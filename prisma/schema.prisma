@@ -1,0 +1,126 @@
+// form5472 Prisma schema — full shape from the product spec.
+// Phase 1 uses only User, Filing, FilingYearData. BankStatement and
+// related fields are present so Phase 2 (CSV parsing) is a pure additive change.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  filings   Filing[]
+}
+
+model Filing {
+  id        String       @id @default(cuid())
+  // userId is null while the customer is filling the wizard anonymously.
+  // Set to a real User once they provide an email at the Review step.
+  userId    String?
+  user      User?        @relation(fields: [userId], references: [id])
+  // sessionId binds an anonymous filing to a browser cookie so refreshes
+  // don't lose work. Cleared once the filing is linked to a user.
+  sessionId String?
+  status    FilingStatus @default(DRAFT)
+
+  // Pricing tier
+  tier            String
+  amountPaid      Int     @default(0)
+  stripeSessionId String?
+  stripePaymentId String?
+
+  // Entity info
+  llcName             String?
+  llcEin              String?
+  llcAddress          String?
+  llcCity             String?
+  llcState            String?
+  llcZip              String?
+  llcCountry          String  @default("USA")
+  llcDateIncorporated DateTime?
+  llcBusinessActivity String?
+  llcBusinessCode     String?
+
+  // Foreign owner info
+  ownerName                String?
+  ownerAddress             String?
+  ownerCountryCitizenship  String?
+  ownerCountryTaxResidence String?
+  ownerCountryBusiness     String?
+  ownerFtin                String?
+  ownerItin                String?
+  ownerReferenceId         String?
+
+  // Filing scope
+  taxYears                 Int[]
+  isDiirsp                 Boolean @default(false)
+  reasonableCauseNarrative String?
+
+  // Generated PDFs (R2 keys)
+  generatedPdfKey    String?
+  signedPdfKey       String?
+  faxJobId           String?
+  faxStatus          String?
+  faxConfirmationKey String?
+
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  yearData  FilingYearData[]
+  plaidConnections PlaidConnection[]
+}
+
+model FilingYearData {
+  id                     String  @id @default(cuid())
+  filingId               String
+  filing                 Filing  @relation(fields: [filingId], references: [id], onDelete: Cascade)
+  taxYear                Int
+  totalAssetsYearEnd     Decimal @db.Decimal(15, 2) @default(0)
+  contributions          Decimal @db.Decimal(15, 2) @default(0)
+  distributions          Decimal @db.Decimal(15, 2) @default(0)
+  reportableTransactions Json    @default("[]")
+
+  bankStatements BankStatement[]
+
+  @@unique([filingId, taxYear])
+}
+
+model PlaidConnection {
+  id              String   @id @default(cuid())
+  filingId        String
+  filing          Filing   @relation(fields: [filingId], references: [id], onDelete: Cascade)
+  // Plaid access token — kept in the DB for simplicity. In production this
+  // should be encrypted at rest with a KMS key; for now we rely on Neon's
+  // at-rest encryption and the row-level filing ownership check.
+  accessToken     String
+  itemId          String
+  institutionName String?
+  createdAt       DateTime @default(now())
+}
+
+model BankStatement {
+  id               String         @id @default(cuid())
+  filingYearDataId String
+  filingYearData   FilingYearData @relation(fields: [filingYearDataId], references: [id], onDelete: Cascade)
+  fileKey          String
+  fileName         String
+  bankProvider     String?
+  parseResult      Json?
+  uploadedAt       DateTime       @default(now())
+}
+
+enum FilingStatus {
+  DRAFT
+  PAID
+  PDF_GENERATED
+  SIGNATURE_PENDING
+  SIGNED_UPLOADED
+  FAXED
+  CONFIRMED
+  FAILED
+}

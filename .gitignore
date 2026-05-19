@@ -34,3 +34,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated PDFs and signed uploads (R2 in prod; local tmp during dev)
+/tmp-pdfs/
+
+# iCloud Drive metadata leak protection — never commit these
+.icloud
+*.icloud
+
+
+# clerk configuration (can include secrets)
+/.clerk/

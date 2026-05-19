@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="5472formIRS mark">
+  <path d="M10 6 H42 L58 22 V58 H10 Z" fill="#1e3a8a"/>
+  <path d="M42 6 V22 H58" fill="none" stroke="#ffffff" stroke-width="2" stroke-linejoin="round" opacity="0.55"/>
+  <text x="34" y="48"
+        text-anchor="middle"
+        font-family="-apple-system, BlinkMacSystemFont, Inter, 'Segoe UI', sans-serif"
+        font-weight="800"
+        font-size="16"
+        letter-spacing="0.5"
+        fill="#ffffff">5472</text>
+</svg>

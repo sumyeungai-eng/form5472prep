@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 56" role="img" aria-label="5472formIRS">
+  <!-- Document mark -->
+  <g transform="translate(0,8)">
+    <path d="M5 0 H30 L42 12 V40 H5 Z" fill="#1e3a8a"/>
+    <path d="M30 0 V12 H42" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round" opacity="0.55"/>
+    <text x="23.5" y="29"
+          text-anchor="middle"
+          font-family="-apple-system, BlinkMacSystemFont, Inter, 'Segoe UI', sans-serif"
+          font-weight="800"
+          font-size="11"
+          letter-spacing="0.4"
+          fill="#ffffff">5472</text>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="56" y="36"
+        font-family="-apple-system, BlinkMacSystemFont, Inter, 'Segoe UI', sans-serif"
+        font-weight="700"
+        font-size="22"
+        letter-spacing="-0.4">
+    <tspan fill="#1e3a8a">5472</tspan><tspan fill="#0f172a">form</tspan><tspan fill="#1e3a8a">IRS</tspan>
+  </text>
+</svg>

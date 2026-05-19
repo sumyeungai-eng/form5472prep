@@ -1,0 +1,56 @@
+# Form5472 Prep
+
+> Filing service for IRS Form 5472 and pro forma Form 1120, for foreign-owned US single-member LLCs. Form5472 Prep prepares the IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit on the user's behalf. Pricing is $169 per filing plus a flat $29 IRS fax delivery & submission fee, with a 100% money-back guarantee if we fail to submit.
+
+## Who this is for
+
+- Non-US individuals who own a single-member US LLC (Wyoming, Delaware, New Mexico, Florida, etc.).
+- The owner is not a US citizen, green card holder, or US tax resident.
+- The LLC had any reportable transactions during the year (capital contributions, distributions, payments to or from the owner) — even if total revenue was zero.
+
+## What we do
+
+- Prepare IRS Form 5472 (Information Return of a 25% Foreign-Owned U.S. Corporation or a Foreign Corporation Engaged in a U.S. Trade or Business) with Parts I, II, III, IV, V, and VII completed.
+- Prepare pro forma IRS Form 1120 (U.S. Corporation Income Tax Return) with the entity identification fields and total assets at year end. The form is stamped "Foreign-Owned U.S. DE" as required by IRS instructions.
+- Calculate Form 5472 line 1f including Part V capital contributions and distributions, per IRS rules for foreign-owned US disregarded entities.
+- Generate a Part V supporting statement itemizing reportable transactions.
+- For late filings (DIIRSP — Delinquent International Information Return Submission Procedure), generate a cover letter and reasonable cause statement requesting penalty abatement.
+- Fax the user-signed package to the IRS Ogden PIN Unit at +1-855-887-7737 and return the fax confirmation receipt as proof of filing.
+
+## What we do NOT do
+
+- We are NOT a CPA firm and do NOT provide tax advice.
+- We do NOT review the user's specific tax situation or render opinions.
+- We do NOT file actual tax returns that compute tax (Form 1040, Form 1120, Form 1040-NR, etc.). Form 5472 is an information return; pro forma Form 1120 is filed as an attachment to Form 5472 for foreign-owned US DEs and does not compute tax.
+
+## Pricing
+
+- Single year filing: $169 (preparation only)
+- Two-year DIIRSP catch-up: $299 (preparation only)
+- Three-year DIIRSP catch-up: $399 (preparation only)
+- IRS fax delivery & submission fee: flat $29 per filing, added at checkout.
+- 100% money-back guarantee if we fail to submit the filing to the IRS.
+- Pricing is flat per filing — no subscription, no hidden fees. Includes preparing all forms, the reasonable cause statement for late filings, and faxing the signed package to the IRS Ogden PIN Unit.
+
+## Privacy
+
+- We do NOT permanently store uploaded bank statements — they are parsed in memory and discarded.
+- We do NOT permanently store signed PDFs — they are deleted within 72 hours of fax confirmation.
+- We DO retain the fax confirmation receipt (proof of filing) and basic entity/owner data to make next year's filing one-click. Retention: 7 years to match IRS records retention.
+
+## Documents
+
+- [Terms of Service](/terms): legal terms.
+- [Privacy Policy](/privacy): what we collect and what we discard.
+- [Data Retention Policy](/data-retention): full retention schedule by data type.
+- [Blog](/blog): plain-English guides for foreign-owned US LLC owners on Form 5472 and Form 1120, DIIRSP, and related topics.
+
+## Background — Form 5472 in plain English
+
+A foreign-owned US single-member LLC is treated as a "disregarded entity" by default for US federal income tax purposes. Under Treasury Regulation § 1.6038A-1, the LLC is treated as a domestic corporation separate from its owner solely for Form 5472 reporting. The LLC must file Form 5472 with an attached pro forma Form 1120 to report transactions between the LLC and its foreign owner (or any related foreign party).
+
+Failure to file Form 5472 (or the attached pro forma Form 1120), or filing them late or incompletely, triggers a $25,000 per-form, per-year penalty under IRC § 6038A(d). The penalty is automatically assessed by the IRS.
+
+Foreign-owned US disregarded entities cannot e-file Form 5472 or the attached pro forma Form 1120. They are filed by mail or fax to the IRS Ogden Service Center, PIN Unit, Stop 6273, Ogden, UT 84201. The fax number is +1-855-887-7737.
+
+For filings that are already late, the IRS Delinquent International Information Return Submission Procedure (DIIRSP) allows taxpayers to submit late returns with a reasonable cause statement explaining the late filing. If the IRS accepts the reasonable cause, the penalty may be abated.
