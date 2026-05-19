@@ -21,7 +21,7 @@ export function LoginForm() {
       body: JSON.stringify({ password }),
     });
     if (res.ok) {
-      router.push("/admin/posts");
+      router.push("/admin/filings");
       router.refresh();
     } else {
       const body = await res.json().catch(() => ({}));

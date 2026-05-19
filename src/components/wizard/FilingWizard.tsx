@@ -110,9 +110,9 @@ export function FilingWizard({
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
       <Stepper steps={steps} current={stepIndex} onJumpTo={(key) => setStepKey(key)} />
-      <div className="mt-8 bg-white rounded-lg border border-slate-200 p-8">
+      <div className="mt-6 sm:mt-8 bg-white rounded-lg border border-slate-200 p-5 sm:p-8">
         {stepKey === "entity" && (
           <EntityStep
             filing={filing}
@@ -228,8 +228,14 @@ function Stepper({
   current: number;
   onJumpTo: (key: StepKey) => void;
 }) {
+  const currentLabel = steps[current]?.label ?? "";
   return (
-    <ol className="flex items-center text-xs">
+    <div>
+      {/* Mobile-only: show "Step N of M — Label" since dots alone aren't self-describing */}
+      <p className="sm:hidden text-xs text-slate-500 mb-2">
+        Step {current + 1} of {steps.length} · <span className="font-medium text-slate-900">{currentLabel}</span>
+      </p>
+      <ol className="flex items-center text-xs">
       {steps.map((s, i) => {
         // Allow jumping back to any visited step (current or earlier).
         // Forward steps stay locked so the wizard can run validation
@@ -248,7 +254,7 @@ function Stepper({
         );
         const label = (
           <span
-            className={`ml-2 ${isCurrent ? "font-medium" : "text-slate-500"} ${
+            className={`ml-2 hidden sm:inline ${isCurrent ? "font-medium" : "text-slate-500"} ${
               canJump ? "group-hover:text-slate-900 group-hover:underline" : ""
             }`}
           >
@@ -278,7 +284,8 @@ function Stepper({
           </li>
         );
       })}
-    </ol>
+      </ol>
+    </div>
   );
 }
 
@@ -310,6 +317,11 @@ function EntityStep({
     },
   });
 
+  // If the LLC name is already populated on a fresh DRAFT, the customer is a
+  // returning filer whose previous filing's details were pre-filled. Surface
+  // a banner so they know to review (e.g. EIN/address may have changed).
+  const isPrefilled = !!filing.llcName;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div>
@@ -318,6 +330,11 @@ function EntityStep({
           Use the legal name and address registered with your state.
         </p>
       </div>
+      {isPrefilled && (
+        <div className="rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+          <strong>Pre-filled from your previous filing.</strong> Review each field and update anything that&apos;s changed since last year — address, EIN, owner details, etc.
+        </div>
+      )}
       <Field label="LLC legal name" error={errors.llcName?.message}>
         <Input {...register("llcName")} placeholder="Acme Holdings LLC" />
       </Field>
@@ -352,7 +369,7 @@ function EntityStep({
       <Field label="Street address" error={errors.llcAddress?.message}>
         <Input {...register("llcAddress")} placeholder="123 Main St" />
       </Field>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <Field label="City" error={errors.llcCity?.message}>
           <Input {...register("llcCity")} />
         </Field>
@@ -458,7 +475,7 @@ function OwnerStep({
       <Field label="Residential address" error={errors.ownerAddress?.message}>
         <Input {...register("ownerAddress")} placeholder="Flat 5A, 123 Queens Rd, Hong Kong" />
       </Field>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Field label="Citizenship" error={errors.ownerCountryCitizenship?.message}>
           <Input {...register("ownerCountryCitizenship")} placeholder="Hong Kong" />
         </Field>
@@ -501,7 +518,7 @@ function OwnerStep({
       >
         <Input {...register("ownerFtin")} placeholder="Your home-country tax ID number" />
       </Field>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field
           label="US ITIN (optional)"
           hint="Only if you've previously been issued one by the IRS."
@@ -599,7 +616,7 @@ function YearsStep({
         </p>
       </div>
       <input type="hidden" {...register("taxYears", { valueAsNumber: false })} />
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
         {allYears.map((y) => {
           const checked = selected.includes(y);
           return (
@@ -729,6 +746,12 @@ function ReviewStep({
         />
       </Field>
 
+      <div className="flex items-start gap-2 rounded-md bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-800">
+        <svg className="flex-none h-4 w-4 mt-0.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Every order is reviewed by a qualified tax accountant before submission to the IRS.</span>
+      </div>
       <p className="text-xs text-slate-500">
         We are not a CPA firm and do not provide tax advice. You are responsible for the accuracy
         of all information.
@@ -747,9 +770,9 @@ function ReviewStep({
 
 function Row({ label, value }: { label: string; value: string | null | undefined }) {
   return (
-    <div className="grid grid-cols-3 gap-4 px-4 py-3">
-      <dt className="text-slate-500">{label}</dt>
-      <dd className="col-span-2 text-slate-900">{value || <em className="text-slate-400">missing</em>}</dd>
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-0.5 sm:gap-4 px-4 py-3">
+      <dt className="text-slate-500 text-xs uppercase tracking-wider sm:text-base sm:normal-case sm:tracking-normal">{label}</dt>
+      <dd className="sm:col-span-2 text-slate-900 break-words">{value || <em className="text-slate-400">missing</em>}</dd>
     </div>
   );
 }

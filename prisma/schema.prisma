@@ -12,10 +12,30 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  createdAt DateTime @default(now())
-  filings   Filing[]
+  id                   String         @id @default(cuid())
+  email                String         @unique
+  createdAt            DateTime       @default(now())
+  // Marketing emails (yearly file-again reminders, etc). Defaults to opted-in
+  // since customers signed up by buying a filing; flipped via /unsubscribe.
+  emailMarketingOptOut Boolean        @default(false)
+  filings              Filing[]
+  reminders            ReminderSent[]
+}
+
+// One row per (user, tax year, campaign) — the unique constraint stops the
+// cron from double-sending if it's re-run within a campaign window.
+model ReminderSent {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // The tax year being reminded about (e.g. 2026 for a January 2026 send).
+  year     Int
+  // Which campaign — lets us run multiple touches per year independently.
+  campaign String   // "january" | "march"
+  sentAt   DateTime @default(now())
+
+  @@unique([userId, year, campaign])
+  @@index([year, campaign])
 }
 
 model Filing {

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { submitFax } from "@/lib/fax";
 import { publicUrl } from "@/lib/storage";
 import { env } from "@/lib/env";
+import { sendFaxDeliveredEmail, sendFaxFailedEmail } from "@/lib/email";
+import { makeMagicLink } from "@/lib/magicLink";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,7 +25,10 @@ export async function POST(req: Request) {
   const faxId = body?.data?.payload?.fax_id as string | undefined;
   if (!faxId) return NextResponse.json({ ok: true });
 
-  const filing = await prisma.filing.findFirst({ where: { faxJobId: faxId } });
+  const filing = await prisma.filing.findFirst({
+    where: { faxJobId: faxId },
+    include: { user: true },
+  });
   if (!filing) return NextResponse.json({ ok: true });
 
   if (evt === "fax.delivered") {
@@ -31,6 +36,18 @@ export async function POST(req: Request) {
       where: { id: filing.id },
       data: { faxStatus: "delivered", status: "CONFIRMED" },
     });
+    if (filing.user) {
+      try {
+        await sendFaxDeliveredEmail({
+          email: filing.user.email,
+          llcName: filing.llcName,
+          taxYears: filing.taxYears,
+          portalLink: makeMagicLink(filing.user.id),
+        });
+      } catch (err) {
+        console.error("[telnyx-webhook] fax delivered email failed", err);
+      }
+    }
     return NextResponse.json({ ok: true });
   }
 
@@ -50,6 +67,18 @@ export async function POST(req: Request) {
       where: { id: filing.id },
       data: { faxStatus: "failed", status: "FAILED" },
     });
+    if (filing.user) {
+      try {
+        await sendFaxFailedEmail({
+          email: filing.user.email,
+          llcName: filing.llcName,
+          taxYears: filing.taxYears,
+          portalLink: makeMagicLink(filing.user.id),
+        });
+      } catch (err) {
+        console.error("[telnyx-webhook] fax failed email failed", err);
+      }
+    }
     return NextResponse.json({ ok: true, gaveUp: true });
   }
 

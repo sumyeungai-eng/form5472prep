@@ -20,6 +20,7 @@ export default function DataRetentionPage() {
       </p>
 
       <h2>Discarded during normal processing</h2>
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
       <table>
         <thead>
           <tr>
@@ -51,8 +52,10 @@ export default function DataRetentionPage() {
           </tr>
         </tbody>
       </table>
+      </div>
 
       <h2>Retained for proof and reuse</h2>
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
       <table>
         <thead>
           <tr>
@@ -94,6 +97,7 @@ export default function DataRetentionPage() {
           </tr>
         </tbody>
       </table>
+      </div>
 
       <h2>Deletion process</h2>
       <p>

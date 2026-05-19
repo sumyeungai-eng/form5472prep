@@ -110,7 +110,7 @@ function FeaturedCard({ post }: { post: PostMeta }) {
       className="group block mt-12 rounded-xl border border-slate-200 bg-white overflow-hidden hover:border-accent transition-colors"
     >
       <div className="grid md:grid-cols-[1fr_280px]">
-        <div className="p-8 sm:p-10">
+        <div className="p-5 sm:p-8 md:p-10">
           <div className="flex items-center gap-2 text-xs">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-accent text-white px-2.5 py-0.5 font-medium">
               Latest

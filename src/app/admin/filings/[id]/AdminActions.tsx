@@ -1,0 +1,136 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+
+const STATUSES = [
+  "DRAFT",
+  "PAID",
+  "PDF_GENERATED",
+  "SIGNATURE_PENDING",
+  "SIGNED_UPLOADED",
+  "FAXED",
+  "CONFIRMED",
+  "FAILED",
+];
+
+type Props = {
+  filingId: string;
+  currentStatus: string;
+  userEmail: string | null;
+};
+
+export function AdminActions({ filingId, currentStatus, userEmail }: Props) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [status, setStatus] = useState(currentStatus);
+  const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+
+  async function callApi(body: Record<string, unknown>, okMsg: string) {
+    setMsg(null);
+    try {
+      const res = await fetch(`/api/admin/filings/${filingId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.text();
+        setMsg({ kind: "err", text: err || `HTTP ${res.status}` });
+        return;
+      }
+      setMsg({ kind: "ok", text: okMsg });
+      startTransition(() => router.refresh());
+    } catch (e) {
+      setMsg({ kind: "err", text: e instanceof Error ? e.message : "Network error" });
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
+        <label className="flex-1">
+          <span className="block text-xs text-slate-500 mb-1">Override status</span>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            disabled={pending}
+            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-white"
+          >
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </label>
+        <button
+          type="button"
+          onClick={() => callApi({ action: "setStatus", status }, `Status set to ${status}`)}
+          disabled={pending || status === currentStatus}
+          className="px-4 py-2 text-sm font-medium bg-slate-900 text-white rounded-md hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+        </button>
+      </div>
+
+      <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+        <ActionButton
+          disabled={pending || !userEmail}
+          onClick={() => callApi({ action: "resendOrderConfirmation" }, "Order confirmation resent")}
+          tooltip={!userEmail ? "No customer email on file" : undefined}
+        >
+          Resend order confirmation
+        </ActionButton>
+        <ActionButton
+          disabled={pending || !userEmail}
+          onClick={() => callApi({ action: "resendMagicLink" }, "Magic link resent")}
+          tooltip={!userEmail ? "No customer email on file" : undefined}
+        >
+          Resend magic link
+        </ActionButton>
+        <ActionButton
+          disabled={pending}
+          onClick={() => callApi({ action: "retryFax" }, "Fax retry queued")}
+        >
+          Retry fax
+        </ActionButton>
+      </div>
+
+      {msg && (
+        <div
+          className={`text-sm px-3 py-2 rounded-md ${
+            msg.kind === "ok"
+              ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+              : "bg-red-50 text-red-800 border border-red-200"
+          }`}
+        >
+          {msg.text}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ActionButton({
+  children,
+  onClick,
+  disabled,
+  tooltip,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  tooltip?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={tooltip}
+      className="px-3 py-1.5 text-sm border border-slate-300 rounded-md bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {children}
+    </button>
+  );
+}

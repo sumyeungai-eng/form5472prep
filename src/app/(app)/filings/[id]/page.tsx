@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getOwnedFiling, getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { FilingActions } from "@/components/wizard/FilingActions";
+import { FilingStatusBanner } from "@/components/FilingStatusBanner";
 import { TIERS } from "@/lib/pricing";
 
 export default async function FilingDetailPage({
@@ -48,6 +49,12 @@ export default async function FilingDetailPage({
           {TIERS[filing.tier as keyof typeof TIERS]?.label} · Tax years {filing.taxYears.join(", ")}
         </p>
       </div>
+
+      <FilingStatusBanner
+        filingId={filing.id}
+        status={filing.status}
+        updatedAt={filing.updatedAt}
+      />
 
       <FilingActions
         filing={{

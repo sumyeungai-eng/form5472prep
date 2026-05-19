@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/cron/january-reminder",
+      "schedule": "0 14 7 1 *"
+    },
+    {
+      "path": "/api/cron/march-reminder",
+      "schedule": "0 14 15 3 *"
+    }
+  ]
+}

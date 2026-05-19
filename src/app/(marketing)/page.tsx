@@ -105,14 +105,14 @@ function Hero() {
           </div>
 
           {/* Right: bold CTA card */}
-          <div className="lg:w-[360px] lg:flex-none animate-fade-in-up animate-delay-300">
-            <div className="rounded-2xl bg-white border border-slate-200 shadow-xl shadow-accent/5 p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-accent/10 hover:-translate-y-0.5">
+          <div className="w-full lg:w-[360px] lg:flex-none animate-fade-in-up animate-delay-300">
+            <div className="rounded-2xl bg-white border border-slate-200 shadow-xl shadow-accent/5 p-6 sm:p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-accent/10 hover:-translate-y-0.5">
               <div className="flex items-center gap-2 text-xs font-medium text-accent uppercase tracking-wide">
                 <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-soft-pulse" />
                 Start filing now
               </div>
               <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-5xl font-semibold text-slate-900 tracking-tight">
+                <span className="text-4xl sm:text-5xl font-semibold text-slate-900 tracking-tight">
                   {formatUsd(TIERS.single_year.priceCents)}
                 </span>
                 <span className="text-sm text-slate-500">/ filing</span>
@@ -124,7 +124,7 @@ function Hero() {
               <Link href="/start" className="block mt-6 group">
                 <Button
                   size="lg"
-                  className="w-full h-14 text-base shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 transition-all duration-200 hover:-translate-y-0.5"
+                  className="w-full h-14 text-sm sm:text-base shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 transition-all duration-200 hover:-translate-y-0.5"
                 >
                   Start filing — {formatUsd(TIERS.single_year.priceCents)}
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
@@ -140,6 +140,7 @@ function Hero() {
                 {[
                   "Filled IRS Form 5472 + pro forma 1120",
                   "Reasonable cause statement (if late)",
+                  "Reviewed by a qualified tax accountant",
                   "Faxed to IRS Ogden PIN Unit",
                   "100% money-back if we fail to submit",
                 ].map((it, i) => (
@@ -335,7 +336,7 @@ function Deliverables() {
         <SectionHead
           eyebrow="What you get"
           title="A complete, IRS-ready package."
-          subtitle="The exact same documents a CPA would prepare. Bundled as one PDF, ready for your signature."
+          subtitle="The exact same documents a CPA would prepare. Every order is reviewed by a qualified tax accountant before we submit to the IRS. Bundled as one PDF, ready for your signature."
         />
         <ul className="mt-10 space-y-3">
           {docs.map((d, i) => (

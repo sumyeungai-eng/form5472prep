@@ -40,7 +40,7 @@ export default async function MarketingLayout({ children }: { children: React.Re
       </header>
       <main className="flex-1">{children}</main>
       <footer className="border-t border-slate-200 py-10 text-xs text-slate-500 bg-white">
-        <div className="max-w-6xl mx-auto px-6 grid sm:grid-cols-4 gap-8">
+        <div className="max-w-6xl mx-auto px-6 grid sm:grid-cols-4 gap-6 sm:gap-8">
           <div className="sm:col-span-2 space-y-2">
             <p>
               Form5472 Prep is a form preparation and filing courier service. We are not a CPA
