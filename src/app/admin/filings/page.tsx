@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { FileText, Inbox } from "lucide-react";
+import { Inbox } from "lucide-react";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { formatUsd } from "@/lib/utils";

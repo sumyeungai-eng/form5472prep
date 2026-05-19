@@ -45,7 +45,7 @@ export default async function UnsubscribePage({
             <h1 className="mt-4 text-xl font-semibold text-slate-900">Link expired or invalid</h1>
             <p className="mt-2 text-sm text-slate-600">
               This unsubscribe link is no longer valid. To stop receiving marketing emails,
-              reply to any recent email from us and we'll remove you manually.
+              reply to any recent email from us and we&apos;ll remove you manually.
             </p>
           </>
         ) : (
@@ -60,7 +60,7 @@ export default async function UnsubscribePage({
                 : `We won't send any more yearly filing reminders to ${email ?? "this address"}.`}
             </p>
             <p className="mt-4 text-xs text-slate-500">
-              You'll still receive transactional emails (order receipts, fax confirmations) —
+              You&apos;ll still receive transactional emails (order receipts, fax confirmations) —
               those are required to manage your filing.
             </p>
           </>
