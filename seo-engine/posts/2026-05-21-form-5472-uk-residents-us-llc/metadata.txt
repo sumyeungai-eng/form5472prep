@@ -1,0 +1,57 @@
+## SEO Metadata — 2026-05-21 — form-5472-uk-residents-us-llc
+
+--- TITLE TAG (58 chars) ---
+Form 5472 for UK Residents With a U.S. LLC (2026 Guide)
+
+--- META DESCRIPTION (154 chars) ---
+UK resident with a Wyoming or Delaware LLC? The IRS requires Form 5472 every year — even with zero revenue. Deadlines, penalties, and the BOI update explained.
+
+--- SLUG ---
+/blog/form-5472-uk-residents-us-llc
+
+--- CANONICAL ---
+https://form5472prep.com/blog/form-5472-uk-residents-us-llc
+
+--- OPEN GRAPH ---
+og:title       Form 5472 for UK Residents With a U.S. LLC (2026 Guide)
+og:description UK resident with a Wyoming or Delaware LLC? The IRS requires Form 5472 every year — even with zero revenue. Deadlines, penalties, and the BOI update explained.
+og:type        article
+og:url         https://form5472prep.com/blog/form-5472-uk-residents-us-llc
+
+--- IMAGE ---
+Filename:    form-5472-uk-residents-us-llc.png
+Alt text:    UK founder at a laptop with a US LLC document and IRS Form 5472 on screen
+Recommended: 1200×630px, OG-safe
+Note:        Use an image of a person at a laptop or a simple IRS form graphic —
+             avoid flags (can read as partisan in some contexts).
+
+--- INTERNAL LINKS (blog → service pages) ---
+1. Contextual in-body (after penalty section):
+   Anchor: "DIIRSP procedure"
+   Href:   /diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uk-residents-us-llc
+
+2. Mid-article CTA box:
+   Anchor: "Get your Form 5472 filed →"
+   Href:   /start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uk-residents-us-llc
+
+3. End CTA (after FAQ — already in post):
+   Anchor: Implied by CTA box (same /start link with UTM)
+
+--- INTERNAL LINKS (blog → blog, SEO) ---
+Link from this post TO existing post:
+  Anchor: "what counts as a reportable transaction"
+  Href:   /blog/what-is-form-5472 (the "Big misconception" section)
+
+Reciprocal link NEEDED — action required:
+  Go to /blog/what-is-form-5472 → "Common scenarios" section
+  Add: "UK residents with a US LLC have additional UK-specific considerations —
+        see our guide to [Form 5472 for UK residents](/blog/form-5472-uk-residents-us-llc)."
+
+--- EXTERNAL AUTHORITY LINKS (open in new tab) ---
+1. https://www.irs.gov/instructions/i5472 — "IRS Form 5472 instructions"
+2. https://www.fincen.gov/boi — "FinCEN BOI status"
+Both already present in post body.
+
+--- UTM TRACKING ---
+All service CTAs tagged: ?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uk-residents-us-llc
+Log in analytics which service pages this drives traffic to over first 30 days.

@@ -1,0 +1,37 @@
+target_keyword,intent,cluster,est_difficulty,target_url_slug,status,publish_date,notes
+"what is form 5472 and who must file it",informational,A - Core,low,/blog/what-is-form-5472,published,2026-05-19,"First post. Covers basics, who files, reportable transactions, penalty intro."
+"form 5472 pro forma 1120 disregarded entity explained",informational,A - Core,low,/blog/form-5472-pro-forma-1120-disregarded-entity,queued,,
+"form 5472 deadlines and extensions",informational,A - Core,low,/blog/form-5472-deadlines-extensions,queued,,
+"reportable transactions form 5472 parts IV V VI plain english",informational,A - Core,medium,/blog/form-5472-reportable-transactions,queued,,
+"form 5472 25000 penalty explained",commercial,B - Penalties,low,/blog/form-5472-penalty-25000,queued,,
+"filed late or never filed form 5472 what to do now",commercial,B - Penalties,low,/blog/form-5472-filed-late-never-filed,queued,,
+"reasonable cause abatement form 5472",commercial,B - Penalties,medium,/blog/form-5472-reasonable-cause-abatement,queued,,
+"correcting amending filed form 5472",informational,B - Penalties,low,/blog/form-5472-amend-correct,queued,,
+"why multiple related parties multiply form 5472 penalty",informational,B - Penalties,low,/blog/form-5472-multiple-related-parties-penalty,queued,,
+"foreign owned single member llc disregarded entity form 5472",informational,C - Entity,low,/blog/foreign-owned-single-member-llc-form-5472,queued,,
+"foreign owned multi member llc form 5472",informational,C - Entity,low,/blog/foreign-owned-multi-member-llc-form-5472,queued,,
+"25 percent foreign owned c corporation form 5472",informational,C - Entity,medium,/blog/25-percent-foreign-owned-c-corp-form-5472,queued,,
+"form 5472 dormant llc no income",informational,C - Entity,very-low,/blog/form-5472-dormant-llc-no-income,queued,,
+"are owner contributions capitalization reportable transactions form 5472",informational,C - Entity,very-low,/blog/form-5472-owner-contributions-reportable,queued,,
+"form 5472 uk residents us llc",commercial,D - Country/Persona,very-low,/blog/form-5472-uk-residents-us-llc,drafted,2026-05-21,"Week 1 post. Target: UK founders/consultants with Wyoming or Delaware LLC. Unique angle: BOI no longer required for domestic LLCs (March 2025 update). ~1700 words."
+"form 5472 india residents us llc",commercial,D - Country/Persona,very-low,/blog/form-5472-india-residents-us-llc,queued,,
+"form 5472 canada residents us llc",commercial,D - Country/Persona,very-low,/blog/form-5472-canada-residents-us-llc,queued,,
+"form 5472 germany residents us llc",commercial,D - Country/Persona,very-low,/blog/form-5472-germany-residents-us-llc,queued,,
+"form 5472 uae residents us llc",commercial,D - Country/Persona,very-low,/blog/form-5472-uae-residents-us-llc,queued,,
+"form 5472 nigeria residents us llc",commercial,D - Country/Persona,very-low,/blog/form-5472-nigeria-residents-us-llc,queued,,
+"form 5472 pakistan residents us llc",commercial,D - Country/Persona,very-low,/blog/form-5472-pakistan-residents-us-llc,queued,,
+"form 5472 philippines residents us llc",commercial,D - Country/Persona,very-low,/blog/form-5472-philippines-residents-us-llc,queued,,
+"form 5472 hong kong residents us llc",commercial,D - Country/Persona,very-low,/blog/form-5472-hong-kong-residents-us-llc,queued,,
+"form 5472 australia residents us llc",commercial,D - Country/Persona,very-low,/blog/form-5472-australia-residents-us-llc,queued,,
+"amazon fba foreign sellers form 5472",commercial,D - Country/Persona,low,/blog/amazon-fba-foreign-sellers-form-5472,queued,,
+"stripe atlas digital nomad llc form 5472",commercial,D - Country/Persona,very-low,/blog/stripe-atlas-digital-nomad-form-5472,queued,,
+"form 5471 vs form 5472 which do you file",informational,E - Comparisons,low,/blog/form-5471-vs-form-5472,queued,,
+"ein for foreign owners us llc",informational,E - Comparisons,low,/blog/ein-foreign-owners-us-llc,queued,,
+"boi corporate transparency act foreign owned llc 2025 status",informational,E - Comparisons,medium,/blog/boi-corporate-transparency-act-foreign-llc-2025,queued,,"VERIFY CURRENT STATUS — rule changed in 2025"
+"do foreign owners need form 1040-nr",informational,E - Comparisons,medium,/blog/foreign-owners-form-1040-nr,queued,,
+"how to fill out form 5472 step by step",informational,F - Process,medium,/blog/how-to-fill-out-form-5472,queued,,
+"documents needed before filing form 5472",informational,F - Process,low,/blog/form-5472-documents-needed,queued,,
+"diy vs hiring preparer form 5472",commercial,F - Process,low,/blog/form-5472-diy-vs-preparer,queued,,"Honest comparison — funnels to service"
+"where and how to file form 5472 mail vs fax",informational,F - Process,low,/blog/form-5472-how-to-file-mail-fax,queued,,
+"one big beautiful bill act remittance tax foreign llc owners",informational,E - Comparisons,medium,/blog/one-big-beautiful-bill-remittance-tax-llc,queued,,"NEW — spotted May 2026. 1% remittance tax on cross-border transfers + FTIN changes. VERIFY rule status before writing."
+"wise revolut transfers form 5472 reportable transactions",informational,D - Country/Persona,very-low,/blog/form-5472-wise-revolut-reportable-transactions,queued,,"NEW — spotted May 2026. High-intent long-tail. UK/EU founders ask this constantly. Pairs with country posts."
