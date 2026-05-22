@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
@@ -36,7 +35,10 @@ export function PlaceSignatureClient({
   taxYears: number[];
   hasExistingSignedPdf: boolean;
 }) {
-  const router = useRouter();
+  // useRouter was used to programmatically navigate after save, but the new
+  // preview-on-save flow keeps the user on this page (with iframe preview)
+  // and has them click "Back to filing" themselves. Kept the import comment
+  // so it's easy to re-add a redirect later if we want one-click finish.
   const [loadingState, setLoadingState] = useState<string>("Loading PDF…");
   const [pageSizes, setPageSizes] = useState<PageSize[]>([]);
   const [sigUrl, setSigUrl] = useState<string | null>(null);
