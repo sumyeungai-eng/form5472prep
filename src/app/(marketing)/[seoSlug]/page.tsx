@@ -393,8 +393,13 @@ function PricingSection({
             One-time fee per filing. No subscription. IRS fax delivery to the
             Ogden PIN Unit is included on every plan.
           </p>
-          <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-4 py-1.5 text-xs font-medium text-emerald-800">
-            Fax filing included on every plan
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-4 py-1.5 text-xs font-medium text-emerald-800">
+              Fax filing included on every plan
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-accent-50 border-2 border-accent/30 px-4 py-1.5 text-xs font-medium text-accent">
+              Reviewed by a qualified tax accountant
+            </div>
           </div>
         </Reveal>
         <div className="mt-10 grid md:grid-cols-3 gap-6 items-stretch">

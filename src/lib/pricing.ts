@@ -34,6 +34,7 @@ export const TIERS: Record<Tier, TierInfo> = {
     priceCents: 19900,
     ctaLabel: "Choose Standard",
     features: [
+      "Reviewed by a qualified tax accountant before submission",
       "Form 5472 + pro forma 1120 prepared",
       "Fax filing to IRS Ogden included",
       "Filing confirmation",

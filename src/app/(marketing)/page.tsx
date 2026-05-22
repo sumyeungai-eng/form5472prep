@@ -105,9 +105,15 @@ function Hero() {
               Ogden PIN Unit included on every plan.
             </p>
 
-            <div className="mt-7 inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-5 py-2 text-sm font-medium text-emerald-800 animate-fade-in-up animate-delay-300">
-              <Send className="h-4 w-4" />
-              Fax filing included on every plan
+            <div className="mt-7 flex flex-wrap items-center gap-3 animate-fade-in-up animate-delay-300">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-5 py-2 text-sm font-medium text-emerald-800">
+                <Send className="h-4 w-4" />
+                Fax filing included on every plan
+              </div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-accent-50 border-2 border-accent/30 px-5 py-2 text-sm font-medium text-accent">
+                <ShieldCheck className="h-4 w-4" />
+                Reviewed by a qualified tax accountant
+              </div>
             </div>
           </div>
 

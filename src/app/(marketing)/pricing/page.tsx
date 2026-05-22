@@ -64,9 +64,15 @@ export default function PricingPage() {
               Ogden PIN Unit included on every plan.
             </p>
 
-            <div className="mt-8 inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-5 py-2 text-sm font-medium text-emerald-800">
-              <Send className="h-4 w-4" />
-              Fax filing included on every plan
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-5 py-2 text-sm font-medium text-emerald-800">
+                <Send className="h-4 w-4" />
+                Fax filing included on every plan
+              </div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-accent-50 border-2 border-accent/30 px-5 py-2 text-sm font-medium text-accent">
+                <ShieldCheck className="h-4 w-4" />
+                Every order reviewed by a qualified tax accountant
+              </div>
             </div>
           </div>
         </div>
