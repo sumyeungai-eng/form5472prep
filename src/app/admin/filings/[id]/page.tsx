@@ -7,6 +7,7 @@ import { formatUsd } from "@/lib/utils";
 import { publicUrl } from "@/lib/storage";
 import { StatusBadge } from "../StatusBadge";
 import { AdminActions } from "./AdminActions";
+import { EditFieldsCard } from "./EditFieldsCard";
 import { MessagesPanel } from "@/components/MessagesPanel";
 
 export const dynamic = "force-dynamic";
@@ -80,6 +81,36 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           hasSignedPdf={!!filing.signedPdfKey}
           hasGeneratedPdf={!!filing.generatedPdfKey}
           hasCustomerSignature={!!filing.signaturePngKey}
+        />
+      </div>
+
+      {/* Field editor — apply customer-reported corrections without making
+          them go back through the wizard. Each save is logged to
+          FilingChangeLog and a regenerate-PDF nudge is shown above. */}
+      <div className="bg-white border border-slate-200 rounded-lg p-6 mb-6">
+        <h2 className="text-sm font-semibold text-slate-900 mb-3">Edit filing fields</h2>
+        <EditFieldsCard
+          filingId={filing.id}
+          initial={{
+            llcName: filing.llcName,
+            llcEin: filing.llcEin,
+            llcAddress: filing.llcAddress,
+            llcCity: filing.llcCity,
+            llcState: filing.llcState,
+            llcZip: filing.llcZip,
+            llcCountry: filing.llcCountry,
+            llcBusinessActivity: filing.llcBusinessActivity,
+            llcBusinessCode: filing.llcBusinessCode,
+            ownerName: filing.ownerName,
+            ownerAddress: filing.ownerAddress,
+            ownerCountryCitizenship: filing.ownerCountryCitizenship,
+            ownerCountryTaxResidence: filing.ownerCountryTaxResidence,
+            ownerCountryBusiness: filing.ownerCountryBusiness,
+            ownerFtin: filing.ownerFtin,
+            ownerItin: filing.ownerItin,
+            ownerReferenceId: filing.ownerReferenceId,
+            reasonableCauseNarrative: filing.reasonableCauseNarrative,
+          }}
         />
       </div>
 

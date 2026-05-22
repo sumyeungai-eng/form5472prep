@@ -221,6 +221,49 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       });
     }
 
+    case "updateField": {
+      // Admin edits a single filing field (e.g. customer wrote in saying
+      // "EIN should be 12-3456789, not 12-3456788"). Whitelisted to the
+      // same fields the customer can edit in the wizard. Logged to
+      // FilingChangeLog so the audit trail is clear.
+      const field = typeof body.field === "string" ? body.field : "";
+      const value = body.value === undefined || body.value === null
+        ? null
+        : String(body.value);
+      const reason = typeof body.reason === "string" ? body.reason.slice(0, 500) : "";
+
+      const allowed = new Set<string>([
+        "llcName", "llcEin", "llcAddress", "llcCity", "llcState", "llcZip",
+        "llcCountry", "llcBusinessActivity", "llcBusinessCode",
+        "ownerName", "ownerAddress",
+        "ownerCountryCitizenship", "ownerCountryTaxResidence",
+        "ownerCountryBusiness", "ownerFtin", "ownerItin", "ownerReferenceId",
+        "reasonableCauseNarrative",
+      ]);
+      if (!allowed.has(field)) {
+        return NextResponse.json({ error: `field "${field}" is not editable` }, { status: 400 });
+      }
+
+      const before = (filing as unknown as Record<string, unknown>)[field];
+      await prisma.$transaction([
+        prisma.filing.update({
+          where: { id: filing.id },
+          data: { [field]: value } as unknown as never,
+        }),
+        prisma.filingChangeLog.create({
+          data: {
+            filingId: filing.id,
+            source: "admin",
+            field,
+            beforeJson: before as never,
+            afterJson: value as never,
+            reason: reason || null,
+          },
+        }),
+      ]);
+      return NextResponse.json({ ok: true, field, before, after: value });
+    }
+
     case "uploadSignedPdf": {
       // Admin/accountant uploads the externally-signed final PDF. Body:
       // { action: "uploadSignedPdf", pdfBase64: "<base64-encoded PDF>" }.

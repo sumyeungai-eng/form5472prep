@@ -43,6 +43,11 @@ export function PlaceSignatureClient({
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  // After Save lands the signed PDF, swap the page into preview mode so the
+  // admin can visually confirm placement before walking away. previewUrl is a
+  // cache-busted URL to /api/admin/filings/[id]/pdf?signed=1 — cache-bust so
+  // a later re-edit + re-save shows the new PDF, not a stale cached one.
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   // Each page gets a canvas ref so we can position overlays inside them.
   const pageCanvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
@@ -221,9 +226,12 @@ export function PlaceSignatureClient({
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body?.error ?? `HTTP ${res.status}`);
-      setSaveMsg({ kind: "ok", text: `Saved! ${body.pagesSigned} page(s) signed.` });
-      // Bounce back to admin filing detail after a beat.
-      setTimeout(() => router.push(`/admin/filings/${filingId}`), 1500);
+      setSaveMsg({ kind: "ok", text: `Saved — ${body.pagesSigned} page(s) signed. Preview below.` });
+      // Swap into preview mode so the admin can visually verify the embed
+      // before navigating away. Cache-bust so a later re-edit + re-save
+      // doesn't show stale bytes.
+      setPreviewUrl(`/api/admin/filings/${filingId}/pdf?signed=1&t=${Date.now()}`);
+      setSaving(false);
     } catch (err) {
       setSaveMsg({ kind: "err", text: err instanceof Error ? err.message : "Save failed" });
       setSaving(false);
@@ -232,6 +240,65 @@ export function PlaceSignatureClient({
 
   const label = llcName ?? `tax year ${taxYears.join(", ")}`;
   const pageCount = pageSizes.length;
+
+  // Preview mode — shown after Save succeeds. Lets the admin verify the
+  // embedded signature lands where they intended before navigating away or
+  // sending to fax. "Re-edit" goes back to the placement canvas with the
+  // same placements still loaded.
+  if (previewUrl) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <Link href={`/admin/filings/${filingId}`} className="text-sm text-slate-500 hover:underline">
+            ← Back to filing
+          </Link>
+          <span className="text-xs uppercase tracking-wider text-emerald-600">Saved · Preview signed PDF</span>
+        </div>
+        <header>
+          <h1 className="text-xl font-semibold">Signed PDF preview — {label}</h1>
+          <p className="mt-1 text-sm text-slate-600">
+            This is the actual signed PDF that will be faxed to the IRS. Scroll
+            through every page to confirm each signature landed correctly. If
+            anything looks off, click <strong>Re-edit placement</strong> and
+            adjust.
+          </p>
+        </header>
+        <div className="sticky top-0 z-20 bg-white border-b border-slate-200 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 flex flex-wrap items-center gap-3">
+          <a
+            href={previewUrl}
+            target="_blank"
+            rel="noopener"
+            className="text-xs text-slate-600 hover:underline"
+          >
+            Open in new tab ↗
+          </a>
+          <div className="flex-1" />
+          <button
+            type="button"
+            onClick={() => {
+              setPreviewUrl(null);
+              setSaveMsg(null);
+            }}
+            className="px-3 py-1.5 text-sm rounded-md border border-slate-300 bg-white hover:bg-slate-50"
+          >
+            ← Re-edit placement
+          </button>
+          <Link
+            href={`/admin/filings/${filingId}`}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-md bg-accent text-white hover:bg-accent/90"
+          >
+            Looks good — back to filing
+          </Link>
+        </div>
+        <iframe
+          src={previewUrl}
+          title="Signed PDF preview"
+          className="w-full border border-slate-300 rounded-md shadow-sm"
+          style={{ height: "85vh" }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4">
