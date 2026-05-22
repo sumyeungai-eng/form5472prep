@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Upload, FileText, X, Sparkles, AlertTriangle, ArrowUp, ArrowDown, Landmark } from "lucide-react";
+import { useRef, useState } from "react";
+import { Upload, FileText, X, Sparkles, AlertTriangle, ArrowUp, ArrowDown, Landmark, Plus, ClipboardPaste } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import type { CategorizedTransaction, Category } from "@/lib/bank/categorize";
@@ -36,6 +36,9 @@ type YearState = {
   // statements (so we can show a "auto-filled" hint without losing the flag
   // when the user clears and retypes).
   totalAssetsAutoFilled?: boolean;
+  // Free-text disclosure of other related-party transactions (loans, sales,
+  // services, rent, etc.) — flows into the Part V supporting statement.
+  otherTransactionsNote?: string;
 };
 
 const MAX_FILES_PER_YEAR = 13;
@@ -57,6 +60,7 @@ export function TransactionsReview({
     totalAssetsYearEnd: number;
     contributions: number;
     distributions: number;
+    otherTransactionsNote?: string;
   }[];
   onSubmit: (years: {
     taxYear: number;
@@ -64,6 +68,7 @@ export function TransactionsReview({
     contributions: number;
     distributions: number;
     reportableTransactions: CategorizedTransaction[];
+    otherTransactionsNote: string;
   }[]) => Promise<void>;
   onBack: () => void;
   saving: boolean;
@@ -79,9 +84,131 @@ export function TransactionsReview({
       uploadedFiles: [],
       plaidConnections: [],
       totalAssetsAutoFilled: false,
+      otherTransactionsNote: y.otherTransactionsNote ?? "",
     })),
   );
   const [uploading, setUploading] = useState<number | null>(null);
+
+  // Draft state for the inline "add transaction manually" form, keyed by year.
+  // null means the form is hidden for that year.
+  type Draft = { description: string; amountUsd: string; category: Category };
+  const [drafts, setDrafts] = useState<Record<number, Draft | null>>({});
+  // Bulk-paste textarea state, keyed by year. null = hidden.
+  const [bulkPaste, setBulkPaste] = useState<Record<number, string | null>>({});
+  // Refs to the description input per year — so we can auto-focus after each
+  // commit for rapid multi-entry.
+  const descRefs = useRef<Record<number, HTMLInputElement | null>>({});
+
+  function startDraft(taxYear: number) {
+    setDrafts((d) => ({
+      ...d,
+      [taxYear]: { description: "", amountUsd: "", category: "contribution" },
+    }));
+    // Focus the description input after the form mounts.
+    setTimeout(() => descRefs.current[taxYear]?.focus(), 0);
+  }
+  function cancelDraft(taxYear: number) {
+    setDrafts((d) => ({ ...d, [taxYear]: null }));
+  }
+  function updateDraft(taxYear: number, patch: Partial<Draft>) {
+    setDrafts((d) => ({
+      ...d,
+      [taxYear]: d[taxYear] ? { ...d[taxYear]!, ...patch } : d[taxYear],
+    }));
+  }
+  function commitDraft(taxYear: number) {
+    const draft = drafts[taxYear];
+    if (!draft) return;
+    const desc = draft.description.trim();
+    const amount = parseFloat(draft.amountUsd);
+    if (!desc || !Number.isFinite(amount) || amount === 0) return;
+    appendManualTx(taxYear, desc, amount, draft.category);
+    // Reset to blank but keep the form open and refocus description for fast
+    // rapid-fire entry: type → Tab → type amount → Enter → next row.
+    setDrafts((d) => ({
+      ...d,
+      [taxYear]: { description: "", amountUsd: "", category: draft.category },
+    }));
+    setTimeout(() => descRefs.current[taxYear]?.focus(), 0);
+  }
+
+  // Shared helper used by both single-add and bulk-paste.
+  function appendManualTx(
+    taxYear: number,
+    description: string,
+    amount: number,
+    category: Category,
+  ) {
+    const cents = Math.round(Math.abs(amount) * 100);
+    // Contribution = money INTO the LLC (positive); distribution = money OUT (negative).
+    const signedCents = category === "distribution" ? -cents : cents;
+    // Default the transaction date to the LAST day of the tax year being
+    // filed (not today). Manual entries without a specific date should fall
+    // within the period the form covers — otherwise the AI compliance check
+    // (correctly) flags a tax-year-vs-date mismatch.
+    const defaultDate = `${taxYear}-12-31`;
+    const newTx: CategorizedTransaction = {
+      date: defaultDate,
+      description,
+      counterparty: "",
+      amountCents: signedCents,
+      category,
+      rule: "Manually entered",
+    };
+    setYears((all) =>
+      all.map((y) =>
+        y.taxYear === taxYear
+          ? {
+              ...y,
+              transactions: [...y.transactions, newTx],
+              manualContributions: undefined,
+              manualDistributions: undefined,
+            }
+          : y,
+      ),
+    );
+  }
+
+  // Parse pasted spreadsheet rows. Accepts tab- or comma-separated, with up to
+  // 3 columns: description, amount, optional type ("contribution"/"distribution"
+  // or any text containing "dist"/"out" → distribution). One row per line.
+  // Negative amounts auto-classify as distributions even if no type column.
+  function commitBulkPaste(taxYear: number) {
+    const raw = bulkPaste[taxYear];
+    if (!raw) return;
+    const lines = raw.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    let added = 0;
+    for (const line of lines) {
+      const parts = line.split(/\t|,/).map((p) => p.trim());
+      if (parts.length < 2) continue;
+      const desc = parts[0];
+      // Strip currency symbols, thousands separators, and parentheses (which
+      // some accounting exports use for negatives).
+      const rawAmount = parts[1].replace(/[$,\s]/g, "");
+      const isParenNeg = /^\(.+\)$/.test(rawAmount);
+      const numStr = isParenNeg ? rawAmount.slice(1, -1) : rawAmount;
+      const num = parseFloat(numStr);
+      if (!desc || !Number.isFinite(num) || num === 0) continue;
+      const signedNum = isParenNeg ? -Math.abs(num) : num;
+      // Determine category: explicit 3rd column wins; else infer from sign.
+      let category: Category = "contribution";
+      const typeHint = (parts[2] ?? "").toLowerCase();
+      if (typeHint.includes("dist") || typeHint.includes("out")) {
+        category = "distribution";
+      } else if (typeHint.includes("contrib") || typeHint.includes("in")) {
+        category = "contribution";
+      } else {
+        category = signedNum < 0 ? "distribution" : "contribution";
+      }
+      appendManualTx(taxYear, desc, signedNum, category);
+      added++;
+    }
+    if (added > 0) {
+      setBulkPaste((b) => ({ ...b, [taxYear]: null }));
+    } else {
+      alert("Couldn't parse any rows. Use one transaction per line: description, amount [, contribution|distribution]");
+    }
+  }
 
   async function uploadFiles(taxYear: number, files: File[]) {
     const year = years.find((y) => y.taxYear === taxYear);
@@ -303,9 +430,45 @@ export function TransactionsReview({
         contributions: t.contributions,
         distributions: t.distributions,
         reportableTransactions: y.transactions.filter((tx) => REPORTABLE.includes(tx.category)),
+        otherTransactionsNote: (y.otherTransactionsNote ?? "").trim(),
       };
     });
     await onSubmit(payload);
+  }
+
+  function setOtherTransactionsNote(taxYear: number, note: string) {
+    setYears((all) => all.map((y) => (y.taxYear === taxYear ? { ...y, otherTransactionsNote: note } : y)));
+  }
+
+  // Empty state when the user lands here without picking tax years first.
+  // The original /edit flow gated step navigation linearly so this branch
+  // never fired; the v3 sidebar lets users jump to any step, so we explain
+  // what to do instead of rendering a blank page.
+  if (years.length === 0) {
+    return (
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold">Transactions per year</h2>
+          <p className="text-sm text-slate-500 mt-1">
+            Pick at least one tax year first — this step shows a card per year so you can enter
+            the totals.
+          </p>
+        </div>
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+          You haven&apos;t selected any tax years yet. Head back to the <strong>Tax years</strong>{" "}
+          step to pick the year(s) you&apos;re filing for, then come back here.
+        </div>
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            ← Go to Tax years
+          </button>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -315,6 +478,23 @@ export function TransactionsReview({
         <p className="text-sm text-slate-500 mt-1">
           Upload a CSV bank statement from Mercury, Wise, Relay, or Brex — we&apos;ll
           auto-categorize transactions. Or enter the totals manually below.
+        </p>
+      </div>
+
+      <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm">
+        <p className="font-medium text-amber-900">All amounts must be in US dollars.</p>
+        <p className="mt-1 text-amber-800">
+          The IRS requires Form 5472 amounts in USD. If your records are in a foreign currency,
+          convert each amount first using the{" "}
+          <a
+            href="https://www.irs.gov/individuals/international-taxpayers/yearly-average-currency-exchange-rates"
+            target="_blank"
+            rel="noreferrer"
+            className="underline font-medium"
+          >
+            IRS yearly average exchange rate
+          </a>{" "}
+          (or the spot rate at the date of each transaction).
         </p>
       </div>
 
@@ -381,6 +561,159 @@ export function TransactionsReview({
                   ))}
                 </ul>
               )}
+
+              <div className="mt-3">
+                {drafts[y.taxYear] ? (
+                  <div className="border border-slate-200 rounded-md p-3 bg-slate-50">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-xs font-medium text-slate-700">
+                        Add transactions — press <kbd className="px-1 py-0.5 bg-white border border-slate-300 rounded text-[10px] font-mono">Enter</kbd> after amount to add and continue
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setBulkPaste((b) => ({ ...b, [y.taxYear]: "" }))}
+                        className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
+                      >
+                        <ClipboardPaste className="h-3 w-3" />
+                        Paste from spreadsheet
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                      <div className="sm:col-span-6">
+                        <label className="text-xs text-slate-500 mb-1 block">Description</label>
+                        <Input
+                          ref={(el) => {
+                            descRefs.current[y.taxYear] = el;
+                          }}
+                          placeholder="e.g., Owner capital injection"
+                          value={drafts[y.taxYear]!.description}
+                          onChange={(e) =>
+                            updateDraft(y.taxYear, { description: e.target.value })
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              commitDraft(y.taxYear);
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="sm:col-span-3">
+                        <label className="text-xs text-slate-500 mb-1 block">Amount (USD)</label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          value={drafts[y.taxYear]!.amountUsd}
+                          onChange={(e) =>
+                            updateDraft(y.taxYear, { amountUsd: e.target.value })
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              commitDraft(y.taxYear);
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="sm:col-span-3">
+                        <label className="text-xs text-slate-500 mb-1 block">Type</label>
+                        <select
+                          value={drafts[y.taxYear]!.category}
+                          onChange={(e) =>
+                            updateDraft(y.taxYear, {
+                              category: e.target.value as Category,
+                            })
+                          }
+                          className="w-full text-sm border border-slate-300 rounded-md px-2 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+                        >
+                          <option value="contribution">Contribution (you → LLC)</option>
+                          <option value="distribution">Distribution (LLC → you)</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="mt-3 flex items-center gap-2 justify-end">
+                      <button
+                        type="button"
+                        onClick={() => cancelDraft(y.taxYear)}
+                        className="text-sm px-3 py-1.5 text-slate-600 hover:text-slate-900"
+                      >
+                        Done
+                      </button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => commitDraft(y.taxYear)}
+                        disabled={
+                          !drafts[y.taxYear]!.description.trim() ||
+                          !parseFloat(drafts[y.taxYear]!.amountUsd)
+                        }
+                      >
+                        Add to list
+                      </Button>
+                    </div>
+
+                    {bulkPaste[y.taxYear] !== null && bulkPaste[y.taxYear] !== undefined && (
+                      <div className="mt-3 pt-3 border-t border-slate-200">
+                        <label className="text-xs text-slate-600 mb-1 block">
+                          Paste rows from Excel or Google Sheets — one transaction per line.
+                          Columns: <span className="font-mono">description, amount [, type]</span>.
+                          Negative amounts auto-classify as distributions.
+                        </label>
+                        <textarea
+                          value={bulkPaste[y.taxYear] ?? ""}
+                          onChange={(e) =>
+                            setBulkPaste((b) => ({ ...b, [y.taxYear]: e.target.value }))
+                          }
+                          placeholder={`Owner capital injection, 5000\nManagement fee paid out, -1200, distribution\nLoan from owner, 10000`}
+                          rows={5}
+                          className="w-full text-sm font-mono border border-slate-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+                        />
+                        <div className="mt-2 flex items-center gap-2 justify-end">
+                          <button
+                            type="button"
+                            onClick={() => setBulkPaste((b) => ({ ...b, [y.taxYear]: null }))}
+                            className="text-sm px-3 py-1.5 text-slate-600 hover:text-slate-900"
+                          >
+                            Cancel
+                          </button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => commitBulkPaste(y.taxYear)}
+                            disabled={!(bulkPaste[y.taxYear] ?? "").trim()}
+                          >
+                            Add all rows
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => startDraft(y.taxYear)}
+                      className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      Add transaction manually
+                    </button>
+                    <span className="text-slate-300">·</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        startDraft(y.taxYear);
+                        setBulkPaste((b) => ({ ...b, [y.taxYear]: "" }));
+                      }}
+                      className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline"
+                    >
+                      <ClipboardPaste className="h-3.5 w-3.5" />
+                      Paste from spreadsheet
+                    </button>
+                  </div>
+                )}
+              </div>
 
               {y.uploadedFiles.length > 0 && (
                 <UploadedFilesList
@@ -478,7 +811,23 @@ export function TransactionsReview({
 
               {y.transactions.length === 0 && (
                 <div className="mt-4 grid grid-cols-2 gap-4">
-                  <Field label="Contributions (USD)" hint="Money you put into the LLC">
+                  <Field
+                    label="Contributions (USD)"
+                    hint="Money you put into the LLC"
+                    help={
+                      <>
+                        <p>
+                          Total amount of <strong>your own money</strong> you put into the LLC
+                          this tax year — typically wires or transfers from your personal account
+                          to the LLC&apos;s U.S. bank account.
+                        </p>
+                        <p className="mt-2">
+                          Don&apos;t include: payments from customers, loans from third parties, or
+                          interest earned in the account. Those are different categories.
+                        </p>
+                      </>
+                    }
+                  >
                     <Input
                       type="number"
                       step="0.01"
@@ -488,7 +837,23 @@ export function TransactionsReview({
                       }
                     />
                   </Field>
-                  <Field label="Distributions (USD)" hint="Money the LLC paid you">
+                  <Field
+                    label="Distributions (USD)"
+                    hint="Money the LLC paid you"
+                    help={
+                      <>
+                        <p>
+                          Total amount of money the LLC sent back to <strong>you personally</strong>{" "}
+                          this tax year. Usually a wire/transfer from the LLC&apos;s U.S. bank account
+                          to your personal account.
+                        </p>
+                        <p className="mt-2">
+                          Don&apos;t include: payments to suppliers, software subscriptions, contractor
+                          fees, or refunds to customers — those aren&apos;t distributions.
+                        </p>
+                      </>
+                    }
+                  >
                     <Input
                       type="number"
                       step="0.01"
@@ -565,6 +930,29 @@ export function TransactionsReview({
                       ? "Mark any owner-paid outflows as Distribution (Part V) above."
                       : "Money the LLC paid to you personally."
                   }
+                />
+              </div>
+
+              <div className="mt-5 pt-5 border-t border-slate-100">
+                <label
+                  htmlFor={`other-tx-${y.taxYear}`}
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Other transactions with the foreign owner this year
+                </label>
+                <p className="mt-1 text-xs text-slate-500 leading-relaxed">
+                  Describe any loans, sales, services, rent, royalties, or expense reimbursements
+                  between you and the LLC in {y.taxYear}. Leave blank if there were none — we&apos;ll
+                  state that on the Part V supporting statement. Example: &quot;$5,000 loan from owner
+                  to LLC on 2024-06-15, balance unpaid at year-end.&quot;
+                </p>
+                <textarea
+                  id={`other-tx-${y.taxYear}`}
+                  rows={3}
+                  value={y.otherTransactionsNote ?? ""}
+                  onChange={(e) => setOtherTransactionsNote(y.taxYear, e.target.value)}
+                  placeholder="None"
+                  className="mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
                 />
               </div>
             </div>

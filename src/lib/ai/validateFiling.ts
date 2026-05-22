@@ -167,6 +167,33 @@ For everything that is NOT auto-fixable but still needs resolution, put it in
 issues[] with needs_customer_input=true and add the question to
 customer_questions[].
 
+INTERPRETING TRANSACTION DATES — do NOT flag these as issues
+  Customer-entered amounts (contributions, distributions, year-end total
+  assets, reportable-transaction line items) ALWAYS refer to the TAX YEAR
+  being filed — never to the calendar date the form was prepared.
+
+  When the wizard collects a manual reportable transaction the customer may
+  not have entered an exact date, so the system stamps it with the LAST day
+  of the tax year (e.g. 2025-12-31 for a 2025 filing). Some legacy filings
+  even have the prepared-on date stamped on transactions because of an
+  older default. Treat these stamped dates as a UX placeholder meaning
+  "sometime during this tax year" — NOT as a factual claim about the date.
+
+  Therefore:
+  - DO NOT ask the customer to "clarify" a transaction date that simply
+    falls inside, on the last day of, or near the tax year boundary, or
+    that looks like an obvious auto-default (12/31 of the filed year, the
+    prepared-on date, etc.).
+  - DO NOT suggest moving transactions to a different year's Form 5472
+    based on the stamped date alone. Only flag a year-mismatch if the
+    customer's free-text description or counterparty explicitly contradicts
+    the tax year (e.g. "Q3 2024 invoice" on a 2025 filing) AND the contradicting
+    text is unambiguous.
+  - Total assets are reported AS OF the year-end of the filed tax year
+    (e.g. 12/31/2025 for a 2025 filing). The customer-entered number is
+    authoritative — do not infer a mismatch from the date the form was
+    prepared.
+
 You MUST call the report_validation tool exactly once with your assessment. Do not respond with
 prose; the tool call is the only acceptable output. Be conservative on customer-facing classification:
 when in doubt, classify as needs_customer_input rather than auto-passing. False negatives (filing a
