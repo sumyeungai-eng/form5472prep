@@ -21,6 +21,12 @@ export default async function MarketingLayout({ children }: { children: React.Re
             >
               Pricing
             </Link>
+            <Link
+              href="/blog"
+              className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
+            >
+              Blog
+            </Link>
             {user ? (
               <Link href="/dashboard">
                 <Button size="sm">My filings</Button>
@@ -61,6 +67,7 @@ export default async function MarketingLayout({ children }: { children: React.Re
               <li><Link href="/terms" className="hover:text-slate-900">Terms of Service</Link></li>
               <li><Link href="/privacy" className="hover:text-slate-900">Privacy Policy</Link></li>
               <li><Link href="/data-retention" className="hover:text-slate-900">Data Retention</Link></li>
+              <li><Link href="/security" className="hover:text-slate-900">Security</Link></li>
             </ul>
           </nav>
         </div>
