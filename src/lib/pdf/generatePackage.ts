@@ -672,7 +672,32 @@ export type SignatureLocation = {
   label: string;       // e.g. "Cover letter"
   page: number;        // 1-based page number in the merged PDF
   instruction: string; // human-readable hint about where on the page to sign
+  // Exact placement in PDF points (1pt = 1/72 inch), bottom-left origin
+  // (matches pdf-lib's coordinate system). The signature image is stretched
+  // into this rectangle. Coords are per-form so embedSignature doesn't have
+  // to guess from the label — IRS revisions move the signature line.
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 };
+
+// Empirically-measured signature placements for each form in our package.
+// Page 1 of US Letter (612x792 pt) → bottom-left origin.
+//
+// To re-measure after an IRS revision, render the unsigned form, overlay a
+// colored rectangle at the candidate (x,y,w,h), open in a PDF viewer, and
+// confirm it sits inside the "Sign Here" blank line and doesn't bleed into
+// adjacent date/title cells.
+const SIG_PLACEMENT = {
+  coverLetter:  { x: 72, y: 135, width: 220, height: 50 },
+  rcs:          { x: 72, y: 135, width: 220, height: 50 },
+  // Form 1120 Sign Here box. The signature line sits left of the date/title
+  // cells. y differs between revisions because IRS shifted the box up by
+  // ~14pt in the 2025 redesign.
+  f1120_2024:   { x: 90, y: 98,  width: 220, height: 24 },
+  f1120_2025:   { x: 90, y: 113, width: 220, height: 24 },
+} as const;
 
 export type GeneratedPackage = {
   bytes: Uint8Array;
@@ -691,6 +716,7 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
     label: "Cover letter",
     page: out.getPageCount(),
     instruction: "Sign on the signature line above your typed name, near the bottom of the page.",
+    ...SIG_PLACEMENT.coverLetter,
   });
 
   if (f.isDiirsp) {
@@ -700,6 +726,7 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
       label: "Reasonable Cause Statement",
       page: out.getPageCount(),
       instruction: 'Sign and date under "Signed under penalties of perjury" at the end of the statement.',
+      ...SIG_PLACEMENT.rcs,
     });
   }
 
@@ -718,10 +745,13 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
     const f1120FirstPage = out.getPageCount() + 1; // 1-based, captured before merge
     await copyAll(out, f1120);
     // Form 1120's "Sign Here" box sits at the bottom of the first page.
+    // 2025 revision shifted the box up ~14pt vs 2024 — use the per-revision
+    // placement so the signature lands on the blank line in both cases.
     signatures.push({
       label: `Form 1120 — tax year ${year}`,
       page: f1120FirstPage,
       instruction: 'Sign and date in the "Sign Here" box at the bottom of the first page. Enter "Sole Member" as your title.',
+      ...(year >= 2025 ? SIG_PLACEMENT.f1120_2025 : SIG_PLACEMENT.f1120_2024),
     });
 
     const f5472 = await loadBlank("f5472.pdf");

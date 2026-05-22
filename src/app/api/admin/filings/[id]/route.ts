@@ -259,6 +259,35 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       });
     }
 
+    case "uploadSignedPdf": {
+      // Admin/accountant uploads the externally-signed final PDF. Body:
+      // { action: "uploadSignedPdf", pdfBase64: "<base64-encoded PDF>" }.
+      // Stores at the same signedPdfKey path so the existing "Send fax to
+      // IRS" button works downstream without further changes.
+      const rawB64 = typeof body.pdfBase64 === "string" ? body.pdfBase64 : "";
+      // Tolerate a data-URL prefix in case the client sends one.
+      const cleaned = rawB64.includes(",") ? rawB64.slice(rawB64.indexOf(",") + 1) : rawB64;
+      if (cleaned.length < 200) {
+        return NextResponse.json({ error: "Empty or missing pdfBase64" }, { status: 400 });
+      }
+      const bytes = Buffer.from(cleaned, "base64");
+      // Cheap magic-number check — PDF files always start with "%PDF-".
+      if (!bytes.slice(0, 5).toString("ascii").startsWith("%PDF-")) {
+        return NextResponse.json({ error: "Uploaded file is not a valid PDF (missing %PDF- header)" }, { status: 400 });
+      }
+      const key = `${filing.id}_signed.pdf`;
+      await putPdf(key, bytes);
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: {
+          signedPdfKey: key,
+          signedAt: new Date(),
+          status: "SIGNED_UPLOADED",
+        },
+      });
+      return NextResponse.json({ ok: true, key, bytes: bytes.length });
+    }
+
     default:
       return NextResponse.json({ error: "unknown action" }, { status: 400 });
   }

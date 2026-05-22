@@ -61,10 +61,11 @@ export function SignClient({
           <span className="text-xs uppercase tracking-wider text-slate-400">Sign your filing</span>
         </div>
 
-        <h1 className="text-2xl font-semibold text-slate-900">Sign {label}</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">Acknowledge & sign — {label}</h1>
         <p className="mt-1.5 text-sm text-slate-600">
-          Draw your signature below. We&apos;ll embed it into the Form 1120 &ldquo;Sign Here&rdquo; box and the
-          cover letter, then make the signed package ready to fax to the IRS.
+          Review the package on the left and draw your signature below to acknowledge
+          you&apos;ve checked it. Our tax accountant will then sign the final IRS package
+          on your behalf and fax it to the IRS Ogden PIN Unit.
         </p>
 
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -88,10 +89,10 @@ export function SignClient({
             <div className="text-xs font-semibold tracking-wider uppercase text-blue-900">
               Signature
             </div>
-            <h2 className="mt-1 text-lg font-semibold">Sign here</h2>
+            <h2 className="mt-1 text-lg font-semibold">Acknowledge with your signature</h2>
             <p className="mt-1 text-xs text-slate-500">
-              We&apos;ll use this exact image on the cover letter and each year&apos;s Form 1120 &ldquo;Sign Here&rdquo;
-              box.
+              We keep this for our records as your acknowledgment that the package
+              above looks right. Our accountant will sign the IRS forms before fax.
               {priorSignatureDataUrl && " We've pre-loaded the signature you used on a previous filing — keep it or clear and re-draw."}
             </p>
             <div className="mt-3">
@@ -112,11 +113,11 @@ export function SignClient({
               disabled={busy || !dataUrl}
               className="mt-5 w-full rounded-full bg-blue-900 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-950 disabled:opacity-60"
             >
-              {busy ? "Applying signature…" : "Apply signature & continue"}
+              {busy ? "Saving…" : "Acknowledge & continue"}
             </button>
             <p className="mt-2 text-xs text-slate-400 text-center">
-              By clicking, you authorize Form5472 Prep to embed this signature into your IRS filing
-              package and to use it on future filings unless you clear it first.
+              By clicking, you confirm the package above looks correct and authorize
+              Form5472 Prep&apos;s accountant to sign and submit on your behalf.
             </p>
           </section>
         </div>

@@ -60,6 +60,44 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
     }
   }
 
+  // Read a File object as base64 (no data: prefix) so we can post it as JSON.
+  // PDFs are small enough (200KB-2MB typical) that this is fine without
+  // multipart/streaming.
+  function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result !== "string") return reject(new Error("Unexpected reader result"));
+        const comma = result.indexOf(",");
+        resolve(comma === -1 ? result : result.slice(comma + 1));
+      };
+      reader.onerror = () => reject(reader.error ?? new Error("Read failed"));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleSignedPdfUpload(file: File | undefined) {
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith(".pdf")) {
+      setMsg({ kind: "err", text: "Please pick a .pdf file." });
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setMsg({ kind: "err", text: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max 10 MB.` });
+      return;
+    }
+    try {
+      const pdfBase64 = await fileToBase64(file);
+      await callApi(
+        { action: "uploadSignedPdf", pdfBase64 },
+        `Signed PDF uploaded (${(file.size / 1024).toFixed(0)} KB). Ready to fax.`,
+      );
+    } catch (e) {
+      setMsg({ kind: "err", text: e instanceof Error ? e.message : "Upload failed" });
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
@@ -84,6 +122,30 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         >
           {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
         </button>
+      </div>
+
+      {/* Upload signed PDF — accountant signs offline, then drops the
+          finished file here. Populates signedPdfKey + bumps status. */}
+      <div className="pt-2 border-t border-slate-100">
+        <p className="text-xs text-slate-500 mb-2">Signed PDF upload</p>
+        <label className="inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-slate-300 bg-white hover:bg-slate-50 cursor-pointer">
+          <span>{hasSignedPdf ? "Replace signed PDF…" : "Upload signed PDF…"}</span>
+          <input
+            type="file"
+            accept="application/pdf,.pdf"
+            disabled={pending}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              void handleSignedPdfUpload(file);
+              e.target.value = ""; // reset so same file can be re-picked after error
+            }}
+            className="sr-only"
+          />
+        </label>
+        <p className="mt-1 text-xs text-slate-400">
+          Upload the externally-signed PDF (max 10 MB). Bumps status to{" "}
+          <code className="font-mono">SIGNED_UPLOADED</code> so the fax button enables.
+        </p>
       </div>
 
       {/* Send fax — primary action when signed PDF is ready */}

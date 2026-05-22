@@ -246,7 +246,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     <!-- Sign in portal -->
     <p style="margin:24px 0 8px;font-weight:600;color:#0f172a;font-size:15px;">Sign your filing</p>
     <p style="margin:0 0 12px;color:#64748b;font-size:13px;line-height:1.5;">
-      Open your portal and draw your signature once — we'll embed it into ${sigCount === 1 ? "the right box" : `all ${sigCount} signature boxes`} for you. No printing or uploading required.
+      Open your portal, review the package, and draw your signature to acknowledge it. Our tax accountant will sign the final IRS forms before fax — no printing or uploading required on your end.
     </p>`
     : "";
 
@@ -276,7 +276,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:15px;">What happens next</p>
     <ol style="margin:0 0 24px;padding-left:20px;color:#475569;line-height:1.6;font-size:14px;">
       <li style="margin-bottom:6px;">We generate your filled <strong>Form 5472 + pro forma Form 1120</strong> and run an AI compliance check (≈ 2 min).</li>
-      <li style="margin-bottom:6px;">You open your portal and sign in-browser — we embed your signature into the right boxes.</li>
+      <li style="margin-bottom:6px;">You open your portal, review the package, and draw your signature to acknowledge it. Our accountant signs the IRS forms before fax.</li>
       ${step3Html}
     </ol>
 
@@ -289,7 +289,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     : "";
 
   const signaturesText = hasPdf && sigCount > 0
-    ? `\nSign in your portal — we'll embed your signature into ${sigCount === 1 ? "the right box" : `${sigCount} signature boxes`}. No printing or uploading needed.\n`
+    ? `\nReview the package in your portal and draw your signature to acknowledge it. Our accountant signs the IRS forms before fax.\n`
     : "";
 
   const nextStepsText = hasPdf

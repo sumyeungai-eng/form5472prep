@@ -5,34 +5,17 @@ import type { SignatureLocation } from "./generatePackage";
 // at each declared SignatureLocation. Outputs the resulting bytes ready to
 // store as `signedPdfKey`.
 //
+// Coordinates come from the SignatureLocation itself — generatePackage knows
+// each form's signature-line position (per IRS revision) and emits exact
+// x/y/w/h alongside the page number. This file just draws — no guessing.
+//
 // Coordinate convention: pdf-lib uses bottom-left origin in PDF points.
-// US Letter pages are 612 x 792 pts. We pick a reasonable signature size
-// (180 x 50 pts) and place it near the bottom-left of each signature page,
-// shifted slightly upward to land in the "Sign here" zone of the standard
-// IRS forms. If the customer's drawing is empty or invalid, we throw so
-// the route handler can surface the error instead of writing a blank PDF.
+// US Letter pages are 612 x 792 pts.
 
 export type SignedDocument = {
   bytes: Uint8Array;
   pagesSigned: number;
 };
-
-// Per-label tuned placement. Falls back to BASIC if the label isn't matched.
-// All values are in PDF points (1pt = 1/72 inch).
-const PLACEMENTS: Array<{ match: (label: string) => boolean; x: number; y: number; width: number; height: number }> = [
-  // Cover letter — signature line above the typed name near the bottom.
-  { match: (l) => l.toLowerCase().includes("cover"), x: 72, y: 110, width: 200, height: 55 },
-  // Reasonable Cause Statement — end of doc, last page.
-  { match: (l) => l.toLowerCase().includes("reasonable"), x: 72, y: 110, width: 200, height: 55 },
-  // Form 1120 — "Sign Here" box at the bottom of the first page.
-  { match: (l) => l.toLowerCase().includes("1120"), x: 200, y: 138, width: 180, height: 38 },
-];
-
-const BASIC = { x: 72, y: 110, width: 200, height: 55 };
-
-function placementFor(label: string) {
-  return PLACEMENTS.find((p) => p.match(label)) ?? BASIC;
-}
 
 export async function embedSignatureIntoPdf(
   unsignedPdfBytes: Uint8Array | Buffer,
@@ -61,12 +44,11 @@ export async function embedSignatureIntoPdf(
       continue;
     }
     const page = pdf.getPage(idx);
-    const place = placementFor(loc.label);
     page.drawImage(image, {
-      x: place.x,
-      y: place.y,
-      width: place.width,
-      height: place.height,
+      x: loc.x,
+      y: loc.y,
+      width: loc.width,
+      height: loc.height,
     });
     pagesSigned++;
   }
