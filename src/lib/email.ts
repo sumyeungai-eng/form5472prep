@@ -734,6 +734,90 @@ export async function sendAiFlaggedAdminEmail(args: {
   });
 }
 
+// ---------- 4d. AI validation auto-fixed one or more fields silently ----------
+
+// Audit notice for silent edits the validate-filing endpoint applied based on
+// the AI's proposed_fixes. The customer is NOT cc'd — they only learn about
+// the package via the order-confirmation email that comes next. The admin
+// gets this so they can spot-check what was changed and revert in the
+// FilingChangeLog if needed.
+export async function sendAiAutoFixedAdminEmail(args: {
+  adminEmail: string;
+  customerEmail: string | null;
+  llcName: string | null;
+  taxYears: number[];
+  filingId: string;
+  adminFilingUrl: string;
+  fixes: Array<{
+    field: string;
+    before: string;
+    after: string;
+    category: string;
+    reason: string;
+  }>;
+  // Final validation status after the auto-fix + re-validate cycle.
+  // "passed" = customer got their PDF straight after. Other values mean we
+  // also asked them follow-ups; the audit still matters either way.
+  followUpStatus: "passed" | "fix_attempted" | "needs_customer_input" | "error";
+}) {
+  const { adminEmail, customerEmail, llcName, taxYears, filingId, adminFilingUrl, fixes, followUpStatus } = args;
+  const yearsLabel = taxYears.join(", ");
+  const llcLine = llcName ?? "(no LLC name)";
+
+  const rowsHtml = fixes.map((f) => `
+    <tr>
+      <td style="padding:8px 10px;border:1px solid #e2e8f0;font-size:12px;font-family:ui-monospace,monospace;color:#0f172a;vertical-align:top;">${escapeHtml(f.field)}</td>
+      <td style="padding:8px 10px;border:1px solid #e2e8f0;font-size:12px;color:#475569;vertical-align:top;text-decoration:line-through;">${escapeHtml(f.before || "(empty)")}</td>
+      <td style="padding:8px 10px;border:1px solid #e2e8f0;font-size:12px;color:#0f172a;vertical-align:top;font-weight:600;">${escapeHtml(f.after || "(empty)")}</td>
+      <td style="padding:8px 10px;border:1px solid #e2e8f0;font-size:11px;color:#64748b;vertical-align:top;"><div>[${escapeHtml(f.category)}]</div><div style="margin-top:2px;">${escapeHtml(f.reason)}</div></td>
+    </tr>
+  `).join("");
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+      AI compliance check silently fixed ${fixes.length} field${fixes.length === 1 ? "" : "s"} on this filing. The PDF was regenerated and re-validated automatically.
+      <br /><span style="color:#64748b;font-size:13px;">Final status after re-validation: <strong>${escapeHtml(followUpStatus)}</strong>.</span>
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Customer</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(customerEmail ?? "(anonymous)")}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">LLC</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(llcLine)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Tax year(s)</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(yearsLabel)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Filing ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</td></tr>
+    </table>
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;width:100%;">
+      <thead><tr>
+        <th align="left" style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:#475569;">Field</th>
+        <th align="left" style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:#475569;">Before</th>
+        <th align="left" style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:#475569;">After</th>
+        <th align="left" style="padding:8px 10px;background:#f1f5f9;border:1px solid #e2e8f0;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:#475569;">Why</th>
+      </tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <p style="margin:0;color:#94a3b8;font-size:12px;">Every change is logged to FilingChangeLog (source=ai_validation_auto_fix). Revert from the admin filing page if anything looks wrong.</p>
+  `;
+
+  const textRows = fixes.map((f) => `  - ${f.field}: "${f.before}" -> "${f.after}"  [${f.category}] ${f.reason}`).join("\n");
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `[AI auto-fix] ${llcLine} (${yearsLabel}) — ${fixes.length} field${fixes.length === 1 ? "" : "s"} silently corrected`,
+    text:
+      `AI compliance check applied ${fixes.length} silent fix${fixes.length === 1 ? "" : "es"} on filing ${filingId}.\n\n` +
+      `Customer:    ${customerEmail ?? "(anonymous)"}\n` +
+      `LLC:         ${llcLine}\n` +
+      `Tax year(s): ${yearsLabel}\n` +
+      `Final status: ${followUpStatus}\n\n` +
+      `Changes:\n${textRows}\n\n` +
+      `Admin view: ${adminFilingUrl}\n`,
+    html: shell({
+      preheader: `AI auto-fixed ${fixes.length} field${fixes.length === 1 ? "" : "s"} on ${llcLine}.`,
+      heading: `AI silently corrected ${fixes.length} field${fixes.length === 1 ? "" : "s"}`,
+      bodyHtml,
+      cta: { label: "Open in admin", url: adminFilingUrl },
+    }),
+  });
+}
+
 // ---------- 4e. AI agent applied a field change ----------
 
 export async function sendAiFieldChangeAdminEmail(args: {

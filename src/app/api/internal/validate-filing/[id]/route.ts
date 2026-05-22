@@ -9,8 +9,67 @@ import {
   sendOrderConfirmationEmail,
   sendUnderReviewEmail,
   sendAiFlaggedAdminEmail,
+  sendAiAutoFixedAdminEmail,
 } from "@/lib/email";
-import { validateFiling, type FilingSnapshot, type ValidationResponse } from "@/lib/ai/validateFiling";
+import {
+  validateFiling,
+  type FilingSnapshot,
+  type ValidationResponse,
+  type ProposedFix,
+} from "@/lib/ai/validateFiling";
+
+// Server-side safety net for AI-proposed auto-fixes. The AI's category tag
+// is hint-quality only — every proposed fix must pass BOTH gates below
+// before we actually write it:
+//
+//   1. category ∈ SAFE_CATEGORIES
+//   2. field ∉ NEVER_AUTOFIX_FIELDS (legal IDs, dates, scope-changing fields,
+//      llcName per product call)
+//   3. confidence === "high"
+//
+// Anything that fails any gate gets dropped silently. The model is told this
+// upfront so over-proposing has no downside.
+const SAFE_AUTOFIX_CATEGORIES = new Set<ProposedFix["category"]>([
+  "casing",
+  "whitespace",
+  "punctuation",
+  "country_normalization",
+  "narrative_clarity",
+  "business_activity_normalization",
+  "typo_proper_noun",
+]);
+
+const NEVER_AUTOFIX_FIELDS = new Set<string>([
+  "llcName", // legal entity name — owner-chosen, never silently edit
+  "llcEin", // legal ID
+  "llcDateIncorporated", // historical fact
+  "llcCountry", // service is US-only; surface as issue instead
+  "taxYears",
+  "tier",
+  "ownerFtin",
+  "ownerItin",
+  "ownerReferenceId",
+]);
+
+const AUTOFIX_ELIGIBLE_FIELDS = new Set<string>([
+  "llcAddress",
+  "llcCity",
+  "llcState",
+  "llcZip",
+  "llcBusinessActivity",
+  "llcBusinessCode",
+  "ownerName",
+  "ownerAddress",
+  "ownerAddressStreet",
+  "ownerAddressCity",
+  "ownerAddressState",
+  "ownerAddressPostal",
+  "ownerAddressCountry",
+  "ownerCountryCitizenship",
+  "ownerCountryTaxResidence",
+  "ownerCountryBusiness",
+  "reasonableCauseNarrative",
+]);
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -60,23 +119,42 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
   let result = await validateFiling({ pdfBytes, filing: snapshot });
 
-  // 2) If AI says we can auto-fix, regenerate once and re-validate.
-  // Auto-fix in practice is limited to generator-side issues; the regenerator
-  // pulls from the same DB so it can only re-emit. This loop exists so future
-  // generator improvements can act on AI hints without round-tripping the customer.
+  // 2) Auto-fix loop. Filter the AI's proposed_fixes through the server-side
+  // safety allowlist (categories + field whitelist + high confidence). For
+  // every fix that survives:
+  //   - write to DB
+  //   - log to FilingChangeLog with source="ai_validation_auto_fix"
+  // Then regenerate the PDF from the (now-corrected) DB and re-validate ONCE.
+  // Anything that doesn't survive the allowlist falls through to the
+  // needs_customer_input path below.
   let autoFixedSignatures: SignatureLocation[] | null = null;
-  if (result.status === "fix_attempted") {
+  let appliedFixes: AppliedFix[] = [];
+  if (result.proposed_fixes && result.proposed_fixes.length > 0) {
+    appliedFixes = await applyAutoFixes(filing.id, result.proposed_fixes);
+  }
+  if (appliedFixes.length > 0) {
     try {
-      const regen = await regenerate(filing);
-      pdfBytes = regen.bytes;
-      autoFixedSignatures = regen.signatures;
-      await prisma.filing.update({
+      // Refetch the filing so the regenerator + re-validation snapshot see
+      // the updated values.
+      const refreshed = await prisma.filing.findUnique({
         where: { id: filing.id },
-        data: { generatedPdfKey: regen.key },
+        include: { user: true, yearData: { orderBy: { taxYear: "asc" } } },
       });
-      result = await validateFiling({ pdfBytes, filing: snapshot });
+      if (refreshed) {
+        const regen = await regenerate(refreshed);
+        pdfBytes = regen.bytes;
+        autoFixedSignatures = regen.signatures;
+        await prisma.filing.update({
+          where: { id: refreshed.id },
+          data: { generatedPdfKey: regen.key },
+        });
+        result = await validateFiling({ pdfBytes, filing: buildSnapshot(refreshed) });
+      }
     } catch (err) {
-      return finishWithError(filing.id, "auto-fix regenerate failed", err);
+      console.error("[validate] auto-fix regenerate failed", err);
+      // Fall through with the original result — the customer-input branch
+      // below will still email the customer if the issues remain. The fixes
+      // we applied to the DB stay (they were independent corrections).
     }
   }
 
@@ -94,10 +172,30 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const portalLink = filing.user ? makeMagicLink(filing.user.id) : `${env.appUrl}/sign-in`;
   const signatures: SignatureLocation[] = autoFixedSignatures ?? (await ensureSignatures(filing));
 
+  // Audit email — whenever we silently edited customer data, the admin should
+  // see what changed. Sent on every path (passed / customer_input / error)
+  // so a downstream issue still has a paper trail.
+  if (appliedFixes.length > 0) {
+    try {
+      await sendAiAutoFixedAdminEmail({
+        adminEmail: env.supportEmail,
+        customerEmail: filing.user?.email ?? null,
+        llcName: filing.llcName,
+        taxYears: filing.taxYears,
+        filingId: filing.id,
+        adminFilingUrl,
+        fixes: appliedFixes,
+        followUpStatus: result.status,
+      });
+    } catch (err) {
+      console.error("[validate] auto-fix audit email failed", err);
+    }
+  }
+
   if (result.status === "passed" || (result.status === "fix_attempted" && result.issues.length === 0)) {
     // Clean — send the order confirmation email with PDF attached.
     await sendOrderConfirmationIfPossible(filing, pdfBytes, signatures);
-    return NextResponse.json({ ok: true, status: result.status, summary: result.summary });
+    return NextResponse.json({ ok: true, status: result.status, summary: result.summary, autoFixedCount: appliedFixes.length });
   }
 
   if (result.status === "needs_customer_input") {
@@ -129,7 +227,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     } catch (err) {
       console.error("[validate] admin alert failed", err);
     }
-    return NextResponse.json({ ok: true, status: result.status, questions: result.customer_questions.length });
+    return NextResponse.json({ ok: true, status: result.status, questions: result.customer_questions.length, autoFixedCount: appliedFixes.length });
   }
 
   // result.status === "error" or fix_attempted with lingering issues we can't classify.
@@ -311,6 +409,78 @@ async function finishWithError(filingId: string, label: string, err: unknown) {
     },
   });
   return NextResponse.json({ error: label }, { status: 500 });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auto-fix application
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type AppliedFix = {
+  field: string;
+  before: string;
+  after: string;
+  category: ProposedFix["category"];
+  reason: string;
+};
+
+// Run the AI's proposed fixes through the safety allowlist and apply the
+// survivors. Each applied fix:
+//   - writes the new value to Filing
+//   - inserts a FilingChangeLog row tagged source="ai_validation_auto_fix"
+//
+// Returns the list of fixes that were actually applied (after filtering),
+// so the caller can decide whether to regenerate the PDF and what to put
+// in the admin audit email.
+async function applyAutoFixes(filingId: string, proposed: ProposedFix[]): Promise<AppliedFix[]> {
+  const applied: AppliedFix[] = [];
+  const filingRow = await prisma.filing.findUnique({ where: { id: filingId } });
+  if (!filingRow) return applied;
+
+  for (const fix of proposed) {
+    // Gate 1: AI must have tagged a category we trust to be low-risk.
+    if (!SAFE_AUTOFIX_CATEGORIES.has(fix.category)) continue;
+    // Gate 2: high confidence only. Medium/low get dropped — they need a human.
+    if (fix.confidence !== "high") continue;
+    // Gate 3: field allowlist (explicit) + field denylist (defense in depth).
+    if (NEVER_AUTOFIX_FIELDS.has(fix.field)) continue;
+    if (!AUTOFIX_ELIGIBLE_FIELDS.has(fix.field)) continue;
+    // Gate 4: the `before` value must match what's actually in the DB right
+    // now — otherwise something raced us and the patch is stale.
+    const currentValue = (filingRow as unknown as Record<string, unknown>)[fix.field];
+    const currentStr = currentValue == null ? "" : String(currentValue);
+    if (currentStr.trim() !== fix.before.trim()) continue;
+    // Gate 5: no-op fixes (same string) are skipped.
+    if (fix.before === fix.after) continue;
+
+    try {
+      await prisma.$transaction([
+        prisma.filing.update({
+          where: { id: filingId },
+          data: { [fix.field]: fix.after } as unknown as never,
+        }),
+        prisma.filingChangeLog.create({
+          data: {
+            filingId,
+            source: "ai_validation_auto_fix",
+            field: fix.field,
+            beforeJson: fix.before as unknown as never,
+            afterJson: fix.after as unknown as never,
+            reason: `[${fix.category}] ${fix.reason}`,
+          },
+        }),
+      ]);
+      applied.push({
+        field: fix.field,
+        before: fix.before,
+        after: fix.after,
+        category: fix.category,
+        reason: fix.reason,
+      });
+    } catch (err) {
+      console.error("[validate] auto-fix apply failed", fix.field, err);
+    }
+  }
+  return applied;
 }
 
 // Re-export the response type so callers (admin UI) can be typed.
