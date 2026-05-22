@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { env } from "@/lib/env";
+import { Analytics } from "@vercel/analytics/react";
+import { ChatWidget } from "@/components/ChatWidget";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -12,7 +14,7 @@ export const metadata: Metadata = {
     template: "%s · Form5472 Prep",
   },
   description:
-    "Self-service IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. Generated, signed, and faxed to the IRS Ogden PIN Unit. $169 plus a flat $29 IRS fax delivery. 100% money-back guarantee.",
+    "Done-for-you IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare, you sign, we fax to the IRS Ogden PIN Unit. Flat-rate plans from $199 — fax delivery included on every plan. 100% money-back guarantee.",
   applicationName: "Form5472 Prep",
   keywords: [
     "Form 5472",
@@ -40,14 +42,14 @@ export const metadata: Metadata = {
     siteName: "Form5472 Prep",
     title: "File IRS Form 5472 and pro forma 1120 in 15 minutes — Form5472 Prep",
     description:
-      "For foreign-owned US LLCs. We prepare, you sign, we fax to the IRS Ogden PIN Unit. $169 plus a flat $29 IRS fax delivery. 100% money-back guarantee.",
+      "For foreign-owned US LLCs. We prepare, you sign, we fax to the IRS Ogden PIN Unit. Flat-rate plans from $199 — fax delivery included on every plan. 100% money-back guarantee.",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title: "File IRS Form 5472 and pro forma 1120 in 15 minutes",
     description:
-      "Self-service filing for foreign-owned US LLCs. $169 plus a flat $29 IRS fax delivery. 100% money-back guarantee.",
+      "Done-for-you Form 5472 filing for foreign-owned US LLCs. Flat-rate plans from $199 — fax delivery included on every plan. 100% money-back guarantee.",
   },
   robots: {
     index: true,
@@ -55,6 +57,16 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" },
   },
   category: "Tax services",
+  // Search-engine ownership verification. Set the codes in Vercel env so
+  // each tool's verifier finds its own meta tag on first crawl. Optional —
+  // search engines also accept other verification methods (HTML file upload,
+  // DNS TXT record). Meta tag is the simplest because it just needs an env.
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+    other: process.env.BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+      : undefined,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -62,6 +74,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen bg-white text-slate-900 font-sans antialiased">
         {children}
+        <ChatWidget />
+        <Analytics />
       </body>
     </html>
   );

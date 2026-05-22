@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { OAuth2Client } from "google-auth-library";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateSessionId, setUserCookie } from "@/lib/session";
-import { TIERS } from "@/lib/pricing";
+import { findOrCreateDraftFiling } from "@/lib/findOrCreateDraft";
 
 export const runtime = "nodejs";
 
@@ -18,7 +18,27 @@ export async function POST(req: Request) {
     );
   }
 
-  const { credential } = await req.json().catch(() => ({}));
+  const body = await req.json().catch(() => ({}));
+  const credential = body?.credential;
+  // "start" = user is on /start or /file (wants to begin a filing), so
+  // ensure they have a DRAFT to drop into. Anything else (default) = just
+  // authenticate. Previously this endpoint always auto-created a DRAFT,
+  // which meant signing in from /sign-in or a magic-link-expired page
+  // produced spurious empty "Unnamed filing" rows on every login.
+  const intent: "start" | "signin" = body?.intent === "start" ? "start" : "signin";
+  // Sales attribution — the source landing page slug that sent the visitor
+  // here, captured by StartForm from ?src= on the URL. Sanitized to
+  // slug-safe characters so a tampered request body can't inject anything.
+  // Only persisted when intent === "start" since signins don't create filings.
+  const rawSource = typeof body?.funnelSource === "string" ? body.funnelSource : null;
+  const funnelSource = rawSource
+    ? rawSource.toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 80) || null
+    : null;
+  // Pre-selected service tier (?tier= on the /start URL, set by the
+  // /pricing card CTAs). Only persisted on intent="start" since signin
+  // doesn't create a filing here.
+  const rawTier = typeof body?.tier === "string" ? body.tier.toLowerCase().trim() : null;
+  const tier = rawTier && new Set(["standard", "rush", "premium"]).has(rawTier) ? rawTier : null;
   if (typeof credential !== "string" || !credential) {
     return NextResponse.json({ error: "Google credential required" }, { status: 400 });
   }
@@ -52,24 +72,23 @@ export async function POST(req: Request) {
   });
   setUserCookie(user.id);
 
-  // If they already have a DRAFT filing, resume it. Otherwise create a fresh one.
+  // For signin intent: just look for an existing DRAFT (don't create one).
+  // Frontend redirects to /dashboard regardless of whether filingId comes back.
+  // For start intent: ensure a DRAFT exists so the wizard has something to load.
   let filing = await prisma.filing.findFirst({
     where: { userId: user.id, status: "DRAFT" },
     orderBy: { updatedAt: "desc" },
   });
-  if (!filing) {
+  if (!filing && intent === "start") {
     const sessionId = getOrCreateSessionId();
-    filing = await prisma.filing.create({
-      data: {
-        userId: user.id,
-        sessionId,
-        status: "DRAFT",
-        tier: "single_year",
-        amountPaid: TIERS.single_year.priceCents,
-        taxYears: [],
-      },
+    const created = await findOrCreateDraftFiling({
+      sessionId,
+      userId: user.id,
+      funnelSource,
+      tier: tier ?? undefined,
     });
+    filing = created.filing;
   }
 
-  return NextResponse.json({ filingId: filing.id, email });
+  return NextResponse.json({ filingId: filing?.id ?? null, email });
 }

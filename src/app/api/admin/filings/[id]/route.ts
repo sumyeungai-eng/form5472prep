@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
-import { tierForYearCount } from "@/lib/pricing";
+import { resolveTier } from "@/lib/pricing";
 import { makeMagicLink } from "@/lib/magicLink";
 import { sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
 import { submitFax } from "@/lib/fax";
-import { publicUrl } from "@/lib/storage";
+import { publicUrl, putPdf } from "@/lib/storage";
 import { env } from "@/lib/env";
+import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// AI check takes 15-30s end-to-end; the regenerate-and-resend-confirmation
+// case can be similar. Default 10s isn't enough.
+export const maxDuration = 120;
 
 const VALID_STATUSES = new Set([
   "DRAFT",
@@ -51,16 +55,73 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     case "resendOrderConfirmation": {
       if (!filing.user) return NextResponse.json({ error: "no customer email" }, { status: 400 });
+      // Regenerate the PDF fresh against the latest generator code, store to
+      // R2, and attach to the email — so a stale PDF (e.g. from a previous
+      // template version) is never what the customer receives.
+      let pdfBytes: Uint8Array | null = null;
+      let signatures: SignatureLocation[] = [];
+      try {
+        const full = await prisma.filing.findUnique({
+          where: { id: filing.id },
+          include: { yearData: true },
+        });
+        if (full?.llcName && full.llcEin && full.llcAddress && full.llcCity && full.llcState &&
+            full.llcZip && full.llcDateIncorporated && full.llcBusinessActivity &&
+            full.llcBusinessCode && full.ownerName && full.ownerAddress &&
+            full.ownerCountryCitizenship && full.ownerCountryTaxResidence &&
+            full.ownerCountryBusiness && full.ownerFtin) {
+          const result = await generatePackage({
+            llcName: full.llcName, llcEin: full.llcEin, llcAddress: full.llcAddress,
+            llcCity: full.llcCity, llcState: full.llcState, llcZip: full.llcZip,
+            llcCountry: full.llcCountry, llcDateIncorporated: full.llcDateIncorporated,
+            llcBusinessActivity: full.llcBusinessActivity, llcBusinessCode: full.llcBusinessCode,
+            ownerName: full.ownerName, ownerAddress: full.ownerAddress,
+            ownerCountryCitizenship: full.ownerCountryCitizenship,
+            ownerCountryTaxResidence: full.ownerCountryTaxResidence,
+            ownerCountryBusiness: full.ownerCountryBusiness, ownerFtin: full.ownerFtin,
+            ownerItin: full.ownerItin, ownerReferenceId: full.ownerReferenceId,
+            taxYears: full.taxYears, isDiirsp: full.isDiirsp,
+            reasonableCauseNarrative: full.reasonableCauseNarrative,
+            yearData: full.yearData.map((y) => ({
+              taxYear: y.taxYear,
+              totalAssetsYearEnd: Number(y.totalAssetsYearEnd),
+              contributions: Number(y.contributions),
+              distributions: Number(y.distributions),
+              otherTransactionsNote: y.otherTransactionsNote,
+              reportableTransactions: Array.isArray(y.reportableTransactions)
+                ? (y.reportableTransactions as unknown[]).filter(
+                    (t): t is { date: string; description: string; counterparty?: string; amountCents: number; category: string } =>
+                      !!t && typeof t === "object" && "date" in t && "amountCents" in t && "category" in t,
+                  )
+                : [],
+            })),
+          });
+          pdfBytes = result.bytes;
+          signatures = result.signatures;
+          const key = `${filing.id}_unsigned.pdf`;
+          await putPdf(key, result.bytes);
+          await prisma.filing.update({
+            where: { id: filing.id },
+            data: { generatedPdfKey: key },
+          });
+        }
+      } catch (err) {
+        console.error("[admin resendOrderConfirmation] regenerate failed", err);
+      }
       await sendOrderConfirmationEmail({
         email: filing.user.email,
+        filingId: filing.id,
         llcName: filing.llcName,
         taxYears: filing.taxYears,
-        tier: tierForYearCount(filing.taxYears.length),
+        tier: resolveTier(filing.tier).tier,
         amountPaidCents: filing.amountPaid,
+        faxService: filing.faxService,
         portalLink: makeMagicLink(filing.user.id),
         receiptUrl: null,
+        pdfBytes,
+        signatures,
       });
-      return NextResponse.json({ ok: true });
+      return NextResponse.json({ ok: true, pdfAttached: !!pdfBytes, signatureCount: signatures.length });
     }
 
     case "resendMagicLink": {
@@ -81,6 +142,48 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         data: { faxJobId: job.id, faxStatus: "queued", status: "FAXED" },
       });
       return NextResponse.json({ ok: true, faxJobId: job.id });
+    }
+
+    case "reEngageAi": {
+      // Resets the AI handoff state and immediately fires the conversation
+      // agent to take a fresh look at the thread. Use when you've replied
+      // manually but want AI to drive again.
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: { aiHandoff: null, aiTurnsUsed: 0 },
+      });
+      const internalSecret = process.env.INTERNAL_API_SECRET;
+      if (internalSecret && filing.validationStatus === "needs_customer_input") {
+        fetch(`${env.appUrl}/api/internal/respond-to-customer/${filing.id}`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${internalSecret}` },
+        }).catch((err) => console.error("[admin reEngageAi] fire failed", err));
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    case "runAiCheck": {
+      if (!filing.generatedPdfKey) {
+        return NextResponse.json({ error: "no generated PDF on file" }, { status: 400 });
+      }
+      const internalSecret = process.env.INTERNAL_API_SECRET;
+      if (!internalSecret) {
+        return NextResponse.json({ error: "INTERNAL_API_SECRET not configured" }, { status: 500 });
+      }
+      // Block-and-await so the admin sees the result. AI check takes 15-30s
+      // which fits within the route's default duration.
+      // env.appUrl is normalized to the www form to avoid the apex→www
+      // redirect that strips the Authorization header on cross-hostname.
+      const targetUrl = `${env.appUrl}/api/internal/validate-filing/${filing.id}`;
+      const res = await fetch(targetUrl, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${internalSecret}` },
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        return NextResponse.json({ error: body?.error ?? `HTTP ${res.status}` }, { status: 500 });
+      }
+      return NextResponse.json({ ok: true, ...body });
     }
 
     default:

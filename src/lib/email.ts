@@ -4,7 +4,13 @@
 // Get a key at https://resend.com — free tier sends 3,000/month.
 
 import { formatUsd } from "@/lib/utils";
-import { TIERS, FAX_FEE_CENTS, type Tier } from "@/lib/pricing";
+import { multiYearAddonCents, tierInfo, type Tier } from "@/lib/pricing";
+
+type SendAttachment = {
+  filename: string;
+  content: Buffer | Uint8Array;
+  contentType?: string; // defaults to application/pdf for .pdf, octet-stream otherwise
+};
 
 type SendArgs = {
   to: string;
@@ -12,22 +18,31 @@ type SendArgs = {
   html: string;
   text: string;
   replyTo?: string;
+  attachments?: SendAttachment[];
 };
 
 const FROM = process.env.RESEND_FROM || "Form5472 Prep <orders@form5472prep.com>";
 const REPLY_TO = process.env.RESEND_REPLY_TO || "support@form5472prep.com";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://form5472prep.com";
 
-export async function sendEmail({ to, subject, html, text, replyTo }: SendArgs) {
+export async function sendEmail({ to, subject, html, text, replyTo, attachments }: SendArgs) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.log("\n[email stub — set RESEND_API_KEY to actually send]");
     console.log("  to:     ", to);
     console.log("  subject:", subject);
     console.log("  text:   ", text);
+    if (attachments?.length) console.log("  attach: ", attachments.map((a) => `${a.filename} (${a.content.byteLength}B)`).join(", "));
     console.log("");
     return { sandbox: true };
   }
+
+  const resendAttachments = attachments?.map((a) => ({
+    filename: a.filename,
+    content: Buffer.from(a.content).toString("base64"),
+    content_type:
+      a.contentType ?? (a.filename.toLowerCase().endsWith(".pdf") ? "application/pdf" : "application/octet-stream"),
+  }));
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -42,6 +57,7 @@ export async function sendEmail({ to, subject, html, text, replyTo }: SendArgs) 
       html,
       text,
       reply_to: replyTo ?? REPLY_TO,
+      ...(resendAttachments && resendAttachments.length > 0 ? { attachments: resendAttachments } : {}),
     }),
   });
   if (!res.ok) {
@@ -146,28 +162,100 @@ export async function sendMagicLinkEmail(email: string, link: string, filingLabe
 
 // ---------- 2. Order confirmation email ----------
 
+type OrderSignatureInfo = {
+  label: string;
+  page: number;
+  instruction: string;
+};
+
 type OrderConfirmationArgs = {
   email: string;
   llcName: string | null;
   taxYears: number[];
   tier: Tier;
-  amountPaidCents: number; // total including fax fee
+  amountPaidCents: number; // total paid (may or may not include fax fee)
+  faxService: boolean; // true = we fax it; false = customer self-faxes
   portalLink: string;
   receiptUrl?: string | null; // Stripe-hosted receipt
+  // Filing ID is used to deeplink the email CTA to the sign page through
+  // the magic-link auth handler's ?next= parameter.
+  filingId?: string;
+  // Source attribution — drives which tier table is used to render the
+  // tier label + per-tier price in the email. Premium funnel sources are
+  // billed at PREMIUM_TIERS so the email must show those values to match
+  // what the customer was actually charged.
+  funnelSource?: string | null;
+  // Filled package — if present, we attach the PDF and list signature
+  // locations directly in the email. If null/undefined, the email goes out
+  // without an attachment (e.g. PDF generation failed and will be retried).
+  pdfBytes?: Uint8Array | null;
+  pdfFilename?: string;
+  signatures?: OrderSignatureInfo[];
 };
 
+// Append a `?next=` query param to a magic-link portal URL so the auth
+// handler bounces the user to a specific in-app page after sign-in.
+// Falls back to the bare portal link if appending fails (e.g. malformed URL).
+function portalLinkWithNext(portalLink: string, nextPath: string): string {
+  if (!nextPath || !nextPath.startsWith("/")) return portalLink;
+  try {
+    const u = new URL(portalLink);
+    u.searchParams.set("next", nextPath);
+    return u.toString();
+  } catch {
+    const sep = portalLink.includes("?") ? "&" : "?";
+    return `${portalLink}${sep}next=${encodeURIComponent(nextPath)}`;
+  }
+}
+
 export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
-  const { email, llcName, taxYears, tier, amountPaidCents, portalLink, receiptUrl } = args;
-  const tierLabel = TIERS[tier].label;
-  const tierPrice = formatUsd(TIERS[tier].priceCents);
+  const {
+    email, llcName, taxYears, tier, amountPaidCents, portalLink, receiptUrl,
+    pdfBytes, pdfFilename, signatures,
+  } = args;
+  // Resolve the tier through pricing.ts so legacy tier values from old
+  // filings still render a sensible label rather than crashing.
+  const t = tierInfo(tier);
+  const tierLabel = t.label;
+  const tierPrice = formatUsd(t.priceCents);
+  const yearCount = taxYears.length || 1;
+  const extraYears = Math.max(0, yearCount - 1);
+  const addOnCents = multiYearAddonCents(yearCount);
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "(LLC name pending)";
+  const hasPdf = !!pdfBytes && pdfBytes.byteLength > 0;
+  const sigCount = signatures?.length ?? 0;
+  const attachmentName = pdfFilename ?? buildPdfFilename(llcName, taxYears);
+
+  // Fax delivery is included on every tier — the row just states that
+  // explicitly so the customer can see what they got.
+  const faxFeeRowHtml = `<tr><td style="padding:4px 0;color:#64748b;">IRS fax delivery</td><td align="right" style="padding:4px 0;">Included</td></tr>`;
+  const multiYearRowHtml = extraYears > 0
+    ? `<tr><td style="padding:4px 0;color:#64748b;">+ ${extraYears} additional year${extraYears === 1 ? "" : "s"}</td><td align="right" style="padding:4px 0;">${formatUsd(addOnCents)}</td></tr>`
+    : "";
+
+  const step3Html = `<li style="margin-bottom:6px;">We fax it to the IRS Ogden PIN Unit and send you a delivery confirmation email.</li>`;
+  const step3Text = `  3. We fax it to the IRS Ogden PIN Unit and email you confirmation.`;
+
+  const introCopy = hasPdf
+    ? "Thanks for your order. Your IRS filing package is ready — open your portal to sign it. The unsigned PDF is attached for your reference."
+    : "Thanks for your order. We've received your payment and started preparing your IRS filing. You'll get the generated PDF in your portal within a few minutes.";
+
+  const signaturesHtml = hasPdf && sigCount > 0
+    ? `
+    <!-- Sign in portal -->
+    <p style="margin:24px 0 8px;font-weight:600;color:#0f172a;font-size:15px;">Sign your filing</p>
+    <p style="margin:0 0 12px;color:#64748b;font-size:13px;line-height:1.5;">
+      Open your portal and draw your signature once — we'll embed it into ${sigCount === 1 ? "the right box" : `all ${sigCount} signature boxes`} for you. No printing or uploading required.
+    </p>`
+    : "";
 
   const bodyHtml = `
     <p style="margin:0 0 20px;color:#475569;line-height:1.6;font-size:15px;">
-      Thanks for your order. We've received your payment and started preparing your IRS filing.
-      You'll get the generated PDF in your portal within a few minutes.
+      ${introCopy}
     </p>
+
+    ${signaturesHtml}
 
     <!-- Receipt -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin:0 0 24px;">
@@ -177,7 +265,8 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
           <tr><td style="padding:4px 0;color:#64748b;">LLC</td><td align="right" style="padding:4px 0;">${escapeHtml(llcLine)}</td></tr>
           <tr><td style="padding:4px 0;color:#64748b;">Tax year${taxYears.length > 1 ? "s" : ""}</td><td align="right" style="padding:4px 0;">${escapeHtml(yearsLabel)}</td></tr>
           <tr><td style="padding:4px 0;color:#64748b;">Plan</td><td align="right" style="padding:4px 0;">${escapeHtml(tierLabel)} — ${tierPrice}</td></tr>
-          <tr><td style="padding:4px 0;color:#64748b;">IRS fax delivery</td><td align="right" style="padding:4px 0;">${formatUsd(FAX_FEE_CENTS)}</td></tr>
+          ${faxFeeRowHtml}
+          ${multiYearRowHtml}
           <tr><td style="padding:10px 0 4px;border-top:1px solid #e2e8f0;font-weight:600;">Total paid</td><td align="right" style="padding:10px 0 4px;border-top:1px solid #e2e8f0;font-weight:600;">${formatUsd(amountPaidCents)}</td></tr>
         </table>
       </td></tr>
@@ -186,51 +275,135 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     <!-- What happens next -->
     <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:15px;">What happens next</p>
     <ol style="margin:0 0 24px;padding-left:20px;color:#475569;line-height:1.6;font-size:14px;">
-      <li style="margin-bottom:6px;">We generate your filled <strong>Form 5472 + pro forma Form 1120</strong> (≈ 2 min).</li>
-      <li style="margin-bottom:6px;">You download, sign, and upload the signed PDF in your portal.</li>
-      <li style="margin-bottom:6px;">We fax it to the IRS Ogden PIN Unit and send you a delivery confirmation email.</li>
+      <li style="margin-bottom:6px;">We generate your filled <strong>Form 5472 + pro forma Form 1120</strong> and run an AI compliance check (≈ 2 min).</li>
+      <li style="margin-bottom:6px;">You open your portal and sign in-browser — we embed your signature into the right boxes.</li>
+      ${step3Html}
     </ol>
 
     ${receiptUrl ? `<p style="margin:0 0 20px;font-size:13px;color:#64748b;">A detailed payment receipt is also available on <a href="${receiptUrl}" style="color:#1e3a8a;text-decoration:none;">Stripe</a>.</p>` : ""}
   `;
 
+  const faxFeeTextLine = `  Fax delivery:  Included\n`;
+  const multiYearTextLine = extraYears > 0
+    ? `  + ${extraYears} extra year${extraYears === 1 ? "" : "s"}: ${formatUsd(addOnCents)}\n`
+    : "";
+
+  const signaturesText = hasPdf && sigCount > 0
+    ? `\nSign in your portal — we'll embed your signature into ${sigCount === 1 ? "the right box" : `${sigCount} signature boxes`}. No printing or uploading needed.\n`
+    : "";
+
+  const nextStepsText = hasPdf
+    ? `What to do next:\n` +
+      `  1. Open your portal: ${portalLink}\n` +
+      `  2. Draw your signature once — we apply it to every required box.\n` +
+      step3Text + "\n"
+    : `What happens next:\n` +
+      `  1. We generate your Form 5472 + pro forma 1120 (≈ 2 min) and run an AI compliance check.\n` +
+      `  2. You open the portal to sign in-browser.\n` +
+      step3Text + "\n";
+
   return sendEmail({
     to: email,
-    subject: `Order confirmed — Form5472 Prep filing (${yearsLabel})`,
+    subject: hasPdf
+      ? `Your Form 5472 filing package — ${sigCount} signature${sigCount === 1 ? "" : "s"} needed`
+      : `Order confirmed — Form5472 Prep filing (${yearsLabel})`,
     text:
       `Thanks for your order!\n\n` +
       `Order summary:\n` +
       `  LLC:           ${llcLine}\n` +
       `  Tax year(s):   ${yearsLabel}\n` +
       `  Plan:          ${tierLabel} — ${tierPrice}\n` +
-      `  Fax delivery:  ${formatUsd(FAX_FEE_CENTS)}\n` +
-      `  Total paid:    ${formatUsd(amountPaidCents)}\n\n` +
-      `What happens next:\n` +
-      `  1. We generate your Form 5472 + pro forma 1120 (≈ 2 min).\n` +
-      `  2. You download, sign, and upload the signed PDF.\n` +
-      `  3. We fax it to the IRS Ogden PIN Unit and email you confirmation.\n\n` +
+      faxFeeTextLine +
+      multiYearTextLine +
+      `  Total paid:    ${formatUsd(amountPaidCents)}\n` +
+      signaturesText + "\n" +
+      nextStepsText + "\n" +
       `Open your filing: ${portalLink}\n\n` +
       `— Form5472 Prep`,
     html: shell({
-      preheader: `Order confirmed for ${llcLine} — ${yearsLabel}. Total ${formatUsd(amountPaidCents)}.`,
-      heading: "Order confirmed",
+      preheader: hasPdf
+        ? `Your filing is ready to sign — sign in-browser, no printing needed.`
+        : `Order confirmed for ${llcLine} — ${yearsLabel}. Total ${formatUsd(amountPaidCents)}.`,
+      heading: hasPdf ? "Your filing is ready to sign" : "Order confirmed",
       bodyHtml,
-      cta: { label: "Open my filing", url: portalLink },
+      // When the PDF is ready, deep-link straight to the sign page via the
+      // magic-link's ?next= deeplink so the customer skips the dashboard.
+      cta: hasPdf
+        ? { label: "Sign my filing", url: portalLinkWithNext(portalLink, `/filings/${args.filingId ?? ""}/sign`) }
+        : { label: "Open my filing", url: portalLink },
     }),
+    attachments: hasPdf
+      ? [{ filename: attachmentName, content: pdfBytes!, contentType: "application/pdf" }]
+      : undefined,
   });
 }
 
+function buildPdfFilename(llcName: string | null, taxYears: number[]): string {
+  const safeName = (llcName ?? "Filing")
+    .replace(/[^A-Za-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 50) || "Filing";
+  const yearPart = taxYears.length === 1 ? `${taxYears[0]}` : `${taxYears[0]}-${taxYears[taxYears.length - 1]}`;
+  return `${safeName}_Form5472_${yearPart}.pdf`;
+}
+
 // ---------- 3. Fax delivered email ----------
+
+export type FaxProof = {
+  faxId: string;
+  deliveredAt: string; // ISO timestamp
+  pageCount?: number | null;
+  durationSecs?: number | null;
+  from?: string | null;
+  to?: string | null;
+};
+
+function formatFaxProofRows(proof: FaxProof): string {
+  const rows: Array<[string, string]> = [
+    ["IRS fax number", proof.to ?? "+1 (855) 887-7737 (Ogden PIN Unit)"],
+    ["Delivered at", new Date(proof.deliveredAt).toUTCString()],
+  ];
+  if (proof.pageCount != null) rows.push(["Pages transmitted", String(proof.pageCount)]);
+  if (proof.durationSecs != null) rows.push(["Transmission duration", `${proof.durationSecs}s`]);
+  if (proof.from) rows.push(["Sent from", proof.from]);
+  rows.push(["Telnyx confirmation ID", proof.faxId]);
+
+  return rows
+    .map(
+      ([k, v]) => `
+        <tr>
+          <td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;white-space:nowrap;">${escapeHtml(k)}</td>
+          <td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${escapeHtml(v)}</td>
+        </tr>`,
+    )
+    .join("");
+}
 
 export async function sendFaxDeliveredEmail(args: {
   email: string;
   llcName: string | null;
   taxYears: number[];
   portalLink: string;
+  proof?: FaxProof;
+  signedPdfBytes?: Uint8Array | Buffer;
+  // Generated IRS Fax Transmission Receipt PDF. Attached separately from
+  // the signed-package PDF so the customer can keep / forward / file the
+  // proof-of-delivery document on its own.
+  receiptPdfBytes?: Uint8Array | Buffer;
 }) {
-  const { email, llcName, taxYears, portalLink } = args;
+  const { email, llcName, taxYears, portalLink, proof, signedPdfBytes, receiptPdfBytes } = args;
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "your filing";
+
+  const proofTable = proof
+    ? `
+      <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:15px;">Proof of fax</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
+        ${formatFaxProofRows(proof)}
+      </table>
+      ${signedPdfBytes ? `<p style="margin:0 0 20px;color:#475569;font-size:13px;">A copy of the exact PDF transmitted to the IRS is attached to this email.</p>` : ""}
+    `
+    : "";
 
   const bodyHtml = `
     <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
@@ -241,25 +414,165 @@ export async function sendFaxDeliveredEmail(args: {
     <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:14px 18px;margin:0 0 20px;color:#065f46;font-size:14px;">
       <strong>✓ Delivered to the IRS</strong> — keep this email as your proof of submission.
     </div>
+    ${proofTable}
+    ${receiptPdfBytes ? `<p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:14px;">
+      A timestamped <strong>IRS Fax Transmission Receipt</strong> is attached
+      (<code style="font-family:ui-monospace,monospace;font-size:12px;">IRS-fax-receipt-…pdf</code>).
+      Keep it with your tax records — under IRC § 6038A it serves as proof of on-time filing if the
+      IRS ever asks.
+    </p>` : ""}
     <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:15px;">What's next</p>
     <p style="margin:0 0 24px;color:#475569;line-height:1.6;font-size:14px;">
       The IRS doesn't send acknowledgments for faxed 5472 filings, so no further action is required.
-      You can download a copy of your full filing package anytime from your portal.
+      You can re-download the receipt and your filing package anytime from your portal.
     </p>
   `;
+
+  const proofText = proof
+    ? `\nProof of fax\n` +
+      `  IRS fax number: ${proof.to ?? "+1 (855) 887-7737 (Ogden PIN Unit)"}\n` +
+      `  Delivered at:   ${new Date(proof.deliveredAt).toUTCString()}\n` +
+      (proof.pageCount != null ? `  Pages:          ${proof.pageCount}\n` : "") +
+      (proof.durationSecs != null ? `  Duration:       ${proof.durationSecs}s\n` : "") +
+      (proof.from ? `  Sent from:      ${proof.from}\n` : "") +
+      `  Confirmation:   ${proof.faxId}\n`
+    : "";
+
+  // Build attachment list. Both PDFs are optional — receipt OR signed PDF
+  // alone is fine. The receipt is named so it sorts before the package PDF
+  // alphabetically in most mail clients.
+  const safeLlc = llcLine.replace(/[^a-zA-Z0-9-]+/g, "_");
+  const safeYears = yearsLabel.replace(/[^0-9-]+/g, "-");
+  const attachments: Array<{ filename: string; content: Uint8Array | Buffer }> = [];
+  if (receiptPdfBytes) {
+    attachments.push({
+      filename: `IRS-fax-receipt-${safeLlc}-${safeYears}.pdf`,
+      content: receiptPdfBytes,
+    });
+  }
+  if (signedPdfBytes) {
+    attachments.push({
+      filename: `form5472-${safeLlc}-${safeYears}-faxed.pdf`,
+      content: signedPdfBytes,
+    });
+  }
 
   return sendEmail({
     to: email,
     subject: `Filed with the IRS — ${llcLine} (${yearsLabel})`,
     text:
       `Your signed Form 5472 + pro forma 1120 for ${llcLine} (${yearsLabel}) was successfully faxed to the IRS Ogden PIN Unit.\n\n` +
-      `Keep this email as your proof of submission. The IRS doesn't send acknowledgments for faxed 5472 filings, so no further action is required.\n\n` +
-      `Download your full filing package: ${portalLink}\n\n— Form5472 Prep`,
+      `Keep this email as your proof of submission. The IRS doesn't send acknowledgments for faxed 5472 filings, so no further action is required.\n` +
+      proofText +
+      `\nDownload your full filing package: ${portalLink}\n\n— Form5472 Prep`,
     html: shell({
       preheader: `Filed with the IRS — ${llcLine} (${yearsLabel}) successfully delivered.`,
       heading: "Your filing was delivered to the IRS",
       bodyHtml,
       cta: { label: "View my filing", url: portalLink },
+    }),
+    attachments: attachments.length > 0 ? attachments : undefined,
+  });
+}
+
+// Admin notification when a fax succeeds. Plain, scannable format.
+export async function sendFaxDeliveredAdminEmail(args: {
+  adminEmail: string;
+  customerEmail: string | null;
+  llcName: string | null;
+  taxYears: number[];
+  filingId: string;
+  adminFilingUrl: string;
+  proof: FaxProof;
+}) {
+  const { adminEmail, customerEmail, llcName, taxYears, filingId, adminFilingUrl, proof } = args;
+  const yearsLabel = taxYears.join(", ");
+  const llcLine = llcName ?? "(no LLC name)";
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+      Fax delivered to the IRS Ogden PIN Unit.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Customer</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(customerEmail ?? "(anonymous)")}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">LLC</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(llcLine)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Tax year(s)</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(yearsLabel)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Filing ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</td></tr>
+      ${formatFaxProofRows(proof)}
+    </table>
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `[Fax delivered] ${llcLine} (${yearsLabel})`,
+    text:
+      `Fax delivered to IRS.\n\n` +
+      `Customer:    ${customerEmail ?? "(anonymous)"}\n` +
+      `LLC:         ${llcLine}\n` +
+      `Tax year(s): ${yearsLabel}\n` +
+      `Filing ID:   ${filingId}\n` +
+      `Telnyx ID:   ${proof.faxId}\n` +
+      `Delivered:   ${new Date(proof.deliveredAt).toUTCString()}\n` +
+      (proof.pageCount != null ? `Pages:       ${proof.pageCount}\n` : "") +
+      (proof.durationSecs != null ? `Duration:    ${proof.durationSecs}s\n` : "") +
+      `\nAdmin view: ${adminFilingUrl}\n`,
+    html: shell({
+      preheader: `Fax delivered — ${llcLine} (${yearsLabel})`,
+      heading: "Fax delivered to IRS",
+      bodyHtml,
+      cta: { label: "Open in admin", url: adminFilingUrl },
+    }),
+  });
+}
+
+// Admin notification when a fax permanently fails (retries exhausted).
+export async function sendFaxFailedAdminEmail(args: {
+  adminEmail: string;
+  customerEmail: string | null;
+  llcName: string | null;
+  taxYears: number[];
+  filingId: string;
+  adminFilingUrl: string;
+  faxId: string;
+  failureReason: string | null;
+  deliveryAttempts: number;
+}) {
+  const { adminEmail, customerEmail, llcName, taxYears, filingId, adminFilingUrl, faxId, failureReason, deliveryAttempts } = args;
+  const yearsLabel = taxYears.join(", ");
+  const llcLine = llcName ?? "(no LLC name)";
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+      Telnyx gave up after ${deliveryAttempts} attempt${deliveryAttempts === 1 ? "" : "s"}.
+      Customer has been notified separately. Manual intervention required.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Customer</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(customerEmail ?? "(anonymous)")}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">LLC</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(llcLine)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Tax year(s)</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(yearsLabel)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Filing ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Telnyx fax ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(faxId)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#dc2626;font-size:13px;font-weight:600;">Failure reason</td><td style="padding:6px 0;color:#dc2626;font-size:13px;">${escapeHtml(failureReason ?? "unknown")}</td></tr>
+    </table>
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `[Fax FAILED] ${llcLine} (${yearsLabel}) — ${failureReason ?? "unknown"}`,
+    text:
+      `Fax to IRS FAILED after ${deliveryAttempts} attempt(s).\n\n` +
+      `Customer:    ${customerEmail ?? "(anonymous)"}\n` +
+      `LLC:         ${llcLine}\n` +
+      `Tax year(s): ${yearsLabel}\n` +
+      `Filing ID:   ${filingId}\n` +
+      `Telnyx ID:   ${faxId}\n` +
+      `Reason:      ${failureReason ?? "unknown"}\n` +
+      `\nAdmin view: ${adminFilingUrl}\n`,
+    html: shell({
+      preheader: `Fax FAILED — ${llcLine} (${yearsLabel})`,
+      heading: "Fax to IRS failed — manual action needed",
+      bodyHtml,
+      cta: { label: "Open in admin", url: adminFilingUrl },
     }),
   });
 }
@@ -308,7 +621,297 @@ export async function sendFaxFailedEmail(args: {
   });
 }
 
-// ---------- 5. January reminder (annual marketing email) ----------
+// ---------- 4c. "We're reviewing your filing" (post-payment, before AI clears it) ----------
+
+// Sent immediately after payment when our AI compliance check flagged
+// issues that require customer clarification. The customer does NOT yet
+// receive the PDF — that's held until the issues resolve. We point them
+// to their portal where the system message with the questions awaits.
+export async function sendUnderReviewEmail(args: {
+  email: string;
+  llcName: string | null;
+  taxYears: number[];
+  portalLink: string;
+}) {
+  const { email, llcName, taxYears, portalLink } = args;
+  const yearsLabel = taxYears.join(", ");
+  const llcLine = llcName ?? "your filing";
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+      Thanks for your payment — we've received your order for <strong>${escapeHtml(llcLine)}</strong>
+      (tax year${taxYears.length > 1 ? "s" : ""} ${escapeHtml(yearsLabel)}).
+    </p>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:14px 18px;margin:0 0 20px;color:#92400e;font-size:14px;">
+      <strong>We're reviewing your filing.</strong> Our compliance check spotted a few details we'd
+      like to confirm with you before we send your signed-ready PDF. The questions are waiting
+      in your portal.
+    </div>
+    <p style="margin:0 0 24px;color:#475569;line-height:1.6;font-size:14px;">
+      Open your portal to read and reply. Once you've answered, we'll regenerate your filing package
+      and email you the PDF with signing instructions. No additional charge.
+    </p>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject: `We're reviewing your filing — ${llcLine}`,
+    text:
+      `Thanks for your payment — we've received your order for ${llcLine} (${yearsLabel}).\n\n` +
+      `Our compliance check spotted a few details we'd like to confirm with you before we send your signed-ready PDF. The questions are waiting in your portal.\n\n` +
+      `Open your portal to read and reply: ${portalLink}\n\n` +
+      `Once you've answered, we'll regenerate your filing package and email you the PDF.\n\n— Form5472 Prep`,
+    html: shell({
+      preheader: `We're reviewing your ${llcLine} filing — a couple of questions in your portal.`,
+      heading: "Your order is in — we're reviewing the details",
+      bodyHtml,
+      cta: { label: "Open my portal", url: portalLink },
+    }),
+  });
+}
+
+// ---------- 4d. Admin alert when AI compliance check flagged issues it couldn't auto-fix ----------
+
+export async function sendAiFlaggedAdminEmail(args: {
+  adminEmail: string;
+  customerEmail: string | null;
+  llcName: string | null;
+  taxYears: number[];
+  filingId: string;
+  adminFilingUrl: string;
+  status: "needs_customer_input" | "error";
+  summary: string;
+  questions: string[];
+  errorMessage?: string;
+}) {
+  const { adminEmail, customerEmail, llcName, taxYears, filingId, adminFilingUrl, status, summary, questions, errorMessage } = args;
+  const yearsLabel = taxYears.join(", ");
+  const llcLine = llcName ?? "(no LLC name)";
+
+  const issueBody = status === "error"
+    ? `<p style="margin:0 0 16px;color:#dc2626;font-size:14px;">AI validation failed: <code style="font-family:ui-monospace,monospace;">${escapeHtml(errorMessage ?? "unknown")}</code>. PDF was sent to the customer anyway (fail-open). You may want to manually review.</p>`
+    : `<p style="margin:0 0 12px;color:#475569;font-size:14px;line-height:1.5;">${escapeHtml(summary)}</p>
+       <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:14px;">Questions posted to customer's portal:</p>
+       <ul style="margin:0 0 20px 18px;padding:0;color:#475569;font-size:13px;line-height:1.5;">
+         ${questions.map((q) => `<li style="margin-bottom:6px;">${escapeHtml(q)}</li>`).join("")}
+       </ul>`;
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+      AI compliance check flagged this filing (${status}). Customer notified via portal + email; PDF email is on hold pending their reply.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Customer</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(customerEmail ?? "(anonymous)")}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">LLC</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(llcLine)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Tax year(s)</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(yearsLabel)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Filing ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</td></tr>
+    </table>
+    ${issueBody}
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject:
+      status === "error"
+        ? `[AI check ERROR] ${llcLine} (${yearsLabel}) — fail-open, PDF sent`
+        : `[AI flagged] ${llcLine} (${yearsLabel}) — ${questions.length} question${questions.length === 1 ? "" : "s"} for customer`,
+    text:
+      `AI compliance check flagged filing ${filingId}.\n\n` +
+      `Status:      ${status}\n` +
+      `Customer:    ${customerEmail ?? "(anonymous)"}\n` +
+      `LLC:         ${llcLine}\n` +
+      `Tax year(s): ${yearsLabel}\n\n` +
+      `Summary: ${summary}\n\n` +
+      (questions.length > 0 ? `Questions posted to portal:\n${questions.map((q, i) => `  ${i + 1}. ${q}`).join("\n")}\n\n` : "") +
+      (errorMessage ? `Error: ${errorMessage}\n\n` : "") +
+      `Admin view: ${adminFilingUrl}\n`,
+    html: shell({
+      preheader: `AI flagged ${llcLine} (${yearsLabel}) — ${status}.`,
+      heading: status === "error" ? "AI compliance check failed" : "AI flagged a filing for customer input",
+      bodyHtml,
+      cta: { label: "Open in admin", url: adminFilingUrl },
+    }),
+  });
+}
+
+// ---------- 4e. AI agent applied a field change ----------
+
+export async function sendAiFieldChangeAdminEmail(args: {
+  adminEmail: string;
+  filingId: string;
+  llcName: string | null;
+  adminFilingUrl: string;
+  field: string;
+  before: unknown;
+  after: unknown;
+  reason: string | null;
+}) {
+  const { adminEmail, filingId, llcName, adminFilingUrl, field, before, after, reason } = args;
+  const display = (v: unknown) => v == null || v === "" ? "(empty)" : typeof v === "string" ? v : JSON.stringify(v);
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+      AI agent updated a field on filing <strong>${escapeHtml(llcName ?? filingId)}</strong> based on a customer reply.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Field</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(field)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Before</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(display(before))}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">After</td><td style="padding:6px 0;color:#10b981;font-size:13px;font-family:ui-monospace,monospace;font-weight:600;">${escapeHtml(display(after))}</td></tr>
+      ${reason ? `<tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Customer said</td><td style="padding:6px 0;color:#475569;font-size:13px;font-style:italic;">${escapeHtml(reason)}</td></tr>` : ""}
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Filing ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</td></tr>
+    </table>
+    <p style="margin:0 0 20px;color:#475569;font-size:13px;">If this looks wrong, open the filing in admin and revert via the edit page.</p>
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `[AI updated] ${field} on ${llcName ?? filingId}`,
+    text:
+      `AI agent updated field "${field}" on filing ${filingId} (${llcName ?? "no LLC name"}).\n\n` +
+      `Before: ${display(before)}\n` +
+      `After:  ${display(after)}\n` +
+      (reason ? `Customer said: ${reason}\n` : "") +
+      `\nAdmin view: ${adminFilingUrl}\n`,
+    html: shell({
+      preheader: `AI updated ${field} on ${llcName ?? filingId}.`,
+      heading: "AI agent updated a filing field",
+      bodyHtml,
+      cta: { label: "Open in admin", url: adminFilingUrl },
+    }),
+  });
+}
+
+// ---------- 4f. AI escalated to admin ----------
+
+export async function sendAiEscalationAdminEmail(args: {
+  adminEmail: string;
+  customerEmail: string | null;
+  filingId: string;
+  llcName: string | null;
+  adminFilingUrl: string;
+  reason: string;
+  recentThread: string;
+}) {
+  const { adminEmail, customerEmail, filingId, llcName, adminFilingUrl, reason, recentThread } = args;
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+      AI agent has handed this thread off to you. Reason: <strong>${escapeHtml(reason)}</strong>
+    </p>
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:14px;">
+      Customer: <strong>${escapeHtml(customerEmail ?? "(anonymous)")}</strong> · Filing: <strong>${escapeHtml(llcName ?? filingId)}</strong>
+    </p>
+    <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:14px;">Recent conversation:</p>
+    <pre style="margin:0 0 20px;padding:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;color:#0f172a;font-size:12px;font-family:ui-monospace,monospace;white-space:pre-wrap;line-height:1.45;">${escapeHtml(recentThread)}</pre>
+    <p style="margin:0 0 20px;color:#475569;font-size:13px;">AI will not respond further until you re-engage it via the "Re-engage AI" button on the admin filing page.</p>
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `[AI escalated] ${llcName ?? filingId} — needs you`,
+    text:
+      `AI agent escalated this conversation to you.\n\n` +
+      `Reason:   ${reason}\n` +
+      `Customer: ${customerEmail ?? "(anonymous)"}\n` +
+      `LLC:      ${llcName ?? "(no name)"}\n` +
+      `Filing:   ${filingId}\n\n` +
+      `Recent thread:\n${recentThread}\n\n` +
+      `Admin view: ${adminFilingUrl}\n`,
+    html: shell({
+      preheader: `AI escalated ${llcName ?? filingId} to you — ${reason}`,
+      heading: "AI handed off — needs human",
+      bodyHtml,
+      cta: { label: "Open in admin", url: adminFilingUrl },
+    }),
+  });
+}
+
+// ---------- 5a. New portal message — admin → customer ----------
+
+// Fires when admin posts a message into a filing's thread AND the customer
+// currently has zero unread admin messages (so we don't double-notify on a
+// rapid back-and-forth). Email is intentionally light on content — the
+// portal thread is the source of truth.
+export async function sendNewMessageToCustomerEmail(args: {
+  email: string;
+  llcName: string | null;
+  taxYears: number[];
+  bodyExcerpt: string;
+  portalLink: string;
+}) {
+  const { email, llcName, taxYears, bodyExcerpt, portalLink } = args;
+  const yearsLabel = taxYears.join(", ");
+  const llcLine = llcName ?? "your filing";
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+      You have a new message from our team about <strong>${escapeHtml(llcLine)}</strong>
+      (tax year${taxYears.length > 1 ? "s" : ""} ${escapeHtml(yearsLabel)}).
+    </p>
+    <blockquote style="margin:0 0 20px;padding:14px 18px;background:#f8fafc;border-left:3px solid #1e3a8a;color:#0f172a;font-size:14px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(bodyExcerpt)}</blockquote>
+    <p style="margin:0 0 24px;color:#475569;line-height:1.6;font-size:14px;">
+      Open your portal to read the full message and reply.
+    </p>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject: `New message about your filing — ${llcLine}`,
+    text:
+      `You have a new message from our team about ${llcLine} (${yearsLabel}).\n\n` +
+      `${bodyExcerpt}\n\n` +
+      `Open your portal to read and reply: ${portalLink}\n\n— Form5472 Prep`,
+    html: shell({
+      preheader: `New message about ${llcLine} — open your portal to reply.`,
+      heading: "You have a new message",
+      bodyHtml,
+      cta: { label: "Open my portal", url: portalLink },
+    }),
+  });
+}
+
+// ---------- 5b. New portal message — customer → admin ----------
+
+export async function sendNewMessageToAdminEmail(args: {
+  adminEmail: string;
+  customerEmail: string;
+  llcName: string | null;
+  taxYears: number[];
+  filingId: string;
+  adminFilingUrl: string;
+  bodyExcerpt: string;
+}) {
+  const { adminEmail, customerEmail, llcName, taxYears, filingId, adminFilingUrl, bodyExcerpt } = args;
+  const yearsLabel = taxYears.join(", ");
+  const llcLine = llcName ?? "(no LLC name)";
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+      <strong>${escapeHtml(customerEmail)}</strong> sent a new message about filing
+      <strong>${escapeHtml(llcLine)}</strong> (${escapeHtml(yearsLabel)}).
+    </p>
+    <blockquote style="margin:0 0 20px;padding:14px 18px;background:#f8fafc;border-left:3px solid #1e3a8a;color:#0f172a;font-size:14px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(bodyExcerpt)}</blockquote>
+    <p style="margin:0 0 20px;color:#475569;font-size:13px;">Filing ID: <code style="font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</code></p>
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `[New message] ${llcLine} from ${customerEmail}`,
+    text:
+      `${customerEmail} sent a new message about ${llcLine} (${yearsLabel}).\n\n` +
+      `${bodyExcerpt}\n\n` +
+      `Filing ID: ${filingId}\n` +
+      `Reply in admin: ${adminFilingUrl}\n`,
+    html: shell({
+      preheader: `New message from ${customerEmail} about ${llcLine}.`,
+      heading: "New message from customer",
+      bodyHtml,
+      cta: { label: "Open in admin", url: adminFilingUrl },
+    }),
+  });
+}
+
+// ---------- 6. January reminder (annual marketing email) ----------
 
 type ReminderArgs = {
   email: string;
@@ -402,6 +1005,53 @@ export async function sendMarchReminderEmail(args: ReminderArgs) {
       heading: `Your ${taxYearToFile} Form 5472 deadline is in 30 days`,
       bodyHtml,
       cta: { label: `File my ${taxYearToFile} return now`, url: startLink },
+      unsubscribeUrl,
+    }),
+  });
+}
+
+// ---------- 7. Abandoned-draft reminder (one-shot) ----------
+
+type AbandonedDraftArgs = {
+  email: string;
+  llcName: string | null;
+  resumeLink: string;
+  unsubscribeUrl: string;
+};
+
+export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) {
+  const { email, llcName, resumeLink, unsubscribeUrl } = args;
+  const llcLine = llcName ? escapeHtml(llcName) : "your foreign-owned LLC";
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+      You started a Form 5472 filing for <strong>${llcLine}</strong> but didn't finish.
+      Your progress is saved — you can pick up right where you left off.
+    </p>
+    <p style="margin:0 0 20px;color:#475569;line-height:1.6;font-size:15px;">
+      Most customers finish in about <strong>15 minutes</strong>. The IRS penalty for a
+      missing Form 5472 is <strong>$25,000</strong>, so it's worth completing today.
+    </p>
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin:0 0 24px;color:#334155;font-size:14px;line-height:1.5;">
+      <strong style="color:#0f172a;">Need help?</strong> Just reply to this email and we'll
+      walk you through whatever you got stuck on.
+    </div>`;
+
+  return sendEmail({
+    to: email,
+    subject: "Finish your Form 5472 filing — your progress is saved",
+    text:
+      `You started a Form 5472 filing for ${llcName ?? "your foreign-owned LLC"} but didn't finish.\n\n` +
+      `Your progress is saved. Pick up where you left off (most customers finish in ~15 minutes):\n` +
+      `${resumeLink}\n\n` +
+      `The IRS penalty for missing Form 5472 is $25,000 — worth completing today.\n\n` +
+      `Need help? Just reply to this email.\n\n— Form5472 Prep\n\n` +
+      `Unsubscribe from these emails: ${unsubscribeUrl}`,
+    html: shell({
+      preheader: "Your progress is saved. Pick up where you left off — about 15 minutes left.",
+      heading: "Finish your Form 5472 filing",
+      bodyHtml,
+      cta: { label: "Resume my filing", url: resumeLink },
       unsubscribeUrl,
     }),
   });

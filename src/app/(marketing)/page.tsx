@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
-import { TIERS } from "@/lib/pricing";
+import { TIERS, TIER_ORDER, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
 import { env } from "@/lib/env";
 
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   // already brands the product, so we don't want the suffix appended.
   title: { absolute: "File IRS Form 5472 and pro forma 1120 in 15 minutes — Form5472 Prep" },
   description:
-    "IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We generate the forms, you sign, we fax to the IRS Ogden PIN Unit. $169 plus a flat $29 IRS fax delivery. 100% money-back guarantee if we fail to submit.",
+    "IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Starting at $199 — fax delivery included on every plan. 100% money-back guarantee if we fail to submit.",
   alternates: { canonical: "/" },
 };
 
@@ -99,8 +99,8 @@ function Hero() {
             <p className="mt-6 text-lg text-slate-600 max-w-2xl animate-fade-in-up animate-delay-200">
               Form5472 Prep prepares your Form 5472 and pro forma Form 1120 for foreign-owned US
               LLCs, generates the reasonable cause statement for late DIIRSP filings, and faxes
-              the signed package to the IRS Ogden PIN Unit on your behalf. $169 plus a flat $29
-              IRS fax delivery fee — with a 100% money-back guarantee if we fail to submit.
+              the signed package to the IRS Ogden PIN Unit on your behalf. Starting at $199 with
+              IRS fax delivery included — backed by a 100% money-back guarantee if we fail to submit.
             </p>
           </div>
 
@@ -113,12 +113,12 @@ function Hero() {
               </div>
               <div className="mt-3 flex items-baseline gap-2">
                 <span className="text-4xl sm:text-5xl font-semibold text-slate-900 tracking-tight">
-                  {formatUsd(TIERS.single_year.priceCents)}
+                  {formatUsd(TIERS.standard.priceCents)}
                 </span>
                 <span className="text-sm text-slate-500">/ filing</span>
               </div>
               <p className="mt-1 text-sm text-slate-600">
-                We generate, you sign, we fax to the IRS. +$29 fax delivery at checkout.
+                IRS fax delivery included. Rush and Premium plans available — see <Link href="/pricing" className="text-accent underline">pricing</Link>.
               </p>
 
               <Link href="/start" className="block mt-6 group">
@@ -126,7 +126,7 @@ function Hero() {
                   size="lg"
                   className="w-full h-14 text-sm sm:text-base shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 transition-all duration-200 hover:-translate-y-0.5"
                 >
-                  Start filing — {formatUsd(TIERS.single_year.priceCents)}
+                  Start filing
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -373,7 +373,7 @@ function Comparison() {
     ["Reasonable cause statement (DIIRSP)", "Usually extra", "DIY", "Included"],
     ["Files with the IRS", "By mail or fax", "Your problem", "We fax to Ogden"],
     ["Stores filing proof", "Sometimes", "Your problem", "Yes, automatic"],
-    ["Cost", "$400 – $800", "Free (until $25k)", formatUsd(TIERS.single_year.priceCents)],
+    ["Cost", "$400 – $800", "Free (until $25k)", `From ${formatUsd(TIERS.standard.priceCents)}`],
   ];
   return (
     <section className="bg-white border-b border-slate-200">
@@ -416,45 +416,63 @@ function Pricing() {
         <SectionHead
           eyebrow="Pricing"
           title="Pay once per filing."
-          subtitle="One year, multi-year catch-up, whatever you need. No subscription. A flat $29 IRS fax delivery & submission fee is added at checkout."
+          subtitle="One-time flat fee per filing. IRS fax delivery to the Ogden PIN Unit included on every plan. Additional past tax years add $149 each."
         />
-        <div className="mt-10 grid md:grid-cols-3 gap-6">
-          {(Object.entries(TIERS) as [keyof typeof TIERS, typeof TIERS[keyof typeof TIERS]][]).map(
-            ([key, t], idx) => {
-              const featured = idx === 0;
-              return (
-                <Reveal
-                  key={key}
-                  delay={idx * 120}
-                  className={`rounded-lg p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/10 ${
-                    featured
-                      ? "border-2 border-accent bg-white shadow-md"
-                      : "border border-slate-200 bg-white hover:border-accent"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="font-medium text-slate-900">{t.label}</p>
-                    {featured && (
-                      <span className="text-[11px] font-medium rounded-full bg-accent text-white px-2 py-0.5 animate-soft-pulse">
-                        Most common
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-3 text-3xl font-semibold text-slate-900">
-                    {formatUsd(t.priceCents)}
-                  </p>
-                  <p className="mt-2 text-sm text-slate-600">{t.description}</p>
-                  <Link href="/start" className="block mt-6">
-                    <Button variant={featured ? "primary" : "outline"} className="w-full transition-transform hover:-translate-y-0.5">
-                      Start filing
-                    </Button>
-                  </Link>
-                </Reveal>
-              );
-            },
-          )}
+        <div className="mt-6 flex justify-center">
+          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-4 py-1.5 text-xs font-medium text-emerald-800">
+            Fax filing included on every plan
+          </span>
         </div>
-        <p className="mt-6 text-center text-xs text-slate-500">
+        <div className="mt-8 grid md:grid-cols-3 gap-6 items-stretch">
+          {TIER_ORDER.map((key, idx) => {
+            const t = TIERS[key];
+            const highlighted = !!t.highlight;
+            return (
+              <Reveal
+                key={key}
+                delay={idx * 120}
+                className={`relative flex flex-col rounded-lg p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/10 ${
+                  highlighted
+                    ? "border-2 border-accent bg-white shadow-md"
+                    : "border border-slate-200 bg-white hover:border-accent"
+                }`}
+              >
+                {highlighted && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-semibold rounded-full bg-accent text-white px-3 py-0.5 shadow">
+                    Most popular
+                  </span>
+                )}
+                <div>
+                  <p className="font-semibold text-slate-900">{t.label}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{t.subtitle}</p>
+                </div>
+                <p className="mt-3 text-3xl font-semibold text-slate-900">
+                  {formatUsd(t.priceCents)}
+                  <span className="ml-1 text-sm font-normal text-slate-500">/ year</span>
+                </p>
+                <ul className="mt-4 space-y-1.5 text-sm text-slate-700 flex-1">
+                  {t.features.map((f) => (
+                    <li key={f} className="flex items-start gap-1.5">
+                      <span className="text-emerald-600 mt-0.5">✓</span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href={`/start?tier=${key}`} className="block mt-6">
+                  <Button variant={highlighted ? "primary" : "outline"} className="w-full transition-transform hover:-translate-y-0.5">
+                    {t.ctaLabel}
+                  </Button>
+                </Link>
+              </Reveal>
+            );
+          })}
+        </div>
+        <p className="mt-6 text-center text-sm text-slate-600">
+          <span className="font-semibold text-slate-900">+ {formatUsd(MULTI_YEAR_ADDON_CENTS)} per additional year</span>
+          <span className="mx-2 text-slate-400">·</span>
+          Saves you from the $25,000-per-form IRS penalty
+        </p>
+        <p className="mt-3 text-center text-xs text-slate-500">
           DIIRSP = IRS Delinquent International Information Return Submission Procedure.
         </p>
       </div>
@@ -589,15 +607,18 @@ function StructuredData() {
     },
     description:
       "Self-service preparation and fax-delivery of IRS Form 5472 with pro forma Form 1120 for foreign-owned US single-member LLCs. Includes reasonable cause statement generation for DIIRSP delinquent filings.",
-    offers: Object.entries(TIERS).map(([key, t]) => ({
-      "@type": "Offer",
-      name: t.label,
-      sku: key,
-      price: (t.priceCents / 100).toFixed(2),
-      priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
-      url: `${url}/start`,
-    })),
+    offers: TIER_ORDER.map((key) => {
+      const t = TIERS[key];
+      return {
+        "@type": "Offer",
+        name: `${t.label} — ${t.subtitle}`,
+        sku: key,
+        price: (t.priceCents / 100).toFixed(2),
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+        url: `${url}/start?tier=${key}`,
+      };
+    }),
   };
 
   const faq = {

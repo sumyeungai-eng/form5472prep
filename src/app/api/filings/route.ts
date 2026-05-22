@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { FilingStatus } from "@prisma/client";
 import { getOrCreateSessionId, getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { TIERS } from "@/lib/pricing";
+import { DEFAULT_TIER, isTier, type Tier } from "@/lib/pricing";
+import { findOrCreateDraftFiling } from "@/lib/findOrCreateDraft";
 
 // Statuses that mean "this customer actually filed before" — we only copy
 // data forward from real submitted filings, not other abandoned drafts.
@@ -16,14 +17,29 @@ const PAID_STATUSES: FilingStatus[] = [
   FilingStatus.FAILED,
 ];
 
-export async function POST() {
+export async function POST(req: Request) {
   const sessionId = getOrCreateSessionId();
   const user = await getCurrentUser();
+
+  // Optional body params from the /file funnel: tier pre-selection + source tag.
+  const body = await req.json().catch(() => ({}));
+  const requestedTier = body?.tier as string | undefined;
+  // Sanitize funnelSource — user-controllable (set client-side from ?src=
+  // on /start). Cap length and restrict to slug-safe chars so a tampered
+  // request body can't store huge or weird strings in the DB / admin UI.
+  const rawSource = typeof body?.funnelSource === "string" ? body.funnelSource : null;
+  const funnelSource = rawSource
+    ? rawSource.toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 80) || null
+    : null;
+  // Service tier ("standard" | "rush" | "premium") is selected at /pricing
+  // before the customer reaches /start. Default to Standard if the param is
+  // missing or unrecognised so we never crash on an empty body.
+  const tier: Tier = isTier(requestedTier) ? requestedTier : DEFAULT_TIER;
 
   // For returning customers, copy LLC + owner details from their most recent
   // paid filing so they don't re-type EIN, address, owner FTIN, etc. Year-
   // specific fields (taxYears, amounts) and submission state stay empty.
-  let prefill = {};
+  let prefill: Record<string, unknown> = {};
   if (user) {
     const previous = await prisma.filing.findFirst({
       where: { userId: user.id, status: { in: PAID_STATUSES } },
@@ -53,18 +69,37 @@ export async function POST() {
     }
   }
 
-  const filing = await prisma.filing.create({
-    data: {
-      sessionId,
-      userId: user?.id ?? null,
-      status: "DRAFT",
-      tier: "single_year",
-      amountPaid: TIERS.single_year.priceCents,
-      taxYears: [],
-      ...prefill,
-    },
+  // Reuse an existing untouched DRAFT if the user/session already has one.
+  // This is the only thing standing between repeat /start submissions or
+  // back-and-forth navigation and a dashboard full of empty "Unnamed filing"
+  // rows. If the user has prefill data from a previous paid filing, we still
+  // reuse the empty row but write the prefill onto it.
+  const { filing, reused } = await findOrCreateDraftFiling({
+    sessionId,
+    userId: user?.id ?? null,
+    tier,
+    funnelSource,
+    prefill: Object.keys(prefill).length > 0 ? (prefill as never) : undefined,
   });
-  return NextResponse.json({ id: filing.id, prefilled: Object.keys(prefill).length > 0 });
+
+  // If we reused an existing row and have new prefill, layer it on top — but
+  // only on fields that are currently empty (don't clobber customer-entered data).
+  if (reused && Object.keys(prefill).length > 0) {
+    const overlay: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(prefill)) {
+      // @ts-expect-error dynamic key into Prisma filing row
+      if (v != null && (filing[k] == null || filing[k] === "")) overlay[k] = v;
+    }
+    if (Object.keys(overlay).length > 0) {
+      await prisma.filing.update({ where: { id: filing.id }, data: overlay });
+    }
+  }
+
+  return NextResponse.json({
+    id: filing.id,
+    prefilled: Object.keys(prefill).length > 0,
+    reused,
+  });
 }
 
 // Only useful for signed-in users — lists all filings tied to their email.

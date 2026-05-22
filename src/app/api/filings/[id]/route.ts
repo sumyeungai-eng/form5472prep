@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getOwnedFiling, bindFilingToEmail } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { tierForYearCount, TIERS } from "@/lib/pricing";
+import { totalPriceCents, isTier } from "@/lib/pricing";
 
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const owned = await getOwnedFiling(params.id);
@@ -43,6 +43,11 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     "llcBusinessCode",
     "ownerName",
     "ownerAddress",
+    "ownerAddressStreet",
+    "ownerAddressCity",
+    "ownerAddressState",
+    "ownerAddressPostal",
+    "ownerAddressCountry",
     "ownerCountryCitizenship",
     "ownerCountryTaxResidence",
     "ownerCountryBusiness",
@@ -55,12 +60,17 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   if (body.llcDateIncorporated) data.llcDateIncorporated = new Date(body.llcDateIncorporated);
 
+  // Allow updating tier directly (the /pricing CTA + /start?tier= flow sets it).
+  if (typeof body.tier === "string" && isTier(body.tier)) {
+    data.tier = body.tier;
+  }
   if (Array.isArray(body.taxYears)) {
     const years = (body.taxYears as number[]).slice().sort((a, b) => a - b);
     data.taxYears = years;
-    const tier = tierForYearCount(years.length);
-    data.tier = tier;
-    data.amountPaid = TIERS[tier].priceCents;
+    // Tier is independent of year count in the new pricing model. Year count
+    // drives a flat per-extra-year add-on layered on the chosen tier base.
+    const tierValue = (data.tier as string) ?? filing.tier;
+    data.amountPaid = totalPriceCents(tierValue, years.length);
     data.isDiirsp = years.length > 1 || (years[0] !== undefined && years[0] < new Date().getFullYear());
   }
 
@@ -75,6 +85,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
           totalAssetsYearEnd: y.totalAssetsYearEnd ?? 0,
           contributions: y.contributions ?? 0,
           distributions: y.distributions ?? 0,
+          otherTransactionsNote: typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : undefined,
+          reportableTransactions: Array.isArray(y.reportableTransactions)
+            ? y.reportableTransactions
+            : undefined,
         },
         create: {
           filingId: filing.id,
@@ -82,10 +96,34 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
           totalAssetsYearEnd: y.totalAssetsYearEnd ?? 0,
           contributions: y.contributions ?? 0,
           distributions: y.distributions ?? 0,
+          otherTransactionsNote: typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : null,
+          reportableTransactions: Array.isArray(y.reportableTransactions) ? y.reportableTransactions : [],
         },
       });
     }
   }
 
   return NextResponse.json(updated);
+}
+
+// Allow deleting a DRAFT filing only. Paid filings have downstream artifacts
+// (Stripe charges, generated PDFs, fax jobs) that shouldn't disappear silently.
+// Message rows are protected from DELETE by a Postgres trigger
+// (see migration 20260521041330_protect_messages_from_delete). The cascade
+// from Filing → Message would otherwise be blocked, so we opt in for this
+// transaction only via a session-local config flag.
+export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+  const filing = await getOwnedFiling(params.id);
+  if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (filing.status !== "DRAFT") {
+    return NextResponse.json(
+      { error: "Only draft filings can be deleted." },
+      { status: 400 },
+    );
+  }
+  await prisma.$transaction(async (tx) => {
+    await tx.$executeRawUnsafe(`SET LOCAL form5472.allow_message_delete = 'true'`);
+    await tx.filing.delete({ where: { id: filing.id } });
+  });
+  return NextResponse.json({ ok: true });
 }

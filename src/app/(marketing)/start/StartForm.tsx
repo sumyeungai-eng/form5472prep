@@ -1,16 +1,41 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
-import { formatUsd } from "@/lib/utils";
-import { TIERS } from "@/lib/pricing";
 import { GoogleLoginButton } from "./GoogleLoginButton";
+
+// Pull the funnel source (?src=) off the URL so we can attribute the eventual
+// paid filing back to the landing page that sent the visitor here. Sanitized
+// to slug-safe characters so a tampered query string can't inject anything
+// into the DB. Falls back to null when the param isn't present (direct visit,
+// homepage CTA, etc.).
+function readFunnelSource(params: URLSearchParams | null): string | null {
+  const raw = params?.get("src");
+  if (!raw) return null;
+  const cleaned = raw.toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 80);
+  return cleaned || null;
+}
+
+const ALLOWED_TIERS = new Set(["standard", "rush", "premium"]);
+
+// Read the customer's tier choice off the URL (?tier=rush etc.). The /pricing
+// page links here with the tier pre-selected; missing or invalid values fall
+// back to Standard via the server-side default.
+function readTier(params: URLSearchParams | null): string | null {
+  const raw = params?.get("tier");
+  if (!raw) return null;
+  const cleaned = raw.toLowerCase().trim();
+  return ALLOWED_TIERS.has(cleaned) ? cleaned : null;
+}
 
 export function StartForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const funnelSource = readFunnelSource(searchParams);
+  const tier = readTier(searchParams);
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +50,11 @@ export function StartForm() {
     setSubmitting(true);
     setError(null);
     try {
-      const create = await fetch("/api/filings", { method: "POST" });
+      const create = await fetch("/api/filings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ funnelSource, tier }),
+      });
       if (!create.ok) throw new Error("Couldn't create your filing");
       const { id } = await create.json();
       const patch = await fetch(`/api/filings/${id}`, {
@@ -48,7 +77,11 @@ export function StartForm() {
       const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ credential }),
+        // intent=start tells the server to ensure a DRAFT exists so the
+        // wizard has something to load. (Default intent is "signin" which
+        // does NOT auto-create a draft.) funnelSource tags the new DRAFT
+        // with its source page for sales attribution.
+        body: JSON.stringify({ credential, intent: "start", funnelSource, tier }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -75,7 +108,7 @@ export function StartForm() {
       <form onSubmit={submitEmail} className="space-y-4">
         <Field
           label="Email address"
-          hint="We save your progress here. $169 plus a flat $29 IRS fax fee — you'll only pay at the end."
+          hint="We save your progress here — you'll only pay at the end."
           error={error ?? undefined}
         >
           <Input
@@ -92,7 +125,7 @@ export function StartForm() {
             "Starting…"
           ) : (
             <>
-              Begin filing — from {formatUsd(TIERS.single_year.priceCents)}
+              Begin filing
               <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}

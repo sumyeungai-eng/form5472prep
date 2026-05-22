@@ -1,33 +1,169 @@
-export type Tier = "single_year" | "two_year_diirsp" | "multi_year_diirsp";
+// ─────────────────────────────────────────────────────────────────────────────
+// PRICING — source of truth for every customer-facing price on the site.
+//
+// Model (May 2026 rewrite):
+//   Three service tiers (Standard / Rush / Premium) charged as a flat fee.
+//   Fax delivery is INCLUDED on every tier (no separate $19 add-on).
+//   Customers can file multiple past tax years on any tier — each additional
+//   year past the first adds a flat $149.
+//
+// Legacy data: Filing.tier rows created before this rewrite hold
+//   "single_year" / "two_year_diirsp" / "multi_year_diirsp". We keep these in
+//   the DB and map them on display via resolveTier() — old filings show their
+//   original plan label tagged "(legacy plan)", and any new code that needs a
+//   real Tier value gets "standard" back so price math doesn't crash.
+// ─────────────────────────────────────────────────────────────────────────────
 
-export const TIERS: Record<Tier, { label: string; priceCents: number; description: string }> = {
-  single_year: {
-    label: "Single year",
-    priceCents: 16900,
-    description:
-      "Filled Form 5472 + pro forma Form 1120 with supporting statement. Standard or DIIRSP. Fax delivery to the IRS Ogden PIN Unit added at checkout.",
+export type Tier = "standard" | "rush" | "premium";
+export type LegacyTier = "single_year" | "two_year_diirsp" | "multi_year_diirsp";
+export type AnyTierValue = Tier | LegacyTier | string;
+
+export type TierInfo = {
+  label: string;
+  subtitle: string;
+  priceCents: number;
+  features: string[];
+  highlight?: boolean;
+  ctaLabel: string;
+};
+
+export const TIERS: Record<Tier, TierInfo> = {
+  standard: {
+    label: "Standard",
+    subtitle: "Done-for-you filing",
+    priceCents: 19900,
+    ctaLabel: "Choose Standard",
+    features: [
+      "Form 5472 + pro forma 1120 prepared",
+      "Fax filing to IRS Ogden included",
+      "Filing confirmation",
+      "Reasonable-cause letter (for late filings)",
+      "Email support",
+    ],
   },
-  two_year_diirsp: {
-    label: "Two-year DIIRSP catch-up",
-    priceCents: 29900,
-    description:
-      "Two delinquent tax years with reasonable cause statement, full package included. Per-year cheaper than filing separately.",
+  rush: {
+    label: "Rush",
+    subtitle: "Prepared in 24 hours",
+    priceCents: 27900,
+    highlight: true,
+    ctaLabel: "Choose Rush",
+    features: [
+      "Everything in Standard",
+      "24-hour turnaround",
+      "Priority email support",
+      "Next-year filing reminder (March email)",
+    ],
   },
-  multi_year_diirsp: {
-    label: "Three-year DIIRSP catch-up",
-    priceCents: 39900,
-    description:
-      "Three delinquent tax years with reasonable cause statement, full package included. Best per-year price for catch-up.",
+  premium: {
+    label: "Premium",
+    subtitle: "Same-day, full support",
+    priceCents: 44900,
+    ctaLabel: "Choose Premium",
+    features: [
+      "Everything in Rush",
+      "Same-day turnaround (12 hours)",
+      "IRS letter handling (1 year)",
+      "BOI filing review",
+    ],
   },
 };
 
-// Flat add-on charged on the final review step: covers fax transmission to the
-// IRS Ogden PIN Unit and submission tracking.
-export const FAX_FEE_CENTS = 2900;
-export const FAX_FEE_LABEL = "IRS fax delivery & submission";
+export const TIER_ORDER: Tier[] = ["standard", "rush", "premium"];
 
-export function tierForYearCount(count: number): Tier {
-  if (count <= 1) return "single_year";
-  if (count === 2) return "two_year_diirsp";
-  return "multi_year_diirsp";
+// Flat add-on for every tax year past the first. Applies to all three tiers.
+export const MULTI_YEAR_ADDON_CENTS = 14900;
+export const MULTI_YEAR_ADDON_LABEL = "Additional past tax year";
+
+export const DEFAULT_TIER: Tier = "standard";
+
+// Stripe / display strings for the "fax is included" message. Kept as 0 so
+// any legacy callsite that still does `+ FAX_FEE_CENTS` produces the right
+// total — the old fax add-on no longer exists as a line item.
+export const FAX_FEE_CENTS = 0;
+export const FAX_FEE_LABEL = "IRS fax delivery (included)";
+
+const NEW_TIER_SET = new Set<string>(TIER_ORDER);
+
+export function isTier(value: string | null | undefined): value is Tier {
+  return !!value && NEW_TIER_SET.has(value);
+}
+
+export type ResolvedTier = {
+  tier: Tier;
+  isLegacy: boolean;
+  legacyLabel?: string;
+  legacyYearCount?: number;
+};
+
+// Map any historical or current tier string to a usable Tier value for price
+// math + label rendering. Unknown / null values fall back to the default
+// tier so callers never have to null-check before doing TIERS[resolved.tier].
+export function resolveTier(value: string | null | undefined): ResolvedTier {
+  if (isTier(value)) return { tier: value, isLegacy: false };
+  switch (value) {
+    case "single_year":
+      return { tier: "standard", isLegacy: true, legacyLabel: "Single year (legacy plan)", legacyYearCount: 1 };
+    case "two_year_diirsp":
+      return { tier: "standard", isLegacy: true, legacyLabel: "Two-year DIIRSP (legacy plan)", legacyYearCount: 2 };
+    case "multi_year_diirsp":
+      return { tier: "standard", isLegacy: true, legacyLabel: "Three-year DIIRSP (legacy plan)", legacyYearCount: 3 };
+    default:
+      return { tier: DEFAULT_TIER, isLegacy: false };
+  }
+}
+
+export function tierLabel(value: string | null | undefined): string {
+  const resolved = resolveTier(value);
+  if (resolved.isLegacy && resolved.legacyLabel) return resolved.legacyLabel;
+  return TIERS[resolved.tier].label;
+}
+
+export function tierInfo(value: string | null | undefined): TierInfo {
+  return TIERS[resolveTier(value).tier];
+}
+
+export function multiYearAddonCents(yearCount: number): number {
+  if (yearCount <= 1) return 0;
+  return (yearCount - 1) * MULTI_YEAR_ADDON_CENTS;
+}
+
+export function totalPriceCents(
+  tierValue: string | null | undefined,
+  yearCount: number,
+): number {
+  return tierInfo(tierValue).priceCents + multiYearAddonCents(yearCount);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Legacy compatibility shims.
+// The previous pricing model exported these — kept here so any unmigrated
+// call sites still compile. New code should use TIERS / resolveTier /
+// totalPriceCents directly.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function tierForYearCount(_count: number): Tier {
+  // Tier and year-count are independent in the new model; default to Standard.
+  return DEFAULT_TIER;
+}
+
+export function isPremiumSource(_funnelSource: string | null | undefined): boolean {
+  return false;
+}
+
+// Returns a lookup table keyed by every tier value the DB may hold (new tiers
+// + legacy tier slugs). Used by display code that does
+// `getTiersForSource(src)[filing.tier]` — old filings still get a label back
+// and the new shared price (since legacy plans no longer exist as a product).
+// Enumeration code should iterate over TIERS directly, not this map.
+export function getTiersForSource(
+  _funnelSource: string | null | undefined,
+): Record<string, TierInfo> {
+  return {
+    standard: TIERS.standard,
+    rush: TIERS.rush,
+    premium: TIERS.premium,
+    single_year: { ...TIERS.standard, label: "Single year (legacy plan)" },
+    two_year_diirsp: { ...TIERS.standard, label: "Two-year DIIRSP (legacy plan)" },
+    multi_year_diirsp: { ...TIERS.standard, label: "Three-year DIIRSP (legacy plan)" },
+  };
 }

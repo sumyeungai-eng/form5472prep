@@ -1,23 +1,96 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
-import { TIERS, tierForYearCount, FAX_FEE_CENTS, FAX_FEE_LABEL } from "@/lib/pricing";
+import { MULTI_YEAR_ADDON_CENTS, multiYearAddonCents, tierInfo, totalPriceCents } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
+
+// Generates a self-assigned Reference ID for Form 5472 when the customer
+// leaves the field blank. Uses last-name initial + first-name initial as a
+// human-readable prefix (so it's identifiable on the form), plus 4 random
+// alphanumeric chars for uniqueness. Format conforms to the IRS rule:
+// letters, numbers, and dashes only. Pure function, no React deps.
+function generateReferenceId(lastName?: string, firstName?: string): string {
+  const sanitize = (s: string) => s.replace(/[^A-Za-z]/g, "").toUpperCase();
+  const last = sanitize(lastName ?? "");
+  const first = sanitize(firstName ?? "");
+  const prefix = last ? `${last.slice(0, 6)}${first ? `-${first[0]}` : ""}` : "REF";
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // unambiguous chars
+  let suffix = "";
+  for (let i = 0; i < 4; i++) {
+    suffix += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+  return `${prefix}-${suffix}`;
+}
+import { z } from "zod";
 import {
   entitySchema,
-  ownerSchema,
+  ownerBaseSchema,
   yearScopeSchema,
   type EntityForm,
   type OwnerForm,
   type YearScopeForm,
 } from "@/lib/schemas";
+
+// Reference ID is allowed to be empty here even when ITIN is empty —
+// handleOwnerSubmit auto-generates one before save. The IRS "ITIN OR
+// Reference ID" rule is therefore satisfied by the time the row hits the
+// DB, just without bouncing the customer back to fill in a field they
+// don't need to think about.
+const ownerStepObject = ownerBaseSchema.omit({ ownerName: true, ownerAddress: true }).extend({
+  ownerFirstName: z.string().trim().min(1, "Required"),
+  ownerMiddleName: z.string().trim().optional().or(z.literal("")),
+  ownerLastName: z.string().trim().min(1, "Required"),
+  ownerAddressStreet: z.string().trim().min(2, "Required"),
+  ownerAddressCity: z.string().trim().min(1, "Required"),
+  ownerAddressState: z.string().trim().optional().or(z.literal("")),
+  ownerAddressPostal: z.string().trim().optional().or(z.literal("")),
+  ownerAddressCountry: z.string().trim().min(1, "Required"),
+});
+const ownerStepSchema = ownerStepObject;
+type OwnerStepForm = z.infer<typeof ownerStepObject>;
 import { TransactionsReview } from "./TransactionsReview";
 import { ReasonableCauseStep } from "./ReasonableCauseStep";
+
+// Common principal business activities for foreign-owned single-member LLCs,
+// with their IRS 6-digit NAICS codes. The catch-all "Other (please specify)"
+// option falls back to the original free-text input.
+const BUSINESS_ACTIVITIES: { activity: string; code: string }[] = [
+  { activity: "Software / SaaS / app development", code: "541512" },
+  { activity: "IT services / computer systems design", code: "541510" },
+  { activity: "Web design / web development", code: "541511" },
+  { activity: "Management consulting", code: "541611" },
+  { activity: "Marketing / advertising consulting", code: "541613" },
+  { activity: "Advertising agency / digital marketing services", code: "541810" },
+  { activity: "Graphic / industrial design services", code: "541430" },
+  { activity: "Writing / content creation / translation", code: "711510" },
+  { activity: "Photography / video production", code: "541921" },
+  { activity: "Online / e-commerce retail (physical products)", code: "454110" },
+  { activity: "Wholesale distribution / import-export", code: "424990" },
+  { activity: "Dropshipping / Amazon FBA seller", code: "454110" },
+  { activity: "Online education / courses / coaching", code: "611430" },
+  { activity: "Affiliate marketing / content publishing", code: "519130" },
+  { activity: "Investment activities / holding company", code: "523900" },
+  { activity: "Real estate — rental property", code: "531110" },
+  { activity: "Real estate — other (flipping, syndication, etc.)", code: "531390" },
+  { activity: "Cryptocurrency / digital asset trading", code: "523900" },
+  { activity: "Financial / accounting / bookkeeping services", code: "541219" },
+  { activity: "Legal services", code: "541110" },
+  { activity: "Engineering / architectural services", code: "541330" },
+  { activity: "Restaurants / food service", code: "722511" },
+  { activity: "Construction / contractor", code: "236220" },
+  { activity: "Manufacturing", code: "339999" },
+  { activity: "Transportation / logistics / freight", code: "488510" },
+  { activity: "Trucking / delivery", code: "484110" },
+  { activity: "Personal services (cleaning, beauty, etc.)", code: "812990" },
+  { activity: "Healthcare / wellness services", code: "621399" },
+  { activity: "Independent artist / performer / influencer", code: "711510" },
+  { activity: "Other (unable to classify)", code: "999999" },
+];
 
 type Filing = {
   id: string;
@@ -33,6 +106,11 @@ type Filing = {
   llcBusinessCode: string | null;
   ownerName: string | null;
   ownerAddress: string | null;
+  ownerAddressStreet: string | null;
+  ownerAddressCity: string | null;
+  ownerAddressState: string | null;
+  ownerAddressPostal: string | null;
+  ownerAddressCountry: string | null;
   ownerCountryCitizenship: string | null;
   ownerCountryTaxResidence: string | null;
   ownerCountryBusiness: string | null;
@@ -42,15 +120,27 @@ type Filing = {
   taxYears: number[];
   isDiirsp: boolean;
   reasonableCauseNarrative: string | null;
+  faxService: boolean;
+  // Service tier ("standard" | "rush" | "premium") chosen at /pricing or
+  // /start?tier=. Drives base price; year count drives the per-extra-year
+  // add-on. Legacy values like "single_year" still appear on old filings
+  // and resolve to Standard via resolveTier() in pricing.ts.
+  tier: string | null;
+  // Source attribution slug captured from ?src= on the landing page that
+  // sent the visitor to /start. Used for sales-attribution reporting.
+  funnelSource: string | null;
   yearData: {
     taxYear: number;
     totalAssetsYearEnd: string;
     contributions: string;
     distributions: string;
+    otherTransactionsNote: string | null;
   }[];
 };
 
-type StepKey = "entity" | "owner" | "years" | "rcs" | "transactions" | "review";
+// Exported so wrapper components (v3 sidebar layout) can build their own
+// step list and stay in sync with the wizard's current step.
+export type StepKey = "entity" | "owner" | "years" | "rcs" | "transactions" | "review";
 
 async function patchFiling(id: string, body: Record<string, unknown>) {
   const res = await fetch(`/api/filings/${id}`, {
@@ -65,13 +155,41 @@ async function patchFiling(id: string, body: Record<string, unknown>) {
 export function FilingWizard({
   filing: initial,
   plaidEnabled = false,
+  // Optional controlled-mode props. When `step` is provided, the parent owns
+  // step state and the wizard fires `onStepChange` whenever it would have
+  // moved internally. When omitted, behavior is unchanged from the original
+  // /edit usage (internal state). Used by the v3 sidebar layout so the
+  // sidebar can highlight + control the active step.
+  step,
+  onStepChange,
+  // When true, hide the wizard's own top Stepper (the v3 layout shows steps
+  // in the left sidebar so the inline one would be redundant).
+  hideTopStepper = false,
+  // When true, hide the wizard's outer max-width container so a parent
+  // layout (the v3 sidebar wrapper) controls the page chrome instead.
+  bareLayout = false,
+  // Notifies the parent when underlying filing data changes (autosave
+  // returns updated record). Lets the sidebar recompute completion status
+  // without reading prisma directly.
+  onFilingChange,
 }: {
   filing: Filing;
   plaidEnabled?: boolean;
+  step?: StepKey;
+  onStepChange?: (next: StepKey) => void;
+  hideTopStepper?: boolean;
+  bareLayout?: boolean;
+  onFilingChange?: (next: Filing) => void;
 }) {
   const router = useRouter();
   const [filing, setFiling] = useState(initial);
   const [saving, setSaving] = useState(false);
+
+  // Whenever local filing state changes, surface it to the parent so the
+  // v3 sidebar can recompute step-status badges.
+  useEffect(() => {
+    onFilingChange?.(filing);
+  }, [filing, onFilingChange]);
 
   // RCS step only shown when DIIRSP.
   const steps: { key: StepKey; label: string }[] = useMemo(() => {
@@ -86,7 +204,14 @@ export function FilingWizard({
     return base;
   }, [filing.isDiirsp]);
 
-  const [stepKey, setStepKey] = useState<StepKey>("entity");
+  // Internal-vs-controlled step state. Controlled wins when `step` is
+  // explicitly passed by the parent.
+  const [internalStepKey, setInternalStepKey] = useState<StepKey>("entity");
+  const stepKey = step ?? internalStepKey;
+  const setStepKey = (next: StepKey) => {
+    if (step === undefined) setInternalStepKey(next);
+    onStepChange?.(next);
+  };
   const stepIndex = steps.findIndex((s) => s.key === stepKey);
 
   function goNext() {
@@ -109,10 +234,20 @@ export function FilingWizard({
     }
   }
 
+  // Outer container: v3 sidebar layout asks for `bareLayout` so the parent
+  // page owns max-width + padding. Default behavior is the original /edit
+  // self-contained look.
+  const Outer: React.FC<{ children: React.ReactNode }> = ({ children }) =>
+    bareLayout
+      ? <div className="w-full">{children}</div>
+      : <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10">{children}</div>;
+
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Stepper steps={steps} current={stepIndex} onJumpTo={(key) => setStepKey(key)} />
-      <div className="mt-6 sm:mt-8 bg-white rounded-lg border border-slate-200 p-5 sm:p-8">
+    <Outer>
+      {!hideTopStepper && (
+        <Stepper steps={steps} current={stepIndex} onJumpTo={(key) => setStepKey(key)} />
+      )}
+      <div className={`${hideTopStepper ? "" : "mt-6 sm:mt-8"} bg-white rounded-lg border border-slate-200 p-5 sm:p-8`}>
         {stepKey === "entity" && (
           <EntityStep
             filing={filing}
@@ -175,6 +310,7 @@ export function FilingWizard({
                 totalAssetsYearEnd: ex ? Number(ex.totalAssetsYearEnd) : 0,
                 contributions: ex ? Number(ex.contributions) : 0,
                 distributions: ex ? Number(ex.distributions) : 0,
+                otherTransactionsNote: ex?.otherTransactionsNote ?? "",
               };
             })}
             onSubmit={async (yearData) => {
@@ -186,6 +322,7 @@ export function FilingWizard({
                   totalAssetsYearEnd: String(y.totalAssetsYearEnd),
                   contributions: String(y.contributions),
                   distributions: String(y.distributions),
+                  otherTransactionsNote: y.otherTransactionsNote || null,
                 })),
               });
               goNext();
@@ -198,11 +335,11 @@ export function FilingWizard({
           <ReviewStep
             filing={filing}
             onBack={goBack}
-            onPay={async (email) => {
+            onPay={async (email, faxService) => {
               const res = await fetch("/api/checkout", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ filingId: filing.id, email }),
+                body: JSON.stringify({ filingId: filing.id, email, faxService }),
               });
               if (!res.ok) {
                 const body = await res.json().catch(() => ({}));
@@ -215,7 +352,7 @@ export function FilingWizard({
           />
         )}
       </div>
-    </div>
+    </Outer>
   );
 }
 
@@ -301,6 +438,8 @@ function EntityStep({
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<EntityForm>({
     resolver: zodResolver(entitySchema),
@@ -316,6 +455,31 @@ function EntityStep({
       llcBusinessCode: filing.llcBusinessCode ?? "",
     },
   });
+
+  // Pre-existing activity values that aren't in the dropdown list start in
+  // "Other" mode so we don't silently lose the customer's prior input.
+  const initialActivity = filing.llcBusinessActivity ?? "";
+  const initialIsPreset = BUSINESS_ACTIVITIES.some((b) => b.activity === initialActivity);
+  const [activityIsOther, setActivityIsOther] = useState<boolean>(
+    initialActivity.length > 0 && !initialIsPreset,
+  );
+
+  function handleActivitySelect(value: string) {
+    if (value === "__other__") {
+      setActivityIsOther(true);
+      setValue("llcBusinessActivity", "", { shouldValidate: true });
+      setValue("llcBusinessCode", "", { shouldValidate: true });
+      return;
+    }
+    setActivityIsOther(false);
+    const preset = BUSINESS_ACTIVITIES.find((b) => b.activity === value);
+    if (preset) {
+      setValue("llcBusinessActivity", preset.activity, { shouldValidate: true });
+      setValue("llcBusinessCode", preset.code, { shouldValidate: true });
+    }
+  }
+
+  const currentActivity = watch("llcBusinessActivity");
 
   // If the LLC name is already populated on a fresh DRAFT, the customer is a
   // returning filer whose previous filing's details were pre-filled. Surface
@@ -364,7 +528,24 @@ function EntityStep({
           </>
         }
       >
-        <Input {...register("llcEin")} placeholder="XX-XXXXXXX" />
+        {/* Auto-format as XX-XXXXXXX while the user types: strip everything
+            that isn't a digit, cap at 9 digits, and re-insert the dash after
+            the first two. inputMode="numeric" pops the numeric keypad on
+            mobile; maxLength includes the dash. */}
+        <Input
+          inputMode="numeric"
+          maxLength={10}
+          value={watch("llcEin") ?? ""}
+          name="llcEin"
+          placeholder="XX-XXXXXXX"
+          onBlur={register("llcEin").onBlur}
+          ref={register("llcEin").ref}
+          onChange={(e) => {
+            const digits = e.target.value.replace(/\D/g, "").slice(0, 9);
+            const formatted = digits.length > 2 ? `${digits.slice(0, 2)}-${digits.slice(2)}` : digits;
+            setValue("llcEin", formatted, { shouldValidate: true, shouldDirty: true });
+          }}
+        />
       </Field>
       <Field label="Street address" error={errors.llcAddress?.message}>
         <Input {...register("llcAddress")} placeholder="123 Main St" />
@@ -380,11 +561,50 @@ function EntityStep({
           <Input {...register("llcZip")} placeholder="82001" />
         </Field>
       </div>
-      <Field label="Date of formation" error={errors.llcDateIncorporated?.message}>
+      <Field
+        label="Date of formation"
+        error={errors.llcDateIncorporated?.message}
+        help={
+          <p>
+            The date the state registered your LLC. Check the formation certificate or the
+            confirmation email from the state agency (or the company that formed it for you).
+          </p>
+        }
+      >
         <Input type="date" {...register("llcDateIncorporated")} />
       </Field>
-      <Field label="Principal business activity" error={errors.llcBusinessActivity?.message}>
-        <Input {...register("llcBusinessActivity")} placeholder="Software consulting" />
+      <Field
+        label="Principal business activity"
+        hint="Pick the closest match. We'll auto-fill the IRS 6-digit code below."
+        error={errors.llcBusinessActivity?.message}
+      >
+        <select
+          value={
+            activityIsOther
+              ? "__other__"
+              : (BUSINESS_ACTIVITIES.find((b) => b.activity === currentActivity)?.activity ?? "")
+          }
+          onChange={(e) => handleActivitySelect(e.target.value)}
+          className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+        >
+          <option value="">Select your business activity…</option>
+          {BUSINESS_ACTIVITIES.map((b) => (
+            <option key={b.code} value={b.activity}>
+              {b.activity}
+            </option>
+          ))}
+          <option value="__other__">Other (specify) …</option>
+        </select>
+        {activityIsOther && (
+          <Input
+            {...register("llcBusinessActivity")}
+            placeholder="Describe what your LLC does (e.g., custom yacht brokering)"
+            className="mt-2"
+          />
+        )}
+        {!activityIsOther && (
+          <input type="hidden" {...register("llcBusinessActivity")} />
+        )}
       </Field>
       <Field
         label="6-digit business code (NAICS)"
@@ -434,6 +654,14 @@ function EntityStep({
   );
 }
 
+function splitOwnerName(full: string | null): { first: string; middle: string; last: string } {
+  const parts = (full ?? "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return { first: "", middle: "", last: "" };
+  if (parts.length === 1) return { first: parts[0], middle: "", last: "" };
+  if (parts.length === 2) return { first: parts[0], middle: "", last: parts[1] };
+  return { first: parts[0], middle: parts.slice(1, -1).join(" "), last: parts[parts.length - 1] };
+}
+
 function OwnerStep({
   filing,
   onSubmit,
@@ -441,19 +669,31 @@ function OwnerStep({
   saving,
 }: {
   filing: Filing;
-  onSubmit: (data: OwnerForm) => Promise<void>;
+  onSubmit: (data: OwnerForm & Partial<OwnerStepForm>) => Promise<void>;
   onBack: () => void;
   saving: boolean;
 }) {
+  const nameParts = splitOwnerName(filing.ownerName);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<OwnerForm>({
-    resolver: zodResolver(ownerSchema),
+  } = useForm<OwnerStepForm>({
+    resolver: zodResolver(ownerStepSchema),
     defaultValues: {
-      ownerName: filing.ownerName ?? "",
-      ownerAddress: filing.ownerAddress ?? "",
+      ownerFirstName: nameParts.first,
+      ownerMiddleName: nameParts.middle,
+      ownerLastName: nameParts.last,
+      // Prefer the structured columns; fall back to the legacy combined
+      // ownerAddress (which lands entirely in Street) only for filings saved
+      // before structured fields existed.
+      ownerAddressStreet:
+        filing.ownerAddressStreet ??
+        (filing.ownerAddressCity || filing.ownerAddressCountry ? "" : filing.ownerAddress ?? ""),
+      ownerAddressCity: filing.ownerAddressCity ?? "",
+      ownerAddressState: filing.ownerAddressState ?? "",
+      ownerAddressPostal: filing.ownerAddressPostal ?? "",
+      ownerAddressCountry: filing.ownerAddressCountry ?? "",
       ownerCountryCitizenship: filing.ownerCountryCitizenship ?? "",
       ownerCountryTaxResidence: filing.ownerCountryTaxResidence ?? "",
       ownerCountryBusiness: filing.ownerCountryBusiness ?? "",
@@ -463,26 +703,117 @@ function OwnerStep({
     },
   });
 
+  function handleOwnerSubmit(data: OwnerStepForm) {
+    const { ownerFirstName, ownerMiddleName, ownerLastName,
+            ownerAddressStreet, ownerAddressCity, ownerAddressState,
+            ownerAddressPostal, ownerAddressCountry, ...rest } = data;
+    const ownerName = [ownerFirstName, ownerMiddleName, ownerLastName].filter(Boolean).join(" ");
+    const ownerAddress = [ownerAddressStreet, ownerAddressCity, ownerAddressState, ownerAddressPostal, ownerAddressCountry]
+      .filter(Boolean).join(", ");
+
+    // Form 5472 requires a Reference ID when the owner has no ITIN. If the
+    // customer left the field blank, generate a stable self-assigned ID
+    // (last-name initials + 4 random alphanumeric chars, or "REF-XXXXXX" if
+    // we don't have a name yet) so the filing remains valid. They can edit
+    // it on a return visit if they want a different value.
+    const ownerItinTrim = (rest.ownerItin ?? "").trim();
+    const ownerRefTrim = (rest.ownerReferenceId ?? "").trim();
+    if (!ownerItinTrim && !ownerRefTrim) {
+      rest.ownerReferenceId = generateReferenceId(ownerLastName, ownerFirstName);
+    }
+
+    // Save both the structured parts (so the form can re-hydrate them on
+    // next visit) and the concatenated string (used by PDF generation).
+    return onSubmit({
+      ownerName,
+      ownerAddress,
+      ownerAddressStreet,
+      ownerAddressCity,
+      ownerAddressState,
+      ownerAddressPostal,
+      ownerAddressCountry,
+      ...rest,
+    });
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit(handleOwnerSubmit)} className="space-y-5">
       <div>
         <h2 className="text-xl font-semibold">Foreign owner information</h2>
         <p className="text-sm text-slate-500 mt-1">As shown on your passport.</p>
       </div>
-      <Field label="Full legal name" error={errors.ownerName?.message}>
-        <Input {...register("ownerName")} />
-      </Field>
-      <Field label="Residential address" error={errors.ownerAddress?.message}>
-        <Input {...register("ownerAddress")} placeholder="Flat 5A, 123 Queens Rd, Hong Kong" />
-      </Field>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Field label="Citizenship" error={errors.ownerCountryCitizenship?.message}>
+        <Field label="First name" error={errors.ownerFirstName?.message}>
+          <Input {...register("ownerFirstName")} placeholder="John" />
+        </Field>
+        <Field label="Middle name" error={errors.ownerMiddleName?.message}>
+          <Input {...register("ownerMiddleName")} placeholder="(optional)" />
+        </Field>
+        <Field label="Last name" error={errors.ownerLastName?.message}>
+          <Input {...register("ownerLastName")} placeholder="Smith" />
+        </Field>
+      </div>
+      <Field label="Street address" error={errors.ownerAddressStreet?.message}>
+        <Input {...register("ownerAddressStreet")} placeholder="Flat 5A, 123 Queens Rd" />
+      </Field>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Field label="City" error={errors.ownerAddressCity?.message}>
+          <Input {...register("ownerAddressCity")} placeholder="Hong Kong" />
+        </Field>
+        <Field label="State / Province" error={errors.ownerAddressState?.message}>
+          <Input {...register("ownerAddressState")} placeholder="(optional)" />
+        </Field>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Field label="Postal / ZIP code" error={errors.ownerAddressPostal?.message}>
+          <Input {...register("ownerAddressPostal")} placeholder="(optional)" />
+        </Field>
+        <Field label="Country" error={errors.ownerAddressCountry?.message}>
+          <Input {...register("ownerAddressCountry")} placeholder="Hong Kong" />
+        </Field>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Field
+          label="Citizenship"
+          error={errors.ownerCountryCitizenship?.message}
+          help={
+            <p>
+              The country that issued your passport. If you hold more than one passport, list the
+              country you use the most (or the same one you used on bank documents for this LLC).
+            </p>
+          }
+        >
           <Input {...register("ownerCountryCitizenship")} placeholder="Hong Kong" />
         </Field>
-        <Field label="Tax residence" error={errors.ownerCountryTaxResidence?.message}>
+        <Field
+          label="Tax residence"
+          error={errors.ownerCountryTaxResidence?.message}
+          help={
+            <>
+              <p>
+                The country where you currently <strong>pay personal income tax</strong>. Usually
+                the country you live in and have a tax ID for.
+              </p>
+              <p className="mt-2">
+                Example: a UK citizen living in Dubai pays tax in the UAE, so the answer is{" "}
+                <strong>United Arab Emirates</strong>, not United Kingdom.
+              </p>
+            </>
+          }
+        >
           <Input {...register("ownerCountryTaxResidence")} placeholder="Hong Kong" />
         </Field>
-        <Field label="Country of business" error={errors.ownerCountryBusiness?.message}>
+        <Field
+          label="Country of business"
+          error={errors.ownerCountryBusiness?.message}
+          help={
+            <p>
+              Where you actually <strong>run the LLC from</strong> — the country you&apos;re sitting in
+              when you make decisions, sign contracts, and manage operations. Often the same as
+              your tax residence.
+            </p>
+          }
+        >
           <Input {...register("ownerCountryBusiness")} placeholder="Hong Kong" />
         </Field>
       </div>
@@ -541,7 +872,7 @@ function OwnerStep({
         </Field>
         <Field
           label="Reference ID (if no ITIN)"
-          hint="Required when ITIN is blank. Letters/numbers only."
+          hint="Leave blank and we'll generate one for you. Letters/numbers only."
           error={errors.ownerReferenceId?.message}
           help={
             <>
@@ -550,7 +881,9 @@ function OwnerStep({
                 on Form 5472. It just needs to be unique to you and stable across years.
               </p>
               <p className="mt-2">
-                Easiest: use your <strong>FTIN with dashes removed</strong>, or a short code like{" "}
+                <strong>You can leave this blank</strong> — we&apos;ll generate one based on your
+                name (e.g. <code>SMITH-J-A7B2</code>). Or set your own: easiest is your{" "}
+                <strong>FTIN with dashes removed</strong>, or a short code like{" "}
                 <code>SMITH-J-001</code>. Letters and numbers only — no spaces or special
                 characters.
               </p>
@@ -602,7 +935,13 @@ function YearsStep({
     setValue("taxYears", next, { shouldValidate: true });
   }
 
-  const tier = tierForYearCount(selected.length);
+  // Tier is selected at /pricing (or /start?tier=) and stored on filing.tier.
+  // Wizard just lets the customer pick year count; each additional past year
+  // adds a flat $149 on top of the tier base.
+  const activeTier = tierInfo(filing.tier);
+  const extraYears = Math.max(0, selected.length - 1);
+  const addOnTotalCents = multiYearAddonCents(selected.length);
+  const totalCents = activeTier.priceCents + addOnTotalCents;
   const wouldBeDiirsp =
     selected.length > 1 || selected.some((y) => y < currentYear);
 
@@ -611,8 +950,9 @@ function YearsStep({
       <div>
         <h2 className="text-xl font-semibold">Tax years to file</h2>
         <p className="text-sm text-slate-500 mt-1">
-          Multi-year filings — or any prior year — go through the DIIRSP procedure with a
-          reasonable cause statement.
+          Pick every tax year you want to file for. If you pick more than one — or any year
+          before the current one — we&apos;ll guide you through the IRS late-filing procedure
+          (called DIIRSP) and help you write a short reason for being late.
         </p>
       </div>
       <input type="hidden" {...register("taxYears", { valueAsNumber: false })} />
@@ -640,10 +980,14 @@ function YearsStep({
       {errors.taxYears && <p className="text-xs text-red-600">{errors.taxYears.message}</p>}
       <div className="rounded-md bg-slate-50 p-4 text-sm">
         <p className="font-medium">
-          {selected.length} year{selected.length === 1 ? "" : "s"} → {formatUsd(TIERS[tier].priceCents)}
-          <span className="text-slate-500"> + {formatUsd(FAX_FEE_CENTS)} fax fee</span>
+          {activeTier.label}: {formatUsd(activeTier.priceCents)}
+          {extraYears > 0 && (
+            <span className="text-slate-500">
+              {" "}+ {extraYears} extra year{extraYears === 1 ? "" : "s"} × {formatUsd(MULTI_YEAR_ADDON_CENTS)} = {formatUsd(totalCents)}
+            </span>
+          )}
         </p>
-        <p className="text-slate-600 mt-1">{TIERS[tier].description}</p>
+        <p className="text-slate-600 mt-1">IRS fax delivery included.</p>
         {wouldBeDiirsp && (
           <p className="text-xs text-accent mt-2">
             DIIRSP applies — we&apos;ll help you write the reasonable cause statement next.
@@ -669,9 +1013,15 @@ function ReviewStep({
 }: {
   filing: Filing;
   onBack: () => void;
-  onPay: (email: string) => Promise<void>;
+  onPay: (email: string, faxService: boolean) => Promise<void>;
 }) {
-  const tier = tierForYearCount(filing.taxYears.length);
+  // Tier chosen upstream at /pricing or /start?tier=. Fax delivery is
+  // included on every tier — no add-on toggle anymore.
+  const activeTier = tierInfo(filing.tier);
+  const yearCount = filing.taxYears.length || 1;
+  const extraYears = Math.max(0, yearCount - 1);
+  const addOnCents = multiYearAddonCents(yearCount);
+  const total = totalPriceCents(filing.tier, yearCount);
   const [email, setEmail] = useState(filing.email ?? "");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
@@ -685,7 +1035,9 @@ function ReviewStep({
     setEmailError(null);
     setPaying(true);
     try {
-      await onPay(trimmed);
+      // faxService arg kept for the existing onPay signature; checkout API
+      // now ignores it (fax is bundled on every tier).
+      await onPay(trimmed, true);
     } finally {
       setPaying(false);
     }
@@ -723,14 +1075,22 @@ function ReviewStep({
             }
           />
         )}
-        <Row label="Tier" value={TIERS[tier].label} />
-        <Row label={TIERS[tier].label} value={formatUsd(TIERS[tier].priceCents)} />
-        <Row label={FAX_FEE_LABEL} value={formatUsd(FAX_FEE_CENTS)} />
-        <Row
-          label="Total"
-          value={formatUsd(TIERS[tier].priceCents + FAX_FEE_CENTS)}
-        />
+        <Row label="Plan" value={`${activeTier.label} — ${activeTier.subtitle}`} />
+        <Row label={`${activeTier.label} (fax delivery included)`} value={formatUsd(activeTier.priceCents)} />
+        {extraYears > 0 && (
+          <Row
+            label={`${extraYears} additional tax year${extraYears === 1 ? "" : "s"}`}
+            value={`${formatUsd(addOnCents)} (${extraYears} × ${formatUsd(MULTI_YEAR_ADDON_CENTS)})`}
+          />
+        )}
+        <Row label="Total" value={formatUsd(total)} />
       </dl>
+
+      <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+        We fax your signed package to the IRS Ogden PIN Unit and return the
+        timestamped fax receipt as proof of on-time filing. Fax delivery is
+        included on every plan — no separate fee.
+      </div>
 
       <Field
         label="Email address"
@@ -761,7 +1121,7 @@ function ReviewStep({
           Back
         </Button>
         <Button onClick={handlePay} disabled={paying}>
-          {paying ? "Redirecting…" : `Pay ${formatUsd(TIERS[tier].priceCents + FAX_FEE_CENTS)} →`}
+          {paying ? "Redirecting…" : `Pay ${formatUsd(total)} →`}
         </Button>
       </div>
     </div>
