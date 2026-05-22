@@ -186,6 +186,79 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ ok: true, ...body });
     }
 
+    case "regeneratePdf": {
+      // Rebuild the unsigned PDF from current DB state. Used after admin
+      // edits a field by hand and wants a fresh package without going
+      // through the wizard or asking the customer to do anything. If the
+      // existing PDF had a signature on it, regenerating discards the
+      // signed version too — surface that risk to the admin via the UI.
+      const full = await prisma.filing.findUnique({
+        where: { id: filing.id },
+        include: { yearData: { orderBy: { taxYear: "asc" } } },
+      });
+      if (!full) return NextResponse.json({ error: "filing not found" }, { status: 404 });
+      if (!full.llcName || !full.llcEin || !full.llcAddress || !full.llcCity ||
+          !full.llcState || !full.llcZip || !full.llcDateIncorporated ||
+          !full.llcBusinessActivity || !full.llcBusinessCode || !full.ownerName ||
+          !full.ownerAddress || !full.ownerCountryCitizenship ||
+          !full.ownerCountryTaxResidence || !full.ownerCountryBusiness || !full.ownerFtin) {
+        return NextResponse.json({ error: "filing is missing required fields — finish the wizard first" }, { status: 400 });
+      }
+      let pkg: { bytes: Uint8Array; signatures: SignatureLocation[] };
+      try {
+        pkg = await generatePackage({
+          llcName: full.llcName, llcEin: full.llcEin, llcAddress: full.llcAddress,
+          llcCity: full.llcCity, llcState: full.llcState, llcZip: full.llcZip,
+          llcCountry: full.llcCountry, llcDateIncorporated: full.llcDateIncorporated,
+          llcBusinessActivity: full.llcBusinessActivity, llcBusinessCode: full.llcBusinessCode,
+          ownerName: full.ownerName, ownerAddress: full.ownerAddress,
+          ownerCountryCitizenship: full.ownerCountryCitizenship,
+          ownerCountryTaxResidence: full.ownerCountryTaxResidence,
+          ownerCountryBusiness: full.ownerCountryBusiness, ownerFtin: full.ownerFtin,
+          ownerItin: full.ownerItin, ownerReferenceId: full.ownerReferenceId,
+          taxYears: full.taxYears, isDiirsp: full.isDiirsp,
+          reasonableCauseNarrative: full.reasonableCauseNarrative,
+          yearData: full.yearData.map((y) => ({
+            taxYear: y.taxYear,
+            totalAssetsYearEnd: Number(y.totalAssetsYearEnd),
+            contributions: Number(y.contributions),
+            distributions: Number(y.distributions),
+            otherTransactionsNote: y.otherTransactionsNote,
+            reportableTransactions: Array.isArray(y.reportableTransactions)
+              ? (y.reportableTransactions as unknown[]).filter(
+                  (t): t is { date: string; description: string; counterparty?: string; amountCents: number; category: string } =>
+                    !!t && typeof t === "object" && "date" in t && "amountCents" in t && "category" in t,
+                )
+              : [],
+          })),
+        });
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "unknown";
+        return NextResponse.json({ error: `generation failed: ${msg}` }, { status: 500 });
+      }
+      const key = `${filing.id}_unsigned.pdf`;
+      await putPdf(key, pkg.bytes);
+      // Reset signed PDF + validation state — the old signature was applied
+      // to a stale PDF and isn't valid against the new one. Customer (or
+      // admin) needs to re-sign.
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: {
+          generatedPdfKey: key,
+          signedPdfKey: null,
+          validationStatus: "pending",
+          validationCheckedAt: null,
+          status: "PDF_GENERATED",
+        },
+      });
+      return NextResponse.json({
+        ok: true,
+        pdfBytes: pkg.bytes.length,
+        signatureCount: pkg.signatures.length,
+        note: filing.signedPdfKey ? "Existing signed PDF was discarded — re-sign required." : undefined,
+      });
+    }
+
     default:
       return NextResponse.json({ error: "unknown action" }, { status: 400 });
   }
