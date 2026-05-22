@@ -76,7 +76,7 @@ function Header({
         </div>
         <h1 className="mt-6 text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900 text-balance">
           Form 5472 and Form 1120 guides,<br />
-          <span className="text-accent">written for humans.</span>
+          <span className="text-accent">in plain English.</span>
         </h1>
         <p className="mt-4 text-lg text-slate-600 max-w-2xl">
           Practical explainers for foreign-owned US LLC owners. The IRS rules in plain English,
@@ -247,7 +247,7 @@ function NewsletterPanel() {
         href="/start"
         className="inline-flex items-center justify-center mt-6 h-11 px-5 rounded-md bg-accent text-white text-sm font-medium hover:bg-accent-700"
       >
-        Start filing — $169 plus a flat $29
+        Start filing
         <ArrowRight className="ml-2 h-4 w-4" />
       </Link>
       <p className="mt-3 text-xs text-slate-500">
