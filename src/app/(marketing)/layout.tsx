@@ -25,7 +25,7 @@ export default async function MarketingLayout({ children }: { children: React.Re
               href="/blog"
               className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
             >
-              Blog
+              Guide
             </Link>
             {user ? (
               <Link href="/dashboard">
