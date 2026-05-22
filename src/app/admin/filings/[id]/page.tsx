@@ -79,6 +79,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           hasFaxService={filing.faxService}
           hasSignedPdf={!!filing.signedPdfKey}
           hasGeneratedPdf={!!filing.generatedPdfKey}
+          hasCustomerSignature={!!filing.signaturePngKey}
         />
       </div>
 
