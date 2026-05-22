@@ -10,15 +10,41 @@ const RENDER_SCALE = 1.5;
 const DEFAULT_SIG_CSS_WIDTH = 180;
 const DEFAULT_SIG_CSS_HEIGHT = 45;
 
-type Placement = {
-  id: string;
-  pageIndex: number; // 0-based
-  // CSS pixel coords relative to the rendered canvas, top-left origin
-  cssX: number;
-  cssY: number;
-  cssWidth: number;
-  cssHeight: number;
-};
+type Placement =
+  | {
+      id: string;
+      kind: "signature";
+      pageIndex: number; // 0-based
+      // CSS pixel coords relative to the rendered canvas, top-left origin
+      cssX: number;
+      cssY: number;
+      cssWidth: number;
+      cssHeight: number;
+    }
+  | {
+      id: string;
+      kind: "date";
+      pageIndex: number;
+      cssX: number;
+      cssY: number;
+      cssWidth: number;  // bounding box for the text, used for drag/select hit area
+      cssHeight: number;
+      text: string;      // editable date string
+      cssFontSize: number; // CSS px; converts to PDF points by dividing by RENDER_SCALE
+    };
+
+type Mode = "signature" | "date";
+
+const DEFAULT_DATE_CSS_WIDTH = 110;
+const DEFAULT_DATE_CSS_HEIGHT = 22;
+const DEFAULT_DATE_CSS_FONT = 18; // ≈ 12pt PDF size at 1.5x render scale
+
+function todayMMDDYYYY(): string {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${mm}/${dd}/${d.getFullYear()}`;
+}
 
 // Each rendered page's intrinsic PDF size (in points) so we can map display
 // coords back to PDF coords on save. Indexed by pageIndex.
@@ -40,6 +66,8 @@ export function PlaceSignatureClient({
   // and has them click "Back to filing" themselves. Kept the import comment
   // so it's easy to re-add a redirect later if we want one-click finish.
   const [loadingState, setLoadingState] = useState<string>("Loading PDF…");
+  const [mode, setMode] = useState<Mode>("signature");
+  const [defaultDateText, setDefaultDateText] = useState<string>(todayMMDDYYYY());
   const [pageSizes, setPageSizes] = useState<PageSize[]>([]);
   const [sigUrl, setSigUrl] = useState<string | null>(null);
   const [placements, setPlacements] = useState<Placement[]>([]);
@@ -138,23 +166,44 @@ export function PlaceSignatureClient({
 
   // ─── Click-to-place ─────────────────────────────────────────────────────
   function handlePageClick(pageIndex: number, e: React.MouseEvent<HTMLDivElement>) {
-    if (!sigUrl) return;
+    // Signature mode needs the signature image loaded; date mode doesn't.
+    if (mode === "signature" && !sigUrl) return;
     const wrapper = e.currentTarget;
     const rect = wrapper.getBoundingClientRect();
-    const cssX = e.clientX - rect.left - DEFAULT_SIG_CSS_WIDTH / 2;
-    const cssY = e.clientY - rect.top - DEFAULT_SIG_CSS_HEIGHT / 2;
     const id = `p_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-    setPlacements((arr) => [
-      ...arr,
-      {
-        id,
-        pageIndex,
-        cssX: Math.max(0, cssX),
-        cssY: Math.max(0, cssY),
-        cssWidth: DEFAULT_SIG_CSS_WIDTH,
-        cssHeight: DEFAULT_SIG_CSS_HEIGHT,
-      },
-    ]);
+    if (mode === "signature") {
+      const cssX = e.clientX - rect.left - DEFAULT_SIG_CSS_WIDTH / 2;
+      const cssY = e.clientY - rect.top - DEFAULT_SIG_CSS_HEIGHT / 2;
+      setPlacements((arr) => [
+        ...arr,
+        {
+          id,
+          kind: "signature",
+          pageIndex,
+          cssX: Math.max(0, cssX),
+          cssY: Math.max(0, cssY),
+          cssWidth: DEFAULT_SIG_CSS_WIDTH,
+          cssHeight: DEFAULT_SIG_CSS_HEIGHT,
+        },
+      ]);
+    } else {
+      const cssX = e.clientX - rect.left - DEFAULT_DATE_CSS_WIDTH / 2;
+      const cssY = e.clientY - rect.top - DEFAULT_DATE_CSS_HEIGHT / 2;
+      setPlacements((arr) => [
+        ...arr,
+        {
+          id,
+          kind: "date",
+          pageIndex,
+          cssX: Math.max(0, cssX),
+          cssY: Math.max(0, cssY),
+          cssWidth: DEFAULT_DATE_CSS_WIDTH,
+          cssHeight: DEFAULT_DATE_CSS_HEIGHT,
+          text: defaultDateText,
+          cssFontSize: DEFAULT_DATE_CSS_FONT,
+        },
+      ]);
+    }
   }
 
   // ─── Drag / resize ──────────────────────────────────────────────────────
@@ -177,12 +226,24 @@ export function PlaceSignatureClient({
           if (mode === "move") {
             return { ...p, cssX: start!.cssX + dx, cssY: start!.cssY + dy };
           }
-          // Resize: keep top-left fixed, change width + height.
-          const newW = Math.max(40, start!.cssWidth + dx);
-          // Preserve the signature's aspect ratio so it doesn't squish.
-          const ratio = start!.cssHeight / start!.cssWidth;
-          const newH = newW * ratio;
-          return { ...p, cssWidth: newW, cssHeight: newH };
+          // Resize. For signatures: preserve aspect ratio so the strokes
+          // don't squish. For dates: scale the font size proportionally to
+          // the width change so the text stays legible relative to handle drag.
+          if (p.kind === "signature") {
+            const sStart = start as Extract<Placement, { kind: "signature" }>;
+            const newW = Math.max(40, sStart.cssWidth + dx);
+            const ratio = sStart.cssHeight / sStart.cssWidth;
+            return { ...p, cssWidth: newW, cssHeight: newW * ratio };
+          }
+          const dStart = start as Extract<Placement, { kind: "date" }>;
+          const newW = Math.max(40, dStart.cssWidth + dx);
+          const fontRatio = newW / dStart.cssWidth;
+          return {
+            ...p,
+            cssWidth: newW,
+            cssHeight: Math.max(12, dStart.cssHeight * fontRatio),
+            cssFontSize: Math.min(60, Math.max(8, dStart.cssFontSize * fontRatio)),
+          };
         }),
       );
     }
@@ -209,15 +270,31 @@ export function PlaceSignatureClient({
     setSaveMsg(null);
     // Convert each placement from CSS (top-left, post-render scale) to PDF
     // points (bottom-left). For each page: PDF y = pageHeightPts - (cssY + cssHeight) / scale.
+    // Date placements pass text + fontSize; signature placements pass width + height.
+    // For dates, the PDF y is the BASELINE — pdf-lib's drawText draws above
+    // the y coord. So we anchor to the bottom of the CSS bounding box.
     const pdfPlacements = placements.map((p) => {
       const size = pageSizes[p.pageIndex];
       if (!size) throw new Error(`No size for page ${p.pageIndex + 1}`);
+      const pdfX = p.cssX / RENDER_SCALE;
+      const pdfYBottom = size.heightPts - (p.cssY + p.cssHeight) / RENDER_SCALE;
+      if (p.kind === "signature") {
+        return {
+          kind: "signature" as const,
+          page: p.pageIndex + 1,
+          x: pdfX,
+          y: pdfYBottom,
+          width: p.cssWidth / RENDER_SCALE,
+          height: p.cssHeight / RENDER_SCALE,
+        };
+      }
       return {
-        page: p.pageIndex + 1, // server expects 1-based
-        x: p.cssX / RENDER_SCALE,
-        y: size.heightPts - (p.cssY + p.cssHeight) / RENDER_SCALE,
-        width: p.cssWidth / RENDER_SCALE,
-        height: p.cssHeight / RENDER_SCALE,
+        kind: "date" as const,
+        page: p.pageIndex + 1,
+        x: pdfX,
+        y: pdfYBottom + 2, // nudge up 2pt so descenders don't clip the box
+        text: p.text,
+        fontSize: p.cssFontSize / RENDER_SCALE,
       };
     });
     try {
@@ -314,9 +391,11 @@ export function PlaceSignatureClient({
       <header>
         <h1 className="text-xl font-semibold">Place signature — {label}</h1>
         <p className="mt-1 text-sm text-slate-600">
-          Click anywhere on a page to drop the customer&apos;s signature there.
-          Drag to nudge, drag the bottom-right corner to resize, click the ✕
-          to remove. When everything looks right, hit{" "}
+          Pick <strong>Signature</strong> or <strong>Date</strong> mode at the
+          top, then click anywhere on a page to drop it. Date placements show
+          editable text — click the text to change the date string. Drag to
+          nudge, drag the bottom-right corner to resize, click the ✕ to
+          remove. When everything looks right, hit{" "}
           <strong>Save signed PDF</strong>.
           {hasExistingSignedPdf && (
             <span className="ml-1 text-amber-700">
@@ -327,8 +406,41 @@ export function PlaceSignatureClient({
       </header>
 
       <div className="sticky top-0 z-20 bg-white border-b border-slate-200 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 flex flex-wrap items-center gap-3">
+        {/* Mode toggle — what gets dropped when you click on a page. */}
+        <div className="inline-flex rounded-md border border-slate-300 overflow-hidden text-xs">
+          <button
+            type="button"
+            onClick={() => setMode("signature")}
+            className={`px-3 py-1.5 font-medium ${mode === "signature" ? "bg-accent text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
+          >
+            Signature
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("date")}
+            className={`px-3 py-1.5 font-medium border-l border-slate-300 ${mode === "date" ? "bg-accent text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
+          >
+            Date
+          </button>
+        </div>
+        {mode === "date" && (
+          <label className="text-xs text-slate-600 inline-flex items-center gap-1.5">
+            <span>New dates use:</span>
+            <input
+              type="text"
+              value={defaultDateText}
+              onChange={(e) => setDefaultDateText(e.target.value)}
+              className="px-2 py-1 w-28 border border-slate-300 rounded text-xs font-mono"
+              placeholder="MM/DD/YYYY"
+            />
+          </label>
+        )}
         <span className="text-xs text-slate-500">
-          {placements.length} signature{placements.length === 1 ? "" : "s"} placed across {pageCount} page{pageCount === 1 ? "" : "s"}
+          {placements.filter((p) => p.kind === "signature").length} sig
+          {" · "}
+          {placements.filter((p) => p.kind === "date").length} date
+          {" · "}
+          {pageCount} page{pageCount === 1 ? "" : "s"}
         </span>
         <button
           type="button"
@@ -384,12 +496,12 @@ export function PlaceSignatureClient({
                 onClick={(e) => handlePageClick(i, e)}
               >
                 <canvas ref={(el) => { pageCanvasRefs.current[i] = el; }} />
-                {sigUrl && placements
+                {placements
                   .filter((p) => p.pageIndex === i)
                   .map((p) => (
                     <div
                       key={p.id}
-                      className="absolute group"
+                      className="absolute"
                       style={{
                         left: p.cssX,
                         top: p.cssY,
@@ -400,12 +512,30 @@ export function PlaceSignatureClient({
                       onClick={(e) => e.stopPropagation()}
                       onPointerDown={(e) => startDrag(p.id, "move", e)}
                     >
-                      <img
-                        src={sigUrl}
-                        alt="customer signature"
-                        draggable={false}
-                        className="w-full h-full object-contain ring-2 ring-accent/50 ring-dashed bg-white/0 pointer-events-none"
-                      />
+                      {p.kind === "signature" && sigUrl && (
+                        <img
+                          src={sigUrl}
+                          alt="customer signature"
+                          draggable={false}
+                          className="w-full h-full object-contain ring-2 ring-accent/50 ring-dashed bg-white/0 pointer-events-none"
+                        />
+                      )}
+                      {p.kind === "date" && (
+                        <input
+                          type="text"
+                          value={p.text}
+                          onChange={(e) => {
+                            const next = e.target.value;
+                            setPlacements((arr) =>
+                              arr.map((q) => (q.id === p.id && q.kind === "date" ? { ...q, text: next } : q)),
+                            );
+                          }}
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-full h-full px-1 bg-amber-50/60 ring-2 ring-amber-400/70 ring-dashed text-slate-900 font-serif outline-none"
+                          style={{ fontSize: p.cssFontSize, lineHeight: 1.1 }}
+                        />
+                      )}
                       <button
                         type="button"
                         onClick={(e) => {
@@ -414,7 +544,7 @@ export function PlaceSignatureClient({
                         }}
                         onPointerDown={(e) => e.stopPropagation()}
                         className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-rose-600 text-white text-xs leading-none flex items-center justify-center shadow opacity-80 hover:opacity-100"
-                        title="Remove signature"
+                        title="Remove"
                       >
                         ×
                       </button>

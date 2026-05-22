@@ -1,22 +1,30 @@
 import { NextResponse } from "next/server";
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { get as getStorageObject, putPdf } from "@/lib/storage";
-import { embedSignatureIntoPdf } from "@/lib/pdf/embedSignature";
-import type { SignatureLocation } from "@/lib/pdf/generatePackage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-type Placement = {
-  page: number;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  label?: string;
-};
+type Placement =
+  | {
+      kind: "signature";
+      page: number;
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    }
+  | {
+      kind: "date";
+      page: number;
+      x: number;
+      y: number;
+      text: string; // human-typed date string, e.g. "05/22/2026"
+      fontSize: number; // PDF points
+    };
 
 // Admin-only: takes admin-chosen placements (one per signature), embeds the
 // stored customer signature PNG into the unsigned PDF at those coords, and
@@ -33,10 +41,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!filing.generatedPdfKey) {
     return NextResponse.json({ error: "no unsigned PDF on file — regenerate first" }, { status: 400 });
   }
-  if (!filing.signaturePngKey) {
-    return NextResponse.json({ error: "customer hasn't drawn a signature yet" }, { status: 400 });
-  }
-
+  // signaturePngKey is only required if at least one placement is a
+  // signature (vs date-only). We re-check below once we've parsed the body.
   const body = (await req.json().catch(() => ({}))) as { placements?: unknown };
   if (!Array.isArray(body.placements) || body.placements.length === 0) {
     return NextResponse.json({ error: "placements array required" }, { status: 400 });
@@ -51,51 +57,93 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: "placement entry must be an object" }, { status: 400 });
     }
     const p = raw as Record<string, unknown>;
+    const kind = p.kind === "date" ? "date" : "signature";
     const page = Number(p.page);
     const x = Number(p.x);
     const y = Number(p.y);
-    const width = Number(p.width);
-    const height = Number(p.height);
     if (!Number.isFinite(page) || page < 1) {
       return NextResponse.json({ error: `bad page ${p.page}` }, { status: 400 });
     }
-    if ([x, y, width, height].some((n) => !Number.isFinite(n))) {
-      return NextResponse.json({ error: "x/y/width/height must be numbers" }, { status: 400 });
+    if ([x, y].some((n) => !Number.isFinite(n))) {
+      return NextResponse.json({ error: "x/y must be numbers" }, { status: 400 });
     }
-    if (width <= 0 || height <= 0 || width > 612 || height > 200) {
-      return NextResponse.json({ error: "width/height out of range" }, { status: 400 });
+    if (kind === "signature") {
+      const width = Number(p.width);
+      const height = Number(p.height);
+      if ([width, height].some((n) => !Number.isFinite(n))) {
+        return NextResponse.json({ error: "width/height must be numbers" }, { status: 400 });
+      }
+      if (width <= 0 || height <= 0 || width > 612 || height > 200) {
+        return NextResponse.json({ error: "signature width/height out of range" }, { status: 400 });
+      }
+      placements.push({ kind: "signature", page: Math.round(page), x, y, width, height });
+    } else {
+      const text = typeof p.text === "string" ? p.text : "";
+      const fontSize = Number(p.fontSize);
+      if (!text.trim()) {
+        return NextResponse.json({ error: "date placement requires non-empty text" }, { status: 400 });
+      }
+      if (text.length > 60) {
+        return NextResponse.json({ error: "date text too long (max 60 chars)" }, { status: 400 });
+      }
+      if (!Number.isFinite(fontSize) || fontSize < 4 || fontSize > 40) {
+        return NextResponse.json({ error: "date fontSize out of range (4-40 pt)" }, { status: 400 });
+      }
+      placements.push({ kind: "date", page: Math.round(page), x, y, text: text.trim(), fontSize });
     }
-    placements.push({
-      page: Math.round(page),
-      x,
-      y,
-      width,
-      height,
-      label: typeof p.label === "string" ? p.label : undefined,
-    });
   }
 
+  // Need at least one signature OR date for it to be worth saving.
+  if (placements.length === 0) {
+    return NextResponse.json({ error: "no placements provided" }, { status: 400 });
+  }
+
+  const needsSignatureImage = placements.some((p) => p.kind === "signature");
+  if (needsSignatureImage && !filing.signaturePngKey) {
+    return NextResponse.json(
+      { error: "customer hasn't drawn a signature yet — date-only placement is OK but signature placements need a PNG on file" },
+      { status: 400 },
+    );
+  }
   const [pdfBytes, pngBytes] = await Promise.all([
     getStorageObject(filing.generatedPdfKey),
-    getStorageObject(filing.signaturePngKey),
+    needsSignatureImage && filing.signaturePngKey
+      ? getStorageObject(filing.signaturePngKey)
+      : Promise.resolve(new Uint8Array()),
   ]);
 
-  // Reuse the existing embed library by adapting placements to its
-  // SignatureLocation shape (label is required by the type but ignored
-  // when coords are explicit).
-  const locations: SignatureLocation[] = placements.map((p, i) => ({
-    label: p.label ?? `Placement ${i + 1}`,
-    page: p.page,
-    instruction: "admin-placed",
-    x: p.x,
-    y: p.y,
-    width: p.width,
-    height: p.height,
-  }));
-
-  let signed;
+  // Single-pass embedding: load the PDF once, embed the signature PNG +
+  // a standard font, then iterate placements drawing image or text per kind.
+  let outBytes: Uint8Array;
+  let pagesTouched = 0;
   try {
-    signed = await embedSignatureIntoPdf(pdfBytes, pngBytes, locations);
+    const pdf = await PDFDocument.load(pdfBytes);
+    const signatureImage = needsSignatureImage ? await pdf.embedPng(pngBytes) : null;
+    const dateFont = placements.some((p) => p.kind === "date")
+      ? await pdf.embedFont(StandardFonts.Helvetica)
+      : null;
+
+    for (const p of placements) {
+      const idx = p.page - 1;
+      if (idx < 0 || idx >= pdf.getPageCount()) {
+        console.warn(`[place-signature] page ${p.page} out of range for filing ${filing.id}`);
+        continue;
+      }
+      const page = pdf.getPage(idx);
+      if (p.kind === "signature" && signatureImage) {
+        page.drawImage(signatureImage, { x: p.x, y: p.y, width: p.width, height: p.height });
+      } else if (p.kind === "date" && dateFont) {
+        page.drawText(p.text, {
+          x: p.x,
+          y: p.y,
+          size: p.fontSize,
+          font: dateFont,
+          color: rgb(0, 0, 0),
+        });
+      }
+      pagesTouched++;
+    }
+    outBytes = await pdf.save();
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[place-signature] embed failed", { filingId: filing.id, error: msg });
@@ -103,7 +151,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   }
 
   const key = `${filing.id}_signed.pdf`;
-  await putPdf(key, signed.bytes);
+  await putPdf(key, outBytes);
   await prisma.filing.update({
     where: { id: filing.id },
     data: {
@@ -112,6 +160,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       status: "SIGNED_UPLOADED",
     },
   });
+  const signed = { pagesSigned: pagesTouched, bytes: outBytes };
 
   return NextResponse.json({
     ok: true,
