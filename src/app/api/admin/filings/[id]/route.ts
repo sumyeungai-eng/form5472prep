@@ -144,47 +144,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ ok: true, faxJobId: job.id });
     }
 
-    case "reEngageAi": {
-      // Resets the AI handoff state and immediately fires the conversation
-      // agent to take a fresh look at the thread. Use when you've replied
-      // manually but want AI to drive again.
-      await prisma.filing.update({
-        where: { id: filing.id },
-        data: { aiHandoff: null, aiTurnsUsed: 0 },
-      });
-      const internalSecret = process.env.INTERNAL_API_SECRET;
-      if (internalSecret && filing.validationStatus === "needs_customer_input") {
-        fetch(`${env.appUrl}/api/internal/respond-to-customer/${filing.id}`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${internalSecret}` },
-        }).catch((err) => console.error("[admin reEngageAi] fire failed", err));
-      }
-      return NextResponse.json({ ok: true });
-    }
-
-    case "runAiCheck": {
-      if (!filing.generatedPdfKey) {
-        return NextResponse.json({ error: "no generated PDF on file" }, { status: 400 });
-      }
-      const internalSecret = process.env.INTERNAL_API_SECRET;
-      if (!internalSecret) {
-        return NextResponse.json({ error: "INTERNAL_API_SECRET not configured" }, { status: 500 });
-      }
-      // Block-and-await so the admin sees the result. AI check takes 15-30s
-      // which fits within the route's default duration.
-      // env.appUrl is normalized to the www form to avoid the apex→www
-      // redirect that strips the Authorization header on cross-hostname.
-      const targetUrl = `${env.appUrl}/api/internal/validate-filing/${filing.id}`;
-      const res = await fetch(targetUrl, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${internalSecret}` },
-      });
-      const body = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        return NextResponse.json({ error: body?.error ?? `HTTP ${res.status}` }, { status: 500 });
-      }
-      return NextResponse.json({ ok: true, ...body });
-    }
+    // reEngageAi + runAiCheck cases removed — AI compliance check + AI
+    // conversation agent are no longer part of the order flow. Accountant
+    // reviews every order before fax.
 
     case "regeneratePdf": {
       // Rebuild the unsigned PDF from current DB state. Used after admin

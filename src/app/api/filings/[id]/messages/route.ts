@@ -116,38 +116,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     select: { id: true, fromAdmin: true, body: true, readAt: true, createdAt: true },
   });
 
-  // ===== AI conversation loop hook =====
-  // When a CUSTOMER replies and the filing is mid-AI-conversation, fire the
-  // agent to respond. When ADMIN posts manually here, mark the thread as
-  // human-handed so the AI defers from now on. Re-read the filing because
-  // the validation/handoff state isn't on the resolveCaller selection.
-  try {
-    const liveState = await prisma.filing.findUnique({
-      where: { id: caller.filing.id },
-      select: { validationStatus: true, aiHandoff: true, aiTurnsUsed: true },
-    });
-    if (liveState?.validationStatus === "needs_customer_input") {
-      if (!fromAdmin && liveState.aiHandoff !== "admin" && liveState.aiTurnsUsed < 5) {
-        // Customer reply → fire AI agent fire-and-forget. The endpoint will
-        // either respond, apply fixes + regenerate + send final, or escalate.
-        const internalSecret = process.env.INTERNAL_API_SECRET;
-        if (internalSecret) {
-          fetch(`${env.appUrl}/api/internal/respond-to-customer/${caller.filing.id}`, {
-            method: "POST",
-            headers: { Authorization: `Bearer ${internalSecret}` },
-          }).catch((err) => console.error("[messages POST] respond-to-customer fire failed", err));
-        }
-      } else if (fromAdmin && liveState.aiHandoff === "agent") {
-        // Human admin posted in a thread the AI was managing — stand down.
-        await prisma.filing.update({
-          where: { id: caller.filing.id },
-          data: { aiHandoff: "admin" },
-        });
-      }
-    }
-  } catch (err) {
-    console.error("[messages POST] AI hook failed (non-fatal)", err);
-  }
+  // AI conversation loop is retired — your accountant handles customer
+  // replies directly now. The respond-to-customer endpoint file is left
+  // in the codebase as dormant code (nothing fires it).
 
   if (priorUnreadFromSender === 0) {
     const bodyExcerpt = body.length > 500 ? body.slice(0, 500) + "…" : body;

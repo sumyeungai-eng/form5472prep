@@ -3,7 +3,11 @@ import { getOwnedFiling, bindFilingToEmail } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
-import { MULTI_YEAR_ADDON_CENTS, MULTI_YEAR_ADDON_LABEL, multiYearAddonCents, tierInfo, isTestTier } from "@/lib/pricing";
+import { MULTI_YEAR_ADDON_CENTS, MULTI_YEAR_ADDON_LABEL, multiYearAddonCents, tierInfo, isTestTier, resolveTier } from "@/lib/pricing";
+import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
+import { putPdf } from "@/lib/storage";
+import { sendOrderConfirmationEmail } from "@/lib/email";
+import { makeMagicLink } from "@/lib/magicLink";
 
 export async function POST(req: Request) {
   const { filingId, email } = await req.json();
@@ -34,30 +38,91 @@ export async function POST(req: Request) {
   });
 
   // ─── Admin-only $0 test path ───
-  // Skip Stripe entirely. Mark the filing PAID immediately and fire the same
-  // internal validate-filing endpoint the Stripe webhook would, so the post-
-  // payment flow (PDF gen + AI compliance check + emails) runs end-to-end.
-  // Only reachable when an admin created the filing via /api/admin/test-filing
-  // (the public /api/filings POST whitelist rejects "test" via isTier).
+  // Skip Stripe entirely. Mark PAID, generate the PDF inline (mirroring the
+  // production Stripe webhook), and send the order-confirmation email with
+  // the PDF + sign link. No AI compliance check — the accountant reviews
+  // the package before fax, same as real orders.
   if (isTestTier(filing.tier)) {
     await prisma.filing.update({
       where: { id: filing.id },
-      data: {
-        status: "PAID",
-        stripePaymentId: "test_no_payment",
-      },
+      data: { status: "PAID", stripePaymentId: "test_no_payment" },
     });
-    // Fire validate-filing endpoint async. It generates the PDF, runs the
-    // AI check, and emails the customer the order-confirmation with sign
-    // link — same as the production webhook path.
-    const internalSecret = process.env.INTERNAL_API_SECRET;
-    if (internalSecret) {
-      fetch(`${env.appUrl}/api/internal/validate-filing/${filing.id}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${internalSecret}` },
-      }).catch((err) => console.error("[checkout test] validate trigger failed", err));
-    } else {
-      console.warn("[checkout test] INTERNAL_API_SECRET not set; skipping validate fire");
+
+    // Refetch with yearData + user so we have everything generatePackage +
+    // sendOrderConfirmationEmail need.
+    const full = await prisma.filing.findUnique({
+      where: { id: filing.id },
+      include: { user: true, yearData: true },
+    });
+
+    let pdfBytes: Uint8Array | null = null;
+    let pdfSignatures: SignatureLocation[] = [];
+    try {
+      if (full && full.llcName && full.llcEin && full.llcAddress && full.llcCity &&
+          full.llcState && full.llcZip && full.llcDateIncorporated &&
+          full.llcBusinessActivity && full.llcBusinessCode && full.ownerName &&
+          full.ownerAddress && full.ownerCountryCitizenship &&
+          full.ownerCountryTaxResidence && full.ownerCountryBusiness && full.ownerFtin) {
+        const result = await generatePackage({
+          llcName: full.llcName, llcEin: full.llcEin, llcAddress: full.llcAddress,
+          llcCity: full.llcCity, llcState: full.llcState, llcZip: full.llcZip,
+          llcCountry: full.llcCountry, llcDateIncorporated: full.llcDateIncorporated,
+          llcBusinessActivity: full.llcBusinessActivity, llcBusinessCode: full.llcBusinessCode,
+          ownerName: full.ownerName, ownerAddress: full.ownerAddress,
+          ownerCountryCitizenship: full.ownerCountryCitizenship,
+          ownerCountryTaxResidence: full.ownerCountryTaxResidence,
+          ownerCountryBusiness: full.ownerCountryBusiness, ownerFtin: full.ownerFtin,
+          ownerItin: full.ownerItin, ownerReferenceId: full.ownerReferenceId,
+          taxYears: full.taxYears, isDiirsp: full.isDiirsp,
+          reasonableCauseNarrative: full.reasonableCauseNarrative,
+          yearData: full.yearData.map((y) => ({
+            taxYear: y.taxYear,
+            totalAssetsYearEnd: Number(y.totalAssetsYearEnd),
+            contributions: Number(y.contributions),
+            distributions: Number(y.distributions),
+            otherTransactionsNote: y.otherTransactionsNote,
+            reportableTransactions: Array.isArray(y.reportableTransactions)
+              ? (y.reportableTransactions as unknown[]).filter(
+                  (t): t is { date: string; description: string; counterparty?: string; amountCents: number; category: string } =>
+                    !!t && typeof t === "object" && "date" in t && "amountCents" in t && "category" in t,
+                )
+              : [],
+          })),
+        });
+        pdfBytes = result.bytes;
+        pdfSignatures = result.signatures;
+        const key = `${filing.id}_unsigned.pdf`;
+        await putPdf(key, result.bytes);
+        await prisma.filing.update({
+          where: { id: filing.id },
+          data: { generatedPdfKey: key, status: "PDF_GENERATED" },
+        });
+      } else {
+        console.warn("[checkout test] PDF generation skipped — required fields missing");
+      }
+    } catch (err) {
+      console.error("[checkout test] PDF generation failed", err);
+    }
+
+    if (full?.user) {
+      try {
+        await sendOrderConfirmationEmail({
+          email: full.user.email,
+          filingId: full.id,
+          llcName: full.llcName,
+          taxYears: full.taxYears,
+          tier: resolveTier(full.tier).tier,
+          amountPaidCents: 0,
+          faxService: full.faxService,
+          portalLink: makeMagicLink(full.user.id),
+          receiptUrl: null,
+          funnelSource: full.funnelSource,
+          pdfBytes,
+          signatures: pdfSignatures,
+        });
+      } catch (err) {
+        console.error("[checkout test] order confirmation email failed", err);
+      }
     }
     return NextResponse.json({ url: `${env.appUrl}/filings/${filing.id}?paid=1` });
   }
