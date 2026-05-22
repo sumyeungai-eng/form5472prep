@@ -91,13 +91,34 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const filing = await prisma.filing.findUnique({
+  let filing = await prisma.filing.findUnique({
     where: { id: params.id },
     include: { user: true, yearData: { orderBy: { taxYear: "asc" } } },
   });
   if (!filing) return NextResponse.json({ error: "filing not found" }, { status: 404 });
   if (!filing.generatedPdfKey) {
-    return NextResponse.json({ error: "no generated PDF on file" }, { status: 400 });
+    // Normally the Stripe webhook generates the PDF before firing this
+    // endpoint. Admin "test" orders skip Stripe entirely, so generate from
+    // current DB state here as a fallback. Real customer filings hit this
+    // path too if the webhook's PDF gen failed and the admin clicks
+    // "Re-run AI check" — saves one round-trip.
+    try {
+      const regen = await regenerate(filing);
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: { generatedPdfKey: regen.key, status: "PDF_GENERATED" },
+      });
+      filing = await prisma.filing.findUnique({
+        where: { id: filing.id },
+        include: { user: true, yearData: { orderBy: { taxYear: "asc" } } },
+      });
+      if (!filing || !filing.generatedPdfKey) {
+        return NextResponse.json({ error: "regenerated but key not persisted" }, { status: 500 });
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "unknown";
+      return NextResponse.json({ error: `no generated PDF and regenerate failed: ${msg}` }, { status: 400 });
+    }
   }
 
   // Mark pending so concurrent admin requests don't double-fire.

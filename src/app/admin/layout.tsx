@@ -20,8 +20,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             {authed && (
               <nav className="flex items-center gap-4 text-sm text-slate-600">
                 <Link href="/admin/filings" className="hover:text-slate-900">Filings</Link>
+                <Link href="/admin/sources" className="hover:text-slate-900">Sources</Link>
                 <Link href="/admin/reminders" className="hover:text-slate-900">Reminders</Link>
                 <Link href="/admin/posts" className="hover:text-slate-900">Posts</Link>
+                <Link href="/admin/test-order" className="hover:text-slate-900 text-amber-700">Test order</Link>
               </nav>
             )}
           </div>

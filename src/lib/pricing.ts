@@ -76,6 +76,23 @@ export const MULTI_YEAR_ADDON_LABEL = "Additional past tax year";
 
 export const DEFAULT_TIER: Tier = "standard";
 
+// Admin-only test tier. Not in TIERS so it never appears on /pricing or
+// landing pages. Created via /api/admin/test-filing (admin-auth gated).
+// /api/checkout detects this value and bypasses Stripe entirely so we can
+// exercise the full post-payment flow (PDF gen, AI validation, signing,
+// fax, emails) without burning real money.
+export const TEST_TIER_VALUE = "test";
+export const TEST_TIER_INFO: TierInfo = {
+  label: "TEST — $0",
+  subtitle: "Internal test order (admin-created, bypasses Stripe)",
+  priceCents: 0,
+  ctaLabel: "Continue",
+  features: [],
+};
+export function isTestTier(value: string | null | undefined): boolean {
+  return value === TEST_TIER_VALUE;
+}
+
 // Stripe / display strings for the "fax is included" message. Kept as 0 so
 // any legacy callsite that still does `+ FAX_FEE_CENTS` produces the right
 // total — the old fax add-on no longer exists as a line item.
@@ -119,6 +136,7 @@ export function tierLabel(value: string | null | undefined): string {
 }
 
 export function tierInfo(value: string | null | undefined): TierInfo {
+  if (isTestTier(value)) return TEST_TIER_INFO;
   return TIERS[resolveTier(value).tier];
 }
 
@@ -131,6 +149,9 @@ export function totalPriceCents(
   tierValue: string | null | undefined,
   yearCount: number,
 ): number {
+  // Test tier is always $0 — multi-year add-on doesn't apply either, so the
+  // admin sees the "Pay $0" button matching what Stripe would have charged.
+  if (isTestTier(tierValue)) return 0;
   return tierInfo(tierValue).priceCents + multiYearAddonCents(yearCount);
 }
 
