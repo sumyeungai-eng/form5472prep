@@ -15,18 +15,27 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
   const filing = await prisma.filing.findUnique({
     where: { id: params.id },
-    select: { generatedPdfKey: true, signedPdfKey: true },
+    select: { generatedPdfKey: true, signedPdfKey: true, faxedPdfKey: true },
   });
   if (!filing) return NextResponse.json({ error: "filing not found" }, { status: 404 });
 
   const url = new URL(req.url);
   const wantSigned = url.searchParams.get("signed") === "1";
-  const key = wantSigned ? filing.signedPdfKey : filing.generatedPdfKey;
+  const wantFaxed = url.searchParams.get("faxed") === "1";
+  let key: string | null;
+  let missingLabel: string;
+  if (wantFaxed) {
+    key = filing.faxedPdfKey;
+    missingLabel = "no faxed PDF snapshot on file (faxing predates the snapshot feature, or fax hasn't been sent yet)";
+  } else if (wantSigned) {
+    key = filing.signedPdfKey;
+    missingLabel = "no signed PDF on file";
+  } else {
+    key = filing.generatedPdfKey;
+    missingLabel = "no unsigned PDF on file";
+  }
   if (!key) {
-    return NextResponse.json(
-      { error: wantSigned ? "no signed PDF on file" : "no unsigned PDF on file" },
-      { status: 404 },
-    );
+    return NextResponse.json({ error: missingLabel }, { status: 404 });
   }
 
   const bytes = await getPdf(key);

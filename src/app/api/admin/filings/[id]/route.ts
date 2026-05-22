@@ -5,7 +5,7 @@ import { resolveTier } from "@/lib/pricing";
 import { makeMagicLink } from "@/lib/magicLink";
 import { sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
 import { submitFax } from "@/lib/fax";
-import { publicUrl, putPdf } from "@/lib/storage";
+import { publicUrl, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 
@@ -135,11 +135,29 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       if (!filing.signedPdfKey) {
         return NextResponse.json({ error: "no signed PDF on file" }, { status: 400 });
       }
+      // Snapshot the exact bytes being faxed under a separate key so the
+      // admin can verify "what was sent to the IRS" even after a later
+      // Regenerate PDF clears signedPdfKey. Best-effort — if the copy fails
+      // (storage hiccup) we still fax, since the original signedPdfKey is
+      // present on this same submission anyway.
+      const faxedKey = `${filing.id}_faxed.pdf`;
+      try {
+        const bytes = await getStorageObject(filing.signedPdfKey);
+        await putPdf(faxedKey, bytes);
+      } catch (err) {
+        console.error("[retryFax] faxed-snapshot copy failed (non-fatal)", err);
+      }
       const mediaUrl = await publicUrl(filing.signedPdfKey);
       const job = await submitFax({ mediaUrl, to: env.telnyx.destination });
       await prisma.filing.update({
         where: { id: filing.id },
-        data: { faxJobId: job.id, faxStatus: "queued", status: "FAXED" },
+        data: {
+          faxJobId: job.id,
+          faxStatus: "queued",
+          status: "FAXED",
+          faxedPdfKey: faxedKey,
+          faxedAt: new Date(),
+        },
       });
       return NextResponse.json({ ok: true, faxJobId: job.id });
     }

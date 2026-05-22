@@ -97,6 +97,12 @@ model Filing {
   // Generated PDFs (R2 keys)
   generatedPdfKey    String?
   signedPdfKey       String?
+  // Snapshot of signedPdfKey taken at the moment retryFax fired. Lets the
+  // admin verify exactly what was sent to the IRS even if signedPdfKey is
+  // later cleared (e.g. after Regenerate PDF). Populated by the retryFax
+  // action — null on legacy faxes that pre-date this field.
+  faxedPdfKey        String?
+  faxedAt            DateTime?
   faxJobId           String?
   faxStatus          String?
   faxConfirmationKey String?

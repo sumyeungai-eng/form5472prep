@@ -28,6 +28,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
   // Resolve public URLs for any uploaded files.
   const generatedPdfUrl = filing.generatedPdfKey ? await publicUrl(filing.generatedPdfKey) : null;
   const signedPdfUrl = filing.signedPdfKey ? await publicUrl(filing.signedPdfKey) : null;
+  const faxedPdfUrl = filing.faxedPdfKey ? await publicUrl(filing.faxedPdfKey) : null;
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
@@ -81,6 +82,8 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           hasSignedPdf={!!filing.signedPdfKey}
           hasGeneratedPdf={!!filing.generatedPdfKey}
           hasCustomerSignature={!!filing.signaturePngKey}
+          hasFaxedPdf={!!filing.faxedPdfKey}
+          faxedAt={filing.faxedAt ? filing.faxedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
         />
       </div>
 
@@ -191,8 +194,12 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         {/* Files — span both columns */}
         <div className="md:col-span-2">
           <DetailCard title="Files">
-            <FileRow label="Generated PDF" url={generatedPdfUrl} />
-            <FileRow label="Signed PDF (uploaded by customer)" url={signedPdfUrl} />
+            <FileRow label="Generated PDF (unsigned)" url={generatedPdfUrl} />
+            <FileRow label="Signed PDF (current)" url={signedPdfUrl} />
+            <FileRow
+              label={filing.faxedAt ? `Faxed PDF snapshot (sent ${filing.faxedAt.toISOString().slice(0, 16).replace("T", " ")} UTC)` : "Faxed PDF snapshot"}
+              url={faxedPdfUrl}
+            />
           </DetailCard>
         </div>
 
