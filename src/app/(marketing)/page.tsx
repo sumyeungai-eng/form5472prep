@@ -59,12 +59,12 @@ export default function LandingPage() {
     <>
       <StructuredData />
       <Hero />
+      <Pricing />
       <TrustStrip />
       <Eligibility />
       <HowItWorks />
       <Deliverables />
       <Comparison />
-      <Pricing />
       <Faq />
       <FinalCta />
     </>
@@ -73,7 +73,7 @@ export default function LandingPage() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-br from-accent-50 via-white to-accent-50 animate-gradient">
+    <section className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-br from-accent-50 via-white to-white animate-gradient">
       {/* Decorative floating blobs — subtle ambient motion behind the content. */}
       <div
         aria-hidden
@@ -84,81 +84,26 @@ function Hero() {
         className="pointer-events-none absolute -bottom-32 right-0 h-[28rem] w-[28rem] rounded-full bg-emerald-200/30 blur-3xl animate-float"
         style={{ animationDelay: "1.5s" }}
       />
-      <div className="relative max-w-6xl mx-auto px-6 pt-16 pb-20 sm:pt-20 sm:pb-24">
-        <div className="grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-start">
-          {/* Left: the pitch */}
-          <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 animate-fade-in-up">
-              <ShieldCheck className="h-3.5 w-3.5 text-accent" />
-              For foreign-owned US single-member LLCs
-            </span>
-            <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-slate-900 text-balance animate-fade-in-up animate-delay-100">
-              File IRS Form 5472 and pro forma Form 1120 in 15 minutes.<br />
-              <span className="text-accent">Avoid the $25,000 penalty.</span>
-            </h1>
-            <p className="mt-6 text-lg text-slate-600 max-w-2xl animate-fade-in-up animate-delay-200">
-              Form5472 Prep prepares your Form 5472 and pro forma Form 1120 for foreign-owned US
-              LLCs, generates the reasonable cause statement for late DIIRSP filings, and faxes
-              the signed package to the IRS Ogden PIN Unit on your behalf. Starting at $199 with
-              IRS fax delivery included — backed by a 100% money-back guarantee if we fail to submit.
-            </p>
-          </div>
+      <div className="relative max-w-6xl mx-auto px-6 pt-16 pb-12 sm:pt-20 sm:pb-16">
+        <div className="text-center max-w-3xl mx-auto">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 animate-fade-in-up">
+            <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+            Built for foreign founders · No CPA required · No US address needed
+          </span>
+          <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-slate-900 text-balance animate-fade-in-up animate-delay-100">
+            Flat-rate Form 5472 filing.
+            <br />
+            <span className="text-accent">No hidden fees.</span>
+          </h1>
+          <p className="mt-5 text-lg text-slate-600 max-w-2xl mx-auto animate-fade-in-up animate-delay-200">
+            Done-for-you Form 5472 + pro forma 1120 for foreign-owned US LLCs.
+            Avoid the $25,000-per-form IRS penalty. Fax delivery to the IRS
+            Ogden PIN Unit included on every plan.
+          </p>
 
-          {/* Right: bold CTA card */}
-          <div className="w-full lg:w-[360px] lg:flex-none animate-fade-in-up animate-delay-300">
-            <div className="rounded-2xl bg-white border border-slate-200 shadow-xl shadow-accent/5 p-6 sm:p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-accent/10 hover:-translate-y-0.5">
-              <div className="flex items-center gap-2 text-xs font-medium text-accent uppercase tracking-wide">
-                <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-soft-pulse" />
-                Start filing now
-              </div>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-4xl sm:text-5xl font-semibold text-slate-900 tracking-tight">
-                  {formatUsd(TIERS.standard.priceCents)}
-                </span>
-                <span className="text-sm text-slate-500">/ filing</span>
-              </div>
-              <p className="mt-1 text-sm text-slate-600">
-                IRS fax delivery included. Rush and Premium plans available — see <Link href="/pricing" className="text-accent underline">pricing</Link>.
-              </p>
-
-              <Link href="/start" className="block mt-6 group">
-                <Button
-                  size="lg"
-                  className="w-full h-14 text-sm sm:text-base shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 transition-all duration-200 hover:-translate-y-0.5"
-                >
-                  Start filing
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
-                </Button>
-              </Link>
-              <Link href="#how-it-works" className="block mt-3">
-                <Button variant="outline" size="lg" className="w-full h-12 transition-colors">
-                  See how it works
-                </Button>
-              </Link>
-
-              <ul className="mt-6 space-y-2.5 text-sm">
-                {[
-                  "Filled IRS Form 5472 + pro forma 1120",
-                  "Reasonable cause statement (if late)",
-                  "Reviewed by a qualified tax accountant",
-                  "Faxed to IRS Ogden PIN Unit",
-                  "100% money-back if we fail to submit",
-                ].map((it, i) => (
-                  <li
-                    key={it}
-                    className="flex items-start gap-2 text-slate-700 animate-fade-in-up"
-                    style={{ animationDelay: `${400 + i * 80}ms` }}
-                  >
-                    <CheckCircle2 className="flex-none h-4 w-4 text-emerald-500 mt-0.5" />
-                    <span>{it}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <p className="mt-5 pt-5 border-t border-slate-100 text-xs text-slate-500 text-center">
-                No subscription. No upsell. Pay once per filing.
-              </p>
-            </div>
+          <div className="mt-8 inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-5 py-2 text-sm font-medium text-emerald-800 animate-fade-in-up animate-delay-300">
+            <Send className="h-4 w-4" />
+            Fax filing included on every plan
           </div>
         </div>
       </div>
@@ -411,19 +356,9 @@ function Comparison() {
 
 function Pricing() {
   return (
-    <section id="pricing" className="bg-slate-50 border-b border-slate-200 scroll-mt-20">
-      <div className="max-w-6xl mx-auto px-6 py-20">
-        <SectionHead
-          eyebrow="Pricing"
-          title="Pay once per filing."
-          subtitle="One-time flat fee per filing. IRS fax delivery to the Ogden PIN Unit included on every plan. Additional past tax years add $149 each."
-        />
-        <div className="mt-6 flex justify-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-4 py-1.5 text-xs font-medium text-emerald-800">
-            Fax filing included on every plan
-          </span>
-        </div>
-        <div className="mt-8 grid md:grid-cols-3 gap-6 items-stretch">
+    <section id="pricing" className="bg-white border-b border-slate-200 scroll-mt-20">
+      <div className="max-w-6xl mx-auto px-6 pt-4 pb-16 sm:pt-8 sm:pb-20">
+        <div className="grid md:grid-cols-3 gap-6 items-stretch">
           {TIER_ORDER.map((key, idx) => {
             const t = TIERS[key];
             const highlighted = !!t.highlight;
