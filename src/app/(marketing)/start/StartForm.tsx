@@ -6,6 +6,7 @@ import { ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { GoogleLoginButton } from "./GoogleLoginButton";
+import { fireLeadConversion } from "@/lib/analytics/googleAds";
 
 // Pull the funnel source (?src=) off the URL so we can attribute the eventual
 // paid filing back to the landing page that sent the visitor here. Sanitized
@@ -63,7 +64,15 @@ export function StartForm() {
         body: JSON.stringify({ email: trimmed }),
       });
       if (!patch.ok) throw new Error("Couldn't save your email");
-      router.push(`/filings/${id}/edit`);
+      // Fire Google Ads "Form 5472 Lead" conversion. The DRAFT is now
+      // created + bound to a real email, which is the qualified-lead signal
+      // the campaign optimises for. event_callback gates the redirect so
+      // the conversion ping has time to leave the browser before navigation;
+      // helper times out after 1.2s so a blocked tag (ad-blocker, consent
+      // decline) doesn't strand the user on /start.
+      fireLeadConversion({
+        onDone: () => router.push(`/filings/${id}/edit`),
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setSubmitting(false);
@@ -88,7 +97,11 @@ export function StartForm() {
         throw new Error(body.error ?? `Google sign-in failed: ${res.status}`);
       }
       const { filingId } = await res.json();
-      router.push(`/filings/${filingId}/edit`);
+      // Google-signin start-intent also creates a DRAFT — same conversion
+      // signal as the email path above.
+      fireLeadConversion({
+        onDone: () => router.push(`/filings/${filingId}/edit`),
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Google sign-in failed");
       setSubmitting(false);

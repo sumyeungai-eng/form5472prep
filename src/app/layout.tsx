@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import { env } from "@/lib/env";
 import { Analytics } from "@vercel/analytics/react";
 import { ChatWidget } from "@/components/ChatWidget";
+import { GOOGLE_ADS_TAG_ID } from "@/lib/analytics/googleAds";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -73,6 +75,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen bg-white text-slate-900 font-sans antialiased">
+        {/* Google Ads conversion tag (loader). Loads on every page so the
+            "Form 5472 Lead" conversion can fire from the /start success
+            handler without a per-page boilerplate. strategy="afterInteractive"
+            keeps it out of the critical render path. The conversion event
+            itself is dispatched from src/lib/analytics/googleAds.ts. */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_TAG_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
+            gtag('js', new Date());
+            gtag('config', '${GOOGLE_ADS_TAG_ID}');
+          `}
+        </Script>
         {children}
         <ChatWidget />
         <Analytics />
