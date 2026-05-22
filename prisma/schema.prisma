@@ -69,7 +69,15 @@ model Filing {
 
   // Foreign owner info
   ownerName                String?
+  // Concatenated address (street, city, state, postal, country) used by the
+  // PDF generator. Backed by the structured parts below — saved on every
+  // wizard submit so existing PDF generation keeps working unchanged.
   ownerAddress             String?
+  ownerAddressStreet       String?
+  ownerAddressCity         String?
+  ownerAddressState        String?
+  ownerAddressPostal       String?
+  ownerAddressCountry      String?
   ownerCountryCitizenship  String?
   ownerCountryTaxResidence String?
   ownerCountryBusiness     String?
@@ -82,6 +90,10 @@ model Filing {
   isDiirsp                 Boolean @default(false)
   reasonableCauseNarrative String?
 
+  // True = we fax the signed package to the IRS for the customer (+ fax fee).
+  // False = customer faxes it themselves after downloading the signed PDF.
+  faxService               Boolean @default(true)
+
   // Generated PDFs (R2 keys)
   generatedPdfKey    String?
   signedPdfKey       String?
@@ -89,10 +101,84 @@ model Filing {
   faxStatus          String?
   faxConfirmationKey String?
 
+  // In-portal signing artifact. R2 key for the customer's saved signature
+  // image (PNG). Stored once per User (denormalised onto Filing so anonymous
+  // sessions also work). When the customer files again later, we pre-populate
+  // the SignaturePad with this image so they don't have to re-draw.
+  signaturePngKey    String?
+  signedAt           DateTime?
+
+  // Tracks the one-time "you didn't finish your filing" nudge so we don't
+  // re-send. Null = not sent. Set timestamp on send.
+  abandonedReminderSentAt DateTime?
+
+  // Which landing-page funnel created this filing. Null = standard /start flow.
+  // "file_funnel" = the /file qualifying funnel.
+  funnelSource String?
+
+  // AI compliance-check state for the generated PDF. Set by the post-payment
+  // validation pipeline. Null = no validation has run yet.
+  //   pending      = generated, waiting for AI check to run
+  //   passed       = AI check found no issues
+  //   fixed        = AI flagged an issue, regenerator auto-corrected, re-check passed
+  //   needs_input  = AI flagged an issue requiring customer clarification (system message posted)
+  //   error        = AI infra failed (timeout/5xx); fell open and sent PDF email anyway
+  validationStatus      String?
+  validationIssuesJson  Json?
+  validationCheckedAt   DateTime?
+
+  // Who currently "owns" the customer support thread for the AI conversation loop.
+  //   null   = no AI conversation in flight (validation hasn't flagged yet, or status is passed/error)
+  //   agent  = AI is responsible for replying to the next customer message
+  //   admin  = a human admin posted in the thread; AI defers indefinitely until admin re-engages
+  aiHandoff      String?
+  // Number of customer reply cycles the AI has handled in this session. Cap = 2
+  // before forced escalation. Reset to 0 when admin re-engages or filing re-validates fresh.
+  aiTurnsUsed    Int     @default(0)
+
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
   yearData  FilingYearData[]
   plaidConnections PlaidConnection[]
+  messages  Message[]
+  changeLog FilingChangeLog[]
+}
+
+// Append-only audit log for changes the AI agent (and admin) make to a
+// filing's data. Visible in the admin UI as a timeline. Never deleted.
+model FilingChangeLog {
+  id        String   @id @default(cuid())
+  filingId  String
+  filing    Filing   @relation(fields: [filingId], references: [id], onDelete: Cascade)
+  // Who/what initiated the change. "ai" = the conversation agent, "admin" =
+  // human via /admin, "customer" = self-service edit, "system" = automated
+  // (cron, webhook, etc.).
+  source    String
+  // Dotted path or simple field name, e.g. "llcName" or "yearData[2024].contributions".
+  field     String
+  beforeJson Json?
+  afterJson  Json?
+  // Free-text reason. For AI changes, this is what the customer told us.
+  reason    String?
+  changedAt DateTime @default(now())
+
+  @@index([filingId, changedAt])
+}
+
+// In-portal communication between admin and customer about a specific filing.
+// fromAdmin distinguishes direction. readAt is set when the OTHER party views
+// (e.g. customer GET marks fromAdmin=true rows as read, and vice versa). The
+// "first unread" email rule uses unread counts to debounce notifications.
+model Message {
+  id        String   @id @default(cuid())
+  filingId  String
+  filing    Filing   @relation(fields: [filingId], references: [id], onDelete: Cascade)
+  fromAdmin Boolean
+  body      String
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([filingId, createdAt])
 }
 
 model FilingYearData {
@@ -104,6 +190,11 @@ model FilingYearData {
   contributions          Decimal @db.Decimal(15, 2) @default(0)
   distributions          Decimal @db.Decimal(15, 2) @default(0)
   reportableTransactions Json    @default("[]")
+  // Free-text disclosure of any other related-party transactions during this
+  // tax year (loans, sales, services, rent, etc.) — flows into the Part V
+  // supporting statement. Null = user hasn't answered; empty string = explicitly
+  // confirmed no other transactions.
+  otherTransactionsNote  String?
 
   bankStatements BankStatement[]
 

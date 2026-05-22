@@ -8,6 +8,14 @@
     {
       "path": "/api/cron/march-reminder",
       "schedule": "0 14 15 3 *"
+    },
+    {
+      "path": "/api/cron/abandoned-draft-reminder",
+      "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/fax-status-poll",
+      "schedule": "*/10 * * * *"
     }
   ]
 }

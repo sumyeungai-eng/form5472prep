@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { StartForm } from "./StartForm";
 
@@ -18,7 +19,10 @@ export default function StartPage() {
           We&apos;ll save your progress as you go and email you a magic-link so you can pick up
           where you left off from any device.
         </p>
-        <StartForm />
+        {/* Suspense boundary required by useSearchParams inside StartForm. */}
+        <Suspense fallback={<div className="mt-6 h-[380px]" aria-hidden />}>
+          <StartForm />
+        </Suspense>
         <p className="mt-6 text-xs text-slate-500 text-center">
           Already started a filing?{" "}
           <a className="text-accent hover:underline" href="/sign-in">

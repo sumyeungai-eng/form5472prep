@@ -105,7 +105,7 @@ export default async function OG() {
             display: "flex",
           }}
         >
-          $169 plus a flat $29 · We fax to the IRS · 100% money-back guarantee
+          From $79 plus a flat $19 · We fax to the IRS · 100% money-back guarantee
         </div>
       </div>
     ),

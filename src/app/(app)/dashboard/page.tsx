@@ -3,8 +3,8 @@ import { FileText, Plus } from "lucide-react";
 import { requireUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
-import { formatUsd } from "@/lib/utils";
-import { TIERS } from "@/lib/pricing";
+import { getTiersForSource } from "@/lib/pricing";
+import { DashboardRow } from "./DashboardRow";
 
 const STATUS: Record<string, { label: string; tone: "slate" | "amber" | "blue" | "emerald" | "red" }> = {
   DRAFT: { label: "Draft", tone: "slate" },
@@ -17,20 +17,27 @@ const STATUS: Record<string, { label: string; tone: "slate" | "amber" | "blue" |
   FAILED: { label: "Failed", tone: "red" },
 };
 
-const TONE: Record<string, string> = {
-  slate: "bg-slate-100 text-slate-700",
-  amber: "bg-amber-100 text-amber-800",
-  blue: "bg-blue-100 text-blue-800",
-  emerald: "bg-emerald-100 text-emerald-800",
-  red: "bg-red-100 text-red-800",
-};
-
 export default async function DashboardPage() {
   const user = await requireUser();
   const filings = await prisma.filing.findMany({
     where: { userId: user.id },
     orderBy: { updatedAt: "desc" },
   });
+
+  // Unread admin → customer message counts per filing, so the dashboard
+  // surfaces "you have a message" without an extra round-trip per row.
+  const unreadCounts = filings.length
+    ? await prisma.message.groupBy({
+        by: ["filingId"],
+        where: {
+          filingId: { in: filings.map((f) => f.id) },
+          fromAdmin: true,
+          readAt: null,
+        },
+        _count: { _all: true },
+      })
+    : [];
+  const unreadByFiling = new Map(unreadCounts.map((u) => [u.filingId, u._count._all]));
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
@@ -61,37 +68,24 @@ export default async function DashboardPage() {
           {filings.map((f) => {
             const s = STATUS[f.status] ?? { label: f.status, tone: "slate" as const };
             return (
-              <Link
+              <DashboardRow
                 key={f.id}
+                id={f.id}
                 href={`/filings/${f.id}`}
-                className="flex items-center justify-between p-5 hover:bg-slate-50"
-              >
-                <div className="min-w-0">
-                  <p className="font-medium text-slate-900 truncate">
-                    {f.llcName ?? <em className="text-slate-400">Unnamed filing</em>}
-                  </p>
-                  <p className="text-sm text-slate-500 mt-0.5">
-                    {f.taxYears.length > 0 ? `Tax years ${f.taxYears.join(", ")}` : "No years selected"}
-                    {" · "}
-                    {TIERS[f.tier as keyof typeof TIERS]?.label ?? f.tier}
-                  </p>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Last updated {f.updatedAt.toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </p>
-                </div>
-                <div className="flex-none text-right ml-4">
-                  <span
-                    className={`inline-block text-xs font-medium px-2.5 py-1 rounded-full ${TONE[s.tone]}`}
-                  >
-                    {s.label}
-                  </span>
-                  <p className="text-xs text-slate-500 mt-2">{formatUsd(f.amountPaid)}</p>
-                </div>
-              </Link>
+                llcName={f.llcName}
+                taxYears={f.taxYears}
+                tierLabel={getTiersForSource(f.funnelSource)[f.tier as "single_year" | "two_year_diirsp" | "multi_year_diirsp"]?.label ?? f.tier}
+                updatedAt={f.updatedAt.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+                amountPaid={f.amountPaid}
+                statusLabel={s.label}
+                statusTone={s.tone}
+                canDelete={f.status === "DRAFT"}
+                unreadMessages={unreadByFiling.get(f.id) ?? 0}
+              />
             );
           })}
         </div>

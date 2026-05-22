@@ -1,10 +1,12 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { getOwnedFiling, getCurrentUser } from "@/lib/session";
+import { getFilingAccess, getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { FilingActions } from "@/components/wizard/FilingActions";
 import { FilingStatusBanner } from "@/components/FilingStatusBanner";
-import { TIERS } from "@/lib/pricing";
+import { FilingLocked } from "@/components/FilingLocked";
+import { MessagesPanel } from "@/components/MessagesPanel";
+import { getTiersForSource } from "@/lib/pricing";
 
 export default async function FilingDetailPage({
   params,
@@ -13,8 +15,18 @@ export default async function FilingDetailPage({
   params: { id: string };
   searchParams: { paid?: string };
 }) {
-  const owned = await getOwnedFiling(params.id);
-  if (!owned) notFound();
+  const access = await getFilingAccess(params.id);
+  if (access.kind === "not_found") notFound();
+  if (access.kind === "locked") return <FilingLocked ownerEmail={access.ownerEmail} />;
+  const owned = access.filing;
+  // DRAFT filings haven't been paid yet — send the user back to the wizard so
+  // they can finish filling and pay, rather than showing post-payment actions.
+  // Exception: ?paid=1 means the user just returned from Stripe; the webhook
+  // may not have fired yet, so let the page run and apply the optimistic bump
+  // below before deciding the status is really DRAFT.
+  if (owned.status === "DRAFT" && searchParams.paid !== "1") {
+    redirect(`/filings/${owned.id}/edit`);
+  }
   const user = await getCurrentUser();
 
   const filing = await prisma.filing.findUnique({
@@ -46,7 +58,7 @@ export default async function FilingDetailPage({
         )}
         <h1 className="text-2xl font-semibold mt-2">{filing.llcName ?? "Filing"}</h1>
         <p className="text-sm text-slate-500">
-          {TIERS[filing.tier as keyof typeof TIERS]?.label} · Tax years {filing.taxYears.join(", ")}
+          {getTiersForSource(filing.funnelSource)[filing.tier as "single_year" | "two_year_diirsp" | "multi_year_diirsp"]?.label} · Tax years {filing.taxYears.join(", ")}
         </p>
       </div>
 
@@ -64,8 +76,17 @@ export default async function FilingDetailPage({
           signedPdfKey: filing.signedPdfKey,
           faxJobId: filing.faxJobId,
           faxStatus: filing.faxStatus,
+          faxService: filing.faxService,
+          faxConfirmationKey: filing.faxConfirmationKey,
         }}
       />
+
+      {/* In-portal messaging. Visible to any owner of the filing — signed-in
+          user OR anonymous session-cookie match. Anonymous owners can still
+          post; admin notifications go to the filing's owner email if one
+          was captured at /start (i.e. filing.user is non-null), even when
+          the current browser doesn't have an active user cookie. */}
+      <MessagesPanel filingId={filing.id} isAdmin={false} />
     </div>
   );
 }

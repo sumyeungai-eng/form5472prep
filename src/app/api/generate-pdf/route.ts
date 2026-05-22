@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: `Missing required field: ${f}` }, { status: 400 });
   }
 
-  const bytes = await generatePackage({
+  const { bytes, signatures } = await generatePackage({
     llcName: filing.llcName!,
     llcEin: filing.llcEin!,
     llcAddress: filing.llcAddress!,
@@ -68,6 +68,13 @@ export async function POST(req: Request) {
       totalAssetsYearEnd: Number(y.totalAssetsYearEnd),
       contributions: Number(y.contributions),
       distributions: Number(y.distributions),
+      otherTransactionsNote: y.otherTransactionsNote,
+      reportableTransactions: Array.isArray(y.reportableTransactions)
+        ? (y.reportableTransactions as unknown[]).filter(
+            (t): t is { date: string; description: string; counterparty?: string; amountCents: number; category: string } =>
+              !!t && typeof t === "object" && "date" in t && "amountCents" in t && "category" in t,
+          )
+        : [],
     })),
   });
 
@@ -79,5 +86,5 @@ export async function POST(req: Request) {
     data: { generatedPdfKey: key, status: "PDF_GENERATED" },
   });
 
-  return NextResponse.json({ key });
+  return NextResponse.json({ key, signatures });
 }

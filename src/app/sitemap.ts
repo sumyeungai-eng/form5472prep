@@ -15,6 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/data-retention`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${base}/security`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
   ];
 
   const posts = await getAllPosts();
@@ -25,13 +26,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  // SEO landing pages — high priority since these target the highest-intent queries.
-  const landingUrls: MetadataRoute.Sitemap = LANDING_PAGES.map((p) => ({
-    url: `${base}/${p.slug}`,
-    lastModified: now,
-    changeFrequency: "monthly",
-    priority: 0.9,
-  }));
+  // SEO landing pages — high priority since these target the highest-intent
+  // queries. Noindex pages (paid-ad landings) are excluded so Google doesn't
+  // discover them via the sitemap.
+  const landingUrls: MetadataRoute.Sitemap = LANDING_PAGES
+    .filter((p) => !p.noindex)
+    .map((p) => ({
+      url: `${base}/${p.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    }));
 
   return [...staticUrls, ...landingUrls, ...postUrls];
 }

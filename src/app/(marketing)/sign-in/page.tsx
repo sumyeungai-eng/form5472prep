@@ -11,9 +11,19 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function SignInPage() {
+export default async function SignInPage({
+  searchParams,
+}: {
+  searchParams: { error?: string };
+}) {
   const user = await getCurrentUser();
   if (user) redirect("/dashboard");
+  const errorMessage =
+    searchParams.error === "expired"
+      ? "That magic link is invalid or has expired. Enter your email and we'll send a fresh one."
+      : searchParams.error === "not_found"
+      ? "We couldn't find that account. Enter your email to start over."
+      : null;
   return (
     <div className="max-w-md mx-auto px-6 py-20">
       <div className="bg-white border border-slate-200 rounded-xl p-8">
@@ -22,6 +32,11 @@ export default async function SignInPage() {
           Enter the email you used when starting your filing. We&apos;ll send you a one-click
           link to view status, download PDFs, and track the IRS fax.
         </p>
+        {errorMessage && (
+          <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+            {errorMessage}
+          </div>
+        )}
         <SignInForm />
         <p className="mt-6 text-xs text-slate-500 text-center">
           No password — we email a one-time link each time.{" "}

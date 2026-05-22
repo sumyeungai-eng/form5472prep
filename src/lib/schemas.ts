@@ -24,7 +24,11 @@ export const entitySchema = z.object({
     .regex(/^\d{6}$/, "6-digit NAICS code"),
 });
 
-export const ownerSchema = z.object({
+// Raw object schema — used as the base for derived form schemas (e.g. the
+// wizard's OwnerStep splits ownerName into first/middle/last). Kept separate
+// from the refined `ownerSchema` because `.omit()` / `.extend()` can't be
+// called on a ZodEffects (the result of `.superRefine()`).
+export const ownerBaseSchema = z.object({
   ownerName: z.string().trim().min(2, "Required"),
   ownerAddress: z.string().trim().min(3, "Required"),
   ownerCountryCitizenship: z.string().trim().min(2, "Required"),
@@ -34,6 +38,27 @@ export const ownerSchema = z.object({
   ownerItin: z.string().trim().optional().or(z.literal("")),
   ownerReferenceId: z.string().trim().optional().or(z.literal("")),
 });
+
+// Per IRS Form 5472 line 4b: must have either US ITIN OR a reference ID.
+// Exported as a plain refiner callback so derived schemas in the wizard can
+// reuse the same rule (they can't import a refined schema and then call
+// `.omit()` on it — `.omit()` is only defined on ZodObject, not ZodEffects).
+export function refineUsIdOrReferenceId(
+  val: { ownerItin?: string; ownerReferenceId?: string },
+  ctx: z.RefinementCtx,
+) {
+  const hasItin = !!val.ownerItin && val.ownerItin.length > 0;
+  const hasRef = !!val.ownerReferenceId && val.ownerReferenceId.length > 0;
+  if (!hasItin && !hasRef) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Required if you don't have a US ITIN",
+      path: ["ownerReferenceId"],
+    });
+  }
+}
+
+export const ownerSchema = ownerBaseSchema.superRefine(refineUsIdOrReferenceId);
 
 const currentYear = new Date().getFullYear();
 

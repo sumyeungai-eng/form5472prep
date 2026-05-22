@@ -11,8 +11,23 @@ function optional(name: string): string | undefined {
   return process.env[name] || undefined;
 }
 
+// Normalize the app URL: apex (form5472prep.com) is configured to 307 to www
+// on Vercel's edge, but that redirect drops the Authorization header on
+// cross-hostname per the fetch spec — breaking internal POST calls (admin
+// → /api/internal/validate-filing). Always emit the www form so internal
+// callers never traverse the redirect.
+function normalizedAppUrl(): string {
+  const raw = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  return raw === "https://form5472prep.com" ? "https://www.form5472prep.com" : raw;
+}
+
 export const env = {
-  appUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  appUrl: normalizedAppUrl(),
+  adminEmail: process.env.ADMIN_EMAIL || "orders@form5472prep.com",
+  // Where customer→admin portal-message notifications go. Kept distinct
+  // from adminEmail so order/fax notifications (orders@) and customer
+  // support replies (support@) can be triaged separately.
+  supportEmail: process.env.SUPPORT_EMAIL || "support@form5472prep.com",
   stripe: {
     get secretKey() { return required("STRIPE_SECRET_KEY"); },
     get webhookSecret() { return required("STRIPE_WEBHOOK_SECRET"); },

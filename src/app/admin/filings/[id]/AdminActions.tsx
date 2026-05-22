@@ -129,20 +129,6 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         >
           Regenerate PDF
         </ActionButton>
-        <ActionButton
-          disabled={pending || !hasGeneratedPdf}
-          onClick={() => callApi({ action: "runAiCheck" }, "AI compliance check complete — see status below")}
-          tooltip={!hasGeneratedPdf ? "No generated PDF on file" : "Re-runs the AI compliance check (~25s). Sends confirmation email if passed, or posts portal message if issues found."}
-        >
-          Re-run AI check
-        </ActionButton>
-        <ActionButton
-          disabled={pending}
-          onClick={() => callApi({ action: "reEngageAi" }, "AI re-engaged on this thread")}
-          tooltip="Clears the AI handoff and gives the conversation agent another go (resets turn counter)."
-        >
-          Re-engage AI
-        </ActionButton>
       </div>
 
       {msg && (

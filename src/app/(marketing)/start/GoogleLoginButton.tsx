@@ -79,8 +79,20 @@ export function GoogleLoginButton({
         strategy="afterInteractive"
         onLoad={() => setScriptLoaded(true)}
       />
+      {/* Reserve the slot's space before GIS injects the iframe — otherwise
+          the button pops in late and shoves the rest of the form down,
+          causing a visible layout shift on first paint. The dimensions
+          mirror the renderButton config above (width: 320, size: large
+          ≈ 40px tall). */}
       <div className="flex justify-center">
-        <div ref={buttonRef} />
+        <div
+          ref={buttonRef}
+          className="relative w-[320px] h-10 flex items-center justify-center"
+        >
+          {!scriptLoaded && (
+            <div className="absolute inset-0 rounded-md border border-slate-200 bg-slate-50 animate-pulse" />
+          )}
+        </div>
       </div>
     </>
   );

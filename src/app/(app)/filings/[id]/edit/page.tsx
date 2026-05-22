@@ -1,12 +1,15 @@
 import { notFound, redirect } from "next/navigation";
-import { getOwnedFiling } from "@/lib/session";
+import { getFilingAccess } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { FilingWizard } from "@/components/wizard/FilingWizard";
+import { FilingWizardV3 } from "@/components/wizard-v3/FilingWizardV3";
+import { FilingLocked } from "@/components/FilingLocked";
 import { plaidConfigured } from "@/lib/plaid";
 
 export default async function EditFilingPage({ params }: { params: { id: string } }) {
-  const owned = await getOwnedFiling(params.id);
-  if (!owned) notFound();
+  const access = await getFilingAccess(params.id);
+  if (access.kind === "not_found") notFound();
+  if (access.kind === "locked") return <FilingLocked ownerEmail={access.ownerEmail} />;
+  const owned = access.filing;
   if (owned.status !== "DRAFT") redirect(`/filings/${owned.id}`);
 
   const filing = await prisma.filing.findUnique({
@@ -24,8 +27,9 @@ export default async function EditFilingPage({ params }: { params: { id: string 
       totalAssetsYearEnd: y.totalAssetsYearEnd.toString(),
       contributions: y.contributions.toString(),
       distributions: y.distributions.toString(),
+      otherTransactionsNote: y.otherTransactionsNote ?? null,
     })),
   };
 
-  return <FilingWizard filing={serialized} plaidEnabled={plaidConfigured()} />;
+  return <FilingWizardV3 filing={serialized} plaidEnabled={plaidConfigured()} />;
 }

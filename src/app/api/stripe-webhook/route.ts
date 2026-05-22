@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { makeMagicLink } from "@/lib/magicLink";
 import { sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
 import { resolveTier } from "@/lib/pricing";
-import { generatePackage } from "@/lib/pdf/generatePackage";
+import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { putPdf } from "@/lib/storage";
 
 export const runtime = "nodejs";
@@ -48,6 +48,7 @@ export async function POST(req: Request) {
       // a PDF was successfully produced, to decide between "fire validation"
       // and "fall back to legacy no-attachment confirmation".
       let pdfBytes: Uint8Array | null = null;
+      let pdfSignatures: SignatureLocation[] = [];
       try {
         const full = await prisma.filing.findUnique({
           where: { id: filing.id },
@@ -95,6 +96,7 @@ export async function POST(req: Request) {
             })),
           });
           pdfBytes = result.bytes;
+          pdfSignatures = result.signatures;
           const key = `${filing.id}_unsigned.pdf`;
           await putPdf(key, result.bytes);
           await prisma.filing.update({
@@ -102,7 +104,6 @@ export async function POST(req: Request) {
             data: {
               generatedPdfKey: key,
               status: "PDF_GENERATED",
-              validationStatus: "pending",
             },
           });
         } else {
@@ -124,32 +125,14 @@ export async function POST(req: Request) {
         }
       }
 
-      // If PDF generation succeeded, kick off the AI compliance check.
-      // The validate endpoint owns sending the order-confirmation email
-      // (after the check passes) or posting a "we need clarification"
-      // system message (when it doesn't). This is fire-and-forget so we
-      // don't block Stripe's webhook timeout on a 20-30s AI call.
-      //
-      // If PDF generation FAILED (missing required fields), there's nothing
-      // to validate — fall through and send the order confirmation as today
-      // so the customer at least gets payment acknowledgment.
-      if (pdfBytes && filing.user) {
-        const internalSecret = process.env.INTERNAL_API_SECRET;
-        if (internalSecret) {
-          // Fire-and-forget: don't await. fetch() returns a Promise but the
-          // serverless function may still run it to completion as long as we
-          // hold the event loop briefly — and even if it doesn't, the admin
-          // "Re-run AI check" button is the fallback.
-          fetch(`${env.appUrl}/api/internal/validate-filing/${filing.id}`, {
-            method: "POST",
-            headers: { Authorization: `Bearer ${internalSecret}` },
-          }).catch((err) => console.error("[stripe-webhook] kick off validation failed", err));
-        } else {
-          console.warn("[stripe-webhook] INTERNAL_API_SECRET not set; skipping AI validation");
-        }
-      } else if (filing.user) {
-        // No PDF generated — send the legacy order confirmation (no attachment)
-        // so the customer still gets a payment receipt + next steps.
+      // Send the order confirmation email directly — AI compliance check has
+      // been removed from the order flow (every package is reviewed by our
+      // tax accountant before fax instead). If PDF generation succeeded the
+      // email includes the unsigned PDF attachment + signature locations so
+      // the customer can sign in-portal immediately. If generation failed
+      // (missing required fields) the email goes out without an attachment
+      // so the customer at least gets a payment receipt + portal link.
+      if (filing.user) {
         const link = makeMagicLink(filing.user.id);
         const amountPaidCents = session.amount_total ?? 0;
         const tier = resolveTier(filing.tier).tier;
@@ -177,12 +160,9 @@ export async function POST(req: Request) {
             faxService: filing.faxService,
             portalLink: link,
             receiptUrl,
-            // Drives tier-label + price selection in the email so premium
-            // customers see "Single year — Priority / $149" matching what
-            // Stripe charged them.
             funnelSource: filing.funnelSource,
-            pdfBytes: null,
-            signatures: [],
+            pdfBytes,
+            signatures: pdfSignatures,
           });
         } catch (err) {
           console.error("[stripe-webhook] order confirmation email failed", err);

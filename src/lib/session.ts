@@ -131,6 +131,27 @@ export async function getOwnedFiling(filingId: string) {
   });
 }
 
+// Distinguishes "filing doesn't exist" from "filing exists but is owned by
+// someone else." Returns "owned" with the filing, "locked" if it exists but the
+// current visitor can't access it (typically: anonymous session cookie expired
+// or different browser, and the filing is bound to a user account), or
+// "not_found" if the ID doesn't exist at all.
+export async function getFilingAccess(filingId: string): Promise<
+  | { kind: "owned"; filing: { id: string; status: string } }
+  | { kind: "locked"; ownerEmail: string | null }
+  | { kind: "not_found" }
+> {
+  const owned = await getOwnedFiling(filingId);
+  if (owned) return { kind: "owned", filing: { id: owned.id, status: owned.status } };
+
+  const exists = await prisma.filing.findUnique({
+    where: { id: filingId },
+    select: { id: true, user: { select: { email: true } } },
+  });
+  if (!exists) return { kind: "not_found" };
+  return { kind: "locked", ownerEmail: exists.user?.email ?? null };
+}
+
 // Upgrade an anonymous draft Filing to be owned by a real (email-bound) User.
 // Idempotent: if the filing is already bound, just updates the email.
 // We DO NOT clear sessionId here — the browser may not have a fs_user cookie

@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { submitFax } from "@/lib/fax";
-import { publicUrl } from "@/lib/storage";
+import { publicUrl, get as getStorageObject, putPdf } from "@/lib/storage";
 import { env } from "@/lib/env";
-import { sendFaxDeliveredEmail, sendFaxFailedEmail } from "@/lib/email";
+import {
+  sendFaxDeliveredEmail,
+  sendFaxFailedEmail,
+  sendFaxDeliveredAdminEmail,
+  sendFaxFailedAdminEmail,
+  type FaxProof,
+} from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
+import { generateFaxReceiptPdf } from "@/lib/pdf/faxReceipt";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,10 +39,65 @@ export async function POST(req: Request) {
   if (!filing) return NextResponse.json({ ok: true });
 
   if (evt === "fax.delivered") {
+    const submittedAtIso = (body?.data?.payload?.created_at as string) ?? new Date().toISOString();
+    const deliveredAtIso = (body?.data?.payload?.updated_at as string) ?? new Date().toISOString();
+
     await prisma.filing.update({
       where: { id: filing.id },
       data: { faxStatus: "delivered", status: "CONFIRMED" },
     });
+
+    const proof: FaxProof = {
+      faxId,
+      deliveredAt: deliveredAtIso,
+      pageCount: (body?.data?.payload?.page_count as number | undefined) ?? null,
+      durationSecs: (body?.data?.payload?.call_duration_secs as number | undefined) ?? null,
+      from: (body?.data?.payload?.from as string | undefined) ?? null,
+      to: (body?.data?.payload?.to as string | undefined) ?? env.telnyx.destination,
+    };
+    const adminFilingUrl = `${env.appUrl}/admin/filings/${filing.id}`;
+
+    // Pull the exact PDF that was faxed and attach it to the customer's
+    // proof email. Missing key isn't fatal — we still send the email body.
+    let signedPdfBytes: Uint8Array | undefined;
+    if (filing.signedPdfKey) {
+      try {
+        signedPdfBytes = await getStorageObject(filing.signedPdfKey);
+      } catch (err) {
+        console.error("[telnyx-webhook] could not read signed PDF for proof attachment", err);
+      }
+    }
+
+    // Generate the timestamped IRS Fax Transmission Receipt PDF and store
+    // it as `faxConfirmationKey`. Customer can re-download it from the
+    // portal, and we also attach it to the delivery email. Failure here
+    // doesn't block the rest of the flow — the email body still includes
+    // the same proof in human-readable form.
+    let receiptPdfBytes: Uint8Array | undefined;
+    try {
+      receiptPdfBytes = await generateFaxReceiptPdf({
+        filingId: filing.id,
+        llcName: filing.llcName,
+        llcEin: filing.llcEin,
+        taxYears: filing.taxYears,
+        ownerName: filing.ownerName,
+        telnyxFaxId: faxId,
+        fromFax: proof.from ?? null,
+        toFax: proof.to ?? null,
+        submittedAtIso,
+        deliveredAtIso,
+        pageCount: proof.pageCount ?? null,
+      });
+      const receiptKey = `${filing.id}_fax_receipt.pdf`;
+      await putPdf(receiptKey, receiptPdfBytes);
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: { faxConfirmationKey: receiptKey },
+      });
+    } catch (err) {
+      console.error("[telnyx-webhook] receipt PDF generation/store failed", err);
+    }
+
     if (filing.user) {
       try {
         await sendFaxDeliveredEmail({
@@ -43,10 +105,26 @@ export async function POST(req: Request) {
           llcName: filing.llcName,
           taxYears: filing.taxYears,
           portalLink: makeMagicLink(filing.user.id),
+          proof,
+          signedPdfBytes,
+          receiptPdfBytes,
         });
       } catch (err) {
         console.error("[telnyx-webhook] fax delivered email failed", err);
       }
+    }
+    try {
+      await sendFaxDeliveredAdminEmail({
+        adminEmail: env.adminEmail,
+        customerEmail: filing.user?.email ?? null,
+        llcName: filing.llcName,
+        taxYears: filing.taxYears,
+        filingId: filing.id,
+        adminFilingUrl,
+        proof,
+      });
+    } catch (err) {
+      console.error("[telnyx-webhook] admin fax delivered email failed", err);
     }
     return NextResponse.json({ ok: true });
   }
@@ -63,9 +141,14 @@ export async function POST(req: Request) {
       });
       return NextResponse.json({ ok: true, retried: true });
     }
+    const failureReason = (body?.data?.payload?.failure_reason as string | undefined) ?? null;
+    const adminFilingUrl = `${env.appUrl}/admin/filings/${filing.id}`;
     await prisma.filing.update({
       where: { id: filing.id },
-      data: { faxStatus: "failed", status: "FAILED" },
+      data: {
+        faxStatus: failureReason ? `failed:${failureReason}` : "failed",
+        status: "FAILED",
+      },
     });
     if (filing.user) {
       try {
@@ -78,6 +161,21 @@ export async function POST(req: Request) {
       } catch (err) {
         console.error("[telnyx-webhook] fax failed email failed", err);
       }
+    }
+    try {
+      await sendFaxFailedAdminEmail({
+        adminEmail: env.adminEmail,
+        customerEmail: filing.user?.email ?? null,
+        llcName: filing.llcName,
+        taxYears: filing.taxYears,
+        filingId: filing.id,
+        adminFilingUrl,
+        faxId,
+        failureReason,
+        deliveryAttempts: retryCount,
+      });
+    } catch (err) {
+      console.error("[telnyx-webhook] admin fax failed email failed", err);
     }
     return NextResponse.json({ ok: true, gaveUp: true });
   }

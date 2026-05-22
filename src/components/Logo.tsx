@@ -84,9 +84,9 @@ export function Logo({
         fontSize="22"
         letterSpacing="-0.4"
       >
-        <tspan fill="#0f172a">Form</tspan>
+        <tspan fill="currentColor">Form</tspan>
         <tspan fill="#1e3a8a">5472</tspan>
-        <tspan fill="#0f172a"> Prep</tspan>
+        <tspan fill="currentColor"> Prep</tspan>
       </text>
     </svg>
   );

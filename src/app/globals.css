@@ -60,6 +60,22 @@
   100% { background-position: 1000px 0; }
 }
 
+@keyframes chatPanelIn {
+  0%   { opacity: 0; transform: translateY(12px) scale(0.92); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes chatButtonIn {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.4); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes chatMessageIn {
+  0%   { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 @layer utilities {
   .animate-fade-in-up {
     animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -95,6 +111,19 @@
   .animate-delay-300 { animation-delay: 300ms; }
   .animate-delay-400 { animation-delay: 400ms; }
   .animate-delay-500 { animation-delay: 500ms; }
+
+  /* Chat widget transitions. transform-origin keeps the panel anchored to
+     the launcher pill in the bottom-right corner as it scales in. */
+  .animate-chat-panel-in {
+    transform-origin: bottom right;
+    animation: chatPanelIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .animate-chat-button-in {
+    animation: chatButtonIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  .animate-chat-message-in {
+    animation: chatMessageIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
 }
 
 /* Respect prefers-reduced-motion — accessibility requirement. Users who

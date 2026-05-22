@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalLayout title="Terms of Service" lastUpdated="2026-01-01">
+    <LegalLayout title="Terms of Service" lastUpdated="2026-05-20">
       <h2>1. What this service is</h2>
       <p>
         form5472 (the &quot;Service&quot;) is a self-service tool for preparing IRS Form 5472
@@ -59,13 +59,27 @@ export default function TermsPage() {
         particular penalty will be avoided or reduced.
       </p>
 
-      <h2>7. Acceptable use</h2>
+      <h2>7. Bank account connections (optional)</h2>
+      <p>
+        The Service offers an optional bank account connection via{" "}
+        <strong>Plaid Inc.</strong> that lets you import the tax year&apos;s transactions
+        automatically. Use of this feature is governed by{" "}
+        <a href="https://plaid.com/legal/#end-user-privacy-policy" target="_blank" rel="noopener noreferrer">
+          Plaid&apos;s End User Privacy Policy
+        </a>{" "}
+        in addition to our own <a href="/privacy">Privacy Policy</a>. You may revoke the
+        Plaid connection at any time from your account dashboard. The feature is provided
+        for your convenience — you remain responsible for verifying that the imported and
+        categorized transactions are accurate and complete before authorizing submission.
+      </p>
+
+      <h2>8. Acceptable use</h2>
       <p>
         You may not use the Service to submit false or fraudulent filings, to file on behalf of
         another person without authorization, or in violation of any applicable law.
       </p>
 
-      <h2>8. Limitation of liability</h2>
+      <h2>9. Limitation of liability</h2>
       <p>
         To the maximum extent permitted by law, our total aggregate liability arising out of or
         relating to the Service is limited to the fees you paid us in the twelve (12) months
@@ -74,25 +88,25 @@ export default function TermsPage() {
         assessed by any tax authority.
       </p>
 
-      <h2>9. Termination</h2>
+      <h2>10. Termination</h2>
       <p>
         We may suspend or terminate your access to the Service at our discretion, including for
         suspected misuse. You may stop using the Service at any time.
       </p>
 
-      <h2>10. Governing law</h2>
+      <h2>11. Governing law</h2>
       <p>
         These Terms are governed by the laws of the State of Wyoming, U.S.A., without regard to
         its conflict of laws principles.
       </p>
 
-      <h2>11. Changes to these Terms</h2>
+      <h2>12. Changes to these Terms</h2>
       <p>
         We may update these Terms from time to time. Material changes will be communicated by
         email to the address associated with your account.
       </p>
 
-      <h2>12. Contact</h2>
+      <h2>13. Contact</h2>
       <p>
         Questions about these Terms can be sent to{" "}
         <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>.

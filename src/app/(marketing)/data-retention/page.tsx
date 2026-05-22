@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function DataRetentionPage() {
   return (
-    <LegalLayout title="Data Retention Policy" lastUpdated="2026-01-01">
+    <LegalLayout title="Data Retention Policy" lastUpdated="2026-05-20">
       <h2>Our principle</h2>
       <p>
         We retain the minimum amount of data needed to (a) prove that your IRS filing was
@@ -36,9 +36,14 @@ export default function DataRetentionPage() {
             <td>Parsed to extract totals, then dropped without being written to disk</td>
           </tr>
           <tr>
-            <td>Individual transaction rows</td>
+            <td>Individual transaction rows (uploaded or imported via Plaid)</td>
             <td>Lifetime of your review session</td>
             <td>Used to display the categorization review; discarded when you confirm the totals</td>
+          </tr>
+          <tr>
+            <td>Plaid access tokens</td>
+            <td>Revoked immediately after transaction import is complete, or on user request</td>
+            <td>No persistent bank connection is retained beyond the import session unless you opt to keep it</td>
           </tr>
           <tr>
             <td>Signed PDFs you upload</td>
@@ -120,7 +125,9 @@ export default function DataRetentionPage() {
         <li>Individual line-item transactions — discarded after totals are confirmed.</li>
         <li>Signed PDFs — deleted within 72 hours of fax confirmation.</li>
         <li>Payment card data — handled and stored exclusively by Stripe.</li>
-        <li>Passwords — we use magic-link authentication via Clerk; no passwords are stored.</li>
+        <li>Passwords — we use passwordless authentication (one-time email magic-link or Google OAuth); no passwords are ever stored.</li>
+        <li>Bank login credentials — never seen or stored. Plaid handles authentication directly with your financial institution.</li>
+        <li>Raw transaction data from Plaid — only the contribution/distribution totals are retained for filing reproduction; individual line items are discarded after review.</li>
       </ul>
     </LegalLayout>
   );
