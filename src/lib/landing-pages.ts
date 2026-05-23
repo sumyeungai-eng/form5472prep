@@ -1934,3 +1934,114 @@ export const LANDING_PAGES: LandingPage[] = [
 export function getLandingPage(slug: string): LandingPage | null {
   return LANDING_PAGES.find((p) => p.slug === slug) ?? null;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Topic clusters — drive the "Related guides" cross-linking block at the
+// bottom of each landing page. Goals:
+//   1. SEO: more internal links from topical neighbours pass authority sideways
+//      between pages that already rank for related queries.
+//   2. AEO / GEO: AI crawlers (and Google's site-quality signals) treat tight
+//      topic clusters as evidence of expertise on a subject area.
+//   3. UX: a reader on "form-5472-deadline" probably also wants "form-5472-fax-number"
+//      and "diirsp"; surface them inline so they don't have to hunt.
+//
+// A page can belong to multiple clusters. Order within a cluster doesn't matter.
+// noindex pages (e.g. /pro-form-5472) are intentionally excluded from being
+// suggested — getRelatedSlugs() filters them out so paid-ad landing pages don't
+// leak into organic neighbours.
+const TOPIC_CLUSTERS: Record<string, string[]> = {
+  // Step-by-step / instructional core
+  "how-to": [
+    "file-form-5472",
+    "form-5472-instructions",
+    "irs-form-5472",
+    "1120-pro-forma-instructions",
+  ],
+  // Late filing & penalty mitigation
+  "late-and-penalty": [
+    "diirsp",
+    "late-form-5472",
+    "form-5472-penalty",
+    "form-5472-reasonable-cause-statement",
+  ],
+  // Pro forma 1120 mechanics
+  "1120": [
+    "pro-forma-1120",
+    "form-1120-foreign-owned-llc",
+    "form-1120-disregarded-entity",
+    "1120-pro-forma-instructions",
+    "form-5472-vs-1120",
+  ],
+  // Operational / logistical
+  "logistics": [
+    "form-5472-deadline",
+    "form-5472-fax-number",
+    "file-form-5472",
+  ],
+  // State-specific guides
+  "state": [
+    "wyoming-llc-form-5472",
+    "delaware-llc-form-5472",
+  ],
+  // Audience / persona
+  "audience": [
+    "foreign-owned-llc-tax",
+    "single-member-llc-foreign-owner",
+    "stripe-atlas-form-5472",
+  ],
+};
+
+// Membership index: slug → list of cluster names it appears in.
+const CLUSTER_MEMBERSHIP: Record<string, string[]> = (() => {
+  const m: Record<string, string[]> = {};
+  for (const [cluster, slugs] of Object.entries(TOPIC_CLUSTERS)) {
+    for (const slug of slugs) {
+      (m[slug] ??= []).push(cluster);
+    }
+  }
+  return m;
+})();
+
+// Returns up to N suggested slugs for the given page, preferring:
+//   1. Anything explicitly set on the page's relatedSlugs[]
+//   2. Cluster mates (same topic cluster)
+//   3. Other indexable pages (random tie-break, deterministic per slug)
+// Always excludes the page itself, noindex pages, and duplicates.
+export function getRelatedSlugs(forSlug: string, limit = 4): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>([forSlug]);
+  const indexable = new Set(
+    LANDING_PAGES.filter((p) => !p.noindex).map((p) => p.slug),
+  );
+
+  const add = (s: string) => {
+    if (out.length >= limit) return;
+    if (seen.has(s)) return;
+    if (!indexable.has(s)) return;
+    out.push(s);
+    seen.add(s);
+  };
+
+  // 1) Explicit overrides
+  const page = LANDING_PAGES.find((p) => p.slug === forSlug);
+  for (const s of page?.relatedSlugs ?? []) add(s);
+
+  // 2) Cluster mates
+  for (const cluster of CLUSTER_MEMBERSHIP[forSlug] ?? []) {
+    for (const s of TOPIC_CLUSTERS[cluster] ?? []) add(s);
+  }
+
+  // 3) Deterministic fallback: walk the rest of LANDING_PAGES in order
+  for (const p of LANDING_PAGES) add(p.slug);
+
+  return out;
+}
+
+// Pull just the title + meta description for a slug (used by the related-guides
+// renderer so it can show "title + one-line teaser" without re-importing the
+// whole page object at every call site).
+export function getLandingTeaser(slug: string): { title: string; description: string } | null {
+  const p = LANDING_PAGES.find((x) => x.slug === slug);
+  if (!p) return null;
+  return { title: p.h1, description: p.metaDescription };
+}

@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2, Clock, FileText, Send, ShieldCheck } from "lu
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
-import { LANDING_PAGES, getLandingPage } from "@/lib/landing-pages";
+import { LANDING_PAGES, getLandingPage, getRelatedSlugs } from "@/lib/landing-pages";
 import { TIERS, TIER_ORDER, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
 import { env } from "@/lib/env";
@@ -62,7 +62,12 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
   const page = getLandingPage(params.seoSlug);
   if (!page) notFound();
 
-  const related = (page.relatedSlugs ?? [])
+  // Topic-cluster-derived related pages — see TOPIC_CLUSTERS in
+  // landing-pages.ts. Honours page.relatedSlugs[] overrides, falls back to
+  // cluster mates, excludes noindex pages and the page itself. The helper
+  // always returns up to N indexable slugs so the "Related guides" block
+  // is never empty (it was, because no page had relatedSlugs set).
+  const related = getRelatedSlugs(page.slug, 4)
     .map((s) => getLandingPage(s))
     .filter((p): p is NonNullable<typeof p> => p !== null);
 
