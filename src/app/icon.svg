@@ -1,14 +1,14 @@
-<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <!-- Document silhouette with a folded top-right corner — reads as "form" -->
-  <path d="M10 6 H42 L58 22 V58 H10 Z" fill="#1e3a8a"/>
-  <!-- Folded corner highlight -->
-  <path d="M42 6 V22 H58" fill="none" stroke="#ffffff" stroke-width="2" stroke-linejoin="round" opacity="0.55"/>
-  <!-- "5472" -->
-  <text x="34" y="48"
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Form5472 Prep">
+  <!-- Brand favicon: white "5472" on navy (#1e3a8a) rounded square.
+       Designed for legibility at 16x16 — no fine details, generous letter-spacing,
+       extra-bold weight, padding from edges. Matches the same #1e3a8a as the
+       site accent color and Google Ads logo. -->
+  <rect width="64" height="64" rx="11" fill="#1e3a8a"/>
+  <text x="32" y="43"
         text-anchor="middle"
-        font-family="-apple-system, BlinkMacSystemFont, Inter, 'Segoe UI', sans-serif"
-        font-weight="800"
-        font-size="16"
-        letter-spacing="0.5"
+        font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif"
+        font-weight="900"
+        font-size="24"
+        letter-spacing="-1"
         fill="#ffffff">5472</text>
 </svg>

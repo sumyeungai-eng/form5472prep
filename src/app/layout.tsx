@@ -69,6 +69,19 @@ export const metadata: Metadata = {
       ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
       : undefined,
   },
+  // Favicon set. Next.js App Router auto-links files dropped at
+  // src/app/icon.svg, src/app/apple-icon.png, and src/app/favicon.ico via
+  // the file conventions — so the only icons that need explicit metadata
+  // entries here are the legacy 16/32 PNG sizes (some old browsers + the
+  // Google search-result icon crawler prefer explicit sizes) and the PWA
+  // manifest. The Android 192/512 icons are referenced from the manifest.
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
