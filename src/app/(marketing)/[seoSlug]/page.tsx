@@ -152,15 +152,57 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
         {/* Body sections */}
         <section className="border-b border-slate-200">
           <div className="max-w-3xl mx-auto px-6 py-16 space-y-10">
+            {/* In-page Table of Contents — only on pages with 4+ sections
+                (anything shorter doesn't benefit from a TOC and clutters the
+                fold). Links use #step-N anchors that match the HowTo JSON-LD
+                step URLs, so when Google's AI Overview cites a specific step
+                of our guide it can deep-link straight to it. */}
+            {page.sections.length >= 4 && (
+              <Reveal>
+                <nav
+                  aria-label="In this guide"
+                  className="rounded-lg border border-slate-200 bg-slate-50 p-5"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    In this guide
+                  </p>
+                  <ol className="mt-3 space-y-1.5 text-sm">
+                    {page.sections.map((s, i) => (
+                      <li key={s.heading} className="flex gap-2">
+                        <span className="text-slate-400 tabular-nums w-5 shrink-0 text-right">
+                          {i + 1}.
+                        </span>
+                        <a
+                          href={`#step-${i + 1}`}
+                          className="text-slate-700 hover:text-accent hover:underline"
+                        >
+                          {s.heading}
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </nav>
+              </Reveal>
+            )}
             {page.sections.map((s, i) => (
               <Reveal key={s.heading} delay={i * 60}>
                 {/* id="step-N" matches the HowTo JSON-LD step URLs so AI
-                    crawlers can deep-link to each step on the page. */}
+                    crawlers can deep-link to each step on the page. The
+                    visible "#" anchor link gives readers a copy-link affordance
+                    (fades in on hover; always visible on touch devices via
+                    sm:opacity-0 vs default opacity-100). */}
                 <h2
                   id={`step-${i + 1}`}
-                  className="text-2xl font-semibold text-slate-900 tracking-tight scroll-mt-20"
+                  className="group flex items-center gap-2 text-2xl font-semibold text-slate-900 tracking-tight scroll-mt-20"
                 >
-                  {s.heading}
+                  <span>{s.heading}</span>
+                  <a
+                    href={`#step-${i + 1}`}
+                    aria-label={`Link to ${s.heading}`}
+                    className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-accent text-xl font-light"
+                  >
+                    #
+                  </a>
                 </h2>
                 <div className="mt-3 space-y-3 text-slate-700 leading-relaxed whitespace-pre-line">
                   {s.body}
