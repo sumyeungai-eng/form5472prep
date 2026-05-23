@@ -583,12 +583,30 @@ function Criterion({
 // - FAQPage powers Google's expandable FAQ rich result + AI direct-answer pulls.
 function StructuredData() {
   const url = env.appUrl;
+  // Organization — enriched for knowledge-panel + E-E-A-T signals. knowsAbout
+  // is the key field for AI engines deciding whether to cite us as a topical
+  // source on a Form 5472 / DIIRSP question.
   const organization = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Form5472 Prep",
+    legalName: "Form5472 Prep",
     url,
     logo: `${url}/logo-mark.svg`,
+    description:
+      "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs. Every package reviewed by a qualified tax accountant before fax delivery to the IRS Ogden PIN Unit.",
+    foundingDate: "2025",
+    areaServed: { "@type": "Country", name: "United States" },
+    knowsAbout: [
+      "IRS Form 5472",
+      "IRS Form 1120 (pro forma)",
+      "Foreign-owned US single-member LLC tax compliance",
+      "DIIRSP — Delinquent International Information Return Submission Procedure",
+      "IRC § 6038A reportable transactions",
+      "Treasury Regulation § 1.6038A-1",
+      "$25,000 IRS information-return penalty abatement",
+    ],
+    slogan: "Flat-rate Form 5472 filing. No hidden fees.",
     sameAs: [] as string[],
     contactPoint: [
       {
@@ -597,7 +615,30 @@ function StructuredData() {
         email: "support@form5472prep.com",
         availableLanguage: ["en"],
       },
+      {
+        "@type": "ContactPoint",
+        contactType: "billing support",
+        email: "orders@form5472prep.com",
+        availableLanguage: ["en"],
+      },
     ],
+  };
+
+  // WebSite + SearchAction declares a site-search action so Google can
+  // render a sitelinks search box for the brand. Even without on-site
+  // search, declaring intent at /blog?q= unlocks the box for branded queries.
+  const website = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    url,
+    name: "Form5472 Prep",
+    publisher: { "@type": "Organization", name: "Form5472 Prep", url },
+    inLanguage: "en-US",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: { "@type": "EntryPoint", urlTemplate: `${url}/blog?q={search_term_string}` },
+      "query-input": "required name=search_term_string",
+    },
   };
 
   const service = {
@@ -647,6 +688,7 @@ function StructuredData() {
   return (
     <>
       <JsonLd data={organization} />
+      <JsonLd data={website} />
       <JsonLd data={service} />
       <JsonLd data={faq} />
       <JsonLd data={breadcrumb} />

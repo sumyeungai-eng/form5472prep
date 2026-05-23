@@ -104,7 +104,12 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                 <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 text-balance animate-fade-in-up animate-delay-100">
                   {page.h1}
                 </h1>
-                <p className="mt-5 text-lg text-slate-600 animate-fade-in-up animate-delay-200">{page.intro}</p>
+                {/* className="lead" matches the SpeakableSpecification cssSelector
+                  in the Article schema below — voice assistants read this aloud
+                  for the page. The first ~60 words also feed Google AI Overviews
+                  and ChatGPT direct answers, so page.intro is written as a
+                  definitional / direct-answer paragraph. */}
+              <p className="lead mt-5 text-lg text-slate-600 animate-fade-in-up animate-delay-200">{page.intro}</p>
               </div>
               <HeroRailCta startUrl={startUrl} />
             </div>
@@ -117,7 +122,12 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
               <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 text-balance animate-fade-in-up animate-delay-100">
                 {page.h1}
               </h1>
-              <p className="mt-5 text-lg text-slate-600 animate-fade-in-up animate-delay-200">{page.intro}</p>
+              {/* className="lead" matches the SpeakableSpecification cssSelector
+                  in the Article schema below — voice assistants read this aloud
+                  for the page. The first ~60 words also feed Google AI Overviews
+                  and ChatGPT direct answers, so page.intro is written as a
+                  definitional / direct-answer paragraph. */}
+              <p className="lead mt-5 text-lg text-slate-600 animate-fade-in-up animate-delay-200">{page.intro}</p>
               <div className="mt-7 flex flex-wrap items-center gap-3 animate-fade-in-up animate-delay-300">
                 <Link href={startUrl} className="group">
                   <Button size="lg" className="shadow-md shadow-accent/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/30">
@@ -139,7 +149,12 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
           <div className="max-w-3xl mx-auto px-6 py-16 space-y-10">
             {page.sections.map((s, i) => (
               <Reveal key={s.heading} delay={i * 60}>
-                <h2 className="text-2xl font-semibold text-slate-900 tracking-tight">
+                {/* id="step-N" matches the HowTo JSON-LD step URLs so AI
+                    crawlers can deep-link to each step on the page. */}
+                <h2
+                  id={`step-${i + 1}`}
+                  className="text-2xl font-semibold text-slate-900 tracking-tight scroll-mt-20"
+                >
                   {s.heading}
                 </h2>
                 <div className="mt-3 space-y-3 text-slate-700 leading-relaxed whitespace-pre-line">
@@ -462,18 +477,45 @@ function PricingSection({
 
 function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof getLandingPage>> }) {
   const url = `${env.appUrl}/${page.slug}`;
+  // datePublished anchors article freshness for Google. dateModified bumps
+  // whenever we redeploy — good for AI engines that prefer recent sources.
+  const buildDate = new Date().toISOString();
   const article = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: page.h1,
     description: page.metaDescription,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    author: { "@type": "Organization", name: "Form5472 Prep", url: env.appUrl },
+    datePublished: "2026-01-15",
+    dateModified: buildDate,
+    inLanguage: "en-US",
+    author: {
+      "@type": "Organization",
+      name: "Form5472 Prep",
+      url: env.appUrl,
+      // knowsAbout signals topical expertise (E-E-A-T) — helps AI engines
+      // (Perplexity, ChatGPT) decide whether to cite us as a source.
+      knowsAbout: [
+        "IRS Form 5472",
+        "IRS Form 1120",
+        "Foreign-owned US LLC tax filing",
+        "DIIRSP — Delinquent International Information Return Submission Procedure",
+        "IRC § 6038A",
+        "Treasury Regulation § 1.6038A-1",
+      ],
+    },
     publisher: {
       "@type": "Organization",
       name: "Form5472 Prep",
       url: env.appUrl,
       logo: { "@type": "ImageObject", url: `${env.appUrl}/logo-mark.svg` },
+    },
+    // Speakable picks the H1 + intro paragraph for voice-assistant readback
+    // (Google Assistant, Alexa). Cheap to declare; only takes effect on
+    // pages an assistant actually serves.
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: ["h1", "p.lead"],
     },
   };
   const faq = {
@@ -493,11 +535,46 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
       { "@type": "ListItem", position: 2, name: page.h1, item: url },
     ],
   };
+  // HowTo schema is what unlocks Google AI Overview citation + AI assistant
+  // step-by-step extraction. We derive it from page.sections: each section's
+  // heading becomes a HowToStep, body becomes the step text. Only emit when
+  // we have at least 3 sections so the schema actually represents a process.
+  const howTo = page.sections.length >= 3
+    ? {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        name: page.h1,
+        description: page.metaDescription,
+        totalTime: "PT15M",
+        estimatedCost: {
+          "@type": "MonetaryAmount",
+          currency: "USD",
+          value: "199",
+        },
+        supply: [
+          { "@type": "HowToSupply", name: "LLC formation documents (EIN, state of formation, date of incorporation)" },
+          { "@type": "HowToSupply", name: "Owner identity (legal name, address, country of citizenship + tax residence, FTIN or Reference ID)" },
+          { "@type": "HowToSupply", name: "Year-end total assets and a list of reportable transactions with the foreign owner" },
+        ],
+        tool: [
+          { "@type": "HowToTool", name: "Form5472 Prep online filer" },
+          { "@type": "HowToTool", name: "IRS fax delivery to Ogden PIN Unit (+1-855-887-7737) — included on every plan" },
+        ],
+        step: page.sections.map((s, i) => ({
+          "@type": "HowToStep",
+          position: i + 1,
+          name: s.heading,
+          text: s.body.replace(/\n+/g, " ").trim().slice(0, 600),
+          url: `${url}#step-${i + 1}`,
+        })),
+      }
+    : null;
   return (
     <>
       <JsonLd data={article} />
       {page.faqs.length > 0 && <JsonLd data={faq} />}
       <JsonLd data={breadcrumb} />
+      {howTo && <JsonLd data={howTo} />}
     </>
   );
 }
