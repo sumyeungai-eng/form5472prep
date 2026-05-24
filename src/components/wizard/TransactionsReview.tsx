@@ -1,12 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Upload, FileText, X, Sparkles, AlertTriangle, ArrowUp, ArrowDown, Landmark, Plus, ClipboardPaste } from "lucide-react";
+import { Upload, FileText, X, Sparkles, AlertTriangle, ArrowUp, ArrowDown, Plus, ClipboardPaste } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import type { CategorizedTransaction, Category } from "@/lib/bank/categorize";
 import { formatUsd } from "@/lib/utils";
-import { PlaidConnectButton } from "./PlaidConnectButton";
+// PlaidConnectButton import temporarily removed while the bank-connect
+// button is hidden on the transactions page. Restore alongside the JSX
+// when re-enabling.
 
 const CATEGORY_LABELS: Record<Category, string> = {
   contribution: "Contribution (Part V)",
@@ -45,8 +47,12 @@ const MAX_FILES_PER_YEAR = 13;
 
 export function TransactionsReview({
   filingId,
-  ownerName,
-  plaidEnabled = false,
+  // ownerName and plaidEnabled are still passed in by the wizard so the
+  // call-site signature doesn't have to change while the Plaid UI is
+  // hidden. Both go back into the JSX when we re-enable the bank-connect
+  // button — see the matching commented block below the UploadDropzone.
+  ownerName: _ownerName,
+  plaidEnabled: _plaidEnabled = false,
   initialYears,
   onSubmit,
   onBack,
@@ -315,8 +321,10 @@ export function TransactionsReview({
   }
 
   // Plaid Link returned with a set of transactions for the year — fold them
-  // into our year state the same way uploaded files do.
-  function onPlaidTransactions(
+  // into our year state the same way uploaded files do. Unused while the
+  // Plaid button is hidden; kept here so re-enabling is one-edit only.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function _onPlaidTransactions(
     taxYear: number,
     institutionName: string | null,
     fresh: CategorizedTransaction[],
@@ -520,47 +528,12 @@ export function TransactionsReview({
                 onFiles={(files) => uploadFiles(y.taxYear, files)}
               />
 
-              <div className="mt-3 flex items-center gap-3 text-xs text-slate-500">
-                <span className="flex-1 border-t border-slate-200" />
-                <span>or</span>
-                <span className="flex-1 border-t border-slate-200" />
-              </div>
-
-              <div className="mt-3 flex flex-wrap items-center gap-3">
-                <PlaidConnectButton
-                  filingId={filingId}
-                  taxYear={y.taxYear}
-                  ownerName={ownerName}
-                  enabled={plaidEnabled}
-                  onTransactions={({ institutionName, transactions }) =>
-                    onPlaidTransactions(y.taxYear, institutionName, transactions)
-                  }
-                />
-                <span className="text-xs text-slate-500">
-                  {plaidEnabled
-                    ? "Sign in to your bank — we pull only this year's transactions."
-                    : "Bank connect is currently unavailable. Upload a CSV/PDF instead."}
-                </span>
-              </div>
-
-              {y.plaidConnections.length > 0 && (
-                <ul className="mt-3 border border-slate-200 rounded-md divide-y divide-slate-100 bg-white">
-                  {y.plaidConnections.map((c, i) => (
-                    <li key={i} className="flex items-center justify-between px-3 py-2 text-xs">
-                      <div className="flex items-center gap-2">
-                        <Landmark className="h-3.5 w-3.5 text-accent" />
-                        <span className="text-slate-700">
-                          Connected to{" "}
-                          <strong>{c.institutionName ?? "your bank"}</strong> via Plaid
-                        </span>
-                      </div>
-                      <span className="text-slate-500">
-                        {c.addedTxCount} {c.addedTxCount === 1 ? "transaction" : "transactions"}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              {/* Plaid bank-connect button + "or" divider + connected-bank
+                  list are hidden until further notice. All backend/import
+                  code, the PlaidConnectButton component, the
+                  /api/plaid/* routes, and the plaidConnections state stay
+                  intact so this is a one-block-restore if we re-enable it.
+                  See git history for the original JSX. */}
 
               <div className="mt-3">
                 {drafts[y.taxYear] ? (
