@@ -19,6 +19,7 @@ import { Reveal } from "@/components/Reveal";
 import { TIERS, TIER_ORDER, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
 import { env } from "@/lib/env";
+import { getConfirmedFilingsCount, formatFilingCount } from "@/lib/stats";
 
 // FAQ content is the source of truth for both the rendered <dl> and the
 // FAQPage JSON-LD structured data — keep them in lockstep by sharing the array.
@@ -54,11 +55,15 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // Single server-side data fetch shared across the hero. Hits the DB
+  // exactly once per server render; Next.js caches the page output so the
+  // count refreshes naturally with the route's revalidation cadence.
+  const filingsCount = await getConfirmedFilingsCount();
   return (
     <>
       <StructuredData />
-      <Hero />
+      <Hero filingsCount={filingsCount} />
       <Pricing />
       <TrustStrip />
       <Eligibility />
@@ -71,7 +76,23 @@ export default function LandingPage() {
   );
 }
 
-function Hero() {
+// Country flags shown on the hero — same 8 countries with the highest
+// historical filing volume in /admin/sources. Ordered by recognizability
+// (US-tied flags first — Wyoming/Delaware LLCs — then the biggest foreign
+// owner geographies). Keeping it to 8 prevents the strip from wrapping
+// awkwardly on tablet widths.
+const FOUNDER_FLAGS = [
+  { emoji: "🇬🇧", name: "United Kingdom" },
+  { emoji: "🇭🇰", name: "Hong Kong" },
+  { emoji: "🇸🇬", name: "Singapore" },
+  { emoji: "🇦🇪", name: "United Arab Emirates" },
+  { emoji: "🇨🇦", name: "Canada" },
+  { emoji: "🇦🇺", name: "Australia" },
+  { emoji: "🇩🇪", name: "Germany" },
+  { emoji: "🇮🇳", name: "India" },
+];
+
+function Hero({ filingsCount }: { filingsCount: number }) {
   return (
     <section className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-br from-accent-50 via-white to-white animate-gradient">
       {/* Decorative floating blobs — subtle ambient motion behind the content. */}
@@ -115,6 +136,45 @@ function Hero() {
                 Reviewed by a qualified tax accountant
               </div>
             </div>
+
+            {/* Country flags — speaks directly to the foreign-founder
+                audience and signals we've handled their geography. Static
+                list (FOUNDER_FLAGS) of the 8 highest-volume countries from
+                /admin/sources. */}
+            <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 animate-fade-in-up animate-delay-300">
+              <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">
+                Trusted by foreign founders in
+              </span>
+              <div className="flex items-center gap-1.5 text-2xl leading-none" aria-label="Countries served">
+                {FOUNDER_FLAGS.map((f) => (
+                  <span key={f.name} title={f.name} role="img" aria-label={f.name}>
+                    {f.emoji}
+                  </span>
+                ))}
+                <span className="text-xs text-slate-500 ml-1">+ 30 more</span>
+              </div>
+            </div>
+
+            {/* Live filings counter — pulled from the real Filing table
+                (status FAXED or CONFIRMED). Below the floor (50), render
+                alternate "every order reviewed" copy instead so a brand-new
+                state doesn't show "0 packages faxed". */}
+            {filingsCount >= 50 ? (
+              <div className="mt-3 flex items-center gap-2 text-sm text-slate-600 animate-fade-in-up animate-delay-300">
+                <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-soft-pulse" />
+                <span>
+                  <span className="font-semibold tabular-nums text-slate-900">
+                    {formatFilingCount(filingsCount)}
+                  </span>{" "}
+                  packages faxed to the IRS Ogden PIN Unit
+                </span>
+              </div>
+            ) : (
+              <div className="mt-3 flex items-center gap-2 text-sm text-slate-600 animate-fade-in-up animate-delay-300">
+                <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-soft-pulse" />
+                <span>Every order reviewed by a tax accountant before we fax to the IRS</span>
+              </div>
+            )}
           </div>
 
           {/* Right: bold CTA card — restored on user request. Mirrors the
