@@ -12,8 +12,9 @@ import Image from "next/image";
 
 const CALLOUTS: Array<{
   n: number;
-  // Percent-coord position of the badge over the image. Tuned to land on
-  // the right line of text at the rendered aspect ratio.
+  // Percent-coord position of the badge over the image. Tuned for the
+  // cropped 1236x912 PNG (top 57% of the source PDF page kept). Re-tune
+  // if render_sample_fax_receipt is re-run with different crop ratio.
   top: string;
   left: string;
   title: string;
@@ -21,36 +22,36 @@ const CALLOUTS: Array<{
 }> = [
   {
     n: 1,
-    top: "13%",
+    top: "20%",
     left: "10%",
     title: "Telnyx-confirmed DELIVERED status",
     body: "Not just \"sent\" — the IRS Ogden PIN Unit's fax machine acknowledged receipt of every page. Sender-side fax services can't see this.",
   },
   {
     n: 2,
-    top: "31%",
-    left: "50%",
+    top: "33%",
+    left: "55%",
     title: "Both forms transmitted together",
     body: "Form 5472 and pro forma 1120 are faxed as one package — exactly how the IRS expects them to arrive.",
   },
   {
     n: 3,
     top: "38%",
-    left: "32%",
+    left: "30%",
     title: "Official IRS Ogden PIN Unit fax number",
     body: "+1-855-887-7737 is the only fax number the IRS publishes for foreign-owned LLC information returns. Wrong number = not filed.",
   },
   {
     n: 4,
-    top: "46%",
-    left: "40%",
+    top: "47%",
+    left: "55%",
     title: "Exact UTC delivery timestamp",
     body: "Down-to-the-second UTC proof of when the IRS received your filing. This is what the IRS cites if a penalty notice is ever appealed.",
   },
   {
     n: 5,
-    top: "58%",
-    left: "52%",
+    top: "73%",
+    left: "30%",
     title: "IRC § 6038A legal citation",
     body: "Receipt cites the specific federal code section governing Form 5472 — drafted to be the document you'd hand to a CPA or tax attorney in a dispute.",
   },
@@ -82,8 +83,8 @@ export function FaxReceiptProof() {
               <Image
                 src="/sample-fax-receipt.png"
                 alt="Sample IRS Fax Transmission Receipt — proof-of-filing document customers receive"
-                width={1240}
-                height={1600}
+                width={1236}
+                height={912}
                 className="w-full h-auto block"
                 priority={false}
               />
