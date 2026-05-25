@@ -8,6 +8,7 @@ import {
   type Tier,
 } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
+import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 
 export const metadata: Metadata = {
   title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs | Form5472 Prep",
@@ -104,6 +105,12 @@ export default function PricingPage() {
           your information return as you provide it.
         </p>
       </section>
+
+      {/* Annotated fax-receipt section — differentiates against $49 DIY
+          competitors that issue no proof-of-delivery. Sits between the
+          pricing cards and the FAQ so anyone reading "is this worth $199?"
+          sees the actual product artifact next to the price. */}
+      <FaxReceiptProof />
 
       <section className="max-w-4xl mx-auto px-6 pb-20 space-y-8">
         <h2 className="text-2xl font-semibold tracking-tight text-slate-900 text-center">
