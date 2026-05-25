@@ -24,18 +24,37 @@ import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 
 // FAQ content is the source of truth for both the rendered <dl> and the
 // FAQPage JSON-LD structured data — keep them in lockstep by sharing the array.
+// Order is intentional: pricing/scope questions first (highest visitor intent),
+// then mechanics, then trust/legal. Pricing-specific Q&As are merged in from
+// the dedicated /pricing FAQ so the homepage answers the full sales question.
 const FAQS = [
   {
+    q: "How much does it cost?",
+    a: "Three plans — Standard $199, Rush $279, Premium $449. Each plan is a flat one-time fee for a single tax year filing. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included on every plan — no separate add-on.",
+  },
+  {
+    q: "What's the difference between the plans?",
+    a: "Standard is our done-for-you baseline — we prepare your Form 5472 + pro forma 1120, fax it to the IRS, and email you the confirmation. Rush adds 24-hour turnaround, priority email support, and a March filing reminder for next year. Premium adds same-day (12-hour) turnaround, IRS-letter handling for one year, and a BOI filing review.",
+  },
+  {
     q: "What if I've missed prior years?",
-    a: "Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing scales with the number of years.",
+    a: "Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing is +$149 per additional past year on any plan.",
   },
   {
     q: "Do I really need Form 5472 and Form 1120 if my LLC made no money?",
     a: "Likely yes. Form 5472 reports reportable transactions, which includes any capital you put in or distributions you took out — not just revenue. The pro forma Form 1120 is always required as the attachment vehicle whenever Form 5472 is required, even with zero income.",
   },
   {
+    q: "Is fax filing really included?",
+    a: "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and a timestamped fax-transmission receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine.",
+  },
+  {
     q: "Why does the IRS require fax instead of e-file?",
     a: "Foreign-owned US disregarded entities can't e-file Form 5472 or the attached pro forma Form 1120. The IRS Ogden PIN Unit accepts paper by mail or fax at +1-855-887-7737. Fax is faster, has a transmission receipt, and is the IRS's stated preferred channel.",
+  },
+  {
+    q: "Are there any hidden fees?",
+    a: "No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge. Multi-year filings add a flat $149 per additional past year — disclosed up front and shown in the checkout summary before you pay.",
   },
   {
     q: "Do you store my bank statements or signed forms?",
