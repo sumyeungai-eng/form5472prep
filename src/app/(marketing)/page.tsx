@@ -20,6 +20,7 @@ import { TIERS, TIER_ORDER, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
 import { env } from "@/lib/env";
 import { getConfirmedFilingsCount, formatFilingCount } from "@/lib/stats";
+import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 
 // FAQ content is the source of truth for both the rendered <dl> and the
 // FAQPage JSON-LD structured data — keep them in lockstep by sharing the array.
@@ -65,6 +66,12 @@ export default async function LandingPage() {
       <StructuredData />
       <Hero filingsCount={filingsCount} />
       <Pricing />
+      {/* Annotated fax-receipt section — same component used on /pricing.
+          Sits right after the three pricing cards so anyone reading "is
+          this worth $199?" sees the actual proof-of-filing artifact next
+          to the price. Differentiates vs $49 DIY tools that issue no
+          receipt. */}
+      <FaxReceiptProof />
       <TrustStrip />
       <Eligibility />
       <HowItWorks />
