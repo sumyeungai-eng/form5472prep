@@ -1,21 +1,27 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // PRICING — source of truth for every customer-facing price on the site.
 //
-// Model (May 2026 rewrite):
-//   Three service tiers (Standard / Rush / Premium) charged as a flat fee.
-//   Fax delivery is INCLUDED on every tier (no separate $19 add-on).
-//   Customers can file multiple past tax years on any tier — each additional
-//   year past the first adds a flat $149.
+// Model (May 2026 rewrite — single flat tier):
+//   One service tier (Standard) charged as a flat fee of $79.
+//   Fax delivery is INCLUDED (no separate add-on).
+//   Customers can file multiple past tax years — each additional year past
+//   the first adds a flat $59.
 //
 // Legacy data: Filing.tier rows created before this rewrite hold
-//   "single_year" / "two_year_diirsp" / "multi_year_diirsp". We keep these in
-//   the DB and map them on display via resolveTier() — old filings show their
-//   original plan label tagged "(legacy plan)", and any new code that needs a
-//   real Tier value gets "standard" back so price math doesn't crash.
+//   "single_year" / "two_year_diirsp" / "multi_year_diirsp" / "rush" / "premium".
+//   We keep these in the DB and map them on display via resolveTier() — old
+//   filings show their original plan label tagged "(legacy plan)", and any
+//   new code that needs a real Tier value gets "standard" back so price math
+//   doesn't crash.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type Tier = "standard" | "rush" | "premium";
-export type LegacyTier = "single_year" | "two_year_diirsp" | "multi_year_diirsp";
+export type Tier = "standard";
+export type LegacyTier =
+  | "single_year"
+  | "two_year_diirsp"
+  | "multi_year_diirsp"
+  | "rush"
+  | "premium";
 export type AnyTierValue = Tier | LegacyTier | string;
 
 export type TierInfo = {
@@ -31,48 +37,23 @@ export const TIERS: Record<Tier, TierInfo> = {
   standard: {
     label: "Standard",
     subtitle: "Done-for-you filing",
-    priceCents: 19900,
-    ctaLabel: "Choose Standard",
+    priceCents: 7900,
+    ctaLabel: "Start filing",
     features: [
-      "Reviewed by a qualified tax accountant before submission",
       "Form 5472 + pro forma 1120 prepared",
-      "Fax filing to IRS Ogden included",
-      "Filing confirmation",
-      "Reasonable-cause letter (for late filings)",
-      "Email support",
-    ],
-  },
-  rush: {
-    label: "Rush",
-    subtitle: "Prepared in 24 hours",
-    priceCents: 27900,
-    highlight: true,
-    ctaLabel: "Choose Rush",
-    features: [
-      "Everything in Standard",
-      "24-hour turnaround",
-      "Priority email support",
-      "Next-year filing reminder (March email)",
-    ],
-  },
-  premium: {
-    label: "Premium",
-    subtitle: "Same-day, full support",
-    priceCents: 44900,
-    ctaLabel: "Choose Premium",
-    features: [
-      "Everything in Rush",
-      "Same-day turnaround (12 hours)",
-      "IRS letter handling (1 year)",
-      "BOI filing review",
+      "Reviewed by a qualified tax accountant before submission",
+      "Fax filing to IRS Ogden PIN Unit included",
+      "Timestamped IRS fax-transmission receipt",
+      "Reasonable-cause letter on late (DIIRSP) filings",
+      "100% money-back guarantee",
     ],
   },
 };
 
-export const TIER_ORDER: Tier[] = ["standard", "rush", "premium"];
+export const TIER_ORDER: Tier[] = ["standard"];
 
-// Flat add-on for every tax year past the first. Applies to all three tiers.
-export const MULTI_YEAR_ADDON_CENTS = 14900;
+// Flat add-on for every tax year past the first.
+export const MULTI_YEAR_ADDON_CENTS = 5900;
 export const MULTI_YEAR_ADDON_LABEL = "Additional past tax year";
 
 export const DEFAULT_TIER: Tier = "standard";
@@ -125,6 +106,10 @@ export function resolveTier(value: string | null | undefined): ResolvedTier {
       return { tier: "standard", isLegacy: true, legacyLabel: "Two-year DIIRSP (legacy plan)", legacyYearCount: 2 };
     case "multi_year_diirsp":
       return { tier: "standard", isLegacy: true, legacyLabel: "Three-year DIIRSP (legacy plan)", legacyYearCount: 3 };
+    case "rush":
+      return { tier: "standard", isLegacy: true, legacyLabel: "Rush (legacy plan)" };
+    case "premium":
+      return { tier: "standard", isLegacy: true, legacyLabel: "Premium (legacy plan)" };
     default:
       return { tier: DEFAULT_TIER, isLegacy: false };
   }
@@ -182,8 +167,8 @@ export function getTiersForSource(
 ): Record<string, TierInfo> {
   return {
     standard: TIERS.standard,
-    rush: TIERS.rush,
-    premium: TIERS.premium,
+    rush: { ...TIERS.standard, label: "Rush (legacy plan)" },
+    premium: { ...TIERS.standard, label: "Premium (legacy plan)" },
     single_year: { ...TIERS.standard, label: "Single year (legacy plan)" },
     two_year_diirsp: { ...TIERS.standard, label: "Two-year DIIRSP (legacy plan)" },
     multi_year_diirsp: { ...TIERS.standard, label: "Three-year DIIRSP (legacy plan)" },

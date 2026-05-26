@@ -83,28 +83,24 @@ THESE FACTS WIN. If a customer asks something not covered here and you're
 not 100% sure, say you'll check and offer the handoff button — do not guess.
 
 PRICING (USD, flat fee, one-time per filing)
-Three service tiers — pick what matches the customer's urgency. Fax filing
-to the IRS Ogden PIN Unit is INCLUDED on every tier (no separate add-on).
+One flat price. Fax filing to the IRS Ogden PIN Unit is INCLUDED (no
+separate add-on).
 
-- Standard — $199 — Done-for-you filing.
-    Form 5472 + pro forma 1120 prepared, fax filing included, filing
-    confirmation, reasonable-cause letter on late filings, email support.
+- Standard — $79 — Done-for-you filing.
+    Form 5472 + pro forma 1120 prepared, accountant-reviewed, fax delivery
+    to the IRS Ogden PIN Unit included, timestamped IRS fax-transmission
+    receipt, reasonable-cause letter on late (DIIRSP) filings, email
+    support, 100% money-back guarantee.
 
-- Rush — $279 — Prepared in 24 hours. (Our most popular plan.)
-    Everything in Standard, plus 24-hour turnaround, priority email support,
-    and a March email reminder for next year's filing.
-
-- Premium — $449 — Same-day, full support.
-    Everything in Rush, plus same-day (12-hour) turnaround, IRS letter
-    handling for one year, and a BOI filing review.
-
-- Multi-year add-on: +$149 per additional past tax year. Applies to every
-  tier. Example: Standard with 2 past years = $199 + $149 = $348. Standard
-  with 3 past years = $199 + $298 = $497.
+- Multi-year add-on: +$59 per additional past tax year.
+  Examples:
+    - 1 year: $79
+    - 2 years (DIIRSP catch-up): $79 + $59 = $138
+    - 3 years (DIIRSP catch-up): $79 + $118 = $197
 
 - Self-fax: no longer offered. Fax is always done by us and is part of the
-  flat tier price. If the customer asks for the IRS fax number directly so
-  they can fax themselves: +1-855-887-7737 (Ogden PIN Unit).
+  flat price. If the customer asks for the IRS fax number directly so they
+  can fax themselves: +1-855-887-7737 (Ogden PIN Unit).
 
 WHAT'S INCLUDED IN EVERY PACKAGE
 - Cover letter

@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 
 // The /file mini-funnel always uses the Standard tier — it's the entry-level
 // "just file my Form 5472" path. The yearsKey maps to year count; additional
-// past years add $149 each on top of the $199 Standard base.
+// past years add $59 each on top of the $79 Standard base.
 const TIER_MAP: Record<string, { tier: string; yearLabel: string; price: string; perYear: string }> = {
-  "1": { tier: "standard", yearLabel: "1 tax year",              price: "$199", perYear: "$199 total" },
-  "2": { tier: "standard", yearLabel: "2 tax years (catch-up)",  price: "$348", perYear: "$199 + $149 extra year" },
-  "3": { tier: "standard", yearLabel: "3+ tax years (catch-up)", price: "$497", perYear: "$199 + 2 × $149 extra years" },
+  "1": { tier: "standard", yearLabel: "1 tax year",              price: "$79",  perYear: "$79 total" },
+  "2": { tier: "standard", yearLabel: "2 tax years (catch-up)",  price: "$138", perYear: "$79 + $59 extra year" },
+  "3": { tier: "standard", yearLabel: "3+ tax years (catch-up)", price: "$197", perYear: "$79 + 2 × $59 extra years" },
 };
 
 function SaveForm() {

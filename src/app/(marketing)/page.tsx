@@ -30,15 +30,11 @@ import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 const FAQS = [
   {
     q: "How much does it cost?",
-    a: "Three plans — Standard $199, Rush $279, Premium $449. Each plan is a flat one-time fee for a single tax year filing. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included on every plan — no separate add-on.",
-  },
-  {
-    q: "What's the difference between the plans?",
-    a: "Standard is our done-for-you baseline — we prepare your Form 5472 + pro forma 1120, fax it to the IRS, and email you the confirmation. Rush adds 24-hour turnaround, priority email support, and a March filing reminder for next year. Premium adds same-day (12-hour) turnaround, IRS-letter handling for one year, and a BOI filing review.",
+    a: "Flat $79 per filing. One tax year, fully done-for-you — Form 5472 + pro forma 1120 prepared, accountant-reviewed, and faxed to the IRS Ogden PIN Unit. Additional past tax years are +$59 each. IRS fax delivery is included — no separate add-on.",
   },
   {
     q: "What if I've missed prior years?",
-    a: "Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing is +$149 per additional past year on any plan.",
+    a: "Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing is +$59 per additional past year.",
   },
   {
     q: "Do I really need Form 5472 and Form 1120 if my LLC made no money?",
@@ -46,7 +42,7 @@ const FAQS = [
   },
   {
     q: "Is fax filing really included?",
-    a: "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and a timestamped fax-transmission receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine.",
+    a: "Yes — the $79 price includes fax delivery to the IRS Ogden PIN Unit and a timestamped fax-transmission receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine.",
   },
   {
     q: "Why does the IRS require fax instead of e-file?",
@@ -54,7 +50,7 @@ const FAQS = [
   },
   {
     q: "Are there any hidden fees?",
-    a: "No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge. Multi-year filings add a flat $149 per additional past year — disclosed up front and shown in the checkout summary before you pay.",
+    a: "No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge. Multi-year filings add a flat $59 per additional past year — disclosed up front and shown in the checkout summary before you pay.",
   },
   {
     q: "Do you store my bank statements or signed forms?",
@@ -71,7 +67,7 @@ export const metadata: Metadata = {
   // already brands the product, so we don't want the suffix appended.
   title: { absolute: "File IRS Form 5472 and pro forma 1120 in 15 minutes — Form5472 Prep" },
   description:
-    "IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Starting at $199 — fax delivery included on every plan. 100% money-back guarantee if we fail to submit.",
+    "IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Flat $79 — fax delivery included. 100% money-back guarantee if we fail to submit.",
   alternates: { canonical: "/" },
 };
 
@@ -86,8 +82,8 @@ export default async function LandingPage() {
       <Hero filingsCount={filingsCount} />
       <Pricing />
       {/* Annotated fax-receipt section — same component used on /pricing.
-          Sits right after the three pricing cards so anyone reading "is
-          this worth $199?" sees the actual proof-of-filing artifact next
+          Sits right after the pricing card so anyone reading "what do I
+          actually get for $79?" sees the proof-of-filing artifact next
           to the price. Differentiates vs $49 DIY tools that issue no
           receipt. */}
       <FaxReceiptProof />
@@ -219,7 +215,7 @@ function Hero({ filingsCount }: { filingsCount: number }) {
                 <span className="text-sm text-slate-500">/ filing</span>
               </div>
               <p className="mt-1 text-sm text-slate-600">
-                IRS fax delivery included. Rush and Premium plans available — see <Link href="/pricing" className="text-accent underline">pricing</Link>.
+                Flat fee — IRS fax delivery and accountant review included. <Link href="/pricing" className="text-accent underline">See what&apos;s included</Link>.
               </p>
 
               <Link href="/start" className="block mt-6 group">
@@ -233,7 +229,7 @@ function Hero({ filingsCount }: { filingsCount: number }) {
               </Link>
               <Link href="#pricing" className="block mt-3">
                 <Button variant="outline" size="lg" className="w-full h-12 transition-colors">
-                  See all plans
+                  See what&apos;s included
                 </Button>
               </Link>
 
@@ -511,57 +507,48 @@ function Comparison() {
 }
 
 function Pricing() {
+  const t = TIERS.standard;
   return (
     <section id="pricing" className="bg-white border-b border-slate-200 scroll-mt-20">
       <div className="max-w-6xl mx-auto px-6 pt-4 pb-16 sm:pt-8 sm:pb-20">
-        <div className="grid md:grid-cols-3 gap-6 items-stretch">
-          {TIER_ORDER.map((key, idx) => {
-            const t = TIERS[key];
-            const highlighted = !!t.highlight;
-            return (
-              <Reveal
-                key={key}
-                delay={idx * 120}
-                className={`relative flex flex-col rounded-lg p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/10 ${
-                  highlighted
-                    ? "border-2 border-accent bg-white shadow-md"
-                    : "border border-slate-200 bg-white hover:border-accent"
-                }`}
-              >
-                {highlighted && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-semibold rounded-full bg-accent text-white px-3 py-0.5 shadow">
-                    Most popular
-                  </span>
-                )}
-                <div>
-                  <p className="font-semibold text-slate-900">{t.label}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{t.subtitle}</p>
-                </div>
-                <p className="mt-3 text-3xl font-semibold text-slate-900">
-                  {formatUsd(t.priceCents)}
-                  <span className="ml-1 text-sm font-normal text-slate-500">/ year</span>
-                </p>
-                <ul className="mt-4 space-y-1.5 text-sm text-slate-700 flex-1">
-                  {t.features.map((f) => (
-                    <li key={f} className="flex items-start gap-1.5">
-                      <span className="text-emerald-600 mt-0.5">✓</span>
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link href={`/start?tier=${key}`} className="block mt-6">
-                  <Button variant={highlighted ? "primary" : "outline"} className="w-full transition-transform hover:-translate-y-0.5">
-                    {t.ctaLabel}
-                  </Button>
-                </Link>
-              </Reveal>
-            );
-          })}
-        </div>
+        <SectionHead
+          eyebrow="Pricing"
+          title="One flat price. Everything included."
+          subtitle="No tiers, no upsells, no per-page fax surcharge. Fax delivery to the IRS Ogden PIN Unit is part of the price — and every package is reviewed by a qualified tax accountant before we send it."
+        />
+        <Reveal className="mt-10 max-w-md mx-auto">
+          <div className="relative flex flex-col rounded-2xl p-7 border-2 border-accent bg-white shadow-xl shadow-accent/10">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-semibold rounded-full bg-accent text-white px-3 py-0.5 shadow">
+              Flat-rate filing
+            </span>
+            <div className="text-center">
+              <p className="font-semibold text-slate-900 text-lg">{t.label}</p>
+              <p className="text-sm text-slate-500 mt-0.5">{t.subtitle}</p>
+            </div>
+            <p className="mt-4 text-center">
+              <span className="text-5xl font-semibold text-slate-900 tracking-tight">{formatUsd(t.priceCents)}</span>
+              <span className="ml-1 text-sm font-normal text-slate-500">/ filing</span>
+            </p>
+            <p className="mt-1 text-center text-xs text-slate-500">
+              + {formatUsd(MULTI_YEAR_ADDON_CENTS)} per additional past tax year
+            </p>
+            <ul className="mt-6 space-y-2 text-sm text-slate-700">
+              {t.features.map((f) => (
+                <li key={f} className="flex items-start gap-2">
+                  <span className="text-emerald-600 mt-0.5">✓</span>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <Link href="/start" className="block mt-7">
+              <Button variant="primary" className="w-full h-12 transition-transform hover:-translate-y-0.5">
+                {t.ctaLabel}
+              </Button>
+            </Link>
+          </div>
+        </Reveal>
         <p className="mt-6 text-center text-sm text-slate-600">
-          <span className="font-semibold text-slate-900">+ {formatUsd(MULTI_YEAR_ADDON_CENTS)} per additional year</span>
-          <span className="mx-2 text-slate-400">·</span>
-          Saves you from the $25,000-per-form IRS penalty
+          Saves you from the <span className="font-semibold text-slate-900">$25,000-per-form IRS penalty</span>
         </p>
         <p className="mt-3 text-center text-xs text-slate-500">
           DIIRSP = IRS Delinquent International Information Return Submission Procedure.

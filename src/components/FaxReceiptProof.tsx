@@ -69,10 +69,10 @@ export function FaxReceiptProof() {
             Real proof your filing reached the IRS
           </h2>
           <p className="mt-3 text-slate-600">
-            Cheap $49 DIY tools generate forms and call it done. We deliver an
-            IRS-citable fax-transmission receipt for every package we send —
-            the document you can present to the IRS if a penalty notice is
-            ever issued.
+            Cheap DIY form generators print PDFs and call it done. For a flat
+            $79 we actually transmit your filing and deliver an IRS-citable
+            fax-transmission receipt — the document you can present to the
+            IRS if a penalty notice is ever issued.
           </p>
         </div>
 
@@ -120,9 +120,9 @@ export function FaxReceiptProof() {
           </ol>
         </div>
 
-        {/* Differentiator chip — directly answers "why pay $199 over $49" */}
+        {/* Differentiator chip — answers "what do I get that DIY tools don't" */}
         <div className="mt-12 max-w-3xl mx-auto rounded-xl border-2 border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900 text-center">
-          <strong>Every plan includes this receipt.</strong>{" "}
+          <strong>Every filing includes this receipt.</strong>{" "}
           DIY form generators can&apos;t issue one — they don&apos;t actually transmit to the IRS.
         </div>
       </div>

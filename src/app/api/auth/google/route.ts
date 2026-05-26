@@ -38,7 +38,7 @@ export async function POST(req: Request) {
   // /pricing card CTAs). Only persisted on intent="start" since signin
   // doesn't create a filing here.
   const rawTier = typeof body?.tier === "string" ? body.tier.toLowerCase().trim() : null;
-  const tier = rawTier && new Set(["standard", "rush", "premium"]).has(rawTier) ? rawTier : null;
+  const tier = rawTier === "standard" ? rawTier : null;
   if (typeof credential !== "string" || !credential) {
     return NextResponse.json({ error: "Google credential required" }, { status: 400 });
   }

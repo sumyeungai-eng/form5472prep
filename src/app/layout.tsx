@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: "%s · Form5472 Prep",
   },
   description:
-    "Done-for-you IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare, you sign, we fax to the IRS Ogden PIN Unit. Flat-rate plans from $199 — fax delivery included on every plan. 100% money-back guarantee.",
+    "Done-for-you IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare, you sign, we fax to the IRS Ogden PIN Unit. Flat $79 per filing — fax delivery included. 100% money-back guarantee.",
   applicationName: "Form5472 Prep",
   keywords: [
     "Form 5472",
@@ -44,14 +44,14 @@ export const metadata: Metadata = {
     siteName: "Form5472 Prep",
     title: "File IRS Form 5472 and pro forma 1120 in 15 minutes — Form5472 Prep",
     description:
-      "For foreign-owned US LLCs. We prepare, you sign, we fax to the IRS Ogden PIN Unit. Flat-rate plans from $199 — fax delivery included on every plan. 100% money-back guarantee.",
+      "For foreign-owned US LLCs. We prepare, you sign, we fax to the IRS Ogden PIN Unit. Flat $79 per filing — fax delivery included. 100% money-back guarantee.",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title: "File IRS Form 5472 and pro forma 1120 in 15 minutes",
     description:
-      "Done-for-you Form 5472 filing for foreign-owned US LLCs. Flat-rate plans from $199 — fax delivery included on every plan. 100% money-back guarantee.",
+      "Done-for-you Form 5472 filing for foreign-owned US LLCs. Flat $79 per filing — fax delivery included. 100% money-back guarantee.",
   },
   robots: {
     index: true,
