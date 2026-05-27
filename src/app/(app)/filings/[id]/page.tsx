@@ -73,6 +73,7 @@ export default async function FilingDetailPage({
           id: filing.id,
           status: filing.status,
           generatedPdfKey: filing.generatedPdfKey,
+          signaturePngKey: filing.signaturePngKey,
           signedPdfKey: filing.signedPdfKey,
           faxJobId: filing.faxJobId,
           faxStatus: filing.faxStatus,

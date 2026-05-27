@@ -8,6 +8,13 @@ type Filing = {
   id: string;
   status: string;
   generatedPdfKey: string | null;
+  // R2 key for the customer's signature PNG, captured on the in-portal sign
+  // page. Populated immediately when the customer hits "Acknowledge & sign";
+  // the admin later embeds it into a finalized PDF (signedPdfKey). For the
+  // "Step 2: Sign in your portal" gate we use this — NOT signedPdfKey —
+  // because signedPdfKey only becomes non-null after admin processing and
+  // would otherwise bounce the customer back to "needs signing" forever.
+  signaturePngKey: string | null;
   signedPdfKey: string | null;
   faxJobId: string | null;
   faxStatus: string | null;
@@ -71,29 +78,53 @@ export function FilingActions({ filing }: { filing: Filing }) {
       <Step
         n={2}
         title="Sign in your portal"
-        done={!!filing.signedPdfKey}
-        active={!!filing.generatedPdfKey && !filing.signedPdfKey}
+        // Step 2 is done as soon as the customer's signature PNG is captured
+        // (or the admin has uploaded the finalized signed PDF). Previously
+        // this gated on signedPdfKey alone, which the admin sets *after*
+        // embedding the signature — leaving every paid customer stuck in
+        // "needs to sign" right after they signed. See sign endpoint at
+        // src/app/api/filings/[id]/sign/route.ts — it writes signaturePngKey
+        // and bumps status to SIGNATURE_PENDING.
+        done={!!filing.signaturePngKey || !!filing.signedPdfKey}
+        active={
+          !!filing.generatedPdfKey &&
+          !filing.signaturePngKey &&
+          !filing.signedPdfKey
+        }
       >
-        <p className="text-sm text-slate-600 mb-3">
-          Draw your signature once — we embed it into every required box automatically. No printing,
-          scanning, or uploading needed.
-        </p>
         {filing.signedPdfKey ? (
-          <a
-            href={`/api/filings/${filing.id}/signed-pdf`}
-            target="_blank"
-            rel="noreferrer"
-            className="text-sm text-accent hover:underline"
-          >
-            View signed PDF
-          </a>
+          <>
+            <p className="text-sm text-slate-600 mb-3">
+              Signed PDF is ready. The complete package is being prepared for fax.
+            </p>
+            <a
+              href={`/api/filings/${filing.id}/signed-pdf`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm text-accent hover:underline"
+            >
+              View signed PDF
+            </a>
+          </>
+        ) : filing.signaturePngKey ? (
+          <p className="text-sm text-slate-600">
+            <span className="font-medium text-emerald-700">Signature received.</span>{" "}
+            Our accountant is reviewing your filing and will fax it to the IRS Ogden
+            PIN Unit shortly. You&apos;ll get an email the moment it&apos;s sent.
+          </p>
         ) : (
-          <Button
-            onClick={() => router.push(`/filings/${filing.id}/sign`)}
-            disabled={!filing.generatedPdfKey}
-          >
-            {filing.generatedPdfKey ? "Sign my filing" : "Generate PDF first"}
-          </Button>
+          <>
+            <p className="text-sm text-slate-600 mb-3">
+              Draw your signature once — we embed it into every required box automatically. No printing,
+              scanning, or uploading needed.
+            </p>
+            <Button
+              onClick={() => router.push(`/filings/${filing.id}/sign`)}
+              disabled={!filing.generatedPdfKey}
+            >
+              {filing.generatedPdfKey ? "Sign my filing" : "Generate PDF first"}
+            </Button>
+          </>
         )}
       </Step>
 

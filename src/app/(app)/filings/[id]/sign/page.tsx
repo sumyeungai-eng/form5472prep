@@ -26,8 +26,15 @@ export default async function SignFilingPage({ params }: { params: { id: string 
     // detail page where the status banner will explain.
     redirect(`/filings/${filing.id}`);
   }
-  if (filing.signedPdfKey) {
-    // Already signed — go look at the status / send-to-IRS view.
+  if (filing.signedPdfKey || filing.signaturePngKey) {
+    // Already signed — either the customer signed in-portal (signaturePngKey
+    // set, status SIGNATURE_PENDING) or the admin already embedded and
+    // uploaded the finalized PDF (signedPdfKey set). Either way, don't show
+    // them the canvas again — bounce back to the filing detail page so the
+    // "Signature received — accountant reviewing" banner explains what's
+    // happening. Without this gate, a returning customer hits a blank canvas,
+    // re-signs, gets bounced back to the filing page, sees "Sign my filing"
+    // again (pre-fix), and loops forever.
     redirect(`/filings/${filing.id}`);
   }
   if (filing.validationStatus === "needs_customer_input") {

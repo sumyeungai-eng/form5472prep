@@ -76,7 +76,6 @@ function viewFor(status: string): View {
         detail: "We're preparing Form 5472 and pro forma 1120. Usually takes under 2 minutes.",
       };
     case "PDF_GENERATED":
-    case "SIGNATURE_PENDING":
       return {
         bg: "bg-amber-50",
         border: "border-amber-200",
@@ -85,7 +84,23 @@ function viewFor(status: string): View {
         icon: "text-amber-600",
         iconNode: <FileCheck2 className="h-5 w-5" />,
         headline: "Awaiting your signature",
-        detail: "Download the unsigned PDF, sign on the marked pages, and upload the signed copy below.",
+        detail: "Open the sign step below to draw your signature once on screen — we embed it into every required box automatically.",
+      };
+    case "SIGNATURE_PENDING":
+      // Customer has signed; the package is queued for accountant review and
+      // fax. NO action is needed on their part — previously this status fell
+      // through to the same "Awaiting your signature" copy, which made paying
+      // customers think their signature hadn't been received and re-sign on
+      // a loop.
+      return {
+        bg: "bg-violet-50",
+        border: "border-violet-200",
+        title: "text-violet-900",
+        body: "text-violet-800",
+        icon: "text-violet-600",
+        iconNode: <FileCheck2 className="h-5 w-5" />,
+        headline: "Signature received — accountant reviewing",
+        detail: "Thanks for signing. Our accountant is reviewing your filing now. We'll fax it to the IRS Ogden PIN Unit and email you the timestamped receipt as soon as it's sent.",
       };
     case "SIGNED_UPLOADED":
       return {
