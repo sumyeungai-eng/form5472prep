@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
@@ -41,12 +42,31 @@ export default async function AdminRemindersPage() {
         </p>
       </div>
 
-      {/* Stats */}
+      {/* Stats — each card links to a drill-down customer list at
+          /admin/reminders/list?bucket=… so the operator can audit which
+          customers are in each bucket without running a DB query. */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-        <StatCard label="Past customers" value={totalCustomers.toString()} />
-        <StatCard label="Opted out" value={optOuts.toString()} tone={optOuts > 0 ? "muted" : "default"} />
-        <StatCard label={`Eligible — Jan (${taxYear})`} value={janEligible.length.toString()} />
-        <StatCard label={`Eligible — Mar (${taxYear})`} value={marEligible.length.toString()} />
+        <StatCard
+          label="Past customers"
+          value={totalCustomers.toString()}
+          href="/admin/reminders/list?bucket=past"
+        />
+        <StatCard
+          label="Opted out"
+          value={optOuts.toString()}
+          tone={optOuts > 0 ? "muted" : "default"}
+          href="/admin/reminders/list?bucket=opted-out"
+        />
+        <StatCard
+          label={`Eligible — Jan (${taxYear})`}
+          value={janEligible.length.toString()}
+          href="/admin/reminders/list?bucket=jan-eligible"
+        />
+        <StatCard
+          label={`Eligible — Mar (${taxYear})`}
+          value={marEligible.length.toString()}
+          href="/admin/reminders/list?bucket=mar-eligible"
+        />
       </div>
 
       {/* Campaign controls */}
@@ -106,19 +126,35 @@ export default async function AdminRemindersPage() {
 function StatCard({
   label,
   value,
+  href,
   tone = "default",
 }: {
   label: string;
   value: string;
+  // When provided, the entire card becomes a Link to the drill-down list.
+  // Hover-treatment + cursor + ring focus state included so the
+  // affordance is obvious without a separate "View list" link.
+  href?: string;
   tone?: "default" | "muted";
 }) {
   const valueColor = tone === "muted" ? "text-slate-500" : "text-slate-900";
-  return (
-    <div className="bg-white border border-slate-200 rounded-lg p-4">
+  const body = (
+    <>
       <div className="text-xs uppercase tracking-wider text-slate-500 font-medium">{label}</div>
       <div className={`mt-1 text-2xl font-semibold tabular-nums ${valueColor}`}>{value}</div>
-    </div>
+    </>
   );
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className="bg-white border border-slate-200 rounded-lg p-4 hover:border-accent hover:shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-accent/30 block"
+      >
+        {body}
+      </Link>
+    );
+  }
+  return <div className="bg-white border border-slate-200 rounded-lg p-4">{body}</div>;
 }
 
 function CampaignCard({
