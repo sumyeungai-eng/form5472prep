@@ -46,8 +46,12 @@ export function SignaturePad({
     c.width = Math.round(rect.width * dpr);
     c.height = Math.round(rect.height * dpr);
     ctx.scale(dpr, dpr);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, rect.width, rect.height);
+    // No background fill: leaving the canvas transparent means toDataURL()
+    // exports a PNG whose only opaque pixels are the strokes themselves.
+    // That way when the signature is later embedded into a PDF form, it
+    // doesn't paint a white box over the "Sign Here" line, date cell, or
+    // any underlying form text. The visible canvas reads white because the
+    // wrapper <div> has bg-white — but the bitmap behind it stays clear.
     ctx.lineWidth = 2;
     ctx.lineCap = "round";
     ctx.strokeStyle = "#0f172a";
@@ -109,8 +113,10 @@ export function SignaturePad({
     const ctx = c.getContext("2d");
     if (!ctx) return;
     const rect = c.getBoundingClientRect();
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, rect.width, rect.height);
+    // clearRect (vs. fillRect with white) preserves the transparency. Same
+    // reason as the init block above — we want the exported PNG to have
+    // alpha=0 everywhere except the strokes.
+    ctx.clearRect(0, 0, rect.width, rect.height);
     dirty.current = false;
     setHasInk(false);
     if (onChange) onChange(null);

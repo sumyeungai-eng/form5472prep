@@ -1,8 +1,48 @@
 import { NextResponse } from "next/server";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import sharp from "sharp";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { get as getStorageObject, putPdf } from "@/lib/storage";
+
+// Chroma-key the customer's signature PNG so its background is transparent
+// when embedded into the form PDF. Without this, a white-bg signature paints
+// a solid rectangle over the "Sign Here" line, the date cell, and any
+// underlying form text — making the signed package look like a photocopy
+// with a white sticker slapped on top.
+//
+// Two cases handled:
+//   1. NEW signatures (post-SignaturePad fix) already have alpha. sharp's
+//      ensureAlpha() is a no-op and the bytes flow through.
+//   2. LEGACY signatures captured before the SignaturePad fix have a solid
+//      white background baked in. We threshold the alpha channel: any pixel
+//      that is near-white in RGB gets alpha=0. The ink itself (dark slate)
+//      is well below the threshold so it passes through fully opaque.
+async function chromaKeySignaturePng(pngBytes: Uint8Array): Promise<Uint8Array> {
+  // Read raw RGBA at native resolution; if the PNG had no alpha channel,
+  // ensureAlpha() adds one set to 255 across the board (we then key it down).
+  const img = sharp(Buffer.from(pngBytes)).ensureAlpha();
+  const { data, info } = await img.raw().toBuffer({ resolveWithObject: true });
+  const out = Buffer.alloc(data.length);
+  data.copy(out);
+  // Threshold: a pixel is "background" if R, G, and B are all >= 240. That
+  // catches paper-white, near-white anti-aliasing fringe, and JPEG-like
+  // compression noise without eating the actual pen stroke.
+  const TH = 240;
+  for (let i = 0; i < out.length; i += 4) {
+    const r = out[i];
+    const g = out[i + 1];
+    const b = out[i + 2];
+    if (r >= TH && g >= TH && b >= TH) {
+      out[i + 3] = 0; // alpha = 0 → fully transparent
+    }
+  }
+  return new Uint8Array(
+    await sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } })
+      .png()
+      .toBuffer(),
+  );
+}
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -131,7 +171,13 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   let pagesTouched = 0;
   try {
     const pdf = await PDFDocument.load(pdfBytes);
-    const signatureImage = needsSignatureImage ? await pdf.embedPng(pngBytes) : null;
+    // Strip white background from the customer's signature PNG before embed
+    // so it composites cleanly onto the IRS form (doesn't paint a solid box
+    // over the signature line or adjacent date/title cells).
+    const transparentPng = needsSignatureImage
+      ? await chromaKeySignaturePng(pngBytes)
+      : new Uint8Array();
+    const signatureImage = needsSignatureImage ? await pdf.embedPng(transparentPng) : null;
     // Single font load for both date and text placements — both render
     // through pdf-lib's drawText in Helvetica.
     const needsTextFont = placements.some((p) => p.kind === "date" || p.kind === "text");
