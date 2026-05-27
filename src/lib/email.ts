@@ -482,6 +482,11 @@ export async function sendFaxDeliveredEmail(args: {
 }
 
 // Admin notification when a fax succeeds. Plain, scannable format.
+// Attaches BOTH the IRS Fax Transmission Receipt and a frozen copy of the
+// exact signed PDF that was faxed — so the operator has the full proof-of-
+// filing artifact in one inbox message without having to log into admin
+// and download each piece separately. Customer email keeps only the
+// receipt (signed package is already in their portal).
 export async function sendFaxDeliveredAdminEmail(args: {
   adminEmail: string;
   customerEmail: string | null;
@@ -490,8 +495,20 @@ export async function sendFaxDeliveredAdminEmail(args: {
   filingId: string;
   adminFilingUrl: string;
   proof: FaxProof;
+  receiptPdfBytes?: Uint8Array | Buffer;
+  signedPdfBytes?: Uint8Array | Buffer;
 }) {
-  const { adminEmail, customerEmail, llcName, taxYears, filingId, adminFilingUrl, proof } = args;
+  const {
+    adminEmail,
+    customerEmail,
+    llcName,
+    taxYears,
+    filingId,
+    adminFilingUrl,
+    proof,
+    receiptPdfBytes,
+    signedPdfBytes,
+  } = args;
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "(no LLC name)";
 
@@ -506,7 +523,31 @@ export async function sendFaxDeliveredAdminEmail(args: {
       <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Filing ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</td></tr>
       ${formatFaxProofRows(proof)}
     </table>
+    ${(receiptPdfBytes || signedPdfBytes) ? `
+    <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:14px;">Attachments</p>
+    <ul style="margin:0 0 20px 18px;padding:0;color:#475569;font-size:13px;line-height:1.6;">
+      ${receiptPdfBytes ? `<li>IRS Fax Transmission Receipt (proof of delivery)</li>` : ""}
+      ${signedPdfBytes ? `<li>Frozen copy of the signed package that was faxed</li>` : ""}
+    </ul>` : ""}
   `;
+
+  // Filename hygiene: scrub the LLC name down to alphanumerics + dashes so
+  // mail clients don't choke on Unicode / punctuation in attachment headers.
+  const safeLlc = llcLine.replace(/[^a-zA-Z0-9-]+/g, "_");
+  const safeYears = yearsLabel.replace(/[^0-9-]+/g, "-");
+  const attachments: Array<{ filename: string; content: Uint8Array | Buffer }> = [];
+  if (receiptPdfBytes) {
+    attachments.push({
+      filename: `IRS-fax-receipt-${safeLlc}-${safeYears}.pdf`,
+      content: receiptPdfBytes,
+    });
+  }
+  if (signedPdfBytes) {
+    attachments.push({
+      filename: `form5472-${safeLlc}-${safeYears}-faxed.pdf`,
+      content: signedPdfBytes,
+    });
+  }
 
   return sendEmail({
     to: adminEmail,
@@ -521,6 +562,7 @@ export async function sendFaxDeliveredAdminEmail(args: {
       `Delivered:   ${new Date(proof.deliveredAt).toUTCString()}\n` +
       (proof.pageCount != null ? `Pages:       ${proof.pageCount}\n` : "") +
       (proof.durationSecs != null ? `Duration:    ${proof.durationSecs}s\n` : "") +
+      `\nAttachments: ${attachments.map((a) => a.filename).join(", ") || "(none)"}\n` +
       `\nAdmin view: ${adminFilingUrl}\n`,
     html: shell({
       preheader: `Fax delivered — ${llcLine} (${yearsLabel})`,
@@ -528,6 +570,7 @@ export async function sendFaxDeliveredAdminEmail(args: {
       bodyHtml,
       cta: { label: "Open in admin", url: adminFilingUrl },
     }),
+    attachments: attachments.length > 0 ? attachments : undefined,
   });
 }
 

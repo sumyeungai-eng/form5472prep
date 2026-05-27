@@ -173,13 +173,13 @@ async function handleDelivered(
 
   if (filing.user && filing.userId) {
     try {
+      // Customer: receipt only (signed package stays in portal).
       await sendFaxDeliveredEmail({
         email: filing.user.email,
         llcName: filing.llcName,
         taxYears: filing.taxYears,
         portalLink: makeMagicLink(filing.userId),
         proof,
-        signedPdfBytes,
         receiptPdfBytes,
       });
     } catch (err) {
@@ -187,6 +187,7 @@ async function handleDelivered(
     }
   }
   try {
+    // Admin: receipt + frozen signed PDF, both in one email.
     await sendFaxDeliveredAdminEmail({
       adminEmail: env.adminEmail,
       customerEmail: filing.user?.email ?? null,
@@ -195,6 +196,8 @@ async function handleDelivered(
       filingId: filing.id,
       adminFilingUrl,
       proof,
+      receiptPdfBytes,
+      signedPdfBytes,
     });
   } catch (err) {
     console.error(`[fax-status-poll] admin delivered email for ${filing.id} failed`, err);

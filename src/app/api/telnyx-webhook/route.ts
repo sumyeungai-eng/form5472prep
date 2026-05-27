@@ -100,13 +100,17 @@ export async function POST(req: Request) {
 
     if (filing.user) {
       try {
+        // Customer email: only the fax-transmission receipt. The signed
+        // package itself is already downloadable from their portal, so we
+        // don't re-send the full PDF every time — keeps the attachment
+        // small and avoids re-delivering taxpayer-identifying data over
+        // email when not needed.
         await sendFaxDeliveredEmail({
           email: filing.user.email,
           llcName: filing.llcName,
           taxYears: filing.taxYears,
           portalLink: makeMagicLink(filing.user.id),
           proof,
-          signedPdfBytes,
           receiptPdfBytes,
         });
       } catch (err) {
@@ -114,6 +118,9 @@ export async function POST(req: Request) {
       }
     }
     try {
+      // Admin email: BOTH the receipt AND the frozen copy of the signed
+      // package that was actually faxed. Saves the operator from having to
+      // log into admin + download two files just to file the audit trail.
       await sendFaxDeliveredAdminEmail({
         adminEmail: env.adminEmail,
         customerEmail: filing.user?.email ?? null,
@@ -122,6 +129,8 @@ export async function POST(req: Request) {
         filingId: filing.id,
         adminFilingUrl,
         proof,
+        receiptPdfBytes,
+        signedPdfBytes,
       });
     } catch (err) {
       console.error("[telnyx-webhook] admin fax delivered email failed", err);
