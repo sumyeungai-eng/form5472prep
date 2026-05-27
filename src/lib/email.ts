@@ -281,8 +281,8 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     <!-- What happens next -->
     <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:15px;">What happens next</p>
     <ol style="margin:0 0 24px;padding-left:20px;color:#475569;line-height:1.6;font-size:14px;">
-      <li style="margin-bottom:6px;">We generate your filled <strong>Form 5472 + pro forma Form 1120</strong> and run an AI compliance check (≈ 2 min).</li>
-      <li style="margin-bottom:6px;">You open your portal, review the package, and draw your signature to acknowledge it. Our accountant signs the IRS forms before fax.</li>
+      <li style="margin-bottom:6px;">We generate your filled <strong>Form 5472 + pro forma Form 1120</strong> (≈ 2 min).</li>
+      <li style="margin-bottom:6px;">You open your portal, review the package, and draw your signature to acknowledge it. A qualified tax accountant on our team then reviews the package end-to-end before we fax it to the IRS.</li>
       ${step3Html}
     </ol>
 
@@ -304,8 +304,8 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       `  2. Draw your signature once — we apply it to every required box.\n` +
       step3Text + "\n"
     : `What happens next:\n` +
-      `  1. We generate your Form 5472 + pro forma 1120 (≈ 2 min) and run an AI compliance check.\n` +
-      `  2. You open the portal to sign in-browser.\n` +
+      `  1. We generate your Form 5472 + pro forma 1120 (≈ 2 min).\n` +
+      `  2. You open the portal to sign in-browser. A qualified tax accountant on our team reviews the package end-to-end before we fax it to the IRS.\n` +
       step3Text + "\n";
 
   return sendEmail({
