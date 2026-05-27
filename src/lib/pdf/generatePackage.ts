@@ -210,14 +210,23 @@ function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number)
 }
 
 // Form 1120 is filed PRO FORMA — purely as a transmittal for Form 5472.
-// Per the Form 5472 instructions for foreign-owned U.S. DEs, only the entity's
-// name and address, plus item B (EIN), should be filled. Items C (date
-// incorporated), D (total assets), and the income/deduction/Schedule pages
-// must NOT be completed for a pro forma 1120 — extra data introduces
-// contradictions and can complicate IRS processing. "Foreign-owned U.S. DE"
-// is stamped across the top of the form by stampDiirspHeader().
+// Per the Form 5472 instructions for foreign-owned U.S. DEs, the income,
+// deduction, and Schedule pages must NOT be completed (no tax is computed
+// on a pro forma 1120). We DO populate the entity-identification fields
+// (name, EIN, date incorporated, total assets) because leaving Items C
+// and D blank creates a "this filing looks incomplete" question for the
+// IRS reviewer and a cross-form inconsistency vs. Form 5472 line 1c
+// (total assets) and 1m (date incorporated). Filling them mirrors the
+// 5472 data and removes the ambiguity at zero risk.
+// "Foreign-owned U.S. DE" is stamped across the top by stampDiirspHeader().
 async function fillForm1120(pdf: PDFDocument, f: Filing, year: number) {
   const form = pdf.getForm();
+  // Total assets at year-end — mirror Form 5472 line 1c. Pull the year that
+  // matches the 1120 we're rendering; fall back to 0 if no yearData row.
+  const yd = f.yearData.find((y) => y.taxYear === year);
+  const totalAssets = yd ? Math.round(yd.totalAssetsYearEnd).toString() : "0";
+  const dateIncorporated = formatDateForIrs(f.llcDateIncorporated);
+
   if (year >= 2025) {
     const m = form1120_2025FieldMap;
     setText(form, m["1a_name"], f.llcName);
@@ -229,12 +238,16 @@ async function fillForm1120(pdf: PDFDocument, f: Filing, year: number) {
     setText(form, m["1_country"], f.llcCountry || "USA");
     setText(form, m["1_zip"], f.llcZip);
     setText(form, m.B_ein, f.llcEin);
+    setText(form, m.C_dateIncorporated, dateIncorporated);
+    setText(form, m.D_totalAssets, totalAssets);
   } else {
     const m = form1120_2024FieldMap;
     setText(form, m["1a_name"], f.llcName);
     setText(form, m["1_streetSuite"], f.llcAddress);
     setText(form, m["1_cityStateCountryZip"], `${f.llcCity}, ${f.llcState} ${f.llcZip}`);
     setText(form, m.B_ein, f.llcEin);
+    setText(form, m.C_dateIncorporated, dateIncorporated);
+    setText(form, m.D_totalAssets, totalAssets);
   }
   flatten(form);
 

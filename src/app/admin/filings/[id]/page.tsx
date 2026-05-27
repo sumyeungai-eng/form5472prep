@@ -20,7 +20,6 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
     include: {
       user: true,
       yearData: { orderBy: { taxYear: "asc" } },
-      changeLog: { orderBy: { changedAt: "desc" }, take: 20 },
     },
   });
   if (!filing) notFound();
@@ -117,21 +116,11 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         />
       </div>
 
-      {/* AI compliance check status — shown when validation has run */}
-      {filing.validationStatus && (
-        <ValidationStatusCard
-          status={filing.validationStatus}
-          issuesJson={filing.validationIssuesJson}
-          checkedAt={filing.validationCheckedAt}
-          aiHandoff={filing.aiHandoff}
-          aiTurnsUsed={filing.aiTurnsUsed}
-        />
-      )}
-
-      {/* AI change log — every field the agent has touched */}
-      {filing.changeLog.length > 0 && (
-        <ChangeLogCard entries={filing.changeLog} />
-      )}
+      {/* AI compliance check + change log UI removed when the AI plumbing
+          was retired. The DB columns (validationStatus, aiHandoff,
+          aiTurnsUsed, FilingChangeLog table) are left orphan rather than
+          migrated away — they're harmless and a future audit may want to
+          read historical records that referenced them. */}
 
       {/* Customer ↔ admin messages */}
       <div className="mb-6">
@@ -235,133 +224,6 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
       <p className="mt-8 text-xs text-slate-400 text-center">
         Created {filing.createdAt.toLocaleString()} · Updated {filing.updatedAt.toLocaleString()}
       </p>
-    </div>
-  );
-}
-
-function ValidationStatusCard({
-  status,
-  issuesJson,
-  checkedAt,
-  aiHandoff,
-  aiTurnsUsed,
-}: {
-  status: string;
-  issuesJson: unknown;
-  checkedAt: Date | null;
-  aiHandoff: string | null;
-  aiTurnsUsed: number;
-}) {
-  const tone =
-    status === "passed" || status === "fixed"
-      ? { bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-900", label: "✓ AI check passed" }
-      : status === "needs_customer_input"
-        ? { bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-900", label: "AI flagged — needs customer input" }
-        : status === "error"
-          ? { bg: "bg-red-50", border: "border-red-200", text: "text-red-900", label: "AI check error (fail-open)" }
-          : { bg: "bg-slate-50", border: "border-slate-200", text: "text-slate-700", label: `AI check status: ${status}` };
-
-  // issuesJson is the ValidationResponse the AI returned. Render shape lenient.
-  const json = issuesJson as { summary?: string; issues?: Array<{ severity: string; location: string; description: string; customer_question?: string | null }>; customer_questions?: string[]; errorMessage?: string } | null;
-
-  const handoffBadge =
-    aiHandoff === "agent"
-      ? { bg: "bg-violet-100", text: "text-violet-800", label: `🤖 AI engaged (${aiTurnsUsed}/3 turns)` }
-      : aiHandoff === "admin"
-        ? { bg: "bg-slate-200", text: "text-slate-700", label: "👤 Admin handoff (AI standby)" }
-        : null;
-
-  return (
-    <div className={`${tone.bg} ${tone.border} border rounded-lg p-5 mb-6`}>
-      <div className="flex items-center justify-between mb-2 gap-3 flex-wrap">
-        <h2 className={`text-sm font-semibold ${tone.text}`}>{tone.label}</h2>
-        <div className="flex items-center gap-2">
-          {handoffBadge && (
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${handoffBadge.bg} ${handoffBadge.text}`}>
-              {handoffBadge.label}
-            </span>
-          )}
-          {checkedAt && (
-            <span className="text-xs text-slate-500">Checked {checkedAt.toLocaleString()}</span>
-          )}
-        </div>
-      </div>
-      {json?.summary && (
-        <p className="text-sm text-slate-800 mb-3">{json.summary}</p>
-      )}
-      {json?.errorMessage && (
-        <p className="text-xs font-mono text-red-700 mb-3">{json.errorMessage}</p>
-      )}
-      {Array.isArray(json?.issues) && json.issues.length > 0 && (
-        <details className="text-sm">
-          <summary className="cursor-pointer text-slate-700 hover:text-slate-900 font-medium">
-            {json.issues.length} issue{json.issues.length === 1 ? "" : "s"} — show details
-          </summary>
-          <ul className="mt-3 space-y-3">
-            {json.issues.map((i, idx) => (
-              <li key={idx} className="border-l-2 border-slate-300 pl-3">
-                <div className="text-xs uppercase tracking-wider text-slate-500">
-                  {i.severity} · {i.location}
-                </div>
-                <div className="text-sm text-slate-800 mt-0.5">{i.description}</div>
-                {i.customer_question && (
-                  <div className="text-xs text-slate-600 mt-1 italic">Asked customer: {i.customer_question}</div>
-                )}
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
-    </div>
-  );
-}
-
-function ChangeLogCard({
-  entries,
-}: {
-  entries: Array<{
-    id: string;
-    source: string;
-    field: string;
-    beforeJson: unknown;
-    afterJson: unknown;
-    reason: string | null;
-    changedAt: Date;
-  }>;
-}) {
-  const display = (v: unknown) => v == null ? "—" : typeof v === "string" ? v : JSON.stringify(v);
-  const sourceTone = (s: string) =>
-    s === "ai" ? "bg-violet-100 text-violet-800"
-      : s === "admin" ? "bg-blue-100 text-blue-800"
-        : s === "customer" ? "bg-emerald-100 text-emerald-800"
-          : "bg-slate-100 text-slate-700";
-
-  return (
-    <div className="bg-white border border-slate-200 rounded-lg p-5 mb-6">
-      <h2 className="text-sm font-semibold text-slate-900 mb-3">Change log ({entries.length})</h2>
-      <ul className="space-y-3">
-        {entries.map((e) => (
-          <li key={e.id} className="flex gap-3 text-sm">
-            <span className={`shrink-0 self-start text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded ${sourceTone(e.source)}`}>
-              {e.source}
-            </span>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-baseline justify-between gap-3">
-                <code className="font-mono text-xs text-slate-700 break-all">{e.field}</code>
-                <span className="text-xs text-slate-400 shrink-0">{e.changedAt.toLocaleString()}</span>
-              </div>
-              <div className="mt-1 text-xs text-slate-600">
-                <span className="font-mono">{display(e.beforeJson)}</span>
-                <span className="mx-1.5 text-slate-400">→</span>
-                <span className="font-mono text-emerald-700 font-semibold">{display(e.afterJson)}</span>
-              </div>
-              {e.reason && (
-                <div className="mt-1 text-xs italic text-slate-500">{e.reason}</div>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
