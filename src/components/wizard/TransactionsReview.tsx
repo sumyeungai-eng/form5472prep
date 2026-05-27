@@ -506,6 +506,28 @@ export function TransactionsReview({
         </p>
       </div>
 
+      {/* Formation-contribution reminder. The single most common Part V
+          omission is the initial capital contribution made at LLC formation
+          to open the business bank account (often $100–$5,000 wired from
+          the owner's personal account). Bank-statement CSV uploads catch
+          ongoing transactions but typically MISS this one because Mercury /
+          Wise / Relay accounts often weren't open yet on the formation
+          date — the money moved in via personal funds → state filing →
+          first bank deposit, none of which show on the LLC bank statement.
+          Surface the question explicitly so the customer doesn't ship a
+          Part V missing the formation contribution. */}
+      <div className="rounded-md border border-blue-200 bg-blue-50 p-4 text-sm">
+        <p className="font-medium text-blue-900">Did you fund the LLC when forming it?</p>
+        <p className="mt-1 text-blue-800">
+          If you put money in to <strong>open the business bank account</strong>, pay the state
+          filing fee, the registered agent, or any pre-banking expenses (even a few hundred dollars
+          from your personal account) — that&apos;s a <strong>capital contribution</strong> and must
+          appear in Part V for the year of formation. Bank-statement uploads usually miss this
+          because the bank account wasn&apos;t open yet on the date the money moved. Add it manually
+          below if it&apos;s not already there.
+        </p>
+      </div>
+
       <div className="space-y-6">
         {years.map((y) => {
           const t = totalsFor(y);

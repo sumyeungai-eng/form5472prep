@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Field, Input } from "@/components/ui/input";
+import { Field, Input, Select } from "@/components/ui/input";
+import { COUNTRIES } from "@/lib/countries";
 import { MULTI_YEAR_ADDON_CENTS, multiYearAddonCents, tierInfo, totalPriceCents } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
 
@@ -59,28 +60,59 @@ import { ReasonableCauseStep } from "./ReasonableCauseStep";
 // Common principal business activities for foreign-owned single-member LLCs,
 // with their IRS 6-digit NAICS codes. The catch-all "Other (please specify)"
 // option falls back to the original free-text input.
+// Curated NAICS list — only the activities our customer base (foreign-owned
+// US LLCs) actually picks. Goal: every customer finds something specific
+// enough that they don't pick "Other" and land on 999999 (or worse, an
+// admin manually-types a wrong code that survives review — e.g. the
+// "Music Publishers (512230)" picked for a non-music publishing business
+// in one historical filing). When in doubt, add more granular entries
+// instead of fewer, generic ones.
 const BUSINESS_ACTIVITIES: { activity: string; code: string }[] = [
+  // ── Software & tech services ────────────────────────────────
   { activity: "Software / SaaS / app development", code: "541512" },
+  { activity: "Software publishing (commercial software products)", code: "511210" },
   { activity: "IT services / computer systems design", code: "541510" },
   { activity: "Web design / web development", code: "541511" },
+
+  // ── Consulting & professional services ──────────────────────
   { activity: "Management consulting", code: "541611" },
   { activity: "Marketing / advertising consulting", code: "541613" },
   { activity: "Advertising agency / digital marketing services", code: "541810" },
   { activity: "Graphic / industrial design services", code: "541430" },
-  { activity: "Writing / content creation / translation", code: "711510" },
-  { activity: "Photography / video production", code: "541921" },
-  { activity: "Online / e-commerce retail (physical products)", code: "454110" },
-  { activity: "Wholesale distribution / import-export", code: "424990" },
-  { activity: "Dropshipping / Amazon FBA seller", code: "454110" },
-  { activity: "Online education / courses / coaching", code: "611430" },
-  { activity: "Affiliate marketing / content publishing", code: "519130" },
-  { activity: "Investment activities / holding company", code: "523900" },
-  { activity: "Real estate — rental property", code: "531110" },
-  { activity: "Real estate — other (flipping, syndication, etc.)", code: "531390" },
-  { activity: "Cryptocurrency / digital asset trading", code: "523900" },
   { activity: "Financial / accounting / bookkeeping services", code: "541219" },
   { activity: "Legal services", code: "541110" },
   { activity: "Engineering / architectural services", code: "541330" },
+
+  // ── Publishing & content ────────────────────────────────────
+  // Common foreign-founder content businesses. The split between
+  // 511130 (books), 511199 (other publishers), 519130 (internet
+  // content), 711510 (independent creator), and 512230 (music
+  // publishers) is the one most likely to be mis-coded — keep them
+  // all explicitly listed so the picker doesn't force a default.
+  { activity: "Book publishing (ebooks, print books)", code: "511130" },
+  { activity: "Newspaper / periodical / magazine publishing", code: "511120" },
+  { activity: "Other publishing (greeting cards, calendars, etc.)", code: "511199" },
+  { activity: "Music publishing / music rights", code: "512230" },
+  { activity: "Internet content / blog / newsletter / Substack", code: "519130" },
+  { activity: "Affiliate marketing / content monetization", code: "519130" },
+  { activity: "Writing / content creation / translation", code: "711510" },
+  { activity: "Independent artist / performer / influencer", code: "711510" },
+  { activity: "Photography / video production", code: "541921" },
+  { activity: "Online education / courses / coaching", code: "611430" },
+
+  // ── E-commerce & retail ─────────────────────────────────────
+  { activity: "Online / e-commerce retail (physical products)", code: "454110" },
+  { activity: "Dropshipping / Amazon FBA seller", code: "454110" },
+  { activity: "Print-on-demand (books, apparel, prints)", code: "323111" },
+  { activity: "Wholesale distribution / import-export", code: "424990" },
+
+  // ── Finance, investment, real estate ────────────────────────
+  { activity: "Investment activities / holding company", code: "523900" },
+  { activity: "Cryptocurrency / digital asset trading", code: "523900" },
+  { activity: "Real estate — rental property", code: "531110" },
+  { activity: "Real estate — other (flipping, syndication, etc.)", code: "531390" },
+
+  // ── Goods, services, ops ────────────────────────────────────
   { activity: "Restaurants / food service", code: "722511" },
   { activity: "Construction / contractor", code: "236220" },
   { activity: "Manufacturing", code: "339999" },
@@ -88,7 +120,8 @@ const BUSINESS_ACTIVITIES: { activity: string; code: string }[] = [
   { activity: "Trucking / delivery", code: "484110" },
   { activity: "Personal services (cleaning, beauty, etc.)", code: "812990" },
   { activity: "Healthcare / wellness services", code: "621399" },
-  { activity: "Independent artist / performer / influencer", code: "711510" },
+
+  // Fallback. Lives here at the bottom so it's the last option.
   { activity: "Other (unable to classify)", code: "999999" },
 ];
 
@@ -769,7 +802,10 @@ function OwnerStep({
           <Input {...register("ownerAddressPostal")} placeholder="(optional)" />
         </Field>
         <Field label="Country" error={errors.ownerAddressCountry?.message}>
-          <Input {...register("ownerAddressCountry")} placeholder="Hong Kong" />
+          <Select {...register("ownerAddressCountry")}>
+            <option value="">Select a country…</option>
+            {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </Select>
         </Field>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -783,7 +819,10 @@ function OwnerStep({
             </p>
           }
         >
-          <Input {...register("ownerCountryCitizenship")} placeholder="Hong Kong" />
+          <Select {...register("ownerCountryCitizenship")}>
+            <option value="">Select a country…</option>
+            {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </Select>
         </Field>
         <Field
           label="Tax residence"
@@ -801,7 +840,10 @@ function OwnerStep({
             </>
           }
         >
-          <Input {...register("ownerCountryTaxResidence")} placeholder="Hong Kong" />
+          <Select {...register("ownerCountryTaxResidence")}>
+            <option value="">Select a country…</option>
+            {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </Select>
         </Field>
         <Field
           label="Country of business"
@@ -814,7 +856,10 @@ function OwnerStep({
             </p>
           }
         >
-          <Input {...register("ownerCountryBusiness")} placeholder="Hong Kong" />
+          <Select {...register("ownerCountryBusiness")}>
+            <option value="">Select a country…</option>
+            {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </Select>
         </Field>
       </div>
       <Field
