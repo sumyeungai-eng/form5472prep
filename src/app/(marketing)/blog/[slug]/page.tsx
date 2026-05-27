@@ -156,7 +156,7 @@ function BlogCta() {
         <ArrowRight className="ml-1.5 h-4 w-4" />
       </Link>
       <p className="mt-3 text-[11px] text-slate-500 text-center">
-        Flat $79 · 100% money-back guarantee
+        From $199 · 100% money-back guarantee
       </p>
     </div>
   );

@@ -20,13 +20,11 @@ function readFunnelSource(params: URLSearchParams | null): string | null {
   return cleaned || null;
 }
 
-// Single-tier model — only "standard" is a valid new-order tier. Legacy
-// values ("rush", "premium", "single_year", etc.) are still readable for
-// display via resolveTier() but new orders can only choose Standard.
-const ALLOWED_TIERS = new Set(["standard"]);
+const ALLOWED_TIERS = new Set(["standard", "rush", "premium"]);
 
-// Read the customer's tier choice off the URL (?tier=standard). Missing or
-// invalid values fall back to Standard via the server-side default.
+// Read the customer's tier choice off the URL (?tier=rush etc.). The /pricing
+// page links here with the tier pre-selected; missing or invalid values fall
+// back to Standard via the server-side default.
 function readTier(params: URLSearchParams | null): string | null {
   const raw = params?.get("tier");
   if (!raw) return null;

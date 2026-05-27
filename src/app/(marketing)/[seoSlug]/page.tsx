@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
 import { LANDING_PAGES, getLandingPage, getRelatedSlugs } from "@/lib/landing-pages";
-import { TIERS, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
+import { TIERS, TIER_ORDER, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
 import { env } from "@/lib/env";
 
@@ -255,9 +255,11 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
           </Reveal>
         </section>
 
-        {/* Flat-rate pricing card — appears on every landing page so
-            visitors always see the offer before deciding. */}
-        <PricingSection startUrl={startUrl} />
+        {/* Three-tier pricing — appears on every landing page so visitors
+            always see all the package options before deciding. Premium
+            pages display PREMIUM_TIERS; the price the customer sees here
+            is what they'll be charged at Stripe checkout. */}
+        <PricingSection startUrl={startUrl} pricingMode={page.pricingMode} />
 
         {/* FAQs */}
         {page.faqs.length > 0 && (
@@ -422,18 +424,25 @@ function HeroRailCta({ startUrl }: { startUrl: string }) {
   );
 }
 
-// Flat-rate pricing block, rendered near the bottom of every landing page.
-// Matches the homepage pricing card so visitors who arrived from search see
-// the same offer regardless of which guide they landed on.
+// Three-tier pricing block, rendered near the bottom of every landing page.
+// Matches the homepage pricing structure so visitors who arrived from search
+// see the same options regardless of which guide they landed on.
 function PricingSection({
   startUrl,
 }: {
   startUrl: string;
+  pricingMode?: "premium";
 }) {
-  // Single flat-rate tier (May 2026 rewrite). startUrl already carries any
-  // ?src= attribution from the landing page funnel; we just append it as-is
-  // since there's no tier selection any more.
-  const t = TIERS.standard;
+  // Always use the canonical three-tier set on every landing page. The
+  // /pro-form-5472 page used to override with PREMIUM_TIERS — that funnel
+  // has been retired in favour of one shared price across organic + paid.
+  const tiers = TIER_ORDER.map((key) => [key, TIERS[key]] as const);
+  // Preserve any ?src= attribution baked into startUrl by appending tier as
+  // a second query param (the /start route accepts both).
+  const tierUrl = (slug: string) => {
+    const sep = startUrl.includes("?") ? "&" : "?";
+    return `${startUrl}${sep}tier=${slug}`;
+  };
   return (
     <section id="pricing" className="bg-slate-50 border-b border-slate-200">
       <div className="max-w-5xl mx-auto px-6 py-16">
@@ -444,50 +453,69 @@ function PricingSection({
           </h2>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto">
             One-time fee per filing. No subscription. IRS fax delivery to the
-            Ogden PIN Unit is included.
+            Ogden PIN Unit is included on every plan.
           </p>
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-4 py-1.5 text-xs font-medium text-emerald-800">
-              Fax filing included
+              Fax filing included on every plan
             </div>
             <div className="inline-flex items-center gap-2 rounded-full bg-accent-50 border-2 border-accent/30 px-4 py-1.5 text-xs font-medium text-accent">
               Reviewed by a qualified tax accountant
             </div>
           </div>
         </Reveal>
-        <Reveal className="mt-10 max-w-md mx-auto">
-          <div className="relative flex flex-col rounded-2xl p-7 border-2 border-accent bg-white shadow-xl shadow-accent/10">
-            <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-semibold rounded-full bg-accent text-white px-3 py-0.5 shadow">
-              Flat-rate filing
-            </span>
-            <div className="text-center">
-              <p className="font-semibold text-slate-900 text-lg">{t.label}</p>
-              <p className="text-sm text-slate-500 mt-0.5">{t.subtitle}</p>
-            </div>
-            <p className="mt-4 text-center">
-              <span className="text-5xl font-semibold text-slate-900 tracking-tight">{formatUsd(t.priceCents)}</span>
-              <span className="ml-1 text-sm font-normal text-slate-500">/ filing</span>
-            </p>
-            <p className="mt-1 text-center text-xs text-slate-500">
-              + {formatUsd(MULTI_YEAR_ADDON_CENTS)} per additional past tax year
-            </p>
-            <ul className="mt-6 space-y-2 text-sm text-slate-700">
-              {t.features.map((f) => (
-                <li key={f} className="flex items-start gap-2">
-                  <span className="text-emerald-600 mt-0.5">✓</span>
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-            <Link href={startUrl} className="block mt-7">
-              <Button variant="primary" className="w-full h-12 transition-transform hover:-translate-y-0.5">
-                {t.ctaLabel}
-              </Button>
-            </Link>
-          </div>
-        </Reveal>
+        <div className="mt-10 grid md:grid-cols-3 gap-6 items-stretch">
+          {tiers.map(([key, t], idx) => {
+            const highlighted = !!t.highlight;
+            return (
+              <Reveal
+                key={key}
+                delay={idx * 120}
+                className={`relative flex flex-col rounded-lg p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/10 ${
+                  highlighted
+                    ? "border-2 border-accent bg-white shadow-md"
+                    : "border border-slate-200 bg-white hover:border-accent"
+                }`}
+              >
+                {highlighted && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-semibold rounded-full bg-accent text-white px-3 py-0.5 shadow">
+                    Most popular
+                  </span>
+                )}
+                <div>
+                  <p className="font-semibold text-slate-900">{t.label}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{t.subtitle}</p>
+                </div>
+                <p className="mt-3 text-3xl font-semibold text-slate-900">
+                  {formatUsd(t.priceCents)}
+                  <span className="ml-1 text-sm font-normal text-slate-500">/ year</span>
+                </p>
+                <ul className="mt-4 space-y-1.5 text-sm text-slate-700 flex-1">
+                  {t.features.map((f) => (
+                    <li key={f} className="flex items-start gap-1.5">
+                      <span className="text-emerald-600 mt-0.5">✓</span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href={tierUrl(key)} className="block mt-6">
+                  <Button
+                    variant={highlighted ? "primary" : "outline"}
+                    className="w-full transition-transform hover:-translate-y-0.5"
+                  >
+                    {t.ctaLabel}
+                  </Button>
+                </Link>
+              </Reveal>
+            );
+          })}
+        </div>
         <p className="mt-6 text-center text-sm text-slate-600">
-          Saves you from the <span className="font-semibold text-slate-900">$25,000-per-form IRS penalty</span>
+          <span className="font-semibold text-slate-900">
+            + {formatUsd(MULTI_YEAR_ADDON_CENTS)} per additional year
+          </span>
+          <span className="mx-2 text-slate-400">·</span>
+          Saves you from the $25,000-per-form IRS penalty
         </p>
       </div>
     </section>

@@ -935,9 +935,9 @@ function YearsStep({
     setValue("taxYears", next, { shouldValidate: true });
   }
 
-  // Tier is fixed at "standard" in the new flat-rate model. Wizard just lets
-  // the customer pick year count; each additional past year adds a flat $59
-  // on top of the $79 base.
+  // Tier is selected at /pricing (or /start?tier=) and stored on filing.tier.
+  // Wizard just lets the customer pick year count; each additional past year
+  // adds a flat $149 on top of the tier base.
   const activeTier = tierInfo(filing.tier);
   const extraYears = Math.max(0, selected.length - 1);
   const addOnTotalCents = multiYearAddonCents(selected.length);

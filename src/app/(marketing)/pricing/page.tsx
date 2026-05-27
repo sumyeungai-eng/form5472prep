@@ -1,35 +1,42 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { CheckCircle2, Send, ShieldCheck, Sparkles } from "lucide-react";
-import { TIERS, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
+import {
+  TIERS,
+  TIER_ORDER,
+  MULTI_YEAR_ADDON_CENTS,
+  type Tier,
+} from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 
 export const metadata: Metadata = {
   title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs | Form5472 Prep",
   description:
-    "Flat $79 Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. IRS fax delivery and accountant review included. +$59 per additional past tax year. Avoid the $25,000 IRS penalty.",
+    "Flat-rate Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. Standard $199, Rush $279, Premium $449. IRS fax delivery included on every plan. Avoid the $25,000 IRS penalty.",
   alternates: { canonical: "https://www.form5472prep.com/pricing" },
 };
 
-// Schema.org Product with single Offer — drives rich-result pricing
+const tierEntries = TIER_ORDER.map((key) => [key, TIERS[key]] as const);
+
+// Schema.org Product with Offer per tier — drives rich-result pricing
 // snippets in Google search.
 const productJsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
   name: "Form 5472 + Pro Forma 1120 Filing Service",
   description:
-    "Done-for-you IRS Form 5472 and pro forma Form 1120 filing for foreign-owned single-member US LLCs. Fax delivery to the IRS Ogden PIN Unit and qualified tax-accountant review are included.",
+    "Done-for-you IRS Form 5472 and pro forma Form 1120 filing for foreign-owned single-member US LLCs. Fax delivery to the IRS Ogden PIN Unit is included on every plan.",
   brand: { "@type": "Brand", name: "Form5472 Prep" },
-  offers: {
+  offers: tierEntries.map(([slug, t]) => ({
     "@type": "Offer",
-    name: `${TIERS.standard.label} — ${TIERS.standard.subtitle}`,
+    name: `${t.label} — ${t.subtitle}`,
     priceCurrency: "USD",
-    price: (TIERS.standard.priceCents / 100).toFixed(2),
-    url: `https://www.form5472prep.com/start`,
+    price: (t.priceCents / 100).toFixed(2),
+    url: `https://www.form5472prep.com/start?tier=${slug}`,
     availability: "https://schema.org/InStock",
     eligibleQuantity: { "@type": "QuantitativeValue", value: 1, unitText: "filing" },
-  },
+  })),
 };
 
 export default function PricingPage() {
@@ -73,13 +80,15 @@ export default function PricingPage() {
       </section>
 
       <section className="max-w-6xl mx-auto px-6 py-12 sm:py-16">
-        <div className="max-w-md mx-auto">
-          <SingleTierCard />
+        <div className="grid gap-6 md:grid-cols-3 items-stretch">
+          {tierEntries.map(([slug, t]) => (
+            <TierCard key={slug} slug={slug} tier={t} />
+          ))}
         </div>
 
         <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-700 text-center">
           <span className="font-semibold text-slate-900">
-            + {formatUsd(MULTI_YEAR_ADDON_CENTS)} per additional past tax year
+            + {formatUsd(MULTI_YEAR_ADDON_CENTS)} per additional year
           </span>
           <span className="mx-2 text-slate-400">·</span>
           <span>
@@ -99,8 +108,8 @@ export default function PricingPage() {
 
       {/* Annotated fax-receipt section — differentiates against $49 DIY
           competitors that issue no proof-of-delivery. Sits between the
-          pricing card and the FAQ so anyone reading "what do I actually
-          get for $79?" sees the real product artifact next to the price. */}
+          pricing cards and the FAQ so anyone reading "is this worth $199?"
+          sees the actual product artifact next to the price. */}
       <FaxReceiptProof />
 
       <section className="max-w-4xl mx-auto px-6 pb-20 space-y-8">
@@ -110,19 +119,19 @@ export default function PricingPage() {
         <div className="space-y-4">
           <FaqItem
             q="How much does it cost?"
-            a="Flat $79 per filing. One tax year, fully done-for-you — Form 5472 + pro forma 1120 prepared, accountant-reviewed, and faxed to the IRS Ogden PIN Unit. Additional past tax years are +$59 each."
+            a="Three plans — Standard $199, Rush $279, Premium $449. Each plan is a flat one-time fee for a single tax year filing. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included on every plan."
           />
           <FaqItem
-            q="What's included in the $79?"
-            a="Cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, reasonable-cause statement for late filings, qualified-tax-accountant review of the package, fax delivery to the IRS Ogden PIN Unit, and a timestamped IRS fax-transmission receipt as proof of filing."
+            q="What's the difference between the plans?"
+            a="Standard is our done-for-you baseline — we prepare your Form 5472 + pro forma 1120, fax it to the IRS, and email you the confirmation. Rush adds 24-hour turnaround, priority email support, and a March filing reminder for next year. Premium adds same-day (12-hour) turnaround, IRS-letter handling for one year, and a BOI filing review."
           />
           <FaqItem
             q="Is fax filing really included?"
-            a="Yes — fax delivery to the IRS Ogden PIN Unit and the timestamped fax receipt as proof of on-time filing under IRC § 6038A are part of the $79. You don't need your own fax machine."
+            a="Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and the timestamped fax receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine."
           />
           <FaqItem
             q="What if I'm filing for multiple past years (DIIRSP)?"
-            a="Add $59 per additional past year. We include a reasonable-cause statement on every late filing so the IRS Delinquent International Information Return Submission Procedure (DIIRSP) is invoked correctly."
+            a="Add $149 per additional past year on any plan. We include a reasonable-cause statement on every late filing so the IRS Delinquent International Information Return Submission Procedure (DIIRSP) is invoked correctly."
           />
           <FaqItem
             q="Are there any hidden fees?"
@@ -134,27 +143,36 @@ export default function PricingPage() {
   );
 }
 
-function SingleTierCard() {
-  const tier = TIERS.standard;
+function TierCard({ slug, tier }: { slug: Tier; tier: typeof TIERS[Tier] }) {
+  const highlighted = !!tier.highlight;
   return (
-    <div className="relative flex flex-col rounded-2xl bg-white p-6 sm:p-7 border-2 border-accent shadow-lg shadow-accent/10">
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-        <span className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white shadow">
-          <Sparkles className="h-3 w-3" />
-          Flat-rate filing
-        </span>
-      </div>
+    <div
+      className={[
+        "relative flex flex-col rounded-2xl bg-white p-6 sm:p-7",
+        highlighted
+          ? "border-2 border-accent shadow-lg shadow-accent/10"
+          : "border border-slate-200",
+      ].join(" ")}
+    >
+      {highlighted && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white shadow">
+            <Sparkles className="h-3 w-3" />
+            Most popular
+          </span>
+        </div>
+      )}
 
-      <div className="text-center">
+      <div>
         <h3 className="text-xl font-semibold text-slate-900">{tier.label}</h3>
         <p className="mt-1 text-sm text-slate-600">{tier.subtitle}</p>
       </div>
 
-      <div className="mt-5 flex items-baseline gap-1.5 justify-center">
-        <span className="text-5xl font-semibold tracking-tight text-slate-900">
+      <div className="mt-5 flex items-baseline gap-1.5">
+        <span className="text-4xl font-semibold tracking-tight text-slate-900">
           {formatUsd(tier.priceCents)}
         </span>
-        <span className="text-sm text-slate-500">/ filing</span>
+        <span className="text-sm text-slate-500">/ year</span>
       </div>
 
       <ul className="mt-6 space-y-2.5 text-sm text-slate-700 flex-1">
@@ -167,8 +185,13 @@ function SingleTierCard() {
       </ul>
 
       <Link
-        href={`/start`}
-        className="mt-7 inline-flex items-center justify-center rounded-md h-12 px-5 text-sm font-semibold transition bg-accent text-white hover:bg-accent-dark"
+        href={`/start?tier=${slug}`}
+        className={[
+          "mt-7 inline-flex items-center justify-center rounded-md h-11 px-5 text-sm font-semibold transition",
+          highlighted
+            ? "bg-accent text-white hover:bg-accent-dark"
+            : "bg-slate-900 text-white hover:bg-slate-800",
+        ].join(" ")}
       >
         {tier.ctaLabel}
       </Link>
