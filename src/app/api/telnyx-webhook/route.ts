@@ -42,10 +42,20 @@ export async function POST(req: Request) {
     const submittedAtIso = (body?.data?.payload?.created_at as string) ?? new Date().toISOString();
     const deliveredAtIso = (body?.data?.payload?.updated_at as string) ?? new Date().toISOString();
 
-    await prisma.filing.update({
-      where: { id: filing.id },
+    // Atomic claim — race-safe against the fax-status-poll cron firing for
+    // the same fax in its 5-min window. updateMany returns the number of
+    // rows actually matched; if it's 0, the cron (or a re-delivery of the
+    // webhook) already flipped this filing to CONFIRMED, and we MUST skip
+    // the rest of this handler so the operator doesn't get duplicate
+    // "Fax delivered" admin emails + duplicate fax-receipt PDFs.
+    const claim = await prisma.filing.updateMany({
+      where: { id: filing.id, status: { not: "CONFIRMED" } },
       data: { faxStatus: "delivered", status: "CONFIRMED" },
     });
+    if (claim.count === 0) {
+      console.log(`[telnyx-webhook] ${filing.id} already CONFIRMED — skipping duplicate fax.delivered`);
+      return NextResponse.json({ ok: true, deduplicated: true });
+    }
 
     const proof: FaxProof = {
       faxId,

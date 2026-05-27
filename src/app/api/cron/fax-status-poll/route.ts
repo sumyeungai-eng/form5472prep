@@ -119,10 +119,19 @@ async function handleDelivered(
   const submittedAtIso = tx.created_at ?? new Date().toISOString();
   const deliveredAtIso = tx.updated_at ?? new Date().toISOString();
 
-  await prisma.filing.update({
-    where: { id: filing.id },
+  // Atomic claim — race-safe against the telnyx-webhook firing for the same
+  // fax. updateMany returns the number of rows actually matched; if it's 0,
+  // another path already flipped the filing to CONFIRMED and we MUST skip
+  // the rest of this handler so the operator doesn't receive duplicate
+  // "Fax delivered" admin emails + duplicate fax-receipt PDFs.
+  const claim = await prisma.filing.updateMany({
+    where: { id: filing.id, status: { not: "CONFIRMED" } },
     data: { faxStatus: "delivered", status: "CONFIRMED" },
   });
+  if (claim.count === 0) {
+    console.log(`[fax-status-poll] ${filing.id} already CONFIRMED — webhook beat us, skipping`);
+    return;
+  }
 
   const proof: FaxProof = {
     faxId: filing.faxJobId ?? tx.id,
