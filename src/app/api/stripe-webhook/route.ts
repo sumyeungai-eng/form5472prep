@@ -4,7 +4,7 @@ import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { makeMagicLink } from "@/lib/magicLink";
-import { sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
+import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { resolveTier } from "@/lib/pricing";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { putPdf } from "@/lib/storage";
@@ -166,6 +166,25 @@ export async function POST(req: Request) {
           });
         } catch (err) {
           console.error("[stripe-webhook] order confirmation email failed", err);
+        }
+        // Admin notification — fires on every new paid order so the
+        // operator sees "new order in queue" in their inbox without
+        // having to poll the admin dashboard.
+        try {
+          await sendNewOrderAdminEmail({
+            adminEmail: env.adminEmail,
+            customerEmail: filing.user.email,
+            llcName: filing.llcName,
+            taxYears: filing.taxYears,
+            filingId: filing.id,
+            adminFilingUrl: `${env.appUrl}/admin/filings/${filing.id}`,
+            tier,
+            amountPaidCents,
+            isTestOrder: false,
+            pdfGenerated: !!pdfBytes,
+          });
+        } catch (err) {
+          console.error("[stripe-webhook] admin new-order email failed", err);
         }
       }
     }

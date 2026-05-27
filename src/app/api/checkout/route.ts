@@ -6,7 +6,7 @@ import { env } from "@/lib/env";
 import { MULTI_YEAR_ADDON_CENTS, MULTI_YEAR_ADDON_LABEL, multiYearAddonCents, tierInfo, isTestTier, resolveTier } from "@/lib/pricing";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { putPdf } from "@/lib/storage";
-import { sendOrderConfirmationEmail } from "@/lib/email";
+import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
 
 export async function POST(req: Request) {
@@ -123,6 +123,24 @@ export async function POST(req: Request) {
       } catch (err) {
         console.error("[checkout test] order confirmation email failed", err);
       }
+    }
+    // Admin notification — same as the real Stripe webhook path, marked as
+    // a test order so the operator can ignore it when triaging real orders.
+    try {
+      await sendNewOrderAdminEmail({
+        adminEmail: env.adminEmail,
+        customerEmail: full?.user?.email ?? null,
+        llcName: full?.llcName ?? null,
+        taxYears: full?.taxYears ?? [],
+        filingId: filing.id,
+        adminFilingUrl: `${env.appUrl}/admin/filings/${filing.id}`,
+        tier: resolveTier(filing.tier).tier,
+        amountPaidCents: 0,
+        isTestOrder: true,
+        pdfGenerated: !!pdfBytes,
+      });
+    } catch (err) {
+      console.error("[checkout test] admin new-order email failed", err);
     }
     return NextResponse.json({ url: `${env.appUrl}/filings/${filing.id}?paid=1` });
   }

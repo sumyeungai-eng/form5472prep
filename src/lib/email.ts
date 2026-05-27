@@ -481,6 +481,84 @@ export async function sendFaxDeliveredEmail(args: {
   });
 }
 
+// Admin notification when a new order is placed (Stripe checkout succeeded
+// OR a $0 test order was created via /admin/test-order). Lets the operator
+// know "new paid order waiting" without having to poll the admin dashboard.
+// No PDF attachment — generation is async and may not be done by the time
+// this fires; the admin can grab the PDF from the linked filing page once
+// generation completes.
+export async function sendNewOrderAdminEmail(args: {
+  adminEmail: string;
+  customerEmail: string | null;
+  llcName: string | null;
+  taxYears: number[];
+  filingId: string;
+  adminFilingUrl: string;
+  tier: Tier;
+  amountPaidCents: number;
+  isTestOrder: boolean;
+  pdfGenerated: boolean;
+}) {
+  const {
+    adminEmail,
+    customerEmail,
+    llcName,
+    taxYears,
+    filingId,
+    adminFilingUrl,
+    tier,
+    amountPaidCents,
+    isTestOrder,
+    pdfGenerated,
+  } = args;
+  const yearsLabel = taxYears.join(", ") || "(none)";
+  const llcLine = llcName ?? "(no LLC name)";
+  const tierLabel = tierInfo(tier).label;
+  const amountLabel = isTestOrder ? "$0.00 (TEST ORDER)" : formatUsd(amountPaidCents);
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+      ${isTestOrder
+        ? `An admin <strong>test order</strong> was just created (Stripe bypassed, $0).`
+        : `A new paid order just landed in the queue.`}
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Customer</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(customerEmail ?? "(anonymous)")}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">LLC</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(llcLine)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Tax year(s)</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(yearsLabel)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Tier</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(tierLabel)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Amount paid</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(amountLabel)}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">PDF generated</td><td style="padding:6px 0;color:${pdfGenerated ? "#047857" : "#b91c1c"};font-size:13px;">${pdfGenerated ? "yes" : "no — check filing for missing fields"}</td></tr>
+      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Filing ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</td></tr>
+    </table>
+    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:14px;">
+      Next step: review the filing, place the customer signature once they
+      sign in-portal, then fax to the IRS.
+    </p>
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `${isTestOrder ? "[Test order]" : "[New order]"} ${llcLine} (${yearsLabel})`,
+    text:
+      `${isTestOrder ? "Admin test order created (Stripe bypassed, $0)." : "New paid order received."}\n\n` +
+      `Customer:      ${customerEmail ?? "(anonymous)"}\n` +
+      `LLC:           ${llcLine}\n` +
+      `Tax year(s):   ${yearsLabel}\n` +
+      `Tier:          ${tierLabel}\n` +
+      `Amount paid:   ${amountLabel}\n` +
+      `PDF generated: ${pdfGenerated ? "yes" : "no — check filing for missing fields"}\n` +
+      `Filing ID:     ${filingId}\n` +
+      `\nAdmin view: ${adminFilingUrl}\n`,
+    html: shell({
+      preheader: `${isTestOrder ? "Test order" : "New order"} — ${llcLine} (${yearsLabel})`,
+      heading: isTestOrder ? "Test order created" : "New order received",
+      bodyHtml,
+      cta: { label: "Open in admin", url: adminFilingUrl },
+    }),
+  });
+}
+
 // Admin notification when a fax succeeds. Plain, scannable format.
 // Attaches BOTH the IRS Fax Transmission Receipt and a frozen copy of the
 // exact signed PDF that was faxed — so the operator has the full proof-of-
