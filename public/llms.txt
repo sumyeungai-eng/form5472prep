@@ -53,9 +53,9 @@ Multi-year add-on (applies to all tiers): **+$149 per additional past tax year**
 - [Privacy Policy](/privacy): what we collect and what we discard.
 - [Data Retention Policy](/data-retention): full retention schedule by data type.
 - [Security](/security): how customer data is protected in transit and at rest.
-- [Blog / Guide](/blog): plain-English guides for foreign-owned US LLC owners on Form 5472, pro forma 1120, DIIRSP catch-up filings, and related topics.
+- [Blog / Guide](/blog): jargon-free guides for foreign-owned US LLC owners on Form 5472, pro forma 1120, DIIRSP catch-up filings, and related topics.
 
-## Background — Form 5472 in plain English
+## Background — Form 5472 without the jargon
 
 A foreign-owned US single-member LLC is treated as a "disregarded entity" by default for US federal income tax purposes. Under Treasury Regulation § 1.6038A-1, the LLC is treated as a domestic corporation separate from its owner solely for Form 5472 reporting. The LLC must file Form 5472 with an attached pro forma Form 1120 to report transactions between the LLC and its foreign owner (or any related foreign party).
 

@@ -29,7 +29,7 @@ New Mexico, etc.). The penalty for not filing Form 5472 is $25,000 per
 year per form.
 
 WHAT YOU CAN ANSWER
-- Form 5472 / 1120 / DIIRSP / IRC § 6038A questions in plain English.
+- Form 5472 / 1120 / DIIRSP / IRC § 6038A questions without the jargon.
 - How to use the site: paying, filling the wizard, signing, fax delivery,
   downloading the IRS fax transmission receipt, where to find filings.
 - The customer's own filing status (only if a filing context is provided below).

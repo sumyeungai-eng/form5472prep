@@ -323,7 +323,7 @@ export const LANDING_PAGES: LandingPage[] = [
       "Plain-English Form 5472 instructions for foreign-owned US LLCs. Every part explained line-by-line, common mistakes, and how to file safely with the IRS Ogden PIN Unit.",
     h1: "Form 5472 Instructions: Plain-English Walkthrough",
     intro:
-      "The official IRS instructions for Form 5472 are 12 pages of dense regulatory language written for tax professionals. This is what each part actually means in plain English, exactly what to put in each box, the common mistakes that trigger the $25,000 penalty, and how to put together a complete filing that the IRS will accept on the first read.",
+      "The official IRS instructions for Form 5472 are 12 pages of dense regulatory language written for tax professionals. This is what each part actually means without the jargon, exactly what to put in each box, the common mistakes that trigger the $25,000 penalty, and how to put together a complete filing that the IRS will accept on the first read.",
     sections: [
       {
         heading: "Before you start — what you need",
