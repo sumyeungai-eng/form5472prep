@@ -21,43 +21,20 @@ type SendArgs = {
   attachments?: SendAttachment[];
 };
 
-// Sender addresses — split into TWO send-only aliases on the same Resend-
-// verified domain so neither matches any inbox we monitor (a From/To match
-// is a classic spam-filter trigger).
-//
-//   FROM_EXTERNAL = "donotreply@…" — used for mail going to customers
-//   FROM_INTERNAL = "noreply@…"    — used for mail going to ourselves
-//
-// The reason for the split: any admin notification we send goes TO
-// support@form5472prep.com (our actual inbox). Sending those FROM
-// donotreply@form5472prep.com would still be same-domain → same-domain,
-// which Gmail will treat as suspicious if Reply-To also points back at the
-// same domain. Sending admin alerts FROM noreply@ instead gives us a
-// distinct sender we can safelist with a dedicated Gmail filter that
-// guarantees they bypass Spam. Customer mail (FROM donotreply@) goes to
-// customer inboxes Google has no opinion on.
-//
-// Replies still flow to support@ via Reply-To, which is the inbox we read.
-const FROM_EXTERNAL = process.env.RESEND_FROM || "Form5472 Prep <donotreply@form5472prep.com>";
-const FROM_INTERNAL = process.env.RESEND_FROM_INTERNAL || "Form5472 Prep <noreply@form5472prep.com>";
+// Sender address. Must NOT match any inbox we monitor — sending FROM and TO
+// the same mailbox (e.g. orders@ → orders@ for admin alerts) is a classic
+// spam-filter trigger and was burying every admin notification in our own
+// Gmail spam folder. `donotreply@` is a send-only alias on the same verified
+// Resend domain, so no extra DNS/verification is needed. Replies still go to
+// support@ via Reply-To, which is the inbox we actually read.
+const FROM = process.env.RESEND_FROM || "Form5472 Prep <donotreply@form5472prep.com>";
 const REPLY_TO = process.env.RESEND_REPLY_TO || "support@form5472prep.com";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://form5472prep.com";
 
-// Decide which sender alias to use based on the recipient. Any recipient on
-// our own domain is "internal" → noreply@. Everything else is "external" →
-// donotreply@.
-function pickFromAddress(to: string): string {
-  const recipient = to.trim().toLowerCase();
-  if (recipient.endsWith("@form5472prep.com")) return FROM_INTERNAL;
-  return FROM_EXTERNAL;
-}
-
 export async function sendEmail({ to, subject, html, text, replyTo, attachments }: SendArgs) {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = pickFromAddress(to);
   if (!apiKey) {
     console.log("\n[email stub — set RESEND_API_KEY to actually send]");
-    console.log("  from:   ", from);
     console.log("  to:     ", to);
     console.log("  subject:", subject);
     console.log("  text:   ", text);
@@ -80,7 +57,7 @@ export async function sendEmail({ to, subject, html, text, replyTo, attachments 
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from,
+      from: FROM,
       to,
       subject,
       html,
