@@ -21,7 +21,13 @@ type SendArgs = {
   attachments?: SendAttachment[];
 };
 
-const FROM = process.env.RESEND_FROM || "Form5472 Prep <orders@form5472prep.com>";
+// Sender address. Must NOT match any inbox we monitor — sending FROM and TO
+// the same mailbox (e.g. orders@ → orders@ for admin alerts) is a classic
+// spam-filter trigger and was burying every admin notification in our own
+// Gmail spam folder. `donotreply@` is a send-only alias on the same verified
+// Resend domain, so no extra DNS/verification is needed. Replies still go to
+// support@ via Reply-To, which is the inbox we actually read.
+const FROM = process.env.RESEND_FROM || "Form5472 Prep <donotreply@form5472prep.com>";
 const REPLY_TO = process.env.RESEND_REPLY_TO || "support@form5472prep.com";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://form5472prep.com";
 

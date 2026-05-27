@@ -150,8 +150,8 @@ DATA HANDLING
   needed to pre-fill next year's filing.
 
 CONTACT
-- Support / general questions: support@form5472prep.com
-- Order / fax delivery questions: orders@form5472prep.com
+- All customer email: support@form5472prep.com (single inbox — orders,
+  fax delivery, support questions, everything).
 
 WHAT WE ARE NOT
 - We are not a CPA firm and don't give tax advice. For tax planning

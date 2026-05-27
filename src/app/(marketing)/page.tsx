@@ -704,7 +704,7 @@ function StructuredData() {
       {
         "@type": "ContactPoint",
         contactType: "billing support",
-        email: "orders@form5472prep.com",
+        email: "support@form5472prep.com",
         availableLanguage: ["en"],
       },
     ],

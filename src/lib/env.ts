@@ -23,10 +23,16 @@ function normalizedAppUrl(): string {
 
 export const env = {
   appUrl: normalizedAppUrl(),
-  adminEmail: process.env.ADMIN_EMAIL || "orders@form5472prep.com",
-  // Where customer→admin portal-message notifications go. Kept distinct
-  // from adminEmail so order/fax notifications (orders@) and customer
-  // support replies (support@) can be triaged separately.
+  // All admin-bound transactional mail (orders, fax delivery, fax failure,
+  // AI flags, validation alerts, etc.) lands in support@form5472prep.com —
+  // the single inbox we actually monitor. The old default was orders@, which
+  // matched the FROM address and got every alert silently filed to spam.
+  // Set ADMIN_EMAIL in Vercel if a different routing is needed.
+  adminEmail: process.env.ADMIN_EMAIL || "support@form5472prep.com",
+  // Where customer→admin portal-message notifications go. Same inbox in
+  // the single-operator setup, but kept as a distinct getter so future
+  // routing (e.g. triage to a separate inbox) can split the two without
+  // touching every call site.
   supportEmail: process.env.SUPPORT_EMAIL || "support@form5472prep.com",
   stripe: {
     get secretKey() { return required("STRIPE_SECRET_KEY"); },
