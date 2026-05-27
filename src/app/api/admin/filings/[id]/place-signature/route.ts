@@ -24,6 +24,14 @@ type Placement =
       y: number;
       text: string; // human-typed date string, e.g. "05/22/2026"
       fontSize: number; // PDF points
+    }
+  | {
+      kind: "text";
+      page: number;
+      x: number;
+      y: number;
+      text: string; // free-form admin text, e.g. an EIN correction, "See attached", etc.
+      fontSize: number;
     };
 
 // Admin-only: takes admin-chosen placements (one per signature), embeds the
@@ -57,7 +65,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: "placement entry must be an object" }, { status: 400 });
     }
     const p = raw as Record<string, unknown>;
-    const kind = p.kind === "date" ? "date" : "signature";
+    const kind: "signature" | "date" | "text" =
+      p.kind === "date" ? "date" : p.kind === "text" ? "text" : "signature";
     const page = Number(p.page);
     const x = Number(p.x);
     const y = Number(p.y);
@@ -78,18 +87,22 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       }
       placements.push({ kind: "signature", page: Math.round(page), x, y, width, height });
     } else {
+      // date and text share validation — both are arbitrary admin-typed strings
+      // drawn in Helvetica. Cap text at 200 chars (vs 60 for dates) since text
+      // mode is meant for longer notes like addresses or sentences.
+      const maxLen = kind === "date" ? 60 : 200;
       const text = typeof p.text === "string" ? p.text : "";
       const fontSize = Number(p.fontSize);
       if (!text.trim()) {
-        return NextResponse.json({ error: "date placement requires non-empty text" }, { status: 400 });
+        return NextResponse.json({ error: `${kind} placement requires non-empty text` }, { status: 400 });
       }
-      if (text.length > 60) {
-        return NextResponse.json({ error: "date text too long (max 60 chars)" }, { status: 400 });
+      if (text.length > maxLen) {
+        return NextResponse.json({ error: `${kind} text too long (max ${maxLen} chars)` }, { status: 400 });
       }
       if (!Number.isFinite(fontSize) || fontSize < 4 || fontSize > 40) {
-        return NextResponse.json({ error: "date fontSize out of range (4-40 pt)" }, { status: 400 });
+        return NextResponse.json({ error: `${kind} fontSize out of range (4-40 pt)` }, { status: 400 });
       }
-      placements.push({ kind: "date", page: Math.round(page), x, y, text: text.trim(), fontSize });
+      placements.push({ kind, page: Math.round(page), x, y, text: text.trim(), fontSize });
     }
   }
 
@@ -119,9 +132,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   try {
     const pdf = await PDFDocument.load(pdfBytes);
     const signatureImage = needsSignatureImage ? await pdf.embedPng(pngBytes) : null;
-    const dateFont = placements.some((p) => p.kind === "date")
-      ? await pdf.embedFont(StandardFonts.Helvetica)
-      : null;
+    // Single font load for both date and text placements — both render
+    // through pdf-lib's drawText in Helvetica.
+    const needsTextFont = placements.some((p) => p.kind === "date" || p.kind === "text");
+    const textFont = needsTextFont ? await pdf.embedFont(StandardFonts.Helvetica) : null;
 
     for (const p of placements) {
       const idx = p.page - 1;
@@ -132,12 +146,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       const page = pdf.getPage(idx);
       if (p.kind === "signature" && signatureImage) {
         page.drawImage(signatureImage, { x: p.x, y: p.y, width: p.width, height: p.height });
-      } else if (p.kind === "date" && dateFont) {
+      } else if ((p.kind === "date" || p.kind === "text") && textFont) {
         page.drawText(p.text, {
           x: p.x,
           y: p.y,
           size: p.fontSize,
-          font: dateFont,
+          font: textFont,
           color: rgb(0, 0, 0),
         });
       }

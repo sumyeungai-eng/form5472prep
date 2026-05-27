@@ -31,13 +31,30 @@ type Placement =
       cssHeight: number;
       text: string;      // editable date string
       cssFontSize: number; // CSS px; converts to PDF points by dividing by RENDER_SCALE
+    }
+  | {
+      id: string;
+      kind: "text";
+      pageIndex: number;
+      cssX: number;
+      cssY: number;
+      cssWidth: number;
+      cssHeight: number;
+      text: string;        // free-form admin-typed text
+      cssFontSize: number;
     };
 
-type Mode = "signature" | "date";
+type Mode = "signature" | "date" | "text";
 
 const DEFAULT_DATE_CSS_WIDTH = 110;
 const DEFAULT_DATE_CSS_HEIGHT = 22;
 const DEFAULT_DATE_CSS_FONT = 18; // ≈ 12pt PDF size at 1.5x render scale
+
+// Text mode defaults — wider than date so multi-word notes don't immediately
+// need a resize. Same font size as dates so they render at the same weight.
+const DEFAULT_TEXT_CSS_WIDTH = 200;
+const DEFAULT_TEXT_CSS_HEIGHT = 22;
+const DEFAULT_TEXT_CSS_FONT = 18;
 
 function todayMMDDYYYY(): string {
   const d = new Date();
@@ -68,6 +85,10 @@ export function PlaceSignatureClient({
   const [loadingState, setLoadingState] = useState<string>("Loading PDF…");
   const [mode, setMode] = useState<Mode>("signature");
   const [defaultDateText, setDefaultDateText] = useState<string>(todayMMDDYYYY());
+  // What new "text" placements are seeded with when clicked. Admin can edit
+  // each instance after dropping it, but having a default lets them queue up
+  // the same value (e.g. an EIN) and just click multiple boxes.
+  const [defaultTextValue, setDefaultTextValue] = useState<string>("");
   const [pageSizes, setPageSizes] = useState<PageSize[]>([]);
   const [sigUrl, setSigUrl] = useState<string | null>(null);
   const [placements, setPlacements] = useState<Placement[]>([]);
@@ -186,7 +207,7 @@ export function PlaceSignatureClient({
           cssHeight: DEFAULT_SIG_CSS_HEIGHT,
         },
       ]);
-    } else {
+    } else if (mode === "date") {
       const cssX = e.clientX - rect.left - DEFAULT_DATE_CSS_WIDTH / 2;
       const cssY = e.clientY - rect.top - DEFAULT_DATE_CSS_HEIGHT / 2;
       setPlacements((arr) => [
@@ -201,6 +222,25 @@ export function PlaceSignatureClient({
           cssHeight: DEFAULT_DATE_CSS_HEIGHT,
           text: defaultDateText,
           cssFontSize: DEFAULT_DATE_CSS_FONT,
+        },
+      ]);
+    } else {
+      // Text mode — drops a free-form editable text box seeded with the
+      // current default value (or "Text" if blank, so the new box is visible).
+      const cssX = e.clientX - rect.left - DEFAULT_TEXT_CSS_WIDTH / 2;
+      const cssY = e.clientY - rect.top - DEFAULT_TEXT_CSS_HEIGHT / 2;
+      setPlacements((arr) => [
+        ...arr,
+        {
+          id,
+          kind: "text",
+          pageIndex,
+          cssX: Math.max(0, cssX),
+          cssY: Math.max(0, cssY),
+          cssWidth: DEFAULT_TEXT_CSS_WIDTH,
+          cssHeight: DEFAULT_TEXT_CSS_HEIGHT,
+          text: defaultTextValue || "Text",
+          cssFontSize: DEFAULT_TEXT_CSS_FONT,
         },
       ]);
     }
@@ -227,22 +267,23 @@ export function PlaceSignatureClient({
             return { ...p, cssX: start!.cssX + dx, cssY: start!.cssY + dy };
           }
           // Resize. For signatures: preserve aspect ratio so the strokes
-          // don't squish. For dates: scale the font size proportionally to
-          // the width change so the text stays legible relative to handle drag.
+          // don't squish. For dates / text: scale the font size proportionally
+          // to the width change so the text stays legible relative to handle drag.
           if (p.kind === "signature") {
             const sStart = start as Extract<Placement, { kind: "signature" }>;
             const newW = Math.max(40, sStart.cssWidth + dx);
             const ratio = sStart.cssHeight / sStart.cssWidth;
             return { ...p, cssWidth: newW, cssHeight: newW * ratio };
           }
-          const dStart = start as Extract<Placement, { kind: "date" }>;
-          const newW = Math.max(40, dStart.cssWidth + dx);
-          const fontRatio = newW / dStart.cssWidth;
+          // date and text share the same resize math
+          const tStart = start as Extract<Placement, { kind: "date" | "text" }>;
+          const newW = Math.max(40, tStart.cssWidth + dx);
+          const fontRatio = newW / tStart.cssWidth;
           return {
             ...p,
             cssWidth: newW,
-            cssHeight: Math.max(12, dStart.cssHeight * fontRatio),
-            cssFontSize: Math.min(60, Math.max(8, dStart.cssFontSize * fontRatio)),
+            cssHeight: Math.max(12, tStart.cssHeight * fontRatio),
+            cssFontSize: Math.min(60, Math.max(8, tStart.cssFontSize * fontRatio)),
           };
         }),
       );
@@ -288,11 +329,22 @@ export function PlaceSignatureClient({
           height: p.cssHeight / RENDER_SCALE,
         };
       }
+      if (p.kind === "date") {
+        return {
+          kind: "date" as const,
+          page: p.pageIndex + 1,
+          x: pdfX,
+          y: pdfYBottom + 2, // nudge up 2pt so descenders don't clip the box
+          text: p.text,
+          fontSize: p.cssFontSize / RENDER_SCALE,
+        };
+      }
+      // text — same wire shape as date, just a different kind on the API
       return {
-        kind: "date" as const,
+        kind: "text" as const,
         page: p.pageIndex + 1,
         x: pdfX,
-        y: pdfYBottom + 2, // nudge up 2pt so descenders don't clip the box
+        y: pdfYBottom + 2,
         text: p.text,
         fontSize: p.cssFontSize / RENDER_SCALE,
       };
@@ -391,12 +443,12 @@ export function PlaceSignatureClient({
       <header>
         <h1 className="text-xl font-semibold">Place signature — {label}</h1>
         <p className="mt-1 text-sm text-slate-600">
-          Pick <strong>Signature</strong> or <strong>Date</strong> mode at the
-          top, then click anywhere on a page to drop it. Date placements show
-          editable text — click the text to change the date string. Drag to
-          nudge, drag the bottom-right corner to resize, click the ✕ to
-          remove. When everything looks right, hit{" "}
-          <strong>Save signed PDF</strong>.
+          Pick <strong>Signature</strong>, <strong>Date</strong>, or{" "}
+          <strong>Text</strong> mode at the top, then click anywhere on a page
+          to drop it. Date and Text placements are inline-editable — click the
+          box to change what gets printed. Drag to nudge, drag the bottom-right
+          corner to resize, click the ✕ to remove. When everything looks right,
+          hit <strong>Save signed PDF</strong>.
           {hasExistingSignedPdf && (
             <span className="ml-1 text-amber-700">
               A signed PDF already exists — saving will replace it.
@@ -422,6 +474,13 @@ export function PlaceSignatureClient({
           >
             Date
           </button>
+          <button
+            type="button"
+            onClick={() => setMode("text")}
+            className={`px-3 py-1.5 font-medium border-l border-slate-300 ${mode === "text" ? "bg-accent text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
+          >
+            Text
+          </button>
         </div>
         {mode === "date" && (
           <label className="text-xs text-slate-600 inline-flex items-center gap-1.5">
@@ -435,10 +494,25 @@ export function PlaceSignatureClient({
             />
           </label>
         )}
+        {mode === "text" && (
+          <label className="text-xs text-slate-600 inline-flex items-center gap-1.5">
+            <span>New text boxes use:</span>
+            <input
+              type="text"
+              value={defaultTextValue}
+              onChange={(e) => setDefaultTextValue(e.target.value)}
+              className="px-2 py-1 w-56 border border-slate-300 rounded text-xs"
+              placeholder="Type once, click to drop"
+              maxLength={200}
+            />
+          </label>
+        )}
         <span className="text-xs text-slate-500">
           {placements.filter((p) => p.kind === "signature").length} sig
           {" · "}
           {placements.filter((p) => p.kind === "date").length} date
+          {" · "}
+          {placements.filter((p) => p.kind === "text").length} text
           {" · "}
           {pageCount} page{pageCount === 1 ? "" : "s"}
         </span>
@@ -533,6 +607,23 @@ export function PlaceSignatureClient({
                           onPointerDown={(e) => e.stopPropagation()}
                           onClick={(e) => e.stopPropagation()}
                           className="w-full h-full px-1 bg-amber-50/60 ring-2 ring-amber-400/70 ring-dashed text-slate-900 font-serif outline-none"
+                          style={{ fontSize: p.cssFontSize, lineHeight: 1.1 }}
+                        />
+                      )}
+                      {p.kind === "text" && (
+                        <input
+                          type="text"
+                          value={p.text}
+                          onChange={(e) => {
+                            const next = e.target.value;
+                            setPlacements((arr) =>
+                              arr.map((q) => (q.id === p.id && q.kind === "text" ? { ...q, text: next } : q)),
+                            );
+                          }}
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()}
+                          maxLength={200}
+                          className="w-full h-full px-1 bg-sky-50/60 ring-2 ring-sky-400/70 ring-dashed text-slate-900 font-serif outline-none"
                           style={{ fontSize: p.cssFontSize, lineHeight: 1.1 }}
                         />
                       )}
