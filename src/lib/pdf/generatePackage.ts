@@ -5,6 +5,62 @@ import { form5472FieldMap, form1120_2024FieldMap, form1120_2025FieldMap } from "
 import { setText, check, stampDiirspHeader, flatten } from "./fillForm";
 import { formatDateForIrs } from "@/lib/utils";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Country normalization — wizard collects nationality/residence as free text
+// and customers frequently type the demonym ("Canadian") rather than the
+// country name ("Canada"). IRS Form 5472 instructions want the COUNTRY in
+// every country field (4c, 4d, 4e, 8f, 8g, 1n, 1o), and a demonym in those
+// cells reads as an internal contradiction against the supporting statement.
+// Map the common demonyms and pass anything else through unchanged.
+// ─────────────────────────────────────────────────────────────────────────────
+const DEMONYM_TO_COUNTRY: Record<string, string> = {
+  american: "United States",
+  australian: "Australia",
+  brazilian: "Brazil",
+  british: "United Kingdom",
+  canadian: "Canada",
+  chinese: "China",
+  dutch: "Netherlands",
+  emirati: "United Arab Emirates",
+  english: "United Kingdom",
+  filipino: "Philippines",
+  french: "France",
+  german: "Germany",
+  "hong konger": "Hong Kong",
+  indian: "India",
+  indonesian: "Indonesia",
+  irish: "Ireland",
+  israeli: "Israel",
+  italian: "Italy",
+  japanese: "Japan",
+  korean: "South Korea",
+  malaysian: "Malaysia",
+  mexican: "Mexico",
+  "new zealander": "New Zealand",
+  pakistani: "Pakistan",
+  polish: "Poland",
+  portuguese: "Portugal",
+  russian: "Russia",
+  singaporean: "Singapore",
+  "south african": "South Africa",
+  spanish: "Spain",
+  swedish: "Sweden",
+  swiss: "Switzerland",
+  taiwanese: "Taiwan",
+  thai: "Thailand",
+  turkish: "Türkiye",
+  ukrainian: "Ukraine",
+  vietnamese: "Vietnam",
+};
+
+function normalizeCountry(input: string | null | undefined): string {
+  if (!input) return "";
+  const trimmed = input.trim();
+  if (!trimmed) return "";
+  const mapped = DEMONYM_TO_COUNTRY[trimmed.toLowerCase()];
+  return mapped ?? trimmed;
+}
+
 type Filing = {
   llcName: string;
   llcEin: string;
@@ -55,6 +111,20 @@ async function loadBlank(name: string): Promise<PDFDocument> {
 function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number) {
   const form = pdf.getForm();
   const m = form5472FieldMap;
+
+  // Normalize country / nationality strings up-front. Wizard collects free
+  // text; "Canadian" → "Canada", etc. See normalizeCountry() above.
+  const ownerCitizenship = normalizeCountry(f.ownerCountryCitizenship);
+  const ownerTaxResidence = normalizeCountry(f.ownerCountryTaxResidence);
+  // 1o (principal country business conducted) and 4c/8f (principal country of
+  // the owner/related party) reflect WHERE the business is operated. For a
+  // foreign-owned US DE that's managed remotely by a non-resident owner, this
+  // is the owner's country — NOT "United States". The RCS says explicitly
+  // "operated from outside the United States", so 1o = "United States" was
+  // creating a direct internal contradiction that auto-validators flag.
+  const ownerBusinessCountry =
+    normalizeCountry(f.ownerCountryBusiness) || ownerTaxResidence || ownerCitizenship;
+
   setText(form, m.taxYearBeginMonthDay, "01/01");
   setText(form, m.taxYearBeginYear, String(year));
   setText(form, m.taxYearEndMonthDay, "12/31");
@@ -72,21 +142,39 @@ function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number)
   setText(form, m["1f_totalPaymentsThisForm"], line1f.toFixed(0));
   setText(form, m["1g_numberOfForms"], "1");
   setText(form, m["1h_totalPaymentsAllForms"], line1f.toFixed(0));
+  // 1k expects a number; we never attach Part VIII (no cost-sharing
+  // arrangement applies to a sole-member DE), so explicit "0" is cleaner
+  // than blank.
+  setText(form, m["1k_partsVIII"], "0");
   setText(form, m["1l_countryIncorp"], "United States");
   setText(form, m["1m_dateIncorp"], formatDateForIrs(f.llcDateIncorporated));
+  // 1n (tax-resident jurisdiction of the REPORTING CORP) — the LLC is a US
+  // entity for US legal/tax purposes. Stays "United States".
   setText(form, m["1n_countriesTaxResident"], "United States");
-  setText(form, m["1o_countriesBusinessConducted"], "United States");
+  // 1o (principal country where business is CONDUCTED) — for a remotely-
+  // managed foreign-owned DE, this is the owner's country. Falls back to
+  // citizenship if tax-residence is missing.
+  setText(form, m["1o_countriesBusinessConducted"], ownerBusinessCountry || "United States");
 
   check(form, m.box3_foreignOwnedUsDE);
+  // Initial-year box: check only for the EARLIEST tax year in the package AND
+  // only when that year coincides with (or post-dates) the LLC's formation —
+  // which guarantees there can't be a prior 5472 on file. For a multi-year
+  // DIIRSP catch-up we check it on year-1, leave it UNchecked on years 2/3.
+  const earliestYear = Math.min(...f.taxYears);
+  const formationYear = f.llcDateIncorporated.getUTCFullYear();
+  if (year === earliestYear && earliestYear >= formationYear) {
+    check(form, m["1j_initialYear"]);
+  }
 
   // Part II — direct 25% foreign shareholder (same as Part III for SMLLC)
   setText(form, m["4a_nameAddress"], `${f.ownerName}\n${f.ownerAddress}`);
   if (f.ownerItin) setText(form, m["4b1_usId"], f.ownerItin);
   if (f.ownerReferenceId) setText(form, m["4b2_referenceId"], f.ownerReferenceId);
   setText(form, m["4b3_ftin"], f.ownerFtin);
-  setText(form, m["4c_principalCountry"], f.ownerCountryBusiness);
-  setText(form, m["4d_citizenship"], f.ownerCountryCitizenship);
-  setText(form, m["4e_taxResidence"], f.ownerCountryTaxResidence);
+  setText(form, m["4c_principalCountry"], ownerBusinessCountry);
+  setText(form, m["4d_citizenship"], ownerCitizenship);
+  setText(form, m["4e_taxResidence"], ownerTaxResidence);
 
   // Part III — related party (same person for SMLLC)
   check(form, m.partIII_foreignPersonBox);
@@ -96,8 +184,11 @@ function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number)
   if (f.ownerReferenceId) setText(form, m["8b2_referenceId"], f.ownerReferenceId);
   setText(form, m["8b3_ftin"], f.ownerFtin);
   setText(form, m["8c_businessActivity"], f.llcBusinessActivity);
-  setText(form, m["8f_principalCountry"], f.ownerCountryBusiness);
-  setText(form, m["8g_taxResidence"], f.ownerCountryTaxResidence);
+  // 8d (related party's PBA CODE) mirrors Part I 1e for a sole-member DE
+  // where the related party IS the controller of the reporting corp.
+  setText(form, m["8d_businessCode"], f.llcBusinessCode);
+  setText(form, m["8f_principalCountry"], ownerBusinessCountry);
+  setText(form, m["8g_taxResidence"], ownerTaxResidence);
 
   // Part IV totals — zero (no inventory/services with the owner)
   setText(form, m.line22_totalReceived, "0");
@@ -125,7 +216,7 @@ function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number)
 // must NOT be completed for a pro forma 1120 — extra data introduces
 // contradictions and can complicate IRS processing. "Foreign-owned U.S. DE"
 // is stamped across the top of the form by stampDiirspHeader().
-function fillForm1120(pdf: PDFDocument, f: Filing, year: number) {
+async function fillForm1120(pdf: PDFDocument, f: Filing, year: number) {
   const form = pdf.getForm();
   if (year >= 2025) {
     const m = form1120_2025FieldMap;
@@ -146,6 +237,26 @@ function fillForm1120(pdf: PDFDocument, f: Filing, year: number) {
     setText(form, m.B_ein, f.llcEin);
   }
   flatten(form);
+
+  // After flatten, stamp "Sole Member" into the signature-block "Title" slot.
+  // We draw OUTSIDE the form field because the title field's exact AcroForm
+  // name varies between IRS revisions and even between PDF generators; a
+  // free-form text stamp at known coordinates is more robust than trying to
+  // bind to f1_XX[0] field numbers that shift each revision. Coordinates are
+  // PDF points, bottom-left origin, calibrated to land in the "Title" cell to
+  // the right of the signature line on page 1's "Sign Here" block.
+  await stampTitleSoleMember(pdf, year);
+}
+
+async function stampTitleSoleMember(pdf: PDFDocument, year: number) {
+  const page = pdf.getPage(0);
+  const font = await pdf.embedFont(StandardFonts.Helvetica);
+  // Title cell sits to the right of the signature line and to the right of the
+  // date cell. Y coordinate matches the signature baseline (98 on 2024 rev,
+  // 113 on 2025 rev — same offset as SIG_PLACEMENT below).
+  const x = 410;
+  const y = year >= 2025 ? 113 : 98;
+  page.drawText("Sole Member", { x, y, size: 10, font, color: rgb(0, 0, 0) });
 }
 
 // Build a brand-new PDF with the Part V supporting statement table.
@@ -513,7 +624,7 @@ async function buildReasonableCause(f: Filing): Promise<PDFDocument> {
   space(12);
   drawLine(`EIN: ${f.llcEin}`);
   space(12);
-  drawLine(`Foreign Owner: ${f.ownerName} (${f.ownerCountryTaxResidence})`);
+  drawLine(`Foreign Owner: ${f.ownerName} (${normalizeCountry(f.ownerCountryTaxResidence)})`);
   space(20);
 
   drawParagraph(
@@ -530,8 +641,13 @@ async function buildReasonableCause(f: Filing): Promise<PDFDocument> {
   const incDateStr = f.llcDateIncorporated
     ? f.llcDateIncorporated.toISOString().slice(0, 10)
     : "(formation date on file)";
+  // Normalize country/nationality the same way the 5472 form fields do, so
+  // the RCS prose and the form cells agree on the spelling (avoids "resident
+  // and citizen of Canadian" — demonym in a country-name context).
+  const rcsOwnerCitizenship = normalizeCountry(f.ownerCountryCitizenship);
+  const rcsOwnerTaxResidence = normalizeCountry(f.ownerCountryTaxResidence);
   drawParagraph(
-    `${f.ownerName} ("the Owner") is a resident and citizen of ${f.ownerCountryCitizenship}. The Owner formed ${f.llcName} ` +
+    `${f.ownerName} ("the Owner") is a resident and citizen of ${rcsOwnerCitizenship}. The Owner formed ${f.llcName} ` +
       `("the Company") on ${incDateStr} in ${f.llcState} as a single-member LLC. The Company is a ` +
       "foreign-owned U.S. disregarded entity for U.S. federal income tax purposes. It has at all " +
       "times been operated from outside the United States. It has no U.S. employees, no U.S. office, " +
@@ -573,7 +689,7 @@ async function buildReasonableCause(f: Filing): Promise<PDFDocument> {
   );
   space(4);
   const factors = [
-    `The Owner is a foreign individual, resident and tax-domiciled in ${f.ownerCountryTaxResidence}, ` +
+    `The Owner is a foreign individual, resident and tax-domiciled in ${rcsOwnerTaxResidence}, ` +
       "managing the Company remotely without a recurring U.S. tax preparer.",
     "The Company generated no U.S. taxable income and no U.S. tax was owed, so no income tax filing " +
       "reminder or payment obligation served as a deadline trigger.",
@@ -739,7 +855,7 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
     // year is technically incorrect and one of the most common DIIRSP gotchas.
     const f1120FormName = year >= 2025 ? "f1120--2025.pdf" : "f1120--2024.pdf";
     const f1120 = await loadBlank(f1120FormName);
-    fillForm1120(f1120, f, year);
+    await fillForm1120(f1120, f, year);
     if (f.isDiirsp) await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE — DIIRSP");
     else await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE");
     const f1120FirstPage = out.getPageCount() + 1; // 1-based, captured before merge

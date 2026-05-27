@@ -25,6 +25,11 @@ export const form5472FieldMap = {
   "1o_countriesBusinessConducted": "topmostSubform[0].Page1[0].f1_19[0]",
 
   // Checkboxes use value '/1' to check
+  // 1i = consolidated-filing flag (leave UNchecked — we never file consolidated).
+  // 1j = initial-year flag (CHECK this on the first-ever Form 5472 for the EIN —
+  //       the IRS uses it to reconcile "no prior 5472 on file" against this
+  //       filing, so an unchecked 1j on a new entity triggers correspondence).
+  "1j_initialYear": "topmostSubform[0].Page1[0].Line1j_ReadOrder[0].c1_2[0]",
   box2_foreign50pct: "topmostSubform[0].Page1[0].c1_3[0]",
   box3_foreignOwnedUsDE: "topmostSubform[0].Page1[0].c1_4[0]",
 
@@ -44,6 +49,12 @@ export const form5472FieldMap = {
   "8b2_referenceId": "topmostSubform[0].Page2[0].f2_3[0]",
   "8b3_ftin": "topmostSubform[0].Page2[0].f2_4[0]",
   "8c_businessActivity": "topmostSubform[0].Page2[0].f2_5[0]",
+  // 8d = related party's Principal Business Activity CODE (NAICS). Was
+  // previously omitted — leaving 8d blank while 8c is populated is the kind of
+  // inconsistency that flags an automated IRS consistency check. For our
+  // sole-member-DE customer profile, the related party is the same individual
+  // who controls the reporting corp, so 8d mirrors Part I 1e.
+  "8d_businessCode": "topmostSubform[0].Page2[0].f2_6[0]",
   "8e_25pctShareholder": "topmostSubform[0].Page2[0].c2_4[0]",
   "8f_principalCountry": "topmostSubform[0].Page2[0].f2_7[0]",
   "8g_taxResidence": "topmostSubform[0].Page2[0].f2_8[0]",
