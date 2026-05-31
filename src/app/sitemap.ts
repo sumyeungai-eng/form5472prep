@@ -7,11 +7,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = env.appUrl;
   const now = new Date();
 
+  // NOTE: /start and /sign-in are intentionally omitted — /start is noindex
+  // (paid-funnel entry) and /sign-in is a login page; neither should be
+  // advertised to crawlers via the sitemap.
   const staticUrls: MetadataRoute.Sitemap = [
     { url: `${base}/`, lastModified: now, changeFrequency: "weekly", priority: 1.0 },
+    { url: `${base}/pricing`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${base}/ein`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/itin`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${base}/start`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${base}/sign-in`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/data-retention`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },

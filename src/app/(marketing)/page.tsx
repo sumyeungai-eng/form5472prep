@@ -69,7 +69,7 @@ const FAQS = [
 export const metadata: Metadata = {
   // `absolute` skips the layout's "%s · Form5472 Prep" template — the homepage title
   // already brands the product, so we don't want the suffix appended.
-  title: { absolute: "File IRS Form 5472 and pro forma 1120 in 15 minutes — Form5472 Prep" },
+  title: { absolute: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep" },
   description:
     "IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Starting at $199 — fax delivery included on every plan. 100% money-back guarantee if we fail to submit.",
   alternates: { canonical: "/" },
@@ -96,9 +96,58 @@ export default async function LandingPage() {
       <HowItWorks />
       <Deliverables />
       <Comparison />
+      <OtherServices />
       <Faq />
       <FinalCta />
     </>
+  );
+}
+
+// Cross-sell strip for the EIN and ITIN services. Lives on the homepage so the
+// site's highest-authority page passes internal-link equity to the newer
+// /ein and /itin pages (otherwise only reachable from the nav/footer).
+function OtherServices() {
+  const services = [
+    {
+      href: "/ein",
+      eyebrow: "EIN — $149",
+      title: "Need an EIN for your LLC?",
+      body: "No SSN or ITIN? We prepare Form SS-4 and obtain your EIN directly from the IRS by fax or phone — typically in 1–5 business days.",
+    },
+    {
+      href: "/itin",
+      eyebrow: "ITIN — $349",
+      title: "Need an ITIN for yourself?",
+      body: "As an IRS Certifying Acceptance Agent we certify your identity documents and file Form W-7 — no original passport mailing required.",
+    },
+  ];
+  return (
+    <section className="bg-slate-50 border-b border-slate-200">
+      <div className="max-w-6xl mx-auto px-6 py-20">
+        <SectionHead
+          eyebrow="More for foreign founders"
+          title="EIN and ITIN, handled too."
+          subtitle="Setting up a US LLC from abroad takes more than one form. We also obtain the two IRS identifiers non-resident owners need most."
+        />
+        <div className="mt-10 grid md:grid-cols-2 gap-4">
+          {services.map((s, i) => (
+            <Reveal as="div" key={s.href} delay={i * 120}>
+              <Link
+                href={s.href}
+                className="group block h-full rounded-lg border border-slate-200 bg-white p-6 transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-1"
+              >
+                <p className="text-xs font-semibold uppercase tracking-wider text-accent">{s.eyebrow}</p>
+                <h3 className="mt-2 text-lg font-semibold text-slate-900 flex items-center gap-1.5">
+                  {s.title}
+                  <ArrowRight className="h-4 w-4 text-slate-400 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-accent" />
+                </h3>
+                <p className="mt-2 text-sm text-slate-600 leading-relaxed">{s.body}</p>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -771,6 +820,20 @@ function StructuredData() {
     ],
   };
 
+  // WebPage + Speakable — flags the hero headline and lead paragraph as the
+  // passages voice assistants (Google Assistant, etc.) should read aloud for
+  // "how do I file Form 5472" style queries.
+  const webPage = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    url,
+    name: "Form5472 Prep",
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: ["h1", "section p"],
+    },
+  };
+
   return (
     <>
       <JsonLd data={organization} />
@@ -778,6 +841,7 @@ function StructuredData() {
       <JsonLd data={service} />
       <JsonLd data={faq} />
       <JsonLd data={breadcrumb} />
+      <JsonLd data={webPage} />
     </>
   );
 }
