@@ -18,6 +18,7 @@ type SendArgs = {
   html: string;
   text: string;
   replyTo?: string;
+  bcc?: string;
   attachments?: SendAttachment[];
 };
 
@@ -31,7 +32,7 @@ const FROM = process.env.RESEND_FROM || "Form5472 Prep <donotreply@form5472prep.
 const REPLY_TO = process.env.RESEND_REPLY_TO || "support@form5472prep.com";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://form5472prep.com";
 
-export async function sendEmail({ to, subject, html, text, replyTo, attachments }: SendArgs) {
+export async function sendEmail({ to, subject, html, text, replyTo, bcc, attachments }: SendArgs) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.log("\n[email stub — set RESEND_API_KEY to actually send]");
@@ -63,6 +64,7 @@ export async function sendEmail({ to, subject, html, text, replyTo, attachments 
       html,
       text,
       reply_to: replyTo ?? REPLY_TO,
+      ...(bcc ? { bcc } : {}),
       ...(resendAttachments && resendAttachments.length > 0 ? { attachments: resendAttachments } : {}),
     }),
   });
@@ -463,8 +465,14 @@ export async function sendFaxDeliveredEmail(args: {
     });
   }
 
+  // BCC Trustpilot AFS so they auto-send a review invitation to the customer.
+  // Only fires on the fax-delivered confirmation — the happiest moment for
+  // the customer, and the right time to ask for a review.
+  const TRUSTPILOT_BCC = "form5472prep.com+70ae06b610@invite.trustpilot.com";
+
   return sendEmail({
     to: email,
+    bcc: TRUSTPILOT_BCC,
     subject: `Filed with the IRS — ${llcLine} (${yearsLabel})`,
     text:
       `Your signed Form 5472 + pro forma 1120 for ${llcLine} (${yearsLabel}) was successfully faxed to the IRS Ogden PIN Unit.\n\n` +
