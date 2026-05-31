@@ -69,10 +69,9 @@ export function FaxReceiptProof() {
             Real proof your filing reached the IRS
           </h2>
           <p className="mt-3 text-slate-600">
-            Cheap $49 DIY tools generate forms and call it done. We deliver an
-            IRS-citable fax-transmission receipt for every package we send —
-            the document you can present to the IRS if a penalty notice is
-            ever issued.
+            We deliver an IRS-citable fax-transmission receipt for every
+            package we send — the document you can present to the IRS if a
+            penalty notice is ever issued.
           </p>
         </div>
 
