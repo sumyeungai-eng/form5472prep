@@ -171,7 +171,7 @@ export default function ItinPage() {
               An <strong className="text-slate-800">Individual Taxpayer Identification Number (ITIN)</strong>{" "}
               is a tax processing number issued by the IRS to individuals who need a US taxpayer ID but
               are not eligible for a Social Security Number. ITINs are for tax purposes only — they
-              don't authorize work in the US or provide eligibility for Social Security benefits.
+              don&apos;t authorize work in the US or provide eligibility for Social Security benefits.
             </p>
             <p>Common reasons non-residents need an ITIN:</p>
             <ul className="list-disc pl-5 space-y-1">

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { CheckCircle2, ShieldCheck, Phone, FileText, Clock, ArrowRight } from "lucide-react";
+import { CheckCircle2, ShieldCheck, Phone, FileText, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "EIN for Foreign-Owned US LLC — No Passport Mailing | Form5472 Prep",
@@ -166,7 +166,7 @@ export default function EinPage() {
             <p>
               An <strong className="text-slate-800">Employer Identification Number (EIN)</strong> is a
               nine-digit number in the format XX-XXXXXXX assigned by the IRS to identify a business
-              entity for US federal tax purposes. Despite the name, you don't need employees to get one
+              entity for US federal tax purposes. Despite the name, you don&apos;t need employees to get one
               — every US LLC should have an EIN.
             </p>
             <p>
@@ -212,7 +212,7 @@ export default function EinPage() {
             </p>
             <p className="text-slate-600 leading-relaxed">
               CAA authorization is granted by the IRS after a background check, training, and passing
-              a competency exam — it's not a self-declared status.
+              a competency exam — it&apos;s not a self-declared status.
             </p>
           </div>
           <div className="rounded-xl border border-accent/20 bg-white p-6 space-y-4">
@@ -223,7 +223,7 @@ export default function EinPage() {
                   <li>Mail original passport to IRS</li>
                   <li>Wait 4–6 weeks for return</li>
                   <li>Risk of passport loss in mail</li>
-                  <li>Can't travel while passport is away</li>
+                  <li>Can&apos;t travel while passport is away</li>
                 </ul>
               </div>
               <div className="w-1/2 rounded-lg border border-emerald-100 bg-emerald-50 p-4 text-xs text-emerald-700">
