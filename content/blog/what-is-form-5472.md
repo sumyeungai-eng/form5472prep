@@ -2,7 +2,7 @@
 title: "What is IRS Form 5472? A jargon-free guide for foreign-owned LLC owners"
 description: "If you're a non-US person who owns a US single-member LLC, the IRS likely requires you to file Form 5472 every year — even if you made zero revenue. Here's what it is, who needs to file, and what happens if you don't."
 date: 2026-05-19
-author: "5472formIRS team"
+author: "Form5472 Prep"
 tags: ["form-5472", "foreign-owned-llc", "getting-started"]
 draft: false
 ---

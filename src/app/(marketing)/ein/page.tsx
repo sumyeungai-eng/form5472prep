@@ -1,11 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { CheckCircle2, ShieldCheck, Phone, FileText, ArrowRight } from "lucide-react";
+import { JsonLd } from "@/components/JsonLd";
+import { env } from "@/lib/env";
 
 export const metadata: Metadata = {
-  title: "EIN for Foreign-Owned US LLC — No Passport Mailing | Form5472 Prep",
+  // `absolute` skips the root layout's "%s · Form5472 Prep" template so the
+  // brand isn't doubled (the title already ends in "| Form5472 Prep").
+  title: { absolute: "EIN for Foreign-Owned US LLC — No SSN Needed | Form5472 Prep" },
   description:
-    "Get a US Employer Identification Number (EIN) for your foreign-owned LLC without mailing your passport. As a Certifying Acceptance Agent (CAA), we certify your identity — IRS Form SS-4 prepared and submitted on your behalf. Flat fee $149.",
+    "Get a US Employer Identification Number (EIN) for your foreign-owned LLC — no SSN or ITIN required. We prepare Form SS-4 and obtain your EIN directly from the IRS by fax or phone. Flat fee $149.",
   alternates: { canonical: "https://www.form5472prep.com/ein" },
 };
 
@@ -19,12 +23,12 @@ const faq = [
     a: "The online EIN application (irs.gov) is only available if you have a US Social Security Number or ITIN. Foreign nationals without a US tax ID cannot use the online tool. The only option is to file Form SS-4 by fax or phone, which we handle on your behalf.",
   },
   {
-    q: "What is a Certifying Acceptance Agent (CAA) and why does it matter?",
-    a: "A CAA is an individual authorized by the IRS to certify identity and foreign status documents. Because we hold CAA authorization, we can certify a copy of your passport — so the IRS accepts it without requiring you to mail your original passport. This removes the biggest friction point for non-resident EIN applicants.",
+    q: "Do I need to mail my passport or get documents certified for an EIN?",
+    a: "No. Unlike an ITIN application, an EIN does not require you to submit or certify any identity documents. On Form SS-4, line 7b, a responsible party without a US tax ID simply enters \"Foreign.\" That's the entire identity requirement — there is no passport to mail and nothing to certify.",
   },
   {
-    q: "What documents do I need to provide?",
-    a: "A clear copy of your passport (photo page), your LLC formation document (Articles of Organization or Certificate of Formation), and a short questionnaire about your LLC's business purpose. We guide you through all of it after you order.",
+    q: "What information do I need to provide?",
+    a: "Your LLC's legal name and formation state, your LLC formation document (Articles of Organization or Certificate of Formation), your name and country as the responsible party, and a short description of the business activity. We guide you through all of it after you order — no passport copy needed.",
   },
   {
     q: "How long does it take to get the EIN?",
@@ -51,14 +55,14 @@ const steps = [
     body: "A short questionnaire about your LLC (name, state, business purpose) and owner (name, country, passport details). Takes about 5 minutes.",
   },
   {
-    icon: ShieldCheck,
-    title: "CAA identity certification",
-    body: "We certify your passport copy as a Certifying Acceptance Agent. No need to mail original documents to the IRS — a certified copy is accepted.",
+    icon: FileText,
+    title: "We prepare your Form SS-4",
+    body: "We complete Form SS-4 correctly for a foreign-owned entity — including the \"Foreign\" entry on line 7b — so it isn't rejected. No passport or identity documents required.",
   },
   {
     icon: Phone,
     title: "We contact the IRS",
-    body: "We prepare Form SS-4 and call the IRS Business & Specialty Tax Line on your behalf to obtain the EIN directly.",
+    body: "We submit your SS-4 and apply by fax or phone with the IRS on your behalf to obtain the EIN directly — the only route open to applicants without an SSN.",
   },
   {
     icon: CheckCircle2,
@@ -70,27 +74,28 @@ const steps = [
 export default function EinPage() {
   return (
     <>
+      <EinStructuredData />
       {/* Hero */}
       <section className="border-b border-slate-200 bg-gradient-to-b from-accent-50 to-white">
         <div className="max-w-6xl mx-auto px-6 py-16 sm:py-20 grid md:grid-cols-[1fr_340px] gap-12 items-start">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 mb-6">
               <ShieldCheck className="h-3.5 w-3.5 text-accent" />
-              Certifying Acceptance Agent — no passport mailing
+              No SSN or ITIN required — we file Form SS-4 for you
             </div>
             <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900 text-balance leading-tight">
               Get a US EIN<br />
-              <span className="text-accent">without mailing your passport.</span>
+              <span className="text-accent">for your foreign-owned LLC.</span>
             </h1>
             <p className="mt-5 text-lg text-slate-600 max-w-xl">
-              Foreign nationals cannot use the IRS online EIN tool — it requires a US Social Security
-              Number. We prepare Form SS-4 and call the IRS on your behalf, and as a{" "}
-              <strong>Certifying Acceptance Agent (CAA)</strong> we certify your identity documents so
-              the IRS accepts a copy of your passport instead of the original.
+              Foreign founders can&apos;t use the IRS online EIN tool — it requires a US Social Security
+              Number or ITIN. We prepare <strong>Form SS-4</strong> and obtain your EIN directly from
+              the IRS by fax or phone. No SSN, no ITIN, and no passport mailing — the EIN itself never
+              requires one.
             </p>
             <ul className="mt-6 space-y-2">
               {[
-                "No passport mailing — CAA-certified copy accepted by IRS",
+                "No SSN or ITIN required — just \"Foreign\" on Form SS-4",
                 "Form SS-4 prepared and submitted on your behalf",
                 "EIN delivered by email in 1–5 business days",
                 "Copy of completed Form SS-4 included",
@@ -123,11 +128,11 @@ export default function EinPage() {
             </Link>
             <ul className="mt-5 space-y-1.5 text-xs text-slate-600">
               {[
-                "No original passport required",
-                "CAA certification included",
+                "No SSN, ITIN, or passport required",
                 "Form SS-4 prepared for you",
-                "IRS call handled by us",
+                "IRS fax / phone application handled by us",
                 "EIN by email in 1–5 business days",
+                "Completed Form SS-4 included",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
@@ -189,50 +194,49 @@ export default function EinPage() {
         </div>
       </section>
 
-      {/* Why CAA matters */}
+      {/* Why foreign founders can't DIY the online tool */}
       <section className="py-16 border-b border-slate-100 bg-slate-50">
         <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-accent mb-3">
-              Certifying Acceptance Agent
+              Why you can&apos;t just do it online
             </p>
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">
-              Why CAA authorization matters for EIN applicants
+              The IRS online EIN tool is closed to foreign founders
             </h2>
             <p className="text-slate-600 leading-relaxed mb-4">
-              The IRS requires proof of identity when you apply for an EIN as a foreign national. Without
-              a CAA, applicants typically have to mail their <strong>original passport</strong> to the IRS
-              and wait months to get it back — a significant inconvenience and risk.
+              The instant online EIN assistant on irs.gov only works if the responsible party has a US{" "}
+              <strong>Social Security Number or ITIN</strong>. If you have neither — the situation for
+              most non-resident LLC owners — the online route is simply unavailable to you.
             </p>
             <p className="text-slate-600 leading-relaxed mb-4">
-              As an IRS-authorized Certifying Acceptance Agent, we are permitted to{" "}
-              <strong>certify copies of your identity documents</strong> rather than requiring originals.
-              The IRS accepts our certified copy in lieu of the original, so your passport never leaves
-              your hands.
+              The only paths left are <strong>Form SS-4 by fax or phone</strong>. Both are slower,
+              easy to get wrong (a single mis-entered line can bounce the application), and the
+              international phone line has long holds. We handle the form and the IRS contact for you.
             </p>
             <p className="text-slate-600 leading-relaxed">
-              CAA authorization is granted by the IRS after a background check, training, and passing
-              a competency exam — it&apos;s not a self-declared status.
+              No SSN, no ITIN, and no passport are required for the EIN itself — on Form SS-4 the
+              responsible party simply enters <strong>&quot;Foreign&quot;</strong> on line 7b.
             </p>
           </div>
           <div className="rounded-xl border border-accent/20 bg-white p-6 space-y-4">
             <div className="flex gap-4">
               <div className="w-1/2 rounded-lg border border-red-100 bg-red-50 p-4 text-xs text-red-700">
-                <p className="font-semibold mb-2 text-red-800">Without CAA</p>
+                <p className="font-semibold mb-2 text-red-800">DIY by yourself</p>
                 <ul className="space-y-1 list-disc pl-3">
-                  <li>Mail original passport to IRS</li>
-                  <li>Wait 4–6 weeks for return</li>
-                  <li>Risk of passport loss in mail</li>
-                  <li>Can&apos;t travel while passport is away</li>
+                  <li>Online tool blocked without SSN/ITIN</li>
+                  <li>Decode Form SS-4 line by line</li>
+                  <li>Long international IRS phone holds</li>
+                  <li>One wrong entry = rejection &amp; restart</li>
                 </ul>
               </div>
               <div className="w-1/2 rounded-lg border border-emerald-100 bg-emerald-50 p-4 text-xs text-emerald-700">
-                <p className="font-semibold mb-2 text-emerald-800">With our CAA</p>
+                <p className="font-semibold mb-2 text-emerald-800">With Form5472 Prep</p>
                 <ul className="space-y-1 list-disc pl-3">
-                  <li>Send us a passport copy</li>
-                  <li>We certify it for the IRS</li>
-                  <li>Passport stays with you</li>
-                  <li>EIN in 1–5 business days</li>
+                  <li>SS-4 prepared correctly for you</li>
+                  <li>We apply by fax / phone for you</li>
+                  <li>No passport or ID to send</li>
+                  <li>EIN by email in 1–5 business days</li>
                 </ul>
               </div>
             </div>
@@ -277,6 +281,76 @@ export default function EinPage() {
           </p>
         </div>
       </section>
+    </>
+  );
+}
+
+// Structured data for search + AI answer engines.
+// - Service + Offer surfaces the $149 EIN offering with price for AEO/GEO.
+// - FAQPage (shares the rendered `faq` array) powers Google's FAQ rich result.
+// - BreadcrumbList + WebPage/Speakable round out the entity graph.
+function EinStructuredData() {
+  const url = `${env.appUrl}/ein`;
+
+  const service = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: "EIN (Form SS-4) acquisition for foreign-owned US LLCs",
+    name: "EIN Acquisition for Foreign-Owned US LLCs",
+    provider: { "@type": "Organization", name: "Form5472 Prep", url: env.appUrl },
+    areaServed: { "@type": "Country", name: "United States" },
+    audience: {
+      "@type": "Audience",
+      audienceType: "Foreign founders of US LLCs without a US Social Security Number or ITIN",
+    },
+    description:
+      "Form SS-4 preparation and EIN acquisition for foreign-owned US LLCs whose owners have no SSN or ITIN. We prepare the form and obtain the EIN directly from the IRS by fax or phone — no online tool, no passport required.",
+    offers: {
+      "@type": "Offer",
+      name: "EIN Acquisition — flat fee",
+      price: "149.00",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      url,
+    },
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: env.appUrl },
+      { "@type": "ListItem", position: 2, name: "EIN Acquisition", item: url },
+    ],
+  };
+
+  const webPage = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    url,
+    name: "EIN for Foreign-Owned US LLC — No SSN Needed",
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: ["h1", "section p"],
+    },
+  };
+
+  return (
+    <>
+      <JsonLd data={service} />
+      <JsonLd data={faqSchema} />
+      <JsonLd data={breadcrumb} />
+      <JsonLd data={webPage} />
     </>
   );
 }

@@ -1,9 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { CheckCircle2, ShieldCheck, FileText, Clock, ArrowRight, UserCheck } from "lucide-react";
+import { JsonLd } from "@/components/JsonLd";
+import { env } from "@/lib/env";
 
 export const metadata: Metadata = {
-  title: "ITIN for Non-Residents — CAA Certification, No Passport Mailing | Form5472 Prep",
+  // `absolute` skips the root layout's "%s · Form5472 Prep" template so the
+  // brand isn't doubled (the title already ends in "| Form5472 Prep").
+  title: { absolute: "ITIN for Non-Residents — No Passport Mailing | Form5472 Prep" },
   description:
     "Get a US Individual Taxpayer Identification Number (ITIN) without mailing your original passport. As a Certifying Acceptance Agent (CAA), we certify your identity documents and submit Form W-7 to the IRS on your behalf. Flat fee $349.",
   alternates: { canonical: "https://www.form5472prep.com/itin" },
@@ -74,6 +78,7 @@ const steps = [
 export default function ItinPage() {
   return (
     <>
+      <ItinStructuredData />
       {/* Hero */}
       <section className="border-b border-slate-200 bg-gradient-to-b from-accent-50 to-white">
         <div className="max-w-6xl mx-auto px-6 py-16 sm:py-20 grid md:grid-cols-[1fr_340px] gap-12 items-start">
@@ -277,6 +282,76 @@ export default function ItinPage() {
           </p>
         </div>
       </section>
+    </>
+  );
+}
+
+// Structured data for search + AI answer engines.
+// - Service + Offer surfaces the $349 ITIN offering with price for AEO/GEO.
+// - FAQPage (shares the rendered `faq` array) powers Google's FAQ rich result.
+// - BreadcrumbList + WebPage/Speakable round out the entity graph.
+function ItinStructuredData() {
+  const url = `${env.appUrl}/itin`;
+
+  const service = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: "ITIN (Form W-7) preparation and CAA certification",
+    name: "ITIN Acquisition for Non-Residents",
+    provider: { "@type": "Organization", name: "Form5472 Prep", url: env.appUrl },
+    areaServed: { "@type": "Country", name: "United States" },
+    audience: {
+      "@type": "Audience",
+      audienceType: "Non-resident individuals requiring a US Individual Taxpayer Identification Number",
+    },
+    description:
+      "IRS Form W-7 preparation with Certifying Acceptance Agent (CAA) document certification — no original passport mailing required. We certify your identity documents and submit your ITIN application to the IRS.",
+    offers: {
+      "@type": "Offer",
+      name: "ITIN Acquisition — flat fee",
+      price: "349.00",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      url,
+    },
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: env.appUrl },
+      { "@type": "ListItem", position: 2, name: "ITIN Acquisition", item: url },
+    ],
+  };
+
+  const webPage = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    url,
+    name: "ITIN for Non-Residents — No Passport Mailing",
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: ["h1", "section p"],
+    },
+  };
+
+  return (
+    <>
+      <JsonLd data={service} />
+      <JsonLd data={faqSchema} />
+      <JsonLd data={breadcrumb} />
+      <JsonLd data={webPage} />
     </>
   );
 }

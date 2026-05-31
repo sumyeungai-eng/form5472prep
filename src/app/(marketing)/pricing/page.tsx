@@ -11,7 +11,7 @@ import { formatUsd } from "@/lib/utils";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 
 export const metadata: Metadata = {
-  title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs | Form5472 Prep",
+  title: { absolute: "Pricing — Form 5472 Filing for Foreign-Owned LLCs | Form5472 Prep" },
   description:
     "Flat-rate Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. Standard $199, Rush $279, Premium $449. IRS fax delivery included on every plan. Avoid the $25,000 IRS penalty.",
   alternates: { canonical: "https://www.form5472prep.com/pricing" },
@@ -104,6 +104,47 @@ export default function PricingPage() {
           not a CPA firm and do not provide tax advice — we prepare and submit
           your information return as you provide it.
         </p>
+      </section>
+
+      {/* EIN / ITIN cross-sell — passes internal-link equity to the newer
+          service pages and captures founders who need more than the 5472. */}
+      <section className="border-t border-slate-200 bg-slate-50">
+        <div className="max-w-5xl mx-auto px-6 py-16">
+          <p className="text-center text-sm font-medium text-accent uppercase tracking-wide">
+            More for foreign founders
+          </p>
+          <h2 className="mt-2 text-center text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900">
+            Also need an EIN or ITIN?
+          </h2>
+          <div className="mt-8 grid md:grid-cols-2 gap-4">
+            {[
+              {
+                href: "/ein",
+                eyebrow: "EIN — $149",
+                title: "EIN for your LLC",
+                body: "No SSN or ITIN required. We prepare Form SS-4 and obtain your EIN directly from the IRS in 1–5 business days.",
+              },
+              {
+                href: "/itin",
+                eyebrow: "ITIN — $349",
+                title: "ITIN for yourself",
+                body: "IRS Certifying Acceptance Agent — we certify your documents and file Form W-7. No passport mailing.",
+              },
+            ].map((s) => (
+              <Link
+                key={s.href}
+                href={s.href}
+                className="group block h-full rounded-xl border border-slate-200 bg-white p-6 transition hover:border-accent hover:shadow-lg hover:shadow-accent/10"
+              >
+                <p className="text-xs font-semibold uppercase tracking-wider text-accent">{s.eyebrow}</p>
+                <h3 className="mt-2 text-lg font-semibold text-slate-900">
+                  {s.title} <span className="text-accent transition group-hover:translate-x-0.5 inline-block">→</span>
+                </h3>
+                <p className="mt-2 text-sm text-slate-600 leading-relaxed">{s.body}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Annotated fax-receipt section — differentiates against $49 DIY
