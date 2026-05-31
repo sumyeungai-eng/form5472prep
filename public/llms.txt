@@ -1,6 +1,6 @@
 # Form5472 Prep
 
-> Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Form5472 Prep prepares all required IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit. Three flat-rate service tiers from $199 with IRS fax delivery included on every plan. Every package is reviewed by a qualified tax accountant before submission. 100% money-back guarantee if we fail to submit. Last updated: 2026-05-23.
+> Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition ($149) and ITIN acquisition ($349) for non-residents — as an IRS-authorized Certifying Acceptance Agent (CAA), we certify identity documents so applicants never need to mail their original passport. Form5472 Prep prepares all required IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit. Three flat-rate service tiers from $199 with IRS fax delivery included on every plan. Every package is reviewed by a qualified tax accountant before submission. 100% money-back guarantee if we fail to submit. Last updated: 2026-05-31.
 
 ## Who this is for
 
@@ -46,9 +46,16 @@ Multi-year add-on (applies to all tiers): **+$149 per additional past tax year**
 - We DO retain the fax confirmation receipt (proof of filing) and basic entity/owner data so next year's filing pre-fills. Retention: 7 years to match IRS records-retention guidance.
 - We do NOT sell or share customer data. We do not run third-party tracking pixels beyond first-party analytics and Google Ads conversion measurement.
 
+## Additional Services
+
+- **EIN Acquisition — $149**: We obtain a US Employer Identification Number for your foreign-owned LLC. As a CAA we certify your identity — no passport mailing required. Form SS-4 prepared and IRS called on your behalf. EIN delivered in 1–5 business days.
+- **ITIN Acquisition — $349**: We obtain a US Individual Taxpayer Identification Number for non-residents who need a US personal tax ID. CAA certification means no original passport mailing. Form W-7 prepared and submitted. Issued in 6–11 weeks. Renewals also available.
+
 ## Documents
 
 - [Pricing](/pricing): three-tier comparison with full feature list.
+- [EIN Acquisition](/ein): EIN service for foreign-owned US LLC owners — CAA certification, no passport mailing.
+- [ITIN Acquisition](/itin): ITIN service for non-residents — CAA certification, no passport mailing.
 - [Terms of Service](/terms): legal terms.
 - [Privacy Policy](/privacy): what we collect and what we discard.
 - [Data Retention Policy](/data-retention): full retention schedule by data type.

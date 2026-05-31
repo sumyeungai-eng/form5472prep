@@ -22,6 +22,18 @@ export default async function MarketingLayout({ children }: { children: React.Re
               Pricing
             </Link>
             <Link
+              href="/ein"
+              className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
+            >
+              EIN
+            </Link>
+            <Link
+              href="/itin"
+              className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
+            >
+              ITIN
+            </Link>
+            <Link
               href="/blog"
               className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
             >
@@ -56,9 +68,12 @@ export default async function MarketingLayout({ children }: { children: React.Re
             <p>&copy; {new Date().getFullYear()} Form5472 Prep</p>
           </div>
           <nav className="space-y-2">
-            <p className="font-medium text-slate-700">Learn</p>
+            <p className="font-medium text-slate-700">Services</p>
             <ul className="space-y-1">
-              <li><Link href="/blog" className="hover:text-slate-900">Blog</Link></li>
+              <li><Link href="/pricing" className="hover:text-slate-900">Form 5472 Filing</Link></li>
+              <li><Link href="/ein" className="hover:text-slate-900">EIN Acquisition</Link></li>
+              <li><Link href="/itin" className="hover:text-slate-900">ITIN Acquisition</Link></li>
+              <li><Link href="/blog" className="hover:text-slate-900">Guides</Link></li>
             </ul>
           </nav>
           <nav className="space-y-2">
