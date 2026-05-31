@@ -109,7 +109,7 @@ export default function EinPage() {
             <p className="text-4xl font-semibold text-slate-900">$149</p>
             <p className="text-sm text-slate-500 mt-1">Flat fee · one-time · no subscription</p>
             <Link
-              href="mailto:support@form5472prep.com?subject=EIN%20application%20enquiry"
+              href="/ein/apply"
               className="mt-5 flex items-center justify-center gap-2 w-full h-11 rounded-md bg-accent text-white text-sm font-medium hover:bg-accent-700 transition-colors"
             >
               Get started
@@ -263,7 +263,7 @@ export default function EinPage() {
             Flat fee of $149. No passport mailing. EIN delivered in 1–5 business days.
           </p>
           <Link
-            href="mailto:support@form5472prep.com?subject=EIN%20application%20enquiry"
+            href="/ein/apply"
             className="inline-flex items-center gap-2 bg-white text-accent font-semibold text-sm px-6 py-3 rounded-md hover:bg-accent-50 transition-colors"
           >
             Email us to get started

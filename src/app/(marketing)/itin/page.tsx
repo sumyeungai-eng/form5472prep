@@ -113,7 +113,7 @@ export default function ItinPage() {
             <p className="text-4xl font-semibold text-slate-900">$349</p>
             <p className="text-sm text-slate-500 mt-1">Flat fee · one-time · no subscription</p>
             <Link
-              href="mailto:support@form5472prep.com?subject=ITIN%20application%20enquiry"
+              href="/itin/apply"
               className="mt-5 flex items-center justify-center gap-2 w-full h-11 rounded-md bg-accent text-white text-sm font-medium hover:bg-accent-700 transition-colors"
             >
               Get started
@@ -263,7 +263,7 @@ export default function ItinPage() {
             Flat fee of $349. No passport mailing. CAA certification included.
           </p>
           <Link
-            href="mailto:support@form5472prep.com?subject=ITIN%20application%20enquiry"
+            href="/itin/apply"
             className="inline-flex items-center gap-2 bg-white text-accent font-semibold text-sm px-6 py-3 rounded-md hover:bg-accent-50 transition-colors"
           >
             Email us to get started
