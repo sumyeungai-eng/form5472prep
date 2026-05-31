@@ -20,6 +20,8 @@ model User {
   emailMarketingOptOut Boolean        @default(false)
   filings              Filing[]
   reminders            ReminderSent[]
+  einApplications      EinApplication[]
+  itinApplications     ItinApplication[]
 }
 
 // One row per (user, tax year, campaign) — the unique constraint stops the
@@ -240,4 +242,78 @@ enum FilingStatus {
   FAXED
   CONFIRMED
   FAILED
+}
+
+model EinApplication {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  fullName         String
+  email            String
+  phone            String?
+  llcName          String
+  llcState         String?
+  llcFormedDate    String?
+  businessPurpose  String?
+  ownerName        String?
+  ownerCitizenship String?
+  ownerResidence   String?
+  passportNumber   String?
+  notes            String?
+
+  status     EinStatus @default(RECEIVED)
+  adminNotes String?
+  ein        String?   // filled when EIN is obtained
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+}
+
+enum EinStatus {
+  RECEIVED
+  IN_REVIEW
+  DOCS_REQUESTED
+  PAYMENT_PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+model ItinApplication {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fullName           String
+  email              String
+  phone              String?
+  dateOfBirth        String?
+  countryOfBirth     String?
+  citizenship        String?
+  countryOfResidence String?
+  itinReason         String
+  taxReturnType      String?
+  usActivity         String?
+  passportNumber     String?
+  passportExpiry     String?
+  notes              String?
+
+  status     ItinStatus @default(RECEIVED)
+  adminNotes String?
+  itin       String?    // filled when ITIN is issued
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+}
+
+enum ItinStatus {
+  RECEIVED
+  IN_REVIEW
+  DOCS_REQUESTED
+  PAYMENT_PENDING
+  CAA_SCHEDULED
+  W7_SUBMITTED
+  COMPLETED
+  CANCELLED
 }

@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { FileText, Plus } from "lucide-react";
+import { FileText, Plus, ArrowRight } from "lucide-react";
 import { requireUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { getTiersForSource } from "@/lib/pricing";
 import { DashboardRow } from "./DashboardRow";
+import type { EinStatus, ItinStatus } from "@prisma/client";
 
 const STATUS: Record<string, { label: string; tone: "slate" | "amber" | "blue" | "emerald" | "red" }> = {
   DRAFT: { label: "Draft", tone: "slate" },
@@ -17,12 +18,62 @@ const STATUS: Record<string, { label: string; tone: "slate" | "amber" | "blue" |
   FAILED: { label: "Failed", tone: "red" },
 };
 
+const EIN_STATUS_CONFIG: Record<EinStatus, { label: string; classes: string }> = {
+  RECEIVED:        { label: "Received",              classes: "bg-slate-100 text-slate-700" },
+  IN_REVIEW:       { label: "In review",              classes: "bg-amber-100 text-amber-700" },
+  DOCS_REQUESTED:  { label: "Documents requested",    classes: "bg-amber-100 text-amber-700" },
+  PAYMENT_PENDING: { label: "Payment pending",        classes: "bg-amber-100 text-amber-700" },
+  PROCESSING:      { label: "Processing with IRS",    classes: "bg-blue-100 text-blue-700" },
+  COMPLETED:       { label: "Completed — EIN issued", classes: "bg-emerald-100 text-emerald-700" },
+  CANCELLED:       { label: "Cancelled",              classes: "bg-red-100 text-red-700" },
+};
+
+const ITIN_STATUS_CONFIG: Record<ItinStatus, { label: string; classes: string }> = {
+  RECEIVED:        { label: "Received",                classes: "bg-slate-100 text-slate-700" },
+  IN_REVIEW:       { label: "In review",               classes: "bg-amber-100 text-amber-700" },
+  DOCS_REQUESTED:  { label: "Documents requested",     classes: "bg-amber-100 text-amber-700" },
+  PAYMENT_PENDING: { label: "Payment pending",         classes: "bg-amber-100 text-amber-700" },
+  CAA_SCHEDULED:   { label: "CAA appointment set",     classes: "bg-blue-100 text-blue-700" },
+  W7_SUBMITTED:    { label: "W-7 submitted to IRS",    classes: "bg-blue-100 text-blue-700" },
+  COMPLETED:       { label: "Completed — ITIN issued", classes: "bg-emerald-100 text-emerald-700" },
+  CANCELLED:       { label: "Cancelled",               classes: "bg-red-100 text-red-700" },
+};
+
+function EinStatusBadge({ status }: { status: EinStatus }) {
+  const cfg = EIN_STATUS_CONFIG[status] ?? EIN_STATUS_CONFIG.RECEIVED;
+  return (
+    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${cfg.classes}`}>
+      {cfg.label}
+    </span>
+  );
+}
+
+function ItinStatusBadge({ status }: { status: ItinStatus }) {
+  const cfg = ITIN_STATUS_CONFIG[status] ?? ITIN_STATUS_CONFIG.RECEIVED;
+  return (
+    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${cfg.classes}`}>
+      {cfg.label}
+    </span>
+  );
+}
+
 export default async function DashboardPage() {
   const user = await requireUser();
   const filings = await prisma.filing.findMany({
     where: { userId: user.id },
     orderBy: { updatedAt: "desc" },
   });
+
+  const [einApps, itinApps] = await Promise.all([
+    prisma.einApplication.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.itinApplication.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
 
   // Unread admin → customer message counts per filing, so the dashboard
   // surfaces "you have a message" without an extra round-trip per row.
@@ -88,6 +139,60 @@ export default async function DashboardPage() {
               />
             );
           })}
+        </div>
+      )}
+
+      {einApps.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-lg font-semibold mb-4">EIN Applications</h2>
+          <div className="bg-white border border-slate-200 rounded-lg divide-y divide-slate-200">
+            {einApps.map((app) => (
+              <Link
+                key={app.id}
+                href={`/applications/ein/${app.id}`}
+                className="flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors"
+              >
+                <div>
+                  <p className="font-medium text-slate-900">{app.llcName}</p>
+                  <p className="text-sm text-slate-500 mt-0.5">
+                    EIN Application &middot;{" "}
+                    {app.createdAt.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <EinStatusBadge status={app.status} />
+                  <ArrowRight className="h-4 w-4 text-slate-400" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {itinApps.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-lg font-semibold mb-4">ITIN Applications</h2>
+          <div className="bg-white border border-slate-200 rounded-lg divide-y divide-slate-200">
+            {itinApps.map((app) => (
+              <Link
+                key={app.id}
+                href={`/applications/itin/${app.id}`}
+                className="flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors"
+              >
+                <div>
+                  <p className="font-medium text-slate-900">{app.fullName}</p>
+                  <p className="text-sm text-slate-500 mt-0.5">
+                    ITIN Application &middot;{" "}
+                    {app.createdAt.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <ItinStatusBadge status={app.status} />
+                  <ArrowRight className="h-4 w-4 text-slate-400" />
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>
