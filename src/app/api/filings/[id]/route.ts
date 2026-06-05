@@ -86,9 +86,19 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
           contributions: y.contributions ?? 0,
           distributions: y.distributions ?? 0,
           otherTransactionsNote: typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : undefined,
-          reportableTransactions: Array.isArray(y.reportableTransactions)
-            ? y.reportableTransactions
-            : undefined,
+          // SECURITY/DATA-LOSS GUARD: the TransactionsReview wizard step
+          // initializes its in-memory transaction list to [] and does NOT
+          // rehydrate previously-uploaded/parsed rows. So a returning user who
+          // re-submits this step would otherwise wipe the stored detailed rows
+          // with an empty array (while keeping only the contribution/
+          // distribution totals). Only overwrite reportableTransactions when
+          // the incoming list is non-empty; an empty list leaves existing
+          // detail untouched. (A genuine "clear all" would need an explicit
+          // signal — not the absence of rehydrated state.)
+          reportableTransactions:
+            Array.isArray(y.reportableTransactions) && y.reportableTransactions.length > 0
+              ? y.reportableTransactions
+              : undefined,
         },
         create: {
           filingId: filing.id,

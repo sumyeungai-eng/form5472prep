@@ -14,6 +14,15 @@ function sign(payload: string): string {
   return crypto.createHmac("sha256", SECRET).update(payload).digest("base64url");
 }
 
+// Constant-time signature comparison (length-checked first). Magic-link tokens
+// grant portal access to taxpayer data, so avoid the `!==` early-exit timing leak.
+function sigEqual(a: string, b: string): boolean {
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  if (ab.length !== bb.length) return false;
+  return crypto.timingSafeEqual(ab, bb);
+}
+
 export function makeMagicLink(userId: string): string {
   const expiresAt = Math.floor(Date.now() / 1000) + TTL_SECONDS;
   const payload = `${userId}:${expiresAt}`;
@@ -26,7 +35,7 @@ export function verifyMagicLinkToken(token: string): string | null {
   if (lastDot === -1) return null;
   const payload = token.slice(0, lastDot);
   const sig = token.slice(lastDot + 1);
-  if (sign(payload) !== sig) return null;
+  if (!sigEqual(sign(payload), sig)) return null;
   const [userId, expStr] = payload.split(":");
   const exp = Number(expStr);
   if (!userId || !exp || Number.isNaN(exp)) return null;

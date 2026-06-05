@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { submitFax } from "@/lib/fax";
@@ -19,15 +20,73 @@ export const dynamic = "force-dynamic";
 // Telnyx fax webhook. Configure your fax connection's webhook URL to
 // {NEXT_PUBLIC_APP_URL}/api/telnyx-webhook. Events we care about:
 //   fax.delivered, fax.failed, fax.sending.failed, fax.delivery.delayed
-//
-// Telnyx signs webhooks; in production you should verify the signature
-// (telnyx-signature-ed25519-signature, telnyx-signature-ed25519-timestamp,
-// against the public key from the Telnyx portal). Skipped in this scaffold.
 
 const MAX_RETRIES = 3;
+// Reject events whose timestamp is older than this — blocks replay of a
+// previously-captured valid webhook.
+const MAX_TIMESTAMP_SKEW_SECS = 60 * 5;
+
+// Verify Telnyx's Ed25519 webhook signature. Telnyx signs the string
+// `${timestamp}|${rawBody}` with their private key; we verify against the
+// public key from the Telnyx portal (TELNYX_PUBLIC_KEY, base64-encoded).
+//
+// SECURITY: when the public key is configured we FAIL CLOSED — an invalid or
+// missing signature is rejected. If the key is NOT set (local/sandbox), we
+// skip verification so dev flows keep working. Set TELNYX_PUBLIC_KEY in
+// production so forged fax.delivered / fax.failed events can't move filings.
+function verifyTelnyxSignature(rawBody: string, req: Request): boolean {
+  const publicKeyB64 = process.env.TELNYX_PUBLIC_KEY;
+  if (!publicKeyB64) {
+    // No key configured — sandbox/local. Don't block, but make it loud.
+    console.warn("[telnyx-webhook] TELNYX_PUBLIC_KEY not set — skipping signature verification");
+    return true;
+  }
+  const signatureB64 = req.headers.get("telnyx-signature-ed25519-signature");
+  const timestamp = req.headers.get("telnyx-signature-ed25519-timestamp");
+  if (!signatureB64 || !timestamp) {
+    console.error("[telnyx-webhook] missing signature headers");
+    return false;
+  }
+  // Replay guard.
+  const ts = Number(timestamp);
+  if (!Number.isFinite(ts) || Math.abs(Math.floor(Date.now() / 1000) - ts) > MAX_TIMESTAMP_SKEW_SECS) {
+    console.error("[telnyx-webhook] signature timestamp outside allowed skew");
+    return false;
+  }
+  try {
+    const signedPayload = `${timestamp}|${rawBody}`;
+    const publicKey = crypto.createPublicKey({
+      key: Buffer.concat([
+        // DER prefix for an Ed25519 SubjectPublicKeyInfo wrapping the 32-byte key.
+        Buffer.from("302a300506032b6570032100", "hex"),
+        Buffer.from(publicKeyB64, "base64"),
+      ]),
+      format: "der",
+      type: "spki",
+    });
+    return crypto.verify(
+      null,
+      Buffer.from(signedPayload),
+      publicKey,
+      Buffer.from(signatureB64, "base64"),
+    );
+  } catch (err) {
+    console.error("[telnyx-webhook] signature verification error", err);
+    return false;
+  }
+}
 
 export async function POST(req: Request) {
-  const body = await req.json().catch(() => ({}));
+  const rawBody = await req.text();
+  if (!verifyTelnyxSignature(rawBody, req)) {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  }
+  let body: Record<string, unknown> & { data?: { event_type?: string; payload?: Record<string, unknown> } };
+  try {
+    body = JSON.parse(rawBody);
+  } catch {
+    body = {};
+  }
   const evt = body?.data?.event_type as string | undefined;
   const faxId = body?.data?.payload?.fax_id as string | undefined;
   if (!faxId) return NextResponse.json({ ok: true });

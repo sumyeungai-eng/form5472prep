@@ -11,21 +11,24 @@ import { MULTI_YEAR_ADDON_CENTS, multiYearAddonCents, tierInfo, totalPriceCents 
 import { formatUsd } from "@/lib/utils";
 
 // Generates a self-assigned Reference ID for Form 5472 when the customer
-// leaves the field blank. Uses last-name initial + first-name initial as a
-// human-readable prefix (so it's identifiable on the form), plus 4 random
-// alphanumeric chars for uniqueness. Format conforms to the IRS rule:
-// letters, numbers, and dashes only. Pure function, no React deps.
+// leaves the field blank. Uses last-name + first-initial as a human-readable
+// prefix (so it's identifiable on the form), plus 4 random alphanumeric chars
+// for uniqueness. Pure function, no React deps.
+//
+// IRS rule (Instructions for Form 5472): the reference ID number must be
+// alphanumeric with NO special characters or spaces, 50 chars or less. So no
+// hyphens — e.g. SMITHJA7B2, not SMITH-J-A7B2.
 function generateReferenceId(lastName?: string, firstName?: string): string {
-  const sanitize = (s: string) => s.replace(/[^A-Za-z]/g, "").toUpperCase();
+  const sanitize = (s: string) => s.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
   const last = sanitize(lastName ?? "");
   const first = sanitize(firstName ?? "");
-  const prefix = last ? `${last.slice(0, 6)}${first ? `-${first[0]}` : ""}` : "REF";
+  const prefix = last ? `${last.slice(0, 6)}${first ? first[0] : ""}` : "REF";
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // unambiguous chars
   let suffix = "";
   for (let i = 0; i < 4; i++) {
     suffix += alphabet[Math.floor(Math.random() * alphabet.length)];
   }
-  return `${prefix}-${suffix}`;
+  return `${prefix}${suffix}`.slice(0, 50);
 }
 import { z } from "zod";
 import {
@@ -746,7 +749,7 @@ function OwnerStep({
 
     // Form 5472 requires a Reference ID when the owner has no ITIN. If the
     // customer left the field blank, generate a stable self-assigned ID
-    // (last-name initials + 4 random alphanumeric chars, or "REF-XXXXXX" if
+    // (last-name initials + 4 random alphanumeric chars, or "REFXXXX" if
     // we don't have a name yet) so the filing remains valid. They can edit
     // it on a return visit if they want a different value.
     const ownerItinTrim = (rest.ownerItin ?? "").trim();
@@ -927,15 +930,15 @@ function OwnerStep({
               </p>
               <p className="mt-2">
                 <strong>You can leave this blank</strong> — we&apos;ll generate one based on your
-                name (e.g. <code>SMITH-J-A7B2</code>). Or set your own: easiest is your{" "}
+                name (e.g. <code>SMITHJA7B2</code>). Or set your own: easiest is your{" "}
                 <strong>FTIN with dashes removed</strong>, or a short code like{" "}
-                <code>SMITH-J-001</code>. Letters and numbers only — no spaces or special
+                <code>SMITHJ001</code>. Letters and numbers only — no spaces, dashes, or special
                 characters.
               </p>
             </>
           }
         >
-          <Input {...register("ownerReferenceId")} placeholder="e.g. A1234567 or SMITH-J-001" />
+          <Input {...register("ownerReferenceId")} placeholder="e.g. A1234567 or SMITHJ001" />
         </Field>
       </div>
       <div className="flex justify-between">

@@ -1616,7 +1616,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Do I need a US ITIN or just my foreign tax ID?",
-        a: "You don't need a US ITIN. Form 5472 accepts your foreign tax ID (FTIN) or a self-assigned Reference ID. If you leave the Reference ID blank in our wizard, we generate one based on your name (e.g. SMITH-J-A7B2).",
+        a: "You don't need a US ITIN. Form 5472 accepts your foreign tax ID (FTIN) or a self-assigned Reference ID. If you leave the Reference ID blank in our wizard, we generate one based on your name (e.g. SMITHJA7B2 — letters and numbers only, no special characters, per IRS rules).",
       },
       {
         q: "Does filing Form 5472 mean I owe US tax?",

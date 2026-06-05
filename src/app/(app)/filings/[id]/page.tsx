@@ -2,11 +2,29 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getFilingAccess, getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+import { stripe } from "@/lib/stripe";
 import { FilingActions } from "@/components/wizard/FilingActions";
 import { FilingStatusBanner } from "@/components/FilingStatusBanner";
 import { FilingLocked } from "@/components/FilingLocked";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { getTiersForSource } from "@/lib/pricing";
+
+// Verify with Stripe — NOT the bare ?paid=1 query param — that the filing's
+// Checkout Session actually completed before promoting DRAFT → PAID. The
+// stripe-webhook remains the authoritative path; this is only a fallback for
+// the brief window where the customer lands back on the page before the
+// webhook fires. Returns true only when Stripe reports payment_status "paid"
+// (or a $0 admin test session). Never trusts the client.
+async function isStripePaid(stripeSessionId: string | null): Promise<boolean> {
+  if (!stripeSessionId) return false;
+  try {
+    const session = await stripe().checkout.sessions.retrieve(stripeSessionId);
+    return session.payment_status === "paid" || session.payment_status === "no_payment_required";
+  } catch (err) {
+    console.error("[filing] Stripe session verify failed", err);
+    return false;
+  }
+}
 
 export default async function FilingDetailPage({
   params,
@@ -19,29 +37,34 @@ export default async function FilingDetailPage({
   if (access.kind === "not_found") notFound();
   if (access.kind === "locked") return <FilingLocked ownerEmail={access.ownerEmail} />;
   const owned = access.filing;
-  // DRAFT filings haven't been paid yet — send the user back to the wizard so
-  // they can finish filling and pay, rather than showing post-payment actions.
-  // Exception: ?paid=1 means the user just returned from Stripe; the webhook
-  // may not have fired yet, so let the page run and apply the optimistic bump
-  // below before deciding the status is really DRAFT.
-  if (owned.status === "DRAFT" && searchParams.paid !== "1") {
-    redirect(`/filings/${owned.id}/edit`);
-  }
   const user = await getCurrentUser();
 
-  const filing = await prisma.filing.findUnique({
+  let filing = await prisma.filing.findUnique({
     where: { id: owned.id },
     include: { yearData: true },
   });
   if (!filing) notFound();
 
-  // Optimistic status bump after Stripe redirect in case the webhook didn't fire.
+  // Fallback promotion after Stripe redirect, in case the webhook hasn't fired
+  // yet. SECURITY: we do NOT trust ?paid=1 alone — we re-check the actual
+  // Checkout Session with Stripe and only promote when Stripe confirms payment.
+  // This closes the bypass where any draft owner could append ?paid=1 to
+  // unlock PDF generation without paying.
   if (searchParams.paid === "1" && filing.status === "DRAFT") {
-    await prisma.filing.update({
-      where: { id: filing.id },
-      data: { status: "PAID" },
-    });
-    filing.status = "PAID";
+    if (await isStripePaid(filing.stripeSessionId)) {
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: { status: "PAID" },
+      });
+      filing = { ...filing, status: "PAID" };
+    }
+  }
+
+  // DRAFT filings haven't been paid yet (and the Stripe re-check above didn't
+  // promote them) — send the user back to the wizard rather than showing
+  // post-payment actions.
+  if (filing.status === "DRAFT") {
+    redirect(`/filings/${owned.id}/edit`);
   }
 
   return (

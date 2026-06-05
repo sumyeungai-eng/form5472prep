@@ -36,7 +36,15 @@ export const ownerBaseSchema = z.object({
   ownerCountryBusiness: z.string().trim().min(2, "Required"),
   ownerFtin: z.string().trim().min(2, "Required"),
   ownerItin: z.string().trim().optional().or(z.literal("")),
-  ownerReferenceId: z.string().trim().optional().or(z.literal("")),
+  // IRS Instructions for Form 5472: the reference ID must be alphanumeric with
+  // no special characters or spaces, 50 chars or less. Reject hyphens etc. so
+  // a manually-entered ID like "SMITH-J-A7B2" can't reach the PDF.
+  ownerReferenceId: z
+    .string()
+    .trim()
+    .regex(/^[A-Za-z0-9]{1,50}$/, "Letters and numbers only, no spaces or symbols (max 50)")
+    .optional()
+    .or(z.literal("")),
 });
 
 // Per IRS Form 5472 line 4b: must have either US ITIN OR a reference ID.

@@ -587,6 +587,7 @@ export function PlaceSignatureClient({
                       onPointerDown={(e) => startDrag(p.id, "move", e)}
                     >
                       {p.kind === "signature" && sigUrl && (
+                        // eslint-disable-next-line @next/next/no-img-element -- internal admin tool: a transient blob/object URL drawn onto a PDF overlay; next/image's optimizer/loader doesn't apply to dynamic signature data URLs.
                         <img
                           src={sigUrl}
                           alt="customer signature"
