@@ -465,14 +465,8 @@ export async function sendFaxDeliveredEmail(args: {
     });
   }
 
-  // BCC Trustpilot AFS so they auto-send a review invitation to the customer.
-  // Only fires on the fax-delivered confirmation — the happiest moment for
-  // the customer, and the right time to ask for a review.
-  const TRUSTPILOT_BCC = "form5472prep.com+70ae06b610@invite.trustpilot.com";
-
   return sendEmail({
     to: email,
-    bcc: TRUSTPILOT_BCC,
     subject: `Filed with the IRS — ${llcLine} (${yearsLabel})`,
     text:
       `Your signed Form 5472 + pro forma 1120 for ${llcLine} (${yearsLabel}) was successfully faxed to the IRS Ogden PIN Unit.\n\n` +
