@@ -168,6 +168,32 @@ export async function sendMagicLinkEmail(email: string, link: string, filingLabe
   });
 }
 
+// ---------- 1b. Partner login link ----------
+
+export async function sendPartnerLoginEmail(email: string, link: string, partnerName: string) {
+  const heading = "Sign in to your partner dashboard";
+  const bodyHtml = `
+    <p style="margin:0 0 14px;color:#475569;line-height:1.6;font-size:15px;">
+      Hi ${escapeHtml(partnerName)}, use the button below to sign in to your Form5472 Prep
+      partner dashboard — start new filings for your clients and track every one in a single place.
+    </p>
+    <p style="margin:0 0 24px;color:#64748b;font-size:13px;">This link is good for 7 days.</p>`;
+
+  return sendEmail({
+    to: email,
+    subject: "Your Form5472 Prep partner sign-in link",
+    text:
+      `Sign in to your partner dashboard:\n\n${link}\n\n` +
+      `This link is good for 7 days. If you didn't request this, ignore this email.\n\n— Form5472 Prep`,
+    html: shell({
+      preheader: "Sign in to your Form5472 Prep partner dashboard",
+      heading,
+      bodyHtml,
+      cta: { label: "Open partner dashboard", url: link },
+    }),
+  });
+}
+
 // ---------- 2. Order confirmation email ----------
 
 type OrderSignatureInfo = {

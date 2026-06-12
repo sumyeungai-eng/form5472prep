@@ -12,16 +12,35 @@ datasource db {
 }
 
 model User {
-  id                   String         @id @default(cuid())
-  email                String         @unique
-  createdAt            DateTime       @default(now())
+  id                   String            @id @default(cuid())
+  email                String            @unique
+  createdAt            DateTime          @default(now())
   // Marketing emails (yearly file-again reminders, etc). Defaults to opted-in
   // since customers signed up by buying a filing; flipped via /unsubscribe.
-  emailMarketingOptOut Boolean        @default(false)
+  emailMarketingOptOut Boolean           @default(false)
   filings              Filing[]
   reminders            ReminderSent[]
   einApplications      EinApplication[]
   itinApplications     ItinApplication[]
+}
+
+// A reseller / agency that batches filings for many client LLCs under one
+// login. Created and approved by an admin (no public self-serve signup).
+// Auth mirrors the customer magic-link model: the partner enters their email
+// at /partner/sign-in, and if an *active* Partner row exists we email them a
+// signed login link. Filings created by a partner carry `partnerId` so the
+// partner dashboard can list them all, while each filing is still paid for
+// individually at checkout and signed by the end client.
+model Partner {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String // contact name or agency name shown in the portal
+  company   String? // agency / firm name if different from `name`
+  active    Boolean  @default(true) // admin can deactivate to revoke access
+  createdAt DateTime @default(now())
+  notes     String? // admin-only notes about this partner
+
+  filings Filing[]
 }
 
 // One row per (user, tax year, campaign) — the unique constraint stops the
@@ -33,7 +52,7 @@ model ReminderSent {
   // The tax year being reminded about (e.g. 2026 for a January 2026 send).
   year     Int
   // Which campaign — lets us run multiple touches per year independently.
-  campaign String   // "january" | "march"
+  campaign String // "january" | "march"
   sentAt   DateTime @default(now())
 
   @@unique([userId, year, campaign])
@@ -49,6 +68,12 @@ model Filing {
   // sessionId binds an anonymous filing to a browser cookie so refreshes
   // don't lose work. Cleared once the filing is linked to a user.
   sessionId String?
+  // Set when a partner (reseller/agency) created this filing on behalf of a
+  // client. Null for normal direct-customer filings. The end client is still
+  // bound via `userId` (for signing + portal access); partnerId is an
+  // additional owner used only by the partner dashboard.
+  partnerId String?
+  partner   Partner?     @relation(fields: [partnerId], references: [id])
   status    FilingStatus @default(DRAFT)
 
   // Pricing tier
@@ -64,7 +89,7 @@ model Filing {
   llcCity             String?
   llcState            String?
   llcZip              String?
-  llcCountry          String  @default("USA")
+  llcCountry          String    @default("USA")
   llcDateIncorporated DateTime?
   llcBusinessActivity String?
   llcBusinessCode     String?
@@ -94,7 +119,7 @@ model Filing {
 
   // True = we fax the signed package to the IRS for the customer (+ fax fee).
   // False = customer faxes it themselves after downloading the signed PDF.
-  faxService               Boolean @default(true)
+  faxService Boolean @default(true)
 
   // Generated PDFs (R2 keys)
   generatedPdfKey    String?
@@ -113,8 +138,8 @@ model Filing {
   // image (PNG). Stored once per User (denormalised onto Filing so anonymous
   // sessions also work). When the customer files again later, we pre-populate
   // the SignaturePad with this image so they don't have to re-draw.
-  signaturePngKey    String?
-  signedAt           DateTime?
+  signaturePngKey String?
+  signedAt        DateTime?
 
   // Tracks the one-time "you didn't finish your filing" nudge so we don't
   // re-send. Null = not sent. Set timestamp on send.
@@ -131,44 +156,46 @@ model Filing {
   //   fixed        = AI flagged an issue, regenerator auto-corrected, re-check passed
   //   needs_input  = AI flagged an issue requiring customer clarification (system message posted)
   //   error        = AI infra failed (timeout/5xx); fell open and sent PDF email anyway
-  validationStatus      String?
-  validationIssuesJson  Json?
-  validationCheckedAt   DateTime?
+  validationStatus     String?
+  validationIssuesJson Json?
+  validationCheckedAt  DateTime?
 
   // Who currently "owns" the customer support thread for the AI conversation loop.
   //   null   = no AI conversation in flight (validation hasn't flagged yet, or status is passed/error)
   //   agent  = AI is responsible for replying to the next customer message
   //   admin  = a human admin posted in the thread; AI defers indefinitely until admin re-engages
-  aiHandoff      String?
+  aiHandoff   String?
   // Number of customer reply cycles the AI has handled in this session. Cap = 2
   // before forced escalation. Reset to 0 when admin re-engages or filing re-validates fresh.
-  aiTurnsUsed    Int     @default(0)
+  aiTurnsUsed Int     @default(0)
 
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  yearData  FilingYearData[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  yearData         FilingYearData[]
   plaidConnections PlaidConnection[]
-  messages  Message[]
-  changeLog FilingChangeLog[]
+  messages         Message[]
+  changeLog        FilingChangeLog[]
+
+  @@index([partnerId])
 }
 
 // Append-only audit log for changes the AI agent (and admin) make to a
 // filing's data. Visible in the admin UI as a timeline. Never deleted.
 model FilingChangeLog {
-  id        String   @id @default(cuid())
-  filingId  String
-  filing    Filing   @relation(fields: [filingId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  filingId   String
+  filing     Filing   @relation(fields: [filingId], references: [id], onDelete: Cascade)
   // Who/what initiated the change. "ai" = the conversation agent, "admin" =
   // human via /admin, "customer" = self-service edit, "system" = automated
   // (cron, webhook, etc.).
-  source    String
+  source     String
   // Dotted path or simple field name, e.g. "llcName" or "yearData[2024].contributions".
-  field     String
+  field      String
   beforeJson Json?
   afterJson  Json?
   // Free-text reason. For AI changes, this is what the customer told us.
-  reason    String?
-  changedAt DateTime @default(now())
+  reason     String?
+  changedAt  DateTime @default(now())
 
   @@index([filingId, changedAt])
 }
@@ -178,13 +205,13 @@ model FilingChangeLog {
 // (e.g. customer GET marks fromAdmin=true rows as read, and vice versa). The
 // "first unread" email rule uses unread counts to debounce notifications.
 model Message {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   filingId  String
-  filing    Filing   @relation(fields: [filingId], references: [id], onDelete: Cascade)
+  filing    Filing    @relation(fields: [filingId], references: [id], onDelete: Cascade)
   fromAdmin Boolean
   body      String
   readAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   @@index([filingId, createdAt])
 }
@@ -194,9 +221,9 @@ model FilingYearData {
   filingId               String
   filing                 Filing  @relation(fields: [filingId], references: [id], onDelete: Cascade)
   taxYear                Int
-  totalAssetsYearEnd     Decimal @db.Decimal(15, 2) @default(0)
-  contributions          Decimal @db.Decimal(15, 2) @default(0)
-  distributions          Decimal @db.Decimal(15, 2) @default(0)
+  totalAssetsYearEnd     Decimal @default(0) @db.Decimal(15, 2)
+  contributions          Decimal @default(0) @db.Decimal(15, 2)
+  distributions          Decimal @default(0) @db.Decimal(15, 2)
   reportableTransactions Json    @default("[]")
   // Free-text disclosure of any other related-party transactions during this
   // tax year (loans, sales, services, rent, etc.) — flows into the Part V
@@ -245,9 +272,9 @@ enum FilingStatus {
 }
 
 model EinApplication {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   fullName         String
   email            String
@@ -264,7 +291,7 @@ model EinApplication {
 
   status     EinStatus @default(RECEIVED)
   adminNotes String?
-  ein        String?   // filled when EIN is obtained
+  ein        String? // filled when EIN is obtained
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
@@ -301,7 +328,7 @@ model ItinApplication {
 
   status     ItinStatus @default(RECEIVED)
   adminNotes String?
-  itin       String?    // filled when ITIN is issued
+  itin       String? // filled when ITIN is issued
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id])

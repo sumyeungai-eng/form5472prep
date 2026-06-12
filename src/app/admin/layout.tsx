@@ -21,6 +21,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <nav className="flex items-center gap-4 text-sm text-slate-600">
                 <Link href="/admin/filings" className="hover:text-slate-900">Filings</Link>
                 <Link href="/admin/applications" className="hover:text-slate-900">Applications</Link>
+                <Link href="/admin/partners" className="hover:text-slate-900">Partners</Link>
                 <Link href="/admin/sources" className="hover:text-slate-900">Sources</Link>
                 <Link href="/admin/reminders" className="hover:text-slate-900">Reminders</Link>
                 <Link href="/admin/posts" className="hover:text-slate-900">Posts</Link>
