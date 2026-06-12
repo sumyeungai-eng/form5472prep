@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendEmail } from "@/lib/email";
+import { sendEmail, sendPartnerApplicationAckEmail } from "@/lib/email";
 import { env } from "@/lib/env";
 
 export const runtime = "nodejs";
@@ -93,6 +93,14 @@ export async function POST(req: Request) {
       console.error("[partner/apply] admin email failed", err);
       // The Partner row is created regardless — admin can still see it in
       // /admin/partners even if the notification email didn't go out.
+    }
+
+    // Acknowledgement to the applicant. Non-blocking — a failure here must not
+    // change the success response (the application is already recorded).
+    try {
+      await sendPartnerApplicationAckEmail(email, name);
+    } catch (err) {
+      console.error("[partner/apply] applicant ack email failed", err);
     }
   }
 

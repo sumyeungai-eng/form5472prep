@@ -194,6 +194,40 @@ export async function sendPartnerLoginEmail(email: string, link: string, partner
   });
 }
 
+// ---------- 1c. Partner application acknowledgement ----------
+
+export async function sendPartnerApplicationAckEmail(email: string, name: string) {
+  const heading = "Thanks for applying to partner with us";
+  const bodyHtml = `
+    <p style="margin:0 0 14px;color:#475569;line-height:1.6;font-size:15px;">
+      Hi ${escapeHtml(name)}, thanks for applying to the Form5472 Prep partner program. We&apos;ve
+      received your details and our team is reviewing them.
+    </p>
+    <p style="margin:0 0 14px;color:#475569;line-height:1.6;font-size:15px;">
+      We approve partner accounts manually — usually within one business day. As soon as yours is
+      active, you&apos;ll get a follow-up email with a secure sign-in link, and you can start
+      preparing Form 5472 filings for your clients right away.
+    </p>
+    <p style="margin:0 0 0;color:#64748b;font-size:14px;">
+      Questions in the meantime? Just reply to this email.
+    </p>`;
+
+  return sendEmail({
+    to: email,
+    subject: "We received your Form5472 Prep partner application",
+    text:
+      `Hi ${name},\n\n` +
+      `Thanks for applying to the Form5472 Prep partner program. We've received your details and our team is reviewing them.\n\n` +
+      `We approve partner accounts manually — usually within one business day. As soon as yours is active, you'll get a follow-up email with a secure sign-in link.\n\n` +
+      `Questions in the meantime? Just reply to this email.\n\n— Form5472 Prep`,
+    html: shell({
+      preheader: "We received your partner application — review usually takes one business day.",
+      heading,
+      bodyHtml,
+    }),
+  });
+}
+
 // ---------- 2. Order confirmation email ----------
 
 type OrderSignatureInfo = {
