@@ -73,6 +73,7 @@ export default async function MarketingLayout({ children }: { children: React.Re
               <li><Link href="/pricing" className="hover:text-slate-900">Form 5472 Filing</Link></li>
               <li><Link href="/ein" className="hover:text-slate-900">EIN Acquisition</Link></li>
               <li><Link href="/itin" className="hover:text-slate-900">ITIN Acquisition</Link></li>
+              <li><Link href="/partners" className="hover:text-slate-900">Partner Program</Link></li>
               <li><Link href="/blog" className="hover:text-slate-900">Guides</Link></li>
             </ul>
           </nav>
