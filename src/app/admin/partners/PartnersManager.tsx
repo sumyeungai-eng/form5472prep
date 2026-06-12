@@ -47,7 +47,10 @@ export function PartnersManager({ partners }: { partners: Partner[] }) {
   }
 
   async function toggleActive(p: Partner) {
-    if (!confirm(`${p.active ? "Deactivate" : "Reactivate"} ${p.name} (${p.email})?`)) return;
+    const msg = p.active
+      ? `Deactivate ${p.name} (${p.email})? They'll lose access immediately.`
+      : `Activate ${p.name} (${p.email})? We'll email them a secure sign-in link right away.`;
+    if (!confirm(msg)) return;
     await fetch("/api/admin/partners", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },

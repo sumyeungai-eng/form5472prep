@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
+import { makePartnerLoginLink } from "@/lib/partner/auth";
+import { sendPartnerLoginEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -48,6 +50,24 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
   }
 
-  await prisma.partner.update({ where: { id }, data });
-  return NextResponse.json({ ok: true });
+  // Read prior state so we can detect an inactive → active transition and
+  // auto-send the partner their sign-in link the moment they're approved.
+  const before = await prisma.partner.findUnique({ where: { id } });
+  if (!before) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const partner = await prisma.partner.update({ where: { id }, data });
+
+  const justActivated = before.active === false && partner.active === true;
+  if (justActivated) {
+    try {
+      const link = makePartnerLoginLink(partner.id);
+      await sendPartnerLoginEmail(partner.email, link, partner.name);
+    } catch (err) {
+      // Non-blocking: activation still succeeds even if the email fails. The
+      // partner can always request a fresh link at /partner/sign-in.
+      console.error("[admin/partners] activation login-link email failed", err);
+    }
+  }
+
+  return NextResponse.json({ ok: true, activated: justActivated });
 }
