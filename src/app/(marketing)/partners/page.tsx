@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { CheckCircle2, Users, FileText, Send, ArrowRight, LayoutDashboard } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
+import { PartnerApplyForm } from "./PartnerApplyForm";
 
 export const metadata: Metadata = {
   // `absolute` skips the root layout's "%s · Form5472 Prep" template so the
@@ -32,7 +33,7 @@ const faq = [
   },
   {
     q: "How do I become a partner?",
-    a: "Email support@form5472prep.com with your company name and the email you want to use. We approve partner accounts manually — usually within one business day — and you sign in with a secure email link. No password to manage.",
+    a: "Fill in the short application form on this page with your company and contact details. We approve partner accounts manually — usually within one business day — then you sign in with a secure email link. No password to manage.",
   },
   {
     q: "Do my clients see Form5472 Prep or my brand?",
@@ -44,7 +45,7 @@ const steps = [
   {
     icon: Users,
     title: "Get approved",
-    body: "Email us your company details. We set up your partner account manually — usually within one business day.",
+    body: "Submit the short application form with your company details. We set up your partner account manually — usually within one business day.",
   },
   {
     icon: FileText,
@@ -111,7 +112,7 @@ export default function PartnersPage() {
               From $199 per filing · fax included · no subscription
             </p>
             <a
-              href="mailto:support@form5472prep.com?subject=Partner%20account%20request"
+              href="#apply"
               className="mt-5 flex items-center justify-center gap-2 w-full h-11 rounded-md bg-accent text-white text-sm font-medium hover:bg-accent-700 transition-colors"
             >
               Request a partner account
@@ -161,6 +162,13 @@ export default function PartnersPage() {
         </div>
       </section>
 
+      {/* Apply form */}
+      <section id="apply" className="py-16 border-b border-slate-100 bg-slate-50 scroll-mt-20">
+        <div className="max-w-2xl mx-auto px-6">
+          <PartnerApplyForm />
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-3xl mx-auto px-6">
@@ -185,7 +193,7 @@ export default function PartnersPage() {
             audit trail.
           </p>
           <a
-            href="mailto:support@form5472prep.com?subject=Partner%20account%20request"
+            href="#apply"
             className="inline-flex items-center gap-2 bg-white text-accent font-semibold text-sm px-6 py-3 rounded-md hover:bg-accent-50 transition-colors"
           >
             Request a partner account
