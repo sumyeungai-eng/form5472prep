@@ -497,17 +497,20 @@ function Deliverables() {
 }
 
 function Comparison() {
+  // Our column comes first (right after the criterion) so it's visible without
+  // horizontal scrolling on mobile — the whole point of the table is what WE
+  // offer. CPA / DIY follow.
   const rows = [
-    ["Setup time", "1–2 weeks back-and-forth", "1–4 hours of confusion", "15 minutes"],
-    ["Knows Form 5472", "Hit or miss", "Up to you", "Built only for this"],
-    ["Reasonable cause statement (DIIRSP)", "Usually extra", "DIY", "Included"],
-    ["Files with the IRS", "By mail or fax", "Your problem", "We fax to Ogden"],
-    ["Stores filing proof", "Sometimes", "Your problem", "Yes, automatic"],
-    ["Cost", "$400 – $800", "Free (until $25k)", `From ${formatPrice(TIERS.standard.priceCents)}`],
+    ["Setup time", "15 minutes", "1–2 weeks back-and-forth", "1–4 hours of confusion"],
+    ["Knows Form 5472", "Built only for this", "Hit or miss", "Up to you"],
+    ["Reasonable cause statement (DIIRSP)", "Included", "Usually extra", "DIY"],
+    ["Files with the IRS", "We fax to Ogden", "By mail or fax", "Your problem"],
+    ["Stores filing proof", "Yes, automatic", "Sometimes", "Your problem"],
+    ["Cost", `From ${formatPrice(TIERS.standard.priceCents)}`, "$400 – $800", "Free (until $25k)"],
   ];
   return (
     <section className="bg-white border-b border-slate-200">
-      <div className="max-w-6xl mx-auto px-6 py-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
         <SectionHead
           eyebrow="vs. the alternatives"
           title="Why not a CPA, why not DIY."
@@ -516,19 +519,19 @@ function Comparison() {
           <table className="w-full text-sm">
             <thead className="bg-slate-50 text-left">
               <tr>
-                <th className="py-3 px-4 font-medium text-slate-600"></th>
-                <th className="py-3 px-4 font-medium text-slate-600">CPA</th>
-                <th className="py-3 px-4 font-medium text-slate-600">DIY</th>
-                <th className="py-3 px-4 font-medium text-accent">Form5472 Prep</th>
+                <th className="py-3 px-3 sm:px-4 font-medium text-slate-600"></th>
+                <th className="py-3 px-3 sm:px-4 font-medium text-accent">Form5472 Prep</th>
+                <th className="py-3 px-3 sm:px-4 font-medium text-slate-600">CPA</th>
+                <th className="py-3 px-3 sm:px-4 font-medium text-slate-600">DIY</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
               {rows.map((r, i) => (
                 <tr key={i} className="transition-colors hover:bg-slate-50/70">
-                  <td className="py-3 px-4 font-medium text-slate-900">{r[0]}</td>
-                  <td className="py-3 px-4 text-slate-600">{r[1]}</td>
-                  <td className="py-3 px-4 text-slate-600">{r[2]}</td>
-                  <td className="py-3 px-4 text-slate-900 font-medium bg-accent-50 transition-colors hover:bg-accent-100">{r[3]}</td>
+                  <td className="py-3 px-3 sm:px-4 font-medium text-slate-900">{r[0]}</td>
+                  <td className="py-3 px-3 sm:px-4 text-slate-900 font-medium bg-accent-50 transition-colors hover:bg-accent-100">{r[1]}</td>
+                  <td className="py-3 px-3 sm:px-4 text-slate-600">{r[2]}</td>
+                  <td className="py-3 px-3 sm:px-4 text-slate-600">{r[3]}</td>
                 </tr>
               ))}
             </tbody>
