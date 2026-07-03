@@ -11,6 +11,12 @@ export const metadata: Metadata = {
   description:
     "Get a US Individual Taxpayer Identification Number (ITIN) without mailing your original passport. As a Certifying Acceptance Agent (CAA), we certify your identity documents and submit Form W-7 to the IRS on your behalf. Flat fee $349.",
   alternates: { canonical: "https://www.form5472prep.com/itin" },
+  openGraph: {
+    title: "ITIN for Non-Residents — No Passport Mailing",
+    description:
+      "As a Certifying Acceptance Agent (CAA), we certify your identity documents and submit Form W-7 to the IRS. No passport mailing. Flat fee $349.",
+    url: "https://www.form5472prep.com/itin",
+  },
 };
 
 const faq = [
@@ -80,21 +86,30 @@ export default function ItinPage() {
     <>
       <ItinStructuredData />
       {/* Hero */}
-      <section className="border-b border-slate-200 bg-gradient-to-b from-accent-50 to-white">
-        <div className="max-w-6xl mx-auto px-6 py-16 sm:py-20 grid md:grid-cols-[1fr_340px] gap-12 items-start">
+      <section className="relative overflow-hidden bg-ink text-white">
+        <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-seal/50" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-70"
+          style={{
+            background:
+              "radial-gradient(55% 55% at 20% 0%, rgba(30,58,138,0.5) 0%, rgba(14,27,51,0) 70%)",
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto px-6 py-16 sm:py-20 grid md:grid-cols-[1fr_340px] gap-12 items-start">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 mb-6">
-              <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+            <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100 mb-6">
+              <ShieldCheck className="h-3.5 w-3.5" />
               Certifying Acceptance Agent — no passport mailing
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900 text-balance leading-tight">
+            </p>
+            <h1 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-balance leading-[1.08]">
               Get a US ITIN<br />
-              <span className="text-accent">without mailing your passport.</span>
+              <span className="text-accent-100">without mailing your passport.</span>
             </h1>
-            <p className="mt-5 text-lg text-slate-600 max-w-xl">
+            <p className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
               Non-residents applying for an ITIN normally have to mail their original passport to the IRS
               and wait months for it back. As an{" "}
-              <strong>IRS-authorized Certifying Acceptance Agent (CAA)</strong>, we certify your
+              <strong className="text-white">IRS-authorized Certifying Acceptance Agent (CAA)</strong>, we certify your
               identity documents so the IRS accepts a certified copy — your passport stays with you.
             </p>
             <ul className="mt-6 space-y-2">
@@ -104,8 +119,8 @@ export default function ItinPage() {
                 "ITIN issued in 6–11 weeks (IRS processing time)",
                 "ITIN renewals also available",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm text-slate-700">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+                <li key={item} className="flex items-start gap-2.5 text-sm text-slate-300">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 shrink-0" />
                   {item}
                 </li>
               ))}
@@ -113,20 +128,20 @@ export default function ItinPage() {
           </div>
 
           {/* CTA card */}
-          <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-6 sticky top-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-accent mb-1">ITIN Acquisition</p>
-            <p className="text-4xl font-semibold text-slate-900">$349</p>
+          <div className="rounded-2xl bg-white text-slate-900 ring-1 ring-black/5 shadow-2xl shadow-black/30 p-6 sticky top-6">
+            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent mb-1">ITIN Acquisition</p>
+            <p className="font-serif text-5xl font-semibold text-ink">$349</p>
             <p className="text-sm text-slate-500 mt-1">Flat fee · one-time · no subscription</p>
             <Link
               href="/itin/apply"
-              className="mt-5 flex items-center justify-center gap-2 w-full h-11 rounded-md bg-accent text-white text-sm font-medium hover:bg-accent-700 transition-colors"
+              className="mt-5 flex items-center justify-center gap-2 w-full h-11 rounded-lg bg-accent text-white text-sm font-medium hover:bg-accent-700 transition-colors"
             >
               Get started
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/ein"
-              className="mt-2 flex items-center justify-center w-full h-10 rounded-md border border-slate-200 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              className="mt-2 flex items-center justify-center w-full h-10 rounded-lg border border-slate-200 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
             >
               Need an EIN instead? →
             </Link>
@@ -151,7 +166,7 @@ export default function ItinPage() {
       {/* How it works */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-2xl font-semibold text-slate-900 mb-10">How it works</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-10">How it works</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
               <div key={step.title}>
@@ -170,7 +185,7 @@ export default function ItinPage() {
       {/* What is an ITIN */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-2xl font-semibold text-slate-900 mb-5">What is an ITIN?</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-5">What is an ITIN?</h2>
           <div className="text-sm text-slate-600 leading-relaxed space-y-4">
             <p>
               An <strong className="text-slate-800">Individual Taxpayer Identification Number (ITIN)</strong>{" "}
@@ -199,10 +214,10 @@ export default function ItinPage() {
       <section className="py-16 border-b border-slate-100 bg-slate-50">
         <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-accent mb-3">
+            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent mb-3">
               Certifying Acceptance Agent
             </p>
-            <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+            <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-4">
               Why a CAA is the right way to apply
             </h2>
             <p className="text-slate-600 leading-relaxed mb-4">
@@ -248,7 +263,7 @@ export default function ItinPage() {
       {/* FAQ */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-2xl font-semibold text-slate-900 mb-8">Frequently asked questions</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-8">Frequently asked questions</h2>
           <div className="space-y-6">
             {faq.map(({ q, a }) => (
               <div key={q}>
@@ -271,7 +286,7 @@ export default function ItinPage() {
             href="/itin/apply"
             className="inline-flex items-center gap-2 bg-white text-accent font-semibold text-sm px-6 py-3 rounded-md hover:bg-accent-50 transition-colors"
           >
-            Email us to get started
+            Start your ITIN application
             <ArrowRight className="h-4 w-4" />
           </Link>
           <p className="mt-4 text-xs text-accent-200">

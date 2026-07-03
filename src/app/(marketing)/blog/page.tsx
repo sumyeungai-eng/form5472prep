@@ -8,6 +8,12 @@ export const metadata: Metadata = {
   description:
     "Guides and explainers for foreign-owned US LLC owners filing IRS Form 5472 and pro forma Form 1120.",
   alternates: { canonical: "/blog" },
+  openGraph: {
+    title: "Blog · Form5472 Prep",
+    description:
+      "Guides and explainers for foreign-owned US LLC owners filing IRS Form 5472 and pro forma Form 1120.",
+    url: "/blog",
+  },
 };
 
 export default async function BlogIndex() {
@@ -74,7 +80,7 @@ function Header({
           <BookOpen className="h-3.5 w-3.5 text-accent" />
           {postCount} {postCount === 1 ? "post" : "posts"}
         </div>
-        <h1 className="mt-6 text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900 text-balance">
+        <h1 className="mt-6 text-4xl sm:text-5xl font-serif font-semibold tracking-tight text-ink text-balance">
           Form 5472 and Form 1120 guides,<br />
           <span className="text-accent">without the jargon.</span>
         </h1>
@@ -124,7 +130,7 @@ function FeaturedCard({ post }: { post: PostMeta }) {
               {post.readingMinutes} min read
             </span>
           </div>
-          <h2 className="mt-4 text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 group-hover:text-accent transition-colors text-balance">
+          <h2 className="mt-4 text-2xl sm:text-3xl font-serif font-semibold tracking-tight text-ink group-hover:text-accent transition-colors text-balance">
             {post.title}
           </h2>
           <p className="mt-4 text-slate-600">{post.description}</p>
@@ -236,7 +242,7 @@ function AuthorChip({ author, compact = false }: { author: string; compact?: boo
 function NewsletterPanel() {
   return (
     <section className="mt-20 rounded-xl border border-slate-200 bg-slate-50 p-8 sm:p-12 text-center">
-      <h2 className="text-2xl font-semibold tracking-tight text-slate-900">
+      <h2 className="text-2xl font-serif font-semibold tracking-tight text-ink">
         Ready to file?
       </h2>
       <p className="mt-3 text-slate-600 max-w-xl mx-auto">

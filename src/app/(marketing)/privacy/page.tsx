@@ -3,7 +3,7 @@ import { LegalLayout } from "@/components/LegalLayout";
 export const metadata = {
   title: "Privacy Policy",
   description:
-    "form5472 Privacy Policy. We do not store your bank statements or signed PDFs. Fax confirmations and entity data are retained for 7 years to match IRS records retention.",
+    "Form5472 Prep Privacy Policy. We do not store your bank statements or signed PDFs. Fax confirmations and entity data are retained for 7 years to match IRS records retention.",
   alternates: { canonical: "/privacy" },
   robots: { index: true, follow: true },
 };
@@ -13,7 +13,7 @@ export default function PrivacyPage() {
     <LegalLayout title="Privacy Policy" lastUpdated="2026-05-20">
       <h2>1. Who we are</h2>
       <p>
-        form5472 is the data controller for personal information you submit through the
+        Form5472 Prep is the data controller for personal information you submit through the
         Service. We are based in the United States and process data on servers located in the
         U.S. and the European Union.
       </p>

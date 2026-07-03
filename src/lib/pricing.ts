@@ -30,7 +30,7 @@ export type TierInfo = {
 export const TIERS: Record<Tier, TierInfo> = {
   standard: {
     label: "Standard",
-    subtitle: "Done-for-you filing",
+    subtitle: "Prepared in 3-5 business days",
     priceCents: 19900,
     ctaLabel: "Choose Standard",
     features: [

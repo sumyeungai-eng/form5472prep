@@ -59,7 +59,10 @@ async function readFile(slug: string): Promise<Post | null> {
     return null;
   }
   const parsed = matter(raw);
-  const fm = parsed.data as Partial<PostFrontmatter>;
+  // gray-matter parses an unquoted YAML `date:` into a JS Date, not a string —
+  // so type that one field as `unknown` and normalise it below. The rest of the
+  // frontmatter keeps its declared string/array types for the checks here.
+  const fm = parsed.data as Partial<Omit<PostFrontmatter, "date">> & { date?: unknown };
   if (!fm.title || !fm.date || !fm.description) {
     throw new Error(`Post ${slug}.md missing required frontmatter (title/date/description)`);
   }
@@ -67,7 +70,11 @@ async function readFile(slug: string): Promise<Post | null> {
     slug,
     title: fm.title,
     description: fm.description,
-    date: String(fm.date),
+    // gray-matter parses YAML dates as JS Date objects; normalise to
+    // YYYY-MM-DD so the string sort in getAllPosts works correctly.
+    date: fm.date instanceof Date
+      ? fm.date.toISOString().slice(0, 10)
+      : String(fm.date).slice(0, 10),
     author: fm.author,
     tags: fm.tags ?? [],
     draft: fm.draft ?? false,
@@ -88,7 +95,7 @@ export async function getAllPosts(opts?: { includeDrafts?: boolean }): Promise<P
     .filter((p): p is Post => p !== null)
     .filter((p) => opts?.includeDrafts || !p.draft)
     .map(({ body: _body, ...meta }) => meta)
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 export async function getPost(slug: string): Promise<Post | null> {

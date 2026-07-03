@@ -3,7 +3,7 @@ import { LegalLayout } from "@/components/LegalLayout";
 export const metadata = {
   title: "Terms of Service",
   description:
-    "form5472 Terms of Service. We prepare and transmit IRS Form 5472 filings — we are not a CPA firm and do not provide tax advice.",
+    "Form5472 Prep Terms of Service. We prepare and transmit IRS Form 5472 filings — we are not a CPA firm and do not provide tax advice.",
   alternates: { canonical: "/terms" },
   robots: { index: true, follow: true },
 };
@@ -13,7 +13,7 @@ export default function TermsPage() {
     <LegalLayout title="Terms of Service" lastUpdated="2026-05-20">
       <h2>1. What this service is</h2>
       <p>
-        form5472 (the &quot;Service&quot;) is a self-service tool for preparing IRS Form 5472
+        Form5472 Prep (the &quot;Service&quot;) is a self-service tool for preparing IRS Form 5472
         and pro forma Form 1120, and for transmitting the signed package to the IRS by fax on
         the user&apos;s behalf. The Service generates documents from information the user
         provides, and acts as a courier in delivering those documents to the IRS.
