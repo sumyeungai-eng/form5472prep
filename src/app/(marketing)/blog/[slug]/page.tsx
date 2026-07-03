@@ -80,7 +80,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       <div className="mt-8 grid lg:grid-cols-[minmax(0,1fr)_320px] gap-12">
         <article>
           <header className="mb-10">
-            <h1 className="text-4xl font-semibold tracking-tight text-slate-900 text-balance">
+            <h1 className="text-4xl font-serif font-semibold tracking-tight text-ink text-balance">
               {post.title}
             </h1>
             <p className="mt-4 text-lg text-slate-600">{post.description}</p>
@@ -90,7 +90,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             </p>
           </header>
 
-          <div className="prose prose-slate max-w-none prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-headings:tracking-tight">
+          <div className="prose prose-slate max-w-none prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-headings:tracking-tight prose-headings:font-serif prose-headings:text-ink">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.body}</ReactMarkdown>
           </div>
 

@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
 import { TIERS, TIER_ORDER, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
-import { formatUsd } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 import { env } from "@/lib/env";
 import { getConfirmedFilingsCount, formatFilingCount } from "@/lib/stats";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
@@ -62,7 +62,7 @@ const FAQS = [
   },
   {
     q: "What's your guarantee?",
-    a: "100% money-back guarantee if we fail to submit your filing to the IRS. If the fax doesn't deliver on the first send, we automatically retry. If it still fails, you get a full refund — no questions asked.",
+    a: "100% money-back guarantee if we fail to submit your filing to the IRS. If the fax doesn't deliver on the first send, we automatically retry. If it still fails, you get a full refund — no questions asked. And if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge.",
   },
 ];
 
@@ -73,6 +73,12 @@ export const metadata: Metadata = {
   description:
     "IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Starting at $199 — fax delivery included on every plan. 100% money-back guarantee if we fail to submit.",
   alternates: { canonical: "/" },
+  openGraph: {
+    title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
+    description:
+      "For foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Starting at $199 — 100% money-back guarantee if we fail to submit.",
+    url: "/",
+  },
 };
 
 export default async function LandingPage() {
@@ -151,137 +157,115 @@ function OtherServices() {
   );
 }
 
-// Country flags shown on the hero — same 8 countries with the highest
-// historical filing volume in /admin/sources. Ordered by recognizability
-// (US-tied flags first — Wyoming/Delaware LLCs — then the biggest foreign
-// owner geographies). Keeping it to 8 prevents the strip from wrapping
-// awkwardly on tablet widths.
-const FOUNDER_FLAGS = [
-  { emoji: "🇬🇧", name: "United Kingdom" },
-  { emoji: "🇭🇰", name: "Hong Kong" },
-  { emoji: "🇸🇬", name: "Singapore" },
-  { emoji: "🇦🇪", name: "United Arab Emirates" },
-  { emoji: "🇨🇦", name: "Canada" },
-  { emoji: "🇦🇺", name: "Australia" },
-  { emoji: "🇩🇪", name: "Germany" },
-  { emoji: "🇮🇳", name: "India" },
-];
+// Countries with the highest historical filing volume (from /admin/sources),
+// shown as a plain text line rather than emoji flags: country-flag emoji don't
+// render as flags on Windows/many desktops (they show as raw letter pairs),
+// which reads as broken to the exact foreign-founder audience this addresses.
+const FOUNDER_COUNTRIES =
+  "United Kingdom · UAE · Singapore · India · Germany · Canada · Australia · Hong Kong";
 
 function Hero({ filingsCount }: { filingsCount: number }) {
   return (
-    <section className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-br from-accent-50 via-white to-white animate-gradient">
-      {/* Decorative floating blobs — subtle ambient motion behind the content. */}
+    <section className="relative overflow-hidden bg-ink text-white">
+      {/* Faint radial highlight behind the copy — depth without pastel blobs. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-accent/10 blur-3xl animate-float"
+        className="pointer-events-none absolute inset-0 opacity-70"
+        style={{
+          background:
+            "radial-gradient(60% 55% at 22% 0%, rgba(30,58,138,0.55) 0%, rgba(14,27,51,0) 70%)",
+        }}
       />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-32 right-0 h-[28rem] w-[28rem] rounded-full bg-emerald-200/30 blur-3xl animate-float"
-        style={{ animationDelay: "1.5s" }}
-      />
-      <div className="relative max-w-6xl mx-auto px-6 pt-16 pb-12 sm:pt-20 sm:pb-16">
-        <div className="grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-start">
-          {/* Left: the pitch — copy adopted from /pricing's hero so the
-              homepage and dedicated pricing page share top-of-funnel
-              messaging. */}
-          <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 animate-fade-in-up">
-              <ShieldCheck className="h-3.5 w-3.5 text-accent" />
-              Built for foreign founders · No CPA required · No US address needed
-            </span>
-            <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-slate-900 text-balance animate-fade-in-up animate-delay-100">
+      {/* Thin brass rule at the very top — the "official document" hairline. */}
+      <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-seal/50" />
+
+      <div className="relative mx-auto max-w-6xl px-6 pb-14 pt-16 sm:pb-20 sm:pt-20">
+        <div className="grid items-center gap-12 lg:grid-cols-[1fr_360px] lg:gap-16">
+          {/* Left: the pitch */}
+          <div className="animate-fade-in-up">
+            <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              For foreign-owned US LLCs
+            </p>
+            <h1 className="mt-5 font-serif text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl lg:text-6xl">
               Flat-rate Form 5472 filing.
               <br />
-              <span className="text-accent">No hidden fees.</span>
+              <span className="text-accent-100">No hidden fees.</span>
             </h1>
-            <p className="mt-5 text-lg text-slate-600 max-w-2xl animate-fade-in-up animate-delay-200">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
               Done-for-you Form 5472 + pro forma 1120 for foreign-owned US LLCs.
-              Avoid the $25,000-per-form IRS penalty. Fax delivery to the IRS
-              Ogden PIN Unit included on every plan.
+              Avoid the $25,000-per-form IRS penalty — with fax delivery to the
+              IRS Ogden PIN Unit included on every plan.
             </p>
 
-            <div className="mt-7 flex flex-wrap items-center gap-3 animate-fade-in-up animate-delay-300">
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-5 py-2 text-sm font-medium text-emerald-800">
-                <Send className="h-4 w-4" />
-                Fax filing included on every plan
-              </div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-accent-50 border-2 border-accent/30 px-5 py-2 text-sm font-medium text-accent">
-                <ShieldCheck className="h-4 w-4" />
-                Reviewed by a qualified tax accountant
-              </div>
-            </div>
-
-            {/* Country flags — speaks directly to the foreign-founder
-                audience and signals we've handled their geography. Static
-                list (FOUNDER_FLAGS) of the 8 highest-volume countries from
-                /admin/sources. */}
-            <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 animate-fade-in-up animate-delay-300">
-              <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">
-                Trusted by foreign founders in
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white ring-1 ring-white/15">
+                <Send className="h-4 w-4 text-accent-100" />
+                Fax filing on every plan
               </span>
-              <div className="flex items-center gap-1.5 text-2xl leading-none" aria-label="Countries served">
-                {FOUNDER_FLAGS.map((f) => (
-                  <span key={f.name} title={f.name} role="img" aria-label={f.name}>
-                    {f.emoji}
-                  </span>
-                ))}
-                <span className="text-xs text-slate-500 ml-1">+ 30 more</span>
-              </div>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white ring-1 ring-white/15">
+                <ShieldCheck className="h-4 w-4 text-accent-100" />
+                Reviewed by a tax accountant
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white ring-1 ring-white/15">
+                No CPA · no US address needed
+              </span>
             </div>
 
-            {/* Live filings counter — pulled from the real Filing table
-                (status FAXED or CONFIRMED). Below the floor (50), render
-                alternate "every order reviewed" copy instead so a brand-new
-                state doesn't show "0 packages faxed". */}
-            {filingsCount >= 50 ? (
-              <div className="mt-3 flex items-center gap-2 text-sm text-slate-600 animate-fade-in-up animate-delay-300">
-                <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-soft-pulse" />
+            {/* Country reach — plain text, no broken flags */}
+            <div className="mt-8 border-t border-white/10 pt-5">
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-400">
+                Trusted by founders in 40+ countries
+              </p>
+              <p className="mt-1.5 text-sm text-slate-400">{FOUNDER_COUNTRIES}</p>
+            </div>
+
+            {/* Live filings counter — real Filing table (FAXED/CONFIRMED). Below
+                the floor (50), show the review-promise line instead of "0". */}
+            <div className="mt-4 flex items-center gap-2 text-sm text-slate-300">
+              <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-soft-pulse" />
+              {filingsCount >= 50 ? (
                 <span>
-                  <span className="font-semibold tabular-nums text-slate-900">
+                  <span className="font-mono font-semibold tabular-nums text-white">
                     {formatFilingCount(filingsCount)}
                   </span>{" "}
                   packages faxed to the IRS Ogden PIN Unit
                 </span>
-              </div>
-            ) : (
-              <div className="mt-3 flex items-center gap-2 text-sm text-slate-600 animate-fade-in-up animate-delay-300">
-                <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-soft-pulse" />
-                <span>Every order reviewed by a tax accountant before we fax to the IRS</span>
-              </div>
-            )}
+              ) : (
+                <span>Every order reviewed by a tax accountant before we fax</span>
+              )}
+            </div>
           </div>
 
-          {/* Right: bold CTA card — restored on user request. Mirrors the
-              old Hero conversion path while the left column carries the
-              /pricing-style messaging. */}
-          <div className="w-full lg:w-[360px] lg:flex-none animate-fade-in-up animate-delay-300">
-            <div className="rounded-2xl bg-white border border-slate-200 shadow-xl shadow-accent/5 p-6 sm:p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-accent/10 hover:-translate-y-0.5">
-              <div className="flex items-center gap-2 text-xs font-medium text-accent uppercase tracking-wide">
-                <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-soft-pulse" />
+          {/* Right: premium CTA card, light on the dark band */}
+          <div className="w-full animate-fade-in-up animate-delay-200">
+            <div className="rounded-2xl bg-white p-6 text-slate-900 shadow-2xl shadow-black/30 ring-1 ring-black/5 sm:p-7">
+              <div className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-soft-pulse" />
                 Start filing now
               </div>
               <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-4xl sm:text-5xl font-semibold text-slate-900 tracking-tight">
-                  {formatUsd(TIERS.standard.priceCents)}
+                <span className="font-serif text-5xl font-semibold tracking-tight text-ink">
+                  {formatPrice(TIERS.standard.priceCents)}
                 </span>
-                <span className="text-sm text-slate-500">/ filing</span>
+                <span className="font-mono text-xs text-slate-500">/ filing</span>
               </div>
-              <p className="mt-1 text-sm text-slate-600">
-                IRS fax delivery included. Rush and Premium plans available — see <Link href="/pricing" className="text-accent underline">pricing</Link>.
+              <p className="mt-2 text-sm text-slate-600">
+                IRS fax delivery included. Rush and Premium plans available —{" "}
+                <Link href="/pricing" className="text-accent underline underline-offset-2">
+                  see pricing
+                </Link>
+                .
               </p>
 
-              <Link href="/start" className="block mt-6 group">
-                <Button
-                  size="lg"
-                  className="w-full h-14 text-sm sm:text-base shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 transition-all duration-200 hover:-translate-y-0.5"
-                >
+              <Link href="/start" className="group mt-6 block">
+                <Button size="lg" className="h-14 w-full text-base shadow-lg shadow-accent/25 transition-all duration-200 hover:-translate-y-0.5">
                   Start filing
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Link href="#pricing" className="block mt-3">
-                <Button variant="outline" size="lg" className="w-full h-12 transition-colors">
+              <Link href="#pricing" className="mt-3 block">
+                <Button variant="outline" size="lg" className="w-full">
                   See all plans
                 </Button>
               </Link>
@@ -293,20 +277,16 @@ function Hero({ filingsCount }: { filingsCount: number }) {
                   "Reviewed by a qualified tax accountant",
                   "Faxed to IRS Ogden PIN Unit",
                   "100% money-back if we fail to submit",
-                ].map((it, i) => (
-                  <li
-                    key={it}
-                    className="flex items-start gap-2 text-slate-700 animate-fade-in-up"
-                    style={{ animationDelay: `${400 + i * 80}ms` }}
-                  >
-                    <CheckCircle2 className="flex-none h-4 w-4 text-emerald-500 mt-0.5" />
+                ].map((it) => (
+                  <li key={it} className="flex items-start gap-2.5 text-slate-700">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 flex-none text-emerald-500" />
                     <span>{it}</span>
                   </li>
                 ))}
               </ul>
 
-              <p className="mt-5 pt-5 border-t border-slate-100 text-xs text-slate-500 text-center">
-                No subscription. No upsell. Pay once per filing.
+              <p className="mt-5 border-t border-slate-100 pt-5 text-center font-mono text-[11px] text-slate-500">
+                No subscription. Pay once per filing.
               </p>
             </div>
           </div>
@@ -406,7 +386,7 @@ function HowItWorks() {
     {
       icon: Receipt,
       title: "Add your numbers",
-      body: "Capital contributions in, distributions out, year-end total assets. Manual entry — or upload bank statements (coming soon).",
+      body: "Capital contributions in, distributions out, year-end total assets. Simple manual entry — no accounting software required.",
     },
     {
       icon: FileText,
@@ -416,7 +396,7 @@ function HowItWorks() {
     {
       icon: PenTool,
       title: "You sign it",
-      body: "Print, sign in pen on the marked pages, scan, upload back. We verify pages are signed.",
+      body: "Review the prepared package and sign in your browser — no printing, scanning, or uploading.",
     },
     {
       icon: Send,
@@ -523,7 +503,7 @@ function Comparison() {
     ["Reasonable cause statement (DIIRSP)", "Usually extra", "DIY", "Included"],
     ["Files with the IRS", "By mail or fax", "Your problem", "We fax to Ogden"],
     ["Stores filing proof", "Sometimes", "Your problem", "Yes, automatic"],
-    ["Cost", "$400 – $800", "Free (until $25k)", `From ${formatUsd(TIERS.standard.priceCents)}`],
+    ["Cost", "$400 – $800", "Free (until $25k)", `From ${formatPrice(TIERS.standard.priceCents)}`],
   ];
   return (
     <section className="bg-white border-b border-slate-200">
@@ -578,17 +558,17 @@ function Pricing() {
                 }`}
               >
                 {highlighted && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-semibold rounded-full bg-accent text-white px-3 py-0.5 shadow">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] rounded-full bg-accent text-white px-3 py-1 shadow">
                     Most popular
                   </span>
                 )}
                 <div>
-                  <p className="font-semibold text-slate-900">{t.label}</p>
+                  <p className="font-semibold text-ink">{t.label}</p>
                   <p className="text-xs text-slate-500 mt-0.5">{t.subtitle}</p>
                 </div>
-                <p className="mt-3 text-3xl font-semibold text-slate-900">
-                  {formatUsd(t.priceCents)}
-                  <span className="ml-1 text-sm font-normal text-slate-500">/ year</span>
+                <p className="mt-3 font-serif text-4xl font-semibold text-ink">
+                  {formatPrice(t.priceCents)}
+                  <span className="ml-1.5 font-mono text-xs font-normal text-slate-500">/ filing</span>
                 </p>
                 <ul className="mt-4 space-y-1.5 text-sm text-slate-700 flex-1">
                   {t.features.map((f) => (
@@ -608,7 +588,7 @@ function Pricing() {
           })}
         </div>
         <p className="mt-6 text-center text-sm text-slate-600">
-          <span className="font-semibold text-slate-900">+ {formatUsd(MULTI_YEAR_ADDON_CENTS)} per additional year</span>
+          <span className="font-semibold text-ink">+ {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year</span>
           <span className="mx-2 text-slate-400">·</span>
           Saves you from the $25,000-per-form IRS penalty
         </p>
@@ -640,28 +620,27 @@ function Faq() {
 
 function FinalCta() {
   return (
-    <section className="relative overflow-hidden bg-accent">
-      {/* Animated accent shapes — subtle motion in the dark CTA. */}
+    <section className="relative overflow-hidden bg-ink">
+      <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-seal/50" />
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 rounded-full bg-white/5 blur-3xl animate-float"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-white/5 blur-3xl animate-float"
-        style={{ animationDelay: "2s" }}
+        className="pointer-events-none absolute inset-0 opacity-70"
+        style={{
+          background:
+            "radial-gradient(55% 60% at 50% 0%, rgba(30,58,138,0.5) 0%, rgba(14,27,51,0) 70%)",
+        }}
       />
       <Reveal as="div" className="relative max-w-4xl mx-auto px-6 py-20 text-center">
-        <h2 className="text-3xl sm:text-4xl font-semibold text-white text-balance">
+        <h2 className="font-serif text-3xl sm:text-4xl font-semibold text-white text-balance">
           Stop worrying about the $25,000 penalty.
         </h2>
-        <p className="mt-4 text-lg text-accent-50/90 max-w-xl mx-auto">
+        <p className="mt-4 text-lg text-slate-300 max-w-xl mx-auto">
           File this year&apos;s Form 5472 in fifteen minutes. Catch up on prior years in
           one sitting.
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
           <Link href="/start" className="group">
-            <Button size="lg" className="bg-white !text-accent hover:bg-accent-50 transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-black/10 hover:shadow-xl hover:shadow-black/20">
+            <Button size="lg" className="bg-white !text-ink hover:bg-slate-100 transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-black/20">
               Start filing
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
@@ -683,8 +662,8 @@ function SectionHead({
 }) {
   return (
     <Reveal className="max-w-2xl mx-auto text-center">
-      <p className="text-sm font-medium text-accent uppercase tracking-wide">{eyebrow}</p>
-      <h2 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 text-balance">
+      <p className="font-mono text-xs font-medium uppercase tracking-[0.18em] text-accent">{eyebrow}</p>
+      <h2 className="mt-3 font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-ink text-balance">
         {title}
       </h2>
       {subtitle && <p className="mt-4 text-slate-600">{subtitle}</p>}

@@ -59,7 +59,10 @@ async function readFile(slug: string): Promise<Post | null> {
     return null;
   }
   const parsed = matter(raw);
-  const fm = parsed.data as Partial<PostFrontmatter>;
+  // gray-matter parses an unquoted YAML `date:` into a JS Date, not a string —
+  // so type that one field as `unknown` and normalise it below. The rest of the
+  // frontmatter keeps its declared string/array types for the checks here.
+  const fm = parsed.data as Partial<Omit<PostFrontmatter, "date">> & { date?: unknown };
   if (!fm.title || !fm.date || !fm.description) {
     throw new Error(`Post ${slug}.md missing required frontmatter (title/date/description)`);
   }

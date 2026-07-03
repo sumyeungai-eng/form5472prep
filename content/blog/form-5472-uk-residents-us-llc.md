@@ -107,7 +107,7 @@ The mistake we see most often: people assume that because the LLC had no US inco
 
 Form5472 Prep prepares your Form 5472 and pro forma Form 1120, generates the reasonable cause statement if you're filing late, and faxes the signed package to the IRS Ogden PIN Unit on your behalf.
 
-> **From $79 + $19 IRS fax delivery fee.** Takes about 15 minutes. 100% money-back guarantee if we fail to submit.
+> **Flat-rate plans from $199 — IRS fax delivery included.** Takes about 15 minutes. 100% money-back guarantee if we fail to submit.
 >
 > [Get your Form 5472 filed →](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uk-residents-us-llc)
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Source_Serif_4, IBM_Plex_Mono } from "next/font/google";
 import Script from "next/script";
 import { env } from "@/lib/env";
 import { Analytics } from "@vercel/analytics/react";
@@ -8,6 +8,22 @@ import { GOOGLE_ADS_TAG_ID } from "@/lib/analytics/googleAds";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+
+// Display serif — institutional, financial-report gravitas for headlines.
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-serif",
+});
+
+// "Artifact" monospace — echoes the actual IRS documents/fax receipts. Used for
+// prices, fax numbers, timestamps, EINs, and eyebrow labels so the marketing UI
+// visually references the real proof-of-filing document customers receive.
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.appUrl),
@@ -86,7 +102,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${sourceSerif.variable} ${plexMono.variable}`}
+    >
       <body className="min-h-screen bg-white text-slate-900 font-sans antialiased">
         {/* Google Ads conversion tag (loader). Loads on every page so the
             "Form 5472 Lead" conversion can fire from the /start success

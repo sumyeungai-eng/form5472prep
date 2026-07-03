@@ -503,7 +503,7 @@ export const LANDING_PAGES: LandingPage[] = [
         a: "No. Our service is built specifically for single-member, foreign-owned, disregarded-entity LLCs. Multi-member LLCs require Form 1065 (partnership return), 8865 (foreign partnership) or full Form 1120 with real income reporting — more complex than our wizard supports. You'd need a CPA familiar with international partnerships.",
       },
     ],
-    relatedSlugs: ["wyoming-llc-form-5472", "delaware-llc-form-5472", "file-form-5472", "single-member-llc-foreign-owner", "stripe-atlas-form-5472"],
+    relatedSlugs: ["wyoming-llc-form-5472", "delaware-llc-form-5472", "form-5472-germany", "form-5472-uae", "single-member-llc-foreign-owner"],
   },
   {
     slug: "late-form-5472",
@@ -884,6 +884,164 @@ export const LANDING_PAGES: LandingPage[] = [
       },
     ],
     relatedSlugs: ["wyoming-llc-form-5472", "foreign-owned-llc-tax", "file-form-5472", "stripe-atlas-form-5472", "single-member-llc-foreign-owner"],
+  },
+  {
+    slug: "form-5472-germany",
+    keyword: "Form 5472 for German LLC owner",
+    title: "Form 5472 for German Owners of US LLCs — Complete Guide",
+    metaDescription:
+      "German residents who own a US LLC (Wyoming, Delaware, or any state) must file IRS Form 5472 + pro forma 1120 every year. What FTIN to use, common scenarios, and accountant-reviewed filing from $199.",
+    h1: "Form 5472 for German-Resident Owners of US LLCs",
+    intro:
+      "If you're a German tax resident who owns a single-member US LLC — commonly for ecommerce, Amazon FBA, SaaS, or consulting — you must file IRS Form 5472 with an attached pro forma Form 1120 every year, even if the LLC had zero US tax due. The most common question we get from German owners is which German tax ID goes on the form. Short answer: your personal Steuerliche Identifikationsnummer (Steuer-ID), not your Steuernummer or VAT ID. Here's the complete filing picture.",
+    sections: [
+      {
+        heading: "Why German founders use US LLCs",
+        body: "Common reasons German residents form a US LLC instead of (or alongside) a German GmbH or Einzelunternehmen:\n\n• Faster, cheaper formation — a Wyoming or Delaware LLC can be set up in days for a few hundred dollars, versus weeks and a notarized €25,000 minimum capital requirement for a GmbH.\n• US-based payment processing — Stripe, PayPal Business, and Mercury banking are simpler to access with a US entity for a US-focused or global customer base.\n• Platforms like Amazon.com or US-based SaaS marketplaces sometimes prefer or require a US entity for certain seller/vendor programs.\n\nThis is a business-structure choice, not a tax-avoidance one — the LLC is a disregarded entity for US federal tax purposes, and as a German tax resident you may still owe German tax on the LLC's income under German rules. Talk to a German Steuerberater about your German-side reporting; we handle the US federal Form 5472 side.",
+      },
+      {
+        heading: "Your FTIN: Steuer-ID, not Steuernummer or VAT ID",
+        body: "Germany actually has three different numbers that get confused for each other:\n\n• Steuerliche Identifikationsnummer (Steuer-ID / IdNr) — an 11-digit personal number issued once, for life, by the Bundeszentralamt für Steuern (BZSt) when you register your address in Germany. This is your personal tax identifier and the one that best matches what Form 5472 Part II is asking for as your foreign tax identifying number (FTIN).\n• Steuernummer — a 10-11 digit number issued by your local Finanzamt, used for your German income tax filings. This is not the FTIN Form 5472 is asking about.\n• USt-IdNr (VAT ID) — a \"DE\" + 9-digit number for VAT purposes, tied to a business, not you personally. Also not the FTIN field.\n\nOn Form 5472 Part II, enter your Steuer-ID as the foreign tax identifying number. If you've never registered a German address (e.g., you're a German citizen living abroad), you may not have a Steuer-ID — in that case use a self-assigned reference ID or \"NA\", consistent with the IRS instructions for shareholders without a foreign tax ID.",
+      },
+      {
+        heading: "Germany-US tax treaty — what it does and doesn't cover",
+        body: "The United States and Germany have an income tax treaty intended to prevent double taxation of the same income. Two things to keep separate:\n\n1. Form 5472 is an information return, not a tax return. It has nothing to do with treaty relief — you file it regardless of whether any US tax is actually owed, and the $25,000 penalty applies for a missing or incomplete filing even at $0 US tax liability.\n2. As a German tax resident, you may need to report your US LLC's income on your own German Einkommensteuererklärung (income tax return), potentially with a Foreign Tax Credit for any US tax paid. This is a German-side compliance question for a German tax advisor — we don't advise on German tax law.\n\nWe handle the US federal Form 5472 + pro forma 1120 filing. The German reporting side is a separate, parallel obligation you'll want a Steuerberater to confirm.",
+      },
+      {
+        heading: "Common scenarios for German LLC owners",
+        body: "1. Amazon FBA seller with a Wyoming LLC: files Form 5472 + 1120 annually. Watch state sales tax nexus in states where Amazon stores inventory (Amazon's reports show you which states).\n\n2. SaaS founder with a Stripe Atlas Delaware LLC: files Form 5472 + 1120. Delaware also requires the separate $300/year franchise tax (state-level, unrelated to the IRS filing).\n\n3. Consultant or agency owner billing international clients through a US LLC: files Form 5472 + 1120. If you also have a German GmbH or sole proprietorship, that's a separate German filing — mention the US LLC relationship to your Steuerberater in case of related-party considerations.\n\n4. German owner who moved abroad and no longer has a German address: may not have a current Steuer-ID. Use a self-assigned reference ID on Form 5472 instead.\n\n5. Dormant US LLC with no transactions: if genuinely $0 activity all year, Form 5472 may not be required — but most owners file anyway since even a single capital contribution counts as a reportable transaction.",
+      },
+      {
+        heading: "Step-by-step filing process",
+        body: "1. Gather your LLC info: legal name (exactly as on your CP-575 EIN letter), EIN, US registered agent address, state and date of formation, NAICS code.\n2. Gather your owner info: full legal name as on your passport, Steuer-ID (or self-assigned reference ID if you don't have one), German residential address, country of citizenship, country of tax residence (Germany).\n3. Add up year-end financials in USD: capital contributions in, distributions out, total assets at year-end, any related-party payments.\n4. Fill in pro forma Form 1120: entity identification only, stamp \"Foreign-Owned U.S. DE\" across the top.\n5. Fill in Form 5472: Parts I, II, III, IV, V, VII — your Steuer-ID goes in Part II's foreign tax ID field.\n6. Build the Part V supporting statement listing each reportable transaction.\n7. Sign in pen (or use our in-portal canvas signature, embedded into a printable PDF).\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Keep the confirmation receipt as proof of timely filing.",
+      },
+      {
+        heading: "What Form5472 Prep does for German owners specifically",
+        body: "Our wizard accepts the German Steuer-ID format directly in the foreign tax ID field, and flags it clearly as separate from a Steuernummer or VAT ID so you don't enter the wrong one. Beyond that, the process is identical to any other country:\n\n• 12-question wizard, 15 minutes.\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Timestamped fax confirmation receipt emailed back to you as proof of filing.\n\nPricing: Standard $199 · Rush $279 · Premium $449 (IRS fax delivery included on every plan). +$149 per additional past year.",
+      },
+      {
+        heading: "Multi-year catch-up for German owners",
+        body: "If you formed your US LLC a few years ago and only recently learned about Form 5472, the IRS's DIIRSP (Delinquent International Information Return Submission Procedure) is the standard catch-up path — file all missed years together with one Reasonable Cause Statement covering the full period.\n\n• 2-year DIIRSP catch-up: Standard $348 · Rush $428 · Premium $598 (fax included).\n• 3-year DIIRSP catch-up: Standard $497 · Rush $577 · Premium $747 (fax included).\n\nThe reasonable cause statement is auto-generated and tailored to the first-time foreign-owner scenario. An accountant on our team reviews every package before it's faxed to the IRS.",
+      },
+      {
+        heading: "Bottom line for German-resident LLC owners",
+        body: "Owning a US LLC as a German tax resident means two separate compliance tracks: the US federal Form 5472 + pro forma 1120 (our job), and your German-side reporting of the LLC's income on your own tax return (your Steuerberater's job). Missing the US filing risks a $25,000 penalty per year, regardless of how much — or how little — US tax is actually owed.\n\nOur service handles the federal piece in about 15 minutes, accountant-reviewed, with a money-back guarantee if we fail to submit — and if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Which German tax number goes on Form 5472 — Steuer-ID, Steuernummer, or VAT ID?",
+        a: "Use your Steuer-ID (Steuerliche Identifikationsnummer) — the 11-digit personal number from the Bundeszentralamt für Steuern. Your Steuernummer (local Finanzamt number) and USt-IdNr (VAT ID) serve different purposes and aren't the foreign tax ID Form 5472 is asking for.",
+      },
+      {
+        q: "I don't have a Steuer-ID — what do I do?",
+        a: "If you've never registered a German address (for example, you're a German citizen living abroad), you may not have one. In that case, use a self-assigned reference ID number on Form 5472, consistent with the IRS instructions for shareholders without a foreign tax ID.",
+      },
+      {
+        q: "Does the Germany-US tax treaty mean I don't have to file Form 5472?",
+        a: "No. Form 5472 is an information return, separate from income tax treaty relief. You file it regardless of whether any US tax is owed — the $25,000 penalty applies to a missing or incomplete filing even at $0 US tax liability.",
+      },
+      {
+        q: "Do I need to report my US LLC's income on my German tax return too?",
+        a: "Likely yes, as a German tax resident — but that's a German-side question for a Steuerberater, not something we advise on. We handle the US federal Form 5472 + pro forma 1120 filing only.",
+      },
+      {
+        q: "My US LLC pays me in EUR to a German bank account — does that change the filing?",
+        a: "No. All amounts on Form 5472 are reported in USD using the appropriate exchange rate for the transaction date, regardless of which currency or bank account the money actually moved through.",
+      },
+      {
+        q: "I have both a German GmbH and a US LLC — does that complicate things?",
+        a: "Potentially, if there are transactions between the two entities (related-party payments, shared services, etc.) — those need to be reported on Form 5472 Part IV. Mention the relationship to your accountant when filing so it's captured correctly.",
+      },
+      {
+        q: "Can I file Form 5472 from Germany without a US address?",
+        a: "Yes. The US address on the form is typically your registered agent's address, not a personal US address. You complete and fax the filing from anywhere, including Germany.",
+      },
+      {
+        q: "My US LLC made no money last year — do I still need to file?",
+        a: "Almost certainly yes. Even a single capital contribution (e.g., wiring money to fund the LLC's bank account) counts as a reportable transaction, which triggers the filing requirement regardless of revenue.",
+      },
+    ],
+    relatedSlugs: ["foreign-owned-llc-tax", "single-member-llc-foreign-owner", "wyoming-llc-form-5472", "delaware-llc-form-5472", "diirsp"],
+  },
+  {
+    slug: "form-5472-uae",
+    keyword: "Form 5472 UAE resident US LLC",
+    title: "Form 5472 for UAE Residents Who Own a US LLC — Complete Guide",
+    metaDescription:
+      "UAE residents who own a US LLC must file IRS Form 5472 + pro forma 1120 every year. What to enter without a personal UAE tax ID, common scenarios, and accountant-reviewed filing from $199.",
+    h1: "Form 5472 for UAE Residents Who Own a US LLC",
+    intro:
+      "Many Dubai and Abu Dhabi-based founders run global ecommerce, dropshipping, SaaS, or consulting businesses through a US LLC (usually Wyoming or Delaware) rather than a UAE mainland or free zone company. If that's you, you must file IRS Form 5472 with an attached pro forma Form 1120 every year — but the UAE has no personal income tax and, for most individuals, no personal tax ID either. Here's exactly what to put on the form instead, and the rest of the filing picture.",
+    sections: [
+      {
+        heading: "Why UAE-based founders use US LLCs",
+        body: "Common reasons UAE residents form a US LLC instead of, or alongside, a UAE mainland or free zone entity:\n\n• Faster, cheaper setup for an early-stage, US-focused or globally distributed business — a Wyoming or Delaware LLC can be formed in days for a few hundred dollars.\n• Easier access to US-based payment rails and banking — Stripe, Mercury, and PayPal Business are simpler to open with a US entity.\n• Customers or platforms (Amazon.com, US SaaS marketplaces) that expect or prefer a US-based seller entity.\n\nThis is a business-structure decision, not a way to avoid UAE obligations — if your UAE Corporate Tax or VAT registration status is affected by owning a foreign entity, that's a question for a UAE tax advisor. We handle the US federal Form 5472 side.",
+      },
+      {
+        heading: "You probably don't have a foreign tax ID — here's what to enter instead",
+        body: "The UAE does not have a personal income tax, and as a result most individuals are never issued a personal tax identification number. The UAE's Tax Registration Number (TRN), issued by the Federal Tax Authority (FTA), exists for VAT and Corporate Tax purposes — it's tied to a registered business, not automatically to you as an individual, unless you personally cross the VAT (AED 375,000 turnover) or Corporate Tax (AED 1,000,000 turnover) registration thresholds running your own business activity.\n\nIf you don't have a TRN or any other UAE tax identifying number, Form 5472 Part II lets you enter a self-assigned reference ID number instead of a foreign tax ID — you don't need to apply to any government agency for this. Just reuse the same reference ID every year for consistency. Your Emirates ID is a residency/identity document, not a tax identifier, and doesn't go in this field.",
+      },
+      {
+        heading: "UAE Corporate Tax — a separate question from Form 5472",
+        body: "The UAE introduced a federal Corporate Tax (generally 9% above a profit threshold) on UAE businesses. Whether your ownership of a foreign (US) disregarded LLC creates any UAE Corporate Tax nexus or reporting obligation depends on your specific facts — where the LLC's management and activity actually happen, whether you have a separate UAE business, and other jurisdiction-specific rules we're not positioned to advise on.\n\nWhat we can say clearly: Form 5472 is a US federal information return, entirely separate from UAE Corporate Tax. You file it based on your US LLC's activity regardless of your UAE tax position. For the UAE side, talk to a UAE-licensed tax advisor.",
+      },
+      {
+        heading: "Common scenarios for UAE-based owners",
+        body: "1. Dubai-based dropshipping or Amazon FBA store owner with a Wyoming LLC: files Form 5472 + 1120 annually. Watch US state sales tax nexus in states where inventory is stored.\n\n2. Abu Dhabi-based consultant or agency owner billing international clients through a Delaware LLC: files Form 5472 + 1120. Delaware also has a separate $300/year state franchise tax.\n\n3. UAE free zone company owner who also holds a separate US LLC: the US LLC filing is independent of the free zone company's UAE compliance, but mention the relationship to your accountant in case of related-party transactions between the two.\n\n4. SaaS founder with global (non-US) customers and a Stripe Atlas Delaware LLC: files Form 5472 + 1120 even though $0 US-source income is typical for this profile.\n\n5. Dormant US LLC with no activity all year: if truly zero transactions, filing may not be required — but most owners file anyway since a single capital contribution already counts.",
+      },
+      {
+        heading: "Step-by-step filing process",
+        body: "1. Gather your LLC info: legal name (as on your CP-575 EIN letter), EIN, US registered agent address, state and date of formation, NAICS code.\n2. Gather your owner info: full legal name as on your passport, UAE tax ID if you have one (otherwise a self-assigned reference ID), UAE residential address, country of citizenship, country of tax residence.\n3. Add up year-end financials in USD: capital contributions in, distributions out, total assets at year-end, related-party payments.\n4. Fill in pro forma Form 1120: entity identification only, stamp \"Foreign-Owned U.S. DE\" across the top.\n5. Fill in Form 5472: Parts I, II, III, IV, V, VII.\n6. Build the Part V supporting statement listing each reportable transaction.\n7. Sign in pen, or use our in-portal canvas signature embedded into a printable PDF.\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Keep the confirmation receipt as proof of timely filing.",
+      },
+      {
+        heading: "What Form5472 Prep does for UAE owners specifically",
+        body: "Our wizard handles the \"no foreign tax ID\" case cleanly — if you don't have a UAE TRN or other tax number, it walks you through the self-assigned reference ID option instead of leaving you stuck. Beyond that, the process is the same as anywhere else:\n\n• 12-question wizard, 15 minutes, accessible any time of day (no need to align with US business hours).\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Priority-tier customers get a direct email/WhatsApp line to the reviewing accountant — useful across the UAE's time zone gap with US business hours.\n\nPricing: Standard $199 · Rush $279 · Premium $449 (IRS fax delivery included on every plan). +$149 per additional past year.",
+      },
+      {
+        heading: "Multi-year catch-up for UAE owners",
+        body: "If your US LLC has been running for a couple of years and Form 5472 is news to you, the IRS's DIIRSP (Delinquent International Information Return Submission Procedure) is the standard catch-up path — file all missed years together with one Reasonable Cause Statement covering the full period.\n\n• 2-year DIIRSP catch-up: Standard $348 · Rush $428 · Premium $598 (fax included).\n• 3-year DIIRSP catch-up: Standard $497 · Rush $577 · Premium $747 (fax included).\n\nThe reasonable cause statement is auto-generated and tailored to the first-time foreign-owner scenario. An accountant on our team reviews every package before it's faxed to the IRS.",
+      },
+      {
+        heading: "Bottom line for UAE-resident LLC owners",
+        body: "Owning a US LLC from the UAE means filing Form 5472 + pro forma 1120 every year regardless of the UAE's 0% personal income tax — the two systems don't offset each other. Most UAE-resident owners won't have a personal foreign tax ID to enter, and that's fine: a self-assigned reference ID is the correct, IRS-sanctioned workaround.\n\nOur service handles the federal filing in about 15 minutes, accountant-reviewed, with a money-back guarantee if we fail to submit — and if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge.",
+      },
+    ],
+    faqs: [
+      {
+        q: "I don't have a personal tax ID in the UAE — what do I put on Form 5472?",
+        a: "Use a self-assigned reference ID number in place of a foreign tax ID. You don't need to apply anywhere for this — just pick a consistent identifier and reuse it every year. The IRS instructions specifically allow this when a shareholder has no foreign tax identifying number.",
+      },
+      {
+        q: "Is my Emirates ID my tax ID for this form?",
+        a: "No. Your Emirates ID is a national identity and residency document, not a tax identifier. It doesn't go in Form 5472's foreign tax ID field.",
+      },
+      {
+        q: "Does the UAE's 0% personal income tax mean I owe nothing in the US either?",
+        a: "Usually yes on actual tax owed, but that's separate from the filing requirement. Form 5472 is an information return — the $25,000 penalty applies for a missing or incomplete filing even when zero US tax is actually due.",
+      },
+      {
+        q: "Does UAE Corporate Tax affect my Form 5472 filing?",
+        a: "No — they're separate systems. Whether your US LLC creates any UAE Corporate Tax exposure is a UAE-side question for a licensed UAE tax advisor. Form 5472 is a US federal filing you complete regardless of your UAE tax position.",
+      },
+      {
+        q: "I have a UAE free zone company and a separate US LLC — does that complicate the filing?",
+        a: "Only if there are transactions between the two entities, which would need to be reported on Form 5472 Part IV as related-party transactions. Mention the relationship when you file so it's captured correctly.",
+      },
+      {
+        q: "Can I file Form 5472 from the UAE without being in the US?",
+        a: "Yes. The US address on the form is typically your registered agent's address, not a personal US address. The whole process — including fax submission — is handled without you needing to be physically present in the US.",
+      },
+      {
+        q: "My US LLC made no money last year — do I still need to file?",
+        a: "Almost certainly yes. Even a single capital contribution, like wiring money to open the LLC's US bank account, counts as a reportable transaction and triggers the filing requirement.",
+      },
+      {
+        q: "Is there a time-zone issue getting this filed from the UAE?",
+        a: "No — our wizard, portal, and email support are available any time. Priority-tier customers also get a direct email/WhatsApp line to the reviewing accountant, which many UAE customers find easier across the time difference than phone calls during US business hours.",
+      },
+    ],
+    relatedSlugs: ["foreign-owned-llc-tax", "single-member-llc-foreign-owner", "wyoming-llc-form-5472", "delaware-llc-form-5472", "diirsp"],
   },
   {
     slug: "pro-forma-1120",
@@ -1643,7 +1801,7 @@ export const LANDING_PAGES: LandingPage[] = [
         a: "The IRS eventually issues a CP-15 penalty notice ($25,000 per missed year per form). If you ignore it past the 90-day window, continuation penalties stack at $25,000 per 30 days. A single LLC with 1 missed year could become $100,000+ in penalties within 18 months of ignored notices. Don't let it get there — file under DIIRSP now while it's still available.",
       },
     ],
-    relatedSlugs: ["form-5472-vs-1120", "foreign-owned-llc-tax", "form-5472-penalty", "wyoming-llc-form-5472", "delaware-llc-form-5472", "stripe-atlas-form-5472"],
+    relatedSlugs: ["form-5472-vs-1120", "foreign-owned-llc-tax", "form-5472-germany", "form-5472-uae", "wyoming-llc-form-5472", "delaware-llc-form-5472"],
   },
   {
     slug: "stripe-atlas-form-5472",
@@ -1874,7 +2032,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What happens if the IRS still assesses a penalty?",
-        body: "DIIRSP (Delinquent International Information Return Submission Procedure) is the IRS-published path for catch-up filings with reasonable cause requests. Most well-documented first-time late filings are accepted with no penalty assessed. There's no formal IRS guarantee, but the acceptance rate for properly-prepared DIIRSP submissions is high.\n\nIf the IRS assesses a penalty despite a complete DIIRSP submission, the reviewing accountant on your case will help you respond and appeal. This isn't part of the base Priority service (penalty abatement appeal is a separate scope and may require additional fees), but having a relationship with the accountant who prepared the original filing significantly streamlines any follow-up.\n\nOur 100% money-back guarantee covers failure-to-submit. It does not cover IRS penalty assessment — no service can guarantee an IRS outcome.",
+        body: "DIIRSP (Delinquent International Information Return Submission Procedure) is the IRS-published path for catch-up filings with reasonable cause requests. Most well-documented first-time late filings are accepted with no penalty assessed. There's no formal IRS guarantee, but the acceptance rate for properly-prepared DIIRSP submissions is high.\n\nTwo different scenarios here. If the IRS assesses a penalty because of an error in our preparation — a mistake on our end — we handle the response with the IRS at no charge. If instead the IRS assesses a penalty despite a correctly prepared, complete DIIRSP submission (a discretionary IRS call on your specific facts, not something we got wrong), the reviewing accountant on your case will still help you respond and appeal; that follow-up work sits outside the base Priority service and may carry an additional fee, though having the original preparer already familiar with your case speeds it up.\n\nOur 100% money-back guarantee covers failure-to-submit and, separately, any penalty caused by our own preparation error. No service can guarantee an IRS outcome on a correctly filed return — that discretion sits with the IRS.",
       },
       {
         heading: "Confidentiality and data handling",
@@ -1924,7 +2082,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Money-back guarantee — what does it cover?",
-        a: "If we fail to submit your filing to the IRS, you get a 100% refund. It does not cover IRS penalty assessment (no service can guarantee an IRS outcome) or change-of-mind cancellations after the package has been faxed.",
+        a: "If we fail to submit your filing to the IRS, you get a 100% refund. And if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge. It does not cover an IRS penalty assessed on a correctly filed return (no service can guarantee an IRS outcome) or change-of-mind cancellations after the package has been faxed.",
       },
     ],
     relatedSlugs: [],
@@ -1982,6 +2140,11 @@ const TOPIC_CLUSTERS: Record<string, string[]> = {
   "state": [
     "wyoming-llc-form-5472",
     "delaware-llc-form-5472",
+  ],
+  // Country-specific guides (owner's country of tax residence)
+  "country": [
+    "form-5472-germany",
+    "form-5472-uae",
   ],
   // Audience / persona
   "audience": [

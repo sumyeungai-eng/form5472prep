@@ -11,6 +11,12 @@ export const metadata: Metadata = {
   description:
     "Get a US Employer Identification Number (EIN) for your foreign-owned LLC — no SSN or ITIN required. We prepare Form SS-4 and obtain your EIN directly from the IRS by fax or phone. Flat fee $149.",
   alternates: { canonical: "https://www.form5472prep.com/ein" },
+  openGraph: {
+    title: "EIN for Foreign-Owned US LLC — No SSN Needed",
+    description:
+      "No SSN or ITIN required. We prepare Form SS-4 and obtain your EIN directly from the IRS by fax or phone. Flat fee $149.",
+    url: "https://www.form5472prep.com/ein",
+  },
 };
 
 const faq = [
@@ -76,20 +82,29 @@ export default function EinPage() {
     <>
       <EinStructuredData />
       {/* Hero */}
-      <section className="border-b border-slate-200 bg-gradient-to-b from-accent-50 to-white">
-        <div className="max-w-6xl mx-auto px-6 py-16 sm:py-20 grid md:grid-cols-[1fr_340px] gap-12 items-start">
+      <section className="relative overflow-hidden bg-ink text-white">
+        <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-seal/50" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-70"
+          style={{
+            background:
+              "radial-gradient(55% 55% at 20% 0%, rgba(30,58,138,0.5) 0%, rgba(14,27,51,0) 70%)",
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto px-6 py-16 sm:py-20 grid md:grid-cols-[1fr_340px] gap-12 items-start">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 mb-6">
-              <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+            <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100 mb-6">
+              <ShieldCheck className="h-3.5 w-3.5" />
               No SSN or ITIN required — we file Form SS-4 for you
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900 text-balance leading-tight">
+            </p>
+            <h1 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-balance leading-[1.08]">
               Get a US EIN<br />
-              <span className="text-accent">for your foreign-owned LLC.</span>
+              <span className="text-accent-100">for your foreign-owned LLC.</span>
             </h1>
-            <p className="mt-5 text-lg text-slate-600 max-w-xl">
+            <p className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
               Foreign founders can&apos;t use the IRS online EIN tool — it requires a US Social Security
-              Number or ITIN. We prepare <strong>Form SS-4</strong> and obtain your EIN directly from
+              Number or ITIN. We prepare <strong className="text-white">Form SS-4</strong> and obtain your EIN directly from
               the IRS by fax or phone. No SSN, no ITIN, and no passport mailing — the EIN itself never
               requires one.
             </p>
@@ -100,8 +115,8 @@ export default function EinPage() {
                 "EIN delivered by email in 1–5 business days",
                 "Copy of completed Form SS-4 included",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm text-slate-700">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+                <li key={item} className="flex items-start gap-2.5 text-sm text-slate-300">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 shrink-0" />
                   {item}
                 </li>
               ))}
@@ -109,20 +124,20 @@ export default function EinPage() {
           </div>
 
           {/* CTA card */}
-          <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-6 sticky top-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-accent mb-1">EIN Acquisition</p>
-            <p className="text-4xl font-semibold text-slate-900">$149</p>
+          <div className="rounded-2xl bg-white text-slate-900 ring-1 ring-black/5 shadow-2xl shadow-black/30 p-6 sticky top-6">
+            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent mb-1">EIN Acquisition</p>
+            <p className="font-serif text-5xl font-semibold text-ink">$149</p>
             <p className="text-sm text-slate-500 mt-1">Flat fee · one-time · no subscription</p>
             <Link
               href="/ein/apply"
-              className="mt-5 flex items-center justify-center gap-2 w-full h-11 rounded-md bg-accent text-white text-sm font-medium hover:bg-accent-700 transition-colors"
+              className="mt-5 flex items-center justify-center gap-2 w-full h-11 rounded-lg bg-accent text-white text-sm font-medium hover:bg-accent-700 transition-colors"
             >
               Get started
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/pricing"
-              className="mt-2 flex items-center justify-center w-full h-10 rounded-md border border-slate-200 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              className="mt-2 flex items-center justify-center w-full h-10 rounded-lg border border-slate-200 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
             >
               See Form 5472 filing plans
             </Link>
@@ -147,7 +162,7 @@ export default function EinPage() {
       {/* How it works */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-2xl font-semibold text-slate-900 mb-10">How it works</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-10">How it works</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
               <div key={step.title} className="relative">
@@ -166,7 +181,7 @@ export default function EinPage() {
       {/* What is an EIN — background */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-2xl font-semibold text-slate-900 mb-5">What is an EIN?</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-5">What is an EIN?</h2>
           <div className="prose prose-slate prose-sm max-w-none space-y-4 text-slate-600 leading-relaxed">
             <p>
               An <strong className="text-slate-800">Employer Identification Number (EIN)</strong> is a
@@ -198,10 +213,10 @@ export default function EinPage() {
       <section className="py-16 border-b border-slate-100 bg-slate-50">
         <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-accent mb-3">
+            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent mb-3">
               Why you can&apos;t just do it online
             </p>
-            <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+            <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-4">
               The IRS online EIN tool is closed to foreign founders
             </h2>
             <p className="text-slate-600 leading-relaxed mb-4">
@@ -247,7 +262,7 @@ export default function EinPage() {
       {/* FAQ */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-2xl font-semibold text-slate-900 mb-8">Frequently asked questions</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-8">Frequently asked questions</h2>
           <div className="space-y-6">
             {faq.map(({ q, a }) => (
               <div key={q}>
@@ -270,7 +285,7 @@ export default function EinPage() {
             href="/ein/apply"
             className="inline-flex items-center gap-2 bg-white text-accent font-semibold text-sm px-6 py-3 rounded-md hover:bg-accent-50 transition-colors"
           >
-            Email us to get started
+            Start your EIN application
             <ArrowRight className="h-4 w-4" />
           </Link>
           <p className="mt-4 text-xs text-accent-200">

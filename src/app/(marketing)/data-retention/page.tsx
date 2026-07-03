@@ -3,7 +3,7 @@ import { LegalLayout } from "@/components/LegalLayout";
 export const metadata = {
   title: "Data Retention Policy",
   description:
-    "form5472 deliberately stores the minimum. Bank statements are processed in memory and discarded. Signed PDFs deleted within 72 hours of fax confirmation. Fax receipts retained 7 years.",
+    "Form5472 Prep deliberately stores the minimum. Bank statements are processed in memory and discarded. Signed PDFs deleted within 72 hours of fax confirmation. Fax receipts retained 7 years.",
   alternates: { canonical: "/data-retention" },
   robots: { index: true, follow: true },
 };

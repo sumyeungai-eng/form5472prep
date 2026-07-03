@@ -20,6 +20,7 @@ type SendArgs = {
   replyTo?: string;
   bcc?: string;
   attachments?: SendAttachment[];
+  headers?: Record<string, string>;
 };
 
 // Sender address. Must NOT match any inbox we monitor — sending FROM and TO
@@ -32,7 +33,7 @@ const FROM = process.env.RESEND_FROM || "Form5472 Prep <donotreply@form5472prep.
 const REPLY_TO = process.env.RESEND_REPLY_TO || "support@form5472prep.com";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://form5472prep.com";
 
-export async function sendEmail({ to, subject, html, text, replyTo, bcc, attachments }: SendArgs) {
+export async function sendEmail({ to, subject, html, text, replyTo, bcc, attachments, headers }: SendArgs) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.log("\n[email stub — set RESEND_API_KEY to actually send]");
@@ -66,6 +67,7 @@ export async function sendEmail({ to, subject, html, text, replyTo, bcc, attachm
       reply_to: replyTo ?? REPLY_TO,
       ...(bcc ? { bcc } : {}),
       ...(resendAttachments && resendAttachments.length > 0 ? { attachments: resendAttachments } : {}),
+      ...(headers && Object.keys(headers).length > 0 ? { headers } : {}),
     }),
   });
   if (!res.ok) {
@@ -279,7 +281,7 @@ function portalLinkWithNext(portalLink: string, nextPath: string): string {
 export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const {
     email, llcName, taxYears, tier, amountPaidCents, portalLink, receiptUrl,
-    pdfBytes, pdfFilename, signatures,
+    pdfBytes, signatures,
   } = args;
   // Resolve the tier through pricing.ts so legacy tier values from old
   // filings still render a sensible label rather than crashing.
@@ -293,7 +295,6 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const llcLine = llcName ?? "(LLC name pending)";
   const hasPdf = !!pdfBytes && pdfBytes.byteLength > 0;
   const sigCount = signatures?.length ?? 0;
-  const attachmentName = pdfFilename ?? buildPdfFilename(llcName, taxYears);
 
   // Fax delivery is included on every tier — the row just states that
   // explicitly so the customer can see what they got.
@@ -306,7 +307,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const step3Text = `  3. We fax it to the IRS Ogden PIN Unit and email you confirmation.`;
 
   const introCopy = hasPdf
-    ? "Thanks for your order. Your IRS filing package is ready — open your portal to sign it. The unsigned PDF is attached for your reference."
+    ? "Thanks for your order. Your IRS filing package is ready — open your portal to review and sign it."
     : "Thanks for your order. We've received your payment and started preparing your IRS filing. You'll get the generated PDF in your portal within a few minutes.";
 
   const signaturesHtml = hasPdf && sigCount > 0
@@ -319,8 +320,11 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     : "";
 
   const bodyHtml = `
-    <p style="margin:0 0 20px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 12px;color:#475569;line-height:1.6;font-size:15px;">
       ${introCopy}
+    </p>
+    <p style="margin:0 0 20px;color:#64748b;font-size:13px;">
+      Save <strong>donotreply@form5472prep.com</strong> to your contacts to make sure our filing emails reach your inbox.
     </p>
 
     ${signaturesHtml}
@@ -377,6 +381,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       : `Order confirmed — Form5472 Prep filing (${yearsLabel})`,
     text:
       `Thanks for your order!\n\n` +
+      `Tip: save donotreply@form5472prep.com to your contacts so our emails reach your inbox.\n\n` +
       `Order summary:\n` +
       `  LLC:           ${llcLine}\n` +
       `  Tax year(s):   ${yearsLabel}\n` +
@@ -400,19 +405,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
         ? { label: "Sign my filing", url: portalLinkWithNext(portalLink, `/filings/${args.filingId ?? ""}/sign`) }
         : { label: "Open my filing", url: portalLink },
     }),
-    attachments: hasPdf
-      ? [{ filename: attachmentName, content: pdfBytes!, contentType: "application/pdf" }]
-      : undefined,
   });
-}
-
-function buildPdfFilename(llcName: string | null, taxYears: number[]): string {
-  const safeName = (llcName ?? "Filing")
-    .replace(/[^A-Za-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "")
-    .slice(0, 50) || "Filing";
-  const yearPart = taxYears.length === 1 ? `${taxYears[0]}` : `${taxYears[0]}-${taxYears[taxYears.length - 1]}`;
-  return `${safeName}_Form5472_${yearPart}.pdf`;
 }
 
 // ---------- 3. Fax delivered email ----------
@@ -469,7 +462,7 @@ export async function sendFaxDeliveredEmail(args: {
       <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
         ${formatFaxProofRows(proof)}
       </table>
-      ${signedPdfBytes ? `<p style="margin:0 0 20px;color:#475569;font-size:13px;">A copy of the exact PDF transmitted to the IRS is attached to this email.</p>` : ""}
+      ${signedPdfBytes ? `<p style="margin:0 0 20px;color:#475569;font-size:13px;">The exact PDF transmitted to the IRS is available for download in your portal.</p>` : ""}
     `
     : "";
 
@@ -484,10 +477,9 @@ export async function sendFaxDeliveredEmail(args: {
     </div>
     ${proofTable}
     ${receiptPdfBytes ? `<p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:14px;">
-      A timestamped <strong>IRS Fax Transmission Receipt</strong> is attached
-      (<code style="font-family:ui-monospace,monospace;font-size:12px;">IRS-fax-receipt-…pdf</code>).
-      Keep it with your tax records — under IRC § 6038A it serves as proof of on-time filing if the
-      IRS ever asks.
+      A timestamped <strong>IRS Fax Transmission Receipt</strong> is saved in your portal — download
+      it to keep with your tax records. Under IRC § 6038A it serves as proof of on-time filing if
+      the IRS ever asks.
     </p>` : ""}
     <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:15px;">What's next</p>
     <p style="margin:0 0 24px;color:#475569;line-height:1.6;font-size:14px;">
@@ -506,40 +498,21 @@ export async function sendFaxDeliveredEmail(args: {
       `  Confirmation:   ${proof.faxId}\n`
     : "";
 
-  // Build attachment list. Both PDFs are optional — receipt OR signed PDF
-  // alone is fine. The receipt is named so it sorts before the package PDF
-  // alphabetically in most mail clients.
-  const safeLlc = llcLine.replace(/[^a-zA-Z0-9-]+/g, "_");
-  const safeYears = yearsLabel.replace(/[^0-9-]+/g, "-");
-  const attachments: Array<{ filename: string; content: Uint8Array | Buffer }> = [];
-  if (receiptPdfBytes) {
-    attachments.push({
-      filename: `IRS-fax-receipt-${safeLlc}-${safeYears}.pdf`,
-      content: receiptPdfBytes,
-    });
-  }
-  if (signedPdfBytes) {
-    attachments.push({
-      filename: `form5472-${safeLlc}-${safeYears}-faxed.pdf`,
-      content: signedPdfBytes,
-    });
-  }
-
   return sendEmail({
     to: email,
-    subject: `Filed with the IRS — ${llcLine} (${yearsLabel})`,
+    subject: `Your ${llcLine} filing was delivered to the IRS`,
     text:
       `Your signed Form 5472 + pro forma 1120 for ${llcLine} (${yearsLabel}) was successfully faxed to the IRS Ogden PIN Unit.\n\n` +
-      `Keep this email as your proof of submission. The IRS doesn't send acknowledgments for faxed 5472 filings, so no further action is required.\n` +
+      `Keep this email as your proof of submission. Download your timestamped IRS Fax Transmission Receipt from your portal — it serves as proof of on-time filing.\n` +
+      `The IRS doesn't send acknowledgments for faxed 5472 filings, so no further action is required.\n` +
       proofText +
-      `\nDownload your full filing package: ${portalLink}\n\n— Form5472 Prep`,
+      `\nView your filing and download documents: ${portalLink}\n\n— Form5472 Prep`,
     html: shell({
-      preheader: `Filed with the IRS — ${llcLine} (${yearsLabel}) successfully delivered.`,
+      preheader: `Your ${llcLine} filing was delivered to the IRS — download your receipt in the portal.`,
       heading: "Your filing was delivered to the IRS",
       bodyHtml,
       cta: { label: "View my filing", url: portalLink },
     }),
-    attachments: attachments.length > 0 ? attachments : undefined,
   });
 }
 
@@ -927,7 +900,7 @@ export async function sendJanuaryReminderEmail(args: ReminderArgs) {
     </p>
     <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin:0 0 24px;color:#334155;font-size:14px;line-height:1.5;">
       <strong style="color:#0f172a;">Why now?</strong> Filing in January means no last-minute rush
-      and no risk of the <strong>$25,000 penalty</strong> for late or missing Form 5472.
+      and no risk of IRS late-filing penalties on Form 5472.
     </div>
   `;
 
@@ -937,7 +910,7 @@ export async function sendJanuaryReminderEmail(args: ReminderArgs) {
     text:
       `Happy New Year!\n\nYour ${taxYearToFile} Form 5472 + pro forma 1120 for ${llcLine} is due by April 15, ${taxYearToFile + 1}.\n\n` +
       `File now in ~15 minutes — we'll pull your previous answers forward: ${startLink}\n\n` +
-      `Filing early avoids the $25,000 IRS penalty for late or missing Form 5472.\n\n` +
+      `Filing early avoids IRS late-filing penalties on Form 5472.\n\n` +
       `— Form5472 Prep\n\n` +
       `Unsubscribe from filing reminders: ${unsubscribeUrl}`,
     html: shell({
@@ -947,6 +920,10 @@ export async function sendJanuaryReminderEmail(args: ReminderArgs) {
       cta: { label: `File my ${taxYearToFile} return`, url: startLink },
       unsubscribeUrl,
     }),
+    headers: {
+      "List-Unsubscribe": `<${unsubscribeUrl}>`,
+      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+    },
   });
 }
 
@@ -968,8 +945,8 @@ export async function sendMarchReminderEmail(args: ReminderArgs) {
       ${escapeHtml(llcLine)} is due in about <strong>30 days</strong> (deadline: ${deadline}).
     </p>
     <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:14px 18px;margin:0 0 20px;color:#991b1b;font-size:14px;line-height:1.5;">
-      <strong>Heads up:</strong> the IRS late-filing penalty for Form 5472 is <strong>$25,000</strong>,
-      and an additional $25,000 per 30-day period it remains unfiled after they request it.
+      <strong>Heads up:</strong> the IRS imposes significant late-filing penalties for Form 5472 —
+      act now to file on time.
     </div>
     <p style="margin:0 0 24px;color:#475569;line-height:1.6;font-size:15px;">
       The filing takes ~15 minutes from start to faxed-with-the-IRS. We've kept your previous
@@ -982,7 +959,7 @@ export async function sendMarchReminderEmail(args: ReminderArgs) {
     subject: `30 days left — file your ${taxYearToFile} Form 5472 before April 15`,
     text:
       `Your ${taxYearToFile} Form 5472 for ${llcLine} is due in about 30 days (deadline: ${deadline}).\n\n` +
-      `The late-filing penalty is $25,000. Take 15 minutes now and we'll fax it to the IRS today: ${startLink}\n\n` +
+      `The IRS imposes significant late-filing penalties on Form 5472. Take 15 minutes now and we'll fax it to the IRS today: ${startLink}\n\n` +
       `— Form5472 Prep\n\n` +
       `Unsubscribe from filing reminders: ${unsubscribeUrl}`,
     html: shell({
@@ -992,6 +969,10 @@ export async function sendMarchReminderEmail(args: ReminderArgs) {
       cta: { label: `File my ${taxYearToFile} return now`, url: startLink },
       unsubscribeUrl,
     }),
+    headers: {
+      "List-Unsubscribe": `<${unsubscribeUrl}>`,
+      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+    },
   });
 }
 
@@ -1014,8 +995,8 @@ export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) 
       Your progress is saved — you can pick up right where you left off.
     </p>
     <p style="margin:0 0 20px;color:#475569;line-height:1.6;font-size:15px;">
-      Most customers finish in about <strong>15 minutes</strong>. The IRS penalty for a
-      missing Form 5472 is <strong>$25,000</strong>, so it's worth completing today.
+      Most customers finish in about <strong>15 minutes</strong>. The IRS imposes
+      significant penalties for missing Form 5472 filings, so it's worth completing today.
     </p>
     <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin:0 0 24px;color:#334155;font-size:14px;line-height:1.5;">
       <strong style="color:#0f172a;">Need help?</strong> Just reply to this email and we'll
@@ -1029,7 +1010,7 @@ export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) 
       `You started a Form 5472 filing for ${llcName ?? "your foreign-owned LLC"} but didn't finish.\n\n` +
       `Your progress is saved. Pick up where you left off (most customers finish in ~15 minutes):\n` +
       `${resumeLink}\n\n` +
-      `The IRS penalty for missing Form 5472 is $25,000 — worth completing today.\n\n` +
+      `The IRS imposes significant penalties for missing Form 5472 filings — worth completing today.\n\n` +
       `Need help? Just reply to this email.\n\n— Form5472 Prep\n\n` +
       `Unsubscribe from these emails: ${unsubscribeUrl}`,
     html: shell({
@@ -1039,6 +1020,10 @@ export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) 
       cta: { label: "Resume my filing", url: resumeLink },
       unsubscribeUrl,
     }),
+    headers: {
+      "List-Unsubscribe": `<${unsubscribeUrl}>`,
+      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+    },
   });
 }
 

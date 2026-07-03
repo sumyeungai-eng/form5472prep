@@ -7,7 +7,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
 import { LANDING_PAGES, getLandingPage, getRelatedSlugs } from "@/lib/landing-pages";
 import { TIERS, TIER_ORDER, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
-import { formatUsd } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 import { env } from "@/lib/env";
 
 // Lock the route to only the known slugs — anything else 404s.
@@ -88,25 +88,24 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
 
       <article className="bg-white">
         {/* Hero — variant assignment is deterministic per slug. */}
-        <section className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-br from-accent-50 via-white to-accent-50 animate-gradient">
-          {/* Decorative floating blobs — subtle ambient motion. */}
+        <section className="relative overflow-hidden bg-ink text-white">
+          <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-seal/50" />
           <div
             aria-hidden
-            className="pointer-events-none absolute -top-24 -left-24 h-80 w-80 rounded-full bg-accent/10 blur-3xl animate-float"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -bottom-24 -right-16 h-80 w-80 rounded-full bg-emerald-200/30 blur-3xl animate-float"
-            style={{ animationDelay: "1.5s" }}
+            className="pointer-events-none absolute inset-0 opacity-70"
+            style={{
+              background:
+                "radial-gradient(55% 55% at 20% 0%, rgba(30,58,138,0.5) 0%, rgba(14,27,51,0) 70%)",
+            }}
           />
           {variant === "rail" ? (
-            <div className="relative max-w-6xl mx-auto px-6 pt-16 pb-12 grid lg:grid-cols-[minmax(0,1fr)_360px] gap-10 items-start">
+            <div className="relative max-w-6xl mx-auto px-6 pt-16 pb-14 grid lg:grid-cols-[minmax(0,1fr)_360px] gap-10 lg:gap-16 items-start animate-fade-in-up">
               <div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 animate-fade-in-up">
-                  <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+                <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100">
+                  <ShieldCheck className="h-3.5 w-3.5" />
                   For foreign-owned US single-member LLCs
-                </span>
-                <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 text-balance animate-fade-in-up animate-delay-100">
+                </p>
+                <h1 className="mt-5 font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold leading-[1.08] tracking-tight text-balance">
                   {page.h1}
                 </h1>
                 {/* className="lead" matches the SpeakableSpecification cssSelector
@@ -114,17 +113,17 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                   for the page. The first ~60 words also feed Google AI Overviews
                   and ChatGPT direct answers, so page.intro is written as a
                   definitional / direct-answer paragraph. */}
-              <p className="lead mt-5 text-lg text-slate-600 animate-fade-in-up animate-delay-200">{page.intro}</p>
+              <p className="lead mt-6 text-lg leading-relaxed text-slate-300">{page.intro}</p>
               </div>
               <HeroRailCta startUrl={startUrl} />
             </div>
           ) : (
-            <div className="relative max-w-3xl mx-auto px-6 pt-16 pb-12">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 animate-fade-in-up">
-                <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+            <div className="relative max-w-3xl mx-auto px-6 pt-16 pb-14 animate-fade-in-up">
+              <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100">
+                <ShieldCheck className="h-3.5 w-3.5" />
                 Form 5472 + 1120 filing service
-              </span>
-              <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 text-balance animate-fade-in-up animate-delay-100">
+              </p>
+              <h1 className="mt-5 font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold leading-[1.08] tracking-tight text-balance">
                 {page.h1}
               </h1>
               {/* className="lead" matches the SpeakableSpecification cssSelector
@@ -132,10 +131,10 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                   for the page. The first ~60 words also feed Google AI Overviews
                   and ChatGPT direct answers, so page.intro is written as a
                   definitional / direct-answer paragraph. */}
-              <p className="lead mt-5 text-lg text-slate-600 animate-fade-in-up animate-delay-200">{page.intro}</p>
-              <div className="mt-7 flex flex-wrap items-center gap-3 animate-fade-in-up animate-delay-300">
+              <p className="lead mt-6 text-lg leading-relaxed text-slate-300">{page.intro}</p>
+              <div className="mt-7 flex flex-wrap items-center gap-3">
                 <Link href={startUrl} className="group">
-                  <Button size="lg" className="shadow-md shadow-accent/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/30">
+                  <Button size="lg" className="shadow-lg shadow-accent/25 transition-all duration-200 hover:-translate-y-0.5">
                     Start filing
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                   </Button>
@@ -163,7 +162,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                   aria-label="In this guide"
                   className="rounded-lg border border-slate-200 bg-slate-50 p-5"
                 >
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-slate-500">
                     In this guide
                   </p>
                   <ol className="mt-3 space-y-1.5 text-sm">
@@ -193,7 +192,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                     sm:opacity-0 vs default opacity-100). */}
                 <h2
                   id={`step-${i + 1}`}
-                  className="group flex items-center gap-2 text-2xl font-semibold text-slate-900 tracking-tight scroll-mt-20"
+                  className="group flex items-center gap-2 font-serif text-2xl font-semibold text-ink tracking-tight scroll-mt-20"
                 >
                   <span>{s.heading}</span>
                   <a
@@ -213,19 +212,14 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
         </section>
 
         {/* Mid-page CTA */}
-        <section className="relative overflow-hidden bg-accent-50 border-b border-slate-200">
-          {/* Decorative motion behind the CTA. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -top-20 right-1/4 h-72 w-72 rounded-full bg-accent/10 blur-3xl animate-float"
-          />
-          <Reveal as="div" className="relative max-w-3xl mx-auto px-6 py-12 text-center">
-            <h2 className="text-2xl font-semibold text-slate-900">
+        <section className="border-y border-paper-edge bg-paper">
+          <Reveal as="div" className="relative max-w-3xl mx-auto px-6 py-14 text-center">
+            <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink">
               Skip the work — file in 15 minutes.
             </h2>
             <p className="mt-3 text-slate-600 max-w-xl mx-auto">
               We generate every form, you sign one PDF, we fax it to the IRS Ogden PIN Unit.
-              Starting at {formatUsd(TIERS.standard.priceCents)}. IRS fax delivery included on every plan.
+              Starting at {formatPrice(TIERS.standard.priceCents)}. IRS fax delivery included on every plan.
             </p>
             <ul className="mt-6 inline-block text-left space-y-2 text-sm">
               {[
@@ -266,7 +260,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
           <section className="border-b border-slate-200">
             <div className="max-w-3xl mx-auto px-6 py-16">
               <Reveal>
-                <h2 className="text-2xl font-semibold text-slate-900 tracking-tight">
+                <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink tracking-tight">
                   Frequently asked questions
                 </h2>
               </Reveal>
@@ -287,7 +281,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
           <section className="bg-slate-50 border-b border-slate-200">
             <div className="max-w-3xl mx-auto px-6 py-16">
               <Reveal>
-                <h2 className="text-xl font-semibold text-slate-900 tracking-tight">
+                <h2 className="font-serif text-xl sm:text-2xl font-semibold text-ink tracking-tight">
                   Related guides
                 </h2>
               </Reveal>
@@ -375,17 +369,17 @@ function HeroRailCta({ startUrl }: { startUrl: string }) {
     "100% money-back if we fail to submit",
   ];
   return (
-    <div className="lg:sticky lg:top-8 rounded-2xl border border-slate-200 bg-white shadow-xl shadow-accent/5 p-6 animate-fade-in-up animate-delay-200">
+    <div className="lg:sticky lg:top-8 rounded-2xl bg-white text-slate-900 ring-1 ring-black/5 shadow-2xl shadow-black/30 p-6 animate-fade-in-up animate-delay-200">
       <div className="flex items-center gap-2">
-        <span className="relative flex h-2.5 w-2.5">
+        <span className="relative flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
         </span>
-        <span className="text-xs font-semibold uppercase tracking-wide text-accent">
+        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent">
           Start filing now
         </span>
       </div>
-      <p className="mt-4 text-2xl font-semibold text-slate-900 leading-tight">
+      <p className="mt-4 font-serif text-2xl font-semibold text-ink leading-tight">
         File in 15 minutes.
       </p>
       <p className="mt-2 text-sm text-slate-600">
@@ -405,7 +399,7 @@ function HeroRailCta({ startUrl }: { startUrl: string }) {
       </Link>
       <a
         href="#pricing"
-        className="mt-2 block text-center text-sm font-medium text-slate-700 border border-slate-300 rounded-md py-2.5 hover:bg-slate-50 transition-colors"
+        className="mt-2 block text-center text-sm font-medium text-slate-700 border border-slate-300 rounded-lg py-2.5 hover:bg-slate-50 transition-colors"
       >
         See pricing
       </a>
@@ -447,8 +441,8 @@ function PricingSection({
     <section id="pricing" className="bg-slate-50 border-b border-slate-200">
       <div className="max-w-5xl mx-auto px-6 py-16">
         <Reveal as="div" className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-wide text-accent">Pricing</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">
+          <p className="font-mono text-xs font-medium uppercase tracking-[0.18em] text-accent">Pricing</p>
+          <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink">
             Flat-rate Form 5472 filing.
           </h2>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto">
@@ -478,17 +472,17 @@ function PricingSection({
                 }`}
               >
                 {highlighted && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-semibold rounded-full bg-accent text-white px-3 py-0.5 shadow">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] rounded-full bg-accent text-white px-3 py-1 shadow">
                     Most popular
                   </span>
                 )}
                 <div>
-                  <p className="font-semibold text-slate-900">{t.label}</p>
+                  <p className="font-semibold text-ink">{t.label}</p>
                   <p className="text-xs text-slate-500 mt-0.5">{t.subtitle}</p>
                 </div>
-                <p className="mt-3 text-3xl font-semibold text-slate-900">
-                  {formatUsd(t.priceCents)}
-                  <span className="ml-1 text-sm font-normal text-slate-500">/ year</span>
+                <p className="mt-3 font-serif text-4xl font-semibold text-ink">
+                  {formatPrice(t.priceCents)}
+                  <span className="ml-1.5 font-mono text-xs font-normal text-slate-500">/ filing</span>
                 </p>
                 <ul className="mt-4 space-y-1.5 text-sm text-slate-700 flex-1">
                   {t.features.map((f) => (
@@ -512,7 +506,7 @@ function PricingSection({
         </div>
         <p className="mt-6 text-center text-sm text-slate-600">
           <span className="font-semibold text-slate-900">
-            + {formatUsd(MULTI_YEAR_ADDON_CENTS)} per additional year
+            + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year
           </span>
           <span className="mx-2 text-slate-400">·</span>
           Saves you from the $25,000-per-form IRS penalty

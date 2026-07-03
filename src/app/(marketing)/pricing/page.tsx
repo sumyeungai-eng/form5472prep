@@ -7,7 +7,7 @@ import {
   MULTI_YEAR_ADDON_CENTS,
   type Tier,
 } from "@/lib/pricing";
-import { formatUsd } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 
 export const metadata: Metadata = {
@@ -15,6 +15,12 @@ export const metadata: Metadata = {
   description:
     "Flat-rate Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. Standard $199, Rush $279, Premium $449. IRS fax delivery included on every plan. Avoid the $25,000 IRS penalty.",
   alternates: { canonical: "https://www.form5472prep.com/pricing" },
+  openGraph: {
+    title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
+    description:
+      "Flat-rate Form 5472 + pro forma 1120 filing. Standard $199, Rush $279, Premium $449. IRS fax delivery included on every plan.",
+    url: "https://www.form5472prep.com/pricing",
+  },
 };
 
 const tierEntries = TIER_ORDER.map((key) => [key, TIERS[key]] as const);
@@ -47,33 +53,42 @@ export default function PricingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
       />
 
-      <section className="border-b border-slate-200 bg-gradient-to-br from-accent-50 via-white to-white">
-        <div className="max-w-6xl mx-auto px-6 pt-16 pb-12 sm:pt-20 sm:pb-16">
+      <section className="relative overflow-hidden bg-ink text-white">
+        <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-seal/50" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-70"
+          style={{
+            background:
+              "radial-gradient(60% 55% at 50% 0%, rgba(30,58,138,0.5) 0%, rgba(14,27,51,0) 70%)",
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto px-6 pt-16 pb-12 sm:pt-20 sm:pb-16">
           <div className="text-center max-w-3xl mx-auto">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700">
-              <ShieldCheck className="h-3.5 w-3.5 text-accent" />
-              Built for foreign founders · No CPA required · No US address needed
-            </span>
-            <h1 className="mt-6 text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900 text-balance">
+            <p className="inline-flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              For foreign-owned US LLCs
+            </p>
+            <h1 className="mt-5 font-serif text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight text-balance">
               Flat-rate Form 5472 filing.
               <br />
-              <span className="text-accent">No hidden fees.</span>
+              <span className="text-accent-100">No hidden fees.</span>
             </h1>
-            <p className="mt-5 text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="mt-6 text-lg leading-relaxed text-slate-300 max-w-2xl mx-auto">
               Done-for-you Form 5472 + pro forma 1120 for foreign-owned US LLCs.
-              Avoid the $25,000-per-form IRS penalty. Fax delivery to the IRS
-              Ogden PIN Unit included on every plan.
+              Avoid the $25,000-per-form IRS penalty — with fax delivery to the
+              IRS Ogden PIN Unit included on every plan.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-5 py-2 text-sm font-medium text-emerald-800">
-                <Send className="h-4 w-4" />
-                Fax filing included on every plan
-              </div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-accent-50 border-2 border-accent/30 px-5 py-2 text-sm font-medium text-accent">
-                <ShieldCheck className="h-4 w-4" />
-                Every order reviewed by a qualified tax accountant
-              </div>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white ring-1 ring-white/15">
+                <Send className="h-4 w-4 text-accent-100" />
+                Fax filing on every plan
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white ring-1 ring-white/15">
+                <ShieldCheck className="h-4 w-4 text-accent-100" />
+                Reviewed by a tax accountant
+              </span>
             </div>
           </div>
         </div>
@@ -88,7 +103,7 @@ export default function PricingPage() {
 
         <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-700 text-center">
           <span className="font-semibold text-slate-900">
-            + {formatUsd(MULTI_YEAR_ADDON_CENTS)} per additional year
+            + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year
           </span>
           <span className="mx-2 text-slate-400">·</span>
           <span>
@@ -110,10 +125,10 @@ export default function PricingPage() {
           service pages and captures founders who need more than the 5472. */}
       <section className="border-t border-slate-200 bg-slate-50">
         <div className="max-w-5xl mx-auto px-6 py-16">
-          <p className="text-center text-sm font-medium text-accent uppercase tracking-wide">
+          <p className="text-center font-mono text-xs font-medium uppercase tracking-[0.18em] text-accent">
             More for foreign founders
           </p>
-          <h2 className="mt-2 text-center text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900">
+          <h2 className="mt-3 text-center font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
             Also need an EIN or ITIN?
           </h2>
           <div className="mt-8 grid md:grid-cols-2 gap-4">
@@ -154,7 +169,7 @@ export default function PricingPage() {
       <FaxReceiptProof />
 
       <section className="max-w-4xl mx-auto px-6 pb-20 space-y-8">
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-900 text-center">
+        <h2 className="text-center font-serif text-2xl font-semibold tracking-tight text-ink">
           Pricing FAQ
         </h2>
         <div className="space-y-4">
@@ -197,7 +212,7 @@ function TierCard({ slug, tier }: { slug: Tier; tier: typeof TIERS[Tier] }) {
     >
       {highlighted && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white shadow">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-white shadow">
             <Sparkles className="h-3 w-3" />
             Most popular
           </span>
@@ -205,15 +220,15 @@ function TierCard({ slug, tier }: { slug: Tier; tier: typeof TIERS[Tier] }) {
       )}
 
       <div>
-        <h3 className="text-xl font-semibold text-slate-900">{tier.label}</h3>
+        <h3 className="text-xl font-semibold text-ink">{tier.label}</h3>
         <p className="mt-1 text-sm text-slate-600">{tier.subtitle}</p>
       </div>
 
       <div className="mt-5 flex items-baseline gap-1.5">
-        <span className="text-4xl font-semibold tracking-tight text-slate-900">
-          {formatUsd(tier.priceCents)}
+        <span className="font-serif text-5xl font-semibold tracking-tight text-ink">
+          {formatPrice(tier.priceCents)}
         </span>
-        <span className="text-sm text-slate-500">/ year</span>
+        <span className="font-mono text-xs text-slate-500">/ filing</span>
       </div>
 
       <ul className="mt-6 space-y-2.5 text-sm text-slate-700 flex-1">

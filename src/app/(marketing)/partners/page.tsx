@@ -12,6 +12,12 @@ export const metadata: Metadata = {
   description:
     "Formation agencies, CPA firms, and registered agents: manage Form 5472 filings for all your clients under one partner account. You prepare, your client signs with a secure link, we review and fax to the IRS.",
   alternates: { canonical: "https://www.form5472prep.com/partners" },
+  openGraph: {
+    title: "Partner Program — Batch Form 5472 Filings for Your Clients",
+    description:
+      "Formation agencies, CPA firms, and registered agents: manage Form 5472 filings for all your clients under one account. Your client signs with a secure link — we review and fax to the IRS.",
+    url: "https://www.form5472prep.com/partners",
+  },
 };
 
 const faq = [
@@ -70,19 +76,28 @@ export default function PartnersPage() {
       <PartnersStructuredData />
 
       {/* Hero */}
-      <section className="border-b border-slate-200 bg-gradient-to-b from-accent-50 to-white">
-        <div className="max-w-6xl mx-auto px-6 py-16 sm:py-20 grid md:grid-cols-[1fr_340px] gap-12 items-start">
+      <section className="relative overflow-hidden bg-ink text-white">
+        <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-seal/50" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-70"
+          style={{
+            background:
+              "radial-gradient(55% 55% at 20% 0%, rgba(30,58,138,0.5) 0%, rgba(14,27,51,0) 70%)",
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto px-6 py-16 sm:py-20 grid md:grid-cols-[1fr_340px] gap-12 items-start">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 mb-6">
-              <Users className="h-3.5 w-3.5 text-accent" />
+            <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100 mb-6">
+              <Users className="h-3.5 w-3.5" />
               For agencies, CPA firms &amp; registered agents
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900 text-balance leading-tight">
+            </p>
+            <h1 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-balance leading-[1.08]">
               All your clients&apos; Form 5472 filings,
               <br />
-              <span className="text-accent">one partner account.</span>
+              <span className="text-accent-100">one partner account.</span>
             </h1>
-            <p className="mt-5 text-lg text-slate-600 max-w-xl">
+            <p className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
               Batch filings for every foreign-owned LLC you manage. You prepare each filing in
               minutes, your client signs with a secure link, our tax accountant reviews, and we fax
               to the IRS Ogden PIN Unit — with a timestamped receipt for every one.
@@ -94,8 +109,8 @@ export default function PartnersPage() {
                 "Every package reviewed by a qualified tax accountant",
                 "IRS fax receipt stored per filing as proof of submission",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm text-slate-700">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+                <li key={item} className="flex items-start gap-2.5 text-sm text-slate-300">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 shrink-0" />
                   {item}
                 </li>
               ))}
@@ -103,24 +118,24 @@ export default function PartnersPage() {
           </div>
 
           {/* CTA card */}
-          <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-6 sticky top-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-accent mb-1">
+          <div className="rounded-2xl bg-white text-slate-900 ring-1 ring-black/5 shadow-2xl shadow-black/30 p-6 sticky top-6">
+            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent mb-1">
               Partner Program
             </p>
-            <p className="text-2xl font-semibold text-slate-900">Same flat pricing</p>
+            <p className="font-serif text-2xl font-semibold text-ink">Same flat pricing</p>
             <p className="text-sm text-slate-500 mt-1">
               From $199 per filing · fax included · no subscription
             </p>
             <a
               href="#apply"
-              className="mt-5 flex items-center justify-center gap-2 w-full h-11 rounded-md bg-accent text-white text-sm font-medium hover:bg-accent-700 transition-colors"
+              className="mt-5 flex items-center justify-center gap-2 w-full h-11 rounded-lg bg-accent text-white text-sm font-medium hover:bg-accent-700 transition-colors"
             >
               Request a partner account
               <ArrowRight className="h-4 w-4" />
             </a>
             <Link
               href="/partner/sign-in"
-              className="mt-2 flex items-center justify-center w-full h-10 rounded-md border border-slate-200 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              className="mt-2 flex items-center justify-center w-full h-10 rounded-lg border border-slate-200 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
             >
               Already a partner? Sign in →
             </Link>
@@ -144,7 +159,7 @@ export default function PartnersPage() {
       {/* How it works */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-2xl font-semibold text-slate-900 mb-10">How the partner flow works</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-10">How the partner flow works</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
               <div key={step.title}>
@@ -172,7 +187,7 @@ export default function PartnersPage() {
       {/* FAQ */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-2xl font-semibold text-slate-900 mb-8">Partner FAQ</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-8">Partner FAQ</h2>
           <div className="space-y-6">
             {faq.map(({ q, a }) => (
               <div key={q}>
