@@ -3,6 +3,7 @@ import { Inter, Source_Serif_4, IBM_Plex_Mono } from "next/font/google";
 import Script from "next/script";
 import { env } from "@/lib/env";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ChatWidget } from "@/components/ChatWidget";
 import { GOOGLE_ADS_TAG_ID } from "@/lib/analytics/googleAds";
 import "./globals.css";
@@ -118,6 +119,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <ChatWidget />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
