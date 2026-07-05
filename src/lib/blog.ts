@@ -25,6 +25,10 @@ export type PostFrontmatter = {
   title: string;
   description: string;
   date: string;
+  // Optional last-updated date (YYYY-MM-DD). Feeds Article `dateModified` and a
+  // visible "Last updated" line — bump it whenever a post is refreshed. Falls
+  // back to `date` when absent.
+  updated?: string;
   author?: string;
   tags?: string[];
   draft?: boolean;
@@ -62,19 +66,22 @@ async function readFile(slug: string): Promise<Post | null> {
   // gray-matter parses an unquoted YAML `date:` into a JS Date, not a string —
   // so type that one field as `unknown` and normalise it below. The rest of the
   // frontmatter keeps its declared string/array types for the checks here.
-  const fm = parsed.data as Partial<Omit<PostFrontmatter, "date">> & { date?: unknown };
+  const fm = parsed.data as Partial<Omit<PostFrontmatter, "date" | "updated">> & {
+    date?: unknown;
+    updated?: unknown;
+  };
   if (!fm.title || !fm.date || !fm.description) {
     throw new Error(`Post ${slug}.md missing required frontmatter (title/date/description)`);
   }
+  // gray-matter parses YAML dates as JS Date objects; normalise to YYYY-MM-DD.
+  const normDate = (v: unknown): string =>
+    v instanceof Date ? v.toISOString().slice(0, 10) : String(v).slice(0, 10);
   return {
     slug,
     title: fm.title,
     description: fm.description,
-    // gray-matter parses YAML dates as JS Date objects; normalise to
-    // YYYY-MM-DD so the string sort in getAllPosts works correctly.
-    date: fm.date instanceof Date
-      ? fm.date.toISOString().slice(0, 10)
-      : String(fm.date).slice(0, 10),
+    date: normDate(fm.date),
+    updated: fm.updated ? normDate(fm.updated) : undefined,
     author: fm.author,
     tags: fm.tags ?? [],
     draft: fm.draft ?? false,
@@ -110,6 +117,50 @@ export function formatPostDate(iso: string): string {
     month: "long",
     day: "numeric",
   });
+}
+
+// Strip the markdown that would be noise inside JSON-LD plain text: links →
+// their text, bold/italic markers, inline code backticks.
+function stripMarkdown(s: string): string {
+  return s
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[*_`]+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Extract Q&A pairs from a post's "## Frequently asked questions" section
+// (each `### question` followed by its answer text) so they can be emitted as
+// FAQPage JSON-LD. Returns [] if the post has no recognizable FAQ section.
+export function extractFaqs(body: string): { q: string; a: string }[] {
+  const out: { q: string; a: string }[] = [];
+  let inFaq = false;
+  let q: string | null = null;
+  let ans: string[] = [];
+  const flush = () => {
+    const a = stripMarkdown(ans.join(" "));
+    if (q && a) out.push({ q: stripMarkdown(q), a });
+    q = null;
+    ans = [];
+  };
+  for (const line of body.split("\n")) {
+    const h2 = line.match(/^##\s+(.*)/);
+    if (h2) {
+      flush();
+      inFaq = /frequently asked|faq|common questions/i.test(h2[1]);
+      continue;
+    }
+    if (!inFaq) continue;
+    const h3 = line.match(/^###\s+(.*)/);
+    if (h3) {
+      flush();
+      q = h3[1];
+      continue;
+    }
+    if (q) ans.push(line);
+  }
+  flush();
+  return out;
 }
 
 // ---- Admin write APIs ----

@@ -7,6 +7,7 @@ import { FilingActions } from "@/components/wizard/FilingActions";
 import { FilingStatusBanner } from "@/components/FilingStatusBanner";
 import { FilingLocked } from "@/components/FilingLocked";
 import { MessagesPanel } from "@/components/MessagesPanel";
+import { PurchaseConversionPing } from "./PurchaseConversionPing";
 import { getTiersForSource } from "@/lib/pricing";
 
 // Verify with Stripe — NOT the bare ?paid=1 query param — that the filing's
@@ -69,6 +70,11 @@ export default async function FilingDetailPage({
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10 space-y-8">
+      {/* Google Ads purchase conversion — only reachable when status !== DRAFT,
+          i.e. payment was verified server-side (webhook or Stripe re-check). */}
+      {searchParams.paid === "1" && (
+        <PurchaseConversionPing amountCents={filing.amountPaid} filingId={filing.id} />
+      )}
       <div>
         {user ? (
           <Link href="/dashboard" className="text-sm text-slate-500 hover:underline">

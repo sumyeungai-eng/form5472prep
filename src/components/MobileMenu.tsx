@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSignedIn } from "@/components/useSignedIn";
 
 // Secondary nav links that are inlined in the desktop header but hidden on
 // mobile (`hidden sm:inline`). Without this menu they'd be unreachable from the
@@ -15,9 +16,12 @@ const LINKS = [
   { href: "/blog", label: "Guide" },
 ];
 
-export function MobileMenu({ signedIn }: { signedIn: boolean }) {
+export function MobileMenu() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  // `null` while checking → treat as signed-out (show "Sign in" in the menu),
+  // which is correct for nearly all visitors and avoids a server round-trip.
+  const signedIn = useSignedIn() === true;
 
   // Close when the route changes (e.g. after tapping a link).
   useEffect(() => {

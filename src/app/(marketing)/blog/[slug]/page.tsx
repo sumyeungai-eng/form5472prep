@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowRight, Calendar, ChevronLeft, Clock, ShieldCheck } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
-import { getAllPosts, getPost, formatPostDate, type PostMeta } from "@/lib/blog";
+import { getAllPosts, getPost, formatPostDate, extractFaqs, type PostMeta } from "@/lib/blog";
 import { env } from "@/lib/env";
 
 export async function generateStaticParams() {
@@ -55,7 +55,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     headline: post.title,
     description: post.description,
     datePublished: new Date(post.date).toISOString(),
-    dateModified: new Date(post.date).toISOString(),
+    dateModified: new Date(post.updated ?? post.date).toISOString(),
     author: { "@type": "Organization", name: post.author ?? "Form5472 Prep" },
     publisher: {
       "@type": "Organization",
@@ -66,9 +66,40 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     keywords: post.tags?.join(", "),
   };
 
+  // Breadcrumb: Home → Blog → this post. Cheap navigational signal for search
+  // and AI crawlers.
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: env.appUrl },
+      { "@type": "ListItem", position: 2, name: "Blog", item: `${env.appUrl}/blog` },
+      { "@type": "ListItem", position: 3, name: post.title, item: `${env.appUrl}/blog/${post.slug}` },
+    ],
+  };
+
+  // Parse the "## Frequently asked questions" section into FAQPage schema so the
+  // Q&A pairs are machine-readable for AI answer engines (Google limits FAQ rich
+  // results, but LLM crawlers still consume the schema).
+  const faqs = extractFaqs(post.body);
+  const faqJsonLd =
+    faqs.length >= 2
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqs.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }
+      : null;
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
       <JsonLd data={articleJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <Link
         href="/blog"
         className="inline-flex items-center text-sm text-slate-500 hover:text-slate-900"

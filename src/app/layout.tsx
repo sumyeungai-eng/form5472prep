@@ -34,26 +34,13 @@ export const metadata: Metadata = {
   description:
     "Done-for-you IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare, you sign, we fax to the IRS Ogden PIN Unit. Flat-rate plans from $199 — fax delivery included on every plan. 100% money-back guarantee.",
   applicationName: "Form5472 Prep",
-  keywords: [
-    "Form 5472",
-    "IRS Form 5472",
-    "pro forma 1120",
-    "Form 1120",
-    "foreign-owned LLC",
-    "foreign-owned disregarded entity",
-    "single-member LLC tax filing",
-    "DIIRSP",
-    "delinquent international information return",
-    "$25,000 penalty",
-    "IRS Ogden PIN Unit",
-    "Wyoming LLC foreign owner",
-    "Delaware LLC foreign owner",
-    "non-resident LLC owner taxes",
-  ],
   authors: [{ name: "Form5472 Prep" }],
   creator: "Form5472 Prep",
   publisher: "Form5472 Prep",
-  alternates: { canonical: "/" },
+  alternates: {
+    canonical: "/",
+    types: { "application/rss+xml": "/feed.xml" },
+  },
   openGraph: {
     type: "website",
     url: env.appUrl,
@@ -107,15 +94,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${sourceSerif.variable} ${plexMono.variable}`}
     >
       <body className="min-h-screen bg-white text-slate-900 font-sans antialiased">
-        {/* Google Ads conversion tag (loader). Loads on every page so the
-            "Form 5472 Lead" conversion can fire from the /start success
-            handler without a per-page boilerplate. strategy="afterInteractive"
-            keeps it out of the critical render path. The conversion event
-            itself is dispatched from src/lib/analytics/googleAds.ts. */}
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_TAG_ID}`}
-          strategy="afterInteractive"
-        />
+        {/* Warm the connection to the tag host ahead of the deferred loader. */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        {/* Google Ads conversion tag. The external gtag.js loads lazily (on idle,
+            after the page is interactive) to keep it off the critical path and
+            out of Total Blocking Time — conversion events queue in `dataLayer`
+            via the inline init below and flush once the script loads, so nothing
+            is lost. The conversion event itself is dispatched from
+            src/lib/analytics/googleAds.ts. */}
         <Script id="google-ads-init" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
@@ -125,6 +111,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gtag('config', '${GOOGLE_ADS_TAG_ID}');
           `}
         </Script>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_TAG_ID}`}
+          strategy="lazyOnload"
+        />
         {children}
         <ChatWidget />
         <Analytics />

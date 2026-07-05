@@ -56,3 +56,32 @@ export function fireLeadConversion(opts: FireConversionOptions = {}): void {
   if (currency) params.currency = currency;
   window.gtag("event", "conversion", params);
 }
+
+// Purchase conversion — created in Google Ads UI (Goals → Conversions →
+// New conversion action → Website → Purchase). Paste the full send_to label
+// here once the action exists, e.g. "AW-18127544007/XxYyZzAaBbCc".
+// While this is an empty string, firePurchaseConversion() is a safe no-op,
+// so this code can ship before the conversion action is created.
+export const GOOGLE_ADS_CONVERSION_PURCHASE = "";
+
+// Fire the Google Ads purchase conversion after a verified Stripe payment.
+// transaction_id lets Google deduplicate: if the customer refreshes or
+// revisits the ?paid=1 URL, repeat pings with the same ID are dropped.
+// When amountCents is missing/0 (webhook race), omit value so the default
+// value configured on the conversion action in Google Ads applies instead.
+export function firePurchaseConversion(opts: {
+  amountCents?: number;
+  transactionId: string;
+}): void {
+  if (!GOOGLE_ADS_CONVERSION_PURCHASE) return;
+  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
+  const params: Record<string, unknown> = {
+    send_to: GOOGLE_ADS_CONVERSION_PURCHASE,
+    transaction_id: opts.transactionId,
+  };
+  if (typeof opts.amountCents === "number" && opts.amountCents > 0) {
+    params.value = opts.amountCents / 100;
+    params.currency = "USD";
+  }
+  window.gtag("event", "conversion", params);
+}

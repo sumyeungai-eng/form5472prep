@@ -115,6 +115,14 @@ export async function getCurrentUser() {
   }
 }
 
+// Cheap, DB-free "is there a valid signed session?" check. Verifies only the
+// cookie's HMAC signature and expiry — no database round-trip. Used by the
+// /api/me endpoint that the client header island polls, so the marketing
+// layout can be fully static (edge-cached) instead of force-dynamic.
+export function hasValidSession(): boolean {
+  return !!verifyUserToken(cookies().get(USER_COOKIE)?.value);
+}
+
 // Redirects to home when not signed in. Use on /dashboard etc.
 export async function requireUser() {
   const user = await getCurrentUser();

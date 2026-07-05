@@ -66,6 +66,11 @@ const FAQS = [
   },
 ];
 
+// ISR: the homepage reads a live filings count from the DB. Regenerate the
+// static page every 10 minutes instead of server-rendering on every request, so
+// it's edge-cached globally while the counter stays fresh.
+export const revalidate = 600;
+
 export const metadata: Metadata = {
   // `absolute` skips the layout's "%s · Form5472 Prep" template — the homepage title
   // already brands the product, so we don't want the suffix appended.

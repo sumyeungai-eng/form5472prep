@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
 import { MobileMenu } from "@/components/MobileMenu";
-import { getCurrentUser } from "@/lib/session";
+import { HeaderAuthButtons } from "@/components/HeaderAuthButtons";
 
-export const dynamic = "force-dynamic";
+// No `force-dynamic` and no cookie reads here: the auth-dependent header bits are
+// client islands (MobileMenu + HeaderAuthButtons) that poll /api/me after paint,
+// so the whole marketing shell can be statically generated and edge-cached.
 
-export default async function MarketingLayout({ children }: { children: React.ReactNode }) {
-  const user = await getCurrentUser();
+export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="relative border-b border-slate-200">
@@ -16,7 +16,7 @@ export default async function MarketingLayout({ children }: { children: React.Re
             <Logo />
           </Link>
           <nav className="flex items-center gap-1 sm:gap-3">
-            <MobileMenu signedIn={!!user} />
+            <MobileMenu />
             <Link
               href="/pricing"
               className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
@@ -41,20 +41,7 @@ export default async function MarketingLayout({ children }: { children: React.Re
             >
               Guide
             </Link>
-            {user ? (
-              <Link href="/dashboard">
-                <Button size="sm">My filings</Button>
-              </Link>
-            ) : (
-              <>
-                <Link href="/sign-in" className="hidden sm:inline-flex">
-                  <Button variant="ghost" size="sm">Sign in</Button>
-                </Link>
-                <Link href="/start">
-                  <Button size="sm">Start filing</Button>
-                </Link>
-              </>
-            )}
+            <HeaderAuthButtons />
           </nav>
         </div>
       </header>
