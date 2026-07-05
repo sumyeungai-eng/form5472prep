@@ -26,7 +26,7 @@ The IRS notices eventually. But there is a formal procedure for fixing this with
 
 ---
 
-## What the penalty actually looks like
+## How much is the penalty for a late Form 5472?
 
 Under IRC §6038A(d), the IRS can assess:
 
@@ -39,7 +39,7 @@ One clarification worth making: the $25,000 penalty is per **form**, not per **t
 
 ---
 
-## DIIRSP: the structured way to fix this
+## How does DIIRSP fix a late Form 5472?
 
 The **Delinquent International Information Return Submission Procedure** is the IRS-endorsed path for foreign-owned LLC owners who have missed Form 5472 (and similar international information returns like Forms 5471, 8865, 8938, or 3520).
 
@@ -67,7 +67,7 @@ If there are reasons to go further back — for example, an IRS notice already r
 
 ---
 
-## What counts as "reasonable cause"
+## What counts as "reasonable cause"?
 
 The reasonable cause standard under Treas. Reg. §301.6724-1 means you exercised ordinary business care and prudence but still failed to file correctly. For Form 5472, the IRS has generally accepted:
 
@@ -79,7 +79,7 @@ What doesn't work: "I was busy," "the penalties seem harsh," or vague references
 
 ---
 
-## What to include in the reasonable cause statement
+## What goes in the reasonable cause statement?
 
 A solid reasonable cause statement covers:
 
@@ -92,7 +92,7 @@ Keep it factual. Avoid emotional appeals or lengthy explanations of how unfair t
 
 ---
 
-## The timeline: what happens after you fax
+## What happens after you fax the package?
 
 After your DIIRSP package arrives at the IRS Ogden PIN Unit:
 

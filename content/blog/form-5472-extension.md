@@ -24,7 +24,7 @@ For a calendar-year filer, that timeline is:
 
 One critical limit: **Form 7004 must be filed by the original due date.** If April 15 has already passed and you did not file an extension, you cannot extend after the fact — you are now filing late, which is a different process (covered below).
 
-## How do you file a Form 5472 extension? (step by step)
+## How do you file a Form 5472 extension step by step?
 
 A foreign-owned US disregarded entity files the extension a specific way, and getting it wrong means it isn't accepted. Start from the official [IRS Form 7004](https://www.irs.gov/forms-pubs/about-form-7004) and follow these steps:
 

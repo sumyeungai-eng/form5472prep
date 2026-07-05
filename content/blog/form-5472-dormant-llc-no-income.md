@@ -27,7 +27,7 @@ The answer most people don't want to hear: **you almost certainly still need to 
 
 ---
 
-## What "dormant" means to you vs. what it means to the IRS
+## What does "dormant" mean to the IRS?
 
 In everyday language, a dormant LLC is one that's not really doing anything. No sales, no expenses, maybe not even a bank account. You think of it as inactive.
 
@@ -44,7 +44,7 @@ If any of those happened, your LLC wasn't fully dormant in the IRS sense, even i
 
 ---
 
-## The only scenario where you genuinely don't need to file Form 5472
+## When do you genuinely not need to file Form 5472?
 
 The IRS does recognize a zero-transaction exemption. Under 26 CFR §1.6038A-2, Form 5472 is only required if there is at least one reportable transaction to report during the year.
 
@@ -61,7 +61,7 @@ The safest approach in any year your LLC exists: file the pro forma 1120 with ei
 
 ---
 
-## The common traps that make a "dormant" LLC actually active
+## What traps make a "dormant" LLC count as active?
 
 Most LLC owners who think their entity was dormant have at least one of these in their history.
 
@@ -83,7 +83,7 @@ The LLC existed and was foreign-owned for part of the year. Even a partial year 
 
 ---
 
-## What to do if you haven't filed for prior years
+## What if you haven't filed for prior years?
 
 The IRS typically catches these through matching programs — if you have a US EIN, eventually the absence of a return gets noticed. But even if it hasn't been flagged yet, the $25,000 penalty per year per form can accumulate fast over a multi-year gap.
 
@@ -93,7 +93,7 @@ If you want to get it done quickly: [start your filing here](/start?utm_source=b
 
 ---
 
-## What to file for a dormant LLC — the checklist
+## What do you file for a dormant LLC?
 
 For each tax year your foreign-owned LLC existed, you need:
 

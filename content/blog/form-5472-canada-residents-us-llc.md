@@ -57,7 +57,7 @@ Your Stripe revenue, your client invoices, any payments from third-party custome
 
 ---
 
-## Your Social Insurance Number is your FTIN
+## Which number is your FTIN if you're in Canada?
 
 Form 5472 Part II asks for your **Foreign Taxpayer Identification Number (FTIN)**. For Canadian individuals, the FTIN is your **Social Insurance Number (SIN)** — the nine-digit number issued by Service Canada and used for tax filing with the Canada Revenue Agency.
 
@@ -96,7 +96,7 @@ This structure is more complex and often warrants a tax professional who handles
 
 ---
 
-## What to actually file
+## What do you actually file?
 
 For each tax year your Canadian-owned US LLC existed, you need:
 

@@ -31,7 +31,7 @@ Here's the full breakdown so you can make the call for your situation.
 
 ---
 
-## What filing Form 5472 yourself actually involves
+## What does filing Form 5472 yourself involve?
 
 To file Form 5472 on your own, you need to produce three things:
 
@@ -45,7 +45,7 @@ The IRS instructions for Form 5472 are available at irs.gov. They're not impenet
 
 ---
 
-## Where DIY Form 5472 filings go wrong
+## Where do DIY Form 5472 filings go wrong?
 
 The error patterns in DIY filings are consistent. These are not obscure technicalities — they're the specific mistakes that trigger penalties or rejection letters.
 
@@ -75,7 +75,7 @@ The IRS updates Form 5472 periodically. Using a version from two or three years 
 
 ---
 
-## What a Form 5472 preparer actually does
+## What does a Form 5472 preparer actually do?
 
 A good preparer — whether a CPA, enrolled agent, or specialist service — handles:
 
@@ -92,7 +92,7 @@ Not all preparers do all of these things. Some deliver the completed forms for y
 
 ---
 
-## What does it cost? A realistic market comparison
+## How much does a Form 5472 preparer cost?
 
 Prices across the market vary significantly based on who's doing the work and what's included.
 
@@ -116,7 +116,7 @@ A few notes on these numbers:
 
 ---
 
-## When DIY makes sense
+## When does DIY make sense?
 
 File yourself if all of the following are true:
 
@@ -131,7 +131,7 @@ If you meet all six conditions and are willing to put in the 3–5 hours, DIY is
 
 ---
 
-## When hiring a preparer makes sense
+## When does hiring a preparer make sense?
 
 Get a preparer if any of the following apply:
 

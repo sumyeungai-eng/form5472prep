@@ -28,7 +28,7 @@ This guide covers what FBA sellers specifically need to report, which transactio
 
 ---
 
-## Why Amazon FBA sellers need to file Form 5472
+## Why do Amazon FBA sellers need to file Form 5472?
 
 Form 5472 exists to give the IRS a record of transactions between a US entity and its foreign related party — in this case, between your US LLC and you as the foreign owner. It was originally designed for large multinationals but was extended in 2017 (via Treas. Reg. §1.6038A-1) to cover all foreign-owned US single-member LLCs.
 
@@ -75,7 +75,7 @@ These are all transactions between the LLC and third parties. They're ordinary b
 
 ---
 
-## What the 2026 OBBBA remittance tax means for FBA sellers
+## What does the 2026 OBBBA remittance tax mean for FBA sellers?
 
 The **One Big Beautiful Bill Act (OBBBA)**, enacted in late 2025, introduced a **1% federal excise tax on certain cross-border cash remittances** effective in 2026. This applies to transfers initiated by non-US persons or by entities beneficially owned by non-US persons from US accounts to foreign accounts.
 
@@ -95,7 +95,7 @@ Keep watching Treasury guidance at irs.gov. This is a developing area as of June
 
 ---
 
-## How IRS enforcement changed in 2026
+## How did IRS enforcement change in 2026?
 
 Two developments in 2026 make Form 5472 non-compliance riskier than in any prior year:
 
@@ -111,7 +111,7 @@ This doesn't mean the IRS is aggressively auditing FBA sellers. It means that a 
 
 ---
 
-## How to file Form 5472 as an FBA seller — step by step
+## How do you file Form 5472 as an FBA seller?
 
 **Step 1: Calculate your reportable transactions**
 

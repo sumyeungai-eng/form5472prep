@@ -39,7 +39,7 @@ Living in India and having no US immigration status means the second condition i
 
 ---
 
-## What counts as a reportable transaction
+## What counts as a reportable transaction?
 
 Reportable transactions are defined under 26 CFR §1.6038A-4 and cover any money, property, or services exchanged between the LLC and you as the foreign related party.
 
@@ -57,7 +57,7 @@ Customer revenue going into the LLC from third parties — your Stripe payments,
 
 ---
 
-## Your PAN number is your FTIN
+## Which number is your FTIN if you're in India?
 
 Form 5472 Part II asks for the foreign shareholder's **Taxpayer Identification Number** and a **Foreign Taxpayer Identification Number (FTIN)**. For Indian residents, the FTIN is your **PAN (Permanent Account Number)** — the 10-character alphanumeric ID issued by the Income Tax Department of India.
 
@@ -77,7 +77,7 @@ Similarly, if you qualify for treaty benefits that reduce your US withholding on
 
 ---
 
-## BOI reporting: what changed in March 2025
+## Do you still need to file a BOI report?
 
 Until early 2025, most foreign-owned US LLCs were expected to file a Beneficial Ownership Information (BOI) report with FinCEN under the Corporate Transparency Act.
 
@@ -89,7 +89,7 @@ This has nothing to do with Form 5472, which is still fully required. The BOI ex
 
 ---
 
-## The 2026 remittance tax — what to know
+## How does the 2026 remittance tax affect you?
 
 The "One Big Beautiful Bill Act" signed in 2025 introduced a **1% excise tax on cash remittances** sent from the US to foreign countries, effective 2026. This applies to transfers made by individuals from US accounts to accounts outside the US.
 
@@ -99,7 +99,7 @@ This is an evolving area. The amount involved is modest — 1% on transfers — 
 
 ---
 
-## What you actually need to file
+## What do you actually need to file?
 
 **For each tax year** your foreign-owned US LLC existed:
 
