@@ -7,6 +7,8 @@ tags: ["form-5472", "foreign-owned-llc", "getting-started"]
 draft: false
 ---
 
+**Form 5472 is an IRS information return that a foreign-owned US single-member LLC files each year to report transactions between the LLC and its non-US owner.** It attaches to a pro forma Form 1120, carries no tax of its own, and is required even if the LLC had zero revenue. A missing or substantially incomplete filing triggers a $25,000 penalty under IRC § 6038A.
+
 If you live outside the United States and own a US single-member LLC — Wyoming, Delaware, New Mexico, Florida, the state doesn't really matter — there is a very good chance the IRS requires you to file **Form 5472** every year. And the penalty for not filing is **$25,000 per form, per year**.
 
 This post explains what Form 5472 actually is, who has to file it, what gets reported, and why the rules feel so weirdly specific.

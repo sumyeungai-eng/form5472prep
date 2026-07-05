@@ -8,6 +8,8 @@ readingMinutes: 7
 draft: false
 ---
 
+**A dormant, no-income foreign-owned US LLC usually still has to file Form 5472** — because the form reports reportable transactions, not profit. Any capital you contributed to open the bank account, or any distribution you took out, is a reportable transaction that triggers the filing. Only a tax year with zero transactions between you and the LLC in either direction is genuinely exempt.
+
 Your US LLC made zero revenue. No customers, no Stripe payments, no employees. You probably opened it with good intentions and then life happened. Now you're wondering whether the IRS expects you to do anything — or whether you can just ignore the LLC until you decide what to do with it.
 
 The answer most people don't want to hear: **you almost certainly still need to file Form 5472**, even with no income. Here's exactly why, and what "dormant" actually means in IRS terms.

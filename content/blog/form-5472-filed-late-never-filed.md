@@ -8,6 +8,8 @@ readingMinutes: 8
 draft: false
 ---
 
+**If you filed Form 5472 late or never filed it, file the delinquent returns under the IRS's DIIRSP with a reasonable-cause statement** requesting penalty abatement. There is no formal waiver guarantee, but well-documented first-time late filings by foreign owners are commonly accepted without penalty. File promptly and completely — the continuation penalty only begins stacking after the IRS sends a notice.
+
 You missed a Form 5472 filing — maybe one year, maybe several. You might have just found out the requirement exists. Or you knew about it and kept putting it off, hoping the IRS wouldn't notice.
 
 The IRS notices eventually. But there is a formal procedure for fixing this without the worst-case penalties, and it's available to most foreign-owned LLC owners who come forward voluntarily. Here's what to do.

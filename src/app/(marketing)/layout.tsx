@@ -74,6 +74,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <li><Link href="/itin" className="hover:text-ink">ITIN Acquisition</Link></li>
                 <li><Link href="/partners" className="hover:text-ink">Partner Program</Link></li>
                 <li><Link href="/blog" className="hover:text-ink">Guides</Link></li>
+                <li><Link href="/about" className="hover:text-ink">About</Link></li>
               </ul>
             </nav>
             <nav className="space-y-2.5">
@@ -81,6 +82,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               <ul className="space-y-2">
                 <li><Link href="/terms" className="hover:text-ink">Terms of Service</Link></li>
                 <li><Link href="/privacy" className="hover:text-ink">Privacy Policy</Link></li>
+                <li><Link href="/editorial-policy" className="hover:text-ink">Editorial Policy</Link></li>
                 <li><Link href="/data-retention" className="hover:text-ink">Data Retention</Link></li>
                 <li><Link href="/security" className="hover:text-ink">Security</Link></li>
               </ul>

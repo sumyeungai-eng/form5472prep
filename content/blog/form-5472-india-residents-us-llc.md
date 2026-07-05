@@ -8,6 +8,8 @@ readingMinutes: 8
 draft: false
 ---
 
+**Indian residents who own a US single-member LLC must file IRS Form 5472 with a pro forma Form 1120 every year**, even if the LLC owes no US tax. Your Indian PAN (Permanent Account Number) is the natural foreign tax identifying number for Form 5472 Part II; if you'd rather not use it, a self-assigned reference ID is accepted. The penalty for missing the filing is $25,000.
+
 If you're based in India — whether you're a solo freelancer, a SaaS founder, or a consultant who opened a US LLC for Stripe or US banking — the IRS almost certainly requires you to file **Form 5472** every year. This is not an income tax return. You don't pay US federal income tax on your business profits just because your LLC is a US entity. But you do have an **information return** filing obligation, and the penalty for missing it is **$25,000 per form, per year**.
 
 This guide covers everything specific to India residents: what to file, how your PAN number factors in, whether the India–US tax treaty eliminates the obligation (it doesn't), and what to know about recent regulatory changes.

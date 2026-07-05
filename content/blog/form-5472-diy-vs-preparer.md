@@ -8,6 +8,8 @@ readingMinutes: 8
 draft: false
 ---
 
+**Filing Form 5472 yourself costs $0 in fees but risks the $25,000 penalty on any error; hiring a preparer or flat-fee service (from $199) removes that risk.** DIY makes sense for one clean tax year with simple transactions and time to read the IRS instructions. Pay someone if you have late or multi-year filings, or if you're unsure what counts as a reportable transaction.
+
 Form 5472 is a two-page information return that reports transactions between your US LLC and you as the foreign owner. It isn't a complex tax calculation — there's no income to compute, no deductions to weigh, no AMT trap. But the penalty for getting it wrong or missing it entirely is $25,000 per form, per year (IRC §6038A(d)). That math changes the DIY vs. preparer question significantly.
 
 The short answer: **if your LLC had simple, straightforward transactions — one owner, one year, contributions and distributions only — filing yourself is genuinely doable.** If you have multiple years, late filings to resolve, complicated transactions, or simply no appetite for IRS correspondence, a preparer is worth the cost.

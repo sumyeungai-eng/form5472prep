@@ -8,6 +8,8 @@ readingMinutes: 7
 draft: false
 ---
 
+**Canadian residents who own a US single-member LLC must file IRS Form 5472 with a pro forma Form 1120 every year**, even when no US tax is due. On Form 5472 Part II you can enter your Canadian SIN as the foreign tax identifying number, or a self-assigned reference ID if you'd rather not use it. Capital you put in counts as a reportable transaction, and missing the filing risks a $25,000 penalty.
+
 If you're based in Canada and own a US single-member LLC — whether it's a Delaware, Wyoming, or any other state entity — the IRS almost certainly requires you to file **Form 5472** every year. This is not an income tax return. You don't pay US federal income tax on your business profits simply because you own a US LLC. But you do have an **information return** filing obligation, and the penalty for missing it is **$25,000 per form, per year** under IRC §6038A(d).
 
 This guide covers what's specific to Canadian residents: what Form 5472 requires from you, what your Social Insurance Number has to do with it, whether the Canada-US tax treaty eliminates the obligation (it doesn't), and what counts as a reportable transaction when you're funding a US business from a Canadian bank account.

@@ -7,6 +7,8 @@ tags: ["form-5472", "uk-residents", "foreign-owned-llc", "disregarded-entity"]
 draft: false
 ---
 
+**UK residents who own a US single-member LLC must file IRS Form 5472 with a pro forma Form 1120 every year**, even with zero US tax to pay. On Form 5472 Part II you can enter your UK tax reference (UTR) as the foreign tax identifying number, or a self-assigned reference ID instead. Any capital you put in counts as a reportable transaction, and missing the filing risks a $25,000 penalty.
+
 If you're based in the UK and you own a US single-member LLC — Wyoming, Delaware, New Mexico, it doesn't matter — the IRS almost certainly requires you to file **Form 5472** every year. This is not an income tax return. You don't pay anything. But the penalty for not filing is **$25,000 per form, per year**, with no cap on continuation penalties.
 
 This guide covers exactly what applies to UK residents specifically: what to file, what counts as a reportable transaction (including Wise transfers), when it's due, and what's changed recently with BOI reporting.

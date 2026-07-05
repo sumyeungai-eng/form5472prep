@@ -8,6 +8,8 @@ readingMinutes: 9
 draft: false
 ---
 
+**A non-US person selling on Amazon FBA through a foreign-owned US single-member LLC must file Form 5472 with a pro forma Form 1120 every year** — regardless of Amazon's own 1099-K reporting. The filing is triggered by reportable transactions between you and the LLC (capital contributed in, distributions taken out), and it applies even if the LLC owes no US income tax. Missing it carries a $25,000 penalty.
+
 If you're a non-US person who sells on Amazon FBA through a US single-member LLC, the IRS requires you to file **Form 5472** every year — not because of your Amazon sales revenue, but because of the money that moves between you and your LLC. Miss it and you're looking at a **$25,000 penalty per form, per year** under IRC §6038A(d), plus a new 2026 headache from the One Big Beautiful Bill Act's 1% remittance tax on cross-border transfers.
 
 This guide covers what FBA sellers specifically need to report, which transactions are the ones that matter, and what's changed in 2026 that makes getting this right more important than it's been in any prior year.

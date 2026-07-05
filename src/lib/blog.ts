@@ -129,9 +129,10 @@ function stripMarkdown(s: string): string {
     .trim();
 }
 
-// Extract Q&A pairs from a post's "## Frequently asked questions" section
-// (each `### question` followed by its answer text) so they can be emitted as
-// FAQPage JSON-LD. Returns [] if the post has no recognizable FAQ section.
+// Extract Q&A pairs from a post's "## Frequently asked questions" section so
+// they can be emitted as FAQPage JSON-LD. Recognizes both question formats used
+// across the blog: `### question` headings and standalone bold lines
+// (`**question?**`). Returns [] if the post has no recognizable FAQ section.
 export function extractFaqs(body: string): { q: string; a: string }[] {
   const out: { q: string; a: string }[] = [];
   let inFaq = false;
@@ -144,6 +145,7 @@ export function extractFaqs(body: string): { q: string; a: string }[] {
     ans = [];
   };
   for (const line of body.split("\n")) {
+    const t = line.trim();
     const h2 = line.match(/^##\s+(.*)/);
     if (h2) {
       flush();
@@ -152,12 +154,16 @@ export function extractFaqs(body: string): { q: string; a: string }[] {
     }
     if (!inFaq) continue;
     const h3 = line.match(/^###\s+(.*)/);
+    const bold = t.match(/^\*\*(.+?)\*\*$/); // a whole-line bold question
     if (h3) {
       flush();
       q = h3[1];
-      continue;
+    } else if (bold) {
+      flush();
+      q = bold[1];
+    } else if (q) {
+      ans.push(line);
     }
-    if (q) ans.push(line);
   }
   flush();
   return out;
