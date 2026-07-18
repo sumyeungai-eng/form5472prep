@@ -54,6 +54,8 @@ Multi-year add-on (applies to all tiers): **+$149 per additional past tax year**
 ## Documents
 
 - [Pricing](/pricing): three-tier comparison with full feature list.
+- [About](/about): who we are, how we work, and what we are and aren't.
+- [Editorial Policy](/editorial-policy): how our guides are sourced, reviewed, and kept current.
 - [EIN Acquisition](/ein): EIN service for foreign-owned US LLC owners — CAA certification, no passport mailing.
 - [ITIN Acquisition](/itin): ITIN service for non-residents — CAA certification, no passport mailing.
 - [Terms of Service](/terms): legal terms.

@@ -7,27 +7,25 @@ import { useEffect, useState } from "react";
 //   false — confirmed signed out
 //   true  — signed in (swap to "My filings")
 //
-// The fetch to /api/me is memoized at module scope so the desktop auth buttons
-// and the mobile menu share a single request per page load instead of two.
-let cached: Promise<boolean> | null = null;
-
-function fetchSignedIn(): Promise<boolean> {
-  if (!cached) {
-    cached = fetch("/api/me", { credentials: "same-origin" })
-      .then((r) => (r.ok ? r.json() : { signedIn: false }))
-      .then((d) => !!d.signedIn)
-      .catch(() => false);
-  }
-  return cached;
-}
-
+// Fetches /api/me on every mount with no caching. An earlier version memoized
+// the result in a module-scoped promise to save one request across the desktop
+// buttons + mobile menu, but that cache was never invalidated: after a
+// client-side (SPA) sign-in or sign-out the header kept showing the pre-auth
+// state until a hard reload, and a transient /api/me failure got cached as
+// "signed out" for the life of the JS bundle. Correctness beats the one saved
+// request — /api/me is a tiny httpOnly-cookie check.
 export function useSignedIn(): boolean | null {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   useEffect(() => {
     let active = true;
-    fetchSignedIn().then((v) => {
-      if (active) setSignedIn(v);
-    });
+    fetch("/api/me", { credentials: "same-origin", cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : { signedIn: false }))
+      .then((d) => {
+        if (active) setSignedIn(!!d.signedIn);
+      })
+      .catch(() => {
+        if (active) setSignedIn(false);
+      });
     return () => {
       active = false;
     };

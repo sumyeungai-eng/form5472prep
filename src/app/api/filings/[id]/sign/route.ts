@@ -33,6 +33,18 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!filing.generatedPdfKey) {
     return NextResponse.json({ error: "Filing has not been generated yet" }, { status: 400 });
   }
+  // Guard against a stale open tab / double-submit / direct re-POST after the
+  // package has been finalized. Once the accountant has uploaded the signed PDF
+  // (SIGNED_UPLOADED) or it has been faxed/confirmed/failed, re-signing would
+  // overwrite signaturePngKey + signedAt and regress the status of an
+  // already-transmitted filing back to SIGNATURE_PENDING. Re-signing is only
+  // valid while still in PDF_GENERATED / SIGNATURE_PENDING.
+  if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED", "FAILED"].includes(filing.status)) {
+    return NextResponse.json(
+      { error: "This filing has already been finalized and can no longer be re-signed." },
+      { status: 409 },
+    );
+  }
 
   const body = (await req.json().catch(() => ({}))) as { pngDataUrl?: unknown };
   // Accept the canonical "data:image/png;base64,..." prefix AND tolerate the

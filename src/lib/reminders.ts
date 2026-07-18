@@ -60,15 +60,19 @@ export async function findEligibleUsers(
       email: true,
       filings: {
         where: { status: { in: PAID_STATUSES } },
-        select: { llcName: true, taxYears: true },
+        select: { llcName: true, taxYears: true, status: true },
       },
     },
   });
 
   return users
     .filter((u) => {
-      // Skip if they already filed (paid) for this tax year.
-      const alreadyFiled = u.filings.some((f) => f.taxYears.includes(taxYear));
+      // Skip if they already have an in-progress/completed filing for this tax
+      // year. A FAILED filing does NOT count — the fax didn't go through, so
+      // they still need to file and are exactly who the reminder should reach.
+      const alreadyFiled = u.filings.some(
+        (f) => f.status !== FilingStatus.FAILED && f.taxYears.includes(taxYear),
+      );
       return !alreadyFiled;
     })
     .map((u) => ({
@@ -115,6 +119,21 @@ export async function runCampaign(args: {
       result.sent += 1;
       continue;
     }
+    // Claim the send slot BEFORE emailing. The @@unique([userId,year,campaign])
+    // constraint makes this atomic: if two runs overlap (the Vercel cron and the
+    // admin "Run campaign" button), only one create() succeeds — the other
+    // throws P2002 and skips, so the customer can't be emailed twice. (The old
+    // order — send, then create — let both runs pass the eligibility filter and
+    // both send before either wrote the row.)
+    try {
+      await prisma.reminderSent.create({
+        data: { userId: u.userId, year: taxYear, campaign: args.campaign },
+      });
+    } catch {
+      // Row already exists — another run (or a prior pass) already claimed and
+      // sent this reminder. Skip without emailing.
+      continue;
+    }
     try {
       const sendFn =
         args.campaign === "january" ? sendJanuaryReminderEmail : sendMarchReminderEmail;
@@ -125,12 +144,13 @@ export async function runCampaign(args: {
         startLink,
         unsubscribeUrl: makeUnsubscribeLink(u.userId),
       });
-      // Record success — unique constraint also prevents accidental double-sends.
-      await prisma.reminderSent.create({
-        data: { userId: u.userId, year: taxYear, campaign: args.campaign },
-      });
       result.sent += 1;
     } catch (err) {
+      // Send failed after claiming the slot — roll the claim back so a later
+      // run can retry this user instead of silently never reminding them.
+      await prisma.reminderSent
+        .deleteMany({ where: { userId: u.userId, year: taxYear, campaign: args.campaign } })
+        .catch(() => {});
       result.failed += 1;
       result.errors.push({
         userId: u.userId,

@@ -28,7 +28,6 @@ export const maxDuration = 60;
 // never gets their proof-of-fax email.
 
 const IN_FLIGHT = ["queued", "sending"];
-const STALE_AFTER_DAYS = 7;
 
 type TelnyxFax = {
   id: string;
@@ -52,18 +51,24 @@ export async function GET(req: Request) {
     return NextResponse.json({ skipped: "TELNYX_API_KEY not set" });
   }
 
-  const sevenDaysAgo = new Date(Date.now() - STALE_AFTER_DAYS * 24 * 60 * 60 * 1000);
-
   // In-flight: faxStatus literally "queued" / "sending", OR one of our retry
   // labels ("retry_1", "retry_2", ...). Plain prisma 'in' can't easily express
-  // both, so pull a slightly wider window and filter in JS.
+  // both, so pull the FAXED rows and filter in JS.
+  //
+  // NOTE: we deliberately do NOT bound this by updatedAt. An earlier version
+  // only polled rows updated within the last 7 days, but a still-"queued" fax
+  // never has its updatedAt touched (the still-sending branch leaves the row
+  // as-is), so a genuinely stuck fax aged out of the window after 7 days and
+  // was NEVER polled again — stuck in FAXED forever, customer never emailed.
+  // The set is naturally bounded (only FAXED + in-flight faxStatus); oldest
+  // first so the most-overdue faxes are reconciled first under the take cap.
   const candidates = await prisma.filing.findMany({
     where: {
       status: "FAXED",
       faxJobId: { not: null },
-      updatedAt: { gte: sevenDaysAgo },
     },
     include: { user: true },
+    orderBy: { updatedAt: "asc" },
     take: 100,
   });
 
@@ -218,13 +223,22 @@ async function handleFailed(
   tx: TelnyxFax,
 ) {
   const failureReason = tx.failure_reason ?? null;
-  await prisma.filing.update({
-    where: { id: filing.id },
+  // Atomic claim — race-safe against the telnyx-webhook firing for the same
+  // fax, and against this poll re-observing a failure it already recorded.
+  // Only flip to FAILED from a still-in-flight state; if the row is already
+  // CONFIRMED or FAILED, skip so we don't regress a delivered fax or send a
+  // duplicate "fax failed" email.
+  const claim = await prisma.filing.updateMany({
+    where: { id: filing.id, status: { notIn: ["CONFIRMED", "FAILED"] } },
     data: {
       faxStatus: failureReason ? `failed:${failureReason}` : "failed",
       status: "FAILED",
     },
   });
+  if (claim.count === 0) {
+    console.log(`[fax-status-poll] ${filing.id} already CONFIRMED/FAILED — skipping duplicate failure`);
+    return;
+  }
 
   const adminFilingUrl = `${env.appUrl}/admin/filings/${filing.id}`;
   if (filing.user && filing.userId) {

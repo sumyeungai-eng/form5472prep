@@ -29,14 +29,31 @@ export async function POST(req: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     const filingId = session.metadata?.filingId;
     if (filingId) {
-      const filing = await prisma.filing.update({
-        where: { id: filingId },
+      // Idempotency guard. Stripe delivers events at-least-once (network
+      // retries, manual "Resend" up to 3 days later), so this handler can
+      // fire more than once for the same payment. Claim the DRAFT->PAID
+      // transition atomically: only the first delivery matches status:DRAFT
+      // and proceeds. A redelivery finds the filing already advanced
+      // (PAID / PDF_GENERATED / SIGNED / FAXED / CONFIRMED), matches 0 rows,
+      // and no-ops — otherwise it would regress status, overwrite the signed
+      // PDF, re-send confirmation/magic-link/admin emails, and risk a second
+      // IRS fax of an already-filed package.
+      const claim = await prisma.filing.updateMany({
+        where: { id: filingId, status: "DRAFT" },
         data: {
           status: "PAID",
           stripePaymentId: session.payment_intent as string,
         },
+      });
+      if (claim.count === 0) {
+        console.log(`[stripe-webhook] ${filingId} not in DRAFT — skipping duplicate checkout.session.completed`);
+        return NextResponse.json({ received: true, deduplicated: true });
+      }
+      const filing = await prisma.filing.findUnique({
+        where: { id: filingId },
         include: { user: true },
       });
+      if (!filing) return NextResponse.json({ received: true });
 
       // Generate the filled PDF synchronously so we can attach it to the
       // confirmation email and tell the customer exactly where to sign.

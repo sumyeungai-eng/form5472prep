@@ -208,7 +208,14 @@ export async function POST(req: Request) {
   }
 
   if (evt === "fax.failed" || evt === "fax.sending.failed") {
-    const retryCount = Number(body?.data?.payload?.delivery_attempts ?? 0);
+    // The attempt ceiling must be driven by OUR own retry label, not Telnyx's
+    // delivery_attempts: each retry calls submitFax() which creates a brand-new
+    // fax job whose delivery_attempts resets to 0, so trusting the payload alone
+    // would let us re-fax the IRS indefinitely. Derive from our "retry_N" label
+    // and take the max of the two as a belt-and-braces cap.
+    const labelMatch = filing.faxStatus?.match(/^retry_(\d+)$/);
+    const appAttempts = labelMatch ? Number(labelMatch[1]) : 0;
+    const retryCount = Math.max(appAttempts, Number(body?.data?.payload?.delivery_attempts ?? 0));
     if (retryCount < MAX_RETRIES && filing.signedPdfKey) {
       // Re-submit with a fresh job; persist the new id.
       const mediaUrl = await publicUrl(filing.signedPdfKey);
@@ -221,13 +228,23 @@ export async function POST(req: Request) {
     }
     const failureReason = (body?.data?.payload?.failure_reason as string | undefined) ?? null;
     const adminFilingUrl = `${env.appUrl}/admin/filings/${filing.id}`;
-    await prisma.filing.update({
-      where: { id: filing.id },
+    // Atomic claim — mirror the fax.delivered dedup. Only move to FAILED from a
+    // still-in-flight state. Without this, a duplicate or out-of-order
+    // fax.failed (e.g. an earlier retry attempt's event arriving after the fax
+    // ultimately delivered) would regress CONFIRMED -> FAILED and send the
+    // customer a false "your fax failed" email after they were already told it
+    // delivered; two failure events would also double-send the failed emails.
+    const claim = await prisma.filing.updateMany({
+      where: { id: filing.id, status: { notIn: ["CONFIRMED", "FAILED"] } },
       data: {
         faxStatus: failureReason ? `failed:${failureReason}` : "failed",
         status: "FAILED",
       },
     });
+    if (claim.count === 0) {
+      console.log(`[telnyx-webhook] ${filing.id} already CONFIRMED/FAILED — skipping duplicate fax.failed`);
+      return NextResponse.json({ ok: true, deduplicated: true });
+    }
     if (filing.user) {
       try {
         await sendFaxFailedEmail({

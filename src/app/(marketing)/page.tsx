@@ -83,6 +83,18 @@ export const metadata: Metadata = {
     description:
       "For foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Starting at $199 — 100% money-back guarantee if we fail to submit.",
     url: "/",
+    // This page sets its own openGraph object, which replaces (not merges
+    // with) the root layout's — so the branded card image has to be named
+    // here explicitly or the homepage shares with no image. /opengraph-image
+    // is the dynamic route from src/app/opengraph-image.tsx.
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Form5472 Prep" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
+    description:
+      "For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. Starting at $199.",
+    images: ["/opengraph-image"],
   },
 };
 

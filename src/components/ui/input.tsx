@@ -61,10 +61,21 @@ export function Field({
   children: React.ReactNode;
 }) {
   const [openHelp, setOpenHelp] = React.useState(false);
+  // Programmatically tie the visible label to its control for screen readers.
+  // Reuse the control's own id if the caller set one, otherwise generate a
+  // stable id and inject it into the child input/select via cloneElement.
+  const autoId = React.useId();
+  const childId =
+    React.isValidElement(children) && (children.props as { id?: string }).id
+      ? (children.props as { id?: string }).id!
+      : autoId;
+  const control = React.isValidElement(children)
+    ? React.cloneElement(children as React.ReactElement<{ id?: string }>, { id: childId })
+    : children;
   return (
     <div>
       <div className="flex items-center gap-1.5 mb-1.5">
-        <Label className="mb-0">{label}</Label>
+        <Label htmlFor={childId} className="mb-0">{label}</Label>
         {help && (
           <button
             type="button"
@@ -82,7 +93,7 @@ export function Field({
           {help}
         </div>
       )}
-      {children}
+      {control}
       {hint && !error && <p className="text-xs text-slate-500 mt-1">{hint}</p>}
       {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
     </div>
