@@ -79,6 +79,26 @@ const ALL_STEPS: SidebarStepDef[] = [
 
 type WizardFiling = React.ComponentProps<typeof FilingWizard>["filing"];
 
+// Where a returning user should land on (re)mount. A brand-new draft (nothing
+// entered) starts at the pre-flight gate as before; but once any real data
+// exists we skip pre-flight (it's a client-only eligibility check with no
+// persistence — having saved data means they already passed it) and drop them
+// on the first step that isn't complete. This is derived purely from the
+// server-provided filing, so it's deterministic across SSR/hydration (no
+// localStorage, no mismatch) and a refresh mid-wizard no longer bounces the
+// user all the way back to step 1.
+function resumeStep(f: WizardFiling): V3StepKey {
+  const st = computeStatuses(f);
+  const anyStarted = (["entity", "owner", "years", "transactions"] as StepKey[]).some(
+    (k) => st[k] !== "untouched",
+  );
+  if (!anyStarted) return "preflight";
+  const order: StepKey[] = f.isDiirsp
+    ? ["entity", "owner", "years", "rcs", "transactions", "review"]
+    : ["entity", "owner", "years", "transactions", "review"];
+  return order.find((k) => st[k] !== "complete") ?? "review";
+}
+
 export function FilingWizardV3({
   filing: initial,
   plaidEnabled = false,
@@ -86,8 +106,10 @@ export function FilingWizardV3({
   filing: WizardFiling;
   plaidEnabled?: boolean;
 }) {
-  // Default landing step is the pre-flight check.
-  const [stepKey, setStepKey] = useState<V3StepKey>("preflight");
+  // Fresh drafts land on the pre-flight check; returning users resume on the
+  // first step they haven't completed (see resumeStep). Lazy initializer so it
+  // runs once from the server-provided filing.
+  const [stepKey, setStepKey] = useState<V3StepKey>(() => resumeStep(initial));
   const [filing, setFiling] = useState(initial);
   const [preflightAnswers, setPreflightAnswers] = useState<PreflightAnswers>(EMPTY_PREFLIGHT_ANSWERS);
 
