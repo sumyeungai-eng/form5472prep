@@ -177,6 +177,13 @@ model Filing {
   changeLog        FilingChangeLog[]
 
   @@index([partnerId])
+  // fax-status-poll (where status=FAXED order by updatedAt) + abandoned-draft
+  // cron (where status=DRAFT and updatedAt in window) + reminder audience
+  // selection all filter on status, often with updatedAt.
+  @@index([status, updatedAt])
+  // telnyx-webhook + fax-status-poll look up the filing by its Telnyx job id
+  // on every inbound event.
+  @@index([faxJobId])
 }
 
 // Append-only audit log for changes the AI agent (and admin) make to a

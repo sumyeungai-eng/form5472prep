@@ -58,11 +58,13 @@ export function fireLeadConversion(opts: FireConversionOptions = {}): void {
 }
 
 // Purchase conversion — created in Google Ads UI (Goals → Conversions →
-// New conversion action → Website → Purchase). Paste the full send_to label
-// here once the action exists, e.g. "AW-18127544007/XxYyZzAaBbCc".
-// While this is an empty string, firePurchaseConversion() is a safe no-op,
-// so this code can ship before the conversion action is created.
-export const GOOGLE_ADS_CONVERSION_PURCHASE = "";
+// New conversion action → Website → Purchase). To activate, set the full
+// send_to label as the NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_PURCHASE env var in
+// Vercel (e.g. "AW-18127544007/XxYyZzAaBbCc") and redeploy — no code change.
+// NEXT_PUBLIC_ vars are inlined at build time. While unset this is "", so
+// firePurchaseConversion() stays a safe no-op and the code ships as-is.
+export const GOOGLE_ADS_CONVERSION_PURCHASE =
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_PURCHASE ?? "";
 
 // Fire the Google Ads purchase conversion after a verified Stripe payment.
 // transaction_id lets Google deduplicate: if the customer refreshes or
