@@ -135,19 +135,26 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       if (!filing.signedPdfKey) {
         return NextResponse.json({ error: "no signed PDF on file" }, { status: 400 });
       }
-      // Snapshot the exact bytes being faxed under a separate key so the
-      // admin can verify "what was sent to the IRS" even after a later
-      // Regenerate PDF clears signedPdfKey. Best-effort — if the copy fails
-      // (storage hiccup) we still fax, since the original signedPdfKey is
-      // present on this same submission anyway.
+      // Snapshot the EXACT bytes we're about to fax under a stable key so the
+      // admin can later verify "what was sent to the IRS". Hard precondition:
+      // if the copy fails we do NOT fax and do NOT mark FAXED — otherwise the
+      // audit artifact would be missing or wrong. Always re-snapshot the
+      // current signedPdfKey (a manual re-fax may follow a regenerate+re-sign,
+      // so the snapshot must reflect THIS submission's bytes, not a stale one).
       const faxedKey = `${filing.id}_faxed.pdf`;
       try {
         const bytes = await getStorageObject(filing.signedPdfKey);
         await putPdf(faxedKey, bytes);
       } catch (err) {
-        console.error("[retryFax] faxed-snapshot copy failed (non-fatal)", err);
+        console.error("[retryFax] faxed-snapshot copy failed", err);
+        return NextResponse.json(
+          { error: "Could not snapshot the PDF for the fax audit trail; fax not sent." },
+          { status: 500 },
+        );
       }
-      const mediaUrl = await publicUrl(filing.signedPdfKey);
+      // Fax the snapshotted bytes so the transmitted content and the recorded
+      // faxedPdfKey are guaranteed identical.
+      const mediaUrl = await publicUrl(faxedKey);
       const job = await submitFax({ mediaUrl, to: env.telnyx.destination });
       await prisma.filing.update({
         where: { id: filing.id },

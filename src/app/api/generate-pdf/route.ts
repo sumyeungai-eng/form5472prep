@@ -16,8 +16,15 @@ export async function POST(req: Request) {
     include: { yearData: true },
   });
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (filing.status === "DRAFT")
-    return NextResponse.json({ error: "Not paid yet" }, { status: 402 });
+  // Generation is only valid from PAID (first generation) or PDF_GENERATED
+  // (idempotent re-generation before signing). DRAFT = not paid (402); any
+  // later state (SIGNATURE_PENDING/SIGNED_UPLOADED/FAXED/CONFIRMED/FAILED)
+  // must NOT be regressed by re-generating, so reject with 409.
+  if (filing.status !== "PAID" && filing.status !== "PDF_GENERATED") {
+    return filing.status === "DRAFT"
+      ? NextResponse.json({ error: "Not paid yet" }, { status: 402 })
+      : NextResponse.json({ error: "This filing can no longer be regenerated." }, { status: 409 });
+  }
 
   const requiredFields: (keyof typeof filing)[] = [
     "llcName",

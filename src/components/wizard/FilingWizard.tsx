@@ -184,7 +184,19 @@ async function patchFiling(id: string, body: Record<string, unknown>) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error(`PATCH failed: ${res.status}`);
+  if (!res.ok) {
+    // Surface the server's validation message + field issues so the wizard can
+    // show WHY the save failed instead of silently not advancing.
+    const err = (await res.json().catch(() => ({}))) as {
+      error?: string;
+      issues?: { field?: string; message?: string }[];
+    };
+    const issueText = Array.isArray(err.issues)
+      ? err.issues.map((i) => i.message).filter(Boolean).join("; ")
+      : "";
+    const message = [err.error, issueText].filter(Boolean).join(" — ") || `Save failed (${res.status})`;
+    throw new Error(message);
+  }
   return res.json();
 }
 
@@ -220,6 +232,7 @@ export function FilingWizard({
   const router = useRouter();
   const [filing, setFiling] = useState(initial);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Whenever local filing state changes, surface it to the parent so the
   // v3 sidebar can recompute step-status badges.
@@ -261,10 +274,16 @@ export function FilingWizard({
 
   async function save(body: Record<string, unknown>) {
     setSaving(true);
+    setSaveError(null);
     try {
       const updated = await patchFiling(filing.id, body);
       setFiling({ ...filing, ...updated, yearData: filing.yearData });
       return updated;
+    } catch (err) {
+      // Record the error for the banner and RE-THROW so the caller's goNext()
+      // is skipped — a failed save must not advance the wizard.
+      setSaveError(err instanceof Error ? err.message : "Could not save. Please try again.");
+      throw err;
     } finally {
       setSaving(false);
     }
@@ -284,6 +303,11 @@ export function FilingWizard({
         <Stepper steps={steps} current={stepIndex} onJumpTo={(key) => setStepKey(key)} />
       )}
       <div className={`${hideTopStepper ? "" : "mt-6 sm:mt-8"} bg-white rounded-lg border border-slate-200 p-5 sm:p-8`}>
+        {saveError && (
+          <div className="mb-5 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800" role="alert">
+            <strong>Couldn&apos;t save:</strong> {saveError}
+          </div>
+        )}
         {stepKey === "entity" && (
           <EntityStep
             filing={filing}
@@ -964,8 +988,12 @@ function YearsStep({
   onBack: () => void;
   saving: boolean;
 }) {
-  const currentYear = new Date().getFullYear();
-  const allYears = Array.from({ length: currentYear - 2017 }, (_, i) => 2018 + i);
+  const currentYear = new Date().getUTCFullYear();
+  // Cap the picker at the last COMPLETED tax year — a user shouldn't file for a
+  // year that hasn't ended yet (the server enforces the same bound via
+  // yearScopeSchema).
+  const lastCompletedTaxYear = currentYear - 1;
+  const allYears = Array.from({ length: lastCompletedTaxYear - 2017 }, (_, i) => 2018 + i);
   const {
     register,
     handleSubmit,
@@ -974,7 +1002,7 @@ function YearsStep({
     formState: { errors },
   } = useForm<YearScopeForm>({
     resolver: zodResolver(yearScopeSchema),
-    defaultValues: { taxYears: filing.taxYears.length ? filing.taxYears : [currentYear - 1] },
+    defaultValues: { taxYears: filing.taxYears.length ? filing.taxYears : [lastCompletedTaxYear] },
   });
   const selected = watch("taxYears");
 

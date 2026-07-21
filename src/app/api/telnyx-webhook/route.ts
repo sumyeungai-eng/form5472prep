@@ -216,13 +216,46 @@ export async function POST(req: Request) {
     const labelMatch = filing.faxStatus?.match(/^retry_(\d+)$/);
     const appAttempts = labelMatch ? Number(labelMatch[1]) : 0;
     const retryCount = Math.max(appAttempts, Number(body?.data?.payload?.delivery_attempts ?? 0));
-    if (retryCount < MAX_RETRIES && filing.signedPdfKey) {
-      // Re-submit with a fresh job; persist the new id.
-      const mediaUrl = await publicUrl(filing.signedPdfKey);
-      const retry = await submitFax({ mediaUrl, to: env.telnyx.destination });
+    // Re-fax the SAME bytes originally transmitted — the immutable snapshot
+    // (faxedPdfKey) when present, falling back to signedPdfKey.
+    const faxSource = filing.faxedPdfKey ?? filing.signedPdfKey;
+    if (retryCount < MAX_RETRIES && faxSource) {
+      // Atomic retry claim — race-safe against a duplicate/overlapping
+      // fax.failed redelivery. Pin the CURRENT faxJobId AND faxStatus so two
+      // concurrent events can't both pass and both re-fax the IRS: Postgres
+      // serializes the UPDATEs, and the loser's WHERE (stale faxStatus) matches
+      // 0 rows. Only the winner submits.
+      const nextLabel = `retry_${retryCount + 1}`;
+      const claim = await prisma.filing.updateMany({
+        where: {
+          id: filing.id,
+          faxJobId: filing.faxJobId,
+          faxStatus: filing.faxStatus,
+          status: { notIn: ["CONFIRMED", "FAILED"] },
+        },
+        data: { faxStatus: `retrying_${retryCount + 1}` },
+      });
+      if (claim.count === 0) {
+        return NextResponse.json({ ok: true, deduplicated: true });
+      }
+      const mediaUrl = await publicUrl(faxSource);
+      let retry: Awaited<ReturnType<typeof submitFax>>;
+      try {
+        retry = await submitFax({ mediaUrl, to: env.telnyx.destination });
+      } catch (err) {
+        // submitFax threw after we claimed — release the claim so a later
+        // event can retry instead of leaving the filing stuck at retrying_N.
+        await prisma.filing
+          .updateMany({
+            where: { id: filing.id, faxStatus: `retrying_${retryCount + 1}` },
+            data: { faxStatus: filing.faxStatus },
+          })
+          .catch(() => {});
+        throw err;
+      }
       await prisma.filing.update({
         where: { id: filing.id },
-        data: { faxJobId: retry.id, faxStatus: `retry_${retryCount + 1}` },
+        data: { faxJobId: retry.id, faxStatus: nextLabel },
       });
       return NextResponse.json({ ok: true, retried: true });
     }
