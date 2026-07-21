@@ -249,10 +249,9 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
           </Reveal>
         </section>
 
-        {/* Three-tier pricing — appears on every landing page so visitors
-            always see all the package options before deciding. Premium
-            pages display PREMIUM_TIERS; the price the customer sees here
-            is what they'll be charged at Stripe checkout. */}
+        {/* Pricing — appears on every landing page so visitors see the
+            package options before deciding. The price shown here is exactly
+            what they'll be charged at Stripe checkout. */}
         <PricingSection startUrl={startUrl} pricingMode={page.pricingMode} />
 
         {/* FAQs */}
@@ -427,8 +426,8 @@ function PricingSection({
   startUrl: string;
   pricingMode?: "premium";
 }) {
-  // Always use the canonical three-tier set on every landing page. The
-  // /pro-form-5472 page used to override with PREMIUM_TIERS — that funnel
+  // Always use the canonical tier set (Standard / Rush) on every landing page.
+  // The /pro-form-5472 page used to override with a premium tier — that funnel
   // has been retired in favour of one shared price across organic + paid.
   const tiers = TIER_ORDER.map((key) => [key, TIERS[key]] as const);
   // Preserve any ?src= attribution baked into startUrl by appending tier as

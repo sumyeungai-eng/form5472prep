@@ -65,7 +65,6 @@ Form5472 Prep is built specifically for the foreign-owned single-member LLC fili
 
 - **Standard — $199:** done-for-you filing, accountant-reviewed, fax delivery included.
 - **Rush — $279:** everything in Standard plus 24-hour turnaround.
-- **Premium — $449:** same-day turnaround, IRS-letter handling for one year, BOI filing review.
 - **+$149 per additional past year** for multi-year DIIRSP catch-up.
 
 No subscription, no upsell, and a 100% money-back guarantee if we fail to submit your filing. [Start your filing here →](/start)

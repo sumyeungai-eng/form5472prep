@@ -95,10 +95,6 @@ to the IRS Ogden PIN Unit is INCLUDED on every tier (no separate add-on).
     Everything in Standard, plus 24-hour turnaround, priority email support,
     and a March email reminder for next year's filing.
 
-- Premium — $449 — Same-day, full support.
-    Everything in Rush, plus same-day (12-hour) turnaround, IRS letter
-    handling for one year, and a BOI filing review.
-
 - Multi-year add-on: +$149 per additional past tax year. Applies to every
   tier. Example: Standard with 2 past years = $199 + $149 = $348. Standard
   with 3 past years = $199 + $298 = $497.

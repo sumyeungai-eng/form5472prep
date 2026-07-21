@@ -35,7 +35,7 @@ const faq = [
   },
   {
     q: "How does payment work?",
-    a: "Each filing is paid individually at checkout with the same flat pricing as direct customers — Standard $199, Rush $279, Premium $449, +$149 per additional past year, IRS fax delivery included. For volume pricing or consolidated invoicing, email support@form5472prep.com.",
+    a: "Each filing is paid individually at checkout with the same flat pricing as direct customers — Standard $199 and Rush $279, +$149 per additional past year, IRS fax delivery included. For volume pricing or consolidated invoicing, email support@form5472prep.com.",
   },
   {
     q: "How do I become a partner?",

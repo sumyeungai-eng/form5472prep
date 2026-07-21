@@ -1,21 +1,23 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // PRICING — source of truth for every customer-facing price on the site.
 //
-// Model (May 2026 rewrite):
-//   Three service tiers (Standard / Rush / Premium) charged as a flat fee.
-//   Fax delivery is INCLUDED on every tier (no separate $19 add-on).
+// Model (2026):
+//   Two service tiers (Standard / Rush) charged as a flat fee.
+//   Fax delivery is INCLUDED on every tier (no separate add-on).
 //   Customers can file multiple past tax years on any tier — each additional
 //   year past the first adds a flat $149.
 //
-// Legacy data: Filing.tier rows created before this rewrite hold
-//   "single_year" / "two_year_diirsp" / "multi_year_diirsp". We keep these in
-//   the DB and map them on display via resolveTier() — old filings show their
-//   original plan label tagged "(legacy plan)", and any new code that needs a
-//   real Tier value gets "standard" back so price math doesn't crash.
+// Legacy data: Filing.tier rows created before this held "premium" or the
+//   older "single_year" / "two_year_diirsp" / "multi_year_diirsp" slugs. We
+//   keep these in the DB and map them on display via resolveTier() — old
+//   filings show their original plan label tagged "(legacy plan)" and their
+//   real charged amount (Filing.amountPaid), while any new price math falls
+//   back to a live tier so nothing crashes. Only Standard / Rush are
+//   offered/selectable now.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type Tier = "standard" | "rush" | "premium";
-export type LegacyTier = "single_year" | "two_year_diirsp" | "multi_year_diirsp";
+export type Tier = "standard" | "rush";
+export type LegacyTier = "premium" | "single_year" | "two_year_diirsp" | "multi_year_diirsp";
 export type AnyTierValue = Tier | LegacyTier | string;
 
 export type TierInfo = {
@@ -55,21 +57,9 @@ export const TIERS: Record<Tier, TierInfo> = {
       "Next-year filing reminder (March email)",
     ],
   },
-  premium: {
-    label: "Premium",
-    subtitle: "Same-day, full support",
-    priceCents: 44900,
-    ctaLabel: "Choose Premium",
-    features: [
-      "Everything in Rush",
-      "Same-day turnaround (12 hours)",
-      "IRS letter handling (1 year)",
-      "BOI filing review",
-    ],
-  },
 };
 
-export const TIER_ORDER: Tier[] = ["standard", "rush", "premium"];
+export const TIER_ORDER: Tier[] = ["standard", "rush"];
 
 // Flat add-on for every tax year past the first. Applies to all three tiers.
 export const MULTI_YEAR_ADDON_CENTS = 14900;
@@ -119,6 +109,10 @@ export type ResolvedTier = {
 export function resolveTier(value: string | null | undefined): ResolvedTier {
   if (isTier(value)) return { tier: value, isLegacy: false };
   switch (value) {
+    case "premium":
+      // Retired tier. Old Premium orders keep their label + real amountPaid;
+      // price math falls back to Rush (the current top tier).
+      return { tier: "rush", isLegacy: true, legacyLabel: "Premium (legacy plan)" };
     case "single_year":
       return { tier: "standard", isLegacy: true, legacyLabel: "Single year (legacy plan)", legacyYearCount: 1 };
     case "two_year_diirsp":
@@ -183,7 +177,7 @@ export function getTiersForSource(
   return {
     standard: TIERS.standard,
     rush: TIERS.rush,
-    premium: TIERS.premium,
+    premium: { ...TIERS.rush, label: "Premium (legacy plan)" },
     single_year: { ...TIERS.standard, label: "Single year (legacy plan)" },
     two_year_diirsp: { ...TIERS.standard, label: "Two-year DIIRSP (legacy plan)" },
     multi_year_diirsp: { ...TIERS.standard, label: "Three-year DIIRSP (legacy plan)" },

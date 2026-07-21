@@ -30,11 +30,11 @@ import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 const FAQS = [
   {
     q: "How much does it cost?",
-    a: "Three plans — Standard $199, Rush $279, Premium $449. Each plan is a flat one-time fee for a single tax year filing. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included on every plan — no separate add-on.",
+    a: "Two plans — Standard $199 and Rush $279. Each plan is a flat one-time fee for a single tax year filing. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included on every plan — no separate add-on.",
   },
   {
     q: "What's the difference between the plans?",
-    a: "Standard is our done-for-you baseline — we prepare your Form 5472 + pro forma 1120, fax it to the IRS, and email you the confirmation. Rush adds 24-hour turnaround, priority email support, and a March filing reminder for next year. Premium adds same-day (12-hour) turnaround, IRS-letter handling for one year, and a BOI filing review.",
+    a: "Standard is our done-for-you baseline — we prepare your Form 5472 + pro forma 1120, fax it to the IRS, and email you the confirmation. Rush adds 24-hour turnaround, priority email support, and a March filing reminder for next year.",
   },
   {
     q: "What if I've missed prior years?",
@@ -268,7 +268,7 @@ function Hero({ filingsCount }: { filingsCount: number }) {
                 <span className="font-mono text-xs text-slate-500">/ filing</span>
               </div>
               <p className="mt-2 text-sm text-slate-600">
-                IRS fax delivery included. Rush and Premium plans available —{" "}
+                IRS fax delivery included. Rush plan also available —{" "}
                 <Link href="/pricing" className="text-accent underline underline-offset-2">
                   see pricing
                 </Link>
