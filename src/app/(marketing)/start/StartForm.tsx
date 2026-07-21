@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 import { fireLeadConversion } from "@/lib/analytics/googleAds";
+import { fireMetaLead, hasMetaMarketingConsent } from "@/lib/analytics/meta";
 
 // Pull the funnel source (?src=) off the URL so we can attribute the eventual
 // paid filing back to the landing page that sent the visitor here. Sanitized
@@ -54,7 +55,11 @@ export function StartForm() {
       const create = await fetch("/api/filings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ funnelSource, tier }),
+        body: JSON.stringify({
+          funnelSource,
+          tier,
+          marketingConsent: hasMetaMarketingConsent(),
+        }),
       });
       if (!create.ok) throw new Error("Couldn't create your filing");
       const { id } = await create.json();
@@ -64,6 +69,7 @@ export function StartForm() {
         body: JSON.stringify({ email: trimmed }),
       });
       if (!patch.ok) throw new Error("Couldn't save your email");
+      fireMetaLead(id);
       // Fire Google Ads "Form 5472 Lead" conversion. The DRAFT is now
       // created + bound to a real email, which is the qualified-lead signal
       // the campaign optimises for. event_callback gates the redirect so
@@ -90,13 +96,20 @@ export function StartForm() {
         // wizard has something to load. (Default intent is "signin" which
         // does NOT auto-create a draft.) funnelSource tags the new DRAFT
         // with its source page for sales attribution.
-        body: JSON.stringify({ credential, intent: "start", funnelSource, tier }),
+        body: JSON.stringify({
+          credential,
+          intent: "start",
+          funnelSource,
+          tier,
+          marketingConsent: hasMetaMarketingConsent(),
+        }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error ?? `Google sign-in failed: ${res.status}`);
       }
       const { filingId } = await res.json();
+      fireMetaLead(filingId);
       // Google-signin start-intent also creates a DRAFT — same conversion
       // signal as the email path above.
       fireLeadConversion({

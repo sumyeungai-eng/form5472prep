@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="624" viewBox="0 0 1640 624" role="img" aria-label="Form5472 Prep Facebook cover">
+  <rect width="1640" height="624" fill="#f8fafc"/>
+  <rect width="1640" height="18" fill="#1e3a8a"/>
+  <circle cx="1420" cy="120" r="230" fill="#e8eef9"/>
+  <circle cx="1520" cy="510" r="180" fill="#dcfce7"/>
+
+  <g transform="translate(170 148)">
+    <rect width="112" height="136" rx="8" fill="#1e3a8a"/>
+    <path d="M72 0v40h40" fill="none" stroke="#ffffff" stroke-width="5" opacity=".55"/>
+    <text x="56" y="98" text-anchor="middle" font-family="Arial, sans-serif" font-size="31" font-weight="800" fill="#ffffff">5472</text>
+  </g>
+
+  <text x="330" y="215" font-family="Arial, sans-serif" font-size="72" font-weight="800" fill="#0f172a">
+    Form<tspan fill="#1e3a8a">5472</tspan><tspan dx="18">Prep</tspan>
+  </text>
+  <text x="330" y="285" font-family="Arial, sans-serif" font-size="30" font-weight="600" fill="#334155">
+    Professional preparation for foreign-owned U.S.
+  </text>
+  <text x="330" y="330" font-family="Arial, sans-serif" font-size="30" font-weight="600" fill="#334155">
+    single-member LLCs
+  </text>
+
+  <g transform="translate(330 390)">
+    <rect width="465" height="58" rx="29" fill="#e8eef9"/>
+    <text x="232" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#1e3a8a">Secure • Guided • Online</text>
+  </g>
+  <text x="330" y="510" font-family="Arial, sans-serif" font-size="25" fill="#475569">form5472prep.com</text>
+</svg>

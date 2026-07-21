@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalLayout title="Privacy Policy" lastUpdated="2026-05-20">
+    <LegalLayout title="Privacy Policy" lastUpdated="2026-07-22">
       <h2>1. Who we are</h2>
       <p>
         Form5472 Prep is the data controller for personal information you submit through the
@@ -127,14 +127,20 @@ export default function PrivacyPage() {
           <strong>Service providers acting on our behalf:</strong> Vercel (application
           hosting), our managed PostgreSQL database provider, Cloudflare R2 (encrypted file
           storage), Plaid (bank account connectivity — see Section 3), Google (optional sign-in
-          via Google OAuth), Stripe (payment processing), and Resend (transactional email).
+          via Google OAuth and advertising measurement), Meta (optional advertising
+          measurement when you consent), Stripe (payment processing), and Resend
+          (transactional email).
           Each is contractually bound to use your data only to provide their service to us,
           and each maintains SOC 2 Type II or equivalent independent attestation.
         </li>
       </ul>
       <p>
-        We do not sell your personal information. We do not share your data with advertisers
-        or analytics platforms beyond privacy-preserving aggregate usage metrics.
+        We do not sell your personal information. We use Google for limited advertising
+        measurement and, only if you allow Meta advertising cookies, share campaign events with
+        Meta. A Meta purchase event may include order value, currency, a deduplication ID, and a
+        one-way hash of your email address. We never send tax IDs, filing answers, addresses,
+        bank data, signatures, or documents to advertising platforms. You can decline optional
+        Meta advertising cookies without affecting the service.
       </p>
 
       <h2>6. Where we store it</h2>

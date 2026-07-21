@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Form5472 Prep profile image">
+  <rect width="1024" height="1024" rx="180" fill="#f8fafc"/>
+  <rect x="232" y="154" width="560" height="700" rx="42" fill="#1e3a8a"/>
+  <path d="M602 154v190h190" fill="none" stroke="#ffffff" stroke-width="26" stroke-linejoin="round" opacity=".55"/>
+  <text x="512" y="650" text-anchor="middle" font-family="Arial, sans-serif" font-size="172" font-weight="800" letter-spacing="5" fill="#ffffff">5472</text>
+  <circle cx="782" cy="808" r="92" fill="#16a34a"/>
+  <path d="M738 808l30 30 60-70" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

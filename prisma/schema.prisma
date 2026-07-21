@@ -149,6 +149,11 @@ model Filing {
   // "file_funnel" = the /file qualifying funnel.
   funnelSource String?
 
+  // Visitor explicitly allowed marketing measurement before this draft was
+  // created. Gates Meta Conversions API events; tax and bank data are never
+  // included in those events.
+  marketingConsent Boolean @default(false)
+
   // AI compliance-check state for the generated PDF. Set by the post-payment
   // validation pipeline. Null = no validation has run yet.
   //   pending      = generated, waiting for AI check to run

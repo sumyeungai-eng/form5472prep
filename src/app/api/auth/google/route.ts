@@ -39,6 +39,7 @@ export async function POST(req: Request) {
   // doesn't create a filing here.
   const rawTier = typeof body?.tier === "string" ? body.tier.toLowerCase().trim() : null;
   const tier = rawTier && new Set(["standard", "rush", "premium"]).has(rawTier) ? rawTier : null;
+  const marketingConsent = body?.marketingConsent === true;
   if (typeof credential !== "string" || !credential) {
     return NextResponse.json({ error: "Google credential required" }, { status: 400 });
   }
@@ -86,8 +87,16 @@ export async function POST(req: Request) {
       userId: user.id,
       funnelSource,
       tier: tier ?? undefined,
+      marketingConsent,
     });
     filing = created.filing;
+  }
+
+  if (filing && intent === "start" && marketingConsent && !filing.marketingConsent) {
+    filing = await prisma.filing.update({
+      where: { id: filing.id },
+      data: { marketingConsent: true },
+    });
   }
 
   return NextResponse.json({ filingId: filing?.id ?? null, email });

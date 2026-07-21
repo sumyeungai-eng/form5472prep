@@ -8,6 +8,7 @@ import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendNewOrderAdminEmail 
 import { resolveTier } from "@/lib/pricing";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { putPdf } from "@/lib/storage";
+import { sendMetaPurchase } from "@/lib/analytics/metaServer";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -83,6 +84,23 @@ export async function POST(req: Request) {
         where: { id: filing.id },
         data: { amountPaid: session.amount_total ?? filing.amountPaid },
       });
+
+      // Consent-gated server-side Purchase event. Only a hashed email, order
+      // value, currency, and event ID are sent; no filing or tax data leaves
+      // the application. The browser Pixel uses the same event ID so Meta can
+      // deduplicate the two delivery paths.
+      if (filing.marketingConsent && filing.user && (session.amount_total ?? 0) > 0) {
+        try {
+          await sendMetaPurchase({
+            email: filing.user.email,
+            eventId: `purchase_${filing.id}`,
+            amountCents: session.amount_total ?? 0,
+            sourceUrl: `${env.appUrl}/pricing`,
+          });
+        } catch (err) {
+          console.error("[stripe-webhook] Meta Purchase event failed", err);
+        }
+      }
 
       // Generate the filled PDF synchronously so we can attach it to the
       // confirmation email and tell the customer exactly where to sign.

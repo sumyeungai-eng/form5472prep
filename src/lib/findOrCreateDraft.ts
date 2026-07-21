@@ -26,6 +26,7 @@ type FindOrCreateArgs = {
   userId: string | null;
   tier?: Tier;
   funnelSource?: string | null;
+  marketingConsent?: boolean;
   prefill?: Partial<Filing>;
 };
 
@@ -38,7 +39,14 @@ type FindOrCreateArgs = {
 // matched on session sticks to them via `userId`, so the user-scoped lookup
 // catches both cases on subsequent visits.
 export async function findOrCreateDraftFiling(args: FindOrCreateArgs): Promise<{ filing: Filing; reused: boolean }> {
-  const { sessionId, userId, tier = DEFAULT_TIER, funnelSource = null, prefill = {} } = args;
+  const {
+    sessionId,
+    userId,
+    tier = DEFAULT_TIER,
+    funnelSource = null,
+    marketingConsent = false,
+    prefill = {},
+  } = args;
 
   const existing = await prisma.filing.findFirst({
     where: {
@@ -67,6 +75,7 @@ export async function findOrCreateDraftFiling(args: FindOrCreateArgs): Promise<{
       amountPaid: totalPriceCents(tier, 0),
       taxYears: [],
       funnelSource,
+      marketingConsent,
       // Cast: prefill is `Partial<Filing>` which includes nullable Json
       // fields that Prisma's CreateInput refuses literally (needs Prisma.JsonNull).
       // At runtime our prefill only ever contains scalar entity/owner fields,
