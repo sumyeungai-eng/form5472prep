@@ -18,16 +18,28 @@ export function useSignedIn(): boolean | null {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   useEffect(() => {
     let active = true;
-    fetch("/api/me", { credentials: "same-origin", cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : { signedIn: false }))
-      .then((d) => {
-        if (active) setSignedIn(!!d.signedIn);
-      })
-      .catch(() => {
-        if (active) setSignedIn(false);
-      });
+    const refresh = () => {
+      fetch("/api/me", { credentials: "same-origin", cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : { signedIn: false }))
+        .then((d) => {
+          if (active) setSignedIn(!!d.signedIn);
+        })
+        .catch(() => {
+          if (active) setSignedIn(false);
+        });
+    };
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    // Re-check on mount and when the tab regains focus/visibility, so a
+    // sign-in/out in another tab isn't shown stale.
+    refresh();
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       active = false;
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
   return signedIn;

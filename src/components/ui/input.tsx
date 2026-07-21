@@ -69,8 +69,15 @@ export function Field({
     React.isValidElement(children) && (children.props as { id?: string }).id
       ? (children.props as { id?: string }).id!
       : autoId;
+  const errorId = error ? `${childId}-error` : undefined;
   const control = React.isValidElement(children)
-    ? React.cloneElement(children as React.ReactElement<{ id?: string }>, { id: childId })
+    ? React.cloneElement(
+        children as React.ReactElement<{ id?: string; "aria-invalid"?: boolean; "aria-describedby"?: string }>,
+        {
+          id: childId,
+          ...(error ? { "aria-invalid": true, "aria-describedby": errorId } : {}),
+        },
+      )
     : children;
   return (
     <div>
@@ -95,7 +102,7 @@ export function Field({
       )}
       {control}
       {hint && !error && <p className="text-xs text-slate-500 mt-1">{hint}</p>}
-      {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+      {error && <p id={errorId} className="text-xs text-red-600 mt-1">{error}</p>}
     </div>
   );
 }
