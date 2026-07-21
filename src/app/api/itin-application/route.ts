@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 import { makeMagicLink } from "@/lib/magicLink";
+import { rateLimit, clientIp, tooManyRequests } from "@/lib/rateLimit";
 
 // Escape applicant-supplied values before interpolating into the admin
 // notification email HTML (prevents markup/link injection into the inbox).
@@ -12,6 +13,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  const rl = await rateLimit("itin-application", clientIp(req), 5, 3600);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
 

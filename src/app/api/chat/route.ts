@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/prisma";
 import { getOwnedFiling } from "@/lib/session";
+import { rateLimit, clientIp, tooManyRequests } from "@/lib/rateLimit";
 import { getTiersForSource } from "@/lib/pricing";
 
 export const runtime = "nodejs";
@@ -161,6 +162,10 @@ WHAT WE ARE NOT
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
 export async function POST(req: Request) {
+  // Throttle per IP — this endpoint calls the paid Anthropic API, so cap it to
+  // blunt cost-DoS from an unauthenticated bot.
+  const rl = await rateLimit("chat", clientIp(req), 20, 600);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return NextResponse.json(

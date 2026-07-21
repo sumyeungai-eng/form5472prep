@@ -351,3 +351,13 @@ enum ItinStatus {
   COMPLETED
   CANCELLED
 }
+
+// Fixed-window rate limiting, backed by Postgres (no external store needed).
+// One row per (bucket:identifier:windowStart); count is incremented atomically.
+model RateLimit {
+  key       String   @id
+  count     Int      @default(0)
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}

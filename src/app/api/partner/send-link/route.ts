@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { makePartnerLoginLink } from "@/lib/partner/auth";
 import { sendPartnerLoginEmail } from "@/lib/email";
+import { rateLimit, clientIp, tooManyRequests } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
@@ -10,6 +11,8 @@ export const runtime = "nodejs";
 // active (no account enumeration). Admins create partner accounts; there is
 // no self-serve signup here.
 export async function POST(req: Request) {
+  const rl = await rateLimit("partner-send-link", clientIp(req), 5, 600);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
   const { email } = await req.json().catch(() => ({}));
   if (typeof email !== "string" || !email.includes("@")) {
     return NextResponse.json({ error: "Valid email required" }, { status: 400 });

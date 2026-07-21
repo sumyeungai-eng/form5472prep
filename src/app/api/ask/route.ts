@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email";
 import { env } from "@/lib/env";
+import { rateLimit, clientIp, tooManyRequests } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +16,8 @@ const MAX_EMAIL = 320;
 const MAX_NAME = 200;
 
 export async function POST(req: Request) {
+  const rl = await rateLimit("ask", clientIp(req), 5, 600);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
 
