@@ -29,24 +29,25 @@ export async function POST(req: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     const filingId = session.metadata?.filingId;
     if (filingId) {
-      // Idempotency guard. Stripe delivers events at-least-once (network
-      // retries, manual "Resend" up to 3 days later), so this handler can
-      // fire more than once for the same payment. Claim the DRAFT->PAID
-      // transition atomically: only the first delivery matches status:DRAFT
-      // and proceeds. A redelivery finds the filing already advanced
-      // (PAID / PDF_GENERATED / SIGNED / FAXED / CONFIRMED), matches 0 rows,
-      // and no-ops — otherwise it would regress status, overwrite the signed
-      // PDF, re-send confirmation/magic-link/admin emails, and risk a second
-      // IRS fax of an already-filed package.
+      // Idempotency guard, keyed on stripePaymentId (NOT status). Stripe
+      // delivers events at-least-once, AND the post-payment success page
+      // (filings/[id]/page.tsx) promotes DRAFT->PAID as a redirect fallback
+      // WITHOUT setting stripePaymentId. Keying the claim on status:DRAFT would
+      // therefore let that page win the race and make this handler skip the
+      // whole fulfillment (PDF gen + confirmation/magic-link/admin emails),
+      // stranding a paid customer. stripePaymentId is only ever written here,
+      // so `stripePaymentId: null` == "not yet fulfilled": the first delivery
+      // claims it (even if the page already flipped status to PAID) and every
+      // redelivery finds it set, matches 0 rows, and no-ops.
       const claim = await prisma.filing.updateMany({
-        where: { id: filingId, status: "DRAFT" },
+        where: { id: filingId, stripePaymentId: null },
         data: {
           status: "PAID",
           stripePaymentId: session.payment_intent as string,
         },
       });
       if (claim.count === 0) {
-        console.log(`[stripe-webhook] ${filingId} not in DRAFT — skipping duplicate checkout.session.completed`);
+        console.log(`[stripe-webhook] ${filingId} already fulfilled — skipping duplicate checkout.session.completed`);
         return NextResponse.json({ received: true, deduplicated: true });
       }
       const filing = await prisma.filing.findUnique({
