@@ -68,16 +68,18 @@ export function refineUsIdOrReferenceId(
 
 export const ownerSchema = ownerBaseSchema.superRefine(refineUsIdOrReferenceId);
 
-const currentYear = new Date().getFullYear();
+// The last COMPLETED tax year — a filing can't be for a year that hasn't
+// ended yet. Bounds both the wizard picker and the server-side validation.
+export const lastCompletedTaxYear = new Date().getUTCFullYear() - 1;
 
 export const yearScopeSchema = z.object({
   taxYears: z
-    .array(z.number().int().min(2018).max(currentYear))
+    .array(z.number().int().min(2018).max(lastCompletedTaxYear))
     .min(1, "Select at least one year"),
 });
 
 export const yearDataSchema = z.object({
-  taxYear: z.number().int().min(2018).max(currentYear),
+  taxYear: z.number().int().min(2018).max(lastCompletedTaxYear),
   totalAssetsYearEnd: z.coerce.number().min(0),
   contributions: z.coerce.number().min(0),
   distributions: z.coerce.number().min(0),
@@ -86,6 +88,18 @@ export const yearDataSchema = z.object({
 export const yearDataListSchema = z.object({
   years: z.array(yearDataSchema).min(1),
 });
+
+// A single Part IV/V reportable transaction. These amounts become the actual
+// dollar figures on the IRS forms, so validate strictly: amountCents must be a
+// finite integer (no NaN/"abc"), and the descriptive fields must be non-empty.
+export const reportableTransactionSchema = z.object({
+  date: z.string().trim().min(1),
+  description: z.string().trim().min(1),
+  counterparty: z.string().trim().optional(),
+  amountCents: z.number().int().finite(),
+  category: z.string().trim().min(1),
+});
+export const reportableTransactionsSchema = z.array(reportableTransactionSchema);
 
 export type EntityForm = z.infer<typeof entitySchema>;
 export type OwnerForm = z.infer<typeof ownerSchema>;

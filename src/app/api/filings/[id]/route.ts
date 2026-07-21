@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getOwnedFiling, bindFilingToEmail } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { totalPriceCents, isTier } from "@/lib/pricing";
-import { entitySchema, ownerBaseSchema, yearDataSchema } from "@/lib/schemas";
+import { entitySchema, ownerBaseSchema, yearDataSchema, yearScopeSchema, reportableTransactionsSchema } from "@/lib/schemas";
 
 // Server-side backstop for the incremental wizard PATCH. Reuses the SAME field
 // rules the wizard enforces client-side (entitySchema + ownerBaseSchema) so
@@ -109,7 +109,19 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     data.tier = body.tier;
   }
   if (Array.isArray(body.taxYears)) {
-    const years = (body.taxYears as number[]).slice().sort((a, b) => a - b);
+    // Validate + dedupe: reject empty, duplicate, or out-of-range years (which
+    // would otherwise charge a fee but produce no/duplicate/wrong-revision forms).
+    const parsedYears = yearScopeSchema.safeParse({ taxYears: Array.from(new Set(body.taxYears)) });
+    if (!parsedYears.success) {
+      return NextResponse.json(
+        {
+          error: "Invalid tax years",
+          issues: parsedYears.error.issues.map((i) => ({ field: i.path.join("."), message: i.message })),
+        },
+        { status: 400 },
+      );
+    }
+    const years = parsedYears.data.taxYears.slice().sort((a, b) => a - b);
     data.taxYears = years;
     // Tier is independent of year count in the new pricing model. Year count
     // drives a flat per-extra-year add-on layered on the chosen tier base.
@@ -141,6 +153,22 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
           { status: 400 },
         );
       }
+      // Validate the detailed reportable-transaction rows (Part IV/V). A direct
+      // PATCH could otherwise store amountCents:"abc" → $NaN on the form.
+      let cleanTransactions: z.infer<typeof reportableTransactionsSchema> | undefined;
+      if (Array.isArray(y.reportableTransactions) && y.reportableTransactions.length > 0) {
+        const tv = reportableTransactionsSchema.safeParse(y.reportableTransactions);
+        if (!tv.success) {
+          return NextResponse.json(
+            {
+              error: "Invalid reportable transactions",
+              issues: tv.error.issues.map((i) => ({ field: i.path.join("."), message: i.message })),
+            },
+            { status: 400 },
+          );
+        }
+        cleanTransactions = tv.data;
+      }
       await prisma.filingYearData.upsert({
         where: { filingId_taxYear: { filingId: filing.id, taxYear: y.taxYear } },
         update: {
@@ -157,10 +185,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
           // the incoming list is non-empty; an empty list leaves existing
           // detail untouched. (A genuine "clear all" would need an explicit
           // signal — not the absence of rehydrated state.)
-          reportableTransactions:
-            Array.isArray(y.reportableTransactions) && y.reportableTransactions.length > 0
-              ? y.reportableTransactions
-              : undefined,
+          // undefined when the incoming list is empty/absent → leaves stored
+          // detail untouched (the anti-data-loss guard above).
+          reportableTransactions: cleanTransactions ?? undefined,
         },
         create: {
           filingId: filing.id,
@@ -169,7 +196,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
           contributions: y.contributions ?? 0,
           distributions: y.distributions ?? 0,
           otherTransactionsNote: typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : null,
-          reportableTransactions: Array.isArray(y.reportableTransactions) ? y.reportableTransactions : [],
+          reportableTransactions: cleanTransactions ?? [],
         },
       });
     }

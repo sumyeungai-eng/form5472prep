@@ -8,6 +8,9 @@ import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePacka
 import { putPdf } from "@/lib/storage";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
+import { entitySchema, ownerBaseSchema, refineUsIdOrReferenceId, yearScopeSchema } from "@/lib/schemas";
+
+const ownerCompletionSchema = ownerBaseSchema.superRefine(refineUsIdOrReferenceId);
 
 export async function POST(req: Request) {
   const { filingId, email } = await req.json();
@@ -18,6 +21,51 @@ export async function POST(req: Request) {
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (filing.status !== "DRAFT")
     return NextResponse.json({ error: "Already paid" }, { status: 409 });
+
+  // Completeness gate — the desktop sidebar lets a user jump straight to Review,
+  // so refuse to charge for an incomplete filing (which would otherwise pay,
+  // skip PDF generation, and strand them in PAID with no product). Validate
+  // against the same schemas the wizard enforces.
+  const validationFiling = {
+    ...filing,
+    llcDateIncorporated: filing.llcDateIncorporated
+      ? filing.llcDateIncorporated.toISOString().slice(0, 10)
+      : filing.llcDateIncorporated,
+  };
+  const completionChecks = [
+    entitySchema.safeParse(validationFiling),
+    ownerCompletionSchema.safeParse(filing),
+    yearScopeSchema.safeParse(filing),
+  ];
+  const completionIssues: string[] = [];
+  for (const result of completionChecks) {
+    if (!result.success) {
+      for (const issue of result.error.issues) {
+        const field = issue.path.join(".") || issue.message;
+        if (completionIssues.indexOf(field) === -1) completionIssues.push(field);
+      }
+    }
+  }
+  if (completionIssues.length > 0) {
+    return NextResponse.json(
+      { error: "Filing is incomplete — please finish all steps before paying.", issues: completionIssues },
+      { status: 400 },
+    );
+  }
+
+  // Idempotency — if a still-open Stripe session already exists for this filing
+  // (double-click / retried request), reuse it instead of minting a second
+  // payable session that could double-charge the customer.
+  if (!isTestTier(filing.tier) && filing.stripeSessionId) {
+    try {
+      const existingSession = await stripe().checkout.sessions.retrieve(filing.stripeSessionId);
+      if (existingSession.status === "open" && existingSession.url) {
+        return NextResponse.json({ url: existingSession.url });
+      }
+    } catch (err) {
+      console.warn("[checkout] existing Stripe session could not be reused", err);
+    }
+  }
 
   // Tier is selected at /pricing (or /start?tier=) and stored on Filing.tier.
   // Fax delivery is bundled into every tier — there's no separate add-on
@@ -176,15 +224,20 @@ export async function POST(req: Request) {
   const expectedTotalCents = tier.priceCents + multiYearAddonCents(yearCount);
   console.log("[checkout] expected total cents:", expectedTotalCents, "filing:", filing.id);
 
-  const session = await stripe().checkout.sessions.create({
-    mode: "payment",
-    payment_method_types: ["card"],
-    customer_email: user.email,
-    line_items: lineItems,
-    success_url: `${env.appUrl}/filings/${filing.id}?paid=1`,
-    cancel_url: `${env.appUrl}/filings/${filing.id}/edit`,
-    metadata: { filingId: filing.id, userId: user.id },
-  });
+  const session = await stripe().checkout.sessions.create(
+    {
+      mode: "payment",
+      payment_method_types: ["card"],
+      customer_email: user.email,
+      line_items: lineItems,
+      success_url: `${env.appUrl}/filings/${filing.id}?paid=1`,
+      cancel_url: `${env.appUrl}/filings/${filing.id}/edit`,
+      metadata: { filingId: filing.id, userId: user.id },
+    },
+    // Idempotency key scoped to the filing + its priced inputs — a retried
+    // identical create returns the same session instead of a second one.
+    { idempotencyKey: `checkout_${filing.id}_${tier.priceCents}_${yearCount}` },
+  );
 
   await prisma.filing.update({
     where: { id: filing.id },

@@ -56,6 +56,34 @@ export async function POST(req: Request) {
       });
       if (!filing) return NextResponse.json({ received: true });
 
+      // Stale-session guard. checkout overwrites filing.stripeSessionId with
+      // the LATEST session, so a payment against a superseded session (e.g. the
+      // customer opened a $199 one-year session, upgraded the draft to a
+      // pricier tier/more years which minted a new session, then paid the old
+      // tab) must be rejected — otherwise they'd get the bigger package for the
+      // old price. Release the idempotency claim so the current session can
+      // still fulfill, and don't process this one. (An orphaned charge here
+      // needs a manual refund — surfaced via this warn log.)
+      if (session.id !== filing.stripeSessionId) {
+        await prisma.filing.updateMany({
+          where: { id: filing.id, stripePaymentId: session.payment_intent as string },
+          data: { status: "DRAFT", stripePaymentId: null },
+        });
+        console.warn("[stripe-webhook] stale checkout session rejected", {
+          filingId,
+          paidSessionId: session.id,
+          currentSessionId: filing.stripeSessionId,
+        });
+        return NextResponse.json({ received: true, staleSession: true });
+      }
+
+      // Record the amount actually charged (the DB previously held only the
+      // pre-checkout expected amount).
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: { amountPaid: session.amount_total ?? filing.amountPaid },
+      });
+
       // Generate the filled PDF synchronously so we can attach it to the
       // confirmation email and tell the customer exactly where to sign.
       // If generation fails (e.g. missing required fields), we still send the
