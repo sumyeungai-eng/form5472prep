@@ -32,39 +32,67 @@ export function SignaturePad({
   const dirty = useRef(false);
   const [hasInk, setHasInk] = useState(false);
 
-  // Initialise the canvas: white background, then draw the initial signature
-  // (if any) so the user can keep their saved signature without re-drawing.
+  // Initialise the canvas and keep its high-DPI backing store in sync with the
+  // element's CSS box. Also draws the initial signature (if any) so the user
+  // can keep their saved signature without re-drawing.
   useEffect(() => {
     const c = canvasRef.current;
     if (!c) return;
-    const ctx = c.getContext("2d");
-    if (!ctx) return;
 
-    // Set up a high-DPI backing store so strokes don't look pixelated.
-    const dpr = window.devicePixelRatio || 1;
-    const rect = c.getBoundingClientRect();
-    c.width = Math.round(rect.width * dpr);
-    c.height = Math.round(rect.height * dpr);
-    ctx.scale(dpr, dpr);
-    // No background fill: leaving the canvas transparent means toDataURL()
-    // exports a PNG whose only opaque pixels are the strokes themselves.
-    // That way when the signature is later embedded into a PDF form, it
-    // doesn't paint a white box over the "Sign Here" line, date cell, or
-    // any underlying form text. The visible canvas reads white because the
-    // wrapper <div> has bg-white — but the bitmap behind it stays clear.
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "#0f172a";
+    let lastW = 0;
+    let lastH = 0;
+
+    // (Re)configure the high-DPI backing store to match the element's CSS box.
+    // Setting canvas.width/height clears the bitmap, so snapshot any existing
+    // ink first and redraw it after — this keeps strokes aligned and intact
+    // when the element resizes (e.g. a phone rotation). No background fill:
+    // leaving the canvas transparent means toDataURL() exports a PNG whose only
+    // opaque pixels are the strokes, so embedding it into the PDF doesn't paint
+    // a white box over the "Sign Here" line or underlying form text.
+    const resizeBacking = () => {
+      const ctx = c.getContext("2d");
+      if (!ctx) return;
+      const rect = c.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      // Skip if the CSS size hasn't actually changed (the ResizeObserver fires
+      // once on observe with the initial size, which the mount call already set).
+      if (Math.abs(rect.width - lastW) < 1 && Math.abs(rect.height - lastH) < 1) return;
+      const snapshot = dirty.current ? c.toDataURL("image/png") : null;
+      const dpr = window.devicePixelRatio || 1;
+      c.width = Math.round(rect.width * dpr);
+      c.height = Math.round(rect.height * dpr);
+      lastW = rect.width;
+      lastH = rect.height;
+      ctx.scale(dpr, dpr);
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "#0f172a";
+      if (snapshot) {
+        const img = new Image();
+        img.onload = () => ctx.drawImage(img, 0, 0, rect.width, rect.height);
+        img.src = snapshot;
+      }
+    };
+
+    resizeBacking();
 
     if (initialPngDataUrl) {
-      const img = new Image();
-      img.onload = () => {
-        ctx.drawImage(img, 0, 0, rect.width, rect.height);
-        setHasInk(true);
-        dirty.current = true;
-      };
-      img.src = initialPngDataUrl;
+      const ctx = c.getContext("2d");
+      const rect = c.getBoundingClientRect();
+      if (ctx) {
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, rect.width, rect.height);
+          setHasInk(true);
+          dirty.current = true;
+        };
+        img.src = initialPngDataUrl;
+      }
     }
+
+    const ro = new ResizeObserver(() => resizeBacking());
+    ro.observe(c);
+    return () => ro.disconnect();
   }, [initialPngDataUrl]);
 
   function pointer(e: React.PointerEvent<HTMLCanvasElement>) {
