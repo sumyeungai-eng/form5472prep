@@ -11,9 +11,10 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen flex flex-col">
       <header className="relative border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Form5472 Prep home">
-            <Logo />
+            <Logo mark className="h-9 w-9 min-[430px]:hidden" />
+            <Logo className="hidden min-[430px]:block" />
           </Link>
           <nav className="flex items-center gap-1 sm:gap-3">
             <MobileMenu />

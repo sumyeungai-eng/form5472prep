@@ -5,6 +5,7 @@ import { env } from "@/lib/env";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ChatWidget } from "@/components/ChatWidget";
+import { MetaPixel } from "@/components/MetaPixel";
 import { GOOGLE_ADS_TAG_ID } from "@/lib/analytics/googleAds";
 import "./globals.css";
 
@@ -117,6 +118,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           strategy="lazyOnload"
         />
         {children}
+        <MetaPixel />
         <ChatWidget />
         <Analytics />
         <SpeedInsights />

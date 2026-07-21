@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { firePurchaseConversion } from "@/lib/analytics/googleAds";
+import { fireMetaPurchase } from "@/lib/analytics/meta";
 
 // Fires the Google Ads purchase conversion once per paid filing.
 //
@@ -19,6 +20,7 @@ export function PurchaseConversionPing({
 }) {
   useEffect(() => {
     firePurchaseConversion({ amountCents, transactionId: filingId });
+    fireMetaPurchase({ amountCents, filingId });
   }, [amountCents, filingId]);
   return null;
 }

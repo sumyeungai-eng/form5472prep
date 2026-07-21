@@ -24,6 +24,7 @@ export async function POST(req: Request) {
   // Optional body params from the /file funnel: tier pre-selection + source tag.
   const body = await req.json().catch(() => ({}));
   const requestedTier = body?.tier as string | undefined;
+  const marketingConsent = body?.marketingConsent === true;
   // Sanitize funnelSource — user-controllable (set client-side from ?src=
   // on /start). Cap length and restrict to slug-safe chars so a tampered
   // request body can't store huge or weird strings in the DB / admin UI.
@@ -79,6 +80,7 @@ export async function POST(req: Request) {
     userId: user?.id ?? null,
     tier,
     funnelSource,
+    marketingConsent,
     prefill: Object.keys(prefill).length > 0 ? (prefill as never) : undefined,
   });
 
@@ -93,6 +95,16 @@ export async function POST(req: Request) {
     if (Object.keys(overlay).length > 0) {
       await prisma.filing.update({ where: { id: filing.id }, data: overlay });
     }
+  }
+
+  // The visitor may grant consent after an untouched draft was created.
+  // Consent is monotonic on the filing; declining still stops future browser
+  // Pixel events through the saved browser preference.
+  if (reused && marketingConsent && !filing.marketingConsent) {
+    await prisma.filing.update({
+      where: { id: filing.id },
+      data: { marketingConsent: true },
+    });
   }
 
   return NextResponse.json({

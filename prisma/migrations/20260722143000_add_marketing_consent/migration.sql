@@ -1,0 +1,2 @@
+ALTER TABLE "Filing"
+ADD COLUMN "marketingConsent" BOOLEAN NOT NULL DEFAULT false;

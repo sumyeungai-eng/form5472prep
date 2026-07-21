@@ -9,6 +9,7 @@ import { Field, Input, Select } from "@/components/ui/input";
 import { COUNTRIES } from "@/lib/countries";
 import { MULTI_YEAR_ADDON_CENTS, multiYearAddonCents, tierInfo, totalPriceCents } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
+import { fireMetaInitiateCheckout } from "@/lib/analytics/meta";
 
 // Generates a self-assigned Reference ID for Form 5472 when the customer
 // leaves the field blank. Uses last-name + first-initial as a human-readable
@@ -407,6 +408,10 @@ export function FilingWizard({
                 return;
               }
               const { url } = await res.json();
+              fireMetaInitiateCheckout({
+                filingId: filing.id,
+                amountCents: totalPriceCents(filing.tier, filing.taxYears.length || 1),
+              });
               router.push(url);
             }}
           />

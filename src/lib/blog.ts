@@ -37,6 +37,8 @@ export type PostFrontmatter = {
 export type PostMeta = PostFrontmatter & {
   slug: string;
   readingMinutes: number;
+  image: string;
+  imageAlt: string;
 };
 
 export type Post = PostMeta & {
@@ -86,8 +88,27 @@ async function readFile(slug: string): Promise<Post | null> {
     tags: fm.tags ?? [],
     draft: fm.draft ?? false,
     readingMinutes: Math.max(1, Math.round(readingTime(parsed.content).minutes)),
+    image: `/blog/${slug}.webp`,
+    imageAlt: artworkAlt(slug, fm.title),
     body: parsed.content,
   };
+}
+
+const ARTWORK_ALTS: Record<string, string> = {
+  "form-5472-cost": "Form 5472 paperwork, a calculator, and an approval marker on a tidy desk",
+  "form-5472-extension": "A calendar, clock, and document envelope illustrating a filing extension",
+  "amazon-fba-foreign-sellers-form-5472": "An ecommerce workspace with parcels, a laptop, and U.S. business paperwork",
+  "form-5472-canada-residents-us-llc": "Canadian and U.S. business paperwork connected across a professional desk",
+  "form-5472-diy-vs-preparer": "A side-by-side comparison of DIY tax paperwork and a professionally reviewed file",
+  "form-5472-dormant-llc-no-income": "A quiet business ledger and tax file for a dormant LLC",
+  "form-5472-filed-late-never-filed": "Late paperwork being organized into a complete filing folder",
+  "form-5472-india-residents-us-llc": "India-based owner paperwork connected to a U.S. LLC filing",
+  "form-5472-uk-residents-us-llc": "UK and U.S. business documents arranged for a Form 5472 filing",
+  "what-is-form-5472": "A Form 5472 document linking a U.S. company with its foreign owner",
+};
+
+function artworkAlt(slug: string, title: string): string {
+  return ARTWORK_ALTS[slug] ?? `Editorial illustration for ${title}`;
 }
 
 export async function getAllPosts(opts?: { includeDrafts?: boolean }): Promise<PostMeta[]> {
