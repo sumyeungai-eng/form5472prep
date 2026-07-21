@@ -3,6 +3,12 @@ import { sendEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 import { makeMagicLink } from "@/lib/magicLink";
 
+// Escape applicant-supplied values before interpolating into the admin
+// notification email's HTML so a submitter can't inject markup/links into the
+// operator's inbox.
+const esc = (s: unknown) =>
+  String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -77,20 +83,20 @@ export async function POST(req: Request) {
         <h2 style="margin:0 0 16px;font-size:18px;color:#0f172a;">New EIN Application</h2>
         <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:14px;">
           <tr><td colspan="2" style="padding:8px 0 4px;font-weight:600;color:#1e3a8a;border-bottom:1px solid #e2e8f0;">Contact</td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;width:180px;">Name</td><td style="color:#0f172a;font-weight:600;">${fullName}</td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Email</td><td><a href="mailto:${normalized}" style="color:#1e3a8a;">${normalized}</a></td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Phone</td><td style="color:#0f172a;">${phone || "—"}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#64748b;width:180px;">Name</td><td style="color:#0f172a;font-weight:600;">${esc(fullName)}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Email</td><td><a href="mailto:${esc(normalized)}" style="color:#1e3a8a;">${esc(normalized)}</a></td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Phone</td><td style="color:#0f172a;">${esc(phone) || "—"}</td></tr>
           <tr><td colspan="2" style="padding:16px 0 4px;font-weight:600;color:#1e3a8a;border-bottom:1px solid #e2e8f0;">LLC</td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">LLC Name</td><td style="color:#0f172a;">${llcName}</td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">State</td><td style="color:#0f172a;">${llcState || "—"}</td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Formed</td><td style="color:#0f172a;">${llcFormedDate || "—"}</td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Business purpose</td><td style="color:#0f172a;">${businessPurpose || "—"}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">LLC Name</td><td style="color:#0f172a;">${esc(llcName)}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">State</td><td style="color:#0f172a;">${esc(llcState) || "—"}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Formed</td><td style="color:#0f172a;">${esc(llcFormedDate) || "—"}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Business purpose</td><td style="color:#0f172a;">${esc(businessPurpose) || "—"}</td></tr>
           <tr><td colspan="2" style="padding:16px 0 4px;font-weight:600;color:#1e3a8a;border-bottom:1px solid #e2e8f0;">Owner</td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Owner name</td><td style="color:#0f172a;">${ownerName || "(same as contact)"}</td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Citizenship</td><td style="color:#0f172a;">${ownerCitizenship || "—"}</td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Residence</td><td style="color:#0f172a;">${ownerResidence || "—"}</td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Passport</td><td style="color:#0f172a;">${passportNumber || "—"}</td></tr>
-          ${notes ? `<tr><td colspan="2" style="padding:16px 0 4px;font-weight:600;color:#1e3a8a;border-bottom:1px solid #e2e8f0;">Notes</td></tr><tr><td colspan="2" style="padding:6px 0;color:#0f172a;">${notes}</td></tr>` : ""}
+          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Owner name</td><td style="color:#0f172a;">${esc(ownerName) || "(same as contact)"}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Citizenship</td><td style="color:#0f172a;">${esc(ownerCitizenship) || "—"}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Residence</td><td style="color:#0f172a;">${esc(ownerResidence) || "—"}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Passport</td><td style="color:#0f172a;">${esc(passportNumber) || "—"}</td></tr>
+          ${notes ? `<tr><td colspan="2" style="padding:16px 0 4px;font-weight:600;color:#1e3a8a;border-bottom:1px solid #e2e8f0;">Notes</td></tr><tr><td colspan="2" style="padding:6px 0;color:#0f172a;">${esc(notes)}</td></tr>` : ""}
         </table>
         <p style="margin:24px 0 0;font-size:13px;color:#64748b;">Reply directly to this email to contact the applicant.</p>
       `,

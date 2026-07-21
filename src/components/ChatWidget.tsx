@@ -8,7 +8,13 @@ import { usePathname } from "next/navigation";
 // the admin inbox via /api/ask — no AI, no chat history. The operator replies
 // from their own inbox (reply-to is set to the visitor's address).
 
-const HIDE_PATHS = [/^\/admin(\/|$)/, /^\/filings\/[^/]+\/sign(\/|$)/];
+// Hidden on admin, the sign page, and the wizard edit page — on the last, the
+// floating button can overlap the bottom-right Continue/Pay control at 375px.
+const HIDE_PATHS = [
+  /^\/admin(\/|$)/,
+  /^\/filings\/[^/]+\/sign(\/|$)/,
+  /^\/filings\/[^/]+\/edit(\/|$)/,
+];
 
 type Status = "idle" | "sending" | "sent" | "error";
 

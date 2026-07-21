@@ -76,7 +76,7 @@ export function firePurchaseConversion(opts: {
   transactionId: string;
 }): void {
   if (!GOOGLE_ADS_CONVERSION_PURCHASE) return;
-  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
+  if (typeof window === "undefined") return;
   const params: Record<string, unknown> = {
     send_to: GOOGLE_ADS_CONVERSION_PURCHASE,
     transaction_id: opts.transactionId,
@@ -84,6 +84,14 @@ export function firePurchaseConversion(opts: {
   if (typeof opts.amountCents === "number" && opts.amountCents > 0) {
     params.value = opts.amountCents / 100;
     params.currency = "USD";
+  }
+  // If gtag.js hasn't finished loading yet (deferred script vs a fast paid
+  // redirect), queue the event on dataLayer so the tag replays it on load
+  // instead of dropping the conversion.
+  if (typeof window.gtag !== "function") {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(["event", "conversion", params]);
+    return;
   }
   window.gtag("event", "conversion", params);
 }

@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { getFilingAccess } from "@/lib/session";
+import { getCurrentUser, getFilingAccess } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { FilingLocked } from "@/components/FilingLocked";
 import { SignClient } from "./SignClient";
@@ -43,8 +43,13 @@ export default async function SignFilingPage({ params }: { params: { id: string 
 
   // Pre-populate the SignaturePad if the same user has a saved signature
   // from a previous filing. Falls back to "" when none.
+  // Only load a prior signature for an AUTHENTICATED user who owns this filing
+  // — not merely because filing.userId is set. Otherwise an anonymous owner who
+  // bound their draft to a victim's email would be served the victim's saved
+  // signature image.
   let priorSignatureDataUrl: string | null = null;
-  if (filing.userId) {
+  const currentUser = await getCurrentUser();
+  if (currentUser?.id && currentUser.id === filing.userId) {
     const previous = await prisma.filing.findFirst({
       where: {
         userId: filing.userId,

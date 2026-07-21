@@ -70,9 +70,11 @@ export default async function FilingDetailPage({
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10 space-y-8">
-      {/* Google Ads purchase conversion — only reachable when status !== DRAFT,
-          i.e. payment was verified server-side (webhook or Stripe re-check). */}
-      {searchParams.paid === "1" && (
+      {/* Google Ads purchase conversion — fire on any paid view (not just the
+          ?paid=1 redirect), so a customer who closes the Stripe tab or opens
+          the filing from their dashboard still converts. Google dedupes on the
+          transaction_id (= filing id). Only reachable when status !== DRAFT. */}
+      {(filing.status as string) !== "DRAFT" && (
         <PurchaseConversionPing amountCents={filing.amountPaid} filingId={filing.id} />
       )}
       <div>

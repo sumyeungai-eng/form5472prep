@@ -28,7 +28,12 @@ function client(): S3Client {
 }
 
 export function makeKey(parts: string): string {
-  return parts.replace(/[^a-zA-Z0-9._/-]/g, "_");
+  return parts
+    .replace(/[^a-zA-Z0-9._/-]/g, "_")
+    // Collapse ".." and strip leading slashes so a user-controlled filename
+    // can't traverse out of the intended directory in local-disk mode.
+    .replace(/\.{2,}/g, "_")
+    .replace(/^\/+/, "");
 }
 
 export async function put(key: string, bytes: Uint8Array, contentType = "application/pdf"): Promise<string> {
