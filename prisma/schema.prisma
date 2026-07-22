@@ -24,6 +24,32 @@ model User {
   itinApplications     ItinApplication[]
 }
 
+model Admin {
+  id           String             @id @default(cuid())
+  email        String             @unique
+  name         String?
+  active       Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  lastLoginAt  DateTime?
+  loginNonce   String?
+  deviceTokens AdminDeviceToken[]
+  changeLog    FilingChangeLog[]
+}
+
+model AdminDeviceToken {
+  id         String   @id @default(cuid())
+  adminId    String
+  admin      Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  tokenHash  String   @unique
+  deviceName String?
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime?
+  expiresAt  DateTime
+  revokedAt  DateTime?
+
+  @@index([adminId])
+}
+
 // A reseller / agency that batches filings for many client LLCs under one
 // login. Created and approved by an admin (no public self-serve signup).
 // Auth mirrors the customer magic-link model: the partner enters their email
@@ -197,6 +223,8 @@ model FilingChangeLog {
   id         String   @id @default(cuid())
   filingId   String
   filing     Filing   @relation(fields: [filingId], references: [id], onDelete: Cascade)
+  adminId    String?
+  admin      Admin?   @relation(fields: [adminId], references: [id])
   // Who/what initiated the change. "ai" = the conversation agent, "admin" =
   // human via /admin, "customer" = self-service edit, "system" = automated
   // (cron, webhook, etc.).
@@ -210,6 +238,7 @@ model FilingChangeLog {
   changedAt  DateTime @default(now())
 
   @@index([filingId, changedAt])
+  @@index([adminId])
 }
 
 // In-portal communication between admin and customer about a specific filing.
@@ -364,5 +393,18 @@ model RateLimit {
   count     Int      @default(0)
   expiresAt DateTime
 
+  @@index([expiresAt])
+}
+
+model IdempotencyRecord {
+  id         String   @id @default(cuid())
+  key        String
+  scope      String
+  adminId    String?
+  resultJson Json?
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+
+  @@unique([scope, key])
   @@index([expiresAt])
 }

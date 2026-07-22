@@ -1,5 +1,12 @@
 import crypto from "node:crypto";
 import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma"
+import {
+  ADMIN_SESSION_TTL_SECONDS,
+  makeAdminSessionToken,
+  verifyAdminSessionToken,
+  verifyDeviceToken,
+} from "@/lib/admin/identity"
 
 // Password gate for /admin (taxpayer data, PDF regen, fax submission).
 //
@@ -71,16 +78,132 @@ function verifyToken(token: string | undefined): boolean {
   return Math.floor(Date.now() / 1000) < exp;
 }
 
-export async function isAdmin(): Promise<boolean> {
-  // Fail closed if admin credentials aren't properly configured in prod.
+function legacyCookieValid(req?: Request): boolean {
   if (!adminConfigOk()) return false;
+  return verifyToken(cookieValue(req, COOKIE_NAME));
+}
+
+export async function isAdmin(): Promise<boolean> {
   // cookies() is synchronous in Next 14, but the API is being made async in
   // Next 15 — awaiting a non-Promise is harmless, so this is forward-compatible.
-  const store = cookies();
-  return verifyToken(store.get(COOKIE_NAME)?.value);
+  if (legacyCookieValid()) return true;
+
+  try {
+    const principal = await getAdminPrincipal();
+    return principal !== null;
+  } catch (error) {
+    console.error("[admin/auth] Failed to resolve admin principal:", error);
+    return false;
+  }
 }
 
 export const ADMIN_COOKIE = {
   name: COOKIE_NAME,
   maxAge: TTL_SECONDS,
 };
+
+const ADMIN_SESSION_COOKIE_NAME = "form5472_admin_session"
+
+export const ADMIN_SESSION_COOKIE = {
+  name: ADMIN_SESSION_COOKIE_NAME,
+  maxAge: ADMIN_SESSION_TTL_SECONDS,
+}
+
+export function setAdminSessionCookie(adminId: string): void {
+  cookies().set({
+    name: ADMIN_SESSION_COOKIE.name,
+    value: makeAdminSessionToken(adminId),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: ADMIN_SESSION_COOKIE.maxAge,
+  })
+}
+
+export function clearAdminSessionCookie(): void {
+  cookies().set({
+    name: ADMIN_SESSION_COOKIE.name,
+    value: "",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  })
+}
+
+export type AdminPrincipal = {
+  adminId: string | null
+  email: string | null
+  via: "cookie" | "bearer" | "legacy-password"
+}
+
+function requestCookie(req: Request, name: string): string | undefined {
+  const cookieHeader = req.headers.get("cookie")
+  if (!cookieHeader) return undefined
+
+  for (const cookie of cookieHeader.split(";")) {
+    const separator = cookie.indexOf("=")
+    if (separator === -1) continue
+    if (cookie.slice(0, separator).trim() !== name) continue
+    const value = cookie.slice(separator + 1).trim()
+    try {
+      return decodeURIComponent(value)
+    } catch {
+      return value
+    }
+  }
+
+  return undefined
+}
+
+function cookieValue(req: Request | undefined, name: string): string | undefined {
+  if (req) return requestCookie(req, name)
+  return cookies().get(name)?.value
+}
+
+async function findActiveAdmin(adminId: string) {
+  const admin = await prisma.admin.findUnique({
+    where: { id: adminId },
+    select: { email: true, active: true },
+  })
+  if (!admin?.active) return null
+  return admin
+}
+
+export async function getAdminPrincipal(req?: Request): Promise<AdminPrincipal | null> {
+  const authorization = req?.headers.get("authorization")
+  const bearerMatch = authorization?.match(/^Bearer\s+(.+)$/i)
+
+  if (bearerMatch) {
+    const adminId = await verifyDeviceToken(bearerMatch[1].trim())
+    if (adminId) {
+      const admin = await findActiveAdmin(adminId)
+      if (admin) return { adminId, email: admin.email, via: "bearer" }
+    }
+  }
+
+  const sessionToken = cookieValue(req, ADMIN_SESSION_COOKIE_NAME)
+  if (sessionToken) {
+    const adminId = verifyAdminSessionToken(sessionToken)
+    if (adminId) {
+      const admin = await findActiveAdmin(adminId)
+      if (admin) return { adminId, email: admin.email, via: "cookie" }
+    }
+  }
+
+  const legacyAuthenticated = legacyCookieValid(req)
+
+  if (legacyAuthenticated) {
+    return { adminId: null, email: null, via: "legacy-password" }
+  }
+
+  return null
+}
+
+export async function requireAdmin(req?: Request): Promise<AdminPrincipal> {
+  const principal = await getAdminPrincipal(req)
+  if (!principal) throw new Error("Admin authentication required")
+  return principal
+}

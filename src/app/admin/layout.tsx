@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { isAdmin } from "@/lib/admin/auth";
+import { getAdminPrincipal } from "@/lib/admin/auth";
 import { SignOutButton } from "./SignOutButton";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +8,8 @@ export const metadata = { robots: { index: false, follow: false } };
 // Per-page auth: each admin page calls requireAdmin() from src/lib/admin/guard.ts.
 // The layout only renders the chrome (and hides nav when logged out).
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const authed = await isAdmin();
+  const principal = await getAdminPrincipal();
+  const authed = principal !== null;
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <header className="border-b border-slate-200 bg-white">
@@ -29,7 +30,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               </nav>
             )}
           </div>
-          {authed && <SignOutButton />}
+          {principal && (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-slate-600">
+                {principal.via === "legacy-password"
+                  ? "shared password session"
+                  : principal.email}
+              </span>
+              <SignOutButton />
+            </div>
+          )}
         </div>
       </header>
       <main className="flex-1">{children}</main>
