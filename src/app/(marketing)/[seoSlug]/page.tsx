@@ -457,7 +457,7 @@ function PricingSection({
             </div>
           </div>
         </Reveal>
-        <div className="mt-10 grid md:grid-cols-3 gap-6 items-stretch">
+        <div className="mt-10 grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto items-stretch">
           {tiers.map(([key, t], idx) => {
             const highlighted = !!t.highlight;
             return (

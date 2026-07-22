@@ -95,7 +95,7 @@ export default function PricingPage() {
       </section>
 
       <section className="max-w-6xl mx-auto px-6 py-12 sm:py-16">
-        <div className="grid gap-6 md:grid-cols-3 items-stretch">
+        <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto items-stretch">
           {tierEntries.map(([slug, t]) => (
             <TierCard key={slug} slug={slug} tier={t} />
           ))}

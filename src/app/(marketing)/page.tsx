@@ -563,7 +563,7 @@ function Pricing() {
   return (
     <section id="pricing" className="bg-white border-b border-slate-200 scroll-mt-20">
       <div className="max-w-6xl mx-auto px-6 pt-4 pb-16 sm:pt-8 sm:pb-20">
-        <div className="grid md:grid-cols-3 gap-6 items-stretch">
+        <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto items-stretch">
           {TIER_ORDER.map((key, idx) => {
             const t = TIERS[key];
             const highlighted = !!t.highlight;
