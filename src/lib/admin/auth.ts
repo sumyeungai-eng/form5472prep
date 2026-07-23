@@ -8,21 +8,29 @@ import {
   verifyDeviceToken,
 } from "@/lib/admin/identity"
 
-// Password gate for /admin (taxpayer data, PDF regen, fax submission).
+// Email + password gate for /admin (taxpayer data, PDF regen, fax submission).
 //
 // SECURITY — fail closed in production. In dev we allow the legacy "111111" /
-// dev-secret defaults so local work isn't blocked. In production
-// (NODE_ENV === "production") we REQUIRE ADMIN_PASSWORD and
-// ADMIN_SESSION_SECRET to be set to non-default values; if either is missing
+// dev-secret / dev-email defaults so local work isn't blocked. In production
+// (NODE_ENV === "production") we REQUIRE ADMIN_LOGIN_EMAIL, ADMIN_PASSWORD and
+// ADMIN_SESSION_SECRET to be set to non-default values; if any is missing
 // or still the default, every auth check fails rather than silently exposing
 // the admin surface with guessable credentials.
+//
+// NOTE: ADMIN_LOGIN_EMAIL is the *sign-in identity* and is distinct from
+// ADMIN_EMAIL (the notification recipient for EIN/ITIN alerts).
 
 const IS_PROD = process.env.NODE_ENV === "production";
 const DEV_PASSWORD = "111111";
 const DEV_SECRET = "dev-only-secret-please-override-in-production-please-please";
+const DEV_LOGIN_EMAIL = "admin@example.com";
 
 const PASSWORD = process.env.ADMIN_PASSWORD || DEV_PASSWORD;
 const SECRET = process.env.ADMIN_SESSION_SECRET || DEV_SECRET;
+// Sign-in email, normalized (lowercase + trimmed) so casing/whitespace on the
+// login form doesn't matter. Not a secret — it's a second identifying factor
+// alongside the password.
+const LOGIN_EMAIL = (process.env.ADMIN_LOGIN_EMAIL || DEV_LOGIN_EMAIL).toLowerCase().trim();
 const COOKIE_NAME = "form5472_admin";
 const TTL_SECONDS = 60 * 60 * 12; // 12 hours
 
@@ -31,9 +39,12 @@ function adminConfigOk(): boolean {
   if (!IS_PROD) return true;
   const passwordOk = !!process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD !== DEV_PASSWORD;
   const secretOk = !!process.env.ADMIN_SESSION_SECRET && process.env.ADMIN_SESSION_SECRET !== DEV_SECRET;
-  if (!passwordOk || !secretOk) {
+  const emailOk =
+    !!process.env.ADMIN_LOGIN_EMAIL &&
+    process.env.ADMIN_LOGIN_EMAIL.toLowerCase().trim() !== DEV_LOGIN_EMAIL;
+  if (!passwordOk || !secretOk || !emailOk) {
     console.error(
-      "[admin/auth] FAIL CLOSED: ADMIN_PASSWORD and/or ADMIN_SESSION_SECRET is missing or still the default in production. Admin access is disabled until both are set to real values.",
+      "[admin/auth] FAIL CLOSED: ADMIN_LOGIN_EMAIL, ADMIN_PASSWORD and/or ADMIN_SESSION_SECRET is missing or still the default in production. Admin access is disabled until all three are set to real values.",
     );
     return false;
   }
@@ -55,6 +66,18 @@ function safeEqual(a: string, b: string): boolean {
 export function verifyPassword(input: string): boolean {
   if (!adminConfigOk()) return false;
   return safeEqual(input, PASSWORD);
+}
+
+// Admin sign-in now requires BOTH the configured email AND the password.
+// The email is a plain (non-secret) identifier, so a normalized equality check
+// is fine; the password comparison stays constant-time. We compute both and
+// AND them, returning a single boolean so the caller can show one generic
+// "wrong email or password" error without revealing which field failed.
+export function verifyCredentials(email: unknown, password: unknown): boolean {
+  if (!adminConfigOk()) return false;
+  const emailOk = typeof email === "string" && email.toLowerCase().trim() === LOGIN_EMAIL;
+  const passwordOk = typeof password === "string" && safeEqual(password, PASSWORD);
+  return emailOk && passwordOk;
 }
 
 export function makeSessionToken(): string {
