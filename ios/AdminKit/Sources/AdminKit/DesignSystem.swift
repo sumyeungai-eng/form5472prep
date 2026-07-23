@@ -146,6 +146,15 @@ public extension View {
         self
 #endif
     }
+
+    @ViewBuilder
+    func adminVisibleNavigationBar() -> some View {
+#if os(iOS)
+        toolbar(.visible, for: .navigationBar)
+#else
+        self
+#endif
+    }
 }
 
 public struct AdminPrimaryButtonStyle: ButtonStyle {
@@ -238,27 +247,79 @@ public struct AdminEyebrow: View {
     }
 }
 
-public struct AdminScreenHeader: View {
+public struct AdminScreenHeader<Trailing: View>: View {
     private let eyebrow: String?
     private let title: String
+    private let trailing: Trailing
 
-    public init(_ title: String, eyebrow: String? = nil) {
+    public init(
+        _ title: String,
+        eyebrow: String? = nil,
+        @ViewBuilder trailing: () -> Trailing
+    ) {
         self.title = title
         self.eyebrow = eyebrow
+        self.trailing = trailing()
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            if let eyebrow {
-                AdminEyebrow(eyebrow)
+        HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .leading, spacing: 6) {
+                if let eyebrow {
+                    AdminEyebrow(eyebrow)
+                }
+                Text(title)
+                    .font(.largeTitle.weight(.semibold))
+                    .fontDesign(.serif)
+                    .foregroundStyle(AdminTheme.primaryText)
+                    .accessibilityAddTraits(.isHeader)
             }
-            Text(title)
-                .font(.largeTitle.weight(.semibold))
-                .fontDesign(.serif)
-                .foregroundStyle(AdminTheme.primaryText)
-                .accessibilityAddTraits(.isHeader)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .layoutPriority(1)
+
+            trailing
+                .fixedSize()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+public extension AdminScreenHeader where Trailing == EmptyView {
+    init(_ title: String, eyebrow: String? = nil) {
+        self.init(title, eyebrow: eyebrow) {
+            EmptyView()
+        }
+    }
+}
+
+@MainActor
+struct AdminAccountMenu: View {
+    let email: String?
+    @Binding var isConfirmingSignOut: Bool
+
+    var body: some View {
+        Menu {
+            if let email, !email.isEmpty {
+                Label(email, systemImage: "person.crop.circle")
+                    .disabled(true)
+            }
+
+            Divider()
+
+            Button(role: .destructive) {
+                isConfirmingSignOut = true
+            } label: {
+                Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+            }
+        } label: {
+            Image(systemName: "person.circle")
+                .font(.title2)
+                .foregroundStyle(AdminTheme.accent)
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Account")
     }
 }
 
@@ -269,24 +330,10 @@ struct AdminAccountToolbar: ToolbarContent {
 
     var body: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
-            Menu {
-                if let email, !email.isEmpty {
-                    Label(email, systemImage: "person.crop.circle")
-                        .disabled(true)
-                }
-
-                Divider()
-
-                Button(role: .destructive) {
-                    isConfirmingSignOut = true
-                } label: {
-                    Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
-                }
-            } label: {
-                Image(systemName: "person.circle")
-                    .frame(width: 44, height: 44)
-            }
-            .accessibilityLabel("Account")
+            AdminAccountMenu(
+                email: email,
+                isConfirmingSignOut: $isConfirmingSignOut
+            )
         }
     }
 }

@@ -23,7 +23,12 @@ public struct AnalyticsView: View {
     public var body: some View {
         ScrollView {
             VStack(spacing: 18) {
-                AdminScreenHeader("Analytics", eyebrow: "REPORTING")
+                AdminScreenHeader("Analytics", eyebrow: "REPORTING") {
+                    AdminAccountMenu(
+                        email: signedInEmail,
+                        isConfirmingSignOut: $isConfirmingSignOut
+                    )
+                }
                 controls
                 content
             }
@@ -31,16 +36,9 @@ public struct AnalyticsView: View {
             .padding(.vertical, 16)
         }
         .background(AdminTheme.screenBackground)
-        .navigationTitle("")
-        .adminInlineNavigationTitle()
+        .adminHiddenNavigationBar()
         .foregroundStyle(AdminTheme.primaryText)
         .tint(AdminTheme.accent)
-        .toolbar {
-            AdminAccountToolbar(
-                email: signedInEmail,
-                isConfirmingSignOut: $isConfirmingSignOut
-            )
-        }
         .confirmationDialog(
             "Sign out of Form 5472 Prep?",
             isPresented: $isConfirmingSignOut,

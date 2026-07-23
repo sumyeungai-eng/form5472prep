@@ -21,7 +21,12 @@ public struct ApplicationsView: View {
     public var body: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 14) {
-                AdminScreenHeader("Applications", eyebrow: "EIN & ITIN")
+                AdminScreenHeader("Applications", eyebrow: "EIN & ITIN") {
+                    AdminAccountMenu(
+                        email: signedInEmail,
+                        isConfirmingSignOut: $isConfirmingSignOut
+                    )
+                }
                 controls
             }
             .padding(.horizontal, 16)
@@ -31,16 +36,9 @@ public struct ApplicationsView: View {
             content
         }
         .background(AdminTheme.screenBackground)
-        .navigationTitle("")
-        .adminInlineNavigationTitle()
+        .adminHiddenNavigationBar()
         .foregroundStyle(AdminTheme.primaryText)
         .tint(AdminTheme.accent)
-        .toolbar {
-            AdminAccountToolbar(
-                email: signedInEmail,
-                isConfirmingSignOut: $isConfirmingSignOut
-            )
-        }
         .confirmationDialog(
             "Sign out of Form 5472 Prep?",
             isPresented: $isConfirmingSignOut,

@@ -23,7 +23,13 @@ public struct FilingsView: View {
     public var body: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 14) {
-                AdminScreenHeader("Filings", eyebrow: "WORK QUEUE")
+                AdminScreenHeader("Filings", eyebrow: "WORK QUEUE") {
+                    AdminAccountMenu(
+                        email: signedInEmail,
+                        isConfirmingSignOut: $isConfirmingSignOut
+                    )
+                }
+                searchField
                 filterBar
             }
             .padding(.horizontal, 16)
@@ -33,21 +39,9 @@ public struct FilingsView: View {
             content
         }
         .background(AdminTheme.screenBackground)
-        .navigationTitle("")
-        .adminInlineNavigationTitle()
+        .adminHiddenNavigationBar()
         .foregroundStyle(AdminTheme.primaryText)
         .tint(AdminTheme.accent)
-        .searchable(
-            text: $viewModel.searchQuery,
-            placement: .toolbar,
-            prompt: "LLC or customer"
-        )
-        .toolbar {
-            AdminAccountToolbar(
-                email: signedInEmail,
-                isConfirmingSignOut: $isConfirmingSignOut
-            )
-        }
         .confirmationDialog(
             "Sign out of Form 5472 Prep?",
             isPresented: $isConfirmingSignOut,
@@ -83,6 +77,41 @@ public struct FilingsView: View {
     private var signedInEmail: String? {
         guard case let .signedIn(profile) = authManager.state else { return nil }
         return profile.email
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(AdminTheme.secondaryText)
+                .accessibilityHidden(true)
+
+            TextField("LLC or customer", text: $viewModel.searchQuery)
+                .textFieldStyle(.plain)
+                .submitLabel(.search)
+                .accessibilityLabel("Search filings")
+
+            if !viewModel.searchQuery.isEmpty {
+                Button {
+                    viewModel.searchQuery = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(AdminTheme.secondaryText)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Clear search")
+            }
+        }
+        .padding(.leading, 14)
+        .padding(.trailing, viewModel.searchQuery.isEmpty ? 14 : 2)
+        .frame(minHeight: 48)
+        .background(AdminTheme.cardSurface)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(AdminTheme.cardBorder, lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 
     private var filterBar: some View {
@@ -273,6 +302,7 @@ public struct FilingDetailView: View {
             }
         }
         .navigationTitle(viewModel.detail?.filing.llcName ?? "Filing")
+        .adminVisibleNavigationBar()
         .task {
             if !viewModel.hasLoaded {
                 await viewModel.load()

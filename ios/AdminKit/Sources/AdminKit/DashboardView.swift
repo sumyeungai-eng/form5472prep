@@ -18,7 +18,12 @@ public struct DashboardView: View {
     public var body: some View {
         ScrollView {
             VStack(spacing: 18) {
-                AdminScreenHeader("Dashboard", eyebrow: "OPERATIONS")
+                AdminScreenHeader("Dashboard", eyebrow: "OPERATIONS") {
+                    AdminAccountMenu(
+                        email: signedInEmail,
+                        isConfirmingSignOut: $isConfirmingSignOut
+                    )
+                }
 
                 Picker("Period", selection: $viewModel.range) {
                     ForEach(ranges, id: \.self) { range in
@@ -34,16 +39,9 @@ public struct DashboardView: View {
             .padding(.vertical, 16)
         }
         .background(AdminTheme.screenBackground)
-        .navigationTitle("")
-        .adminInlineNavigationTitle()
+        .adminHiddenNavigationBar()
         .foregroundStyle(AdminTheme.primaryText)
         .tint(AdminTheme.accent)
-        .toolbar {
-            AdminAccountToolbar(
-                email: signedInEmail,
-                isConfirmingSignOut: $isConfirmingSignOut
-            )
-        }
         .confirmationDialog(
             "Sign out of Form 5472 Prep?",
             isPresented: $isConfirmingSignOut,
