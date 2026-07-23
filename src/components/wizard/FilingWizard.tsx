@@ -1193,10 +1193,6 @@ function ReviewStep({
         </svg>
         <span>Every order is reviewed by a qualified tax accountant before submission to the IRS.</span>
       </div>
-      <p className="text-xs text-slate-500">
-        We are not a CPA firm and do not provide tax advice. You are responsible for the accuracy
-        of all information.
-      </p>
       <div className="flex justify-between">
         <Button type="button" variant="outline" onClick={onBack}>
           Back
