@@ -41,6 +41,11 @@ public actor APIClient {
         let deviceName: String
     }
 
+    private struct APNsRegistrationRequest: Encodable {
+        let apnsToken: String
+        let environment: String
+    }
+
     private struct ExchangeResponse: Decodable {
         struct Admin: Decodable {
             let id: String
@@ -138,6 +143,23 @@ public actor APIClient {
         return try await decodeResponse(request, authenticated: true)
     }
 
+    public func registerAPNs(token: String, environment: String) async throws {
+        var request = try makeRequest(path: "/api/admin/v1/devices/apns", method: "POST")
+        request.httpBody = try encode(
+            APNsRegistrationRequest(apnsToken: token, environment: environment)
+        )
+        try await performNoContent(request, authenticated: true)
+    }
+
+    public func unregisterAPNs() async throws {
+        let request = try makeRequest(path: "/api/admin/v1/devices/apns", method: "DELETE")
+        try await performNoContent(request, authenticated: true)
+    }
+
+    public func baseURLHost() -> String {
+        baseURL.host ?? baseURL.absoluteString
+    }
+
     public func dashboard(range: String) async throws -> DashboardSummary {
         let url = try makeURL(
             path: "/api/admin/v1/dashboard",
@@ -230,6 +252,17 @@ public actor APIClient {
         } catch {
             throw APIError.decoding(error)
         }
+    }
+
+    private func performNoContent(
+        _ request: URLRequest,
+        authenticated: Bool
+    ) async throws {
+        _ = try await perform(
+            request,
+            authenticated: authenticated,
+            expectsBody: false
+        )
     }
 
     private func perform(

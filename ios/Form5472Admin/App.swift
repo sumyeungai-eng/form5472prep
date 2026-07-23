@@ -1,13 +1,40 @@
 import AdminKit
+import OSLog
 import SwiftUI
 
 #if canImport(UIKit)
 import UIKit
+
+final class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        Task { @MainActor in
+            await PushManager.shared.handleDeviceToken(deviceToken)
+        }
+    }
+
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        Logger(
+            subsystem: "com.form5472prep.admin",
+            category: "PushNotifications"
+        ).error("Remote notification registration failed: \(error.localizedDescription, privacy: .public)")
+    }
+}
 #endif
 
 @main
+@MainActor
 struct Form5472AdminApp: App {
     @StateObject private var authManager: AuthManager
+
+#if canImport(UIKit)
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+#endif
 
     init() {
 #if canImport(UIKit)
@@ -22,6 +49,7 @@ struct Form5472AdminApp: App {
                 tokenStore: tokenStore,
                 session: FixtureMode.makeSession()
             )
+            PushManager.shared.configure(client: client)
             _authManager = StateObject(
                 wrappedValue: AuthManager(
                     client: client,
@@ -37,6 +65,7 @@ struct Form5472AdminApp: App {
             baseURL: URL(string: "https://www.form5472prep.com")!,
             tokenStore: tokenStore
         )
+        PushManager.shared.configure(client: client)
         _authManager = StateObject(
             wrappedValue: AuthManager(
                 client: client,
@@ -51,6 +80,10 @@ struct Form5472AdminApp: App {
             RootView(authManager: authManager)
                 .task {
                     await authManager.restore()
+                    if case .signedIn = authManager.state {
+                        await PushManager.shared
+                            .registerForRemoteNotificationsIfAuthorized()
+                    }
                 }
         }
     }

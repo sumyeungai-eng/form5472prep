@@ -71,3 +71,29 @@ func stubResponse(url: URL, status: Int, body: String) -> (HTTPURLResponse, Data
     )!
     return (response, Data(body.utf8))
 }
+
+func requestBody(_ request: URLRequest) throws -> Data {
+    if let body = request.httpBody {
+        return body
+    }
+    guard let stream = request.httpBodyStream else {
+        throw URLError(.cannotDecodeContentData)
+    }
+
+    stream.open()
+    defer { stream.close() }
+
+    var data = Data()
+    var buffer = [UInt8](repeating: 0, count: 1_024)
+    while stream.hasBytesAvailable {
+        let count = stream.read(&buffer, maxLength: buffer.count)
+        if count < 0 {
+            throw stream.streamError ?? URLError(.cannotDecodeContentData)
+        }
+        if count == 0 {
+            break
+        }
+        data.append(buffer, count: count)
+    }
+    return data
+}

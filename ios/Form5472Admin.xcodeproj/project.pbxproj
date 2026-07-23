@@ -13,11 +13,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		14CDFAB20E5979DFE3549FCD /* F5472 Admin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "F5472 Admin.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		157888EDD0C6086247B466BB /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
-		41F437F18C6E1AF2A11A0484 /* AdminKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AdminKit; sourceTree = SOURCE_ROOT; };
+		41F437F18C6E1AF2A11A0484 /* AdminKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AdminKit; path = AdminKit; sourceTree = SOURCE_ROOT; };
+		42BDC5BC9F4BE877DBD4FEF3 /* F5472 Admin.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "F5472 Admin.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		871EE6DC2180A1864FFDDB17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C5D4622A8EACFA90E165A69A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E89D45EF10DD087137F3BA50 /* Form5472Admin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Form5472Admin.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,7 +53,7 @@
 		C87EFBE1AA66CB5B9EBB6BEF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				14CDFAB20E5979DFE3549FCD /* F5472 Admin.app */,
+				42BDC5BC9F4BE877DBD4FEF3 /* F5472 Admin.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -62,6 +63,7 @@
 			children = (
 				157888EDD0C6086247B466BB /* App.swift */,
 				C5D4622A8EACFA90E165A69A /* Assets.xcassets */,
+				E89D45EF10DD087137F3BA50 /* Form5472Admin.entitlements */,
 				871EE6DC2180A1864FFDDB17 /* Info.plist */,
 			);
 			path = Form5472Admin;
@@ -87,7 +89,7 @@
 				570542159A22617320E4EA77 /* AdminKit */,
 			);
 			productName = Form5472Admin;
-			productReference = 14CDFAB20E5979DFE3549FCD /* F5472 Admin.app */;
+			productReference = 42BDC5BC9F4BE877DBD4FEF3 /* F5472 Admin.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -100,6 +102,7 @@
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					C6CC95A34A38159E3C68111D = {
+						DevelopmentTeam = LU9X3H78Y4;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -215,8 +218,10 @@
 		35CA4E615BC55D40E6637FAC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Form5472Admin/Form5472Admin.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LU9X3H78Y4;
@@ -293,8 +298,10 @@
 		82C7B10577844E1AB5B89F7E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APS_ENVIRONMENT = production;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Form5472Admin/Form5472Admin.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LU9X3H78Y4;

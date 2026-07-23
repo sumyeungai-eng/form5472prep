@@ -359,6 +359,13 @@ private struct AdminTabView: View {
             .tabItem {
                 Label("Analytics", systemImage: "chart.xyaxis.line")
             }
+
+            NavigationStack {
+                SettingsView(client: client, authManager: authManager)
+            }
+            .tabItem {
+                Label("Settings", systemImage: "gearshape.fill")
+            }
         }
         .tint(AdminTheme.accent)
     }

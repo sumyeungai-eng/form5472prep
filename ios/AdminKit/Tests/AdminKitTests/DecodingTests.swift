@@ -3,6 +3,49 @@ import Testing
 @testable import AdminKit
 
 extension APIClientTests {
+    @Test func registersAPNsTokenWithExpectedBodyAndAccepts204() async throws {
+        struct Payload: Decodable {
+            let apnsToken: String
+            let environment: String
+        }
+
+        let client = makeDecodingClient()
+        StubURLProtocol.install { request in
+            #expect(request.url?.path == "/api/admin/v1/devices/apns")
+            #expect(request.httpMethod == "POST")
+            #expect(
+                request.value(forHTTPHeaderField: "Authorization")
+                    == "Bearer device-token"
+            )
+
+            let body = try requestBody(request)
+            let payload = try JSONDecoder().decode(Payload.self, from: body)
+            #expect(payload.apnsToken == "001aff")
+            #expect(payload.environment == "sandbox")
+            return stubResponse(url: request.url!, status: 204, body: "")
+        }
+        defer { StubURLProtocol.reset() }
+
+        try await client.registerAPNs(token: "001aff", environment: "sandbox")
+    }
+
+    @Test func unregistersAPNsTokenAndAccepts204() async throws {
+        let client = makeDecodingClient()
+        StubURLProtocol.install { request in
+            #expect(request.url?.path == "/api/admin/v1/devices/apns")
+            #expect(request.httpMethod == "DELETE")
+            #expect(
+                request.value(forHTTPHeaderField: "Authorization")
+                    == "Bearer device-token"
+            )
+            #expect(request.httpBody == nil)
+            return stubResponse(url: request.url!, status: 204, body: "")
+        }
+        defer { StubURLProtocol.reset() }
+
+        try await client.unregisterAPNs()
+    }
+
     @Test func decodesAdminProfileEnvelope() async throws {
         let client = makeDecodingClient()
         StubURLProtocol.install { request in
