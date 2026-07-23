@@ -273,6 +273,9 @@ model FilingYearData {
   contributions          Decimal @default(0) @db.Decimal(15, 2)
   distributions          Decimal @default(0) @db.Decimal(15, 2)
   reportableTransactions Json    @default("[]")
+  noReportableTransactions Boolean @default(false)
+  // Customer explicitly attested this year had no reportable transactions;
+  // server clears stored transaction data when set.
   // Free-text disclosure of any other related-party transactions during this
   // tax year (loans, sales, services, rent, etc.) — flows into the Part V
   // supporting statement. Null = user hasn't answered; empty string = explicitly

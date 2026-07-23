@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Upload, FileText, X, Sparkles, AlertTriangle, ArrowUp, ArrowDown, Plus, ClipboardPaste } from "lucide-react";
+import { Upload, FileText, X, Sparkles, AlertTriangle, ArrowUp, ArrowDown, Plus, ClipboardPaste, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import type { CategorizedTransaction, Category } from "@/lib/bank/categorize";
@@ -67,6 +67,7 @@ export function TransactionsReview({
     contributions: number;
     distributions: number;
     otherTransactionsNote?: string;
+    noReportableTransactions?: boolean;
   }[];
   onSubmit: (years: {
     taxYear: number;
@@ -75,6 +76,7 @@ export function TransactionsReview({
     distributions: number;
     reportableTransactions: CategorizedTransaction[];
     otherTransactionsNote: string;
+    noReportableTransactions: boolean;
   }[]) => Promise<void>;
   onBack: () => void;
   saving: boolean;
@@ -92,6 +94,9 @@ export function TransactionsReview({
       totalAssetsAutoFilled: false,
       otherTransactionsNote: y.otherTransactionsNote ?? "",
     })),
+  );
+  const [noneForAllYears, setNoneForAllYears] = useState<boolean>(
+    initialYears.length > 0 && initialYears.every((y) => y.noReportableTransactions === true),
   );
   const [uploading, setUploading] = useState<number | null>(null);
 
@@ -429,6 +434,22 @@ export function TransactionsReview({
     );
   }
 
+  function toggleNoneForAllYears(checked: boolean) {
+    setNoneForAllYears(checked);
+    if (checked) {
+      setYears((all) =>
+        all.map((y) => ({
+          ...y,
+          transactions: [],
+          manualContributions: 0,
+          manualDistributions: 0,
+          totalAssetsYearEnd: 0,
+          otherTransactionsNote: "",
+        })),
+      );
+    }
+  }
+
   async function handleSubmit() {
     const payload = years.map((y) => {
       const t = totalsFor(y);
@@ -439,6 +460,7 @@ export function TransactionsReview({
         distributions: t.distributions,
         reportableTransactions: y.transactions.filter((tx) => REPORTABLE.includes(tx.category)),
         otherTransactionsNote: (y.otherTransactionsNote ?? "").trim(),
+        noReportableTransactions: noneForAllYears,
       };
     });
     await onSubmit(payload);
@@ -484,8 +506,48 @@ export function TransactionsReview({
       <div>
         <h2 className="text-xl font-semibold">Transactions per year</h2>
         <p className="text-sm text-slate-500 mt-1">
-          Upload a CSV bank statement from Mercury, Wise, Relay, or Brex — we&apos;ll
-          auto-categorize transactions. Or enter the totals manually below.
+          Optional — upload a CSV bank statement from Mercury, Wise, Relay, or Brex and we&apos;ll
+          auto-categorize transactions. You can also skip uploads entirely and just enter the
+          totals manually below.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <button
+          type="button"
+          onClick={() => toggleNoneForAllYears(!noneForAllYears)}
+          aria-pressed={noneForAllYears}
+          className={`w-full rounded-md border p-4 text-left text-sm transition-colors ${
+            noneForAllYears
+              ? "border-emerald-300 bg-emerald-50"
+              : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+          }`}
+        >
+          <span className="flex items-start gap-3">
+            <span
+              className={`mt-0.5 flex h-5 w-5 items-center justify-center rounded border ${
+                noneForAllYears
+                  ? "border-emerald-500 bg-emerald-500"
+                  : "border-slate-300 bg-white"
+              }`}
+            >
+              {noneForAllYears && <CheckCircle2 className="h-4 w-4 text-white" />}
+            </span>
+            <span>
+              <span className="font-semibold text-slate-900">
+                I had no reportable transactions
+              </span>
+              <span className="mt-1 block text-slate-600">
+                The LLC had no bank activity and no money moved between you and the company during
+                the year(s). Check this box and you&apos;re done with this step — we&apos;ll report
+                zero amounts to the IRS.
+              </span>
+            </span>
+          </span>
+        </button>
+        <p className="text-xs text-slate-500">
+          Money you put in or took out counts — including paying the LLC&apos;s formation or
+          registered-agent fees yourself. If any of that happened, enter it below instead.
         </p>
       </div>
 
@@ -528,8 +590,25 @@ export function TransactionsReview({
         </p>
       </div>
 
-      <div className="space-y-6">
-        {years.map((y) => {
+      {noneForAllYears ? (
+        <div className="space-y-3">
+          {years.map((y) => (
+            <div
+              key={y.taxYear}
+              className="rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"
+            >
+              <p className="font-medium">
+                ✓ {y.taxYear}: Nothing to report — zero amounts will be filed.
+              </p>
+              <p className="mt-1 text-xs text-emerald-700">
+                Uncheck the box above to enter transactions.
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {years.map((y) => {
           const t = totalsFor(y);
           return (
             <div key={y.taxYear} className="border border-slate-200 rounded-md bg-white p-5">
@@ -952,8 +1031,9 @@ export function TransactionsReview({
               </div>
             </div>
           );
-        })}
-      </div>
+          })}
+        </div>
+      )}
 
       <div className="flex justify-between">
         <Button type="button" variant="outline" onClick={onBack}>
@@ -1033,7 +1113,7 @@ function UploadDropzone({
           <>
             <Upload className="h-6 w-6 text-slate-400" />
             <span className="text-slate-700 font-medium">
-              Drop your bank statements here or click to browse
+              Drop your bank statements here or click to browse (optional)
             </span>
             <span className="text-xs text-slate-500">
               CSV or Excel (.xlsx, .xls) · Mercury · Wise · Relay · Brex · or generic · up to{" "}

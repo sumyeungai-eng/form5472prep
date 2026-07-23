@@ -28,6 +28,7 @@ export default async function EditFilingPage({ params }: { params: { id: string 
       contributions: y.contributions.toString(),
       distributions: y.distributions.toString(),
       otherTransactionsNote: y.otherTransactionsNote ?? null,
+      noReportableTransactions: y.noReportableTransactions,
     })),
   };
 

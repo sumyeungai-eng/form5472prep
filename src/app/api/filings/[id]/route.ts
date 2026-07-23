@@ -143,6 +143,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         totalAssetsYearEnd: y?.totalAssetsYearEnd ?? 0,
         contributions: y?.contributions ?? 0,
         distributions: y?.distributions ?? 0,
+        noReportableTransactions: y?.noReportableTransactions,
       });
       if (!yv.success) {
         return NextResponse.json(
@@ -169,13 +170,17 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         }
         cleanTransactions = tv.data;
       }
+      const noneReported = yv.data.noReportableTransactions === true;
       await prisma.filingYearData.upsert({
         where: { filingId_taxYear: { filingId: filing.id, taxYear: y.taxYear } },
         update: {
           totalAssetsYearEnd: y.totalAssetsYearEnd ?? 0,
-          contributions: y.contributions ?? 0,
-          distributions: y.distributions ?? 0,
-          otherTransactionsNote: typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : undefined,
+          contributions: noneReported ? 0 : y.contributions ?? 0,
+          distributions: noneReported ? 0 : y.distributions ?? 0,
+          otherTransactionsNote: noneReported
+            ? ""
+            : typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : undefined,
+          noReportableTransactions: noneReported,
           // SECURITY/DATA-LOSS GUARD: the TransactionsReview wizard step
           // initializes its in-memory transaction list to [] and does NOT
           // rehydrate previously-uploaded/parsed rows. So a returning user who
@@ -183,20 +188,26 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
           // with an empty array (while keeping only the contribution/
           // distribution totals). Only overwrite reportableTransactions when
           // the incoming list is non-empty; an empty list leaves existing
-          // detail untouched. (A genuine "clear all" would need an explicit
-          // signal — not the absence of rehydrated state.)
+          // detail untouched except for the explicit no-reportable-transactions
+          // attestation below.
+          // Explicit attestation bypasses the guard because the user is
+          // intentionally clearing stored transaction detail, not submitting
+          // an empty, non-rehydrated client state.
           // undefined when the incoming list is empty/absent → leaves stored
           // detail untouched (the anti-data-loss guard above).
-          reportableTransactions: cleanTransactions ?? undefined,
+          reportableTransactions: noneReported ? [] : cleanTransactions ?? undefined,
         },
         create: {
           filingId: filing.id,
           taxYear: y.taxYear,
           totalAssetsYearEnd: y.totalAssetsYearEnd ?? 0,
-          contributions: y.contributions ?? 0,
-          distributions: y.distributions ?? 0,
-          otherTransactionsNote: typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : null,
-          reportableTransactions: cleanTransactions ?? [],
+          contributions: noneReported ? 0 : y.contributions ?? 0,
+          distributions: noneReported ? 0 : y.distributions ?? 0,
+          otherTransactionsNote: noneReported
+            ? ""
+            : typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : null,
+          noReportableTransactions: noneReported,
+          reportableTransactions: noneReported ? [] : cleanTransactions ?? [],
         },
       });
     }

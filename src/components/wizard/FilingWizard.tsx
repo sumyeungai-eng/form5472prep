@@ -172,6 +172,7 @@ type Filing = {
     contributions: string;
     distributions: string;
     otherTransactionsNote: string | null;
+    noReportableTransactions: boolean;
   }[];
 };
 
@@ -372,6 +373,7 @@ export function FilingWizard({
                 contributions: ex ? Number(ex.contributions) : 0,
                 distributions: ex ? Number(ex.distributions) : 0,
                 otherTransactionsNote: ex?.otherTransactionsNote ?? "",
+                noReportableTransactions: ex?.noReportableTransactions ?? false,
               };
             })}
             onSubmit={async (yearData) => {
@@ -384,6 +386,7 @@ export function FilingWizard({
                   contributions: String(y.contributions),
                   distributions: String(y.distributions),
                   otherTransactionsNote: y.otherTransactionsNote || null,
+                  noReportableTransactions: y.noReportableTransactions,
                 })),
               });
               goNext();

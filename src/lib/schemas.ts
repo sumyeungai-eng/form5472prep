@@ -83,6 +83,7 @@ export const yearDataSchema = z.object({
   totalAssetsYearEnd: z.coerce.number().min(0),
   contributions: z.coerce.number().min(0),
   distributions: z.coerce.number().min(0),
+  noReportableTransactions: z.boolean().optional(),
 });
 
 export const yearDataListSchema = z.object({
