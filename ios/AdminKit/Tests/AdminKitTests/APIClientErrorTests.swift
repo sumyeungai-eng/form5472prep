@@ -73,6 +73,32 @@ struct APIClientTests {
         }
     }
 
+    @Test func propagatesInvalidCredentialsFromLogin() async {
+        let client = makeClient()
+        StubURLProtocol.install { request in
+            stubResponse(
+                url: request.url!,
+                status: 401,
+                body: #"{"error":{"code":"invalid_credentials","message":"Email or password is incorrect"}}"#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        do {
+            _ = try await client.login(
+                email: "admin@example.com",
+                password: "incorrect",
+                deviceName: "Admin’s iPhone"
+            )
+            Issue.record("Expected server error")
+        } catch let APIError.server(code, message) {
+            #expect(code == "invalid_credentials")
+            #expect(message == "Email or password is incorrect")
+        } catch {
+            Issue.record("Unexpected error: \(error)")
+        }
+    }
+
     private func makeClient() -> APIClient {
         APIClient(
             baseURL: URL(string: "https://www.form5472prep.com")!,

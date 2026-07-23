@@ -98,6 +98,15 @@ public final class AuthManager: ObservableObject {
         try await client.requestLink(email: email)
     }
 
+    public func signIn(email: String, password: String) async throws {
+        let profile = try await client.login(
+            email: email,
+            password: password,
+            deviceName: deviceName
+        )
+        state = .signedIn(profile)
+    }
+
     public func handle(url: URL) async throws {
         guard let token = AuthTokenExtractor.extract(from: url.absoluteString) else {
             throw AuthInputError.malformedSignInToken

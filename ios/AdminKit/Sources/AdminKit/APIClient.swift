@@ -35,6 +35,12 @@ public actor APIClient {
         let deviceName: String
     }
 
+    private struct LoginRequest: Encodable {
+        let email: String
+        let password: String
+        let deviceName: String
+    }
+
     private struct ExchangeResponse: Decodable {
         struct Admin: Decodable {
             let id: String
@@ -42,6 +48,18 @@ public actor APIClient {
         }
 
         let deviceToken: String
+        let admin: Admin
+    }
+
+    private struct LoginResponse: Decodable {
+        struct Admin: Decodable {
+            let id: String
+            let email: String
+            let name: String?
+        }
+
+        let deviceToken: String
+        let expiresAt: String
         let admin: Admin
     }
 
@@ -83,6 +101,27 @@ public actor APIClient {
         var request = try makeRequest(path: "/api/admin/v1/auth/exchange", method: "POST")
         request.httpBody = try encode(ExchangeRequest(token: token, deviceName: deviceName))
         let response: ExchangeResponse = try await decodeResponse(
+            request,
+            authenticated: false
+        )
+        try tokenStore.write(response.deviceToken)
+        return AdminProfile(
+            adminId: response.admin.id,
+            email: response.admin.email,
+            via: "bearer"
+        )
+    }
+
+    public func login(
+        email: String,
+        password: String,
+        deviceName: String
+    ) async throws -> AdminProfile {
+        var request = try makeRequest(path: "/api/admin/v1/auth/login", method: "POST")
+        request.httpBody = try encode(
+            LoginRequest(email: email, password: password, deviceName: deviceName)
+        )
+        let response: LoginResponse = try await decodeResponse(
             request,
             authenticated: false
         )
@@ -220,7 +259,7 @@ public actor APIClient {
             throw APIError.transport(URLError(.badServerResponse))
         }
 
-        if httpResponse.statusCode == 401 {
+        if authenticated && httpResponse.statusCode == 401 {
             try? tokenStore.clear()
             throw APIError.unauthorized
         }

@@ -3,11 +3,9 @@ import SwiftUI
 public struct SignInView: View {
     @ObservedObject private var authManager: AuthManager
     @State private var email = ""
-    @State private var pastedLink = ""
-    @State private var confirmationMessage: String?
+    @State private var password = ""
     @State private var errorMessage: String?
-    @State private var isRequestingLink = false
-    @State private var isExchanging = false
+    @State private var isSigningIn = false
 
     public init(authManager: AuthManager) {
         self.authManager = authManager
@@ -52,45 +50,23 @@ public struct SignInView: View {
                         }
 
                         signInSection(
-                            eyebrow: "EMAIL SIGN-IN",
-                            description: "We’ll send a secure, single-use link to your admin address."
+                            eyebrow: "SIGN IN",
+                            description: "Sign in with your admin email and password."
                         ) {
                             emailField
+                            passwordField
 
                             Button {
-                                requestLink()
-                            } label: {
-                                Label("Email me a sign-in link", systemImage: "envelope")
-                            }
-                            .buttonStyle(AdminPrimaryButtonStyle())
-                            .disabled(
-                                isRequestingLink
-                                    || email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                            )
-
-                            if let confirmationMessage {
-                                Label(confirmationMessage, systemImage: "checkmark.circle.fill")
-                                    .font(.footnote)
-                                    .foregroundStyle(AdminTheme.successOnDark)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-
-                        signInSection(
-                            eyebrow: "HAVE A LINK?",
-                            description: "Paste the full sign-in link or token below."
-                        ) {
-                            pastedLinkField
-
-                            Button {
-                                exchangeToken()
+                                signIn()
                             } label: {
                                 Label("Sign In", systemImage: "arrow.right.circle.fill")
                             }
                             .buttonStyle(AdminPrimaryButtonStyle())
                             .disabled(
-                                isExchanging
-                                    || pastedLink.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                isSigningIn
+                                    || email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                    || password.trimmingCharacters(in: .whitespacesAndNewlines)
+                                        .isEmpty
                             )
                         }
 
@@ -124,9 +100,9 @@ public struct SignInView: View {
                 .scrollDismissesKeyboard(.interactively)
             }
             .navigationTitle("")
-            .disabled(isRequestingLink || isExchanging)
+            .disabled(isSigningIn)
             .overlay {
-                if isRequestingLink || isExchanging {
+                if isSigningIn {
                     ProgressView()
                         .tint(AdminTheme.onDark)
                         .padding(18)
@@ -191,52 +167,27 @@ public struct SignInView: View {
     }
 
     @ViewBuilder
-    private var pastedLinkField: some View {
-#if os(iOS)
-        TextField(
+    private var passwordField: some View {
+        SecureField(
             "",
-            text: $pastedLink,
-            prompt: Text("Link or token").foregroundStyle(AdminTheme.onDark.opacity(0.52)),
-            axis: .vertical
+            text: $password,
+            prompt: Text("Password").foregroundStyle(AdminTheme.onDark.opacity(0.52))
         )
-            .lineLimit(2 ... 4)
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled()
-            .adminDarkField()
-#else
-        TextField(
-            "",
-            text: $pastedLink,
-            prompt: Text("Link or token").foregroundStyle(AdminTheme.onDark.opacity(0.52))
-        )
-            .adminDarkField()
-#endif
+        .adminDarkField()
     }
 
-    private func requestLink() {
+    private func signIn() {
         errorMessage = nil
-        confirmationMessage = nil
-        isRequestingLink = true
+        isSigningIn = true
         let submittedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        let submittedPassword = password
         Task {
-            defer { isRequestingLink = false }
+            defer { isSigningIn = false }
             do {
-                try await authManager.requestLink(email: submittedEmail)
-                confirmationMessage = "If that address is eligible, a sign-in link is on its way."
-            } catch {
-                errorMessage = Self.message(for: error)
-            }
-        }
-    }
-
-    private func exchangeToken() {
-        errorMessage = nil
-        isExchanging = true
-        let submittedLink = pastedLink
-        Task {
-            defer { isExchanging = false }
-            do {
-                try await authManager.exchange(pastedLinkOrToken: submittedLink)
+                try await authManager.signIn(
+                    email: submittedEmail,
+                    password: submittedPassword
+                )
             } catch {
                 errorMessage = Self.message(for: error)
             }
@@ -244,8 +195,18 @@ public struct SignInView: View {
     }
 
     private static func message(for error: Error) -> String {
-        if case APIError.unauthorized = error {
-            return "That sign-in link is invalid or has expired."
+        if case let APIError.server(code, _) = error {
+            switch code {
+            case "invalid_credentials":
+                return "Email or password is incorrect."
+            case "rate_limited":
+                return "Too many attempts. Please wait a moment and try again."
+            default:
+                break
+            }
+        }
+        if case APIError.transport = error {
+            return "Network error. Check your connection and try again."
         }
         return AdminFormatting.errorMessage(for: error)
     }

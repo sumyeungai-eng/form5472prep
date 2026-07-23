@@ -20,6 +20,32 @@ extension APIClientTests {
         #expect(profile.via == "bearer")
     }
 
+    @Test func decodesLoginEnvelopeAndStoresDeviceToken() async throws {
+        let store = InMemoryTokenStore(initial: nil)
+        let client = makeDecodingClient(tokenStore: store)
+        StubURLProtocol.install { request in
+            #expect(request.url?.path == "/api/admin/v1/auth/login")
+            #expect(request.httpMethod == "POST")
+            #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
+            return stubResponse(
+                url: request.url!,
+                status: 200,
+                body: #"{"data":{"deviceToken":"device-token-from-login","expiresAt":"2026-08-22T10:20:30.123Z","admin":{"id":"admin_456","email":"admin@example.com","name":"Admin User"}}}"#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        let profile = try await client.login(
+            email: "admin@example.com",
+            password: "correct horse battery staple",
+            deviceName: "Admin’s iPhone"
+        )
+        #expect(profile.adminId == "admin_456")
+        #expect(profile.email == "admin@example.com")
+        #expect(profile.via == "bearer")
+        #expect(try store.read() == "device-token-from-login")
+    }
+
     @Test func decodesDashboardEnvelope() async throws {
         let client = makeDecodingClient()
         StubURLProtocol.install { request in
@@ -63,10 +89,12 @@ extension APIClientTests {
         #expect(page.nextCursor == "next_page")
     }
 
-    private func makeDecodingClient() -> APIClient {
+    private func makeDecodingClient(
+        tokenStore: any TokenStore = InMemoryTokenStore(initial: "device-token")
+    ) -> APIClient {
         APIClient(
             baseURL: URL(string: "https://www.form5472prep.com")!,
-            tokenStore: InMemoryTokenStore(initial: "device-token"),
+            tokenStore: tokenStore,
             session: makeStubSession()
         )
     }
