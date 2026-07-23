@@ -181,8 +181,11 @@ private struct ApplicationRow: View {
                 .font(.subheadline)
                 .foregroundStyle(AdminTheme.secondaryText)
                 .textSelection(.enabled)
-            if type == "ein", let llcName = application.llcName, !llcName.isEmpty {
-                Label(llcName, systemImage: "building.2")
+            if type == "ein" {
+                Label(
+                    application.llcName.flatMap { $0.isEmpty ? nil : $0 } ?? "—",
+                    systemImage: "building.2"
+                )
                     .font(.caption)
                     .foregroundStyle(AdminTheme.secondaryText)
             }

@@ -297,13 +297,11 @@ public struct AnalyticsView: View {
 
     private func partnerIdentity(_ partner: PartnerPerformance) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(partner.name ?? partner.email)
+            Text(partner.name)
                 .font(.headline)
-            if partner.name != nil {
-                Text(partner.email)
-                    .font(.caption)
-                    .foregroundStyle(AdminTheme.secondaryText)
-            }
+            Text(partner.email)
+                .font(.caption)
+                .foregroundStyle(AdminTheme.secondaryText)
         }
     }
 

@@ -25,12 +25,13 @@ public enum AdminFormatting {
         )
     }
 
-    public static func age(hours: Int) -> String {
-        if hours < 24 {
-            return "\(hours)h ago"
+    public static func age(hours: Double) -> String {
+        let wholeHours = Int(hours.rounded(.down))
+        if wholeHours < 24 {
+            return "\(wholeHours)h ago"
         }
-        let days = hours / 24
-        let remainingHours = hours % 24
+        let days = wholeHours / 24
+        let remainingHours = wholeHours % 24
         return remainingHours == 0
             ? "\(days)d ago"
             : "\(days)d \(remainingHours)h ago"

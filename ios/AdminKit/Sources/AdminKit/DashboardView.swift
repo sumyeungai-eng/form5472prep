@@ -197,7 +197,10 @@ public struct DashboardView: View {
                                         .foregroundStyle(AdminTheme.secondaryText)
                                         .adminTabularNumbers()
                                 }
-                                Text(item.llcName ?? "Unknown LLC")
+                                Text(
+                                    item.llcName.flatMap { $0.isEmpty ? nil : $0 }
+                                        ?? "Untitled filing"
+                                )
                                     .font(.subheadline)
                                     .foregroundStyle(AdminTheme.secondaryText)
                             }

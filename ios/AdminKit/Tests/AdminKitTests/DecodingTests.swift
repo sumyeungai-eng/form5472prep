@@ -52,7 +52,7 @@ extension APIClientTests {
             stubResponse(
                 url: request.url!,
                 status: 200,
-                body: #"{"data":{"revenueCents":{"period":12500,"previousPeriod":10000,"changePct":25.0},"orders":{"period":5,"previousPeriod":4,"changePct":25.0},"filingsByStatus":[{"status":"PAID","count":3}],"applicationQueue":{"ein":{"NEW":2},"itin":{"REVIEW":1}},"needsAttention":[{"kind":"fax_failed","filingId":"filing_1","llcName":"Example LLC","ageHours":27}]}}"#
+                body: #"{"data":{"revenueCents":{"period":12500,"previousPeriod":10000,"changePct":25.0},"orders":{"period":5,"previousPeriod":4,"changePct":25.0},"filingsByStatus":[{"status":"PAID","count":3}],"applicationQueue":{"ein":{"NEW":2},"itin":{"REVIEW":1}},"needsAttention":[{"kind":"fax_failed","filingId":"filing_1","llcName":null,"ageHours":27.5}]}}"#
             )
         }
         defer { StubURLProtocol.reset() }
@@ -63,6 +63,8 @@ extension APIClientTests {
         #expect(dashboard.filingsByStatus.first?.status == "PAID")
         #expect(dashboard.applicationQueue.ein["NEW"] == 2)
         #expect(dashboard.needsAttention.first?.filingId == "filing_1")
+        #expect(dashboard.needsAttention.first?.llcName == nil)
+        #expect(dashboard.needsAttention.first?.ageHours == 27.5)
     }
 
     @Test func decodesFilingPageEnvelope() async throws {
@@ -87,6 +89,32 @@ extension APIClientTests {
         #expect(page.items[0].taxYears == [2024, 2025])
         #expect(page.items[0].customerEmail == "owner@example.com")
         #expect(page.nextCursor == "next_page")
+    }
+
+    @Test func decodesDraftFilingPageRowWithNullableFields() async throws {
+        let client = makeDecodingClient()
+        StubURLProtocol.install { request in
+            stubResponse(
+                url: request.url!,
+                status: 200,
+                body: #"{"data":{"items":[{"id":"filing_draft","llcName":null,"status":"DRAFT","taxYears":[],"amountPaid":0,"updatedAt":"2026-07-24T08:15:30.250Z","customerEmail":null}],"nextCursor":null}}"#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        let page = try await client.filings(
+            status: nil,
+            query: nil,
+            cursor: nil,
+            limit: 25
+        )
+        #expect(page.items.count == 1)
+        #expect(page.items[0].id == "filing_draft")
+        #expect(page.items[0].llcName == nil)
+        #expect(page.items[0].customerEmail == nil)
+        #expect(page.items[0].taxYears.isEmpty)
+        #expect(page.items[0].amountPaid == 0)
+        #expect(page.nextCursor == nil)
     }
 
     private func makeDecodingClient(

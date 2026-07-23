@@ -67,6 +67,63 @@ extension APIClientTests {
         #expect(transactions.count == 2)
     }
 
+    @Test func decodesFilingDetailWhenEveryNullableFieldIsNull() async throws {
+        let client = makeFeatureClient()
+        StubURLProtocol.install { request in
+            stubResponse(
+                url: request.url!,
+                status: 200,
+                body: #"""
+                {"data":{"filing":{
+                  "id":"filing_draft","status":"DRAFT","tier":"basic","amountPaid":0,
+                  "llcName":null,"llcEin":null,"llcAddress":null,"llcCity":null,
+                  "llcState":null,"llcZip":null,"llcCountry":"USA",
+                  "llcDateIncorporated":null,"llcBusinessActivity":null,
+                  "llcBusinessCode":null,"ownerName":null,"ownerAddress":null,
+                  "ownerCountryCitizenship":null,"ownerCountryTaxResidence":null,
+                  "ownerCountryBusiness":null,"ownerFtin":null,"ownerItin":null,
+                  "ownerReferenceId":null,"taxYears":[],"isDiirsp":false,
+                  "reasonableCauseNarrative":null,"faxService":true,"faxStatus":null,
+                  "faxedAt":null,"signedAt":null,"validationStatus":null,
+                  "validationCheckedAt":null,"createdAt":"2026-07-24T01:00:00Z",
+                  "updatedAt":"2026-07-24T01:00:00.125Z","partnerId":null,"user":null,
+                  "yearData":[{"id":"year_draft","taxYear":2025,
+                    "totalAssetsYearEnd":"0","contributions":"0","distributions":"0",
+                    "reportableTransactions":[],"otherTransactionsNote":null}]
+                },"messages":[
+                  {"id":"message_unread","fromAdmin":false,"body":"Draft question",
+                   "readAt":null,"createdAt":"2026-07-24T01:05:00Z"}
+                ],"changeLog":[
+                  {"id":"change_system","adminId":null,"source":"system","field":"status",
+                   "beforeJson":null,"afterJson":null,"reason":null,
+                   "changedAt":"2026-07-24T01:10:00Z"}
+                ]}}
+                """#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        let detail = try await client.filingDetail(id: "filing_draft")
+        #expect(detail.filing.llcName == nil)
+        #expect(detail.filing.llcEin == nil)
+        #expect(detail.filing.llcDateIncorporated == nil)
+        #expect(detail.filing.ownerName == nil)
+        #expect(detail.filing.reasonableCauseNarrative == nil)
+        #expect(detail.filing.faxStatus == nil)
+        #expect(detail.filing.faxedAt == nil)
+        #expect(detail.filing.signedAt == nil)
+        #expect(detail.filing.validationStatus == nil)
+        #expect(detail.filing.validationCheckedAt == nil)
+        #expect(detail.filing.partnerId == nil)
+        #expect(detail.filing.user == nil)
+        #expect(detail.filing.yearData[0].otherTransactionsNote == nil)
+        #expect(detail.messages[0].readAt == nil)
+        #expect(detail.changeLog[0].adminId == nil)
+        #expect(detail.changeLog[0].beforeJson == nil)
+        #expect(detail.changeLog[0].afterJson == nil)
+        #expect(detail.changeLog[0].reason == nil)
+    }
+
     @Test func decodesEINAndITINApplicationShapes() async throws {
         let client = makeFeatureClient()
         StubURLProtocol.install { request in
@@ -92,6 +149,47 @@ extension APIClientTests {
         #expect(ein.items[0].itinReason == nil)
         #expect(itin.items[0].itinReason == "Treaty benefit")
         #expect(itin.items[0].llcName == nil)
+    }
+
+    @Test func decodesApplicationRowsWithNullableAndVariantFields() async throws {
+        let client = makeFeatureClient()
+        StubURLProtocol.install { request in
+            let type = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)?
+                .queryItems?.first(where: { $0.name == "type" })?.value
+            let item = type == "ein"
+                ? #"{"id":"ein_nulls","createdAt":"2026-07-24T02:00:00Z","updatedAt":"2026-07-24T02:01:00.100Z","fullName":"EIN Applicant","email":"ein.nulls@example.com","llcName":"Required Name LLC","status":"RECEIVED","ein":null,"phone":null,"llcState":null}"#
+                : #"{"id":"itin_nulls","createdAt":"2026-07-24T03:00:00Z","updatedAt":"2026-07-24T03:01:00.200Z","fullName":"ITIN Applicant","email":"itin.nulls@example.com","phone":null,"itinReason":"Federal tax reporting","status":"RECEIVED","itin":null}"#
+            return stubResponse(
+                url: request.url!,
+                status: 200,
+                body: "{\"data\":{\"items\":[\(item)],\"nextCursor\":null}}"
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        let ein = try await client.applications(
+            type: "ein",
+            status: nil,
+            cursor: nil,
+            limit: 25
+        )
+        let itin = try await client.applications(
+            type: "itin",
+            status: nil,
+            cursor: nil,
+            limit: 25
+        )
+
+        #expect(ein.items[0].phone == nil)
+        #expect(ein.items[0].llcState == nil)
+        #expect(ein.items[0].ein == nil)
+        #expect(ein.items[0].itinReason == nil)
+        #expect(ein.items[0].itin == nil)
+        #expect(itin.items[0].phone == nil)
+        #expect(itin.items[0].llcName == nil)
+        #expect(itin.items[0].llcState == nil)
+        #expect(itin.items[0].ein == nil)
+        #expect(itin.items[0].itin == nil)
     }
 
     @Test func decodesPartnerRows() async throws {

@@ -252,7 +252,7 @@ private struct FilingRow: View {
     }
 
     private var filingName: some View {
-        Text(filing.llcName)
+        Text(filing.llcName.flatMap { $0.isEmpty ? nil : $0 } ?? "Untitled filing")
             .font(.headline)
             .lineLimit(2)
     }
@@ -301,7 +301,10 @@ public struct FilingDetailView: View {
                 LoadingStateView(title: "Loading filing…")
             }
         }
-        .navigationTitle(viewModel.detail?.filing.llcName ?? "Filing")
+        .navigationTitle(
+            viewModel.detail?.filing.llcName.flatMap { $0.isEmpty ? nil : $0 }
+                ?? "Untitled filing"
+        )
         .adminVisibleNavigationBar()
         .task {
             if !viewModel.hasLoaded {
@@ -333,7 +336,7 @@ public struct FilingDetailView: View {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 5) {
                     AdminEyebrow(filing.tier)
-                    Text(filing.llcName ?? "Unknown LLC")
+                    Text(filing.llcName.flatMap { $0.isEmpty ? nil : $0 } ?? "Untitled filing")
                         .font(.title2.weight(.semibold))
                         .fontDesign(.serif)
                 }
@@ -356,7 +359,10 @@ public struct FilingDetailView: View {
 
     private func entitySection(_ filing: FilingRecord) -> some View {
         detailCard(title: "Entity", icon: "building.2") {
-            DetailInfoRow(label: "Legal name", value: filing.llcName)
+            DetailInfoRow(
+                label: "Legal name",
+                value: filing.llcName.flatMap { $0.isEmpty ? nil : $0 } ?? "Untitled filing"
+            )
             DetailInfoRow(label: "EIN", value: filing.llcEin)
             DetailInfoRow(label: "Address", value: entityAddress(filing))
             DetailInfoRow(label: "Incorporated", value: filing.llcDateIncorporated.map { formatted($0, dateOnly: true) })

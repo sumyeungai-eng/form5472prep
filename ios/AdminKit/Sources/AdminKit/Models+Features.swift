@@ -96,7 +96,7 @@ public struct FilingRecord: Codable, Sendable, Identifiable {
     public let llcCity: String?
     public let llcState: String?
     public let llcZip: String?
-    public let llcCountry: String?
+    public let llcCountry: String
     public let llcDateIncorporated: Date?
     public let llcBusinessActivity: String?
     public let llcBusinessCode: String?
@@ -134,7 +134,7 @@ public struct FilingRecord: Codable, Sendable, Identifiable {
         llcCity: String?,
         llcState: String?,
         llcZip: String?,
-        llcCountry: String?,
+        llcCountry: String,
         llcDateIncorporated: Date?,
         llcBusinessActivity: String?,
         llcBusinessCode: String?,
@@ -202,9 +202,9 @@ public struct FilingRecord: Codable, Sendable, Identifiable {
 
 public struct FilingUser: Codable, Sendable, Identifiable {
     public let id: String
-    public let email: String?
+    public let email: String
 
-    public init(id: String, email: String?) {
+    public init(id: String, email: String) {
         self.id = id
         self.email = email
     }
@@ -414,7 +414,7 @@ public struct SourceAttributionRow: Codable, Sendable, Identifiable {
 public struct PartnerPerformance: Codable, Sendable, Identifiable {
     public var id: String { partnerId }
     public let partnerId: String
-    public let name: String?
+    public let name: String
     public let email: String
     public let filings: Int
     public let paidFilings: Int
@@ -422,7 +422,7 @@ public struct PartnerPerformance: Codable, Sendable, Identifiable {
 
     public init(
         partnerId: String,
-        name: String?,
+        name: String,
         email: String,
         filings: Int,
         paidFilings: Int,

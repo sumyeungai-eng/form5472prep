@@ -48,9 +48,9 @@ public struct AttentionItem: Codable, Sendable {
     public let kind: String
     public let filingId: String
     public let llcName: String?
-    public let ageHours: Int
+    public let ageHours: Double
 
-    public init(kind: String, filingId: String, llcName: String?, ageHours: Int) {
+    public init(kind: String, filingId: String, llcName: String?, ageHours: Double) {
         self.kind = kind
         self.filingId = filingId
         self.llcName = llcName
@@ -82,7 +82,7 @@ public struct DashboardSummary: Codable, Sendable {
 
 public struct FilingSummary: Codable, Sendable, Identifiable {
     public let id: String
-    public let llcName: String
+    public let llcName: String?
     public let status: String
     public let taxYears: [Int]
     public let amountPaid: Int
@@ -91,7 +91,7 @@ public struct FilingSummary: Codable, Sendable, Identifiable {
 
     public init(
         id: String,
-        llcName: String,
+        llcName: String?,
         status: String,
         taxYears: [Int],
         amountPaid: Int,

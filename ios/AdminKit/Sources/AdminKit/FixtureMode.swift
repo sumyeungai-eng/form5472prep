@@ -320,7 +320,7 @@ final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
             "email": "martin.novak@example.com",
             "phone": "+420 777 123 456",
             "status": "CANCELLED",
-            "llcName": null,
+            "llcName": "Novak Product Studio LLC",
             "llcState": null,
             "ein": null,
             "itinReason": null,
