@@ -16,7 +16,9 @@ public struct DashboardView: View {
 
     public var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: 18) {
+                AdminScreenHeader("Dashboard", eyebrow: "OPERATIONS")
+
                 Picker("Period", selection: $viewModel.range) {
                     ForEach(ranges, id: \.self) { range in
                         Text(range.uppercased()).tag(range)
@@ -27,16 +29,21 @@ public struct DashboardView: View {
 
                 content
             }
-            .padding()
+            .padding(.horizontal, 16)
+            .padding(.vertical, 20)
         }
-        .background(Color.secondary.opacity(0.06))
-        .navigationTitle("Dashboard")
+        .background(AdminTheme.screenBackground)
+        .navigationTitle("")
+        .foregroundStyle(AdminTheme.primaryText)
+        .tint(AdminTheme.accent)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("Sign Out", role: .destructive) {
                     Task { await authManager.signOut() }
                 }
-                .buttonStyle(.bordered)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AdminTheme.danger)
+                .frame(minHeight: 44)
                 .accessibilityHint("Returns to the sign-in screen")
             }
         }
@@ -83,75 +90,110 @@ public struct DashboardView: View {
     }
 
     private func summaryContent(_ summary: DashboardSummary) -> some View {
-        VStack(spacing: 16) {
-            HStack(alignment: .top, spacing: 12) {
-                metricCard(
-                    title: "Revenue",
-                    value: AdminFormatting.usd(cents: summary.revenueCents.period),
-                    comparison: summary.revenueCents
-                )
-                metricCard(
-                    title: "Orders",
-                    value: summary.orders.period.formatted(),
-                    comparison: summary.orders
-                )
+        VStack(spacing: 18) {
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .top, spacing: 12) {
+                    metricCard(
+                        title: "Revenue",
+                        value: AdminFormatting.usd(cents: summary.revenueCents.period),
+                        comparison: summary.revenueCents
+                    )
+                    metricCard(
+                        title: "Orders",
+                        value: summary.orders.period.formatted(),
+                        comparison: summary.orders
+                    )
+                }
+
+                VStack(spacing: 12) {
+                    metricCard(
+                        title: "Revenue",
+                        value: AdminFormatting.usd(cents: summary.revenueCents.period),
+                        comparison: summary.revenueCents
+                    )
+                    metricCard(
+                        title: "Orders",
+                        value: summary.orders.period.formatted(),
+                        comparison: summary.orders
+                    )
+                }
             }
 
-            AdminCard {
-                VStack(alignment: .leading, spacing: 12) {
-                    sectionTitle("Filings by status", icon: "doc.text")
-                    if summary.filingsByStatus.isEmpty {
-                        Text("No filings in this period")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(summary.filingsByStatus, id: \.status) { item in
-                            HStack {
-                                StatusBadge(status: item.status)
-                                Spacer()
-                                Text(item.count.formatted())
-                                    .fontWeight(.semibold)
-                                    .adminTabularNumbers()
-                            }
+            VStack(alignment: .leading, spacing: 12) {
+                sectionTitle("Filings by status", icon: "doc.text")
+                if summary.filingsByStatus.isEmpty {
+                    Text("No filings in this period")
+                        .foregroundStyle(AdminTheme.secondaryText)
+                } else {
+                    ForEach(Array(summary.filingsByStatus.enumerated()), id: \.element.status) { index, item in
+                        if index > 0 {
+                            Divider()
+                                .overlay(AdminTheme.cardBorder)
+                        }
+                        HStack {
+                            AdminDesignSystem.StatusBadge(status: item.status)
+                            Spacer()
+                            Text(item.count.formatted())
+                                .font(.subheadline.weight(.semibold))
+                                .fontDesign(.monospaced)
+                                .adminTabularNumbers()
                         }
                     }
                 }
             }
+            .card()
 
-            AdminCard {
-                VStack(alignment: .leading, spacing: 14) {
-                    sectionTitle("Application queue", icon: "person.text.rectangle")
-                    applicationQueue(title: "EIN", counts: summary.applicationQueue.ein)
-                    Divider()
-                    applicationQueue(title: "ITIN", counts: summary.applicationQueue.itin)
-                }
+            VStack(alignment: .leading, spacing: 14) {
+                sectionTitle("Application queue", icon: "person.text.rectangle")
+                applicationQueue(title: "EIN", counts: summary.applicationQueue.ein)
+                Divider()
+                    .overlay(AdminTheme.cardBorder)
+                applicationQueue(title: "ITIN", counts: summary.applicationQueue.itin)
             }
+            .card()
 
-            AdminCard {
-                VStack(alignment: .leading, spacing: 12) {
-                    sectionTitle("Needs attention", icon: "exclamationmark.circle")
-                    if summary.needsAttention.isEmpty {
-                        Label("Nothing needs attention", systemImage: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                    } else {
-                        ForEach(summary.needsAttention, id: \.filingId) { item in
+            VStack(alignment: .leading, spacing: 12) {
+                sectionTitle("Needs attention", icon: "exclamationmark.circle")
+                if summary.needsAttention.isEmpty {
+                    Label("Nothing needs attention", systemImage: "checkmark.circle.fill")
+                        .foregroundStyle(AdminTheme.success)
+                } else {
+                    ForEach(Array(summary.needsAttention.enumerated()), id: \.element.filingId) { index, item in
+                        if index > 0 {
+                            Divider()
+                                .overlay(AdminTheme.cardBorder)
+                        }
+                        HStack(alignment: .top, spacing: 12) {
+                            Image(systemName: attentionIcon(item.kind))
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(attentionColor(item.kind))
+                                .frame(width: 32, height: 32)
+                                .background(
+                                    attentionColor(item.kind).opacity(0.12),
+                                    in: RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                )
+                                .accessibilityHidden(true)
+
                             VStack(alignment: .leading, spacing: 5) {
-                                HStack(alignment: .firstTextBaseline) {
+                                HStack(alignment: .firstTextBaseline, spacing: 10) {
                                     Text(attentionLabel(item.kind))
                                         .font(.headline)
-                                    Spacer()
+                                    Spacer(minLength: 8)
                                     Text(AdminFormatting.age(hours: item.ageHours))
                                         .font(.caption)
-                                        .foregroundStyle(.secondary)
+                                        .fontDesign(.monospaced)
+                                        .foregroundStyle(AdminTheme.secondaryText)
                                         .adminTabularNumbers()
                                 }
                                 Text(item.llcName ?? "Unknown LLC")
-                                    .foregroundStyle(.secondary)
+                                    .font(.subheadline)
+                                    .foregroundStyle(AdminTheme.secondaryText)
                             }
-                            .padding(.vertical, 4)
                         }
                     }
                 }
             }
+            .card()
         }
     }
 
@@ -160,52 +202,67 @@ public struct DashboardView: View {
         value: String,
         comparison: PeriodComparison
     ) -> some View {
-        AdminCard {
-            VStack(alignment: .leading, spacing: 7) {
-                Text(title)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Text(value)
-                    .font(.title2.weight(.bold))
-                    .minimumScaleFactor(0.75)
-                    .lineLimit(1)
-                    .adminTabularNumbers()
-                Label(
-                    comparison.changePct.formatted(
-                        .percent
-                            .scale(1)
-                            .precision(.fractionLength(1))
-                    ),
-                    systemImage: comparison.changePct >= 0
-                        ? "arrow.up.right"
-                        : "arrow.down.right"
-                )
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(comparison.changePct >= 0 ? .green : .red)
+        VStack(alignment: .leading, spacing: 9) {
+            AdminEyebrow(title)
+            Text(value)
+                .font(title == "Revenue" ? .largeTitle.weight(.semibold) : .title.weight(.semibold))
+                .fontDesign(.serif)
+                .minimumScaleFactor(0.68)
+                .lineLimit(1)
                 .adminTabularNumbers()
-                Text("Previous: \(title == "Revenue" ? AdminFormatting.usd(cents: comparison.previousPeriod) : comparison.previousPeriod.formatted())")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .adminTabularNumbers()
-            }
+                .accessibilityLabel("\(title): \(value)")
+            Label(
+                comparison.changePct.formatted(
+                    .percent
+                        .scale(1)
+                        .precision(.fractionLength(1))
+                )
+                .replacingOccurrences(of: "-", with: ""),
+                systemImage: comparison.changePct >= 0
+                    ? "arrowtriangle.up.fill"
+                    : "arrowtriangle.down.fill"
+            )
+            .font(.caption2.weight(.semibold))
+            .fontDesign(.monospaced)
+            .foregroundStyle(
+                comparison.changePct >= 0 ? AdminTheme.success : AdminTheme.danger
+            )
+            .padding(.horizontal, 9)
+            .padding(.vertical, 5)
+            .background(
+                (comparison.changePct >= 0 ? AdminTheme.success : AdminTheme.danger)
+                    .opacity(0.12),
+                in: Capsule()
+            )
+            .adminTabularNumbers()
+            Text(
+                "Previous: \(title == "Revenue" ? AdminFormatting.usd(cents: comparison.previousPeriod) : comparison.previousPeriod.formatted())"
+            )
+            .font(.caption2)
+            .fontDesign(.monospaced)
+            .foregroundStyle(AdminTheme.secondaryText)
+            .lineLimit(1)
+            .adminTabularNumbers()
         }
+        .card()
     }
 
     private func applicationQueue(title: String, counts: [String: Int]) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
-                .font(.headline)
+                .font(.subheadline.weight(.semibold))
+                .fontDesign(.monospaced)
             if counts.isEmpty {
                 Text("No queued applications")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AdminTheme.secondaryText)
             } else {
                 ForEach(counts.keys.sorted(), id: \.self) { status in
                     HStack {
-                        StatusBadge(status: status, application: true)
+                        AdminDesignSystem.StatusBadge(status: status)
                         Spacer()
                         Text(counts[status, default: 0].formatted())
-                            .fontWeight(.semibold)
+                            .font(.subheadline.weight(.semibold))
+                            .fontDesign(.monospaced)
                             .adminTabularNumbers()
                     }
                 }
@@ -214,8 +271,11 @@ public struct DashboardView: View {
     }
 
     private func sectionTitle(_ title: String, icon: String) -> some View {
-        Label(title, systemImage: icon)
-            .font(.title3.weight(.semibold))
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .foregroundStyle(AdminTheme.accent)
+            AdminEyebrow(title)
+        }
     }
 
     private func attentionLabel(_ kind: String) -> String {
@@ -225,6 +285,24 @@ public struct DashboardView: View {
         case "validation_failed": "Validation failed"
         case "stale_paid": "Paid filing is stale"
         default: kind.replacingOccurrences(of: "_", with: " ").capitalized
+        }
+    }
+
+    private func attentionIcon(_ kind: String) -> String {
+        switch kind {
+        case "fax_failed": "exclamationmark.triangle.fill"
+        case "signature_pending": "signature"
+        case "validation_failed": "checkmark.shield"
+        case "stale_paid": "clock"
+        default: "exclamationmark.circle"
+        }
+    }
+
+    private func attentionColor(_ kind: String) -> Color {
+        switch kind {
+        case "fax_failed", "validation_failed": AdminTheme.danger
+        case "signature_pending", "stale_paid": AdminTheme.warning
+        default: AdminTheme.accent
         }
     }
 

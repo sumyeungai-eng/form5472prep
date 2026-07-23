@@ -16,10 +16,20 @@ public struct ApplicationsView: View {
 
     public var body: some View {
         VStack(spacing: 0) {
-            controls
+            VStack(alignment: .leading, spacing: 14) {
+                AdminScreenHeader("Applications", eyebrow: "EIN & ITIN")
+                controls
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 20)
+            .padding(.bottom, 12)
+
             content
         }
-        .navigationTitle("Applications")
+        .background(AdminTheme.screenBackground)
+        .navigationTitle("")
+        .foregroundStyle(AdminTheme.primaryText)
+        .tint(AdminTheme.accent)
         .onChange(of: viewModel.type) { _ in
             Task { await viewModel.load() }
         }
@@ -44,6 +54,7 @@ public struct ApplicationsView: View {
             HStack {
                 Label("Status", systemImage: "line.3.horizontal.decrease.circle")
                     .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AdminTheme.secondaryText)
                 Spacer()
                 Picker("Status", selection: $viewModel.status) {
                     ForEach(statuses, id: \.self) { status in
@@ -54,8 +65,7 @@ public struct ApplicationsView: View {
                 .pickerStyle(.menu)
             }
         }
-        .padding()
-        .background(.bar)
+        .card(padding: 14)
     }
 
     @ViewBuilder
@@ -75,11 +85,17 @@ public struct ApplicationsView: View {
         } else {
             List(viewModel.items) { application in
                 ApplicationRow(application: application, type: viewModel.type)
+                    .card(padding: 14)
+                    .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
                     .task {
                         await viewModel.loadMoreIfNeeded(currentID: application.id)
                     }
             }
             .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(AdminTheme.screenBackground)
             .refreshable { await viewModel.load() }
             .overlay(alignment: .bottom) {
                 if viewModel.isLoadingMore {
@@ -98,28 +114,27 @@ private struct ApplicationRow: View {
     let type: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 7) {
+        VStack(alignment: .leading, spacing: 9) {
             HStack(alignment: .firstTextBaseline) {
                 Text(application.fullName)
                     .font(.headline)
                 Spacer(minLength: 8)
-                StatusBadge(status: application.status, application: true)
+                AdminDesignSystem.StatusBadge(status: application.status)
             }
             Text(application.email)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(AdminTheme.secondaryText)
                 .textSelection(.enabled)
             if type == "ein", let llcName = application.llcName, !llcName.isEmpty {
                 Label(llcName, systemImage: "building.2")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AdminTheme.secondaryText)
             }
             if type == "itin", let reason = application.itinReason, !reason.isEmpty {
                 Label(reason, systemImage: "text.document")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AdminTheme.secondaryText)
             }
         }
-        .padding(.vertical, 5)
     }
 }

@@ -16,14 +16,18 @@ public struct AnalyticsView: View {
 
     public var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: 18) {
+                AdminScreenHeader("Analytics", eyebrow: "REPORTING")
                 controls
                 content
             }
-            .padding()
+            .padding(.horizontal, 16)
+            .padding(.vertical, 20)
         }
-        .background(Color.secondary.opacity(0.06))
-        .navigationTitle("Analytics")
+        .background(AdminTheme.screenBackground)
+        .navigationTitle("")
+        .foregroundStyle(AdminTheme.primaryText)
+        .tint(AdminTheme.accent)
         .refreshable { await viewModel.load() }
         .task {
             if viewModel.bundle == nil {
@@ -39,27 +43,24 @@ public struct AnalyticsView: View {
     }
 
     private var controls: some View {
-        AdminCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Reporting period")
-                    .font(.headline)
-                Picker("Range", selection: $viewModel.range) {
-                    ForEach(ranges, id: \.self) { range in
-                        Text(range.uppercased()).tag(range)
-                    }
+        VStack(alignment: .leading, spacing: 12) {
+            AdminEyebrow("Reporting period")
+            Picker("Range", selection: $viewModel.range) {
+                ForEach(ranges, id: \.self) { range in
+                    Text(range.uppercased()).tag(range)
                 }
-                .pickerStyle(.segmented)
-
-                Text("Bucket")
-                    .font(.headline)
-                Picker("Bucket", selection: $viewModel.bucket) {
-                    ForEach(buckets, id: \.self) { bucket in
-                        Text(bucket.capitalized).tag(bucket)
-                    }
-                }
-                .pickerStyle(.segmented)
             }
+            .pickerStyle(.segmented)
+
+            AdminEyebrow("Bucket", color: AdminTheme.secondaryText)
+            Picker("Bucket", selection: $viewModel.bucket) {
+                ForEach(buckets, id: \.self) { bucket in
+                    Text(bucket.capitalized).tag(bucket)
+                }
+            }
+            .pickerStyle(.segmented)
         }
+        .card()
     }
 
     @ViewBuilder
@@ -96,126 +97,155 @@ public struct AnalyticsView: View {
     }
 
     private func analyticsContent(_ bundle: AnalyticsBundle) -> some View {
-        VStack(spacing: 16) {
-            AdminCard {
-                VStack(alignment: .leading, spacing: 14) {
-                    Label("Revenue over time", systemImage: "chart.bar.xaxis")
-                        .font(.title3.weight(.semibold))
-                    if bundle.revenueSeries.isEmpty {
-                        Text("No revenue data")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Chart(bundle.revenueSeries) { point in
-                            BarMark(
-                                x: .value("Date", point.date),
-                                y: .value("Revenue cents", point.revenueCents)
-                            )
-                            .foregroundStyle(.blue.gradient)
-                            .cornerRadius(3)
-                            .accessibilityLabel(point.date)
-                            .accessibilityValue(
-                                "\(AdminFormatting.usd(cents: point.revenueCents)), \(point.orders) orders"
-                            )
-                        }
-                        .chartYAxis {
-                            AxisMarks(position: .leading) { value in
-                                AxisGridLine()
-                                AxisTick()
-                                AxisValueLabel {
-                                    if let cents = value.as(Int.self) {
-                                        Text(AdminFormatting.usd(cents: cents))
-                                    }
+        VStack(spacing: 18) {
+            VStack(alignment: .leading, spacing: 14) {
+                chartTitle("Revenue over time", icon: "chart.bar.xaxis")
+                if bundle.revenueSeries.isEmpty {
+                    Text("No revenue data")
+                        .foregroundStyle(AdminTheme.secondaryText)
+                } else {
+                    Chart(bundle.revenueSeries) { point in
+                        BarMark(
+                            x: .value("Date", point.date),
+                            y: .value("Revenue cents", point.revenueCents)
+                        )
+                        .foregroundStyle(AdminTheme.accent.gradient)
+                        .cornerRadius(3)
+                        .accessibilityLabel(point.date)
+                        .accessibilityValue(
+                            "\(AdminFormatting.usd(cents: point.revenueCents)), \(point.orders) orders"
+                        )
+                    }
+                    .chartYAxis {
+                        AxisMarks(position: .leading) { value in
+                            AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                                .foregroundStyle(AdminTheme.accentTint)
+                            AxisTick()
+                                .foregroundStyle(AdminTheme.cardBorder)
+                            AxisValueLabel {
+                                if let cents = value.as(Int.self) {
+                                    Text(AdminFormatting.usd(cents: cents))
+                                        .font(.caption2)
+                                        .fontDesign(.monospaced)
+                                        .foregroundStyle(AdminTheme.secondaryText)
                                 }
                             }
                         }
-                        .chartXAxis {
-                            AxisMarks(values: .automatic(desiredCount: 5)) {
-                                AxisValueLabel(collisionResolution: .greedy)
+                    }
+                    .chartXAxis {
+                        AxisMarks(values: .automatic(desiredCount: 5)) { value in
+                            AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                                .foregroundStyle(AdminTheme.accentTint.opacity(0.58))
+                            AxisTick()
+                                .foregroundStyle(AdminTheme.cardBorder)
+                            AxisValueLabel(collisionResolution: .greedy) {
+                                if let label = value.as(String.self) {
+                                    Text(label)
+                                        .font(.caption2)
+                                        .fontDesign(.monospaced)
+                                        .foregroundStyle(AdminTheme.secondaryText)
+                                }
                             }
                         }
-                        .frame(minHeight: 240)
                     }
+                    .frame(minHeight: 240)
                 }
             }
+            .card()
 
-            AdminCard {
-                VStack(alignment: .leading, spacing: 12) {
-                    Label("Source attribution", systemImage: "arrow.triangle.branch")
-                        .font(.title3.weight(.semibold))
-                    if bundle.sourceAttribution.isEmpty {
-                        Text("No source attribution data")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(Array(bundle.sourceAttribution.enumerated()), id: \.element.id) { index, row in
-                            if index > 0 { Divider() }
-                            VStack(alignment: .leading, spacing: 6) {
-                                HStack(alignment: .firstTextBaseline) {
-                                    Text(sourceName(row.source))
-                                        .font(.headline)
-                                    Spacer()
-                                    Text(AdminFormatting.usd(cents: row.revenueCents))
-                                        .font(.subheadline.weight(.semibold))
-                                        .adminTabularNumbers()
-                                }
-                                HStack {
-                                    Text("\(row.paid) / \(row.started) paid")
-                                    Spacer()
-                                    Text(
-                                        row.conversionRate.formatted(
-                                            .percent.precision(.fractionLength(1))
-                                        )
+            VStack(alignment: .leading, spacing: 12) {
+                chartTitle("Source attribution", icon: "arrow.triangle.branch")
+                if bundle.sourceAttribution.isEmpty {
+                    Text("No source attribution data")
+                        .foregroundStyle(AdminTheme.secondaryText)
+                } else {
+                    ForEach(Array(bundle.sourceAttribution.enumerated()), id: \.element.id) { index, row in
+                        if index > 0 {
+                            Divider()
+                                .overlay(AdminTheme.cardBorder)
+                        }
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(alignment: .firstTextBaseline) {
+                                Text(sourceName(row.source))
+                                    .font(.headline)
+                                Spacer()
+                                Text(AdminFormatting.usd(cents: row.revenueCents))
+                                    .font(.subheadline.weight(.semibold))
+                                    .fontDesign(.monospaced)
+                                    .adminTabularNumbers()
+                            }
+                            HStack {
+                                Text("\(row.paid) / \(row.started) paid")
+                                Spacer()
+                                Text(
+                                    row.conversionRate.formatted(
+                                        .percent.precision(.fractionLength(1))
                                     )
-                                }
+                                )
+                            }
+                            .font(.caption)
+                            .fontDesign(.monospaced)
+                            .foregroundStyle(AdminTheme.secondaryText)
+                            .adminTabularNumbers()
+                            Text("\(row.confirmed) confirmed")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .fontDesign(.monospaced)
+                                .foregroundStyle(AdminTheme.secondaryText)
                                 .adminTabularNumbers()
-                                Text("\(row.confirmed) confirmed")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                    .adminTabularNumbers()
-                            }
-                            .padding(.vertical, 3)
                         }
+                        .padding(.vertical, 3)
                     }
                 }
             }
+            .card()
 
-            AdminCard {
-                VStack(alignment: .leading, spacing: 12) {
-                    Label("Partner performance", systemImage: "person.2")
-                        .font(.title3.weight(.semibold))
-                    if bundle.partnerPerformance.isEmpty {
-                        Text("No partner performance data")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(Array(bundle.partnerPerformance.enumerated()), id: \.element.id) { index, partner in
-                            if index > 0 { Divider() }
-                            VStack(alignment: .leading, spacing: 6) {
-                                HStack(alignment: .firstTextBaseline) {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(partner.name ?? partner.email)
-                                            .font(.headline)
-                                        if partner.name != nil {
-                                            Text(partner.email)
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
-                                        }
+            VStack(alignment: .leading, spacing: 12) {
+                chartTitle("Partner performance", icon: "person.2")
+                if bundle.partnerPerformance.isEmpty {
+                    Text("No partner performance data")
+                        .foregroundStyle(AdminTheme.secondaryText)
+                } else {
+                    ForEach(Array(bundle.partnerPerformance.enumerated()), id: \.element.id) { index, partner in
+                        if index > 0 {
+                            Divider()
+                                .overlay(AdminTheme.cardBorder)
+                        }
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(alignment: .firstTextBaseline) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(partner.name ?? partner.email)
+                                        .font(.headline)
+                                    if partner.name != nil {
+                                        Text(partner.email)
+                                            .font(.caption)
+                                            .foregroundStyle(AdminTheme.secondaryText)
                                     }
-                                    Spacer()
-                                    Text(AdminFormatting.usd(cents: partner.revenueCents))
-                                        .font(.subheadline.weight(.semibold))
-                                        .adminTabularNumbers()
                                 }
-                                Text("\(partner.paidFilings) paid of \(partner.filings) filings")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                Spacer()
+                                Text(AdminFormatting.usd(cents: partner.revenueCents))
+                                    .font(.subheadline.weight(.semibold))
+                                    .fontDesign(.monospaced)
                                     .adminTabularNumbers()
                             }
-                            .padding(.vertical, 3)
+                            Text("\(partner.paidFilings) paid of \(partner.filings) filings")
+                                .font(.caption)
+                                .fontDesign(.monospaced)
+                                .foregroundStyle(AdminTheme.secondaryText)
+                                .adminTabularNumbers()
                         }
+                        .padding(.vertical, 3)
                     }
                 }
             }
+            .card()
+        }
+    }
+
+    private func chartTitle(_ title: String, icon: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .foregroundStyle(AdminTheme.accent)
+            AdminEyebrow(title)
         }
     }
 

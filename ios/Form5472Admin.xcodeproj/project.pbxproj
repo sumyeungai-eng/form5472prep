@@ -13,9 +13,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		14CDFAB20E5979DFE3549FCD /* Form5472Admin.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Form5472Admin.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		14CDFAB20E5979DFE3549FCD /* F5472 Admin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "F5472 Admin.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		157888EDD0C6086247B466BB /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
-		41F437F18C6E1AF2A11A0484 /* AdminKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AdminKit; path = AdminKit; sourceTree = SOURCE_ROOT; };
+		41F437F18C6E1AF2A11A0484 /* AdminKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AdminKit; sourceTree = SOURCE_ROOT; };
 		871EE6DC2180A1864FFDDB17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C5D4622A8EACFA90E165A69A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -52,7 +52,7 @@
 		C87EFBE1AA66CB5B9EBB6BEF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				14CDFAB20E5979DFE3549FCD /* Form5472Admin.app */,
+				14CDFAB20E5979DFE3549FCD /* F5472 Admin.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -87,7 +87,7 @@
 				570542159A22617320E4EA77 /* AdminKit */,
 			);
 			productName = Form5472Admin;
-			productReference = 14CDFAB20E5979DFE3549FCD /* Form5472Admin.app */;
+			productReference = 14CDFAB20E5979DFE3549FCD /* F5472 Admin.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -219,6 +219,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = LU9X3H78Y4;
 				INFOPLIST_FILE = Form5472Admin/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -296,6 +297,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = LU9X3H78Y4;
 				INFOPLIST_FILE = Form5472Admin/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (

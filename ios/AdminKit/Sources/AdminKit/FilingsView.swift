@@ -21,10 +21,20 @@ public struct FilingsView: View {
 
     public var body: some View {
         VStack(spacing: 0) {
-            filterBar
+            VStack(alignment: .leading, spacing: 14) {
+                AdminScreenHeader("Filings", eyebrow: "WORK QUEUE")
+                filterBar
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 20)
+            .padding(.bottom, 12)
+
             content
         }
-        .navigationTitle("Filings")
+        .background(AdminTheme.screenBackground)
+        .navigationTitle("")
+        .foregroundStyle(AdminTheme.primaryText)
+        .tint(AdminTheme.accent)
         .searchable(text: $viewModel.searchQuery, prompt: "LLC or customer")
         .onSubmit(of: .search) {
             Task { await viewModel.load() }
@@ -43,6 +53,7 @@ public struct FilingsView: View {
         HStack {
             Label("Status", systemImage: "line.3.horizontal.decrease.circle")
                 .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AdminTheme.secondaryText)
             Spacer()
             Picker("Status", selection: $viewModel.status) {
                 ForEach(statuses, id: \.self) { status in
@@ -52,9 +63,14 @@ public struct FilingsView: View {
             }
             .pickerStyle(.menu)
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 14)
         .frame(minHeight: 48)
-        .background(.bar)
+        .background(AdminTheme.cardSurface)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(AdminTheme.cardBorder, lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 
     @ViewBuilder
@@ -81,12 +97,19 @@ public struct FilingsView: View {
                     )
                 } label: {
                     FilingRow(filing: filing)
+                        .card(padding: 14)
                 }
+                .buttonStyle(.plain)
+                .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
                 .task {
                     await viewModel.loadMoreIfNeeded(currentID: filing.id)
                 }
             }
             .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(AdminTheme.screenBackground)
             .refreshable { await viewModel.load() }
             .overlay(alignment: .bottom) {
                 if viewModel.isLoadingMore {
@@ -104,7 +127,7 @@ private struct FilingRow: View {
     let filing: FilingSummary
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 9) {
             HStack(alignment: .firstTextBaseline) {
                 Text(filing.llcName)
                     .font(.headline)
@@ -112,21 +135,31 @@ private struct FilingRow: View {
                 Spacer(minLength: 8)
                 Text(AdminFormatting.usd(cents: filing.amountPaid))
                     .font(.subheadline.weight(.semibold))
+                    .fontDesign(.monospaced)
                     .adminTabularNumbers()
             }
-            HStack(spacing: 10) {
-                StatusBadge(status: filing.status)
+
+            if let customerEmail = filing.customerEmail, !customerEmail.isEmpty {
+                Text(customerEmail)
+                    .font(.subheadline)
+                    .foregroundStyle(AdminTheme.secondaryText)
+                    .lineLimit(1)
+            }
+
+            HStack(alignment: .center, spacing: 10) {
                 if !filing.taxYears.isEmpty {
                     Label(
                         filing.taxYears.map(String.init).joined(separator: ", "),
                         systemImage: "calendar"
                     )
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .fontDesign(.monospaced)
+                    .foregroundStyle(AdminTheme.secondaryText)
                 }
+                Spacer(minLength: 8)
+                AdminDesignSystem.StatusBadge(status: filing.status)
             }
         }
-        .padding(.vertical, 5)
     }
 }
 
@@ -184,34 +217,36 @@ public struct FilingDetailView: View {
             }
             .padding()
         }
-        .background(Color.secondary.opacity(0.06))
+        .background(AdminTheme.screenBackground)
+        .foregroundStyle(AdminTheme.primaryText)
+        .tint(AdminTheme.accent)
         .refreshable { await viewModel.load() }
     }
 
     private func filingHeader(_ filing: FilingRecord) -> some View {
-        AdminCard {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(filing.llcName ?? "Unknown LLC")
-                            .font(.title2.weight(.bold))
-                        Text(filing.tier)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    StatusBadge(status: filing.status)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 5) {
+                    AdminEyebrow(filing.tier)
+                    Text(filing.llcName ?? "Unknown LLC")
+                        .font(.title2.weight(.semibold))
+                        .fontDesign(.serif)
                 }
-                Divider()
-                DetailInfoRow(label: "Amount paid", value: AdminFormatting.usd(cents: filing.amountPaid))
-                DetailInfoRow(label: "Tax years", value: filing.taxYears.map(String.init).joined(separator: ", "))
-                DetailInfoRow(label: "DIIRSP", value: filing.isDiirsp ? "Yes" : "No")
-                DetailInfoRow(label: "Fax service", value: filing.faxService ? "Yes" : "No")
-                DetailInfoRow(label: "Fax status", value: filing.faxStatus)
-                DetailInfoRow(label: "Validation", value: filing.validationStatus)
-                DetailInfoRow(label: "Created", value: formatted(filing.createdAt))
-                DetailInfoRow(label: "Updated", value: formatted(filing.updatedAt))
+                Spacer()
+                AdminDesignSystem.StatusBadge(status: filing.status)
             }
+            Divider()
+                .overlay(AdminTheme.cardBorder)
+            DetailInfoRow(label: "Amount paid", value: AdminFormatting.usd(cents: filing.amountPaid))
+            DetailInfoRow(label: "Tax years", value: filing.taxYears.map(String.init).joined(separator: ", "))
+            DetailInfoRow(label: "DIIRSP", value: filing.isDiirsp ? "Yes" : "No")
+            DetailInfoRow(label: "Fax service", value: filing.faxService ? "Yes" : "No")
+            DetailInfoRow(label: "Fax status", value: filing.faxStatus)
+            DetailInfoRow(label: "Validation", value: filing.validationStatus)
+            DetailInfoRow(label: "Created", value: formatted(filing.createdAt))
+            DetailInfoRow(label: "Updated", value: formatted(filing.updatedAt))
         }
+        .card()
     }
 
     private func entitySection(_ filing: FilingRecord) -> some View {
@@ -239,10 +274,11 @@ public struct FilingDetailView: View {
             DetailInfoRow(label: "Reference ID", value: filing.ownerReferenceId)
             if let narrative = filing.reasonableCauseNarrative, !narrative.isEmpty {
                 Divider()
+                    .overlay(AdminTheme.cardBorder)
                 Text("Reasonable cause narrative")
                     .font(.subheadline.weight(.semibold))
                 Text(narrative)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AdminTheme.secondaryText)
             }
         }
     }
@@ -251,12 +287,16 @@ public struct FilingDetailView: View {
         detailCard(title: "Year data", icon: "calendar.badge.clock") {
             if years.isEmpty {
                 Text("No year data")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AdminTheme.secondaryText)
             } else {
                 ForEach(Array(years.enumerated()), id: \.element.id) { index, year in
-                    if index > 0 { Divider() }
+                    if index > 0 {
+                        Divider()
+                            .overlay(AdminTheme.cardBorder)
+                    }
                     Text(String(year.taxYear))
                         .font(.headline)
+                        .fontDesign(.monospaced)
                     DetailInfoRow(
                         label: "Total assets, year end",
                         value: AdminFormatting.usd(decimalString: year.totalAssetsYearEnd)
@@ -272,7 +312,7 @@ public struct FilingDetailView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Reportable transactions")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(AdminTheme.secondaryText)
                         Text(year.reportableTransactions.displayString)
                             .font(.callout.monospaced())
                             .textSelection(.enabled)
@@ -289,10 +329,13 @@ public struct FilingDetailView: View {
         detailCard(title: "Messages", icon: "bubble.left.and.bubble.right") {
             if messages.isEmpty {
                 Text("No messages")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AdminTheme.secondaryText)
             } else {
                 ForEach(Array(messages.enumerated()), id: \.element.id) { index, message in
-                    if index > 0 { Divider() }
+                    if index > 0 {
+                        Divider()
+                            .overlay(AdminTheme.cardBorder)
+                    }
                     VStack(alignment: .leading, spacing: 5) {
                         HStack {
                             Text(message.fromAdmin ? "Admin" : "Customer")
@@ -300,7 +343,8 @@ public struct FilingDetailView: View {
                             Spacer()
                             Text(formatted(message.createdAt))
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .fontDesign(.monospaced)
+                                .foregroundStyle(AdminTheme.secondaryText)
                         }
                         Text(message.body)
                     }
@@ -313,10 +357,13 @@ public struct FilingDetailView: View {
         detailCard(title: "Recent changes", icon: "clock.arrow.circlepath") {
             if changes.isEmpty {
                 Text("No changes recorded")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AdminTheme.secondaryText)
             } else {
                 ForEach(Array(changes.enumerated()), id: \.element.id) { index, change in
-                    if index > 0 { Divider() }
+                    if index > 0 {
+                        Divider()
+                            .overlay(AdminTheme.cardBorder)
+                    }
                     VStack(alignment: .leading, spacing: 5) {
                         HStack(alignment: .firstTextBaseline) {
                             Text(change.field.replacingOccurrences(of: "_", with: " ").capitalized)
@@ -324,23 +371,25 @@ public struct FilingDetailView: View {
                             Spacer()
                             Text(formatted(change.changedAt))
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .fontDesign(.monospaced)
+                                .foregroundStyle(AdminTheme.secondaryText)
                         }
                         Text("Source: \(change.source)")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .fontDesign(.monospaced)
+                            .foregroundStyle(AdminTheme.secondaryText)
                         if let reason = change.reason, !reason.isEmpty {
                             Text(reason)
                         }
                         if let before = change.beforeJson {
                             Text("Before: \(before.displayString)")
                                 .font(.caption.monospaced())
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(AdminTheme.secondaryText)
                         }
                         if let after = change.afterJson {
                             Text("After: \(after.displayString)")
                                 .font(.caption.monospaced())
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(AdminTheme.secondaryText)
                         }
                     }
                 }
@@ -353,14 +402,17 @@ public struct FilingDetailView: View {
         icon: String,
         @ViewBuilder content: () -> Content
     ) -> some View {
-        AdminCard {
-            VStack(alignment: .leading, spacing: 10) {
-                Label(title, systemImage: icon)
-                    .font(.title3.weight(.semibold))
-                Divider()
-                content()
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .foregroundStyle(AdminTheme.accent)
+                AdminEyebrow(title)
             }
+            Divider()
+                .overlay(AdminTheme.cardBorder)
+            content()
         }
+        .card()
     }
 
     private func entityAddress(_ filing: FilingRecord) -> String? {
@@ -394,9 +446,10 @@ private struct DetailInfoRow: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 16) {
             Text(label)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(AdminTheme.secondaryText)
             Spacer(minLength: 10)
             Text(value.flatMap { $0.isEmpty ? nil : $0 } ?? "—")
+                .fontDesign(.monospaced)
                 .multilineTextAlignment(.trailing)
                 .textSelection(.enabled)
                 .adminTabularNumbers()

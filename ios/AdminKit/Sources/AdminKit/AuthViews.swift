@@ -15,79 +15,201 @@ public struct SignInView: View {
 
     public var body: some View {
         NavigationStack {
-            Form {
-                Section("Email sign-in") {
-                    emailField
+            ZStack(alignment: .top) {
+                AdminTheme.ink
+                    .ignoresSafeArea()
 
-                    Button {
-                        requestLink()
-                    } label: {
-                        Label("Email me a sign-in link", systemImage: "envelope")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .disabled(isRequestingLink || email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                RadialGradient(
+                    colors: [
+                        AdminTheme.accent.opacity(0.52),
+                        AdminTheme.accent.opacity(0.12),
+                        .clear,
+                    ],
+                    center: UnitPoint(x: 0.12, y: 0.04),
+                    startRadius: 8,
+                    endRadius: 430
+                )
+                .ignoresSafeArea()
 
-                    if let confirmationMessage {
-                        Label(confirmationMessage, systemImage: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                    }
-                }
+                Rectangle()
+                    .fill(AdminTheme.seal.opacity(0.50))
+                    .frame(height: 1)
+                    .frame(maxHeight: .infinity, alignment: .top)
+                    .ignoresSafeArea()
 
-                Section("Paste a sign-in link") {
-                    pastedLinkField
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 28) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            AdminEyebrow("ADMIN", color: AdminTheme.seal)
+                            Text("Form 5472 Prep")
+                                .font(.largeTitle.weight(.semibold))
+                                .fontDesign(.serif)
+                                .foregroundStyle(AdminTheme.onDark)
+                                .accessibilityAddTraits(.isHeader)
+                            Text("Secure access to filings and operations.")
+                                .font(.subheadline)
+                                .foregroundStyle(AdminTheme.onDark.opacity(0.68))
+                        }
 
-                    Button {
-                        exchangeToken()
-                    } label: {
-                        Label("Sign In", systemImage: "arrow.right.circle.fill")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .disabled(isExchanging || pastedLink.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                }
+                        signInSection(
+                            eyebrow: "EMAIL SIGN-IN",
+                            description: "We’ll send a secure, single-use link to your admin address."
+                        ) {
+                            emailField
 
-                if let errorMessage {
-                    Section {
-                        Text(errorMessage)
-                            .foregroundStyle(.red)
+                            Button {
+                                requestLink()
+                            } label: {
+                                Label("Email me a sign-in link", systemImage: "envelope")
+                            }
+                            .buttonStyle(AdminPrimaryButtonStyle())
+                            .disabled(
+                                isRequestingLink
+                                    || email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            )
+
+                            if let confirmationMessage {
+                                Label(confirmationMessage, systemImage: "checkmark.circle.fill")
+                                    .font(.footnote)
+                                    .foregroundStyle(AdminTheme.successOnDark)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+
+                        signInSection(
+                            eyebrow: "HAVE A LINK?",
+                            description: "Paste the full sign-in link or token below."
+                        ) {
+                            pastedLinkField
+
+                            Button {
+                                exchangeToken()
+                            } label: {
+                                Label("Sign In", systemImage: "arrow.right.circle.fill")
+                            }
+                            .buttonStyle(AdminPrimaryButtonStyle())
+                            .disabled(
+                                isExchanging
+                                    || pastedLink.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            )
+                        }
+
+                        if let errorMessage {
+                            Label {
+                                Text(errorMessage)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            } icon: {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                            }
+                            .font(.footnote)
+                            .foregroundStyle(AdminTheme.dangerOnDark)
+                            .padding(14)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                AdminTheme.danger.opacity(0.14),
+                                in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .stroke(AdminTheme.danger.opacity(0.30), lineWidth: 1)
+                            )
                             .accessibilityLabel("Sign-in error: \(errorMessage)")
+                        }
                     }
+                    .frame(maxWidth: 520)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 44)
+                    .frame(maxWidth: .infinity)
                 }
+                .scrollDismissesKeyboard(.interactively)
             }
-            .navigationTitle("F5472 Admin")
+            .navigationTitle("")
             .disabled(isRequestingLink || isExchanging)
             .overlay {
                 if isRequestingLink || isExchanging {
                     ProgressView()
+                        .tint(AdminTheme.onDark)
+                        .padding(18)
+                        .background(
+                            AdminTheme.ink800.opacity(0.92),
+                            in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(AdminTheme.onDark.opacity(0.15), lineWidth: 1)
+                        )
                 }
             }
+        }
+    }
+
+    private func signInSection<Content: View>(
+        eyebrow: String,
+        description: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 5) {
+                AdminEyebrow(eyebrow, color: AdminTheme.onDark.opacity(0.72))
+                Text(description)
+                    .font(.subheadline)
+                    .foregroundStyle(AdminTheme.onDark.opacity(0.62))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            content()
+        }
+        .padding(.vertical, 20)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(AdminTheme.onDark.opacity(0.14))
+                .frame(height: 1)
         }
     }
 
     @ViewBuilder
     private var emailField: some View {
 #if os(iOS)
-        TextField("Admin email", text: $email)
+        TextField(
+            "",
+            text: $email,
+            prompt: Text("Admin email").foregroundStyle(AdminTheme.onDark.opacity(0.52))
+        )
             .textContentType(.emailAddress)
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .keyboardType(.emailAddress)
+            .adminDarkField()
 #else
-        TextField("Admin email", text: $email)
+        TextField(
+            "",
+            text: $email,
+            prompt: Text("Admin email").foregroundStyle(AdminTheme.onDark.opacity(0.52))
+        )
+            .adminDarkField()
 #endif
     }
 
     @ViewBuilder
     private var pastedLinkField: some View {
 #if os(iOS)
-        TextField("Link or token", text: $pastedLink, axis: .vertical)
+        TextField(
+            "",
+            text: $pastedLink,
+            prompt: Text("Link or token").foregroundStyle(AdminTheme.onDark.opacity(0.52)),
+            axis: .vertical
+        )
+            .lineLimit(2 ... 4)
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
+            .adminDarkField()
 #else
-        TextField("Link or token", text: $pastedLink)
+        TextField(
+            "",
+            text: $pastedLink,
+            prompt: Text("Link or token").foregroundStyle(AdminTheme.onDark.opacity(0.52))
+        )
+            .adminDarkField()
 #endif
     }
 
@@ -142,6 +264,9 @@ public struct RootView: View {
             switch authManager.state {
             case .unknown:
                 ProgressView("Checking sign-in…")
+                    .foregroundStyle(AdminTheme.primaryText)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(AdminTheme.screenBackground)
             case .signedOut:
                 SignInView(authManager: authManager)
             case .signedIn:
@@ -150,12 +275,18 @@ public struct RootView: View {
         }
         .safeAreaInset(edge: .bottom) {
             if let incomingLinkError {
-                Text(incomingLinkError)
-                    .font(.callout)
-                    .foregroundStyle(.red)
-                    .padding()
+                Label(incomingLinkError, systemImage: "exclamationmark.triangle.fill")
+                    .font(.callout.weight(.medium))
+                    .foregroundStyle(AdminTheme.danger)
+                    .padding(.horizontal, 16)
+                    .frame(minHeight: 44)
                     .frame(maxWidth: .infinity)
-                    .background(.thinMaterial)
+                    .background(AdminTheme.cardSurface)
+                    .overlay(alignment: .top) {
+                        Rectangle()
+                            .fill(AdminTheme.danger.opacity(0.30))
+                            .frame(height: 1)
+                    }
             }
         }
         .onOpenURL { url in
@@ -168,6 +299,7 @@ public struct RootView: View {
                 }
             }
         }
+        .tint(AdminTheme.accent)
     }
 }
 
@@ -206,5 +338,6 @@ private struct AdminTabView: View {
                 Label("Analytics", systemImage: "chart.xyaxis.line")
             }
         }
+        .tint(AdminTheme.accent)
     }
 }
