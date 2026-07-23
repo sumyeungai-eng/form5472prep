@@ -30,11 +30,11 @@ import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 const FAQS = [
   {
     q: "How much does it cost?",
-    a: "Two plans — Standard $199 and Rush $279. Each plan is a flat one-time fee for a single tax year filing. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included on every plan — no separate add-on.",
+    a: "One flat, all-inclusive price — $199 for a single tax year filing, with everything included. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included — no separate add-on.",
   },
   {
-    q: "What's the difference between the plans?",
-    a: "Standard is our done-for-you baseline — we prepare your Form 5472 + pro forma 1120, fax it to the IRS, and email you the confirmation. Rush adds 24-hour turnaround, priority email support, and a March filing reminder for next year.",
+    q: "What's included in the $199?",
+    a: "Everything. We prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. You also get a reasonable-cause letter on late / DIIRSP filings, priority email support, and a March filing reminder for next year — all in the one flat fee.",
   },
   {
     q: "What if I've missed prior years?",
@@ -268,9 +268,10 @@ function Hero({ filingsCount }: { filingsCount: number }) {
                 <span className="font-mono text-xs text-slate-500">/ filing</span>
               </div>
               <p className="mt-2 text-sm text-slate-600">
-                IRS fax delivery included. Rush plan also available —{" "}
+                One flat price, everything included — accountant review, IRS fax
+                delivery, filing confirmation.{" "}
                 <Link href="/pricing" className="text-accent underline underline-offset-2">
-                  see pricing
+                  See what&apos;s included
                 </Link>
                 .
               </p>
@@ -563,7 +564,7 @@ function Pricing() {
   return (
     <section id="pricing" className="bg-white border-b border-slate-200 scroll-mt-20">
       <div className="max-w-6xl mx-auto px-6 pt-4 pb-16 sm:pt-8 sm:pb-20">
-        <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto items-stretch">
+        <div className="max-w-md mx-auto">
           {TIER_ORDER.map((key, idx) => {
             const t = TIERS[key];
             const highlighted = !!t.highlight;

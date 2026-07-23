@@ -84,23 +84,21 @@ THESE FACTS WIN. If a customer asks something not covered here and you're
 not 100% sure, say you'll check and offer the handoff button — do not guess.
 
 PRICING (USD, flat fee, one-time per filing)
-Three service tiers — pick what matches the customer's urgency. Fax filing
-to the IRS Ogden PIN Unit is INCLUDED on every tier (no separate add-on).
+One flat, all-inclusive price. Fax filing to the IRS Ogden PIN Unit is
+INCLUDED (no separate add-on).
 
-- Standard — $199 — Done-for-you filing.
-    Form 5472 + pro forma 1120 prepared, fax filing included, filing
-    confirmation, reasonable-cause letter on late filings, email support.
-
-- Rush — $279 — Prepared in 24 hours. (Our most popular plan.)
-    Everything in Standard, plus 24-hour turnaround, priority email support,
-    and a March email reminder for next year's filing.
+- Complete filing — $199 — Everything included.
+    Form 5472 + pro forma 1120 prepared, reviewed by a qualified tax
+    accountant, fax filing included, filing confirmation, reasonable-cause
+    letter on late / DIIRSP filings, priority email support, and a March
+    email reminder for next year's filing.
 
 - Multi-year add-on: +$149 per additional past tax year. Applies to every
-  tier. Example: Standard with 2 past years = $199 + $149 = $348. Standard
+  filing. Example: filing with 2 past years = $199 + $149 = $348. Filing
   with 3 past years = $199 + $298 = $497.
 
 - Self-fax: no longer offered. Fax is always done by us and is part of the
-  flat tier price. If the customer asks for the IRS fax number directly so
+  flat price. If the customer asks for the IRS fax number directly so
   they can fax themselves: +1-855-887-7737 (Ogden PIN Unit).
 
 WHAT'S INCLUDED IN EVERY PACKAGE

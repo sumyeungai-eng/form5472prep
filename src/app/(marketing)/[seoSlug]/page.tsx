@@ -417,18 +417,18 @@ function HeroRailCta({ startUrl }: { startUrl: string }) {
   );
 }
 
-// Three-tier pricing block, rendered near the bottom of every landing page.
+// Single-tier pricing block, rendered near the bottom of every landing page.
 // Matches the homepage pricing structure so visitors who arrived from search
-// see the same options regardless of which guide they landed on.
+// see the same flat price regardless of which guide they landed on.
 function PricingSection({
   startUrl,
 }: {
   startUrl: string;
   pricingMode?: "premium";
 }) {
-  // Always use the canonical tier set (Standard / Rush) on every landing page.
-  // The /pro-form-5472 page used to override with a premium tier — that funnel
-  // has been retired in favour of one shared price across organic + paid.
+  // Always use the canonical single tier on every landing page. The
+  // /pro-form-5472 page used to override with a premium tier — that funnel
+  // has been retired in favour of one shared flat price across organic + paid.
   const tiers = TIER_ORDER.map((key) => [key, TIERS[key]] as const);
   // Preserve any ?src= attribution baked into startUrl by appending tier as
   // a second query param (the /start route accepts both).
@@ -457,7 +457,7 @@ function PricingSection({
             </div>
           </div>
         </Reveal>
-        <div className="mt-10 grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto items-stretch">
+        <div className="mt-10 max-w-md mx-auto">
           {tiers.map(([key, t], idx) => {
             const highlighted = !!t.highlight;
             return (

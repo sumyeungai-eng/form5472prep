@@ -63,8 +63,7 @@ DIY makes sense if you have one clean tax year, simple transactions, and time to
 
 Form5472 Prep is built specifically for the foreign-owned single-member LLC filing — nothing else. You answer about a dozen questions, we generate the full package (cover letter, pro forma 1120, Form 5472, Part V supporting statement, and a reasonable-cause statement if you're late), an accountant reviews it, and we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt.
 
-- **Standard — $199:** done-for-you filing, accountant-reviewed, fax delivery included.
-- **Rush — $279:** everything in Standard plus 24-hour turnaround.
+- **$199, all inclusive:** done-for-you filing, accountant-reviewed, fax delivery included.
 - **+$149 per additional past year** for multi-year DIIRSP catch-up.
 
 No subscription, no upsell, and a 100% money-back guarantee if we fail to submit your filing. [Start your filing here →](/start)

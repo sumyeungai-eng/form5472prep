@@ -21,9 +21,9 @@ function readFunnelSource(params: URLSearchParams | null): string | null {
   return cleaned || null;
 }
 
-const ALLOWED_TIERS = new Set(["standard", "rush"]);
+const ALLOWED_TIERS = new Set(["standard"]);
 
-// Read the customer's tier choice off the URL (?tier=rush etc.). The /pricing
+// Read the customer's tier choice off the URL (?tier=standard). The /pricing
 // page links here with the tier pre-selected; missing or invalid values fall
 // back to Standard via the server-side default.
 function readTier(params: URLSearchParams | null): string | null {

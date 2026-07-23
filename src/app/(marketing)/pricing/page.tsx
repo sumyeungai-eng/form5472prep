@@ -13,12 +13,12 @@ import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 export const metadata: Metadata = {
   title: { absolute: "Pricing — Form 5472 Filing for Foreign-Owned LLCs | Form5472 Prep" },
   description:
-    "Flat-rate Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. Standard $199 and Rush $279. IRS fax delivery included on every plan. Avoid the $25,000 IRS penalty.",
+    "Flat-rate Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. One all-inclusive price — $199. IRS fax delivery included. Avoid the $25,000 IRS penalty.",
   alternates: { canonical: "https://www.form5472prep.com/pricing" },
   openGraph: {
     title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
     description:
-      "Flat-rate Form 5472 + pro forma 1120 filing. Standard $199 and Rush $279. IRS fax delivery included on every plan.",
+      "Flat-rate Form 5472 + pro forma 1120 filing. One all-inclusive price — $199. IRS fax delivery included.",
     url: "https://www.form5472prep.com/pricing",
   },
 };
@@ -95,7 +95,7 @@ export default function PricingPage() {
       </section>
 
       <section className="max-w-6xl mx-auto px-6 py-12 sm:py-16">
-        <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto items-stretch">
+        <div className="max-w-md mx-auto">
           {tierEntries.map(([slug, t]) => (
             <TierCard key={slug} slug={slug} tier={t} />
           ))}
@@ -175,11 +175,11 @@ export default function PricingPage() {
         <div className="space-y-4">
           <FaqItem
             q="How much does it cost?"
-            a="Two plans — Standard $199 and Rush $279. Each plan is a flat one-time fee for a single tax year filing. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included on every plan."
+            a="One flat, all-inclusive price — $199 for a single tax year filing, with everything included. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included."
           />
           <FaqItem
-            q="What's the difference between the plans?"
-            a="Standard is our done-for-you baseline — we prepare your Form 5472 + pro forma 1120, fax it to the IRS, and email you the confirmation. Rush adds 24-hour turnaround, priority email support, and a March filing reminder for next year."
+            q="What's included in the $199?"
+            a="Everything. We prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. You also get a reasonable-cause letter on late / DIIRSP filings, priority email support, and a March filing reminder for next year — all in the one flat fee."
           />
           <FaqItem
             q="Is fax filing really included?"
