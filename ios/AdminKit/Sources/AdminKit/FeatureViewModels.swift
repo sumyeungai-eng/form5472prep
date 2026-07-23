@@ -94,6 +94,10 @@ public final class FilingsViewModel: ObservableObject {
         guard items.suffix(5).contains(where: { $0.id == currentID }) else { return }
         await load(reset: false)
     }
+
+    public func dismissError() {
+        errorMessage = nil
+    }
 }
 
 @MainActor
@@ -190,6 +194,10 @@ public final class ApplicationsViewModel: ObservableObject {
     public func loadMoreIfNeeded(currentID: String) async {
         guard items.suffix(5).contains(where: { $0.id == currentID }) else { return }
         await load(reset: false)
+    }
+
+    public func dismissError() {
+        errorMessage = nil
     }
 }
 

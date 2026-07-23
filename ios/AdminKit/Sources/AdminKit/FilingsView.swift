@@ -3,8 +3,9 @@ import SwiftUI
 @MainActor
 public struct FilingsView: View {
     @StateObject private var viewModel: FilingsViewModel
+    @ObservedObject private var authManager: AuthManager
+    @State private var isConfirmingSignOut = false
     private let client: APIClient
-    private let authManager: AuthManager
 
     private let statuses = [
         "", "DRAFT", "PAID", "PDF_GENERATED", "SIGNATURE_PENDING",
@@ -26,20 +27,50 @@ public struct FilingsView: View {
                 filterBar
             }
             .padding(.horizontal, 16)
-            .padding(.top, 20)
+            .padding(.top, 16)
             .padding(.bottom, 12)
 
             content
         }
         .background(AdminTheme.screenBackground)
         .navigationTitle("")
+        .adminInlineNavigationTitle()
         .foregroundStyle(AdminTheme.primaryText)
         .tint(AdminTheme.accent)
-        .searchable(text: $viewModel.searchQuery, prompt: "LLC or customer")
+        .searchable(
+            text: $viewModel.searchQuery,
+            placement: .toolbar,
+            prompt: "LLC or customer"
+        )
+        .toolbar {
+            AdminAccountToolbar(
+                email: signedInEmail,
+                isConfirmingSignOut: $isConfirmingSignOut
+            )
+        }
+        .confirmationDialog(
+            "Sign out of Form 5472 Prep?",
+            isPresented: $isConfirmingSignOut,
+            titleVisibility: .visible
+        ) {
+            Button("Sign Out", role: .destructive) {
+                Task { await authManager.signOut() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You will need to sign in again to access admin data.")
+        }
         .onSubmit(of: .search) {
             Task { await viewModel.load() }
         }
-        .onChange(of: viewModel.status) { _ in
+        .onChange(of: viewModel.searchQuery) { oldQuery, newQuery in
+            let oldValue = oldQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+            let newValue = newQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !oldValue.isEmpty, newValue.isEmpty {
+                Task { await viewModel.load() }
+            }
+        }
+        .onChange(of: viewModel.status) { _, _ in
             Task { await viewModel.load() }
         }
         .task {
@@ -47,6 +78,11 @@ public struct FilingsView: View {
                 await viewModel.load()
             }
         }
+    }
+
+    private var signedInEmail: String? {
+        guard case let .signedIn(profile) = authManager.state else { return nil }
+        return profile.email
     }
 
     private var filterBar: some View {
@@ -78,45 +114,66 @@ public struct FilingsView: View {
         if viewModel.isLoading, viewModel.items.isEmpty {
             LoadingStateView(title: "Loading filings…")
         } else if let errorMessage = viewModel.errorMessage, viewModel.items.isEmpty {
-            ErrorStateView(message: errorMessage) {
-                Task { await viewModel.load() }
-            }
-        } else if viewModel.hasLoaded, viewModel.items.isEmpty {
-            EmptyStateView(
-                title: "No Filings",
-                message: "Try another search or status filter.",
-                systemImage: "doc.text.magnifyingglass"
-            )
-        } else {
-            List(viewModel.items) { filing in
-                NavigationLink {
-                    FilingDetailView(
-                        filingID: filing.id,
-                        client: client,
-                        authManager: authManager
-                    )
-                } label: {
-                    FilingRow(filing: filing)
-                        .card(padding: 14)
+            ScrollView {
+                ErrorStateView(message: errorMessage) {
+                    Task { await viewModel.load() }
                 }
-                .buttonStyle(.plain)
-                .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.clear)
-                .task {
-                    await viewModel.loadMoreIfNeeded(currentID: filing.id)
-                }
+                .frame(maxWidth: .infinity, minHeight: 360)
             }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-            .background(AdminTheme.screenBackground)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .refreshable { await viewModel.load() }
-            .overlay(alignment: .bottom) {
-                if viewModel.isLoadingMore {
-                    ProgressView()
-                        .padding(10)
-                        .background(.regularMaterial, in: Capsule())
-                        .padding()
+        } else if viewModel.hasLoaded, viewModel.items.isEmpty {
+            ScrollView {
+                EmptyStateView(
+                    title: "No Filings",
+                    message: "Try another search or status filter.",
+                    systemImage: "doc.text.magnifyingglass"
+                )
+                .frame(maxWidth: .infinity, minHeight: 360)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .refreshable { await viewModel.load() }
+        } else {
+            VStack(spacing: 0) {
+                if let errorMessage = viewModel.errorMessage {
+                    AdminInlineErrorBanner(
+                        message: errorMessage,
+                        onDismiss: viewModel.dismissError
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                }
+
+                List(viewModel.items) { filing in
+                    NavigationLink {
+                        FilingDetailView(
+                            filingID: filing.id,
+                            client: client,
+                            authManager: authManager
+                        )
+                    } label: {
+                        FilingRow(filing: filing)
+                            .card(padding: 14)
+                    }
+                    .buttonStyle(.plain)
+                    .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .task {
+                        await viewModel.loadMoreIfNeeded(currentID: filing.id)
+                    }
+                }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .background(AdminTheme.screenBackground)
+                .refreshable { await viewModel.load() }
+                .overlay(alignment: .bottom) {
+                    if viewModel.isLoadingMore {
+                        ProgressView()
+                            .padding(10)
+                            .background(.regularMaterial, in: Capsule())
+                            .padding()
+                    }
                 }
             }
         }
@@ -125,18 +182,21 @@ public struct FilingsView: View {
 
 private struct FilingRow: View {
     let filing: FilingSummary
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(filing.llcName)
-                    .font(.headline)
-                    .lineLimit(2)
-                Spacer(minLength: 8)
-                Text(AdminFormatting.usd(cents: filing.amountPaid))
-                    .font(.subheadline.weight(.semibold))
-                    .fontDesign(.monospaced)
-                    .adminTabularNumbers()
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 5) {
+                    filingName
+                    amount
+                }
+            } else {
+                HStack(alignment: .firstTextBaseline) {
+                    filingName
+                    Spacer(minLength: 8)
+                    amount
+                }
             }
 
             if let customerEmail = filing.customerEmail, !customerEmail.isEmpty {
@@ -160,6 +220,21 @@ private struct FilingRow: View {
                 AdminDesignSystem.StatusBadge(status: filing.status)
             }
         }
+    }
+
+    private var filingName: some View {
+        Text(filing.llcName)
+            .font(.headline)
+            .lineLimit(2)
+    }
+
+    private var amount: some View {
+        Text(AdminFormatting.usd(cents: filing.amountPaid))
+            .font(.subheadline.weight(.semibold))
+            .fontDesign(.monospaced)
+            .layoutPriority(1)
+            .fixedSize(horizontal: false, vertical: true)
+            .adminTabularNumbers()
     }
 }
 
@@ -437,6 +512,7 @@ public struct FilingDetailView: View {
 private struct DetailInfoRow: View {
     let label: String
     let value: String?
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     init(label: String, value: String?) {
         self.label = label
@@ -444,16 +520,36 @@ private struct DetailInfoRow: View {
     }
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 16) {
-            Text(label)
-                .foregroundStyle(AdminTheme.secondaryText)
-            Spacer(minLength: 10)
-            Text(value.flatMap { $0.isEmpty ? nil : $0 } ?? "—")
-                .fontDesign(.monospaced)
-                .multilineTextAlignment(.trailing)
-                .textSelection(.enabled)
-                .adminTabularNumbers()
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 4) {
+                    labelText
+                    valueText
+                        .multilineTextAlignment(.leading)
+                }
+            } else {
+                HStack(alignment: .firstTextBaseline, spacing: 16) {
+                    labelText
+                    Spacer(minLength: 10)
+                    valueText
+                        .multilineTextAlignment(.trailing)
+                }
+            }
         }
         .font(.subheadline)
+    }
+
+    private var labelText: some View {
+        Text(label)
+            .foregroundStyle(AdminTheme.secondaryText)
+    }
+
+    private var valueText: some View {
+        Text(value.flatMap { $0.isEmpty ? nil : $0 } ?? "—")
+            .fontDesign(.monospaced)
+            .layoutPriority(1)
+            .fixedSize(horizontal: false, vertical: true)
+            .textSelection(.enabled)
+            .adminTabularNumbers()
     }
 }

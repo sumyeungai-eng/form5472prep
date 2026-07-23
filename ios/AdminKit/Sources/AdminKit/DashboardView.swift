@@ -4,6 +4,7 @@ import SwiftUI
 public struct DashboardView: View {
     @ObservedObject private var authManager: AuthManager
     @StateObject private var viewModel: DashboardViewModel
+    @State private var isConfirmingSignOut = false
 
     private let ranges = ["7d", "30d", "90d", "12m"]
 
@@ -30,22 +31,30 @@ public struct DashboardView: View {
                 content
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 20)
+            .padding(.vertical, 16)
         }
         .background(AdminTheme.screenBackground)
         .navigationTitle("")
+        .adminInlineNavigationTitle()
         .foregroundStyle(AdminTheme.primaryText)
         .tint(AdminTheme.accent)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("Sign Out", role: .destructive) {
-                    Task { await authManager.signOut() }
-                }
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(AdminTheme.danger)
-                .frame(minHeight: 44)
-                .accessibilityHint("Returns to the sign-in screen")
+            AdminAccountToolbar(
+                email: signedInEmail,
+                isConfirmingSignOut: $isConfirmingSignOut
+            )
+        }
+        .confirmationDialog(
+            "Sign out of Form 5472 Prep?",
+            isPresented: $isConfirmingSignOut,
+            titleVisibility: .visible
+        ) {
+            Button("Sign Out", role: .destructive) {
+                Task { await authManager.signOut() }
             }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You will need to sign in again to access admin data.")
         }
         .refreshable { await viewModel.load() }
         .task {
@@ -53,9 +62,14 @@ public struct DashboardView: View {
                 await viewModel.load()
             }
         }
-        .onChange(of: viewModel.range) { _ in
+        .onChange(of: viewModel.range) { _, _ in
             Task { await viewModel.load() }
         }
+    }
+
+    private var signedInEmail: String? {
+        guard case let .signedIn(profile) = authManager.state else { return nil }
+        return profile.email
     }
 
     @ViewBuilder

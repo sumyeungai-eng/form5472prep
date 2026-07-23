@@ -4,11 +4,17 @@ import SwiftUI
 @MainActor
 public struct AnalyticsView: View {
     @StateObject private var viewModel: AnalyticsViewModel
+    @ObservedObject private var authManager: AuthManager
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @State private var isConfirmingSignOut = false
+    @State private var appliedBucketNotice: String?
+    @State private var isAutoCorrectingBucket = false
 
     private let ranges = ["7d", "30d", "90d", "12m"]
     private let buckets = ["day", "week", "month"]
 
     public init(client: APIClient, authManager: AuthManager) {
+        self.authManager = authManager
         _viewModel = StateObject(
             wrappedValue: AnalyticsViewModel(client: client, authManager: authManager)
         )
@@ -22,24 +28,65 @@ public struct AnalyticsView: View {
                 content
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 20)
+            .padding(.vertical, 16)
         }
         .background(AdminTheme.screenBackground)
         .navigationTitle("")
+        .adminInlineNavigationTitle()
         .foregroundStyle(AdminTheme.primaryText)
         .tint(AdminTheme.accent)
+        .toolbar {
+            AdminAccountToolbar(
+                email: signedInEmail,
+                isConfirmingSignOut: $isConfirmingSignOut
+            )
+        }
+        .confirmationDialog(
+            "Sign out of Form 5472 Prep?",
+            isPresented: $isConfirmingSignOut,
+            titleVisibility: .visible
+        ) {
+            Button("Sign Out", role: .destructive) {
+                Task { await authManager.signOut() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You will need to sign in again to access admin data.")
+        }
         .refreshable { await viewModel.load() }
         .task {
             if viewModel.bundle == nil {
                 await viewModel.load()
             }
         }
-        .onChange(of: viewModel.range) { _ in
+        .onChange(of: viewModel.range) { _, newRange in
+            let correctedBucket = validBucket(
+                viewModel.bucket,
+                for: newRange
+            )
+            if correctedBucket != viewModel.bucket {
+                isAutoCorrectingBucket = true
+                appliedBucketNotice =
+                    "\(correctedBucket.capitalized) bucketing was applied for \(rangeLabel(newRange))."
+                viewModel.bucket = correctedBucket
+            } else {
+                appliedBucketNotice = nil
+                Task { await viewModel.load() }
+            }
+        }
+        .onChange(of: viewModel.bucket) { _, _ in
+            if isAutoCorrectingBucket {
+                isAutoCorrectingBucket = false
+            } else {
+                appliedBucketNotice = nil
+            }
             Task { await viewModel.load() }
         }
-        .onChange(of: viewModel.bucket) { _ in
-            Task { await viewModel.load() }
-        }
+    }
+
+    private var signedInEmail: String? {
+        guard case let .signedIn(profile) = authManager.state else { return nil }
+        return profile.email
     }
 
     private var controls: some View {
@@ -56,9 +103,17 @@ public struct AnalyticsView: View {
             Picker("Bucket", selection: $viewModel.bucket) {
                 ForEach(buckets, id: \.self) { bucket in
                     Text(bucket.capitalized).tag(bucket)
+                        .disabled(!isBucketAllowed(bucket, for: viewModel.range))
                 }
             }
             .pickerStyle(.segmented)
+
+            if let appliedBucketNotice {
+                Label(appliedBucketNotice, systemImage: "calendar.badge.checkmark")
+                    .font(.caption)
+                    .foregroundStyle(AdminTheme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .card()
     }
@@ -165,14 +220,19 @@ public struct AnalyticsView: View {
                                 .overlay(AdminTheme.cardBorder)
                         }
                         VStack(alignment: .leading, spacing: 6) {
-                            HStack(alignment: .firstTextBaseline) {
-                                Text(sourceName(row.source))
-                                    .font(.headline)
-                                Spacer()
-                                Text(AdminFormatting.usd(cents: row.revenueCents))
-                                    .font(.subheadline.weight(.semibold))
-                                    .fontDesign(.monospaced)
-                                    .adminTabularNumbers()
+                            if dynamicTypeSize.isAccessibilitySize {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(sourceName(row.source))
+                                        .font(.headline)
+                                    moneyText(cents: row.revenueCents)
+                                }
+                            } else {
+                                HStack(alignment: .firstTextBaseline) {
+                                    Text(sourceName(row.source))
+                                        .font(.headline)
+                                    Spacer()
+                                    moneyText(cents: row.revenueCents)
+                                }
                             }
                             HStack {
                                 Text("\(row.paid) / \(row.started) paid")
@@ -211,21 +271,17 @@ public struct AnalyticsView: View {
                                 .overlay(AdminTheme.cardBorder)
                         }
                         VStack(alignment: .leading, spacing: 6) {
-                            HStack(alignment: .firstTextBaseline) {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(partner.name ?? partner.email)
-                                        .font(.headline)
-                                    if partner.name != nil {
-                                        Text(partner.email)
-                                            .font(.caption)
-                                            .foregroundStyle(AdminTheme.secondaryText)
-                                    }
+                            if dynamicTypeSize.isAccessibilitySize {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    partnerIdentity(partner)
+                                    moneyText(cents: partner.revenueCents)
                                 }
-                                Spacer()
-                                Text(AdminFormatting.usd(cents: partner.revenueCents))
-                                    .font(.subheadline.weight(.semibold))
-                                    .fontDesign(.monospaced)
-                                    .adminTabularNumbers()
+                            } else {
+                                HStack(alignment: .firstTextBaseline) {
+                                    partnerIdentity(partner)
+                                    Spacer()
+                                    moneyText(cents: partner.revenueCents)
+                                }
                             }
                             Text("\(partner.paidFilings) paid of \(partner.filings) filings")
                                 .font(.caption)
@@ -238,6 +294,48 @@ public struct AnalyticsView: View {
                 }
             }
             .card()
+        }
+    }
+
+    private func partnerIdentity(_ partner: PartnerPerformance) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(partner.name ?? partner.email)
+                .font(.headline)
+            if partner.name != nil {
+                Text(partner.email)
+                    .font(.caption)
+                    .foregroundStyle(AdminTheme.secondaryText)
+            }
+        }
+    }
+
+    private func moneyText(cents: Int) -> some View {
+        Text(AdminFormatting.usd(cents: cents))
+            .font(.subheadline.weight(.semibold))
+            .fontDesign(.monospaced)
+            .layoutPriority(1)
+            .fixedSize(horizontal: false, vertical: true)
+            .adminTabularNumbers()
+    }
+
+    private func isBucketAllowed(_ bucket: String, for range: String) -> Bool {
+        switch range {
+        case "90d", "12m":
+            bucket == "week" || bucket == "month"
+        default:
+            true
+        }
+    }
+
+    private func validBucket(_ bucket: String, for range: String) -> String {
+        isBucketAllowed(bucket, for: range) ? bucket : "week"
+    }
+
+    private func rangeLabel(_ range: String) -> String {
+        switch range {
+        case "90d": "the 90-day range"
+        case "12m": "the 12-month range"
+        default: "this range"
         }
     }
 

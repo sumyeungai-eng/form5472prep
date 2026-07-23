@@ -76,7 +76,8 @@ private extension NSColor {
 #endif
 
 public enum AdminTheme {
-    public static let accent = Color(hex: "#1E3A8A")
+    public static let accent = Color(light: "#1E3A8A", dark: "#8FAFF0")
+    public static let accentFixed = Color(hex: "#1E3A8A")
     public static let accentDark = Color(hex: "#16295E")
     public static let accentTint = Color(light: "#EFF3FB", dark: "#24365C")
 
@@ -127,6 +128,24 @@ public extension View {
     func adminDarkField() -> some View {
         modifier(AdminDarkFieldModifier())
     }
+
+    @ViewBuilder
+    func adminInlineNavigationTitle() -> some View {
+#if os(iOS)
+        navigationBarTitleDisplayMode(.inline)
+#else
+        self
+#endif
+    }
+
+    @ViewBuilder
+    func adminHiddenNavigationBar() -> some View {
+#if os(iOS)
+        toolbar(.hidden, for: .navigationBar)
+#else
+        self
+#endif
+    }
 }
 
 public struct AdminPrimaryButtonStyle: ButtonStyle {
@@ -142,7 +161,11 @@ public struct AdminPrimaryButtonStyle: ButtonStyle {
             .padding(.horizontal, 16)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(configuration.isPressed ? AdminTheme.accentDark : AdminTheme.accent)
+                    .fill(
+                        configuration.isPressed
+                            ? AdminTheme.accentDark
+                            : AdminTheme.accentFixed
+                    )
             )
             .opacity(isEnabled ? 1 : 0.48)
             .scaleEffect(configuration.isPressed ? 0.96 : 1)
@@ -236,6 +259,78 @@ public struct AdminScreenHeader: View {
                 .accessibilityAddTraits(.isHeader)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+@MainActor
+struct AdminAccountToolbar: ToolbarContent {
+    let email: String?
+    @Binding var isConfirmingSignOut: Bool
+
+    var body: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
+                if let email, !email.isEmpty {
+                    Label(email, systemImage: "person.crop.circle")
+                        .disabled(true)
+                }
+
+                Divider()
+
+                Button(role: .destructive) {
+                    isConfirmingSignOut = true
+                } label: {
+                    Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+                }
+            } label: {
+                Image(systemName: "person.circle")
+                    .frame(width: 44, height: 44)
+            }
+            .accessibilityLabel("Account")
+        }
+    }
+}
+
+struct AdminInlineErrorBanner: View {
+    let message: String
+    let onDismiss: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .accessibilityHidden(true)
+
+            Text(message)
+                .font(.footnote)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button(action: onDismiss) {
+                Image(systemName: "xmark")
+                    .font(.caption.weight(.semibold))
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Dismiss error")
+        }
+        .foregroundStyle(
+            colorScheme == .dark ? AdminTheme.dangerOnDark : AdminTheme.danger
+        )
+        .padding(.leading, 14)
+        .padding(.trailing, 4)
+        .padding(.vertical, 4)
+        .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
+        .background(
+            AdminTheme.danger.opacity(0.10),
+            in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(AdminTheme.danger.opacity(0.30), lineWidth: 1)
+        )
+        .accessibilityElement(children: .contain)
     }
 }
 

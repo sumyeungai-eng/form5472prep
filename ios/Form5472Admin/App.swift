@@ -15,6 +15,23 @@ struct Form5472AdminApp: App {
 #else
         let deviceName = "Apple device"
 #endif
+        if FixtureMode.isActive {
+            let tokenStore = InMemoryTokenStore(initial: "fixture-token")
+            let client = APIClient(
+                baseURL: URL(string: "https://www.form5472prep.com")!,
+                tokenStore: tokenStore,
+                session: FixtureMode.makeSession()
+            )
+            _authManager = StateObject(
+                wrappedValue: AuthManager(
+                    client: client,
+                    tokenStore: tokenStore,
+                    deviceName: deviceName
+                )
+            )
+            return
+        }
+
         let tokenStore = KeychainTokenStore(service: "com.form5472prep.admin.device-token")
         let client = APIClient(
             baseURL: URL(string: "https://www.form5472prep.com")!,

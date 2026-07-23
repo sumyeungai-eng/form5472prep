@@ -1,11 +1,23 @@
 import SwiftUI
 
+private extension Notification.Name {
+    static let adminSignInAttemptDidStart = Notification.Name(
+        "AdminKit.adminSignInAttemptDidStart"
+    )
+}
+
 public struct SignInView: View {
     @ObservedObject private var authManager: AuthManager
     @State private var email = ""
     @State private var password = ""
     @State private var errorMessage: String?
     @State private var isSigningIn = false
+    @FocusState private var focusedField: Field?
+
+    private enum Field {
+        case email
+        case password
+    }
 
     public init(authManager: AuthManager) {
         self.authManager = authManager
@@ -19,8 +31,8 @@ public struct SignInView: View {
 
                 RadialGradient(
                     colors: [
-                        AdminTheme.accent.opacity(0.52),
-                        AdminTheme.accent.opacity(0.12),
+                        AdminTheme.accentFixed.opacity(0.52),
+                        AdminTheme.accentFixed.opacity(0.12),
                         .clear,
                     ],
                     center: UnitPoint(x: 0.12, y: 0.04),
@@ -33,7 +45,7 @@ public struct SignInView: View {
                     .fill(AdminTheme.seal.opacity(0.50))
                     .frame(height: 1)
                     .frame(maxHeight: .infinity, alignment: .top)
-                    .ignoresSafeArea()
+                    .ignoresSafeArea(.container, edges: .horizontal)
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 28) {
@@ -94,12 +106,13 @@ public struct SignInView: View {
                     }
                     .frame(maxWidth: 520)
                     .padding(.horizontal, 24)
-                    .padding(.vertical, 44)
+                    .padding(.top, 16)
+                    .padding(.bottom, 32)
                     .frame(maxWidth: .infinity)
                 }
                 .scrollDismissesKeyboard(.interactively)
             }
-            .navigationTitle("")
+            .adminHiddenNavigationBar()
             .disabled(isSigningIn)
             .overlay {
                 if isSigningIn {
@@ -151,10 +164,15 @@ public struct SignInView: View {
             text: $email,
             prompt: Text("Admin email").foregroundStyle(AdminTheme.onDark.opacity(0.52))
         )
-            .textContentType(.emailAddress)
+            .textContentType(.username)
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .keyboardType(.emailAddress)
+            .submitLabel(.next)
+            .focused($focusedField, equals: .email)
+            .onSubmit {
+                focusedField = .password
+            }
             .adminDarkField()
 #else
         TextField(
@@ -162,6 +180,11 @@ public struct SignInView: View {
             text: $email,
             prompt: Text("Admin email").foregroundStyle(AdminTheme.onDark.opacity(0.52))
         )
+            .submitLabel(.next)
+            .focused($focusedField, equals: .email)
+            .onSubmit {
+                focusedField = .password
+            }
             .adminDarkField()
 #endif
     }
@@ -173,12 +196,26 @@ public struct SignInView: View {
             text: $password,
             prompt: Text("Password").foregroundStyle(AdminTheme.onDark.opacity(0.52))
         )
+        .textContentType(.password)
+        .submitLabel(.go)
+        .focused($focusedField, equals: .password)
+        .onSubmit {
+            signIn()
+        }
         .adminDarkField()
     }
 
     private func signIn() {
+        guard
+            !isSigningIn,
+            !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+            !password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else { return }
+
         errorMessage = nil
+        focusedField = nil
         isSigningIn = true
+        NotificationCenter.default.post(name: .adminSignInAttemptDidStart, object: nil)
         let submittedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
         let submittedPassword = password
         Task {
@@ -215,6 +252,7 @@ public struct SignInView: View {
 public struct RootView: View {
     @ObservedObject private var authManager: AuthManager
     @State private var incomingLinkError: String?
+    @Environment(\.colorScheme) private var colorScheme
 
     public init(authManager: AuthManager) {
         self.authManager = authManager
@@ -236,11 +274,29 @@ public struct RootView: View {
         }
         .safeAreaInset(edge: .bottom) {
             if let incomingLinkError {
-                Label(incomingLinkError, systemImage: "exclamationmark.triangle.fill")
-                    .font(.callout.weight(.medium))
-                    .foregroundStyle(AdminTheme.danger)
-                    .padding(.horizontal, 16)
-                    .frame(minHeight: 44)
+                HStack(spacing: 10) {
+                    Label(incomingLinkError, systemImage: "exclamationmark.triangle.fill")
+                        .font(.callout.weight(.medium))
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Button {
+                        self.incomingLinkError = nil
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.caption.weight(.semibold))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Dismiss sign-in link error")
+                }
+                    .foregroundStyle(
+                        colorScheme == .dark ? AdminTheme.dangerOnDark : AdminTheme.danger
+                    )
+                    .padding(.leading, 16)
+                    .padding(.trailing, 4)
+                    .frame(minHeight: 52)
                     .frame(maxWidth: .infinity)
                     .background(AdminTheme.cardSurface)
                     .overlay(alignment: .top) {
@@ -249,6 +305,11 @@ public struct RootView: View {
                             .frame(height: 1)
                     }
             }
+        }
+        .onReceive(
+            NotificationCenter.default.publisher(for: .adminSignInAttemptDidStart)
+        ) { _ in
+            incomingLinkError = nil
         }
         .onOpenURL { url in
             incomingLinkError = nil
