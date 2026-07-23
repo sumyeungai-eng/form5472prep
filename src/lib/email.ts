@@ -983,16 +983,37 @@ type AbandonedDraftArgs = {
   llcName: string | null;
   resumeLink: string;
   unsubscribeUrl: string;
+  // "first" = the 24-hour nudge (default). "final" = the ~1-month follow-up,
+  // which reads as a gentler "still saved" reminder rather than "you just
+  // didn't finish".
+  variant?: "first" | "final";
 };
 
 export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) {
-  const { email, llcName, resumeLink, unsubscribeUrl } = args;
+  const { email, llcName, resumeLink, unsubscribeUrl, variant = "first" } = args;
   const llcLine = llcName ? escapeHtml(llcName) : "your foreign-owned LLC";
+  const llcPlain = llcName ?? "your foreign-owned LLC";
+  const isFinal = variant === "final";
+
+  const subject = isFinal
+    ? "Still time to file your Form 5472 — your draft is saved"
+    : "Finish your Form 5472 filing — your progress is saved";
+  const heading = isFinal ? "Your Form 5472 draft is still saved" : "Finish your Form 5472 filing";
+  const preheader = isFinal
+    ? "It's been about a month — your draft is still saved and takes ~15 minutes to finish."
+    : "Your progress is saved. Pick up where you left off — about 15 minutes left.";
+  const introHtml = isFinal
+    ? `It's been about a month since you started a Form 5472 filing for <strong>${llcLine}</strong>.
+       Your progress is still saved — you can pick up right where you left off whenever you're ready.`
+    : `You started a Form 5472 filing for <strong>${llcLine}</strong> but didn't finish.
+       Your progress is saved — you can pick up right where you left off.`;
+  const introText = isFinal
+    ? `It's been about a month since you started a Form 5472 filing for ${llcPlain}. Your progress is still saved.`
+    : `You started a Form 5472 filing for ${llcPlain} but didn't finish.\n\nYour progress is saved.`;
 
   const bodyHtml = `
     <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
-      You started a Form 5472 filing for <strong>${llcLine}</strong> but didn't finish.
-      Your progress is saved — you can pick up right where you left off.
+      ${introHtml}
     </p>
     <p style="margin:0 0 20px;color:#475569;line-height:1.6;font-size:15px;">
       Most customers finish in about <strong>15 minutes</strong>. The IRS imposes
@@ -1005,17 +1026,17 @@ export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) 
 
   return sendEmail({
     to: email,
-    subject: "Finish your Form 5472 filing — your progress is saved",
+    subject,
     text:
-      `You started a Form 5472 filing for ${llcName ?? "your foreign-owned LLC"} but didn't finish.\n\n` +
-      `Your progress is saved. Pick up where you left off (most customers finish in ~15 minutes):\n` +
+      `${introText}\n\n` +
+      `Pick up where you left off (most customers finish in ~15 minutes):\n` +
       `${resumeLink}\n\n` +
       `The IRS imposes significant penalties for missing Form 5472 filings — worth completing today.\n\n` +
       `Need help? Just reply to this email.\n\n— Form5472 Prep\n\n` +
       `Unsubscribe from these emails: ${unsubscribeUrl}`,
     html: shell({
-      preheader: "Your progress is saved. Pick up where you left off — about 15 minutes left.",
-      heading: "Finish your Form 5472 filing",
+      preheader,
+      heading,
       bodyHtml,
       cta: { label: "Resume my filing", url: resumeLink },
       unsubscribeUrl,
