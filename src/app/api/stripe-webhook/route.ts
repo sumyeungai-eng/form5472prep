@@ -9,6 +9,8 @@ import { resolveTier } from "@/lib/pricing";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { putPdf } from "@/lib/storage";
 import { sendMetaPurchase } from "@/lib/analytics/metaServer";
+import { apnsConfigured, sendAdminPush } from "@/lib/apns";
+import { formatUsd } from "@/lib/utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -249,6 +251,16 @@ export async function POST(req: Request) {
           });
         } catch (err) {
           console.error("[stripe-webhook] admin new-order email failed", err);
+        }
+        if (apnsConfigured()) {
+          const dollars = formatUsd(amountPaidCents);
+          try {
+            await sendAdminPush({
+              title: "New order",
+              body: `${filing.llcName ?? "New filing"} — ${dollars}`,
+              threadId: "orders",
+            });
+          } catch {}
         }
       }
     }

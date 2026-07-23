@@ -13,6 +13,7 @@ import {
 } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
 import { generateFaxReceiptPdf } from "@/lib/pdf/faxReceipt";
+import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -204,6 +205,15 @@ export async function POST(req: Request) {
     } catch (err) {
       console.error("[telnyx-webhook] admin fax delivered email failed", err);
     }
+    if (apnsConfigured()) {
+      try {
+        await sendAdminPush({
+          title: "Fax delivered",
+          body: `${filing.llcName ?? filing.id} — delivered to IRS`,
+          threadId: filing.id,
+        });
+      } catch {}
+    }
     return NextResponse.json({ ok: true });
   }
 
@@ -304,6 +314,15 @@ export async function POST(req: Request) {
       });
     } catch (err) {
       console.error("[telnyx-webhook] admin fax failed email failed", err);
+    }
+    if (apnsConfigured()) {
+      try {
+        await sendAdminPush({
+          title: "Fax failed",
+          body: `${filing.llcName ?? filing.id} — ${failureReason ?? "unknown error"}`,
+          threadId: filing.id,
+        });
+      } catch {}
     }
     return NextResponse.json({ ok: true, gaveUp: true });
   }

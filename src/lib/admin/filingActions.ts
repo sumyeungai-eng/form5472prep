@@ -13,6 +13,7 @@ import {
   logFilingChange,
   TransitionError,
 } from "@/lib/admin/mutations";
+import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 
 export type FilingActionName =
   | "setStatus"
@@ -191,6 +192,15 @@ export async function runFilingAction(
         after: nextStatus,
         reason: ctx.reason,
       });
+      if (apnsConfigured()) {
+        try {
+          await sendAdminPush({
+            title: "Filing updated",
+            body: `${filing.llcName ?? filing.id} → ${nextStatus}`,
+            threadId: filing.id,
+          });
+        } catch {}
+      }
       return { ok: true };
     }
 

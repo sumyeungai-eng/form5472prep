@@ -37,15 +37,18 @@ model Admin {
 }
 
 model AdminDeviceToken {
-  id         String   @id @default(cuid())
-  adminId    String
-  admin      Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
-  tokenHash  String   @unique
-  deviceName String?
-  createdAt  DateTime @default(now())
-  lastUsedAt DateTime?
-  expiresAt  DateTime
-  revokedAt  DateTime?
+  id              String   @id @default(cuid())
+  adminId         String
+  admin           Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  tokenHash       String   @unique
+  deviceName      String?
+  createdAt       DateTime @default(now())
+  lastUsedAt      DateTime?
+  expiresAt       DateTime
+  revokedAt       DateTime?
+  apnsToken       String?
+  apnsEnvironment String?
+  apnsUpdatedAt   DateTime?
 
   @@index([adminId])
 }

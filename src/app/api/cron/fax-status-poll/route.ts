@@ -11,6 +11,7 @@ import {
   sendFaxFailedAdminEmail,
   type FaxProof,
 } from "@/lib/email";
+import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -216,6 +217,15 @@ async function handleDelivered(
   } catch (err) {
     console.error(`[fax-status-poll] admin delivered email for ${filing.id} failed`, err);
   }
+  if (apnsConfigured()) {
+    try {
+      await sendAdminPush({
+        title: "Fax delivered",
+        body: `${filing.llcName ?? filing.id} — delivered to IRS`,
+        threadId: filing.id,
+      });
+    } catch {}
+  }
 }
 
 async function handleFailed(
@@ -267,6 +277,15 @@ async function handleFailed(
     });
   } catch (err) {
     console.error(`[fax-status-poll] admin failed email for ${filing.id} failed`, err);
+  }
+  if (apnsConfigured()) {
+    try {
+      await sendAdminPush({
+        title: "Fax failed",
+        body: `${filing.llcName ?? filing.id} — ${failureReason ?? "unknown error"}`,
+        threadId: filing.id,
+      });
+    } catch {}
   }
 }
 
