@@ -1,0 +1,7 @@
+.build/
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.xcuserdatad/
+Form5472Admin.xcodeproj/project.xcworkspace/xcuserdata/

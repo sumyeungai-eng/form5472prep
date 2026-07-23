@@ -56,11 +56,13 @@ export async function POST(req: Request): Promise<Response> {
 
     if (admin?.active) {
       const link = await makeAdminLoginLink(admin.id);
+      const token = link.slice(link.lastIndexOf("/") + 1);
+      const appLink = `form5472admin://auth/${token}`;
       await sendEmail({
         to: email,
         subject: "Your Form5472 Prep admin sign-in link",
-        html: `<p>Use this secure link to sign in to the Form5472 Prep admin app:</p><p><a href="${link}">Sign in to admin</a></p><p>This link expires in 15 minutes and can only be used once.</p>`,
-        text: `Use this secure link to sign in to the Form5472 Prep admin app:\n\n${link}\n\nThis link expires in 15 minutes and can only be used once.`,
+        html: `<p>Use this secure link to sign in to Form5472 Prep:</p><p><a href="${link}">Sign in on the web</a></p><p><a href="${appLink}">Sign in on the iPhone app</a></p><p>This link expires in 15 minutes and can only be used once. Using either link consumes it, so pick the surface you actually want to use.</p>`,
+        text: `Use this secure link to sign in to Form5472 Prep:\n\nSign in on the web:\n${link}\n\nSign in on the iPhone app:\n${appLink}\n\nThis link expires in 15 minutes and can only be used once. Using either link consumes it, so pick the surface you actually want to use.`,
       });
     }
   } catch (err) {

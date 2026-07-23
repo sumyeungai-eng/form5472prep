@@ -1,0 +1,73 @@
+import Foundation
+import Testing
+@testable import AdminKit
+
+extension APIClientTests {
+    @Test func decodesAdminProfileEnvelope() async throws {
+        let client = makeDecodingClient()
+        StubURLProtocol.install { request in
+            stubResponse(
+                url: request.url!,
+                status: 200,
+                body: #"{"data":{"adminId":"admin_123","email":"admin@example.com","via":"bearer"}}"#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        let profile = try await client.me()
+        #expect(profile.adminId == "admin_123")
+        #expect(profile.email == "admin@example.com")
+        #expect(profile.via == "bearer")
+    }
+
+    @Test func decodesDashboardEnvelope() async throws {
+        let client = makeDecodingClient()
+        StubURLProtocol.install { request in
+            stubResponse(
+                url: request.url!,
+                status: 200,
+                body: #"{"data":{"revenueCents":{"period":12500,"previousPeriod":10000,"changePct":25.0},"orders":{"period":5,"previousPeriod":4,"changePct":25.0},"filingsByStatus":[{"status":"PAID","count":3}],"applicationQueue":{"ein":{"NEW":2},"itin":{"REVIEW":1}},"needsAttention":[{"kind":"fax_failed","filingId":"filing_1","llcName":"Example LLC","ageHours":27}]}}"#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        let dashboard = try await client.dashboard(range: "30d")
+        #expect(dashboard.revenueCents.period == 12_500)
+        #expect(dashboard.orders.period == 5)
+        #expect(dashboard.filingsByStatus.first?.status == "PAID")
+        #expect(dashboard.applicationQueue.ein["NEW"] == 2)
+        #expect(dashboard.needsAttention.first?.filingId == "filing_1")
+    }
+
+    @Test func decodesFilingPageEnvelope() async throws {
+        let client = makeDecodingClient()
+        StubURLProtocol.install { request in
+            stubResponse(
+                url: request.url!,
+                status: 200,
+                body: #"{"data":{"items":[{"id":"filing_1","llcName":"Example LLC","status":"PAID","taxYears":[2024,2025],"amountPaid":14900,"updatedAt":"2026-07-23T10:20:30.123Z","customerEmail":"owner@example.com"}],"nextCursor":"next_page"}}"#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        let page = try await client.filings(
+            status: "PAID",
+            query: "Example",
+            cursor: nil,
+            limit: 25
+        )
+        #expect(page.items.count == 1)
+        #expect(page.items[0].amountPaid == 14_900)
+        #expect(page.items[0].taxYears == [2024, 2025])
+        #expect(page.items[0].customerEmail == "owner@example.com")
+        #expect(page.nextCursor == "next_page")
+    }
+
+    private func makeDecodingClient() -> APIClient {
+        APIClient(
+            baseURL: URL(string: "https://www.form5472prep.com")!,
+            tokenStore: InMemoryTokenStore(initial: "device-token"),
+            session: makeStubSession()
+        )
+    }
+}
