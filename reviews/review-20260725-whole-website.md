@@ -121,3 +121,34 @@ Commands / checks run:
 
 ## Approval request
 Reply: **"approve"** (all) / **"approve 1,2"** (partial, by step number) / describe changes / **"reject"**.
+
+---
+
+# Execution log — 2026-07-25 (plan APPROVED: "approve and fix all")
+
+Commits: `95fa1d6` (security hardening) · `56f6a67` (filing correctness) · `b09f6d4` (copy). Deployed to production, READY.
+
+| Step | Fix | Status | Verified by |
+|---|---|---|---|
+| 1 | C1 Telnyx headers + fail-closed | **Done (code)** — see OPEN ITEM below | Architect read of diff; live unsigned POST → 200 (key-absent path intact, prod not broken) |
+| 2 | M1 toggle: assets preserved + formation-year interlock | Done | Architect read: `toggleNoneForAllYears` no longer zeroes `totalAssetsYearEnd`; `needsFormationContributionConfirmation` gates Continue (line 1109) |
+| 3 | M2 checkout completeness gate | Done | Architect read of checkout/route.ts:55-63; confirmed admin test-tier unaffected (pre-existing gate already required year scope) |
+| 4 | M3 DIIRSP per-year by April 15 deadline | Done | Architect read: `isYearDelinquent` (line 29) + `years.some(...)` (line 128); date math hand-checked |
+| 5 | M4 atomic PATCH | Done | Architect read: validation precedes `bindFilingToEmail` (193) and `$transaction` (196) |
+| 6 | M6 stale two-tier copy | Done | Live prod: `/pro-form-5472` returns 0 matches for Priority/same-day/WhatsApp; llms.txt 0 three-tier |
+| 7 | Hardening (m2,m3,m5,m6,m11) | Done | Live prod: 3 security headers present; partner/apply returns 429 after 5 POSTs; presign-only; dead shims removed |
+| 8 | M5 tests + I1–I10 features | **Not executed** — deferred by design | See below |
+
+Final verification (single clean serial run, no concurrent agents): `npx tsc --noEmit` → 0 errors · `npm test` → 10/10 passed · `rm -rf .next && npm run build` → exit 0, 94/94 pages · stale-tier grep → CLEAN · secret scan → CLEAN.
+
+## OPEN ITEM — requires owner action (cannot be done by Claude)
+**Set `TELNYX_PUBLIC_KEY` in Vercel production** (Telnyx Portal → Account → Keys & Credentials → Public Key). Until it is set, the fax webhook still accepts unsigned requests — the code change fixed the wrong header names and armed fail-closed verification, but deliberately does NOT hard-reject while the key is absent, because doing so would have broken live fax confirmations. After setting it, send a Telnyx test event and confirm a real fax still confirms end-to-end.
+
+## Deferred (not defects)
+- **Step 8 tests (M5)** — a real gap; money/auth/webhook paths still have no coverage. Recommended as the next session's work.
+- **I1–I10 feature additions** — roadmap items, not fixes. Top ROI: social proof/reviews, non-card payments (Apple/Google Pay, PayPal), one-click annual re-file, order-status timeline.
+- **Codex-claimed items left unverified** (m7, m9, m10, m12): confirmation-email signer wording, privacy-retention vs. actual storage, automatic refund on terminal fax failure, partner filing access via anonymous cookie. Each needs its own investigation before acting.
+
+## Process notes
+- Lane routing: 5 specs to codex (GPT-5), 1 downgraded to a Claude subagent after grok was unauthenticated AND codex timed out on the copy rewrite. Grok lane unavailable all session (`grok login` needed).
+- **Shared-worktree hazard:** all lanes ran in one working tree. Four separate agents misread their siblings' edits as contamination and recommended `git checkout --` on files that held verified fixes; every such recommendation was overridden by the architect. Future multi-lane waves in this repo should use `isolation: "worktree"`.
