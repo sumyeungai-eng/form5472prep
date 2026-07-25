@@ -140,22 +140,6 @@ export function totalPriceCents(
   return tierInfo(tierValue).priceCents + multiYearAddonCents(yearCount);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Legacy compatibility shims.
-// The previous pricing model exported these — kept here so any unmigrated
-// call sites still compile. New code should use TIERS / resolveTier /
-// totalPriceCents directly.
-// ─────────────────────────────────────────────────────────────────────────────
-
-export function tierForYearCount(_count: number): Tier {
-  // Tier and year-count are independent in the new model; default to Standard.
-  return DEFAULT_TIER;
-}
-
-export function isPremiumSource(_funnelSource: string | null | undefined): boolean {
-  return false;
-}
-
 // Returns a lookup table keyed by every tier value the DB may hold (new tiers
 // + legacy tier slugs). Used by display code that does
 // `getTiersForSource(src)[filing.tier]` — old filings still get a label back

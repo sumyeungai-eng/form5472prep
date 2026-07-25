@@ -39,11 +39,11 @@ function verifyTelnyxSignature(rawBody: string, req: Request): boolean {
   const publicKeyB64 = process.env.TELNYX_PUBLIC_KEY;
   if (!publicKeyB64) {
     // No key configured — sandbox/local. Don't block, but make it loud.
-    console.warn("[telnyx-webhook] TELNYX_PUBLIC_KEY not set — skipping signature verification");
+    console.error("[telnyx-webhook] SIGNATURE VERIFICATION DISABLED — TELNYX_PUBLIC_KEY not set");
     return true;
   }
-  const signatureB64 = req.headers.get("telnyx-signature-ed25519-signature");
-  const timestamp = req.headers.get("telnyx-signature-ed25519-timestamp");
+  const signatureB64 = req.headers.get("telnyx-signature-ed25519");
+  const timestamp = req.headers.get("telnyx-timestamp");
   if (!signatureB64 || !timestamp) {
     console.error("[telnyx-webhook] missing signature headers");
     return false;
@@ -65,12 +65,16 @@ function verifyTelnyxSignature(rawBody: string, req: Request): boolean {
       format: "der",
       type: "spki",
     });
-    return crypto.verify(
+    const verified = crypto.verify(
       null,
       Buffer.from(signedPayload),
       publicKey,
       Buffer.from(signatureB64, "base64"),
     );
+    if (!verified) {
+      console.error("[telnyx-webhook] invalid signature");
+    }
+    return verified;
   } catch (err) {
     console.error("[telnyx-webhook] signature verification error", err);
     return false;

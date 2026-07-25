@@ -86,7 +86,6 @@ export async function exists(key: string): Promise<boolean> {
 // In local mode it's the in-app route — only works for sandbox/test.
 export async function publicUrl(key: string, opts?: { expiresInSeconds?: number }): Promise<string> {
   if (r2Enabled()) {
-    if (env.r2.publicBaseUrl) return `${env.r2.publicBaseUrl}/${key}`;
     return getSignedUrl(
       client(),
       new GetObjectCommand({ Bucket: env.r2.bucket, Key: key }),

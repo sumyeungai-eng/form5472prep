@@ -14,6 +14,14 @@ function sign(payload: string): string {
   return crypto.createHmac("sha256", SECRET).update(payload).digest("base64url");
 }
 
+// Constant-time string compare on raw bytes (length-checked first).
+function safeEqual(a: string, b: string): boolean {
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  if (ab.length !== bb.length) return false;
+  return crypto.timingSafeEqual(ab, bb);
+}
+
 export function makeUnsubscribeLink(userId: string): string {
   const expiresAt = Math.floor(Date.now() / 1000) + TTL_SECONDS;
   const payload = `${userId}:${expiresAt}`;
@@ -26,7 +34,7 @@ export function verifyUnsubscribeToken(token: string): string | null {
   if (lastDot === -1) return null;
   const payload = token.slice(0, lastDot);
   const sig = token.slice(lastDot + 1);
-  if (sign(payload) !== sig) return null;
+  if (!safeEqual(sign(payload), sig)) return null;
   const [userId, expStr] = payload.split(":");
   const exp = Number(expStr);
   if (!userId || !exp || Number.isNaN(exp)) return null;

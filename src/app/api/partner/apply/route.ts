@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail, sendPartnerApplicationAckEmail } from "@/lib/email";
 import { env } from "@/lib/env";
+import { rateLimit, clientIp, tooManyRequests } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,6 +15,8 @@ export const dynamic = "force-dynamic";
 const MAX = { name: 200, company: 200, email: 320, phone: 60, notes: 2000 };
 
 export async function POST(req: Request) {
+  const rl = await rateLimit("partner-apply", clientIp(req), 5, 3600);
+  if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
 
