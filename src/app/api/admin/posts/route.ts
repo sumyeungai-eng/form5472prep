@@ -1,8 +1,19 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { isAdmin } from "@/lib/admin/auth";
 import { writePost, getPostIncludingDraft, slugify } from "@/lib/blog";
 
 export const runtime = "nodejs";
+
+// Posts live in the database now, but the public blog is statically rendered.
+// Bust every surface that lists or renders a post so a publish shows up in
+// seconds instead of waiting out the 60s ISR window (or a redeploy).
+function revalidateBlog(...slugs: string[]) {
+  revalidatePath("/blog");
+  for (const slug of slugs) revalidatePath(`/blog/${slug}`);
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/feed.xml");
+}
 
 // Create a new post. Auto-generates the slug from the title if not supplied.
 export async function POST(req: Request) {
@@ -42,5 +53,6 @@ export async function POST(req: Request) {
     );
   }
 
+  revalidateBlog(slug);
   return NextResponse.json({ slug });
 }

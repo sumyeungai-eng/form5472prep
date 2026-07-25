@@ -12,6 +12,11 @@ import {
 } from "lucide-react";
 import { getAllPosts, formatPostDate, type PostMeta } from "@/lib/blog";
 
+// ISR: posts published from /admin live in the database, so the index has to
+// re-render without a redeploy. Admin writes also revalidatePath("/blog") for
+// an immediate refresh; this is the safety net.
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Blog",
   description:

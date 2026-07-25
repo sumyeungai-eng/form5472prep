@@ -411,3 +411,30 @@ model IdempotencyRecord {
   @@unique([scope, key])
   @@index([expiresAt])
 }
+
+// Blog posts written from /admin. The blog is hybrid: the original
+// content/blog/*.md files still render, and a DB row with the same slug wins
+// over the file. Vercel's filesystem is read-only at runtime, so anything
+// published from the admin editor has to live here.
+model Post {
+  slug        String   @id
+  title       String
+  description String
+  // Publish date kept as the YYYY-MM-DD string the frontmatter uses, so there
+  // is no timezone drift between file-backed and DB-backed posts.
+  date        String
+  // Optional ISO-8601 release time. When present, public readers hide the post
+  // until this instant while the admin can still preview and edit it.
+  publishAt   String?
+  updated     String?
+  author      String?
+  tags        String[]
+  draft       Boolean  @default(false)
+  body        String
+  // Tombstone: marks a slug removed even though content/blog/<slug>.md still
+  // exists in the deployment (that file can't be deleted at runtime on
+  // Vercel's read-only filesystem).
+  deleted     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
