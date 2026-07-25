@@ -53,6 +53,7 @@ export function TransactionsReview({
   // button — see the matching commented block below the UploadDropzone.
   ownerName: _ownerName,
   plaidEnabled: _plaidEnabled = false,
+  formationYear,
   initialYears,
   onSubmit,
   onBack,
@@ -61,6 +62,7 @@ export function TransactionsReview({
   filingId: string;
   ownerName: string | null;
   plaidEnabled?: boolean;
+  formationYear: number | null;
   initialYears: {
     taxYear: number;
     totalAssetsYearEnd: number;
@@ -97,6 +99,9 @@ export function TransactionsReview({
   );
   const [noneForAllYears, setNoneForAllYears] = useState<boolean>(
     initialYears.length > 0 && initialYears.every((y) => y.noReportableTransactions === true),
+  );
+  const [confirmedNoFormationContributions, setConfirmedNoFormationContributions] = useState<Set<number>>(
+    () => new Set(),
   );
   const [uploading, setUploading] = useState<number | null>(null);
 
@@ -437,18 +442,39 @@ export function TransactionsReview({
   function toggleNoneForAllYears(checked: boolean) {
     setNoneForAllYears(checked);
     if (checked) {
+      setConfirmedNoFormationContributions(new Set());
       setYears((all) =>
         all.map((y) => ({
           ...y,
           transactions: [],
           manualContributions: 0,
           manualDistributions: 0,
-          totalAssetsYearEnd: 0,
           otherTransactionsNote: "",
         })),
       );
     }
   }
+
+  function setFormationContributionConfirmation(taxYear: number, checked: boolean) {
+    setConfirmedNoFormationContributions((current) => {
+      const next = new Set(current);
+      if (checked) {
+        next.add(taxYear);
+      } else {
+        next.delete(taxYear);
+      }
+      return next;
+    });
+  }
+
+  const needsFormationContributionConfirmation =
+    noneForAllYears &&
+    formationYear !== null &&
+    years.some(
+      (y) =>
+        y.taxYear === formationYear &&
+        !confirmedNoFormationContributions.has(y.taxYear),
+    );
 
   async function handleSubmit() {
     const payload = years.map((y) => {
@@ -603,6 +629,44 @@ export function TransactionsReview({
               <p className="mt-1 text-xs text-emerald-700">
                 Uncheck the box above to enter transactions.
               </p>
+              <div className="mt-4">
+                <Field
+                  label="Total assets at year end (USD)"
+                  hint="Your LLC's total assets on the last day of the year (e.g. bank balance). This is separate from transactions — enter it even if you had no transactions."
+                >
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={y.totalAssetsYearEnd}
+                    onChange={(e) =>
+                      setManual(y.taxYear, "totalAssetsYearEnd", Number(e.target.value) || 0)
+                    }
+                  />
+                </Field>
+              </div>
+              {y.taxYear === formationYear && (
+                <div className="mt-4 space-y-3">
+                  <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                    This is your LLC&apos;s formation year. If you paid the state filing fee,
+                    registered agent, or funded the bank account from your own money, that is a
+                    reportable capital contribution and must be entered — uncheck &apos;no
+                    reportable transactions&apos; and add it below.
+                  </div>
+                  <label className="flex items-start gap-2 text-sm font-medium text-slate-800">
+                    <input
+                      type="checkbox"
+                      checked={confirmedNoFormationContributions.has(y.taxYear)}
+                      onChange={(e) =>
+                        setFormationContributionConfirmation(y.taxYear, e.target.checked)
+                      }
+                      className="mt-1 h-4 w-4 rounded border-slate-300 text-accent focus:ring-accent"
+                    />
+                    <span>
+                      I confirm there were no contributions at all, including at formation.
+                    </span>
+                  </label>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -1039,7 +1103,11 @@ export function TransactionsReview({
         <Button type="button" variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button type="button" onClick={handleSubmit} disabled={saving}>
+        <Button
+          type="button"
+          onClick={handleSubmit}
+          disabled={saving || needsFormationContributionConfirmation}
+        >
           {saving ? "Saving…" : "Continue"}
         </Button>
       </div>

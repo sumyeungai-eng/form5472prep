@@ -22,6 +22,12 @@ export async function POST(req: Request) {
   if (filing.status !== "DRAFT")
     return NextResponse.json({ error: "Already paid" }, { status: 409 });
 
+  const filingYearData = await prisma.filing.findUnique({
+    where: { id: filing.id },
+    select: { yearData: true },
+  });
+  const yearDataRows = filingYearData?.yearData ?? [];
+
   // Completeness gate — the desktop sidebar lets a user jump straight to Review,
   // so refuse to charge for an incomplete filing (which would otherwise pay,
   // skip PDF generation, and strand them in PAID with no product). Validate
@@ -45,6 +51,15 @@ export async function POST(req: Request) {
         if (completionIssues.indexOf(field) === -1) completionIssues.push(field);
       }
     }
+  }
+  for (const taxYear of filing.taxYears) {
+    if (!yearDataRows.find((yearData) => yearData.taxYear === taxYear)) {
+      const field = `yearData.${taxYear}`;
+      if (completionIssues.indexOf(field) === -1) completionIssues.push(field);
+    }
+  }
+  if (filing.isDiirsp && (!filing.reasonableCauseNarrative || !filing.reasonableCauseNarrative.trim())) {
+    if (completionIssues.indexOf("reasonableCauseNarrative") === -1) completionIssues.push("reasonableCauseNarrative");
   }
   if (completionIssues.length > 0) {
     return NextResponse.json(

@@ -26,6 +26,10 @@ const patchFieldSchema = z
   })
   .partial();
 
+function isYearDelinquent(taxYear: number): boolean {
+  return Date.now() > Date.UTC(taxYear + 1, 3, 15);
+}
+
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const owned = await getOwnedFiling(params.id);
   if (!owned) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -45,12 +49,6 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     return NextResponse.json({ error: "Filing is locked" }, { status: 409 });
 
   const body = await req.json();
-
-  // If an email was provided at the Review step, upsert the user and bind
-  // this filing to them. Idempotent.
-  if (typeof body.email === "string" && body.email.includes("@")) {
-    await bindFilingToEmail(filing.id, body.email);
-  }
 
   // Whitelist editable fields.
   const stringFields = [
@@ -127,12 +125,18 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     // drives a flat per-extra-year add-on layered on the chosen tier base.
     const tierValue = (data.tier as string) ?? filing.tier;
     data.amountPaid = totalPriceCents(tierValue, years.length);
-    data.isDiirsp = years.length > 1 || (years[0] !== undefined && years[0] < new Date().getFullYear());
+    data.isDiirsp = years.some(isYearDelinquent);
   }
 
-  const updated = await prisma.filing.update({ where: { id: filing.id }, data });
-
-  // If yearData payload included, upsert each year.
+  const resolvedYearData: Array<{
+    taxYear: number;
+    totalAssetsYearEnd: number;
+    contributions: number;
+    distributions: number;
+    otherTransactionsNote: unknown;
+    noReportableTransactions: boolean;
+    cleanTransactions: z.infer<typeof reportableTransactionsSchema> | undefined;
+  }> = [];
   if (Array.isArray(body.yearData)) {
     for (const y of body.yearData) {
       // Validate the reported financial figures (these become the actual
@@ -171,47 +175,74 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         cleanTransactions = tv.data;
       }
       const noneReported = yv.data.noReportableTransactions === true;
-      await prisma.filingYearData.upsert({
-        where: { filingId_taxYear: { filingId: filing.id, taxYear: y.taxYear } },
-        update: {
-          totalAssetsYearEnd: y.totalAssetsYearEnd ?? 0,
-          contributions: noneReported ? 0 : y.contributions ?? 0,
-          distributions: noneReported ? 0 : y.distributions ?? 0,
-          otherTransactionsNote: noneReported
-            ? ""
-            : typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : undefined,
-          noReportableTransactions: noneReported,
-          // SECURITY/DATA-LOSS GUARD: the TransactionsReview wizard step
-          // initializes its in-memory transaction list to [] and does NOT
-          // rehydrate previously-uploaded/parsed rows. So a returning user who
-          // re-submits this step would otherwise wipe the stored detailed rows
-          // with an empty array (while keeping only the contribution/
-          // distribution totals). Only overwrite reportableTransactions when
-          // the incoming list is non-empty; an empty list leaves existing
-          // detail untouched except for the explicit no-reportable-transactions
-          // attestation below.
-          // Explicit attestation bypasses the guard because the user is
-          // intentionally clearing stored transaction detail, not submitting
-          // an empty, non-rehydrated client state.
-          // undefined when the incoming list is empty/absent → leaves stored
-          // detail untouched (the anti-data-loss guard above).
-          reportableTransactions: noneReported ? [] : cleanTransactions ?? undefined,
-        },
-        create: {
-          filingId: filing.id,
-          taxYear: y.taxYear,
-          totalAssetsYearEnd: y.totalAssetsYearEnd ?? 0,
-          contributions: noneReported ? 0 : y.contributions ?? 0,
-          distributions: noneReported ? 0 : y.distributions ?? 0,
-          otherTransactionsNote: noneReported
-            ? ""
-            : typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : null,
-          noReportableTransactions: noneReported,
-          reportableTransactions: noneReported ? [] : cleanTransactions ?? [],
-        },
+      resolvedYearData.push({
+        taxYear: yv.data.taxYear,
+        totalAssetsYearEnd: yv.data.totalAssetsYearEnd,
+        contributions: yv.data.contributions,
+        distributions: yv.data.distributions,
+        otherTransactionsNote: y?.otherTransactionsNote,
+        noReportableTransactions: noneReported,
+        cleanTransactions,
       });
     }
   }
+
+  // If an email was provided at the Review step, upsert the user and bind
+  // this filing to them. Idempotent.
+  if (typeof body.email === "string" && body.email.includes("@")) {
+    await bindFilingToEmail(filing.id, body.email);
+  }
+
+  const updated = await prisma.$transaction(async (tx) => {
+    const updatedFiling = await tx.filing.update({ where: { id: filing.id }, data });
+
+    // If yearData payload included, upsert each year.
+    if (Array.isArray(body.yearData)) {
+      for (const y of resolvedYearData) {
+        await tx.filingYearData.upsert({
+          where: { filingId_taxYear: { filingId: filing.id, taxYear: y.taxYear } },
+          update: {
+            totalAssetsYearEnd: y.totalAssetsYearEnd,
+            contributions: y.noReportableTransactions ? 0 : y.contributions,
+            distributions: y.noReportableTransactions ? 0 : y.distributions,
+            otherTransactionsNote: y.noReportableTransactions
+              ? ""
+              : typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : undefined,
+            noReportableTransactions: y.noReportableTransactions,
+            // SECURITY/DATA-LOSS GUARD: the TransactionsReview wizard step
+            // initializes its in-memory transaction list to [] and does NOT
+            // rehydrate previously-uploaded/parsed rows. So a returning user who
+            // re-submits this step would otherwise wipe the stored detailed rows
+            // with an empty array (while keeping only the contribution/
+            // distribution totals). Only overwrite reportableTransactions when
+            // the incoming list is non-empty; an empty list leaves existing
+            // detail untouched except for the explicit no-reportable-transactions
+            // attestation below.
+            // Explicit attestation bypasses the guard because the user is
+            // intentionally clearing stored transaction detail, not submitting
+            // an empty, non-rehydrated client state.
+            // undefined when the incoming list is empty/absent → leaves stored
+            // detail untouched (the anti-data-loss guard above).
+            reportableTransactions: y.noReportableTransactions ? [] : y.cleanTransactions ?? undefined,
+          },
+          create: {
+            filingId: filing.id,
+            taxYear: y.taxYear,
+            totalAssetsYearEnd: y.totalAssetsYearEnd,
+            contributions: y.noReportableTransactions ? 0 : y.contributions,
+            distributions: y.noReportableTransactions ? 0 : y.distributions,
+            otherTransactionsNote: y.noReportableTransactions
+              ? ""
+              : typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : null,
+            noReportableTransactions: y.noReportableTransactions,
+            reportableTransactions: y.noReportableTransactions ? [] : y.cleanTransactions ?? [],
+          },
+        });
+      }
+    }
+
+    return updatedFiling;
+  });
 
   return NextResponse.json(updated);
 }

@@ -365,6 +365,7 @@ export function FilingWizard({
             filingId={filing.id}
             ownerName={filing.ownerName}
             plaidEnabled={plaidEnabled}
+            formationYear={filing.llcDateIncorporated ? new Date(filing.llcDateIncorporated).getUTCFullYear() : null}
             initialYears={filing.taxYears.map((y) => {
               const ex = filing.yearData.find((d) => d.taxYear === y);
               return {
