@@ -70,7 +70,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How much does it cost to file?",
-        body: "Three ways to do it:\n\n1. DIY with IRS forms: $0 in fees but 4-8 hours of careful work, and any mistake risks the $25,000 penalty. You also need a fax service ($2-$5).\n\n2. Hire a US CPA: $400-$800 typical. Most CPAs are unfamiliar with Form 5472 for foreign-owned disregarded entities, so expect them to either decline the work or take 1-3 weeks while they research it.\n\n3. Use Form5472 Prep: $199 all-inclusive. IRS fax delivery included on every plan. +$149 per additional past year.\n\nEvery package we prepare is reviewed by an accountant on our team before we fax it to the IRS. 100% money-back guarantee if we fail to submit.",
+        body: "Three ways to do it:\n\n1. DIY with IRS forms: $0 in fees but 4-8 hours of careful work, and any mistake risks the $25,000 penalty. You also need a fax service ($2-$5).\n\n2. Hire a US CPA: $400-$800 typical. Most CPAs are unfamiliar with Form 5472 for foreign-owned disregarded entities, so expect them to either decline the work or take 1-3 weeks while they research it.\n\n3. Use Form5472 Prep: $199 all-inclusive. IRS fax delivery included. +$149 per additional past year.\n\nEvery package we prepare is reviewed by an accountant on our team before we fax it to the IRS. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "What happens after you file Form 5472?",
@@ -116,7 +116,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Is IRS fax delivery included in the price?",
-        a: "Yes. IRS fax delivery to +1-855-887-7737 is included in every plan. There is no separate fax fee. You will receive the timestamped fax transmission receipt as proof of timely filing.",
+        a: "Yes. IRS fax delivery to +1-855-887-7737 is included with every filing. There is no separate fax fee. You will receive the timestamped fax transmission receipt as proof of timely filing.",
       },
       {
         q: "Does someone actually review my filing before it goes to the IRS?",
@@ -810,7 +810,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do Stripe Atlas LLCs interact with Form 5472?",
-        body: "If you used Stripe Atlas to incorporate, your LLC is almost certainly Delaware. Stripe Atlas is excellent at:\n• Forming the LLC.\n• Getting your EIN (typically within days).\n• Helping with the initial Mercury bank account.\n• Providing legal templates.\n\nWhat Stripe Atlas explicitly does NOT cover:\n• Annual federal tax filings including Form 5472.\n• Delaware franchise tax (they remind you but don't pay it).\n• Ongoing tax compliance.\n\nNote: BOI (Beneficial Ownership Information) reporting isn't on this list because it no longer applies to Stripe Atlas LLCs. Since March 26, 2025, FinCEN has exempted all US-formed entities, including Delaware LLCs, from BOI reporting.\n\nStripe's own documentation states Atlas is a formation product, not an ongoing tax service. The $5K-equivalent value at formation does not include any year-2-onward filing.\n\nWe handle the federal Form 5472 + pro forma 1120 specifically for foreign-owned Stripe Atlas LLCs. Standard $199 (IRS fax delivery included), same 15-minute filing process. Most Stripe Atlas customers come to us in spring of year 2 once they realize Form 5472 is on them.",
+        body: "If you used Stripe Atlas to incorporate, your LLC is almost certainly Delaware. Stripe Atlas is excellent at:\n• Forming the LLC.\n• Getting your EIN (typically within days).\n• Helping with the initial Mercury bank account.\n• Providing legal templates.\n\nWhat Stripe Atlas explicitly does NOT cover:\n• Annual federal tax filings including Form 5472.\n• Delaware franchise tax (they remind you but don't pay it).\n• Ongoing tax compliance.\n\nNote: BOI (Beneficial Ownership Information) reporting isn't on this list because it no longer applies to Stripe Atlas LLCs. Since March 26, 2025, FinCEN has exempted all US-formed entities, including Delaware LLCs, from BOI reporting.\n\nStripe's own documentation states Atlas is a formation product, not an ongoing tax service. The $5K-equivalent value at formation does not include any year-2-onward filing.\n\nWe handle the federal Form 5472 + pro forma 1120 specifically for foreign-owned Stripe Atlas LLCs. $199 all-inclusive with IRS fax delivery included, same 15-minute filing process. Most Stripe Atlas customers come to us in spring of year 2 once they realize Form 5472 is on them.",
       },
       {
         heading: "How do you file Form 5472 for a Delaware LLC?",
@@ -826,7 +826,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are common Delaware LLC scenarios?",
-        body: "1. Stripe Atlas SaaS founder, foreign, no US customers: file pro forma 1120 + Form 5472. No US tax. Delaware franchise tax $300. Annual total: $499 (our Standard $199 + Delaware's $300). IRS fax delivery included.\n\n2. Delaware LLC for ecommerce serving global customers: file Form 5472 + 1120. Sales tax only in states where economic nexus crossed. Total annual federal compliance: Standard $199 (fax included) with us.\n\n3. Delaware LLC with US-based contractors / freelancers: same federal filing, plus possible 1099-NEC for the contractors (separate filing). No US trade or business if contractors are independent and you have no fixed US place of business.\n\n4. Delaware LLC with US-based employees or US warehouse: significantly more complex — likely US trade or business, ECI income, payroll taxes. Consult a CPA, not our service.\n\n5. Multi-year catch-up: a Delaware LLC formed in 2022 with no Form 5472 filed: use our 3-year DIIRSP catch-up (Standard $497, fax included) covering 2022, 2023, 2024.\n\n6. Delaware LLC dissolved last year: file a final Form 5472 + 1120 for the partial year ending at dissolution. Still required.",
+        body: "1. Stripe Atlas SaaS founder, foreign, no US customers: file pro forma 1120 + Form 5472. No US tax. Delaware franchise tax $300. Annual total: $499 ($199 for our federal filing + Delaware's $300). IRS fax delivery included.\n\n2. Delaware LLC for ecommerce serving global customers: file Form 5472 + 1120. Sales tax only in states where economic nexus crossed. Total annual federal compliance: $199 all-inclusive with us.\n\n3. Delaware LLC with US-based contractors / freelancers: same federal filing, plus possible 1099-NEC for the contractors (separate filing). No US trade or business if contractors are independent and you have no fixed US place of business.\n\n4. Delaware LLC with US-based employees or US warehouse: significantly more complex — likely US trade or business, ECI income, payroll taxes. Consult a CPA, not our service.\n\n5. Multi-year catch-up: a Delaware LLC formed in 2022 with no Form 5472 filed: a 3-year DIIRSP catch-up is $497 with fax delivery included, covering 2022, 2023, 2024.\n\n6. Delaware LLC dissolved last year: file a final Form 5472 + 1120 for the partial year ending at dissolution. Still required.",
       },
       {
         heading: "How do you handle multi-year catch-up under DIIRSP?",
@@ -838,7 +838,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Bottom line for Delaware LLC owners",
-        body: "If you have a foreign-owned Delaware LLC:\n• File federal Form 5472 + pro forma 1120 every year by April 15. $25,000 penalty if missed.\n• Pay Delaware franchise tax $300 by June 1. State-level — separate from IRS.\n• No BOI report — since March 26, 2025, FinCEN has exempted US-formed entities (including Delaware LLCs) from Beneficial Ownership Information reporting.\n• Watch for state sales tax obligations as you scale.\n\nOur service handles the federal Form 5472 + 1120 from $199 (Standard), with IRS fax delivery included on every plan. +$149 per additional past year. Every filing is reviewed by an accountant on our team. 100% money-back guarantee if we fail to submit.",
+        body: "If you have a foreign-owned Delaware LLC:\n• File federal Form 5472 + pro forma 1120 every year by April 15. $25,000 penalty if missed.\n• Pay Delaware franchise tax $300 by June 1. State-level — separate from IRS.\n• No BOI report — since March 26, 2025, FinCEN has exempted US-formed entities (including Delaware LLCs) from Beneficial Ownership Information reporting.\n• Watch for state sales tax obligations as you scale.\n\nOur service handles the federal Form 5472 + 1120 for $199, with IRS fax delivery included. +$149 per additional past year. Every filing is reviewed by an accountant on our team. 100% money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -880,7 +880,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What's the cheapest year-1 federal compliance for a Stripe Atlas Delaware LLC?",
-        a: "Federal: Standard $199 (our service, fax included). Add the $300 Delaware franchise tax = $499 total annual compliance. Add Stripe Atlas's one-time $500 formation cost (year 1 only) for full year-1 picture.",
+        a: "Federal: $199 all-inclusive with our service, fax delivery included. Add the $300 Delaware franchise tax = $499 total annual compliance. Add Stripe Atlas's one-time $500 formation cost (year 1 only) for full year-1 picture.",
       },
     ],
     relatedSlugs: ["wyoming-llc-form-5472", "foreign-owned-llc-tax", "file-form-5472", "stripe-atlas-form-5472", "single-member-llc-foreign-owner"],
@@ -996,7 +996,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What Form5472 Prep does for UAE owners specifically",
-        body: "Our wizard handles the \"no foreign tax ID\" case cleanly — if you don't have a UAE TRN or other tax number, it walks you through the self-assigned reference ID option instead of leaving you stuck. Beyond that, the process is the same as anywhere else:\n\n• 12-question wizard, 15 minutes, accessible any time of day (no need to align with US business hours).\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Priority-tier customers get a direct email/WhatsApp line to the reviewing accountant — useful across the UAE's time zone gap with US business hours.\n\nPricing: $199 all-inclusive (IRS fax delivery included on every plan). +$149 per additional past year.",
+        body: "Our wizard handles the \"no foreign tax ID\" case cleanly — if you don't have a UAE TRN or other tax number, it walks you through the self-assigned reference ID option instead of leaving you stuck. Beyond that, the process is the same as anywhere else:\n\n• 12-question wizard, 15 minutes, accessible any time of day (no need to align with US business hours).\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Email support is included on every filing — useful across the UAE's time zone gap with US business hours.\n\nPricing: $199 all-inclusive (IRS fax delivery included on every plan). +$149 per additional past year.",
       },
       {
         heading: "How do you handle multi-year catch-up as a UAE owner?",
@@ -1038,7 +1038,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Is there a time-zone issue getting this filed from the UAE?",
-        a: "No — our wizard, portal, and email support are available any time. Priority-tier customers also get a direct email/WhatsApp line to the reviewing accountant, which many UAE customers find easier across the time difference than phone calls during US business hours.",
+        a: "No — our wizard, portal, and email support are available any time. Email support is included on every filing, and most UAE customers find written correspondence easier across the time difference than phone calls during US business hours.",
       },
     ],
     relatedSlugs: ["foreign-owned-llc-tax", "single-member-llc-foreign-owner", "wyoming-llc-form-5472", "delaware-llc-form-5472", "diirsp"],
@@ -1455,7 +1455,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How to file IRS Form 5472",
-        body: "You can't e-file Form 5472. The IRS only accepts it by mail or fax to the Ogden PIN Unit. The fax route is faster and gives you a transmission receipt as proof of timely filing.\n\n• Fax: +1-855-887-7737 (IRS Ogden PIN Unit).\n• Mail: Internal Revenue Service, Ogden, UT 84201-0023 (use certified mail with return receipt).\n\nOur 15-minute online filer handles the whole package — Form 5472, pro forma Form 1120, Part V supporting statement, cover letter, and reasonable cause statement (if late). Pricing starts at $199 (Standard), we generate everything, you sign once on screen (the signature embeds into every required signature box), an accountant on our team reviews the package end-to-end, and we fax it to the IRS Ogden PIN Unit. IRS fax delivery is included in every plan. You get the timestamped fax transmission receipt as proof of filing.",
+        body: "You can't e-file Form 5472. The IRS only accepts it by mail or fax to the Ogden PIN Unit. The fax route is faster and gives you a transmission receipt as proof of timely filing.\n\n• Fax: +1-855-887-7737 (IRS Ogden PIN Unit).\n• Mail: Internal Revenue Service, Ogden, UT 84201-0023 (use certified mail with return receipt).\n\nOur 15-minute online filer handles the whole package — Form 5472, pro forma Form 1120, Part V supporting statement, cover letter, and reasonable cause statement (if late). Pricing starts at $199, we generate everything, you sign once on screen (the signature embeds into every required signature box), an accountant on our team reviews the package end-to-end, and we fax it to the IRS Ogden PIN Unit. IRS fax delivery is included in every plan. You get the timestamped fax transmission receipt as proof of filing.",
       },
       {
         heading: "Form 5472 vs. Form 1120 — what's the difference?",
@@ -2001,84 +2001,84 @@ export const LANDING_PAGES: LandingPage[] = [
   {
     slug: "pro-form-5472",
     keyword: "form 5472 pro",
-    title: "Form 5472 Priority Filing — Accountant-Reviewed, Same-Day Fax",
+    title: "Form 5472 Filing Service — Accountant-Reviewed, $199 All-In",
     metaDescription:
-      "Priority Form 5472 filing for foreign-owned US LLCs. Direct accountant access, same-day IRS fax delivery, and end-to-end DIIRSP coordination. Done in 15 minutes.",
-    h1: "Form 5472 Priority Filing — done right, same day.",
+      "Done-for-you Form 5472 + pro forma Form 1120 for foreign-owned US LLCs. Reviewed by a qualified tax accountant, faxed to IRS Ogden, timestamped receipt back. $199 flat.",
+    h1: "Form 5472, filed properly — $199, everything included.",
     intro:
-      "Skip the queue. Our Priority plan gets your Form 5472 + pro forma Form 1120 prepared, reviewed by a tax accountant on our team, and faxed to the IRS Ogden PIN Unit the same business day you sign. Direct support line to the reviewing accountant from the moment you start. Avoid the $25,000 §6038A penalty with the smallest possible margin of error.",
+      "Answer 12 questions in about 15 minutes. A qualified tax accountant on our team reviews your Form 5472 + pro forma Form 1120 end-to-end, we fax the signed package to the IRS Ogden PIN Unit — typically within 1–2 business days — and you get back the timestamped transmission receipt as your proof of filing. $199 flat, all-inclusive, for one tax year. That's the filing that keeps a $25,000 §6038A penalty off your LLC.",
     noindex: true,
     pricingMode: "premium",
     sections: [
       {
-        heading: "Who Priority is for",
-        body: "Priority is built for foreign LLC owners who would rather pay for certainty than save a few dollars. The most common Priority customers:\n\n• You're up against a tight IRS deadline and need same-day fax delivery, not next-business-day.\n• You've already received an IRS notice (CP-15 or letter) and want a professional handling the late filing.\n• You own multiple LLCs and value a single dedicated point of contact over self-serve forms.\n• You're a high-net-worth individual or family office where one $25,000 penalty would dwarf any plan-price difference.\n• You're a CPA / tax attorney filing on behalf of a client and need direct accountant collaboration.\n\nIf you'd rather DIY through a wizard at the lowest price, our standard plan starts at $199 — that's fine too. Priority is for customers who want the white-glove version.",
+        heading: "Who this is for",
+        body: "Form 5472 is the return every foreign-owned US single-member LLC owes the IRS each year — and the one nobody mentions when you form the LLC. This service is built for:\n\n• Non-US owners of a US single-member LLC (Wyoming, Delaware, New Mexico, Florida — any state) who need this year's filing done correctly the first time.\n• Owners who only just discovered the requirement and are one, two, or three years behind.\n• Owners who have already received an IRS notice (CP-15 or a §6038A letter) and need a properly prepared late filing with a reasonable cause statement.\n• Owners of several LLCs who want every entity filed the same way, every year, without rebuilding the paperwork from scratch.\n• CPAs and tax attorneys filing for a foreign client who want the 5472 package prepared, reviewed, and faxed for them.\n\nIf your LLC had even one reportable transaction last year — including the wire you sent to open its US bank account — you are in scope, revenue or no revenue.",
       },
       {
-        heading: "What's included in Priority",
-        body: "Every Priority filing includes:\n\n• Filled IRS Form 5472 + pro forma Form 1120 with Part V supporting statement.\n• Reasonable Cause Statement for late filings (DIIRSP), drafted by the accountant.\n• Same-day fax delivery to the IRS Ogden PIN Unit (orders signed by 4pm ET fax by EOD).\n• Direct email / WhatsApp line to the accountant reviewing your filing.\n• Priority review queue — your filing skips ahead of standard-plan filings.\n• Timestamped IRS Fax Transmission Receipt emailed back, plus stored in your portal.\n• 100% money-back guarantee if we fail to submit.\n\nYou still sign once on screen in your portal (no printing or scanning required). The accountant signs off on the package before we fax — no autopilot.",
+        heading: "What's included for $199",
+        body: "One flat price covers one tax year, end to end:\n\n• Filled IRS Form 5472 + pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp and the Part V supporting statement.\n• Review by a qualified tax accountant on our team before anything leaves our hands — no autopilot.\n• Reasonable Cause Statement for late filings under DIIRSP, drafted around your facts.\n• Fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) included — no separate fax fee.\n• The timestamped IRS fax transmission receipt emailed to you and stored in your portal: your proof of timely filing.\n• Filing confirmation and priority email support from start to receipt.\n• A reminder next March so the following year's deadline doesn't slip past you.\n• 100% money-back guarantee if we fail to submit.\n\nYou sign once on screen in your portal — no printing, no scanning, no mailing anything yourself.",
       },
       {
-        heading: "Priority vs. standard — what's the actual difference?",
-        body: "Same filing, different service level:\n\n• Forms filed: identical. Both plans produce the same cover letter, pro forma 1120, Form 5472, and Part V supporting statement.\n• IRS acceptance: identical. Both plans satisfy the §6038A reporting requirement.\n• Review: standard gets accountant review on the day it queues (typically same-week). Priority gets accountant review same-day, with the reviewing accountant assigned to your case end-to-end.\n• Fax timing: standard faxes when ready in the queue (1-2 business days typical). Priority faxes same business day.\n• Support: standard support is via the in-portal chat. Priority adds a direct email / WhatsApp line to the accountant.\n• Multi-year DIIRSP coordination: standard handles up to 3 years via wizard. Priority can coordinate complex multi-year and multi-entity catch-up scenarios with personal guidance.\n\nThe filings are functionally equivalent. Priority is for customers who value time and white-glove service.",
+        heading: "The $25,000 reason to get this right",
+        body: "IRC § 6038A assesses $25,000 per form, per year when Form 5472 is filed late, filed incompletely, or not filed at all. The penalty is automatic — the IRS doesn't have to show any harm, and there is no small-LLC exception for an entity with no revenue. Once the IRS issues a notice, another $25,000 accrues for every 30-day period the filing stays outstanding.\n\nThe three ways owners get caught:\n\n1. Never filed — the LLC exists, money moved in and out, and Form 5472 never came up at formation.\n2. Filed Form 5472 on its own — without the pro forma Form 1120 it attaches to, the IRS treats the return as never filed.\n3. Filed, but incomplete — a blank Part V, a missing supporting statement, or a missing owner identifier is scored the same as a missing return.\n\nEvery one of those is avoidable paperwork. That is exactly what the $199 buys: a complete package, checked by an accountant who files these all year, delivered with dated proof of when it arrived.",
       },
       {
-        heading: "Same-day fax delivery — how it works",
-        body: "1. Complete the 12-question wizard (about 15 minutes for first-time, 5 minutes for returning customers).\n2. Sign once on screen.\n3. We email the assigned accountant immediately.\n4. Accountant reviews end-to-end, reaches out if anything needs clarification.\n5. Accountant signs off — fax goes out to +1-855-887-7737 (IRS Ogden PIN Unit) the same business day.\n6. You receive the timestamped IRS Fax Transmission Receipt by email.\n\nCutoff: orders signed by 4:00 PM Eastern fax by end-of-day. Orders signed after 4pm ET fax the next business morning. Weekends fax Monday morning. Force-majeure on the IRS Ogden line (rare but happens) defers to certified mail with same-day postmark.",
+        heading: "How your filing reaches the IRS",
+        body: "1. Complete the 12-question wizard — about 15 minutes the first year, about 5 minutes for returning customers.\n2. Sign once on screen. The canvas signature is embedded into every required signature box on the forms.\n3. A qualified tax accountant reviews the full package and emails you if anything needs clarifying.\n4. Once review clears, we fax the signed package to the IRS Ogden PIN Unit at +1-855-887-7737 — typically within 1–2 business days of your signature.\n5. You receive the timestamped IRS fax transmission receipt by email, and a copy stays in your portal.\n\nYou can't e-file Form 5472. The IRS only accepts it by mail or fax to Ogden, and fax is the route that produces a dated transmission receipt — which is why we use it. In the rare event the Ogden fax line is down for an extended period, we fall back to certified mail with return receipt and send you the tracking details.",
       },
       {
-        heading: "Priority pricing",
-        body: "• 1 tax year: $199\n• 2 tax years (DIIRSP catch-up): $348\n• 3 tax years (DIIRSP catch-up): $497\n• IRS fax delivery & submission included.\n\nNo subscription. Pay once per filing. 100% money-back guarantee if we fail to submit your filing to the IRS.\n\nPriority is the same end-result as our standard filing, with personal accountant handling and same-day delivery.",
+        heading: "Pricing",
+        body: "• One tax year: $199, all-inclusive.\n• Each additional past tax year: +$149.\n\nSo a two-year DIIRSP catch-up is $348 and a three-year catch-up is $497. Accountant review, the reasonable cause letter, IRS fax delivery, and the transmission receipt are included at every year count — no separate fax fee, no setup fee, no subscription.\n\nYou pay once, per filing. If we fail to submit your filing to the IRS, you get all of it back.",
       },
       {
         heading: "What happens if the IRS still assesses a penalty?",
-        body: "DIIRSP (Delinquent International Information Return Submission Procedure) is the IRS-published path for catch-up filings with reasonable cause requests. Most well-documented first-time late filings are accepted with no penalty assessed. There's no formal IRS guarantee, but the acceptance rate for properly-prepared DIIRSP submissions is high.\n\nTwo different scenarios here. If the IRS assesses a penalty because of an error in our preparation — a mistake on our end — we handle the response with the IRS at no charge. If instead the IRS assesses a penalty despite a correctly prepared, complete DIIRSP submission (a discretionary IRS call on your specific facts, not something we got wrong), the reviewing accountant on your case will still help you respond and appeal; that follow-up work sits outside the base Priority service and may carry an additional fee, though having the original preparer already familiar with your case speeds it up.\n\nOur 100% money-back guarantee covers failure-to-submit and, separately, any penalty caused by our own preparation error. No service can guarantee an IRS outcome on a correctly filed return — that discretion sits with the IRS.",
+        body: "DIIRSP (Delinquent International Information Return Submission Procedure) is the IRS-published path for catch-up filings with reasonable cause requests. Most well-documented first-time late filings are accepted with no penalty assessed. There's no formal IRS guarantee, but the acceptance rate for properly-prepared DIIRSP submissions is high.\n\nTwo different scenarios here. If the IRS assesses a penalty because of an error in our preparation — a mistake on our end — we handle the response with the IRS at no charge. If instead the IRS assesses a penalty despite a correctly prepared, complete DIIRSP submission (a discretionary IRS call on your specific facts, not something we got wrong), the accountant who reviewed your package will still help you respond and appeal; that follow-up work sits outside the $199 filing and may carry an additional fee, though having the original preparer already familiar with your case speeds it up.\n\nOur 100% money-back guarantee covers failure-to-submit and, separately, any penalty caused by our own preparation error. No service can guarantee an IRS outcome on a correctly filed return — that discretion sits with the IRS.",
       },
       {
         heading: "Confidentiality and data handling",
-        body: "• Your filing data is encrypted in transit (HTTPS) and at rest (database + storage).\n• Bank statements (if you upload any for transaction extraction) are processed in memory and never written to permanent storage.\n• Signed PDFs are held only long enough to fax to the IRS and deliver the receipt back, then deleted.\n• We retain the fax confirmation receipt + the basic entity/owner info needed to pre-fill next year's filing.\n• Direct accountant communication via email or WhatsApp is between you and the accountant; we don't store these transcripts beyond what's needed for service delivery.\n• We never share your data with third parties for marketing.\n• Standard data-retention policy applies — see Data Retention page.",
+        body: "• Your filing data is encrypted in transit (HTTPS) and at rest (database + storage).\n• Bank statements (if you upload any for transaction extraction) are processed in memory and never written to permanent storage.\n• Signed PDFs are held only long enough to fax to the IRS and deliver the receipt back, then deleted.\n• We retain the fax confirmation receipt + the basic entity/owner info needed to pre-fill next year's filing.\n• Email correspondence about your filing is kept only as long as it takes to deliver the service, and is never used for anything else.\n• We never share your data with third parties for marketing.\n• Standard data-retention policy applies — see Data Retention page.",
       },
       {
         heading: "Get started",
-        body: "Click Start filing now. You'll fill in the 12-question wizard (about 15 minutes), sign once on screen, and the assigned accountant will take it from there with same-day fax delivery.\n\nPrefer to discuss your situation with the accountant before paying? Use the in-portal chat once you start, or email support@form5472prep.com with PRIORITY in the subject — a Priority response goes out the same business day.",
+        body: "Click Start filing now. You'll answer the 12-question wizard (about 15 minutes) and sign once on screen — an accountant on our team takes it from there: package reviewed, faxed to the IRS Ogden PIN Unit, timestamped receipt back in your inbox.\n\nWant to talk your situation through before paying? Use the in-portal chat once you start, or email support@form5472prep.com. Email support is included on every filing.",
       },
     ],
     faqs: [
       {
-        q: "Is the Priority plan a different filing than the standard plan?",
-        a: "No — same filing, same forms, same IRS process. Priority adds a dedicated accountant, same-day fax delivery, and a direct support line.",
+        q: "What exactly do I get for $199?",
+        a: "One tax year filed end to end: Form 5472 + pro forma Form 1120 with the Part V supporting statement, review by a qualified tax accountant, a reasonable cause letter if you're filing late, fax delivery to the IRS Ogden PIN Unit, the timestamped transmission receipt as proof of filing, and a reminder before next year's deadline. No add-ons, no separate fax fee.",
       },
       {
-        q: "Does Priority cost more than the standard plan?",
-        a: "No — Priority is priced the same as standard: $199 for 1 tax year, $348 for 2, $497 for 3. The difference is service level, not price: Priority adds a dedicated accountant, same-day fax delivery, and a direct support line.",
+        q: "Is there a cheaper or more expensive version of this service?",
+        a: "No. There is one price: $199 for one tax year, plus $149 for each additional past year you're catching up on. Every filing gets the same accountant review, the same IRS fax delivery, and the same timestamped receipt.",
       },
       {
-        q: "Can I switch from Priority to standard?",
-        a: "Yes — message us before payment. Once paid, we'll process at whichever plan you paid for. After completion, refund and re-purchase is the cleanest path.",
+        q: "How long does the whole thing take?",
+        a: "About 15 minutes of your time in the wizard. On our side, the package is reviewed and faxed to the IRS Ogden PIN Unit typically within 1–2 business days of your signature, and the timestamped fax receipt comes back to you by email.",
       },
       {
-        q: "Does Priority guarantee my IRS penalty is waived for late filings?",
-        a: "No service can guarantee an IRS outcome. Priority maximizes the strength of your DIIRSP submission — proper documentation, accountant-reviewed reasonable cause statement, fast filing — but the IRS makes the final decision. Most well-documented first-time late filings are accepted.",
+        q: "Can you guarantee the IRS waives the penalty on my late filing?",
+        a: "No service can guarantee an IRS outcome. What we can do is make the DIIRSP submission as strong as possible — complete forms, documented transactions, an accountant-reviewed reasonable cause statement, and dated proof of delivery. Most well-documented first-time late filings are accepted, but the decision is the IRS's.",
       },
       {
-        q: "I have 5+ missed years — can Priority handle that?",
-        a: "Yes. Multi-year catch-up beyond 3 years requires coordination across multiple DIIRSP filings, which is exactly the kind of case Priority is built for. Message us at support@form5472prep.com with PRIORITY in the subject to scope the work.",
+        q: "I have 5+ missed years — can you handle that?",
+        a: "Yes. The wizard covers up to three years directly; beyond that we coordinate the extra DIIRSP years with you by email. Write to support@form5472prep.com with your entity details and the years involved and we'll scope it before you pay. Pricing follows the same rule: $199 for the first year, +$149 per additional past year.",
       },
       {
-        q: "Can my CPA or tax attorney work with the assigned accountant?",
-        a: "Yes. Direct accountant access on Priority is designed to support collaboration with your existing tax professionals.",
+        q: "Can my CPA or tax attorney work with your accountant?",
+        a: "Yes. A good share of filings come from advisors acting for a foreign client. Email support@form5472prep.com and we'll include your advisor in the correspondence on the filing.",
       },
       {
-        q: "Same-day fax delivery — what's the cutoff?",
-        a: "Orders signed by 4:00 PM Eastern fax the same business day. After 4pm ET, the fax goes out the next business morning. Weekends fax Monday morning.",
+        q: "Do I sign, or does your accountant sign?",
+        a: "You sign — the signature must come from you as the LLC owner. The portal's canvas signature is embedded into the required signature boxes. Our accountant reviews and signs off internally on the package before we fax it.",
       },
       {
-        q: "Do I still sign in the portal, or does the accountant sign?",
-        a: "You sign — the signature must come from you as the LLC owner. The portal's canvas signature is embedded into the required signature boxes. The accountant reviews and signs off internally on the package before fax.",
+        q: "Why fax instead of e-filing?",
+        a: "Foreign-owned US disregarded entities can't e-file Form 5472 or the attached pro forma Form 1120 — the IRS only accepts them by mail or fax to the Ogden PIN Unit. Fax is faster than mail and produces a timestamped transmission receipt, which is the cleanest evidence of when you filed.",
       },
       {
-        q: "What if I want to talk to the accountant before paying?",
-        a: "Email support@form5472prep.com with PRIORITY in the subject. A Priority response goes out the same business day. Once you start a filing, the in-portal chat connects you to the team.",
+        q: "What if I want to ask a question before paying?",
+        a: "Email support@form5472prep.com and describe your situation. Once you start a filing, the in-portal chat connects you to the team, and email support is included on every filing.",
       },
       {
         q: "Money-back guarantee — what does it cover?",

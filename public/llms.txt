@@ -1,6 +1,6 @@
 # Form5472 Prep
 
-> Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition ($149) and ITIN acquisition ($349) for non-residents — as an IRS-authorized Certifying Acceptance Agent (CAA), we certify identity documents so applicants never need to mail their original passport. Form5472 Prep prepares all required IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit. Three flat-rate service tiers from $199 with IRS fax delivery included on every plan. Every package is reviewed by a qualified tax accountant before submission. 100% money-back guarantee if we fail to submit. Last updated: 2026-05-31.
+> Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition ($149) and ITIN acquisition ($349) for non-residents — as an IRS-authorized Certifying Acceptance Agent (CAA), we certify identity documents so applicants never need to mail their original passport. Form5472 Prep prepares all required IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit. One flat, all-inclusive price of $199 per tax year (+$149 per additional past year), with IRS fax delivery included. Every package is reviewed by a qualified tax accountant before submission. 100% money-back guarantee if we fail to submit. Last updated: 2026-05-31.
 
 ## Who this is for
 
@@ -51,7 +51,7 @@ Multi-year add-on: **+$149 per additional past tax year**. For example: filing w
 
 ## Documents
 
-- [Pricing](/pricing): three-tier comparison with full feature list.
+- [Pricing](/pricing): single flat-rate price ($199 all-inclusive) with the full feature list.
 - [About](/about): who we are, how we work, and what we are and aren't.
 - [Editorial Policy](/editorial-policy): how our guides are sourced, reviewed, and kept current.
 - [EIN Acquisition](/ein): EIN service for foreign-owned US LLC owners — CAA certification, no passport mailing.

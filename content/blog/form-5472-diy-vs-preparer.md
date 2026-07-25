@@ -101,7 +101,7 @@ Prices across the market vary significantly based on who's doing the work and wh
 | Traditional CPA / accounting firm | $300–$700 per year | Rarely | Sometimes, for extra fee |
 | Online compliance services (doola, entity.inc, etc.) | $225–$400 per year | Varies | Limited |
 | Freelancers (Fiverr, Upwork) | $25–$100 | No | No |
-| Form5472 Prep | $199 per year (Standard) | Yes | Yes — full DIIRSP packages available |
+| Form5472 Prep | $199 per year, all-inclusive | Yes | Yes — full DIIRSP packages available |
 | DIY | $0 | No (you pay separately) | Possible |
 
 A few notes on these numbers:
