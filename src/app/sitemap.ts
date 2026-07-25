@@ -3,6 +3,10 @@ import { env } from "@/lib/env";
 import { getAllPosts } from "@/lib/blog";
 import { LANDING_PAGES } from "@/lib/landing-pages";
 
+// ISR: the post list comes partly from the database, so the sitemap has to
+// refresh between deploys as admins publish.
+export const revalidate = 60;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = env.appUrl;
   const now = new Date();
@@ -28,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getAllPosts();
   const postUrls: MetadataRoute.Sitemap = posts.map((p) => ({
     url: `${base}/blog/${p.slug}`,
-    lastModified: new Date(p.date),
+    lastModified: new Date(p.updated ?? p.publishAt ?? p.date),
     changeFrequency: "yearly",
     priority: 0.6,
   }));

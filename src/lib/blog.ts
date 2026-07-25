@@ -2,13 +2,18 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
 import readingTime from "reading-time";
+import type { Post as PostRow } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
-// File-based blog. Drop a .md file in /content/blog/ with frontmatter:
+// Hybrid blog: markdown files on disk + a Postgres `Post` table.
+//
+// Files — drop a .md file in /content/blog/ with frontmatter:
 //
 //   ---
 //   title: "Your post title"
 //   description: "1–2 sentence summary used as meta description + index card"
 //   date: 2026-05-19
+//   publishAt: "2026-05-19T09:00:00-04:00"
 //   author: "form5472 team"
 //   tags: ["form-5472", "diirsp"]
 //   draft: false
@@ -18,6 +23,13 @@ import readingTime from "reading-time";
 //   Markdown body here.
 //
 // File name (without .md) becomes the URL slug.
+//
+// Database — everything published from /admin/posts lands in the `Post` table,
+// because Vercel's runtime filesystem is read-only (writing a .md there throws
+// EROFS). For any given slug a non-deleted DB row WINS over the file, and a row
+// with `deleted: true` is a tombstone that hides the file. The reads below fall
+// back to files-only if the database is unreachable, so a DB blip can never
+// take the public blog down.
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 
@@ -25,6 +37,9 @@ export type PostFrontmatter = {
   title: string;
   description: string;
   date: string;
+  // Optional ISO-8601 instant used for timed publishing. `date` remains the
+  // human-facing publication date.
+  publishAt?: string;
   // Optional last-updated date (YYYY-MM-DD). Feeds Article `dateModified` and a
   // visible "Last updated" line — bump it whenever a post is refreshed. Falls
   // back to `date` when absent.
@@ -68,8 +83,9 @@ async function readFile(slug: string): Promise<Post | null> {
   // gray-matter parses an unquoted YAML `date:` into a JS Date, not a string —
   // so type that one field as `unknown` and normalise it below. The rest of the
   // frontmatter keeps its declared string/array types for the checks here.
-  const fm = parsed.data as Partial<Omit<PostFrontmatter, "date" | "updated">> & {
+  const fm = parsed.data as Partial<Omit<PostFrontmatter, "date" | "publishAt" | "updated">> & {
     date?: unknown;
+    publishAt?: unknown;
     updated?: unknown;
   };
   if (!fm.title || !fm.date || !fm.description) {
@@ -83,6 +99,11 @@ async function readFile(slug: string): Promise<Post | null> {
     title: fm.title,
     description: fm.description,
     date: normDate(fm.date),
+    publishAt: fm.publishAt
+      ? fm.publishAt instanceof Date
+        ? fm.publishAt.toISOString()
+        : String(fm.publishAt)
+      : undefined,
     updated: fm.updated ? normDate(fm.updated) : undefined,
     author: fm.author,
     tags: fm.tags ?? [],
@@ -105,30 +126,119 @@ const ARTWORK_ALTS: Record<string, string> = {
   "form-5472-india-residents-us-llc": "India-based owner paperwork connected to a U.S. LLC filing",
   "form-5472-uk-residents-us-llc": "UK and U.S. business documents arranged for a Form 5472 filing",
   "what-is-form-5472": "A Form 5472 document linking a U.S. company with its foreign owner",
+  "form-5472-reportable-transactions-examples": "A foreign-owned LLC ledger separating related-party transactions from ordinary business activity",
+  "stripe-paypal-wise-form-5472": "Payment cards, a phone, and a transaction ledger representing Stripe, PayPal, and Wise activity",
+  "form-5472-saas-founders": "A SaaS founder reviewing U.S. LLC tax records beside a laptop with an analytics dashboard",
+  "first-year-form-5472-new-llc": "A newly formed U.S. LLC filing folder with a calendar and startup records",
+  "form-5472-owner-loans-contributions-reimbursements": "Owner funding and reimbursement records organized around a U.S. LLC ledger",
+  "itin-required-form-5472": "Foreign owner identification documents beside Form 5472 and an EIN confirmation",
+  "form-5472-recordkeeping-checklist": "An organized Form 5472 recordkeeping system with statements, receipts, and a checklist",
+  "form-5472-ftin-reference-id-foreign-address": "Foreign tax identification and address details being entered into U.S. filing paperwork",
+  "multiple-related-parties-form-5472": "Multiple related-party folders connected to one U.S. reporting entity",
+  "final-form-5472-closing-foreign-owned-llc": "A final Form 5472 file beside LLC closure documents and a completed calendar",
 };
 
 function artworkAlt(slug: string, title: string): string {
   return ARTWORK_ALTS[slug] ?? `Editorial illustration for ${title}`;
 }
 
+// ---- Database-backed posts ----
+
+// Shape a DB row like a file-backed post. Derived fields (readingMinutes,
+// image, imageAlt) go through the exact same helpers `readFile` uses so a
+// DB post and a file post are indistinguishable downstream.
+function fromRow(row: PostRow): Post {
+  return {
+    slug: row.slug,
+    title: row.title,
+    description: row.description,
+    date: row.date,
+    publishAt: row.publishAt ?? undefined,
+    updated: row.updated ?? undefined,
+    author: row.author ?? undefined,
+    tags: row.tags,
+    draft: row.draft,
+    readingMinutes: Math.max(1, Math.round(readingTime(row.body).minutes)),
+    image: `/blog/${row.slug}.webp`,
+    imageAlt: artworkAlt(row.slug, row.title),
+    body: row.body,
+  };
+}
+
+// Every DB row, tombstones included — callers need the `deleted` flag to know
+// which file-backed slugs to hide. Returns null (not []) when the database is
+// unreachable, so callers can tell "no rows" apart from "no database" and
+// degrade to files only instead of silently dropping published posts.
+async function listRows(): Promise<PostRow[] | null> {
+  try {
+    return await prisma.post.findMany();
+  } catch (err) {
+    console.error("[blog] database unavailable, falling back to files only:", err);
+    return null;
+  }
+}
+
+async function readRow(slug: string): Promise<PostRow | null | undefined> {
+  try {
+    return await prisma.post.findUnique({ where: { slug } });
+  } catch (err) {
+    console.error(`[blog] database unavailable reading "${slug}", falling back to file:`, err);
+    // `undefined` = couldn't ask; `null` = asked, no such row.
+    return undefined;
+  }
+}
+
 export async function getAllPosts(opts?: { includeDrafts?: boolean }): Promise<PostMeta[]> {
   const files = await listFiles();
-  const posts = await Promise.all(
-    files.map(async (f) => {
-      const slug = f.replace(/\.md$/, "");
-      return readFile(slug);
-    }),
-  );
-  return posts
-    .filter((p): p is Post => p !== null)
-    .filter((p) => opts?.includeDrafts || !p.draft)
+  const [filePosts, rows] = await Promise.all([
+    Promise.all(files.map((f) => readFile(f.replace(/\.md$/, "")))),
+    listRows(),
+  ]);
+
+  // Files first, then let the DB overwrite (published) or remove (tombstoned)
+  // matching slugs. A Map keyed by slug gives the dedupe for free.
+  const bySlug = new Map<string, Post>();
+  for (const post of filePosts) {
+    if (post) bySlug.set(post.slug, post);
+  }
+  for (const row of rows ?? []) {
+    if (row.deleted) bySlug.delete(row.slug);
+    else bySlug.set(row.slug, fromRow(row));
+  }
+
+  return Array.from(bySlug.values())
+    .filter((p) => opts?.includeDrafts || isPubliclyAvailable(p))
     .map(({ body: _body, ...meta }) => meta)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .sort(
+      (a, b) =>
+        new Date(b.publishAt ?? b.date).getTime() -
+        new Date(a.publishAt ?? a.date).getTime(),
+    );
+}
+
+export function isPubliclyAvailable(
+  post: Pick<PostFrontmatter, "draft" | "publishAt">,
+  now = new Date(),
+): boolean {
+  if (post.draft) return false;
+  if (!post.publishAt) return true;
+  const release = new Date(post.publishAt).getTime();
+  return Number.isFinite(release) && release <= now.getTime();
+}
+
+// Merged single-post read: DB row wins, tombstone hides the file, and an
+// unreachable database falls through to the file.
+async function readMerged(slug: string): Promise<Post | null> {
+  const row = await readRow(slug);
+  if (row === undefined) return readFile(slug); // DB down — file is all we have
+  if (row === null) return readFile(slug); // no DB row — file-backed or missing
+  if (row.deleted) return null; // tombstoned: the .md file is shadowed
+  return fromRow(row);
 }
 
 export async function getPost(slug: string): Promise<Post | null> {
-  const post = await readFile(slug);
-  if (!post || post.draft) return null;
+  const post = await readMerged(slug);
+  if (!post || !isPubliclyAvailable(post)) return null;
   return post;
 }
 
@@ -213,9 +323,30 @@ export function slugify(input: string): string {
 }
 
 export async function getPostIncludingDraft(slug: string): Promise<Post | null> {
-  return readFile(slug);
+  return readMerged(slug);
 }
 
+// Does content/blog/<slug>.md exist in this deployment? Decides whether a
+// delete needs a tombstone row (file present, can't be unlinked at runtime) or
+// can just drop the DB row outright.
+async function fileExists(slug: string): Promise<boolean> {
+  try {
+    await fs.access(path.join(BLOG_DIR, `${slug}.md`));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Frontmatter dates arrive as either "2026-05-19" or a full ISO timestamp;
+// store the YYYY-MM-DD form so DB and file posts sort and render identically.
+function normDateString(v: string): string {
+  return String(v).slice(0, 10);
+}
+
+// Publishes to the database, never to disk — the runtime filesystem is
+// read-only on Vercel. Upsert by slug, and clear any tombstone so re-creating
+// a previously deleted slug works.
 export async function writePost(
   slug: string,
   fm: PostFrontmatter,
@@ -225,40 +356,70 @@ export async function writePost(
   if (!fm.title || !fm.description || !fm.date) {
     throw new Error("title, description, and date are required");
   }
-  await fs.mkdir(BLOG_DIR, { recursive: true });
-  const dateString = String(fm.date).slice(0, 10);
-  const frontmatter = [
-    "---",
-    `title: ${JSON.stringify(fm.title)}`,
-    `description: ${JSON.stringify(fm.description)}`,
-    `date: ${dateString}`,
-    fm.author ? `author: ${JSON.stringify(fm.author)}` : null,
-    fm.tags && fm.tags.length > 0
-      ? `tags: [${fm.tags.map((t) => JSON.stringify(t)).join(", ")}]`
-      : null,
-    `draft: ${fm.draft ? "true" : "false"}`,
-    "---",
-    "",
-    body.trim(),
-    "",
-  ]
-    .filter((l) => l !== null)
-    .join("\n");
-  const filePath = path.join(BLOG_DIR, `${slug}.md`);
-  await fs.writeFile(filePath, frontmatter, "utf8");
+  const data = {
+    title: fm.title,
+    description: fm.description,
+    date: normDateString(fm.date),
+    publishAt: fm.publishAt || null,
+    updated: fm.updated ? normDateString(fm.updated) : null,
+    author: fm.author || null,
+    tags: fm.tags ?? [],
+    draft: !!fm.draft,
+    body: body.trim(),
+    deleted: false,
+  };
+  await prisma.post.upsert({
+    where: { slug },
+    create: { slug, ...data },
+    update: data,
+  });
 }
 
 export async function deletePost(slug: string): Promise<void> {
   assertValidSlug(slug);
-  const filePath = path.join(BLOG_DIR, `${slug}.md`);
-  await fs.unlink(filePath);
+  if (await fileExists(slug)) {
+    // The .md file ships with the deployment and can't be removed at runtime,
+    // so shadow it with a tombstone row instead.
+    const tombstone = await readFile(slug);
+    await prisma.post.upsert({
+      where: { slug },
+      create: {
+        slug,
+        title: tombstone?.title ?? slug,
+        description: tombstone?.description ?? "",
+        date: tombstone?.date ?? new Date().toISOString().slice(0, 10),
+        body: tombstone?.body ?? "",
+        deleted: true,
+      },
+      update: { deleted: true },
+    });
+    return;
+  }
+  // DB-only post: nothing on disk to shadow, so drop the row.
+  await prisma.post.delete({ where: { slug } });
 }
 
 export async function renamePost(oldSlug: string, newSlug: string): Promise<void> {
   assertValidSlug(oldSlug);
   assertValidSlug(newSlug);
   if (oldSlug === newSlug) return;
-  const from = path.join(BLOG_DIR, `${oldSlug}.md`);
-  const to = path.join(BLOG_DIR, `${newSlug}.md`);
-  await fs.rename(from, to);
+  const current = await readMerged(oldSlug);
+  if (!current) throw new Error(`Post "${oldSlug}" not found`);
+  // Copy the merged content to the new slug, then retire the old one — a real
+  // filesystem move isn't available (and wouldn't reach the DB row anyway).
+  await writePost(
+    newSlug,
+    {
+      title: current.title,
+      description: current.description,
+      date: current.date,
+      publishAt: current.publishAt,
+      updated: current.updated,
+      author: current.author,
+      tags: current.tags ?? [],
+      draft: current.draft,
+    },
+    current.body,
+  );
+  await deletePost(oldSlug);
 }

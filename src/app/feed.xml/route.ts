@@ -20,7 +20,9 @@ function esc(s: string): string {
 export async function GET() {
   const base = env.appUrl;
   const posts = await getAllPosts();
-  const latest = posts[0]?.date ? new Date(posts[0].date) : new Date(0);
+  const latest = posts[0]
+    ? new Date(posts[0].publishAt ?? posts[0].date)
+    : new Date(0);
 
   const items = posts
     .map((p) => {
@@ -29,7 +31,7 @@ export async function GET() {
       <title>${esc(p.title)}</title>
       <link>${url}</link>
       <guid isPermaLink="true">${url}</guid>
-      <pubDate>${new Date(p.date).toUTCString()}</pubDate>
+      <pubDate>${new Date(p.publishAt ?? p.date).toUTCString()}</pubDate>
       <description>${esc(p.description)}</description>
 ${(p.tags ?? []).map((t) => `      <category>${esc(t)}</category>`).join("\n")}
     </item>`;

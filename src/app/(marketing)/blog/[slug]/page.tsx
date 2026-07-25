@@ -16,6 +16,12 @@ import { JsonLd } from "@/components/JsonLd";
 import { getAllPosts, getPost, formatPostDate, extractFaqs, type PostMeta } from "@/lib/blog";
 import { env } from "@/lib/env";
 
+// ISR: prerender the slugs known at build time, but `dynamicParams` lets a post
+// published from /admin (DB-only, so absent from the build) render on first
+// request instead of 404ing until the next deploy.
+export const dynamicParams = true;
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const posts = await getAllPosts();
   return posts.map((post) => ({ slug: post.slug }));
@@ -35,7 +41,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       description: post.description,
       url,
       type: "article",
-      publishedTime: new Date(post.date).toISOString(),
+      publishedTime: new Date(post.publishAt ?? post.date).toISOString(),
       authors: post.author ? [post.author] : undefined,
       tags: post.tags,
       images: [{ url: image, width: 1280, height: 720, alt: post.imageAlt }],
@@ -62,7 +68,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     headline: post.title,
     description: post.description,
     image: `${env.appUrl}${post.image}`,
-    datePublished: new Date(post.date).toISOString(),
+    datePublished: new Date(post.publishAt ?? post.date).toISOString(),
     dateModified: new Date(post.updated ?? post.date).toISOString(),
     author: { "@type": "Organization", name: post.author ?? "Form5472 Prep" },
     publisher: {
