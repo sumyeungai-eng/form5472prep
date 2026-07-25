@@ -44,13 +44,19 @@ export default async function AdminFilingsPage({
 
   // Quick stats: last 30 days
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  const [statsPaid, statsConfirmed, statsFailed, statsRevenue] = await Promise.all([
+  const [statsPaid, statsConfirmed, statsFailed, statsRevenue, statsUnfinished] = await Promise.all([
     prisma.filing.count({ where: { status: "PAID", updatedAt: { gte: since } } }),
     prisma.filing.count({ where: { status: "CONFIRMED", updatedAt: { gte: since } } }),
     prisma.filing.count({ where: { status: "FAILED", updatedAt: { gte: since } } }),
     prisma.filing.aggregate({
       where: { status: { in: ["PAID", "PDF_GENERATED", "SIGNATURE_PENDING", "SIGNED_UPLOADED", "FAXED", "CONFIRMED"] }, updatedAt: { gte: since } },
       _sum: { amountPaid: true },
+    }),
+    // Unfinished = abandoned wizard drafts that got far enough to leave an
+    // email. Drafts without a user are anonymous bounces (every /start visit
+    // creates one), so counting those would drown the real recovery pipeline.
+    prisma.filing.count({
+      where: { status: "DRAFT", userId: { not: null }, updatedAt: { gte: since } },
     }),
   ]);
 
@@ -64,10 +70,15 @@ export default async function AdminFilingsPage({
       </div>
 
       {/* Quick stats — last 30 days */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
         <StatCard label="Paid (30d)" value={statsPaid.toString()} />
         <StatCard label="Delivered" value={statsConfirmed.toString()} />
         <StatCard label="Failed" value={statsFailed.toString()} tone={statsFailed > 0 ? "danger" : "default"} />
+        <StatCard
+          label="Unfinished (30d)"
+          value={statsUnfinished.toString()}
+          href="/admin/filings?status=DRAFT"
+        />
         <StatCard label="Revenue (30d)" value={formatUsd(statsRevenue._sum.amountPaid ?? 0)} />
       </div>
 
@@ -166,14 +177,36 @@ const STATUS_VALUES = [
   "FAILED",
 ];
 
-function StatCard({ label, value, tone = "default" }: { label: string; value: string; tone?: "default" | "danger" }) {
+function StatCard({
+  label,
+  value,
+  tone = "default",
+  href,
+}: {
+  label: string;
+  value: string;
+  tone?: "default" | "danger";
+  href?: string;
+}) {
   const valueColor = tone === "danger" ? "text-red-600" : "text-slate-900";
-  return (
-    <div className="bg-white border border-slate-200 rounded-lg p-4">
+  const body = (
+    <>
       <div className="text-xs uppercase tracking-wider text-slate-500 font-medium">{label}</div>
       <div className={`mt-1 text-2xl font-semibold tabular-nums ${valueColor}`}>{value}</div>
-    </div>
+    </>
   );
+  // Linked variant drills into the matching filtered list.
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className="block bg-white border border-slate-200 rounded-lg p-4 transition-colors hover:border-slate-400 hover:bg-slate-50"
+      >
+        {body}
+      </Link>
+    );
+  }
+  return <div className="bg-white border border-slate-200 rounded-lg p-4">{body}</div>;
 }
 
 function formatRelative(d: Date): string {
