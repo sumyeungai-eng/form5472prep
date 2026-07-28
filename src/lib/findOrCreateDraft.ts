@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_TIER, totalPriceCents, type Tier } from "@/lib/pricing";
+import type { Attribution } from "@/lib/attribution";
 import type { Filing, FilingStatus } from "@prisma/client";
 
 const PAID_STATUSES = [
@@ -28,6 +29,9 @@ type FindOrCreateArgs = {
   funnelSource?: string | null;
   marketingConsent?: boolean;
   prefill?: Partial<Filing>;
+  // First-touch traffic attribution read from the `f5472_attr` cookie by the
+  // caller (see lib/attribution.ts). Only ever written on CREATE — see below.
+  attribution?: Partial<Attribution> | null;
 };
 
 // Returns an existing untouched DRAFT belonging to this session or user,
@@ -46,6 +50,7 @@ export async function findOrCreateDraftFiling(args: FindOrCreateArgs): Promise<{
     funnelSource = null,
     marketingConsent = false,
     prefill = {},
+    attribution = null,
   } = args;
 
   const existing = await prisma.filing.findFirst({
@@ -60,6 +65,10 @@ export async function findOrCreateDraftFiling(args: FindOrCreateArgs): Promise<{
     orderBy: { createdAt: "desc" },
   });
   if (existing && isUntouchedDraft(existing)) {
+    // Deliberately NOT touching the attr* columns here. The row already carries
+    // the attribution captured when it was created; a reused draft means the
+    // visitor came back (often through a different channel), and re-stamping it
+    // would turn first-touch into last-touch and mis-credit the acquisition.
     return { filing: existing, reused: true };
   }
 
@@ -76,6 +85,14 @@ export async function findOrCreateDraftFiling(args: FindOrCreateArgs): Promise<{
       taxYears: [],
       funnelSource,
       marketingConsent,
+      // Where the visitor came FROM (channel), as opposed to funnelSource,
+      // which records which landing PAGE they entered through. Nulls are fine:
+      // attribution is best-effort and must never block filing creation.
+      attrSource: attribution?.source ?? null,
+      attrMedium: attribution?.medium ?? null,
+      attrCampaign: attribution?.campaign ?? null,
+      attrReferrer: attribution?.referrer ?? null,
+      attrLanding: attribution?.landing ?? null,
       // Cast: prefill is `Partial<Filing>` which includes nullable Json
       // fields that Prisma's CreateInput refuses literally (needs Prisma.JsonNull).
       // At runtime our prefill only ever contains scalar entity/owner fields,

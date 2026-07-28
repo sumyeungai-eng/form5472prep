@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { FilingStatus } from "@prisma/client";
 import { getOrCreateSessionId, getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_TIER, isTier, type Tier } from "@/lib/pricing";
 import { findOrCreateDraftFiling } from "@/lib/findOrCreateDraft";
+import { ATTR_COOKIE, parseAttributionCookie } from "@/lib/attribution";
 
 // Statuses that mean "this customer actually filed before" — we only copy
 // data forward from real submitted filings, not other abandoned drafts.
@@ -36,6 +38,11 @@ export async function POST(req: Request) {
   // before the customer reaches /start. Default to Standard if the param is
   // missing or unrecognised so we never crash on an empty body.
   const tier: Tier = isTier(requestedTier) ? requestedTier : DEFAULT_TIER;
+
+  // First-touch traffic attribution, captured into an httpOnly cookie by the
+  // middleware on the visitor's first page view. Read-only here and never
+  // fatal: a malformed cookie parses to all-nulls rather than throwing.
+  const attribution = parseAttributionCookie(cookies().get(ATTR_COOKIE)?.value);
 
   // For returning customers, copy LLC + owner details from their most recent
   // paid filing so they don't re-type EIN, address, owner FTIN, etc. Year-
@@ -81,6 +88,7 @@ export async function POST(req: Request) {
     tier,
     funnelSource,
     marketingConsent,
+    attribution,
     prefill: Object.keys(prefill).length > 0 ? (prefill as never) : undefined,
   });
 

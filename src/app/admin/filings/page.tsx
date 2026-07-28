@@ -5,10 +5,11 @@ import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { formatUsd } from "@/lib/utils";
 import { StatusBadge } from "./StatusBadge";
+import { DraftActions } from "./DraftActions";
 
 export const dynamic = "force-dynamic";
 
-type SearchParams = { status?: string; q?: string };
+type SearchParams = { status?: string; q?: string; hidden?: string };
 
 export default async function AdminFilingsPage({
   searchParams,
@@ -19,12 +20,18 @@ export default async function AdminFilingsPage({
 
   const statusFilter = searchParams.status?.toUpperCase();
   const q = (searchParams.q ?? "").trim();
+  // hidden=1 flips the list into the archive view: ONLY drafts the admin
+  // dismissed. Any other value means the normal list, which must never show
+  // them — dismissing a draft is meant to make it disappear.
+  const showHidden = searchParams.hidden === "1";
 
-  const where: Record<string, unknown> = {};
+  const where: Record<string, unknown> = { adminHidden: showHidden };
   if (statusFilter && STATUS_VALUES.includes(statusFilter)) {
     where.status = statusFilter;
-  } else {
+  } else if (!showHidden) {
     // Default: hide DRAFT filings (mostly abandoned wizard sessions).
+    // Skipped in the archive view — archived rows are always DRAFT (the API
+    // refuses to hide anything else), so "except draft" would empty it out.
     where.status = { not: "DRAFT" };
   }
   if (q) {
@@ -55,10 +62,26 @@ export default async function AdminFilingsPage({
     // Unfinished = abandoned wizard drafts that got far enough to leave an
     // email. Drafts without a user are anonymous bounces (every /start visit
     // creates one), so counting those would drown the real recovery pipeline.
+    // adminHidden rows are excluded too: the admin already triaged them, and a
+    // count that keeps them alive would never fall to zero.
     prisma.filing.count({
-      where: { status: "DRAFT", userId: { not: null }, updatedAt: { gte: since } },
+      where: {
+        status: "DRAFT",
+        userId: { not: null },
+        adminHidden: false,
+        updatedAt: { gte: since },
+      },
     }),
   ]);
+
+  // "Show hidden" / "Hide archived" toggle, keeping the current status+search
+  // filters so the archive view isn't a context reset.
+  const toggleQuery = new URLSearchParams();
+  if (statusFilter) toggleQuery.set("status", statusFilter);
+  if (q) toggleQuery.set("q", q);
+  if (!showHidden) toggleQuery.set("hidden", "1");
+  const toggleQs = toggleQuery.toString();
+  const toggleHref = toggleQs ? `/admin/filings?${toggleQs}` : "/admin/filings";
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
@@ -83,7 +106,9 @@ export default async function AdminFilingsPage({
       </div>
 
       {/* Filters */}
-      <form className="mb-4 flex flex-col sm:flex-row gap-2" method="get">
+      <form className="mb-2 flex flex-col sm:flex-row gap-2" method="get">
+        {/* Keep the archive view sticky when re-filtering from inside it. */}
+        {showHidden && <input type="hidden" name="hidden" value="1" />}
         <input
           type="text"
           name="q"
@@ -109,6 +134,12 @@ export default async function AdminFilingsPage({
         </button>
       </form>
 
+      <div className="mb-4 text-xs">
+        <Link href={toggleHref} className="text-slate-500 hover:text-slate-900 hover:underline">
+          {showHidden ? "← Hide archived" : "Show hidden"}
+        </Link>
+      </div>
+
       {filings.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-lg p-12 text-center">
           <Inbox className="mx-auto h-10 w-10 text-slate-300" />
@@ -125,6 +156,7 @@ export default async function AdminFilingsPage({
                 <th className="text-left font-semibold px-4 py-3">Status</th>
                 <th className="text-right font-semibold px-4 py-3">Paid</th>
                 <th className="text-left font-semibold px-4 py-3">Updated</th>
+                <th className="text-right font-semibold px-4 py-3"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -149,6 +181,12 @@ export default async function AdminFilingsPage({
                   </td>
                   <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">
                     {formatRelative(f.updatedAt)}
+                  </td>
+                  <td className="px-4 py-3 text-right align-top">
+                    {/* Drafts only — paid/faxed filings are never disposable. */}
+                    {f.status === "DRAFT" && (
+                      <DraftActions filingId={f.id} hidden={f.adminHidden} />
+                    )}
                   </td>
                 </tr>
               ))}

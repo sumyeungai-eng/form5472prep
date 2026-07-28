@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { ChevronLeft, Mail, ExternalLink } from "lucide-react";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
+import { formatAttribution, hasAttribution } from "@/lib/attribution";
 import { formatUsd } from "@/lib/utils";
 import { publicUrl } from "@/lib/storage";
 import { StatusBadge } from "../StatusBadge";
@@ -28,6 +29,18 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
   const generatedPdfUrl = filing.generatedPdfKey ? await publicUrl(filing.generatedPdfKey) : null;
   const signedPdfUrl = filing.signedPdfKey ? await publicUrl(filing.signedPdfKey) : null;
   const faxedPdfUrl = filing.faxedPdfKey ? await publicUrl(filing.faxedPdfKey) : null;
+
+  // First-touch traffic attribution (captured in middleware, stamped on the
+  // draft at creation). Filings created before this shipped have all-null
+  // columns, so formatAttribution() renders an explicit "unknown" instead.
+  const attribution = {
+    source: filing.attrSource,
+    medium: filing.attrMedium,
+    campaign: filing.attrCampaign,
+    referrer: filing.attrReferrer,
+    landing: filing.attrLanding,
+  };
+  const attributionKnown = hasAttribution(attribution);
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
@@ -180,6 +193,24 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           <Field label="Fax status" value={filing.faxStatus} />
         </DetailCard>
 
+        {/* Where this customer came from. attrSource & co. are FIRST-TOUCH:
+            the channel of the visitor's first ever page view, not the last
+            one before checkout — that's the number that tells us which ad
+            spend actually produced the order. funnelSource is a different
+            axis (which landing page they entered through). */}
+        <div className="md:col-span-2">
+          <DetailCard title="Traffic source">
+            <Field
+              label="Channel"
+              value={formatAttribution(attribution)}
+              muted={!attributionKnown}
+            />
+            <Field label="Landing page" value={filing.attrLanding} mono />
+            <Field label="Referring site" value={filing.attrReferrer} />
+            <Field label="Landing funnel (?src=)" value={filing.funnelSource} mono />
+          </DetailCard>
+        </div>
+
         {/* Files — span both columns */}
         <div className="md:col-span-2">
           <DetailCard title="Files">
@@ -242,17 +273,21 @@ function Field({
   value,
   mono = false,
   multiline = false,
+  // `muted` renders a real value in the placeholder grey — used for the
+  // "we don't know" attribution summary, which is text rather than a dash.
+  muted = false,
 }: {
   label: string;
   value: string | null | undefined;
   mono?: boolean;
   multiline?: boolean;
+  muted?: boolean;
 }) {
   const display = value && value.trim().length > 0 ? value : null;
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-0.5 sm:gap-3 text-sm">
       <dt className="text-slate-500 text-xs uppercase tracking-wider sm:text-sm sm:normal-case sm:tracking-normal">{label}</dt>
-      <dd className={`sm:col-span-2 ${mono ? "font-mono text-xs" : ""} ${multiline ? "whitespace-pre-line" : ""} text-slate-900 break-words`}>
+      <dd className={`sm:col-span-2 ${mono ? "font-mono text-xs" : ""} ${multiline ? "whitespace-pre-line" : ""} ${muted ? "text-slate-400" : "text-slate-900"} break-words`}>
         {display ?? <span className="text-slate-400">—</span>}
       </dd>
     </div>

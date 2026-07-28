@@ -182,6 +182,29 @@ model Filing {
   // "file_funnel" = the /file qualifying funnel.
   funnelSource String?
 
+  // FIRST-TOUCH traffic attribution, captured on the visitor's very first
+  // request and never overwritten afterwards. funnelSource (above) records
+  // which landing PAGE they entered through; these record where the traffic
+  // came FROM, so an order can be credited to Google Ads / Meta Ads / a
+  // referring site / organic search.
+  //   attrSource   = normalised channel ("google-ads", "meta-ads",
+  //                  "google-organic", "referral", "direct", or raw utm_source)
+  //   attrMedium   = utm_medium (cpc, organic, referral, email, ...)
+  //   attrCampaign = utm_campaign
+  //   attrReferrer = referring host (never a full URL with query, to avoid
+  //                  storing third-party tracking params)
+  //   attrLanding  = first landing pathname
+  attrSource   String?
+  attrMedium   String?
+  attrCampaign String?
+  attrReferrer String?
+  attrLanding  String?
+
+  // Admin-archived draft: hidden from the admin filings list and the
+  // "Unfinished" count without destroying the row. Reversible (unhide), and
+  // only ever set on DRAFT filings — paid filings are never hidden.
+  adminHidden Boolean @default(false)
+
   // Visitor explicitly allowed marketing measurement before this draft was
   // created. Gates Meta Conversions API events; tax and bank data are never
   // included in those events.

@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { OAuth2Client } from "google-auth-library";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateSessionId, setUserCookie } from "@/lib/session";
 import { findOrCreateDraftFiling } from "@/lib/findOrCreateDraft";
+import { ATTR_COOKIE, parseAttributionCookie } from "@/lib/attribution";
 
 export const runtime = "nodejs";
 
@@ -82,12 +84,17 @@ export async function POST(req: Request) {
   });
   if (!filing && intent === "start") {
     const sessionId = getOrCreateSessionId();
+    // First-touch channel from the `f5472_attr` cookie (set by middleware on
+    // the visitor's first page view). Parsing never throws — a malformed
+    // cookie yields all-nulls so sign-in can't break on bad attribution.
+    const attribution = parseAttributionCookie(cookies().get(ATTR_COOKIE)?.value);
     const created = await findOrCreateDraftFiling({
       sessionId,
       userId: user.id,
       funnelSource,
       tier: tier ?? undefined,
       marketingConsent,
+      attribution,
     });
     filing = created.filing;
   }
