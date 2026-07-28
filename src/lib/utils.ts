@@ -14,7 +14,7 @@ export function formatUsd(cents: number): string {
 }
 
 // Marketing-facing price: drops the ".00" on whole-dollar amounts so a flat fee
-// reads as "$199" (a brand price), not "$199.00" (an invoice line). Falls back
+// reads as "$99" (a brand price), not "$99.00" (an invoice line). Falls back
 // to cents for any non-whole amount. Use on public pages; keep formatUsd for
 // admin/dashboard/wizard/email where exact cents matter.
 export function formatPrice(cents: number): string {

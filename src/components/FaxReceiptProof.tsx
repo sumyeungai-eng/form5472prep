@@ -73,9 +73,9 @@ export function FaxReceiptProof() {
           </ul>
         </div>
 
-        {/* Differentiator — directly answers "why pay $199 over $49" */}
+        {/* Differentiator — directly answers "why pay $99 over $49" */}
         <div className="mx-auto mt-14 max-w-3xl rounded-2xl border border-emerald-200 bg-emerald-50/70 px-6 py-5 text-center text-sm text-emerald-900">
-          <strong className="font-semibold">Every plan includes this receipt.</strong>{" "}
+          <strong className="font-semibold">Every filing includes this receipt.</strong>{" "}
           DIY form generators can&apos;t issue one — they never actually transmit to the IRS.
         </div>
       </div>

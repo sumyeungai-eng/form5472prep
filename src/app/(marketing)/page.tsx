@@ -30,15 +30,15 @@ import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 const FAQS = [
   {
     q: "How much does it cost?",
-    a: "One flat, all-inclusive price — $199 for a single tax year filing, with everything included. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included — no separate add-on.",
+    a: "One flat, all-inclusive price — $99 for a single tax year filing, with everything included. Additional past tax years are +$79 each. IRS fax delivery to the Ogden PIN Unit is included — no separate add-on.",
   },
   {
-    q: "What's included in the $199?",
+    q: "What's included in the $99?",
     a: "Everything. We prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. You also get a reasonable-cause letter on late / DIIRSP filings, priority email support, and a March filing reminder for next year — all in the one flat fee.",
   },
   {
     q: "What if I've missed prior years?",
-    a: "Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing is +$149 per additional past year on any plan.",
+    a: "Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing is +$79 per additional past year.",
   },
   {
     q: "Do I really need Form 5472 and Form 1120 if my LLC made no money?",
@@ -46,7 +46,7 @@ const FAQS = [
   },
   {
     q: "Is fax filing really included?",
-    a: "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and a timestamped fax-transmission receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine.",
+    a: "Yes — the flat price includes fax delivery to the IRS Ogden PIN Unit and a timestamped fax-transmission receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine.",
   },
   {
     q: "Why does the IRS require fax instead of e-file?",
@@ -54,7 +54,7 @@ const FAQS = [
   },
   {
     q: "Are there any hidden fees?",
-    a: "No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge. Multi-year filings add a flat $149 per additional past year — disclosed up front and shown in the checkout summary before you pay.",
+    a: "No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge. Multi-year filings add a flat $79 per additional past year — disclosed up front and shown in the checkout summary before you pay.",
   },
   {
     q: "Do you store my bank statements or signed forms?",
@@ -76,12 +76,12 @@ export const metadata: Metadata = {
   // already brands the product, so we don't want the suffix appended.
   title: { absolute: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep" },
   description:
-    "IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Starting at $199 — fax delivery included on every plan. 100% money-back guarantee if we fail to submit.",
+    "IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Flat $99 — fax delivery included. 100% money-back guarantee if we fail to submit.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
     description:
-      "For foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Starting at $199 — 100% money-back guarantee if we fail to submit.",
+      "For foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Flat $99 — 100% money-back guarantee if we fail to submit.",
     url: "/",
     // This page sets its own openGraph object, which replaces (not merges
     // with) the root layout's — so the branded card image has to be named
@@ -93,7 +93,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
     description:
-      "For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. Starting at $199.",
+      "For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. Flat $99.",
     images: ["/opengraph-image"],
   },
 };
@@ -110,7 +110,7 @@ export default async function LandingPage() {
       <Pricing />
       {/* Annotated fax-receipt section — same component used on /pricing.
           Sits right after the three pricing cards so anyone reading "is
-          this worth $199?" sees the actual proof-of-filing artifact next
+          this worth $99?" sees the actual proof-of-filing artifact next
           to the price. Differentiates vs $49 DIY tools that issue no
           receipt. */}
       <FaxReceiptProof />

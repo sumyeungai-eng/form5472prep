@@ -61,7 +61,7 @@ export async function POST(req: Request) {
 
       // Stale-session guard. checkout overwrites filing.stripeSessionId with
       // the LATEST session, so a payment against a superseded session (e.g. the
-      // customer opened a $199 one-year session, upgraded the draft to a
+      // customer opened a $99 one-year session, upgraded the draft to a
       // pricier tier/more years which minted a new session, then paid the old
       // tab) must be rejected — otherwise they'd get the bigger package for the
       // old price. Release the idempotency claim so the current session can

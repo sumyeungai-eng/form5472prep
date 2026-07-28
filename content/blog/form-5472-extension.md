@@ -59,7 +59,7 @@ Most well-documented, first-time late filings by foreign owners are accepted und
 
 For most foreign-owned single-member LLCs, filing Form 5472 is faster than filing the extension to delay it. There's no income to calculate and no documents to gather beyond your entity details and year-end totals — so an extension often just moves a 15-minute task six months down the road.
 
-Form5472 Prep generates the complete package (cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and a reasonable-cause statement if you're already late), an accountant reviews it, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt as proof of filing. Pricing is a flat **$199**, all inclusive, with fax delivery included and **+$149 per additional past year** for DIIRSP catch-up. See full [pricing](/pricing) or [start your filing now](/start).
+Form5472 Prep generates the complete package (cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and a reasonable-cause statement if you're already late), an accountant reviews it, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt as proof of filing. Pricing is a flat **$99**, all inclusive, with fax delivery included and **+$79 per additional past year** for DIIRSP catch-up. See full [pricing](/pricing) or [start your filing now](/start).
 
 ## Frequently asked questions
 
@@ -87,4 +87,4 @@ An extension can't be filed after the due date. Instead, file the delinquent For
 
 You can extend your Form 5472 deadline to October 15 by faxing Form 7004 — with the Form 1120 code and "Foreign-owned U.S. DE" across the top — by April 15. But an extension only buys time to file; it doesn't reduce the $25,000 penalty, and it's useless once the deadline has passed. Since the filing itself takes about 15 minutes, most owners are better off just getting it done.
 
-Don't want to think about deadlines at all? [File your Form 5472 now →](/start) — accountant-reviewed, faxed to the IRS, flat $199.
+Don't want to think about deadlines at all? [File your Form 5472 now →](/start) — accountant-reviewed, faxed to the IRS, flat $99.
