@@ -148,7 +148,35 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
   }
 
+  // The LLC's formation date after this patch — the entity step may be setting
+  // it in this very request. Both the "no tax year before the LLC existed" check
+  // and the dissolution-date ordering check below are keyed to it.
+  const effectiveFormedAt: Date | null = clean.llcDateIncorporated
+    ? new Date(clean.llcDateIncorporated as string)
+    : filing.llcDateIncorporated;
+  const formationYear =
+    effectiveFormedAt && !Number.isNaN(effectiveFormedAt.getTime())
+      ? effectiveFormedAt.getUTCFullYear()
+      : null;
+
   if (Array.isArray(body.taxYears)) {
+    // An LLC can't have a tax year before it existed: there is no period to
+    // report, no 5472 obligation, and the IRS would reject a return for a year
+    // the EIN didn't cover. Caught here rather than at PDF generation because
+    // each extra year is billed — refusing now stops the customer paying for a
+    // form we can't legitimately produce.
+    if (formationYear !== null) {
+      const tooEarly = (body.taxYears as unknown[]).filter(
+        (y) => typeof y === "number" && y < formationYear,
+      );
+      if (tooEarly.length > 0) {
+        const message = `You can't file a tax year before the LLC existed — it was formed in ${formationYear}`;
+        return NextResponse.json(
+          { error: message, issues: [{ field: "taxYears", message }] },
+          { status: 400 },
+        );
+      }
+    }
     // Validate + dedupe: reject empty, duplicate, or out-of-range years (which
     // would otherwise charge a fee but produce no/duplicate/wrong-revision forms).
     const parsedYears = makeYearScopeSchema(effectiveFinal).safeParse({
@@ -193,7 +221,14 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       // Same value the delinquency test above used; validate it and store the
       // parsed Date.
       const rawDissolvedAt = effectiveDissolvedAt;
-      const dissolvedAtError = validateDissolvedAt(rawDissolvedAt, yearsAfterPatch);
+      // Pass the formation date so a dissolution that precedes it is rejected
+      // (transposed dates / mis-keyed year would otherwise print a
+      // negative-length short period on the forms).
+      const dissolvedAtError = validateDissolvedAt(
+        rawDissolvedAt,
+        yearsAfterPatch,
+        effectiveFormedAt,
+      );
       if (dissolvedAtError) {
         return NextResponse.json(
           {

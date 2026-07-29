@@ -13,6 +13,7 @@ import {
   logFilingChange,
   TransitionError,
 } from "@/lib/admin/mutations";
+import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 
 export type FilingActionName =
@@ -104,6 +105,8 @@ const filingSelect = {
   ownerReferenceId: true,
   reasonableCauseNarrative: true,
   taxYears: true,
+  isFinalReturn: true,
+  dissolvedAt: true,
   faxService: true,
   signedPdfKey: true,
   generatedPdfKey: true,
@@ -277,6 +280,18 @@ export async function runFilingAction(
         receiptUrl: null,
         pdfBytes,
         signatures,
+        // Admin resends must match the original confirmation: final returns
+        // carry the EIN-cancellation sequencing warning + deadline line.
+        isFinalReturn: filing.isFinalReturn,
+        dueDateText:
+          filing.taxYears.length > 0
+            ? formatDueDate(
+                filingDueDateUtc(
+                  Math.max(...filing.taxYears),
+                  filing.isFinalReturn ? filing.dissolvedAt : null,
+                ),
+              )
+            : null,
       });
       await logFilingChange({
         filingId: filing.id,

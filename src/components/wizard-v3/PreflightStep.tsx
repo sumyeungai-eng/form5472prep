@@ -32,17 +32,27 @@ export function preflightStatus(a: PreflightAnswers): "complete" | "missing" | "
   return "missing";
 }
 
-export function preflightBlocked(a: PreflightAnswers): { blocked: boolean; reason: string | null } {
+// `code` says WHICH answer blocked, so the UI can render a tailored panel.
+// "no-ein" is the only blocker we can actually solve for the customer — we
+// sell EIN acquisition at /ein — so it gets its own call-to-action instead of
+// the generic "this workflow may not fit" message.
+export type PreflightBlockCode = "not-smllc" | "multi-member" | "no-ein";
+
+export function preflightBlocked(a: PreflightAnswers): {
+  blocked: boolean;
+  reason: string | null;
+  code: PreflightBlockCode | null;
+} {
   if (a.isForeignOwnedSmllc === false) {
-    return { blocked: true, reason: "This workflow is only for foreign-owned U.S. single-member LLCs (disregarded entities)." };
+    return { blocked: true, code: "not-smllc", reason: "This workflow is only for foreign-owned U.S. single-member LLCs (disregarded entities)." };
   }
   if (a.isMultiMember === true) {
-    return { blocked: true, reason: "Multi-member LLCs file a different return (Form 1065 partnership). This workflow doesn't support them." };
+    return { blocked: true, code: "multi-member", reason: "Multi-member LLCs file a different return (Form 1065 partnership). This workflow doesn't support them." };
   }
   if (a.hasEin === false) {
-    return { blocked: true, reason: "You'll need an EIN before filing Form 5472. Apply at irs.gov/ein, then come back." };
+    return { blocked: true, code: "no-ein", reason: "You'll need an EIN before filing Form 5472." };
   }
-  return { blocked: false, reason: null };
+  return { blocked: false, reason: null, code: null };
 }
 
 // One question row with a "?" toggle that expands an explainer below.
@@ -141,7 +151,8 @@ const QUESTIONS: QDef[] = [
       "EIN = Employer Identification Number. It's a 9-digit U.S. tax ID for businesses, formatted like 12-3456789. " +
       "Every U.S. LLC needs one to file Form 5472. " +
       "If you already opened the LLC and got a confirmation letter from the IRS (CP 575 / 147C), you have an EIN. " +
-      "If you don't have one yet, apply free at irs.gov/ein — takes about a week internationally — and come back.",
+      "If you don't have one yet, we can obtain it for you for $149 (no passport mailing, 1–5 business days), " +
+      "or you can apply directly with the IRS for free and come back once it arrives.",
   },
 ];
 
@@ -155,7 +166,7 @@ export function PreflightStep({
   onContinue: () => void;
 }) {
   const status = preflightStatus(answers);
-  const { blocked, reason } = preflightBlocked(answers);
+  const { blocked, reason, code } = preflightBlocked(answers);
   const canContinue = status === "complete" && !blocked;
 
   return (
@@ -181,7 +192,38 @@ export function PreflightStep({
         ))}
       </div>
 
-      {blocked && reason && (
+      {/* Missing EIN is a solvable blocker, not a disqualification — we sell
+          the fix. Route to our own service first, with the free DIY route
+          kept visible underneath so the choice stays honest. Continuing is
+          still blocked either way. */}
+      {blocked && code === "no-ein" && (
+        <div className="mt-4 rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-slate-700">
+          <strong className="text-slate-900">{reason}</strong> Every U.S. LLC needs one before we
+          can prepare the return.
+          <div className="mt-3">
+            <a
+              href="/ein"
+              className="inline-flex items-center gap-1.5 rounded-full bg-blue-900 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-950"
+            >
+              We can get your EIN for you — $149 <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+          <p className="mt-2 text-xs leading-relaxed text-slate-600">
+            No passport mailing, 1–5 business days. Or{" "}
+            <a
+              href="https://www.irs.gov/ein"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-slate-900"
+            >
+              apply directly with the IRS for free
+            </a>{" "}
+            and come back once you have it.
+          </p>
+        </div>
+      )}
+
+      {blocked && code !== "no-ein" && reason && (
         <div className="mt-4 rounded-lg bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-700">
           <strong>This workflow may not fit your filing.</strong> {reason} If you&apos;d still like
           help, email{" "}

@@ -8,7 +8,7 @@ import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePacka
 import { putPdf } from "@/lib/storage";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
-import { entitySchema, ownerBaseSchema, refineUsIdOrReferenceId, makeYearScopeSchema } from "@/lib/schemas";
+import { entitySchema, ownerBaseSchema, refineUsIdOrReferenceId, makeYearScopeSchema, filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 
 const ownerCompletionSchema = ownerBaseSchema.superRefine(refineUsIdOrReferenceId);
 
@@ -193,6 +193,18 @@ export async function POST(req: Request) {
           funnelSource: full.funnelSource,
           pdfBytes,
           signatures: pdfSignatures,
+          // Keep admin test orders identical to real ones: final returns get
+          // the EIN-cancellation warning + deadline line.
+          isFinalReturn: full.isFinalReturn,
+          dueDateText:
+            full.taxYears.length > 0
+              ? formatDueDate(
+                  filingDueDateUtc(
+                    Math.max(...full.taxYears),
+                    full.isFinalReturn ? full.dissolvedAt : null,
+                  ),
+                )
+              : null,
         });
       } catch (err) {
         console.error("[checkout test] order confirmation email failed", err);

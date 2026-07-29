@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { makeMagicLink } from "@/lib/magicLink";
 import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { resolveTier } from "@/lib/pricing";
+import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { putPdf } from "@/lib/storage";
 import { sendMetaPurchase } from "@/lib/analytics/metaServer";
@@ -217,6 +218,19 @@ export async function POST(req: Request) {
           console.error("[stripe-webhook] receipt url lookup failed", err);
         }
 
+        // Filing deadline for the confirmation email. The latest tax year
+        // drives the date the customer actually has to beat; a FINAL return
+        // shortens that year, so pass dissolvedAt only when isFinalReturn is
+        // set (same rule generatePackage uses above). Null when the filing
+        // somehow carries no years — the email just omits the line.
+        const maxYear = filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : null;
+        const dueDateText =
+          maxYear == null
+            ? null
+            : formatDueDate(
+                filingDueDateUtc(maxYear, filing.isFinalReturn ? filing.dissolvedAt : null),
+              );
+
         try {
           await sendOrderConfirmationEmail({
             email: filing.user.email,
@@ -231,6 +245,8 @@ export async function POST(req: Request) {
             funnelSource: filing.funnelSource,
             pdfBytes,
             signatures: pdfSignatures,
+            isFinalReturn: filing.isFinalReturn,
+            dueDateText,
           });
         } catch (err) {
           console.error("[stripe-webhook] order confirmation email failed", err);

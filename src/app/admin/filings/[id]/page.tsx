@@ -29,6 +29,12 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
   const generatedPdfUrl = filing.generatedPdfKey ? await publicUrl(filing.generatedPdfKey) : null;
   const signedPdfUrl = filing.signedPdfKey ? await publicUrl(filing.signedPdfKey) : null;
   const faxedPdfUrl = filing.faxedPdfKey ? await publicUrl(filing.faxedPdfKey) : null;
+  // Optional customer-uploaded state dissolution certificate — final returns
+  // only, and never required. Used to sanity-check the effective dissolution
+  // date against dissolvedAt.
+  const dissolutionCertUrl = filing.dissolutionCertKey
+    ? await publicUrl(filing.dissolutionCertKey)
+    : null;
 
   // First-touch traffic attribution (captured in middleware, stamped on the
   // draft at creation). Filings created before this shipped have all-null
@@ -183,6 +189,19 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           {filing.isDiirsp && (
             <Field label="Reasonable cause" value={filing.reasonableCauseNarrative} multiline />
           )}
+          {/* Final-return block. The dissolution certificate is OPTIONAL —
+              when it's missing the row prompts the preparer to confirm the
+              effective date with the customer instead of blocking anything. */}
+          {filing.isFinalReturn && (
+            <>
+              <Field label="Final return" value="Yes — final Form 5472 (LLC dissolved)" />
+              <Field
+                label="Dissolution date"
+                value={filing.dissolvedAt?.toISOString().split("T")[0] ?? null}
+              />
+              <CertRow url={dissolutionCertUrl} />
+            </>
+          )}
         </DetailCard>
 
         {/* Payment + fax */}
@@ -289,6 +308,35 @@ function Field({
       <dt className="text-slate-500 text-xs uppercase tracking-wider sm:text-sm sm:normal-case sm:tracking-normal">{label}</dt>
       <dd className={`sm:col-span-2 ${mono ? "font-mono text-xs" : ""} ${multiline ? "whitespace-pre-line" : ""} ${muted ? "text-slate-400" : "text-slate-900"} break-words`}>
         {display ?? <span className="text-slate-400">—</span>}
+      </dd>
+    </div>
+  );
+}
+
+// Dissolution-certificate row inside the "Filing scope" card. Uses the same
+// dt/dd grid as Field so it lines up, but the value is either a presigned
+// link or a muted nudge — Field only renders plain text.
+function CertRow({ url }: { url: string | null }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-0.5 sm:gap-3 text-sm">
+      <dt className="text-slate-500 text-xs uppercase tracking-wider sm:text-sm sm:normal-case sm:tracking-normal">
+        Dissolution certificate
+      </dt>
+      <dd className="sm:col-span-2 break-words">
+        {url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:underline inline-flex items-center gap-1"
+          >
+            View dissolution certificate <ExternalLink className="h-3 w-3" />
+          </a>
+        ) : (
+          <span className="text-slate-400">
+            No certificate uploaded — verify the effective date with the customer.
+          </span>
+        )}
       </dd>
     </div>
   );

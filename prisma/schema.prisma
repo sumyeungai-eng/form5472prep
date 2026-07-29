@@ -206,6 +206,12 @@ model Filing {
   // to end. Ticks item E "Final return" on the pro forma 1120.
   isFinalReturn Boolean @default(false)
 
+  // Optional customer-uploaded Certificate of Dissolution/Cancellation (R2
+  // key). Lets the reviewing accountant verify the certificate's EFFECTIVE
+  // date against dissolvedAt — the known trap is customers entering the date
+  // their formation service marked the task complete instead. Never required.
+  dissolutionCertKey String?
+
   // Date the LLC was dissolved. Required when isFinalReturn is true, because a
   // final return covers a SHORT tax year (Jan 1 → this date), and both the
   // Form 5472 header and the pro forma 1120 must show that period rather than

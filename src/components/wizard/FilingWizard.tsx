@@ -38,6 +38,7 @@ import {
   makeYearScopeSchema,
   validateDissolvedAt,
   isYearDelinquent,
+  DISSOLVED_AT_FUTURE,
   type EntityForm,
   type OwnerForm,
   type YearScopeForm,
@@ -384,6 +385,10 @@ export function FilingWizard({
             ownerName={filing.ownerName}
             plaidEnabled={plaidEnabled}
             formationYear={filing.llcDateIncorporated ? new Date(filing.llcDateIncorporated).getUTCFullYear() : null}
+            // Drives the final-return copy: on a closing LLC the money that came
+            // back to the owner at wind-up is a distribution, and customers
+            // routinely don't think of it as one.
+            isFinalReturn={filing.isFinalReturn}
             initialYears={filing.taxYears.map((y) => {
               const ex = filing.yearData.find((d) => d.taxYear === y);
               return {
@@ -1015,6 +1020,30 @@ function toDateInputValue(value: Date | string | null | undefined): string {
   return d.toISOString().slice(0, 10);
 }
 
+// "2026-04-13" → "April 13, 2026". Formatted in UTC (the stored dates are
+// date-only instants at UTC midnight), so the prose never shows the customer a
+// day either side of the one they typed. Returns null for anything that isn't a
+// real calendar date — a <input type="date"> can hold a partial value mid-typing.
+function formatLongDate(iso: string | null | undefined): string | null {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+  const [y, m, d] = iso.split("-").map(Number);
+  const utc = Date.UTC(y, m - 1, d);
+  const parsed = new Date(utc);
+  if (
+    parsed.getUTCFullYear() !== y ||
+    parsed.getUTCMonth() !== m - 1 ||
+    parsed.getUTCDate() !== d
+  ) {
+    return null;
+  }
+  return parsed.toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 function YearsStep({
   filing,
   onSubmit,
@@ -1097,6 +1126,24 @@ function YearsStep({
   const todayIso = new Date().toISOString().slice(0, 10);
   const dissolvedAtMax = dissolvedAtYear < currentYear ? `${dissolvedAtYear}-12-31` : todayIso;
 
+  // Period the forms will actually cover, stated in plain English under the
+  // date field. The START is only January 1 when the LLC already existed at the
+  // start of the year — an LLC formed mid-year has a SHORT first year that
+  // begins on its formation date (first-and-final filers get both ends short),
+  // so read the formation date off the filing rather than hard-coding Jan 1.
+  const formationIso = filing.llcDateIncorporated
+    ? toDateInputValue(filing.llcDateIncorporated)
+    : "";
+  const formedInFinalYear =
+    formationIso.length > 0 && Number(formationIso.slice(0, 4)) === dissolvedAtYear;
+  const periodStartLabel = formedInFinalYear
+    ? formatLongDate(formationIso) ?? `January 1, ${dissolvedAtYear}`
+    : `January 1, ${dissolvedAtYear}`;
+  // Before the customer has entered a dissolution date we can't name the end, so
+  // show the full-year end as the placeholder; it updates live as they type.
+  const periodEndLabel =
+    formatLongDate(dissolvedAt) ?? `December 31, ${dissolvedAtYear}`;
+
   return (
     <form
       onSubmit={handleSubmit(async (data) => {
@@ -1104,7 +1151,14 @@ function YearsStep({
         // end, so don't let the wizard advance (and don't send a date the
         // filing shouldn't carry when the box is unticked).
         if (isFinalReturn) {
-          const err = validateDissolvedAt(dissolvedAt, data.taxYears);
+          // Same three arguments the PATCH route passes, so the inline message
+          // matches the 400 the server would return (including the
+          // dissolved-before-formed case).
+          const err = validateDissolvedAt(
+            dissolvedAt,
+            data.taxYears,
+            filing.llcDateIncorporated,
+          );
           if (err) {
             setDissolvedAtError(err);
             return;
@@ -1155,18 +1209,24 @@ function YearsStep({
             className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
           />
           <span className="font-medium">
-            My LLC was closed or dissolved during {currentYear} — this is a final return
+            My LLC has been closed or dissolved — this is its final return
           </span>
         </label>
         <p className="text-xs text-amber-800 mt-1.5 ml-6">
-          Only tick this if the LLC has actually been dissolved. It lets you file a short tax
-          year that hasn&apos;t ended yet, and marks the return as final on Form 1120.
+          Only tick this if the LLC has actually been dissolved. It marks the return as final
+          on Form 1120, and if the LLC closed during {currentYear} it also lets you file that
+          short tax year now instead of waiting for the year to end.
         </p>
         {isFinalReturn && (
           <div className="mt-3 ml-6">
             <Field
-              label="Date the LLC was dissolved"
-              hint="This is the last day of the tax year we file for you. The forms will cover January 1 through this date."
+              // The single most common wrong answer here is the date the
+              // formation/closure service marked the job done — often weeks
+              // before (or after) the state's effective date. Name the document
+              // the right date is printed on so the customer copies it off the
+              // certificate instead of a dashboard.
+              label="Effective date of dissolution — as shown on your Certificate of Cancellation / Dissolution"
+              hint="Use the date printed on the state certificate, not the date your formation/closure service marked the task complete — the two can differ."
               error={dissolvedAtError ?? undefined}
             >
               <Input
@@ -1185,6 +1245,15 @@ function YearsStep({
                 aria-required
               />
             </Field>
+            <p className="text-xs text-amber-800 mt-1.5">
+              The forms will cover {periodStartLabel} through {periodEndLabel}.
+            </p>
+            {dissolvedAtError === DISSOLVED_AT_FUTURE && (
+              <p className="text-xs text-amber-800 mt-1.5">
+                If your LLC&apos;s closure isn&apos;t effective yet, come back once you have the
+                certificate — we&apos;ll email you a reminder if you leave your draft unfinished.
+              </p>
+            )}
           </div>
         )}
       </div>

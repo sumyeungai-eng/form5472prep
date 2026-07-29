@@ -54,6 +54,7 @@ export function TransactionsReview({
   ownerName: _ownerName,
   plaidEnabled: _plaidEnabled = false,
   formationYear,
+  isFinalReturn = false,
   initialYears,
   onSubmit,
   onBack,
@@ -63,6 +64,11 @@ export function TransactionsReview({
   ownerName: string | null;
   plaidEnabled?: boolean;
   formationYear: number | null;
+  // True when this package is the LLC's FINAL (short-year) return. Copy-only:
+  // a closing LLC almost always pays its remaining cash out to the owner, and
+  // customers don't recognise that wind-up transfer as a Part V distribution.
+  // Optional so existing call sites keep compiling; absent behaves as false.
+  isFinalReturn?: boolean;
   initialYears: {
     taxYear: number;
     totalAssetsYearEnd: number;
@@ -616,6 +622,15 @@ export function TransactionsReview({
         </p>
       </div>
 
+      {/* A dormant LLC's owner reads every field below as "not applicable to
+          me" and is tempted to skip the step. Form 5472 has no de-minimis or
+          no-activity exemption — total assets and the contribution/distribution
+          figures are required entries even when they're zero. */}
+      <p className="text-sm text-slate-600">
+        Even if the LLC had no business activity, these amounts are what the IRS requires on
+        Form 5472.
+      </p>
+
       {noneForAllYears ? (
         <div className="space-y-3">
           {years.map((y) => (
@@ -977,7 +992,15 @@ export function TransactionsReview({
                   </Field>
                   <Field
                     label="Distributions (USD)"
-                    hint="Money the LLC paid you"
+                    // On a final return the biggest distribution of the year is
+                    // usually the closing sweep of the remaining bank balance
+                    // back to the owner — which customers think of as "closing
+                    // the account", not as a reportable distribution. Say so.
+                    hint={
+                      isFinalReturn
+                        ? "Money you took out — including anything that came back to you when the LLC closed."
+                        : "Money the LLC paid you"
+                    }
                     help={
                       <>
                         <p>

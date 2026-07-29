@@ -134,6 +134,49 @@ export function periodEndFor(f: Pick<Filing, "isFinalReturn" | "dissolvedAt">, y
   return `${mm}/${dd}`;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Tax-year period START (MM/DD) for a given year in the package.
+//
+// The mirror image of periodEndFor(). An entity's FIRST tax year does not begin
+// on January 1 — it begins the day the entity came into existence. An LLC formed
+// 2026-04-13 and dissolved 2026-09-30 is a first-and-final filer whose only tax
+// year runs 04/13/2026 – 09/30/2026; printing 01/01 would claim three and a half
+// months of existence that never happened, and would contradict Form 5472 line
+// 1m (date incorporated) on the same page.
+//
+// Only the FORMATION year gets the late start. In a multi-year DIIRSP catch-up
+// the years after formation are ordinary years that really do begin Jan 1 —
+// hence the year match, same shape as periodEndFor().
+// Read in UTC: the stored value is a date-only instant (UTC midnight), and local
+// getters would slide it a day backwards on a west-of-UTC host.
+// ─────────────────────────────────────────────────────────────────────────────
+export function periodStartFor(
+  f: { llcDateIncorporated?: Date | string | null },
+  year: number,
+): string {
+  if (!f.llcDateIncorporated) return "01/01";
+  const formed =
+    f.llcDateIncorporated instanceof Date
+      ? f.llcDateIncorporated
+      : new Date(f.llcDateIncorporated);
+  if (Number.isNaN(formed.getTime())) return "01/01";
+  if (formed.getUTCFullYear() !== year) return "01/01";
+  const mm = String(formed.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(formed.getUTCDate()).padStart(2, "0");
+  return `${mm}/${dd}`;
+}
+
+// The LLC's formation year in UTC, or null when no formation date is on file.
+function formationYearOf(f: { llcDateIncorporated?: Date | string | null }): number | null {
+  if (!f.llcDateIncorporated) return null;
+  const formed =
+    f.llcDateIncorporated instanceof Date
+      ? f.llcDateIncorporated
+      : new Date(f.llcDateIncorporated);
+  if (Number.isNaN(formed.getTime())) return null;
+  return formed.getUTCFullYear();
+}
+
 const FORMS_DIR = path.join(process.cwd(), "public", "forms");
 
 async function loadBlank(name: string): Promise<PDFDocument> {
@@ -158,10 +201,11 @@ function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number)
   const ownerBusinessCountry =
     normalizeCountry(f.ownerCountryBusiness) || ownerTaxResidence || ownerCitizenship;
 
-  // Period always begins 01/01 (a dissolved LLC's short year still starts with
-  // the calendar year); the END is 12/31 unless this is the final year, in
-  // which case it's the dissolution date. See periodEndFor().
-  setText(form, m.taxYearBeginMonthDay, "01/01");
+  // Period bounds. The START is 01/01 except in the LLC's FORMATION year, where
+  // it is the formation date (see periodStartFor()); the END is 12/31 unless
+  // this is the final year, in which case it's the dissolution date (see
+  // periodEndFor()). A first-and-final filer gets both at once.
+  setText(form, m.taxYearBeginMonthDay, periodStartFor(f, year));
   setText(form, m.taxYearBeginYear, String(year));
   setText(form, m.taxYearEndMonthDay, periodEndFor(f, year));
   setText(form, m.taxYearEndYear, String(year));
@@ -193,13 +237,18 @@ function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number)
   setText(form, m["1o_countriesBusinessConducted"], ownerBusinessCountry || "United States");
 
   check(form, m.box3_foreignOwnedUsDE);
-  // Initial-year box: check only for the EARLIEST tax year in the package AND
-  // only when that year coincides with (or post-dates) the LLC's formation —
-  // which guarantees there can't be a prior 5472 on file. For a multi-year
-  // DIIRSP catch-up we check it on year-1, leave it UNchecked on years 2/3.
-  const earliestYear = Math.min(...f.taxYears);
-  const formationYear = f.llcDateIncorporated.getUTCFullYear();
-  if (year === earliestYear && earliestYear >= formationYear) {
+  // Initial-year box (1j): "this is the reporting corporation's INITIAL year of
+  // existence", not "the first year in this package". The old gate was
+  // `year === earliest selected year && earliest >= formationYear`, which ticked
+  // 1j on whichever year the customer happened to start their catch-up from —
+  // so an LLC formed in 2020 that files 2022-2024 declared 2022 its initial
+  // year, contradicting line 1m (date incorporated 2020) two cells away.
+  // Keyed on the formation year instead: exactly one year in any package can be
+  // the initial year, and only if that year is actually being filed. An LLC
+  // whose formation year is missing or unparseable ticks nothing (safer than
+  // asserting an initial year we can't substantiate).
+  const formationYear = formationYearOf(f);
+  if (formationYear !== null && year === formationYear) {
     check(form, m["1j_initialYear"]);
   }
 
@@ -302,10 +351,21 @@ async function fillForm1120(pdf: PDFDocument, f: Filing, year: number) {
   // expose E_finalReturn (c1_7[0], verified by pdf-lib enumeration of both blank
   // PDFs); keep the key guard so any future unmapped revision skips it silently.
   const isShortYear = periodEndFor(f, year) !== "12/31";
+  const itemE: typeof form1120_2025FieldMap | typeof form1120_2024FieldMap =
+    year >= 2025 ? form1120_2025FieldMap : form1120_2024FieldMap;
   if (f.isFinalReturn && isShortYear) {
-    const itemE: typeof form1120_2025FieldMap | typeof form1120_2024FieldMap =
-      year >= 2025 ? form1120_2025FieldMap : form1120_2024FieldMap;
     if ("E_finalReturn" in itemE) check(form, itemE.E_finalReturn);
+  }
+
+  // Item E "Initial return" is the mirror flag: this is the entity's FIRST tax
+  // year, so the IRS shouldn't expect a prior-year return for the same EIN. It
+  // belongs to the formation year only — independent of the final-return gate
+  // above, so an LLC formed and dissolved in the same year (a first-and-final
+  // filer) correctly gets BOTH boxes ticked on its single 1120. Both revisions'
+  // maps expose E_initialReturn (c1_6[0], probe-verified alongside c1_7[0]);
+  // keep the key guard so a future unmapped revision skips it silently.
+  if (formationYearOf(f) === year) {
+    if ("E_initialReturn" in itemE) check(form, itemE.E_initialReturn);
   }
 
   flatten(form);
@@ -974,12 +1034,23 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
     await fillForm1120(f1120, f, year);
     if (yearDelinquent) await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE — DIIRSP");
     else await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE");
-    // Short-period annotation for the dissolution year's 1120 (final short
-    // year). periodEndFor() returns a non-12/31 end only for that year, so this
-    // stamp lands only where item E "Final return" is ticked.
+    // Short-period annotation. A year is short when it starts after Jan 1 (the
+    // LLC was formed mid-year) OR ends before Dec 31 (it was dissolved
+    // mid-year), so this stamp tracks BOTH bounds and lands exactly where at
+    // least one item E box is ticked. The suffix names which case applies so the
+    // stamp can never contradict the checkboxes above it.
+    const periodStart = periodStartFor(f, year);
     const periodEnd = periodEndFor(f, year);
-    if (periodEnd !== "12/31") {
-      await stampShortPeriod(f1120, `01/01/${year}`, `${periodEnd}/${year}`);
+    const isInitialYear = periodStart !== "01/01";
+    const isFinalYear = periodEnd !== "12/31";
+    if (isInitialYear || isFinalYear) {
+      const suffix =
+        isInitialYear && isFinalYear
+          ? "(initial and final return)"
+          : isFinalYear
+            ? "(final return)"
+            : `(initial return — formed ${periodStart}/${year})`;
+      await stampShortPeriod(f1120, `${periodStart}/${year}`, `${periodEnd}/${year}`, suffix);
     }
     const f1120FirstPage = out.getPageCount() + 1; // 1-based, captured before merge
     await copyAll(out, f1120);

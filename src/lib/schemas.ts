@@ -82,8 +82,15 @@ export const currentTaxYear = new Date().getUTCFullYear();
 
 // Single source of truth for the upper bound. Callers pass the filing's
 // final-return flag; only a final return unlocks the in-progress year.
+//
+// STALENESS: reads the clock on every call rather than the module-level
+// constants above. A long-lived server process started in December would
+// otherwise keep enforcing last year's bound after New Year, rejecting the
+// year that just became filable. The constants stay for display callers that
+// render once per request anyway.
 export function maxSelectableTaxYear(isFinalReturn: boolean): number {
-  return isFinalReturn ? currentTaxYear : lastCompletedTaxYear;
+  const nowYear = new Date().getUTCFullYear();
+  return isFinalReturn ? nowYear : nowYear - 1;
 }
 
 // ─── Dissolution date (final short-year returns) ─────────────────────────────
@@ -100,6 +107,11 @@ export const DISSOLVED_AT_FORMAT = "Use YYYY-MM-DD";
 export const DISSOLVED_AT_OUT_OF_RANGE =
   "The dissolution date must fall within the tax year being filed";
 export const DISSOLVED_AT_FUTURE = "The dissolution date cannot be in the future";
+// An LLC cannot be dissolved before it existed. Catches the transposed-date
+// typo (formation and dissolution swapped) and a mis-keyed year, either of
+// which would otherwise print a negative-length tax period on the forms.
+export const DISSOLVED_AT_BEFORE_FORMATION =
+  "The dissolution date cannot be before the LLC was formed";
 
 /**
  * Validates a `YYYY-MM-DD` dissolution date against the years being filed.
@@ -109,10 +121,17 @@ export const DISSOLVED_AT_FUTURE = "The dissolution date cannot be in the future
  * LATEST year in the package — earlier years in a DIIRSP catch-up are ordinary
  * full years. An empty selection skips the range check (the year-scope schema
  * reports the missing years separately).
+ *
+ * `formedAt` is the LLC's formation date (`llcDateIncorporated`). When both
+ * dates are known the dissolution must be on or after it — a first-and-final
+ * filer's short year runs formation → dissolution, so a dissolution that
+ * precedes formation describes an impossible period. Skipped when the
+ * formation date isn't on file yet (the entity step may not have run).
  */
 export function validateDissolvedAt(
   value: string | null | undefined,
   taxYears: number[],
+  formedAt?: Date | string | null,
 ): string | null {
   const raw = typeof value === "string" ? value.trim() : "";
   if (!raw) return DISSOLVED_AT_REQUIRED;
@@ -141,6 +160,20 @@ export function validateDissolvedAt(
   const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
   if (asUtc > todayUtc) return DISSOLVED_AT_FUTURE;
 
+  // Compare on the calendar day in UTC — both values are date-only instants
+  // (UTC midnight), so same-day formation-and-dissolution stays valid.
+  if (formedAt != null) {
+    const formed = formedAt instanceof Date ? formedAt : new Date(formedAt);
+    if (!Number.isNaN(formed.getTime())) {
+      const formedUtc = Date.UTC(
+        formed.getUTCFullYear(),
+        formed.getUTCMonth(),
+        formed.getUTCDate(),
+      );
+      if (asUtc < formedUtc) return DISSOLVED_AT_BEFORE_FORMATION;
+    }
+  }
+
   return null;
 }
 
@@ -154,10 +187,26 @@ export function validateDissolvedAt(
 // therefore already due (and can be delinquent) months before a full-year
 // return would be. JS Date.UTC month overflow handles December correctly
 // (m=11 → month 15 → April 15 of the next year).
+//
+// Weekend roll (IRC §7503): a deadline falling on a Saturday or Sunday moves to
+// the next business day, so April 15 2028 (Sat) is really due Mon April 17.
+// Federal HOLIDAYS are deliberately NOT rolled here. §7503 rolls those too, but
+// modelling them needs the DC-Emancipation-Day rule plus the observed-holiday
+// shifts, and getting one wrong in the other direction would mark a still-timely
+// return delinquent. Omitting them can only make us treat a return as due
+// EARLIER than the IRS does — i.e. we might show DIIRSP wording on a package
+// that was technically still on time, which is the safe failure direction (a
+// reasonable cause statement on a timely filing is harmless; a missing one on a
+// late filing is not).
 export function filingDueDateUtc(
   taxYear: number,
   dissolvedAt?: Date | string | null,
 ): number {
+  const raw = rawFilingDueDateUtc(taxYear, dissolvedAt);
+  return rollWeekendToMonday(raw);
+}
+
+function rawFilingDueDateUtc(taxYear: number, dissolvedAt?: Date | string | null): number {
   if (dissolvedAt != null) {
     const d = dissolvedAt instanceof Date ? dissolvedAt : new Date(dissolvedAt);
     // Only a dissolution that actually falls in `taxYear` shortens it. An
@@ -167,6 +216,29 @@ export function filingDueDateUtc(
     }
   }
   return Date.UTC(taxYear + 1, 3, 15);
+}
+
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+// Saturday → Monday (+2 days), Sunday → Monday (+1 day), everything else
+// unchanged. Read in UTC because the deadline is a date-only instant.
+function rollWeekendToMonday(utcMs: number): number {
+  const dayOfWeek = new Date(utcMs).getUTCDay(); // 0 = Sunday … 6 = Saturday
+  if (dayOfWeek === 6) return utcMs + 2 * ONE_DAY_MS;
+  if (dayOfWeek === 0) return utcMs + ONE_DAY_MS;
+  return utcMs;
+}
+
+// Human-readable deadline for display ("November 16, 2026"). Rendered in UTC so
+// the printed day matches the instant filingDueDateUtc() returns regardless of
+// the server's or the reader's timezone.
+export function formatDueDate(utcMs: number): string {
+  return new Date(utcMs).toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 // A year is delinquent once its filing deadline has passed. Callers pass the
@@ -179,6 +251,11 @@ export function isYearDelinquent(
   return Date.now() > filingDueDateUtc(taxYear, dissolvedAt);
 }
 
+// Both factories build a NEW schema on every call and read the upper bound from
+// maxSelectableTaxYear() at that moment (which reads the clock — see its note).
+// Nothing here closes over the module-level lastCompletedTaxYear/currentTaxYear
+// constants: a server process alive across New Year's Eve would otherwise keep
+// rejecting the year that just became filable until it restarted.
 export function makeYearScopeSchema(isFinalReturn: boolean) {
   return z.object({
     taxYears: z
@@ -200,6 +277,10 @@ export function makeYearDataSchema(isFinalReturn: boolean) {
 // Ordinary (non-final-return) bounds. Kept as standalone exports because most
 // call sites have no final-return context and must stay capped at the last
 // completed year; the factories above are the opt-in for the exception.
+// NOTE: these are built ONCE at module load, so their upper bound freezes at
+// the year the process started. Validation paths must call the factories (which
+// re-read the clock); these constants exist for the derived types below and for
+// one-shot/per-request use.
 export const yearScopeSchema = makeYearScopeSchema(false);
 
 export const yearDataSchema = makeYearDataSchema(false);

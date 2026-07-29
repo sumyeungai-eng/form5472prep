@@ -42,23 +42,30 @@ export async function stampDiirspHeader(
   });
 }
 
-// Stamp the SHORT tax-year period just under the DIIRSP header line. A final
-// return covers 01/01 → the dissolution date, not the printed calendar year,
-// and the 1120 header's own "tax year beginning / ending" cells are an unmapped
-// AcroForm field — so we free-draw the period the same way stampDiirspHeader
-// draws its banner. Placed ~12pt below the header (y 778 → 766) so the two
-// stamps never overlap; black (not the header's red) because this is a factual
-// period statement, not a filing-procedure flag.
+// Stamp the SHORT tax-year period just under the DIIRSP header line. A short
+// year covers less than 01/01 → 12/31 — because the LLC was formed mid-year
+// (initial return), dissolved mid-year (final return), or both — and the 1120
+// header's own "tax year beginning / ending" cells are an unmapped AcroForm
+// field, so we free-draw the period the same way stampDiirspHeader draws its
+// banner. Placed ~12pt below the header (y 778 → 766) so the two stamps never
+// overlap; black (not the header's red) because this is a factual period
+// statement, not a filing-procedure flag.
+//
+// `suffix` names WHY the year is short (e.g. "(initial and final return)") so
+// the stamp agrees with whichever item E boxes the caller ticked. Pass "" to
+// print the period with no parenthetical.
 export async function stampShortPeriod(
   pdf: PDFDocument,
   beginText: string,
   endText: string,
+  suffix: string = "(final return)",
   opts?: { x?: number; y?: number },
 ) {
   const page = pdf.getPage(0);
   const font = await pdf.embedFont(StandardFonts.HelveticaBold);
   // en-dash between the dates, matching typographic convention for ranges.
-  page.drawText(`Short tax year: ${beginText} – ${endText} (final return)`, {
+  const tail = suffix ? ` ${suffix}` : "";
+  page.drawText(`Short tax year: ${beginText} – ${endText}${tail}`, {
     x: opts?.x ?? 200,
     y: opts?.y ?? 766,
     size: 9,

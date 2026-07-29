@@ -9,6 +9,19 @@ import { FilingLocked } from "@/components/FilingLocked";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { PurchaseConversionPing } from "./PurchaseConversionPing";
 import { getTiersForSource } from "@/lib/pricing";
+import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
+
+// Statuses where the filing is paid but not yet acknowledged as complete —
+// the window in which the customer still cares "will this land before my
+// deadline?". DRAFT (unpaid), CONFIRMED (done) and FAILED (different
+// conversation entirely) deliberately show nothing.
+const DEADLINE_VISIBLE_STATUSES = new Set([
+  "PAID",
+  "PDF_GENERATED",
+  "SIGNATURE_PENDING",
+  "SIGNED_UPLOADED",
+  "FAXED",
+]);
 
 // Verify with Stripe — NOT the bare ?paid=1 query param — that the filing's
 // Checkout Session actually completed before promoting DRAFT → PAID. The
@@ -68,6 +81,17 @@ export default async function FilingDetailPage({
     redirect(`/filings/${owned.id}/edit`);
   }
 
+  // Filing deadline for the in-flight window. Latest tax year drives the date;
+  // a FINAL return shortens that year, so dissolvedAt is passed only when
+  // isFinalReturn is set. Omitted entirely when there are no tax years.
+  const maxTaxYear = filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : null;
+  const deadlineText =
+    maxTaxYear != null && DEADLINE_VISIBLE_STATUSES.has(filing.status)
+      ? formatDueDate(
+          filingDueDateUtc(maxTaxYear, filing.isFinalReturn ? filing.dissolvedAt : null),
+        )
+      : null;
+
   return (
     <div className="max-w-3xl mx-auto px-6 py-10 space-y-8">
       {/* Google Ads purchase conversion — fire on any paid view (not just the
@@ -93,11 +117,20 @@ export default async function FilingDetailPage({
         </p>
       </div>
 
-      <FilingStatusBanner
-        filingId={filing.id}
-        status={filing.status}
-        updatedAt={filing.updatedAt}
-      />
+      <div className="space-y-3">
+        <FilingStatusBanner
+          filingId={filing.id}
+          status={filing.status}
+          updatedAt={filing.updatedAt}
+        />
+
+        {deadlineText && (
+          <p className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+            <span className="font-medium text-slate-900">Your filing deadline: {deadlineText}</span>{" "}
+            — we file well before this.
+          </p>
+        )}
+      </div>
 
       <FilingActions
         filing={{

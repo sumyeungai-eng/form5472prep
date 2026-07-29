@@ -261,6 +261,14 @@ type OrderConfirmationArgs = {
   pdfBytes?: Uint8Array | null;
   pdfFilename?: string;
   signatures?: OrderSignatureInfo[];
+  // Post-purchase sequencing. FINAL short-year returns (dissolved LLC) get an
+  // extra warning box: customers routinely cancel the EIN / tick "closed" with
+  // their formation service the same week they buy, which can land the final
+  // 5472 at an EIN the IRS has already retired.
+  isFinalReturn?: boolean;
+  // Pre-rendered deadline string (e.g. "April 15, 2026"). Caller computes it
+  // from filingDueDateUtc() so the email never re-derives tax logic.
+  dueDateText?: string | null;
 };
 
 // Append a `?next=` query param to a magic-link portal URL so the auth
@@ -281,7 +289,7 @@ function portalLinkWithNext(portalLink: string, nextPath: string): string {
 export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const {
     email, llcName, taxYears, tier, amountPaidCents, portalLink, receiptUrl,
-    pdfBytes, signatures,
+    pdfBytes, signatures, isFinalReturn, dueDateText,
   } = args;
   // Resolve the tier through pricing.ts so legacy tier values from old
   // filings still render a sensible label rather than crashing.
@@ -295,6 +303,37 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const llcLine = llcName ?? "(LLC name pending)";
   const hasPdf = !!pdfBytes && pdfBytes.byteLength > 0;
   const sigCount = signatures?.length ?? 0;
+
+  // ----- Post-purchase sequencing -----
+  // Deadline line, shown high in the email so the customer can sanity-check
+  // that what they just bought lands before the date they were worried about.
+  const dueDateHtml = dueDateText
+    ? `<p style="margin:0 0 12px;color:#334155;line-height:1.6;font-size:14px;">
+         <strong style="color:#0f172a;">Your filing deadline:</strong> ${escapeHtml(dueDateText)} — we prepare and file well before this.
+       </p>`
+    : "";
+
+  // Amber warning — FINAL RETURNS ONLY, and deliberately the loudest block in
+  // the "what happens next" section.
+  const einWarningHtml = isFinalReturn
+    ? `<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:14px 18px;margin:0 0 16px;color:#92400e;font-size:14px;line-height:1.6;">
+         <strong style="display:block;margin:0 0 6px;color:#78350f;font-size:15px;">Before you close anything else</strong>
+         Do not sign any EIN cancellation letter, and don't mark your closure task complete with your formation service, until we send you the fax transmission confirmation. Cancelling the EIN before the filing is transmitted can cause the IRS to reject or misfile your final return.
+       </div>`
+    : "";
+
+  const nextImportantHtml = `
+    <!-- What happens next — important -->
+    <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:15px;">What happens next — important</p>
+    ${einWarningHtml}
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin:0 0 12px;color:#334155;font-size:14px;line-height:1.6;">
+      <strong style="display:block;margin:0 0 6px;color:#0f172a;">Your proof of filing</strong>
+      The IRS does not send an acknowledgment for Form 5472. Your proof is the timestamped fax transmission report plus your filed copy — we email both to you at no charge once transmission completes.
+    </div>
+    <p style="margin:0 0 24px;color:#64748b;font-size:13px;line-height:1.6;">
+      Keep your filed copy and the transmission report with your LLC records for at least six years.
+    </p>
+  `;
 
   // Fax delivery is included on every tier — the row just states that
   // explicitly so the customer can see what they got.
@@ -323,6 +362,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     <p style="margin:0 0 12px;color:#475569;line-height:1.6;font-size:15px;">
       ${introCopy}
     </p>
+    ${dueDateHtml}
     <p style="margin:0 0 20px;color:#64748b;font-size:13px;">
       Save <strong>donotreply@form5472prep.com</strong> to your contacts to make sure our filing emails reach your inbox.
     </p>
@@ -352,6 +392,8 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       ${step3Html}
     </ol>
 
+    ${nextImportantHtml}
+
     ${receiptUrl ? `<p style="margin:0 0 20px;font-size:13px;color:#64748b;">A detailed payment receipt is also available on <a href="${receiptUrl}" style="color:#1e3a8a;text-decoration:none;">Stripe</a>.</p>` : ""}
   `;
 
@@ -374,6 +416,25 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       `  2. You open the portal to sign in-browser. A qualified tax accountant on our team reviews the package end-to-end before we fax it to the IRS.\n` +
       step3Text + "\n";
 
+  // Plain-text mirror of the post-purchase sequencing section above.
+  const dueDateLineText = dueDateText
+    ? `Your filing deadline: ${dueDateText} — we prepare and file well before this.\n\n`
+    : "";
+  const nextImportantText =
+    `What happens next — important\n\n` +
+    (isFinalReturn
+      ? `  BEFORE YOU CLOSE ANYTHING ELSE\n` +
+        `  Do not sign any EIN cancellation letter, and don't mark your closure task complete\n` +
+        `  with your formation service, until we send you the fax transmission confirmation.\n` +
+        `  Cancelling the EIN before the filing is transmitted can cause the IRS to reject or\n` +
+        `  misfile your final return.\n\n`
+      : "") +
+    `  Your proof of filing\n` +
+    `  The IRS does not send an acknowledgment for Form 5472. Your proof is the timestamped\n` +
+    `  fax transmission report plus your filed copy — we email both to you at no charge once\n` +
+    `  transmission completes.\n\n` +
+    `  Keep your filed copy and the transmission report with your LLC records for at least six years.\n`;
+
   return sendEmail({
     to: email,
     subject: hasPdf
@@ -381,6 +442,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       : `Order confirmed — Form5472 Prep filing (${yearsLabel})`,
     text:
       `Thanks for your order!\n\n` +
+      dueDateLineText +
       `Tip: save donotreply@form5472prep.com to your contacts so our emails reach your inbox.\n\n` +
       `Order summary:\n` +
       `  LLC:           ${llcLine}\n` +
@@ -391,6 +453,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       `  Total paid:    ${formatUsd(amountPaidCents)}\n` +
       signaturesText + "\n" +
       nextStepsText + "\n" +
+      nextImportantText + "\n" +
       `Open your filing: ${portalLink}\n\n` +
       `— Form5472 Prep`,
     html: shell({
