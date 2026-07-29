@@ -200,6 +200,18 @@ model Filing {
   attrReferrer String?
   attrLanding  String?
 
+  // Final (short-year) return: the LLC was dissolved/closed during the tax
+  // year being filed. This is the ONLY case where the current, not-yet-ended
+  // calendar year is a valid selection — a normal filer must wait for the year
+  // to end. Ticks item E "Final return" on the pro forma 1120.
+  isFinalReturn Boolean @default(false)
+
+  // Date the LLC was dissolved. Required when isFinalReturn is true, because a
+  // final return covers a SHORT tax year (Jan 1 → this date), and both the
+  // Form 5472 header and the pro forma 1120 must show that period rather than
+  // a full 01/01–12/31 calendar year. Null for every ordinary filing.
+  dissolvedAt DateTime?
+
   // Admin-archived draft: hidden from the admin filings list and the
   // "Unfinished" count without destroying the row. Reversible (unhide), and
   // only ever set on DRAFT filings — paid filings are never hidden.

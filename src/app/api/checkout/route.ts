@@ -8,7 +8,7 @@ import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePacka
 import { putPdf } from "@/lib/storage";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
-import { entitySchema, ownerBaseSchema, refineUsIdOrReferenceId, yearScopeSchema } from "@/lib/schemas";
+import { entitySchema, ownerBaseSchema, refineUsIdOrReferenceId, makeYearScopeSchema } from "@/lib/schemas";
 
 const ownerCompletionSchema = ownerBaseSchema.superRefine(refineUsIdOrReferenceId);
 
@@ -41,7 +41,10 @@ export async function POST(req: Request) {
   const completionChecks = [
     entitySchema.safeParse(validationFiling),
     ownerCompletionSchema.safeParse(filing),
-    yearScopeSchema.safeParse(filing),
+    // Bound the year range by the filing's own final-return flag — a dissolved
+    // LLC legitimately reports the in-progress year, and the fixed bound would
+    // otherwise flag that filing as incomplete and block it from paying.
+    makeYearScopeSchema(filing.isFinalReturn).safeParse(filing),
   ];
   const completionIssues: string[] = [];
   for (const result of completionChecks) {
@@ -57,6 +60,12 @@ export async function POST(req: Request) {
       const field = `yearData.${taxYear}`;
       if (completionIssues.indexOf(field) === -1) completionIssues.push(field);
     }
+  }
+  // A final return covers a short tax year (Jan 1 → dissolution date). Without
+  // the date the forms would claim a full 01/01–12/31 year while item E says
+  // "final" — so refuse to charge until the customer supplies it.
+  if (filing.isFinalReturn && !filing.dissolvedAt) {
+    if (completionIssues.indexOf("dissolvedAt") === -1) completionIssues.push("dissolvedAt");
   }
   if (filing.isDiirsp && (!filing.reasonableCauseNarrative || !filing.reasonableCauseNarrative.trim())) {
     if (completionIssues.indexOf("reasonableCauseNarrative") === -1) completionIssues.push("reasonableCauseNarrative");
@@ -137,6 +146,8 @@ export async function POST(req: Request) {
           ownerCountryBusiness: full.ownerCountryBusiness, ownerFtin: full.ownerFtin,
           ownerItin: full.ownerItin, ownerReferenceId: full.ownerReferenceId,
           taxYears: full.taxYears, isDiirsp: full.isDiirsp,
+          isFinalReturn: full.isFinalReturn,
+          dissolvedAt: full.dissolvedAt,
           reasonableCauseNarrative: full.reasonableCauseNarrative,
           yearData: full.yearData.map((y) => ({
             taxYear: y.taxYear,

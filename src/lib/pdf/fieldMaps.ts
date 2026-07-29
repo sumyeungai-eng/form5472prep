@@ -83,6 +83,17 @@ export const form1120_2024FieldMap = {
   B_ein: "topmostSubform[0].Page1[0].f1_7[0]",
   C_dateIncorporated: "topmostSubform[0].Page1[0].f1_8[0]",
   D_totalAssets: "topmostSubform[0].Page1[0].f1_9[0]",
+  // Item E checkboxes. Probed the blank public/forms/f1120--2024.pdf with
+  // pdf-lib field enumeration: Page1 carries a clean sequential run c1_6[0]..
+  // c1_9[0] directly under Page1[0] (item A's five boxes are the earlier
+  // A[0].c1_1..c1_5), all on one row at y≈637.5 with x = 187.2 / 280.8 / 374.4 /
+  // 468.0 — i.e. left→right Initial / Final / Name change / Address change,
+  // structurally IDENTICAL to the 2025 revision (same names, same coordinates).
+  // So the Final-return box is unambiguously c1_7[0], the second of the four.
+  E_initialReturn: "topmostSubform[0].Page1[0].c1_6[0]",
+  E_finalReturn:   "topmostSubform[0].Page1[0].c1_7[0]",
+  E_nameChange:    "topmostSubform[0].Page1[0].c1_8[0]",
+  E_addressChange: "topmostSubform[0].Page1[0].c1_9[0]",
 } as const;
 
 // 2025 Form 1120 restructured the header: the name/address block is split

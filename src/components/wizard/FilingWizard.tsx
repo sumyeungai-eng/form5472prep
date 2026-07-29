@@ -35,7 +35,9 @@ import { z } from "zod";
 import {
   entitySchema,
   ownerBaseSchema,
-  yearScopeSchema,
+  makeYearScopeSchema,
+  validateDissolvedAt,
+  isYearDelinquent,
   type EntityForm,
   type OwnerForm,
   type YearScopeForm,
@@ -156,6 +158,14 @@ type Filing = {
   ownerReferenceId: string | null;
   taxYears: number[];
   isDiirsp: boolean;
+  // True when the LLC was dissolved/closed and this is its final short-year
+  // return — the only case that may report a tax year still in progress.
+  isFinalReturn: boolean;
+  // Day the LLC was dissolved; the short tax year runs Jan 1 → this date.
+  // Typed loosely because it reaches this component two ways: as a Date on the
+  // server-rendered record (the page spreads the raw row) and as an ISO string
+  // in the JSON that PATCH echoes back.
+  dissolvedAt: Date | string | null;
   reasonableCauseNarrative: string | null;
   faxService: boolean;
   // Service tier ("standard" | "rush" | "premium") chosen at /pricing or
@@ -335,11 +345,19 @@ export function FilingWizard({
           <YearsStep
             filing={filing}
             onSubmit={async (data) => {
-              const updated = await save({ taxYears: data.taxYears });
+              const updated = await save({
+                taxYears: data.taxYears,
+                isFinalReturn: data.isFinalReturn,
+                // Always sent — null clears any date left over from a
+                // previously-ticked final-return box.
+                dissolvedAt: data.dissolvedAt,
+              });
               setFiling({
                 ...filing,
                 taxYears: updated.taxYears,
                 isDiirsp: updated.isDiirsp,
+                isFinalReturn: updated.isFinalReturn,
+                dissolvedAt: updated.dissolvedAt,
               });
               // The steps list will pick up the new isDiirsp on the next render.
               setStepKey(updated.isDiirsp ? "rcs" : "transactions");
@@ -986,6 +1004,17 @@ function OwnerStep({
   );
 }
 
+// Normalizes a stored date (Date from the server-rendered row, ISO string from
+// a PATCH response, or null) to the YYYY-MM-DD that <input type="date"> wants.
+// Read in UTC: the value is a calendar day, and local getters would show the
+// previous day for anyone west of UTC.
+function toDateInputValue(value: Date | string | null | undefined): string {
+  if (!value) return "";
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toISOString().slice(0, 10);
+}
+
 function YearsStep({
   filing,
   onSubmit,
@@ -993,16 +1022,29 @@ function YearsStep({
   saving,
 }: {
   filing: Filing;
-  onSubmit: (data: YearScopeForm) => Promise<void>;
+  onSubmit: (
+    data: YearScopeForm & { isFinalReturn: boolean; dissolvedAt: string | null },
+  ) => Promise<void>;
   onBack: () => void;
   saving: boolean;
 }) {
   const currentYear = new Date().getUTCFullYear();
   // Cap the picker at the last COMPLETED tax year — a user shouldn't file for a
   // year that hasn't ended yet (the server enforces the same bound via
-  // yearScopeSchema).
+  // makeYearScopeSchema). The single exception is a FINAL return: a dissolved
+  // LLC's tax year ends on the closing date, so its return is already due and
+  // filable mid-year. Ticking the box below therefore unlocks — and only for
+  // that filer — the year in progress.
   const lastCompletedTaxYear = currentYear - 1;
-  const allYears = Array.from({ length: lastCompletedTaxYear - 2017 }, (_, i) => 2018 + i);
+  const [isFinalReturn, setIsFinalReturn] = useState(filing.isFinalReturn);
+  // Dissolution date lives outside react-hook-form because the whole final-
+  // return block is conditional and its rule depends on the year selection —
+  // validateDissolvedAt() is the same function the server runs, so the inline
+  // message matches the 400 the PATCH would return.
+  const [dissolvedAt, setDissolvedAt] = useState(toDateInputValue(filing.dissolvedAt));
+  const [dissolvedAtError, setDissolvedAtError] = useState<string | null>(null);
+  const maxYear = isFinalReturn ? currentYear : lastCompletedTaxYear;
+  const allYears = Array.from({ length: maxYear - 2017 }, (_, i) => 2018 + i);
   const {
     register,
     handleSubmit,
@@ -1010,7 +1052,7 @@ function YearsStep({
     setValue,
     formState: { errors },
   } = useForm<YearScopeForm>({
-    resolver: zodResolver(yearScopeSchema),
+    resolver: zodResolver(makeYearScopeSchema(isFinalReturn)),
     defaultValues: { taxYears: filing.taxYears.length ? filing.taxYears : [lastCompletedTaxYear] },
   });
   const selected = watch("taxYears");
@@ -1020,6 +1062,18 @@ function YearsStep({
     setValue("taxYears", next, { shouldValidate: true });
   }
 
+  function toggleFinalReturn(checked: boolean) {
+    setIsFinalReturn(checked);
+    // Unticking re-locks the current year. Drop it from the selection too —
+    // leaving it checked would submit a year this filing may no longer report
+    // and the server would reject the whole save with a 400.
+    if (!checked && selected.includes(currentYear)) {
+      setValue("taxYears", selected.filter((y) => y !== currentYear), { shouldValidate: true });
+    }
+    // Stale error from the hidden field would otherwise keep showing.
+    if (!checked) setDissolvedAtError(null);
+  }
+
   // Tier is selected at /pricing (or /start?tier=) and stored on filing.tier.
   // Wizard just lets the customer pick year count; each additional past year
   // adds a flat $79 on top of the tier base.
@@ -1027,11 +1081,40 @@ function YearsStep({
   const extraYears = Math.max(0, selected.length - 1);
   const addOnTotalCents = multiYearAddonCents(selected.length);
   const totalCents = activeTier.priceCents + addOnTotalCents;
-  const wouldBeDiirsp =
-    selected.length > 1 || selected.some((y) => y < currentYear);
+  // Show the DIIRSP hint (and, downstream, the RCS step) exactly when the server
+  // will set isDiirsp: any selected year whose IRS deadline has already passed.
+  // Use the SAME shared rule the PATCH route runs — so a final short year that
+  // is already late triggers it, and a not-yet-due final/current year does not
+  // (the old "more than one year, or any past year" heuristic got both wrong).
+  const wouldBeDiirsp = selected.some((y) =>
+    isYearDelinquent(y, isFinalReturn ? dissolvedAt : null),
+  );
+
+  // The short year belongs to the LATEST selected year — earlier years in a
+  // multi-year catch-up are ordinary full years. Cap the picker at today when
+  // that year is the one still running.
+  const dissolvedAtYear = selected.length > 0 ? Math.max(...selected) : maxYear;
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const dissolvedAtMax = dissolvedAtYear < currentYear ? `${dissolvedAtYear}-12-31` : todayIso;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form
+      onSubmit={handleSubmit(async (data) => {
+        // A final return without a dissolution date has no defined tax-year
+        // end, so don't let the wizard advance (and don't send a date the
+        // filing shouldn't carry when the box is unticked).
+        if (isFinalReturn) {
+          const err = validateDissolvedAt(dissolvedAt, data.taxYears);
+          if (err) {
+            setDissolvedAtError(err);
+            return;
+          }
+        }
+        setDissolvedAtError(null);
+        await onSubmit({ ...data, isFinalReturn, dissolvedAt: isFinalReturn ? dissolvedAt : null });
+      })}
+      className="space-y-5"
+    >
       <div>
         <h2 className="text-xl font-semibold">Tax years to file</h2>
         <p className="text-sm text-slate-500 mt-1">
@@ -1063,6 +1146,48 @@ function YearsStep({
         })}
       </div>
       {errors.taxYears && <p className="text-xs text-red-600">{errors.taxYears.message}</p>}
+      <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={isFinalReturn}
+            onChange={(e) => toggleFinalReturn(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+          />
+          <span className="font-medium">
+            My LLC was closed or dissolved during {currentYear} — this is a final return
+          </span>
+        </label>
+        <p className="text-xs text-amber-800 mt-1.5 ml-6">
+          Only tick this if the LLC has actually been dissolved. It lets you file a short tax
+          year that hasn&apos;t ended yet, and marks the return as final on Form 1120.
+        </p>
+        {isFinalReturn && (
+          <div className="mt-3 ml-6">
+            <Field
+              label="Date the LLC was dissolved"
+              hint="This is the last day of the tax year we file for you. The forms will cover January 1 through this date."
+              error={dissolvedAtError ?? undefined}
+            >
+              <Input
+                type="date"
+                value={dissolvedAt}
+                onChange={(e) => {
+                  setDissolvedAt(e.target.value);
+                  if (dissolvedAtError) setDissolvedAtError(null);
+                }}
+                // Bounds mirror validateDissolvedAt: inside the latest selected
+                // year and not in the future. `aria-required` rather than the
+                // native `required` so the browser's own bubble doesn't
+                // pre-empt our inline message.
+                min={`${dissolvedAtYear}-01-01`}
+                max={dissolvedAtMax}
+                aria-required
+              />
+            </Field>
+          </div>
+        )}
+      </div>
       <div className="rounded-md bg-slate-50 p-4 text-sm">
         <p className="font-medium">
           {activeTier.label}: {formatUsd(activeTier.priceCents)}

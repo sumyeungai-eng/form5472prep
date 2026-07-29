@@ -69,6 +69,8 @@ export async function POST(req: Request) {
     ownerReferenceId: filing.ownerReferenceId,
     taxYears: filing.taxYears,
     isDiirsp: filing.isDiirsp,
+    isFinalReturn: filing.isFinalReturn,
+    dissolvedAt: filing.dissolvedAt,
     reasonableCauseNarrative: filing.reasonableCauseNarrative,
     yearData: filing.yearData.map((y) => ({
       taxYear: y.taxYear,

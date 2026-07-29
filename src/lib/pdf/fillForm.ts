@@ -42,6 +42,31 @@ export async function stampDiirspHeader(
   });
 }
 
+// Stamp the SHORT tax-year period just under the DIIRSP header line. A final
+// return covers 01/01 → the dissolution date, not the printed calendar year,
+// and the 1120 header's own "tax year beginning / ending" cells are an unmapped
+// AcroForm field — so we free-draw the period the same way stampDiirspHeader
+// draws its banner. Placed ~12pt below the header (y 778 → 766) so the two
+// stamps never overlap; black (not the header's red) because this is a factual
+// period statement, not a filing-procedure flag.
+export async function stampShortPeriod(
+  pdf: PDFDocument,
+  beginText: string,
+  endText: string,
+  opts?: { x?: number; y?: number },
+) {
+  const page = pdf.getPage(0);
+  const font = await pdf.embedFont(StandardFonts.HelveticaBold);
+  // en-dash between the dates, matching typographic convention for ranges.
+  page.drawText(`Short tax year: ${beginText} – ${endText} (final return)`, {
+    x: opts?.x ?? 200,
+    y: opts?.y ?? 766,
+    size: 9,
+    font,
+    color: rgb(0, 0, 0),
+  });
+}
+
 // Flatten the form so downstream PDF viewers (and the IRS) see the values
 // as static text rather than editable fields.
 export function flatten(form: ReturnType<PDFDocument["getForm"]>) {

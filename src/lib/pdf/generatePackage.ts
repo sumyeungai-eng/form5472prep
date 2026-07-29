@@ -2,8 +2,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { form5472FieldMap, form1120_2024FieldMap, form1120_2025FieldMap } from "./fieldMaps";
-import { setText, check, stampDiirspHeader, flatten } from "./fillForm";
+import { setText, check, stampDiirspHeader, stampShortPeriod, flatten } from "./fillForm";
 import { formatDateForIrs } from "@/lib/utils";
+import { isYearDelinquent } from "@/lib/schemas";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Country normalization — wizard collects nationality/residence as free text
@@ -82,6 +83,14 @@ type Filing = {
   ownerReferenceId: string | null;
   taxYears: number[];
   isDiirsp: boolean;
+  // Set when the LLC was dissolved/closed and this package is its FINAL
+  // (short-year) return. Optional so existing call sites that never handle a
+  // final return keep compiling; absent behaves exactly as `false`.
+  isFinalReturn?: boolean;
+  // Date the LLC was dissolved. Only meaningful alongside isFinalReturn, and
+  // it is what makes the year SHORT — see periodEndFor(). Optional/nullable so
+  // the many call sites that never deal with a final return keep compiling.
+  dissolvedAt?: Date | string | null;
   reasonableCauseNarrative: string | null;
   yearData: {
     taxYear: number;
@@ -100,6 +109,30 @@ export type ReportableTx = {
   amountCents: number; // signed: positive = inflow (contribution), negative = outflow (distribution)
   category: string; // "contribution" | "distribution" | other
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Tax-year period end (MM/DD) for a given year in the package.
+//
+// A final return covers a SHORT tax year: it starts Jan 1 but ends the day the
+// LLC was dissolved, NOT 12/31. Printing the full calendar year on a return
+// whose item E says "Final return" is an internal contradiction, and it
+// overstates the period the reported figures cover.
+//
+// Only the year the dissolution actually falls in is short. A multi-year
+// (DIIRSP catch-up) package that ends with a final year still has ordinary,
+// complete years before it, and those must keep 12/31 — hence the year match.
+// Read in UTC because the stored value is a date-only instant (UTC midnight);
+// local getters would slide it a day backwards on a west-of-UTC host.
+// ─────────────────────────────────────────────────────────────────────────────
+export function periodEndFor(f: Pick<Filing, "isFinalReturn" | "dissolvedAt">, year: number): string {
+  if (!f.isFinalReturn || !f.dissolvedAt) return "12/31";
+  const dissolved = f.dissolvedAt instanceof Date ? f.dissolvedAt : new Date(f.dissolvedAt);
+  if (Number.isNaN(dissolved.getTime())) return "12/31";
+  if (dissolved.getUTCFullYear() !== year) return "12/31";
+  const mm = String(dissolved.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(dissolved.getUTCDate()).padStart(2, "0");
+  return `${mm}/${dd}`;
+}
 
 const FORMS_DIR = path.join(process.cwd(), "public", "forms");
 
@@ -125,9 +158,12 @@ function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number)
   const ownerBusinessCountry =
     normalizeCountry(f.ownerCountryBusiness) || ownerTaxResidence || ownerCitizenship;
 
+  // Period always begins 01/01 (a dissolved LLC's short year still starts with
+  // the calendar year); the END is 12/31 unless this is the final year, in
+  // which case it's the dissolution date. See periodEndFor().
   setText(form, m.taxYearBeginMonthDay, "01/01");
   setText(form, m.taxYearBeginYear, String(year));
-  setText(form, m.taxYearEndMonthDay, "12/31");
+  setText(form, m.taxYearEndMonthDay, periodEndFor(f, year));
   setText(form, m.taxYearEndYear, String(year));
 
   // Part I — reporting corp
@@ -249,6 +285,29 @@ async function fillForm1120(pdf: PDFDocument, f: Filing, year: number) {
     setText(form, m.C_dateIncorporated, dateIncorporated);
     setText(form, m.D_totalAssets, totalAssets);
   }
+
+  // NOTE (short year): the 1120 header's own "tax year beginning / ending" line
+  // is an AcroForm field neither revision's map exposes, so rather than guess
+  // its name we state the short period with a free-text stamp (stampShortPeriod,
+  // applied in generatePackage just under the header stamp) for the dissolution
+  // year, and Form 5472 also carries it in its mapped period cells (see
+  // periodEndFor). Ordinary full years are left showing their calendar year.
+  //
+  // Item E "Final return" belongs ONLY to the 1120 for the SHORT (dissolution)
+  // year. In a multi-year DIIRSP catch-up the earlier years are ordinary,
+  // complete returns — ticking "Final return" on them would misdeclare a still-
+  // live entity as closed for a year it was operating. periodEndFor() returns a
+  // non-12/31 end exactly for the dissolution year, so it is the correct gate
+  // (and matches the short-period stamp). Both the 2024 and 2025 field maps now
+  // expose E_finalReturn (c1_7[0], verified by pdf-lib enumeration of both blank
+  // PDFs); keep the key guard so any future unmapped revision skips it silently.
+  const isShortYear = periodEndFor(f, year) !== "12/31";
+  if (f.isFinalReturn && isShortYear) {
+    const itemE: typeof form1120_2025FieldMap | typeof form1120_2024FieldMap =
+      year >= 2025 ? form1120_2025FieldMap : form1120_2024FieldMap;
+    if ("E_finalReturn" in itemE) check(form, itemE.E_finalReturn);
+  }
+
   flatten(form);
 
   // After flatten, stamp "Sole Member" into the signature-block "Title" slot.
@@ -526,7 +585,7 @@ function wrapAtPx(text: string, f: import("pdf-lib").PDFFont, size: number, maxW
   return lines;
 }
 
-async function buildCoverLetter(f: Filing): Promise<PDFDocument> {
+async function buildCoverLetter(f: Filing, delinquentYears: number[]): Promise<PDFDocument> {
   const pdf = await PDFDocument.create();
   const page = pdf.addPage([612, 792]);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
@@ -556,13 +615,35 @@ async function buildCoverLetter(f: Filing): Promise<PDFDocument> {
   draw(`Tax year(s): ${f.taxYears.join(", ")}`);
   y -= 28;
 
+  // Per-year status. The DIIRSP / late-filing language must name ONLY the years
+  // that are actually delinquent — the cover letter is signed, so declaring a
+  // timely year late would be a false statement. Three cases:
+  //   • no delinquent years  → the existing fully-timely wording (unchanged);
+  //   • ALL years delinquent → the existing DIIRSP wording, VERBATIM (this is
+  //     the ordinary catch-up package, kept byte-for-byte stable);
+  //   • a mix                → DIIRSP for the late years + one sentence noting
+  //     the timely year(s).
+  const timelyYears = f.taxYears.filter((y) => !delinquentYears.includes(y));
+  let statusSentence: string;
+  if (delinquentYears.length === 0) {
+    statusSentence = `These are timely filed for the tax year(s) indicated.`;
+  } else if (timelyYears.length === 0) {
+    statusSentence =
+      `These filings are being submitted under the Delinquent International Information ` +
+      `Return Submission Procedures (DIIRSP). A reasonable cause statement is attached.`;
+  } else {
+    const dPlural = delinquentYears.length > 1;
+    const tPlural = timelyYears.length > 1;
+    statusSentence =
+      `The filing${dPlural ? "s" : ""} for tax year${dPlural ? "s" : ""} ${delinquentYears.join(", ")} ` +
+      `${dPlural ? "are" : "is"} being submitted under the Delinquent International Information ` +
+      `Return Submission Procedures (DIIRSP). A reasonable cause statement is attached. ` +
+      `This package also includes a timely filed return for tax year${tPlural ? "s" : ""} ${timelyYears.join(", ")}.`;
+  }
   const body =
     `Enclosed please find Form 5472 with attached pro forma Form 1120 for the above ` +
     `foreign-owned U.S. disregarded entity, for the tax year(s) listed. ` +
-    (f.isDiirsp
-      ? `These filings are being submitted under the Delinquent International Information ` +
-        `Return Submission Procedures (DIIRSP). A reasonable cause statement is attached.`
-      : `These are timely filed for the tax year(s) indicated.`);
+    statusSentence;
 
   for (const line of wrap(body, 85)) {
     draw(line);
@@ -579,10 +660,17 @@ async function buildCoverLetter(f: Filing): Promise<PDFDocument> {
   return pdf;
 }
 
-async function buildReasonableCause(f: Filing): Promise<PDFDocument> {
+async function buildReasonableCause(f: Filing, delinquentYears: number[]): Promise<PDFDocument> {
   const pdf = await PDFDocument.create();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+
+  // The RCS explains why the LATE returns are late, so every year it names must
+  // be a delinquent one — never a timely year bundled in the same package. Fall
+  // back to the full set only in the defensive case of an empty delinquent list
+  // (the caller renders the RCS only when isDiirsp, i.e. at least one late year,
+  // so in practice `years` is exactly delinquentYears).
+  const years = delinquentYears.length ? delinquentYears : f.taxYears;
 
   const MARGIN_L = 50;
   const MARGIN_R = 50;
@@ -628,8 +716,8 @@ async function buildReasonableCause(f: Filing): Promise<PDFDocument> {
   space(16);
   drawLine(
     "(Attached to Form 5472 / Pro Forma Form 1120 submission for tax year" +
-      (f.taxYears.length > 1 ? "s" : "") +
-      ` ${f.taxYears.join(", ")})`,
+      (years.length > 1 ? "s" : "") +
+      ` ${years.join(", ")})`,
     { size: 10 },
   );
   space(18);
@@ -642,7 +730,7 @@ async function buildReasonableCause(f: Filing): Promise<PDFDocument> {
 
   drawParagraph(
     "This statement explains the circumstances giving rise to the late filing of Form 5472 and the " +
-      `accompanying pro forma Form 1120 for tax year${f.taxYears.length > 1 ? "s" : ""} ${f.taxYears.join(", ")}, ` +
+      `accompanying pro forma Form 1120 for tax year${years.length > 1 ? "s" : ""} ${years.join(", ")}, ` +
       "and respectfully requests waiver of any penalty pursuant to the reasonable cause standard of " +
       "IRC § 6038A(d)(3) and Treas. Reg. § 1.6038A-4(b).",
   );
@@ -735,7 +823,7 @@ async function buildReasonableCause(f: Filing): Promise<PDFDocument> {
   space(6);
   drawParagraph(
     "This submission is voluntary and is being made before any IRS contact regarding the missing " +
-      `return${f.taxYears.length > 1 ? "s" : ""}. To the best of the Owner's knowledge, the Owner is not currently under civil examination, ` +
+      `return${years.length > 1 ? "s" : ""}. To the best of the Owner's knowledge, the Owner is not currently under civil examination, ` +
       "criminal investigation, or under examination by the IRS with respect to Form 5472 reporting. " +
       "The Owner has now established a recurring annual reminder for the April 15 filing deadline " +
       "and will retain qualified assistance as needed to ensure timely future compliance with the " +
@@ -838,7 +926,18 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
   const out = await PDFDocument.create();
   const signatures: SignatureLocation[] = [];
 
-  const cover = await buildCoverLetter(f);
+  // Per-year delinquency. A bundled package can mix late years with a timely one
+  // (e.g. a DIIRSP catch-up that ends with a final short year whose deadline
+  // hasn't passed yet). The DIIRSP header stamp, the cover letter's late-filing
+  // language, and the reasonable cause statement are signed under penalties of
+  // perjury, so they must apply to the delinquent years ONLY — declaring a
+  // timely year "delinquent" would be a false statement. Use the same shared
+  // rule the server used to set isDiirsp, so the two never disagree.
+  const delinquentYears = f.taxYears.filter((y) =>
+    isYearDelinquent(y, f.isFinalReturn ? f.dissolvedAt : null),
+  );
+
+  const cover = await buildCoverLetter(f, delinquentYears);
   await copyAll(out, cover);
   // Cover letter signature line is at the bottom of the (single) cover page.
   signatures.push({
@@ -849,7 +948,7 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
   });
 
   if (f.isDiirsp) {
-    const rcs = await buildReasonableCause(f);
+    const rcs = await buildReasonableCause(f, delinquentYears);
     await copyAll(out, rcs);
     signatures.push({
       label: "Reasonable Cause Statement",
@@ -862,6 +961,10 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
   for (const year of f.taxYears) {
     const yd = f.yearData.find((y) => y.taxYear === year);
     const line1f = (yd?.contributions ?? 0) + (yd?.distributions ?? 0);
+    // Per-year, not per-package: only THIS year's forms carry the DIIRSP banner,
+    // and only if this year is actually late. A timely year bundled alongside
+    // late ones gets the plain header.
+    const yearDelinquent = delinquentYears.includes(year);
 
     // Pick the IRS-published Form 1120 that matches the tax year being filed.
     // The IRS revises Form 1120 annually; using an older revision for a newer
@@ -869,8 +972,15 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
     const f1120FormName = year >= 2025 ? "f1120--2025.pdf" : "f1120--2024.pdf";
     const f1120 = await loadBlank(f1120FormName);
     await fillForm1120(f1120, f, year);
-    if (f.isDiirsp) await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE — DIIRSP");
+    if (yearDelinquent) await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE — DIIRSP");
     else await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE");
+    // Short-period annotation for the dissolution year's 1120 (final short
+    // year). periodEndFor() returns a non-12/31 end only for that year, so this
+    // stamp lands only where item E "Final return" is ticked.
+    const periodEnd = periodEndFor(f, year);
+    if (periodEnd !== "12/31") {
+      await stampShortPeriod(f1120, `01/01/${year}`, `${periodEnd}/${year}`);
+    }
     const f1120FirstPage = out.getPageCount() + 1; // 1-based, captured before merge
     await copyAll(out, f1120);
     // Form 1120's "Sign Here" box sits at the bottom of the first page.
@@ -885,7 +995,7 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
 
     const f5472 = await loadBlank("f5472.pdf");
     fillForm5472(f5472, f, year, line1f);
-    if (f.isDiirsp) await stampDiirspHeader(f5472, "FOREIGN-OWNED U.S. DE — DIIRSP");
+    if (yearDelinquent) await stampDiirspHeader(f5472, "FOREIGN-OWNED U.S. DE — DIIRSP");
     else await stampDiirspHeader(f5472, "FOREIGN-OWNED U.S. DE");
     await copyAll(out, f5472);
     // Form 5472 itself does not require a separate signature — the Form 1120

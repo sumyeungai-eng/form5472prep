@@ -3,7 +3,16 @@ import { z } from "zod";
 import { getOwnedFiling, bindFilingToEmail } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { totalPriceCents, isTier } from "@/lib/pricing";
-import { entitySchema, ownerBaseSchema, yearDataSchema, yearScopeSchema, reportableTransactionsSchema } from "@/lib/schemas";
+import {
+  entitySchema,
+  ownerBaseSchema,
+  currentTaxYear,
+  makeYearDataSchema,
+  makeYearScopeSchema,
+  reportableTransactionsSchema,
+  validateDissolvedAt,
+  isYearDelinquent,
+} from "@/lib/schemas";
 
 // Server-side backstop for the incremental wizard PATCH. Reuses the SAME field
 // rules the wizard enforces client-side (entitySchema + ownerBaseSchema) so
@@ -25,10 +34,6 @@ const patchFieldSchema = z
     reasonableCauseNarrative: z.string().max(20000),
   })
   .partial();
-
-function isYearDelinquent(taxYear: number): boolean {
-  return Date.now() > Date.UTC(taxYear + 1, 3, 15);
-}
 
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const owned = await getOwnedFiling(params.id);
@@ -106,10 +111,49 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (typeof body.tier === "string" && isTier(body.tier)) {
     data.tier = body.tier;
   }
+
+  // Final short-year return: the LLC was dissolved/closed mid-year, so its tax
+  // year has already ended even though the calendar year hasn't. This is the
+  // ONLY case in which a filer may report the current year — resolve the flag
+  // before the year validation below so this request is judged against the
+  // value it is establishing, not the stale stored one.
+  const isFinalReturnUpdate =
+    typeof body.isFinalReturn === "boolean" ? (body.isFinalReturn as boolean) : undefined;
+  const effectiveFinal = isFinalReturnUpdate ?? filing.isFinalReturn;
+  if (isFinalReturnUpdate !== undefined) data.isFinalReturn = isFinalReturnUpdate;
+
+  // The dissolution date this PATCH will persist, as a raw YYYY-MM-DD string (or
+  // null). A final short year's IRS deadline is keyed to the dissolution month,
+  // so the per-year delinquency test below needs it; the same value is validated
+  // and converted to a Date in the dissolvedAt block further down. Only a final
+  // return carries one — null otherwise so ordinary years use the April-15 rule.
+  const dissolvedAtProvided = Object.prototype.hasOwnProperty.call(body, "dissolvedAt");
+  const effectiveDissolvedAt: string | null = effectiveFinal
+    ? dissolvedAtProvided
+      ? (body.dissolvedAt as string | null)
+      : filing.dissolvedAt?.toISOString().slice(0, 10) ?? null
+    : null;
+
+  // Turning the flag OFF re-imposes the "no unfinished year" cap. Refuse the
+  // whole PATCH if the current year would survive it — silently keeping a year
+  // the filing may no longer report would leave an invalid record that only
+  // blows up later at checkout / PDF generation.
+  if (isFinalReturnUpdate === false) {
+    const yearsAfterPatch: unknown[] = Array.isArray(body.taxYears) ? body.taxYears : filing.taxYears;
+    if (yearsAfterPatch.some((y) => y === currentTaxYear)) {
+      return NextResponse.json(
+        { error: "Remove the current tax year before unmarking this as a final return" },
+        { status: 400 },
+      );
+    }
+  }
+
   if (Array.isArray(body.taxYears)) {
     // Validate + dedupe: reject empty, duplicate, or out-of-range years (which
     // would otherwise charge a fee but produce no/duplicate/wrong-revision forms).
-    const parsedYears = yearScopeSchema.safeParse({ taxYears: Array.from(new Set(body.taxYears)) });
+    const parsedYears = makeYearScopeSchema(effectiveFinal).safeParse({
+      taxYears: Array.from(new Set(body.taxYears)),
+    });
     if (!parsedYears.success) {
       return NextResponse.json(
         {
@@ -125,7 +169,50 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     // drives a flat per-extra-year add-on layered on the chosen tier base.
     const tierValue = (data.tier as string) ?? filing.tier;
     data.amountPaid = totalPriceCents(tierValue, years.length);
-    data.isDiirsp = years.some(isYearDelinquent);
+    // Per-year delinquency drives DIIRSP. A FINAL short year's deadline is NOT
+    // the following April 15 — it's the 15th day of the 4th month after the
+    // dissolution month (IRC §6072 applied to the short period), so a final
+    // return dissolved early enough in the year can already be late while a
+    // full-year return for the same calendar year would still be timely. The
+    // shared isYearDelinquent encodes both rules; feed it the dissolution date
+    // (null for non-final filings, so those keep the April-15 deadline).
+    data.isDiirsp = years.some((y) => isYearDelinquent(y, effectiveDissolvedAt));
+  }
+
+  // Dissolution date — the short year this final return actually covers runs
+  // Jan 1 → this date, so the flag is meaningless without it (and a stale date
+  // left behind on a filing that is no longer final would shorten the period
+  // printed on the forms). Validated against the years AFTER this patch, since
+  // the wizard saves the year selection and the date in the same request.
+  if (effectiveFinal) {
+    // Only judge the pairing when this request actually touches it; an
+    // unrelated step save (entity, owner…) must not be rejected for a field
+    // it never sent.
+    if (dissolvedAtProvided || isFinalReturnUpdate !== undefined || Array.isArray(body.taxYears)) {
+      const yearsAfterPatch = (data.taxYears as number[] | undefined) ?? filing.taxYears;
+      // Same value the delinquency test above used; validate it and store the
+      // parsed Date.
+      const rawDissolvedAt = effectiveDissolvedAt;
+      const dissolvedAtError = validateDissolvedAt(rawDissolvedAt, yearsAfterPatch);
+      if (dissolvedAtError) {
+        return NextResponse.json(
+          {
+            error: dissolvedAtError,
+            issues: [{ field: "dissolvedAt", message: dissolvedAtError }],
+          },
+          { status: 400 },
+        );
+      }
+      // Same convention as llcDateIncorporated: a YYYY-MM-DD string parses as
+      // UTC midnight, so the stored instant round-trips to the same calendar
+      // day the customer picked.
+      data.dissolvedAt = new Date(rawDissolvedAt as string);
+    }
+  } else {
+    // Not (or no longer) a final return: only a final return carries a
+    // dissolution date. Clearing it here keeps unticking the box a single
+    // atomic update instead of leaving an orphaned short-year date behind.
+    data.dissolvedAt = null;
   }
 
   const resolvedYearData: Array<{
@@ -142,7 +229,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       // Validate the reported financial figures (these become the actual
       // Part IV/V dollar amounts on the IRS forms). Reject bad taxYear or
       // negative/non-numeric amounts instead of coercing garbage to 0.
-      const yv = yearDataSchema.safeParse({
+      const yv = makeYearDataSchema(effectiveFinal).safeParse({
         taxYear: y?.taxYear,
         totalAssetsYearEnd: y?.totalAssetsYearEnd ?? 0,
         contributions: y?.contributions ?? 0,

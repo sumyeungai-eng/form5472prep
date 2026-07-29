@@ -134,6 +134,8 @@ const packageFilingSelect = {
   ownerReferenceId: true,
   taxYears: true,
   isDiirsp: true,
+  isFinalReturn: true,
+  dissolvedAt: true,
   reasonableCauseNarrative: true,
   yearData: {
     select: {
@@ -233,7 +235,8 @@ export async function runFilingAction(
             ownerCountryTaxResidence: full.ownerCountryTaxResidence,
             ownerCountryBusiness: full.ownerCountryBusiness, ownerFtin: full.ownerFtin,
             ownerItin: full.ownerItin, ownerReferenceId: full.ownerReferenceId,
-            taxYears: full.taxYears, isDiirsp: full.isDiirsp,
+            taxYears: full.taxYears, isDiirsp: full.isDiirsp, isFinalReturn: full.isFinalReturn,
+            dissolvedAt: full.dissolvedAt,
             reasonableCauseNarrative: full.reasonableCauseNarrative,
             yearData: full.yearData.map((y) => ({
               taxYear: y.taxYear,
@@ -414,7 +417,8 @@ export async function runFilingAction(
           ownerCountryTaxResidence: full.ownerCountryTaxResidence,
           ownerCountryBusiness: full.ownerCountryBusiness, ownerFtin: full.ownerFtin,
           ownerItin: full.ownerItin, ownerReferenceId: full.ownerReferenceId,
-          taxYears: full.taxYears, isDiirsp: full.isDiirsp,
+          taxYears: full.taxYears, isDiirsp: full.isDiirsp, isFinalReturn: full.isFinalReturn,
+          dissolvedAt: full.dissolvedAt,
           reasonableCauseNarrative: full.reasonableCauseNarrative,
           yearData: full.yearData.map((y) => ({
             taxYear: y.taxYear,

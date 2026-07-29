@@ -146,6 +146,8 @@ export async function POST(req: Request) {
             ownerReferenceId: full.ownerReferenceId,
             taxYears: full.taxYears,
             isDiirsp: full.isDiirsp,
+            isFinalReturn: full.isFinalReturn,
+            dissolvedAt: full.dissolvedAt,
             reasonableCauseNarrative: full.reasonableCauseNarrative,
             yearData: full.yearData.map((y) => ({
               taxYear: y.taxYear,
