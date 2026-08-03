@@ -2,14 +2,10 @@
 // PRICING — source of truth for every customer-facing price on the site.
 //
 // Model (2026):
-//   ONE flat, all-inclusive service tier ($99) charged as a flat fee.
+//   ONE flat, all-inclusive service tier ($199) charged as a flat fee.
 //   Fax delivery is INCLUDED (no separate add-on).
 //   Customers can file multiple past tax years — each additional year past
-//   the first adds a flat $79. So 2 years = $178, 3 years = $257.
-//
-//   Historical prices: the tier was $199 + $149/extra year until 2026-07-25.
-//   Paid filings keep their real charged amount in Filing.amountPaid, so
-//   changing these constants never rewrites what an existing customer paid.
+//   the first adds a flat $149.
 //
 // Legacy data: Filing.tier rows created before this held "rush" / "premium"
 //   or the older "single_year" / "two_year_diirsp" / "multi_year_diirsp"
@@ -37,7 +33,7 @@ export const TIERS: Record<Tier, TierInfo> = {
   standard: {
     label: "Complete filing",
     subtitle: "One flat fee — everything included",
-    priceCents: 9900,
+    priceCents: 19900,
     ctaLabel: "Start your filing",
     features: [
       "Reviewed by a qualified tax accountant before submission",
@@ -54,7 +50,7 @@ export const TIERS: Record<Tier, TierInfo> = {
 export const TIER_ORDER: Tier[] = ["standard"];
 
 // Flat add-on for every tax year past the first.
-export const MULTI_YEAR_ADDON_CENTS = 7900;
+export const MULTI_YEAR_ADDON_CENTS = 14900;
 export const MULTI_YEAR_ADDON_LABEL = "Additional past tax year";
 
 export const DEFAULT_TIER: Tier = "standard";

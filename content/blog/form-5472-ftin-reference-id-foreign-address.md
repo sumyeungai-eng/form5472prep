@@ -58,7 +58,7 @@ The country questions are not interchangeable. “Country of citizenship,” “
 
 ## How does Form5472 Prep handle owner identifiers?
 
-The guided intake asks for LLC and owner identifiers separately, checks prior-year consistency, and produces the completed Form 5472 plus pro forma Form 1120. The flat $99 filing includes accountant review, fax delivery to the IRS, and a timestamped receipt.
+The guided intake asks for LLC and owner identifiers separately, checks prior-year consistency, and produces the completed Form 5472 plus pro forma Form 1120. The $199 Standard plan includes accountant review, fax delivery to the IRS, and a timestamped receipt.
 
 [Start your filing](/start) with the EIN notice and prior-year return nearby.
 

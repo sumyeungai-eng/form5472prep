@@ -35,7 +35,7 @@ const faq = [
   },
   {
     q: "How does payment work?",
-    a: "Each filing is paid individually at checkout with the same flat pricing as direct customers — $99 all-inclusive, +$79 per additional past year, IRS fax delivery included. For volume pricing or consolidated invoicing, email support@form5472prep.com.",
+    a: "Each filing is paid individually at checkout with the same flat pricing as direct customers — $199 all-inclusive, +$149 per additional past year, IRS fax delivery included. For volume pricing or consolidated invoicing, email support@form5472prep.com.",
   },
   {
     q: "How do I become a partner?",
@@ -124,7 +124,7 @@ export default function PartnersPage() {
             </p>
             <p className="font-serif text-2xl font-semibold text-ink">Same flat pricing</p>
             <p className="text-sm text-slate-500 mt-1">
-              $99 per filing · fax included · no subscription
+              From $199 per filing · fax included · no subscription
             </p>
             <a
               href="#apply"

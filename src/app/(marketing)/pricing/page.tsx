@@ -13,12 +13,12 @@ import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 export const metadata: Metadata = {
   title: { absolute: "Pricing — Form 5472 Filing for Foreign-Owned LLCs | Form5472 Prep" },
   description:
-    "Flat-rate Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. One all-inclusive price — $99. IRS fax delivery included. Avoid the $25,000 IRS penalty.",
+    "Flat-rate Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. One all-inclusive price — $199. IRS fax delivery included. Avoid the $25,000 IRS penalty.",
   alternates: { canonical: "https://www.form5472prep.com/pricing" },
   openGraph: {
     title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
     description:
-      "Flat-rate Form 5472 + pro forma 1120 filing. One all-inclusive price — $99. IRS fax delivery included.",
+      "Flat-rate Form 5472 + pro forma 1120 filing. One all-inclusive price — $199. IRS fax delivery included.",
     url: "https://www.form5472prep.com/pricing",
   },
 };
@@ -164,7 +164,7 @@ export default function PricingPage() {
 
       {/* Annotated fax-receipt section — differentiates against $49 DIY
           competitors that issue no proof-of-delivery. Sits between the
-          pricing cards and the FAQ so anyone reading "is this worth $99?"
+          pricing cards and the FAQ so anyone reading "is this worth $199?"
           sees the actual product artifact next to the price. */}
       <FaxReceiptProof />
 
@@ -175,19 +175,19 @@ export default function PricingPage() {
         <div className="space-y-4">
           <FaqItem
             q="How much does it cost?"
-            a="One flat, all-inclusive price — $99 for a single tax year filing, with everything included. Additional past tax years are +$79 each. IRS fax delivery to the Ogden PIN Unit is included."
+            a="One flat, all-inclusive price — $199 for a single tax year filing, with everything included. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included."
           />
           <FaqItem
-            q="What's included in the $99?"
+            q="What's included in the $199?"
             a="Everything. We prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. You also get a reasonable-cause letter on late / DIIRSP filings, priority email support, and a March filing reminder for next year — all in the one flat fee."
           />
           <FaqItem
             q="Is fax filing really included?"
-            a="Yes — the flat price includes fax delivery to the IRS Ogden PIN Unit and the timestamped fax receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine."
+            a="Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and the timestamped fax receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine."
           />
           <FaqItem
             q="What if I'm filing for multiple past years (DIIRSP)?"
-            a="Add $79 per additional past year. We include a reasonable-cause statement on every late filing so the IRS Delinquent International Information Return Submission Procedure (DIIRSP) is invoked correctly."
+            a="Add $149 per additional past year on any plan. We include a reasonable-cause statement on every late filing so the IRS Delinquent International Information Return Submission Procedure (DIIRSP) is invoked correctly."
           />
           <FaqItem
             q="Are there any hidden fees?"

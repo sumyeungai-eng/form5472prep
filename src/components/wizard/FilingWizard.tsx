@@ -1154,7 +1154,7 @@ function YearsStep({
 
   // Tier is selected at /pricing (or /start?tier=) and stored on filing.tier.
   // Wizard just lets the customer pick year count; each additional past year
-  // adds a flat $79 on top of the tier base.
+  // adds a flat $149 on top of the tier base.
   const activeTier = tierInfo(filing.tier);
   const extraYears = Math.max(0, selected.length - 1);
   const addOnTotalCents = multiYearAddonCents(selected.length);

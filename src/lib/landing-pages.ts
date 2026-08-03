@@ -38,7 +38,7 @@ export const LANDING_PAGES: LandingPage[] = [
       "Step-by-step guide to filing IRS Form 5472 with pro forma Form 1120 for foreign-owned US LLCs. Avoid the $25,000 penalty. File online in 15 minutes.",
     h1: "How to File IRS Form 5472",
     intro:
-      "Foreign-owned US single-member LLCs must file Form 5472 with an attached pro forma Form 1120 by April 15 each year. You can't e-file — the IRS only accepts these forms by mail or fax to the Ogden PIN Unit at +1-855-887-7737. Below is the full step-by-step process, broken down into every form, field, and decision you'll face — or skip the work entirely and use our accountant-reviewed 15-minute online filer for a flat $99.",
+      "Foreign-owned US single-member LLCs must file Form 5472 with an attached pro forma Form 1120 by April 15 each year. You can't e-file — the IRS only accepts these forms by mail or fax to the Ogden PIN Unit at +1-855-887-7737. Below is the full step-by-step process, broken down into every form, field, and decision you'll face — or skip the work entirely and use our accountant-reviewed 15-minute online filer from $199.",
     sections: [
       {
         heading: "Who has to file Form 5472?",
@@ -70,7 +70,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How much does it cost to file?",
-        body: "Three ways to do it:\n\n1. DIY with IRS forms: $0 in fees but 4-8 hours of careful work, and any mistake risks the $25,000 penalty. You also need a fax service ($2-$5).\n\n2. Hire a US CPA: $400-$800 typical. Most CPAs are unfamiliar with Form 5472 for foreign-owned disregarded entities, so expect them to either decline the work or take 1-3 weeks while they research it.\n\n3. Use Form5472 Prep: $99 all-inclusive. IRS fax delivery included. +$79 per additional past year.\n\nEvery package we prepare is reviewed by an accountant on our team before we fax it to the IRS. 100% money-back guarantee if we fail to submit.",
+        body: "Three ways to do it:\n\n1. DIY with IRS forms: $0 in fees but 4-8 hours of careful work, and any mistake risks the $25,000 penalty. You also need a fax service ($2-$5).\n\n2. Hire a US CPA: $400-$800 typical. Most CPAs are unfamiliar with Form 5472 for foreign-owned disregarded entities, so expect them to either decline the work or take 1-3 weeks while they research it.\n\n3. Use Form5472 Prep: $199 all-inclusive. IRS fax delivery included. +$149 per additional past year.\n\nEvery package we prepare is reviewed by an accountant on our team before we fax it to the IRS. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "What happens after you file Form 5472?",
@@ -78,7 +78,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Skip the work — file in 15 minutes",
-        body: "Our online filer asks 12 simple questions about your LLC, owner, and year-end totals. We generate the entire package (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if late). You sign once on screen — no printing or scanning. An accountant on our team reviews the package end-to-end. Then we fax it to the IRS Ogden PIN Unit and email you the timestamped fax transmission receipt as proof of filing.\n\nPricing: $99 all-inclusive. IRS fax delivery included. +$79 per additional past year. 100% money-back guarantee if we fail to submit your filing.",
+        body: "Our online filer asks 12 simple questions about your LLC, owner, and year-end totals. We generate the entire package (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if late). You sign once on screen — no printing or scanning. An accountant on our team reviews the package end-to-end. Then we fax it to the IRS Ogden PIN Unit and email you the timestamped fax transmission receipt as proof of filing.\n\nPricing: $199 all-inclusive. IRS fax delivery included. +$149 per additional past year. 100% money-back guarantee if we fail to submit your filing.",
       },
     ],
     faqs: [
@@ -92,7 +92,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Can a US CPA file Form 5472 for me?",
-        a: "Technically yes, but most US-based CPAs see this filing once or twice in their career and aren't comfortable with it. Expect $400-$800 and 1-2 weeks of back-and-forth while they research the requirements. Our flat-fee service is $99, takes 15 minutes, and is accountant-reviewed.",
+        a: "Technically yes, but most US-based CPAs see this filing once or twice in their career and aren't comfortable with it. Expect $400-$800 and 1-2 weeks of back-and-forth while they research the requirements. Our flat-fee service starts at $199, takes 15 minutes, and is accountant-reviewed.",
       },
       {
         q: "Do I need a US ITIN to file?",
@@ -100,7 +100,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What if my LLC had no transactions at all?",
-        a: "A truly inactive LLC — no bank account, no money in or out — may not have a reportable transaction. But the bar is low: a single capital contribution to open the bank account counts. If you're unsure, file anyway. A $99 filing is cheaper than even a small percentage risk of the $25,000 penalty.",
+        a: "A truly inactive LLC — no bank account, no money in or out — may not have a reportable transaction. But the bar is low: a single capital contribution to open the bank account counts. If you're unsure, file anyway. A $199 filing is cheaper than even a small percentage risk of the $25,000 penalty.",
       },
       {
         q: "Do I file Form 5472 or Form 1120 — or both?",
@@ -130,7 +130,7 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "form 5472 $25,000 penalty",
     title: "Form 5472 $25,000 Penalty — How to Avoid or Reduce It",
     metaDescription:
-      "The IRS automatically charges $25,000 per missed or late Form 5472. Learn how to avoid it, request abatement under DIIRSP, and file safely online for a flat $99.",
+      "The IRS automatically charges $25,000 per missed or late Form 5472. Learn how to avoid it, request abatement under DIIRSP, and file safely online from $199.",
     h1: "The Form 5472 $25,000 Penalty Explained",
     intro:
       "Under IRC § 6038A(d), the IRS automatically assesses a $25,000 penalty per Form 5472 that is filed late, filed incompletely, or not filed at all — per year, per LLC. The penalty stacks at $25,000 per 30-day period if you don't fix it within 90 days of an IRS notice. Here's exactly how the penalty works, who it applies to, how to either avoid it entirely, and how to request abatement if you've already triggered it.",
@@ -169,11 +169,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "We handle the whole DIIRSP process",
-        body: "Form5472 Prep automatically generates a Reasonable Cause Statement when you file a late return. The narrative is tailored to first-time foreign LLC owners — the most common DIIRSP scenario — and you can edit it in the wizard if your circumstances are different.\n\nPricing for catch-up filings:\n• 1 year: $99 all-inclusive (fax included)\n• 2-year DIIRSP catch-up: $178 (fax included)\n• 3-year DIIRSP catch-up: $257 (fax included)\n\nFiling all missed years together with one comprehensive reasonable cause statement gives the strongest abatement argument. Every package is reviewed by an accountant on our team before we fax to the IRS Ogden PIN Unit. 100% money-back guarantee if we fail to submit.",
+        body: "Form5472 Prep automatically generates a Reasonable Cause Statement when you file a late return. The narrative is tailored to first-time foreign LLC owners — the most common DIIRSP scenario — and you can edit it in the wizard if your circumstances are different.\n\nPricing for catch-up filings:\n• 1 year: $199 all-inclusive (fax included)\n• 2-year DIIRSP catch-up: $348 (fax included)\n• 3-year DIIRSP catch-up: $497 (fax included)\n\nFiling all missed years together with one comprehensive reasonable cause statement gives the strongest abatement argument. Every package is reviewed by an accountant on our team before we fax to the IRS Ogden PIN Unit. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "Bottom line",
-        body: "The $25,000-per-form-per-year penalty is the single largest compliance risk most foreign LLC owners are unaware of. It's automatic, it stacks if ignored, and it applies even when your LLC owes zero US tax.\n\nThree things keep you safe:\n\n1. File every year, on time, completely, by fax to +1-855-887-7737.\n2. If you've missed filings, catch up under DIIRSP immediately with a reasonable cause statement.\n3. Don't ignore IRS notices — the continuation penalty makes a manageable problem into a six-figure one.\n\nOur 15-minute online filer handles all of this for a flat $99. IRS fax delivery included. +$79 per additional past year. Accountant-reviewed, with a money-back guarantee.",
+        body: "The $25,000-per-form-per-year penalty is the single largest compliance risk most foreign LLC owners are unaware of. It's automatic, it stacks if ignored, and it applies even when your LLC owes zero US tax.\n\nThree things keep you safe:\n\n1. File every year, on time, completely, by fax to +1-855-887-7737.\n2. If you've missed filings, catch up under DIIRSP immediately with a reasonable cause statement.\n3. Don't ignore IRS notices — the continuation penalty makes a manageable problem into a six-figure one.\n\nOur 15-minute online filer handles all of this for a flat $199. IRS fax delivery included. +$149 per additional past year. Accountant-reviewed, with a money-back guarantee.",
       },
     ],
     faqs: [
@@ -215,7 +215,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What does your service cost vs. the penalty exposure?",
-        a: "Our service is $99, plus $79 per additional past year. The penalty for a single missed year is $25,000 — our fee is a fraction of one percent of that. For multi-year catch-up packages (add $79 per additional past year), the math against ignoring the obligation is even more one-sided.",
+        a: "Our service is $199, plus $149 per additional past year. The penalty for a single missed year is $25,000 — a fraction of our service price. For multi-year catch-up packages (add $149 per additional past year), the math is even more compelling against ignoring the obligation.",
       },
     ],
     relatedSlugs: ["diirsp", "late-form-5472", "file-form-5472", "form-5472-reasonable-cause-statement", "form-5472-deadline"],
@@ -252,7 +252,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you handle multi-year DIIRSP filings?",
-        body: "If you've missed 2 or 3+ years, file them all at once with one comprehensive Reasonable Cause Statement covering the entire period. The IRS treats a single comprehensive catch-up far more favorably than serial late filings spaced out over time.\n\nOur flat-rate DIIRSP catch-up packages:\n\n• 2-year DIIRSP catch-up: $178 (fax included)\n• 3-year DIIRSP catch-up: $257 (fax included)\n\nThe per-year price is cheaper than filing separately, and we use one consistent reasonable cause narrative across all years. Every package is reviewed by an accountant on our team before we fax it to the IRS.\n\nFor 4+ missed years, you'd run two packages back-to-back or message us to coordinate — the IRS still accepts the comprehensive catch-up approach but the multi-year package limit is 3 years per wizard session.",
+        body: "If you've missed 2 or 3+ years, file them all at once with one comprehensive Reasonable Cause Statement covering the entire period. The IRS treats a single comprehensive catch-up far more favorably than serial late filings spaced out over time.\n\nOur flat-rate DIIRSP catch-up packages:\n\n• 2-year DIIRSP catch-up: $348 (fax included)\n• 3-year DIIRSP catch-up: $497 (fax included)\n\nThe per-year price is cheaper than filing separately, and we use one consistent reasonable cause narrative across all years. Every package is reviewed by an accountant on our team before we fax it to the IRS.\n\nFor 4+ missed years, you'd run two packages back-to-back or message us to coordinate — the IRS still accepts the comprehensive catch-up approach but the multi-year package limit is 3 years per wizard session.",
       },
       {
         heading: "What's the difference between DIIRSP, Streamlined, and Quiet Disclosure?",
@@ -268,7 +268,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Catch up with our accountant-reviewed DIIRSP filer",
-        body: "Form5472 Prep automatically generates a Reasonable Cause Statement when you select 2 or 3 missed years in our wizard. The narrative is tailored to the most common DIIRSP scenario — first-time foreign LLC owner who was unaware of the Form 5472 obligation — and you can edit it to fit your specific circumstances.\n\nWe prepare the complete package for each year (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement). You sign once on screen — that signature embeds into every required signature box automatically. An accountant on our team reviews everything end-to-end. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as proof of DIIRSP submission.\n\n• 2-year DIIRSP catch-up: $178 (fax included)\n• 3-year DIIRSP catch-up: $257 (fax included)\n\n100% money-back guarantee if we fail to submit.",
+        body: "Form5472 Prep automatically generates a Reasonable Cause Statement when you select 2 or 3 missed years in our wizard. The narrative is tailored to the most common DIIRSP scenario — first-time foreign LLC owner who was unaware of the Form 5472 obligation — and you can edit it to fit your specific circumstances.\n\nWe prepare the complete package for each year (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement). You sign once on screen — that signature embeds into every required signature box automatically. An accountant on our team reviews everything end-to-end. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as proof of DIIRSP submission.\n\n• 2-year DIIRSP catch-up: $348 (fax included)\n• 3-year DIIRSP catch-up: $497 (fax included)\n\n100% money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -405,7 +405,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Where can I get help filling in the form?",
-        a: "Use our wizard — it asks 12 simple questions and generates the complete package (cover letter, pro forma 1120, Form 5472, Part V supporting statement). Every filing is reviewed by an accountant on our team before we fax it to the IRS Ogden PIN Unit. A flat $99 (IRS fax delivery included).",
+        a: "Use our wizard — it asks 12 simple questions and generates the complete package (cover letter, pro forma 1120, Form 5472, Part V supporting statement). Every filing is reviewed by an accountant on our team before we fax it to the IRS Ogden PIN Unit. From $199 (IRS fax delivery included).",
       },
     ],
     relatedSlugs: ["file-form-5472", "pro-forma-1120", "form-5472-vs-1120", "irs-form-5472", "form-5472-fax-number"],
@@ -458,7 +458,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "File the federal piece in 15 minutes",
-        body: "Federal Form 5472 + pro forma 1120 is the universal filing every foreign-owned US LLC owes and the one with the biggest penalty for missing it ($25,000 per form per year). Our wizard handles the entire package in 15 minutes:\n\n• $99 all-inclusive (fax included)\n• +$79 per additional past year\n\nEvery package is reviewed by an accountant on our team before we fax it to the IRS Ogden PIN Unit. 100% money-back guarantee if we fail to submit.",
+        body: "Federal Form 5472 + pro forma 1120 is the universal filing every foreign-owned US LLC owes and the one with the biggest penalty for missing it ($25,000 per form per year). Our wizard handles the entire package in 15 minutes:\n\n• $199 all-inclusive (fax included)\n• +$149 per additional past year\n\nEvery package is reviewed by an accountant on our team before we fax it to the IRS Ogden PIN Unit. 100% money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -510,7 +510,7 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "late form 5472",
     title: "Late Form 5472 — How to File Late and Avoid the Penalty",
     metaDescription:
-      "Filed Form 5472 late or never at all? Catch up under DIIRSP with a Reasonable Cause Statement and request abatement of the $25,000 penalty. Accountant-reviewed filings, a flat $99.",
+      "Filed Form 5472 late or never at all? Catch up under DIIRSP with a Reasonable Cause Statement and request abatement of the $25,000 penalty. Accountant-reviewed filings from $199.",
     h1: "Filed Form 5472 Late? Here's What to Do Now",
     intro:
       "If you missed the April 15 deadline for Form 5472, file as soon as possible. The IRS Delinquent International Information Return Submission Procedure (DIIRSP) lets you submit late filings with a Reasonable Cause Statement requesting that the $25,000 penalty be waived. The longer you wait, the higher the risk of an automatic CP-15 penalty notice — and once that notice arrives, your options narrow sharply. This is the complete playbook for getting back into compliance from one missed year to many.",
@@ -529,7 +529,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What should you do if you've missed multiple years?",
-        body: "File ALL missed years in one DIIRSP package. Don't space them out. The IRS treats a comprehensive catch-up filing more favorably than serial late filings — one consistent reasonable cause narrative covering the whole period is stronger than separate filings each blaming the same circumstances.\n\nOur multi-year DIIRSP packages:\n\n• 2-year catch-up: $178 (fax included)\n• 3-year catch-up: $257 (fax included)\n\nThe wizard generates one cover letter, one Reasonable Cause Statement (covering all years), and a separate fully-completed Form 5472 + pro forma 1120 for each year. Everything assembled into one package, faxed once, with one timestamped receipt per year.\n\nFor 4+ missed years, run two back-to-back packages or message us and we'll coordinate.",
+        body: "File ALL missed years in one DIIRSP package. Don't space them out. The IRS treats a comprehensive catch-up filing more favorably than serial late filings — one consistent reasonable cause narrative covering the whole period is stronger than separate filings each blaming the same circumstances.\n\nOur multi-year DIIRSP packages:\n\n• 2-year catch-up: $348 (fax included)\n• 3-year catch-up: $497 (fax included)\n\nThe wizard generates one cover letter, one Reasonable Cause Statement (covering all years), and a separate fully-completed Form 5472 + pro forma 1120 for each year. Everything assembled into one package, faxed once, with one timestamped receipt per year.\n\nFor 4+ missed years, run two back-to-back packages or message us and we'll coordinate.",
       },
       {
         heading: "What should you include in your Reasonable Cause Statement?",
@@ -553,7 +553,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Get caught up in 15 minutes",
-        body: "Our DIIRSP-aware filer handles the entire late-filing package. The wizard asks 12 questions about your LLC, owner, and year-end totals for each missed year. We generate everything — cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, AND the Reasonable Cause Statement.\n\nYou sign once on screen. An accountant on our team reviews the package. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as proof of DIIRSP submission.\n\n• 1 year: $99 all-inclusive (fax included)\n• 2 years (DIIRSP): $178 (fax included)\n• 3 years (DIIRSP): $257 (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
+        body: "Our DIIRSP-aware filer handles the entire late-filing package. The wizard asks 12 questions about your LLC, owner, and year-end totals for each missed year. We generate everything — cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, AND the Reasonable Cause Statement.\n\nYou sign once on screen. An accountant on our team reviews the package. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as proof of DIIRSP submission.\n\n• 1 year: $199 all-inclusive (fax included)\n• 2 years (DIIRSP): $348 (fax included)\n• 3 years (DIIRSP): $497 (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
       },
     ],
     faqs: [
@@ -648,7 +648,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Pricing",
-        body: "Both forms together (cover letter, pro forma 1120, Form 5472, Part V supporting statement) for one year:\n\n• 1 tax year: $99 all-inclusive (fax included)\n• 2 tax years (DIIRSP catch-up): $178 (fax included)\n• 3 tax years (DIIRSP catch-up): $257 (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
+        body: "Both forms together (cover letter, pro forma 1120, Form 5472, Part V supporting statement) for one year:\n\n• 1 tax year: $199 all-inclusive (fax included)\n• 2 tax years (DIIRSP catch-up): $348 (fax included)\n• 3 tax years (DIIRSP catch-up): $497 (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
       },
     ],
     faqs: [
@@ -700,7 +700,7 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "Wyoming LLC form 5472",
     title: "Wyoming LLC Form 5472 — Foreign Owner Filing Guide",
     metaDescription:
-      "Wyoming LLCs owned by non-US persons must file Form 5472 with pro forma Form 1120 by April 15. Full guide to federal + Wyoming state obligations. Accountant-reviewed filings, a flat $99.",
+      "Wyoming LLCs owned by non-US persons must file Form 5472 with pro forma Form 1120 by April 15. Full guide to federal + Wyoming state obligations. Accountant-reviewed filings from $199.",
     h1: "Wyoming LLC Form 5472 Filing Guide",
     intro:
       "Wyoming is the most popular state for foreign-owned US LLCs because of its low fees, no state income tax, strong privacy laws, and cheap registered agent ecosystem. But Wyoming residency doesn't exempt you from federal filings — every foreign-owned Wyoming LLC must file IRS Form 5472 with pro forma Form 1120 by April 15 each year, with a $25,000 penalty if missed. This is the complete federal + Wyoming-state filing playbook for foreign owners.",
@@ -723,7 +723,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file Form 5472 for a Wyoming LLC?",
-        body: "1. Gather the items in the previous section (LLC info, owner info, year-end financials).\n2. Fill in the pro forma Form 1120: entity name/EIN/address, total assets, stamp \"Foreign-Owned U.S. DE\" across the top.\n3. Fill in Form 5472: Part I (your LLC), Part II (you as foreign shareholder), Part III (you again as related party), Part IV (usually blank for foreign-owned DEs), Part V (capital contributions + distributions, with supporting statement), Part VII (FDE confirmation).\n4. Sign the 1120's signature line in pen.\n5. Fax the complete package (cover letter + 1120 + 5472 + Part V supporting statement) to +1-855-887-7737 (IRS Ogden PIN Unit).\n6. Save the fax transmission receipt as proof of timely filing.\n\nOr use our service: a flat $99 covers the entire package including IRS fax delivery, and every filing is reviewed by an accountant on our team before submission.",
+        body: "1. Gather the items in the previous section (LLC info, owner info, year-end financials).\n2. Fill in the pro forma Form 1120: entity name/EIN/address, total assets, stamp \"Foreign-Owned U.S. DE\" across the top.\n3. Fill in Form 5472: Part I (your LLC), Part II (you as foreign shareholder), Part III (you again as related party), Part IV (usually blank for foreign-owned DEs), Part V (capital contributions + distributions, with supporting statement), Part VII (FDE confirmation).\n4. Sign the 1120's signature line in pen.\n5. Fax the complete package (cover letter + 1120 + 5472 + Part V supporting statement) to +1-855-887-7737 (IRS Ogden PIN Unit).\n6. Save the fax transmission receipt as proof of timely filing.\n\nOr use our service: Standard $199 covers the entire package including IRS fax delivery, and every filing is reviewed by an accountant on our team before submission.",
       },
       {
         heading: "Wyoming registered agent address — what to use",
@@ -735,11 +735,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you handle multi-year catch-up for a Wyoming LLC?",
-        body: "If you formed your Wyoming LLC in 2022 and just learned about Form 5472, you may have 2-3 unfiled years (2022, 2023, 2024). The IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up path:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement covering the entire period.\n• Submit via fax to +1-855-887-7737.\n• If accepted, no penalty assessed.\n\nOur multi-year DIIRSP packages:\n• 2-year catch-up: $178 (fax included).\n• 3-year catch-up: $257 (fax included).\n\nThe reasonable cause statement is auto-generated by our wizard, tailored to the first-time-foreign-owner scenario. Every package is reviewed by an accountant on our team before we fax it.",
+        body: "If you formed your Wyoming LLC in 2022 and just learned about Form 5472, you may have 2-3 unfiled years (2022, 2023, 2024). The IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up path:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement covering the entire period.\n• Submit via fax to +1-855-887-7737.\n• If accepted, no penalty assessed.\n\nOur multi-year DIIRSP packages:\n• 2-year catch-up: $348 (fax included).\n• 3-year catch-up: $497 (fax included).\n\nThe reasonable cause statement is auto-generated by our wizard, tailored to the first-time-foreign-owner scenario. Every package is reviewed by an accountant on our team before we fax it.",
       },
       {
         heading: "What our service does for Wyoming LLC owners specifically",
-        body: "Our wizard is pre-tuned for the foreign-owned single-member LLC profile — which is overwhelmingly Wyoming and Delaware. Wyoming-specific touches:\n\n• Pre-populated state code (WY) on the 1120 entity info.\n• Default NAICS suggestions for the most common Wyoming foreign-owner business types (ecommerce, SaaS, consulting, marketing).\n• Validation that the address matches a recognized Wyoming registered agent pattern (helps catch typos).\n• No state-specific add-ons needed — Wyoming has no state filing we'd add to the package.\n\nPricing identical to any other state:\n• 1 year: $99 all-inclusive (fax included)\n• 2 years: $178 (fax included)\n• 3 years: $257 (fax included)",
+        body: "Our wizard is pre-tuned for the foreign-owned single-member LLC profile — which is overwhelmingly Wyoming and Delaware. Wyoming-specific touches:\n\n• Pre-populated state code (WY) on the 1120 entity info.\n• Default NAICS suggestions for the most common Wyoming foreign-owner business types (ecommerce, SaaS, consulting, marketing).\n• Validation that the address matches a recognized Wyoming registered agent pattern (helps catch typos).\n• No state-specific add-ons needed — Wyoming has no state filing we'd add to the package.\n\nPricing identical to any other state:\n• 1 year: $199 all-inclusive (fax included)\n• 2 years: $348 (fax included)\n• 3 years: $497 (fax included)",
       },
       {
         heading: "Bottom line for Wyoming LLC owners",
@@ -795,7 +795,7 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "Delaware LLC form 5472",
     title: "Delaware LLC Form 5472 — Foreign Owner Filing Guide",
     metaDescription:
-      "Delaware LLCs with foreign owners must file IRS Form 5472 + pro forma Form 1120 every year. Complete guide for Stripe Atlas + standalone Delaware LLCs. Accountant-reviewed filings, a flat $99.",
+      "Delaware LLCs with foreign owners must file IRS Form 5472 + pro forma Form 1120 every year. Complete guide for Stripe Atlas + standalone Delaware LLCs. Accountant-reviewed filings from $199.",
     h1: "Delaware LLC Form 5472 Filing Guide",
     intro:
       "Delaware is the #2 most popular state for foreign-owned US LLCs after Wyoming. Stripe Atlas defaults to Delaware, so a large share of foreign-founder LLCs are Delaware entities. If you formed a Delaware LLC and you're not a US person, you must file IRS Form 5472 with pro forma Form 1120 every year — even if your LLC had zero revenue. This is the full Delaware-specific filing playbook including the federal Form 5472, the $300 Delaware franchise tax, and the differences from Wyoming.",
@@ -810,7 +810,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do Stripe Atlas LLCs interact with Form 5472?",
-        body: "If you used Stripe Atlas to incorporate, your LLC is almost certainly Delaware. Stripe Atlas is excellent at:\n• Forming the LLC.\n• Getting your EIN (typically within days).\n• Helping with the initial Mercury bank account.\n• Providing legal templates.\n\nWhat Stripe Atlas explicitly does NOT cover:\n• Annual federal tax filings including Form 5472.\n• Delaware franchise tax (they remind you but don't pay it).\n• Ongoing tax compliance.\n\nNote: BOI (Beneficial Ownership Information) reporting isn't on this list because it no longer applies to Stripe Atlas LLCs. Since March 26, 2025, FinCEN has exempted all US-formed entities, including Delaware LLCs, from BOI reporting.\n\nStripe's own documentation states Atlas is a formation product, not an ongoing tax service. The $5K-equivalent value at formation does not include any year-2-onward filing.\n\nWe handle the federal Form 5472 + pro forma 1120 specifically for foreign-owned Stripe Atlas LLCs. $99 all-inclusive with IRS fax delivery included, same 15-minute filing process. Most Stripe Atlas customers come to us in spring of year 2 once they realize Form 5472 is on them.",
+        body: "If you used Stripe Atlas to incorporate, your LLC is almost certainly Delaware. Stripe Atlas is excellent at:\n• Forming the LLC.\n• Getting your EIN (typically within days).\n• Helping with the initial Mercury bank account.\n• Providing legal templates.\n\nWhat Stripe Atlas explicitly does NOT cover:\n• Annual federal tax filings including Form 5472.\n• Delaware franchise tax (they remind you but don't pay it).\n• Ongoing tax compliance.\n\nNote: BOI (Beneficial Ownership Information) reporting isn't on this list because it no longer applies to Stripe Atlas LLCs. Since March 26, 2025, FinCEN has exempted all US-formed entities, including Delaware LLCs, from BOI reporting.\n\nStripe's own documentation states Atlas is a formation product, not an ongoing tax service. The $5K-equivalent value at formation does not include any year-2-onward filing.\n\nWe handle the federal Form 5472 + pro forma 1120 specifically for foreign-owned Stripe Atlas LLCs. $199 all-inclusive with IRS fax delivery included, same 15-minute filing process. Most Stripe Atlas customers come to us in spring of year 2 once they realize Form 5472 is on them.",
       },
       {
         heading: "How do you file Form 5472 for a Delaware LLC?",
@@ -822,15 +822,15 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Stripe Atlas + Mercury + Form 5472 — the typical stack",
-        body: "Common setup for foreign founders:\n• Delaware LLC formed via Stripe Atlas ($500 / one-time).\n• EIN issued through Atlas.\n• Mercury business banking account.\n• Stripe for payment processing.\n• Customers anywhere globally (commonly: ecommerce dropshipping, SaaS subscriptions, info products, consulting).\n\nWhat this triggers annually:\n• Federal Form 5472 + pro forma 1120 — yes, every year, $25,000 penalty if missed. Our service: $99 all-inclusive. IRS fax delivery included. +$79 per additional past year.\n• Delaware franchise tax — $300/year, due June 1. Self-serve at corp.delaware.gov.\n• Stripe Atlas annual fees — if you subscribed to Atlas's ongoing service ($100/month or similar), they handle some of this. The base $500 formation product does NOT include annual filing.\n• BOI report — one-time at formation (FinCEN). Free.\n• Sales tax — only if you cross economic nexus thresholds in specific states (typically not for SaaS or non-US-only ecommerce).\n\nAt the federal level, the largest penalty risk by far is Form 5472. The $300 franchise tax late penalty is small money; the $25,000 IRS penalty is real money.",
+        body: "Common setup for foreign founders:\n• Delaware LLC formed via Stripe Atlas ($500 / one-time).\n• EIN issued through Atlas.\n• Mercury business banking account.\n• Stripe for payment processing.\n• Customers anywhere globally (commonly: ecommerce dropshipping, SaaS subscriptions, info products, consulting).\n\nWhat this triggers annually:\n• Federal Form 5472 + pro forma 1120 — yes, every year, $25,000 penalty if missed. Our service: $199 all-inclusive. IRS fax delivery included. +$149 per additional past year.\n• Delaware franchise tax — $300/year, due June 1. Self-serve at corp.delaware.gov.\n• Stripe Atlas annual fees — if you subscribed to Atlas's ongoing service ($100/month or similar), they handle some of this. The base $500 formation product does NOT include annual filing.\n• BOI report — one-time at formation (FinCEN). Free.\n• Sales tax — only if you cross economic nexus thresholds in specific states (typically not for SaaS or non-US-only ecommerce).\n\nAt the federal level, the largest penalty risk by far is Form 5472. The $300 franchise tax late penalty is small money; the $25,000 IRS penalty is real money.",
       },
       {
         heading: "What are common Delaware LLC scenarios?",
-        body: "1. Stripe Atlas SaaS founder, foreign, no US customers: file pro forma 1120 + Form 5472. No US tax. Delaware franchise tax $300. Annual total: $399 ($99 for our federal filing + Delaware's $300). IRS fax delivery included.\n\n2. Delaware LLC for ecommerce serving global customers: file Form 5472 + 1120. Sales tax only in states where economic nexus crossed. Total annual federal compliance: $99 all-inclusive with us.\n\n3. Delaware LLC with US-based contractors / freelancers: same federal filing, plus possible 1099-NEC for the contractors (separate filing). No US trade or business if contractors are independent and you have no fixed US place of business.\n\n4. Delaware LLC with US-based employees or US warehouse: significantly more complex — likely US trade or business, ECI income, payroll taxes. Consult a CPA, not our service.\n\n5. Multi-year catch-up: a Delaware LLC formed in 2022 with no Form 5472 filed: a 3-year DIIRSP catch-up is $257 with fax delivery included, covering 2022, 2023, 2024.\n\n6. Delaware LLC dissolved last year: file a final Form 5472 + 1120 for the partial year ending at dissolution. Still required.",
+        body: "1. Stripe Atlas SaaS founder, foreign, no US customers: file pro forma 1120 + Form 5472. No US tax. Delaware franchise tax $300. Annual total: $499 ($199 for our federal filing + Delaware's $300). IRS fax delivery included.\n\n2. Delaware LLC for ecommerce serving global customers: file Form 5472 + 1120. Sales tax only in states where economic nexus crossed. Total annual federal compliance: $199 all-inclusive with us.\n\n3. Delaware LLC with US-based contractors / freelancers: same federal filing, plus possible 1099-NEC for the contractors (separate filing). No US trade or business if contractors are independent and you have no fixed US place of business.\n\n4. Delaware LLC with US-based employees or US warehouse: significantly more complex — likely US trade or business, ECI income, payroll taxes. Consult a CPA, not our service.\n\n5. Multi-year catch-up: a Delaware LLC formed in 2022 with no Form 5472 filed: a 3-year DIIRSP catch-up is $497 with fax delivery included, covering 2022, 2023, 2024.\n\n6. Delaware LLC dissolved last year: file a final Form 5472 + 1120 for the partial year ending at dissolution. Still required.",
       },
       {
         heading: "How do you handle multi-year catch-up under DIIRSP?",
-        body: "Many Stripe Atlas founders discover Form 5472 a year or two after forming their Delaware LLC. The IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement covering the entire period.\n• Submit via fax to +1-855-887-7737.\n• Most well-documented first-time foreign-owner catch-ups are accepted without penalty.\n\nOur multi-year DIIRSP packages:\n• 2-year catch-up: $178 (fax included).\n• 3-year catch-up: $257 (fax included).\n\nThe Reasonable Cause Statement is auto-generated by our wizard, tailored to the first-time-foreign-owner / Stripe Atlas scenario. Every package is reviewed by an accountant on our team before we fax it.",
+        body: "Many Stripe Atlas founders discover Form 5472 a year or two after forming their Delaware LLC. The IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement covering the entire period.\n• Submit via fax to +1-855-887-7737.\n• Most well-documented first-time foreign-owner catch-ups are accepted without penalty.\n\nOur multi-year DIIRSP packages:\n• 2-year catch-up: $348 (fax included).\n• 3-year catch-up: $497 (fax included).\n\nThe Reasonable Cause Statement is auto-generated by our wizard, tailored to the first-time-foreign-owner / Stripe Atlas scenario. Every package is reviewed by an accountant on our team before we fax it.",
       },
       {
         heading: "How do you switch from Delaware to Wyoming?",
@@ -838,7 +838,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Bottom line for Delaware LLC owners",
-        body: "If you have a foreign-owned Delaware LLC:\n• File federal Form 5472 + pro forma 1120 every year by April 15. $25,000 penalty if missed.\n• Pay Delaware franchise tax $300 by June 1. State-level — separate from IRS.\n• No BOI report — since March 26, 2025, FinCEN has exempted US-formed entities (including Delaware LLCs) from Beneficial Ownership Information reporting.\n• Watch for state sales tax obligations as you scale.\n\nOur service handles the federal Form 5472 + 1120 for $99, with IRS fax delivery included. +$79 per additional past year. Every filing is reviewed by an accountant on our team. 100% money-back guarantee if we fail to submit.",
+        body: "If you have a foreign-owned Delaware LLC:\n• File federal Form 5472 + pro forma 1120 every year by April 15. $25,000 penalty if missed.\n• Pay Delaware franchise tax $300 by June 1. State-level — separate from IRS.\n• No BOI report — since March 26, 2025, FinCEN has exempted US-formed entities (including Delaware LLCs) from Beneficial Ownership Information reporting.\n• Watch for state sales tax obligations as you scale.\n\nOur service handles the federal Form 5472 + 1120 for $199, with IRS fax delivery included. +$149 per additional past year. Every filing is reviewed by an accountant on our team. 100% money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -880,7 +880,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What's the cheapest year-1 federal compliance for a Stripe Atlas Delaware LLC?",
-        a: "Federal: $99 all-inclusive with our service, fax delivery included. Add the $300 Delaware franchise tax = $399 total annual compliance. Add Stripe Atlas's one-time $500 formation cost (year 1 only) for full year-1 picture.",
+        a: "Federal: $199 all-inclusive with our service, fax delivery included. Add the $300 Delaware franchise tax = $499 total annual compliance. Add Stripe Atlas's one-time $500 formation cost (year 1 only) for full year-1 picture.",
       },
     ],
     relatedSlugs: ["wyoming-llc-form-5472", "foreign-owned-llc-tax", "file-form-5472", "stripe-atlas-form-5472", "single-member-llc-foreign-owner"],
@@ -890,7 +890,7 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "Form 5472 for German LLC owner",
     title: "Form 5472 for German Owners of US LLCs — Complete Guide",
     metaDescription:
-      "German residents who own a US LLC (Wyoming, Delaware, or any state) must file IRS Form 5472 + pro forma 1120 every year. What FTIN to use, common scenarios, and accountant-reviewed filing, a flat $99.",
+      "German residents who own a US LLC (Wyoming, Delaware, or any state) must file IRS Form 5472 + pro forma 1120 every year. What FTIN to use, common scenarios, and accountant-reviewed filing from $199.",
     h1: "Form 5472 for German-Resident Owners of US LLCs",
     intro:
       "If you're a German tax resident who owns a single-member US LLC — commonly for ecommerce, Amazon FBA, SaaS, or consulting — you must file IRS Form 5472 with an attached pro forma Form 1120 every year, even if the LLC had zero US tax due. The most common question we get from German owners is which German tax ID goes on the form. Short answer: your personal Steuerliche Identifikationsnummer (Steuer-ID), not your Steuernummer or VAT ID. Here's the complete filing picture.",
@@ -917,11 +917,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What Form5472 Prep does for German owners specifically",
-        body: "Our wizard accepts the German Steuer-ID format directly in the foreign tax ID field, and flags it clearly as separate from a Steuernummer or VAT ID so you don't enter the wrong one. Beyond that, the process is identical to any other country:\n\n• 12-question wizard, 15 minutes.\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Timestamped fax confirmation receipt emailed back to you as proof of filing.\n\nPricing: $99 all-inclusive (IRS fax delivery included on every filing). +$79 per additional past year.",
+        body: "Our wizard accepts the German Steuer-ID format directly in the foreign tax ID field, and flags it clearly as separate from a Steuernummer or VAT ID so you don't enter the wrong one. Beyond that, the process is identical to any other country:\n\n• 12-question wizard, 15 minutes.\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Timestamped fax confirmation receipt emailed back to you as proof of filing.\n\nPricing: $199 all-inclusive (IRS fax delivery included on every plan). +$149 per additional past year.",
       },
       {
         heading: "How do you handle multi-year catch-up as a German owner?",
-        body: "If you formed your US LLC a few years ago and only recently learned about Form 5472, the IRS's DIIRSP (Delinquent International Information Return Submission Procedure) is the standard catch-up path — file all missed years together with one Reasonable Cause Statement covering the full period.\n\n• 2-year DIIRSP catch-up: $178 (fax included).\n• 3-year DIIRSP catch-up: $257 (fax included).\n\nThe reasonable cause statement is auto-generated and tailored to the first-time foreign-owner scenario. An accountant on our team reviews every package before it's faxed to the IRS.",
+        body: "If you formed your US LLC a few years ago and only recently learned about Form 5472, the IRS's DIIRSP (Delinquent International Information Return Submission Procedure) is the standard catch-up path — file all missed years together with one Reasonable Cause Statement covering the full period.\n\n• 2-year DIIRSP catch-up: $348 (fax included).\n• 3-year DIIRSP catch-up: $497 (fax included).\n\nThe reasonable cause statement is auto-generated and tailored to the first-time foreign-owner scenario. An accountant on our team reviews every package before it's faxed to the IRS.",
       },
       {
         heading: "Bottom line for German-resident LLC owners",
@@ -969,7 +969,7 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "Form 5472 UAE resident US LLC",
     title: "Form 5472 for UAE Residents Who Own a US LLC — Complete Guide",
     metaDescription:
-      "UAE residents who own a US LLC must file IRS Form 5472 + pro forma 1120 every year. What to enter without a personal UAE tax ID, common scenarios, and accountant-reviewed filing, a flat $99.",
+      "UAE residents who own a US LLC must file IRS Form 5472 + pro forma 1120 every year. What to enter without a personal UAE tax ID, common scenarios, and accountant-reviewed filing from $199.",
     h1: "Form 5472 for UAE Residents Who Own a US LLC",
     intro:
       "Many Dubai and Abu Dhabi-based founders run global ecommerce, dropshipping, SaaS, or consulting businesses through a US LLC (usually Wyoming or Delaware) rather than a UAE mainland or free zone company. If that's you, you must file IRS Form 5472 with an attached pro forma Form 1120 every year — but the UAE has no personal income tax and, for most individuals, no personal tax ID either. Here's exactly what to put on the form instead, and the rest of the filing picture.",
@@ -996,11 +996,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What Form5472 Prep does for UAE owners specifically",
-        body: "Our wizard handles the \"no foreign tax ID\" case cleanly — if you don't have a UAE TRN or other tax number, it walks you through the self-assigned reference ID option instead of leaving you stuck. Beyond that, the process is the same as anywhere else:\n\n• 12-question wizard, 15 minutes, accessible any time of day (no need to align with US business hours).\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Email support is included on every filing — useful across the UAE's time zone gap with US business hours.\n\nPricing: $99 all-inclusive (IRS fax delivery included on every filing). +$79 per additional past year.",
+        body: "Our wizard handles the \"no foreign tax ID\" case cleanly — if you don't have a UAE TRN or other tax number, it walks you through the self-assigned reference ID option instead of leaving you stuck. Beyond that, the process is the same as anywhere else:\n\n• 12-question wizard, 15 minutes, accessible any time of day (no need to align with US business hours).\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Email support is included on every filing — useful across the UAE's time zone gap with US business hours.\n\nPricing: $199 all-inclusive (IRS fax delivery included on every plan). +$149 per additional past year.",
       },
       {
         heading: "How do you handle multi-year catch-up as a UAE owner?",
-        body: "If your US LLC has been running for a couple of years and Form 5472 is news to you, the IRS's DIIRSP (Delinquent International Information Return Submission Procedure) is the standard catch-up path — file all missed years together with one Reasonable Cause Statement covering the full period.\n\n• 2-year DIIRSP catch-up: $178 (fax included).\n• 3-year DIIRSP catch-up: $257 (fax included).\n\nThe reasonable cause statement is auto-generated and tailored to the first-time foreign-owner scenario. An accountant on our team reviews every package before it's faxed to the IRS.",
+        body: "If your US LLC has been running for a couple of years and Form 5472 is news to you, the IRS's DIIRSP (Delinquent International Information Return Submission Procedure) is the standard catch-up path — file all missed years together with one Reasonable Cause Statement covering the full period.\n\n• 2-year DIIRSP catch-up: $348 (fax included).\n• 3-year DIIRSP catch-up: $497 (fax included).\n\nThe reasonable cause statement is auto-generated and tailored to the first-time foreign-owner scenario. An accountant on our team reviews every package before it's faxed to the IRS.",
       },
       {
         heading: "Bottom line for UAE-resident LLC owners",
@@ -1075,7 +1075,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file the complete package?",
-        body: "Once your pro forma 1120 is filled and stamped, the full package order is:\n\n1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (1-2 pages, with the \"Foreign-Owned U.S. DE\" stamp).\n3. Form 5472 (2 pages).\n4. Part V supporting statement (1+ pages).\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nSign the 1120's signature line in pen on the printed page. Fax the entire package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the fax transmission receipt as proof of timely filing.\n\nOur service generates the entire correctly-formatted package automatically. You sign one PDF on screen (the signature embeds into every required signature box), an accountant on our team reviews it, and we fax it to the IRS. IRS fax delivery is included in every filing — no separate fee.",
+        body: "Once your pro forma 1120 is filled and stamped, the full package order is:\n\n1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (1-2 pages, with the \"Foreign-Owned U.S. DE\" stamp).\n3. Form 5472 (2 pages).\n4. Part V supporting statement (1+ pages).\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nSign the 1120's signature line in pen on the printed page. Fax the entire package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the fax transmission receipt as proof of timely filing.\n\nOur service generates the entire correctly-formatted package automatically. You sign one PDF on screen (the signature embeds into every required signature box), an accountant on our team reviews it, and we fax it to the IRS. IRS fax delivery is included in every plan — no separate fee.",
       },
       {
         heading: "What are common mistakes on pro forma 1120?",
@@ -1091,7 +1091,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Use our pre-filled pro forma 1120",
-        body: "Our wizard generates a correctly-formatted pro forma Form 1120 with:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Entity name, EIN, US address pre-filled from your wizard answers.\n• Date of incorporation pre-filled.\n• Total assets at year-end pre-filled from your year-end total.\n• Signature line ready for your in-portal canvas signature.\n• All income/deduction/tax fields correctly left blank.\n• Schedule L line 15 column (d) pre-filled to match Item D.\n\nNo manual form-filling. The signed PDF is ready to fax to +1-855-887-7737, and we handle that for you — IRS fax delivery is included in every filing.\n\nPricing: $99 all-inclusive. +$79 per additional past year. 100% money-back guarantee if we fail to submit.",
+        body: "Our wizard generates a correctly-formatted pro forma Form 1120 with:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Entity name, EIN, US address pre-filled from your wizard answers.\n• Date of incorporation pre-filled.\n• Total assets at year-end pre-filled from your year-end total.\n• Signature line ready for your in-portal canvas signature.\n• All income/deduction/tax fields correctly left blank.\n• Schedule L line 15 column (d) pre-filled to match Item D.\n\nNo manual form-filling. The signed PDF is ready to fax to +1-855-887-7737, and we handle that for you — IRS fax delivery is included in every plan.\n\nPricing: $199 all-inclusive. +$149 per additional past year. 100% money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -1186,7 +1186,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Get it done in 15 minutes",
-        body: "Our service generates a perfectly-formatted pro forma 1120 + Form 5472 package automatically. You answer 12 questions in a wizard, we generate the PDF, you sign one page on screen (the signature embeds into every required signature box), and an accountant on our team reviews everything before we fax it to the IRS.\n\nPricing: $99 all-inclusive (IRS fax delivery included). +$79 per additional past year for multi-year DIIRSP catch-up. 100% money-back guarantee if we fail to submit your filing.",
+        body: "Our service generates a perfectly-formatted pro forma 1120 + Form 5472 package automatically. You answer 12 questions in a wizard, we generate the PDF, you sign one page on screen (the signature embeds into every required signature box), and an accountant on our team reviews everything before we fax it to the IRS.\n\nPricing: $199 all-inclusive (IRS fax delivery included). +$149 per additional past year for multi-year DIIRSP catch-up. 100% money-back guarantee if we fail to submit your filing.",
       },
     ],
     faqs: [
@@ -1281,7 +1281,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Skip the paperwork — 15-minute filing",
-        body: "Form5472 Prep generates the complete disregarded entity filing package automatically:\n\n• Cover letter.\n• Pro forma Form 1120 with \"Foreign-Owned U.S. DE\" stamp, entity info, signature line.\n• Form 5472 (Parts I, II, III, IV, V, VII).\n• Part V supporting statement listing each reportable transaction.\n• Reasonable Cause Statement (if filing late under DIIRSP).\n\nYou answer 12 questions in the wizard, sign once on screen (the signature embeds into every required signature box), an accountant on our team reviews everything, and we fax to the IRS Ogden PIN Unit. You get the timestamped receipt as proof of filing.\n\n• 1 year: $99 all-inclusive (fax included)\n• 2 years (DIIRSP): $178 (fax included)\n• 3 years (DIIRSP): $257 (fax included)\n\n100% money-back guarantee if we fail to submit.",
+        body: "Form5472 Prep generates the complete disregarded entity filing package automatically:\n\n• Cover letter.\n• Pro forma Form 1120 with \"Foreign-Owned U.S. DE\" stamp, entity info, signature line.\n• Form 5472 (Parts I, II, III, IV, V, VII).\n• Part V supporting statement listing each reportable transaction.\n• Reasonable Cause Statement (if filing late under DIIRSP).\n\nYou answer 12 questions in the wizard, sign once on screen (the signature embeds into every required signature box), an accountant on our team reviews everything, and we fax to the IRS Ogden PIN Unit. You get the timestamped receipt as proof of filing.\n\n• 1 year: $199 all-inclusive (fax included)\n• 2 years (DIIRSP): $348 (fax included)\n• 3 years (DIIRSP): $497 (fax included)\n\n100% money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -1333,7 +1333,7 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "1120 pro forma instructions",
     title: "1120 Pro Forma Instructions — What to Fill, What to Leave Blank",
     metaDescription:
-      "Field-by-field instructions for filling out pro forma Form 1120 for a foreign-owned US LLC. Avoid the common mistakes that trigger IRS notices. Accountant-reviewed filings, a flat $99.",
+      "Field-by-field instructions for filling out pro forma Form 1120 for a foreign-owned US LLC. Avoid the common mistakes that trigger IRS notices. Accountant-reviewed filings from $199.",
     h1: "1120 Pro Forma Instructions (Foreign-Owned LLCs)",
     intro:
       "Filling out a pro forma Form 1120 is completely different from a real corporate tax return. You complete almost nothing — fewer than 10 fields total. Below is the field-by-field breakdown of what to fill in, what to leave blank, the schedules to ignore, signature requirements, and the common mistakes that cause the IRS to misprocess your filing as if it were a real corporate return.",
@@ -1376,7 +1376,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Use our pre-filled pro forma 1120",
-        body: "Our wizard generates a pre-filled, signature-ready pro forma 1120 that follows every instruction above:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Header section pre-filled from your wizard answers.\n• Income, deductions, tax sections correctly empty.\n• Schedule L line 15 (d) pre-filled with the year-end total assets you entered.\n• Signature line ready for your in-portal canvas signature.\n• Form 5472 + Part V supporting statement assembled behind it.\n\n$99 all-inclusive. IRS fax delivery included on every filing. +$79 per additional past year. Every package is reviewed by an accountant on our team before submission. 100% money-back guarantee if we fail to submit.",
+        body: "Our wizard generates a pre-filled, signature-ready pro forma 1120 that follows every instruction above:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Header section pre-filled from your wizard answers.\n• Income, deductions, tax sections correctly empty.\n• Schedule L line 15 (d) pre-filled with the year-end total assets you entered.\n• Signature line ready for your in-portal canvas signature.\n• Form 5472 + Part V supporting statement assembled behind it.\n\n$199 all-inclusive. IRS fax delivery included on every plan. +$149 per additional past year. Every package is reviewed by an accountant on our team before submission. 100% money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -1455,7 +1455,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How to file IRS Form 5472",
-        body: "You can't e-file Form 5472. The IRS only accepts it by mail or fax to the Ogden PIN Unit. The fax route is faster and gives you a transmission receipt as proof of timely filing.\n\n• Fax: +1-855-887-7737 (IRS Ogden PIN Unit).\n• Mail: Internal Revenue Service, Ogden, UT 84201-0023 (use certified mail with return receipt).\n\nOur 15-minute online filer handles the whole package — Form 5472, pro forma Form 1120, Part V supporting statement, cover letter, and reasonable cause statement (if late). Pricing is a flat $99, we generate everything, you sign once on screen (the signature embeds into every required signature box), an accountant on our team reviews the package end-to-end, and we fax it to the IRS Ogden PIN Unit. IRS fax delivery is included in every filing. You get the timestamped fax transmission receipt as proof of filing.",
+        body: "You can't e-file Form 5472. The IRS only accepts it by mail or fax to the Ogden PIN Unit. The fax route is faster and gives you a transmission receipt as proof of timely filing.\n\n• Fax: +1-855-887-7737 (IRS Ogden PIN Unit).\n• Mail: Internal Revenue Service, Ogden, UT 84201-0023 (use certified mail with return receipt).\n\nOur 15-minute online filer handles the whole package — Form 5472, pro forma Form 1120, Part V supporting statement, cover letter, and reasonable cause statement (if late). Pricing starts at $199, we generate everything, you sign once on screen (the signature embeds into every required signature box), an accountant on our team reviews the package end-to-end, and we fax it to the IRS Ogden PIN Unit. IRS fax delivery is included in every plan. You get the timestamped fax transmission receipt as proof of filing.",
       },
       {
         heading: "Form 5472 vs. Form 1120 — what's the difference?",
@@ -1463,15 +1463,15 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "DIIRSP — catching up if you've missed prior years",
-        body: "If you've missed Form 5472 for one or more prior years, the IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up path. Steps:\n\n1. File the late Form 5472 + pro forma 1120 for each missed year.\n2. Include a Reasonable Cause Statement explaining why the filing was late.\n3. Submit all missed years together as one package.\n4. Fax to +1-855-887-7737 with the reasonable cause statement at the front.\n5. Keep the fax transmission receipt — it's your timestamped proof of DIIRSP submission.\n\nWell-documented first-time catch-ups are accepted at a high rate, with no penalty assessed. The IRS treats voluntary catch-up under DIIRSP far more favorably than waiting for a CP-15 notice and then responding.\n\nOur multi-year DIIRSP packages: 2 years $178, 3 years $257 (fax included). The Reasonable Cause Statement is auto-generated by our wizard and editable to fit your specific facts.",
+        body: "If you've missed Form 5472 for one or more prior years, the IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up path. Steps:\n\n1. File the late Form 5472 + pro forma 1120 for each missed year.\n2. Include a Reasonable Cause Statement explaining why the filing was late.\n3. Submit all missed years together as one package.\n4. Fax to +1-855-887-7737 with the reasonable cause statement at the front.\n5. Keep the fax transmission receipt — it's your timestamped proof of DIIRSP submission.\n\nWell-documented first-time catch-ups are accepted at a high rate, with no penalty assessed. The IRS treats voluntary catch-up under DIIRSP far more favorably than waiting for a CP-15 notice and then responding.\n\nOur multi-year DIIRSP packages: 2 years Standard $348, 3 years $497 (fax included). The Reasonable Cause Statement is auto-generated by our wizard and editable to fit your specific facts.",
       },
       {
         heading: "Pricing",
-        body: "• 1 tax year: $99 all-inclusive (fax included)\n• 2 tax years (DIIRSP catch-up): $178 (fax included)\n• 3 tax years (DIIRSP catch-up): $257 (fax included)\n\nIRS fax delivery to the Ogden PIN Unit at +1-855-887-7737 is included in every filing — no separate fee.\n\nEvery package is reviewed by an accountant on our team before we fax it to the IRS. 100% money-back guarantee if we fail to submit your filing.",
+        body: "• 1 tax year: $199 all-inclusive (fax included)\n• 2 tax years (DIIRSP catch-up): $348 (fax included)\n• 3 tax years (DIIRSP catch-up): $497 (fax included)\n\nIRS fax delivery to the Ogden PIN Unit at +1-855-887-7737 is included in every plan — no separate fee.\n\nEvery package is reviewed by an accountant on our team before we fax it to the IRS. 100% money-back guarantee if we fail to submit your filing.",
       },
       {
         heading: "Why use our service vs. a CPA or DIY",
-        body: "Three ways to file:\n\nDIY with IRS forms ($0 fees, 4-8 hours of careful work): you download blank 1120 and 5472 PDFs from irs.gov, fill them by hand, sign, and fax. Risk: any mistake (missing stamp, blank Part V, wrong signature method) can trigger the $25,000 penalty. Many DIY filings fail compliance review.\n\nUS CPA ($400-$800, 1-2 weeks): most CPAs see foreign-owned DE filings once or twice in their career. They'll typically research the requirements from scratch each time, which makes the turnaround long and the cost high. Some will decline the work entirely.\n\nForm5472 Prep ($99, plus $79 per additional past year, 15 minutes): purpose-built for this exact filing. Wizard pre-fills everything based on 12 simple questions. Generated PDFs follow current IRS instructions. Every package is accountant-reviewed before fax submission. IRS fax delivery included. Money-back guarantee. Reasonable cause statement auto-generated for late filings.\n\nFor the standard foreign-owned single-member LLC profile, our service is dramatically faster and lower-cost than CPA, and dramatically lower risk than DIY.",
+        body: "Three ways to file:\n\nDIY with IRS forms ($0 fees, 4-8 hours of careful work): you download blank 1120 and 5472 PDFs from irs.gov, fill them by hand, sign, and fax. Risk: any mistake (missing stamp, blank Part V, wrong signature method) can trigger the $25,000 penalty. Many DIY filings fail compliance review.\n\nUS CPA ($400-$800, 1-2 weeks): most CPAs see foreign-owned DE filings once or twice in their career. They'll typically research the requirements from scratch each time, which makes the turnaround long and the cost high. Some will decline the work entirely.\n\nForm5472 Prep ($199, plus $149 per additional past year, 15 minutes): purpose-built for this exact filing. Wizard pre-fills everything based on 12 simple questions. Generated PDFs follow current IRS instructions. Every package is accountant-reviewed before fax submission. IRS fax delivery included. Money-back guarantee. Reasonable cause statement auto-generated for late filings.\n\nFor the standard foreign-owned single-member LLC profile, our service is dramatically faster and lower-cost than CPA, and dramatically lower risk than DIY.",
       },
     ],
     faqs: [
@@ -1546,7 +1546,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Missed the deadline? Use DIIRSP",
-        body: "Don't panic. The IRS provides a relief path called DIIRSP — Delinquent International Information Return Submission Procedure — that lets you file late with a Reasonable Cause Statement requesting penalty abatement.\n\nDIIRSP is available as long as:\n• The IRS has NOT yet contacted you about the specific delinquency.\n• You're not under IRS examination or criminal investigation.\n• You don't owe US income tax (DIIRSP is for information-return delinquencies).\n\nMost foreign-owned single-member LLCs meet all three criteria. DIIRSP is the right path for almost all late filings.\n\nThere's no guarantee the IRS will waive the penalty, but well-documented first-time late filings have a high acceptance rate. Generic statements with no specific facts get rejected more often.\n\nOur DIIRSP-aware filer automatically attaches the Reasonable Cause Statement for late filings. Multi-year catch-up packages: $178 for 2 years, $257 for 3 years. Every package is reviewed by an accountant on our team before we fax it.",
+        body: "Don't panic. The IRS provides a relief path called DIIRSP — Delinquent International Information Return Submission Procedure — that lets you file late with a Reasonable Cause Statement requesting penalty abatement.\n\nDIIRSP is available as long as:\n• The IRS has NOT yet contacted you about the specific delinquency.\n• You're not under IRS examination or criminal investigation.\n• You don't owe US income tax (DIIRSP is for information-return delinquencies).\n\nMost foreign-owned single-member LLCs meet all three criteria. DIIRSP is the right path for almost all late filings.\n\nThere's no guarantee the IRS will waive the penalty, but well-documented first-time late filings have a high acceptance rate. Generic statements with no specific facts get rejected more often.\n\nOur DIIRSP-aware filer automatically attaches the Reasonable Cause Statement for late filings. Multi-year catch-up packages: $149 for 2 years, $199 for 3 years. Every package is reviewed by an accountant on our team before we fax it.",
       },
       {
         heading: "What is the late-filing penalty in detail?",
@@ -1558,7 +1558,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How to file before the deadline",
-        body: "1. Gather your LLC info (EIN, address, formation date, NAICS code) and your foreign owner info (legal name, FTIN or self-assigned Reference ID, residential address, country of citizenship).\n2. Add up year-end totals: capital contributions in, distributions out, total assets at year-end in USD, list of any other reportable transactions.\n3. Use our 15-minute online filer to generate the full package: cover letter, pro forma 1120 with the \"Foreign-Owned U.S. DE\" stamp, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (only if late).\n4. Sign once on screen — the signature embeds into every required signature box automatically.\n5. An accountant on our team reviews the package end-to-end.\n6. We fax it to the IRS Ogden PIN Unit at +1-855-887-7737 and email you the timestamped receipt as proof of timely filing.\n\nPricing: $99 all-inclusive (IRS fax delivery included). +$79 per additional past year. 100% money-back guarantee if we fail to submit.",
+        body: "1. Gather your LLC info (EIN, address, formation date, NAICS code) and your foreign owner info (legal name, FTIN or self-assigned Reference ID, residential address, country of citizenship).\n2. Add up year-end totals: capital contributions in, distributions out, total assets at year-end in USD, list of any other reportable transactions.\n3. Use our 15-minute online filer to generate the full package: cover letter, pro forma 1120 with the \"Foreign-Owned U.S. DE\" stamp, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (only if late).\n4. Sign once on screen — the signature embeds into every required signature box automatically.\n5. An accountant on our team reviews the package end-to-end.\n6. We fax it to the IRS Ogden PIN Unit at +1-855-887-7737 and email you the timestamped receipt as proof of timely filing.\n\nPricing: $199 all-inclusive (IRS fax delivery included). +$149 per additional past year. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "Should you file early?",
@@ -1584,7 +1584,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "I'm filing for last year — can I still use your service?",
-        a: "Yes. The wizard auto-detects late filings and adds the DIIRSP Reasonable Cause Statement automatically. Pricing: $99 all-inclusive for 1 year (fax included). Add $79 per additional past year for multi-year catch-up.",
+        a: "Yes. The wizard auto-detects late filings and adds the DIIRSP Reasonable Cause Statement automatically. Pricing: $199 all-inclusive for 1 year (fax included). Add $149 per additional past year for multi-year catch-up.",
       },
       {
         q: "What's the deadline for tax year 2024?",
@@ -1633,15 +1633,15 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Which fax services work?",
-        body: "Any fax service that can send to a US toll-free number works. Common choices:\n\n• eFax (~$17/month with several free outbound pages monthly).\n• MyFax (~$10/month).\n• FaxZero (free for up to 5 pages with ads, or paid tier for ad-free).\n• Pamfax (pay-per-page, no subscription).\n• HelloFax / Dropbox Sign (~$10/month).\n• Google Voice with Workspace + HelloFax integration.\n• A physical fax machine if you have access.\n• Our service (IRS fax delivery included in every filing — $99).\n\nFor a one-time fax of a 5-8 page document, FaxZero (free) or Pamfax (pay-per-page) are low-cost DIY options if you prefer to self-file. For ongoing use, monthly subscriptions become economical.\n\nKeep the transmission receipt the service generates — it shows the fax was successfully delivered, with a timestamp. That receipt is your legal proof of timely filing under IRC § 6038A. Without it, you can't prove you filed on time if the IRS later assesses a penalty.",
+        body: "Any fax service that can send to a US toll-free number works. Common choices:\n\n• eFax (~$17/month with several free outbound pages monthly).\n• MyFax (~$10/month).\n• FaxZero (free for up to 5 pages with ads, or paid tier for ad-free).\n• Pamfax (pay-per-page, no subscription).\n• HelloFax / Dropbox Sign (~$10/month).\n• Google Voice with Workspace + HelloFax integration.\n• A physical fax machine if you have access.\n• Our service (IRS fax delivery included in every plan — $199).\n\nFor a one-time fax of a 5-8 page document, FaxZero (free) or Pamfax (pay-per-page) are low-cost DIY options if you prefer to self-file. For ongoing use, monthly subscriptions become economical.\n\nKeep the transmission receipt the service generates — it shows the fax was successfully delivered, with a timestamp. That receipt is your legal proof of timely filing under IRC § 6038A. Without it, you can't prove you filed on time if the IRS later assesses a penalty.",
       },
       {
         heading: "How to actually send a fax in 2026",
         body: "If you've never sent a fax before, here's the modern path:\n\n1. Sign up for an online fax service (FaxZero is free for occasional use; eFax / MyFax for subscriptions).\n2. Upload your signed PDF as the document to fax.\n3. Enter the destination fax number: +18558877737 (some services accept hyphens or parentheses; +1-855-887-7737 also works).\n4. Add an optional cover sheet (most services let you skip this since your cover letter is page 1 of the PDF).\n5. Hit Send.\n6. Wait for the confirmation email. Most US fax transmissions to the IRS complete in 5-30 minutes.\n7. Save the confirmation email and the transmission receipt PDF.\n\nThere's no need for a fax machine, fax modem, landline, or any specialized hardware. Online fax services route through real fax protocols on the receiving side — the IRS Ogden line is a standard US fax line that accepts these transmissions transparently.",
       },
       {
-        heading: "IRS fax delivery — included in every filing",
-        body: "IRS fax delivery is included in every filing at no extra charge. We fax the signed package to +1-855-887-7737 for you. You get:\n\n• A timestamped IRS Fax Transmission Receipt PDF emailed back to you.\n• A copy of the receipt in your portal you can re-download anytime.\n• An email confirmation when the fax delivers.\n• Automatic retry if the first attempt fails.\n• Proof-of-filing language formatted to satisfy any future IRS questions about timing.\n\nIf the first fax attempt fails, we automatically retry. If multiple attempts fail (rare but possible during IRS Ogden maintenance windows), we'll reach out before falling back to certified mail. 100% money-back guarantee if we fail to submit your filing to the IRS.",
+        heading: "IRS fax delivery — included in every plan",
+        body: "IRS fax delivery is included in every plan at no extra charge. We fax the signed package to +1-855-887-7737 for you. You get:\n\n• A timestamped IRS Fax Transmission Receipt PDF emailed back to you.\n• A copy of the receipt in your portal you can re-download anytime.\n• An email confirmation when the fax delivers.\n• Automatic retry if the first attempt fails.\n• Proof-of-filing language formatted to satisfy any future IRS questions about timing.\n\nIf the first fax attempt fails, we automatically retry. If multiple attempts fail (rare but possible during IRS Ogden maintenance windows), we'll reach out before falling back to certified mail. 100% money-back guarantee if we fail to submit your filing to the IRS.",
       },
       {
         heading: "What if the fax fails?",
@@ -1661,7 +1661,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Your annual fax routine",
-        body: "If you file Form 5472 every year (and you should), the fax routine becomes:\n\n• Tax year ends December 31.\n• In January or February, prepare the filing (12-question wizard with us, ~5-10 minutes for returning customers).\n• Sign on screen.\n• We fax to +1-855-887-7737 and email you the timestamped receipt (included in every filing).\n• Save the transmission receipt.\n• Done until next year.\n\nTotal time investment: about 15 minutes once a year. Cost: a flat $99 with us (fax delivery included). Penalty avoided: $25,000.\n\nMost of our returning customers fax in early February and have the obligation handled with 10+ weeks of buffer before the April 15 deadline.",
+        body: "If you file Form 5472 every year (and you should), the fax routine becomes:\n\n• Tax year ends December 31.\n• In January or February, prepare the filing (12-question wizard with us, ~5-10 minutes for returning customers).\n• Sign on screen.\n• We fax to +1-855-887-7737 and email you the timestamped receipt (included in every plan).\n• Save the transmission receipt.\n• Done until next year.\n\nTotal time investment: about 15 minutes once a year. Cost: Standard $199 with us (fax delivery included). Penalty avoided: $25,000.\n\nMost of our returning customers fax in early February and have the obligation handled with 10+ weeks of buffer before the April 15 deadline.",
       },
     ],
     faqs: [
@@ -1703,7 +1703,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "How do I get the timestamped receipt that's accepted as proof of filing?",
-        a: "IRS fax delivery is included in every filing. After we fax your package, we email you a polished IRS Fax Transmission Receipt PDF that's also stored in your portal for re-download at any time.",
+        a: "IRS fax delivery is included in every plan. After we fax your package, we email you a polished IRS Fax Transmission Receipt PDF that's also stored in your portal for re-download at any time.",
       },
     ],
     relatedSlugs: ["file-form-5472", "form-5472-deadline", "form-5472-instructions", "irs-form-5472", "1120-pro-forma-instructions"],
@@ -1736,7 +1736,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are typical foreign-owner LLC profiles?",
-        body: "Profile 1: SaaS founder.\n• Delaware LLC formed via Stripe Atlas.\n• Owner abroad (e.g. UK, Singapore, Hong Kong).\n• Selling SaaS via Stripe to global customers.\n• Revenue $50K-$2M.\n• US federal tax: $0 (no US trade or business, foreign-source services).\n• Required filings: Form 5472 + pro forma 1120 federal, Delaware franchise tax $300. No BOI report — US-formed LLCs have been exempt from FinCEN BOI reporting since March 26, 2025. Total federal compliance with us: $99/year.\n\nProfile 2: Ecommerce / dropshipping.\n• Wyoming LLC.\n• Owner in Vietnam, Mexico, etc.\n• Shopify store with worldwide customers (no US warehouse).\n• Revenue $20K-$500K.\n• US federal tax: $0 (no US-source income).\n• Required filings: Form 5472 + pro forma 1120 federal, Wyoming annual report $60, sales tax if nexus crossed. No BOI report — same March 26, 2025 exemption applies. Total federal compliance with us: $99/year.\n\nProfile 3: Consulting / agency.\n• Wyoming or Delaware LLC.\n• Owner in EU, India, Brazil.\n• Consulting clients in US and abroad.\n• Revenue $30K-$300K.\n• US federal tax: $0 if consulting performed outside the US.\n• Required filings: Form 5472 + pro forma 1120 federal, state annual report. With us: $99/year.\n\nProfile 4: Stripe Atlas Delaware LLC, no revenue.\n• Just formed.\n• Funded $5K-$10K to open Mercury bank account.\n• No customers yet.\n• Required filings: Form 5472 + pro forma 1120 federal (the capital contribution counts as a reportable transaction). With us: $99/year.",
+        body: "Profile 1: SaaS founder.\n• Delaware LLC formed via Stripe Atlas.\n• Owner abroad (e.g. UK, Singapore, Hong Kong).\n• Selling SaaS via Stripe to global customers.\n• Revenue $50K-$2M.\n• US federal tax: $0 (no US trade or business, foreign-source services).\n• Required filings: Form 5472 + pro forma 1120 federal, Delaware franchise tax $300. No BOI report — US-formed LLCs have been exempt from FinCEN BOI reporting since March 26, 2025. Total federal compliance with us: $199/year.\n\nProfile 2: Ecommerce / dropshipping.\n• Wyoming LLC.\n• Owner in Vietnam, Mexico, etc.\n• Shopify store with worldwide customers (no US warehouse).\n• Revenue $20K-$500K.\n• US federal tax: $0 (no US-source income).\n• Required filings: Form 5472 + pro forma 1120 federal, Wyoming annual report $60, sales tax if nexus crossed. No BOI report — same March 26, 2025 exemption applies. Total federal compliance with us: $199/year.\n\nProfile 3: Consulting / agency.\n• Wyoming or Delaware LLC.\n• Owner in EU, India, Brazil.\n• Consulting clients in US and abroad.\n• Revenue $30K-$300K.\n• US federal tax: $0 if consulting performed outside the US.\n• Required filings: Form 5472 + pro forma 1120 federal, state annual report. With us: $199/year.\n\nProfile 4: Stripe Atlas Delaware LLC, no revenue.\n• Just formed.\n• Funded $5K-$10K to open Mercury bank account.\n• No customers yet.\n• Required filings: Form 5472 + pro forma 1120 federal (the capital contribution counts as a reportable transaction). With us: $199/year.",
       },
       {
         heading: "What's in the federal filing package",
@@ -1744,11 +1744,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "When and how to file",
-        body: "When: April 15 of the year following the tax year. October 15 with Form 7004 extension.\n\nHow:\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit) — preferred. Get a timestamped transmission receipt as proof of filing.\n• Mail to IRS Ogden, UT 84201-0023 — backup. Use certified mail with return receipt.\n• E-file: NOT available for foreign-owned DE filings.\n\nWho:\n• You, the owner. Pen signature required on Form 1120 (no separate signature on Form 5472).\n\nWith us:\n• Wizard (12 questions) → generated PDF → sign once on screen → accountant review → fax to IRS → timestamped receipt. ~15 minutes total. $99 all-inclusive. IRS fax delivery included. +$79 per additional past year.",
+        body: "When: April 15 of the year following the tax year. October 15 with Form 7004 extension.\n\nHow:\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit) — preferred. Get a timestamped transmission receipt as proof of filing.\n• Mail to IRS Ogden, UT 84201-0023 — backup. Use certified mail with return receipt.\n• E-file: NOT available for foreign-owned DE filings.\n\nWho:\n• You, the owner. Pen signature required on Form 1120 (no separate signature on Form 5472).\n\nWith us:\n• Wizard (12 questions) → generated PDF → sign once on screen → accountant review → fax to IRS → timestamped receipt. ~15 minutes total. $199 all-inclusive. IRS fax delivery included. +$149 per additional past year.",
       },
       {
         heading: "What do you do if you've missed prior years?",
-        body: "Many foreign owners discover Form 5472 a year or more after forming their LLC. The IRS provides DIIRSP — Delinquent International Information Return Submission Procedure — as the standard catch-up:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement.\n• Fax to +1-855-887-7737.\n• Most well-documented first-time catch-ups are accepted without penalty.\n\nOur DIIRSP packages:\n• 2-year catch-up: $178 (fax included).\n• 3-year catch-up: $257 (fax included).\n• Reasonable cause statement auto-generated, accountant-reviewed.\n\nDon't wait. Once the IRS issues a CP-15 notice for a missed year, DIIRSP is no longer available for that year and you're stuck with a much harder post-assessment appeal.",
+        body: "Many foreign owners discover Form 5472 a year or more after forming their LLC. The IRS provides DIIRSP — Delinquent International Information Return Submission Procedure — as the standard catch-up:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement.\n• Fax to +1-855-887-7737.\n• Most well-documented first-time catch-ups are accepted without penalty.\n\nOur DIIRSP packages:\n• 2-year catch-up: $348 (fax included).\n• 3-year catch-up: $497 (fax included).\n• Reasonable cause statement auto-generated, accountant-reviewed.\n\nDon't wait. Once the IRS issues a CP-15 notice for a missed year, DIIRSP is no longer available for that year and you're stuck with a much harder post-assessment appeal.",
       },
       {
         heading: "Common scenarios we don't cover",
@@ -1756,7 +1756,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "The fastest way to file",
-        body: "Our 15-minute online filer handles everything for the standard foreign-owned single-member LLC case:\n\n• 12-question wizard pre-tuned for non-US founders.\n• Pre-fills the next year from your prior filing.\n• Generates the complete package: cover letter, pro forma Form 1120, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (if late).\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review on every package before submission.\n• IRS fax delivery + timestamped receipt as proof of filing.\n• 100% money-back guarantee if we fail to submit.\n\nPricing:\n• 1 tax year: $99 all-inclusive (fax included)\n• 2 tax years (DIIRSP catch-up): $178 (fax included)\n• 3 tax years (DIIRSP catch-up): $257 (fax included)\n• +$79 per additional past year beyond the base package",
+        body: "Our 15-minute online filer handles everything for the standard foreign-owned single-member LLC case:\n\n• 12-question wizard pre-tuned for non-US founders.\n• Pre-fills the next year from your prior filing.\n• Generates the complete package: cover letter, pro forma Form 1120, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (if late).\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review on every package before submission.\n• IRS fax delivery + timestamped receipt as proof of filing.\n• 100% money-back guarantee if we fail to submit.\n\nPricing:\n• 1 tax year: $199 all-inclusive (fax included)\n• 2 tax years (DIIRSP catch-up): $348 (fax included)\n• 3 tax years (DIIRSP catch-up): $497 (fax included)\n• +$149 per additional past year beyond the base package",
       },
     ],
     faqs: [
@@ -1766,7 +1766,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Can my US CPA file this for me?",
-        a: "They can, but most US-based CPAs see this filing once or twice in their career and aren't comfortable with it. Expect $400-$800 and 1-2 weeks of back-and-forth. Our flat-fee $99 service (IRS fax delivery included) takes 15 minutes and is reviewed by an accountant on our team.",
+        a: "They can, but most US-based CPAs see this filing once or twice in their career and aren't comfortable with it. Expect $400-$800 and 1-2 weeks of back-and-forth. Our flat-fee service from $199 (IRS fax delivery included) takes 15 minutes and is reviewed by an accountant on our team.",
       },
       {
         q: "What if I have multiple foreign-owned LLCs?",
@@ -1808,7 +1808,7 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "stripe atlas form 5472",
     title: "Stripe Atlas LLC + Form 5472 — What You Must File",
     metaDescription:
-      "Stripe Atlas LLCs owned by non-US founders must file IRS Form 5472 every year. Stripe doesn't handle this — we do. 15-minute accountant-reviewed online filing, a flat $99.",
+      "Stripe Atlas LLCs owned by non-US founders must file IRS Form 5472 every year. Stripe doesn't handle this — we do. 15-minute accountant-reviewed online filing from $199.",
     h1: "Stripe Atlas LLC owners — Form 5472 is on you, not Stripe",
     intro:
       "Stripe Atlas makes US LLC formation effortless for foreign founders — Delaware LLC + EIN + Mercury bank account in days. What Stripe Atlas explicitly does NOT handle is the annual IRS filing your LLC owes every year: Form 5472 + pro forma Form 1120. Skip it and the IRS charges $25,000 per year, per form. This is the complete Stripe Atlas + Form 5472 playbook — including the typical year-2 surprise, the Delaware franchise tax, and how to catch up if you've missed prior years.",
@@ -1823,23 +1823,23 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "The Stripe Atlas typical compliance stack",
-        body: "If you formed your LLC via Stripe Atlas, here's your full annual compliance stack:\n\nFederal (us):\n• Form 5472 + pro forma Form 1120 due April 15. $25,000 penalty if missed. Our service: $99 all-inclusive (IRS fax delivery included).\n• BOI report to FinCEN — NOT required. Since March 26, 2025, FinCEN has exempted US-formed entities, including Delaware LLCs, from BOI reporting under the Corporate Transparency Act.\n\nState (Delaware, self-serve):\n• Delaware Annual LLC Franchise Tax: $300, due June 1. Self-serve at corp.delaware.gov.\n\nSituational:\n• Personal Form 1040-NR — only if you have US-source income personally (rare for most Stripe Atlas LLCs).\n• Sales tax registrations — only if you cross economic nexus thresholds in specific states (rare for SaaS, more common for physical-goods ecommerce).\n• Payroll taxes — only if you have US employees (rare).\n\nNot Stripe's job after formation:\n• None of the above is included in the Stripe Atlas formation product. Some of Stripe Atlas's optional ongoing services may handle pieces, but the standard formation product ends at year 1 day 1.\n\nTotal annual federal compliance with us: $99 (fax delivery included). Plus $300 Delaware state. Total year 2+: $399/year.",
+        body: "If you formed your LLC via Stripe Atlas, here's your full annual compliance stack:\n\nFederal (us):\n• Form 5472 + pro forma Form 1120 due April 15. $25,000 penalty if missed. Our service: $199 all-inclusive (IRS fax delivery included).\n• BOI report to FinCEN — NOT required. Since March 26, 2025, FinCEN has exempted US-formed entities, including Delaware LLCs, from BOI reporting under the Corporate Transparency Act.\n\nState (Delaware, self-serve):\n• Delaware Annual LLC Franchise Tax: $300, due June 1. Self-serve at corp.delaware.gov.\n\nSituational:\n• Personal Form 1040-NR — only if you have US-source income personally (rare for most Stripe Atlas LLCs).\n• Sales tax registrations — only if you cross economic nexus thresholds in specific states (rare for SaaS, more common for physical-goods ecommerce).\n• Payroll taxes — only if you have US employees (rare).\n\nNot Stripe's job after formation:\n• None of the above is included in the Stripe Atlas formation product. Some of Stripe Atlas's optional ongoing services may handle pieces, but the standard formation product ends at year 1 day 1.\n\nTotal annual federal compliance with us: Standard $199 (fax delivery included). Plus $300 Delaware state. Total year 2+: $499/year.",
       },
       {
         heading: "What you actually file for Form 5472",
-        body: "For a Stripe Atlas Delaware LLC owned by one non-US founder, the federal filing package is:\n\n1. Cover letter identifying the filing.\n2. Pro forma Form 1120 — entity info only, stamped \"Foreign-Owned U.S. DE\" at the top. Income, deductions, tax sections all blank.\n3. Form 5472 — Parts I (your LLC), II (you as foreign shareholder), III (you again as related party), IV (monetary transactions, often blank), V (reportable transactions — capital contributions, distributions), VII (FDE confirmation).\n4. Part V supporting statement — list of each reportable transaction.\n5. Reasonable Cause Statement — only if filing late under DIIRSP.\n\nAll faxed to the IRS Ogden PIN Unit at +1-855-887-7737. The fax transmission receipt is your proof of timely filing.\n\nTotal pages: 5-8. Total time to file with us: ~15 minutes. Total cost with us: $99 (IRS fax delivery included).",
+        body: "For a Stripe Atlas Delaware LLC owned by one non-US founder, the federal filing package is:\n\n1. Cover letter identifying the filing.\n2. Pro forma Form 1120 — entity info only, stamped \"Foreign-Owned U.S. DE\" at the top. Income, deductions, tax sections all blank.\n3. Form 5472 — Parts I (your LLC), II (you as foreign shareholder), III (you again as related party), IV (monetary transactions, often blank), V (reportable transactions — capital contributions, distributions), VII (FDE confirmation).\n4. Part V supporting statement — list of each reportable transaction.\n5. Reasonable Cause Statement — only if filing late under DIIRSP.\n\nAll faxed to the IRS Ogden PIN Unit at +1-855-887-7737. The fax transmission receipt is your proof of timely filing.\n\nTotal pages: 5-8. Total time to file with us: ~15 minutes. Total cost with us: Standard $199 (IRS fax delivery included).",
       },
       {
         heading: "Common Stripe Atlas LLC scenarios",
-        body: "Scenario A — Year 1, no revenue yet: Lucia formed her Stripe Atlas LLC in June 2024. By December 2024 the only activity was: $5K capital contribution to open Mercury account + $500 spent on Stripe Atlas formation fee. Required for tax year 2024: Form 5472 + pro forma 1120. Part V reports the $5K capital contribution. Files by April 15, 2025 with our service for a flat $99 (fax included).\n\nScenario B — Year 2, growing SaaS: Mei has been running her Stripe Atlas Delaware LLC for 2 years selling SaaS to EU customers. Year 2 revenue: $180K, $0 US tax owed. She files Form 5472 + 1120 reporting capital contributions and distributions to/from her HK bank account. $99 (fax included) with our service.\n\nScenario C — Discovered Form 5472 late: Carlos formed his Stripe Atlas LLC in 2022. Three years later (2025) he discovers Form 5472 obligation. He files 2022, 2023, 2024 together under DIIRSP using our 3-year catch-up ($257, fax included). Reasonable cause statement auto-generated for first-time foreign-owner unawareness. Typical outcome: penalty waived.\n\nScenario D — Multiple Stripe Atlas LLCs: Mei has 3 separate Stripe Atlas LLCs for 3 different product lines. Each one needs its own Form 5472 + pro forma 1120 every year — 3 separate filings, $99 each with us = $297/year just for federal compliance.",
+        body: "Scenario A — Year 1, no revenue yet: Lucia formed her Stripe Atlas LLC in June 2024. By December 2024 the only activity was: $5K capital contribution to open Mercury account + $500 spent on Stripe Atlas formation fee. Required for tax year 2024: Form 5472 + pro forma 1120. Part V reports the $5K capital contribution. Files by April 15, 2025 with our service for Standard $199 (fax included).\n\nScenario B — Year 2, growing SaaS: Mei has been running her Stripe Atlas Delaware LLC for 2 years selling SaaS to EU customers. Year 2 revenue: $180K, $0 US tax owed. She files Form 5472 + 1120 reporting capital contributions and distributions to/from her HK bank account. Standard $199 (fax included) with our service.\n\nScenario C — Discovered Form 5472 late: Carlos formed his Stripe Atlas LLC in 2022. Three years later (2025) he discovers Form 5472 obligation. He files 2022, 2023, 2024 together under DIIRSP using our 3-year catch-up (Standard $497, fax included). Reasonable cause statement auto-generated for first-time foreign-owner unawareness. Typical outcome: penalty waived.\n\nScenario D — Multiple Stripe Atlas LLCs: Mei has 3 separate Stripe Atlas LLCs for 3 different product lines. Each one needs its own Form 5472 + pro forma 1120 every year — 3 separate filings, Standard $199 each with us = $597/year just for federal compliance.",
       },
       {
         heading: "How we handle it",
-        body: "We built Form5472 Prep specifically for the Stripe Atlas / Mercury / non-US-founder profile. Most of our customers are Stripe Atlas Delaware LLC owners — the wizard is pre-tuned for this exact case:\n\n• 12-question wizard. Pre-filled state (Delaware), common NAICS suggestions for SaaS / ecommerce / consulting.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review on every package before submission.\n• IRS fax delivery + timestamped receipt as proof of filing.\n• Pre-fills the next year from your prior filing — year 2 onward takes 5 minutes.\n• Optional annual reminder emails so you don't miss the April 15 deadline.\n\nPricing:\n• 1 tax year: $99 all-inclusive (fax included)\n• 2 tax years (DIIRSP catch-up): $178 (fax included)\n• 3 tax years (DIIRSP catch-up): $257 (fax included)\n• +$79 per additional past year\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
+        body: "We built Form5472 Prep specifically for the Stripe Atlas / Mercury / non-US-founder profile. Most of our customers are Stripe Atlas Delaware LLC owners — the wizard is pre-tuned for this exact case:\n\n• 12-question wizard. Pre-filled state (Delaware), common NAICS suggestions for SaaS / ecommerce / consulting.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review on every package before submission.\n• IRS fax delivery + timestamped receipt as proof of filing.\n• Pre-fills the next year from your prior filing — year 2 onward takes 5 minutes.\n• Optional annual reminder emails so you don't miss the April 15 deadline.\n\nPricing:\n• 1 tax year: $199 all-inclusive (fax included)\n• 2 tax years (DIIRSP catch-up): $348 (fax included)\n• 3 tax years (DIIRSP catch-up): $497 (fax included)\n• +$149 per additional past year\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
       },
       {
         heading: "What do you do if you've missed prior years as a Stripe Atlas user?",
-        body: "Many Stripe Atlas founders discover Form 5472 a year or two after forming their LLC. The IRS provides DIIRSP — Delinquent International Information Return Submission Procedure — as the standard catch-up:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement explaining first-time foreign-owner unawareness.\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit).\n• Most first-time catch-ups are accepted with no penalty assessed.\n\nDIIRSP eligibility: you have not yet been contacted by the IRS about the specific year's delinquency. As long as no CP-15 notice has arrived for those years, DIIRSP is available.\n\nOur multi-year packages:\n• 2-year catch-up: $178 (fax included).\n• 3-year catch-up: $257 (fax included).\n\nDon't wait. Once the IRS issues a CP-15, that year's DIIRSP eligibility ends and you're in the harder post-assessment appeal process.",
+        body: "Many Stripe Atlas founders discover Form 5472 a year or two after forming their LLC. The IRS provides DIIRSP — Delinquent International Information Return Submission Procedure — as the standard catch-up:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement explaining first-time foreign-owner unawareness.\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit).\n• Most first-time catch-ups are accepted with no penalty assessed.\n\nDIIRSP eligibility: you have not yet been contacted by the IRS about the specific year's delinquency. As long as no CP-15 notice has arrived for those years, DIIRSP is available.\n\nOur multi-year packages:\n• 2-year catch-up: $348 (fax included).\n• 3-year catch-up: $497 (fax included).\n\nDon't wait. Once the IRS issues a CP-15, that year's DIIRSP eligibility ends and you're in the harder post-assessment appeal process.",
       },
       {
         heading: "The Stripe Atlas + Mercury banking dimension",
@@ -1851,7 +1851,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Bottom line for Stripe Atlas LLC owners",
-        body: "Stripe Atlas got you the LLC, the EIN, and the Mercury account. That's where their job ended. From year 1 onward, Form 5472 + pro forma 1120 is on you, due April 15 each year, with a $25,000 penalty per year if missed.\n\nOur service is built for this profile — flat-fee, accountant-reviewed, with a money-back guarantee. $99 all-inclusive (IRS fax delivery included). Most of our customers come from Stripe Atlas, Mercury, and similar foreign-founder onboarding paths.\n\nFile early, file every year, keep the fax receipt for your records. The $25,000 penalty is the single largest compliance risk for your LLC — bigger than every other federal/state obligation combined.",
+        body: "Stripe Atlas got you the LLC, the EIN, and the Mercury account. That's where their job ended. From year 1 onward, Form 5472 + pro forma 1120 is on you, due April 15 each year, with a $25,000 penalty per year if missed.\n\nOur service is built for this profile — flat-fee, accountant-reviewed, with a money-back guarantee. $199 all-inclusive (IRS fax delivery included). Most of our customers come from Stripe Atlas, Mercury, and similar foreign-founder onboarding paths.\n\nFile early, file every year, keep the fax receipt for your records. The $25,000 penalty is the single largest compliance risk for your LLC — bigger than every other federal/state obligation combined.",
       },
     ],
     faqs: [
@@ -1869,11 +1869,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What's the cheapest option if I have one year to file?",
-        a: "$99 (fax delivery included). IRS fax delivery is included in every filing — no separate fee.",
+        a: "Standard $199 (fax delivery included). IRS fax delivery is included in every plan — no separate fee.",
       },
       {
         q: "I have 3 Stripe Atlas LLCs — do I file 3 separate Form 5472s?",
-        a: "Yes. Each LLC files its own Form 5472 + pro forma 1120 separately. Three LLCs = three filings = $297/year at our flat rate (3 × $99, fax included). Each gets its own fax receipt.",
+        a: "Yes. Each LLC files its own Form 5472 + pro forma 1120 separately. Three LLCs = three filings = $597/year at our Standard rate (3 × $199, fax included). Each gets its own fax receipt.",
       },
       {
         q: "Stripe Atlas says I don't owe US tax — so why file Form 5472?",
@@ -1938,7 +1938,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Pricing for catch-up filings",
-        body: "• 1-year late filing: $99 all-inclusive (fax included, reasonable cause statement included)\n• 2-year DIIRSP catch-up: $178 (fax included)\n• 3-year DIIRSP catch-up: $257 (fax included)\n\nFiling all missed years together with one comprehensive reasonable cause statement gives the strongest abatement argument. Don't space them out — the IRS treats a single concurrent catch-up far more favorably than serial late filings.\n\nFor 4+ missed years, run two back-to-back packages or message us and we'll coordinate.\n\n100% money-back guarantee if we fail to submit.",
+        body: "• 1-year late filing: $199 all-inclusive (fax included, reasonable cause statement included)\n• 2-year DIIRSP catch-up: $348 (fax included)\n• 3-year DIIRSP catch-up: $497 (fax included)\n\nFiling all missed years together with one comprehensive reasonable cause statement gives the strongest abatement argument. Don't space them out — the IRS treats a single concurrent catch-up far more favorably than serial late filings.\n\nFor 4+ missed years, run two back-to-back packages or message us and we'll coordinate.\n\n100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "When you should not use the template",
@@ -1946,7 +1946,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Bottom line",
-        body: "A Reasonable Cause Statement is the single most important document in a DIIRSP catch-up filing. Done well, it can save you tens of thousands of dollars in penalties. Done poorly, the IRS assesses $25,000 per form per year automatically.\n\nThe winning formula: specific facts, clear timeline, prompt corrective action, concise length, no vague excuses or boilerplate.\n\nOur DIIRSP packages include an auto-generated, accountant-reviewed Reasonable Cause Statement tailored to the most common foreign-owner scenario. Editable in the wizard if your facts differ.\n\n• 2-year DIIRSP catch-up: $178 (fax included)\n• 3-year DIIRSP catch-up: $257 (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
+        body: "A Reasonable Cause Statement is the single most important document in a DIIRSP catch-up filing. Done well, it can save you tens of thousands of dollars in penalties. Done poorly, the IRS assesses $25,000 per form per year automatically.\n\nThe winning formula: specific facts, clear timeline, prompt corrective action, concise length, no vague excuses or boilerplate.\n\nOur DIIRSP packages include an auto-generated, accountant-reviewed Reasonable Cause Statement tailored to the most common foreign-owner scenario. Editable in the wizard if your facts differ.\n\n• 2-year DIIRSP catch-up: $348 (fax included)\n• 3-year DIIRSP catch-up: $497 (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
       },
     ],
     faqs: [
@@ -2001,12 +2001,12 @@ export const LANDING_PAGES: LandingPage[] = [
   {
     slug: "pro-form-5472",
     keyword: "form 5472 pro",
-    title: "Form 5472 Filing Service — Accountant-Reviewed, $99 All-In",
+    title: "Form 5472 Filing Service — Accountant-Reviewed, $199 All-In",
     metaDescription:
-      "Done-for-you Form 5472 + pro forma Form 1120 for foreign-owned US LLCs. Reviewed by a qualified tax accountant, faxed to IRS Ogden, timestamped receipt back. $99 flat.",
-    h1: "Form 5472, filed properly — $99, everything included.",
+      "Done-for-you Form 5472 + pro forma Form 1120 for foreign-owned US LLCs. Reviewed by a qualified tax accountant, faxed to IRS Ogden, timestamped receipt back. $199 flat.",
+    h1: "Form 5472, filed properly — $199, everything included.",
     intro:
-      "Answer 12 questions in about 15 minutes. A qualified tax accountant on our team reviews your Form 5472 + pro forma Form 1120 end-to-end, we fax the signed package to the IRS Ogden PIN Unit — typically within 1–2 business days — and you get back the timestamped transmission receipt as your proof of filing. $99 flat, all-inclusive, for one tax year. That's the filing that keeps a $25,000 §6038A penalty off your LLC.",
+      "Answer 12 questions in about 15 minutes. A qualified tax accountant on our team reviews your Form 5472 + pro forma Form 1120 end-to-end, we fax the signed package to the IRS Ogden PIN Unit — typically within 1–2 business days — and you get back the timestamped transmission receipt as your proof of filing. $199 flat, all-inclusive, for one tax year. That's the filing that keeps a $25,000 §6038A penalty off your LLC.",
     noindex: true,
     pricingMode: "premium",
     sections: [
@@ -2015,12 +2015,12 @@ export const LANDING_PAGES: LandingPage[] = [
         body: "Form 5472 is the return every foreign-owned US single-member LLC owes the IRS each year — and the one nobody mentions when you form the LLC. This service is built for:\n\n• Non-US owners of a US single-member LLC (Wyoming, Delaware, New Mexico, Florida — any state) who need this year's filing done correctly the first time.\n• Owners who only just discovered the requirement and are one, two, or three years behind.\n• Owners who have already received an IRS notice (CP-15 or a §6038A letter) and need a properly prepared late filing with a reasonable cause statement.\n• Owners of several LLCs who want every entity filed the same way, every year, without rebuilding the paperwork from scratch.\n• CPAs and tax attorneys filing for a foreign client who want the 5472 package prepared, reviewed, and faxed for them.\n\nIf your LLC had even one reportable transaction last year — including the wire you sent to open its US bank account — you are in scope, revenue or no revenue.",
       },
       {
-        heading: "What's included for $99",
+        heading: "What's included for $199",
         body: "One flat price covers one tax year, end to end:\n\n• Filled IRS Form 5472 + pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp and the Part V supporting statement.\n• Review by a qualified tax accountant on our team before anything leaves our hands — no autopilot.\n• Reasonable Cause Statement for late filings under DIIRSP, drafted around your facts.\n• Fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) included — no separate fax fee.\n• The timestamped IRS fax transmission receipt emailed to you and stored in your portal: your proof of timely filing.\n• Filing confirmation and priority email support from start to receipt.\n• A reminder next March so the following year's deadline doesn't slip past you.\n• 100% money-back guarantee if we fail to submit.\n\nYou sign once on screen in your portal — no printing, no scanning, no mailing anything yourself.",
       },
       {
         heading: "The $25,000 reason to get this right",
-        body: "IRC § 6038A assesses $25,000 per form, per year when Form 5472 is filed late, filed incompletely, or not filed at all. The penalty is automatic — the IRS doesn't have to show any harm, and there is no small-LLC exception for an entity with no revenue. Once the IRS issues a notice, another $25,000 accrues for every 30-day period the filing stays outstanding.\n\nThe three ways owners get caught:\n\n1. Never filed — the LLC exists, money moved in and out, and Form 5472 never came up at formation.\n2. Filed Form 5472 on its own — without the pro forma Form 1120 it attaches to, the IRS treats the return as never filed.\n3. Filed, but incomplete — a blank Part V, a missing supporting statement, or a missing owner identifier is scored the same as a missing return.\n\nEvery one of those is avoidable paperwork. That is exactly what the $99 buys: a complete package, checked by an accountant who files these all year, delivered with dated proof of when it arrived.",
+        body: "IRC § 6038A assesses $25,000 per form, per year when Form 5472 is filed late, filed incompletely, or not filed at all. The penalty is automatic — the IRS doesn't have to show any harm, and there is no small-LLC exception for an entity with no revenue. Once the IRS issues a notice, another $25,000 accrues for every 30-day period the filing stays outstanding.\n\nThe three ways owners get caught:\n\n1. Never filed — the LLC exists, money moved in and out, and Form 5472 never came up at formation.\n2. Filed Form 5472 on its own — without the pro forma Form 1120 it attaches to, the IRS treats the return as never filed.\n3. Filed, but incomplete — a blank Part V, a missing supporting statement, or a missing owner identifier is scored the same as a missing return.\n\nEvery one of those is avoidable paperwork. That is exactly what the $199 buys: a complete package, checked by an accountant who files these all year, delivered with dated proof of when it arrived.",
       },
       {
         heading: "How your filing reaches the IRS",
@@ -2028,11 +2028,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Pricing",
-        body: "• One tax year: $99, all-inclusive.\n• Each additional past tax year: +$79.\n\nSo a two-year DIIRSP catch-up is $178 and a three-year catch-up is $257. Accountant review, the reasonable cause letter, IRS fax delivery, and the transmission receipt are included at every year count — no separate fax fee, no setup fee, no subscription.\n\nYou pay once, per filing. If we fail to submit your filing to the IRS, you get all of it back.",
+        body: "• One tax year: $199, all-inclusive.\n• Each additional past tax year: +$149.\n\nSo a two-year DIIRSP catch-up is $348 and a three-year catch-up is $497. Accountant review, the reasonable cause letter, IRS fax delivery, and the transmission receipt are included at every year count — no separate fax fee, no setup fee, no subscription.\n\nYou pay once, per filing. If we fail to submit your filing to the IRS, you get all of it back.",
       },
       {
         heading: "What happens if the IRS still assesses a penalty?",
-        body: "DIIRSP (Delinquent International Information Return Submission Procedure) is the IRS-published path for catch-up filings with reasonable cause requests. Most well-documented first-time late filings are accepted with no penalty assessed. There's no formal IRS guarantee, but the acceptance rate for properly-prepared DIIRSP submissions is high.\n\nTwo different scenarios here. If the IRS assesses a penalty because of an error in our preparation — a mistake on our end — we handle the response with the IRS at no charge. If instead the IRS assesses a penalty despite a correctly prepared, complete DIIRSP submission (a discretionary IRS call on your specific facts, not something we got wrong), the accountant who reviewed your package will still help you respond and appeal; that follow-up work sits outside the $99 filing and may carry an additional fee, though having the original preparer already familiar with your case speeds it up.\n\nOur 100% money-back guarantee covers failure-to-submit and, separately, any penalty caused by our own preparation error. No service can guarantee an IRS outcome on a correctly filed return — that discretion sits with the IRS.",
+        body: "DIIRSP (Delinquent International Information Return Submission Procedure) is the IRS-published path for catch-up filings with reasonable cause requests. Most well-documented first-time late filings are accepted with no penalty assessed. There's no formal IRS guarantee, but the acceptance rate for properly-prepared DIIRSP submissions is high.\n\nTwo different scenarios here. If the IRS assesses a penalty because of an error in our preparation — a mistake on our end — we handle the response with the IRS at no charge. If instead the IRS assesses a penalty despite a correctly prepared, complete DIIRSP submission (a discretionary IRS call on your specific facts, not something we got wrong), the accountant who reviewed your package will still help you respond and appeal; that follow-up work sits outside the $199 filing and may carry an additional fee, though having the original preparer already familiar with your case speeds it up.\n\nOur 100% money-back guarantee covers failure-to-submit and, separately, any penalty caused by our own preparation error. No service can guarantee an IRS outcome on a correctly filed return — that discretion sits with the IRS.",
       },
       {
         heading: "Confidentiality and data handling",
@@ -2045,12 +2045,12 @@ export const LANDING_PAGES: LandingPage[] = [
     ],
     faqs: [
       {
-        q: "What exactly do I get for $99?",
+        q: "What exactly do I get for $199?",
         a: "One tax year filed end to end: Form 5472 + pro forma Form 1120 with the Part V supporting statement, review by a qualified tax accountant, a reasonable cause letter if you're filing late, fax delivery to the IRS Ogden PIN Unit, the timestamped transmission receipt as proof of filing, and a reminder before next year's deadline. No add-ons, no separate fax fee.",
       },
       {
         q: "Is there a cheaper or more expensive version of this service?",
-        a: "No. There is one price: $99 for one tax year, plus $79 for each additional past year you're catching up on. Every filing gets the same accountant review, the same IRS fax delivery, and the same timestamped receipt.",
+        a: "No. There is one price: $199 for one tax year, plus $149 for each additional past year you're catching up on. Every filing gets the same accountant review, the same IRS fax delivery, and the same timestamped receipt.",
       },
       {
         q: "How long does the whole thing take?",
@@ -2062,7 +2062,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "I have 5+ missed years — can you handle that?",
-        a: "Yes. The wizard covers up to three years directly; beyond that we coordinate the extra DIIRSP years with you by email. Write to support@form5472prep.com with your entity details and the years involved and we'll scope it before you pay. Pricing follows the same rule: $99 for the first year, +$79 per additional past year.",
+        a: "Yes. The wizard covers up to three years directly; beyond that we coordinate the extra DIIRSP years with you by email. Write to support@form5472prep.com with your entity details and the years involved and we'll scope it before you pay. Pricing follows the same rule: $199 for the first year, +$149 per additional past year.",
       },
       {
         q: "Can my CPA or tax attorney work with your accountant?",

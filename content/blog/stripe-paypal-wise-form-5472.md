@@ -57,7 +57,7 @@ Whether the foreign owner separately owes U.S. income tax or must file Form 1040
 
 ## How can Form5472 Prep help with mixed platform activity?
 
-Form5472 Prep focuses the intake on reportable owner and related-party movements instead of asking you to recreate every customer sale. The flat $99 filing includes Form 5472, pro forma Form 1120, the Part V supporting statement, accountant review, IRS fax delivery, and a timestamped receipt.
+Form5472 Prep focuses the intake on reportable owner and related-party movements instead of asking you to recreate every customer sale. The $199 Standard plan includes Form 5472, pro forma Form 1120, the Part V supporting statement, accountant review, IRS fax delivery, and a timestamped receipt.
 
 [Start your filing](/start) when you have separated owner transfers from ordinary platform activity.
 
@@ -81,6 +81,6 @@ Keep statements as support, but do not attach every platform statement to the re
 
 ## The bottom line
 
-Stripe, PayPal, and Wise are payment rails, not Form 5472 categories. Classify the person on the other side of each transfer, then report movements involving the foreign owner or another related party. [Prepare and fax the complete filing for $99](/start).
+Stripe, PayPal, and Wise are payment rails, not Form 5472 categories. Classify the person on the other side of each transfer, then report movements involving the foreign owner or another related party. [Prepare and fax the complete filing for $199](/start).
 
 *Educational content only; not tax or legal advice.*

@@ -87,15 +87,15 @@ PRICING (USD, flat fee, one-time per filing)
 One flat, all-inclusive price. Fax filing to the IRS Ogden PIN Unit is
 INCLUDED (no separate add-on).
 
-- Complete filing — $99 — Everything included.
+- Complete filing — $199 — Everything included.
     Form 5472 + pro forma 1120 prepared, reviewed by a qualified tax
     accountant, fax filing included, filing confirmation, reasonable-cause
     letter on late / DIIRSP filings, priority email support, and a March
     email reminder for next year's filing.
 
-- Multi-year add-on: +$79 per additional past tax year. Applies to every
-  filing. Example: filing 2 tax years = $99 + $79 = $178. Filing
-  3 tax years = $99 + $158 = $257.
+- Multi-year add-on: +$149 per additional past tax year. Applies to every
+  filing. Example: filing with 2 past years = $199 + $149 = $348. Filing
+  with 3 past years = $199 + $298 = $497.
 
 - Self-fax: no longer offered. Fax is always done by us and is part of the
   flat price. If the customer asks for the IRS fax number directly so

@@ -8,7 +8,7 @@ readingMinutes: 8
 draft: false
 ---
 
-**Filing Form 5472 yourself costs $0 in fees but risks the $25,000 penalty on any error; hiring a preparer or flat-fee service (a flat $99) removes that risk.** DIY makes sense for one clean tax year with simple transactions and time to read the IRS instructions. Pay someone if you have late or multi-year filings, or if you're unsure what counts as a reportable transaction.
+**Filing Form 5472 yourself costs $0 in fees but risks the $25,000 penalty on any error; hiring a preparer or flat-fee service (from $199) removes that risk.** DIY makes sense for one clean tax year with simple transactions and time to read the IRS instructions. Pay someone if you have late or multi-year filings, or if you're unsure what counts as a reportable transaction.
 
 Form 5472 is a two-page information return that reports transactions between your US LLC and you as the foreign owner. It isn't a complex tax calculation — there's no income to compute, no deductions to weigh, no AMT trap. But the penalty for getting it wrong or missing it entirely is $25,000 per form, per year (IRC §6038A(d)). That math changes the DIY vs. preparer question significantly.
 
@@ -101,7 +101,7 @@ Prices across the market vary significantly based on who's doing the work and wh
 | Traditional CPA / accounting firm | $300–$700 per year | Rarely | Sometimes, for extra fee |
 | Online compliance services (doola, entity.inc, etc.) | $225–$400 per year | Varies | Limited |
 | Freelancers (Fiverr, Upwork) | $25–$100 | No | No |
-| Form5472 Prep | $99 per year, all-inclusive | Yes | Yes — full DIIRSP packages available |
+| Form5472 Prep | $199 per year, all-inclusive | Yes | Yes — full DIIRSP packages available |
 | DIY | $0 | No (you pay separately) | Possible |
 
 A few notes on these numbers:
@@ -175,7 +175,7 @@ The IRS doesn't send an acceptance confirmation for Form 5472 the way it does fo
 
 ## The bottom line
 
-If you have one clean year, simple transactions, and the time to do it carefully, DIY is workable. If you have late filings to sort out, aren't sure what counts as a reportable transaction, or simply want the form prepared, faxed, and confirmed without the risk — a specialist service at $99 is a small spend against a $25,000 exposure.
+If you have one clean year, simple transactions, and the time to do it carefully, DIY is workable. If you have late filings to sort out, aren't sure what counts as a reportable transaction, or simply want the form prepared, faxed, and confirmed without the risk — a specialist service at $199 is a small spend against a $25,000 exposure.
 
 For a broader overview of what the form is and who needs to file, see [our Form 5472 guide](/blog/what-is-form-5472). If you have late years to catch up on, the [DIIRSP walkthrough](/blog/form-5472-filed-late-never-filed) explains the procedure.
 

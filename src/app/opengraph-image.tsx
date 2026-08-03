@@ -105,7 +105,7 @@ export default async function OG() {
             display: "flex",
           }}
         >
-          Flat-rate $99 · We fax to the IRS · 100% money-back guarantee
+          Flat-rate plans from $199 · We fax to the IRS · 100% money-back guarantee
         </div>
       </div>
     ),
