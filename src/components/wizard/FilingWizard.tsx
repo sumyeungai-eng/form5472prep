@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -167,6 +167,10 @@ type Filing = {
   // server-rendered record (the page spreads the raw row) and as an ISO string
   // in the JSON that PATCH echoes back.
   dissolvedAt: Date | string | null;
+  // Storage key of the optional state dissolution/cancellation certificate the
+  // customer may upload on a final return. Null until they upload one; nothing
+  // downstream requires it.
+  dissolutionCertKey: string | null;
   reasonableCauseNarrative: string | null;
   faxService: boolean;
   // Service tier ("standard" | "rush" | "premium") chosen at /pricing or
@@ -1072,6 +1076,13 @@ function YearsStep({
   // message matches the 400 the PATCH would return.
   const [dissolvedAt, setDissolvedAt] = useState(toDateInputValue(filing.dissolvedAt));
   const [dissolvedAtError, setDissolvedAtError] = useState<string | null>(null);
+  // Optional supporting document: the state dissolution certificate the date
+  // above is copied off. Uploaded straight to its own endpoint (not through
+  // the wizard's PATCH), so it saves on pick and never blocks Continue.
+  const certInputRef = useRef<HTMLInputElement>(null);
+  const [certKey, setCertKey] = useState<string | null>(filing.dissolutionCertKey);
+  const [certUploading, setCertUploading] = useState(false);
+  const [certError, setCertError] = useState<string | null>(null);
   const maxYear = isFinalReturn ? currentYear : lastCompletedTaxYear;
   const allYears = Array.from({ length: maxYear - 2017 }, (_, i) => 2018 + i);
   const {
@@ -1101,6 +1112,44 @@ function YearsStep({
     }
     // Stale error from the hidden field would otherwise keep showing.
     if (!checked) setDissolvedAtError(null);
+  }
+
+  async function uploadCert(file: File) {
+    setCertUploading(true);
+    setCertError(null);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch(`/api/filings/${filing.id}/dissolution-cert`, {
+        method: "POST",
+        body,
+      });
+      const json = (await res.json().catch(() => ({}))) as { error?: string; key?: string };
+      if (!res.ok) {
+        setCertError(json.error || `Upload failed (${res.status})`);
+        return;
+      }
+      setCertKey(json.key ?? null);
+    } catch {
+      setCertError("Upload failed. Please try again.");
+    } finally {
+      setCertUploading(false);
+    }
+  }
+
+  async function removeCert() {
+    setCertError(null);
+    try {
+      const res = await fetch(`/api/filings/${filing.id}/dissolution-cert`, { method: "DELETE" });
+      const json = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setCertError(json.error || `Could not remove the certificate (${res.status})`);
+        return;
+      }
+      setCertKey(null);
+    } catch {
+      setCertError("Could not remove the certificate. Please try again.");
+    }
   }
 
   // Tier is selected at /pricing (or /start?tier=) and stored on filing.tier.
@@ -1254,6 +1303,49 @@ function YearsStep({
                 certificate — we&apos;ll email you a reminder if you leave your draft unfinished.
               </p>
             )}
+            <div className="mt-3">
+              <Field
+                label="Upload your Certificate of Dissolution (optional)"
+                hint="Optional — lets our accountant double-check the effective date against the certificate."
+                error={certError ?? undefined}
+              >
+                <div>
+                  <input
+                    ref={certInputRef}
+                    type="file"
+                    accept="application/pdf,image/png,image/jpeg"
+                    className="sr-only"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) void uploadCert(file);
+                      e.target.value = ""; // let the same file be re-picked after an error
+                    }}
+                  />
+                  {certKey ? (
+                    <p className="text-sm text-emerald-700">
+                      ✓ Certificate uploaded{" "}
+                      <button
+                        type="button"
+                        onClick={() => void removeCert()}
+                        className="ml-1 text-xs text-slate-500 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </p>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={certUploading}
+                      onClick={() => certInputRef.current?.click()}
+                    >
+                      {certUploading ? "Uploading…" : "Upload certificate (optional)"}
+                    </Button>
+                  )}
+                </div>
+              </Field>
+            </div>
           </div>
         )}
       </div>

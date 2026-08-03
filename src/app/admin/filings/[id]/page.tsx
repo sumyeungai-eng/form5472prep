@@ -29,6 +29,13 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
   const generatedPdfUrl = filing.generatedPdfKey ? await publicUrl(filing.generatedPdfKey) : null;
   const signedPdfUrl = filing.signedPdfKey ? await publicUrl(filing.signedPdfKey) : null;
   const faxedPdfUrl = filing.faxedPdfKey ? await publicUrl(filing.faxedPdfKey) : null;
+  // The IRS fax transmission receipt — the customer's proof of filing under
+  // IRC § 6038A. Written by the Telnyx webhook, with the fax-status-poll cron
+  // as a backstop. Support needs it to answer "did it actually land?" without
+  // asking the customer to forward their own copy.
+  const faxReceiptUrl = filing.faxConfirmationKey
+    ? await publicUrl(filing.faxConfirmationKey)
+    : null;
   // Optional customer-uploaded state dissolution certificate — final returns
   // only, and never required. Used to sanity-check the effective dissolution
   // date against dissolvedAt.
@@ -239,6 +246,18 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
               label={filing.faxedAt ? `Faxed PDF snapshot (sent ${filing.faxedAt.toISOString().slice(0, 16).replace("T", " ")} UTC)` : "Faxed PDF snapshot"}
               url={faxedPdfUrl}
             />
+            {/* Proof of filing. Absent after a fax has gone out is a real
+                signal — it means Telnyx never reported completion — so the
+                empty state says that rather than the generic "Not uploaded". */}
+            <FileRow
+              label="IRS fax transmission receipt (proof of filing)"
+              url={faxReceiptUrl}
+              emptyLabel={
+                filing.faxedAt
+                  ? "No receipt yet — transmission not confirmed"
+                  : "Not faxed yet"
+              }
+            />
           </DetailCard>
         </div>
 
@@ -342,7 +361,18 @@ function CertRow({ url }: { url: string | null }) {
   );
 }
 
-function FileRow({ label, url }: { label: string; url: string | null }) {
+function FileRow({
+  label,
+  url,
+  // Some rows want a more informative empty state than "Not uploaded" — e.g.
+  // a missing fax receipt on an already-faxed filing means the transmission
+  // was never confirmed, which is worth saying out loud.
+  emptyLabel = "Not uploaded",
+}: {
+  label: string;
+  url: string | null;
+  emptyLabel?: string;
+}) {
   return (
     <div className="flex items-center justify-between py-1.5 border-b border-slate-100 last:border-0">
       <span className="text-sm text-slate-700">{label}</span>
@@ -356,7 +386,7 @@ function FileRow({ label, url }: { label: string; url: string | null }) {
           Open <ExternalLink className="h-3 w-3" />
         </a>
       ) : (
-        <span className="text-sm text-slate-400">Not uploaded</span>
+        <span className="text-sm text-slate-400">{emptyLabel}</span>
       )}
     </div>
   );

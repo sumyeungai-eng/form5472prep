@@ -53,13 +53,11 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const filing = await getOwnedFiling(params.id);
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  if (!filing.isFinalReturn) {
-    return NextResponse.json(
-      { error: "Only final returns need a dissolution certificate" },
-      { status: 400 },
-    );
-  }
-
+  // Deliberately NOT gated on filing.isFinalReturn. The upload control appears
+  // as soon as the customer ticks the final-return box, which is before that
+  // flag is persisted by the step's Continue — gating here would reject the
+  // upload exactly when the UI invites it. Ownership is the real guard, and an
+  // uploaded certificate on a filing that never becomes final is inert.
   const form = await req.formData();
   const file = form.get("file");
   if (!(file instanceof Blob))
