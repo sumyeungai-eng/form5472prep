@@ -3,7 +3,7 @@ import { getOwnedFiling, bindFilingToEmail } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
-import { MULTI_YEAR_ADDON_CENTS, MULTI_YEAR_ADDON_LABEL, multiYearAddonCents, tierInfo, isTestTier, resolveTier } from "@/lib/pricing";
+import { MULTI_YEAR_ADDON_CENTS, MULTI_YEAR_ADDON_LABEL, multiYearAddonCents, tierInfo, isTestTier, resolveTier, promoDiscountCents, PROMO_LABEL } from "@/lib/pricing";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { putPdf } from "@/lib/storage";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
@@ -260,7 +260,51 @@ export async function POST(req: Request) {
   // Final total: tier base + multi-year add-on. Kept here as a sanity log so
   // a mismatched Stripe receipt can be cross-checked against expected math.
   const expectedTotalCents = tier.priceCents + multiYearAddonCents(yearCount);
-  console.log("[checkout] expected total cents:", expectedTotalCents, "filing:", filing.id);
+
+  // ─── Launch promotion ───
+  // Decided SERVER-SIDE from the filing's own funnelSource (the landing page
+  // the customer actually arrived through, persisted at draft creation) — never
+  // from anything in this request body. line_items above stay at FULL list
+  // price and the reduction rides as a Stripe coupon, so the customer sees
+  // "$199" and "−$100" on the Checkout page and on their receipt.
+  const discountCents = promoDiscountCents(filing.funnelSource, expectedTotalCents);
+  let discounts: Array<{ coupon: string }> | undefined;
+  if (discountCents > 0) {
+    // Deterministic coupon id — there are only a handful of possible year
+    // counts, so at most a few coupon objects ever exist in the Stripe account
+    // instead of one per checkout.
+    const couponId = `f5472_promo50_${discountCents}`;
+    try {
+      try {
+        await stripe().coupons.retrieve(couponId);
+      } catch {
+        await stripe().coupons.create({
+          id: couponId,
+          amount_off: discountCents,
+          currency: "usd",
+          duration: "once",
+          name: PROMO_LABEL,
+        });
+      }
+    } catch (err) {
+      // NEVER fall through to full price here. The customer was shown the
+      // discounted figure on the landing page and in the wizard; charging them
+      // list price instead is a chargeback and an ad-policy violation. Fail the
+      // request loudly instead.
+      console.error("[checkout] promo coupon setup failed — refusing to charge full price", err);
+      return NextResponse.json(
+        { error: "We couldn't apply your discount. Nothing has been charged — please try again." },
+        { status: 500 },
+      );
+    }
+    discounts = [{ coupon: couponId }];
+  }
+  console.log(
+    "[checkout] list total cents:", expectedTotalCents,
+    "discount:", discountCents,
+    "charged:", expectedTotalCents - discountCents,
+    "filing:", filing.id,
+  );
 
   const session = await stripe().checkout.sessions.create(
     {
@@ -268,13 +312,18 @@ export async function POST(req: Request) {
       payment_method_types: ["card"],
       customer_email: user.email,
       line_items: lineItems,
+      // `discounts` and `allow_promotion_codes` are mutually exclusive in
+      // Stripe — only ever set one of them (we never set the latter).
+      ...(discounts ? { discounts } : {}),
       success_url: `${env.appUrl}/filings/${filing.id}?paid=1`,
       cancel_url: `${env.appUrl}/filings/${filing.id}/edit`,
       metadata: { filingId: filing.id, userId: user.id },
     },
-    // Idempotency key scoped to the filing + its priced inputs — a retried
-    // identical create returns the same session instead of a second one.
-    { idempotencyKey: `checkout_${filing.id}_${tier.priceCents}_${yearCount}` },
+    // Idempotency key scoped to the filing + its priced inputs (discount
+    // included, so a promo and non-promo session for the same filing can never
+    // collide) — a retried identical create returns the same session instead of
+    // a second one.
+    { idempotencyKey: `checkout_${filing.id}_${tier.priceCents}_${yearCount}_${discountCents}` },
   );
 
   await prisma.filing.update({

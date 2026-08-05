@@ -5,8 +5,8 @@ import { ArrowRight, CheckCircle2, Clock, FileText, Send, ShieldCheck } from "lu
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
-import { LANDING_PAGES, getLandingPage, getRelatedSlugs } from "@/lib/landing-pages";
-import { TIERS, TIER_ORDER, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
+import { LANDING_PAGES, getLandingPage, getRelatedSlugs, PROMO_LANDING_SLUG } from "@/lib/landing-pages";
+import { TIERS, TIER_ORDER, MULTI_YEAR_ADDON_CENTS, isPromoSource, promoTotalCents } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import { env } from "@/lib/env";
 
@@ -23,8 +23,17 @@ export const dynamicParams = false;
 //
 // Split logic: alphabetically sort all slugs, then assign odd-indexed to
 // "rail" and even-indexed to "below". With 19 slugs this gives a 10/9 split.
+//
+// Paid-ad pages that always force the "rail" variant are excluded from the
+// sorted list entirely. The split is index-parity over an alphabetical sort,
+// so letting a new slug into the array would silently flip the variant of
+// every page that sorts after it and corrupt the running comparison.
+const AB_EXCLUDED_SLUGS: ReadonlySet<string> = new Set([PROMO_LANDING_SLUG]);
+
 function heroVariantFor(slug: string): "rail" | "below" {
-  const allSlugs = LANDING_PAGES.map((p) => p.slug).sort();
+  const allSlugs = LANDING_PAGES.map((p) => p.slug)
+    .filter((s) => !AB_EXCLUDED_SLUGS.has(s))
+    .sort();
   const idx = allSlugs.indexOf(slug);
   return idx % 2 === 0 ? "below" : "rail";
 }
@@ -74,13 +83,26 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
   // Premium (paid-ad) pages always use the rail variant — same-day promise
   // and direct accountant access deserve the most-prominent CTA layout.
   // Organic SEO pages stay in the A/B split.
-  const variant = page.pricingMode === "premium" ? "rail" : heroVariantFor(page.slug);
+  // The promo page also forces the rail layout (and is excluded from the A/B
+  // parity list above) — a paid-ad page shouldn't be split-tested.
+  const isPromoPage = page.slug === PROMO_LANDING_SLUG;
+  const variant =
+    page.pricingMode === "premium" || isPromoPage ? "rail" : heroVariantFor(page.slug);
   // ?v= drives the layout-variant A/B comparison in Vercel Analytics (Top
-  // Pages report). ?src= is the source landing-page slug — captured on
-  // /start and persisted as Filing.funnelSource for per-page sales attribution.
-  // Premium pages also drive the pricing mode (PREMIUM_SOURCES in pricing.ts
-  // reads funnelSource to route the filing to PREMIUM_TIERS in checkout).
-  const startUrl = `/start?v=${variant}&src=${page.slug}`;
+  // Pages report). ?src= is the source funnel tag — captured on /start and
+  // persisted as Filing.funnelSource for per-page sales attribution. It
+  // defaults to the page's own slug; `startSrc` overrides it where the tag has
+  // to match a PROMO_SOURCES entry in pricing.ts, because /api/checkout reads
+  // funnelSource server-side to decide what the customer is actually charged.
+  //
+  // Every CTA on the page (hero rail, mid-page, and each pricing card) is built
+  // from this one string, so there is exactly one place the tag can be wrong.
+  const startSrc = page.startSrc ?? page.slug;
+  const startUrl = `/start?v=${variant}&src=${startSrc}`;
+  // Promo pages render the list price struck through next to the real
+  // discounted figure. Derived from the same helper checkout uses, so the
+  // advertised price can't drift from the charged one.
+  const promoPricing = isPromoSource(startSrc);
 
   return (
     <>
@@ -218,8 +240,23 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
               Skip the work — file in 15 minutes.
             </h2>
             <p className="mt-3 text-slate-600 max-w-xl mx-auto">
-              We generate every form, you sign one PDF, we fax it to the IRS Ogden PIN Unit.
-              Starting at {formatPrice(TIERS.standard.priceCents)}. IRS fax delivery included on every plan.
+              {promoPricing ? (
+                <>
+                  We generate every form, you sign one PDF, we fax it to the IRS Ogden PIN Unit.{" "}
+                  <span className="line-through text-slate-400">
+                    {formatPrice(TIERS.standard.priceCents)}
+                  </span>{" "}
+                  <span className="font-semibold text-ink">
+                    {formatPrice(promoTotalCents(startSrc, TIERS.standard.priceCents))}
+                  </span>{" "}
+                  — 50% off. IRS fax delivery included on every plan.
+                </>
+              ) : (
+                <>
+                  We generate every form, you sign one PDF, we fax it to the IRS Ogden PIN Unit.
+                  Starting at {formatPrice(TIERS.standard.priceCents)}. IRS fax delivery included on every plan.
+                </>
+              )}
             </p>
             <ul className="mt-6 inline-block text-left space-y-2 text-sm">
               {[
@@ -252,7 +289,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
         {/* Pricing — appears on every landing page so visitors see the
             package options before deciding. The price shown here is exactly
             what they'll be charged at Stripe checkout. */}
-        <PricingSection startUrl={startUrl} pricingMode={page.pricingMode} />
+        <PricingSection startUrl={startUrl} pricingMode={page.pricingMode} promo={promoPricing} />
 
         {/* FAQs */}
         {page.faqs.length > 0 && (
@@ -422,10 +459,20 @@ function HeroRailCta({ startUrl }: { startUrl: string }) {
 // see the same flat price regardless of which guide they landed on.
 function PricingSection({
   startUrl,
+  promo = false,
 }: {
   startUrl: string;
   pricingMode?: "premium";
+  // Promo pages show the list price struck through beside the discounted
+  // figure. The discounted figure comes from promoTotalCents() — the same
+  // helper /api/checkout uses — so what's advertised here is what's charged.
+  promo?: boolean;
 }) {
+  // Only ever a real PROMO_SOURCES tag; promo={false} pages never call these.
+  const PROMO_SRC = "promo50";
+  const fullOneYear = TIERS.standard.priceCents;
+  const fullTwoYear = fullOneYear + MULTI_YEAR_ADDON_CENTS;
+  const fullThreeYear = fullOneYear + MULTI_YEAR_ADDON_CENTS * 2;
   // Always use the canonical single tier on every landing page. The
   // /pro-form-5472 page used to override with a premium tier — that funnel
   // has been retired in favour of one shared flat price across organic + paid.
@@ -480,7 +527,16 @@ function PricingSection({
                   <p className="text-xs text-slate-500 mt-0.5">{t.subtitle}</p>
                 </div>
                 <p className="mt-3 font-serif text-4xl font-semibold text-ink">
-                  {formatPrice(t.priceCents)}
+                  {promo ? (
+                    <>
+                      <span className="mr-2 text-2xl font-normal text-slate-400 line-through">
+                        {formatPrice(t.priceCents)}
+                      </span>
+                      {formatPrice(promoTotalCents(PROMO_SRC, t.priceCents))}
+                    </>
+                  ) : (
+                    formatPrice(t.priceCents)
+                  )}
                   <span className="ml-1.5 font-mono text-xs font-normal text-slate-500">/ filing</span>
                 </p>
                 <ul className="mt-4 space-y-1.5 text-sm text-slate-700 flex-1">
@@ -503,13 +559,37 @@ function PricingSection({
             );
           })}
         </div>
-        <p className="mt-6 text-center text-sm text-slate-600">
-          <span className="font-semibold text-slate-900">
-            + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year
-          </span>
-          <span className="mx-2 text-slate-400">·</span>
-          Saves you from the $25,000-per-form IRS penalty
-        </p>
+        {promo ? (
+          // The 50% comes off the WHOLE order and rounds down to whole dollars,
+          // so the marginal cost of an extra year isn't a flat number. State
+          // the exact order totals instead — these are the figures Stripe
+          // charges, computed by the same helper checkout uses.
+          <p className="mt-6 text-center text-sm text-slate-600">
+            <span className="font-semibold text-slate-900">
+              Additional past tax years are 50% off too
+            </span>
+            <span className="mx-2 text-slate-400">·</span>
+            2 years{" "}
+            <span className="line-through text-slate-400">{formatPrice(fullTwoYear)}</span>{" "}
+            <span className="font-semibold text-slate-900">
+              {formatPrice(promoTotalCents(PROMO_SRC, fullTwoYear))}
+            </span>
+            <span className="mx-2 text-slate-400">·</span>
+            3 years{" "}
+            <span className="line-through text-slate-400">{formatPrice(fullThreeYear)}</span>{" "}
+            <span className="font-semibold text-slate-900">
+              {formatPrice(promoTotalCents(PROMO_SRC, fullThreeYear))}
+            </span>
+          </p>
+        ) : (
+          <p className="mt-6 text-center text-sm text-slate-600">
+            <span className="font-semibold text-slate-900">
+              + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year
+            </span>
+            <span className="mx-2 text-slate-400">·</span>
+            Saves you from the $25,000-per-form IRS penalty
+          </p>
+        )}
       </div>
     </section>
   );
@@ -589,7 +669,11 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
         estimatedCost: {
           "@type": "MonetaryAmount",
           currency: "USD",
-          value: "199",
+          // Promo pages must not advertise the list price in structured data
+          // while the visible page (and the actual charge) says otherwise.
+          value: String(
+            promoTotalCents(page.startSrc ?? page.slug, TIERS.standard.priceCents) / 100,
+          ),
         },
         supply: [
           { "@type": "HowToSupply", name: "LLC formation documents (EIN, state of formation, date of incorporation)" },

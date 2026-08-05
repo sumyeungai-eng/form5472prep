@@ -78,6 +78,65 @@ export function isTestTier(value: string | null | undefined): boolean {
 export const FAX_FEE_CENTS = 0;
 export const FAX_FEE_LABEL = "IRS fax delivery (included)";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// LAUNCH PROMOTION (Google Ads channel only)
+//
+// 50% off the WHOLE order, rounded DOWN to whole dollars in the customer's
+// favour. List price in TIERS stays $199 — this is a discount off list, not a
+// second price list, so /pricing, the homepage and the blog are untouched.
+//
+//   1 year  $199        → $99
+//   2 years $199+$149   → $174
+//   3 years $199+$298   → $248
+//
+// THE INVARIANT: promoTotalCents() is the single source of truth for the
+// discounted figure. The wizard renders it, /api/checkout derives the Stripe
+// coupon from it, and the webhook writes Stripe's real amount_total back onto
+// the Filing — so shown == charged == stored.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Funnel sources that receive the launch promotion. Keyed off funnelSource so
+// the discount is decided server-side from the landing page the customer
+// actually arrived through — never from anything the client can set.
+//
+// "promo50" is the canonical tag every CTA on /form-5472-50-off emits (via
+// `startSrc` in src/lib/landing-pages.ts). That page's own slug is registered
+// too as a fail-safe: [seoSlug]/page.tsx derives ?src= from the slug by
+// default, so if the startSrc override is ever dropped the visitor still gets
+// the price the page advertised instead of being silently billed full list.
+export const PROMO_SOURCES: ReadonlySet<string> = new Set([
+  "promo50",
+  "form-5472-50-off",
+]);
+
+export const PROMO_LABEL = "50% launch promotion";
+
+export function isPromoSource(funnelSource: string | null | undefined): boolean {
+  return !!funnelSource && PROMO_SOURCES.has(funnelSource);
+}
+
+// Returns the discounted total, rounded down to whole dollars. Non-promo
+// sources return fullTotal unchanged.
+//
+// The admin $0 test tier (isTestTier) can never be discounted — its total is
+// already 0, and the <= 0 guard below keeps the arithmetic a no-op regardless.
+export function promoTotalCents(
+  funnelSource: string | null | undefined,
+  fullTotalCents: number,
+): number {
+  if (!isPromoSource(funnelSource)) return fullTotalCents;
+  if (fullTotalCents <= 0) return fullTotalCents;
+  return Math.floor(fullTotalCents / 2 / 100) * 100;
+}
+
+// Convenience: the amount taken off (fullTotal - promoTotal), 0 when no promo.
+export function promoDiscountCents(
+  funnelSource: string | null | undefined,
+  fullTotalCents: number,
+): number {
+  return fullTotalCents - promoTotalCents(funnelSource, fullTotalCents);
+}
+
 const NEW_TIER_SET = new Set<string>(TIER_ORDER);
 
 export function isTier(value: string | null | undefined): value is Tier {

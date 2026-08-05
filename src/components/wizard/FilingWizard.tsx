@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Field, Input, Select } from "@/components/ui/input";
 import { COUNTRIES } from "@/lib/countries";
-import { MULTI_YEAR_ADDON_CENTS, multiYearAddonCents, tierInfo, totalPriceCents } from "@/lib/pricing";
+import { MULTI_YEAR_ADDON_CENTS, multiYearAddonCents, tierInfo, totalPriceCents, promoDiscountCents, promoTotalCents, PROMO_LABEL } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
 import { fireMetaInitiateCheckout } from "@/lib/analytics/meta";
 
@@ -441,7 +441,13 @@ export function FilingWizard({
               const { url } = await res.json();
               fireMetaInitiateCheckout({
                 filingId: filing.id,
-                amountCents: totalPriceCents(filing.tier, filing.taxYears.length || 1),
+                // Report the amount actually about to be charged (promo
+                // applied) so ad-platform value optimisation isn't trained on
+                // a price the customer never paid.
+                amountCents: promoTotalCents(
+                  filing.funnelSource,
+                  totalPriceCents(filing.tier, filing.taxYears.length || 1),
+                ),
               });
               router.push(url);
             }}
@@ -1393,6 +1399,12 @@ function ReviewStep({
   const extraYears = Math.max(0, yearCount - 1);
   const addOnCents = multiYearAddonCents(yearCount);
   const total = totalPriceCents(filing.tier, yearCount);
+  // Launch promotion — driven by the filing's funnelSource using the exact
+  // same helpers /api/checkout runs server-side, so the figure on this button
+  // is the figure Stripe charges. 0 for every non-promo filing, which makes
+  // dueNow === total and leaves this step rendering exactly as it always has.
+  const promoDiscount = promoDiscountCents(filing.funnelSource, total);
+  const dueNow = total - promoDiscount;
   const [email, setEmail] = useState(filing.email ?? "");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
@@ -1454,7 +1466,29 @@ function ReviewStep({
             value={`${formatUsd(addOnCents)} (${extraYears} × ${formatUsd(MULTI_YEAR_ADDON_CENTS)})`}
           />
         )}
-        <Row label="Total" value={formatUsd(total)} />
+        {promoDiscount > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-0.5 sm:gap-4 px-4 py-3">
+              <dt className="text-slate-500 text-xs uppercase tracking-wider sm:text-base sm:normal-case sm:tracking-normal">
+                {PROMO_LABEL}
+              </dt>
+              <dd className="sm:col-span-2 font-medium text-emerald-700 break-words">
+                −{formatUsd(promoDiscount)}
+              </dd>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-0.5 sm:gap-4 px-4 py-3">
+              <dt className="text-slate-500 text-xs uppercase tracking-wider sm:text-base sm:normal-case sm:tracking-normal">
+                Total
+              </dt>
+              <dd className="sm:col-span-2 text-slate-900 break-words">
+                <span className="line-through text-slate-400">{formatUsd(total)}</span>{" "}
+                <span className="font-semibold">{formatUsd(dueNow)}</span>
+              </dd>
+            </div>
+          </>
+        ) : (
+          <Row label="Total" value={formatUsd(total)} />
+        )}
       </dl>
 
       <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
@@ -1488,7 +1522,7 @@ function ReviewStep({
           Back
         </Button>
         <Button onClick={handlePay} disabled={paying}>
-          {paying ? "Redirecting…" : `Pay ${formatUsd(total)} →`}
+          {paying ? "Redirecting…" : `Pay ${formatUsd(dueNow)} →`}
         </Button>
       </div>
     </div>
