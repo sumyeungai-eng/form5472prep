@@ -10,6 +10,7 @@ import { MessagesPanel } from "@/components/MessagesPanel";
 import { PurchaseConversionPing } from "./PurchaseConversionPing";
 import { getTiersForSource } from "@/lib/pricing";
 import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { TrustpilotWidget, TRUSTPILOT_TEMPLATES, REVIEW_COLLECTOR_TOKEN } from "@/components/TrustpilotWidget";
 
 // Statuses where the filing is paid but not yet acknowledged as complete —
 // the window in which the customer still cares "will this land before my
@@ -145,6 +146,26 @@ export default async function FilingDetailPage({
           faxConfirmationKey: filing.faxConfirmationKey,
         }}
       />
+
+      {/* Ask for a Trustpilot review at the happiest moment — once the filing
+          has actually been delivered to the IRS. Review Collector is the one
+          TrustBox that's free on every plan. */}
+      {filing.status === "CONFIRMED" && (
+        <div className="rounded-xl border border-slate-200 bg-white p-5 text-center">
+          <p className="text-sm font-semibold text-slate-900">Filed with the IRS — nicely done.</p>
+          <p className="mx-auto mt-1 max-w-sm text-sm text-slate-600">
+            If we made Form 5472 painless, a quick review helps other foreign founders find us.
+          </p>
+          <div className="mt-3 flex justify-center">
+            <TrustpilotWidget
+              templateId={TRUSTPILOT_TEMPLATES.reviewCollector}
+              token={REVIEW_COLLECTOR_TOKEN}
+              height="52px"
+              width="260px"
+            />
+          </div>
+        </div>
+      )}
 
       {/* In-portal messaging. Visible to any owner of the filing — signed-in
           user OR anonymous session-cookie match. Anonymous owners can still

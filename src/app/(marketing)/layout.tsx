@@ -66,6 +66,16 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                   support@form5472prep.com
                 </a>
               </p>
+              <p>
+                <a
+                  href="https://www.trustpilot.com/review/form5472prep.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 hover:text-ink"
+                >
+                  <span aria-hidden className="text-[#00b67a]">★</span> See our reviews on Trustpilot
+                </a>
+              </p>
             </div>
             <nav className="space-y-2.5">
               <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-ink">Services</p>
