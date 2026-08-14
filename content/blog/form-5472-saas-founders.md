@@ -55,7 +55,7 @@ The IRS requires records sufficient to support the accuracy of related-party rep
 
 ## How does Form5472 Prep fit a SaaS founder’s workflow?
 
-The guided intake focuses on the small set of facts that drives the filing: LLC identity, foreign owner identity, reportable transaction totals, and filing status. The Standard plan is $199 and includes accountant review, pro forma Form 1120, Form 5472, Part V statement, IRS fax delivery, and proof of delivery.
+The guided intake focuses on the small set of facts that drives the filing: LLC identity, foreign owner identity, reportable transaction totals, and filing status. The Standard plan is $149, ready in 5-7 business days, and includes accountant review, pro forma Form 1120, Form 5472, Part V statement, IRS fax delivery, and proof of delivery. Express is the identical package within 3 business days for $199.
 
 [Start your Form 5472 filing](/start) once the SaaS year-end packet is ready.
 
@@ -79,6 +79,6 @@ A commonly controlled foreign company may be a related party. The U.S. LLC may n
 
 ## The bottom line
 
-SaaS does not change the Form 5472 rule. Separate ordinary customer activity from founder and intercompany transfers, document the latter carefully, and file the information return on time. [Get the complete package prepared and faxed for $199](/start).
+SaaS does not change the Form 5472 rule. Separate ordinary customer activity from founder and intercompany transfers, document the latter carefully, and file the information return on time. [Get the complete package prepared and faxed for $149](/start).
 
 *Educational content only; not tax or legal advice.*

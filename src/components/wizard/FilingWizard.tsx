@@ -7,7 +7,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Field, Input, Select } from "@/components/ui/input";
 import { COUNTRIES } from "@/lib/countries";
-import { MULTI_YEAR_ADDON_CENTS, multiYearAddonCents, tierInfo, totalPriceCents, promoDiscountCents, promoTotalCents, PROMO_LABEL } from "@/lib/pricing";
+import {
+  MULTI_YEAR_ADDON_CENTS,
+  multiYearAddonCents,
+  tierInfo,
+  totalPriceCents,
+  promoDiscountCents,
+  promoTotalCents,
+  PROMO_LABEL,
+  TIERS,
+  TIER_ORDER,
+  resolveTier,
+  isTestTier,
+  type Tier,
+} from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
 import { fireMetaInitiateCheckout } from "@/lib/analytics/meta";
 
@@ -173,10 +186,12 @@ type Filing = {
   dissolutionCertKey: string | null;
   reasonableCauseNarrative: string | null;
   faxService: boolean;
-  // Service tier ("standard" | "rush" | "premium") chosen at /pricing or
-  // /start?tier=. Drives base price; year count drives the per-extra-year
-  // add-on. Legacy values like "single_year" still appear on old filings
-  // and resolve to Standard via resolveTier() in pricing.ts.
+  // Service tier ("standard" | "express") pre-selected at /pricing or
+  // /start?tier=, and changeable by the customer on the Review step right
+  // up until they pay. Drives base price; year count drives the
+  // per-extra-year add-on. Legacy values ("rush", "premium",
+  // "single_year", …) still appear on old filings and resolve to Standard
+  // via resolveTier() in pricing.ts.
   tier: string | null;
   // Source attribution slug captured from ?src= on the landing page that
   // sent the visitor to /start. Used for sales-attribution reporting.
@@ -427,6 +442,15 @@ export function FilingWizard({
           <ReviewStep
             filing={filing}
             onBack={goBack}
+            saving={saving}
+            // Persists the customer's tier switch through the same PATCH +
+            // setFiling path every other step uses, so `filing.tier` — the
+            // value /api/checkout prices off — is what the summary shows.
+            // Rejects on failure (save() re-throws) so ReviewStep can roll
+            // its optimistic selection back to the server's truth.
+            onSelectTier={async (tier) => {
+              await save({ tier });
+            }}
             onPay={async (email, faxService) => {
               const res = await fetch("/api/checkout", {
                 method: "POST",
@@ -1158,9 +1182,10 @@ function YearsStep({
     }
   }
 
-  // Tier is selected at /pricing (or /start?tier=) and stored on filing.tier.
-  // Wizard just lets the customer pick year count; each additional past year
-  // adds a flat $149 on top of the tier base.
+  // Tier is pre-selected at /pricing (or /start?tier=) and stored on
+  // filing.tier; this step only picks the year count. Each additional past
+  // year adds a flat MULTI_YEAR_ADDON_CENTS on top of the tier base, on
+  // either tier. The tier itself can be changed later on the Review step.
   const activeTier = tierInfo(filing.tier);
   const extraYears = Math.max(0, selected.length - 1);
   const addOnTotalCents = multiYearAddonCents(selected.length);
@@ -1387,18 +1412,65 @@ function ReviewStep({
   filing,
   onBack,
   onPay,
+  onSelectTier,
+  saving,
 }: {
   filing: Filing;
   onBack: () => void;
   onPay: (email: string, faxService: boolean) => Promise<void>;
+  onSelectTier: (tier: Tier) => Promise<void>;
+  saving: boolean;
 }) {
-  // Tier chosen upstream at /pricing or /start?tier=. Fax delivery is
-  // included on every tier — no add-on toggle anymore.
-  const activeTier = tierInfo(filing.tier);
+  // Tier is pre-selected upstream (/pricing, /start?tier=) but the customer
+  // can still switch it here. This is the last screen before payment and the
+  // only place the two turnarounds sit side by side, so it's where the
+  // upgrade decision actually gets made — the tiers differ ONLY by speed.
+  //
+  // Admin $0 test filings are the exception: their tier isn't a product, so
+  // they keep it and never see the chooser (offering it would let a test
+  // order re-tier itself into a real, chargeable one).
+  const isTestFiling = isTestTier(filing.tier);
+  const savedTier = resolveTier(filing.tier).tier;
+  // Optimistic selection so the cards and the total move the instant a card is
+  // clicked instead of after the PATCH round-trip. Reset (below) as soon as
+  // the server echoes the new tier back onto `filing`, and rolled back to
+  // `savedTier` if the save fails — the price shown must never outrun the
+  // price /api/checkout will actually charge.
+  const [pendingTier, setPendingTier] = useState<Tier | null>(null);
+  const [tierSaving, setTierSaving] = useState(false);
+  const selectedTier: Tier = pendingTier ?? savedTier;
+  // What the price math runs on: the live selection normally, the raw stored
+  // value for a test filing (so tierInfo/totalPriceCents keep returning $0).
+  const pricedTierValue: string | null = isTestFiling ? filing.tier : selectedTier;
+
+  // Clear the optimistic override once the PATCH has landed. Comparing against
+  // filing.tier (not a success flag) means a save that succeeded server-side
+  // but whose response we mishandled still converges on the stored truth.
+  useEffect(() => {
+    setPendingTier(null);
+  }, [filing.tier]);
+
+  async function handleSelectTier(next: Tier) {
+    if (next === selectedTier || tierSaving) return;
+    setPendingTier(next);
+    setTierSaving(true);
+    try {
+      await onSelectTier(next);
+    } catch {
+      // The wizard's own error banner already names the failure; just fall
+      // back to the tier the server still holds so the Pay button can't quote
+      // a plan the customer isn't about to be charged for.
+      setPendingTier(null);
+    } finally {
+      setTierSaving(false);
+    }
+  }
+
+  const activeTier = tierInfo(pricedTierValue);
   const yearCount = filing.taxYears.length || 1;
   const extraYears = Math.max(0, yearCount - 1);
   const addOnCents = multiYearAddonCents(yearCount);
-  const total = totalPriceCents(filing.tier, yearCount);
+  const total = totalPriceCents(pricedTierValue, yearCount);
   // Launch promotion — driven by the filing's funnelSource using the exact
   // same helpers /api/checkout runs server-side, so the figure on this button
   // is the figure Stripe charges. 0 for every non-promo filing, which makes
@@ -1458,6 +1530,81 @@ function ReviewStep({
             }
           />
         )}
+      </dl>
+
+      {!isTestFiling && (
+        <div>
+          <h3 className="text-sm font-medium text-slate-900">Choose your turnaround</h3>
+          <p className="text-xs text-slate-500 mt-1">
+            Both plans include the same package and the same accountant review — the only
+            difference is how fast it goes out. You can switch until you pay.
+          </p>
+          <div
+            role="radiogroup"
+            aria-label="Choose your turnaround"
+            className="mt-3 grid gap-3 sm:grid-cols-2"
+          >
+            {TIER_ORDER.map((key) => {
+              const info = TIERS[key];
+              const isSelected = key === selectedTier;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  role="radio"
+                  aria-checked={isSelected}
+                  disabled={tierSaving}
+                  onClick={() => void handleSelectTier(key)}
+                  className={`relative text-left rounded-lg border p-4 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-60 ${
+                    isSelected
+                      ? "border-accent ring-1 ring-accent bg-accent/5"
+                      : "border-slate-300 bg-white hover:bg-slate-50"
+                  }`}
+                >
+                  {info.highlight && (
+                    <span className="absolute top-3 right-3 rounded-full bg-accent px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-white">
+                      Most popular
+                    </span>
+                  )}
+                  <span className="flex items-center gap-2">
+                    <span
+                      aria-hidden
+                      className={`h-4 w-4 flex-none rounded-full border flex items-center justify-center ${
+                        isSelected ? "border-accent" : "border-slate-300"
+                      }`}
+                    >
+                      {isSelected && <span className="h-2 w-2 rounded-full bg-accent" />}
+                    </span>
+                    <span className="font-medium text-slate-900">{info.label}</span>
+                  </span>
+                  <span className="block text-xs text-slate-500 mt-1 ml-6">{info.subtitle}</span>
+                  <span className="block text-lg font-semibold text-slate-900 mt-2 ml-6">
+                    {formatUsd(info.priceCents)}
+                  </span>
+                  <ul className="mt-3 ml-6 space-y-1 text-xs text-slate-600">
+                    {info.features.map((f) => (
+                      <li key={f} className="flex gap-1.5">
+                        <span aria-hidden className="flex-none text-accent">
+                          ✓
+                        </span>
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </button>
+              );
+            })}
+          </div>
+          {extraYears > 0 && (
+            <p className="text-xs text-slate-500 mt-2">
+              Prices shown are for the first tax year. Each additional past year adds{" "}
+              {formatUsd(MULTI_YEAR_ADDON_CENTS)} on either plan.
+            </p>
+          )}
+        </div>
+      )}
+
+      <dl className="text-sm divide-y divide-slate-200 border border-slate-200 rounded-md">
         <Row label="Plan" value={`${activeTier.label} — ${activeTier.subtitle}`} />
         <Row label={`${activeTier.label} (fax delivery included)`} value={formatUsd(activeTier.priceCents)} />
         {extraYears > 0 && (
@@ -1521,7 +1668,10 @@ function ReviewStep({
         <Button type="button" variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button onClick={handlePay} disabled={paying}>
+        {/* Blocked while a tier switch is in flight: checkout prices off the
+            stored filing.tier, so paying mid-PATCH could charge the plan the
+            customer just switched away from. */}
+        <Button onClick={handlePay} disabled={paying || saving || tierSaving}>
           {paying ? "Redirecting…" : `Pay ${formatUsd(dueNow)} →`}
         </Button>
       </div>

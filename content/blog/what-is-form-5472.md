@@ -110,7 +110,7 @@ Form 5472 is filed by a **US entity** (your US LLC) that has a foreign owner. Fo
 
 ### How much does it cost to file Form 5472?
 
-Doing it yourself costs $0 in fees but takes several hours and risks the $25,000 penalty on any error. A US CPA typically charges $400–$800. Form5472 Prep prepares and faxes the complete package for a flat **$199**, all inclusive, with IRS fax delivery included and +$149 per additional past year for late filings.
+Doing it yourself costs $0 in fees but takes several hours and risks the $25,000 penalty on any error. A US CPA typically charges $400–$800. Form5472 Prep prepares and faxes the complete package for **$149** (Standard, ready in 5-7 business days) or **$199** (Express, ready within 3 business days) — the same filing either way, only the speed differs — with IRS fax delivery included and +$99 per additional past year for late filings.
 
 ## What's next
 

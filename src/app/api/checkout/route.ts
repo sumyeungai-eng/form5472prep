@@ -77,26 +77,57 @@ export async function POST(req: Request) {
     );
   }
 
+  // Tier is pre-selected at /pricing (or /start?tier=), changeable by the
+  // customer on the wizard's Review step, and stored on Filing.tier. Standard
+  // and Express are identical packages at different turnarounds, so the tier
+  // only moves the base price. Fax delivery is bundled into every tier —
+  // there's no separate add-on line item anymore. Multi-year filings add a
+  // flat per-extra-year charge on either tier.
+  const tier = tierInfo(filing.tier);
+  const yearCount = filing.taxYears.length || 1;
+  const extraYears = Math.max(0, yearCount - 1);
+
+  // Final list total: tier base + multi-year add-on...
+  const expectedTotalCents = tier.priceCents + multiYearAddonCents(yearCount);
+  // ...and the promotion taken off it. Decided SERVER-SIDE from the filing's
+  // own funnelSource (the landing page the customer actually arrived through,
+  // persisted at draft creation) — never from anything in this request body.
+  // Computed here, ahead of the session-reuse check below, because the amount
+  // is what decides whether an existing session is still the right one.
+  const discountCents = promoDiscountCents(filing.funnelSource, expectedTotalCents);
+  const expectedChargeCents = expectedTotalCents - discountCents;
+
   // Idempotency — if a still-open Stripe session already exists for this filing
   // (double-click / retried request), reuse it instead of minting a second
   // payable session that could double-charge the customer.
+  //
+  // ONLY when its amount still matches what this request would charge. The
+  // customer can abandon Checkout (cancel_url drops them back in the wizard),
+  // switch Standard ⇄ Express or add a tax year, and come back — reusing the
+  // stale session would then bill them the OLD plan's price while the wizard
+  // and the confirmation email say otherwise. A price mismatch falls through
+  // to create a fresh session; the create below is itself idempotent on
+  // (filing, tier price, year count, discount), so that can't double-charge.
   if (!isTestTier(filing.tier) && filing.stripeSessionId) {
     try {
       const existingSession = await stripe().checkout.sessions.retrieve(filing.stripeSessionId);
-      if (existingSession.status === "open" && existingSession.url) {
+      if (
+        existingSession.status === "open" &&
+        existingSession.url &&
+        existingSession.amount_total === expectedChargeCents
+      ) {
         return NextResponse.json({ url: existingSession.url });
+      }
+      if (existingSession.status === "open" && existingSession.amount_total !== expectedChargeCents) {
+        console.log(
+          "[checkout] existing session priced at", existingSession.amount_total,
+          "but this order is", expectedChargeCents, "— creating a new session. filing:", filing.id,
+        );
       }
     } catch (err) {
       console.warn("[checkout] existing Stripe session could not be reused", err);
     }
   }
-
-  // Tier is selected at /pricing (or /start?tier=) and stored on Filing.tier.
-  // Fax delivery is bundled into every tier — there's no separate add-on
-  // line item anymore. Multi-year filings add a flat per-extra-year charge.
-  const tier = tierInfo(filing.tier);
-  const yearCount = filing.taxYears.length || 1;
-  const extraYears = Math.max(0, yearCount - 1);
 
   // Bind the filing to the email before payment so the Stripe webhook can
   // look up the user and email the magic link even if the cookie is lost.
@@ -238,7 +269,10 @@ export async function POST(req: Request) {
         unit_amount: tier.priceCents,
         product_data: {
           name: `Form5472 Prep — ${tier.label}`,
-          description: `Filing for ${filing.llcName ?? "your LLC"} — ${filing.taxYears.join(", ") || "tax year"} (IRS fax delivery included)`,
+          // The turnaround is the ONLY thing the tier buys, so it has to be on
+          // the Checkout page and the receipt — otherwise an Express customer
+          // has nothing on paper saying what the extra $50 was for.
+          description: `Filing for ${filing.llcName ?? "your LLC"} — ${filing.taxYears.join(", ") || "tax year"} · ${tier.subtitle} (IRS fax delivery included)`,
         },
       },
       quantity: 1,
@@ -257,22 +291,19 @@ export async function POST(req: Request) {
       quantity: extraYears,
     });
   }
-  // Final total: tier base + multi-year add-on. Kept here as a sanity log so
-  // a mismatched Stripe receipt can be cross-checked against expected math.
-  const expectedTotalCents = tier.priceCents + multiYearAddonCents(yearCount);
-
   // ─── Launch promotion ───
-  // Decided SERVER-SIDE from the filing's own funnelSource (the landing page
-  // the customer actually arrived through, persisted at draft creation) — never
-  // from anything in this request body. line_items above stay at FULL list
-  // price and the reduction rides as a Stripe coupon, so the customer sees
-  // "$199" and "−$100" on the Checkout page and on their receipt.
-  const discountCents = promoDiscountCents(filing.funnelSource, expectedTotalCents);
+  // expectedTotalCents / discountCents were computed above (the session-reuse
+  // check needs them). line_items above stay at FULL list price and the
+  // reduction rides as a Stripe coupon, so the customer sees the list price
+  // and a separate "−$50" on the Checkout page and on their receipt.
   let discounts: Array<{ coupon: string }> | undefined;
   if (discountCents > 0) {
-    // Deterministic coupon id — there are only a handful of possible year
-    // counts, so at most a few coupon objects ever exist in the Stripe account
-    // instead of one per checkout.
+    // Deterministic coupon id, keyed on the amount off. The promotion is a
+    // FLAT $50 off the base fee (PROMO_DISCOUNT_CENTS) on either tier — not a
+    // percentage of the order — so in practice exactly one coupon object
+    // (f5472_promo50_5000) ever exists in the Stripe account. Keying on the
+    // amount rather than hardcoding the id keeps that true if the figure is
+    // ever retuned, without stamping a new amount onto the old coupon.
     const couponId = `f5472_promo50_${discountCents}`;
     try {
       try {

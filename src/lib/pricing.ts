@@ -2,21 +2,25 @@
 // PRICING — source of truth for every customer-facing price on the site.
 //
 // Model (2026):
-//   ONE flat, all-inclusive service tier ($199) charged as a flat fee.
-//   Fax delivery is INCLUDED (no separate add-on).
+//   TWO tiers that differ ONLY by turnaround — the filing itself, the
+//   accountant review and everything in the package are identical:
+//     standard $149 — ready in 5-7 business days
+//     express  $199 — ready within 3 business days
+//   The ranges deliberately don't overlap, so the upgrade buys a real,
+//   stateable difference rather than a vague "faster".
+//   Fax delivery is INCLUDED on both (no separate add-on).
 //   Customers can file multiple past tax years — each additional year past
-//   the first adds a flat $149.
+//   the first adds a flat $99, on either tier.
 //
 // Legacy data: Filing.tier rows created before this held "rush" / "premium"
 //   or the older "single_year" / "two_year_diirsp" / "multi_year_diirsp"
 //   slugs. We keep these in the DB and map them on display via resolveTier()
 //   — old filings show their original plan label tagged "(legacy plan)" and
 //   their real charged amount (Filing.amountPaid), while any new price math
-//   falls back to the single live tier so nothing crashes. Only the single
-//   all-inclusive tier is offered/selectable now.
+//   falls back to a live tier so nothing crashes.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type Tier = "standard";
+export type Tier = "standard" | "express";
 export type LegacyTier = "rush" | "premium" | "single_year" | "two_year_diirsp" | "multi_year_diirsp";
 export type AnyTierValue = Tier | LegacyTier | string;
 
@@ -29,28 +33,51 @@ export type TierInfo = {
   ctaLabel: string;
 };
 
+// The one thing that differs between tiers. Kept as constants so the wizard,
+// the pricing page, the landing pages and the confirmation email all quote an
+// identical promise — a turnaround stated three different ways is how a
+// service-level complaint starts.
+export const STANDARD_TURNAROUND = "5-7 business days";
+export const EXPRESS_TURNAROUND = "3 business days";
+
+const SHARED_FEATURES = [
+  "Reviewed by a qualified tax accountant before submission",
+  "Form 5472 + pro forma 1120 prepared",
+  "IRS Ogden fax delivery + timestamped receipt",
+  "Filing confirmation",
+  "Reasonable-cause letter for late / DIIRSP filings",
+  "Next-year filing reminder (March email)",
+];
+
 export const TIERS: Record<Tier, TierInfo> = {
   standard: {
-    label: "Complete filing",
-    subtitle: "One flat fee — everything included",
-    priceCents: 19900,
+    label: "Standard filing",
+    subtitle: `Ready in ${STANDARD_TURNAROUND}`,
+    priceCents: 14900,
     ctaLabel: "Start your filing",
+    features: [`Prepared and filed in ${STANDARD_TURNAROUND}`, ...SHARED_FEATURES, "Email support"],
+  },
+  express: {
+    label: "Express filing",
+    subtitle: `Ready within ${EXPRESS_TURNAROUND}`,
+    priceCents: 19900,
+    highlight: true,
+    ctaLabel: "Start express filing",
     features: [
-      "Reviewed by a qualified tax accountant before submission",
-      "Form 5472 + pro forma 1120 prepared",
-      "IRS Ogden fax delivery + timestamped receipt",
-      "Filing confirmation",
-      "Reasonable-cause letter for late / DIIRSP filings",
+      `Prepared and filed within ${EXPRESS_TURNAROUND}`,
+      ...SHARED_FEATURES,
       "Priority email support",
-      "Next-year filing reminder (March email)",
     ],
   },
 };
 
-export const TIER_ORDER: Tier[] = ["standard"];
+export const TIER_ORDER: Tier[] = ["standard", "express"];
 
-// Flat add-on for every tax year past the first.
-export const MULTI_YEAR_ADDON_CENTS = 14900;
+// Flat add-on for every tax year past the first, on either tier. Deliberately
+// below the base fee — an extra year that costs as much as the whole first
+// filing reads wrong on a multi-year DIIRSP catch-up, which is exactly the
+// customer we most want to say yes.
+export const MULTI_YEAR_ADDON_CENTS = 9900;
 export const MULTI_YEAR_ADDON_LABEL = "Additional past tax year";
 
 export const DEFAULT_TIER: Tier = "standard";
@@ -81,13 +108,19 @@ export const FAX_FEE_LABEL = "IRS fax delivery (included)";
 // ─────────────────────────────────────────────────────────────────────────────
 // LAUNCH PROMOTION (Google Ads channel only)
 //
-// 50% off the WHOLE order, rounded DOWN to whole dollars in the customer's
-// favour. List price in TIERS stays $199 — this is a discount off list, not a
-// second price list, so /pricing, the homepage and the blog are untouched.
+// A flat $50 off the BASE filing fee — not a percentage, and never off the
+// multi-year add-on. A percentage would cut deepest on multi-year DIIRSP
+// catch-ups, which are the most labour-intensive orders we take; a fixed
+// amount keeps the discount where it actually wins the sale.
 //
-//   1 year  $199        → $99
-//   2 years $199+$149   → $174
-//   3 years $199+$298   → $248
+//   Standard 1 year   $149        → $99
+//   Standard 2 years  $149+$99    → $198
+//   Standard 3 years  $149+$198   → $297
+//   Express  1 year   $199        → $149
+//
+// List prices in TIERS are untouched — this is a discount off list, not a
+// second price list, so /pricing, the homepage and the blog keep quoting the
+// real price and the promo ends the moment the ads are paused.
 //
 // THE INVARIANT: promoTotalCents() is the single source of truth for the
 // discounted figure. The wizard renders it, /api/checkout derives the Stripe
@@ -109,7 +142,12 @@ export const PROMO_SOURCES: ReadonlySet<string> = new Set([
   "form-5472-50-off",
 ]);
 
-export const PROMO_LABEL = "50% launch promotion";
+// $50 off the base filing fee, so the ad's headline price is $99 on standard
+// ($149 − $50) and $149 on express. Additional past tax years are NOT
+// discounted — the saving is a fixed amount off the filing, not a percentage
+// of the order, so a multi-year catch-up can't be bought at half price.
+export const PROMO_DISCOUNT_CENTS = 5000;
+export const PROMO_LABEL = "$50 launch promotion";
 
 export function isPromoSource(funnelSource: string | null | undefined): boolean {
   return !!funnelSource && PROMO_SOURCES.has(funnelSource);
@@ -126,7 +164,9 @@ export function promoTotalCents(
 ): number {
   if (!isPromoSource(funnelSource)) return fullTotalCents;
   if (fullTotalCents <= 0) return fullTotalCents;
-  return Math.floor(fullTotalCents / 2 / 100) * 100;
+  // Never let the discount exceed the order (a $0 or negative charge would be
+  // rejected by Stripe and is nonsense on a paid service).
+  return Math.max(0, fullTotalCents - PROMO_DISCOUNT_CENTS);
 }
 
 // Convenience: the amount taken off (fullTotal - promoTotal), 0 when no promo.

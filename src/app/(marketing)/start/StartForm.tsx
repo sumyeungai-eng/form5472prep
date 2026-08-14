@@ -8,6 +8,7 @@ import { Field, Input } from "@/components/ui/input";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 import { fireLeadConversion } from "@/lib/analytics/googleAds";
 import { fireMetaLead, hasMetaMarketingConsent } from "@/lib/analytics/meta";
+import { isTier } from "@/lib/pricing";
 
 // Pull the funnel source (?src=) off the URL so we can attribute the eventual
 // paid filing back to the landing page that sent the visitor here. Sanitized
@@ -21,16 +22,20 @@ function readFunnelSource(params: URLSearchParams | null): string | null {
   return cleaned || null;
 }
 
-const ALLOWED_TIERS = new Set(["standard"]);
-
-// Read the customer's tier choice off the URL (?tier=standard). The /pricing
-// page links here with the tier pre-selected; missing or invalid values fall
-// back to Standard via the server-side default.
+// Read the customer's tier choice off the URL (?tier=standard | ?tier=express).
+// The /pricing page links here with the tier pre-selected; missing or invalid
+// values fall back to DEFAULT_TIER via the server-side default.
+//
+// Validated with isTier() — the pricing module's own list — rather than a local
+// copy of the tier names. A hardcoded whitelist here is how the express tier
+// was silently dropped on the floor once already: /pricing linked to
+// ?tier=express, this filter didn't know the value, and every express customer
+// was quietly started on Standard.
 function readTier(params: URLSearchParams | null): string | null {
   const raw = params?.get("tier");
   if (!raw) return null;
   const cleaned = raw.toLowerCase().trim();
-  return ALLOWED_TIERS.has(cleaned) ? cleaned : null;
+  return isTier(cleaned) ? cleaned : null;
 }
 
 export function StartForm() {

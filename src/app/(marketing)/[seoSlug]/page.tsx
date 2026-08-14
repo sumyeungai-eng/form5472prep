@@ -6,7 +6,14 @@ import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
 import { LANDING_PAGES, getLandingPage, getRelatedSlugs, PROMO_LANDING_SLUG } from "@/lib/landing-pages";
-import { TIERS, TIER_ORDER, MULTI_YEAR_ADDON_CENTS, isPromoSource, promoTotalCents } from "@/lib/pricing";
+import {
+  TIERS,
+  TIER_ORDER,
+  MULTI_YEAR_ADDON_CENTS,
+  PROMO_DISCOUNT_CENTS,
+  isPromoSource,
+  promoTotalCents,
+} from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import { env } from "@/lib/env";
 
@@ -249,7 +256,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                   <span className="font-semibold text-ink">
                     {formatPrice(promoTotalCents(startSrc, TIERS.standard.priceCents))}
                   </span>{" "}
-                  — 50% off. IRS fax delivery included on every plan.
+                  — {formatPrice(PROMO_DISCOUNT_CENTS)} off. IRS fax delivery included on every plan.
                 </>
               ) : (
                 <>
@@ -454,9 +461,10 @@ function HeroRailCta({ startUrl }: { startUrl: string }) {
   );
 }
 
-// Single-tier pricing block, rendered near the bottom of every landing page.
+// Two-tier pricing block, rendered near the bottom of every landing page.
 // Matches the homepage pricing structure so visitors who arrived from search
-// see the same flat price regardless of which guide they landed on.
+// see the same prices regardless of which guide they landed on. The tiers
+// differ only by turnaround — same filing, same inclusions.
 function PricingSection({
   startUrl,
   promo = false,
@@ -473,9 +481,9 @@ function PricingSection({
   const fullOneYear = TIERS.standard.priceCents;
   const fullTwoYear = fullOneYear + MULTI_YEAR_ADDON_CENTS;
   const fullThreeYear = fullOneYear + MULTI_YEAR_ADDON_CENTS * 2;
-  // Always use the canonical single tier on every landing page. The
+  // Always use the canonical tier list on every landing page. The
   // /pro-form-5472 page used to override with a premium tier — that funnel
-  // has been retired in favour of one shared flat price across organic + paid.
+  // has been retired in favour of one shared price list across organic + paid.
   const tiers = TIER_ORDER.map((key) => [key, TIERS[key]] as const);
   // Preserve any ?src= attribution baked into startUrl by appending tier as
   // a second query param (the /start route accepts both).
@@ -492,8 +500,9 @@ function PricingSection({
             Flat-rate Form 5472 filing.
           </h2>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto">
-            One-time fee per filing. No subscription. IRS fax delivery to the
-            Ogden PIN Unit is included on every plan.
+            One-time fee per filing. No subscription. Both tiers include the
+            identical filing and IRS fax delivery to the Ogden PIN Unit — only
+            the turnaround differs.
           </p>
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border-2 border-emerald-200 px-4 py-1.5 text-xs font-medium text-emerald-800">
@@ -504,7 +513,7 @@ function PricingSection({
             </div>
           </div>
         </Reveal>
-        <div className="mt-10 max-w-md mx-auto">
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto items-stretch">
           {tiers.map(([key, t], idx) => {
             const highlighted = !!t.highlight;
             return (
@@ -560,16 +569,16 @@ function PricingSection({
           })}
         </div>
         {promo ? (
-          // The 50% comes off the WHOLE order and rounds down to whole dollars,
-          // so the marginal cost of an extra year isn't a flat number. State
-          // the exact order totals instead — these are the figures Stripe
+          // The promotion is a flat amount off the ORDER, taken once — extra
+          // years are not themselves discounted. State the exact multi-year
+          // totals so nothing is implied: these are the figures Stripe
           // charges, computed by the same helper checkout uses.
           <p className="mt-6 text-center text-sm text-slate-600">
             <span className="font-semibold text-slate-900">
-              Additional past tax years are 50% off too
+              + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year, {formatPrice(PROMO_DISCOUNT_CENTS)} off once per order
             </span>
             <span className="mx-2 text-slate-400">·</span>
-            2 years{" "}
+            {TIERS.standard.label}, 2 years{" "}
             <span className="line-through text-slate-400">{formatPrice(fullTwoYear)}</span>{" "}
             <span className="font-semibold text-slate-900">
               {formatPrice(promoTotalCents(PROMO_SRC, fullTwoYear))}
@@ -584,7 +593,7 @@ function PricingSection({
         ) : (
           <p className="mt-6 text-center text-sm text-slate-600">
             <span className="font-semibold text-slate-900">
-              + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year
+              + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year, either tier
             </span>
             <span className="mx-2 text-slate-400">·</span>
             Saves you from the $25,000-per-form IRS penalty

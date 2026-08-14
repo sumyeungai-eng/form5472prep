@@ -122,7 +122,7 @@ If you want to handle this yourself, you need:
 - Form 5472 for each year (Part I, Part II, Part III with transactions, and Part V if applicable)
 - A well-drafted reasonable cause statement
 
-If you want someone else to handle it: [we prepare the complete DIIRSP package](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-filed-late-never-filed) — all years, the reasonable cause statement, and fax to the IRS — for a flat fee.
+If you want someone else to handle it: [we prepare the complete DIIRSP package](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-filed-late-never-filed) — all years, the reasonable cause statement, and fax to the IRS — from $149.
 
 ---
 

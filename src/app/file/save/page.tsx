@@ -6,12 +6,13 @@ import { ArrowLeft, ArrowRight, Lock, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // The /file mini-funnel always uses the Standard tier — it's the entry-level
-// "just file my Form 5472" path. The yearsKey maps to year count; additional
-// past years add $149 each on top of the $199 Standard base.
+// "just file my Form 5472" path (ready in 5-7 business days; Express at $199
+// is the same filing in 3). The yearsKey maps to year count; additional past
+// years add $99 each on top of the $149 Standard base.
 const TIER_MAP: Record<string, { tier: string; yearLabel: string; price: string; perYear: string }> = {
-  "1": { tier: "standard", yearLabel: "1 tax year",              price: "$199", perYear: "$199 total" },
-  "2": { tier: "standard", yearLabel: "2 tax years (catch-up)",  price: "$348", perYear: "$199 + $149 extra year" },
-  "3": { tier: "standard", yearLabel: "3+ tax years (catch-up)", price: "$497", perYear: "$199 + 2 × $149 extra years" },
+  "1": { tier: "standard", yearLabel: "1 tax year",              price: "$149", perYear: "$149 total" },
+  "2": { tier: "standard", yearLabel: "2 tax years (catch-up)",  price: "$248", perYear: "$149 + $99 extra year" },
+  "3": { tier: "standard", yearLabel: "3+ tax years (catch-up)", price: "$347", perYear: "$149 + 2 × $99 extra years" },
 };
 
 function SaveForm() {
@@ -87,6 +88,7 @@ function SaveForm() {
               "Filled Form 5472 + pro forma 1120",
               "Reasonable cause statement (if DIIRSP)",
               "IRS fax delivery to Ogden PIN Unit (included)",
+              "Standard turnaround: ready in 5-7 business days",
             ].map((item) => (
               <div key={item} className="flex items-center gap-2 text-sm text-slate-600">
                 <CheckCircle2 className="flex-none h-3.5 w-3.5 text-emerald-500" />

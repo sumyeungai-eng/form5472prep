@@ -35,7 +35,7 @@ const faq = [
   },
   {
     q: "How does payment work?",
-    a: "Each filing is paid individually at checkout with the same flat pricing as direct customers — $199 all-inclusive, +$149 per additional past year, IRS fax delivery included. For volume pricing or consolidated invoicing, email support@form5472prep.com.",
+    a: "Each filing is paid individually at checkout with the same pricing as direct customers — Standard $149 (ready in 5-7 business days) or Express $199 (within 3 business days), +$99 per additional past year on either tier, IRS fax delivery included. The filing and the accountant review are identical on both tiers; only the speed differs. For volume pricing or consolidated invoicing, email support@form5472prep.com.",
   },
   {
     q: "How do I become a partner?",
@@ -122,9 +122,9 @@ export default function PartnersPage() {
             <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent mb-1">
               Partner Program
             </p>
-            <p className="font-serif text-2xl font-semibold text-ink">Same flat pricing</p>
+            <p className="font-serif text-2xl font-semibold text-ink">Same pricing as direct</p>
             <p className="text-sm text-slate-500 mt-1">
-              From $199 per filing · fax included · no subscription
+              From $149 per filing · fax included · no subscription
             </p>
             <a
               href="#apply"
@@ -243,7 +243,7 @@ function PartnersStructuredData() {
         "Formation agencies, CPA firms, and registered agents managing foreign-owned US LLCs",
     },
     description:
-      "Batch IRS Form 5472 + pro forma 1120 filings for multiple client LLCs under a single partner account. Per-filing flat pricing, client e-sign links, accountant review, and IRS fax delivery with receipts.",
+      "Batch IRS Form 5472 + pro forma 1120 filings for multiple client LLCs under a single partner account. Per-filing pricing from $149, client e-sign links, accountant review, and IRS fax delivery with receipts.",
   };
 
   const faqSchema = {

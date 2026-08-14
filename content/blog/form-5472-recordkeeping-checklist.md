@@ -59,7 +59,7 @@ Keep filed returns and proof of delivery permanently. Preserve the supporting re
 
 Every plan includes IRS fax delivery and a timestamped transmission receipt. The receipt establishes when the package reached the IRS Ogden PIN Unit; it does not replace the underlying transaction records.
 
-[Start the $199 Standard filing](/start) and keep the receipt with the signed return.
+[Start the $149 Standard filing](/start) and keep the receipt with the signed return.
 
 ## Frequently asked questions
 

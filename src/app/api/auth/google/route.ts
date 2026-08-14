@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrCreateSessionId, setUserCookie } from "@/lib/session";
 import { findOrCreateDraftFiling } from "@/lib/findOrCreateDraft";
 import { ATTR_COOKIE, parseAttributionCookie } from "@/lib/attribution";
+import { isTier } from "@/lib/pricing";
 
 export const runtime = "nodejs";
 
@@ -36,11 +37,15 @@ export async function POST(req: Request) {
   const funnelSource = rawSource
     ? rawSource.toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 80) || null
     : null;
-  // Pre-selected service tier (?tier= on the /start URL, set by the
-  // /pricing card CTAs). Only persisted on intent="start" since signin
-  // doesn't create a filing here.
+  // Pre-selected service tier (?tier=standard | ?tier=express on the /start
+  // URL, set by the /pricing card CTAs). Only persisted on intent="start"
+  // since signin doesn't create a filing here.
+  //
+  // Checked with isTier() — the pricing module's own tier list — so adding or
+  // renaming a tier can never leave a stale copy of the names behind in this
+  // route and silently downgrade the customer to DEFAULT_TIER.
   const rawTier = typeof body?.tier === "string" ? body.tier.toLowerCase().trim() : null;
-  const tier = rawTier && new Set(["standard"]).has(rawTier) ? rawTier : null;
+  const tier = isTier(rawTier) ? rawTier : null;
   const marketingConsent = body?.marketingConsent === true;
   if (typeof credential !== "string" || !credential) {
     return NextResponse.json({ error: "Google credential required" }, { status: 400 });

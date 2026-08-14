@@ -5,6 +5,8 @@ import {
   TIERS,
   TIER_ORDER,
   MULTI_YEAR_ADDON_CENTS,
+  STANDARD_TURNAROUND,
+  EXPRESS_TURNAROUND,
   type Tier,
 } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
@@ -13,12 +15,12 @@ import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 export const metadata: Metadata = {
   title: { absolute: "Pricing — Form 5472 Filing for Foreign-Owned LLCs | Form5472 Prep" },
   description:
-    "Flat-rate Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. One all-inclusive price — $199. IRS fax delivery included. Avoid the $25,000 IRS penalty.",
+    "Flat-rate Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. Standard $149 in 5-7 business days, or Express $199 within 3. IRS fax delivery included on both. Avoid the $25,000 IRS penalty.",
   alternates: { canonical: "https://www.form5472prep.com/pricing" },
   openGraph: {
     title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
     description:
-      "Flat-rate Form 5472 + pro forma 1120 filing. One all-inclusive price — $199. IRS fax delivery included.",
+      "Flat-rate Form 5472 + pro forma 1120 filing. Standard $149 in 5-7 business days, or Express $199 within 3. IRS fax delivery included.",
     url: "https://www.form5472prep.com/pricing",
   },
 };
@@ -76,8 +78,10 @@ export default function PricingPage() {
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-slate-300 max-w-2xl mx-auto">
               Done-for-you Form 5472 + pro forma 1120 for foreign-owned US LLCs.
-              Avoid the $25,000-per-form IRS penalty — with fax delivery to the
-              IRS Ogden PIN Unit included on every plan.
+              Same filing either way — pick the turnaround you need:{" "}
+              {STANDARD_TURNAROUND} or within {EXPRESS_TURNAROUND}. Fax delivery
+              to the IRS Ogden PIN Unit is included on both plans, so you avoid
+              the $25,000-per-form IRS penalty.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -95,7 +99,7 @@ export default function PricingPage() {
       </section>
 
       <section className="max-w-6xl mx-auto px-6 py-12 sm:py-16">
-        <div className="max-w-md mx-auto">
+        <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto items-stretch">
           {tierEntries.map(([slug, t]) => (
             <TierCard key={slug} slug={slug} tier={t} />
           ))}
@@ -103,7 +107,7 @@ export default function PricingPage() {
 
         <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-700 text-center">
           <span className="font-semibold text-slate-900">
-            + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year
+            + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year, either tier
           </span>
           <span className="mx-2 text-slate-400">·</span>
           <span>
@@ -164,7 +168,7 @@ export default function PricingPage() {
 
       {/* Annotated fax-receipt section — differentiates against $49 DIY
           competitors that issue no proof-of-delivery. Sits between the
-          pricing cards and the FAQ so anyone reading "is this worth $199?"
+          pricing cards and the FAQ so anyone weighing the fee
           sees the actual product artifact next to the price. */}
       <FaxReceiptProof />
 
@@ -175,11 +179,11 @@ export default function PricingPage() {
         <div className="space-y-4">
           <FaqItem
             q="How much does it cost?"
-            a="One flat, all-inclusive price — $199 for a single tax year filing, with everything included. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included."
+            a={`Two flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready within ${EXPRESS_TURNAROUND}. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on either tier. IRS fax delivery to the Ogden PIN Unit is included in both.`}
           />
           <FaqItem
-            q="What's included in the $199?"
-            a="Everything. We prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. You also get a reasonable-cause letter on late / DIIRSP filings, priority email support, and a March filing reminder for next year — all in the one flat fee."
+            q="What's the difference between the two tiers?"
+            a={`Only the turnaround. The filing itself is identical: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. Both tiers also include a reasonable-cause letter on late / DIIRSP filings and a March filing reminder for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready within ${EXPRESS_TURNAROUND} and comes with priority email support.`}
           />
           <FaqItem
             q="Is fax filing really included?"
@@ -187,7 +191,7 @@ export default function PricingPage() {
           />
           <FaqItem
             q="What if I'm filing for multiple past years (DIIRSP)?"
-            a="Add $149 per additional past year on any plan. We include a reasonable-cause statement on every late filing so the IRS Delinquent International Information Return Submission Procedure (DIIRSP) is invoked correctly."
+            a={`Add ${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past year on either tier. We include a reasonable-cause statement on every late filing so the IRS Delinquent International Information Return Submission Procedure (DIIRSP) is invoked correctly.`}
           />
           <FaqItem
             q="Are there any hidden fees?"

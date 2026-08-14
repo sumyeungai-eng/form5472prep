@@ -49,7 +49,7 @@ The foreign owner’s Form 5472 section can include an FTIN and, where required,
 
 ## How does Form5472 Prep prepare a first-year return?
 
-Form5472 Prep collects the formation date, EIN, owner details, year-end assets, and categorized owner transactions. The $199 Standard plan includes the pro forma Form 1120, Form 5472, Part V statement, accountant review, IRS fax delivery, and delivery receipt.
+Form5472 Prep collects the formation date, EIN, owner details, year-end assets, and categorized owner transactions. The $149 Standard plan includes the pro forma Form 1120, Form 5472, Part V statement, accountant review, IRS fax delivery, and delivery receipt, ready in 5-7 business days; Express delivers the same package in 3 business days for $199.
 
 [Prepare the first-year package](/start) before the filing deadline.
 

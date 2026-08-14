@@ -125,7 +125,7 @@ export default function AboutPage() {
               <ul className="mt-3 space-y-2 text-sm text-slate-700">
                 <li>A form-preparation and filing-courier service for Form 5472 + pro forma 1120.</li>
                 <li>Reviewed by a qualified tax accountant before every submission.</li>
-                <li>Transparent, flat-fee, and up front about multi-year pricing.</li>
+                <li>Transparent about both tiers and up front about multi-year pricing.</li>
                 <li>Built to give you a timestamped IRS fax receipt as proof of filing.</li>
               </ul>
             </div>
@@ -160,7 +160,7 @@ export default function AboutPage() {
         <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-seal/50" />
         <div className="relative mx-auto max-w-3xl px-6 py-16 text-center">
           <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-white text-balance">Ready to file?</h2>
-          <p className="mt-3 text-slate-300">Flat $199, accountant-reviewed, faxed to the IRS with a receipt.</p>
+          <p className="mt-3 text-slate-300">$149 in 5-7 business days, or $199 in 3 — same filing, accountant-reviewed, faxed to the IRS with a receipt.</p>
           <div className="mt-7">
             <Link href="/start" className="group inline-block">
               <Button size="lg" className="bg-white !text-ink hover:bg-slate-100">

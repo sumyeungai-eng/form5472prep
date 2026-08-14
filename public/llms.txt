@@ -1,6 +1,6 @@
 # Form5472 Prep
 
-> Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition ($149) and ITIN acquisition ($349) for non-residents — as an IRS-authorized Certifying Acceptance Agent (CAA), we certify identity documents so applicants never need to mail their original passport. Form5472 Prep prepares all required IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit. One flat, all-inclusive price of $199 per tax year (+$149 per additional past year), with IRS fax delivery included. Every package is reviewed by a qualified tax accountant before submission. 100% money-back guarantee if we fail to submit. Last updated: 2026-05-31.
+> Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition ($149) and ITIN acquisition ($349) for non-residents — as an IRS-authorized Certifying Acceptance Agent (CAA), we certify identity documents so applicants never need to mail their original passport. Form5472 Prep prepares all required IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit. Two pricing tiers that differ only by turnaround speed: Standard $149 (ready in 5-7 business days) and Express $199 (ready within 3 business days), plus $99 per additional past tax year on either tier. IRS fax delivery is included on both. The filing itself, the accountant review and the package contents are identical on both tiers — only the speed differs. Every package is reviewed by a qualified tax accountant before submission. 100% money-back guarantee if we fail to submit. Last updated: 2026-08-14.
 
 ## Who this is for
 
@@ -27,11 +27,14 @@
 
 ## Pricing
 
-One flat, all-inclusive price, one-time per filing, USD:
+Two tiers, one-time per filing, USD. They differ **only** by turnaround speed — the filing, the accountant review and everything in the package are identical on both:
 
-- **Complete filing — $199** — Everything included: Form 5472 + pro forma Form 1120 prepared, reviewed by a qualified tax accountant, IRS fax delivery, filing confirmation, reasonable-cause letter for late / DIIRSP filings, priority email support, and a March email reminder for next year's filing.
+- **Standard — $149** — ready in 5-7 business days.
+- **Express — $199** — ready within 3 business days.
 
-Multi-year add-on: **+$149 per additional past tax year**. For example: filing with 2 past years = $199 + $149 = $348. Filing with 3 past years = $199 + $298 = $497.
+Both tiers include: Form 5472 + pro forma Form 1120 prepared, reviewed by a qualified tax accountant, IRS fax delivery, filing confirmation, reasonable-cause letter for late / DIIRSP filings, priority email support, and a March email reminder for next year's filing.
+
+Multi-year add-on: **+$99 per additional past tax year**, on either tier. For example, on Standard: filing with 2 past years = $149 + $99 = $248; filing with 3 past years = $149 + $198 = $347. On Express: 2 past years = $199 + $99 = $298; 3 past years = $199 + $198 = $397.
 
 **Fax delivery to the IRS Ogden PIN Unit is included on every plan** — no separate $19/$29 fax fee. The price you see is the price you pay. No subscription, no setup fee, no per-page surcharge.
 
@@ -51,7 +54,7 @@ Multi-year add-on: **+$149 per additional past tax year**. For example: filing w
 
 ## Documents
 
-- [Pricing](/pricing): single flat-rate price ($199 all-inclusive) with the full feature list.
+- [Pricing](/pricing): both tiers ($149 Standard, $199 Express) with the full feature list.
 - [About](/about): who we are, how we work, and what we are and aren't.
 - [Editorial Policy](/editorial-policy): how our guides are sourced, reviewed, and kept current.
 - [EIN Acquisition](/ein): EIN service for foreign-owned US LLC owners — CAA certification, no passport mailing.

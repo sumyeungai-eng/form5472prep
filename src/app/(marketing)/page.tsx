@@ -16,7 +16,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
-import { TIERS, TIER_ORDER, MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
+import {
+  TIERS,
+  TIER_ORDER,
+  MULTI_YEAR_ADDON_CENTS,
+  STANDARD_TURNAROUND,
+  EXPRESS_TURNAROUND,
+} from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import { env } from "@/lib/env";
 import { getConfirmedFilingsCount, formatFilingCount } from "@/lib/stats";
@@ -30,15 +36,15 @@ import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 const FAQS = [
   {
     q: "How much does it cost?",
-    a: "One flat, all-inclusive price — $199 for a single tax year filing, with everything included. Additional past tax years are +$149 each. IRS fax delivery to the Ogden PIN Unit is included — no separate add-on.",
+    a: `Two flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready within ${EXPRESS_TURNAROUND}. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on either tier. IRS fax delivery to the Ogden PIN Unit is included on both — no separate add-on.`,
   },
   {
-    q: "What's included in the $199?",
-    a: "Everything. We prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. You also get a reasonable-cause letter on late / DIIRSP filings, priority email support, and a March filing reminder for next year — all in the one flat fee.",
+    q: "What's the difference between the two tiers?",
+    a: `Only the turnaround. The filing is identical on both: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation — plus a reasonable-cause letter on late / DIIRSP filings and a March filing reminder for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready within ${EXPRESS_TURNAROUND} and adds priority email support.`,
   },
   {
     q: "What if I've missed prior years?",
-    a: "Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing is +$149 per additional past year on any plan.",
+    a: `Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing is +${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past year on either tier.`,
   },
   {
     q: "Do I really need Form 5472 and Form 1120 if my LLC made no money?",
@@ -54,7 +60,7 @@ const FAQS = [
   },
   {
     q: "Are there any hidden fees?",
-    a: "No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge. Multi-year filings add a flat $149 per additional past year — disclosed up front and shown in the checkout summary before you pay.",
+    a: `No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge. Multi-year filings add a flat ${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past year — disclosed up front and shown in the checkout summary before you pay.`,
   },
   {
     q: "Do you store my bank statements or signed forms?",
@@ -76,12 +82,12 @@ export const metadata: Metadata = {
   // already brands the product, so we don't want the suffix appended.
   title: { absolute: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep" },
   description:
-    "IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Starting at $199 — fax delivery included on every plan. 100% money-back guarantee if we fail to submit.",
+    "IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. From $149 in 5-7 business days, or $199 for express within 3 — fax delivery included on both. 100% money-back guarantee if we fail to submit.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
     description:
-      "For foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. Starting at $199 — 100% money-back guarantee if we fail to submit.",
+      "For foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. From $149, or $199 for express filing within 3 business days — 100% money-back guarantee if we fail to submit.",
     url: "/",
     // This page sets its own openGraph object, which replaces (not merges
     // with) the root layout's — so the branded card image has to be named
@@ -93,7 +99,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
     description:
-      "For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. Starting at $199.",
+      "For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. From $149, or $199 for express filing within 3 business days.",
     images: ["/opengraph-image"],
   },
 };
@@ -109,10 +115,9 @@ export default async function LandingPage() {
       <Hero filingsCount={filingsCount} />
       <Pricing />
       {/* Annotated fax-receipt section — same component used on /pricing.
-          Sits right after the three pricing cards so anyone reading "is
-          this worth $199?" sees the actual proof-of-filing artifact next
-          to the price. Differentiates vs $49 DIY tools that issue no
-          receipt. */}
+          Sits right after the pricing cards so anyone weighing the fee sees
+          the actual proof-of-filing artifact next to the price.
+          Differentiates vs $49 DIY tools that issue no receipt. */}
       <FaxReceiptProof />
       <TrustStrip />
       <Eligibility />
@@ -261,15 +266,33 @@ function Hero({ filingsCount }: { filingsCount: number }) {
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-soft-pulse" />
                 Start filing now
               </div>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="font-serif text-5xl font-semibold tracking-tight text-ink">
-                  {formatPrice(TIERS.standard.priceCents)}
-                </span>
-                <span className="font-mono text-xs text-slate-500">/ filing</span>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                {TIER_ORDER.map((key) => {
+                  const t = TIERS[key];
+                  return (
+                    <div
+                      key={key}
+                      className={[
+                        "rounded-lg px-3 py-3",
+                        t.highlight
+                          ? "border-2 border-accent bg-accent-50/50"
+                          : "border border-slate-200 bg-white",
+                      ].join(" ")}
+                    >
+                      <p className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">
+                        {t.label}
+                      </p>
+                      <p className="mt-1 font-serif text-3xl font-semibold tracking-tight text-ink">
+                        {formatPrice(t.priceCents)}
+                      </p>
+                      <p className="mt-1 text-xs text-slate-600">{t.subtitle}</p>
+                    </div>
+                  );
+                })}
               </div>
-              <p className="mt-2 text-sm text-slate-600">
-                One flat price, everything included — accountant review, IRS fax
-                delivery, filing confirmation.{" "}
+              <p className="mt-3 text-sm text-slate-600">
+                Same filing either way — accountant review, IRS fax delivery,
+                filing confirmation. Only the turnaround differs.{" "}
                 <Link href="/pricing" className="text-accent underline underline-offset-2">
                   See what&apos;s included
                 </Link>
@@ -564,7 +587,7 @@ function Pricing() {
   return (
     <section id="pricing" className="bg-white border-b border-slate-200 scroll-mt-20">
       <div className="max-w-6xl mx-auto px-6 pt-4 pb-16 sm:pt-8 sm:pb-20">
-        <div className="max-w-md mx-auto">
+        <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto items-stretch">
           {TIER_ORDER.map((key, idx) => {
             const t = TIERS[key];
             const highlighted = !!t.highlight;
@@ -609,7 +632,7 @@ function Pricing() {
           })}
         </div>
         <p className="mt-6 text-center text-sm text-slate-600">
-          <span className="font-semibold text-ink">+ {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year</span>
+          <span className="font-semibold text-ink">+ {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year, either tier</span>
           <span className="mx-2 text-slate-400">·</span>
           Saves you from the $25,000-per-form IRS penalty
         </p>
