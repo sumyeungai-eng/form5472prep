@@ -8,9 +8,8 @@ import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePacka
 import { putPdf } from "@/lib/storage";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
-import { entitySchema, ownerBaseSchema, refineUsIdOrReferenceId, makeYearScopeSchema, filingDueDateUtc, formatDueDate } from "@/lib/schemas";
-
-const ownerCompletionSchema = ownerBaseSchema.superRefine(refineUsIdOrReferenceId);
+import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { filingCompletionIssues } from "@/lib/completeness";
 
 export async function POST(req: Request) {
   const { filingId, email } = await req.json();
@@ -30,46 +29,13 @@ export async function POST(req: Request) {
 
   // Completeness gate — the desktop sidebar lets a user jump straight to Review,
   // so refuse to charge for an incomplete filing (which would otherwise pay,
-  // skip PDF generation, and strand them in PAID with no product). Validate
-  // against the same schemas the wizard enforces.
-  const validationFiling = {
-    ...filing,
-    llcDateIncorporated: filing.llcDateIncorporated
-      ? filing.llcDateIncorporated.toISOString().slice(0, 10)
-      : filing.llcDateIncorporated,
-  };
-  const completionChecks = [
-    entitySchema.safeParse(validationFiling),
-    ownerCompletionSchema.safeParse(filing),
-    // Bound the year range by the filing's own final-return flag — a dissolved
-    // LLC legitimately reports the in-progress year, and the fixed bound would
-    // otherwise flag that filing as incomplete and block it from paying.
-    makeYearScopeSchema(filing.isFinalReturn).safeParse(filing),
-  ];
-  const completionIssues: string[] = [];
-  for (const result of completionChecks) {
-    if (!result.success) {
-      for (const issue of result.error.issues) {
-        const field = issue.path.join(".") || issue.message;
-        if (completionIssues.indexOf(field) === -1) completionIssues.push(field);
-      }
-    }
-  }
-  for (const taxYear of filing.taxYears) {
-    if (!yearDataRows.find((yearData) => yearData.taxYear === taxYear)) {
-      const field = `yearData.${taxYear}`;
-      if (completionIssues.indexOf(field) === -1) completionIssues.push(field);
-    }
-  }
-  // A final return covers a short tax year (Jan 1 → dissolution date). Without
-  // the date the forms would claim a full 01/01–12/31 year while item E says
-  // "final" — so refuse to charge until the customer supplies it.
-  if (filing.isFinalReturn && !filing.dissolvedAt) {
-    if (completionIssues.indexOf("dissolvedAt") === -1) completionIssues.push("dissolvedAt");
-  }
-  if (filing.isDiirsp && (!filing.reasonableCauseNarrative || !filing.reasonableCauseNarrative.trim())) {
-    if (completionIssues.indexOf("reasonableCauseNarrative") === -1) completionIssues.push("reasonableCauseNarrative");
-  }
+  // skip PDF generation, and strand them in PAID with no product). The rules
+  // live in @/lib/completeness so the admin drafts view can flag exactly the
+  // drafts this gate would accept.
+  const completionIssues = filingCompletionIssues(
+    filing,
+    yearDataRows.map((yearData) => yearData.taxYear),
+  );
   if (completionIssues.length > 0) {
     return NextResponse.json(
       { error: "Filing is incomplete — please finish all steps before paying.", issues: completionIssues },

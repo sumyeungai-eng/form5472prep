@@ -1,15 +1,24 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Inbox } from "lucide-react";
+import type { Prisma } from "@prisma/client";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { formatUsd } from "@/lib/utils";
+import { formatAttribution } from "@/lib/attribution";
+import { filingCompletionIssues } from "@/lib/completeness";
 import { StatusBadge } from "./StatusBadge";
 import { DraftActions } from "./DraftActions";
 
 export const dynamic = "force-dynamic";
 
-type SearchParams = { status?: string; q?: string; hidden?: string };
+type SearchParams = { status?: string; q?: string; hidden?: string; ready?: string };
+
+// yearData rides along ONLY on the draft view (conditional include below), so
+// it's optional here — the completeness check is the only consumer.
+type FilingRow = Prisma.FilingGetPayload<{ include: { user: true } }> & {
+  yearData?: { taxYear: number }[];
+};
 
 export default async function AdminFilingsPage({
   searchParams,
@@ -24,6 +33,12 @@ export default async function AdminFilingsPage({
   // dismissed. Any other value means the normal list, which must never show
   // them — dismissing a draft is meant to make it disappear.
   const showHidden = searchParams.hidden === "1";
+  // The two views that list DRAFT rows. Only these pay for the extra yearData
+  // join + the completeness pass.
+  const draftView = statusFilter === "DRAFT" || showHidden;
+  // ready=1 narrows the draft view to the drafts checkout would accept — the
+  // customers who filled everything in and stopped at the payment step.
+  const readyOnly = draftView && searchParams.ready === "1";
 
   const where: Record<string, unknown> = { adminHidden: showHidden };
   if (statusFilter && STATUS_VALUES.includes(statusFilter)) {
@@ -42,12 +57,27 @@ export default async function AdminFilingsPage({
     ];
   }
 
-  const filings = await prisma.filing.findMany({
+  const filings: FilingRow[] = await prisma.filing.findMany({
     where,
-    include: { user: true },
+    include: { user: true, ...(draftView ? { yearData: { select: { taxYear: true } } } : {}) },
     orderBy: { updatedAt: "desc" },
     take: 100,
   });
+
+  // Which drafts are actually finished. Uses the SAME helper /api/checkout
+  // gates on, so a green pill means "this would have paid if they'd clicked".
+  const draftIssues = new Map<string, string[]>();
+  if (draftView) {
+    for (const f of filings) {
+      if (f.status !== "DRAFT") continue;
+      draftIssues.set(f.id, filingCompletionIssues(f, (f.yearData ?? []).map((y) => y.taxYear)));
+    }
+  }
+  // Filtered in JS rather than SQL — completeness isn't expressible as a where
+  // clause, and take:100 keeps the pass trivial.
+  const visibleFilings = readyOnly
+    ? filings.filter((f) => draftIssues.get(f.id)?.length === 0)
+    : filings;
 
   // Quick stats: last 30 days
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -83,6 +113,15 @@ export default async function AdminFilingsPage({
   const toggleQs = toggleQuery.toString();
   const toggleHref = toggleQs ? `/admin/filings?${toggleQs}` : "/admin/filings";
 
+  // "Ready to pay only" / "← All drafts" toggle, same param-preserving idiom.
+  const readyQuery = new URLSearchParams();
+  if (statusFilter) readyQuery.set("status", statusFilter);
+  if (q) readyQuery.set("q", q);
+  if (showHidden) readyQuery.set("hidden", "1");
+  if (!readyOnly) readyQuery.set("ready", "1");
+  const readyQs = readyQuery.toString();
+  const readyHref = readyQs ? `/admin/filings?${readyQs}` : "/admin/filings";
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
       <div className="flex items-center justify-between mb-8">
@@ -109,6 +148,8 @@ export default async function AdminFilingsPage({
       <form className="mb-2 flex flex-col sm:flex-row gap-2" method="get">
         {/* Keep the archive view sticky when re-filtering from inside it. */}
         {showHidden && <input type="hidden" name="hidden" value="1" />}
+        {/* Same for the ready-to-pay narrowing. */}
+        {readyOnly && <input type="hidden" name="ready" value="1" />}
         <input
           type="text"
           name="q"
@@ -134,13 +175,18 @@ export default async function AdminFilingsPage({
         </button>
       </form>
 
-      <div className="mb-4 text-xs">
+      <div className="mb-4 text-xs flex gap-4">
         <Link href={toggleHref} className="text-slate-500 hover:text-slate-900 hover:underline">
           {showHidden ? "← Hide archived" : "Show hidden"}
         </Link>
+        {draftView && (
+          <Link href={readyHref} className="text-slate-500 hover:text-slate-900 hover:underline">
+            {readyOnly ? "← All drafts" : "Ready to pay only"}
+          </Link>
+        )}
       </div>
 
-      {filings.length === 0 ? (
+      {visibleFilings.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-lg p-12 text-center">
           <Inbox className="mx-auto h-10 w-10 text-slate-300" />
           <p className="mt-4 font-medium text-slate-900">No filings match your filters</p>
@@ -148,19 +194,20 @@ export default async function AdminFilingsPage({
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-lg overflow-x-auto">
-          <table className="w-full text-sm min-w-[640px]">
+          <table className="w-full text-sm min-w-[780px]">
             <thead className="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
               <tr>
                 <th className="text-left font-semibold px-4 py-3">Customer / LLC</th>
                 <th className="text-left font-semibold px-4 py-3">Years</th>
                 <th className="text-left font-semibold px-4 py-3">Status</th>
+                <th className="text-left font-semibold px-4 py-3">Source</th>
                 <th className="text-right font-semibold px-4 py-3">Paid</th>
                 <th className="text-left font-semibold px-4 py-3">Updated</th>
                 <th className="text-right font-semibold px-4 py-3"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {filings.map((f) => (
+              {visibleFilings.map((f) => (
                 <tr key={f.id} className="hover:bg-slate-50">
                   <td className="px-4 py-3">
                     <Link href={`/admin/filings/${f.id}`} className="block">
@@ -175,7 +222,12 @@ export default async function AdminFilingsPage({
                   <td className="px-4 py-3 text-slate-600">
                     {f.taxYears.length > 0 ? f.taxYears.join(", ") : "—"}
                   </td>
-                  <td className="px-4 py-3"><StatusBadge status={f.status} /></td>
+                  <td className="px-4 py-3">
+                    <StatusBadge status={f.status} />
+                    {/* Draft views only: did they actually finish the wizard? */}
+                    {draftIssues.has(f.id) && <CompletenessHint issues={draftIssues.get(f.id)!} />}
+                  </td>
+                  <td className="px-4 py-3"><SourceCell filing={f} /></td>
                   <td className="px-4 py-3 text-right tabular-nums text-slate-700">
                     {f.amountPaid > 0 ? formatUsd(f.amountPaid) : "—"}
                   </td>
@@ -185,7 +237,7 @@ export default async function AdminFilingsPage({
                   <td className="px-4 py-3 text-right align-top">
                     {/* Drafts only — paid/faxed filings are never disposable. */}
                     {f.status === "DRAFT" && (
-                      <DraftActions filingId={f.id} hidden={f.adminHidden} />
+                      <DraftActions filingId={f.id} hidden={f.adminHidden} hasEmail={Boolean(f.user?.email)} remindedAt={f.abandonedReminderSentAt?.toISOString() ?? null} />
                     )}
                   </td>
                 </tr>
@@ -214,6 +266,48 @@ const STATUS_VALUES = [
   "CONFIRMED",
   "FAILED",
 ];
+
+// Draft triage at a glance: a draft with zero completeness issues is a
+// customer who filled in EVERYTHING and stopped at the payment step — the
+// hottest lead on the list. Anything else is a half-empty abandonment.
+function CompletenessHint({ issues }: { issues: string[] }) {
+  if (issues.length === 0) {
+    return (
+      <span className="mt-1 block w-fit text-[11px] font-medium rounded-full px-2 py-0.5 bg-emerald-50 text-emerald-700">
+        Ready to pay
+      </span>
+    );
+  }
+  return (
+    <div className="mt-1 text-xs text-slate-400" title={issues.join(", ")}>
+      {issues.length} field{issues.length === 1 ? "" : "s"} missing
+    </div>
+  );
+}
+
+// Where this customer came FROM (first-touch attribution), with the landing
+// funnel they entered through underneath when there is one.
+function SourceCell({ filing }: { filing: FilingRow }) {
+  const label = formatAttribution({
+    source: filing.attrSource,
+    medium: filing.attrMedium,
+    campaign: filing.attrCampaign,
+    referrer: filing.attrReferrer,
+    landing: filing.attrLanding,
+  });
+  return (
+    <>
+      <div className="text-xs text-slate-600 truncate max-w-[140px]" title={label}>
+        {label}
+      </div>
+      {filing.funnelSource && (
+        <div className="text-[11px] text-slate-400 truncate max-w-[140px]" title={filing.funnelSource}>
+          via {filing.funnelSource}
+        </div>
+      )}
+    </>
+  );
+}
 
 function StatCard({
   label,

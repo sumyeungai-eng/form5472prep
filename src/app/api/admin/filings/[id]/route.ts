@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
+import { sendAbandonedDraftReminderEmail } from "@/lib/email";
+import { makeMagicLink } from "@/lib/magicLink";
+import { makeUnsubscribeLink } from "@/lib/unsubscribeToken";
 import {
   FilingActionError,
   runFilingAction,
@@ -20,11 +23,16 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const action = body?.action as string | undefined;
   if (!action) return NextResponse.json({ error: "missing action" }, { status: 400 });
 
-  // Draft housekeeping (archive / unarchive / destroy) lives here rather than
-  // in runFilingAction: it touches no filing workflow state, sends nothing,
-  // and must stay behind a status guard that the workflow actions don't share.
-  if (action === "hideDraft" || action === "unhideDraft" || action === "deleteDraft") {
-    return handleDraftHousekeeping(params.id, action);
+  // Draft-only actions (archive / unarchive / destroy / manual nudge) live here
+  // rather than in runFilingAction: they touch no filing workflow state and must
+  // stay behind a status guard that the workflow actions don't share.
+  if (
+    action === "hideDraft" ||
+    action === "unhideDraft" ||
+    action === "deleteDraft" ||
+    action === "sendDraftReminder"
+  ) {
+    return handleDraftAction(params.id, action);
   }
 
   try {
@@ -47,24 +55,32 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   }
 }
 
-async function handleDraftHousekeeping(
+async function handleDraftAction(
   filingId: string,
-  action: "hideDraft" | "unhideDraft" | "deleteDraft",
+  action: "hideDraft" | "unhideDraft" | "deleteDraft" | "sendDraftReminder",
 ) {
   const filing = await prisma.filing.findUnique({
     where: { id: filingId },
-    select: { id: true, status: true },
+    select: {
+      id: true,
+      status: true,
+      userId: true,
+      llcName: true,
+      abandonedReminderSentAt: true,
+      user: { select: { email: true, emailMarketingOptOut: true } },
+    },
   });
   if (!filing) return NextResponse.json({ error: "filing not found" }, { status: 404 });
 
-  // Hard guard for all three actions, deliberately checked once before the
+  // Hard guard for every action below, deliberately checked once before the
   // switch so no branch can be added later that forgets it. Only abandoned
   // wizard drafts are disposable: anything past DRAFT is taxpayer data tied to
   // a payment and (often) to a fax we may have to prove we sent, so it must
-  // never be hideable or destroyable — whatever the client posts.
+  // never be hideable or destroyable — whatever the client posts. The same
+  // guard keeps the "finish your filing" nudge off filings already paid for.
   if (filing.status !== "DRAFT") {
     return NextResponse.json(
-      { error: "only draft filings can be hidden or deleted" },
+      { error: "only draft filings can be reminded, hidden, or deleted" },
       { status: 400 },
     );
   }
@@ -90,6 +106,53 @@ async function handleDraftHousekeeping(
         await tx.filing.delete({ where: { id: filing.id } });
       });
       return NextResponse.json({ ok: true });
+    }
+
+    case "sendDraftReminder": {
+      // Manual version of the daily abandoned-draft cron: same template, same
+      // magic link, same opt-out rules — just triggered the moment an admin
+      // spots a hot half-finished draft instead of waiting for the nightly run.
+      if (!filing.userId || !filing.user?.email) {
+        return NextResponse.json(
+          { error: "draft has no email — nothing to send to" },
+          { status: 400 },
+        );
+      }
+      // An admin's hunch does not outrank an unsubscribe.
+      if (filing.user.emailMarketingOptOut) {
+        return NextResponse.json(
+          { error: "customer has unsubscribed from reminder emails" },
+          { status: 400 },
+        );
+      }
+
+      try {
+        await sendAbandonedDraftReminderEmail({
+          email: filing.user.email,
+          llcName: filing.llcName,
+          resumeLink: makeMagicLink(filing.userId),
+          unsubscribeUrl: makeUnsubscribeLink(filing.userId),
+          variant: "first",
+        });
+      } catch (error) {
+        // Nothing is stamped on failure, so the cron (and the admin) can retry.
+        return NextResponse.json(
+          { error: error instanceof Error ? error.message : "failed to send reminder" },
+          { status: 500 },
+        );
+      }
+
+      // Stamp unconditionally, even if the cron already claimed this slot: the
+      // field's job is "when was this customer last nudged", and writing it now
+      // also stops tonight's cron double-nudging someone we just chased.
+      // abandonedReminderSent2At is left alone — the final nudge is still owed.
+      const sentAt = new Date();
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: { abandonedReminderSentAt: sentAt },
+        select: { id: true },
+      });
+      return NextResponse.json({ ok: true, sentAt: sentAt.toISOString() });
     }
   }
 }
