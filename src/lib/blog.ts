@@ -136,6 +136,16 @@ const ARTWORK_ALTS: Record<string, string> = {
   "form-5472-ftin-reference-id-foreign-address": "Foreign tax identification and address details being entered into U.S. filing paperwork",
   "multiple-related-parties-form-5472": "Multiple related-party folders connected to one U.S. reporting entity",
   "final-form-5472-closing-foreign-owned-llc": "A final Form 5472 file beside LLC closure documents and a completed calendar",
+  "form-5472-penalty-notice-what-to-do": "An IRS civil penalty notice on a desk beside a reasonable cause response letter and filing records",
+  "foreign-owned-llc-filing-requirements-checklist": "A compliance checklist of the federal and state filings a foreign-owned U.S. LLC completes each year",
+  "does-foreign-owned-llc-pay-us-tax": "A non-resident owner reviewing U.S. tax rules for a foreign-owned LLC beside an income analysis",
+  "how-to-fill-out-form-5472": "A blank Form 5472 and pro forma Form 1120 being completed part by part on a tidy desk",
+  "form-5472-deadline-2026": "A wall calendar marking the April and October Form 5472 filing deadlines beside a filing package",
+  "wyoming-llc-foreign-owner-tax-filing": "Wyoming LLC state paperwork arranged beside a federal Form 5472 filing folder",
+  "ein-for-foreign-owned-llc-without-ssn": "A completed Form SS-4 and EIN confirmation letter for a foreign-owned U.S. LLC",
+  "multi-member-llc-form-5472-or-1065": "Two partner files beside a Form 1065 partnership return and a Form 5472, showing which return applies",
+  "form-5472-uae-dubai-residents-us-llc": "United Arab Emirates and U.S. business documents arranged for a Form 5472 filing",
+  "amended-form-5472-correcting-errors": "A corrected Form 5472 package with an amended cover sheet and an explanation statement",
 };
 
 function artworkAlt(slug: string, title: string): string {
