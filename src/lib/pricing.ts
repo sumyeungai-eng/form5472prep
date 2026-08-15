@@ -61,7 +61,9 @@ export const TIERS: Record<Tier, TierInfo> = {
     label: "Express filing",
     subtitle: `Ready within ${EXPRESS_TURNAROUND}`,
     priceCents: 19900,
-    highlight: true,
+    // No tier carries `highlight` (the "Most popular" badge + emphasised
+    // border). Nudging customers toward the dearer plan isn't the pitch here,
+    // and we have no order data that would make a "most popular" claim true.
     ctaLabel: "Start express filing",
     features: [
       `Prepared and filed within ${EXPRESS_TURNAROUND}`,
