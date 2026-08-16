@@ -18,5 +18,16 @@ Baseline was already strong (AI-crawler allow-list, FAQ/HowTo/Article schema on 
 | C | grok | `src/app/llms.txt/route.ts`, `src/app/llms-full.txt/route.ts`, delete `public/llms.txt` | generated llms.txt (core pages incl. /partners, 21 topic pages, 30 guides) + llms-full.txt (full markdown corpus, 51 docs) |
 | Architect | — | `src/lib/seo.ts` (new shared primitives), this doc | interface design, verification, build, deploy, live re-probe |
 
-## Results
-_(filled after verification)_
+## Results (live, verified — see `2026-08-16-seo-aeo-geo-live-recheck.md`)
+- Commits: `5f725df` (main pass), `4ebdd75` (skeptic-review fixes), `28505a2` (promo page). All deployed to prod.
+- og:image null 8/12 → 0; og:type null 6/12 → 0. `/pricing` FAQPage+Breadcrumb ✔; `/blog` CollectionPage ✔; blog speakable + full "Last updated" + TOC (anchor ids verified against h2 ids) ✔; landing "Official sources" + Article `citation` + honest dates + visible "Last reviewed" ✔; Organization: email + Trustpilot sameAs (telephone removed — it was the IRS fax line, caught by the advisor) ✔.
+- `/llms.txt` 8 KB → 21 KB generated (12 core incl. /partners + 21 topic + 23 guides); `/llms-full.txt` 529 KB, `X-Robots-Tag: noindex`.
+- Titles/descriptions: worst offenders fixed (91→52, 87→57; home 298→138, itin 234→142, pricing/ein/partners/about trimmed). Remaining: 12 blog `<title>`s exceed 60 only because of the ` · Form5472 Prep` suffix (frontmatter ≤60) — accepted.
+- Lighthouse mobile: home perf 85 / SEO 100 (LCP 3.4s, CLS 0); blog post 93 / 100.
+- Sitemap 56/56 → 200 with lastmod. Blog irs.gov citation coverage 100%; landing pages 23/23 with sources.
+- Lane note: grok-implementer unusable headless (PermissionCancelled) → all implementation went through codex-implementer; recorded in doctrine/lessons.md.
+
+## Still open (owner-gated)
+1. Vercel apex→www redirect is 307: Project → Settings → Domains → form5472prep.com → Edit → status 308.
+2. Named credentialed reviewer (name, EA/CPA, PTIN, bio) → Person schema + author page. Highest remaining YMYL lever.
+3. Organization `legalName` + postal address, and a link to the IRS Acceptance Agent list entry proving the CAA claim.
