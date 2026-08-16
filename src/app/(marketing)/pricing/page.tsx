@@ -15,14 +15,14 @@ import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbList, pageOpenGraph } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: { absolute: "Pricing — Form 5472 Filing for Foreign-Owned LLCs | Form5472 Prep" },
+  title: "Pricing for Form 5472 Filing",
   description:
-    "Flat-rate Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. Standard $149 in 5-7 business days, or Express $199 within 3. IRS fax delivery included on both. Avoid the $25,000 IRS penalty.",
+    `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} within ${EXPRESS_TURNAROUND}. We fax to the IRS Ogden PIN Unit.`,
   alternates: { canonical: "/pricing" },
   openGraph: pageOpenGraph({
     title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
     description:
-      "Flat-rate Form 5472 + pro forma 1120 filing. Standard $149 in 5-7 business days, or Express $199 within 3. IRS fax delivery included.",
+      `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} within ${EXPRESS_TURNAROUND}. We fax to the IRS Ogden PIN Unit.`,
     path: "/pricing",
   }),
 };

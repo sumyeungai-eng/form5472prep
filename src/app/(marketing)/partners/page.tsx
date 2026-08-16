@@ -15,14 +15,14 @@ import { PartnerApplyForm } from "./PartnerApplyForm";
 export const metadata: Metadata = {
   // `absolute` skips the root layout's "%s · Form5472 Prep" template so the
   // brand isn't doubled (the title already ends in "| Form5472 Prep").
-  title: { absolute: "Partner Program — Batch Form 5472 Filings for Your Clients | Form5472 Prep" },
+  title: { absolute: "Partner Program for Form 5472 Filings | Form5472 Prep" },
   description:
-    "Formation agencies, CPA firms, and registered agents: manage Form 5472 filings for all your clients under one partner account. You prepare, your client signs with a secure link, we review and fax to the IRS.",
+    "Partner program: formation agencies, CPA firms and registered agents batch filings in one partner account; client signs by secure link; we review, fax to IRS.",
   alternates: { canonical: "/partners" },
   openGraph: pageOpenGraph({
     title: "Partner Program — Batch Form 5472 Filings for Your Clients",
     description:
-      "Formation agencies, CPA firms, and registered agents: manage Form 5472 filings for all your clients under one account. Your client signs with a secure link — we review and fax to the IRS.",
+      "Partner program: formation agencies, CPA firms and registered agents batch filings in one partner account; client signs by secure link; we review, fax to IRS.",
     path: "/partners",
   }),
 };

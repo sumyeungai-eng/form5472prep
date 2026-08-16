@@ -9,12 +9,12 @@ import { CONTENT_LAST_REVIEWED, organizationNode, pageOpenGraph } from "@/lib/se
 export const metadata: Metadata = {
   title: "About Form5472 Prep",
   description:
-    "Form5472 Prep is a done-for-you filing and courier service built only for the foreign-owned single-member LLC's Form 5472 + pro forma 1120. How we work, and what we are and aren't.",
+    "About Form5472 Prep: done-for-you filing and courier service for a foreign-owned single-member LLC's Form 5472 + pro forma 1120.",
   alternates: { canonical: "/about" },
   openGraph: pageOpenGraph({
     title: "About Form5472 Prep",
     description:
-      "A done-for-you filing service built only for the foreign-owned LLC's Form 5472 + pro forma 1120. How we work — accountant-reviewed, faxed to the IRS, with a proof-of-delivery receipt.",
+      "About Form5472 Prep: done-for-you filing and courier service for a foreign-owned single-member LLC's Form 5472 + pro forma 1120.",
     path: "/about",
   }),
 };

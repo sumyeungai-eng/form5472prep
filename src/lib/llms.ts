@@ -2,8 +2,8 @@ import { getAllPosts, getPost, type PostMeta } from "@/lib/blog";
 import { LANDING_PAGES } from "@/lib/landing-pages";
 import {
   CONTENT_LAST_REVIEWED,
+  IRS_OGDEN_FAX,
   ORG_EMAIL,
-  ORG_TELEPHONE,
   SITE_NAME,
   SITE_URL,
   TRUSTPILOT_PROFILE_URL,
@@ -27,7 +27,7 @@ const WHAT_WE_DO = `## What we do
 - Generate a Part V supporting statement itemizing reportable transactions.
 - For late filings (DIIRSP), generate a cover letter and reasonable cause statement requesting penalty abatement under Rev. Proc. 2020-29.
 - Every package is reviewed by a qualified tax accountant on our team before it is faxed to the IRS.
-- Fax the signed package to the IRS Ogden Service Center PIN Unit at ${ORG_TELEPHONE} and return the fax confirmation receipt as proof of timely filing.
+- Fax the signed package to the IRS Ogden Service Center PIN Unit at ${IRS_OGDEN_FAX} and return the fax confirmation receipt as proof of timely filing.
 - Store basic entity/owner data to one-click pre-fill next year's filing (7-year retention to match IRS records-retention guidance).`;
 
 const WHAT_WE_DO_NOT_DO = `## What we do NOT do
@@ -68,7 +68,7 @@ A foreign-owned US single-member LLC is treated as a "disregarded entity" by def
 
 Failure to file Form 5472 (or the attached pro forma Form 1120), or filing late or incompletely, triggers a $25,000-per-form, per-year penalty under IRC § 6038A(d). The penalty is automatically assessed by the IRS. Continued failure after IRS notice adds another $25,000 per 30-day period.
 
-Foreign-owned US disregarded entities cannot e-file Form 5472 or the attached pro forma Form 1120. They are filed by mail or fax to the IRS Ogden Service Center, PIN Unit, Stop 6273, Ogden, UT 84201. The fax number is ${ORG_TELEPHONE}.
+Foreign-owned US disregarded entities cannot e-file Form 5472 or the attached pro forma Form 1120. They are filed by mail or fax to the IRS Ogden Service Center, PIN Unit, Stop 6273, Ogden, UT 84201. The fax number is ${IRS_OGDEN_FAX}.
 
 For filings that are already late, the IRS Delinquent International Information Return Submission Procedure (DIIRSP) — see Rev. Proc. 2020-29 — allows taxpayers to submit late returns with a reasonable cause statement explaining the late filing. If the IRS accepts the reasonable cause, the penalty may be abated. There is no guarantee of abatement, but DIIRSP is the IRS's stated process for delinquent international information returns.`;
 
@@ -147,7 +147,7 @@ function buildContact(): string {
 
 - Support / general questions: ${ORG_EMAIL}
 - Order / fax delivery questions: orders@form5472prep.com
-- IRS Ogden PIN Unit fax: ${ORG_TELEPHONE}
+- IRS Ogden PIN Unit fax: ${IRS_OGDEN_FAX}
 - Trustpilot: ${TRUSTPILOT_PROFILE_URL}`;
 }
 

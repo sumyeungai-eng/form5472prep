@@ -16,12 +16,12 @@ export const metadata: Metadata = {
   // brand isn't doubled (the title already ends in "| Form5472 Prep").
   title: { absolute: "EIN for Foreign-Owned US LLC — No SSN Needed | Form5472 Prep" },
   description:
-    "Get a US Employer Identification Number (EIN) for your foreign-owned LLC — no SSN or ITIN required. We prepare Form SS-4 and obtain your EIN directly from the IRS by fax or phone. Flat fee $149.",
+    "EIN for foreign-owned US LLCs: $149 flat fee, no SSN or ITIN required. We prepare Form SS-4 and get your EIN directly from the IRS.",
   alternates: { canonical: "/ein" },
   openGraph: pageOpenGraph({
     title: "EIN for Foreign-Owned US LLC — No SSN Needed",
     description:
-      "No SSN or ITIN required. We prepare Form SS-4 and obtain your EIN directly from the IRS by fax or phone. Flat fee $149.",
+      "EIN for foreign-owned US LLCs: $149 flat fee, no SSN or ITIN required. We prepare Form SS-4 and get your EIN directly from the IRS.",
     path: "/ein",
   }),
 };

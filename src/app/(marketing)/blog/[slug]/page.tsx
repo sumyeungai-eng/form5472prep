@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
-import GithubSlugger from "github-slugger";
 import {
   ArrowRight,
   Calendar,
@@ -15,7 +14,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
-import { BlogToc } from "@/components/BlogToc";
+import { BlogToc, extractH2Headings } from "@/components/BlogToc";
 import { getAllPosts, getPost, formatPostDate, extractFaqs, type PostMeta } from "@/lib/blog";
 import { env } from "@/lib/env";
 import { SPEAKABLE, pageOpenGraph } from "@/lib/seo";
@@ -74,7 +73,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     description: post.description,
     image: `${env.appUrl}${post.image}`,
     datePublished: new Date(post.publishAt ?? post.date).toISOString(),
-    dateModified: new Date(post.updated ?? post.date).toISOString(),
+    dateModified: new Date(post.updated ?? post.publishAt ?? post.date).toISOString(),
     speakable: SPEAKABLE,
     author: { "@type": "Organization", name: post.author ?? "Form5472 Prep" },
     publisher: {
@@ -184,7 +183,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   "Current",
                   post.updated
                     ? `Last updated ${formatPostDate(post.updated)}`
-                    : `Published ${formatPostDate(post.date)}`,
+                    : `Published ${formatPostDate(post.publishAt ?? post.date)}`,
                 ],
               ].map(([label, detail]) => (
                 <div key={label} className="flex items-start gap-3 sm:border-r sm:border-slate-100 sm:last:border-0">
@@ -291,32 +290,4 @@ function OtherPosts({ posts }: { posts: PostMeta[] }) {
 
 function formatTag(tag: string): string {
   return tag.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
-function extractH2Headings(body: string): { text: string; id: string }[] {
-  const slugger = new GithubSlugger();
-  const headings: { text: string; id: string }[] = [];
-  let inFence = false;
-
-  for (const line of body.split("\n")) {
-    if (line.trimStart().startsWith("```")) {
-      inFence = !inFence;
-      continue;
-    }
-    if (inFence) continue;
-
-    const match = line.match(/^## (.+)$/);
-    if (!match) continue;
-
-    const markdownText = match[1].replace(/\s+#+\s*$/, "").trim();
-    const text = markdownText
-      .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-      .replace(/<[^>]+>/g, "")
-      .replace(/[*_~`]/g, "")
-      .trim();
-    headings.push({ text, id: slugger.slug(text) });
-  }
-
-  return headings;
 }

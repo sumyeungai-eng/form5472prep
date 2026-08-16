@@ -5,7 +5,8 @@ import { env } from "@/lib/env";
 
 export const SITE_NAME = "Form5472 Prep";
 export const SITE_URL = env.appUrl; // always the www form
-export const ORG_TELEPHONE = "+1-855-887-7737";
+// IRS Ogden PIN Unit fax line for Form 5472 — NOT our phone; never emit as Organization.telephone
+export const IRS_OGDEN_FAX = "+1-855-887-7737";
 export const ORG_EMAIL = "support@form5472prep.com";
 export const TRUSTPILOT_PROFILE_URL = "https://www.trustpilot.com/review/form5472prep.com";
 export const ORG_SAME_AS = [TRUSTPILOT_PROFILE_URL];
@@ -64,7 +65,6 @@ export function organizationNode(extra: Record<string, unknown> = {}) {
     url: SITE_URL,
     logo: `${SITE_URL}/logo.svg`,
     email: ORG_EMAIL,
-    telephone: ORG_TELEPHONE,
     sameAs: ORG_SAME_AS,
     contactPoint: [
       {

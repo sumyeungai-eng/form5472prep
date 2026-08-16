@@ -64,8 +64,8 @@ export async function generateMetadata({
     // Paid-ad landing pages opt out of organic search so Google only sends
     // ad-clicks here. Also keeps the page out of the sitemap (see sitemap.ts).
     robots: page.noindex
-      ? { index: false, follow: false, googleBot: { index: false, follow: false } }
-      : undefined,
+      ? { index: false, follow: false }
+      : { index: true, follow: true },
     openGraph: pageOpenGraph({
       title: page.title,
       description: page.metaDescription,
@@ -249,6 +249,9 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                 <h2 className="font-serif text-2xl font-semibold text-ink tracking-tight">
                   Official sources
                 </h2>
+                <p className="mt-2 text-xs text-slate-500">
+                  Last reviewed {new Date(page.updated ?? CONTENT_LAST_REVIEWED).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" })}
+                </p>
                 <ul className="mt-5 space-y-3 text-sm">
                   {page.sources.map((source) => (
                     <li key={source.url}>
@@ -634,15 +637,13 @@ function PricingSection({
 
 function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof getLandingPage>> }) {
   const url = `${env.appUrl}/${page.slug}`;
-  // datePublished anchors the original publication date; dateModified comes
-  // from an explicit page review date or the site's content review date.
   const article = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: page.h1,
     description: page.metaDescription,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    datePublished: "2026-01-15",
+    datePublished: page.updated ?? CONTENT_LAST_REVIEWED,
     dateModified: page.updated ?? CONTENT_LAST_REVIEWED,
     citation:
       page.sources?.map((source) => ({

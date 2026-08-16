@@ -1,6 +1,41 @@
+import GithubSlugger from "github-slugger";
+
 type BlogTocProps = {
   headings: { text: string; id: string }[];
 };
+
+export function extractH2Headings(body: string): { text: string; id: string }[] {
+  const slugger = new GithubSlugger();
+  const headings: { text: string; id: string }[] = [];
+  let inFence = false;
+
+  for (const line of body.split("\n")) {
+    if (line.trimStart().startsWith("```")) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+
+    const match = line.match(/^(#{1,6})\s+(.+)$/);
+    if (!match) continue;
+
+    const level = match[1];
+    const markdownText = match[2].replace(/\s+#+\s*$/, "").trim();
+    const text = markdownText
+      .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      .replace(/<[^>]+>/g, "")
+      .replace(/[*_~`]/g, "")
+      .trim();
+    const id = slugger.slug(text);
+
+    if (level === "##") {
+      headings.push({ text, id });
+    }
+  }
+
+  return headings;
+}
 
 export function BlogToc({ headings }: BlogTocProps) {
   if (headings.length < 3) return null;
