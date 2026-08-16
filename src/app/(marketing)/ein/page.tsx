@@ -3,6 +3,13 @@ import type { Metadata } from "next";
 import { CheckCircle2, ShieldCheck, Phone, FileText, ArrowRight } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
+import {
+  CONTENT_LAST_REVIEWED,
+  SPEAKABLE,
+  breadcrumbList,
+  organizationNode,
+  pageOpenGraph,
+} from "@/lib/seo";
 
 export const metadata: Metadata = {
   // `absolute` skips the root layout's "%s · Form5472 Prep" template so the
@@ -10,13 +17,13 @@ export const metadata: Metadata = {
   title: { absolute: "EIN for Foreign-Owned US LLC — No SSN Needed | Form5472 Prep" },
   description:
     "Get a US Employer Identification Number (EIN) for your foreign-owned LLC — no SSN or ITIN required. We prepare Form SS-4 and obtain your EIN directly from the IRS by fax or phone. Flat fee $149.",
-  alternates: { canonical: "https://www.form5472prep.com/ein" },
-  openGraph: {
+  alternates: { canonical: "/ein" },
+  openGraph: pageOpenGraph({
     title: "EIN for Foreign-Owned US LLC — No SSN Needed",
     description:
       "No SSN or ITIN required. We prepare Form SS-4 and obtain your EIN directly from the IRS by fax or phone. Flat fee $149.",
-    url: "https://www.form5472prep.com/ein",
-  },
+    path: "/ein",
+  }),
 };
 
 const faq = [
@@ -102,7 +109,7 @@ export default function EinPage() {
               Get a US EIN<br />
               <span className="text-accent-100">for your foreign-owned LLC.</span>
             </h1>
-            <p className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
+            <p data-speakable className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
               Foreign founders can&apos;t use the IRS online EIN tool — it requires a US Social Security
               Number or ITIN. We prepare <strong className="text-white">Form SS-4</strong> and obtain your EIN directly from
               the IRS by fax or phone. No SSN, no ITIN, and no passport mailing — the EIN itself never
@@ -312,7 +319,8 @@ function EinStructuredData() {
     "@type": "Service",
     serviceType: "EIN (Form SS-4) acquisition for foreign-owned US LLCs",
     name: "EIN Acquisition for Foreign-Owned US LLCs",
-    provider: { "@type": "Organization", name: "Form5472 Prep", url: env.appUrl },
+    provider: organizationNode(),
+    dateModified: CONTENT_LAST_REVIEWED,
     areaServed: { "@type": "Country", name: "United States" },
     audience: {
       "@type": "Audience",
@@ -340,24 +348,18 @@ function EinStructuredData() {
     })),
   };
 
-  const breadcrumb = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: env.appUrl },
-      { "@type": "ListItem", position: 2, name: "EIN Acquisition", item: url },
-    ],
-  };
+  const breadcrumb = breadcrumbList([
+    { name: "Home", path: "/" },
+    { name: "EIN Acquisition", path: "/ein" },
+  ]);
 
   const webPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
     url,
     name: "EIN for Foreign-Owned US LLC — No SSN Needed",
-    speakable: {
-      "@type": "SpeakableSpecification",
-      cssSelector: ["h1", "section p"],
-    },
+    dateModified: CONTENT_LAST_REVIEWED,
+    speakable: SPEAKABLE,
   };
 
   return (

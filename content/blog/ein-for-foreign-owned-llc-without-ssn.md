@@ -1,6 +1,6 @@
 ---
 title: "How to Get an EIN for a US LLC Without an SSN or ITIN"
-description: "Foreign owners cannot use the IRS online EIN tool — but you do not need an SSN or ITIN to get an EIN. Here's the Form SS-4 route, what to write on line 7b, the fax and phone numbers, and how long it takes."
+description: "EIN applications for foreign-owned LLCs do not require an SSN or ITIN. Learn how to complete Form SS-4, identify the responsible party, and apply to the IRS."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"

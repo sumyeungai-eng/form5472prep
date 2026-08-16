@@ -16,6 +16,7 @@ import {
 } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import { env } from "@/lib/env";
+import { CONTENT_LAST_REVIEWED, pageOpenGraph } from "@/lib/seo";
 
 // Lock the route to only the known slugs — anything else 404s.
 export const dynamicParams = false;
@@ -65,12 +66,12 @@ export async function generateMetadata({
     robots: page.noindex
       ? { index: false, follow: false, googleBot: { index: false, follow: false } }
       : undefined,
-    openGraph: {
-      type: "article",
+    openGraph: pageOpenGraph({
       title: page.title,
       description: page.metaDescription,
-      url: `${env.appUrl}/${page.slug}`,
-    },
+      path: `/${page.slug}`,
+      type: "article",
+    }),
   };
 }
 
@@ -239,6 +240,33 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
             ))}
           </div>
         </section>
+
+        {/* Primary authorities supporting this guide and its structured data. */}
+        {page.sources && page.sources.length > 0 && (
+          <section className="border-b border-slate-200 bg-slate-50">
+            <div className="max-w-3xl mx-auto px-6 py-12">
+              <Reveal>
+                <h2 className="font-serif text-2xl font-semibold text-ink tracking-tight">
+                  Official sources
+                </h2>
+                <ul className="mt-5 space-y-3 text-sm">
+                  {page.sources.map((source) => (
+                    <li key={source.url}>
+                      <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-accent hover:underline"
+                      >
+                        {source.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            </div>
+          </section>
+        )}
 
         {/* Mid-page CTA */}
         <section className="border-y border-paper-edge bg-paper">
@@ -606,9 +634,8 @@ function PricingSection({
 
 function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof getLandingPage>> }) {
   const url = `${env.appUrl}/${page.slug}`;
-  // datePublished anchors article freshness for Google. dateModified bumps
-  // whenever we redeploy — good for AI engines that prefer recent sources.
-  const buildDate = new Date().toISOString();
+  // datePublished anchors the original publication date; dateModified comes
+  // from an explicit page review date or the site's content review date.
   const article = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -616,7 +643,13 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
     description: page.metaDescription,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     datePublished: "2026-01-15",
-    dateModified: buildDate,
+    dateModified: page.updated ?? CONTENT_LAST_REVIEWED,
+    citation:
+      page.sources?.map((source) => ({
+        "@type": "CreativeWork",
+        name: source.label,
+        url: source.url,
+      })) ?? [],
     inLanguage: "en-US",
     author: {
       "@type": "Organization",

@@ -1,14 +1,15 @@
 ---
 title: "Filed Late or Never Filed Form 5472? Here's What to Do Now"
-description: "Missing Form 5472 filings carry a $25,000 penalty per form, per year — with no cap. But there's a structured IRS procedure for fixing this, and earlier is better. Here's the full playbook."
+description: "Late Form 5472 filings can trigger a $25,000 penalty per form and year. Learn how DIIRSP, complete catch-up returns, and reasonable cause requests work."
 date: 2026-05-28
+updated: 2026-08-14
 author: "Form5472 Prep"
 tags: ["form-5472", "late-filing", "diirsp", "penalty-abatement", "foreign-owned-llc"]
 readingMinutes: 8
 draft: false
 ---
 
-**If you filed Form 5472 late or never filed it, file the delinquent returns under the IRS's DIIRSP with a reasonable-cause statement** requesting penalty abatement. There is no formal waiver guarantee, but well-documented first-time late filings by foreign owners are commonly accepted without penalty. File promptly and completely — the continuation penalty only begins stacking after the IRS sends a notice.
+**If you filed Form 5472 late or never filed it, file the delinquent returns under the [IRS's DIIRSP](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures) with a reasonable-cause statement** requesting penalty abatement. There is no formal waiver guarantee, but well-documented first-time late filings by foreign owners are commonly accepted without penalty. File promptly and completely — the continuation penalty only begins stacking after the IRS sends a notice.
 
 You missed a Form 5472 filing — maybe one year, maybe several. You might have just found out the requirement exists. Or you knew about it and kept putting it off, hoping the IRS wouldn't notice.
 

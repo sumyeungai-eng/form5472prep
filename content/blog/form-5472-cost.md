@@ -2,6 +2,7 @@
 title: "How Much Does Form 5472 Cost to File? (2026 Breakdown)"
 description: "Form 5472 has no IRS filing fee. DIY is free but risky, a US CPA runs ~$600–$750, and a done-for-you service starts at $149. Full 2026 price breakdown."
 date: 2026-07-05
+updated: 2026-08-14
 author: "Form5472 Prep"
 tags: ["form-5472", "cost", "pricing", "foreign-owned-llc", "filing-guide"]
 draft: false

@@ -1,7 +1,8 @@
 ---
-title: "Form 5472 for UK Residents Who Own a U.S. LLC: What You Actually Need to File"
-description: "If you're a UK resident who owns a Wyoming, Delaware, or any other US single-member LLC, the IRS requires you to file Form 5472 every year — even if you never made a penny. Here's exactly what to file, when, and what happens if you miss it."
+title: "Form 5472 for UK Residents With a U.S. LLC"
+description: "Form 5472 for UK residents covers the annual filing package for a foreign-owned US LLC, reportable transactions, deadlines, and late-filing consequences."
 date: 2026-05-21
+updated: 2026-08-14
 author: "Form5472 Prep"
 tags: ["form-5472", "uk-residents", "foreign-owned-llc", "disregarded-entity"]
 draft: false

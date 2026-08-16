@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageOpenGraph } from "@/lib/seo";
 
 // The apply page itself is a client component ("use client") and can't export
 // metadata. This server layout sets it instead. The intake form is a thin
@@ -9,7 +10,13 @@ export const metadata: Metadata = {
   title: "EIN Application — Form5472 Prep",
   description:
     "Start your EIN application for a foreign-owned US LLC. We prepare Form SS-4 and obtain your EIN directly from the IRS — no SSN required.",
-  alternates: { canonical: "https://www.form5472prep.com/ein/apply" },
+  alternates: { canonical: "/ein/apply" },
+  openGraph: pageOpenGraph({
+    title: "EIN Application — Form5472 Prep",
+    description:
+      "Start your EIN application for a foreign-owned US LLC. We prepare Form SS-4 and obtain your EIN directly from the IRS — no SSN required.",
+    path: "/ein/apply",
+  }),
   robots: { index: false, follow: true },
 };
 

@@ -1,6 +1,6 @@
 ---
 title: "Form 5472 for UAE and Dubai Residents with a US LLC"
-description: "There is no US-UAE tax treaty, and the UAE issues no personal tax ID — two facts that change how a Dubai-based owner completes Form 5472. Here's what to file, what to put in the FTIN box, and what the $25,000 penalty means for you."
+description: "Form 5472 for UAE and Dubai residents covers the filing package, identification fields, reportable owner transactions, deadlines, and the $25,000 penalty."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"

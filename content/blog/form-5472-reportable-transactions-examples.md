@@ -1,5 +1,5 @@
 ---
-title: "Form 5472 Reportable Transactions: 15 Examples for Foreign-Owned LLCs"
+title: "Form 5472 Reportable Transactions: 15 Examples"
 description: "Form 5472 reports transactions between a foreign-owned U.S. LLC and related parties—not every sale or expense. See 15 practical examples."
 date: 2026-07-27
 publishAt: "2026-07-27T09:00:00-04:00"

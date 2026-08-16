@@ -1,6 +1,6 @@
 ---
 title: "I Got a $25,000 Form 5472 Penalty Notice — What Do I Do Now?"
-description: "The IRS assessed a $25,000 penalty for a late or missing Form 5472. Here's what the notice means, why your reasonable cause letter may have been ignored, and the exact steps to respond before the deadline."
+description: "Form 5472 penalty notice guidance explains the $25,000 assessment, response deadlines, reasonable cause evidence, and the steps to request penalty relief."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"

@@ -11,23 +11,26 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { getAllPosts, formatPostDate, type PostMeta } from "@/lib/blog";
+import { JsonLd } from "@/components/JsonLd";
+import { SITE_URL, breadcrumbList, pageOpenGraph } from "@/lib/seo";
 
 // ISR: posts published from /admin live in the database, so the index has to
 // re-render without a redeploy. Admin writes also revalidatePath("/blog") for
 // an immediate refresh; this is the safety net.
 export const revalidate = 60;
 
+const BLOG_DESCRIPTION =
+  "Guides and explainers for foreign-owned US LLC owners filing IRS Form 5472 and pro forma Form 1120.";
+
 export const metadata: Metadata = {
   title: "Blog",
-  description:
-    "Guides and explainers for foreign-owned US LLC owners filing IRS Form 5472 and pro forma Form 1120.",
+  description: BLOG_DESCRIPTION,
   alternates: { canonical: "/blog" },
-  openGraph: {
+  openGraph: pageOpenGraph({
     title: "Blog · Form5472 Prep",
-    description:
-      "Guides and explainers for foreign-owned US LLC owners filing IRS Form 5472 and pro forma Form 1120.",
-    url: "/blog",
-  },
+    description: BLOG_DESCRIPTION,
+    path: "/blog",
+  }),
 };
 
 export default async function BlogIndex() {
@@ -40,9 +43,33 @@ export default async function BlogIndex() {
   const popularTags = Array.from(tagCounts.entries())
     .sort((a, b) => b[1] - a[1])
     .slice(0, 6);
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "The Form 5472 Guide",
+    url: `${SITE_URL}/blog`,
+    description: BLOG_DESCRIPTION,
+    dateModified: posts[0]?.updated ?? posts[0]?.date,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: posts.map((post, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `${SITE_URL}/blog/${post.slug}`,
+        name: post.title,
+      })),
+    },
+  };
 
   return (
     <div className="bg-[#f8f9fb]">
+      <JsonLd data={collectionJsonLd} />
+      <JsonLd
+        data={breadcrumbList([
+          { name: "Home", path: "/" },
+          { name: "Guides", path: "/blog" },
+        ])}
+      />
       <BlogHeader postCount={posts.length} tags={popularTags} />
       <div className="mx-auto max-w-6xl px-6 pb-24">
         {posts.length === 0 ? (

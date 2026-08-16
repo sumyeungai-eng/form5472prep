@@ -3,6 +3,13 @@ import type { Metadata } from "next";
 import { CheckCircle2, Users, FileText, Send, ArrowRight, LayoutDashboard } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
+import {
+  CONTENT_LAST_REVIEWED,
+  SPEAKABLE,
+  breadcrumbList,
+  organizationNode,
+  pageOpenGraph,
+} from "@/lib/seo";
 import { PartnerApplyForm } from "./PartnerApplyForm";
 
 export const metadata: Metadata = {
@@ -11,13 +18,13 @@ export const metadata: Metadata = {
   title: { absolute: "Partner Program — Batch Form 5472 Filings for Your Clients | Form5472 Prep" },
   description:
     "Formation agencies, CPA firms, and registered agents: manage Form 5472 filings for all your clients under one partner account. You prepare, your client signs with a secure link, we review and fax to the IRS.",
-  alternates: { canonical: "https://www.form5472prep.com/partners" },
-  openGraph: {
+  alternates: { canonical: "/partners" },
+  openGraph: pageOpenGraph({
     title: "Partner Program — Batch Form 5472 Filings for Your Clients",
     description:
       "Formation agencies, CPA firms, and registered agents: manage Form 5472 filings for all your clients under one account. Your client signs with a secure link — we review and fax to the IRS.",
-    url: "https://www.form5472prep.com/partners",
-  },
+    path: "/partners",
+  }),
 };
 
 const faq = [
@@ -97,7 +104,7 @@ export default function PartnersPage() {
               <br />
               <span className="text-accent-100">one partner account.</span>
             </h1>
-            <p className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
+            <p data-speakable className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
               Batch filings for every foreign-owned LLC you manage. You prepare each filing in
               minutes, your client signs with a secure link, our tax accountant reviews, and we fax
               to the IRS Ogden PIN Unit — with a timestamped receipt for every one.
@@ -235,7 +242,8 @@ function PartnersStructuredData() {
     "@type": "Service",
     serviceType: "Form 5472 partner / reseller program for agencies and firms",
     name: "Form5472 Prep Partner Program",
-    provider: { "@type": "Organization", name: "Form5472 Prep", url: env.appUrl },
+    provider: organizationNode(),
+    dateModified: CONTENT_LAST_REVIEWED,
     areaServed: { "@type": "Country", name: "United States" },
     audience: {
       "@type": "Audience",
@@ -256,13 +264,18 @@ function PartnersStructuredData() {
     })),
   };
 
-  const breadcrumb = {
+  const breadcrumb = breadcrumbList([
+    { name: "Home", path: "/" },
+    { name: "Partner Program", path: "/partners" },
+  ]);
+
+  const webPage = {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: env.appUrl },
-      { "@type": "ListItem", position: 2, name: "Partner Program", item: url },
-    ],
+    "@type": "WebPage",
+    url,
+    name: "Form5472 Prep Partner Program",
+    dateModified: CONTENT_LAST_REVIEWED,
+    speakable: SPEAKABLE,
   };
 
   return (
@@ -270,6 +283,7 @@ function PartnersStructuredData() {
       <JsonLd data={service} />
       <JsonLd data={faqSchema} />
       <JsonLd data={breadcrumb} />
+      <JsonLd data={webPage} />
     </>
   );
 }

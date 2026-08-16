@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeSlug from "rehype-slug";
+import GithubSlugger from "github-slugger";
 import {
   ArrowRight,
   Calendar,
@@ -13,8 +15,10 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
+import { BlogToc } from "@/components/BlogToc";
 import { getAllPosts, getPost, formatPostDate, extractFaqs, type PostMeta } from "@/lib/blog";
 import { env } from "@/lib/env";
+import { SPEAKABLE, pageOpenGraph } from "@/lib/seo";
 
 // ISR: prerender the slugs known at build time, but `dynamicParams` lets a post
 // published from /admin (DB-only, so absent from the build) render on first
@@ -30,22 +34,23 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await getPost(params.slug);
   if (!post) return {};
-  const url = `${env.appUrl}/blog/${post.slug}`;
-  const image = `${env.appUrl}${post.image}`;
+  const image = `/blog/${post.slug}/opengraph-image`;
   return {
     title: post.title,
     description: post.description,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
-      title: post.title,
-      description: post.description,
-      url,
-      type: "article",
+      ...pageOpenGraph({
+        title: post.title,
+        description: post.description,
+        path: `/blog/${post.slug}`,
+        type: "article",
+        images: [{ url: image, width: 1200, height: 630 }],
+      }),
       publishedTime: new Date(post.publishAt ?? post.date).toISOString(),
       authors: post.author ? [post.author] : undefined,
       tags: post.tags,
-      images: [{ url: image, width: 1280, height: 720, alt: post.imageAlt }],
-    },
+    } as NonNullable<Metadata["openGraph"]>,
     twitter: {
       card: "summary_large_image",
       title: post.title,
@@ -70,6 +75,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     image: `${env.appUrl}${post.image}`,
     datePublished: new Date(post.publishAt ?? post.date).toISOString(),
     dateModified: new Date(post.updated ?? post.date).toISOString(),
+    speakable: SPEAKABLE,
     author: { "@type": "Organization", name: post.author ?? "Form5472 Prep" },
     publisher: {
       "@type": "Organization",
@@ -89,6 +95,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     ],
   };
   const faqs = extractFaqs(post.body);
+  const tocHeadings = extractH2Headings(post.body);
   const faqJsonLd = faqs.length >= 2
     ? {
         "@context": "https://schema.org",
@@ -130,7 +137,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 <h1 className="font-serif text-4xl font-semibold leading-[1.08] tracking-tight text-ink sm:text-5xl lg:text-[3.35rem]">
                   {post.title}
                 </h1>
-                <p className="mt-6 text-lg leading-8 text-slate-600">{post.description}</p>
+                <p data-speakable className="mt-6 text-lg leading-8 text-slate-600">{post.description}</p>
                 <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-slate-500">
                   <span className="inline-flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-accent" />
@@ -173,7 +180,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               {[
                 ["Plain English", "No dense tax-code language"],
                 ["Actionable", "Clear next steps and deadlines"],
-                ["Current", `Updated for ${new Date(post.updated ?? post.date).getFullYear()}`],
+                [
+                  "Current",
+                  post.updated
+                    ? `Last updated ${formatPostDate(post.updated)}`
+                    : `Published ${formatPostDate(post.date)}`,
+                ],
               ].map(([label, detail]) => (
                 <div key={label} className="flex items-start gap-3 sm:border-r sm:border-slate-100 sm:last:border-0">
                   <FileCheck2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -185,9 +197,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               ))}
             </div>
 
+            <BlogToc headings={tocHeadings} />
+
             <div className="rounded-2xl border border-slate-200 bg-white px-6 py-9 shadow-[0_18px_55px_-45px_rgba(15,23,42,0.45)] sm:px-10 sm:py-12">
               <div className="prose prose-slate max-w-none prose-p:leading-8 prose-li:leading-7 prose-a:font-medium prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-headings:font-serif prose-headings:tracking-tight prose-headings:text-ink prose-h2:mt-12 prose-h2:border-t prose-h2:border-slate-100 prose-h2:pt-10 prose-h2:text-3xl prose-h3:mt-8 prose-h3:text-xl prose-blockquote:rounded-r-lg prose-blockquote:border-l-accent prose-blockquote:bg-accent-50/60 prose-blockquote:px-5 prose-blockquote:py-1 prose-blockquote:not-italic prose-table:text-sm prose-th:bg-slate-50">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.body}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]}>
+                  {post.body}
+                </ReactMarkdown>
               </div>
 
               {post.tags && post.tags.length > 0 && (
@@ -275,4 +291,32 @@ function OtherPosts({ posts }: { posts: PostMeta[] }) {
 
 function formatTag(tag: string): string {
   return tag.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function extractH2Headings(body: string): { text: string; id: string }[] {
+  const slugger = new GithubSlugger();
+  const headings: { text: string; id: string }[] = [];
+  let inFence = false;
+
+  for (const line of body.split("\n")) {
+    if (line.trimStart().startsWith("```")) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+
+    const match = line.match(/^## (.+)$/);
+    if (!match) continue;
+
+    const markdownText = match[1].replace(/\s+#+\s*$/, "").trim();
+    const text = markdownText
+      .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      .replace(/<[^>]+>/g, "")
+      .replace(/[*_~`]/g, "")
+      .trim();
+    headings.push({ text, id: slugger.slug(text) });
+  }
+
+  return headings;
 }

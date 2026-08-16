@@ -1,6 +1,6 @@
 ---
-title: "Wyoming LLC for Non-Residents: What You Actually Have to File Each Year"
-description: "Wyoming has no state income tax — but a foreign-owned Wyoming LLC still owes an annual report and, in almost every case, IRS Form 5472 with a $25,000 penalty attached. Here's the full annual obligation."
+title: "Wyoming LLC Foreign-Owner Filing Checklist"
+description: "Wyoming LLC foreign-owner filing duties can include Form 5472, pro forma Form 1120, a state annual report, and separate federal or state tax returns."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"

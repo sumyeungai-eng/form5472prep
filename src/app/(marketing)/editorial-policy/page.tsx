@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/LegalLayout";
+import { pageOpenGraph } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Editorial Policy",
@@ -8,12 +9,12 @@ export const metadata: Metadata = {
     "How Form5472 Prep researches, sources, reviews, and corrects its Form 5472 guides — primary IRS sources, a fixed review cadence, and a clear correction process.",
   alternates: { canonical: "/editorial-policy" },
   robots: { index: true, follow: true },
-  openGraph: {
+  openGraph: pageOpenGraph({
     title: "Editorial Policy — Form5472 Prep",
     description:
       "Primary IRS sources, a fixed review cadence, and a clear correction process behind every Form 5472 guide we publish.",
-    url: "https://www.form5472prep.com/editorial-policy",
-  },
+    path: "/editorial-policy",
+  }),
 };
 
 export default function EditorialPolicyPage() {

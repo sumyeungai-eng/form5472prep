@@ -11,21 +11,46 @@ import {
 } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbList, pageOpenGraph } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: { absolute: "Pricing — Form 5472 Filing for Foreign-Owned LLCs | Form5472 Prep" },
   description:
     "Flat-rate Form 5472 + pro forma 1120 filing for foreign-owned US LLCs. Standard $149 in 5-7 business days, or Express $199 within 3. IRS fax delivery included on both. Avoid the $25,000 IRS penalty.",
-  alternates: { canonical: "https://www.form5472prep.com/pricing" },
-  openGraph: {
+  alternates: { canonical: "/pricing" },
+  openGraph: pageOpenGraph({
     title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
     description:
       "Flat-rate Form 5472 + pro forma 1120 filing. Standard $149 in 5-7 business days, or Express $199 within 3. IRS fax delivery included.",
-    url: "https://www.form5472prep.com/pricing",
-  },
+    path: "/pricing",
+  }),
 };
 
 const tierEntries = TIER_ORDER.map((key) => [key, TIERS[key]] as const);
+
+const PRICING_FAQS: { q: string; a: string }[] = [
+  {
+    q: "How much does it cost?",
+    a: `Two flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready within ${EXPRESS_TURNAROUND}. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on either tier. IRS fax delivery to the Ogden PIN Unit is included in both.`,
+  },
+  {
+    q: "What's the difference between the two tiers?",
+    a: `Only the turnaround. The filing itself is identical: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. Both tiers also include a reasonable-cause letter on late / DIIRSP filings and a March filing reminder for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready within ${EXPRESS_TURNAROUND} and comes with priority email support.`,
+  },
+  {
+    q: "Is fax filing really included?",
+    a: "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and the timestamped fax receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine.",
+  },
+  {
+    q: "What if I'm filing for multiple past years (DIIRSP)?",
+    a: `Add ${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past year on either tier. We include a reasonable-cause statement on every late filing so the IRS Delinquent International Information Return Submission Procedure (DIIRSP) is invoked correctly.`,
+  },
+  {
+    q: "Are there any hidden fees?",
+    a: "No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge.",
+  },
+];
 
 // Schema.org Product with Offer per tier — drives rich-result pricing
 // snippets in Google search.
@@ -47,12 +72,26 @@ const productJsonLd = {
   })),
 };
 
+const pricingFaqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: PRICING_FAQS.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
+};
+
 export default function PricingPage() {
   return (
     <main className="bg-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      <JsonLd data={productJsonLd} />
+      <JsonLd data={pricingFaqJsonLd} />
+      <JsonLd
+        data={breadcrumbList([
+          { name: "Home", path: "/" },
+          { name: "Pricing", path: "/pricing" },
+        ])}
       />
 
       <section className="relative overflow-hidden bg-ink text-white">
@@ -177,26 +216,9 @@ export default function PricingPage() {
           Pricing FAQ
         </h2>
         <div className="space-y-4">
-          <FaqItem
-            q="How much does it cost?"
-            a={`Two flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready within ${EXPRESS_TURNAROUND}. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on either tier. IRS fax delivery to the Ogden PIN Unit is included in both.`}
-          />
-          <FaqItem
-            q="What's the difference between the two tiers?"
-            a={`Only the turnaround. The filing itself is identical: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. Both tiers also include a reasonable-cause letter on late / DIIRSP filings and a March filing reminder for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready within ${EXPRESS_TURNAROUND} and comes with priority email support.`}
-          />
-          <FaqItem
-            q="Is fax filing really included?"
-            a="Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and the timestamped fax receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine."
-          />
-          <FaqItem
-            q="What if I'm filing for multiple past years (DIIRSP)?"
-            a={`Add ${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past year on either tier. We include a reasonable-cause statement on every late filing so the IRS Delinquent International Information Return Submission Procedure (DIIRSP) is invoked correctly.`}
-          />
-          <FaqItem
-            q="Are there any hidden fees?"
-            a="No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge."
-          />
+          {PRICING_FAQS.map(({ q, a }) => (
+            <FaqItem key={q} q={q} a={a} />
+          ))}
         </div>
       </section>
     </main>

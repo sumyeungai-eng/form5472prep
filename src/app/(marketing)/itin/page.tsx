@@ -3,20 +3,28 @@ import type { Metadata } from "next";
 import { CheckCircle2, ShieldCheck, FileText, Clock, ArrowRight, UserCheck } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
+import {
+  CONTENT_LAST_REVIEWED,
+  SPEAKABLE,
+  breadcrumbList,
+  organizationNode,
+  pageOpenGraph,
+} from "@/lib/seo";
+
+const ITIN_DESCRIPTION =
+  "Get an ITIN without mailing your passport. An IRS Certifying Acceptance Agent certifies your documents and files Form W-7 for a flat $349 fee.";
 
 export const metadata: Metadata = {
   // `absolute` skips the root layout's "%s · Form5472 Prep" template so the
   // brand isn't doubled (the title already ends in "| Form5472 Prep").
   title: { absolute: "ITIN for Non-Residents — No Passport Mailing | Form5472 Prep" },
-  description:
-    "Get a US Individual Taxpayer Identification Number (ITIN) without mailing your original passport. As a Certifying Acceptance Agent (CAA), we certify your identity documents and submit Form W-7 to the IRS on your behalf. Flat fee $349.",
-  alternates: { canonical: "https://www.form5472prep.com/itin" },
-  openGraph: {
+  description: ITIN_DESCRIPTION,
+  alternates: { canonical: "/itin" },
+  openGraph: pageOpenGraph({
     title: "ITIN for Non-Residents — No Passport Mailing",
-    description:
-      "As a Certifying Acceptance Agent (CAA), we certify your identity documents and submit Form W-7 to the IRS. No passport mailing. Flat fee $349.",
-    url: "https://www.form5472prep.com/itin",
-  },
+    description: ITIN_DESCRIPTION,
+    path: "/itin",
+  }),
 };
 
 const faq = [
@@ -106,7 +114,7 @@ export default function ItinPage() {
               Get a US ITIN<br />
               <span className="text-accent-100">without mailing your passport.</span>
             </h1>
-            <p className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
+            <p data-speakable className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
               Non-residents applying for an ITIN normally have to mail their original passport to the IRS
               and wait months for it back. As an{" "}
               <strong className="text-white">IRS-authorized Certifying Acceptance Agent (CAA)</strong>, we certify your
@@ -313,7 +321,8 @@ function ItinStructuredData() {
     "@type": "Service",
     serviceType: "ITIN (Form W-7) preparation and CAA certification",
     name: "ITIN Acquisition for Non-Residents",
-    provider: { "@type": "Organization", name: "Form5472 Prep", url: env.appUrl },
+    provider: organizationNode(),
+    dateModified: CONTENT_LAST_REVIEWED,
     areaServed: { "@type": "Country", name: "United States" },
     audience: {
       "@type": "Audience",
@@ -341,24 +350,18 @@ function ItinStructuredData() {
     })),
   };
 
-  const breadcrumb = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: env.appUrl },
-      { "@type": "ListItem", position: 2, name: "ITIN Acquisition", item: url },
-    ],
-  };
+  const breadcrumb = breadcrumbList([
+    { name: "Home", path: "/" },
+    { name: "ITIN Acquisition", path: "/itin" },
+  ]);
 
   const webPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
     url,
     name: "ITIN for Non-Residents — No Passport Mailing",
-    speakable: {
-      "@type": "SpeakableSpecification",
-      cssSelector: ["h1", "section p"],
-    },
+    dateModified: CONTENT_LAST_REVIEWED,
+    speakable: SPEAKABLE,
   };
 
   return (

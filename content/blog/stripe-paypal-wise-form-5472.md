@@ -1,5 +1,5 @@
 ---
-title: "Stripe, PayPal and Wise on Form 5472: What Foreign LLC Owners Report"
+title: "Form 5472 for Stripe, PayPal, and Wise Activity"
 description: "Stripe, PayPal and Wise activity is not automatically reportable on Form 5472. The key is whether the transaction involved a related party."
 date: 2026-08-03
 publishAt: "2026-08-03T09:00:00-04:00"

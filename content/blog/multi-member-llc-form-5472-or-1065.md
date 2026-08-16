@@ -1,6 +1,6 @@
 ---
-title: "Multi-Member LLC with Foreign Owners: Form 5472 or Form 1065?"
-description: "A two-member LLC is a partnership by default — it files Form 1065, not Form 5472. Here's when the switch happens, what a partnership with foreign partners owes instead, and the ownership structures that put you back in Form 5472 territory."
+title: "Multi-Member LLC: Form 5472 or Form 1065?"
+description: "Multi-member LLC filing rules usually require Form 1065 under the default partnership classification. Learn when Form 5472 applies after an entity election."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"

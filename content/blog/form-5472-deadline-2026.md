@@ -1,6 +1,6 @@
 ---
-title: "Form 5472 Deadlines for 2026 and 2027: Every Date a Foreign-Owned LLC Needs"
-description: "The 2025 tax year Form 5472 is due 15 October 2026 if you extended. Here are all the deadlines, the extension rule that trips up foreign-owned LLCs, and what to do if a date has already passed."
+title: "Form 5472 Deadline for 2026 and 2027"
+description: "Form 5472 deadline guidance lists the 2026 and 2027 due dates, the Form 7004 extension rule, and the steps to take after a missed filing date."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"

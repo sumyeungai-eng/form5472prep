@@ -1,14 +1,15 @@
 ---
-title: "Form 5472 for India Residents Who Own a US LLC: The Complete Filing Guide"
-description: "If you're based in India and own a US single-member LLC, the IRS requires you to file Form 5472 every year. Here's exactly what to file, what your PAN number has to do with it, and what's changed in 2025 and 2026."
+title: "Form 5472 for India Residents With a US LLC"
+description: "Form 5472 for India residents covers the filing package for a foreign-owned US LLC, how to enter a PAN as an FTIN, and which owner transactions to report."
 date: 2026-05-28
+updated: 2026-07-06
 author: "Form5472 Prep"
 tags: ["form-5472", "india-residents", "foreign-owned-llc", "disregarded-entity"]
 readingMinutes: 8
 draft: false
 ---
 
-**Indian residents who own a US single-member LLC must file IRS Form 5472 with a pro forma Form 1120 every year**, even if the LLC owes no US tax. Your Indian PAN (Permanent Account Number) is the natural foreign tax identifying number for Form 5472 Part II; if you'd rather not use it, a self-assigned reference ID is accepted. The penalty for missing the filing is $25,000.
+**Indian residents who own a US single-member LLC must file [IRS Form 5472](https://www.irs.gov/instructions/i5472) with a pro forma Form 1120 every year**, even if the LLC owes no US tax. Your Indian PAN (Permanent Account Number) is the natural foreign tax identifying number for Form 5472 Part II; if you'd rather not use it, a self-assigned reference ID is accepted. The penalty for missing the filing is $25,000.
 
 If you're based in India — whether you're a solo freelancer, a SaaS founder, or a consultant who opened a US LLC for Stripe or US banking — the IRS almost certainly requires you to file **Form 5472** every year. This is not an income tax return. You don't pay US federal income tax on your business profits just because your LLC is a US entity. But you do have an **information return** filing obligation, and the penalty for missing it is **$25,000 per form, per year**.
 

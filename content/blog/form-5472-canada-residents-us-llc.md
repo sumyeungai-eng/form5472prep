@@ -1,14 +1,15 @@
 ---
-title: "Form 5472 for Canada Residents Who Own a US LLC: What You Need to File"
-description: "If you're based in Canada and own a US single-member LLC, the IRS requires you to file Form 5472 every year — even with zero revenue. Here's the complete guide including your SIN as the FTIN."
+title: "Form 5472 for Canada Residents With a US LLC"
+description: "Form 5472 for Canada residents covers the filing package for a foreign-owned US LLC, how to enter a Canadian SIN as an FTIN, and which transactions to report."
 date: 2026-06-19
+updated: 2026-07-06
 author: "Form5472 Prep"
 tags: ["form-5472", "canada-residents", "foreign-owned-llc", "disregarded-entity"]
 readingMinutes: 7
 draft: false
 ---
 
-**Canadian residents who own a US single-member LLC must file IRS Form 5472 with a pro forma Form 1120 every year**, even when no US tax is due. On Form 5472 Part II you can enter your Canadian SIN as the foreign tax identifying number, or a self-assigned reference ID if you'd rather not use it. Capital you put in counts as a reportable transaction, and missing the filing risks a $25,000 penalty.
+**Canadian residents who own a US single-member LLC must file [IRS Form 5472](https://www.irs.gov/instructions/i5472) with a pro forma Form 1120 every year**, even when no US tax is due. On Form 5472 Part II you can enter your Canadian SIN as the foreign tax identifying number, or a self-assigned reference ID if you'd rather not use it. Capital you put in counts as a reportable transaction, and missing the filing risks a $25,000 penalty.
 
 If you're based in Canada and own a US single-member LLC — whether it's a Delaware, Wyoming, or any other state entity — the IRS almost certainly requires you to file **Form 5472** every year. This is not an income tax return. You don't pay US federal income tax on your business profits simply because you own a US LLC. But you do have an **information return** filing obligation, and the penalty for missing it is **$25,000 per form, per year** under IRC §6038A(d).
 

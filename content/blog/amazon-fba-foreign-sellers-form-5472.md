@@ -1,7 +1,8 @@
 ---
-title: "Amazon FBA Foreign Sellers: Your Form 5472 Filing Guide for 2026"
-description: "If you're a non-US person selling on Amazon FBA through a US LLC, Form 5472 applies to you — and the 2026 environment is stricter than ever. Here's exactly what to report and what changed."
+title: "Form 5472 for Amazon FBA Foreign Sellers (2026)"
+description: "Form 5472 for Amazon FBA foreign sellers explains which owner transactions to report, how inventory activity differs, and what the 2026 filing requires."
 date: 2026-06-19
+updated: 2026-07-06
 author: "Form5472 Prep"
 tags: ["form-5472", "amazon-fba", "foreign-sellers", "ecommerce", "disregarded-entity"]
 readingMinutes: 9

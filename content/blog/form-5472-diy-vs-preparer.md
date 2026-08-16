@@ -1,7 +1,8 @@
 ---
-title: "DIY vs. Hiring a Preparer for Form 5472: Which Makes Sense for You?"
-description: "Form 5472 is simpler than most tax forms — but the $25,000 penalty for errors means the decision between DIY and hiring a preparer deserves a clear-eyed look. Here's the honest comparison."
+title: "Form 5472: DIY vs. Hiring a Preparer"
+description: "Form 5472 DIY filing costs less, while a preparer can reduce research and error risk. Compare the work, price, review, and filing support for each option."
 date: 2026-06-15
+updated: 2026-08-14
 author: "Form5472 Prep"
 tags: ["form-5472", "diy", "tax-preparer", "foreign-owned-llc", "filing-guide"]
 readingMinutes: 8

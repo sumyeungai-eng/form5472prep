@@ -1,6 +1,6 @@
 ---
-title: "Does a Foreign-Owned US LLC Pay US Tax? What Non-Residents Actually Owe"
-description: "Most non-US owners of a single-member US LLC owe zero US income tax — but almost all of them still have to file Form 5472. Here's the difference between owing tax and owing a filing, and how to tell which side you're on."
+title: "Foreign-Owned US LLC Tax: What Non-Residents Owe"
+description: "Foreign-owned US LLC tax depends on US trade or business and income sourcing, but Form 5472 filing can still apply when no federal income tax is due."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"

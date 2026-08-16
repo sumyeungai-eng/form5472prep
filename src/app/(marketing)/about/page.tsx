@@ -4,18 +4,19 @@ import { ShieldCheck, FileText, Send, PenTool, Users, ArrowRight } from "lucide-
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
+import { CONTENT_LAST_REVIEWED, organizationNode, pageOpenGraph } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "About Form5472 Prep",
   description:
     "Form5472 Prep is a done-for-you filing and courier service built only for the foreign-owned single-member LLC's Form 5472 + pro forma 1120. How we work, and what we are and aren't.",
   alternates: { canonical: "/about" },
-  openGraph: {
+  openGraph: pageOpenGraph({
     title: "About Form5472 Prep",
     description:
       "A done-for-you filing service built only for the foreign-owned LLC's Form 5472 + pro forma 1120. How we work — accountant-reviewed, faxed to the IRS, with a proof-of-delivery receipt.",
-    url: "https://www.form5472prep.com/about",
-  },
+    path: "/about",
+  }),
 };
 
 const steps = [
@@ -31,13 +32,11 @@ export default function AboutPage() {
     "@type": "AboutPage",
     name: "About Form5472 Prep",
     url: `${env.appUrl}/about`,
-    mainEntity: {
-      "@type": "Organization",
-      name: "Form5472 Prep",
-      url: env.appUrl,
+    dateModified: CONTENT_LAST_REVIEWED,
+    mainEntity: organizationNode({
       description:
         "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs, reviewed by a qualified tax accountant before fax delivery to the IRS Ogden PIN Unit.",
-    },
+    }),
   };
 
   return (

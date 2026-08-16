@@ -1,5 +1,5 @@
 ---
-title: "Form 5472 FTIN, Reference ID and Foreign Address: How to Enter Them"
+title: "Form 5472 FTIN, Reference ID, and Foreign Address"
 description: "Use the foreign owner’s FTIN if available, create a consistent reference ID when required, and enter the complete foreign address."
 date: 2026-09-14
 publishAt: "2026-09-14T09:00:00-04:00"

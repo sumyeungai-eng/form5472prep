@@ -1,6 +1,6 @@
 ---
-title: "What Does a Foreign-Owned US LLC Actually Have to File? The 2026 Checklist"
-description: "Form 5472, pro forma 1120, state annual reports, BOI, 1040-NR — here's the complete list of what a non-US owner of a US LLC must file each year, what changed in 2026, and what you can safely ignore."
+title: "Foreign-Owned US LLC Filing Checklist (2026)"
+description: "Foreign-owned US LLC filing requirements can include Form 5472, pro forma Form 1120, state reports, income-tax returns, and sales-tax registrations."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"

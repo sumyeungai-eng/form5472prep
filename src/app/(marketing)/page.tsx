@@ -27,6 +27,12 @@ import { formatPrice } from "@/lib/utils";
 import { env } from "@/lib/env";
 import { getConfirmedFilingsCount, formatFilingCount } from "@/lib/stats";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
+import {
+  CONTENT_LAST_REVIEWED,
+  ORG_EMAIL,
+  organizationNode,
+  pageOpenGraph,
+} from "@/lib/seo";
 
 // FAQ content is the source of truth for both the rendered <dl> and the
 // FAQPage JSON-LD structured data — keep them in lockstep by sharing the array.
@@ -77,24 +83,21 @@ const FAQS = [
 // it's edge-cached globally while the counter stays fresh.
 export const revalidate = 600;
 
+const HOME_DESCRIPTION =
+  "Form 5472 and pro forma 1120 filing for a foreign-owned US LLC, from $149. Prepared, reviewed, and filed by fax to the IRS Ogden PIN Unit.";
+
 export const metadata: Metadata = {
   // `absolute` skips the layout's "%s · Form5472 Prep" template — the homepage title
   // already brands the product, so we don't want the suffix appended.
   title: { absolute: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep" },
-  description:
-    "IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. From $149 in 5-7 business days, or $199 for express within 3 — fax delivery included on both. 100% money-back guarantee if we fail to submit.",
+  description: HOME_DESCRIPTION,
   alternates: { canonical: "/" },
-  openGraph: {
+  openGraph: pageOpenGraph({
     title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
-    description:
-      "For foreign-owned US single-member LLCs. We prepare the forms, you sign once, we fax to the IRS Ogden PIN Unit. From $149, or $199 for express filing within 3 business days — 100% money-back guarantee if we fail to submit.",
-    url: "/",
-    // This page sets its own openGraph object, which replaces (not merges
-    // with) the root layout's — so the branded card image has to be named
-    // here explicitly or the homepage shares with no image. /opengraph-image
-    // is the dynamic route from src/app/opengraph-image.tsx.
+    description: HOME_DESCRIPTION,
+    path: "/",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Form5472 Prep" }],
-  },
+  }),
   twitter: {
     card: "summary_large_image",
     title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
@@ -746,10 +749,8 @@ function StructuredData() {
   // source on a Form 5472 / DIIRSP question.
   const organization = {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Form5472 Prep",
+    ...organizationNode({
     legalName: "Form5472 Prep",
-    url,
     logo: `${url}/logo-mark.svg`,
     description:
       "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs. Every package reviewed by a qualified tax accountant before fax delivery to the IRS Ogden PIN Unit.",
@@ -765,21 +766,21 @@ function StructuredData() {
       "$25,000 IRS information-return penalty abatement",
     ],
     slogan: "Flat-rate Form 5472 filing. No hidden fees.",
-    sameAs: [] as string[],
     contactPoint: [
       {
         "@type": "ContactPoint",
         contactType: "customer support",
-        email: "support@form5472prep.com",
+        email: ORG_EMAIL,
         availableLanguage: ["en"],
       },
       {
         "@type": "ContactPoint",
         contactType: "billing support",
-        email: "support@form5472prep.com",
+        email: ORG_EMAIL,
         availableLanguage: ["en"],
       },
     ],
+    }),
   };
 
   // WebSite + SearchAction declares a site-search action so Google can
@@ -851,6 +852,7 @@ function StructuredData() {
     "@type": "WebPage",
     url,
     name: "Form5472 Prep",
+    dateModified: CONTENT_LAST_REVIEWED,
     speakable: {
       "@type": "SpeakableSpecification",
       cssSelector: ["h1", "section p"],
