@@ -37,9 +37,8 @@ export type LandingPage = {
   startSrc?: string;
 };
 
-// The $50-off Google Ads landing page. Exported so [seoSlug]/page.tsx can
-// keep it out of the hero A/B split (see AB_EXCLUDED_SLUGS there) — adding a
-// slug to the split would reshuffle every existing page's variant.
+// Canonical slug for the Google Ads promo funnel. Exported as the single
+// source of truth for code that associates this route with promo pricing.
 export const PROMO_LANDING_SLUG = "form-5472-50-off";
 
 export const LANDING_PAGES: LandingPage[] = [
@@ -2209,111 +2208,6 @@ export const LANDING_PAGES: LandingPage[] = [
       {
         q: "Money-back guarantee — what does it cover?",
         a: "If we fail to submit your filing to the IRS, you get a 100% refund. And if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge. It does not cover an IRS penalty assessed on a correctly filed return (no service can guarantee an IRS outcome) or change-of-mind cancellations after the package has been faxed.",
-      },
-    ],
-    relatedSlugs: [],
-  },
-  // ────────────────────────────────────────────────────────────────────
-  // $50-OFF LAUNCH PROMOTION (Google Ads) — noindex so it never competes with
-  // /pricing in organic search. List prices stay $149 standard / $199 express
-  // everywhere else on the site; this page advertises a flat $50 off the base
-  // filing fee. Additional past tax years (+$99 each) are NOT discounted.
-  //
-  // startSrc: "promo50" is load-bearing. It is what /start persists as
-  // Filing.funnelSource, which is what /api/checkout reads server-side to
-  // decide the discount (PROMO_SOURCES in src/lib/pricing.ts). Change it and
-  // this page silently sells at full price.
-  // ────────────────────────────────────────────────────────────────────
-  {
-    slug: PROMO_LANDING_SLUG,
-    keyword: "form 5472 filing discount",
-    title: "File Form 5472 for $99 — $50 Off (Was $149) | Form5472 Prep",
-    metaDescription:
-      "File Form 5472 with pro forma Form 1120 for $99, reduced from $149. The package is accountant-reviewed and faxed to the IRS with a timestamped receipt.",
-    sources: [
-      { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
-      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
-      { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
-    ],
-    h1: "File your Form 5472 for $99 — $50 off.",
-    intro:
-      "Our complete, accountant-reviewed Form 5472 filing is $149, ready in 5-7 business days. Right now it's $99 — a flat $50 off. Same service, lower price: a qualified tax accountant reviews your Form 5472 + pro forma Form 1120, we fax the signed package to the IRS Ogden PIN Unit, and you get the timestamped transmission receipt back as your proof of filing. Need it sooner? Express is $50 off as well — $199 down to $149, the identical filing within 3 business days. This is the filing that keeps a $25,000 §6038A penalty off your LLC.",
-    noindex: true,
-    startSrc: "promo50",
-    sections: [
-      {
-        heading: "The offer: $149 → $99",
-        body: "Our list price for a complete Form 5472 filing is $149 for one tax year, ready in 5-7 business days. Through this promotion you pay $99 — a flat $50 off, straight back in your pocket.\n\nNothing is stripped out to get there. The $99 filing is the same package, prepared the same way, reviewed by the same accountant, and delivered to the IRS the same way as a $149 filing. There is no \"basic\" tier, no upsell at checkout, and no separate fax fee.\n\nIn a hurry? The $50 comes off Express too: $199 → $149, with the filing ready within 3 business days instead of 5-7. The forms, the accountant review and everything in the package are identical on both tiers — the only thing the extra buys is speed.\n\nThe discount is applied automatically when you start from this page — you'll see the $149 struck through and the $50 reduction itemised on the payment screen before you enter a card. What the page shows you is exactly what Stripe charges.",
-      },
-      {
-        heading: "What your $99 includes",
-        body: "One tax year, filed end to end:\n\n• Filled IRS Form 5472 + pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp and the Part V supporting statement.\n• Review by a qualified tax accountant on our team before anything leaves our hands — nothing goes to the IRS on autopilot.\n• Reasonable Cause Statement for late filings under DIIRSP, drafted around your actual circumstances.\n• Fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) — included, no separate fax fee.\n• The timestamped IRS fax transmission receipt emailed to you and stored in your portal: your proof of timely filing.\n• Filing confirmation and priority email support from start to receipt.\n• Ready in 5-7 business days, or within 3 on Express ($199 → $149 with the same $50 off).\n• A reminder next March so the following year's deadline doesn't slip past you.\n• 100% money-back guarantee if we fail to submit.\n\nYou answer 12 questions — about 15 minutes — and sign once on screen. No printing, no scanning, no mailing anything yourself.",
-      },
-      {
-        heading: "Filing late? Here's what a multi-year catch-up costs",
-        body: "The $50 comes off the base filing fee. Additional past tax years are $99 each and are not discounted — the saving is a fixed amount off your order, not a percentage of it:\n\n• 1 tax year: was $149 — now $99.\n• 2 tax years (DIIRSP catch-up): was $248 — now $198 ($99 + $99).\n• 3 tax years (DIIRSP catch-up): was $347 — now $297 ($99 + $99 + $99).\n\nEvery year in the package gets the same treatment: complete forms, accountant review, and one comprehensive reasonable cause statement covering all the delinquent years together — which is the strongest abatement argument you can make under DIIRSP.\n\nIf you're more than three years behind, email support@form5472prep.com with your entity details and the years involved and we'll scope it before you pay.",
-      },
-      {
-        heading: "Why this filing is worth far more than $99",
-        body: "IRC § 6038A assesses $25,000 per form, per year when Form 5472 is filed late, filed incompletely, or not filed at all. The penalty is automatic — the IRS doesn't have to show any harm, and there is no small-LLC exception for an entity with no revenue and no US tax due. Once the IRS issues a notice, another $25,000 accrues for every 30-day period the filing stays outstanding.\n\nThe three ways owners get caught:\n\n1. Never filed — the LLC exists, money moved in and out, and Form 5472 never came up when the LLC was formed.\n2. Filed Form 5472 on its own — without the pro forma Form 1120 it attaches to, the IRS treats the return as never filed.\n3. Filed, but incomplete — a blank Part V, a missing supporting statement, or a missing owner identifier is scored the same as a missing return.\n\nAll three are avoidable paperwork. That's what the $99 buys: a complete package, checked by an accountant who files these all year, delivered with dated proof of when it arrived.",
-      },
-      {
-        heading: "Who this is for",
-        body: "• Non-US owners of a US single-member LLC (Wyoming, Delaware, New Mexico, Florida — any state) who need this year's filing done correctly the first time.\n• Owners who only just discovered the requirement and are one, two, or three years behind.\n• Owners who have already received an IRS notice (CP-15 or a §6038A letter) and need a properly prepared late filing with a reasonable cause statement.\n• Owners of several LLCs who want every entity filed the same way, every year.\n• CPAs and tax attorneys filing for a foreign client who want the 5472 package prepared, reviewed, and faxed for them.\n\nIf your LLC had even one reportable transaction last year — including the wire you sent to open its US bank account — you are in scope, revenue or no revenue.",
-      },
-      {
-        heading: "How your filing reaches the IRS",
-        body: "1. Complete the 12-question wizard — about 15 minutes the first year, about 5 minutes for returning customers.\n2. Sign once on screen. The canvas signature is embedded into every required signature box on the forms.\n3. A qualified tax accountant reviews the full package and emails you if anything needs clarifying.\n4. Once review clears, we fax the signed package to the IRS Ogden PIN Unit at +1-855-887-7737 — within 5-7 business days of your signature on Standard, or within 3 on Express.\n5. You receive the timestamped IRS fax transmission receipt by email, and a copy stays in your portal.\n\nYou can't e-file Form 5472. The IRS only accepts it by mail or fax to Ogden, and fax is the route that produces a dated transmission receipt — which is why we use it.",
-      },
-      {
-        heading: "Start now at $99",
-        body: "Click Start filing. The discounted price is applied for you — you'll see $149 struck through and $99 as the amount due before you enter any payment details, and that's the amount Stripe charges.\n\nWant to talk your situation through first? Email support@form5472prep.com. Email support is included on every filing, and the in-portal chat opens as soon as you start.",
-      },
-    ],
-    faqs: [
-      {
-        q: "Is $99 really the full price?",
-        a: "Yes. $99 is the total for one tax year, everything included: forms, accountant review, reasonable cause letter if you're late, IRS fax delivery, and the timestamped receipt. There is no separate fax fee, no setup fee, and no subscription. The only things that change the total are additional past tax years (a flat $99 each, not discounted) and choosing Express, which is $50 off as well at $149 instead of $199.",
-      },
-      {
-        q: "What's the catch — is the $99 service different from the $149 one?",
-        a: "There's no catch and no difference. $149 is our list price for the Standard filing; this is a $50 promotional discount off it through our Google Ads campaign. The package, the accountant review, the fax delivery, the 5-7 business day turnaround and the guarantee are identical.",
-      },
-      {
-        q: "How much is a two- or three-year catch-up?",
-        a: "The $50 comes off the base filing fee only; extra past years stay at $99 each. Two tax years is $198 (normally $248) and three tax years is $297 (normally $347). All the delinquent years go to the IRS together under DIIRSP with one comprehensive reasonable cause statement.",
-      },
-      {
-        q: "How fast will my filing go out, and can I get it sooner?",
-        a: "Standard is ready in 5-7 business days, which at $99 is what this promotion prices. If your deadline is tight, Express is ready within 3 business days and carries the same $50 off — $149 instead of $199. Express is not a better or more thorough filing: the forms, the accountant review and the documents you receive are exactly the same. You are only paying for speed.",
-      },
-      {
-        q: "Do I have to enter a discount code?",
-        a: "No. The discount is applied automatically because you started your filing from this page. You'll see the full price struck through and the reduction itemised on the review screen and again on the Stripe payment page before you pay.",
-      },
-      {
-        q: "What exactly do I get?",
-        a: "One tax year filed end to end: Form 5472 + pro forma Form 1120 with the Part V supporting statement, review by a qualified tax accountant, a reasonable cause letter if you're filing late, fax delivery to the IRS Ogden PIN Unit, the timestamped transmission receipt as proof of filing, filing confirmation, and a reminder before next year's deadline.",
-      },
-      {
-        q: "What happens if I don't file at all?",
-        a: "IRC § 6038A carries an automatic $25,000 penalty per form, per year — even if your LLC had no revenue and owes no US tax. If the IRS sends a notice and the filing stays outstanding, another $25,000 is added for each 30-day period. There is no cap.",
-      },
-      {
-        q: "Can you guarantee the IRS waives the penalty on my late filing?",
-        a: "No service can guarantee an IRS outcome. What we can do is make the DIIRSP submission as strong as possible — complete forms, documented transactions, an accountant-reviewed reasonable cause statement, and dated proof of delivery. Most well-documented first-time late filings are accepted, but the decision is the IRS's.",
-      },
-      {
-        q: "Why fax instead of e-filing?",
-        a: "Foreign-owned US disregarded entities can't e-file Form 5472 or the attached pro forma Form 1120 — the IRS only accepts them by mail or fax to the Ogden PIN Unit. Fax is faster than mail and produces a timestamped transmission receipt, which is the cleanest evidence of when you filed.",
-      },
-      {
-        q: "Do I sign, or does your accountant sign?",
-        a: "You sign — the signature must come from you as the LLC owner. The portal's canvas signature is embedded into the required signature boxes. Our accountant reviews and signs off internally on the package before we fax it.",
-      },
-      {
-        q: "Money-back guarantee — what does it cover?",
-        a: "If we fail to submit your filing to the IRS, you get a 100% refund. And if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge. It does not cover an IRS penalty assessed on a correctly filed return, or change-of-mind cancellations after the package has been faxed.",
       },
     ],
     relatedSlugs: [],

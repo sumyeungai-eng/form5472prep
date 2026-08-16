@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2, Clock, FileText, Send, ShieldCheck } from "lu
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
-import { LANDING_PAGES, getLandingPage, getRelatedSlugs, PROMO_LANDING_SLUG } from "@/lib/landing-pages";
+import { LANDING_PAGES, getLandingPage, getRelatedSlugs } from "@/lib/landing-pages";
 import {
   TIERS,
   TIER_ORDER,
@@ -32,16 +32,8 @@ export const dynamicParams = false;
 // Split logic: alphabetically sort all slugs, then assign odd-indexed to
 // "rail" and even-indexed to "below". With 19 slugs this gives a 10/9 split.
 //
-// Paid-ad pages that always force the "rail" variant are excluded from the
-// sorted list entirely. The split is index-parity over an alphabetical sort,
-// so letting a new slug into the array would silently flip the variant of
-// every page that sorts after it and corrupt the running comparison.
-const AB_EXCLUDED_SLUGS: ReadonlySet<string> = new Set([PROMO_LANDING_SLUG]);
-
 function heroVariantFor(slug: string): "rail" | "below" {
-  const allSlugs = LANDING_PAGES.map((p) => p.slug)
-    .filter((s) => !AB_EXCLUDED_SLUGS.has(s))
-    .sort();
+  const allSlugs = LANDING_PAGES.map((p) => p.slug).sort();
   const idx = allSlugs.indexOf(slug);
   return idx % 2 === 0 ? "below" : "rail";
 }
@@ -91,11 +83,8 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
   // Premium (paid-ad) pages always use the rail variant — same-day promise
   // and direct accountant access deserve the most-prominent CTA layout.
   // Organic SEO pages stay in the A/B split.
-  // The promo page also forces the rail layout (and is excluded from the A/B
-  // parity list above) — a paid-ad page shouldn't be split-tested.
-  const isPromoPage = page.slug === PROMO_LANDING_SLUG;
   const variant =
-    page.pricingMode === "premium" || isPromoPage ? "rail" : heroVariantFor(page.slug);
+    page.pricingMode === "premium" ? "rail" : heroVariantFor(page.slug);
   // ?v= drives the layout-variant A/B comparison in Vercel Analytics (Top
   // Pages report). ?src= is the source funnel tag — captured on /start and
   // persisted as Filing.funnelSource for per-page sales attribution. It
