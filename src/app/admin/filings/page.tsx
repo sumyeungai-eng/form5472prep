@@ -33,21 +33,22 @@ export default async function AdminFilingsPage({
   // dismissed. Any other value means the normal list, which must never show
   // them — dismissing a draft is meant to make it disappear.
   const showHidden = searchParams.hidden === "1";
-  // The two views that list DRAFT rows. Only these pay for the extra yearData
-  // join + the completeness pass.
-  const draftView = statusFilter === "DRAFT" || showHidden;
-  // ready=1 narrows the draft view to the drafts checkout would accept — the
-  // customers who filled everything in and stopped at the payment step.
+  // Every view that can contain DRAFT rows — the default (all statuses), the
+  // explicit DRAFT filter, and the archive. Only these pay for the extra
+  // yearData join + the completeness pass; a PAID-only filter skips it.
+  const draftView = !statusFilter || statusFilter === "DRAFT" || showHidden;
+  // ready=1 narrows to the drafts checkout would accept — the customers who
+  // filled everything in and stopped at the payment step.
   const readyOnly = draftView && searchParams.ready === "1";
 
+  // Default = ALL statuses, drafts included. Drafts used to be hidden by
+  // default as "mostly abandoned wizard sessions", but that also hid the
+  // customers who finished everything and stalled at payment — the exact rows
+  // the admin most wants to see. Junk drafts are handled by Hide, not by
+  // hiding the whole status.
   const where: Record<string, unknown> = { adminHidden: showHidden };
   if (statusFilter && STATUS_VALUES.includes(statusFilter)) {
     where.status = statusFilter;
-  } else if (!showHidden) {
-    // Default: hide DRAFT filings (mostly abandoned wizard sessions).
-    // Skipped in the archive view — archived rows are always DRAFT (the API
-    // refuses to hide anything else), so "except draft" would empty it out.
-    where.status = { not: "DRAFT" };
   }
   if (q) {
     where.OR = [
@@ -162,7 +163,7 @@ export default async function AdminFilingsPage({
           defaultValue={statusFilter ?? ""}
           className="px-3 py-2 text-sm border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
         >
-          <option value="">All statuses (except draft)</option>
+          <option value="">All statuses</option>
           {STATUS_VALUES.map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
@@ -181,7 +182,7 @@ export default async function AdminFilingsPage({
         </Link>
         {draftView && (
           <Link href={readyHref} className="text-slate-500 hover:text-slate-900 hover:underline">
-            {readyOnly ? "← All drafts" : "Ready to pay only"}
+            {readyOnly ? "← All rows" : "Ready to pay only"}
           </Link>
         )}
       </div>
