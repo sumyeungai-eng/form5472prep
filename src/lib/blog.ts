@@ -146,6 +146,21 @@ const ARTWORK_ALTS: Record<string, string> = {
   "multi-member-llc-form-5472-or-1065": "Two partner files beside a Form 1065 partnership return and a Form 5472, showing which return applies",
   "form-5472-uae-dubai-residents-us-llc": "United Arab Emirates and U.S. business documents arranged for a Form 5472 filing",
   "amended-form-5472-correcting-errors": "A corrected Form 5472 package with an amended cover sheet and an explanation statement",
+  "form-5472-australia-residents-us-llc": "An Australian owner reviewing U.S. LLC tax records in an international workspace",
+  "form-5472-germany-residents-us-llc": "A German owner organizing U.S. LLC filing records and cross-border transactions",
+  "form-5472-france-residents-us-llc": "A French owner preparing U.S. LLC tax paperwork beside euro and dollar records",
+  "form-5472-singapore-residents-us-llc": "A Singapore owner reviewing a U.S. LLC filing package in a modern office",
+  "form-5472-netherlands-residents-us-llc": "A Dutch owner organizing cross-border U.S. LLC filing records",
+  "delaware-llc-foreign-owner-tax-filing": "A Delaware LLC compliance file with an annual-tax calendar and U.S. filing records",
+  "california-llc-foreign-owner-tax-filing": "California LLC state and federal filing records arranged on a professional desk",
+  "florida-llc-foreign-owner-tax-filing": "A Florida LLC annual-report calendar beside a federal tax filing folder",
+  "texas-llc-foreign-owner-tax-filing": "A Texas LLC public-information report and federal compliance records",
+  "form-5472-reasonable-cause-letter": "A detailed reasonable cause letter organized with a timeline and supporting exhibits",
+  "how-to-fax-form-5472-irs": "A complete Form 5472 package moving through a secure fax workflow",
+  "pro-forma-form-1120-foreign-owned-llc": "A pro forma Form 1120 and Form 5472 assembled as one filing package",
+  "form-5472-currency-conversion-exchange-rates": "A foreign-currency ledger being converted into documented U.S. dollar totals",
+  "form-5472-foreign-corporate-owner": "A foreign parent-company folder connected to its U.S. LLC filing records",
+  "form-5472-change-of-ownership": "Two owners documenting the transfer of a U.S. LLC interest",
 };
 
 function artworkAlt(slug: string, title: string): string {
@@ -308,6 +323,35 @@ export function extractFaqs(body: string): { q: string; a: string }[] {
   }
   flush();
   return out;
+}
+
+// Pull the first substantial numbered process from a question-form "How..."
+// section. This lets process guides expose matching HowTo schema without
+// duplicating step copy in frontmatter or page code.
+export function extractHowTo(
+  body: string,
+): { name: string; steps: { name: string; text: string }[] } | null {
+  let name: string | null = null;
+  let steps: { name: string; text: string }[] = [];
+
+  const finish = () => (name && steps.length >= 2 ? { name, steps } : null);
+  for (const line of body.split("\n")) {
+    const h2 = line.match(/^##\s+(.+)/);
+    if (h2) {
+      const ready = finish();
+      if (ready) return ready;
+      name = /^How\b/i.test(h2[1]) ? stripMarkdown(h2[1]) : null;
+      steps = [];
+      continue;
+    }
+    if (!name) continue;
+    const item = line.match(/^\d+\.\s+(.+)/);
+    if (!item) continue;
+    const text = stripMarkdown(item[1]);
+    const firstSentence = text.match(/^(.+?[.!?])(?:\s|$)/)?.[1] ?? text;
+    steps.push({ name: firstSentence.replace(/[.!?]$/, ""), text });
+  }
+  return finish();
 }
 
 // ---- Admin write APIs ----

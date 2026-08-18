@@ -15,7 +15,14 @@ import {
 } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { BlogToc, extractH2Headings } from "@/components/BlogToc";
-import { getAllPosts, getPost, formatPostDate, extractFaqs, type PostMeta } from "@/lib/blog";
+import {
+  getAllPosts,
+  getPost,
+  formatPostDate,
+  extractFaqs,
+  extractHowTo,
+  type PostMeta,
+} from "@/lib/blog";
 import { env } from "@/lib/env";
 import { SPEAKABLE, pageOpenGraph } from "@/lib/seo";
 
@@ -67,26 +74,22 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const allPosts = await getAllPosts();
   const otherPosts = allPosts.filter((candidate) => candidate.slug !== post.slug).slice(0, 4);
   const articleJsonLd = {
-    "@context": "https://schema.org",
     "@type": "BlogPosting",
+    "@id": `${env.appUrl}/blog/${post.slug}#article`,
     headline: post.title,
     description: post.description,
     image: `${env.appUrl}${post.image}`,
     datePublished: new Date(post.publishAt ?? post.date).toISOString(),
     dateModified: new Date(post.updated ?? post.publishAt ?? post.date).toISOString(),
     speakable: SPEAKABLE,
-    author: { "@type": "Organization", name: post.author ?? "Form5472 Prep" },
-    publisher: {
-      "@type": "Organization",
-      name: "Form5472 Prep",
-      logo: { "@type": "ImageObject", url: `${env.appUrl}/logo-mark.svg` },
-    },
+    author: { "@id": `${env.appUrl}#organization` },
+    publisher: { "@id": `${env.appUrl}#organization` },
     mainEntityOfPage: { "@type": "WebPage", "@id": `${env.appUrl}/blog/${post.slug}` },
     keywords: post.tags?.join(", "),
   };
   const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    "@id": `${env.appUrl}/blog/${post.slug}#breadcrumb`,
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: env.appUrl },
       { "@type": "ListItem", position: 2, name: "Blog", item: `${env.appUrl}/blog` },
@@ -94,11 +97,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     ],
   };
   const faqs = extractFaqs(post.body);
+  const howTo = extractHowTo(post.body);
   const tocHeadings = extractH2Headings(post.body);
   const faqJsonLd = faqs.length >= 2
     ? {
-        "@context": "https://schema.org",
         "@type": "FAQPage",
+        "@id": `${env.appUrl}/blog/${post.slug}#faq`,
         mainEntity: faqs.map((faq) => ({
           "@type": "Question",
           name: faq.q,
@@ -106,12 +110,40 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         })),
       }
     : null;
+  const howToJsonLd = howTo
+    ? {
+        "@type": "HowTo",
+        "@id": `${env.appUrl}/blog/${post.slug}#howto`,
+        name: howTo.name,
+        step: howTo.steps.map((step, index) => ({
+          "@type": "HowToStep",
+          position: index + 1,
+          name: step.name,
+          text: step.text,
+        })),
+      }
+    : null;
+  const organizationJsonLd = {
+    "@type": "Organization",
+    "@id": `${env.appUrl}#organization`,
+    name: "Form5472 Prep",
+    url: env.appUrl,
+    logo: { "@type": "ImageObject", url: `${env.appUrl}/logo-mark.svg` },
+  };
+  const schemaGraph = {
+    "@context": "https://schema.org",
+    "@graph": [
+      articleJsonLd,
+      organizationJsonLd,
+      breadcrumbJsonLd,
+      ...(faqJsonLd ? [faqJsonLd] : []),
+      ...(howToJsonLd ? [howToJsonLd] : []),
+    ],
+  };
 
   return (
     <div className="bg-[#f8f9fb] pb-24">
-      <JsonLd data={articleJsonLd} />
-      <JsonLd data={breadcrumbJsonLd} />
-      {faqJsonLd && <JsonLd data={faqJsonLd} />}
+      <JsonLd data={schemaGraph} />
 
       <article>
         <header className="relative overflow-hidden border-b border-slate-200 bg-paper">
