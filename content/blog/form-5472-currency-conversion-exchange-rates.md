@@ -8,8 +8,6 @@ tags: ["form-5472", "exchange-rates", "foreign-currency", "recordkeeping"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=Form 5472 exchange rate currency conversion; intent=problem solving; secondary=Form 5472 USD amounts, exchange rate schedule, yearly average rate; fan-out=spot rate, average rate, attachment, records, examples; target=/start; opportunity=official rules are split across two IRS pages; original asset=four-column conversion workpaper. -->
-
 **Report Form 5472 amounts in US dollars and attach a schedule showing the exchange rates used. The IRS generally points to the spot rate when an item is received, paid or accrued and accepts a consistently used published rate. The method should match the transaction pattern and be documented, not selected for a preferred result.**
 
 Currency conversion is part of the filing workpapers, not an afterthought. Owners can [start a guided filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-exchange-rates) after collecting original-currency amounts, dates and statements.

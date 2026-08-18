@@ -8,8 +8,6 @@ tags: ["form-5472", "ownership-change", "llc-sale", "entity-classification"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=Form 5472 change of ownership LLC; intent=ready to act; secondary=sale US LLC foreign owner Form 5472, new member Form 1065, ownership transfer Part V; fan-out=transaction, classification, final return, EIN, related parties; target=/start; opportunity=answers split between entity-classification and Form 5472 sources; original asset=before-event-after checklist. -->
-
 **A change in a foreign-owned LLC's ownership can create a reportable acquisition or disposition on Form 5472 and can also change the entity's federal tax classification. A one-owner LLC that gains a second member generally becomes a partnership by default, while a partnership reduced to one owner generally becomes disregarded. Analyse the transaction date, parties, consideration and resulting classification together.**
 
 Ownership changes are not routine annual transactions. [Start the filing review](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-change-ownership) with the purchase agreement, ownership ledger and bank evidence before deciding which return applies.

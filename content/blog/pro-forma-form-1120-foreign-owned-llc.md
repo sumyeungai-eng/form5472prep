@@ -8,8 +8,6 @@ tags: ["form-5472", "pro-forma-1120", "foreign-owned-llc", "filing-guide"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=pro forma Form 1120 foreign-owned LLC; intent=commercial investigation; secondary=how to fill pro forma 1120 Form 5472, foreign-owned U.S. DE 1120, Form 5472 attachment; fan-out=why required, fields, notation, deadline, filing method; target=/start; opportunity=IRS instructions are authoritative but difficult to apply; original asset=pro-forma-vs-full-return comparison. -->
-
 **A pro forma Form 1120 is the abbreviated cover return that a wholly foreign-owned US disregarded entity uses to transmit Form 5472. It does not automatically turn the LLC into a corporation for all federal income-tax purposes. The filer completes the limited identifying items required by the instructions, writes “Foreign-owned U.S. DE” across the top, and attaches Form 5472.**
 
 The pro forma return and Form 5472 form one filing package. Owners can [start the guided package](/start?utm_source=blog&utm_medium=internal&utm_campaign=pro-forma-1120) when they want both documents prepared consistently.

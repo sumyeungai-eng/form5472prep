@@ -8,8 +8,6 @@ tags: ["form-5472", "netherlands", "foreign-owned-llc", "ftin"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=form 5472 Netherlands resident US LLC; intent=commercial investigation; secondary=Dutch BSN Form 5472, RSIN FTIN, US LLC Netherlands filing; fan-out=filing test, identifier, transactions, EUR conversion, deadline; target=/start; opportunity=high-value founder market with little specialist coverage; original asset=Dutch owner ID map. -->
-
 **A Netherlands resident who wholly owns a US single-member LLC generally files Form 5472 with a pro forma Form 1120 when the LLC has a reportable transaction with its owner or another related party. Capital contributions, withdrawals, loans, reimbursements and formation expenses can create the obligation even if the company earned no revenue.**
 
 The filing gives the IRS related-party information. It does not decide Dutch tax classification or replace a Netherlands return. A Dutch owner can [start a guided filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-netherlands) using the LLC's EIN, owner information and a complete transaction ledger.

@@ -8,8 +8,6 @@ tags: ["form-5472", "foreign-company", "corporate-owner", "related-parties"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=Form 5472 foreign company owns US LLC; intent=commercial investigation; secondary=foreign corporate owner US LLC Form 5472, direct ultimate owner, Part II foreign entity; fan-out=eligibility, identification, ownership chain, transactions, separate forms; target=/start; opportunity=most guides assume an individual owner; original asset=three-layer ownership map. -->
-
 **A foreign company may wholly own a US single-member LLC, and the US LLC can remain a disregarded entity for federal tax purposes. When reportable transactions occur, Form 5472 identifies the foreign corporate owner, any ultimate indirect 25% foreign shareholder, and each related party. A separate Form 5472 is generally required for each related party with reportable transactions.**
 
 Corporate ownership adds an ownership-chain exercise to the ordinary transaction work. [Start the filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-foreign-corporate-owner) after gathering the foreign company's registration, tax number and shareholder chart.

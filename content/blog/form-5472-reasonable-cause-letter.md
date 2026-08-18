@@ -8,8 +8,6 @@ tags: ["form-5472", "reasonable-cause", "late-filing", "penalty"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=Form 5472 reasonable cause letter; intent=ready to act; secondary=Form 5472 penalty abatement letter, reasonable cause statement example, late 5472 letter; fan-out=legal standard, facts, evidence, filing process, IRS notice; target=/start; opportunity=SERPs contain generic templates that overpromise; original asset=five-part evidence framework. -->
-
 **A Form 5472 reasonable cause letter should give a dated, fact-specific account showing that the taxpayer exercised ordinary business care and prudence, explain exactly what prevented timely compliance, document steps taken before and after the failure, and confirm prompt correction. A template alone cannot establish reasonable cause, because the IRS evaluates all facts and circumstances.**
 
 A late package should be complete before the letter is polished. [Start the catch-up filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-reasonable-cause) so the chronology, forms and supporting records agree.

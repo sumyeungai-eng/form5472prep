@@ -8,8 +8,6 @@ tags: ["form-5472", "california-llc", "foreign-owned-llc", "form-568"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=California LLC foreign owner tax filing requirements; intent=commercial investigation; secondary=California LLC Form 5472, Form 568 foreign owner, $800 annual tax; fan-out=federal reporting, state return, fee, deadlines, no-income; target=/start; opportunity=current results often blur state and federal duties; original asset=California federal/state matrix. -->
-
 **A foreign-owned California single-member LLC can have three distinct obligations: the $800 California annual tax, California Form 568, and federal Form 5472 attached to a pro forma Form 1120 when related-party transactions occurred. The state duties generally continue even with no business activity, while Form 5472 depends on ownership, classification and reportable transactions.**
 
 California compliance is not one filing. The federal package goes to the IRS, while the state return and payments go to the Franchise Tax Board. Foreign owners can [start the Form 5472 package here](/start?utm_source=blog&utm_medium=internal&utm_campaign=california-foreign-owner) and handle Form 568 separately.

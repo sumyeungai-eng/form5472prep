@@ -8,8 +8,6 @@ tags: ["form-5472", "australia", "foreign-owned-llc", "ftin"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=form 5472 Australia resident US LLC; intent=commercial investigation; secondary=Australian TFN on Form 5472, US LLC filing Australia, foreign-owned LLC deadline; fan-out=who files, owner ID, transactions, deadline, Australian overlap; target=/start; opportunity=country-specific SERP is thin while filing intent is high; original asset=Australia-to-Form-5472 field map. -->
-
 **An Australian resident who wholly owns a US single-member LLC generally files Form 5472 with a pro forma Form 1120 when the LLC has a reportable transaction with its owner or another related party. Owner funding, withdrawals, loans, reimbursements, formation costs and dissolution transactions can qualify even when the LLC earned no revenue.**
 
 The filing is a US information return, not a calculation of Australian tax. An Australian owner can [start a guided Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-australia) without an SSN or ITIN; the US LLC needs its own EIN.

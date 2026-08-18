@@ -8,8 +8,6 @@ tags: ["form-5472", "singapore", "foreign-owned-llc", "ftin"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=form 5472 Singapore resident US LLC; intent=commercial investigation; secondary=Singapore TIN Form 5472, NRIC FIN UEN FTIN, US LLC filing Singapore; fan-out=filing test, identifiers, transactions, exchange, deadline; target=/start; opportunity=high-buying-power market with sparse specialist content; original asset=Singapore identifier map. -->
-
 **A Singapore resident or company that wholly owns a US single-member LLC generally files Form 5472 with a pro forma Form 1120 when the LLC has a reportable transaction with its owner or another related party. Contributions, withdrawals, loans, reimbursements and formation costs can trigger filing even when the LLC has no sales.**
 
 Form 5472 reports US related-party information; it does not replace a Singapore tax analysis. The LLC needs an EIN, while the owner provides the applicable foreign identifier. Owners ready to prepare the package can [start the guided filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-singapore).

@@ -8,8 +8,6 @@ tags: ["form-5472", "texas-llc", "foreign-owned-llc", "franchise-tax"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=Texas LLC foreign owner tax filing requirements 2026; intent=commercial investigation; secondary=Texas LLC Form 5472, 2026 PIR foreign owner, Texas no tax due threshold; fan-out=threshold, PIR, federal filing, deadlines, zero revenue; target=/start; opportunity=rules changed in 2024 and many results are stale; original asset=2026 decision matrix. -->
-
 **A foreign-owned Texas single-member LLC may have both a Texas Public Information Report and federal Form 5472 obligations. For 2026, an entity at or below the $2.65 million no-tax-due threshold generally does not file a No Tax Due Report, but still files its PIR. Form 5472 is separate and depends on reportable related-party transactions.**
 
 The Texas threshold does not exempt the LLC from federal information reporting. A foreign owner who contributed or withdrew funds should [start the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=texas-foreign-owner) and handle the Texas filing through the Comptroller.

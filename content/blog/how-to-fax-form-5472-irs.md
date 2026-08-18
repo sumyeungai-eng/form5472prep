@@ -8,8 +8,6 @@ tags: ["form-5472", "how-to", "fax", "irs-ogden"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=how to fax Form 5472 to IRS; intent=ready to act; secondary=Form 5472 fax number, Ogden PIN Unit, proof Form 5472 filed; fan-out=documents, DPI, number, cover sheet, receipt, mail alternative; target=/start; opportunity=high-risk transactional query with scattered answers; original asset=preflight and receipt protocol. -->
-
 **Fax a foreign-owned US disregarded entity's complete Form 5472 package at 300 DPI or higher to the IRS Ogden PIN Unit at 855-887-7737. Include the pro forma Form 1120, every required Form 5472 and attachment, and any signed statement. Keep the full transmitted file and a timestamped successful-transmission receipt as filing evidence.**
 
 The fax is the submission, not a draft handoff. If the package is not complete, [use the guided preparation process](/start?utm_source=blog&utm_medium=internal&utm_campaign=how-to-fax-form-5472) before sending it.

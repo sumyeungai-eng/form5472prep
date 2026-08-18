@@ -8,8 +8,6 @@ tags: ["form-5472", "florida-llc", "foreign-owned-llc", "annual-report"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=Florida LLC foreign owner tax filing requirements; intent=commercial investigation; secondary=Florida LLC Form 5472, Sunbiz annual report foreign owner, Florida LLC May 1; fan-out=annual report, fee, federal return, no-income, deadlines; target=/start; opportunity=formation sites dominate and often omit Form 5472; original asset=Florida two-agency calendar. -->
-
 **A foreign-owned Florida single-member LLC generally files a Sunbiz annual report each year to remain active and may also need federal Form 5472 attached to a pro forma Form 1120 when it has a reportable transaction with its owner. The annual report is due by May 1; a calendar-year federal package is generally due April 15.**
 
 These are separate filings. Sunbiz maintains the Florida entity record; Form 5472 reports related-party transactions to the IRS. If the owner funded or withdrew money from the company, [start the federal filing here](/start?utm_source=blog&utm_medium=internal&utm_campaign=florida-foreign-owner).

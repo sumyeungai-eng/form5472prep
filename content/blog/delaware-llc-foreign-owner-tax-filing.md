@@ -8,8 +8,6 @@ tags: ["form-5472", "delaware-llc", "foreign-owned-llc", "state-compliance"]
 draft: false
 ---
 
-<!-- GEO/AEO brief: primary=Delaware LLC foreign owner tax filing requirements; intent=commercial investigation; secondary=Delaware LLC Form 5472, $300 annual tax, foreign-owned Delaware LLC tax return; fan-out=federal return, state tax, annual report, deadlines, no-income rule; target=/start; opportunity=SERPs mix formation sales pages with incomplete federal guidance; original asset=two-calendar compliance map. -->
-
 **A foreign-owned Delaware single-member LLC commonly has two separate annual obligations: Delaware's $300 LLC tax due June 1 and federal Form 5472 attached to a pro forma Form 1120, generally due April 15 for a calendar-year entity with a reportable owner transaction. Delaware LLCs do not file a state annual report, but the federal filing can still apply.**
 
 State formation does not replace federal tax reporting. A non-US owner should manage the two calendars separately and [start the federal Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=delaware-foreign-owner) when owner funding, withdrawals or other related-party transactions occurred.
