@@ -1,5 +1,5 @@
 ---
-title: "Form 5472 for Multiple Related Parties"
+title: "Form 5472: How Many Forms for Related Parties?"
 description: "File a separate Form 5472 for each related party with reportable transactions, all attached to the reporting entity’s return."
 date: 2026-09-21
 publishAt: "2026-09-21T09:00:00-04:00"

@@ -1,6 +1,6 @@
 ---
 title: "How to Correct a Mistake on a Filed Form 5472"
-description: "Form 5472 corrections require an amended filing when a submitted return contains errors. Learn which mistakes matter and how practitioners correct them."
+description: "Found an error after filing Form 5472? The IRS has no amendment procedure — see the practitioner fix and why an incomplete form risks the $25,000 penalty."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"

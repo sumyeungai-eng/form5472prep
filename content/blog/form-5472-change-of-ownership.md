@@ -29,7 +29,7 @@ The description should identify the parties, date, type of transaction, consider
 
 ## Does adding a second owner change the tax return?
 
-Generally yes if no corporate election controls. IRS classification guidance says a domestic eligible entity with one owner is disregarded by default and one with two or more owners is a partnership by default. The IRS [entity-classification practice unit](https://www.irs.gov/pub/int_practice_units/ore_c_19_02_01.pdf) explains that a disregarded entity becomes a partnership when membership increases above one and a partnership becomes disregarded when membership falls to one.
+Generally yes if no corporate election controls. IRS classification guidance says a domestic eligible entity with one owner is disregarded by default and one with two or more owners is a partnership by default. The IRS [entity-classification practice unit](https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies) explains that a disregarded entity becomes a partnership when membership increases above one and a partnership becomes disregarded when membership falls to one.
 
 That means an LLC can need:
 
@@ -99,6 +99,6 @@ No. EIN consequences depend on entity continuity, federal classification and tra
 
 ### Is a no-cash ownership transfer still reportable?
 
-It can be. Part V includes acquisition and disposition transactions, and nonmonetary transfers may also require description under the applicable rules.
+Yes, potentially. Part V includes acquisition and disposition transactions, and nonmonetary transfers may also require description under the applicable rules.
 
 An ownership change should be treated as a tax event with dates and evidence, not only a state amendment. [Start the Form 5472 review](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-change-ownership-close) or read the [multi-member LLC filing guide](/blog/multi-member-llc-form-5472-or-1065).

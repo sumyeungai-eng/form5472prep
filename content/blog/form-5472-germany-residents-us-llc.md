@@ -71,7 +71,7 @@ Our practical rule is:
 5. Fax at 300 DPI or higher to the Ogden PIN Unit or use its dedicated mailing address.
 6. Retain the filed return and delivery evidence with the underlying ledger.
 
-The usual calendar-year due date is April 15, extended to October 15 by a timely Form 7004.
+For filings due in 2026, the usual 2025 calendar-year due date is April 15, 2026, extended to October 15, 2026 by a timely Form 7004.
 
 ## Frequently asked questions
 

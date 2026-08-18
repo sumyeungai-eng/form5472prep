@@ -1,6 +1,6 @@
 ---
 title: "Form 5472 for Canada Residents With a US LLC"
-description: "Form 5472 for Canada residents covers the filing package for a foreign-owned US LLC, how to enter a Canadian SIN as an FTIN, and which transactions to report."
+description: "Canada residents who own a US LLC must file Form 5472 yearly, even with zero revenue. See how to enter your SIN as the FTIN and what counts as reportable."
 date: 2026-06-19
 updated: 2026-07-06
 author: "Form5472 Prep"

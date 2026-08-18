@@ -1,6 +1,6 @@
 ---
-title: "Form 5472: A Guide for Foreign-Owned LLCs"
-description: "Form 5472 is an IRS information return for reportable transactions involving foreign-owned US entities. Learn who files, what to report, and when it is due."
+title: "What Is IRS Form 5472? A Jargon-Free Guide"
+description: "Form 5472 is an IRS return foreign-owned US LLCs must file yearly, even with zero revenue. See who must file it and what a missed filing actually costs."
 date: 2026-05-19
 updated: 2026-08-14
 author: "Form5472 Prep"

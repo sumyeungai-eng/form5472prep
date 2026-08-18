@@ -1,6 +1,6 @@
 ---
 title: "Form 5472 for a Dormant LLC With No Income"
-description: "Form 5472 may still apply to a dormant foreign-owned LLC with no income because capital contributions, distributions, loans, and reimbursements are reportable."
+description: "Zero revenue doesn't mean no filing. A dormant foreign-owned LLC almost always still owes Form 5472 — contributions and distributions count as reportable."
 date: 2026-05-28
 updated: 2026-07-06
 author: "Form5472 Prep"

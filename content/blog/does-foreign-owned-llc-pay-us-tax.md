@@ -1,5 +1,5 @@
 ---
-title: "Foreign-Owned US LLC Tax: What Non-Residents Owe"
+title: "Does a Foreign-Owned US LLC Pay US Tax?"
 description: "Foreign-owned US LLC tax depends on US trade or business and income sourcing, but Form 5472 filing can still apply when no federal income tax is due."
 date: 2026-08-15
 updated: 2026-08-15

@@ -1,6 +1,6 @@
 ---
 title: "Form 5472 Deadline for 2026 and 2027"
-description: "Form 5472 deadline guidance lists the 2026 and 2027 due dates, the Form 7004 extension rule, and the steps to take after a missed filing date."
+description: "The 2025 Form 5472 is due October 15, 2026 if extended. See every 2026-2027 deadline, the Form 7004 extension rule, and what to do if you're already late."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"

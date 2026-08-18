@@ -21,6 +21,7 @@ import {
   formatPostDate,
   extractFaqs,
   extractHowTo,
+  blogSlugFromHref,
   type PostMeta,
 } from "@/lib/blog";
 import { env } from "@/lib/env";
@@ -72,6 +73,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   if (!post) notFound();
 
   const allPosts = await getAllPosts();
+  const publishedSlugs = new Set(allPosts.map((p) => p.slug));
   const otherPosts = allPosts.filter((candidate) => candidate.slug !== post.slug).slice(0, 4);
   const articleJsonLd = {
     "@type": "BlogPosting",
@@ -232,7 +234,18 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
             <div className="rounded-2xl border border-slate-200 bg-white px-6 py-9 shadow-[0_18px_55px_-45px_rgba(15,23,42,0.45)] sm:px-10 sm:py-12">
               <div className="prose prose-slate max-w-none prose-p:leading-8 prose-li:leading-7 prose-a:font-medium prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-headings:font-serif prose-headings:tracking-tight prose-headings:text-ink prose-h2:mt-12 prose-h2:border-t prose-h2:border-slate-100 prose-h2:pt-10 prose-h2:text-3xl prose-h3:mt-8 prose-h3:text-xl prose-blockquote:rounded-r-lg prose-blockquote:border-l-accent prose-blockquote:bg-accent-50/60 prose-blockquote:px-5 prose-blockquote:py-1 prose-blockquote:not-italic prose-table:text-sm prose-th:bg-slate-50">
-                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]}>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeSlug]}
+                  components={{
+                    a: ({ href, children, node: _node, ...props }) => {
+                      const slug = blogSlugFromHref(href);
+                      // Scheduled sibling posts 404 until publishAt; ISR will restore the link after release.
+                      if (slug && !publishedSlugs.has(slug)) return <span>{children}</span>;
+                      return <a href={href} {...props}>{children}</a>;
+                    },
+                  }}
+                >
                   {post.body}
                 </ReactMarkdown>
               </div>

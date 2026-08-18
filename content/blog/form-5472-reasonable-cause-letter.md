@@ -91,6 +91,6 @@ Yes. Current delinquent-information-return procedures state that penalties may b
 
 ### Should a late filer wait for an IRS notice?
 
-Generally no. The delinquent procedures address taxpayers who file before examination or IRS contact. Delay weakens the claim of prompt correction and prolongs exposure.
+Usually no. The delinquent procedures address taxpayers who file before examination or IRS contact. Delay weakens the claim of prompt correction and prolongs exposure.
 
 Reasonable cause is proved by a coherent record, not persuasive adjectives. [Start the late Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-reasonable-cause-close) and review the [penalty-notice response guide](/blog/form-5472-penalty-notice-what-to-do) if a notice has arrived.

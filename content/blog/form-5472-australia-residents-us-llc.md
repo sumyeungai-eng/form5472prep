@@ -26,7 +26,7 @@ The third condition is broader than revenue. The contribution used to open the b
 
 ## Which Australian number goes in the FTIN field?
 
-For an individual, the relevant foreign taxpayer identification number is normally the Australian Tax File Number. The [Australian Taxation Office](https://www.ato.gov.au/api/public/content/0-6faec75b-2772-4cf2-ac8d-ddb6f6d0d102) describes a TFN as a unique personal reference number, usually nine digits, that remains with the holder for life.
+For an individual, the relevant foreign taxpayer identification number is normally the Australian Tax File Number. The [Australian Taxation Office](https://www.ato.gov.au/individuals-and-families/tax-file-number) describes a TFN as a unique personal reference number, usually nine digits, that remains with the holder for life.
 
 | Form 5472 field | Australian owner information |
 |---|---|
@@ -65,7 +65,7 @@ Use one documented method for comparable transactions and keep the source with t
 5. Fax the package at 300 DPI or higher to 855-887-7737, or use the dedicated Ogden mailing address in the instructions.
 6. Keep the complete package and timestamped transmission receipt.
 
-A calendar-year return is generally due April 15 of the following year, or October 15 after a timely Form 7004 extension.
+For filings due in 2026, the 2025 calendar-year return is generally due April 15, 2026, or October 15, 2026 after a timely Form 7004 extension.
 
 ## Frequently asked questions
 

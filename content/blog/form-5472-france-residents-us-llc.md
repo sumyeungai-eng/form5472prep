@@ -67,7 +67,7 @@ Keep a conversion schedule with the date, EUR amount, source rate and USD amount
 5. Fax the package at 300 DPI or higher to 855-887-7737, or mail it to the dedicated Ogden PIN Unit address.
 6. Keep the submission and delivery receipt permanently.
 
-The calendar-year deadline is ordinarily April 15 of the following year, or October 15 with a timely Form 7004 extension.
+For filings due in 2026, the 2025 calendar-year deadline is ordinarily April 15, 2026, or October 15, 2026 with a timely Form 7004 extension.
 
 ## Frequently asked questions
 

@@ -251,6 +251,11 @@ export function isPubliclyAvailable(
   return Number.isFinite(release) && release <= now.getTime();
 }
 
+export function blogSlugFromHref(href: string | undefined): string | null {
+  if (!href) return null;
+  return href.match(/^\/blog\/([a-z0-9-]+)\/?(?:[?#].*)?$/)?.[1] ?? null;
+}
+
 // Merged single-post read: DB row wins, tombstone hides the file, and an
 // unreachable database falls through to the file.
 async function readMerged(slug: string): Promise<Post | null> {

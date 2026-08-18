@@ -1,6 +1,6 @@
 ---
 title: "Form 5472: How to Fill It Out Part by Part"
-description: "Form 5472 instructions explain each part of the form and the attached pro forma Form 1120, including required fields, reportable amounts, and common errors."
+description: "A part-by-part walkthrough of Form 5472 and the pro forma 1120 — which boxes to complete, which to skip, and the errors that trigger the $25,000 penalty."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"

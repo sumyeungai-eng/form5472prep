@@ -66,7 +66,7 @@ Maintain a schedule showing the original EUR amount, transaction date, source ra
 5. Fax at 300 DPI or higher to 855-887-7737 or mail to the dedicated IRS Ogden PIN Unit address.
 6. Keep the signed package, workpapers and delivery evidence.
 
-A calendar-year filing is normally due April 15 of the following year, or October 15 after a timely Form 7004 extension.
+For filings due in 2026, the 2025 calendar-year filing is normally due April 15, 2026, or October 15, 2026 after a timely Form 7004 extension.
 
 ## Frequently asked questions
 
