@@ -6,7 +6,7 @@
 // internal queue swallows pre-load calls and replays them.
 
 export const GOOGLE_ADS_TAG_ID = "AW-18127544007";
-export const GOOGLE_ADS_CONVERSION_LEAD = "AW-18127544007/TFriCN3piLEcEMe98cNd";
+export const GOOGLE_ADS_CONVERSION_LEAD = "AW-18127544007/TFriCN3piLEcEMe98cND";
 
 declare global {
   interface Window {
