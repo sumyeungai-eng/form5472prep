@@ -1,5 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/form-5472-50-off",
+        destination: "/form-5472-filing",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

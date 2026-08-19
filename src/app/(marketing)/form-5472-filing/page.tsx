@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import {
   ArrowRight,
-  BadgePercent,
   CheckCircle2,
   Clock,
   FileCheck2,
@@ -11,7 +10,6 @@ import {
   Send,
   ShieldCheck,
   Sparkles,
-  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
@@ -19,74 +17,62 @@ import { Reveal } from "@/components/Reveal";
 import {
   EXPRESS_TURNAROUND,
   MULTI_YEAR_ADDON_CENTS,
-  PROMO_DISCOUNT_CENTS,
   STANDARD_TURNAROUND,
   TIERS,
   TIER_ORDER,
-  promoTotalCents,
   type Tier,
 } from "@/lib/pricing";
 import { ORG_EMAIL, pageOpenGraph } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
 
-// PROMO_SOURCES in src/lib/pricing.ts must contain this funnel source.
-const PROMO_SRC = "promo50";
-const START_URL = `/start?v=rail&src=${PROMO_SRC}`;
+// Google Ads funnel attribution for this list-price landing page.
+const ATTRIBUTION_SRC = "gads";
+const START_URL = `/start?v=rail&src=${ATTRIBUTION_SRC}`;
 
 function tierUrl(slug: Tier) {
   const sep = START_URL.includes("?") ? "&" : "?";
   return `${START_URL}${sep}tier=${slug}`;
 }
 
-const STANDARD_PROMO_PRICE = promoTotalCents(PROMO_SRC, TIERS.standard.priceCents);
-const EXPRESS_PROMO_PRICE = promoTotalCents(PROMO_SRC, TIERS.express.priceCents);
-const PROMO_TITLE = `File Form 5472 for ${formatPrice(STANDARD_PROMO_PRICE)} — ${formatPrice(PROMO_DISCOUNT_CENTS)} Off (Was ${formatPrice(TIERS.standard.priceCents)}) | Form5472 Prep`;
-const PROMO_DESCRIPTION = `Save ${formatPrice(PROMO_DISCOUNT_CENTS)} on accountant-reviewed Form 5472 + pro forma 1120 preparation, with IRS Ogden fax delivery and a timestamped receipt included.`;
+const PAGE_TITLE = `Form 5472 Filing Service — ${formatPrice(TIERS.standard.priceCents)}, Done For You | Form5472 Prep`;
+const PAGE_DESCRIPTION = `Accountant-reviewed Form 5472 + pro forma 1120 for ${formatPrice(TIERS.standard.priceCents)}, with IRS Ogden fax delivery and a timestamped receipt included.`;
 
 export const metadata: Metadata = {
-  title: { absolute: PROMO_TITLE },
-  description: PROMO_DESCRIPTION,
+  title: { absolute: PAGE_TITLE },
+  description: PAGE_DESCRIPTION,
   robots: { index: false, follow: true },
-  alternates: { canonical: "/form-5472-50-off" },
+  alternates: { canonical: "/form-5472-filing" },
   openGraph: pageOpenGraph({
-    title: PROMO_TITLE,
-    description: PROMO_DESCRIPTION,
-    path: "/form-5472-50-off",
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    path: "/form-5472-filing",
   }),
 };
 
 const FAQS = [
   {
-    q: `Is ${formatPrice(STANDARD_PROMO_PRICE)} really the full price?`,
-    a: `Yes. ${formatPrice(STANDARD_PROMO_PRICE)} is the total for one tax year, including the forms, accountant review, a reasonable cause letter if you're late, IRS fax delivery, and the timestamped receipt. There is no separate fax fee, setup fee, or subscription. Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each and are not discounted; Express also receives the same ${formatPrice(PROMO_DISCOUNT_CENTS)} reduction.`,
+    q: "What's included for the price?",
+    a: `The price includes Form 5472 + pro forma Form 1120 with the Part V supporting statement, review by a qualified tax accountant, a reasonable cause letter if you're late, IRS fax delivery, a timestamped receipt, filing confirmation, and a reminder before next year's deadline. There is no separate fax fee, setup fee, or subscription. Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each.`,
   },
   {
-    q: `Is the promoted filing different from the ${formatPrice(TIERS.standard.priceCents)} service?`,
-    a: `No. ${formatPrice(TIERS.standard.priceCents)} is the Standard list price, and this Google Ads offer applies a ${formatPrice(PROMO_DISCOUNT_CENTS)} promotional discount. The package, accountant review, IRS fax delivery, ${STANDARD_TURNAROUND} turnaround, and guarantee are identical.`,
+    q: "What's the difference between Standard and Express?",
+    a: `Turnaround only. Standard is ready in ${STANDARD_TURNAROUND} at ${formatPrice(TIERS.standard.priceCents)}; Express is ready within ${EXPRESS_TURNAROUND} at ${formatPrice(TIERS.express.priceCents)}. Both include the same documents and accountant review. Express buys speed and priority email support.`,
   },
   {
-    q: "How much is a two- or three-year catch-up?",
-    a: `The ${formatPrice(PROMO_DISCOUNT_CENTS)} comes off the base filing fee once; extra past years remain ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each. All delinquent years go to the IRS together under DIIRSP with one comprehensive reasonable cause statement. The exact computed totals are shown in the multi-year table above.`,
+    q: "Is fax filing to the IRS really included?",
+    a: "Yes. Fax delivery to the IRS Ogden PIN Unit is included on every plan with no separate fee, and you receive a timestamped transmission receipt as proof of filing.",
   },
   {
-    q: "How fast will my filing go out, and can I get it sooner?",
-    a: `Standard is ready in ${STANDARD_TURNAROUND}. If your deadline is tight, Express is ready within ${EXPRESS_TURNAROUND} and carries the same ${formatPrice(PROMO_DISCOUNT_CENTS)} discount. Express is not a different or more thorough filing; you are paying only for speed and priority email support.`,
+    q: "What if I'm two or three years late (DIIRSP)?",
+    a: `Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each. All delinquent years go to the IRS together under DIIRSP with one comprehensive reasonable cause statement, and the exact totals are shown in the multi-year table above. If you're more than three years behind, email ${ORG_EMAIL} to scope it first.`,
   },
   {
-    q: "Do I have to enter a discount code?",
-    a: "No. The discount is applied automatically because you started from this page. You will see the full price struck through and the reduction itemised on the review screen and Stripe payment page before you pay.",
+    q: "I already received an IRS notice — can you still help?",
+    a: "Yes. We help owners who received an IRS CP-15 notice or §6038A letter and need a properly prepared late filing, including the required forms and a reasonable cause statement based on their circumstances.",
   },
   {
-    q: "What exactly do I get?",
-    a: "One tax year filed end to end: Form 5472 + pro forma Form 1120 with the Part V supporting statement, review by a qualified tax accountant, a reasonable cause letter if you are filing late, fax delivery to the IRS Ogden PIN Unit, a timestamped transmission receipt, filing confirmation, and a reminder before next year's deadline.",
-  },
-  {
-    q: "What happens if I do not file at all?",
-    a: "IRC § 6038A carries an automatic $25,000 penalty per form, per year, even if your LLC had no revenue and owes no US tax. If the IRS sends a notice and the filing stays outstanding, another penalty can be added for each 30-day period. There is no cap.",
-  },
-  {
-    q: "Money-back guarantee — what does it cover?",
-    a: "If we fail to submit your filing to the IRS, you get a 100% refund. If the IRS assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge. It does not cover a penalty assessed on a correctly filed return or a change-of-mind cancellation after the package has been faxed.",
+    q: "Are there any hidden fees?",
+    a: "No. One price per filing includes IRS fax delivery, accountant review, and the timestamped receipt. There is no subscription, no checkout upsell, and no separate fax fee.",
   },
 ];
 
@@ -96,11 +82,10 @@ const MULTI_YEAR_ROWS = [1, 2, 3].map((yearCount) => {
   return {
     yearCount,
     fullTotal,
-    promoTotal: promoTotalCents(PROMO_SRC, fullTotal),
   };
 });
 
-export default function PromoLandingPage() {
+export default function Form5472FilingLandingPage() {
   return (
     <main className="bg-white">
       <Hero />
@@ -143,18 +128,17 @@ function Hero() {
         <div className="grid items-center gap-12 lg:grid-cols-[1fr_380px] lg:gap-16">
           <div className="animate-fade-in-up">
             <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100">
-              <BadgePercent className="h-3.5 w-3.5" />
-              {formatPrice(PROMO_DISCOUNT_CENTS)} off · Google Ads offer · Foreign-owned US single-member LLCs
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Done-for-you Form 5472 · Foreign-owned US single-member LLCs
             </p>
             <h1 className="mt-5 font-serif text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl lg:text-6xl">
-              File your Form 5472 for {formatPrice(STANDARD_PROMO_PRICE)}.
+              File your Form 5472 for {formatPrice(TIERS.standard.priceCents)}.
             </h1>
             <p className="mt-4 font-serif text-2xl leading-snug text-slate-200 sm:text-3xl">
-              <s className="text-slate-400">{formatPrice(TIERS.standard.priceCents)}</s> list price —{" "}
-              {formatPrice(PROMO_DISCOUNT_CENTS)} off, applied automatically.
+              Accountant-reviewed, faxed to the IRS, timestamped receipt in your inbox.
             </p>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
-              Get an accountant-reviewed Form 5472 + pro forma 1120, faxed to the IRS Ogden PIN Unit with a timestamped receipt as proof of filing. The same complete package is ready in {STANDARD_TURNAROUND}; Express is also {formatPrice(PROMO_DISCOUNT_CENTS)} off and ready within {EXPRESS_TURNAROUND}.
+              Get an accountant-reviewed Form 5472 + pro forma 1120, faxed to the IRS Ogden PIN Unit with a timestamped receipt as proof of filing. The complete package is ready in {STANDARD_TURNAROUND}, or within {EXPRESS_TURNAROUND} on Express.
             </p>
           </div>
 
@@ -165,33 +149,27 @@ function Hero() {
                 Start filing now
               </div>
               <div className="mt-4 flex flex-wrap items-end gap-x-3 gap-y-2">
-                <s className="pb-1 font-serif text-2xl text-slate-400">
-                  {formatPrice(TIERS.standard.priceCents)}
-                </s>
                 <span className="font-serif text-5xl font-semibold tracking-tight text-ink">
-                  {formatPrice(STANDARD_PROMO_PRICE)}
-                </span>
-                <span className="mb-1.5 rounded-full bg-seal/15 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-seal">
-                  {formatPrice(PROMO_DISCOUNT_CENTS)} off
+                  {formatPrice(TIERS.standard.priceCents)}
                 </span>
               </div>
               <p className="mt-2 text-sm text-slate-600">
                 Standard · ready in {STANDARD_TURNAROUND}
               </p>
 
-              <Link href={START_URL} className="group mt-6 block">
+              <Link href={START_URL} data-attribution={ATTRIBUTION_SRC} className="group mt-6 block">
                 <Button size="lg" className="h-14 w-full text-base shadow-lg shadow-accent/25 transition-all duration-200 hover:-translate-y-0.5">
-                  Start filing — {formatPrice(STANDARD_PROMO_PRICE)}
+                  Start filing — {formatPrice(TIERS.standard.priceCents)}
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Button>
               </Link>
               <Link
                 href={tierUrl("express")}
+                data-attribution={ATTRIBUTION_SRC}
                 className="group mt-2 flex min-h-11 items-center justify-center rounded-lg px-2 text-center text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-accent"
               >
-                Need it in {EXPRESS_TURNAROUND}? Express&nbsp;
-                <s className="text-slate-400">{formatPrice(TIERS.express.priceCents)}</s>
-                &nbsp;{formatPrice(EXPRESS_PROMO_PRICE)}
+                Need it within {EXPRESS_TURNAROUND}? Express&nbsp;
+                {formatPrice(TIERS.express.priceCents)}
                 <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
 
@@ -205,7 +183,7 @@ function Hero() {
               </ul>
 
               <p className="mt-5 border-t border-slate-100 pt-5 text-center font-mono text-[11px] leading-relaxed text-slate-500">
-                Discount itemised on the payment screen before you enter a card. No subscription — pay once per filing.
+                Pay once per filing. No subscription. Price shown is what Stripe charges.
               </p>
             </div>
           </div>
@@ -245,19 +223,19 @@ function TrustStrip() {
 function Offer() {
   const cards = [
     {
+      icon: FileCheck2,
+      title: "Nothing to assemble yourself",
+      body: "We prepare the complete Form 5472 + pro forma 1120 package, including the supporting statement and a reasonable cause letter when needed.",
+    },
+    {
       icon: ShieldCheck,
-      title: "Nothing stripped out",
-      body: `The ${formatPrice(STANDARD_PROMO_PRICE)} filing is the same complete package as the ${formatPrice(TIERS.standard.priceCents)} filing: same preparation, accountant review, fax delivery, and guarantee.`,
+      title: "Reviewed by a qualified tax accountant",
+      body: "A qualified tax accountant checks the completed filing before anything is signed or sent to the IRS.",
     },
     {
-      icon: Zap,
-      title: `Express is ${formatPrice(PROMO_DISCOUNT_CENTS)} off too`,
-      body: `Choose Express for delivery within ${EXPRESS_TURNAROUND}. The documents and review are identical; the upgrade buys speed and priority email support.`,
-    },
-    {
-      icon: BadgePercent,
-      title: "Applied automatically",
-      body: `The ${formatPrice(PROMO_DISCOUNT_CENTS)} reduction is itemised before you enter a card. There is no code, checkout upsell, separate fax fee, or subscription.`,
+      icon: Send,
+      title: "Proof of filing, stored for you",
+      body: "We keep the timestamped IRS fax transmission receipt in your portal so you can retrieve dated proof of filing when you need it.",
     },
   ];
 
@@ -266,8 +244,8 @@ function Offer() {
       <div className="mx-auto max-w-6xl px-6 py-20">
         <SectionHead
           eyebrow="The offer"
-          title={`${formatPrice(TIERS.standard.priceCents)} → ${formatPrice(STANDARD_PROMO_PRICE)}. Same filing, lower price.`}
-          subtitle={`A fixed ${formatPrice(PROMO_DISCOUNT_CENTS)} reduction on the complete filing package, shown before payment.`}
+          title="Complete filing, one flat price"
+          subtitle="Every filing gets the same accountant-reviewed package and IRS fax delivery — priced once, shown before you pay."
         />
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {cards.map((card, index) => (
@@ -297,7 +275,7 @@ function Includes() {
     "Fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) with no separate fax fee",
     "Timestamped fax transmission receipt emailed to you and stored in your portal",
     "Filing confirmation and email support from start to receipt",
-    `Ready in ${STANDARD_TURNAROUND}, or within ${EXPRESS_TURNAROUND} on Express with the same ${formatPrice(PROMO_DISCOUNT_CENTS)} off`,
+    `Ready in ${STANDARD_TURNAROUND}, or within ${EXPRESS_TURNAROUND} on Express`,
     "A reminder next March so the following year's deadline does not slip past you",
     "100% money-back guarantee if we fail to submit",
   ];
@@ -307,7 +285,7 @@ function Includes() {
       <div className="mx-auto max-w-6xl px-6 py-20">
         <SectionHead
           eyebrow="Complete filing package"
-          title={`What your ${formatPrice(STANDARD_PROMO_PRICE)} includes`}
+          title={`What your ${formatPrice(TIERS.standard.priceCents)} includes`}
           subtitle="One tax year, prepared, reviewed, signed, and delivered end to end."
         />
         <ul className="mt-10 grid gap-x-10 gap-y-4 md:grid-cols-2">
@@ -322,7 +300,7 @@ function Includes() {
           <p className="text-slate-700">
             You answer 12 questions — about 15 minutes — and sign once on screen. No printing, scanning, or mailing.
           </p>
-          <Link href={START_URL} className="group mx-auto mt-5 block w-fit">
+          <Link href={START_URL} data-attribution={ATTRIBUTION_SRC} className="group mx-auto mt-5 block w-fit">
             <Button size="lg">
               Start filing
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -339,8 +317,8 @@ function Pricing() {
     <section id="pricing" className="scroll-mt-20 border-b border-slate-200 bg-slate-50">
       <div className="mx-auto max-w-5xl px-6 py-20">
         <SectionHead
-          eyebrow="Choose your turnaround"
-          title={`${formatPrice(PROMO_DISCOUNT_CENTS)} off either filing tier`}
+          eyebrow="Pricing"
+          title="Choose your turnaround"
           subtitle="Both tiers include the same forms, accountant review, IRS fax delivery, and timestamped receipt. Only timing and support priority differ."
         />
 
@@ -357,7 +335,7 @@ function Pricing() {
                 Filing more than one year?
               </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                Additional past tax years are {formatPrice(MULTI_YEAR_ADDON_CENTS)} each and are not discounted; the {formatPrice(PROMO_DISCOUNT_CENTS)} comes off once.
+                Additional past tax years are {formatPrice(MULTI_YEAR_ADDON_CENTS)} each; one reasonable-cause statement covers all delinquent years (DIIRSP).
               </p>
             </div>
           </div>
@@ -367,19 +345,15 @@ function Pricing() {
               <thead className="bg-slate-50 text-left">
                 <tr>
                   <th className="px-4 py-3 font-medium text-slate-600">Tax years</th>
-                  <th className="px-4 py-3 font-medium text-slate-600">Was</th>
-                  <th className="px-4 py-3 font-medium text-accent">Now</th>
+                  <th className="px-4 py-3 font-medium text-accent">Total</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
                 {MULTI_YEAR_ROWS.map((row) => (
                   <tr key={row.yearCount} className="transition-colors hover:bg-slate-50/70">
                     <td className="px-4 py-3 font-medium text-ink">{row.yearCount}</td>
-                    <td className="px-4 py-3 text-slate-500">
-                      <s>{formatPrice(row.fullTotal)}</s>
-                    </td>
                     <td className="bg-accent-50 px-4 py-3 font-semibold text-ink">
-                      {formatPrice(row.promoTotal)}
+                      {formatPrice(row.fullTotal)}
                     </td>
                   </tr>
                 ))}
@@ -429,9 +403,8 @@ function TierCard({ slug, delay }: { slug: Tier; delay: number }) {
       </div>
 
       <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <s className="font-serif text-2xl text-slate-400">{formatPrice(tier.priceCents)}</s>
         <span className="font-serif text-5xl font-semibold tracking-tight text-ink">
-          {formatPrice(promoTotalCents(PROMO_SRC, tier.priceCents))}
+          {formatPrice(tier.priceCents)}
         </span>
         <span className="font-mono text-xs text-slate-500">/ filing</span>
       </div>
@@ -445,7 +418,7 @@ function TierCard({ slug, delay }: { slug: Tier; delay: number }) {
         ))}
       </ul>
 
-      <Link href={tierUrl(slug)} className="mt-7 block">
+      <Link href={tierUrl(slug)} data-attribution={ATTRIBUTION_SRC} className="mt-7 block">
         <Button
           size="lg"
           variant={slug === "standard" ? "primary" : "outline"}
@@ -518,7 +491,7 @@ function ValueOfFiling() {
   const risks = [
     {
       title: "Never filed",
-      body: "The LLC exists, money moved in and out, and Form 5472 never came up when the LLC was formed.",
+      body: "The LLC exists, money moved in and out, and no one mentioned Form 5472 during formation.",
     },
     {
       title: "Filed 5472 without the pro forma 1120",
@@ -536,7 +509,7 @@ function ValueOfFiling() {
       <div className="relative mx-auto max-w-6xl px-6 py-20">
         <Reveal className="mx-auto max-w-3xl text-center">
           <p className="font-mono text-xs font-medium uppercase tracking-[0.18em] text-accent-100">
-            Why it is worth far more than {formatPrice(STANDARD_PROMO_PRICE)}
+            Why it is worth far more than {formatPrice(TIERS.standard.priceCents)}
           </p>
           <p className="mt-5 font-serif text-6xl font-semibold tracking-tight text-white sm:text-7xl">
             $25,000
@@ -566,7 +539,7 @@ function ValueOfFiling() {
         </div>
 
         <Reveal className="mx-auto mt-10 max-w-3xl border-t border-white/10 pt-8 text-center text-slate-300">
-          Your discounted filing buys a complete package, accountant review, IRS delivery, and dated proof of when it arrived.
+          Your filing includes the complete package, accountant review, IRS delivery, and dated proof of when it arrived.
         </Reveal>
       </div>
     </section>
@@ -617,7 +590,7 @@ function Faq() {
       <div className="mx-auto max-w-3xl px-6 py-20">
         <SectionHead
           eyebrow="FAQ"
-          title={`Questions about the ${formatPrice(PROMO_DISCOUNT_CENTS)} offer`}
+          title="Common filing questions"
         />
         <div className="mt-10 space-y-4">
           {FAQS.map((faq, index) => (
@@ -657,21 +630,21 @@ function FinalCta() {
       />
       <Reveal as="div" className="relative mx-auto max-w-4xl px-6 py-20 text-center">
         <h2 className="font-serif text-3xl font-semibold text-white text-balance sm:text-4xl">
-          Start now at {formatPrice(STANDARD_PROMO_PRICE)}.
+          Start your Form 5472 filing — {formatPrice(TIERS.standard.priceCents)}.
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
-          The {formatPrice(TIERS.standard.priceCents)} list price is shown struck through on the payment screen. Get 100% back if we fail to submit your filing.
+          Get 100% back if we fail to submit your filing.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link href={START_URL} className="group block w-full sm:w-auto">
+          <Link href={START_URL} data-attribution={ATTRIBUTION_SRC} className="group block w-full sm:w-auto">
             <Button size="lg" className="w-full bg-white !text-ink shadow-lg shadow-black/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-100 sm:w-auto">
-              Start filing — {formatPrice(STANDARD_PROMO_PRICE)}
+              Start filing — {formatPrice(TIERS.standard.priceCents)}
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
-          <Link href={tierUrl("express")} className="block w-full sm:w-auto">
+          <Link href={tierUrl("express")} data-attribution={ATTRIBUTION_SRC} className="block w-full sm:w-auto">
             <Button size="lg" variant="ghost" className="w-full !text-white hover:bg-white/10 sm:w-auto">
-              Express — {formatPrice(EXPRESS_PROMO_PRICE)}
+              Express — {formatPrice(TIERS.express.priceCents)}
             </Button>
           </Link>
         </div>

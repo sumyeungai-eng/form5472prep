@@ -37,10 +37,6 @@ export type LandingPage = {
   startSrc?: string;
 };
 
-// Canonical slug for the Google Ads promo funnel. Exported as the single
-// source of truth for code that associates this route with promo pricing.
-export const PROMO_LANDING_SLUG = "form-5472-50-off";
-
 export const LANDING_PAGES: LandingPage[] = [
   {
     slug: "file-form-5472",

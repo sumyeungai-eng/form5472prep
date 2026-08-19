@@ -130,19 +130,11 @@ export const FAX_FEE_LABEL = "IRS fax delivery (included)";
 // the Filing — so shown == charged == stored.
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Funnel sources that receive the launch promotion. Keyed off funnelSource so
-// the discount is decided server-side from the landing page the customer
-// actually arrived through — never from anything the client can set.
-//
-// "promo50" is the canonical tag every CTA on /form-5472-50-off emits (via
-// `startSrc` in src/lib/landing-pages.ts). That page's own slug is registered
-// too as a fail-safe: [seoSlug]/page.tsx derives ?src= from the slug by
-// default, so if the startSrc override is ever dropped the visitor still gets
-// the price the page advertised instead of being silently billed full list.
-export const PROMO_SOURCES: ReadonlySet<string> = new Set([
-  "promo50",
-  "form-5472-50-off",
-]);
+// Launch promotion ENDED 2026-08-19. Kept as a switch: add a funnelSource
+// string here to re-run a fixed-amount promotion in future. While this set is
+// empty, isPromoSource() always returns false and every order is charged full
+// list price.
+export const PROMO_SOURCES: ReadonlySet<string> = new Set<string>([]);
 
 // $50 off the base filing fee, so the ad's headline price is $99 on standard
 // ($149 − $50) and $149 on express. Additional past tax years are NOT
