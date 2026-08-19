@@ -229,8 +229,8 @@ export default async function AdminFilingsPage({
                     {draftIssues.has(f.id) && <CompletenessHint issues={draftIssues.get(f.id)!} />}
                   </td>
                   <td className="px-4 py-3"><SourceCell filing={f} /></td>
-                  <td className="px-4 py-3 text-right tabular-nums text-slate-700">
-                    {f.amountPaid > 0 ? formatUsd(f.amountPaid) : "—"}
+                  <td className="px-4 py-3 text-right tabular-nums">
+                    <PaidCell status={f.status} amountCents={f.amountPaid} />
                   </td>
                   <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">
                     {formatRelative(f.updatedAt)}
@@ -288,6 +288,24 @@ function CompletenessHint({ issues }: { issues: string[] }) {
 
 // Where this customer came FROM (first-touch attribution), with the landing
 // funnel they entered through underneath when there is one.
+// Filing.amountPaid is written while the customer is still in the wizard — it
+// is the QUOTE for the tax years they picked, not evidence of a payment. So a
+// draft carries a dollar figure long before anyone is charged. Rendering that
+// under a "Paid" heading made unpaid drafts look settled once drafts started
+// showing by default, so drafts render the figure explicitly as a quote, in
+// muted type, and only a filing that actually left DRAFT shows a paid amount.
+function PaidCell({ status, amountCents }: { status: string; amountCents: number }) {
+  if (amountCents <= 0) return <span className="text-slate-400">—</span>;
+  if (status === "DRAFT") {
+    return (
+      <span className="text-xs text-slate-400" title="Quoted total — not yet paid">
+        {formatUsd(amountCents)} quote
+      </span>
+    );
+  }
+  return <span className="text-slate-700">{formatUsd(amountCents)}</span>;
+}
+
 function SourceCell({ filing }: { filing: FilingRow }) {
   const label = formatAttribution({
     source: filing.attrSource,
