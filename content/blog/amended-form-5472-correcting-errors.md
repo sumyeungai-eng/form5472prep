@@ -1,6 +1,6 @@
 ---
 title: "How to Correct a Mistake on a Filed Form 5472"
-description: "Found an error after filing Form 5472? The IRS has no amendment procedure — see the practitioner fix and why an incomplete form risks the $25,000 penalty."
+description: "Found an error after filing Form 5472? The IRS has no amendment procedure — here's the fix preparers use, and why an incomplete form risks $25,000."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"
@@ -54,15 +54,15 @@ Not every imperfection warrants a corrected filing. The question is whether the 
 
 The judgement line is materiality: would the error change what the IRS understands about who the parties are and what moved between them? If yes, correct it. If it is cosmetic, note it and fix it in next year's filing.
 
-One case deserves separate treatment. **If you omitted a related party entirely**, you did not file an incomplete return for that party — you filed *no* return for them. That is a straightforward late filing of a missing Form 5472, not an amendment, and it should include a reasonable cause statement. It also changes the form count reported on line 1g of the other Forms 5472 for that year.
+One case deserves separate treatment. **If you omitted a related party entirely**, you did not file an incomplete return for that party — you filed *no* return for them. That is a straightforward late filing of a missing Form 5472, not an amendment, and it should include a reasonable cause statement. See [multiple related parties on Form 5472](/blog/multiple-related-parties-form-5472). It also changes the form count reported on line 1g of the other Forms 5472 for that year.
 
 ## How do you assemble a corrected filing?
 
-1. **Get the original.** Work from your copy of what was actually sent, not from memory. If you do not have it, that is itself a records problem worth fixing — rebuilding a return from memory is how a correction becomes a second error.
+1. **Get the original.** Work from your copy of what was actually sent, not from memory. If you do not have it, that is itself a records problem worth fixing — see our [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) — rebuilding a return from memory is how a correction becomes a second error.
 2. **Identify every error, not just the one you found.** A second corrected filing three months later reads badly. Reconcile the whole return against the bank and payment-processor statements before you rebuild it.
-3. **Prepare a complete corrected Form 5472** for the same tax year, with every part filled as it should have been — Part I for the LLC with line 3 checked, Part II with the foreign owner and their FTIN or reference ID, Part III for the related party, Part IV for listed monetary transactions, Part V with a full supporting statement, and the line 1f and 1h totals reconciling to Parts IV, V and VI.
+3. **Prepare a complete corrected Form 5472** for the same tax year, with every part filled as it should have been — Part I for the LLC with line 3 checked, Part II with the foreign owner and their FTIN and, where no U.S. identifying number is entered, a reference ID, Part III for the related party, Part IV for listed monetary transactions, Part V with a full supporting statement, and the line 1f and 1h totals reconciling to Parts IV, V and VI.
 4. **Prepare a corrected pro forma Form 1120**, signed, with **"Foreign-owned U.S. DE"** across the top of page 1 and the **amended return box checked**.
-5. **Attach an explanation statement.** One page, headed with the LLC's name, EIN and tax year, stating that this corrects a Form 5472 originally filed on [date], listing each item changed with the original and corrected figures, and giving the reason. Keep it factual — this is not the place for argument.
+5. **Attach an explanation statement.** One page, headed with the LLC's name, EIN and tax year, stating that this corrects a Form 5472 originally filed on the date shown on your fax confirmation receipt, listing each item changed with the original and corrected figures, and giving the reason. Keep it factual — this is not the place for argument.
 6. **Attach a reasonable cause statement if the original was also late**, or if you believe the error could attract a penalty. Signed under penalties of perjury, with a specific dated chronology.
 7. **Fax to 855-887-7737**, or mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 — the same destination as the original. You cannot e-file; the instructions state that a foreign-owned US DE cannot file Form 5472 electronically.
 8. **Keep the timestamped fax receipt** for the correction alongside the original one. You now have two filings for that year and need to be able to evidence both.
@@ -92,7 +92,7 @@ Two Form 1120 errors are worth singling out because they change how the return i
 
 The $25,000 penalty attaches to two separate failures, and most people only know about one. The instructions state that the penalty "also applies for failure to maintain records as required by Regulations section 1.6038A-3."
 
-So an entity that files a perfect Form 5472 but cannot produce the underlying records supporting it has a second, independent exposure. If you are correcting a return because you could not reconstruct the figures the first time, fix the record-keeping at the same time — otherwise you have corrected the symptom and left the cause. Retain the bank and payment-processor statements, the ledger of owner transfers, and the fax confirmation receipt for every year filed.
+So an entity that files a perfect Form 5472 but cannot produce the underlying records supporting it has a second, independent exposure. If you are correcting a return because you could not reconstruct the figures the first time, fix the record-keeping at the same time — otherwise you have corrected the symptom and left the cause. Our [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) sets out what to retain and for how long: retain the bank and payment-processor statements, the ledger of owner transfers, and the fax confirmation receipt for every year filed.
 
 ## Having the correction prepared properly
 

@@ -8,9 +8,9 @@ tags: ["form-5472", "form-7004", "extension", "deadline", "foreign-owned-llc"]
 draft: false
 ---
 
-**Last updated: July 2026**
+**Last updated: August 2026**
 
-Yes — you can extend the Form 5472 deadline by filing **Form 7004** by the original due date (April 15 for calendar-year filers), which moves your filing deadline to **October 15**. Because your Form 5472 attaches to a pro forma Form 1120, you enter the **Form 1120 code** on Form 7004, write **"Foreign-owned U.S. DE"** across the top, and **fax or mail it** — a foreign-owned disregarded entity cannot e-file. An extension gives you more time to *file*; it does not remove the obligation, and it can't help once April 15 has passed.
+Yes — you can extend the Form 5472 deadline by filing **Form 7004** by the original due date (April 15 for calendar-year filers), which moves your filing deadline to **October 15**. Because your Form 5472 attaches to a pro forma Form 1120, you enter the **Form 1120 code** on Form 7004, write **"Foreign-owned U.S. DE"** across the top, and **fax or mail it** — a foreign-owned disregarded entity cannot e-file. An extension gives you more time to *file*; it does not remove the obligation, and a missed or incomplete Form 5472 can trigger the **$25,000 penalty under IRC §6038A(d)**. It also can't help once April 15 has passed.
 
 Form 7004 is the IRS's "Application for Automatic Extension of Time To File Certain Business Income Tax, Information, and Other Returns." For a foreign-owned US single-member LLC, it extends the deadline for the pro forma Form 1120 that Form 5472 is attached to. If you're worried about the [April 15 deadline](/form-5472-deadline), filing the extension buys you six months — but only if you act before the deadline, and you can [start your filing now](/start) in about 15 minutes instead.
 
@@ -61,6 +61,8 @@ Most well-documented, first-time late filings by foreign owners are accepted und
 For most foreign-owned single-member LLCs, filing Form 5472 is faster than filing the extension to delay it. There's no income to calculate and no documents to gather beyond your entity details and year-end totals — so an extension often just moves a 15-minute task six months down the road.
 
 Form5472 Prep generates the complete package (cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and a reasonable-cause statement if you're already late), an accountant reviews it, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt as proof of filing. Pricing is **$149 Standard** (ready in 5-7 business days) or **$199 Express** (ready within 3 business days) — the filing, the accountant review and the package are identical, only the speed differs — with fax delivery included on both and **+$99 per additional past year** for DIIRSP catch-up. See full [pricing](/pricing) or [start your filing now](/start).
+
+We are not a CPA firm and do not give tax advice; we prepare and submit the extension or filing package accurately.
 
 ## Frequently asked questions
 

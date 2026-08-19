@@ -9,7 +9,7 @@ tags: ["form-5472", "llc-dissolution", "final-return", "foreign-owned-llc"]
 draft: false
 ---
 
-**Last updated: July 2026**
+**Last updated: September 2026**
 
 A foreign-owned U.S. single-member LLC generally files a final Form 5472 with a pro forma Form 1120 for the year it closes when reportable transactions occurred. Dissolution expenses, owner-paid bills, debt settlements, and final distributions can be reportable. Mark the pro forma Form 1120 as final, send the package by the applicable deadline, and retain proof of delivery.
 

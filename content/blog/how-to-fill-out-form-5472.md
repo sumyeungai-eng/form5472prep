@@ -8,7 +8,7 @@ tags: ["form-5472", "filing-guide", "diy", "pro-forma-1120", "foreign-owned-llc"
 draft: false
 ---
 
-**To complete Form 5472 as a foreign-owned US single-member LLC: fill Part I with the LLC's details and check the box on line 3, Part II with the foreign owner's details and foreign tax ID, Part III with the related party, Part IV with monetary transactions, and Part V with contributions and distributions on an attached statement. Attach it to a pro forma Form 1120 and fax to 855-887-7737.**
+**To complete Form 5472 as a foreign-owned US single-member LLC: fill Part I with the LLC's details and check the box on line 3, Part II with the foreign owner's details and foreign tax ID, Part III with the related party, Part IV with monetary transactions, and Part V with contributions and distributions on an attached statement. Attach it to a pro forma Form 1120 and fax to 855-887-7737. A missed or incomplete filing can trigger the $25,000 penalty under [IRC §6038A(d)](https://www.irs.gov/instructions/i5472).**
 
 Form 5472 is two pages and nine parts, most of which a small foreign-owned LLC leaves blank. The difficulty is not volume — it is knowing which parts apply to a disregarded entity, because the form was designed for foreign multinationals and only later extended to single-member LLCs. The instructions never quite say "here is the short version for you."
 
@@ -25,7 +25,7 @@ Gather these first. Missing any one of them will stall you halfway through:
 3. **The LLC's US address** — usually the registered agent address.
 4. **Total assets at year end**, in US dollars.
 5. **Your own full legal name, foreign address, and country of citizenship/residence.**
-6. **Your Foreign Taxpayer Identifying Number (FTIN)** — your home country's tax ID, or a reference ID if your country does not issue one.
+6. **Your Foreign Taxpayer Identifying Number (FTIN)** — your home country's tax ID, or "None" or "N/A" if your country does not issue one, plus a reference ID when you have no US identifying number. Details in our [FTIN and reference ID guide](/blog/form-5472-ftin-reference-id-foreign-address).
 7. **A complete list of every transfer between you and the LLC during the year**, both directions, with dates and US dollar amounts.
 
 Item 7 is the one people underestimate. Pull the LLC's full bank and payment-processor statements for the year, not just a summary.
@@ -72,7 +72,7 @@ Three lines deserve special attention.
 
 **Lines 1f and 1h are where disregarded entities differ from corporations.** The instructions for line 1f say to enter "the total value in U.S. dollars of all foreign related party transactions reported in Parts IV and VI (and if the reporting corporation is a foreign-owned U.S. DE, Part V) of **this** Form 5472." That parenthetical is doing the work: your Part V contributions and distributions are included in the line 1f total, even though Part V itself is a described attachment rather than a numeric grid. Line 1h is the same figure aggregated across every Form 5472 you file for the year — identical to 1f when you file only one.
 
-**Line 1g is usually 1.** You file a separate Form 5472 for each related party you had reportable transactions with. A single-owner LLC that only transacted with its owner files one form and enters 1. If the LLC also transacted with, say, your foreign company, that is a second Form 5472 and line 1g becomes 2.
+**Line 1g is usually 1.** You file a separate Form 5472 for each related party you had reportable transactions with. A single-owner LLC that only transacted with its owner files one form and enters 1. If the LLC also transacted with, say, your foreign company, that is a second Form 5472 and line 1g becomes 2. See [multiple related parties on Form 5472](/blog/multiple-related-parties-form-5472).
 
 ## Part II — 25% Foreign Shareholder
 
@@ -86,9 +86,9 @@ Enter:
 - **Line 4b(3)** — your **FTIN**, the tax identification number issued by your country of residence.
 - Principal country(ies) where business is conducted, country of citizenship/organization, and the country(ies) under whose laws you file an income tax return as a resident.
 
-**You do not need a US ITIN to file Form 5472.** The form provides for a foreign tax ID precisely because most foreign shareholders do not have US tax numbers. Applying for an ITIN solely to file Form 5472 wastes months and several hundred dollars.
+**You do not need a US ITIN to file Form 5472.** The form provides for a foreign tax ID precisely because most foreign shareholders do not have US tax numbers. Applying for an ITIN solely to file Form 5472 wastes months and several hundred dollars. Details: [do I need an ITIN for Form 5472](/blog/itin-required-form-5472).
 
-If your country does not issue individual tax identification numbers at all — the UAE and several others — leave the FTIN blank and use a **reference ID number**, applied consistently every year.
+If your country does not issue individual tax identification numbers at all — the UAE and several others — enter "None" or "N/A" in the FTIN block and also enter a **reference ID number** on line 4b(2), applied consistently every year.
 
 ## Part III — Related Party
 
@@ -139,7 +139,7 @@ Then carry the Part V total into the line 1f and line 1h figures in Part I, as t
 - **Part VIII — Cost Sharing Arrangement (CSA).** Blank for essentially every small LLC.
 - **Part IX — Base Erosion Payments under Section 59A.** The base erosion and anti-abuse tax applies to corporations with very large gross receipts. Blank for small filers.
 
-Leaving a part blank because it does not apply is correct. Leaving a part blank because you did not read it is how a return becomes substantially incomplete — and the instructions state that a substantially incomplete Form 5472 "constitutes a failure to file Form 5472," which carries the full **$25,000 penalty** under IRC § 6038A(d).
+Leaving a part blank because it does not apply is correct. Leaving a part blank because you did not read it can make a return substantially incomplete, which the instructions treat as a failure to file and can carry the full **$25,000 penalty** under IRC § 6038A(d).
 
 ## How do you file the finished package?
 
@@ -154,7 +154,7 @@ You cannot e-file. The instructions are unambiguous: "If you are a foreign-owned
 
 1. Putting the **owner's name in Part I** instead of the LLC's.
 2. **Not checking line 3**, the foreign-owned US DE box.
-3. Leaving the **FTIN blank** in Part II with no reference ID either.
+3. Leaving the FTIN block empty instead of writing "None" or "N/A", or omitting the required reference ID on line 4b(2).
 4. Putting **capital contributions in Part IV** instead of Part V.
 5. **Omitting the Part V attached statement** entirely — the box checked with nothing described.
 6. **Line 1f and 1h totals that do not reconcile** with Parts IV, V and VI.
@@ -185,7 +185,7 @@ In Part V, described on an attached statement, not in Part IV. The Part V total 
 
 ### Do I need a US tax ID to complete Part II?
 
-No. Enter your Foreign Taxpayer Identifying Number on line 4b(3). If your country issues no individual tax ID, leave it blank and use a reference ID number on line 4b(2), applied consistently in every year you file.
+No. Put your FTIN on line 4b(3). If your country issues no foreign tax ID, write "None" or "N/A" on 4b(3). Because you have no US identifying number, also enter a Reference ID number on line 4b(2).
 
 ### Can I fill in Form 5472 in a spreadsheet or a third-party PDF?
 

@@ -19,8 +19,9 @@ The IRS notices eventually. But there is a formal procedure for fixing this with
 
 ## TL;DR — Late or Unfiled Form 5472
 
-- **The penalty** is $25,000 per form, per year, under IRC §6038A(d). It continues at $25,000 per 30-day period after the IRS notifies you of the failure.
+- **The penalty** is $25,000 per form, per year, under [IRC §6038A(d)](https://www.law.cornell.edu/uscode/text/26/6038A). It continues at $25,000 per 30-day period if you still haven't filed 90 days after the IRS mails its notice.
 - **The fix** is the Delinquent International Information Return Submission Procedure (DIIRSP): file all missing returns together with a reasonable cause statement.
+- **Need help catching up?** [Start the DIIRSP filing](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-filed-late-never-filed-tldr) after gathering each missed year's owner transactions.
 - **No special IRS program needed.** DIIRSP is filed through normal channels — it's a package of returns plus a cover letter, not an online application.
 - **Earlier is better.** Penalties start running from the original due date. The sooner you file, the less exposure you have.
 - **Most foreign owners qualify** for reasonable cause abatement if the failure was due to not knowing about the requirement.
@@ -32,7 +33,7 @@ The IRS notices eventually. But there is a formal procedure for fixing this with
 Under IRC §6038A(d), the IRS can assess:
 
 - **$25,000 per form, per tax year** for failure to file or failure to maintain records.
-- An additional **$25,000 for each 30-day period** (or part of a period) after the IRS mails a notice of failure, capped at nothing — the statute doesn't impose a ceiling on the continuation penalty.
+- An additional **$25,000 for each 30-day period** (or part of a period) if the failure continues more than 90 days after the IRS mails a notice of failure, capped at nothing — the statute doesn't impose a ceiling on the continuation penalty.
 
 So if you missed Form 5472 for three years, the initial exposure is $75,000. If the IRS sends a notice and you don't respond, the continuation penalties keep stacking. This is why acting before an IRS notice arrives changes your situation dramatically.
 
@@ -62,7 +63,7 @@ That's the entire procedure. There's no application to submit, no online form, n
 
 There's no statute of limitations on unfiled returns in most circumstances. For returns that were never filed, the three-year assessment period doesn't start running. In theory, the IRS could go back indefinitely.
 
-In practice, DIIRSP submissions typically cover the last six years. If your LLC has existed for fewer than six years, you'd file for every year it existed. If it's older, filing six years of returns is generally sufficient to demonstrate good faith and stop the accumulating exposure.
+Many practitioners cover the last six years as a rule of thumb; the IRS publishes no DIIRSP lookback period. If your LLC has existed for fewer than six years, you'd file for every year it existed. If it's older, filing six years of returns is generally sufficient to demonstrate good faith and stop the accumulating exposure.
 
 If there are reasons to go further back — for example, an IRS notice already references a specific year, or you have unusual circumstances — file those years too. The goal is to have no gaps.
 
@@ -70,7 +71,7 @@ If there are reasons to go further back — for example, an IRS notice already r
 
 ## What counts as "reasonable cause"?
 
-The reasonable cause standard under Treas. Reg. §301.6724-1 means you exercised ordinary business care and prudence but still failed to file correctly. For Form 5472, the IRS has generally accepted:
+The reasonable cause standard for this penalty sits in [26 CFR §1.6038A-4(b)](https://www.law.cornell.edu/cfr/text/26/1.6038A-4) and means you exercised ordinary business care and prudence but still failed to file correctly. For Form 5472, the IRS has generally accepted:
 
 - **Not knowing about the requirement.** Foreign nationals who opened a US LLC for business reasons, relying on a state formation service or a general business advisor who didn't flag the IRS filing obligation, have a strong argument here.
 - **Relying on a professional who gave incorrect advice.** If your accountant or lawyer told you no filing was required and that advice was wrong, reliance on a tax professional is a recognized reasonable cause category.
@@ -131,7 +132,7 @@ If you want someone else to handle it: [we prepare the complete DIIRSP package](
 
 **Can I go to jail for not filing Form 5472?**
 
-Form 5472 is an information return, not a tax return, so there's no criminal penalty for non-filing in the usual sense. The penalty is civil — $25,000 per form. However, if the failure to file is part of a pattern of tax evasion, other charges can apply. Most foreign owners dealing with inadvertent non-filing have no criminal exposure.
+Form 5472 is an information return, not a tax return, so there's usually no criminal non-filing penalty. The penalty is civil — $25,000 per form. If non-filing is part of tax evasion, other charges can apply. Inadvertent non-filing usually carries no criminal exposure.
 
 **Do I need to amend my state tax returns too?**
 
@@ -139,11 +140,11 @@ Form 5472 is a federal IRS filing. Most states don't have an equivalent for sing
 
 **My LLC has a different tax year. Does the April 15 deadline still apply?**
 
-Form 5472 for a disregarded entity is due when the pro forma Form 1120 is due — which for calendar-year LLCs is April 15, extendable to October 15 with Form 7004. If your LLC has a non-calendar tax year, the deadline shifts accordingly.
+Form 5472 for a disregarded entity is due when the pro forma Form 1120 is due — for calendar-year filers reporting the 2025 tax year, April 15, 2026, extendable to October 15, 2026 with Form 7004. Non-calendar years shift accordingly.
 
 **What if I've already received an IRS penalty notice?**
 
-You can still respond with a reasonable cause statement and request abatement. File the missing returns immediately, attach the statement, and request abatement in the same submission. The continuation penalty clock stops once you've filed. See a tax professional if the notice references a specific dollar amount — you'll want to verify what years are covered.
+You can still respond with a reasonable cause statement and request abatement. File the missing returns immediately, attach the statement, and request abatement in the same submission. The continuation penalty clock stops once you've filed. If the notice lists a specific amount, verify the covered years.
 
 **Is first-time abatement available for Form 5472 penalties?**
 

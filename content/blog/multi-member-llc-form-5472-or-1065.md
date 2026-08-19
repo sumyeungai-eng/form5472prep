@@ -10,7 +10,7 @@ draft: false
 
 **A US LLC with two or more members is a partnership by default, not a disregarded entity — so it files Form 1065 with Schedules K-1 and K-2/K-3, not Form 5472. Form 5472 applies to a single-member LLC wholly owned by one foreign person, or to any LLC that elected to be taxed as a corporation and is at least 25% foreign-owned.**
 
-Adding a second member changes your entire federal filing profile. The obligations do not get lighter — a partnership with foreign partners has more moving parts than a foreign-owned disregarded entity, including potential withholding at 37% — but the specific form changes, and filing the wrong one wastes months.
+Adding a second member changes your entire federal filing profile. The obligations do not get lighter — a partnership with foreign partners has more moving parts than a foreign-owned disregarded entity, including potential withholding at 37% — but the specific form changes, and filing the wrong one wastes months. If Form 5472 was required before the second member joined, the missed-form penalty is **$25,000 per form, per year** under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472).
 
 This guide covers which return applies to which structure, what a partnership with foreign partners actually files, and the three ownership arrangements that put a multi-member LLC back into Form 5472 territory.
 
@@ -72,7 +72,7 @@ Three structures put you back in scope.
 
 **2. The "two members" are not really two owners.** If both members are entities that are themselves disregarded as separate from the same foreign person, the LLC may still have a single owner for federal tax purposes, and remain a foreign-owned disregarded entity. This arises with layered structures set up by formation agents, and it is a determination to get in writing from an adviser rather than to assume.
 
-**3. A corporation in your group is 25% foreign-owned.** Form 5472 applies to any 25%-foreign-owned domestic corporation, whether or not an LLC is involved. If your structure includes a US corporation with a foreign shareholder above that threshold, that corporation has its own Form 5472 obligation for each foreign related party it transacted with. One Form 5472 is filed per related party, not one covering them all.
+**3. A corporation in your group is 25% foreign-owned.** Form 5472 applies to any 25%-foreign-owned domestic corporation, whether or not an LLC is involved. If your structure includes a US corporation with a foreign shareholder above that threshold, that corporation has its own Form 5472 obligation for each foreign related party it transacted with. Our [multiple related parties guide](/blog/multiple-related-parties-form-5472) covers the one-form-per-related-party rule.
 
 The penalty for getting scope wrong in the direction of not filing is **$25,000 per form, per year** under IRC § 6038A(d), as set out in the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472).
 

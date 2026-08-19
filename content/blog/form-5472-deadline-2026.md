@@ -10,7 +10,7 @@ draft: false
 
 **For a calendar-year foreign-owned US LLC, Form 5472 with its pro forma Form 1120 is due 15 April of the following year, extended to 15 October if Form 7004 was filed on time. The 2025 tax year return was due 15 April 2026, or 15 October 2026 with an extension. The 2026 tax year return is due 15 April 2027.**
 
-Form 5472 deadlines are simple in outline and easy to miss in practice, because the filing sits outside every system that would normally remind you. It is not e-filed, no software prompts you, and the IRS sends no acknowledgement when it arrives. The first signal that something went wrong is usually a $25,000 penalty notice a year later.
+Form 5472 deadlines are simple in outline and easy to miss in practice, because the filing sits outside every system that would normally remind you. It is not e-filed, no software prompts you, and the IRS sends no acknowledgement when it arrives. The first signal that something went wrong is usually a $25,000 penalty notice (IRC §6038A(d)) a year later.
 
 Here is the full calendar as it stands in August 2026, plus the extension rule that is specific to foreign-owned disregarded entities and catches out people who assume Form 7004 works the way it does for everyone else.
 
@@ -35,7 +35,7 @@ Form 5472 is filed as an attachment to the reporting corporation's income tax re
 
 For a **calendar-year** LLC — which is the default and covers almost every foreign-owned LLC — that means **15 April** of the following year.
 
-For a **fiscal-year** LLC, the due date is the 15th day of the fourth month after the end of the tax year. A tax year ending 30 June is due 15 October.
+For a **fiscal-year** LLC, the due date is generally the 15th day of the fourth month after the tax year ends — with one live exception. A tax year **ending 30 June that began before 1 January 2026** is due on the 15th day of the **third** month (so a year ended 30 June 2026 is due **15 September 2026**), and its automatic extension runs **seven** months, to 15 April 2027. Only a June-30 year that *begins* on or after 1 January 2026 — the first is the year ended 30 June 2027 — follows the standard fourth-month rule and the six-month extension. See the [Form 1120 instructions](https://www.irs.gov/instructions/i1120) and [Form 7004 instructions](https://www.irs.gov/instructions/i7004).
 
 The due date does not change based on:
 
@@ -68,7 +68,7 @@ Three features of the penalty make missing a deadline more serious than it first
 
 1. **It is systemic.** No one weighs your circumstances before it is assessed. A computer notices the missing return and charges the penalty.
 2. **A substantially incomplete return counts as a failure to file.** Filing on time but wrong can produce the same $25,000 as not filing at all.
-3. **It escalates.** If the failure continues more than 90 days after IRS notification, the instructions provide for an additional $25,000 penalty, with further amounts for continued non-compliance.
+3. **It escalates.** If the failure continues more than 90 days after the IRS mails its notice, an additional $25,000 applies **for each 30-day period (or fraction of one) that the failure continues after that 90-day window** — per related party, with no stated cap (IRC §6038A(d)(2)).
 
 The penalty has no relationship to the size of your business. A dormant LLC with $500 of lifetime activity and a company with $10 million in revenue face the same $25,000 for the same missing form. That is the structural reason deadlines matter more here than in most small-business compliance.
 
@@ -130,11 +130,11 @@ Yes — file Form 7004 by the regular due date for a six-month extension. A fore
 
 ### Is there an automatic extension because I live outside the United States?
 
-Do not rely on one. Some corporations that keep their books and records outside the United States qualify for an automatic extension under Regulations § 1.6081-5, but the Form 5472 instructions do not address that route for a pro forma Form 1120 filed by a foreign-owned DE. Filing Form 7004 by 15 April is the safe course.
+Do not rely on one. Some corporations with books and records outside the United States qualify under Regulations 1.6081-5, but the Form 5472 instructions do not address that route for a foreign-owned DE's pro forma Form 1120. Filing Form 7004 by 15 April is safer.
 
 ### What is the penalty for filing Form 5472 late?
 
-$25,000 per form, per year, under IRC § 6038A(d). An additional $25,000 applies if the failure continues more than 90 days after IRS notification. The penalty is unrelated to the LLC's income.
+$25,000 per form, per year, under IRC § 6038A(d). If the failure continues more than 90 days after the IRS mails its notice, an additional $25,000 applies for each 30-day period or fraction that the failure continues after that 90-day window. The penalty is unrelated to the LLC's income.
 
 ### How long does the IRS take to confirm receipt?
 

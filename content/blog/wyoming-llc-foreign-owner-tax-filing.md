@@ -8,7 +8,7 @@ tags: ["form-5472", "wyoming-llc", "foreign-owned-llc", "compliance", "annual-re
 draft: false
 ---
 
-**A foreign-owned Wyoming LLC files two things each year: the Wyoming annual report with its license tax — the greater of $60 or $0.0002 per dollar of Wyoming assets, due by the first day of the LLC's anniversary month — and IRS Form 5472 attached to a pro forma Form 1120, faxed to the IRS Ogden PIN Unit. Wyoming charges no state income tax, but the federal Form 5472 penalty is $25,000 per year.**
+**A foreign-owned Wyoming LLC files two things each year: the Wyoming annual report with its license tax, and IRS Form 5472 attached to a pro forma Form 1120.** Wyoming charges no state income tax, but the annual report is still due by the first day of the LLC's anniversary month and the federal Form 5472 penalty is $25,000 per year.
 
 Wyoming is the most popular US formation state for non-residents, and for good reasons: no state income tax, no state franchise tax on income, low fees, strong charging-order protection, and no requirement to name members publicly. Those advantages are real.
 
@@ -39,7 +39,7 @@ Every LLC registered in Wyoming — domestic or foreign-registered, US-owned or 
 
 **If you miss it,** Wyoming will eventually administratively dissolve the LLC. A dissolved entity loses good standing, which typically breaks its bank account and payment processing, and reinstatement costs more than the report would have. Note that dissolution does not end your federal filing history: Form 5472 remains due for every year the entity existed and had reportable transactions.
 
-Fees change. Confirm the current amount on the Wyoming Secretary of State's own site before you file rather than relying on any third-party summary, including this one.
+Fees change. Confirm the current amount on the [Wyoming Secretary of State annual-report page](https://wyobiz.wyo.gov/Business/AnnualReport.aspx) before you file rather than relying on any third-party summary, including this one.
 
 ## Does a Wyoming LLC pay state income tax?
 
@@ -55,13 +55,13 @@ Two qualifications worth understanding, because "no state income tax" is often o
 
 Yes, if the LLC is a disregarded entity wholly owned by a non-US person and it had at least one **reportable transaction** during the tax year.
 
-Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 a foreign-owned US disregarded entity is treated as a corporation separate from its owner, solely for the purposes of the § 6038A reporting rules. State of formation is irrelevant to that rule.
+Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017, and ending on or after December 13, 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner, solely for the purposes of the § 6038A reporting rules. State of formation is irrelevant to that rule.
 
 Reportable transactions are movements of money, property or services **between the LLC and you** (or another foreign related party): capital contributions in, distributions out, loans either direction, payments for goods or services. **Revenue from customers is not reportable** — a Stripe payout from a customer does not go on the form; a transfer from that balance to your personal account does.
 
 The practical result for a typical Wyoming LLC: you wired money from your personal account to open the LLC's US business bank account. **That is a reportable capital contribution, and it means Form 5472 is due for that year** — even if the LLC never earned a cent afterwards. The formation year is the year most often missed. See [Form 5472 for a dormant LLC with no income](/blog/form-5472-dormant-llc-no-income).
 
-The penalty is **$25,000 per form, per year** under IRC § 6038A(d). The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) also state that a substantially incomplete return counts as a failure to file, and that continued failure more than 90 days after IRS notification adds a further $25,000.
+The penalty is **$25,000 per form, per year** under IRC § 6038A(d). The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) also state that a substantially incomplete return counts as a failure to file. If the failure continues more than 90 days after the IRS mails its notice, an additional $25,000 applies **for each 30-day period (or fraction of one) that the failure continues after that 90-day window** — per related party, with no stated cap (IRC §6038A(d)(2)).
 
 ## Does a Wyoming LLC still have to file a BOI report?
 
@@ -90,7 +90,7 @@ If that describes you, catching up voluntarily — before the IRS makes contact 
 You cannot e-file it. The IRS instructions state that a foreign-owned US DE cannot file Form 5472 electronically, and no consumer tax software supports it.
 
 1. Complete the **pro forma Form 1120** — the LLC's name, EIN, US address, formation date and year-end total assets — signed, with **"Foreign-owned U.S. DE"** written across the top of page 1.
-2. Complete **Form 5472**: Part I for the LLC (including the line 3 foreign-owned US DE box), Part II for you as the foreign owner with your foreign tax ID or reference ID, Part III for the related party, Part IV for listed monetary transactions, and **Part V with an attached statement** itemizing capital contributions and distributions.
+2. Complete **Form 5472**: Part I for the LLC (including the line 3 foreign-owned US DE box), Part II for you as the foreign owner with your foreign tax ID and, where no U.S. identifying number is entered, a reference ID, Part III for the related party, Part IV for listed monetary transactions, and **Part V with an attached statement** itemizing capital contributions and distributions.
 3. **Fax to 855-887-7737** or mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.
 4. **Keep the timestamped fax receipt.** The IRS sends no acknowledgement; the receipt is your only proof of filing.
 
@@ -110,7 +110,7 @@ The state side of a Wyoming LLC is genuinely easy — a $60 report you can file 
 
 ### Does a Wyoming LLC owned by a non-resident pay US taxes?
 
-The LLC itself pays no entity-level US income tax as a disregarded entity, and Wyoming charges no state income tax. The non-resident owner owes US federal income tax only on income effectively connected with a US trade or business or on US-source FDAP income. Form 5472 is required regardless. See [does a foreign-owned LLC pay US tax](/blog/does-foreign-owned-llc-pay-us-tax).
+The LLC pays no entity-level US income tax as a disregarded entity, and Wyoming has no state income tax. The non-resident owner owes US federal tax only on effectively connected income or US-source FDAP income. Form 5472 is still required. See [does a foreign-owned LLC pay US tax](/blog/does-foreign-owned-llc-pay-us-tax).
 
 ### How much is the Wyoming LLC annual report fee?
 

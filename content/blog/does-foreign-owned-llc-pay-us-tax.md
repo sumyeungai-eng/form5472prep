@@ -8,7 +8,7 @@ tags: ["form-5472", "foreign-owned-llc", "us-tax", "eci", "non-resident"]
 draft: false
 ---
 
-**A foreign-owned US single-member LLC pays no US federal income tax on its own — it is a disregarded entity, so its income is treated as the non-US owner's income. The owner owes US tax only on income effectively connected with a US trade or business, or on US-source FDAP income. Owing no tax does not remove the Form 5472 filing requirement, which carries a $25,000 penalty.**
+**A foreign-owned US single-member LLC pays no US federal income tax on its own — it is disregarded, so its income is treated as the non-US owner's income. The owner owes US tax only on effectively connected income or US-source FDAP income. Owing no tax does not remove Form 5472, which carries a $25,000 penalty (IRC §6038A(d)).**
 
 This is the single most confused question in the foreign-owned LLC world, and the confusion runs in both directions. Some owners believe a US LLC is a tax-free structure with nothing to file. Others believe having a US company means paying US corporate tax on everything. Both are wrong, and the second group usually overpays while the first group gets penalized.
 
@@ -30,7 +30,7 @@ Three notes before going further:
 
 A non-resident owner owes US federal income tax in two situations.
 
-**1. Effectively connected income (ECI).** Income from carrying on a trade or business within the United States is taxed at graduated US rates on a net basis. The owner reports it on **Form 1040-NR** (individual) or **Form 1120-F** (foreign corporation) and can deduct related expenses.
+**1. Effectively connected income (ECI).** Income from carrying on a trade or business within the United States is taxed at graduated US rates on a net basis. The owner reports it on **Form 1040-NR** (individual) or **Form 1120-F** (foreign corporation) and can deduct related expenses; [IRS Publication 519](https://www.irs.gov/publications/p519) explains the nonresident-alien income categories.
 
 **2. US-source FDAP income.** Fixed, determinable, annual or periodical income from US sources — dividends, certain interest, rents, royalties — is generally taxed at a flat 30% on the gross amount, usually collected by withholding at source, and often reduced by an income tax treaty.
 
@@ -78,7 +78,7 @@ The United States has treaties with the UK, Canada, India, Germany, and many oth
 
 Because Form 5472 is not a tax return. It is an **information return** that exists to give the IRS a record of transactions between a US entity and its foreign owner — regardless of whether any tax is due.
 
-For tax years beginning on or after 1 January 2017, Treasury Regulation § 1.6038A-1 treats a foreign-owned US disregarded entity as a corporation separate from its owner **solely** for the purposes of the § 6038A reporting rules. That single regulatory change is what put every foreign-owned single-member LLC in scope.
+For tax years beginning on or after 1 January 2017, and ending on or after December 13, 2017, Treasury Regulation § 1.6038A-1 treats a foreign-owned US disregarded entity as a corporation separate from its owner **solely** for the purposes of the § 6038A reporting rules. That single regulatory change is what put every foreign-owned single-member LLC in scope.
 
 The filing is required whenever there was at least one **reportable transaction** during the year between the LLC and its foreign owner or another foreign related party. Reportable transactions include:
 
@@ -91,7 +91,7 @@ The filing is required whenever there was at least one **reportable transaction*
 
 That distinction produces the outcome that surprises people most: a completely dormant LLC that earned nothing usually still has a reportable transaction, because the owner wired money in to open the bank account. See [Form 5472 for a dormant LLC with no income](/blog/form-5472-dormant-llc-no-income).
 
-The penalty for not filing is **$25,000 per form, per year** under IRC § 6038A(d) — confirmed in the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472), which also state that a substantially incomplete form counts as a failure to file, and that continued failure more than 90 days after IRS notification adds another $25,000.
+The penalty for not filing is **$25,000 per form, per year** under IRC § 6038A(d) — confirmed in the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472), which also state that a substantially incomplete form counts as a failure to file. If the failure continues more than 90 days after the IRS mails its notice, an additional $25,000 applies **for each 30-day period (or fraction of one) that the failure continues after that 90-day window** — per related party, with no stated cap (IRC §6038A(d)(2)).
 
 Note the asymmetry that makes this regime so punishing for small businesses: the penalty is a fixed dollar amount with no relationship to income. A business with $0 of revenue and a business with $10 million of revenue face exactly the same $25,000 charge for the same missing form.
 
@@ -129,7 +129,7 @@ Generally only if the profit is effectively connected with a US trade or busines
 
 ### Is a US LLC tax-free for non-residents?
 
-Not as a rule, and not in the sense of having no obligations. A single-member LLC pays no entity-level US tax, and many non-resident owners owe no US income tax. But Form 5472 is still required, state franchise taxes are still due, and your home country almost certainly taxes the income.
+Not automatically. A single-member LLC pays no entity-level US tax, and many non-resident owners owe no US income tax, but Form 5472 is still required, state franchise taxes may still be due, and your home country almost certainly taxes the income.
 
 ### Do I have to file Form 1040-NR if I own a US LLC?
 

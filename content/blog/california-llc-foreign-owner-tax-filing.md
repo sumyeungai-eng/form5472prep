@@ -10,87 +10,152 @@ draft: false
 
 **A foreign-owned California single-member LLC can have three distinct obligations: the $800 California annual tax, California Form 568, and federal Form 5472 attached to a pro forma Form 1120 when related-party transactions occurred. The state duties generally continue even with no business activity, while Form 5472 depends on ownership, classification and reportable transactions.**
 
-California compliance is not one filing. The federal package goes to the IRS, while the state return and payments go to the Franchise Tax Board. Foreign owners can [start the Form 5472 package here](/start?utm_source=blog&utm_medium=internal&utm_campaign=california-foreign-owner) and handle Form 568 separately.
+California compliance is a two-agency problem. The Franchise Tax Board handles the annual tax, LLC fee and Form 568. The IRS handles Form 5472 and the pro forma Form 1120.
+
+The California Franchise Tax Board states that every LLC doing business or organised in California must pay an annual tax of $800, and that the yearly tax remains due even when the LLC is not conducting business until the LLC is cancelled ([California FTB LLC page](https://www.ftb.ca.gov/file/business/types/limited-liability-company/index.html)). If the federal related-party ledger is the part you need handled, [start the Form 5472 package here](/start?utm_source=blog&utm_medium=internal&utm_campaign=california-llc-foreign-owner-tax-filing) and keep the California Form 568 work separate.
 
 ## What must a foreign-owned California LLC file?
 
-The following matrix prevents the most common mix-up:
+A foreign-owned California LLC must screen for California entity filings, California income-based fees, and federal related-party reporting. The correct answer is not one form.
 
-| Requirement | Agency | Core rule |
-|---|---|---|
-| $800 annual LLC tax | California FTB | Applies to an LLC organised, registered or doing business in California |
-| Form 568 | California FTB | State LLC return for qualifying disregarded LLCs and partnerships |
-| California LLC fee | California FTB | Begins when California-source total income exceeds the published threshold |
-| Form 5472 + pro forma 1120 | IRS | Applies to a wholly foreign-owned disregarded entity with a reportable related-party transaction |
+| Requirement | Agency | What triggers it | Why foreign owners mix it up |
+|---|---|---|---|
+| California annual LLC tax | California FTB | LLC is organised, registered or doing business in California | The charge is not based on profit |
+| California Form 568 | California FTB | LLC meets California filing requirements | It is a state LLC return, not the IRS Form 5472 package |
+| California LLC fee | California FTB | California-source total income exceeds the published fee bands | The fee is separate from the annual tax |
+| Form 5472 + pro forma 1120 | IRS | Wholly foreign-owned U.S. disregarded entity has a reportable related-party transaction | It can apply even when no U.S. income tax is due |
 
-The [California FTB LLC page](https://www.ftb.ca.gov/file/business/types/limited-liability-company/index.html) states that every LLC doing business or organised in California must pay an $800 annual tax. The page also states that the yearly tax continues even when the LLC is not conducting business until cancellation.
+The FTB says an LLC that is doing business in California or registered with the Secretary of State must pay the $800 annual tax, estimate and pay any LLC fee, and file Form 568 by the applicable original return due date ([California FTB LLC page](https://www.ftb.ca.gov/file/business/types/limited-liability-company/index.html)). The IRS rule is different: the Form 5472 instructions say a reporting corporation, including a foreign-owned U.S. disregarded entity, generally files when it had a reportable transaction with a related party ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)).
 
-## How much is the California LLC tax and fee?
+The practical result is simple: build one California checklist and one federal checklist. Do not ask whether the LLC "made money" until after the filing category is clear.
 
-The annual tax is $800. The FTB says it is due by the 15th day of the fourth month after the beginning of the taxable year. The temporary first-year exemption applied only to taxable years beginning from 2021 through 2023, so an LLC formed in 2026 should not assume it qualifies.
+## How much are the California annual tax and LLC fee?
 
-California also imposes an LLC fee based on California-source total income. The current [FTB filing information](https://www.ftb.ca.gov/forms/misc/3556.html) lists fee bands beginning above $250,000. The fee is separate from the $800 annual tax.
+The California annual LLC tax is $800, and the California LLC fee starts only when California total income passes the FTB's fee threshold. The annual tax and the LLC fee are two different charges.
 
-## When does Form 568 apply?
+For current LLC fee bands, the FTB lists the following California income ranges and fee amounts on its LLC page ([California FTB LLC page](https://www.ftb.ca.gov/file/business/types/limited-liability-company/index.html)):
 
-The FTB generally requires Form 568 when an LLC is organised in California, registered with the Secretary of State or doing business in California. The return reports state LLC information and calculates applicable tax or fee amounts.
+| California income | California LLC fee |
+|---|---:|
+| $250,000 to $499,999 | $900 |
+| $500,000 to $999,999 | $2,500 |
+| $1,000,000 to $4,999,999 | $6,000 |
+| $5,000,000 or more | $11,790 |
 
-Form 568 does not replace Form 5472. California follows federal entity classification for many LLC purposes, but the returns go to different agencies and report different information.
+The $800 annual tax is generally due by the 15th day of the fourth month after the beginning of the taxable year, and the estimated LLC fee is generally due by the 15th day of the sixth month of the current taxable year ([California FTB LLC page](https://www.ftb.ca.gov/file/business/types/limited-liability-company/index.html)). For a calendar-year LLC, those dates usually fall around April 15 and June 15, subject to weekends, holidays and short-year facts.
 
-## When does federal Form 5472 apply?
+The first-year $800 exemption is not a general 2026 rule. The FTB page says the temporary first-year annual-tax exception applied to tax years beginning on or after 1 January 2021 and before 1 January 2024 ([California FTB LLC page](https://www.ftb.ca.gov/file/business/types/limited-liability-company/index.html)). A foreign owner forming a California LLC in 2026 should not rely on that old exemption.
 
-The [IRS instructions](https://www.irs.gov/instructions/i5472) generally require a wholly foreign-owned US disregarded entity to file when it had a reportable transaction with its owner or another related party.
+## When does California Form 568 apply?
 
-California owners should specifically review:
+California Form 568 applies when the LLC is organised in California, registered with the California Secretary of State, doing business in California, or otherwise meets California LLC filing rules. Form 568 is not the same filing as Form 5472.
 
-- the owner paying the $800 tax or formation costs personally;
-- initial and later capital contributions;
-- owner withdrawals or distributions;
-- loans and repayments;
-- related-party services, rent or property transfers; and
-- cancellation or disposition transactions.
+Form 568 is the California LLC return. It is where the state receives the LLC's entity information and where California annual tax and fee items are reported or reconciled. The FTB says LLCs classified as partnerships and disregarded LLCs must file Form 568 when the California filing conditions apply ([FTB Publication 3556](https://www.ftb.ca.gov/forms/misc/3556.html)).
 
-Even a no-income LLC can have reportable transactions because owner funding is not the same as customer revenue.
+A single-member LLC can be disregarded for federal income tax and still have a California Form 568 filing. "Disregarded" does not mean invisible to every agency. It means the LLC is disregarded as separate from its owner for federal income tax classification, while California still uses an LLC return for state administration.
 
-## What is the California compliance calendar?
+The state return also does not replace the IRS package. California Form 568 goes to the FTB. Form 5472 attaches to a pro forma Form 1120 and goes to the IRS Ogden PIN Unit under the special foreign-owned U.S. disregarded entity procedure.
 
-1. **January:** reconcile the prior year's owner and related-party ledger.
-2. **April 15:** calendar-year federal Form 5472/pro forma 1120 due; the $800 annual tax is also generally due in the fourth month of the current tax year.
-3. **June 15:** estimated California LLC fee is generally due when applicable.
-4. **Return deadline:** file Form 568 under the FTB schedule for the LLC's classification and year.
-5. **Before closing:** file final returns and the proper Secretary of State cancellation documents so future $800 assessments stop.
+## When does federal Form 5472 apply to a California LLC?
 
-Confirm weekends, holidays, short tax years and fiscal-year dates using the current agency instructions.
+Federal Form 5472 applies when the California LLC is a wholly foreign-owned U.S. disregarded entity and had a reportable transaction with its foreign owner or another related party during the tax year. Customer revenue is not the key test.
 
-## How does the owner prepare Form 5472?
+The IRS instructions define a foreign-owned U.S. DE as a domestic disregarded entity wholly owned by a foreign person and state that, for section 6038A reporting, the entity is treated as separate from its owner for limited reporting purposes ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). The same instructions say foreign-owned U.S. DEs file a pro forma Form 1120 with Form 5472 attached by the Form 1120 due date, and cannot file Form 5472 electronically.
 
-1. Confirm the LLC's foreign ownership and disregarded classification.
-2. Reconcile owner transactions in US dollars.
-3. Complete Form 5472 and a Part V attachment.
-4. Attach it to a pro forma Form 1120 marked “Foreign-owned U.S. DE.”
-5. Fax at 300 DPI or higher to the IRS Ogden PIN Unit or use its dedicated mailing address.
-6. Retain the package and delivery proof with the ledger.
+California owners should review these transactions carefully:
+
+1. Owner paid formation, registered-agent, legal or FTB costs personally.
+2. Owner transferred capital into a U.S. or foreign bank account held by the LLC.
+3. LLC distributed money back to the owner.
+4. Owner lent money to the LLC, or the LLC repaid that loan.
+5. LLC paid owner compensation, rent, services or personal expenses.
+6. LLC was formed, acquired, disposed of or dissolved during the year.
+
+The 2025 tax year federal package for a calendar-year foreign-owned U.S. DE is generally due 15 April 2026, with a timely Form 7004 extension moving the filing deadline to 15 October 2026. The IRS Form 5472 instructions tie the due date to the attached Form 1120 due date and explain that Form 7004 must be filed by the regular due date for the extension ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)).
+
+## How should a California foreign owner build the filing calendar?
+
+A California foreign owner should build a calendar with separate state and federal columns, because the same bank transfer can affect one calendar and not the other.
+
+1. **January:** reconcile the prior-year owner ledger, bank statements and payment processor exports.
+2. **February:** confirm whether the LLC is organised, registered or doing business in California.
+3. **March:** classify California total income and decide whether an LLC fee estimate is possible.
+4. **By the federal due date:** file Form 5472 with the pro forma Form 1120, or timely file Form 7004.
+5. **By the California annual-tax due date:** pay the $800 annual tax when the FTB rule applies.
+6. **By the California estimated-fee due date:** pay any estimated LLC fee when California total income is above the threshold.
+7. **By the Form 568 due date:** file California Form 568 and reconcile payments.
+8. **Before closing:** file final federal and California returns and complete Secretary of State cancellation steps.
+
+The order matters. If the owner ledger is wrong in January, the Form 5472 package can be incomplete, and the California fee calculation can also be unreliable.
+
+## What California records should a foreign owner keep?
+
+A California foreign owner should keep a state folder, a federal folder and one transaction ledger that explains every owner movement in U.S. dollars. The ledger is the bridge between the two compliance systems.
+
+The state folder should include formation or registration documents, FTB notices, annual-tax confirmations, fee workpapers, Form 568 copies, and cancellation records. The federal folder should include the EIN confirmation, ownership evidence, signed Form 5472 package, pro forma Form 1120, Part V statement and timestamped fax receipt.
+
+The transaction ledger should separate:
+
+- capital contributions from the owner;
+- distributions to the owner;
+- owner-paid costs later reimbursed by the LLC;
+- LLC-paid personal expenses;
+- loans, repayments and interest;
+- non-cash transfers of property or rights; and
+- currency conversion method.
+
+For more examples of what belongs in the federal ledger, see the [Form 5472 reportable transactions guide](/blog/form-5472-reportable-transactions-examples).
+
+## What do four California scenarios look like in practice?
+
+California scenarios are easiest to analyse by separating the California tax result from the federal information-return result.
+
+**1. California-formed LLC, non-U.S. consultant abroad, no U.S. office.** The LLC is organised in California, so the FTB annual tax and Form 568 screening matter even if all work is performed abroad. If the owner funded the bank account or withdrew profits, Form 5472 is also likely required. No U.S. federal income tax may be due if the owner has no U.S. trade or business, but the filing analysis does not stop there.
+
+**2. Delaware LLC registered to do business in California.** California registration brings the LLC into the FTB system. The owner should expect the California annual tax, Form 568 and possible LLC fee analysis. Owner-paid state costs may also create federal Form 5472 reporting.
+
+**3. California LLC with $300,000 of California total income.** The $800 annual tax is one charge. California total income in the $250,000 to $499,999 band creates a $900 LLC fee under the FTB fee table. Arithmetic: $800 annual tax + $900 LLC fee = $1,700 of California LLC-level charges before any other state or local tax analysis. The federal Form 5472 answer still depends on related-party transactions.
+
+**4. California LLC cancelled during the year.** Cancellation can stop future California annual-tax accruals only when the legal and tax steps are completed. The final year still needs a California and federal review. Owner distributions, final reimbursements and dissolution transactions can be reportable on Form 5472 for the final tax year.
+
+## How does Form5472 Prep fit as the answer?
+
+Form5472 Prep handles the federal information-return package, not the California Form 568 or California tax-advice work. For a foreign-owned California LLC, that means we prepare Form 5472, the pro forma Form 1120 and the Part V statement, then have the package reviewed by a qualified tax accountant.
+
+After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped receipt. Standard service is $149 and takes 5-7 business days. Express service is $199 and takes 3 business days. Each additional past tax year is +$99. Fax delivery is included.
+
+We are not a CPA firm and do not give California tax advice. If you need an EIN first, the EIN service is $149 at [/ein](/ein). If the federal package is ready to start, use the [California Form 5472 intake](/start?utm_source=blog&utm_medium=internal&utm_campaign=california-llc-foreign-owner-tax-filing-product).
 
 ## Frequently asked questions
 
 ### Does a California LLC owe $800 with no income?
 
-Generally yes if it remains organised, registered or doing business in California. The annual tax is separate from profit and continues until proper cancellation.
+Generally yes, if the LLC remains organised, registered or doing business in California. The annual tax is separate from profit and generally continues until proper cancellation.
 
-### Is Form 568 the same as Form 5472?
+### Is California Form 568 the same as Form 5472?
 
-No. Form 568 is a California LLC return. Form 5472 is a federal related-party information return attached to a pro forma Form 1120 for a foreign-owned disregarded entity.
+No. Form 568 is a California LLC return filed with the FTB. Form 5472 is a federal related-party information return attached to a pro forma Form 1120.
 
 ### Does an out-of-state LLC owe California tax?
 
-It can if it registers or does business in California. California's doing-business tests are fact-specific and should be checked with the FTB or a California adviser.
+It can. An out-of-state LLC may owe California filings if it registers or does business in California. The California doing-business analysis is separate from federal Form 5472.
+
+### Does the California LLC fee apply to all LLCs?
+
+No. The California LLC fee is based on California total income bands. The $800 annual tax can apply even when the fee does not.
 
 ### Can the $800 payment be included with Form 5472?
 
-No. California payments go to the FTB. Form 5472 goes to the IRS Ogden PIN Unit and carries no IRS filing fee.
+No. California payments go to the Franchise Tax Board. Form 5472 goes to the IRS Ogden PIN Unit and carries no IRS filing fee.
 
-### What happens when the LLC closes?
+### Does a California LLC need Form 5472 if it is dormant?
 
-File final federal and state returns and complete California cancellation. Stopping activity alone does not reliably stop the annual state tax.
+Possibly. A dormant LLC can still have a reportable transaction if the foreign owner funded the LLC, paid its costs personally or received a distribution.
 
-Build one calendar with separate state and federal columns. [Start the federal Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=california-foreign-owner-close) or review the [foreign-owned LLC annual checklist](/blog/foreign-owned-llc-filing-requirements-checklist).
+### What happens when a California LLC closes?
+
+File final California and federal returns where required and complete cancellation. Stopping activity alone does not reliably stop future state assessments.
+
+---
+
+Build one calendar with separate California and federal columns. The takeaway is that California maintenance and IRS related-party reporting are different jobs, both easy to miss. [Start the federal Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=california-llc-foreign-owner-tax-filing-close) or review the [foreign-owned LLC annual checklist](/blog/foreign-owned-llc-filing-requirements-checklist).

@@ -9,9 +9,9 @@ readingMinutes: 7
 draft: false
 ---
 
-**Canadian residents who own a US single-member LLC must file [IRS Form 5472](https://www.irs.gov/instructions/i5472) with a pro forma Form 1120 every year**, even when no US tax is due. On Form 5472 Part II you can enter your Canadian SIN as the foreign tax identifying number, or a self-assigned reference ID if you'd rather not use it. Capital you put in counts as a reportable transaction, and missing the filing risks a $25,000 penalty.
+**Canadian residents who own a US single-member LLC must file [IRS Form 5472](https://www.irs.gov/instructions/i5472) with a pro forma Form 1120 every year**, even when no US tax is due. Enter your SIN as the foreign taxpayer identifying number on Part II line 4b(3); if you have none, the IRS instructions say to write "None" or "N/A" there rather than leaving it blank. Because you have no U.S. identifying number on line 4b(1), you must **also** enter a reference ID number on line 4b(2) — a consistent alphanumeric ID you assign yourself and reuse in every filing year. The reference ID is an additional field, not a substitute for the FTIN. Capital you put in counts as a reportable transaction, and missing the filing risks a $25,000 penalty.
 
-If you're based in Canada and own a US single-member LLC — whether it's a Delaware, Wyoming, or any other state entity — the IRS almost certainly requires you to file **Form 5472** every year. This is not an income tax return. You don't pay US federal income tax on your business profits simply because you own a US LLC. But you do have an **information return** filing obligation, and the penalty for missing it is **$25,000 per form, per year** under IRC §6038A(d).
+If you're based in Canada and own a US single-member LLC — whether it's a Delaware, Wyoming, or any other state entity — the IRS almost certainly requires you to file **Form 5472** every year. This is not an income tax return. You don't pay US federal income tax on your business profits simply because you own a US LLC. But you do have an **information return** filing obligation, and the penalty for missing it is **$25,000 per form, per year** under [IRC §6038A(d)](https://www.irs.gov/instructions/i5472).
 
 This guide covers what's specific to Canadian residents: what Form 5472 requires from you, what your Social Insurance Number has to do with it, whether the Canada-US tax treaty eliminates the obligation (it doesn't), and what counts as a reportable transaction when you're funding a US business from a Canadian bank account.
 
@@ -24,7 +24,9 @@ This guide covers what's specific to Canadian residents: what Form 5472 requires
 - **The Canada-US tax treaty** reduces withholding on certain income types but does not eliminate the Form 5472 obligation. These are separate regimes.
 - **Zero revenue ≠ zero filing.** The wire transfer you made from your TD or RBC account to open your US LLC bank account is a reportable capital contribution.
 - **BOI reporting to FinCEN is NOT required** for US-formed LLCs as of March 26, 2025 — many online guides haven't caught up with this.
-- **The deadline** is April 15, extendable to October 15 by filing Form 7004 in advance.
+- **The deadline** is April 15, extendable to October 15 by filing [Form 7004](https://www.irs.gov/instructions/i7004) in advance.
+
+If you want the federal filing handled, [start your Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-canada-residents-us-llc) — about 15 minutes.
 
 ---
 
@@ -42,7 +44,7 @@ The second condition is automatically met if you're a Canadian resident with no 
 
 ## What counts as a reportable transaction if you're in Canada?
 
-Reportable transactions under 26 CFR §1.6038A-4 cover any money, property, or services exchanged between the LLC and you as the foreign related party.
+Reportable transactions are defined in [26 CFR §1.6038A-2(b)(3)–(4)](https://www.law.cornell.edu/cfr/text/26/1.6038A-2) and cover any money, property, or services exchanged between the LLC and you as the foreign related party.
 
 **Common examples for Canadian LLC owners:**
 
@@ -68,7 +70,7 @@ A few things worth clarifying about the SIN on US forms:
 
 - Your SIN **is not** the same as a US Individual Taxpayer Identification Number (ITIN). You don't need to apply for an ITIN just to file Form 5472.
 - Your SIN **is not** sufficient for claiming treaty benefits on a W-8BEN for US withholding purposes. But that's a different regime from Form 5472 — on Form 5472, your SIN is the correct identifier for Part II.
-- If you genuinely don't have a SIN (rare for a Canadian resident), Form 5472 has a checkbox to explain why no FTIN is available, along with a reason. Always provide the SIN if you have one.
+- If you genuinely have no SIN, the IRS instructions say to enter "None" or "N/A" in the FTIN block and supply a reference ID number on line 4b(2). There is no explanation checkbox. Always provide the SIN if you have one.
 
 ---
 
@@ -113,7 +115,7 @@ For each tax year your Canadian-owned US LLC existed, you need:
 
 The complete package — Form 1120 cover plus Form 5472 — gets faxed to the **IRS Ogden PIN Unit at +1-855-887-7737**. There is no e-file option. Do not mail it to a regular IRS service center.
 
-The deadline is **April 15** of the following year (so April 15, 2026 for tax year 2025), extendable to **October 15** by filing Form 7004.
+The deadline is **April 15** of the following year (so April 15, 2026 for tax year 2025), extendable to **October 15** by filing [Form 7004](https://www.irs.gov/instructions/i7004).
 
 ---
 
@@ -121,7 +123,7 @@ The deadline is **April 15** of the following year (so April 15, 2026 for tax ye
 
 The fix is the **Delinquent International Information Return Submission Procedure (DIIRSP)**. You prepare returns for all missing years, attach a reasonable cause statement, and fax the complete package to the IRS Ogden PIN Unit.
 
-Most Canadian founders who didn't know about the requirement qualify for reasonable cause abatement — the IRS recognizes that non-US residents are often unaware of this obligation when they form a US LLC. Earlier is better: the continuation penalty ($25,000 per 30-day period after an IRS notice) runs on top of the initial penalty.
+Reasonable cause relief is decided on the facts and circumstances; not knowing about the requirement is a commonly cited factor, but relief is not automatic. Earlier is better: the continuation penalty ($25,000 per 30-day period once a failure runs more than 90 days past the IRS notice) runs on top of the initial penalty.
 
 See our [complete guide to filing late Form 5472 returns](/blog/form-5472-filed-late-never-filed) for the full DIIRSP walkthrough.
 
@@ -135,7 +137,7 @@ No. Your Canadian address goes on Part II as the foreign shareholder's address. 
 
 **My US LLC has a Canadian accountant. Can they file Form 5472?**
 
-Yes, if they're familiar with the filing workflow for a foreign-owned disregarded entity. The key requirement is knowing that the return goes to the IRS Ogden PIN Unit by fax (not e-file, not mail to a general IRS address) and that it must be attached to a pro forma Form 1120. Not every accountant knows this workflow — it's not a standard Canadian tax filing.
+Yes, if they're familiar with the filing workflow for a foreign-owned disregarded entity. The key requirement is knowing that the return goes to the IRS Ogden PIN Unit by fax and that it must be attached to a pro forma Form 1120.
 
 **Does my LLC need to file a state tax return in addition to the federal Form 5472?**
 

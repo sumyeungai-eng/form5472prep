@@ -1,6 +1,6 @@
 ---
 title: "Form 5472 for India Residents With a US LLC"
-description: "Form 5472 for India residents covers the filing package for a foreign-owned US LLC, how to enter a PAN as an FTIN, and which owner transactions to report."
+description: "Form 5472 for India residents covers the US LLC filing package, PAN-as-FTIN rules, and which owner transactions to report."
 date: 2026-05-28
 updated: 2026-07-06
 author: "Form5472 Prep"
@@ -9,7 +9,7 @@ readingMinutes: 8
 draft: false
 ---
 
-**Indian residents who own a US single-member LLC must file [IRS Form 5472](https://www.irs.gov/instructions/i5472) with a pro forma Form 1120 every year**, even if the LLC owes no US tax. Your Indian PAN (Permanent Account Number) is the natural foreign tax identifying number for Form 5472 Part II; if you'd rather not use it, a self-assigned reference ID is accepted. The penalty for missing the filing is $25,000.
+**Indian residents who own a US single-member LLC must file [IRS Form 5472](https://www.irs.gov/instructions/i5472) with a pro forma Form 1120 every year**, even if the LLC owes no US tax. Enter your PAN (Permanent Account Number) as the foreign taxpayer identifying number on Part II line 4b(3); if you have none, the IRS instructions say to write "None" or "N/A" there rather than leaving it blank. Because you have no U.S. identifying number on line 4b(1), you must **also** enter a reference ID number on line 4b(2) — a consistent alphanumeric ID you assign yourself and reuse in every filing year. The reference ID is an additional field, not a substitute for the FTIN. The penalty for missing the filing is $25,000.
 
 If you're based in India — whether you're a solo freelancer, a SaaS founder, or a consultant who opened a US LLC for Stripe or US banking — the IRS almost certainly requires you to file **Form 5472** every year. This is not an income tax return. You don't pay US federal income tax on your business profits just because your LLC is a US entity. But you do have an **information return** filing obligation, and the penalty for missing it is **$25,000 per form, per year**.
 
@@ -24,7 +24,8 @@ This guide covers everything specific to India residents: what to file, how your
 - **The India–US tax treaty** reduces withholding rates on certain income categories but does not eliminate the Form 5472 filing obligation.
 - **Zero revenue doesn't mean zero filing.** The initial transfer you made to open your US bank account is a reportable capital contribution.
 - **BOI reporting to FinCEN is NOT required** for US-formed LLCs as of March 26, 2025. Most guides online still say you must file — they're wrong.
-- **A new US remittance tax** was introduced in 2026 legislation — see the section below, as it may affect transfers from your LLC back to India.
+- **The 2026 US remittance excise tax (IRC §4475) does not reach ordinary bank transfers** from your LLC to your Indian account — only cash/money-order/cashier's-check remittances through a money-transmitter are taxed.
+- **Want the federal filing handled?** [Start your Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-india-residents-us-llc-tldr) after gathering the LLC EIN and owner ledger.
 
 ---
 
@@ -42,7 +43,7 @@ Living in India and having no US immigration status means the second condition i
 
 ## What counts as a reportable transaction?
 
-Reportable transactions are defined under 26 CFR §1.6038A-4 and cover any money, property, or services exchanged between the LLC and you as the foreign related party.
+Reportable transactions are defined in [26 CFR §1.6038A-2(b)(3)–(4)](https://www.law.cornell.edu/cfr/text/26/1.6038A-2) and cover any money, property, or services exchanged between the LLC and you as the foreign related party.
 
 **Common examples for India-based founders:**
 
@@ -62,7 +63,7 @@ Customer revenue going into the LLC from third parties — your Stripe payments,
 
 Form 5472 Part II asks for the foreign shareholder's **Taxpayer Identification Number** and a **Foreign Taxpayer Identification Number (FTIN)**. For Indian residents, the FTIN is your **PAN (Permanent Account Number)** — the 10-character alphanumeric ID issued by the Income Tax Department of India.
 
-If you have a PAN, enter it in the FTIN field on Part II. If you don't have a PAN (less common for individuals running a business), the form has a checkbox to explain why no FTIN is available — but if you have a PAN, you should use it.
+If you have a PAN, enter it in the FTIN field on Part II line 4b(3). If you don't have a PAN, the IRS instructions say to enter "None" or "N/A" in the FTIN block rather than leaving it blank. If you have no US identifying number on line 4b(1), you also need a consistent reference ID number on line 4b(2).
 
 You do not need to obtain a US Individual Taxpayer Identification Number (ITIN) just to file Form 5472, unless you have other US filing obligations that require one.
 
@@ -82,7 +83,7 @@ Similarly, if you qualify for treaty benefits that reduce your US withholding on
 
 Until early 2025, most foreign-owned US LLCs were expected to file a Beneficial Ownership Information (BOI) report with FinCEN under the Corporate Transparency Act.
 
-On March 26, 2025, the Treasury Department issued a final rule that **exempted all US-formed entities** — including domestic LLCs formed in Wyoming, Delaware, New Mexico, Florida, or any other US state — from the BOI filing requirement. Only foreign-formed entities that register to do business in the US still need to file.
+On March 26, 2025, the Treasury Department issued an **interim final rule** that **exempted all US-formed entities** — including domestic LLCs formed in Wyoming, Delaware, New Mexico, Florida, or any other US state — from the BOI filing requirement. Only foreign-formed entities that register to do business in the US still need to file ([Federal Register notice](https://www.federalregister.gov/documents/2025/03/26/2025-05199/beneficial-ownership-information-reporting-requirement-revision-and-deadline-extension)).
 
 If you formed your LLC in a US state (which is the typical structure for Indian founders accessing Stripe and US banking), **you do not need to file a BOI report**. A large number of online guides and advisors still say you do — they haven't been updated since the rule change. The exemption is real and in effect.
 
@@ -92,11 +93,9 @@ This has nothing to do with Form 5472, which is still fully required. The BOI ex
 
 ## How does the 2026 remittance tax affect you?
 
-The "One Big Beautiful Bill Act" signed in 2025 introduced a **1% excise tax on cash remittances** sent from the US to foreign countries, effective 2026. This applies to transfers made by individuals from US accounts to accounts outside the US.
+The One Big Beautiful Bill Act added a 1% federal excise tax on remittance transfers (IRC §4475) for transfers occurring after 31 December 2025. It is narrower than most summaries suggest: it applies **only** when the sender funds the transfer with cash, a money order, a cashier's check, or a similar physical instrument handed to a remittance transfer provider. Transfers funded by withdrawal from an account at a US financial institution, or with a US-issued debit or credit card, are **expressly excluded**. An ordinary wire or ACH from your LLC's own US business bank account to your Indian bank account is therefore outside the tax. Source: [IRS guidance on the remittance transfer tax](https://www.irs.gov/newsroom/treasury-irs-provide-penalty-relief-for-remittance-transfer-providers-who-fail-to-deposit-excise-tax-under-the-one-big-beautiful-bill).
 
-**What this may mean for you:** If your LLC makes distributions to your Indian bank account, and those transfers are treated as "remittances" under the statute, they could be subject to the 1% tax. The IRS has not yet issued detailed guidance on exactly which LLC-to-owner transfers fall within the scope.
-
-This is an evolving area. The amount involved is modest — 1% on transfers — but it's worth tracking as guidance develops. We will update this post when the IRS publishes implementation rules.
+If you send money from the LLC's US bank account to your Indian bank account by wire or ACH, the 1% tax does not apply. It would apply if you walked cash or a cashier's check into a money-transfer shop.
 
 ---
 
@@ -124,7 +123,7 @@ The deadline is **April 15** of the year following the tax year (e.g., April 15,
 
 The fix is the **Delinquent International Information Return Submission Procedure (DIIRSP)**. You file all missing years together, attach a reasonable cause statement explaining why you didn't file, and send the complete package to the IRS Ogden PIN Unit.
 
-Most India-based LLC owners who simply didn't know about the requirement qualify for penalty abatement under reasonable cause. The key is filing proactively, before the IRS sends a notice. Once the IRS flags the issue and sends a notice of failure, the continuation penalty ($25,000 per 30-day period) starts running. See our [late-filing guide](/blog/form-5472-filed-late-never-filed) for the full playbook.
+Most India-based LLC owners who simply didn't know about the requirement can present a reasonable-cause case, though relief is evaluated individually and is not automatic. The key is filing proactively, before the IRS sends a notice. Once the IRS flags the issue and sends a notice of failure, the continuation penalty ($25,000 per 30-day period once a failure runs more than 90 days past the IRS notice) starts running. See our [late-filing guide](/blog/form-5472-filed-late-never-filed) for the full playbook.
 
 ---
 
@@ -156,8 +155,12 @@ A single-member LLC has exactly one owner. If there are two of you, the entity i
 
 The Form 5472 obligation applies to Indian residents exactly as it does to anyone else who is a non-US person owning a US single-member LLC. The form isn't complex — typically two pages of information plus a supporting statement. The penalty for ignoring it is not.
 
-Use your PAN number as your FTIN, remember that the BOI obligation has been lifted for US-formed LLCs, and file by April 15 (or extend to October 15 with Form 7004).
+Use your PAN number as your FTIN, remember that the BOI obligation has been lifted for US-formed LLCs, and file by April 15 (or extend to October 15 with Form 7004). The penalty for ignoring the federal package is **$25,000 per form, per year** (IRC §6038A(d)).
 
 For a broader overview of the form, see [what Form 5472 is and who must file](/blog/what-is-form-5472). If you have missed years to sort out, the [late-filing guide](/blog/form-5472-filed-late-never-filed) covers DIIRSP step by step.
+
+Standard filing is $149 (5-7 business days), Express $199 (3 business days), +$99 per additional past tax year — IRS fax delivery included on both.
+
+We are not a CPA firm and do not give tax advice. We prepare and submit the US information return accurately.
 
 Ready to file your Form 5472? [Start here — takes about 15 minutes](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-india-residents-us-llc).

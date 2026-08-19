@@ -10,80 +10,140 @@ draft: false
 
 **A foreign-owned Delaware single-member LLC commonly has two separate annual obligations: Delaware's $300 LLC tax due June 1 and federal Form 5472 attached to a pro forma Form 1120, generally due April 15 for a calendar-year entity with a reportable owner transaction. Delaware LLCs do not file a state annual report, but the federal filing can still apply.**
 
-State formation does not replace federal tax reporting. A non-US owner should manage the two calendars separately and [start the federal Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=delaware-foreign-owner) when owner funding, withdrawals or other related-party transactions occurred.
+Delaware is popular because state maintenance is simple. That simplicity causes a specific mistake: a foreign owner pays the Delaware LLC tax, sees no annual report requirement, and assumes the IRS has nothing to receive. Delaware maintenance and federal related-party reporting are separate systems.
+
+The Delaware Division of Corporations states that Delaware limited liability companies do not file an annual report, but they must pay an annual tax of $300 on or before June 1; late payment carries a $200 penalty and interest at 1.5% per month ([Delaware annual report and tax information](https://corp.delaware.gov/frtax/)). If the federal transaction ledger is the part you need completed, [start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=delaware-llc-foreign-owner-tax-filing) and treat the Delaware tax as a separate state payment.
 
 ## What does a foreign-owned Delaware LLC file in 2026?
 
-The core checklist separates state entity maintenance from federal tax information reporting:
+A foreign-owned Delaware LLC should screen for the Delaware annual LLC tax, federal Form 5472, and any income, payroll or sales-tax filings created by actual activity. The Delaware entity record alone does not answer the federal question.
 
 | Obligation | Agency | Typical deadline | Applies when |
 |---|---|---|---|
 | Delaware LLC annual tax | Delaware Division of Corporations | June 1 | Domestic or registered Delaware LLC remains active |
-| Form 5472 + pro forma 1120 | IRS | April 15 for a calendar-year LLC | Foreign-owned disregarded entity had a reportable related-party transaction |
-| Form 7004 extension | IRS Ogden PIN Unit | By regular federal due date | Six more months are needed for the Form 5472 package |
-| Other income, payroll or sales-tax filings | Relevant agency | Fact-specific | Business activity creates a separate obligation |
+| Delaware annual report | Delaware Division of Corporations | Not required for LLCs | Corporations follow different rules |
+| Form 5472 + pro forma 1120 | IRS | April 15 for many calendar-year LLCs | Foreign-owned disregarded entity had a reportable related-party transaction |
+| Form 7004 extension | IRS Ogden PIN Unit | By the regular federal due date | More time is needed for the federal package |
+| Other tax filings | Federal, state or local agency | Fact-specific | Payroll, sales, U.S.-source income or elected corporate treatment exists |
 
-This table is a screening tool, not a conclusion that every LLC owes income tax. Form 5472 is an information return and can apply even when no federal income tax is due.
+The IRS Form 5472 instructions say a reporting corporation includes a foreign-owned U.S. disregarded entity and generally must file Form 5472 when it had a reportable transaction with a related party ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). The foreign owner is a related party, so owner funding, withdrawals and reimbursements are often enough to create a filing requirement.
+
+The point is not that every Delaware LLC owes U.S. income tax. Many foreign-owned single-member LLCs owe no U.S. federal income tax. The point is that no-tax and no-filing are different conclusions.
 
 ## Does a Delaware LLC file an annual report?
 
-No annual report is required for a Delaware LLC, but the state annual tax remains due. The Delaware Division of Corporations' [official tax FAQ](https://corp.delaware.gov/taxfaq/) states that domestic and foreign LLCs formed or registered in Delaware pay a $300 annual tax and do not file an annual report.
+A Delaware LLC does not file the Delaware annual report, but it does pay the Delaware LLC annual tax. The no-report rule is real, and it applies only to the Delaware state report.
 
-The state's [annual tax page](https://corp.delaware.gov/frtax/) says the LLC tax is due on or before June 1. It also lists a $200 late-payment penalty and interest at 1.5% per month. The tax continues until the entity is legally cancelled; merely stopping business does not end it.
+The Delaware Division of Corporations' tax FAQ states that domestic and foreign LLCs formed or registered in Delaware are required to pay an annual tax of $300 and that there is no requirement to file an annual report ([Delaware tax FAQ](https://corp.delaware.gov/taxfaq/)). The annual tax page gives the operational rule: LLC taxes are due on or before June 1, with a $200 penalty for non-payment or late payment and 1.5% monthly interest on the tax and penalty ([Delaware annual report and tax information](https://corp.delaware.gov/frtax/)).
 
-## When does the federal Form 5472 apply?
+That state rule is often the entire Delaware compliance job for a simple LLC with no Delaware activity. It is not the entire U.S. compliance job for a foreign-owned disregarded entity. The IRS Form 5472 package is still analysed under federal reporting rules.
 
-The [IRS instructions](https://www.irs.gov/instructions/i5472) generally require a foreign-owned US disregarded entity to file when it had a reportable transaction with a related party. The foreign owner is a related party.
+## When does federal Form 5472 apply to a Delaware LLC?
 
-Common triggers include:
+Federal Form 5472 applies to a Delaware LLC when the LLC is wholly foreign-owned, disregarded for U.S. federal income tax, and had at least one reportable transaction with the owner or another related party during the tax year.
 
-- paying Delaware formation or registered-agent costs personally;
-- contributing capital to the LLC;
-- lending money to the LLC or receiving repayment;
-- taking an owner withdrawal;
-- having the LLC pay a personal expense; and
-- selling, transferring or dissolving the entity.
+The IRS instructions say a foreign-owned U.S. DE files a pro forma Form 1120 with Form 5472 attached by the Form 1120 due date, and that "Foreign-owned U.S. DE" should be written across the top of the Form 1120 ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). The same instructions say the package is faxed to 855-887-7737 at 300 DPI or higher, or mailed to the dedicated Ogden PIN Unit address.
 
-An LLC that earned no revenue can still have one or more of these transactions. Delaware's lack of an LLC annual report has no bearing on the federal rule.
+Common Delaware-owner triggers include:
+
+1. The owner paid Delaware formation costs personally.
+2. The owner paid registered-agent invoices personally.
+3. The owner transferred startup capital into the LLC's bank account.
+4. The LLC sent money back to the owner as a withdrawal or distribution.
+5. The owner advanced a loan or the LLC repaid a loan.
+6. The LLC paid the owner's personal expense.
+7. The LLC was formed, acquired, disposed of or dissolved during the year.
+
+Revenue from customers is not automatically a reportable transaction with the owner. A Stripe payment from an unrelated customer may be ordinary revenue, while an owner reimbursement can be a related-party transaction.
+
+## How should a Delaware foreign owner handle deadlines?
+
+A Delaware foreign owner should manage the federal and state deadlines as two separate due dates, with separate proof of filing.
+
+1. **January:** download bank, processor and registered-agent records for the prior year.
+2. **February:** mark every owner-paid invoice, contribution, withdrawal and loan movement.
+3. **March:** prepare the Form 5472 transaction summary and Part V statement.
+4. **By 15 April 2026 for the 2025 tax year:** file the federal package, or file Form 7004 for the extension.
+5. **By 1 June 2026:** pay the Delaware annual LLC tax for active Delaware entities.
+6. **After each filing:** save the IRS fax receipt and Delaware payment confirmation in separate folders.
+7. **Before cancelling:** confirm every prior Delaware tax year and federal Form 5472 year is closed.
+
+The 2025 tax year federal package is the one most foreign owners will file in 2026. A timely federal extension moves the Form 5472 package deadline to 15 October 2026 for a calendar-year filer, but it does not extend the Delaware June 1 LLC tax.
 
 ## What records should a Delaware LLC retain?
 
-Use a two-calendar compliance file:
+A Delaware LLC should retain one state-maintenance file and one federal related-party file. The evidence overlaps, but the purpose is different.
 
-1. **State folder:** formation certificate, registered-agent records, $300 tax confirmation and any amendment or cancellation.
-2. **Federal folder:** EIN letter, ownership evidence, bank and processor statements, owner ledger, exchange-rate schedule, Form 5472 package and fax receipt.
+| Record | Delaware use | Federal Form 5472 use |
+|---|---|---|
+| Certificate of formation | Confirms entity existence | Confirms U.S. domestic DE history |
+| Registered-agent invoices | Supports state maintenance | Owner-paid invoices can be reportable |
+| Delaware tax confirmation | Shows annual tax paid | Owner-paid tax may affect related-party ledger |
+| EIN confirmation | Usually not needed for Delaware annual tax | Required for the federal package |
+| Bank statements | Usually not submitted to Delaware | Source for contributions and distributions |
+| Owner ledger | Usually internal only | Core Form 5472 support |
+| Fax receipt | No Delaware purpose | Proof the IRS package was sent |
 
-The owner ledger should classify cash in, cash out, owner-paid expenses, reimbursements, loans and non-cash transfers. Our [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) gives a complete evidence list.
+The owner ledger should classify cash in, cash out, owner-paid expenses, reimbursements, loans, repayments and non-cash transfers. The [Form 5472 recordkeeping checklist](/blog/foreign-owned-llc-filing-requirements-checklist) gives a broader annual evidence list.
 
-## How does a Delaware foreign owner complete the federal filing?
+## What do four Delaware scenarios look like in practice?
 
-1. Confirm that the LLC was wholly foreign-owned and disregarded for federal tax purposes.
-2. Reconcile all owner and related-party transactions for the tax year.
-3. Complete Form 5472 and the required Part V attachment.
-4. Attach Form 5472 to a pro forma Form 1120 marked “Foreign-owned U.S. DE.”
-5. Fax the package at 300 DPI or higher to 855-887-7737, or mail it to the dedicated Ogden address.
-6. Keep a timestamped receipt because the IRS does not send a routine acceptance notice.
+Delaware scenarios usually turn on whether the owner moved money, not whether Delaware asks for an annual report.
+
+**1. Newly formed Delaware LLC, non-U.S. owner paid all startup costs personally.** Delaware annual tax is due while the LLC remains active. No Delaware annual report is filed for the LLC. The owner's personal payment of formation or registered-agent costs is a likely related-party transaction, so Form 5472 should be prepared if the LLC is a foreign-owned disregarded entity.
+
+**2. Delaware LLC with no revenue and no bank account after formation.** The LLC may still owe the Delaware annual tax because state maintenance is not based on revenue. Federal Form 5472 depends on whether there was a reportable transaction during the tax year, such as the owner paying state or agent costs.
+
+**3. Delaware LLC missed the June 1 state tax by three months.** Arithmetic using Delaware's published charges: $300 annual tax + $200 late-payment penalty = $500 before interest. Interest also accrues at 1.5% per month on the tax and penalty under the Delaware annual tax page. That state balance does not file or fix Form 5472.
+
+**4. Delaware LLC is closing in 2026.** Delaware cancellation stops future state accruals only after proper legal filing. The final federal year still needs a Form 5472 review because liquidation distributions, owner-paid cancellation costs or final reimbursements can be reportable related-party transactions.
+
+## Does Delaware's no-report rule reduce IRS risk?
+
+Delaware's no-report rule does not reduce IRS Form 5472 risk. Delaware is saying the LLC does not file a Delaware annual report; the IRS is asking whether a foreign-owned U.S. disregarded entity had reportable related-party transactions.
+
+The penalty difference is also stark. Delaware's late-payment penalty for the LLC tax is $200, plus interest. The IRS Form 5472 penalty is $25,000 per form, per year under the Form 5472 instructions, with additional penalties if the failure continues after IRS notice ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)).
+
+That mismatch explains why foreign owners should not let the easy Delaware filing create false confidence. Paying the state keeps the entity in better standing. Filing Form 5472 keeps the federal information-return obligation from becoming a fixed-dollar penalty problem.
+
+## How does Form5472 Prep fit as the answer?
+
+Form5472 Prep handles the federal package for foreign-owned Delaware LLCs. We prepare Form 5472, the pro forma Form 1120 and the Part V statement, then have the package reviewed by a qualified tax accountant.
+
+After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped receipt. Standard service is $149 and takes 5-7 business days. Express service is $199 and takes 3 business days. Each additional past tax year is +$99. Fax delivery is included.
+
+We are not a CPA firm and do not give Delaware tax advice. If the LLC still needs an EIN, the EIN service is $149 at [/ein](/ein). If the federal package is ready, use the [Delaware Form 5472 intake](/start?utm_source=blog&utm_medium=internal&utm_campaign=delaware-llc-foreign-owner-tax-filing-product).
 
 ## Frequently asked questions
 
 ### Does a Delaware LLC owe $300 with no income?
 
-Yes, while it remains formed or registered in Delaware. The state's $300 LLC tax is an entity-maintenance charge and is separate from income or Form 5472.
+Yes, while the LLC remains formed or registered in Delaware. The $300 annual LLC tax is separate from income and separate from federal Form 5472.
 
 ### Does a Delaware LLC file an annual report?
 
-No. Delaware LLCs pay the annual tax but do not file the corporate annual report. Corporations follow different rules.
+No. Delaware LLCs pay the annual LLC tax but do not file the state annual report. Delaware corporations follow different rules.
+
+### What is the Delaware LLC tax deadline?
+
+The Delaware LLC annual tax is due on or before June 1. Late payment carries the Delaware penalty and monthly interest stated by the Division of Corporations.
 
 ### Does every foreign-owned Delaware LLC file Form 5472?
 
-The federal return generally requires a reportable transaction. Formation funding, owner-paid bills and withdrawals mean many active or newly formed LLCs meet that test.
+Not every year automatically. The federal filing generally requires a reportable transaction, but formation funding, owner-paid bills and withdrawals make many Delaware LLCs meet that test.
 
 ### Are the Delaware and Form 5472 deadlines the same?
 
-No. A calendar-year Form 5472 package is generally due April 15, while Delaware's LLC annual tax is due June 1.
+No. A calendar-year federal package is generally due April 15. Delaware's LLC annual tax is due June 1.
 
 ### Does cancelling the LLC erase past filings?
 
-No. Cancellation stops future state accruals when completed properly, but overdue state taxes and prior-year federal Form 5472 obligations remain.
+No. Cancellation can stop future Delaware accruals when done properly, but overdue state taxes and prior-year federal Form 5472 obligations remain.
 
-Treat Delaware maintenance and IRS reporting as two separate jobs. [Start your federal filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=delaware-foreign-owner-close) or see the [final Form 5472 guide](/blog/final-form-5472-closing-foreign-owned-llc) if the LLC is closing.
+### Can a registered agent file Form 5472?
+
+Usually no. Registered-agent service is state maintenance. Form 5472 is a federal information return that needs transaction records and a signed package.
+
+---
+
+Treat Delaware maintenance and IRS reporting as two separate jobs. Pay the Delaware LLC tax on time, but do not stop there if owner money moved. [Start your federal filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=delaware-llc-foreign-owner-tax-filing-close) or see the [Form 5472 late-filing guide](/blog/form-5472-filed-late-never-filed) if prior years are missing.

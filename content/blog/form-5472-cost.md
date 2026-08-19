@@ -8,9 +8,9 @@ tags: ["form-5472", "cost", "pricing", "foreign-owned-llc", "filing-guide"]
 draft: false
 ---
 
-**Last updated: July 2026**
+**Last updated: August 2026**
 
-The IRS charges **$0** to file Form 5472 — the form itself is free. What you pay for is preparation. Filing it yourself costs nothing but a few dollars for a fax service and several hours of your time; a US CPA typically charges **$600–$750** for Form 5472 with the required pro forma Form 1120; and a done-for-you service like [Form5472 Prep](/pricing) starts at **$149** with IRS fax delivery included. Every one of those is small next to the **$25,000 penalty** for filing late or wrong.
+The IRS charges **$0** to file Form 5472. Preparation is the cost: DIY is free apart from fax delivery and your time; our August 2026 review of published CPA pricing pages commonly showed **$600–$750** for Form 5472 with the required pro forma Form 1120; and [Form5472 Prep](/pricing) starts at **$149** with IRS fax delivery included. Every option is small next to the **$25,000 penalty** for filing late or wrong.
 
 Form 5472 is an information return that a foreign-owned US single-member LLC files each year to report transactions between the LLC and its non-US owner. There is no tax to calculate on it, so "cost" almost always means preparation cost, not a tax bill.
 
@@ -24,7 +24,7 @@ There is no government filing fee for Form 5472 or the attached pro forma Form 1
 | US CPA / tax firm | ~$600–$750 (more with many transactions) | 1–3 weeks, plus finding one who knows the form | Low, if the preparer knows Form 5472 |
 | Done-for-you service ([Form5472 Prep](/start)) | **$149** (Standard, 5-7 business days) or **$199** (Express, 3 business days), IRS fax delivery included | ~15 minutes to answer the questions | Low — every filing is accountant-reviewed |
 
-US CPA firms that publish prices commonly quote **$600 to $750** for a foreign-owned single-member LLC's Form 5472 plus pro forma 1120, with add-ons for extensions, EIN applications, or rush turnaround. Fees rise with the number of related parties and the volume of reportable transactions.
+Our August 2026 review of published CPA pricing pages commonly showed **$600 to $750** for a foreign-owned single-member LLC's Form 5472 plus pro forma 1120, with add-ons for extensions, EIN applications, or rush turnaround. Fees rise with the number of related parties and the volume of reportable transactions.
 
 The important number is the downside, not the fee. Under IRC § 6038A(d), the IRS assesses a **$25,000 penalty** on any reporting corporation that fails to file Form 5472 when due or files a substantially incomplete one ([IRS, Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). Against that, the difference between a $149 service and a $700 CPA is rounding error — the real decision is making sure it gets filed correctly and on time.
 
@@ -78,15 +78,15 @@ No. There is no IRS filing fee for Form 5472 or the attached pro forma Form 1120
 
 ### How much does a CPA charge for Form 5472?
 
-US CPA firms that publish prices commonly quote **$600 to $750** for a foreign-owned single-member LLC's Form 5472 plus pro forma 1120. Fees increase with the number of related parties, transaction volume, and add-ons like extensions or rush processing.
+Our August 2026 review of published CPA pricing pages commonly showed **$600 to $750** for a foreign-owned single-member LLC's Form 5472 plus pro forma 1120. Fees increase with related parties, transaction volume, and add-ons.
 
 ### Can I file Form 5472 for free?
 
-You can prepare and file it yourself for $0 in fees (plus a few dollars for a fax), so "free" is possible. But the IRS treats a substantially incomplete Form 5472 as a failure to file, which carries a $25,000 penalty — so free DIY only pays off if you complete it correctly and on time.
+You can prepare and file it yourself for $0 in fees plus fax delivery. But the IRS treats a substantially incomplete Form 5472 as a failure to file, which carries a $25,000 penalty — so free DIY only pays off if you complete it correctly and on time.
 
 ### How much does it cost to file multiple years of Form 5472?
 
-Each missed year needs its own Form 5472 package. With Form5472 Prep, additional past years are a flat +$99 each — so on the $149 Standard tier a two-year catch-up is $248 and a three-year catch-up is $347, filed together under DIIRSP with one reasonable-cause statement. On the $199 Express tier the same catch-ups are $298 and $397.
+Each missed year needs its own Form 5472 package. With Form5472 Prep, additional past years are +$99 each on either the $149 Standard tier or the $199 Express tier, filed together under DIIRSP with one reasonable-cause statement.
 
 ### Is Form 5472 filing tax-deductible?
 
@@ -94,6 +94,6 @@ Preparation fees for a business information return can generally be treated as a
 
 ## The bottom line
 
-Form 5472 itself is free to file; what you're really buying is correctness and on-time delivery. DIY costs $0 in fees but carries the most risk, a CPA runs roughly $600–$750 per year, and a done-for-you service is $149 (or $199 if you want it in 3 business days instead of 5-7) with fax delivery included. Whatever you choose, the goal is the same — get a complete package to the IRS Ogden PIN Unit before the deadline, because the $25,000 penalty makes every one of these prices look cheap.
+Form 5472 itself is free to file; what you're really buying is correctness and on-time delivery. DIY costs $0 in fees but carries the most risk, our August 2026 review of published CPA pricing pages commonly showed roughly $600–$750 per year, and a done-for-you service is $149 (or $199 if you want it in 3 business days instead of 5-7) with fax delivery included. Whatever you choose, the goal is the same — get a complete package to the IRS Ogden PIN Unit before the deadline, because the $25,000 penalty makes every one of these prices look cheap.
 
 Ready to get it done? [File your Form 5472 from $149 →](/start) — about 15 minutes, accountant-reviewed, fax to the IRS included.

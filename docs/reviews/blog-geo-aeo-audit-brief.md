@@ -33,3 +33,11 @@ Output format (write to the file path given in your prompt, then return ONLY a 5
 - P0 (wrong/invented fact, broken link, wrong price): ...
 - P1 (standard violation): ...
 - P2 (polish): ...
+
+## Addendum for the 2026-08-19 full-site pass
+- Audit the WORKING-TREE file content/blog/<slug>.md as source of truth (15 posts were just expanded locally and are not yet deployed). Use the live site only to check that link TARGETS return 200.
+- Depth line 17: for country/state/pillar guides the bar is ≥1,600 words; for narrow how-to/topic posts ≥1,200 is acceptable if the standard is otherwise met.
+- Add line 18 — INTEGRITY: no duplicated H2s, no truncated/half-written sections, no leftover placeholder text ("[date]", "TODO", "lorem"), no two conflicting statements of the same fact within one post, frontmatter parses (title/description/date present, description ≤155, title ≤60).
+- Add line 19 — the FAQ H2 must be exactly the pattern the extractor needs (H2 containing "Frequently asked questions"/"FAQ") and each question an H3 or whole-line bold.
+- Known environment quirk: comptroller.texas.gov is DNS-blocked from this machine — report those links as "unverifiable here", not broken.
+- Be concrete: every finding needs the slug, the line number, the exact offending text, and the exact fix. Findings without a line ref will be ignored.

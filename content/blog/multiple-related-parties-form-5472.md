@@ -9,7 +9,7 @@ tags: ["form-5472", "related-parties", "foreign-owned-llc", "multiple-forms"]
 draft: false
 ---
 
-**Last updated: July 2026**
+**Last updated: September 2026**
 
 A reporting LLC files a separate Form 5472 for each related party with which it had a reportable transaction during the tax year. Multiple transactions with the same person normally stay on that person’s form. Transactions with the foreign owner, a related foreign company, and another related person can therefore require three Forms 5472 attached to one filing package.
 

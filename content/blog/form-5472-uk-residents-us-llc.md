@@ -8,7 +8,7 @@ tags: ["form-5472", "uk-residents", "foreign-owned-llc", "disregarded-entity"]
 draft: false
 ---
 
-**UK residents who own a US single-member LLC must file IRS Form 5472 with a pro forma Form 1120 every year**, even with zero US tax to pay. On Form 5472 Part II you can enter your UK tax reference (UTR) as the foreign tax identifying number, or a self-assigned reference ID instead. Any capital you put in counts as a reportable transaction, and missing the filing risks a $25,000 penalty.
+**UK residents who own a US single-member LLC must file IRS Form 5472 with a pro forma Form 1120 every year**, even with zero US tax to pay. Enter your UK tax reference (UTR) as the foreign taxpayer identifying number on Part II line 4b(3); if you have none, the IRS instructions say to write "None" or "N/A" there rather than leaving it blank. Because you have no U.S. identifying number on line 4b(1), you must **also** enter a reference ID number on line 4b(2) — a consistent alphanumeric ID you assign yourself and reuse in every filing year. The reference ID is an additional field, not a substitute for the FTIN.
 
 If you're based in the UK and you own a US single-member LLC — Wyoming, Delaware, New Mexico, it doesn't matter — the IRS almost certainly requires you to file **Form 5472** every year. This is not an income tax return. You don't pay anything. But the penalty for not filing is **$25,000 per form, per year**, with no cap on continuation penalties.
 
@@ -23,6 +23,7 @@ This guide covers exactly what applies to UK residents specifically: what to fil
 - **The deadline** is April 15 of the following year, extendable to October 15 by filing Form 7004 first.
 - **Zero revenue does not mean zero filing obligation.** The capital you wired into the LLC when you opened it is a reportable transaction.
 - **BOI reporting to FinCEN is NOT required** for US-formed LLCs as of March 26, 2025 — most guides you'll find online have this wrong.
+- **Want the filing handled?** [Start your Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uk-residents-us-llc-tldr), or review [what Form 5472 is](/blog/what-is-form-5472) first.
 
 ---
 
@@ -42,7 +43,7 @@ The tricky one is point three. "Reportable transaction" is broader than most peo
 
 ## What counts as a reportable transaction if you're in the UK?
 
-Reportable transactions are defined in 26 CFR §1.6038A-4 and cover any money, property, or services exchanged between the LLC and a foreign related party (you).
+Reportable transactions are defined in [26 CFR §1.6038A-2(b)(3)–(4)](https://www.law.cornell.edu/cfr/text/26/1.6038A-2) and cover any money, property, or services exchanged between the LLC and a foreign related party (you).
 
 **Things that count:**
 - The initial wire from your UK bank account to open the LLC's US bank account (a capital contribution)
@@ -110,7 +111,7 @@ The mistake we see most often: people assume that because the LLC had no US inco
 
 Form5472 Prep prepares your Form 5472 and pro forma Form 1120, generates the reasonable cause statement if you're filing late, and faxes the signed package to the IRS Ogden PIN Unit on your behalf.
 
-> **Plans from $149 — IRS fax delivery included.** Takes about 15 minutes. 100% money-back guarantee if we fail to submit.
+> **Standard filing is $149 (5-7 business days), Express is $199 (3 business days), and each additional past tax year is +$99 — IRS fax delivery included.** Takes about 15 minutes. 100% money-back guarantee if we fail to submit.
 >
 > [Get your Form 5472 filed →](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uk-residents-us-llc)
 
@@ -124,7 +125,7 @@ Many guides you'll find online — including some published by US CPAs — still
 
 The remaining BOI obligation applies only to **foreign companies** (formed under the law of a foreign country) that have registered to do business in a US state. A UK-resident who owns a Wyoming LLC does not trigger this obligation — the LLC itself is the US entity, and it's now exempt.
 
-*Note: This rule was published as an interim final rule and FinCEN has indicated it intends to finalize it. This post reflects the status as of May 2026 — confirm at [fincen.gov/boi](https://www.fincen.gov/boi) if you're filing after this date.*
+*Note: This rule was published as an interim final rule and FinCEN has indicated it intends to finalize it. This post reflects the status as of August 2026 — confirm at [fincen.gov/boi](https://www.fincen.gov/boi) if you're filing after this date.*
 
 ---
 
@@ -142,7 +143,7 @@ This is a separate issue from your Form 5472 obligation. The IRS requirement exi
 
 **Do I have to file Form 5472 if my Wyoming LLC made no money?**
 
-Almost certainly yes, if you funded it at all. The initial capital you put in — even £200 to open a bank account — is a reportable transaction. The only scenario where you genuinely have no filing obligation is a year in which there were zero transactions between you and the LLC in either direction. Most dormant LLCs still have at least a bank account opened with some initial deposit.
+Almost certainly yes, if you funded it at all. The initial capital you put in — even £200 to open a bank account — is a reportable transaction. You usually skip Form 5472 only for a year with zero transactions between you and the LLC.
 
 **My LLC has a UK bank account as well as a US account. Does that change anything?**
 
@@ -150,7 +151,7 @@ No. It doesn't matter where the LLC's accounts are held. What matters is whether
 
 **I missed the deadline. Can I still file?**
 
-Yes. File as soon as possible under the DIIRSP procedure. You attach a reasonable cause statement to the late return explaining why you didn't file on time — common reasons include not being aware of the requirement, which the IRS does accept in appropriate circumstances. The earlier you file, the better: the continuation penalties (§6038A(d)(2)) only start accruing after the IRS sends a notice.
+Yes. File as soon as possible under the DIIRSP procedure. Attach a reasonable cause statement explaining why you missed the deadline, with dates and evidence. The earlier you file, the better: continuation penalties (§6038A(d)(2)) only start after the IRS sends a notice.
 
 **Do I need a US EIN to file?**
 
@@ -162,8 +163,6 @@ The LLC must have a US address on its formation documents and on the pro forma F
 
 ---
 
-*Last reviewed: May 2026*
-
----
-
 *Disclaimer: This post is general information about IRS filing obligations, not tax advice for your specific situation. Rules can change — always verify current requirements at [irs.gov/instructions/i5472](https://www.irs.gov/instructions/i5472) or consult a qualified preparer before filing.*
+
+[Start your UK Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uk-residents-us-llc-close), or read the [late-filing guide](/blog/form-5472-filed-late-never-filed) if you have missed years.

@@ -17,6 +17,8 @@ The short answer: **if your LLC had simple, straightforward transactions — one
 
 Here's the full breakdown so you can make the call for your situation.
 
+[Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-diy-vs-preparer-early) if you already know you want the prepared route.
+
 ---
 
 ## TL;DR — DIY vs. Preparer for Form 5472
@@ -24,7 +26,7 @@ Here's the full breakdown so you can make the call for your situation.
 | | DIY | Preparer |
 |---|---|---|
 | **Cost** | $0 (your time) | $150–$500 depending on service |
-| **Time** | 3–8 hours first time | 15–30 minutes on your end |
+| **Time** | Roughly 3–8 hours first time | Roughly 15–30 minutes on your end |
 | **Error risk** | Moderate — specific mistakes are common | Low if you use a specialist |
 | **Penalty exposure** | Full $25,000 if filed wrong | Reduced; most services guarantee accuracy |
 | **Fax to IRS included** | No — you arrange your own fax | Depends on service |
@@ -42,7 +44,7 @@ To file Form 5472 on your own, you need to produce three things:
 
 **3. Fax transmission** — The complete package (Form 1120 cover + Form 5472) must be faxed to the IRS Ogden PIN Unit at **+1-855-887-7737**. You cannot e-file this. You cannot mail it to a regular IRS service center. You need either a physical fax machine or an online fax service (eFax, FaxZero, or similar).
 
-The IRS instructions for Form 5472 are available at irs.gov. They're not impenetrable — but they do assume familiarity with terms like "disregarded entity," "reportable transaction," and "related party" that don't have obvious plain-English translations.
+The [IRS instructions for Form 5472](https://www.irs.gov/instructions/i5472) are available at irs.gov. They're not impenetrable — but they do assume familiarity with terms like "disregarded entity," "reportable transaction," and "related party" that don't have obvious plain-English translations.
 
 ---
 
@@ -52,7 +54,7 @@ The error patterns in DIY filings are consistent. These are not obscure technica
 
 **1. Filing Form 5472 for the wrong entity type**
 
-Form 5472 for a foreign-owned disregarded entity is filed with a pro forma Form 1120 cover. Some DIY filers confuse this with the Form 5472 filed by foreign corporations, which uses a real Form 1120 — an entirely different return. The filing routes, attachments, and processing are different.
+Form 5472 for a foreign-owned disregarded entity is filed with a pro forma Form 1120 cover. Some DIY filers confuse this with two other Form 5472 filings: a 25%-foreign-owned **domestic** US corporation with real income attaches its Form 5472 to an actual (non-pro-forma) Form 1120, and a **foreign** corporation engaged in a US trade or business attaches its Form 5472 to **Form 1120-F**. Different returns, different filing routes.
 
 **2. Misidentifying the "reporting corporation"**
 
@@ -87,7 +89,7 @@ A good preparer — whether a CPA, enrolled agent, or specialist service — han
 - Faxing the complete package to the IRS Ogden PIN Unit
 - Providing you with a timestamped fax confirmation receipt as proof of submission
 
-What you provide: your LLC's name, EIN, address, formation date, and a summary of what money moved between you and the LLC during the year. That's typically a 15–30 minute exercise on your end.
+What you provide: your LLC's name, EIN, address, formation date, and a summary of what money moved between you and the LLC during the year. That's roughly a 15–30 minute exercise on your end.
 
 Not all preparers do all of these things. Some deliver the completed forms for you to fax yourself. Some don't help with late filings or reasonable cause statements. If you're comparing services, the most important questions are: (1) is the fax to the IRS included, and (2) do they handle DIIRSP submissions for late filers?
 
@@ -95,7 +97,7 @@ Not all preparers do all of these things. Some deliver the completed forms for y
 
 ## How much does a Form 5472 preparer cost?
 
-Prices across the market vary significantly based on who's doing the work and what's included.
+Prices across the market vary significantly based on who's doing the work and what's included. Based on our review of publicly listed pricing in August 2026, common ranges looked like this:
 
 | Provider type | Typical cost | Fax included? | Late years? |
 |---|---|---|---|
@@ -166,11 +168,11 @@ Not for a foreign-owned disregarded entity. The pro forma Form 1120 + Form 5472 
 
 **What is the IRS fax number for Form 5472?**
 
-The IRS Ogden PIN Unit fax number is **+1-855-887-7737**. This is the only correct destination for a Form 5472 attached to a pro forma Form 1120 for a foreign-owned disregarded entity. Keep the fax confirmation — it's your proof of timely filing.
+The IRS Ogden PIN Unit fax number is **+1-855-887-7737** under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472). This is the only correct destination for a Form 5472 attached to a pro forma Form 1120 for a foreign-owned disregarded entity. Keep the fax confirmation — it's your proof of timely filing.
 
 **How do I know if my Form 5472 was accepted?**
 
-The IRS doesn't send an acceptance confirmation for Form 5472 the way it does for e-filed returns. Your timestamped fax confirmation is the documentation that matters. If the IRS has an issue with the return, they'll send a letter — typically 6–18 months after filing.
+The IRS doesn't send an acceptance confirmation for Form 5472 the way it does for e-filed returns. Your timestamped fax confirmation is the documentation that matters. If the IRS has an issue with the return, they'll send a letter, and correspondence can take well over a year.
 
 ---
 

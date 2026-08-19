@@ -1,6 +1,6 @@
 ---
-title: "I Got a $25,000 Form 5472 Penalty Notice — What Do I Do Now?"
-description: "Form 5472 penalty notice guidance explains the $25,000 assessment, response deadlines, reasonable cause evidence, and the steps to request penalty relief."
+title: "I Got a $25,000 Form 5472 Penalty Notice — Now What?"
+description: "Got a $25,000 Form 5472 penalty notice? Here's what CP215 means, why a reasonable-cause letter gets ignored, and how to respond before the deadline."
 date: 2026-08-15
 updated: 2026-08-15
 author: "Form5472 Prep"
@@ -25,7 +25,7 @@ Four separate failures trigger the same $25,000 charge:
 3. **Filing substantially incomplete** — the instructions state that a substantially incomplete Form 5472 "constitutes a failure to file Form 5472."
 4. **Failing to maintain records** as required by Regulations section 1.6038A-3.
 
-The penalty applies **per form, per year**. A foreign-owned LLC that missed three years faces $75,000, not $25,000. And if the failure continues for more than 90 days after the IRS notifies you, the instructions provide for an **additional $25,000** penalty, with further amounts accruing for continued non-compliance.
+The penalty applies **per form, per year**. A foreign-owned LLC that missed three years faces $75,000, not $25,000. If the failure continues more than 90 days after the IRS mails its notice, an additional $25,000 applies **for each 30-day period (or fraction of one) that the failure continues after that 90-day window** — per related party, with no stated cap (IRC §6038A(d)(2)).
 
 Two clarifications that matter for your response letter:
 
@@ -57,6 +57,8 @@ The [IRS Administrative penalty relief page](https://www.irs.gov/payments/admini
 International information return penalties under IRC § 6038A do not appear on that list. A clean three-year compliance history is helpful context inside a reasonable cause argument, but "this is my first offense" is not, by itself, a basis for relief on a Form 5472 penalty.
 
 The route that does exist is statutory. IRC § 6038A(d)(3) provides that the penalty does not apply where the failure was **due to reasonable cause and not willful neglect**. That is the standard your letter has to meet.
+
+For a full walkthrough of the letter itself, see [our reasonable cause letter guide](/blog/form-5472-reasonable-cause-letter).
 
 ## What counts as reasonable cause for a Form 5472 penalty?
 
@@ -90,7 +92,7 @@ Two structural points that decide more cases than the narrative does:
 Read the notice itself — the response date is printed on it, and it governs. Two timing rules apply generally:
 
 - **Respond by the date on the notice.** CP215 notices carry a short response window. Missing it does not permanently end your options, but it moves the matter toward collection.
-- **The 90-day clock.** The Form 5472 instructions provide that if the failure continues for more than 90 days after IRS notification, an additional $25,000 penalty applies. The notice starts that clock. Filing the delinquent returns promptly is how you stop it.
+- **The 90-day clock.** If the failure continues more than 90 days after the IRS mails its notice, an additional $25,000 applies **for each 30-day period (or fraction of one) that the failure continues after that 90-day window** — per related party, with no stated cap (IRC §6038A(d)(2)). Filing the delinquent returns promptly is how you stop it.
 
 If the response deadline is close and your package is not ready, a written request for additional time, sent before the deadline, is better than silence.
 
@@ -101,7 +103,7 @@ If the response deadline is close and your package is not ready, a written reque
 3. **File every delinquent Form 5472 package still outstanding.** Pro forma Form 1120 with "Foreign-owned U.S. DE" written across the top, Form 5472, and the Part V supporting statement — faxed to the Ogden PIN Unit at **855-887-7737**, or mailed to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.
 4. **Write the reasonable cause statement.** Signed under penalties of perjury, addressed to the notice, with a dated chronology and attached documents. Reference the notice number and the LLC's EIN on every page.
 5. **Send it to the address on the notice** — not to Ogden, not to a general IRS address. Use a method that gives you proof of delivery.
-6. **Keep everything and expect a wait.** International penalty correspondence commonly takes six to twelve months for a substantive reply. Do not assume silence means acceptance.
+6. **Keep everything and expect a wait.** International penalty correspondence commonly takes many months for a substantive reply. Do not assume silence means acceptance.
 7. **If denied, you can appeal.** The IRS Independent Office of Appeals reviews international penalty cases. At that stage, if the amounts justify it, engage a tax attorney or CPA who handles § 6038A matters.
 
 ## What if you have several unfiled years?
@@ -139,7 +141,7 @@ No. The IRS states that during processing of a delinquent international informat
 
 ### Is the Form 5472 penalty per year or one flat amount?
 
-Per form, per year. Three unfiled years means three separate $25,000 penalties. If a failure continues more than 90 days after IRS notification, the instructions provide for an additional $25,000 penalty for that year.
+Per form, per year. Three unfiled years means three separate $25,000 penalties. If the failure continues more than 90 days after the IRS mails its notice, an additional $25,000 applies for each 30-day period, or fraction of one, after that 90-day window.
 
 ### Do I owe the penalty if my LLC had no income?
 
@@ -155,7 +157,7 @@ That is a decision for you and, at that amount, ideally a tax professional. Payi
 
 ### How long does the IRS take to respond to an abatement request?
 
-Commonly six to twelve months for international penalty correspondence. Silence during that period is normal and should not be read as acceptance or denial. Keep proof of what you sent and when.
+Commonly many months for international penalty correspondence. Silence during that period is normal and should not be read as acceptance or denial. Keep proof of what you sent and when.
 
 ---
 

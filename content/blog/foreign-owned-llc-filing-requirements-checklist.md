@@ -8,7 +8,9 @@ tags: ["form-5472", "foreign-owned-llc", "compliance", "boi", "filing-guide"]
 draft: false
 ---
 
-**A foreign-owned US single-member LLC generally files two federal items each year: Form 5472 attached to a pro forma Form 1120, filed by fax or mail to the IRS Ogden PIN Unit. It also files a state annual report or franchise return. As of the March 2025 FinCEN interim final rule, US-formed LLCs are exempt from BOI reporting. A US income tax return is required only if the LLC has US-source or effectively connected income.**
+**A foreign-owned US single-member LLC generally files two federal items each year: Form 5472 attached to a pro forma Form 1120, filed by fax or mail to the IRS Ogden PIN Unit. It also files a state annual report or franchise return. As of the March 2025 FinCEN interim final rule, US-formed LLCs are exempt from BOI reporting.**
+
+A US income tax return is required only if the LLC has US-source or effectively connected income.
 
 Most owners of a US LLC formed from abroad get one of two wrong answers: either "you don't file anything, the LLC is tax-free" or a formation agent's upsell list that includes filings you do not owe. This checklist separates what is actually required, what is conditional, and what stopped being required in 2026.
 
@@ -33,7 +35,7 @@ Read the conditional rows carefully. Most single-member LLCs owned by a non-US p
 
 Yes, if all three are true for the tax year: the LLC is a US disregarded entity, it is wholly owned by a non-US person, and there was at least one **reportable transaction** between the LLC and its owner or another foreign related party.
 
-Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the purposes of the § 6038A reporting rules. That is the sentence that pulled hundreds of thousands of small single-member LLCs into a regime originally designed for foreign multinationals.
+Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017, and ending on or after December 13, 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the purposes of the § 6038A reporting rules. That is the sentence that pulled hundreds of thousands of small single-member LLCs into a regime originally designed for foreign multinationals.
 
 Reportable transactions include money you put into the LLC, money the LLC paid out to you, loans in either direction, and payments for goods or services between you and the LLC. **Customer revenue is not a reportable transaction** — a Stripe payout from a customer does not go on Form 5472; a transfer from that Stripe balance to your personal account does.
 
@@ -78,10 +80,10 @@ Every US LLC owes something to its state of formation, every year, regardless of
 
 Typical obligations by popular formation state:
 
-- **Wyoming** — annual report with a license tax, due on or before the first day of the LLC's anniversary month. The tax is the greater of $60 or $0.0002 per dollar of assets located and employed in Wyoming, so most small LLCs pay the $60 minimum.
-- **Delaware** — annual LLC franchise tax of $300, due 1 June, with penalties and interest for late payment.
+- **Wyoming** — annual report with a license tax, due on or before the first day of the LLC's anniversary month. The tax is the greater of $60 or $0.0002 per dollar of assets located and employed in Wyoming, so most small LLCs pay the $60 minimum ([Wyoming Secretary of State FAQ](https://sos.wyo.gov/faqs.aspx?root=BUS)).
+- **Delaware** — annual LLC franchise tax of $300, due 1 June, with penalties and interest for late payment ([Delaware Division of Corporations tax FAQ](https://corp.delaware.gov/taxfaq/)).
 - **New Mexico** — no annual report for LLCs, which is why it appears in low-maintenance formation pitches.
-- **Florida** — annual report due 1 May, with a substantial late fee.
+- **Florida** — annual report due 1 May, with a substantial late fee ([Sunbiz annual report page](https://dos.fl.gov/sunbiz/manage-business/efile/annual-report/)).
 
 Verify current amounts on the state's own Secretary of State site before relying on them; state fees change more often than federal rules do. Our [Wyoming LLC filing guide](/blog/wyoming-llc-foreign-owner-tax-filing) covers that state in detail.
 
@@ -96,7 +98,7 @@ Filings that are commonly sold to foreign LLC owners who do not owe them:
 - **A "real" Form 1120 with tax computed.** The Form 1120 filed with Form 5472 for a disregarded entity is a *pro forma* cover — entity identification fields and total assets only, with "Foreign-owned U.S. DE" written across the top. It does not compute tax.
 - **Form 5471.** That form is filed by a *US person* who owns a *foreign* corporation — the opposite direction from your situation.
 - **State income tax returns**, where the LLC has no nexus, employees, or property in that state. Formation state alone does not usually create an income tax filing obligation.
-- **ITIN applications, when the only goal is filing Form 5472.** You use your home country's tax ID as your Foreign Taxpayer Identifying Number, or a reference ID.
+- **ITIN applications, when the only goal is filing Form 5472.** You use your home country's tax ID as your Foreign Taxpayer Identifying Number (or "None"/"N/A" if you have none) **and**, because you have no U.S. identifying number, a reference ID number as well. See [do I need an ITIN for Form 5472](/blog/itin-required-form-5472).
 
 ## Your annual compliance cycle, in order
 
@@ -104,7 +106,7 @@ Filings that are commonly sold to foreign LLC owners who do not owe them:
 2. **By 15 April** — file Form 5472 with the pro forma Form 1120 by fax to the Ogden PIN Unit, or file Form 7004 by the same date to extend to 15 October. Note the extension quirk: a foreign-owned US DE must fax or mail Form 7004 to the *same* PIN Unit fax number or address, by the regular due date.
 3. **By 15 October** — if extended, the Form 5472 package is due.
 4. **On your state's schedule** — file the annual report and pay the franchise tax or license tax.
-5. **Year-round** — keep the records. Regulations section 1.6038A-3 imposes a separate record-maintenance requirement with its own $25,000 penalty. Retain bank statements, payment-processor exports, the owner-transfer ledger, and every fax confirmation receipt.
+5. **Year-round** — keep the records. Regulations section 1.6038A-3 imposes a separate record-maintenance requirement with its own $25,000 penalty. Our [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) covers what to retain: bank statements, payment-processor exports, the owner-transfer ledger, and every fax confirmation receipt.
 
 ## The piece most owners need help with
 

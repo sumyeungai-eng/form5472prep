@@ -8,7 +8,7 @@ tags: ["form-5472", "foreign-owned-llc", "getting-started"]
 draft: false
 ---
 
-**[Form 5472](https://www.irs.gov/forms-pubs/about-form-5472) is an IRS information return that a foreign-owned US single-member LLC files each year to report transactions between the LLC and its non-US owner.** It attaches to a pro forma Form 1120, carries no tax of its own, and is required even if the LLC had zero revenue. A missing or substantially incomplete filing triggers a $25,000 penalty under IRC § 6038A.
+**[Form 5472](https://www.irs.gov/forms-pubs/about-form-5472) is an IRS information return for transactions between a foreign-owned US single-member LLC and its non-US owner.** It attaches to a pro forma Form 1120, carries no tax of its own, and a missing or substantially incomplete filing triggers a $25,000 penalty under IRC § 6038A.
 
 If you live outside the United States and own a US single-member LLC — Wyoming, Delaware, New Mexico, Florida, the state doesn't really matter — there is a very good chance the IRS requires you to file **Form 5472** every year. And the penalty for not filing is **$25,000 per form, per year**.
 
@@ -19,8 +19,9 @@ This post explains what Form 5472 actually is, who has to file it, what gets rep
 - **What it is:** an information return that reports transactions between a US business and its foreign owner (or other foreign related parties).
 - **Who files it:** foreign-owned US disregarded entities — i.e. single-member LLCs owned by a non-US person.
 - **What gets reported:** money moving between the LLC and the owner. Capital you put in, distributions you took out, loans, services. Revenue from customers is *not* reported.
-- **When it's due:** April 15 of the year after the tax year, with an automatic extension to October 15 if you file Form 7004 first.
-- **How it's filed:** by mail or **fax** to the IRS Ogden Service Center, PIN Unit. You cannot e-file Form 5472 for a foreign-owned disregarded entity. The fax number is **+1-855-887-7737**.
+- **When it's due:** April 15 of the year after the tax year, with an automatic extension to October 15 if you file Form 7004 first. See the [Form 5472 deadline guide](/blog/form-5472-deadline-2026) for the current calendar-year dates.
+- **How it's filed:** by mail or **fax** to the IRS Ogden Service Center, PIN Unit. You cannot e-file Form 5472 for a foreign-owned disregarded entity. The fax number is **+1-855-887-7737** under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472).
+- **Need it prepared?** [Start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=what-is-form-5472-tldr), or use the [part-by-part guide](/blog/how-to-fill-out-form-5472) to see what the form asks for.
 
 ## Why does this form exist?
 
@@ -62,7 +63,7 @@ The IRS doesn't have a standalone form to attach Form 5472 to for a disregarded 
 
 ## How much is the Form 5472 penalty?
 
-The penalty for failing to file Form 5472, or filing it late or incompletely, is **$25,000 per form, per year** under IRC § 6038A(d). The IRS assesses it automatically — you don't have to do anything special to trigger it.
+The penalty for failing to file Form 5472, or filing it late or incompletely, is **$25,000 per form, per year** under IRC § 6038A(d), as described in the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472). The IRS assesses it automatically — you don't have to do anything special to trigger it.
 
 If you've missed prior years, there's a procedure called **DIIRSP** (Delinquent International Information Return Submission Procedure) that lets you catch up. You file the late returns with a written **reasonable cause statement** explaining why you didn't file on time. If the IRS accepts the statement, the penalty may be abated.
 
@@ -87,11 +88,11 @@ If you're outside the US on April 15, you get an automatic 2-month extension to 
 
 ### Do I need to file Form 5472 if my LLC had no income?
 
-Almost certainly yes. Form 5472 reports *transactions* between you and the LLC — not income. The money you wired in to open the bank account is a reportable capital contribution, and so is any amount you later took out. The only year you can skip filing is one where literally no money, property, or services moved between you and the LLC in either direction — and even then the IRS expects a pro forma Form 1120 marking the LLC as a foreign-owned disregarded entity.
+Almost certainly yes. Form 5472 reports *transactions*, not income. Money you wired into the LLC is a reportable capital contribution, and withdrawals count too. You can skip only a year with no money, property, or services moving either way, and the IRS still expects a pro forma Form 1120.
 
 ### Can I e-file Form 5472?
 
-No. A foreign-owned US disregarded entity cannot e-file Form 5472 or the pro forma Form 1120 it attaches to. The IRS accepts these returns only by fax or mail to the Ogden PIN Unit. Normal e-file services like TurboTax or H&R Block cannot submit this filing, even if they take your payment.
+No. A foreign-owned US disregarded entity cannot e-file Form 5472 or its pro forma Form 1120. The IRS accepts these returns only by fax or mail to the Ogden PIN Unit. TurboTax, H&R Block, and similar services cannot submit this filing, even if they take payment.
 
 ### What is the fax number for Form 5472?
 
@@ -103,7 +104,7 @@ Yes. The pro forma Form 1120 that Form 5472 attaches to must be signed. The IRS 
 
 ### Do I need an ITIN or SSN to file Form 5472?
 
-No. As the foreign owner you use your **foreign tax identifying number (FTIN)** — your home country's tax ID, such as a UK UTR, Indian PAN, or Canadian SIN — or a self-assigned Reference ID. You do not need to obtain a US ITIN just to file Form 5472. The LLC does need its own EIN.
+No. Use your FTIN on line 4b(3), or write "None" or "N/A" there if you have no foreign tax ID. Because you have no US identifying number, also use a self-assigned Reference ID. You do not need a US ITIN just to file Form 5472.
 
 ### What's the difference between Form 5472 and Form 5471?
 
@@ -111,12 +112,14 @@ Form 5472 is filed by a **US entity** (your US LLC) that has a foreign owner. Fo
 
 ### How much does it cost to file Form 5472?
 
-Doing it yourself costs $0 in fees but takes several hours and risks the $25,000 penalty on any error. A US CPA typically charges $400–$800. Form5472 Prep prepares and faxes the complete package for **$149** (Standard, ready in 5-7 business days) or **$199** (Express, ready within 3 business days) — the same filing either way, only the speed differs — with IRS fax delivery included and +$99 per additional past year for late filings.
+Doing it yourself costs $0 in IRS fees but takes hours and risks a $25,000 penalty for a missed or incomplete filing. Form5472 Prep prepares and faxes the package for **$149** Standard or **$199** Express, with fax delivery included and +$99 per additional past year.
 
 ## What's next
 
 If you're filing for the first time, the IRS instructions are dense but workable. If you're catching up on multiple years, you'll want a reasonable cause statement that hits the right notes for DIIRSP.
 
-That's exactly what [Form5472 Prep does](/) — generates the filled forms, the reasonable cause statement, and faxes the signed package to the IRS. About 15 minutes start to finish.
+That's exactly what [Form5472 Prep does](/start?utm_source=blog&utm_medium=internal&utm_campaign=what-is-form-5472) — generates the filled forms, the reasonable cause statement, and faxes the signed package to the IRS. About 15 minutes start to finish.
+
+We are not a CPA firm and do not give tax advice; we prepare and submit the filing package accurately.
 
 Whatever route you take: the worst thing is not filing. $25,000 per year compounds fast.

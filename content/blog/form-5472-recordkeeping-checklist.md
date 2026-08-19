@@ -9,7 +9,7 @@ tags: ["form-5472", "recordkeeping", "foreign-owned-llc", "checklist"]
 draft: false
 ---
 
-**Last updated: July 2026**
+**Last updated: September 2026**
 
 A foreign-owned U.S. LLC should keep records that prove the identity, date, amount, currency, business purpose, and classification of every related-party transaction reported on Form 5472. Bank statements alone are not enough when transfers have vague descriptions. Retain invoices, owner ledgers, loan documents, reimbursement support, exchange-rate evidence, and copies of filed forms and delivery receipts.
 

@@ -11,7 +11,7 @@ draft: false
 
 **A non-US person selling on Amazon FBA through a foreign-owned US single-member LLC must file Form 5472 with a pro forma Form 1120 every year** — regardless of Amazon's own 1099-K reporting. The filing is triggered by reportable transactions between you and the LLC (capital contributed in, distributions taken out), and it applies even if the LLC owes no US income tax. Missing it carries a $25,000 penalty.
 
-If you're a non-US person who sells on Amazon FBA through a US single-member LLC, the IRS requires you to file **Form 5472** every year — not because of your Amazon sales revenue, but because of the money that moves between you and your LLC. Miss it and you're looking at a **$25,000 penalty per form, per year** under IRC §6038A(d), plus a new 2026 headache from the One Big Beautiful Bill Act's 1% remittance tax on cross-border transfers.
+If you're a non-US person who sells on Amazon FBA through a US single-member LLC, the IRS requires you to file **Form 5472** every year — not because of your Amazon sales revenue, but because of the money that moves between you and your LLC. Miss it and you're looking at a **$25,000 penalty per form, per year** under [IRC §6038A(d)](https://www.irs.gov/instructions/i5472).
 
 This guide covers what FBA sellers specifically need to report, which transactions are the ones that matter, and what's changed in 2026 that makes getting this right more important than it's been in any prior year.
 
@@ -23,9 +23,11 @@ This guide covers what FBA sellers specifically need to report, which transactio
 - **Amazon's bi-weekly disbursements to your foreign bank account** are distributions from the LLC — reportable on Form 5472 Part V.
 - **The initial inventory funding wire** you sent from your home-country bank account to the LLC is a capital contribution — also reportable.
 - **Amazon FBA fees, storage fees, and ad spend** paid from the LLC's own Amazon account are NOT reportable. They're expenses between the LLC and Amazon — a third party, not a related party.
-- **The 2026 OBBBA 1% remittance tax** potentially applies to Amazon payouts that flow from your US LLC to your foreign bank account.
-- **IRS enforcement is automated in 2026** — penalty notices for missing Form 5472 are now system-generated, not manually reviewed.
+- **The 2026 OBBBA 1% remittance tax (IRC §4475) does NOT apply** to Amazon payouts swept from your US LLC bank account to your foreign bank account — bank-funded transfers are exempt.
+- **Practitioners report faster, more automated notice generation in 2026** for missing or deficient Form 5472 filings.
 - **The deadline** is April 15, extendable to October 15 with Form 7004.
+
+If the federal filing is the part you want handled, [start your Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=amazon-fba-foreign-sellers-form-5472) — about 15 minutes.
 
 ---
 
@@ -76,23 +78,11 @@ These are all transactions between the LLC and third parties. They're ordinary b
 
 ---
 
-## What does the 2026 OBBBA remittance tax mean for FBA sellers?
+## Does the 2026 OBBBA remittance tax hit FBA payouts?
 
-The **One Big Beautiful Bill Act (OBBBA)**, enacted in late 2025, introduced a **1% federal excise tax on certain cross-border cash remittances** effective in 2026. This applies to transfers initiated by non-US persons or by entities beneficially owned by non-US persons from US accounts to foreign accounts.
+No, not in the usual setup.
 
-For an Amazon FBA seller whose Delaware LLC sweeps its Amazon payout to a foreign bank account every two weeks, this matters.
-
-Treasury has not yet issued final implementation regulations, but the working interpretation is:
-
-- The 1% tax applies to the **transfer from the US LLC's bank account to your foreign personal account** (the distribution step).
-- It does not apply to Amazon's disbursement into the LLC's US bank account (that's a domestic payment from Amazon to a US entity).
-- The tax is collected at the point of transfer — your US bank or payment provider is expected to withhold and remit it.
-
-For a seller generating $200,000 a year in net distributions from their US LLC, 1% is $2,000. On $500,000, it's $5,000. This is real money, and it adds up over a year of bi-weekly sweeps.
-
-The practical implication: once Treasury issues guidance, some sellers will benefit from restructuring how and when they distribute funds. Some will elect to keep more cash in the LLC rather than distributing frequently. The Form 5472 filing itself doesn't change — you still report all distributions — but the economics of the distribution cadence shift.
-
-Keep watching Treasury guidance at irs.gov. This is a developing area as of June 2026.
+The One Big Beautiful Bill Act added a 1% federal excise tax on remittance transfers (IRC §4475) for transfers occurring after 31 December 2025. It is narrower than most summaries suggest: it applies **only** when the sender funds the transfer with cash, a money order, a cashier's check, or a similar physical instrument handed to a remittance transfer provider. Transfers funded by withdrawal from an account at a US financial institution, or with a US-issued debit or credit card, are **expressly excluded**. An ordinary wire or ACH from your LLC's own US business bank account to your foreign bank account is therefore outside the tax. Source: [IRS guidance on the remittance transfer tax](https://www.irs.gov/newsroom/treasury-irs-provide-penalty-relief-for-remittance-transfer-providers-who-fail-to-deposit-excise-tax-under-the-one-big-beautiful-bill).
 
 ---
 
@@ -102,7 +92,7 @@ Two developments in 2026 make Form 5472 non-compliance riskier than in any prior
 
 **1. Automated penalty notices**
 
-In prior years, the IRS reviewed missing Form 5472 cases manually before issuing penalty assessments. As of 2026, the IRS has automated both the initial $25,000 penalty notice and the 90-day continuation notice that stacks an additional $25,000 per 30-day period (per EcomCPA, June 2026). There is no human review before the first two penalty rounds — if the system detects a missing or deficient return, the notice generates automatically. By the time you see the letter, the clock is already running.
+Practitioners report faster, more automated notice generation in 2026 for missing or deficient Form 5472 filings (see [EcomCPA](https://www.ecomcpa.com/), June 2026). The initial $25,000 penalty notice and the 90-day continuation notice can arrive before you have a chance to explain the facts, so by the time you see the letter, the clock is already running.
 
 **2. Cross-referencing with entity data**
 
@@ -162,7 +152,7 @@ See the [full DIIRSP guide](/blog/form-5472-filed-late-never-filed) for the step
 
 **Does Amazon report my FBA sales to the IRS?**
 
-Amazon reports certain payment data (via Form 1099-K for US sellers who exceed the threshold), but this is a different reporting regime from Form 5472. A non-US person selling through a foreign-owned US LLC is subject to Form 5472 based on related-party transactions with the LLC, not based on Amazon's 1099-K reporting.
+Amazon may report payment data, such as Form 1099-K for US sellers above the threshold, but that is separate from Form 5472. A non-US person using a foreign-owned US LLC files Form 5472 because of related-party transactions with the LLC, not Amazon's 1099-K reporting.
 
 **My LLC is a multi-member LLC with a US partner. Do I still file Form 5472?**
 
@@ -182,7 +172,7 @@ Yes. Form 5472 is triggered by reportable transactions, not by profitability. A 
 
 **Does the 1% OBBBA remittance tax apply to my Amazon disbursements?**
 
-As of June 2026, Treasury has not issued final implementation guidance. The tax appears to apply to distributions from your US LLC to your foreign personal account — the step where you sweep the money home — not to Amazon's disbursement into the LLC's US bank account. Monitor irs.gov for final rules.
+No, in the usual setup. The 1% remittance transfer tax (IRC §4475) reaches only cash, money-order, or cashier's-check-funded transfers made through a remittance transfer provider. A wire or ACH from your LLC's US bank account is funded from a financial-institution account and is expressly excluded.
 
 ---
 
@@ -190,7 +180,7 @@ As of June 2026, Treasury has not issued final implementation guidance. The tax 
 
 Amazon FBA is one of the clearest use cases for Form 5472: a foreign person owns a US LLC, funds it with personal capital, sells products through it, and periodically sweeps profits home. Every one of those steps generates a reportable transaction.
 
-The form itself isn't complex — two pages plus a supporting statement. The 2026 environment (automated enforcement, OBBBA remittance tax) makes getting it right more consequential than in prior years.
+The form itself isn't complex — two pages plus a supporting statement. The 2026 environment and faster notice generation make getting it right more consequential than in prior years.
 
 For context on how this fits the broader Form 5472 requirements, see [what Form 5472 is and who must file](/blog/what-is-form-5472). If you have late years to catch up on, the [DIIRSP guide](/blog/form-5472-filed-late-never-filed) covers the procedure start to finish.
 

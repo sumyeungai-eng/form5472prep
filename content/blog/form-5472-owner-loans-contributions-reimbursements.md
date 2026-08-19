@@ -9,7 +9,7 @@ tags: ["form-5472", "owner-loans", "capital-contributions", "reimbursements"]
 draft: false
 ---
 
-**Last updated: July 2026**
+**Last updated: August 2026**
 
 Money between a foreign owner and a U.S. single-member LLC must be classified before Form 5472 is prepared. Permanent funding is usually a contribution; repayable funding is a loan; money taken out may be a distribution or loan repayment; and payment of the other party’s bill may be a reimbursement. Each category needs separate supporting records.
 

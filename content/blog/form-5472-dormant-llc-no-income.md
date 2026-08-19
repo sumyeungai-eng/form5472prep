@@ -25,6 +25,7 @@ The answer most people don't want to hear: **you almost certainly still need to 
 - **Pro forma Form 1120 is still required** even in years where you might qualify for the zero-transaction exemption — the IRS expects it whenever a foreign-owned DE exists.
 - **The penalty** is $25,000 per form, per year, under IRC §6038A(d).
 - **The fix is simple.** If you haven't filed, [DIIRSP](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income) lets you catch up without criminal exposure in most cases.
+- **Want it handled?** [Start your Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income-tldr) after you collect the LLC EIN and owner transaction history.
 
 ---
 
@@ -47,7 +48,7 @@ If any of those happened, your LLC wasn't fully dormant in the IRS sense, even i
 
 ## When do you genuinely not need to file Form 5472?
 
-The IRS does recognize a zero-transaction exemption. Under 26 CFR §1.6038A-2, Form 5472 is only required if there is at least one reportable transaction to report during the year.
+The IRS does recognize a zero-transaction exemption. Under [26 CFR §1.6038A-2(e)](https://www.law.cornell.edu/cfr/text/26/1.6038A-2), Form 5472 is only required if there is at least one reportable transaction to report during the year.
 
 So if:
 
@@ -88,9 +89,11 @@ The LLC existed and was foreign-owned for part of the year. Even a partial year 
 
 The IRS typically catches these through matching programs — if you have a US EIN, eventually the absence of a return gets noticed. But even if it hasn't been flagged yet, the $25,000 penalty per year per form can accumulate fast over a multi-year gap.
 
-The structured way to resolve this is the **Delinquent International Information Return Submission Procedure (DIIRSP)**. You file all the missing returns, attach a reasonable cause statement explaining why you didn't file, and submit everything together. Most foreign owners qualify for penalty abatement under this procedure. See our [DIIRSP guide](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income) for the full walkthrough.
+The structured way to resolve this is the IRS's **[Delinquent International Information Return Submission Procedure](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures) (DIIRSP)**. You file all the missing returns, attach a reasonable cause statement explaining why you didn't file, and submit everything together. Most foreign owners qualify for penalty abatement under this procedure. See our [DIIRSP guide](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income) for the full walkthrough.
 
 If you want to get it done quickly: [start your filing here](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income). We prepare the pro forma Form 1120 and Form 5472 for each outstanding year, draft the reasonable cause statement, and fax the complete package to the IRS Ogden PIN Unit on your behalf.
+
+Standard filing is $149 (5-7 business days), Express $199 (3 business days), +$99 per additional past tax year — IRS fax delivery included on both.
 
 ---
 
@@ -111,23 +114,23 @@ All of this gets faxed to the IRS Ogden PIN Unit at **+1-855-887-7737**. You can
 
 **If my LLC had zero bank activity, do I still need to file?**
 
-If there were genuinely no transactions between you and the LLC — no capital contributions, no loans, no services, nothing — you may not need to file Form 5472. But the IRS still expects a pro forma Form 1120 indicating the foreign-owned DE exists. Filing nothing at all for a year the LLC existed is a much riskier position.
+If there were genuinely no transactions between you and the LLC — no capital contributions, loans, services or other value — you may not need Form 5472. But the IRS still expects a pro forma Form 1120 showing the foreign-owned DE exists. Filing nothing is riskier.
 
 **What if I didn't have an EIN?**
 
-You still need one to file. If your LLC doesn't have an EIN, you'll need to apply for one (Form SS-4, by phone if you're outside the US — the international number is +1-267-941-1099). You can file late returns once you have the EIN.
+You still need one to file. If the LLC lacks an EIN, apply with Form SS-4, by phone if you're outside the US. Once the EIN is issued, you can file the late returns.
 
 **Can I just dissolve the LLC and not file?**
 
-Dissolving the LLC closes the entity going forward. But it doesn't retroactively eliminate the filing obligation for the years the LLC existed. The IRS can still assess $25,000 penalties for each unfiled year. Dissolution and back-filing are two separate things — you should do both if you want to close the books cleanly.
+Dissolving the LLC closes the entity going forward. It does not erase filing obligations for years the LLC existed. The IRS can still assess $25,000 penalties for each unfiled year. Dissolution and back-filing are separate steps.
 
 **How far back does the IRS go?**
 
-There's no statute of limitations on unfiled returns in most cases. For returns that were filed, the IRS generally has 3 years to assess additional tax (6 years for substantial omissions). For returns that were never filed, the period doesn't start running. In practice, DIIRSP submissions typically cover the last 6 years.
+An unfiled Form 5472 keeps the assessment window open on the entire return until three years after the form is filed; the exposure is not capped at three or six years. DIIRSP submissions commonly cover the last six years — a practitioner convention, not a published IRS lookback.
 
 **Is there any penalty relief available?**
 
-Yes. First-time abatement is available for taxpayers with a clean filing history. Reasonable cause abatement is available when you can show the failure to file wasn't due to willful neglect. Most foreign owners of dormant LLCs who simply didn't know about the requirement qualify for some form of relief.
+Limited first-time abatement may apply where it is tied to abatement of the related Form 1120 late-filing penalty and you have a clean three-year history; reasonable-cause abatement under 26 CFR §1.6038A-4(b) is the more commonly available route for a standalone Form 5472 penalty.
 
 ---
 
@@ -138,3 +141,5 @@ Yes. First-time abatement is available for taxpayers with a clean filing history
 The paperwork is not difficult. The penalty for ignoring it is severe. If you have years of unfiled returns, the [DIIRSP process](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income) exists specifically for this situation — and earlier is better, because the $25,000 continuation penalties compound by the month.
 
 For a broader overview of who needs to file and what the form covers, see our [guide to what Form 5472 is and who must file](/blog/what-is-form-5472).
+
+[Start the dormant-LLC filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income-close) when you are ready to prepare the return and fax package.

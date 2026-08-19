@@ -299,11 +299,15 @@ export function extractFaqs(body: string): { q: string; a: string }[] {
   let inFaq = false;
   let q: string | null = null;
   let ans: string[] = [];
+  let started = false;
+  let done = false;
   const flush = () => {
     const a = stripMarkdown(ans.join(" "));
     if (q && a) out.push({ q: stripMarkdown(q), a });
     q = null;
     ans = [];
+    started = false;
+    done = false;
   };
   for (const line of body.split("\n")) {
     const t = line.trim();
@@ -314,6 +318,12 @@ export function extractFaqs(body: string): { q: string; a: string }[] {
       continue;
     }
     if (!inFaq) continue;
+    // After H2 handling, a horizontal rule closes FAQ extraction before bold-marker parsing.
+    if (/^(-{3,}|\*{3,}|_{3,})$/.test(t)) {
+      flush();
+      inFaq = false;
+      continue;
+    }
     const h3 = line.match(/^###\s+(.*)/);
     const bold = t.match(/^\*\*(.+?)\*\*$/); // a whole-line bold question
     if (h3) {
@@ -322,8 +332,14 @@ export function extractFaqs(body: string): { q: string; a: string }[] {
     } else if (bold) {
       flush();
       q = bold[1];
-    } else if (q) {
-      ans.push(line);
+    } else if (q && !done) {
+      // Intentional trade-off: JSON-LD truncates two-paragraph answers or following bullet lists; rendered content is unaffected.
+      if (t === "") {
+        if (started) done = true;
+      } else {
+        started = true;
+        ans.push(line);
+      }
     }
   }
   flush();

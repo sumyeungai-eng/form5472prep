@@ -9,7 +9,7 @@ tags: ["form-5472", "ftin", "reference-id", "foreign-address"]
 draft: false
 ---
 
-**Last updated: July 2026**
+**Last updated: September 2026**
 
 A foreign-owned U.S. disregarded entity should enter the owner’s foreign taxpayer identification number if one exists. If the owner has no U.S. identifying number, a consistent filer-created reference ID may be required. Enter the owner’s complete residential or business address using the country’s normal components; do not substitute the LLC’s registered-agent address for the owner’s address.
 
