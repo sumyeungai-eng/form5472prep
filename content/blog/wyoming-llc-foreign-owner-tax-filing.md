@@ -2,7 +2,7 @@
 title: "Wyoming LLC Foreign-Owner Filing Checklist"
 description: "Wyoming has no state income tax, but a foreign-owned Wyoming LLC still owes an annual report and, in most cases, Form 5472 backed by a $25,000 penalty."
 date: 2026-08-15
-updated: 2026-08-15
+updated: 2026-08-21
 author: "Form5472 Prep"
 tags: ["form-5472", "wyoming-llc", "foreign-owned-llc", "compliance", "annual-report"]
 draft: false
@@ -118,7 +118,7 @@ The license tax is the greater of $60 or $0.0002 per dollar of assets located an
 
 ### Is Wyoming better than Delaware or New Mexico for a non-resident?
 
-For a small online business, the differences are mostly cost and privacy, not tax. All three impose the identical federal Form 5472 obligation. New Mexico requires no annual report; Delaware charges a $300 annual franchise tax; Wyoming charges the $60 minimum license tax.
+For a small online business, the differences are mostly cost and privacy, not tax. All three impose the identical federal Form 5472 obligation. New Mexico requires no annual report; Delaware charges a $400 annual franchise tax (from tax year 2026); Wyoming charges the $60 minimum license tax.
 
 ### Do I need a BOI report for my Wyoming LLC?
 

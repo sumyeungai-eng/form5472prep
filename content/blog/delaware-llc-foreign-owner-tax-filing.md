@@ -1,18 +1,18 @@
 ---
 title: "Delaware LLC Filing Checklist for Foreign Owners"
-description: "A foreign-owned Delaware LLC may owe the $300 state tax and need federal Form 5472 with a pro forma 1120. See the 2026 checklist."
+description: "A foreign-owned Delaware LLC may owe the $400 state tax and need federal Form 5472 with a pro forma 1120. See the 2026 checklist."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-08-21
 author: "Form5472 Prep"
 tags: ["form-5472", "delaware-llc", "foreign-owned-llc", "state-compliance"]
 draft: false
 ---
 
-**A foreign-owned Delaware single-member LLC commonly has two separate annual obligations: Delaware's $300 LLC tax due June 1 and federal Form 5472 attached to a pro forma Form 1120, generally due April 15 for a calendar-year entity with a reportable owner transaction. Delaware LLCs do not file a state annual report, but the federal filing can still apply.**
+**A foreign-owned Delaware single-member LLC commonly has two separate annual obligations: Delaware's [$400 LLC tax due June 1](https://corp.delaware.gov/alt-entitytaxinstructions/) and federal Form 5472 attached to a pro forma Form 1120, generally due April 15 for a calendar-year entity with a reportable owner transaction. The $400 figure applies from tax year 2026 under Delaware House Bill 400 and is first payable by 1 June 2027; the payment that fell due on 1 June 2026 was the previous $300. Delaware LLCs do not file a state annual report, but the federal filing can still apply.**
 
 Delaware is popular because state maintenance is simple. That simplicity causes a specific mistake: a foreign owner pays the Delaware LLC tax, sees no annual report requirement, and assumes the IRS has nothing to receive. Delaware maintenance and federal related-party reporting are separate systems.
 
-The Delaware Division of Corporations states that Delaware limited liability companies do not file an annual report, but they must pay an annual tax of $300 on or before June 1; late payment carries a $200 penalty and interest at 1.5% per month ([Delaware annual report and tax information](https://corp.delaware.gov/frtax/)). If the federal transaction ledger is the part you need completed, [start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=delaware-llc-foreign-owner-tax-filing) and treat the Delaware tax as a separate state payment.
+The Delaware Division of Corporations states that Delaware limited liability companies do not file an annual report, but they must pay an annual tax of $400 on or before June 1; late payment carries a $200 penalty and interest at 1.5% per month ([Delaware annual report and tax information](https://corp.delaware.gov/frtax/)). If the federal transaction ledger is the part you need completed, [start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=delaware-llc-foreign-owner-tax-filing) and treat the Delaware tax as a separate state payment.
 
 ## What does a foreign-owned Delaware LLC file in 2026?
 
@@ -34,7 +34,7 @@ The point is not that every Delaware LLC owes U.S. income tax. Many foreign-owne
 
 A Delaware LLC does not file the Delaware annual report, but it does pay the Delaware LLC annual tax. The no-report rule is real, and it applies only to the Delaware state report.
 
-The Delaware Division of Corporations' tax FAQ states that domestic and foreign LLCs formed or registered in Delaware are required to pay an annual tax of $300 and that there is no requirement to file an annual report ([Delaware tax FAQ](https://corp.delaware.gov/taxfaq/)). The annual tax page gives the operational rule: LLC taxes are due on or before June 1, with a $200 penalty for non-payment or late payment and 1.5% monthly interest on the tax and penalty ([Delaware annual report and tax information](https://corp.delaware.gov/frtax/)).
+The Delaware Division of Corporations' tax FAQ states that domestic and foreign LLCs formed or registered in Delaware are required to pay an annual tax of $400 and that there is no requirement to file an annual report ([Delaware tax FAQ](https://corp.delaware.gov/taxfaq/)). The annual tax page gives the operational rule: LLC taxes are due on or before June 1, with a $200 penalty for non-payment or late payment and 1.5% monthly interest on the tax and penalty ([Delaware annual report and tax information](https://corp.delaware.gov/frtax/)).
 
 That state rule is often the entire Delaware compliance job for a simple LLC with no Delaware activity. It is not the entire U.S. compliance job for a foreign-owned disregarded entity. The IRS Form 5472 package is still analysed under federal reporting rules.
 
@@ -94,7 +94,7 @@ Delaware scenarios usually turn on whether the owner moved money, not whether De
 
 **2. Delaware LLC with no revenue and no bank account after formation.** The LLC may still owe the Delaware annual tax because state maintenance is not based on revenue. Federal Form 5472 depends on whether there was a reportable transaction during the tax year, such as the owner paying state or agent costs.
 
-**3. Delaware LLC missed the June 1 state tax by three months.** Arithmetic using Delaware's published charges: $300 annual tax + $200 late-payment penalty = $500 before interest. Interest also accrues at 1.5% per month on the tax and penalty under the Delaware annual tax page. That state balance does not file or fix Form 5472.
+**3. Delaware LLC missed the June 1 state tax by three months.** Arithmetic using Delaware's published charges: $400 annual tax + $200 late-payment penalty = $600 before interest. Interest also accrues at 1.5% per month on the tax and penalty under the Delaware annual tax page. That state balance does not file or fix Form 5472.
 
 **4. Delaware LLC is closing in 2026.** Delaware cancellation stops future state accruals only after proper legal filing. The final federal year still needs a Form 5472 review because liquidation distributions, owner-paid cancellation costs or final reimbursements can be reportable related-party transactions.
 
@@ -116,9 +116,9 @@ We are not a CPA firm and do not give Delaware tax advice. If the LLC still need
 
 ## Frequently asked questions
 
-### Does a Delaware LLC owe $300 with no income?
+### Does a Delaware LLC owe $400 with no income?
 
-Yes, while the LLC remains formed or registered in Delaware. The $300 annual LLC tax is separate from income and separate from federal Form 5472.
+Yes, while the LLC remains formed or registered in Delaware. The $400 annual LLC tax is separate from income and separate from federal Form 5472.
 
 ### Does a Delaware LLC file an annual report?
 

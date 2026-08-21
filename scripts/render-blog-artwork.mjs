@@ -241,6 +241,16 @@ const POSTS = {
   "multi-member-llc-form-5472-or-1065": { accent: C.amber, motif: "split", glyphs: ["two", "person", "doc", "check"] },
   "form-5472-uae-dubai-residents-us-llc": { accent: C.green, motif: "globe", glyphs: ["globe", "person", "doc", "check"] },
   "amended-form-5472-correcting-errors": { accent: C.clay, motif: "correct", glyphs: ["pen", "doc", "warn", "check"] },
+  "form-5472-us-real-estate-foreign-investor": { accent: C.teal, motif: "split", glyphs: ["doc", "person", "hash", "check"] },
+  "form-5472-vs-form-5471": { accent: C.amber, motif: "split", glyphs: ["two", "doc", "globe", "check"] },
+  "form-5472-statute-of-limitations": { accent: C.clay, motif: "calendar", glyphs: ["clock", "calendar", "warn", "check"] },
+  "new-mexico-llc-foreign-owner-tax-filing": { accent: C.amber, motif: "checklist", glyphs: ["doc", "calendar", "person", "check"] },
+  "nevada-llc-foreign-owner-tax-filing": { accent: C.navySoft, motif: "checklist", glyphs: ["doc", "calendar", "hash", "check"] },
+  "form-5472-hong-kong-residents-us-llc": { accent: C.clay, motif: "globe", glyphs: ["globe", "person", "doc", "check"] },
+  "form-5472-pakistan-residents-us-llc": { accent: C.green, motif: "globe", glyphs: ["globe", "person", "hash", "check"] },
+  "form-5472-mexico-residents-us-llc": { accent: C.amber, motif: "globe", glyphs: ["globe", "doc", "person", "check"] },
+  "form-5472-part-v-statement-example": { accent: C.teal, motif: "notice", glyphs: ["pen", "doc", "hash", "check"] },
+  "form-5472-shopify-dropshipping-foreign-owner": { accent: C.green, motif: "stack", glyphs: ["doc", "person", "clock", "check"] },
 };
 
 const wanted = process.argv.slice(2);

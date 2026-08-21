@@ -2,7 +2,7 @@
 title: "Foreign-Owned US LLC Filing Checklist (2026)"
 description: "Foreign-owned US LLC filing requirements can include Form 5472, pro forma Form 1120, state reports, income-tax returns, and sales-tax registrations."
 date: 2026-08-15
-updated: 2026-08-15
+updated: 2026-08-21
 author: "Form5472 Prep"
 tags: ["form-5472", "foreign-owned-llc", "compliance", "boi", "filing-guide"]
 draft: false
@@ -81,7 +81,7 @@ Every US LLC owes something to its state of formation, every year, regardless of
 Typical obligations by popular formation state:
 
 - **Wyoming** — annual report with a license tax, due on or before the first day of the LLC's anniversary month. The tax is the greater of $60 or $0.0002 per dollar of assets located and employed in Wyoming, so most small LLCs pay the $60 minimum ([Wyoming Secretary of State FAQ](https://sos.wyo.gov/faqs.aspx?root=BUS)).
-- **Delaware** — annual LLC franchise tax of $300, due 1 June, with penalties and interest for late payment ([Delaware Division of Corporations tax FAQ](https://corp.delaware.gov/taxfaq/)).
+- **Delaware** — annual LLC franchise tax of $400 (from tax year 2026; $300 was due in June 2026), due 1 June, with penalties and interest for late payment ([Delaware Division of Corporations tax FAQ](https://corp.delaware.gov/taxfaq/)).
 - **New Mexico** — no annual report for LLCs, which is why it appears in low-maintenance formation pitches.
 - **Florida** — annual report due 1 May, with a substantial late fee ([Sunbiz annual report page](https://dos.fl.gov/sunbiz/manage-business/efile/annual-report/)).
 
