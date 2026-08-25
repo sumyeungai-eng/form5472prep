@@ -171,6 +171,16 @@ const ARTWORK_ALTS: Record<string, string> = {
   "form-5472-currency-conversion-exchange-rates": "A foreign-currency ledger being converted into documented U.S. dollar totals",
   "form-5472-foreign-corporate-owner": "A foreign parent-company folder connected to its U.S. LLC filing records",
   "form-5472-change-of-ownership": "Two owners documenting the transfer of a U.S. LLC interest",
+  "form-5472-spain-residents-us-llc": "A Spain-based owner organizing U.S. LLC tax records and euro-to-dollar transactions",
+  "form-5472-italy-residents-us-llc": "An Italy-based owner reviewing U.S. LLC filing records in a refined international workspace",
+  "form-5472-switzerland-residents-us-llc": "A Swiss owner checking a U.S. LLC filing package and cross-border transaction ledger",
+  "form-5472-japan-residents-us-llc": "A Japan-based founder preparing U.S. LLC tax records and yen-to-dollar transactions",
+  "form-5472-new-zealand-residents-us-llc": "A New Zealand owner reviewing a U.S. LLC filing package in an Auckland workspace",
+  "form-5472-formation-costs-registered-agent-fees": "Formation receipts and registered-agent fees organized into a Form 5472 workpaper",
+  "form-5472-customer-payments-foreign-source-income": "Separate customer and foreign-owner ledgers showing which transactions belong on Form 5472",
+  "form-5472-no-us-bank-account": "Foreign-account records and owner-paid LLC costs arranged for a Form 5472 filing",
+  "form-5472-lines-1f-1g-1h-total-value": "Three related-party ledgers reconciled to Form 5472 gross transaction totals",
+  "form-5472-business-address-owner-address": "An LLC filing package routed between principal-office and foreign-owner address records",
 };
 
 function artworkAlt(slug: string, title: string): string {
