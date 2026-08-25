@@ -136,6 +136,7 @@ public final class FilingDetailViewModel: ObservableObject {
 
 @MainActor
 public final class ApplicationsViewModel: ObservableObject {
+    @Published public var searchQuery = ""
     @Published public var type = "ein"
     @Published public var status = ""
     @Published public private(set) var items: [ApplicationSummary] = []
@@ -174,6 +175,7 @@ public final class ApplicationsViewModel: ObservableObject {
             let page = try await client.applications(
                 type: type,
                 status: status,
+                query: searchQuery.trimmingCharacters(in: .whitespacesAndNewlines),
                 cursor: reset ? nil : pagination.nextCursor,
                 limit: pageSize
             )
@@ -206,6 +208,7 @@ public final class AnalyticsViewModel: ObservableObject {
     @Published public var range = "30d"
     @Published public var bucket = "day"
     @Published public private(set) var bundle: AnalyticsBundle?
+    @Published public private(set) var partners: [PartnerRow] = []
     @Published public private(set) var isLoading = false
     @Published public private(set) var errorMessage: String?
 
@@ -224,12 +227,15 @@ public final class AnalyticsViewModel: ObservableObject {
         let requestedBucket = bucket
         defer { isLoading = false }
         do {
-            let response = try await client.analytics(
+            async let analyticsRequest = client.analytics(
                 range: requestedRange,
                 bucket: requestedBucket
             )
+            async let partnersRequest = client.partners()
+            let (response, partnerRows) = try await (analyticsRequest, partnersRequest)
             guard requestedRange == range, requestedBucket == bucket else { return }
             bundle = response
+            partners = partnerRows
         } catch APIError.unauthorized {
             await authManager.signOut()
         } catch {

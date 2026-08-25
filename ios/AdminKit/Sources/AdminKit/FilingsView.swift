@@ -9,7 +9,7 @@ public struct FilingsView: View {
 
     private let statuses = [
         "", "DRAFT", "PAID", "PDF_GENERATED", "SIGNATURE_PENDING",
-        "SIGNED_UPLOADED", "CONFIRMED", "FAXED", "FAILED",
+        "SIGNED_UPLOADED", "FAXED", "CONFIRMED", "FAILED",
     ]
 
     public init(client: APIClient, authManager: AuthManager) {
@@ -270,8 +270,17 @@ private struct FilingRow: View {
 @MainActor
 public struct FilingDetailView: View {
     @StateObject private var viewModel: FilingDetailViewModel
+    @State private var selectedDocument: FilingDocument?
+    @State private var additionalMessages: [FilingMessage] = []
+    @State private var messageBody = ""
+    @State private var isSendingMessage = false
+    @State private var messageError: String?
+    private let filingID: String
+    private let client: APIClient
 
     public init(filingID: String, client: APIClient, authManager: AuthManager) {
+        self.filingID = filingID
+        self.client = client
         _viewModel = StateObject(
             wrappedValue: FilingDetailViewModel(
                 filingID: filingID,
@@ -306,6 +315,14 @@ public struct FilingDetailView: View {
                 ?? "Untitled filing"
         )
         .adminVisibleNavigationBar()
+        .sheet(item: $selectedDocument) { document in
+            PdfPreviewView(
+                filingID: filingID,
+                kind: document.kind,
+                title: document.title,
+                client: client
+            )
+        }
         .task {
             if !viewModel.hasLoaded {
                 await viewModel.load()
@@ -317,10 +334,12 @@ public struct FilingDetailView: View {
         ScrollView {
             LazyVStack(spacing: 16) {
                 filingHeader(detail.filing)
+                documentsSection(detail.filing)
+                actionsSection(detail.filing)
                 entitySection(detail.filing)
                 ownerSection(detail.filing)
                 yearDataSection(detail.filing.yearData)
-                messagesSection(detail.messages)
+                messagesSection(displayedMessages(serverMessages: detail.messages))
                 changeLogSection(detail.changeLog)
             }
             .padding()
@@ -329,6 +348,52 @@ public struct FilingDetailView: View {
         .foregroundStyle(AdminTheme.primaryText)
         .tint(AdminTheme.accent)
         .refreshable { await viewModel.load() }
+    }
+
+    private func documentsSection(_ filing: FilingRecord) -> some View {
+        detailCard(title: "Documents", icon: "doc.on.doc") {
+            documentButton(.generated, isAvailable: filing.hasGeneratedPdf)
+            documentButton(.signed, isAvailable: filing.hasSignedPdf)
+            documentButton(.faxed, isAvailable: filing.hasFaxedPdf)
+        }
+    }
+
+    private func documentButton(
+        _ document: FilingDocument,
+        isAvailable: Bool
+    ) -> some View {
+        Button {
+            selectedDocument = document
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "doc.richtext")
+                Text(document.title)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(AdminTheme.secondaryText)
+            }
+            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(AdminTheme.primaryText)
+        .contentShape(Rectangle())
+        .disabled(!isAvailable)
+        .opacity(isAvailable ? 1 : 0.48)
+        .accessibilityHint(isAvailable ? "Opens PDF preview" : "Document is not available")
+    }
+
+    private func actionsSection(_ filing: FilingRecord) -> some View {
+        detailCard(title: "Actions", icon: "bolt.shield") {
+            FilingActionsView(
+                filingID: filing.id,
+                currentStatus: filing.status,
+                hasSignedPdf: filing.hasSignedPdf,
+                client: client
+            ) {
+                await viewModel.load()
+            }
+        }
     }
 
     private func filingHeader(_ filing: FilingRecord) -> some View {
@@ -461,6 +526,70 @@ public struct FilingDetailView: View {
                     }
                 }
             }
+
+            Divider()
+                .overlay(AdminTheme.cardBorder)
+
+            VStack(alignment: .leading, spacing: 8) {
+                TextField("Message customer", text: $messageBody, axis: .vertical)
+                    .lineLimit(2...6)
+                    .textFieldStyle(.roundedBorder)
+                    .disabled(isSendingMessage)
+                    .accessibilityLabel("Message customer")
+
+                HStack(alignment: .center, spacing: 10) {
+                    Text("\(messageBody.count) / 5000")
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(
+                            messageBody.count > 5_000
+                                ? AdminTheme.danger
+                                : AdminTheme.secondaryText
+                        )
+                    Spacer()
+                    if isSendingMessage {
+                        ProgressView()
+                            .frame(width: 44, height: 44)
+                    }
+                    Button("Send") {
+                        Task { await sendMessage() }
+                    }
+                    .buttonStyle(AdminPrimaryButtonStyle())
+                    .fixedSize(horizontal: true, vertical: false)
+                    .disabled(!canSendMessage || isSendingMessage)
+                }
+
+                if let messageError {
+                    Text(messageError)
+                        .font(.subheadline)
+                        .foregroundStyle(AdminTheme.danger)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    private var canSendMessage: Bool {
+        let body = messageBody.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !body.isEmpty && body.count <= 5_000
+    }
+
+    private func displayedMessages(serverMessages: [FilingMessage]) -> [FilingMessage] {
+        let serverIDs = Set(serverMessages.map(\.id))
+        return serverMessages + additionalMessages.filter { !serverIDs.contains($0.id) }
+    }
+
+    private func sendMessage() async {
+        let body = messageBody.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !body.isEmpty, body.count <= 5_000 else { return }
+        isSendingMessage = true
+        messageError = nil
+        defer { isSendingMessage = false }
+        do {
+            let message = try await client.postMessage(filingId: filingID, body: body)
+            additionalMessages.append(message)
+            messageBody = ""
+        } catch {
+            messageError = AdminFormatting.errorMessage(for: error)
         }
     }
 
@@ -542,6 +671,23 @@ public struct FilingDetailView: View {
             return date.formatted(date: .abbreviated, time: .omitted)
         }
         return date.formatted(date: .abbreviated, time: .shortened)
+    }
+}
+
+private enum FilingDocument: String, Identifiable {
+    case generated
+    case signed
+    case faxed
+
+    var id: String { rawValue }
+    var kind: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .generated: "Prepared PDF"
+        case .signed: "Signed PDF"
+        case .faxed: "Faxed PDF"
+        }
     }
 }
 
