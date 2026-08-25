@@ -13,7 +13,12 @@ import {
   logFilingChange,
   TransitionError,
 } from "@/lib/admin/mutations";
-import { effectiveDueDateUtc, extensionUnclear, formatDueDate } from "@/lib/schemas";
+import {
+  effectiveDueDateUtc,
+  extensionUnclear,
+  formatDueDate,
+  isYearDelinquent,
+} from "@/lib/schemas";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 
 export type FilingActionName =
@@ -115,6 +120,9 @@ const filingSelect = {
   extensionTransmittedAt: true,
   extensionMethod: true,
   extensionDestination: true,
+  // Part of the cascade: a filing that no longer records an extension must not
+  // keep the "proof of extension" upload attached to it.
+  extensionProofKey: true,
   faxService: true,
   signedPdfKey: true,
   generatedPdfKey: true,
@@ -201,11 +209,26 @@ export function extensionReviewFlags(f: ExtensionReviewInput): ExtensionReviewFl
   const maxYear = f.taxYears.length > 0 ? Math.max(...f.taxYears) : null;
   const sent = f.extensionTransmittedAt?.getTime() ?? null;
   if (sent !== null && maxYear !== null) {
-    // End of the tax year = Dec 31, or the dissolution date on a final
-    // (short-year) return.
-    const yearEnd =
-      f.isFinalReturn && f.dissolvedAt ? f.dissolvedAt.getTime() : Date.UTC(maxYear, 11, 31);
-    if (sent < yearEnd) {
+    // The boundary is EXCLUSIVE: the tax year is not over until its last day
+    // has ENDED, so the first non-premature instant is the start of the day
+    // AFTER year end. Comparing against Dec 31 itself (as this used to) missed
+    // a 7004 sent ON December 31 — sent while the year was still running, which
+    // is exactly the mistake the flag exists to catch.
+    //
+    // A final return's year ends on the dissolution date instead — but only
+    // when that date actually falls in maxYear. A dissolvedAt in some other
+    // year (stale value, mis-keyed year, or a multi-year bundle whose final
+    // year isn't the latest) would otherwise move the boundary to an unrelated
+    // point on the calendar; fall back to the normal December 31 rule.
+    const dissolvedInMaxYear =
+      f.isFinalReturn &&
+      f.dissolvedAt !== null &&
+      !Number.isNaN(f.dissolvedAt.getTime()) &&
+      f.dissolvedAt.getUTCFullYear() === maxYear;
+    const yearEndExclusive = dissolvedInMaxYear
+      ? f.dissolvedAt!.getTime() + 24 * 60 * 60 * 1000
+      : Date.UTC(maxYear + 1, 0, 1);
+    if (sent < yearEndExclusive) {
       flags.push({ code: "premature", detail: "7004 possibly premature — sent before the tax year closed" });
     }
   }
@@ -396,6 +419,27 @@ export async function runFilingAction(
     case "retryFax": {
       if (!filing.signedPdfKey) {
         throw new FilingActionError(400, "signed_pdf_required", "no signed PDF on file");
+      }
+      // A late filing without a reasonable-cause statement is legally naked on
+      // the $25,000 exposure — the whole pitch of the service is that late
+      // filings go out WITH the statement. Computed fresh (never from the
+      // stored isDiirsp flag): the classification may have changed since the
+      // package was generated. The admin can override with force+reason for
+      // the rare deliberate case; the override is captured in the change log.
+      {
+        const maxYear = filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : null;
+        const anyLate = filing.taxYears.some((y) =>
+          isYearDelinquent(y, filing.isFinalReturn ? filing.dissolvedAt : null, y === maxYear
+            ? { filed: filing.extensionFiled, transmittedAt: filing.extensionTransmittedAt }
+            : null),
+        );
+        if (anyLate && !filing.reasonableCauseNarrative?.trim() && !isValidForceOverride(ctx)) {
+          throw new FilingActionError(
+            409,
+            "rcs_missing_for_late_filing",
+            "This filing is past its due date but has no reasonable-cause statement. Add the narrative (or force with a reason) before faxing.",
+          );
+        }
       }
       // Snapshot the EXACT bytes we're about to fax under a stable key so the
       // admin can later verify "what was sent to the IRS". Hard precondition:
@@ -623,10 +667,30 @@ export async function runFilingAction(
         }
       } else if (field === "extensionTransmittedAt") {
         if (!blank) {
-          // Same parse the filings route uses for date-only wizard input.
-          const parsed = new Date(value!);
-          if (Number.isNaN(parsed.getTime())) {
-            throw new FilingActionError(400, "invalid_value", "extensionTransmittedAt must be a valid date");
+          // DATE-ONLY, exactly like the customer PATCH. The old `new Date(value)`
+          // accepted anything Date.parse tolerates — a full timestamp with a
+          // timezone, "March 4 2026", "2026" — and stored an instant that no
+          // longer round-trips to the calendar day the admin typed. Since
+          // isExtensionValid() compares this against a UTC-midnight due date,
+          // an off-by-a-timezone instant can flip a return from timely to late.
+          const raw = value!.trim();
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+            throw new FilingActionError(
+              400,
+              "invalid_value",
+              "extensionTransmittedAt must be a date in YYYY-MM-DD form",
+            );
+          }
+          const parsed = new Date(`${raw}T00:00:00.000Z`);
+          // Round-trip check: rejects a well-formed but non-existent calendar
+          // date ("2026-02-31", "2026-13-01"), which some parsers roll forward
+          // into a different real day instead of failing.
+          if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== raw) {
+            throw new FilingActionError(
+              400,
+              "invalid_value",
+              "extensionTransmittedAt is not a real calendar date",
+            );
           }
           writeValue = parsed;
         }
@@ -640,15 +704,91 @@ export async function runFilingAction(
         else throw new FilingActionError(400, "invalid_value", "isDiirsp must be true or false");
       }
 
-      const beforeRaw = (filing as unknown as Record<string, unknown>)[field];
-      // Dates are not JSON — normalise both sides so the audit log stays
-      // readable (and Prisma's Json column stays writable).
-      const before = beforeRaw instanceof Date ? beforeRaw.toISOString() : beforeRaw ?? null;
-      const after = writeValue instanceof Date ? writeValue.toISOString() : writeValue;
+      // ── Grouped rules for the Form 7004 fields ───────────────────────────
+      // updateField writes one column at a time, but the four extension fields
+      // are ONE fact. The customer PATCH enforces the invariants below; an
+      // admin correction has to land on the same end state or the two write
+      // paths disagree about the same filing — and it is the admin path that
+      // exists specifically to remediate pre-gate orders, so it is the one that
+      // must not be able to store a half-answer.
+      const update: Record<string, unknown> = { [field]: writeValue };
+
+      if (EXTENSION_SCALARS.has(field)) {
+        // The state the filing will be in AFTER this write.
+        const nextFiled =
+          field === "extensionFiled" ? (writeValue as string | null) : filing.extensionFiled;
+        const nextTransmittedAt =
+          field === "extensionTransmittedAt"
+            ? (writeValue as Date | null)
+            : filing.extensionTransmittedAt;
+
+        // "Yes" with no date can never rescue the return: isExtensionValid()
+        // has nothing to compare against the due date, so it silently reads as
+        // "not extended" — an answered question that changes nothing. Same hard
+        // error the customer PATCH raises. Also fires when the date is BLANKED
+        // while the stored answer is still "yes".
+        if (nextFiled === "yes" && !nextTransmittedAt) {
+          throw new FilingActionError(
+            400,
+            "extension_date_required",
+            'extensionFiled "yes" requires a transmittal date — save extensionTransmittedAt (YYYY-MM-DD) first, then set extensionFiled',
+          );
+        }
+
+        // null / "no" / "not_sure": the supporting details describe an
+        // extension this filing no longer records. Cleared in the SAME update
+        // (and the same transaction) so no stale 7004 date can survive for
+        // effectiveDueDateUtc — or the accountant — to trip over. The uploaded
+        // proof goes with them: a filing with no extension must not keep a
+        // "proof of extension" attachment.
+        if (field === "extensionFiled" && nextFiled !== "yes") {
+          update.extensionTransmittedAt = null;
+          update.extensionMethod = null;
+          update.extensionDestination = null;
+          update.extensionProofKey = null;
+        }
+
+        // isDiirsp is DERIVED, never stored independently of the facts that
+        // produce it. Writing an extension field without recomputing left the
+        // pre-edit (usually delinquent) verdict in place, which is what the
+        // reasonable-cause statement and the whole DIIRSP path key off. Same
+        // rule the PATCH route runs: extension facts apply to max(taxYears)
+        // alone, because one Form 7004 covers exactly one tax year.
+        const facts = {
+          filed: nextFiled,
+          transmittedAt: nextFiled === "yes" ? nextTransmittedAt : null,
+        };
+        const maxYear = filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : null;
+        update.isDiirsp = filing.taxYears.some((y) =>
+          isYearDelinquent(
+            y,
+            filing.isFinalReturn ? filing.dissolvedAt : null,
+            y === maxYear ? facts : null,
+          ),
+        );
+      }
+      // NOTE the deliberate asymmetry: when the admin names `isDiirsp` itself,
+      // that explicit value is written and NOT recomputed. It is the manual
+      // override — the escape hatch for a case the shared rule gets wrong — so
+      // it has to survive the save that set it.
+
+      // Dates are not JSON — normalise so the audit log stays readable (and
+      // Prisma's Json column stays writable).
+      const toJson = (v: unknown) => (v instanceof Date ? v.toISOString() : v ?? null);
+      const beforeOf = (k: string) => toJson((filing as unknown as Record<string, unknown>)[k]);
+      const before = beforeOf(field);
+      const after = toJson(update[field]);
+      // Every column this edit touches BEYOND the one the admin named — the
+      // cascade and the recomputed isDiirsp — gets its own change-log row, so
+      // the trail explains values nobody typed.
+      const derivedKeys = Object.keys(update).filter(
+        (k) => k !== field && toJson(update[k]) !== beforeOf(k),
+      );
+      const logReason = reason || ctx.reason || null;
       await prisma.$transaction([
         prisma.filing.update({
           where: { id: filing.id },
-          data: { [field]: writeValue } as unknown as never,
+          data: update as unknown as never,
           select: { id: true },
         }),
         prisma.filingChangeLog.create({
@@ -659,12 +799,32 @@ export async function runFilingAction(
             field,
             beforeJson: before as never,
             afterJson: after as never,
-            reason: reason || ctx.reason || null,
+            reason: logReason,
           },
           select: { id: true },
         }),
+        ...derivedKeys.map((k) =>
+          prisma.filingChangeLog.create({
+            data: {
+              filingId: filing.id,
+              adminId: ctx.adminId,
+              source: "admin",
+              field: k,
+              beforeJson: beforeOf(k) as never,
+              afterJson: toJson(update[k]) as never,
+              reason: `${logReason ? `${logReason} — ` : ""}derived from ${field} edit`,
+            },
+            select: { id: true },
+          }),
+        ),
       ]);
-      return { ok: true, field, before, after };
+      return {
+        ok: true,
+        field,
+        before,
+        after,
+        derived: Object.fromEntries(derivedKeys.map((k) => [k, toJson(update[k])])),
+      };
     }
 
     case "uploadSignedPdf": {

@@ -396,15 +396,14 @@ export function FilingWizard({
                 // Always sent — null clears any date left over from a
                 // previously-ticked final-return box.
                 dissolvedAt: data.dissolvedAt,
-                // Same "always sent" rule for the Form 7004 answers: when the
-                // extension question wasn't applicable (or stopped being
-                // applicable after a year change) YearsStep sends nulls, so a
-                // stale "yes" from an earlier selection can't survive and keep
-                // a return marked timely that no longer is.
-                extensionFiled: data.extensionFiled,
-                extensionTransmittedAt: data.extensionTransmittedAt,
-                extensionMethod: data.extensionMethod,
-                extensionDestination: data.extensionDestination,
+                // The Form 7004 answers are the OPPOSITE: present only when the
+                // question was on screen. The PATCH route reads these four keys
+                // with hasOwnProperty, so OMITTING them means "no change" and
+                // the stored facts survive. Sending nulls (what this used to do
+                // whenever the section was hidden) deleted a customer's recorded
+                // extension on every later re-save — including the ordinary case
+                // of reopening the wizard after the extended window closed.
+                ...(data.extension ?? {}),
               });
               setFiling({
                 ...filing,
@@ -412,15 +411,19 @@ export function FilingWizard({
                 isDiirsp: updated.isDiirsp,
                 isFinalReturn: updated.isFinalReturn,
                 dissolvedAt: updated.dissolvedAt,
-                // Echo back what we sent rather than the server's row: the
-                // PATCH route may not persist these yet (separate lane), and a
-                // resumed step should still re-render the customer's answers.
-                extensionFiled: updated.extensionFiled ?? data.extensionFiled,
+                // The route returns the whole row, so these keys are always
+                // present and the server's value is authoritative — including
+                // when it is null because the server cleared them. `data.extension`
+                // is only a fallback for a response that omits the field.
+                extensionFiled: updated.extensionFiled ?? data.extension?.extensionFiled ?? null,
                 extensionTransmittedAt:
-                  updated.extensionTransmittedAt ?? data.extensionTransmittedAt,
-                extensionMethod: updated.extensionMethod ?? data.extensionMethod,
+                  updated.extensionTransmittedAt ??
+                  data.extension?.extensionTransmittedAt ??
+                  null,
+                extensionMethod:
+                  updated.extensionMethod ?? data.extension?.extensionMethod ?? null,
                 extensionDestination:
-                  updated.extensionDestination ?? data.extensionDestination,
+                  updated.extensionDestination ?? data.extension?.extensionDestination ?? null,
               });
               // The steps list will pick up the new isDiirsp on the next render.
               setStepKey(updated.isDiirsp ? "rcs" : "transactions");
@@ -1132,10 +1135,18 @@ function YearsStep({
     data: YearScopeForm & {
       isFinalReturn: boolean;
       dissolvedAt: string | null;
-      extensionFiled: string | null;
-      extensionTransmittedAt: string | null;
-      extensionMethod: string | null;
-      extensionDestination: string | null;
+      // The four Form 7004 answers, or NULL when the extension question was not
+      // on screen for this save. Null means "this save asserts nothing about the
+      // extension" and the caller must OMIT the four fields from the PATCH —
+      // sending explicit nulls would DESTROY a stored 7004 record the moment the
+      // window closes or the customer re-saves a not-yet-due year (the schema
+      // comment promises we keep that record; see the parent handler).
+      extension: {
+        extensionFiled: string | null;
+        extensionTransmittedAt: string | null;
+        extensionMethod: string | null;
+        extensionDestination: string | null;
+      } | null;
     },
   ) => Promise<void>;
   onBack: () => void;
@@ -1178,6 +1189,17 @@ function YearsStep({
     filing.extensionDestination ?? "",
   );
   const [extensionDateError, setExtensionDateError] = useState<string | null>(null);
+  // Unanswered-radio error. Separate from the date error because they can be
+  // shown at different times and clear on different interactions.
+  const [extensionAnswerError, setExtensionAnswerError] = useState<string | null>(null);
+  // The tax year the four answers in state currently DESCRIBE. A Form 7004
+  // covers exactly one year, so an answer given for 2025 says nothing about a
+  // 2026 final year the customer adds afterwards — see the reset effect below.
+  const extensionAnswerYearRef = useRef<number | null>(
+    filing.extensionFiled != null && filing.taxYears.length > 0
+      ? Math.max(...filing.taxYears)
+      : null,
+  );
   // Optional supporting document, same save-on-pick pattern as the dissolution
   // certificate above. The endpoint is owned by another lane; a 404 here just
   // surfaces as an upload error and never blocks Continue.
@@ -1341,6 +1363,28 @@ function YearsStep({
   // window has closed too. So the extension facts are attached to
   // max(taxYears) and to nothing else.
   const latestSelectedYear = selected.length > 0 ? Math.max(...selected) : null;
+  // ── Answers belong to ONE year; never let them leak into another ──────────
+  // The section can stay on screen across a year change (2025 answered, then a
+  // January-dissolved 2026 final year is added and the extension window for
+  // 2026 is open too). Without this, the state — and therefore the next PATCH —
+  // would silently apply the 2025 answer to 2026 and could mark a genuinely
+  // late 2026 return "timely". The server clears the same fields when max(year)
+  // changes, so client and server agree on the post-change state: unanswered.
+  useEffect(() => {
+    if (latestSelectedYear === null) return;
+    const answersBelongTo = extensionAnswerYearRef.current;
+    if (answersBelongTo === latestSelectedYear) return;
+    extensionAnswerYearRef.current = latestSelectedYear;
+    // Nothing to invalidate the first time we learn which year the loaded
+    // answers describe (mount, or a draft that has never had an answer).
+    if (answersBelongTo === null) return;
+    setExtensionFiled(null);
+    setExtensionTransmittedAt("");
+    setExtensionMethod("");
+    setExtensionDestination("");
+    setExtensionDateError(null);
+    setExtensionAnswerError(null);
+  }, [latestSelectedYear]);
   // Only a final return's dissolution date shortens a year; pass "" as null so
   // a half-typed date can't be read as a real one.
   const shortYearDate = isFinalReturn && dissolvedAt ? dissolvedAt : null;
@@ -1349,26 +1393,33 @@ function YearsStep({
   // the following April).
   const originalDueMs =
     latestSelectedYear === null ? null : filingDueDateUtc(latestSelectedYear, shortYearDate);
-  // The far edge of the six-month extended window: what the deadline WOULD be
-  // if a 7004 had been transmitted on the original due date. Past this point a
-  // 7004 can no longer make the return timely, so asking about one would only
-  // collect an answer that changes nothing.
-  const extendedWindowEndMs =
-    latestSelectedYear === null || originalDueMs === null
-      ? null
-      : effectiveDueDateUtc(latestSelectedYear, shortYearDate, {
-          filed: "yes",
-          transmittedAt: new Date(originalDueMs),
-        });
-  const nowMs = Date.now();
   // Ask ONLY inside the window where the answer changes the outcome: the
-  // original deadline has passed (otherwise the return is plainly timely) but
-  // the extended one hasn't (otherwise it's plainly late).
-  const showExtensionSection =
-    originalDueMs !== null &&
-    extendedWindowEndMs !== null &&
-    nowMs > originalDueMs &&
-    nowMs <= extendedWindowEndMs;
+  // original deadline has passed (otherwise the return is plainly timely) but a
+  // validly-transmitted 7004 could still rescue the year (otherwise it's
+  // plainly late and the answer buys nothing).
+  //
+  // Expressed as the EXACT two isYearDelinquent() calls that
+  // completeness.extensionAnswerRequired() makes, not as raw millisecond
+  // comparisons. isYearDelinquent is DAY-INCLUSIVE — a return is timely through
+  // the whole of its due day — so `nowMs > originalDueMs` opened the question a
+  // day early and `nowMs <= extendedWindowEndMs` closed it a day early. The
+  // second error was the dangerous one: on the extended due date itself (Oct 15)
+  // the wizard hid the question while checkout still required the answer,
+  // locking the customer out on the last day they could have used it.
+  const extensionWindowOpen =
+    latestSelectedYear !== null &&
+    isYearDelinquent(latestSelectedYear, shortYearDate, null) &&
+    !isYearDelinquent(latestSelectedYear, shortYearDate, {
+      filed: "yes",
+      // The latest transmission instant that still satisfies isExtensionValid:
+      // "could ANY valid extension still rescue this year?"
+      transmittedAt: new Date(filingDueDateUtc(latestSelectedYear, shortYearDate)),
+    });
+  // A recorded answer stays on screen even once the window shuts. It still
+  // drives the determination (and the admin's review flags), so hiding it would
+  // leave a stored fact influencing the outcome with no way to see or correct
+  // it — and the customer would have no way to fix a mistyped 7004 date.
+  const showExtensionSection = extensionWindowOpen || filing.extensionFiled != null;
   // Facts that reach the shared helpers. Deliberately null whenever the
   // section isn't on screen — an answer the customer can't currently see must
   // not silently keep driving the determination after they change years.
@@ -1483,6 +1534,19 @@ function YearsStep({
           }
         }
         setDissolvedAtError(null);
+        // The answer decides whether the return is late, and checkout now
+        // blocks on it — catching it here keeps the customer from discovering
+        // a missing answer three steps later at the payment screen. Gated on
+        // extensionWindowOpen, NOT on showExtensionSection: the section also
+        // stays visible for a stored answer outside the window, and there the
+        // server does not require one, so neither may we.
+        if (extensionWindowOpen && extensionFiled === null) {
+          setExtensionAnswerError(
+            "Select whether you filed Form 7004 — it decides whether your return is late.",
+          );
+          return;
+        }
+        setExtensionAnswerError(null);
         // A "yes" without a transmittal date is unusable: isExtensionValid()
         // can't compare an absent date to the deadline, so it would silently
         // fall back to "not extended" — the exact misclassification this gate
@@ -1496,21 +1560,27 @@ function YearsStep({
           ...data,
           isFinalReturn,
           dissolvedAt: isFinalReturn ? dissolvedAt : null,
-          // Nulls whenever the question wasn't on screen, so an answer given
-          // for one year selection can't linger after the customer changes it.
-          extensionFiled: showExtensionSection ? extensionFiled : null,
-          extensionTransmittedAt:
-            showExtensionSection && extensionFiled === "yes" && extensionTransmittedAt
-              ? extensionTransmittedAt
-              : null,
-          extensionMethod:
-            showExtensionSection && extensionFiled === "yes" && extensionMethod
-              ? extensionMethod
-              : null,
-          extensionDestination:
-            showExtensionSection && extensionFiled === "yes" && extensionDestination
-              ? extensionDestination
-              : null,
+          // Only sent when the question was actually on screen. When it wasn't,
+          // this save has NO OPINION about the extension: the caller omits the
+          // four fields, and the stored facts survive untouched. (The old code
+          // sent nulls here, which erased a customer's recorded 7004 on every
+          // later re-save once the extension window had closed.) Cross-year
+          // leakage is handled separately, by the reset effect above.
+          extension: showExtensionSection
+            ? {
+                extensionFiled,
+                extensionTransmittedAt:
+                  extensionFiled === "yes" && extensionTransmittedAt
+                    ? extensionTransmittedAt
+                    : null,
+                extensionMethod:
+                  extensionFiled === "yes" && extensionMethod ? extensionMethod : null,
+                extensionDestination:
+                  extensionFiled === "yes" && extensionDestination
+                    ? extensionDestination
+                    : null,
+              }
+            : null,
         });
       })}
       className="space-y-5"
@@ -1682,6 +1752,7 @@ function YearsStep({
                     onChange={() => {
                       setExtensionFiled(opt.value);
                       setExtensionDateError(null);
+                      setExtensionAnswerError(null);
                     }}
                     className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
                   />
@@ -1695,6 +1766,13 @@ function YearsStep({
               );
             })}
           </div>
+          {/* Same idiom as dissolvedAtError: inline, red, directly under the
+              control that has to change. */}
+          {extensionAnswerError && (
+            <p className="text-xs text-red-600 mt-2" role="alert">
+              {extensionAnswerError}
+            </p>
+          )}
 
           {extensionFiled === "yes" && (
             <div className="mt-4 space-y-3">
@@ -1953,7 +2031,24 @@ function ReviewStep({
         <Row label="Owner" value={filing.ownerName} />
         <Row label="Owner FTIN" value={filing.ownerFtin} />
         <Row label="Tax years" value={filing.taxYears.join(", ")} />
-        <Row label="Late filing" value={filing.isDiirsp ? "Yes — reasonable-cause statement included" : "No"} />
+        {/* "I'm not sure" is deliberately not collapsed into yes or no anywhere
+            in the product: isYearDelinquent() defers the latest year rather than
+            asserting it, so isDiirsp can be false purely because the question is
+            still OPEN. Printing "No" there would present an unresolved
+            determination as a resolved one — the customer would read "not late"
+            off a filing we have not yet decided about. */}
+        {filing.extensionFiled === "not_sure" ? (
+          <Row
+            label="Late filing"
+            value="Pending — we'll confirm your extension before filing"
+            muted
+          />
+        ) : (
+          <Row
+            label="Late filing"
+            value={filing.isDiirsp ? "Yes — reasonable-cause statement included" : "No"}
+          />
+        )}
         {filing.isDiirsp && (
           <Row
             label="Reasonable cause"
@@ -2115,11 +2210,23 @@ function ReviewStep({
   );
 }
 
-function Row({ label, value }: { label: string; value: string | null | undefined }) {
+function Row({
+  label,
+  value,
+  // Renders the value in the muted grey used for "not decided yet" states, so
+  // an unresolved determination doesn't read like a confirmed answer.
+  muted = false,
+}: {
+  label: string;
+  value: string | null | undefined;
+  muted?: boolean;
+}) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-0.5 sm:gap-4 px-4 py-3">
       <dt className="text-slate-500 text-xs uppercase tracking-wider sm:text-base sm:normal-case sm:tracking-normal">{label}</dt>
-      <dd className="sm:col-span-2 text-slate-900 break-words">{value || <em className="text-slate-400">missing</em>}</dd>
+      <dd className={`sm:col-span-2 break-words ${muted ? "text-slate-500" : "text-slate-900"}`}>
+        {value || <em className="text-slate-400">missing</em>}
+      </dd>
     </div>
   );
 }

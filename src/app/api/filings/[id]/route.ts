@@ -50,6 +50,28 @@ const EXTENSION_DESTINATIONS = ["ogden", "standard", "not_sure"] as const;
 // calendar day the customer picked.
 const DATE_ONLY_RE = /^\d{4}-\d{2}-\d{2}$/;
 
+/**
+ * Whether a YYYY-MM-DD string names a date that actually exists.
+ *
+ * The regex alone is not enough: `new Date("2026-02-31")` does NOT return
+ * Invalid Date — V8 normalises the overflow and hands back March 3, which would
+ * then be persisted as the transmission date of a Form 7004 the customer sent
+ * on no such day. That date decides whether the extension was timely, so a
+ * silent two-day slide is a wrong legal determination.
+ *
+ * Same round-trip technique validateDissolvedAt() uses: build the UTC instant
+ * from the parts, then check the parts survived.
+ */
+function isRealCalendarDate(value: string): boolean {
+  const [year, month, day] = value.split("-").map(Number);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  return (
+    parsed.getUTCFullYear() === year &&
+    parsed.getUTCMonth() === month - 1 &&
+    parsed.getUTCDate() === day
+  );
+}
+
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const owned = await getOwnedFiling(params.id);
   if (!owned) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -188,17 +210,59 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     hasKey("extensionMethod") ||
     hasKey("extensionDestination");
 
-  // Effective facts = this request's values where it supplied them, the stored
-  // ones otherwise. Both the validation below and the isDiirsp recompute judge
+  // ─── A Form 7004 belongs to ONE tax year ───
+  // So the stored answers describe max(stored taxYears) and nothing else. When
+  // this request moves that latest year — e.g. the customer adds a 2026 final
+  // year on top of a 2025 catch-up — the stored "yes, transmitted 2026-04-15"
+  // would silently be re-read as an extension of the NEW year, extending a
+  // deadline no 7004 ever covered. Detected here, before the effective facts
+  // are resolved, so the stale answers never reach the validation, the isDiirsp
+  // recompute, or the database.
+  //
+  // Provisional on purpose: `body.taxYears` is not validated/deduped until
+  // further down. Max is unaffected by dedupe and sorting, and if the array
+  // turns out to be invalid the request 400s before any write — so reading it
+  // early is safe.
+  const storedMaxYear = filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : null;
+  const requestedYears: number[] | null = Array.isArray(body.taxYears)
+    ? (body.taxYears as unknown[]).filter(
+        (y): y is number => typeof y === "number" && Number.isFinite(y),
+      )
+    : null;
+  const requestedMaxYear =
+    requestedYears !== null && requestedYears.length > 0 ? Math.max(...requestedYears) : null;
+  // ONLY an explicit year change triggers this. A body that omits taxYears
+  // means "no change" — the wizard omits the extension fields entirely when its
+  // section is hidden, and that absence must never be read as "clear".
+  const maxYearChanged = requestedYears !== null && requestedMaxYear !== storedMaxYear;
+
+  // Baseline = what the filing already knows, EXCEPT when the latest year just
+  // moved: then the stored answers belong to a year this filing no longer
+  // reports as its latest, so they are treated as absent. Anything this request
+  // states explicitly still wins — the customer re-answering for the new year
+  // set is a fact, not a carry-over.
+  const extensionBaselineFiled = maxYearChanged ? null : filing.extensionFiled;
+  const extensionBaselineTransmittedAt = maxYearChanged ? null : filing.extensionTransmittedAt;
+  const extensionBaselineMethod = maxYearChanged ? null : filing.extensionMethod;
+  const extensionBaselineDestination = maxYearChanged ? null : filing.extensionDestination;
+
+  // Effective facts = this request's values where it supplied them, the baseline
+  // otherwise. Both the validation below and the isDiirsp recompute judge
   // the state the filing will be in AFTER this patch, never the stale one.
   const effectiveExtensionFiled: string | null = hasKey("extensionFiled")
     ? ((body.extensionFiled as string | null | undefined) ?? null)
-    : filing.extensionFiled;
+    : extensionBaselineFiled;
   const effectiveExtensionTransmittedAt: Date | string | null = hasKey("extensionTransmittedAt")
     ? ((body.extensionTransmittedAt as string | null | undefined) ?? null)
-    : filing.extensionTransmittedAt;
+    : extensionBaselineTransmittedAt;
+  const effectiveExtensionMethod: string | null = hasKey("extensionMethod")
+    ? ((body.extensionMethod as string | null | undefined) ?? null)
+    : extensionBaselineMethod;
+  const effectiveExtensionDestination: string | null = hasKey("extensionDestination")
+    ? ((body.extensionDestination as string | null | undefined) ?? null)
+    : extensionBaselineDestination;
 
-  if (extensionTouched) {
+  if (extensionTouched || maxYearChanged) {
     // Enum answers. null/absent is always fine — the question simply hasn't
     // been answered yet.
     const enumIssue = (
@@ -225,12 +289,24 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     if (hasKey("extensionTransmittedAt")) {
       const value = body.extensionTransmittedAt;
-      const wellFormed =
+      const shaped =
         value === null ||
         value === undefined ||
         (typeof value === "string" && DATE_ONLY_RE.test(value) && !Number.isNaN(Date.parse(value)));
-      if (!wellFormed) {
+      if (!shaped) {
         const message = "Enter the date you sent Form 7004 as YYYY-MM-DD";
+        return NextResponse.json(
+          { error: message, issues: [{ field: "extensionTransmittedAt", message }] },
+          { status: 400 },
+        );
+      }
+      // Shape is not existence. "2026-02-31" passes the regex AND Date.parse
+      // (V8 rolls it over to March 3) and would be stored as a transmission
+      // date the customer never had — silently moving the date the extension's
+      // timeliness is judged against. Same round-trip check validateDissolvedAt
+      // uses.
+      if (typeof value === "string" && !isRealCalendarDate(value)) {
+        const message = "That date doesn't exist — check the day and month";
         return NextResponse.json(
           { error: message, issues: [{ field: "extensionTransmittedAt", message }] },
           { status: 400 },
@@ -258,12 +334,23 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     if (effectiveExtensionFiled === "yes") {
       data.extensionFiled = "yes";
-      if (hasKey("extensionTransmittedAt"))
-        data.extensionTransmittedAt = new Date(body.extensionTransmittedAt as string);
-      if (hasKey("extensionMethod"))
-        data.extensionMethod = (body.extensionMethod as string | null | undefined) ?? null;
-      if (hasKey("extensionDestination"))
-        data.extensionDestination = (body.extensionDestination as string | null | undefined) ?? null;
+      // Written from the EFFECTIVE values rather than only the supplied keys:
+      // when the latest year just moved, the baseline is already null, so the
+      // previous year's date/method/destination are cleared in this same update
+      // instead of surviving underneath a freshly re-answered "yes". When the
+      // year didn't move the effective value IS the stored one, so this is a
+      // no-op write for any field this request left alone.
+      data.extensionTransmittedAt = effectiveExtensionTransmittedAt
+        ? new Date(effectiveExtensionTransmittedAt as string | Date)
+        : null;
+      data.extensionMethod = effectiveExtensionMethod;
+      data.extensionDestination = effectiveExtensionDestination;
+      // The uploaded proof is a copy of ONE year's 7004. A new latest year
+      // makes it evidence for a year this filing no longer treats as latest, so
+      // it must not sit under the new answer. (The R2 object itself is left in
+      // place — the key is what stops the admin view showing it as proof of
+      // this filing's extension.)
+      if (maxYearChanged) data.extensionProofKey = null;
     } else {
       // null / "no" / "not_sure": the supporting details describe an extension
       // that (as far as this filing now records) doesn't exist. Cleared in the
@@ -274,6 +361,11 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       data.extensionTransmittedAt = null;
       data.extensionMethod = null;
       data.extensionDestination = null;
+      // The uploaded proof belongs to the answer being cleared. Leaving the key
+      // behind would show the admin a 7004 receipt attached to a filing that
+      // now says no extension exists — the cascade has to reach it too. The R2
+      // object is deliberately not deleted here; only the reference is dropped.
+      data.extensionProofKey = null;
     }
   }
 
@@ -357,7 +449,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   // isDiirsp would otherwise keep the pre-extension (delinquent) verdict all
   // the way to the PDF. Equivalent to recomputing against
   // `body.taxYears ?? filing.taxYears` — the array case was just handled above.
-  if (extensionTouched && data.isDiirsp === undefined) {
+  if ((extensionTouched || maxYearChanged) && data.isDiirsp === undefined) {
     data.isDiirsp = recomputeIsDiirsp(filing.taxYears);
   }
 

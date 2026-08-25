@@ -259,7 +259,13 @@ export function isYearDelinquent(
   // rescue — still compute from the calendar and keep their reasonable-cause
   // protection.
   if (extensionUnclear(extension)) return false;
-  return Date.now() > effectiveDueDateUtc(taxYear, dissolvedAt, extension);
+  // The due-date helpers return UTC MIDNIGHT AT THE START of the due day, so a
+  // naive `now > dueMs` marks a return late the moment its own due date begins
+  // (00:00 UTC = the evening of the 14th in the US). A return is timely THROUGH
+  // the whole due day: it only becomes delinquent at the start of the NEXT day.
+  // Hence the +1-day offset and the >= (an instant exactly at the start of the
+  // day after the deadline is already late).
+  return Date.now() >= effectiveDueDateUtc(taxYear, dissolvedAt, extension) + ONE_DAY_MS;
 }
 
 // ─── Form 7004 extension gate ────────────────────────────────────────────────
@@ -299,6 +305,11 @@ export function isExtensionValid(
   if (!extension || extension.filed !== "yes") return false;
   const sent = toUtcMs(extension.transmittedAt);
   if (sent === null) return false;
+  // INVARIANT: `transmittedAt` is a DATE-ONLY value (UTC midnight at the start
+  // of the transmission day), and filingDueDateUtc() is likewise midnight at the
+  // start of the due day. So a 7004 sent ON the due date compares equal and
+  // validates — which is why this stays `<=` with NO +1-day offset, unlike
+  // isYearDelinquent() above (which compares a wall-clock instant, not a date).
   return sent <= filingDueDateUtc(taxYear, dissolvedAt);
 }
 

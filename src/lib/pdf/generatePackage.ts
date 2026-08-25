@@ -4,7 +4,12 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { form5472FieldMap, form1120_2024FieldMap, form1120_2025FieldMap } from "./fieldMaps";
 import { setText, check, stampDiirspHeader, stampShortPeriod, flatten } from "./fillForm";
 import { formatDateForIrs } from "@/lib/utils";
-import { isExtensionValid, isYearDelinquent, type ExtensionFacts } from "@/lib/schemas";
+import {
+  extensionUnclear,
+  isExtensionValid,
+  isYearDelinquent,
+  type ExtensionFacts,
+} from "@/lib/schemas";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Country normalization — wizard collects nationality/residence as free text
@@ -663,6 +668,17 @@ async function buildCoverLetter(
   // statement to the IRS about why this return is on time, so it must never
   // appear on a package where the extension is not what makes it on time.
   extendedYear: number | null,
+  // The tax year (if any) whose timeliness CANNOT be asserted either way,
+  // because the customer answered "not sure" about a Form 7004. This letter is
+  // signed, so such a year must be excluded from BOTH the delinquent wording
+  // (a false admission) and the timely wording (a false claim) — it gets one
+  // deliberately conspicuous neutral sentence instead, which is what forces the
+  // accountant to resolve the answer in admin and regenerate before faxing.
+  unresolvedYear: number | null,
+  // Whether a reasonable cause statement is actually being attached to this
+  // package. The letter's "A reasonable cause statement is attached." sentence
+  // must track the real attachment decision, never a stale order flag.
+  attachRcs: boolean,
 ): Promise<PDFDocument> {
   const pdf = await PDFDocument.create();
   const page = pdf.addPage([612, 792]);
@@ -695,42 +711,84 @@ async function buildCoverLetter(
 
   // Per-year status. The DIIRSP / late-filing language must name ONLY the years
   // that are actually delinquent — the cover letter is signed, so declaring a
-  // timely year late would be a false statement. Three cases:
-  //   • no delinquent years  → the existing fully-timely wording (unchanged);
-  //   • ALL years delinquent → the existing DIIRSP wording, VERBATIM (this is
-  //     the ordinary catch-up package, kept byte-for-byte stable);
-  //   • a mix                → DIIRSP for the late years + one sentence noting
-  //     the timely year(s).
-  const timelyYears = f.taxYears.filter((y) => !delinquentYears.includes(y));
+  // timely year late would be a false statement. Symmetrically, a year whose
+  // timeliness is UNRESOLVED (`unresolvedYear`) is excluded from the timely
+  // wording too: it belongs to neither bucket, and only the neutral pending
+  // sentence at the end of the body may speak about it. Cases:
+  //   • some year(s) delinquent, nothing else in the package → the existing
+  //     DIIRSP wording, VERBATIM (the ordinary catch-up package, kept
+  //     byte-for-byte stable);
+  //   • some delinquent + timely and/or unresolved years → DIIRSP naming ONLY
+  //     the late years, plus a sentence naming the timely one(s) if any;
+  //   • no delinquent years → the timely wording, which names the years
+  //     explicitly whenever an unresolved year is present so "the tax year(s)
+  //     indicated" can never sweep it in;
+  //   • nothing to assert at all (single-year "not sure") → no status sentence.
+  const timelyYears = f.taxYears.filter(
+    (y) => !delinquentYears.includes(y) && y !== unresolvedYear,
+  );
+  // The attachment claim is derived from the ONE attachment decision, so the
+  // letter can never promise a statement the package does not contain.
+  const rcsClause = attachRcs ? ` A reasonable cause statement is attached.` : ``;
+  const dPlural = delinquentYears.length > 1;
+  const tPlural = timelyYears.length > 1;
   let statusSentence: string;
-  if (delinquentYears.length === 0) {
-    statusSentence = `These are timely filed for the tax year(s) indicated.`;
-  } else if (timelyYears.length === 0) {
+  if (delinquentYears.length > 0) {
+    if (timelyYears.length === 0 && unresolvedYear == null) {
+      statusSentence =
+        `These filings are being submitted under the Delinquent International Information ` +
+        `Return Submission Procedures (DIIRSP).` +
+        rcsClause;
+    } else {
+      statusSentence =
+        `The filing${dPlural ? "s" : ""} for tax year${dPlural ? "s" : ""} ${delinquentYears.join(", ")} ` +
+        `${dPlural ? "are" : "is"} being submitted under the Delinquent International Information ` +
+        `Return Submission Procedures (DIIRSP).` +
+        rcsClause;
+      if (timelyYears.length > 0) {
+        statusSentence +=
+          ` This package also includes a timely filed return for tax year${tPlural ? "s" : ""} ${timelyYears.join(", ")}.`;
+      }
+    }
+  } else if (timelyYears.length > 0) {
     statusSentence =
-      `These filings are being submitted under the Delinquent International Information ` +
-      `Return Submission Procedures (DIIRSP). A reasonable cause statement is attached.`;
+      unresolvedYear == null
+        ? `These are timely filed for the tax year(s) indicated.`
+        : `The return${tPlural ? "s" : ""} for tax year${tPlural ? "s" : ""} ${timelyYears.join(", ")} ` +
+          `${tPlural ? "are" : "is"} timely filed.`;
   } else {
-    const dPlural = delinquentYears.length > 1;
-    const tPlural = timelyYears.length > 1;
-    statusSentence =
-      `The filing${dPlural ? "s" : ""} for tax year${dPlural ? "s" : ""} ${delinquentYears.join(", ")} ` +
-      `${dPlural ? "are" : "is"} being submitted under the Delinquent International Information ` +
-      `Return Submission Procedures (DIIRSP). A reasonable cause statement is attached. ` +
-      `This package also includes a timely filed return for tax year${tPlural ? "s" : ""} ${timelyYears.join(", ")}.`;
+    // Every year in the package is unresolved — assert nothing here; the
+    // pending sentence below carries the whole story.
+    statusSentence = ``;
   }
   // One extra sentence when a Form 7004 is what keeps the latest year timely.
   // Appended AFTER statusSentence so the all-late and mixed wordings above stay
-  // byte-for-byte what they were.
+  // byte-for-byte what they were. Fires only for a VALID extension, which is
+  // mutually exclusive with `unresolvedYear` (an unclear answer can never be
+  // valid), so these two sentences never both describe the same year.
   const extensionSentence =
     extendedYear == null
       ? ""
       : ` The return for tax year ${extendedYear} is timely filed under a Form 7004 ` +
         `extension of time to file.`;
-  const body =
+  // Deliberately conspicuous: it claims neither timeliness nor delinquency and
+  // reads as an open question, so a package that reaches the accountant with
+  // this sentence in it visibly demands the 7004 answer before it is faxed.
+  const pendingSentence =
+    unresolvedYear == null
+      ? ""
+      : ` The return for tax year ${unresolvedYear} is enclosed; its timeliness ` +
+        `determination is pending confirmation of a Form 7004 extension of time to file.`;
+  const body = [
     `Enclosed please find Form 5472 with attached pro forma Form 1120 for the above ` +
-    `foreign-owned U.S. disregarded entity, for the tax year(s) listed. ` +
-    statusSentence +
-    extensionSentence;
+      `foreign-owned U.S. disregarded entity, for the tax year(s) listed.`,
+    statusSentence,
+    extensionSentence,
+    pendingSentence,
+  ]
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0)
+    .join(" ");
 
   for (const line of wrap(body, 85)) {
     draw(line);
@@ -753,11 +811,10 @@ async function buildReasonableCause(f: Filing, delinquentYears: number[]): Promi
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
 
   // The RCS explains why the LATE returns are late, so every year it names must
-  // be a delinquent one — never a timely year bundled in the same package. Fall
-  // back to the full set only in the defensive case of an empty delinquent list
-  // (the caller renders the RCS only when isDiirsp, i.e. at least one late year,
-  // so in practice `years` is exactly delinquentYears).
-  const years = delinquentYears.length ? delinquentYears : f.taxYears;
+  // be a delinquent one — never a timely (or unresolved) year bundled in the
+  // same package. The caller renders this document only when `attachRcs`, which
+  // requires a non-empty delinquentYears, so there is nothing to fall back to.
+  const years = delinquentYears;
 
   const MARGIN_L = 50;
   const MARGIN_R = 50;
@@ -848,23 +905,14 @@ async function buildReasonableCause(f: Filing, delinquentYears: number[]): Promi
   // ---- 2. Cause of the delinquency ----
   drawParagraph("2. Cause of the Delinquency", { font: bold, size: 11 });
   space(6);
-  // Use the customer-provided narrative here when present; otherwise a
-  // conservative general statement.
-  const narrative = f.reasonableCauseNarrative?.trim();
-  if (narrative) {
-    drawParagraph(narrative);
-  } else {
-    drawParagraph(
-      "The filing was missed due to administrative oversight. The Owner, a non-U.S. resident managing " +
-        "the Company remotely from outside the United States, did not have an established compliance " +
-        "calendar reminder for the April 15 federal filing deadline, which falls outside the Owner's " +
-        "domestic tax calendar. The Company generated no U.S. taxable income and no U.S. tax was owed, " +
-        "so no income tax filing reminder or payment obligation served as a deadline trigger. Upon " +
-        "recognizing the oversight, the Owner immediately undertook to prepare the delinquent return(s) " +
-        "and is filing as soon as practicable, voluntarily and prior to any contact from the Internal " +
-        "Revenue Service regarding the missed return(s).",
-    );
-  }
+  // The customer's OWN narrative, always. There is deliberately no canned
+  // fallback here: this document is signed under penalties of perjury, and a
+  // generated account of the taxpayer's personal circumstances ("the Owner did
+  // not have a compliance calendar reminder…") is a statement of fact nobody
+  // verified — worse than attaching no statement at all. `attachRcs` in the
+  // caller already requires a non-empty narrative, so this is always present;
+  // the `?? ""` is only a type guard, never a rendered value.
+  drawParagraph(f.reasonableCauseNarrative?.trim() ?? "");
   space(10);
 
   // ---- 3. Reasonable cause analysis ----
@@ -1047,7 +1095,27 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
       ? maxTaxYear
       : null;
 
-  const cover = await buildCoverLetter(f, delinquentYears, extendedYear);
+  // "Not sure" about a Form 7004 asserts NEITHER timeliness nor delinquency.
+  // isYearDelinquent() already keeps such a year out of delinquentYears; this
+  // names it so the cover letter can also keep it out of the TIMELY wording,
+  // which it would otherwise fall into by default. Only the latest year can
+  // carry extension facts, so only it can ever be unresolved.
+  const unresolvedYear = maxTaxYear != null && extensionUnclear(extension) ? maxTaxYear : null;
+
+  // ── The single source of truth for the reasonable cause statement ──────────
+  // Everything about the RCS — whether the page is rendered, whether the cover
+  // letter claims an attachment, and which years it names — is derived from
+  // this one boolean. It intentionally does NOT read f.isDiirsp: that flag is a
+  // snapshot the server stamped when the order was sold, and it disagrees with
+  // today's facts in both directions (a filing sold as a late catch-up whose
+  // Form 7004 later turned out to be valid; a filing sold as timely that has
+  // since slipped past its deadline). delinquentYears is what the shared rule
+  // says NOW. The narrative requirement is the second half: an RCS is signed
+  // under penalties of perjury and must be the taxpayer's own account, so with
+  // no narrative on file there is simply nothing truthful to attach.
+  const attachRcs = delinquentYears.length > 0 && !!f.reasonableCauseNarrative?.trim();
+
+  const cover = await buildCoverLetter(f, delinquentYears, extendedYear, unresolvedYear, attachRcs);
   await copyAll(out, cover);
   // Cover letter signature line is at the bottom of the (single) cover page.
   signatures.push({
@@ -1057,14 +1125,9 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
     ...SIG_PLACEMENT.coverLetter,
   });
 
-  // isDiirsp is the flag the server stamped on the order; delinquentYears is
-  // what the shared rule says TODAY, extension included. Requiring both means a
-  // validly extended filing never carries a reasonable cause statement — even
-  // if it was sold and flagged as a late catch-up before the customer told us
-  // about the 7004 (the remediation path for the misclassified 2025 orders).
-  // The RCS is signed under penalties of perjury; rendering one with no
-  // delinquent year to name would be a false admission.
-  if (f.isDiirsp && delinquentYears.length > 0) {
+  // Rendered iff `attachRcs` — the same boolean the cover letter's attachment
+  // sentence reads, so the letter and the package can never disagree.
+  if (attachRcs) {
     const rcs = await buildReasonableCause(f, delinquentYears);
     await copyAll(out, rcs);
     signatures.push({

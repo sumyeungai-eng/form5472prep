@@ -8,7 +8,7 @@ import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePacka
 import { putPdf } from "@/lib/storage";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
-import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { filingCompletionIssues, requiresReasonableCause } from "@/lib/completeness";
 
 export async function POST(req: Request) {
@@ -63,6 +63,32 @@ export async function POST(req: Request) {
   const discountCents = promoDiscountCents(filing.funnelSource, expectedTotalCents);
   const expectedChargeCents = expectedTotalCents - discountCents;
 
+  // ─── Re-pin the stored classification BEFORE anything can return early ───
+  // Fax delivery is included on every tier — pin faxService=true so post-
+  // payment UI + admin views never branch into the legacy "self-fax" path.
+  //
+  // The same update re-pins isDiirsp when the live verdict disagrees with what
+  // the wizard last stored. The completeness gate above already refuses to
+  // charge on the FRESH classification, but everything downstream of payment
+  // (Stripe webhook, PDF generation, the emails) reads the stored column — so a
+  // draft that went delinquent while it sat, or one that a Form 7004 answer
+  // just rescued, would otherwise produce a package classified by a stale flag.
+  //
+  // ORDER IS LOAD-BEARING: this must run on EVERY checkout attempt, including
+  // the session-reuse short-circuit below. When it sat after that `return`, a
+  // draft that crossed its deadline between two checkout attempts reused the
+  // old Stripe session and paid carrying the stale classification — the fresh
+  // verdict never reached the database, so the package was built (and the
+  // reasonable-cause statement omitted) on the wizard's obsolete answer.
+  const freshIsDiirsp = requiresReasonableCause(filing);
+  await prisma.filing.update({
+    where: { id: filing.id },
+    data: {
+      faxService: true,
+      ...(freshIsDiirsp !== filing.isDiirsp ? { isDiirsp: freshIsDiirsp } : {}),
+    },
+  });
+
   // Idempotency — if a still-open Stripe session already exists for this filing
   // (double-click / retried request), reuse it instead of minting a second
   // payable session that could double-charge the customer.
@@ -98,24 +124,6 @@ export async function POST(req: Request) {
   // Bind the filing to the email before payment so the Stripe webhook can
   // look up the user and email the magic link even if the cookie is lost.
   const user = await bindFilingToEmail(filing.id, email);
-
-  // Fax delivery is included on every tier — pin faxService=true so post-
-  // payment UI + admin views never branch into the legacy "self-fax" path.
-  //
-  // Same update re-pins isDiirsp when the live verdict disagrees with what the
-  // wizard last stored. The gate above already refuses to charge on the FRESH
-  // classification, but everything downstream of payment (Stripe webhook, PDF
-  // generation, the emails) reads the stored column — so a draft that went
-  // delinquent while it sat, or one that a Form 7004 answer just rescued,
-  // would otherwise produce a package classified by a stale flag.
-  const freshIsDiirsp = requiresReasonableCause(filing);
-  await prisma.filing.update({
-    where: { id: filing.id },
-    data: {
-      faxService: true,
-      ...(freshIsDiirsp !== filing.isDiirsp ? { isDiirsp: freshIsDiirsp } : {}),
-    },
-  });
 
   // ─── Admin-only $0 test path ───
   // Skip Stripe entirely. Mark PAID, generate the PDF inline (mirroring the
@@ -157,6 +165,13 @@ export async function POST(req: Request) {
           isFinalReturn: full.isFinalReturn,
           dissolvedAt: full.dissolvedAt,
           reasonableCauseNarrative: full.reasonableCauseNarrative,
+          // The Form 7004 facts decide the deadline the package prints (and
+          // whether it reads as extended rather than delinquent). Every other
+          // generatePackage call site passes them; this one used to be the sole
+          // omission, so an admin test order silently rendered an extended
+          // filer's package on the unextended April 15 deadline.
+          extensionFiled: full.extensionFiled,
+          extensionTransmittedAt: full.extensionTransmittedAt,
           yearData: full.yearData.map((y) => ({
             taxYear: y.taxYear,
             totalAssetsYearEnd: Number(y.totalAssetsYearEnd),
@@ -204,12 +219,21 @@ export async function POST(req: Request) {
           // Keep admin test orders identical to real ones: final returns get
           // the EIN-cancellation warning + deadline line.
           isFinalReturn: full.isFinalReturn,
+          // effectiveDueDateUtc, NOT filingDueDateUtc: a validly-extended filer's
+          // deadline is the ORIGINAL date plus six months, so the raw statutory
+          // date would tell them April 15 when they actually have until
+          // October 15 — a date wrong in the direction that makes them panic
+          // (or, on a short year, act on a deadline that isn't theirs).
           dueDateText:
             full.taxYears.length > 0
               ? formatDueDate(
-                  filingDueDateUtc(
+                  effectiveDueDateUtc(
                     Math.max(...full.taxYears),
                     full.isFinalReturn ? full.dissolvedAt : null,
+                    {
+                      filed: full.extensionFiled,
+                      transmittedAt: full.extensionTransmittedAt,
+                    },
                   ),
                 )
               : null,

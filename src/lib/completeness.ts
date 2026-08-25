@@ -4,6 +4,7 @@ import {
   refineUsIdOrReferenceId,
   makeYearScopeSchema,
   isYearDelinquent,
+  filingDueDateUtc,
   type ExtensionFacts,
 } from "@/lib/schemas";
 
@@ -91,6 +92,49 @@ export function requiresReasonableCause(
 }
 
 /**
+ * Whether the Form 7004 question is one this filing MUST answer before it can
+ * be paid for.
+ *
+ * True exactly inside the "extension window" of the latest tax year: the
+ * ORIGINAL deadline has passed (so the calendar alone says delinquent) but a
+ * validly-transmitted 7004 would still make the return timely (so the extended
+ * deadline has not passed either). In that window the answer is the ONLY thing
+ * that decides the classification, and leaving it null means the filing
+ * proceeds as late-from-calendar — an inference standing in for a fact, which
+ * is the precise failure this gate exists to kill.
+ *
+ * Outside the window the answer changes nothing (before the original deadline
+ * the return is plainly timely; after the extended one it is plainly late), so
+ * a null stays perfectly acceptable and the wizard rightly never asks.
+ *
+ * The hypothetical used for the upper bound is a 7004 transmitted ON the
+ * original due date — the latest instant that still satisfies isExtensionValid
+ * — so this asks "could ANY valid extension still rescue this year?".
+ */
+function extensionAnswerRequired(
+  filing: Pick<
+    CompletionInput,
+    "taxYears" | "isFinalReturn" | "dissolvedAt" | "extensionFiled"
+  >,
+): boolean {
+  if (filing.taxYears.length === 0) return false;
+  // Any answer at all — including "no" and "not sure" — discharges the
+  // obligation. What's refused is silence.
+  if (filing.extensionFiled != null) return false;
+  const maxYear = Math.max(...filing.taxYears);
+  // Only a final return carries a dissolution date, and only that date
+  // shortens the year — same rule requiresReasonableCause applies.
+  const dissolved = filing.isFinalReturn ? filing.dissolvedAt : null;
+  const lateOnTheCalendar = isYearDelinquent(maxYear, dissolved, null);
+  if (!lateOnTheCalendar) return false;
+  const hypotheticallyValid: ExtensionFacts = {
+    filed: "yes",
+    transmittedAt: new Date(filingDueDateUtc(maxYear, dissolved)),
+  };
+  return !isYearDelinquent(maxYear, dissolved, hypotheticallyValid);
+}
+
+/**
  * Every reason this filing is not yet payable, as dotted field paths
  * ("llcEin", "yearData.2025", "dissolvedAt"). Empty array = complete.
  *
@@ -133,6 +177,15 @@ export function filingCompletionIssues(filing: CompletionInput, yearDataYears: n
   // "final" — so refuse to charge until the customer supplies it.
   if (filing.isFinalReturn && !filing.dissolvedAt) {
     if (completionIssues.indexOf("dissolvedAt") === -1) completionIssues.push("dissolvedAt");
+  }
+  // Inside the extension window the Form 7004 answer is REQUIRED. Skipping it
+  // (extensionFiled null) would let the filing proceed classified as late
+  // purely from the calendar — inference standing in for a customer-supplied
+  // fact. Checkout refuses to charge until it's answered, and the admin drafts
+  // "ready" badge inherits the refusal because it calls this same helper.
+  if (extensionAnswerRequired(filing)) {
+    if (completionIssues.indexOf("extensionFiled") === -1)
+      completionIssues.push("extensionFiled");
   }
   // Live recompute rather than the stored filing.isDiirsp — see
   // requiresReasonableCause above. The admin drafts "ready" badge inherits

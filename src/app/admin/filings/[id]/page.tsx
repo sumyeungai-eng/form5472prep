@@ -175,6 +175,14 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             ownerItin: filing.ownerItin,
             ownerReferenceId: filing.ownerReferenceId,
             reasonableCauseNarrative: filing.reasonableCauseNarrative,
+            // Form 7004 remediation fields — seeded so the editor shows the
+            // stored answer and clearing a value registers as dirty.
+            extensionFiled: filing.extensionFiled,
+            extensionTransmittedAt: filing.extensionTransmittedAt
+              ? filing.extensionTransmittedAt.toISOString().slice(0, 10)
+              : null,
+            extensionMethod: filing.extensionMethod,
+            extensionDestination: filing.extensionDestination,
           }}
         />
       </div>
