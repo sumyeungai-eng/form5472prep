@@ -199,9 +199,9 @@ export function resolveTier(value: string | null | undefined): ResolvedTier {
     case "single_year":
       return { tier: "standard", isLegacy: true, legacyLabel: "Single year (legacy plan)", legacyYearCount: 1 };
     case "two_year_diirsp":
-      return { tier: "standard", isLegacy: true, legacyLabel: "Two-year DIIRSP (legacy plan)", legacyYearCount: 2 };
+      return { tier: "standard", isLegacy: true, legacyLabel: "Two-year catch-up (legacy plan)", legacyYearCount: 2 };
     case "multi_year_diirsp":
-      return { tier: "standard", isLegacy: true, legacyLabel: "Three-year DIIRSP (legacy plan)", legacyYearCount: 3 };
+      return { tier: "standard", isLegacy: true, legacyLabel: "Three-year catch-up (legacy plan)", legacyYearCount: 3 };
     default:
       return { tier: DEFAULT_TIER, isLegacy: false };
   }
@@ -246,7 +246,7 @@ export function getTiersForSource(
     rush: { ...TIERS.standard, label: "Rush (legacy plan)" },
     premium: { ...TIERS.standard, label: "Premium (legacy plan)" },
     single_year: { ...TIERS.standard, label: "Single year (legacy plan)" },
-    two_year_diirsp: { ...TIERS.standard, label: "Two-year DIIRSP (legacy plan)" },
-    multi_year_diirsp: { ...TIERS.standard, label: "Three-year DIIRSP (legacy plan)" },
+    two_year_diirsp: { ...TIERS.standard, label: "Two-year catch-up (legacy plan)" },
+    multi_year_diirsp: { ...TIERS.standard, label: "Three-year catch-up (legacy plan)" },
   };
 }

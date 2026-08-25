@@ -59,7 +59,7 @@ export default async function FilingConfirmationPage({ params }: { params: { id:
             label="Filing type"
             value={
               filing.isDiirsp
-                ? "Delinquent International Information Return Submission Procedures (DIIRSP)"
+                ? "IRS late-filing procedure, with a reasonable-cause statement included"
                 : "Form 5472 + pro forma Form 1120"
             }
           />

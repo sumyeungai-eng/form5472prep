@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { formatAttribution, hasAttribution } from "@/lib/attribution";
 import { formatUsd } from "@/lib/utils";
 import { publicUrl } from "@/lib/storage";
+import { effectiveDueDateUtc, filingDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { extensionReviewFlags } from "@/lib/admin/filingActions";
 import { StatusBadge } from "../StatusBadge";
 import { AdminActions } from "./AdminActions";
 import { EditFieldsCard } from "./EditFieldsCard";
@@ -42,6 +44,41 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
   const dissolutionCertUrl = filing.dissolutionCertKey
     ? await publicUrl(filing.dissolutionCertKey)
     : null;
+  // Optional customer-uploaded copy of the Form 7004 / its transmission
+  // receipt. The extension is a customer-ASSERTED fact that suppresses the
+  // whole late-filing path, so the reviewer wants to be able to look at the
+  // proof before the package goes out.
+  const extensionProofUrl = filing.extensionProofKey
+    ? await publicUrl(filing.extensionProofKey)
+    : null;
+
+  // ── Filing deadline ──
+  // A Form 7004 covers ONE year, so everything here describes the LATEST tax
+  // year in the order; a final return shortens that year, hence dissolvedAt is
+  // only passed when isFinalReturn is set (same rule generatePackage uses).
+  const maxTaxYear = filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : null;
+  const dissolvedForDeadline = filing.isFinalReturn ? filing.dissolvedAt : null;
+  const originalDueText =
+    maxTaxYear == null ? null : formatDueDate(filingDueDateUtc(maxTaxYear, dissolvedForDeadline));
+  const effectiveDueText =
+    maxTaxYear == null
+      ? null
+      : formatDueDate(
+          effectiveDueDateUtc(maxTaxYear, dissolvedForDeadline, {
+            filed: filing.extensionFiled,
+            transmittedAt: filing.extensionTransmittedAt,
+          }),
+        );
+  // Show the extension rows only once the customer has actually told us
+  // something — a filing sold before the question existed shows the original
+  // due date and nothing else.
+  const hasExtensionFacts =
+    filing.extensionFiled != null ||
+    filing.extensionTransmittedAt != null ||
+    filing.extensionMethod != null ||
+    filing.extensionDestination != null ||
+    filing.extensionProofKey != null;
+  const reviewFlags = extensionReviewFlags(filing);
 
   // First-touch traffic attribution (captured in middleware, stamped on the
   // draft at creation). Filings created before this shipped have all-null
@@ -209,6 +246,44 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
               <CertRow url={dissolutionCertUrl} />
             </>
           )}
+
+          {/* Filing deadline. Original date first — the one the calendar
+              gives — then, only when the customer told us about a Form 7004,
+              what they said and the date that actually governs. The amber
+              chips are INTERNAL review prompts: they never reach the customer
+              and never change the package. */}
+          {maxTaxYear != null && (
+            <div className="pt-3 mt-1 border-t border-slate-100 space-y-2">
+              <Field label={`Original due (${maxTaxYear})`} value={originalDueText} />
+              {hasExtensionFacts ? (
+                <>
+                  <Field label="Form 7004 filed" value={EXTENSION_ANSWER_LABEL[filing.extensionFiled ?? ""] ?? filing.extensionFiled} />
+                  <Field
+                    label="7004 transmitted"
+                    value={filing.extensionTransmittedAt?.toISOString().split("T")[0] ?? null}
+                  />
+                  <Field label="7004 method" value={EXTENSION_METHOD_LABEL[filing.extensionMethod ?? ""] ?? filing.extensionMethod} />
+                  <Field label="7004 sent to" value={EXTENSION_DESTINATION_LABEL[filing.extensionDestination ?? ""] ?? filing.extensionDestination} />
+                  <Field label="Effective due date" value={effectiveDueText} />
+                  <ExtensionProofRow url={extensionProofUrl} />
+                </>
+              ) : (
+                <Field label="Form 7004" value="Not asked — no extension on record" muted />
+              )}
+              {reviewFlags.length > 0 && (
+                <div className="flex flex-col gap-1 pt-1">
+                  {reviewFlags.map((f) => (
+                    <span
+                      key={f.code}
+                      className="w-fit text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200"
+                    >
+                      {f.detail}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </DetailCard>
 
         {/* Payment + fax */}
@@ -327,6 +402,53 @@ function Field({
       <dt className="text-slate-500 text-xs uppercase tracking-wider sm:text-sm sm:normal-case sm:tracking-normal">{label}</dt>
       <dd className={`sm:col-span-2 ${mono ? "font-mono text-xs" : ""} ${multiline ? "whitespace-pre-line" : ""} ${muted ? "text-slate-400" : "text-slate-900"} break-words`}>
         {display ?? <span className="text-slate-400">—</span>}
+      </dd>
+    </div>
+  );
+}
+
+// Wizard-value → human label for the Form 7004 answers. The raw values are
+// the shared enums ("not_sure", "certified_mail", "ogden"); reading them off a
+// review screen at speed is exactly where a misread happens.
+const EXTENSION_ANSWER_LABEL: Record<string, string> = {
+  yes: "Yes — extension filed",
+  no: "No",
+  not_sure: "Not sure",
+};
+const EXTENSION_METHOD_LABEL: Record<string, string> = {
+  fax: "Fax",
+  certified_mail: "Certified mail",
+  mail: "Regular mail",
+  not_sure: "Not sure",
+};
+const EXTENSION_DESTINATION_LABEL: Record<string, string> = {
+  ogden: "Ogden (correct for a foreign-owned DE)",
+  standard: "Standard 7004 address",
+  not_sure: "Not sure",
+};
+
+// Same dt/dd grid as CertRow, for the optional 7004 proof upload.
+function ExtensionProofRow({ url }: { url: string | null }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-0.5 sm:gap-3 text-sm">
+      <dt className="text-slate-500 text-xs uppercase tracking-wider sm:text-sm sm:normal-case sm:tracking-normal">
+        Extension proof
+      </dt>
+      <dd className="sm:col-span-2 break-words">
+        {url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:underline inline-flex items-center gap-1"
+          >
+            View extension proof <ExternalLink className="h-3 w-3" />
+          </a>
+        ) : (
+          <span className="text-slate-400">
+            No proof uploaded — the extension is the customer&apos;s word only.
+          </span>
+        )}
       </dd>
     </div>
   );

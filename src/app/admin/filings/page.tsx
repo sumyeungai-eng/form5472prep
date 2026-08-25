@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { formatUsd } from "@/lib/utils";
 import { formatAttribution } from "@/lib/attribution";
 import { filingCompletionIssues } from "@/lib/completeness";
+import { extensionReviewFlags, type ExtensionReviewFlag } from "@/lib/admin/filingActions";
 import { StatusBadge } from "./StatusBadge";
 import { DraftActions } from "./DraftActions";
 
@@ -227,6 +228,7 @@ export default async function AdminFilingsPage({
                     <StatusBadge status={f.status} />
                     {/* Draft views only: did they actually finish the wizard? */}
                     {draftIssues.has(f.id) && <CompletenessHint issues={draftIssues.get(f.id)!} />}
+                    <ExtensionHint filing={f} />
                   </td>
                   <td className="px-4 py-3"><SourceCell filing={f} /></td>
                   <td className="px-4 py-3 text-right tabular-nums">
@@ -267,6 +269,45 @@ const STATUS_VALUES = [
   "CONFIRMED",
   "FAILED",
 ];
+
+// Late/extension triage at a glance — the row-level counterpart to the
+// "Filing deadline" block on the detail page. Two chips, both amber, both
+// INTERNAL:
+//   • "Late filing"      — this PAID order is classified as a delinquent
+//                          submission. The owner needs to eyeball these to
+//                          find 2025 orders that were misclassified before the
+//                          Form 7004 question existed.
+//   • "Review extension" — the customer's extension answer needs a human
+//                          before the package is faxed (unclear answer, wrong
+//                          destination, or a 7004 dated before the year even
+//                          closed).
+// A DRAFT is never chipped as late: isDiirsp on an unpaid draft is a moving
+// inference, not a decision anyone has acted on.
+function ExtensionHint({ filing }: { filing: FilingRow }) {
+  const flags: ExtensionReviewFlag[] = extensionReviewFlags(filing);
+  const late = filing.status === "DRAFT" ? false : filing.isDiirsp;
+  if (!late && flags.length === 0) return null;
+  return (
+    <div className="mt-1 flex flex-wrap gap-1">
+      {late && (
+        <span
+          className="text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-50 text-amber-800"
+          title="Classified as a delinquent (DIIRSP) submission — package carries the late-filing language and a reasonable cause statement."
+        >
+          Late filing
+        </span>
+      )}
+      {flags.length > 0 && (
+        <span
+          className="text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-50 text-amber-800"
+          title={flags.map((x) => x.detail).join(" · ")}
+        >
+          Review extension
+        </span>
+      )}
+    </div>
+  );
+}
 
 // Draft triage at a glance: a draft with zero completeness issues is a
 // customer who filled in EVERYTHING and stopped at the payment step — the

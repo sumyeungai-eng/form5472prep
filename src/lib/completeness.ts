@@ -1,4 +1,11 @@
-import { entitySchema, ownerBaseSchema, refineUsIdOrReferenceId, makeYearScopeSchema } from "@/lib/schemas";
+import {
+  entitySchema,
+  ownerBaseSchema,
+  refineUsIdOrReferenceId,
+  makeYearScopeSchema,
+  isYearDelinquent,
+  type ExtensionFacts,
+} from "@/lib/schemas";
 
 // The single definition of "this filing is complete enough to pay for".
 // Extracted from /api/checkout so the admin drafts view marks exactly the
@@ -36,7 +43,52 @@ export type CompletionInput = {
   dissolvedAt: Date | null;
   isDiirsp: boolean;
   reasonableCauseNarrative: string | null;
+  // Form 7004 extension facts. Only the two the delinquency test reads are
+  // required here — extensionMethod/Destination/ProofKey are review metadata
+  // for the accountant and don't move the completeness verdict, so demanding
+  // them would only add obligations on callers for nothing.
+  extensionFiled: string | null;
+  extensionTransmittedAt: Date | string | null;
 };
+
+/**
+ * Whether this filing needs a reasonable-cause (DIIRSP) narrative, decided
+ * from TODAY's clock and the filing's own extension answers.
+ *
+ * Deliberately NOT `filing.isDiirsp`: that column is written whenever the
+ * wizard last touched the years or the extension step, and a draft can sit
+ * across a deadline afterwards (or be resumed months later) — the stored value
+ * then says "timely" for a return that is now late, and checkout would take
+ * the money without the statement that carries the $25,000 penalty protection.
+ *
+ * A Form 7004 covers ONE tax year, so the extension facts are applied ONLY to
+ * the latest year; every earlier year in a catch-up is judged unextended.
+ * "Not sure" counts as NOT delinquent — an unknown must not become a
+ * delinquency admission on the customer's forms; the accountant confirms it by
+ * email before the package is faxed.
+ */
+export function requiresReasonableCause(
+  filing: Pick<
+    CompletionInput,
+    "taxYears" | "isFinalReturn" | "dissolvedAt" | "extensionFiled" | "extensionTransmittedAt"
+  >,
+): boolean {
+  if (filing.taxYears.length === 0) return false;
+  // Only a final return carries a dissolution date, and only that date
+  // shortens the year — everything else keeps the ordinary deadline.
+  const finalDissolved = filing.isFinalReturn ? filing.dissolvedAt : null;
+  const extFacts: ExtensionFacts = {
+    filed: filing.extensionFiled,
+    transmittedAt: filing.extensionTransmittedAt,
+  };
+  // NOTE: the "not sure" deferral lives INSIDE isYearDelinquent (per-year),
+  // so an unclear latest-year extension never strips the reasonable-cause
+  // protection from unambiguously-late earlier years in the same bundle.
+  const maxYear = Math.max(...filing.taxYears);
+  return filing.taxYears.some((y) =>
+    isYearDelinquent(y, finalDissolved, y === maxYear ? extFacts : null),
+  );
+}
 
 /**
  * Every reason this filing is not yet payable, as dotted field paths
@@ -82,7 +134,12 @@ export function filingCompletionIssues(filing: CompletionInput, yearDataYears: n
   if (filing.isFinalReturn && !filing.dissolvedAt) {
     if (completionIssues.indexOf("dissolvedAt") === -1) completionIssues.push("dissolvedAt");
   }
-  if (filing.isDiirsp && (!filing.reasonableCauseNarrative || !filing.reasonableCauseNarrative.trim())) {
+  // Live recompute rather than the stored filing.isDiirsp — see
+  // requiresReasonableCause above. The admin drafts "ready" badge inherits
+  // this automatically: it calls this same helper, so a draft that quietly
+  // went delinquent stops showing as payable there too.
+  const requiresRcs = requiresReasonableCause(filing);
+  if (requiresRcs && (!filing.reasonableCauseNarrative || !filing.reasonableCauseNarrative.trim())) {
     if (completionIssues.indexOf("reasonableCauseNarrative") === -1)
       completionIssues.push("reasonableCauseNarrative");
   }

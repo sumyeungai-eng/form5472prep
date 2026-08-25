@@ -13,7 +13,7 @@ import {
   logFilingChange,
   TransitionError,
 } from "@/lib/admin/mutations";
-import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { effectiveDueDateUtc, extensionUnclear, formatDueDate } from "@/lib/schemas";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 
 export type FilingActionName =
@@ -105,8 +105,16 @@ const filingSelect = {
   ownerReferenceId: true,
   reasonableCauseNarrative: true,
   taxYears: true,
+  isDiirsp: true,
   isFinalReturn: true,
   dissolvedAt: true,
+  // Form 7004 gate. Read here (not just in packageFilingSelect) because
+  // updateField logs the BEFORE value of these fields, and the confirmation
+  // email's deadline line is computed from them.
+  extensionFiled: true,
+  extensionTransmittedAt: true,
+  extensionMethod: true,
+  extensionDestination: true,
   faxService: true,
   signedPdfKey: true,
   generatedPdfKey: true,
@@ -139,6 +147,10 @@ const packageFilingSelect = {
   isDiirsp: true,
   isFinalReturn: true,
   dissolvedAt: true,
+  // Form 7004 facts. generatePackage applies them to max(taxYears) only; a
+  // valid extension makes that year timely and drops the DIIRSP language.
+  extensionFiled: true,
+  extensionTransmittedAt: true,
   reasonableCauseNarrative: true,
   yearData: {
     select: {
@@ -151,6 +163,54 @@ const packageFilingSelect = {
     },
   },
 } as const;
+
+// ─── Extension review flags (internal only) ──────────────────────────────────
+// Three things about a Form 7004 answer that a human must look at before the
+// package is faxed. None of them change what the customer is told or what the
+// PDF says — they exist because the extension is a customer-ASSERTED fact and
+// the accountant reviews every package anyway. Shared by the admin list and
+// the admin detail page so the chip and the block can never disagree.
+export type ExtensionReviewFlag = {
+  code: "unclear" | "destination" | "premature";
+  detail: string;
+};
+
+export type ExtensionReviewInput = {
+  taxYears: number[];
+  isFinalReturn: boolean;
+  dissolvedAt: Date | null;
+  extensionFiled: string | null;
+  extensionTransmittedAt: Date | null;
+  extensionDestination: string | null;
+};
+
+export function extensionReviewFlags(f: ExtensionReviewInput): ExtensionReviewFlag[] {
+  const flags: ExtensionReviewFlag[] = [];
+  // "I'm not sure" is deliberately NOT collapsed into yes or no anywhere in the
+  // product, so somebody has to ask the customer.
+  if (extensionUnclear({ filed: f.extensionFiled, transmittedAt: f.extensionTransmittedAt })) {
+    flags.push({ code: "unclear", detail: "Extension unclear — confirm with customer before fax" });
+  }
+  // A foreign-owned DE's 7004 has to go to the Ogden address/fax. Anything else
+  // may mean the extension never posted to this entity's account.
+  if (f.extensionDestination === "standard" || f.extensionDestination === "not_sure") {
+    flags.push({ code: "destination", detail: "7004 may have gone to the wrong address — verify" });
+  }
+  // A 7004 transmitted before the tax year even closed is usually a mistyped
+  // year (or an extension for the PREVIOUS year being credited to this one).
+  const maxYear = f.taxYears.length > 0 ? Math.max(...f.taxYears) : null;
+  const sent = f.extensionTransmittedAt?.getTime() ?? null;
+  if (sent !== null && maxYear !== null) {
+    // End of the tax year = Dec 31, or the dissolution date on a final
+    // (short-year) return.
+    const yearEnd =
+      f.isFinalReturn && f.dissolvedAt ? f.dissolvedAt.getTime() : Date.UTC(maxYear, 11, 31);
+    if (sent < yearEnd) {
+      flags.push({ code: "premature", detail: "7004 possibly premature — sent before the tax year closed" });
+    }
+  }
+  return flags;
+}
 
 export async function runFilingAction(
   filingId: string,
@@ -240,6 +300,8 @@ export async function runFilingAction(
             ownerItin: full.ownerItin, ownerReferenceId: full.ownerReferenceId,
             taxYears: full.taxYears, isDiirsp: full.isDiirsp, isFinalReturn: full.isFinalReturn,
             dissolvedAt: full.dissolvedAt,
+            extensionFiled: full.extensionFiled,
+            extensionTransmittedAt: full.extensionTransmittedAt,
             reasonableCauseNarrative: full.reasonableCauseNarrative,
             yearData: full.yearData.map((y) => ({
               taxYear: y.taxYear,
@@ -283,12 +345,16 @@ export async function runFilingAction(
         // Admin resends must match the original confirmation: final returns
         // carry the EIN-cancellation sequencing warning + deadline line.
         isFinalReturn: filing.isFinalReturn,
+        // The date the customer actually has to beat. A valid Form 7004 moves
+        // it six months, so an extended filer must see October 15, not April
+        // 15 — effectiveDueDateUtc() is the single place that decides.
         dueDateText:
           filing.taxYears.length > 0
             ? formatDueDate(
-                filingDueDateUtc(
+                effectiveDueDateUtc(
                   Math.max(...filing.taxYears),
                   filing.isFinalReturn ? filing.dissolvedAt : null,
+                  { filed: filing.extensionFiled, transmittedAt: filing.extensionTransmittedAt },
                 ),
               )
             : null,
@@ -434,6 +500,8 @@ export async function runFilingAction(
           ownerItin: full.ownerItin, ownerReferenceId: full.ownerReferenceId,
           taxYears: full.taxYears, isDiirsp: full.isDiirsp, isFinalReturn: full.isFinalReturn,
           dissolvedAt: full.dissolvedAt,
+          extensionFiled: full.extensionFiled,
+          extensionTransmittedAt: full.extensionTransmittedAt,
           reasonableCauseNarrative: full.reasonableCauseNarrative,
           yearData: full.yearData.map((y) => ({
             taxYear: y.taxYear,
@@ -512,16 +580,75 @@ export async function runFilingAction(
         "ownerCountryCitizenship", "ownerCountryTaxResidence",
         "ownerCountryBusiness", "ownerFtin", "ownerItin", "ownerReferenceId",
         "reasonableCauseNarrative",
+        // Form 7004 gate + the late/timely classification it drives. These are
+        // the remediation path for orders sold BEFORE the extension question
+        // existed: a customer who writes in "I filed a 7004 on April 10" gets
+        // the facts recorded here, isDiirsp corrected, and the package
+        // regenerated — no wizard round-trip, no re-purchase.
+        "extensionFiled", "extensionTransmittedAt", "extensionMethod",
+        "extensionDestination", "isDiirsp",
       ]);
       if (!allowed.has(field)) {
         throw new FilingActionError(400, "field_not_editable", `field "${field}" is not editable`);
       }
 
-      const before = (filing as unknown as Record<string, unknown>)[field];
+      // Typed coercion + validation. The generic path writes strings, but
+      // extensionTransmittedAt is a DateTime and isDiirsp a Boolean, and the
+      // three extension answers are closed enums shared with the wizard — an
+      // admin correction must never be able to write a value the rest of the
+      // app cannot read back.
+      const EXTENSION_ENUMS: Record<string, readonly string[]> = {
+        extensionFiled: ["yes", "no", "not_sure"],
+        extensionMethod: ["fax", "certified_mail", "mail", "not_sure"],
+        extensionDestination: ["ogden", "standard", "not_sure"],
+      };
+      // Blanking an EXTENSION field is always allowed — it means "we don't
+      // have this fact", which is the same as never having asked. The legacy
+      // string fields keep their previous behaviour exactly (an empty string
+      // is stored as an empty string) — llcCountry is a non-nullable column,
+      // so silently turning "" into null there would start throwing.
+      const EXTENSION_SCALARS = new Set([
+        "extensionFiled", "extensionTransmittedAt", "extensionMethod", "extensionDestination",
+      ]);
+      const blank = value === null || value.trim() === "";
+      let writeValue: string | Date | boolean | null =
+        EXTENSION_SCALARS.has(field) && blank ? null : value;
+      if (field in EXTENSION_ENUMS) {
+        if (!blank && !EXTENSION_ENUMS[field].includes(value!)) {
+          throw new FilingActionError(
+            400,
+            "invalid_value",
+            `${field} must be one of: ${EXTENSION_ENUMS[field].join(", ")}`,
+          );
+        }
+      } else if (field === "extensionTransmittedAt") {
+        if (!blank) {
+          // Same parse the filings route uses for date-only wizard input.
+          const parsed = new Date(value!);
+          if (Number.isNaN(parsed.getTime())) {
+            throw new FilingActionError(400, "invalid_value", "extensionTransmittedAt must be a valid date");
+          }
+          writeValue = parsed;
+        }
+      } else if (field === "isDiirsp") {
+        // Non-nullable boolean column: blanking it is not a thing.
+        const truthy = new Set(["true", "yes", "1"]);
+        const falsy = new Set(["false", "no", "0"]);
+        const raw = (value ?? "").trim().toLowerCase();
+        if (truthy.has(raw)) writeValue = true;
+        else if (falsy.has(raw)) writeValue = false;
+        else throw new FilingActionError(400, "invalid_value", "isDiirsp must be true or false");
+      }
+
+      const beforeRaw = (filing as unknown as Record<string, unknown>)[field];
+      // Dates are not JSON — normalise both sides so the audit log stays
+      // readable (and Prisma's Json column stays writable).
+      const before = beforeRaw instanceof Date ? beforeRaw.toISOString() : beforeRaw ?? null;
+      const after = writeValue instanceof Date ? writeValue.toISOString() : writeValue;
       await prisma.$transaction([
         prisma.filing.update({
           where: { id: filing.id },
-          data: { [field]: value } as unknown as never,
+          data: { [field]: writeValue } as unknown as never,
           select: { id: true },
         }),
         prisma.filingChangeLog.create({
@@ -531,13 +658,13 @@ export async function runFilingAction(
             source: "admin",
             field,
             beforeJson: before as never,
-            afterJson: value as never,
+            afterJson: after as never,
             reason: reason || ctx.reason || null,
           },
           select: { id: true },
         }),
       ]);
-      return { ok: true, field, before, after: value };
+      return { ok: true, field, before, after };
     }
 
     case "uploadSignedPdf": {

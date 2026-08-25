@@ -9,7 +9,7 @@ import { FilingLocked } from "@/components/FilingLocked";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { PurchaseConversionPing } from "./PurchaseConversionPing";
 import { getTiersForSource } from "@/lib/pricing";
-import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { TrustpilotWidget, TRUSTPILOT_TEMPLATES, REVIEW_COLLECTOR_TOKEN } from "@/components/TrustpilotWidget";
 
 // Statuses where the filing is paid but not yet acknowledged as complete —
@@ -84,12 +84,18 @@ export default async function FilingDetailPage({
 
   // Filing deadline for the in-flight window. Latest tax year drives the date;
   // a FINAL return shortens that year, so dissolvedAt is passed only when
-  // isFinalReturn is set. Omitted entirely when there are no tax years.
+  // isFinalReturn is set. A valid Form 7004 pushes the date out six months, so
+  // the extension facts are read here as well — showing an extended customer
+  // an April 15 deadline they have already lawfully moved is both wrong and
+  // alarming. Omitted entirely when there are no tax years.
   const maxTaxYear = filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : null;
   const deadlineText =
     maxTaxYear != null && DEADLINE_VISIBLE_STATUSES.has(filing.status)
       ? formatDueDate(
-          filingDueDateUtc(maxTaxYear, filing.isFinalReturn ? filing.dissolvedAt : null),
+          effectiveDueDateUtc(maxTaxYear, filing.isFinalReturn ? filing.dissolvedAt : null, {
+            filed: filing.extensionFiled,
+            transmittedAt: filing.extensionTransmittedAt,
+          }),
         )
       : null;
 

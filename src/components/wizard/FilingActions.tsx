@@ -59,7 +59,7 @@ export function FilingActions({ filing }: { filing: Filing }) {
         active={filing.status === "PAID" && !filing.generatedPdfKey}
       >
         <p className="text-sm text-slate-600 mb-3">
-          Cover letter, reasonable cause statement (if DIIRSP), filled Form 1120 and Form 5472,
+          Cover letter, reasonable-cause statement (late filings), filled Form 1120 and Form 5472,
           plus the Part V supporting statement — combined into one PDF.
         </p>
         {!filing.generatedPdfKey ? (

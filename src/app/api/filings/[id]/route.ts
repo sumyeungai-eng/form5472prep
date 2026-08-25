@@ -12,6 +12,7 @@ import {
   reportableTransactionsSchema,
   validateDissolvedAt,
   isYearDelinquent,
+  type ExtensionFacts,
 } from "@/lib/schemas";
 
 // Server-side backstop for the incremental wizard PATCH. Reuses the SAME field
@@ -34,6 +35,20 @@ const patchFieldSchema = z
     reasonableCauseNarrative: z.string().max(20000),
   })
   .partial();
+
+// ─── Form 7004 extension gate — accepted answers ───
+// Kept as plain literal tuples rather than folded into patchFieldSchema: those
+// fields are validated as a GROUP (the date is conditionally required on
+// "yes", and a non-"yes" answer clears the other three), which a `.partial()`
+// object schema can't express without changing how every other field is
+// checked.
+const EXTENSION_ANSWERS = ["yes", "no", "not_sure"] as const;
+const EXTENSION_METHODS = ["fax", "certified_mail", "mail", "not_sure"] as const;
+const EXTENSION_DESTINATIONS = ["ogden", "standard", "not_sure"] as const;
+// Date-only, same convention as llcDateIncorporated/dissolvedAt: a YYYY-MM-DD
+// string parses as UTC midnight, so the stored instant round-trips to the
+// calendar day the customer picked.
+const DATE_ONLY_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const owned = await getOwnedFiling(params.id);
@@ -159,6 +174,136 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       ? effectiveFormedAt.getUTCFullYear()
       : null;
 
+  // ─── Form 7004 extension gate ───
+  // Whether a return is late is a LEGAL CHARACTERISATION, and this route used
+  // to infer it from the calendar alone — which misclassified every validly
+  // extended filer as delinquent (live incident 2026-08-25). These four
+  // answers are the customer-supplied fact that overrides the inference; we
+  // persist the raw INPUTS and re-derive the verdict through the shared
+  // helpers, so the record shows what the customer told us and when.
+  const hasKey = (k: string) => Object.prototype.hasOwnProperty.call(body, k);
+  const extensionTouched =
+    hasKey("extensionFiled") ||
+    hasKey("extensionTransmittedAt") ||
+    hasKey("extensionMethod") ||
+    hasKey("extensionDestination");
+
+  // Effective facts = this request's values where it supplied them, the stored
+  // ones otherwise. Both the validation below and the isDiirsp recompute judge
+  // the state the filing will be in AFTER this patch, never the stale one.
+  const effectiveExtensionFiled: string | null = hasKey("extensionFiled")
+    ? ((body.extensionFiled as string | null | undefined) ?? null)
+    : filing.extensionFiled;
+  const effectiveExtensionTransmittedAt: Date | string | null = hasKey("extensionTransmittedAt")
+    ? ((body.extensionTransmittedAt as string | null | undefined) ?? null)
+    : filing.extensionTransmittedAt;
+
+  if (extensionTouched) {
+    // Enum answers. null/absent is always fine — the question simply hasn't
+    // been answered yet.
+    const enumIssue = (
+      field: "extensionFiled" | "extensionMethod" | "extensionDestination",
+      allowed: readonly string[],
+      message: string,
+    ) => {
+      if (!hasKey(field)) return null;
+      const value = (body as Record<string, unknown>)[field];
+      if (value === null || value === undefined) return null;
+      if (typeof value === "string" && allowed.includes(value)) return null;
+      return { field, message };
+    };
+    const enumProblem =
+      enumIssue("extensionFiled", EXTENSION_ANSWERS, "Answer yes, no, or not sure") ??
+      enumIssue("extensionMethod", EXTENSION_METHODS, "Choose how the Form 7004 was sent") ??
+      enumIssue("extensionDestination", EXTENSION_DESTINATIONS, "Choose where the Form 7004 was sent");
+    if (enumProblem) {
+      return NextResponse.json(
+        { error: enumProblem.message, issues: [enumProblem] },
+        { status: 400 },
+      );
+    }
+
+    if (hasKey("extensionTransmittedAt")) {
+      const value = body.extensionTransmittedAt;
+      const wellFormed =
+        value === null ||
+        value === undefined ||
+        (typeof value === "string" && DATE_ONLY_RE.test(value) && !Number.isNaN(Date.parse(value)));
+      if (!wellFormed) {
+        const message = "Enter the date you sent Form 7004 as YYYY-MM-DD";
+        return NextResponse.json(
+          { error: message, issues: [{ field: "extensionTransmittedAt", message }] },
+          { status: 400 },
+        );
+      }
+    }
+
+    // "Yes" without a date is the one hard error: isExtensionValid compares the
+    // transmission date against the original due date, so a dateless "yes"
+    // could never rescue the return — and silently storing it would look like
+    // an answered question that changes nothing.
+    //
+    // NOTE the deliberate asymmetry: a date AFTER the original due date is NOT
+    // rejected. A late-sent 7004 is a true fact worth recording (the
+    // accountant sees it, and the customer isn't dead-ended by a form that
+    // won't accept their real answer); it simply fails isExtensionValid and so
+    // doesn't make the return timely.
+    if (effectiveExtensionFiled === "yes" && !effectiveExtensionTransmittedAt) {
+      const message = "Enter the date you sent Form 7004";
+      return NextResponse.json(
+        { error: message, issues: [{ field: "extensionTransmittedAt", message }] },
+        { status: 400 },
+      );
+    }
+
+    if (effectiveExtensionFiled === "yes") {
+      data.extensionFiled = "yes";
+      if (hasKey("extensionTransmittedAt"))
+        data.extensionTransmittedAt = new Date(body.extensionTransmittedAt as string);
+      if (hasKey("extensionMethod"))
+        data.extensionMethod = (body.extensionMethod as string | null | undefined) ?? null;
+      if (hasKey("extensionDestination"))
+        data.extensionDestination = (body.extensionDestination as string | null | undefined) ?? null;
+    } else {
+      // null / "no" / "not_sure": the supporting details describe an extension
+      // that (as far as this filing now records) doesn't exist. Cleared in the
+      // SAME update so a customer who answers "yes", fills in a date, then
+      // changes to "no" can't leave a stale 7004 date behind for the
+      // accountant — or for effectiveDueDateUtc — to trip over.
+      data.extensionFiled = effectiveExtensionFiled;
+      data.extensionTransmittedAt = null;
+      data.extensionMethod = null;
+      data.extensionDestination = null;
+    }
+  }
+
+  // The facts the delinquency test will use. transmittedAt is only meaningful
+  // alongside a "yes", matching what the update above persists.
+  const extFacts: ExtensionFacts = {
+    filed: effectiveExtensionFiled,
+    transmittedAt: effectiveExtensionFiled === "yes" ? effectiveExtensionTransmittedAt : null,
+  };
+
+  // A Form 7004 covers ONE tax year, so on a multi-year catch-up the extension
+  // facts apply ONLY to the latest year — every earlier year is judged with no
+  // extension at all.
+  //
+  // "Not sure" collapses to NOT delinquent: defaulting an unknown to "late"
+  // would print a delinquency admission on the customer's forms that no fact
+  // supports. The order is instead flagged for the accountant (derivable from
+  // the stored extensionFiled — deliberately no extra derived column), who
+  // already reviews every package before fax.
+  const recomputeIsDiirsp = (years: number[]): boolean => {
+    if (years.length === 0) return false;
+    // NOTE: the "not sure" deferral lives INSIDE isYearDelinquent (per-year),
+    // so an unclear latest-year extension never strips the reasonable-cause
+    // protection from unambiguously-late earlier years in the same bundle.
+    const maxYear = Math.max(...years);
+    return years.some((y) =>
+      isYearDelinquent(y, effectiveDissolvedAt, y === maxYear ? extFacts : null),
+    );
+  };
+
   if (Array.isArray(body.taxYears)) {
     // An LLC can't have a tax year before it existed: there is no period to
     // report, no 5472 obligation, and the IRS would reject a return for a year
@@ -204,7 +349,16 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     // full-year return for the same calendar year would still be timely. The
     // shared isYearDelinquent encodes both rules; feed it the dissolution date
     // (null for non-final filings, so those keep the April-15 deadline).
-    data.isDiirsp = years.some((y) => isYearDelinquent(y, effectiveDissolvedAt));
+    data.isDiirsp = recomputeIsDiirsp(years);
+  }
+
+  // An extension answer ALONE has to be able to flip the classification: the
+  // wizard's extension step saves without resending taxYears, and the stored
+  // isDiirsp would otherwise keep the pre-extension (delinquent) verdict all
+  // the way to the PDF. Equivalent to recomputing against
+  // `body.taxYears ?? filing.taxYears` — the array case was just handled above.
+  if (extensionTouched && data.isDiirsp === undefined) {
+    data.isDiirsp = recomputeIsDiirsp(filing.taxYears);
   }
 
   // Dissolution date — the short year this final return actually covers runs

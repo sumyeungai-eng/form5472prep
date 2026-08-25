@@ -206,6 +206,27 @@ model Filing {
   // to end. Ticks item E "Final return" on the pro forma 1120.
   isFinalReturn Boolean @default(false)
 
+  // ── Form 7004 extension gate ──
+  // Whether the filing is late is a legal characterisation, so it must trace
+  // to a customer-supplied answer, never to a calendar inference (live
+  // incident 2026-08-25: a validly extended filer was forced through the
+  // reasonable-cause path). We persist the INPUTS, not just the derived
+  // status, so if the IRS later questions the filing we hold the record of
+  // what the customer told us and when.
+  //   extensionFiled        "yes" | "no" | "not_sure" | null (not yet asked)
+  //   extensionTransmittedAt when the 7004 was sent (required for "yes")
+  //   extensionMethod       "fax" | "certified_mail" | "mail" | "not_sure"
+  //   extensionDestination  "ogden" | "standard" | "not_sure" — foreign-owned
+  //                         DEs must use the Ogden address/fax; "standard" or
+  //                         "not_sure" raises an internal review flag only
+  //                         (accountant confirms by email before fax).
+  //   extensionProofKey     optional uploaded copy/receipt (R2 key)
+  extensionFiled         String?
+  extensionTransmittedAt DateTime?
+  extensionMethod        String?
+  extensionDestination   String?
+  extensionProofKey      String?
+
   // Optional customer-uploaded Certificate of Dissolution/Cancellation (R2
   // key). Lets the reviewing accountant verify the certificate's EFFECTIVE
   // date against dissolvedAt — the known trap is customers entering the date

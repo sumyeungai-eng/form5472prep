@@ -196,8 +196,10 @@ export function validateDissolvedAt(
 // return delinquent. Omitting them can only make us treat a return as due
 // EARLIER than the IRS does — i.e. we might show DIIRSP wording on a package
 // that was technically still on time, which is the safe failure direction (a
-// reasonable cause statement on a timely filing is harmless; a missing one on a
-// late filing is not).
+// missing reasonable-cause statement on a late filing is the unprotected
+// $25,000 direction; the reverse error is corrected by the Form 7004
+// extension gate below, which is the customer-supplied fact that overrides
+// this inference).
 export function filingDueDateUtc(
   taxYear: number,
   dissolvedAt?: Date | string | null,
@@ -247,8 +249,85 @@ export function formatDueDate(utcMs: number): string {
 export function isYearDelinquent(
   taxYear: number,
   dissolvedAt?: Date | string | null,
+  extension?: ExtensionFacts | null,
 ): boolean {
-  return Date.now() > filingDueDateUtc(taxYear, dissolvedAt);
+  // "I'm not sure" defers THIS year's determination to human review — the one
+  // year the extension could affect is not asserted late (no false delinquency
+  // admission) and not asserted timely (no dropped protection); the accountant
+  // confirms by email before anything is faxed. Because callers pass extension
+  // facts only for max(taxYears), earlier bundle years — which no 7004 could
+  // rescue — still compute from the calendar and keep their reasonable-cause
+  // protection.
+  if (extensionUnclear(extension)) return false;
+  return Date.now() > effectiveDueDateUtc(taxYear, dissolvedAt, extension);
+}
+
+// ─── Form 7004 extension gate ────────────────────────────────────────────────
+// Whether a return is late is a LEGAL CHARACTERISATION, and the wizard used to
+// infer it purely from the calendar — which misclassified every validly
+// extended filer as delinquent (live incident, 2026-08-25: a customer with a
+// timely Form 7004 was forced through the reasonable-cause path). The rule now:
+// a characterisation must trace to a customer-supplied fact. The extension
+// answer is that fact.
+//
+// A Form 7004 covers ONE tax year. On a multi-year catch-up the only year an
+// extension can still rescue is the latest one (earlier years' extended windows
+// have passed too, and the math would say so anyway) — callers pass the
+// extension facts ONLY for year === max(taxYears) and null for the rest.
+
+export type ExtensionAnswer = "yes" | "no" | "not_sure";
+
+export type ExtensionFacts = {
+  filed: string | null; // "yes" | "no" | "not_sure" | null = not yet asked
+  transmittedAt: Date | string | null;
+};
+
+function toUtcMs(value: Date | string | null | undefined): number | null {
+  if (value == null) return null;
+  const d = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d.getTime();
+}
+
+// A 7004 only buys time when it was itself transmitted by the ORIGINAL due
+// date. Compared against the rolled original due date (§7503 applies to the
+// extension application the same as to the return).
+export function isExtensionValid(
+  taxYear: number,
+  dissolvedAt: Date | string | null | undefined,
+  extension: ExtensionFacts | null | undefined,
+): boolean {
+  if (!extension || extension.filed !== "yes") return false;
+  const sent = toUtcMs(extension.transmittedAt);
+  if (sent === null) return false;
+  return sent <= filingDueDateUtc(taxYear, dissolvedAt);
+}
+
+// Effective due date = original due date, plus six calendar months when a
+// valid extension exists. The six months extend the RAW statutory date (so
+// April 15 → October 15, and a short-year November 15 → May 15 of the next
+// year); the weekend roll is applied after, to the date that actually governs.
+export function effectiveDueDateUtc(
+  taxYear: number,
+  dissolvedAt?: Date | string | null,
+  extension?: ExtensionFacts | null,
+): number {
+  const raw = rawFilingDueDateUtc(taxYear, dissolvedAt);
+  if (!isExtensionValid(taxYear, dissolvedAt, extension)) {
+    return rollWeekendToMonday(raw);
+  }
+  const d = new Date(raw);
+  const extended = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 6, 15);
+  return rollWeekendToMonday(extended);
+}
+
+// "I'm not sure / my agent may have filed one" must NOT be collapsed into
+// either answer: defaulting it to late forces a false delinquency admission,
+// defaulting it to timely strips the $25,000 protection. The wizard suppresses
+// the reasonable-cause step (no false admission ON THE FORMS) and the order is
+// flagged for the accountant — who already reviews every package before fax —
+// to confirm by email. This helper is the single definition of that state.
+export function extensionUnclear(extension: ExtensionFacts | null | undefined): boolean {
+  return extension?.filed === "not_sure";
 }
 
 // Both factories build a NEW schema on every call and read the upper bound from

@@ -51,8 +51,14 @@ import {
   makeYearScopeSchema,
   validateDissolvedAt,
   isYearDelinquent,
+  filingDueDateUtc,
+  effectiveDueDateUtc,
+  isExtensionValid,
+  extensionUnclear,
+  formatDueDate,
   DISSOLVED_AT_FUTURE,
   type EntityForm,
+  type ExtensionFacts,
   type OwnerForm,
   type YearScopeForm,
 } from "@/lib/schemas";
@@ -184,6 +190,25 @@ type Filing = {
   // customer may upload on a final return. Null until they upload one; nothing
   // downstream requires it.
   dissolutionCertKey: string | null;
+  // ── Form 7004 extension gate ──────────────────────────────────────────────
+  // Whether the return is late is a LEGAL characterisation, and the calendar
+  // alone can't tell us: a validly extended filer is timely months past the
+  // original due date. These five fields carry the customer-supplied fact.
+  // `extensionFiled` is "yes" | "no" | "not_sure", or null when we've never
+  // had to ask (the extension window wasn't open for their year).
+  extensionFiled: string | null;
+  // Day the 7004 was transmitted. Typed loosely for the same reason as
+  // `dissolvedAt`: a Date on the server-rendered row, an ISO string in the
+  // JSON that PATCH echoes back.
+  extensionTransmittedAt: Date | string | null;
+  // "fax" | "certified_mail" | "mail" | "not_sure" — how it was sent.
+  extensionMethod: string | null;
+  // "ogden" | "standard" | "not_sure" — where it was sent. A foreign-owned DE's
+  // 7004 belongs at Ogden; a standard-address answer is reviewed internally
+  // (no customer-facing warning here, deliberately).
+  extensionDestination: string | null;
+  // Storage key of the optional fax receipt / certified-mail slip / 7004 copy.
+  extensionProofKey: string | null;
   reasonableCauseNarrative: string | null;
   faxService: boolean;
   // Service tier ("standard" | "express") pre-selected at /pricing or
@@ -371,6 +396,15 @@ export function FilingWizard({
                 // Always sent — null clears any date left over from a
                 // previously-ticked final-return box.
                 dissolvedAt: data.dissolvedAt,
+                // Same "always sent" rule for the Form 7004 answers: when the
+                // extension question wasn't applicable (or stopped being
+                // applicable after a year change) YearsStep sends nulls, so a
+                // stale "yes" from an earlier selection can't survive and keep
+                // a return marked timely that no longer is.
+                extensionFiled: data.extensionFiled,
+                extensionTransmittedAt: data.extensionTransmittedAt,
+                extensionMethod: data.extensionMethod,
+                extensionDestination: data.extensionDestination,
               });
               setFiling({
                 ...filing,
@@ -378,6 +412,15 @@ export function FilingWizard({
                 isDiirsp: updated.isDiirsp,
                 isFinalReturn: updated.isFinalReturn,
                 dissolvedAt: updated.dissolvedAt,
+                // Echo back what we sent rather than the server's row: the
+                // PATCH route may not persist these yet (separate lane), and a
+                // resumed step should still re-render the customer's answers.
+                extensionFiled: updated.extensionFiled ?? data.extensionFiled,
+                extensionTransmittedAt:
+                  updated.extensionTransmittedAt ?? data.extensionTransmittedAt,
+                extensionMethod: updated.extensionMethod ?? data.extensionMethod,
+                extensionDestination:
+                  updated.extensionDestination ?? data.extensionDestination,
               });
               // The steps list will pick up the new isDiirsp on the next render.
               setStepKey(updated.isDiirsp ? "rcs" : "transactions");
@@ -1086,7 +1129,14 @@ function YearsStep({
 }: {
   filing: Filing;
   onSubmit: (
-    data: YearScopeForm & { isFinalReturn: boolean; dissolvedAt: string | null },
+    data: YearScopeForm & {
+      isFinalReturn: boolean;
+      dissolvedAt: string | null;
+      extensionFiled: string | null;
+      extensionTransmittedAt: string | null;
+      extensionMethod: string | null;
+      extensionDestination: string | null;
+    },
   ) => Promise<void>;
   onBack: () => void;
   saving: boolean;
@@ -1113,6 +1163,32 @@ function YearsStep({
   const [certKey, setCertKey] = useState<string | null>(filing.dissolutionCertKey);
   const [certUploading, setCertUploading] = useState(false);
   const [certError, setCertError] = useState<string | null>(null);
+  // ── Form 7004 extension answers ───────────────────────────────────────────
+  // Outside react-hook-form for the same reason as the dissolution date: the
+  // whole block is conditional on a rule derived from the year selection, and
+  // its validation mirrors the shared helpers rather than a zod schema.
+  const [extensionFiled, setExtensionFiled] = useState<string | null>(
+    filing.extensionFiled ?? null,
+  );
+  const [extensionTransmittedAt, setExtensionTransmittedAt] = useState(
+    toDateInputValue(filing.extensionTransmittedAt),
+  );
+  const [extensionMethod, setExtensionMethod] = useState(filing.extensionMethod ?? "");
+  const [extensionDestination, setExtensionDestination] = useState(
+    filing.extensionDestination ?? "",
+  );
+  const [extensionDateError, setExtensionDateError] = useState<string | null>(null);
+  // Optional supporting document, same save-on-pick pattern as the dissolution
+  // certificate above. The endpoint is owned by another lane; a 404 here just
+  // surfaces as an upload error and never blocks Continue.
+  const extProofInputRef = useRef<HTMLInputElement>(null);
+  const [extProofKey, setExtProofKey] = useState<string | null>(filing.extensionProofKey);
+  const [extProofUploading, setExtProofUploading] = useState(false);
+  const [extProofError, setExtProofError] = useState<string | null>(null);
+  // Escape hatch: "this doesn't match my situation" posts into the existing
+  // per-filing message thread the accountant already watches.
+  const [flagState, setFlagState] = useState<"idle" | "sending" | "sent">("idle");
+  const [flagError, setFlagError] = useState<string | null>(null);
   const maxYear = isFinalReturn ? currentYear : lastCompletedTaxYear;
   const allYears = Array.from({ length: maxYear - 2017 }, (_, i) => 2018 + i);
   const {
@@ -1182,6 +1258,75 @@ function YearsStep({
     }
   }
 
+  async function uploadExtProof(file: File) {
+    setExtProofUploading(true);
+    setExtProofError(null);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch(`/api/filings/${filing.id}/extension-proof`, {
+        method: "POST",
+        body,
+      });
+      const json = (await res.json().catch(() => ({}))) as { error?: string; key?: string };
+      if (!res.ok) {
+        setExtProofError(json.error || `Upload failed (${res.status})`);
+        return;
+      }
+      setExtProofKey(json.key ?? null);
+    } catch {
+      setExtProofError("Upload failed. Please try again.");
+    } finally {
+      setExtProofUploading(false);
+    }
+  }
+
+  async function removeExtProof() {
+    setExtProofError(null);
+    try {
+      const res = await fetch(`/api/filings/${filing.id}/extension-proof`, { method: "DELETE" });
+      const json = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setExtProofError(json.error || `Could not remove the file (${res.status})`);
+        return;
+      }
+      setExtProofKey(null);
+    } catch {
+      setExtProofError("Could not remove the file. Please try again.");
+    }
+  }
+
+  // "This doesn't match my situation" — the escape hatch behind every
+  // automated characterisation. Posts the exact sentence the customer was
+  // shown into the filing's message thread so the accountant can see what the
+  // wizard claimed, not just that it was wrong.
+  async function flagDetermination(sentence: string) {
+    if (flagState !== "idle") return;
+    setFlagState("sending");
+    setFlagError(null);
+    try {
+      const res = await fetch(`/api/filings/${filing.id}/messages?as=customer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          body:
+            "Customer flagged from the tax-years step: the late/timely determination shown does not match their situation. Shown: " +
+            sentence,
+        }),
+      });
+      if (!res.ok) {
+        const json = (await res.json().catch(() => ({}))) as { error?: string };
+        setFlagError(json.error || `Could not send (${res.status})`);
+        setFlagState("idle");
+        return;
+      }
+      setFlagState("sent");
+    } catch {
+      setFlagError("Could not send. Please try again.");
+      setFlagState("idle");
+    }
+  }
+
   // Tier is pre-selected at /pricing (or /start?tier=) and stored on
   // filing.tier; this step only picks the year count. Each additional past
   // year adds a flat MULTI_YEAR_ADDON_CENTS on top of the tier base, on
@@ -1190,19 +1335,112 @@ function YearsStep({
   const extraYears = Math.max(0, selected.length - 1);
   const addOnTotalCents = multiYearAddonCents(selected.length);
   const totalCents = activeTier.priceCents + addOnTotalCents;
+  // ── Form 7004 gate: which year it can rescue, and whether to ask ──────────
+  // A 7004 covers exactly ONE tax year, and on a multi-year catch-up the only
+  // year still rescuable is the LATEST one — every earlier year's extended
+  // window has closed too. So the extension facts are attached to
+  // max(taxYears) and to nothing else.
+  const latestSelectedYear = selected.length > 0 ? Math.max(...selected) : null;
+  // Only a final return's dissolution date shortens a year; pass "" as null so
+  // a half-typed date can't be read as a real one.
+  const shortYearDate = isFinalReturn && dissolvedAt ? dissolvedAt : null;
+  // ORIGINAL statutory deadline for the latest year — never hard-coded, always
+  // via the shared helper (short years are due four months after they end, not
+  // the following April).
+  const originalDueMs =
+    latestSelectedYear === null ? null : filingDueDateUtc(latestSelectedYear, shortYearDate);
+  // The far edge of the six-month extended window: what the deadline WOULD be
+  // if a 7004 had been transmitted on the original due date. Past this point a
+  // 7004 can no longer make the return timely, so asking about one would only
+  // collect an answer that changes nothing.
+  const extendedWindowEndMs =
+    latestSelectedYear === null || originalDueMs === null
+      ? null
+      : effectiveDueDateUtc(latestSelectedYear, shortYearDate, {
+          filed: "yes",
+          transmittedAt: new Date(originalDueMs),
+        });
+  const nowMs = Date.now();
+  // Ask ONLY inside the window where the answer changes the outcome: the
+  // original deadline has passed (otherwise the return is plainly timely) but
+  // the extended one hasn't (otherwise it's plainly late).
+  const showExtensionSection =
+    originalDueMs !== null &&
+    extendedWindowEndMs !== null &&
+    nowMs > originalDueMs &&
+    nowMs <= extendedWindowEndMs;
+  // Facts that reach the shared helpers. Deliberately null whenever the
+  // section isn't on screen — an answer the customer can't currently see must
+  // not silently keep driving the determination after they change years.
+  const extensionFacts: ExtensionFacts | null = showExtensionSection
+    ? { filed: extensionFiled, transmittedAt: extensionTransmittedAt || null }
+    : null;
+  const extensionIsUnclear = extensionUnclear(extensionFacts);
+  const extensionIsValid =
+    latestSelectedYear !== null &&
+    isExtensionValid(latestSelectedYear, shortYearDate, extensionFacts);
+  // "Yes" + a date after the original deadline: the 7004 itself was late, so
+  // it bought nothing. Shown as an amber explainer, not a blocking error —
+  // the answer is still savable and the RCS path protects them.
+  const extensionSentLate =
+    showExtensionSection &&
+    extensionFiled === "yes" &&
+    extensionTransmittedAt.length > 0 &&
+    formatLongDate(extensionTransmittedAt) !== null &&
+    originalDueMs !== null &&
+    !extensionIsValid;
+
   // Show the DIIRSP hint (and, downstream, the RCS step) exactly when the server
   // will set isDiirsp: any selected year whose IRS deadline has already passed.
   // Use the SAME shared rule the PATCH route runs — so a final short year that
   // is already late triggers it, and a not-yet-due final/current year does not
   // (the old "more than one year, or any past year" heuristic got both wrong).
-  const wouldBeDiirsp = selected.some((y) =>
-    isYearDelinquent(y, isFinalReturn ? dissolvedAt : null),
+  // The deadline now depends on the extension answer, which belongs to the
+  // latest year alone.
+  const lateYears = selected.filter((y) =>
+    isYearDelinquent(
+      y,
+      isFinalReturn ? dissolvedAt : null,
+      y === latestSelectedYear ? extensionFacts : null,
+    ),
   );
+  // "I'm not sure" defers ONLY the latest year's determination — that rule
+  // lives inside isYearDelinquent, which already returned false for the
+  // unclear year above. Earlier bundle years that no Form 7004 could rescue
+  // stay in lateYears, so their reasonable-cause protection is never dropped.
+  const wouldBeDiirsp = lateYears.length > 0;
+
+  // ── Determination shown to the customer (plain language) ─────────────────
+  // Dated off the most recent deadline that has actually passed when the
+  // package is late (on a single-year filing that is simply this year), and
+  // off the latest year's effective deadline otherwise.
+  const determinationYear =
+    lateYears.length > 0 ? Math.max(...lateYears) : latestSelectedYear;
+  const determinationDueMs =
+    determinationYear === null
+      ? null
+      : effectiveDueDateUtc(
+          determinationYear,
+          isFinalReturn ? dissolvedAt : null,
+          determinationYear === latestSelectedYear ? extensionFacts : null,
+        );
+  const determinationSentence =
+    determinationDueMs === null
+      ? null
+      : extensionIsUnclear
+        ? lateYears.length > 0
+          ? `We'll confirm your extension status for ${latestSelectedYear} by email before anything is filed. The earlier year${lateYears.length > 1 ? "s" : ""} ${lateYears.join(", ")} ${lateYears.length > 1 ? "are" : "is"} being filed after ${lateYears.length > 1 ? "their due dates" : "its due date"}, so a reasonable-cause statement is included for ${lateYears.length > 1 ? "them" : "it"}.`
+          : "We'll confirm your extension status by email before anything is filed — you can continue for now."
+        : lateYears.length > 0
+          ? `This return is being filed after its due date (${formatDueDate(determinationDueMs)}). We'll include a reasonable-cause statement explaining why — it's what protects you from the $25,000 penalty.`
+          : extensionIsValid
+            ? `We've recorded this as a timely filing under your Form 7004 extension, due ${formatDueDate(determinationDueMs)}.`
+            : `Your filing deadline is ${formatDueDate(determinationDueMs)} — this return is on time.`;
 
   // The short year belongs to the LATEST selected year — earlier years in a
   // multi-year catch-up are ordinary full years. Cap the picker at today when
   // that year is the one still running.
-  const dissolvedAtYear = selected.length > 0 ? Math.max(...selected) : maxYear;
+  const dissolvedAtYear = latestSelectedYear ?? maxYear;
   const todayIso = new Date().toISOString().slice(0, 10);
   const dissolvedAtMax = dissolvedAtYear < currentYear ? `${dissolvedAtYear}-12-31` : todayIso;
 
@@ -1245,16 +1483,44 @@ function YearsStep({
           }
         }
         setDissolvedAtError(null);
-        await onSubmit({ ...data, isFinalReturn, dissolvedAt: isFinalReturn ? dissolvedAt : null });
+        // A "yes" without a transmittal date is unusable: isExtensionValid()
+        // can't compare an absent date to the deadline, so it would silently
+        // fall back to "not extended" — the exact misclassification this gate
+        // exists to prevent. Mirrors the server's own required-when-yes rule.
+        if (showExtensionSection && extensionFiled === "yes" && !extensionTransmittedAt) {
+          setExtensionDateError("Enter the date you sent Form 7004");
+          return;
+        }
+        setExtensionDateError(null);
+        await onSubmit({
+          ...data,
+          isFinalReturn,
+          dissolvedAt: isFinalReturn ? dissolvedAt : null,
+          // Nulls whenever the question wasn't on screen, so an answer given
+          // for one year selection can't linger after the customer changes it.
+          extensionFiled: showExtensionSection ? extensionFiled : null,
+          extensionTransmittedAt:
+            showExtensionSection && extensionFiled === "yes" && extensionTransmittedAt
+              ? extensionTransmittedAt
+              : null,
+          extensionMethod:
+            showExtensionSection && extensionFiled === "yes" && extensionMethod
+              ? extensionMethod
+              : null,
+          extensionDestination:
+            showExtensionSection && extensionFiled === "yes" && extensionDestination
+              ? extensionDestination
+              : null,
+        });
       })}
       className="space-y-5"
     >
       <div>
         <h2 className="text-xl font-semibold">Tax years to file</h2>
         <p className="text-sm text-slate-500 mt-1">
-          Pick every tax year you want to file for. If you pick more than one — or any year
-          before the current one — we&apos;ll guide you through the IRS late-filing procedure
-          (called DIIRSP) and help you write a short reason for being late.
+          Pick every tax year you want to file for. If any year is being filed after its
+          due date, we&apos;ll help you write a short reasonable-cause statement explaining
+          why — it&apos;s what protects you from the $25,000 penalty.
         </p>
       </div>
       <input type="hidden" {...register("taxYears", { valueAsNumber: false })} />
@@ -1380,6 +1646,176 @@ function YearsStep({
           </div>
         )}
       </div>
+      {showExtensionSection && (
+        <div className="rounded-md border border-slate-200 bg-white p-4">
+          <p className="text-sm font-medium text-slate-900">
+            Did you file Form 7004 (extension of time to file) for this tax year?
+          </p>
+          <p className="text-xs text-slate-500 mt-1">
+            A Form 7004 filed on time gives you six extra months — if you have one, this
+            return isn&apos;t late at all.
+          </p>
+          <div className="mt-3 space-y-2">
+            {[
+              { value: "yes", label: "Yes — filed on or before the original due date" },
+              { value: "no", label: "No" },
+              {
+                value: "not_sure",
+                label: "I'm not sure / my formation agent may have filed one",
+                helper:
+                  "Formation agents sometimes file extensions without telling you — if in doubt, pick this and we'll confirm before filing.",
+              },
+            ].map((opt) => {
+              const checked = extensionFiled === opt.value;
+              return (
+                <label
+                  key={opt.value}
+                  className={`flex items-start gap-2 rounded-md border p-3 cursor-pointer text-sm ${
+                    checked ? "border-accent bg-accent-50" : "border-slate-300 bg-white"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="extensionFiled"
+                    value={opt.value}
+                    checked={checked}
+                    onChange={() => {
+                      setExtensionFiled(opt.value);
+                      setExtensionDateError(null);
+                    }}
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+                  />
+                  <span>
+                    <span className="text-slate-900">{opt.label}</span>
+                    {opt.helper && (
+                      <span className="block text-xs text-slate-500 mt-1">{opt.helper}</span>
+                    )}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+
+          {extensionFiled === "yes" && (
+            <div className="mt-4 space-y-3">
+              <Field
+                label="Date you sent Form 7004"
+                hint="The day it was faxed or postmarked — not the day you prepared it."
+                error={extensionDateError ?? undefined}
+              >
+                <Input
+                  type="date"
+                  value={extensionTransmittedAt}
+                  onChange={(e) => {
+                    setExtensionTransmittedAt(e.target.value);
+                    if (extensionDateError) setExtensionDateError(null);
+                  }}
+                  aria-required
+                />
+              </Field>
+              {/* Amber, not red: a late 7004 is a real answer worth saving, it
+                  just doesn't extend anything. Blocking here would strand the
+                  customer on a fact they can't change. */}
+              {extensionSentLate && originalDueMs !== null && (
+                <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+                  This Form 7004 was sent after the original due date (
+                  {formatDueDate(originalDueMs)}), so the IRS treats the return as late —
+                  we&apos;ll include a reasonable-cause statement protecting you.
+                </div>
+              )}
+              <Field label="How did you send it?">
+                <Select
+                  value={extensionMethod}
+                  onChange={(e) => setExtensionMethod(e.target.value)}
+                >
+                  <option value="">Select…</option>
+                  <option value="fax">Fax</option>
+                  <option value="certified_mail">Certified mail</option>
+                  <option value="mail">Regular mail</option>
+                  <option value="not_sure">Not sure</option>
+                </Select>
+              </Field>
+              <Field label="Where did you send it?">
+                <Select
+                  value={extensionDestination}
+                  onChange={(e) => setExtensionDestination(e.target.value)}
+                >
+                  <option value="">Select…</option>
+                  <option value="ogden">
+                    The IRS address or fax line for foreign-owned disregarded entities
+                    (Ogden, Utah)
+                  </option>
+                  <option value="standard">The standard Form 7004 filing address</option>
+                  <option value="not_sure">Not sure</option>
+                </Select>
+              </Field>
+              <Field
+                label="Upload proof of your extension (optional)"
+                hint="A fax receipt, certified-mail slip, or the 7004 copy — helps if the IRS has no record of it."
+                error={extProofError ?? undefined}
+              >
+                <div>
+                  <input
+                    ref={extProofInputRef}
+                    type="file"
+                    accept="application/pdf,image/png,image/jpeg"
+                    className="sr-only"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) void uploadExtProof(file);
+                      e.target.value = ""; // let the same file be re-picked after an error
+                    }}
+                  />
+                  {extProofKey ? (
+                    <p className="text-sm text-emerald-700">
+                      ✓ Proof uploaded{" "}
+                      <button
+                        type="button"
+                        onClick={() => void removeExtProof()}
+                        className="ml-1 text-xs text-slate-500 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </p>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={extProofUploading}
+                      onClick={() => extProofInputRef.current?.click()}
+                    >
+                      {extProofUploading ? "Uploading…" : "Upload proof (optional)"}
+                    </Button>
+                  )}
+                </div>
+              </Field>
+            </div>
+          )}
+        </div>
+      )}
+      {determinationSentence && (
+        <div className="rounded-md bg-slate-50 border border-slate-200 p-4 text-sm">
+          <p className="text-slate-700">{determinationSentence}</p>
+          <div className="mt-2">
+            {flagState === "sent" ? (
+              <p className="text-xs text-emerald-700">
+                ✓ Flagged — we&apos;ll review and email you.
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void flagDetermination(determinationSentence)}
+                disabled={flagState === "sending"}
+                className="text-xs text-slate-500 underline hover:text-slate-700 disabled:opacity-50"
+              >
+                {flagState === "sending" ? "Sending…" : "This doesn't match my situation"}
+              </button>
+            )}
+            {flagError && <p className="text-xs text-red-600 mt-1">{flagError}</p>}
+          </div>
+        </div>
+      )}
       <div className="rounded-md bg-slate-50 p-4 text-sm">
         <p className="font-medium">
           {activeTier.label}: {formatUsd(activeTier.priceCents)}
@@ -1392,7 +1828,7 @@ function YearsStep({
         <p className="text-slate-600 mt-1">IRS fax delivery included.</p>
         {wouldBeDiirsp && (
           <p className="text-xs text-accent mt-2">
-            DIIRSP applies — we&apos;ll help you write the reasonable cause statement next.
+            Filed after its due date — we&apos;ll help you write the reasonable-cause statement next.
           </p>
         )}
       </div>
@@ -1517,7 +1953,7 @@ function ReviewStep({
         <Row label="Owner" value={filing.ownerName} />
         <Row label="Owner FTIN" value={filing.ownerFtin} />
         <Row label="Tax years" value={filing.taxYears.join(", ")} />
-        <Row label="DIIRSP" value={filing.isDiirsp ? "Yes" : "No"} />
+        <Row label="Late filing" value={filing.isDiirsp ? "Yes — reasonable-cause statement included" : "No"} />
         {filing.isDiirsp && (
           <Row
             label="Reasonable cause"

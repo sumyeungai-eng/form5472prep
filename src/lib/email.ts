@@ -5,6 +5,7 @@
 
 import { formatUsd } from "@/lib/utils";
 import { multiYearAddonCents, tierInfo, type Tier } from "@/lib/pricing";
+import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 
 type SendAttachment = {
   filename: string;
@@ -944,6 +945,9 @@ type ReminderArgs = {
 
 export async function sendJanuaryReminderEmail(args: ReminderArgs) {
   const { email, taxYearToFile, previousLlcNames, startLink, unsubscribeUrl } = args;
+  // Shared rule owns the date — never a hardcoded April 15. Prospect mail, so
+  // there are no extension facts to apply: this is the original due date.
+  const deadline = formatDueDate(filingDueDateUtc(taxYearToFile));
   const llcLine =
     previousLlcNames.length === 0
       ? "your foreign-owned LLC"
@@ -958,7 +962,7 @@ export async function sendJanuaryReminderEmail(args: ReminderArgs) {
     </p>
     <p style="margin:0 0 20px;color:#475569;line-height:1.6;font-size:15px;">
       For ${escapeHtml(llcLine)}, your <strong>${taxYearToFile}</strong> tax year filing is due by
-      <strong>April 15, ${taxYearToFile + 1}</strong>. Start now and have it filed in ~15 minutes —
+      <strong>${deadline}</strong>. Start now and have it filed in ~15 minutes —
       we'll pull your previous answers forward so you don't re-enter the LLC details.
     </p>
     <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin:0 0 24px;color:#334155;font-size:14px;line-height:1.5;">
@@ -971,13 +975,13 @@ export async function sendJanuaryReminderEmail(args: ReminderArgs) {
     to: email,
     subject: `Time to file your ${taxYearToFile} Form 5472`,
     text:
-      `Happy New Year!\n\nYour ${taxYearToFile} Form 5472 + pro forma 1120 for ${llcLine} is due by April 15, ${taxYearToFile + 1}.\n\n` +
+      `Happy New Year!\n\nYour ${taxYearToFile} Form 5472 + pro forma 1120 for ${llcLine} is due by ${deadline}.\n\n` +
       `File now in ~15 minutes — we'll pull your previous answers forward: ${startLink}\n\n` +
       `Filing early avoids IRS late-filing penalties on Form 5472.\n\n` +
       `— Form5472 Prep\n\n` +
       `Unsubscribe from filing reminders: ${unsubscribeUrl}`,
     html: shell({
-      preheader: `Your ${taxYearToFile} Form 5472 is due by April 15, ${taxYearToFile + 1}. File in 15 min.`,
+      preheader: `Your ${taxYearToFile} Form 5472 is due by ${deadline}. File in 15 min.`,
       heading: `Time to file your ${taxYearToFile} Form 5472`,
       bodyHtml,
       cta: { label: `File my ${taxYearToFile} return`, url: startLink },
@@ -994,7 +998,11 @@ export async function sendJanuaryReminderEmail(args: ReminderArgs) {
 
 export async function sendMarchReminderEmail(args: ReminderArgs) {
   const { email, taxYearToFile, previousLlcNames, startLink, unsubscribeUrl } = args;
-  const deadline = `April 15, ${taxYearToFile + 1}`;
+  // Never hardcode April 15: the shared rule owns the date (and rolls a
+  // weekend deadline forward, e.g. tax year 2027 is really due April 17 2028).
+  // No extension facts here — this reminder goes to a prospect with no filing
+  // on record, so it is the ordinary original due date by definition.
+  const deadline = formatDueDate(filingDueDateUtc(taxYearToFile));
   const llcLine =
     previousLlcNames.length === 0
       ? "your foreign-owned LLC"
@@ -1019,7 +1027,7 @@ export async function sendMarchReminderEmail(args: ReminderArgs) {
 
   return sendEmail({
     to: email,
-    subject: `30 days left — file your ${taxYearToFile} Form 5472 before April 15`,
+    subject: `30 days left — file your ${taxYearToFile} Form 5472 before ${deadline}`,
     text:
       `Your ${taxYearToFile} Form 5472 for ${llcLine} is due in about 30 days (deadline: ${deadline}).\n\n` +
       `The IRS imposes significant late-filing penalties on Form 5472. Take 15 minutes now and we'll fax it to the IRS today: ${startLink}\n\n` +

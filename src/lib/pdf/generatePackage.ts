@@ -4,7 +4,7 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { form5472FieldMap, form1120_2024FieldMap, form1120_2025FieldMap } from "./fieldMaps";
 import { setText, check, stampDiirspHeader, stampShortPeriod, flatten } from "./fillForm";
 import { formatDateForIrs } from "@/lib/utils";
-import { isYearDelinquent } from "@/lib/schemas";
+import { isExtensionValid, isYearDelinquent, type ExtensionFacts } from "@/lib/schemas";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Country normalization — wizard collects nationality/residence as free text
@@ -91,6 +91,15 @@ type Filing = {
   // it is what makes the year SHORT — see periodEndFor(). Optional/nullable so
   // the many call sites that never deal with a final return keep compiling.
   dissolvedAt?: Date | string | null;
+  // Form 7004 extension facts, as answered by the customer. A 7004 covers ONE
+  // tax year, so these describe max(taxYears) and nothing else — see the
+  // per-year wiring in generatePackage(). Optional so call sites that predate
+  // the extension gate keep compiling; absent behaves exactly as "no extension
+  // was filed", i.e. the pre-gate calendar-only behaviour.
+  //   extensionFiled          "yes" | "no" | "not_sure" | null (not yet asked)
+  //   extensionTransmittedAt  when the 7004 was transmitted
+  extensionFiled?: string | null;
+  extensionTransmittedAt?: Date | string | null;
   reasonableCauseNarrative: string | null;
   yearData: {
     taxYear: number;
@@ -645,7 +654,16 @@ function wrapAtPx(text: string, f: import("pdf-lib").PDFFont, size: number, maxW
   return lines;
 }
 
-async function buildCoverLetter(f: Filing, delinquentYears: number[]): Promise<PDFDocument> {
+async function buildCoverLetter(
+  f: Filing,
+  delinquentYears: number[],
+  // The tax year (if any) that is timely ONLY because a valid Form 7004
+  // extension moved its deadline. Null whenever no extension is in play, and
+  // also when the year would have been timely anyway — the sentence below is a
+  // statement to the IRS about why this return is on time, so it must never
+  // appear on a package where the extension is not what makes it on time.
+  extendedYear: number | null,
+): Promise<PDFDocument> {
   const pdf = await PDFDocument.create();
   const page = pdf.addPage([612, 792]);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
@@ -700,10 +718,19 @@ async function buildCoverLetter(f: Filing, delinquentYears: number[]): Promise<P
       `Return Submission Procedures (DIIRSP). A reasonable cause statement is attached. ` +
       `This package also includes a timely filed return for tax year${tPlural ? "s" : ""} ${timelyYears.join(", ")}.`;
   }
+  // One extra sentence when a Form 7004 is what keeps the latest year timely.
+  // Appended AFTER statusSentence so the all-late and mixed wordings above stay
+  // byte-for-byte what they were.
+  const extensionSentence =
+    extendedYear == null
+      ? ""
+      : ` The return for tax year ${extendedYear} is timely filed under a Form 7004 ` +
+        `extension of time to file.`;
   const body =
     `Enclosed please find Form 5472 with attached pro forma Form 1120 for the above ` +
     `foreign-owned U.S. disregarded entity, for the tax year(s) listed. ` +
-    statusSentence;
+    statusSentence +
+    extensionSentence;
 
   for (const line of wrap(body, 85)) {
     draw(line);
@@ -993,11 +1020,34 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
   // perjury, so they must apply to the delinquent years ONLY — declaring a
   // timely year "delinquent" would be a false statement. Use the same shared
   // rule the server used to set isDiirsp, so the two never disagree.
+  //
+  // Form 7004 gate: a timely extension moves a year's deadline six months, so
+  // an extended year is NOT delinquent even though the calendar says its
+  // original date has passed. One 7004 covers ONE tax year, and on a multi-year
+  // catch-up the only year it can still rescue is the latest one — so the facts
+  // are passed for max(taxYears) and null for every earlier year.
+  const dissolvedForDeadline = f.isFinalReturn ? f.dissolvedAt : null;
+  const maxTaxYear = f.taxYears.length > 0 ? Math.max(...f.taxYears) : null;
+  const extension: ExtensionFacts = {
+    filed: f.extensionFiled ?? null,
+    transmittedAt: f.extensionTransmittedAt ?? null,
+  };
   const delinquentYears = f.taxYears.filter((y) =>
-    isYearDelinquent(y, f.isFinalReturn ? f.dissolvedAt : null),
+    isYearDelinquent(y, dissolvedForDeadline, y === maxTaxYear ? extension : null),
   );
 
-  const cover = await buildCoverLetter(f, delinquentYears);
+  // Is the latest year timely BECAUSE of the extension? Only then does the
+  // cover letter cite the 7004: a year whose original deadline hasn't passed
+  // yet is timely on its own and needs no explanation.
+  const extendedYear =
+    maxTaxYear != null &&
+    isExtensionValid(maxTaxYear, dissolvedForDeadline, extension) &&
+    !delinquentYears.includes(maxTaxYear) &&
+    isYearDelinquent(maxTaxYear, dissolvedForDeadline, null)
+      ? maxTaxYear
+      : null;
+
+  const cover = await buildCoverLetter(f, delinquentYears, extendedYear);
   await copyAll(out, cover);
   // Cover letter signature line is at the bottom of the (single) cover page.
   signatures.push({
@@ -1007,7 +1057,14 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
     ...SIG_PLACEMENT.coverLetter,
   });
 
-  if (f.isDiirsp) {
+  // isDiirsp is the flag the server stamped on the order; delinquentYears is
+  // what the shared rule says TODAY, extension included. Requiring both means a
+  // validly extended filing never carries a reasonable cause statement — even
+  // if it was sold and flagged as a late catch-up before the customer told us
+  // about the 7004 (the remediation path for the misclassified 2025 orders).
+  // The RCS is signed under penalties of perjury; rendering one with no
+  // delinquent year to name would be a false admission.
+  if (f.isDiirsp && delinquentYears.length > 0) {
     const rcs = await buildReasonableCause(f, delinquentYears);
     await copyAll(out, rcs);
     signatures.push({

@@ -71,6 +71,9 @@ export async function POST(req: Request) {
     isDiirsp: filing.isDiirsp,
     isFinalReturn: filing.isFinalReturn,
     dissolvedAt: filing.dissolvedAt,
+    // Form 7004 facts — the generator applies them to max(taxYears) only.
+    extensionFiled: filing.extensionFiled,
+    extensionTransmittedAt: filing.extensionTransmittedAt,
     reasonableCauseNarrative: filing.reasonableCauseNarrative,
     yearData: filing.yearData.map((y) => ({
       taxYear: y.taxYear,

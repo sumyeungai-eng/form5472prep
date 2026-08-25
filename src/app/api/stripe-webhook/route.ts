@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { makeMagicLink } from "@/lib/magicLink";
 import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { resolveTier } from "@/lib/pricing";
-import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { putPdf } from "@/lib/storage";
 import { sendMetaPurchase } from "@/lib/analytics/metaServer";
@@ -149,6 +149,10 @@ export async function POST(req: Request) {
             isDiirsp: full.isDiirsp,
             isFinalReturn: full.isFinalReturn,
             dissolvedAt: full.dissolvedAt,
+            // Form 7004 facts — the generator applies them to max(taxYears)
+            // only, and a valid extension suppresses the late-filing language.
+            extensionFiled: full.extensionFiled,
+            extensionTransmittedAt: full.extensionTransmittedAt,
             reasonableCauseNarrative: full.reasonableCauseNarrative,
             yearData: full.yearData.map((y) => ({
               taxYear: y.taxYear,
@@ -221,14 +225,19 @@ export async function POST(req: Request) {
         // Filing deadline for the confirmation email. The latest tax year
         // drives the date the customer actually has to beat; a FINAL return
         // shortens that year, so pass dissolvedAt only when isFinalReturn is
-        // set (same rule generatePackage uses above). Null when the filing
-        // somehow carries no years — the email just omits the line.
+        // set (same rule generatePackage uses above). A valid Form 7004 moves
+        // the date six months, so this reads the extension facts too — an
+        // extended filer must be shown October 15, not April 15. Null when the
+        // filing somehow carries no years — the email just omits the line.
         const maxYear = filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : null;
         const dueDateText =
           maxYear == null
             ? null
             : formatDueDate(
-                filingDueDateUtc(maxYear, filing.isFinalReturn ? filing.dissolvedAt : null),
+                effectiveDueDateUtc(maxYear, filing.isFinalReturn ? filing.dissolvedAt : null, {
+                  filed: filing.extensionFiled,
+                  transmittedAt: filing.extensionTransmittedAt,
+                }),
               );
 
         try {

@@ -9,7 +9,7 @@ import { putPdf } from "@/lib/storage";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
 import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
-import { filingCompletionIssues } from "@/lib/completeness";
+import { filingCompletionIssues, requiresReasonableCause } from "@/lib/completeness";
 
 export async function POST(req: Request) {
   const { filingId, email } = await req.json();
@@ -101,9 +101,20 @@ export async function POST(req: Request) {
 
   // Fax delivery is included on every tier — pin faxService=true so post-
   // payment UI + admin views never branch into the legacy "self-fax" path.
+  //
+  // Same update re-pins isDiirsp when the live verdict disagrees with what the
+  // wizard last stored. The gate above already refuses to charge on the FRESH
+  // classification, but everything downstream of payment (Stripe webhook, PDF
+  // generation, the emails) reads the stored column — so a draft that went
+  // delinquent while it sat, or one that a Form 7004 answer just rescued,
+  // would otherwise produce a package classified by a stale flag.
+  const freshIsDiirsp = requiresReasonableCause(filing);
   await prisma.filing.update({
     where: { id: filing.id },
-    data: { faxService: true },
+    data: {
+      faxService: true,
+      ...(freshIsDiirsp !== filing.isDiirsp ? { isDiirsp: freshIsDiirsp } : {}),
+    },
   });
 
   // ─── Admin-only $0 test path ───
