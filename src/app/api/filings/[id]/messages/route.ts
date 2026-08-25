@@ -3,11 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getOwnedFiling } from "@/lib/session";
 import { isAdmin } from "@/lib/admin/auth";
 import { env } from "@/lib/env";
-import { makeMagicLink } from "@/lib/magicLink";
-import {
-  sendNewMessageToCustomerEmail,
-  sendNewMessageToAdminEmail,
-} from "@/lib/email";
+import { sendNewMessageToAdminEmail } from "@/lib/email";
+import { FilingNotFoundError, postAdminMessage } from "@/lib/messages";
 
 export const runtime = "nodejs";
 
@@ -100,7 +97,17 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: `Message too long (max ${MAX_BODY_LEN} characters)` }, { status: 400 });
   }
 
-  const fromAdmin = caller.role === "admin";
+  if (caller.role === "admin") {
+    try {
+      const { message } = await postAdminMessage(params.id, body);
+      return NextResponse.json({ message });
+    } catch (error) {
+      if (error instanceof FilingNotFoundError) {
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+      }
+      throw error;
+    }
+  }
 
   // "First unread" rule: if the recipient currently has zero unread messages
   // from us in this thread, the message we're about to insert will be their
@@ -108,11 +115,11 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   // racing ourselves. A small concurrent-send race could double-email; that's
   // acceptable for v1 vs. the complexity of a row lock.
   const priorUnreadFromSender = await prisma.message.count({
-    where: { filingId: params.id, fromAdmin, readAt: null },
+    where: { filingId: params.id, fromAdmin: false, readAt: null },
   });
 
   const message = await prisma.message.create({
-    data: { filingId: params.id, fromAdmin, body },
+    data: { filingId: params.id, fromAdmin: false, body },
     select: { id: true, fromAdmin: true, body: true, readAt: true, createdAt: true },
   });
 
@@ -123,31 +130,18 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (priorUnreadFromSender === 0) {
     const bodyExcerpt = body.length > 500 ? body.slice(0, 500) + "…" : body;
     try {
-      if (fromAdmin) {
-        // Admin → customer: needs a user with an email to notify.
-        if (caller.filing.user?.email && caller.filing.userId) {
-          await sendNewMessageToCustomerEmail({
-            email: caller.filing.user.email,
-            llcName: caller.filing.llcName,
-            taxYears: caller.filing.taxYears,
-            bodyExcerpt,
-            portalLink: makeMagicLink(caller.filing.userId),
-          });
-        }
-      } else {
-        // Customer → admin: customer must be signed-in (anonymous filings
-        // can't post via UI), but defend the check anyway.
-        if (caller.filing.user?.email) {
-          await sendNewMessageToAdminEmail({
-            adminEmail: env.supportEmail,
-            customerEmail: caller.filing.user.email,
-            llcName: caller.filing.llcName,
-            taxYears: caller.filing.taxYears,
-            filingId: caller.filing.id,
-            adminFilingUrl: `${env.appUrl}/admin/filings/${caller.filing.id}`,
-            bodyExcerpt,
-          });
-        }
+      // Customer → admin: customer must be signed-in (anonymous filings
+      // can't post via UI), but defend the check anyway.
+      if (caller.filing.user?.email) {
+        await sendNewMessageToAdminEmail({
+          adminEmail: env.supportEmail,
+          customerEmail: caller.filing.user.email,
+          llcName: caller.filing.llcName,
+          taxYears: caller.filing.taxYears,
+          filingId: caller.filing.id,
+          adminFilingUrl: `${env.appUrl}/admin/filings/${caller.filing.id}`,
+          bodyExcerpt,
+        });
       }
     } catch (err) {
       // Don't fail the POST if email delivery fails — the message itself
