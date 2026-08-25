@@ -153,8 +153,8 @@ public struct ApplicationsView: View {
 
     private func applicationStatuses(for type: String, includesAll: Bool) -> [String] {
         var values = type == "ein"
-            ? ["RECEIVED", "IN_REVIEW", "COMPLETED", "CANCELLED"]
-            : ["RECEIVED", "IN_REVIEW", "AWAITING_CUSTOMER", "SUBMITTED", "COMPLETED", "CANCELLED"]
+            ? ["RECEIVED", "IN_REVIEW", "DOCS_REQUESTED", "PAYMENT_PENDING", "PROCESSING", "COMPLETED", "CANCELLED"]
+            : ["RECEIVED", "IN_REVIEW", "DOCS_REQUESTED", "PAYMENT_PENDING", "CAA_SCHEDULED", "W7_SUBMITTED", "COMPLETED", "CANCELLED"]
         if includesAll {
             values.insert("", at: 0)
         }
@@ -419,8 +419,8 @@ private struct ApplicationDetailSheet: View {
 
     private var statuses: [String] {
         type == "ein"
-            ? ["RECEIVED", "IN_REVIEW", "COMPLETED", "CANCELLED"]
-            : ["RECEIVED", "IN_REVIEW", "AWAITING_CUSTOMER", "SUBMITTED", "COMPLETED", "CANCELLED"]
+            ? ["RECEIVED", "IN_REVIEW", "DOCS_REQUESTED", "PAYMENT_PENDING", "PROCESSING", "COMPLETED", "CANCELLED"]
+            : ["RECEIVED", "IN_REVIEW", "DOCS_REQUESTED", "PAYMENT_PENDING", "CAA_SCHEDULED", "W7_SUBMITTED", "COMPLETED", "CANCELLED"]
     }
 
     private func save() async {
