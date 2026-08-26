@@ -60,27 +60,26 @@ export function MetaPixel() {
   }
 
   return (
-    <div className="fixed inset-x-4 bottom-4 z-[70] mx-auto max-w-3xl rounded-xl border border-slate-200 bg-white p-4 shadow-2xl sm:flex sm:items-center sm:gap-5">
-      <p className="text-sm leading-6 text-slate-700">
-        We use optional Meta advertising cookies to measure whether our ads lead to completed
-        filings. We never send tax or bank information to Meta. Read our{" "}
+    <div className="fixed inset-x-4 bottom-4 z-[70] mx-auto flex max-w-3xl items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-xs shadow-2xl sm:text-sm">
+      <p className="min-w-0 flex-1 leading-tight text-slate-700">
+        Optional Meta advertising cookies help us measure ad performance. We never send tax or bank information.{" "}
         <Link href="/privacy" className="font-medium text-blue-900 underline">
           Privacy Policy
         </Link>
         .
       </p>
-      <div className="mt-3 flex shrink-0 gap-2 sm:mt-0">
+      <div className="flex shrink-0 gap-2">
         <button
           type="button"
           onClick={() => choose("denied")}
-          className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 sm:text-sm"
         >
           Decline
         </button>
         <button
           type="button"
           onClick={() => choose("granted")}
-          className="rounded-lg bg-blue-900 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
+          className="rounded-lg bg-blue-900 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-800 sm:text-sm"
         >
           Allow
         </button>

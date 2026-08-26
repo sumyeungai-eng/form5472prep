@@ -357,3 +357,43 @@ export function formatAttribution(attr: Partial<Attribution> | null | undefined)
 
   return parts.join(" · ");
 }
+
+// Session-scoped funnel source used by client-side links. This is deliberately
+// separate from the long-lived acquisition cookie above: it carries the
+// landing-page src slug into /start without changing the original attribution.
+const SESSION_SRC_KEY = "form5472:first-touch-src";
+
+export function sanitizeSrc(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const cleaned = raw.toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 80);
+  return cleaned || null;
+}
+
+export function rememberSrc(src: string): void {
+  if (typeof window === "undefined") return;
+
+  try {
+    if (window.sessionStorage.getItem(SESSION_SRC_KEY) !== null) return;
+    window.sessionStorage.setItem(SESSION_SRC_KEY, src);
+  } catch {
+    // Storage can be unavailable in private browsing or blocked environments.
+  }
+}
+
+export function recallSrc(): string | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    return sanitizeSrc(window.sessionStorage.getItem(SESSION_SRC_KEY));
+  } catch {
+    return null;
+  }
+}
+
+export function startHref(): string {
+  if (typeof window === "undefined") return "/start";
+
+  const currentSrc = sanitizeSrc(new URLSearchParams(window.location.search).get("src"));
+  const src = currentSrc ?? recallSrc();
+  return src ? `/start?src=${encodeURIComponent(src)}` : "/start";
+}

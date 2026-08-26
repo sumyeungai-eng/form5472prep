@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AttributionSeed } from "@/components/AttributionSeed";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 import { Reveal } from "@/components/Reveal";
 import {
@@ -22,7 +23,7 @@ import {
   TIER_ORDER,
   type Tier,
 } from "@/lib/pricing";
-import { ORG_EMAIL, pageOpenGraph } from "@/lib/seo";
+import { ORG_EMAIL, pageOpenGraph, TRUSTPILOT_PROFILE_URL } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
 
 // Google Ads funnel attribution for this list-price landing page.
@@ -88,6 +89,7 @@ const MULTI_YEAR_ROWS = [1, 2, 3].map((yearCount) => {
 export default function Form5472FilingLandingPage() {
   return (
     <main className="bg-white">
+      <AttributionSeed src="gads" />
       <Hero />
       <TrustStrip />
       <Offer />
@@ -125,24 +127,24 @@ function Hero() {
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-seal/50" />
 
       <div className="relative mx-auto max-w-6xl px-6 pb-14 pt-16 sm:pb-20 sm:pt-20">
-        <div className="grid items-center gap-12 lg:grid-cols-[1fr_380px] lg:gap-16">
-          <div className="animate-fade-in-up">
-            <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100">
+        <div className="grid items-center gap-0 lg:grid-cols-[1fr_380px] lg:gap-16">
+          <div className="contents lg:block lg:animate-fade-in-up">
+            <p className="order-1 flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100">
               <ShieldCheck className="h-3.5 w-3.5" />
               Done-for-you Form 5472 · Foreign-owned US single-member LLCs
             </p>
-            <h1 className="mt-5 font-serif text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl lg:text-6xl">
+            <h1 className="order-2 mt-5 font-serif text-3xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl lg:text-6xl">
               File your Form 5472 for {formatPrice(TIERS.standard.priceCents)}.
             </h1>
-            <p className="mt-4 font-serif text-2xl leading-snug text-slate-200 sm:text-3xl">
+            <p className="order-3 mt-4 font-serif text-2xl leading-snug text-slate-200 sm:text-3xl">
               Accountant-reviewed, faxed to the IRS, timestamped receipt in your inbox.
             </p>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
+            <p className="order-5 mt-6 max-w-xl text-lg leading-relaxed text-slate-300 lg:order-none">
               Get an accountant-reviewed Form 5472 + pro forma 1120, faxed to the IRS Ogden PIN Unit with a timestamped receipt as proof of filing. The complete package is ready in {STANDARD_TURNAROUND}, or within {EXPRESS_TURNAROUND} on Express.
             </p>
           </div>
 
-          <div className="w-full animate-fade-in-up animate-delay-200">
+          <div className="order-4 mt-8 w-full animate-fade-in-up animate-delay-200 lg:order-none lg:mt-0">
             <div className="rounded-2xl bg-white p-6 text-slate-900 shadow-2xl shadow-black/30 ring-1 ring-black/5 sm:p-7">
               <div className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-soft-pulse" />
@@ -163,6 +165,15 @@ function Hero() {
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Button>
               </Link>
+              <a
+                href={TRUSTPILOT_PROFILE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 flex items-center justify-center gap-1.5 text-xs font-medium text-slate-600 hover:text-accent hover:underline"
+              >
+                <span aria-hidden="true" className="text-[#00b67a]">★</span>
+                See our reviews on Trustpilot
+              </a>
               <Link
                 href={tierUrl("express")}
                 data-attribution={ATTRIBUTION_SRC}
@@ -271,7 +282,7 @@ function Includes() {
   const items = [
     'Filled IRS Form 5472 + pro forma Form 1120 with the "Foreign-Owned U.S. DE" stamp and Part V supporting statement',
     "Review by a qualified tax accountant before anything is sent",
-    "Reasonable cause statement for late filings under DIIRSP, drafted around your circumstances",
+    "Reasonable cause statement for late filings under the IRS Delinquent International Information Return Submission Procedures (DIIRSP), drafted around your circumstances",
     "Fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) with no separate fax fee",
     "Timestamped fax transmission receipt emailed to you and stored in your portal",
     "Filing confirmation and email support from start to receipt",

@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useSignedIn } from "@/components/useSignedIn";
+import { startHref } from "@/lib/attribution";
 
 // Client island for the marketing header's auth cluster. Renders the signed-out
 // state (Sign in + Start filing) as the default so the static, edge-cached page
@@ -11,6 +13,15 @@ import { useSignedIn } from "@/components/useSignedIn";
 // whole marketing shell be statically generated.
 export function HeaderAuthButtons() {
   const signedIn = useSignedIn();
+  const [startLinkHref, setStartLinkHref] = useState("/start");
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setStartLinkHref(startHref());
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   if (signedIn) {
     return (
@@ -25,7 +36,7 @@ export function HeaderAuthButtons() {
       <Link href="/sign-in" className="hidden sm:inline-flex">
         <Button variant="ghost" size="sm">Sign in</Button>
       </Link>
-      <Link href="/start">
+      <Link href={startLinkHref}>
         <Button size="sm">Start filing</Button>
       </Link>
     </>
