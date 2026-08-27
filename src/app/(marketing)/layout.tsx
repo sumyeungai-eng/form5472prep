@@ -42,6 +42,12 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             >
               Guide
             </Link>
+            <Link
+              href="/contact"
+              className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
+            >
+              Contact
+            </Link>
             <HeaderAuthButtons />
           </nav>
         </div>
@@ -85,6 +91,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <li><Link href="/itin" className="hover:text-ink">ITIN Acquisition</Link></li>
                 <li><Link href="/partners" className="hover:text-ink">Partner Program</Link></li>
                 <li><Link href="/blog" className="hover:text-ink">Guides</Link></li>
+                <li><Link href="/contact" className="hover:text-ink">Contact</Link></li>
                 <li><Link href="/about" className="hover:text-ink">About</Link></li>
               </ul>
             </nav>

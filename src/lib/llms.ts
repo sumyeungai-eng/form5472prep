@@ -84,6 +84,7 @@ const CORE_PAGES = [
   ["ITIN Acquisition", "/itin", "ITIN service for non-residents — CAA certification, no passport mailing."],
   ["Partners", "/partners", "Partner / referral program for accountants, formation agents, and registered agents."],
   ["Guides index", "/blog", "Jargon-free guides for foreign-owned US LLC owners on Form 5472, pro forma 1120, DIIRSP catch-up filings, and related topics."],
+  ["Contact", "/contact", "Contact Form5472 Prep for Form 5472, pro forma 1120, EIN, ITIN, and catch-up filing questions."],
   ["About", "/about", "Who we are, how we work, and what we are and aren't."],
   ["Editorial policy", "/editorial-policy", "How our guides are sourced, reviewed, and kept current."],
   ["Security", "/security", "How customer data is protected in transit and at rest."],
