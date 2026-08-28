@@ -181,6 +181,16 @@ const ARTWORK_ALTS: Record<string, string> = {
   "form-5472-no-us-bank-account": "Foreign-account records and owner-paid LLC costs arranged for a Form 5472 filing",
   "form-5472-lines-1f-1g-1h-total-value": "Three related-party ledgers reconciled to Form 5472 gross transaction totals",
   "form-5472-business-address-owner-address": "An LLC filing package routed between principal-office and foreign-owner address records",
+  "form-5472-vs-1040-nr": "Two separate tax filing folders and an international decision path comparing entity reporting with owner income tax",
+  "form-5472-vs-1120-f": "A streamlined information-return file and a larger foreign-corporation return binder at a filing decision point",
+  "form-5472-multiple-llcs-one-owner": "Three separate LLC filing workstations connected to one foreign owner",
+  "form-5472-short-tax-year": "A new LLC filing folder beside a short year-end calendar and clock",
+  "form-5472-related-party-services-management-fees": "Two related-party business files connected by a cross-border service-payment workflow",
+  "form-5472-noncash-property-transfers": "Business equipment and property moving into a foreign-owned LLC filing folder",
+  "form-5472-royalties-license-fees-intellectual-property": "Intellectual-property drawings and licensing files connected between related-party ledgers",
+  "form-5472-reasonable-estimates-small-amounts": "A calculator, receipts, and ledger organized to support Form 5472 estimates",
+  "washington-llc-foreign-owner-tax-filing": "Washington State compliance folders beside a Seattle and evergreen landscape",
+  "oregon-llc-foreign-owner-tax-filing": "Oregon compliance folders beside the coast, forests, and state silhouette",
 };
 
 function artworkAlt(slug: string, title: string): string {
