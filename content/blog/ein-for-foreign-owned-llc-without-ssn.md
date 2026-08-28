@@ -98,7 +98,7 @@ If that is your situation, the fix is the same either way: get the EIN, then fil
 
 The SS-4 route is free and workable if you are comfortable completing an IRS form correctly and dealing with fax transmissions or an international phone queue. What it costs you is the time, and the risk of a rejected application that you only discover weeks later.
 
-[Form5472 Prep](/ein) obtains the EIN for foreign-owned LLCs for **$149**: we prepare Form SS-4 correctly for a foreign-owned disregarded entity, submit it, deal with the IRS on your behalf, and deliver the EIN — typically in 1-5 business days. As an IRS-authorized Certifying Acceptance Agent we can also certify identity documents where an ITIN is genuinely needed, so no original passport ever has to be mailed.
+[Form5472 Prep](/ein) obtains the EIN for foreign-owned LLCs for **$149**: we prepare Form SS-4 correctly for a foreign-owned disregarded entity, submit it, deal with the IRS on your behalf, and deliver the EIN — typically in 1-5 business days. Where an ITIN is genuinely needed, identity documents are certified by an IRS-authorized Certifying Acceptance Agent, so no original passport ever has to be mailed.
 
 If you also need the annual filing, that is our main service: Form 5472 and the pro forma Form 1120 prepared, reviewed by a qualified tax accountant, and faxed to the IRS Ogden PIN Unit — **$149** standard (5-7 business days), **$199** express (3 business days), **+$99** per additional past tax year.
 

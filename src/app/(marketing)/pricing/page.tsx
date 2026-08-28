@@ -186,7 +186,7 @@ export default function PricingPage() {
                 href: "/itin",
                 eyebrow: "ITIN — $349",
                 title: "ITIN for yourself",
-                body: "IRS Certifying Acceptance Agent — we certify your documents and file Form W-7. No passport mailing.",
+                body: "Certified by an IRS Certifying Acceptance Agent — your documents are certified and we file Form W-7. No passport mailing.",
               },
             ].map((s) => (
               <Link

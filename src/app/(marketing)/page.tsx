@@ -149,7 +149,7 @@ function OtherServices() {
       href: "/itin",
       eyebrow: "ITIN — $349",
       title: "Need an ITIN for yourself?",
-      body: "As an IRS Certifying Acceptance Agent we certify your identity documents and file Form W-7 — no original passport mailing required.",
+      body: "Your identity documents are certified by an IRS Certifying Acceptance Agent and we file Form W-7 — no original passport mailing required.",
     },
   ];
   return (

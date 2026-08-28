@@ -9,12 +9,12 @@ import { pageOpenGraph } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "ITIN Application — Form5472 Prep",
   description:
-    "Start your ITIN application. As an IRS Certifying Acceptance Agent we certify your identity documents and submit Form W-7 — no passport mailing required.",
+    "Start your ITIN application. Your identity documents are certified by an IRS Certifying Acceptance Agent and we submit Form W-7 — no passport mailing required.",
   alternates: { canonical: "/itin/apply" },
   openGraph: pageOpenGraph({
     title: "ITIN Application — Form5472 Prep",
     description:
-      "Start your ITIN application. As an IRS Certifying Acceptance Agent we certify your identity documents and submit Form W-7 — no passport mailing required.",
+      "Start your ITIN application. Your identity documents are certified by an IRS Certifying Acceptance Agent and we submit Form W-7 — no passport mailing required.",
     path: "/itin/apply",
   }),
   robots: { index: false, follow: true },

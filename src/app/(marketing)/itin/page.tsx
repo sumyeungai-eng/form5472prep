@@ -42,7 +42,7 @@ const faq = [
   },
   {
     q: "What is a Certifying Acceptance Agent and why does it matter?",
-    a: "A CAA is authorized by the IRS to verify and certify identity documents for ITIN applications. Without a CAA, you must mail your original passport to the IRS and wait several months for it to be returned — a major inconvenience. As a CAA, we review and certify your documents, so the IRS accepts our certification in place of the original. Your passport stays with you.",
+    a: "A CAA is authorized by the IRS to verify and certify identity documents for ITIN applications. Without a CAA, you must mail your original passport to the IRS and wait several months for it to be returned — a major inconvenience. Your documents are reviewed and certified by an IRS-authorized CAA, so the IRS accepts that certification in place of the original. Your passport stays with you.",
   },
   {
     q: "What documents do I need?",
@@ -75,12 +75,12 @@ const steps = [
   {
     icon: UserCheck,
     title: "CAA identity certification",
-    body: "We review your passport and other required documents via a video call or secure document upload, then certify them as an IRS-authorized CAA. No mailing required.",
+    body: "We collect your passport and other required documents via a video call or secure document upload, which an IRS-authorized CAA then reviews and certifies. No mailing required.",
   },
   {
     icon: FileText,
     title: "Form W-7 prepared and submitted",
-    body: "We prepare your Form W-7 application and submit it to the IRS ITIN Unit with our CAA certification attached.",
+    body: "We prepare your Form W-7 application and submit it to the IRS ITIN Unit with the CAA certification attached.",
   },
   {
     icon: Clock,
@@ -235,12 +235,12 @@ export default function ItinPage() {
               — during which time they cannot travel internationally.
             </p>
             <p className="text-slate-600 leading-relaxed mb-4">
-              As an IRS-authorized CAA, we can <strong>certify your identity documents</strong> in place
-              of the originals. The IRS accepts our certification, so your passport stays with you at all
+              An IRS-authorized CAA can <strong>certify your identity documents</strong> in place
+              of the originals. The IRS accepts that certification, so your passport stays with you at all
               times.
             </p>
             <p className="text-slate-600 leading-relaxed">
-              We verify your documents via a secure process, prepare your W-7, attach our CAA
+              We collect your documents via a secure process, prepare your W-7, attach the CAA
               certification, and submit everything to the IRS ITIN Unit.
             </p>
           </div>
@@ -256,10 +256,10 @@ export default function ItinPage() {
                 </ul>
               </div>
               <div className="w-1/2 rounded-lg border border-emerald-100 bg-emerald-50 p-4 text-xs text-emerald-700">
-                <p className="font-semibold mb-2 text-emerald-800">With our CAA</p>
+                <p className="font-semibold mb-2 text-emerald-800">With a CAA</p>
                 <ul className="space-y-1 list-disc pl-3">
                   <li>Share a passport copy with us</li>
-                  <li>We certify it for the IRS</li>
+                  <li>A CAA certifies it for the IRS</li>
                   <li>Passport stays with you</li>
                   <li>Travel freely while waiting</li>
                 </ul>
@@ -330,7 +330,7 @@ function ItinStructuredData() {
       audienceType: "Non-resident individuals requiring a US Individual Taxpayer Identification Number",
     },
     description:
-      "IRS Form W-7 preparation with Certifying Acceptance Agent (CAA) document certification — no original passport mailing required. We certify your identity documents and submit your ITIN application to the IRS.",
+      "IRS Form W-7 preparation with Certifying Acceptance Agent (CAA) document certification — no original passport mailing required. Identity documents are certified by an IRS-authorized Certifying Acceptance Agent and the ITIN application is submitted to the IRS.",
     offers: {
       "@type": "Offer",
       name: "ITIN Acquisition — flat fee",
