@@ -122,10 +122,10 @@ public struct FilingRecord: Codable, Sendable, Identifiable {
     public let partnerId: String?
     public let user: FilingUser?
     public let yearData: [FilingYearData]
-    public let hasGeneratedPdf: Bool
-    public let hasSignedPdf: Bool
-    public let hasFaxedPdf: Bool
-    public let hasCustomerSignature: Bool
+    public let hasGeneratedPdf: Bool?
+    public let hasSignedPdf: Bool?
+    public let hasFaxedPdf: Bool?
+    public let hasCustomerSignature: Bool?
 
     public init(
         id: String,
@@ -164,10 +164,10 @@ public struct FilingRecord: Codable, Sendable, Identifiable {
         partnerId: String?,
         user: FilingUser?,
         yearData: [FilingYearData],
-        hasGeneratedPdf: Bool,
-        hasSignedPdf: Bool,
-        hasFaxedPdf: Bool,
-        hasCustomerSignature: Bool
+        hasGeneratedPdf: Bool? = nil,
+        hasSignedPdf: Bool? = nil,
+        hasFaxedPdf: Bool? = nil,
+        hasCustomerSignature: Bool? = nil
     ) {
         self.id = id
         self.status = status

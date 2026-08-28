@@ -354,9 +354,9 @@ public struct FilingDetailView: View {
 
     private func documentsSection(_ filing: FilingRecord) -> some View {
         detailCard(title: "Documents", icon: "doc.on.doc") {
-            documentButton(.generated, isAvailable: filing.hasGeneratedPdf)
-            documentButton(.signed, isAvailable: filing.hasSignedPdf)
-            documentButton(.faxed, isAvailable: filing.hasFaxedPdf)
+            documentButton(.generated, isAvailable: filing.hasGeneratedPdf ?? false)
+            documentButton(.signed, isAvailable: filing.hasSignedPdf ?? false)
+            documentButton(.faxed, isAvailable: filing.hasFaxedPdf ?? false)
         }
     }
 
@@ -390,7 +390,7 @@ public struct FilingDetailView: View {
             FilingActionsView(
                 filingID: filing.id,
                 currentStatus: filing.status,
-                hasSignedPdf: filing.hasSignedPdf,
+                hasSignedPdf: filing.hasSignedPdf ?? false,
                 client: client
             ) {
                 await viewModel.load()

@@ -30,10 +30,10 @@ extension APIClientTests {
         defer { StubURLProtocol.reset() }
 
         let filing = try await client.filingDetail(id: "filing_docs").filing
-        #expect(filing.hasGeneratedPdf)
-        #expect(filing.hasSignedPdf)
-        #expect(!filing.hasFaxedPdf)
-        #expect(filing.hasCustomerSignature)
+        #expect(filing.hasGeneratedPdf == true)
+        #expect(filing.hasSignedPdf == true)
+        #expect(filing.hasFaxedPdf == false)
+        #expect(filing.hasCustomerSignature == true)
     }
 
     @Test func decodesNullableApplicationAdminNotes() async throws {

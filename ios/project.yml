@@ -22,7 +22,7 @@ targets:
       path: Form5472Admin/Info.plist
       properties:
         CFBundleShortVersionString: "1.1"
-        CFBundleVersion: "6"
+        CFBundleVersion: "7"
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:

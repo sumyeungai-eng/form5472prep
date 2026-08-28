@@ -59,10 +59,10 @@ extension APIClientTests {
 
         let detail = try await client.filingDetail(id: "filing/special")
         #expect(detail.filing.amountPaid == 24_900)
-        #expect(detail.filing.hasGeneratedPdf)
-        #expect(detail.filing.hasSignedPdf)
-        #expect(!detail.filing.hasFaxedPdf)
-        #expect(detail.filing.hasCustomerSignature)
+        #expect(detail.filing.hasGeneratedPdf == true)
+        #expect(detail.filing.hasSignedPdf == true)
+        #expect(detail.filing.hasFaxedPdf == false)
+        #expect(detail.filing.hasCustomerSignature == true)
         #expect(detail.filing.yearData[0].totalAssetsYearEnd == "12345.67")
         #expect(detail.messages.map(\.id) == ["message_1", "message_2"])
         #expect(detail.changeLog[0].beforeJson != nil)
@@ -248,6 +248,45 @@ extension APIClientTests {
             session: makeStubSession()
         )
     }
+
+    /// A production deploy can lag the client: an older server build omits the
+    /// has*Pdf booleans entirely. Absent must decode as nil (treated as false at
+    /// the call sites), never as a hard decode failure that blanks the screen.
+    @Test func decodesFilingDetailWhenPdfFlagsAreAbsent() async throws {
+        let client = makeFeatureClient()
+        StubURLProtocol.install { request in
+            stubResponse(
+                url: request.url!,
+                status: 200,
+                body: #"""
+                {"data":{"filing":{
+                  "id":"filing_legacy","status":"PAID","tier":"standard","amountPaid":14900,
+                  "llcName":"Legacy Server LLC","llcEin":null,"llcAddress":null,"llcCity":null,
+                  "llcState":null,"llcZip":null,"llcCountry":"USA",
+                  "llcDateIncorporated":null,"llcBusinessActivity":null,
+                  "llcBusinessCode":null,"ownerName":null,"ownerAddress":null,
+                  "ownerCountryCitizenship":null,"ownerCountryTaxResidence":null,
+                  "ownerCountryBusiness":null,"ownerFtin":null,"ownerItin":null,
+                  "ownerReferenceId":null,"taxYears":[2024],"isDiirsp":false,
+                  "reasonableCauseNarrative":null,"faxService":true,"faxStatus":null,
+                  "faxedAt":null,"signedAt":null,"validationStatus":null,
+                  "validationCheckedAt":null,"createdAt":"2026-08-01T00:00:00Z",
+                  "updatedAt":"2026-08-01T00:00:00.500Z","partnerId":null,"user":null,
+                  "yearData":[]
+                },"messages":[],"changeLog":[]}}
+                """#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        let detail = try await client.filingDetail(id: "filing_legacy")
+        #expect(detail.filing.llcName == "Legacy Server LLC")
+        #expect(detail.filing.hasGeneratedPdf == nil)
+        #expect(detail.filing.hasSignedPdf == nil)
+        #expect(detail.filing.hasFaxedPdf == nil)
+        #expect(detail.filing.hasCustomerSignature == nil)
+    }
+
 }
 
 @Suite("Admin formatting")
