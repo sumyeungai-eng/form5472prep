@@ -32,48 +32,144 @@ final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
             return
         }
 
-        let body = Self.fixtureBody(
-            method: request.httpMethod ?? "GET",
-            path: url.path
-        )
+        let fixture = Self.fixtureResponse(for: request)
         let response = HTTPURLResponse(
             url: url,
             statusCode: 200,
             httpVersion: "HTTP/1.1",
-            headerFields: ["Content-Type": "application/json"]
+            headerFields: ["Content-Type": fixture.contentType]
         )!
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-        client?.urlProtocol(self, didLoad: body)
+        client?.urlProtocol(self, didLoad: fixture.body)
         client?.urlProtocolDidFinishLoading(self)
     }
 
     override func stopLoading() {}
 
-    private static func fixtureBody(method: String, path: String) -> Data {
+    private static func fixtureResponse(for request: URLRequest) -> (
+        contentType: String,
+        body: Data
+    ) {
+        let method = request.httpMethod ?? "GET"
+        let path = request.url?.path ?? ""
         switch (method, path) {
         case ("GET", "/api/admin/v1/me"):
-            return data(adminProfileJSON)
+            return json(adminProfileJSON)
         case ("GET", "/api/admin/v1/dashboard"):
-            return data(dashboardJSON)
+            return json(dashboardJSON)
         case ("GET", "/api/admin/v1/filings"):
-            return data(filingsJSON)
+            return json(filingsJSON)
+        case ("GET", let pdfPath)
+            where pdfPath.hasPrefix("/api/admin/v1/filings/")
+                && pdfPath.hasSuffix("/pdf"):
+            return ("application/pdf", tinyPDFData())
+        case ("POST", let actionPath)
+            where actionPath.hasPrefix("/api/admin/v1/filings/")
+                && actionPath.hasSuffix("/actions"):
+            return json(#"{"data":{"replayed":false}}"#)
+        case ("POST", let messagePath)
+            where messagePath.hasPrefix("/api/admin/v1/filings/")
+                && messagePath.hasSuffix("/messages"):
+            let body = requestJSONObject(request)["body"] as? String ?? "Fixture message"
+            let encodedBody = jsonString(body)
+            return json(
+                #"{"data":{"id":"fixture_message_new","fromAdmin":true,"body":\#(encodedBody),"readAt":null,"createdAt":"2026-08-25T09:00:00.000Z"}}"#
+            )
         case ("GET", let detailPath)
             where detailPath.hasPrefix("/api/admin/v1/filings/"):
             let id = String(detailPath.dropFirst("/api/admin/v1/filings/".count))
-            return data(filingDetailJSON(id: id))
+            return json(filingDetailJSON(id: id))
         case ("GET", "/api/admin/v1/applications"):
-            return data(applicationsJSON)
+            return json(applicationsJSON)
+        case ("PATCH", let applicationPath)
+            where applicationPath.hasPrefix("/api/admin/v1/applications/"):
+            return json(updatedApplicationJSON(path: applicationPath, request: request))
         case ("GET", "/api/admin/v1/analytics"):
-            return data(analyticsJSON)
+            return json(analyticsJSON)
         case ("GET", "/api/admin/v1/partners"):
-            return data(partnersJSON)
+            return json(partnersJSON)
         default:
-            return data(#"{"data":{}}"#)
+            return json(#"{"data":{}}"#)
         }
     }
 
-    private static func data(_ json: String) -> Data {
-        Data(json.utf8)
+    private static func json(_ value: String) -> (contentType: String, body: Data) {
+        ("application/json", Data(value.utf8))
+    }
+
+    private static func jsonString(_ value: String) -> String {
+        let data = try! JSONEncoder().encode(value)
+        return String(decoding: data, as: UTF8.self)
+    }
+
+    private static func requestJSONObject(_ request: URLRequest) -> [String: Any] {
+        guard let body = requestData(request),
+              let object = try? JSONSerialization.jsonObject(with: body) as? [String: Any] else {
+            return [:]
+        }
+        return object
+    }
+
+    private static func requestData(_ request: URLRequest) -> Data? {
+        if let body = request.httpBody {
+            return body
+        }
+        guard let stream = request.httpBodyStream else { return nil }
+        stream.open()
+        defer { stream.close() }
+
+        var data = Data()
+        var buffer = [UInt8](repeating: 0, count: 1_024)
+        while stream.hasBytesAvailable {
+            let count = stream.read(&buffer, maxLength: buffer.count)
+            guard count >= 0 else { return nil }
+            if count == 0 { break }
+            data.append(buffer, count: count)
+        }
+        return data
+    }
+
+    private static func updatedApplicationJSON(path: String, request: URLRequest) -> String {
+        let fields = requestJSONObject(request)
+        let components = path.split(separator: "/")
+        let type = components.dropLast().last.map(String.init) ?? "ein"
+        let id = components.last.map(String.init) ?? "fixture_application"
+        let status = fields["status"] as? String ?? "IN_REVIEW"
+        let notes = fields["adminNotes"] as? String
+        let identifier = fields[type] as? String
+        let encodedID = jsonString(id)
+        let encodedStatus = jsonString(status)
+        let encodedNotes = notes.map(jsonString) ?? "null"
+        let encodedIdentifier = identifier.map(jsonString) ?? "null"
+        let typeFields = type == "itin"
+            ? #""llcName":null,"llcState":null,"ein":null,"itinReason":"Federal tax reporting","itin":\#(encodedIdentifier)"#
+            : #""llcName":"Fixture LLC","llcState":"WY","ein":\#(encodedIdentifier),"itinReason":null,"itin":null"#
+        return #"{"data":{"id":\#(encodedID),"createdAt":"2026-07-20T08:10:00.123Z","updatedAt":"2026-08-25T09:00:00.000Z","fullName":"Fixture Applicant","email":"fixture@example.com","phone":null,"status":\#(encodedStatus),\#(typeFields),"adminNotes":\#(encodedNotes)}}"#
+    }
+
+    private static func tinyPDFData() -> Data {
+        let stream = "BT /F1 18 Tf 36 100 Td (Fixture PDF) Tj ET\n"
+        let objects = [
+            "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n",
+            "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n",
+            "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 200 200] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>\nendobj\n",
+            "4 0 obj\n<< /Length \(stream.utf8.count) >>\nstream\n\(stream)endstream\nendobj\n",
+            "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n",
+        ]
+        var data = Data("%PDF-1.4\n".utf8)
+        var offsets = [0]
+        for object in objects {
+            offsets.append(data.count)
+            data.append(Data(object.utf8))
+        }
+        let xrefOffset = data.count
+        var xref = "xref\n0 \(objects.count + 1)\n0000000000 65535 f \n"
+        for offset in offsets.dropFirst() {
+            xref += String(format: "%010d 00000 n \n", offset)
+        }
+        xref += "trailer\n<< /Size \(objects.count + 1) /Root 1 0 R >>\nstartxref\n\(xrefOffset)\n%%EOF\n"
+        data.append(Data(xref.utf8))
+        return data
     }
 
     private static let adminProfileJSON = #"""
@@ -282,7 +378,8 @@ final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
             "llcState": "WY",
             "ein": null,
             "itinReason": null,
-            "itin": null
+            "itin": null,
+            "adminNotes": null
           },
           {
             "id": "fixture_application_ein_002",
@@ -296,7 +393,8 @@ final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
             "llcState": "DE",
             "ein": null,
             "itinReason": null,
-            "itin": null
+            "itin": null,
+            "adminNotes": "Waiting for state confirmation."
           },
           {
             "id": "fixture_application_ein_003",
@@ -310,7 +408,8 @@ final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
             "llcState": "NM",
             "ein": "88-7654321",
             "itinReason": null,
-            "itin": null
+            "itin": null,
+            "adminNotes": "EIN issued and delivered."
           },
           {
             "id": "fixture_application_ein_004",
@@ -324,7 +423,8 @@ final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
             "llcState": null,
             "ein": null,
             "itinReason": null,
-            "itin": null
+            "itin": null,
+            "adminNotes": null
           },
           {
             "id": "fixture_application_itin_001",
@@ -338,7 +438,8 @@ final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
             "llcState": null,
             "ein": null,
             "itinReason": "Federal tax reporting for a U.S. single-member LLC",
-            "itin": null
+            "itin": null,
+            "adminNotes": "Customer documents requested."
           },
           {
             "id": "fixture_application_itin_002",
@@ -352,7 +453,8 @@ final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
             "llcState": null,
             "ein": null,
             "itinReason": "Claiming a tax treaty benefit",
-            "itin": null
+            "itin": null,
+            "adminNotes": null
           },
           {
             "id": "fixture_application_itin_003",
@@ -366,7 +468,8 @@ final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
             "llcState": null,
             "ein": null,
             "itinReason": "U.S. federal tax return filing",
-            "itin": "912-70-4567"
+            "itin": "912-70-4567",
+            "adminNotes": "ITIN issued."
           },
           {
             "id": "fixture_application_itin_004",
@@ -380,7 +483,8 @@ final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
             "llcState": null,
             "ein": null,
             "itinReason": "Receiving U.S.-source partnership income",
-            "itin": null
+            "itin": null,
+            "adminNotes": null
           }
         ],
         "nextCursor": null
@@ -529,6 +633,10 @@ final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
               "createdAt": "2026-07-02T08:11:32.123Z",
               "updatedAt": "2026-07-20T10:20:30.123Z",
               "partnerId": "fixture_partner_001",
+              "hasGeneratedPdf": true,
+              "hasSignedPdf": true,
+              "hasFaxedPdf": false,
+              "hasCustomerSignature": true,
               "user": {
                 "id": "fixture_user_004",
                 "email": "nadia.rahman@example.com"

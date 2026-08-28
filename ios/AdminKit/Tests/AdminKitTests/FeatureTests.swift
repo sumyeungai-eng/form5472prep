@@ -30,7 +30,9 @@ extension APIClientTests {
                   "faxStatus":"PENDING","faxedAt":null,"signedAt":"2026-07-20T10:00:00Z",
                   "validationStatus":"PASSED","validationCheckedAt":"2026-07-20T10:01:00.125Z",
                   "createdAt":"2026-07-01T09:00:00Z","updatedAt":"2026-07-21T11:30:00.500Z",
-                  "partnerId":"partner_1","user":{"id":"user_1","email":"owner@example.com"},
+                  "partnerId":"partner_1","hasGeneratedPdf":true,"hasSignedPdf":true,
+                  "hasFaxedPdf":false,"hasCustomerSignature":true,
+                  "user":{"id":"user_1","email":"owner@example.com"},
                   "yearData":[{"id":"year_1","taxYear":2024,
                     "totalAssetsYearEnd":"12345.67","contributions":"5000.25","distributions":"100.00",
                     "reportableTransactions":[
@@ -57,6 +59,10 @@ extension APIClientTests {
 
         let detail = try await client.filingDetail(id: "filing/special")
         #expect(detail.filing.amountPaid == 24_900)
+        #expect(detail.filing.hasGeneratedPdf == true)
+        #expect(detail.filing.hasSignedPdf == true)
+        #expect(detail.filing.hasFaxedPdf == false)
+        #expect(detail.filing.hasCustomerSignature == true)
         #expect(detail.filing.yearData[0].totalAssetsYearEnd == "12345.67")
         #expect(detail.messages.map(\.id) == ["message_1", "message_2"])
         #expect(detail.changeLog[0].beforeJson != nil)
@@ -86,7 +92,9 @@ extension APIClientTests {
                   "reasonableCauseNarrative":null,"faxService":true,"faxStatus":null,
                   "faxedAt":null,"signedAt":null,"validationStatus":null,
                   "validationCheckedAt":null,"createdAt":"2026-07-24T01:00:00Z",
-                  "updatedAt":"2026-07-24T01:00:00.125Z","partnerId":null,"user":null,
+                  "updatedAt":"2026-07-24T01:00:00.125Z","partnerId":null,
+                  "hasGeneratedPdf":false,"hasSignedPdf":false,"hasFaxedPdf":false,
+                  "hasCustomerSignature":false,"user":null,
                   "yearData":[{"id":"year_draft","taxYear":2025,
                     "totalAssetsYearEnd":"0","contributions":"0","distributions":"0",
                     "reportableTransactions":[],"otherTransactionsNote":null}]
@@ -131,7 +139,7 @@ extension APIClientTests {
                 .queryItems?.first(where: { $0.name == "type" })?.value
             let item: String
             if type == "ein" {
-                item = #"{"id":"ein_1","createdAt":"2026-07-01T00:00:00Z","updatedAt":"2026-07-02T00:00:00.100Z","fullName":"Ein Person","email":"ein@example.com","llcName":"Ein LLC","status":"RECEIVED","ein":null,"phone":"+1 555 0100","llcState":"WY"}"#
+                item = #"{"id":"ein_1","createdAt":"2026-07-01T00:00:00Z","updatedAt":"2026-07-02T00:00:00.100Z","fullName":"Ein Person","email":"ein@example.com","llcName":"Ein LLC","status":"RECEIVED","ein":null,"phone":"+1 555 0100","llcState":"WY","adminNotes":"Needs review"}"#
             } else {
                 item = #"{"id":"itin_1","createdAt":"2026-07-03T00:00:00Z","updatedAt":"2026-07-04T00:00:00.200Z","fullName":"Itin Person","email":"itin@example.com","phone":null,"itinReason":"Treaty benefit","status":"IN_REVIEW","itin":"900-70-0000"}"#
             }
@@ -146,6 +154,7 @@ extension APIClientTests {
         let ein = try await client.applications(type: "ein", status: nil, cursor: nil, limit: 25)
         let itin = try await client.applications(type: "itin", status: "", cursor: nil, limit: 25)
         #expect(ein.items[0].llcName == "Ein LLC")
+        #expect(ein.items[0].adminNotes == "Needs review")
         #expect(ein.items[0].itinReason == nil)
         #expect(itin.items[0].itinReason == "Treaty benefit")
         #expect(itin.items[0].llcName == nil)
@@ -239,6 +248,45 @@ extension APIClientTests {
             session: makeStubSession()
         )
     }
+
+    /// A production deploy can lag the client: an older server build omits the
+    /// has*Pdf booleans entirely. Absent must decode as nil (treated as false at
+    /// the call sites), never as a hard decode failure that blanks the screen.
+    @Test func decodesFilingDetailWhenPdfFlagsAreAbsent() async throws {
+        let client = makeFeatureClient()
+        StubURLProtocol.install { request in
+            stubResponse(
+                url: request.url!,
+                status: 200,
+                body: #"""
+                {"data":{"filing":{
+                  "id":"filing_legacy","status":"PAID","tier":"standard","amountPaid":14900,
+                  "llcName":"Legacy Server LLC","llcEin":null,"llcAddress":null,"llcCity":null,
+                  "llcState":null,"llcZip":null,"llcCountry":"USA",
+                  "llcDateIncorporated":null,"llcBusinessActivity":null,
+                  "llcBusinessCode":null,"ownerName":null,"ownerAddress":null,
+                  "ownerCountryCitizenship":null,"ownerCountryTaxResidence":null,
+                  "ownerCountryBusiness":null,"ownerFtin":null,"ownerItin":null,
+                  "ownerReferenceId":null,"taxYears":[2024],"isDiirsp":false,
+                  "reasonableCauseNarrative":null,"faxService":true,"faxStatus":null,
+                  "faxedAt":null,"signedAt":null,"validationStatus":null,
+                  "validationCheckedAt":null,"createdAt":"2026-08-01T00:00:00Z",
+                  "updatedAt":"2026-08-01T00:00:00.500Z","partnerId":null,"user":null,
+                  "yearData":[]
+                },"messages":[],"changeLog":[]}}
+                """#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        let detail = try await client.filingDetail(id: "filing_legacy")
+        #expect(detail.filing.llcName == "Legacy Server LLC")
+        #expect(detail.filing.hasGeneratedPdf == nil)
+        #expect(detail.filing.hasSignedPdf == nil)
+        #expect(detail.filing.hasFaxedPdf == nil)
+        #expect(detail.filing.hasCustomerSignature == nil)
+    }
+
 }
 
 @Suite("Admin formatting")

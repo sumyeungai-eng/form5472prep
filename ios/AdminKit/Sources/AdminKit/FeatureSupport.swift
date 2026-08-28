@@ -48,7 +48,7 @@ public enum AdminFormatting {
                 return "Your session has expired. Sign in again."
             case .notFound:
                 return "The requested item could not be found."
-            case let .server(_, message):
+            case let .server(_, message, _):
                 return message
             case .transport:
                 return "Could not reach the server. Check your connection and try again."
@@ -57,6 +57,10 @@ public enum AdminFormatting {
             }
         }
         return "Something went wrong. Please try again."
+    }
+
+    public static func diagnosticDetail(for error: Error) -> String? {
+        (error as? APIError)?.diagnosticDetail
     }
 }
 
@@ -140,7 +144,14 @@ struct AdminCard<Content: View>: View {
 
 struct ErrorStateView: View {
     let message: String
+    let detail: String?
     let retry: () -> Void
+
+    init(message: String, detail: String? = nil, retry: @escaping () -> Void) {
+        self.message = message
+        self.detail = detail
+        self.retry = retry
+    }
 
     var body: some View {
         VStack(spacing: 14) {
@@ -152,6 +163,15 @@ struct ErrorStateView: View {
             Text(message)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
+            if let detail {
+                Text(detail)
+                    .font(.caption)
+                    .fontDesign(.monospaced)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .textSelection(.enabled)
+            }
             Button("Retry", action: retry)
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)

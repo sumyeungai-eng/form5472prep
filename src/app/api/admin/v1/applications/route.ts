@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 const querySchema = z.object({
   type: z.enum(["ein", "itin"]),
   status: z.string().trim().min(1).optional(),
+  q: z.string().trim().max(200).optional(),
   cursor: z.string().trim().min(1).optional(),
   limit: z.coerce
     .number()
@@ -22,6 +23,7 @@ export const GET = withAdminAuth(async (req) => {
   const parsed = querySchema.safeParse({
     type: url.searchParams.get("type") ?? undefined,
     status: url.searchParams.get("status") ?? undefined,
+    q: url.searchParams.get("q") ?? undefined,
     cursor: url.searchParams.get("cursor") ?? undefined,
     limit: url.searchParams.get("limit") ?? undefined,
   });
@@ -42,7 +44,20 @@ export const GET = withAdminAuth(async (req) => {
     }
 
     const rows = await prisma.einApplication.findMany({
-      where: status?.success ? { status: status.data } : undefined,
+      where: {
+        AND: [
+          ...(status?.success ? [{ status: status.data }] : []),
+          ...(parsed.data.q
+            ? [{
+                OR: [
+                  { fullName: { contains: parsed.data.q, mode: "insensitive" as const } },
+                  { email: { contains: parsed.data.q, mode: "insensitive" as const } },
+                  { llcName: { contains: parsed.data.q, mode: "insensitive" as const } },
+                ],
+              }]
+            : []),
+        ],
+      },
       select: {
         id: true,
         createdAt: true,
@@ -88,7 +103,19 @@ export const GET = withAdminAuth(async (req) => {
   }
 
   const rows = await prisma.itinApplication.findMany({
-    where: status?.success ? { status: status.data } : undefined,
+    where: {
+      AND: [
+        ...(status?.success ? [{ status: status.data }] : []),
+        ...(parsed.data.q
+          ? [{
+              OR: [
+                { fullName: { contains: parsed.data.q, mode: "insensitive" as const } },
+                { email: { contains: parsed.data.q, mode: "insensitive" as const } },
+              ],
+            }]
+          : []),
+      ],
+    },
     select: {
       id: true,
       createdAt: true,

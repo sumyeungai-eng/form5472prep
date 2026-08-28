@@ -65,9 +65,78 @@ struct APIClientTests {
         do {
             _ = try await client.dashboard(range: "bad")
             Issue.record("Expected server error")
-        } catch let APIError.server(code, message) {
+        } catch let APIError.server(code, message, status) {
             #expect(code == "invalid_range")
             #expect(message == "Range is invalid")
+            #expect(status == 422)
+        } catch {
+            Issue.record("Unexpected error: \(error)")
+        }
+    }
+
+    @Test func decodingDiagnosticIdentifiesMissingRequiredKey() async throws {
+        let client = makeClient()
+        StubURLProtocol.install { request in
+            stubResponse(
+                url: request.url!,
+                status: 200,
+                body: #"{"data":{"revenueCents":{"period":12500,"previousPeriod":10000,"changePct":25.0},"filingsByStatus":[],"applicationQueue":{"ein":{},"itin":{}},"needsAttention":[]}}"#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        do {
+            _ = try await client.dashboard(range: "30d")
+            Issue.record("Expected decoding error")
+        } catch let error as APIError {
+            let detail = try #require(error.diagnosticDetail)
+            #expect(detail.contains("keyNotFound"))
+            #expect(detail.contains("orders"))
+        } catch {
+            Issue.record("Unexpected error: \(error)")
+        }
+    }
+
+    @Test func decodingDiagnosticIdentifiesWrongFieldType() async throws {
+        let client = makeClient()
+        StubURLProtocol.install { request in
+            stubResponse(
+                url: request.url!,
+                status: 200,
+                body: #"{"data":{"revenueCents":{"period":12500,"previousPeriod":10000,"changePct":25.0},"orders":{"period":"five","previousPeriod":4,"changePct":25.0},"filingsByStatus":[],"applicationQueue":{"ein":{},"itin":{}},"needsAttention":[]}}"#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        do {
+            _ = try await client.dashboard(range: "30d")
+            Issue.record("Expected decoding error")
+        } catch let error as APIError {
+            let detail = try #require(error.diagnosticDetail)
+            #expect(detail.contains("typeMismatch"))
+            #expect(detail.contains("period"))
+        } catch {
+            Issue.record("Unexpected error: \(error)")
+        }
+    }
+
+    @Test func serverDiagnosticIncludesHTTPStatus() async throws {
+        let client = makeClient()
+        StubURLProtocol.install { request in
+            stubResponse(
+                url: request.url!,
+                status: 500,
+                body: #"{"error":{"code":"internal_error","message":"Internal server error"}}"#
+            )
+        }
+        defer { StubURLProtocol.reset() }
+
+        do {
+            _ = try await client.dashboard(range: "30d")
+            Issue.record("Expected server error")
+        } catch let error as APIError {
+            let detail = try #require(error.diagnosticDetail)
+            #expect(detail.contains("HTTP 500"))
         } catch {
             Issue.record("Unexpected error: \(error)")
         }
@@ -91,9 +160,10 @@ struct APIClientTests {
                 deviceName: "Admin’s iPhone"
             )
             Issue.record("Expected server error")
-        } catch let APIError.server(code, message) {
+        } catch let APIError.server(code, message, status) {
             #expect(code == "invalid_credentials")
             #expect(message == "Email or password is incorrect")
+            #expect(status == 401)
         } catch {
             Issue.record("Unexpected error: \(error)")
         }

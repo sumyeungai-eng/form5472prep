@@ -122,6 +122,10 @@ public struct FilingRecord: Codable, Sendable, Identifiable {
     public let partnerId: String?
     public let user: FilingUser?
     public let yearData: [FilingYearData]
+    public let hasGeneratedPdf: Bool?
+    public let hasSignedPdf: Bool?
+    public let hasFaxedPdf: Bool?
+    public let hasCustomerSignature: Bool?
 
     public init(
         id: String,
@@ -159,7 +163,11 @@ public struct FilingRecord: Codable, Sendable, Identifiable {
         updatedAt: Date,
         partnerId: String?,
         user: FilingUser?,
-        yearData: [FilingYearData]
+        yearData: [FilingYearData],
+        hasGeneratedPdf: Bool? = nil,
+        hasSignedPdf: Bool? = nil,
+        hasFaxedPdf: Bool? = nil,
+        hasCustomerSignature: Bool? = nil
     ) {
         self.id = id
         self.status = status
@@ -197,6 +205,10 @@ public struct FilingRecord: Codable, Sendable, Identifiable {
         self.partnerId = partnerId
         self.user = user
         self.yearData = yearData
+        self.hasGeneratedPdf = hasGeneratedPdf
+        self.hasSignedPdf = hasSignedPdf
+        self.hasFaxedPdf = hasFaxedPdf
+        self.hasCustomerSignature = hasCustomerSignature
     }
 }
 
@@ -298,6 +310,7 @@ public struct ApplicationSummary: Codable, Sendable, Identifiable {
     public let ein: String?
     public let itinReason: String?
     public let itin: String?
+    public let adminNotes: String?
 
     public init(
         id: String,
@@ -311,7 +324,8 @@ public struct ApplicationSummary: Codable, Sendable, Identifiable {
         llcState: String?,
         ein: String?,
         itinReason: String?,
-        itin: String?
+        itin: String?,
+        adminNotes: String?
     ) {
         self.id = id
         self.createdAt = createdAt
@@ -325,6 +339,15 @@ public struct ApplicationSummary: Codable, Sendable, Identifiable {
         self.ein = ein
         self.itinReason = itinReason
         self.itin = itin
+        self.adminNotes = adminNotes
+    }
+}
+
+public struct FilingActionResult: Codable, Sendable {
+    public let replayed: Bool
+
+    public init(replayed: Bool) {
+        self.replayed = replayed
     }
 }
 

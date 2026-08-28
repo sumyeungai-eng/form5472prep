@@ -340,18 +340,36 @@ struct AdminAccountToolbar: ToolbarContent {
 
 struct AdminInlineErrorBanner: View {
     let message: String
+    let detail: String?
     let onDismiss: () -> Void
     @Environment(\.colorScheme) private var colorScheme
+
+    init(message: String, detail: String? = nil, onDismiss: @escaping () -> Void) {
+        self.message = message
+        self.detail = detail
+        self.onDismiss = onDismiss
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .accessibilityHidden(true)
 
-            Text(message)
-                .font(.footnote)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(message)
+                    .font(.footnote)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if let detail {
+                    Text(detail)
+                        .font(.caption)
+                        .fontDesign(.monospaced)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .textSelection(.enabled)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Button(action: onDismiss) {
                 Image(systemName: "xmark")

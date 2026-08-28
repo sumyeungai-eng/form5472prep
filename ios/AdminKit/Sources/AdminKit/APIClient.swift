@@ -7,9 +7,104 @@ import FoundationNetworking
 public enum APIError: Error, Sendable {
     case unauthorized
     case notFound
-    case server(code: String, message: String)
+    case server(code: String, message: String, status: Int)
     case transport(Error)
     case decoding(Error)
+}
+
+public extension APIError {
+    var diagnosticDetail: String? {
+        switch self {
+        case .unauthorized:
+            "HTTP 401"
+        case .notFound:
+            "HTTP 404"
+        case let .server(code, _, status):
+            "HTTP \(status) \(code)"
+        case let .transport(error):
+            Self.shortErrorDescription(error)
+        case let .decoding(error):
+            Self.decodingDetail(for: error)
+        }
+    }
+
+    private static func decodingDetail(for error: Error) -> String {
+        guard let decodingError = error as? DecodingError else {
+            if let urlError = error as? URLError, urlError.code == .zeroByteResource {
+                return "emptyResponseBody"
+            }
+            return shortErrorDescription(error)
+        }
+
+        switch decodingError {
+        case let .keyNotFound(key, context):
+            return "keyNotFound \"\(key.stringValue)\" at \(codingPath(context.codingPath))"
+        case let .typeMismatch(type, context):
+            return "typeMismatch \(type) at \(codingPath(context.codingPath))"
+        case let .valueNotFound(type, context):
+            return "valueNotFound \(type) at \(codingPath(context.codingPath))"
+        case let .dataCorrupted(context):
+            return "dataCorrupted at \(codingPath(context.codingPath))"
+        @unknown default:
+            return "decodingError"
+        }
+    }
+
+    private static func codingPath(_ path: [any CodingKey]) -> String {
+        // Root-level failures have no coding keys, so keep their location explicit.
+        path.isEmpty ? "<root>" : path.map(\.stringValue).joined(separator: ".")
+    }
+
+    private static func shortErrorDescription(_ error: Error) -> String {
+        if let urlError = error as? URLError {
+            return "URLError \(urlError.code.rawValue) \(urlErrorCodeName(urlError.code))"
+        }
+
+        let typeName = String(describing: type(of: error))
+        let description = error.localizedDescription
+        return description.isEmpty ? typeName : "\(typeName): \(description)"
+    }
+
+    private static func urlErrorCodeName(_ code: URLError.Code) -> String {
+        switch code {
+        case .notConnectedToInternet: "notConnectedToInternet"
+        case .timedOut: "timedOut"
+        case .cannotFindHost: "cannotFindHost"
+        case .cannotConnectToHost: "cannotConnectToHost"
+        case .networkConnectionLost: "networkConnectionLost"
+        case .dnsLookupFailed: "dnsLookupFailed"
+        case .badServerResponse: "badServerResponse"
+        case .secureConnectionFailed: "secureConnectionFailed"
+        case .badURL: "badURL"
+        case .unsupportedURL: "unsupportedURL"
+        case .cancelled: "cancelled"
+        case .resourceUnavailable: "resourceUnavailable"
+        case .zeroByteResource: "zeroByteResource"
+        case .cannotDecodeRawData: "cannotDecodeRawData"
+        case .cannotDecodeContentData: "cannotDecodeContentData"
+        case .cannotParseResponse: "cannotParseResponse"
+        case .fileDoesNotExist: "fileDoesNotExist"
+        case .dataLengthExceedsMaximum: "dataLengthExceedsMaximum"
+        case .internationalRoamingOff: "internationalRoamingOff"
+        case .callIsActive: "callIsActive"
+        case .dataNotAllowed: "dataNotAllowed"
+        case .requestBodyStreamExhausted: "requestBodyStreamExhausted"
+        case .appTransportSecurityRequiresSecureConnection:
+            "appTransportSecurityRequiresSecureConnection"
+        case .clientCertificateRejected: "clientCertificateRejected"
+        case .clientCertificateRequired: "clientCertificateRequired"
+        case .userAuthenticationRequired: "userAuthenticationRequired"
+        case .userCancelledAuthentication: "userCancelledAuthentication"
+        case .downloadDecodingFailedMidStream: "downloadDecodingFailedMidStream"
+        case .downloadDecodingFailedToComplete: "downloadDecodingFailedToComplete"
+        case .backgroundSessionRequiresSharedContainer:
+            "backgroundSessionRequiresSharedContainer"
+        case .backgroundSessionInUseByAnotherProcess:
+            "backgroundSessionInUseByAnotherProcess"
+        case .backgroundSessionWasDisconnected: "backgroundSessionWasDisconnected"
+        default: "unknown"
+        }
+    }
 }
 
 public actor APIClient {
@@ -44,6 +139,18 @@ public actor APIClient {
     private struct APNsRegistrationRequest: Encodable {
         let apnsToken: String
         let environment: String
+    }
+
+    private struct FilingActionRequest: Encodable {
+        let action: String
+        let payload: [String: JSONValue]?
+        let idempotencyKey: String?
+        let force: Bool?
+        let reason: String?
+    }
+
+    private struct MessageRequest: Encodable {
+        let body: String
     }
 
     private struct ExchangeResponse: Decodable {
@@ -201,9 +308,65 @@ public actor APIClient {
         return try await decodeResponse(request, authenticated: true)
     }
 
+    public func filingAction(
+        id: String,
+        action: String,
+        payload: [String: JSONValue]? = nil,
+        idempotencyKey: String? = nil,
+        force: Bool? = nil,
+        reason: String? = nil
+    ) async throws -> FilingActionResult {
+        let filingURL = try makeURL(
+            path: "/api/admin/v1/filings",
+            appendingPathSegment: id
+        )
+        var request = makeRequest(
+            url: filingURL.appendingPathComponent("actions"),
+            method: "POST"
+        )
+        request.httpBody = try encode(
+            FilingActionRequest(
+                action: action,
+                payload: payload,
+                idempotencyKey: idempotencyKey,
+                force: force,
+                reason: reason
+            )
+        )
+        return try await decodeResponse(request, authenticated: true)
+    }
+
+    public func filingPdf(id: String, kind: String) async throws -> Data {
+        let filingURL = try makeURL(
+            path: "/api/admin/v1/filings",
+            appendingPathSegment: id
+        )
+        let url = try makeURL(
+            url: filingURL.appendingPathComponent("pdf"),
+            queryItems: [URLQueryItem(name: "kind", value: kind)]
+        )
+        var request = makeRequest(url: url, method: "GET")
+        request.setValue("application/pdf", forHTTPHeaderField: "Accept")
+        return try await perform(request, authenticated: true, expectsBody: true)
+    }
+
+    public func postMessage(filingId: String, body: String) async throws -> FilingMessage {
+        let filingURL = try makeURL(
+            path: "/api/admin/v1/filings",
+            appendingPathSegment: filingId
+        )
+        var request = makeRequest(
+            url: filingURL.appendingPathComponent("messages"),
+            method: "POST"
+        )
+        request.httpBody = try encode(MessageRequest(body: body))
+        return try await decodeResponse(request, authenticated: true)
+    }
+
     public func applications(
         type: String,
         status: String?,
+        query: String? = nil,
         cursor: String?,
         limit: Int
     ) async throws -> (items: [ApplicationSummary], nextCursor: String?) {
@@ -214,6 +377,9 @@ public actor APIClient {
         if let status, !status.isEmpty {
             queryItems.append(URLQueryItem(name: "status", value: status))
         }
+        if let query, !query.isEmpty {
+            queryItems.append(URLQueryItem(name: "q", value: query))
+        }
         if let cursor, !cursor.isEmpty {
             queryItems.append(URLQueryItem(name: "cursor", value: cursor))
         }
@@ -222,6 +388,21 @@ public actor APIClient {
         let request = makeRequest(url: url, method: "GET")
         let page: ApplicationPage = try await decodeResponse(request, authenticated: true)
         return (page.items, page.nextCursor)
+    }
+
+    public func updateApplication(
+        type: String,
+        id: String,
+        fields: [String: JSONValue]
+    ) async throws -> ApplicationSummary {
+        let typeURL = try makeURL(
+            path: "/api/admin/v1/applications",
+            appendingPathSegment: type
+        )
+        let url = try appendPathSegment(id, to: typeURL)
+        var request = makeRequest(url: url, method: "PATCH")
+        request.httpBody = try encode(fields)
+        return try await decodeResponse(request, authenticated: true)
     }
 
     public func partners() async throws -> [PartnerRow] {
@@ -303,12 +484,14 @@ public actor APIClient {
             if let envelope = try? JSONDecoder().decode(ErrorEnvelope.self, from: data) {
                 throw APIError.server(
                     code: envelope.error.code,
-                    message: envelope.error.message
+                    message: envelope.error.message,
+                    status: httpResponse.statusCode
                 )
             }
             throw APIError.server(
                 code: "http_\(httpResponse.statusCode)",
-                message: HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode)
+                message: HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode),
+                status: httpResponse.statusCode
             )
         }
 
@@ -348,8 +531,23 @@ public actor APIClient {
         return finalURL
     }
 
+    private func makeURL(url: URL, queryItems: [URLQueryItem]) throws -> URL {
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            throw APIError.transport(URLError(.badURL))
+        }
+        components.queryItems = queryItems
+        guard let finalURL = components.url else {
+            throw APIError.transport(URLError(.badURL))
+        }
+        return finalURL
+    }
+
     private func makeURL(path: String, appendingPathSegment segment: String) throws -> URL {
         let base = try makeURL(path: path, queryItems: [])
+        return try appendPathSegment(segment, to: base)
+    }
+
+    private func appendPathSegment(_ segment: String, to base: URL) throws -> URL {
         guard var components = URLComponents(url: base, resolvingAgainstBaseURL: false) else {
             throw APIError.transport(URLError(.badURL))
         }

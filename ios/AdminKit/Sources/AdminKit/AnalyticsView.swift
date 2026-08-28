@@ -122,14 +122,15 @@ public struct AnalyticsView: View {
             LoadingStateView(title: "Loading analytics…")
                 .frame(minHeight: 360)
         } else if let errorMessage = viewModel.errorMessage, viewModel.bundle == nil {
-            ErrorStateView(message: errorMessage) {
+            ErrorStateView(message: errorMessage, detail: viewModel.errorDetail) {
                 Task { await viewModel.load() }
             }
             .frame(minHeight: 360)
         } else if let bundle = viewModel.bundle {
             if bundle.revenueSeries.isEmpty
                 && bundle.sourceAttribution.isEmpty
-                && bundle.partnerPerformance.isEmpty {
+                && bundle.partnerPerformance.isEmpty
+                && viewModel.partners.isEmpty {
                 EmptyStateView(
                     title: "No Analytics",
                     message: "There is no reporting data for this period.",
@@ -292,6 +293,65 @@ public struct AnalyticsView: View {
                 }
             }
             .card()
+
+            VStack(alignment: .leading, spacing: 12) {
+                chartTitle("Partners", icon: "person.2.badge.gearshape")
+                if viewModel.partners.isEmpty {
+                    Text("No partners")
+                        .foregroundStyle(AdminTheme.secondaryText)
+                } else {
+                    ForEach(Array(viewModel.partners.enumerated()), id: \.element.id) { index, partner in
+                        if index > 0 {
+                            Divider()
+                                .overlay(AdminTheme.cardBorder)
+                        }
+                        VStack(alignment: .leading, spacing: 6) {
+                            if dynamicTypeSize.isAccessibilitySize {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    partnerIdentity(partner)
+                                    partnerRevenue(partner, bundle: bundle)
+                                }
+                            } else {
+                                HStack(alignment: .firstTextBaseline) {
+                                    partnerIdentity(partner)
+                                    Spacer()
+                                    partnerRevenue(partner, bundle: bundle)
+                                }
+                            }
+                            Text("\(partner.filingCount) filings")
+                                .font(.caption)
+                                .fontDesign(.monospaced)
+                                .foregroundStyle(AdminTheme.secondaryText)
+                                .adminTabularNumbers()
+                        }
+                        .padding(.vertical, 3)
+                    }
+                }
+            }
+            .card()
+        }
+    }
+
+    private func partnerIdentity(_ partner: PartnerRow) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(partner.name)
+                .font(.headline)
+            Text(partner.email)
+                .font(.caption)
+                .foregroundStyle(AdminTheme.secondaryText)
+        }
+    }
+
+    @ViewBuilder
+    private func partnerRevenue(_ partner: PartnerRow, bundle: AnalyticsBundle) -> some View {
+        if let revenue = bundle.partnerPerformance.first(where: { $0.partnerId == partner.id })?
+            .revenueCents {
+            moneyText(cents: revenue)
+        } else {
+            Text("—")
+                .font(.subheadline.weight(.semibold))
+                .fontDesign(.monospaced)
+                .foregroundStyle(AdminTheme.secondaryText)
         }
     }
 

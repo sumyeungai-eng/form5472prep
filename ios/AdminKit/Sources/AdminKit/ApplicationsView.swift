@@ -6,12 +6,10 @@ public struct ApplicationsView: View {
     @ObservedObject private var authManager: AuthManager
     @State private var selectedApplication: ApplicationSummary?
     @State private var isConfirmingSignOut = false
-
-    private let statuses = [
-        "", "RECEIVED", "IN_REVIEW", "AWAITING_CUSTOMER", "SUBMITTED", "COMPLETED", "CANCELLED",
-    ]
+    private let client: APIClient
 
     public init(client: APIClient, authManager: AuthManager) {
+        self.client = client
         self.authManager = authManager
         _viewModel = StateObject(
             wrappedValue: ApplicationsViewModel(client: client, authManager: authManager)
@@ -27,6 +25,7 @@ public struct ApplicationsView: View {
                         isConfirmingSignOut: $isConfirmingSignOut
                     )
                 }
+                searchField
                 controls
             }
             .padding(.horizontal, 16)
@@ -52,10 +51,30 @@ public struct ApplicationsView: View {
             Text("You will need to sign in again to access admin data.")
         }
         .sheet(item: $selectedApplication) { application in
-            ApplicationDetailSheet(application: application, type: viewModel.type)
+            ApplicationDetailSheet(
+                application: application,
+                type: viewModel.type,
+                client: client
+            ) {
+                await viewModel.load()
+            }
+        }
+        .onSubmit(of: .search) {
+            Task { await viewModel.load() }
+        }
+        .onChange(of: viewModel.searchQuery) { oldQuery, newQuery in
+            let oldValue = oldQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+            let newValue = newQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !oldValue.isEmpty, newValue.isEmpty {
+                Task { await viewModel.load() }
+            }
         }
         .onChange(of: viewModel.type) { _, _ in
-            Task { await viewModel.load() }
+            let shouldLoadDirectly = viewModel.status.isEmpty
+            viewModel.status = ""
+            if shouldLoadDirectly {
+                Task { await viewModel.load() }
+            }
         }
         .onChange(of: viewModel.status) { _, _ in
             Task { await viewModel.load() }
@@ -72,6 +91,41 @@ public struct ApplicationsView: View {
         return profile.email
     }
 
+    private var searchField: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(AdminTheme.secondaryText)
+                .accessibilityHidden(true)
+
+            TextField("Applicant, email, or LLC", text: $viewModel.searchQuery)
+                .textFieldStyle(.plain)
+                .submitLabel(.search)
+                .accessibilityLabel("Search applications")
+
+            if !viewModel.searchQuery.isEmpty {
+                Button {
+                    viewModel.searchQuery = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(AdminTheme.secondaryText)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Clear search")
+            }
+        }
+        .padding(.leading, 14)
+        .padding(.trailing, viewModel.searchQuery.isEmpty ? 14 : 2)
+        .frame(minHeight: 48)
+        .background(AdminTheme.cardSurface)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(AdminTheme.cardBorder, lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+
     private var controls: some View {
         VStack(spacing: 10) {
             Picker("Application type", selection: $viewModel.type) {
@@ -86,7 +140,7 @@ public struct ApplicationsView: View {
                     .foregroundStyle(AdminTheme.secondaryText)
                 Spacer()
                 Picker("Status", selection: $viewModel.status) {
-                    ForEach(statuses, id: \.self) { status in
+                    ForEach(applicationStatuses(for: viewModel.type, includesAll: true), id: \.self) { status in
                         Text(status.isEmpty ? "All statuses" : status.replacingOccurrences(of: "_", with: " "))
                             .tag(status)
                     }
@@ -97,13 +151,23 @@ public struct ApplicationsView: View {
         .card(padding: 14)
     }
 
+    private func applicationStatuses(for type: String, includesAll: Bool) -> [String] {
+        var values = type == "ein"
+            ? ["RECEIVED", "IN_REVIEW", "DOCS_REQUESTED", "PAYMENT_PENDING", "PROCESSING", "COMPLETED", "CANCELLED"]
+            : ["RECEIVED", "IN_REVIEW", "DOCS_REQUESTED", "PAYMENT_PENDING", "CAA_SCHEDULED", "W7_SUBMITTED", "COMPLETED", "CANCELLED"]
+        if includesAll {
+            values.insert("", at: 0)
+        }
+        return values
+    }
+
     @ViewBuilder
     private var content: some View {
         if viewModel.isLoading, viewModel.items.isEmpty {
             LoadingStateView(title: "Loading applications…")
         } else if let errorMessage = viewModel.errorMessage, viewModel.items.isEmpty {
             ScrollView {
-                ErrorStateView(message: errorMessage) {
+                ErrorStateView(message: errorMessage, detail: viewModel.errorDetail) {
                     Task { await viewModel.load() }
                 }
                 .frame(maxWidth: .infinity, minHeight: 360)
@@ -126,6 +190,7 @@ public struct ApplicationsView: View {
                 if let errorMessage = viewModel.errorMessage {
                     AdminInlineErrorBanner(
                         message: errorMessage,
+                        detail: viewModel.errorDetail,
                         onDismiss: viewModel.dismissError
                     )
                     .padding(.horizontal, 16)
@@ -198,10 +263,35 @@ private struct ApplicationRow: View {
     }
 }
 
+@MainActor
 private struct ApplicationDetailSheet: View {
     let application: ApplicationSummary
     let type: String
+    let client: APIClient
+    let onSaved: @MainActor () async -> Void
     @Environment(\.dismiss) private var dismiss
+    @State private var status: String
+    @State private var adminNotes: String
+    @State private var identifier: String
+    @State private var isSaving = false
+    @State private var successMessage: String?
+    @State private var errorMessage: String?
+    @State private var errorDetail: String?
+
+    init(
+        application: ApplicationSummary,
+        type: String,
+        client: APIClient,
+        onSaved: @escaping @MainActor () async -> Void
+    ) {
+        self.application = application
+        self.type = type
+        self.client = client
+        self.onSaved = onSaved
+        _status = State(initialValue: application.status)
+        _adminNotes = State(initialValue: application.adminNotes ?? "")
+        _identifier = State(initialValue: type == "ein" ? application.ein ?? "" : application.itin ?? "")
+    }
 
     var body: some View {
         NavigationStack {
@@ -226,12 +316,9 @@ private struct ApplicationDetailSheet: View {
                         ApplicationDetailRow(label: "Full name", value: application.fullName)
                         ApplicationDetailRow(label: "Email", value: application.email)
                         ApplicationDetailRow(label: "Phone", value: application.phone)
-                        ApplicationDetailRow(label: "Status", value: application.status)
                         ApplicationDetailRow(label: "LLC name", value: application.llcName)
                         ApplicationDetailRow(label: "LLC state", value: application.llcState)
-                        ApplicationDetailRow(label: "EIN", value: application.ein)
                         ApplicationDetailRow(label: "ITIN reason", value: application.itinReason)
-                        ApplicationDetailRow(label: "ITIN", value: application.itin)
                         ApplicationDetailRow(
                             label: "Created",
                             value: formatted(application.createdAt)
@@ -240,6 +327,85 @@ private struct ApplicationDetailSheet: View {
                             label: "Updated",
                             value: formatted(application.updatedAt)
                         )
+                    }
+                    .card()
+
+                    VStack(alignment: .leading, spacing: 14) {
+                        AdminEyebrow("Admin update")
+
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Status")
+                                .font(.subheadline.weight(.semibold))
+                            Picker("Status", selection: $status) {
+                                ForEach(statuses, id: \.self) { value in
+                                    Text(value.replacingOccurrences(of: "_", with: " "))
+                                        .tag(value)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        }
+
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(type == "ein" ? "EIN" : "ITIN")
+                                .font(.subheadline.weight(.semibold))
+                            TextField(type == "ein" ? "XX-XXXXXXX" : "XXX-XX-XXXX", text: $identifier)
+                                .textFieldStyle(.roundedBorder)
+                                .frame(minHeight: 44)
+                        }
+
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Admin notes")
+                                .font(.subheadline.weight(.semibold))
+                            TextEditor(text: $adminNotes)
+                                .scrollContentBackground(.hidden)
+                                .padding(10)
+                                .frame(minHeight: 120)
+                                .background(AdminTheme.screenBackground)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                        .stroke(AdminTheme.cardBorder, lineWidth: 1)
+                                )
+                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        }
+
+                        if isSaving {
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                Text("Saving…")
+                            }
+                            .font(.subheadline)
+                            .foregroundStyle(AdminTheme.secondaryText)
+                            .frame(minHeight: 44)
+                        }
+
+                        if let successMessage {
+                            Label(successMessage, systemImage: "checkmark.circle.fill")
+                                .font(.subheadline)
+                                .foregroundStyle(AdminTheme.success)
+                        }
+
+                        if let errorMessage {
+                            Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
+                                .font(.subheadline)
+                                .foregroundStyle(AdminTheme.danger)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        if let errorDetail {
+                            Text(errorDetail)
+                                .font(.caption)
+                                .fontDesign(.monospaced)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .textSelection(.enabled)
+                        }
+
+                        Button("Save changes") {
+                            Task { await save() }
+                        }
+                        .buttonStyle(AdminPrimaryButtonStyle())
+                        .disabled(isSaving)
                     }
                     .card()
                 }
@@ -260,6 +426,44 @@ private struct ApplicationDetailSheet: View {
         }
         .tint(AdminTheme.accent)
         .presentationDetents([.medium, .large])
+    }
+
+    private var statuses: [String] {
+        type == "ein"
+            ? ["RECEIVED", "IN_REVIEW", "DOCS_REQUESTED", "PAYMENT_PENDING", "PROCESSING", "COMPLETED", "CANCELLED"]
+            : ["RECEIVED", "IN_REVIEW", "DOCS_REQUESTED", "PAYMENT_PENDING", "CAA_SCHEDULED", "W7_SUBMITTED", "COMPLETED", "CANCELLED"]
+    }
+
+    private func save() async {
+        isSaving = true
+        errorMessage = nil
+        errorDetail = nil
+        successMessage = nil
+        defer { isSaving = false }
+
+        let trimmedNotes = adminNotes.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedIdentifier = identifier.trimmingCharacters(in: .whitespacesAndNewlines)
+        var fields: [String: JSONValue] = [
+            "status": .string(status),
+            "adminNotes": trimmedNotes.isEmpty ? .null : .string(trimmedNotes),
+        ]
+        fields[type] = trimmedIdentifier.isEmpty ? .null : .string(trimmedIdentifier)
+
+        do {
+            let updated = try await client.updateApplication(
+                type: type,
+                id: application.id,
+                fields: fields
+            )
+            status = updated.status
+            adminNotes = updated.adminNotes ?? ""
+            identifier = type == "ein" ? updated.ein ?? "" : updated.itin ?? ""
+            successMessage = "Application updated"
+            await onSaved()
+        } catch {
+            errorMessage = AdminFormatting.errorMessage(for: error)
+            errorDetail = AdminFormatting.diagnosticDetail(for: error)
+        }
     }
 
     private func formatted(_ date: Date) -> String {
