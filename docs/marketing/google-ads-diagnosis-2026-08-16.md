@@ -560,3 +560,81 @@ Added (all Level: Campaign, both description lines filled, saved 26 Aug 2026 14:
 - **Assessment:** removing the $3 max-CPC cap and adding head-term keywords has not yet produced a visible delivery increase — still essentially flat at 8 impressions/week, 0 clicks, concentrated entirely on the single broadest keyword. Worth re-checking again after the next full day or two now that the cap is off.
 
 No bids, budget, keywords, or campaign status were changed this session (Task 3 was read-only as instructed).
+
+## Session 12 — stale $199 assets + headline pinning (2026-08-28)
+
+### Task 1 — Purged stale/incorrect assets (campaign scope; account scope only had Business name/logo, no price text)
+Removed 4 assets (all campaign-level, exact text):
+| Asset removed | Type | Status before removal | Impr (week) |
+|---|---|---|---|
+| From $199 | Callout | Eligible | 6 |
+| Fax Filing Included | Callout (duplicate of "IRS Fax Filing Included") | Eligible | 2 |
+| Standard — $199.00/yr, Rush — $279.00/yr, Premium — $449.00/yr | Price asset | Eligible | 3 |
+| Pricing — From $199 (sitelink: "Fixed flat-rate, no hidden fees / Fax filing included on every plan") | Sitelink | Paused | 0 |
+
+The Price asset was not named in the brief but matched the "any asset containing an incorrect/stale price" rule even more badly than the callout — it advertised annual-subscription pricing ($199/yr, $279/yr, $449/yr) that contradicts both the current one-time pricing and the "No Subscription" callout. Removed it too.
+
+Kept exactly the 4 required callouts (Accountant-Reviewed, IRS Fax Filing Included, No Subscription, Money-Back Guarantee) plus other unrelated eligible/paused assets untouched. Two sitelinks were left alone despite Disapproved status because their text is not a stale price and is out of scope: "Pricing Information" (Disapproved, Government Documents and Official Services policy) and "Pricing - $149 Flat" (Disapproved, same policy — its own text "Standard $149, Express $199... No subscription" is actually correct pricing, just currently disapproved for an unrelated policy reason). Remaining campaign asset count after removal: 25 (was 29).
+
+### Task 2 — Automatically created assets / Auto-apply
+- **AI Max "Text customisation" / "Final URL expansion"** (the modern name for automatically-created assets) — both checkboxes **unchecked**, "Optimise your campaign with AI Max" toggle **OFF**. Already in the safe state; no change needed.
+- **Auto-apply recommendations** — verified individually, not just via the "0 of 21 selected" counter: all 7 "Maintain your ads" toggles and all 14 "Grow your business" toggles are **unchecked/OFF** (confirmed by expanding both sections and reading every checkbox). No change needed — prior session's attempt had in fact succeeded.
+
+### Task 3 — Pinned "Form 5472" headline to position 1 (all 4 active ads)
+The Ads grid was blank (ad-blocker `.ess-table-canvas{display:none}` issue, confirmed via accessibility-tree read — the grid renders zero real rows). Used the bulk-upload CSV route: downloaded Google's own "Responsive search ad" template, exported the live "Ad report" CSV (Ads → Download → .csv) to get exact current headline text/order per ad group, built an Action=Edit CSV reproducing every headline/description verbatim and adding `1` only to the 3 target "Headline N position" columns, then Preview → Apply via Tools → Bulk actions → Uploads.
+
+All 4 changes applied successfully (0 errors), verified twice — once in the upload's own change log and once via a fresh CSV re-export showing the pins live:
+| Ad group | Ad ID | Headlines pinned to position 1 |
+|---|---|---|
+| AG1 - Filing Service | 822242517758 | "Form 5472 Filing — $149 Flat", "Done-For-You Form 5472 Filing", "File Form 5472 Online Today" |
+| AG2 - Foreign-Owned LLC | 822170710012 | "Foreign-Owned LLC? File 5472", "Form 5472 For Foreign Owners", "Form 5472 + Pro Forma 1120" |
+| AG3 - CPA Help | 822243342473 | "Form 5472 Help — $149 Flat", "Form 5472 Done For You", "Form 5472 + Pro Forma 1120" |
+| AG4 - Late Filing & Penalty | 822243630470 | "Late Form 5472? File It Now", "Never Filed Form 5472?", "Form 5472 + Pro Forma 1120" |
+
+All 3 listed headlines existed in every ad group — nothing to report as missing. Nothing was pinned to position 2 or 3. Scanned every headline/description across all 4 active ads plus the 4 paused (old) ads for any "$199"-as-starting-price text: **none found anywhere** — confirms the live "From $199" the user saw was coming from the removed callout/price assets (Task 1), not from ad copy itself.
+
+Side effect (not requested, harmless): re-saving each ad normalized one unrelated headline's dash character from an en-dash to a hyphen ("Ready In 5–7 Business Days" → "Ready In 5-7 Business Days") — Google's own upload processor did this on every ad touched, cosmetically invisible, no wording change.
+
+### Task 4 — Verification
+- **Ad preview and diagnosis tool** (search term "form 5472 filing service", location United States, mobile): returned **"Your ad isn't showing"** — reason given: "Your ad's Destination URL isn't working" for the AG1 ad. This looks like a false/stale flag from that specific diagnostic tool, not a real outage — the destination URL (`https://www.form5472prep.com/form-5472-filing`) loads fine in-browser, and **today's live delivery numbers below show real impressions and clicks flowing**, so ads are actively serving. Flagging for awareness, not fixing (out of scope for this session).
+- **Definitive verification instead came from the post-apply CSV re-export** (see Task 3 table above): every active ad's Headline 1 slot is now one of the pinned "Form 5472 ..." headlines, and a full-text grep across all headlines/descriptions of all 8 ads (4 active + 4 paused) found zero occurrences of "199" outside the legitimate "Express $199" context.
+- **Campaign status:** Enabled · Status: Eligible · Type: Search · Budget: US$20.00/day (unchanged).
+- **Today (27 Aug 2026, account timezone GMT-04:00 Eastern):** Impressions 90, Clicks 4, Avg. CPC $3.38, Cost $13.50 — campaign is actively delivering.
+
+No bids, budget, or keyword changes made this session.
+
+## Session 13 — budget drift cause + reset (2026-08-28)
+
+### Task 1 — Change history (Last 30 days, Budget filter, campaign "Form5472 Filing Service")
+Every budget-amount change in the last 30 days — 7 rows total, all attributed to **user "sumyeungus@gmail.com"**, tool **"Web client (manual)"** (verbatim). No row anywhere reads "Google Ads automated," "Automatically applied recommendation," or "Google AI" — every budget edit was a manual save through the Ads web UI logged in as this account, not Google-side automation:
+
+| Date & time (ET) | Change | Old → New |
+|---|---|---|
+| 26 Aug 2026, 07:53:00 | Budget amount increased | US$10.00 → US$20.00 |
+| 26 Aug 2026, 02:26:09 | Budget amount decreased | US$20.00 → US$10.00 |
+| 26 Aug 2026, 02:06:20 | Budget amount increased | US$10.00 → US$20.00 |
+| 25 Aug 2026, 14:38:51 | Budget amount decreased | US$12.00 → US$10.00 |
+| 25 Aug 2026, 13:40:48 | Budget amount increased | US$10.00 → US$12.00 |
+| 25 Aug 2026, 06:36:48 | Budget amount decreased | US$15.00 → US$10.00 |
+| 4 Aug 2026, 20:37:40 | Budget amount decreased | US$20.00 → US$15.00 |
+
+Bidding filter (same 30-day window) showed exactly **1** row: 25 Aug 2026, 14:57:10, sumyeungus@gmail.com, Web client (manual), "Campaign changed" — detail line "Bid limit was US$3.00" (the max-CPC bid-limit removal from a prior session, not a new change).
+
+**Conclusion:** the drift is not Google automation (auto-apply and auto-assets were already confirmed OFF, and change history shows no automated actor at all) — every single budget change, including the toggling between $10/$12/$15/$20 on 25–26 Aug, was a manual "Web client" save under the sumyeungus@gmail.com login. Whether that's the owner testing, someone else with access to this Google account, or a saved-session script logged in as this user, the change history cannot distinguish further — it only records the account, not the physical person or device.
+
+### Task 2 — Budget reset
+- **Before:** US$20.00/day (confirmed on Campaign settings panel before editing).
+- Set Budget field to 10.00, clicked Save.
+- **Reloaded the Campaigns page and re-read:** campaign header shows "Budget: US$10.00/day," and the Campaigns table row for "Form5472 Filing Service" shows Budget **US$10.00/day**, Status Eligible. Persisted correctly.
+
+### Task 3 — Shared budget check
+Not shared. The Settings → Budget panel is a plain "Set your average daily budget for this campaign" field with no portfolio/shared-budget picker or shared-budget name — this is a standard per-campaign budget, not a shared budget used by other campaigns in the account.
+
+### Task 4 — Today's numbers (27 Aug 2026, account timezone GMT-04:00 Eastern)
+- Impressions: 89 · Clicks: 4 · Avg. CPC: US$3.38 · Cost: US$13.50 · CTR: 4.49%
+- Campaign status: Enabled · Eligible · Type: Search
+- Search impr. share: **22.62%** · Search lost IS (rank): **76.19%** · Search lost IS (budget): **1.19%**
+
+**Read:** the budget cap is costing almost nothing right now (1.19% lost to budget) — the overwhelming majority of missed impression share (76.19%) is lost to Rank, not budget. Resetting to $10/day should not meaningfully change today's traffic pattern; Quality Score / ad rank is the binding constraint, not the daily cap.
+
+No bids, keywords, ads, or campaign status changed this session beyond the Task 2 budget edit.
