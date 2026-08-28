@@ -15,6 +15,17 @@ const MAX_MESSAGE = 4000;
 const MAX_EMAIL = 320;
 const MAX_NAME = 200;
 
+const TOPIC_LABELS = {
+  service: "Pre-sales question",
+  "in-progress": "Filing in progress",
+  "late-years": "Late or past years (DIIRSP)",
+  "ein-itin": "EIN or ITIN",
+  "irs-notice": "IRS notice or penalty",
+  billing: "Billing or refund",
+  partner: "Partner enquiry",
+  other: "Other",
+} as const;
+
 export async function POST(req: Request) {
   const rl = await rateLimit("ask", clientIp(req), 5, 600);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
@@ -24,6 +35,11 @@ export async function POST(req: Request) {
   const name = typeof body.name === "string" ? body.name.trim().slice(0, MAX_NAME) : "";
   const email = typeof body.email === "string" ? body.email.trim().slice(0, MAX_EMAIL) : "";
   const message = typeof body.message === "string" ? body.message.trim().slice(0, MAX_MESSAGE) : "";
+  const topic =
+    typeof body.topic === "string" && Object.prototype.hasOwnProperty.call(TOPIC_LABELS, body.topic)
+      ? (body.topic as keyof typeof TOPIC_LABELS)
+      : null;
+  const topicLabel = topic ? TOPIC_LABELS[topic] : "";
   // Honeypot — bots fill hidden fields; humans never see it. Silently accept
   // (so the bot thinks it worked) but don't email.
   const honeypot = typeof body.company === "string" ? body.company.trim() : "";
@@ -47,12 +63,13 @@ export async function POST(req: Request) {
     await sendEmail({
       to: env.adminEmail,
       replyTo: email,
-      subject: `[Website question] ${name ? name + " — " : ""}${message.slice(0, 60)}${message.length > 60 ? "…" : ""}`,
+      subject: `[Website question] ${topicLabel ? topicLabel + " — " : ""}${name ? name + " — " : ""}${message.slice(0, 60)}${message.length > 60 ? "…" : ""}`,
       text: [
         "New question from the website widget",
         "",
         `Name:  ${displayName}`,
         `Email: ${email}`,
+        topicLabel ? `Topic: ${topicLabel}` : "",
         pageUrl ? `Page:  ${pageUrl}` : "",
         "",
         "Message:",
@@ -67,6 +84,7 @@ export async function POST(req: Request) {
         <table role="presentation" cellpadding="0" cellspacing="0" style="font-size:14px;border-collapse:collapse;">
           <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Name</td><td style="color:#0f172a;font-weight:600;">${safe(displayName)}</td></tr>
           <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Email</td><td><a href="mailto:${safe(email)}" style="color:#1e3a8a;">${safe(email)}</a></td></tr>
+          ${topicLabel ? `<tr><td style="padding:6px 16px 6px 0;color:#64748b;">Topic</td><td style="color:#0f172a;">${safe(topicLabel)}</td></tr>` : ""}
           ${pageUrl ? `<tr><td style="padding:6px 16px 6px 0;color:#64748b;">Page</td><td style="color:#0f172a;">${safe(pageUrl)}</td></tr>` : ""}
         </table>
         <p style="margin:16px 0 4px;color:#64748b;font-size:13px;">Message</p>

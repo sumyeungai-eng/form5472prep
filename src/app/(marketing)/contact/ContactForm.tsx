@@ -30,6 +30,7 @@ export function ContactForm() {
         body: JSON.stringify({
           name: valueFrom(formData, "name"),
           email: valueFrom(formData, "email"),
+          topic: valueFrom(formData, "topic"),
           message: valueFrom(formData, "message"),
           company: valueFrom(formData, "company"),
           pageUrl: "/contact",
@@ -60,11 +61,17 @@ export function ContactForm() {
   if (isSuccess) {
     return (
       <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm leading-relaxed text-emerald-900">
-        Thanks — we&apos;ve received your question. We reply within 1 business day, from{" "}
-        <a href={`mailto:${SUPPORT_EMAIL}`} className="font-medium underline underline-offset-2">
-          {SUPPORT_EMAIL}
-        </a>
-        .
+        <p>
+          Thanks — we&apos;ve received your question. We reply within 1 business day, from{" "}
+          <a href={`mailto:${SUPPORT_EMAIL}`} className="font-medium underline underline-offset-2">
+            {SUPPORT_EMAIL}
+          </a>
+          .
+        </p>
+        <p className="mt-2">
+          You&apos;ll get a reply from {SUPPORT_EMAIL} — if it doesn&apos;t arrive, check your
+          spam folder.
+        </p>
       </div>
     );
   }
@@ -73,7 +80,7 @@ export function ContactForm() {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-ink">
-          Name
+          Name <span className="font-normal text-slate-400">(optional)</span>
         </label>
         <input
           id="name"
@@ -96,6 +103,31 @@ export function ContactForm() {
           required
           className="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-slate-400 focus:border-accent focus:ring-4 focus:ring-accent/10"
         />
+        <p className="mt-2 text-xs text-slate-500">
+          We only use this to reply — no marketing.
+        </p>
+      </div>
+
+      <div>
+        <label htmlFor="topic" className="block text-sm font-medium text-ink">
+          What&apos;s this about?
+        </label>
+        <select
+          id="topic"
+          name="topic"
+          defaultValue="service"
+          required
+          className="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-ink shadow-sm outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/10"
+        >
+          <option value="service">Pre-sales question</option>
+          <option value="in-progress">Filing in progress</option>
+          <option value="late-years">Late or past years (DIIRSP)</option>
+          <option value="ein-itin">EIN or ITIN</option>
+          <option value="irs-notice">IRS notice or penalty</option>
+          <option value="billing">Billing or refund</option>
+          <option value="partner">Partner enquiry</option>
+          <option value="other">Other</option>
+        </select>
       </div>
 
       <div>
@@ -108,6 +140,7 @@ export function ContactForm() {
           rows={6}
           maxLength={4000}
           required
+          placeholder="Tell us your LLC's state, which tax years are involved, and whether the LLC already has an EIN — with those three details we can usually answer in one reply."
           className="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-slate-400 focus:border-accent focus:ring-4 focus:ring-accent/10"
         />
       </div>
@@ -130,13 +163,22 @@ export function ContactForm() {
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="inline-flex w-full items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-      >
-        {isSubmitting ? "Sending..." : "Send question"}
-      </button>
+      <div>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="inline-flex w-full items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        >
+          {isSubmitting ? "Sending..." : "Send question"}
+        </button>
+        <p className="mt-3 text-xs leading-relaxed text-slate-500">
+          We never ask for your SSN, ITIN, or bank details by email. Read our{" "}
+          <a href="/privacy" className="font-medium text-accent hover:underline">
+            Privacy Policy
+          </a>
+          .
+        </p>
+      </div>
     </form>
   );
 }
