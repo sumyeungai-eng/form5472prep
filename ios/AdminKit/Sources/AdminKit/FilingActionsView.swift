@@ -296,7 +296,7 @@ public struct FilingActionsView: View {
                 ? "Status changed (already completed)"
                 : "Status changed"
             await onRefresh()
-        } catch let APIError.server(code, message) where code == "illegal_transition" {
+        } catch let APIError.server(code, message, _) where code == "illegal_transition" {
             illegalTransitionMessage = message
         } catch {
             errorMessage = actionErrorMessage(error)
@@ -304,7 +304,7 @@ public struct FilingActionsView: View {
     }
 
     private func actionErrorMessage(_ error: Error) -> String {
-        if case let APIError.server(code, message) = error {
+        if case let APIError.server(code, message, _) = error {
             switch code {
             case "operation_in_progress":
                 return "This operation is already running. Try again in a moment."

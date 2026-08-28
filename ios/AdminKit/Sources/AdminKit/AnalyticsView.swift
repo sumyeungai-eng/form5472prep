@@ -122,7 +122,7 @@ public struct AnalyticsView: View {
             LoadingStateView(title: "Loading analytics…")
                 .frame(minHeight: 360)
         } else if let errorMessage = viewModel.errorMessage, viewModel.bundle == nil {
-            ErrorStateView(message: errorMessage) {
+            ErrorStateView(message: errorMessage, detail: viewModel.errorDetail) {
                 Task { await viewModel.load() }
             }
             .frame(minHeight: 360)

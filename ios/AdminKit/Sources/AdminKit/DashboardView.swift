@@ -76,7 +76,7 @@ public struct DashboardView: View {
             LoadingStateView(title: "Loading dashboard…")
                 .frame(minHeight: 360)
         } else if let errorMessage = viewModel.errorMessage, viewModel.summary == nil {
-            ErrorStateView(message: errorMessage) {
+            ErrorStateView(message: errorMessage, detail: viewModel.errorDetail) {
                 Task { await viewModel.load() }
             }
             .frame(minHeight: 360)

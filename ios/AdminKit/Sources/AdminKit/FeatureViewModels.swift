@@ -7,6 +7,7 @@ public final class DashboardViewModel: ObservableObject {
     @Published public private(set) var summary: DashboardSummary?
     @Published public private(set) var isLoading = false
     @Published public private(set) var errorMessage: String?
+    @Published public private(set) var errorDetail: String?
 
     private let client: APIClient
     private let authManager: AuthManager
@@ -19,6 +20,7 @@ public final class DashboardViewModel: ObservableObject {
     public func load() async {
         isLoading = true
         errorMessage = nil
+        errorDetail = nil
         let requestedRange = range
         defer { isLoading = false }
         do {
@@ -29,6 +31,7 @@ public final class DashboardViewModel: ObservableObject {
             await authManager.signOut()
         } catch {
             errorMessage = AdminFormatting.errorMessage(for: error)
+            errorDetail = AdminFormatting.diagnosticDetail(for: error)
         }
     }
 }
@@ -42,6 +45,7 @@ public final class FilingsViewModel: ObservableObject {
     @Published public private(set) var isLoadingMore = false
     @Published public private(set) var hasLoaded = false
     @Published public private(set) var errorMessage: String?
+    @Published public private(set) var errorDetail: String?
 
     private let client: APIClient
     private let authManager: AuthManager
@@ -59,6 +63,7 @@ public final class FilingsViewModel: ObservableObject {
         if reset {
             isLoading = true
             errorMessage = nil
+            errorDetail = nil
         } else {
             guard pagination.shouldRequestNextPage(isLoading: isLoadingMore) else { return }
             isLoadingMore = true
@@ -83,10 +88,12 @@ public final class FilingsViewModel: ObservableObject {
             }
             items = pagination.items
             errorMessage = nil
+            errorDetail = nil
         } catch APIError.unauthorized {
             await authManager.signOut()
         } catch {
             errorMessage = AdminFormatting.errorMessage(for: error)
+            errorDetail = AdminFormatting.diagnosticDetail(for: error)
         }
     }
 
@@ -97,6 +104,7 @@ public final class FilingsViewModel: ObservableObject {
 
     public func dismissError() {
         errorMessage = nil
+        errorDetail = nil
     }
 }
 
@@ -106,6 +114,7 @@ public final class FilingDetailViewModel: ObservableObject {
     @Published public private(set) var isLoading = false
     @Published public private(set) var hasLoaded = false
     @Published public private(set) var errorMessage: String?
+    @Published public private(set) var errorDetail: String?
 
     private let filingID: String
     private let client: APIClient
@@ -120,6 +129,7 @@ public final class FilingDetailViewModel: ObservableObject {
     public func load() async {
         isLoading = true
         errorMessage = nil
+        errorDetail = nil
         defer {
             isLoading = false
             hasLoaded = true
@@ -130,6 +140,7 @@ public final class FilingDetailViewModel: ObservableObject {
             await authManager.signOut()
         } catch {
             errorMessage = AdminFormatting.errorMessage(for: error)
+            errorDetail = AdminFormatting.diagnosticDetail(for: error)
         }
     }
 }
@@ -144,6 +155,7 @@ public final class ApplicationsViewModel: ObservableObject {
     @Published public private(set) var isLoadingMore = false
     @Published public private(set) var hasLoaded = false
     @Published public private(set) var errorMessage: String?
+    @Published public private(set) var errorDetail: String?
 
     private let client: APIClient
     private let authManager: AuthManager
@@ -161,6 +173,7 @@ public final class ApplicationsViewModel: ObservableObject {
         if reset {
             isLoading = true
             errorMessage = nil
+            errorDetail = nil
         } else {
             guard pagination.shouldRequestNextPage(isLoading: isLoadingMore) else { return }
             isLoadingMore = true
@@ -186,10 +199,12 @@ public final class ApplicationsViewModel: ObservableObject {
             }
             items = pagination.items
             errorMessage = nil
+            errorDetail = nil
         } catch APIError.unauthorized {
             await authManager.signOut()
         } catch {
             errorMessage = AdminFormatting.errorMessage(for: error)
+            errorDetail = AdminFormatting.diagnosticDetail(for: error)
         }
     }
 
@@ -200,6 +215,7 @@ public final class ApplicationsViewModel: ObservableObject {
 
     public func dismissError() {
         errorMessage = nil
+        errorDetail = nil
     }
 }
 
@@ -211,6 +227,7 @@ public final class AnalyticsViewModel: ObservableObject {
     @Published public private(set) var partners: [PartnerRow] = []
     @Published public private(set) var isLoading = false
     @Published public private(set) var errorMessage: String?
+    @Published public private(set) var errorDetail: String?
 
     private let client: APIClient
     private let authManager: AuthManager
@@ -223,6 +240,7 @@ public final class AnalyticsViewModel: ObservableObject {
     public func load() async {
         isLoading = true
         errorMessage = nil
+        errorDetail = nil
         let requestedRange = range
         let requestedBucket = bucket
         defer { isLoading = false }
@@ -240,6 +258,7 @@ public final class AnalyticsViewModel: ObservableObject {
             await authManager.signOut()
         } catch {
             errorMessage = AdminFormatting.errorMessage(for: error)
+            errorDetail = AdminFormatting.diagnosticDetail(for: error)
         }
     }
 }

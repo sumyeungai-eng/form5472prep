@@ -144,7 +144,7 @@ public struct FilingsView: View {
             LoadingStateView(title: "Loading filings…")
         } else if let errorMessage = viewModel.errorMessage, viewModel.items.isEmpty {
             ScrollView {
-                ErrorStateView(message: errorMessage) {
+                ErrorStateView(message: errorMessage, detail: viewModel.errorDetail) {
                     Task { await viewModel.load() }
                 }
                 .frame(maxWidth: .infinity, minHeight: 360)
@@ -167,6 +167,7 @@ public struct FilingsView: View {
                 if let errorMessage = viewModel.errorMessage {
                     AdminInlineErrorBanner(
                         message: errorMessage,
+                        detail: viewModel.errorDetail,
                         onDismiss: viewModel.dismissError
                     )
                     .padding(.horizontal, 16)
@@ -275,6 +276,7 @@ public struct FilingDetailView: View {
     @State private var messageBody = ""
     @State private var isSendingMessage = false
     @State private var messageError: String?
+    @State private var messageErrorDetail: String?
     private let filingID: String
     private let client: APIClient
 
@@ -295,7 +297,7 @@ public struct FilingDetailView: View {
             if viewModel.isLoading, viewModel.detail == nil {
                 LoadingStateView(title: "Loading filing…")
             } else if let errorMessage = viewModel.errorMessage, viewModel.detail == nil {
-                ErrorStateView(message: errorMessage) {
+                ErrorStateView(message: errorMessage, detail: viewModel.errorDetail) {
                     Task { await viewModel.load() }
                 }
             } else if let detail = viewModel.detail {
@@ -564,6 +566,15 @@ public struct FilingDetailView: View {
                         .foregroundStyle(AdminTheme.danger)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+
+                if let messageErrorDetail {
+                    Text(messageErrorDetail)
+                        .font(.caption)
+                        .fontDesign(.monospaced)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .textSelection(.enabled)
+                }
             }
         }
     }
@@ -583,6 +594,7 @@ public struct FilingDetailView: View {
         guard !body.isEmpty, body.count <= 5_000 else { return }
         isSendingMessage = true
         messageError = nil
+        messageErrorDetail = nil
         defer { isSendingMessage = false }
         do {
             let message = try await client.postMessage(filingId: filingID, body: body)
@@ -590,6 +602,7 @@ public struct FilingDetailView: View {
             messageBody = ""
         } catch {
             messageError = AdminFormatting.errorMessage(for: error)
+            messageErrorDetail = AdminFormatting.diagnosticDetail(for: error)
         }
     }
 

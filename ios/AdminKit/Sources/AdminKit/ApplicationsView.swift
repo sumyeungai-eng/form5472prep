@@ -167,7 +167,7 @@ public struct ApplicationsView: View {
             LoadingStateView(title: "Loading applications…")
         } else if let errorMessage = viewModel.errorMessage, viewModel.items.isEmpty {
             ScrollView {
-                ErrorStateView(message: errorMessage) {
+                ErrorStateView(message: errorMessage, detail: viewModel.errorDetail) {
                     Task { await viewModel.load() }
                 }
                 .frame(maxWidth: .infinity, minHeight: 360)
@@ -190,6 +190,7 @@ public struct ApplicationsView: View {
                 if let errorMessage = viewModel.errorMessage {
                     AdminInlineErrorBanner(
                         message: errorMessage,
+                        detail: viewModel.errorDetail,
                         onDismiss: viewModel.dismissError
                     )
                     .padding(.horizontal, 16)
@@ -275,6 +276,7 @@ private struct ApplicationDetailSheet: View {
     @State private var isSaving = false
     @State private var successMessage: String?
     @State private var errorMessage: String?
+    @State private var errorDetail: String?
 
     init(
         application: ApplicationSummary,
@@ -390,6 +392,15 @@ private struct ApplicationDetailSheet: View {
                                 .fixedSize(horizontal: false, vertical: true)
                         }
 
+                        if let errorDetail {
+                            Text(errorDetail)
+                                .font(.caption)
+                                .fontDesign(.monospaced)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .textSelection(.enabled)
+                        }
+
                         Button("Save changes") {
                             Task { await save() }
                         }
@@ -426,6 +437,7 @@ private struct ApplicationDetailSheet: View {
     private func save() async {
         isSaving = true
         errorMessage = nil
+        errorDetail = nil
         successMessage = nil
         defer { isSaving = false }
 
@@ -450,6 +462,7 @@ private struct ApplicationDetailSheet: View {
             await onSaved()
         } catch {
             errorMessage = AdminFormatting.errorMessage(for: error)
+            errorDetail = AdminFormatting.diagnosticDetail(for: error)
         }
     }
 

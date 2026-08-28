@@ -232,7 +232,7 @@ public struct SignInView: View {
     }
 
     private static func message(for error: Error) -> String {
-        if case let APIError.server(code, _) = error {
+        if case let APIError.server(code, _, _) = error {
             switch code {
             case "invalid_credentials":
                 return "Email or password is incorrect."
