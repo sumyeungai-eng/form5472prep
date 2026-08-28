@@ -118,7 +118,7 @@ export default function ItinPage() {
               Non-residents applying for an ITIN usually have to mail their original passport to the IRS
               and wait months to get it back. Through our platform, your identity documents are reviewed
               and certified directly by an{" "}
-              <strong className="text-white">independent IRS-authorized Certifying Acceptance Agent (CAA)</strong>{" "}
+              <strong className="text-white">IRS-authorized Certifying Acceptance Agent (CAA)</strong>{" "}
               — meaning the IRS accepts a certified copy, and your original passport stays safely with you.
             </p>
             <ul className="mt-6 space-y-2">
