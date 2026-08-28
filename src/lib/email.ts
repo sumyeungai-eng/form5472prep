@@ -590,8 +590,8 @@ function formatFaxProofRows(proof: FaxProof): string {
     .map(
       ([k, v]) => `
         <tr>
-          <td style="padding:6px 12px 6px 0;color:${EMAIL_STYLES.subtle};font-size:13px;white-space:nowrap;">${escapeHtml(k)}</td>
-          <td style="padding:6px 0;color:${EMAIL_STYLES.ink};font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${escapeHtml(v)}</td>
+          <td style="padding:6px 12px 6px 0;color:${EMAIL_STYLES.subtle};font-size:13px;vertical-align:top;">${escapeHtml(k)}</td>
+          <td style="padding:6px 0;color:${EMAIL_STYLES.ink};font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;">${escapeHtml(v)}</td>
         </tr>`,
     )
     .join("");
@@ -616,7 +616,7 @@ export async function sendFaxDeliveredEmail(args: {
   const proofTable = proof
     ? `
       <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Proof of fax</p>
-      <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
         ${formatFaxProofRows(proof)}
       </table>
       ${signedPdfBytes ? `<p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};font-size:13px;">The exact PDF transmitted to the IRS is available for download in your portal.</p>` : ""}
