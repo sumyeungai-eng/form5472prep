@@ -156,12 +156,12 @@ function shell({ preheader, heading, bodyHtml, cta, unsubscribeUrl, closingHtml 
     <tr>
       <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:${EMAIL_STYLES.white};border:1px solid ${EMAIL_STYLES.border};border-radius:12px;overflow:hidden;">
-          <!-- Brand header -->
+          <!-- Brand header: hosted banner. The navy cell background + white alt text
+               keep the header on-brand in clients that block remote images. -->
           <tr>
-            <td style="padding:24px 32px;border-bottom:1px solid ${EMAIL_STYLES.border};background:${EMAIL_STYLES.white};">
-              <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;">
-                <span style="color:${EMAIL_STYLES.ink};">Form</span><span style="color:${EMAIL_STYLES.brand};">5472</span><span style="color:${EMAIL_STYLES.ink};"> Prep</span>
-              </div>
+            <td style="background:#0d1b3d;border-bottom:1px solid ${EMAIL_STYLES.border};">
+              <img src="https://www.form5472prep.com/email/banner.png" width="560" alt="Form5472 Prep"
+                style="display:block;width:100%;height:auto;border:0;color:${EMAIL_STYLES.white};font-size:18px;font-weight:600;" />
             </td>
           </tr>
           <!-- Body -->
