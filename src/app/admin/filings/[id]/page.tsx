@@ -51,6 +51,16 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
   const extensionProofUrl = filing.extensionProofKey
     ? await publicUrl(filing.extensionProofKey)
     : null;
+  const customerDocuments = await prisma.filingDocument.findMany({
+    where: { filingId: filing.id },
+    orderBy: { createdAt: "asc" },
+  });
+  const customerDocumentRows = await Promise.all(
+    customerDocuments.map(async (doc) => ({
+      ...doc,
+      url: await publicUrl(doc.fileKey),
+    })),
+  );
 
   // ── Filing deadline ──
   // A Form 7004 covers ONE year, so everything here describes the LATEST tax
@@ -344,6 +354,24 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           </DetailCard>
         </div>
 
+        <div className="md:col-span-2">
+          <DetailCard title="Customer documents">
+            {customerDocumentRows.length === 0 ? (
+              <p className="text-sm text-slate-400">None uploaded.</p>
+            ) : (
+              customerDocumentRows.map((doc) => (
+                <DocumentFileRow
+                  key={doc.id}
+                  name={doc.fileName}
+                  size={doc.size}
+                  createdAt={doc.createdAt}
+                  url={doc.url}
+                />
+              ))
+            )}
+          </DetailCard>
+        </div>
+
         {/* Year-by-year data */}
         {filing.yearData.length > 0 && (
           <div className="md:col-span-2">
@@ -520,4 +548,40 @@ function FileRow({
       )}
     </div>
   );
+}
+
+function DocumentFileRow({
+  name,
+  size,
+  createdAt,
+  url,
+}: {
+  name: string;
+  size: number;
+  createdAt: Date;
+  url: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 py-1.5 border-b border-slate-100 last:border-0">
+      <span className="min-w-0 text-sm text-slate-700">
+        <span className="block truncate">{name}</span>
+        <span className="text-xs text-slate-400">
+          {formatFileSize(size)} · {createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+        </span>
+      </span>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex-none text-sm text-accent hover:underline inline-flex items-center gap-1"
+      >
+        View <ExternalLink className="h-3 w-3" />
+      </a>
+    </div>
+  );
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes >= 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }

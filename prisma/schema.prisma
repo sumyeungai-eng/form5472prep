@@ -274,6 +274,7 @@ model Filing {
   yearData         FilingYearData[]
   plaidConnections PlaidConnection[]
   messages         Message[]
+  documents        FilingDocument[]
   changeLog        FilingChangeLog[]
 
   @@index([partnerId])
@@ -324,6 +325,20 @@ model Message {
   createdAt DateTime  @default(now())
 
   @@index([filingId, createdAt])
+}
+
+model FilingDocument {
+  id          String   @id @default(cuid())
+  filingId    String
+  filing      Filing   @relation(fields: [filingId], references: [id], onDelete: Cascade)
+  fileKey     String
+  fileName    String
+  size        Int
+  contentType String
+  uploadedBy  String
+  createdAt   DateTime @default(now())
+
+  @@index([filingId])
 }
 
 model FilingYearData {

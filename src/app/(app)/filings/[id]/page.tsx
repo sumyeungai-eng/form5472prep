@@ -7,6 +7,7 @@ import { FilingActions } from "@/components/wizard/FilingActions";
 import { FilingStatusBanner } from "@/components/FilingStatusBanner";
 import { FilingLocked } from "@/components/FilingLocked";
 import { MessagesPanel } from "@/components/MessagesPanel";
+import { DocumentsUploader } from "@/components/DocumentsUploader";
 import { PurchaseConversionPing } from "./PurchaseConversionPing";
 import { getTiersForSource } from "@/lib/pricing";
 import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
@@ -151,6 +152,12 @@ export default async function FilingDetailPage({
           faxService: filing.faxService,
           faxConfirmationKey: filing.faxConfirmationKey,
         }}
+      />
+
+      <DocumentsUploader
+        filingId={filing.id}
+        title="Documents"
+        description="Upload any supporting documents for our accountant — bank statements, formation papers, IRS letters."
       />
 
       {/* Ask for a Trustpilot review at the happiest moment — once the filing

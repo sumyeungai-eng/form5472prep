@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { S3Client, PutObjectCommand, GetObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand, HeadObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { env } from "./env";
 
@@ -27,8 +27,9 @@ function client(): S3Client {
   return _client;
 }
 
-export function makeKey(parts: string): string {
-  return parts
+export function makeKey(parts: string | string[]): string {
+  const raw = Array.isArray(parts) ? parts.join("/") : parts;
+  return raw
     .replace(/[^a-zA-Z0-9._/-]/g, "_")
     // Collapse ".." and strip leading slashes so a user-controlled filename
     // can't traverse out of the intended directory in local-disk mode.
@@ -79,6 +80,14 @@ export async function exists(key: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+export async function del(key: string): Promise<void> {
+  if (r2Enabled()) {
+    await client().send(new DeleteObjectCommand({ Bucket: env.r2.bucket, Key: key }));
+    return;
+  }
+  await fs.unlink(path.join(LOCAL_ROOT, key));
 }
 
 // Get a URL that Telnyx can fetch the signed PDF from.

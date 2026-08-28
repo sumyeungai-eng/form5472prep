@@ -23,6 +23,7 @@ import {
 } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
 import { fireMetaInitiateCheckout } from "@/lib/analytics/meta";
+import { DocumentsUploader } from "@/components/DocumentsUploader";
 
 // Generates a self-assigned Reference ID for Form 5472 when the customer
 // leaves the field blank. Uses last-name + first-initial as a human-readable
@@ -2062,6 +2063,16 @@ function ReviewStep({
           />
         )}
       </dl>
+
+      <div>
+        <h3 className="text-sm font-medium text-slate-900">Supporting documents (optional)</h3>
+        <p className="text-xs text-slate-500 mt-1">
+          Anything that helps us prepare your filing — formation documents, IRS letters, prior filings.
+        </p>
+        <div className="mt-3">
+          <DocumentsUploader filingId={filing.id} />
+        </div>
+      </div>
 
       {!isTestFiling && (
         <div>
