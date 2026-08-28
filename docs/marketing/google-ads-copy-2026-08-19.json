@@ -109,5 +109,37 @@
         "Timestamped IRS fax receipt as proof of filing. Express: ready in 3 business days."
       ]
     }
-  }
+  },
+  "sitelinks": [
+    {
+      "text": "Pricing - $149 Flat",
+      "d1": "Standard $149, Express $199",
+      "d2": "Pay once. No subscription.",
+      "url": "https://www.form5472prep.com/pricing"
+    },
+    {
+      "text": "Late or Never Filed?",
+      "d1": "Catch up on past years (DIIRSP)",
+      "d2": "Reasonable-cause letter included",
+      "url": "https://www.form5472prep.com/late-form-5472"
+    },
+    {
+      "text": "How It Works",
+      "d1": "12 questions, about 15 minutes",
+      "d2": "We fax the IRS, you get proof",
+      "url": "https://www.form5472prep.com/file-form-5472"
+    },
+    {
+      "text": "$25,000 Penalty Explained",
+      "d1": "Per form, per year, automatic",
+      "d2": "See how to avoid or reduce it",
+      "url": "https://www.form5472prep.com/form-5472-penalty"
+    },
+    {
+      "text": "Free Form 5472 Guides",
+      "d1": "Plain-English filing guides",
+      "d2": "Written for foreign owners",
+      "url": "https://www.form5472prep.com/blog"
+    }
+  ]
 }

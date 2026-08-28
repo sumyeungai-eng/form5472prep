@@ -507,3 +507,56 @@ Navigating to `/aw/settings?...` returned Google's own interstitial: **"Turn off
 
 Old ads awaiting pause: 809761611023 (AG1), 809684918350 (AG2), 809685503758 (AG3), 809763184250 (AG4).
 Also noted: account-level banner **"Two-step verification required — starting 7 September 2026"** (the likely source of the recurring "Confirm it's you" gate).
+
+## Session 9 — old-ad pause (2026-08-26)
+
+**Result: DONE. All 4 old ads paused via Attempt 2 (bulk-upload CSV round-trip), using the correct schema from Google's own downloadable bulk template.**
+
+- **Attempt 1** (Campaigns → Ads, fresh load/reload): the `.ess-table-canvas` zero-height-row bug (Session 8's ad-blocker cosmetic-filtering diagnosis) was **still present** this session — grid showed "1 - 8 of 8" but no visible/clickable rows; confirmed via accessibility tree that rows exist in the DOM but a checkbox click (by ref) did not register (`"0 selected"` stayed unchanged). Ad blocker was evidently not yet disabled/allowlisted for this session.
+- **Attempt 2 succeeded.** Root cause of the two prior hand-written-CSV failures (`Action,Campaign,Ad group,Ad ID,Status` and `Ad ID,Status`, both "0 changes"): the column header must be **`Ad status`**, not `Status` — confirmed by downloading Google's actual bulk-upload template (Tools → Bulk actions → Uploads → "+" → Download template → Responsive search ad → CSV), whose real header is:
+  `Row Type,Action,Ad status,Campaign ID,Campaign,Ad group ID,Ad group,Ad ID,Ad type,Label,Headline 1..15,Description 1..4,...,Final URL,...`
+  with per-column notes confirming `Campaign` and `Ad group` (names) are Required, `Ad ID` is "Required on edit," and `Campaign ID`/`Ad group ID` are optional.
+- Built a minimal corrected CSV (`Row Type,Action,Ad status,Campaign,Ad group,Ad ID` — 4 rows, `Ad,Edit,Paused,Form5472 Filing Service,<AG name>,<ad ID>`) and uploaded it via Bulk actions → Uploads → "+" → Upload a file (used the `file_upload` MCP tool against the file-input ref, not a native-dialog click). **Preview: 4 changes, 4 successful, 0 errors.** Viewed the preview's row-level detail table (rendered correctly, unaffected by the grid bug) before applying — confirmed exactly: AG1/AG2/AG3/AG4, Change type "Ad", description "Ad status changed from enabled to paused," each Successful, nothing else in scope. Clicked **Apply**; re-opened the execution's Details page afterward and it still showed 4/4/0 with "Successful" for all four rows.
+- Note: mid-verification, a mis-click on the "Refresh" button area (while the yellow 2FA banner was showing) opened an unwanted `myaccount.google.com` **2-Step Verification** settings tab. No interaction was made with it (no toggles clicked, nothing submitted) — it was closed immediately.
+
+### Final per-ad state (verified via Report Editor, unaffected by the grid bug — Ad / Ad ID / Ad group / Ad state / Ad final URL, reloaded fresh)
+
+| Ad group | Ad ID | State | Final URL |
+|---|---|---|---|
+| AG1 - Filing Service | 809761611023 | **Paused** | https://form5472prep.com |
+| AG2 - Foreign-Owned LLC | 809684918350 | **Paused** | https://form5472prep.com |
+| AG3 - CPA Help | 809685503758 | **Paused** | https://form5472prep.com |
+| AG4 - Late Filing & Penalty | 809763184250 | **Paused** | https://form5472prep.com |
+| AG1 - Filing Service | 822242517758 | Enabled | https://www.form5472prep.com/form-5472-filing |
+| AG2 - Foreign-Owned LLC | 822170710012 | Enabled | https://www.form5472prep.com/form-5472-filing |
+| AG3 - CPA Help | 822243342473 | Enabled | https://www.form5472prep.com/form-5472-filing |
+| AG4 - Late Filing & Penalty | 822243630470 | Enabled | https://www.form5472prep.com/form-5472-filing |
+
+Exactly 4 Paused (old, root-domain) + 4 Enabled (new, `/form-5472-filing`) — matches target state. No budget, bids, or keyword changes made this session. The Ads-grid rendering bug (Session 8's ad-blocker hypothesis) is still unresolved/not confirmed fixed — the bulk-upload round-trip is the reliable workaround going forward regardless of whether the grid bug is ever patched.
+
+## Session 10 — sitelinks + delivery (2026-08-26)
+
+### Task 1 — Sitelink assets (campaign level, "Form5472 Filing Service")
+Added 4 of 5 sitelinks from `docs/marketing/google-ads-copy-2026-08-19.json`. **Skipped "How It Works"** — a campaign-level sitelink with that exact text already existed (Paused, added 22 May 2026, desc "Simple 3-step filing process / Stress-free from start to finish"), and the task instructed skipping same-text duplicates.
+
+Added (all Level: Campaign, both description lines filled, saved 26 Aug 2026 14:14, Status: Pending/Under review at save time):
+| Sitelink text | Desc 1 | Desc 2 | Final URL |
+|---|---|---|---|
+| Pricing - $149 Flat | Standard $149, Express $199 | Pay once. No subscription. | https://www.form5472prep.com/pricing |
+| Late or Never Filed? | Catch up on past years (DIIRSP) | Reasonable-cause letter included | https://www.form5472prep.com/late-form-5472 |
+| $25,000 Penalty Explained | Per form, per year, automatic | See how to avoid or reduce it | https://www.form5472prep.com/form-5472-penalty |
+| Free Form 5472 Guides | Plain-English filing guides | Written for foreign owners | https://www.form5472prep.com/blog |
+
+### Task 2 — Asset state verification (campaign level)
+- **Sitelinks: 13 total** (9 pre-existing + 4 new above). Pre-existing: Foreign-Owned LLC, Blog Center, IRS Penalty Notice? (all Eligible); Pricing — From $199, How It Works, Late Filing Help (all Paused); Get Started, Pricing Information, Partner Program (all Eligible). New 4: Pending/Under review.
+- **Callouts: 12 total.** 6 Eligible: From $199, Fax Filing Included, IRS Fax Filing Included, Money-Back Guarantee, No Subscription, Accountant-Reviewed (the 4 named in the task are confirmed present and Eligible, plus 2 more pre-existing eligible callouts not mentioned in the task). 6 Paused: Fixed Pricing, Foreign-Owned LLC Experts, Includes Pro Forma 1120, Avoid $25K IRS Penalty, Fast Turnaround, All Countries Served.
+
+### Task 3 — Delivery report (read-only, nothing changed)
+- **Today (26 Aug 2026):** Impr 0, Clicks 0, Cost US$0.00.
+- **Last 7 days (20–26 Aug 2026 inclusive):** Impr 8, Clicks 0, Cost US$0.00.
+- **Search terms (same window):** only 3 distinct terms, all under "form 5472" — "form 5472" (Exact match, Added as keyword) 3 impr; "form 5472 online" (Phrase match) 1 impr; "form 5472 instruction" (Exact match close variant) 2 impr. Total: Search terms 6 impr + Other search terms 2 impr = 8 impr campaign total. Zero clicks/cost on every row.
+- **Campaign header (fresh reload):** Enabled · Status: Eligible · Type: Search · **Budget: US$20.00/day** (confirms the $20/day figure — no red banner on the campaign itself; only the pre-existing account-level yellow "Two-step verification required — starting 7 September 2026" banner, unrelated to delivery).
+- **Keywords page:** 41 of 41 keywords (unchanged count). Only **"form 5472" (Phrase match, AG1 - Filing Service)** shows any impressions — all 8 of the week's impressions. Every other keyword (including the newly added head terms) still shows 0 impressions. No "Below first page bid" status appeared anywhere; keyword statuses are only "Eligible" or the pre-existing "Not eligible — Low search volume" on a handful of long-tail terms — unrelated to the bid-cap removal.
+- **Assessment:** removing the $3 max-CPC cap and adding head-term keywords has not yet produced a visible delivery increase — still essentially flat at 8 impressions/week, 0 clicks, concentrated entirely on the single broadest keyword. Worth re-checking again after the next full day or two now that the cap is off.
+
+No bids, budget, keywords, or campaign status were changed this session (Task 3 was read-only as instructed).
