@@ -105,6 +105,7 @@ async function processCohort(opts: CohortOpts) {
     try {
       await sendAbandonedDraftReminderEmail({
         email: f.user.email,
+        recipientName: f.ownerName,
         llcName: f.llcName,
         resumeLink: makeMagicLink(f.userId),
         unsubscribeUrl: makeUnsubscribeLink(f.userId),

@@ -205,6 +205,7 @@ export async function POST(req: Request) {
       try {
         await sendOrderConfirmationEmail({
           email: full.user.email,
+          recipientName: full.ownerName,
           filingId: full.id,
           llcName: full.llcName,
           taxYears: full.taxYears,

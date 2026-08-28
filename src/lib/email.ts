@@ -136,6 +136,7 @@ type ShellArgs = {
 };
 
 function shell({ preheader, heading, bodyHtml, cta, unsubscribeUrl, closingHtml = "", internal = false }: ShellArgs) {
+  const footerUrl = internal ? "https://www.form5472prep.com" : APP_URL;
   const ctaBlock = cta
     ? `<tr><td style="padding:8px 0 24px;">
          <a href="${escapeHtml(cta.url)}" style="display:inline-block;background:${EMAIL_STYLES.brand};color:${EMAIL_STYLES.white};text-decoration:none;padding:14px 24px;border-radius:8px;font-weight:600;font-size:15px;">${escapeHtml(cta.label)}</a>
@@ -177,7 +178,7 @@ function shell({ preheader, heading, bodyHtml, cta, unsubscribeUrl, closingHtml 
           <tr>
             <td style="padding:20px 32px;border-top:1px solid ${EMAIL_STYLES.border};background:${EMAIL_STYLES.bg};color:${EMAIL_STYLES.muted};font-size:12px;line-height:1.5;">
               Questions? Reply to this email or write to <a href="mailto:support@form5472prep.com" style="color:${EMAIL_STYLES.brand};text-decoration:none;">support@form5472prep.com</a>.
-              ${internal ? "" : `<br/>Form5472 Prep · <a href="${APP_URL}" style="color:${EMAIL_STYLES.brand};text-decoration:none;">form5472prep.com</a>`}
+              <br/>Form5472 Prep · <a href="${footerUrl}" style="color:${EMAIL_STYLES.brand};text-decoration:none;">form5472prep.com</a>
               ${unsubscribeUrl ? `<br/><br/><a href="${escapeHtml(unsubscribeUrl)}" style="color:${EMAIL_STYLES.muted};text-decoration:underline;">Unsubscribe from filing reminders</a>` : ""}
             </td>
           </tr>
@@ -238,6 +239,11 @@ export function adminShell({
 
 function customerText(salutation: string, body: string, footnote?: string) {
   return `Hello ${salutation},\n\n${body}${footnote ? `\n\n${footnote}` : ""}\n\nThank you,\nThe Form5472 Prep team`;
+}
+
+export function firstNameFrom(name: string | null | undefined): string | null {
+  const trimmed = name?.trim();
+  return trimmed ? trimmed.split(/\s+/)[0] : null;
 }
 
 // ---------- 1. Magic-link email (existing) ----------
@@ -335,6 +341,7 @@ type OrderSignatureInfo = {
 
 type OrderConfirmationArgs = {
   email: string;
+  recipientName?: string | null;
   llcName: string | null;
   taxYears: number[];
   tier: Tier;
@@ -383,9 +390,10 @@ function portalLinkWithNext(portalLink: string, nextPath: string): string {
 
 export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const {
-    email, llcName, taxYears, tier, amountPaidCents, portalLink, receiptUrl,
+    email, recipientName, llcName, taxYears, tier, amountPaidCents, portalLink, receiptUrl,
     pdfBytes, signatures, isFinalReturn, dueDateText,
   } = args;
+  const salutation = firstNameFrom(recipientName) ?? "there";
   // Resolve the tier through pricing.ts so legacy tier values from old
   // filings still render a sensible label rather than crashing.
   const t = tierInfo(tier);
@@ -536,7 +544,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       ? `Your Form 5472 filing package — ${sigCount} signature${sigCount === 1 ? "" : "s"} needed`
       : `Order confirmed — Form5472 Prep filing (${yearsLabel})`,
     text: customerText(
-      "there",
+      salutation,
       `Thank you for your order.\n\n` +
       dueDateLineText +
       `Tip: save donotreply@form5472prep.com to your contacts so our emails reach your inbox.\n\n` +
@@ -554,7 +562,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     ),
     html: customerShell({
       heading: hasPdf ? "Your filing is ready to sign" : "Order confirmed",
-      salutation: "there",
+      salutation,
       bodyHtml,
       // When the PDF is ready, deep-link straight to the sign page via the
       // magic-link's ?next= deeplink so the customer skips the dashboard.
@@ -599,6 +607,7 @@ function formatFaxProofRows(proof: FaxProof): string {
 
 export async function sendFaxDeliveredEmail(args: {
   email: string;
+  recipientName?: string | null;
   llcName: string | null;
   taxYears: number[];
   portalLink: string;
@@ -609,7 +618,8 @@ export async function sendFaxDeliveredEmail(args: {
   // proof-of-delivery document on its own.
   receiptPdfBytes?: Uint8Array | Buffer;
 }) {
-  const { email, llcName, taxYears, portalLink, proof, signedPdfBytes, receiptPdfBytes } = args;
+  const { email, recipientName, llcName, taxYears, portalLink, proof, signedPdfBytes, receiptPdfBytes } = args;
+  const salutation = firstNameFrom(recipientName) ?? "there";
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "your filing";
 
@@ -659,7 +669,7 @@ export async function sendFaxDeliveredEmail(args: {
     to: email,
     subject: `Your ${llcLine} filing was delivered to the IRS`,
     text: customerText(
-      "there",
+      salutation,
       `Your signed Form 5472 + pro forma 1120 for ${llcLine} (${yearsLabel}) was successfully faxed to the IRS Ogden PIN Unit.\n\n` +
       `Keep this email as your proof of submission. Download your timestamped IRS Fax Transmission Receipt from your portal — it serves as proof of on-time filing.\n` +
       `The IRS doesn't send acknowledgments for faxed 5472 filings, so no further action is required.\n` +
@@ -668,7 +678,7 @@ export async function sendFaxDeliveredEmail(args: {
     ),
     html: customerShell({
       heading: "Your filing was delivered to the IRS",
-      salutation: "there",
+      salutation,
       bodyHtml,
       cta: { label: "View my filing", url: portalLink },
     }),
@@ -879,11 +889,13 @@ export async function sendFaxFailedAdminEmail(args: {
 
 export async function sendFaxFailedEmail(args: {
   email: string;
+  recipientName?: string | null;
   llcName: string | null;
   taxYears: number[];
   portalLink: string;
 }) {
-  const { email, llcName, taxYears, portalLink } = args;
+  const { email, recipientName, llcName, taxYears, portalLink } = args;
+  const salutation = firstNameFrom(recipientName) ?? "there";
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "your filing";
 
@@ -907,14 +919,14 @@ export async function sendFaxFailedEmail(args: {
     to: email,
     subject: `Action needed — fax to IRS failed (${llcLine})`,
     text: customerText(
-      "there",
+      salutation,
       `We tried to fax your signed Form 5472 + pro forma 1120 for ${llcLine} (${yearsLabel}) to the IRS Ogden PIN Unit, but transmission failed after multiple attempts.\n\n` +
       `Our team has been notified and will reach out within one business day with next steps. You don't need to do anything right now.\n\n` +
       `View your filing: ${portalLink}`,
     ),
     html: customerShell({
       heading: "We could not fax your filing",
-      salutation: "there",
+      salutation,
       bodyHtml,
       cta: { label: "View my filing", url: portalLink },
     }),
@@ -930,12 +942,14 @@ export async function sendFaxFailedEmail(args: {
 // portal thread is the source of truth.
 export async function sendNewMessageToCustomerEmail(args: {
   email: string;
+  recipientName?: string | null;
   llcName: string | null;
   taxYears: number[];
   bodyExcerpt: string;
   portalLink: string;
 }) {
-  const { email, llcName, taxYears, bodyExcerpt, portalLink } = args;
+  const { email, recipientName, llcName, taxYears, bodyExcerpt, portalLink } = args;
+  const salutation = firstNameFrom(recipientName) ?? "there";
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "your filing";
 
@@ -954,14 +968,14 @@ export async function sendNewMessageToCustomerEmail(args: {
     to: email,
     subject: `New message about your filing — ${llcLine}`,
     text: customerText(
-      "there",
+      salutation,
       `You have a new message from our team about ${llcLine} (${yearsLabel}).\n\n` +
       `${bodyExcerpt}\n\n` +
       `Open your portal to read and reply: ${portalLink}`,
     ),
     html: customerShell({
       heading: "You have a new message",
-      salutation: "there",
+      salutation,
       bodyHtml,
       cta: { label: "Open my portal", url: portalLink },
     }),
@@ -1124,6 +1138,7 @@ export async function sendMarchReminderEmail(args: ReminderArgs) {
 
 type AbandonedDraftArgs = {
   email: string;
+  recipientName?: string | null;
   llcName: string | null;
   resumeLink: string;
   unsubscribeUrl: string;
@@ -1134,7 +1149,8 @@ type AbandonedDraftArgs = {
 };
 
 export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) {
-  const { email, llcName, resumeLink, unsubscribeUrl, variant = "first" } = args;
+  const { email, recipientName, llcName, resumeLink, unsubscribeUrl, variant = "first" } = args;
+  const salutation = firstNameFrom(recipientName) ?? "there";
   const llcLine = llcName ? escapeHtml(llcName) : "your foreign-owned LLC";
   const llcPlain = llcName ?? "your foreign-owned LLC";
   const isFinal = variant === "final";
@@ -1172,7 +1188,7 @@ export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) 
     to: email,
     subject,
     text:
-      `Hello there,\n\n${introText}\n\n` +
+      `Hello ${salutation},\n\n${introText}\n\n` +
       `Pick up where you left off (most customers finish in ~15 minutes):\n` +
       `${resumeLink}\n\n` +
       `The IRS imposes significant penalties for missing Form 5472 filings — worth completing today.\n\n` +
@@ -1180,7 +1196,7 @@ export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) 
       `Unsubscribe from these emails: ${unsubscribeUrl}`,
     html: customerShell({ preheader,
       heading,
-      salutation: "there",
+      salutation,
       bodyHtml,
       cta: { label: "Resume my filing", url: resumeLink },
       unsubscribeUrl,

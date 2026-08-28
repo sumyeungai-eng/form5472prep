@@ -53,6 +53,7 @@ await sendPartnerLoginEmail(customerEmail, `${baseUrl}/partners/auth/sample-toke
 await sendPartnerApplicationAckEmail(customerEmail, ownerName);
 await sendOrderConfirmationEmail({
   email: customerEmail,
+  recipientName: "Maria Schmidt",
   llcName,
   taxYears: [taxYear],
   tier: "standard",
@@ -69,6 +70,7 @@ await sendOrderConfirmationEmail({
 });
 await sendFaxDeliveredEmail({
   email: customerEmail,
+  recipientName: "Maria Schmidt",
   llcName,
   taxYears: [taxYear],
   portalLink,
@@ -110,9 +112,10 @@ await sendFaxFailedAdminEmail({
   failureReason: "The destination line did not answer",
   deliveryAttempts: 3,
 });
-await sendFaxFailedEmail({ email: customerEmail, llcName, taxYears: [taxYear], portalLink });
+await sendFaxFailedEmail({ email: customerEmail, recipientName: "Maria Schmidt", llcName, taxYears: [taxYear], portalLink });
 await sendNewMessageToCustomerEmail({
   email: customerEmail,
+  recipientName: "Maria Schmidt",
   llcName,
   taxYears: [taxYear],
   bodyExcerpt: "Please confirm the LLC formation date shown in your filing.",
@@ -143,6 +146,7 @@ await sendMarchReminderEmail({
 });
 await sendAbandonedDraftReminderEmail({
   email: customerEmail,
+  recipientName: "Maria Schmidt",
   llcName,
   resumeLink: `${baseUrl}/filings/${filingId}`,
   unsubscribeUrl,

@@ -191,6 +191,7 @@ async function handleDelivered(
       // Customer: receipt only (signed package stays in portal).
       await sendFaxDeliveredEmail({
         email: filing.user.email,
+        recipientName: filing.ownerName,
         llcName: filing.llcName,
         taxYears: filing.taxYears,
         portalLink: makeMagicLink(filing.userId),
@@ -229,7 +230,7 @@ async function handleDelivered(
 }
 
 async function handleFailed(
-  filing: { id: string; faxJobId: string | null; llcName: string | null; taxYears: number[]; userId: string | null; user: { email: string } | null },
+  filing: { id: string; faxJobId: string | null; llcName: string | null; ownerName: string | null; taxYears: number[]; userId: string | null; user: { email: string } | null },
   tx: TelnyxFax,
 ) {
   const failureReason = tx.failure_reason ?? null;
@@ -255,6 +256,7 @@ async function handleFailed(
     try {
       await sendFaxFailedEmail({
         email: filing.user.email,
+        recipientName: filing.ownerName,
         llcName: filing.llcName,
         taxYears: filing.taxYears,
         portalLink: makeMagicLink(filing.userId),

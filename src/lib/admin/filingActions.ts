@@ -355,6 +355,7 @@ export async function runFilingAction(
       }
       await sendOrderConfirmationEmail({
         email: filing.user.email,
+        recipientName: filing.ownerName,
         filingId: filing.id,
         llcName: filing.llcName,
         taxYears: filing.taxYears,

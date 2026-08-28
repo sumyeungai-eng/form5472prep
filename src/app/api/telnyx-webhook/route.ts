@@ -181,6 +181,7 @@ export async function POST(req: Request) {
         // email when not needed.
         await sendFaxDeliveredEmail({
           email: filing.user.email,
+          recipientName: filing.ownerName,
           llcName: filing.llcName,
           taxYears: filing.taxYears,
           portalLink: makeMagicLink(filing.user.id),
@@ -296,6 +297,7 @@ export async function POST(req: Request) {
       try {
         await sendFaxFailedEmail({
           email: filing.user.email,
+          recipientName: filing.ownerName,
           llcName: filing.llcName,
           taxYears: filing.taxYears,
           portalLink: makeMagicLink(filing.user.id),

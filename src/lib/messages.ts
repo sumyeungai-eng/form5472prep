@@ -14,6 +14,7 @@ export async function postAdminMessage(filingId: string, body: string) {
     where: { id: filingId },
     select: {
       llcName: true,
+      ownerName: true,
       taxYears: true,
       userId: true,
       user: { select: { email: true } },
@@ -48,6 +49,7 @@ export async function postAdminMessage(filingId: string, body: string) {
     try {
       await sendNewMessageToCustomerEmail({
         email: filing.user.email,
+        recipientName: filing.ownerName,
         llcName: filing.llcName,
         taxYears: filing.taxYears,
         bodyExcerpt,
