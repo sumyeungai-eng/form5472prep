@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sendEmail } from "@/lib/email";
+import { sendWebsiteQuestionAdminEmail } from "@/lib/email";
 import { env } from "@/lib/env";
 import { rateLimit, clientIp, tooManyRequests } from "@/lib/rateLimit";
 
@@ -55,42 +55,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const safe = (s: string) =>
-    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const displayName = name || "(not provided)";
-
   try {
-    await sendEmail({
-      to: env.adminEmail,
-      replyTo: email,
-      subject: `[Website question] ${topicLabel ? topicLabel + " — " : ""}${name ? name + " — " : ""}${message.slice(0, 60)}${message.length > 60 ? "…" : ""}`,
-      text: [
-        "New question from the website widget",
-        "",
-        `Name:  ${displayName}`,
-        `Email: ${email}`,
-        topicLabel ? `Topic: ${topicLabel}` : "",
-        pageUrl ? `Page:  ${pageUrl}` : "",
-        "",
-        "Message:",
-        message,
-        "",
-        "— Reply directly to this email to answer the visitor.",
-      ]
-        .filter(Boolean)
-        .join("\n"),
-      html: `
-        <h2 style="margin:0 0 16px;font-size:18px;color:#0f172a;">New question from the website</h2>
-        <table role="presentation" cellpadding="0" cellspacing="0" style="font-size:14px;border-collapse:collapse;">
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Name</td><td style="color:#0f172a;font-weight:600;">${safe(displayName)}</td></tr>
-          <tr><td style="padding:6px 16px 6px 0;color:#64748b;">Email</td><td><a href="mailto:${safe(email)}" style="color:#1e3a8a;">${safe(email)}</a></td></tr>
-          ${topicLabel ? `<tr><td style="padding:6px 16px 6px 0;color:#64748b;">Topic</td><td style="color:#0f172a;">${safe(topicLabel)}</td></tr>` : ""}
-          ${pageUrl ? `<tr><td style="padding:6px 16px 6px 0;color:#64748b;">Page</td><td style="color:#0f172a;">${safe(pageUrl)}</td></tr>` : ""}
-        </table>
-        <p style="margin:16px 0 4px;color:#64748b;font-size:13px;">Message</p>
-        <p style="margin:0;color:#0f172a;font-size:15px;white-space:pre-wrap;">${safe(message)}</p>
-        <p style="margin:24px 0 0;font-size:13px;color:#64748b;">Reply directly to this email to answer the visitor.</p>
-      `,
+    await sendWebsiteQuestionAdminEmail({
+      adminEmail: env.adminEmail,
+      name,
+      email,
+      message,
+      topicLabel,
+      pageUrl,
     });
   } catch (err) {
     console.error("[ask] email send failed", err);

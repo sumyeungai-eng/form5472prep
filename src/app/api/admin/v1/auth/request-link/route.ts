@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { fail } from "@/lib/admin/api";
 import { makeAdminLoginLink } from "@/lib/admin/identity";
-import { sendEmail } from "@/lib/email";
+import { sendAdminLoginEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rateLimit";
 
@@ -58,12 +58,7 @@ export async function POST(req: Request): Promise<Response> {
       const link = await makeAdminLoginLink(admin.id);
       const token = link.slice(link.lastIndexOf("/") + 1);
       const appLink = `form5472admin://auth/${token}`;
-      await sendEmail({
-        to: email,
-        subject: "Your Form5472 Prep admin sign-in link",
-        html: `<p>Use this secure link to sign in to Form5472 Prep:</p><p><a href="${link}">Sign in on the web</a></p><p><a href="${appLink}">Sign in on the iPhone app</a></p><p>This link expires in 15 minutes and can only be used once. Using either link consumes it, so pick the surface you actually want to use.</p>`,
-        text: `Use this secure link to sign in to Form5472 Prep:\n\nSign in on the web:\n${link}\n\nSign in on the iPhone app:\n${appLink}\n\nThis link expires in 15 minutes and can only be used once. Using either link consumes it, so pick the surface you actually want to use.`,
-      });
+      await sendAdminLoginEmail({ email, link, appLink });
     }
   } catch (err) {
     // Account lookup, token creation, and email delivery are deliberately

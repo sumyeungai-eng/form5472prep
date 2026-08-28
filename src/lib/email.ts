@@ -6,6 +6,34 @@
 import { formatUsd } from "@/lib/utils";
 import { multiYearAddonCents, tierInfo, type Tier } from "@/lib/pricing";
 import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { mkdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+
+// Single source of truth for the inline colours used across every email.
+export const EMAIL_STYLES = {
+  brand: "#1e3a8a",
+  ink: "#0f172a",
+  muted: "#64748b",
+  subtle: "#475569",
+  bg: "#f8fafc",
+  border: "#e2e8f0",
+  white: "#ffffff",
+  slate: "#334155",
+  green: "#047857",
+  greenDark: "#065f46",
+  greenBg: "#ecfdf5",
+  greenBorder: "#a7f3d0",
+  amber: "#92400e",
+  amberDark: "#78350f",
+  amberText: "#b45309",
+  amberBg: "#fffbeb",
+  amberBorder: "#fcd34d",
+  red: "#dc2626",
+  redDark: "#991b1b",
+  redStrong: "#b91c1c",
+  redBg: "#fef2f2",
+  redBorder: "#fecaca",
+} as const;
 
 type SendAttachment = {
   filename: string;
@@ -35,6 +63,20 @@ const REPLY_TO = process.env.RESEND_REPLY_TO || "support@form5472prep.com";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://form5472prep.com";
 
 export async function sendEmail({ to, subject, html, text, replyTo, bcc, attachments, headers }: SendArgs) {
+  const previewDir = process.env.EMAIL_PREVIEW_DIR;
+  if (previewDir) {
+    const slug = slugifySubject(subject);
+    await mkdir(previewDir, { recursive: true });
+    const htmlPath = join(previewDir, `${slug}.html`);
+    const textPath = join(previewDir, `${slug}.txt`);
+    await Promise.all([
+      writeFile(htmlPath, html, "utf8"),
+      writeFile(textPath, text, "utf8"),
+    ]);
+    console.log(`[email preview] ${htmlPath} ${textPath}`);
+    return { preview: true, htmlPath, textPath };
+  }
+
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.log("\n[email stub — set RESEND_API_KEY to actually send]");
@@ -89,12 +131,14 @@ type ShellArgs = {
   // Only set on marketing emails (yearly reminders). Transactional emails
   // omit this — CAN-SPAM only requires unsubscribe on commercial messages.
   unsubscribeUrl?: string;
+  closingHtml?: string;
+  internal?: boolean;
 };
 
-function shell({ preheader, heading, bodyHtml, cta, unsubscribeUrl }: ShellArgs) {
+function shell({ preheader, heading, bodyHtml, cta, unsubscribeUrl, closingHtml = "", internal = false }: ShellArgs) {
   const ctaBlock = cta
-    ? `<tr><td style="padding:8px 0 32px;">
-         <a href="${cta.url}" style="display:inline-block;background:#1e3a8a;color:#ffffff;text-decoration:none;padding:14px 24px;border-radius:8px;font-weight:600;font-size:15px;">${cta.label}</a>
+    ? `<tr><td style="padding:8px 0 24px;">
+         <a href="${escapeHtml(cta.url)}" style="display:inline-block;background:${EMAIL_STYLES.brand};color:${EMAIL_STYLES.white};text-decoration:none;padding:14px 24px;border-radius:8px;font-weight:600;font-size:15px;">${escapeHtml(cta.label)}</a>
        </td></tr>`
     : "";
 
@@ -105,36 +149,36 @@ function shell({ preheader, heading, bodyHtml, cta, unsubscribeUrl }: ShellArgs)
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${heading}</title>
 </head>
-<body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0f172a;">
+<body style="margin:0;padding:0;background:${EMAIL_STYLES.bg};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${EMAIL_STYLES.ink};">
   <!-- preheader: hidden inbox preview -->
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${preheader}</div>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${EMAIL_STYLES.bg};">
     <tr>
       <td align="center" style="padding:32px 16px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:${EMAIL_STYLES.white};border:1px solid ${EMAIL_STYLES.border};border-radius:12px;overflow:hidden;">
           <!-- Brand header -->
           <tr>
-            <td style="padding:24px 32px;border-bottom:1px solid #e2e8f0;background:#ffffff;">
+            <td style="padding:24px 32px;border-bottom:1px solid ${EMAIL_STYLES.border};background:${EMAIL_STYLES.white};">
               <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em;">
-                <span style="color:#0f172a;">Form</span><span style="color:#1e3a8a;">5472</span><span style="color:#0f172a;"> Prep</span>
+                <span style="color:${EMAIL_STYLES.ink};">Form</span><span style="color:${EMAIL_STYLES.brand};">5472</span><span style="color:${EMAIL_STYLES.ink};"> Prep</span>
               </div>
             </td>
           </tr>
           <!-- Body -->
           <tr>
             <td style="padding:32px;">
-              <h1 style="font-size:22px;line-height:1.3;margin:0 0 16px;font-weight:600;color:#0f172a;">${heading}</h1>
+              <h1 style="font-size:22px;line-height:1.3;margin:0 0 16px;font-weight:600;color:${EMAIL_STYLES.ink};">${escapeHtml(heading)}</h1>
               ${bodyHtml}
               <table role="presentation" cellpadding="0" cellspacing="0">${ctaBlock}</table>
+              ${closingHtml}
             </td>
           </tr>
           <!-- Footer -->
           <tr>
-            <td style="padding:20px 32px;border-top:1px solid #e2e8f0;background:#f8fafc;color:#64748b;font-size:12px;line-height:1.5;">
-              Questions? Reply to this email or contact <a href="mailto:${REPLY_TO}" style="color:#1e3a8a;text-decoration:none;">${REPLY_TO}</a>.
-              <br/>
-              Form5472 Prep · <a href="${APP_URL}" style="color:#1e3a8a;text-decoration:none;">form5472prep.com</a>
-              ${unsubscribeUrl ? `<br/><br/><a href="${unsubscribeUrl}" style="color:#64748b;text-decoration:underline;">Unsubscribe from filing reminders</a>` : ""}
+            <td style="padding:20px 32px;border-top:1px solid ${EMAIL_STYLES.border};background:${EMAIL_STYLES.bg};color:${EMAIL_STYLES.muted};font-size:12px;line-height:1.5;">
+              Questions? Reply to this email or write to <a href="mailto:support@form5472prep.com" style="color:${EMAIL_STYLES.brand};text-decoration:none;">support@form5472prep.com</a>.
+              ${internal ? "" : `<br/>Form5472 Prep · <a href="${APP_URL}" style="color:${EMAIL_STYLES.brand};text-decoration:none;">form5472prep.com</a>`}
+              ${unsubscribeUrl ? `<br/><br/><a href="${escapeHtml(unsubscribeUrl)}" style="color:${EMAIL_STYLES.muted};text-decoration:underline;">Unsubscribe from filing reminders</a>` : ""}
             </td>
           </tr>
         </table>
@@ -145,26 +189,78 @@ function shell({ preheader, heading, bodyHtml, cta, unsubscribeUrl }: ShellArgs)
 </html>`;
 }
 
+export function customerShell({
+  heading,
+  salutation,
+  bodyHtml,
+  cta,
+  footnoteHtml,
+  unsubscribeUrl,
+  preheader,
+}: {
+  heading: string;
+  salutation: string;
+  bodyHtml: string;
+  cta?: { label: string; url: string };
+  footnoteHtml?: string;
+  unsubscribeUrl?: string;
+  preheader?: string;
+}) {
+  const greeting = `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Hello ${escapeHtml(salutation)},</p>`;
+  const closingHtml = `${footnoteHtml ? `<div style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.6;">${footnoteHtml}</div>` : ""}
+    <p style="margin:0;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">Thank you,<br/>The Form5472 Prep team</p>`;
+  return shell({ preheader: preheader ?? heading, heading, bodyHtml: `${greeting}${bodyHtml}`, cta, closingHtml, unsubscribeUrl });
+}
+
+export function adminShell({
+  tag,
+  heading,
+  rows,
+  extraHtml,
+}: {
+  tag: string;
+  heading: string;
+  rows: Array<[label: string, value: string]>;
+  extraHtml?: string;
+}) {
+  const tableRows = rows
+    .map(([label, value]) => `<tr>
+      <td style="padding:7px 16px 7px 0;color:${EMAIL_STYLES.muted};font-size:13px;vertical-align:top;width:150px;">${escapeHtml(label)}</td>
+      <td style="padding:7px 0;color:${EMAIL_STYLES.ink};font-size:13px;vertical-align:top;white-space:pre-wrap;word-break:break-word;">${escapeHtml(value)}</td>
+    </tr>`)
+    .join("");
+  const bodyHtml = `
+    <div style="margin:0 0 20px;padding:9px 12px;background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:6px;color:${EMAIL_STYLES.muted};font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;">Internal notification · ${escapeHtml(tag)}</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">${tableRows}</table>
+    ${extraHtml ?? ""}`;
+  return shell({ preheader: `${tag}: ${heading}`, heading, bodyHtml, internal: true });
+}
+
+function customerText(salutation: string, body: string, footnote?: string) {
+  return `Hello ${salutation},\n\n${body}${footnote ? `\n\n${footnote}` : ""}\n\nThank you,\nThe Form5472 Prep team`;
+}
+
 // ---------- 1. Magic-link email (existing) ----------
 
 export async function sendMagicLinkEmail(email: string, link: string, filingLabel: string) {
   const heading = "Open your filing";
   const bodyHtml = `
-    <p style="margin:0 0 14px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       Use the button below to access your filing (<strong>${escapeHtml(filingLabel)}</strong>) —
       download the generated PDF, upload your signed copy, and track the fax delivery to the IRS.
     </p>
-    <p style="margin:0 0 24px;color:#64748b;font-size:13px;">This link is good for 7 days.</p>`;
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days.</p>`;
 
   return sendEmail({
     to: email,
     subject: "Your Form5472 Prep filing — access link",
-    text:
-      `Open your filing (${filingLabel}):\n\n${link}\n\n` +
-      `This link is good for 7 days. If you didn't request this, ignore this email.\n\n— Form5472 Prep`,
-    html: shell({
-      preheader: `Open your filing (${filingLabel})`,
+    text: customerText(
+      "there",
+      `Use this secure link to open your filing (${filingLabel}):\n\n${link}\n\nThis link is good for 7 days. If you did not request this, you can ignore this email.`,
+    ),
+    html: customerShell({
       heading,
+      salutation: "there",
       bodyHtml,
       cta: { label: "Open my filing", url: link },
     }),
@@ -176,21 +272,22 @@ export async function sendMagicLinkEmail(email: string, link: string, filingLabe
 export async function sendPartnerLoginEmail(email: string, link: string, partnerName: string) {
   const heading = "Sign in to your partner dashboard";
   const bodyHtml = `
-    <p style="margin:0 0 14px;color:#475569;line-height:1.6;font-size:15px;">
-      Hi ${escapeHtml(partnerName)}, use the button below to sign in to your Form5472 Prep
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
+      Use the button below to sign in to your Form5472 Prep
       partner dashboard — start new filings for your clients and track every one in a single place.
     </p>
-    <p style="margin:0 0 24px;color:#64748b;font-size:13px;">This link is good for 7 days.</p>`;
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days.</p>`;
 
   return sendEmail({
     to: email,
     subject: "Your Form5472 Prep partner sign-in link",
-    text:
-      `Sign in to your partner dashboard:\n\n${link}\n\n` +
-      `This link is good for 7 days. If you didn't request this, ignore this email.\n\n— Form5472 Prep`,
-    html: shell({
-      preheader: "Sign in to your Form5472 Prep partner dashboard",
+    text: customerText(
+      partnerName,
+      `Use this secure link to sign in to your Form5472 Prep partner dashboard:\n\n${link}\n\nThis link is good for 7 days. If you did not request this, you can ignore this email.`,
+    ),
+    html: customerShell({
       heading,
+      salutation: partnerName,
       bodyHtml,
       cta: { label: "Open partner dashboard", url: link },
     }),
@@ -200,32 +297,29 @@ export async function sendPartnerLoginEmail(email: string, link: string, partner
 // ---------- 1c. Partner application acknowledgement ----------
 
 export async function sendPartnerApplicationAckEmail(email: string, name: string) {
-  const heading = "Thanks for applying to partner with us";
+  const heading = "We received your partner application";
   const bodyHtml = `
-    <p style="margin:0 0 14px;color:#475569;line-height:1.6;font-size:15px;">
-      Hi ${escapeHtml(name)}, thanks for applying to the Form5472 Prep partner program. We&apos;ve
-      received your details and our team is reviewing them.
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
+      Thank you for applying to the Form5472 Prep partner program. We&apos;ve received your details
+      and our team is reviewing them.
     </p>
-    <p style="margin:0 0 14px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       We approve partner accounts manually — usually within one business day. As soon as yours is
       active, you&apos;ll get a follow-up email with a secure sign-in link, and you can start
       preparing Form 5472 filings for your clients right away.
     </p>
-    <p style="margin:0 0 0;color:#64748b;font-size:14px;">
-      Questions in the meantime? Just reply to this email.
-    </p>`;
+    `;
 
   return sendEmail({
     to: email,
     subject: "We received your Form5472 Prep partner application",
-    text:
-      `Hi ${name},\n\n` +
-      `Thanks for applying to the Form5472 Prep partner program. We've received your details and our team is reviewing them.\n\n` +
-      `We approve partner accounts manually — usually within one business day. As soon as yours is active, you'll get a follow-up email with a secure sign-in link.\n\n` +
-      `Questions in the meantime? Just reply to this email.\n\n— Form5472 Prep`,
-    html: shell({
-      preheader: "We received your partner application — review usually takes one business day.",
+    text: customerText(
+      name,
+      `Thank you for applying to the Form5472 Prep partner program. We've received your details and our team is reviewing them.\n\nWe approve partner accounts manually — usually within one business day. As soon as yours is active, you'll receive a follow-up email with a secure sign-in link.`,
+    ),
+    html: customerShell({
       heading,
+      salutation: name,
       bodyHtml,
     }),
   });
@@ -309,38 +403,38 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   // Deadline line, shown high in the email so the customer can sanity-check
   // that what they just bought lands before the date they were worried about.
   const dueDateHtml = dueDateText
-    ? `<p style="margin:0 0 12px;color:#334155;line-height:1.6;font-size:14px;">
-         <strong style="color:#0f172a;">Your filing deadline:</strong> ${escapeHtml(dueDateText)} — we prepare and file well before this.
+    ? `<p style="margin:0 0 12px;color:${EMAIL_STYLES.slate};line-height:1.6;font-size:14px;">
+         <strong style="color:${EMAIL_STYLES.ink};">Your filing deadline:</strong> ${escapeHtml(dueDateText)} — we prepare and file well before this.
        </p>`
     : "";
 
   // Amber warning — FINAL RETURNS ONLY, and deliberately the loudest block in
   // the "what happens next" section.
   const einWarningHtml = isFinalReturn
-    ? `<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:14px 18px;margin:0 0 16px;color:#92400e;font-size:14px;line-height:1.6;">
-         <strong style="display:block;margin:0 0 6px;color:#78350f;font-size:15px;">Before you close anything else</strong>
+    ? `<div style="background:${EMAIL_STYLES.amberBg};border:1px solid ${EMAIL_STYLES.amberBorder};border-radius:8px;padding:14px 18px;margin:0 0 16px;color:${EMAIL_STYLES.amber};font-size:14px;line-height:1.6;">
+         <strong style="display:block;margin:0 0 6px;color:${EMAIL_STYLES.amberDark};font-size:15px;">Before you close anything else</strong>
          Do not sign any EIN cancellation letter, and don't mark your closure task complete with your formation service, until we send you the fax transmission confirmation. Cancelling the EIN before the filing is transmitted can cause the IRS to reject or misfile your final return.
        </div>`
     : "";
 
   const nextImportantHtml = `
     <!-- What happens next — important -->
-    <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:15px;">What happens next — important</p>
+    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next — important</p>
     ${einWarningHtml}
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin:0 0 12px;color:#334155;font-size:14px;line-height:1.6;">
-      <strong style="display:block;margin:0 0 6px;color:#0f172a;">Your proof of filing</strong>
+    <div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;padding:14px 18px;margin:0 0 12px;color:${EMAIL_STYLES.slate};font-size:14px;line-height:1.6;">
+      <strong style="display:block;margin:0 0 6px;color:${EMAIL_STYLES.ink};">Your proof of filing</strong>
       The IRS does not send an acknowledgment for Form 5472. Your proof is the timestamped fax transmission report plus your filed copy — we email both to you at no charge once transmission completes.
     </div>
-    <p style="margin:0 0 24px;color:#64748b;font-size:13px;line-height:1.6;">
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.6;">
       Keep your filed copy and the transmission report with your LLC records for at least six years.
     </p>
   `;
 
   // Fax delivery is included on every tier — the row just states that
   // explicitly so the customer can see what they got.
-  const faxFeeRowHtml = `<tr><td style="padding:4px 0;color:#64748b;">IRS fax delivery</td><td align="right" style="padding:4px 0;">Included</td></tr>`;
+  const faxFeeRowHtml = `<tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">IRS fax delivery</td><td align="right" style="padding:4px 0;">Included</td></tr>`;
   const multiYearRowHtml = extraYears > 0
-    ? `<tr><td style="padding:4px 0;color:#64748b;">+ ${extraYears} additional year${extraYears === 1 ? "" : "s"}</td><td align="right" style="padding:4px 0;">${formatUsd(addOnCents)}</td></tr>`
+    ? `<tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">+ ${extraYears} additional year${extraYears === 1 ? "" : "s"}</td><td align="right" style="padding:4px 0;">${formatUsd(addOnCents)}</td></tr>`
     : "";
 
   const step3Html = `<li style="margin-bottom:6px;">We fax it to the IRS Ogden PIN Unit and send you a delivery confirmation email.</li>`;
@@ -353,41 +447,41 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const signaturesHtml = hasPdf && sigCount > 0
     ? `
     <!-- Sign in portal -->
-    <p style="margin:24px 0 8px;font-weight:600;color:#0f172a;font-size:15px;">Sign your filing</p>
-    <p style="margin:0 0 12px;color:#64748b;font-size:13px;line-height:1.5;">
+    <p style="margin:24px 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Sign your filing</p>
+    <p style="margin:0 0 12px;color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.5;">
       Open your portal, review the package, and draw your signature to acknowledge it. Our tax accountant will sign the final IRS forms before fax — no printing or uploading required on your end.
     </p>`
     : "";
 
   const bodyHtml = `
-    <p style="margin:0 0 12px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 12px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       ${introCopy}
     </p>
     ${dueDateHtml}
-    <p style="margin:0 0 20px;color:#64748b;font-size:13px;">
+    <p style="margin:0 0 20px;color:${EMAIL_STYLES.muted};font-size:13px;">
       Save <strong>donotreply@form5472prep.com</strong> to your contacts to make sure our filing emails reach your inbox.
     </p>
 
     ${signaturesHtml}
 
     <!-- Receipt -->
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin:0 0 24px;">
-      <tr><td style="padding:16px 20px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#64748b;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;">Order receipt</td></tr>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;margin:0 0 24px;">
+      <tr><td style="padding:16px 20px;border-bottom:1px solid ${EMAIL_STYLES.border};font-size:13px;color:${EMAIL_STYLES.muted};text-transform:uppercase;letter-spacing:0.04em;font-weight:600;">Order receipt</td></tr>
       <tr><td style="padding:14px 20px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#0f172a;">
-          <tr><td style="padding:4px 0;color:#64748b;">LLC</td><td align="right" style="padding:4px 0;">${escapeHtml(llcLine)}</td></tr>
-          <tr><td style="padding:4px 0;color:#64748b;">Tax year${taxYears.length > 1 ? "s" : ""}</td><td align="right" style="padding:4px 0;">${escapeHtml(yearsLabel)}</td></tr>
-          <tr><td style="padding:4px 0;color:#64748b;">Plan</td><td align="right" style="padding:4px 0;">${escapeHtml(tierLabel)} — ${tierPrice}</td></tr>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:${EMAIL_STYLES.ink};">
+          <tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">LLC</td><td align="right" style="padding:4px 0;">${escapeHtml(llcLine)}</td></tr>
+          <tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">Tax year${taxYears.length > 1 ? "s" : ""}</td><td align="right" style="padding:4px 0;">${escapeHtml(yearsLabel)}</td></tr>
+          <tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">Plan</td><td align="right" style="padding:4px 0;">${escapeHtml(tierLabel)} — ${tierPrice}</td></tr>
           ${faxFeeRowHtml}
           ${multiYearRowHtml}
-          <tr><td style="padding:10px 0 4px;border-top:1px solid #e2e8f0;font-weight:600;">Total paid</td><td align="right" style="padding:10px 0 4px;border-top:1px solid #e2e8f0;font-weight:600;">${formatUsd(amountPaidCents)}</td></tr>
+          <tr><td style="padding:10px 0 4px;border-top:1px solid ${EMAIL_STYLES.border};font-weight:600;">Total paid</td><td align="right" style="padding:10px 0 4px;border-top:1px solid ${EMAIL_STYLES.border};font-weight:600;">${formatUsd(amountPaidCents)}</td></tr>
         </table>
       </td></tr>
     </table>
 
     <!-- What happens next -->
-    <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:15px;">What happens next</p>
-    <ol style="margin:0 0 24px;padding-left:20px;color:#475569;line-height:1.6;font-size:14px;">
+    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next</p>
+    <ol style="margin:0 0 24px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       <li style="margin-bottom:6px;">We generate your filled <strong>Form 5472 + pro forma Form 1120</strong> (≈ 2 min).</li>
       <li style="margin-bottom:6px;">You open your portal, review the package, and draw your signature to acknowledge it. A qualified tax accountant on our team then reviews the package end-to-end before we fax it to the IRS.</li>
       ${step3Html}
@@ -395,7 +489,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
 
     ${nextImportantHtml}
 
-    ${receiptUrl ? `<p style="margin:0 0 20px;font-size:13px;color:#64748b;">A detailed payment receipt is also available on <a href="${receiptUrl}" style="color:#1e3a8a;text-decoration:none;">Stripe</a>.</p>` : ""}
+    ${receiptUrl ? `<p style="margin:0 0 20px;font-size:13px;color:${EMAIL_STYLES.muted};">A detailed payment receipt is also available on <a href="${receiptUrl}" style="color:${EMAIL_STYLES.brand};text-decoration:none;">Stripe</a>.</p>` : ""}
   `;
 
   const faxFeeTextLine = `  Fax delivery:  Included\n`;
@@ -424,7 +518,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const nextImportantText =
     `What happens next — important\n\n` +
     (isFinalReturn
-      ? `  BEFORE YOU CLOSE ANYTHING ELSE\n` +
+      ? `  Before you close anything else\n` +
         `  Do not sign any EIN cancellation letter, and don't mark your closure task complete\n` +
         `  with your formation service, until we send you the fax transmission confirmation.\n` +
         `  Cancelling the EIN before the filing is transmitted can cause the IRS to reject or\n` +
@@ -441,8 +535,9 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     subject: hasPdf
       ? `Your Form 5472 filing package — ${sigCount} signature${sigCount === 1 ? "" : "s"} needed`
       : `Order confirmed — Form5472 Prep filing (${yearsLabel})`,
-    text:
-      `Thanks for your order!\n\n` +
+    text: customerText(
+      "there",
+      `Thank you for your order.\n\n` +
       dueDateLineText +
       `Tip: save donotreply@form5472prep.com to your contacts so our emails reach your inbox.\n\n` +
       `Order summary:\n` +
@@ -455,13 +550,11 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       signaturesText + "\n" +
       nextStepsText + "\n" +
       nextImportantText + "\n" +
-      `Open your filing: ${portalLink}\n\n` +
-      `— Form5472 Prep`,
-    html: shell({
-      preheader: hasPdf
-        ? `Your filing is ready to sign — sign in-browser, no printing needed.`
-        : `Order confirmed for ${llcLine} — ${yearsLabel}. Total ${formatUsd(amountPaidCents)}.`,
+      `Open your filing: ${portalLink}`,
+    ),
+    html: customerShell({
       heading: hasPdf ? "Your filing is ready to sign" : "Order confirmed",
+      salutation: "there",
       bodyHtml,
       // When the PDF is ready, deep-link straight to the sign page via the
       // magic-link's ?next= deeplink so the customer skips the dashboard.
@@ -497,8 +590,8 @@ function formatFaxProofRows(proof: FaxProof): string {
     .map(
       ([k, v]) => `
         <tr>
-          <td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;white-space:nowrap;">${escapeHtml(k)}</td>
-          <td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${escapeHtml(v)}</td>
+          <td style="padding:6px 12px 6px 0;color:${EMAIL_STYLES.subtle};font-size:13px;white-space:nowrap;">${escapeHtml(k)}</td>
+          <td style="padding:6px 0;color:${EMAIL_STYLES.ink};font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${escapeHtml(v)}</td>
         </tr>`,
     )
     .join("");
@@ -522,31 +615,31 @@ export async function sendFaxDeliveredEmail(args: {
 
   const proofTable = proof
     ? `
-      <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:15px;">Proof of fax</p>
+      <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Proof of fax</p>
       <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
         ${formatFaxProofRows(proof)}
       </table>
-      ${signedPdfBytes ? `<p style="margin:0 0 20px;color:#475569;font-size:13px;">The exact PDF transmitted to the IRS is available for download in your portal.</p>` : ""}
+      ${signedPdfBytes ? `<p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};font-size:13px;">The exact PDF transmitted to the IRS is available for download in your portal.</p>` : ""}
     `
     : "";
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       Good news — your signed Form 5472 + pro forma 1120 for <strong>${escapeHtml(llcLine)}</strong>
       (tax year${taxYears.length > 1 ? "s" : ""} ${escapeHtml(yearsLabel)}) was successfully faxed
       to the IRS Ogden PIN Unit.
     </p>
-    <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:14px 18px;margin:0 0 20px;color:#065f46;font-size:14px;">
+    <div style="background:${EMAIL_STYLES.greenBg};border:1px solid ${EMAIL_STYLES.greenBorder};border-radius:8px;padding:14px 18px;margin:0 0 20px;color:${EMAIL_STYLES.greenDark};font-size:14px;">
       <strong>✓ Delivered to the IRS</strong> — keep this email as your proof of submission.
     </div>
     ${proofTable}
-    ${receiptPdfBytes ? `<p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:14px;">
+    ${receiptPdfBytes ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       A timestamped <strong>IRS Fax Transmission Receipt</strong> is saved in your portal — download
       it to keep with your tax records. Under IRC § 6038A it serves as proof of on-time filing if
       the IRS ever asks.
     </p>` : ""}
-    <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:15px;">What's next</p>
-    <p style="margin:0 0 24px;color:#475569;line-height:1.6;font-size:14px;">
+    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What's next</p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       The IRS doesn't send acknowledgments for faxed 5472 filings, so no further action is required.
       You can re-download the receipt and your filing package anytime from your portal.
     </p>
@@ -565,15 +658,17 @@ export async function sendFaxDeliveredEmail(args: {
   return sendEmail({
     to: email,
     subject: `Your ${llcLine} filing was delivered to the IRS`,
-    text:
+    text: customerText(
+      "there",
       `Your signed Form 5472 + pro forma 1120 for ${llcLine} (${yearsLabel}) was successfully faxed to the IRS Ogden PIN Unit.\n\n` +
       `Keep this email as your proof of submission. Download your timestamped IRS Fax Transmission Receipt from your portal — it serves as proof of on-time filing.\n` +
       `The IRS doesn't send acknowledgments for faxed 5472 filings, so no further action is required.\n` +
       proofText +
-      `\nView your filing and download documents: ${portalLink}\n\n— Form5472 Prep`,
-    html: shell({
-      preheader: `Your ${llcLine} filing was delivered to the IRS — download your receipt in the portal.`,
+      `\nView your filing and download documents: ${portalLink}`,
+    ),
+    html: customerShell({
       heading: "Your filing was delivered to the IRS",
+      salutation: "there",
       bodyHtml,
       cta: { label: "View my filing", url: portalLink },
     }),
@@ -615,27 +710,6 @@ export async function sendNewOrderAdminEmail(args: {
   const tierLabel = tierInfo(tier).label;
   const amountLabel = isTestOrder ? "$0.00 (TEST ORDER)" : formatUsd(amountPaidCents);
 
-  const bodyHtml = `
-    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
-      ${isTestOrder
-        ? `An admin <strong>test order</strong> was just created (Stripe bypassed, $0).`
-        : `A new paid order just landed in the queue.`}
-    </p>
-    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Customer</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(customerEmail ?? "(anonymous)")}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">LLC</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(llcLine)}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Tax year(s)</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(yearsLabel)}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Tier</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(tierLabel)}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Amount paid</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(amountLabel)}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">PDF generated</td><td style="padding:6px 0;color:${pdfGenerated ? "#047857" : "#b91c1c"};font-size:13px;">${pdfGenerated ? "yes" : "no — check filing for missing fields"}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Filing ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</td></tr>
-    </table>
-    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:14px;">
-      Next step: review the filing, place the customer signature once they
-      sign in-portal, then fax to the IRS.
-    </p>
-  `;
-
   return sendEmail({
     to: adminEmail,
     subject: `${isTestOrder ? "[Test order]" : "[New order]"} ${llcLine} (${yearsLabel})`,
@@ -649,11 +723,20 @@ export async function sendNewOrderAdminEmail(args: {
       `PDF generated: ${pdfGenerated ? "yes" : "no — check filing for missing fields"}\n` +
       `Filing ID:     ${filingId}\n` +
       `\nAdmin view: ${adminFilingUrl}\n`,
-    html: shell({
-      preheader: `${isTestOrder ? "Test order" : "New order"} — ${llcLine} (${yearsLabel})`,
+    html: adminShell({
+      tag: "Orders",
       heading: isTestOrder ? "Test order created" : "New order received",
-      bodyHtml,
-      cta: { label: "Open in admin", url: adminFilingUrl },
+      rows: [
+        ["Customer", customerEmail ?? "(anonymous)"],
+        ["LLC", llcLine],
+        ["Tax years", yearsLabel],
+        ["Tier", tierLabel],
+        ["Amount paid", amountLabel],
+        ["PDF generated", pdfGenerated ? "Yes" : "No — check filing for missing fields"],
+        ["Filing ID", filingId],
+        ["Admin view", adminFilingUrl],
+      ],
+      extraHtml: `<p style="margin:0;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">Next step: review the filing, place the customer signature after it is provided in the portal, then fax the filing to the IRS.</p>`,
     }),
   });
 }
@@ -689,25 +772,6 @@ export async function sendFaxDeliveredAdminEmail(args: {
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "(no LLC name)";
 
-  const bodyHtml = `
-    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
-      Fax delivered to the IRS Ogden PIN Unit.
-    </p>
-    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Customer</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(customerEmail ?? "(anonymous)")}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">LLC</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(llcLine)}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Tax year(s)</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(yearsLabel)}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Filing ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</td></tr>
-      ${formatFaxProofRows(proof)}
-    </table>
-    ${(receiptPdfBytes || signedPdfBytes) ? `
-    <p style="margin:0 0 8px;font-weight:600;color:#0f172a;font-size:14px;">Attachments</p>
-    <ul style="margin:0 0 20px 18px;padding:0;color:#475569;font-size:13px;line-height:1.6;">
-      ${receiptPdfBytes ? `<li>IRS Fax Transmission Receipt (proof of delivery)</li>` : ""}
-      ${signedPdfBytes ? `<li>Frozen copy of the signed package that was faxed</li>` : ""}
-    </ul>` : ""}
-  `;
-
   // Filename hygiene: scrub the LLC name down to alphanumerics + dashes so
   // mail clients don't choke on Unicode / punctuation in attachment headers.
   const safeLlc = llcLine.replace(/[^a-zA-Z0-9-]+/g, "_");
@@ -741,11 +805,25 @@ export async function sendFaxDeliveredAdminEmail(args: {
       (proof.durationSecs != null ? `Duration:    ${proof.durationSecs}s\n` : "") +
       `\nAttachments: ${attachments.map((a) => a.filename).join(", ") || "(none)"}\n` +
       `\nAdmin view: ${adminFilingUrl}\n`,
-    html: shell({
-      preheader: `Fax delivered — ${llcLine} (${yearsLabel})`,
+    html: adminShell({
+      tag: "Fax delivery",
       heading: "Fax delivered to IRS",
-      bodyHtml,
-      cta: { label: "Open in admin", url: adminFilingUrl },
+      rows: [
+        ["Customer", customerEmail ?? "(anonymous)"],
+        ["LLC", llcLine],
+        ["Tax years", yearsLabel],
+        ["Filing ID", filingId],
+        ["IRS fax number", proof.to ?? "+1 (855) 887-7737 (Ogden PIN Unit)"],
+        ["Delivered at", new Date(proof.deliveredAt).toUTCString()],
+        ...(proof.pageCount != null ? [["Pages transmitted", String(proof.pageCount)] as [string, string]] : []),
+        ...(proof.durationSecs != null ? [["Transmission duration", `${proof.durationSecs}s`] as [string, string]] : []),
+        ...(proof.from ? [["Sent from", proof.from] as [string, string]] : []),
+        ["Telnyx confirmation ID", proof.faxId],
+        ["Admin view", adminFilingUrl],
+      ],
+      extraHtml: attachments.length > 0
+        ? `<p style="margin:0;color:${EMAIL_STYLES.subtle};font-size:13px;line-height:1.6;"><strong>Attachments:</strong> ${escapeHtml(attachments.map((attachment) => attachment.filename).join(", "))}</p>`
+        : undefined,
     }),
     attachments: attachments.length > 0 ? attachments : undefined,
   });
@@ -767,26 +845,11 @@ export async function sendFaxFailedAdminEmail(args: {
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "(no LLC name)";
 
-  const bodyHtml = `
-    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
-      Telnyx gave up after ${deliveryAttempts} attempt${deliveryAttempts === 1 ? "" : "s"}.
-      Customer has been notified separately. Manual intervention required.
-    </p>
-    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Customer</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(customerEmail ?? "(anonymous)")}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">LLC</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(llcLine)}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Tax year(s)</td><td style="padding:6px 0;color:#0f172a;font-size:13px;">${escapeHtml(yearsLabel)}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Filing ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#475569;font-size:13px;">Telnyx fax ID</td><td style="padding:6px 0;color:#0f172a;font-size:13px;font-family:ui-monospace,monospace;">${escapeHtml(faxId)}</td></tr>
-      <tr><td style="padding:6px 12px 6px 0;color:#dc2626;font-size:13px;font-weight:600;">Failure reason</td><td style="padding:6px 0;color:#dc2626;font-size:13px;">${escapeHtml(failureReason ?? "unknown")}</td></tr>
-    </table>
-  `;
-
   return sendEmail({
     to: adminEmail,
-    subject: `[Fax FAILED] ${llcLine} (${yearsLabel}) — ${failureReason ?? "unknown"}`,
+    subject: `[Fax failed] ${llcLine} (${yearsLabel}) — ${failureReason ?? "unknown"}`,
     text:
-      `Fax to IRS FAILED after ${deliveryAttempts} attempt(s).\n\n` +
+      `Fax to IRS failed after ${deliveryAttempts} attempt(s).\n\n` +
       `Customer:    ${customerEmail ?? "(anonymous)"}\n` +
       `LLC:         ${llcLine}\n` +
       `Tax year(s): ${yearsLabel}\n` +
@@ -794,11 +857,20 @@ export async function sendFaxFailedAdminEmail(args: {
       `Telnyx ID:   ${faxId}\n` +
       `Reason:      ${failureReason ?? "unknown"}\n` +
       `\nAdmin view: ${adminFilingUrl}\n`,
-    html: shell({
-      preheader: `Fax FAILED — ${llcLine} (${yearsLabel})`,
+    html: adminShell({
+      tag: "Fax delivery",
       heading: "Fax to IRS failed — manual action needed",
-      bodyHtml,
-      cta: { label: "Open in admin", url: adminFilingUrl },
+      rows: [
+        ["Customer", customerEmail ?? "(anonymous)"],
+        ["LLC", llcLine],
+        ["Tax years", yearsLabel],
+        ["Filing ID", filingId],
+        ["Telnyx fax ID", faxId],
+        ["Delivery attempts", String(deliveryAttempts)],
+        ["Failure reason", failureReason ?? "unknown"],
+        ["Admin view", adminFilingUrl],
+      ],
+      extraHtml: `<div style="background:${EMAIL_STYLES.redBg};border:1px solid ${EMAIL_STYLES.redBorder};border-radius:8px;padding:14px 18px;color:${EMAIL_STYLES.redDark};font-size:14px;line-height:1.6;">The customer has been notified separately. Manual intervention is required.</div>`,
     }),
   });
 }
@@ -816,16 +888,16 @@ export async function sendFaxFailedEmail(args: {
   const llcLine = llcName ?? "your filing";
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       We tried to fax your signed Form 5472 + pro forma 1120 for <strong>${escapeHtml(llcLine)}</strong>
       (tax year${taxYears.length > 1 ? "s" : ""} ${escapeHtml(yearsLabel)}) to the IRS Ogden PIN Unit,
       but the transmission didn't go through after multiple attempts.
     </p>
-    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:14px 18px;margin:0 0 20px;color:#991b1b;font-size:14px;">
+    <div style="background:${EMAIL_STYLES.redBg};border:1px solid ${EMAIL_STYLES.redBorder};border-radius:8px;padding:14px 18px;margin:0 0 20px;color:${EMAIL_STYLES.redDark};font-size:14px;">
       <strong>Fax delivery failed</strong> — no action lost. Our team has been notified and will
       reach out within one business day with next steps (manual retry or refund).
     </div>
-    <p style="margin:0 0 24px;color:#475569;line-height:1.6;font-size:14px;">
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       You don't need to do anything right now. If you have questions in the meantime,
       reply to this email and we'll get back to you quickly.
     </p>
@@ -834,13 +906,15 @@ export async function sendFaxFailedEmail(args: {
   return sendEmail({
     to: email,
     subject: `Action needed — fax to IRS failed (${llcLine})`,
-    text:
+    text: customerText(
+      "there",
       `We tried to fax your signed Form 5472 + pro forma 1120 for ${llcLine} (${yearsLabel}) to the IRS Ogden PIN Unit, but transmission failed after multiple attempts.\n\n` +
       `Our team has been notified and will reach out within one business day with next steps. You don't need to do anything right now.\n\n` +
-      `View your filing: ${portalLink}\n\n— Form5472 Prep`,
-    html: shell({
-      preheader: `Fax to IRS failed for ${llcLine} — our team has been notified.`,
-      heading: "We hit a snag faxing your filing",
+      `View your filing: ${portalLink}`,
+    ),
+    html: customerShell({
+      heading: "We could not fax your filing",
+      salutation: "there",
       bodyHtml,
       cta: { label: "View my filing", url: portalLink },
     }),
@@ -866,12 +940,12 @@ export async function sendNewMessageToCustomerEmail(args: {
   const llcLine = llcName ?? "your filing";
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       You have a new message from our team about <strong>${escapeHtml(llcLine)}</strong>
       (tax year${taxYears.length > 1 ? "s" : ""} ${escapeHtml(yearsLabel)}).
     </p>
-    <blockquote style="margin:0 0 20px;padding:14px 18px;background:#f8fafc;border-left:3px solid #1e3a8a;color:#0f172a;font-size:14px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(bodyExcerpt)}</blockquote>
-    <p style="margin:0 0 24px;color:#475569;line-height:1.6;font-size:14px;">
+    <blockquote style="margin:0 0 20px;padding:14px 18px;background:${EMAIL_STYLES.bg};border-left:3px solid ${EMAIL_STYLES.brand};color:${EMAIL_STYLES.ink};font-size:14px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(bodyExcerpt)}</blockquote>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       Open your portal to read the full message and reply.
     </p>
   `;
@@ -879,13 +953,15 @@ export async function sendNewMessageToCustomerEmail(args: {
   return sendEmail({
     to: email,
     subject: `New message about your filing — ${llcLine}`,
-    text:
+    text: customerText(
+      "there",
       `You have a new message from our team about ${llcLine} (${yearsLabel}).\n\n` +
       `${bodyExcerpt}\n\n` +
-      `Open your portal to read and reply: ${portalLink}\n\n— Form5472 Prep`,
-    html: shell({
-      preheader: `New message about ${llcLine} — open your portal to reply.`,
+      `Open your portal to read and reply: ${portalLink}`,
+    ),
+    html: customerShell({
       heading: "You have a new message",
+      salutation: "there",
       bodyHtml,
       cta: { label: "Open my portal", url: portalLink },
     }),
@@ -907,15 +983,6 @@ export async function sendNewMessageToAdminEmail(args: {
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "(no LLC name)";
 
-  const bodyHtml = `
-    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
-      <strong>${escapeHtml(customerEmail)}</strong> sent a new message about filing
-      <strong>${escapeHtml(llcLine)}</strong> (${escapeHtml(yearsLabel)}).
-    </p>
-    <blockquote style="margin:0 0 20px;padding:14px 18px;background:#f8fafc;border-left:3px solid #1e3a8a;color:#0f172a;font-size:14px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(bodyExcerpt)}</blockquote>
-    <p style="margin:0 0 20px;color:#475569;font-size:13px;">Filing ID: <code style="font-family:ui-monospace,monospace;">${escapeHtml(filingId)}</code></p>
-  `;
-
   return sendEmail({
     to: adminEmail,
     subject: `[New message] ${llcLine} from ${customerEmail}`,
@@ -924,11 +991,17 @@ export async function sendNewMessageToAdminEmail(args: {
       `${bodyExcerpt}\n\n` +
       `Filing ID: ${filingId}\n` +
       `Reply in admin: ${adminFilingUrl}\n`,
-    html: shell({
-      preheader: `New message from ${customerEmail} about ${llcLine}.`,
+    html: adminShell({
+      tag: "Customer message",
       heading: "New message from customer",
-      bodyHtml,
-      cta: { label: "Open in admin", url: adminFilingUrl },
+      rows: [
+        ["Customer", customerEmail],
+        ["LLC", llcLine],
+        ["Tax years", yearsLabel],
+        ["Filing ID", filingId],
+        ["Message", bodyExcerpt],
+        ["Admin view", adminFilingUrl],
+      ],
     }),
   });
 }
@@ -956,17 +1029,17 @@ export async function sendJanuaryReminderEmail(args: ReminderArgs) {
         : `${previousLlcNames.slice(0, -1).join(", ")} and ${previousLlcNames[previousLlcNames.length - 1]}`;
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
-      Happy New Year! It's that time again — the IRS requires foreign-owned US LLCs to file
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
+      The new filing season is here. The IRS requires foreign-owned US LLCs to file
       <strong>Form 5472 + pro forma Form 1120</strong> every year, even if there was no income.
     </p>
-    <p style="margin:0 0 20px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       For ${escapeHtml(llcLine)}, your <strong>${taxYearToFile}</strong> tax year filing is due by
       <strong>${deadline}</strong>. Start now and have it filed in ~15 minutes —
       we'll pull your previous answers forward so you don't re-enter the LLC details.
     </p>
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin:0 0 24px;color:#334155;font-size:14px;line-height:1.5;">
-      <strong style="color:#0f172a;">Why now?</strong> Filing in January means no last-minute rush
+    <div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;padding:14px 18px;margin:0 0 24px;color:${EMAIL_STYLES.slate};font-size:14px;line-height:1.5;">
+      <strong style="color:${EMAIL_STYLES.ink};">Why now?</strong> Filing in January means no last-minute rush
       and no risk of IRS late-filing penalties on Form 5472.
     </div>
   `;
@@ -975,14 +1048,14 @@ export async function sendJanuaryReminderEmail(args: ReminderArgs) {
     to: email,
     subject: `Time to file your ${taxYearToFile} Form 5472`,
     text:
-      `Happy New Year!\n\nYour ${taxYearToFile} Form 5472 + pro forma 1120 for ${llcLine} is due by ${deadline}.\n\n` +
+      `Hello there,\n\nYour ${taxYearToFile} Form 5472 + pro forma 1120 for ${llcLine} is due by ${deadline}.\n\n` +
       `File now in ~15 minutes — we'll pull your previous answers forward: ${startLink}\n\n` +
       `Filing early avoids IRS late-filing penalties on Form 5472.\n\n` +
-      `— Form5472 Prep\n\n` +
+      `Thank you,\nThe Form5472 Prep team\n\n` +
       `Unsubscribe from filing reminders: ${unsubscribeUrl}`,
-    html: shell({
-      preheader: `Your ${taxYearToFile} Form 5472 is due by ${deadline}. File in 15 min.`,
+    html: customerShell({
       heading: `Time to file your ${taxYearToFile} Form 5472`,
+      salutation: "there",
       bodyHtml,
       cta: { label: `File my ${taxYearToFile} return`, url: startLink },
       unsubscribeUrl,
@@ -1011,15 +1084,15 @@ export async function sendMarchReminderEmail(args: ReminderArgs) {
         : `${previousLlcNames.slice(0, -1).join(", ")} and ${previousLlcNames[previousLlcNames.length - 1]}`;
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       Quick reminder — your <strong>${taxYearToFile}</strong> Form 5472 for
       ${escapeHtml(llcLine)} is due in about <strong>30 days</strong> (deadline: ${deadline}).
     </p>
-    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:14px 18px;margin:0 0 20px;color:#991b1b;font-size:14px;line-height:1.5;">
+    <div style="background:${EMAIL_STYLES.redBg};border:1px solid ${EMAIL_STYLES.redBorder};border-radius:8px;padding:14px 18px;margin:0 0 20px;color:${EMAIL_STYLES.redDark};font-size:14px;line-height:1.5;">
       <strong>Heads up:</strong> the IRS imposes significant late-filing penalties for Form 5472 —
       act now to file on time.
     </div>
-    <p style="margin:0 0 24px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       The filing takes ~15 minutes from start to faxed-with-the-IRS. We've kept your previous
       LLC and owner details on file so you can move fast.
     </p>
@@ -1029,13 +1102,13 @@ export async function sendMarchReminderEmail(args: ReminderArgs) {
     to: email,
     subject: `30 days left — file your ${taxYearToFile} Form 5472 before ${deadline}`,
     text:
-      `Your ${taxYearToFile} Form 5472 for ${llcLine} is due in about 30 days (deadline: ${deadline}).\n\n` +
+      `Hello there,\n\nYour ${taxYearToFile} Form 5472 for ${llcLine} is due in about 30 days (deadline: ${deadline}).\n\n` +
       `The IRS imposes significant late-filing penalties on Form 5472. Take 15 minutes now and we'll fax it to the IRS today: ${startLink}\n\n` +
-      `— Form5472 Prep\n\n` +
+      `Thank you,\nThe Form5472 Prep team\n\n` +
       `Unsubscribe from filing reminders: ${unsubscribeUrl}`,
-    html: shell({
-      preheader: `30 days left until the ${deadline} Form 5472 deadline.`,
+    html: customerShell({
       heading: `Your ${taxYearToFile} Form 5472 deadline is in 30 days`,
+      salutation: "there",
       bodyHtml,
       cta: { label: `File my ${taxYearToFile} return now`, url: startLink },
       unsubscribeUrl,
@@ -1083,15 +1156,15 @@ export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) 
     : `You started a Form 5472 filing for ${llcPlain} but didn't finish.\n\nYour progress is saved.`;
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       ${introHtml}
     </p>
-    <p style="margin:0 0 20px;color:#475569;line-height:1.6;font-size:15px;">
+    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       Most customers finish in about <strong>15 minutes</strong>. The IRS imposes
       significant penalties for missing Form 5472 filings, so it's worth completing today.
     </p>
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin:0 0 24px;color:#334155;font-size:14px;line-height:1.5;">
-      <strong style="color:#0f172a;">Need help?</strong> Just reply to this email and we'll
+    <div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;padding:14px 18px;margin:0 0 24px;color:${EMAIL_STYLES.slate};font-size:14px;line-height:1.5;">
+      <strong style="color:${EMAIL_STYLES.ink};">Need help?</strong> Just reply to this email and we'll
       walk you through whatever you got stuck on.
     </div>`;
 
@@ -1099,15 +1172,15 @@ export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) 
     to: email,
     subject,
     text:
-      `${introText}\n\n` +
+      `Hello there,\n\n${introText}\n\n` +
       `Pick up where you left off (most customers finish in ~15 minutes):\n` +
       `${resumeLink}\n\n` +
       `The IRS imposes significant penalties for missing Form 5472 filings — worth completing today.\n\n` +
-      `Need help? Just reply to this email.\n\n— Form5472 Prep\n\n` +
+      `If you need help, reply to this email.\n\nThank you,\nThe Form5472 Prep team\n\n` +
       `Unsubscribe from these emails: ${unsubscribeUrl}`,
-    html: shell({
-      preheader,
+    html: customerShell({ preheader,
       heading,
+      salutation: "there",
       bodyHtml,
       cta: { label: "Resume my filing", url: resumeLink },
       unsubscribeUrl,
@@ -1119,7 +1192,302 @@ export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) 
   });
 }
 
+// ---------- Application, contact, authentication, and partner emails ----------
+
+type EinApplicationEmailArgs = {
+  fullName: string;
+  email: string;
+  phone?: string;
+  llcName: string;
+  llcState?: string;
+  llcFormedDate?: string;
+  businessPurpose?: string;
+  ownerName?: string;
+  ownerCitizenship?: string;
+  ownerResidence?: string;
+  passportNumber?: string;
+  notes?: string;
+};
+
+export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs & { adminEmail: string }) {
+  const value = (input?: string, fallback = "(not provided)") => input || fallback;
+  return sendEmail({
+    to: args.adminEmail,
+    replyTo: args.email,
+    subject: `[EIN Application] ${args.fullName} — ${args.llcName}`,
+    text: [
+      "New EIN application",
+      "",
+      `Name: ${args.fullName}`,
+      `Email: ${args.email}`,
+      `Phone: ${value(args.phone)}`,
+      `LLC name: ${args.llcName}`,
+      `State: ${value(args.llcState)}`,
+      `Formed date: ${value(args.llcFormedDate)}`,
+      `Business purpose: ${value(args.businessPurpose)}`,
+      `Owner name: ${value(args.ownerName, "(same as contact)")}`,
+      `Citizenship: ${value(args.ownerCitizenship)}`,
+      `Residence: ${value(args.ownerResidence)}`,
+      `Passport number: ${value(args.passportNumber)}`,
+      `Notes: ${value(args.notes, "(none)")}`,
+      "",
+      "Reply directly to this email to contact the applicant.",
+    ].join("\n"),
+    html: adminShell({
+      tag: "EIN application",
+      heading: "New EIN application",
+      rows: [
+        ["Name", args.fullName],
+        ["Email", args.email],
+        ["Phone", value(args.phone)],
+        ["LLC name", args.llcName],
+        ["State", value(args.llcState)],
+        ["Formed date", value(args.llcFormedDate)],
+        ["Business purpose", value(args.businessPurpose)],
+        ["Owner name", value(args.ownerName, "(same as contact)")],
+        ["Citizenship", value(args.ownerCitizenship)],
+        ["Residence", value(args.ownerResidence)],
+        ["Passport number", value(args.passportNumber)],
+        ["Notes", value(args.notes, "(none)")],
+      ],
+      extraHtml: `<p style="margin:0;color:${EMAIL_STYLES.muted};font-size:13px;">Reply directly to this email to contact the applicant.</p>`,
+    }),
+  });
+}
+
+export async function sendEinApplicationConfirmationEmail(args: {
+  email: string;
+  fullName: string;
+  llcName: string;
+  portalLink: string;
+}) {
+  const body = `We've received your EIN application for ${args.llcName}.\n\nOur team will reach out within 1 business day with a document checklist and payment link.\n\nTrack your application status in your client portal:\n${args.portalLink}`;
+  return sendEmail({
+    to: args.email,
+    subject: "EIN application received — Form5472 Prep",
+    text: customerText(args.fullName, body),
+    html: customerShell({
+      heading: "We received your EIN application",
+      salutation: args.fullName,
+      bodyHtml: `
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">We&apos;ve received your EIN application for <strong>${escapeHtml(args.llcName)}</strong>.</p>
+        <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Our team will reach out within <strong>1 business day</strong> with a document checklist and payment link.</p>`,
+      cta: { label: "View my application", url: args.portalLink },
+    }),
+  });
+}
+
+type ItinApplicationEmailArgs = {
+  fullName: string;
+  email: string;
+  phone?: string;
+  dateOfBirth?: string;
+  countryOfBirth?: string;
+  citizenship?: string;
+  countryOfResidence?: string;
+  itinReason: string;
+  taxReturnType?: string;
+  usActivity?: string;
+  passportNumber?: string;
+  passportExpiry?: string;
+  notes?: string;
+};
+
+export async function sendItinApplicationAdminEmail(args: ItinApplicationEmailArgs & { adminEmail: string }) {
+  const value = (input?: string, fallback = "(not provided)") => input || fallback;
+  return sendEmail({
+    to: args.adminEmail,
+    replyTo: args.email,
+    subject: `[ITIN Application] ${args.fullName} — ${args.itinReason}`,
+    text: [
+      "New ITIN application",
+      "",
+      `Name: ${args.fullName}`,
+      `Email: ${args.email}`,
+      `Phone: ${value(args.phone)}`,
+      `Date of birth: ${value(args.dateOfBirth)}`,
+      `Country of birth: ${value(args.countryOfBirth)}`,
+      `Citizenship: ${value(args.citizenship)}`,
+      `Country of residence: ${value(args.countryOfResidence)}`,
+      `Reason (W-7): ${args.itinReason}`,
+      `Tax return type: ${value(args.taxReturnType, "(not applicable)")}`,
+      `US activity: ${value(args.usActivity)}`,
+      `Passport number: ${value(args.passportNumber)}`,
+      `Passport expiry: ${value(args.passportExpiry)}`,
+      `Notes: ${value(args.notes, "(none)")}`,
+      "",
+      "Reply directly to this email to contact the applicant.",
+    ].join("\n"),
+    html: adminShell({
+      tag: "ITIN application",
+      heading: "New ITIN application",
+      rows: [
+        ["Name", args.fullName],
+        ["Email", args.email],
+        ["Phone", value(args.phone)],
+        ["Date of birth", value(args.dateOfBirth)],
+        ["Country of birth", value(args.countryOfBirth)],
+        ["Citizenship", value(args.citizenship)],
+        ["Country of residence", value(args.countryOfResidence)],
+        ["Reason (W-7)", args.itinReason],
+        ["Tax return type", value(args.taxReturnType, "(not applicable)")],
+        ["US activity", value(args.usActivity)],
+        ["Passport number", value(args.passportNumber)],
+        ["Passport expiry", value(args.passportExpiry)],
+        ["Notes", value(args.notes, "(none)")],
+      ],
+      extraHtml: `<p style="margin:0;color:${EMAIL_STYLES.muted};font-size:13px;">Reply directly to this email to contact the applicant.</p>`,
+    }),
+  });
+}
+
+export async function sendItinApplicationConfirmationEmail(args: {
+  email: string;
+  fullName: string;
+  portalLink: string;
+}) {
+  const body = `We've received your ITIN application.\n\nOur team will reach out within 1 business day with a document checklist, CAA certification appointment details, and payment link.\n\nTrack your application status in your client portal:\n${args.portalLink}`;
+  return sendEmail({
+    to: args.email,
+    subject: "ITIN application received — Form5472 Prep",
+    text: customerText(args.fullName, body),
+    html: customerShell({
+      heading: "We received your ITIN application",
+      salutation: args.fullName,
+      bodyHtml: `
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">We&apos;ve received your ITIN application.</p>
+        <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Our team will review it and reach out within <strong>1 business day</strong> with next steps, including the document checklist, CAA certification appointment, and payment link.</p>`,
+      cta: { label: "View my application", url: args.portalLink },
+    }),
+  });
+}
+
+function subjectSnippet(message: string, maxLength = 60) {
+  if (message.length <= maxLength) return message;
+  const initial = message.slice(0, maxLength).trimEnd();
+  const boundary = /\s/.test(message.charAt(maxLength)) ? initial.length : initial.lastIndexOf(" ");
+  const wholeWords = boundary > 0 ? initial.slice(0, boundary).trimEnd() : "Message received";
+  return `${wholeWords}…`;
+}
+
+export async function sendWebsiteQuestionAdminEmail(args: {
+  adminEmail: string;
+  name?: string;
+  email: string;
+  message: string;
+  topicLabel?: string;
+  pageUrl?: string;
+}) {
+  const displayName = args.name || "(not provided)";
+  const subjectParts = [args.topicLabel, args.name, subjectSnippet(args.message)].filter(Boolean).join(" — ");
+  return sendEmail({
+    to: args.adminEmail,
+    replyTo: args.email,
+    subject: `[Website question] ${subjectParts}`,
+    text: [
+      "New question from the website",
+      "",
+      `Name: ${displayName}`,
+      `Email: ${args.email}`,
+      args.topicLabel ? `Topic: ${args.topicLabel}` : "",
+      args.pageUrl ? `Page: ${args.pageUrl}` : "",
+      "",
+      "Message:",
+      args.message,
+      "",
+      "Reply directly to this email to answer the visitor.",
+    ].filter(Boolean).join("\n"),
+    html: adminShell({
+      tag: "Website question",
+      heading: "New question from the website",
+      rows: [
+        ["Name", displayName],
+        ["Email", args.email],
+        ...(args.topicLabel ? [["Topic", args.topicLabel] as [string, string]] : []),
+        ...(args.pageUrl ? [["Page", args.pageUrl] as [string, string]] : []),
+        ["Message", args.message],
+      ],
+      extraHtml: `<p style="margin:0;color:${EMAIL_STYLES.muted};font-size:13px;">Reply directly to this email to answer the visitor.</p>`,
+    }),
+  });
+}
+
+export async function sendAdminLoginEmail(args: {
+  email: string;
+  link: string;
+  appLink: string;
+}) {
+  const body = `Use this secure link to sign in to Form5472 Prep:\n\nSign in on the web:\n${args.link}\n\nSign in on the iPhone app:\n${args.appLink}\n\nThis link expires in 15 minutes and can only be used once. Using either link consumes it, so choose the service you want to use.`;
+  return sendEmail({
+    to: args.email,
+    subject: "Your Form5472 Prep admin sign-in link",
+    text: customerText("administrator", body),
+    html: customerShell({
+      heading: "Sign in to Form5472 Prep",
+      salutation: "administrator",
+      bodyHtml: `
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Use this secure link to sign in to Form5472 Prep.</p>
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">You can also <a href="${escapeHtml(args.appLink)}" style="color:${EMAIL_STYLES.brand};text-decoration:none;">sign in on the iPhone app</a>.</p>
+        <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};line-height:1.6;font-size:13px;">This link expires in 15 minutes and can only be used once. Using either link consumes it, so choose the service you want to use.</p>`,
+      cta: { label: "Sign in", url: args.link },
+    }),
+  });
+}
+
+export async function sendPartnerApplicationAdminEmail(args: {
+  adminEmail: string;
+  name: string;
+  email: string;
+  company?: string;
+  phone?: string;
+  notes?: string;
+  adminPartnersUrl: string;
+}) {
+  return sendEmail({
+    to: args.adminEmail,
+    replyTo: args.email,
+    subject: `[Partner application] ${args.name}${args.company ? ` — ${args.company}` : ""}`,
+    text: [
+      "New partner application — pending approval.",
+      "",
+      `Contact: ${args.name}`,
+      `Email: ${args.email}`,
+      args.company ? `Company: ${args.company}` : "",
+      args.phone ? `Phone: ${args.phone}` : "",
+      args.notes ? `Notes: ${args.notes}` : "",
+      "",
+      `Activate the applicant at ${args.adminPartnersUrl}. They cannot sign in until approval.`,
+    ].filter(Boolean).join("\n"),
+    html: adminShell({
+      tag: "Partner application",
+      heading: "New partner application",
+      rows: [
+        ["Contact", args.name],
+        ["Email", args.email],
+        ...(args.company ? [["Company", args.company] as [string, string]] : []),
+        ...(args.phone ? [["Phone", args.phone] as [string, string]] : []),
+        ...(args.notes ? [["Notes", args.notes] as [string, string]] : []),
+        ["Admin view", args.adminPartnersUrl],
+      ],
+      extraHtml: `
+        <div style="background:${EMAIL_STYLES.amberBg};border:1px solid ${EMAIL_STYLES.amberBorder};border-radius:8px;padding:14px 18px;color:${EMAIL_STYLES.amber};font-size:14px;line-height:1.6;">
+          <strong style="display:block;margin:0 0 6px;color:${EMAIL_STYLES.amberDark};">Pending approval</strong>
+          The applicant cannot sign in until you activate the partner account.
+        </div>`,
+    }),
+  });
+}
+
 // ---------- helpers ----------
+
+function slugifySubject(subject: string) {
+  return subject
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 120) || "email";
+}
 
 function escapeHtml(s: string): string {
   return s

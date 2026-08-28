@@ -37,6 +37,7 @@ next-env.d.ts
 
 # generated PDFs and signed uploads (R2 in prod; local tmp during dev)
 /tmp-pdfs/
+/tmp-emails/
 
 # iCloud Drive metadata leak protection — never commit these
 .icloud
