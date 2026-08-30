@@ -25,6 +25,7 @@ export default async function PartnerDashboard() {
   const filings = await prisma.filing.findMany({
     where: { partnerId: partner.id },
     orderBy: { updatedAt: "desc" },
+    take: 200, // dashboard query cap; pagination can come later if needed
     include: { user: true },
   });
 

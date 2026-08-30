@@ -24,6 +24,7 @@ export async function POST(req: Request) {
   const company = typeof body.company === "string" ? body.company.trim().slice(0, MAX.company) : "";
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase().slice(0, MAX.email) : "";
   const phone = typeof body.phone === "string" ? body.phone.trim().slice(0, MAX.phone) : "";
+  const wantsWhiteLabel = body.wantsWhiteLabel === true;
   const notes = typeof body.notes === "string" ? body.notes.trim().slice(0, MAX.notes) : "";
   // Honeypot — bots fill hidden fields; humans never see it.
   const website = typeof body.website === "string" ? body.website.trim() : "";
@@ -55,6 +56,8 @@ export async function POST(req: Request) {
         name,
         email,
         company: company || null,
+        phone: phone || null,
+        wantsWhiteLabel,
         active: false, // pending admin approval
         notes: noteLines.join("\n"),
       },
@@ -67,6 +70,7 @@ export async function POST(req: Request) {
         email,
         company,
         phone,
+        wantsWhiteLabel,
         notes,
         adminPartnersUrl: `${env.appUrl}/admin/partners`,
       });

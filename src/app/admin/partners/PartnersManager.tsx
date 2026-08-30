@@ -8,6 +8,8 @@ type Partner = {
   name: string;
   email: string;
   company: string | null;
+  phone: string | null;
+  wantsWhiteLabel: boolean;
   active: boolean;
   filingCount: number;
   createdAt: string;
@@ -108,8 +110,16 @@ export function PartnersManager({ partners }: { partners: Partner[] }) {
                 <p className="font-medium text-slate-900 truncate">
                   {p.name}
                   {p.company ? <span className="text-slate-400 font-normal"> · {p.company}</span> : null}
+                  {p.wantsWhiteLabel ? (
+                    <span className="ml-2 align-middle text-xs font-medium rounded-full px-2 py-0.5 bg-amber-100 text-amber-800">
+                      White-label
+                    </span>
+                  ) : null}
                 </p>
-                <p className="text-sm text-slate-500">{p.email}</p>
+                <p className="text-sm text-slate-500">
+                  {p.email}
+                  {p.phone ? <span className="text-slate-400"> · {p.phone}</span> : null}
+                </p>
                 <p className="text-xs text-slate-400 mt-0.5">
                   {p.filingCount} filing{p.filingCount === 1 ? "" : "s"} · added {p.createdAt}
                 </p>

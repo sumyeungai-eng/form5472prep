@@ -50,7 +50,7 @@ const faq = [
   },
   {
     q: "Do my clients see Form5472 Prep or my brand?",
-    a: "Clients receive emails from Form5472 Prep — the sign link, filing confirmation, and the IRS fax receipt. You appear as the preparer coordinating the filing. White-label delivery isn't available yet; tell us if you need it.",
+    a: "Clients receive emails from Form5472 Prep — the sign link, filing confirmation, and the IRS fax receipt. You appear as the preparer coordinating the filing. White-label delivery isn't live yet — tell us you want it when you apply and we'll contact you about options.",
   },
 ];
 

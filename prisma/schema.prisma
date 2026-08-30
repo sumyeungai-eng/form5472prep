@@ -61,13 +61,15 @@ model AdminDeviceToken {
 // partner dashboard can list them all, while each filing is still paid for
 // individually at checkout and signed by the end client.
 model Partner {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String // contact name or agency name shown in the portal
-  company   String? // agency / firm name if different from `name`
-  active    Boolean  @default(true) // admin can deactivate to revoke access
-  createdAt DateTime @default(now())
-  notes     String? // admin-only notes about this partner
+  id              String   @id @default(cuid())
+  email           String   @unique
+  name            String // contact name or agency name shown in the portal
+  company         String? // agency / firm name if different from `name`
+  phone           String? // contact phone from the partner application
+  wantsWhiteLabel Boolean @default(false) // applicant wants white-label delivery options
+  active          Boolean  @default(true) // admin can deactivate to revoke access
+  createdAt       DateTime @default(now())
+  notes           String? // admin-only notes about this partner
 
   filings Filing[]
 }

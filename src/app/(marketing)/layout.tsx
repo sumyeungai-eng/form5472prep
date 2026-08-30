@@ -89,7 +89,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <li><Link href="/pricing" className="hover:text-ink">Form 5472 Filing</Link></li>
                 <li><Link href="/ein" className="hover:text-ink">EIN Acquisition</Link></li>
                 <li><Link href="/itin" className="hover:text-ink">ITIN Acquisition</Link></li>
-                <li><Link href="/partners" className="hover:text-ink">Partner Program</Link></li>
+                <li><Link href="/partners" className="hover:text-ink">Become a Partner</Link></li>
                 <li><Link href="/blog" className="hover:text-ink">Guides</Link></li>
                 <li><Link href="/contact" className="hover:text-ink">Contact</Link></li>
                 <li><Link href="/about" className="hover:text-ink">About</Link></li>

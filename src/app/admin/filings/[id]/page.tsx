@@ -23,6 +23,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
     where: { id: params.id },
     include: {
       user: true,
+      partner: { select: { id: true, name: true, email: true } },
       yearData: {
         orderBy: { taxYear: "asc" },
         include: { bankStatements: { orderBy: { uploadedAt: "asc" } } },
@@ -342,6 +343,9 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             <Field label="Landing page" value={filing.attrLanding} mono />
             <Field label="Referring site" value={filing.attrReferrer} />
             <Field label="Landing funnel (?src=)" value={filing.funnelSource} mono />
+            {filing.partnerId && filing.partner ? (
+              <PartnerField name={filing.partner.name} email={filing.partner.email} />
+            ) : null}
           </DetailCard>
         </div>
 
@@ -406,6 +410,21 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
       <p className="mt-8 text-xs text-slate-400 text-center">
         Created {filing.createdAt.toLocaleString()} · Updated {filing.updatedAt.toLocaleString()}
       </p>
+    </div>
+  );
+}
+
+function PartnerField({ name, email }: { name: string; email: string }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-0.5 sm:gap-3 text-sm">
+      <dt className="text-slate-500 text-xs uppercase tracking-wider sm:text-sm sm:normal-case sm:tracking-normal">
+        Partner
+      </dt>
+      <dd className="sm:col-span-2 break-words">
+        <Link href="/admin/partners" className="text-accent hover:underline">
+          {name} ({email})
+        </Link>
+      </dd>
     </div>
   );
 }

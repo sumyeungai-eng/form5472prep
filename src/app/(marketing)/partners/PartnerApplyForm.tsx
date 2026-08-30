@@ -17,11 +17,14 @@ export function PartnerApplyForm() {
     company: "",
     email: "",
     phone: "",
+    wantsWhiteLabel: false,
     notes: "",
     website: "", // honeypot
   });
 
-  function set(k: keyof typeof form) {
+  type TextField = Exclude<keyof typeof form, "wantsWhiteLabel">;
+
+  function set(k: TextField) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setForm((f) => ({ ...f, [k]: e.target.value }));
   }
@@ -137,6 +140,41 @@ export function PartnerApplyForm() {
             disabled={status === "submitting"}
             className="w-full text-sm px-3 py-2 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
           />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            Interested in white-label delivery?
+          </label>
+          <div className="grid sm:grid-cols-2 gap-2">
+            <label className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700">
+              <input
+                type="radio"
+                name="wantsWhiteLabel"
+                value="no"
+                checked={!form.wantsWhiteLabel}
+                onChange={() => setForm((f) => ({ ...f, wantsWhiteLabel: false }))}
+                disabled={status === "submitting"}
+                className="h-4 w-4 accent-accent"
+              />
+              No
+            </label>
+            <label className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700">
+              <input
+                type="radio"
+                name="wantsWhiteLabel"
+                value="yes"
+                checked={form.wantsWhiteLabel}
+                onChange={() => setForm((f) => ({ ...f, wantsWhiteLabel: true }))}
+                disabled={status === "submitting"}
+                className="h-4 w-4 accent-accent"
+              />
+              Yes
+            </label>
+          </div>
+          <p className="mt-1 text-xs text-slate-400">
+            White-label means your clients see your brand on communications instead of ours. We&apos;ll
+            discuss options with you after approval.
+          </p>
         </div>
       </div>
 

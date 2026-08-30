@@ -1450,15 +1450,38 @@ export async function sendAdminLoginEmail(args: {
   });
 }
 
+export function sendPartnerApplicationAdminEmail(args: {
+  adminEmail: string;
+  name: string;
+  email: string;
+  company?: string;
+  phone?: string;
+  wantsWhiteLabel: boolean;
+  notes?: string;
+  adminPartnersUrl: string;
+}): ReturnType<typeof sendEmail>;
+export function sendPartnerApplicationAdminEmail(args: {
+  adminEmail: string;
+  name: string;
+  email: string;
+  company?: string;
+  phone?: string;
+  wantsWhiteLabel?: boolean;
+  notes?: string;
+  adminPartnersUrl: string;
+}): ReturnType<typeof sendEmail>;
 export async function sendPartnerApplicationAdminEmail(args: {
   adminEmail: string;
   name: string;
   email: string;
   company?: string;
   phone?: string;
+  wantsWhiteLabel?: boolean;
   notes?: string;
   adminPartnersUrl: string;
 }) {
+  const wantsWhiteLabel = args.wantsWhiteLabel === true;
+  const whiteLabelText = wantsWhiteLabel ? "Yes — wants their own branding" : "No";
   return sendEmail({
     to: args.adminEmail,
     replyTo: args.email,
@@ -1470,6 +1493,7 @@ export async function sendPartnerApplicationAdminEmail(args: {
       `Email: ${args.email}`,
       args.company ? `Company: ${args.company}` : "",
       args.phone ? `Phone: ${args.phone}` : "",
+      `White-label: ${whiteLabelText}`,
       args.notes ? `Notes: ${args.notes}` : "",
       "",
       `Activate the applicant at ${args.adminPartnersUrl}. They cannot sign in until approval.`,
@@ -1482,10 +1506,16 @@ export async function sendPartnerApplicationAdminEmail(args: {
         ["Email", args.email],
         ...(args.company ? [["Company", args.company] as [string, string]] : []),
         ...(args.phone ? [["Phone", args.phone] as [string, string]] : []),
+        ["White-label", whiteLabelText],
         ...(args.notes ? [["Notes", args.notes] as [string, string]] : []),
         ["Admin view", args.adminPartnersUrl],
       ],
       extraHtml: `
+        ${wantsWhiteLabel ? `
+        <div style="background:${EMAIL_STYLES.amberBg};border:1px solid ${EMAIL_STYLES.amberBorder};border-radius:8px;padding:14px 18px;color:${EMAIL_STYLES.amber};font-size:14px;line-height:1.6;margin:0 0 12px;">
+          <strong style="display:block;margin:0 0 6px;color:${EMAIL_STYLES.amberDark};">White-label requested</strong>
+          The applicant wants clients to see their own branding on communications.
+        </div>` : ""}
         <div style="background:${EMAIL_STYLES.amberBg};border:1px solid ${EMAIL_STYLES.amberBorder};border-radius:8px;padding:14px 18px;color:${EMAIL_STYLES.amber};font-size:14px;line-height:1.6;">
           <strong style="display:block;margin:0 0 6px;color:${EMAIL_STYLES.amberDark};">Pending approval</strong>
           The applicant cannot sign in until you activate the partner account.
