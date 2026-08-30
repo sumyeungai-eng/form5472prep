@@ -92,40 +92,52 @@ export function FilingActions({ filing }: { filing: Filing }) {
           !filing.signedPdfKey
         }
       >
-        {filing.signedPdfKey ? (
-          <>
-            <p className="text-sm text-slate-600 mb-3">
-              Signed PDF is ready. The complete package is being prepared for fax.
-            </p>
+        <>
+          {filing.generatedPdfKey && (
             <a
-              href={`/api/filings/${filing.id}/signed-pdf`}
+              href={`/api/filings/${filing.id}/pdf`}
               target="_blank"
-              rel="noreferrer"
-              className="text-sm text-accent hover:underline"
+              rel="noopener"
+              className="mb-3 inline-block text-sm text-accent hover:underline"
             >
-              View signed PDF
+              View your filing package (PDF)
             </a>
-          </>
-        ) : filing.signaturePngKey ? (
-          <p className="text-sm text-slate-600">
-            <span className="font-medium text-emerald-700">Signature received.</span>{" "}
-            Our accountant is reviewing your filing and will fax it to the IRS Ogden
-            PIN Unit shortly. You&apos;ll get an email the moment it&apos;s sent.
-          </p>
-        ) : (
-          <>
-            <p className="text-sm text-slate-600 mb-3">
-              Draw your signature once — we embed it into every required box automatically. No printing,
-              scanning, or uploading needed.
+          )}
+          {filing.signedPdfKey ? (
+            <>
+              <p className="text-sm text-slate-600 mb-3">
+                Signed PDF is ready. The complete package is being prepared for fax.
+              </p>
+              <a
+                href={`/api/filings/${filing.id}/signed-pdf`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm text-accent hover:underline"
+              >
+                View signed PDF
+              </a>
+            </>
+          ) : filing.signaturePngKey ? (
+            <p className="text-sm text-slate-600">
+              <span className="font-medium text-emerald-700">Signature received.</span>{" "}
+              Our accountant is reviewing your filing and will fax it to the IRS Ogden
+              PIN Unit shortly. You&apos;ll get an email the moment it&apos;s sent.
             </p>
-            <Button
-              onClick={() => router.push(`/filings/${filing.id}/sign`)}
-              disabled={!filing.generatedPdfKey}
-            >
-              {filing.generatedPdfKey ? "Sign my filing" : "Generate PDF first"}
-            </Button>
-          </>
-        )}
+          ) : (
+            <>
+              <p className="text-sm text-slate-600 mb-3">
+                Draw your signature once — we embed it into every required box automatically. No printing,
+                scanning, or uploading needed.
+              </p>
+              <Button
+                onClick={() => router.push(`/filings/${filing.id}/sign`)}
+                disabled={!filing.generatedPdfKey}
+              >
+                {filing.generatedPdfKey ? "Sign my filing" : "Generate PDF first"}
+              </Button>
+            </>
+          )}
+        </>
       </Step>
 
       {filing.faxService ? (

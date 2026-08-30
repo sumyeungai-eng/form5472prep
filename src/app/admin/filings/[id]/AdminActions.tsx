@@ -101,6 +101,27 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
     }
   }
 
+  async function handleReviewedPdfUpload(file: File | undefined) {
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith(".pdf")) {
+      setMsg({ kind: "err", text: "Please pick a .pdf file." });
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setMsg({ kind: "err", text: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max 10 MB.` });
+      return;
+    }
+    try {
+      const pdfBase64 = await fileToBase64(file);
+      await callApi(
+        { action: "uploadReviewedPdf", pdfBase64 },
+        `Reviewed package uploaded (${(file.size / 1024).toFixed(0)} KB). Customer can sign it now.`,
+      );
+    } catch (e) {
+      setMsg({ kind: "err", text: e instanceof Error ? e.message : "Upload failed" });
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
@@ -152,7 +173,7 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
             </span>
           )}
           <label className="inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-slate-300 bg-white hover:bg-slate-50 cursor-pointer">
-            <span>{hasSignedPdf ? "Replace with uploaded PDF…" : "Upload signed PDF…"}</span>
+            <span>Upload already-signed PDF…</span>
             <input
               type="file"
               accept="application/pdf,.pdf"
@@ -167,7 +188,8 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
           </label>
         </div>
         <p className="text-xs text-slate-400">
-          Either path populates <code className="font-mono">signedPdfKey</code> + bumps status to{" "}
+          The upload path is for a finished, already-signed PDF: it populates{" "}
+          <code className="font-mono">signedPdfKey</code> + bumps status to{" "}
           <code className="font-mono">SIGNED_UPLOADED</code> so the fax button enables.
         </p>
       </div>
@@ -215,6 +237,25 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         >
           Regenerate PDF
         </ActionButton>
+        <div className="flex flex-col gap-1">
+          <label className="inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-slate-300 bg-white hover:bg-slate-50 cursor-pointer">
+            <span>Upload reviewed package…</span>
+            <input
+              type="file"
+              accept="application/pdf,.pdf"
+              disabled={pending}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                void handleReviewedPdfUpload(file);
+                e.target.value = ""; // reset so same file can be re-picked after error
+              }}
+              className="sr-only"
+            />
+          </label>
+          <p className="max-w-xs text-xs text-slate-400">
+            The customer will see and sign this file. Replaces the generated package; any existing signature is cleared.
+          </p>
+        </div>
         {/* Quick preview link — opens the current unsigned PDF in a new
             tab. Uses the admin-auth endpoint with Cache-Control: no-store
             so a regen always shows the latest bytes (no stale CDN copy). */}

@@ -5,7 +5,7 @@ import { resolveTier } from "@/lib/pricing";
 import { makeMagicLink } from "@/lib/magicLink";
 import { sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
 import { submitFax } from "@/lib/fax";
-import { publicUrl, putPdf, get as getStorageObject } from "@/lib/storage";
+import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import {
@@ -28,6 +28,7 @@ export type FilingActionName =
   | "retryFax"
   | "regeneratePdf"
   | "updateField"
+  | "uploadReviewedPdf"
   | "uploadSignedPdf";
 
 export type FilingActionContext = {
@@ -45,6 +46,7 @@ export const FILING_ACTION_NAMES = [
   "retryFax",
   "regeneratePdf",
   "updateField",
+  "uploadReviewedPdf",
   "uploadSignedPdf",
 ] as const satisfies readonly FilingActionName[];
 
@@ -826,6 +828,67 @@ export async function runFilingAction(
         after,
         derived: Object.fromEntries(derivedKeys.map((k) => [k, toJson(update[k])])),
       };
+    }
+
+    case "uploadReviewedPdf": {
+      if (["FAXED", "CONFIRMED"].includes(filing.status) && !isValidForceOverride(ctx)) {
+        throw new FilingActionError(
+          409,
+          "already_faxed",
+          "This filing has already been faxed or confirmed. Force with a reason to replace its reviewed PDF.",
+        );
+      }
+      const rawB64 = typeof body.pdfBase64 === "string" ? body.pdfBase64 : "";
+      const cleaned = rawB64.includes(",") ? rawB64.slice(rawB64.indexOf(",") + 1) : rawB64;
+      if (cleaned.length < 200) {
+        throw new FilingActionError(400, "invalid_pdf", "Empty or missing pdfBase64");
+      }
+      const bytes = Buffer.from(cleaned, "base64");
+      if (bytes.length > 20 * 1024 * 1024) {
+        throw new FilingActionError(400, "pdf_too_large", "Uploaded PDF must be 20 MB or smaller");
+      }
+      if (!bytes.slice(0, 5).toString("ascii").startsWith("%PDF-")) {
+        throw new FilingActionError(
+          400,
+          "invalid_pdf",
+          "Uploaded file is not a valid PDF (missing %PDF- header)",
+        );
+      }
+      const key = `${filing.id}_reviewed_${Date.now()}.pdf`;
+      await put(key, bytes, "application/pdf");
+      // Repoint generatedPdfKey so sign, preview, place-signature, and fax paths
+      // read the reviewed package; the timestamp avoids stale caches and keeps
+      // the original artifact in R2.
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: {
+          generatedPdfKey: key,
+          signedPdfKey: null,
+          signedAt: null,
+          validationStatus: "pending",
+          validationCheckedAt: null,
+          status: "PDF_GENERATED",
+        },
+        select: { id: true },
+      });
+      await logFilingChange({
+        filingId: filing.id,
+        adminId: ctx.adminId,
+        source: "admin",
+        field: "pdf",
+        before: {
+          generatedPdfKey: filing.generatedPdfKey,
+          signedPdfKey: filing.signedPdfKey,
+          status: filing.status,
+        },
+        after: {
+          generatedPdfKey: key,
+          signedPdfKey: null,
+          status: "PDF_GENERATED",
+        },
+        reason: ctx.reason,
+      });
+      return { ok: true, key, bytes: bytes.length };
     }
 
     case "uploadSignedPdf": {
