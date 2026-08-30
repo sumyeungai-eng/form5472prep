@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAdmin } from "@/lib/admin/auth";
+import { getAdminPrincipal, isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { sendAbandonedDraftReminderEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
@@ -22,6 +22,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const body = await req.json().catch(() => ({}));
   const action = body?.action as string | undefined;
   if (!action) return NextResponse.json({ error: "missing action" }, { status: 400 });
+
+  // Review coordination applies independently of the customer-facing filing
+  // workflow, so these actions deliberately bypass the DRAFT-only helper.
+  if (action === "startReview" || action === "endReview") {
+    return handleReviewAction(req, params.id, action);
+  }
 
   // Draft-only actions (archive / unarchive / destroy / manual nudge) live here
   // rather than in runFilingAction: they touch no filing workflow state and must
@@ -53,6 +59,37 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     }
     throw error;
   }
+}
+
+async function handleReviewAction(
+  req: Request,
+  filingId: string,
+  action: "startReview" | "endReview",
+) {
+  const filing = await prisma.filing.findUnique({
+    where: { id: filingId },
+    select: { id: true },
+  });
+  if (!filing) return NextResponse.json({ error: "filing not found" }, { status: 404 });
+
+  const principal = action === "startReview" ? await getAdminPrincipal(req) : null;
+  await prisma.filing.update({
+    where: { id: filing.id },
+    data:
+      action === "startReview"
+        ? {
+            inReview: true,
+            reviewStartedAt: new Date(),
+            reviewedBy: principal?.email ?? principal?.adminId ?? null,
+          }
+        : {
+            inReview: false,
+            reviewStartedAt: null,
+            reviewedBy: null,
+          },
+    select: { id: true },
+  });
+  return NextResponse.json({ ok: true });
 }
 
 async function handleDraftAction(

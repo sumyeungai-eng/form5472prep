@@ -10,10 +10,17 @@ import { filingCompletionIssues } from "@/lib/completeness";
 import { extensionReviewFlags, type ExtensionReviewFlag } from "@/lib/admin/filingActions";
 import { StatusBadge } from "./StatusBadge";
 import { DraftActions } from "./DraftActions";
+import { ReviewToggle } from "./ReviewToggle";
 
 export const dynamic = "force-dynamic";
 
-type SearchParams = { status?: string; q?: string; hidden?: string; ready?: string };
+type SearchParams = {
+  status?: string;
+  q?: string;
+  hidden?: string;
+  ready?: string;
+  review?: string;
+};
 
 // yearData rides along ONLY on the draft view (conditional include below), so
 // it's optional here — the completeness check is the only consumer.
@@ -41,6 +48,7 @@ export default async function AdminFilingsPage({
   // ready=1 narrows to the drafts checkout would accept — the customers who
   // filled everything in and stopped at the payment step.
   const readyOnly = draftView && searchParams.ready === "1";
+  const reviewOnly = searchParams.review === "1";
 
   // Default = ALL statuses, drafts included. Drafts used to be hidden by
   // default as "mostly abandoned wizard sessions", but that also hid the
@@ -51,6 +59,7 @@ export default async function AdminFilingsPage({
   if (statusFilter && STATUS_VALUES.includes(statusFilter)) {
     where.status = statusFilter;
   }
+  if (reviewOnly) where.inReview = true;
   if (q) {
     where.OR = [
       { llcName: { contains: q, mode: "insensitive" } },
@@ -111,6 +120,8 @@ export default async function AdminFilingsPage({
   const toggleQuery = new URLSearchParams();
   if (statusFilter) toggleQuery.set("status", statusFilter);
   if (q) toggleQuery.set("q", q);
+  if (readyOnly) toggleQuery.set("ready", "1");
+  if (reviewOnly) toggleQuery.set("review", "1");
   if (!showHidden) toggleQuery.set("hidden", "1");
   const toggleQs = toggleQuery.toString();
   const toggleHref = toggleQs ? `/admin/filings?${toggleQs}` : "/admin/filings";
@@ -120,9 +131,20 @@ export default async function AdminFilingsPage({
   if (statusFilter) readyQuery.set("status", statusFilter);
   if (q) readyQuery.set("q", q);
   if (showHidden) readyQuery.set("hidden", "1");
+  if (reviewOnly) readyQuery.set("review", "1");
   if (!readyOnly) readyQuery.set("ready", "1");
   const readyQs = readyQuery.toString();
   const readyHref = readyQs ? `/admin/filings?${readyQs}` : "/admin/filings";
+
+  // "In review only" / "← All reviews" toggle, preserving every other filter.
+  const reviewQuery = new URLSearchParams();
+  if (statusFilter) reviewQuery.set("status", statusFilter);
+  if (q) reviewQuery.set("q", q);
+  if (showHidden) reviewQuery.set("hidden", "1");
+  if (readyOnly) reviewQuery.set("ready", "1");
+  if (!reviewOnly) reviewQuery.set("review", "1");
+  const reviewQs = reviewQuery.toString();
+  const reviewHref = reviewQs ? `/admin/filings?${reviewQs}` : "/admin/filings";
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
@@ -152,6 +174,8 @@ export default async function AdminFilingsPage({
         {showHidden && <input type="hidden" name="hidden" value="1" />}
         {/* Same for the ready-to-pay narrowing. */}
         {readyOnly && <input type="hidden" name="ready" value="1" />}
+        {/* Review narrowing remains sticky while changing search or status. */}
+        {reviewOnly && <input type="hidden" name="review" value="1" />}
         <input
           type="text"
           name="q"
@@ -186,6 +210,9 @@ export default async function AdminFilingsPage({
             {readyOnly ? "← All rows" : "Ready to pay only"}
           </Link>
         )}
+        <Link href={reviewHref} className="text-slate-500 hover:text-slate-900 hover:underline">
+          {reviewOnly ? "← All rows" : "In review only"}
+        </Link>
       </div>
 
       {visibleFilings.length === 0 ? (
@@ -202,6 +229,7 @@ export default async function AdminFilingsPage({
                 <th className="text-left font-semibold px-4 py-3">Customer / LLC</th>
                 <th className="text-left font-semibold px-4 py-3">Years</th>
                 <th className="text-left font-semibold px-4 py-3">Status</th>
+                <th className="text-left font-semibold px-4 py-3">Review</th>
                 <th className="text-left font-semibold px-4 py-3">Signed</th>
                 <th className="text-left font-semibold px-4 py-3">Source</th>
                 <th className="text-right font-semibold px-4 py-3">Paid</th>
@@ -226,10 +254,16 @@ export default async function AdminFilingsPage({
                     {f.taxYears.length > 0 ? f.taxYears.join(", ") : "—"}
                   </td>
                   <td className="px-4 py-3">
-                    <StatusBadge status={f.status} />
+                    <div className="flex flex-wrap items-center gap-1">
+                      <StatusBadge status={f.status} />
+                      {f.inReview && <ReviewBadge filing={f} />}
+                    </div>
                     {/* Draft views only: did they actually finish the wizard? */}
                     {draftIssues.has(f.id) && <CompletenessHint issues={draftIssues.get(f.id)!} />}
                     <ExtensionHint filing={f} />
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    <ReviewToggle filingId={f.id} inReview={f.inReview} />
                   </td>
                   <td className="px-4 py-3"><SignedCell filing={f} /></td>
                   <td className="px-4 py-3"><SourceCell filing={f} /></td>
@@ -258,6 +292,24 @@ export default async function AdminFilingsPage({
         </p>
       )}
     </div>
+  );
+}
+
+function ReviewBadge({ filing: f }: { filing: FilingRow }) {
+  const title = [
+    f.reviewedBy ? `Started by ${f.reviewedBy}` : null,
+    f.reviewStartedAt ? `Started ${f.reviewStartedAt.toLocaleString()}` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  return (
+    <span
+      className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-100 text-amber-800"
+      title={title || undefined}
+    >
+      In review
+    </span>
   );
 }
 

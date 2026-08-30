@@ -244,6 +244,13 @@ model Filing {
   // only ever set on DRAFT filings — paid filings are never hidden.
   adminHidden Boolean @default(false)
 
+  // Admin review marker: true while staff is actively reviewing this filing.
+  // Internal only and independent of customer-facing status; never set by
+  // customer code. Reversible, with the time and admin cleared when turned off.
+  inReview        Boolean   @default(false)
+  reviewStartedAt DateTime?
+  reviewedBy      String?
+
   // Visitor explicitly allowed marketing measurement before this draft was
   // created. Gates Meta Conversions API events; tax and bank data are never
   // included in those events.
