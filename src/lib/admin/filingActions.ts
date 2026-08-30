@@ -127,6 +127,7 @@ const filingSelect = {
   extensionProofKey: true,
   faxService: true,
   signedPdfKey: true,
+  signaturePngKey: true,
   generatedPdfKey: true,
   faxedPdfKey: true,
   faxJobId: true,
@@ -858,7 +859,10 @@ export async function runFilingAction(
       await put(key, bytes, "application/pdf");
       // Repoint generatedPdfKey so sign, preview, place-signature, and fax paths
       // read the reviewed package; the timestamp avoids stale caches and keeps
-      // the original artifact in R2.
+      // the original artifact in R2. Customer-signs-first flow: when their
+      // drawn signature is already on file, return to SIGNATURE_PENDING (admin
+      // stamps the saved signature onto this version next), not PDF_GENERATED.
+      const reviewedStatus = filing.signaturePngKey ? "SIGNATURE_PENDING" : "PDF_GENERATED";
       await prisma.filing.update({
         where: { id: filing.id },
         data: {
@@ -867,7 +871,7 @@ export async function runFilingAction(
           signedAt: null,
           validationStatus: "pending",
           validationCheckedAt: null,
-          status: "PDF_GENERATED",
+          status: reviewedStatus,
         },
         select: { id: true },
       });
@@ -884,7 +888,7 @@ export async function runFilingAction(
         after: {
           generatedPdfKey: key,
           signedPdfKey: null,
-          status: "PDF_GENERATED",
+          status: reviewedStatus,
         },
         reason: ctx.reason,
       });

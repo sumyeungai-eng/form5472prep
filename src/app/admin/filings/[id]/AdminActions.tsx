@@ -276,8 +276,7 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
             />
           </label>
           <p className="max-w-xs text-xs text-slate-400">
-            The customer will see and sign this file. Replaces the generated package; any existing signature is cleared.
-          </p>
+            The customer sees this file on their portal. Their saved signature is kept — use Place customer signature to stamp it onto this version before faxing.</p>
         </div>
         {/* Quick preview link — opens the current unsigned PDF in a new
             tab. Uses the admin-auth endpoint with Cache-Control: no-store
