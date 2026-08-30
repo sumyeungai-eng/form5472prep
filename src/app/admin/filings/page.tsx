@@ -202,6 +202,7 @@ export default async function AdminFilingsPage({
                 <th className="text-left font-semibold px-4 py-3">Customer / LLC</th>
                 <th className="text-left font-semibold px-4 py-3">Years</th>
                 <th className="text-left font-semibold px-4 py-3">Status</th>
+                <th className="text-left font-semibold px-4 py-3">Signed</th>
                 <th className="text-left font-semibold px-4 py-3">Source</th>
                 <th className="text-right font-semibold px-4 py-3">Paid</th>
                 <th className="text-left font-semibold px-4 py-3">Updated</th>
@@ -230,6 +231,7 @@ export default async function AdminFilingsPage({
                     {draftIssues.has(f.id) && <CompletenessHint issues={draftIssues.get(f.id)!} />}
                     <ExtensionHint filing={f} />
                   </td>
+                  <td className="px-4 py-3"><SignedCell filing={f} /></td>
                   <td className="px-4 py-3"><SourceCell filing={f} /></td>
                   <td className="px-4 py-3 text-right tabular-nums">
                     <PaidCell status={f.status} amountCents={f.amountPaid} />
@@ -256,6 +258,63 @@ export default async function AdminFilingsPage({
         </p>
       )}
     </div>
+  );
+}
+
+// DRAFT has no package to sign, so it stays neutral instead of "not signed".
+function SignedCell({ filing: f }: { filing: FilingRow }) {
+  const signed = f.signedAt != null || f.signedPdfKey != null;
+
+  if (f.status === "DRAFT") {
+    return (
+      <span className="text-slate-400" title="Not paid yet — nothing to sign">
+        —
+      </span>
+    );
+  }
+
+  if (signed) {
+    return (
+      <>
+        <span className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-emerald-100 text-emerald-800">
+          Signed
+        </span>
+        <div className="mt-1 text-[11px] text-slate-400 whitespace-nowrap">
+          {f.signedAt ? formatRelative(f.signedAt) : "uploaded"}
+        </div>
+      </>
+    );
+  }
+
+  if (["PAID", "PDF_GENERATED", "SIGNATURE_PENDING"].includes(f.status)) {
+    return (
+      <span className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-100 text-amber-800">
+        Awaiting signature
+      </span>
+    );
+  }
+
+  // SIGNED_UPLOADED with no signature on file contradicts itself — flag it red
+  // rather than amber, so nobody chases a customer who may already have signed.
+  if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(f.status)) {
+    return (
+      <span
+        className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-red-100 text-red-800"
+        title="No signature recorded — check this order"
+      >
+        Not signed
+      </span>
+    );
+  }
+
+  if (f.status === "FAILED") {
+    return <span className="text-slate-400">—</span>;
+  }
+
+  return (
+    <span className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-100 text-amber-800">
+      Awaiting signature
+    </span>
   );
 }
 
