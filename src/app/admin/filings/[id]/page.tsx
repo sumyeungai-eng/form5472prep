@@ -12,6 +12,7 @@ import { StatusBadge } from "../StatusBadge";
 import { AdminActions } from "./AdminActions";
 import { EditFieldsCard } from "./EditFieldsCard";
 import { MessagesPanel } from "@/components/MessagesPanel";
+import { YearBreakdown } from "./YearBreakdown";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,10 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
     where: { id: params.id },
     include: {
       user: true,
-      yearData: { orderBy: { taxYear: "asc" } },
+      yearData: {
+        orderBy: { taxYear: "asc" },
+        include: { bankStatements: { orderBy: { uploadedAt: "asc" } } },
+      },
     },
   });
   if (!filing) notFound();
@@ -59,6 +63,17 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
     customerDocuments.map(async (doc) => ({
       ...doc,
       url: await publicUrl(doc.fileKey),
+    })),
+  );
+  const yearDataWithStatementUrls = await Promise.all(
+    filing.yearData.map(async (year) => ({
+      ...year,
+      bankStatements: await Promise.all(
+        year.bankStatements.map(async (stmt) => ({
+          ...stmt,
+          url: await publicUrl(stmt.fileKey),
+        })),
+      ),
     })),
   );
 
@@ -375,27 +390,14 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         {/* Year-by-year data */}
         {filing.yearData.length > 0 && (
           <div className="md:col-span-2">
-            <DetailCard title="Year-by-year data">
-              <table className="w-full text-sm">
-                <thead className="text-xs uppercase tracking-wider text-slate-500">
-                  <tr className="border-b border-slate-200">
-                    <th className="text-left font-semibold py-2">Year</th>
-                    <th className="text-right font-semibold py-2">Total assets (year-end)</th>
-                    <th className="text-right font-semibold py-2">Contributions</th>
-                    <th className="text-right font-semibold py-2">Distributions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {filing.yearData.map((y) => (
-                    <tr key={y.id}>
-                      <td className="py-2 font-medium">{y.taxYear}</td>
-                      <td className="py-2 text-right tabular-nums">${y.totalAssetsYearEnd.toString()}</td>
-                      <td className="py-2 text-right tabular-nums">${y.contributions.toString()}</td>
-                      <td className="py-2 text-right tabular-nums">${y.distributions.toString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <DetailCard title="Year-by-year data (as entered by the customer)">
+              <div className="divide-y divide-slate-200">
+                {yearDataWithStatementUrls.map((y) => (
+                  <div key={y.id} className="py-4 first:pt-0 last:pb-0">
+                    <YearBreakdown year={y} />
+                  </div>
+                ))}
+              </div>
             </DetailCard>
           </div>
         )}
