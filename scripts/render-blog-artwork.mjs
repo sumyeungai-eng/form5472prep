@@ -251,6 +251,17 @@ const POSTS = {
   "form-5472-mexico-residents-us-llc": { accent: C.amber, motif: "globe", glyphs: ["globe", "doc", "person", "check"] },
   "form-5472-part-v-statement-example": { accent: C.teal, motif: "notice", glyphs: ["pen", "doc", "hash", "check"] },
   "form-5472-shopify-dropshipping-foreign-owner": { accent: C.green, motif: "stack", glyphs: ["doc", "person", "clock", "check"] },
+  "form-5472-china-residents-us-llc": { accent: C.clay, motif: "globe", glyphs: ["globe", "person", "hash", "check"] },
+  "form-5472-brazil-residents-us-llc": { accent: C.green, motif: "globe", glyphs: ["globe", "doc", "person", "check"] },
+  "form-5472-spain-residents-us-llc": { accent: C.amber, motif: "globe", glyphs: ["globe", "person", "doc", "check"] },
+  "form-5472-nigeria-residents-us-llc": { accent: C.teal, motif: "globe", glyphs: ["globe", "hash", "person", "check"] },
+  "llc-vs-c-corp-non-resident-founders": { accent: C.amber, motif: "split", glyphs: ["two", "doc", "hash", "check"] },
+  "us-bank-account-foreign-owned-llc": { accent: C.teal, motif: "card", glyphs: ["hash", "doc", "person", "check"] },
+  "w8ben-vs-w9-foreign-owned-llc": { accent: C.clay, motif: "split", glyphs: ["two", "person", "doc", "check"] },
+  "form-5472-youtube-creators-influencers": { accent: C.clay, motif: "stack", glyphs: ["person", "doc", "clock", "check"] },
+  "form-5472-etsy-print-on-demand-sellers": { accent: C.amber, motif: "stack", glyphs: ["doc", "person", "hash", "check"] },
+  "form-8832-election-foreign-owned-llc": { accent: C.navySoft, motif: "correct", glyphs: ["pen", "doc", "two", "check"] },
+  "form-5472-airbnb-short-term-rental-host": { accent: C.teal, motif: "calendar", glyphs: ["person", "doc", "calendar", "check"] },
 };
 
 const wanted = process.argv.slice(2);
