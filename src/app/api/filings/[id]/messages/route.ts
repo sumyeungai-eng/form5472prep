@@ -5,10 +5,18 @@ import { isAdmin } from "@/lib/admin/auth";
 import { env } from "@/lib/env";
 import { sendNewMessageToAdminEmail } from "@/lib/email";
 import { FilingNotFoundError, postAdminMessage } from "@/lib/messages";
+import { makeKey, put } from "@/lib/storage";
 
 export const runtime = "nodejs";
 
 const MAX_BODY_LEN = 5000;
+const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+
+type MessageAttachment = {
+  key: string;
+  name: string;
+  type: string;
+};
 
 // Resolve the caller for this request. The client tells us which view it's
 // rendering (?as=admin or ?as=customer) and we validate that claim against
@@ -56,6 +64,40 @@ function parseAs(req: Request): "admin" | "customer" | null {
   return v === "admin" || v === "customer" ? v : null;
 }
 
+function normalizeAttachmentName(value: unknown): string {
+  const name = typeof value === "string" ? value.trim().slice(0, 200) : "";
+  return name || "file";
+}
+
+function stripDataUrlPrefix(value: string): string {
+  const marker = ";base64,";
+  if (!value.startsWith("data:")) return value;
+  const markerIndex = value.indexOf(marker);
+  return markerIndex === -1 ? value : value.slice(markerIndex + marker.length);
+}
+
+function detectAttachmentType(bytes: Buffer): string | null {
+  if (bytes.subarray(0, 5).equals(Buffer.from("%PDF-"))) return "application/pdf";
+  if (bytes.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return "image/png";
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "image/jpeg";
+  return null;
+}
+
+async function storeAttachment(filingId: string, rawBase64: string, rawName: unknown): Promise<MessageAttachment | NextResponse> {
+  const name = normalizeAttachmentName(rawName);
+  const bytes = Buffer.from(stripDataUrlPrefix(rawBase64.trim()), "base64");
+  if (bytes.byteLength > MAX_ATTACHMENT_BYTES) {
+    return NextResponse.json({ error: "Attachment too large (max 10MB)" }, { status: 400 });
+  }
+  const type = detectAttachmentType(bytes);
+  if (!type) {
+    return NextResponse.json({ error: "Only PDF, PNG or JPG attachments are accepted." }, { status: 400 });
+  }
+
+  const key = await put(makeKey(["chat", filingId, `${Date.now()}_${name}`]), bytes, type);
+  return { key, name, type };
+}
+
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   const caller = await resolveCaller(params.id, parseAs(req));
   if (caller.role === "denied") {
@@ -65,7 +107,16 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   const messages = await prisma.message.findMany({
     where: { filingId: params.id },
     orderBy: { createdAt: "asc" },
-    select: { id: true, fromAdmin: true, body: true, readAt: true, createdAt: true },
+    select: {
+      id: true,
+      fromAdmin: true,
+      body: true,
+      attachmentKey: true,
+      attachmentName: true,
+      attachmentType: true,
+      readAt: true,
+      createdAt: true,
+    },
   });
 
   // Auto-mark messages from the OTHER party as read. Admin viewing the
@@ -90,16 +141,25 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const { body: rawBody } = (await req.json().catch(() => ({}))) as { body?: unknown };
+  const { body: rawBody, attachmentBase64, attachmentName } = (await req.json().catch(() => ({}))) as {
+    body?: unknown;
+    attachmentBase64?: unknown;
+    attachmentName?: unknown;
+  };
   const body = typeof rawBody === "string" ? rawBody.trim() : "";
-  if (!body) return NextResponse.json({ error: "Message is empty" }, { status: 400 });
+  const hasAttachment = typeof attachmentBase64 === "string" && attachmentBase64.trim().length > 0;
+  if (!body && !hasAttachment) return NextResponse.json({ error: "Message is empty" }, { status: 400 });
   if (body.length > MAX_BODY_LEN) {
     return NextResponse.json({ error: `Message too long (max ${MAX_BODY_LEN} characters)` }, { status: 400 });
   }
 
+  const attachmentResult = hasAttachment ? await storeAttachment(params.id, attachmentBase64, attachmentName) : undefined;
+  if (attachmentResult instanceof NextResponse) return attachmentResult;
+  const attachment = attachmentResult;
+
   if (caller.role === "admin") {
     try {
-      const { message } = await postAdminMessage(params.id, body);
+      const { message } = await postAdminMessage(params.id, body, attachment);
       return NextResponse.json({ message });
     } catch (error) {
       if (error instanceof FilingNotFoundError) {
@@ -119,8 +179,24 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   });
 
   const message = await prisma.message.create({
-    data: { filingId: params.id, fromAdmin: false, body },
-    select: { id: true, fromAdmin: true, body: true, readAt: true, createdAt: true },
+    data: {
+      filingId: params.id,
+      fromAdmin: false,
+      body,
+      attachmentKey: attachment?.key,
+      attachmentName: attachment?.name,
+      attachmentType: attachment?.type,
+    },
+    select: {
+      id: true,
+      fromAdmin: true,
+      body: true,
+      attachmentKey: true,
+      attachmentName: true,
+      attachmentType: true,
+      readAt: true,
+      createdAt: true,
+    },
   });
 
   // AI conversation loop is retired — your accountant handles customer

@@ -9,7 +9,13 @@ export class FilingNotFoundError extends Error {
   }
 }
 
-export async function postAdminMessage(filingId: string, body: string) {
+type MessageAttachment = {
+  key: string;
+  name: string;
+  type: string;
+};
+
+export async function postAdminMessage(filingId: string, body: string, attachment?: MessageAttachment) {
   const filing = await prisma.filing.findUnique({
     where: { id: filingId },
     select: {
@@ -34,11 +40,21 @@ export async function postAdminMessage(filingId: string, body: string) {
   });
 
   const message = await prisma.message.create({
-    data: { filingId, fromAdmin: true, body },
+    data: {
+      filingId,
+      fromAdmin: true,
+      body,
+      attachmentKey: attachment?.key,
+      attachmentName: attachment?.name,
+      attachmentType: attachment?.type,
+    },
     select: {
       id: true,
       fromAdmin: true,
       body: true,
+      attachmentKey: true,
+      attachmentName: true,
+      attachmentType: true,
       readAt: true,
       createdAt: true,
     },
