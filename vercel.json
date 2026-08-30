@@ -3,7 +3,7 @@
   "crons": [
     {
       "path": "/api/cron/january-reminder",
-      "schedule": "0 14 7 1 *"
+      "schedule": "0 14 28 1 *"
     },
     {
       "path": "/api/cron/march-reminder",

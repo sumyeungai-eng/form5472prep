@@ -4,8 +4,8 @@ import {
   sendJanuaryReminderEmail,
   sendMarchReminderEmail,
 } from "@/lib/email";
+import { makeMagicLink } from "@/lib/magicLink";
 import { makeUnsubscribeLink } from "@/lib/unsubscribeToken";
-import { env } from "@/lib/env";
 
 export type Campaign = "january" | "march";
 
@@ -102,7 +102,8 @@ export async function runCampaign(args: {
   const taxYear = args.taxYear ?? taxYearForSend();
   const dryRun = !!args.dryRun;
   const eligible = await findEligibleUsers(args.campaign, taxYear);
-  const startLink = `${env.appUrl}/start?utm_source=email&utm_medium=lifecycle&utm_campaign=${args.campaign}-reminder`;
+  const startPath =
+    "/start?utm_source=email&utm_medium=lifecycle&utm_campaign=" + args.campaign + "-reminder";
 
   const result: CampaignResult = {
     campaign: args.campaign,
@@ -137,6 +138,8 @@ export async function runCampaign(args: {
     try {
       const sendFn =
         args.campaign === "january" ? sendJanuaryReminderEmail : sendMarchReminderEmail;
+      // The magic-link wrapper signs them in; bare /start would miss the prefill.
+      const startLink = makeMagicLink(u.userId) + "?next=" + encodeURIComponent(startPath);
       await sendFn({
         email: u.email,
         taxYearToFile: taxYear,

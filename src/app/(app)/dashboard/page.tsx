@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { getTiersForSource } from "@/lib/pricing";
+import { taxYearForSend } from "@/lib/reminders";
 import { DashboardRow } from "./DashboardRow";
 import type { EinStatus, ItinStatus } from "@prisma/client";
 
@@ -39,6 +40,15 @@ const ITIN_STATUS_CONFIG: Record<ItinStatus, { label: string; classes: string }>
   CANCELLED:       { label: "Cancelled",               classes: "bg-red-100 text-red-700" },
 };
 
+const RENEWAL_ELIGIBLE_STATUSES = [
+  "PAID",
+  "PDF_GENERATED",
+  "SIGNATURE_PENDING",
+  "SIGNED_UPLOADED",
+  "FAXED",
+  "CONFIRMED",
+];
+
 function EinStatusBadge({ status }: { status: EinStatus }) {
   const cfg = EIN_STATUS_CONFIG[status] ?? EIN_STATUS_CONFIG.RECEIVED;
   return (
@@ -63,6 +73,10 @@ export default async function DashboardPage() {
     where: { userId: user.id },
     orderBy: { updatedAt: "desc" },
   });
+  const taxYear = taxYearForSend();
+  const showRenewalBanner =
+    filings.some((f) => RENEWAL_ELIGIBLE_STATUSES.includes(f.status)) &&
+    !filings.some((f) => f.taxYears.includes(taxYear));
 
   const [einApps, itinApps] = await Promise.all([
     prisma.einApplication.findMany({
@@ -104,6 +118,22 @@ export default async function DashboardPage() {
           </Button>
         </Link>
       </div>
+
+      {showRenewalBanner && (
+        <div className="mb-6 bg-white border border-slate-200 rounded-lg p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">Time to file for {taxYear}?</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                Your LLC and owner details carry over from last year — a returning filing takes about 5 minutes.
+              </p>
+            </div>
+            <Link href="/start?utm_source=dashboard&utm_medium=banner&utm_campaign=renewal">
+              <Button>Start {taxYear} filing</Button>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {filings.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-lg p-12 text-center">
