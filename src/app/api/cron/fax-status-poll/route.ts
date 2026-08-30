@@ -12,6 +12,7 @@ import {
   type FaxProof,
 } from "@/lib/email";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
+import { brandForFiling } from "@/lib/partnerBrand";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -187,6 +188,13 @@ async function handleDelivered(
   }
 
   if (filing.user && filing.userId) {
+    let brand = null;
+    try {
+      brand = await brandForFiling(filing.id);
+    } catch (err) {
+      console.error(`[fax-status-poll] brand lookup for ${filing.id} failed`, err);
+    }
+
     try {
       // Customer: receipt only (signed package stays in portal).
       await sendFaxDeliveredEmail({
@@ -197,6 +205,7 @@ async function handleDelivered(
         portalLink: makeMagicLink(filing.userId),
         proof,
         receiptPdfBytes,
+        brand: brand ?? undefined,
       });
     } catch (err) {
       console.error(`[fax-status-poll] customer delivered email for ${filing.id} failed`, err);
@@ -253,6 +262,13 @@ async function handleFailed(
 
   const adminFilingUrl = `${env.appUrl}/admin/filings/${filing.id}`;
   if (filing.user && filing.userId) {
+    let brand = null;
+    try {
+      brand = await brandForFiling(filing.id);
+    } catch (err) {
+      console.error(`[fax-status-poll] brand lookup for ${filing.id} failed`, err);
+    }
+
     try {
       await sendFaxFailedEmail({
         email: filing.user.email,
@@ -260,6 +276,7 @@ async function handleFailed(
         llcName: filing.llcName,
         taxYears: filing.taxYears,
         portalLink: makeMagicLink(filing.userId),
+        brand: brand ?? undefined,
       });
     } catch (err) {
       console.error(`[fax-status-poll] customer failed email for ${filing.id} failed`, err);

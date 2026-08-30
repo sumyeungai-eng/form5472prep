@@ -1,5 +1,6 @@
 import { sendNewMessageToCustomerEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
+import { brandForFiling } from "@/lib/partnerBrand";
 import { prisma } from "@/lib/prisma";
 
 export class FilingNotFoundError extends Error {
@@ -62,6 +63,13 @@ export async function postAdminMessage(filingId: string, body: string, attachmen
 
   if (priorUnreadFromSender === 0 && filing.user?.email && filing.userId) {
     const bodyExcerpt = body.length > 500 ? body.slice(0, 500) + "…" : body;
+    let brand = null;
+    try {
+      brand = await brandForFiling(filingId);
+    } catch (err) {
+      console.error("[messages POST] brand lookup failed", err);
+    }
+
     try {
       await sendNewMessageToCustomerEmail({
         email: filing.user.email,
@@ -70,6 +78,7 @@ export async function postAdminMessage(filingId: string, body: string, attachmen
         taxYears: filing.taxYears,
         bodyExcerpt,
         portalLink: makeMagicLink(filing.userId),
+        brand: brand ?? undefined,
       });
     } catch (err) {
       // Don't fail the POST if email delivery fails — the message itself

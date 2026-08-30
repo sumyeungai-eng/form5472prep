@@ -6,6 +6,10 @@ import { sendPartnerLoginEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
 
+function hasOwn(obj: unknown, key: string): boolean {
+  return !!obj && typeof obj === "object" && Object.prototype.hasOwnProperty.call(obj, key);
+}
+
 // Create a partner (reseller/agency) account. Admin-only. The partner can then
 // sign in at /partner/sign-in with this email (magic link).
 export async function POST(req: Request) {
@@ -45,6 +49,35 @@ export async function PATCH(req: Request) {
   if (typeof body.name === "string" && body.name.trim()) data.name = body.name.trim();
   if (typeof body.company === "string") data.company = body.company.trim() || null;
   if (typeof body.notes === "string") data.notes = body.notes.trim() || null;
+  if (hasOwn(body, "whiteLabelEnabled")) {
+    if (typeof body.whiteLabelEnabled !== "boolean") {
+      return NextResponse.json({ error: "whiteLabelEnabled must be a boolean" }, { status: 400 });
+    }
+    data.whiteLabelEnabled = body.whiteLabelEnabled;
+  }
+  if (hasOwn(body, "brandName")) {
+    if (typeof body.brandName !== "string") {
+      return NextResponse.json({ error: "brandName must be a string" }, { status: 400 });
+    }
+    const brandName = body.brandName.trim();
+    if (brandName.length > 120) {
+      return NextResponse.json({ error: "brandName must be 120 characters or fewer" }, { status: 400 });
+    }
+    data.brandName = brandName;
+  }
+  if (hasOwn(body, "brandReplyTo")) {
+    if (typeof body.brandReplyTo !== "string") {
+      return NextResponse.json({ error: "brandReplyTo must be a string" }, { status: 400 });
+    }
+    const brandReplyTo = body.brandReplyTo.trim();
+    if (brandReplyTo.length > 120) {
+      return NextResponse.json({ error: "brandReplyTo must be 120 characters or fewer" }, { status: 400 });
+    }
+    if (brandReplyTo && !brandReplyTo.includes("@")) {
+      return NextResponse.json({ error: "brandReplyTo must be a valid email or empty" }, { status: 400 });
+    }
+    data.brandReplyTo = brandReplyTo || null;
+  }
 
   if (Object.keys(data).length === 0) {
     return NextResponse.json({ error: "Nothing to update" }, { status: 400 });

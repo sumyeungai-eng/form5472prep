@@ -4,6 +4,7 @@ import { getCurrentPartner } from "@/lib/partner/auth";
 import { bindFilingToEmail } from "@/lib/session";
 import { makeMagicLink } from "@/lib/magicLink";
 import { sendMagicLinkEmail } from "@/lib/email";
+import { brandForFiling, type EmailBrand } from "@/lib/partnerBrand";
 
 export const runtime = "nodejs";
 
@@ -53,8 +54,22 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const signLink = `${baseLink}${sep}next=${encodeURIComponent(`/filings/${filing.id}/sign`)}`;
 
   const label = filing.llcName ?? `tax year ${filing.taxYears.join(", ")}`;
+  let brand: EmailBrand | null = null;
   try {
-    await sendMagicLinkEmail(user.email, signLink, label);
+    if ("whiteLabelEnabled" in partner && "brandName" in partner && "brandReplyTo" in partner) {
+      const name = partner.brandName?.trim();
+      if (partner.whiteLabelEnabled && name) {
+        const replyTo = partner.brandReplyTo?.trim();
+        brand = replyTo && replyTo.includes("@") ? { name, replyTo } : { name };
+      }
+    } else {
+      brand = await brandForFiling(filing.id);
+    }
+  } catch (err) {
+    console.error("[partner send-sign-link] brand lookup failed", err);
+  }
+  try {
+    await sendMagicLinkEmail(user.email, signLink, label, brand ?? undefined);
   } catch (err) {
     console.error("[partner send-sign-link] email failed", err);
     return NextResponse.json({ error: "Could not send the email. Try again." }, { status: 500 });

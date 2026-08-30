@@ -10,6 +10,7 @@ import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email"
 import { makeMagicLink } from "@/lib/magicLink";
 import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { filingCompletionIssues, requiresReasonableCause } from "@/lib/completeness";
+import { brandForFiling } from "@/lib/partnerBrand";
 
 export async function POST(req: Request) {
   const { filingId, email } = await req.json();
@@ -202,6 +203,13 @@ export async function POST(req: Request) {
     }
 
     if (full?.user) {
+      let brand = null;
+      try {
+        brand = await brandForFiling(full.id);
+      } catch (err) {
+        console.error("[checkout test] brand lookup failed", err);
+      }
+
       try {
         await sendOrderConfirmationEmail({
           email: full.user.email,
@@ -238,6 +246,7 @@ export async function POST(req: Request) {
                   ),
                 )
               : null,
+          brand: brand ?? undefined,
         });
       } catch (err) {
         console.error("[checkout test] order confirmation email failed", err);

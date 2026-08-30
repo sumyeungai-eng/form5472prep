@@ -29,6 +29,9 @@ export default async function AdminPartnersPage() {
           company: p.company,
           phone: p.phone,
           wantsWhiteLabel: p.wantsWhiteLabel,
+          whiteLabelEnabled: p.whiteLabelEnabled,
+          brandName: p.brandName,
+          brandReplyTo: p.brandReplyTo,
           active: p.active,
           filingCount: p._count.filings,
           createdAt: p.createdAt.toLocaleDateString("en-US", {

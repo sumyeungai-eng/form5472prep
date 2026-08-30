@@ -67,6 +67,9 @@ model Partner {
   company         String? // agency / firm name if different from `name`
   phone           String? // contact phone from the partner application
   wantsWhiteLabel Boolean @default(false) // applicant wants white-label delivery options
+  whiteLabelEnabled Boolean @default(false) // admin-granted; distinct from wantsWhiteLabel (interest)
+  brandName         String? // client-facing sender/wordmark, required in practice when enabled
+  brandReplyTo      String? // client replies go here when set (falls back to our support address)
   active          Boolean  @default(true) // admin can deactivate to revoke access
   createdAt       DateTime @default(now())
   notes           String? // admin-only notes about this partner

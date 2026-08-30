@@ -12,6 +12,7 @@ import { putPdf } from "@/lib/storage";
 import { sendMetaPurchase } from "@/lib/analytics/metaServer";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 import { formatUsd } from "@/lib/utils";
+import { brandForFiling } from "@/lib/partnerBrand";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -240,6 +241,13 @@ export async function POST(req: Request) {
                 }),
               );
 
+        let brand = null;
+        try {
+          brand = await brandForFiling(filing.id);
+        } catch (err) {
+          console.error("[stripe-webhook] brand lookup failed", err);
+        }
+
         try {
           await sendOrderConfirmationEmail({
             email: filing.user.email,
@@ -256,6 +264,7 @@ export async function POST(req: Request) {
             signatures: pdfSignatures,
             isFinalReturn: filing.isFinalReturn,
             dueDateText,
+            brand: brand ?? undefined,
           });
         } catch (err) {
           console.error("[stripe-webhook] order confirmation email failed", err);
