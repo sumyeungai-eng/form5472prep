@@ -40,6 +40,7 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
 
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [uploading, setUploading] = useState<null | "signed" | "reviewed">(null);
   const [status, setStatus] = useState(currentStatus);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
@@ -82,15 +83,16 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
 
   async function handleSignedPdfUpload(file: File | undefined) {
     if (!file) return;
-    if (!file.name.toLowerCase().endsWith(".pdf")) {
-      setMsg({ kind: "err", text: "Please pick a .pdf file." });
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      setMsg({ kind: "err", text: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max 10 MB.` });
-      return;
-    }
+    setUploading("signed");
     try {
+      if (!file.name.toLowerCase().endsWith(".pdf")) {
+        setMsg({ kind: "err", text: "Please pick a .pdf file." });
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        setMsg({ kind: "err", text: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max 10 MB.` });
+        return;
+      }
       const pdfBase64 = await fileToBase64(file);
       await callApi(
         { action: "uploadSignedPdf", pdfBase64 },
@@ -98,20 +100,23 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
       );
     } catch (e) {
       setMsg({ kind: "err", text: e instanceof Error ? e.message : "Upload failed" });
+    } finally {
+      setUploading(null);
     }
   }
 
   async function handleReviewedPdfUpload(file: File | undefined) {
     if (!file) return;
-    if (!file.name.toLowerCase().endsWith(".pdf")) {
-      setMsg({ kind: "err", text: "Please pick a .pdf file." });
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      setMsg({ kind: "err", text: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max 10 MB.` });
-      return;
-    }
+    setUploading("reviewed");
     try {
+      if (!file.name.toLowerCase().endsWith(".pdf")) {
+        setMsg({ kind: "err", text: "Please pick a .pdf file." });
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        setMsg({ kind: "err", text: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max 10 MB.` });
+        return;
+      }
       const pdfBase64 = await fileToBase64(file);
       await callApi(
         { action: "uploadReviewedPdf", pdfBase64 },
@@ -119,6 +124,8 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
       );
     } catch (e) {
       setMsg({ kind: "err", text: e instanceof Error ? e.message : "Upload failed" });
+    } finally {
+      setUploading(null);
     }
   }
 
@@ -130,7 +137,7 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            disabled={pending}
+            disabled={pending || uploading !== null}
             className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-white"
           >
             {STATUSES.map((s) => (
@@ -141,7 +148,7 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         <button
           type="button"
           onClick={() => callApi({ action: "setStatus", status }, `Status set to ${status}`)}
-          disabled={pending || status === currentStatus}
+          disabled={pending || uploading !== null || status === currentStatus}
           className="px-4 py-2 text-sm font-medium bg-slate-900 text-white rounded-md hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
@@ -172,16 +179,24 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
               Place customer signature → (no signature yet)
             </span>
           )}
-          <label className="inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-slate-300 bg-white hover:bg-slate-50 cursor-pointer">
-            <span>Upload already-signed PDF…</span>
+          <label>
+            <span
+              className={`inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-slate-300 bg-white ${
+                pending || uploading !== null ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-50 cursor-pointer"
+              }`}
+            >
+              {uploading === "signed" ? "Uploading signed PDF…" : "Upload already-signed PDF…"}
+            </span>
             <input
               type="file"
               accept="application/pdf,.pdf"
-              disabled={pending}
+              disabled={pending || uploading !== null}
               onChange={(e) => {
+                const input = e.currentTarget;
                 const file = e.target.files?.[0];
-                void handleSignedPdfUpload(file);
-                e.target.value = ""; // reset so same file can be re-picked after error
+                void handleSignedPdfUpload(file).finally(() => {
+                  input.value = "";
+                });
               }}
               className="sr-only"
             />
@@ -199,7 +214,7 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         <div className="pt-2 border-t border-slate-100">
           <p className="text-xs text-slate-500 mb-2">Fax submission</p>
           <ActionButton
-            disabled={pending || !hasSignedPdf}
+            disabled={pending || uploading !== null || !hasSignedPdf}
             onClick={() => callApi({ action: "retryFax" }, "Fax submitted to IRS ✓")}
             tooltip={!hasSignedPdf ? "No signed PDF uploaded yet" : undefined}
             primary
@@ -214,21 +229,21 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
 
       <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
         <ActionButton
-          disabled={pending || !userEmail}
+          disabled={pending || uploading !== null || !userEmail}
           onClick={() => callApi({ action: "resendOrderConfirmation" }, "Order confirmation resent")}
           tooltip={!userEmail ? "No customer email on file" : undefined}
         >
           Resend order confirmation
         </ActionButton>
         <ActionButton
-          disabled={pending || !userEmail}
+          disabled={pending || uploading !== null || !userEmail}
           onClick={() => callApi({ action: "resendMagicLink" }, "Magic link resent")}
           tooltip={!userEmail ? "No customer email on file" : undefined}
         >
           Resend magic link
         </ActionButton>
         <ActionButton
-          disabled={pending}
+          disabled={pending || uploading !== null}
           onClick={async () => {
             if (!(await confirmRegenerate())) return;
             await callApi({ action: "regeneratePdf" }, "PDF regenerated from current filing data");
@@ -238,16 +253,24 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
           Regenerate PDF
         </ActionButton>
         <div className="flex flex-col gap-1">
-          <label className="inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-slate-300 bg-white hover:bg-slate-50 cursor-pointer">
-            <span>Upload reviewed package…</span>
+          <label>
+            <span
+              className={`inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-slate-300 bg-white ${
+                pending || uploading !== null ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-50 cursor-pointer"
+              }`}
+            >
+              {uploading === "reviewed" ? "Uploading reviewed package…" : "Upload reviewed package…"}
+            </span>
             <input
               type="file"
               accept="application/pdf,.pdf"
-              disabled={pending}
+              disabled={pending || uploading !== null}
               onChange={(e) => {
+                const input = e.currentTarget;
                 const file = e.target.files?.[0];
-                void handleReviewedPdfUpload(file);
-                e.target.value = ""; // reset so same file can be re-picked after error
+                void handleReviewedPdfUpload(file).finally(() => {
+                  input.value = "";
+                });
               }}
               className="sr-only"
             />
