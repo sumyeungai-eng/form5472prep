@@ -2208,6 +2208,390 @@ export const LANDING_PAGES: LandingPage[] = [
     ],
     relatedSlugs: [],
   },
+  {
+    slug: "doola-form-5472",
+    keyword: "doola form 5472",
+    title: "doola Form 5472 — Bundle vs Flat-Fee Filing",
+    metaDescription:
+      "Formed an LLC with doola? Compare its bundled Form 5472 coverage with a flat-fee filing-only option for foreign-owned US LLCs.",
+    sources: [
+      { label: "doola: Form 5472 for Foreign-Owned LLCs", url: "https://www.doola.com/blog/learn-how-to-file-form-5472-foreign-owned-llcs/" },
+      { label: "doola: Pricing", url: "https://www.doola.com/pricing/" },
+      { label: "doola: Wyoming or Delaware guide", url: "https://help.doola.com/should-i-form-in-wyoming-or-delaware-doola-help-center" },
+      { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
+      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+    ],
+    updated: "2026-08-28",
+    startSrc: "doola-form-5472",
+    h1: "Formed your LLC with doola? Check what is actually included.",
+    intro:
+      "doola forms LLCs and C-corps, provides registered agent service and EIN support, and sells bookkeeping, analytics, banking-partner introductions, and a tax package for non-US founders and e-commerce sellers. If your LLC was formed through doola, your next question is whether your plan includes the annual Form 5472 + pro forma Form 1120 filing or whether you need a filing-only option.",
+    sections: [
+      {
+        heading: "What doola does for you",
+        body: "doola's offering covers LLC/C-corp formation, registered agent service, EIN support, bookkeeping software, e-commerce analytics, banking-partner introductions, and a tax package. Its public positioning is aimed heavily at non-US founders, solo founders, and small e-commerce businesses.\n\nIts state guidance is not limited to one state: doola markets formation in all 50 states and identifies Wyoming and Delaware as top picks for non-US founders and online businesses.",
+      },
+      {
+        heading: "What that leaves with you",
+        body: "Every foreign-owned single-member US LLC must file Form 5472 with a pro forma Form 1120 annually when it has a reportable transaction. That rule applies regardless of who formed the LLC, obtained the EIN, or serves as registered agent.\n\nThis is a federal information-return obligation. It is separate from state formation, registered agent service, state annual reports, bookkeeping, and payment setup.",
+      },
+      {
+        heading: "doola's bundle includes it, but only at the tax-plan level",
+        body: "doola's own Form 5472 article says it prepares the pro-forma 1120 and Form 5472, and the facts file ties that coverage to doola's Tax and Compliance plan, listed at $1,999/yr and discounted to $1,499/yr. The same facts file notes that doola's page describes e-filing, while current IRS instructions require foreign-owned disregarded-entity Form 5472 packages to be paper-filed or faxed.\n\nIf you want the broader doola compliance bundle, that may be the right fit. If you only need the federal Form 5472 + pro forma 1120 package filed, Form5472 Prep is the flat-fee alternative: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — identical filing, IRS fax delivery included.",
+      },
+      {
+        heading: "Your first-year timeline",
+        body: "Your first Form 5472 year starts with the LLC's formation month and runs through the end of that tax year. A formation-year filing is required if the LLC had any reportable transaction, including capital contributions, distributions, owner reimbursements, or related-party payments.\n\nThe initial funding wire into the LLC's bank account almost always counts as a reportable transaction. That is why most newly formed foreign-owned LLCs have a first-year filing even before meaningful revenue starts.",
+      },
+      {
+        heading: "How we file it",
+        body: "Our online filer asks 12 questions about the LLC, owner, and year-end totals. We generate the pro forma Form 1120, Form 5472, supporting statement, cover letter, and reasonable cause statement if the filing is late.\n\nEvery package is reviewed by an accountant before submission. We fax the signed package to the IRS Ogden PIN Unit at +1-855-887-7737 and send you the timestamped fax receipt as proof of filing. 100% money-back guarantee if we fail to submit.",
+      },
+      {
+        heading: "Multi-year catch-up",
+        body: "If your doola-formed LLC is more than one year old and prior Form 5472 filings were missed, the IRS DIIRSP process can be used to file late international information returns with a reasonable cause statement. The cleaner path is to file all missed years together before the IRS contacts you.\n\nForm5472 Prep is an independent service and is not affiliated with, endorsed by, or connected to doola.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does doola's Tax and Compliance plan include Form 5472?",
+        a: "Yes. The facts file says doola offers Form 5472 filing inside its Tax and Compliance plan, listed at $1,999/yr and discounted to $1,499/yr. Its public pricing page does not publish a standalone 5472-only price.",
+      },
+      {
+        q: "I used doola Starter or another formation-only package. Am I covered?",
+        a: "Check your plan and invoice. The facts file's angle is that doola customers on formation or registered-agent-only tiers have not necessarily paid for the 5472 filing; the confirmed coverage is the Tax and Compliance tier.",
+      },
+      {
+        q: "doola got my EIN. Does that change the Form 5472 deadline?",
+        a: "No. EIN issuance is separate from the annual federal information return. If the foreign-owned single-member LLC had a reportable transaction during the year, it still files Form 5472 + pro forma Form 1120.",
+      },
+      {
+        q: "Why mention fax if doola's article talks about e-filing?",
+        a: "The facts file flags that doola's page describes e-filing, but current IRS instructions require foreign-owned disregarded-entity Form 5472 packages to be filed by paper or fax. Our service uses IRS Ogden PIN Unit fax delivery.",
+      },
+    ],
+    relatedSlugs: ["wyoming-llc-form-5472", "delaware-llc-form-5472"],
+  },
+  {
+    slug: "firstbase-form-5472",
+    keyword: "firstbase form 5472",
+    title: "Firstbase Form 5472 — What the Bundle Covers",
+    metaDescription:
+      "Firstbase One includes one Form 5472 in a larger bundle. See what that means and when a flat filing-only service may fit better.",
+    sources: [
+      { label: "Firstbase: Tax Filing announcement", url: "https://www.firstbase.io/blog/announcing-firstbase-tax-filing" },
+      { label: "Firstbase: Firstbase One", url: "https://www.firstbase.io/one" },
+      { label: "Firstbase: Delaware vs Wyoming guide", url: "https://www.firstbase.io/blog/delaware-vs-wyoming-where-to-incorporate-llc" },
+      { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
+      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+    ],
+    updated: "2026-08-28",
+    startSrc: "firstbase-form-5472",
+    h1: "Using Firstbase for your US company? Put Form 5472 in context.",
+    intro:
+      "Firstbase forms LLCs and C-corps, primarily in Delaware and Wyoming, and offers registered-agent, mailroom, accounting, and tax-filing services through its broader Firstbase One bundle. If you formed a foreign-owned single-member LLC through Firstbase, the practical question is whether your exact plan includes the Form 5472 + pro forma Form 1120 filing.",
+    sections: [
+      {
+        heading: "What Firstbase does for you",
+        body: "Firstbase's offering includes LLC/C-corp formation, Agent Autopilot registered-agent service, premium mail/virtual address service, accounting, and federal/state tax filing. Its bundle is positioned for startups and foreign founders that want formation, compliance, and accounting in one place.\n\nThe facts file says Firstbase directly forms companies in Delaware and Wyoming, with foreign qualification into other states offered after initial formation.",
+      },
+      {
+        heading: "What that leaves with you",
+        body: "A foreign-owned single-member US LLC has a federal Form 5472 + pro forma Form 1120 filing obligation each year if it had a reportable transaction. The obligation does not disappear because a formation platform filed the state paperwork, acted as registered agent, or helped open operational services.\n\nForm 5472 is an IRS information return. It sits apart from state formation, state registered agent coverage, mailroom services, accounting subscriptions, and state annual reports.",
+      },
+      {
+        heading: "Firstbase One covers one 5472 inside a larger bundle",
+        body: "Firstbase's tax-filing announcement states that the base Tax Package for foreign-owned LLCs includes one Form 5472 and one pro forma Form 1120. The facts file ties that to Firstbase One at $199/month, billed yearly at $2,388/yr, with Agent Autopilot, Mailroom Premium, Accounting, and Tax Filing bundled together.\n\nFirstbase does not publish a standalone 5472-only public price in the facts file. For owners who do not need the full bundle, Form5472 Prep is a filing-only alternative: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — identical filing, IRS fax delivery included.",
+      },
+      {
+        heading: "Your first-year timeline",
+        body: "If the LLC was formed partway through the year, that partial year still counts. The first Form 5472 filing covers the period from formation through year-end whenever there was a reportable transaction.\n\nCapital contributions, distributions, owner payments, and related-party reimbursements can all be reportable. The first wire used to fund the LLC's bank account is usually enough to create the first-year filing obligation.",
+      },
+      {
+        heading: "How we file it",
+        body: "Our wizard collects the filing facts in 12 questions: LLC details, foreign owner details, year-end assets, and related-party transactions. We prepare the pro forma Form 1120, Form 5472, the Part V supporting statement, and a reasonable cause statement when a late filing needs DIIRSP treatment.\n\nAn accountant reviews every package before we submit it. We deliver by fax to the IRS Ogden PIN Unit at +1-855-887-7737 and keep the timestamped fax receipt as proof. 100% money-back guarantee if we fail to submit.",
+      },
+      {
+        heading: "Multi-year catch-up",
+        body: "If your Firstbase-formed LLC predates your current tax-filing coverage, or you only discovered the 5472 rule after one or more missed years, DIIRSP is the standard catch-up path for late international information returns. The key is to file the complete missed-year packages together with a reasonable cause statement before an IRS notice arrives.\n\nForm5472 Prep is an independent service and is not affiliated with, endorsed by, or connected to Firstbase.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does Firstbase One include Form 5472?",
+        a: "Yes. The facts file says Firstbase's tax-filing announcement includes one Form 5472 and one pro forma Form 1120 for foreign-owned LLCs inside the Firstbase One bundle.",
+      },
+      {
+        q: "Can I buy only Firstbase Form 5472 filing at a published price?",
+        a: "The facts file did not find a public standalone 5472-only SKU. It found Firstbase One listed at $199/month, billed yearly at $2,388/yr, with tax filing included among several bundled services.",
+      },
+      {
+        q: "What if I only bought Firstbase Start or an older plan?",
+        a: "Check your plan, invoice, or support history for explicit Form 5472 + pro forma Form 1120 coverage. The facts file notes that customers on formation-only or legacy plans may not have 5472 filing coverage.",
+      },
+      {
+        q: "Does Firstbase forming in Delaware or Wyoming change the federal filing?",
+        a: "No. The federal Form 5472 + pro forma Form 1120 obligation applies the same way to a foreign-owned single-member LLC formed in either state when there is a reportable transaction.",
+      },
+    ],
+    relatedSlugs: ["wyoming-llc-form-5472", "delaware-llc-form-5472"],
+  },
+  {
+    slug: "clemta-form-5472",
+    keyword: "clemta form 5472",
+    title: "Clemta Form 5472 — Confirm Your Plan Coverage",
+    metaDescription:
+      "Clemta lists Federal Tax Filing, but public pages do not clearly itemize Form 5472. Learn what to confirm and how to file if needed.",
+    sources: [
+      { label: "Clemta: Pricing", url: "https://clemta.com/pricing" },
+      { label: "Clemta: What Is Form 5472?", url: "https://clemta.com/blog/what-is-form-5472" },
+      { label: "Clemta: USA company registration", url: "https://clemta.com/usa-company-registration" },
+      { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
+      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+    ],
+    updated: "2026-08-28",
+    startSrc: "clemta-form-5472",
+    h1: "Clemta customer? Get written clarity on Form 5472.",
+    intro:
+      "Clemta provides LLC/C-corp formation, EIN application, registered agent and US business address services, mail receipt, banking support, invoicing, bookkeeping, and tiered Federal Tax Filing add-ons for non-US founders. If your LLC was formed or maintained through Clemta, the public-plan question is whether Form 5472 + pro forma Form 1120 is specifically included for your account.",
+    sections: [
+      {
+        heading: "What Clemta does for you",
+        body: "Clemta's offering includes LLC/C-corp formation, EIN application, registered agent service with a US business address, mail receipt, banking support, invoicing, bookkeeping through Clemta Books, and paid Federal Tax Filing features. Its public materials aim at non-US founders, international entrepreneurs, small businesses, e-commerce sellers, freelancers, and VC-track startups.\n\nThe facts file says Clemta prominently promotes Wyoming and Delaware while listing many additional US states and territories as available.",
+      },
+      {
+        heading: "What that leaves with you",
+        body: "A foreign-owned single-member US LLC still has to file Form 5472 and a pro forma Form 1120 annually when it has reportable transactions. The rule applies no matter which company handled formation, EIN application, registered agent service, or business-address setup.\n\nThis is a federal IRS information return. It is different from formation work, state annual compliance, registered agent duties, bookkeeping, and generic business filings.",
+      },
+      {
+        heading: "Clemta's public pages do not itemize the 5472 package",
+        body: "Clemta's pricing page lists Federal Tax Filing on the Pro plan at $89/month and Premium plan at $299/month, but the facts file says the plan comparison does not name Form 5472 or pro forma Form 1120 as an included line item. Clemta's own Form 5472 explainer mentions assistance with Form 5472 filings, but does not state a price or confirm automatic inclusion in a specific tier.\n\nThat is not a confirmed no. It is a public-pages gap. Ask Clemta to confirm in writing whether your plan or invoice includes Form 5472 + pro forma Form 1120; if it is not itemized, a Form 5472-specific service closes that exact gap.",
+      },
+      {
+        heading: "Your first-year timeline",
+        body: "The first tax year begins in the LLC's formation month, even if the company only existed for part of the calendar year. If there was any reportable transaction before year-end, the first-year Form 5472 + pro forma Form 1120 package is due the following filing season.\n\nThe first owner funding wire to open a bank account or pay operating costs is usually reportable. That makes first-year filings common even for Clemta-formed LLCs with little or no revenue.",
+      },
+      {
+        heading: "How we file it",
+        body: "Form5472 Prep uses a 12-question wizard to capture the LLC, owner, formation-year, year-end asset, and related-party transaction facts. We prepare the IRS package, including pro forma Form 1120, Form 5472, the supporting statement, and a DIIRSP reasonable cause statement if needed.\n\nAn accountant reviews the filing before it leaves our system. We fax it to the IRS Ogden PIN Unit at +1-855-887-7737 and provide the timestamped fax receipt. 100% money-back guarantee if we fail to submit.",
+      },
+      {
+        heading: "Multi-year catch-up",
+        body: "If your Clemta-formed LLC is more than one year old and prior 5472 coverage is unclear, review each year separately. When filings were missed and the IRS has not contacted you, DIIRSP catch-up filing with a reasonable cause statement is the standard route.\n\nForm5472 Prep is an independent service and is not affiliated with, endorsed by, or connected to Clemta.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does Clemta's Federal Tax Filing line definitely include Form 5472?",
+        a: "It is not clear from the public pages summarized in the facts file. The pricing page lists Federal Tax Filing, while the facts file says it does not name Form 5472 or pro forma Form 1120 in the plan comparison.",
+      },
+      {
+        q: "Clemta's blog mentions Form 5472 assistance. Is that enough?",
+        a: "Not by itself. The facts file says the blog mentions assistance with Form 5472 filings but does not state a price or confirm that the filing is automatically included in a specific plan tier.",
+      },
+      {
+        q: "What should I ask Clemta before buying another filing service?",
+        a: "Ask for written confirmation that your specific plan or invoice includes both Form 5472 and the attached pro forma Form 1120 for the relevant tax year. Generic Federal Tax Filing language is less precise.",
+      },
+      {
+        q: "Does my Clemta EIN application satisfy anything with the IRS?",
+        a: "It gets the LLC an EIN, but it does not file the annual information return. Form 5472 + pro forma Form 1120 remains a separate annual package when the LLC has reportable transactions.",
+      },
+    ],
+    relatedSlugs: ["wyoming-llc-form-5472", "delaware-llc-form-5472"],
+  },
+  {
+    slug: "startglobal-form-5472",
+    keyword: "startglobal form 5472",
+    title: "StartGlobal Form 5472 — Check the Filing Scope",
+    metaDescription:
+      "StartGlobal offers Federal Tax Filing, but public pages do not name Form 5472. See what to verify and how filing-only help works.",
+    sources: [
+      { label: "StartGlobal: Pricing", url: "https://startglobal.co/pricing/" },
+      { label: "StartGlobal: LLC formation", url: "https://startglobal.co/llc-formation/" },
+      { label: "StartGlobal: Wyoming LLC formation", url: "https://startglobal.co/us/wyoming/llc-formation/" },
+      { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
+      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+    ],
+    updated: "2026-08-28",
+    startSrc: "startglobal-form-5472",
+    h1: "StartGlobal formed the LLC. Now confirm the 5472 filing.",
+    intro:
+      "StartGlobal sells LLC formation, registered agent service, EIN/business tax number support, remote US bank account setup, virtual mailing address, US phone number, invoicing, bookkeeping, Federal Tax Filing, and state annual reports to non-US founders. If you used StartGlobal, the key next step is confirming whether its Federal Tax Filing line specifically covers Form 5472 + pro forma Form 1120.",
+    sections: [
+      {
+        heading: "What StartGlobal does for you",
+        body: "StartGlobal's public offering includes LLC formation with state fees included, registered agent service, EIN/business tax number support, remote US bank account setup, virtual US mailing address, US phone number, invoicing/payments, bookkeeping, Federal Tax Filing, and state annual reports. The services are sold a la carte or through a Managed LLC plan.\n\nThe facts file says StartGlobal explicitly targets non-US founders and positions Wyoming as the default for most international founders, with Delaware pitched to founders planning to raise venture capital.",
+      },
+      {
+        heading: "What that leaves with you",
+        body: "Every foreign-owned single-member US LLC with a reportable transaction must file Form 5472 with a pro forma Form 1120 each year. That annual IRS information return is required regardless of who formed the LLC or provides registered agent, address, bank-account, phone, bookkeeping, or state-report support.\n\nThe federal filing is separate from state formation and state annual compliance. It is also separate from generic tax-filing language unless the provider confirms the specific forms covered.",
+      },
+      {
+        heading: "StartGlobal names Federal Tax Filing, not Form 5472",
+        body: "The facts file says StartGlobal lists Federal Tax Filing as a service line, priced by revenue a la carte or bundled into the $149/month Managed LLC plan, but Form 5472 and pro forma Form 1120 are not named on the public pricing or LLC-formation pages. That means there is no public confirmation in the facts file that StartGlobal files 5472 specifically.\n\nDo not assume either way from generic wording. Ask StartGlobal to confirm in writing whether your plan includes Form 5472 + pro forma Form 1120; if it does not itemize those forms, a Form 5472-specific filing service fills the gap.",
+      },
+      {
+        heading: "Your first-year timeline",
+        body: "The first filing period starts in the month the LLC is formed. Even a short first year counts if the LLC had a reportable transaction before December 31.\n\nThe initial funding sent to open the LLC's account, pay vendors, or reimburse owner-paid expenses is usually reportable. For newly formed foreign-owned LLCs, that makes a first-year Form 5472 filing the normal outcome.",
+      },
+      {
+        heading: "How we file it",
+        body: "Our 12-question wizard turns your formation details, owner information, year-end assets, and related-party transactions into a complete Form 5472 filing package. If prior years were missed, the wizard also prepares the reasonable cause statement used for DIIRSP catch-up submissions.\n\nEvery package is accountant-reviewed before we fax it to the IRS Ogden PIN Unit at +1-855-887-7737. You receive the timestamped fax receipt as proof of filing. 100% money-back guarantee if we fail to submit.",
+      },
+      {
+        heading: "Multi-year catch-up",
+        body: "If your StartGlobal LLC is older and you cannot confirm that Form 5472 + pro forma Form 1120 was filed for each year, identify the missed years before an IRS notice arrives. DIIRSP lets late international information returns be submitted with a reasonable cause statement requesting penalty relief.\n\nForm5472 Prep is an independent service and is not affiliated with, endorsed by, or connected to StartGlobal.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does StartGlobal's Managed LLC plan clearly list Form 5472?",
+        a: "The facts file says the public pages list Federal Tax Filing but do not name Form 5472 or pro forma Form 1120. Ask StartGlobal for written confirmation tied to your plan and tax year.",
+      },
+      {
+        q: "StartGlobal charges for Federal Tax Filing by revenue. Is that the same thing?",
+        a: "Not necessarily. The facts file treats it as unclear because the public pages do not identify the specific Form 5472 + pro forma 1120 package. Confirm the forms, not just the category name.",
+      },
+      {
+        q: "Does StartGlobal's bank-account setup create the filing by itself?",
+        a: "The bank account is not the filing. But the funding wire used to open or operate the account is often a reportable transaction, which can trigger the first-year Form 5472 obligation.",
+      },
+      {
+        q: "If StartGlobal formed my Wyoming LLC, should I use Wyoming-related guidance?",
+        a: "Yes for state annual-report context, but the federal Form 5472 filing works the same in Wyoming and Delaware. The federal package is what Form5472 Prep handles.",
+      },
+    ],
+    relatedSlugs: ["wyoming-llc-form-5472", "delaware-llc-form-5472"],
+  },
+  {
+    slug: "zenind-form-5472",
+    keyword: "zenind form 5472",
+    title: "Zenind Form 5472 — From Guide to Actual Filing",
+    metaDescription:
+      "Zenind publishes a Form 5472 guide but does not offer the filing in its public tiers. Learn the next step for foreign-owned LLCs.",
+    sources: [
+      { label: "Zenind: Form 5472 and pro forma 1120 guide", url: "https://www.zenind.com/en-US/help/post/how-to-file-form-5472-and-pro-forma-form-1120-for-a-foreign-owned-single-member-llc" },
+      { label: "Zenind: Pricing", url: "https://www.zenind.com/en-US/pricing" },
+      { label: "Zenind: Home", url: "https://www.zenind.com/en-US" },
+      { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
+      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+    ],
+    updated: "2026-08-28",
+    startSrc: "zenind-form-5472",
+    h1: "Zenind explains Form 5472. Filing it is the next step.",
+    intro:
+      "Zenind offers low-cost US company formation, registered agent service across all 50 states and DC, EIN application preparation assistance, BOI report preparation assistance, compliance tracking, annual-report alerts, notary, foreign qualification, and separate accounting services. Its own Form 5472 guide can help you understand the rule, but a foreign-owned single-member LLC still needs the annual IRS package filed.",
+    sections: [
+      {
+        heading: "What Zenind does for you",
+        body: "Zenind's offering includes low-cost company formation tiers, registered agent service in all 50 states plus DC, BOI report preparation assistance, EIN application preparation assistance, compliance tracking and annual-report alerts, notary, foreign qualification, and separate accounting services.\n\nThe facts file describes Zenind as budget/DIY-adjacent for startups, e-commerce, and small businesses generally, while also serving non-US founders.",
+      },
+      {
+        heading: "What that leaves with you",
+        body: "Foreign-owned single-member US LLCs must file Form 5472 with a pro forma Form 1120 annually when they have reportable transactions. Formation, registered agent service, compliance reminders, EIN application preparation, and annual-report alerts do not replace that IRS filing.\n\nForm 5472 is a federal information return. It is separate from state compliance tracking and from educational guidance explaining what the form is.",
+      },
+      {
+        heading: "Zenind teaches the process but does not file it",
+        body: "The facts file says Zenind publishes a detailed educational guide on filing Form 5472 + pro forma Form 1120. That guide's How Zenind Can Help section discusses business formation and ongoing compliance workflows, but stops short of saying Zenind will prepare or file the 5472/1120 package, and it includes a disclaimer that the content is not tax or legal advice.\n\nThe facts file also says Zenind's pricing page does not list a Form 5472 or pro forma Form 1120 line item. So the public materials point you from awareness to the filing task, but they do not show Zenind as the filer.",
+      },
+      {
+        heading: "Your first-year timeline",
+        body: "Your first Form 5472 filing period begins when the LLC is formed and ends with that tax year. If anything reportable happened in that first partial year, the filing is due the following filing season.\n\nThe most common first reportable transaction is the owner's initial funding wire into the LLC bank account. Even without revenue, that transaction usually means the newly formed foreign-owned LLC files for year one.",
+      },
+      {
+        heading: "How we file it",
+        body: "Form5472 Prep turns the filing into a 12-question flow covering LLC identity, owner identity, year-end totals, and related-party transactions. We produce the pro forma Form 1120, Form 5472, Part V supporting statement, cover letter, and DIIRSP reasonable cause statement if late.\n\nAn accountant reviews every package. We fax it to the IRS Ogden PIN Unit at +1-855-887-7737 and return the timestamped fax receipt as proof of filing. 100% money-back guarantee if we fail to submit.",
+      },
+      {
+        heading: "Multi-year catch-up",
+        body: "If you read Zenind's guide after missing one or more prior years, catch-up usually means preparing each missed Form 5472 + pro forma Form 1120 package and submitting them through DIIRSP with a reasonable cause statement. Filing before IRS contact keeps the catch-up path cleaner.\n\nForm5472 Prep is an independent service and is not affiliated with, endorsed by, or connected to Zenind.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does Zenind file Form 5472 for customers?",
+        a: "The facts file says no public Zenind page reviewed offers to prepare or file Form 5472 + pro forma Form 1120. Its detailed guide is educational and includes a tax/legal-advice disclaimer.",
+      },
+      {
+        q: "Zenind prepared my EIN application. Does that cover federal tax filing?",
+        a: "No. EIN application preparation is an identity step. Form 5472 + pro forma Form 1120 is a separate annual federal information return for foreign-owned single-member LLCs with reportable transactions.",
+      },
+      {
+        q: "Does Zenind's compliance tracking mean the IRS received my return?",
+        a: "Not based on the facts file. Compliance tracking and annual-report alerts help keep obligations visible, but the reviewed public materials do not show Zenind filing the 5472 package.",
+      },
+      {
+        q: "What should I do after reading Zenind's Form 5472 guide?",
+        a: "Gather your EIN, formation date, owner details, year-end assets, and owner-to-LLC transactions. Then either prepare and fax the IRS package yourself or use a filing service that specifically handles Form 5472 + pro forma Form 1120.",
+      },
+    ],
+    relatedSlugs: ["form-5472-instructions", "diirsp"],
+  },
+  {
+    slug: "northwest-registered-agent-form-5472",
+    keyword: "northwest registered agent form 5472",
+    title: "Northwest Registered Agent Form 5472 — Tax Filing Gap",
+    metaDescription:
+      "Northwest Registered Agent explains Form 5472 and tells readers to check with a CPA. See how foreign-owned LLCs can file the IRS package.",
+    sources: [
+      { label: "Northwest Registered Agent: IRS Form 5472", url: "https://www.northwestregisteredagent.com/start-a-business/irs-form-5472" },
+      { label: "Northwest Registered Agent: Registered agent service", url: "https://www.northwestregisteredagent.com/registered-agent" },
+      { label: "Northwest Registered Agent: Incorporation service", url: "https://www.northwestregisteredagent.com/incorporation-service" },
+      { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
+      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+    ],
+    updated: "2026-08-28",
+    startSrc: "northwest-registered-agent-form-5472",
+    h1: "Northwest Registered Agent handled formation. The 5472 is federal tax.",
+    intro:
+      "Northwest Registered Agent provides registered agent service, formation filings, annual report filing, EIN service, business address services, legal document templates, and privacy-focused business tools across all 50 states. If your foreign-owned single-member LLC was formed through Northwest, Form 5472 is the separate IRS information-return package to confirm and file.",
+    sections: [
+      {
+        heading: "What Northwest Registered Agent does for you",
+        body: "Northwest Registered Agent offers registered agent service, LLC/corporation/nonprofit formation, annual report filing, EIN service, business address service, legal document templates such as operating agreements and bylaws, and free identity/privacy tools with domain, website, email, and phone add-ons.\n\nThe facts file describes Northwest as a nationwide formation and compliance-filing company, not a tax-preparation firm, with a long track record and privacy-and-service-quality positioning.",
+      },
+      {
+        heading: "What that leaves with you",
+        body: "A foreign-owned single-member US LLC must file Form 5472 with a pro forma Form 1120 annually when it has reportable transactions. This is true even when a registered agent or formation company handled the state filing, EIN service, business address, or annual report.\n\nForm 5472 is federal tax information reporting. Registered-agent service and state compliance filings do not by themselves complete the federal IRS package.",
+      },
+      {
+        heading: "Northwest points readers to a CPA instead of filing it",
+        body: "The facts file says Northwest's own Form 5472 blog post is explanatory: it covers what the form is, who must file, and Form 5471 versus Form 5472. It ends by telling readers that, to determine whether Form 5472 is necessary, it is a good idea to check with a CPA.\n\nThe same facts file says no reviewed Northwest page offers to prepare or file Form 5472 or a pro forma Form 1120 as a paid service. That is a neutral scope line: Northwest handles formation and registered-agent work; the Form 5472 filing is separate.",
+      },
+      {
+        heading: "Your first-year timeline",
+        body: "The first filing year is the year the LLC was formed, even if formation happened late in the year. If the LLC had any reportable transaction during that partial year, Form 5472 + pro forma Form 1120 is due the next filing season.\n\nFor most foreign-owned LLCs, the owner-funded startup deposit into the LLC bank account is reportable. Revenue is not required for a first-year filing obligation to exist.",
+      },
+      {
+        heading: "How we file it",
+        body: "Our 12-question wizard collects the LLC facts, foreign-owner facts, year-end totals, and transactions between the LLC and related parties. We generate the complete federal package: pro forma Form 1120, Form 5472, supporting statement, cover letter, and reasonable cause statement if late.\n\nAn accountant reviews each package before submission. We fax the signed return to the IRS Ogden PIN Unit at +1-855-887-7737 and provide the timestamped fax receipt. 100% money-back guarantee if we fail to submit.",
+      },
+      {
+        heading: "Multi-year catch-up",
+        body: "If your Northwest-formed LLC has been around for multiple years and the 5472 package was never filed, DIIRSP is the usual voluntary catch-up route when the IRS has not already contacted you. That means filing the missed-year packages together with a reasonable cause statement requesting penalty relief.\n\nForm5472 Prep is an independent service and is not affiliated with, endorsed by, or connected to Northwest Registered Agent.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does Northwest Registered Agent prepare Form 5472?",
+        a: "The facts file says no reviewed Northwest page offers Form 5472 or pro forma Form 1120 preparation or filing. Its own Form 5472 article sends readers to check with a CPA.",
+      },
+      {
+        q: "Is a registered agent responsible for my federal Form 5472?",
+        a: "No. Registered agent service receives legal and state correspondence; it does not automatically prepare federal information returns. The foreign-owned LLC owner remains responsible for Form 5472 when required.",
+      },
+      {
+        q: "Northwest got my EIN. Is that different from Form 5472?",
+        a: "Yes. EIN service obtains the LLC's IRS identification number. Form 5472 + pro forma Form 1120 is the annual federal package that reports related-party transactions.",
+      },
+      {
+        q: "Why might Northwest source URLs show 403 in command-line checks?",
+        a: "The facts file says Northwest's site-wide WAF returns 403 to curl and non-browser requests, including the homepage, while the listed URLs were separately verified live in a browser on 2026-08-28.",
+      },
+    ],
+    relatedSlugs: ["file-form-5472", "diirsp"],
+  },
 ];
 
 export function getLandingPage(slug: string): LandingPage | null {
