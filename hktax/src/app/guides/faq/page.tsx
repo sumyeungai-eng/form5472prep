@@ -54,9 +54,9 @@ const faqItems: FaqItem[] = [
     questionZh: "已婚人士報稅有咩選擇？分開評稅定合併好？",
     questionEn: "What filing choices do married couples have — separate or joint assessment?",
     answerZh:
-      "已婚人士的薪俸稅預設為「分開評稅」，但夫婦亦可選擇「合併評稅」，將雙方入息合併計算並使用已婚人士免稅額；另外亦可個別或共同選擇「個人入息課稅」。哪一種組合最慳稅，視乎雙方入息差距、扣除項目及是否有虧損等因素而定，本網站的優化器會列出各方案的總稅款作比較。",
+      "已婚人士的薪俸稅預設為「分開評稅」，但夫婦亦可選擇「合併評稅」，將雙方入息合併計算並使用已婚人士免稅額；由2018/19課稅年度起，已婚人士亦可個別選擇「個人入息課稅」，或在雙方同意下共同選擇。哪一種組合最慳稅，視乎雙方入息差距、扣除項目及是否有虧損等因素而定，本網站的優化器會列出各方案的總稅款作比較。",
     answerEn:
-      "Married couples' salaries tax defaults to separate assessment, but you may elect joint assessment (combining both incomes and using the married person's allowance) instead. You may also elect personal assessment individually or jointly. Which combination saves the most tax depends on the income gap between spouses, deductions, and any losses — our optimizer lists the total tax under each scenario for comparison."
+      "Married couples' salaries tax defaults to separate assessment, but you may elect joint assessment (combining both incomes and using the married person's allowance) instead. Since YA 2018/19, married persons may also elect personal assessment individually, or jointly if both spouses agree. Which combination saves the most tax depends on the income gap between spouses, deductions, and any losses — our optimizer lists the total tax under each scenario for comparison."
   },
   {
     id: "rent-vs-home-loan",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MARRIED_PA_ELECTION_RULE, type PAPersonInput } from './personalAssessment';
+import { type PAPersonInput } from './personalAssessment';
 import type { PropertyInput } from './property';
 import type { SalariesInput } from './salaries';
 import { optimize, type OptimizerResult } from './optimizer';
@@ -98,27 +98,33 @@ describe('optimize', () => {
     expect(result.explanationEn).toContain('unused spouse allowance headroom');
   });
 
-  it('marks both individual PA scenarios unavailable when both spouses have chargeable income', () => {
+  it('makes individual PA scenarios available when both spouses have chargeable income', () => {
     const personA = eligiblePerson({ salaries: salary(500_000) });
     const personB = eligiblePerson({ properties: [property(300_000)] });
 
     const result = optimize({ married: true, personA, personB }, params);
 
     expect(scenarioById(result, 'paIndividualA')).toMatchObject({
-      available: false,
-      totalTax: Number.POSITIVE_INFINITY,
-      reasonUnavailableZh: MARRIED_PA_ELECTION_RULE.labelZh,
-      reasonUnavailableEn: MARRIED_PA_ELECTION_RULE.labelEn,
+      available: true,
+      totalTax: 77_560,
+      reasonUnavailableZh: undefined,
+      reasonUnavailableEn: undefined,
     });
     expect(scenarioById(result, 'paIndividualB')).toMatchObject({
-      available: false,
-      totalTax: Number.POSITIVE_INFINITY,
-      reasonUnavailableZh: MARRIED_PA_ELECTION_RULE.labelZh,
-      reasonUnavailableEn: MARRIED_PA_ELECTION_RULE.labelEn,
+      available: true,
+      totalTax: 43_360,
+      reasonUnavailableZh: undefined,
+      reasonUnavailableEn: undefined,
+    });
+    expect(scenarioById(result, 'paIndividualBoth')).toMatchObject({
+      available: true,
+      totalTax: 43_360,
+      reasonUnavailableZh: undefined,
+      reasonUnavailableEn: undefined,
     });
   });
 
-  it('chooses joint PA for a couple where rental-property mortgage interest beats separate heads and joint salaries', () => {
+  it('chooses spouse B individual PA for a couple where rental-property mortgage interest beats separate heads and joint salaries', () => {
     const personA = eligiblePerson({ salaries: salary(500_000) });
     const personB = eligiblePerson({
       properties: [property(300_000)],
@@ -127,8 +133,16 @@ describe('optimize', () => {
 
     const result = optimize({ married: true, personA, personB }, params);
 
-    expect(result.best).toBe('paJoint');
-    expect(result.saving).toBe(34_640);
+    expect(result.best).toBe('paIndividualB');
+    expect(result.saving).toBe(36_000);
+    expect(scenarioById(result, 'paIndividualB')).toMatchObject({
+      available: true,
+      totalTax: 41_560,
+      perPerson: {
+        a: expect.objectContaining({ finalTax: 41_560 }),
+        b: expect.objectContaining({ paTax: 0, finalTax: 0 }),
+      },
+    });
     expect(scenarioById(result, 'paJoint')).toMatchObject({
       available: true,
       totalTax: 42_920,
@@ -144,7 +158,7 @@ describe('optimize', () => {
     expect(result.explanationEn).toContain('let-property mortgage interest');
   });
 
-  it('returns the full exact scenario table for a couple where joint PA wins from rental mortgage interest', () => {
+  it('returns the full exact scenario table for a couple where individual PA wins from rental mortgage interest', () => {
     const personA = eligiblePerson({ salaries: salary(500_000) });
     const personB = eligiblePerson({
       properties: [property(300_000)],
@@ -156,8 +170,9 @@ describe('optimize', () => {
     expect(scenarioRows(result)).toEqual([
       { id: 'separate', available: true, totalTax: 77_560 },
       { id: 'jointSalaries', available: false, totalTax: Number.POSITIVE_INFINITY },
-      { id: 'paIndividualA', available: false, totalTax: Number.POSITIVE_INFINITY },
-      { id: 'paIndividualB', available: false, totalTax: Number.POSITIVE_INFINITY },
+      { id: 'paIndividualA', available: true, totalTax: 77_560 },
+      { id: 'paIndividualB', available: true, totalTax: 41_560 },
+      { id: 'paIndividualBoth', available: true, totalTax: 41_560 },
       { id: 'paJoint', available: true, totalTax: 42_920 },
     ]);
   });

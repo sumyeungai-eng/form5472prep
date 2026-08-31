@@ -1140,3 +1140,17 @@ on it; the inference is by analogy.
 | S13 | MPFA, mandatory contributions | https://www.mpfa.org.hk/en/mpf-system/mandatory-contributions/employees | via params file: 5%, $7,100 min / $30,000 max relevant income |
 
 **All figures above were computed by hand twice, independently, before being written down.**
+
+---
+
+## Amendments 2026-08-31
+
+* Married Personal Assessment election rule: confirmed the post-2018/19 rule under the
+  Inland Revenue (Amendment) (No.4) Ordinance 2018. A married person may elect PA
+  individually regardless of whether the spouse has chargeable salaries, property, or
+  profits income; joint PA remains available where both spouses agree to elect jointly.
+
+* G21 joint-PA apportionment rounding: the engine assigns the rounding remainder to the
+  larger-share spouse. No IRD-published convention was identified for this exact
+  remainder case; the total is verified exact at 54,480 per the golden doc. The engine's
+  per-spouse figures are A = 33,243 and B = 21,237, summing to 54,480.

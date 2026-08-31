@@ -88,6 +88,12 @@ export function DemandNotePanel({ demandItems, hasPropertyHead, lang }: DemandNo
           {resultsT(resultsDictionary.propertyReductionNote, lang)}
         </p>
       ) : null}
+
+      {demandItems.length ? (
+        <p className="mt-4 text-sm leading-6 text-warm-600">
+          {resultsT(resultsDictionary.provisionalCaveatNote, lang)}
+        </p>
+      ) : null}
     </section>
   );
 }

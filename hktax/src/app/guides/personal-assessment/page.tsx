@@ -165,36 +165,32 @@ function buildSections(params: TaxParams): Section[] {
         zh: (
           <ul className="list-disc space-y-2 pl-5">
             <li>
-              如果只有一方喺該課稅年度有應課稅入息（另一方完全冇入息），有入息嗰一方可以
-              <strong>單獨</strong>選擇個人入息課稅，唔需要對方一齊選。
+              由2018/19課稅年度起，已婚人士可<strong>個別</strong>選擇個人入息課稅，
+              即使配偶同一課稅年度亦有應課稅入息，亦唔會因此失去個別選擇資格。
             </li>
             <li>
-              如果夫婦雙方喺該課稅年度都有應課稅入息，兩人就<strong>必須一齊選擇</strong>
-              個人入息課稅 — 唔可以一方揀、一方唔揀；亦唔可以各自揀完再喺呢兩個「個人入息課稅」
-              評稅之間扮成分開評稅。
+              夫婦亦可在雙方同意下<strong>共同</strong>選擇個人入息課稅，將雙方所有入息
+              合併評稅，並使用已婚人士免稅額；最終稅款會按雙方各自入息比例攤分繳付責任。
             </li>
             <li>
-              夫婦一齊選擇個人入息課稅時，會將雙方所有入息合併評稅，並使用已婚人士免稅額；
-              最終稅款會按雙方各自入息比例攤分繳付責任。
+              如果個別同共同選擇都合資格，應比較各方案實際稅款；本網站嘅優化器會自動逐一計算。
             </li>
           </ul>
         ),
         en: (
           <ul className="list-disc space-y-2 pl-5">
             <li>
-              If only one spouse has chargeable income for the year (the other has none at all), the spouse
-              with income may elect Personal Assessment <strong>individually</strong> — the other spouse
-              does not need to join the election.
+              Since YA 2018/19, a married person may elect Personal Assessment{" "}
+              <strong>individually</strong>, even if the spouse also has chargeable income for the year.
             </li>
             <li>
-              If both spouses have chargeable income for the year, they <strong>must elect jointly</strong>{" "}
-              — one spouse cannot elect while the other opts out, and they cannot each separately claim PA
-              as if they were still assessed apart.
+              A couple may also elect Personal Assessment <strong>jointly</strong> if both spouses agree,
+              aggregating all of both spouses&apos; income and using the married person&apos;s allowance;
+              the resulting liability is then apportioned between the spouses by their respective share of income.
             </li>
             <li>
-              When a couple elects jointly, all of both spouses&apos; income is aggregated and taxed as one,
-              using the married person&apos;s allowance; the resulting liability is then apportioned between
-              the spouses by their respective share of income.
+              If both individual and joint election are available, compare the actual outcomes; this app&apos;s
+              optimizer does that automatically.
             </li>
           </ul>
         )

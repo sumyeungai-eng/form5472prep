@@ -52,15 +52,16 @@ export interface JointPAComputation extends Computation {
 
 export const MARRIED_PA_ELECTION_RULE = {
   effectiveFromYear: '2018/19',
-  labelZh: '由2018/19課稅年度起，如夫婦雙方均有應課薪俸稅、物業稅或利得稅的入息，必須共同選擇個人入息課稅。',
-  labelEn: 'From YA 2018/19, spouses with income chargeable under salaries, property, or profits tax must elect Personal Assessment jointly.',
+  labelZh: '由2018/19課稅年度起，已婚人士可個別選擇個人入息課稅，亦可在雙方同意下共同選擇。',
+  labelEn: 'From YA 2018/19, married persons may elect Personal Assessment individually, or jointly if both spouses agree.',
 } as const;
 
-// Married-couple PA election rule: an individual may elect PA alone only if the
-// spouse has no chargeable salaries, property, or profits income for the year.
-// If both spouses have chargeable income, they must elect PA jointly or not at all.
-// optimizer.ts owns scenario availability/enforcement; this module exposes the
-// eligibility-shaped helpers it needs.
+// Married-couple PA election rule: under the Inland Revenue (Amendment) (No.4)
+// Ordinance 2018, effective from YA 2018/19, a married person may elect PA
+// individually regardless of whether the spouse has chargeable salaries,
+// property, or profits income. Joint PA remains available where both spouses
+// agree to elect jointly. optimizer.ts owns scenario availability/enforcement;
+// this module exposes the eligibility-shaped helpers it needs.
 
 interface IncomePipelineResult {
   lines: ComputationLine[];
@@ -127,19 +128,9 @@ export function hasChargeableIncomeForMarriedPA(person: PAPersonInput, params: T
 }
 
 export function canElectIndividualPA(
-  spouse: PAPersonInput | undefined,
-  params: TaxYearParams,
+  _spouse: PAPersonInput | undefined,
+  _params: TaxYearParams,
 ): { available: boolean; reasonUnavailableZh?: string; reasonUnavailableEn?: string } {
-  // From YA 2018/19, a married person may elect PA individually only when the
-  // spouse has no income chargeable under salaries, property, or profits tax.
-  if (spouse && hasChargeableIncomeForMarriedPA(spouse, params)) {
-    return {
-      available: false,
-      reasonUnavailableZh: MARRIED_PA_ELECTION_RULE.labelZh,
-      reasonUnavailableEn: MARRIED_PA_ELECTION_RULE.labelEn,
-    };
-  }
-
   return { available: true };
 }
 

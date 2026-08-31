@@ -63,6 +63,10 @@ export const resultsDictionary = {
     zh: "注意：物業稅不屬於此年度稅款寬減適用範圍，因此物業稅明細及暫繳稅均不扣減寬減額。",
     en: "Note: property tax is outside this year's tax-reduction scope, so property-tax computations and provisional property tax do not receive the reduction.",
   },
+  provisionalCaveatNote: {
+    zh: "暫繳稅估算以本年度免稅額及扣除上限計算；稅務局正式暫繳稅按下一年度的免稅額計算，金額或有不同。",
+    en: "Provisional tax here is estimated using the current year's allowances and caps; the IRD computes actual provisional tax using the following year's allowances, so your bill may differ.",
+  },
   marginalTitle: { zh: "邊際稅率說明", en: "Marginal-rate note" },
   marginalProgressive: { zh: "建議方案採用累進稅率；應課稅入息實額落入", en: "The winning scenario uses progressive rates; net chargeable income falls in" },
   marginalStandard: { zh: "建議方案採用標準稅率基準；相關邊際稅率為", en: "The winning scenario uses the standard-rate basis; the relevant marginal rate is" },

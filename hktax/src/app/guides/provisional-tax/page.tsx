@@ -124,6 +124,11 @@ export default function ProvisionalTaxGuidePage() {
                 ? "另外要留意：物業稅的暫繳稅並不包括在寬減適用範圍之內；薪俸稅、利得稅及個人入息課稅則通常適用（以稅務局當年公布為準）。"
                 : "Also note: provisional property tax has historically fallen outside the scope of the annual reduction, while salaries tax, profits tax, and personal assessment are usually covered — always confirm the exact scope against IRD's announcement for the relevant year."}
             </p>
+            <p className="mt-3 text-sm leading-6 text-warm-700">
+              {lang === "zh"
+                ? "暫繳稅估算以本年度免稅額及扣除上限計算；稅務局正式暫繳稅按下一年度的免稅額計算，金額或有不同。"
+                : "Provisional tax here is estimated using the current year's allowances and caps; the IRD computes actual provisional tax using the following year's allowances, so your bill may differ."}
+            </p>
           </div>
         </Container>
       </section>

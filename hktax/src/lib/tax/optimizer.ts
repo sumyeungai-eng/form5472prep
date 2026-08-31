@@ -1,9 +1,7 @@
 import {
-  canElectIndividualPA,
   checkPAEligibility,
   computeJointPA,
   computePA,
-  hasChargeableIncomeForMarriedPA,
   type PAPersonInput,
 } from './personalAssessment';
 import { computeProfitsTax } from './profits';
@@ -65,15 +63,19 @@ const SCENARIO_KIND_BY_ID: Record<string, ScenarioKind> = {
   jointSalaries: 'jointSalaries',
   paIndividualA: 'individualPA',
   paIndividualB: 'individualPA',
+  paIndividualBoth: 'individualPA',
   pa: 'individualPA',
   paJoint: 'jointPA',
 };
 
-const TIE_BREAK_RANK: Record<ScenarioKind, number> = {
+const TIE_BREAK_RANK_BY_ID: Record<string, number> = {
   separate: 0,
   jointSalaries: 1,
-  individualPA: 2,
-  jointPA: 3,
+  pa: 2,
+  paIndividualA: 2,
+  paIndividualB: 3,
+  paIndividualBoth: 4,
+  paJoint: 5,
 };
 
 const PA_INDIVIDUAL_A_UNAVAILABLE = {
@@ -178,6 +180,7 @@ function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params: TaxYea
   const individualBAvailability = individualPAAvailability(eligibilityB, a, params, PA_INDIVIDUAL_B_UNAVAILABLE);
   const paA = individualAAvailability.available ? computePA(a, params) : undefined;
   const paB = individualBAvailability.available ? computePA(b, params) : undefined;
+  const paBothAvailability = individualBothPAAvailability(individualAAvailability, individualBAvailability);
   const jointPA = eligibilityA.eligible && eligibilityB.eligible ? computeJointPA(a, b, sharedAllowances, params) : undefined;
 
   return [
@@ -206,8 +209,8 @@ function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params: TaxYea
     }),
     scenario({
       id: 'paIndividualA',
-      labelZh: '配偶甲個人入息課稅',
-      labelEn: 'Spouse A Personal Assessment',
+      labelZh: '配偶甲個別選擇個人入息課稅',
+      labelEn: 'Spouse A elects Personal Assessment individually',
       available: individualAAvailability.available,
       totalTax: paA ? paA.finalTax + separateB.totalTax : Number.POSITIVE_INFINITY,
       perPerson: {
@@ -218,8 +221,8 @@ function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params: TaxYea
     }),
     scenario({
       id: 'paIndividualB',
-      labelZh: '配偶乙個人入息課稅',
-      labelEn: 'Spouse B Personal Assessment',
+      labelZh: '配偶乙個別選擇個人入息課稅',
+      labelEn: 'Spouse B elects Personal Assessment individually',
       available: individualBAvailability.available,
       totalTax: paB ? separateA.totalTax + paB.finalTax : Number.POSITIVE_INFINITY,
       perPerson: {
@@ -227,6 +230,18 @@ function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params: TaxYea
         b: paPersonResult(b, separateB, paB?.finalTax),
       },
       unavailableReason: individualBAvailability.available ? undefined : individualBAvailability.reason,
+    }),
+    scenario({
+      id: 'paIndividualBoth',
+      labelZh: '夫婦各自選擇個人入息課稅',
+      labelEn: 'Both spouses elect Personal Assessment individually',
+      available: paBothAvailability.available,
+      totalTax: paA && paB ? paA.finalTax + paB.finalTax : Number.POSITIVE_INFINITY,
+      perPerson: {
+        a: paPersonResult(a, separateA, paA?.finalTax),
+        b: paPersonResult(b, separateB, paB?.finalTax),
+      },
+      unavailableReason: paBothAvailability.available ? undefined : paBothAvailability.reason,
     }),
     scenario({
       id: 'paJoint',
@@ -260,21 +275,10 @@ function computeSeparateHeads(person: PAPersonInput, params: TaxYearParams): Sep
 
 function individualPAAvailability(
   electorEligibility: ReturnType<typeof checkPAEligibility>,
-  spouse: PAPersonInput,
-  params: TaxYearParams,
+  _spouse: PAPersonInput,
+  _params: TaxYearParams,
   fallbackReason: { zh: string; en: string },
 ): { available: true; reason?: undefined } | { available: false; reason: { zh: string; en: string } } {
-  if (hasChargeableIncomeForMarriedPA(spouse, params)) {
-    const marriedRule = canElectIndividualPA(spouse, params);
-    return {
-      available: false,
-      reason: {
-        zh: marriedRule.reasonUnavailableZh ?? '',
-        en: marriedRule.reasonUnavailableEn ?? '',
-      },
-    };
-  }
-
   if (!electorEligibility.eligible) {
     return {
       available: false,
@@ -286,6 +290,32 @@ function individualPAAvailability(
   }
 
   return { available: true };
+}
+
+function individualBothPAAvailability(
+  availabilityA: ReturnType<typeof individualPAAvailability>,
+  availabilityB: ReturnType<typeof individualPAAvailability>,
+): { available: true; reason?: undefined } | { available: false; reason: { zh: string; en: string } } {
+  if (availabilityA.available && availabilityB.available) {
+    return { available: true };
+  }
+
+  const zh = [
+    availabilityA.available ? undefined : `配偶甲：${availabilityA.reason.zh}`,
+    availabilityB.available ? undefined : `配偶乙：${availabilityB.reason.zh}`,
+  ].filter((reason): reason is string => Boolean(reason));
+  const en = [
+    availabilityA.available ? undefined : `Spouse A: ${availabilityA.reason.en}`,
+    availabilityB.available ? undefined : `Spouse B: ${availabilityB.reason.en}`,
+  ].filter((reason): reason is string => Boolean(reason));
+
+  return {
+    available: false,
+    reason: {
+      zh: zh.join(' ') || '夫婦雙方均須符合個人入息課稅資格。',
+      en: en.join(' ') || 'Both spouses must be eligible for Personal Assessment.',
+    },
+  };
 }
 
 function combinedEligibilityReason(
@@ -404,7 +434,7 @@ function pickBestScenario(scenarios: OptimizerScenario[]): OptimizerScenario | u
 }
 
 function tieBreakRank(id: string): number {
-  return TIE_BREAK_RANK[SCENARIO_KIND_BY_ID[id] ?? 'jointPA'];
+  return TIE_BREAK_RANK_BY_ID[id] ?? TIE_BREAK_RANK_BY_ID.paJoint;
 }
 
 function hasSalariesIncome(person: PAPersonInput): person is PAPersonInput & {
@@ -502,8 +532,8 @@ function explainPAWin(
   }
 
   return {
-    zh: `${best.labelZh}勝出，因為個人入息課稅下的扣除、免稅額及稅率計算較預設方案有利，節省${saving}。`,
-    en: `${best.labelEn} wins because Personal Assessment applies a more favorable mix of deductions, allowances, and rates, saving ${saving} versus the default.`,
+    zh: `${best.labelZh}勝出；由2018/19課稅年度起已婚人士可個別選擇個人入息課稅，本方案的扣除、免稅額及稅率計算較預設方案有利，節省${saving}。`,
+    en: `${best.labelEn} wins; since YA 2018/19 married persons may elect Personal Assessment individually, and this scenario applies a more favorable mix of deductions, allowances, and rates, saving ${saving} versus the default.`,
   };
 }
 
