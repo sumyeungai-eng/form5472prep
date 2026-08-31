@@ -9,6 +9,7 @@ type ComputationBreakdownProps = {
   heading: string;
   lang: ResultsLanguage;
   defaultOpen?: boolean;
+  printHidden?: boolean;
 };
 
 export function ComputationBreakdown({
@@ -16,9 +17,10 @@ export function ComputationBreakdown({
   defaultOpen = false,
   heading,
   lang,
+  printHidden = false,
 }: ComputationBreakdownProps) {
   return (
-    <section className="results-breakdown-section rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8">
+    <section className={`results-breakdown-section rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8${printHidden ? " results-breakdown-baseline" : ""}`}>
       <div>
         <p className="text-sm font-semibold uppercase text-teal-700">
           {lang === "zh" ? breakdown.scenario.labelZh : breakdown.scenario.labelEn}
@@ -90,7 +92,9 @@ function ComputationPanel({
                   <td className="whitespace-nowrap px-3 py-2 text-right font-medium text-navy-900">
                     {formatLineAmount(line)}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-2 text-xs uppercase text-warm-500">{line.kind}</td>
+                  <td className="whitespace-nowrap px-3 py-2 text-xs text-warm-500">
+                    {kindLabel(line.kind, lang)}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -133,4 +137,8 @@ function formatLineAmount(line: ComputationLine): string {
   }
 
   return formatHKD(line.amount);
+}
+
+function kindLabel(kind: ComputationLine["kind"], lang: ResultsLanguage): string {
+  return resultsT(resultsDictionary.computationKinds[kind], lang);
 }

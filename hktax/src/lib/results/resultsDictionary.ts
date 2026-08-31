@@ -37,6 +37,14 @@ export const resultsDictionary = {
   computationLine: { zh: "項目", en: "Line" },
   amount: { zh: "金額", en: "Amount" },
   kind: { zh: "類別", en: "Kind" },
+  computationKinds: {
+    income: { zh: "收入", en: "Income" },
+    deduction: { zh: "扣除", en: "Deduction" },
+    allowance: { zh: "免稅額", en: "Allowance" },
+    subtotal: { zh: "小計", en: "Subtotal" },
+    tax: { zh: "稅款", en: "Tax" },
+    info: { zh: "資料", en: "Information" },
+  },
   basisUsed: { zh: "採用基準", en: "Basis used" },
   progressive: { zh: "累進稅率", en: "Progressive rates" },
   standard: { zh: "標準稅率", en: "Standard rates" },
@@ -72,4 +80,4 @@ export const resultsDictionary = {
   outputJson: { zh: "引擎輸出", en: "Engine output" },
   noBreakdowns: { zh: "此方案沒有可顯示的稅項明細。", en: "This scenario has no tax-head breakdowns to display." },
   noDemand: { zh: "沒有可組成繳稅通知書的應繳稅款。", en: "There is no payable tax head to assemble into a demand note." },
-} as const satisfies Record<string, ResultsEntry>;
+} as const;

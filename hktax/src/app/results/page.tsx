@@ -126,6 +126,7 @@ export default function ResultsPage() {
             breakdown={separateBreakdown}
             heading={resultsT(resultsDictionary.baselineBreakdowns, lang)}
             lang={lang}
+            printHidden
           />
         ) : null}
 

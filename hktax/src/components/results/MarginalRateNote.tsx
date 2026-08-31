@@ -25,6 +25,9 @@ export function MarginalRateNote({ item, lang, params }: MarginalRateNoteProps) 
         {resultsT(resultsDictionary.marginalTitle, lang)}
       </h2>
       <p className="mt-2 text-sm leading-6 text-warm-700">
+        <span className="font-semibold text-navy-900">
+          {lang === "zh" ? item.titleZh : item.titleEn}：
+        </span>{" "}
         {comp.basisUsed === "progressive"
           ? progressiveText(rateInfo, lang)
           : standardText(rateInfo, lang)}
@@ -46,7 +49,8 @@ function standardText(rateInfo: { index: number; rate: number }, lang: ResultsLa
     ? lang === "zh" ? `第 ${rateInfo.index} 級` : `band ${rateInfo.index}`
     : "";
 
-  return `${resultsT(resultsDictionary.marginalStandard, lang)} ${bandText}${bandText ? " " : ""}${formatPercent(rateInfo.rate)}.`;
+  const punctuation = lang === "zh" ? "。" : ".";
+  return `${resultsT(resultsDictionary.marginalStandard, lang)} ${bandText}${bandText ? " " : ""}${formatPercent(rateInfo.rate)}${punctuation}`;
 }
 
 function standardRateInfo(item: ResultComputation, params: TaxYearParams): { index: number; rate: number } {

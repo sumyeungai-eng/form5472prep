@@ -69,7 +69,6 @@ function ScenarioRow({
         <div className="font-semibold text-navy-900">
           {lang === "zh" ? scenario.labelZh : scenario.labelEn}
         </div>
-        <div className="mt-1 font-mono text-xs text-warm-500">{scenario.id}</div>
       </td>
       <td className="px-3 py-3 align-top">
         <span className={`inline-flex rounded-full px-2 py-1 text-xs font-bold ${

@@ -35,7 +35,7 @@
     break-inside: avoid;
   }
 
-  .results-breakdown-section:not(:first-of-type) {
+  .results-breakdown-baseline {
     display: none !important;
   }
 

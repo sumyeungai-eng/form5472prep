@@ -50,7 +50,6 @@ export function buildScenarioBreakdown(
 
 export function buildDemandItems(breakdown: ScenarioBreakdown, params: TaxYearParams): DemandItem[] {
   return breakdown.computations
-    .filter((item) => item.computation.finalTax > 0 || item.computation.taxBeforeReduction > 0)
     .map((item) => ({
       ...item,
       demand: assembleDemand(item.demandHead, item.computation, params),
@@ -58,10 +57,19 @@ export function buildDemandItems(breakdown: ScenarioBreakdown, params: TaxYearPa
 }
 
 export function selectMarginalComputation(breakdown: ScenarioBreakdown): ResultComputation | undefined {
-  return breakdown.computations.find((item) => item.demandHead === "pa")
-    ?? breakdown.computations.find((item) => item.demandHead === "salaries")
-    ?? breakdown.computations.find((item) => item.demandHead === "profits")
-    ?? breakdown.computations.find((item) => item.demandHead === "property");
+  const preferredHeads: DemandHead[] = ["pa", "salaries", "profits", "property"];
+
+  for (const head of preferredHeads) {
+    const candidates = breakdown.computations
+      .filter((item) => item.demandHead === head)
+      .sort((left, right) => right.computation.netChargeableIncome - left.computation.netChargeableIncome);
+
+    if (candidates[0]) {
+      return candidates[0];
+    }
+  }
+
+  return undefined;
 }
 
 function computationsForScenario(
@@ -332,10 +340,18 @@ function bir60FlagsForScenario(
   if (scenario.id === "paJoint") {
     flags.add("jointPersonalAssessmentElection");
   }
-  if (computations.some((item) => item.computation.lines.some((line) => line.kind === "deduction" && line.amount !== 0))) {
+  const personalComputations = computations.filter(
+    (item) => item.demandHead === "salaries" || item.demandHead === "pa",
+  );
+
+  if (personalComputations.some((item) => item.computation.lines.some(
+    (line) => line.kind === "deduction" && line.amount !== 0,
+  ))) {
     flags.add("deductions");
   }
-  if (computations.some((item) => item.computation.lines.some((line) => line.kind === "allowance" && line.amount !== 0))) {
+  if (personalComputations.some((item) => item.computation.lines.some(
+    (line) => line.kind === "allowance" && line.key.startsWith("allowance.") && line.amount !== 0,
+  ))) {
     flags.add("allowances");
   }
 
