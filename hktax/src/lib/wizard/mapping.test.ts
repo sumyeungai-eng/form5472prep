@@ -6,6 +6,7 @@ import {
   calculateMpfAutoFill,
   mapWizardStateToFamilyScenarioInput,
 } from "./mapping";
+import { defaultMoneyItem } from "./defaultItems";
 import { createDefaultWizardState, type WizardState } from "./wizardState";
 
 function baseState(): WizardState {
@@ -313,5 +314,22 @@ describe("calculateMpfAutoFill", () => {
     };
 
     expect(calculateMpfAutoFill(30_000, highRateParams)).toBe(params.deductionCaps.mpfMandatory);
+  });
+});
+
+describe("defaultMoneyItem", () => {
+  it("uses human-readable labels for income items", () => {
+    expect(defaultMoneyItem("income", 1)).toEqual({
+      key: "income-1",
+      labelZh: "薪金",
+      labelEn: "Salary",
+      amount: 0,
+    });
+    expect(defaultMoneyItem("income", 2)).toEqual({
+      key: "income-2",
+      labelZh: "收入項目 2",
+      labelEn: "Income item 2",
+      amount: 0,
+    });
   });
 });

@@ -21,6 +21,7 @@ import {
   RadioGroupField,
   SelectField,
   getFieldError,
+  scrollToFirstError,
 } from "./FormFields";
 
 type BasicsStepProps = {
@@ -86,7 +87,7 @@ export function BasicsStep({ formId, onValid }: BasicsStepProps) {
   }
 
   return (
-    <form id={formId} onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form id={formId} onSubmit={handleSubmit(onSubmit, scrollToFirstError)} className="space-y-8" noValidate>
       <input type="hidden" {...register("personA.personId")} />
       <input type="hidden" {...register("personB.personId")} />
       <div>

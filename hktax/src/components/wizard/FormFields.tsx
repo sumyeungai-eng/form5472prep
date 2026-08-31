@@ -154,6 +154,7 @@ export function CheckboxField<T extends FieldValues>({
 }: CheckboxFieldProps<T>) {
   const { lang } = useI18n();
   const id = useId();
+  const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
 
   return (
     <div className={className}>
@@ -162,12 +163,13 @@ export function CheckboxField<T extends FieldValues>({
           id={id}
           type="checkbox"
           aria-invalid={Boolean(error)}
+          aria-describedby={describedBy}
           className="focus-ring mt-1 h-4 w-4 rounded border-warm-300 text-teal-700"
           {...register(name)}
         />
         <div className="min-w-0 flex-1">
           <FieldLabel htmlFor={id} label={label} help={help} compact />
-          {hint ? <p className="mt-1 text-xs text-warm-600">{hint}</p> : null}
+          {hint ? <p id={`${id}-hint`} className="mt-1 text-xs text-warm-600">{hint}</p> : null}
           <FieldErrorText id={`${id}-error`} error={error} lang={lang} />
         </div>
       </div>
@@ -193,7 +195,7 @@ export function RadioGroupField<T extends FieldValues>({
     <fieldset className={className} aria-describedby={error ? `${id}-error` : undefined}>
       <legend className="flex items-center gap-2 text-sm font-semibold text-navy-900">
         <span>{wizardT(label, lang)}</span>
-        <HelpPopover entry={help} />
+        <HelpPopover entry={help} label={label} />
       </legend>
       {hint ? <p className="mt-1 text-xs text-warm-600">{hint}</p> : null}
       <div className="mt-2 flex flex-wrap gap-2">
@@ -236,6 +238,7 @@ export function SelectField<T extends FieldValues>({
 }: SelectFieldProps<T>) {
   const { lang } = useI18n();
   const id = useId();
+  const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
 
   return (
     <div className={className}>
@@ -243,6 +246,7 @@ export function SelectField<T extends FieldValues>({
       <select
         id={id}
         aria-invalid={Boolean(error)}
+        aria-describedby={describedBy}
         className="form-select mt-2 w-full"
         {...register(name, {
           setValueAs: (value) => (parseNumber ? Number(value) : value),
@@ -254,7 +258,7 @@ export function SelectField<T extends FieldValues>({
           </option>
         ))}
       </select>
-      {hint ? <p className="mt-1 text-xs text-warm-600">{hint}</p> : null}
+      {hint ? <p id={`${id}-hint`} className="mt-1 text-xs text-warm-600">{hint}</p> : null}
       <FieldErrorText id={`${id}-error`} error={error} lang={lang} />
     </div>
   );
@@ -276,7 +280,7 @@ export function FieldErrorText({
   }
 
   return (
-    <p id={id} className="mt-1 text-sm font-medium text-red-700">
+    <p id={id} className="mt-1 text-sm font-medium text-red-700" role="alert">
       {message}
     </p>
   );
@@ -301,6 +305,21 @@ export function getFieldError<T extends FieldValues>(
   }
 
   return undefined;
+}
+
+export function scrollToFirstError<T extends FieldValues>(errors: FieldErrors<T>): void {
+  const path = firstErrorPath(errors);
+  if (!path) {
+    return;
+  }
+
+  const field = document.getElementsByName(path)[0];
+  if (!field) {
+    return;
+  }
+
+  field.scrollIntoView({ behavior: "smooth", block: "center" });
+  field.focus();
 }
 
 export function formatHKD(value: number): string {
@@ -330,9 +349,32 @@ function FieldLabel({
       className={`flex items-center gap-2 ${compact ? "text-sm" : "text-sm"} font-semibold text-navy-900`}
     >
       <span>{wizardT(label, lang)}</span>
-      <HelpPopover entry={help} />
+      <HelpPopover entry={help} label={label} />
     </label>
   );
+}
+
+function firstErrorPath(value: unknown, path: string[] = []): string | undefined {
+  if (!value || typeof value !== "object") {
+    return undefined;
+  }
+
+  if ("message" in value && typeof (value as { message?: unknown }).message === "string") {
+    return path.join(".");
+  }
+
+  for (const [key, child] of Object.entries(value)) {
+    if (key === "root") {
+      continue;
+    }
+
+    const childPath = firstErrorPath(child, [...path, key]);
+    if (childPath) {
+      return childPath;
+    }
+  }
+
+  return undefined;
 }
 
 function errorMessage(message: unknown, lang: "zh" | "en"): string | undefined {

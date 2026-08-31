@@ -42,7 +42,7 @@ const PROPERTY_REDUCTION_PLACEHOLDER_EN =
 const faqItems: FaqItem[] = [
   {
     id: "first-time-filer",
-    questionZh: "我是第一次要報稅，應該點做？",
+    questionZh: "我是第一次要報稅，應該怎樣做？",
     questionEn: "This is my first time filing tax in Hong Kong — what should I do?",
     answerZh:
       "先確認你有沒有收到稅務局的個別人士報稅表（BIR60）；如未收到但已有應課稅入息，你須主動通知稅務局（見〈報稅時間表〉指南）。建議先用本網站的「報稅精靈」，按你的實際入息、扣除及家庭狀況行一次，了解大概稅款及應填報的部分，再對照正式報稅表逐項填寫。",
@@ -51,16 +51,16 @@ const faqItems: FaqItem[] = [
   },
   {
     id: "married-filing-choices",
-    questionZh: "已婚人士報稅有咩選擇？分開評稅定合併好？",
+    questionZh: "已婚人士報稅有甚麼選擇？分開評稅還是合併較好？",
     questionEn: "What filing choices do married couples have — separate or joint assessment?",
     answerZh:
-      "已婚人士的薪俸稅預設為「分開評稅」，但夫婦亦可選擇「合併評稅」，將雙方入息合併計算並使用已婚人士免稅額；由2018/19課稅年度起，已婚人士亦可個別選擇「個人入息課稅」，或在雙方同意下共同選擇。哪一種組合最慳稅，視乎雙方入息差距、扣除項目及是否有虧損等因素而定，本網站的優化器會列出各方案的總稅款作比較。",
+      "已婚人士的薪俸稅預設為「分開評稅」，但夫婦亦可選擇「合併評稅」，將雙方入息合併計算並使用已婚人士免稅額；由2018/19課稅年度起，已婚人士亦可個別選擇「個人入息課稅」，或在雙方同意下共同選擇。哪一種組合最節省稅款，視乎雙方入息差距、扣除項目及是否有虧損等因素而定，本網站的優化器會列出各方案的總稅款作比較。",
     answerEn:
       "Married couples' salaries tax defaults to separate assessment, but you may elect joint assessment (combining both incomes and using the married person's allowance) instead. Since YA 2018/19, married persons may also elect personal assessment individually, or jointly if both spouses agree. Which combination saves the most tax depends on the income gap between spouses, deductions, and any losses — our optimizer lists the total tax under each scenario for comparison."
   },
   {
     id: "rent-vs-home-loan",
-    questionZh: "租金扣除同居所貸款利息扣除可唔可以同時申索？",
+    questionZh: "租金扣除及居所貸款利息扣除可否同時申索？",
     questionEn: "Can I claim both the domestic rent deduction and home loan interest deduction?",
     answerZh:
       "不可以——兩者互相排斥，同一課稅年度只能二選其一。此外，如你或配偶在香港擁有任何應課差餉租值的居住物業，一般不符合租金扣除資格，即使該物業並非你現時居住的單位亦然，這是常見的稅務局審查重點。",
@@ -72,34 +72,34 @@ const faqItems: FaqItem[] = [
     questionZh: "我有出租物業，是否應該選擇個人入息課稅？",
     questionEn: "I own a let property — should I elect personal assessment?",
     answerZh:
-      "如你有為該出租物業支付按揭利息，物業稅本身並不容許扣除按揭利息，但個人入息課稅容許將該筆利息扣除（上限為該物業的應評稅淨值）。如你同時有其他入息（例如薪俸），個人入息課稅將所有收入合併計算，是否更慳稅視乎整體數字，建議用本網站的優化器逐一比較。",
+      "如你有為該出租物業支付按揭利息，物業稅本身並不容許扣除按揭利息，但個人入息課稅容許將該筆利息扣除（上限為該物業的應評稅淨值）。如你同時有其他入息（例如薪俸），個人入息課稅將所有收入合併計算，是否更節省稅款視乎整體數字，建議用本網站的優化器逐一比較。",
     answerEn:
       "If you pay mortgage interest on that let property, Property Tax itself does not allow a deduction for it — but Personal Assessment does, capped at that property's net assessable value. If you also have other income (such as a salary), Personal Assessment aggregates everything, so whether it saves tax overall depends on your full numbers — use our optimizer to compare directly."
   },
   {
     id: "side-business-two-tier",
-    questionZh: "我有兼職生意，利潤未夠兩級制門檻，稅率點計？",
+    questionZh: "我有兼職生意，利潤未達兩級制門檻，稅率如何計算？",
     questionEn: "I run a small side business with profits below the two-tier threshold — how is the rate worked out?",
     answerZh: SIDE_BUSINESS_PLACEHOLDER_ZH,
     answerEn: SIDE_BUSINESS_PLACEHOLDER_EN
   },
   {
     id: "mpf-tvc-vs-mandatory",
-    questionZh: "強積金強制性供款同「可扣稅自願性供款」(TVC) 有咩分別？",
+    questionZh: "強積金強制性供款及「可扣稅自願性供款」(TVC) 有甚麼分別？",
     questionEn: "What is the difference between mandatory MPF contributions and Tax-deductible Voluntary Contributions (TVC)?",
     answerZh: MPF_PLACEHOLDER_ZH,
     answerEn: MPF_PLACEHOLDER_EN
   },
   {
     id: "newborn-caps",
-    questionZh: "新生嬰兒出生果年度，有咩額外稅務著數？",
+    questionZh: "新生嬰兒出生的年度，有甚麼額外稅務優惠？",
     questionEn: "What extra tax benefits apply in the year my child is born?",
     answerZh: NEWBORN_PLACEHOLDER_ZH,
     answerEn: NEWBORN_PLACEHOLDER_EN
   },
   {
     id: "share-options",
-    questionZh: "公司畀我認股權（share options），要點計稅？",
+    questionZh: "公司給予我認股權（share options），應如何計稅？",
     questionEn: "My employer granted me share options — how are they taxed?",
     answerZh:
       "行使、轉讓或放棄認股權時所得的收益，一般會被視為應課稅的僱傭入息（花紅性質），須計入行使/轉讓當年的薪俸稅評稅內。計算方法及涉及跨境受僱、分期歸屬（vesting）等情況可以相當複雜，本網站未有涵蓋認股權的自動計算，建議諮詢執業會計師或稅務顧問處理。",
@@ -108,7 +108,7 @@ const faqItems: FaqItem[] = [
   },
   {
     id: "leaving-hk",
-    questionZh: "我打算永久或長期離開香港，稅務上有咩要處理？",
+    questionZh: "我打算永久或長期離開香港，稅務上有甚麼要處理？",
     questionEn: "I'm leaving Hong Kong for good (or for a long period) — what do I need to handle?",
     answerZh:
       "一般而言，僱主須在你預計離職日前最少一個月，以書面通知稅務局，並可能須代扣最後薪金直至取得稅務局的「釋放金錢通知書」（一般稱為稅務「清稅證明」）。你本人亦應主動通知稅務局你即將離港，並如實申報全年入息，確保清繳所有稅款後才安排資金調走。詳情及所需表格請以稅務局最新指引為準。",
@@ -117,7 +117,7 @@ const faqItems: FaqItem[] = [
   },
   {
     id: "no-return-duty",
-    questionZh: "冇收到報稅表，但今年有應課稅入息，使唔使報？",
+    questionZh: "沒有收到報稅表，但今年有應課稅入息，是否需要申報？",
     questionEn: "I didn't receive a tax return, but I have chargeable income this year — do I still need to file?",
     answerZh:
       "要。即使未收到報稅表，法例規定你須在該課稅年度完結後 4 個月內，主動以書面通知稅務局你有應課稅入息，稅務局其後會向你發出報稅表。詳見〈報稅時間表〉指南。",
@@ -126,7 +126,7 @@ const faqItems: FaqItem[] = [
   },
   {
     id: "provisional-holdover",
-    questionZh: "暫繳稅金額太高，可唔可以申請少畀啲？",
+    questionZh: "暫繳稅金額太高，可否申請減少繳付？",
     questionEn: "My provisional tax bill is too high — can I apply to pay less?",
     answerZh:
       "如你符合法定的緩繳理由（例如預計入息大跌、新增扣除或免稅額、停止經營等），可在限期前向稅務局申請緩繳全部或部分暫繳稅。詳細的法定理由及申請期限請見〈暫繳稅與緩繳〉指南。",
@@ -135,16 +135,16 @@ const faqItems: FaqItem[] = [
   },
   {
     id: "joint-vs-separate-quick",
-    questionZh: "大致上，幾時合併評稅或個人入息課稅著數？幾時分開評稅著數？",
+    questionZh: "大致上，何時合併評稅或個人入息課稅較有利？何時分開評稅較有利？",
     questionEn: "As a rule of thumb, when does joint assessment or personal assessment help, and when does separate assessment win?",
     answerZh:
-      "概括嚟講：如夫婦入息相差懸殊，或其中一方有大額扣除項目（例如按揭利息、業務虧損）多於自己入息可以扣減，合併評稅或個人入息課稅通常較著數，因為可將盈餘扣除轉移抵銷另一方的入息。如雙方入息相若、各自已用盡扣除及免稅額，分開評稅未必較差。實際結果因人而異，建議一律以本網站優化器的逐項比較為準，不要單憑經驗法則下決定。",
+      "概括而言：如夫婦入息相差懸殊，或其中一方有大額扣除項目（例如按揭利息、業務虧損）多於自己入息可以扣減，合併評稅或個人入息課稅通常較有利，因為可將盈餘扣除轉移抵銷另一方的入息。如雙方入息相若、各自已用盡扣除及免稅額，分開評稅未必較差。實際結果因人而異，建議一律以本網站優化器的逐項比較為準，不要單憑經驗法則下決定。",
     answerEn:
       "In broad terms: if one spouse's income is much higher, or one spouse has large deductions (mortgage interest, business losses) exceeding their own income, joint assessment or personal assessment usually helps because the surplus deduction offsets the other spouse's income. If incomes are similar and each spouse already uses up their own deductions and allowances, separate assessment may be just as good. Results vary by case — always rely on our optimizer's side-by-side comparison rather than a rule of thumb alone."
   },
   {
     id: "records-to-keep",
-    questionZh: "報稅之後，我要保留邊啲紀錄？",
+    questionZh: "報稅之後，我要保留哪些紀錄？",
     questionEn: "What records should I keep after filing?",
     answerZh:
       "建議保留所有支持你申報數字的文件，包括僱主提供的薪俸證明/報稅表（IR56 系列）、扣除項目的收據（自願醫保保費單、進修學費單、慈善捐款收據等）、租約及租金收據、按揭利息證明、以及物業/生意的帳目紀錄。法例對不同類別的紀錄設有不同的保存年期規定，具體年期請參閱稅務局最新指引，不宜自行假設。",
@@ -153,7 +153,7 @@ const faqItems: FaqItem[] = [
   },
   {
     id: "etax-vs-paper",
-    questionZh: "eTAX 網上報稅同紙本申報有咩分別？",
+    questionZh: "eTAX 網上報稅及紙本申報有甚麼分別？",
     questionEn: "What's the difference between filing through eTAX and filing on paper?",
     answerZh:
       "eTAX 網上報稅通常可享有較長的申報限期、即時遞交確認、可查閱過往申報紀錄，亦減省郵寄需時；紙本申報則須親手簽署及以郵寄或親身遞交方式交回，限期一般較短。兩者所需申報的資料內容大致相同，選擇哪一種主要視乎你是否已登記 eTAX 帳戶及個人使用習慣。",
@@ -162,16 +162,16 @@ const faqItems: FaqItem[] = [
   },
   {
     id: "privacy-model",
-    questionZh: "用呢個計算機安唔安全？我啲稅務資料會唔會被上載？",
+    questionZh: "使用這個計算機是否安全？我的稅務資料會否被上載？",
     questionEn: "Is this calculator safe to use — does my tax data get uploaded anywhere?",
     answerZh:
-      "不會。本網站的所有計算均在你的瀏覽器內完成，你輸入的入息、家庭及扣除資料不會傳送到任何伺服器，我們亦沒有帳戶系統或後台資料庫。如你選擇讓精靈記住你的填寫進度，資料只會儲存喺你自己裝置的瀏覽器（localStorage）內，你可以隨時按「清除我的資料」刪除。",
+      "不會。本網站的所有計算均在你的瀏覽器內完成，你輸入的入息、家庭及扣除資料不會傳送到任何伺服器，我們亦沒有帳戶系統或後台資料庫。如你選擇讓精靈記住你的填寫進度，資料只會儲存在你自己裝置的瀏覽器（localStorage）內，你可以隨時按「清除我的資料」刪除。",
     answerEn:
       "No. All computations run entirely inside your own browser. The income, family, and deduction details you enter are never sent to any server, and we have no user accounts or backend database. If you let the wizard remember your progress, that data is stored only in your own device's browser (localStorage), and you can delete it at any time with the \"clear my data\" option."
   },
   {
     id: "does-tool-file-for-me",
-    questionZh: "呢個工具會唔會直接幫我電子報稅？",
+    questionZh: "這個工具會否直接替我電子報稅？",
     questionEn: "Does this tool file my tax return for me?",
     answerZh:
       "不會。本網站是純教育及計算輔助工具，並沒有連接到稅務局的 eTAX 系統，亦無法代你提交任何報稅表或文件。你仍須自行透過 eTAX 或紙本方式，向稅務局正式申報。",
@@ -180,7 +180,7 @@ const faqItems: FaqItem[] = [
   },
   {
     id: "non-resident-60-day",
-    questionZh: "我唔係香港居民，只嚟咗香港工作幾十日，使唔使交薪俸稅？",
+    questionZh: "我不是香港居民，只來了香港工作幾十日，是否需要繳付薪俸稅？",
     questionEn: "I'm not a Hong Kong resident and only worked here for a number of days — do I owe salaries tax?",
     answerZh:
       "非香港居民的短期受僱情況，涉及「60 天規則」及按天數比例劃分入息來源等複雜判斷，本網站目前並未提供自動計算，僅作資訊性提示。如你屬於這類情況，強烈建議諮詢執業稅務顧問，確認實際的申報及繳稅義務。",
@@ -189,24 +189,24 @@ const faqItems: FaqItem[] = [
   },
   {
     id: "reduction-cap-2025-vs-2024",
-    questionZh: "點解 2024/25 同 2025/26 課稅年度嘅寬減上限唔一樣？",
+    questionZh: "為何 2024/25 及 2025/26 課稅年度的寬減上限不一樣？",
     questionEn: "Why is the one-off tax reduction cap different between YA 2024/25 and YA 2025/26?",
     answerZh: REDUCTION_PLACEHOLDER_ZH,
     answerEn: REDUCTION_PLACEHOLDER_EN
   },
   {
     id: "property-tax-no-reduction",
-    questionZh: "我淨係有物業出租、冇其他入息，都有冇份攞埋稅務寬減？",
+    questionZh: "我只有物業出租、沒有其他入息，是否仍可享有稅務寬減？",
     questionEn: "I only have rental income under Property Tax — do I still get the tax reduction?",
     answerZh: PROPERTY_REDUCTION_PLACEHOLDER_ZH,
     answerEn: PROPERTY_REDUCTION_PLACEHOLDER_EN
   },
   {
     id: "where-figures-come-from",
-    questionZh: "網站入面啲數字（免稅額、上限、稅率）係邊度嚟？可唔可信？",
+    questionZh: "網站內的數字（免稅額、上限、稅率）來自哪裡？是否可信？",
     questionEn: "Where do the figures on this site (allowances, caps, rates) come from — can I trust them?",
     answerZh:
-      "所有金額及稅率均取自稅務局官方發布的《免稅額、扣除及稅率表》（PAM 61(e)）及相關 ird.gov.hk / gov.hk 官方頁面，並按課稅年度分別存放喺網站的參數檔案內，逐項核對來源後才使用；本網站的計算文字內不會直接寫死任何稅務金額，全部即時從已核實的參數計算出來。即使如此，本網站仍屬教育及估算工具，正式數字請以稅務局發出的通知為準。",
+      "所有金額及稅率均取自稅務局官方發布的《免稅額、扣除及稅率表》（PAM 61(e)）及相關 ird.gov.hk / gov.hk 官方頁面，並按課稅年度分別存放在網站的參數檔案內，逐項核對來源後才使用；本網站的計算文字內不會直接寫死任何稅務金額，全部即時從已核實的參數計算出來。即使如此，本網站仍屬教育及估算工具，正式數字請以稅務局發出的通知為準。",
     answerEn:
       "All amounts and rates are sourced from IRD's official \"Allowances, Deductions and Tax Rate Table\" (PAM 61(e)) and related ird.gov.hk / gov.hk pages, stored per year of assessment in the site's parameter files after each figure was checked against its source. No tax amount is hard-coded in this site's text — every figure shown is computed live from the verified parameters. That said, this remains an educational and estimation tool; official figures are those on your own notice from IRD."
   }

@@ -29,6 +29,7 @@ import {
   RadioGroupField,
   getFieldError,
   formatHKD,
+  scrollToFirstError,
 } from "./FormFields";
 
 type DeductionsStepProps = {
@@ -75,7 +76,7 @@ export function DeductionsStep({ formId, onValid }: DeductionsStepProps) {
   }
 
   return (
-    <form id={formId} onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form id={formId} onSubmit={handleSubmit(onSubmit, scrollToFirstError)} className="space-y-8" noValidate>
       <input type="hidden" {...register("personA.personId")} />
       <input type="hidden" {...register("personB.personId")} />
       <div>

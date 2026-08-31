@@ -19,7 +19,7 @@ const guideCards: GuideCard[] = [
     titleZh: "薪俸稅指南",
     titleEn: "Salaries Tax Guide",
     descriptionZh:
-      "邊啲人要課稅、邊啲入息要計算在內、僱主提供宿舍嘅租值計算、扣除項目次序、免稅額、累進稅率同標準稅率點揀，以及一次性寬減。",
+      "哪些人要課稅、哪些入息要計算在內、僱主提供宿舍的租值計算、扣除項目次序、免稅額、累進稅率及標準稅率如何選擇，以及一次性寬減。",
     descriptionEn:
       "Who is chargeable, what counts as income, employer accommodation rental value, the order of deductions and allowances, progressive vs standard rate, and the one-off reduction.",
     ready: true
@@ -29,7 +29,7 @@ const guideCards: GuideCard[] = [
     titleZh: "物業稅指南",
     titleEn: "Property Tax Guide",
     descriptionZh:
-      "應評稅淨值（NAV）點計、法定修葺及支出免稅額、共同擁有物業、租約溢價攤分，以及點解物業稅冇一次性寬減。",
+      "應評稅淨值（NAV）如何計算、法定修葺及支出免稅額、共同擁有物業、租約溢價攤分，以及為何物業稅沒有一次性寬減。",
     descriptionEn:
       "How the net assessable value (NAV) is computed, the statutory repairs allowance, co-ownership, lease premium spreading, and why property tax gets no one-off reduction.",
     ready: true
@@ -39,7 +39,7 @@ const guideCards: GuideCard[] = [
     titleZh: "利得稅（獨資／合夥）指南",
     titleEn: "Profits Tax (Sole Prop / Partnership) Guide",
     descriptionZh:
-      "邊啲人要報利得稅、應評稅利潤點計、常見不可扣除項目、簡化折舊免稅額，以及兩級制利得稅率同虧損結轉。",
+      "哪些人要報利得稅、應評稅利潤如何計算、常見不可扣除項目、簡化折舊免稅額，以及兩級制利得稅率與虧損結轉。",
     descriptionEn:
       "Who must file, how assessable profits are computed, common non-deductible items, simplified capital allowances, the two-tiered profits tax rate, and loss carry-forward.",
     ready: true
@@ -49,7 +49,7 @@ const guideCards: GuideCard[] = [
     titleZh: "個人入息課稅詳解",
     titleEn: "Personal Assessment Explained",
     descriptionZh:
-      "個人入息課稅其實係咩、邊啲人揀選會慳到稅、邊啲人唔會、夫婦選擇規則，以及我哋嘅計算工具點樣自動比較各個方案。",
+      "個人入息課稅是甚麼、哪些人選擇後會節省稅款、哪些人不會受惠、夫婦選擇規則，以及我們的計算工具如何自動比較各個方案。",
     descriptionEn:
       "What Personal Assessment actually is, who benefits from electing it, who doesn't, married-couple election rules, and how our optimizer compares the options.",
     ready: true
@@ -58,7 +58,7 @@ const guideCards: GuideCard[] = [
     href: "/guides/provisional-tax",
     titleZh: "暫繳稅指南",
     titleEn: "Provisional Tax Guide",
-    descriptionZh: "暫繳稅點計、點樣同結算稅一齊出單，以及申請緩繳嘅法定理由。",
+    descriptionZh: "暫繳稅如何計算、如何與結算稅一併發出繳款單，以及申請緩繳的法定理由。",
     descriptionEn:
       "How provisional tax is assembled alongside your final assessment, and the statutory grounds for holding it over.",
     ready: true
@@ -76,7 +76,7 @@ const guideCards: GuideCard[] = [
     href: "/guides/objections",
     titleZh: "反對評稅及暫緩繳稅",
     titleEn: "Objections & Holdover Basics",
-    descriptionZh: "點樣對評稅提出反對、時限，以及申請暫緩繳交暫繳稅嘅基本步驟。",
+    descriptionZh: "如何對評稅提出反對、時限，以及申請暫緩繳交暫繳稅的基本步驟。",
     descriptionEn:
       "How to object to an assessment, the time limit, and the basics of applying to hold over provisional tax.",
     ready: true
@@ -85,7 +85,7 @@ const guideCards: GuideCard[] = [
     href: "/guides/faq",
     titleZh: "常見問題",
     titleEn: "Frequently Asked Questions",
-    descriptionZh: "整合大家最常問嘅香港個人稅務問題，一次過解答。",
+    descriptionZh: "整合大家最常問的香港個人稅務問題，一次解答。",
     descriptionEn: "Answers to the questions Hong Kong taxpayers ask most often.",
     ready: true
   },
@@ -93,7 +93,7 @@ const guideCards: GuideCard[] = [
     href: "/guides/glossary",
     titleZh: "稅務詞彙中英對照",
     titleEn: "Tax Glossary",
-    descriptionZh: "本網站用到嘅稅務術語中英對照表，一睇就明。",
+    descriptionZh: "本網站使用的稅務術語中英對照表，一目了然。",
     descriptionEn: "A bilingual glossary of every tax term used on this site.",
     ready: true
   }
@@ -115,7 +115,7 @@ export default function GuidesPage() {
             </h1>
             <p className="mt-5 text-base leading-7 text-warm-700">
               {lang === "zh"
-                ? "喺用計算工具之前，建議先睇下相關指南，了解薪俸稅、物業稅、利得稅同個人入息課稅嘅基本概念、計算方法同常見陷阱。所有金額按頁首所揀嘅課稅年度自動更新。"
+                ? "在使用計算工具之前，建議先參閱相關指南，了解薪俸稅、物業稅、利得稅及個人入息課稅的基本概念、計算方法及常見陷阱。所有金額按頁首所選擇的課稅年度自動更新。"
                 : "Before you use the calculators, it helps to read the relevant guide first — the basic concepts, how each computation works, and common pitfalls for salaries tax, property tax, profits tax, and Personal Assessment. Amounts throughout update automatically for the year of assessment selected in the header."}
             </p>
           </div>

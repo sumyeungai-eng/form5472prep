@@ -12,6 +12,7 @@ import {
 } from "react-hook-form";
 import { getParams } from "@/lib/tax/params";
 import { useI18n } from "@/lib/i18n/useI18n";
+import { defaultMoneyItem } from "@/lib/wizard/defaultItems";
 import { calculateMpfAutoFill } from "@/lib/wizard/mapping";
 import { useWizard } from "@/lib/wizard/wizardContext";
 import {
@@ -33,6 +34,7 @@ import {
   SelectField,
   TextField,
   getFieldError,
+  scrollToFirstError,
 } from "./FormFields";
 import { HelpPopover } from "./HelpPopover";
 
@@ -93,7 +95,7 @@ export function SourceDetailsStep({ formId, onValid }: SourceDetailsStepProps) {
   }
 
   return (
-    <form id={formId} onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form id={formId} onSubmit={handleSubmit(onSubmit, scrollToFirstError)} className="space-y-8" noValidate>
       <input type="hidden" {...register("personA.personId")} />
       <input type="hidden" {...register("personB.personId")} />
       <div>
@@ -235,7 +237,10 @@ function SalaryDetailForm({
       <div className="rounded-md border border-teal-100 bg-teal-50 p-4">
         <label className="flex items-center gap-2 text-sm font-semibold text-navy-900" htmlFor={`${root}-mpf-income`}>
           <span>{wizardT(wizardDictionary.sourceDetails.mpfMonthlyIncome.label, lang)}</span>
-          <HelpPopover entry={wizardDictionary.sourceDetails.mpfMonthlyIncome.help} />
+          <HelpPopover
+            entry={wizardDictionary.sourceDetails.mpfMonthlyIncome.help}
+            label={wizardDictionary.sourceDetails.mpfMonthlyIncome.label}
+          />
         </label>
         <div className="mt-2 flex flex-col gap-3 sm:flex-row">
           <input
@@ -574,15 +579,6 @@ function appendTo<T>(path: string, array: T[], item: T, setValue: SetValue) {
 
 function removeAt<T>(path: string, array: T[], index: number, setValue: SetValue) {
   setValue(path as Path<SourceDetailsStepFormValues>, array.filter((_item, itemIndex) => itemIndex !== index) as never, { shouldDirty: true });
-}
-
-function defaultMoneyItem(prefix: string, index: number): WizardMoneyItem {
-  return {
-    key: `${prefix}-${index}`,
-    labelZh: `${prefix}-${index}`,
-    labelEn: `${prefix}-${index}`,
-    amount: 0,
-  };
 }
 
 function defaultAccommodation(index: number): WizardEmployerAccommodation {

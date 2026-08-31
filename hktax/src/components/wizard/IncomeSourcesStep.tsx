@@ -11,7 +11,7 @@ import {
 } from "@/lib/wizard/wizardSchemas";
 import type { WizardPersonId, WizardState } from "@/lib/wizard/wizardState";
 import { wizardDictionary, wizardT } from "@/lib/wizard/wizardDictionary";
-import { CheckboxField, getFieldError } from "./FormFields";
+import { CheckboxField, getFieldError, scrollToFirstError } from "./FormFields";
 
 type IncomeSourcesStepProps = {
   formId: string;
@@ -52,7 +52,7 @@ export function IncomeSourcesStep({ formId, onValid }: IncomeSourcesStepProps) {
   }
 
   return (
-    <form id={formId} onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form id={formId} onSubmit={handleSubmit(onSubmit, scrollToFirstError)} className="space-y-8" noValidate>
       <input type="hidden" {...register("personA.personId")} />
       <input type="hidden" {...register("personB.personId")} />
       <div>

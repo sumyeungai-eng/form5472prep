@@ -19,6 +19,7 @@ import {
 import { wizardStateSchema } from "./wizardSchemas";
 
 export const WIZARD_STORAGE_KEY = `hktax:wizard:v${WIZARD_STATE_VERSION}`;
+const LAST_WIZARD_STEP_INDEX = 5;
 
 type WizardContextValue = {
   wizardState: WizardState;
@@ -59,6 +60,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       const result = wizardStateSchema.safeParse(parsed);
       if (result.success && result.data.version === WIZARD_STATE_VERSION) {
         setWizardStateState(result.data);
+        setCurrentStepIndexState(clampStepIndex(storedStepIndex(parsed)));
       } else {
         window.localStorage.removeItem(WIZARD_STORAGE_KEY);
       }
@@ -74,8 +76,46 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    window.localStorage.setItem(WIZARD_STORAGE_KEY, JSON.stringify(wizardState));
-  }, [hasHydrated, wizardState]);
+    window.localStorage.setItem(WIZARD_STORAGE_KEY, JSON.stringify({
+      ...wizardState,
+      currentStepIndex,
+    }));
+  }, [currentStepIndex, hasHydrated, wizardState]);
+
+  useEffect(() => {
+    if (
+      wizardState.maritalStatus !== "married"
+      || wizardState.claimMarriedAllowanceBy !== "none"
+    ) {
+      return;
+    }
+
+    setWizardStateState((previous) => {
+      if (
+        previous.maritalStatus !== "married"
+        || previous.claimMarriedAllowanceBy !== "none"
+      ) {
+        return previous;
+      }
+
+      const personAHasIncome = hasAnyIncomeSource(previous.personA);
+      const personBHasIncome = hasAnyIncomeSource(previous.personB);
+
+      if (personAHasIncome === personBHasIncome) {
+        return previous;
+      }
+
+      return {
+        ...previous,
+        claimMarriedAllowanceBy: personAHasIncome ? "A" : "B",
+      };
+    });
+  }, [
+    wizardState.claimMarriedAllowanceBy,
+    wizardState.maritalStatus,
+    wizardState.personA.incomeSources,
+    wizardState.personB.incomeSources,
+  ]);
 
   const setWizardState = useCallback(
     (nextState: WizardState | ((previous: WizardState) => WizardState)) => {
@@ -109,11 +149,11 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setCurrentStepIndex = useCallback((stepIndex: number) => {
-    setCurrentStepIndexState(Math.max(0, stepIndex));
+    setCurrentStepIndexState(clampStepIndex(stepIndex));
   }, []);
 
   const nextStep = useCallback(() => {
-    setCurrentStepIndexState((previous) => previous + 1);
+    setCurrentStepIndexState((previous) => clampStepIndex(previous + 1));
   }, []);
 
   const previousStep = useCallback(() => {
@@ -166,4 +206,26 @@ export function useWizard(): WizardContextValue {
   }
 
   return context;
+}
+
+export function clampStepIndex(stepIndex: unknown): number {
+  if (typeof stepIndex !== "number" || !Number.isFinite(stepIndex)) {
+    return 0;
+  }
+
+  return Math.min(LAST_WIZARD_STEP_INDEX, Math.max(0, Math.trunc(stepIndex)));
+}
+
+function storedStepIndex(payload: unknown): unknown {
+  if (!payload || typeof payload !== "object") {
+    return undefined;
+  }
+
+  return (payload as { currentStepIndex?: unknown }).currentStepIndex;
+}
+
+function hasAnyIncomeSource(person: WizardPersonState): boolean {
+  return person.incomeSources.hasSalary
+    || person.incomeSources.hasProperty
+    || person.incomeSources.hasBusiness;
 }

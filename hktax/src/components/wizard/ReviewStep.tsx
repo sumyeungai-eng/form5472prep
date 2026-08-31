@@ -25,9 +25,11 @@ type ReviewStepProps = {
 
 export function ReviewStep({ formId, onValid }: ReviewStepProps) {
   const { lang } = useI18n();
-  const { wizardState } = useWizard();
+  const { setCurrentStepIndex, wizardState } = useWizard();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const people = activePeople(wizardState);
+  const showMarriedAllowanceWarning = wizardState.maritalStatus === "married"
+    && wizardState.claimMarriedAllowanceBy === "none";
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -48,7 +50,7 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
   }
 
   return (
-    <form id={formId} onSubmit={handleSubmit} className="space-y-8">
+    <form id={formId} onSubmit={handleSubmit} className="space-y-8" noValidate>
       <div>
         <h1 className="text-2xl font-bold text-navy-900">
           {wizardT(wizardDictionary.review.title, lang)}
@@ -61,6 +63,26 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
             {wizardDictionary.review.mappingError.zh} / {wizardDictionary.review.mappingError.en}
           </p>
           <p className="mt-2">{errorMessage}</p>
+        </div>
+      ) : null}
+
+      {showMarriedAllowanceWarning ? (
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="alert">
+          <p className="font-bold">
+            {lang === "zh" ? "未申索已婚人士免稅額" : "Married person's allowance is not claimed"}
+          </p>
+          <p className="mt-2">
+            {lang === "zh"
+              ? "你已選擇已婚，但目前未申索已婚人士免稅額。若符合資格而未申索，估算稅款可能偏高。"
+              : "You selected married status, but married person's allowance is not currently claimed. If you are eligible and leave it unclaimed, the estimate may overstate your tax."}
+          </p>
+          <button
+            type="button"
+            onClick={() => setCurrentStepIndex(0)}
+            className="focus-ring mt-3 inline-flex min-h-10 items-center justify-center rounded-md border border-amber-300 bg-white px-4 py-2 text-sm font-bold text-amber-900 hover:bg-amber-100"
+          >
+            {lang === "zh" ? "返回基本資料修正" : "Back to basics to fix"}
+          </button>
         </div>
       ) : null}
 

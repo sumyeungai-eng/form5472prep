@@ -37,27 +37,27 @@ function buildSections(params: TaxParams): Section[] {
   return [
     {
       id: "nav",
-      title: { zh: "應評稅淨值（NAV）點計", en: "How the net assessable value (NAV) is computed" },
+      title: { zh: "應評稅淨值（NAV）如何計算", en: "How the net assessable value (NAV) is computed" },
       content: {
         zh: (
           <>
-            <p>物業稅按物業嘅「應評稅淨值」（Net Assessable Value，簡稱 NAV）計算，步驟如下：</p>
+            <p>物業稅按物業的「應評稅淨值」（Net Assessable Value，簡稱 NAV）計算，步驟如下：</p>
             <ol className="list-decimal space-y-2 pl-5">
               <li>
-                <strong>代價總額</strong> — 你嗰年應收嘅租金總額，包括租金、簽約時收取而按租期攤分嘅
-                租約溢價（premium），以及租客直接支付、原本屬於業主責任嘅款項（例如管理費由租客代付）。
+                <strong>代價總額</strong> — 你該年應收的租金總額，包括租金、簽約時收取而按租期攤分的
+                租約溢價（premium），以及租客直接支付、原本屬於業主責任的款項（例如管理費由租客代付）。
               </li>
               <li>
-                <strong>減：不能收回嘅租金</strong> — 已經盡力追討仍然收唔到、經稅務局接納為壞帳嘅租金，
-                可以喺該年扣減；日後如果追返，就要喺追返嗰年重新計入應課稅入息。
+                <strong>減：不能收回的租金</strong> — 已經盡力追討仍然未能收回、經稅務局接納為壞帳的租金，
+                可以在該年扣減；日後如果追回，就要在追回的年度重新計入應課稅入息。
               </li>
               <li>
-                <strong>減：業主支付嘅差餉</strong> — 如果差餉係由業主（而唔係租客）支付，可以全數扣減；
-                由租客支付嘅差餉唔可以扣除。
+                <strong>減：業主支付的差餉</strong> — 如果差餉是由業主（而不是租客）支付，可以全數扣減；
+                由租客支付的差餉不可以扣除。
               </li>
               <li>
-                <strong>減：法定修葺及支出免稅額</strong> — 唔需要提供收據，稅務局會自動喺上述淨額基礎上
-                扣除 {pct(propertyTax.repairsAllowancePercent, "zh")} 作為法定修葺及支出免稅額，計出最終嘅 NAV。
+                <strong>減：法定修葺及支出免稅額</strong> — 不需要提供收據，稅務局會自動在上述淨額基礎上
+                扣除 {pct(propertyTax.repairsAllowancePercent, "zh")} 作為法定修葺及支出免稅額，計出最終的 NAV。
               </li>
             </ol>
           </>
@@ -97,8 +97,8 @@ function buildSections(params: TaxParams): Section[] {
       content: {
         zh: (
           <p>
-            物業稅稅款 = NAV × {pct(propertyTax.rate, "zh")}。同薪俸稅或利得稅唔同，物業稅冇累進稅階，
-            亦冇兩級制，一律以單一稅率計算，唔會因應入息高低而有唔同稅率。
+            物業稅稅款 = NAV × {pct(propertyTax.rate, "zh")}。與薪俸稅或利得稅不同，物業稅沒有累進稅階，
+            亦沒有兩級制，一律以單一稅率計算，不會因應入息高低而有不同稅率。
           </p>
         ),
         en: (
@@ -116,8 +116,8 @@ function buildSections(params: TaxParams): Section[] {
       content: {
         zh: (
           <p>
-            物業由多於一位業主共同擁有時，物業稅一般會按各業主嘅實際擁有份額分攤：如果係「分權共有」
-            （tenants in common，各人持有明確份額），稅務局會按各人份額分別評稅；如果係「聯權共有」
+            物業由多於一位業主共同擁有時，物業稅一般會按各業主的實際擁有份額分攤：如果是「分權共有」
+            （tenants in common，各人持有明確份額），稅務局會按各人份額分別評稅；如果是「聯權共有」
             （joint tenants，各人份額相同且不可分割），一般會視作一個評稅單位共同評稅。實際分類同申報方式，
             應以物業契約及稅務局評稅通知書為準。
           </p>
@@ -139,8 +139,8 @@ function buildSections(params: TaxParams): Section[] {
       content: {
         zh: (
           <p>
-            如果你喺簽訂租約時一次過收取一筆「溢價」（premium），一般唔會即時全數計入嗰一年嘅租金收入，
-            而係按租期平均攤分作為每年嘅租金收入計稅，攤分年期喺法例下設有上限。實際攤分方法及年期上限
+            如果你在簽訂租約時一次收取一筆「溢價」（premium），一般不會即時全數計入該年度的租金收入，
+            而是按租期平均攤分作為每年的租金收入計稅，攤分年期在法例下設有上限。實際攤分方法及年期上限
             請查閱稅務局最新指引，或於申報時向稅務局查詢，以免計錯攤分年期而多報或少報租金收入。
           </p>
         ),
@@ -157,11 +157,11 @@ function buildSections(params: TaxParams): Section[] {
     },
     {
       id: "no-reduction",
-      title: { zh: "點解物業稅冇一次性寬減", en: "Why property tax gets no one-off reduction" },
+      title: { zh: "為何物業稅沒有一次性寬減", en: "Why property tax gets no one-off reduction" },
       content: {
         zh: (
           <p>
-            財政預算案宣布嘅一次性稅款寬減，適用範圍限於：
+            財政預算案宣布的一次性稅款寬減，適用範圍限於：
             {" "}
             {taxReduction.appliesTo
               .map((headKey) =>
@@ -169,8 +169,8 @@ function buildSections(params: TaxParams): Section[] {
               )
               .join("、")}
             。物業稅並不包括在寬減範圍之內 —
-            即使你嘅物業稅款好低，都唔會有呢筆寬減。如果你名下物業有按揭利息開支，
-            不妨睇下下面「個人入息課稅」點樣可能幫到你進一步慳稅。
+            即使你的物業稅款很低，也不會有這項寬減。如果你名下物業有按揭利息開支，
+            不妨參閱下面「個人入息課稅」如何可能幫助你進一步節省稅款。
           </p>
         ),
         en: (
@@ -193,14 +193,14 @@ function buildSections(params: TaxParams): Section[] {
     },
     {
       id: "personal-assessment",
-      title: { zh: "個人入息課稅幾時幫到業主", en: "When Personal Assessment helps landlords" },
+      title: { zh: "個人入息課稅何時能幫助業主", en: "When Personal Assessment helps landlords" },
       content: {
         zh: (
           <p>
-            單獨計算物業稅時，供款買樓嘅按揭利息係<strong>唔可以</strong>扣除嘅 —
-            只有差餉同法定修葺免稅額先扣得。但係如果你選擇個人入息課稅，就可以將該物業嘅按揭利息
-            （上限為該物業嘅 NAV）喺合併入息入面扣除，有可能令你嘅總體稅款低過單獨計物業稅。
-            詳情請睇{" "}
+            單獨計算物業稅時，供款買樓的按揭利息是<strong>不可以</strong>扣除的 —
+            只有差餉及法定修葺免稅額可以扣除。但如果你選擇個人入息課稅，就可以將該物業的按揭利息
+            （上限為該物業的 NAV）在合併入息中扣除，有可能令你的總體稅款低於單獨計算物業稅。
+            詳情請參閱{" "}
             <Link href="/guides/personal-assessment" className="font-semibold text-teal-700 hover:underline">
               個人入息課稅詳解
             </Link>
@@ -255,7 +255,7 @@ export default function PropertyTaxGuidePage() {
             </h1>
             <p className="mt-5 text-base leading-7 text-warm-700">
               {lang === "zh"
-                ? "如果你將香港物業出租收租，就可能要繳交物業稅。物業稅嘅計算方法比薪俸稅簡單得多，只涉及一個淨值同一個單一稅率，但都有幾個容易忽略嘅細節，例如共同擁有、租約溢價，同埋佢同個人入息課稅嘅關係。"
+                ? "如果你將香港物業出租收租，就可能要繳交物業稅。物業稅的計算方法比薪俸稅簡單得多，只涉及一個淨值及一個單一稅率，但仍有幾個容易忽略的細節，例如共同擁有、租約溢價，以及它與個人入息課稅的關係。"
                 : "If you let out a Hong Kong property, you may be liable to property tax. The computation is much simpler than salaries tax — a single net value and a single flat rate — but there are a few details worth knowing, including co-ownership, lease premiums, and how it interacts with Personal Assessment."}
             </p>
           </div>
@@ -283,7 +283,7 @@ export default function PropertyTaxGuidePage() {
             </h2>
             <p className="mt-3 text-sm leading-6 text-warm-700">
               {lang === "zh"
-                ? `假設你將單位出租，月租 ${hkd(example.monthlyRent, "zh")}，全年冇壞帳租金，差餉由業主支付，全年 ${hkd(example.ratesPaidByOwner, "zh")}。`
+                ? `假設你將單位出租，月租 ${hkd(example.monthlyRent, "zh")}，全年沒有壞帳租金，差餉由業主支付，全年 ${hkd(example.ratesPaidByOwner, "zh")}。`
                 : `Assume you let a flat for ${hkd(example.monthlyRent, "en")} per month, no irrecoverable rent for the year, and rates of ${hkd(example.ratesPaidByOwner, "en")} for the year paid by you as the owner.`}
             </p>
             <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
@@ -329,7 +329,7 @@ export default function PropertyTaxGuidePage() {
           <div className="rounded-lg border border-warm-200 bg-white p-6 text-sm leading-6 text-warm-700">
             <p>
               {lang === "zh"
-                ? "本頁內容僅供教育及參考用途，並非稅務意見，亦冇考慮閣下個人情況。本網站並非香港稅務局網站，亦與稅務局無從屬關係。如有疑問，請參閱稅務局最新指引或諮詢專業稅務顧問。"
+                ? "本頁內容僅供教育及參考用途，並非稅務意見，亦沒有考慮閣下個人情況。本網站並非香港稅務局網站，亦與稅務局無從屬關係。如有疑問，請參閱稅務局最新指引或諮詢專業稅務顧問。"
                 : "This page is provided for general education and reference only. It is not tax advice and does not take account of your personal circumstances. This website is not the Inland Revenue Department's website and is not affiliated with the IRD. For authoritative guidance, consult the IRD's current guidance or a qualified tax adviser."}
             </p>
             <Link href="/guides" className="mt-4 inline-block font-semibold text-teal-700 hover:underline">

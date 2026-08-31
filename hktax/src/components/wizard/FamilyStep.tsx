@@ -23,6 +23,7 @@ import {
   NumberField,
   RadioGroupField,
   getFieldError,
+  scrollToFirstError,
 } from "./FormFields";
 
 type FamilyWizardFormValues = FamilyStepFormValues & Pick<
@@ -83,7 +84,7 @@ export function FamilyStep({ formId, onValid }: FamilyStepProps) {
   }
 
   return (
-    <form id={formId} onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form id={formId} onSubmit={handleSubmit(onSubmit, scrollToFirstError)} className="space-y-8" noValidate>
       <div>
         <h1 className="text-2xl font-bold text-navy-900">
           {wizardT(wizardDictionary.family.title, lang)}

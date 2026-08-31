@@ -6,13 +6,17 @@ import { wizardT, type WizardDictionaryEntry } from "@/lib/wizard/wizardDictiona
 
 type HelpPopoverProps = {
   entry: WizardDictionaryEntry;
+  label: WizardDictionaryEntry;
 };
 
-export function HelpPopover({ entry }: HelpPopoverProps) {
+export function HelpPopover({ entry, label }: HelpPopoverProps) {
   const { lang } = useI18n();
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const wrapperRef = useRef<HTMLSpanElement>(null);
+  const helpLabel = lang === "zh"
+    ? `${wizardT(label, lang)}說明`
+    : `${wizardT(label, lang)} help`;
 
   useEffect(() => {
     if (!open) {
@@ -44,6 +48,7 @@ export function HelpPopover({ entry }: HelpPopoverProps) {
     <span ref={wrapperRef} className="relative inline-flex">
       <button
         type="button"
+        aria-label={helpLabel}
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((previous) => !previous)}

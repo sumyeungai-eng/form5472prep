@@ -52,21 +52,21 @@ function buildSections(params: TaxParams): Section[] {
   return [
     {
       id: "what",
-      title: { zh: "個人入息課稅其實係咩", en: "What Personal Assessment actually is" },
+      title: { zh: "個人入息課稅其實是甚麼", en: "What Personal Assessment actually is" },
       content: {
         zh: (
           <>
             <p>
-              個人入息課稅（俗稱「入息稅」）<strong>唔係香港嘅第四種稅</strong>，
-              而係一種選擇性嘅「合併計稅」方法。你可以選擇將全年嘅物業應評稅淨值、
-              薪俸稅應評稅入息淨額，同利得稅應評稅利潤（你個人／夫婦分佔嘅部分）三項合併埋一齊，
-              再用薪俸稅嗰套扣除、免稅額同稅率計法（累進稅率 vs 標準稅率取較低者）計出一個總稅款，
-              同你分開俾三種稅嘅總和比較，揀較低嗰個。
+              個人入息課稅（俗稱「入息稅」）<strong>並非香港的第四種稅</strong>，
+              而是一種選擇性的「合併計稅」方法。你可以選擇將全年的物業應評稅淨值、
+              薪俸稅應評稅入息淨額，以及利得稅應評稅利潤（你個人／夫婦分佔的部分）三項合併，
+              再用薪俸稅的扣除、免稅額及稅率計法（累進稅率 vs 標準稅率取較低者）計出一個總稅款，
+              並與你分開繳付三種稅的總和比較，選擇較低者。
             </p>
             <p>
-              關鍵在於「選擇」二字 — 你或你夫婦要喺限期內主動向稅務局提出選擇個人入息課稅，
-              稅務局唔會自動幫你套用；亦唔會喺對你不利時仍然強制執行 — 如果計出嚟個人入息課稅
-              反而要俾多啲，你隨時可以喺限期內撤回選擇。
+              關鍵在於「選擇」二字 — 你或你夫婦須在限期內主動向稅務局提出選擇個人入息課稅，
+              稅務局不會自動為你套用；亦不會在對你不利時仍然強制執行 — 如果計算結果顯示個人入息課稅
+              反而需要繳付更多稅款，你可在限期內撤回選擇。
             </p>
           </>
         ),
@@ -92,22 +92,22 @@ function buildSections(params: TaxParams): Section[] {
     },
     {
       id: "who-benefits",
-      title: { zh: "邊啲人揀選會慳到稅", en: "Who benefits from electing it" },
+      title: { zh: "哪些人選擇後可節省稅款", en: "Who benefits from electing it" },
       content: {
         zh: (
           <ul className="list-disc space-y-2 pl-5">
             <li>
-              <strong>有按揭嘅業主</strong> — 單獨計物業稅唔可以扣按揭利息，但個人入息課稅可以扣
-              （上限為該物業嘅 NAV），業主往往可以慳到唔少稅款。
+              <strong>有按揭的業主</strong> — 單獨計算物業稅不可以扣除按揭利息，但個人入息課稅可以扣除
+              （上限為該物業的 NAV），業主往往可以節省不少稅款。
             </li>
             <li>
-              <strong>有業務虧損嘅人</strong> — 單獨計利得稅嘅虧損只可以結轉去下年，
-              但個人入息課稅可以將虧損即時抵銷你嗰年其他收入（例如薪俸或租金）。
+              <strong>有業務虧損的人</strong> — 單獨計算利得稅的虧損只可以結轉至下一年度，
+              但個人入息課稅可以將虧損即時抵銷你該年度的其他收入（例如薪俸或租金）。
             </li>
             <li>
-              <strong>入息偏低嘅業主／小生意經營者</strong> — 物業稅（{pct(propertyTax.rate, "zh")} 單一稅率）
-              同利得稅嘅兩級制優惠稅階，都冇考慮你嘅個人免稅額。如果你整體入息唔算高，
-              將所有入息合併再套用免稅額同累進稅率，好可能全部都好慳過分開計。
+              <strong>入息偏低的業主／小生意經營者</strong> — 物業稅（{pct(propertyTax.rate, "zh")} 單一稅率）
+              及利得稅的兩級制優惠稅階，都沒有考慮你的個人免稅額。如果你整體入息不算高，
+              將所有入息合併再套用免稅額及累進稅率，很可能比逐項分開計算更節省稅款。
             </li>
           </ul>
         ),
@@ -136,14 +136,14 @@ function buildSections(params: TaxParams): Section[] {
     },
     {
       id: "who-doesnt",
-      title: { zh: "邊啲人唔會受惠", en: "Who doesn't benefit" },
+      title: { zh: "哪些人不會受惠", en: "Who doesn't benefit" },
       content: {
         zh: (
           <p>
-            如果你嘅薪俸稅已經係用標準稅率計算（即入息高過某個水平，累進稅率反而計出更多稅款），
-            而且你冇按揭利息、業務虧損之類可以額外扣除嘅項目，咁合併埋薪俸、租金同業務利潤，
-            往往只會令更多入息推入標準稅率嘅計算基礎，未必有著數，甚至有可能要俾多啲。
-            呢類高入息、扣除項目相對少嘅納稅人，一般揀分開評稅較着數。
+            如果你的薪俸稅已經是用標準稅率計算（即入息高於某個水平，累進稅率反而計出更多稅款），
+            而且你沒有按揭利息、業務虧損等可以額外扣除的項目，合併薪俸、租金及業務利潤，
+            往往只會令更多入息納入標準稅率的計算基礎，未必有利，甚至有可能需要繳付更多稅款。
+            這類高入息、扣除項目相對少的納稅人，一般選擇分開評稅較為有利。
           </p>
         ),
         en: (
@@ -166,14 +166,14 @@ function buildSections(params: TaxParams): Section[] {
           <ul className="list-disc space-y-2 pl-5">
             <li>
               由2018/19課稅年度起，已婚人士可<strong>個別</strong>選擇個人入息課稅，
-              即使配偶同一課稅年度亦有應課稅入息，亦唔會因此失去個別選擇資格。
+              即使配偶在同一課稅年度亦有應課稅入息，亦不會因此失去個別選擇資格。
             </li>
             <li>
               夫婦亦可在雙方同意下<strong>共同</strong>選擇個人入息課稅，將雙方所有入息
               合併評稅，並使用已婚人士免稅額；最終稅款會按雙方各自入息比例攤分繳付責任。
             </li>
             <li>
-              如果個別同共同選擇都合資格，應比較各方案實際稅款；本網站嘅優化器會自動逐一計算。
+              如果個別及共同選擇均符合資格，應比較各方案實際稅款；本網站的優化器會自動逐一計算。
             </li>
           </ul>
         ),
@@ -198,15 +198,15 @@ function buildSections(params: TaxParams): Section[] {
     },
     {
       id: "optimizer",
-      title: { zh: "我哋嘅計算工具點樣自動比較", en: "How our optimizer compares the options" },
+      title: { zh: "我們的計算工具如何自動比較", en: "How our optimizer compares the options" },
       content: {
         zh: (
           <p>
-            個人入息課稅要唔要揀，往往要逐個情境試計先知道邊個最平 — 呢個網站嘅計算精靈同結果頁面，
-            會自動列出你（同配偶，如適用）所有合法可行嘅組合：分開評稅、薪俸稅聯合評稅、
+            是否需要選擇個人入息課稅，往往要逐個情境試算才知道哪個方案稅款最低 — 本網站的計算精靈及結果頁面，
+            會自動列出你（及配偶，如適用）所有合法可行的組合：分開評稅、薪俸稅聯合評稅、
             單獨選擇個人入息課稅、夫婦聯合選擇個人入息課稅，逐一計出總稅款，
-            揀出總稅款最低嗰個方案，並用淺白文字解釋點解揀呢個方案（例如「因為你出租單位嘅按揭利息
-            同業務虧損可以喺個人入息課稅下扣除」）。你只需要輸入資料一次，唔使自己逐個情境手動計。
+            選出總稅款最低的方案，並用淺白文字解釋為何選擇該方案（例如「因為你出租單位的按揭利息
+            及業務虧損可以在個人入息課稅下扣除」）。你只需要輸入資料一次，無須自行逐個情境手動計算。
           </p>
         ),
         en: (
@@ -279,7 +279,7 @@ export default function PersonalAssessmentGuidePage() {
             </h1>
             <p className="mt-5 text-base leading-7 text-warm-700">
               {lang === "zh"
-                ? "「個人入息課稅」係香港稅制入面最容易被誤解嘅一環 —— 好多人以為佢係第四種獨立嘅稅，其實佢只係一個選擇性嘅合併計稅方法。本指南講解佢嘅運作原理、邊啲人受惠、夫婦選擇規則，以及點解值得逐一試計。"
+                ? "「個人入息課稅」是香港稅制中最容易被誤解的一環 —— 很多人以為它是第四種獨立的稅，其實它只是一個選擇性的合併計稅方法。本指南講解它的運作原理、哪些人受惠、夫婦選擇規則，以及為何值得逐一試算。"
                 : "Personal Assessment is one of the most misunderstood parts of the Hong Kong tax system — many people assume it is a fourth, separate tax, when it is really an elective way of combining your figures. This guide explains how it works, who benefits, the married-couple election rules, and why it's worth computing every time."}
             </p>
           </div>
@@ -303,11 +303,11 @@ export default function PersonalAssessmentGuidePage() {
         <Container>
           <div className="card p-6">
             <h2 className="text-xl font-bold text-navy-900">
-              {lang === "zh" ? "計算示例：有按揭嘅業主" : "Worked example: a landlord with a mortgage"}
+              {lang === "zh" ? "計算示例：有按揭的業主" : "Worked example: a landlord with a mortgage"}
             </h2>
             <p className="mt-3 text-sm leading-6 text-warm-700">
               {lang === "zh"
-                ? `延續物業稅指南嘅示例（NAV 為 ${hkd(example.nav, "zh")}），假設呢位業主當年有 ${hkd(example.mortgageInterest, "zh")} 按揭利息，並冇其他入息或免稅額（只有基本免稅額）。`
+                ? `延續物業稅指南的示例（NAV 為 ${hkd(example.nav, "zh")}），假設這位業主當年有 ${hkd(example.mortgageInterest, "zh")} 按揭利息，並沒有其他入息或免稅額（只有基本免稅額）。`
                 : `Continuing the example from the property tax guide (NAV of ${hkd(example.nav, "en")}), assume this landlord paid ${hkd(example.mortgageInterest, "en")} of mortgage interest that year, with no other income and only the basic allowance.`}
             </p>
             <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
@@ -336,7 +336,7 @@ export default function PersonalAssessmentGuidePage() {
                 <dd className="font-bold text-navy-900">{hkd(example.paFinalTax, lang)}</dd>
               </div>
               <div className="flex justify-between gap-3 pb-2 sm:col-span-2">
-                <dt className="font-semibold text-navy-900">{lang === "zh" ? "揀個人入息課稅慳到" : "Saving from electing Personal Assessment"}</dt>
+                <dt className="font-semibold text-navy-900">{lang === "zh" ? "選擇個人入息課稅可節省" : "Saving from electing Personal Assessment"}</dt>
                 <dd className="font-bold text-teal-700">{hkd(Math.max(example.saving, 0), lang)}</dd>
               </div>
             </dl>
@@ -349,7 +349,7 @@ export default function PersonalAssessmentGuidePage() {
           <div className="rounded-lg border border-warm-200 bg-white p-6 text-sm leading-6 text-warm-700">
             <p>
               {lang === "zh"
-                ? "本頁內容僅供教育及參考用途，並非稅務意見，亦冇考慮閣下個人情況。本網站並非香港稅務局網站，亦與稅務局無從屬關係。如有疑問，請參閱稅務局最新指引或諮詢專業稅務顧問。"
+                ? "本頁內容僅供教育及參考用途，並非稅務意見，亦沒有考慮閣下個人情況。本網站並非香港稅務局網站，亦與稅務局無從屬關係。如有疑問，請參閱稅務局最新指引或諮詢專業稅務顧問。"
                 : "This page is provided for general education and reference only. It is not tax advice and does not take account of your personal circumstances. This website is not the Inland Revenue Department's website and is not affiliated with the IRD. For authoritative guidance, consult the IRD's current guidance or a qualified tax adviser."}
             </p>
             <Link href="/guides" className="mt-4 inline-block font-semibold text-teal-700 hover:underline">

@@ -72,18 +72,18 @@ function buildSections(params: TaxParams): Section[] {
   return [
     {
       id: "who",
-      title: { zh: "邊啲人要課薪俸稅", en: "Who is chargeable" },
+      title: { zh: "哪些人要課薪俸稅", en: "Who is chargeable" },
       content: {
         zh: (
           <>
             <p>
-              任何人喺香港「因任何office（職位）、僱傭或退休金」而產生或得自香港嘅入息，都要課繳薪俸稅。
-              簡單嚟講，只要你受僱工作嘅職位或提供服務嘅地方喺香港，你嘅入息就好可能屬於應課稅範圍，
-              毋須係香港永久性居民或持有香港身份證先至要課稅。
+              任何人在香港「因任何office（職位）、僱傭或退休金」而產生或得自香港的入息，都要課繳薪俸稅。
+              簡單而言，只要你受僱工作的職位或提供服務的地方在香港，你的入息就很可能屬於應課稅範圍，
+              毋須是香港永久性居民或持有香港身份證才需要課稅。
             </p>
             <p>
-              相反，如果你嘅僱傭關係全部喺香港以外地方訂立、管理及執行（即「非香港僱傭」），
-              就可能只需要就實際喺香港提供服務嘅日數比例課稅，甚至完全豁免。呢類跨境情況牽涉嘅規則
+              相反，如果你的僱傭關係全部在香港以外地方訂立、管理及執行（即「非香港僱傭」），
+              就可能只需要就實際在香港提供服務的日數比例課稅，甚至完全豁免。這類跨境情況牽涉的規則
               （例如 60 日豁免規則）比較複雜，建議另行諮詢專業意見。
             </p>
           </>
@@ -108,26 +108,26 @@ function buildSections(params: TaxParams): Section[] {
     },
     {
       id: "income",
-      title: { zh: "邊啲入息要計算在內", en: "What counts as income" },
+      title: { zh: "哪些入息要計算在內", en: "What counts as income" },
       content: {
         zh: (
           <ul className="list-disc space-y-2 pl-5">
-            <li>基本薪金、工資、假期薪酬、董事袍金、佣金及花紅（無論係咪合約列明）。</li>
+            <li>基本薪金、工資、假期薪酬、董事袍金、佣金及花紅（無論是否合約列明）。</li>
             <li>
-              各種實物利益（perquisites）— 凡可以兌換現金、或由僱主代你支付本應由你負責嘅開支
-              （例如僱主代交你個人嘅私人費用），一般都要計入應課稅入息。
+              各種實物利益（perquisites）— 凡可以兌換現金、或由僱主代你支付本應由你負責的開支
+              （例如僱主代交你個人的私人費用），一般都要計入應課稅入息。
             </li>
             <li>
-              購股權（share option）收益 — 喺行使、轉讓或放棄購股權嗰刻，市值減去行使價嘅差額，
-              一般要計入該課稅年度嘅入息，並非資本增值稅範圍。
+              購股權（share option）收益 — 在行使、轉讓或放棄購股權的一刻，市值減去行使價的差額，
+              一般要計入該課稅年度的入息，並非資本增值稅範圍。
             </li>
             <li>
-              終止僱傭時收取嘅款項 — 屬合約性酬金或約滿酬金一般要課稅，並可選擇追溯攤分至最多 36
-              個月；至於法定遣散費／長期服務金當中屬彌補離職損失嘅部分，一般唔屬於應課稅入息，
-              但實際定性要視乎每宗個案嘅事實，建議個案有疑問時查詢稅務局或專業意見。
+              終止僱傭時收取的款項 — 屬合約性酬金或約滿酬金一般要課稅，並可選擇追溯攤分至最多 36
+              個月；至於法定遣散費／長期服務金當中屬彌補離職損失的部分，一般不屬於應課稅入息，
+              但實際定性要視乎每宗個案的事實，建議個案有疑問時查詢稅務局或專業意見。
             </li>
             <li>
-              僱主提供居所嘅「租值」（rental value）— 詳見下一節，會按你嘅入息或物業應課差餉租值計算。
+              僱主提供居所的「租值」（rental value）— 詳見下一節，會按你的入息或物業應課差餉租值計算。
             </li>
           </ul>
         ),
@@ -164,22 +164,22 @@ function buildSections(params: TaxParams): Section[] {
     {
       id: "accommodation",
       title: {
-        zh: "僱主提供宿舍嘅租值計算",
+        zh: "僱主提供宿舍的租值計算",
         en: "Employer-provided accommodation: rental value"
       },
       content: {
         zh: (
           <>
             <p>
-              如果僱主免費或以低於市值嘅租金畀你住宿，稅務局會將一個「租值」加返入你嘅應課稅入息，
-              比例視乎住宿類型而定 — 一般住宅單位（例如成層樓／成間屋）嘅比例，會高過酒店、賓館或
-              服務式住宅嘅套房或單人房。具體比例並不包含喺本網站嘅課稅年度參數之內（因為呢類比例
-              屬長期不變嘅結構性規則，並非每年隨財政預算案調整），請以稅務局最新指引所列嘅百分比為準。
+              如果僱主免費或以低於市值的租金提供住宿，稅務局會將一個「租值」加回你的應課稅入息，
+              比例視乎住宿類型而定 — 一般住宅單位（例如整個單位／整間房屋）的比例，會高於酒店、賓館或
+              服務式住宅的套房或單人房。具體比例並不包含在本網站的課稅年度參數之內（因為這類比例
+              屬長期不變的結構性規則，並非每年隨財政預算案調整），請以稅務局最新指引所列的百分比為準。
             </p>
             <p>
-              以上比例一般乘以你嗰年嘅「應評稅入息淨額」（即扣除准許開支之後、計租值之前嘅入息）計出租值。
-              喺某啲情況下，你亦可以選擇改用該物業嘅應課差餉租值，兩者取較低者 —
-              實際比較方法及適用條件請參閱稅務局最新指引，因為涉及嘅細節規則較多。
+              以上比例一般乘以你該年的「應評稅入息淨額」（即扣除准許開支之後、計租值之前的入息）計出租值。
+              在某些情況下，你亦可以選擇改用該物業的應課差餉租值，兩者取較低者 —
+              實際比較方法及適用條件請參閱稅務局最新指引，因為涉及的細節規則較多。
             </p>
           </>
         ),
@@ -216,8 +216,8 @@ function buildSections(params: TaxParams): Section[] {
               再減去免稅額，得出「應課稅入息實額」（NCI）：
             </p>
             <ol className="list-decimal space-y-2 pl-5">
-              <li>屬工作上完全、純粹及必須產生嘅開支（例如專業會費）。</li>
-              <li>認可慈善捐款，上限為認可入息嘅 {pct(deductionCaps.donationsPercent, "zh")}。</li>
+              <li>屬工作上完全、純粹及必須產生的開支（例如專業會費）。</li>
+              <li>認可慈善捐款，上限為認可入息的 {pct(deductionCaps.donationsPercent, "zh")}。</li>
               <li>強制性公積金供款，每年上限 {hkd(deductionCaps.mpfMandatory, "zh")}。</li>
               <li>
                 個人進修開支，每年上限 {hkd(deductionCaps.selfEducation, "zh")}。
@@ -328,7 +328,7 @@ function buildSections(params: TaxParams): Section[] {
         zh: (
           <>
             <p>
-              稅務局會分別用兩種方法計出稅款，然後取較低者作為你要繳交嘅薪俸稅：
+              稅務局會分別用兩種方法計出稅款，然後取較低者作為你要繳交的薪俸稅：
             </p>
             <p className="font-semibold text-navy-900">累進稅率 — 按「應課稅入息實額」（NCI，即扣除埋免稅額之後）計算：</p>
             <ul className="list-disc space-y-1 pl-5">
@@ -345,8 +345,8 @@ function buildSections(params: TaxParams): Section[] {
               ))}
             </ul>
             <p>
-              兩個結果之中，邊個較低就用邊個。一般嚟講，入息唔算太高、又有唔少免稅額同扣除嘅納稅人，
-              用累進稅率通常著數啲；入息好高、免稅額相對入息又唔算多嘅納稅人，就有可能係標準稅率著數。
+              兩個結果之中，哪個較低就採用哪個。一般而言，入息不算太高、又有不少免稅額及扣除的納稅人，
+              用累進稅率通常較有利；入息很高、免稅額相對入息又不算多的納稅人，就有可能是標準稅率較有利。
             </p>
           </>
         ),
@@ -387,9 +387,9 @@ function buildSections(params: TaxParams): Section[] {
       content: {
         zh: (
           <p>
-            政府喺財政預算案宣布嘅一次性寬減，會將你嗰年嘅薪俸稅（連同利得稅及個人入息課稅）扣減{" "}
-            {pct(taxReduction.percent, "zh")}，每宗個案上限 {hkd(taxReduction.cap, "zh")}。呢項寬減只適用於{" "}
-            <strong>最終評稅</strong>，唔適用於下一年度嘅暫繳稅（暫繳稅仍要按單全數繳交，寬減會喺最終評稅時反映）。
+            政府在財政預算案宣布的一次性寬減，會將你該年的薪俸稅（連同利得稅及個人入息課稅）扣減{" "}
+            {pct(taxReduction.percent, "zh")}，每宗個案上限 {hkd(taxReduction.cap, "zh")}。這項寬減只適用於{" "}
+            <strong>最終評稅</strong>，不適用於下一年度的暫繳稅（暫繳稅仍要按單全數繳交，寬減會在最終評稅時反映）。
           </p>
         ),
         en: (
@@ -410,13 +410,13 @@ function buildSections(params: TaxParams): Section[] {
         zh: (
           <>
             <p>
-              已婚夫婦嘅入息預設係分開評稅（各自報自己嘅入息、扣除同免稅額）。如果夾埋一齊評稅對雙方合計嚟講
+              已婚夫婦的入息預設是分開評稅（各自申報自己的入息、扣除及免稅額）。如果合併評稅對雙方合計而言
               較著數，夫婦雙方可以共同選擇「聯合評稅」— 將兩人入息合併計算，改用已婚人士免稅額代替兩份基本免稅額，
-              其餘扣除同免稅額（例如子女、供養父母）合併申索，最後按合併後嘅入息比例攤分應繳稅款。
+              其餘扣除及免稅額（例如子女、供養父母）合併申索，最後按合併後的入息比例攤分應繳稅款。
             </p>
             <p>
-              聯合評稅純粹係選擇性，稅務局唔會自動幫你決定；建議兩種方式都計一計，揀較低嘅一種。
-              呢個網站嘅計算工具會自動比較呢兩個方案。
+              聯合評稅純粹是選擇性，稅務局不會自動為你決定；建議兩種方式都計算一次，選擇較低的一種。
+              本網站的計算工具會自動比較這兩個方案。
             </p>
           </>
         ),
@@ -475,7 +475,7 @@ export default function SalariesTaxGuidePage() {
             </h1>
             <p className="mt-5 text-base leading-7 text-warm-700">
               {lang === "zh"
-                ? "薪俸稅係香港最多人接觸嘅稅種，計算方法睇落複雜，但其實可以拆做幾個步驟：確定應課稅入息、逐項扣除、逐項申索免稅額，再喺累進稅率同兩級制標準稅率之間取較低者。以下逐步講解，並附一個以本頁參數計算嘅簡單示例。"
+                ? "薪俸稅是香港最多人接觸的稅種，計算方法看似複雜，但其實可以拆分為幾個步驟：確定應課稅入息、逐項扣除、逐項申索免稅額，再在累進稅率及兩級制標準稅率之間取較低者。以下逐步講解，並附一個以本頁參數計算的簡單示例。"
                 : "Salaries tax is the tax most people in Hong Kong deal with directly. The computation looks complex but breaks down into a few steps: work out chargeable income, apply deductions in order, apply allowances, then take the lower of the progressive rate and the two-tiered standard rate. This guide walks through each step, with a simple worked example computed from this page's live parameters."}
             </p>
           </div>
@@ -503,7 +503,7 @@ export default function SalariesTaxGuidePage() {
             </h2>
             <p className="mt-3 text-sm leading-6 text-warm-700">
               {lang === "zh"
-                ? `假設一位單身人士，全年入息 ${hkd(example.income, "zh")}，已供滿強積金上限，除基本免稅額外冇其他免稅額或扣除。`
+                ? `假設一位單身人士，全年入息 ${hkd(example.income, "zh")}，已供滿強積金上限，除基本免稅額外沒有其他免稅額或扣除。`
                 : `Assume a single taxpayer with annual income of ${hkd(example.income, "en")}, maxed-out mandatory MPF contributions, and no allowances or deductions beyond the basic allowance.`}
             </p>
             <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
@@ -520,11 +520,11 @@ export default function SalariesTaxGuidePage() {
                 <dd className="font-semibold text-navy-900">{hkd(example.nci, lang)}</dd>
               </div>
               <div className="flex justify-between gap-3 border-b border-warm-200 pb-2">
-                <dt className="text-warm-700">{lang === "zh" ? "累進稅率計出嘅稅款" : "Tax under progressive rate"}</dt>
+                <dt className="text-warm-700">{lang === "zh" ? "累進稅率計出的稅款" : "Tax under progressive rate"}</dt>
                 <dd className="font-semibold text-navy-900">{hkd(example.progressive.tax, lang)}</dd>
               </div>
               <div className="flex justify-between gap-3 border-b border-warm-200 pb-2">
-                <dt className="text-warm-700">{lang === "zh" ? "標準稅率計出嘅稅款" : "Tax under standard rate"}</dt>
+                <dt className="text-warm-700">{lang === "zh" ? "標準稅率計出的稅款" : "Tax under standard rate"}</dt>
                 <dd className="font-semibold text-navy-900">{hkd(example.standard.tax, lang)}</dd>
               </div>
               <div className="flex justify-between gap-3 border-b border-warm-200 pb-2">
@@ -557,7 +557,7 @@ export default function SalariesTaxGuidePage() {
           <div className="rounded-lg border border-warm-200 bg-white p-6 text-sm leading-6 text-warm-700">
             <p>
               {lang === "zh"
-                ? "本頁內容僅供教育及參考用途，並非稅務意見，亦冇考慮閣下個人情況。本網站並非香港稅務局網站，亦與稅務局無從屬關係。如有疑問，請參閱稅務局最新指引或諮詢專業稅務顧問。"
+                ? "本頁內容僅供教育及參考用途，並非稅務意見，亦沒有考慮閣下個人情況。本網站並非香港稅務局網站，亦與稅務局無從屬關係。如有疑問，請參閱稅務局最新指引或諮詢專業稅務顧問。"
                 : "This page is provided for general education and reference only. It is not tax advice and does not take account of your personal circumstances. This website is not the Inland Revenue Department's website and is not affiliated with the IRD. For authoritative guidance, consult the IRD's current guidance or a qualified tax adviser."}
             </p>
             <Link href="/guides" className="mt-4 inline-block font-semibold text-teal-700 hover:underline">
