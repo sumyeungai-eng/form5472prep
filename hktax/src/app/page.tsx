@@ -9,28 +9,28 @@ import { useI18n } from "@/lib/i18n/useI18n";
 const features = [
   {
     href: "/wizard",
-    imageSrc: "/images/card-salaries.png",
+    imageSrc: "/images/card-salaries.webp",
     titleKey: "home.features.salaries.title",
     descriptionKey: "home.features.salaries.description",
     altKey: "home.features.salaries.alt"
   },
   {
     href: "/calculators",
-    imageSrc: "/images/card-property.png",
+    imageSrc: "/images/card-property.webp",
     titleKey: "home.features.property.title",
     descriptionKey: "home.features.property.description",
     altKey: "home.features.property.alt"
   },
   {
     href: "/calculators",
-    imageSrc: "/images/card-profits.png",
+    imageSrc: "/images/card-profits.webp",
     titleKey: "home.features.profits.title",
     descriptionKey: "home.features.profits.description",
     altKey: "home.features.profits.alt"
   },
   {
     href: "/wizard",
-    imageSrc: "/images/card-family.png",
+    imageSrc: "/images/card-family.webp",
     titleKey: "home.features.family.title",
     descriptionKey: "home.features.family.description",
     altKey: "home.features.family.alt"
@@ -59,7 +59,7 @@ export default function Home() {
     <>
       <section className="relative isolate min-h-[calc(100svh-9rem)] overflow-hidden bg-navy-900 text-white">
         <Image
-          src="/images/og-image.png"
+          src="/images/og-image.webp"
           alt={t("home.hero.imageAlt")}
           fill
           priority
