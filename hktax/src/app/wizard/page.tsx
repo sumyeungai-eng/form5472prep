@@ -88,9 +88,9 @@ function WizardFlow() {
 
   return (
     <Container className="py-10 sm:py-14">
-      <section className="mx-auto max-w-5xl rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8">
+      <section className="mx-auto min-h-[44rem] max-w-5xl rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8">
         {!hasHydrated ? (
-          <div className="rounded-md border border-teal-100 bg-teal-50 p-5 text-sm font-semibold text-teal-800">
+          <div className="min-h-[40rem] rounded-md border border-teal-100 bg-teal-50 p-5 text-sm font-semibold text-teal-800">
             {wizardT(wizardDictionary.common.loading, lang)}
           </div>
         ) : (
