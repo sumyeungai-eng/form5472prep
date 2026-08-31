@@ -18,3 +18,18 @@ npm run build
 npm run test
 npm run lint
 ```
+
+## Deploy (Vercel)
+
+This app is self-contained and deploys as its own Vercel project, separate from the
+repository root app:
+
+1. In Vercel, **Add New Project** → import `sumyeungai-eng/form5472prep`.
+2. Set **Root Directory** to `hktax/` (Framework Preset: Next.js — auto-detected).
+3. No environment variables are required — the app is 100% client-side, has no
+   database, and stores user data only in the visitor's browser (localStorage).
+4. Deploy. Verify the production URL by completing one wizard run
+   (e.g. single filer, salary 600,000, no deductions, YA 2025/26 → final tax HK$58,560).
+
+Any other static-capable Node host works the same way: `npm ci && npm run build`
+then serve with `npm run start` (or `next start -p <port>`).
