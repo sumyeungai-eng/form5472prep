@@ -100,20 +100,20 @@ export const BIR60_MAPPING = [
   {
     id: "deductions",
     flag: "deductions",
-    part: "Parts 4.3/4.4 & Part 8",
+    part: "Parts 4.3, 8, 9, 10, 11 & 12.4",
     figure: {
       zh: "強積金、個人進修、認可捐款、長者住宿照顧、住屋、年金/TVC、自願醫保及輔助生育扣除",
       en: "MPF, self-education, donations, elderly care, housing, annuity/TVC, VHIS, and assisted-reproduction deductions",
     },
     note: {
-      zh: "薪俸相關扣除通常在第 4 部分；其他扣除及個人入息課稅扣除通常在第 8 部分。",
-      en: "Employment-related deductions usually sit in Part 4; other deductions and PA deductions usually sit in Part 8.",
+      zh: "僱傭相關扣除在第 4.3 部分；居所貸款利息/住宅租金在第 8 部分；自願醫保在第 9 部分；輔助生育在第 10 部分；年金及TVC在第 11 部分；長者住宿照顧在第 12.4 部分。",
+      en: "Employment-related deductions sit in Part 4.3; home loan interest / domestic rent in Part 8; VHIS in Part 9; assisted reproduction in Part 10; annuity and TVC in Part 11; elderly residential care in Part 12.4.",
     },
   },
   {
     id: "allowances",
     flag: "allowances",
-    part: "Part 11",
+    part: "Part 12",
     figure: {
       zh: "基本、已婚、子女、供養父母/祖父母、兄弟姊妹、單親及傷殘相關免稅額",
       en: "Basic, married, child, parent/grandparent, sibling, single-parent, and disability-related allowances",
