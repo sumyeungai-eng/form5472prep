@@ -1154,3 +1154,24 @@ on it; the inference is by analogy.
   larger-share spouse. No IRD-published convention was identified for this exact
   remainder case; the total is verified exact at 54,480 per the golden doc. The engine's
   per-spouse figures are A = 33,243 and B = 21,237, summing to 54,480.
+
+## Amendments 2026-08-31 (2)
+
+* G21 individual-PA MPA cross-spouse condition: for the three individual-PA election
+  optimizer branches only, the engine now applies the amended s.29(1) condition that MPA is
+  unavailable to a person whose spouse elects PA separately. In those same branches, the
+  spouse-income test uses the broader PA helper covering salaries, property, and profits
+  income. This is deliberately scoped to the branch computation and does not rewrite the
+  general salaries-tax-only rule documented in section 0.4.
+
+* G21 corrected totals: no-election remains 58,920. Husband with MPA remains 8,520 in the
+  baseline separate branch. When wife elects PA individually, husband is stripped to basic:
+  NAI 432,000 less basic allowance 132,000 gives NCI 300,000; progressive tax is 33,000,
+  less the 3,000 reduction, so husband tax is 30,000. Wife's PA remains 5,400. Corrected
+  paIndividualB total is 35,400, so saving is 58,920 - 35,400 = 23,520. paIndividualBoth
+  also totals 35,400, and the optimizer tie-break keeps paIndividualB ahead of
+  paIndividualBoth.
+
+* G22 and G23 confirmation: G22 is unchanged because person B has zero chargeable income and
+  does not elect in the paIndividualA branch, so person A keeps MPA. G23 is unchanged because
+  neither spouse claims MPA in the raw fixture; there is no MPA amount to strip.

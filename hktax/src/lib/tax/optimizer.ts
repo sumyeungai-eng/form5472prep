@@ -2,6 +2,7 @@ import {
   checkPAEligibility,
   computeJointPA,
   computePA,
+  hasChargeableIncomeForMarriedPA,
   type PAPersonInput,
 } from './personalAssessment';
 import { computeProfitsTax } from './profits';
@@ -103,6 +104,8 @@ export function optimize(family: FamilyScenarioInput, params: TaxYearParams): Op
     throw new Error('Married optimizer input must include personB.');
   }
 
+  assertNotBothSpousesClaimMarriedAllowance(family.personA, family.personB);
+
   const scenarios = buildCoupleScenarios(family.personA, family.personB, params);
   return buildOptimizerResult(family, scenarios, params);
 }
@@ -161,7 +164,7 @@ function buildSingleScenarios(person: PAPersonInput, params: TaxYearParams): Opt
   ];
 }
 
-function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params: TaxYearParams): OptimizerScenario[] {
+export function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params: TaxYearParams): OptimizerScenario[] {
   const separateA = computeSeparateHeads(a, params);
   const separateB = computeSeparateHeads(b, params);
   const separateTotal = separateA.totalTax + separateB.totalTax;
@@ -178,10 +181,30 @@ function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params: TaxYea
 
   const individualAAvailability = individualPAAvailability(eligibilityA, b, params, PA_INDIVIDUAL_A_UNAVAILABLE);
   const individualBAvailability = individualPAAvailability(eligibilityB, a, params, PA_INDIVIDUAL_B_UNAVAILABLE);
-  const paA = individualAAvailability.available ? computePA(a, params) : undefined;
-  const paB = individualBAvailability.available ? computePA(b, params) : undefined;
   const paBothAvailability = individualBothPAAvailability(individualAAvailability, individualBAvailability);
   const jointPA = eligibilityA.eligible && eligibilityB.eligible ? computeJointPA(a, b, sharedAllowances, params) : undefined;
+  // IRO s.29(1), as amended: in individual-PA branches, MPA is unavailable
+  // where the spouse elects PA separately, and this branch also applies the
+  // broader PA income-head test used by hasChargeableIncomeForMarriedPA. That
+  // is deliberately narrower in scope than docs/golden-scenarios.md section
+  // 0.4's general salaries-tax-only MPA note; keep this local to these three
+  // individual-election scenarios.
+  const paIndividualAInputA = personForIndividualPAScenario(a, b, false, params);
+  const paIndividualAInputB = personForIndividualPAScenario(b, a, true, params);
+  const paIndividualBInputA = personForIndividualPAScenario(a, b, true, params);
+  const paIndividualBInputB = personForIndividualPAScenario(b, a, false, params);
+  const paIndividualBothInputA = personForIndividualPAScenario(a, b, true, params);
+  const paIndividualBothInputB = personForIndividualPAScenario(b, a, true, params);
+  const paIndividualASeparateA = computeSeparateHeads(paIndividualAInputA, params);
+  const paIndividualASeparateB = computeSeparateHeads(paIndividualAInputB, params);
+  const paIndividualBSeparateA = computeSeparateHeads(paIndividualBInputA, params);
+  const paIndividualBSeparateB = computeSeparateHeads(paIndividualBInputB, params);
+  const paIndividualBothSeparateA = computeSeparateHeads(paIndividualBothInputA, params);
+  const paIndividualBothSeparateB = computeSeparateHeads(paIndividualBothInputB, params);
+  const paIndividualAForA = individualAAvailability.available ? computePA(paIndividualAInputA, params) : undefined;
+  const paIndividualBForB = individualBAvailability.available ? computePA(paIndividualBInputB, params) : undefined;
+  const paIndividualBothForA = paBothAvailability.available ? computePA(paIndividualBothInputA, params) : undefined;
+  const paIndividualBothForB = paBothAvailability.available ? computePA(paIndividualBothInputB, params) : undefined;
 
   return [
     scenario({
@@ -212,10 +235,12 @@ function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params: TaxYea
       labelZh: '配偶甲個別選擇個人入息課稅',
       labelEn: 'Spouse A elects Personal Assessment individually',
       available: individualAAvailability.available,
-      totalTax: paA ? paA.finalTax + separateB.totalTax : Number.POSITIVE_INFINITY,
+      totalTax: paIndividualAForA
+        ? paIndividualAForA.finalTax + paIndividualASeparateB.totalTax
+        : Number.POSITIVE_INFINITY,
       perPerson: {
-        a: paPersonResult(a, separateA, paA?.finalTax),
-        b: separatePersonResult(b, separateB),
+        a: paPersonResult(paIndividualAInputA, paIndividualASeparateA, paIndividualAForA?.finalTax),
+        b: separatePersonResult(paIndividualAInputB, paIndividualASeparateB),
       },
       unavailableReason: individualAAvailability.available ? undefined : individualAAvailability.reason,
     }),
@@ -224,10 +249,12 @@ function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params: TaxYea
       labelZh: '配偶乙個別選擇個人入息課稅',
       labelEn: 'Spouse B elects Personal Assessment individually',
       available: individualBAvailability.available,
-      totalTax: paB ? separateA.totalTax + paB.finalTax : Number.POSITIVE_INFINITY,
+      totalTax: paIndividualBForB
+        ? paIndividualBSeparateA.totalTax + paIndividualBForB.finalTax
+        : Number.POSITIVE_INFINITY,
       perPerson: {
-        a: separatePersonResult(a, separateA),
-        b: paPersonResult(b, separateB, paB?.finalTax),
+        a: separatePersonResult(paIndividualBInputA, paIndividualBSeparateA),
+        b: paPersonResult(paIndividualBInputB, paIndividualBSeparateB, paIndividualBForB?.finalTax),
       },
       unavailableReason: individualBAvailability.available ? undefined : individualBAvailability.reason,
     }),
@@ -236,10 +263,12 @@ function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params: TaxYea
       labelZh: '夫婦各自選擇個人入息課稅',
       labelEn: 'Both spouses elect Personal Assessment individually',
       available: paBothAvailability.available,
-      totalTax: paA && paB ? paA.finalTax + paB.finalTax : Number.POSITIVE_INFINITY,
+      totalTax: paIndividualBothForA && paIndividualBothForB
+        ? paIndividualBothForA.finalTax + paIndividualBothForB.finalTax
+        : Number.POSITIVE_INFINITY,
       perPerson: {
-        a: paPersonResult(a, separateA, paA?.finalTax),
-        b: paPersonResult(b, separateB, paB?.finalTax),
+        a: paPersonResult(paIndividualBothInputA, paIndividualBothSeparateA, paIndividualBothForA?.finalTax),
+        b: paPersonResult(paIndividualBothInputB, paIndividualBothSeparateB, paIndividualBothForB?.finalTax),
       },
       unavailableReason: paBothAvailability.available ? undefined : paBothAvailability.reason,
     }),
@@ -271,6 +300,54 @@ function computeSeparateHeads(person: PAPersonInput, params: TaxYearParams): Sep
     profitsTax,
     totalTax: salariesTax + propertyTax + profitsTax,
   };
+}
+
+function personForIndividualPAScenario(
+  person: PAPersonInput,
+  spouse: PAPersonInput,
+  spouseElectsPAIndividually: boolean,
+  params: TaxYearParams,
+): PAPersonInput {
+  const spouseHasChargeableIncome = hasChargeableIncomeForMarriedPA(spouse, params);
+  const mayKeepMarriedAllowance = !spouseElectsPAIndividually && !spouseHasChargeableIncome;
+
+  return mayKeepMarriedAllowance ? person : stripMarriedAllowanceClaim(person);
+}
+
+function stripMarriedAllowanceClaim(person: PAPersonInput): PAPersonInput {
+  const allowances = {
+    ...effectiveAllowanceInput(person),
+    claimMarriedAllowance: false,
+  };
+
+  return {
+    ...person,
+    allowances,
+    salaries: person.salaries
+      ? {
+        ...person.salaries,
+        allowances,
+      }
+      : person.salaries,
+  };
+}
+
+function assertNotBothSpousesClaimMarriedAllowance(a: PAPersonInput, b: PAPersonInput): void {
+  if (claimsMarriedAllowance(a) && claimsMarriedAllowance(b)) {
+    throw new Error(
+      "Both spouses cannot claim the married person's allowance simultaneously. / 夫婦雙方不可同時申索已婚人士免稅額。",
+    );
+  }
+}
+
+function claimsMarriedAllowance(person: PAPersonInput): boolean {
+  const allowances = effectiveAllowanceInput(person);
+
+  return Boolean(allowances.isMarried && allowances.claimMarriedAllowance);
+}
+
+function effectiveAllowanceInput(person: PAPersonInput): NonNullable<PAPersonInput['allowances']> {
+  return person.allowances ?? person.salaries?.allowances ?? {};
 }
 
 function individualPAAvailability(

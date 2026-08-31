@@ -455,6 +455,10 @@ function computeAllowances(
   let total = 0;
   const allowances = allowanceInput ?? {};
   const individualAllowanceInput = allowances as SalariesInput['allowances'];
+  // IRO s.29(1), as amended, also denies MPA where the person's spouse has
+  // elected PA separately. buildCoupleScenarios in optimizer.ts enforces that
+  // cross-spouse election rule; this allowance layer only renders the
+  // claimMarriedAllowance flag supplied by the active scenario.
   const claimsMarriedAllowance = forceMarriedAllowance
     || Boolean(individualAllowanceInput?.isMarried && individualAllowanceInput.claimMarriedAllowance);
 

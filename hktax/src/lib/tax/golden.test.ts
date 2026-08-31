@@ -729,8 +729,9 @@ describe('G20: Couple: joint assessment loses (two mid earners, YA 2025/26)', ()
 describe('G21: Couple: joint personal assessment with rental + mortgage (YA 2025/26)', () => {
   /*
    * Golden doc: docs/golden-scenarios.md, scenario G21
-   * EXPECTED: no-election total 58,920 · joint PA total 54,480 · joint PA elected; saving
-   * 4,440. Apportionment: husband 33,242, wife 21,238.
+   * EXPECTED: no-election total 58,920 · paIndividualB and paIndividualBoth tie
+   * at 35,400, with paIndividualB elected by tie-break; saving 23,520.
+   * Joint PA remains 54,480. Apportionment: husband 33,242, wife 21,238.
    * Derivation date: 2026-08-31
    */
   it('G21: Couple: joint personal assessment with rental + mortgage', () => {
@@ -765,8 +766,17 @@ describe('G21: Couple: joint personal assessment with rental + mortgage (YA 2025
     // apportionment rounding: engine assigns the rounding remainder to the larger-share spouse; no IRD-published convention; total verified exact at 54,480 per golden doc
     expect(jointPA.perSpouse.b.shareOfTax).toBe(21_237);
     expect(jointPA.perSpouse.a.shareOfTax + jointPA.perSpouse.b.shareOfTax).toBe(54_480);
+    // s.29(1) amended rule in individual-PA branches: B electing separately
+    // strips A's MPA. A with basic allowance: NAI 432,000 - 132,000 = 300,000;
+    // progressive tax 33,000 less 3,000 reduction = 30,000. B's PA remains
+    // 5,400, so paIndividualB = 35,400. paIndividualBoth ties because A and B
+    // are both stripped by the separate-election condition.
+    expect(scenarioById(optimized, 'paIndividualA').totalTax).toBe(80_400);
+    expect(scenarioById(optimized, 'paIndividualB').totalTax).toBe(35_400);
+    expect(scenarioById(optimized, 'paIndividualBoth').totalTax).toBe(35_400);
+    expect(scenarioById(optimized, 'paJoint').totalTax).toBe(54_480);
     expect(optimized.best).toBe('paIndividualB');
-    expect(optimized.saving).toBe(45_000);
+    expect(optimized.saving).toBe(23_520);
   });
 });
 

@@ -1,20 +1,47 @@
 "use client";
 
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/Container";
 import { BasicsStep } from "@/components/wizard/BasicsStep";
-import { DeductionsStep } from "@/components/wizard/DeductionsStep";
-import { FamilyStep } from "@/components/wizard/FamilyStep";
-import { IncomeSourcesStep } from "@/components/wizard/IncomeSourcesStep";
 import { ProgressIndicator } from "@/components/wizard/ProgressIndicator";
-import { ReviewStep } from "@/components/wizard/ReviewStep";
-import { SourceDetailsStep } from "@/components/wizard/SourceDetailsStep";
 import { useI18n } from "@/lib/i18n/useI18n";
 import { WizardProvider, useWizard } from "@/lib/wizard/wizardContext";
 import { wizardDictionary, wizardT } from "@/lib/wizard/wizardDictionary";
 
 const LAST_STEP_INDEX = 5;
+
+const LazyStepLoading = () => {
+  const { lang } = useI18n();
+
+  return (
+    <div className="rounded-md border border-teal-100 bg-teal-50 p-5 text-sm font-semibold text-teal-800">
+      {wizardT(wizardDictionary.common.loading, lang)}
+    </div>
+  );
+};
+
+const IncomeSourcesStep = dynamic(
+  () => import("@/components/wizard/IncomeSourcesStep").then((mod) => mod.IncomeSourcesStep),
+  { loading: LazyStepLoading },
+);
+const SourceDetailsStep = dynamic(
+  () => import("@/components/wizard/SourceDetailsStep").then((mod) => mod.SourceDetailsStep),
+  { loading: LazyStepLoading },
+);
+const FamilyStep = dynamic(
+  () => import("@/components/wizard/FamilyStep").then((mod) => mod.FamilyStep),
+  { loading: LazyStepLoading },
+);
+const DeductionsStep = dynamic(
+  () => import("@/components/wizard/DeductionsStep").then((mod) => mod.DeductionsStep),
+  { loading: LazyStepLoading },
+);
+const ReviewStep = dynamic(
+  () => import("@/components/wizard/ReviewStep").then((mod) => mod.ReviewStep),
+  { loading: LazyStepLoading },
+);
 
 export default function WizardPage() {
   return (

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { type PAPersonInput } from './personalAssessment';
 import type { PropertyInput } from './property';
 import type { SalariesInput } from './salaries';
-import { optimize, type OptimizerResult } from './optimizer';
+import { buildCoupleScenarios, optimize, type OptimizerResult } from './optimizer';
 import { ya2025_26 as params } from './params/ya2025_26';
 
 function eligiblePerson(overrides: Omit<PAPersonInput, 'ageDuringYear' | 'isHongKongPermanentResident'>): PAPersonInput {
@@ -175,5 +175,40 @@ describe('optimize', () => {
       { id: 'paIndividualBoth', available: true, totalTax: 41_560 },
       { id: 'paJoint', available: true, totalTax: 42_920 },
     ]);
+  });
+
+  it('rejects bilateral raw MPA claims and strips MPA from both spouses in paIndividualBoth', () => {
+    const personA = eligiblePerson({
+      salaries: {
+        ...salary(450_000, { mpfMandatory: 18_000 }),
+        allowances: { isMarried: true, claimMarriedAllowance: true },
+      },
+    });
+    const personB = eligiblePerson({
+      salaries: {
+        ...salary(450_000, { mpfMandatory: 18_000 }),
+        allowances: { isMarried: true, claimMarriedAllowance: true },
+      },
+    });
+
+    expect(() => optimize({ married: true, personA, personB }, params)).toThrow(
+      "Both spouses cannot claim the married person's allowance simultaneously. / 夫婦雙方不可同時申索已婚人士免稅額。",
+    );
+
+    const scenario = buildCoupleScenarios(personA, personB, params)
+      .find((item) => item.id === 'paIndividualBoth');
+
+    // Both spouses elect PA separately, so s.29(1) strips MPA from both.
+    // Per spouse: NAI 450,000 - 18,000 MPF = 432,000; basic NCI = 432,000 -
+    // 132,000 = 300,000. Progressive tax = 1,000 + 3,000 + 5,000 + 7,000 +
+    // 100,000 * 17% = 33,000; 2025/26 reduction = 3,000; final = 30,000.
+    expect(scenario).toMatchObject({
+      available: true,
+      totalTax: 60_000,
+      perPerson: {
+        a: expect.objectContaining({ paTax: 30_000, finalTax: 30_000 }),
+        b: expect.objectContaining({ paTax: 30_000, finalTax: 30_000 }),
+      },
+    });
   });
 });
