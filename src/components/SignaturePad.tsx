@@ -64,8 +64,11 @@ export function SignaturePad({
       lastW = rect.width;
       lastH = rect.height;
       ctx.scale(dpr, dpr);
-      ctx.lineWidth = 2;
+      // Thicker than a hairline on purpose: this PNG is scaled down into the
+      // PDF and then faxed at 1-bit resolution, where thin strokes break up.
+      ctx.lineWidth = 3.5;
       ctx.lineCap = "round";
+      ctx.lineJoin = "round";
       ctx.strokeStyle = "#0f172a";
       if (snapshot) {
         const img = new Image();
