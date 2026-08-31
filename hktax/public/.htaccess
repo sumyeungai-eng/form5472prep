@@ -4,6 +4,10 @@
 # Serve the app's own bilingual 404 page instead of the server default.
 ErrorDocument 404 /404.html
 
+# This is a static site: index.html must win over any host placeholder
+# (e.g. Hostinger's parked default.php) regardless of the server's default order.
+DirectoryIndex index.html index.htm
+
 # --- Compression -------------------------------------------------------------
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript
