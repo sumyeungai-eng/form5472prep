@@ -2,7 +2,7 @@
 title: "Form 5472 Extension: How to Get More Time (Form 7004)"
 description: "Yes — file Form 7004 by April 15 to extend your Form 5472 deadline to October 15. Foreign-owned LLCs can't e-file it. Here's exactly how, step by step."
 date: 2026-07-05
-updated: 2026-08-14
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "form-7004", "extension", "deadline", "foreign-owned-llc"]
 draft: false
@@ -24,6 +24,8 @@ For a calendar-year filer, that timeline is:
 - **October 15, 2026** — extended deadline, if Form 7004 was filed on time.
 
 One critical limit: **Form 7004 must be filed by the original due date.** If April 15 has already passed and you did not file an extension, you cannot extend after the fact — you are now filing late, which is a different process (covered below).
+
+If you are comparing an original deadline with an extended one, the [Form 5472 deadline calculator](/form-5472-deadline-calculator) is a quick way to confirm the date before you rely on Form 7004.
 
 ## How do you file a Form 5472 extension step by step?
 

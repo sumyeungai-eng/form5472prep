@@ -44,6 +44,8 @@ Do not net the contribution and payment to $1,200. Do not annualize the six-week
 
 For a calendar-year pro forma Form 1120, the package is generally due April 15, 2027, subject to weekends and holidays. A timely Form 7004 can extend the filing deadline, and the [IRS instructions](https://www.irs.gov/instructions/i5472) specify using the Form 1120 code for the extension.
 
+The [Form 5472 deadline calculator](/form-5472-deadline-calculator) can turn that short-period year-end and any Form 7004 extension into a concrete due date.
+
 ## Which transactions belong in the first short year?
 
 Include transactions that occurred after legal formation and on or before the tax-year end:

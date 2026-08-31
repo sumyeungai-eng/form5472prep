@@ -3,7 +3,7 @@ title: "First-Year Form 5472: What a New Foreign-Owned LLC Must File"
 description: "A new foreign-owned U.S. LLC may need Form 5472 for its formation year because startup funding and formation payments are reportable."
 date: 2026-08-17
 publishAt: "2026-08-17T09:00:00-04:00"
-updated: 2026-08-19
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "first-year-filing", "new-llc", "foreign-owned-llc"]
 draft: false
@@ -100,6 +100,8 @@ The **$0** revenue does not reduce the Part V statement. Form 5472 is reporting 
 A late-year LLC still has a first tax year. If a calendar-year LLC is formed in November, the first tax year may be only the weeks from formation through December 31. That short period is still the period you review.
 
 Do not annualize the activity. Do not wait until the company has existed for a full twelve months. If the LLC was formed in November and the owner paid formation costs or deposited startup cash before December 31, those transactions belong in that short first-year review.
+
+For a short first year, the [Form 5472 deadline calculator](/form-5472-deadline-calculator) helps anchor the first filing date to the period that actually closed.
 
 The IRS instructions say a foreign-owned U.S. disregarded entity uses the owner's tax year for U.S. filing requirements, or the calendar year if none, and files Form 5472 with a pro forma Form 1120 by the due date of that return ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). For many single-member foreign-owned LLCs, that means a calendar-year first filing after the short first year closes.
 

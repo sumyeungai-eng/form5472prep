@@ -3,7 +3,7 @@ title: "Form 5472: How Many Forms for Related Parties?"
 description: "File a separate Form 5472 for each related party with reportable transactions, all attached to the reporting entity’s return."
 date: 2026-09-21
 publishAt: "2026-09-21T09:00:00-04:00"
-updated: 2026-09-21
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "related-parties", "foreign-owned-llc", "multiple-forms"]
 draft: false
@@ -78,6 +78,8 @@ Not solely because they are foreign. Ownership, control, family, and specified t
 ### Does each Form 5472 carry a separate penalty risk?
 
 The IRS instructions apply the continuing penalty with respect to each related party for which a failure occurs. Complete party-by-party reporting is important.
+
+When several related parties are involved, the [Form 5472 penalty calculator](/form-5472-penalty-calculator) can help separate per-form exposure from the underlying transaction totals.
 
 ## The bottom line
 

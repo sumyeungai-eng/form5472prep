@@ -2,7 +2,7 @@
 title: "Form 5472 Statute of Limitations: How Far Back?"
 description: "Missing Form 5472 can keep the IRS assessment period open. See how the three-year clock starts and how to catch up old years."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "statute-of-limitations", "late-filing", "penalty", "reasonable-cause"]
 draft: false
@@ -45,6 +45,8 @@ Illustrative five-year status table:
 | 2025 | No | Due 15 April 2026 for a calendar-year LLC, or 15 October 2026 if extended under the Form 5472 instructions |
 
 If the owner files all five packages in 2026, the practical position changes. The missing information has been furnished, the owner has created proof of submission, and the three-year period described in section 6501(c)(8) begins to run from the furnishing date for the information. That filing does not guarantee penalty relief. It changes the posture from unfiled to filed.
+
+Before deciding how far back to file, the [Form 5472 penalty calculator](/form-5472-penalty-calculator) can help model the per-year exposure that remains open.
 
 ## How does filing start the clock?
 

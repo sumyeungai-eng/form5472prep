@@ -2,7 +2,7 @@
 title: "Foreign-Owned US LLC Filing Checklist (2026)"
 description: "Foreign-owned US LLC filing requirements can include Form 5472, pro forma Form 1120, state reports, income-tax returns, and sales-tax registrations."
 date: 2026-08-15
-updated: 2026-08-21
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "foreign-owned-llc", "compliance", "boi", "filing-guide"]
 draft: false
@@ -30,6 +30,8 @@ If you already know Form 5472 is the piece you are missing, [we prepare and fax 
 | **Registered agent renewal** | Yes — contractual, not tax | Varies | Your agent |
 
 Read the conditional rows carefully. Most single-member LLCs owned by a non-US person with no US employees, no US office and no US-based inventory owe rows 1 and 2 and nothing else.
+
+If row 1 is uncertain, the [Do I need to file Form 5472? checker](/do-i-need-to-file-form-5472) gives a faster yes-or-no pass before you work through the rest of the checklist.
 
 ## Do I have to file Form 5472?
 

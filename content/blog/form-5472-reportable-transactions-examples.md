@@ -3,7 +3,7 @@ title: "Form 5472 Reportable Transactions: 15 Examples"
 description: "Form 5472 reports transactions between a foreign-owned U.S. LLC and related parties—not every sale or expense. See 15 practical examples."
 date: 2026-07-27
 publishAt: "2026-07-27T09:00:00-04:00"
-updated: 2026-08-19
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "reportable-transactions", "foreign-owned-llc", "filing-guide"]
 draft: false
@@ -25,6 +25,8 @@ The practical test has two gates:
 2. **Did money, property, a right, or an obligation move between the LLC and that related party?** If yes, classify and total the transaction in U.S. dollars.
 
 The IRS instructions expressly include amounts connected with formation, dissolution, acquisition, and disposition, including contributions to and distributions from a foreign-owned U.S. disregarded entity ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)).
+
+If you are still at the threshold question, the [Do I need to file Form 5472? checker](/do-i-need-to-file-form-5472) applies the related-party and transaction gates before you classify the amounts.
 
 ## Which owner transactions are commonly reportable?
 

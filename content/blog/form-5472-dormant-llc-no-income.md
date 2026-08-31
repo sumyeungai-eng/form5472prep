@@ -2,7 +2,7 @@
 title: "Form 5472 for a Dormant LLC With No Income"
 description: "Zero revenue doesn't mean no filing. A dormant foreign-owned LLC almost always still owes Form 5472 — contributions and distributions count as reportable."
 date: 2026-05-28
-updated: 2026-07-06
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "dormant-llc", "no-income", "foreign-owned-llc"]
 readingMinutes: 7
@@ -56,6 +56,8 @@ So if:
 2. There were **no transactions of any kind** — no money in, no money out, no services, no loans, nothing — between the LLC and any foreign related party,
 
 …then technically you don't need to file Form 5472 for that year.
+
+If you are trying to distinguish a true zero-transaction year from a quiet-but-reportable one, the [Do I need to file Form 5472? checker](/do-i-need-to-file-form-5472) walks through the threshold facts.
 
 But here's the catch: **even in a zero-transaction year, the IRS expects you to file a pro forma Form 1120** that identifies the LLC as a foreign-owned disregarded entity. The Form 5472 would have a checkbox checked indicating no transactions occurred. The alternative — filing nothing at all — is the position that attracts $25,000 penalties.
 

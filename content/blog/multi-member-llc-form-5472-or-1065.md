@@ -2,7 +2,7 @@
 title: "Multi-Member LLC with Foreign Owners: 5472 or 1065?"
 description: "A 2-member LLC defaults to a partnership and files Form 1065, not Form 5472. See when the switch happens and which structures bring back Form 5472."
 date: 2026-08-15
-updated: 2026-08-15
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "form-1065", "multi-member-llc", "partnership", "foreign-owned-llc"]
 draft: false
@@ -27,6 +27,8 @@ If you have concluded you are a single-member disregarded entity after all, [we 
 | Two members who are the same foreign person's disregarded entities | Still effectively one owner | Pro forma Form 1120 | **Likely yes** — see below |
 
 The rule that decides most cases is simple: **Form 5472 is filed by a "reporting corporation."** For these purposes that means a 25%-foreign-owned domestic corporation, a foreign corporation engaged in a US trade or business, or — since the 2017 extension in Treasury Regulation § 1.6038A-1 — a foreign-owned US **disregarded entity**. A partnership is none of those.
+
+If you are not sure whether you are in the single-member disregarded-entity row, the [Do I need to file Form 5472? checker](/do-i-need-to-file-form-5472) helps separate Form 5472 cases from Form 1065 cases.
 
 ## Why does a second member change the classification?
 

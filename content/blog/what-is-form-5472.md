@@ -2,7 +2,7 @@
 title: "What Is IRS Form 5472? A Jargon-Free Guide"
 description: "Form 5472 is an IRS return foreign-owned US LLCs must file yearly, even with zero revenue. See who must file it and what a missed filing actually costs."
 date: 2026-05-19
-updated: 2026-08-14
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "foreign-owned-llc", "getting-started"]
 draft: false
@@ -36,6 +36,8 @@ You need to file Form 5472 if **all three** of the following are true for the ta
 1. You own a US LLC.
 2. You are not a US person — not a US citizen, green card holder, or US tax resident.
 3. There was at least one **reportable transaction** between the LLC and you (or another foreign related party) during the year.
+
+If any part of that test is unclear, the [Do I need to file Form 5472? checker](/do-i-need-to-file-form-5472) walks through the ownership, residency, entity type, and transaction questions in order.
 
 The third condition is broad. "Reportable transactions" include:
 

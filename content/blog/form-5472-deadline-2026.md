@@ -2,7 +2,7 @@
 title: "Form 5472 Deadline for 2026 and 2027"
 description: "The 2025 Form 5472 is due October 15, 2026 if extended. See every 2026-2027 deadline, the Form 7004 extension rule, and what to do if you're already late."
 date: 2026-08-15
-updated: 2026-08-15
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "deadline", "extension", "form-7004", "foreign-owned-llc"]
 draft: false
@@ -36,6 +36,8 @@ Form 5472 is filed as an attachment to the reporting corporation's income tax re
 For a **calendar-year** LLC — which is the default and covers almost every foreign-owned LLC — that means **15 April** of the following year.
 
 For a **fiscal-year** LLC, the due date is generally the 15th day of the fourth month after the tax year ends — with one live exception. A tax year **ending 30 June that began before 1 January 2026** is due on the 15th day of the **third** month (so a year ended 30 June 2026 is due **15 September 2026**), and its automatic extension runs **seven** months, to 15 April 2027. Only a June-30 year that *begins* on or after 1 January 2026 — the first is the year ended 30 June 2027 — follows the standard fourth-month rule and the six-month extension. See the [Form 1120 instructions](https://www.irs.gov/instructions/i1120) and [Form 7004 instructions](https://www.irs.gov/instructions/i7004).
+
+For short years, fiscal years and extension scenarios, the [Form 5472 deadline calculator](/form-5472-deadline-calculator) converts those rules into a specific filing date.
 
 The due date does not change based on:
 

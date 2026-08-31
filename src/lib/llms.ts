@@ -80,6 +80,9 @@ const FILING_DEADLINE = `## Filing deadline
 const CORE_PAGES = [
   ["Home", "/", "Form5472 Prep home — Form 5472 + pro forma 1120 filing for foreign-owned US LLCs."],
   ["Pricing", "/pricing", "Standard $149 and Express $199 filing tiers with the full feature list."],
+  ["Form 5472 deadline calculator", "/form-5472-deadline-calculator", "Work out exactly when your Form 5472 + pro forma 1120 is due, including dissolution short-years and Form 7004 extensions."],
+  ["Do I need to file Form 5472?", "/do-i-need-to-file-form-5472", "Six questions that tell you whether your US LLC has a Form 5472 obligation."],
+  ["Form 5472 penalty calculator", "/form-5472-penalty-calculator", "Estimate statutory exposure under IRC §6038A for late or unfiled Form 5472, and the DIIRSP path to resolving it."],
   ["EIN Acquisition", "/ein", "EIN service for foreign-owned US LLC owners — CAA certification, no passport mailing."],
   ["ITIN Acquisition", "/itin", "ITIN service for non-residents — CAA certification, no passport mailing."],
   ["Partners", "/partners", "Partner / referral program for accountants, formation agents, and registered agents."],

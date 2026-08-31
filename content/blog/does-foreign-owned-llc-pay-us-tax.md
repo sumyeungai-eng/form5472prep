@@ -2,7 +2,7 @@
 title: "Does a Foreign-Owned US LLC Pay US Tax?"
 description: "Foreign-owned US LLC tax depends on US trade or business and income sourcing, but Form 5472 filing can still apply when no federal income tax is due."
 date: 2026-08-15
-updated: 2026-08-15
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "foreign-owned-llc", "us-tax", "eci", "non-resident"]
 draft: false
@@ -13,6 +13,8 @@ draft: false
 This is the single most confused question in the foreign-owned LLC world, and the confusion runs in both directions. Some owners believe a US LLC is a tax-free structure with nothing to file. Others believe having a US company means paying US corporate tax on everything. Both are wrong, and the second group usually overpays while the first group gets penalized.
 
 The two questions have to be answered separately: **do you owe US tax**, and **do you owe a US filing**. Very often the answers are no and yes. If you already know you need Form 5472, [we prepare and fax the complete package from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=does-foreign-llc-pay-us-tax).
+
+The [Do I need to file Form 5472? checker](/do-i-need-to-file-form-5472) is useful when the filing answer is still unclear even though the income-tax answer looks like zero.
 
 ## Does a single-member LLC pay US corporate tax?
 

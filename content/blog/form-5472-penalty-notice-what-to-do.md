@@ -2,7 +2,7 @@
 title: "I Got a $25,000 Form 5472 Penalty Notice — Now What?"
 description: "Got a $25,000 Form 5472 penalty notice? Here's what CP215 means, why a reasonable-cause letter gets ignored, and how to respond before the deadline."
 date: 2026-08-15
-updated: 2026-08-15
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "penalty", "diirsp", "reasonable-cause", "foreign-owned-llc"]
 draft: false
@@ -26,6 +26,8 @@ Four separate failures trigger the same $25,000 charge:
 4. **Failing to maintain records** as required by Regulations section 1.6038A-3.
 
 The penalty applies **per form, per year**. A foreign-owned LLC that missed three years faces $75,000, not $25,000. If the failure continues more than 90 days after the IRS mails its notice, an additional $25,000 applies **for each 30-day period (or fraction of one) that the failure continues after that 90-day window** — per related party, with no stated cap (IRC §6038A(d)(2)).
+
+If you need to size the notice and any still-unfiled years before responding, the [Form 5472 penalty calculator](/form-5472-penalty-calculator) can model the statutory exposure by year.
 
 Two clarifications that matter for your response letter:
 

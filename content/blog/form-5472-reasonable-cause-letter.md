@@ -2,7 +2,7 @@
 title: "Form 5472 Reasonable Cause Letter: What to Include"
 description: "A Form 5472 reasonable cause letter needs a dated, evidence-backed account of ordinary care — here's what to include and what the IRS credits."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "reasonable-cause", "late-filing", "penalty"]
 draft: false
@@ -13,6 +13,8 @@ draft: false
 A late package should be complete before the letter is polished. The [IRS penalty relief page](https://www.irs.gov/payments/penalty-relief-for-reasonable-cause) says reasonable cause is determined case by case from all facts and circumstances, and that a taxpayer may qualify for failure-to-file relief by showing ordinary care and prudence but still being unable to file on time. [Start the catch-up filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-reasonable-cause) so the chronology, forms and supporting records agree.
 
 For Form 5472, the [IRS instructions](https://www.irs.gov/instructions/i5472) state that a **$25,000** penalty is assessed when a reporting corporation fails to file when due and in the prescribed manner. A reasonable cause letter is therefore not a formality. It is the factual record that explains why the penalty should not apply.
+
+Before drafting the letter, the [Form 5472 penalty calculator](/form-5472-penalty-calculator) helps frame which years and continuation periods are actually in play.
 
 ## What is reasonable cause for a late Form 5472?
 

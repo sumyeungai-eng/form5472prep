@@ -3,7 +3,7 @@ title: "Final Form 5472 After Closing a Foreign-Owned U.S. LLC"
 description: "Closing a foreign-owned U.S. LLC does not erase its final Form 5472 filing. Report dissolution transactions and mark the pro forma 1120 final."
 date: 2026-09-28
 publishAt: "2026-09-28T09:00:00-04:00"
-updated: 2026-09-28
+updated: 2026-08-28
 author: "Form5472 Prep"
 tags: ["form-5472", "llc-dissolution", "final-return", "foreign-owned-llc"]
 draft: false
@@ -59,6 +59,8 @@ Use the Form5472 Prep closeout order:
 ## When is the final Form 5472 due?
 
 The due date depends on the LLC’s final tax period and classification. A calendar-year foreign-owned disregarded entity that remains on a calendar year generally follows the Form 1120 due date in the following year, with a timely extension available.
+
+For a final short year, the [Form 5472 deadline calculator](/form-5472-deadline-calculator) helps separate the federal due date from the state dissolution date.
 
 Do not assume state dissolution makes the federal return immediately due or eliminates the regular due date. Confirm short-period or classification issues with a qualified tax professional.
 
