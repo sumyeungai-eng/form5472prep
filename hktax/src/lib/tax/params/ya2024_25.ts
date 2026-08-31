@@ -1,0 +1,53 @@
+import type { TaxYearParams } from '../types';
+
+export const ya2024_25: TaxYearParams = {
+  year: '2024_25',
+  progressiveBands: [
+    { width: 50000, rate: 0.02 },
+    { width: 50000, rate: 0.06 },
+    { width: 50000, rate: 0.10 },
+    { width: 50000, rate: 0.14 },
+    { width: null, rate: 0.17 },
+  ],
+  standardRateTiers: [
+    { width: 5000000, rate: 0.15 },
+    { width: null, rate: 0.16 },
+  ],
+  taxReduction: { percent: 1, cap: 1500, appliesTo: ['salaries', 'profits', 'pa'] },
+  allowances: {
+    basic: 132000,
+    married: 264000,
+    child: 130000,
+    childNewbornExtra: 130000,
+    parentAged60: 50000,
+    parentAged55: 25000,
+    parentResidingExtra60: 50000,
+    parentResidingExtra55: 25000,
+    sibling: 37500,
+    singleParent: 132000,
+    disabledDependant: 75000,
+    personalDisability: 75000,
+  },
+  deductionCaps: {
+    selfEducation: 100000,
+    donationsPercent: 0.35,
+    mpfMandatory: 18000,
+    homeLoanInterest: 100000,
+    homeLoanInterestElevated: 120000,
+    homeLoanInterestYears: 20,
+    domesticRent: 100000,
+    domesticRentElevated: 120000,
+    elderlyCare: 100000,
+    annuityAndTvc: 60000,
+    vhisPerPerson: 8000,
+    assistedReproduction: 100000,
+  },
+  propertyTax: { rate: 0.15, repairsAllowancePercent: 0.20 },
+  profitsTax: { tierOneRate: 0.075, tierOneCap: 2000000, standardRate: 0.15 },
+  mpf: {
+    employeeRate: 0.05,
+    monthlyCap: 1500,
+    minRelevantIncomeMonthly: 7100,
+    maxRelevantIncomeMonthly: 30000,
+  },
+};
