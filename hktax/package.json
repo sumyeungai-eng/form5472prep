@@ -10,9 +10,12 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@hookform/resolvers": "file:../../../../../../private/tmp/hookform-resolvers-3.10.0.tgz",
     "next": "14.2.35",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "react-hook-form": "file:../../../../../../private/tmp/react-hook-form-7.76.1.tgz",
+    "zod": "file:../../../../../../private/tmp/zod-3.25.76.tgz"
   },
   "devDependencies": {
     "@types/node": "20.14.10",
