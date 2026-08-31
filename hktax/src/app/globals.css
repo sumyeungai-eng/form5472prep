@@ -13,10 +13,38 @@
 body {
   margin: 0;
   font-family:
+    "Noto Sans TC",
+    "PingFang TC",
+    "Microsoft JhengHei",
     ui-sans-serif,
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
+  background: #f7f5f0;
+  color: #0e2038;
+}
+
+@layer components {
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white;
+  }
+
+  .btn-primary {
+    @apply focus-ring inline-flex min-h-11 items-center justify-center rounded-md bg-gold px-5 py-3 text-center text-sm font-bold text-navy-950 shadow-soft transition hover:bg-gold-200;
+  }
+
+  .btn-secondary {
+    @apply focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-white/70 bg-white/10 px-5 py-3 text-center text-sm font-bold text-white backdrop-blur transition hover:bg-white hover:text-navy-900;
+  }
+
+  .card {
+    @apply rounded-lg border border-warm-200 bg-white shadow-soft transition hover:-translate-y-0.5 hover:border-teal-400 hover:shadow-lg;
+  }
+
+  .form-select,
+  .form-input {
+    @apply focus-ring min-h-10 rounded-md border border-warm-200 bg-white px-3 py-2 text-sm font-medium text-navy-900 shadow-sm;
+  }
 }
