@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/Container";
@@ -71,7 +71,38 @@ function WizardFlow() {
     }
   }, [currentStepIndex, setCurrentStepIndex]);
 
+  // Step chips: jumping back is immediate (same contract as the Back button),
+  // but jumping forward submits the current step first so what the user typed is
+  // validated and saved rather than silently dropped.
+  const pendingStepRef = useRef<number | null>(null);
+
+  function handleSelectStep(target: number) {
+    if (target === currentStepIndex) {
+      return;
+    }
+
+    if (target < currentStepIndex) {
+      pendingStepRef.current = null;
+      setCurrentStepIndex(target);
+      return;
+    }
+
+    pendingStepRef.current = target;
+    const form = document.getElementById(formId);
+    if (form instanceof HTMLFormElement) {
+      form.requestSubmit();
+    }
+  }
+
   function handleValidStep() {
+    const pendingStep = pendingStepRef.current;
+    pendingStepRef.current = null;
+
+    if (pendingStep !== null) {
+      setCurrentStepIndex(Math.min(pendingStep, LAST_STEP_INDEX));
+      return;
+    }
+
     if (currentStepIndex === LAST_STEP_INDEX) {
       router.push("/results");
       return;
@@ -113,14 +144,17 @@ function WizardFlow() {
               </button>
             </div>
 
-            <ProgressIndicator currentStepIndex={currentStepIndex} />
+            <ProgressIndicator currentStepIndex={currentStepIndex} onSelectStep={handleSelectStep} />
 
             <div>{renderStep(currentStepIndex, formId, handleValidStep)}</div>
 
             <div className="flex flex-col-reverse gap-3 border-t border-warm-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="button"
-                onClick={previousStep}
+                onClick={() => {
+                  pendingStepRef.current = null;
+                  previousStep();
+                }}
                 disabled={currentStepIndex === 0}
                 className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-warm-300 px-5 py-2 text-sm font-bold text-navy-900 hover:border-teal-300 disabled:cursor-not-allowed disabled:opacity-40"
               >
@@ -129,6 +163,9 @@ function WizardFlow() {
               <button
                 type="submit"
                 form={formId}
+                onClick={() => {
+                  pendingStepRef.current = null;
+                }}
                 className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md bg-navy-900 px-5 py-2 text-sm font-bold text-white hover:bg-navy-800"
               >
                 {wizardT(

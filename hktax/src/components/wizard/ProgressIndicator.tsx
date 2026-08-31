@@ -12,7 +12,13 @@ const steps: WizardDictionaryEntry[] = [
   wizardDictionary.context.review.label,
 ];
 
-export function ProgressIndicator({ currentStepIndex }: { currentStepIndex: number }) {
+export function ProgressIndicator({
+  currentStepIndex,
+  onSelectStep
+}: {
+  currentStepIndex: number;
+  onSelectStep?: (stepIndex: number) => void;
+}) {
   const { lang } = useI18n();
 
   return (
@@ -21,22 +27,25 @@ export function ProgressIndicator({ currentStepIndex }: { currentStepIndex: numb
         {steps.map((step, index) => {
           const active = index === currentStepIndex;
           const complete = index < currentStepIndex;
+          const stateClasses = active
+            ? "border-teal-500 bg-teal-50 text-teal-800"
+            : complete
+              ? "border-gold-200 bg-gold-100 text-navy-900"
+              : "border-warm-200 bg-white text-warm-700";
 
           return (
             <li key={wizardT(step, "en")}>
-              <div
-                className={`rounded-md border px-3 py-3 text-sm font-semibold ${
-                  active
-                    ? "border-teal-500 bg-teal-50 text-teal-800"
-                    : complete
-                      ? "border-gold-200 bg-gold-100 text-navy-900"
-                      : "border-warm-200 bg-white text-warm-700"
-                }`}
+              <button
+                type="button"
+                onClick={() => onSelectStep?.(index)}
                 aria-current={active ? "step" : undefined}
+                className={`focus-ring w-full rounded-md border px-3 py-3 text-left text-sm font-semibold transition-colors ${stateClasses} ${
+                  active ? "" : "hover:border-teal-400 hover:bg-teal-50 hover:text-teal-800"
+                }`}
               >
                 <span className="block text-xs text-warm-600">{index + 1}</span>
                 <span>{wizardT(step, lang)}</span>
-              </div>
+              </button>
             </li>
           );
         })}
