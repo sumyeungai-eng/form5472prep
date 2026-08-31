@@ -75,6 +75,7 @@ function WizardFlow() {
   // but jumping forward submits the current step first so what the user typed is
   // validated and saved rather than silently dropped.
   const pendingStepRef = useRef<number | null>(null);
+  const chipInitiatedSubmitRef = useRef(false);
 
   function handleSelectStep(target: number) {
     if (target === currentStepIndex) {
@@ -87,11 +88,15 @@ function WizardFlow() {
       return;
     }
 
-    pendingStepRef.current = target;
     const form = document.getElementById(formId);
     if (form instanceof HTMLFormElement) {
+      pendingStepRef.current = target;
+      chipInitiatedSubmitRef.current = true;
       form.requestSubmit();
+      return;
     }
+
+    pendingStepRef.current = null;
   }
 
   function handleValidStep() {
@@ -109,6 +114,15 @@ function WizardFlow() {
     }
 
     nextStep();
+  }
+
+  function handleStepSubmitCapture() {
+    if (chipInitiatedSubmitRef.current) {
+      chipInitiatedSubmitRef.current = false;
+      return;
+    }
+
+    pendingStepRef.current = null;
   }
 
   function handleClearData() {
@@ -146,7 +160,9 @@ function WizardFlow() {
 
             <ProgressIndicator currentStepIndex={currentStepIndex} onSelectStep={handleSelectStep} />
 
-            <div>{renderStep(currentStepIndex, formId, handleValidStep)}</div>
+            <div onSubmitCapture={handleStepSubmitCapture}>
+              {renderStep(currentStepIndex, formId, handleValidStep)}
+            </div>
 
             <div className="flex flex-col-reverse gap-3 border-t border-warm-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
               <button

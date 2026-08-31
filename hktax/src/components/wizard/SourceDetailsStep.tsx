@@ -53,7 +53,7 @@ export function SourceDetailsStep({ formId, onValid }: SourceDetailsStepProps) {
   const { setWizardState, wizardState } = useWizard();
   const defaultValues = useMemo(() => sourceDetailsDefaults(wizardState), [wizardState]);
   const {
-    formState: { errors },
+    formState: { errors, isDirty },
     handleSubmit,
     register,
     reset,
@@ -65,8 +65,10 @@ export function SourceDetailsStep({ formId, onValid }: SourceDetailsStepProps) {
   });
 
   useEffect(() => {
-    reset(defaultValues);
-  }, [defaultValues, reset]);
+    if (!isDirty) {
+      reset(defaultValues);
+    }
+  }, [defaultValues, isDirty, reset]);
 
   const hasAnySource = personHasAnySource(wizardState, "A")
     || (wizardState.maritalStatus === "married" && personHasAnySource(wizardState, "B"));

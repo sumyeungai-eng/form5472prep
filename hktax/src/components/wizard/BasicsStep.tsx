@@ -39,7 +39,7 @@ export function BasicsStep({ formId, onValid }: BasicsStepProps) {
   const { setWizardState, wizardState } = useWizard();
   const defaultValues = useMemo(() => basicsDefaults(wizardState), [wizardState]);
   const {
-    formState: { errors },
+    formState: { errors, isDirty },
     handleSubmit,
     register,
     reset,
@@ -51,8 +51,10 @@ export function BasicsStep({ formId, onValid }: BasicsStepProps) {
   const maritalStatus = watch("maritalStatus");
 
   useEffect(() => {
-    reset(defaultValues);
-  }, [defaultValues, reset]);
+    if (!isDirty) {
+      reset(defaultValues);
+    }
+  }, [defaultValues, isDirty, reset]);
 
   useEffect(() => {
     if (isFreshWizardState(wizardState) && wizardState.year !== year) {

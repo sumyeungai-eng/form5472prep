@@ -6,7 +6,12 @@ import {
   computeSalariesTax,
   type SharedAllowanceInput,
 } from "@/lib/tax/salaries";
-import { computeJointPA, computePA, type PAPersonInput } from "@/lib/tax/personalAssessment";
+import {
+  computeJointPA,
+  computePA,
+  hasChargeableIncomeForMarriedPA,
+  type PAPersonInput,
+} from "@/lib/tax/personalAssessment";
 import type { FamilyScenarioInput, OptimizerScenario } from "@/lib/tax/optimizer";
 import type { Computation, ComputationLine, TaxYearParams } from "@/lib/tax/types";
 import type { Bir60MappingFlag } from "./bir60Mapping";
@@ -16,13 +21,22 @@ export type ResultPersonId = "A" | "B" | "joint";
 
 export type ResultComputation = {
   id: string;
-  scenarioId: string;
+  scenarioId: ResultScenarioId;
   personId: ResultPersonId;
   demandHead: DemandHead;
   titleZh: string;
   titleEn: string;
   computation: Computation;
 };
+
+type ResultScenarioId =
+  | "separate"
+  | "jointSalaries"
+  | "pa"
+  | "paIndividualA"
+  | "paIndividualB"
+  | "paIndividualBoth"
+  | "paJoint";
 
 export type ScenarioBreakdown = {
   scenario: OptimizerScenario;
@@ -77,29 +91,70 @@ function computationsForScenario(
   scenario: OptimizerScenario,
   params: TaxYearParams,
 ): ResultComputation[] {
-  switch (scenario.id) {
+  const scenarioId = scenario.id as ResultScenarioId;
+
+  switch (scenarioId) {
     case "jointSalaries":
       return jointSalariesComputations(family, scenario, params);
     case "pa":
       return [paComputation("A", family.personA, scenario, params)];
-    case "paIndividualA":
+    case "paIndividualA": {
+      const personA = personForIndividualPAScenario(family.personA, family.personB, false, params);
+      const personB = family.personB
+        ? personForIndividualPAScenario(family.personB, family.personA, true, params)
+        : undefined;
+
       return [
-        paComputation("A", family.personA, scenario, params),
-        ...separatePersonComputations("B", family.personB, scenario, params),
+        paComputation("A", personA, scenario, params),
+        ...separatePersonComputations("B", personB, scenario, params),
       ];
-    case "paIndividualB":
+    }
+    case "paIndividualB": {
+      const personA = family.personB
+        ? personForIndividualPAScenario(family.personA, family.personB, true, params)
+        : family.personA;
+      const personB = family.personB
+        ? personForIndividualPAScenario(family.personB, family.personA, false, params)
+        : undefined;
+
       return [
-        ...separatePersonComputations("A", family.personA, scenario, params),
-        ...separatePersonComputations("B", family.personB, scenario, params, { personalAssessment: true }),
+        ...separatePersonComputations("A", personA, scenario, params),
+        ...separatePersonComputations("B", personB, scenario, params, { personalAssessment: true }),
       ];
+    }
+    case "paIndividualBoth": {
+      const personB = family.personB;
+
+      if (!personB) {
+        return [paComputation("A", family.personA, scenario, params)];
+      }
+
+      return [
+        paComputation(
+          "A",
+          personForIndividualPAScenario(family.personA, personB, true, params),
+          scenario,
+          params,
+        ),
+        paComputation(
+          "B",
+          personForIndividualPAScenario(personB, family.personA, true, params),
+          scenario,
+          params,
+        ),
+      ];
+    }
     case "paJoint":
       return jointPAComputations(family, scenario, params);
     case "separate":
-    default:
       return [
         ...separatePersonComputations("A", family.personA, scenario, params),
         ...separatePersonComputations("B", family.personB, scenario, params),
       ];
+    default: {
+      const _exhaustive: never = scenarioId;
+      throw new Error(`Unsupported optimizer scenario id: ${_exhaustive}`);
+    }
   }
 }
 
@@ -118,7 +173,7 @@ function jointSalariesComputations(
   return [
     {
       id: `${scenario.id}.joint.salaries`,
-      scenarioId: scenario.id,
+      scenarioId: scenario.id as ResultScenarioId,
       personId: "joint",
       demandHead: "salaries",
       titleZh: "夫婦合併薪俸稅",
@@ -147,7 +202,7 @@ function jointPAComputations(
   return [
     {
       id: `${scenario.id}.joint.pa`,
-      scenarioId: scenario.id,
+      scenarioId: scenario.id as ResultScenarioId,
       personId: "joint",
       demandHead: "pa",
       titleZh: "夫婦共同個人入息課稅",
@@ -184,7 +239,7 @@ function separatePersonComputations(
   if (!options.omitSalaries && person.salaries) {
     computations.push({
       id: `${scenario.id}.${personId}.salaries`,
-      scenarioId: scenario.id,
+      scenarioId: scenario.id as ResultScenarioId,
       personId,
       demandHead: "salaries",
       titleZh: `${personLabelZh}：薪俸稅`,
@@ -196,7 +251,7 @@ function separatePersonComputations(
   if (person.properties?.length) {
     computations.push({
       id: `${scenario.id}.${personId}.property`,
-      scenarioId: scenario.id,
+      scenarioId: scenario.id as ResultScenarioId,
       personId,
       demandHead: "property",
       titleZh: `${personLabelZh}：物業稅`,
@@ -208,7 +263,7 @@ function separatePersonComputations(
   if (person.businesses?.length) {
     computations.push({
       id: `${scenario.id}.${personId}.profits`,
-      scenarioId: scenario.id,
+      scenarioId: scenario.id as ResultScenarioId,
       personId,
       demandHead: "profits",
       titleZh: `${personLabelZh}：利得稅`,
@@ -231,13 +286,53 @@ function paComputation(
 
   return {
     id: `${scenario.id}.${personId}.pa`,
-    scenarioId: scenario.id,
+    scenarioId: scenario.id as ResultScenarioId,
     personId,
     demandHead: "pa",
     titleZh: `${personLabelZh}：個人入息課稅`,
     titleEn: `${personLabelEn}: Personal Assessment`,
     computation: computePA(person, params),
   };
+}
+
+// Mirrors hktax/src/lib/tax/optimizer.ts:305-333. That helper is private, so
+// results recomputation must keep this copy aligned with the optimizer.
+function personForIndividualPAScenario(
+  person: PAPersonInput,
+  spouse: PAPersonInput | undefined,
+  spouseElectsPAIndividually: boolean,
+  params: TaxYearParams,
+): PAPersonInput {
+  if (!spouse) {
+    return person;
+  }
+
+  const spouseHasChargeableIncome = hasChargeableIncomeForMarriedPA(spouse, params);
+  const mayKeepMarriedAllowance = !spouseElectsPAIndividually && !spouseHasChargeableIncome;
+
+  return mayKeepMarriedAllowance ? person : stripMarriedAllowanceClaim(person);
+}
+
+function stripMarriedAllowanceClaim(person: PAPersonInput): PAPersonInput {
+  const allowances = {
+    ...effectiveAllowanceInput(person),
+    claimMarriedAllowance: false,
+  };
+
+  return {
+    ...person,
+    allowances,
+    salaries: person.salaries
+      ? {
+        ...person.salaries,
+        allowances,
+      }
+      : person.salaries,
+  };
+}
+
+function effectiveAllowanceInput(person: PAPersonInput): NonNullable<PAPersonInput["allowances"]> {
+  return person.allowances ?? person.salaries?.allowances ?? {};
 }
 
 function propertyComputation(properties: NonNullable<PAPersonInput["properties"]>, params: TaxYearParams): Computation {
@@ -331,7 +426,13 @@ function bir60FlagsForScenario(
   if (people.some((person) => person.businesses?.length)) {
     flags.add("profitsIncome");
   }
-  if (scenario.id === "pa" || scenario.id === "paIndividualA" || scenario.id === "paIndividualB" || scenario.id === "paJoint") {
+  if (
+    scenario.id === "pa"
+    || scenario.id === "paIndividualA"
+    || scenario.id === "paIndividualB"
+    || scenario.id === "paIndividualBoth"
+    || scenario.id === "paJoint"
+  ) {
     flags.add("personalAssessmentElection");
   }
   if (scenario.id === "jointSalaries") {

@@ -216,7 +216,7 @@ function amountForLine(lines: { key: string; amount: number }[], key: string): n
 }
 
 function sanitizeMoney(value: number): number {
-  return Number.isFinite(value) ? Math.max(0, value) : 0;
+  return Number.isFinite(value) ? Math.round(Math.max(0, value)) : 0;
 }
 
 function sanitizeCount(value: number): number {

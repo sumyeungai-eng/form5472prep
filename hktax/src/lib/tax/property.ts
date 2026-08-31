@@ -60,7 +60,7 @@ function computePremiumForYear(property: PropertyInput): {
   }
 
   const spreadingMonths = Math.min(leaseTermMonths, 36);
-  const monthsInYear = property.premiumMonthsInYear ?? 0;
+  const monthsInYear = property.premiumMonthsInYear ?? Math.min(12, spreadingMonths);
   const amount = (premium / spreadingMonths) * monthsInYear;
 
   return { spreadingMonths, monthsInYear, amount };

@@ -200,7 +200,7 @@ describe('computeProfitsTax', () => {
     expect(withAddBacks.perBusiness[0].assessableProfits - baseline.perBusiness[0].assessableProfits).toBe(200_000);
   });
 
-  it('aggregates only positive assessable profits across multiple businesses', () => {
+  it('sets off same-year cross-trade losses before taxing remaining profits', () => {
     const result = computeProfitsTax(
       [
         singleBusiness({ id: 'profit', revenue: 1_000_000, deductibleExpenses: 400_000 }),
@@ -209,9 +209,61 @@ describe('computeProfitsTax', () => {
       ya2025_26,
     );
 
-    expect(result.perBusiness[0].assessableProfits).toBe(600_000);
-    expect(result.perBusiness[1].assessableProfits).toBe(-150_000);
-    expect(result.totalAssessableProfits).toBe(600_000);
-    expect(result.totalTax).toBe(90_000);
+    // Expected values changed because IRO s.19C(1) requires same-year cross-trade
+    // loss set-off, and golden-scenarios.md §0.6 applies the reduction ceiling per business.
+    expect(result.perBusiness[0].assessableProfits).toBe(450_000);
+    expect(result.perBusiness[1].assessableProfits).toBe(0);
+    expect(result.perBusiness[0].lossCarriedForward).toBe(0);
+    expect(result.perBusiness[1].lossCarriedForward).toBe(0);
+    expect(result.totalAssessableProfits).toBe(450_000);
+    expect(result.totalTax).toBe(67_500);
+    expect(result.finalTax).toBe(64_500);
+  });
+
+  it('applies the profits tax reduction ceiling separately to each business', () => {
+    const result = computeProfitsTax(
+      [
+        singleBusiness({ id: 'biz-1', revenue: 200_000, deductibleExpenses: 100_000 }),
+        singleBusiness({ id: 'biz-2', revenue: 200_000, deductibleExpenses: 100_000 }),
+      ],
+      ya2025_26,
+    );
+
+    expect(result.perBusiness[0].tax).toBe(15_000);
+    expect(result.perBusiness[1].tax).toBe(15_000);
+    expect(result.totalTax).toBe(30_000);
+    expect(result.reduction).toBe(6_000);
+    expect(result.finalTax).toBe(24_000);
+  });
+
+  it('floors only the final aggregate net tax amount', () => {
+    const result = computeProfitsTax(
+      [singleBusiness({ revenue: 1_000_005, deductibleExpenses: 0 })],
+      ya2025_26,
+    );
+
+    expect(result.perBusiness[0].tax).toBe(150_000.75);
+    expect(result.totalTax).toBe(150_000.75);
+    expect(result.finalTax).toBe(147_000);
+  });
+
+  it('carries forward only the unabsorbed loss balance against the loss-making trade', () => {
+    const result = computeProfitsTax(
+      [
+        singleBusiness({ id: 'profit-a', revenue: 100_000, deductibleExpenses: 0 }),
+        singleBusiness({ id: 'loss-b', revenue: 50_000, deductibleExpenses: 250_000 }),
+        singleBusiness({ id: 'profit-c', revenue: 40_000, deductibleExpenses: 0 }),
+      ],
+      ya2025_26,
+    );
+
+    expect(result.perBusiness[0].assessableProfits).toBe(0);
+    expect(result.perBusiness[1].assessableProfits).toBe(-60_000);
+    expect(result.perBusiness[2].assessableProfits).toBe(0);
+    expect(result.perBusiness[0].lossCarriedForward).toBe(0);
+    expect(result.perBusiness[1].lossCarriedForward).toBe(60_000);
+    expect(result.perBusiness[2].lossCarriedForward).toBe(0);
+    expect(result.totalAssessableProfits).toBe(0);
+    expect(result.finalTax).toBe(0);
   });
 });

@@ -24,6 +24,8 @@ export function resolveResultYear(
     return fallbackYear();
   }
 
+  const matches: ResolvedResultYear[] = [];
+
   for (const year of ALL_YEARS) {
     const params = getParams(year);
 
@@ -37,11 +39,15 @@ export function resolveResultYear(
         : family.personB === undefined && separateScenario.perPerson.b === undefined;
 
       if (personAMatches && personBMatches) {
-        return { year, params, exactMatch: true };
+        matches.push({ year, params, exactMatch: true });
       }
     } catch {
       // Try the next year. Invalid stored data should not make the result page unusable.
     }
+  }
+
+  if (matches.length === 1) {
+    return matches[0];
   }
 
   return fallbackYear();

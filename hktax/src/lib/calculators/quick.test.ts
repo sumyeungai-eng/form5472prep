@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { getParams } from "../tax/params";
+import { wizardStateSchema } from "../wizard/wizardSchemas";
 import {
+  buildSalariesWizardState,
   computeQuickProfits,
   computeQuickProperty,
   computeQuickSalaries,
@@ -50,6 +52,18 @@ describe("quick calculator mapping helpers", () => {
 
     expect(result.reduction).toBe(3_000);
     expect(result.finalTax).toBe(55_500);
+  });
+
+  it("rounds decimal money inputs before handing salaries state to the wizard", () => {
+    const state = buildSalariesWizardState(
+      { ...baseSalariesInput, annualIncome: 600_000.5 },
+      "2025_26",
+    );
+    const salaryAmount = state.personA.salary.incomeItems[0].amount;
+
+    expect(Number.isInteger(salaryAmount)).toBe(true);
+    expect(salaryAmount).toBe(600_001);
+    expect(wizardStateSchema.safeParse(state).success).toBe(true);
   });
 
   it("maps owner-paid rates into the 2025/26 property tax golden result", () => {

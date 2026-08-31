@@ -133,7 +133,7 @@ describe('computePropertyTax', () => {
     );
   });
 
-  it('defaults premiumMonthsInYear to zero when a premium is supplied without explicit current-year months', () => {
+  it('defaults premiumMonthsInYear to a full year of the premium spread when omitted', () => {
     const result = computePropertyTax([
       simpleProperty({
         rentReceived: 0,
@@ -142,7 +142,22 @@ describe('computePropertyTax', () => {
       }),
     ], params);
 
-    expect(result.perProperty[0].nav).toBe(0);
-    expect(result.perProperty[0].tax).toBe(0);
+    // Omitting premiumMonthsInYear was silently discarding a real premium; the default now covers a full year of the spread.
+    expect(result.perProperty[0].nav).toBe(96000);
+    expect(result.perProperty[0].tax).toBe(14400);
+  });
+
+  it('honours an explicit premiumMonthsInYear value exactly', () => {
+    const result = computePropertyTax([
+      simpleProperty({
+        rentReceived: 0,
+        leasePremium: 360000,
+        leaseTermMonths: 36,
+        premiumMonthsInYear: 6,
+      }),
+    ], params);
+
+    expect(result.perProperty[0].nav).toBe(48000);
+    expect(result.perProperty[0].tax).toBe(7200);
   });
 });

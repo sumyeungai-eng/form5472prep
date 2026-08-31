@@ -93,10 +93,10 @@ function computeBusinessTax(
           'tax',
         ),
       );
-      return Math.round(tierOneTax + remainderTax);
+      return tierOneTax + remainderTax;
     }
 
-    return Math.round(tierOneTax);
+    return tierOneTax;
   }
 
   const tax = assessableProfits * params.profitsTax.standardRate;
@@ -109,21 +109,23 @@ function computeBusinessTax(
       'tax',
     ),
   );
-  return Math.round(tax);
+  return tax;
 }
 
 export function computeProfitsTax(
   businesses: BusinessInput[],
   params: TaxYearParams,
 ): ProfitsComputation {
-  // Loss years follow the interface convention: assessableProfits keeps the negative
-  // current-year figure, while lossCarriedForward reports the positive loss plus unused b/f losses.
+  assertFiniteBusinessInputs(businesses);
+
+  // Loss years follow the interface convention: assessableProfits keeps any negative
+  // post-set-off figure, while lossCarriedForward reports that positive loss plus unused b/f losses.
   const electedCount = businesses.filter((business) => business.electedTwoTier === true).length;
   if (electedCount > 1) {
     throw new Error('Only one business may elect the two-tiered profits tax rates.');
   }
 
-  const perBusiness = businesses.map((business) => {
+  const businessComputations = businesses.map((business) => {
     const lines: ComputationLine[] = [];
     const businessLabelZh = business.name ? `（${business.name}）` : '';
     const businessLabelEn = business.name ? ` (${business.name})` : '';
@@ -199,20 +201,76 @@ export function computeProfitsTax(
     lines.push(line('assessable-profits-before-loss', '扣除承前虧損前的應評稅利潤', 'Assessable profits before brought-forward loss', currentYearAssessableProfits, 'subtotal'));
 
     const lossBroughtForward = business.lossBroughtForward ?? 0;
-    let assessableProfits: number;
-    let lossCarriedForward: number;
+    let assessableProfits = currentYearAssessableProfits;
+    let unusedLossBroughtForward = lossBroughtForward;
+    let currentYearLossRemaining = 0;
 
     if (currentYearAssessableProfits < 0) {
-      assessableProfits = currentYearAssessableProfits;
-      lossCarriedForward = Math.abs(currentYearAssessableProfits) + lossBroughtForward;
+      currentYearLossRemaining = Math.abs(currentYearAssessableProfits);
+      assessableProfits = -currentYearLossRemaining;
     } else {
       const lossApplied = Math.min(lossBroughtForward, currentYearAssessableProfits);
       if (lossApplied > 0) {
         lines.push(line('loss-brought-forward-applied', '已抵銷承前虧損', 'Loss brought forward applied', -lossApplied, 'deduction'));
       }
       assessableProfits = currentYearAssessableProfits - lossApplied;
-      lossCarriedForward = lossBroughtForward - lossApplied;
+      unusedLossBroughtForward = lossBroughtForward - lossApplied;
     }
+
+    return {
+      id: business.id,
+      lines,
+      electedTwoTier: business.electedTwoTier === true,
+      assessableProfits,
+      currentYearLossRemaining,
+      unusedLossBroughtForward,
+    };
+  });
+
+  const profitIndexes = businessComputations
+    .map((business, index) => ({ business, index }))
+    .filter(({ business }) => business.assessableProfits > 0)
+    .sort((left, right) => {
+      if (left.business.electedTwoTier !== right.business.electedTwoTier) {
+        return left.business.electedTwoTier ? 1 : -1;
+      }
+      return left.index - right.index;
+    })
+    .map(({ index }) => index);
+
+  businessComputations.forEach((lossBusiness, lossIndex) => {
+    let lossAvailable = lossBusiness.currentYearLossRemaining;
+    if (lossAvailable <= 0) {
+      return;
+    }
+
+    for (const profitIndex of profitIndexes) {
+      if (profitIndex === lossIndex || lossAvailable <= 0) {
+        continue;
+      }
+
+      const profitBusiness = businessComputations[profitIndex];
+      if (profitBusiness.assessableProfits <= 0) {
+        continue;
+      }
+
+      const lossApplied = Math.min(lossAvailable, profitBusiness.assessableProfits);
+      if (lossApplied > 0) {
+        // IRO s.19C(1) is silent on ordering among multiple other-trade profits;
+        // documented assumption: apply losses to non-two-tier businesses first as taxpayer-favourable.
+        profitBusiness.lines.push(line('same-year-other-trade-loss-applied', '已抵銷同年度其他行業虧損', 'Same-year loss from another trade applied', -lossApplied, 'deduction'));
+        profitBusiness.assessableProfits -= lossApplied;
+        lossAvailable -= lossApplied;
+      }
+    }
+
+    lossBusiness.currentYearLossRemaining = lossAvailable;
+    lossBusiness.assessableProfits = lossAvailable > 0 ? -lossAvailable : 0;
+  });
+
+  const perBusiness = businessComputations.map((business) => {
+    const { assessableProfits, lines } = business;
+    const lossCarriedForward = business.currentYearLossRemaining + business.unusedLossBroughtForward;
 
     lines.push(line('assessable-profits', '應評稅利潤', 'Assessable profits', assessableProfits, 'subtotal'));
 
@@ -220,7 +278,7 @@ export function computeProfitsTax(
       lines.push(line('loss-carried-forward', '結轉虧損', 'Loss carried forward', lossCarriedForward, 'info'));
     }
 
-    const tax = computeBusinessTax(assessableProfits, business.electedTwoTier === true, params, lines);
+    const tax = computeBusinessTax(assessableProfits, business.electedTwoTier, params, lines);
     lines.push(line('business-tax', '本業務利得稅', 'Profits tax for this business', tax, 'tax'));
 
     return {
@@ -235,7 +293,10 @@ export function computeProfitsTax(
   const totalAssessableProfits = perBusiness.reduce((total, business) => total + Math.max(business.assessableProfits, 0), 0);
   const totalTax = perBusiness.reduce((total, business) => total + business.tax, 0);
   const reduction = params.taxReduction.appliesTo.includes('profits')
-    ? Math.min(params.taxReduction.percent * totalTax, params.taxReduction.cap)
+    ? perBusiness.reduce(
+        (total, business) => total + Math.min(params.taxReduction.percent * business.tax, params.taxReduction.cap),
+        0,
+      )
     : 0;
   const finalTax = Math.max(Math.floor(totalTax - reduction), 0);
 
@@ -254,4 +315,45 @@ export function computeProfitsTax(
     finalTax,
     lines,
   };
+}
+
+function assertFiniteBusinessInputs(businesses: BusinessInput[]): void {
+  businesses.forEach((business, index) => {
+    const prefix = `businesses[${index}]`;
+    assertFiniteNumber(business.revenue, `${prefix}.revenue`);
+    assertFiniteNumber(business.deductibleExpenses, `${prefix}.deductibleExpenses`);
+
+    const addBacks = business.addBacks;
+    if (addBacks !== undefined) {
+      assertFiniteOptionalNumber(addBacks.privatePortion, `${prefix}.addBacks.privatePortion`);
+      assertFiniteOptionalNumber(addBacks.capitalExpenditure, `${prefix}.addBacks.capitalExpenditure`);
+      assertFiniteOptionalNumber(addBacks.proprietorSalaries, `${prefix}.addBacks.proprietorSalaries`);
+      assertFiniteOptionalNumber(addBacks.nonDeductibleDonations, `${prefix}.addBacks.nonDeductibleDonations`);
+    }
+
+    const capitalAllowances = business.capitalAllowances;
+    if (capitalAllowances !== undefined) {
+      assertFiniteOptionalNumber(capitalAllowances.pmInitialAdditions, `${prefix}.capitalAllowances.pmInitialAdditions`);
+      capitalAllowances.pools?.forEach((pool, poolIndex) => {
+        assertFiniteNumber(pool.rate, `${prefix}.capitalAllowances.pools[${poolIndex}].rate`);
+        assertFiniteNumber(pool.broughtForward, `${prefix}.capitalAllowances.pools[${poolIndex}].broughtForward`);
+        assertFiniteNumber(pool.additions, `${prefix}.capitalAllowances.pools[${poolIndex}].additions`);
+      });
+      assertFiniteOptionalNumber(capitalAllowances.buildingAllowance, `${prefix}.capitalAllowances.buildingAllowance`);
+    }
+
+    assertFiniteOptionalNumber(business.lossBroughtForward, `${prefix}.lossBroughtForward`);
+  });
+}
+
+function assertFiniteOptionalNumber(value: number | undefined, field: string): void {
+  if (value !== undefined) {
+    assertFiniteNumber(value, field);
+  }
+}
+
+function assertFiniteNumber(value: number, field: string): void {
+  if (!Number.isFinite(value)) {
+    throw new Error(`${field} must be a finite number`);
+  }
 }
