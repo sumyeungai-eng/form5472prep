@@ -99,6 +99,7 @@ export interface JointComputation extends Computation {
 interface IncomeAndDeductionResult {
   lines: ComputationLine[];
   assessableIncome: number;
+  netAssessableIncomeBeforeFloor: number;
   netAssessableIncome: number;
 }
 
@@ -118,6 +119,8 @@ const MINIMUM_QUALIFYING_DONATION = 100;
 const CHILD_ALLOWANCE_MAX_COUNT = 9;
 
 export function computeSalariesTax(input: SalariesInput, params: TaxYearParams): Computation {
+  assertFiniteSalariesInput(input);
+
   const incomeAndDeductions = computeIncomeAndDeductions(input, params);
   const allowances = computeAllowances(input.allowances ?? {}, params, false);
   const netChargeableIncome = Math.max(0, incomeAndDeductions.netAssessableIncome - allowances.total);
@@ -148,9 +151,16 @@ export function computeJointAssessment(
   shared: SharedAllowanceInput,
   params: TaxYearParams,
 ): JointComputation {
+  assertFiniteSalariesInput(a, 'a');
+  assertFiniteSalariesInput(b, 'b');
+  assertFiniteSharedAllowances(shared, 'shared');
+
   const spouseA = computeIncomeAndDeductions(a, params);
   const spouseB = computeIncomeAndDeductions(b, params);
-  const combinedNetAssessableIncome = Math.max(0, spouseA.netAssessableIncome + spouseB.netAssessableIncome);
+  const combinedNetAssessableIncome = Math.max(
+    0,
+    spouseA.netAssessableIncomeBeforeFloor + spouseB.netAssessableIncomeBeforeFloor,
+  );
   const allowances = computeAllowances(shared, params, true);
   const netChargeableIncome = Math.max(0, combinedNetAssessableIncome - allowances.total);
   const tax = computeTaxFigures(netChargeableIncome, combinedNetAssessableIncome, params);
@@ -183,7 +193,10 @@ export function computeJointAssessment(
   };
 }
 
-function computeIncomeAndDeductions(input: SalariesInput, params: TaxYearParams): IncomeAndDeductionResult {
+function computeIncomeAndDeductions(
+  input: SalariesInput,
+  params: TaxYearParams,
+): IncomeAndDeductionResult {
   assertHousingDeductionChoice(input);
 
   const lines: ComputationLine[] = [];
@@ -264,7 +277,7 @@ function computeIncomeAndDeductions(input: SalariesInput, params: TaxYearParams)
     '自願醫保計劃保費',
     'VHIS premiums',
     input.deductions?.vhisPremiums ?? 0,
-    params.deductionCaps.vhisPerPerson * Math.max(0, input.deductions?.vhisInsuredPersons ?? 0),
+    params.deductionCaps.vhisPerPerson * getVhisInsuredPersons(input.deductions?.vhisPremiums, input.deductions?.vhisInsuredPersons),
   );
   netIncome -= applyCappedDeduction(
     lines,
@@ -275,10 +288,11 @@ function computeIncomeAndDeductions(input: SalariesInput, params: TaxYearParams)
     params.deductionCaps.assistedReproduction,
   );
 
+  const netAssessableIncomeBeforeFloor = netIncome;
   const netAssessableIncome = Math.max(0, netIncome);
   lines.push(line('netAssessableIncome', '入息實額', 'Net assessable income', netAssessableIncome, 'subtotal'));
 
-  return { lines, assessableIncome, netAssessableIncome };
+  return { lines, assessableIncome, netAssessableIncomeBeforeFloor, netAssessableIncome };
 }
 
 function includedIncomeAmount(item: IncomeItem): number {
@@ -391,7 +405,11 @@ function applyDonationDeduction(
   );
 }
 
-function applyHousingDeduction(lines: ComputationLine[], input: SalariesInput, params: TaxYearParams): number {
+function applyHousingDeduction(
+  lines: ComputationLine[],
+  input: SalariesInput,
+  params: TaxYearParams,
+): number {
   const homeLoanInterest = deductionAmount(input.deductions?.homeLoanInterest);
   const domesticRent = deductionAmount(input.deductions?.domesticRent);
 
@@ -442,6 +460,10 @@ function deductionEligibleForElevatedCap(
   input: number | HomeLoanInterestDeductionInput | DomesticRentDeductionInput | undefined,
 ): boolean {
   return typeof input === 'number' ? false : Boolean(input?.eligibleForElevatedCap);
+}
+
+function getVhisInsuredPersons(premiums: number | undefined, insuredPersons: number | undefined): number {
+  return Math.max(0, insuredPersons ?? (premiums !== undefined && premiums > 0 ? 1 : 0));
 }
 
 function computeAllowances(
@@ -516,7 +538,7 @@ function computeAllowances(
     lines.push(line('allowance.sibling', '供養兄弟姊妹免稅額', 'Dependent sibling allowance', siblingAllowance, 'allowance'));
   }
 
-  if (!claimsMarriedAllowance && allowances.singleParent) {
+  if (!claimsMarriedAllowance && allowances.singleParent && childAllowance > 0) {
     total += params.allowances.singleParent;
     lines.push(line('allowance.singleParent', '單親免稅額', 'Single parent allowance', params.allowances.singleParent, 'allowance'));
   }
@@ -688,4 +710,94 @@ function multiplyByRate(amount: number, rate: number): number {
   const denominator = 10 ** decimals;
   const numerator = Number(text.replace('.', ''));
   return (amount * numerator) / denominator;
+}
+
+function assertFiniteSalariesInput(input: SalariesInput, prefix = 'input'): void {
+  input.incomeItems.forEach((item, index) => {
+    assertFiniteNumber(item.amount, `${prefix}.incomeItems[${index}].amount`);
+    if (item.relateBack !== undefined) {
+      assertFiniteNumber(item.relateBack.months, `${prefix}.incomeItems[${index}].relateBack.months`);
+      assertFiniteNumber(item.relateBack.currentYearMonths, `${prefix}.incomeItems[${index}].relateBack.currentYearMonths`);
+    }
+  });
+
+  input.outgoingsAndExpenses?.forEach((item, index) => {
+    assertFiniteNumber(item.amount, `${prefix}.outgoingsAndExpenses[${index}].amount`);
+  });
+  input.depreciationAllowances?.forEach((item, index) => {
+    assertFiniteNumber(item.amount, `${prefix}.depreciationAllowances[${index}].amount`);
+  });
+  input.employerAccommodation?.forEach((item, index) => {
+    assertFiniteNumber(
+      item.employerAssessableIncomeBeforeAccommodation,
+      `${prefix}.employerAccommodation[${index}].employerAssessableIncomeBeforeAccommodation`,
+    );
+    assertFiniteOptionalNumber(
+      item.employerOutgoingsAndExpenses,
+      `${prefix}.employerAccommodation[${index}].employerOutgoingsAndExpenses`,
+    );
+    assertFiniteOptionalNumber(item.rateableValueElection, `${prefix}.employerAccommodation[${index}].rateableValueElection`);
+  });
+
+  const deductions = input.deductions;
+  if (deductions !== undefined) {
+    assertFiniteOptionalNumber(deductions.selfEducation, `${prefix}.deductions.selfEducation`);
+    assertFiniteOptionalNumber(deductions.charitableDonations, `${prefix}.deductions.charitableDonations`);
+    assertFiniteOptionalNumber(deductions.elderlyCare, `${prefix}.deductions.elderlyCare`);
+    assertFiniteDeductionInput(deductions.homeLoanInterest, `${prefix}.deductions.homeLoanInterest`);
+    assertFiniteDeductionInput(deductions.domesticRent, `${prefix}.deductions.domesticRent`);
+    assertFiniteOptionalNumber(deductions.mpfMandatory, `${prefix}.deductions.mpfMandatory`);
+    assertFiniteOptionalNumber(deductions.annuityAndTvc, `${prefix}.deductions.annuityAndTvc`);
+    assertFiniteOptionalNumber(deductions.vhisPremiums, `${prefix}.deductions.vhisPremiums`);
+    assertFiniteOptionalNumber(deductions.vhisInsuredPersons, `${prefix}.deductions.vhisInsuredPersons`);
+    assertFiniteOptionalNumber(deductions.assistedReproduction, `${prefix}.deductions.assistedReproduction`);
+  }
+
+  assertFiniteAllowanceInput(input.allowances, `${prefix}.allowances`);
+}
+
+function assertFiniteSharedAllowances(shared: SharedAllowanceInput, prefix: string): void {
+  assertFiniteAllowanceInput(shared, prefix);
+  assertFiniteOptionalNumber(shared.personalDisabilityCount, `${prefix}.personalDisabilityCount`);
+}
+
+function assertFiniteAllowanceInput(
+  allowances: SalariesInput['allowances'] | SharedAllowanceInput | undefined,
+  prefix: string,
+): void {
+  if (allowances === undefined) {
+    return;
+  }
+
+  allowances.parents?.forEach((parent, index) => {
+    assertFiniteNumber(parent.age, `${prefix}.parents[${index}].age`);
+  });
+  assertFiniteOptionalNumber(allowances.siblingCount, `${prefix}.siblingCount`);
+  assertFiniteOptionalNumber(allowances.disabledDependantCount, `${prefix}.disabledDependantCount`);
+}
+
+function assertFiniteDeductionInput(
+  input: number | HomeLoanInterestDeductionInput | DomesticRentDeductionInput | undefined,
+  field: string,
+): void {
+  if (input === undefined) {
+    return;
+  }
+  if (typeof input === 'number') {
+    assertFiniteNumber(input, field);
+    return;
+  }
+  assertFiniteNumber(input.amount, `${field}.amount`);
+}
+
+function assertFiniteOptionalNumber(value: number | undefined, field: string): void {
+  if (value !== undefined) {
+    assertFiniteNumber(value, field);
+  }
+}
+
+function assertFiniteNumber(value: number, field: string): void {
+  if (!Number.isFinite(value)) {
+    throw new Error(`${field} must be a finite number`);
+  }
 }

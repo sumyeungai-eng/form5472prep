@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getParams } from './params';
 import { assembleDemand, checkHoldoverEligibility, HOLDOVER_GROUNDS } from './provisional';
+import { computeSalariesTax } from './salaries';
 import type { Computation } from './types';
 
 const params = getParams('2025_26');
@@ -84,6 +85,27 @@ describe('assembleDemand', () => {
     expect(demand.installments.secondAmount).toBe(Math.round(provisionalTax * 0.25));
     expect(demand.installments.firstAmount + demand.installments.secondAmount).toBe(finalTax + provisionalTax);
     expect(demand.installments.firstAmount - finalTax + demand.installments.secondAmount).toBe(provisionalTax);
+  });
+
+  it('floors provisional salaries tax to whole dollars before splitting installments', () => {
+    const salaries = computeSalariesTax({
+      incomeItems: [{ key: 'salary', labelZh: '薪金', labelEn: 'Salary', amount: 332_001 }],
+    }, params);
+    const demand = assembleDemand('salaries', salaries, params);
+
+    expect(salaries.taxBeforeReduction).toBe(16_000.17);
+    expect(demand.finalTax).toBe(13_000);
+    expect(demand.provisionalTax).toBe(16_000);
+    expect(demand.totalDemand).toBe(29_000);
+    expect(demand.installments.firstAmount).toBe(25_000);
+    expect(demand.installments.secondAmount).toBe(4_000);
+    expect(Number.isInteger(demand.finalTax)).toBe(true);
+    expect(Number.isInteger(demand.provisionalTax)).toBe(true);
+    expect(Number.isInteger(demand.installments.firstAmount)).toBe(true);
+    expect(Number.isInteger(demand.installments.secondAmount)).toBe(true);
+    expect(Number.isInteger(demand.totalDemand)).toBe(true);
+    expect(demand.installments.firstAmount + demand.installments.secondAmount).toBe(demand.totalDemand);
+    expect(demand.installments.firstAmount - demand.finalTax + demand.installments.secondAmount).toBe(demand.provisionalTax);
   });
 
   it('throws when the requested demand head does not match the computation head', () => {

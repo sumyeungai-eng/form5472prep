@@ -45,7 +45,7 @@ export function assembleDemand(head: DemandHead, finalComp: Computation, params:
   // Provisional tax for the following year is assessed on the current year's
   // income/profits at the full statutory rates. The one-off tax reduction is a
   // final-assessment-only measure and does not apply to the provisional charge.
-  const provisionalTax = finalComp.taxBeforeReduction;
+  const provisionalTax = Math.floor(finalComp.taxBeforeReduction);
   const totalDemand = finalTax + provisionalTax;
   // Round the second provisional-tax portion first, then derive the first
   // portion so the two provisional portions sum exactly to provisionalTax.

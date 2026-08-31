@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getParams } from './params';
+import { computeProfitsTax } from './profits';
 import { computeJointAssessment, computeSalariesTax, type SalariesInput } from './salaries';
 
 function salary(amount: number): SalariesInput {
@@ -112,6 +113,11 @@ describe('computeSalariesTax', () => {
     }, getParams('2024_25'))).toThrow('mutually exclusive');
   });
 
+  it('rejects a non-finite salary input', () => {
+    expect(() => computeSalariesTax(salary(Number.NaN), getParams('2025_26')))
+      .toThrow('input.incomeItems[0].amount must be a finite number');
+  });
+
   it('uses the elevated newborn-rule cap for home loan interest when eligible', () => {
     expect(amountFor({
       ...salary(500000),
@@ -133,6 +139,16 @@ describe('computeSalariesTax', () => {
     }, 'deduction.domesticRent')).toBe(getParams('2024_25').deductionCaps.domesticRent);
   });
 
+  it('defaults VHIS insured-person count to one when premiums are supplied', () => {
+    const computation = computeSalariesTax({
+      ...salary(500000),
+      deductions: { vhisPremiums: 8000 },
+    }, getParams('2025_26'));
+
+    expect(computation.lines.find((item) => item.key === 'deduction.vhis')?.amount).toBe(8000);
+    expect(computation.lines.find((item) => item.key === 'deduction.vhis.excess')).toBeUndefined();
+  });
+
   it('makes joint assessment better than separate assessment for a one-earner married couple', () => {
     const params = getParams('2025_26');
     const spouseA: SalariesInput = { ...salary(600000), deductions: { mpfMandatory: 18000 } };
@@ -146,6 +162,24 @@ describe('computeSalariesTax', () => {
     expect(joint.perSpouse.a.shareOfTax + joint.perSpouse.b.shareOfTax).toBe(joint.finalTax);
   });
 
+  it('offsets one spouse excess home-loan-interest deduction before joint salaries aggregation is floored', () => {
+    const params = getParams('2025_26');
+    const spouseA = salary(500_000);
+    const spouseB: SalariesInput = { ...salary(0), deductions: { homeLoanInterest: 200_000 } };
+    const joint = computeJointAssessment(spouseA, spouseB, {}, params);
+
+    expect(joint.combinedNetAssessableIncome).toBe(400_000);
+  });
+
+  it('offsets one spouse excess mandatory MPF deduction before joint salaries aggregation is floored', () => {
+    const params = getParams('2025_26');
+    const spouseA = salary(900_000);
+    const spouseB: SalariesInput = { ...salary(10_000), deductions: { mpfMandatory: 18_000 } };
+    const joint = computeJointAssessment(spouseA, spouseB, {}, params);
+
+    expect(joint.combinedNetAssessableIncome).toBe(892_000);
+  });
+
   it('does not make joint assessment better than separate assessment for two high standard-rate earners', () => {
     const params = getParams('2025_26');
     const spouseA = salary(10000000);
@@ -157,6 +191,11 @@ describe('computeSalariesTax', () => {
     expect(joint.finalTax).toBe(3147000);
     expect(joint.finalTax).toBeGreaterThanOrEqual(separate);
     expect(joint.basisUsed).toBe('standard');
+  });
+
+  it('rejects a non-finite joint-assessment salary input', () => {
+    expect(() => computeJointAssessment(salary(300000), salary(Number.NaN), {}, getParams('2025_26')))
+      .toThrow('b.incomeItems[0].amount must be a finite number');
   });
 
   it('applies the different 2024/25 and 2025/26 salaries tax reduction caps to the same input', () => {
@@ -197,6 +236,32 @@ describe('computeSalariesTax', () => {
     expect(computation.lines.find((item) => item.key === 'allowance.child')?.amount).toBe(260000);
     expect(computation.lines.find((item) => item.key === 'allowance.childNewbornExtra')?.amount).toBe(130000);
     expect(computation.netChargeableIncome).toBe(278000);
+  });
+
+  it('grants single-parent allowance when child allowance is granted', () => {
+    const computation = computeSalariesTax({
+      ...salary(500000),
+      allowances: {
+        children: [{ key: 'child' }],
+        singleParent: true,
+      },
+    }, getParams('2025_26'));
+
+    expect(computation.lines.find((item) => item.key === 'allowance.child')?.amount).toBe(130000);
+    expect(computation.lines.find((item) => item.key === 'allowance.singleParent')?.amount).toBe(132000);
+    expect(computation.lines.find((item) => item.key === 'allowance.total')?.amount).toBe(394000);
+  });
+
+  it('does not grant single-parent allowance without a granted child allowance', () => {
+    const computation = computeSalariesTax({
+      ...salary(500000),
+      allowances: { singleParent: true },
+    }, getParams('2025_26'));
+
+    expect(computation.lines.find((item) => item.key === 'allowance.singleParent')).toBeUndefined();
+    expect(computation.lines.find((item) => item.key === 'allowance.total')?.amount).toBe(132000);
+    expect(computation.netChargeableIncome).toBe(368000);
+    expect(computation.finalTax).toBe(41560);
   });
 
   it('matches a hand-verified IRD-style salaries tax computation', () => {
@@ -264,5 +329,15 @@ describe('computeSalariesTax', () => {
     expect(computation.lines.find((item) => item.key === 'allowance.sibling')?.amount).toBe(37500);
     expect(computation.lines.find((item) => item.key === 'allowance.disabledDependant')?.amount).toBe(75000);
     expect(computation.lines.find((item) => item.key === 'allowance.personalDisability')?.amount).toBe(75000);
+  });
+});
+
+describe('computeProfitsTax input validation', () => {
+  it('rejects a non-finite profits tax revenue input', () => {
+    expect(() => computeProfitsTax([{
+      id: 'sole-proprietor',
+      revenue: Number.NaN,
+      deductibleExpenses: 0,
+    }], getParams('2025_26'))).toThrow('businesses[0].revenue must be a finite number');
   });
 });

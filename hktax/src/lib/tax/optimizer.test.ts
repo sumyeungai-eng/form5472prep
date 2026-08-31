@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { type PAPersonInput } from './personalAssessment';
 import type { PropertyInput } from './property';
 import type { SalariesInput } from './salaries';
-import { buildCoupleScenarios, optimize, type OptimizerResult } from './optimizer';
+import { buildCoupleScenarios, optimize, personForIndividualPAScenario, type OptimizerResult } from './optimizer';
 import { ya2025_26 as params } from './params/ya2025_26';
 
 function eligiblePerson(overrides: Omit<PAPersonInput, 'ageDuringYear' | 'isHongKongPermanentResident'>): PAPersonInput {
@@ -38,6 +38,17 @@ function scenarioById(result: OptimizerResult, id: string) {
     throw new Error(`Missing scenario ${id}`);
   }
   return found;
+}
+
+function presentNumericValues(value: unknown): number[] {
+  if (typeof value === 'number') {
+    return [value];
+  }
+  if (!value || typeof value !== 'object') {
+    return [];
+  }
+
+  return Object.values(value).flatMap((item) => presentNumericValues(item));
 }
 
 describe('optimize', () => {
@@ -177,7 +188,21 @@ describe('optimize', () => {
     ]);
   });
 
-  it('rejects bilateral raw MPA claims and strips MPA from both spouses in paIndividualBoth', () => {
+  it('keeps per-person figures finite when a scenario is unavailable', () => {
+    const personA = eligiblePerson({ salaries: salary(500_000) });
+    const personB = eligiblePerson({ properties: [property(300_000)] });
+
+    const result = optimize({ married: true, personA, personB }, params);
+    const jointSalaries = scenarioById(result, 'jointSalaries');
+
+    expect(jointSalaries.available).toBe(false);
+    expect(jointSalaries.totalTax).toBe(Number.POSITIVE_INFINITY);
+    expect(presentNumericValues(jointSalaries.perPerson.a).every(Number.isFinite)).toBe(true);
+    expect(jointSalaries.perPerson.b).toBeDefined();
+    expect(presentNumericValues(jointSalaries.perPerson.b).every(Number.isFinite)).toBe(true);
+  });
+
+  it('rejects bilateral raw MPA claims in optimize and buildCoupleScenarios', () => {
     const personA = eligiblePerson({
       salaries: {
         ...salary(450_000, { mpfMandatory: 18_000 }),
@@ -194,21 +219,67 @@ describe('optimize', () => {
     expect(() => optimize({ married: true, personA, personB }, params)).toThrow(
       "Both spouses cannot claim the married person's allowance simultaneously. / 夫婦雙方不可同時申索已婚人士免稅額。",
     );
+    expect(() => buildCoupleScenarios(personA, personB, params)).toThrow(
+      "Both spouses cannot claim the married person's allowance simultaneously. / 夫婦雙方不可同時申索已婚人士免稅額。",
+    );
+  });
 
-    const scenario = buildCoupleScenarios(personA, personB, params)
-      .find((item) => item.id === 'paIndividualBoth');
-
-    // Both spouses elect PA separately, so s.29(1) strips MPA from both.
-    // Per spouse: NAI 450,000 - 18,000 MPF = 432,000; basic NCI = 432,000 -
-    // 132,000 = 300,000. Progressive tax = 1,000 + 3,000 + 5,000 + 7,000 +
-    // 100,000 * 17% = 33,000; 2025/26 reduction = 3,000; final = 30,000.
-    expect(scenario).toMatchObject({
-      available: true,
-      totalTax: 60_000,
-      perPerson: {
-        a: expect.objectContaining({ paTax: 30_000, finalTax: 30_000 }),
-        b: expect.objectContaining({ paTax: 30_000, finalTax: 30_000 }),
+  it('rejects bilateral MPA claims when top-level empty allowances would otherwise shadow salary allowances', () => {
+    const personA = eligiblePerson({
+      allowances: {},
+      salaries: {
+        ...salary(450_000, { mpfMandatory: 18_000 }),
+        allowances: { isMarried: true, claimMarriedAllowance: true },
       },
     });
+    const personB = eligiblePerson({
+      allowances: {},
+      salaries: {
+        ...salary(450_000, { mpfMandatory: 18_000 }),
+        allowances: { isMarried: true, claimMarriedAllowance: true },
+      },
+    });
+
+    expect(() => optimize({ married: true, personA, personB }, params)).toThrow(
+      "Both spouses cannot claim the married person's allowance simultaneously. / 夫婦雙方不可同時申索已婚人士免稅額。",
+    );
+    expect(() => buildCoupleScenarios(personA, personB, params)).toThrow(
+      "Both spouses cannot claim the married person's allowance simultaneously. / 夫婦雙方不可同時申索已婚人士免稅額。",
+    );
+  });
+
+  it('keeps MPA for a property-only spouse unless that spouse elects PA individually', () => {
+    const person = eligiblePerson({
+      salaries: {
+        ...salary(450_000, { mpfMandatory: 18_000 }),
+        allowances: { isMarried: true, claimMarriedAllowance: true },
+      },
+    });
+    const propertyOnlySpouse = eligiblePerson({
+      properties: [property(300_000)],
+    });
+
+    const spouseNotElecting = personForIndividualPAScenario(person, propertyOnlySpouse, false, params);
+    const spouseElecting = personForIndividualPAScenario(person, propertyOnlySpouse, true, params);
+
+    expect(spouseNotElecting.salaries?.allowances?.claimMarriedAllowance).toBe(true);
+    expect(spouseElecting.salaries?.allowances?.claimMarriedAllowance).toBe(false);
+  });
+
+  it('strips MPA without merging away distinct top-level and salary allowance fields', () => {
+    const person = eligiblePerson({
+      allowances: { siblingCount: 2 },
+      salaries: {
+        ...salary(450_000, { mpfMandatory: 18_000 }),
+        allowances: { disabledDependantCount: 1, isMarried: true, claimMarriedAllowance: true },
+      },
+    });
+    const spouseWithSalariesIncome = eligiblePerson({ salaries: salary(1) });
+    const stripped = personForIndividualPAScenario(person, spouseWithSalariesIncome, false, params);
+
+    expect(stripped.allowances?.siblingCount).toBe(2);
+    expect(stripped.salaries?.allowances?.disabledDependantCount).toBe(1);
+    expect(stripped.salaries?.allowances?.isMarried).toBe(true);
+    expect(stripped.salaries?.allowances?.claimMarriedAllowance).toBe(false);
   });
 });

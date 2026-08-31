@@ -74,6 +74,12 @@ interface IncomePipelineResult {
   paLossBroughtForwardDeducted: number;
   residualPaLoss: number;
   netAssessableIncomeBeforeConcessionaryDeductions: number;
+  netAssessableIncomeBeforeFloor: number;
+  netAssessableIncome: number;
+}
+
+interface ConcessionaryDeductionResult {
+  netAssessableIncomeBeforeFloor: number;
   netAssessableIncome: number;
 }
 
@@ -119,13 +125,14 @@ export function checkPAEligibility(input: PAEligibilityInput): PAEligibilityResu
   return { eligible: reasonsZh.length === 0, reasonsZh, reasonsEn };
 }
 
-export function hasChargeableIncomeForMarriedPA(person: PAPersonInput, params: TaxYearParams): boolean {
+export function hasSalariesAssessableIncomeForMarriedPA(person: PAPersonInput, params: TaxYearParams): boolean {
+  // IRO s.29(1)(b)(i)(A) disqualifies MPA only when the spouse has
+  // Salaries Tax assessable income; see docs/mpa-joint-setoff-verification.md.
   const salariesAssessableIncome = getSalariesAssessableIncome(person.salaries, params);
-  const propertyNav = computePropertyTax(person.properties ?? [], params).totalNav;
-  const profits = person.businesses?.length ? computeProfitsTax(person.businesses, params).totalAssessableProfits : 0;
 
-  return salariesAssessableIncome > 0 || propertyNav > 0 || profits > 0;
+  return salariesAssessableIncome > 0;
 }
+
 
 export function canElectIndividualPA(
   _spouse: PAPersonInput | undefined,
@@ -136,7 +143,7 @@ export function canElectIndividualPA(
 
 export function computePA(person: PAPersonInput, params: TaxYearParams): Computation {
   const income = computeIncomePipeline(person, params, 'person');
-  const allowances = computeAllowances(person.allowances ?? person.salaries?.allowances ?? {}, params, false);
+  const allowances = computeAllowances(effectiveAllowanceInput(person), params, false);
   const netChargeableIncome = Math.max(0, income.netAssessableIncome - allowances.total);
   const tax = computeTaxFigures(netChargeableIncome, income.netAssessableIncome, params, 'pa');
 
@@ -159,6 +166,13 @@ export function computePA(person: PAPersonInput, params: TaxYearParams): Computa
   };
 }
 
+function effectiveAllowanceInput(person: PAPersonInput): NonNullable<PAPersonInput['allowances']> {
+  return {
+    ...(person.allowances ?? {}),
+    ...(person.salaries?.allowances ?? {}),
+  };
+}
+
 export function computeJointPA(
   a: PAPersonInput,
   b: PAPersonInput,
@@ -167,7 +181,10 @@ export function computeJointPA(
 ): JointPAComputation {
   const spouseA = computeIncomePipeline(a, params, 'spouseA');
   const spouseB = computeIncomePipeline(b, params, 'spouseB');
-  const combinedNetAssessableIncome = Math.max(0, spouseA.netAssessableIncome + spouseB.netAssessableIncome);
+  const combinedNetAssessableIncome = Math.max(
+    0,
+    spouseA.netAssessableIncomeBeforeFloor + spouseB.netAssessableIncomeBeforeFloor,
+  );
   const allowances = computeAllowances(shared, params, true);
   const netChargeableIncome = Math.max(0, combinedNetAssessableIncome - allowances.total);
   const tax = computeTaxFigures(netChargeableIncome, combinedNetAssessableIncome, params, 'jointPa');
@@ -255,13 +272,14 @@ function computeIncomePipeline(person: PAPersonInput, params: TaxYearParams, key
   lines.push(line(`${keyPrefix}.beforeConcessionaryDeductions`, '扣除業務虧損後入息', 'Income after business losses', reducedIncome, 'subtotal'));
 
   const netAssessableIncomeBeforeConcessionaryDeductions = reducedIncome;
-  const netAssessableIncome = applyConcessionaryDeductions(
+  const concessionaryDeductions = applyConcessionaryDeductions(
     lines,
     keyPrefix,
     reducedIncome,
     getDeductions(person),
     params,
   );
+  const netAssessableIncomeBeforeFloor = concessionaryDeductions.netAssessableIncomeBeforeFloor - residualPaLoss;
 
   return {
     lines,
@@ -274,7 +292,8 @@ function computeIncomePipeline(person: PAPersonInput, params: TaxYearParams, key
     paLossBroughtForwardDeducted,
     residualPaLoss,
     netAssessableIncomeBeforeConcessionaryDeductions,
-    netAssessableIncome,
+    netAssessableIncomeBeforeFloor,
+    netAssessableIncome: concessionaryDeductions.netAssessableIncome,
   };
 }
 
@@ -314,17 +333,25 @@ function applyLetPropertyMortgageInterest(
   inputs: { propertyId: string; interest: number }[],
   propertyNavById: Map<string, number>,
 ): number {
-  return inputs.reduce((sum, item) => {
+  const requestedByPropertyId = new Map<string, number>();
+
+  for (const item of inputs) {
     const requested = Math.max(0, item.interest);
-    const propertyNav = Math.max(0, propertyNavById.get(item.propertyId) ?? 0);
+    requestedByPropertyId.set(item.propertyId, (requestedByPropertyId.get(item.propertyId) ?? 0) + requested);
+  }
+
+  let totalDeducted = 0;
+
+  requestedByPropertyId.forEach((requested, propertyId) => {
+    const propertyNav = Math.max(0, propertyNavById.get(propertyId) ?? 0);
     const deducted = Math.min(requested, propertyNav);
 
     if (deducted > 0) {
-      lines.push(line(`${keyPrefix}.letPropertyMortgageInterest.${item.propertyId}`, '出租物業按揭利息', 'Let-property mortgage interest', deducted, 'deduction'));
+      lines.push(line(`${keyPrefix}.letPropertyMortgageInterest.${propertyId}`, '出租物業按揭利息', 'Let-property mortgage interest', deducted, 'deduction'));
     }
     if (requested > propertyNav) {
       lines.push(line(
-        `${keyPrefix}.letPropertyMortgageInterest.${item.propertyId}.excess`,
+        `${keyPrefix}.letPropertyMortgageInterest.${propertyId}.excess`,
         '出租物業按揭利息超出該物業應評稅淨值',
         'Let-property mortgage interest exceeds that property net assessable value',
         requested - propertyNav,
@@ -332,8 +359,10 @@ function applyLetPropertyMortgageInterest(
       ));
     }
 
-    return sum + deducted;
-  }, 0);
+    totalDeducted += deducted;
+  });
+
+  return totalDeducted;
 }
 
 function applyConcessionaryDeductions(
@@ -342,7 +371,7 @@ function applyConcessionaryDeductions(
   income: number,
   deductions: SalariesInput['deductions'],
   params: TaxYearParams,
-): number {
+): ConcessionaryDeductionResult {
   let netIncome = income;
 
   netIncome -= applyCappedDeduction(lines, keyPrefix, 'selfEducation', '個人進修開支', 'Self-education expenses', deductions?.selfEducation ?? 0, params.deductionCaps.selfEducation);
@@ -355,9 +384,10 @@ function applyConcessionaryDeductions(
   netIncome -= applyCappedDeduction(lines, keyPrefix, 'vhis', '自願醫保計劃保費', 'VHIS premiums', deductions?.vhisPremiums ?? 0, params.deductionCaps.vhisPerPerson * Math.max(0, deductions?.vhisInsuredPersons ?? 0));
   netIncome -= applyCappedDeduction(lines, keyPrefix, 'assistedReproduction', '輔助生育服務開支', 'Assisted reproduction expenses', deductions?.assistedReproduction ?? 0, params.deductionCaps.assistedReproduction);
 
+  const netAssessableIncomeBeforeFloor = netIncome;
   const netAssessableIncome = Math.max(0, netIncome);
   lines.push(line(`${keyPrefix}.netAssessableIncome`, '入息實額', 'Net assessable income', netAssessableIncome, 'subtotal'));
-  return netAssessableIncome;
+  return { netAssessableIncomeBeforeFloor, netAssessableIncome };
 }
 
 function applyCappedDeduction(

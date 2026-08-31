@@ -1175,3 +1175,17 @@ on it; the inference is by analogy.
 * G22 and G23 confirmation: G22 is unchanged because person B has zero chargeable income and
   does not elect in the paIndividualA branch, so person A keeps MPA. G23 is unchanged because
   neither spouse claims MPA in the raw fixture; there is no MPA amount to strip.
+
+## Amendments 2026-09-01
+
+* G21 individual-PA MPA correction: `docs/mpa-joint-setoff-verification.md` Question A is
+  the authoritative source for the s.29 rule. Under IRO s.29(1)(b)(i)(A), only the spouse's
+  Salaries Tax assessable income disqualifies MPA; Property Tax NAV and Profits Tax income
+  are irrelevant. The separate s.29(1)(b)(i)(B) limb remains in force: if the spouse makes
+  an individual PA election under s.41(1), MPA is disqualified.
+
+* Corrected G21 `paIndividualA`: wife has property-only income and does not elect PA in this
+  branch, so husband keeps MPA. Husband NAI 432,000 less MPA 264,000 gives NCI 168,000;
+  progressive tax is 50,000 x 2% + 50,000 x 6% + 50,000 x 10% + 18,000 x 14% = 11,520;
+  less the 2025/26 reduction cap of 3,000 gives husband PA tax 8,520. Wife remains on
+  Property Tax at 50,400. Corrected `paIndividualA` total is 8,520 + 50,400 = 58,920.

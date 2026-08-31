@@ -9,9 +9,9 @@ import {
 import {
   computeJointPA,
   computePA,
-  hasChargeableIncomeForMarriedPA,
   type PAPersonInput,
 } from "@/lib/tax/personalAssessment";
+import { personForIndividualPAScenario } from "@/lib/tax/optimizer";
 import type { FamilyScenarioInput, OptimizerScenario } from "@/lib/tax/optimizer";
 import type { Computation, ComputationLine, TaxYearParams } from "@/lib/tax/types";
 import type { Bir60MappingFlag } from "./bir60Mapping";
@@ -293,46 +293,6 @@ function paComputation(
     titleEn: `${personLabelEn}: Personal Assessment`,
     computation: computePA(person, params),
   };
-}
-
-// Mirrors hktax/src/lib/tax/optimizer.ts:305-333. That helper is private, so
-// results recomputation must keep this copy aligned with the optimizer.
-function personForIndividualPAScenario(
-  person: PAPersonInput,
-  spouse: PAPersonInput | undefined,
-  spouseElectsPAIndividually: boolean,
-  params: TaxYearParams,
-): PAPersonInput {
-  if (!spouse) {
-    return person;
-  }
-
-  const spouseHasChargeableIncome = hasChargeableIncomeForMarriedPA(spouse, params);
-  const mayKeepMarriedAllowance = !spouseElectsPAIndividually && !spouseHasChargeableIncome;
-
-  return mayKeepMarriedAllowance ? person : stripMarriedAllowanceClaim(person);
-}
-
-function stripMarriedAllowanceClaim(person: PAPersonInput): PAPersonInput {
-  const allowances = {
-    ...effectiveAllowanceInput(person),
-    claimMarriedAllowance: false,
-  };
-
-  return {
-    ...person,
-    allowances,
-    salaries: person.salaries
-      ? {
-        ...person.salaries,
-        allowances,
-      }
-      : person.salaries,
-  };
-}
-
-function effectiveAllowanceInput(person: PAPersonInput): NonNullable<PAPersonInput["allowances"]> {
-  return person.allowances ?? person.salaries?.allowances ?? {};
 }
 
 function propertyComputation(properties: NonNullable<PAPersonInput["properties"]>, params: TaxYearParams): Computation {

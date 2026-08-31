@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { getParams } from './params';
-import { checkPAEligibility, computeJointPA, computePA, type PAPersonInput } from './personalAssessment';
+import {
+  checkPAEligibility,
+  computeJointPA,
+  computePA,
+  hasSalariesAssessableIncomeForMarriedPA,
+  type PAPersonInput,
+} from './personalAssessment';
 import type { BusinessInput } from './profits';
 import type { PropertyInput } from './property';
 import type { SalariesInput } from './salaries';
@@ -182,6 +188,28 @@ describe('Personal Assessment', () => {
     expect(result.netAssessableIncome).toBe(salaryIncome);
   });
 
+  it('caps aggregated mortgage interest once per let property when multiple entries use the same property id', () => {
+    const salaryIncome = 500_000;
+    const baseProperty = property({ rentReceived: 300_000 });
+    const nav = 240_000;
+    const result = computePA({
+      salaries: salary(salaryIncome),
+      properties: [baseProperty],
+      letPropertyMortgageInterest: [
+        { propertyId: 'flat-a', interest: nav },
+        { propertyId: 'flat-a', interest: nav },
+      ],
+    }, ya2025_26);
+    const interestLines = result.lines.filter((item) => item.key === 'person.letPropertyMortgageInterest.flat-a');
+
+    expect(lineFor(result, 'person.propertyNav').amount).toBe(nav);
+    expect(interestLines).toHaveLength(1);
+    expect(interestLines[0].amount).toBe(nav);
+    expect(lineFor(result, 'person.letPropertyMortgageInterest.flat-a.excess').amount).toBe(nav);
+    expect(lineFor(result, 'person.afterLetPropertyInterest').amount).toBe(salaryIncome);
+    expect(result.netAssessableIncome).toBe(salaryIncome);
+  });
+
   it('offsets current-year business losses against other PA income', () => {
     const salaryIncome = 500_000;
     const rentReceived = 125_000;
@@ -267,6 +295,17 @@ describe('Personal Assessment', () => {
     expect(eligibleUnder18Orphan.eligible).toBe(true);
   });
 
+  it('tests only salaries assessable income for the s.29 MPA spouse-income condition', () => {
+    expect(hasSalariesAssessableIncomeForMarriedPA({
+      properties: [property({ rentReceived: 300_000 })],
+      businesses: [business({ revenue: 300_000 })],
+    }, ya2025_26)).toBe(false);
+
+    expect(hasSalariesAssessableIncomeForMarriedPA({
+      salaries: salary(1),
+    }, ya2025_26)).toBe(true);
+  });
+
   it('applies the YA 2024/25 PA tax reduction cap', () => {
     const result = computePA({ salaries: salary(1_000_000) }, ya2024_25);
     const expected = expectedTax(1_000_000, ya2024_25.allowances.basic, ya2024_25);
@@ -310,6 +349,26 @@ describe('Personal Assessment', () => {
     expect(result.perSpouse.b.shareOfCombinedNai).toBeCloseTo(bNai / combinedNai);
     expect(result.perSpouse.a.shareOfTax).toBe(apportionment.a);
     expect(result.perSpouse.b.shareOfTax).toBe(apportionment.b);
+  });
+
+  it('offsets one spouse excess business loss before joint PA aggregation is floored', () => {
+    const result = computeJointPA(
+      { salaries: salary(500_000) },
+      {
+        businesses: [{
+          id: 'b1',
+          name: 'Business',
+          revenue: 0,
+          deductibleExpenses: 200_000,
+        }],
+      },
+      {},
+      ya2025_26,
+    );
+
+    expect(result.combinedNetAssessableIncome).toBe(300_000);
+    expect(result.netChargeableIncome).toBe(36_000);
+    expect(result.finalTax).toBe(0);
   });
 
   it('rejects simultaneous home-loan-interest and domestic-rent deductions inside PA', () => {

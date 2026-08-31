@@ -2,7 +2,7 @@ import {
   checkPAEligibility,
   computeJointPA,
   computePA,
-  hasChargeableIncomeForMarriedPA,
+  hasSalariesAssessableIncomeForMarriedPA,
   type PAPersonInput,
 } from './personalAssessment';
 import { computeProfitsTax } from './profits';
@@ -104,8 +104,6 @@ export function optimize(family: FamilyScenarioInput, params: TaxYearParams): Op
     throw new Error('Married optimizer input must include personB.');
   }
 
-  assertNotBothSpousesClaimMarriedAllowance(family.personA, family.personB);
-
   const scenarios = buildCoupleScenarios(family.personA, family.personB, params);
   return buildOptimizerResult(family, scenarios, params);
 }
@@ -165,6 +163,8 @@ function buildSingleScenarios(person: PAPersonInput, params: TaxYearParams): Opt
 }
 
 export function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params: TaxYearParams): OptimizerScenario[] {
+  assertNotBothSpousesClaimMarriedAllowance(a, b);
+
   const separateA = computeSeparateHeads(a, params);
   const separateB = computeSeparateHeads(b, params);
   const separateTotal = separateA.totalTax + separateB.totalTax;
@@ -183,12 +183,8 @@ export function buildCoupleScenarios(a: PAPersonInput, b: PAPersonInput, params:
   const individualBAvailability = individualPAAvailability(eligibilityB, a, params, PA_INDIVIDUAL_B_UNAVAILABLE);
   const paBothAvailability = individualBothPAAvailability(individualAAvailability, individualBAvailability);
   const jointPA = eligibilityA.eligible && eligibilityB.eligible ? computeJointPA(a, b, sharedAllowances, params) : undefined;
-  // IRO s.29(1), as amended: in individual-PA branches, MPA is unavailable
-  // where the spouse elects PA separately, and this branch also applies the
-  // broader PA income-head test used by hasChargeableIncomeForMarriedPA. That
-  // is deliberately narrower in scope than docs/golden-scenarios.md section
-  // 0.4's general salaries-tax-only MPA note; keep this local to these three
-  // individual-election scenarios.
+  // IRO s.29(1)(b)(i): in individual-PA branches, MPA is unavailable
+  // where the spouse elects PA separately or has Salaries Tax assessable income.
   const paIndividualAInputA = personForIndividualPAScenario(a, b, false, params);
   const paIndividualAInputB = personForIndividualPAScenario(b, a, true, params);
   const paIndividualBInputA = personForIndividualPAScenario(a, b, true, params);
@@ -302,33 +298,46 @@ function computeSeparateHeads(person: PAPersonInput, params: TaxYearParams): Sep
   };
 }
 
-function personForIndividualPAScenario(
+export function personForIndividualPAScenario(
   person: PAPersonInput,
-  spouse: PAPersonInput,
+  // Undefined for an unmarried taxpayer: there is no spouse whose salaries income
+  // or PA election could disqualify the married person's allowance, so the person
+  // is returned unchanged.
+  spouse: PAPersonInput | undefined,
   spouseElectsPAIndividually: boolean,
   params: TaxYearParams,
 ): PAPersonInput {
-  const spouseHasChargeableIncome = hasChargeableIncomeForMarriedPA(spouse, params);
-  const mayKeepMarriedAllowance = !spouseElectsPAIndividually && !spouseHasChargeableIncome;
+  if (!spouse) {
+    return person;
+  }
+
+  const spouseHasSalariesAssessableIncome = hasSalariesAssessableIncomeForMarriedPA(spouse, params);
+  const mayKeepMarriedAllowance = !spouseElectsPAIndividually && !spouseHasSalariesAssessableIncome;
 
   return mayKeepMarriedAllowance ? person : stripMarriedAllowanceClaim(person);
 }
 
 function stripMarriedAllowanceClaim(person: PAPersonInput): PAPersonInput {
-  const allowances = {
-    ...effectiveAllowanceInput(person),
-    claimMarriedAllowance: false,
-  };
-
   return {
     ...person,
-    allowances,
+    allowances: stripAllowanceClaim(person.allowances),
     salaries: person.salaries
       ? {
         ...person.salaries,
-        allowances,
+        allowances: stripAllowanceClaim(person.salaries.allowances),
       }
       : person.salaries,
+  };
+}
+
+function stripAllowanceClaim(allowances: PAPersonInput['allowances']): PAPersonInput['allowances'] {
+  if (!allowances) {
+    return allowances;
+  }
+
+  return {
+    ...allowances,
+    claimMarriedAllowance: false,
   };
 }
 
@@ -347,7 +356,10 @@ function claimsMarriedAllowance(person: PAPersonInput): boolean {
 }
 
 function effectiveAllowanceInput(person: PAPersonInput): NonNullable<PAPersonInput['allowances']> {
-  return person.allowances ?? person.salaries?.allowances ?? {};
+  return {
+    ...(person.allowances ?? {}),
+    ...(person.salaries?.allowances ?? {}),
+  };
 }
 
 function individualPAAvailability(
@@ -440,7 +452,7 @@ function paPersonResult(
     propertyTax: 0,
     profitsTax: 0,
     separateHeadsTax: separate.totalTax,
-    finalTax: paTax ?? Number.POSITIVE_INFINITY,
+    finalTax: paTax ?? separate.totalTax,
     paTax,
   };
 }
@@ -451,7 +463,7 @@ function jointSalariesPersonResult(
   jointSalariesTax: number | undefined,
 ): OptimizerPersonResult {
   const finalTax = jointSalariesTax === undefined
-    ? Number.POSITIVE_INFINITY
+    ? separate.totalTax
     : jointSalariesTax + separate.propertyTax + separate.profitsTax;
 
   return {
@@ -476,7 +488,7 @@ function jointPAPersonResult(
     propertyTax: 0,
     profitsTax: 0,
     separateHeadsTax: separate.totalTax,
-    finalTax: jointPATax ?? Number.POSITIVE_INFINITY,
+    finalTax: jointPATax ?? separate.totalTax,
     jointPATax,
   };
 }
@@ -521,8 +533,8 @@ function hasSalariesIncome(person: PAPersonInput): person is PAPersonInput & {
 }
 
 function deriveSharedAllowances(a: PAPersonInput, b: PAPersonInput): SharedAllowanceInput {
-  const allowanceA = a.allowances ?? a.salaries?.allowances ?? {};
-  const allowanceB = b.allowances ?? b.salaries?.allowances ?? {};
+  const allowanceA = effectiveAllowanceInput(a);
+  const allowanceB = effectiveAllowanceInput(b);
 
   // Until the interview layer has a distinct family-allowance model, shared allowances are
   // merged field-by-field, preferring person A when both spouses provided a non-empty value.
