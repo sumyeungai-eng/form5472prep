@@ -120,6 +120,13 @@ export const wizardDictionary = {
     title: { zh: "受養人及家庭免稅額", en: "Dependants and family allowances" },
     children: { label: { zh: "子女", en: "Children" }, help: { zh: "輸入出生年份以判斷是否有出生年度額外免稅額。", en: "Enter birth years so the wizard can determine year-of-birth extra allowance." } },
     childBirthYear: { label: { zh: "子女出生年份", en: "Child birth year" }, help: { zh: "不得遲於所選課稅年度的結束曆年。", en: "Cannot be later than the ending calendar year of the selected assessment year." } },
+    childBornDuringYearOfAssessment: {
+      label: { zh: "在本課稅年度內出生（1 April – 31 March）", en: "Born during this year of assessment (1 Apr - 31 Mar)" },
+      help: {
+        zh: "子女出生年度額外免稅額只在子女出生的課稅年度給予。香港課稅年度橫跨兩個曆年（4月1日至翌年3月31日），單靠出生年份可能不明確。",
+        en: "The extra child allowance is granted only in the year of the child's birth. A Hong Kong year of assessment straddles two calendar years, from 1 April to 31 March, so birth year alone can be ambiguous.",
+      },
+    },
     parents: { label: { zh: "供養父母或祖父母", en: "Dependent parents or grandparents" }, help: { zh: "可用出生年份或本年度年齡計算父母免稅額。", en: "Use birth year or age during the year to compute parent allowance." } },
     parentBirthYear: { label: { zh: "父母出生年份", en: "Parent birth year" }, help: { zh: "如不確定出生年份，可直接輸入課稅年度內年齡。", en: "If birth year is unknown, enter age during the assessment year instead." } },
     parentAgeDuringYear: { label: { zh: "父母本年度年齡", en: "Parent age during the year" }, help: { zh: "55歲或以上可能有供養父母免稅額。", en: "Age 55 or above may qualify for dependent parent allowance." } },

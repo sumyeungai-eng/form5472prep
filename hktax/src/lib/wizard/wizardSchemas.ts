@@ -200,6 +200,7 @@ export function createFamilyStepSchema(year: YearOfAssessment) {
   const childSchema = z.object({
     key: z.string().optional(),
     birthYear: createBirthYearSchema(year),
+    bornDuringYearOfAssessment: z.boolean().optional(),
   });
 
   const parentSchema = z

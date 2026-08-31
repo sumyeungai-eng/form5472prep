@@ -126,6 +126,7 @@ export interface WizardPersonState {
 export interface WizardChild {
   key?: string;
   birthYear: number;
+  bornDuringYearOfAssessment?: boolean;
 }
 
 export interface WizardParent {

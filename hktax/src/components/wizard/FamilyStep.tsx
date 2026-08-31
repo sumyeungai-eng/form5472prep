@@ -16,6 +16,7 @@ import {
   createFamilyStepSchema,
   type FamilyStepFormValues,
 } from "@/lib/wizard/wizardSchemas";
+import { isChildBornInCurrentYear } from "@/lib/wizard/mapping";
 import type { WizardChild, WizardParent, WizardState } from "@/lib/wizard/wizardState";
 import { wizardDictionary, wizardT } from "@/lib/wizard/wizardDictionary";
 import {
@@ -155,7 +156,7 @@ function ChildrenFields({
             error={getFieldError(errors, `children.${index}.birthYear`)}
           />
           <div className="flex items-end gap-3">
-            {child.birthYear === endYear ? (
+            {child.bornDuringYearOfAssessment ? (
               <span className="rounded-md bg-gold-100 px-3 py-2 text-sm font-semibold text-gold-700">
                 {wizardT(wizardDictionary.sourceDetails.newborn, lang)}
               </span>
@@ -164,9 +165,17 @@ function ChildrenFields({
               {wizardT(wizardDictionary.common.remove, lang)}
             </button>
           </div>
+          <CheckboxField
+            name={`children.${index}.bornDuringYearOfAssessment` as Path<FamilyWizardFormValues>}
+            register={register}
+            label={wizardDictionary.family.childBornDuringYearOfAssessment.label}
+            help={wizardDictionary.family.childBornDuringYearOfAssessment.help}
+            error={getFieldError(errors, `children.${index}.bornDuringYearOfAssessment`)}
+            className="md:col-span-2"
+          />
         </div>
       ))}
-      <button type="button" className="focus-ring rounded-md border border-teal-200 px-3 py-2 text-sm font-bold text-teal-700" onClick={() => setValue("children", [...children, { key: `child-${children.length + 1}`, birthYear: endYear }], { shouldDirty: true })}>
+      <button type="button" className="focus-ring rounded-md border border-teal-200 px-3 py-2 text-sm font-bold text-teal-700" onClick={() => setValue("children", [...children, { key: `child-${children.length + 1}`, birthYear: endYear, bornDuringYearOfAssessment: true }], { shouldDirty: true })}>
         {wizardT(wizardDictionary.common.add, lang)}
       </button>
     </section>
@@ -217,6 +226,11 @@ function ParentFields({
 function familyDefaults(state: WizardState): FamilyWizardFormValues {
   return {
     ...state.family,
+    children: state.family.children.map((child) => ({
+      ...child,
+      bornDuringYearOfAssessment: child.bornDuringYearOfAssessment
+        ?? isChildBornInCurrentYear(child.birthYear, state.year),
+    })),
     claimingSpouseForFamilyAllowances: state.claimingSpouseForFamilyAllowances,
     claimMarriedAllowanceBy: state.claimMarriedAllowanceBy,
   };
@@ -237,3 +251,4 @@ function personOptions() {
     { value: "B", label: wizardDictionary.common.personB },
   ];
 }
+

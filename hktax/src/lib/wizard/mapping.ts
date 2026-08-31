@@ -5,6 +5,7 @@ import type { PropertyInput } from "../tax/property";
 import type { SalariesInput } from "../tax/salaries";
 import type { TaxYearParams, YearOfAssessment } from "../tax/types";
 import type {
+  WizardChild,
   WizardDeductions,
   WizardFamilyState,
   WizardParent,
@@ -256,7 +257,7 @@ function mapAllowances(
     if (family.children.length > 0) {
       allowances.children = family.children.map((child) => ({
         ...(child.key ? { key: child.key } : {}),
-        bornInCurrentYear: isChildBornInCurrentYear(child.birthYear, state.year),
+        bornInCurrentYear: childBornInCurrentYear(child, state.year),
       }));
     }
 
@@ -305,11 +306,15 @@ function parentAge(parent: WizardParent, year: YearOfAssessment): number {
   return yearOfAssessmentEndYear(year) - (parent.birthYear ?? yearOfAssessmentEndYear(year));
 }
 
-function isChildBornInCurrentYear(birthYear: number, year: YearOfAssessment): boolean {
-  // Wizard state stores only a birth year, not a full date. For YA 2025/26
-  // (1 Apr 2025 to 31 Mar 2026), we flag `bornInCurrentYear` only when the
-  // birth year equals the ending calendar year (2026), matching the Step 9
-  // instruction to compare against the assessment year's ending calendar year.
+function childBornInCurrentYear(child: WizardChild, year: YearOfAssessment): boolean {
+  return child.bornDuringYearOfAssessment ?? isChildBornInCurrentYear(child.birthYear, year);
+}
+
+export function isChildBornInCurrentYear(birthYear: number, year: YearOfAssessment): boolean {
+  // A Hong Kong year of assessment runs 1 Apr to 31 Mar, so the calendar
+  // birth year alone cannot prove whether a child was born in that assessment
+  // year. `bornDuringYearOfAssessment` is authoritative when present; this
+  // end-year heuristic remains only as a legacy fallback for older saved state.
   return birthYear === yearOfAssessmentEndYear(year);
 }
 

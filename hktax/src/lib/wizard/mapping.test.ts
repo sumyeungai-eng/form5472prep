@@ -8,6 +8,7 @@ import {
 } from "./mapping";
 import { defaultMoneyItem } from "./defaultItems";
 import { createDefaultWizardState, type WizardState } from "./wizardState";
+import { wizardStateSchema } from "./wizardSchemas";
 
 function baseState(): WizardState {
   return {
@@ -27,6 +28,21 @@ function baseState(): WizardState {
       },
     },
   };
+}
+
+function salaryStateWithChild(child: WizardState["family"]["children"][number]): WizardState {
+  const state = baseState();
+  state.personA.incomeSources.hasSalary = true;
+  state.personA.salary.incomeItems = [
+    { key: "salary", labelZh: "薪金", labelEn: "Salary", amount: 300_000 },
+  ];
+  state.family.children = [child];
+
+  return state;
+}
+
+function mappedChildBornInCurrentYear(state: WizardState): boolean | undefined {
+  return mapWizardStateToFamilyScenarioInput(state).personA.salaries?.allowances?.children?.[0]?.bornInCurrentYear;
 }
 
 describe("mapWizardStateToFamilyScenarioInput", () => {
@@ -116,6 +132,65 @@ describe("mapWizardStateToFamilyScenarioInput", () => {
     };
 
     expect(mapWizardStateToFamilyScenarioInput(state)).toEqual(expected);
+  });
+
+  it("uses an explicit born-during-assessment-year true flag even when the birth-year heuristic is false", () => {
+    const state = salaryStateWithChild({
+      key: "apr-dec-newborn",
+      birthYear: 2025,
+      bornDuringYearOfAssessment: true,
+    });
+
+    expect(mappedChildBornInCurrentYear(state)).toBe(true);
+  });
+
+  it("uses an explicit born-during-assessment-year false flag even when the birth-year heuristic is true", () => {
+    const state = salaryStateWithChild({
+      key: "jan-mar-not-current-ya",
+      birthYear: 2026,
+      bornDuringYearOfAssessment: false,
+    });
+
+    expect(mappedChildBornInCurrentYear(state)).toBe(false);
+  });
+
+  it("preserves the legacy child birth-year heuristic when the explicit flag is absent and heuristic is true", () => {
+    const state = salaryStateWithChild({
+      key: "legacy-newborn",
+      birthYear: 2026,
+    });
+
+    expect(mappedChildBornInCurrentYear(state)).toBe(true);
+  });
+
+  it("preserves the legacy child birth-year heuristic when the explicit flag is absent and heuristic is false", () => {
+    const state = salaryStateWithChild({
+      key: "legacy-older-child",
+      birthYear: 2025,
+    });
+
+    expect(mappedChildBornInCurrentYear(state)).toBe(false);
+  });
+
+  it("parses legacy stored wizard state without child born-during-assessment-year flags", () => {
+    const storedState = {
+      ...createDefaultWizardState(),
+      family: {
+        ...createDefaultWizardState().family,
+        children: [
+          { key: "legacy-child", birthYear: 2020 },
+        ],
+      },
+    };
+
+    const result = wizardStateSchema.safeParse(storedState);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.family.children).toEqual([
+        { key: "legacy-child", birthYear: 2020 },
+      ]);
+    }
   });
 
   it("maps salary, rental property, sole-proprietor business, PA mortgage interest, and a dependent parent allowance", () => {
