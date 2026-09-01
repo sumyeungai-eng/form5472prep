@@ -149,6 +149,39 @@ export async function getOwnedFiling(filingId: string) {
   });
 }
 
+export async function getOwnedEinApplication(id: string) {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  return prisma.einApplication.findFirst({
+    where: { id, userId: user.id },
+    select: {
+      id: true,
+      userId: true,
+      fullName: true,
+      email: true,
+      llcName: true,
+      status: true,
+    },
+  });
+}
+
+export async function getOwnedItinApplication(id: string) {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  return prisma.itinApplication.findFirst({
+    where: { id, userId: user.id },
+    select: {
+      id: true,
+      userId: true,
+      fullName: true,
+      email: true,
+      status: true,
+    },
+  });
+}
+
 // Distinguishes "filing doesn't exist" from "filing exists but is owned by
 // someone else." Returns "owned" with the filing, "locked" if it exists but the
 // current visitor can't access it (typically: anonymous session cookie expired

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { MessagesPanel } from "@/components/MessagesPanel";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { EinAdminActions } from "./EinAdminActions";
@@ -79,6 +80,10 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
         currentAdminNotes={app.adminNotes ?? ""}
         currentEin={app.ein ?? ""}
       />
+
+      <div className="mt-8">
+        <MessagesPanel apiBase={`/api/applications/ein/${app.id}/messages`} isAdmin />
+      </div>
     </div>
   );
 }

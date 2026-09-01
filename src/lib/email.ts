@@ -1075,6 +1075,82 @@ export async function sendNewMessageToAdminEmail(args: {
   });
 }
 
+// ---------- 5c. New application message — admin/customer ----------
+
+export async function sendNewApplicationMessageAdminEmail(args: {
+  adminEmail: string;
+  customerEmail: string;
+  kind: "EIN" | "ITIN";
+  subjectLabel: string;
+  applicationId: string;
+  adminUrl: string;
+  bodyExcerpt: string;
+}): Promise<unknown> {
+  const { adminEmail, customerEmail, kind, subjectLabel, applicationId, adminUrl, bodyExcerpt } = args;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `[${kind} application] New message from ${customerEmail}`,
+    text:
+      `${customerEmail} sent a new message about ${subjectLabel}.\n\n` +
+      `${bodyExcerpt}\n\n` +
+      `Application ID: ${applicationId}\n` +
+      `Reply in admin: ${adminUrl}\n`,
+    html: adminShell({
+      tag: `${kind} application message`,
+      heading: "New message from customer",
+      rows: [
+        ["Customer", customerEmail],
+        ["Application", subjectLabel],
+        ["Kind", kind],
+        ["Application ID", applicationId],
+        ["Message", bodyExcerpt],
+        ["Admin view", adminUrl],
+      ],
+    }),
+  });
+}
+
+export async function sendNewApplicationMessageCustomerEmail(args: {
+  email: string;
+  recipientName?: string | null;
+  kind: "EIN" | "ITIN";
+  subjectLabel: string;
+  bodyExcerpt: string;
+  portalLink: string;
+}): Promise<unknown> {
+  const { email, recipientName, kind, subjectLabel, bodyExcerpt, portalLink } = args;
+  const salutation = firstNameFrom(recipientName) ?? "there";
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
+      You have a new message from our team about your <strong>${escapeHtml(kind)}</strong>
+      application for <strong>${escapeHtml(subjectLabel)}</strong>.
+    </p>
+    <blockquote style="margin:0 0 20px;padding:14px 18px;background:${EMAIL_STYLES.bg};border-left:3px solid ${EMAIL_STYLES.brand};color:${EMAIL_STYLES.ink};font-size:14px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(bodyExcerpt)}</blockquote>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
+      Open your portal to read the full message and reply.
+    </p>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject: `New message about your ${kind} application`,
+    text: customerText(
+      salutation,
+      `You have a new message from our team about your ${kind} application for ${subjectLabel}.\n\n` +
+      `${bodyExcerpt}\n\n` +
+      `Open your portal to read and reply: ${portalLink}`,
+    ),
+    html: customerShell({
+      heading: "You have a new message",
+      salutation,
+      bodyHtml,
+      cta: { label: "Open my portal", url: portalLink },
+    }),
+  });
+}
+
 // ---------- 6. January reminder (annual marketing email) ----------
 
 type ReminderArgs = {

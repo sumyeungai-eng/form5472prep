@@ -17,7 +17,7 @@ type Message = {
 type LoadResponse = { messages: Message[]; role: "admin" | "customer" };
 
 type Props = {
-  filingId: string;
+  apiBase: string;
   isAdmin: boolean;
 };
 
@@ -40,7 +40,7 @@ function fileToBase64(file: File): Promise<string> {
   });
 }
 
-export function MessagesPanel({ filingId, isAdmin }: Props) {
+export function MessagesPanel({ apiBase, isAdmin }: Props) {
   const [messages, setMessages] = useState<Message[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
@@ -58,7 +58,7 @@ export function MessagesPanel({ filingId, isAdmin }: Props) {
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch(`/api/filings/${filingId}/messages${roleQuery}`, { cache: "no-store" });
+      const res = await fetch(`${apiBase}${roleQuery}`, { cache: "no-store" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = (await res.json()) as LoadResponse;
       setMessages(data.messages);
@@ -66,7 +66,7 @@ export function MessagesPanel({ filingId, isAdmin }: Props) {
     } catch (e) {
       setLoadError(e instanceof Error ? e.message : "Failed to load messages");
     }
-  }, [filingId, roleQuery]);
+  }, [apiBase, roleQuery]);
 
   useEffect(() => {
     load();
@@ -85,7 +85,7 @@ export function MessagesPanel({ filingId, isAdmin }: Props) {
     setSendError(null);
     try {
       const attachmentBase64 = attachmentFile ? await fileToBase64(attachmentFile) : undefined;
-      const res = await fetch(`/api/filings/${filingId}/messages${roleQuery}`, {
+      const res = await fetch(`${apiBase}${roleQuery}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -167,7 +167,7 @@ export function MessagesPanel({ filingId, isAdmin }: Props) {
         )}
         {messages?.map((m) => {
           const mine = m.fromAdmin === isAdmin;
-          const attachmentUrl = `/api/filings/${filingId}/messages/${m.id}/attachment`;
+          const attachmentUrl = `${apiBase}/${m.id}/attachment`;
           const hasBody = m.body.trim().length > 0;
           const senderLabel = m.fromAdmin
             ? isAdmin ? "You (admin)" : "Form5472 Prep team"

@@ -185,7 +185,7 @@ export default async function FilingDetailPage({
           post; admin notifications go to the filing's owner email if one
           was captured at /start (i.e. filing.user is non-null), even when
           the current browser doesn't have an active user cookie. */}
-      <MessagesPanel filingId={filing.id} isAdmin={false} />
+      <MessagesPanel apiBase={`/api/filings/${filing.id}/messages`} isAdmin={false} />
     </div>
   );
 }

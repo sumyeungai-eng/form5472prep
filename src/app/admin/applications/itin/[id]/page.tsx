@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { MessagesPanel } from "@/components/MessagesPanel";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { ItinAdminActions } from "./ItinAdminActions";
@@ -80,6 +81,10 @@ export default async function AdminItinApplicationPage({ params }: { params: { i
         currentAdminNotes={app.adminNotes ?? ""}
         currentItin={app.itin ?? ""}
       />
+
+      <div className="mt-8">
+        <MessagesPanel apiBase={`/api/applications/itin/${app.id}/messages`} isAdmin />
+      </div>
     </div>
   );
 }

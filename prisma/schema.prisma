@@ -328,18 +328,24 @@ model FilingChangeLog {
 // (e.g. customer GET marks fromAdmin=true rows as read, and vice versa). The
 // "first unread" email rule uses unread counts to debounce notifications.
 model Message {
-  id             String    @id @default(cuid())
-  filingId       String
-  filing         Filing    @relation(fields: [filingId], references: [id], onDelete: Cascade)
-  fromAdmin      Boolean
-  body           String
-  attachmentKey  String?
-  attachmentName String?
-  attachmentType String?
-  readAt         DateTime?
-  createdAt      DateTime  @default(now())
+  id                String           @id @default(cuid())
+  filingId          String?
+  filing            Filing?          @relation(fields: [filingId], references: [id], onDelete: Cascade)
+  einApplicationId  String?
+  einApplication    EinApplication?  @relation(fields: [einApplicationId], references: [id], onDelete: Cascade)
+  itinApplicationId String?
+  itinApplication   ItinApplication? @relation(fields: [itinApplicationId], references: [id], onDelete: Cascade)
+  fromAdmin         Boolean
+  body              String
+  attachmentKey     String?
+  attachmentName    String?
+  attachmentType    String?
+  readAt            DateTime?
+  createdAt         DateTime         @default(now())
 
   @@index([filingId, createdAt])
+  @@index([einApplicationId, createdAt])
+  @@index([itinApplicationId, createdAt])
 }
 
 model FilingDocument {
@@ -438,6 +444,7 @@ model EinApplication {
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
+  messages Message[]
 }
 
 enum EinStatus {
@@ -475,6 +482,7 @@ model ItinApplication {
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
+  messages Message[]
 }
 
 enum ItinStatus {

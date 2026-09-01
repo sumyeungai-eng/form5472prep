@@ -8,7 +8,7 @@ async function main() {
   });
   for (const m of msgs) {
     console.log(
-      `${m.createdAt.toISOString()}  filing=${m.filingId.slice(0,8)}.. fromAdmin=${m.fromAdmin}  body="${m.body.slice(0,60)}${m.body.length>60?"…":""}"`,
+      `${m.createdAt.toISOString()}  subject=${(m.filingId ?? m.einApplicationId ?? m.itinApplicationId ?? "?").slice(0,8)}.. fromAdmin=${m.fromAdmin}  body="${m.body.slice(0,60)}${m.body.length>60?"…":""}"`,
     );
   }
   if (msgs.length === 0) console.log("(no messages in DB)");
