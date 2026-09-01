@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 import { Container } from "@/components/Container";
+import { getAllPosts, type Post } from "@/lib/content/posts";
 import { useI18n } from "@/lib/i18n/useI18n";
+import { getParams } from "@/lib/tax/params";
 
 type GuideCard = {
   href: string;
@@ -11,6 +14,15 @@ type GuideCard = {
   descriptionZh: string;
   descriptionEn: string;
   ready: boolean;
+};
+
+type Lang = "zh" | "en";
+type PostKind = Post["kind"];
+
+const kindLabels: Record<PostKind, { zh: string; en: string }> = {
+  "tax-news": { zh: "稅務消息", en: "Tax news" },
+  "site-update": { zh: "網站更新", en: "Site update" },
+  article: { zh: "文章", en: "Article" }
 };
 
 const guideCards: GuideCard[] = [
@@ -99,8 +111,22 @@ const guideCards: GuideCard[] = [
   }
 ];
 
+const posts = getAllPosts();
+
 export default function GuidesPage() {
-  const { lang } = useI18n();
+  const { lang, year } = useI18n();
+  const params = getParams(year);
+  const params2024 = getParams("2024_25");
+  const params2025 = getParams("2025_26");
+
+  const variables = useMemo(
+    () => ({
+      reductionCap2024: hkd(params2024.taxReduction.cap, lang),
+      reductionCap2025: hkd(params2025.taxReduction.cap, lang),
+      reductionPercent: formatPercent(params.taxReduction.percent, lang)
+    }),
+    [lang, params.taxReduction.percent, params2024.taxReduction.cap, params2025.taxReduction.cap]
+  );
 
   return (
     <main>
@@ -124,6 +150,11 @@ export default function GuidesPage() {
 
       <section className="bg-warm-50 py-12 sm:py-16">
         <Container>
+          <div className="mb-6 max-w-3xl">
+            <h2 className="text-2xl font-bold text-navy-900">
+              {lang === "zh" ? "參考指南" : "Reference guides"}
+            </h2>
+          </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {guideCards.map((guide) => (
               <Link key={guide.href} href={guide.href} className="card focus-ring flex flex-col p-5">
@@ -148,6 +179,83 @@ export default function GuidesPage() {
           </div>
         </Container>
       </section>
+
+      <section className="bg-white py-12 sm:py-16">
+        <Container>
+          <div className="max-w-3xl">
+            <h2 className="text-2xl font-bold text-navy-900">
+              {lang === "zh" ? "最新消息與文章" : "Updates & articles"}
+            </h2>
+            <p className="mt-3 text-base leading-7 text-warm-700">
+              {lang === "zh"
+                ? "參考指南整理稅務規則；這裡集中記錄最新改動、網站更新及實用做法。"
+                : "The reference guides explain the rules; this section covers recent changes, site updates, and practical how-tos."}
+            </p>
+          </div>
+
+          {posts.length ? (
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {posts.map((post) => {
+                const title = interpolate(lang === "zh" ? post.titleZh : post.titleEn, variables);
+                const summary = interpolate(lang === "zh" ? post.summaryZh : post.summaryEn, variables);
+
+                return (
+                  <Link
+                    key={post.slug}
+                    href={`/guides/posts/${post.slug}`}
+                    className="card focus-ring flex flex-col p-5"
+                  >
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="rounded-md bg-teal-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-teal-800">
+                        {kindLabels[post.kind][lang]}
+                      </span>
+                      <span className="text-sm font-medium text-warm-600">
+                        {formatDate(post.publishedISO, lang)}
+                      </span>
+                    </div>
+                    <h3 className="mt-4 text-lg font-bold leading-tight text-navy-900">{title}</h3>
+                    <p className="mt-3 flex-1 text-sm leading-6 text-warm-700">{summary}</p>
+                    <span className="mt-4 text-sm font-semibold text-teal-700">
+                      {lang === "zh" ? "閱讀文章 →" : "Read post →"}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="mt-8 rounded-md border border-warm-200 bg-warm-50 p-5 text-sm leading-6 text-warm-700">
+              {lang === "zh" ? "暫時未有最新文章。" : "No updates yet."}
+            </div>
+          )}
+        </Container>
+      </section>
     </main>
   );
+}
+
+function hkd(value: number, lang: Lang) {
+  return new Intl.NumberFormat(lang === "zh" ? "zh-HK" : "en-HK", {
+    style: "currency",
+    currency: "HKD",
+    maximumFractionDigits: 0
+  }).format(value);
+}
+
+function formatPercent(value: number, lang: Lang) {
+  return new Intl.NumberFormat(lang === "zh" ? "zh-HK" : "en-HK", {
+    style: "percent",
+    maximumFractionDigits: 2
+  }).format(value);
+}
+
+function formatDate(value: string, lang: Lang) {
+  return new Intl.DateTimeFormat(lang === "zh" ? "zh-HK" : "en-HK", {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  }).format(new Date(`${value}T00:00:00+08:00`));
+}
+
+function interpolate(text: string, variables: Record<string, string>) {
+  return text.replace(/\{(\w+)\}/g, (match, key: string) => variables[key] ?? match);
 }
