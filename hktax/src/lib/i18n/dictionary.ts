@@ -43,6 +43,10 @@ export const dictionary = {
     zh: "稅務指南",
     en: "Guides"
   },
+  "header.nav.contact": {
+    zh: "聯絡我們",
+    en: "Contact"
+  },
   "header.language.ariaLabel": {
     zh: "切換語言",
     en: "Switch language"
@@ -88,6 +92,10 @@ export const dictionary = {
   "footer.links.ariaLabel": {
     zh: "頁尾連結",
     en: "Footer links"
+  },
+  "footer.links.feedback": {
+    zh: "改進建議",
+    en: "Feedback"
   },
   "footer.copyright": {
     zh: "保留所有權利。",
@@ -220,6 +228,62 @@ export const dictionary = {
   "home.privacy.note": {
     zh: "100% 瀏覽器內計算，資料不會上傳。",
     en: "All computation stays in your browser; nothing is uploaded."
+  },
+  "contact.eyebrow": {
+    zh: "聯絡",
+    en: "Contact"
+  },
+  "contact.title": {
+    zh: "聯絡我們",
+    en: "Contact us"
+  },
+  "contact.intro": {
+    zh: "如你對這個香港個人稅務教育工具有一般查詢、私隱問題或技術問題，可以使用以下表格聯絡網站營運者。",
+    en: "Use this form to contact the site owner about this Hong Kong personal tax education tool, including general questions, privacy questions, or technical issues."
+  },
+  "contact.safetyTitle": {
+    zh: "請勿提交敏感稅務資料",
+    en: "Do not send sensitive tax details"
+  },
+  "contact.notIrdNote": {
+    zh: "本網站只屬教育工具，營運者並非稅務局，不能查閱任何人的稅務帳戶，也不能代任何人報稅或處理個案。請勿透過此表格提交香港身份證號碼、密碼或完整稅務資料。",
+    en: "This site is an educational tool. The operators are not the Inland Revenue Department and cannot access anyone's tax account, file on anyone's behalf, or handle individual tax cases. Do not send HKID numbers, passwords, or full tax details through this form."
+  },
+  "contact.irdReferralNote": {
+    zh: "如屬真正稅務帳戶查詢，請直接聯絡稅務局：",
+    en: "For genuine tax-account enquiries, contact the IRD directly:"
+  },
+  "contact.irdLinkText": {
+    zh: "稅務局網站",
+    en: "IRD website"
+  },
+  "contact.privacyNote": {
+    zh: "稅務計算機本身仍然 100% 在你的瀏覽器內運算；只有你在此表格輸入的內容會被傳送。",
+    en: "The tax calculator itself still runs 100% in your browser; only the contents you type into this form are transmitted."
+  },
+  "feedback.eyebrow": {
+    zh: "意見",
+    en: "Feedback"
+  },
+  "feedback.title": {
+    zh: "改進建議",
+    en: "Suggest an improvement"
+  },
+  "feedback.intro": {
+    zh: "如果你發現錯誤、對計算結果有疑問，或想建議改善介面和內容，可以在這裡告訴網站營運者。",
+    en: "Tell the site owner if you spot an issue, have a question about a calculation, or want to suggest improvements to the interface or content."
+  },
+  "feedback.notesTitle": {
+    zh: "私下閱讀",
+    en: "Privately reviewed"
+  },
+  "feedback.notPublishedNote": {
+    zh: "你的建議只會由網站擁有人私下閱讀，不會發布在網站任何位置；本網站沒有公開留言板。",
+    en: "Suggestions are read privately by the site owner and are not published anywhere on the site; there is no public comment board."
+  },
+  "feedback.privacyNote": {
+    zh: "稅務計算機本身仍然 100% 在你的瀏覽器內運算；只有你在此表格輸入的內容會被傳送。",
+    en: "The tax calculator itself still runs 100% in your browser; only the contents you type into this form are transmitted."
   },
   "placeholder.comingSoon": {
     zh: "建設中",

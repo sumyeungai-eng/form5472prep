@@ -13,7 +13,8 @@ const navLinks = [
   { href: "/wizard", labelKey: "header.nav.wizard" },
   { href: "/calculators", labelKey: "header.nav.calculators" },
   { href: "/deductions", labelKey: "header.nav.deductions" },
-  { href: "/guides", labelKey: "header.nav.guides" }
+  { href: "/guides", labelKey: "header.nav.guides" },
+  { href: "/contact", labelKey: "header.nav.contact" }
 ] as const;
 
 const languages: Language[] = ["zh", "en"];

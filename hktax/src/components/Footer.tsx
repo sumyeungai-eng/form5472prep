@@ -9,7 +9,9 @@ const footerLinks = [
   { href: "/wizard", labelKey: "header.nav.wizard" },
   { href: "/calculators", labelKey: "header.nav.calculators" },
   { href: "/deductions", labelKey: "header.nav.deductions" },
-  { href: "/guides", labelKey: "header.nav.guides" }
+  { href: "/guides", labelKey: "header.nav.guides" },
+  { href: "/contact", labelKey: "header.nav.contact" },
+  { href: "/feedback", labelKey: "footer.links.feedback" }
 ] as const;
 
 export function Footer() {
