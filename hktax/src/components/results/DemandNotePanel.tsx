@@ -11,6 +11,7 @@ type DemandNotePanelProps = {
 };
 
 export function DemandNotePanel({ demandItems, hasPropertyHead, lang }: DemandNotePanelProps) {
+  const tableHeadingTracking = lang === "en" ? "tracking-[0.12em] uppercase" : "";
   const totals = demandItems.reduce(
     (sum, item) => ({
       finalTax: sum.finalTax + item.demand.finalTax,
@@ -23,10 +24,10 @@ export function DemandNotePanel({ demandItems, hasPropertyHead, lang }: DemandNo
   );
 
   return (
-    <section className="rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8">
+    <section className="card p-5 sm:p-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-navy-900">
+          <h2 className="display-subsection">
             {resultsT(resultsDictionary.demandTitle, lang)}
           </h2>
           <Link
@@ -48,9 +49,9 @@ export function DemandNotePanel({ demandItems, hasPropertyHead, lang }: DemandNo
             <Metric label={resultsT(resultsDictionary.secondInstallment, lang)} value={formatHKD(totals.secondAmount)} />
           </dl>
 
-          <div className="mt-5 overflow-x-auto">
+          <div className="mt-5 overflow-x-auto rounded-md border border-warm-150 shadow-field">
             <table className="min-w-full divide-y divide-warm-200 text-left text-sm">
-              <thead className="bg-warm-50 text-xs uppercase text-warm-600">
+              <thead className={`bg-warm-50 text-xs text-warm-600 ${tableHeadingTracking}`}>
                 <tr>
                   <th className="px-3 py-2 font-bold">{resultsT(resultsDictionary.computationLine, lang)}</th>
                   <th className="px-3 py-2 text-right font-bold">{resultsT(resultsDictionary.finalTax, lang)}</th>
@@ -84,7 +85,7 @@ export function DemandNotePanel({ demandItems, hasPropertyHead, lang }: DemandNo
       )}
 
       {hasPropertyHead ? (
-        <p className="mt-5 rounded-md border border-gold-200 bg-gold-100 p-4 text-sm leading-6 text-navy-900">
+        <p className="mt-5 rounded-md border border-gold-200 bg-gold-100 p-4 text-sm leading-6 text-navy-900 shadow-field">
           {resultsT(resultsDictionary.propertyReductionNote, lang)}
         </p>
       ) : null}
@@ -100,7 +101,7 @@ export function DemandNotePanel({ demandItems, hasPropertyHead, lang }: DemandNo
 
 function Metric({ label, strong = false, value }: { label: string; strong?: boolean; value: string }) {
   return (
-    <div className={`rounded-md border p-3 ${strong ? "border-teal-200 bg-teal-50" : "border-warm-100 bg-warm-50"}`}>
+    <div className={`rounded-md border p-3 shadow-field ${strong ? "border-teal-200 bg-teal-50" : "border-warm-150 bg-warm-50"}`}>
       <dt className="text-xs font-semibold text-warm-600">{label}</dt>
       <dd className="mt-1 text-lg font-bold text-navy-900">{value}</dd>
     </div>

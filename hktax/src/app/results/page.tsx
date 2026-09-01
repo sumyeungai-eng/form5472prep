@@ -31,8 +31,8 @@ export default function ResultsPage() {
 
   if (storedResult === undefined) {
     return (
-      <Container className="py-16 sm:py-24">
-        <section className="mx-auto max-w-3xl rounded-lg border border-warm-200 bg-white p-8 shadow-soft">
+      <Container className="py-20 sm:py-24 lg:py-28">
+        <section className="card mx-auto max-w-3xl p-8">
           <p className="text-sm font-semibold text-teal-800">
             {wizardT(wizardDictionary.common.loading, lang)}
           </p>
@@ -43,9 +43,9 @@ export default function ResultsPage() {
 
   if (storedResult === null) {
     return (
-      <Container className="py-16 sm:py-24">
-        <section className="mx-auto max-w-3xl rounded-lg border border-warm-200 bg-white p-8 text-center shadow-soft">
-          <h1 className="text-2xl font-bold text-navy-900">
+      <Container className="py-20 sm:py-24 lg:py-28">
+        <section className="card mx-auto max-w-3xl p-8 text-center sm:p-10">
+          <h1 className="display-subsection">
             {wizardT(wizardDictionary.results.title, lang)}
           </h1>
           <p className="mt-4 text-sm leading-6 text-warm-700">
@@ -53,7 +53,7 @@ export default function ResultsPage() {
           </p>
           <Link
             href="/wizard"
-            className="focus-ring mt-6 inline-flex min-h-11 items-center justify-center rounded-md bg-navy-900 px-5 py-2 text-sm font-bold text-white hover:bg-navy-800"
+            className="btn-primary mt-6"
           >
             {wizardT(wizardDictionary.results.backToWizard, lang)}
           </Link>
@@ -68,9 +68,9 @@ export default function ResultsPage() {
 
   if (!bestScenario || !separateScenario) {
     return (
-      <Container className="py-16 sm:py-24">
-        <section className="mx-auto max-w-3xl rounded-lg border border-warm-200 bg-white p-8 text-center shadow-soft">
-          <h1 className="text-2xl font-bold text-navy-900">
+      <Container className="py-20 sm:py-24 lg:py-28">
+        <section className="card mx-auto max-w-3xl p-8 text-center sm:p-10">
+          <h1 className="display-subsection">
             {wizardT(wizardDictionary.results.title, lang)}
           </h1>
           <p className="mt-4 text-sm leading-6 text-warm-700">
@@ -78,7 +78,7 @@ export default function ResultsPage() {
           </p>
           <Link
             href="/wizard"
-            className="focus-ring mt-6 inline-flex min-h-11 items-center justify-center rounded-md bg-navy-900 px-5 py-2 text-sm font-bold text-white hover:bg-navy-800"
+            className="btn-primary mt-6"
           >
             {wizardT(wizardDictionary.results.backToWizard, lang)}
           </Link>
@@ -97,8 +97,8 @@ export default function ResultsPage() {
   const hasPropertyHead = bestBreakdown.computations.some((item) => item.demandHead === "property");
 
   return (
-    <Container className="py-10 sm:py-14">
-      <div className="mx-auto max-w-6xl space-y-8">
+    <Container className="py-16 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-6xl space-y-10">
         <HeadlineCard
           bestScenario={bestScenario}
           optimizerResult={optimizerResult}
@@ -107,7 +107,7 @@ export default function ResultsPage() {
         />
 
         {!resolvedYear.exactMatch ? (
-          <p className="rounded-md border border-gold-200 bg-gold-100 p-4 text-sm leading-6 text-navy-900">
+          <p className="rounded-md border border-gold-200 bg-gold-100 p-4 text-sm leading-6 text-navy-900 shadow-field">
             {resultsT(resultsDictionary.fallbackYear, lang)}
           </p>
         ) : null}
@@ -144,7 +144,7 @@ export default function ResultsPage() {
 
         <Bir60Panel flags={bestBreakdown.bir60Flags} lang={lang} />
 
-        <details className="results-debug rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8">
+        <details className="results-debug card p-5 sm:p-8">
           <summary className="cursor-pointer text-sm font-bold text-navy-900">
             {resultsT(resultsDictionary.debugJson, lang)}
           </summary>

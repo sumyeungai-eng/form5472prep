@@ -134,6 +134,7 @@ const defaultProfitsInput: QuickProfitsInput = {
 export default function CalculatorsPage() {
   const router = useRouter();
   const { lang, year } = useI18n();
+  const eyebrowTracking = lang === "en" ? "tracking-[0.18em] uppercase" : "";
   const params = useMemo(() => getParams(year), [year]);
   const [salariesInput, setSalariesInput] = useState<QuickSalariesInput>(defaultSalariesInput);
   const [propertyInput, setPropertyInput] = useState<QuickPropertyInput>(defaultPropertyInput);
@@ -164,27 +165,27 @@ export default function CalculatorsPage() {
 
   return (
     <main>
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="max-w-4xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">
+            <p className={`text-xs font-bold text-gold-700 sm:text-sm ${eyebrowTracking}`}>
               {tr(dict.eyebrow, lang)}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+            <h1 className="display-section mt-4">
               {tr(dict.title, lang)}
             </h1>
             <p className="mt-5 text-base leading-7 text-warm-700">
               {tr(dict.intro, lang)}
             </p>
-            <p className="mt-4 inline-flex rounded-md border border-teal-100 bg-teal-50 px-3 py-2 text-sm font-bold text-teal-800">
+            <p className="mt-5 inline-flex rounded-md border border-teal-100 bg-teal-50 px-3 py-2 text-sm font-bold text-teal-800 shadow-field">
               {tr(dict.yearPrefix, lang)}: {formatYear(year)}
             </p>
           </div>
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-10 sm:py-14">
-        <Container className="space-y-8">
+      <section className="bg-warm-50 py-16 sm:py-20 lg:py-24">
+        <Container className="space-y-10">
           <CalculatorShell
             eyebrow="01"
             title={tr(dict.salaries.title, lang)}
@@ -213,7 +214,7 @@ export default function CalculatorsPage() {
                       ...current,
                       mpfMandatory: calculateQuickAnnualMpf(current.annualIncome, params),
                     }))}
-                    className="focus-ring inline-flex min-h-10 items-center justify-center rounded-md bg-navy-900 px-4 py-2 text-sm font-bold text-white hover:bg-navy-800"
+                    className="btn-primary"
                   >
                     {tr(dict.salaries.autoMpf, lang)}
                   </button>
@@ -257,7 +258,7 @@ export default function CalculatorsPage() {
                 ) : null}
               </div>
 
-              <ResultPanel title={tr(dict.common.results, lang)}>
+              <ResultPanel title={tr(dict.common.results, lang)} lang={lang}>
                 <MetricGrid>
                   <Metric label={tr(dict.salaries.finalTax, lang)} value={formatMoney(salariesResult.finalTax)} />
                   <Metric
@@ -335,7 +336,7 @@ export default function CalculatorsPage() {
                 />
               </div>
 
-              <ResultPanel title={tr(dict.common.results, lang)}>
+              <ResultPanel title={tr(dict.common.results, lang)} lang={lang}>
                 <MetricGrid>
                   <Metric label={tr(dict.property.nav, lang)} value={formatMoney(propertyResult.totalNav)} />
                   <Metric label={tr(dict.property.tax, lang)} value={formatMoney(propertyResult.totalTax)} />
@@ -345,7 +346,7 @@ export default function CalculatorsPage() {
                   lines={propertyBreakdown(propertyResult.perProperty[0]?.lines ?? [])}
                   lang={lang}
                 />
-                <div className="rounded-md border border-gold-100 bg-gold-100/50 p-4 text-sm leading-6 text-navy-900">
+                <div className="rounded-md border border-gold-200 bg-gold-100 p-4 text-sm leading-6 text-navy-900 shadow-field">
                   <p className="font-bold">{tr(dict.property.noReduction, lang)}</p>
                   <p className="mt-1 text-warm-700">{tr(dict.property.paHint, lang)}</p>
                 </div>
@@ -386,7 +387,7 @@ export default function CalculatorsPage() {
                 />
               </div>
 
-              <ResultPanel title={tr(dict.common.results, lang)}>
+              <ResultPanel title={tr(dict.common.results, lang)} lang={lang}>
                 <MetricGrid>
                   <Metric
                     label={tr(dict.profits.assessableProfits, lang)}
@@ -453,13 +454,13 @@ function CalculatorShell({
   title: string;
 }) {
   return (
-    <section className="rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-7">
-      <div className="mb-6 grid gap-4 border-b border-warm-100 pb-5 md:grid-cols-[auto_1fr] md:items-start">
-        <div className="flex h-11 w-11 items-center justify-center rounded-md bg-navy-900 text-sm font-bold text-gold">
+    <section className="card p-5 sm:p-7 lg:p-8">
+      <div className="mb-6 grid gap-4 border-b border-warm-150 pb-6 md:grid-cols-[auto_1fr] md:items-start">
+        <div className="flex h-11 w-11 items-center justify-center rounded-md bg-navy-950 text-sm font-black text-gold shadow-button">
           {eyebrow}
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-navy-900">{title}</h2>
+          <h2 className="display-subsection">{title}</h2>
           <p className="mt-2 text-sm leading-6 text-warm-700">{description}</p>
         </div>
       </div>
@@ -468,10 +469,12 @@ function CalculatorShell({
   );
 }
 
-function ResultPanel({ children, title }: { children: ReactNode; title: string }) {
+function ResultPanel({ children, lang, title }: { children: ReactNode; lang: Lang; title: string }) {
+  const eyebrowTracking = lang === "en" ? "tracking-[0.14em] uppercase" : "";
+
   return (
-    <aside className="space-y-5 rounded-md border border-teal-100 bg-teal-50 p-4 sm:p-5">
-      <h3 className="text-sm font-bold uppercase tracking-[0.14em] text-teal-800">{title}</h3>
+    <aside className="space-y-5 rounded-lg border border-teal-100 bg-teal-50 p-4 shadow-card sm:p-5">
+      <h3 className={`text-xs font-bold text-teal-800 sm:text-sm ${eyebrowTracking}`}>{title}</h3>
       {children}
     </aside>
   );
@@ -483,8 +486,8 @@ function MetricGrid({ children }: { children: ReactNode }) {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-white bg-white p-3">
-      <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-warm-600">{label}</dt>
+    <div className="rounded-md border border-warm-150 bg-white p-4 shadow-field">
+      <dt className="text-xs font-semibold text-warm-600">{label}</dt>
       <dd className="mt-2 text-xl font-bold text-navy-900">{value}</dd>
     </div>
   );
@@ -569,7 +572,7 @@ function CheckboxInput({
   return (
     <label
       htmlFor={id}
-      className="focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 flex cursor-pointer items-center gap-3 rounded-md border border-warm-200 bg-white px-4 py-3 text-sm font-semibold text-navy-900"
+      className="focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-warm-150 bg-white px-4 py-3 text-sm font-semibold text-navy-900 shadow-field hover:border-teal-400"
     >
       <input
         id={id}
@@ -608,8 +611,8 @@ function SegmentedControl<T extends string>({
               onClick={() => onChange(option.value)}
               className={`focus-ring min-h-10 rounded-md border px-4 py-2 text-sm font-bold transition ${
                 active
-                  ? "border-navy-900 bg-navy-900 text-white"
-                  : "border-warm-200 bg-white text-navy-900 hover:border-teal-400"
+                  ? "border-navy-950 bg-navy-950 text-white shadow-button"
+                  : "border-warm-150 bg-white text-navy-900 shadow-field hover:border-teal-400 hover:bg-teal-50"
               }`}
             >
               {option.label}
@@ -633,7 +636,7 @@ function Breakdown({
   return (
     <div>
       <h4 className="text-sm font-bold text-navy-900">{title}</h4>
-      <dl className="mt-3 divide-y divide-teal-100 rounded-md border border-teal-100 bg-white">
+      <dl className="mt-3 divide-y divide-teal-100 rounded-md border border-teal-100 bg-white shadow-field">
         {lines.map((line) => (
           <div key={line.key} className="grid grid-cols-[1fr_auto] gap-3 px-3 py-2">
             <dt className="text-sm text-warm-700">{lang === "zh" ? line.labelZh : line.labelEn}</dt>
@@ -647,7 +650,7 @@ function Breakdown({
 
 function SplitRow({ amount, label, tax }: { amount: number; label: string; tax: number }) {
   return (
-    <div className="grid gap-2 rounded-md border border-teal-100 bg-white p-3 sm:grid-cols-[1fr_auto] sm:items-center">
+    <div className="grid gap-2 rounded-md border border-teal-100 bg-white p-3 shadow-field sm:grid-cols-[1fr_auto] sm:items-center">
       <div>
         <p className="text-sm font-bold text-navy-900">{label}</p>
         <p className="mt-1 text-sm text-warm-700">{formatMoney(amount)}</p>
@@ -662,7 +665,7 @@ function WizardButton({ label, onClick }: { label: string; onClick: () => void }
     <button
       type="button"
       onClick={onClick}
-      className="focus-ring inline-flex min-h-11 w-full items-center justify-center rounded-md bg-gold px-5 py-3 text-center text-sm font-bold text-navy-950 hover:bg-gold-200"
+      className="btn-primary w-full"
     >
       {label}
     </button>

@@ -10,15 +10,16 @@ type ScenarioTableProps = {
 
 export function ScenarioTable({ optimizerResult, lang }: ScenarioTableProps) {
   const bestScenario = optimizerResult.scenarios.find((scenario) => scenario.id === optimizerResult.best);
+  const tableHeadingTracking = lang === "en" ? "tracking-[0.12em] uppercase" : "";
 
   return (
-    <section className="rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8">
-      <h2 className="text-xl font-bold text-navy-900">
+    <section className="card p-5 sm:p-8">
+      <h2 className="display-subsection">
         {resultsT(resultsDictionary.scenarioComparison, lang)}
       </h2>
-      <div className="mt-4 overflow-x-auto">
+      <div className="mt-5 overflow-x-auto rounded-md border border-warm-150 shadow-field">
         <table className="min-w-full divide-y divide-warm-200 text-left text-sm">
-          <thead className="bg-warm-50 text-xs uppercase text-warm-600">
+          <thead className={`bg-warm-50 text-xs text-warm-600 ${tableHeadingTracking}`}>
             <tr>
               <Column>{resultsT(resultsDictionary.scenario, lang)}</Column>
               <Column>{resultsT(resultsDictionary.status, lang)}</Column>
@@ -71,7 +72,7 @@ function ScenarioRow({
         </div>
       </td>
       <td className="px-3 py-3 align-top">
-        <span className={`inline-flex rounded-full px-2 py-1 text-xs font-bold ${
+        <span className={`inline-flex rounded-full border px-2 py-1 text-xs font-bold ${
           scenario.available ? "bg-teal-100 text-teal-800" : "bg-warm-100 text-warm-700"
         }`}
         >

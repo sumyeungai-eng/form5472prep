@@ -52,7 +52,7 @@ export function HelpPopover({ entry, label }: HelpPopoverProps) {
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((previous) => !previous)}
-        className="focus-ring inline-flex h-6 w-6 items-center justify-center rounded-full border border-teal-200 bg-teal-50 text-xs font-bold text-teal-700 hover:bg-teal-100"
+        className="focus-ring inline-flex h-6 w-6 items-center justify-center rounded-full border border-teal-200 bg-teal-50 text-xs font-bold text-teal-700 shadow-field hover:bg-teal-100"
       >
         ?
       </button>
@@ -60,7 +60,7 @@ export function HelpPopover({ entry, label }: HelpPopoverProps) {
         <span
           id={panelId}
           role="tooltip"
-          className="absolute left-0 top-8 z-20 w-72 rounded-md border border-warm-200 bg-white p-3 text-left text-sm font-normal leading-6 text-warm-700 shadow-soft"
+          className="absolute left-0 top-8 z-20 w-72 rounded-md border border-warm-150 bg-white p-3 text-left text-sm font-normal leading-6 text-warm-700 shadow-card"
         >
           {wizardT(entry, lang)}
         </span>

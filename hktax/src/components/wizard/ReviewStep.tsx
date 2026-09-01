@@ -56,13 +56,13 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
   return (
     <form id={formId} onSubmit={handleSubmit} className="space-y-8" noValidate>
       <div>
-        <h1 className="text-2xl font-bold text-navy-900">
+        <h1 className="display-subsection">
           {wizardT(wizardDictionary.review.title, lang)}
         </h1>
       </div>
 
       {errorMessage ? (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800" role="alert">
+        <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800 shadow-field" role="alert">
           <p className="font-bold">
             {wizardDictionary.review.mappingError.zh} / {wizardDictionary.review.mappingError.en}
           </p>
@@ -71,7 +71,7 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
       ) : null}
 
       {showMarriedAllowanceWarning ? (
-        <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="alert">
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 shadow-field" role="alert">
           <p className="font-bold">
             {lang === "zh" ? "未申索已婚人士免稅額" : "Married person's allowance is not claimed"}
           </p>
@@ -83,7 +83,7 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
           <button
             type="button"
             onClick={() => setCurrentStepIndex(0)}
-            className="focus-ring mt-3 inline-flex min-h-10 items-center justify-center rounded-md border border-amber-300 bg-white px-4 py-2 text-sm font-bold text-amber-900 hover:bg-amber-100"
+            className="focus-ring mt-3 inline-flex min-h-11 items-center justify-center rounded-md border border-amber-300 bg-white px-4 py-2 text-sm font-bold text-amber-900 shadow-field hover:bg-amber-100"
           >
             {lang === "zh" ? "返回基本資料修正" : "Back to basics to fix"}
           </button>
@@ -91,7 +91,7 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
       ) : null}
 
       {hintCount > 0 ? (
-        <section className="space-y-4 rounded-md border border-warm-200 bg-white p-5">
+        <section className="card space-y-4 p-5 sm:p-6">
           <h2 className="text-lg font-bold text-navy-900">
             {wizardT(wizardDictionary.hints.reviewHeading, lang)} ({hintCount})
           </h2>
@@ -99,7 +99,7 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
         </section>
       ) : null}
 
-      <section className="space-y-4 rounded-md border border-warm-200 bg-white p-5">
+      <section className="card space-y-4 p-5 sm:p-6">
         <h2 className="text-lg font-bold text-navy-900">
           {wizardT(wizardDictionary.review.personSummary, lang)}
         </h2>
@@ -133,7 +133,7 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
 
       <FamilySummary family={wizardState.family} year={wizardState.year} lang={lang} />
 
-      <section className="space-y-4 rounded-md border border-warm-200 bg-white p-5">
+      <section className="card space-y-4 p-5 sm:p-6">
         <h2 className="text-lg font-bold text-navy-900">
           {wizardT(wizardDictionary.review.deductionsSummary, lang)}
         </h2>
@@ -146,7 +146,7 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
 
       <button
         type="submit"
-        className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md bg-navy-900 px-5 py-2 text-sm font-bold text-white hover:bg-navy-800"
+        className="btn-primary"
       >
         {wizardT(wizardDictionary.common.compute, lang)}
       </button>
@@ -164,7 +164,7 @@ function PersonSummary({
   personId: WizardPersonId;
 }) {
   return (
-    <section className="rounded-md border border-warm-100 bg-warm-50 p-4">
+    <section className="rounded-md border border-warm-150 bg-warm-50 p-4 shadow-field">
       <h3 className="text-sm font-bold text-navy-900">{personName(personId, lang)}</h3>
       <dl className="mt-3 space-y-2 text-sm text-warm-700">
         <SummaryItem
@@ -206,7 +206,7 @@ function FamilySummary({
   const careHomeTotal = family.parents.reduce((sum, parent) => sum + (parent.careHomeExpenses ?? 0), 0);
 
   return (
-    <section className="space-y-4 rounded-md border border-warm-200 bg-white p-5">
+    <section className="card space-y-4 p-5 sm:p-6">
       <h2 className="text-lg font-bold text-navy-900">
         {wizardT(wizardDictionary.review.familySummary, lang)}
       </h2>
@@ -235,7 +235,7 @@ function DeductionsSummary({
   personId: WizardPersonId;
 }) {
   return (
-    <section className="rounded-md border border-warm-100 bg-warm-50 p-4">
+    <section className="rounded-md border border-warm-150 bg-warm-50 p-4 shadow-field">
       <h3 className="text-sm font-bold text-navy-900">{personName(personId, lang)}</h3>
       <dl className="mt-3 space-y-2 text-sm text-warm-700">
         <SummaryItem label={wizardT(wizardDictionary.deductions.selfEducation.label, lang)} value={formatHKD(deductions.selfEducation ?? 0)} />

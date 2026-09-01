@@ -10,16 +10,17 @@ type Bir60PanelProps = {
 
 export function Bir60Panel({ flags, lang }: Bir60PanelProps) {
   const rows = getBir60MappingRows(flags);
+  const tableHeadingTracking = lang === "en" ? "tracking-[0.12em] uppercase" : "";
 
   if (!rows.length) {
     return null;
   }
 
   return (
-    <section className="rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8">
+    <section className="card p-5 sm:p-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-navy-900">
+          <h2 className="display-subsection">
             {resultsT(resultsDictionary.bir60Title, lang)}
           </h2>
           <p className="mt-2 text-sm leading-6 text-warm-700">
@@ -28,15 +29,15 @@ export function Bir60Panel({ flags, lang }: Bir60PanelProps) {
         </div>
         <Link
           href="/bir60/"
-          className="focus-ring inline-flex min-h-11 flex-none items-center justify-center rounded-md bg-gold px-5 py-2 text-sm font-bold text-navy-900 hover:bg-gold-600 hover:text-white"
+          className="btn-primary flex-none"
         >
           {resultsT(resultsDictionary.generateDraft, lang)}
         </Link>
       </div>
 
-      <div className="mt-5 overflow-x-auto">
+      <div className="mt-5 overflow-x-auto rounded-md border border-warm-150 shadow-field">
         <table className="min-w-full divide-y divide-warm-200 text-left text-sm">
-          <thead className="bg-warm-50 text-xs uppercase text-warm-600">
+          <thead className={`bg-warm-50 text-xs text-warm-600 ${tableHeadingTracking}`}>
             <tr>
               <th className="px-3 py-2 font-bold">{resultsT(resultsDictionary.bir60Part, lang)}</th>
               <th className="px-3 py-2 font-bold">{resultsT(resultsDictionary.bir60Figure, lang)}</th>

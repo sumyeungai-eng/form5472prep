@@ -164,7 +164,7 @@ export function CheckboxField<T extends FieldValues>({
           type="checkbox"
           aria-invalid={Boolean(error)}
           aria-describedby={describedBy}
-          className="focus-ring mt-1 h-4 w-4 rounded border-warm-300 text-teal-700"
+        className="focus-ring mt-1 h-4 w-4 rounded border-warm-300 text-teal-700 shadow-field"
           {...register(name)}
         />
         <div className="min-w-0 flex-1">
@@ -206,7 +206,7 @@ export function RadioGroupField<T extends FieldValues>({
             <label
               key={option.value}
               htmlFor={optionId}
-              className="focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 inline-flex cursor-pointer items-center gap-2 rounded-md border border-warm-200 bg-white px-3 py-2 text-sm font-medium text-navy-900 hover:border-teal-400"
+              className="focus-within:ring-2 focus-within:ring-gold focus-within:ring-offset-2 inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-md border border-warm-150 bg-white px-3 py-2 text-sm font-medium text-navy-900 shadow-field hover:border-teal-400"
             >
               <input
                 id={optionId}

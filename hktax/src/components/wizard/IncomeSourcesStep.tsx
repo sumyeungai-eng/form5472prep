@@ -56,7 +56,7 @@ export function IncomeSourcesStep({ formId, onValid }: IncomeSourcesStepProps) {
       <input type="hidden" {...register("personA.personId")} />
       <input type="hidden" {...register("personB.personId")} />
       <div>
-        <h1 className="text-2xl font-bold text-navy-900">
+        <h1 className="display-subsection">
           {wizardT(wizardDictionary.incomeSources.title, lang)}
         </h1>
       </div>
@@ -81,7 +81,7 @@ function IncomeSourceFields({
   const root = personId === "A" ? "personA" : "personB";
 
   return (
-    <fieldset className="rounded-md border border-warm-200 bg-white p-5">
+    <fieldset className="card p-5 sm:p-6">
       <legend className="px-2 text-sm font-bold text-navy-900">
         {wizardT(personId === "A" ? wizardDictionary.common.personA : wizardDictionary.common.personB, lang)}
       </legend>

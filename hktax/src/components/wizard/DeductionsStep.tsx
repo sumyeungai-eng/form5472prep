@@ -87,7 +87,7 @@ export function DeductionsStep({ formId, onValid }: DeductionsStepProps) {
       <input type="hidden" {...register("personA.personId")} />
       <input type="hidden" {...register("personB.personId")} />
       <div>
-        <h1 className="text-2xl font-bold text-navy-900">
+        <h1 className="display-subsection">
           {wizardT(wizardDictionary.deductions.title, lang)}
         </h1>
       </div>
@@ -136,7 +136,7 @@ function PersonDeductions({
     ?? "none") as WizardHousingDeductionKind;
 
   return (
-    <fieldset className="space-y-5 rounded-md border border-warm-200 bg-white p-5">
+    <fieldset className="card space-y-5 p-5 sm:p-6">
       <legend className="px-2 text-sm font-bold text-navy-900">
         {wizardT(personId === "A" ? wizardDictionary.common.personA : wizardDictionary.common.personB, lang)}
       </legend>
@@ -179,7 +179,7 @@ function PersonDeductions({
         />
       </div>
 
-      <section className="space-y-4 rounded-md border border-warm-100 bg-warm-50 p-4">
+      <section className="space-y-4 rounded-md border border-warm-150 bg-warm-50 p-4 shadow-field">
         <RadioGroupField
           name={`${root}.deductions.housing.kind` as Path<DeductionsStepFormValues>}
           register={register}

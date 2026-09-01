@@ -13,31 +13,33 @@ type HeadlineCardProps = {
 };
 
 export function HeadlineCard({ bestScenario, optimizerResult, lang, yearLabel }: HeadlineCardProps) {
+  const eyebrowTracking = lang === "en" ? "tracking-[0.18em] uppercase" : "";
+
   return (
-    <section className="rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8">
+    <section className="overflow-hidden rounded-lg border border-white/10 bg-navy-950 p-5 text-white shadow-card sm:p-8 lg:p-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase text-teal-700">
+          <p className={`text-xs font-bold text-gold sm:text-sm ${eyebrowTracking}`}>
             {resultsT(resultsDictionary.recommended, lang)}
           </p>
-          <h1 className="mt-2 text-3xl font-bold leading-tight text-navy-900">
+          <h1 className="display-section mt-3 text-white">
             {lang === "zh" ? bestScenario.labelZh : bestScenario.labelEn}
           </h1>
-          <p className="mt-2 text-sm font-medium text-warm-600">
+          <p className="mt-3 text-sm font-medium text-teal-50">
             {resultsT(resultsDictionary.year, lang)}: {yearLabel}
           </p>
         </div>
         <div className="results-print-action flex flex-col gap-2 sm:items-end">
           <Link
             href="/bir60/"
-            className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md bg-gold px-5 py-2 text-sm font-bold text-navy-900 hover:bg-gold-600 hover:text-white"
+            className="btn-primary"
           >
             {resultsT(resultsDictionary.generateDraft, lang)}
           </Link>
           <button
             type="button"
             onClick={() => window.print()}
-            className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-warm-300 px-5 py-2 text-sm font-bold text-navy-900 hover:border-teal-300"
+            className="btn-secondary"
           >
             {resultsT(resultsDictionary.print, lang)}
           </button>
@@ -55,11 +57,11 @@ export function HeadlineCard({ bestScenario, optimizerResult, lang, yearLabel }:
         />
       </dl>
 
-      <div className="mt-5 rounded-md border border-teal-100 bg-teal-50 p-4">
-        <p className="text-xs font-semibold uppercase text-teal-800">
+      <div className="mt-6 rounded-md border border-white/10 bg-white/[0.07] p-4 shadow-field">
+        <p className={`text-xs font-bold text-gold ${eyebrowTracking}`}>
           {resultsT(resultsDictionary.optimizerReason, lang)}
         </p>
-        <p className="mt-2 text-sm leading-6 text-navy-900">
+        <p className="mt-2 text-sm leading-6 text-teal-50">
           {lang === "zh" ? optimizerResult.explanationZh : optimizerResult.explanationEn}
         </p>
       </div>
@@ -69,9 +71,9 @@ export function HeadlineCard({ bestScenario, optimizerResult, lang, yearLabel }:
 
 function Metric({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="rounded-md border border-warm-100 bg-warm-50 p-4">
-      <dt className="font-semibold text-warm-700">{label}</dt>
-      <dd className="mt-1 text-2xl font-bold text-navy-900">{value}</dd>
+    <div className="rounded-md border border-white/[0.12] bg-white p-5 text-navy-950 shadow-card">
+      <dt className="text-sm font-semibold text-warm-700">{label}</dt>
+      <dd className="mt-2 text-3xl font-extrabold text-navy-950 sm:text-display-sm">{value}</dd>
     </div>
   );
 }

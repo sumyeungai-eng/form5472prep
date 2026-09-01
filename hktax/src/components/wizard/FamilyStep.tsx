@@ -93,14 +93,14 @@ export function FamilyStep({ formId, onValid }: FamilyStepProps) {
   return (
     <form id={formId} onSubmit={handleSubmit(onSubmit, scrollToFirstError)} className="space-y-8" noValidate>
       <div>
-        <h1 className="text-2xl font-bold text-navy-900">
+        <h1 className="display-subsection">
           {wizardT(wizardDictionary.family.title, lang)}
         </h1>
       </div>
       <HintsPanel step="family" />
       <ChildrenFields register={register} setValue={setValue} watch={watch} errors={errors} year={wizardState.year} />
       <ParentFields register={register} setValue={setValue} watch={watch} errors={errors} year={wizardState.year} />
-      <div className="grid gap-5 rounded-md border border-warm-200 bg-white p-5 md:grid-cols-2">
+      <div className="card grid gap-5 p-5 md:grid-cols-2 sm:p-6">
         <NumberField name="siblingCount" register={register} label={wizardDictionary.family.siblingCount.label} help={wizardDictionary.family.siblingCount.help} error={getFieldError(errors, "siblingCount")} />
         <NumberField name="disabledDependantCount" register={register} label={wizardDictionary.family.disabledDependantCount.label} help={wizardDictionary.family.disabledDependantCount.help} error={getFieldError(errors, "disabledDependantCount")} />
         <CheckboxField name="singleParent" register={register} label={wizardDictionary.family.singleParent.label} help={wizardDictionary.family.singleParent.help} hint={allowanceExplainer("single-parent", params, lang)} error={getFieldError(errors, "singleParent")} />
@@ -110,7 +110,7 @@ export function FamilyStep({ formId, onValid }: FamilyStepProps) {
         ) : null}
       </div>
       {wizardState.maritalStatus === "married" ? (
-        <div className="grid gap-5 rounded-md border border-warm-200 bg-white p-5 md:grid-cols-2">
+        <div className="card grid gap-5 p-5 md:grid-cols-2 sm:p-6">
           <RadioGroupField
             name={"claimingSpouseForFamilyAllowances" as Path<FamilyWizardFormValues>}
             register={register}
@@ -152,11 +152,11 @@ function ChildrenFields({
   const params = getParams(year);
 
   return (
-    <section className="space-y-3 rounded-md border border-warm-200 bg-white p-5">
+    <section className="card space-y-4 p-5 sm:p-6">
       <h2 className="text-lg font-bold text-navy-900">{wizardT(wizardDictionary.family.children.label, lang)}</h2>
       {allowanceExplainer("child", params, lang)}
       {children.map((child, index) => (
-        <div key={index} className="grid gap-3 rounded-md border border-warm-100 bg-warm-50 p-3 md:grid-cols-[1fr_auto]">
+        <div key={index} className="grid gap-3 rounded-md border border-warm-150 bg-warm-50 p-4 shadow-field md:grid-cols-[1fr_auto]">
           <NumberField
             name={`children.${index}.birthYear` as Path<FamilyWizardFormValues>}
             register={register}
@@ -170,7 +170,7 @@ function ChildrenFields({
                 {wizardT(wizardDictionary.sourceDetails.newborn, lang)}
               </span>
             ) : null}
-            <button type="button" className="focus-ring rounded-md px-3 py-2 text-sm font-semibold text-red-700" onClick={() => setValue("children", children.filter((_item, itemIndex) => itemIndex !== index), { shouldDirty: true })}>
+            <button type="button" className="focus-ring rounded-md px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50" onClick={() => setValue("children", children.filter((_item, itemIndex) => itemIndex !== index), { shouldDirty: true })}>
               {wizardT(wizardDictionary.common.remove, lang)}
             </button>
           </div>
@@ -184,7 +184,7 @@ function ChildrenFields({
           />
         </div>
       ))}
-      <button type="button" className="focus-ring rounded-md border border-teal-200 px-3 py-2 text-sm font-bold text-teal-700" onClick={() => setValue("children", [...children, { key: `child-${children.length + 1}`, birthYear: endYear, bornDuringYearOfAssessment: true }], { shouldDirty: true })}>
+      <button type="button" className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-teal-200 bg-white px-4 py-2 text-sm font-bold text-teal-700 shadow-field hover:border-teal-400 hover:bg-teal-50" onClick={() => setValue("children", [...children, { key: `child-${children.length + 1}`, birthYear: endYear, bornDuringYearOfAssessment: true }], { shouldDirty: true })}>
         {wizardT(wizardDictionary.common.add, lang)}
       </button>
     </section>
@@ -209,11 +209,11 @@ function ParentFields({
   const params = getParams(year);
 
   return (
-    <section className="space-y-3 rounded-md border border-warm-200 bg-white p-5">
+    <section className="card space-y-4 p-5 sm:p-6">
       <h2 className="text-lg font-bold text-navy-900">{wizardT(wizardDictionary.family.parents.label, lang)}</h2>
       {allowanceExplainer("parent-grandparent", params, lang)}
       {parents.map((parent, index) => (
-        <div key={index} className="grid gap-3 rounded-md border border-warm-100 bg-warm-50 p-3 md:grid-cols-2">
+        <div key={index} className="grid gap-3 rounded-md border border-warm-150 bg-warm-50 p-4 shadow-field md:grid-cols-2">
           <NumberField name={`parents.${index}.birthYear` as Path<FamilyWizardFormValues>} register={register} label={wizardDictionary.family.parentBirthYear.label} help={wizardDictionary.family.parentBirthYear.help} optional error={getFieldError(errors, `parents.${index}.birthYear`)} />
           <NumberField name={`parents.${index}.ageDuringYear` as Path<FamilyWizardFormValues>} register={register} label={wizardDictionary.family.parentAgeDuringYear.label} help={wizardDictionary.family.parentAgeDuringYear.help} optional error={getFieldError(errors, `parents.${index}.ageDuringYear`)} />
           <CheckboxField name={`parents.${index}.inCareHome` as Path<FamilyWizardFormValues>} register={register} label={wizardDictionary.family.inCareHome.label} help={wizardDictionary.family.inCareHome.help} error={getFieldError(errors, `parents.${index}.inCareHome`)} />
@@ -223,13 +223,13 @@ function ParentFields({
             <CheckboxField name={`parents.${index}.residedWithTaxpayer` as Path<FamilyWizardFormValues>} register={register} label={wizardDictionary.family.residedWithTaxpayer.label} help={wizardDictionary.family.residedWithTaxpayer.help} error={getFieldError(errors, `parents.${index}.residedWithTaxpayer`)} />
           )}
           <div className="md:col-span-2">
-            <button type="button" className="focus-ring rounded-md px-3 py-2 text-sm font-semibold text-red-700" onClick={() => setValue("parents", parents.filter((_item, itemIndex) => itemIndex !== index), { shouldDirty: true })}>
+            <button type="button" className="focus-ring rounded-md px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50" onClick={() => setValue("parents", parents.filter((_item, itemIndex) => itemIndex !== index), { shouldDirty: true })}>
               {wizardT(wizardDictionary.common.remove, lang)}
             </button>
           </div>
         </div>
       ))}
-      <button type="button" className="focus-ring rounded-md border border-teal-200 px-3 py-2 text-sm font-bold text-teal-700" onClick={() => setValue("parents", [...parents, defaultParent(parents.length + 1)], { shouldDirty: true })}>
+      <button type="button" className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-teal-200 bg-white px-4 py-2 text-sm font-bold text-teal-700 shadow-field hover:border-teal-400 hover:bg-teal-50" onClick={() => setValue("parents", [...parents, defaultParent(parents.length + 1)], { shouldDirty: true })}>
         {wizardT(wizardDictionary.common.add, lang)}
       </button>
     </section>

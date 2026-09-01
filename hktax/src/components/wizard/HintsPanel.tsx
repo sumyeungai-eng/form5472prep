@@ -14,7 +14,7 @@ import { formatHKD } from "./FormFields";
 const kindClasses: Record<WizardHintKind, string> = {
   opportunity: "border-teal-200 bg-teal-50 text-teal-900",
   warning: "border-amber-200 bg-amber-50 text-amber-900",
-  info: "border-warm-200 bg-warm-50 text-warm-700",
+  info: "border-warm-150 bg-warm-50 text-warm-700",
 };
 
 // Hints are recomputed on every render directly from the committed wizardState
@@ -35,7 +35,7 @@ export function HintsPanel({ step }: { step: WizardHintStep | "all" }): JSX.Elem
     <div className="space-y-3" role="note">
       <ul className="space-y-3">
         {hints.map((hint) => (
-          <li key={hint.id} className={`rounded-md border p-4 text-sm ${kindClasses[hint.kind]}`}>
+          <li key={hint.id} className={`rounded-md border p-4 text-sm shadow-field ${kindClasses[hint.kind]}`}>
             <p className="font-bold">{lang === "zh" ? hint.titleZh : hint.titleEn}</p>
             <p className="mt-2 leading-6">{lang === "zh" ? hint.bodyZh : hint.bodyEn}</p>
             {hint.estimatedSavingHKD !== undefined ? (

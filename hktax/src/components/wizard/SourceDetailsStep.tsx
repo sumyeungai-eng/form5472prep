@@ -102,13 +102,13 @@ export function SourceDetailsStep({ formId, onValid }: SourceDetailsStepProps) {
       <input type="hidden" {...register("personA.personId")} />
       <input type="hidden" {...register("personB.personId")} />
       <div>
-        <h1 className="text-2xl font-bold text-navy-900">
+        <h1 className="display-subsection">
           {wizardT(wizardDictionary.salary.title, lang)}
         </h1>
       </div>
       <HintsPanel step="sourceDetails" />
       {!hasAnySource ? (
-        <div className="rounded-md border border-warm-200 bg-white p-5 text-sm text-warm-700">
+        <div className="card p-5 text-sm text-warm-700 sm:p-6">
           {wizardT(wizardDictionary.sourceDetails.noSources, lang)}
         </div>
       ) : null}
@@ -155,7 +155,7 @@ function PersonSourceDetails({
   }
 
   return (
-    <fieldset className="space-y-6 rounded-md border border-warm-200 bg-white p-5">
+    <fieldset className="card space-y-6 p-5 sm:p-6">
       <legend className="px-2 text-sm font-bold text-navy-900">
         {wizardT(personId === "A" ? wizardDictionary.common.personA : wizardDictionary.common.personB, lang)}
       </legend>
@@ -220,7 +220,7 @@ function SalaryDetailForm({
   const accommodation = (watch(`${root}.salary.employerAccommodation` as Path<SourceDetailsStepFormValues>) ?? []) as WizardEmployerAccommodation[];
 
   return (
-    <section className="space-y-4 border-t border-warm-100 pt-5">
+    <section className="space-y-4 rounded-md border border-warm-150 bg-white p-4 shadow-field">
       <h2 className="text-lg font-bold text-navy-900">{wizardT(wizardDictionary.salary.title, lang)}</h2>
       <MoneyItems
         array={incomeItems}
@@ -238,7 +238,7 @@ function SalaryDetailForm({
         setValue={setValue}
         errors={errors}
       />
-      <div className="rounded-md border border-teal-100 bg-teal-50 p-4">
+      <div className="rounded-md border border-teal-100 bg-teal-50 p-4 shadow-field">
         <label className="flex items-center gap-2 text-sm font-semibold text-navy-900" htmlFor={`${root}-mpf-income`}>
           <span>{wizardT(wizardDictionary.sourceDetails.mpfMonthlyIncome.label, lang)}</span>
           <HelpPopover
@@ -262,7 +262,7 @@ function SalaryDetailForm({
               const amount = calculateMpfAutoFill(Number(monthlyIncome || 0), getParams(wizardState.year));
               onMpfAutoFill(amount);
             }}
-            className="focus-ring inline-flex min-h-10 shrink-0 items-center justify-center rounded-md bg-navy-900 px-4 py-2 text-sm font-bold text-white hover:bg-navy-800"
+            className="btn-primary shrink-0"
           >
             {wizardT(wizardDictionary.sourceDetails.autoMpf, lang)}
           </button>
@@ -320,7 +320,7 @@ function MoneyItems({
   return (
     <div className="space-y-3">
       {array.map((_item, index) => (
-        <div key={index} className="grid gap-3 rounded-md border border-warm-100 bg-warm-50 p-3 md:grid-cols-4">
+        <div key={index} className="grid gap-3 rounded-md border border-warm-150 bg-warm-50 p-4 shadow-field md:grid-cols-4">
           <TextField
             name={`${basePath}.${index}.key` as Path<SourceDetailsStepFormValues>}
             register={register}
@@ -350,13 +350,13 @@ function MoneyItems({
             error={getFieldError(errors, `${basePath}.${index}.amount`)}
           />
           <div className="md:col-span-4">
-            <button type="button" className="focus-ring text-sm font-semibold text-red-700" onClick={() => removeAt(basePath, array, index, setValue)}>
+            <button type="button" className="focus-ring rounded-md px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50" onClick={() => removeAt(basePath, array, index, setValue)}>
               {wizardT(wizardDictionary.common.remove, lang)}
             </button>
           </div>
         </div>
       ))}
-      <button type="button" className="focus-ring rounded-md border border-teal-200 px-3 py-2 text-sm font-bold text-teal-700" onClick={() => appendTo(basePath, array, itemFactory(), setValue)}>
+      <button type="button" className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-teal-200 bg-white px-4 py-2 text-sm font-bold text-teal-700 shadow-field hover:border-teal-400 hover:bg-teal-50" onClick={() => appendTo(basePath, array, itemFactory(), setValue)}>
         {wizardT(addLabel, lang)}
       </button>
     </div>
@@ -382,7 +382,7 @@ function AccommodationItems({
     <div className="space-y-3">
       <h3 className="text-sm font-bold text-navy-900">{wizardT(wizardDictionary.salary.employerAccommodation.label, lang)}</h3>
       {array.map((_item, index) => (
-        <div key={index} className="grid gap-3 rounded-md border border-warm-100 bg-warm-50 p-3 md:grid-cols-3">
+        <div key={index} className="grid gap-3 rounded-md border border-warm-150 bg-warm-50 p-4 shadow-field md:grid-cols-3">
           <TextField name={`${basePath}.${index}.key` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.salary.key.label} help={wizardDictionary.salary.key.help} error={getFieldError(errors, `${basePath}.${index}.key`)} />
           <TextField name={`${basePath}.${index}.labelZh` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.salary.labelZh.label} help={wizardDictionary.salary.labelZh.help} error={getFieldError(errors, `${basePath}.${index}.labelZh`)} />
           <TextField name={`${basePath}.${index}.labelEn` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.salary.labelEn.label} help={wizardDictionary.salary.labelEn.help} error={getFieldError(errors, `${basePath}.${index}.labelEn`)} />
@@ -403,13 +403,13 @@ function AccommodationItems({
           <NumberField name={`${basePath}.${index}.employerOutgoingsAndExpenses` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.salary.employerOutgoingsAndExpenses.label} help={wizardDictionary.salary.employerOutgoingsAndExpenses.help} optional error={getFieldError(errors, `${basePath}.${index}.employerOutgoingsAndExpenses`)} />
           <NumberField name={`${basePath}.${index}.rateableValueElection` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.salary.rateableValueElection.label} help={wizardDictionary.salary.rateableValueElection.help} optional error={getFieldError(errors, `${basePath}.${index}.rateableValueElection`)} />
           <div className="md:col-span-3">
-            <button type="button" className="focus-ring text-sm font-semibold text-red-700" onClick={() => removeAt(basePath, array, index, setValue)}>
+            <button type="button" className="focus-ring rounded-md px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50" onClick={() => removeAt(basePath, array, index, setValue)}>
               {wizardT(wizardDictionary.common.remove, lang)}
             </button>
           </div>
         </div>
       ))}
-      <button type="button" className="focus-ring rounded-md border border-teal-200 px-3 py-2 text-sm font-bold text-teal-700" onClick={() => appendTo(basePath, array, defaultAccommodation(array.length + 1), setValue)}>
+      <button type="button" className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-teal-200 bg-white px-4 py-2 text-sm font-bold text-teal-700 shadow-field hover:border-teal-400 hover:bg-teal-50" onClick={() => appendTo(basePath, array, defaultAccommodation(array.length + 1), setValue)}>
         {wizardT(wizardDictionary.sourceDetails.addAccommodation, lang)}
       </button>
     </div>
@@ -433,10 +433,10 @@ function PropertyDetailForm({
   const properties = watch(`${root}.properties` as Path<SourceDetailsStepFormValues>) ?? [];
 
   return (
-    <section className="space-y-4 border-t border-warm-100 pt-5">
+    <section className="space-y-4 rounded-md border border-warm-150 bg-white p-4 shadow-field">
       <h2 className="text-lg font-bold text-navy-900">{wizardT(wizardDictionary.property.title, lang)}</h2>
       {(properties as WizardProperty[]).map((_property, index) => (
-        <div key={index} className="grid gap-3 rounded-md border border-warm-100 bg-warm-50 p-3 md:grid-cols-3">
+        <div key={index} className="grid gap-3 rounded-md border border-warm-150 bg-warm-50 p-4 shadow-field md:grid-cols-3">
           <TextField name={`${root}.properties.${index}.id` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.property.id.label} help={wizardDictionary.property.id.help} error={getFieldError(errors, `${root}.properties.${index}.id`)} />
           <NumberField name={`${root}.properties.${index}.rentReceived` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.property.rentReceived.label} help={wizardDictionary.property.rentReceived.help} error={getFieldError(errors, `${root}.properties.${index}.rentReceived`)} />
           <NumberField name={`${root}.properties.${index}.leasePremium` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.property.leasePremium.label} help={wizardDictionary.property.leasePremium.help} optional error={getFieldError(errors, `${root}.properties.${index}.leasePremium`)} />
@@ -448,13 +448,13 @@ function PropertyDetailForm({
           <NumberField name={`${root}.properties.${index}.ownershipShare` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.property.ownershipShare.label} help={wizardDictionary.property.ownershipShare.help} min={0} max={1} step={0.01} optional error={getFieldError(errors, `${root}.properties.${index}.ownershipShare`)} />
           <NumberField name={`${root}.properties.${index}.letPropertyMortgageInterestForPA` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.property.letPropertyMortgageInterestForPA.label} help={wizardDictionary.property.letPropertyMortgageInterestForPA.help} optional error={getFieldError(errors, `${root}.properties.${index}.letPropertyMortgageInterestForPA`)} />
           <div className="md:col-span-3">
-            <button type="button" className="focus-ring text-sm font-semibold text-red-700" onClick={() => removeAt(`${root}.properties`, properties as WizardProperty[], index, setValue)}>
+            <button type="button" className="focus-ring rounded-md px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50" onClick={() => removeAt(`${root}.properties`, properties as WizardProperty[], index, setValue)}>
               {wizardT(wizardDictionary.common.remove, lang)}
             </button>
           </div>
         </div>
       ))}
-      <button type="button" className="focus-ring rounded-md border border-teal-200 px-3 py-2 text-sm font-bold text-teal-700" onClick={() => appendTo(`${root}.properties`, properties as WizardProperty[], defaultProperty((properties as WizardProperty[]).length + 1), setValue)}>
+      <button type="button" className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-teal-200 bg-white px-4 py-2 text-sm font-bold text-teal-700 shadow-field hover:border-teal-400 hover:bg-teal-50" onClick={() => appendTo(`${root}.properties`, properties as WizardProperty[], defaultProperty((properties as WizardProperty[]).length + 1), setValue)}>
         {wizardT(wizardDictionary.sourceDetails.addProperty, lang)}
       </button>
     </section>
@@ -488,13 +488,13 @@ function BusinessDetailForm({
   ];
 
   return (
-    <section className="space-y-4 border-t border-warm-100 pt-5">
+    <section className="space-y-4 rounded-md border border-warm-150 bg-white p-4 shadow-field">
       <h2 className="text-lg font-bold text-navy-900">{wizardT(wizardDictionary.business.title, lang)}</h2>
       {businesses.map((business, index) => {
         const pools = business.capitalAllowances?.pools ?? [];
 
         return (
-          <div key={index} className="space-y-4 rounded-md border border-warm-100 bg-warm-50 p-3">
+          <div key={index} className="space-y-4 rounded-md border border-warm-150 bg-warm-50 p-4 shadow-field">
             <div className="grid gap-3 md:grid-cols-2">
               <TextField name={`${root}.businesses.${index}.id` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.business.id.label} help={wizardDictionary.business.id.help} error={getFieldError(errors, `${root}.businesses.${index}.id`)} />
               <TextField name={`${root}.businesses.${index}.name` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.business.name.label} help={wizardDictionary.business.name.help} error={getFieldError(errors, `${root}.businesses.${index}.name`)} />
@@ -506,7 +506,7 @@ function BusinessDetailForm({
               <NumberField name={`${root}.businesses.${index}.addBacks.nonDeductibleDonations` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.business.nonDeductibleDonations.label} help={wizardDictionary.business.nonDeductibleDonations.help} optional error={getFieldError(errors, `${root}.businesses.${index}.addBacks.nonDeductibleDonations`)} />
               <NumberField name={`${root}.businesses.${index}.lossBroughtForward` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.business.lossBroughtForward.label} help={wizardDictionary.business.lossBroughtForward.help} optional error={getFieldError(errors, `${root}.businesses.${index}.lossBroughtForward`)} />
             </div>
-            <details className="rounded-md border border-warm-200 bg-white p-3">
+            <details className="rounded-md border border-warm-150 bg-white p-4 shadow-field">
               <summary className="cursor-pointer text-sm font-bold text-navy-900">
                 {wizardT(wizardDictionary.sourceDetails.advanced, lang)}
               </summary>
@@ -521,27 +521,27 @@ function BusinessDetailForm({
                     <NumberField name={`${root}.businesses.${index}.capitalAllowances.pools.${poolIndex}.broughtForward` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.business.poolBroughtForward.label} help={wizardDictionary.business.poolBroughtForward.help} error={getFieldError(errors, `${root}.businesses.${index}.capitalAllowances.pools.${poolIndex}.broughtForward`)} />
                     <NumberField name={`${root}.businesses.${index}.capitalAllowances.pools.${poolIndex}.additions` as Path<SourceDetailsStepFormValues>} register={register} label={wizardDictionary.business.poolAdditions.label} help={wizardDictionary.business.poolAdditions.help} error={getFieldError(errors, `${root}.businesses.${index}.capitalAllowances.pools.${poolIndex}.additions`)} />
                     <div className="md:col-span-3">
-                      <button type="button" className="focus-ring text-sm font-semibold text-red-700" onClick={() => setValue(`${root}.businesses.${index}.capitalAllowances.pools` as Path<SourceDetailsStepFormValues>, pools.filter((_item, itemIndex) => itemIndex !== poolIndex) as never, { shouldDirty: true })}>
+                      <button type="button" className="focus-ring rounded-md px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50" onClick={() => setValue(`${root}.businesses.${index}.capitalAllowances.pools` as Path<SourceDetailsStepFormValues>, pools.filter((_item, itemIndex) => itemIndex !== poolIndex) as never, { shouldDirty: true })}>
                         {wizardT(wizardDictionary.common.remove, lang)}
                       </button>
                     </div>
                   </div>
                 ))}
-                <button type="button" className="focus-ring rounded-md border border-teal-200 px-3 py-2 text-sm font-bold text-teal-700" onClick={() => setValue(`${root}.businesses.${index}.capitalAllowances.pools` as Path<SourceDetailsStepFormValues>, [...pools, { rate: 0.2, broughtForward: 0, additions: 0 }] as never, { shouldDirty: true })}>
+                <button type="button" className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-teal-200 bg-white px-4 py-2 text-sm font-bold text-teal-700 shadow-field hover:border-teal-400 hover:bg-teal-50" onClick={() => setValue(`${root}.businesses.${index}.capitalAllowances.pools` as Path<SourceDetailsStepFormValues>, [...pools, { rate: 0.2, broughtForward: 0, additions: 0 }] as never, { shouldDirty: true })}>
                   {wizardT(wizardDictionary.sourceDetails.addPool, lang)}
                 </button>
               </div>
             </details>
-            <button type="button" className="focus-ring text-sm font-semibold text-red-700" onClick={() => removeAt(`${root}.businesses`, businesses, index, setValue)}>
+            <button type="button" className="focus-ring rounded-md px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50" onClick={() => removeAt(`${root}.businesses`, businesses, index, setValue)}>
               {wizardT(wizardDictionary.common.remove, lang)}
             </button>
           </div>
         );
       })}
-      <button type="button" className="focus-ring rounded-md border border-teal-200 px-3 py-2 text-sm font-bold text-teal-700" onClick={() => appendTo(`${root}.businesses`, businesses, defaultBusiness(businesses.length + 1), setValue)}>
+      <button type="button" className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-teal-200 bg-white px-4 py-2 text-sm font-bold text-teal-700 shadow-field hover:border-teal-400 hover:bg-teal-50" onClick={() => appendTo(`${root}.businesses`, businesses, defaultBusiness(businesses.length + 1), setValue)}>
         {wizardT(wizardDictionary.sourceDetails.addBusiness, lang)}
       </button>
-      <div className="rounded-md border border-teal-100 bg-white p-4">
+      <div className="rounded-md border border-teal-100 bg-white p-4 shadow-field">
         <RadioGroupField
           name={`${root}.electedTwoTierBusinessId` as Path<SourceDetailsStepFormValues>}
           register={register}
