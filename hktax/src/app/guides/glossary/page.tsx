@@ -221,6 +221,7 @@ const glossaryEntries: GlossaryEntry[] = [
 
 export default function GlossaryGuidePage() {
   const { lang } = useI18n();
+  const eyebrowTracking = lang === "en" ? "uppercase tracking-[0.18em]" : "";
   const [query, setQuery] = useState("");
 
   const sortedEntries = useMemo(
@@ -243,23 +244,23 @@ export default function GlossaryGuidePage() {
 
   return (
     <main>
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">
+            <p className={`text-xs font-bold text-teal-700 sm:text-sm ${eyebrowTracking}`}>
               {lang === "zh" ? "報稅指南" : "Filing guide"}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+            <h1 className="display-hero mt-4 max-w-4xl">
               {lang === "zh" ? "中英稅務詞彙表" : "Chinese–English Tax Glossary"}
             </h1>
-            <p className="mt-5 text-base leading-7 text-warm-700">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-warm-700">
               {lang === "zh"
                 ? "本表收錄本網站使用的所有主要稅務用詞，按繁體中文筆劃/字母順序排列，每項附一句話的中英對照解釋，方便你對照報稅表及稅務局文件時查閱。"
                 : "This table lists every key tax term used on this site, ordered alphabetically by its Traditional Chinese term, each with a one-line bilingual definition — handy to check against your tax return and IRD documents."}
             </p>
           </div>
 
-          <div className="mt-8 max-w-md">
+          <div className="mt-10 max-w-md">
             <label htmlFor="glossary-search" className="sr-only">
               {lang === "zh" ? "搜尋詞彙" : "Search glossary"}
             </label>
@@ -275,10 +276,10 @@ export default function GlossaryGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-12 sm:py-16">
+      <section className="bg-warm-50 py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="overflow-x-auto rounded-lg border border-warm-200 bg-white shadow-soft">
-            <table className="w-full min-w-[640px] table-fixed border-collapse text-sm">
+          <div className="card overflow-x-auto">
+            <table className="w-full min-w-[640px] table-fixed border-collapse text-base">
               <caption className="sr-only">
                 {lang === "zh" ? "中英稅務詞彙對照表" : "Chinese-English tax glossary table"}
               </caption>
@@ -298,9 +299,9 @@ export default function GlossaryGuidePage() {
               <tbody className="divide-y divide-warm-200">
                 {visibleEntries.map((entry) => (
                   <tr key={entry.id} className="align-top">
-                    <td className="px-4 py-3 font-semibold text-navy-900">{entry.zh}</td>
-                    <td className="px-4 py-3 font-semibold text-navy-900">{entry.en}</td>
-                    <td className="px-4 py-3 leading-6 text-warm-700">
+                    <td className="px-4 py-4 font-semibold text-navy-900">{entry.zh}</td>
+                    <td className="px-4 py-4 font-semibold text-navy-900">{entry.en}</td>
+                    <td className="px-4 py-4 leading-7 text-warm-700">
                       {lang === "zh" ? entry.defZh : entry.defEn}
                     </td>
                   </tr>
@@ -323,7 +324,7 @@ export default function GlossaryGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-white py-10">
+      <section className="bg-white py-14 sm:py-16">
         <Container>
           <p className="max-w-3xl text-xs leading-6 text-warm-600">
             {lang === "zh"

@@ -115,6 +115,8 @@ const posts = getAllPosts();
 
 export default function GuidesPage() {
   const { lang, year } = useI18n();
+  const eyebrowTracking = lang === "en" ? "uppercase tracking-[0.18em]" : "";
+  const labelTracking = lang === "en" ? "uppercase tracking-[0.12em]" : "";
   const params = getParams(year);
   const params2024 = getParams("2024_25");
   const params2025 = getParams("2025_26");
@@ -130,16 +132,16 @@ export default function GuidesPage() {
 
   return (
     <main>
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">
+            <p className={`text-xs font-bold text-teal-700 sm:text-sm ${eyebrowTracking}`}>
               {lang === "zh" ? "稅務指南" : "Guides"}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+            <h1 className="display-hero mt-4 max-w-4xl">
               {lang === "zh" ? "了解香港個人稅務" : "Understand Hong Kong personal tax"}
             </h1>
-            <p className="mt-5 text-base leading-7 text-warm-700">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-warm-700">
               {lang === "zh"
                 ? "在使用計算工具之前，建議先參閱相關指南，了解薪俸稅、物業稅、利得稅及個人入息課稅的基本概念、計算方法及常見陷阱。所有金額按頁首所選擇的課稅年度自動更新。"
                 : "Before you use the calculators, it helps to read the relevant guide first — the basic concepts, how each computation works, and common pitfalls for salaries tax, property tax, profits tax, and Personal Assessment. Amounts throughout update automatically for the year of assessment selected in the header."}
@@ -148,22 +150,22 @@ export default function GuidesPage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-12 sm:py-16">
+      <section className="bg-warm-50 py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="mb-6 max-w-3xl">
-            <h2 className="text-2xl font-bold text-navy-900">
+          <div className="mb-12 max-w-4xl">
+            <h2 className="display-section">
               {lang === "zh" ? "參考指南" : "Reference guides"}
             </h2>
           </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {guideCards.map((guide) => (
-              <Link key={guide.href} href={guide.href} className="card focus-ring flex flex-col p-5">
+              <Link key={guide.href} href={guide.href} className="card focus-ring flex flex-col p-6">
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="text-lg font-bold leading-tight text-navy-900">
                     {lang === "zh" ? guide.titleZh : guide.titleEn}
                   </h2>
                   {!guide.ready ? (
-                    <span className="flex-none rounded-full bg-teal-50 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-teal-700">
+                    <span className={`flex-none rounded-full bg-teal-50 px-2 py-1 text-[11px] font-semibold text-teal-700 ${labelTracking}`}>
                       {lang === "zh" ? "即將推出" : "Coming soon"}
                     </span>
                   ) : null}
@@ -180,13 +182,13 @@ export default function GuidesPage() {
         </Container>
       </section>
 
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="max-w-3xl">
-            <h2 className="text-2xl font-bold text-navy-900">
+          <div className="max-w-4xl">
+            <h2 className="display-section">
               {lang === "zh" ? "最新消息與文章" : "Updates & articles"}
             </h2>
-            <p className="mt-3 text-base leading-7 text-warm-700">
+            <p className="mt-4 max-w-2xl text-base leading-7 text-warm-700">
               {lang === "zh"
                 ? "參考指南整理稅務規則；這裡集中記錄最新改動、網站更新及實用做法。"
                 : "The reference guides explain the rules; this section covers recent changes, site updates, and practical how-tos."}
@@ -194,7 +196,7 @@ export default function GuidesPage() {
           </div>
 
           {posts.length ? (
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {posts.map((post) => {
                 const title = interpolate(lang === "zh" ? post.titleZh : post.titleEn, variables);
                 const summary = interpolate(lang === "zh" ? post.summaryZh : post.summaryEn, variables);
@@ -203,10 +205,10 @@ export default function GuidesPage() {
                   <Link
                     key={post.slug}
                     href={`/guides/posts/${post.slug}`}
-                    className="card focus-ring flex flex-col p-5"
+                    className="card focus-ring flex flex-col p-6"
                   >
                     <div className="flex flex-wrap items-center gap-3">
-                      <span className="rounded-md bg-teal-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-teal-800">
+                      <span className={`rounded-md bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-800 ${labelTracking}`}>
                         {kindLabels[post.kind][lang]}
                       </span>
                       <span className="text-sm font-medium text-warm-600">
@@ -223,7 +225,7 @@ export default function GuidesPage() {
               })}
             </div>
           ) : (
-            <div className="mt-8 rounded-md border border-warm-200 bg-warm-50 p-5 text-sm leading-6 text-warm-700">
+            <div className="card mt-8 p-6 text-sm leading-6 text-warm-700">
               {lang === "zh" ? "暫時未有最新文章。" : "No updates yet."}
             </div>
           )}

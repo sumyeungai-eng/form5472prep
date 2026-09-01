@@ -63,19 +63,21 @@ const timeline: TimelineStep[] = [
 
 export default function DeadlinesGuidePage() {
   const { lang } = useI18n();
+  const eyebrowTracking = lang === "en" ? "uppercase tracking-[0.18em]" : "";
+  const labelTracking = lang === "en" ? "uppercase tracking-[0.12em]" : "";
 
   return (
     <main>
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">
+            <p className={`text-xs font-bold text-teal-700 sm:text-sm ${eyebrowTracking}`}>
               {lang === "zh" ? "報稅指南" : "Filing guide"}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+            <h1 className="display-hero mt-4 max-w-4xl">
               {lang === "zh" ? "報稅時間表" : "Filing Deadlines Timeline"}
             </h1>
-            <p className="mt-5 text-base leading-7 text-warm-700">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-warm-700">
               {lang === "zh"
                 ? "以下是香港個人報稅一年一度的典型時間表，涵蓋報稅表發出、申報限期、電子報稅延期，以及繳款日子。所有日期均為一般行政安排，實際限期請以你本人的報稅表及繳稅通知書為準——行政安排或有變動。"
                 : "Below is the typical annual cycle for Hong Kong individual tax filing — from when the return is issued, through filing deadlines and the eTAX extension, to payment dates. All dates describe general administrative practice. Always check the actual deadlines on your own return and demand note — administrative arrangements can change."}
@@ -84,7 +86,7 @@ export default function DeadlinesGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-12 sm:py-16">
+      <section className="bg-warm-50 py-20 sm:py-24 lg:py-28">
         <Container>
           <ol className="relative ml-3 space-y-8 border-l-2 border-teal-200 pl-8 sm:ml-6">
             {timeline.map((step, index) => (
@@ -95,12 +97,12 @@ export default function DeadlinesGuidePage() {
                 >
                   {index + 1}
                 </span>
-                <div className="card p-5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-teal-700">
+                <div className="card p-6">
+                  <p className={`text-xs font-bold text-teal-700 ${labelTracking}`}>
                     {step.when[lang]}
                   </p>
-                  <h2 className="mt-1 text-lg font-bold text-navy-900">{step.title[lang]}</h2>
-                  <p className="mt-2 text-sm leading-6 text-warm-700">{step.detail[lang]}</p>
+                  <h2 className="mt-2 text-lg font-bold text-navy-900">{step.title[lang]}</h2>
+                  <p className="mt-3 max-w-[65ch] text-base leading-7 text-warm-700">{step.detail[lang]}</p>
                 </div>
               </li>
             ))}
@@ -108,14 +110,14 @@ export default function DeadlinesGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="grid gap-6 lg:grid-cols-2">
             <article className="card p-6">
-              <h2 className="text-xl font-bold text-navy-900">
+              <h2 className="display-subsection">
                 {lang === "zh" ? "未收到報稅表但有應課稅入息？" : "No return received, but you have chargeable income?"}
               </h2>
-              <p className="mt-3 text-sm leading-6 text-warm-700">
+              <p className="mt-4 max-w-[65ch] text-base leading-7 text-warm-700">
                 {lang === "zh"
                   ? "即使未曾收到稅務局發出的報稅表，如你在有關課稅年度有應課稅入息（例如新受僱、新開業或新增租金收入），法例規定你必須在該課稅年度完結後的 4 個月內，主動以書面通知稅務局你須課稅這事實，稅務局其後會發出報稅表要求你申報。不主動通知並不能免除報稅責任。"
                   : "Even if you never receive a return from IRD, if you have chargeable income for the year (for example, a new job, a new business, or new rental income), the law requires you to notify IRD in writing within 4 months after the end of that year of assessment that you are chargeable to tax. IRD will then issue a return for you to complete. Staying silent does not remove the filing obligation."}
@@ -123,10 +125,10 @@ export default function DeadlinesGuidePage() {
             </article>
 
             <article className="card p-6">
-              <h2 className="text-xl font-bold text-navy-900">
+              <h2 className="display-subsection">
                 {lang === "zh" ? "逾期申報的後果（概述）" : "Consequences of late filing (overview)"}
               </h2>
-              <ul className="mt-3 space-y-2 text-sm leading-6 text-warm-700">
+              <ul className="mt-4 space-y-3 text-base leading-7 text-warm-700">
                 <li className="flex gap-2">
                   <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
                   <span>
@@ -157,7 +159,7 @@ export default function DeadlinesGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-10">
+      <section className="bg-warm-50 py-14 sm:py-16">
         <Container>
           <p className="max-w-3xl text-xs leading-6 text-warm-600">
             {lang === "zh"

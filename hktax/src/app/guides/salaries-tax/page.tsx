@@ -443,6 +443,7 @@ function buildSections(params: TaxParams): Section[] {
 
 export default function SalariesTaxGuidePage() {
   const { lang, t, year } = useI18n();
+  const eyebrowTracking = lang === "en" ? "uppercase tracking-[0.18em]" : "";
   const params = getParams(year);
   const sections = useMemo(() => buildSections(params), [params]);
 
@@ -464,16 +465,16 @@ export default function SalariesTaxGuidePage() {
 
   return (
     <main>
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">
+            <p className={`text-xs font-bold text-teal-700 sm:text-sm ${eyebrowTracking}`}>
               {lang === "zh" ? "稅務指南" : "Guides"} · {t(`header.year.${year}`)}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+            <h1 className="display-hero mt-4 max-w-4xl">
               {lang === "zh" ? "薪俸稅指南" : "Salaries Tax Guide"}
             </h1>
-            <p className="mt-5 text-base leading-7 text-warm-700">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-warm-700">
               {lang === "zh"
                 ? "薪俸稅是香港最多人接觸的稅種，計算方法看似複雜，但其實可以拆分為幾個步驟：確定應課稅入息、逐項扣除、逐項申索免稅額，再在累進稅率及兩級制標準稅率之間取較低者。以下逐步講解，並附一個以本頁參數計算的簡單示例。"
                 : "Salaries tax is the tax most people in Hong Kong deal with directly. The computation looks complex but breaks down into a few steps: work out chargeable income, apply deductions in order, apply allowances, then take the lower of the progressive rate and the two-tiered standard rate. This guide walks through each step, with a simple worked example computed from this page's live parameters."}
@@ -482,26 +483,26 @@ export default function SalariesTaxGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-12 sm:py-16">
+      <section className="bg-warm-50 py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="space-y-10">
+          <div className="max-w-4xl space-y-8">
             {sections.map((section) => (
-              <article key={section.id} className="card p-6">
-                <h2 className="text-xl font-bold text-navy-900">{section.title[lang]}</h2>
-                <div className="mt-4 space-y-3 text-sm leading-6 text-warm-700">{section.content[lang]}</div>
+              <article key={section.id} className="card p-6 sm:p-8">
+                <h2 className="display-subsection">{section.title[lang]}</h2>
+                <div className="mt-5 max-w-[65ch] space-y-4 text-base leading-7 text-warm-700 sm:leading-8">{section.content[lang]}</div>
               </article>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="card p-6">
-            <h2 className="text-xl font-bold text-navy-900">
+          <div className="card max-w-4xl p-6 sm:p-8">
+            <h2 className="display-subsection">
               {lang === "zh" ? "計算示例" : "Worked example"}
             </h2>
-            <p className="mt-3 text-sm leading-6 text-warm-700">
+            <p className="mt-4 max-w-[65ch] text-base leading-7 text-warm-700">
               {lang === "zh"
                 ? `假設一位單身人士，全年入息 ${hkd(example.income, "zh")}，已供滿強積金上限，除基本免稅額外沒有其他免稅額或扣除。`
                 : `Assume a single taxpayer with annual income of ${hkd(example.income, "en")}, maxed-out mandatory MPF contributions, and no allowances or deductions beyond the basic allowance.`}
@@ -552,9 +553,9 @@ export default function SalariesTaxGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-10">
+      <section className="bg-warm-50 py-14 sm:py-16">
         <Container>
-          <div className="rounded-lg border border-warm-200 bg-white p-6 text-sm leading-6 text-warm-700">
+          <div className="card max-w-4xl p-6 text-sm leading-6 text-warm-700">
             <p>
               {lang === "zh"
                 ? "本頁內容僅供教育及參考用途，並非稅務意見，亦沒有考慮閣下個人情況。本網站並非香港稅務局網站，亦與稅務局無從屬關係。如有疑問，請參閱稅務局最新指引或諮詢專業稅務顧問。"

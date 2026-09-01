@@ -166,12 +166,12 @@ export function ContactForm({ className = "", kind }: ContactFormProps) {
   };
 
   return (
-    <form ref={formRef} className={`space-y-5 ${className}`} onSubmit={handleSubmit}>
+    <form ref={formRef} className={`card space-y-5 p-5 sm:p-6 ${className}`} onSubmit={handleSubmit}>
       <input type="hidden" name="kind" value={kind} />
       <input type="hidden" name="rendered_at" value={renderedAt} />
 
-      <div>
-        <label htmlFor={nameId} className="block text-sm font-semibold text-navy-900">
+      <div className="space-y-2">
+        <label htmlFor={nameId} className="block text-sm font-bold text-navy-950">
           {copy("nameLabel")}
         </label>
         <input
@@ -181,14 +181,14 @@ export function ContactForm({ className = "", kind }: ContactFormProps) {
           value={name}
           maxLength={200}
           autoComplete="name"
-          className="form-input mt-2 w-full"
+          className="form-input w-full"
           placeholder={copy("namePlaceholder")}
           onChange={(event) => setName(event.target.value)}
         />
       </div>
 
-      <div>
-        <label htmlFor={emailId} className="block text-sm font-semibold text-navy-900">
+      <div className="space-y-2">
+        <label htmlFor={emailId} className="block text-sm font-bold text-navy-950">
           {copy("emailLabel")}
         </label>
         <input
@@ -197,21 +197,21 @@ export function ContactForm({ className = "", kind }: ContactFormProps) {
           type="email"
           value={email}
           autoComplete="email"
-          className="form-input mt-2 w-full"
+          className="form-input w-full"
           placeholder={copy("emailPlaceholder")}
           onChange={(event) => setEmail(event.target.value)}
         />
       </div>
 
-      <div>
-        <label htmlFor={subjectId} className="block text-sm font-semibold text-navy-900">
+      <div className="space-y-2">
+        <label htmlFor={subjectId} className="block text-sm font-bold text-navy-950">
           {copy(kind === "feedback" ? "feedbackSubjectLabel" : "contactSubjectLabel")}
         </label>
         <select
           id={subjectId}
           name="subject"
           value={subject}
-          className="form-select mt-2 w-full"
+          className="form-select w-full"
           onChange={(event) => setSubject(event.target.value)}
         >
           {options.map((option) => (
@@ -222,8 +222,8 @@ export function ContactForm({ className = "", kind }: ContactFormProps) {
         </select>
       </div>
 
-      <div>
-        <label htmlFor={messageId} className="block text-sm font-semibold text-navy-900">
+      <div className="space-y-2">
+        <label htmlFor={messageId} className="block text-sm font-bold text-navy-950">
           {copy("messageLabel")}
         </label>
         <textarea
@@ -234,11 +234,11 @@ export function ContactForm({ className = "", kind }: ContactFormProps) {
           maxLength={MESSAGE_MAX_LENGTH}
           rows={7}
           aria-describedby={counterId}
-          className="form-input mt-2 w-full resize-y"
+          className="form-input w-full resize-y"
           placeholder={copy("messagePlaceholder")}
           onChange={(event) => setMessage(event.target.value)}
         />
-        <p id={counterId} className="mt-2 text-xs font-medium text-warm-600">
+        <p id={counterId} className="text-xs font-semibold text-warm-600">
           {copy("characterCounterLabel")}: {message.length} / {MESSAGE_MAX_LENGTH}
         </p>
       </div>
@@ -264,7 +264,7 @@ export function ContactForm({ className = "", kind }: ContactFormProps) {
           tabIndex={-1}
           role={status.tone === "error" ? "alert" : "status"}
           aria-live={status.tone === "error" ? "assertive" : "polite"}
-          className={`rounded-md border px-4 py-3 text-sm font-semibold outline-none ${
+          className={`rounded-md border px-4 py-3 text-sm font-bold shadow-field outline-none ${
             status.tone === "success"
               ? "border-teal-400 bg-teal-50 text-teal-700"
               : "border-gold-200 bg-gold-100 text-navy-900"

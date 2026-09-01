@@ -227,6 +227,7 @@ function buildSections(params: TaxParams): Section[] {
 
 export default function PropertyTaxGuidePage() {
   const { lang, t, year } = useI18n();
+  const eyebrowTracking = lang === "en" ? "uppercase tracking-[0.18em]" : "";
   const params = getParams(year);
   const sections = useMemo(() => buildSections(params), [params]);
 
@@ -244,16 +245,16 @@ export default function PropertyTaxGuidePage() {
 
   return (
     <main>
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">
+            <p className={`text-xs font-bold text-teal-700 sm:text-sm ${eyebrowTracking}`}>
               {lang === "zh" ? "稅務指南" : "Guides"} · {t(`header.year.${year}`)}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+            <h1 className="display-hero mt-4 max-w-4xl">
               {lang === "zh" ? "物業稅指南" : "Property Tax Guide"}
             </h1>
-            <p className="mt-5 text-base leading-7 text-warm-700">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-warm-700">
               {lang === "zh"
                 ? "如果你將香港物業出租收租，就可能要繳交物業稅。物業稅的計算方法比薪俸稅簡單得多，只涉及一個淨值及一個單一稅率，但仍有幾個容易忽略的細節，例如共同擁有、租約溢價，以及它與個人入息課稅的關係。"
                 : "If you let out a Hong Kong property, you may be liable to property tax. The computation is much simpler than salaries tax — a single net value and a single flat rate — but there are a few details worth knowing, including co-ownership, lease premiums, and how it interacts with Personal Assessment."}
@@ -262,26 +263,26 @@ export default function PropertyTaxGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-12 sm:py-16">
+      <section className="bg-warm-50 py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="space-y-10">
+          <div className="max-w-4xl space-y-8">
             {sections.map((section) => (
-              <article key={section.id} className="card p-6">
-                <h2 className="text-xl font-bold text-navy-900">{section.title[lang]}</h2>
-                <div className="mt-4 space-y-3 text-sm leading-6 text-warm-700">{section.content[lang]}</div>
+              <article key={section.id} className="card p-6 sm:p-8">
+                <h2 className="display-subsection">{section.title[lang]}</h2>
+                <div className="mt-5 max-w-[65ch] space-y-4 text-base leading-7 text-warm-700 sm:leading-8">{section.content[lang]}</div>
               </article>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="card p-6">
-            <h2 className="text-xl font-bold text-navy-900">
+          <div className="card max-w-4xl p-6 sm:p-8">
+            <h2 className="display-subsection">
               {lang === "zh" ? "計算示例" : "Worked example"}
             </h2>
-            <p className="mt-3 text-sm leading-6 text-warm-700">
+            <p className="mt-4 max-w-[65ch] text-base leading-7 text-warm-700">
               {lang === "zh"
                 ? `假設你將單位出租，月租 ${hkd(example.monthlyRent, "zh")}，全年沒有壞帳租金，差餉由業主支付，全年 ${hkd(example.ratesPaidByOwner, "zh")}。`
                 : `Assume you let a flat for ${hkd(example.monthlyRent, "en")} per month, no irrecoverable rent for the year, and rates of ${hkd(example.ratesPaidByOwner, "en")} for the year paid by you as the owner.`}
@@ -324,9 +325,9 @@ export default function PropertyTaxGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-10">
+      <section className="bg-warm-50 py-14 sm:py-16">
         <Container>
-          <div className="rounded-lg border border-warm-200 bg-white p-6 text-sm leading-6 text-warm-700">
+          <div className="card max-w-4xl p-6 text-sm leading-6 text-warm-700">
             <p>
               {lang === "zh"
                 ? "本頁內容僅供教育及參考用途，並非稅務意見，亦沒有考慮閣下個人情況。本網站並非香港稅務局網站，亦與稅務局無從屬關係。如有疑問，請參閱稅務局最新指引或諮詢專業稅務顧問。"

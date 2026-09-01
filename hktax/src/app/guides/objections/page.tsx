@@ -42,19 +42,20 @@ const s70aPoints: Bi[] = [
 
 export default function ObjectionsGuidePage() {
   const { lang } = useI18n();
+  const eyebrowTracking = lang === "en" ? "uppercase tracking-[0.18em]" : "";
 
   return (
     <main>
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">
+            <p className={`text-xs font-bold text-teal-700 sm:text-sm ${eyebrowTracking}`}>
               {lang === "zh" ? "報稅指南" : "Filing guide"}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+            <h1 className="display-hero mt-4 max-w-4xl">
               {lang === "zh" ? "反對評稅與更正" : "Objections and Corrections"}
             </h1>
-            <p className="mt-5 text-base leading-7 text-warm-700">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-warm-700">
               {lang === "zh"
                 ? "如果你認為稅務局發出的評稅通知書有誤，或發現自己申報時有遺漏，香港稅制提供兩種主要途徑作出糾正：在評稅作實前提出「反對」，或在評稅作實後按 s.70A 申請「更正」。以下概述兩者的基本流程及注意事項。"
                 : "If you believe a notice of assessment is wrong, or you discover an error in what you reported, Hong Kong's tax system offers two main routes to correct it: lodging an objection before the assessment becomes final, or applying for a correction under s.70A after it has become final. This page outlines the basics of each and what to watch for."}
@@ -63,18 +64,18 @@ export default function ObjectionsGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-12 sm:py-16">
+      <section className="bg-warm-50 py-20 sm:py-24 lg:py-28">
         <Container>
-          <h2 className="text-xl font-bold text-navy-900">
+          <h2 className="display-section">
             {lang === "zh" ? "反對評稅：一個月期限" : "Objecting to an assessment: the 1-month deadline"}
           </h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-warm-700">
+          <p className="mt-4 max-w-[65ch] text-base leading-7 text-warm-700">
             {lang === "zh"
               ? "反對評稅是最常用的糾正途徑，必須在評稅通知書發出日起計 1 個月內提出，逾期一般不獲受理（除非能證明有合理原因並經稅務局酌情接納）。"
               : "Objecting is the most commonly used route and must be lodged within 1 month of the date the notice of assessment was issued. Late objections are generally not accepted unless you can show reasonable cause and IRD exercises its discretion to allow it."}
           </p>
 
-          <ol className="mt-6 grid gap-4 sm:grid-cols-2">
+          <ol className="mt-10 grid gap-4 sm:grid-cols-2">
             {objectionSteps.map((step, index) => (
               <li key={step.en} className="card flex gap-4 p-5">
                 <span
@@ -83,26 +84,26 @@ export default function ObjectionsGuidePage() {
                 >
                   {index + 1}
                 </span>
-                <p className="text-sm leading-6 text-warm-700">{step[lang]}</p>
+                <p className="text-base leading-7 text-warm-700">{step[lang]}</p>
               </li>
             ))}
           </ol>
         </Container>
       </section>
 
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
-          <h2 className="text-xl font-bold text-navy-900">
+          <h2 className="display-section">
             {lang === "zh" ? "s.70A：評稅作實後的錯誤或遺漏更正" : "s.70A: correcting an error or omission after finality"}
           </h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-warm-700">
+          <p className="mt-4 max-w-[65ch] text-base leading-7 text-warm-700">
             {lang === "zh"
               ? "如反對期已過，但你其後發現原本申報有錯誤或遺漏，《稅務條例》第 70A 條提供有限度的補救機制。"
               : "If the objection period has already passed but you later discover an error or omission in what was originally reported, section 70A of the Inland Revenue Ordinance provides a limited remedy."}
           </p>
-          <ul className="mt-5 max-w-3xl space-y-3">
+          <ul className="mt-6 max-w-[65ch] space-y-3">
             {s70aPoints.map((point) => (
-              <li key={point.en} className="flex gap-2 text-sm leading-6 text-warm-700">
+              <li key={point.en} className="flex gap-2 text-base leading-7 text-warm-700">
                 <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
                 <span>{point[lang]}</span>
               </li>
@@ -111,14 +112,14 @@ export default function ObjectionsGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-12 sm:py-16">
+      <section className="bg-warm-50 py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="grid gap-6 lg:grid-cols-2">
             <article className="card p-6">
-              <h2 className="text-xl font-bold text-navy-900">
+              <h2 className="display-subsection">
                 {lang === "zh" ? "反對期間仍須繼續繳稅，或申請暫緩繳稅" : "Keep paying, or apply to hold over, while you object"}
               </h2>
-              <p className="mt-3 text-sm leading-6 text-warm-700">
+              <p className="mt-4 max-w-[65ch] text-base leading-7 text-warm-700">
                 {lang === "zh"
                   ? "提出反對本身並不會自動暫停繳稅義務。如評稅通知書列明的稅款到期，你原則上仍須按時繳付；如不希望在爭議未解決前先行繳付有爭議的部分，可同時向稅務局申請「暫緩繳稅」，惟是否批准由稅務局按情況酌情決定，並可能要求提供部分擔保或按金。詳見〈暫繳稅與緩繳〉指南。"
                   : "Lodging an objection does not automatically suspend your obligation to pay. If the tax shown on the notice falls due, you generally must still pay it on time. If you do not want to pay the disputed portion while the matter is unresolved, you can separately apply to hold over payment — approval is at IRD's discretion and may require partial payment or security. See the Provisional Tax and Holdover guide for more detail."}
@@ -126,10 +127,10 @@ export default function ObjectionsGuidePage() {
             </article>
 
             <article className="card p-6">
-              <h2 className="text-xl font-bold text-navy-900">
+              <h2 className="display-subsection">
                 {lang === "zh" ? "何時應該尋求專業意見" : "When to seek professional advice"}
               </h2>
-              <ul className="mt-3 space-y-2 text-sm leading-6 text-warm-700">
+              <ul className="mt-4 space-y-3 text-base leading-7 text-warm-700">
                 <li className="flex gap-2">
                   <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
                   <span>
@@ -160,7 +161,7 @@ export default function ObjectionsGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-white py-10">
+      <section className="bg-white py-14 sm:py-16">
         <Container>
           <p className="max-w-3xl text-xs leading-6 text-warm-600">
             {lang === "zh"

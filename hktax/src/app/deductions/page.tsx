@@ -64,6 +64,8 @@ export default function DeductionsPage() {
   const [filter, setFilter] = useState<FilterKind>("all");
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const params = getParams(year);
+  const eyebrowTracking = lang === "en" ? "tracking-[0.18em]" : "";
+  const eyebrowCase = lang === "en" ? "uppercase" : "";
 
   const variables = useMemo(
     () => ({
@@ -85,18 +87,18 @@ export default function DeductionsPage() {
 
   return (
     <main>
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-warm-50 py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">
+          <div className="max-w-4xl">
+            <p className={`text-xs font-bold text-teal-700 sm:text-sm ${eyebrowCase} ${eyebrowTracking}`}>
               {lang === "zh" ? "慳稅檢查" : "Tax-saving check"}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+            <h1 className="display-hero mt-4 max-w-5xl">
               {lang === "zh"
                 ? "扣除項目及免稅額資格檢查"
                 : "Deduction and allowance eligibility checker"}
             </h1>
-            <p className="mt-5 text-base leading-7 text-warm-700">
+            <p className="mt-6 max-w-3xl text-lg leading-8 text-warm-700 sm:text-xl">
               {lang === "zh"
                 ? `按 ${t(`header.year.${year}`)} 顯示每項上限，逐張卡檢查資格、需保存的證明及常見稅務局風險。切換頁首課稅年度時，金額會即時更新。`
                 : `Review each cap for ${t(`header.year.${year}`)}, then check eligibility, evidence to keep, and common IRD pitfalls. Amounts update immediately when you switch the year of assessment in the header.`}
@@ -104,7 +106,7 @@ export default function DeductionsPage() {
           </div>
 
           <div
-            className="mt-8 flex flex-wrap gap-2"
+            className="mt-10 flex flex-wrap gap-2.5"
             aria-label={lang === "zh" ? "篩選扣除項目及免稅額" : "Filter deductions and allowances"}
           >
             {(Object.keys(kindLabels) as FilterKind[]).map((kind) => {
@@ -115,10 +117,10 @@ export default function DeductionsPage() {
                   type="button"
                   aria-pressed={isActive}
                   onClick={() => setFilter(kind)}
-                  className={`focus-ring rounded-md border px-4 py-2 text-sm font-semibold transition ${
+                  className={`focus-ring inline-flex min-h-11 items-center justify-center rounded-md border px-4 py-2.5 text-sm font-bold shadow-button transition ${
                     isActive
-                      ? "border-navy-900 bg-navy-900 text-white"
-                      : "border-warm-200 bg-warm-50 text-navy-900 hover:border-teal-500 hover:bg-white"
+                      ? "border-navy-950 bg-navy-950 text-white"
+                      : "border-warm-150 bg-white text-navy-900 hover:border-teal-400/70 hover:bg-teal-50"
                   }`}
                 >
                   {kindLabels[kind][lang]}
@@ -129,26 +131,26 @@ export default function DeductionsPage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-12 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {visibleEntries.map((entry, index) => (
               <Reveal key={entry.id} delayMs={(index % 6) * 70}>
-                <article className="card flex flex-col overflow-hidden">
-                  <div className="border-b border-warm-200 bg-white p-5">
+                <article className="card flex h-full flex-col overflow-hidden">
+                  <div className="border-b border-warm-150 bg-white p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-700">
+                        <p className={`text-xs font-bold text-teal-700 sm:text-sm ${eyebrowCase} ${eyebrowTracking}`}>
                           {kindLabels[entry.kind][lang]}
                         </p>
-                        <h2 className="mt-2 text-xl font-bold leading-tight text-navy-900">
+                        <h2 className="mt-3 text-xl font-bold leading-tight text-navy-950">
                           {lang === "zh" ? entry.titleZh : entry.titleEn}
                         </h2>
                       </div>
                     </div>
 
-                    <div className="mt-5 rounded-md border border-teal-100 bg-teal-50 p-4">
-                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-teal-800">
+                    <div className="mt-6 rounded-md border border-teal-100 bg-teal-50/80 p-4">
+                      <p className={`text-xs font-bold text-teal-700 ${eyebrowCase} ${eyebrowTracking}`}>
                         {lang === "zh" ? "本年度上限" : "Current-year cap"}
                       </p>
                       <dl className="mt-3 space-y-2">
@@ -164,7 +166,7 @@ export default function DeductionsPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-1 flex-col divide-y divide-warm-200">
+                  <div className="flex flex-1 flex-col divide-y divide-warm-150">
                     {sectionKeys.map((section) => {
                       const sectionId = `${entry.id}-${section}`;
                       const isOpen = openSections[`${entry.id}:${section}`] ?? section === "eligibility";
@@ -179,7 +181,7 @@ export default function DeductionsPage() {
                             aria-expanded={isOpen}
                             aria-controls={sectionId}
                             onClick={() => toggleSection(entry.id, section)}
-                            className="focus-ring flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-bold text-navy-900 transition hover:bg-warm-50"
+                            className="focus-ring flex min-h-11 w-full items-center justify-between gap-4 px-6 py-4 text-left text-sm font-bold text-navy-950 transition hover:bg-warm-50"
                           >
                             <span>{sectionLabels[section][lang]}</span>
                             <span aria-hidden="true" className="text-lg leading-none text-teal-700">
@@ -187,7 +189,7 @@ export default function DeductionsPage() {
                             </span>
                           </button>
                           {isOpen ? (
-                            <div id={sectionId} className="px-5 pb-5">
+                            <div id={sectionId} className="px-6 pb-6">
                               <ul className="space-y-2 text-sm leading-6 text-warm-700">
                                 {items.map((item) => (
                                   <li key={item} className="flex gap-2">

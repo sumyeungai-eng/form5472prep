@@ -19,6 +19,7 @@ const kindLabels: Record<PostKind, { zh: string; en: string }> = {
 
 export function PostDetail({ post }: { post: Post }) {
   const { lang, t, year } = useI18n();
+  const labelTracking = lang === "en" ? "uppercase tracking-[0.12em]" : "";
   const params = getParams(year);
   const params2024 = getParams("2024_25");
   const params2025 = getParams("2025_26");
@@ -38,7 +39,7 @@ export function PostDetail({ post }: { post: Post }) {
 
   return (
     <main>
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="max-w-3xl">
             <Link
@@ -48,25 +49,25 @@ export function PostDetail({ post }: { post: Post }) {
               {lang === "zh" ? "← 返回稅務指南" : "← Back to guides"}
             </Link>
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <span className="rounded-md bg-teal-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-teal-800">
+              <span className={`rounded-md bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-800 ${labelTracking}`}>
                 {kindLabels[post.kind][lang]}
               </span>
               <span className="text-sm font-medium text-warm-600">
                 {formatDate(post.publishedISO, lang)}
               </span>
             </div>
-            <h1 className="mt-4 text-3xl font-bold leading-tight text-navy-900 sm:text-4xl">
+            <h1 className="display-hero mt-4 max-w-4xl">
               {title}
             </h1>
-            <p className="mt-5 text-base leading-7 text-warm-700">{summary}</p>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-warm-700">{summary}</p>
             <dl className="mt-6 grid gap-3 text-sm text-warm-700 sm:grid-cols-2">
-              <div className="rounded-md border border-warm-200 bg-warm-50 px-4 py-3">
+              <div className="card px-4 py-3">
                 <dt className="font-semibold text-navy-900">
                   {lang === "zh" ? "發布日期" : "Published"}
                 </dt>
                 <dd className="mt-1">{formatDate(post.publishedISO, lang)}</dd>
               </div>
-              <div className="rounded-md border border-warm-200 bg-warm-50 px-4 py-3">
+              <div className="card px-4 py-3">
                 <dt className="font-semibold text-navy-900">
                   {lang === "zh" ? "最後核對" : "Last reviewed"}
                 </dt>
@@ -77,11 +78,11 @@ export function PostDetail({ post }: { post: Post }) {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-12 sm:py-16">
+      <section className="bg-warm-50 py-20 sm:py-24 lg:py-28">
         <Container>
           <Reveal>
-            <article className="card p-6 sm:p-8">
-              <div className="space-y-5 text-base leading-7 text-warm-700">
+            <article className="card max-w-4xl p-6 sm:p-8">
+              <div className="max-w-[65ch] space-y-5 text-base leading-7 text-warm-700 sm:leading-8">
                 {body.map((block, index) => renderBlock(block, index, variables))}
               </div>
             </article>
@@ -89,12 +90,12 @@ export function PostDetail({ post }: { post: Post }) {
         </Container>
       </section>
 
-      <section className="bg-white py-10">
+      <section className="bg-white py-14 sm:py-16">
         <Container>
           <div className="max-w-3xl space-y-6">
             {post.sources?.length ? (
-              <div className="rounded-lg border border-warm-200 bg-white p-5">
-                <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-navy-900">
+              <div className="card p-5">
+                <h2 className={`text-sm font-bold text-navy-900 ${labelTracking}`}>
                   {lang === "zh" ? "官方來源" : "Official sources"}
                 </h2>
                 <ul className="mt-4 space-y-2 text-sm leading-6">
@@ -127,7 +128,7 @@ export function PostDetail({ post }: { post: Post }) {
               </div>
             ) : null}
 
-            <div className="rounded-lg border border-warm-200 bg-warm-50 p-5 text-sm leading-6 text-warm-700">
+            <div className="card bg-warm-50 p-5 text-sm leading-6 text-warm-700">
               <p>{t("disclaimer.banner")}</p>
               <p className="mt-3">
                 {lang === "zh"
@@ -148,7 +149,7 @@ export function PostDetail({ post }: { post: Post }) {
 function renderBlock(block: PostBlock, index: number, variables: Record<string, string>) {
   if (block.type === "heading") {
     return (
-      <h2 key={index} className="pt-3 text-xl font-bold leading-tight text-navy-900">
+      <h2 key={index} className="display-subsection pt-3">
         {interpolate(block.text, variables)}
       </h2>
     );
@@ -166,7 +167,7 @@ function renderBlock(block: PostBlock, index: number, variables: Record<string, 
 
   if (block.type === "callout") {
     return (
-      <div key={index} className="rounded-md border border-teal-100 bg-teal-50 p-4 font-medium text-navy-900">
+      <div key={index} className="rounded-md border border-teal-100 bg-teal-50 p-4 font-medium leading-7 text-navy-900">
         {interpolate(block.text, variables)}
       </div>
     );

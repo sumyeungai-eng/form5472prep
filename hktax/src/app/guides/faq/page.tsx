@@ -214,6 +214,7 @@ const faqItems: FaqItem[] = [
 
 export default function FaqGuidePage() {
   const { lang, year } = useI18n();
+  const eyebrowTracking = lang === "en" ? "uppercase tracking-[0.18em]" : "";
   const [openId, setOpenId] = useState<string | null>("first-time-filer");
 
   const params = getParams(year);
@@ -242,16 +243,16 @@ export default function FaqGuidePage() {
 
   return (
     <main>
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">
+            <p className={`text-xs font-bold text-teal-700 sm:text-sm ${eyebrowTracking}`}>
               {lang === "zh" ? "報稅指南" : "Filing guide"}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+            <h1 className="display-hero mt-4 max-w-4xl">
               {lang === "zh" ? "常見問題" : "Frequently Asked Questions"}
             </h1>
-            <p className="mt-5 text-base leading-7 text-warm-700">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-warm-700">
               {lang === "zh"
                 ? `以下 ${faqItems.length} 條問題整理自用戶最常詢問的報稅情境。金額會按你在頁首選擇的課稅年度（目前：${t2(year, lang)}）自動更新；如問題本身比較兩個年度，答案會分別列出兩年的數字。`
                 : `The ${faqItems.length} questions below cover the situations users ask about most often. Amounts update automatically for the year of assessment selected in the header (currently: ${t2(year, lang)}). Where a question compares two years, both years' figures are shown explicitly.`}
@@ -260,9 +261,9 @@ export default function FaqGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-12 sm:py-16">
+      <section className="bg-warm-50 py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="divide-y divide-warm-200 overflow-hidden rounded-lg border border-warm-200 bg-white shadow-soft">
+          <div className="grid gap-4">
             {faqItems.map((item) => {
               const isOpen = openId === item.id;
               const panelId = `faq-panel-${item.id}`;
@@ -270,14 +271,14 @@ export default function FaqGuidePage() {
               const answer = interpolate(lang === "zh" ? item.answerZh : item.answerEn, variables);
 
               return (
-                <div key={item.id}>
+                <div key={item.id} className="card overflow-hidden">
                   <h2>
                     <button
                       type="button"
                       aria-expanded={isOpen}
                       aria-controls={panelId}
                       onClick={() => setOpenId(isOpen ? null : item.id)}
-                      className="focus-ring flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-bold text-navy-900 transition hover:bg-warm-50 sm:text-base"
+                      className="focus-ring flex min-h-11 w-full items-center justify-between gap-4 px-5 py-4 text-left text-base font-bold text-navy-900 transition hover:bg-warm-50 sm:px-6"
                     >
                       <span>{question}</span>
                       <span aria-hidden="true" className="flex-none text-lg leading-none text-teal-700">
@@ -286,8 +287,8 @@ export default function FaqGuidePage() {
                     </button>
                   </h2>
                   {isOpen ? (
-                    <div id={panelId} className="px-5 pb-5">
-                      <p className="max-w-3xl text-sm leading-6 text-warm-700">{answer}</p>
+                    <div id={panelId} className="px-5 pb-5 sm:px-6 sm:pb-6">
+                      <p className="max-w-[65ch] text-base leading-7 text-warm-700">{answer}</p>
                     </div>
                   ) : null}
                 </div>
@@ -297,7 +298,7 @@ export default function FaqGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-white py-10">
+      <section className="bg-white py-14 sm:py-16">
         <Container>
           <p className="max-w-3xl text-xs leading-6 text-warm-600">
             {lang === "zh"

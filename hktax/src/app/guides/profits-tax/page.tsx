@@ -234,6 +234,7 @@ function buildSections(params: TaxParams): Section[] {
 
 export default function ProfitsTaxGuidePage() {
   const { lang, t, year } = useI18n();
+  const eyebrowTracking = lang === "en" ? "uppercase tracking-[0.18em]" : "";
   const params = getParams(year);
   const sections = useMemo(() => buildSections(params), [params]);
 
@@ -251,16 +252,16 @@ export default function ProfitsTaxGuidePage() {
 
   return (
     <main>
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700">
+            <p className={`text-xs font-bold text-teal-700 sm:text-sm ${eyebrowTracking}`}>
               {lang === "zh" ? "稅務指南" : "Guides"} · {t(`header.year.${year}`)}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+            <h1 className="display-hero mt-4 max-w-4xl">
               {lang === "zh" ? "利得稅（獨資／合夥）指南" : "Profits Tax (Sole Prop / Partnership) Guide"}
             </h1>
-            <p className="mt-5 text-base leading-7 text-warm-700">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-warm-700">
               {lang === "zh"
                 ? "如果你以獨資經營或合夥形式在香港經營業務，就要就業務利潤繳交利得稅。本指南集中講解個人／獨資業務相關的利得稅規則，不涵蓋有限公司的利得稅。"
                 : "If you run a business in Hong Kong as a sole proprietor or partner, you are liable to profits tax on the business's profits. This guide focuses on the profits tax rules relevant to individuals and unincorporated businesses — it does not cover limited company (corporate) profits tax."}
@@ -269,26 +270,26 @@ export default function ProfitsTaxGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-12 sm:py-16">
+      <section className="bg-warm-50 py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="space-y-10">
+          <div className="max-w-4xl space-y-8">
             {sections.map((section) => (
-              <article key={section.id} className="card p-6">
-                <h2 className="text-xl font-bold text-navy-900">{section.title[lang]}</h2>
-                <div className="mt-4 space-y-3 text-sm leading-6 text-warm-700">{section.content[lang]}</div>
+              <article key={section.id} className="card p-6 sm:p-8">
+                <h2 className="display-subsection">{section.title[lang]}</h2>
+                <div className="mt-5 max-w-[65ch] space-y-4 text-base leading-7 text-warm-700 sm:leading-8">{section.content[lang]}</div>
               </article>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-white py-20 sm:py-24 lg:py-28">
         <Container>
-          <div className="card p-6">
-            <h2 className="text-xl font-bold text-navy-900">
+          <div className="card max-w-4xl p-6 sm:p-8">
+            <h2 className="display-subsection">
               {lang === "zh" ? "計算示例" : "Worked example"}
             </h2>
-            <p className="mt-3 text-sm leading-6 text-warm-700">
+            <p className="mt-4 max-w-[65ch] text-base leading-7 text-warm-700">
               {lang === "zh"
                 ? `假設一盤獨資業務全年應評稅利潤為 ${hkd(example.assessableProfits, "zh")}，並符合資格享用兩級制稅率（相聯實體之中並沒有其他業務已使用這個優惠）。`
                 : `Assume a sole proprietorship has assessable profits of ${hkd(example.assessableProfits, "en")} for the year and is eligible for the two-tiered rate (no other entity in its connected group has already used the election).`}
@@ -327,9 +328,9 @@ export default function ProfitsTaxGuidePage() {
         </Container>
       </section>
 
-      <section className="bg-warm-50 py-10">
+      <section className="bg-warm-50 py-14 sm:py-16">
         <Container>
-          <div className="rounded-lg border border-warm-200 bg-white p-6 text-sm leading-6 text-warm-700">
+          <div className="card max-w-4xl p-6 text-sm leading-6 text-warm-700">
             <p>
               {lang === "zh"
                 ? "本頁內容僅供教育及參考用途，並非稅務意見，亦沒有考慮閣下個人情況。本網站並非香港稅務局網站，亦與稅務局無從屬關係。如有疑問，請參閱稅務局最新指引或諮詢專業稅務顧問。"
