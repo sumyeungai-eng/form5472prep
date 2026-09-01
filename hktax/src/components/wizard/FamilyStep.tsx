@@ -279,13 +279,15 @@ function allowanceExplainer(
     return null;
   }
 
+  // Must be a block element: as an inline <span> it shared a line with the
+  // following "add" button, whose padding then overlapped the text.
   return (
-    <span className="text-xs leading-5 text-warm-600">
+    <p className="text-xs leading-5 text-warm-600">
       {allowanceCapSummary(entry, params.allowances, lang)} · {interpolate(pitfall, allowanceVariables(params, lang))} ·{" "}
       <Link href="/deductions" className="font-semibold text-teal-700 underline-offset-2 hover:underline">
         {wizardT(wizardDictionary.hints.moreDetails, lang)}
       </Link>
-    </span>
+    </p>
   );
 }
 
