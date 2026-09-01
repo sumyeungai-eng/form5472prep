@@ -183,6 +183,12 @@ export const wizardDictionary = {
     unavailable: { zh: "不可用", en: "Unavailable" },
     debug: { zh: "偵錯", en: "Debug" },
   },
+  hints: {
+    savingChip: { zh: "估算可慳 ≈", en: "Est. saving ≈" },
+    disclaimer: { zh: "以上為一般教育提示，並非稅務建議。", en: "General educational reminders, not tax advice." },
+    reviewHeading: { zh: "慳稅檢查", en: "Tax-saving checks" },
+    moreDetails: { zh: "詳情", en: "Details" },
+  },
   sourceDetails: {
     noSources: { zh: "尚未選擇收入來源。返回上一頁選擇至少一項收入來源。", en: "No income source is selected yet. Go back and select at least one source." },
     addIncomeItem: { zh: "新增收入項目", en: "Add income item" },

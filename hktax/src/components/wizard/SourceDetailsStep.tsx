@@ -37,6 +37,7 @@ import {
   scrollToFirstError,
 } from "./FormFields";
 import { HelpPopover } from "./HelpPopover";
+import { HintsPanel } from "./HintsPanel";
 
 type SourceDetailsStepProps = {
   formId: string;
@@ -105,6 +106,7 @@ export function SourceDetailsStep({ formId, onValid }: SourceDetailsStepProps) {
           {wizardT(wizardDictionary.salary.title, lang)}
         </h1>
       </div>
+      <HintsPanel step="sourceDetails" />
       {!hasAnySource ? (
         <div className="rounded-md border border-warm-200 bg-white p-5 text-sm text-warm-700">
           {wizardT(wizardDictionary.sourceDetails.noSources, lang)}

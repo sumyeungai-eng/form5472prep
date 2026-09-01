@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
+import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useForm,
@@ -10,6 +11,8 @@ import {
   type UseFormSetValue,
   type UseFormWatch,
 } from "react-hook-form";
+import { deductionEntries, type DeductionEntry } from "@/lib/content/deductions";
+import { getParams } from "@/lib/tax/params";
 import { useI18n } from "@/lib/i18n/useI18n";
 import { useWizard } from "@/lib/wizard/wizardContext";
 import {
@@ -24,8 +27,10 @@ import {
   NumberField,
   RadioGroupField,
   getFieldError,
+  formatHKD,
   scrollToFirstError,
 } from "./FormFields";
+import { HintsPanel } from "./HintsPanel";
 
 type FamilyWizardFormValues = FamilyStepFormValues & Pick<
   WizardState,
@@ -45,6 +50,7 @@ export function FamilyStep({ formId, onValid }: FamilyStepProps) {
   const { lang } = useI18n();
   const { setWizardState, wizardState } = useWizard();
   const defaultValues = useMemo(() => familyDefaults(wizardState), [wizardState]);
+  const params = getParams(wizardState.year);
   const {
     formState: { errors },
     getValues,
@@ -91,12 +97,13 @@ export function FamilyStep({ formId, onValid }: FamilyStepProps) {
           {wizardT(wizardDictionary.family.title, lang)}
         </h1>
       </div>
+      <HintsPanel step="family" />
       <ChildrenFields register={register} setValue={setValue} watch={watch} errors={errors} year={wizardState.year} />
-      <ParentFields register={register} setValue={setValue} watch={watch} errors={errors} />
+      <ParentFields register={register} setValue={setValue} watch={watch} errors={errors} year={wizardState.year} />
       <div className="grid gap-5 rounded-md border border-warm-200 bg-white p-5 md:grid-cols-2">
         <NumberField name="siblingCount" register={register} label={wizardDictionary.family.siblingCount.label} help={wizardDictionary.family.siblingCount.help} error={getFieldError(errors, "siblingCount")} />
         <NumberField name="disabledDependantCount" register={register} label={wizardDictionary.family.disabledDependantCount.label} help={wizardDictionary.family.disabledDependantCount.help} error={getFieldError(errors, "disabledDependantCount")} />
-        <CheckboxField name="singleParent" register={register} label={wizardDictionary.family.singleParent.label} help={wizardDictionary.family.singleParent.help} error={getFieldError(errors, "singleParent")} />
+        <CheckboxField name="singleParent" register={register} label={wizardDictionary.family.singleParent.label} help={wizardDictionary.family.singleParent.help} hint={allowanceExplainer("single-parent", params, lang)} error={getFieldError(errors, "singleParent")} />
         <CheckboxField name="personalDisability.A" register={register} label={wizardDictionary.family.personalDisability.label} help={wizardDictionary.family.personalDisability.help} hint={wizardT(wizardDictionary.common.personA, lang)} error={getFieldError(errors, "personalDisability.A")} />
         {wizardState.maritalStatus === "married" ? (
           <CheckboxField name="personalDisability.B" register={register} label={wizardDictionary.family.personalDisability.label} help={wizardDictionary.family.personalDisability.help} hint={wizardT(wizardDictionary.common.personB, lang)} error={getFieldError(errors, "personalDisability.B")} />
@@ -142,10 +149,12 @@ function ChildrenFields({
   const { lang } = useI18n();
   const children = watch("children") ?? [];
   const endYear = year === "2024_25" ? 2025 : 2026;
+  const params = getParams(year);
 
   return (
     <section className="space-y-3 rounded-md border border-warm-200 bg-white p-5">
       <h2 className="text-lg font-bold text-navy-900">{wizardT(wizardDictionary.family.children.label, lang)}</h2>
+      {allowanceExplainer("child", params, lang)}
       {children.map((child, index) => (
         <div key={index} className="grid gap-3 rounded-md border border-warm-100 bg-warm-50 p-3 md:grid-cols-[1fr_auto]">
           <NumberField
@@ -187,18 +196,22 @@ function ParentFields({
   register,
   setValue,
   watch,
+  year,
 }: {
   errors: FieldErrors<FamilyWizardFormValues>;
   register: Register;
   setValue: SetValue;
   watch: Watch;
+  year: WizardState["year"];
 }) {
   const { lang } = useI18n();
   const parents = watch("parents") ?? [];
+  const params = getParams(year);
 
   return (
     <section className="space-y-3 rounded-md border border-warm-200 bg-white p-5">
       <h2 className="text-lg font-bold text-navy-900">{wizardT(wizardDictionary.family.parents.label, lang)}</h2>
+      {allowanceExplainer("parent-grandparent", params, lang)}
       {parents.map((parent, index) => (
         <div key={index} className="grid gap-3 rounded-md border border-warm-100 bg-warm-50 p-3 md:grid-cols-2">
           <NumberField name={`parents.${index}.birthYear` as Path<FamilyWizardFormValues>} register={register} label={wizardDictionary.family.parentBirthYear.label} help={wizardDictionary.family.parentBirthYear.help} optional error={getFieldError(errors, `parents.${index}.birthYear`)} />
@@ -252,3 +265,55 @@ function personOptions() {
   ];
 }
 
+type AllowanceEntry = Extract<DeductionEntry, { kind: "allowance" }>;
+
+function allowanceExplainer(
+  entryId: "child" | "parent-grandparent" | "single-parent",
+  params: ReturnType<typeof getParams>,
+  lang: "zh" | "en",
+): ReactNode {
+  const entry = findAllowanceEntry(entryId);
+  const pitfall = entry ? (lang === "zh" ? entry.pitfallsZh[0] : entry.pitfallsEn[0]) : undefined;
+
+  if (!entry || !pitfall) {
+    return null;
+  }
+
+  return (
+    <span className="text-xs leading-5 text-warm-600">
+      {allowanceCapSummary(entry, params.allowances, lang)} · {interpolate(pitfall, allowanceVariables(params, lang))} ·{" "}
+      <Link href="/deductions" className="font-semibold text-teal-700 underline-offset-2 hover:underline">
+        {wizardT(wizardDictionary.hints.moreDetails, lang)}
+      </Link>
+    </span>
+  );
+}
+
+function findAllowanceEntry(entryId: string): AllowanceEntry | null {
+  const entry = deductionEntries.find((item) => item.id === entryId);
+  return entry?.kind === "allowance" ? entry : null;
+}
+
+function allowanceCapSummary(
+  entry: AllowanceEntry,
+  allowances: ReturnType<typeof getParams>["allowances"],
+  lang: "zh" | "en",
+): string {
+  return `${wizardT(wizardDictionary.common.cap, lang)}: ${entry.capKeys
+    .map((key) => formatHKD(allowances[key]))
+    .join(" / ")}`;
+}
+
+function allowanceVariables(params: ReturnType<typeof getParams>, lang: "zh" | "en"): Record<string, string> {
+  return {
+    homeLoanInterestYears: formatCount(params.deductionCaps.homeLoanInterestYears, lang),
+  };
+}
+
+function interpolate(text: string, variables: Record<string, string>): string {
+  return text.replace(/\{(\w+)\}/g, (match, key: string) => variables[key] ?? match);
+}
+
+function formatCount(value: number, lang: "zh" | "en"): string {
+  return lang === "zh" ? `${value} 年` : `${value} years`;
+}

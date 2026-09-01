@@ -5,6 +5,7 @@ import { getParams } from "@/lib/tax/params";
 import { optimize } from "@/lib/tax/optimizer";
 import { useI18n } from "@/lib/i18n/useI18n";
 import { mapWizardStateToFamilyScenarioInput } from "@/lib/wizard/mapping";
+import { deriveHints } from "@/lib/wizard/optimizationHints";
 import { useWizard } from "@/lib/wizard/wizardContext";
 import type {
   WizardDeductions,
@@ -16,6 +17,7 @@ import type {
 } from "@/lib/wizard/wizardState";
 import { wizardDictionary, wizardT } from "@/lib/wizard/wizardDictionary";
 import { formatHKD } from "./FormFields";
+import { HintsPanel } from "./HintsPanel";
 import { saveWizardResult } from "./resultsStorage";
 
 type ReviewStepProps = {
@@ -28,6 +30,8 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
   const { setCurrentStepIndex, wizardState } = useWizard();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const people = activePeople(wizardState);
+  const params = getParams(wizardState.year);
+  const hintCount = deriveHints(wizardState, params).length;
   const showMarriedAllowanceWarning = wizardState.maritalStatus === "married"
     && wizardState.claimMarriedAllowanceBy === "none";
 
@@ -37,7 +41,7 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
 
     try {
       const familyScenarioInput = mapWizardStateToFamilyScenarioInput(wizardState);
-      const optimizerResult = optimize(familyScenarioInput, getParams(wizardState.year));
+      const optimizerResult = optimize(familyScenarioInput, params);
       saveWizardResult({
         familyScenarioInput,
         optimizerResult,
@@ -84,6 +88,15 @@ export function ReviewStep({ formId, onValid }: ReviewStepProps) {
             {lang === "zh" ? "返回基本資料修正" : "Back to basics to fix"}
           </button>
         </div>
+      ) : null}
+
+      {hintCount > 0 ? (
+        <section className="space-y-4 rounded-md border border-warm-200 bg-white p-5">
+          <h2 className="text-lg font-bold text-navy-900">
+            {wizardT(wizardDictionary.hints.reviewHeading, lang)} ({hintCount})
+          </h2>
+          <HintsPanel step="all" />
+        </section>
       ) : null}
 
       <section className="space-y-4 rounded-md border border-warm-200 bg-white p-5">

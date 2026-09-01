@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
+import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useForm,
@@ -9,6 +10,11 @@ import {
   type UseFormRegister,
   type UseFormWatch,
 } from "react-hook-form";
+import {
+  DONATION_MINIMUM_HKD,
+  deductionEntries,
+  type DeductionEntry,
+} from "@/lib/content/deductions";
 import { getParams } from "@/lib/tax/params";
 import { useI18n } from "@/lib/i18n/useI18n";
 import { useWizard } from "@/lib/wizard/wizardContext";
@@ -31,6 +37,7 @@ import {
   formatHKD,
   scrollToFirstError,
 } from "./FormFields";
+import { HintsPanel } from "./HintsPanel";
 
 type DeductionsStepProps = {
   formId: string;
@@ -84,6 +91,7 @@ export function DeductionsStep({ formId, onValid }: DeductionsStepProps) {
           {wizardT(wizardDictionary.deductions.title, lang)}
         </h1>
       </div>
+      <HintsPanel step="deductions" />
       <PersonDeductions
         personId="A"
         root="personA"
@@ -122,7 +130,8 @@ function PersonDeductions({
   watch: Watch;
 }) {
   const { lang } = useI18n();
-  const caps = getParams(state.year).deductionCaps;
+  const params = getParams(state.year);
+  const caps = params.deductionCaps;
   const housingKind = (watch(`${root}.deductions.housing.kind` as Path<DeductionsStepFormValues>)
     ?? "none") as WizardHousingDeductionKind;
 
@@ -138,7 +147,7 @@ function PersonDeductions({
           label={wizardDictionary.deductions.selfEducation.label}
           help={wizardDictionary.deductions.selfEducation.help}
           optional
-          hint={capHint(caps.selfEducation, lang)}
+          hint={deductionExplainer("self-education", params, lang)}
           error={getFieldError(errors, `${root}.deductions.selfEducation`)}
         />
         <NumberField
@@ -147,7 +156,7 @@ function PersonDeductions({
           label={wizardDictionary.deductions.charitableDonations.label}
           help={wizardDictionary.deductions.charitableDonations.help}
           optional
-          hint={`${wizardT(wizardDictionary.deductions.donationsPercentNote, lang)}: ${formatPercent(caps.donationsPercent)}`}
+          hint={deductionExplainer("donations", params, lang)}
           error={getFieldError(errors, `${root}.deductions.charitableDonations`)}
         />
         <NumberField
@@ -156,7 +165,7 @@ function PersonDeductions({
           label={wizardDictionary.deductions.elderlyCare.label}
           help={wizardDictionary.deductions.elderlyCare.help}
           optional
-          hint={capHint(caps.elderlyCare, lang)}
+          hint={deductionExplainer("elderly-care", params, lang)}
           error={getFieldError(errors, `${root}.deductions.elderlyCare`)}
         />
         <NumberField
@@ -165,7 +174,7 @@ function PersonDeductions({
           label={wizardDictionary.deductions.mpfMandatory.label}
           help={wizardDictionary.deductions.mpfMandatory.help}
           optional
-          hint={capHint(caps.mpfMandatory, lang)}
+          hint={deductionExplainer("mpf-mandatory", params, lang)}
           error={getFieldError(errors, `${root}.deductions.mpfMandatory`)}
         />
       </div>
@@ -181,7 +190,7 @@ function PersonDeductions({
             { value: "homeLoanInterest", label: wizardDictionary.deductions.homeLoanInterest.label },
             { value: "domesticRent", label: wizardDictionary.deductions.domesticRent.label },
           ]}
-          hint={housingCapHint(caps, lang)}
+          hint={housingDeductionExplainer(housingKind, params, lang)}
           error={getFieldError(errors, `${root}.deductions.housing.kind`)}
         />
         {housingKind !== "none" ? (
@@ -212,7 +221,7 @@ function PersonDeductions({
           label={wizardDictionary.deductions.annuityAndTvc.label}
           help={wizardDictionary.deductions.annuityAndTvc.help}
           optional
-          hint={capHint(caps.annuityAndTvc, lang)}
+          hint={deductionExplainer("annuity-tvc", params, lang)}
           error={getFieldError(errors, `${root}.deductions.annuityAndTvc`)}
         />
         <NumberField
@@ -221,7 +230,7 @@ function PersonDeductions({
           label={wizardDictionary.deductions.vhisPremiums.label}
           help={wizardDictionary.deductions.vhisPremiums.help}
           optional
-          hint={capHint(caps.vhisPerPerson, lang)}
+          hint={deductionExplainer("vhis", params, lang)}
           error={getFieldError(errors, `${root}.deductions.vhisPremiums`)}
         />
         <NumberField
@@ -238,7 +247,7 @@ function PersonDeductions({
           label={wizardDictionary.deductions.assistedReproduction.label}
           help={wizardDictionary.deductions.assistedReproduction.help}
           optional
-          hint={capHint(caps.assistedReproduction, lang)}
+          hint={deductionExplainer("assisted-reproduction", params, lang)}
           error={getFieldError(errors, `${root}.deductions.assistedReproduction`)}
         />
       </div>
@@ -280,20 +289,6 @@ function normalizeDeductions(deductions: WizardDeductions): WizardDeductions {
   };
 }
 
-function capHint(cap: number, lang: "zh" | "en"): string {
-  return `${wizardT(wizardDictionary.deductions.capNote, lang)}: ${formatHKD(cap)}`;
-}
-
-function housingCapHint(
-  caps: ReturnType<typeof getParams>["deductionCaps"],
-  lang: "zh" | "en",
-): string {
-  return [
-    `${wizardT(wizardDictionary.deductions.homeLoanInterest.label, lang)}: ${formatHKD(caps.homeLoanInterest)} / ${formatHKD(caps.homeLoanInterestElevated)}`,
-    `${wizardT(wizardDictionary.deductions.domesticRent.label, lang)}: ${formatHKD(caps.domesticRent)} / ${formatHKD(caps.domesticRentElevated)}`,
-  ].join(" · ");
-}
-
 function selectedHousingCapHint(
   kind: WizardHousingDeductionKind,
   caps: ReturnType<typeof getParams>["deductionCaps"],
@@ -311,4 +306,82 @@ function formatPercent(value: number): string {
     maximumFractionDigits: 0,
     style: "percent",
   }).format(value);
+}
+
+type DeductionOnlyEntry = Extract<DeductionEntry, { kind: "deduction" }>;
+type DeductionEntryId =
+  | "self-education"
+  | "donations"
+  | "elderly-care"
+  | "mpf-mandatory"
+  | "home-loan-interest"
+  | "domestic-rent"
+  | "annuity-tvc"
+  | "vhis"
+  | "assisted-reproduction";
+
+function deductionExplainer(
+  entryId: DeductionEntryId,
+  params: ReturnType<typeof getParams>,
+  lang: "zh" | "en",
+): ReactNode {
+  const entry = findDeductionEntry(entryId);
+  const pitfall = entry ? (lang === "zh" ? entry.pitfallsZh[0] : entry.pitfallsEn[0]) : undefined;
+
+  if (!entry || !pitfall) {
+    return null;
+  }
+
+  return (
+    <>
+      {deductionCapSummary(entry, params.deductionCaps, lang)} · {interpolate(pitfall, deductionVariables(params, lang))} ·{" "}
+      <Link href="/deductions" className="font-semibold text-teal-700 underline-offset-2 hover:underline">
+        {wizardT(wizardDictionary.hints.moreDetails, lang)}
+      </Link>
+    </>
+  );
+}
+
+function housingDeductionExplainer(
+  kind: WizardHousingDeductionKind,
+  params: ReturnType<typeof getParams>,
+  lang: "zh" | "en",
+): ReactNode {
+  if (kind === "none") {
+    return null;
+  }
+
+  return deductionExplainer(kind === "homeLoanInterest" ? "home-loan-interest" : "domestic-rent", params, lang);
+}
+
+function findDeductionEntry(entryId: DeductionEntryId): DeductionOnlyEntry | null {
+  const entry = deductionEntries.find((item) => item.id === entryId);
+  return entry?.kind === "deduction" ? entry : null;
+}
+
+function deductionCapSummary(
+  entry: DeductionOnlyEntry,
+  caps: ReturnType<typeof getParams>["deductionCaps"],
+  lang: "zh" | "en",
+): string {
+  return `${wizardT(wizardDictionary.common.cap, lang)}: ${entry.capKeys
+    .filter((key) => key !== "homeLoanInterestYears")
+    .map((key) => key === "donationsPercent" ? formatPercent(caps[key]) : formatHKD(caps[key]))
+    .join(" / ")}`;
+}
+
+function deductionVariables(params: ReturnType<typeof getParams>, lang: "zh" | "en"): Record<string, string> {
+  return {
+    donationMinimum: formatHKD(DONATION_MINIMUM_HKD),
+    donationsPercent: formatPercent(params.deductionCaps.donationsPercent),
+    homeLoanInterestYears: formatCount(params.deductionCaps.homeLoanInterestYears, lang),
+  };
+}
+
+function interpolate(text: string, variables: Record<string, string>): string {
+  return text.replace(/\{(\w+)\}/g, (match, key: string) => variables[key] ?? match);
+}
+
+function formatCount(value: number, lang: "zh" | "en"): string {
+  return lang === "zh" ? `${value} 年` : `${value} years`;
 }
