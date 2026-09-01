@@ -205,6 +205,7 @@ function allowed_subject_label(string $kind, string $subject): ?string
             'tax-question' => 'Tax question',
             'technical' => 'Technical issue',
             'privacy' => 'Privacy question',
+            'partnership' => 'Partnership / business enquiry',
             'other' => 'Other',
         ],
         'feedback' => [
@@ -307,14 +308,19 @@ $body = implode("\n", [
     $message,
 ]);
 
+// mail() must receive headers as a STRING or an associative array keyed by
+// header name. A numerically-indexed list throws "Header name cannot be
+// numeric" on PHP 8 and fails every valid submission. The associative form
+// also makes PHP validate each name/value itself — defence in depth on top of
+// our own control-character stripping.
 $headers = [
-    'From: HK Tax Assistant <' . FROM_ADDRESS . '>',
-    'Content-Type: text/plain; charset=UTF-8',
-    'X-Mailer: PHP/' . phpversion(),
+    'From' => 'HK Tax Assistant <' . FROM_ADDRESS . '>',
+    'Content-Type' => 'text/plain; charset=UTF-8',
+    'X-Mailer' => 'PHP/' . phpversion(),
 ];
 
 if ($validEmail !== '') {
-    $headers[] = 'Reply-To: ' . $validEmail;
+    $headers['Reply-To'] = $validEmail;
 }
 
 if (!mail(RECIPIENT, $mailSubject, $body, $headers)) {

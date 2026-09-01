@@ -99,6 +99,10 @@ export const contactDictionary = {
     zh: "私隱問題",
     en: "Privacy question"
   },
+  contactSubjectPartnership: {
+    zh: "合作／業務洽談",
+    en: "Partnership / business enquiry"
+  },
   contactSubjectOther: {
     zh: "其他",
     en: "Other"
@@ -136,6 +140,7 @@ export type ContactSubjectValue =
   | "tax-question"
   | "technical"
   | "privacy"
+  | "partnership"
   | "other";
 
 export type FeedbackCategoryValue =
@@ -155,6 +160,7 @@ export const contactSubjectOptions = [
   { value: "tax-question", labelKey: "contactSubjectTaxQuestion" },
   { value: "technical", labelKey: "contactSubjectTechnical" },
   { value: "privacy", labelKey: "contactSubjectPrivacy" },
+  { value: "partnership", labelKey: "contactSubjectPartnership" },
   { value: "other", labelKey: "contactSubjectOther" }
 ] as const satisfies ReadonlyArray<ContactOption<ContactSubjectValue>>;
 
