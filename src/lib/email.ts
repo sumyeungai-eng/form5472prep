@@ -1348,8 +1348,12 @@ type EinApplicationEmailArgs = {
   llcName: string;
   llcState?: string;
   llcFormedDate?: string;
+  businessMailingAddress?: string;
+  businessType?: string;
   businessPurpose?: string;
+  principalProducts?: string;
   ownerName?: string;
+  ownerHomeAddress?: string;
   ownerCitizenship?: string;
   ownerResidence?: string;
   passportNumber?: string;
@@ -1371,8 +1375,12 @@ export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs
       `LLC name: ${args.llcName}`,
       `State: ${value(args.llcState)}`,
       `Formed date: ${value(args.llcFormedDate)}`,
+      `Company business mailing address: ${value(args.businessMailingAddress)}`,
+      `Business type: ${value(args.businessType)}`,
       `Business purpose: ${value(args.businessPurpose)}`,
+      `Principal line of products or services sold: ${value(args.principalProducts)}`,
       `Owner name: ${value(args.ownerName, "(same as contact)")}`,
+      `Owner home address: ${value(args.ownerHomeAddress)}`,
       `Citizenship: ${value(args.ownerCitizenship)}`,
       `Residence: ${value(args.ownerResidence)}`,
       `Passport number: ${value(args.passportNumber)}`,
@@ -1390,8 +1398,12 @@ export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs
         ["LLC name", args.llcName],
         ["State", value(args.llcState)],
         ["Formed date", value(args.llcFormedDate)],
+        ["Company business mailing address", value(args.businessMailingAddress)],
+        ["Business type", value(args.businessType)],
         ["Business purpose", value(args.businessPurpose)],
+        ["Principal line of products or services sold", value(args.principalProducts)],
         ["Owner name", value(args.ownerName, "(same as contact)")],
+        ["Owner home address", value(args.ownerHomeAddress)],
         ["Citizenship", value(args.ownerCitizenship)],
         ["Residence", value(args.ownerResidence)],
         ["Passport number", value(args.passportNumber)],

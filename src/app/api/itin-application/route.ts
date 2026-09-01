@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     create: { email: normalized },
   });
 
-  await prisma.itinApplication.create({
+  const application = await prisma.itinApplication.create({
     data: {
       fullName, email: normalized, phone: phone || null,
       dateOfBirth: dateOfBirth || null, countryOfBirth: countryOfBirth || null,
@@ -72,5 +72,5 @@ export async function POST(req: Request) {
     }),
   ]);
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, id: application.id });
 }

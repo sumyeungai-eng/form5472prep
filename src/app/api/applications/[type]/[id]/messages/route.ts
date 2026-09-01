@@ -253,7 +253,12 @@ export async function POST(req: Request, { params }: { params: { type: string; i
             kind,
             subjectLabel: label,
             bodyExcerpt,
-            portalLink: makeMagicLink(caller.application.userId),
+            // Deep-link through the auth handler so the client lands on the
+            // application itself, not the dashboard, ready to reply.
+            portalLink:
+              makeMagicLink(caller.application.userId) +
+              "?next=" +
+              encodeURIComponent(`/applications/${type}/${caller.application.id}`),
           });
         }
       } else {

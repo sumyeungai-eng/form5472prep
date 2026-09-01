@@ -15,8 +15,8 @@ export async function POST(req: Request) {
 
   const {
     fullName, email, phone,
-    llcName, llcState, llcFormedDate, businessPurpose,
-    ownerName, ownerCitizenship, ownerResidence, passportNumber,
+    llcName, llcState, llcFormedDate, businessMailingAddress, businessType, businessPurpose, principalProducts,
+    ownerName, ownerHomeAddress, ownerCitizenship, ownerResidence, passportNumber,
     notes,
   } = body as Record<string, string>;
 
@@ -33,12 +33,13 @@ export async function POST(req: Request) {
     create: { email: normalized },
   });
 
-  await prisma.einApplication.create({
+  const application = await prisma.einApplication.create({
     data: {
       fullName, email: normalized, phone: phone || null,
       llcName, llcState: llcState || null, llcFormedDate: llcFormedDate || null,
-      businessPurpose: businessPurpose || null,
-      ownerName: ownerName || null, ownerCitizenship: ownerCitizenship || null,
+      businessMailingAddress: businessMailingAddress || null, businessType: businessType || null,
+      businessPurpose: businessPurpose || null, principalProducts: principalProducts || null,
+      ownerName: ownerName || null, ownerHomeAddress: ownerHomeAddress || null, ownerCitizenship: ownerCitizenship || null,
       ownerResidence: ownerResidence || null, passportNumber: passportNumber || null,
       notes: notes || null,
       userId: user.id,
@@ -58,8 +59,12 @@ export async function POST(req: Request) {
       llcName,
       llcState,
       llcFormedDate,
+      businessMailingAddress,
+      businessType,
       businessPurpose,
+      principalProducts,
       ownerName,
+      ownerHomeAddress,
       ownerCitizenship,
       ownerResidence,
       passportNumber,
@@ -74,5 +79,5 @@ export async function POST(req: Request) {
     }),
   ]);
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, id: application.id });
 }

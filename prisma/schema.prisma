@@ -425,18 +425,27 @@ model EinApplication {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  fullName         String
-  email            String
-  phone            String?
-  llcName          String
-  llcState         String?
-  llcFormedDate    String?
-  businessPurpose  String?
-  ownerName        String?
-  ownerCitizenship String?
-  ownerResidence   String?
-  passportNumber   String?
-  notes            String?
+  fullName               String
+  email                  String
+  phone                  String?
+  llcName                String
+  llcState               String?
+  llcFormedDate          String?
+  businessMailingAddress String?
+  businessType           String?
+  businessPurpose        String?
+  principalProducts      String?
+  ownerName              String?
+  ownerHomeAddress       String?
+  ownerCitizenship       String?
+  ownerResidence         String?
+  passportNumber         String?
+  notes                  String?
+
+  amountPaid      Int       @default(0)
+  stripeSessionId String?
+  stripePaymentId String?
+  paidAt          DateTime?
 
   status     EinStatus @default(RECEIVED)
   adminNotes String?
@@ -475,6 +484,11 @@ model ItinApplication {
   passportNumber     String?
   passportExpiry     String?
   notes              String?
+
+  amountPaid      Int       @default(0)
+  stripeSessionId String?
+  stripePaymentId String?
+  paidAt          DateTime?
 
   status     ItinStatus @default(RECEIVED)
   adminNotes String?
