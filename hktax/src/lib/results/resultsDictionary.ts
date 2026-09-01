@@ -14,6 +14,11 @@ export const resultsDictionary = {
     en: "The original assessment year could not be confirmed from the stored result; figures below were recomputed using the current year's parameters and may not exactly match the original wizard session.",
   },
   print: { zh: "列印 / 儲存為 PDF", en: "Print / Save as PDF" },
+  generateDraft: { zh: "生成 BIR60 填表草稿", en: "Generate BIR60 filing draft" },
+  generateDraftHint: {
+    zh: "把以下數字逐格對應到報稅表，方便抄寫。",
+    en: "Maps the figures below to each BIR60 box so you can copy them across.",
+  },
   recommended: { zh: "建議方案", en: "Recommended election" },
   totalFamilyTax: { zh: "家庭總稅款", en: "Total family tax" },
   savingVsSeparate: { zh: "較預設分開評稅節省", en: "Saving vs default separate assessment" },

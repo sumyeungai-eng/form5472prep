@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { formatHKD } from "@/components/wizard/FormFields";
 import type { OptimizerResult, OptimizerScenario } from "@/lib/tax/optimizer";
 import type { ResultsLanguage } from "@/lib/results/resultsDictionary";
@@ -25,11 +26,17 @@ export function HeadlineCard({ bestScenario, optimizerResult, lang, yearLabel }:
             {resultsT(resultsDictionary.year, lang)}: {yearLabel}
           </p>
         </div>
-        <div className="results-print-action">
+        <div className="results-print-action flex flex-col gap-2 sm:items-end">
+          <Link
+            href="/bir60/"
+            className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md bg-gold px-5 py-2 text-sm font-bold text-navy-900 hover:bg-gold-600 hover:text-white"
+          >
+            {resultsT(resultsDictionary.generateDraft, lang)}
+          </Link>
           <button
             type="button"
             onClick={() => window.print()}
-            className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md bg-navy-900 px-5 py-2 text-sm font-bold text-white hover:bg-navy-800"
+            className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-warm-300 px-5 py-2 text-sm font-bold text-navy-900 hover:border-teal-300"
           >
             {resultsT(resultsDictionary.print, lang)}
           </button>

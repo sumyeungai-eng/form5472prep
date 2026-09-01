@@ -27,10 +27,10 @@ export function Bir60Panel({ flags, lang }: Bir60PanelProps) {
           </p>
         </div>
         <Link
-          href="/bir60"
-          className="focus-ring inline-flex min-h-11 items-center justify-center rounded-md bg-navy-900 px-5 py-2 text-sm font-bold text-white hover:bg-navy-800"
+          href="/bir60/"
+          className="focus-ring inline-flex min-h-11 flex-none items-center justify-center rounded-md bg-gold px-5 py-2 text-sm font-bold text-navy-900 hover:bg-gold-600 hover:text-white"
         >
-          生成填表草稿 / Generate filing draft
+          {resultsT(resultsDictionary.generateDraft, lang)}
         </Link>
       </div>
 
