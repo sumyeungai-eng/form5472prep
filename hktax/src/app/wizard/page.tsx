@@ -160,11 +160,11 @@ function WizardFlow() {
 
             <ProgressIndicator currentStepIndex={currentStepIndex} onSelectStep={handleSelectStep} />
 
-            <div onSubmitCapture={handleStepSubmitCapture}>
+            <div className="pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0" onSubmitCapture={handleStepSubmitCapture}>
               {renderStep(currentStepIndex, formId, handleValidStep)}
             </div>
 
-            <div className="flex flex-col-reverse gap-3 border-t border-warm-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="hidden gap-3 border-t border-warm-100 pt-5 md:flex md:items-center md:justify-between">
               <button
                 type="button"
                 onClick={() => {
@@ -191,6 +191,37 @@ function WizardFlow() {
                   lang,
                 )}
               </button>
+            </div>
+
+            <div className="fixed inset-x-0 bottom-0 z-40 !mt-0 border-t border-warm-200 bg-white px-5 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-10px_30px_rgba(14,32,56,0.12)] print:hidden md:hidden">
+              <div className="mx-auto flex max-w-5xl gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    pendingStepRef.current = null;
+                    previousStep();
+                  }}
+                  disabled={currentStepIndex === 0}
+                  className="focus-ring inline-flex min-h-11 flex-1 items-center justify-center rounded-md border border-warm-300 px-4 py-2 text-sm font-bold text-navy-900 hover:border-teal-300 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {wizardT(wizardDictionary.context.previousStep.label, lang)}
+                </button>
+                <button
+                  type="submit"
+                  form={formId}
+                  onClick={() => {
+                    pendingStepRef.current = null;
+                  }}
+                  className="focus-ring inline-flex min-h-11 flex-1 items-center justify-center rounded-md bg-navy-900 px-4 py-2 text-sm font-bold text-white hover:bg-navy-800"
+                >
+                  {wizardT(
+                    currentStepIndex === LAST_STEP_INDEX
+                      ? wizardDictionary.common.compute
+                      : wizardDictionary.context.nextStep.label,
+                    lang,
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         )}

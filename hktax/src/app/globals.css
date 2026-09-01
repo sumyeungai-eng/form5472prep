@@ -54,7 +54,7 @@ body {
 
   .form-select,
   .form-input {
-    @apply focus-ring min-h-10 rounded-md border border-warm-200 bg-white px-3 py-2 text-sm font-medium text-navy-900 shadow-sm;
+    @apply focus-ring min-h-10 rounded-md border border-warm-200 bg-white px-3 py-2 text-base font-medium text-navy-900 shadow-sm sm:text-sm;
   }
 }
 

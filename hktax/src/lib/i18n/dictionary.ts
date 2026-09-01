@@ -51,9 +51,11 @@ export const dictionary = {
     zh: "切換至中文",
     en: "Switch to Chinese"
   },
+  // WCAG 2.5.3 Label in Name: the accessible name must contain the visible
+  // label ("EN") so speech-input users can activate it by saying what they see.
   "header.language.enAriaLabel": {
-    zh: "切換至英文",
-    en: "Switch to English"
+    zh: "切換至英文 EN",
+    en: "Switch to English (EN)"
   },
   "header.language.zh": {
     zh: "中",
