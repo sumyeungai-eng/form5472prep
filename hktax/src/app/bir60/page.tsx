@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/Container";
+import FormReplica from "@/components/bir60/FormReplica";
 import { loadWizardResult, type StoredWizardResult } from "@/components/wizard/resultsStorage";
 import { fillBir60, type Bir60Particulars, type FilledBir60, type FilledBir60Box, type FilledBir60Part, type FilledBir60Section } from "@/lib/bir60/fill";
 import { useI18n } from "@/lib/i18n/useI18n";
@@ -15,6 +16,7 @@ import "./bir60-print.css";
 const PARTICULARS_STORAGE_KEY = "hktax:bir60:particulars:v1";
 
 type Bir60Entry = WizardDictionaryEntry;
+type Bir60ViewMode = "replica" | "table";
 
 const bir60Dictionary = {
   title: { zh: "BIR60 填表草稿", en: "BIR60 filing draft" },
@@ -77,6 +79,10 @@ const bir60Dictionary = {
     en: "Complete the wizard and generate a result first, then return here to prepare the filing draft.",
   },
   year: { zh: "課稅年度", en: "Year of assessment" },
+  viewModeLegend: { zh: "草稿檢視模式", en: "Draft view mode" },
+  replicaView: { zh: "表格版面", en: "Form layout" },
+  tableView: { zh: "清單檢視", en: "List view" },
+  replicaRegion: { zh: "BIR60 表格版面草稿", en: "BIR60 form-layout draft" },
 } as const satisfies Record<string, Bir60Entry>;
 
 function bir60T(entry: Bir60Entry, lang: WizardLanguage): string {
@@ -125,6 +131,7 @@ function Bir60PageContent() {
   const [storedResult, setStoredResult] = useState<StoredWizardResult | null>();
   const [particulars, setParticulars] = useState<Bir60Particulars>({});
   const [particularsLoaded, setParticularsLoaded] = useState(false);
+  const [viewMode, setViewMode] = useState<"replica" | "table">("replica");
 
   useEffect(() => {
     setStoredResult(loadWizardResult());
@@ -240,11 +247,18 @@ function Bir60PageContent() {
           </p>
         ) : null}
 
+        <Bir60ViewModeToggle
+          mode={viewMode}
+          onChange={setViewMode}
+          controls={wizardState.maritalStatus === "married" ? "bir60-A-draft bir60-B-draft" : "bir60-A-draft"}
+        />
+
         <DraftOrNote
           draft={personADraft}
           heading={bir60T(bir60Dictionary.personADraft, lang)}
           lang={lang}
           personId="A"
+          viewMode={viewMode}
         />
 
         {wizardState.maritalStatus === "married" ? (
@@ -254,6 +268,7 @@ function Bir60PageContent() {
             lang={lang}
             personId="B"
             pageBreakBefore
+            viewMode={viewMode}
           />
         ) : null}
 
@@ -427,22 +442,72 @@ function TextInput({
   );
 }
 
+function Bir60ViewModeToggle({
+  controls,
+  mode,
+  onChange,
+}: {
+  controls: string;
+  mode: Bir60ViewMode;
+  onChange: (mode: Bir60ViewMode) => void;
+}) {
+  const options: Array<{ label: Bir60Entry; value: Bir60ViewMode }> = [
+    { label: bir60Dictionary.replicaView, value: "replica" },
+    { label: bir60Dictionary.tableView, value: "table" },
+  ];
+
+  return (
+    <fieldset className="bir60-view-toggle rounded-lg border border-warm-200 bg-white p-4 shadow-soft" aria-controls={controls}>
+      <legend className="px-1 text-sm font-bold text-navy-900">
+        {bir60Dictionary.viewModeLegend.zh} / {bir60Dictionary.viewModeLegend.en}
+      </legend>
+      <div className="mt-3 flex flex-wrap gap-3">
+        {options.map((option) => (
+          <label
+            key={option.value}
+            className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border px-4 py-2 text-sm font-bold focus-within:ring-2 focus-within:ring-teal-500 ${
+              mode === option.value
+                ? "border-navy-900 bg-navy-900 text-white"
+                : "border-warm-200 bg-white text-navy-900 hover:border-teal-400"
+            }`}
+          >
+            <input
+              type="radio"
+              name="bir60-view-mode"
+              value={option.value}
+              checked={mode === option.value}
+              onChange={() => onChange(option.value)}
+              className="h-4 w-4 accent-teal-700"
+            />
+            <span>{option.label.zh} / {option.label.en}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 function DraftOrNote({
   draft,
   heading,
   lang,
   pageBreakBefore = false,
   personId,
+  viewMode,
 }: {
   draft: FilledBir60 | null;
   heading: string;
   lang: WizardLanguage;
   pageBreakBefore?: boolean;
   personId: WizardPersonId;
+  viewMode: Bir60ViewMode;
 }) {
   if (!draft) {
     return (
-      <section className={pageBreakBefore ? "bir60-person-break rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8" : "rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8"}>
+      <section
+        id={`bir60-${personId}-draft`}
+        className={pageBreakBefore ? "bir60-person-break rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8" : "rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8"}
+      >
         <h2 className="text-xl font-bold text-navy-900">{heading}</h2>
         <p className="mt-3 text-sm leading-6 text-warm-700">
           {bir60T(bir60Dictionary.noDraftForPerson, lang)}
@@ -452,7 +517,11 @@ function DraftOrNote({
   }
 
   return (
-    <article className={pageBreakBefore ? "bir60-person-break space-y-5" : "space-y-5"} aria-labelledby={`bir60-${personId}-title`}>
+    <article
+      id={`bir60-${personId}-draft`}
+      className={pageBreakBefore ? "bir60-person-break space-y-5" : "space-y-5"}
+      aria-labelledby={`bir60-${personId}-title`}
+    >
       <DraftBanner compact />
       <div className="rounded-lg border border-warm-200 bg-white p-5 shadow-soft sm:p-8">
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-teal-700">
@@ -462,9 +531,19 @@ function DraftOrNote({
           {heading}
         </h2>
       </div>
-      {draft.parts.map((part) => (
-        <Bir60PartView key={part.id} part={part} lang={lang} />
-      ))}
+      {viewMode === "replica" ? (
+        <div
+          className="bir60-replica"
+          role="region"
+          aria-label={`${heading} - ${bir60T(bir60Dictionary.replicaRegion, lang)}`}
+        >
+          <FormReplica draft={draft} lang={lang} />
+        </div>
+      ) : (
+        draft.parts.map((part) => (
+          <Bir60PartView key={part.id} part={part} lang={lang} />
+        ))
+      )}
     </article>
   );
 }

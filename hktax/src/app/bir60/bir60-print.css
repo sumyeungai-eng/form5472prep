@@ -1,3 +1,11 @@
+.bir60-segmented-cell {
+  width: clamp(1rem, 5.6vw, 1.5rem);
+}
+
+.bir60-segmented-cell-compact {
+  width: clamp(0.875rem, 4.7vw, 1.25rem);
+}
+
 @media print {
   @page {
     size: A4;
@@ -8,6 +16,7 @@
   nav,
   footer,
   button,
+  .bir60-view-toggle,
   .bir60-print-action {
     display: none !important;
   }
@@ -37,6 +46,53 @@
 
   .bir60-person-break {
     break-before: page;
+    page-break-before: always;
+  }
+
+  .bir60-replica,
+  .bir60-replica * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .bir60-replica [data-part-no="4"],
+  .bir60-replica [data-part-no="8"],
+  .bir60-replica [data-part-no="11"] {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .bir60-replica [data-part-no] {
+    background: #eef3e6 !important;
+    border-color: #111111 !important;
+  }
+
+  .bir60-replica [data-part-no] > div:first-child {
+    background: #000000 !important;
+    border: 1px solid #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .bir60-segmented-row {
+    overflow-x: visible !important;
+    padding-bottom: 0 !important;
+  }
+
+  .bir60-replica article,
+  .bir60-replica section,
+  .bir60-replica div,
+  .bir60-replica span {
+    border-color: #111111 !important;
+  }
+
+  .bir60-replica [class*="text-[#555]"],
+  .bir60-replica [class*="text-[#666]"],
+  .bir60-replica [class*="text-[#1f321b]"] {
+    color: #111111 !important;
+  }
+
+  .bir60-replica [class*="border-dashed"] {
+    border-style: solid !important;
   }
 
   .bir60-part,
@@ -140,5 +196,17 @@
 @media screen {
   .bir60-print-final-banner {
     display: none;
+  }
+
+  .bir60-replica {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .bir60-replica *,
+  .bir60-replica *::before,
+  .bir60-replica *::after {
+    min-width: 0;
   }
 }
