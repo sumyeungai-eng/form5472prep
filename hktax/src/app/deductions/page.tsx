@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Container } from "@/components/Container";
+import { Reveal } from "@/components/motion/Reveal";
 import {
   DONATION_MINIMUM_HKD,
   deductionEntries,
@@ -131,76 +132,78 @@ export default function DeductionsPage() {
       <section className="bg-warm-50 py-12 sm:py-16">
         <Container>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {visibleEntries.map((entry) => (
-              <article key={entry.id} className="card flex flex-col overflow-hidden">
-                <div className="border-b border-warm-200 bg-white p-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-700">
-                        {kindLabels[entry.kind][lang]}
+            {visibleEntries.map((entry, index) => (
+              <Reveal key={entry.id} delayMs={(index % 6) * 70}>
+                <article className="card flex flex-col overflow-hidden">
+                  <div className="border-b border-warm-200 bg-white p-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-700">
+                          {kindLabels[entry.kind][lang]}
+                        </p>
+                        <h2 className="mt-2 text-xl font-bold leading-tight text-navy-900">
+                          {lang === "zh" ? entry.titleZh : entry.titleEn}
+                        </h2>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 rounded-md border border-teal-100 bg-teal-50 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-teal-800">
+                        {lang === "zh" ? "本年度上限" : "Current-year cap"}
                       </p>
-                      <h2 className="mt-2 text-xl font-bold leading-tight text-navy-900">
-                        {lang === "zh" ? entry.titleZh : entry.titleEn}
-                      </h2>
+                      <dl className="mt-3 space-y-2">
+                        {getCapLines(entry, params, lang).map((line) => (
+                          <div key={line.label} className="flex items-baseline justify-between gap-3">
+                            <dt className="text-sm text-warm-700">{line.label}</dt>
+                            <dd className="text-right text-sm font-bold text-navy-900">
+                              {line.value}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
                     </div>
                   </div>
 
-                  <div className="mt-5 rounded-md border border-teal-100 bg-teal-50 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-teal-800">
-                      {lang === "zh" ? "本年度上限" : "Current-year cap"}
-                    </p>
-                    <dl className="mt-3 space-y-2">
-                      {getCapLines(entry, params, lang).map((line) => (
-                        <div key={line.label} className="flex items-baseline justify-between gap-3">
-                          <dt className="text-sm text-warm-700">{line.label}</dt>
-                          <dd className="text-right text-sm font-bold text-navy-900">
-                            {line.value}
-                          </dd>
+                  <div className="flex flex-1 flex-col divide-y divide-warm-200">
+                    {sectionKeys.map((section) => {
+                      const sectionId = `${entry.id}-${section}`;
+                      const isOpen = openSections[`${entry.id}:${section}`] ?? section === "eligibility";
+                      const items = getSectionItems(entry, section, lang).map((item) =>
+                        interpolate(item, variables)
+                      );
+
+                      return (
+                        <div key={section} className="bg-white">
+                          <button
+                            type="button"
+                            aria-expanded={isOpen}
+                            aria-controls={sectionId}
+                            onClick={() => toggleSection(entry.id, section)}
+                            className="focus-ring flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-bold text-navy-900 transition hover:bg-warm-50"
+                          >
+                            <span>{sectionLabels[section][lang]}</span>
+                            <span aria-hidden="true" className="text-lg leading-none text-teal-700">
+                              {isOpen ? "-" : "+"}
+                            </span>
+                          </button>
+                          {isOpen ? (
+                            <div id={sectionId} className="px-5 pb-5">
+                              <ul className="space-y-2 text-sm leading-6 text-warm-700">
+                                {items.map((item) => (
+                                  <li key={item} className="flex gap-2">
+                                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
+                                    <span>{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ) : null}
                         </div>
-                      ))}
-                    </dl>
+                      );
+                    })}
                   </div>
-                </div>
-
-                <div className="flex flex-1 flex-col divide-y divide-warm-200">
-                  {sectionKeys.map((section) => {
-                    const sectionId = `${entry.id}-${section}`;
-                    const isOpen = openSections[`${entry.id}:${section}`] ?? section === "eligibility";
-                    const items = getSectionItems(entry, section, lang).map((item) =>
-                      interpolate(item, variables)
-                    );
-
-                    return (
-                      <div key={section} className="bg-white">
-                        <button
-                          type="button"
-                          aria-expanded={isOpen}
-                          aria-controls={sectionId}
-                          onClick={() => toggleSection(entry.id, section)}
-                          className="focus-ring flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-bold text-navy-900 transition hover:bg-warm-50"
-                        >
-                          <span>{sectionLabels[section][lang]}</span>
-                          <span aria-hidden="true" className="text-lg leading-none text-teal-700">
-                            {isOpen ? "-" : "+"}
-                          </span>
-                        </button>
-                        {isOpen ? (
-                          <div id={sectionId} className="px-5 pb-5">
-                            <ul className="space-y-2 text-sm leading-6 text-warm-700">
-                              {items.map((item) => (
-                                <li key={item} className="flex gap-2">
-                                  <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
-                                  <span>{item}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                </div>
-              </article>
+                </article>
+              </Reveal>
             ))}
           </div>
         </Container>

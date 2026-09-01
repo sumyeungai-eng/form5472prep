@@ -52,8 +52,23 @@ const config: Config = {
           "sans-serif"
         ]
       },
+      keyframes: {
+        riseIn: {
+          "0%": { opacity: "0", transform: "translateY(14px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
+        },
+        settleIn: {
+          "0%": { opacity: "0", transform: "scale(.985)" },
+          "100%": { opacity: "1", transform: "scale(1)" }
+        }
+      },
+      animation: {
+        "rise-in": "riseIn 400ms cubic-bezier(0.16, 1, 0.3, 1) both",
+        "settle-in": "settleIn 350ms cubic-bezier(0.16, 1, 0.3, 1) both"
+      },
       boxShadow: {
-        soft: "0 18px 45px -28px rgb(14 32 56 / 0.45)"
+        soft: "0 18px 45px -28px rgb(14 32 56 / 0.45)",
+        lift: "0 22px 54px -32px rgb(14 32 56 / 0.5), 0 8px 18px -14px rgb(14 32 56 / 0.2)"
       }
     }
   },

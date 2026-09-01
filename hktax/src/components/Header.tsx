@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n/useI18n";
 import type { Language } from "@/lib/i18n/dictionary";
 import type { YearOfAssessment } from "@/lib/i18n/I18nProvider";
@@ -19,9 +20,27 @@ const years: YearOfAssessment[] = ["2024_25", "2025_26"];
 
 export function Header() {
   const { lang, setLang, setYear, t, year } = useI18n();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const updateScrolled = (): void => {
+      setIsScrolled(window.scrollY > 8);
+    };
+
+    updateScrolled();
+    window.addEventListener("scroll", updateScrolled, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", updateScrolled);
+    };
+  }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-navy-900/95 text-white shadow-soft backdrop-blur">
+    <header
+      className={`sticky top-0 z-40 border-b border-white/10 text-white backdrop-blur transition-[background-color,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        isScrolled ? "bg-navy-900/[0.98] shadow-md" : "bg-navy-900/95 shadow-soft"
+      }`}
+    >
       <Container className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
         <Link
           href="/"

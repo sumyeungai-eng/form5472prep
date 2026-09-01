@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { formatHKD } from "@/components/wizard/FormFields";
+import type { ReactNode } from "react";
+import { CountUp } from "@/components/motion/CountUp";
 import type { OptimizerResult, OptimizerScenario } from "@/lib/tax/optimizer";
 import type { ResultsLanguage } from "@/lib/results/resultsDictionary";
 import { resultsDictionary, resultsT } from "@/lib/results/resultsDictionary";
@@ -46,11 +47,11 @@ export function HeadlineCard({ bestScenario, optimizerResult, lang, yearLabel }:
       <dl className="mt-6 grid gap-4 text-sm md:grid-cols-2">
         <Metric
           label={resultsT(resultsDictionary.totalFamilyTax, lang)}
-          value={formatHKD(bestScenario.totalTax)}
+          value={<CountUp value={bestScenario.totalTax} />}
         />
         <Metric
           label={resultsT(resultsDictionary.savingVsSeparate, lang)}
-          value={formatHKD(optimizerResult.saving)}
+          value={<CountUp value={optimizerResult.saving} />}
         />
       </dl>
 
@@ -66,7 +67,7 @@ export function HeadlineCard({ bestScenario, optimizerResult, lang, yearLabel }:
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function Metric({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="rounded-md border border-warm-100 bg-warm-50 p-4">
       <dt className="font-semibold text-warm-700">{label}</dt>

@@ -33,10 +33,19 @@ body {
 
   .btn-primary {
     @apply focus-ring inline-flex min-h-11 items-center justify-center rounded-md bg-gold px-5 py-3 text-center text-sm font-bold text-navy-950 shadow-soft transition hover:bg-gold-200;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .btn-secondary {
     @apply focus-ring inline-flex min-h-11 items-center justify-center rounded-md border border-white/70 bg-white/10 px-5 py-3 text-center text-sm font-bold text-white backdrop-blur transition hover:bg-white hover:text-navy-900;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-primary:active,
+  .btn-secondary:active {
+    transform: scale(0.985);
   }
 
   .card {
@@ -46,5 +55,32 @@ body {
   .form-select,
   .form-input {
     @apply focus-ring min-h-10 rounded-md border border-warm-200 bg-white px-3 py-2 text-sm font-medium text-navy-900 shadow-sm;
+  }
+}
+
+@layer utilities {
+  .motion-reveal-pending {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media print {
+  *,
+  *::before,
+  *::after {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
   }
 }
