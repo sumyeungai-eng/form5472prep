@@ -133,6 +133,18 @@ export const dictionary = {
     zh: "香港天際線背景",
     en: "Hong Kong skyline background"
   },
+  "home.hero.trust.ird": {
+    zh: "已核對稅務局參數",
+    en: "IRD-sourced parameters"
+  },
+  "home.hero.trust.browser": {
+    zh: "100% 瀏覽器內計算",
+    en: "100% in-browser calculation"
+  },
+  "home.hero.trust.free": {
+    zh: "免費，無需帳戶",
+    en: "Free, no account required"
+  },
   "home.features.eyebrow": {
     zh: "稅務範圍",
     en: "Tax areas"

@@ -65,30 +65,30 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-40 border-b border-white/10 text-white backdrop-blur transition-[background-color,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        isScrolled ? "bg-navy-900/[0.98] shadow-md" : "bg-navy-900/95 shadow-soft"
+      className={`sticky top-0 z-40 border-b border-white/10 text-white backdrop-blur-xl transition-[background-color,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        isScrolled ? "border-gold/20 bg-navy-950/[0.98] shadow-card" : "bg-navy-950/[0.94] shadow-soft"
       }`}
     >
       <Container className="flex min-h-16 items-center justify-between gap-2 px-3 py-2 md:hidden">
         <Link
           href="/"
-          className="focus-ring inline-flex min-h-11 min-w-0 items-center gap-1.5 rounded-md"
+          className="focus-ring inline-flex min-h-11 min-w-0 items-center gap-2 rounded-md"
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-gold text-sm font-black text-navy-900">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-gold text-sm font-black text-navy-950 shadow-button">
             {t("site.logoMark")}
           </span>
           <span className="min-w-0">
-            <span className="block truncate text-xs font-semibold leading-tight">
+            <span className="block truncate text-xs font-bold leading-tight">
               {t("site.name.zh")}
             </span>
-            <span className="block truncate text-[11px] leading-tight text-teal-100">
+            <span className="block truncate text-[11px] font-medium leading-tight text-teal-100">
               {t("site.name.en")}
             </span>
           </span>
         </Link>
 
         <div className="flex shrink-0 items-center gap-1.5">
-          <span className="inline-flex min-h-11 items-center rounded-md border border-white/15 bg-white/10 px-2 text-xs font-semibold text-teal-50">
+          <span className="inline-flex min-h-11 items-center rounded-md border border-white/15 bg-white/[0.08] px-2 text-xs font-bold text-teal-50 shadow-field">
             {compactYearLabel(year)}
           </span>
           {/* A single switch-to-the-other-language button rather than the desktop
@@ -97,14 +97,14 @@ export function Header() {
           <button
             type="button"
             onClick={() => setLang(lang === "zh" ? "en" : "zh")}
-            className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-white/15 bg-white/10 px-2 text-sm font-semibold text-teal-50 transition hover:bg-white/15 hover:text-white"
+            className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-white/15 bg-white/[0.08] px-2 text-sm font-bold text-teal-50 shadow-field transition hover:border-white/25 hover:bg-white/15 hover:text-white"
             aria-label={t(lang === "zh" ? "header.language.enAriaLabel" : "header.language.zhAriaLabel")}
           >
             {t(lang === "zh" ? "header.language.en" : "header.language.zh")}
           </button>
           <button
             type="button"
-            className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-white/15 bg-white/10 px-3 text-xl font-semibold leading-none text-teal-50 transition hover:bg-white/15 hover:text-white"
+            className="focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-white/15 bg-white/[0.08] px-3 text-xl font-semibold leading-none text-teal-50 shadow-field transition hover:border-white/25 hover:bg-white/15 hover:text-white"
             aria-controls={menuId}
             aria-expanded={isMenuOpen}
             aria-label={menuLabel}
@@ -132,7 +132,7 @@ export function Header() {
       </Container>
 
       <div id={menuId} className={`${isMenuOpen ? "block" : "hidden"} md:hidden`}>
-        <Container className="border-t border-white/10 pb-3 pt-2">
+        <Container className="border-t border-white/10 pb-4 pt-3">
           <nav
             aria-label={t("header.nav.ariaLabel")}
             className="grid gap-1"
@@ -141,7 +141,7 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="focus-ring inline-flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-teal-50 transition hover:bg-white/10 hover:text-white"
+                className="focus-ring inline-flex min-h-11 items-center rounded-md px-3 text-sm font-semibold text-teal-50 transition hover:bg-white/10 hover:text-white"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {t(link.labelKey)}
@@ -172,14 +172,14 @@ export function Header() {
           href="/"
           className="focus-ring inline-flex min-h-11 min-w-0 items-center gap-3 rounded-md"
         >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-gold text-base font-black text-navy-900">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-gold text-base font-black text-navy-950 shadow-button">
             {t("site.logoMark")}
           </span>
           <span className="min-w-0">
-            <span className="block text-base font-semibold leading-tight">
+            <span className="block text-base font-bold leading-tight">
               {t("site.name.zh")}
             </span>
-            <span className="block text-sm leading-tight text-teal-100">
+            <span className="block text-sm font-medium leading-tight text-teal-100">
               {t("site.name.en")}
             </span>
           </span>
@@ -194,7 +194,7 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="focus-ring inline-flex min-h-11 items-center whitespace-nowrap rounded-md px-3 text-sm font-medium text-teal-50 transition hover:bg-white/10 hover:text-white"
+                className="focus-ring inline-flex min-h-11 items-center whitespace-nowrap rounded-md px-3 text-sm font-semibold text-teal-50 transition hover:bg-white/10 hover:text-white"
               >
                 {t(link.labelKey)}
               </Link>
@@ -204,7 +204,7 @@ export function Header() {
           <div className="flex flex-wrap items-center gap-2">
             <div
               role="group"
-              className="inline-flex rounded-md border border-white/15 bg-white/10"
+              className="inline-flex rounded-md border border-white/15 bg-white/[0.08] shadow-field"
               aria-label={t("header.language.ariaLabel")}
             >
               {languages.map((language) => (
@@ -215,7 +215,7 @@ export function Header() {
                   className={`focus-ring min-h-11 min-w-11 rounded px-3 text-sm font-semibold transition ${
                     lang === language
                       ? "bg-white text-navy-900"
-                      : "text-teal-50 hover:bg-white/10"
+                      : "text-teal-50 hover:bg-white/10 hover:text-white"
                   }`}
                   aria-pressed={lang === language}
                   aria-label={t(`header.language.${language}AriaLabel`)}

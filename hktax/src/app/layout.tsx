@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
 import { Footer } from "@/components/Footer";
@@ -10,6 +11,13 @@ import "./globals.css";
 // deployed origin (e.g. https://example.com); the fallback keeps builds working
 // anywhere without configuration.
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hktax.example.com";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-inter"
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -37,7 +45,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="zh-Hant-HK">
+    <html lang="zh-Hant-HK" className={inter.variable}>
       <body>
         <I18nProvider>
           <DisclaimerBanner />
