@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
+import { EIN_APPLICATION_FAQ } from "@/lib/einApplicationFaq";
 import { pageOpenGraph } from "@/lib/seo";
 
 // The apply page itself is a client component ("use client") and can't export
@@ -21,5 +23,20 @@ export const metadata: Metadata = {
 };
 
 export default function EinApplyLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: EIN_APPLICATION_FAQ.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
+  return (
+    <>
+      <JsonLd data={faqSchema} />
+      {children}
+    </>
+  );
 }

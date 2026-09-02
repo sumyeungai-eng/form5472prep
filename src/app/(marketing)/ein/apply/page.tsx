@@ -3,19 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
-import { Input, Select, Label, Field } from "@/components/ui/input";
-import { COUNTRIES } from "@/lib/countries";
-
-const US_STATES = [
-  "Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut",
-  "Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa",
-  "Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan",
-  "Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada",
-  "New Hampshire","New Jersey","New Mexico","New York","North Carolina",
-  "North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island",
-  "South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont",
-  "Virginia","Washington","West Virginia","Wisconsin","Wyoming",
-];
+import { Input, Select, Field } from "@/components/ui/input";
+import { EIN_APPLICATION_FAQ } from "@/lib/einApplicationFaq";
 
 const APPLICATION_ID_STORAGE_KEY = "einApplicationId";
 
@@ -41,10 +30,14 @@ export default function EinApplyPage() {
   const [needsCheckoutRetry, setNeedsCheckoutRetry] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [form, setForm] = useState({
-    fullName: "", email: "", phone: "",
-    llcName: "", llcState: "", llcFormedDate: "", businessMailingAddress: "", businessType: "", businessPurpose: "", principalProducts: "",
-    ownerName: "", ownerHomeAddress: "", ownerCitizenship: "", ownerResidence: "", passportNumber: "",
-    notes: "",
+    email: "",
+    llcName: "",
+    ownerName: "",
+    businessMailingAddress: "",
+    ownerHomeAddress: "",
+    businessType: "",
+    businessPurpose: "",
+    principalProducts: "",
   });
 
   useEffect(() => {
@@ -101,7 +94,7 @@ export default function EinApplyPage() {
       const res = await fetch("/api/ein-application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, fullName: form.ownerName }),
       });
       if (!res.ok) throw new Error("Server error");
       const payload = applicationResponse(await res.json().catch(() => null));
@@ -211,47 +204,22 @@ export default function EinApplyPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
-
-        {/* Contact */}
-        <section>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-accent mb-4">
-            Your contact details
-          </h2>
+        <section className="rounded-lg border border-slate-200 bg-white p-5">
           <div className="space-y-4">
-            <Field label="Full legal name" >
-              <Input required value={form.fullName} onChange={set("fullName")} placeholder="As on your passport" />
-            </Field>
             <Field label="Email address">
               <Input required type="email" value={form.email} onChange={set("email")} placeholder="you@example.com" />
             </Field>
-            <Field label="Phone number" hint="Optional — include country code">
-              <Input type="tel" value={form.phone} onChange={set("phone")} placeholder="+1 555 000 0000" />
-            </Field>
-          </div>
-        </section>
-
-        <hr className="border-slate-200" />
-
-        {/* LLC Info */}
-        <section>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-accent mb-4">
-            LLC information
-          </h2>
-          <div className="space-y-4">
-            <Field label="LLC legal name">
+            <Field label="Company name">
               <Input required value={form.llcName} onChange={set("llcName")} placeholder="Acme LLC" />
             </Field>
-            <Field label="State of formation">
-              <Select value={form.llcState} onChange={set("llcState")}>
-                <option value="">Select a state…</option>
-                {US_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
-              </Select>
-            </Field>
-            <Field label="Formation date" hint="Approximate is fine if you don't have the exact date">
-              <Input type="date" value={form.llcFormedDate} onChange={set("llcFormedDate")} />
+            <Field label="Owner full legal name (as on documents)">
+              <Input required value={form.ownerName} onChange={set("ownerName")} placeholder="Full legal name" />
             </Field>
             <Field label="Company business mailing address">
               <Input required value={form.businessMailingAddress} onChange={set("businessMailingAddress")} placeholder="Street, city, state, postal code, country" />
+            </Field>
+            <Field label="Owner home address">
+              <Input required value={form.ownerHomeAddress} onChange={set("ownerHomeAddress")} placeholder="Street, city, postal code, country" />
             </Field>
             <Field label="Business type">
               <Select required value={form.businessType} onChange={set("businessType")}>
@@ -261,68 +229,12 @@ export default function EinApplyPage() {
                 <option value="Sole proprietorship">Sole proprietorship</option>
               </Select>
             </Field>
-            <Field
-              label="Business purpose"
-              hint="Brief description — e.g. 'SaaS software sales', 'ecommerce dropshipping', 'consulting services'"
-            >
-              <Input value={form.businessPurpose} onChange={set("businessPurpose")} placeholder="What does the LLC do?" />
+            <Field label="Business activity">
+              <Input required value={form.businessPurpose} onChange={set("businessPurpose")} placeholder="Retail" />
             </Field>
             <Field label="Principal line of products or services sold">
               <Input required value={form.principalProducts} onChange={set("principalProducts")} placeholder="Home and kitchen products" />
             </Field>
-          </div>
-        </section>
-
-        <hr className="border-slate-200" />
-
-        {/* Owner Info */}
-        <section>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-accent mb-4">
-            LLC owner (foreign national)
-          </h2>
-          <div className="space-y-4">
-            <Field label="Owner legal name" hint="Leave blank if same as your name above">
-              <Input value={form.ownerName} onChange={set("ownerName")} placeholder="Full name as on passport" />
-            </Field>
-            <Field label="Owner home address">
-              <Input required value={form.ownerHomeAddress} onChange={set("ownerHomeAddress")} placeholder="Street, city, postal code, country" />
-            </Field>
-            <Field label="Country of citizenship">
-              <Select value={form.ownerCitizenship} onChange={set("ownerCitizenship")}>
-                <option value="">Select a country…</option>
-                {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                <option value="Other">Other</option>
-              </Select>
-            </Field>
-            <Field label="Country of residence">
-              <Select value={form.ownerResidence} onChange={set("ownerResidence")}>
-                <option value="">Select a country…</option>
-                {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                <option value="Other">Other</option>
-              </Select>
-            </Field>
-            <Field label="Passport number" hint="Optional at this stage — we will need it before filing">
-              <Input value={form.passportNumber} onChange={set("passportNumber")} placeholder="A1234567" />
-            </Field>
-          </div>
-        </section>
-
-        <hr className="border-slate-200" />
-
-        {/* Notes */}
-        <section>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-accent mb-4">
-            Anything else?
-          </h2>
-          <div>
-            <Label>Additional notes <span className="text-slate-400 font-normal">(optional)</span></Label>
-            <textarea
-              rows={3}
-              value={form.notes}
-              onChange={set("notes")}
-              placeholder="Any questions or context for us…"
-              className="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-            />
           </div>
         </section>
 
@@ -357,6 +269,22 @@ export default function EinApplyPage() {
           <Link href="/privacy" className="underline hover:no-underline">Privacy Policy</Link>.
         </p>
       </form>
+
+      <section className="mt-10">
+        <h2 className="text-2xl font-semibold text-slate-900">Questions about the application</h2>
+        <p className="mt-2 text-sm text-slate-600">Optional — expand any question before you submit.</p>
+        <div className="mt-5 space-y-3">
+          {EIN_APPLICATION_FAQ.map(({ q, a }) => (
+            <details key={q} className="group rounded-lg border border-slate-200 bg-white p-4 open:bg-slate-50">
+              <summary className="cursor-pointer text-sm font-semibold text-slate-900 list-none flex items-center justify-between">
+                {q}
+                <span className="text-slate-400 group-open:rotate-180 transition">▾</span>
+              </summary>
+              <p className="mt-2 text-sm text-slate-600 leading-relaxed">{a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

@@ -19,8 +19,9 @@ export async function POST(req: Request) {
     ownerName, ownerHomeAddress, ownerCitizenship, ownerResidence, passportNumber,
     notes,
   } = body as Record<string, string>;
+  const effectiveFullName = fullName || ownerName;
 
-  if (!fullName || !email || !llcName) {
+  if (!effectiveFullName || !email || !llcName) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
 
   const application = await prisma.einApplication.create({
     data: {
-      fullName, email: normalized, phone: phone || null,
+      fullName: effectiveFullName, email: normalized, phone: phone || null,
       llcName, llcState: llcState || null, llcFormedDate: llcFormedDate || null,
       businessMailingAddress: businessMailingAddress || null, businessType: businessType || null,
       businessPurpose: businessPurpose || null, principalProducts: principalProducts || null,
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
     // Admin notification
     sendEinApplicationAdminEmail({
       adminEmail,
-      fullName,
+      fullName: effectiveFullName,
       email: normalized,
       phone,
       llcName,
@@ -73,7 +74,7 @@ export async function POST(req: Request) {
     // Applicant confirmation with portal link
     sendEinApplicationConfirmationEmail({
       email: normalized,
-      fullName,
+      fullName: effectiveFullName,
       llcName,
       portalLink,
     }),
