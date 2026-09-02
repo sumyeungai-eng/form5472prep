@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   const {
     fullName, email, phone,
     llcName, llcState, llcFormedDate, businessMailingAddress, businessType, businessPurpose, principalProducts,
-    ownerName, ownerHomeAddress, ownerCitizenship, ownerResidence, passportNumber,
+    ownerName, dateOfBirth, ownerHomeAddress, ownerCitizenship, ownerResidence, passportNumber,
     notes,
   } = body as Record<string, string>;
   const effectiveFullName = fullName || ownerName;
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       llcName, llcState: llcState || null, llcFormedDate: llcFormedDate || null,
       businessMailingAddress: businessMailingAddress || null, businessType: businessType || null,
       businessPurpose: businessPurpose || null, principalProducts: principalProducts || null,
-      ownerName: ownerName || null, ownerHomeAddress: ownerHomeAddress || null, ownerCitizenship: ownerCitizenship || null,
+      ownerName: ownerName || null, dateOfBirth: dateOfBirth || null, ownerHomeAddress: ownerHomeAddress || null, ownerCitizenship: ownerCitizenship || null,
       ownerResidence: ownerResidence || null, passportNumber: passportNumber || null,
       notes: notes || null,
       userId: user.id,
@@ -65,6 +65,7 @@ export async function POST(req: Request) {
       businessPurpose,
       principalProducts,
       ownerName,
+      dateOfBirth,
       ownerHomeAddress,
       ownerCitizenship,
       ownerResidence,

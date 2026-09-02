@@ -436,6 +436,7 @@ model EinApplication {
   businessPurpose        String?
   principalProducts      String?
   ownerName              String?
+  dateOfBirth            String? // owner's date of birth, ISO YYYY-MM-DD from the form
   ownerHomeAddress       String?
   ownerCitizenship       String?
   ownerResidence         String?

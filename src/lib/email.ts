@@ -1353,6 +1353,7 @@ type EinApplicationEmailArgs = {
   businessPurpose?: string;
   principalProducts?: string;
   ownerName?: string;
+  dateOfBirth?: string | null;
   ownerHomeAddress?: string;
   ownerCitizenship?: string;
   ownerResidence?: string;
@@ -1361,7 +1362,7 @@ type EinApplicationEmailArgs = {
 };
 
 export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs & { adminEmail: string }) {
-  const value = (input?: string, fallback = "(not provided)") => input || fallback;
+  const value = (input?: string | null, fallback = "(not provided)") => input || fallback;
   return sendEmail({
     to: args.adminEmail,
     replyTo: args.email,
@@ -1380,6 +1381,7 @@ export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs
       `Business purpose: ${value(args.businessPurpose)}`,
       `Principal line of products or services sold: ${value(args.principalProducts)}`,
       `Owner name: ${value(args.ownerName, "(same as contact)")}`,
+      `Date of birth: ${value(args.dateOfBirth)}`,
       `Owner home address: ${value(args.ownerHomeAddress)}`,
       `Citizenship: ${value(args.ownerCitizenship)}`,
       `Residence: ${value(args.ownerResidence)}`,
@@ -1403,6 +1405,7 @@ export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs
         ["Business purpose", value(args.businessPurpose)],
         ["Principal line of products or services sold", value(args.principalProducts)],
         ["Owner name", value(args.ownerName, "(same as contact)")],
+        ["Date of birth", value(args.dateOfBirth)],
         ["Owner home address", value(args.ownerHomeAddress)],
         ["Citizenship", value(args.ownerCitizenship)],
         ["Residence", value(args.ownerResidence)],

@@ -61,6 +61,7 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
         </Section>
         <Section title="Owner">
           <Row label="Owner name" value={app.ownerName} />
+          <Row label="Date of birth" value={app.dateOfBirth} />
           <Row label="Home address" value={app.ownerHomeAddress} />
           <Row label="Citizenship" value={app.ownerCitizenship} />
           <Row label="Residence" value={app.ownerResidence} />

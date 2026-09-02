@@ -33,6 +33,7 @@ export default function EinApplyPage() {
     email: "",
     llcName: "",
     ownerName: "",
+    dateOfBirth: "",
     businessMailingAddress: "",
     ownerHomeAddress: "",
     businessType: "",
@@ -214,6 +215,9 @@ export default function EinApplyPage() {
             </Field>
             <Field label="Owner full legal name (as on documents)">
               <Input required value={form.ownerName} onChange={set("ownerName")} placeholder="Full legal name" />
+            </Field>
+            <Field label="Owner date of birth">
+              <Input required type="date" value={form.dateOfBirth} onChange={set("dateOfBirth")} />
             </Field>
             <Field label="Company business mailing address">
               <Input required value={form.businessMailingAddress} onChange={set("businessMailingAddress")} placeholder="Street, city, state, postal code, country" />
