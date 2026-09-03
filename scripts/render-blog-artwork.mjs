@@ -262,6 +262,11 @@ const POSTS = {
   "form-5472-etsy-print-on-demand-sellers": { accent: C.amber, motif: "stack", glyphs: ["doc", "person", "hash", "check"] },
   "form-8832-election-foreign-owned-llc": { accent: C.navySoft, motif: "correct", glyphs: ["pen", "doc", "two", "check"] },
   "form-5472-airbnb-short-term-rental-host": { accent: C.teal, motif: "calendar", glyphs: ["person", "doc", "calendar", "check"] },
+  "ein-application-rejected-reference-number-101": { accent: C.clay, motif: "notice", glyphs: ["warn", "hash", "doc", "check"] },
+  "lost-ein-147c-letter-replacement": { accent: C.amber, motif: "notice", glyphs: ["doc", "hash", "clock", "check"] },
+  "how-to-fill-out-form-ss-4-foreign-owned-llc": { accent: C.navySoft, motif: "checklist", glyphs: ["pen", "doc", "hash", "check"] },
+  "ein-for-stripe-amazon-paypal-seller-account": { accent: C.green, motif: "card", glyphs: ["hash", "doc", "person", "check"] },
+  "ein-third-party-designee-apply-on-your-behalf": { accent: C.teal, motif: "split", glyphs: ["two", "person", "doc", "check"] },
 };
 
 const wanted = process.argv.slice(2);
