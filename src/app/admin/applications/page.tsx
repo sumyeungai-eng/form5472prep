@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
+import { formatAttribution } from "@/lib/attribution";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,15 @@ const ITIN_STATUS_COLORS: Record<string, string> = {
 function formatStatus(s: string) {
   return s.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+type ApplicationAttribution = {
+  funnelSource: string | null;
+  attrSource: string | null;
+  attrMedium: string | null;
+  attrCampaign: string | null;
+  attrReferrer: string | null;
+  attrLanding: string | null;
+};
 
 export default async function AdminApplicationsPage({
   searchParams,
@@ -122,6 +132,7 @@ export default async function AdminApplicationsPage({
                   >
                     {formatStatus(app.status)}
                   </span>
+                  <SourceCell app={app} />
                   <span className="text-xs text-slate-400">
                     {app.createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </span>
@@ -150,12 +161,35 @@ export default async function AdminApplicationsPage({
                 >
                   {formatStatus(app.status)}
                 </span>
+                <SourceCell app={app} />
                 <span className="text-xs text-slate-400">
                   {app.createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                 </span>
               </div>
             </Link>
           ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SourceCell({ app }: { app: ApplicationAttribution }) {
+  const label = formatAttribution({
+    source: app.attrSource,
+    medium: app.attrMedium,
+    campaign: app.attrCampaign,
+    referrer: app.attrReferrer,
+    landing: app.attrLanding,
+  });
+  return (
+    <div className="min-w-0 max-w-[150px]">
+      <div className="text-xs text-slate-600 truncate" title={label}>
+        {label}
+      </div>
+      {app.funnelSource && (
+        <div className="text-[11px] text-slate-400 truncate" title={app.funnelSource}>
+          via {app.funnelSource}
         </div>
       )}
     </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { Input, Select, Field } from "@/components/ui/input";
+import { sanitizeSrc } from "@/lib/attribution";
 import { EIN_APPLICATION_FAQ } from "@/lib/einApplicationFaq";
 
 const APPLICATION_ID_STORAGE_KEY = "einApplicationId";
@@ -29,6 +30,7 @@ export default function EinApplyPage() {
   const [applicationId, setApplicationId] = useState("");
   const [needsCheckoutRetry, setNeedsCheckoutRetry] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [funnelSource, setFunnelSource] = useState<string | null>(null);
   const [form, setForm] = useState({
     email: "",
     llcName: "",
@@ -43,6 +45,7 @@ export default function EinApplyPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    setFunnelSource(sanitizeSrc(params.get("src")));
     const storedApplicationId = window.sessionStorage.getItem(APPLICATION_ID_STORAGE_KEY) ?? "";
     if (storedApplicationId) setApplicationId(storedApplicationId);
     if (params.get("paid") === "1") {
@@ -95,7 +98,7 @@ export default function EinApplyPage() {
       const res = await fetch("/api/ein-application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, fullName: form.ownerName }),
+        body: JSON.stringify({ ...form, fullName: form.ownerName, funnelSource }),
       });
       if (!res.ok) throw new Error("Server error");
       const payload = applicationResponse(await res.json().catch(() => null));

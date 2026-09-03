@@ -1,0 +1,12 @@
+ALTER TABLE "EinApplication" ADD COLUMN "funnelSource" TEXT;
+ALTER TABLE "EinApplication" ADD COLUMN "attrSource" TEXT;
+ALTER TABLE "EinApplication" ADD COLUMN "attrMedium" TEXT;
+ALTER TABLE "EinApplication" ADD COLUMN "attrCampaign" TEXT;
+ALTER TABLE "EinApplication" ADD COLUMN "attrReferrer" TEXT;
+ALTER TABLE "EinApplication" ADD COLUMN "attrLanding" TEXT;
+ALTER TABLE "ItinApplication" ADD COLUMN "funnelSource" TEXT;
+ALTER TABLE "ItinApplication" ADD COLUMN "attrSource" TEXT;
+ALTER TABLE "ItinApplication" ADD COLUMN "attrMedium" TEXT;
+ALTER TABLE "ItinApplication" ADD COLUMN "attrCampaign" TEXT;
+ALTER TABLE "ItinApplication" ADD COLUMN "attrReferrer" TEXT;
+ALTER TABLE "ItinApplication" ADD COLUMN "attrLanding" TEXT;

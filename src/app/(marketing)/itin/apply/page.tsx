@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { Input, Select, Label, Field } from "@/components/ui/input";
+import { sanitizeSrc } from "@/lib/attribution";
 import { COUNTRIES } from "@/lib/countries";
 
 const ITIN_REASONS = [
@@ -40,6 +41,7 @@ export default function ItinApplyPage() {
   const [applicationId, setApplicationId] = useState("");
   const [needsCheckoutRetry, setNeedsCheckoutRetry] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [funnelSource, setFunnelSource] = useState<string | null>(null);
   const [form, setForm] = useState({
     fullName: "", email: "", phone: "",
     dateOfBirth: "", countryOfBirth: "", citizenship: "", countryOfResidence: "",
@@ -50,6 +52,7 @@ export default function ItinApplyPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    setFunnelSource(sanitizeSrc(params.get("src")));
     const storedApplicationId = window.sessionStorage.getItem(APPLICATION_ID_STORAGE_KEY) ?? "";
     if (storedApplicationId) setApplicationId(storedApplicationId);
     if (params.get("paid") === "1") {
@@ -102,7 +105,7 @@ export default function ItinApplyPage() {
       const res = await fetch("/api/itin-application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, funnelSource }),
       });
       if (!res.ok) throw new Error("Server error");
       const payload = applicationResponse(await res.json().catch(() => null));

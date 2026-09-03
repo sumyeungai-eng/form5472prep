@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
+import { formatAttribution } from "@/lib/attribution";
 import { formatUsd } from "@/lib/utils";
 import { ItinAdminActions } from "./ItinAdminActions";
 
@@ -17,6 +18,22 @@ export default async function AdminItinApplicationPage({ params }: { params: { i
     include: { user: true },
   });
   if (!app) notFound();
+
+  const attribution = {
+    source: app.attrSource,
+    medium: app.attrMedium,
+    campaign: app.attrCampaign,
+    referrer: app.attrReferrer,
+    landing: app.attrLanding,
+  };
+  const hasTrafficSource = !!(
+    app.funnelSource ||
+    app.attrSource ||
+    app.attrMedium ||
+    app.attrCampaign ||
+    app.attrReferrer ||
+    app.attrLanding
+  );
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
@@ -47,6 +64,18 @@ export default async function AdminItinApplicationPage({ params }: { params: { i
           <Row label="Name" value={app.fullName} />
           <Row label="Email" value={<a href={`mailto:${app.email}`} className="text-accent hover:underline">{app.email}</a>} />
           <Row label="Phone" value={app.phone} />
+        </Section>
+        <Section title="Traffic source">
+          {hasTrafficSource ? (
+            <>
+              <Row label="Channel" value={formatAttribution(attribution)} />
+              <Row label="Landing page" value={app.attrLanding} />
+              <Row label="Referring site" value={app.attrReferrer} />
+              <Row label="Landing funnel" value={app.funnelSource} />
+            </>
+          ) : (
+            <Row label="Channel" value="Direct / unknown" />
+          )}
         </Section>
         <Section title="Personal Info">
           <Row label="Date of birth" value={app.dateOfBirth} />
