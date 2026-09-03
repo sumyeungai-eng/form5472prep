@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { sendEinApplicationAdminEmail, sendEinApplicationConfirmationEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
-import { makeMagicLink } from "@/lib/magicLink";
 import { rateLimit, clientIp, tooManyRequests } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
@@ -44,42 +42,9 @@ export async function POST(req: Request) {
       ownerResidence: ownerResidence || null, passportNumber: passportNumber || null,
       notes: notes || null,
       userId: user.id,
+      status: "PAYMENT_PENDING",
     },
   });
-
-  const portalLink = makeMagicLink(user.id);
-  const adminEmail = process.env.ADMIN_EMAIL || "support@form5472prep.com";
-
-  await Promise.all([
-    // Admin notification
-    sendEinApplicationAdminEmail({
-      adminEmail,
-      fullName: effectiveFullName,
-      email: normalized,
-      phone,
-      llcName,
-      llcState,
-      llcFormedDate,
-      businessMailingAddress,
-      businessType,
-      businessPurpose,
-      principalProducts,
-      ownerName,
-      dateOfBirth,
-      ownerHomeAddress,
-      ownerCitizenship,
-      ownerResidence,
-      passportNumber,
-      notes,
-    }),
-    // Applicant confirmation with portal link
-    sendEinApplicationConfirmationEmail({
-      email: normalized,
-      fullName: effectiveFullName,
-      llcName,
-      portalLink,
-    }),
-  ]);
 
   return NextResponse.json({ ok: true, id: application.id });
 }

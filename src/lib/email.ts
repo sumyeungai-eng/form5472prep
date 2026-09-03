@@ -1361,15 +1361,17 @@ type EinApplicationEmailArgs = {
   notes?: string;
 };
 
-export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs & { adminEmail: string }) {
+export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs & { adminEmail: string; amountPaidCents?: number }) {
   const value = (input?: string | null, fallback = "(not provided)") => input || fallback;
+  const paymentText = args.amountPaidCents && args.amountPaidCents > 0 ? `Payment: ${formatUsd(args.amountPaidCents)} received` : null;
   return sendEmail({
     to: args.adminEmail,
     replyTo: args.email,
-    subject: `[EIN Application] ${args.fullName} — ${args.llcName}`,
+    subject: `${paymentText ? "[Paid] " : ""}[EIN Application] ${args.fullName} — ${args.llcName}`,
     text: [
       "New EIN application",
       "",
+      ...(paymentText ? [paymentText] : []),
       `Name: ${args.fullName}`,
       `Email: ${args.email}`,
       `Phone: ${value(args.phone)}`,
@@ -1394,6 +1396,7 @@ export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs
       tag: "EIN application",
       heading: "New EIN application",
       rows: [
+        ...(paymentText ? [["Payment", `${formatUsd(args.amountPaidCents ?? 0)} received`] as [string, string]] : []),
         ["Name", args.fullName],
         ["Email", args.email],
         ["Phone", value(args.phone)],
@@ -1455,15 +1458,17 @@ type ItinApplicationEmailArgs = {
   notes?: string;
 };
 
-export async function sendItinApplicationAdminEmail(args: ItinApplicationEmailArgs & { adminEmail: string }) {
+export async function sendItinApplicationAdminEmail(args: ItinApplicationEmailArgs & { adminEmail: string; amountPaidCents?: number }) {
   const value = (input?: string, fallback = "(not provided)") => input || fallback;
+  const paymentText = args.amountPaidCents && args.amountPaidCents > 0 ? `Payment: ${formatUsd(args.amountPaidCents)} received` : null;
   return sendEmail({
     to: args.adminEmail,
     replyTo: args.email,
-    subject: `[ITIN Application] ${args.fullName} — ${args.itinReason}`,
+    subject: `${paymentText ? "[Paid] " : ""}[ITIN Application] ${args.fullName} — ${args.itinReason}`,
     text: [
       "New ITIN application",
       "",
+      ...(paymentText ? [paymentText] : []),
       `Name: ${args.fullName}`,
       `Email: ${args.email}`,
       `Phone: ${value(args.phone)}`,
@@ -1484,6 +1489,7 @@ export async function sendItinApplicationAdminEmail(args: ItinApplicationEmailAr
       tag: "ITIN application",
       heading: "New ITIN application",
       rows: [
+        ...(paymentText ? [["Payment", `${formatUsd(args.amountPaidCents ?? 0)} received`] as [string, string]] : []),
         ["Name", args.fullName],
         ["Email", args.email],
         ["Phone", value(args.phone)],

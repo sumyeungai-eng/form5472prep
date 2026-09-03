@@ -141,12 +141,9 @@ export default function EinApplyPage() {
           <div className="h-16 w-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto mb-5">
             <CheckCircle2 className="h-8 w-8 text-emerald-500" />
           </div>
-          <h1 className="text-2xl font-semibold text-slate-900 mb-3">Application received</h1>
-          <p className="text-slate-600 mb-2">
-            We&apos;ve also sent a confirmation to <strong>{form.email}</strong>.
-          </p>
+          <h1 className="text-2xl font-semibold text-slate-900 mb-3">Almost done — complete payment to submit</h1>
           <p className="text-slate-600 mb-4">
-            Our team will reach out within 1 business day with a document checklist.
+            Your details are saved. Your application is submitted to our team once payment is complete, and you&apos;ll receive a confirmation email then.
           </p>
           {needsCheckoutRetry && (
             <div className="mb-8">

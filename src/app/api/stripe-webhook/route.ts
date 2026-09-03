@@ -13,6 +13,7 @@ import { sendMetaPurchase } from "@/lib/analytics/metaServer";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 import { formatUsd } from "@/lib/utils";
 import { brandForFiling } from "@/lib/partnerBrand";
+import { notifyApplicationPaid } from "@/lib/applicationNotifications";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -70,6 +71,11 @@ export async function POST(req: Request) {
         return NextResponse.json({ received: true, deduplicated: true });
       }
       console.log(`[stripe-webhook] ${applicationType} application ${applicationId} payment recorded`);
+      try {
+        await notifyApplicationPaid(applicationType, applicationId);
+      } catch (err) {
+        console.error("[stripe-webhook] application paid notification failed", err);
+      }
       return NextResponse.json({ received: true });
     }
 
