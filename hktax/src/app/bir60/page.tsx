@@ -21,7 +21,7 @@ type Bir60ViewMode = "replica" | "table";
 const bir60Dictionary = {
   title: { zh: "BIR60 填表草稿", en: "BIR60 filing draft" },
   subtitle: {
-    zh: "按精靈計算結果整理成逐格抄寫用草稿。",
+    zh: "根據報稅精靈的計算結果整理，方便你逐格抄寫到報稅表。",
     en: "A box-by-box copy aid prepared from the wizard result.",
   },
   bannerTitle: {
@@ -63,10 +63,10 @@ const bir60Dictionary = {
   part: { zh: "第", en: "Part" },
   box: { zh: "方格", en: "Box" },
   item: { zh: "項目", en: "Item" },
-  value: { zh: "填寫值", en: "Value" },
+  value: { zh: "填寫內容", en: "Value" },
   note: { zh: "提示", en: "Note" },
   noBoxNo: { zh: "無方格", en: "No box" },
-  completeYourself: { zh: "此部分毋須由本工具填寫", en: "Not filled by this tool" },
+  completeYourself: { zh: "本工具不會填寫的項目", en: "Not filled by this tool" },
   completeYourselfValue: { zh: "自行填寫", en: "Complete yourself" },
   notProvided: { zh: "未填寫", en: "Not provided" },
   noRows: {

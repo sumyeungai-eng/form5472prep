@@ -38,7 +38,7 @@ export const deductionEntries: DeductionEntry[] = [
     capKeys: ["selfEducation"],
     eligibilityQuestionsZh: [
       "課程是否與你現時或將來可能從事的受僱工作有關？",
-      "開支是否由你本人支付，且沒有由僱主或其他人士全數補償？"
+      "開支是否由你本人支付，而未獲僱主或其他人士全數補償？"
     ],
     eligibilityQuestionsEn: [
       "Is the course connected with your current employment or a possible future employment role?",
@@ -56,7 +56,7 @@ export const deductionEntries: DeductionEntry[] = [
     titleEn: "Approved charitable donations",
     capKeys: ["donationsPercent"],
     eligibilityQuestionsZh: [
-      "捐款是否給予香港認可慈善機構或政府作慈善用途？",
+      "捐款是否捐予香港的認可慈善機構，或捐給政府作慈善用途？",
       "捐款總額是否不少於 {donationMinimum}？"
     ],
     eligibilityQuestionsEn: [
@@ -71,14 +71,14 @@ export const deductionEntries: DeductionEntry[] = [
   {
     id: "mpf-mandatory",
     kind: "deduction",
-    titleZh: "強制性公積金強制性供款",
+    titleZh: "強制性強積金供款",
     titleEn: "Mandatory MPF contributions",
     capKeys: ["mpfMandatory"],
     eligibilityQuestionsZh: ["你是否就受僱或自僱入息作出強制性強積金供款？"],
     eligibilityQuestionsEn: ["Did you make mandatory MPF contributions for employment or self-employment income?"],
-    evidenceZh: ["僱主報稅表、糧單或強積金周年權益報表"],
+    evidenceZh: ["僱主發出的薪酬報稅表、糧單或強積金周年權益報表"],
     evidenceEn: ["Employer's return, payslips, or MPF annual benefit statement"],
-    pitfallsZh: ["此項只適用於強制性供款；可扣稅自願性供款 TVC 屬另一個年金及 TVC 合併上限。"],
+    pitfallsZh: ["此項只適用於強制性供款；可扣稅自願性供款（TVC）另設年金及 TVC 的合併上限。"],
     pitfallsEn: ["This entry is only for mandatory contributions; MPF Tax Deductible Voluntary Contributions (TVC) use the separate annuity and TVC combined cap."]
   },
   {
@@ -89,17 +89,17 @@ export const deductionEntries: DeductionEntry[] = [
     capKeys: ["homeLoanInterest", "homeLoanInterestElevated", "homeLoanInterestYears"],
     eligibilityQuestionsZh: [
       "物業是否你的主要居所，而貸款利息由你支付？",
-      "你是否仍有未用完的 {homeLoanInterestYears} 扣除年期？",
-      "如年內有合資格新生子女，可能適用較高上限。"
+      "你是否仍未用盡 {homeLoanInterestYears}的申索年期？",
+      "如年內有合資格的新生子女，可能適用較高上限。"
     ],
     eligibilityQuestionsEn: [
       "Was the property your main home, with mortgage interest paid by you?",
-      "Do you still have remaining entitlement within the {homeLoanInterestYears} claim count?",
+      "Do you still have unused years within the {homeLoanInterestYears} claim limit?",
       "If you had a qualifying newborn child in the year, the elevated cap may apply."
     ],
-    evidenceZh: ["銀行利息證明或按揭年結單", "物業及貸款文件", "如申索較高上限，保留新生子女相關證明"],
+    evidenceZh: ["銀行利息證明或按揭年結單", "物業及貸款文件", "如申索較高上限，請保留與新生子女有關的證明"],
     evidenceEn: ["Bank interest certificate or mortgage annual statement", "Property and loan documents", "For the elevated cap, keep evidence for the newborn child condition"],
-    pitfallsZh: ["居所貸款利息與住宅租金扣除同一年度不可同時申索。", "年期計算按已申索年度累計，並非按貸款年期自動重置。"],
+    pitfallsZh: ["居所貸款利息與住宅租金扣除在同一課稅年度不可同時申索。", "年期按已申索的課稅年度累計計算，不會因為換了新貸款而自動重新起算。"],
     pitfallsEn: ["Home loan interest and the domestic rent deduction cannot both be claimed for the same year.", "The year count is based on years claimed, not automatically reset by a new loan."]
   },
   {
@@ -110,17 +110,17 @@ export const deductionEntries: DeductionEntry[] = [
     capKeys: ["domesticRent", "domesticRentElevated"],
     eligibilityQuestionsZh: [
       "你是否為自己在香港的主要居所支付租金？",
-      "你及配偶是否沒有擁有香港住宅物業？",
-      "如年內有合資格新生子女，可能適用較高上限。"
+      "你及配偶是否均未擁有香港的住宅物業？",
+      "如年內有合資格的新生子女，可能適用較高上限。"
     ],
     eligibilityQuestionsEn: [
       "Did you pay rent for your main home in Hong Kong?",
       "Do neither you nor your spouse own domestic property in Hong Kong?",
       "If you had a qualifying newborn child in the year, the elevated cap may apply."
     ],
-    evidenceZh: ["已打釐印租約", "租金收據或銀行轉賬紀錄", "業主資料及租住期間紀錄"],
+    evidenceZh: ["已加蓋印花的租約", "租金收據或銀行轉賬紀錄", "業主資料及租住期間的紀錄"],
     evidenceEn: ["Stamped tenancy agreement", "Rent receipts or bank transfer records", "Landlord details and rental period records"],
-    pitfallsZh: ["如你或配偶擁有香港住宅物業，通常不能申索。", "住宅租金扣除與居所貸款利息同一年度不可同時申索。"],
+    pitfallsZh: ["如你或配偶擁有香港的住宅物業，通常不能申索。", "住宅租金扣除與居所貸款利息在同一課稅年度不可同時申索。"],
     pitfallsEn: ["You usually cannot claim if you or your spouse owns domestic property in Hong Kong.", "The domestic rent deduction and home loan interest cannot both be claimed for the same year."]
   },
   {
@@ -129,12 +129,12 @@ export const deductionEntries: DeductionEntry[] = [
     titleZh: "長者住宿照顧開支",
     titleEn: "Elderly residential care expenses",
     capKeys: ["elderlyCare"],
-    eligibilityQuestionsZh: ["你是否為合資格父母或祖父母／外祖父母支付安老院舍住宿照顧費用？"],
+    eligibilityQuestionsZh: ["你是否為合資格的父母、祖父母或外祖父母支付安老院舍的住宿照顧費用？"],
     eligibilityQuestionsEn: ["Did you pay residential care expenses for a qualifying parent or grandparent?"],
     evidenceZh: ["安老院舍收據", "受養人身分及親屬關係證明"],
     evidenceEn: ["Residential care home receipts", "Dependant identity and relationship evidence"],
-    pitfallsZh: ["同一名受養人的長者住宿照顧開支與供養父母／祖父母免稅額一般不可重複使用同一基礎申索。"],
-    pitfallsEn: ["For the same dependant, residential care expenses and dependent parent or grandparent allowance generally cannot be double-counted on the same basis."]
+    pitfallsZh: ["就同一名受養人，一般不可同時申索長者住宿照顧開支及供養父母／祖父母免稅額。"],
+    pitfallsEn: ["For the same dependant, you generally cannot claim both the residential care expenses deduction and the dependent parent or grandparent allowance."]
   },
   {
     id: "annuity-tvc",
@@ -172,7 +172,7 @@ export const deductionEntries: DeductionEntry[] = [
     eligibilityQuestionsEn: ["Did you or your spouse pay qualifying assisted reproduction service expenses?"],
     evidenceZh: ["醫療機構收據", "服務明細及付款紀錄"],
     evidenceEn: ["Medical provider receipts", "Service details and payment records"],
-    pitfallsZh: ["只應申索合資格服務開支，保留足夠文件以區分其他醫療或私人開支。"],
+    pitfallsZh: ["只應申索合資格的服務開支，並保留足夠文件，以與其他醫療或私人開支區分。"],
     pitfallsEn: ["Claim only qualifying service expenses, and keep enough documentation to separate them from other medical or private costs."]
   },
   {
@@ -181,11 +181,11 @@ export const deductionEntries: DeductionEntry[] = [
     titleZh: "基本免稅額",
     titleEn: "Basic allowance",
     capKeys: ["basic"],
-    eligibilityQuestionsZh: ["你是否以個人身分課繳薪俸稅或個人入息課稅？"],
+    eligibilityQuestionsZh: ["你是否以個人身分須課繳薪俸稅或個人入息課稅？"],
     eligibilityQuestionsEn: ["Are you chargeable as an individual under Salaries Tax or Personal Assessment?"],
-    evidenceZh: ["一般不需特定收據；保留身分及報稅資料。"],
+    evidenceZh: ["一般毋須特定收據；保留身分及報稅資料即可。"],
     evidenceEn: ["Usually no specific receipt is needed; keep identity and filing records."],
-    pitfallsZh: ["已選用已婚人士免稅額的夫婦不會另行重複獲得兩個基本免稅額。"],
+    pitfallsZh: ["已享有已婚人士免稅額的夫婦，不會再各自獲得一份基本免稅額。"],
     pitfallsEn: ["A couple using married person's allowance does not separately duplicate two basic allowances."]
   },
   {
@@ -198,7 +198,7 @@ export const deductionEntries: DeductionEntry[] = [
     eligibilityQuestionsEn: ["Are you married and eligible to be assessed using married person's allowance?"],
     evidenceZh: ["婚姻狀況資料", "配偶收入及評稅選擇資料"],
     evidenceEn: ["Marital status records", "Spouse income and assessment election details"],
-    pitfallsZh: ["選用已婚人士免稅額會影響配偶評稅方式及其他家庭免稅額配置。"],
+    pitfallsZh: ["選用已婚人士免稅額，會影響配偶的評稅方式及其他家庭免稅額的分配。"],
     pitfallsEn: ["Using married person's allowance affects the spouse's assessment basis and family allowance allocation."]
   },
   {
@@ -227,9 +227,9 @@ export const deductionEntries: DeductionEntry[] = [
     titleEn: "Dependent parent or grandparent allowance",
     capKeys: ["parentAged60", "parentAged55", "parentResidingExtra60", "parentResidingExtra55"],
     eligibilityQuestionsZh: [
-      "受養人是否為父母、祖父母或外祖父母？",
+      "受養人是否為你或配偶的父母、祖父母或外祖父母？",
       "按年齡分為 60 歲或以上，以及 55 至 59 歲兩個組別。",
-      "如全年與你同住，相關組別可有額外同住免稅額。"
+      "如受養人全年與你同住，相關組別可另享額外免稅額。"
     ],
     eligibilityQuestionsEn: [
       "Is the dependant your parent, grandparent, or spouse's parent or grandparent?",
@@ -238,7 +238,7 @@ export const deductionEntries: DeductionEntry[] = [
     ],
     evidenceZh: ["受養人身分及親屬關係證明", "年齡證明", "供養及同住紀錄（如申索同住額）"],
     evidenceEn: ["Dependant identity and relationship evidence", "Age evidence", "Maintenance and residence records if claiming the residing amount"],
-    pitfallsZh: ["同住額是按相同年齡組別另加，實際效果為該組別金額加倍。"],
+    pitfallsZh: ["額外免稅額按相同年齡組別另加，實際效果是該組別的金額加倍。"],
     pitfallsEn: ["The residing amount is added for the same age band, effectively doubling that band."]
   },
   {
@@ -260,7 +260,7 @@ export const deductionEntries: DeductionEntry[] = [
     titleZh: "單親免稅額",
     titleEn: "Single parent allowance",
     capKeys: ["singleParent"],
-    eligibilityQuestionsZh: ["你是否獨力或主要照顧合資格子女，並符合單親條件？"],
+    eligibilityQuestionsZh: ["你是否獨力或主要負責照顧合資格的子女，並符合單親的條件？"],
     eligibilityQuestionsEn: ["Are you solely or mainly responsible for a qualifying child and meet the single parent conditions?"],
     evidenceZh: ["子女資料", "婚姻或分居狀況資料", "照顧及同住紀錄"],
     evidenceEn: ["Child details", "Marital or separation status records", "Care and residence records"],
@@ -277,7 +277,7 @@ export const deductionEntries: DeductionEntry[] = [
     eligibilityQuestionsEn: ["Do you maintain a dependant who meets the disability conditions?"],
     evidenceZh: ["傷殘證明文件", "受養人身分及親屬關係文件"],
     evidenceEn: ["Disability evidence", "Dependant identity and relationship documents"],
-    pitfallsZh: ["此免稅額通常是在相關受養人免稅額以外另行考慮，仍須保留傷殘資格證明。"],
+    pitfallsZh: ["此免稅額一般在相關受養人免稅額之外另行考慮，但仍須保留傷殘資格的證明。"],
     pitfallsEn: ["This allowance is usually considered in addition to the relevant dependant allowance, but disability eligibility evidence is still needed."]
   },
   {

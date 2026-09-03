@@ -69,7 +69,7 @@ export function PostDetail({ post }: { post: Post }) {
               </div>
               <div className="card px-4 py-3">
                 <dt className="font-semibold text-navy-900">
-                  {lang === "zh" ? "最後核對" : "Last reviewed"}
+                  {lang === "zh" ? "最後覆核" : "Last reviewed"}
                 </dt>
                 <dd className="mt-1">{formatDate(post.reviewedISO, lang)}</dd>
               </div>
@@ -132,7 +132,7 @@ export function PostDetail({ post }: { post: Post }) {
               <p>{t("disclaimer.banner")}</p>
               <p className="mt-3">
                 {lang === "zh"
-                  ? `本文反映發布日期（${formatDate(post.publishedISO, lang)}）已核對的資料；現行規則請以稅務局最新公布為準。`
+                  ? `本文內容以發布日期（${formatDate(post.publishedISO, lang)}）當時已核對的資料為基礎；現行規則請以稅務局最新公布為準。`
                   : `This post reflects the position checked as at its published date (${formatDate(post.publishedISO, lang)}); check the IRD for the current rules.`}
               </p>
               <Link href="/guides" className="mt-4 inline-block font-semibold text-teal-700 hover:underline">

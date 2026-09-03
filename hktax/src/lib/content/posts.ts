@@ -50,13 +50,13 @@ const posts: Post[] = [
           "適用於利得稅。",
           "適用於個人入息課稅下的稅款。",
           "不適用於物業稅。",
-          "不適用於 2025/26 年度暫繳稅；它只會在 2025/26 年度最後評稅中處理。"
+          "不適用於 2025/26 年度暫繳稅；寬減只會在 2025/26 年度的最終評稅中處理。"
         ]
       },
       {
         type: "callout",
         text:
-          "如果你只有出租物業並按物業稅評稅，這項一次性稅款寬減本身不會套用到物業稅。是否選擇個人入息課稅，要看全盤數字。"
+          "如果你只有出租物業並按物業稅評稅，這項一次性稅款寬減並不適用於物業稅。是否選擇個人入息課稅，須視乎整體計算結果。"
       }
     ],
     bodyEn: [
@@ -107,24 +107,24 @@ const posts: Post[] = [
     titleZh: "2026/27 免稅額增加不適用於 2025/26 報稅",
     titleEn: "YA 2026/27 allowance increases do not apply to YA 2025/26",
     summaryZh:
-      "2026 年 2 月《財政預算案》公布了多項免稅額及扣除額上調，但這些改動由 2026/27 課稅年度起才適用。2025/26 報稅不應套用新年度金額。",
+      "2026 年 2 月《財政預算案》公布了多項免稅額及扣除額上調，但這些改動由 2026/27 課稅年度起才適用。填報 2025/26 報稅表時不應採用新年度的金額。",
     summaryEn:
       "The February 2026 Budget announced increases to several allowances and deductions, but those changes start from YA 2026/27. They should not be used for YA 2025/26 filing.",
     bodyZh: [
       {
         type: "callout",
         text:
-          "重點：2025/26 報稅不要使用 2026/27 起才生效的免稅額或扣除額。這是很容易出錯、也可能很昂貴的年度切換問題。"
+          "重點：填報 2025/26 報稅表時，不要使用 2026/27 起才生效的免稅額或扣除額。這是十分容易出錯、而且代價可能不菲的年度混淆問題。"
       },
       {
         type: "paragraph",
         text:
-          "2026 年 2 月《財政預算案》公布了基本免稅額、已婚人士免稅額、子女免稅額、供養父母／祖父母或外祖父母免稅額，以及長者住宿照顧開支等項目的增加。"
+          "2026 年 2 月《財政預算案》公布上調基本免稅額、已婚人士免稅額、子女免稅額、供養父母／祖父母或外祖父母免稅額，以及長者住宿照顧開支扣除等多個項目的金額。"
       },
       {
         type: "paragraph",
         text:
-          "不過，已核實的稅務局 PAM 61(e) 表格將 2024/25 及 2025/26 放在同一欄，並另列 2026/27 及以後的欄。換言之，這些增加並不改變 2025/26 的計算。"
+          "不過，經核對的稅務局 PAM 61(e) 表格將 2024/25 及 2025/26 列於同一欄，並將 2026/27 及其後年度另列一欄。換言之，這些上調並不影響 2025/26 年度的計算。"
       },
       { type: "heading", text: "對 2025/26 報稅人的實務影響" },
       {
@@ -132,7 +132,7 @@ const posts: Post[] = [
         items: [
           "填報或核對 2025/26 稅款時，應使用 2025/26 年度的參數。",
           "不要把 2026/27 起才生效的免稅額加到 2025/26 年度。",
-          "如想查看新年度的確實金額，請直接參閱稅務局 PAM 61(e) 官方表格。"
+          "如需查閱新年度的確切金額，請直接參閱稅務局 PAM 61(e) 官方表格。"
         ]
       }
     ],
@@ -178,39 +178,39 @@ const posts: Post[] = [
     titleZh: "選擇個人入息課稅會否慳稅？",
     titleEn: "Does Personal Assessment save you money?",
     summaryZh:
-      "個人入息課稅不一定較好；它通常在出租物業按揭利息、業務虧損，或分開評稅未能反映個人免稅額時才值得比較。本網站的報稅精靈會自動比較合法選項。",
+      "個人入息課稅不一定較好。一般而言，只有在你有出租物業的按揭利息、業務虧損，或分開評稅令免稅額未能盡用時，才值得逐一比較。本網站的報稅精靈會自動比較各個合法選項。",
     summaryEn:
       "Personal Assessment is not always better. It is usually worth comparing where let-property mortgage interest, a business loss, or separate tax computations make your allowances less useful. This site's wizard compares the legal options automatically.",
     bodyZh: [
       {
         type: "paragraph",
         text:
-          "個人入息課稅是一種選擇性的合併計稅方法。你不是多交一種稅，而是把合資格的薪俸、物業及業務數字放在同一個計算框架下比較。"
+          "個人入息課稅是一種選擇性的合併計稅方法。它並非要你多繳一種稅，而是把合資格的薪俸、物業及業務數字放在同一個計算方式下比較。"
       },
       { type: "heading", text: "通常會有幫助的情況" },
       {
         type: "list",
         items: [
-          "你有出租物業，而且有為產生租金收入而借款的利息；在物業稅下該利息不扣除，但個人入息課稅可在已核實規則下處理。",
-          "你有業務虧損，希望在同一年抵銷其他入息，而不是只留待日後同一業務有利潤時使用。",
-          "分開評稅令物業或業務收入以固定或兩級制方式處理，但你的整體情況在合併後可能受惠於免稅額及累進計算。"
+          "你有出租物業，並就借款用以產生租金收入而支付利息；在物業稅下該利息不可扣除，但在個人入息課稅下則可獲扣除。",
+          "你有業務虧損，希望在同一年度抵銷其他入息，而不是只留待日後同一業務有利潤時才使用。",
+          "分開評稅令物業或業務入息按單一稅率或兩級制稅率課稅，但你的整體情況在合併計算後，可能受惠於免稅額及累進稅率。"
         ]
       },
       { type: "heading", text: "通常不會有幫助的情況" },
       {
         type: "paragraph",
         text:
-          "如果你本身已主要按標準或兩級制固定稅率計算，並且沒有出租物業按揭利息、業務虧損，或其他在個人入息課稅下才變得有用的因素，選擇個人入息課稅通常未必帶來好處。"
+          "如果你的稅款本身已主要按標準稅率或兩級制稅率計算，而你又沒有出租物業的按揭利息、業務虧損，或其他只在個人入息課稅下才發揮作用的因素，選擇個人入息課稅通常不會帶來好處。"
       },
       {
         type: "callout",
         text:
-          "不要靠估。最穩妥的做法，是讓報稅精靈輸入一次資料後自動比較所有合法選項，包括是否選擇個人入息課稅。"
+          "切勿單憑猜測。最穩妥的做法，是在報稅精靈輸入資料一次，讓系統自動比較所有合法選項，包括是否選擇個人入息課稅。"
       },
       {
         type: "paragraph",
         text:
-          "本網站的計算結果頁會比較每個合法評稅選擇，並用文字解釋為何某個方案最低。你毋須自行逐個情境手動計算。"
+          "本網站的計算結果頁會比較每個合法的評稅選擇，並以文字解釋為何該方案的稅款最低。你毋須自行逐個情境手動計算。"
       }
     ],
     bodyEn: [
@@ -223,16 +223,16 @@ const posts: Post[] = [
       {
         type: "list",
         items: [
-          "You have a let property with interest on money borrowed to produce the rental income; that interest is not deducted under Property Tax, but can be handled under Personal Assessment under the verified rules.",
+          "You have a let property with interest on money borrowed to produce the rental income; that interest is not deductible under Property Tax, but is deductible under Personal Assessment.",
           "You have a business loss and want it to offset other income in the same year, rather than only carrying it forward against future profits of the same business.",
-          "Separate assessments leave property or business income taxed under a fixed or two-tiered computation, while your combined position may benefit from allowances and progressive computation."
+          "Separate assessments leave property or business income taxed at a flat or two-tiered rate, while your combined position may benefit from allowances and the progressive rate."
         ]
       },
       { type: "heading", text: "When it usually does not help" },
       {
         type: "paragraph",
         text:
-          "If you are already mainly paying under the standard or two-tiered fixed-rate computation, and you have no let-property mortgage interest, business loss, or other Personal-Assessment-specific advantage, electing Personal Assessment usually may not help."
+          "If you are already mainly paying at the standard or two-tiered rate, and you have no let-property mortgage interest, business loss, or other Personal-Assessment-specific advantage, electing Personal Assessment usually will not help."
       },
       {
         type: "callout",
@@ -261,14 +261,14 @@ const posts: Post[] = [
     titleZh: "本站新增功能：BIR60 草稿、慳稅檢查及手機版更新",
     titleEn: "What's new: BIR60 draft view, tax-saving checks, and mobile updates",
     summaryZh:
-      "本站最近集中改善報稅流程本身：加入 BIR60 填報草稿視圖、在報稅精靈中整理慳稅檢查，並重新調整手機版介面。",
+      "本站最近集中改善報稅流程本身：加入 BIR60 填報草稿視圖、在報稅精靈內加入慳稅檢查，並重新調整手機版介面。",
     summaryEn:
       "Recent site work focuses on the filing workflow itself: a BIR60 draft view, tax-saving checks inside the wizard, and a mobile-responsive interface refresh.",
     bodyZh: [
       {
         type: "paragraph",
         text:
-          "今次網站更新集中在使用流程，而不是新增稅務規則。目標是讓你由輸入資料、比較結果，到整理報稅草稿時更順手。"
+          "今次網站更新集中在使用流程，而不是新增稅務規則。目標是讓你由輸入資料、比較結果，到整理報稅草稿的整個過程更為順暢。"
       },
       { type: "heading", text: "BIR60 填報草稿視圖" },
       {

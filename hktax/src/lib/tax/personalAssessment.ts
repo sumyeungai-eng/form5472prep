@@ -113,12 +113,12 @@ export function checkPAEligibility(input: PAEligibilityInput): PAEligibilityResu
     || input.presentInHongKongMoreThan300DaysAcrossTwoYears === true;
 
   if (!meetsAgeOrOrphanRule) {
-    reasonsZh.push('申請人須在該課稅年度年滿18歲，或父母均已去世。');
+    reasonsZh.push('選擇個人入息課稅的人士須在該課稅年度年滿18歲，或父母均已去世。');
     reasonsEn.push('The elector must be aged 18 or above during the year of assessment, unless both parents are deceased.');
   }
 
   if (!meetsResidenceRule) {
-    reasonsZh.push('申請人須為香港永久性居民，或符合個人入息課稅下的臨時居民居港日數／通常居住條件。');
+    reasonsZh.push('選擇個人入息課稅的人士須為香港永久性居民，或符合個人入息課稅下的通常居港或臨時居民居港日數條件。');
     reasonsEn.push('The elector must be a Hong Kong permanent resident or meet the ordinary-residence or temporary-resident presence test for Personal Assessment.');
   }
 
@@ -267,7 +267,7 @@ function computeIncomePipeline(person: PAPersonInput, params: TaxYearParams, key
     lines.push(line(`${keyPrefix}.paLossBroughtForward`, '個人入息課稅承前虧損', 'Personal Assessment loss brought forward', paLossBroughtForwardDeducted, 'deduction'));
   }
   if (residualPaLoss > 0) {
-    lines.push(line(`${keyPrefix}.residualPaLoss`, '未吸收並假設可結轉的個人入息課稅虧損', 'Unabsorbed Personal Assessment loss assumed carried forward', residualPaLoss, 'info'));
+    lines.push(line(`${keyPrefix}.residualPaLoss`, '未抵銷並假設可結轉的個人入息課稅虧損', 'Unabsorbed Personal Assessment loss assumed carried forward', residualPaLoss, 'info'));
   }
   lines.push(line(`${keyPrefix}.beforeConcessionaryDeductions`, '扣除業務虧損後入息', 'Income after business losses', reducedIncome, 'subtotal'));
 
@@ -380,7 +380,7 @@ function applyConcessionaryDeductions(
   netIncome -= applyCappedDeduction(lines, keyPrefix, 'elderlyCare', '長者住宿照顧開支', 'Elderly residential care expenses', deductions?.elderlyCare ?? 0, params.deductionCaps.elderlyCare);
   netIncome -= applyHousingDeduction(lines, keyPrefix, deductions, params);
   netIncome -= applyCappedDeduction(lines, keyPrefix, 'mpfMandatory', '強制性強積金供款', 'Mandatory MPF contributions', deductions?.mpfMandatory ?? 0, params.deductionCaps.mpfMandatory);
-  netIncome -= applyCappedDeduction(lines, keyPrefix, 'annuityAndTvc', '合資格延期年金保費及可扣稅強積金自願性供款', 'Qualifying annuity premiums and tax deductible voluntary contributions', deductions?.annuityAndTvc ?? 0, params.deductionCaps.annuityAndTvc);
+  netIncome -= applyCappedDeduction(lines, keyPrefix, 'annuityAndTvc', '合資格延期年金保費及可扣稅強積金自願性供款', 'Qualifying annuity premiums and tax-deductible MPF voluntary contributions', deductions?.annuityAndTvc ?? 0, params.deductionCaps.annuityAndTvc);
   netIncome -= applyCappedDeduction(lines, keyPrefix, 'vhis', '自願醫保計劃保費', 'VHIS premiums', deductions?.vhisPremiums ?? 0, params.deductionCaps.vhisPerPerson * Math.max(0, deductions?.vhisInsuredPersons ?? 0));
   netIncome -= applyCappedDeduction(lines, keyPrefix, 'assistedReproduction', '輔助生育服務開支', 'Assisted reproduction expenses', deductions?.assistedReproduction ?? 0, params.deductionCaps.assistedReproduction);
 
@@ -421,7 +421,7 @@ function applyDonationDeduction(
 ): number {
   const requested = Math.max(0, amount);
   if (requested > 0 && requested < MINIMUM_QUALIFYING_DONATION) {
-    lines.push(line(`${keyPrefix}.deduction.charitableDonations.minimum`, '認可慈善捐款少於最低合資格金額', 'Approved charitable donations below the minimum qualifying amount are not deductible', requested, 'info'));
+    lines.push(line(`${keyPrefix}.deduction.charitableDonations.minimum`, '認可慈善捐款少於最低合資格金額，不可扣除', 'Approved charitable donations below the minimum qualifying amount are not deductible', requested, 'info'));
     return 0;
   }
 

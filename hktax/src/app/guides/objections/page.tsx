@@ -8,7 +8,7 @@ type Bi = { zh: string; en: string };
 
 const objectionSteps: Bi[] = [
   {
-    zh: "留意評稅通知書上列明的評稅日期，反對期限一般為評稅通知書發出日起計 1 個月內。",
+    zh: "留意評稅通知書上列明的發出日期；反對期限一般為該發出日起計 1 個月。",
     en: "Note the date of the notice of assessment. The objection deadline is generally 1 month from the date it was issued."
   },
   {
@@ -16,7 +16,7 @@ const objectionSteps: Bi[] = [
     en: "Lodge your objection in writing, stating the specific grounds (e.g. an omitted deduction, an income computation error, or an allowance that was left out)."
   },
   {
-    zh: "透過 IR831 表格，或以 eTAX 帳戶網上提交反對通知書，兩種方式均須在期限內完成。",
+    zh: "填交 IR831 表格，或透過 eTAX 帳戶在網上提交反對通知書；兩種方式均須在期限內完成。",
     en: "Submit using form IR831, or lodge the notice of objection online through your eTAX account — either channel must be completed before the deadline."
   },
   {
@@ -31,11 +31,11 @@ const s70aPoints: Bi[] = [
     en: "Applies after an assessment has become final and conclusive (the objection period has passed, or the assessment was settled by agreement) and an error or omission in the reported income or profits is then discovered."
   },
   {
-    zh: "須以書面向稅務局申請更正，並須在有關課稅年度完結後 6 年內，或評稅通知書發出日起計 6 個月內（以較後者為準）提出。",
+    zh: "須以書面向稅務局申請更正，並須在有關課稅年度完結後 6 年內，或評稅通知書發出日起計 6 個月內（以較遲者為準）提出。",
     en: "A written application to correct the assessment must be made within 6 years after the end of the relevant year of assessment, or within 6 months of the date of the notice of assessment, whichever is later."
   },
   {
-    zh: "s.70A 更正機制的門檻與一般反對不同，一般只適用於客觀的計算或事實錯誤，而非單純對稅務局判斷的不同意見，實際適用範圍建議諮詢專業人士。",
+    zh: "s.70A 更正機制的門檻與一般反對不同：它一般只涵蓋客觀的計算或事實錯誤，而不包括單純與稅務局意見不同的情況。個案是否符合資格，建議諮詢專業人士。",
     en: "The s.70A correction mechanism has a different threshold from a normal objection — it generally covers objective computational or factual errors, not a mere difference of opinion with IRD's judgment. Seek professional advice to confirm whether your situation qualifies."
   }
 ];
@@ -121,7 +121,7 @@ export default function ObjectionsGuidePage() {
               </h2>
               <p className="mt-4 max-w-[65ch] text-base leading-7 text-warm-700">
                 {lang === "zh"
-                  ? "提出反對本身並不會自動暫停繳稅義務。如評稅通知書列明的稅款到期，你原則上仍須按時繳付；如不希望在爭議未解決前先行繳付有爭議的部分，可同時向稅務局申請「暫緩繳稅」，惟是否批准由稅務局按情況酌情決定，並可能要求提供部分擔保或按金。詳見〈暫繳稅與緩繳〉指南。"
+                  ? "提出反對並不會自動暫停繳稅的責任。如評稅通知書列明的稅款到期，你原則上仍須按時繳付；如不希望在爭議未解決前先行繳付有爭議的部分，可同時向稅務局申請「暫緩繳稅」，惟是否批准由稅務局按情況酌情決定，並可能要求你先繳付部分稅款或提供擔保。詳見〈暫繳稅與緩繳〉指南。"
                   : "Lodging an objection does not automatically suspend your obligation to pay. If the tax shown on the notice falls due, you generally must still pay it on time. If you do not want to pay the disputed portion while the matter is unresolved, you can separately apply to hold over payment — approval is at IRD's discretion and may require partial payment or security. See the Provisional Tax and Holdover guide for more detail."}
               </p>
             </article>
@@ -135,7 +135,7 @@ export default function ObjectionsGuidePage() {
                   <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
                   <span>
                     {lang === "zh"
-                      ? "爭議涉及金額龐大，或涉及複雜的入息來源地、居籍或商業安排問題。"
+                      ? "爭議涉及金額龐大，或涉及複雜的入息來源地、稅務居民身分或商業安排問題。"
                       : "The disputed amount is significant, or involves complex source-of-income, residency, or business-structure questions."}
                   </span>
                 </li>
@@ -151,7 +151,7 @@ export default function ObjectionsGuidePage() {
                   <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
                   <span>
                     {lang === "zh"
-                      ? "稅務局要求提交補充文件、進行實地審查，或案件已轉介上訴委員會處理。"
+                      ? "稅務局要求提交補充文件、展開實地審核，或個案已轉介稅務上訴委員會處理。"
                       : "IRD has requested supplementary documents, initiated a field audit, or the case has been referred to the Board of Review."}
                   </span>
                 </li>
@@ -165,7 +165,7 @@ export default function ObjectionsGuidePage() {
         <Container>
           <p className="max-w-3xl text-xs leading-6 text-warm-600">
             {lang === "zh"
-              ? "本頁內容僅供一般教育及參考用途，並非稅務意見，亦與稅務局無從屬關係。反對及更正的期限、表格編號及審批安排均以《稅務條例》及稅務局最新指引為準，本網站不代表你向稅務局提交任何文件；如個案複雜或爭議金額較大，建議諮詢執業會計師或稅務顧問。"
+              ? "本頁內容僅供一般教育及參考用途，並非稅務意見；本網站與稅務局並無從屬關係。反對及更正的期限、表格編號及審批安排，均以《稅務條例》及稅務局最新指引為準，本網站不會代你向稅務局提交任何文件；如個案複雜或爭議金額較大，建議諮詢執業會計師或稅務顧問。"
               : "This page is for general education and reference only. It is not tax advice and this website is not affiliated with the Inland Revenue Department. Deadlines, form numbers, and approval processes for objections and corrections are governed by the Inland Revenue Ordinance and IRD's latest guidance; this website does not submit anything to IRD on your behalf. For complex cases or significant disputed amounts, consult a qualified accountant or tax adviser."}
           </p>
           <Link

@@ -89,14 +89,14 @@ export const HOLDOVER_GROUNDS: HoldoverGround[] = [
     id: '90-percent-drop',
     labelZh: '入息或應評稅額少於九成',
     labelEn: 'Income or assessable amount below 90%',
-    descriptionZh: '本年度入息、應評稅利潤或應評稅值，已經或相當可能少於上一年度相關金額的90%。',
+    descriptionZh: '本年度入息、應評稅利潤或應評稅值，已經或相當可能少於上一年度有關金額的90%。',
     descriptionEn: 'Current-year income, assessable profits, or assessable value is, or is likely to be, less than 90% of the preceding year figure.',
   },
   {
     id: 'increased-allowances-deductions',
     labelZh: '新增或增加免稅額或扣除',
     labelEn: 'New or increased allowances or deductions',
-    descriptionZh: '納稅人已符合資格享有新增免稅額或扣除，或相關免稅額或扣除增加，但暫繳評稅未有反映。',
+    descriptionZh: '納稅人已符合資格享有新增免稅額或扣除，或有關免稅額或扣除增加，但暫繳評稅未有反映。',
     descriptionEn: 'The taxpayer has become entitled to, or has an increase in, allowances or deductions that were not reflected in the provisional assessment.',
   },
   {
@@ -108,16 +108,16 @@ export const HOLDOVER_GROUNDS: HoldoverGround[] = [
   },
   {
     id: 'ceased-source',
-    labelZh: '停止取得相關收入或持有來源',
+    labelZh: '有關收入來源已停止',
     labelEn: 'Relevant income source has ceased',
-    descriptionZh: '納稅人已經或將會在課稅年度完結前停止取得相關收入、停止經營業務，或停止持有相關物業來源。',
+    descriptionZh: '納稅人已經或將會在課稅年度完結前停止取得有關收入、停止經營業務，或不再持有有關物業。',
     descriptionEn: 'The taxpayer has ceased, or will cease before year-end, to derive the relevant income, carry on the business, or hold the relevant source.',
   },
   {
     id: 'prior-year-objection',
     labelZh: '已反對上一年度評稅',
     labelEn: 'Prior-year assessment under objection',
-    descriptionZh: '納稅人已就上一課稅年度的相關評稅提出反對。',
+    descriptionZh: '納稅人已就上一課稅年度的有關評稅提出反對。',
     descriptionEn: 'The taxpayer has objected to the relevant assessment for the preceding year.',
   },
 ];

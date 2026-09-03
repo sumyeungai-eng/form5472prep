@@ -31,7 +31,7 @@ const guideCards: GuideCard[] = [
     titleZh: "薪俸稅指南",
     titleEn: "Salaries Tax Guide",
     descriptionZh:
-      "哪些人要課稅、哪些入息要計算在內、僱主提供宿舍的租值計算、扣除項目次序、免稅額、累進稅率及標準稅率如何選擇，以及一次性寬減。",
+      "哪些人須課稅、哪些入息須計算在內、僱主提供居所的租值計算、扣除項目次序、免稅額、累進稅率與標準稅率如何取較低者，以及一次性寬減。",
     descriptionEn:
       "Who is chargeable, what counts as income, employer accommodation rental value, the order of deductions and allowances, progressive vs standard rate, and the one-off reduction.",
     ready: true
@@ -70,7 +70,7 @@ const guideCards: GuideCard[] = [
     href: "/guides/provisional-tax",
     titleZh: "暫繳稅指南",
     titleEn: "Provisional Tax Guide",
-    descriptionZh: "暫繳稅如何計算、如何與結算稅一併發出繳款單，以及申請緩繳的法定理由。",
+    descriptionZh: "暫繳稅如何計算、如何與最終稅款合併在同一張繳稅通知書上徵收，以及申請緩繳的法定理由。",
     descriptionEn:
       "How provisional tax is assembled alongside your final assessment, and the statutory grounds for holding it over.",
     ready: true

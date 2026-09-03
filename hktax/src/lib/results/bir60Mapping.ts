@@ -37,7 +37,7 @@ export const BIR60_MAPPING = [
     flag: "salariesIncome",
     part: "Part 4",
     figure: {
-      zh: "薪金、花紅、一次性款項、僱主提供居所租值及僱傭相關扣除",
+      zh: "薪金、花紅、整筆款項、僱主提供的居所租值，以及與受僱工作有關的扣除",
       en: "Salary, bonus, lump sums, employer accommodation rental value, and employment deductions",
     },
     note: {

@@ -64,7 +64,7 @@ function computeBusinessTax(
   lines: ComputationLine[],
 ): number {
   if (assessableProfits <= 0) {
-    lines.push(line('tax-none', '應課稅利潤不多於零，利得稅為零', 'No profits tax where assessable profits are zero or below', 0, 'tax'));
+    lines.push(line('tax-none', '應評稅利潤不多於零，利得稅為零', 'No profits tax where assessable profits are zero or below', 0, 'tax'));
     return 0;
   }
 
@@ -169,7 +169,7 @@ export function computeProfitsTax(
       lines.push(
         line(
           `pm-pool-${index + 1}-annual-allowance`,
-          `機械及工業裝置免稅額組別 ${index + 1}（${formatRate(pool.rate)}）`,
+          `機械及工業裝置聚合組 ${index + 1} 每年免稅額（${formatRate(pool.rate)}）`,
           `Plant and machinery pool ${index + 1} annual allowance (${formatRate(pool.rate)})`,
           -annualAllowance,
           'deduction',
@@ -178,8 +178,8 @@ export function computeProfitsTax(
       lines.push(
         line(
           `pm-pool-${index + 1}-carried-forward`,
-          `機械及工業裝置組別 ${index + 1} 結轉餘額`,
-          `Plant and machinery pool ${index + 1} balance carried forward`,
+          `機械及工業裝置聚合組 ${index + 1} 結轉遞減價值`,
+          `Plant and machinery pool ${index + 1} reducing value carried forward`,
           carriedForward,
           'info',
         ),

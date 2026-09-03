@@ -41,8 +41,8 @@ function buildSections(params: TaxParams): Section[] {
       content: {
         zh: (
           <p>
-            以獨資經營或合夥形式在香港經營行業、專業或業務的個人，就其源自香港的應評稅利潤，
-            要負責繳交利得稅。獨資經營者一般在個人報稅表 BIR60 的第 5 部分申報業務詳情及利潤；
+            以獨資經營或合夥形式在香港經營行業、專業或業務的個人，須就其在香港產生或得自香港的
+            應評稅利潤繳納利得稅。獨資經營者一般在個人報稅表 BIR60 的第 5 部分申報業務詳情及利潤；
             合夥業務本身可能需要另行提交合夥業務報稅表，而每位合夥人分佔的利潤，仍然要在自己的
             BIR60 第 5 部分申報，一併計入個人的整體稅務狀況（例如會否選擇個人入息課稅）。
           </p>
@@ -66,9 +66,9 @@ function buildSections(params: TaxParams): Section[] {
       content: {
         zh: (
           <p>
-            應評稅利潤源自你的商業會計利潤，再按稅務規則調整：加回不可扣除的開支（見下）、
-            扣除不屬應課稅的收入項目，再扣減折舊（資本）免稅額，得出該年度的應評稅利潤。
-            如果有上年度結轉下來的虧損，亦會在這一步扣減。
+            應評稅利潤以你的會計利潤為起點，再按稅務規則作出調整：加回不可扣除的開支（見下文）、
+            剔除不屬應課稅的收入項目，然後扣減折舊免稅額，得出該年度的應評稅利潤。
+            如有從上年度結轉下來的虧損，亦會在這一步扣減。
           </p>
         ),
         en: (
@@ -88,10 +88,10 @@ function buildSections(params: TaxParams): Section[] {
         zh: (
           <ul className="list-disc space-y-2 pl-5">
             <li>私人或家庭性質的開支（例如非因業務需要的個人生活費用）。</li>
-            <li>資本性開支（例如購置資產、裝修改動的成本 — 這類開支要透過折舊免稅額分年扣除，而不是即年一筆過扣除）。</li>
-            <li>業主／獨資經營者本人（或其配偶）當作「支薪」給自己的款項，以及本人資本的利息。</li>
-            <li>非慈善捐款，或者捐給未經稅務局認可機構的捐款。</li>
-            <li>任何並非為賺取應課稅利潤而招致的開支、一般性撥備／準備金、罰款及利得稅本身。</li>
+            <li>資本性開支（例如購置資產或進行改良工程的成本 — 這類開支須透過折舊免稅額分年扣除，而不是在該年一筆過扣除）。</li>
+            <li>以薪金名義支付給獨資經營者本人或其配偶的款項，以及就經營者投入資本所計算的利息。</li>
+            <li>非慈善性質的捐款，或捐給未經稅務局認可的機構的捐款。</li>
+            <li>任何並非為賺取應課稅利潤而招致的開支、一般性撥備／準備金、罰款，以及利得稅本身。</li>
           </ul>
         ),
         en: (
@@ -110,15 +110,15 @@ function buildSections(params: TaxParams): Section[] {
     },
     {
       id: "capital-allowances",
-      title: { zh: "折舊（資本）免稅額 — 簡化說明", en: "Capital allowances — a simplified explanation" },
+      title: { zh: "折舊免稅額 — 簡化說明", en: "Capital allowances — a simplified explanation" },
       content: {
         zh: (
           <p>
-            用於業務的機器、設備等資產，通常不可以即年一筆過扣除全部成本，而是按稅務局訂明的類別歸類為
-            「資產組別」，在購入該年度先扣一個初期免稅額，之後每年再按遞減結餘方式扣一個年度免稅額，
-            直至組別結餘用盡或資產出售為止；工業／商業樓宇另設一套獨立、較為複雜的免稅額制度。
-            由於具體百分比會因資產類別而異、亦不時因政策調整，如你有相當數量的機器設備或樓宇投資，
-            建議使用本網站計算工具內的進階輸入，或直接查閱稅務局最新指引以取得準確的免稅額比率。
+            用於業務的機械及工業裝置等資產，通常不可在購入該年一筆過扣除全部成本，而是按稅務局訂明的類別
+            歸入「資產組別」：在購入該年度先獲得初期免稅額，其後每年再按遞減價值方式獲得年度免稅額，
+            直至該組別的結餘用盡或資產出售為止；工業及商業建築物另設一套獨立而較為複雜的免稅額制度。
+            由於具體百分比因資產類別而異，亦會不時隨政策調整，如你有相當數量的機械設備或建築物投資，
+            建議使用本網站計算工具內的進階輸入，或直接查閱稅務局最新指引，以取得準確的免稅額比率。
           </p>
         ),
         en: (
@@ -147,11 +147,11 @@ function buildSections(params: TaxParams): Section[] {
               標準稅率計稅。
             </p>
             <p>
-              <strong>「一組相聯實體只可選一間享用兩級制」規則</strong> — 如果你同時經營多於一盤生意，
-              或者你的業務與其他實體（例如配偶名下的業務、你控制的公司）屬於「相聯實體」，
-              在一組相聯實體之中，只可以選擇其中一間享用兩級制優惠稅率；其餘實體的全部利潤，
-              一律按標準稅率 {pct(profitsTax.standardRate, "zh")} 計稅，沒有首 {hkd(profitsTax.tierOneCap, "zh")}{" "}
-              優惠稅階。報稅表會問及這個「相聯實體」問題，務必如實申報。
+              <strong>一組有關連實體只可由其中一個享用兩級制</strong> — 如果你同時經營多於一項業務，
+              或你的業務與其他實體（例如配偶名下的業務、由你控制的公司）互為「有關連實體」，
+              則在同一組有關連實體之中，只可由其中一個實體享用兩級制稅率；其餘實體的全部利潤，
+              一律按標準稅率 {pct(profitsTax.standardRate, "zh")} 計稅，不會享有首 {hkd(profitsTax.tierOneCap, "zh")}{" "}
+              的較低稅階。報稅表會問及「有關連實體」的情況，務必如實申報。
             </p>
           </>
         ),
@@ -182,8 +182,8 @@ function buildSections(params: TaxParams): Section[] {
       content: {
         zh: (
           <p>
-            業務虧損可以無限期結轉，在未來年度的應評稅利潤中扣除（同一盤生意，或按規則容許的同一納稅人
-            的其他應評稅利潤），直至用盡為止；利得稅並不容許將虧損向前結轉抵銷過往年度已完稅的利潤。
+            業務虧損可以無限期結轉，在日後年度的應評稅利潤中扣除（同一項業務，或在規則容許下同一納稅人
+            的其他應評稅利潤），直至用盡為止；利得稅並不容許將虧損追溯抵銷過往年度已課稅的利潤。
             另一個做法是在虧損的該年度選擇個人入息課稅，將業務虧損即時抵銷你該年其他來源的入息
             （例如薪俸或租金），詳見
             {" "}
@@ -263,7 +263,7 @@ export default function ProfitsTaxGuidePage() {
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-warm-700">
               {lang === "zh"
-                ? "如果你以獨資經營或合夥形式在香港經營業務，就要就業務利潤繳交利得稅。本指南集中講解個人／獨資業務相關的利得稅規則，不涵蓋有限公司的利得稅。"
+                ? "如果你以獨資經營或合夥形式在香港經營業務，便須就業務利潤繳納利得稅。本指南集中講解與個人及獨資／合夥業務相關的利得稅規則，不涵蓋有限公司的利得稅。"
                 : "If you run a business in Hong Kong as a sole proprietor or partner, you are liable to profits tax on the business's profits. This guide focuses on the profits tax rules relevant to individuals and unincorporated businesses — it does not cover limited company (corporate) profits tax."}
             </p>
           </div>
@@ -291,7 +291,7 @@ export default function ProfitsTaxGuidePage() {
             </h2>
             <p className="mt-4 max-w-[65ch] text-base leading-7 text-warm-700">
               {lang === "zh"
-                ? `假設一盤獨資業務全年應評稅利潤為 ${hkd(example.assessableProfits, "zh")}，並符合資格享用兩級制稅率（相聯實體之中並沒有其他業務已使用這個優惠）。`
+                ? `假設一項獨資業務全年應評稅利潤為 ${hkd(example.assessableProfits, "zh")}，並符合資格享用兩級制稅率（同一組有關連實體之中並無其他業務已使用這項稅率）。`
                 : `Assume a sole proprietorship has assessable profits of ${hkd(example.assessableProfits, "en")} for the year and is eligible for the two-tiered rate (no other entity in its connected group has already used the election).`}
             </p>
             <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">

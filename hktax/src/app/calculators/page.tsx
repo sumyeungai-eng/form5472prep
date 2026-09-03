@@ -25,20 +25,20 @@ type LocalText = Record<Lang, string>;
 
 const dict = {
   eyebrow: { zh: "快速計算", en: "Quick calculators" },
-  title: { zh: "三個獨立稅務快速計", en: "Three standalone tax quick calculators" },
+  title: { zh: "三個獨立的稅項快速計算機", en: "Three standalone tax quick calculators" },
   intro: {
-    zh: "使用頁首選定的課稅年度即時計算。輸入只涵蓋常見情況；如有多個收入來源、配偶、個人入息課稅或進階扣除，請轉到完整報稅精靈。",
-    en: "Calculations use the year of assessment selected in the header. These inputs cover common cases only; use the full wizard for multiple sources, spouse details, Personal Assessment, or advanced deductions.",
+    zh: "計算會採用你在頁首所選的課稅年度。這裏的輸入項只涵蓋常見情況；如有多項收入來源、配偶資料、個人入息課稅或較複雜的扣除項目，請改用完整報稅精靈。",
+    en: "Calculations use the year of assessment selected in the header. These inputs cover common cases only; use the full wizard for multiple sources, spouse details, Personal Assessment, or more complex deductions.",
   },
   yearPrefix: { zh: "目前課稅年度", en: "Current year of assessment" },
   cta: {
-    zh: "情況複雜？用完整報稅精靈",
+    zh: "情況較複雜？請改用完整報稅精靈",
     en: "Need the full picture? Use the wizard",
   },
   salaries: {
-    title: { zh: "薪俸稅快速計", en: "Salaries Tax quick calculator" },
+    title: { zh: "薪俸稅快速計算機", en: "Salaries Tax quick calculator" },
     description: {
-      zh: "輸入全年薪金、強制性強積金、基本或已婚人士免稅額，以及一項住屋扣除。",
+      zh: "輸入全年薪金、強制性強積金供款、基本或已婚人士免稅額，以及一項住屋扣除。",
       en: "Enter annual salary, mandatory MPF, basic or married allowance, and one housing deduction.",
     },
     annualIncome: { zh: "全年入息", en: "Annual income" },
@@ -55,17 +55,17 @@ const dict = {
     housingAmount: { zh: "扣除金額", en: "Deduction amount" },
     finalTax: { zh: "應繳薪俸稅", en: "Salaries tax payable" },
     effectiveRate: { zh: "實際稅率", en: "Effective rate" },
-    basis: { zh: "採用基準", en: "Basis used" },
+    basis: { zh: "計稅基準", en: "Basis used" },
     progressive: { zh: "累進稅率", en: "Progressive" },
     standard: { zh: "標準稅率", en: "Standard" },
     reduction: { zh: "稅款寬減", en: "Tax reduction" },
     breakdown: { zh: "計算流程", en: "Calculation chain" },
   },
   property: {
-    title: { zh: "物業稅快速計", en: "Property Tax quick calculator" },
+    title: { zh: "物業稅快速計算機", en: "Property Tax quick calculator" },
     description: {
-      zh: "以每月租金乘出租月數計算全年租金，再套用差餉、修葺免稅額及業權份額。",
-      en: "Annual rent is calculated as monthly rent times months rented, then rates, repairs allowance, and ownership share are applied.",
+      zh: "全年租金以每月租金乘以出租月數計算，再套用差餉、修葺及支出的標準免稅額，以及業權份額。",
+      en: "Annual rent is calculated as monthly rent times months rented, then rates, the standard repairs and outgoings allowance, and ownership share are applied.",
     },
     monthlyRent: { zh: "每月租金", en: "Monthly rent" },
     months: { zh: "出租月數", en: "Months rented" },
@@ -74,18 +74,18 @@ const dict = {
     share: { zh: "業權份額（%）", en: "Ownership share (%)" },
     tax: { zh: "物業稅", en: "Property tax" },
     nav: { zh: "應評稅淨值", en: "Net assessable value" },
-    walkthrough: { zh: "NAV 流程", en: "NAV walkthrough" },
+    walkthrough: { zh: "應評稅淨值計算流程", en: "NAV walkthrough" },
     noReduction: {
-      zh: "物業稅不適用一次性稅款寬減。",
+      zh: "一次性稅款寬減不適用於物業稅。",
       en: "No one-off tax reduction applies to property tax.",
     },
     paHint: {
-      zh: "如符合個人入息課稅，整體稅款或可降低；請使用完整報稅精靈檢查。",
+      zh: "如符合選擇個人入息課稅的資格，整體稅款或可減少；可用完整報稅精靈核對。",
       en: "Personal Assessment may reduce the overall tax if you qualify; use the full wizard to check.",
     },
   },
   profits: {
-    title: { zh: "利得稅快速計", en: "Profits Tax quick calculator" },
+    title: { zh: "利得稅快速計算機", en: "Profits Tax quick calculator" },
     description: {
       zh: "輸入獨資業務收入、可扣除開支及是否選用兩級制稅率。",
       en: "Enter sole-proprietorship revenue, deductible expenses, and whether two-tier rates are elected.",
@@ -95,14 +95,14 @@ const dict = {
     twoTier: { zh: "選用兩級制利得稅率", en: "Elect two-tier profits tax rates" },
     assessableProfits: { zh: "應評稅利潤", en: "Assessable profits" },
     tierOne: { zh: "第一級利潤／稅款", en: "First-tier profits / tax" },
-    remainder: { zh: "餘額利潤／稅款", en: "Remainder profits / tax" },
+    remainder: { zh: "其餘利潤／稅款", en: "Remainder profits / tax" },
     standard: { zh: "標準稅率稅款", en: "Standard-rate tax" },
     reduction: { zh: "稅款寬減", en: "Tax reduction" },
     finalTax: { zh: "應繳利得稅", en: "Profits tax payable" },
   },
   common: {
     results: { zh: "即時計算結果", en: "Live result" },
-    hkdHint: { zh: "港元，不包括仙位", en: "HKD, whole dollars" },
+    hkdHint: { zh: "港元，只填整數", en: "HKD, whole dollars" },
     percentHint: { zh: "輸入 0 至 100", en: "Enter 0 to 100" },
     amount: { zh: "金額", en: "Amount" },
   },

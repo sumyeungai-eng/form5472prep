@@ -102,12 +102,12 @@ function computeOneProperty(
     ),
     line(
       'irrecoverableRentRecovered',
-      '已追回往年不能追回租金',
+      '收回以往年度的不能追回租金',
       'Irrecoverable rent recovered from prior years',
       recoveredRent,
       'income',
     ),
-    line('consideration', '總代價', 'Total consideration', consideration, 'subtotal'),
+    line('consideration', '代價總額', 'Total consideration', consideration, 'subtotal'),
     line(
       'irrecoverableRent',
       '扣除本年度不能追回租金',
@@ -118,7 +118,7 @@ function computeOneProperty(
     line('assessableValue', '應評稅值', 'Assessable value', assessableValue, 'subtotal'),
     line(
       'ratesPaidByOwner',
-      '扣除業主繳付差餉',
+      '扣除業主繳付的差餉',
       'Less rates paid by owner',
       -ratesPaidByOwner,
       'deduction',
@@ -132,15 +132,15 @@ function computeOneProperty(
     ),
     line(
       'repairsAllowance',
-      '扣除修葺及支出法定免稅額',
+      '扣除法定修葺及支出免稅額',
       'Less statutory repairs and outgoings allowance',
       -repairsAllowance,
       'allowance',
     ),
     line(
       'netAssessableValueBeforeShare',
-      '業權份額前應評稅淨值',
-      'Net assessable value before ownership share',
+      '未按業權份額分攤的應評稅淨值',
+      'Net assessable value before ownership apportionment',
       navBeforeShare,
       'subtotal',
     ),

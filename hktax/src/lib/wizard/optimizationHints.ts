@@ -132,7 +132,7 @@ function mpfUnfilledHint(person: WizardPersonState, _state: WizardState, params:
     id: "mpf-unfilled",
     step: "deductions",
     kind: "opportunity",
-    titleZh: "可檢查強積金強制性供款扣除",
+    titleZh: "可檢查強制性強積金供款扣除",
     titleEn: "Check mandatory MPF deduction",
     bodyZh: `如你年內有受僱收入，僱員強制性強積金供款通常可扣除，上限為 ${cap}。請按糧單、僱主報稅表或強積金周年權益報表補上實際金額。`,
     bodyEn: `If you had employment income, employee mandatory MPF contributions are usually deductible, capped at ${cap}. Enter the actual amount from your payslips, employer's return, or MPF annual statement.`,
@@ -201,7 +201,7 @@ function marriedAllowanceUnclaimedHint(state: WizardState, params: TaxYearParams
     kind: "warning",
     titleZh: "請即檢查已婚人士免稅額",
     titleEn: "Review married person's allowance now",
-    bodyZh: "你填報為已婚，但似乎只有一方有收入，而尚未選用已婚人士免稅額。這種情況可能令你多繳薪俸稅；請在家庭資料中立即檢查評稅選擇。",
+    bodyZh: "你填報為已婚，但似乎只有一方有收入，而尚未申索已婚人士免稅額。這種情況可能令你多繳薪俸稅；請在家庭資料中立即檢查評稅選擇。",
     bodyEn: "You are filing as married, but only one spouse appears to have income and married person's allowance has not been selected. This can lead to overpayment; review the assessment choice in the family section.",
     ...(estimatedSavingHKD !== undefined ? { estimatedSavingHKD } : {}),
   };
@@ -222,9 +222,9 @@ function familyAllowancesWastedHint(state: WizardState): WizardHint | null {
     id: "family-allowances-wasted",
     step: "family",
     kind: "warning",
-    titleZh: "家庭免稅額可能放在無收入一方",
+    titleZh: "家庭免稅額可能分配給沒有收入的一方",
     titleEn: "Family allowances may be allocated to the spouse with no income",
-    bodyZh: "目前子女或受養人免稅額由看似沒有收入的一方申索，可能不能產生實際節稅效果。請檢查由哪位配偶申索家庭免稅額。",
+    bodyZh: "目前子女或受養人免稅額由看來沒有收入的一方申索，可能無法實際減少稅款。請檢查應由哪位配偶申索家庭免稅額。",
     bodyEn: "Child or dependant allowances are currently allocated to the spouse who appears to have no income, so they may not reduce tax in practice. Review which spouse should claim the family allowances.",
   };
 }
@@ -241,7 +241,7 @@ function donationHeadroomHint(person: WizardPersonState, _state: WizardState, pa
     kind: "info",
     titleZh: "認可慈善捐款有入息比例上限",
     titleEn: "Donation deduction is capped by income",
-    bodyZh: `認可慈善捐款一般以應評稅入息的 ${percent} 為上限。這個提示層不重算完整入息基數；請在覆核頁查看實際可扣除金額及任何超額部分。`,
+    bodyZh: `認可慈善捐款一般以應評稅入息的 ${percent} 為上限。此提示不會重算完整的入息基數；請在核對頁查看實際可扣除金額及任何超額部分。`,
     bodyEn: `Approved charitable donations are generally capped at ${percent} of assessable income. This hint layer does not recompute the full income base; check the review page for the actual deductible amount and any excess.`,
   };
 }
@@ -263,9 +263,9 @@ function annuityTvcHeadroomHint(person: WizardPersonState, state: WizardState, p
     id: "annuity-tvc-headroom",
     step: "deductions",
     kind: "opportunity",
-    titleZh: "年金及 TVC 扣除仍有上限空間",
+    titleZh: "年金及可扣稅自願性供款仍有扣除空間",
     titleEn: "Annuity and TVC deduction headroom remains",
-    bodyZh: `合資格延期年金保費及強積金 TVC 共用 ${formatHKD(params.deductionCaps.annuityAndTvc)} 上限。按今年已填資料粗略估算，如你已有供款或持有合資格保單而尚未全數填報，餘下 ${formatHKD(headroom)} 扣除空間約可節省 ${formatHKD(estimatedSavingHKD)} 稅款。`,
+    bodyZh: `合資格延期年金保費及強積金可扣稅自願性供款共用 ${formatHKD(params.deductionCaps.annuityAndTvc)} 上限。按今年已填資料粗略估算，如你已有供款或持有合資格保單而尚未全數填報，餘下 ${formatHKD(headroom)} 扣除空間約可節省 ${formatHKD(estimatedSavingHKD)} 稅款。`,
     bodyEn: `Qualifying deferred annuity premiums and MPF TVC share a ${formatHKD(params.deductionCaps.annuityAndTvc)} cap. Based on this year's inputs, if you already contribute or hold a qualifying policy and have not entered the full amount, the remaining ${formatHKD(headroom)} headroom could save about ${formatHKD(estimatedSavingHKD)} in tax.`,
     estimatedSavingHKD,
   };

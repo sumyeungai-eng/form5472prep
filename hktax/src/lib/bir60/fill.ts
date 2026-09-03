@@ -224,7 +224,7 @@ function fillPropertyTax(draft: FilledBir60, properties: PropertyInput[], partic
 
   setBox(draft, "part3.totalPropertiesLet", {
     value: soleProperties.length,
-    noteZh: overflowCount > 0 ? `另有 ${overflowCount} 個獨資出租物業須使用附加頁。` : undefined,
+    noteZh: overflowCount > 0 ? `另有 ${overflowCount} 個獨資出租物業須使用附頁。` : undefined,
     noteEn: overflowCount > 0 ? `${overflowCount} additional solely-owned let property/properties require a separate sheet.` : undefined,
   });
   setBox(draft, "part3.totalRatesAndIrrecoverableRent", {
@@ -236,7 +236,7 @@ function fillPropertyTax(draft: FilledBir60, properties: PropertyInput[], partic
   setBox(draft, "part3.jointOwnershipExclusion", {
     value: null,
     noteZh: excludedCount > 0
-      ? `已排除 ${excludedCount} 個共同擁有物業；該等物業通常由稅局另發物業稅報稅表。`
+      ? `已排除 ${excludedCount} 個共同擁有物業；該等物業通常由稅務局另發物業稅報稅表。`
       : "沒有共同擁有物業需要從第3部排除。",
     noteEn: excludedCount > 0
       ? `${excludedCount} jointly-owned property/properties excluded; those are usually handled on separate IRD Property Tax returns.`
@@ -310,13 +310,13 @@ function fillProfits(
   if (electedIndex >= 2) {
     setBox(draft, "part5.moreBusinesses", {
       value: null,
-      noteZh: "兩級制選擇屬於第3項或以後的業務；該業務須使用附加頁並自行標示選擇。",
+      noteZh: "兩級制選擇屬於第3項或以後的業務；該業務須使用附頁並自行標示選擇。",
       noteEn: "The two-tier election belongs to the third or later business; use a separate sheet and mark the election manually there.",
     });
   } else if (businesses.length > 2) {
     setBox(draft, "part5.moreBusinesses", {
       value: null,
-      noteZh: `另有 ${businesses.length - 2} 項業務須使用附加頁。`,
+      noteZh: `另有 ${businesses.length - 2} 項業務須使用附頁。`,
       noteEn: `${businesses.length - 2} additional business(es) require a separate sheet.`,
     });
   }
@@ -466,7 +466,7 @@ function fillAllowances(
   if (wizard.family.children.length > 3 || wizard.family.siblingCount > 3) {
     setBox(draft, "part12.childOverflow", {
       value: null,
-      noteZh: "有超過三名子女／兄弟姊妹受養人，使用附加頁。",
+      noteZh: "有超過三名子女／兄弟姊妹受養人，使用附頁。",
       noteEn: "There are more than three child/brother/sister dependants; use a separate sheet.",
     });
   }
@@ -503,7 +503,7 @@ function fillAllowances(
   if (wizard.family.parents.length > 3) {
     setBox(draft, "part12.parentOverflow", {
       value: null,
-      noteZh: "有超過三名供養父母／祖父母，使用附加頁。",
+      noteZh: "有超過三名供養父母／祖父母，使用附頁。",
       noteEn: "There are more than three parent/grandparent dependants; use a separate sheet.",
     });
   }

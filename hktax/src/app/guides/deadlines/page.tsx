@@ -19,7 +19,7 @@ const timeline: TimelineStep[] = [
     when: { zh: "約每年五月初", en: "Typically early May" },
     title: { zh: "稅務局發出報稅表（BIR60）", en: "IRD issues the BIR60 tax return" },
     detail: {
-      zh: "稅務局一般在每個課稅年度完結後不久，向已知有應課稅入息的納稅人發出個別人士報稅表（BIR60）。收到報稅表本身不代表你一定要繳稅，但一定要按期妥善處理。",
+      zh: "稅務局一般在每個課稅年度完結後不久，向已知有應課稅入息的納稅人發出個別人士報稅表（BIR60）。收到報稅表並不代表你一定須要繳稅，但必須按期填交。",
       en: "Shortly after each year of assessment ends, IRD generally issues the Individual Tax Return (BIR60) to taxpayers with known chargeable income. Receiving the form does not automatically mean tax is due, but it must be dealt with by the deadline."
     }
   },
@@ -46,7 +46,7 @@ const timeline: TimelineStep[] = [
     when: { zh: "約發出日起計 3 個月（無帳目審計要求的獨資業務）", en: "About 3 months from issue (unaudited sole-proprietorship cases)" },
     title: { zh: "有獨資業務人士的延長限期", en: "Extended deadline for sole-proprietorship cases" },
     detail: {
-      zh: "如報稅表包含須申報的獨資業務利潤（第 5 部分），稅務局一般會給予較長的申報期限，約為發出日起計三個月，方便業務主預備帳目。實際延期日數請以報稅表及稅務局通知為準。",
+      zh: "如報稅表包含須申報的獨資業務利潤（第 5 部分），稅務局一般會給予較長的申報期限，約為發出日起計三個月，方便獨資經營者預備帳目。實際延期日數請以報稅表及稅務局通知為準。",
       en: "Where the return includes sole-proprietorship business profits (Part 5), IRD generally allows a longer filing window — roughly three months from issue — to give business owners time to prepare accounts. Always confirm the exact extended date on your return or IRD's notice."
     }
   },
@@ -55,7 +55,7 @@ const timeline: TimelineStep[] = [
     when: { zh: "典型繳款月份：一月及四月", en: "Typical payment months: January and April" },
     title: { zh: "繳稅日期（與申報期限分開計算）", en: "Payment dates (separate from the filing deadline)" },
     detail: {
-      zh: "申報限期與繳稅日期是兩回事：即使已按時報稅，稅務局評稅後仍會另行發出繳稅通知書，典型的兩期繳款日子分別在一月及四月左右（詳見〈暫繳稅與緩繳〉指南）。",
+      zh: "申報限期與繳稅日期是兩件不同的事：即使已按時報稅，稅務局評稅後仍會另行發出繳稅通知書，典型的兩期繳款日期分別在一月及四月左右（詳見〈暫繳稅與緩繳〉指南）。",
       en: "The filing deadline and the payment date are different things. Even after you file on time, IRD issues a separate demand note once the assessment is raised, typically due in two instalments around January and April (see the Provisional Tax and Holdover guide for details)."
     }
   }
@@ -79,7 +79,7 @@ export default function DeadlinesGuidePage() {
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-warm-700">
               {lang === "zh"
-                ? "以下是香港個人報稅一年一度的典型時間表，涵蓋報稅表發出、申報限期、電子報稅延期，以及繳款日子。所有日期均為一般行政安排，實際限期請以你本人的報稅表及繳稅通知書為準——行政安排或有變動。"
+                ? "以下是香港個人報稅一年一度的典型時間表，涵蓋報稅表發出、申報限期、電子報稅延期，以及繳稅日期。所有日期均屬一般行政安排；行政安排或有變動，實際限期請以你本人的報稅表及繳稅通知書為準。"
                 : "Below is the typical annual cycle for Hong Kong individual tax filing — from when the return is issued, through filing deadlines and the eTAX extension, to payment dates. All dates describe general administrative practice. Always check the actual deadlines on your own return and demand note — administrative arrangements can change."}
             </p>
           </div>
@@ -119,7 +119,7 @@ export default function DeadlinesGuidePage() {
               </h2>
               <p className="mt-4 max-w-[65ch] text-base leading-7 text-warm-700">
                 {lang === "zh"
-                  ? "即使未曾收到稅務局發出的報稅表，如你在有關課稅年度有應課稅入息（例如新受僱、新開業或新增租金收入），法例規定你必須在該課稅年度完結後的 4 個月內，主動以書面通知稅務局你須課稅這事實，稅務局其後會發出報稅表要求你申報。不主動通知並不能免除報稅責任。"
+                  ? "即使未曾收到稅務局發出的報稅表，如你在有關課稅年度有應課稅入息（例如新受僱、新開業或新增租金收入），法例規定你必須在該課稅年度完結後的 4 個月內，主動以書面通知稅務局你須予課稅，稅務局其後會發出報稅表要求你申報。不主動通知並不能免除報稅責任。"
                   : "Even if you never receive a return from IRD, if you have chargeable income for the year (for example, a new job, a new business, or new rental income), the law requires you to notify IRD in writing within 4 months after the end of that year of assessment that you are chargeable to tax. IRD will then issue a return for you to complete. Staying silent does not remove the filing obligation."}
               </p>
             </article>
@@ -133,7 +133,7 @@ export default function DeadlinesGuidePage() {
                   <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
                   <span>
                     {lang === "zh"
-                      ? "稅務局可能先按估計方式作出「估計評稅」，金額可能高於你實際應繳稅款。"
+                      ? "稅務局可能先向你作出「估計評稅」，金額可能高於你實際應繳的稅款。"
                       : "IRD may raise an estimated assessment first, which can be higher than your actual liability."}
                   </span>
                 </li>
@@ -141,7 +141,7 @@ export default function DeadlinesGuidePage() {
                   <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
                   <span>
                     {lang === "zh"
-                      ? "持續逾期或無合理辯解，可能引致罰款、附加費，情況嚴重者甚至可被檢控——具體金額及安排由稅務局按個案及現行法例厘定，本網站不會臆測具體數字。"
+                      ? "如持續不遵從規定而又無合理辯解，可能引致罰款、附加費，情況嚴重者甚至可被檢控；具體金額及安排由稅務局按個案及現行法例厘定，本網站不會臆測具體數字。"
                       : "Continued non-compliance without reasonable excuse can lead to penalties, additional charges, and in serious cases prosecution — the exact amounts and thresholds are set by IRD and current legislation on a case-by-case basis, and this website does not speculate on specific figures."}
                   </span>
                 </li>
@@ -149,7 +149,7 @@ export default function DeadlinesGuidePage() {
                   <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
                   <span>
                     {lang === "zh"
-                      ? "即使已被估計評稅，你通常仍可在指定期限內反對並提交實際數字更正（見〈反對評稅與更正〉指南）。"
+                      ? "即使已被估計評稅，你通常仍可在指定期限內提出反對，並提交實際數字要求更正（見〈反對評稅與更正〉指南）。"
                       : "Even after an estimated assessment, you can usually still object within the applicable deadline and correct it with your actual figures (see the Objections and Corrections guide)."}
                   </span>
                 </li>
@@ -163,7 +163,7 @@ export default function DeadlinesGuidePage() {
         <Container>
           <p className="max-w-3xl text-xs leading-6 text-warm-600">
             {lang === "zh"
-              ? "本頁內容僅供一般教育及參考用途，並非稅務意見，亦與稅務局無從屬關係。報稅表發出日期、申報限期、電子報稅延期天數及罰則安排均可能因年度或個別情況而有所不同，實際安排請以你本人的報稅表、繳稅通知書及稅務局最新公布為準；如有疑問，建議諮詢執業會計師或稅務顧問。"
+              ? "本頁內容僅供一般教育及參考用途，並非稅務意見；本網站與稅務局並無從屬關係。報稅表發出日期、申報限期、電子報稅延期天數及罰則安排，均可能因年度或個別情況而有所不同，實際安排請以你本人的報稅表、繳稅通知書及稅務局最新公布為準；如有疑問，建議諮詢執業會計師或稅務顧問。"
               : "This page is for general education and reference only. It is not tax advice and this website is not affiliated with the Inland Revenue Department. Issue dates, filing deadlines, eTAX extension lengths, and penalty arrangements can vary by year or by case — always rely on your own return, demand note, and IRD's latest announcements, and consult a qualified accountant or tax adviser if in doubt."}
           </p>
           <Link

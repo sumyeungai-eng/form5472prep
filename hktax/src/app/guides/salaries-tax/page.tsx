@@ -77,14 +77,14 @@ function buildSections(params: TaxParams): Section[] {
         zh: (
           <>
             <p>
-              任何人在香港「因任何office（職位）、僱傭或退休金」而產生或得自香港的入息，都要課繳薪俸稅。
-              簡單而言，只要你受僱工作的職位或提供服務的地方在香港，你的入息就很可能屬於應課稅範圍，
-              毋須是香港永久性居民或持有香港身份證才需要課稅。
+              任何因香港的職位、僱傭或退休金而在香港產生或得自香港的入息，均須課繳薪俸稅。
+              簡單而言，只要你所任職的職位或提供服務的地點在香港，你的入息就很可能屬於應課稅範圍；
+              並非只有香港永久性居民或香港身份證持有人才須課稅。
             </p>
             <p>
-              相反，如果你的僱傭關係全部在香港以外地方訂立、管理及執行（即「非香港僱傭」），
-              就可能只需要就實際在香港提供服務的日數比例課稅，甚至完全豁免。這類跨境情況牽涉的規則
-              （例如 60 日豁免規則）比較複雜，建議另行諮詢專業意見。
+              相反，如果你的僱傭全部在香港以外地方議定、管理及支付（即「非香港僱傭」），
+              則可能只須按實際在香港提供服務的日數比例課稅，甚至可完全獲豁免。這類跨境情況所涉及的規則
+              （例如 60 日規則）比較複雜，建議另行諮詢專業意見。
             </p>
           </>
         ),
@@ -114,17 +114,17 @@ function buildSections(params: TaxParams): Section[] {
           <ul className="list-disc space-y-2 pl-5">
             <li>基本薪金、工資、假期薪酬、董事袍金、佣金及花紅（無論是否合約列明）。</li>
             <li>
-              各種實物利益（perquisites）— 凡可以兌換現金、或由僱主代你支付本應由你負責的開支
-              （例如僱主代交你個人的私人費用），一般都要計入應課稅入息。
+              各種額外賞賜（perquisites）— 凡可以兌換現金的利益，或由僱主代你支付而本應由你承擔的開支
+              （例如僱主代付你的私人費用），一般都須計入應課稅入息。
             </li>
             <li>
-              購股權（share option）收益 — 在行使、轉讓或放棄購股權的一刻，市值減去行使價的差額，
-              一般要計入該課稅年度的入息，並非資本增值稅範圍。
+              股份認購權（share option）收益 — 在行使、轉讓或放棄該權利時，市值減去行使價的差額，
+              一般須計入該課稅年度的入息，並不屬於資本增值。
             </li>
             <li>
-              終止僱傭時收取的款項 — 屬合約性酬金或約滿酬金一般要課稅，並可選擇追溯攤分至最多 36
+              終止僱傭時收取的款項 — 合約性酬金及代通知金一般須課稅，並可選擇追溯攤分至最多 36
               個月；至於法定遣散費／長期服務金當中屬彌補離職損失的部分，一般不屬於應課稅入息，
-              但實際定性要視乎每宗個案的事實，建議個案有疑問時查詢稅務局或專業意見。
+              但實際定性須視乎每宗個案的事實。如有疑問，建議向稅務局查詢或諮詢專業意見。
             </li>
             <li>
               僱主提供居所的「租值」（rental value）— 詳見下一節，會按你的入息或物業應課差餉租值計算。
@@ -164,22 +164,22 @@ function buildSections(params: TaxParams): Section[] {
     {
       id: "accommodation",
       title: {
-        zh: "僱主提供宿舍的租值計算",
+        zh: "僱主提供居所的租值計算",
         en: "Employer-provided accommodation: rental value"
       },
       content: {
         zh: (
           <>
             <p>
-              如果僱主免費或以低於市值的租金提供住宿，稅務局會將一個「租值」加回你的應課稅入息，
-              比例視乎住宿類型而定 — 一般住宅單位（例如整個單位／整間房屋）的比例，會高於酒店、賓館或
-              服務式住宅的套房或單人房。具體比例並不包含在本網站的課稅年度參數之內（因為這類比例
+              如果僱主免費或以低於市值的租金提供住宿，稅務局會將一項「租值」計入你的應課稅入息，
+              百分比視乎住宿類型而定 — 一般住宅（例如整個單位或整間房屋）所用的百分比，會高於
+              酒店、旅舍或寄宿舍內的房間。具體百分比並不包含在本網站的課稅年度參數之內（因為這類百分比
               屬長期不變的結構性規則，並非每年隨財政預算案調整），請以稅務局最新指引所列的百分比為準。
             </p>
             <p>
-              以上比例一般乘以你該年的「應評稅入息淨額」（即扣除准許開支之後、計租值之前的入息）計出租值。
-              在某些情況下，你亦可以選擇改用該物業的應課差餉租值，兩者取較低者 —
-              實際比較方法及適用條件請參閱稅務局最新指引，因為涉及的細節規則較多。
+              有關百分比一般以你該年的入息淨額（即扣除准許開支之後、未計租值之前的入息）計算，得出租值。
+              在某些情況下，你亦可改用該物業的應課差餉租值，並以較低者為準；
+              由於當中的細節條件較多，實際比較方法及適用情況請參閱稅務局最新指引。
             </p>
           </>
         ),
@@ -189,7 +189,7 @@ function buildSections(params: TaxParams): Section[] {
               If your employer provides you with accommodation rent-free or below market rent, the IRD
               adds a &ldquo;rental value&rdquo; to your chargeable income, at a percentage that depends on
               the type of accommodation — an ordinary residence (e.g. a whole flat or house) attracts a
-              higher percentage than a hotel, hostel, or serviced-apartment suite or single room. The exact
+              higher percentage than a room in a hotel, hostel, or boarding house. The exact
               percentages are not part of this site&apos;s year-of-assessment parameters, since this is a
               long-standing structural rule rather than something the annual Budget adjusts — check the
               IRD&apos;s current guidance for the applicable percentage.
@@ -216,19 +216,19 @@ function buildSections(params: TaxParams): Section[] {
               再減去免稅額，得出「應課稅入息實額」（NCI）：
             </p>
             <ol className="list-decimal space-y-2 pl-5">
-              <li>屬工作上完全、純粹及必須產生的開支（例如專業會費）。</li>
+              <li>完全、純粹及必須為工作而支付的開支（例如專業團體會費）。</li>
               <li>認可慈善捐款，上限為認可入息的 {pct(deductionCaps.donationsPercent, "zh")}。</li>
-              <li>強制性公積金供款，每年上限 {hkd(deductionCaps.mpfMandatory, "zh")}。</li>
+              <li>強制性強積金供款，每年上限 {hkd(deductionCaps.mpfMandatory, "zh")}。</li>
               <li>
                 個人進修開支，每年上限 {hkd(deductionCaps.selfEducation, "zh")}。
               </li>
               <li>
-                居所貸款利息（一般上限 {hkd(deductionCaps.homeLoanInterest, "zh")}，合資格新生子女個案可提高至{" "}
-                {hkd(deductionCaps.homeLoanInterestElevated, "zh")}，可申索年期 {deductionCaps.homeLoanInterestYears}{" "}
-                個課稅年度）— 同「居所租金」互斥，兩者只可擇一申索同一課稅年度。
+                居所貸款利息（一般上限 {hkd(deductionCaps.homeLoanInterest, "zh")}，如與合資格的首名新生子女同住，可提高至{" "}
+                {hkd(deductionCaps.homeLoanInterestElevated, "zh")}，可申索年期為 {deductionCaps.homeLoanInterestYears}{" "}
+                個課稅年度）— 在同一課稅年度不可與「住宅租金」同時申索，只可選擇其中一項。
               </li>
               <li>
-                居所租金（一般上限 {hkd(deductionCaps.domesticRent, "zh")}，合資格新生子女個案可提高至{" "}
+                住宅租金（一般上限 {hkd(deductionCaps.domesticRent, "zh")}，在上述同一新生子女條件下可提高至{" "}
                 {hkd(deductionCaps.domesticRentElevated, "zh")}）。
               </li>
               <li>長者住宿照顧開支，每名受養父母／祖父母上限 {hkd(deductionCaps.elderlyCare, "zh")}。</li>
@@ -236,7 +236,7 @@ function buildSections(params: TaxParams): Section[] {
                 合資格年金保費及強積金可扣稅自願性供款（TVC），合併上限 {hkd(deductionCaps.annuityAndTvc, "zh")}。
               </li>
               <li>
-                自願medical保險計劃（VHIS）保費，每名受保人上限 {hkd(deductionCaps.vhisPerPerson, "zh")}。
+                自願醫保計劃（VHIS）保費，每名受保人上限 {hkd(deductionCaps.vhisPerPerson, "zh")}。
               </li>
               <li>
                 合資格輔助生育服務開支，每年上限 {hkd(deductionCaps.assistedReproduction, "zh")}。
@@ -330,7 +330,7 @@ function buildSections(params: TaxParams): Section[] {
             <p>
               稅務局會分別用兩種方法計出稅款，然後取較低者作為你要繳交的薪俸稅：
             </p>
-            <p className="font-semibold text-navy-900">累進稅率 — 按「應課稅入息實額」（NCI，即扣除埋免稅額之後）計算：</p>
+            <p className="font-semibold text-navy-900">累進稅率 — 按「應課稅入息實額」（NCI，即已扣除免稅額之後）計算：</p>
             <ul className="list-disc space-y-1 pl-5">
               {describeBands(progressiveBands, "zh").map((line) => (
                 <li key={line}>{line}</li>
@@ -405,17 +405,17 @@ function buildSections(params: TaxParams): Section[] {
     },
     {
       id: "joint",
-      title: { zh: "夫婦聯合評稅基本概念", en: "Joint assessment basics" },
+      title: { zh: "夫婦合併評稅基本概念", en: "Joint assessment basics" },
       content: {
         zh: (
           <>
             <p>
-              已婚夫婦的入息預設是分開評稅（各自申報自己的入息、扣除及免稅額）。如果合併評稅對雙方合計而言
-              較著數，夫婦雙方可以共同選擇「聯合評稅」— 將兩人入息合併計算，改用已婚人士免稅額代替兩份基本免稅額，
+              已婚夫婦的入息一般分開評稅（各自申報自己的入息、扣除及免稅額）。如果合併計算對雙方的總稅款
+              較為有利，夫婦雙方可共同選擇「合併評稅」— 將兩人入息合併計算，改用已婚人士免稅額代替兩份基本免稅額，
               其餘扣除及免稅額（例如子女、供養父母）合併申索，最後按合併後的入息比例攤分應繳稅款。
             </p>
             <p>
-              聯合評稅純粹是選擇性，稅務局不會自動為你決定；建議兩種方式都計算一次，選擇較低的一種。
+              合併評稅屬自行選擇，稅務局不會自動為你選定；建議兩種方式都計算一次，然後選擇稅款較低的一種。
               本網站的計算工具會自動比較這兩個方案。
             </p>
           </>
@@ -504,7 +504,7 @@ export default function SalariesTaxGuidePage() {
             </h2>
             <p className="mt-4 max-w-[65ch] text-base leading-7 text-warm-700">
               {lang === "zh"
-                ? `假設一位單身人士，全年入息 ${hkd(example.income, "zh")}，已供滿強積金上限，除基本免稅額外沒有其他免稅額或扣除。`
+                ? `假設一位單身人士，全年入息 ${hkd(example.income, "zh")}，強積金強制性供款已達每年扣除上限，除基本免稅額外並無其他免稅額或扣除。`
                 : `Assume a single taxpayer with annual income of ${hkd(example.income, "en")}, maxed-out mandatory MPF contributions, and no allowances or deductions beyond the basic allowance.`}
             </p>
             <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">

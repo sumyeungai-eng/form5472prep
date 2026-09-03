@@ -62,8 +62,8 @@ describe('computeSalariesTax', () => {
       ...salary(500000),
       employerAccommodation: [{
         key: 'hotel',
-        labelZh: '兩房酒店住宿租值',
-        labelEn: 'Two-room hotel accommodation rental value',
+        labelZh: '酒店／旅舍（兩個房間）住宿租值',
+        labelEn: 'Hotel/hostel (2 rooms) accommodation rental value',
         type: 'twoRoomHotel',
         employerAssessableIncomeBeforeAccommodation: 500000,
         rateableValueElection: 10000,

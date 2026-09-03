@@ -36,7 +36,7 @@ export const dictionary = {
     en: "Calculators"
   },
   "header.nav.deductions": {
-    zh: "扣稅檢查",
+    zh: "扣除項目",
     en: "Deductions"
   },
   "header.nav.guides": {
@@ -82,7 +82,7 @@ export const dictionary = {
     en: "YA 2025/26 / 2025/26 課稅年度"
   },
   "footer.disclaimer": {
-    zh: "本網站只提供香港個人稅務教育及估算用途，實際評稅以稅務局通知及專業意見為準。",
+    zh: "本網站只作香港個人稅務教育及估算用途，實際評稅以稅務局的通知及專業意見為準。",
     en: "This website is for Hong Kong personal tax education and estimation only; actual assessments depend on IRD notices and professional advice."
   },
   "footer.affiliation": {
@@ -114,11 +114,11 @@ export const dictionary = {
     en: "Hong Kong personal tax planning"
   },
   "home.hero.title": {
-    zh: "輕鬆計算香港個人稅",
+    zh: "輕鬆算清你的香港稅款",
     en: "Calculate your Hong Kong taxes with confidence"
   },
   "home.hero.subtitle": {
-    zh: "涵蓋薪俸稅、物業稅、利得稅及個人入息課稅，協助你用清晰步驟了解報稅影響。",
+    zh: "涵蓋薪俸稅、物業稅、利得稅及個人入息課稅，逐步引導你看清報稅的整體情況。",
     en: "Cover Salaries Tax, Property Tax, Profits Tax, and Personal Assessment with a clear step-by-step filing view."
   },
   "home.hero.primaryCta": {
@@ -134,11 +134,11 @@ export const dictionary = {
     en: "Hong Kong skyline background"
   },
   "home.hero.trust.ird": {
-    zh: "已核對稅務局參數",
+    zh: "稅率及免稅額源自稅務局",
     en: "IRD-sourced parameters"
   },
   "home.hero.trust.browser": {
-    zh: "100% 瀏覽器內計算",
+    zh: "100% 在你的瀏覽器內計算",
     en: "100% in-browser calculation"
   },
   "home.hero.trust.free": {
@@ -150,8 +150,8 @@ export const dictionary = {
     en: "Tax areas"
   },
   "home.features.title": {
-    zh: "由收入來源到家庭情境，一次整理",
-    en: "Organize income sources and family scenarios in one place"
+    zh: "由收入來源到家庭狀況，一次整理清楚",
+    en: "Organize income sources and family circumstances in one place"
   },
   "home.features.salaries.title": {
     zh: "薪俸稅",
@@ -170,8 +170,8 @@ export const dictionary = {
     en: "Property Tax"
   },
   "home.features.property.description": {
-    zh: "快速檢視租金收入、差餉及法定修葺免稅額如何影響應繳稅款。",
-    en: "Preview how rental income, rates, and statutory repairs allowance affect tax payable."
+    zh: "快速檢視租金收入、差餉，以及修葺及支出的標準免稅額如何影響應繳稅款。",
+    en: "Preview how rental income, rates, and the standard repairs and outgoings allowance affect tax payable."
   },
   "home.features.property.alt": {
     zh: "物業稅功能卡圖片",
@@ -182,7 +182,7 @@ export const dictionary = {
     en: "Profits Tax"
   },
   "home.features.profits.description": {
-    zh: "為獨資或合夥業務預留清晰入口，日後連接業務收入計算。",
+    zh: "為獨資及合夥業務預留位置，日後可接上業務收入的計算。",
     en: "Prepare a clear entry point for sole proprietorship and partnership income calculations."
   },
   "home.features.profits.alt": {
@@ -194,8 +194,8 @@ export const dictionary = {
     en: "Family and assessment comparison"
   },
   "home.features.family.description": {
-    zh: "保留配偶、子女及供養親屬情境，支援日後比較個人入息課稅選項。",
-    en: "Keep spouse, child, and dependant scenarios ready for future Personal Assessment comparisons."
+    zh: "預先記錄配偶、子女及受養親屬的資料，日後可比較個人入息課稅的選擇。",
+    en: "Record spouse, child, and dependant details for later Personal Assessment comparisons."
   },
   "home.features.family.alt": {
     zh: "家庭及評稅比較功能卡圖片",
@@ -210,7 +210,7 @@ export const dictionary = {
     en: "Three steps to a cleaner tax picture"
   },
   "home.how.step1.title": {
-    zh: "答問題",
+    zh: "回答問題",
     en: "Answer questions"
   },
   "home.how.step1.description": {
@@ -222,7 +222,7 @@ export const dictionary = {
     en: "Instant calculation"
   },
   "home.how.step2.description": {
-    zh: "在瀏覽器內整理計算，讓你即時看到影響。",
+    zh: "在瀏覽器內即時計算，每次輸入都即時反映在稅款上。",
     en: "Review estimates in the browser as the filing picture changes."
   },
   "home.how.step3.title": {
@@ -238,7 +238,7 @@ export const dictionary = {
     en: "Privacy first"
   },
   "home.privacy.note": {
-    zh: "100% 瀏覽器內計算，資料不會上傳。",
+    zh: "100% 在你的瀏覽器內計算，資料不會上傳。",
     en: "All computation stays in your browser; nothing is uploaded."
   },
   "contact.eyebrow": {
@@ -258,7 +258,7 @@ export const dictionary = {
     en: "Do not send sensitive tax details"
   },
   "contact.notIrdNote": {
-    zh: "本網站只屬教育工具，營運者並非稅務局，不能查閱任何人的稅務帳戶，也不能代任何人報稅或處理個案。請勿透過此表格提交香港身份證號碼、密碼或完整稅務資料。",
+    zh: "本網站純屬教育工具，營運者並非稅務局，不能查閱任何人的稅務帳戶，也不能代任何人報稅或處理個案。請勿透過此表格提交香港身份證號碼、密碼或完整稅務資料。",
     en: "This site is an educational tool. The operators are not the Inland Revenue Department and cannot access anyone's tax account, file on anyone's behalf, or handle individual tax cases. Do not send HKID numbers, passwords, or full tax details through this form."
   },
   "contact.irdReferralNote": {
@@ -286,7 +286,7 @@ export const dictionary = {
     en: "Tell the site owner if you spot an issue, have a question about a calculation, or want to suggest improvements to the interface or content."
   },
   "feedback.notesTitle": {
-    zh: "私下閱讀",
+    zh: "私下閱覽",
     en: "Privately reviewed"
   },
   "feedback.notPublishedNote": {
@@ -298,7 +298,7 @@ export const dictionary = {
     en: "The tax calculator itself still runs 100% in your browser; only the contents you type into this form are transmitted."
   },
   "placeholder.comingSoon": {
-    zh: "建設中",
+    zh: "即將推出",
     en: "Coming soon"
   },
   "placeholder.description": {
@@ -314,7 +314,7 @@ export const dictionary = {
     en: "Calculators"
   },
   "placeholder.deductions.title": {
-    zh: "扣稅檢查",
+    zh: "扣除項目",
     en: "Deductions"
   },
   "placeholder.guides.title": {

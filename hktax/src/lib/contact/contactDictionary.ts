@@ -48,12 +48,12 @@ export const contactDictionary = {
     en: "Characters"
   },
   submitLabel: {
-    zh: "送出",
-    en: "Send"
+    zh: "提交",
+    en: "Submit"
   },
   sendingLabel: {
-    zh: "傳送中...",
-    en: "Sending..."
+    zh: "提交中...",
+    en: "Submitting..."
   },
   successMessage: {
     zh: "已收到你的訊息，謝謝。",
@@ -64,7 +64,7 @@ export const contactDictionary = {
     en: "The submission method was not accepted. Please refresh and try again."
   },
   errorInvalid: {
-    zh: "請檢查必填欄位和電郵格式後再試。",
+    zh: "請檢查必填欄位及電郵格式後再試。",
     en: "Please check the required fields and email format, then try again."
   },
   errorSpam: {
@@ -80,7 +80,7 @@ export const contactDictionary = {
     en: "The message could not be sent right now. Please try again later."
   },
   errorGeneric: {
-    zh: "未能完成提交。若你正在本機預覽靜態網站，PHP 端點可能尚未啟用。",
+    zh: "未能完成提交。若你正在本地預覽靜態網站，PHP 端點可能尚未啟用。",
     en: "The submission could not be completed. If you are previewing the static site locally, the PHP endpoint may not be running."
   },
   contactSubjectGeneral: {

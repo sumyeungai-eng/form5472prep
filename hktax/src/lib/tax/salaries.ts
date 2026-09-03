@@ -218,7 +218,7 @@ function computeIncomeAndDeductions(
       ));
       lines.push(line(
         `income.${item.key}.relateBackNote`,
-        '以不超過三十六個月平均攤分；過往課稅年度需另行重開評稅',
+        '以不超過三十六個月平均攤分；過往課稅年度須另行重新評稅',
         'Spread evenly over the elected period; prior years are reassessed separately outside this engine',
         relatedBack,
         'info',
@@ -267,7 +267,7 @@ function computeIncomeAndDeductions(
     lines,
     'annuityAndTvc',
     '合資格延期年金保費及可扣稅強積金自願性供款',
-    'Qualifying annuity premiums and tax deductible voluntary contributions',
+    'Qualifying annuity premiums and tax-deductible MPF voluntary contributions',
     input.deductions?.annuityAndTvc ?? 0,
     params.deductionCaps.annuityAndTvc,
   );
@@ -386,7 +386,7 @@ function applyDonationDeduction(
   if (requested > 0 && requested < MINIMUM_QUALIFYING_DONATION) {
     lines.push(line(
       'deduction.charitableDonations.minimum',
-      '認可慈善捐款少於最低合資格金額',
+      '認可慈善捐款少於最低合資格金額，不可扣除',
       'Approved charitable donations below the minimum qualifying amount are not deductible',
       requested,
       'info',

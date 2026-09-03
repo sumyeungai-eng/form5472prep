@@ -34,12 +34,12 @@ const manualNote = {
 };
 
 const notComputedNote = {
-  noteZh: "本計算器未涵蓋，請按報稅表及填表指南自行核對。",
+  noteZh: "本工具未涵蓋此項，請按報稅表及填表指南自行核對。",
   noteEn: "Not covered by this calculator; review the return and guide yourself.",
 };
 
 const leaveBlankNote = {
-  noteZh: "由稅局填寫，毋須填寫。",
+  noteZh: "此欄由稅務局填寫，你毋須填寫。",
   noteEn: "For IRD official use only; leave blank.",
 };
 
@@ -55,26 +55,26 @@ export const BIR60_STRUCTURE: Bir60Part[] = [
         titleZh: "本人及配偶資料",
         titleEn: "Self and spouse particulars",
         boxes: [
-          { id: "part1.selfName", labelZh: "本人 中文姓名 / 英文姓名", labelEn: "SELF - Name in Chinese / Name in English", kind: "text", source: "particulars" },
-          { id: "part1.spouseName", labelZh: "配偶 中文姓名 / 英文姓名", labelEn: "SPOUSE - Name in Chinese / Name in English", kind: "text", source: "particulars" },
+          { id: "part1.selfName", labelZh: "本人 中文姓名／英文姓名", labelEn: "SELF - Name in Chinese / Name in English", kind: "text", source: "particulars" },
+          { id: "part1.spouseName", labelZh: "配偶 中文姓名／英文姓名", labelEn: "SPOUSE - Name in Chinese / Name in English", kind: "text", source: "particulars" },
           { id: "part1.selfHkid", boxNo: "1", labelZh: "本人香港身份證號碼", labelEn: "SELF - Hong Kong Identity Card No.", kind: "text", source: "particulars" },
           { id: "part1.spouseHkid", boxNo: "2", labelZh: "配偶香港身份證號碼", labelEn: "SPOUSE - Hong Kong Identity Card No.", kind: "text", source: "particulars" },
-          { id: "part1.passport", labelZh: "如沒有香港身分證，國籍及護照號碼", labelEn: "If not a HKID holder, nationality and passport number", kind: "text", source: "manual", ...manualNote },
+          { id: "part1.passport", labelZh: "如沒有香港身份證，國籍及護照號碼", labelEn: "If not a HKID holder, nationality and passport number", kind: "text", source: "manual", ...manualNote },
           { id: "part1.mobile", boxNo: "3", labelZh: "手提電話（日間聯絡電話）", labelEn: "Mobile phone no. (Day-time contact tel. no.)", kind: "text", source: "manual", ...manualNote },
-          { id: "part1.address", labelZh: "新通訊地址 / 新住址", labelEn: "New Postal Address / New Residential Address", kind: "text", source: "manual", ...manualNote },
+          { id: "part1.address", labelZh: "新通訊地址／新住址", labelEn: "New Postal Address / New Residential Address", kind: "text", source: "manual", ...manualNote },
           { id: "part1.maritalStatusChange", boxNo: "2", labelZh: "更改婚姻狀況 生效日期", labelEn: "Change of Marital Status - effective date and code", kind: "date", source: "manual", ...manualNote },
         ],
       },
       {
         id: "officialUseOnly",
-        titleZh: "稅局專用",
+        titleZh: "只供稅務局人員填寫",
         titleEn: "For Official Use Only",
         boxes: Array.from({ length: 19 }, (_, index) => {
           const boxNo = String(index + 11);
           return {
             id: `officialUse.box${boxNo}`,
             boxNo,
-            labelZh: `方格 ${boxNo} - 稅局專用`,
+            labelZh: `方格 ${boxNo} - 只供稅務局人員填寫`,
             labelEn: `Box ${boxNo} - For Official Use Only`,
             kind: "note",
             source: "manual",
@@ -92,13 +92,13 @@ export const BIR60_STRUCTURE: Bir60Part[] = [
     sections: [
       {
         id: "part2.notification",
-        titleZh: "需自行核對的通知事項",
+        titleZh: "須自行核對的通知事項",
         titleEn: "Notification items for manual review",
         boxes: [
           { id: "part2.authorizedRepresentative", boxNo: "4", labelZh: "本人已委任獲授權代表", labelEn: "I have appointed an authorized representative", kind: "note", source: "manual", ...manualNote },
           { id: "part2.advanceRuling", boxNo: "5", labelZh: "本人曾經取得有關本課稅年度的事先裁定", labelEn: "I have obtained an advance ruling relating to this year of assessment", kind: "note", source: "manual", ...manualNote },
           { id: "part2.dtaRelief", boxNo: "6", labelZh: "本人擬根據雙重課稅安排申請有關的寬免", labelEn: "I wish to claim relief under Double Taxation Arrangement(s)", kind: "note", source: "manual", ...manualNote },
-          { id: "part2.futureLanguage", boxNo: "7", labelZh: "本人要求日後收取英文版本的個人人士報稅表 (BIR60)", labelEn: "I wish to receive CHINESE version of tax return (BIR60) in future", kind: "note", source: "manual", ...manualNote },
+          { id: "part2.futureLanguage", boxNo: "7", labelZh: "本人要求日後收取英文版本的個別人士報稅表 (BIR60)", labelEn: "I wish to receive CHINESE version of tax return (BIR60) in future", kind: "note", source: "manual", ...manualNote },
         ],
       },
     ],
@@ -111,15 +111,15 @@ export const BIR60_STRUCTURE: Bir60Part[] = [
     sections: [
       {
         id: "part3.properties",
-        titleZh: "獨資出租物業明細",
+        titleZh: "獨資出租物業詳情",
         titleEn: "Solely-owned let property details",
         boxes: [
-          { id: "part3.hasSoleProperties", labelZh: "是否有獨資出租物業", labelEn: "Did you have solely-owned properties let during the year?", kind: "tick", source: "computed", noteZh: "聯名/共同擁有物業不在此部申報。", noteEn: "Jointly-owned properties are excluded from this part." },
+          { id: "part3.hasSoleProperties", labelZh: "是否有獨資出租物業", labelEn: "Did you have solely-owned properties let during the year?", kind: "tick", source: "computed", noteZh: "聯名或共同擁有的物業不在本部申報。", noteEn: "Jointly-owned properties are excluded from this part." },
           { id: "part3.property.location", labelZh: "物業地點", labelEn: "Location of property", kind: "text", source: "particulars", repeatFor: "propertyColumns" },
           { id: "part3.property.period", labelZh: "出租期間", labelEn: "Period of letting", kind: "date", source: "manual", repeatFor: "propertyColumns", ...manualNote },
           { id: "part3.property.grossRentalIncome", labelZh: "總出租收入", labelEn: "Gross rental income", kind: "amount", source: "entered", repeatFor: "propertyColumns" },
           { id: "part3.property.ratesAndIrrecoverableRent", labelZh: "扣除額 - 本人繳交的差餉及不能追回的租金", labelEn: "Deductions - rates paid by me and irrecoverable rent", kind: "amount", source: "entered", repeatFor: "propertyColumns" },
-          { id: "part3.property.netBeforeAllowance", labelZh: "總出租收入減扣除額", labelEn: "Gross rental income less deductions", kind: "amount", source: "computed", repeatFor: "propertyColumns", noteZh: "20%修葺及支出免稅額由稅局另行扣減。", noteEn: "The 20% repairs and outgoings allowance is applied separately by the IRD." },
+          { id: "part3.property.netBeforeAllowance", labelZh: "總出租收入減扣除額", labelEn: "Gross rental income less deductions", kind: "amount", source: "computed", repeatFor: "propertyColumns", noteZh: "20%修葺及支出的標準免稅額由稅務局另行扣減。", noteEn: "The 20% repairs and outgoings allowance is applied separately by the IRD." },
         ],
       },
       {
@@ -129,8 +129,8 @@ export const BIR60_STRUCTURE: Bir60Part[] = [
         boxes: [
           { id: "part3.totalPropertiesLet", boxNo: "8", labelZh: "出租物業總數", labelEn: "Total number of properties LET", kind: "amount", source: "computed" },
           { id: "part3.totalRatesAndIrrecoverableRent", boxNo: "9", labelZh: "所有出租物業由本人繳交的差餉及不能追回的租金之總額", labelEn: "Total rates paid by me and irrecoverable rent for all properties let", kind: "amount", source: "computed" },
-          { id: "part3.totalNetBeforeAllowance", boxNo: "10", labelZh: "所有出租物業的總出租收入減扣除額", labelEn: "Total gross rental income less deductions of all properties let", kind: "amount", source: "computed", noteZh: "方格10為扣除20%修葺及支出免稅額前的金額。", noteEn: "Box 10 is before the 20% repairs and outgoings allowance." },
-          { id: "part3.jointOwnershipExclusion", labelZh: "共同擁有物業提示", labelEn: "Joint ownership exclusion note", kind: "note", source: "manual", noteZh: "共同擁有物業由稅局另發物業稅報稅表處理，不在第3部填寫。", noteEn: "Jointly-owned properties are handled on separate IRD Property Tax returns and are not entered in Part 3." },
+          { id: "part3.totalNetBeforeAllowance", boxNo: "10", labelZh: "所有出租物業的總出租收入減扣除額", labelEn: "Total gross rental income less deductions of all properties let", kind: "amount", source: "computed", noteZh: "方格10為扣除20%修葺及支出的標準免稅額前的金額。", noteEn: "Box 10 is before the 20% repairs and outgoings allowance." },
+          { id: "part3.jointOwnershipExclusion", labelZh: "共同擁有物業提示", labelEn: "Joint ownership exclusion note", kind: "note", source: "manual", noteZh: "共同擁有的物業由稅務局另發物業稅報稅表處理，不在第3部填寫。", noteEn: "Jointly-owned properties are handled on separate IRD Property Tax returns and are not entered in Part 3." },
         ],
       },
     ],
@@ -182,7 +182,7 @@ export const BIR60_STRUCTURE: Bir60Part[] = [
         titleZh: "4.4 選擇合併評稅",
         titleEn: "4.4 Election for Joint Assessment",
         boxes: [
-          { id: "part4.jointAssessmentElection", boxNo: "42", labelZh: "本人及配偶願意選擇合併評稅方式評定薪俸稅", labelEn: "I and my spouse wish to elect for joint assessment under Salaries Tax", kind: "tick", source: "computed" },
+          { id: "part4.jointAssessmentElection", boxNo: "42", labelZh: "本人及配偶願意選擇以合併評稅方式評定薪俸稅", labelEn: "I and my spouse wish to elect for joint assessment under Salaries Tax", kind: "tick", source: "computed" },
         ],
       },
     ],
@@ -225,7 +225,7 @@ export const BIR60_STRUCTURE: Bir60Part[] = [
           { id: "part5.business2.nonResidentTransactions", boxNo: "64", labelZh: "曾代／與非居住於香港的人士進行交易", labelEn: "Had transactions for/with non-resident persons", kind: "note", source: "manual", ...notComputedNote },
           { id: "part5.business2.specialDeductions", boxNo: "65", labelZh: "曾申索扣除研究和開發開支／環保設施開支／知識產權開支", labelEn: "Had deduction claims for R&D/environmental protection facilities/IP expenditure", kind: "note", source: "manual", ...notComputedNote },
           { id: "part5.business2.ipConcession", boxNo: "66", labelZh: "擬從具資格知識產權收入所賺取的利潤申索利得稅寬減", labelEn: "Claim profits tax concessions for eligible IP income", kind: "note", source: "manual", ...notComputedNote },
-          { id: "part5.moreBusinesses", labelZh: "多於兩項業務", labelEn: "More than two businesses", kind: "note", source: "manual", noteZh: "如多於兩項業務，使用附加頁。", noteEn: "Use a separate sheet for more than two businesses." },
+          { id: "part5.moreBusinesses", labelZh: "多於兩項業務", labelEn: "More than two businesses", kind: "note", source: "manual", noteZh: "如多於兩項業務，請另用附頁填寫。", noteEn: "Use a separate sheet for more than two businesses." },
         ],
       },
     ],
@@ -324,7 +324,7 @@ export const BIR60_STRUCTURE: Bir60Part[] = [
   {
     id: "part9",
     partNo: "9",
-    titleZh: "自願醫保計劃保費",
+    titleZh: "根據自願醫保計劃保單繳付的合資格保費",
     titleEn: "Qualifying Premiums Paid under VHIS Policy",
     sections: [
       { id: "part9.vhis", titleZh: "保費", titleEn: "Premiums", boxes: [
@@ -363,7 +363,7 @@ export const BIR60_STRUCTURE: Bir60Part[] = [
     titleZh: "合資格年金保費及可扣稅強積金自願性供款",
     titleEn: "Qualifying Annuity Premiums and Tax Deductible MPF Voluntary Contributions",
     sections: [
-      { id: "part11.annuityTvc", titleZh: "年金及TVC", titleEn: "Annuity and TVC", boxes: [
+      { id: "part11.annuityTvc", titleZh: "年金及可扣稅自願性供款", titleEn: "Annuity and TVC", boxes: [
         { id: "part11.tvcAccountHolder", boxNo: "139", labelZh: "本人是可扣稅自願性供款帳戶的持有人", labelEn: "I am the holder of a TVC account", kind: "note", source: "manual", ...manualNote },
         { id: "part11.tvcContribution", boxNo: "140", labelZh: "可扣稅強積金自願性供款", labelEn: "Tax deductible MPF voluntary contributions", kind: "amount", source: "entered" },
         { id: "part11.annuitySelf", boxNo: "141", labelZh: "以本人作為年金領取人繳付的合資格年金保費", labelEn: "Qualifying annuity premiums paid for self as annuitant", kind: "amount", source: "entered" },
@@ -379,7 +379,7 @@ export const BIR60_STRUCTURE: Bir60Part[] = [
     sections: [
       { id: "part12.marriedDisability", titleZh: "12.1 已婚人士免稅額及傷殘人士免稅額", titleEn: "12.1 Married Person's Allowance and Personal Disability Allowance", boxes: [
         { id: "part12.spouseHadIncome", boxNo: "143", labelZh: "配偶在本年度內有收取應課薪俸稅的入息", labelEn: "My spouse had income chargeable to Salaries Tax during the year", kind: "tick", source: "computed" },
-        { id: "part12.livingApartMaintenance", boxNo: "144", labelZh: "與無薪俸入息配偶分開居住並支付生活費", labelEn: "Living apart from spouse with no chargeable income; maintenance paid", kind: "amount", source: "manual", ...manualNote },
+        { id: "part12.livingApartMaintenance", boxNo: "144", labelZh: "與沒有應課薪俸稅入息的配偶分開居住並支付其生活費", labelEn: "Living apart from spouse with no chargeable income; maintenance paid", kind: "amount", source: "manual", ...manualNote },
         { id: "part12.spouseDisabledDependant", boxNo: "145", labelZh: "就配偶申請傷殘受養人免稅額", labelEn: "Claim disabled dependant allowance in respect of spouse", kind: "tick", source: "manual", ...manualNote },
         { id: "part12.personalDisability", boxNo: "146", labelZh: "申請傷殘人士免稅額", labelEn: "Claim personal disability allowance", kind: "tick", source: "computed" },
       ] },
@@ -397,12 +397,12 @@ export const BIR60_STRUCTURE: Bir60Part[] = [
         }),
         { id: "part12.siblingFatherHkid", boxNo: "159", labelZh: "供養兄弟姊妹父親香港身份證號碼", labelEn: "Father's HKID for dependent brother/sister", kind: "text", source: "manual", ...manualNote },
         { id: "part12.siblingMotherHkid", boxNo: "160", labelZh: "供養兄弟姊妹母親香港身份證號碼", labelEn: "Mother's HKID for dependent brother/sister", kind: "text", source: "manual", ...manualNote },
-        { id: "part12.childOverflow", labelZh: "額外受養子女／兄弟姊妹", labelEn: "Additional child/brother/sister dependants", kind: "note", source: "manual", noteZh: "如多於三名，使用附加頁。", noteEn: "Use a separate sheet for more than three dependants." },
+        { id: "part12.childOverflow", labelZh: "額外受養子女／兄弟姊妹", labelEn: "Additional child/brother/sister dependants", kind: "note", source: "manual", noteZh: "如受養人多於三名，請另用附頁填寫。", noteEn: "Use a separate sheet for more than three dependants." },
       ] },
       { id: "part12.singleParent", titleZh: "12.3 單親免稅額", titleEn: "12.3 Single Parent Allowance", boxes: [
         { id: "part12.singleParent", boxNo: "161", labelZh: "獨力或主力撫養子女", labelEn: "Sole/predominant care of child/children", kind: "text", source: "computed" },
       ] },
-      { id: "part12.parents", titleZh: "12.4 供養父母及祖父母或外祖父母免稅額及長者住宿照顧開支", titleEn: "12.4 Dependent Parent/Grandparent Allowance and Elderly Residential Care Expenses", boxes: [
+      { id: "part12.parents", titleZh: "12.4 供養父母及供養祖父母或外祖父母免稅額及長者住宿照顧開支", titleEn: "12.4 Dependent Parent/Grandparent Allowance and Elderly Residential Care Expenses", boxes: [
         ...[1, 2, 3].flatMap((dependant) => {
           const boxNos = dependant === 1 ? ["162", "163", "164", "165", "166", "167", "168", "169"] : dependant === 2 ? ["170", "171", "172", "173", "174", "175", "176", "177"] : ["178", "179", "180", "181", "182", "183", "184", "185"];
           const prefix = `part12.parent${dependant}`;
@@ -413,13 +413,13 @@ export const BIR60_STRUCTURE: Bir60Part[] = [
             { id: `${prefix}.relationshipCode`, boxNo: boxNos[2], labelZh: `受養人${dependant}關係`, labelEn: `Dependant ${dependant} - Relationship`, kind: "note", source: "manual", repeatFor: "parentDependants", ...manualNote },
             { id: `${prefix}.ordinarilyResidentHk`, boxNo: boxNos[3], labelZh: `受養人${dependant}通常在香港居住`, labelEn: `Dependant ${dependant} ordinarily resident in Hong Kong`, kind: "note", source: "manual", repeatFor: "parentDependants", ...manualNote },
             { id: `${prefix}.residedWithMeCode`, boxNo: boxNos[4], labelZh: `受養人${dependant}與本人同住代號`, labelEn: `Dependant ${dependant} resided with me code`, kind: "text", source: "computed", repeatFor: "parentDependants" },
-            { id: `${prefix}.contributed12000`, boxNo: boxNos[5], labelZh: `受養人${dependant}供養款不少於12,000元`, labelEn: `Dependant ${dependant} support contribution at least $12,000`, kind: "tick", source: "manual", repeatFor: "parentDependants", ...manualNote },
+            { id: `${prefix}.contributed12000`, boxNo: boxNos[5], labelZh: `受養人${dependant}供養費不少於12,000元`, labelEn: `Dependant ${dependant} support contribution at least $12,000`, kind: "tick", source: "manual", repeatFor: "parentDependants", ...manualNote },
             { id: `${prefix}.careHomeName`, labelZh: `受養人${dependant}安老院名稱`, labelEn: `Dependant ${dependant} - Name of residential care home`, kind: "text", source: "manual", repeatFor: "parentDependants", ...manualNote },
             { id: `${prefix}.elderlyResidentialCareExpenses`, boxNo: boxNos[6], labelZh: `受養人${dependant}長者住宿照顧開支`, labelEn: `Dependant ${dependant} elderly residential care expenses`, kind: "amount", source: "entered", repeatFor: "parentDependants" },
             { id: `${prefix}.disabledDependantAllowance`, boxNo: boxNos[7], labelZh: `受養人${dependant}傷殘受養人免稅額`, labelEn: `Dependant ${dependant} disabled dependant allowance`, kind: "tick", source: "manual", repeatFor: "parentDependants", ...manualNote },
           ] satisfies Bir60BoxTemplate[];
         }),
-        { id: "part12.parentOverflow", labelZh: "額外供養父母／祖父母", labelEn: "Additional parent/grandparent dependants", kind: "note", source: "manual", noteZh: "如多於三名，使用附加頁。", noteEn: "Use a separate sheet for more than three dependants." },
+        { id: "part12.parentOverflow", labelZh: "額外供養父母／祖父母", labelEn: "Additional parent/grandparent dependants", kind: "note", source: "manual", noteZh: "如受養人多於三名，請另用附頁填寫。", noteEn: "Use a separate sheet for more than three dependants." },
       ] },
     ],
   },
