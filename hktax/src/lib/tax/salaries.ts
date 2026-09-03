@@ -338,7 +338,7 @@ function computeRentalValue(items: EmployerAccommodationInput[], lines: Computat
     if (item.type !== 'residence' && item.rateableValueElection !== undefined) {
       lines.push(line(
         `rentalValue.${item.key}.electionIgnored`,
-        '酒店或宿舍住宿不適用以較低差餉租值替代租值的選擇',
+        '酒店、旅舍或寄宿舍不可選用應課差餉租值',
         'Rateable-value election is not available for hotel, hostel, or boarding house accommodation',
         item.rateableValueElection,
         'info',
