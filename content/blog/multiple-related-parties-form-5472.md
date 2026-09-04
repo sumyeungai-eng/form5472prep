@@ -1,9 +1,8 @@
 ---
 title: "Form 5472: How Many Forms for Related Parties?"
 description: "File a separate Form 5472 for each related party with reportable transactions, all attached to the reporting entity’s return."
-date: 2026-09-21
-publishAt: "2026-09-21T09:00:00-04:00"
-updated: 2026-09-21
+date: 2026-09-05
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "related-parties", "foreign-owned-llc", "multiple-forms"]
 draft: false
