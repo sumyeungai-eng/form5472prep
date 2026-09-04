@@ -20,7 +20,7 @@ import { SITE_URL, breadcrumbList, pageOpenGraph } from "@/lib/seo";
 export const revalidate = 60;
 
 const BLOG_DESCRIPTION =
-  "Guides and explainers for foreign-owned US LLC owners filing IRS Form 5472 and pro forma Form 1120.";
+  "Practical guides for foreign-owned US LLC owners filing Form 5472, pro forma Form 1120, EINs, ITINs, penalties, deadlines, and catch-up returns.";
 
 export const metadata: Metadata = {
   title: "Blog",

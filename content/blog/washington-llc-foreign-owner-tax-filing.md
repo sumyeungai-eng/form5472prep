@@ -2,7 +2,7 @@
 title: "Washington LLC Foreign Owner Tax Filing Requirements"
 description: "A foreign owner of a Washington LLC may face a state annual report, B&O and sales-tax registration, plus the separate federal Form 5472 filing."
 date: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["washington-llc", "foreign-owner", "form-5472", "business-and-occupation-tax"]
 draft: false
@@ -69,6 +69,26 @@ State-law “foreign LLC” usually means an LLC formed in another US state. It 
 The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) require a foreign-owned US disregarded entity to file Form 5472 with a pro forma Form 1120 when it has a reportable transaction. Contributions, distributions, loans, repayments, reimbursements, related-party services, and formation or dissolution activity may qualify.
 
 Customer sales to unrelated parties do not become Form 5472 transactions merely because the customers are in Washington. Build a separate related-party ledger and use the state books only as a reconciliation source.
+
+## Frequently asked questions
+
+### Does a Washington LLC annual report replace Form 5472?
+
+No. The annual report keeps the Washington entity record current. Form 5472 is a separate federal related-party information return filed with a pro forma Form 1120.
+
+### Is Washington B&O tax based on profit?
+
+No. The post explains that Washington B&O tax is a gross-receipts tax, and the Department of Revenue generally does not allow deductions for labor, materials, taxes, or other costs from gross income.
+
+### Can remote sales create Washington registration duties?
+
+Yes. The post notes that remote businesses exceeding Washington's current gross-receipts threshold generally must register and report, while a Washington-organized or commercially domiciled business may have duties without waiting for that threshold.
+
+### What does Form5472 Prep handle for Washington LLCs?
+
+Form5472 Prep handles the federal information-return package for the standard foreign-owned disregarded LLC profile. It does not file the Washington annual report, business license application, B&O return, or sales-tax return.
+
+---
 
 Form5472 Prep handles the federal information-return package for the standard profile. We do not file the Washington annual report, business license application, B&O return, or sales-tax return.
 

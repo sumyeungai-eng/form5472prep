@@ -2,7 +2,7 @@
 title: "Form 5472 for Royalties, License Fees, and Intellectual Property"
 description: "Related-party royalties, software licenses, trademarks, patents, and other IP transactions may require Form 5472 and a separate US withholding review."
 date: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "royalties", "license-fees", "intellectual-property"]
 draft: false
@@ -69,6 +69,26 @@ Use the [currency-conversion guide](/blog/form-5472-currency-conversion-exchange
 Related-party royalty rates and IP sale prices can raise section 482 transfer-pricing issues. A complete Form 5472 is not proof that the rate is arm's length. Significant arrangements may require comparables, a functional analysis, ownership and development records, and specialist advice about cost-sharing or intangible transfers.
 
 Avoid reverse-engineering a royalty only from the cash sent. Start with the signed agreement, the rights used, the parties' functions and risks, and the pricing evidence that existed when the arrangement was made.
+
+## Frequently asked questions
+
+### Are related-party royalties reportable on Form 5472?
+
+They can be. The post explains that amounts paid or received for the sale, lease, or license of intangible property can be Part IV monetary reportable transactions when they involve a foreign related party.
+
+### Does Form 5472 decide whether withholding applies?
+
+No. Form 5472 disclosure and withholding are separate workstreams. The payer still has to analyze what the payment represents, where the IP is used, W-8 documentation, treaty claims, ECI, and any Forms 1042 or 1042-S.
+
+### What if one contract includes software and support?
+
+Preserve the legal rights and services actually provided. A combined fee may need to be split between IP and service components when supportable, using the contract, invoice detail, and a defensible allocation method.
+
+### What records support an IP payment?
+
+Keep the legal payer and payee, relationship, IP ownership, rights granted, payment terms, gross amount, currency conversion, service component if any, withholding position, and Form 5472 category.
+
+---
 
 ## Filing scope
 

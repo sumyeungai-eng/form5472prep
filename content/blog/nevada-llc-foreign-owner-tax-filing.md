@@ -2,7 +2,7 @@
 title: "Nevada LLC Non-Resident Annual Fees and Filings"
 description: "A Nevada LLC needs an annual list and business license renewal, while foreign owners may also owe Form 5472. See the complete checklist."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "nevada-llc", "foreign-owned-llc", "annual-fees", "non-resident"]
 draft: false
@@ -121,6 +121,8 @@ The arithmetic is **$5,000 + $800 + $14,000 = $19,800**. Ordinary customer recei
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit with a timestamped confirmation receipt.
 
 Standard is **$149**, ready in **5-7 business days**. Express is **$199**, ready in **3 business days**. Each additional past tax year is **+$99**, and IRS fax delivery is included. EIN service is **$149** at [/ein](/ein).
+
+For current federal filing tiers, [see current pricing](/pricing).
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the federal information return; Nevada nexus, Commerce Tax, sales tax, income tax, and home-country positions require the appropriate adviser.
 

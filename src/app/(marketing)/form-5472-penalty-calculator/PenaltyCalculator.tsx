@@ -224,14 +224,14 @@ export function PenaltyCalculator() {
                   href="/blog/form-5472-filed-late-never-filed"
                   className="font-medium underline decoration-emerald-700/40 underline-offset-4 hover:text-emerald-800"
                 >
-                  here
+                  for DIIRSP late-filing steps
                 </Link>{" "}
                 and the reasonable-cause letter guide{" "}
                 <Link
                   href="/blog/form-5472-reasonable-cause-letter"
                   className="font-medium underline decoration-emerald-700/40 underline-offset-4 hover:text-emerald-800"
                 >
-                  here
+                  for abatement letter requirements
                 </Link>
                 .
               </p>

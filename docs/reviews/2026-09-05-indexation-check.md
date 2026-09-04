@@ -190,3 +190,54 @@ deadline calculator, etc.) it has never seen. No other technical blocker was
 found: crawl health is good (no host problems, 88% 200s), robots.txt allows
 everything relevant, and the one `noindex` (`/start`) and 3 redirecting
 homepage variants are correct/intentional.
+
+## IndexNow submission — 2026-09-05 05:07 UTC
+Key file live at https://www.form5472prep.com/93ddcc589b3e2a572c208e3628e1e545.txt (deployed in e3d7888). `npm run indexnow` submitted all 139 sitemap URLs to api.indexnow.org → **HTTP 202 Accepted (key validation pending)** — expected on first use; Bing validates the key file asynchronously. Re-run `npm run indexnow` after future content pushes (or `--urls a,b` for a subset). Google ignores IndexNow; the GSC www-sitemap submission is the Google path.
+
+## Actions taken 2026-09-05
+
+Account: switched Chrome to sumyeungai@gmail.com (account slot `/u/6/`), the
+account with access to `sc-domain:form5472prep.com` (default profile
+sum1989104@gmail.com does not have property access).
+
+### Action 1 — Sitemaps
+
+Submitted `https://www.form5472prep.com/sitemap.xml` via "Add a new sitemap".
+Read back (reloaded twice, final check at end of session):
+
+| Sitemap | Submitted | Last read | Status | Discovered pages |
+|---|---|---|---|---|
+| `https://www.form5472prep.com/sitemap.xml` (new) | Sep 5, 2026 | Sep 5, 2026 | **Success** | **139** |
+| `https://form5472prep.com/sitemap.xml` (old, left in place) | May 20, 2026 | May 22, 2026 | Success | 22 |
+
+Google read and accepted the new www sitemap same-day, discovering all 139
+URLs. Old non-www row was left untouched as instructed.
+
+### Action 2 — URL Inspection / Request indexing
+
+All 8 target URLs were inspected and "Request indexing" was clicked and
+confirmed ("Indexing requested — URL was added to a priority crawl queue")
+for each:
+
+| # | URL | Pre-request status | Outcome |
+|---|---|---|---|
+| 1 | `/pricing` | Discovered - currently not indexed | Indexing requested (confirmed twice — one accidental duplicate click while re-focusing the search bar; per Google's own dialog, duplicate submission does not change queue position/priority) |
+| 2 | `/file-form-5472` | URL is unknown to Google | Indexing requested |
+| 3 | `/form-5472-penalty` | URL is unknown to Google | Indexing requested |
+| 4 | `/blog/what-is-form-5472` | Discovered - currently not indexed | Indexing requested |
+| 5 | `/form-5472-deadline-calculator` | URL is unknown to Google | Indexing requested |
+| 6 | `/form-5472-penalty-calculator` | URL is unknown to Google | Indexing requested |
+| 7 | `/do-i-need-to-file-form-5472` | URL is unknown to Google | Indexing requested |
+| 8 | `/blog/form-5472-deadline-2026` | Discovered - currently not indexed | Indexing requested |
+
+No "Quota exceeded" message was seen at any point (9 total requests submitted
+today, including the 1 duplicate, comfortably under the ~10/day quota).
+
+Note: a prior read-only session (see body of this doc above) had already
+inspected 4 of these URLs (`/pricing`, `/form-5472-penalty`,
+`/blog/what-is-form-5472`, `/form-5472-deadline-calculator`) but explicitly
+did not click "Request indexing" — this session performed the actual
+indexing requests for all 8.
+
+No other GSC settings were changed. Verification, users, and properties were
+left untouched.

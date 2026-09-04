@@ -2,7 +2,7 @@
 title: "New Mexico LLC Non-Resident Annual Requirements"
 description: "A New Mexico LLC has no annual report, but a foreign owner may still need Form 5472. See the state, federal, and nexus checklist."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "new-mexico-llc", "foreign-owned-llc", "annual-requirements", "non-resident"]
 draft: false
@@ -125,6 +125,8 @@ This map is useful because one bank statement can support two reviews without fo
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V supporting statement. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit with a timestamped confirmation receipt.
 
 Standard is **$149** and ready in **5-7 business days**. Express is **$199** and ready in **3 business days**. Each additional past tax year is **+$99**, and IRS fax delivery is included. If the LLC still needs its federal number, EIN service is **$149** at [/ein](/ein).
+
+For current federal filing tiers, [see current pricing](/pricing).
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the federal information return; New Mexico nexus, income-tax elections, and home-country tax positions should be reviewed with an appropriate adviser.
 

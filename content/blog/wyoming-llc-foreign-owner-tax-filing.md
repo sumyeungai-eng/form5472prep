@@ -2,7 +2,7 @@
 title: "Wyoming LLC Foreign-Owner Filing Checklist"
 description: "Wyoming has no state income tax, but a foreign-owned Wyoming LLC still owes an annual report and, in most cases, Form 5472 backed by a $25,000 penalty."
 date: 2026-08-15
-updated: 2026-08-21
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "wyoming-llc", "foreign-owned-llc", "compliance", "annual-report"]
 draft: false
@@ -103,6 +103,8 @@ The state side of a Wyoming LLC is genuinely easy — a $60 report you can file 
 [Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt. For missed years we include a reasonable cause cover letter.
 
 **$149** standard, ready in 5-7 business days. **$199** express, ready in 3 business days. **+$99** per additional past tax year. IRS fax delivery included. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
+
+For the current federal filing options, [see current pricing](/pricing).
 
 [Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=wyoming-llc-foreign-owner-cta) — about 15 minutes.
 

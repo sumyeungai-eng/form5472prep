@@ -2,7 +2,7 @@
 title: "Oregon LLC Foreign Owner Tax Filing Requirements"
 description: "A foreign owner of an Oregon LLC may need an annual report, Oregon CAT review, and the separate federal Form 5472 information return."
 date: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["oregon-llc", "foreign-owner", "form-5472", "oregon-cat"]
 draft: false
@@ -83,6 +83,26 @@ Keep four folders:
 2. Oregon-sourced receipts and CAT calculations;
 3. federal income-tax and owner-level analysis; and
 4. the Form 5472 related-party ledger with contributions, distributions, loans, reimbursements, services, and property transfers.
+
+## Frequently asked questions
+
+### Does an Oregon LLC have an annual report?
+
+Yes. The post cites Oregon Secretary of State guidance saying an Oregon corporation or LLC must file an annual report, with the current fee verified in the official system when filing.
+
+### Does Oregon's lack of sales tax remove state tax duties?
+
+No. Oregon has no general sales, use, or transaction tax, but CAT, income or excise tax, payroll withholding, transit tax, property tax, lodging taxes, and local obligations can still matter.
+
+### Do Oregon CAT thresholds affect Form 5472?
+
+No. The federal Form 5472 trigger is separate from Oregon commercial-activity thresholds. An LLC with no customer revenue can still have Form 5472 reporting if the owner funded it.
+
+### What records should an Oregon foreign owner keep?
+
+Keep Oregon entity records, Oregon-sourced receipts and CAT calculations, federal income-tax analysis, and a separate Form 5472 related-party ledger for contributions, distributions, loans, reimbursements, services, and property transfers.
+
+---
 
 Form5472 Prep prepares the federal Form 5472, pro forma Form 1120, and supporting statement for the standard foreign-owned disregarded LLC profile. It does not include the Oregon annual report, CAT, state income or excise tax, payroll, or local filings.
 

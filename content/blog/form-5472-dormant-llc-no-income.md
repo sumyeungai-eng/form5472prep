@@ -2,7 +2,7 @@
 title: "Form 5472 for a Dormant LLC With No Income"
 description: "Zero revenue doesn't mean no filing. A dormant foreign-owned LLC almost always still owes Form 5472 — contributions and distributions count as reportable."
 date: 2026-05-28
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "dormant-llc", "no-income", "foreign-owned-llc"]
 readingMinutes: 7
@@ -96,6 +96,8 @@ The structured way to resolve this is the IRS's **[Delinquent International Info
 If you want to get it done quickly: [start your filing here](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income). We prepare the pro forma Form 1120 and Form 5472 for each outstanding year, draft the reasonable cause statement, and fax the complete package to the IRS Ogden PIN Unit on your behalf.
 
 Standard filing is $149 (5-7 business days), Express $199 (3 business days), +$99 per additional past tax year — IRS fax delivery included on both.
+
+For current flat-fee options before catching up, [see current pricing](/pricing).
 
 ---
 

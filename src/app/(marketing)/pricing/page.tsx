@@ -111,9 +111,9 @@ export default function PricingPage() {
               For foreign-owned US LLCs
             </p>
             <h1 className="mt-5 font-serif text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight text-balance">
-              Flat-rate Form 5472 filing.
+              Form 5472 filing pricing:
               <br />
-              <span className="text-accent-100">No hidden fees.</span>
+              <span className="text-accent-100">{formatPrice(TIERS.standard.priceCents)} and {formatPrice(TIERS.express.priceCents)}, nothing hidden.</span>
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-slate-300 max-w-2xl mx-auto">
               Done-for-you Form 5472 + pro forma 1120 for foreign-owned US LLCs.

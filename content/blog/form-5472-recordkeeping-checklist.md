@@ -1,5 +1,5 @@
 ---
-title: "Form 5472 Recordkeeping Checklist for Foreign-Owned LLCs"
+title: "Form 5472 Recordkeeping Checklist"
 description: "Keep records that prove every related-party total on Form 5472. This practical checklist covers statements, transfers, loans and exchange rates."
 date: 2026-09-07
 publishAt: "2026-09-07T09:00:00-04:00"

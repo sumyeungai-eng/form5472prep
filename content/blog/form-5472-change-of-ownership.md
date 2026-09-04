@@ -2,7 +2,7 @@
 title: "Form 5472 After a Change of LLC Ownership"
 description: "A sale, transfer, new member or owner change can create Form 5472 reporting and change an LLC's federal classification. Use this checklist."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "ownership-change", "llc-sale", "entity-classification"]
 draft: false
@@ -102,6 +102,8 @@ If the owner change created a missed prior-year Form 5472, address the delinquen
 Form5472 Prep handles the mechanical information-return package when a foreign-owned U.S. disregarded entity still needs Form 5472. We prepare Form 5472, the pro forma Form 1120, and the Part V statement that describes the ownership event; a qualified tax accountant reviews the package; and we fax it to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
 Standard service is **$149** in 5-7 business days, Express is **$199** in 3 business days, each additional past tax year is **+$99**, and fax delivery is included. EIN service is **$149** at [/ein](/ein). We are not a CPA firm and we do not give tax advice, so classification changes, partner tax consequences and sale structuring should be reviewed by your own adviser.
+
+For current filing tiers after an ownership event, [see current pricing](/pricing).
 
 ## Frequently asked questions
 

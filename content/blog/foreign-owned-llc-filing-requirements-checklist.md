@@ -2,7 +2,7 @@
 title: "Foreign-Owned US LLC Filing Checklist (2026)"
 description: "Foreign-owned US LLC filing requirements can include Form 5472, pro forma Form 1120, state reports, income-tax returns, and sales-tax registrations."
 date: 2026-08-15
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "foreign-owned-llc", "compliance", "boi", "filing-guide"]
 draft: false
@@ -117,6 +117,8 @@ Rows 2 through 8 of the checklist are either simple, conditional, or handled by 
 [Form5472 Prep](/) does that one row properly: Form 5472 and the pro forma Form 1120 prepared from your entity and transaction details, a Part V supporting statement, a reasonable cause letter if you have late years, review by a qualified tax accountant, and fax delivery to the IRS Ogden PIN Unit with the timestamped receipt returned to you as proof of filing.
 
 **$149** standard (ready in 5-7 business days), **$199** express (3 business days), **+$99** per additional past tax year. Fax delivery included on both — no separate fee. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
+
+For current flat-fee options before starting row 1, [see current pricing](/pricing).
 
 [Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=foreign-owned-llc-checklist-cta) — about 15 minutes.
 

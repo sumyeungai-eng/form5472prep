@@ -2,7 +2,7 @@
 title: "Form 5472 for Multiple LLCs Owned by One Foreign Person"
 description: "One foreign owner with multiple US LLCs usually needs a separate entity review and filing package for each LLC. Use this entity-by-party matrix."
 date: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "multiple-llcs", "foreign-owner", "related-parties"]
 draft: false
@@ -80,6 +80,26 @@ The master sheet is a control, not a combined ledger. Each LLC should retain its
 - Closing one LLC but omitting its final distributions and dissolution costs.
 
 The [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) gives each entity a defensible filing file.
+
+## Frequently asked questions
+
+### Can one foreign owner file one Form 5472 for all LLCs?
+
+No. Common ownership does not normally combine separate US disregarded entities into one package. Each LLC is reviewed as its own reporting entity, and each qualifying LLC uses its own EIN, pro forma Form 1120, and Form 5472 set.
+
+### Does each LLC need a separate EIN?
+
+Yes. The filing package identifies the reporting LLC, so each separate LLC should use its own EIN. Reusing one entity's EIN on another package is one of the common failure points this post warns against.
+
+### Do transfers between sister LLCs matter?
+
+They can. A sister-company transfer should be classified by legal payer, legal recipient, purpose, ownership chain, and relationship status. It may be a loan, service payment, purchase, contribution, distribution through the owner, reimbursement, or another supported category.
+
+### How should I organize records for multiple LLCs?
+
+Keep a master control sheet, but do not merge the books. Each LLC should retain its own bank records, invoices, contracts, exchange-rate support, signed filing copy, and delivery proof tied to that entity's legal name and EIN.
+
+---
 
 ## Filing support for multiple entities
 

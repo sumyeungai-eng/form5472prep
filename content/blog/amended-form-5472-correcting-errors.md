@@ -2,7 +2,7 @@
 title: "How to Correct a Mistake on a Filed Form 5472"
 description: "Found an error after filing Form 5472? The IRS has no amendment procedure — here's the fix preparers use, and why an incomplete form risks $25,000."
 date: 2026-08-15
-updated: 2026-08-15
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "amended-return", "correction", "penalty", "foreign-owned-llc"]
 draft: false
@@ -101,6 +101,8 @@ A corrected filing has to be right the second time. It attracts attention by its
 [Form5472 Prep](/) prepares complete corrected packages — Form 5472 rebuilt from your actual transaction records, a corrected pro forma Form 1120 with the amended box checked and the required annotation, the Part V supporting statement, an explanation statement, and a reasonable cause letter where the original was late — reviewed by a qualified tax accountant and faxed to the IRS Ogden PIN Unit, with the timestamped confirmation receipt returned to you.
 
 **$149** standard (5-7 business days), **$199** express (3 business days), **+$99** per additional past tax year if other years also need filing. IRS fax delivery included.
+
+For current corrected-filing options, [see current pricing](/pricing).
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return accurately.
 

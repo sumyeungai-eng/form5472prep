@@ -98,7 +98,7 @@ Follow this sequence:
 7. Fax at 300 DPI or higher to 855-887-7737, or mail to the dedicated Ogden PIN Unit address listed in the Form 5472 instructions.
 8. Save the exact filed package and delivery proof.
 
-The IRS Form 5472 instructions say foreign-owned U.S. DEs must use the special mailing address, not ordinary Form 1120 mailing addresses, and cannot file electronically ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)).
+The IRS Form 5472 instructions say foreign-owned U.S. DEs must use the special mailing address, not ordinary Form 1120 mailing addresses, and cannot file electronically ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). Review the [1120 pro forma instructions](/1120-pro-forma-instructions) before assembling the final signed package.
 
 For the 2025 tax year, a calendar-year package is generally due 15 April 2026. A timely Form 7004 can extend the filing deadline to 15 October 2026, but Form 7004 for this DE package must follow the same special foreign-owned U.S. DE fax or mail procedure described in the Form 5472 instructions.
 

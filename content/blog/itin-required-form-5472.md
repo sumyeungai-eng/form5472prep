@@ -3,15 +3,13 @@ title: "Do You Need an ITIN to File Form 5472? The 2026 Answer"
 description: "A foreign owner usually does not need an ITIN solely to file Form 5472. The LLC needs an EIN; the owner can use an FTIN and reference ID."
 date: 2026-08-31
 publishAt: "2026-08-31T09:00:00-04:00"
-updated: 2026-08-31
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "itin", "ein", "foreign-owned-llc"]
 draft: false
 ---
 
-**Last updated: August 2026**
-
-A foreign individual usually does not need an ITIN solely to file Form 5472 for a wholly owned U.S. single-member LLC. The LLC needs its own EIN. The foreign owner can generally provide a foreign taxpayer identification number and, when no U.S. identifying number exists, a consistently used reference ID. Other U.S. tax obligations may separately require an ITIN.
+**No, a foreign individual usually does not need an ITIN solely to file Form 5472 for a wholly owned U.S. single-member LLC. The LLC needs its own EIN, while the foreign owner can generally provide a foreign taxpayer identification number and, when no U.S. identifying number exists, a consistently used reference ID.**
 
 If the LLC already has an EIN, [start your Form 5472 filing](/start) without waiting for an unnecessary personal identifier.
 

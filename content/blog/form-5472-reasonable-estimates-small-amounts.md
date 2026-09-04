@@ -2,7 +2,7 @@
 title: "Form 5472 Reasonable Estimates and the $50,000 Reporting Rule"
 description: "Learn when Form 5472 permits a reasonable estimate, what the 75%-to-125% standard means, and why $50,000 is not a filing exemption."
 date: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "reasonable-estimates", "small-transactions", "recordkeeping"]
 draft: false
@@ -67,6 +67,26 @@ Do not treat exchange-rate movement as a reason to estimate the underlying trans
 If better records arrive after filing, compare the filed amount with the supported actual amount and ask a qualified preparer whether an amended filing is appropriate. Materiality, category changes, timeliness, and whether the original return was substantially complete all matter.
 
 The [Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that failure to file a timely and substantially complete return can trigger a $25,000 penalty. The estimate provisions should be used carefully and documented contemporaneously.
+
+## Frequently asked questions
+
+### Is the $50,000 rule a Form 5472 filing exemption?
+
+No. The post explains that the $50,000-or-less convention affects how a small transaction or series may be reported. It does not let a foreign-owned disregarded LLC skip Form 5472 when the filing requirement otherwise applies.
+
+### When can I use a reasonable estimate?
+
+Use actual amounts when they can be determined. A reasonable estimate is for cases where the actual amount cannot be determined, and the method, inputs, assumptions, missing-record explanation, and available evidence should be retained.
+
+### Can I net contributions and distributions together?
+
+No. Contributions and distributions are different directions and categories. The post's example warns against netting a contribution and a distribution into one smaller flow for Form 5472 analysis.
+
+### What if better records arrive after filing?
+
+Compare the filed estimate with the supported actual amount and ask a qualified preparer whether an amended filing is appropriate. Materiality, category changes, timeliness, and substantial completeness all matter.
+
+---
 
 ## Filing support
 

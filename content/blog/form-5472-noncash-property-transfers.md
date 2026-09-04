@@ -2,7 +2,7 @@
 title: "Form 5472 for Noncash Property Transfers"
 description: "Foreign-owned LLCs may need to disclose equipment, intellectual property, services, and other noncash transfers with related parties on Form 5472."
 date: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "noncash-transactions", "property-transfers", "foreign-owned-llc"]
 draft: false
@@ -77,6 +77,26 @@ Reporting a noncash transfer does not determine:
 - whether depreciation or amortization is available;
 - whether section 482 requires an arm's-length adjustment; or
 - whether withholding, sales tax, customs, or state tax applies.
+
+## Frequently asked questions
+
+### Can Form 5472 apply when no cash changes hands?
+
+Yes. Property, rights, obligations, and services transferred between the LLC and a foreign related party can require review even without a wire or card payment. Bank-only reviews can miss those transactions.
+
+### What value should I use for noncash property?
+
+The post separates fair market value from tax basis. Part VI asks for a reasonable fair-market-value estimate when possible, supported by evidence such as comparable listings, appraisals, arm's-length quotes, or a documented valuation method.
+
+### Does reporting a noncash transfer decide tax basis?
+
+No. Form 5472 disclosure does not determine tax basis, holding period, depreciation, amortization, withholding, sales tax, customs, or state tax. Those conclusions remain separate from the information-return reporting.
+
+### What records should I keep for a noncash transfer?
+
+Keep the parties, relationship, transfer date, property or service description, consideration, fair market value, valuation method, business purpose, and form treatment. The records should show gross events rather than netting later reimbursements against the transfer.
+
+---
 
 Form5472 Prep can prepare the supported federal information-return package for the standard foreign-owned disregarded LLC profile. Complex restructurings, valuable intellectual property, real estate, and below-market arrangements should receive specialist advice.
 

@@ -189,6 +189,7 @@ function CheckerStructuredData() {
     operatingSystem: "Web",
     isAccessibleForFree: true,
     dateModified: CONTENT_LAST_REVIEWED,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     description: PAGE_DESCRIPTION,
     publisher: organization,
     author: organization,

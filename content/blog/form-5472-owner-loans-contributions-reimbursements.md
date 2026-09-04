@@ -1,5 +1,5 @@
 ---
-title: "Owner Loans, Contributions and Reimbursements on Form 5472"
+title: "Form 5472 Owner Loans and Contributions"
 description: "Owner loans, capital contributions, withdrawals and reimbursements can all be Form 5472 transactions. Use this classification guide."
 date: 2026-08-24
 publishAt: "2026-08-24T09:00:00-04:00"

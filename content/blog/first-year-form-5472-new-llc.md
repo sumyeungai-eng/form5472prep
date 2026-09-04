@@ -1,5 +1,5 @@
 ---
-title: "First-Year Form 5472: What a New Foreign-Owned LLC Must File"
+title: "First-Year Form 5472 for New Foreign-Owned LLCs"
 description: "A new foreign-owned U.S. LLC may need Form 5472 for its formation year because startup funding and formation payments are reportable."
 date: 2026-08-17
 publishAt: "2026-08-17T09:00:00-04:00"

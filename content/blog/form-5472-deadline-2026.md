@@ -2,7 +2,7 @@
 title: "Form 5472 Deadline for 2026 and 2027"
 description: "The 2025 Form 5472 is due October 15, 2026 if extended. See every 2026-2027 deadline, the Form 7004 extension rule, and what to do if you're already late."
 date: 2026-08-15
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "deadline", "extension", "form-7004", "foreign-owned-llc"]
 draft: false
@@ -113,6 +113,8 @@ Note that the March buffer also gives you time to discover that a prior year was
 [Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt as your proof of timely filing. For late years we include a reasonable cause cover letter.
 
 **$149** standard, ready in **5-7 business days**. **$199** express, ready in **3 business days**. **+$99** per additional past tax year. IRS fax delivery included on both.
+
+For current turnaround tiers before choosing a start date, [see current pricing](/pricing).
 
 With the 15 October 2026 extended deadline in view: standard turnaround needs you to start by roughly the end of September; express covers you into early October. Starting earlier is always cheaper than starting later, because the express upgrade exists precisely to buy back time you have already spent.
 

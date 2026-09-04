@@ -50,6 +50,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 1120", url: "https://www.irs.gov/instructions/i1120" },
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
+    updated: "2026-09-05",
     h1: "How to File IRS Form 5472",
     intro:
       "Foreign-owned US single-member LLCs must file Form 5472 with an attached pro forma Form 1120 by April 15 each year. You can't e-file — the IRS only accepts these forms by mail or fax to the Ogden PIN Unit at +1-855-887-7737. Below is the full step-by-step process, broken down into every form, field, and decision you'll face — or skip the work entirely and use our accountant-reviewed 15-minute online filer from $149.",
@@ -150,6 +151,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    updated: "2026-09-05",
     h1: "The Form 5472 $25,000 Penalty Explained",
     intro:
       "Under IRC § 6038A(d), the IRS automatically assesses a $25,000 penalty per Form 5472 that is filed late, filed incompletely, or not filed at all — per year, per LLC. The penalty stacks at $25,000 per 30-day period if you don't fix it within 90 days of an IRS notice. Here's exactly how the penalty works, who it applies to, how to either avoid it entirely, and how to request abatement if you've already triggered it.",
@@ -250,6 +252,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    updated: "2026-09-05",
     h1: "DIIRSP: Filing Late Form 5472 with Penalty Abatement",
     intro:
       "The IRS Delinquent International Information Return Submission Procedure (DIIRSP) is the official way to catch up on missed Form 5472 filings while requesting that the $25,000-per-form-per-year penalty be waived. Filing under DIIRSP requires a properly written Reasonable Cause Statement attached to each late return. Get it right and most first-time filers walk away with no penalty assessed. Get it wrong — or do nothing — and the IRS will eventually mail a CP-15 notice and start the clock on continuation penalties.",
@@ -350,6 +353,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
+    updated: "2026-09-05",
     h1: "Form 5472 Instructions: Plain-English Walkthrough",
     intro:
       "The official IRS instructions for Form 5472 are 12 pages of dense regulatory language written for tax professionals. This is what each part actually means without the jargon, exactly what to put in each box, the common mistakes that trigger the $25,000 penalty, and how to put together a complete filing that the IRS will accept on the first read.",
@@ -451,6 +455,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "Reg. §301.7701-2", url: "https://www.ecfr.gov/current/title-26/section-301.7701-2" },
       { label: "FinCEN: Beneficial ownership information", url: "https://www.fincen.gov/boi" },
     ],
+    updated: "2026-09-05",
     h1: "Foreign-Owned US LLC Tax Filing Requirements",
     intro:
       "If you are a non-US person who owns a US single-member LLC, you have specific federal tax filing obligations even if your LLC made zero revenue and owes zero US tax. The main universal requirement is Form 5472 with an attached pro forma Form 1120, due April 15. Beyond that, your state filings, ITIN need, FBAR/FATCA exposure, and sales tax obligations depend on your specific facts. This is the complete map.",
@@ -551,6 +556,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
+    updated: "2026-09-05",
     h1: "Filed Form 5472 Late? Here's What to Do Now",
     intro:
       "If you missed the April 15 deadline for Form 5472, file as soon as possible. The IRS Delinquent International Information Return Submission Procedure (DIIRSP) lets you submit late filings with a Reasonable Cause Statement requesting that the $25,000 penalty be waived. The longer you wait, the higher the risk of an automatic CP-15 penalty notice — and once that notice arrives, your options narrow sharply. This is the complete playbook for getting back into compliance from one missed year to many.",
@@ -651,6 +657,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
+    updated: "2026-09-05",
     h1: "Form 5472 vs Form 1120 — What's the Difference?",
     intro:
       "Form 5472 and Form 1120 are two separate IRS forms that foreign-owned US LLCs must file together as one package. Form 1120 is the US corporate income tax return. Form 5472 is an information return about related-party transactions. For most foreign-owned single-member LLCs, the 1120 is filed \"pro forma\" — meaning most boxes are blank. Here's exactly what each form is, why you need both, and how the IRS expects them combined.",
@@ -751,6 +758,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
+    updated: "2026-09-05",
     h1: "Wyoming LLC Form 5472 Filing Guide",
     intro:
       "Wyoming is the most popular state for foreign-owned US LLCs because of its low fees, no state income tax, strong privacy laws, and cheap registered agent ecosystem. But Wyoming residency doesn't exempt you from federal filings — every foreign-owned Wyoming LLC must file IRS Form 5472 with pro forma Form 1120 by April 15 each year, with a $25,000 penalty if missed. This is the complete federal + Wyoming-state filing playbook for foreign owners.",
@@ -851,6 +859,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
+    updated: "2026-09-05",
     h1: "Delaware LLC Form 5472 Filing Guide",
     intro:
       "Delaware is the #2 most popular state for foreign-owned US LLCs after Wyoming. Stripe Atlas defaults to Delaware, so a large share of foreign-founder LLCs are Delaware entities. If you formed a Delaware LLC and you're not a US person, you must file IRS Form 5472 with pro forma Form 1120 every year — even if your LLC had zero revenue. This is the full Delaware-specific filing playbook including the federal Form 5472, the $400 Delaware franchise tax, and the differences from Wyoming.",
@@ -951,6 +960,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    updated: "2026-09-05",
     h1: "Form 5472 for German-Resident Owners of US LLCs",
     intro:
       "If you're a German tax resident who owns a single-member US LLC — commonly for ecommerce, Amazon FBA, SaaS, or consulting — you must file IRS Form 5472 with an attached pro forma Form 1120 every year, even if the LLC had zero US tax due. The most common question we get from German owners is which German tax ID goes on the form. Short answer: your personal Steuerliche Identifikationsnummer (Steuer-ID), not your Steuernummer or VAT ID. Here's the complete filing picture.",
@@ -1035,6 +1045,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    updated: "2026-09-05",
     h1: "Form 5472 for UAE Residents Who Own a US LLC",
     intro:
       "Many Dubai and Abu Dhabi-based founders run global ecommerce, dropshipping, SaaS, or consulting businesses through a US LLC (usually Wyoming or Delaware) rather than a UAE mainland or free zone company. If that's you, you must file IRS Form 5472 with an attached pro forma Form 1120 every year — but the UAE has no personal income tax and, for most individuals, no personal tax ID either. Here's exactly what to put on the form instead, and the rest of the filing picture.",
@@ -1119,6 +1130,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRS: Instructions for Form 1120", url: "https://www.irs.gov/instructions/i1120" },
     ],
+    updated: "2026-09-05",
     h1: "Pro Forma Form 1120 — Plain-English Guide",
     intro:
       "Foreign-owned US single-member LLCs file pro forma Form 1120 as the procedural envelope for Form 5472. \"Pro forma\" means most of the form stays blank — you only fill in entity identification fields and stamp \"Foreign-Owned U.S. DE\" at the top. This guide shows exactly which fields to fill, which to leave empty, why the form even exists in this format, and how to assemble the full package the IRS expects.",
@@ -1145,7 +1157,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file the complete package?",
-        body: "Once your pro forma 1120 is filled and stamped, the full package order is:\n\n1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (1-2 pages, with the \"Foreign-Owned U.S. DE\" stamp).\n3. Form 5472 (2 pages).\n4. Part V supporting statement (1+ pages).\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nSign the 1120's signature line in pen on the printed page. Fax the entire package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the fax transmission receipt as proof of timely filing.\n\nOur service generates the entire correctly-formatted package automatically. You sign one PDF on screen (the signature embeds into every required signature box), an accountant on our team reviews it, and we fax it to the IRS. IRS fax delivery is included in every plan — no separate fee.",
+        body: "Once your pro forma 1120 is filled and stamped, the full package order is:\n\n1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (1-2 pages, with the \"Foreign-Owned U.S. DE\" stamp).\n3. Form 5472 (2 pages).\n4. Part V supporting statement (1+ pages).\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nSign the 1120's signature line in pen on the printed page. Use the [1120 pro forma instructions](/1120-pro-forma-instructions) as a final field-by-field check, then fax the entire package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the fax transmission receipt as proof of timely filing.\n\nOur service generates the entire correctly-formatted package automatically. You sign one PDF on screen (the signature embeds into every required signature box), an accountant on our team reviews it, and we fax it to the IRS. IRS fax delivery is included in every plan — no separate fee.",
       },
       {
         heading: "What are common mistakes on pro forma 1120?",
@@ -1219,6 +1231,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
     ],
+    updated: "2026-09-05",
     h1: "Form 1120 for Foreign-Owned LLCs",
     intro:
       "If you are a non-US person who owns a US single-member LLC, you must file Form 1120 — but in a special \"pro forma\" version where almost every field stays blank. The 1120 exists only as an envelope for Form 5472 (the form that actually matters). This is exactly how it works, what to fill in, what to leave empty, how to assemble the full package, and why filing 1120 doesn't subject your LLC to US corporate income tax.",
@@ -1245,7 +1258,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file the complete package?",
-        body: "1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (signed, stamped \"Foreign-Owned U.S. DE\").\n3. Form 5472 attached behind the 1120.\n4. Part V supporting statement listing each reportable transaction.\n5. Reasonable Cause Statement (only if late under DIIRSP).\n\nFax the complete package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the transmission receipt as your proof of timely filing.\n\nDo NOT mail or fax Form 1120 to the regular IRS processing center. The Ogden PIN Unit is the only correct destination for foreign-owned DE filings — sending it elsewhere will cause routing problems and may not satisfy your filing obligation.\n\nMail alternative: Internal Revenue Service, Ogden, UT 84201-0023. Use certified mail with return receipt as proof of timely filing.",
+        body: "1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (signed, stamped \"Foreign-Owned U.S. DE\").\n3. Form 5472 attached behind the 1120.\n4. Part V supporting statement listing each reportable transaction.\n5. Reasonable Cause Statement (only if late under DIIRSP).\n\nUse the [1120 pro forma instructions](/1120-pro-forma-instructions) to check the page-one fields, then fax the complete package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the transmission receipt as your proof of timely filing.\n\nDo NOT mail or fax Form 1120 to the regular IRS processing center. The Ogden PIN Unit is the only correct destination for foreign-owned DE filings — sending it elsewhere will cause routing problems and may not satisfy your filing obligation.\n\nMail alternative: Internal Revenue Service, Ogden, UT 84201-0023. Use certified mail with return receipt as proof of timely filing.",
       },
       {
         heading: "What are common mistakes specific to pro forma 1120?",
@@ -1319,6 +1332,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
+    updated: "2026-09-05",
     h1: "Form 1120 for a Disregarded Entity (Foreign Owner)",
     intro:
       "A US LLC owned by a single non-US person is a \"disregarded entity\" — meaning the IRS treats it as if it doesn't exist for income tax purposes. So why does it file Form 1120? Because Treasury Regulation § 1.6038A-1 requires Form 5472 to be attached to a tax return, and a pro forma Form 1120 is the IRS-specified attachment vehicle. This is the complete explanation, the regulation's history, what the filing looks like, and how to avoid the common pitfalls.",
@@ -1419,6 +1433,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 1120", url: "https://www.irs.gov/instructions/i1120" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
+    updated: "2026-09-05",
     h1: "1120 Pro Forma Instructions (Foreign-Owned LLCs)",
     intro:
       "Filling out a pro forma Form 1120 is completely different from a real corporate tax return. You complete almost nothing — fewer than 10 fields total. Below is the field-by-field breakdown of what to fill in, what to leave blank, the schedules to ignore, signature requirements, and the common mistakes that cause the IRS to misprocess your filing as if it were a real corporate return.",
@@ -1520,6 +1535,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    updated: "2026-09-05",
     h1: "IRS Form 5472 — the complete guide for foreign-owned LLCs",
     intro:
       "IRS Form 5472 is the information return that foreign-owned US single-member LLCs must file every year with an attached pro forma Form 1120. Skip the form and the IRS charges $25,000 per year, per form. We prepare the full package in 15 minutes — every order is reviewed by an accountant on our team before we fax it to the IRS Ogden PIN Unit. This is the complete guide: who has to file, what's in the package, when it's due, what the penalty looks like in practice, and how to get caught up if you've missed prior years.",
@@ -1620,6 +1636,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 7004", url: "https://www.irs.gov/forms-pubs/about-form-7004" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
     ],
+    updated: "2026-09-05",
     h1: "Form 5472 deadline — when it's due, and what to do if you've missed it",
     intro:
       "Form 5472 is due April 15 of the year following the tax year. You can get an automatic 6-month extension to October 15 by filing Form 7004 by April 15. Miss the deadline and the IRS charges $25,000 per form — but you can still catch up under DIIRSP. This is the complete deadline guide: exact dates, extension mechanics, what counts as on-time filing, late-filing penalties, the catch-up procedure, and a real timeline showing what happens after you submit.",
@@ -1719,6 +1736,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
     ],
+    updated: "2026-09-05",
     h1: "The IRS Form 5472 fax number (and how to actually send it)",
     intro:
       "The IRS Form 5472 fax number is +1-855-887-7737 — the Ogden PIN Unit. Fax is the fastest way to file Form 5472 with its attached pro forma Form 1120, and the fax transmission receipt is your proof of timely filing under IRC § 6038A. This is exactly what to send, in what order, which fax services work, what to do if the fax fails, and how to get the IRS-acknowledged proof of timely submission.",
@@ -1820,6 +1838,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    updated: "2026-09-05",
     h1: "Single-member LLC with a foreign owner — what you actually have to file",
     intro:
       "If you are a non-US person who owns a single-member US LLC (Wyoming, Delaware, New Mexico, Florida, Nevada, or any state), you have one critical annual federal filing the IRS imposes on you: Form 5472 attached to a pro forma Form 1120. Miss it and the IRS charges $25,000 per year, per form — automatically, with no warning. This is the complete guide to what you owe, when, what your LLC actually pays (often nothing), and how to file it in 15 minutes.",
@@ -1920,6 +1939,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
     ],
+    updated: "2026-09-05",
     h1: "Stripe Atlas LLC owners — Form 5472 is on you, not Stripe",
     intro:
       "Stripe Atlas makes US LLC formation effortless for foreign founders — Delaware LLC + EIN + Mercury bank account in days. What Stripe Atlas explicitly does NOT handle is the annual IRS filing your LLC owes every year: Form 5472 + pro forma Form 1120. Skip it and the IRS charges $25,000 per year, per form. This is the complete Stripe Atlas + Form 5472 playbook — including the typical year-2 surprise, the Delaware franchise tax, and how to catch up if you've missed prior years.",
@@ -2020,6 +2040,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    updated: "2026-09-05",
     h1: "Reasonable cause statement for Form 5472 — what to include",
     intro:
       "If you're filing Form 5472 late, the IRS requires a Reasonable Cause Statement under DIIRSP (Delinquent International Information Return Submission Procedure) to request abatement of the $25,000-per-form-per-year penalty. Done right, it can save tens of thousands of dollars. Done poorly — or skipped entirely — and the penalty is assessed automatically. This is the complete guide: what the IRS expects, what to include, what kills a request, sample structure, and how our DIIRSP-aware filer generates one for you that's accountant-reviewed before fax submission.",
@@ -2125,6 +2146,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    updated: "2026-09-05",
     h1: "Form 5472, filed properly — from $149, everything included.",
     intro:
       "Answer 12 questions in about 15 minutes. A qualified tax accountant on our team reviews your Form 5472 + pro forma Form 1120 end-to-end, we fax the signed package to the IRS Ogden PIN Unit and you get back the timestamped transmission receipt as your proof of filing. $149 on Standard, ready in 5-7 business days, or $199 on Express, ready within 3 — the identical filing either way, only the speed differs. That's the filing that keeps a $25,000 §6038A penalty off your LLC.",

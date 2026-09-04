@@ -1,5 +1,5 @@
 ---
-title: "Form 5472 for SaaS Founders With a Foreign-Owned U.S. LLC"
+title: "Form 5472 for Foreign-Owned SaaS Founders"
 description: "Non-U.S. SaaS founders may need Form 5472 even when the LLC owes no entity-level income tax. Here is what the filing reports."
 date: 2026-08-10
 publishAt: "2026-08-10T09:00:00-04:00"

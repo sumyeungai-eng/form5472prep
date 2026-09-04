@@ -2,7 +2,7 @@
 title: "Form 5472: DIY vs. Hiring a Preparer"
 description: "Form 5472 DIY filing costs less, while a preparer can reduce research and error risk. Compare the work, price, review, and filing support for each option."
 date: 2026-06-15
-updated: 2026-08-14
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "diy", "tax-preparer", "foreign-owned-llc", "filing-guide"]
 readingMinutes: 8
@@ -106,6 +106,8 @@ Prices across the market vary significantly based on who's doing the work and wh
 | Freelancers (Fiverr, Upwork) | $25–$100 | No | No |
 | Form5472 Prep | $149 per year (Standard, 5-7 business days) or $199 (Express, 3 business days) | Yes | Yes — full DIIRSP packages available |
 | DIY | $0 | No (you pay separately) | Possible |
+
+For the live service tiers and turnaround choices, [see current pricing](/pricing).
 
 A few notes on these numbers:
 

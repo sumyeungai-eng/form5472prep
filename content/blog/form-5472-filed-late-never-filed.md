@@ -2,7 +2,7 @@
 title: "Filed Late or Never Filed Form 5472? Here's What to Do Now"
 description: "Late Form 5472 filings can trigger a $25,000 penalty per form and year. Learn how DIIRSP, complete catch-up returns, and reasonable cause requests work."
 date: 2026-05-28
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "late-filing", "diirsp", "penalty-abatement", "foreign-owned-llc"]
 readingMinutes: 8
@@ -127,6 +127,8 @@ If you want to handle this yourself, you need:
 - A well-drafted reasonable cause statement
 
 If you want someone else to handle it: [we prepare the complete DIIRSP package](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-filed-late-never-filed) — all years, the reasonable cause statement, and fax to the IRS — from $149.
+
+Current service tiers and multi-year options are listed on the [pricing page](/pricing).
 
 ---
 

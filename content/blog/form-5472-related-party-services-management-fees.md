@@ -2,7 +2,7 @@
 title: "Form 5472 for Related-Party Services and Management Fees"
 description: "Payments for management, technical, consulting, and other services between a US LLC and a foreign related party can require Form 5472 reporting."
 date: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "management-fees", "related-party-services", "transfer-pricing"]
 draft: false
@@ -92,6 +92,26 @@ For every invoice, retain:
 | Other filing review | Withholding, ECI, treaty, transfer pricing |
 
 Use the [currency-conversion guide](/blog/form-5472-currency-conversion-exchange-rates) to keep the original currency, rate source, and US-dollar result together.
+
+## Frequently asked questions
+
+### Are payments to foreign freelancers always reportable?
+
+No. Form 5472 is not a report of every international payment. The post distinguishes related foreign parties from unrelated vendors, so the relationship memo should prove whether the provider is related before the payment is classified.
+
+### Can a service fee be reported as a distribution?
+
+Only if that is the supported substance. A payment to the owner may be a service fee, distribution, loan repayment, reimbursement, or split transfer. The form categories should follow the facts, not the bank memo.
+
+### What if the owner works for the LLC without charging?
+
+Unpaid owner activity needs review. Routine owner actions are not automatically a service transaction, but a structured exchange of valuable services for no or below-market consideration can raise Part VI and transfer-pricing questions.
+
+### Does Form5472 Prep decide withholding or transfer pricing?
+
+No. The post's service boundary says Form5472 Prep can report the supported transaction but does not produce transfer-pricing studies or decide withholding and treaty positions. Significant recurring fees should receive specialist review.
+
+---
 
 ## Filing support
 

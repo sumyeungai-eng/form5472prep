@@ -128,6 +128,7 @@ export default async function LandingPage() {
       <Deliverables />
       <Comparison />
       <OtherServices />
+      <ToolsAndGuides />
       <Faq />
       <FinalCta />
     </>
@@ -642,6 +643,82 @@ function Pricing() {
         <p className="mt-3 text-center text-xs text-slate-500">
           DIIRSP = IRS Delinquent International Information Return Submission Procedure.
         </p>
+      </div>
+    </section>
+  );
+}
+
+function ToolsAndGuides() {
+  const tools = [
+    {
+      href: "/do-i-need-to-file-form-5472",
+      title: "Do I need to file Form 5472?",
+      description: "Six questions, a straight answer.",
+    },
+    {
+      href: "/form-5472-deadline-calculator",
+      title: "Deadline calculator",
+      description: "Your exact due date, including extensions and short years.",
+    },
+    {
+      href: "/form-5472-penalty-calculator",
+      title: "Penalty calculator",
+      description: "What late or missed filings cost under IRC §6038A.",
+    },
+  ];
+
+  const guides = [
+    { href: "/file-form-5472", text: "How to file Form 5472" },
+    { href: "/form-5472-penalty", text: "The $25,000 penalty explained" },
+    { href: "/diirsp", text: "Filing late under DIIRSP" },
+    { href: "/pro-forma-1120", text: "The pro forma Form 1120" },
+    { href: "/blog/what-is-form-5472", text: "What is Form 5472?" },
+    { href: "/blog/form-5472-deadline-2026", text: "Form 5472 deadline for 2026" },
+    { href: "/blog/does-foreign-owned-llc-pay-us-tax", text: "Does a foreign-owned LLC pay US tax?" },
+    { href: "/blog/form-5472-filed-late-never-filed", text: "Filed late or never filed?" },
+  ];
+
+  return (
+    <section className="bg-slate-50 border-b border-slate-200">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+        <SectionHead
+          eyebrow="Resources"
+          title="Free tools and guides"
+          subtitle="Everything you need to know before you file — and the tools that answer the two questions we get most."
+        />
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {tools.map((tool, i) => (
+            <Reveal as="div" key={tool.href} delay={i * 100}>
+              <Link
+                href={tool.href}
+                className="group block h-full rounded-xl border border-paper-edge bg-paper p-5 transition-all duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-lg hover:shadow-accent/10"
+              >
+                <h3 className="flex items-center gap-1.5 font-medium text-ink">
+                  {tool.title}
+                  <ArrowRight className="h-4 w-4 text-slate-400 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-accent" />
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">{tool.description}</p>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+        <div className="mt-6 rounded-xl border border-paper-edge bg-paper p-5 sm:p-6">
+          <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
+            {guides.map((guide, i) => (
+              <Reveal as="li" key={guide.href} delay={i * 60}>
+                <Link
+                  href={guide.href}
+                  className="text-sm font-medium text-slate-700 underline-offset-2 transition-colors hover:text-accent hover:underline"
+                >
+                  {guide.text}
+                </Link>
+              </Reveal>
+            ))}
+          </ul>
+          <Link href="/blog" className="mt-5 inline-block text-sm text-accent underline underline-offset-2">
+            See all guides →
+          </Link>
+        </div>
       </div>
     </section>
   );

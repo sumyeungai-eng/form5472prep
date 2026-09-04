@@ -2,7 +2,7 @@
 title: "Florida LLC Filing Checklist for Foreign Owners"
 description: "A foreign-owned Florida LLC may need the Sunbiz annual report and federal Form 5472 with a pro forma 1120. See the 2026 deadlines."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "florida-llc", "foreign-owned-llc", "annual-report"]
 draft: false
@@ -112,6 +112,8 @@ For many non-U.S. owners using a Florida LLC only as a payment wrapper, the prac
 Form5472 Prep handles the federal Form 5472 package for foreign-owned Florida LLCs. We prepare Form 5472, the pro forma Form 1120 and the Part V statement, then have the package reviewed by a qualified tax accountant.
 
 After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped receipt. Standard service is $149 and takes 5-7 business days. Express service is $199 and takes 3 business days. Each additional past tax year is +$99. Fax delivery is included.
+
+For current federal filing tiers, [see current pricing](/pricing).
 
 We are not a CPA firm and do not give Florida tax advice. If the LLC still needs an EIN, the EIN service is $149 at [/ein](/ein). If the federal package is ready, use the [Florida Form 5472 intake](/start?utm_source=blog&utm_medium=internal&utm_campaign=florida-llc-foreign-owner-tax-filing-product).
 

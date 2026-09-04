@@ -1,5 +1,5 @@
 ---
-title: "Final Form 5472 After Closing a Foreign-Owned U.S. LLC"
+title: "Final Form 5472 After Closing a U.S. LLC"
 description: "Closing a foreign-owned U.S. LLC does not erase its final Form 5472 filing. Report dissolution transactions and mark the pro forma 1120 final."
 date: 2026-09-28
 publishAt: "2026-09-28T09:00:00-04:00"

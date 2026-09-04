@@ -2,7 +2,7 @@
 title: "Texas LLC Filing Checklist for Foreign Owners (2026)"
 description: "A foreign-owned Texas LLC may need a 2026 PIR, Texas franchise-tax reporting, and federal Form 5472 with a pro forma Form 1120."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "texas-llc", "foreign-owned-llc", "franchise-tax"]
 draft: false
@@ -117,6 +117,8 @@ If a foreign owner is late, solve both systems. File the missing Texas report th
 Form5472 Prep handles the federal package for foreign-owned Texas LLCs. We prepare Form 5472, the pro forma Form 1120 and the Part V statement, then have the package reviewed by a qualified tax accountant.
 
 After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped receipt. Standard service is $149 and takes 5-7 business days. Express service is $199 and takes 3 business days. Each additional past tax year is +$99. Fax delivery is included.
+
+For current federal filing tiers, [see current pricing](/pricing).
 
 We are not a CPA firm and do not give Texas franchise-tax advice. If the LLC still needs an EIN, the EIN service is $149 at [/ein](/ein). If the federal package is ready, use the [Texas Form 5472 intake](/start?utm_source=blog&utm_medium=internal&utm_campaign=texas-llc-foreign-owner-tax-filing-product).
 

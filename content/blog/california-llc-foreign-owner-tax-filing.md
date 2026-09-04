@@ -2,7 +2,7 @@
 title: "California LLC Filing Checklist for Foreign Owners"
 description: "A foreign-owned California LLC may owe the $800 annual tax, file Form 568, and file federal Form 5472 with a pro forma 1120."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "california-llc", "foreign-owned-llc", "form-568"]
 draft: false
@@ -123,6 +123,8 @@ California scenarios are easiest to analyse by separating the California tax res
 Form5472 Prep handles the federal information-return package, not the California Form 568 or California tax-advice work. For a foreign-owned California LLC, that means we prepare Form 5472, the pro forma Form 1120 and the Part V statement, then have the package reviewed by a qualified tax accountant.
 
 After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped receipt. Standard service is $149 and takes 5-7 business days. Express service is $199 and takes 3 business days. Each additional past tax year is +$99. Fax delivery is included.
+
+For current federal filing tiers, [see current pricing](/pricing).
 
 We are not a CPA firm and do not give California tax advice. If you need an EIN first, the EIN service is $149 at [/ein](/ein). If the federal package is ready to start, use the [California Form 5472 intake](/start?utm_source=blog&utm_medium=internal&utm_campaign=california-llc-foreign-owner-tax-filing-product).
 

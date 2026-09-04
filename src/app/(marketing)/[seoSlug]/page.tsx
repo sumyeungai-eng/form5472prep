@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { ArrowRight, CheckCircle2, Clock, FileText, Send, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
@@ -20,6 +21,31 @@ import { CONTENT_LAST_REVIEWED, pageOpenGraph } from "@/lib/seo";
 
 // Lock the route to only the known slugs — anything else 404s.
 export const dynamicParams = false;
+
+const INLINE_LINK_RE = /\[([^\]]+)\]\((\/[^)\s]+)\)/g;
+
+function renderInlineLinks(text: string): ReactNode {
+  const parts: ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  INLINE_LINK_RE.lastIndex = 0;
+  while ((match = INLINE_LINK_RE.exec(text)) !== null) {
+    const index = match.index;
+    const [full, label, href] = match;
+    if (index > lastIndex) parts.push(text.slice(lastIndex, index));
+    parts.push(
+      <Link key={`${href}-${index}`} href={href} className="font-medium text-accent hover:underline">
+        {label}
+      </Link>,
+    );
+    lastIndex = index + full.length;
+  }
+
+  if (parts.length === 0) return text;
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts;
+}
 
 // A/B test the hero layout to see which converts better.
 //   - "rail":   2-column hero with a big right-rail CTA card (no price).
@@ -223,7 +249,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                   </a>
                 </h2>
                 <div className="mt-3 space-y-3 text-slate-700 leading-relaxed whitespace-pre-line">
-                  {s.body}
+                  {renderInlineLinks(s.body)}
                 </div>
               </Reveal>
             ))}
@@ -331,7 +357,9 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                 {page.faqs.map((f, i) => (
                   <Reveal key={f.q} delay={i * 80}>
                     <dt className="font-medium text-slate-900">{f.q}</dt>
-                    <dd className="mt-2 text-sm text-slate-600 leading-relaxed">{f.a}</dd>
+                    <dd className="mt-2 text-sm text-slate-600 leading-relaxed">
+                      {renderInlineLinks(f.a)}
+                    </dd>
                   </Reveal>
                 ))}
               </dl>

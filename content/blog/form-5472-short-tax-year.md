@@ -2,7 +2,7 @@
 title: "Form 5472 for a Short Tax Year or LLC Formed Late in the Year"
 description: "An LLC formed late in the year may have a short first Form 5472 period. See the reporting dates, deadline, and transactions that belong in it."
 date: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-05
 author: "Form5472 Prep"
 tags: ["form-5472", "short-tax-year", "first-year-filing", "foreign-owned-llc"]
 draft: false
@@ -83,6 +83,26 @@ Do not rely only on the “closing month” entered on Form SS-4. Entity classif
 | Pre-formation organizer costs classified | Contract, payer, and reimbursement trail |
 | Gross flows kept separate | Contribution, distribution, loan, and repayment columns |
 | Extension filed by regular due date if needed | Form 7004 confirmation |
+
+## Frequently asked questions
+
+### Does an LLC formed in December still have a Form 5472 year?
+
+It can. The post explains that even two days can be a tax year, and the filing question is whether a reportable transaction occurred while the LLC existed during that period.
+
+### Does the EIN date start the short year?
+
+No. The practical start point is the legal formation date, not the date the EIN arrived, bank account opened, website launched, or first customer paid.
+
+### Should I annualize short-year transactions?
+
+No. The form reports what occurred during the actual short period. The post's example keeps the owner-paid formation cost, contribution, and LLC-to-owner payment as separate gross movements.
+
+### What records matter for a short-year filing?
+
+Keep the legal effective date, tax-year end, EIN confirmation, post-formation owner activity, pre-formation organizer costs, gross-flow categories, and any Form 7004 extension confirmation.
+
+---
 
 ## Filing support
 
