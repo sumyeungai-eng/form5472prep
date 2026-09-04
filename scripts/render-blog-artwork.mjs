@@ -267,6 +267,11 @@ const POSTS = {
   "how-to-fill-out-form-ss-4-foreign-owned-llc": { accent: C.navySoft, motif: "checklist", glyphs: ["pen", "doc", "hash", "check"] },
   "ein-for-stripe-amazon-paypal-seller-account": { accent: C.green, motif: "card", glyphs: ["hash", "doc", "person", "check"] },
   "ein-third-party-designee-apply-on-your-behalf": { accent: C.teal, motif: "split", glyphs: ["two", "person", "doc", "check"] },
+  "how-to-fill-out-form-w-7-nonresident-llc-owner": { accent: C.navySoft, motif: "checklist", glyphs: ["pen", "doc", "person", "check"] },
+  "itin-renewal-expired-itin-what-to-do": { accent: C.amber, motif: "calendar", glyphs: ["clock", "calendar", "hash", "check"] },
+  "itin-application-rejected-cp567-cp566": { accent: C.clay, motif: "notice", glyphs: ["warn", "doc", "person", "check"] },
+  "when-nonresident-actually-needs-itin": { accent: C.teal, motif: "split", glyphs: ["two", "hash", "person", "check"] },
+  "itin-refund-30-percent-withholding-1042-s": { accent: C.green, motif: "stack", glyphs: ["doc", "hash", "clock", "check"] },
 };
 
 const wanted = process.argv.slice(2);
