@@ -17,6 +17,22 @@
 - The `hktax/` app is a separate product. It must not be deployed to the
   form5472prep.com production project.
 
+## Default completion checklist
+- The owner wants completed website and content work released, not left only
+  in a local branch. Unless the request explicitly says draft-only, local-only,
+  or no deployment, finish by running the required tests and production build,
+  merging the scoped work into `main`, and pushing `origin/main`.
+- For blog work, check for completed drafts and scheduled posts that the owner
+  asked to release; confirm each published post has its image, then verify the
+  live article, image, sitemap, and RSS feed after the Git-linked deployment.
+- Verify the affected public pages and the three production markers documented
+  in `REPO-STATE.md`. Do not stop at a successful build or Git push.
+- Write or update the latest file under `docs/sessions/` with the commit,
+  deployment outcome, live verification, files changed, and anything still
+  open. Keep durable cross-session rules in this `CLAUDE.md` file.
+- Explicit user instructions such as “do not publish” or “leave as drafts”
+  override this default. Never deploy unrelated or visibly unfinished work.
+
 ## Working in this repo alongside other sessions
 - Several Claude sessions share this repo (blog production, SEO, hktax).
   Before a multi-file change run `git status --short`; never edit files you
