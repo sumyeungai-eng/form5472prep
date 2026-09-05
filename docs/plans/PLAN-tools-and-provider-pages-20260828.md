@@ -1,5 +1,5 @@
 # Plan: Conversion tools + provider-integration pages
-Version: 1 | Status: APPROVED v1 — EXECUTING | Date: 2026-08-28
+Version: 1 | Status: COMPLETE | Date: 2026-08-28
 
 ## 1. Goal
 Ship the four commercial-intent assets from the growth plan (items 1–4; item 5
@@ -126,4 +126,5 @@ v1 — initial plan.
 - 2026-08-28/29: Step 6 COMPLETE (6 new provider pages; stripe-atlas already existed — left as pre-existing, not upgraded). Step 7 COMPLETE (sitemap/llms/footer + 16 guide links). Step 8 COMPLETE — pushed 6227bd0 + afa1257 via git deploy; live verification: 9 URLs 200, tags present, disclaimers ×6, sitemap 123, llms 3, footer 3. Minor hand fix logged: removed unused `CheckCircle2` import that failed lint.
 - 2026-09-04/05: INCIDENT — production overwritten by a sibling session's `vercel --prod` from branch claude/hk-tax-filing-website-* (deploy f1fc2dc, 20:22, 8 min after main's 8d2cc93). All tool + provider pages 404 for ~8 h. Restored 2026-09-05 04:37 by pushing main (6ffcea1 adds repo CLAUDE.md deploy rule; 0cbeffa mirrors into AGENTS.md). Verified: all pages 200, sitemap tools 3, total 134.
 - Step 9 (skeptic review) still OPEN — folded into the 2026-09-05 full SEO/AEO/GEO audit now running.
+- 2026-09-05: Step 9 (skeptic/quality pass) CLOSED via the full SEO/AEO/GEO audit (docs/reviews/2026-09-05-*.md): tool pages Lighthouse SEO 100/100/92→fixed, schema parity restored (checker `offers`), penalty link-text fixed. Status: COMPLETE. Follow-ups carried to the audit plan: upgrade pre-existing stripe-atlas page to provider template; cannibalization consolidations (owner decision).
 

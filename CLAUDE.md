@@ -21,6 +21,9 @@
 - Several Claude sessions share this repo (blog production, SEO, hktax).
   Before a multi-file change run `git status --short`; never edit files you
   don't own; report dirt, don't clean it.
+- **Session logs live in `docs/sessions/`.** Read the most recent one before
+  starting work: it records which checkout/branch owns which files, what was
+  shipped, and what is still open. Write one when you finish a sprint.
 - Never commit secrets. A remote URL containing a `ghp_…` token was found in
   one checkout's `.git/config` — use SSH remotes.
 
