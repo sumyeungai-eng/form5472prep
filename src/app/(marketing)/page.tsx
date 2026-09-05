@@ -234,7 +234,7 @@ function Hero({ filingsCount }: { filingsCount: number }) {
                 Reviewed by a tax accountant
               </span>
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white ring-1 ring-white/15">
-                No CPA · no US address needed
+                No US address needed
               </span>
             </div>
 

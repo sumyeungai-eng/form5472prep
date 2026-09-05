@@ -108,7 +108,26 @@ exclusions the production build fails on code that is not part of this app.
 
 ---
 
-## 6. Working alongside other agents
+## 6. Finish every session with a log — mandatory
+
+`CLAUDE.md` requires it and it is what keeps concurrent agents from destroying each other's work.
+After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<topic>.md`) covering:
+
+- what shipped, with the commit SHA
+- deployment outcome + **live verification** (not just "build passed")
+- which files this session owns, and which are shared
+- what is still open, split into *needs another agent* vs *needs the owner*
+- traps encountered, so the next session does not repay the same cost
+
+**Read the most recent session log before starting work.** Existing logs:
+
+- `docs/sessions/2026-09-05-seo-aeo-geo-session.md` — SEO/GEO sprint + conversion tools
+- `docs/sessions/2026-09-05-payments-merge-deliverability-session.md` — EIN/ITIN payments, the
+  branch reunification, email deliverability
+
+---
+
+## 7. Working alongside other agents
 
 Claude and Codex sessions share these folders. Practical rules:
 
