@@ -32,3 +32,14 @@ An explicit instruction to keep work local, leave drafts unpublished, or avoid d
 - `docs/sessions/2026-09-05-standing-release-workflow.md`
 
 No application code, blog copy, images, pricing, tax logic, payment behavior, or production data was changed.
+
+## Release and live verification
+
+- Workflow documentation commit: `3ef1194`
+- Merged with the latest concurrent `origin/main` work and pushed as: `a17d81c`
+- Git-linked Vercel deployment: `dpl_ECib4LjB9R9PvTQW4grZN1q5sCQs`, status `READY`
+- Public EIN checkout marker: HTTP 400 for the expected empty request
+- Public EIN form marker: HTTP 200 with `Owner date of birth` present
+- Public penalty-calculator marker: HTTP 200
+
+The push used `git push origin main`; no Vercel CLI production deployment was run.
