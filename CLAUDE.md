@@ -23,7 +23,13 @@
   don't own; report dirt, don't clean it.
 - **Session logs live in `docs/sessions/`.** Read the most recent one before
   starting work: it records which checkout/branch owns which files, what was
-  shipped, and what is still open. Write one when you finish a sprint.
+  shipped, and what is still open.
+- **Every session that changes files must write one before it ends** —
+  `docs/sessions/<YYYY-MM-DD>-<topic>.md`, committed with the work. Include:
+  ownership table (checkout/branch → files), what shipped (commit range +
+  live-verified evidence), contracts a future editor must respect, what is
+  still open (owner decisions vs. follow-ups), and lane notes. This is how
+  concurrent sessions avoid overwriting each other.
 - Never commit secrets. A remote URL containing a `ghp_…` token was found in
   one checkout's `.git/config` — use SSH remotes.
 
