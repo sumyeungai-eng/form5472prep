@@ -40,6 +40,10 @@ export type TierInfo = {
 export const STANDARD_TURNAROUND = "5-7 business days";
 export const EXPRESS_TURNAROUND = "3 business days";
 
+// The EIN and ITIN marketing application pages quote these exact prices.
+export const EIN_PRICE_CENTS = 14900;
+export const ITIN_PRICE_CENTS = 34900;
+
 const SHARED_FEATURES = [
   "Reviewed by a qualified tax accountant before submission",
   "Form 5472 + pro forma 1120 prepared",

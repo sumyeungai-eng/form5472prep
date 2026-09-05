@@ -116,6 +116,21 @@ async function readFile(slug: string): Promise<Post | null> {
 }
 
 const ARTWORK_ALTS: Record<string, string> = {
+  "itin-application-checklist-nonresidents": "An organized ITIN application checklist with international identity and document folders",
+  "itin-cost-irs-fee-caa-service": "A balance scale comparing application costs with professional document assistance",
+  "itin-processing-time-status-delays": "An hourglass, blank calendar, and queued folders representing ITIN processing time",
+  "itin-caa-vs-mail-vs-tac": "Three ITIN application routes represented by an adviser, mailed envelope, and office appointment",
+  "itin-nonresident-rental-property": "A U.S. rental property model with keys and an international owner's tax-identification file",
+  "ein-application-checklist-foreign-owned-llc": "Formation, ownership, address, and application folders arranged as an EIN readiness checklist",
+  "ein-cost-irs-free-vs-service": "Two EIN application workstations comparing direct filing with managed preparation",
+  "ein-processing-time-international-applicants": "Phone, fax, mail, and a clock representing international EIN processing routes",
+  "ein-responsible-party-foreign-owned-llc": "A foreign LLC owner controlling the entity records while an adviser assists",
+  "new-ein-llc-ownership-structure-change": "Blank entity blocks branching into alternative structures for a new-EIN decision",
+  "form-5472-partner-program-how-it-works": "Partner professionals coordinating multiple client filing folders through one shared dashboard",
+  "white-label-form-5472-filing-accounting-firms": "An accounting firm handing a client file into a discreet white-label preparation workflow",
+  "form-5472-partner-program-company-formation-agents": "A newly formed LLC file moving from company setup into annual federal compliance",
+  "form-5472-partner-program-registered-agents": "State correspondence and federal filing records organized into separate compliance paths",
+  "form-5472-white-label-vs-standard-partner": "Two partner delivery paths—standard and white-label—leading to one specialist filing workflow",
   "form-5472-cost": "Form 5472 paperwork, a calculator, and an approval marker on a tidy desk",
   "form-5472-extension": "A calendar, clock, and document envelope illustrating a filing extension",
   "amazon-fba-foreign-sellers-form-5472": "An ecommerce workspace with parcels, a laptop, and U.S. business paperwork",

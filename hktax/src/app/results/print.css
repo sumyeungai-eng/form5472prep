@@ -1,0 +1,110 @@
+@media print {
+  header,
+  nav,
+  footer,
+  button,
+  .results-print-action,
+  .results-debug {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #0e2038 !important;
+  }
+
+  main,
+  section,
+  article,
+  details {
+    box-shadow: none !important;
+  }
+
+  details {
+    break-inside: avoid;
+  }
+
+  details[open] > summary {
+    padding-bottom: 0.25rem !important;
+  }
+
+  .results-breakdown-section,
+  table,
+  tr,
+  dl {
+    break-inside: avoid;
+  }
+
+  .results-breakdown-baseline {
+    display: none !important;
+  }
+
+  .max-w-6xl,
+  .max-w-7xl {
+    max-width: none !important;
+  }
+
+  .shadow-soft {
+    box-shadow: none !important;
+  }
+
+  .rounded-lg,
+  .rounded-md {
+    border-radius: 0 !important;
+  }
+
+  .space-y-8 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.55rem !important;
+  }
+
+  .p-8,
+  .sm\:p-8,
+  .p-6,
+  .sm\:p-6,
+  .p-5,
+  .p-4 {
+    padding: 0.45rem !important;
+  }
+
+  .py-10,
+  .sm\:py-14,
+  .py-16,
+  .sm\:py-24 {
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  h1 {
+    font-size: 1.25rem !important;
+    line-height: 1.35 !important;
+  }
+
+  h2 {
+    font-size: 1rem !important;
+    line-height: 1.35 !important;
+  }
+
+  p,
+  dt,
+  dd,
+  td,
+  th,
+  summary,
+  a {
+    font-size: 0.72rem !important;
+    line-height: 1.3 !important;
+  }
+
+  table {
+    width: 100% !important;
+  }
+
+  th,
+  td {
+    padding: 0.2rem 0.3rem !important;
+  }
+
+  pre {
+    display: none !important;
+  }
+}

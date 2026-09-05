@@ -1,0 +1,92 @@
+import type { WizardDictionaryEntry, WizardLanguage } from "@/lib/wizard/wizardDictionary";
+
+export type ResultsLanguage = WizardLanguage;
+export type ResultsEntry = WizardDictionaryEntry;
+
+export function resultsT(entry: ResultsEntry, lang: ResultsLanguage): string {
+  return entry[lang];
+}
+
+export const resultsDictionary = {
+  year: { zh: "課稅年度", en: "Year of assessment" },
+  fallbackYear: {
+    zh: "未能從儲存結果確認原本課稅年度；以下明細以現行年度參數重新計算，可能與原本的報稅精靈計算結果不完全相同。",
+    en: "The original assessment year could not be confirmed from the stored result; figures below were recomputed using the current year's parameters and may not exactly match the original wizard session.",
+  },
+  print: { zh: "列印 / 儲存為 PDF", en: "Print / Save as PDF" },
+  generateDraft: { zh: "生成 BIR60 填表草稿", en: "Generate BIR60 filing draft" },
+  generateDraftHint: {
+    zh: "把以下數字逐格對應到報稅表，方便抄寫。",
+    en: "Maps the figures below to each BIR60 box so you can copy them across.",
+  },
+  recommended: { zh: "建議方案", en: "Recommended election" },
+  totalFamilyTax: { zh: "家庭總稅款", en: "Total family tax" },
+  savingVsSeparate: { zh: "較預設分開評稅節省", en: "Saving vs default separate assessment" },
+  optimizerReason: { zh: "優化器說明", en: "Optimizer explanation" },
+  scenarioComparison: { zh: "方案比較", en: "Scenario comparison" },
+  scenario: { zh: "方案", en: "Scenario" },
+  status: { zh: "狀態", en: "Status" },
+  personA: { zh: "納稅人甲", en: "Person A" },
+  personB: { zh: "納稅人乙", en: "Person B" },
+  totalTax: { zh: "總稅款", en: "Total tax" },
+  why: { zh: "原因", en: "Why" },
+  available: { zh: "可用", en: "Available" },
+  unavailable: { zh: "不可用", en: "Unavailable" },
+  winner: { zh: "建議", en: "Winner" },
+  tied: { zh: "與建議方案稅款相同，但排序規則保留較簡單方案。", en: "Ties the winning tax amount, but the tie-break keeps the simpler scenario." },
+  lost: { zh: "較建議方案多繳", en: "More than winner by" },
+  noTax: { zh: "無稅款", en: "No tax" },
+  separateBaseline: { zh: "預設分開評稅", en: "Default separate assessment" },
+  winningBreakdowns: { zh: "建議方案計算明細", en: "Winning scenario computations" },
+  baselineBreakdowns: { zh: "分開評稅比較明細", en: "Separate-assessment comparison computations" },
+  computationLine: { zh: "項目", en: "Line" },
+  amount: { zh: "金額", en: "Amount" },
+  kind: { zh: "類別", en: "Kind" },
+  computationKinds: {
+    income: { zh: "收入", en: "Income" },
+    deduction: { zh: "扣除", en: "Deduction" },
+    allowance: { zh: "免稅額", en: "Allowance" },
+    subtotal: { zh: "小計", en: "Subtotal" },
+    tax: { zh: "稅款", en: "Tax" },
+    info: { zh: "資料", en: "Information" },
+  },
+  basisUsed: { zh: "採用基準", en: "Basis used" },
+  progressive: { zh: "累進稅率", en: "Progressive rates" },
+  standard: { zh: "標準稅率", en: "Standard rates" },
+  netAssessableIncome: { zh: "入息實額", en: "Net assessable income" },
+  netChargeableIncome: { zh: "應課稅入息實額", en: "Net chargeable income" },
+  taxBeforeReduction: { zh: "寬減前稅款", en: "Tax before reduction" },
+  reduction: { zh: "稅款寬減", en: "Tax reduction" },
+  finalTax: { zh: "應繳稅款", en: "Final tax" },
+  demandTitle: { zh: "暫繳稅與繳稅通知書總額", en: "Provisional tax and total demand" },
+  provisionalTax: { zh: "暫繳稅", en: "Provisional tax" },
+  totalDemand: { zh: "繳稅通知書總額", en: "Total demand" },
+  firstInstallment: { zh: "第一期", en: "First installment" },
+  secondInstallment: { zh: "第二期", en: "Second installment" },
+  demandGuide: { zh: "查看暫繳稅指南", en: "Read the provisional-tax guide" },
+  propertyReductionNote: {
+    zh: "注意：物業稅不屬於此年度稅款寬減適用範圍，因此物業稅明細及暫繳稅均不扣減寬減額。",
+    en: "Note: property tax is outside this year's tax-reduction scope, so property-tax computations and provisional property tax do not receive the reduction.",
+  },
+  provisionalCaveatNote: {
+    zh: "暫繳稅估算以本年度免稅額及扣除上限計算；稅務局正式暫繳稅按下一年度的免稅額計算，金額或有不同。",
+    en: "Provisional tax here is estimated using the current year's allowances and caps; the IRD computes actual provisional tax using the following year's allowances, so your bill may differ.",
+  },
+  marginalTitle: { zh: "邊際稅率說明", en: "Marginal-rate note" },
+  marginalProgressive: { zh: "建議方案採用累進稅率；應課稅入息實額落入", en: "The winning scenario uses progressive rates; net chargeable income falls in" },
+  marginalStandard: { zh: "建議方案採用標準稅率基準；適用的邊際稅率為", en: "The winning scenario uses the standard-rate basis; the relevant marginal rate is" },
+  marginalBand: { zh: "級，邊際稅率為", en: "band, with a marginal rate of" },
+  bir60Title: { zh: "下一步 · 填寫報稅表", en: "Next step: complete BIR60" },
+  bir60Specimen: {
+    zh: "以 2025 年版 BIR60 的格式為準，請核對你收到的報稅表。",
+    en: "Based on the 2025 BIR60 layout; please check against the return you received.",
+  },
+  bir60Part: { zh: "BIR60 部分", en: "BIR60 part" },
+  bir60Figure: { zh: "填報內容", en: "Figure to report" },
+  bir60Note: { zh: "提示", en: "Note" },
+  debugJson: { zh: "技術資料：計算引擎輸入／輸出 JSON", en: "Technical details: engine input/output JSON" },
+  inputJson: { zh: "引擎輸入", en: "Engine input" },
+  outputJson: { zh: "引擎輸出", en: "Engine output" },
+  noBreakdowns: { zh: "此方案沒有可顯示的稅項明細。", en: "This scenario has no tax-head breakdowns to display." },
+  noDemand: { zh: "沒有可組成繳稅通知書的應繳稅款。", en: "There is no payable tax head to assemble into a demand note." },
+} as const;

@@ -1,0 +1,212 @@
+.bir60-segmented-cell {
+  width: clamp(1rem, 5.6vw, 1.5rem);
+}
+
+.bir60-segmented-cell-compact {
+  width: clamp(0.875rem, 4.7vw, 1.25rem);
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  header,
+  nav,
+  footer,
+  button,
+  .bir60-view-toggle,
+  .bir60-print-action {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #0e2038 !important;
+  }
+
+  main,
+  section,
+  article,
+  details,
+  div {
+    box-shadow: none !important;
+  }
+
+  .bir60-page {
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .bir60-print-final-banner {
+    display: block !important;
+    margin-top: 8mm !important;
+  }
+
+  .bir60-person-break {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .bir60-replica,
+  .bir60-replica * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .bir60-replica [data-part-no="4"],
+  .bir60-replica [data-part-no="8"],
+  .bir60-replica [data-part-no="11"] {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .bir60-replica [data-part-no] {
+    background: #eef3e6 !important;
+    border-color: #111111 !important;
+  }
+
+  .bir60-replica [data-part-no] > div:first-child {
+    background: #000000 !important;
+    border: 1px solid #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .bir60-segmented-row {
+    overflow-x: visible !important;
+    padding-bottom: 0 !important;
+  }
+
+  .bir60-replica article,
+  .bir60-replica section,
+  .bir60-replica div,
+  .bir60-replica span {
+    border-color: #111111 !important;
+  }
+
+  .bir60-replica [class*="text-[#555]"],
+  .bir60-replica [class*="text-[#666]"],
+  .bir60-replica [class*="text-[#1f321b]"] {
+    color: #111111 !important;
+  }
+
+  .bir60-replica [class*="border-dashed"] {
+    border-style: solid !important;
+  }
+
+  .bir60-part,
+  .bir60-section,
+  .bir60-particulars,
+  table,
+  tr,
+  dl {
+    break-inside: avoid;
+  }
+
+  .bir60-particulars {
+    border-color: #ddd7c9 !important;
+  }
+
+  .bir60-particulars summary {
+    display: block !important;
+    list-style: none !important;
+  }
+
+  .bir60-particulars summary::-webkit-details-marker {
+    display: none !important;
+  }
+
+  .bir60-particulars-input {
+    min-height: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0.05rem 0 !important;
+  }
+
+  input::placeholder {
+    color: transparent !important;
+  }
+
+  .max-w-6xl,
+  .max-w-7xl {
+    max-width: none !important;
+  }
+
+  .shadow-soft {
+    box-shadow: none !important;
+  }
+
+  .rounded-lg,
+  .rounded-md {
+    border-radius: 0 !important;
+  }
+
+  .space-y-6 > :not([hidden]) ~ :not([hidden]),
+  .space-y-5 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.45rem !important;
+  }
+
+  .p-8,
+  .sm\:p-8,
+  .p-5,
+  .sm\:p-5,
+  .p-4,
+  .p-3 {
+    padding: 0.35rem !important;
+  }
+
+  h1 {
+    font-size: 1.25rem !important;
+    line-height: 1.35 !important;
+  }
+
+  h2,
+  h3 {
+    font-size: 0.95rem !important;
+    line-height: 1.35 !important;
+  }
+
+  h4,
+  p,
+  dt,
+  dd,
+  td,
+  th,
+  summary,
+  a,
+  label,
+  input {
+    font-size: 0.68rem !important;
+    line-height: 1.25 !important;
+  }
+
+  table {
+    width: 100% !important;
+  }
+
+  th,
+  td {
+    padding: 0.16rem 0.25rem !important;
+  }
+}
+
+@media screen {
+  .bir60-print-final-banner {
+    display: none;
+  }
+
+  .bir60-replica {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .bir60-replica *,
+  .bir60-replica *::before,
+  .bir60-replica *::after {
+    min-width: 0;
+  }
+}

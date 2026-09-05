@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { MessagesPanel } from "@/components/MessagesPanel";
 import { requireUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import type { EinStatus } from "@prisma/client";
@@ -67,6 +68,10 @@ export default async function EinApplicationPage({ params }: { params: { id: str
             <div className="flex"><dt className="w-40 text-slate-500 shrink-0">Submitted</dt><dd className="text-slate-900">{app.createdAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</dd></div>
           </dl>
         </div>
+      </div>
+
+      <div className="mt-6">
+        <MessagesPanel apiBase={`/api/applications/ein/${app.id}/messages`} isAdmin={false} />
       </div>
 
       <p className="mt-8 text-sm text-slate-500">

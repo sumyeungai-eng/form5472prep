@@ -1075,6 +1075,82 @@ export async function sendNewMessageToAdminEmail(args: {
   });
 }
 
+// ---------- 5c. New application message — admin/customer ----------
+
+export async function sendNewApplicationMessageAdminEmail(args: {
+  adminEmail: string;
+  customerEmail: string;
+  kind: "EIN" | "ITIN";
+  subjectLabel: string;
+  applicationId: string;
+  adminUrl: string;
+  bodyExcerpt: string;
+}): Promise<unknown> {
+  const { adminEmail, customerEmail, kind, subjectLabel, applicationId, adminUrl, bodyExcerpt } = args;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `[${kind} application] New message from ${customerEmail}`,
+    text:
+      `${customerEmail} sent a new message about ${subjectLabel}.\n\n` +
+      `${bodyExcerpt}\n\n` +
+      `Application ID: ${applicationId}\n` +
+      `Reply in admin: ${adminUrl}\n`,
+    html: adminShell({
+      tag: `${kind} application message`,
+      heading: "New message from customer",
+      rows: [
+        ["Customer", customerEmail],
+        ["Application", subjectLabel],
+        ["Kind", kind],
+        ["Application ID", applicationId],
+        ["Message", bodyExcerpt],
+        ["Admin view", adminUrl],
+      ],
+    }),
+  });
+}
+
+export async function sendNewApplicationMessageCustomerEmail(args: {
+  email: string;
+  recipientName?: string | null;
+  kind: "EIN" | "ITIN";
+  subjectLabel: string;
+  bodyExcerpt: string;
+  portalLink: string;
+}): Promise<unknown> {
+  const { email, recipientName, kind, subjectLabel, bodyExcerpt, portalLink } = args;
+  const salutation = firstNameFrom(recipientName) ?? "there";
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
+      You have a new message from our team about your <strong>${escapeHtml(kind)}</strong>
+      application for <strong>${escapeHtml(subjectLabel)}</strong>.
+    </p>
+    <blockquote style="margin:0 0 20px;padding:14px 18px;background:${EMAIL_STYLES.bg};border-left:3px solid ${EMAIL_STYLES.brand};color:${EMAIL_STYLES.ink};font-size:14px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(bodyExcerpt)}</blockquote>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
+      Open your portal to read the full message and reply.
+    </p>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject: `New message about your ${kind} application`,
+    text: customerText(
+      salutation,
+      `You have a new message from our team about your ${kind} application for ${subjectLabel}.\n\n` +
+      `${bodyExcerpt}\n\n` +
+      `Open your portal to read and reply: ${portalLink}`,
+    ),
+    html: customerShell({
+      heading: "You have a new message",
+      salutation,
+      bodyHtml,
+      cta: { label: "Open my portal", url: portalLink },
+    }),
+  });
+}
+
 // ---------- 6. January reminder (annual marketing email) ----------
 
 type ReminderArgs = {
@@ -1272,31 +1348,43 @@ type EinApplicationEmailArgs = {
   llcName: string;
   llcState?: string;
   llcFormedDate?: string;
+  businessMailingAddress?: string;
+  businessType?: string;
   businessPurpose?: string;
+  principalProducts?: string;
   ownerName?: string;
+  dateOfBirth?: string | null;
+  ownerHomeAddress?: string;
   ownerCitizenship?: string;
   ownerResidence?: string;
   passportNumber?: string;
   notes?: string;
 };
 
-export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs & { adminEmail: string }) {
-  const value = (input?: string, fallback = "(not provided)") => input || fallback;
+export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs & { adminEmail: string; amountPaidCents?: number }) {
+  const value = (input?: string | null, fallback = "(not provided)") => input || fallback;
+  const paymentText = args.amountPaidCents && args.amountPaidCents > 0 ? `Payment: ${formatUsd(args.amountPaidCents)} received` : null;
   return sendEmail({
     to: args.adminEmail,
     replyTo: args.email,
-    subject: `[EIN Application] ${args.fullName} — ${args.llcName}`,
+    subject: `${paymentText ? "[Paid] " : ""}[EIN Application] ${args.fullName} — ${args.llcName}`,
     text: [
       "New EIN application",
       "",
+      ...(paymentText ? [paymentText] : []),
       `Name: ${args.fullName}`,
       `Email: ${args.email}`,
       `Phone: ${value(args.phone)}`,
       `LLC name: ${args.llcName}`,
       `State: ${value(args.llcState)}`,
       `Formed date: ${value(args.llcFormedDate)}`,
+      `Company business mailing address: ${value(args.businessMailingAddress)}`,
+      `Business type: ${value(args.businessType)}`,
       `Business purpose: ${value(args.businessPurpose)}`,
+      `Principal line of products or services sold: ${value(args.principalProducts)}`,
       `Owner name: ${value(args.ownerName, "(same as contact)")}`,
+      `Date of birth: ${value(args.dateOfBirth)}`,
+      `Owner home address: ${value(args.ownerHomeAddress)}`,
       `Citizenship: ${value(args.ownerCitizenship)}`,
       `Residence: ${value(args.ownerResidence)}`,
       `Passport number: ${value(args.passportNumber)}`,
@@ -1308,14 +1396,20 @@ export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs
       tag: "EIN application",
       heading: "New EIN application",
       rows: [
+        ...(paymentText ? [["Payment", `${formatUsd(args.amountPaidCents ?? 0)} received`] as [string, string]] : []),
         ["Name", args.fullName],
         ["Email", args.email],
         ["Phone", value(args.phone)],
         ["LLC name", args.llcName],
         ["State", value(args.llcState)],
         ["Formed date", value(args.llcFormedDate)],
+        ["Company business mailing address", value(args.businessMailingAddress)],
+        ["Business type", value(args.businessType)],
         ["Business purpose", value(args.businessPurpose)],
+        ["Principal line of products or services sold", value(args.principalProducts)],
         ["Owner name", value(args.ownerName, "(same as contact)")],
+        ["Date of birth", value(args.dateOfBirth)],
+        ["Owner home address", value(args.ownerHomeAddress)],
         ["Citizenship", value(args.ownerCitizenship)],
         ["Residence", value(args.ownerResidence)],
         ["Passport number", value(args.passportNumber)],
@@ -1364,15 +1458,17 @@ type ItinApplicationEmailArgs = {
   notes?: string;
 };
 
-export async function sendItinApplicationAdminEmail(args: ItinApplicationEmailArgs & { adminEmail: string }) {
+export async function sendItinApplicationAdminEmail(args: ItinApplicationEmailArgs & { adminEmail: string; amountPaidCents?: number }) {
   const value = (input?: string, fallback = "(not provided)") => input || fallback;
+  const paymentText = args.amountPaidCents && args.amountPaidCents > 0 ? `Payment: ${formatUsd(args.amountPaidCents)} received` : null;
   return sendEmail({
     to: args.adminEmail,
     replyTo: args.email,
-    subject: `[ITIN Application] ${args.fullName} — ${args.itinReason}`,
+    subject: `${paymentText ? "[Paid] " : ""}[ITIN Application] ${args.fullName} — ${args.itinReason}`,
     text: [
       "New ITIN application",
       "",
+      ...(paymentText ? [paymentText] : []),
       `Name: ${args.fullName}`,
       `Email: ${args.email}`,
       `Phone: ${value(args.phone)}`,
@@ -1393,6 +1489,7 @@ export async function sendItinApplicationAdminEmail(args: ItinApplicationEmailAr
       tag: "ITIN application",
       heading: "New ITIN application",
       rows: [
+        ...(paymentText ? [["Payment", `${formatUsd(args.amountPaidCents ?? 0)} received`] as [string, string]] : []),
         ["Name", args.fullName],
         ["Email", args.email],
         ["Phone", value(args.phone)],

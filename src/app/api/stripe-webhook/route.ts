@@ -13,6 +13,7 @@ import { sendMetaPurchase } from "@/lib/analytics/metaServer";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 import { formatUsd } from "@/lib/utils";
 import { brandForFiling } from "@/lib/partnerBrand";
+import { notifyApplicationPaid } from "@/lib/applicationNotifications";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,6 +33,52 @@ export async function POST(req: Request) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
+    const applicationType = session.metadata?.applicationType;
+    const applicationId = session.metadata?.applicationId;
+    if (applicationType === "ein" || applicationType === "itin") {
+      if (!applicationId) {
+        console.warn("[stripe-webhook] application checkout missing applicationId", {
+          applicationType,
+          sessionId: session.id,
+        });
+        return NextResponse.json({ received: true, missingApplicationId: true });
+      }
+
+      const paymentIntentId = session.payment_intent as string;
+      const claim =
+        applicationType === "ein"
+          ? await prisma.einApplication.updateMany({
+              where: { id: applicationId, stripePaymentId: null, status: { in: ["RECEIVED", "PAYMENT_PENDING"] } },
+              data: {
+                stripePaymentId: paymentIntentId,
+                amountPaid: session.amount_total ?? 0,
+                paidAt: new Date(),
+                status: "IN_REVIEW",
+              },
+            })
+          : await prisma.itinApplication.updateMany({
+              where: { id: applicationId, stripePaymentId: null, status: { in: ["RECEIVED", "PAYMENT_PENDING"] } },
+              data: {
+                stripePaymentId: paymentIntentId,
+                amountPaid: session.amount_total ?? 0,
+                paidAt: new Date(),
+                status: "IN_REVIEW",
+              },
+            });
+
+      if (claim.count === 0) {
+        console.log(`[stripe-webhook] ${applicationType} application ${applicationId} already paid or not payable — skipping duplicate checkout.session.completed`);
+        return NextResponse.json({ received: true, deduplicated: true });
+      }
+      console.log(`[stripe-webhook] ${applicationType} application ${applicationId} payment recorded`);
+      try {
+        await notifyApplicationPaid(applicationType, applicationId);
+      } catch (err) {
+        console.error("[stripe-webhook] application paid notification failed", err);
+      }
+      return NextResponse.json({ received: true });
+    }
+
     const filingId = session.metadata?.filingId;
     if (filingId) {
       // Idempotency guard, keyed on stripePaymentId (NOT status). Stripe

@@ -328,18 +328,24 @@ model FilingChangeLog {
 // (e.g. customer GET marks fromAdmin=true rows as read, and vice versa). The
 // "first unread" email rule uses unread counts to debounce notifications.
 model Message {
-  id             String    @id @default(cuid())
-  filingId       String
-  filing         Filing    @relation(fields: [filingId], references: [id], onDelete: Cascade)
-  fromAdmin      Boolean
-  body           String
-  attachmentKey  String?
-  attachmentName String?
-  attachmentType String?
-  readAt         DateTime?
-  createdAt      DateTime  @default(now())
+  id                String           @id @default(cuid())
+  filingId          String?
+  filing            Filing?          @relation(fields: [filingId], references: [id], onDelete: Cascade)
+  einApplicationId  String?
+  einApplication    EinApplication?  @relation(fields: [einApplicationId], references: [id], onDelete: Cascade)
+  itinApplicationId String?
+  itinApplication   ItinApplication? @relation(fields: [itinApplicationId], references: [id], onDelete: Cascade)
+  fromAdmin         Boolean
+  body              String
+  attachmentKey     String?
+  attachmentName    String?
+  attachmentType    String?
+  readAt            DateTime?
+  createdAt         DateTime         @default(now())
 
   @@index([filingId, createdAt])
+  @@index([einApplicationId, createdAt])
+  @@index([itinApplicationId, createdAt])
 }
 
 model FilingDocument {
@@ -419,18 +425,49 @@ model EinApplication {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  fullName         String
-  email            String
-  phone            String?
-  llcName          String
-  llcState         String?
-  llcFormedDate    String?
-  businessPurpose  String?
-  ownerName        String?
-  ownerCitizenship String?
-  ownerResidence   String?
-  passportNumber   String?
-  notes            String?
+  fullName               String
+  email                  String
+  phone                  String?
+  llcName                String
+  llcState               String?
+  llcFormedDate          String?
+  businessMailingAddress String?
+  businessType           String?
+  businessPurpose        String?
+  principalProducts      String?
+  ownerName              String?
+  dateOfBirth            String? // owner's date of birth, ISO YYYY-MM-DD from the form
+  ownerHomeAddress       String?
+  ownerCitizenship       String?
+  ownerResidence         String?
+  passportNumber         String?
+  notes                  String?
+
+  // Which landing-page funnel created this EIN application. Null = standard /ein/apply flow.
+  funnelSource String?
+
+  // FIRST-TOUCH traffic attribution, captured on the visitor's very first
+  // request and never overwritten afterwards. funnelSource (above) records
+  // which landing PAGE they entered through; these record where the traffic
+  // came FROM, so an application can be credited to Google Ads / Meta Ads / a
+  // referring site / organic search.
+  //   attrSource   = normalised channel ("google-ads", "meta-ads",
+  //                  "google-organic", "referral", "direct", or raw utm_source)
+  //   attrMedium   = utm_medium (cpc, organic, referral, email, ...)
+  //   attrCampaign = utm_campaign
+  //   attrReferrer = referring host (never a full URL with query, to avoid
+  //                  storing third-party tracking params)
+  //   attrLanding  = first landing pathname
+  attrSource   String?
+  attrMedium   String?
+  attrCampaign String?
+  attrReferrer String?
+  attrLanding  String?
+
+  amountPaid      Int       @default(0)
+  stripeSessionId String?
+  stripePaymentId String?
+  paidAt          DateTime?
 
   status     EinStatus @default(RECEIVED)
   adminNotes String?
@@ -438,6 +475,7 @@ model EinApplication {
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
+  messages Message[]
 }
 
 enum EinStatus {
@@ -469,12 +507,39 @@ model ItinApplication {
   passportExpiry     String?
   notes              String?
 
+  // Which landing-page funnel created this ITIN application. Null = standard /itin/apply flow.
+  funnelSource String?
+
+  // FIRST-TOUCH traffic attribution, captured on the visitor's very first
+  // request and never overwritten afterwards. funnelSource (above) records
+  // which landing PAGE they entered through; these record where the traffic
+  // came FROM, so an application can be credited to Google Ads / Meta Ads / a
+  // referring site / organic search.
+  //   attrSource   = normalised channel ("google-ads", "meta-ads",
+  //                  "google-organic", "referral", "direct", or raw utm_source)
+  //   attrMedium   = utm_medium (cpc, organic, referral, email, ...)
+  //   attrCampaign = utm_campaign
+  //   attrReferrer = referring host (never a full URL with query, to avoid
+  //                  storing third-party tracking params)
+  //   attrLanding  = first landing pathname
+  attrSource   String?
+  attrMedium   String?
+  attrCampaign String?
+  attrReferrer String?
+  attrLanding  String?
+
+  amountPaid      Int       @default(0)
+  stripeSessionId String?
+  stripePaymentId String?
+  paidAt          DateTime?
+
   status     ItinStatus @default(RECEIVED)
   adminNotes String?
   itin       String? // filled when ITIN is issued
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
+  messages Message[]
 }
 
 enum ItinStatus {

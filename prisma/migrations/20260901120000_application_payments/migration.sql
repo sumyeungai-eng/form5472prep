@@ -1,0 +1,12 @@
+ALTER TABLE "EinApplication" ADD COLUMN "businessMailingAddress" TEXT;
+ALTER TABLE "EinApplication" ADD COLUMN "businessType" TEXT;
+ALTER TABLE "EinApplication" ADD COLUMN "principalProducts" TEXT;
+ALTER TABLE "EinApplication" ADD COLUMN "ownerHomeAddress" TEXT;
+ALTER TABLE "EinApplication" ADD COLUMN "amountPaid" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "EinApplication" ADD COLUMN "stripeSessionId" TEXT;
+ALTER TABLE "EinApplication" ADD COLUMN "stripePaymentId" TEXT;
+ALTER TABLE "EinApplication" ADD COLUMN "paidAt" TIMESTAMP(3);
+ALTER TABLE "ItinApplication" ADD COLUMN "amountPaid" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "ItinApplication" ADD COLUMN "stripeSessionId" TEXT;
+ALTER TABLE "ItinApplication" ADD COLUMN "stripePaymentId" TEXT;
+ALTER TABLE "ItinApplication" ADD COLUMN "paidAt" TIMESTAMP(3);

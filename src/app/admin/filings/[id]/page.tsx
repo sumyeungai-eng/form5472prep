@@ -221,7 +221,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
 
       {/* Customer ↔ admin messages */}
       <div className="mb-6">
-        <MessagesPanel filingId={filing.id} isAdmin={true} />
+        <MessagesPanel apiBase={`/api/filings/${filing.id}/messages`} isAdmin={true} />
       </div>
 
       {/* Two-column details */}

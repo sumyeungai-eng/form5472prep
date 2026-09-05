@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { MessagesPanel } from "@/components/MessagesPanel";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
+import { formatAttribution } from "@/lib/attribution";
+import { formatUsd } from "@/lib/utils";
 import { EinAdminActions } from "./EinAdminActions";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +18,22 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
     include: { user: true },
   });
   if (!app) notFound();
+
+  const attribution = {
+    source: app.attrSource,
+    medium: app.attrMedium,
+    campaign: app.attrCampaign,
+    referrer: app.attrReferrer,
+    landing: app.attrLanding,
+  };
+  const hasTrafficSource = !!(
+    app.funnelSource ||
+    app.attrSource ||
+    app.attrMedium ||
+    app.attrCampaign ||
+    app.attrReferrer ||
+    app.attrLanding
+  );
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
@@ -48,17 +67,39 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
           <Row label="Email" value={<a href={`mailto:${app.email}`} className="text-accent hover:underline">{app.email}</a>} />
           <Row label="Phone" value={app.phone} />
         </Section>
+        <Section title="Traffic source">
+          {hasTrafficSource ? (
+            <>
+              <Row label="Channel" value={formatAttribution(attribution)} />
+              <Row label="Landing page" value={app.attrLanding} />
+              <Row label="Referring site" value={app.attrReferrer} />
+              <Row label="Landing funnel" value={app.funnelSource} />
+            </>
+          ) : (
+            <Row label="Channel" value="Direct / unknown" />
+          )}
+        </Section>
         <Section title="LLC">
           <Row label="LLC name" value={app.llcName} />
           <Row label="State" value={app.llcState} />
           <Row label="Formed" value={app.llcFormedDate} />
+          <Row label="Business mailing address" value={app.businessMailingAddress} />
+          <Row label="Business type" value={app.businessType} />
           <Row label="Business purpose" value={app.businessPurpose} />
+          <Row label="Products or services" value={app.principalProducts} />
         </Section>
         <Section title="Owner">
           <Row label="Owner name" value={app.ownerName} />
+          <Row label="Date of birth" value={app.dateOfBirth} />
+          <Row label="Home address" value={app.ownerHomeAddress} />
           <Row label="Citizenship" value={app.ownerCitizenship} />
           <Row label="Residence" value={app.ownerResidence} />
           <Row label="Passport" value={app.passportNumber} />
+        </Section>
+        <Section title="Payment">
+          <Row label="Status" value={<PaymentBadge paid={!!app.stripePaymentId} />} />
+          <Row label="Amount" value={app.amountPaid > 0 ? formatUsd(app.amountPaid) : null} />
+          <Row label="Paid on" value={app.paidAt ? app.paidAt.toLocaleString("en-US") : null} />
         </Section>
         {app.notes && (
           <Section title="Notes from applicant">
@@ -79,6 +120,10 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
         currentAdminNotes={app.adminNotes ?? ""}
         currentEin={app.ein ?? ""}
       />
+
+      <div className="mt-8">
+        <MessagesPanel apiBase={`/api/applications/ein/${app.id}/messages`} isAdmin />
+      </div>
     </div>
   );
 }
@@ -101,5 +146,17 @@ function Row({ label, value }: { label: string; value: React.ReactNode | null | 
       <span className="w-40 text-slate-500 shrink-0">{label}</span>
       <span className="text-slate-900">{value}</span>
     </div>
+  );
+}
+
+function PaymentBadge({ paid }: { paid: boolean }) {
+  return (
+    <span
+      className={`inline-block text-[11px] font-medium rounded-full px-2 py-0.5 ${
+        paid ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+      }`}
+    >
+      {paid ? "Paid" : "Unpaid"}
+    </span>
   );
 }

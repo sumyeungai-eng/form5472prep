@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { CheckCircle2, ShieldCheck, Phone, FileText, ArrowRight } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
+import { EIN_APPLICATION_FAQ } from "@/lib/einApplicationFaq";
 import { env } from "@/lib/env";
 import {
   CONTENT_LAST_REVIEWED,
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
   }),
 };
 
-const faq = [
+const serviceFaq = [
   {
     q: "What is an EIN and why do I need one?",
     a: "An EIN (Employer Identification Number) is a 9-digit US tax ID issued by the IRS to business entities. Your LLC needs an EIN to open a US business bank account (Mercury, Relay, Chase), set up Stripe or PayPal, hire US contractors, file Form 5472, and sign certain contracts. Without an EIN you can't operate a US LLC in any meaningful way.",
@@ -60,6 +61,8 @@ const faq = [
     a: "Then you don't need this service. If you've lost or forgotten your EIN, we can also help retrieve it — contact support@form5472prep.com.",
   },
 ];
+
+const faq = [...serviceFaq, ...EIN_APPLICATION_FAQ];
 
 const steps = [
   {

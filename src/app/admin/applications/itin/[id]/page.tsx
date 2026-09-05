@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { MessagesPanel } from "@/components/MessagesPanel";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
+import { formatAttribution } from "@/lib/attribution";
+import { formatUsd } from "@/lib/utils";
 import { ItinAdminActions } from "./ItinAdminActions";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +18,22 @@ export default async function AdminItinApplicationPage({ params }: { params: { i
     include: { user: true },
   });
   if (!app) notFound();
+
+  const attribution = {
+    source: app.attrSource,
+    medium: app.attrMedium,
+    campaign: app.attrCampaign,
+    referrer: app.attrReferrer,
+    landing: app.attrLanding,
+  };
+  const hasTrafficSource = !!(
+    app.funnelSource ||
+    app.attrSource ||
+    app.attrMedium ||
+    app.attrCampaign ||
+    app.attrReferrer ||
+    app.attrLanding
+  );
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
@@ -46,6 +65,18 @@ export default async function AdminItinApplicationPage({ params }: { params: { i
           <Row label="Email" value={<a href={`mailto:${app.email}`} className="text-accent hover:underline">{app.email}</a>} />
           <Row label="Phone" value={app.phone} />
         </Section>
+        <Section title="Traffic source">
+          {hasTrafficSource ? (
+            <>
+              <Row label="Channel" value={formatAttribution(attribution)} />
+              <Row label="Landing page" value={app.attrLanding} />
+              <Row label="Referring site" value={app.attrReferrer} />
+              <Row label="Landing funnel" value={app.funnelSource} />
+            </>
+          ) : (
+            <Row label="Channel" value="Direct / unknown" />
+          )}
+        </Section>
         <Section title="Personal Info">
           <Row label="Date of birth" value={app.dateOfBirth} />
           <Row label="Country of birth" value={app.countryOfBirth} />
@@ -60,6 +91,11 @@ export default async function AdminItinApplicationPage({ params }: { params: { i
         <Section title="Passport">
           <Row label="Passport number" value={app.passportNumber} />
           <Row label="Passport expiry" value={app.passportExpiry} />
+        </Section>
+        <Section title="Payment">
+          <Row label="Status" value={<PaymentBadge paid={!!app.stripePaymentId} />} />
+          <Row label="Amount" value={app.amountPaid > 0 ? formatUsd(app.amountPaid) : null} />
+          <Row label="Paid on" value={app.paidAt ? app.paidAt.toLocaleString("en-US") : null} />
         </Section>
         {app.notes && (
           <Section title="Notes from applicant">
@@ -80,6 +116,10 @@ export default async function AdminItinApplicationPage({ params }: { params: { i
         currentAdminNotes={app.adminNotes ?? ""}
         currentItin={app.itin ?? ""}
       />
+
+      <div className="mt-8">
+        <MessagesPanel apiBase={`/api/applications/itin/${app.id}/messages`} isAdmin />
+      </div>
     </div>
   );
 }
@@ -102,5 +142,17 @@ function Row({ label, value }: { label: string; value: React.ReactNode | null | 
       <span className="w-40 text-slate-500 shrink-0">{label}</span>
       <span className="text-slate-900">{value}</span>
     </div>
+  );
+}
+
+function PaymentBadge({ paid }: { paid: boolean }) {
+  return (
+    <span
+      className={`inline-block text-[11px] font-medium rounded-full px-2 py-0.5 ${
+        paid ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+      }`}
+    >
+      {paid ? "Paid" : "Unpaid"}
+    </span>
   );
 }
