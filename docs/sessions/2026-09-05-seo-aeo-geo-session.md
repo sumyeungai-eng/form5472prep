@@ -4,6 +4,13 @@
 **Branch:** `tools/commercial-assets` · **Shipped to main:** `6227bd0` → `52e9598` (8 commits, 102 files)
 **Status at close:** all work merged to `origin/main`, deployed, and verified live. No agents running.
 
+**Update, later on 2026-09-05:** a sibling session merged a large branch into
+`main` (hktax app + EIN/ITIN payments + 17 posts). Re-verified afterwards —
+all three tools, `src/lib/penalty.ts`, the 6 provider entries, the homepage
+tools section, IndexNow and this log are intact on `origin/main`. That session
+also adopted the push-only deploy rule and wrote `REPO-STATE.md`; read it
+alongside this log.
+
 > Read this before editing anything listed under "Files this session owns". Several
 > Claude/Codex sessions share this repo — see `CLAUDE.md` for the deploy and
 > tree-hygiene rules that caused three production outages before they were written down.
@@ -15,7 +22,7 @@
 | Checkout | Branch | Owner / purpose |
 |---|---|---|
 | `~/Documents/Codex/form5472-tools` | `tools/commercial-assets` | **This session.** Tools, provider pages, SEO/AEO/GEO. Kept identical to `origin/main`; ships via `git push origin HEAD:main`. |
-| `~/Documents/Codex/form5472` | `test/merge-into-main` | hktax session. Now sitting at `52e9598`. **Must not deploy to the form5472prep production project.** |
+| `~/Documents/Codex/form5472` | `test/merge-into-main` | hktax / blog session. **Merged into `main` later on 2026-09-05** (`7e7cea6`…`800b35f`): the whole `hktax/` app, EIN/ITIN payment-at-submission + attribution, 4 Prisma migrations, 17 blog posts, and `REPO-STATE.md`. `hktax/` is excluded from the root build via `tsconfig.json` `exclude`, so it ships as source only — it must still never be deployed as the form5472prep production site. |
 | `~/Documents/Claude work/form5472` | `feat/seo-geo-aeo-sprint` | Another session (in-guide TOC + H2 anchor links, `c007cbc`). Has unshipped `$49` budget-tier code — **not on `main`, not live**. Its git remote URL contains a plaintext `ghp_…` token; that token needs rotating and the remote switching to SSH. |
 
 **Deploy rule (unchanged, restated because it broke production three times):**
