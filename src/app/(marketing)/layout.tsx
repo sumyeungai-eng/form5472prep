@@ -94,6 +94,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <li><Link href="/form-5472-penalty-calculator" className="hover:text-ink">Penalty calculator</Link></li>
                 <li><Link href="/partners" className="hover:text-ink">Become a Partner</Link></li>
                 <li><Link href="/blog" className="hover:text-ink">Guides</Link></li>
+                <li><Link href="/faq" className="hover:text-ink">FAQ</Link></li>
                 <li><Link href="/contact" className="hover:text-ink">Contact</Link></li>
                 <li><Link href="/about" className="hover:text-ink">About</Link></li>
               </ul>

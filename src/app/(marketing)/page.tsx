@@ -737,6 +737,9 @@ function Faq() {
             </Reveal>
           ))}
         </dl>
+        <Link href="/faq" className="mt-8 inline-block text-sm text-accent underline underline-offset-2">
+          See all questions →
+        </Link>
       </div>
     </section>
   );
