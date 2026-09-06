@@ -75,6 +75,11 @@ Verified before push, each run personally, not taken from the lane's report:
 - index name `Filing_status_supersededAt_idx` matches Prisma's convention for
   `@@index([status, supersededAt])`, so no drift
 
+After deploy:
+
+- build log: `Applying migration 20260906120000_supersede_stale_drafts` → `All migrations have been successfully applied.`
+- live: `ein/checkout` 400 (exists), `/ein/apply` date-of-birth marker 1, penalty calculator 200, homepage 200
+
 ## Still open
 
 **Needs the owner**
@@ -85,11 +90,15 @@ Verified before push, each run personally, not taken from the lane's report:
 
 **Needs another agent / follow-up**
 
-- **The backfill has never been executed.** There is no local Postgres and Vercel returns
-  `DATABASE_URL` empty (marked sensitive), so the SQL was reviewed but not run. Prisma wraps
-  each migration in a transaction, so it is atomic; a failure fails the BUILD and Vercel keeps
-  serving the previous deployment rather than causing an outage. After this deploy, confirm in
-  `/admin/filings?hidden=1` that the archived rows look right.
+- **Backfill applied successfully.** It could not be tested locally (no local Postgres;
+  Vercel returns `DATABASE_URL` empty because it is marked sensitive), so the first execution
+  was the production deploy. Build log for `fce1e1d` confirms it:
+  `Applying migration 20260906120000_supersede_stale_drafts` →
+  `All migrations have been successfully applied.`
+  **Not yet eyeballed:** nobody has looked at WHICH rows it archived. Owner should open
+  `/admin/filings?hidden=1` and sanity-check that the archived drafts are genuine false starts.
+  If any look wrong, `UPDATE "Filing" SET "supersededAt" = NULL, "supersededById" = NULL`
+  (optionally scoped by `"supersededById" = '<id>'`) restores them.
 - The admin manual `DRAFT → PAID` transition (`src/lib/admin/mutations.ts`) does NOT call
   `supersedeDraftsFor`. Rare path, deliberately left out of scope; add it if manual promotions
   become common.
