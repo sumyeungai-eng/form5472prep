@@ -86,7 +86,12 @@ npm run build                         # must print "Compiled successfully"
 ```
 
 Harmless noise: `prisma:error ... database unavailable, falling back to files only` — `.env.local`
-points at **localhost**, and there is no local Postgres. Production migrations apply automatically
+points at **localhost**, and there is no local Postgres. **You cannot reach the production database
+from this Mac**: `vercel env pull` returns `DATABASE_URL=""` because the variable is marked
+sensitive, and there is no local Postgres or Docker. So production row counts, data probes and
+migration dry-runs are impossible here — a data migration's first execution is the deploy.
+Prisma wraps each migration in a transaction, so a bad one fails the BUILD and Vercel keeps
+serving the previous deployment rather than breaking the site. Production migrations apply automatically
 on Vercel via `vercel-build`; never run `prisma migrate dev` here.
 
 `tsconfig.json` excludes `hktax/` (a separate Next app inside this repo, with its own
@@ -124,6 +129,8 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
 - `docs/sessions/2026-09-05-seo-aeo-geo-session.md` — SEO/GEO sprint + conversion tools
 - `docs/sessions/2026-09-05-payments-merge-deliverability-session.md` — EIN/ITIN payments, the
   branch reunification, email deliverability
+- `docs/sessions/2026-09-06-duplicate-draft-filings.md` — duplicate DRAFT rows: supersede-on-
+  payment + backfill, and the cron that was emailing paying customers
 
 ---
 
