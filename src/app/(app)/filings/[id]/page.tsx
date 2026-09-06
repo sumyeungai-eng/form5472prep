@@ -12,6 +12,7 @@ import { PurchaseConversionPing } from "./PurchaseConversionPing";
 import { getTiersForSource } from "@/lib/pricing";
 import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { TrustpilotWidget, TRUSTPILOT_TEMPLATES, REVIEW_COLLECTOR_TOKEN } from "@/components/TrustpilotWidget";
+import { supersedeDraftsFor } from "@/lib/supersedeDrafts";
 
 // Statuses where the filing is paid but not yet acknowledged as complete —
 // the window in which the customer still cares "will this land before my
@@ -72,6 +73,11 @@ export default async function FilingDetailPage({
         where: { id: filing.id },
         data: { status: "PAID" },
       });
+      try {
+        await supersedeDraftsFor(filing.id);
+      } catch (err) {
+        console.error("[filing] supersede drafts failed", err);
+      }
       filing = { ...filing, status: "PAID" };
     }
   }

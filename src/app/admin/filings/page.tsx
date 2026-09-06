@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Inbox } from "lucide-react";
-import type { Prisma } from "@prisma/client";
+import type { FilingStatus, Prisma } from "@prisma/client";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { formatUsd } from "@/lib/utils";
@@ -37,9 +37,9 @@ export default async function AdminFilingsPage({
 
   const statusFilter = searchParams.status?.toUpperCase();
   const q = (searchParams.q ?? "").trim();
-  // hidden=1 flips the list into the archive view: ONLY drafts the admin
-  // dismissed. Any other value means the normal list, which must never show
-  // them — dismissing a draft is meant to make it disappear.
+  // hidden=1 flips the list into the archive view: rows dismissed by the admin
+  // plus system-superseded false starts. Any other value means the normal list,
+  // which must never show either kind of archived draft.
   const showHidden = searchParams.hidden === "1";
   // Every view that can contain DRAFT rows — the default (all statuses), the
   // explicit DRAFT filter, and the archive. Only these pay for the extra
@@ -55,18 +55,25 @@ export default async function AdminFilingsPage({
   // customers who finished everything and stalled at payment — the exact rows
   // the admin most wants to see. Junk drafts are handled by Hide, not by
   // hiding the whole status.
-  const where: Record<string, unknown> = { adminHidden: showHidden };
-  if (statusFilter && STATUS_VALUES.includes(statusFilter)) {
-    where.status = statusFilter;
+  const whereParts: Prisma.FilingWhereInput[] = [
+    showHidden
+      ? { OR: [{ adminHidden: true }, { supersededAt: { not: null } }] }
+      : { adminHidden: false, supersededAt: null },
+  ];
+  if (statusFilter && isFilingStatus(statusFilter)) {
+    whereParts.push({ status: statusFilter });
   }
-  if (reviewOnly) where.inReview = true;
+  if (reviewOnly) whereParts.push({ inReview: true });
   if (q) {
-    where.OR = [
-      { llcName: { contains: q, mode: "insensitive" } },
-      { user: { email: { contains: q, mode: "insensitive" } } },
-      { id: { equals: q } },
-    ];
+    whereParts.push({
+      OR: [
+        { llcName: { contains: q, mode: "insensitive" } },
+        { user: { email: { contains: q, mode: "insensitive" } } },
+        { id: { equals: q } },
+      ],
+    });
   }
+  const where: Prisma.FilingWhereInput = { AND: whereParts };
 
   const filings: FilingRow[] = await prisma.filing.findMany({
     where,
@@ -110,6 +117,7 @@ export default async function AdminFilingsPage({
         status: "DRAFT",
         userId: { not: null },
         adminHidden: false,
+        supersededAt: null,
         updatedAt: { gte: since },
       },
     }),
@@ -379,7 +387,11 @@ const STATUS_VALUES = [
   "FAXED",
   "CONFIRMED",
   "FAILED",
-];
+] as const satisfies readonly FilingStatus[];
+
+function isFilingStatus(value: string): value is FilingStatus {
+  return STATUS_VALUES.includes(value as FilingStatus);
+}
 
 // Late/extension triage at a glance — the row-level counterpart to the
 // "Filing deadline" block on the detail page. Two chips, both amber, both

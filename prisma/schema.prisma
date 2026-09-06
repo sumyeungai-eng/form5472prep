@@ -249,6 +249,14 @@ model Filing {
   // only ever set on DRAFT filings — paid filings are never hidden.
   adminHidden Boolean @default(false)
 
+  // Set when a later PAID filing from the same customer makes this abandoned
+  // draft redundant (false start, then restarted and paid). Superseded drafts
+  // are hidden from the admin default view, the customer dashboard and the
+  // abandoned-draft cron, but the row is kept and the field is nullable, so
+  // clearing it fully restores the draft.
+  supersededAt   DateTime?
+  supersededById String?
+
   // Admin review marker: true while staff is actively reviewing this filing.
   // Internal only and independent of customer-facing status; never set by
   // customer code. Reversible, with the time and admin cleared when turned off.
@@ -294,6 +302,7 @@ model Filing {
   // cron (where status=DRAFT and updatedAt in window) + reminder audience
   // selection all filter on status, often with updatedAt.
   @@index([status, updatedAt])
+  @@index([status, supersededAt])
   // telnyx-webhook + fax-status-poll look up the filing by its Telnyx job id
   // on every inbound event.
   @@index([faxJobId])

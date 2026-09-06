@@ -68,6 +68,7 @@ async function processCohort(opts: CohortOpts) {
   const drafts = await prisma.filing.findMany({
     where: {
       status: "DRAFT",
+      supersededAt: null,
       userId: { not: null },
       updatedAt: { lte: idleAtLeast, gte: notOlderThan },
       user: { is: { emailMarketingOptOut: false } },

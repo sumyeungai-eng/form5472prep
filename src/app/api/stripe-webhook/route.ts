@@ -14,6 +14,7 @@ import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 import { formatUsd } from "@/lib/utils";
 import { brandForFiling } from "@/lib/partnerBrand";
 import { notifyApplicationPaid } from "@/lib/applicationNotifications";
+import { supersedeDraftsFor } from "@/lib/supersedeDrafts";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -135,6 +136,11 @@ export async function POST(req: Request) {
         where: { id: filing.id },
         data: { amountPaid: session.amount_total ?? filing.amountPaid },
       });
+      try {
+        await supersedeDraftsFor(filing.id);
+      } catch (err) {
+        console.error("[stripe-webhook] supersede drafts failed", err);
+      }
 
       // Consent-gated server-side Purchase event. Only a hashed email, order
       // value, currency, and event ID are sent; no filing or tax data leaves

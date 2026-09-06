@@ -70,7 +70,7 @@ function ItinStatusBadge({ status }: { status: ItinStatus }) {
 export default async function DashboardPage() {
   const user = await requireUser();
   const filings = await prisma.filing.findMany({
-    where: { userId: user.id },
+    where: { userId: user.id, supersededAt: null },
     orderBy: { updatedAt: "desc" },
   });
   const taxYear = taxYearForSend();
