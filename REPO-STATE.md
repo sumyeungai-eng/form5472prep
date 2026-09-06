@@ -131,6 +131,8 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
   branch reunification, email deliverability
 - `docs/sessions/2026-09-06-duplicate-draft-filings.md` — duplicate DRAFT rows: supersede-on-
   payment + backfill, and the cron that was emailing paying customers
+- `docs/sessions/2026-09-06-faq-hub-page.md` — central `/faq` (51 source-cited answers, AEO/GEO
+  schema); the answer-content contracts live in `src/lib/faq.test.ts`
 
 ---
 

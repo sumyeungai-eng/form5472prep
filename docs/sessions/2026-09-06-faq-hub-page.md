@@ -49,7 +49,16 @@ corrected to `src/lib/penalty.ts:1`, CAA sources extended, March reminder added.
 
 ## Deploy
 
-DEPLOY_PLACEHOLDER
+Pushed `a5b64ad` → production auto-deploy; `/faq` went 404 → 200 within ~3 min.
+
+Live verification (curl against `https://www.form5472prep.com`, personally):
+
+- `/faq`: 51 `"@type":"Question"`, 1 `FAQPage`, 1 `BreadcrumbList`, 1 `speakable`
+- CP-15 scope sentence present; 0 page-attribution leaks
+- homepage: 2 `href="/faq"` (footer + "See all questions")
+- `sitemap.xml` and `llms.txt` both list `/faq`
+- three-check unchanged: ein/checkout 400, `/ein/apply` DOB marker 1, penalty calculator 200
+- IndexNow: Batch 1/1: HTTP 200 — OK — URLs submitted successfully
 
 ## Still open
 
