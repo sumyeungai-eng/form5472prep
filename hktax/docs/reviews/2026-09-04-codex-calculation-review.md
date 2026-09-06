@@ -80,9 +80,9 @@ Next steps:
 
 # Architect adjudication (Fable 5.1, 2026-09-04/06)
 
-Reports are claims. Three findings are rejected or discounted with reasons; the rest are
+Reports are claims. Of 18 findings (15 high, 3 medium), three are rejected or discounted with reasons; the remaining 15 are
 plausible and UNVERIFIED — verify each against the IRO/IRD source before changing code.
-Numbering follows the order above (1 = cross-trade losses … 17 = holdover heads).
+Numbering follows the order above (1 = cross-trade losses … 15 = provisional, 16 = rounding, 17 = single-parent, 18 = holdover heads).
 
 | # | Finding | Verdict | Reason |
 |---|---|---|---|
@@ -95,8 +95,8 @@ Numbering follows the order above (1 = cross-trade losses … 17 = holdover head
 | 9 | Joint-assessment donations capped spouse-by-spouse | Plausible | DIPN 37. |
 | 11 | Permanent-resident route to PA lapsed after 2017/18 | Plausible | DIPN 18 — verify the amendment year. |
 | 10 | Parent age from birth year (post-31-March births) | Plausible | Needs DOB or age-at-31-March. |
-| 16 | PA grants single-parent allowance from a bare flag | Plausible | Salaries path already gates on a child. |
-| 4, 7, 8, 12, 13, 14, 17 | Depreciation inputs, housing model, rent suffered, PA joint test, property consideration, lease premium, holdover heads; 15 rounding | Plausible / model-scope | Each needs a statute check; several are modelling breadth rather than wrong arithmetic. |
+| 17 | PA grants single-parent allowance from a bare flag | Plausible | Salaries path already gates on a child. |
+| 4, 7, 8, 12, 13, 14, 16, 18 | Depreciation inputs, housing model, rent suffered, PA joint test, property consideration, lease premium, per-business rounding, holdover heads | Plausible / model-scope | Each needs a statute check; several are modelling breadth rather than wrong arithmetic. |
 
 Owner decides whether to fund the verification + fix wave (see the 2026-09-06 session log,
 owner-gated §6).

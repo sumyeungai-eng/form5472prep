@@ -87,7 +87,7 @@ zip `out/`, hPanel File Manager → upload via hidden file input → Extract, fo
 3. Home hero headline is now 輕鬆算清你的香港稅款 (個人稅 is not a HK tax); owner sign-off.
 4. `額外賞賜` (statutory "perquisite") reads archaic; 非現金利益 is the alternative.
 5. 項目代碼 / 中文名稱 / 英文名稱 fields are developer plumbing exposed to taxpayers.
-6. Codex calculation review (docs/reviews/2026-09-04-codex-calculation-review.md): 14
+6. Codex calculation review (docs/reviews/2026-09-04-codex-calculation-review.md): 15
    unadjudicated findings, several plausibly real money. Owner decides whether to fund the
    verification + fix wave.
 
@@ -113,7 +113,7 @@ zip `out/`, hPanel File Manager → upload via hidden file input → Extract, fo
 - Three Claude (opus) audit lanes on disjoint file sets for Chinese copy worked well; one
   self-caught four wrong "corrections" against BIR60 specimens. Chinese-language judgment was
   deliberately routed to Claude rather than codex/grok.
-- Codex adversarial calculation review: 17 findings; 3 judged false/known by the architect
+- Codex adversarial calculation review: 18 findings (15 high, 3 medium); 3 judged false/known by the architect
   (corporate 8.25/16.5 rates = the architect's own prompt error, site is individuals-only;
   cross-trade loss set-off contradicts IRO s.19C(1) primary-source check; provisional-tax
-  allowances = documented v1 limitation, golden G24). Remaining 14 unverified.
+  allowances = documented v1 limitation, golden G24). Remaining 15 unverified.
