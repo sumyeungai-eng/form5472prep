@@ -187,6 +187,8 @@ export async function POST(req: Request) {
           portalLink: makeMagicLink(filing.user.id),
           proof,
           receiptPdfBytes,
+          isFinalReturn: filing.isFinalReturn,
+          dissolvedAt: filing.dissolvedAt,
         });
       } catch (err) {
         console.error("[telnyx-webhook] fax delivered email failed", err);

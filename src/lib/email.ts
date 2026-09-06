@@ -655,11 +655,16 @@ export async function sendFaxDeliveredEmail(args: {
   // proof-of-delivery document on its own.
   receiptPdfBytes?: Uint8Array | Buffer;
   brand?: EmailBrand;
+  isFinalReturn?: boolean;
+  dissolvedAt?: Date | string | null;
 }) {
-  const { email, recipientName, llcName, taxYears, portalLink, proof, signedPdfBytes, receiptPdfBytes, brand } = args;
+  const { email, recipientName, llcName, taxYears, portalLink, proof, signedPdfBytes, receiptPdfBytes, brand, isFinalReturn } = args;
   const salutation = firstNameFrom(recipientName) ?? "there";
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "your filing";
+  const latestYear = taxYears.length ? Math.max(...taxYears) : null;
+  const nextTaxYear = latestYear != null ? latestYear + 1 : null;
+  const nextDueDateLabel = nextTaxYear != null ? formatDueDate(filingDueDateUtc(nextTaxYear)) : null;
 
   const proofTable = proof
     ? `
@@ -671,26 +676,55 @@ export async function sendFaxDeliveredEmail(args: {
     `
     : "";
 
+  const closingHtml =
+    nextTaxYear == null || nextDueDateLabel == null
+      ? ""
+      : isFinalReturn
+        ? `
+    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Final return</p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
+      Because this filing was submitted as a final return for a dissolved entity, no further Form 5472
+      filings are required provided the company does not resume activity. Please retain this message,
+      the IRS Fax Transmission Receipt, and the filed package with your permanent tax records for at
+      least six years.
+    </p>
+  `
+        : `
+    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Your next filing obligation</p>
+    <p style="margin:0 0 12px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
+      Form 5472 remains an annual requirement for as long as <strong>${escapeHtml(llcLine)}</strong>
+      remains a foreign-owned U.S. entity. The next return covers tax year ${escapeHtml(String(nextTaxYear))}
+      and is due on ${escapeHtml(nextDueDateLabel)}. Late or missed filings carry a statutory penalty of
+      <strong>$25,000 per return</strong>, so the date is worth noting now.
+    </p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
+      We will send a reminder in <strong>early January ${escapeHtml(String(nextTaxYear + 1))}</strong>,
+      giving over three months' notice before the deadline, and a further reminder if the filing remains
+      outstanding. Because company and ownership details are retained on file, a returning filing takes
+      about five minutes.
+    </p>
+  `;
+
   const bodyHtml = `
     <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      Good news — your signed Form 5472 + pro forma 1120 for <strong>${escapeHtml(llcLine)}</strong>
-      (tax year${taxYears.length > 1 ? "s" : ""} ${escapeHtml(yearsLabel)}) was successfully faxed
-      to the IRS Ogden PIN Unit.
+      We are pleased to confirm that your signed Form 5472 and pro forma Form 1120 for
+      <strong>${escapeHtml(llcLine)}</strong> (tax year${taxYears.length > 1 ? "s" : ""}
+      ${escapeHtml(yearsLabel)}) were successfully faxed to the IRS Ogden PIN Unit.
     </p>
     <div style="background:${EMAIL_STYLES.greenBg};border:1px solid ${EMAIL_STYLES.greenBorder};border-radius:8px;padding:14px 18px;margin:0 0 20px;color:${EMAIL_STYLES.greenDark};font-size:14px;">
-      <strong>✓ Delivered to the IRS</strong> — keep this email as your proof of submission.
+      <strong>✓ Delivered to the IRS</strong> — please retain this message with your permanent tax records as evidence of timely submission.
     </div>
     ${proofTable}
     ${receiptPdfBytes ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      A timestamped <strong>IRS Fax Transmission Receipt</strong> is saved in your portal — download
-      it to keep with your tax records. Under IRC § 6038A it serves as proof of on-time filing if
-      the IRS ever asks.
+      A timestamped <strong>IRS Fax Transmission Receipt</strong> is saved in your portal. Please
+      download it and keep it with your tax records. Under IRC § 6038A, it serves as proof of
+      on-time filing if the IRS ever asks.
     </p>` : ""}
-    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What's next</p>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      The IRS doesn't send acknowledgments for faxed 5472 filings, so no further action is required.
-      You can re-download the receipt and your filing package anytime from your portal.
+    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
+      The IRS does not send acknowledgments for faxed Form 5472 filings. You can re-download the
+      receipt and your filing package anytime from your portal.
     </p>
+    ${closingHtml}
   `;
 
   const proofText = proof
@@ -702,18 +736,34 @@ export async function sendFaxDeliveredEmail(args: {
       (proof.from ? `  Sent from:      ${proof.from}\n` : "") +
       `  Confirmation:   ${proof.faxId}\n`
     : "";
+  const receiptText = receiptPdfBytes
+    ? `A timestamped IRS Fax Transmission Receipt is saved in your portal. Please download it and keep it with your tax records. Under IRC § 6038A, it serves as proof of on-time filing if the IRS ever asks.\n\n`
+    : "";
+  // Final returns do not promise next-year reminders because the entity has dissolved.
+  const closingText =
+    nextTaxYear == null || nextDueDateLabel == null
+      ? ""
+      : isFinalReturn
+        ? `Final return\n\n` +
+          `Because this filing was submitted as a final return for a dissolved entity, no further Form 5472 filings are required provided the company does not resume activity. Please retain this message, the IRS Fax Transmission Receipt, and the filed package with your permanent tax records for at least six years.\n\n`
+        : `Your next filing obligation\n\n` +
+          `Form 5472 remains an annual requirement for as long as ${llcLine} remains a foreign-owned U.S. entity. The next return covers tax year ${nextTaxYear} and is due on ${nextDueDateLabel}. Late or missed filings carry a statutory penalty of $25,000 per return, so the date is worth noting now.\n\n` +
+          `We will send a reminder in early January ${nextTaxYear + 1}, giving over three months' notice before the deadline, and a further reminder if the filing remains outstanding. Because company and ownership details are retained on file, a returning filing takes about five minutes.\n\n`;
 
   return sendEmail({
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
-    subject: `Your ${llcLine} filing was delivered to the IRS`,
+    subject: `Confirmation of IRS filing — Form 5472, ${llcLine}, tax year${taxYears.length > 1 ? "s" : ""} ${yearsLabel}`,
     text: customerText(
       salutation,
-      `Your signed Form 5472 + pro forma 1120 for ${llcLine} (${yearsLabel}) was successfully faxed to the IRS Ogden PIN Unit.\n\n` +
-      `Keep this email as your proof of submission. Download your timestamped IRS Fax Transmission Receipt from your portal — it serves as proof of on-time filing.\n` +
-      `The IRS doesn't send acknowledgments for faxed 5472 filings, so no further action is required.\n` +
+      `We are pleased to confirm that your signed Form 5472 and pro forma Form 1120 for ${llcLine} (tax year${taxYears.length > 1 ? "s" : ""} ${yearsLabel}) were successfully faxed to the IRS Ogden PIN Unit.\n\n` +
+      `Delivered to the IRS. Please retain this message with your permanent tax records as evidence of timely submission.\n` +
       proofText +
+      `\n` +
+      receiptText +
+      `The IRS does not send acknowledgments for faxed Form 5472 filings. You can re-download the receipt and your filing package anytime from your portal.\n\n` +
+      closingText +
       `\nView your filing and download documents: ${portalLink}`,
       undefined,
       brand,

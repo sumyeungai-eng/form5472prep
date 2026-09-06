@@ -120,7 +120,7 @@ export async function GET(req: Request) {
 }
 
 async function handleDelivered(
-  filing: { id: string; faxJobId: string | null; signedPdfKey: string | null; llcName: string | null; llcEin: string | null; ownerName: string | null; taxYears: number[]; userId: string | null; user: { email: string } | null },
+  filing: { id: string; faxJobId: string | null; signedPdfKey: string | null; llcName: string | null; llcEin: string | null; ownerName: string | null; isFinalReturn: boolean; dissolvedAt: Date | null; taxYears: number[]; userId: string | null; user: { email: string } | null },
   tx: TelnyxFax,
 ) {
   const submittedAtIso = tx.created_at ?? new Date().toISOString();
@@ -205,6 +205,8 @@ async function handleDelivered(
         portalLink: makeMagicLink(filing.userId),
         proof,
         receiptPdfBytes,
+        isFinalReturn: filing.isFinalReturn,
+        dissolvedAt: filing.dissolvedAt,
         brand: brand ?? undefined,
       });
     } catch (err) {
