@@ -127,3 +127,20 @@ cannot be recovered.
 
 After deploy, `/admin/filings` and the applications list show the AI channel per order — this
 is how the owner reads WHEN ChatGPT orders stopped.
+
+Deploy evidence (`97f8902`): production build log —
+`Applying migration 20260907120000_ai_engine_attribution_backfill` → `All migrations have been
+successfully applied.` Live after deploy: ein/checkout 400, `/ein/apply` DOB marker 1, penalty
+calculator 200, `/faq` 200.
+
+## Bing Webmaster Tools — set up 2026-09-07 (owner-authorized, via owner's Chrome)
+
+- Signed in with Google (`sumyeungai@gmail.com`, scopes: profile/email + `webmasters.readonly`).
+- Imported ONLY `https://form5472prep.com/` from GSC (the MileMarketplace property was
+  deliberately deselected — outside the authorization).
+- **The imported property is the apex URL-prefix**, not `www`. Bing treats them as separate
+  sites, and the apex 307s to `www`, so a `www` property must be added and verified separately
+  (XML-file or meta-tag verification can be shipped in the repo without owner action).
+- BWT shows "data processing, up to 48 hours". It also offers an **AI Performance** report
+  (citations in Copilot / Bing AI answers) — the closest instrument we have to "is the site
+  cited by AI engines", worth reading once data lands.
