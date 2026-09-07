@@ -46,7 +46,22 @@ Wave 1: commit `ea08906` on `main`. Verified personally before push: `tsc` clean
 **216 passed** (212 + 4); `npm run build` "Compiled successfully" with `/api/admin/counters` and all
 16 admin pages in the route table. Deploy evidence: see below.
 
-DEPLOY_PLACEHOLDER
+Deploy: `a142259` went live (marker: `/api/admin/counters` 404 → 401); three-check unchanged
+(ein/checkout 400, `/ein/apply` DOB 1, penalty calculator 200) and `/admin/login` 200.
+
+Visual verification on production via the owner's Chrome (owner-authorized, read-only):
+- Desktop `/admin/filings`: sidebar with Overview / Work / Growth / Tools, Filings active with its
+  three children expanded, badges **Unfinished drafts 21** and **Applications 1** (matches
+  `/api/admin/counters` → `{filingsInReview:0, unfinishedDrafts:21, applicationsAwaiting:1, unreadMessages:3}`).
+- Detail page `/admin/filings/<id>`: Filings stays active (prefix match).
+- Narrow window (1000 px): top bar + hamburger, no sidebar; drawer opens with full nav, badges and
+  footer; Escape closes it.
+- `/admin/filings/<id>/place-signature`: full-bleed — slim bar with "← Back to filing", no sidebar,
+  the 11-page PDF renders at its native width. First render took ~20 s (PDF load), not a regression.
+  Console shows only pdf.js warnings ("Setting up fake worker", `standardFontDataUrl`, ZapfDingbats)
+  — pre-existing, unrelated to the shell; a follow-up could configure the pdf.js worker/fonts.
+- Side observation: the SOURCE column now shows **ChatGPT (AI)** on several orders from the last
+  2 days, including a paid, delivered filing — the attribution backfill is visible in the admin.
 
 ## Still open
 
