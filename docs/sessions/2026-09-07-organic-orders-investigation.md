@@ -55,7 +55,7 @@ two days is too early for Google to have re-indexed.
   answers, so this is plausibly the site's largest organic channel and it is invisible in any
   count based on the "Google (organic)" label. Cheap to fix once the owner confirms what they
   are counting.
-- **Partner supersede defect (fixed 09-07).** `partner/filings/new/route.ts:24` stamps the
+- **Partner supersede defect (fixed 09-07, commit `4b8dcf7`, deployed Ready; live three-check + `/faq` 200 after deploy; 185 tests).** `partner/filings/new/route.ts:24` stamps the
   PARTNER's browser `sessionId` on every client filing it creates, so the 09-06 session-match
   rule would have archived one client's blank draft when another client's filing was paid.
   `supersedeDraftsFor` now matches partner rows on `userId` only; two tests lock it in. No
