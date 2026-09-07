@@ -74,12 +74,26 @@ filings with `StatusBadge`, recent applications. Per-page `<title>` "… · Admi
 `src/components/MetaPixel.tsx`: on `/admin/*` the consent banner is not shown AND the pixel is never
 initialised (`isAdminPath` guard on both). Verified personally: `tsc` clean, vitest **217**, build clean.
 
-WAVE2_DEPLOY_PLACEHOLDER
+Deploy: `2501d56` → deployment `la67fjawd` Ready (watched via `vercel inspect`, NOT an HTTP marker —
+see trap below); three-check unchanged + `/faq` 200. Production visual check (owner's Chrome):
+- `/admin` renders the Overview: "What needs attention today.", cards 0 / 21 / 1 / 3, recent filings
+  with status badges, three unread customer threads listed with counts.
+- `/admin/filings/<id>`: breadcrumb "Filings › Conceptual Asset Holdings LLC", Delivered badge and
+  amount in the header's actions slot, no "‹ All filings" link, no cookie banner.
+- Tab title: "Conceptual Asset Holdings LLC · Filings · Admin · Form5472 Prep" (site title template
+  appends the brand).
+
+**Trap hit and recorded in `~/.claude/doctrine/lessons.md`:** the first deploy watch polled `/admin`
+for a redirect to `/admin/login`, but the OLD stub already did that for unauthenticated requests,
+so it reported LIVE on poll 1 against the previous build and the first screenshot pass saw the old
+pages. Verify a marker differs between old and new before polling, or watch the deployment object.
 
 ## Still open
 
-- Wave 2 (page headers on 12 pages + Overview at `/admin`) — spec drafted, dispatch after the
-  wave-1 visual check.
+- `/admin/test-order` still shows the marketing tab title: it is a `"use client"` page and cannot
+  export `metadata`; needs a server `page.tsx` wrapping a `TestOrderClient.tsx`. Small follow-up.
+- pdf.js on the signature placer logs "Setting up fake worker" / `standardFontDataUrl` warnings
+  (pre-existing); configuring the worker + standard fonts would speed up first render (~20 s today).
 - Lane deviations accepted: `match: "prefix"` on childless routes; `principal.email ?? "admin session"`;
   an extra `X` close button in the drawer (eyeball it); `runtime = "nodejs"` on the counters route.
 - `brew install coreutils` would restore the wall-clock cap on codex lanes (`timeout` missing).

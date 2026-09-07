@@ -133,6 +133,10 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
   payment + backfill, and the cron that was emailing paying customers
 - `docs/sessions/2026-09-06-faq-hub-page.md` — central `/faq` (51 source-cited answers, AEO/GEO
   schema); the answer-content contracts live in `src/lib/faq.test.ts`
+- `docs/sessions/2026-09-07-organic-orders-investigation.md` — ChatGPT-traffic investigation, AI-engine
+  attribution + backfill, Bing Webmaster Tools setup, partner supersede fix
+- `docs/sessions/2026-09-07-admin-sidebar-redesign.md` — admin left sidebar (wave 1) + page headers /
+  Overview / tab titles (wave 2); the counters and full-bleed contracts live there
 
 ---
 
