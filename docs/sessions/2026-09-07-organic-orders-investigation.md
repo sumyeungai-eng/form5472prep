@@ -144,3 +144,17 @@ calculator 200, `/faq` 200.
 - BWT shows "data processing, up to 48 hours". It also offers an **AI Performance** report
   (citations in Copilot / Bing AI answers) — the closest instrument we have to "is the site
   cited by AI engines", worth reading once data lands.
+
+### Bing findings (URL Inspection, 2026-09-07)
+
+- `https://form5472prep.com/` → **Indexed successfully. URL can appear on Bing. No SEO/GEO issues. 2 markup types found.**
+- `https://form5472prep.com/pricing` → same.
+- Adding `https://www.form5472prep.com` manually returned "Site is already added" — the apex
+  property covers the `www` host in Bing's model; no separate property needed.
+- Sitemap `https://www.form5472prep.com/sitemap.xml` submitted 9/7/2026, status Processing.
+
+**Hypothesis 2 (Bing coverage) is refuted.** With OpenAI's crawlers unblocked, no URL removals,
+and Bing indexing the site cleanly, the remaining explanation for the ChatGPT referral loss is
+ChatGPT's own source-selection change (second week of August 2026) — nothing on the site.
+Next instrument: BWT → AI Performance (citations in Copilot/Bing AI) once the 48-hour
+processing completes; and the owner's GA `chatgpt.com` weekly trend for the drop date.
