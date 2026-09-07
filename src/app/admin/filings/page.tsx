@@ -8,11 +8,13 @@ import { formatUsd } from "@/lib/utils";
 import { formatAttribution } from "@/lib/attribution";
 import { filingCompletionIssues } from "@/lib/completeness";
 import { extensionReviewFlags, type ExtensionReviewFlag } from "@/lib/admin/filingActions";
+import { AdminPageHeader } from "../_components/AdminPageHeader";
 import { StatusBadge } from "./StatusBadge";
 import { DraftActions } from "./DraftActions";
 import { ReviewToggle } from "./ReviewToggle";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Filings · Admin" };
 
 type SearchParams = {
   status?: string;
@@ -156,12 +158,10 @@ export default async function AdminFilingsPage({
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold">Filings</h1>
-          <p className="text-sm text-slate-500 mt-1">All customer filings, newest first.</p>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Filings"
+        description="Every Form 5472 order — drafts, paid, signed, faxed. Filter by status or search by company or email."
+      />
 
       {/* Quick stats — last 30 days */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">

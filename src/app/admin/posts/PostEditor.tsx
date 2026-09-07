@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
+import { AdminPageHeader } from "../_components/AdminPageHeader";
 
 export type PostEditorInitial = {
   slug?: string;
@@ -88,10 +89,16 @@ export function PostEditor({
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">
-          {mode === "create" ? "New post" : "Edit post"}
-        </h1>
+      <AdminPageHeader
+        title={mode === "create" ? "New post" : "Edit post"}
+        breadcrumb={[
+          { label: "Blog posts", href: "/admin/posts" },
+          {
+            label: mode === "create" ? "New post" : state.title || "Untitled post",
+            href: mode === "create" ? "/admin/posts/new" : `/admin/posts/${originalSlug}`,
+          },
+        ]}
+        actions={
         <div className="flex items-center gap-3">
           {mode === "edit" && (
             <a
@@ -112,7 +119,8 @@ export function PostEditor({
             {saving ? "Saving…" : state.draft ? "Save draft" : "Publish"}
           </Button>
         </div>
-      </div>
+        }
+      />
 
       {error && (
         <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">

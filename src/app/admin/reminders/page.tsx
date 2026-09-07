@@ -3,9 +3,11 @@ import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { findEligibleUsers, taxYearForSend } from "@/lib/reminders";
+import { AdminPageHeader } from "../_components/AdminPageHeader";
 import { CampaignControls } from "./CampaignControls";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Reminders · Admin" };
 
 export default async function AdminRemindersPage() {
   if (!(await isAdmin())) redirect("/admin/login");
@@ -34,13 +36,10 @@ export default async function AdminRemindersPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold">Reminder campaigns</h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Yearly emails reminding past customers to file their next return. Auto-fired by Vercel Cron
-          on Jan 7 (early-year nudge) and Mar 15 (30 days before the April 15 deadline).
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Reminder campaigns"
+        description="The two annual filing-reminder campaigns and who each one will reach."
+      />
 
       {/* Stats — each card links to a drill-down customer list at
           /admin/reminders/list?bucket=… so the operator can audit which

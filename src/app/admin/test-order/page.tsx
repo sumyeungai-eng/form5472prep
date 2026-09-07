@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { AdminPageHeader } from "../_components/AdminPageHeader";
 
 export default function AdminTestOrderPage() {
   const router = useRouter();
@@ -31,16 +32,10 @@ export default function AdminTestOrderPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-10 space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">$0 Test Order</h1>
-        <p className="mt-2 text-sm text-slate-600">
-          Admin-only. Creates a DRAFT filing with the internal{" "}
-          <code className="font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">tier=test</code>{" "}
-          flag, hands you the wizard, and skips Stripe at checkout. Exercises the
-          full post-payment flow (PDF generation, AI validation, sign link
-          email, fax) end-to-end without any money moving.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="$0 Test Order"
+        description="Creates a $0 order through the real checkout to exercise the full pipeline. Internal only."
+      />
 
       <ol className="text-sm text-slate-700 space-y-2 list-decimal list-inside bg-slate-50 border border-slate-200 rounded-md p-4">
         <li>Click <strong>Start test order</strong> below — opens the wizard at /filings/[id]/edit.</li>

@@ -4,8 +4,10 @@ import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { formatUsd } from "@/lib/utils";
+import { AdminPageHeader } from "../_components/AdminPageHeader";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Sales by source · Admin" };
 
 // Per-source sales attribution. Groups every Filing by funnelSource (the
 // source landing page slug captured from ?src= on /start) and shows funnel
@@ -86,14 +88,10 @@ export default async function AdminSourcesPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold">Sales by source</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Filings grouped by the landing page that sent the visitor to /start. The source is
-          captured from the <code className="text-xs">?src=</code> query param on the start link
-          and saved as <code className="text-xs">Filing.funnelSource</code>.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Sales by source"
+        description="Paid orders and revenue by acquisition channel, including AI answer engines."
+      />
 
       {/* Totals row across all sources */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">

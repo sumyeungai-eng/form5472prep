@@ -4,6 +4,9 @@ import { Plus, FileText } from "lucide-react";
 import { isAdmin } from "@/lib/admin/auth";
 import { getAllPosts, formatPostDate } from "@/lib/blog";
 import { Button } from "@/components/ui/button";
+import { AdminPageHeader } from "../_components/AdminPageHeader";
+
+export const metadata = { title: "Blog posts · Admin" };
 
 export default async function AdminPostsPage() {
   if (!(await isAdmin())) redirect("/admin/login");
@@ -11,20 +14,18 @@ export default async function AdminPostsPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold">Blog posts</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Posts are saved as markdown files in <code>content/blog/</code>.
-          </p>
-        </div>
+      <AdminPageHeader
+        title="Blog posts"
+        description="Guides published on /blog. Drafts are not public until published."
+        actions={
         <Link href="/admin/posts/new">
           <Button>
             <Plus className="mr-1.5 h-4 w-4" />
             New post
           </Button>
         </Link>
-      </div>
+        }
+      />
 
       {posts.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-lg p-12 text-center">

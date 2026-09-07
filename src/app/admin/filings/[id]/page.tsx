@@ -1,6 +1,7 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { ChevronLeft, Mail, ExternalLink } from "lucide-react";
+import { Mail, ExternalLink } from "lucide-react";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { formatAttribution, hasAttribution } from "@/lib/attribution";
@@ -9,12 +10,22 @@ import { publicUrl } from "@/lib/storage";
 import { effectiveDueDateUtc, filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { extensionReviewFlags } from "@/lib/admin/filingActions";
 import { StatusBadge } from "../StatusBadge";
+import { AdminPageHeader } from "../../_components/AdminPageHeader";
 import { AdminActions } from "./AdminActions";
 import { EditFieldsCard } from "./EditFieldsCard";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { YearBreakdown } from "./YearBreakdown";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const filing = await prisma.filing.findUnique({
+    where: { id: params.id },
+    select: { llcName: true },
+  });
+  const name = filing?.llcName || "Filing";
+  return { title: `${name} · Filings · Admin` };
+}
 
 export default async function AdminFilingDetailPage({ params }: { params: { id: string } }) {
   if (!(await isAdmin())) redirect("/admin/login");
@@ -120,33 +131,13 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <Link
-        href="/admin/filings"
-        className="inline-flex items-center text-sm text-slate-600 hover:text-slate-900 mb-4"
-      >
-        <ChevronLeft className="h-4 w-4 mr-1" />
-        All filings
-      </Link>
-
-      {/* Header */}
-      <div className="bg-white border border-slate-200 rounded-lg p-6 mb-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <h1 className="text-xl font-semibold text-slate-900 truncate">
-              {filing.llcName || <span className="text-slate-400">(no LLC name)</span>}
-            </h1>
-            <p className="text-sm text-slate-500 mt-1">
-              Filing <code className="text-slate-700">{filing.id}</code>
-            </p>
-            {filing.user && (
-              <p className="text-sm text-slate-700 mt-2 flex items-center gap-1.5">
-                <Mail className="h-3.5 w-3.5 text-slate-400" />
-                <a href={`mailto:${filing.user.email}`} className="hover:text-accent">
-                  {filing.user.email}
-                </a>
-              </p>
-            )}
-          </div>
+      <AdminPageHeader
+        title={filing.llcName || "(no LLC name)"}
+        breadcrumb={[
+          { label: "Filings", href: "/admin/filings" },
+          { label: filing.llcName || "(no LLC name)", href: `/admin/filings/${filing.id}` },
+        ]}
+        actions={
           <div className="flex flex-col items-end gap-2 shrink-0">
             <StatusBadge status={filing.status} />
             <div className="text-right">
@@ -156,7 +147,21 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
               </div>
             </div>
           </div>
-        </div>
+        }
+      />
+
+      <div className="mb-6">
+        <p className="text-sm text-slate-500">
+          Filing <code className="text-slate-700">{filing.id}</code>
+        </p>
+        {filing.user && (
+          <p className="text-sm text-slate-700 mt-2 flex items-center gap-1.5">
+            <Mail className="h-3.5 w-3.5 text-slate-400" />
+            <a href={`mailto:${filing.user.email}`} className="hover:text-accent">
+              {filing.user.email}
+            </a>
+          </p>
+        )}
       </div>
 
       {/* Quick actions */}

@@ -37,6 +37,7 @@ function initializePixel(): void {
 
 export function MetaPixel() {
   const pathname = usePathname();
+  const isAdminPath = pathname?.startsWith("/admin") ?? false;
   const [consent, setConsent] = useState<Consent>(null);
 
   useEffect(() => {
@@ -47,11 +48,13 @@ export function MetaPixel() {
 
   useEffect(() => {
     if (consent !== "granted") return;
+    // Admin traffic is the operator, not a prospect — never feed it to Meta.
+    if (isAdminPath) return;
     initializePixel();
     window.fbq?.("track", "PageView");
-  }, [consent, pathname]);
+  }, [consent, pathname, isAdminPath]);
 
-  if (!META_PIXEL_ID || consent !== null) return null;
+  if (!META_PIXEL_ID || isAdminPath || consent !== null) return null;
 
   function choose(value: Exclude<Consent, null>) {
     window.localStorage.setItem(META_CONSENT_KEY, value);

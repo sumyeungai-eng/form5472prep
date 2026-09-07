@@ -1,10 +1,9 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
 import { FilingStatus } from "@prisma/client";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { findEligibleUsers, taxYearForSend } from "@/lib/reminders";
+import { AdminPageHeader } from "../../_components/AdminPageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +38,12 @@ const BUCKET_META: Record<Bucket, { title: string; subtitle: string }> = {
       "AND have not already filed for the current tax year.",
   },
 };
+
+export function generateMetadata({ searchParams }: { searchParams: { bucket?: string } }) {
+  const bucket = searchParams.bucket;
+  const title = bucket && bucket in BUCKET_META ? BUCKET_META[bucket as Bucket].title : "Reminder list";
+  return { title: `${title} · Reminders · Admin` };
+}
 
 const PAID_STATUSES: FilingStatus[] = [
   FilingStatus.PAID,
@@ -166,20 +171,17 @@ export default async function ReminderListPage({
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <Link
-        href="/admin/reminders"
-        className="inline-flex items-center text-sm text-slate-600 hover:text-slate-900 mb-4"
-      >
-        <ChevronLeft className="h-4 w-4 mr-1" />
-        Back to reminders dashboard
-      </Link>
-
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold">
-          {meta.title} <span className="text-slate-400 font-normal tabular-nums">({rows.length})</span>
-        </h1>
-        <p className="text-sm text-slate-500 mt-1 max-w-3xl">{meta.subtitle}</p>
-      </div>
+      <AdminPageHeader
+        title={meta.title}
+        description={meta.subtitle}
+        breadcrumb={[
+          { label: "Reminders", href: "/admin/reminders" },
+          { label: meta.title, href: `/admin/reminders/list?bucket=${bucket}` },
+        ]}
+        actions={
+          <span className="text-slate-400 font-normal tabular-nums">({rows.length})</span>
+        }
+      />
 
       {rows.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-lg p-12 text-center text-sm text-slate-500">

@@ -3,6 +3,11 @@ import { isAdmin } from "@/lib/admin/auth";
 import { getPostIncludingDraft } from "@/lib/blog";
 import { PostEditor } from "../PostEditor";
 
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const post = await getPostIncludingDraft(params.slug);
+  return { title: post ? `${post.title} · Blog posts · Admin` : "Edit post · Admin" };
+}
+
 export default async function EditPostPage({ params }: { params: { slug: string } }) {
   if (!(await isAdmin())) redirect("/admin/login");
   const post = await getPostIncludingDraft(params.slug);

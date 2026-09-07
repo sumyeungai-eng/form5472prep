@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
+import { AdminPageHeader } from "../_components/AdminPageHeader";
 import { PartnersManager } from "./PartnersManager";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Partners · Admin" };
 
 export default async function AdminPartnersPage() {
   if (!(await isAdmin())) redirect("/admin/login");
@@ -15,12 +17,10 @@ export default async function AdminPartnersPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-semibold text-slate-900 mb-1">Partners</h1>
-      <p className="text-sm text-slate-500 mb-8">
-        Reseller / agency accounts that batch filings under one login. They sign in at{" "}
-        <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">/partner/sign-in</code> with a
-        magic link.
-      </p>
+      <AdminPageHeader
+        title="Partners"
+        description="Reseller and accountant accounts that file on behalf of their clients."
+      />
       <PartnersManager
         partners={partners.map((p) => ({
           id: p.id,

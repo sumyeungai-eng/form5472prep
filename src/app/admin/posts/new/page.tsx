@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/admin/auth";
 import { PostEditor } from "../PostEditor";
 
+export const metadata = { title: "New post · Admin" };
+
 export default async function NewPostPage() {
   if (!(await isAdmin())) redirect("/admin/login");
   const today = new Date().toISOString().slice(0, 10);

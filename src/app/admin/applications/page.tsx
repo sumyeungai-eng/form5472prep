@@ -3,8 +3,10 @@ import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { formatAttribution } from "@/lib/attribution";
+import { AdminPageHeader } from "../_components/AdminPageHeader";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Applications · Admin" };
 
 const EIN_STATUS_COLORS: Record<string, string> = {
   RECEIVED:        "bg-slate-100 text-slate-700",
@@ -76,7 +78,10 @@ export default async function AdminApplicationsPage({
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <h1 className="text-xl font-semibold mb-6">Applications</h1>
+      <AdminPageHeader
+        title="Applications"
+        description="EIN and ITIN applications. Paid applications appear as In review until you start them."
+      />
 
       {/* Tabs */}
       <div className="flex gap-1 mb-6 border-b border-slate-200">

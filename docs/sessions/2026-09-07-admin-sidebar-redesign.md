@@ -63,6 +63,19 @@ Visual verification on production via the owner's Chrome (owner-authorized, read
 - Side observation: the SOURCE column now shows **ChatGPT (AI)** on several orders from the last
   2 days, including a paid, delivered filing — the attribution backfill is visible in the admin.
 
+## Wave 2 — page headers, Overview, tab titles, no pixel in admin
+
+Commit `659a6f2`. `AdminPageHeader` on all 12 pages (title / verbatim one-line description /
+right-aligned actions / breadcrumb on the three detail pages, replacing the old "‹ All filings"
+back links). `/admin` is now an Overview (`src/lib/admin/overview.ts`): the four counters as cards,
+unread customer threads grouped by filing/EIN/ITIN (`fromAdmin: false, readAt: null`), recent
+filings with `StatusBadge`, recent applications. Per-page `<title>` "… · Admin" everywhere except
+`/admin/test-order` (a `"use client"` page cannot export metadata — needs a server wrapper; follow-up).
+`src/components/MetaPixel.tsx`: on `/admin/*` the consent banner is not shown AND the pixel is never
+initialised (`isAdminPath` guard on both). Verified personally: `tsc` clean, vitest **217**, build clean.
+
+WAVE2_DEPLOY_PLACEHOLDER
+
 ## Still open
 
 - Wave 2 (page headers on 12 pages + Overview at `/admin`) — spec drafted, dispatch after the

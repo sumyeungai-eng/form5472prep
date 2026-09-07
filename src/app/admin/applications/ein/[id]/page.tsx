@@ -1,14 +1,23 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { formatAttribution } from "@/lib/attribution";
 import { formatUsd } from "@/lib/utils";
+import { AdminPageHeader } from "../../../_components/AdminPageHeader";
 import { EinAdminActions } from "./EinAdminActions";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const app = await prisma.einApplication.findUnique({
+    where: { id: params.id },
+    select: { llcName: true },
+  });
+  const name = app?.llcName || "EIN application";
+  return { title: `${name} · Applications · Admin` };
+}
 
 export default async function AdminEinApplicationPage({ params }: { params: { id: string } }) {
   if (!(await isAdmin())) redirect("/admin/login");
@@ -37,20 +46,14 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <Link
-        href="/admin/applications?type=ein"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-8"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" /> EIN Applications
-      </Link>
-
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h1 className="text-xl font-semibold">{app.llcName}</h1>
-          <p className="text-slate-500 text-sm mt-1">
-            {app.fullName} &middot; {app.email}
-          </p>
-        </div>
+      <AdminPageHeader
+        title={app.llcName}
+        breadcrumb={[
+          { label: "Applications", href: "/admin/applications" },
+          { label: "EIN", href: "/admin/applications?type=ein" },
+          { label: app.llcName, href: `/admin/applications/ein/${app.id}` },
+        ]}
+        actions={
         <span className="text-xs text-slate-400">
           {app.createdAt.toLocaleDateString("en-US", {
             year: "numeric",
@@ -58,7 +61,12 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
             day: "numeric",
           })}
         </span>
-      </div>
+        }
+      />
+
+      <p className="mb-6 text-slate-500 text-sm">
+        {app.fullName} &middot; {app.email}
+      </p>
 
       {/* Application details */}
       <div className="bg-white border border-slate-200 rounded-lg divide-y divide-slate-100 mb-8">
