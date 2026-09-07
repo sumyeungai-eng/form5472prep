@@ -27,7 +27,7 @@ export const ATTR_COOKIE_MAX_AGE = 60 * 60 * 24 * 90;
 export const ATTR_COOKIE = "f5472_attr";
 
 export type Attribution = {
-  /** Normalised channel: "google-ads", "meta-ads", "google-organic", "referral", "direct", or a raw utm_source. */
+  /** Normalised channel: "google-ads", "meta-ads", "google-organic", "<engine>-ai", "referral", "direct", or a raw utm_source. */
   source: string | null;
   /** cpc | organic | referral | email | ... (from utm_medium when present). */
   medium: string | null;
@@ -137,8 +137,28 @@ const SEARCH_ENGINES: ReadonlyArray<readonly [RegExp, string]> = [
   [/(^|\.)brave\.com$/, "brave"],
 ];
 
+const AI_ENGINES: ReadonlyArray<readonly [RegExp, string]> = [
+  [/(^|\.)chatgpt\.com$/, "chatgpt"],
+  [/(^|\.)openai\.com$/, "chatgpt"],
+  [/(^|\.)perplexity\.ai$/, "perplexity"],
+  [/(^|\.)copilot\.microsoft\.com$/, "copilot"],
+  [/(^|\.)claude\.ai$/, "claude"],
+  [/(^|\.)gemini\.google\.com$/, "gemini"],
+  [/(^|\.)grok\.com$/, "grok"],
+  [/(^|\.)x\.ai$/, "grok"],
+  [/(^|\.)meta\.ai$/, "metaai"],
+  [/(^|\.)you\.com$/, "you"],
+];
+
 function searchEngineFor(host: string): string | null {
   for (const [pattern, engine] of SEARCH_ENGINES) {
+    if (pattern.test(host)) return engine;
+  }
+  return null;
+}
+
+function aiEngineForHost(host: string): string | null {
+  for (const [pattern, engine] of AI_ENGINES) {
     if (pattern.test(host)) return engine;
   }
   return null;
@@ -153,6 +173,21 @@ const META_SOURCES = new Set([
   "instagram.com",
   "ig",
   "meta",
+]);
+
+const AI_SOURCE_ENGINES = new Map<string, string>([
+  ["chatgpt.com", "chatgpt"],
+  ["chatgpt", "chatgpt"],
+  ["openai", "chatgpt"],
+  ["perplexity", "perplexity"],
+  ["perplexity.ai", "perplexity"],
+  ["copilot", "copilot"],
+  ["claude", "claude"],
+  ["claude.ai", "claude"],
+  ["gemini", "gemini"],
+  ["grok", "grok"],
+  ["meta.ai", "metaai"],
+  ["you.com", "you"],
 ]);
 
 /** utm_medium values that still mean "paid" — anything else is honoured verbatim. */
@@ -244,20 +279,32 @@ export function deriveAttribution(input: DeriveInput): Attribution {
     };
   }
 
-  // 3. Any other tagged campaign — newsletters, partners, affiliates. Keep the
+  // The f5472_attr cookie stores this derived result at first landing and is
+  // not re-derived for returning visitors; old cookies keeping "referral" or a
+  // raw AI utm_source are expected, which is why the DB backfill also exists.
+  if (utmSource) {
+    const aiEngine = AI_SOURCE_ENGINES.get(utmSource);
+    if (aiEngine) return { ...base, source: `${aiEngine}-ai`, medium: "ai" };
+  }
+
+  // 4. Any other tagged campaign — newsletters, partners, affiliates. Keep the
   //    marketer's own labels verbatim rather than guessing at a channel.
   if (utmSource) {
     return { ...base, source: utmSource, medium: utmMedium };
   }
 
-  // 4. Untagged arrival with an external referrer: search engine or plain link.
+  // 5. Untagged arrival with an external referrer: AI answer engine, search
+  //    engine, or plain link.
   if (external) {
+    const aiEngine = aiEngineForHost(external);
+    if (aiEngine) return { ...base, source: `${aiEngine}-ai`, medium: "ai" };
+
     const engine = searchEngineFor(external);
     if (engine) return { ...base, source: `${engine}-organic`, medium: "organic" };
     return { ...base, source: "referral", medium: "referral" };
   }
 
-  // 5. Typed the domain, a bookmark, or a stripped referrer.
+  // 6. Typed the domain, a bookmark, or a stripped referrer.
   return { ...base, source: "direct" };
 }
 
@@ -324,6 +371,14 @@ const SOURCE_LABELS: Record<string, string> = {
   "yahoo-organic": "Yahoo (organic)",
   "ecosia-organic": "Ecosia (organic)",
   "brave-organic": "Brave (organic)",
+  "chatgpt-ai": "ChatGPT (AI)",
+  "perplexity-ai": "Perplexity (AI)",
+  "copilot-ai": "Copilot (AI)",
+  "claude-ai": "Claude (AI)",
+  "gemini-ai": "Gemini (AI)",
+  "grok-ai": "Grok (AI)",
+  "metaai-ai": "Meta AI (AI)",
+  "you-ai": "You.com (AI)",
   referral: "Referral",
   direct: "Direct",
 };
@@ -344,7 +399,8 @@ export function formatAttribution(attr: Partial<Attribution> | null | undefined)
   const mediumIsRedundant =
     !!source &&
     ((source === "referral" && medium === "referral") ||
-      (source.endsWith("-organic") && medium === "organic"));
+      (source.endsWith("-organic") && medium === "organic") ||
+      (source.endsWith("-ai") && medium === "ai"));
   if (medium && !mediumIsRedundant) parts.push(medium);
 
   // The referring host only adds information when the source doesn't already

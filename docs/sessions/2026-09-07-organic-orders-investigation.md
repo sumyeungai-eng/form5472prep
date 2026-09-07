@@ -103,3 +103,27 @@ decides between 1 and 3; (b) create Bing Webmaster Tools, verify `www.form5472pr
 submit the sitemap, read Coverage; (c) run 3 ChatGPT prompts and note whether the site is
 cited at all today; (d) add AI-engine referrers to `attribution.ts` so this channel is
 visible in the admin from now on.
+
+## Shipped 2026-09-07 — AI-engine attribution + historical backfill
+
+Commit `0ba1b9b`. `src/lib/attribution.ts` now classifies ChatGPT, Perplexity, Copilot,
+Claude, Gemini, Grok, Meta AI and You.com — by referrer host (suffix-anchored, lookalike-safe)
+or by `utm_source` token — as `<engine>-ai` / medium `ai`, labelled "ChatGPT (AI)" etc.
+Precedence: paid click-ids → Microsoft Ads → Meta → **AI by utm** → generic utm → **AI by
+referrer** (before the search-engine table, so `gemini.google.com` is not `google-organic`) →
+search organic → referral → direct. 27 new tests (`src/lib/attribution.test.ts`).
+
+Migration `20260907120000_ai_engine_attribution_backfill` re-classifies historical rows in
+`Filing`, `EinApplication`, `ItinApplication` (24 statements). **Spec correction by the lane,
+verified:** `attrReferrer` stores a bare host and `attrLanding` a pathname only, so the backfill
+matches `attrReferrer ~* '(^|\.)chatgpt\.com$'` (when source is referral/direct/null) or
+`lower(attrSource)` equal to a raw AI utm token — never a paid source. First execution is the
+deploy (no local Postgres).
+
+Accepted risks, recorded: (1) patterns assume `standard_conforming_strings=on` (PG default
+since 9.1); (2) `utm_medium=cpc` with an AI `utm_source` lands as `<engine>-ai`, not paid —
+paid click-ids still win; (3) rows whose ChatGPT visit left `referral` with a stripped referrer
+cannot be recovered.
+
+After deploy, `/admin/filings` and the applications list show the AI channel per order — this
+is how the owner reads WHEN ChatGPT orders stopped.
