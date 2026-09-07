@@ -48,4 +48,17 @@ two days is too early for Google to have re-indexed.
 
 ## Side findings
 
+- **AI-engine referrals are not classified as organic.** `src/lib/attribution.ts` maps Google/Bing
+  hosts to `<engine>-organic` but has no entry for perplexity.ai, chatgpt.com/openai.com,
+  copilot.microsoft.com, claude.ai or gemini.google.com — those orders land as "referral", or
+  "direct" when the app strips the referrer. On 09-05 Perplexity cited the site in 5/6 test
+  answers, so this is plausibly the site's largest organic channel and it is invisible in any
+  count based on the "Google (organic)" label. Cheap to fix once the owner confirms what they
+  are counting.
+- **Partner supersede defect (fixed 09-07).** `partner/filings/new/route.ts:24` stamps the
+  PARTNER's browser `sessionId` on every client filing it creates, so the 09-06 session-match
+  rule would have archived one client's blank draft when another client's filing was paid.
+  `supersedeDraftsFor` now matches partner rows on `userId` only; two tests lock it in. No
+  partner filings existed when the backfill ran, so nothing was archived wrongly.
+
 - A probe `curl /filings/new` on 09-07 created one anonymous empty DRAFT in production. Noise.

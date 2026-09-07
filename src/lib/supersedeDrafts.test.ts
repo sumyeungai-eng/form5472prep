@@ -23,6 +23,7 @@ type MockFiling = {
   status: string;
   userId: string | null;
   sessionId: string | null;
+  partnerId: string | null;
   llcName: string | null;
   taxYears: number[];
   supersededAt: Date | null;
@@ -37,6 +38,7 @@ function filing(overrides: Partial<MockFiling>): MockFiling {
     status: "DRAFT",
     userId: null,
     sessionId: null,
+    partnerId: null,
     llcName: null,
     taxYears: [],
     supersededAt: null,
@@ -157,5 +159,24 @@ describe("supersedeDraftsFor", () => {
 
     await expect(supersedeDraftsFor("paid")).resolves.toBe(0);
     expect(db.findMany).not.toHaveBeenCalled();
+  });
+
+  it("archives an anonymous false start that shares the paying customer's browser session", async () => {
+    seed([
+      filing({ id: "paid", status: "PAID", userId: "user_1", sessionId: "sess_1", llcName: "Acme LLC", taxYears: [2024] }),
+      filing({ id: "draft", userId: null, sessionId: "sess_1", llcName: null, taxYears: [] }),
+    ]);
+
+    await expect(supersedeDraftsFor("paid")).resolves.toBe(1);
+  });
+
+  it("does NOT archive a partner's other client draft just because it shares the partner's session", async () => {
+    seed([
+      filing({ id: "paid", status: "PAID", userId: null, sessionId: "partner_sess", partnerId: "partner_1", llcName: "Acme LLC", taxYears: [2024] }),
+      filing({ id: "draft", userId: null, sessionId: "partner_sess", partnerId: "partner_1", llcName: null, taxYears: [] }),
+    ]);
+
+    await expect(supersedeDraftsFor("paid")).resolves.toBe(0);
+    expect(filings.find((row) => row.id === "draft")?.supersededAt).toBeNull();
   });
 });

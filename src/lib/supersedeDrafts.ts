@@ -10,6 +10,7 @@ type CandidateDraft = {
   id: string;
   userId: string | null;
   sessionId: string | null;
+  partnerId: string | null;
   llcName: string | null;
   taxYears: number[] | null;
 };
@@ -32,11 +33,15 @@ function yearsCoveredByPaid(draftYears: number[] | null, paidYears: number[] | n
   return draftYears.every((year) => paid.has(year));
 }
 
+// A session match is only meaningful for an anonymous customer in one browser.
+// Partner-created filings all share the PARTNER's browser session while
+// belonging to different clients, so a session match there would archive one
+// client's fresh draft the moment another client's filing is paid. Partner
+// rows are matched on userId only.
 function sameOwner(draft: CandidateDraft, paid: CandidateDraft): boolean {
-  return (
-    (draft.userId !== null && draft.userId === paid.userId) ||
-    (draft.userId === null && draft.sessionId !== null && draft.sessionId === paid.sessionId)
-  );
+  if (draft.userId !== null && draft.userId === paid.userId) return true;
+  if (draft.partnerId !== null || paid.partnerId !== null) return false;
+  return draft.userId === null && draft.sessionId !== null && draft.sessionId === paid.sessionId;
 }
 
 export async function supersedeDraftsFor(paidFilingId: string): Promise<number> {
@@ -47,6 +52,7 @@ export async function supersedeDraftsFor(paidFilingId: string): Promise<number> 
       status: true,
       userId: true,
       sessionId: true,
+      partnerId: true,
       llcName: true,
       taxYears: true,
     },
@@ -57,8 +63,10 @@ export async function supersedeDraftsFor(paidFilingId: string): Promise<number> 
 
   const ownerClauses = [
     paid.userId ? { userId: paid.userId } : null,
-    paid.sessionId ? { userId: null, sessionId: paid.sessionId } : null,
-  ].filter((clause): clause is { userId: string } | { userId: null; sessionId: string } => clause !== null);
+    paid.sessionId && !paid.partnerId ? { userId: null, sessionId: paid.sessionId, partnerId: null } : null,
+  ].filter(
+    (clause): clause is { userId: string } | { userId: null; sessionId: string; partnerId: null } => clause !== null,
+  );
 
   if (ownerClauses.length === 0) return 0;
 
@@ -73,6 +81,7 @@ export async function supersedeDraftsFor(paidFilingId: string): Promise<number> 
       id: true,
       userId: true,
       sessionId: true,
+      partnerId: true,
       llcName: true,
       taxYears: true,
     },
