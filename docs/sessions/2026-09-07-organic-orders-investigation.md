@@ -62,3 +62,44 @@ two days is too early for Google to have re-indexed.
   partner filings existed when the backfill ran, so nothing was archived wrongly.
 
 - A probe `curl /filings/new` on 09-07 created one anonymous empty DRAFT in production. Noise.
+
+## Update 2026-09-07 — owner clarified: the lost channel is ChatGPT referral traffic
+
+Checked (all from this machine, evidence in-line):
+
+- **OpenAI's crawlers are not blocked.** `OAI-SearchBot`, `ChatGPT-User`, `GPTBot` (and `bingbot`)
+  fetch `/`, `/pricing` and a blog post with HTTP 200, `server: Vercel`, no challenge or
+  mitigation headers. Vercel deployment protection: SSO applies to `all_except_custom_domains`,
+  so the public domain is open (curl 200 confirms).
+- `robots.txt` AI-crawler allow rules date from `4a5dd1e` **2026-05-23**; unchanged since.
+- **No blog, landing or marketing URL was deleted or renamed since 2026-08-30** — no cited link 404s.
+- The 09-05 audit did NOT test ChatGPT (not logged in) — there is no citation baseline.
+- **Bing Webmaster Tools was never set up** (`docs/reviews/2026-09-05-seo-aeo-geo-audit.md:172`).
+  ChatGPT search draws on Bing's index; the site has no registration there and no way to see
+  Bing coverage. IndexNow (live since 09-05) submits to Bing but does not replace BWT.
+- **Bing indexation could NOT be verified from here.** DuckDuckGo and Bing RSS are bot-walled
+  from the shell (IRS.gov also returned 0), and Bing in the in-app browser serves degraded,
+  geo-mangled results even for `site:form5472.online`. Do not repeat these methods; use a
+  normal browser session or BWT.
+- **Industry-wide ChatGPT change in the second week of August 2026**: ChatGPT changed how it
+  selects sources (fan-out via `site:` operators, fewer citations per answer; Reddit citations
+  −86%, official/institutional sources absorbed the share). Separately, ChatGPT referral clicks
+  per citation have been falling since mid-2025 ("cited, not clicked"). Sources: seroundtable,
+  searchengineland, otterly.ai, seoclarity, dataconomy (2026-09-07 search).
+
+Ranked hypotheses (pending the owner's GA drop date):
+
+1. **Platform shift (~14 Aug 2026)** — ChatGPT re-weighted toward official/institutional
+   sources; for tax queries that means IRS.gov. A small prep site loses citations without
+   anything changing on the site. Fits "traffic gone" with no on-site cause found.
+2. **Bing coverage** — if Bing dropped/never had the pages, ChatGPT search cannot cite them.
+   Unverifiable until BWT exists.
+3. **The 09-04/05 production overwrites** — pages 404'd for minutes while crawlers may have
+   fetched them. Weak: short windows, and OpenAI recrawls.
+4. Nothing shipped this week is a credible cause (table above).
+
+Owner-gated next steps: (a) GA → Acquisition → referral `chatgpt.com` by week — the drop DATE
+decides between 1 and 3; (b) create Bing Webmaster Tools, verify `www.form5472prep.com`,
+submit the sitemap, read Coverage; (c) run 3 ChatGPT prompts and note whether the site is
+cited at all today; (d) add AI-engine referrers to `attribution.ts` so this channel is
+visible in the admin from now on.
