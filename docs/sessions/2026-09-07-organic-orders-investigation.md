@@ -158,3 +158,6 @@ and Bing indexing the site cleanly, the remaining explanation for the ChatGPT re
 ChatGPT's own source-selection change (second week of August 2026) — nothing on the site.
 Next instrument: BWT → AI Performance (citations in Copilot/Bing AI) once the 48-hour
 processing completes; and the owner's GA `chatgpt.com` weekly trend for the drop date.
+- `https://form5472prep.com/blog/what-is-form-5472` → **Indexed successfully**; one Bing notice:
+  "Alt attribute for images is missing — 5 instances". Content pages are in Bing too.
+  Follow-up for an agent: add alt text to blog images (Bing flags it as an SEO/GEO issue).
