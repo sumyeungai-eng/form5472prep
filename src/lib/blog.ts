@@ -116,6 +116,11 @@ async function readFile(slug: string): Promise<Post | null> {
 }
 
 const ARTWORK_ALTS: Record<string, string> = {
+  "form-5472-crypto-owner-transfers": "Owner and company wallets connected above a ledger to illustrate tracing digital-asset transfers",
+  "form-5472-llc-pays-personal-expenses": "Business receipts and personal purchases separated into two trays beside a company payment card",
+  "ein-address-change-form-8822-b": "Business correspondence moving between mailboxes while the company and its identifier stay the same",
+  "itin-name-change-marriage-passport": "Previous and current identity records connected by a supporting legal-name-change document",
+  "itin-without-passport-alternative-documents": "A passport and an alternative pair of identity documents arranged as separate application routes",
   "itin-application-checklist-nonresidents": "An organized ITIN application checklist with international identity and document folders",
   "itin-cost-irs-fee-caa-service": "A balance scale comparing application costs with professional document assistance",
   "itin-processing-time-status-delays": "An hourglass, blank calendar, and queued folders representing ITIN processing time",
