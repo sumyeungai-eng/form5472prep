@@ -2,7 +2,7 @@
 
 ## Status
 
-User asked for five new posts and publication today, using sales-blog-geo-aeo. All five posts and original images are complete. Final local production build, TypeScript, 217 tests, and the full local batch verifier passed. Production deployment and verification are pending at this checkpoint. Do not treat this checkpoint as evidence of publication. This file will be updated with the actual release result.
+Published and checked on 2026-09-11 (Asia/Seoul). User asked for five new posts and publication today, using sales-blog-geo-aeo. All five articles and original images are live. Final local production build, TypeScript, 217 tests, the local/live batch verifier, and all three production markers passed. This handoff records the actual release; no publication steps remain for the articles.
 
 ## Ownership
 
@@ -47,7 +47,22 @@ Each has a matching `/blog/<slug>.webp` hero: 1280×720, about 69–88 KB. Promp
 
 ## Release evidence
 
-Final release build exited 0; log at `/tmp/form5472-blog-build-20260911.log`. Local batch verifier passed at 2026-09-10T17:22:12Z (September 11 in Asia/Seoul). All 11 unique external citations returned HTTP 200 in separate checks; CSV ledger parsed with 16 rows and no errors. Pending scoped commit/push, Git-linked Vercel readiness, live batch verifier and the three production markers. Update this section after actual verification.
+Content commit: `1a4c5e4` (`a7b0c65..1a4c5e4`), pushed to `origin/main`. Git-linked production deployment `dpl_5xi3W4yTHJdCb7JueL9qWpPEsXor`, URL `https://form5472prep-fkp6tnxwe-form5472prep.vercel.app`, reached Ready and was aliased to `https://www.form5472prep.com`. No production CLI deploy was used. This final evidence update is a separate documentation-only commit after the content release.
+
+Final release build exited 0 and printed Compiled successfully; log at `/tmp/form5472-blog-build-20260911.log`. Local batch verifier passed again at 2026-09-10T17:24:45Z. All 11 unique external citations returned HTTP 200 in separate checks; CSV ledger parsed with 16 rows and no errors.
+
+Live batch verification completed at **2026-09-10T17:27:23.769Z = September 11, 02:27 Asia/Seoul**:
+
+- All five article URLs: HTTP 200, expected title, single H1, visible September 11 date, correct production canonical, no page/header noindex, rendered decision table, Article dates and three-question FAQ structured data.
+- All five matching WebP URLs: HTTP 200, image/webp, nonempty image payloads.
+- All 11 unique body-internal links: HTTP 200, including /start, /contact, /itin and /ein.
+- All five discoverable in /blog, /sitemap.xml and /feed.xml; robots.txt did not block blog crawling.
+- Mandatory markers passed together after deployment: empty EIN checkout POST returned **400**; /ein/apply returned **200** with **Owner date of birth**; /form-5472-penalty-calculator returned **200**. The empty validation probe did not submit a valid application or create a checkout.
+- Production browser preview of the personal-expenses article confirmed expected H1, date, canonical and fully loaded optimized hero. A 390×844 live viewport had scrollWidth 390; temporary viewport reset. Additional local desktop checks confirmed the EIN and name-change heroes fully loaded.
+
+An initial live probe returned 404 while Vercel was still Building, as expected before alias promotion. It was rerun only after Ready and passed. The local verifier initially assumed a production canonical in localhost; corrected the verifier to respect local environment origin. No site metadata change was needed.
+
+Verification is publication/access evidence, not proof of search indexing, rich-result eligibility, AI citations, or sales performance. Production database contents were not queried directly; the public results confirm no tombstone or DB override prevented these pages from appearing.
 
 ## Open follow-ups
 

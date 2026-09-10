@@ -1,6 +1,6 @@
 # Five-post editorial brief — 2026-09-11
 
-Status: drafts complete; publication evidence belongs in the dated session handoff.
+Status: published and checked on 2026-09-11 (Asia/Seoul); publication evidence is in `docs/sessions/2026-09-11-five-blog-posts.md`.
 
 ## Assignment and limits
 
