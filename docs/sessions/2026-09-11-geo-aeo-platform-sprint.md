@@ -111,7 +111,9 @@ Three correction rounds were needed — each a spec gap on my side, recorded in 
 Kept-as-statement list (19) is in the lane transcript; the `northwest` §3 and `stripe-atlas` §8 headings were
 reverted because their bodies do not answer a question form.
 
-H2_DEPLOY_PLACEHOLDER
+Deploy: guarded watch → Ready. Live: 7/7 question headings on `/form-5472-penalty-calculator`; "What does
+doola leave with you?" on the doola page; the deleted "ask most" line absent from `/`; the homepage CTA
+"Stop worrying about the $25,000 penalty." intact; three-check unchanged.
 
 ## Still open
 
