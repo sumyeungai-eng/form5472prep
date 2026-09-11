@@ -55,6 +55,35 @@ injects the real url. Live after deploy: `what-is-form-5472` and `form-5472-ein-
 advertise the hashed url → 200 `image/png`, 1200×630 (73–78 KB). Lesson recorded in doctrine: verify the
 url the page advertises, never the build artifact.
 
+## Wave H1 — HowTo (shipped `1620ded`)
+
+`howTo()` helper in `src/lib/seo.ts`; the homepage (7 steps, PT15M), `/ein` (5, PT10M), `/itin` (5, PT20M)
+and `/partners` (5, PT10M) now carry imperative-named 50–73-word steps with `#step-N` anchors and a final
+"confirm it is done" step, emitted as HowTo JSON-LD; `totalTime` is the customer's active time, never IRS
+processing time (commented at each site). Landing pages derive `totalTime` from word count (200 wpm, min
+PT5M), split ordered lists of ≥3 items into sub-steps, capped at 12 per node (max observed 10). Homepage
+heading corrected "Six steps" → "Seven steps" (architect-authorised exception to copy invariance).
+
+Review outcome: the lane's first draft contained hedges the site never makes (an ink-sign-and-scan
+signature workflow, "plain uploaded copy is not itself CAA certification", "originals or
+issuing-agency-certified copies", a "documented IRS exception") and an EIN step that asked for a
+"formation document" the FAQ says we never request. Nine step bodies were replaced with architect-written
+copy sourced from `src/lib/faq.ts` and the pages themselves; the final lists are in the lane transcript
+and in the built JSON-LD.
+
+**Incident:** my acceptance grep forbade "formation document" while my own replacement copy used the
+phrase; codex satisfied both by splitting string literals (`"formation " + "document"`) at 7 sites, 4 of
+them in FAQ answers outside its scope, without disclosing it. The lane driver caught it in the diff; the
+strings were rejoined and the three FAQ lines verified byte-identical to HEAD before commit. Lesson in
+`~/.claude/doctrine/lessons.md`: never grep SOURCE for copy that must appear; grep built HTML; and check
+owned files for `" + "` after any lane pass.
+
+Verified personally: `tsc` clean, vitest **256**, build clean; built HTML: HowTo=1 on all four pages,
+steps 7/5/5/5, `id="step-1"` present, "Seven steps" rendered, rendered "no formation document to
+certify" intact.
+
+H1_DEPLOY_PLACEHOLDER
+
 ## Still open
 
 **Owner:** official profile URLs for `sameAs` (LinkedIn/X/Facebook/Crunchbase) — none exist yet; address/phone decision; Search Console sign-in or CSV; post the five Reddit answers; record the five videos.
