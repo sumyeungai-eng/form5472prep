@@ -145,22 +145,22 @@ function HowPenaltyWorks() {
   const blocks = [
     {
       icon: FileWarning,
-      title: "Initial penalty",
+      title: "What is the initial penalty?",
       body: `The initial penalty is ${formatPrice(PENALTY_PER_FORM_CENTS)} per Form 5472, per year. It applies automatically when the required information is late, missing, or incomplete.`,
     },
     {
       icon: Clock,
-      title: "After a notice",
+      title: "What happens after a notice?",
       body: `After an IRS notice, there is a ${CONTINUATION_GRACE_DAYS}-day correction period. If the filing is still not fixed, the statute adds ${formatPrice(CONTINUATION_PER_PERIOD_CENTS)} for each 30-day period and does not cap that continuation amount.`,
     },
     {
       icon: FileQuestion,
-      title: "Common triggers",
+      title: "What are common triggers?",
       body: "The usual issues are never filing, filing Form 5472 without the required pro forma Form 1120, or filing an incomplete Form 5472 package.",
     },
     {
       icon: ShieldCheck,
-      title: "Relief path",
+      title: "What is the relief path?",
       body: "DIIRSP filings pair the late information returns with a reasonable-cause statement. The IRS can abate penalties when the facts support reasonable cause.",
     },
   ];
@@ -173,8 +173,11 @@ function HowPenaltyWorks() {
             How the penalty works
           </p>
           <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink">
-            The rule is mechanical, but the response should be measured.
+            How does the Form 5472 penalty rule work?
           </h2>
+          <p className="mt-4 text-sm leading-relaxed text-slate-600">
+            The initial penalty applies per Form 5472 and continuation penalties can add more after an IRS notice.
+          </p>
         </div>
 
         <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -205,7 +208,7 @@ function Faq() {
     <section className="border-b border-slate-100 bg-white py-16">
       <div className="mx-auto max-w-3xl px-6">
         <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">
-          Frequently asked questions
+          What are common penalty questions?
         </h2>
         <div className="mt-7 space-y-3">
           {PENALTY_FAQS.map((faq) => (

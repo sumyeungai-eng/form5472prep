@@ -185,7 +185,10 @@ export default function ItinPage() {
       {/* How it works */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-10">How it works</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-4">How does the ITIN service work?</h2>
+          <p className="mb-10 max-w-3xl text-sm leading-relaxed text-slate-600">
+            You confirm the ITIN need, submit documents, complete CAA certification, send the W-7 package, and confirm the IRS notice.
+          </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
               <div key={step.title}>
@@ -236,7 +239,7 @@ export default function ItinPage() {
               Certifying Acceptance Agent
             </p>
             <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-4">
-              Choose the document route that fits your case
+              How do you choose the document route for your case?
             </h2>
             <p className="text-slate-600 leading-relaxed mb-4">
               Direct mail generally requires original documents or copies certified by the issuing agency.
@@ -284,7 +287,7 @@ export default function ItinPage() {
       {/* FAQ */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-8">Frequently asked questions</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-8">What ITIN questions do non-residents ask?</h2>
           <div className="space-y-6">
             {faq.map(({ q, a }) => (
               <div key={q}>

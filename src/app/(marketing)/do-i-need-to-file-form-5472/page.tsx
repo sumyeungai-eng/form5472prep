@@ -108,7 +108,7 @@ function PlainEnglishRule() {
           The rule in plain English
         </p>
         <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">
-          Form 5472 depends on ownership, tax classification, and transactions.
+          When do foreign-owned LLCs file Form 5472?
         </h2>
         <div className="mt-6 space-y-4 text-sm leading-relaxed text-slate-600">
           <p>
@@ -139,7 +139,7 @@ function Faq() {
     <section className="border-b border-slate-100 bg-slate-50 py-16">
       <div className="mx-auto max-w-3xl px-6">
         <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">
-          Frequently asked questions
+          What are common Form 5472 filing questions?
         </h2>
         <div className="mt-8 space-y-3">
           {CHECKER_FAQS.map(({ q, a }) => (

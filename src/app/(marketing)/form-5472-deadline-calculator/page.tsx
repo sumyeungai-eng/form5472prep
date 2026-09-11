@@ -39,22 +39,22 @@ export const metadata: Metadata = {
 const deadlineRules = [
   {
     icon: CalendarDays,
-    title: "April 15 rule",
+    title: "What is the April 15 rule?",
     body: "For a calendar-year foreign-owned single-member LLC, Form 5472 attaches to a pro forma Form 1120 and is due April 15 after the tax year ends.",
   },
   {
     icon: RotateCw,
-    title: "Weekend roll",
+    title: "How does the weekend roll work?",
     body: "When the computed due date lands on a Saturday or Sunday, the filing deadline moves to the next Monday.",
   },
   {
     icon: FileClock,
-    title: "Dissolution short year",
+    title: "When does a dissolution short year apply?",
     body: "If the LLC dissolved during the tax year, the final short-year return is due on the 15th day of the fourth month after the month of dissolution.",
   },
   {
     icon: CalendarClock,
-    title: "Form 7004 extension",
+    title: "How does a Form 7004 extension work?",
     body: "A timely Form 7004 extends the Form 5472 package to October 15, with the same weekend-roll rule applied to the extended date.",
   },
 ];
@@ -145,7 +145,7 @@ function HowDeadlineWorks() {
       <div className="mx-auto max-w-6xl px-6 py-20">
         <SectionHead
           eyebrow="How the deadline works"
-          title="One rule, adjusted for timing facts"
+          title="How does the deadline rule work?"
           subtitle="The calculator applies the filing year, dissolution date, and extension status to the same due-date logic used in the filing workflow."
         />
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -171,7 +171,7 @@ function Faq() {
   return (
     <section className="border-b border-slate-200 bg-white">
       <div className="mx-auto max-w-3xl px-6 py-20">
-        <SectionHead eyebrow="FAQ" title="Deadline questions" />
+        <SectionHead eyebrow="FAQ" title="What are common deadline questions?" />
         <div className="mt-10 space-y-4">
           {DEADLINE_FAQS.map((faq) => (
             <FaqItem key={faq.q} q={faq.q} a={faq.a} />

@@ -159,7 +159,7 @@ export default function ContactPage() {
 
               <div className="rounded-xl border border-paper-edge bg-paper p-6 text-sm leading-relaxed text-slate-700">
                 <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink">
-                  What we can help with
+                  What can we help with?
                 </h2>
                 <ul className="mt-4 space-y-2">
                   {HELP_TOPICS.map((topic) => (
@@ -177,7 +177,7 @@ export default function ContactPage() {
 
       <section className="mx-auto max-w-4xl px-6 py-16 sm:py-20">
         <h2 className="text-center font-serif text-2xl font-semibold tracking-tight text-ink">
-          Common questions
+          What are common contact questions?
         </h2>
         <div className="mt-8 space-y-4">
           {CONTACT_FAQS.map(({ q, a }) => (

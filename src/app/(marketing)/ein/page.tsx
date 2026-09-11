@@ -182,7 +182,10 @@ export default function EinPage() {
       {/* How it works */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-10">How it works</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-4">How does the EIN service work?</h2>
+          <p className="mb-10 max-w-3xl text-sm leading-relaxed text-slate-600">
+            You complete the intake form, we prepare Form SS-4, we contact the IRS, and you receive the EIN by email.
+          </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
               <div key={step.title} className="relative">
@@ -237,7 +240,7 @@ export default function EinPage() {
               Why you can&apos;t just do it online
             </p>
             <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-4">
-              The IRS online EIN tool is closed to foreign founders
+              Why is the IRS online EIN tool closed to foreign founders?
             </h2>
             <p className="text-slate-600 leading-relaxed mb-4">
               The instant online EIN assistant on irs.gov only works if the responsible party has a US{" "}
@@ -282,7 +285,7 @@ export default function EinPage() {
       {/* FAQ */}
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-8">Frequently asked questions</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-8">What EIN questions do foreign founders ask?</h2>
           <div className="space-y-6">
             {faq.map(({ q, a }) => (
               <div key={q}>

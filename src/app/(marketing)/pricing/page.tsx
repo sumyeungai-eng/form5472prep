@@ -178,13 +178,13 @@ export default function PricingPage() {
               {
                 href: "/ein",
                 eyebrow: "EIN — $149",
-                title: "EIN for your LLC",
+                title: "Do you need an EIN for your LLC?",
                 body: "No SSN or ITIN required. We prepare Form SS-4 and obtain your EIN directly from the IRS in 1–5 business days.",
               },
               {
                 href: "/itin",
                 eyebrow: "ITIN — $349",
-                title: "ITIN for yourself",
+                title: "Do you need an ITIN for yourself?",
                 body: "Certified by an IRS Certifying Acceptance Agent — your documents are certified and we file Form W-7. No passport mailing.",
               },
             ].map((s) => (
@@ -194,9 +194,15 @@ export default function PricingPage() {
                 className="group block h-full rounded-xl border border-slate-200 bg-white p-6 transition hover:border-accent hover:shadow-lg hover:shadow-accent/10"
               >
                 <p className="text-xs font-semibold uppercase tracking-wider text-accent">{s.eyebrow}</p>
-                <h3 className="mt-2 text-lg font-semibold text-slate-900">
-                  {s.title} <span className="text-accent transition group-hover:translate-x-0.5 inline-block">→</span>
-                </h3>
+                <div className="mt-2 flex items-center gap-1.5">
+                  <h3 className="text-lg font-semibold text-slate-900">{s.title}</h3>
+                  <span
+                    aria-hidden
+                    className="text-accent transition group-hover:translate-x-0.5 inline-block"
+                  >
+                    →
+                  </span>
+                </div>
                 <p className="mt-2 text-sm text-slate-600 leading-relaxed">{s.body}</p>
               </Link>
             ))}
@@ -212,7 +218,7 @@ export default function PricingPage() {
 
       <section className="max-w-4xl mx-auto px-6 pb-20 space-y-8">
         <h2 className="text-center font-serif text-2xl font-semibold tracking-tight text-ink">
-          Pricing FAQ
+          What pricing questions do filers ask?
         </h2>
         <div className="space-y-4">
           {PRICING_FAQS.map(({ q, a }) => (

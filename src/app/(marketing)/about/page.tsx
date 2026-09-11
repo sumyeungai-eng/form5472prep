@@ -70,7 +70,7 @@ export default function AboutPage() {
       {/* Why we exist */}
       <section className="border-b border-slate-200">
         <div className="mx-auto max-w-3xl px-6 py-16 space-y-5 text-slate-700 leading-relaxed">
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">Why we built this</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">Why did we build Form5472 Prep?</h2>
           <p>
             Most foreign founders discover Form 5472 the hard way — through a warning
             about a <strong>$25,000 penalty</strong>, often after they&apos;ve already missed a
@@ -94,8 +94,11 @@ export default function AboutPage() {
           <div className="max-w-2xl">
             <p className="font-mono text-xs font-medium uppercase tracking-[0.18em] text-accent">How we work</p>
             <h2 className="mt-3 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
-              Four steps, about fifteen minutes of your time
+              How do we work?
             </h2>
+            <p className="mt-4 text-sm leading-relaxed text-slate-600">
+              You complete the intake, we prepare the package, signing is resolved, and we fax and document transmission.
+            </p>
           </div>
           <ol className="mt-10 grid gap-6 sm:grid-cols-2">
             {steps.map((s, i) => (
@@ -117,7 +120,10 @@ export default function AboutPage() {
       {/* What we are / aren't — trust */}
       <section className="border-b border-slate-200">
         <div className="mx-auto max-w-3xl px-6 py-16">
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">What we are — and what we&apos;re not</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">What are we, and what are we not?</h2>
+          <p className="mt-4 text-sm leading-relaxed text-slate-600">
+            We are a form-preparation and filing-courier service, and we are not a general tax firm.
+          </p>
           <div className="mt-8 grid gap-8 sm:grid-cols-2">
             <div>
               <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-emerald-700">We are</p>

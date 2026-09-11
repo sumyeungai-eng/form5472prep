@@ -202,7 +202,7 @@ function OtherServices() {
       <div className="max-w-6xl mx-auto px-6 py-20">
         <SectionHead
           eyebrow="More for foreign founders"
-          title="EIN and ITIN, handled too."
+          title="Do you need EIN or ITIN help too?"
           subtitle="Setting up a US LLC from abroad takes more than one form. We also obtain the two IRS identifiers non-resident owners need most."
         />
         <div className="mt-10 grid md:grid-cols-2 gap-4">
@@ -422,25 +422,25 @@ function Eligibility() {
         />
         <div className="mt-10 grid md:grid-cols-3 gap-4">
           <Reveal delay={0}>
-            <Criterion
-              icon={Building2}
-              title="You own a US LLC"
-              body="A single-member LLC organized in any US state — Wyoming, Delaware, New Mexico, Florida, etc."
-            />
+              <Criterion
+                icon={Building2}
+                title="Do you own a US LLC?"
+                body="A single-member LLC organized in any US state — Wyoming, Delaware, New Mexico, Florida, etc."
+              />
           </Reveal>
           <Reveal delay={120}>
-            <Criterion
-              icon={Globe}
-              title="You're not a US person"
-              body="You're not a US citizen, green card holder, or US tax resident. You live and pay tax outside the US."
-            />
+              <Criterion
+                icon={Globe}
+                title="Are you a non-US person?"
+                body="You're not a US citizen, green card holder, or US tax resident. You live and pay tax outside the US."
+              />
           </Reveal>
           <Reveal delay={240}>
-            <Criterion
-              icon={Receipt}
-              title="You moved money in or out"
-              body="You contributed capital, took distributions, paid yourself, or had any reportable transactions during the year."
-            />
+              <Criterion
+                icon={Receipt}
+                title="Did you move money in or out?"
+                body="You contributed capital, took distributions, paid yourself, or had any reportable transactions during the year."
+              />
           </Reveal>
         </div>
         <Reveal delay={300} className="mt-8 rounded-lg border border-amber-200 bg-amber-50 p-5 flex gap-3">
@@ -466,8 +466,8 @@ function HowItWorks() {
       <div className="max-w-6xl mx-auto px-6 py-20">
         <SectionHead
           eyebrow="How it works"
-          title="Seven steps. About fifteen minutes."
-          subtitle="No CPA back-and-forth. No PDF fields filled in the wrong language. No second-guessing whether you checked the right box."
+          title="How does Form 5472 filing work?"
+          subtitle="You complete LLC, owner, and transaction details, review the package, sign, and confirm the IRS fax transmission. No CPA back-and-forth. No PDF fields filled in the wrong language. No second-guessing whether you checked the right box."
         />
         <ol className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {processSteps.map((s, i) => (
@@ -522,8 +522,8 @@ function Deliverables() {
       <div className="max-w-6xl mx-auto px-6 py-20">
         <SectionHead
           eyebrow="What you get"
-          title="A complete, IRS-ready package."
-          subtitle="The exact same documents a CPA would prepare. Every order is reviewed by a qualified tax accountant before we submit to the IRS. Bundled as one PDF, ready for your signature."
+          title="What is included in the filing package?"
+          subtitle="The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and reasonable cause statement when the filing is late. The exact same documents a CPA would prepare. Every order is reviewed by a qualified tax accountant before we submit to the IRS. Bundled as one PDF, ready for your signature."
         />
         <ul className="mt-10 space-y-3">
           {docs.map((d, i) => (
@@ -570,7 +570,8 @@ function Comparison() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
         <SectionHead
           eyebrow="vs. the alternatives"
-          title="Why not a CPA, why not DIY."
+          title="Why use Form5472 Prep instead of CPA or DIY?"
+          subtitle="Form5472 Prep prepares this filing with IRS fax delivery and filing proof included."
         />
         <div className="mt-10 overflow-x-auto rounded-lg border border-slate-200">
           <table className="w-full text-sm">
@@ -695,7 +696,7 @@ function ToolsAndGuides() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
         <SectionHead
           eyebrow="Resources"
-          title="Free tools and guides"
+          title="What free tools and guides help before filing?"
           subtitle="Everything you need to know before you file — and the tools that answer the two questions we get most."
         />
         <div className="mt-10 grid gap-4 md:grid-cols-3">
@@ -740,7 +741,10 @@ function Faq() {
   return (
     <section className="bg-white border-b border-slate-200">
       <div className="max-w-3xl mx-auto px-6 py-20">
-        <SectionHead eyebrow="FAQ" title="Common questions." />
+        <SectionHead
+          eyebrow="FAQ"
+          title="What are common Form 5472 questions?"
+        />
         <dl className="mt-10 space-y-6">
           {FAQS.map((it, i) => (
             <Reveal key={it.q} delay={i * 80}>
