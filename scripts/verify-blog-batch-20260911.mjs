@@ -5,7 +5,7 @@ import matter from "gray-matter";
 // Read-only HTTP checks. Pass a local preview or production origin.
 const base = process.argv[2] || "http://localhost:3000";
 const canonicalOrigin = base.startsWith("http://localhost:") ? base : "https://www.form5472prep.com";
-const slugs = [
+const slugs = process.argv.length > 3 ? process.argv.slice(3) : [
   "form-5472-crypto-owner-transfers",
   "form-5472-llc-pays-personal-expenses",
   "ein-address-change-form-8822-b",

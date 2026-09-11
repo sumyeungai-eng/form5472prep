@@ -116,6 +116,11 @@ async function readFile(slug: string): Promise<Post | null> {
 }
 
 const ARTWORK_ALTS: Record<string, string> = {
+  "form-5472-outstanding-owner-loan-no-transfers": "An unchanged stack of coins on a ledger bridging two archive trays illustrates a loan balance carried into another year",
+  "form-5472-cash-accrual-year-end-cutoff": "An invoice and payment token on adjacent calendars illustrate a charge and payment falling in different years",
+  "form-5472-nonresident-spouse-joint-return-election": "Two sculpted figures beside wedding rings and a shared document folder illustrate a couple's joint tax election",
+  "irsn-vs-itin-rejected-w7": "A translucent processing slip and a solid identity card illustrate the distinction between an IRSN and an ITIN",
+  "tax-extension-without-itin": "An envelope beside a clock and a separate blank identity card illustrates requesting an extension before an ITIN arrives",
   "form-5472-crypto-owner-transfers": "Owner and company wallets connected above a ledger to illustrate tracing digital-asset transfers",
   "form-5472-llc-pays-personal-expenses": "Business receipts and personal purchases separated into two trays beside a company payment card",
   "ein-address-change-form-8822-b": "Business correspondence moving between mailboxes while the company and its identifier stay the same",
