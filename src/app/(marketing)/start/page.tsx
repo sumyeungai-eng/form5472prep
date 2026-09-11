@@ -1,12 +1,16 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { StartForm } from "./StartForm";
+import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Start your filing",
   description:
     "Start your IRS Form 5472 and pro forma Form 1120 filing. Enter your email to begin — we'll save your progress and send a reminder if you don't finish.",
-  alternates: { canonical: "/start" },
+  alternates: {
+    canonical: "/start",
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+  },
   robots: { index: false, follow: false },
 };
 

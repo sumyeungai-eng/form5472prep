@@ -4,7 +4,7 @@ import { ArrowRight, HelpCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { FAQ_CATEGORIES, FAQ_ITEMS, FAQ_LAST_REVIEWED } from "@/lib/faq";
-import { SITE_URL, SPEAKABLE, breadcrumbList, pageOpenGraph } from "@/lib/seo";
+import { SITE_URL, SPEAKABLE, breadcrumbList, pageMeta } from "@/lib/seo";
 
 const DESCRIPTION =
   "Canonical short answers for Form 5472 filing, deadlines, penalties, EIN, ITIN, proof, records, and how Form5472 Prep works.";
@@ -12,8 +12,7 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: "Form 5472 FAQ: Filing, Deadlines, EIN & ITIN",
   description: DESCRIPTION,
-  alternates: { canonical: `${SITE_URL}/faq` },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: "Form 5472 FAQ: Filing, Deadlines, EIN & ITIN",
     description: DESCRIPTION,
     path: "/faq",

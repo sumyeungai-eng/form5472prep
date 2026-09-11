@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { getAllPosts, formatPostDate, type PostMeta } from "@/lib/blog";
 import { JsonLd } from "@/components/JsonLd";
-import { SITE_URL, breadcrumbList, pageOpenGraph } from "@/lib/seo";
+import { SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
 
 // ISR: posts published from /admin live in the database, so the index has to
 // re-render without a redeploy. Admin writes also revalidatePath("/blog") for
@@ -25,8 +25,7 @@ const BLOG_DESCRIPTION =
 export const metadata: Metadata = {
   title: "Blog",
   description: BLOG_DESCRIPTION,
-  alternates: { canonical: "/blog" },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: "Blog · Form5472 Prep",
     description: BLOG_DESCRIPTION,
     path: "/blog",

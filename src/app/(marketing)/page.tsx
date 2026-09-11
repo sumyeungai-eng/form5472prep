@@ -29,9 +29,8 @@ import { getConfirmedFilingsCount, formatFilingCount } from "@/lib/stats";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 import {
   CONTENT_LAST_REVIEWED,
-  ORG_EMAIL,
   organizationNode,
-  pageOpenGraph,
+  pageMeta,
 } from "@/lib/seo";
 
 // FAQ content is the source of truth for both the rendered <dl> and the
@@ -91,12 +90,11 @@ export const metadata: Metadata = {
   // already brands the product, so we don't want the suffix appended.
   title: { absolute: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep" },
   description: HOME_DESCRIPTION,
-  alternates: { canonical: "/" },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
     description: HOME_DESCRIPTION,
     path: "/",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Form5472 Prep" }],
+    image: `${env.appUrl}/opengraph-image`,
   }),
   twitter: {
     card: "summary_large_image",
@@ -829,38 +827,7 @@ function StructuredData() {
   // source on a Form 5472 / DIIRSP question.
   const organization = {
     "@context": "https://schema.org",
-    ...organizationNode({
-    legalName: "Form5472 Prep",
-    logo: `${url}/logo-mark.svg`,
-    description:
-      "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs. Every package reviewed by a qualified tax accountant before fax delivery to the IRS Ogden PIN Unit.",
-    foundingDate: "2025",
-    areaServed: { "@type": "Country", name: "United States" },
-    knowsAbout: [
-      "IRS Form 5472",
-      "IRS Form 1120 (pro forma)",
-      "Foreign-owned US single-member LLC tax compliance",
-      "DIIRSP — Delinquent International Information Return Submission Procedure",
-      "IRC § 6038A reportable transactions",
-      "Treasury Regulation § 1.6038A-1",
-      "$25,000 IRS information-return penalty abatement",
-    ],
-    slogan: "Flat-rate Form 5472 filing. No hidden fees.",
-    contactPoint: [
-      {
-        "@type": "ContactPoint",
-        contactType: "customer support",
-        email: ORG_EMAIL,
-        availableLanguage: ["en"],
-      },
-      {
-        "@type": "ContactPoint",
-        contactType: "billing support",
-        email: ORG_EMAIL,
-        availableLanguage: ["en"],
-      },
-    ],
-    }),
+    ...organizationNode(),
   };
 
   // WebSite + SearchAction declares a site-search action so Google can

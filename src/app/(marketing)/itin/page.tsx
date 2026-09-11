@@ -8,7 +8,7 @@ import {
   SPEAKABLE,
   breadcrumbList,
   organizationNode,
-  pageOpenGraph,
+  pageMeta,
 } from "@/lib/seo";
 
 const ITIN_DESCRIPTION =
@@ -19,8 +19,7 @@ export const metadata: Metadata = {
   // brand isn't doubled (the title already ends in "| Form5472 Prep").
   title: { absolute: "ITIN Application Support for Non-Residents | Form5472 Prep" },
   description: ITIN_DESCRIPTION,
-  alternates: { canonical: "/itin" },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: "ITIN Application Support for Non-Residents",
     description: ITIN_DESCRIPTION,
     path: "/itin",

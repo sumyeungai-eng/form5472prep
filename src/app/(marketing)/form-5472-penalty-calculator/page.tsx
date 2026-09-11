@@ -16,7 +16,7 @@ import {
   SPEAKABLE,
   breadcrumbList,
   organizationNode,
-  pageOpenGraph,
+  pageMeta,
 } from "@/lib/seo";
 import {
   CONTINUATION_GRACE_DAYS,
@@ -60,8 +60,7 @@ const PENALTY_FAQS = [
 export const metadata: Metadata = {
   title: { absolute: PAGE_TITLE },
   description: PAGE_DESCRIPTION,
-  alternates: { canonical: PAGE_PATH },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
     path: PAGE_PATH,

@@ -19,6 +19,17 @@ export const CONTENT_LAST_REVIEWED = "2026-08-16";
 
 export const DEFAULT_OG_IMAGE = { url: "/opengraph-image", width: 1200, height: 630 };
 
+export type PageMetaInput = {
+  title: string;
+  description: string;
+  path: string;
+  type?: "website" | "article";
+  image?: string;
+  alt?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+};
+
 // Per-page OpenGraph block. Next.js does NOT deep-merge a page's `openGraph`
 // with the root layout's, so every page that sets its own must re-supply
 // type + images or they vanish (confirmed live 2026-08-16: og:image missing
@@ -41,6 +52,48 @@ export function pageOpenGraph(input: {
   };
 }
 
+// Page-level metadata helper. Next.js does NOT deep-merge `alternates` from
+// the root layout into a page that sets its own `alternates` — the page's
+// object wins wholesale, which is why the layout's RSS link
+// (src/app/layout.tsx:43-46) never renders. Every page-level `alternates`
+// must therefore carry `types` itself.
+export function pageMeta(input: PageMetaInput): Metadata {
+  const canonical = `${SITE_URL}${input.path}`;
+  const type = input.type ?? "website";
+  const image = input.image ?? `${SITE_URL}${DEFAULT_OG_IMAGE.url}`;
+  const alt = input.alt ?? SITE_NAME;
+  const articleDates =
+    type === "article"
+      ? {
+          publishedTime: input.publishedTime,
+          modifiedTime: input.modifiedTime,
+        }
+      : {};
+
+  return {
+    alternates: {
+      canonical,
+      types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+    },
+    openGraph: {
+      type,
+      siteName: SITE_NAME,
+      locale: "en_US",
+      title: input.title,
+      description: input.description,
+      url: canonical,
+      images: [{ url: image, width: DEFAULT_OG_IMAGE.width, height: DEFAULT_OG_IMAGE.height, alt }],
+      ...articleDates,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: input.title,
+      description: input.description,
+      images: [image],
+    },
+  };
+}
+
 // BreadcrumbList JSON-LD. `items` are ordered root→leaf; paths are relative.
 export function breadcrumbList(items: Array<{ name: string; path: string }>) {
   return {
@@ -55,15 +108,33 @@ export function breadcrumbList(items: Array<{ name: string; path: string }>) {
   };
 }
 
-// Canonical Organization node reused by every page's schema (and by
-// llms.txt). Keep this the single source of truth for org facts.
+// Canonical Organization node reused by every page's schema (and by llms.txt).
+// Organization is enriched for knowledge-panel + E-E-A-T signals. knowsAbout
+// is the key field for AI engines deciding whether to cite us as a topical
+// source on a Form 5472 / DIIRSP question. These fields were lost and restored
+// on 2026-09-11; keep them here so nobody prunes them again.
 export function organizationNode(extra: Record<string, unknown> = {}) {
   return {
     "@type": "Organization",
     "@id": `${SITE_URL}/#organization`,
     name: SITE_NAME,
+    legalName: SITE_NAME,
     url: SITE_URL,
-    logo: `${SITE_URL}/logo.svg`,
+    logo: `${SITE_URL}/logo-mark.svg`,
+    description:
+      "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs. Every package reviewed by a qualified tax accountant before fax delivery to the IRS Ogden PIN Unit.",
+    foundingDate: "2025",
+    areaServed: { "@type": "Country", name: "United States" },
+    knowsAbout: [
+      "IRS Form 5472",
+      "IRS Form 1120 (pro forma)",
+      "Foreign-owned US single-member LLC tax compliance",
+      "DIIRSP — Delinquent International Information Return Submission Procedure",
+      "IRC § 6038A reportable transactions",
+      "Treasury Regulation § 1.6038A-1",
+      "$25,000 IRS information-return penalty abatement",
+    ],
+    slogan: "Flat-rate Form 5472 filing. No hidden fees.",
     email: ORG_EMAIL,
     sameAs: ORG_SAME_AS,
     contactPoint: [
@@ -71,7 +142,13 @@ export function organizationNode(extra: Record<string, unknown> = {}) {
         "@type": "ContactPoint",
         contactType: "customer support",
         email: ORG_EMAIL,
-        availableLanguage: ["English"],
+        availableLanguage: ["en"],
+      },
+      {
+        "@type": "ContactPoint",
+        contactType: "billing support",
+        email: ORG_EMAIL,
+        availableLanguage: ["en"],
       },
     ],
     ...extra,

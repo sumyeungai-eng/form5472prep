@@ -8,7 +8,7 @@ import {
   SPEAKABLE,
   breadcrumbList,
   organizationNode,
-  pageOpenGraph,
+  pageMeta,
 } from "@/lib/seo";
 import { PartnerApplyForm } from "./PartnerApplyForm";
 
@@ -18,8 +18,7 @@ export const metadata: Metadata = {
   title: { absolute: "Partner Program for Form 5472 Filings | Form5472 Prep" },
   description:
     "Partner program: formation agencies, CPA firms and registered agents batch filings in one partner account; client signs by secure link; we review, fax to IRS.",
-  alternates: { canonical: "/partners" },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: "Partner Program — Batch Form 5472 Filings for Your Clients",
     description:
       "Partner program: formation agencies, CPA firms and registered agents batch filings in one partner account; client signs by secure link; we review, fax to IRS.",

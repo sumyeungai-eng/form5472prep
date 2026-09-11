@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { pageOpenGraph } from "@/lib/seo";
+import { pageMeta } from "@/lib/seo";
 
 // The apply page itself is a client component ("use client") and can't export
 // metadata. This server layout sets it instead. The intake form is a thin
@@ -10,8 +10,7 @@ export const metadata: Metadata = {
   title: "ITIN Application — Form5472 Prep",
   description:
     "Start your ITIN application. Your identity documents are certified by an IRS Certifying Acceptance Agent and we submit Form W-7 — no passport mailing required.",
-  alternates: { canonical: "/itin/apply" },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: "ITIN Application — Form5472 Prep",
     description:
       "Start your ITIN application. Your identity documents are certified by an IRS Certifying Acceptance Agent and we submit Form W-7 — no passport mailing required.",

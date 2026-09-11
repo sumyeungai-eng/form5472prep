@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/JsonLd";
 import { EIN_APPLICATION_FAQ } from "@/lib/einApplicationFaq";
-import { pageOpenGraph } from "@/lib/seo";
+import { pageMeta } from "@/lib/seo";
 
 // The apply page itself is a client component ("use client") and can't export
 // metadata. This server layout sets it instead. The intake form is a thin
@@ -12,8 +12,7 @@ export const metadata: Metadata = {
   title: "EIN Application — Form5472 Prep",
   description:
     "Start your EIN application for a foreign-owned US LLC. We prepare Form SS-4 and obtain your EIN directly from the IRS — no SSN required.",
-  alternates: { canonical: "/ein/apply" },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: "EIN Application — Form5472 Prep",
     description:
       "Start your EIN application for a foreign-owned US LLC. We prepare Form SS-4 and obtain your EIN directly from the IRS — no SSN required.",

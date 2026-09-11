@@ -1,10 +1,14 @@
 import { LegalLayout } from "@/components/LegalLayout";
+import { SITE_URL } from "@/lib/seo";
 
 export const metadata = {
   title: "Terms of Service",
   description:
     "Form5472 Prep Terms of Service. We prepare and transmit IRS Form 5472 filings — we are not a CPA firm and do not provide tax advice.",
-  alternates: { canonical: "/terms" },
+  alternates: {
+    canonical: "/terms",
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+  },
   robots: { index: true, follow: true },
 };
 

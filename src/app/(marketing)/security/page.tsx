@@ -1,10 +1,14 @@
 import { LegalLayout } from "@/components/LegalLayout";
+import { SITE_URL } from "@/lib/seo";
 
 export const metadata = {
   title: "Information Security Policy",
   description:
     "How Form5472 Prep protects customer information — including bank transaction data accessed via Plaid, government identifiers, and tax filing PDFs.",
-  alternates: { canonical: "/security" },
+  alternates: {
+    canonical: "/security",
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+  },
   robots: { index: true, follow: true },
 };
 

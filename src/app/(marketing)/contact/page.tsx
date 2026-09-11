@@ -6,7 +6,7 @@ import {
   breadcrumbList,
   ORG_EMAIL,
   organizationNode,
-  pageOpenGraph,
+  pageMeta,
   SITE_URL,
   SPEAKABLE,
 } from "@/lib/seo";
@@ -63,8 +63,7 @@ const contactFaqJsonLd = {
 export const metadata: Metadata = {
   title: { absolute: PAGE_TITLE },
   description: PAGE_DESCRIPTION,
-  alternates: { canonical: "/contact" },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
     path: "/contact",

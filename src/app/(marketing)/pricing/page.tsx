@@ -12,14 +12,13 @@ import {
 import { formatPrice } from "@/lib/utils";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 import { JsonLd } from "@/components/JsonLd";
-import { breadcrumbList, pageOpenGraph } from "@/lib/seo";
+import { breadcrumbList, pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Pricing for Form 5472 Filing",
   description:
     `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} within ${EXPRESS_TURNAROUND}. We fax to the IRS Ogden PIN Unit.`,
-  alternates: { canonical: "/pricing" },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
     description:
       `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} within ${EXPRESS_TURNAROUND}. We fax to the IRS Ogden PIN Unit.`,

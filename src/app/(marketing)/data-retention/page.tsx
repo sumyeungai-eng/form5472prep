@@ -1,10 +1,14 @@
 import { LegalLayout } from "@/components/LegalLayout";
+import { SITE_URL } from "@/lib/seo";
 
 export const metadata = {
   title: "Data Retention Policy",
   description:
     "Bank statements are processed in memory and discarded; signed PDFs are deleted within 72 hours of fax confirmation; fax receipts are retained 7 years.",
-  alternates: { canonical: "/data-retention" },
+  alternates: {
+    canonical: "/data-retention",
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+  },
   robots: { index: true, follow: true },
 };
 

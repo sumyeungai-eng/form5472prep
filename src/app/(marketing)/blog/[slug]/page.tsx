@@ -25,7 +25,7 @@ import {
   type PostMeta,
 } from "@/lib/blog";
 import { env } from "@/lib/env";
-import { SPEAKABLE, pageOpenGraph } from "@/lib/seo";
+import { SPEAKABLE, pageMeta } from "@/lib/seo";
 
 // ISR: prerender the slugs known at build time, but `dynamicParams` lets a post
 // published from /admin (DB-only, so absent from the build) render on first
@@ -41,20 +41,26 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await getPost(params.slug);
   if (!post) return {};
-  const image = `/blog/${post.slug}/opengraph-image`;
+  const image = `${env.appUrl}/blog/${post.slug}/opengraph-image`;
+  const publishedTime = new Date(post.publishAt ?? post.date).toISOString();
+  const modifiedTime = new Date(post.updated ?? post.publishAt ?? post.date).toISOString();
+  const meta = pageMeta({
+    title: post.title,
+    description: post.description,
+    path: `/blog/${post.slug}`,
+    type: "article",
+    image,
+    publishedTime,
+    modifiedTime,
+  });
   return {
     title: post.title,
     description: post.description,
-    alternates: { canonical: `/blog/${post.slug}` },
+    ...meta,
     openGraph: {
-      ...pageOpenGraph({
-        title: post.title,
-        description: post.description,
-        path: `/blog/${post.slug}`,
-        type: "article",
-        images: [{ url: image, width: 1200, height: 630 }],
-      }),
-      publishedTime: new Date(post.publishAt ?? post.date).toISOString(),
+      ...meta.openGraph,
+      publishedTime,
+      modifiedTime,
       authors: post.author ? [post.author] : undefined,
       tags: post.tags,
     } as NonNullable<Metadata["openGraph"]>,

@@ -1,10 +1,14 @@
 import { LegalLayout } from "@/components/LegalLayout";
+import { SITE_URL } from "@/lib/seo";
 
 export const metadata = {
   title: "Privacy Policy",
   description:
     "We do not store bank statements or signed PDFs. Fax confirmations and entity data are retained for 7 years to match IRS records retention.",
-  alternates: { canonical: "/privacy" },
+  alternates: {
+    canonical: "/privacy",
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+  },
   robots: { index: true, follow: true },
 };
 

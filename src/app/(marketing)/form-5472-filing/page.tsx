@@ -23,7 +23,7 @@ import {
   TIER_ORDER,
   type Tier,
 } from "@/lib/pricing";
-import { ORG_EMAIL, pageOpenGraph, TRUSTPILOT_PROFILE_URL } from "@/lib/seo";
+import { ORG_EMAIL, pageMeta, TRUSTPILOT_PROFILE_URL } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
 
 // Google Ads funnel attribution for this list-price landing page.
@@ -42,8 +42,7 @@ export const metadata: Metadata = {
   title: { absolute: PAGE_TITLE },
   description: PAGE_DESCRIPTION,
   robots: { index: false, follow: true },
-  alternates: { canonical: "/form-5472-filing" },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
     path: "/form-5472-filing",

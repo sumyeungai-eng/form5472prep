@@ -9,7 +9,7 @@ import {
   SPEAKABLE,
   breadcrumbList,
   organizationNode,
-  pageOpenGraph,
+  pageMeta,
 } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -18,8 +18,7 @@ export const metadata: Metadata = {
   title: { absolute: "EIN for Foreign-Owned US LLC — No SSN Needed | Form5472 Prep" },
   description:
     "EIN for foreign-owned US LLCs: $149 flat fee, no SSN or ITIN required. We prepare Form SS-4 and get your EIN directly from the IRS.",
-  alternates: { canonical: "/ein" },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: "EIN for Foreign-Owned US LLC — No SSN Needed",
     description:
       "EIN for foreign-owned US LLCs: $149 flat fee, no SSN or ITIN required. We prepare Form SS-4 and get your EIN directly from the IRS.",

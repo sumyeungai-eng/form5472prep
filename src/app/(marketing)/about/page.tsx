@@ -4,14 +4,13 @@ import { ShieldCheck, FileText, Send, PenTool, Users, ArrowRight } from "lucide-
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
-import { CONTENT_LAST_REVIEWED, organizationNode, pageOpenGraph } from "@/lib/seo";
+import { CONTENT_LAST_REVIEWED, organizationNode, pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "About Form5472 Prep",
   description:
     "About Form5472 Prep: done-for-you filing and courier service for a foreign-owned single-member LLC's Form 5472 + pro forma 1120.",
-  alternates: { canonical: "/about" },
-  openGraph: pageOpenGraph({
+  ...pageMeta({
     title: "About Form5472 Prep",
     description:
       "About Form5472 Prep: done-for-you filing and courier service for a foreign-owned single-member LLC's Form 5472 + pro forma 1120.",

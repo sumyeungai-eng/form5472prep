@@ -172,6 +172,7 @@ export async function buildLlmsTxt(): Promise<string> {
     buildTopicPages(),
     buildGuides(posts),
     `Full text of every guide and topic page: ${SITE_URL}/llms-full.txt`,
+    `RSS 2.0 feed with the latest public guides (127 items as of 2026-09-11): ${SITE_URL}/feed.xml`,
     BACKGROUND,
     FILING_DEADLINE,
     buildContact(),

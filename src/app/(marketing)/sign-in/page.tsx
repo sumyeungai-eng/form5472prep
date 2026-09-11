@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { SITE_URL } from "@/lib/seo";
 import { SignInForm } from "./SignInForm";
 
 export const metadata: Metadata = {
   title: "Sign in",
   description:
     "Sign in to Form5472 Prep to view your filing status, download generated PDFs, and check fax delivery.",
-  alternates: { canonical: "/sign-in" },
+  alternates: {
+    canonical: "/sign-in",
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+  },
   robots: { index: false, follow: false },
 };
 

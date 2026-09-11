@@ -17,7 +17,7 @@ import {
 } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import { env } from "@/lib/env";
-import { CONTENT_LAST_REVIEWED, pageOpenGraph } from "@/lib/seo";
+import { CONTENT_LAST_REVIEWED, pageMeta } from "@/lib/seo";
 
 // Lock the route to only the known slugs — anything else 404s.
 export const dynamicParams = false;
@@ -78,18 +78,18 @@ export async function generateMetadata({
   return {
     title: { absolute: page.title },
     description: page.metaDescription,
-    alternates: { canonical: `/${page.slug}` },
+    ...pageMeta({
+      title: page.title,
+      description: page.metaDescription,
+      path: `/${page.slug}`,
+      type: "article",
+      modifiedTime: page.updated ?? CONTENT_LAST_REVIEWED,
+    }),
     // Paid-ad landing pages opt out of organic search so Google only sends
     // ad-clicks here. Also keeps the page out of the sitemap (see sitemap.ts).
     robots: page.noindex
       ? { index: false, follow: false }
       : { index: true, follow: true },
-    openGraph: pageOpenGraph({
-      title: page.title,
-      description: page.metaDescription,
-      path: `/${page.slug}`,
-      type: "article",
-    }),
   };
 }
 

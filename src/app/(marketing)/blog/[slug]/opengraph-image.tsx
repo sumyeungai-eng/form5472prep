@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getPost, formatPostDate } from "@/lib/blog";
+import { getAllPosts, getPost, formatPostDate } from "@/lib/blog";
 
 // Per-post social card. Renders the post title in the brand's navy "filing
 // house" style so every shared blog link gets a specific preview instead of the
@@ -8,6 +8,11 @@ export const runtime = "nodejs";
 export const alt = "Form5472 Prep — guide";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+export async function generateStaticParams() {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({ slug: post.slug }));
+}
 
 export default async function Image({ params }: { params: { slug: string } }) {
   const post = await getPost(params.slug);
