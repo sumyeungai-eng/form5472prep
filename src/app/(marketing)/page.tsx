@@ -441,7 +441,7 @@ function HowItWorks() {
     {
       icon: PenTool,
       title: "You sign it",
-      body: "Review the prepared package and sign in your browser — no printing, scanning, or uploading.",
+      body: "Review the prepared package. Confirm the authorized signer and the signing method appropriate to the document and filing route before submission.",
     },
     {
       icon: Send,
