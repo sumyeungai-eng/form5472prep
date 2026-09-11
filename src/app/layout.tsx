@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ChatWidget } from "@/components/ChatWidget";
 import { MetaPixel } from "@/components/MetaPixel";
+import { VisitPing } from "@/components/VisitPing";
 import { GOOGLE_ADS_TAG_ID } from "@/lib/analytics/googleAds";
 import "./globals.css";
 
@@ -120,6 +121,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <MetaPixel />
         <ChatWidget />
+        {/* Deliberately not behind the Meta consent gate: site-security and
+            first-party analytics run under legitimate interest with short
+            retention, and gating this would blind the log exactly for the
+            visitors most worth logging. */}
+        <VisitPing />
         <Analytics />
         <SpeedInsights />
       </body>

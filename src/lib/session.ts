@@ -119,6 +119,13 @@ export async function getCurrentUser() {
 // cookie's HMAC signature and expiry — no database round-trip. Used by the
 // /api/me endpoint that the client header island polls, so the marketing
 // layout can be fully static (edge-cached) instead of force-dynamic.
+// DB-free user id from the signed cookie, for hot paths that only need the
+// identifier (the page-view beacon runs on every navigation and must not
+// spend a database round-trip to learn who is browsing).
+export function getCurrentUserId(): string | null {
+  return verifyUserToken(cookies().get(USER_COOKIE)?.value) ?? null;
+}
+
 export function hasValidSession(): boolean {
   return !!verifyUserToken(cookies().get(USER_COOKIE)?.value);
 }

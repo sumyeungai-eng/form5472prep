@@ -49,6 +49,9 @@ export default function PrivacyPage() {
           Stripe. We never see or store your card information.
         </li>
       </ul>
+      <p>
+        When you visit the site we record your IP address, an approximate location derived from it (country and city), the pages you view, the referring site and your browser type. IP addresses are deleted after 30 days and page-view records after 90 days. We use this information to keep the site secure and to understand how visitors use it.
+      </p>
 
       <p>
         The following are <strong>processed and discarded</strong>, never written to permanent

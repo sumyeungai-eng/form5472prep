@@ -572,6 +572,56 @@ model RateLimit {
   @@index([expiresAt])
 }
 
+model Visitor {
+  id            String     @id @default(cuid())
+  visitorKey    String     @unique
+  firstSeenAt   DateTime   @default(now())
+  lastSeenAt    DateTime   @default(now())
+  pageViews     Int        @default(0)
+  isBot         Boolean    @default(false)
+  // First touch, copied ONCE from the f5472_attr cookie on the first ping and never overwritten.
+  attrSource    String?
+  attrMedium    String?
+  attrCampaign  String?
+  attrReferrer  String?
+  attrLanding   String?
+  // Last known, refreshed on every ping. `ip` is nulled by the retention cron after 30 days.
+  ip            String?
+  ipHash        String?
+  country       String?
+  region        String?
+  city          String?
+  timezone      String?
+  userAgent     String?
+  userId        String?
+  lastSessionId String?
+  views         PageView[]
+
+  @@index([isBot, lastSeenAt])
+  @@index([country, lastSeenAt])
+  @@index([userId])
+}
+
+model PageView {
+  id        String   @id @default(cuid())
+  visitorId String
+  visitor   Visitor  @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  path      String
+  referrer  String?
+  sessionId String?
+  userId    String?
+  ip        String?
+  country   String?
+  city      String?
+  device    String?
+  isBot     Boolean  @default(false)
+
+  @@index([visitorId, createdAt])
+  @@index([createdAt])
+  @@index([sessionId])
+}
+
 model IdempotencyRecord {
   id         String   @id @default(cuid())
   key        String

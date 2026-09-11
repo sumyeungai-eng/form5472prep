@@ -23,6 +23,7 @@ function normalizedAppUrl(): string {
 
 export const env = {
   appUrl: normalizedAppUrl(),
+  trafficIpSalt: optional("TRAFFIC_IP_SALT"),
   // All admin-bound transactional mail (orders, fax delivery, fax failure,
   // AI flags, validation alerts, etc.) lands in support@form5472prep.com —
   // the single inbox we actually monitor. The old default was orders@, which
