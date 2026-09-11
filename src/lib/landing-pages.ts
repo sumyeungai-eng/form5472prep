@@ -50,7 +50,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 1120", url: "https://www.irs.gov/instructions/i1120" },
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "How to File IRS Form 5472",
     intro:
       "Foreign-owned US single-member LLCs must file Form 5472 with an attached pro forma Form 1120 by April 15 each year. You can't e-file — the IRS only accepts these forms by mail or fax to the Ogden PIN Unit at +1-855-887-7737. Below is the full step-by-step process, broken down into every form, field, and decision you'll face — or skip the work entirely and use our accountant-reviewed 15-minute online filer from $149.",
@@ -65,7 +65,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file Form 5472 step by step?",
-        body: "1. Gather your LLC info: legal name as registered with the state, EIN, US address, date of formation, country of incorporation (US), state of incorporation, NAICS / principal business activity code.\n2. Gather your owner info: full legal name as on passport, foreign tax ID (FTIN) or self-assigned Reference ID, residential address abroad, country of citizenship, country of tax residence, country of organization of any related foreign entities.\n3. Add up year-end financials: capital contributions in, distributions out, total assets at year-end (in USD), and a list of every transaction between the LLC and any related party.\n4. Fill in Form 1120: entity identification (lines A-E), name, address, EIN, date of formation, total assets. Leave income and tax sections blank. Stamp or type \"Foreign-Owned U.S. DE\" across the top margin.\n5. Fill in Form 5472: Part I (reporting corporation), Part II (25%+ foreign shareholder), Part III (related party), Part IV (monetary transactions), Part V (cost-sharing or other transactions), Part VII (foreign disregarded entity info).\n6. Build the Part V supporting statement: one line per reportable transaction with date, amount, related party, and nature.\n7. Sign every signature line in pen. Digital-only signatures are not accepted by the IRS for these filings.\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Keep the fax confirmation receipt — it is your proof of timely filing.",
+        body: "1. Gather your LLC info: legal name as registered with the state, EIN, US address, date of formation, country of incorporation (US), state of incorporation, NAICS / principal business activity code.\n2. Gather your owner info: full legal name as on passport, foreign tax ID (FTIN) or self-assigned Reference ID, residential address abroad, country of citizenship, country of tax residence, country of organization of any related foreign entities.\n3. Add up year-end financials: capital contributions in, distributions out, total assets at year-end (in USD), and a list of every transaction between the LLC and any related party.\n4. Fill in Form 1120: name, address, item B (EIN) and applicable item E boxes, as the special DE instructions require. Leave income and tax sections blank. Stamp or type \"Foreign-Owned U.S. DE\" across the top margin.\n5. Fill in Form 5472: Part I (reporting corporation), Part II (25%+ foreign shareholder), Part III (related party), Part IV (monetary transactions), Part V (cost-sharing or other transactions), Part VII (foreign disregarded entity info).\n6. Build the Part V supporting statement: one line per reportable transaction with date, amount, related party, and nature.\n7. As a conservative workflow, have the authorized person sign the completed pro forma 1120 in ink, then scan that signed page for fax. Form 5472 has no signature block; [electronic-signature rules depend on the document and route](/blog/form-5472-pro-forma-1120-signature).\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Keep the fax confirmation receipt — it is your transmission evidence.",
       },
       {
         heading: "What goes on each part of Form 5472?",
@@ -73,7 +73,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Why can't I e-file?",
-        body: "Foreign-owned US disregarded entities are explicitly excluded from IRS e-filing for Form 5472 and the attached pro forma Form 1120. The IRS Modernized e-File (MeF) system cannot process these returns — the IRS publishes their fax number (+1-855-887-7737) specifically because there's no e-file option.\n\nFax is faster than mail and gives you a transmission receipt with a timestamp — which is your proof of timely filing under IRC § 6038A. Certified mail with a return receipt works too, but takes longer and is harder to track.\n\nDo not try to file through a normal e-file service like TurboTax, FreeTaxUSA, or H&R Block. They cannot submit Form 5472 for a foreign-owned single-member LLC even if they accept your money. The return will simply not reach the IRS.",
+        body: "Foreign-owned US disregarded entities are explicitly excluded from IRS e-filing for Form 5472 and the attached pro forma Form 1120. The IRS Modernized e-File (MeF) system cannot process these returns — the IRS publishes their fax number (+1-855-887-7737) specifically because there's no e-file option.\n\nFax is faster than mail and gives you a transmission receipt with a timestamp — which is your transmission evidence to retain with the exact package. Certified mail with a return receipt works too, but takes longer and is harder to track.\n\nDo not try to file through a normal e-file service like TurboTax, FreeTaxUSA, or H&R Block. They cannot submit Form 5472 for a foreign-owned single-member LLC even if they accept your money. The return will simply not reach the IRS.",
       },
       {
         heading: "What does a real Form 5472 filing look like?",
@@ -81,7 +81,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are the most common Form 5472 mistakes?",
-        body: "• Filing only Form 5472 without the pro forma 1120 — the IRS will reject this and treat it as not filed.\n• Forgetting to stamp \"Foreign-Owned U.S. DE\" on the 1120.\n• Leaving Part V blank when capital contributions or distributions occurred.\n• Using a digital-only signature — the IRS requires a wet/ink signature on these specific forms.\n• Filing for the wrong tax year (the package is for the tax year that ended, not the current year).\n• Missing the Part V supporting statement — Part V references it but many DIY filers forget to attach the list.\n• Reporting amounts in a foreign currency — all dollar figures must be in USD using the appropriate exchange rate.\n• Sending to the wrong fax number — only +1-855-887-7737 is the IRS Ogden PIN Unit fax for these filings.",
+        body: "• Filing only Form 5472 without the pro forma 1120 — the IRS will reject this and treat it as not filed.\n• Forgetting to stamp \"Foreign-Owned U.S. DE\" on the 1120.\n• Leaving Part V blank when capital contributions or distributions occurred.\n• Assuming a digital-only signature is authorized merely because faxing is allowed. Ink signing of the completed pro forma cover followed by scanning is a conservative workflow, not an absolute IRS ban on every other method.\n• Filing for the wrong tax year (the package is for the tax year that ended, not the current year).\n• Missing the Part V supporting statement — Part V references it but many DIY filers forget to attach the list.\n• Reporting amounts in a foreign currency — all dollar figures must be in USD using the appropriate exchange rate.\n• Sending to the wrong fax number — only +1-855-887-7737 is the IRS Ogden PIN Unit fax for these filings.",
       },
       {
         heading: "How much does it cost to file?",
@@ -89,11 +89,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What happens after you file Form 5472?",
-        body: "The IRS Ogden Service Center will process your return over the following weeks. For most foreign-owned single-member LLCs there is no follow-up — no news is good news.\n\nIf the IRS has a question or wants additional information, they will mail a notice (usually a Letter 5891 or CP-15) to the LLC's US address. Make sure the address you put on the forms can actually receive mail — many foreign owners use a virtual mailbox service or their registered agent's address.\n\nKeep your filing records for at least 6 years: the signed PDF, the fax transmission receipt, and copies of any IRS correspondence. The IRS can audit Form 5472 filings for up to 6 years after the filing date if the return is incomplete.\n\nNext year, you'll do the same thing again — Form 5472 is an annual filing. Most customers come back to us each spring and we pre-fill from their prior year's filing.",
+        body: "The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. The provider’s transmission record and IRS processing are different evidence. Silence establishes neither delivery nor acceptance, and no filing-specific processing timetable was verified.\n\nKeep the exact submitted package, destination, timestamp, page count, provider receipt and any IRS correspondence together. Do not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline; a transmission record does not guarantee a penalty will be removed. See [receipt confirmation and next steps](/blog/form-5472-irs-receipt-confirmation-status).",
       },
       {
         heading: "Skip the work — file in 15 minutes",
-        body: "Our online filer asks 12 simple questions about your LLC, owner, and year-end totals. We generate the entire package (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if late). You sign once on screen — no printing or scanning. An accountant on our team reviews the package end-to-end. Then we fax it to the IRS Ogden PIN Unit and email you the timestamped fax transmission receipt as proof of filing.\n\nPricing: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included. +$99 per additional past year. 100% money-back guarantee if we fail to submit your filing.",
+        body: "Our online filer asks 12 simple questions about your LLC, owner, and year-end totals. We generate the entire package (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if late). You sign once on screen — no printing or scanning. An accountant on our team reviews the package end-to-end. Then we fax it to the IRS Ogden PIN Unit and email you the timestamped fax transmission receipt as transmission evidence.\n\nPricing: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included. +$99 per additional past year. 100% money-back guarantee if we fail to submit your filing.",
       },
     ],
     faqs: [
@@ -131,7 +131,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Is IRS fax delivery included in the price?",
-        a: "Yes. IRS fax delivery to +1-855-887-7737 is included with every filing. There is no separate fax fee. You will receive the timestamped fax transmission receipt as proof of timely filing.",
+        a: "Yes. IRS fax delivery to +1-855-887-7737 is included with every filing. There is no separate fax fee. You will receive the timestamped fax transmission receipt as transmission evidence.",
       },
       {
         q: "Does someone actually review my filing before it goes to the IRS?",
@@ -151,7 +151,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "The Form 5472 $25,000 Penalty Explained",
     intro:
       "Under IRC § 6038A(d), the IRS automatically assesses a $25,000 penalty per Form 5472 that is filed late, filed incompletely, or not filed at all — per year, per LLC. The penalty stacks at $25,000 per 30-day period if you don't fix it within 90 days of an IRS notice. Here's exactly how the penalty works, who it applies to, how to either avoid it entirely, and how to request abatement if you've already triggered it.",
@@ -166,7 +166,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you avoid the penalty entirely?",
-        body: "1. File on time — by April 15 of the year following the tax year, or by October 15 if you filed Form 7004 for an extension by April 15.\n2. File completely — Parts I, II, III, IV, V, and VII of Form 5472, plus the pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp, plus the Part V supporting statement.\n3. File by the right method — fax to +1-855-887-7737 (IRS Ogden PIN Unit) or mail certified to IRS Ogden, UT 84201-0023. The IRS does not accept these via e-file or email.\n4. Keep your fax transmission receipt — it's the timestamped proof you filed before the deadline. The IRS does not send a separate confirmation.\n5. Use a US address that can actually receive mail in case the IRS sends a notice.",
+        body: "1. File on time — by April 15 of the year following the tax year, or by October 15 if you filed Form 7004 for an extension by April 15.\n2. File completely — Parts I, II, III, IV, V, and VII of Form 5472, plus the pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp, plus the Part V supporting statement.\n3. File by the right method — fax to +1-855-887-7737 (IRS Ogden PIN Unit) or mail certified to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201. The IRS does not accept these via e-file or email.\n4. Keep your fax transmission receipt — it records provider-reported transmission, not IRS acceptance. The current instructions do not describe a routine acceptance acknowledgment for this faxed package.\n5. Use a US address that can actually receive mail in case the IRS sends a notice.",
       },
       {
         heading: "How do you get the penalty abated under DIIRSP?",
@@ -174,7 +174,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What triggers the penalty besides missing the filing deadline?",
-        body: "Most foreign LLC owners assume the $25,000 penalty only applies to non-filers. It doesn't. The IRS treats these failures the same way:\n\n• Filing only Form 5472 without the pro forma Form 1120.\n• Filing Form 5472 without the Part V supporting statement when Part V has entries.\n• Filing with substantially incomplete information (e.g. Part IV blank when you took distributions).\n• Filing through a method the IRS doesn't accept (e-file attempts, email, wrong fax number).\n• Filing in the wrong tax year or with the wrong EIN.\n• Filing without wet/ink signatures where required.\n\nA careless DIY filing can trigger the same $25,000 penalty as not filing at all. This is the main reason we have an accountant review every filing on our service before it gets faxed.",
+        body: "Most foreign LLC owners assume the $25,000 penalty only applies to non-filers. It doesn't. The IRS treats these failures the same way:\n\n• Filing only Form 5472 without the pro forma Form 1120.\n• Filing Form 5472 without the Part V supporting statement when Part V has entries.\n• Filing with substantially incomplete information (e.g. Part IV blank when you took distributions).\n• Filing through a method the IRS doesn't accept (e-file attempts, email, wrong fax number).\n• Filing in the wrong tax year or with the wrong EIN.\n\nA careless DIY filing can trigger the same $25,000 penalty as not filing at all. This is the main reason we have an accountant review every filing on our service before it gets faxed.",
       },
       {
         heading: "What are real-world penalty scenarios?",
@@ -252,7 +252,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "DIIRSP: Filing Late Form 5472 with Penalty Abatement",
     intro:
       "The IRS Delinquent International Information Return Submission Procedure (DIIRSP) is the official way to catch up on missed Form 5472 filings while requesting that the $25,000-per-form-per-year penalty be waived. Filing under DIIRSP requires a properly written Reasonable Cause Statement attached to each late return. Get it right and most first-time filers walk away with no penalty assessed. Get it wrong — or do nothing — and the IRS will eventually mail a CP-15 notice and start the clock on continuation penalties.",
@@ -267,7 +267,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How does DIIRSP work — step by step?",
-        body: "1. Identify every missed year. If you formed the LLC in 2022 and haven't filed, that's 2022, 2023, 2024.\n2. Prepare the complete filing package for each missed year separately: cover letter, pro forma Form 1120 (with \"Foreign-Owned U.S. DE\" stamp), Form 5472, Part V supporting statement.\n3. Write a single Reasonable Cause Statement that covers all missed years (or one per year if circumstances differ).\n4. Attach the statement to the front of the package.\n5. File all years together — fax the entire set to +1-855-887-7737 (IRS Ogden PIN Unit), or mail certified to IRS Ogden, UT 84201-0023.\n6. Keep the fax transmission receipt. It's the timestamped proof that you submitted under DIIRSP on a specific date — important if the IRS later tries to assess penalties.\n7. Wait. The IRS typically responds within 3-6 months. No response usually means accepted.",
+        body: "1. Identify every missed year. If you formed the LLC in 2022 and haven't filed, that's 2022, 2023, 2024.\n2. Prepare the complete filing package for each missed year separately: cover letter, pro forma Form 1120 (with \"Foreign-Owned U.S. DE\" stamp), Form 5472, Part V supporting statement.\n3. Write a single Reasonable Cause Statement that covers all missed years (or one per year if circumstances differ).\n4. Attach the statement to the front of the package.\n5. File all years together — fax the entire set to +1-855-887-7737 (IRS Ogden PIN Unit), or mail certified to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n6. Keep the fax transmission receipt. It records the provider’s transmission event and should be retained with the exact package; it does not establish acceptance of a reasonable cause request.\n7. Preserve the record and monitor correspondence. Silence does not establish processing, acceptance or penalty relief.",
       },
       {
         heading: "What makes a good Reasonable Cause Statement?",
@@ -287,15 +287,15 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What happens after you file under DIIRSP?",
-        body: "The IRS Ogden Service Center processes the package. Typical timeline:\n\n• 0-2 weeks: fax confirmed delivered. No IRS acknowledgment yet — that's normal.\n• 2-6 months: IRS reviews. If they accept the reasonable cause, you typically hear nothing. No news is good news.\n• 3-9 months: if they want more info, you'll get a Letter 5891 or similar. Respond promptly with the requested documentation.\n• 6-12 months: if they assess the penalty anyway despite the reasonable cause request, you'll get a CP-15. You can then appeal through the IRS Office of Appeals.\n\nKeep the entire DIIRSP package (signed PDF, reasonable cause statement, fax receipt) for at least 6 years. If the IRS contacts you in year 4 about year 2 filing, you'll want the original receipts to prove timely DIIRSP submission.",
+        body: "The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. The provider’s transmission record and IRS processing are different evidence. Silence establishes neither delivery nor acceptance, and no filing-specific processing timetable was verified.\n\nKeep the exact submitted package, destination, timestamp, page count, provider receipt and any IRS correspondence together. Do not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline; a transmission record does not guarantee a penalty will be removed. See receipt confirmation and next steps.",
       },
       {
         heading: "What should you NOT do under DIIRSP?",
-        body: "• Do not pay any penalty before you file under DIIRSP — there's nothing to pay until the IRS assesses something.\n\n• Do not split missed years across multiple filings over months. File them all at once.\n\n• Do not submit only Form 5472 without the pro forma 1120 and supporting statement — incomplete filings can be treated as not filed and the DIIRSP request rejected.\n\n• Do not write a reasonable cause statement that admits negligence or implies tax avoidance. Frame the failure as a good-faith unawareness or reliance issue.\n\n• Do not assume amending an existing late return will reset the DIIRSP clock — amendments don't qualify as initial DIIRSP submissions if you previously filed late without one.\n\n• Do not skip the wet/ink signature requirement. Form 5472 and the attached 1120 require pen signatures; digital-only signatures can invalidate the filing.",
+        body: "• Do not pay any penalty before you file under DIIRSP — there's nothing to pay until the IRS assesses something.\n\n• Do not split missed years across multiple filings over months. File them all at once.\n\n• Do not submit only Form 5472 without the pro forma 1120 and supporting statement — incomplete filings can be treated as not filed and the DIIRSP request rejected.\n\n• Do not write a reasonable cause statement that admits negligence or implies tax avoidance. Frame the failure as a good-faith unawareness or reliance issue.\n\n• Do not assume amending an existing late return will reset the DIIRSP clock — amendments don't qualify as initial DIIRSP submissions if you previously filed late without one.\n\n• Do not assume a signature platform establishes permission for this filing route. Form 5472 has no signature block; ink signing of the completed pro forma 1120 followed by scanning is a conservative workflow. Review signing authority separately.",
       },
       {
         heading: "Catch up with our accountant-reviewed DIIRSP filer",
-        body: "Form5472 Prep automatically generates a Reasonable Cause Statement when you select 2 or 3 missed years in our wizard. The narrative is tailored to the most common DIIRSP scenario — first-time foreign LLC owner who was unaware of the Form 5472 obligation — and you can edit it to fit your specific circumstances.\n\nWe prepare the complete package for each year (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement). You sign once on screen — that signature embeds into every required signature box automatically. An accountant on our team reviews everything end-to-end. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as proof of DIIRSP submission.\n\n• 2-year DIIRSP catch-up: $248 Standard / $298 Express (fax included)\n• 3-year DIIRSP catch-up: $347 Standard / $397 Express (fax included)\n\n100% money-back guarantee if we fail to submit.",
+        body: "Form5472 Prep automatically generates a Reasonable Cause Statement when you select 2 or 3 missed years in our wizard. The narrative is tailored to the most common DIIRSP scenario — first-time foreign LLC owner who was unaware of the Form 5472 obligation — and you can edit it to fit your specific circumstances.\n\nWe prepare the complete package for each year (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement). You sign once on screen — that signature embeds into every required signature box automatically. An accountant on our team reviews everything end-to-end. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as transmission evidence.\n\n• 2-year DIIRSP catch-up: $248 Standard / $298 Express (fax included)\n• 3-year DIIRSP catch-up: $347 Standard / $397 Express (fax included)\n\n100% money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -305,7 +305,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "How long after a DIIRSP filing will I hear back?",
-        a: "Usually 3-6 months. The IRS will either accept the reasonable cause and close the matter quietly (no news), or send a CP-15 notice with the penalty assessed (which you can then appeal through the IRS Office of Appeals).",
+        a: "No filing-specific response timetable was verified in the current official guidance. Silence does not show that reasonable cause was accepted or a penalty waived. Keep the complete package and transmission evidence, and act on any IRS correspondence.",
       },
       {
         q: "Can I do DIIRSP myself?",
@@ -353,7 +353,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Form 5472 Instructions: Plain-English Walkthrough",
     intro:
       "The official IRS instructions for Form 5472 are 12 pages of dense regulatory language written for tax professionals. This is what each part actually means without the jargon, exactly what to put in each box, the common mistakes that trigger the $25,000 penalty, and how to put together a complete filing that the IRS will accept on the first read.",
@@ -368,7 +368,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Part I — Reporting Corporation",
-        body: "This is your LLC's information. The IRS calls the LLC a \"corporation\" here because for §6038A reporting purposes a foreign-owned DE is treated as a corporation.\n\n• Line 1a: LLC legal name as shown on your CP-575.\n• Line 1b: US address — typically your registered agent's address. The IRS sends correspondence here, so it must be able to receive mail.\n• Line 1c: EIN — your 9-digit IRS-issued number.\n• Line 1d: Total assets at year-end in USD (the ending balance from your books — cash + receivables + inventory + fixed assets).\n• Line 1e: Principal business activity code (NAICS, 6 digits).\n• Line 1f: Total value of gross payments made or received reportable on this form (must equal Part IV + Part V totals).\n• Line 1g: Total number of Forms 5472 filed for the tax year (typically 1).\n• Line 1h: Total reportable transactions reported on this Form 5472 (Part IV + Part V).\n• Lines 1i-1l: Country of incorporation (US), state of incorporation (e.g. WY, DE), principal place of business (typically US), country where books are kept.",
+        body: "Part I identifies the reporting LLC, its business activity, year-end assets, form count and reportable payment totals. Follow the labels on the current IRS form rather than copying field numbers from a different revision. Keep the LLC's information separate from the foreign owner's details in Part II.\n\nForm 5472 asks for total assets. The special pro forma Form 1120 instruction limits its required cover information to name, address and items B and E; that does not by itself settle the asset entry on Form 5472. Determine and document the LLC's year-end book assets, distinguishing this calculation from the limited cover-field rule.\n\nKeep the dollar amount reported on one Form 5472 separate from the combined amount across all Forms 5472 and from the number of forms. Reconcile reportable transactions with Parts IV, V and VI as applicable, without counting a transaction twice.",
       },
       {
         heading: "Part II — 25% Foreign Shareholder",
@@ -392,11 +392,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Signing the form",
-        body: "Form 5472 itself doesn't have a signature line — the signature lives on the attached pro forma Form 1120. Specifically: the signature block at the bottom of page 1 of the 1120.\n\nRequirements:\n\n• Wet/ink signature — sign in pen on a printed page. Digital-only signatures are not accepted by the IRS for these specific forms.\n• Sign as \"Owner\" or \"Member\" — both are acceptable for a single-member LLC.\n• Date the signature.\n• Print your name below the signature line.\n• Paid preparer block: leave blank if you prepared it yourself. If our service prepared it, we leave it blank too — you are the filer.\n\nOur in-portal signing flow handles this by embedding your once-drawn signature into a printable PDF and producing a signature-applied package. You print, sign in pen if the IRS rejects digital, or our accountant-reviewed digital sign-off is what we fax — both approaches have been accepted.",
+        body: "Form 5472 has no taxpayer signature block. The relevant block is at the bottom of Form 1120 page 1, with separate officer signature, date, title and paid-preparer fields.\n\nThe special pro forma instruction does not separately address signatures. A conservative workflow is to have the authorized person sign the completed cover in ink, enter the actual signing date and capacity, and scan that signed page for fax. This is a recommendation, not a ruling that every digital-only signature invalidates a filing.\n\nIRS electronic-signature permission depends on the document and route. Corporate e-file authorization rules do not automatically cover this DE fax package. Ask the preparer to establish signing authority and the applicable method; the general Form 1120 instructions separately address paid preparers. See the current signature guide.",
       },
       {
         heading: "What are the common mistakes that trigger penalties?",
-        body: "• Forgetting to attach pro forma Form 1120 — Form 5472 by itself isn't a valid filing.\n• Forgetting the Part V supporting statement when Part V has entries.\n• Mismatching Line 1f / 1h totals with the Part IV / Part V details.\n• Signing in pencil or with a digital-only signature where wet ink was required.\n• Missing the April 15 deadline without filing Form 7004 for an extension.\n• Filing by email or trying to e-file — neither method is accepted by the IRS for these forms.\n• Sending to the wrong fax number — only +1-855-887-7737 (IRS Ogden PIN Unit) is correct.\n• Using a US address on Part I that can't receive mail (some virtual mailboxes return-to-sender IRS letters).\n• Filing in the wrong tax year (the form is for the tax year that ENDED, not the year you're sending it in).\n• Reporting amounts in your home currency instead of USD using a documented exchange rate.\n\nAny one of these can invalidate the filing and trigger the $25,000 penalty under IRC § 6038A.",
+        body: "• Forgetting to attach pro forma Form 1120 — Form 5472 by itself isn't a valid filing.\n• Forgetting the Part V supporting statement when Part V has entries.\n• Mismatching Line 1f / 1h totals with the Part IV / Part V details.\n• Missing the April 15 deadline without filing Form 7004 for an extension.\n• Filing by email or trying to e-file — neither method is accepted by the IRS for these forms.\n• Sending to the wrong fax number — only +1-855-887-7737 (IRS Ogden PIN Unit) is correct.\n• Using a US address on Part I that can't receive mail (some virtual mailboxes return-to-sender IRS letters).\n• Filing in the wrong tax year (the form is for the tax year that ENDED, not the year you're sending it in).\n• Reporting amounts in your home currency instead of USD using a documented exchange rate.\n\nMaterial filing failures can create $25,000 penalty exposure under IRC § 6038A; not every imperfection automatically invalidates a filing.",
       },
     ],
     faqs: [
@@ -414,7 +414,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What if I made a mistake on a prior year's Form 5472?",
-        a: "File an amended return for that year. Check the \"Amended return\" box at the top of Form 5472, redo the parts that changed, and attach a brief explanation. Amended returns don't automatically waive any penalty already assessed, but they correct the underlying filing.",
+        a: "Review the actual filed package and determine whether a correction is needed. Neither current Form 1120 nor Form 5472 has an amended-return checkbox. When a corrected package is appropriate, clearly identify it with an amended notation and an explanation linking it to the original filing; this is a preparer workflow, not a prescribed special IRS amendment procedure. A correction does not guarantee penalty relief.",
       },
       {
         q: "What NAICS code should I use?",
@@ -422,7 +422,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Can I use my own signature instead of printing and signing?",
-        a: "Per current IRS practice, Form 5472 + attached pro forma 1120 require pen/ink signatures. In-portal canvas signatures embedded in a printable PDF have been accepted in practice; an absolutely wet-ink signature is the safest path. Our flow embeds your once-drawn signature in a printable PDF — most customers also print and sign in pen on top of it before faxing.",
+        a: "Do not assume a generic e-signature tool is approved for this filing. The special DE package uses fax or mail, not ordinary corporate e-file. Signing the completed pro forma 1120 in ink and scanning it for fax is a conservative workflow; see signature methods and their limits.",
       },
       {
         q: "How do I report a loan from me to the LLC?",
@@ -556,7 +556,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Filed Form 5472 Late? Here's What to Do Now",
     intro:
       "If you missed the April 15 deadline for Form 5472, file as soon as possible. The IRS Delinquent International Information Return Submission Procedure (DIIRSP) lets you submit late filings with a Reasonable Cause Statement requesting that the $25,000 penalty be waived. The longer you wait, the higher the risk of an automatic CP-15 penalty notice — and once that notice arrives, your options narrow sharply. This is the complete playbook for getting back into compliance from one missed year to many.",
@@ -571,7 +571,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What should you do if you've missed one year?",
-        body: "1. Don't panic. The IRS has not yet assessed the penalty if you haven't received a CP-15 notice.\n2. Prepare the late return immediately. You need: cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, AND a Reasonable Cause Statement at the front.\n3. Write the Reasonable Cause Statement (or use our service to generate one tailored to the most common first-time-foreign-owner scenario).\n4. File via DIIRSP — fax to +1-855-887-7737 (IRS Ogden PIN Unit), or mail certified to IRS Ogden, UT 84201-0023.\n5. Keep the fax transmission receipt as your timestamped proof of DIIRSP filing.\n6. Set up an annual reminder so you file on time going forward (or sign up for an annual filing service).",
+        body: "1. Don't panic. The IRS has not yet assessed the penalty if you haven't received a CP-15 notice.\n2. Prepare the late return immediately. You need: cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, AND a Reasonable Cause Statement at the front.\n3. Write the Reasonable Cause Statement (or use our service to generate one tailored to the most common first-time-foreign-owner scenario).\n4. File via DIIRSP — fax to +1-855-887-7737 (IRS Ogden PIN Unit), or mail certified to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n5. Keep the fax transmission receipt as your timestamped transmission evidence.\n6. Set up an annual reminder so you file on time going forward (or sign up for an annual filing service).",
       },
       {
         heading: "What should you do if you've missed multiple years?",
@@ -587,7 +587,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How long until you hear back from the IRS?",
-        body: "After a DIIRSP filing, typical timeline:\n\n• Day 0-2: Fax delivered. No IRS acknowledgment yet — that's normal.\n• Week 4-8: Internal processing at IRS Ogden Service Center.\n• Month 3-6: IRS reviews the reasonable cause request. Most cases: no news = acceptance.\n• Month 4-9: If they want more info, you'll get a Letter 5891 or similar — respond promptly.\n• Month 6-12: If they assess the penalty anyway, you'll get a CP-15. You can appeal.\n\nKeep the entire filing package (signed PDF, reasonable cause statement, fax receipt) for at least 6 years. If the IRS contacts you 18 months later about year 2, you'll want the original receipts to prove timely DIIRSP submission.",
+        body: "The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. The provider’s transmission record and IRS processing are different evidence. Silence establishes neither delivery nor acceptance, and no filing-specific processing timetable was verified.\n\nKeep the exact submitted package, destination, timestamp, page count, provider receipt and any IRS correspondence together. Do not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline; a transmission record does not guarantee a penalty will be removed. See receipt confirmation and next steps.",
       },
       {
         heading: "What are real-world late-filing scenarios?",
@@ -599,7 +599,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Get caught up in 15 minutes",
-        body: "Our DIIRSP-aware filer handles the entire late-filing package. The wizard asks 12 questions about your LLC, owner, and year-end totals for each missed year. We generate everything — cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, AND the Reasonable Cause Statement.\n\nYou sign once on screen. An accountant on our team reviews the package. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as proof of DIIRSP submission.\n\n• 1 year: $149 Standard / $199 Express (fax included)\n• 2 years (DIIRSP): $248 Standard / $298 Express (fax included)\n• 3 years (DIIRSP): $347 Standard / $397 Express (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
+        body: "Our DIIRSP-aware filer handles the entire late-filing package. The wizard asks 12 questions about your LLC, owner, and year-end totals for each missed year. We generate everything — cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, AND the Reasonable Cause Statement.\n\nYou sign once on screen. An accountant on our team reviews the package. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as transmission evidence.\n\n• 1 year: $149 Standard / $199 Express (fax included)\n• 2 years (DIIRSP): $248 Standard / $298 Express (fax included)\n• 3 years (DIIRSP): $347 Standard / $397 Express (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
       },
     ],
     faqs: [
@@ -625,7 +625,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "How do I know the fax actually delivered to the IRS?",
-        a: "Your fax service generates a transmission receipt with delivery confirmation and timestamp. That receipt is your legal proof of timely DIIRSP filing. If you use our service, we email you the receipt as a PDF, and a copy stays in your portal.",
+        a: "Your fax service generates a transmission receipt with delivery confirmation and timestamp. That receipt is your fax-provider transmission evidence. If you use our service, we email you the receipt as a PDF, and a copy stays in your portal.",
       },
       {
         q: "Can I file under DIIRSP for years where the LLC was inactive?",
@@ -657,7 +657,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Form 5472 vs Form 1120 — What's the Difference?",
     intro:
       "Form 5472 and Form 1120 are two separate IRS forms that foreign-owned US LLCs must file together as one package. Form 1120 is the US corporate income tax return. Form 5472 is an information return about related-party transactions. For most foreign-owned single-member LLCs, the 1120 is filed \"pro forma\" — meaning most boxes are blank. Here's exactly what each form is, why you need both, and how the IRS expects them combined.",
@@ -676,7 +676,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What's the side-by-side comparison of Form 1120 and Form 5472?",
-        body: "Form 1120 (pro forma version for foreign-owned DEs):\n• Purpose: corporate income tax return — used as procedural envelope here.\n• Pages: 6 standard, but most are blank for foreign-owned DEs.\n• What you fill in: entity name, EIN, US address, country/state of incorporation, total assets at year-end, signature.\n• What's blank: income, deductions, COGS, tax calculation.\n• Special: \"Foreign-Owned U.S. DE\" stamped across the top of page 1.\n• Tax owed: $0 (because the LLC is disregarded).\n\nForm 5472:\n• Purpose: information return reporting related-party transactions.\n• Pages: 2 substantive pages.\n• What you fill in: Part I (reporting corporation = your LLC), Part II (25% foreign shareholder = you), Part III (related party = you again for single-member), Part IV (monetary transactions, usually blank), Part V (reportable transactions — capital in, distributions out), Part VII (FDE confirmation).\n• Required attachments: Part V supporting statement listing each transaction.\n• Tax owed: $0 (informational only).\n\nFiled together as one package, faxed to +1-855-887-7737.",
+        body: "Form 1120 (pro forma version for foreign-owned DEs):\n• Purpose: corporate income tax return — used as procedural envelope here.\n• Pages: 6 standard, but most are blank for foreign-owned DEs.\n• What you fill in: name, address, item B (EIN), applicable item E boxes; signature workflow considered separately.\n• What's blank: income, deductions, COGS, tax calculation.\n• Special: \"Foreign-Owned U.S. DE\" stamped across the top of page 1.\n• Tax owed: $0 (because the LLC is disregarded).\n\nForm 5472:\n• Purpose: information return reporting related-party transactions.\n• Pages: 2 substantive pages.\n• What you fill in: Part I (reporting corporation = your LLC), Part II (25% foreign shareholder = you), Part III (related party = you again for single-member), Part IV (monetary transactions, usually blank), Part V (reportable transactions — capital in, distributions out), Part VII (FDE confirmation).\n• Required attachments: Part V supporting statement listing each transaction.\n• Tax owed: $0 (informational only).\n\nFiled together as one package, faxed to +1-855-887-7737.",
       },
       {
         heading: "What's NOT involved",
@@ -692,11 +692,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How are these forms filed together?",
-        body: "Physical / faxed order of the package:\n\n1. Cover letter (1 page)\n2. Pro forma Form 1120 (1-2 pages, stamped \"Foreign-Owned U.S. DE\")\n3. Form 5472 (2 pages)\n4. Part V supporting statement (1+ pages depending on transaction count)\n5. Reasonable Cause Statement (1-2 pages, only if filing late under DIIRSP)\n\nTotal package: typically 5-8 pages.\n\nFax destination: +1-855-887-7737 (IRS Ogden PIN Unit).\nOr mail: Internal Revenue Service, Ogden, UT 84201-0023.\n\nThe whole package is one filing. You fax it together, you get one transmission receipt covering the entire package as proof of timely filing.",
+        body: "Physical / faxed order of the package:\n\n1. Cover letter (1 page)\n2. Pro forma Form 1120 (1-2 pages, stamped \"Foreign-Owned U.S. DE\")\n3. Form 5472 (2 pages)\n4. Part V supporting statement (1+ pages depending on transaction count)\n5. Reasonable Cause Statement (1-2 pages, only if filing late under DIIRSP)\n\nTotal package: typically 5-8 pages.\n\nFax destination: +1-855-887-7737 (IRS Ogden PIN Unit).\nOr mail: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n\nThe whole package is one filing. You fax it together, you get one transmission receipt covering the entire package as transmission evidence.",
       },
       {
         heading: "What our service generates",
-        body: "When you complete our wizard, we generate the complete package automatically:\n\n• Cover letter introducing the filing.\n• Pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp and your entity info.\n• Form 5472 fully filled in (Parts I, II, III, IV, V, VII as needed).\n• Part V supporting statement listing each reportable transaction.\n• Reasonable Cause Statement (only if the filing is late).\n\nYou sign once on screen. An accountant on our team reviews it. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt as proof of filing.",
+        body: "When you complete our wizard, we generate the complete package automatically:\n\n• Cover letter introducing the filing.\n• Pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp and your entity info.\n• Form 5472 fully filled in (Parts I, II, III, IV, V, VII as needed).\n• Part V supporting statement listing each reportable transaction.\n• Reasonable Cause Statement (only if the filing is late).\n\nYou sign once on screen. An accountant on our team reviews it. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt as transmission evidence.",
       },
       {
         heading: "Pricing",
@@ -758,7 +758,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Wyoming LLC Form 5472 Filing Guide",
     intro:
       "Wyoming is the most popular state for foreign-owned US LLCs because of its low fees, no state income tax, strong privacy laws, and cheap registered agent ecosystem. But Wyoming residency doesn't exempt you from federal filings — every foreign-owned Wyoming LLC must file IRS Form 5472 with pro forma Form 1120 by April 15 each year, with a $25,000 penalty if missed. This is the complete federal + Wyoming-state filing playbook for foreign owners.",
@@ -781,7 +781,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file Form 5472 for a Wyoming LLC?",
-        body: "1. Gather the items in the previous section (LLC info, owner info, year-end financials).\n2. Fill in the pro forma Form 1120: entity name/EIN/address, total assets, stamp \"Foreign-Owned U.S. DE\" across the top.\n3. Fill in Form 5472: Part I (your LLC), Part II (you as foreign shareholder), Part III (you again as related party), Part IV (usually blank for foreign-owned DEs), Part V (capital contributions + distributions, with supporting statement), Part VII (FDE confirmation).\n4. Sign the 1120's signature line in pen.\n5. Fax the complete package (cover letter + 1120 + 5472 + Part V supporting statement) to +1-855-887-7737 (IRS Ogden PIN Unit).\n6. Save the fax transmission receipt as proof of timely filing.\n\nOr use our service: Standard $149 covers the entire package including IRS fax delivery, ready in 5-7 business days (Express is the same package within 3, for $199), and every filing is reviewed by an accountant on our team before submission.",
+        body: "1. Gather the items in the previous section (LLC info, owner info, year-end financials).\n2. Fill in the pro forma Form 1120: name, address, item B (EIN) and applicable item E boxes; stamp \"Foreign-Owned U.S. DE\" across the top.\n3. Fill in Form 5472: Part I (your LLC), Part II (you as foreign shareholder), Part III (you again as related party), Part IV (usually blank for foreign-owned DEs), Part V (capital contributions + distributions, with supporting statement), Part VII (FDE confirmation).\n4. For a conservative signing workflow, sign the completed 1120 cover in ink and scan that page for fax.\n5. Fax the complete package (cover letter + 1120 + 5472 + Part V supporting statement) to +1-855-887-7737 (IRS Ogden PIN Unit).\n6. Save the fax transmission receipt as transmission evidence.\n\nOr use our service: Standard $149 covers the entire package including IRS fax delivery, ready in 5-7 business days (Express is the same package within 3, for $199), and every filing is reviewed by an accountant on our team before submission.",
       },
       {
         heading: "Wyoming registered agent address — what to use",
@@ -859,7 +859,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Delaware LLC Form 5472 Filing Guide",
     intro:
       "Delaware is the #2 most popular state for foreign-owned US LLCs after Wyoming. Stripe Atlas defaults to Delaware, so a large share of foreign-founder LLCs are Delaware entities. If you formed a Delaware LLC and you're not a US person, you must file IRS Form 5472 with pro forma Form 1120 every year — even if your LLC had zero revenue. This is the full Delaware-specific filing playbook including the federal Form 5472, the $400 Delaware franchise tax, and the differences from Wyoming.",
@@ -878,7 +878,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file Form 5472 for a Delaware LLC?",
-        body: "Identical to filing for any other state:\n\n1. Gather LLC info: legal name (exactly as on CP-575), EIN, Delaware registered agent address, date of formation, state (DE), NAICS code, total assets at year-end.\n2. Gather your owner info: full legal name as on passport, FTIN or self-assigned Reference ID, residential address in your home country, country of citizenship, country of tax residence.\n3. Add up year-end financials: capital contributions in, distributions out, any related-party payments.\n4. Fill in pro forma Form 1120: entity identification fields only, stamp \"Foreign-Owned U.S. DE\" across the top.\n5. Fill in Form 5472: Parts I, II, III, IV, V, VII.\n6. Build the Part V supporting statement listing each reportable transaction.\n7. Sign the 1120's signature line in pen.\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Save the transmission receipt.\n\nDelaware doesn't change the federal process at all. Same forms, same fax number, same deadline.",
+        body: "Identical to filing for any other state:\n\n1. Gather LLC info: legal name (exactly as on CP-575), EIN, Delaware registered agent address, date of formation, state (DE), NAICS code, total assets at year-end.\n2. Gather your owner info: full legal name as on passport, FTIN or self-assigned Reference ID, residential address in your home country, country of citizenship, country of tax residence.\n3. Add up year-end financials: capital contributions in, distributions out, any related-party payments.\n4. Fill in pro forma Form 1120: entity identification fields only, stamp \"Foreign-Owned U.S. DE\" across the top.\n5. Fill in Form 5472: Parts I, II, III, IV, V, VII.\n6. Build the Part V supporting statement listing each reportable transaction.\n7. For a conservative signing workflow, sign the completed 1120 cover in ink and scan that page for fax.\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Save the transmission receipt.\n\nDelaware doesn't change the federal process at all. Same forms, same fax number, same deadline.",
       },
       {
         heading: "What is the Delaware franchise tax, and how does it differ from Form 5472?",
@@ -960,7 +960,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Form 5472 for German-Resident Owners of US LLCs",
     intro:
       "If you're a German tax resident who owns a single-member US LLC — commonly for ecommerce, Amazon FBA, SaaS, or consulting — you must file IRS Form 5472 with an attached pro forma Form 1120 every year, even if the LLC had zero US tax due. The most common question we get from German owners is which German tax ID goes on the form. Short answer: your personal Steuerliche Identifikationsnummer (Steuer-ID), not your Steuernummer or VAT ID. Here's the complete filing picture.",
@@ -983,11 +983,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file Form 5472 as a German founder?",
-        body: "1. Gather your LLC info: legal name (exactly as on your CP-575 EIN letter), EIN, US registered agent address, state and date of formation, NAICS code.\n2. Gather your owner info: full legal name as on your passport, Steuer-ID (or self-assigned reference ID if you don't have one), German residential address, country of citizenship, country of tax residence (Germany).\n3. Add up year-end financials in USD: capital contributions in, distributions out, total assets at year-end, any related-party payments.\n4. Fill in pro forma Form 1120: entity identification only, stamp \"Foreign-Owned U.S. DE\" across the top.\n5. Fill in Form 5472: Parts I, II, III, IV, V, VII — your Steuer-ID goes in Part II's foreign tax ID field.\n6. Build the Part V supporting statement listing each reportable transaction.\n7. Sign in pen (or use our in-portal canvas signature, embedded into a printable PDF).\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Keep the confirmation receipt as proof of timely filing.",
+        body: "1. Gather your LLC info: legal name (exactly as on your CP-575 EIN letter), EIN, US registered agent address, state and date of formation, NAICS code.\n2. Gather your owner info: full legal name as on your passport, Steuer-ID (or self-assigned reference ID if you don't have one), German residential address, country of citizenship, country of tax residence (Germany).\n3. Add up year-end financials in USD: capital contributions in, distributions out, total assets at year-end, any related-party payments.\n4. Fill in pro forma Form 1120: entity identification only, stamp \"Foreign-Owned U.S. DE\" across the top.\n5. Fill in Form 5472: Parts I, II, III, IV, V, VII — your Steuer-ID goes in Part II's foreign tax ID field.\n6. Build the Part V supporting statement listing each reportable transaction.\n7. Sign in pen (or use our in-portal canvas signature, embedded into a printable PDF).\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Keep the confirmation receipt as transmission evidence.",
       },
       {
         heading: "What Form5472 Prep does for German owners specifically",
-        body: "Our wizard accepts the German Steuer-ID format directly in the foreign tax ID field, and flags it clearly as separate from a Steuernummer or VAT ID so you don't enter the wrong one. Beyond that, the process is identical to any other country:\n\n• 12-question wizard, 15 minutes.\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Timestamped fax confirmation receipt emailed back to you as proof of filing.\n\nPricing: $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included on every plan. +$99 per additional past year.",
+        body: "Our wizard accepts the German Steuer-ID format directly in the foreign tax ID field, and flags it clearly as separate from a Steuernummer or VAT ID so you don't enter the wrong one. Beyond that, the process is identical to any other country:\n\n• 12-question wizard, 15 minutes.\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Timestamped fax confirmation receipt emailed back to you as transmission evidence.\n\nPricing: $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included on every plan. +$99 per additional past year.",
       },
       {
         heading: "How do you handle multi-year catch-up as a German owner?",
@@ -1045,7 +1045,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Form 5472 for UAE Residents Who Own a US LLC",
     intro:
       "Many Dubai and Abu Dhabi-based founders run global ecommerce, dropshipping, SaaS, or consulting businesses through a US LLC (usually Wyoming or Delaware) rather than a UAE mainland or free zone company. If that's you, you must file IRS Form 5472 with an attached pro forma Form 1120 every year — but the UAE has no personal income tax and, for most individuals, no personal tax ID either. Here's exactly what to put on the form instead, and the rest of the filing picture.",
@@ -1068,7 +1068,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file Form 5472 as a UAE founder?",
-        body: "1. Gather your LLC info: legal name (as on your CP-575 EIN letter), EIN, US registered agent address, state and date of formation, NAICS code.\n2. Gather your owner info: full legal name as on your passport, UAE tax ID if you have one (otherwise a self-assigned reference ID), UAE residential address, country of citizenship, country of tax residence.\n3. Add up year-end financials in USD: capital contributions in, distributions out, total assets at year-end, related-party payments.\n4. Fill in pro forma Form 1120: entity identification only, stamp \"Foreign-Owned U.S. DE\" across the top.\n5. Fill in Form 5472: Parts I, II, III, IV, V, VII.\n6. Build the Part V supporting statement listing each reportable transaction.\n7. Sign in pen, or use our in-portal canvas signature embedded into a printable PDF.\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Keep the confirmation receipt as proof of timely filing.",
+        body: "1. Gather your LLC info: legal name (as on your CP-575 EIN letter), EIN, US registered agent address, state and date of formation, NAICS code.\n2. Gather your owner info: full legal name as on your passport, UAE tax ID if you have one (otherwise a self-assigned reference ID), UAE residential address, country of citizenship, country of tax residence.\n3. Add up year-end financials in USD: capital contributions in, distributions out, total assets at year-end, related-party payments.\n4. Fill in pro forma Form 1120: entity identification only, stamp \"Foreign-Owned U.S. DE\" across the top.\n5. Fill in Form 5472: Parts I, II, III, IV, V, VII.\n6. Build the Part V supporting statement listing each reportable transaction.\n7. Sign in pen, or use our in-portal canvas signature embedded into a printable PDF.\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Keep the confirmation receipt as transmission evidence.",
       },
       {
         heading: "What Form5472 Prep does for UAE owners specifically",
@@ -1130,7 +1130,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRS: Instructions for Form 1120", url: "https://www.irs.gov/instructions/i1120" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Pro Forma Form 1120 — Plain-English Guide",
     intro:
       "Foreign-owned US single-member LLCs file pro forma Form 1120 as the procedural envelope for Form 5472. \"Pro forma\" means most of the form stays blank — you only fill in entity identification fields and stamp \"Foreign-Owned U.S. DE\" at the top. This guide shows exactly which fields to fill, which to leave empty, why the form even exists in this format, and how to assemble the full package the IRS expects.",
@@ -1141,11 +1141,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Which fields do you fill in on the pro forma 1120?",
-        body: "On page 1 of Form 1120:\n\n• Top margin: stamp or write \"Foreign-Owned U.S. DE\" — required by IRS instructions.\n• Item A (Check if): leave blank unless you have a specific situation.\n• Item B (Employer identification number): your LLC's EIN.\n• Item C (Date incorporated): date your LLC was formed.\n• Item D (Total assets): year-end total assets in USD (sum of cash + receivables + inventory + fixed assets).\n• Item E (Check if initial / final / amended): check \"Initial return\" for your first year, \"Final return\" for the dissolution year, blank otherwise.\n• Name and address block: legal name + US address (typically registered agent's address) exactly as on CP-575.\n• Signature block at the bottom: sign in pen, date, print name, list as \"Member\" or \"Owner\".\n\nSchedule L (Balance Sheets per Books):\n• Line 15, column (d) end of year — total assets. This must match Item D on page 1.\n\nThat's it. Maybe 8 fields total.",
+        body: "The special IRS Form 5472 instructions require only the foreign-owned U.S. DE’s name, address, item B (EIN), and applicable item E boxes on Form 1120 page 1. Item E contains Initial return, Final return, Name change and Address change—not an amended-return box. Write \"Foreign-owned U.S. DE\" across the top.\n\nItems C and D and Schedule L are not required by that special pro forma instruction. Do not treat an omitted optional cover field as permission to leave Form 5472 line 1c blank. See [Form 5472 line 1c and total assets](/blog/form-5472-line-1c-total-assets).\n\nFor signing, identify the authorized signer. Signing the completed cover in ink, then scanning it for fax, is a conservative workflow; see [signature methods and submission routes](/blog/form-5472-pro-forma-1120-signature).",
       },
       {
         heading: "Which fields do you leave blank on the pro forma 1120?",
-        body: "Almost everything else:\n\n• Income section (lines 1a through 11): leave blank.\n• Deductions section (lines 12 through 29): leave blank.\n• Tax computation (lines 30 through 37): leave blank.\n• Schedule C (Dividends, Inclusions, Special Deductions): leave blank.\n• Schedule J (Tax Computation and Payment): leave blank.\n• Schedule K (Other Information): leave blank unless something specifically applies.\n• Schedule L (Balance Sheets per Books): only line 15 column (d) needs a value; all other lines blank.\n• Schedule M-1 (Reconciliation of Income per Books with Income per Return): leave blank.\n• Schedule M-2 (Analysis of Unappropriated Retained Earnings): leave blank.\n\nLeave them empty. Don't write \"0\" or \"N/A\" — write nothing. The IRS instructions for foreign-owned DEs are explicit: these sections stay blank on a pro forma filing.\n\nFilling in income would incorrectly treat your LLC as a C-corp owing tax. Filling in \"0\" is technically also wrong (it asserts a calculation was performed). Empty is correct.",
+        body: "For this foreign-owned U.S. DE pro forma package, the special IRS required-fields instruction is limited to name, address, item B and item E. It does not require income, deduction or tax computations, or Schedules C, J, K, L, M-1 or M-2.\n\nLeave unrelated corporate-return computations and schedules blank rather than inventing entries. Items C and D are also outside the special required list. Form 5472 has its own requirements, including line 1c; see the total-assets guide.",
       },
       {
         heading: "What is the 'Foreign-Owned U.S. DE' stamp?",
@@ -1157,11 +1157,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file the complete package?",
-        body: "Once your pro forma 1120 is filled and stamped, the full package order is:\n\n1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (1-2 pages, with the \"Foreign-Owned U.S. DE\" stamp).\n3. Form 5472 (2 pages).\n4. Part V supporting statement (1+ pages).\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nSign the 1120's signature line in pen on the printed page. Use the [1120 pro forma instructions](/1120-pro-forma-instructions) as a final field-by-field check, then fax the entire package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the fax transmission receipt as proof of timely filing.\n\nOur service generates the entire correctly-formatted package automatically. You sign one PDF on screen (the signature embeds into every required signature box), an accountant on our team reviews it, and we fax it to the IRS. IRS fax delivery is included in every plan — no separate fee.",
+        body: "Once your pro forma 1120 is filled and stamped, the full package order is:\n\n1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (1-2 pages, with the \"Foreign-Owned U.S. DE\" stamp).\n3. Form 5472 (2 pages).\n4. Part V supporting statement (1+ pages).\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nFor a conservative signing workflow, sign the completed 1120 cover in ink and scan that page for fax. Use the [1120 pro forma instructions](/1120-pro-forma-instructions) as a final field-by-field check, then fax the entire package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the fax transmission receipt as transmission evidence.\n\nOur service generates the entire correctly-formatted package automatically. You sign one PDF on screen (the signature embeds into every required signature box), an accountant on our team reviews it, and we fax it to the IRS. IRS fax delivery is included in every plan — no separate fee.",
       },
       {
         heading: "What are common mistakes on pro forma 1120?",
-        body: "• Filling in income/deductions/tax: turns it into a real corporate return, can trigger US tax liability and audits.\n• Writing \"0\" in blank fields instead of leaving empty: technically incorrect; the IRS instructions specify these fields stay empty.\n• Missing the \"Foreign-Owned U.S. DE\" stamp: causes routing/processing issues at Ogden.\n• Wrong tax year: form is for the tax year that ENDED, not the year you're filing in. 2024 return = tax year 2024 = filed by April 15, 2025.\n• Wrong EIN: must match your CP-575 exactly. A digit transposition can trigger rejection.\n• Missing signature: the 1120 signature line must be signed in pen — Form 5472 doesn't have a separate signature.\n• Filing only the 1120 without Form 5472 attached: the whole point is the 5472 attachment; missing it defeats the purpose.\n• Filing only Form 5472 without the pro forma 1120: also invalid; the IRS won't process a 5472 without its envelope.",
+        body: "• Filling in income/deductions/tax: turns it into a real corporate return, can trigger US tax liability and audits.\n• Writing \"0\" in blank fields instead of leaving empty: technically incorrect; the IRS instructions specify these fields stay empty.\n• Missing the \"Foreign-Owned U.S. DE\" stamp: causes routing/processing issues at Ogden.\n• Wrong tax year: form is for the tax year that ENDED, not the year you're filing in. 2024 return = tax year 2024 = filed by April 15, 2025.\n• Wrong EIN: must match your CP-575 exactly. A digit transposition can trigger rejection.\n• Unresolved signature method or authority: Form 5472 has no signature block. Signing the completed 1120 cover in ink is conservative practice, not a basis for declaring every other method invalid.\n• Filing only the 1120 without Form 5472 attached: the whole point is the 5472 attachment; missing it defeats the purpose.\n• Filing only Form 5472 without the pro forma 1120: also invalid; the IRS won't process a 5472 without its envelope.",
       },
       {
         heading: "What's the difference between pro forma 1120 and regular Form 1120?",
@@ -1173,17 +1173,17 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Use our pre-filled pro forma 1120",
-        body: "Our wizard generates a correctly-formatted pro forma Form 1120 with:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Entity name, EIN, US address pre-filled from your wizard answers.\n• Date of incorporation pre-filled.\n• Total assets at year-end pre-filled from your year-end total.\n• Signature line ready for your in-portal canvas signature.\n• All income/deduction/tax fields correctly left blank.\n• Schedule L line 15 column (d) pre-filled to match Item D.\n\nNo manual form-filling. The signed PDF is ready to fax to +1-855-887-7737, and we handle that for you — IRS fax delivery is included in every plan.\n\nPricing: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. +$99 per additional past year. 100% money-back guarantee if we fail to submit.",
+        body: "Our wizard generates a correctly-formatted pro forma Form 1120 with:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Entity name, EIN, US address pre-filled from your wizard answers.\n• Date of incorporation pre-filled.\n• Total assets at year-end pre-filled from your year-end total.\n• Signature line ready for your in-portal canvas signature.\n• All income/deduction/tax fields correctly left blank.\n• Any populated item C, item D or Schedule L fields are additional preparation practice, not requirements of the special pro forma instruction.\n\nNo manual form-filling. The signed PDF is ready to fax to +1-855-887-7737, and we handle that for you — IRS fax delivery is included in every plan.\n\nPricing: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. +$99 per additional past year. 100% money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
       {
         q: "Do I need to fill in Schedule L (balance sheet)?",
-        a: "Only line 15, column (d) — total assets at year-end. The other balance sheet detail isn't required for pro forma filings. Line 15 (d) must match Item D on page 1.",
+        a: "No. Schedule L is outside the special pro forma required-fields instruction for foreign-owned U.S. DEs. The required cover information is the name, address, item B and applicable item E boxes. Form 5472 line 1c is a separate asset-reporting question.",
       },
       {
         q: "Can I e-file the pro forma 1120?",
-        a: "No. Foreign-owned disregarded entities are explicitly excluded from e-filing for 1120 and 5472. The IRS Modernized e-File system can't process them. Fax (+1-855-887-7737) or paper mail (IRS Ogden, UT 84201-0023) only.",
+        a: "No. Foreign-owned disregarded entities are explicitly excluded from e-filing for 1120 and 5472. The IRS Modernized e-File system can't process them. Fax (+1-855-887-7737) or paper mail (Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201) only.",
       },
       {
         q: "Do I need to attach Form 1125-A or 1125-E?",
@@ -1203,11 +1203,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What goes in Item D — total assets?",
-        a: "Total assets at year-end in USD: sum of cash + receivables + inventory + fixed assets (whatever the LLC owns on December 31). This should match your accounting records' end-of-year balance sheet total.",
+        a: "Item D is not among the fields required by the special foreign-owned U.S. DE pro forma instruction. That does not make Form 5472 line 1c optional or zero. If you choose to populate item D, use a supported figure consistent with the records and accounting basis.",
       },
       {
         q: "Do I sign the 1120 or the 5472?",
-        a: "The 1120 — Form 5472 itself doesn't have a signature line. The 1120's signature block at the bottom of page 1 covers both forms in the package. Sign in pen.",
+        a: "Form 1120 page 1 has the signature block; Form 5472 does not. Signing the completed cover in ink and scanning it for fax is a conservative workflow. The special pro forma instruction does not separately resolve signing, and electronic-signature approval depends on the document and route.",
       },
       {
         q: "Can I use last year's pro forma 1120 as a template?",
@@ -1231,7 +1231,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Form 1120 for Foreign-Owned LLCs",
     intro:
       "If you are a non-US person who owns a US single-member LLC, you must file Form 1120 — but in a special \"pro forma\" version where almost every field stays blank. The 1120 exists only as an envelope for Form 5472 (the form that actually matters). This is exactly how it works, what to fill in, what to leave empty, how to assemble the full package, and why filing 1120 doesn't subject your LLC to US corporate income tax.",
@@ -1246,23 +1246,23 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What do you fill in on the pro forma 1120?",
-        body: "Page 1, header section:\n• Entity name (exactly as on CP-575 EIN confirmation letter).\n• EIN.\n• US business address (typically your registered agent's address).\n• Date of incorporation (from your Articles of Organization).\n• Total assets at year-end (Item D, also shown on Schedule L line 15 column (d)).\n• Item E — check \"Initial return\" if this is your first year, \"Final return\" if dissolving, else blank.\n\nTop margin of page 1:\n• Write or stamp: \"Foreign-Owned U.S. DE\".\n\nSignature block (bottom of page 1):\n• Sign in pen.\n• Date.\n• Print name.\n• Title: \"Member\" or \"Owner\".\n\nSchedule L (page 6 of standard 1120):\n• Line 15, column (d): total assets at year-end. Must match Item D above.\n\nThat's it. Maybe 8 fields total across the entire form.",
+        body: "The special IRS Form 5472 instructions require only the foreign-owned U.S. DE’s name, address, item B (EIN), and applicable item E boxes on Form 1120 page 1. Item E contains Initial return, Final return, Name change and Address change—not an amended-return box. Write \"Foreign-owned U.S. DE\" across the top.\n\nItems C and D and Schedule L are not required by that special pro forma instruction. Do not treat an omitted optional cover field as permission to leave Form 5472 line 1c blank. See Form 5472 line 1c and total assets.\n\nFor signing, identify the authorized signer. Signing the completed cover in ink, then scanning it for fax, is a conservative workflow; see signature methods and submission routes.",
       },
       {
         heading: "What do you leave blank on the pro forma 1120?",
-        body: "Pages 2-5 of Form 1120 contain income, deductions, tax calculation, and various schedules. For pro forma filings by foreign-owned DEs:\n\n• Income section (lines 1-11): blank.\n• Cost of Goods Sold (line 2): blank — don't attach Form 1125-A.\n• Officer compensation (line 12): blank — don't attach Form 1125-E.\n• All other deductions (lines 12-29): blank.\n• Tax computation (lines 30-37): blank.\n• Schedule C (Dividends, Inclusions, Special Deductions): blank.\n• Schedule J (Tax Computation and Payment): blank.\n• Schedule K (Other Information): blank unless something specifically applies.\n• Schedule L (Balance Sheets per Books): only line 15 (d). Other lines blank.\n• Schedule M-1 (Reconciliation of Income per Books with Income per Return): blank.\n• Schedule M-2 (Analysis of Unappropriated Retained Earnings): blank.\n\nThis isn't a mistake or oversight. The IRS instructions explicitly state pro forma 1120 for foreign-owned DEs is filed with these sections empty. Filling them in could incorrectly trigger US corporate income tax processing.\n\nLeave them truly blank — don't write \"0\", don't write \"N/A\". Empty.",
+        body: "For this foreign-owned U.S. DE pro forma package, the special IRS required-fields instruction is limited to name, address, item B and item E. It does not require income, deduction or tax computations, or Schedules C, J, K, L, M-1 or M-2.\n\nLeave unrelated corporate-return computations and schedules blank rather than inventing entries. Items C and D are also outside the special required list. Form 5472 has its own requirements, including line 1c; see the total-assets guide.",
       },
       {
         heading: "How do you sign the pro forma 1120?",
-        body: "The signature line at the bottom of page 1 must be signed by you (the owner) in pen. The IRS does not accept digital-only signatures on Form 5472 + attached pro forma 1120 — pen/ink only.\n\nDate the form on the date you actually sign — not the tax year end.\n\nTitle yourself \"Member\" or \"Owner\" — both acceptable for a single-member LLC.\n\nPrint your name below the signature line for legibility.\n\nPaid preparer block: leave blank if you prepared it yourself. If our service prepared it for you, we leave it blank too — you are the filer of record, not us.",
+        body: "Form 5472 has no taxpayer signature block. The relevant block is at the bottom of Form 1120 page 1, with separate officer signature, date, title and paid-preparer fields.\n\nThe special pro forma instruction does not separately address signatures. A conservative workflow is to have the authorized person sign the completed cover in ink, enter the actual signing date and capacity, and scan that signed page for fax. This is a recommendation, not a ruling that every digital-only signature invalidates a filing.\n\nIRS electronic-signature permission depends on the document and route. Corporate e-file authorization rules do not automatically cover this DE fax package. Ask the preparer to establish signing authority and the applicable method; the general Form 1120 instructions separately address paid preparers. See the current signature guide.",
       },
       {
         heading: "How do you file the complete package?",
-        body: "1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (signed, stamped \"Foreign-Owned U.S. DE\").\n3. Form 5472 attached behind the 1120.\n4. Part V supporting statement listing each reportable transaction.\n5. Reasonable Cause Statement (only if late under DIIRSP).\n\nUse the [1120 pro forma instructions](/1120-pro-forma-instructions) to check the page-one fields, then fax the complete package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the transmission receipt as your proof of timely filing.\n\nDo NOT mail or fax Form 1120 to the regular IRS processing center. The Ogden PIN Unit is the only correct destination for foreign-owned DE filings — sending it elsewhere will cause routing problems and may not satisfy your filing obligation.\n\nMail alternative: Internal Revenue Service, Ogden, UT 84201-0023. Use certified mail with return receipt as proof of timely filing.",
+        body: "1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (signed, stamped \"Foreign-Owned U.S. DE\").\n3. Form 5472 attached behind the 1120.\n4. Part V supporting statement listing each reportable transaction.\n5. Reasonable Cause Statement (only if late under DIIRSP).\n\nUse the [1120 pro forma instructions](/1120-pro-forma-instructions) to check the page-one fields, then fax the complete package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the transmission receipt as your transmission evidence.\n\nDo NOT mail or fax Form 1120 to the regular IRS processing center. The Ogden PIN Unit is the only correct destination for foreign-owned DE filings — sending it elsewhere will cause routing problems and may not satisfy your filing obligation.\n\nMail alternative: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201. Use certified mail with return receipt as transmission evidence.",
       },
       {
         heading: "What are common mistakes specific to pro forma 1120?",
-        body: "• Filling in income or deductions: treats the LLC as a real C-corp and can trigger tax processing. Leave those lines empty.\n• Missing the \"Foreign-Owned U.S. DE\" stamp: causes routing issues at Ogden.\n• Forgetting to sign in pen: digital-only signatures may be rejected.\n• Attaching Form 1125-A (Cost of Goods Sold) or 1125-E (Officer Comp): not needed and confuses processing.\n• Wrong tax year on the form header: must be the tax year that ENDED, not the year you're filing in.\n• Wrong EIN: must match CP-575 exactly.\n• Sending only the 1120 without Form 5472 attached: defeats the entire purpose.\n• Mailing to a regular IRS processing center instead of Ogden PIN Unit.\n• Filing electronically: not supported for foreign-owned DEs.",
+        body: "• Filling in income or deductions: treats the LLC as a real C-corp and can trigger tax processing. Leave those lines empty.\n• Missing the \"Foreign-Owned U.S. DE\" stamp: causes routing issues at Ogden.\n• Assuming a generic e-signature tool is authorized for this specific document and filing route; resolve that question before sending.\n• Attaching Form 1125-A (Cost of Goods Sold) or 1125-E (Officer Comp): not needed and confuses processing.\n• Wrong tax year on the form header: must be the tax year that ENDED, not the year you're filing in.\n• Wrong EIN: must match CP-575 exactly.\n• Sending only the 1120 without Form 5472 attached: defeats the entire purpose.\n• Mailing to a regular IRS processing center instead of Ogden PIN Unit.\n• Filing electronically: not supported for foreign-owned DEs.",
       },
       {
         heading: "How are foreign-owned multi-member LLCs different?",
@@ -1288,7 +1288,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Can I file Form 1120 electronically (e-file)?",
-        a: "No. Foreign-owned disregarded entities are explicitly excluded from e-filing for Form 1120 and Form 5472. Fax to +1-855-887-7737 or mail to IRS Ogden, UT 84201-0023 only.",
+        a: "No. Foreign-owned disregarded entities are explicitly excluded from e-filing for Form 1120 and Form 5472. Fax to +1-855-887-7737 or mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 only.",
       },
       {
         q: "Do I attach a Schedule C for cost of goods sold?",
@@ -1296,11 +1296,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What if I made a mistake on a prior year's pro forma 1120?",
-        a: "File an amended return for that year. Check the \"Amended return\" box at the top of Form 1120, attach an updated Form 5472 if it changed, and include a brief explanation. Amendments don't waive any penalty already assessed.",
+        a: "Review the actual filed package and determine whether a correction is needed. Neither current Form 1120 nor Form 5472 has an amended-return checkbox. When a corrected package is appropriate, clearly identify it with an amended notation and an explanation linking it to the original filing; this is a preparer workflow, not a prescribed special IRS amendment procedure. A correction does not guarantee penalty relief.",
       },
       {
         q: "Can the 1120 signature be a digital signature?",
-        a: "Per current IRS practice, pen/ink signatures are required. In-portal canvas signatures embedded in a printable PDF have been accepted in practice, but a wet-ink signature on a printed page is the safest path. Many of our customers print, sign in pen, then fax.",
+        a: "Do not assume a generic e-signature tool is approved for this filing. The special DE package uses fax or mail, not ordinary corporate e-file. Signing the completed pro forma 1120 in ink and scanning it for fax is a conservative workflow; see signature methods and their limits.",
       },
       {
         q: "Do I file pro forma 1120 if my LLC is dormant?",
@@ -1332,7 +1332,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Form 1120 for a Disregarded Entity (Foreign Owner)",
     intro:
       "A US LLC owned by a single non-US person is a \"disregarded entity\" — meaning the IRS treats it as if it doesn't exist for income tax purposes. So why does it file Form 1120? Because Treasury Regulation § 1.6038A-1 requires Form 5472 to be attached to a tax return, and a pro forma Form 1120 is the IRS-specified attachment vehicle. This is the complete explanation, the regulation's history, what the filing looks like, and how to avoid the common pitfalls.",
@@ -1351,7 +1351,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What does the pro forma 1120 look like?",
-        body: "Header section (page 1 top):\n• \"Foreign-Owned U.S. DE\" stamped or written across the top margin.\n• Entity name, EIN, US business address.\n• Date of incorporation.\n• Item D — total assets at year-end.\n• Item E — Initial return / Final return / blank.\n• Signature block at the bottom: signed in pen.\n\nBody (pages 2-4):\n• Empty. No income, no deductions, no tax calculation, no schedules.\n\nSchedule L:\n• Only line 15, column (d) — total assets at year-end. Must match Item D.\n\nAll other schedules:\n• Blank.\n\nThat's the entire pro forma 1120 filing. Then Form 5472 + Part V supporting statement attached behind it.",
+        body: "The special IRS Form 5472 instructions require only the foreign-owned U.S. DE’s name, address, item B (EIN), and applicable item E boxes on Form 1120 page 1. Item E contains Initial return, Final return, Name change and Address change—not an amended-return box. Write \"Foreign-owned U.S. DE\" across the top.\n\nItems C and D and Schedule L are not required by that special pro forma instruction. Do not treat an omitted optional cover field as permission to leave Form 5472 line 1c blank. See [Form 5472 line 1c and total assets](/blog/form-5472-line-1c-total-assets).\n\nFor signing, identify the authorized signer. Signing the completed cover in ink, then scanning it for fax, is a conservative workflow; see [signature methods and submission routes](/blog/form-5472-pro-forma-1120-signature).",
       },
       {
         heading: "What 'solely for purposes of' means in practice",
@@ -1359,7 +1359,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Where do you file Form 5472 and pro forma 1120?",
-        body: "Foreign-owned DE filings go ONLY to the IRS Ogden PIN Unit:\n\n• Fax: +1-855-887-7737 (preferred — fast, with a timestamped transmission receipt as proof of filing).\n• Mail: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 (use certified mail with return receipt for proof).\n\nDo NOT send to the regular Form 1120 processing addresses listed in the standard 1120 instructions. Those addresses are for real corporate returns and your pro forma filing will be misrouted or treated as a real corporate filing — which can trigger collection notices and tax liability for tax you don't actually owe.\n\nThe Ogden PIN Unit is the dedicated team within IRS Ogden that handles foreign-owned DE filings. The \"Foreign-Owned U.S. DE\" stamp on the 1120 is what tells them to route to this team.",
+        body: "Foreign-owned DE filings go ONLY to the IRS Ogden PIN Unit:\n\n• Fax: +1-855-887-7737 (preferred — fast, with a timestamped transmission receipt as transmission evidence).\n• Mail: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 (retain mailing and delivery evidence).\n\nDo NOT send to the regular Form 1120 processing addresses listed in the standard 1120 instructions. Those addresses are for real corporate returns and your pro forma filing will be misrouted or treated as a real corporate filing — which can trigger collection notices and tax liability for tax you don't actually owe.\n\nThe Ogden PIN Unit is the dedicated team within IRS Ogden that handles foreign-owned DE filings. The \"Foreign-Owned U.S. DE\" stamp on the 1120 is what tells them to route to this team.",
       },
       {
         heading: "What if you elect C-corp taxation?",
@@ -1375,7 +1375,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Skip the paperwork — 15-minute filing",
-        body: "Form5472 Prep generates the complete disregarded entity filing package automatically:\n\n• Cover letter.\n• Pro forma Form 1120 with \"Foreign-Owned U.S. DE\" stamp, entity info, signature line.\n• Form 5472 (Parts I, II, III, IV, V, VII).\n• Part V supporting statement listing each reportable transaction.\n• Reasonable Cause Statement (if filing late under DIIRSP).\n\nYou answer 12 questions in the wizard, sign once on screen (the signature embeds into every required signature box), an accountant on our team reviews everything, and we fax to the IRS Ogden PIN Unit. You get the timestamped receipt as proof of filing.\n\n• 1 year: $149 Standard / $199 Express (fax included)\n• 2 years (DIIRSP): $248 Standard / $298 Express (fax included)\n• 3 years (DIIRSP): $347 Standard / $397 Express (fax included)\n\n100% money-back guarantee if we fail to submit.",
+        body: "Form5472 Prep generates the complete disregarded entity filing package automatically:\n\n• Cover letter.\n• Pro forma Form 1120 with \"Foreign-Owned U.S. DE\" stamp, entity info, signature line.\n• Form 5472 (Parts I, II, III, IV, V, VII).\n• Part V supporting statement listing each reportable transaction.\n• Reasonable Cause Statement (if filing late under DIIRSP).\n\nYou answer 12 questions in the wizard, sign once on screen (the signature embeds into every required signature box), an accountant on our team reviews everything, and we fax to the IRS Ogden PIN Unit. You get the timestamped receipt as transmission evidence.\n\n• 1 year: $149 Standard / $199 Express (fax included)\n• 2 years (DIIRSP): $248 Standard / $298 Express (fax included)\n• 3 years (DIIRSP): $347 Standard / $397 Express (fax included)\n\n100% money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -1433,18 +1433,18 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 1120", url: "https://www.irs.gov/instructions/i1120" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "1120 Pro Forma Instructions (Foreign-Owned LLCs)",
     intro:
       "Filling out a pro forma Form 1120 is completely different from a real corporate tax return. You complete almost nothing — fewer than 10 fields total. Below is the field-by-field breakdown of what to fill in, what to leave blank, the schedules to ignore, signature requirements, and the common mistakes that cause the IRS to misprocess your filing as if it were a real corporate return.",
     sections: [
       {
         heading: "What do you need to gather before you start?",
-        body: "Gather these before opening Form 1120:\n\n• Your LLC's CP-575 EIN confirmation letter from the IRS (gives the legal name, EIN, and US address exactly as the IRS has them on file).\n• Date of your LLC's formation (on your Articles of Organization).\n• Year-end total assets in USD — sum of cash + receivables + inventory + fixed assets as of December 31.\n• A pen for signing (no digital-only signatures).\n\nIf you're using the IRS's official PDF, download the current tax year's blank Form 1120 from irs.gov. Don't use a prior-year form for a current-year filing — the IRS rejects out-of-year forms.\n\nIf you're using our service, the wizard generates a pre-filled 1120 from your answers; you don't need to download anything.",
+        body: "Gather these before opening Form 1120:\n\n• Your LLC's CP-575 EIN confirmation letter from the IRS (gives the legal name, EIN, and US address exactly as the IRS has them on file).\n• Formation and year-end asset records for the attached Form 5472; these are not required item C/D entries on the special pro forma 1120.\n• A pen if following the conservative ink-sign-and-scan workflow.\n\nIf you're using the IRS's official PDF, download the current tax year's blank Form 1120 from irs.gov. Don't use a prior-year form for a current-year filing — the IRS rejects out-of-year forms.\n\nIf you're using our service, the wizard generates a pre-filled 1120 from your answers; you don't need to download anything.",
       },
       {
         heading: "What do you fill in on Page 1 header?",
-        body: "Top of page 1, above all other content:\n• Write or stamp: \"Foreign-Owned U.S. DE\"\n\nName / Address block (top-left):\n• Entity name — exactly as on your EIN confirmation letter (CP-575). Watch for capitalization and abbreviations the IRS uses.\n• Number, street, and room/suite — your US business address (registered agent address is fine).\n• City, state, ZIP code.\n\nItems A through E (top-right):\n• A: Check \"Initial return\" if this is your LLC's first year. Otherwise blank (or \"Final return\" if dissolving).\n• B: Employer Identification Number — your 9-digit EIN.\n• C: Date incorporated — your LLC's formation date (MM/DD/YYYY).\n• D: Total assets — year-end total in USD, from Schedule L line 15 column (d). Round to nearest dollar.\n• E: Check applicable boxes — usually all blank for a pro forma filing.\n\nThat's everything for the header. Filling out the rest of page 1 (income, deductions, tax) would be incorrect.",
+        body: "The special IRS Form 5472 instructions require only the foreign-owned U.S. DE’s name, address, item B (EIN), and applicable item E boxes on Form 1120 page 1. Item E contains Initial return, Final return, Name change and Address change—not an amended-return box. Write \"Foreign-owned U.S. DE\" across the top.\n\nItems C and D and Schedule L are not required by that special pro forma instruction. Do not treat an omitted optional cover field as permission to leave Form 5472 line 1c blank. See [Form 5472 line 1c and total assets](/blog/form-5472-line-1c-total-assets).\n\nFor signing, identify the authorized signer. Signing the completed cover in ink, then scanning it for fax, is a conservative workflow; see [signature methods and submission routes](/blog/form-5472-pro-forma-1120-signature).",
       },
       {
         heading: "What income section details do you leave blank?",
@@ -1460,23 +1460,23 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What do you do with schedules on pro forma 1120?",
-        body: "Schedule C (Dividends, Inclusions, Special Deductions): blank.\nSchedule J (Tax Computation and Payment): blank.\nSchedule K (Other Information): blank in most cases. If your LLC has any unusual item the schedule asks about (foreign accounts, related-party debt, etc.), only fill in the specific applicable lines.\nSchedule L (Balance Sheet per Books):\n• Beginning of year (column (a)) and end of year (column (d)) — only line 15 (Total assets) in column (d) needs a value. Must match Item D on page 1.\n• All other balance sheet lines: blank.\nSchedule M-1 (Reconciliation of Income per Books with Income per Return): blank.\nSchedule M-2 (Analysis of Unappropriated Retained Earnings): blank.\n\nIf you encounter a schedule that asks for information the pro forma instructions don't require, leave it blank. The IRS does not expect a foreign-owned DE's pro forma 1120 to have populated schedules beyond Schedule L line 15 (d).",
+        body: "For this foreign-owned U.S. DE pro forma package, the special IRS required-fields instruction is limited to name, address, item B and item E. It does not require income, deduction or tax computations, or Schedules C, J, K, L, M-1 or M-2.\n\nLeave unrelated corporate-return computations and schedules blank rather than inventing entries. Items C and D are also outside the special required list. Form 5472 has its own requirements, including line 1c; see the total-assets guide.",
       },
       {
         heading: "How do you complete the signature block?",
-        body: "Sign on the signature line at the bottom of page 1 in PEN. The IRS does not accept digital-only signatures for Form 5472 + attached pro forma 1120.\n\n• Signature: in pen, on the printed form.\n• Date: when you actually sign (not the tax year end).\n• Title: \"Member\" or \"Owner\" or \"Sole Member\" — all acceptable for a single-member LLC.\n• Print name: write or type your name below the signature line for legibility.\n\nPaid Preparer Use Only block (separate row):\n• Leave blank if you're filing yourself.\n• If a preparer (CPA, our service, etc.) prepared the return but isn't the filer of record, also leave blank.\n• Only fill in if you have a paid preparer who is signing as the responsible preparer (uncommon for foreign-owned DEs).",
+        body: "Form 5472 has no taxpayer signature block. The relevant block is at the bottom of Form 1120 page 1, with separate officer signature, date, title and paid-preparer fields.\n\nThe special pro forma instruction does not separately address signatures. A conservative workflow is to have the authorized person sign the completed cover in ink, enter the actual signing date and capacity, and scan that signed page for fax. This is a recommendation, not a ruling that every digital-only signature invalidates a filing.\n\nIRS electronic-signature permission depends on the document and route. Corporate e-file authorization rules do not automatically cover this DE fax package. Ask the preparer to establish signing authority and the applicable method; the general Form 1120 instructions separately address paid preparers. See the current signature guide.",
       },
       {
         heading: "What mistakes on pro forma 1120 trigger IRS notices?",
-        body: "• Writing zeros in the income section — IRS may process it as a real (zero-income) tax return and ask follow-up questions about why income is zero.\n• Forgetting the \"Foreign-Owned U.S. DE\" stamp at the top of page 1 — the most common routing error.\n• Filling in Schedule L with a complete balance sheet (only line 15 column (d) is needed).\n• Signing digitally only — the IRS requires pen/ink signatures.\n• Mailing to the wrong IRS address — must go to Ogden PIN Unit, not the regular 1120 processing center.\n• Forgetting to attach Form 5472 + Part V supporting statement (the whole point of the pro forma 1120).\n• Using a prior-year version of Form 1120 — always use the current tax year's blank form.\n• Wrong EIN (typo) — must match CP-575 exactly.\n• Wrong tax year on the form header — must be the tax year that ENDED, not the year you're filing in.\n• Reporting amounts in non-USD — always convert to USD.\n• Filing without an attached cover letter — not strictly required by the IRS instructions but recommended for clean routing.",
+        body: "• Writing zeros in the income section — IRS may process it as a real (zero-income) tax return and ask follow-up questions about why income is zero.\n• Forgetting the \"Foreign-Owned U.S. DE\" stamp at the top of page 1 — the most common routing error.\n• Treating Schedule L as required: it is outside the special pro forma required-fields instruction.\n• Assuming electronic signing and IRS e-filing are the same; permission depends on the specific document and route.\n• Mailing to the wrong IRS address — must go to Ogden PIN Unit, not the regular 1120 processing center.\n• Forgetting to attach Form 5472 + Part V supporting statement (the whole point of the pro forma 1120).\n• Using a prior-year version of Form 1120 — always use the current tax year's blank form.\n• Wrong EIN (typo) — must match CP-575 exactly.\n• Wrong tax year on the form header — must be the tax year that ENDED, not the year you're filing in.\n• Reporting amounts in non-USD — always convert to USD.\n• Filing without an attached cover letter — not strictly required by the IRS instructions but recommended for clean routing.",
       },
       {
         heading: "What is the correct assembly order for the filing package?",
-        body: "1. Cover letter (1 page) — identifies the filing, lists the LLC, EIN, tax year, and forms included.\n2. Pro forma Form 1120 (signed, stamped \"Foreign-Owned U.S. DE\") — the procedural envelope.\n3. Form 5472 (2 pages) — Parts I, II, III, IV, V, VII.\n4. Part V supporting statement (1+ pages) — list of reportable transactions.\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nFax destination: +1-855-887-7737 (IRS Ogden PIN Unit).\nMail destination: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 (certified mail recommended).\n\nKeep your fax transmission receipt as proof of timely filing. The receipt's timestamp is your legal filing date.",
+        body: "1. Cover letter (1 page) — identifies the filing, lists the LLC, EIN, tax year, and forms included.\n2. Pro forma Form 1120 (signed, stamped \"Foreign-Owned U.S. DE\") — the procedural envelope.\n3. Form 5472 (2 pages) — Parts I, II, III, IV, V, VII.\n4. Part V supporting statement (1+ pages) — list of reportable transactions.\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nFax destination: +1-855-887-7737 (IRS Ogden PIN Unit).\nMail destination: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 (certified mail recommended).\n\nKeep your fax transmission receipt as transmission evidence. Its timestamp records the provider’s transmission event; it does not alone establish IRS acceptance or the legal filing date.",
       },
       {
         heading: "Use our pre-filled pro forma 1120",
-        body: "Our wizard generates a pre-filled, signature-ready pro forma 1120 that follows every instruction above:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Header section pre-filled from your wizard answers.\n• Income, deductions, tax sections correctly empty.\n• Schedule L line 15 (d) pre-filled with the year-end total assets you entered.\n• Signature line ready for your in-portal canvas signature.\n• Form 5472 + Part V supporting statement assembled behind it.\n\n$149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included on every plan. +$99 per additional past year. Every package is reviewed by an accountant on our team before submission. 100% money-back guarantee if we fail to submit.",
+        body: "Our wizard generates a pre-filled, signature-ready pro forma 1120 for review alongside the special IRS required-fields instruction:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Header section pre-filled from your wizard answers.\n• Income, deductions, tax sections correctly empty.\n• Any additional asset fields populated by the preparation workflow are not required by the special pro forma 1120 instruction.\n• Signature line ready for your in-portal canvas signature.\n• Form 5472 + Part V supporting statement assembled behind it.\n\n$149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included on every plan. +$99 per additional past year. Every package is reviewed by an accountant on our team before submission. 100% money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -1486,7 +1486,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What if I don't know my LLC's total assets at year-end?",
-        a: "It's usually the ending balance in your business bank account, plus any receivables, inventory, or equipment. If your LLC only has a bank account, use that ending balance. The IRS doesn't require itemized breakdown — just the total.",
+        a: "Reconstruct a supported year-end asset figure from the books; do not assume an empty bank account means zero assets. Item D is not required by the special pro forma 1120 instruction, but Form 5472 line 1c is separate. See the line 1c guide.",
       },
       {
         q: "Can I print a blank 1120 PDF and fill it by hand?",
@@ -1502,7 +1502,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What if I made a mistake after filing?",
-        a: "File an amended return. Check the \"Amended return\" box at the top of Form 1120, correct the errors, and attach a brief explanation. Amendments don't waive any penalty already assessed but they correct the underlying record.",
+        a: "Review the actual filed package and determine whether a correction is needed. Neither current Form 1120 nor Form 5472 has an amended-return checkbox. When a corrected package is appropriate, clearly identify it with an amended notation and an explanation linking it to the original filing; this is a preparer workflow, not a prescribed special IRS amendment procedure. A correction does not guarantee penalty relief.",
       },
       {
         q: "Can I use a foreign address on the 1120?",
@@ -1535,7 +1535,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "IRS Form 5472 — the complete guide for foreign-owned LLCs",
     intro:
       "IRS Form 5472 is the information return that foreign-owned US single-member LLCs must file every year with an attached pro forma Form 1120. Skip the form and the IRS charges $25,000 per year, per form. We prepare the full package in 15 minutes — every order is reviewed by an accountant on our team before we fax it to the IRS Ogden PIN Unit. This is the complete guide: who has to file, what's in the package, when it's due, what the penalty looks like in practice, and how to get caught up if you've missed prior years.",
@@ -1554,15 +1554,15 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What's in the filing package",
-        body: "The complete Form 5472 filing package contains:\n\n1. Cover letter (1 page) identifying the filing — LLC name, EIN, tax year, forms included.\n2. Pro forma Form 1120 (1-2 pages) — entity identification fields only, with \"Foreign-Owned U.S. DE\" stamped across the top. Income, deductions, and tax sections all blank.\n3. Form 5472 (2 pages) — Parts I (reporting corporation), II (25% foreign shareholder), III (related party), IV (monetary transactions, often blank), V (reportable transactions — capital contributions and distributions), VII (FDE confirmation).\n4. Part V supporting statement (1+ pages) — list of each reportable transaction with date, amount, and description.\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nTotal package: typically 5-8 pages. Faxed as one document to the IRS Ogden PIN Unit at +1-855-887-7737, or mailed certified to IRS Ogden, UT 84201-0023.",
+        body: "The complete Form 5472 filing package contains:\n\n1. Cover letter (1 page) identifying the filing — LLC name, EIN, tax year, forms included.\n2. Pro forma Form 1120 (1-2 pages) — entity identification fields only, with \"Foreign-Owned U.S. DE\" stamped across the top. Income, deductions, and tax sections all blank.\n3. Form 5472 (2 pages) — Parts I (reporting corporation), II (25% foreign shareholder), III (related party), IV (monetary transactions, often blank), V (reportable transactions — capital contributions and distributions), VII (FDE confirmation).\n4. Part V supporting statement (1+ pages) — list of each reportable transaction with date, amount, and description.\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nTotal package: typically 5-8 pages. Faxed as one document to the IRS Ogden PIN Unit at +1-855-887-7737, or mailed certified to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.",
       },
       {
         heading: "When is Form 5472 due?",
-        body: "April 15 of the year following the tax year (e.g. April 15, 2026 for tax year 2025).\n\nExtensions: file Form 7004 by April 15 for an automatic 6-month extension to October 15. Since Form 5472 is attached to the 1120, the extension covers both forms.\n\nFiscal-year LLCs: 15th day of the 4th month after fiscal year-end.\n\nFiling date: the postmark or fax transmission timestamp counts as the filing date. Send by midnight on the deadline and you're on time, even if the IRS processes the return weeks later.\n\nMissed the deadline? Don't panic. File under DIIRSP immediately with a reasonable cause statement — the longer you wait, the higher the risk of a CP-15 penalty notice.",
+        body: "April 15 of the year following the tax year (e.g. April 15, 2026 for tax year 2025).\n\nExtensions: file Form 7004 by April 15 for an automatic 6-month extension to October 15. Since Form 5472 is attached to the 1120, the extension covers both forms.\n\nFiscal-year LLCs: 15th day of the 4th month after fiscal year-end.\n\nFiling evidence: retain the exact package and transmission or mailing records. A fax timestamp records the provider’s event, not an IRS acceptance or a statutory postmark. Send early and check the rules for your chosen mailing method; do not assume a deadline-day attempt alone establishes timely filing. See the receipt and follow-up guide.\n\nMissed the deadline? Don't panic. File under DIIRSP immediately with a reasonable cause statement — the longer you wait, the higher the risk of a CP-15 penalty notice.",
       },
       {
         heading: "How to file IRS Form 5472",
-        body: "You can't e-file Form 5472. The IRS only accepts it by mail or fax to the Ogden PIN Unit. The fax route is faster and gives you a transmission receipt as proof of timely filing.\n\n• Fax: +1-855-887-7737 (IRS Ogden PIN Unit).\n• Mail: Internal Revenue Service, Ogden, UT 84201-0023 (use certified mail with return receipt).\n\nOur 15-minute online filer handles the whole package — Form 5472, pro forma Form 1120, Part V supporting statement, cover letter, and reasonable cause statement (if late). Pricing starts at $149, we generate everything, you sign once on screen (the signature embeds into every required signature box), an accountant on our team reviews the package end-to-end, and we fax it to the IRS Ogden PIN Unit. IRS fax delivery is included in every plan. You get the timestamped fax transmission receipt as proof of filing.",
+        body: "You can't e-file Form 5472. The IRS only accepts it by mail or fax to the Ogden PIN Unit. The fax route is faster and gives you a transmission receipt as transmission evidence.\n\n• Fax: +1-855-887-7737 (IRS Ogden PIN Unit).\n• Mail: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 (use certified mail with return receipt).\n\nOur 15-minute online filer handles the whole package — Form 5472, pro forma Form 1120, Part V supporting statement, cover letter, and reasonable cause statement (if late). Pricing starts at $149, we generate everything, you sign once on screen (the signature embeds into every required signature box), an accountant on our team reviews the package end-to-end, and we fax it to the IRS Ogden PIN Unit. IRS fax delivery is included in every plan. You get the timestamped fax transmission receipt as transmission evidence.",
       },
       {
         heading: "Form 5472 vs. Form 1120 — what's the difference?",
@@ -1570,7 +1570,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "DIIRSP — catching up if you've missed prior years",
-        body: "If you've missed Form 5472 for one or more prior years, the IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up path. Steps:\n\n1. File the late Form 5472 + pro forma 1120 for each missed year.\n2. Include a Reasonable Cause Statement explaining why the filing was late.\n3. Submit all missed years together as one package.\n4. Fax to +1-855-887-7737 with the reasonable cause statement at the front.\n5. Keep the fax transmission receipt — it's your timestamped proof of DIIRSP submission.\n\nWell-documented first-time catch-ups are accepted at a high rate, with no penalty assessed. The IRS treats voluntary catch-up under DIIRSP far more favorably than waiting for a CP-15 notice and then responding.\n\nOur multi-year DIIRSP packages: 2 years $248 Standard / $298 Express, 3 years $347 Standard / $397 Express (fax included). The Reasonable Cause Statement is auto-generated by our wizard and editable to fit your specific facts.",
+        body: "If you've missed Form 5472 for one or more prior years, the IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up path. Steps:\n\n1. File the late Form 5472 + pro forma 1120 for each missed year.\n2. Include a Reasonable Cause Statement explaining why the filing was late.\n3. Submit all missed years together as one package.\n4. Fax to +1-855-887-7737 with the reasonable cause statement at the front.\n5. Keep the fax transmission receipt — it's your timestamped transmission evidence.\n\nWell-documented first-time catch-ups are accepted at a high rate, with no penalty assessed. The IRS treats voluntary catch-up under DIIRSP far more favorably than waiting for a CP-15 notice and then responding.\n\nOur multi-year DIIRSP packages: 2 years $248 Standard / $298 Express, 3 years $347 Standard / $397 Express (fax included). The Reasonable Cause Statement is auto-generated by our wizard and editable to fit your specific facts.",
       },
       {
         heading: "Pricing",
@@ -1604,7 +1604,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Can I e-file Form 5472?",
-        a: "No. Foreign-owned disregarded entities are excluded from IRS e-filing for Form 5472 + pro forma 1120. Fax to +1-855-887-7737 or mail to IRS Ogden, UT 84201-0023 only.",
+        a: "No. Foreign-owned disregarded entities are excluded from IRS e-filing for Form 5472 + pro forma 1120. Fax to +1-855-887-7737 or mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 only.",
       },
       {
         q: "How long has Form 5472 applied to single-member LLCs?",
@@ -1636,7 +1636,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 7004", url: "https://www.irs.gov/forms-pubs/about-form-7004" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Form 5472 deadline — when it's due, and what to do if you've missed it",
     intro:
       "Form 5472 is due April 15 of the year following the tax year. You can get an automatic 6-month extension to October 15 by filing Form 7004 by April 15. Miss the deadline and the IRS charges $25,000 per form — but you can still catch up under DIIRSP. This is the complete deadline guide: exact dates, extension mechanics, what counts as on-time filing, late-filing penalties, the catch-up procedure, and a real timeline showing what happens after you submit.",
@@ -1647,11 +1647,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How to file Form 7004 for an extension",
-        body: "Form 7004 (Application for Automatic Extension of Time to File) gives you the 6-month extension. It must be filed by the original deadline (April 15 for calendar-year LLCs).\n\nWhat to put on Form 7004:\n• Part I: select form code \"12\" (Form 1120).\n• Identification: LLC name, EIN, address — same as on the eventual 1120.\n• Estimated tax: $0 for foreign-owned DEs (no tax liability).\n\nSubmit Form 7004 by:\n• Fax to +1-855-887-7737 (same Ogden PIN Unit number).\n• Mail to IRS Ogden, UT 84201-0023.\n\nThe extension is automatic — the IRS doesn't send a confirmation. Just keep proof of timely filing of the 7004 (fax receipt or certified mail receipt). Your Form 5472 + pro forma 1120 is then due by October 15.\n\nDon't file Form 7004 if you're already past April 15 — at that point file the actual Form 5472 + 1120 directly with a DIIRSP reasonable cause statement.",
+        body: "Form 7004 (Application for Automatic Extension of Time to File) gives you the 6-month extension. It must be filed by the original deadline (April 15 for calendar-year LLCs).\n\nWhat to put on Form 7004:\n• Part I: select form code \"12\" (Form 1120).\n• Identification: LLC name, EIN, address — same as on the eventual 1120.\n• Estimated tax: $0 for foreign-owned DEs (no tax liability).\n\nSubmit Form 7004 by:\n• Fax to +1-855-887-7737 (same Ogden PIN Unit number).\n• Mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n\nThe extension is automatic — the IRS doesn't send a confirmation. Just keep transmission evidence of the 7004 (fax receipt or certified mail receipt). Your Form 5472 + pro forma 1120 is then due by October 15.\n\nDon't file Form 7004 if you're already past April 15 — at that point file the actual Form 5472 + 1120 directly with a DIIRSP reasonable cause statement.",
       },
       {
         heading: "What counts as \"on time\"?",
-        body: "If you fax to the IRS Ogden PIN Unit (+1-855-887-7737), the timestamp on your fax transmission receipt is the postmark. Send it before midnight (local time at your fax origin) on the deadline and you're on time — even if the IRS processes it days or weeks later.\n\nIf you mail it, the postmark date counts. Use certified mail with a return receipt so you have proof.\n\nIf the IRS processes the return after the deadline despite a timely fax/mail, no penalty applies — the timestamp on your proof of filing is what matters legally.\n\nKeep the fax transmission receipt or certified mail receipt for at least 6 years. If the IRS later (incorrectly) assesses a late-filing penalty, you respond with the proof and they reverse it.",
+        body: "A successful fax report is useful transmission evidence, but it is not an IRS acknowledgment or a statutory postmark. The special Form 5472 instructions permit fax filing without specifying a universal sender-local-midnight cutoff or making every provider timestamp conclusive.\n\nSend early enough to resolve failures. For mail, check the applicable postal or IRS-designated private delivery-service rules; do not assume an international postmark or any courier shipment receives the same timely-mailing treatment.\n\nRetain the exact package, the complete report with destination and timestamp/timezone, and any mailing records or IRS correspondence. If a notice questions timeliness, respond using those records; a receipt does not guarantee penalty reversal. See what a fax receipt does and does not prove.",
       },
       {
         heading: "What happens after the deadline if you do nothing",
@@ -1671,7 +1671,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How to file before the deadline",
-        body: "1. Gather your LLC info (EIN, address, formation date, NAICS code) and your foreign owner info (legal name, FTIN or self-assigned Reference ID, residential address, country of citizenship).\n2. Add up year-end totals: capital contributions in, distributions out, total assets at year-end in USD, list of any other reportable transactions.\n3. Use our 15-minute online filer to generate the full package: cover letter, pro forma 1120 with the \"Foreign-Owned U.S. DE\" stamp, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (only if late).\n4. Sign once on screen — the signature embeds into every required signature box automatically.\n5. An accountant on our team reviews the package end-to-end.\n6. We fax it to the IRS Ogden PIN Unit at +1-855-887-7737 and email you the timestamped receipt as proof of timely filing.\n\nPricing: $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included. +$99 per additional past year. 100% money-back guarantee if we fail to submit.",
+        body: "1. Gather your LLC info (EIN, address, formation date, NAICS code) and your foreign owner info (legal name, FTIN or self-assigned Reference ID, residential address, country of citizenship).\n2. Add up year-end totals: capital contributions in, distributions out, total assets at year-end in USD, list of any other reportable transactions.\n3. Use our 15-minute online filer to generate the full package: cover letter, pro forma 1120 with the \"Foreign-Owned U.S. DE\" stamp, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (only if late).\n4. Sign once on screen — the signature embeds into every required signature box automatically.\n5. An accountant on our team reviews the package end-to-end.\n6. We fax it to the IRS Ogden PIN Unit at +1-855-887-7737 and email you the timestamped receipt as transmission evidence.\n\nPricing: $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included. +$99 per additional past year. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "Should you file early?",
@@ -1721,7 +1721,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What if my fax fails on the deadline day?",
-        a: "Retry within minutes — most fax failures are transient. If you can't get through after multiple attempts, fall back to certified mail (postmarked the same day) to IRS Ogden, UT 84201-0023. The certified-mail postmark satisfies the deadline.",
+        a: "Check the provider error and retry promptly. If fax remains unavailable, assess an authorized mailing alternative that can meet the applicable deadline, using the dedicated Ogden PIN Unit address in the Form 5472 instructions. Do not assume a failed fax attempt extends the deadline; preserve the records and obtain advice if it passes.",
       },
     ],
     relatedSlugs: ["late-form-5472", "diirsp", "form-5472-penalty", "file-form-5472", "form-5472-reasonable-cause-statement"],
@@ -1731,15 +1731,15 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "form 5472 fax number",
     title: "Form 5472 Fax Number — IRS Ogden PIN Unit",
     metaDescription:
-      "Form 5472 fax number guidance explains what to send to the IRS Ogden PIN Unit, how to transmit the full filing package, and which proof of filing to retain.",
+      "Form 5472 fax number guidance explains what to send to the IRS Ogden PIN Unit, how to transmit the full filing package, and which transmission evidence to retain.",
     sources: [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "The IRS Form 5472 fax number (and how to actually send it)",
     intro:
-      "The IRS Form 5472 fax number is +1-855-887-7737 — the Ogden PIN Unit. Fax is the fastest way to file Form 5472 with its attached pro forma Form 1120, and the fax transmission receipt is your proof of timely filing under IRC § 6038A. This is exactly what to send, in what order, which fax services work, what to do if the fax fails, and how to get the IRS-acknowledged proof of timely submission.",
+      "The IRS Form 5472 fax number is +1-855-887-7737 — the Ogden PIN Unit. Fax is the fastest way to file Form 5472 with its attached pro forma Form 1120, and the fax transmission receipt is your transmission evidence to retain with the exact package. This is exactly what to send, in what order, which fax services work, what to do if the fax fails, and how to get the provider’s transmission record.",
     sections: [
       {
         heading: "What is the fax number?",
@@ -1747,11 +1747,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What do you need to send to the IRS?",
-        body: "The fax must contain, in this order:\n\n1. Cover sheet (1 page) — your name, the LLC name, EIN, tax year, page count, and \"Form 5472 + Pro Forma 1120 — Foreign-Owned U.S. DE\".\n2. Pro forma Form 1120 — entity identification fields filled in, signed in pen, with \"Foreign-Owned U.S. DE\" stamped across the top. Income, deductions, and tax sections blank.\n3. Form 5472 — fully filled in (Parts I, II, III, IV, V, VII at minimum).\n4. Part V supporting statement — lists every reportable transaction (capital contributions in, distributions out, etc.) with date, amount, and related party.\n5. Reasonable Cause Statement — only if you're filing late under DIIRSP.\n\nTotal pages: typically 5-8 depending on transaction count.\n\nEvery page that requires a signature must be signed in pen — the IRS does not accept digital-only signatures on these forms. The only signature line is on Form 1120 (bottom of page 1).",
+        body: "The fax must contain, in this order:\n\n1. Cover sheet (1 page) — your name, the LLC name, EIN, tax year, page count, and \"Form 5472 + Pro Forma 1120 — Foreign-Owned U.S. DE\".\n2. Pro forma Form 1120 — entity identification fields filled in, signed in pen, with \"Foreign-Owned U.S. DE\" stamped across the top. Income, deductions, and tax sections blank.\n3. Form 5472 — fully filled in (Parts I, II, III, IV, V, VII at minimum).\n4. Part V supporting statement — lists every reportable transaction (capital contributions in, distributions out, etc.) with date, amount, and related party.\n5. Reasonable Cause Statement — only if you're filing late under DIIRSP.\n\nTotal pages: typically 5-8 depending on transaction count.\n\nForm 1120 page 1 has the taxpayer signature block; Form 5472 does not. Ink signing of the completed cover followed by scanning is a conservative workflow. This does not establish an absolute ban on other methods. See [signatures and submission routes](/blog/form-5472-pro-forma-1120-signature).",
       },
       {
         heading: "Which fax services work?",
-        body: "Any fax service that can send to a US toll-free number works. Common choices:\n\n• eFax (~$17/month with several free outbound pages monthly).\n• MyFax (~$10/month).\n• FaxZero (free for up to 5 pages with ads, or paid tier for ad-free).\n• Pamfax (pay-per-page, no subscription).\n• HelloFax / Dropbox Sign (~$10/month).\n• Google Voice with Workspace + HelloFax integration.\n• A physical fax machine if you have access.\n• Our service (IRS fax delivery included in every plan — from $149).\n\nFor a one-time fax of a 5-8 page document, FaxZero (free) or Pamfax (pay-per-page) are low-cost DIY options if you prefer to self-file. For ongoing use, monthly subscriptions become economical.\n\nKeep the transmission receipt the service generates — it shows the fax was successfully delivered, with a timestamp. That receipt is your legal proof of timely filing under IRC § 6038A. Without it, you can't prove you filed on time if the IRS later assesses a penalty.",
+        body: "Any fax service that can send to a US toll-free number works. Common choices:\n\n• eFax (~$17/month with several free outbound pages monthly).\n• MyFax (~$10/month).\n• FaxZero (free for up to 5 pages with ads, or paid tier for ad-free).\n• Pamfax (pay-per-page, no subscription).\n• HelloFax / Dropbox Sign (~$10/month).\n• Google Voice with Workspace + HelloFax integration.\n• A physical fax machine if you have access.\n• Our service (IRS fax delivery included in every plan — from $149).\n\nFor a one-time fax of a 5-8 page document, FaxZero (free) or Pamfax (pay-per-page) are low-cost DIY options if you prefer to self-file. For ongoing use, monthly subscriptions become economical.\n\nKeep the transmission receipt the service generates — it shows the fax was successfully delivered, with a timestamp. Retain that provider-reported transmission evidence with the exact package. Keep the exact submitted package and any IRS account information or correspondence as well; a provider receipt does not guarantee penalty relief.",
       },
       {
         heading: "How to actually send a fax in 2026",
@@ -1759,23 +1759,23 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "IRS fax delivery — included in every plan",
-        body: "IRS fax delivery is included in every plan at no extra charge. We fax the signed package to +1-855-887-7737 for you. You get:\n\n• A timestamped IRS Fax Transmission Receipt PDF emailed back to you.\n• A copy of the receipt in your portal you can re-download anytime.\n• An email confirmation when the fax delivers.\n• Automatic retry if the first attempt fails.\n• Proof-of-filing language formatted to satisfy any future IRS questions about timing.\n\nIf the first fax attempt fails, we automatically retry. If multiple attempts fail (rare but possible during IRS Ogden maintenance windows), we'll reach out before falling back to certified mail. 100% money-back guarantee if we fail to submit your filing to the IRS.",
+        body: "IRS fax delivery is included in every plan at no extra charge. We fax the signed package to +1-855-887-7737 for you. You get:\n\n• A timestamped IRS Fax Transmission Receipt PDF emailed back to you.\n• A copy of the receipt in your portal you can re-download anytime.\n• An email confirmation when the fax delivers.\n• Automatic retry if the first attempt fails.\n• A formatted transmission record to retain with your filed package; it does not guarantee the outcome of an IRS timing dispute.\n\nIf the first fax attempt fails, we automatically retry. If multiple attempts fail (rare but possible during IRS Ogden maintenance windows), we'll reach out before falling back to certified mail. 100% money-back guarantee if we fail to submit your filing to the IRS.",
       },
       {
         heading: "What if the fax fails?",
-        body: "The IRS Ogden fax line is generally reliable but can experience temporary outages, especially during peak filing periods (early April).\n\nIf your fax fails:\n1. Wait 5-10 minutes and retry. Most failures are transient and self-resolve.\n2. If multiple retries fail over an hour, check the IRS website for any announced fax outages.\n3. If still failing the next business day, fall back to certified mail.\n\nCertified mail fallback:\n• Address: Internal Revenue Service, Ogden, UT 84201-0023.\n• Use certified mail with return receipt requested.\n• Postmark date counts as your filing date — same legal weight as a fax transmission timestamp.\n• Mail USPS or via any major US carrier (UPS, FedEx) that offers tracked international shipping if you're outside the US.\n\nKeep your USPS Certified Mail receipt AND the return receipt (PS Form 3811 or USPS tracking confirmation) for at least 6 years. These prove timely filing.",
+        body: "A failed or partial fax does not establish a completed filing. Check the provider’s status, destination, page limit and file readability, then retry promptly when the problem is resolved.\n\nIf the deadline is near and fax remains unavailable, assess an authorized mail alternative that can meet the applicable deadline. Use the dedicated destination: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201. Mailing timeliness depends on the applicable postmark and delivery-service rules; do not assume any international courier or a logged fax attempt preserves the deadline.\n\nKeep failed and successful attempt records. If the deadline passes, obtain advice on the late filing rather than assuming a next-day transmission was timely.",
       },
       {
         heading: "Common fax mistakes to avoid",
-        body: "• Faxing only Form 5472 without the pro forma 1120 — the IRS will reject and treat as not filed. Always send the complete package.\n• Faxing to the wrong number — must be +1-855-887-7737 (Ogden PIN Unit). Other IRS fax numbers are for different filings.\n• Sending unsigned forms — the signature line on Form 1120 must be signed in pen on the printed page before fax.\n• Sending an unsigned cover letter — the cover letter itself doesn't require a signature; the 1120 inside does.\n• Faxing pages out of order — the IRS Ogden team handles thousands of these; well-ordered packages are processed faster.\n• Forgetting to save the transmission receipt — without it, you have no proof of timely filing.\n• Filing after midnight on April 15 (deadline) — the timestamp is what counts, so send before midnight in your local timezone.\n• Sending color or low-resolution scans — black and white at 200dpi or higher is the safe choice for fax fidelity.",
+        body: "• Faxing only Form 5472 without the pro forma 1120 — the IRS will reject and treat as not filed. Always send the complete package.\n• Faxing to the wrong number — must be +1-855-887-7737 (Ogden PIN Unit). Other IRS fax numbers are for different filings.\n• Leaving signing questions unresolved — ink signing of the completed Form 1120 cover and scanning is a conservative workflow; verify who has authority to sign.\n• Confusing a cover letter with the pro forma 1120 signature block; review each actual form and any separately required declaration.\n• Faxing pages out of order — the IRS Ogden team handles thousands of these; well-ordered packages are processed faster.\n• Forgetting to save the transmission receipt — without it, you have no transmission evidence.\n• Leaving filing until the deadline — transmit early and do not assume an unverified local-time cutoff or failed attempt preserves timeliness.\n• Sending color or low-resolution scans — the IRS specifies 300 DPI or higher for this fax route.",
       },
       {
         heading: "What proof of filing should you save?",
-        body: "Keep all of these for at least 6 years (IRS examination window for incomplete returns):\n\n• The signed PDF you faxed (full package).\n• The fax transmission receipt with timestamp.\n• The fax service's confirmation email.\n• If you used our service: the timestamped IRS Fax Transmission Receipt PDF we email and store in your portal.\n• If you filed by mail: the certified mail receipt (PS Form 3800) and return receipt (PS Form 3811).\n\nIf the IRS later (incorrectly) assesses a CP-15 penalty for a return you filed on time, you respond with the proof and they reverse the assessment. Without proof, you'd be in a much harder position to dispute the penalty.\n\nStore them somewhere durable: cloud storage (Google Drive, Dropbox), email folder, or paper file. Don't rely on your fax service's own retention — many services delete sent items after a year or two.",
+        body: "Keep a durable filing record; retention depends on the applicable rules and circumstances, not a universal six-year cutoff for incomplete returns:\n\n• The signed PDF you faxed (full package).\n• The fax transmission receipt with timestamp.\n• The fax service's confirmation email.\n• If you used our service: the timestamped IRS Fax Transmission Receipt PDF we email and store in your portal.\n• If you filed by mail: the certified mail receipt (PS Form 3800) and return receipt (PS Form 3811).\n\nIf a penalty notice arrives, these records can support a response but do not guarantee reversal. Read the notice and obtain advice about its facts and response deadline.\n\nStore them somewhere durable: cloud storage (Google Drive, Dropbox), email folder, or paper file. Don't rely on your fax service's own retention — many services delete sent items after a year or two.",
       },
       {
         heading: "Mail vs. fax — which is better?",
-        body: "Fax (preferred):\n• Faster delivery — transmission completes in minutes.\n• Immediate proof of receipt — the fax confirmation timestamp.\n• Lower risk of misdelivery (no chance of getting lost in physical mail).\n• Cheaper than international certified mail.\n• Works the same from anywhere in the world.\n\nMail (backup):\n• Slower — takes days to weeks for delivery, especially internationally.\n• Proof of timely filing relies on postmark date and certified mail receipt.\n• Risk of physical misdelivery or loss.\n• More expensive for international senders ($20-$80 vs $0-$5 for fax).\n• Can be the only option if fax service fails.\n\nFor most foreign LLC owners, fax is the right default. Mail is the fallback when fax fails or as a redundant filing method (some cautious filers fax AND mail to maximize proof).",
+        body: "Fax (preferred):\n• Faster delivery — transmission completes in minutes.\n• Immediate provider transmission record — not an IRS acceptance.\n• Avoids physical postal transit, but a transmission record does not establish IRS processing.\n• Cheaper than international certified mail.\n• Works the same from anywhere in the world.\n\nMail (backup):\n• Slower — takes days to weeks for delivery, especially internationally.\n• Mailing evidence depends on applicable postmark and delivery-service rules.\n• Risk of physical misdelivery or loss.\n• More expensive for international senders ($20-$80 vs $0-$5 for fax).\n• Can be the only option if fax service fails.\n\nFor most foreign LLC owners, fax is the right default. Mail can be a fallback for a specific fax failure. Do not automatically fax and mail duplicates merely because the IRS is silent.",
       },
       {
         heading: "Your annual fax routine",
@@ -1793,7 +1793,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Do I get a confirmation from the IRS that they received my fax?",
-        a: "Not directly from the IRS. Your fax transmission receipt (from your fax service) is the legal proof of timely filing. The IRS doesn't send a separate confirmation. If you don't see a CP-15 notice over the following 6-18 months, no news is good news.",
+        a: "The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. A provider receipt is transmission evidence, not an IRS-issued acceptance. Silence does not establish receipt, processing or approval.",
       },
       {
         q: "How long does it take you to fax it?",
@@ -1801,7 +1801,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What's the IRS Ogden mailing address?",
-        a: "Internal Revenue Service, Ogden, UT 84201-0023. Use certified mail with return receipt. The postmark counts as your filing date.",
+        a: "The dedicated address is Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201. Retain mailing and delivery evidence; timely-mailing treatment depends on the applicable postal or designated delivery-service rules.",
       },
       {
         q: "Can I fax from outside the US?",
@@ -1809,7 +1809,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What if the IRS Ogden fax is down on the deadline day?",
-        a: "Retry every 30 minutes. If it stays down past evening, fax it the next morning (still on time if the original day's transmission attempt is logged) or send by certified mail with same-day postmark.",
+        a: "Retry promptly after checking the provider error and assess an authorized mailing alternative that can meet the deadline. A logged failed attempt does not make a next-morning fax automatically timely. Preserve all records and obtain advice if the deadline passes.",
       },
       {
         q: "Does the fax need a cover sheet?",
@@ -1820,7 +1820,7 @@ export const LANDING_PAGES: LandingPage[] = [
         a: "No. Each LLC's filing is a separate fax — different EIN, different package. Combining them risks mis-routing and incomplete processing.",
       },
       {
-        q: "How do I get the timestamped receipt that's accepted as proof of filing?",
+        q: "How do I get the timestamped transmission receipt?",
         a: "IRS fax delivery is included in every plan. After we fax your package, we email you a polished IRS Fax Transmission Receipt PDF that's also stored in your portal for re-download at any time.",
       },
     ],
@@ -1838,7 +1838,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Single-member LLC with a foreign owner — what you actually have to file",
     intro:
       "If you are a non-US person who owns a single-member US LLC (Wyoming, Delaware, New Mexico, Florida, Nevada, or any state), you have one critical annual federal filing the IRS imposes on you: Form 5472 attached to a pro forma Form 1120. Miss it and the IRS charges $25,000 per year, per form — automatically, with no warning. This is the complete guide to what you owe, when, what your LLC actually pays (often nothing), and how to file it in 15 minutes.",
@@ -1869,7 +1869,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "When and how to file",
-        body: "When: April 15 of the year following the tax year. October 15 with Form 7004 extension.\n\nHow:\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit) — preferred. Get a timestamped transmission receipt as proof of filing.\n• Mail to IRS Ogden, UT 84201-0023 — backup. Use certified mail with return receipt.\n• E-file: NOT available for foreign-owned DE filings.\n\nWho:\n• You, the owner. Pen signature required on Form 1120 (no separate signature on Form 5472).\n\nWith us:\n• Wizard (12 questions) → generated PDF → sign once on screen → accountant review → fax to IRS → timestamped receipt. ~15 minutes total. $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included. +$99 per additional past year.",
+        body: "When: April 15 of the year following the tax year. October 15 with Form 7004 extension.\n\nHow:\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit) — preferred. Get a timestamped transmission receipt as transmission evidence.\n• Mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 — backup. Use certified mail with return receipt.\n• E-file: NOT available for foreign-owned DE filings.\n\nWho:\n• Establish who is authorized to sign for the LLC. Ink signing the completed Form 1120 is a conservative workflow; Form 5472 has no separate signature block.\n\nWith us:\n• Wizard (12 questions) → generated PDF → sign once on screen → accountant review → fax to IRS → timestamped receipt. ~15 minutes total. $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included. +$99 per additional past year.",
       },
       {
         heading: "What do you do if you've missed prior years?",
@@ -1881,7 +1881,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "The fastest way to file",
-        body: "Our 15-minute online filer handles everything for the standard foreign-owned single-member LLC case:\n\n• 12-question wizard pre-tuned for non-US founders.\n• Pre-fills the next year from your prior filing.\n• Generates the complete package: cover letter, pro forma Form 1120, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (if late).\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review on every package before submission.\n• IRS fax delivery + timestamped receipt as proof of filing.\n• 100% money-back guarantee if we fail to submit.\n\nPricing:\n• 1 tax year: $149 Standard / $199 Express (fax included)\n• 2 tax years (DIIRSP catch-up): $248 Standard / $298 Express (fax included)\n• 3 tax years (DIIRSP catch-up): $347 Standard / $397 Express (fax included)\n• +$99 per additional past year beyond the base package",
+        body: "Our 15-minute online filer handles everything for the standard foreign-owned single-member LLC case:\n\n• 12-question wizard pre-tuned for non-US founders.\n• Pre-fills the next year from your prior filing.\n• Generates the complete package: cover letter, pro forma Form 1120, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (if late).\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review on every package before submission.\n• IRS fax delivery + timestamped receipt as transmission evidence.\n• 100% money-back guarantee if we fail to submit.\n\nPricing:\n• 1 tax year: $149 Standard / $199 Express (fax included)\n• 2 tax years (DIIRSP catch-up): $248 Standard / $298 Express (fax included)\n• 3 tax years (DIIRSP catch-up): $347 Standard / $397 Express (fax included)\n• +$99 per additional past year beyond the base package",
       },
     ],
     faqs: [
@@ -1939,7 +1939,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Stripe Atlas LLC owners — Form 5472 is on you, not Stripe",
     intro:
       "Stripe Atlas makes US LLC formation effortless for foreign founders — Delaware LLC + EIN + Mercury bank account in days. What Stripe Atlas explicitly does NOT handle is the annual IRS filing your LLC owes every year: Form 5472 + pro forma Form 1120. Skip it and the IRS charges $25,000 per year, per form. This is the complete Stripe Atlas + Form 5472 playbook — including the typical year-2 surprise, the Delaware franchise tax, and how to catch up if you've missed prior years.",
@@ -1958,7 +1958,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What you actually file for Form 5472",
-        body: "For a Stripe Atlas Delaware LLC owned by one non-US founder, the federal filing package is:\n\n1. Cover letter identifying the filing.\n2. Pro forma Form 1120 — entity info only, stamped \"Foreign-Owned U.S. DE\" at the top. Income, deductions, tax sections all blank.\n3. Form 5472 — Parts I (your LLC), II (you as foreign shareholder), III (you again as related party), IV (monetary transactions, often blank), V (reportable transactions — capital contributions, distributions), VII (FDE confirmation).\n4. Part V supporting statement — list of each reportable transaction.\n5. Reasonable Cause Statement — only if filing late under DIIRSP.\n\nAll faxed to the IRS Ogden PIN Unit at +1-855-887-7737. The fax transmission receipt is your proof of timely filing.\n\nTotal pages: 5-8. Total time to file with us: ~15 minutes. Total cost with us: Standard $149 (IRS fax delivery included).",
+        body: "For a Stripe Atlas Delaware LLC owned by one non-US founder, the federal filing package is:\n\n1. Cover letter identifying the filing.\n2. Pro forma Form 1120 — entity info only, stamped \"Foreign-Owned U.S. DE\" at the top. Income, deductions, tax sections all blank.\n3. Form 5472 — Parts I (your LLC), II (you as foreign shareholder), III (you again as related party), IV (monetary transactions, often blank), V (reportable transactions — capital contributions, distributions), VII (FDE confirmation).\n4. Part V supporting statement — list of each reportable transaction.\n5. Reasonable Cause Statement — only if filing late under DIIRSP.\n\nAll faxed to the IRS Ogden PIN Unit at +1-855-887-7737. The fax transmission receipt is your transmission evidence.\n\nTotal pages: 5-8. Total time to file with us: ~15 minutes. Total cost with us: Standard $149 (IRS fax delivery included).",
       },
       {
         heading: "Common Stripe Atlas LLC scenarios",
@@ -1966,7 +1966,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How we handle it",
-        body: "We built Form5472 Prep specifically for the Stripe Atlas / Mercury / non-US-founder profile. Most of our customers are Stripe Atlas Delaware LLC owners — the wizard is pre-tuned for this exact case:\n\n• 12-question wizard. Pre-filled state (Delaware), common NAICS suggestions for SaaS / ecommerce / consulting.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review on every package before submission.\n• IRS fax delivery + timestamped receipt as proof of filing.\n• Pre-fills the next year from your prior filing — year 2 onward takes 5 minutes.\n• Optional annual reminder emails so you don't miss the April 15 deadline.\n\nPricing:\n• 1 tax year: $149 Standard / $199 Express (fax included)\n• 2 tax years (DIIRSP catch-up): $248 Standard / $298 Express (fax included)\n• 3 tax years (DIIRSP catch-up): $347 Standard / $397 Express (fax included)\n• +$99 per additional past year\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
+        body: "We built Form5472 Prep specifically for the Stripe Atlas / Mercury / non-US-founder profile. Most of our customers are Stripe Atlas Delaware LLC owners — the wizard is pre-tuned for this exact case:\n\n• 12-question wizard. Pre-filled state (Delaware), common NAICS suggestions for SaaS / ecommerce / consulting.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review on every package before submission.\n• IRS fax delivery + timestamped receipt as transmission evidence.\n• Pre-fills the next year from your prior filing — year 2 onward takes 5 minutes.\n• Optional annual reminder emails so you don't miss the April 15 deadline.\n\nPricing:\n• 1 tax year: $149 Standard / $199 Express (fax included)\n• 2 tax years (DIIRSP catch-up): $248 Standard / $298 Express (fax included)\n• 3 tax years (DIIRSP catch-up): $347 Standard / $397 Express (fax included)\n• +$99 per additional past year\n\n100% money-back guarantee if we fail to submit your filing to the IRS.",
       },
       {
         heading: "What do you do if you've missed prior years as a Stripe Atlas user?",
@@ -2040,7 +2040,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Reasonable cause statement for Form 5472 — what to include",
     intro:
       "If you're filing Form 5472 late, the IRS requires a Reasonable Cause Statement under DIIRSP (Delinquent International Information Return Submission Procedure) to request abatement of the $25,000-per-form-per-year penalty. Done right, it can save tens of thousands of dollars. Done poorly — or skipped entirely — and the penalty is assessed automatically. This is the complete guide: what the IRS expects, what to include, what kills a request, sample structure, and how our DIIRSP-aware filer generates one for you that's accountant-reviewed before fax submission.",
@@ -2071,7 +2071,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What happens after you file Form 5472?",
-        body: "After submitting a DIIRSP package with a Reasonable Cause Statement:\n\n• Week 0-2: Fax delivered to IRS Ogden PIN Unit. You have the timestamped transmission receipt as proof. No IRS acknowledgment yet — that's normal.\n\n• Month 1-2: Internal IRS processing at Ogden Service Center.\n\n• Month 3-6: IRS reviews the reasonable cause request. If accepted, you typically hear nothing — no news is good news.\n\n• Month 4-9: If IRS wants more information, you'll receive Letter 5891 or a similar request for documentation. Respond promptly with whatever the letter asks for.\n\n• Month 6-12: If IRS rejects the reasonable cause and assesses the penalty, you'll receive a CP-15 notice. You then have the right to appeal through the IRS Office of Appeals (separate process; consider engaging a tax professional).\n\nKeep the entire DIIRSP package (signed PDF, reasonable cause statement, fax receipt) for at least 6 years. If the IRS contacts you 18 months later about year 2 filing, the original receipts prove timely DIIRSP submission.\n\nFor most first-time foreign-owner DIIRSP cases with strong reasonable cause statements: penalty waived, no further IRS contact, file again next year on time.",
+        body: "The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. The provider’s transmission record and IRS processing are different evidence. Silence establishes neither delivery nor acceptance, and no filing-specific processing timetable was verified.\n\nKeep the exact submitted package, destination, timestamp, page count, provider receipt and any IRS correspondence together. Do not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline; a transmission record does not guarantee a penalty will be removed. See receipt confirmation and next steps.",
       },
       {
         heading: "Pricing for catch-up filings",
@@ -2101,7 +2101,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What happens after I file?",
-        a: "The IRS processes the return. If they accept the reasonable cause, you'll hear nothing (no news is good news, typically 3-6 months). If they assess a penalty anyway, they send a notice and you have the right to appeal — uncommon for clean first-time DIIRSP filings.",
+        a: "Silence does not establish processing, acceptance or penalty relief. Preserve your complete submitted package and fax-provider record. If the IRS sends a notice, follow its response instructions and deadline.",
       },
       {
         q: "How long should the reasonable cause statement be?",
@@ -2146,10 +2146,10 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
-    updated: "2026-09-05",
+    updated: "2026-09-11",
     h1: "Form 5472, filed properly — from $149, everything included.",
     intro:
-      "Answer 12 questions in about 15 minutes. A qualified tax accountant on our team reviews your Form 5472 + pro forma Form 1120 end-to-end, we fax the signed package to the IRS Ogden PIN Unit and you get back the timestamped transmission receipt as your proof of filing. $149 on Standard, ready in 5-7 business days, or $199 on Express, ready within 3 — the identical filing either way, only the speed differs. That's the filing that keeps a $25,000 §6038A penalty off your LLC.",
+      "Answer 12 questions in about 15 minutes. A qualified tax accountant on our team reviews your Form 5472 + pro forma Form 1120 end-to-end, we fax the signed package to the IRS Ogden PIN Unit and you get back the timestamped transmission receipt as your transmission evidence. $149 on Standard, ready in 5-7 business days, or $199 on Express, ready within 3 — the identical filing either way, only the speed differs. That's the filing that keeps a $25,000 §6038A penalty off your LLC.",
     noindex: true,
     pricingMode: "premium",
     sections: [
@@ -2159,11 +2159,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What's included on either tier",
-        body: "Both tiers cover one tax year, end to end — the filing, the review and the paperwork are identical, and only the turnaround differs:\n\n• Filled IRS Form 5472 + pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp and the Part V supporting statement.\n• Review by a qualified tax accountant on our team before anything leaves our hands — no autopilot.\n• Reasonable Cause Statement for late filings under DIIRSP, drafted around your facts.\n• Fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) included — no separate fax fee.\n• The timestamped IRS fax transmission receipt emailed to you and stored in your portal: your proof of timely filing.\n• Filing confirmation and priority email support from start to receipt.\n• A reminder next March so the following year's deadline doesn't slip past you.\n• 100% money-back guarantee if we fail to submit.\n\nYou sign once on screen in your portal — no printing, no scanning, no mailing anything yourself.",
+        body: "Both tiers cover one tax year, end to end — the filing, the review and the paperwork are identical, and only the turnaround differs:\n\n• Filled IRS Form 5472 + pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp and the Part V supporting statement.\n• Review by a qualified tax accountant on our team before anything leaves our hands — no autopilot.\n• Reasonable Cause Statement for late filings under DIIRSP, drafted around your facts.\n• Fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) included — no separate fax fee.\n• The timestamped fax-provider transmission receipt emailed to you and stored in your portal: your transmission evidence.\n• Filing confirmation and priority email support from start to receipt.\n• A reminder next March so the following year's deadline doesn't slip past you.\n• 100% money-back guarantee if we fail to submit.\n\nYou sign once on screen in your portal — no printing, no scanning, no mailing anything yourself.",
       },
       {
         heading: "The $25,000 reason to get this right",
-        body: "IRC § 6038A assesses $25,000 per form, per year when Form 5472 is filed late, filed incompletely, or not filed at all. The penalty is automatic — the IRS doesn't have to show any harm, and there is no small-LLC exception for an entity with no revenue. Once the IRS issues a notice, another $25,000 accrues for every 30-day period the filing stays outstanding.\n\nThe three ways owners get caught:\n\n1. Never filed — the LLC exists, money moved in and out, and Form 5472 never came up at formation.\n2. Filed Form 5472 on its own — without the pro forma Form 1120 it attaches to, the IRS treats the return as never filed.\n3. Filed, but incomplete — a blank Part V, a missing supporting statement, or a missing owner identifier is scored the same as a missing return.\n\nEvery one of those is avoidable paperwork. That is exactly what the filing fee buys: a complete package, checked by an accountant who files these all year, delivered with dated proof of when it arrived.",
+        body: "IRC § 6038A assesses $25,000 per form, per year when Form 5472 is filed late, filed incompletely, or not filed at all. The penalty is automatic — the IRS doesn't have to show any harm, and there is no small-LLC exception for an entity with no revenue. Once the IRS issues a notice, another $25,000 accrues for every 30-day period the filing stays outstanding.\n\nThe three ways owners get caught:\n\n1. Never filed — the LLC exists, money moved in and out, and Form 5472 never came up at formation.\n2. Filed Form 5472 on its own — without the pro forma Form 1120 it attaches to, the IRS treats the return as never filed.\n3. Filed, but incomplete — a blank Part V, a missing supporting statement, or a missing owner identifier is scored the same as a missing return.\n\nEvery one of those is avoidable paperwork. That is exactly what the filing fee buys: a complete package, checked by an accountant who files these all year, delivered with dated fax-provider transmission evidence.",
       },
       {
         heading: "How your filing reaches the IRS",
@@ -2189,7 +2189,7 @@ export const LANDING_PAGES: LandingPage[] = [
     faqs: [
       {
         q: "What exactly do I get for the filing fee?",
-        a: "One tax year filed end to end: Form 5472 + pro forma Form 1120 with the Part V supporting statement, review by a qualified tax accountant, a reasonable cause letter if you're filing late, fax delivery to the IRS Ogden PIN Unit, the timestamped transmission receipt as proof of filing, and a reminder before next year's deadline. No add-ons, no separate fax fee.",
+        a: "One tax year filed end to end: Form 5472 + pro forma Form 1120 with the Part V supporting statement, review by a qualified tax accountant, a reasonable cause letter if you're filing late, fax delivery to the IRS Ogden PIN Unit, the timestamped transmission receipt as transmission evidence, and a reminder before next year's deadline. No add-ons, no separate fax fee.",
       },
       {
         q: "Is there a cheaper or more expensive version of this service?",
@@ -2201,7 +2201,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Can you guarantee the IRS waives the penalty on my late filing?",
-        a: "No service can guarantee an IRS outcome. What we can do is make the DIIRSP submission as strong as possible — complete forms, documented transactions, an accountant-reviewed reasonable cause statement, and dated proof of delivery. Most well-documented first-time late filings are accepted, but the decision is the IRS's.",
+        a: "No service can guarantee an IRS outcome. What we can do is make the DIIRSP submission as strong as possible — complete forms, documented transactions, an accountant-reviewed reasonable cause statement, and dated transmission evidence. Most well-documented first-time late filings are accepted, but the decision is the IRS's.",
       },
       {
         q: "I have 5+ missed years — can you handle that?",
@@ -2243,7 +2243,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
-    updated: "2026-08-28",
+    updated: "2026-09-11",
     startSrc: "doola-form-5472",
     h1: "Formed your LLC with doola? Check what is actually included.",
     intro:
@@ -2267,7 +2267,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How we file it",
-        body: "Our online filer asks 12 questions about the LLC, owner, and year-end totals. We generate the pro forma Form 1120, Form 5472, supporting statement, cover letter, and reasonable cause statement if the filing is late.\n\nEvery package is reviewed by an accountant before submission. We fax the signed package to the IRS Ogden PIN Unit at +1-855-887-7737 and send you the timestamped fax receipt as proof of filing. 100% money-back guarantee if we fail to submit.",
+        body: "Our online filer asks 12 questions about the LLC, owner, and year-end totals. We generate the pro forma Form 1120, Form 5472, supporting statement, cover letter, and reasonable cause statement if the filing is late.\n\nEvery package is reviewed by an accountant before submission. We fax the signed package to the IRS Ogden PIN Unit at +1-855-887-7737 and send you the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "Multi-year catch-up",
@@ -2307,7 +2307,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
-    updated: "2026-08-28",
+    updated: "2026-09-11",
     startSrc: "firstbase-form-5472",
     h1: "Using Firstbase for your US company? Put Form 5472 in context.",
     intro:
@@ -2331,7 +2331,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How we file it",
-        body: "Our wizard collects the filing facts in 12 questions: LLC details, foreign owner details, year-end assets, and related-party transactions. We prepare the pro forma Form 1120, Form 5472, the Part V supporting statement, and a reasonable cause statement when a late filing needs DIIRSP treatment.\n\nAn accountant reviews every package before we submit it. We deliver by fax to the IRS Ogden PIN Unit at +1-855-887-7737 and keep the timestamped fax receipt as proof. 100% money-back guarantee if we fail to submit.",
+        body: "Our wizard collects the filing facts in 12 questions: LLC details, foreign owner details, year-end assets, and related-party transactions. We prepare the pro forma Form 1120, Form 5472, the Part V supporting statement, and a reasonable cause statement when a late filing needs DIIRSP treatment.\n\nAn accountant reviews every package before we submit it. We deliver by fax to the IRS Ogden PIN Unit at +1-855-887-7737 and keep the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "Multi-year catch-up",
@@ -2435,7 +2435,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
-    updated: "2026-08-28",
+    updated: "2026-09-11",
     startSrc: "startglobal-form-5472",
     h1: "StartGlobal formed the LLC. Now confirm the 5472 filing.",
     intro:
@@ -2459,7 +2459,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How we file it",
-        body: "Our 12-question wizard turns your formation details, owner information, year-end assets, and related-party transactions into a complete Form 5472 filing package. If prior years were missed, the wizard also prepares the reasonable cause statement used for DIIRSP catch-up submissions.\n\nEvery package is accountant-reviewed before we fax it to the IRS Ogden PIN Unit at +1-855-887-7737. You receive the timestamped fax receipt as proof of filing. 100% money-back guarantee if we fail to submit.",
+        body: "Our 12-question wizard turns your formation details, owner information, year-end assets, and related-party transactions into a complete Form 5472 filing package. If prior years were missed, the wizard also prepares the reasonable cause statement used for DIIRSP catch-up submissions.\n\nEvery package is accountant-reviewed before we fax it to the IRS Ogden PIN Unit at +1-855-887-7737. You receive the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "Multi-year catch-up",
@@ -2499,7 +2499,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
-    updated: "2026-08-28",
+    updated: "2026-09-11",
     startSrc: "zenind-form-5472",
     h1: "Zenind explains Form 5472. Filing it is the next step.",
     intro:
@@ -2523,7 +2523,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How we file it",
-        body: "Form5472 Prep turns the filing into a 12-question flow covering LLC identity, owner identity, year-end totals, and related-party transactions. We produce the pro forma Form 1120, Form 5472, Part V supporting statement, cover letter, and DIIRSP reasonable cause statement if late.\n\nAn accountant reviews every package. We fax it to the IRS Ogden PIN Unit at +1-855-887-7737 and return the timestamped fax receipt as proof of filing. 100% money-back guarantee if we fail to submit.",
+        body: "Form5472 Prep turns the filing into a 12-question flow covering LLC identity, owner identity, year-end totals, and related-party transactions. We produce the pro forma Form 1120, Form 5472, Part V supporting statement, cover letter, and DIIRSP reasonable cause statement if late.\n\nAn accountant reviews every package. We fax it to the IRS Ogden PIN Unit at +1-855-887-7737 and return the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "Multi-year catch-up",

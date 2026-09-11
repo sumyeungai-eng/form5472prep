@@ -2,7 +2,7 @@
 title: "Pro Forma Form 1120 for a Foreign-Owned LLC"
 description: "A foreign-owned disregarded LLC attaches Form 5472 to a limited pro forma Form 1120 marked Foreign-owned U.S. DE. Learn what that means."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-11
 author: "Form5472 Prep"
 tags: ["form-5472", "pro-forma-1120", "foreign-owned-llc", "filing-guide"]
 draft: false
@@ -27,7 +27,7 @@ That rule creates the filing package:
 | Pro forma Form 1120 | Identifies the foreign-owned U.S. DE and acts as the return wrapper | Does not make the LLC a C corporation by itself |
 | Form 5472 | Reports the owner, related parties and reportable transactions | Does not calculate income tax |
 | Part V statement | Describes disregarded-entity transactions such as formation, contributions, distributions or dissolution | Does not replace the form itself |
-| Fax or mailing proof | Shows delivery to the IRS Ogden PIN Unit | Does not guarantee IRS acceptance |
+| Fax or mailing evidence | Records the provider-reported transmission or tracked mailing event | Does not establish IRS processing or substantive acceptance |
 
 The pro forma 1120 matters because Form 5472 is attached to it.
 
@@ -46,6 +46,8 @@ That corrects a common overfilling error. Ordinary Form 1120 instructions discus
 | Filing method for this package | Fax or mail to the Ogden PIN Unit | Ordinary corporate-return filing rules |
 
 The Form 1120 instructions identify item B as the employer identification number and say a corporation without an EIN must apply for one ([IRS Form 1120 instructions](https://www.irs.gov/instructions/i1120)). The same instructions describe item E as the initial return, final return, name change or address change boxes.
+
+Items C (date incorporated) and D (total assets) are not named in the special foreign-owned U.S. DE required-field list. Form 5472 line 1c separately asks a domestic reporting corporation for total assets, but that does not turn item D or Schedule L into express requirements for this pro forma cover. See [Form 5472 line 1c: total assets, zero or blank?](/blog/form-5472-line-1c-total-assets) for that distinction.
 
 ## Which boxes and lines does the foreign-owned DE actually complete?
 
@@ -96,9 +98,9 @@ Follow this sequence:
 5. Complete Form 5472 and the Part V statement.
 6. Assemble one ordered package with Form 1120 first and Form 5472 attached.
 7. Fax at 300 DPI or higher to 855-887-7737, or mail to the dedicated Ogden PIN Unit address listed in the Form 5472 instructions.
-8. Save the exact filed package and delivery proof.
+8. Save the exact filed package and its transmission or mailing evidence.
 
-The IRS Form 5472 instructions say foreign-owned U.S. DEs must use the special mailing address, not ordinary Form 1120 mailing addresses, and cannot file electronically ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). Review the [1120 pro forma instructions](/1120-pro-forma-instructions) before assembling the final signed package.
+The IRS Form 5472 instructions say foreign-owned U.S. DEs must use the special mailing address, not ordinary Form 1120 mailing addresses, and cannot file electronically ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). Signing technology is a separate question from filing route; review the [pro forma 1120 signature guide](/blog/form-5472-pro-forma-1120-signature) and the [1120 pro forma instructions](/1120-pro-forma-instructions) before assembling the final package.
 
 For the 2025 tax year, a calendar-year package is generally due 15 April 2026. A timely Form 7004 can extend the filing deadline to 15 October 2026, but Form 7004 for this DE package must follow the same special foreign-owned U.S. DE fax or mail procedure described in the Form 5472 instructions.
 
@@ -145,7 +147,7 @@ The arithmetic does not mean only 700 is reportable. The contribution and distri
 
 Form5472 Prep prepares the whole federal package: Form 5472, the pro forma Form 1120 and the Part V statement. A qualified tax accountant reviews the package before filing.
 
-After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped receipt. Standard service is $149 and takes 5-7 business days. Express service is $199 and takes 3 business days. Each additional past tax year is +$99. Fax delivery is included.
+After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped provider transmission receipt. The receipt records the provider's reported destination, time, status, and available page details; it is not an IRS acceptance notice. Standard service is $149 and takes 5-7 business days. Express service is $199 and takes 3 business days. Each additional past tax year is +$99. Fax delivery is included.
 
 We are not a CPA firm and do not give tax advice. If the LLC still needs an EIN, the EIN service is $149 at [/ein](/ein). If the Form 5472 package is ready, use the [pro forma 1120 intake](/start?utm_source=blog&utm_medium=internal&utm_campaign=pro-forma-form-1120-foreign-owned-llc-product).
 
@@ -181,4 +183,4 @@ The Part V statement describes disregarded-entity reportable transactions, such 
 
 ---
 
-The pro forma 1120 is short, but not optional. Use IRS-limited fields, attach the Form 5472 detail, and keep delivery proof. [Start the complete filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=pro-forma-form-1120-foreign-owned-llc-close) or review [whether an ITIN is needed](/blog/itin-required-form-5472).
+The pro forma 1120 is short, but not optional. Use IRS-limited fields, attach the Form 5472 detail, and keep the submitted package with its transmission or mailing evidence. For what a fax receipt can and cannot establish, read the [Form 5472 receipt and status guide](/blog/form-5472-irs-receipt-confirmation-status). [Start the complete filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=pro-forma-form-1120-foreign-owned-llc-close) or review [whether an ITIN is needed](/blog/itin-required-form-5472).

@@ -2,7 +2,7 @@
 title: "How to Get an EIN for a US LLC Without an SSN or ITIN"
 description: "No SSN or ITIN? You can still get an EIN via Form SS-4. Learn what to write on line 7b, the fax number to use, and how long approval takes."
 date: 2026-08-15
-updated: 2026-08-15
+updated: 2026-09-11
 author: "Form5472 Prep"
 tags: ["ein", "ss-4", "foreign-owned-llc", "non-resident", "getting-started"]
 draft: false
@@ -10,7 +10,7 @@ draft: false
 
 **A foreign owner without an SSN or ITIN gets an EIN by filing Form SS-4 with "foreign" on line 7b, then submitting it by fax to 855-215-1627 from within the US or 304-707-9471 from outside, by mail to the EIN International Operation in Cincinnati, or by calling +1-267-941-1099. The IRS online EIN tool requires a US tax ID.**
 
-Every foreign-owned US LLC needs an EIN. The LLC's EIN goes on its bank application, its payment-processor account, its pro forma Form 1120 and its Form 5472. Without one, the entity cannot really operate and cannot file.
+An EIN identifies a foreign-owned U.S. disregarded LLC for its Form 5472 package and many banking or platform requirements. Apply promptly, but do not assume an unresolved EIN postpones a filing deadline. The IRS gives general guidance for returns due while an EIN is pending; see [EIN pending when Form 5472 is due](/blog/form-5472-ein-pending-deadline) for the distinction between that guidance and a valid extension.
 
 The obstacle non-residents hit is that the IRS's fast online EIN application requires the responsible party to have an SSN or ITIN. That leads a lot of people to conclude they must first spend months and several hundred dollars obtaining an ITIN. **They do not.** The IRS instructions state it explicitly.
 
@@ -84,13 +84,13 @@ Two things that reliably slow an application down:
 
 ## Why does the EIN matter for Form 5472?
 
-Because the LLC's EIN appears on both the pro forma Form 1120 and Form 5472, and neither can be filed without it.
+The LLC's EIN appears on both the pro forma Form 1120 and Form 5472. The [SS-4 instructions](https://www.irs.gov/instructions/iss4) give general return-filing guidance to enter “Applied For” with the application date when the number has not arrived. They do not resolve every foreign-owned-DE package or Form 7004 validity question; obtain case-specific guidance rather than waiting past the deadline or inventing a number.
 
 A foreign-owned US single-member LLC is required to file Form 5472 each year in which it had a reportable transaction with its foreign owner — including the capital contribution that funded its bank account. The penalty for failing to file is **$25,000 per form, per year** under IRC § 6038A(d), as stated in the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472).
 
 There is a sequencing trap here worth naming. Owners who delay the EIN — because the online tool rejected them and the ITIN detour looked long — often end up with an LLC that has existed and been funded for a year or more before it gets its number. The Form 5472 obligation started with the funding, not with the EIN. Those owners frequently discover a late year the moment they finally file.
 
-If that is your situation, the fix is the same either way: get the EIN, then file every year that had a reportable transaction, with a reasonable cause statement. Our [late filing guide](/blog/form-5472-filed-late-never-filed) covers the catch-up procedure, and the [full filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) shows where the EIN sits in the wider set of obligations.
+If that is your situation, investigate the EIN and each year's filing requirement together. A qualified tax adviser can assess late returns and any reasonable-cause explanation; relief is not automatic. Our [late filing guide](/blog/form-5472-filed-late-never-filed) covers catch-up considerations, and the [full filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) shows where the EIN sits in the wider set of obligations.
 
 **Do not confuse the EIN with an ITIN.** The EIN is the *entity's* number and is what Form 5472 requires. The ITIN is a *personal* US tax ID for individuals who need one for their own US filing. You do not need an ITIN to file Form 5472 — Part II takes your home country's foreign tax ID (or "None"/"N/A" if you have none) **and**, because you have no U.S. identifying number, a reference ID number as well. See [do I need an ITIN for Form 5472](/blog/itin-required-form-5472).
 
@@ -134,6 +134,6 @@ No. An EIN is an identification number, not a tax liability. Whether you owe US 
 
 ---
 
-The EIN is the first federal step for a foreign-owned LLC in 2026, and it does not require a personal US tax number. Once you have it, the annual Form 5472 obligation begins — for every year the LLC had money moving between it and you.
+Obtaining the EIN is an important federal setup step, but its assignment date does not start or reset the Form 5472 obligation. Review the entity's classification and reportable transactions for every relevant tax year, including activity before the EIN arrived.
 
 [Get your EIN](/ein?utm_source=blog&utm_medium=internal&utm_campaign=ein-without-ssn-close), or read [what a foreign-owned LLC has to file](/blog/foreign-owned-llc-filing-requirements-checklist).

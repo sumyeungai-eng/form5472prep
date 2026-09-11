@@ -116,6 +116,11 @@ async function readFile(slug: string): Promise<Post | null> {
 }
 
 const ARTWORK_ALTS: Record<string, string> = {
+  "form-5472-irs-receipt-confirmation-status": "A fax terminal, transmission slip and separate archive folder illustrate sending a filing versus later IRS processing",
+  "form-5472-line-1c-total-assets": "A ledger, coins, laptop and inventory boxes illustrate total business assets beyond a bank balance",
+  "form-5472-pro-forma-1120-signature": "A pen on a blank document beside a scanner and tablet distinguishes signing and transmission methods",
+  "form-5472-ein-pending-deadline": "A clock beside an application envelope and blank identity card illustrates a filing deadline while an EIN is pending",
+  "form-5472-1099-k-foreign-owned-llc": "Payment records and separate coin groups illustrate gross receipts, fees, net deposits and an owner transfer",
   "form-5472-outstanding-owner-loan-no-transfers": "An unchanged stack of coins on a ledger bridging two archive trays illustrates a loan balance carried into another year",
   "form-5472-cash-accrual-year-end-cutoff": "An invoice and payment token on adjacent calendars illustrate a charge and payment falling in different years",
   "form-5472-nonresident-spouse-joint-return-election": "Two sculpted figures beside wedding rings and a shared document folder illustrate a couple's joint tax election",

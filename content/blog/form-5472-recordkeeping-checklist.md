@@ -2,7 +2,7 @@
 title: "Form 5472 Recordkeeping Checklist"
 description: "Keep records that prove every related-party total on Form 5472. This practical checklist covers statements, transfers, loans and exchange rates."
 date: 2026-09-05
-updated: 2026-09-05
+updated: 2026-09-11
 author: "Form5472 Prep"
 tags: ["form-5472", "recordkeeping", "foreign-owned-llc", "checklist"]
 draft: false
@@ -10,7 +10,7 @@ draft: false
 
 **Last updated: September 2026**
 
-A foreign-owned U.S. LLC should keep records that prove the identity, date, amount, currency, business purpose, and classification of every related-party transaction reported on Form 5472. Bank statements alone are not enough when transfers have vague descriptions. Retain invoices, owner ledgers, loan documents, reimbursement support, exchange-rate evidence, and copies of filed forms and delivery receipts.
+A foreign-owned U.S. LLC should keep records that prove the identity, date, amount, currency, business purpose, and classification of every related-party transaction reported on Form 5472. Bank statements alone are not enough when transfers have vague descriptions. Retain invoices, owner ledgers, loan documents, reimbursement support, exchange-rate evidence, and copies of filed forms and transmission or mailing records.
 
 Once the year-end packet is complete, [start the Form 5472 filing](/start).
 
@@ -24,11 +24,11 @@ The detailed [Treasury record-maintenance rule](https://www.ecfr.gov/current/tit
 
 Use five folders:
 
-1. **Entity:** EIN notice, articles of organization, operating agreement, formation date, addresses, and ownership record.
+1. **Entity:** EIN notice, articles of organization, operating agreement, formation date, addresses, ownership record, and the workpaper supporting [Form 5472 line 1c total assets](/blog/form-5472-line-1c-total-assets).
 2. **Owner:** legal name, address, country of citizenship and tax residence, FTIN, and consistent reference ID.
 3. **Transactions:** LLC bank statements, owner-account statements showing transfers, and payment-platform exports.
 4. **Support:** invoices, receipts, reimbursement reports, loan notes, interest schedules, and noncash valuation support.
-5. **Filing:** final signed Form 5472, pro forma Form 1120, Part V statement, extension if any, and fax or mailing evidence.
+5. **Filing:** final Form 5472, the completed pro forma Form 1120, Part V statement, extension if any, and fax or mailing evidence. Keep any signed original or scan used under the package's [applicable signature method](/blog/form-5472-pro-forma-1120-signature).
 
 The Form5472 Prep evidence rule is simple: **every reported total should trace to a schedule, and every schedule line should trace to source evidence**.
 
@@ -52,13 +52,13 @@ Do not use “transfer” as the final category. “Owner contribution for opera
 
 The Form 5472 instructions say books and records should be retained for as long as their contents may become material in administering federal tax law. That standard is fact-dependent and can be longer than a generic three-year rule.
 
-Keep filed returns and proof of delivery permanently. Preserve the supporting records for at least as long as they can affect an open tax year, a related-party balance, a basis calculation, a loan, or a later IRS inquiry. Ask a qualified tax professional for a retention policy tailored to the LLC.
+Keep filed returns and their transmission or mailing evidence together on a durable retention schedule. Preserve the supporting records for at least as long as they can affect an open tax year, a related-party balance, a basis calculation, a loan, or a later IRS inquiry. Ask a qualified tax professional for a retention policy tailored to the LLC.
 
-## How does Form5472 Prep preserve filing proof?
+## How does Form5472 Prep preserve transmission evidence?
 
-Every plan includes IRS fax delivery and a timestamped transmission receipt. The receipt establishes when the package reached the IRS Ogden PIN Unit; it does not replace the underlying transaction records.
+Every plan includes IRS fax delivery and a timestamped provider transmission receipt. That receipt records a provider-reported completed transmission to the displayed destination, time, and page count. It does not establish IRS account processing, attachment matching, or substantive acceptance. See [what a Form 5472 fax receipt does and does not show](/blog/form-5472-irs-receipt-confirmation-status).
 
-[Start the $149 Standard filing](/start) and keep the receipt with the signed return.
+[Start the $149 Standard filing](/start) and keep the receipt with the exact submitted package.
 
 ## Frequently asked questions
 
@@ -76,7 +76,7 @@ Keep ordinary accounting records for all business activity. The Form 5472 workpa
 
 ### Is a fax receipt proof that the form was correct?
 
-No. A fax receipt proves delivery. The signed forms, supporting schedule, and source records prove what was filed and how the totals were calculated.
+No. A fax receipt is provider transmission evidence, not an IRS decision about the return. Keep it with the exact submitted package, supporting schedule, and source records so you can show what was transmitted and how the totals were calculated.
 
 ## The bottom line
 

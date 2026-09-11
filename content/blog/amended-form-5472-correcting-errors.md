@@ -1,14 +1,14 @@
 ---
 title: "How to Correct a Mistake on a Filed Form 5472"
-description: "Found an error after filing Form 5472? The IRS has no amendment procedure — here's the fix preparers use, and why an incomplete form risks $25,000."
+description: "Found an error after filing Form 5472? Review corrected-package considerations, amendment labelling, supporting records and the limits of current instructions."
 date: 2026-08-15
-updated: 2026-09-05
+updated: 2026-09-11
 author: "Form5472 Prep"
 tags: ["form-5472", "amended-return", "correction", "penalty", "foreign-owned-llc"]
 draft: false
 ---
 
-**To correct a filed Form 5472, prepare a complete corrected Form 5472 and a corrected pro forma Form 1120 with the amended return box checked, attach a short statement identifying what changed and why, and fax the package to the IRS Ogden PIN Unit at 855-887-7737. The IRS instructions prescribe no formal amendment procedure for Form 5472, so this approach follows general amended-return practice.**
+**If a filed Form 5472 needs correction, review the complete original package with your preparer. Neither current Form 5472 nor Form 1120 has an amended-return checkbox. A clearly labelled corrected package with an explanation identifying the original filing is a practical preparer approach, not a special amendment procedure prescribed in the Form 5472 instructions.**
 
 Finding an error after filing is uncomfortable, and the instinct to leave it alone is understandable. It is usually the wrong instinct, because of one sentence in the IRS instructions: **"Filing a substantially incomplete Form 5472 constitutes a failure to file Form 5472."**
 
@@ -22,7 +22,7 @@ Not a prescribed one. The [IRS Instructions for Form 5472 (Rev. December 2024)](
 
 This is worth stating plainly, because a lot of content online presents a confident step-by-step "amendment procedure" that has no source in the instructions. What exists instead is general practice, drawn from how amended returns work elsewhere in the system:
 
-- The **pro forma Form 1120** that Form 5472 attaches to *does* have an amended return checkbox on page 1. That is the mechanism that identifies the package as a correction.
+- Neither [Form 5472 (Rev. December 2023)](https://www.irs.gov/pub/irs-pdf/f5472.pdf) nor [Form 1120 (2025)](https://www.irs.gov/pub/irs-pdf/f1120.pdf) has an amended-return checkbox. Form 1120 item E has Initial return, Final return, Name change and Address change boxes. An explicit **“Amended” or “Corrected” notation** is a practical way to distinguish the package, not an IRS-prescribed checkbox procedure.
 - A **written explanation of what changed** is attached, so the Ogden PIN Unit can match the correction to the original.
 - The corrected Form 5472 is filed **complete**, not as a diff. You do not submit only the changed lines.
 
@@ -61,7 +61,7 @@ One case deserves separate treatment. **If you omitted a related party entirely*
 1. **Get the original.** Work from your copy of what was actually sent, not from memory. If you do not have it, that is itself a records problem worth fixing — see our [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) — rebuilding a return from memory is how a correction becomes a second error.
 2. **Identify every error, not just the one you found.** A second corrected filing three months later reads badly. Reconcile the whole return against the bank and payment-processor statements before you rebuild it.
 3. **Prepare a complete corrected Form 5472** for the same tax year, with every part filled as it should have been — Part I for the LLC with line 3 checked, Part II with the foreign owner and their FTIN and, where no U.S. identifying number is entered, a reference ID, Part III for the related party, Part IV for listed monetary transactions, Part V with a full supporting statement, and the line 1f and 1h totals reconciling to Parts IV, V and VI.
-4. **Prepare a corrected pro forma Form 1120**, signed, with **"Foreign-owned U.S. DE"** across the top of page 1 and the **amended return box checked**.
+4. **Prepare the corrected pro forma Form 1120** with **"Foreign-owned U.S. DE"** across the top of page 1, and clearly label the package as a correction. There is no amended-return checkbox. Identify the authorized signer; signing the completed cover in ink and scanning that page for fax is a conservative workflow, not an absolute ban on every digital method. See [the signature guide](/blog/form-5472-pro-forma-1120-signature).
 5. **Attach an explanation statement.** One page, headed with the LLC's name, EIN and tax year, stating that this corrects a Form 5472 originally filed on the date shown on your fax confirmation receipt, listing each item changed with the original and corrected figures, and giving the reason. Keep it factual — this is not the place for argument.
 6. **Attach a reasonable cause statement if the original was also late**, or if you believe the error could attract a penalty. Signed under penalties of perjury, with a specific dated chronology.
 7. **Fax to 855-887-7737**, or mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 — the same destination as the original. You cannot e-file; the instructions state that a foreign-owned US DE cannot file Form 5472 electronically.
@@ -69,7 +69,7 @@ One case deserves separate treatment. **If you omitted a related party entirely*
 
 ## What happens after you send a correction?
 
-Nothing visible, most likely. The IRS sends no acknowledgement for a foreign-owned DE's Form 5472 package, corrected or not. Silence means the fax arrived, not that the correction was accepted.
+The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. Silence does not establish that the fax arrived, was processed or was accepted. Keep the exact corrected package and provider receipt together; see [what receipt evidence can establish](/blog/form-5472-irs-receipt-confirmation-status). Do not send another duplicate solely because you have heard nothing.
 
 Two possibilities worth preparing for:
 
@@ -81,12 +81,12 @@ The timing argument you are preserving is worth being explicit about. A correcti
 
 ## What if the mistake was on the pro forma 1120 instead?
 
-Same package, same route. The pro forma Form 1120 is part of the filing, so an error there — a wrong EIN, a missing signature, no "Foreign-owned U.S. DE" annotation, total assets materially misstated — is corrected by refiling the complete package with the amended box checked and an explanation attached.
+First establish what was actually submitted and whether the error requires a correction. The special Form 5472 instructions require only the DE's name, address, Form 1120 items B and E, and the "Foreign-owned U.S. DE" annotation. Items C and D and Schedule L are outside that special required list. An omitted optional cover field is not the same as an error on [Form 5472 line 1c, total assets](/blog/form-5472-line-1c-total-assets). If a correction is appropriate, clearly identify the corrected package and explain the change; neither form has an amended-return checkbox.
 
 Two Form 1120 errors are worth singling out because they change how the return is processed rather than merely what it says:
 
 - **Filing a real Form 1120 with income and deductions** instead of a pro forma cover. This misrepresents the entity as a taxable corporation. Correct it.
-- **No signature.** An unsigned return is generally treated as not filed. Correct it, and treat the original date as unreliable for timeliness purposes.
+- **A missing or disputed signature.** The general Form 1120 instructions address signing, while the special pro forma instructions do not expressly resolve the signature question. Review the actual package, signer authority and submission method with a qualified adviser. Do not assume an automatic penalty, loss of the original filing date or a need to refile solely from the signature method; see [the signature-method distinctions](/blog/form-5472-pro-forma-1120-signature).
 
 ## Do not forget the records requirement
 
@@ -98,7 +98,7 @@ So an entity that files a perfect Form 5472 but cannot produce the underlying re
 
 A corrected filing has to be right the second time. It attracts attention by its nature, and a correction that is itself incomplete converts a fixable problem into a pattern.
 
-[Form5472 Prep](/) prepares complete corrected packages — Form 5472 rebuilt from your actual transaction records, a corrected pro forma Form 1120 with the amended box checked and the required annotation, the Part V supporting statement, an explanation statement, and a reasonable cause letter where the original was late — reviewed by a qualified tax accountant and faxed to the IRS Ogden PIN Unit, with the timestamped confirmation receipt returned to you.
+[Form5472 Prep](/) prepares complete corrected packages — Form 5472 rebuilt from your actual transaction records, a corrected pro forma Form 1120 with the required annotation, the Part V supporting statement, an explanation statement, and a reasonable cause letter where the original was late — reviewed by a qualified tax accountant and faxed to the IRS Ogden PIN Unit, with the timestamped transmission receipt returned to you.
 
 **$149** standard (5-7 business days), **$199** express (3 business days), **+$99** per additional past tax year if other years also need filing. IRS fax delivery included.
 
@@ -112,7 +112,7 @@ We are not a CPA firm and do not give tax advice. We prepare and submit the info
 
 ### Is there an amended Form 5472?
 
-No separate amended form exists, and the IRS instructions prescribe no amendment procedure. The accepted approach is to file a complete corrected Form 5472 with a corrected pro forma Form 1120 that has the amended return box checked, plus a statement explaining what changed.
+There is no separate amended Form 5472, and neither current Form 5472 nor Form 1120 has an amended-return checkbox. The Form 5472 instructions do not prescribe a special amendment procedure. A complete corrected package, clearly labelled and accompanied by an explanation, is a practical preparer approach rather than a verified IRS acceptance guarantee.
 
 ### Will I be penalized for correcting a Form 5472?
 
@@ -128,7 +128,7 @@ That is a missing return, not an amendment. File a complete Form 5472 for that r
 
 ### How do I prove I sent a correction?
 
-The timestamped fax transmission receipt. The IRS issues no acknowledgement for these filings, so keep the receipt for the correction alongside the one for the original filing, permanently.
+Keep the exact corrected package, its complete fax-provider report, the original package and receipt, and any IRS correspondence. The report records a provider-reported transmission event, not IRS processing or acceptance. Retention depends on the applicable records rules and unresolved issues; see [the receipt and follow-up guide](/blog/form-5472-irs-receipt-confirmation-status).
 
 ### Should I wait and fix it in next year's filing instead?
 

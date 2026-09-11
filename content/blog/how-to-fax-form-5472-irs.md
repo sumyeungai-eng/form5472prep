@@ -2,7 +2,7 @@
 title: "How to Fax Form 5472 to the IRS"
 description: "Fax Form 5472 and its pro forma Form 1120 at 300 DPI or higher to 855-887-7737, then retain a timestamped transmission receipt."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-11
 author: "Form5472 Prep"
 tags: ["form-5472", "how-to", "fax", "irs-ogden"]
 draft: false
@@ -42,9 +42,9 @@ The instructions also define a corporation as 25% foreign owned if it has at lea
 
 For a typical non-U.S. individual or foreign company that wholly owns a U.S. single-member LLC, the practical result is simple: if the LLC had a reportable transaction, the Form 5472 package goes to the Ogden PIN Unit by fax or mail. The 2025 calendar-year package is normally due 15 April 2026 under the [IRS Form 1120 instructions](https://www.irs.gov/instructions/i1120), with a 15 October 2026 extended deadline if [Form 7004](https://www.irs.gov/forms-pubs/about-form-7004) is filed by the regular due date.
 
-## What should appear on Form 5472 line 1g and Part V?
+## What should appear in the payment totals and Part V?
 
-Line 1g and Part V are common problem areas in faxed packages because they connect the form totals to the supporting statement. The IRS instructions for line 1g say the filer enters the total value in U.S. dollars of gross payments made or received as reported in Part IV, Part V and Part VI.
+Reconcile the payment totals with the supporting statements using the labels on the actual form revision. Keep the number of Forms 5472 separate from dollar totals, and distinguish the amount on one form from the amount across all forms. See the [Form 5472 totals guide](/blog/form-5472-lines-1f-1g-1h-total-value).
 
 Part V matters especially for foreign-owned U.S. disregarded entities. The instructions say to check the box in Part V when the entity had other transactions not already entered in Part IV, including amounts paid or received in connection with formation, dissolution, acquisition and disposition of the entity, and including contributions and distributions. Those transactions must be described on an attached statement.
 
@@ -63,7 +63,7 @@ The safest fax process is a controlled filing workflow with a final PDF, page co
 7. Transmit once and wait for final successful status.
 8. Save the exact PDF, timestamp, destination number, page count, provider job ID and successful-transmission receipt.
 
-Original element: use a two-sided evidence test after transmission. A readable PDF without delivery proof is incomplete. A fax receipt without the exact transmitted PDF is also incomplete. The filing file should contain both sides before the job is marked done.
+Keep two connected records after transmission: the exact final PDF and the provider's transmission report. A readable PDF does not document a completed fax; a fax receipt does not show every value entered on the forms.
 
 ## Should the fax have a cover sheet?
 
@@ -73,7 +73,7 @@ Do not put unnecessary sensitive owner data on the cover sheet. If the fax provi
 
 ## What proof does the IRS send back after faxing?
 
-The IRS does not routinely send an acceptance acknowledgement for this faxed package. The sender's transmission record is therefore important evidence.
+The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. The sender's transmission record is useful evidence, but silence establishes neither delivery nor acceptance. See [IRS receipt, processing and next steps](/blog/form-5472-irs-receipt-confirmation-status).
 
 Keep:
 
@@ -85,7 +85,7 @@ Keep:
 6. Any failed-attempt records if a successful resend was needed.
 7. Any later IRS correspondence.
 
-Our [Form 5472 recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) explains how to preserve the underlying transaction evidence as well. Delivery proof does not prove the IRS agreed with the filing, but it is the evidence you need if timeliness is later questioned.
+Our [Form 5472 recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) explains how to preserve the underlying transaction evidence as well. A provider receipt does not establish IRS processing, attachment matching or correctness; retain it with the complete package and any later IRS correspondence.
 
 ## Can Form 5472 be mailed instead of faxed?
 

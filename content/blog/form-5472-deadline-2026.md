@@ -2,7 +2,7 @@
 title: "Form 5472 Deadline for 2026 and 2027"
 description: "The 2025 Form 5472 is due October 15, 2026 if extended. See every 2026-2027 deadline, the Form 7004 extension rule, and what to do if you're already late."
 date: 2026-08-15
-updated: 2026-09-05
+updated: 2026-09-11
 author: "Form5472 Prep"
 tags: ["form-5472", "deadline", "extension", "form-7004", "foreign-owned-llc"]
 draft: false
@@ -10,7 +10,7 @@ draft: false
 
 **For a calendar-year foreign-owned US LLC, Form 5472 with its pro forma Form 1120 is due 15 April of the following year, extended to 15 October if Form 7004 was filed on time. The 2025 tax year return was due 15 April 2026, or 15 October 2026 with an extension. The 2026 tax year return is due 15 April 2027.**
 
-Form 5472 deadlines are simple in outline and easy to miss in practice, because the filing sits outside every system that would normally remind you. It is not e-filed, no software prompts you, and the IRS sends no acknowledgement when it arrives. The first signal that something went wrong is usually a $25,000 penalty notice (IRC §6038A(d)) a year later.
+Form 5472 deadlines are simple in outline and easy to miss in practice, because this foreign-owned U.S. DE package is not e-filed. The current Form 5472 instructions do not describe a routine acceptance acknowledgment for the faxed package, so keep the exact submission and its transmission evidence. Silence establishes neither acceptance nor rejection.
 
 Here is the full calendar as it stands in August 2026, plus the extension rule that is specific to foreign-owned disregarded entities and catches out people who assume Form 7004 works the way it does for everyone else.
 
@@ -104,13 +104,13 @@ Because nothing in your normal software stack will remind you, set these yoursel
 | **By 15 October** | Extended deadline, if you extended. No further extension exists |
 | **State anniversary month** | Annual report and franchise or license tax |
 
-Filing in March rather than April is not fussiness. Fax transmissions to the IRS fail, get busy signals, and occasionally need re-sending — and the fax receipt only helps you if it is dated before the deadline. Leaving a two-to-four week buffer converts a hard deadline into a soft one.
+Filing in March rather than April is not fussiness. Fax transmissions can fail, get busy signals, or report too few pages. A final provider record showing the intended destination, timestamp, and complete page count is more useful than a failed or queued attempt. Leaving a two-to-four week buffer gives you time to resolve a transmission problem before the deadline.
 
 Note that the March buffer also gives you time to discover that a prior year was missed, which is far more common than owners expect. If you find one, you are catching up voluntarily rather than after IRS contact — a materially better position.
 
 ## Meeting the deadline without doing the work
 
-[Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt as your proof of timely filing. For late years we include a reasonable cause cover letter.
+[Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning a timestamped provider transmission receipt. The receipt is useful transmission evidence; it is not an IRS acceptance notice. For late years we include a reasonable cause cover letter.
 
 **$149** standard, ready in **5-7 business days**. **$199** express, ready in **3 business days**. **+$99** per additional past tax year. IRS fax delivery included on both.
 
@@ -142,7 +142,7 @@ $25,000 per form, per year, under IRC § 6038A(d). If the failure continues more
 
 ### How long does the IRS take to confirm receipt?
 
-It does not. The IRS sends no acknowledgement for a foreign-owned DE's Form 5472 package. Your timestamped fax confirmation receipt is the only evidence of filing, so keep it permanently.
+The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. A provider receipt can document the reported transmission, while later IRS account information or correspondence may provide different evidence. Do not treat silence as receipt or acceptance, and do not send an automatic duplicate solely because no response arrived. See our [Form 5472 receipt and status guide](/blog/form-5472-irs-receipt-confirmation-status).
 
 ### Does the deadline change if my LLC had no activity?
 

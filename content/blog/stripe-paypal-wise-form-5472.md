@@ -3,7 +3,7 @@ title: "Form 5472 for Stripe, PayPal, and Wise Activity"
 description: "Stripe, PayPal and Wise activity is not automatically reportable on Form 5472. The key is whether the transaction involved a related party."
 date: 2026-08-03
 publishAt: "2026-08-03T09:00:00-04:00"
-updated: 2026-08-19
+updated: 2026-09-11
 author: "Form5472 Prep"
 tags: ["form-5472", "stripe", "paypal", "wise", "foreign-owned-llc"]
 draft: false
@@ -39,6 +39,8 @@ Use the counterparty, not the app name, to classify each movement.
 The payment rail never decides the answer. A **$2,000** Wise transfer can be an unrelated contractor payment, an owner distribution, or an intercompany service payment. Each classification produces a different result. For a broader checklist, see [Form 5472 reportable transactions examples](/blog/form-5472-reportable-transactions-examples).
 
 ## How do you separate revenue from owner transfers?
+
+If the processor also issued Form 1099-K, reconcile its gross figure before comparing it with bank deposits. See [Form 1099-K for a foreign-owned LLC](/blog/form-5472-1099-k-foreign-owned-llc) for a worked example separating gross payments, refunds, fees and a later owner distribution.
 
 Separate revenue from owner transfers by reconciling platforms to the bank first, then reconciling the bank to the owner ledger. Do not start by copying every Stripe line into a Form 5472 worksheet.
 

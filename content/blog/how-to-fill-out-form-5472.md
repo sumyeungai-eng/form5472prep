@@ -2,7 +2,7 @@
 title: "Form 5472: How to Fill It Out Part by Part"
 description: "A part-by-part walkthrough of Form 5472 and the pro forma 1120 — which boxes to complete, which to skip, and the errors that trigger the $25,000 penalty."
 date: 2026-08-15
-updated: 2026-08-15
+updated: 2026-09-11
 author: "Form5472 Prep"
 tags: ["form-5472", "filing-guide", "diy", "pro-forma-1120", "foreign-owned-llc"]
 draft: false
@@ -10,9 +10,9 @@ draft: false
 
 **To complete Form 5472 as a foreign-owned US single-member LLC: fill Part I with the LLC's details and check the box on line 3, Part II with the foreign owner's details and foreign tax ID, Part III with the related party, Part IV with monetary transactions, and Part V with contributions and distributions on an attached statement. Attach it to a pro forma Form 1120 and fax to 855-887-7737. A missed or incomplete filing can trigger the $25,000 penalty under [IRC §6038A(d)](https://www.irs.gov/instructions/i5472).**
 
-Form 5472 is two pages and nine parts, most of which a small foreign-owned LLC leaves blank. The difficulty is not volume — it is knowing which parts apply to a disregarded entity, because the form was designed for foreign multinationals and only later extended to single-member LLCs. The instructions never quite say "here is the short version for you."
+The current Form 5472 is three pages and has nine parts, most of which a small foreign-owned LLC leaves blank. The difficulty is not volume — it is knowing which parts apply to a disregarded entity, because the form was designed for foreign multinationals and only later extended to single-member LLCs. The instructions never quite say "here is the short version for you."
 
-This walkthrough is the short version. It follows [Form 5472 (Rev. December 2023)](https://www.irs.gov/pub/irs-pdf/f5472.pdf) and the [Instructions (Rev. December 2024)](https://www.irs.gov/instructions/i5472), which are the current revisions as of August 2026. Always check the revision date in the top-right corner of the PDF you downloaded — using a stale version is one of the most common DIY errors.
+This walkthrough is the short version. It follows [Form 5472 (Rev. December 2023)](https://www.irs.gov/pub/irs-pdf/f5472.pdf) and the [Instructions (Rev. December 2024)](https://www.irs.gov/instructions/i5472), which are the current revisions as of September 2026. Always check the revision date in the top-right corner of the PDF you downloaded — using a stale version is one of the most common DIY errors.
 
 If at any point this stops being worth your afternoon, [we prepare and fax the complete package from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=how-to-fill-out-form-5472).
 
@@ -34,17 +34,17 @@ Item 7 is the one people underestimate. Pull the LLC's full bank and payment-pro
 
 Form 5472 for a disregarded entity is never filed on its own. It attaches to a **pro forma Form 1120**, which acts as a cover sheet and computes no tax.
 
-Complete only:
+The special Form 5472 instruction expressly requires only:
 
 - **Name and address** — the LLC's.
 - **Employer identification number (Box B)** — the LLC's EIN.
-- **Date incorporated (Box C)** — the LLC's formation date.
-- **Total assets (Box D)** — year-end total assets in US dollars.
-- **The signature block** — signed and dated. The IRS expects a genuine signature on these filings.
+- **Item E** — check the applicable initial return, final return, name change, or address change box.
 
 Then write **"Foreign-owned U.S. DE"** across the top of page 1. The instructions state this explicitly: "'Foreign-owned U.S. DE' should be written across the top of the Form 1120."
 
-Leave every income, deduction, tax and schedule line blank. Do not complete Schedules C, J, K, L, M-1 or M-2. This is not a tax return and filling it in like one causes processing problems.
+Items C (date incorporated) and D (total assets) are not in that express required-field list. Form 5472 line 1c still asks a domestic reporting corporation for total assets, but that does not make item D or Schedule L an express requirement for this special pro forma cover. See the [line 1c total-assets guide](/blog/form-5472-line-1c-total-assets) for the calculation and the distinction between the forms.
+
+Do not complete full corporate income, deduction, tax, or Schedule L sections merely because they appear on Form 1120. The special instruction does not require Schedule L. The Form 1120 does contain a signature block, but the special Form 5472 paragraph does not separately resolve signature method. Our conservative workflow is to sign the completed cover in ink and scan that page for the permitted fax route; see the [pro forma 1120 signature guide](/blog/form-5472-pro-forma-1120-signature) for the authority and limits.
 
 ## Part I — Reporting Corporation
 
@@ -145,9 +145,9 @@ Leaving a part blank because it does not apply is correct. Leaving a part blank 
 
 You cannot e-file. The instructions are unambiguous: "If you are a foreign-owned U.S. DE, you cannot file Form 5472 electronically."
 
-1. **Assemble in order:** pro forma Form 1120 (signed, "Foreign-owned U.S. DE" across the top), then Form 5472, then the Part V supporting statement, then a reasonable cause statement if the filing is late.
+1. **Assemble in order:** pro forma Form 1120 with "Foreign-owned U.S. DE" across the top and completed under the chosen signature method, then Form 5472, the Part V supporting statement, and a reasonable cause statement if the filing is late.
 2. **Send by fax to 855-887-7737**, or mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.
-3. **Keep the timestamped transmission receipt.** The IRS sends no acknowledgement for these filings. The fax confirmation is your only evidence of timely filing, and you may need it years later.
+3. **Keep the exact package and timestamped provider transmission receipt together.** The current instructions do not describe a routine acceptance acknowledgment. The receipt records transport details; it does not establish IRS processing or correctness. See the [receipt and filing-status guide](/blog/form-5472-irs-receipt-confirmation-status).
 4. **Deadline:** 15 April for a calendar-year LLC, or 15 October if you filed Form 7004 on time. Note the extension quirk — a foreign-owned US DE must fax or mail Form 7004 to the *same* PIN Unit fax number or address by the regular due date. See our [Form 5472 extension guide](/blog/form-5472-extension).
 
 ## The eight errors that cause most rejections

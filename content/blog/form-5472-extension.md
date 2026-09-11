@@ -1,22 +1,22 @@
 ---
 title: "Form 5472 Extension: How to Get More Time (Form 7004)"
-description: "Yes — file Form 7004 by April 15 to extend your Form 5472 deadline to October 15. Foreign-owned LLCs can't e-file it. Here's exactly how, step by step."
+description: "Request a Form 5472 extension with Form 7004 by the regular due date. Learn the foreign-owned disregarded LLC route, timing and pending-EIN limits."
 date: 2026-07-05
-updated: 2026-08-28
+updated: 2026-09-11
 author: "Form5472 Prep"
 tags: ["form-5472", "form-7004", "extension", "deadline", "foreign-owned-llc"]
 draft: false
 ---
 
-**Last updated: August 2026**
+**Last updated: September 11, 2026**
 
 Yes — you can extend the Form 5472 deadline by filing **Form 7004** by the original due date (April 15 for calendar-year filers), which moves your filing deadline to **October 15**. Because your Form 5472 attaches to a pro forma Form 1120, you enter the **Form 1120 code** on Form 7004, write **"Foreign-owned U.S. DE"** across the top, and **fax or mail it** — a foreign-owned disregarded entity cannot e-file. An extension gives you more time to *file*; it does not remove the obligation, and a missed or incomplete Form 5472 can trigger the **$25,000 penalty under IRC §6038A(d)**. It also can't help once April 15 has passed.
 
-Form 7004 is the IRS's "Application for Automatic Extension of Time To File Certain Business Income Tax, Information, and Other Returns." For a foreign-owned US single-member LLC, it extends the deadline for the pro forma Form 1120 that Form 5472 is attached to. If you're worried about the [April 15 deadline](/form-5472-deadline), filing the extension buys you six months — but only if you act before the deadline, and you can [start your filing now](/start) in about 15 minutes instead.
+Form 7004 is the IRS's "Application for Automatic Extension of Time To File Certain Business Income Tax, Information, and Other Returns." For a foreign-owned U.S. disregarded LLC, it extends the deadline for the pro forma Form 1120 that Form 5472 is attached to when properly and timely filed. The April 15 and October 15 dates below refer to the 2025 calendar tax year filed in 2026, absent special relief. Other years may shift for weekends or legal holidays. Starting an intake is not the same as filing the return.
 
 ## Can you get an extension for Form 5472?
 
-Yes. A foreign-owned US disregarded entity that is required to file Form 5472 can request an extension of time to file by submitting Form 7004 by the return's regular due date ([IRS, Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). Approved, it extends the filing deadline by six months.
+Yes. A foreign-owned US disregarded entity that is required to file Form 5472 can request an extension of time to file by submitting Form 7004 by the return's regular due date ([IRS, Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). The [Form 7004 instructions](https://www.irs.gov/instructions/i7004) describe the conditions for a valid automatic extension, generally six months, and say the IRS no longer sends approval notifications.
 
 For a calendar-year filer, that timeline is:
 
@@ -34,8 +34,10 @@ A foreign-owned US disregarded entity files the extension a specific way, and ge
 1. **Complete Form 7004** and enter the **Form 1120 code** on Part I, line 1 — the code for the return your Form 5472 attaches to.
 2. **Write "Foreign-owned U.S. DE" across the top** of Form 7004, exactly as you do on the return itself.
 3. **Fax it to the IRS at +1-855-887-7737** (the IRS Ogden PIN Unit fax) or mail it to the address in the Form 5472 instructions. A foreign-owned U.S. DE **cannot e-file** Form 7004.
-4. **Send it by the regular due date** — April 15 for calendar-year filers (excluding extensions). The postmark or fax timestamp is what counts.
-5. **Keep the fax confirmation** as proof you filed on time. Your new filing deadline is October 15.
+4. **Send it by the regular due date** — April 15, 2026 for the 2025 calendar tax year, absent special relief. Do not assume a failed fax attempt satisfies the deadline.
+5. **Keep the submitted extension and delivery evidence.** A provider's successful transmission report is not an IRS acceptance notice. October 15, 2026 applies only if the extension is valid and timely.
+
+If the EIN is unresolved, see [EIN pending at the Form 5472 deadline](/blog/form-5472-ein-pending-deadline). An EIN application is not an extension; general “Applied For” return guidance does not guarantee Form 7004 validity. The [receipt-confirmation guide](/blog/form-5472-irs-receipt-confirmation-status) explains the limits of transmission evidence.
 
 The instruction that trips people up is the code: because the disregarded entity itself doesn't file an 1120, filers assume there's no code to enter. The IRS is explicit that the **Form 1120 code** goes on Form 7004, Part I, line 1.
 
@@ -46,9 +48,9 @@ An extension is narrower than most people think. It buys time to file — nothin
 | The extension… | Reality |
 |---|---|
 | Extends time to **file** the return | ✓ Yes — six months, to October 15 for calendar-year filers |
-| Extends time to **pay** tax | Not applicable to most — a foreign-owned US disregarded entity with no US-source income owes $0 US federal income tax, so there is nothing to pay |
-| Reduces or removes the **$25,000 penalty** | ✗ No — only actually filing a complete Form 5472 avoids the penalty |
-| Helps if you **already missed** April 15 | ✗ No — a late filing goes through DIIRSP, not an extension |
+| Extends time to **pay** tax | No. Separately assess any owner-level or other tax liability and payment deadline. |
+| Removes an existing **$25,000 penalty** | No. A valid extension changes the filing due date; it does not grant penalty relief. |
+| Helps if you **already missed** the regular due date | A later Form 7004 does not retroactively extend that deadline; assess late-filing procedures. |
 
 The penalty exists to punish *not filing*, not filing later within an approved window. Under IRC § 6038A(d), the IRS assesses **$25,000** on any reporting corporation that fails to file Form 5472 when due (including extensions) or files a substantially incomplete one ([IRS, Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). An extension moves the "when due" date; it does not weaken the penalty if you still don't file.
 
@@ -56,13 +58,13 @@ The penalty exists to punish *not filing*, not filing later within an approved w
 
 If April 15 has passed and you didn't file Form 7004, an extension is off the table — but you are not stuck. The IRS provides the **Delinquent International Information Return Submission Procedure ([DIIRSP](/diirsp))** for exactly this situation. You file the delinquent Form 5472 + pro forma 1120 with a **reasonable cause statement** explaining why it was late, and request that the penalty be abated.
 
-Most well-documented, first-time late filings by foreign owners are accepted under DIIRSP without a penalty assessed, though there is no formal IRS guarantee. The key is filing promptly and completely — the longer a return goes unfiled after an IRS notice, the more the continuation penalty stacks. Our guide on what to do when you've [filed late or never filed](/blog/form-5472-filed-late-never-filed) walks through the DIIRSP path in detail.
+The [IRS delinquent international information return procedures](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures) warn that penalties may be assessed, including when a reasonable-cause statement is attached. There is no published success rate supporting a promise that most first-time cases avoid penalties. Review the facts with a qualified tax professional and see our guide for [late or never-filed returns](/blog/form-5472-filed-late-never-filed).
 
-## Skip the extension — file in 15 minutes instead
+## Prepare the return while there is time
 
-For most foreign-owned single-member LLCs, filing Form 5472 is faster than filing the extension to delay it. There's no income to calculate and no documents to gather beyond your entity details and year-end totals — so an extension often just moves a 15-minute task six months down the road.
+An intake may be quick, but gathering records, resolving questions, reviewing the package and transmitting it take additional time. Reconcile owner transactions and retain supporting records. Choose between a timely extension and completing the return based on what can actually be finished by the deadline.
 
-Form5472 Prep generates the complete package (cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and a reasonable-cause statement if you're already late), an accountant reviews it, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt as proof of filing. Pricing is **$149 Standard** (ready in 5-7 business days) or **$199 Express** (ready within 3 business days) — the filing, the accountant review and the package are identical, only the speed differs — with fax delivery included on both and **+$99 per additional past year** for DIIRSP catch-up. See full [pricing](/pricing) or [start your filing now](/start).
+Form5472 Prep generates the complete package (cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and a reasonable-cause statement if you're already late), an accountant reviews it, and we fax it to the IRS Ogden PIN Unit with a timestamped provider transmission record. Pricing is **$149 Standard** (ready in 5-7 business days) or **$199 Express** (ready within 3 business days) — the filing, the accountant review and the package are identical, only the speed differs — with fax delivery included on both and **+$99 per additional past year** for DIIRSP catch-up. See full [pricing](/pricing) or [start your filing now](/start).
 
 We are not a CPA firm and do not give tax advice; we prepare and submit the extension or filing package accurately.
 
@@ -86,10 +88,10 @@ No. An extension only extends the time to file. The $25,000 penalty under IRC §
 
 ### What if I already missed the Form 5472 deadline?
 
-An extension can't be filed after the due date. Instead, file the delinquent Form 5472 + pro forma 1120 under the IRS's DIIRSP, with a reasonable-cause statement requesting penalty abatement. Filing promptly and completely gives the strongest case for no penalty.
+A late Form 7004 does not retroactively extend the deadline. Assess the delinquent return and any reasonable-cause explanation with a qualified tax professional. Penalties may still be assessed; relief depends on the facts and IRS review.
 
 ## The bottom line
 
-You can extend your Form 5472 deadline to October 15 by faxing Form 7004 — with the Form 1120 code and "Foreign-owned U.S. DE" across the top — by April 15. But an extension only buys time to file; it doesn't reduce the $25,000 penalty, and it's useless once the deadline has passed. Since the filing itself takes about 15 minutes, most owners are better off just getting it done.
+For the 2025 calendar tax year, a valid Form 7004 filed by April 15, 2026 generally extends the filing deadline to October 15, 2026. Follow the dedicated foreign-owned-DE route, preserve the package and transmission evidence, and allow time for preparation and review. Do not confuse an intake, EIN application or fax report with IRS acceptance.
 
 Don't want to think about deadlines at all? [File your Form 5472 now →](/start) — accountant-reviewed, faxed to the IRS, from $149.

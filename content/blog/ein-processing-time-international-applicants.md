@@ -2,7 +2,7 @@
 title: "How Long Does an EIN Take for an International Applicant?"
 description: "Compare international EIN timing by phone, fax, and mail, including the current IRS SS-4 queue and what can delay a foreign-owned LLC application."
 date: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-11
 author: "Form5472 Prep"
 tags: ["ein-processing-time", "ein", "form-ss-4", "international-applicant", "foreign-owned-llc"]
 draft: false
@@ -58,6 +58,8 @@ The IRS says a newly assigned EIN can be used immediately for most business need
 Keep that two-week system-update period separate from the assignment time. Having the number does not mean every external bank or platform has completed its own verification.
 
 ## Planning recommendation
+
+If a return is due before assignment, check [what to do when an EIN is pending at the Form 5472 deadline](/blog/form-5472-ein-pending-deadline). An application queue does not itself extend a filing deadline, and a missing EIN letter is different from an unassigned number.
 
 Form the LLC, prepare the SS-4, and apply before a bank, payment processor, contract, or federal filing becomes urgent. Use the phone route when eligible and practical; use fax when you need a documented submission and can accept the current queue; use mail only when the longer path fits the schedule.
 

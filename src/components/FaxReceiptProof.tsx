@@ -1,15 +1,12 @@
 import { FaxReceipt } from "@/components/FaxReceipt";
 
-// "Here's the proof you'll get" section. Sits between the pricing cards and the
-// FAQ. Differentiates Form5472 Prep against $49 DIY tools (which issue no
-// proof) by foregrounding the actual proof-of-filing artifact — now a crafted
-// HTML receipt rather than a flat screenshot.
+// Explains provider transmission evidence and its limits; not IRS acceptance.
 
 const PROOF_POINTS: Array<{ field: string; title: string; body: string }> = [
   {
     field: "Status: Delivered",
-    title: "Carrier-confirmed delivery, not just “sent”",
-    body: "The IRS Ogden PIN Unit's fax machine acknowledged receipt of every page. Sender-side fax tools can't show this.",
+    title: "Provider-reported completed transmission",
+    body: "A final delivery status records the fax provider's result. It does not establish IRS account processing or acceptance of the return.",
   },
   {
     field: "Forms",
@@ -19,17 +16,17 @@ const PROOF_POINTS: Array<{ field: string; title: string; body: string }> = [
   {
     field: "Fax: +1-855-887-7737",
     title: "The official IRS Ogden PIN Unit number",
-    body: "The only fax number the IRS publishes for foreign-owned LLC information returns. Wrong number means not filed.",
+    body: "Compare the destination with the current Form 5472 instructions for foreign-owned U.S. disregarded entities before sending.",
   },
   {
     field: "Timestamp (UTC)",
-    title: "Exact delivery time, to the second",
-    body: "Down-to-the-second UTC proof of when the IRS received your filing — what the IRS cites if a penalty notice is ever appealed.",
+    title: "A timestamp with a clear time zone",
+    body: "Keep the provider's completion timestamp with the exact submitted PDF. It is useful transmission evidence, not a legal determination of timely filing.",
   },
   {
-    field: "IRC § 6038A",
-    title: "The governing legal citation",
-    body: "The receipt names the federal code section behind Form 5472 — drafted to be the document you'd hand a CPA or tax attorney in a dispute.",
+    field: "Confirmation",
+    title: "Connect the record to the submitted package",
+    body: "Keep the provider reference with the exact PDF and supporting correspondence. This provider-derived record is not IRS-issued and does not guarantee penalty relief.",
   },
 ];
 
@@ -42,11 +39,11 @@ export function FaxReceiptProof() {
             What you actually receive
           </p>
           <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Real proof your filing reached the IRS
+            Keep a record of your filing transmission
           </h2>
           <p className="mt-4 text-slate-600">
-            Every package ships with an IRS-citable fax-transmission receipt —
-            the document you present if a penalty notice is ever issued.
+            Your fax-transmission receipt belongs with the complete submitted package.
+            It records the provider&apos;s result, not IRS processing or acceptance.
           </p>
         </div>
 
@@ -55,7 +52,7 @@ export function FaxReceiptProof() {
           <div className="mx-auto w-full max-w-md">
             <FaxReceipt />
             <p className="mt-3 text-center font-mono text-[11px] text-slate-500">
-              Sample transmission record — customer data redacted.
+              Illustrative provider-derived record — dummy data, not an IRS document.
             </p>
           </div>
 
@@ -76,7 +73,8 @@ export function FaxReceiptProof() {
         {/* Differentiator — directly answers "why pay $149 over $49" */}
         <div className="mx-auto mt-14 max-w-3xl rounded-2xl border border-emerald-200 bg-emerald-50/70 px-6 py-5 text-center text-sm text-emerald-900">
           <strong className="font-semibold">Every plan includes this receipt.</strong>{" "}
-          DIY form generators can&apos;t issue one — they never actually transmit to the IRS.
+          Keep it with your signed package and any IRS correspondence. Learn{" "}
+          <a href="/blog/form-5472-irs-receipt-confirmation-status" className="underline">what a fax receipt can and cannot establish</a>.
         </div>
       </div>
     </section>
