@@ -111,7 +111,10 @@ Verified personally: `tsc` clean, vitest **249** (244 + 5), build clean with `/a
 `/admin/traffic/[visitorId]` and `/admin/traffic/ip/[ip]` all present — the sibling dynamic segments
 do not collide.
 
-IP_GROUP_DEPLOY_PLACEHOLDER
+Deploy: guarded watch → Ready. Production check from the owner's admin session: the "Page views |
+Visitors by IP" toggle renders, the caveat line shows above the grouped table, and the summary already
+reflects real traffic (6 visitors today, 25 views / 7 d, 2 became customers; KR 21 / TH 4; sources
+ChatGPT (AI) 3, Direct 3).
 
 **Lane note:** the codex lane was killed by an API rate limit before it could report, but the codex
 process had already finished writing all five files. The artifact was on disk, so it was verified
