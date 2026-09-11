@@ -88,6 +88,31 @@ step url is `https://www.form5472prep.com#step-1` — no slash before the fragme
 `path: "/"` normalisation later); `file-form-5472` HowTo `totalTime` PT10M with 10 steps; three-check
 unchanged.
 
+## Wave H2 — question-form headings (shipped `b1745af`)
+
+Statement headings converted to question form where the section genuinely answers the question, with the
+first sentence beneath rewritten as the direct answer in the section's own words; everything after that
+sentence byte-identical. Measured on BUILT HTML: marketing pages 34.6% → **63.9%** (below the 65% bar on
+purpose — the remaining 48 statements are HowTo step names, `FaxReceiptProof` labels, pricing tier labels,
+CTAs and link labels, none of which should be questions); landing pages 51.6% → **92.4%** under the strict
+regex now enforced by `src/lib/landing-pages.test.ts` (first word interrogative AND trailing "?"; ≤ 70 chars).
+Titles/OG copy unchanged across all 49 built pages; the three product pages' FAQ answers byte-identical to
+HEAD; no split strings.
+
+Three correction rounds were needed — each a spec gap on my side, recorded in `~/.claude/doctrine/lessons.md`:
+1. The lane converted CTAs and link labels ("Should you stop worrying about the $25,000 penalty?") although
+   the spec said not to — because "CTA block" was described, not enumerated. All reverted.
+2. It met the aggregate landing target by taking 15 pages to 100% and leaving 13 (all six provider pages)
+   at 0% — aggregate bars invite lopsided work; the second pass used a per-page minimum.
+3. It added ten lead paragraphs, four asserting what visitors "ask most" (unverifiable) and one unsourced
+   positioning claim ("built only for this filing"); all five deleted. Two first sentences had dropped
+   qualifiers ("with no US tax liability"; "only the turnaround differs") — restored.
+
+Kept-as-statement list (19) is in the lane transcript; the `northwest` §3 and `stripe-atlas` §8 headings were
+reverted because their bodies do not answer a question form.
+
+H2_DEPLOY_PLACEHOLDER
+
 ## Still open
 
 **Owner:** official profile URLs for `sameAs` (LinkedIn/X/Facebook/Crunchbase) — none exist yet; address/phone decision; Search Console sign-in or CSV; post the five Reddit answers; record the five videos.
