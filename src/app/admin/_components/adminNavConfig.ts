@@ -5,6 +5,7 @@ import {
   ClipboardList,
   FileText,
   FlaskConical,
+  Globe,
   Handshake,
   LayoutDashboard,
   Newspaper,
@@ -91,6 +92,12 @@ export const ADMIN_NAV: NavGroup[] = [
   {
     label: "Growth",
     items: [
+      {
+        label: "Traffic",
+        href: "/admin/traffic",
+        icon: Globe,
+        match: "prefix",
+      },
       {
         label: "Partners",
         href: "/admin/partners",
