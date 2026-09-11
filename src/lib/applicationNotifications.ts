@@ -55,6 +55,7 @@ export async function notifyApplicationPaid(type: "ein" | "itin", applicationId:
         email: app.email,
         fullName: app.fullName,
         llcName: app.llcName,
+        amountPaidCents: app.amountPaid ?? 0,
         portalLink: makeMagicLink(app.user.id),
       });
     } catch (err) {
@@ -103,6 +104,7 @@ export async function notifyApplicationPaid(type: "ein" | "itin", applicationId:
     await sendItinApplicationConfirmationEmail({
       email: app.email,
       fullName: app.fullName,
+      amountPaidCents: app.amountPaid ?? 0,
       portalLink: makeMagicLink(app.user.id),
     });
   } catch (err) {

@@ -1474,20 +1474,40 @@ export async function sendEinApplicationConfirmationEmail(args: {
   email: string;
   fullName: string;
   llcName: string;
+  amountPaidCents: number;
   portalLink: string;
 }) {
-  const body = `We've received your EIN application for ${args.llcName}.\n\nOur team will reach out within 1 business day with a document checklist and payment link.\n\nTrack your application status in your client portal:\n${args.portalLink}`;
+  const amount = formatUsd(args.amountPaidCents);
+  const body = `Thank you. We have received your EIN application for ${args.llcName} and your payment of ${amount}. This email confirms that payment — you will not receive a separate payment request.\n\n` +
+    `What happens next\n\n` +
+    `1. Review — within 1 business day. We check the details you provided. If anything is missing, we email you a short list of exactly what to send.\n` +
+    `2. Form SS-4 prepared. We complete Form SS-4 on your behalf. An EIN does not require identity documents: no passport to mail, nothing to certify.\n` +
+    `3. We contact the IRS. We call the IRS Business & Specialty Tax Line for you and can often obtain the EIN on the call. Complex cases may take slightly longer.\n` +
+    `4. Your EIN delivered. You receive your nine-digit EIN by email, together with a copy of the completed Form SS-4 for your records. The IRS then mails the official CP 575 confirmation letter to your LLC's address within 4–6 weeks — this is the document banks sometimes ask for.\n\n` +
+    `Typical timing: 1–5 business days once we have everything we need.\n\n` +
+    `You can follow your application's status at any time in your client portal:\n\n` +
+    `${args.portalLink}\n\n` +
+    `If you have a question, reply to this email or write to support@form5472prep.com.`;
   return sendEmail({
     to: args.email,
-    subject: "EIN application received — Form5472 Prep",
+    subject: `EIN application received — ${args.llcName}`,
     text: customerText(args.fullName, body),
     html: customerShell({
-      heading: "We received your EIN application",
+      heading: "We have received your EIN application",
       salutation: args.fullName,
       bodyHtml: `
-        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">We&apos;ve received your EIN application for <strong>${escapeHtml(args.llcName)}</strong>.</p>
-        <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Our team will reach out within <strong>1 business day</strong> with a document checklist and payment link.</p>`,
-      cta: { label: "View my application", url: args.portalLink },
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Thank you. We have received your EIN application for <strong>${escapeHtml(args.llcName)}</strong> and your payment of <strong>${escapeHtml(amount)}</strong>. This email confirms that payment — you will not receive a separate payment request.</p>
+        <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next</p>
+        <ol style="margin:0 0 24px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
+          <li style="margin-bottom:8px;"><strong>Review — within 1 business day.</strong> We check the details you provided. If anything is missing, we email you a short list of exactly what to send.</li>
+          <li style="margin-bottom:8px;"><strong>Form SS-4 prepared.</strong> We complete Form SS-4 on your behalf. An EIN does not require identity documents: no passport to mail, nothing to certify.</li>
+          <li style="margin-bottom:8px;"><strong>We contact the IRS.</strong> We call the IRS Business &amp; Specialty Tax Line for you and can often obtain the EIN on the call. Complex cases may take slightly longer.</li>
+          <li style="margin-bottom:0;"><strong>Your EIN delivered.</strong> You receive your nine-digit EIN by email, together with a copy of the completed Form SS-4 for your records. The IRS then mails the official CP 575 confirmation letter to your LLC&apos;s address within 4–6 weeks — this is the document banks sometimes ask for.</li>
+        </ol>
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;"><strong>Typical timing:</strong> 1–5 business days once we have everything we need.</p>
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">You can follow your application&apos;s status at any time in your client portal:</p>`,
+      cta: { label: "Open your application →", url: args.portalLink },
+      footnoteHtml: "If you have a question, reply to this email or write to support@form5472prep.com.",
     }),
   });
 }
@@ -1562,20 +1582,38 @@ export async function sendItinApplicationAdminEmail(args: ItinApplicationEmailAr
 export async function sendItinApplicationConfirmationEmail(args: {
   email: string;
   fullName: string;
+  amountPaidCents: number;
   portalLink: string;
 }) {
-  const body = `We've received your ITIN application.\n\nOur team will reach out within 1 business day with a document checklist, CAA certification appointment details, and payment link.\n\nTrack your application status in your client portal:\n${args.portalLink}`;
+  const amount = formatUsd(args.amountPaidCents);
+  const body = `Thank you. We have received your ITIN application and your payment of ${amount}. This email confirms that payment — you will not receive a separate payment request.\n\n` +
+    `What happens next\n\n` +
+    `1. Eligibility check and checklist — within 1 business day. We review your details and email you a short checklist of the identity documents required.\n` +
+    `2. Identity certification. We forward your application to an IRS-authorized Certifying Acceptance Agent, who verifies your documents by video call or secure upload and certifies them, so the IRS accepts the certified copies. Your original passport stays with you — nothing is mailed to the IRS.\n` +
+    `3. Form W-7 submitted. We prepare your Form W-7 and submit it to the IRS ITIN Unit with the certification attached.\n` +
+    `4. ITIN issued. The IRS typically issues an ITIN within 6–11 weeks of receiving a complete application. Applications filed during peak season (January–April) can take longer; IRS processing time is outside our control.\n\n` +
+    `You can follow your application's status at any time in your client portal:\n\n` +
+    `${args.portalLink}\n\n` +
+    `If you have a question, reply to this email or write to support@form5472prep.com.`;
   return sendEmail({
     to: args.email,
-    subject: "ITIN application received — Form5472 Prep",
+    subject: `ITIN application received — ${args.fullName}`,
     text: customerText(args.fullName, body),
     html: customerShell({
-      heading: "We received your ITIN application",
+      heading: "We have received your ITIN application",
       salutation: args.fullName,
       bodyHtml: `
-        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">We&apos;ve received your ITIN application.</p>
-        <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Our team will review it and reach out within <strong>1 business day</strong> with next steps, including the document checklist, CAA certification appointment, and payment link.</p>`,
-      cta: { label: "View my application", url: args.portalLink },
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Thank you. We have received your ITIN application and your payment of <strong>${escapeHtml(amount)}</strong>. This email confirms that payment — you will not receive a separate payment request.</p>
+        <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next</p>
+        <ol style="margin:0 0 24px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
+          <li style="margin-bottom:8px;"><strong>Eligibility check and checklist — within 1 business day.</strong> We review your details and email you a short checklist of the identity documents required.</li>
+          <li style="margin-bottom:8px;"><strong>Identity certification.</strong> We forward your application to an IRS-authorized Certifying Acceptance Agent, who verifies your documents by video call or secure upload and certifies them, so the IRS accepts the certified copies. Your original passport stays with you — nothing is mailed to the IRS.</li>
+          <li style="margin-bottom:8px;"><strong>Form W-7 submitted.</strong> We prepare your Form W-7 and submit it to the IRS ITIN Unit with the certification attached.</li>
+          <li style="margin-bottom:0;"><strong>ITIN issued.</strong> The IRS typically issues an ITIN within <strong>6–11 weeks</strong> of receiving a complete application. Applications filed during peak season (January–April) can take longer; IRS processing time is outside our control.</li>
+        </ol>
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">You can follow your application&apos;s status at any time in your client portal:</p>`,
+      cta: { label: "Open your application →", url: args.portalLink },
+      footnoteHtml: "If you have a question, reply to this email or write to support@form5472prep.com.",
     }),
   });
 }

@@ -82,12 +82,14 @@ export async function POST(req: Request) {
           email: to,
           fullName: "Alex Chen",
           llcName: "Acme Holdings LLC (sample)",
+          amountPaidCents: 14900,
           portalLink: SAMPLE_PORTAL_LINK,
         });
       } else {
         await sendItinApplicationConfirmationEmail({
           email: to,
           fullName: "Alex Chen",
+          amountPaidCents: 34900,
           portalLink: SAMPLE_PORTAL_LINK,
         });
       }

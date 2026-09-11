@@ -166,7 +166,7 @@ await sendEinApplicationAdminEmail({
   passportNumber: "C01X23456",
   notes: "Applicant would like the EIN confirmation sent electronically.",
 });
-await sendEinApplicationConfirmationEmail({ email: customerEmail, fullName: ownerName, llcName, portalLink });
+await sendEinApplicationConfirmationEmail({ email: customerEmail, fullName: ownerName, llcName, amountPaidCents: 14900, portalLink });
 await sendItinApplicationAdminEmail({
   adminEmail,
   fullName: ownerName,
@@ -183,7 +183,7 @@ await sendItinApplicationAdminEmail({
   passportExpiry: "2031-06-20",
   notes: "Applicant prefers a morning CAA appointment.",
 });
-await sendItinApplicationConfirmationEmail({ email: customerEmail, fullName: ownerName, portalLink });
+await sendItinApplicationConfirmationEmail({ email: customerEmail, fullName: ownerName, amountPaidCents: 34900, portalLink });
 await sendWebsiteQuestionAdminEmail({
   adminEmail,
   name: ownerName,
