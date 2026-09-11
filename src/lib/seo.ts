@@ -108,6 +108,43 @@ export function breadcrumbList(items: Array<{ name: string; path: string }>) {
   };
 }
 
+export type HowToStepInput = { name: string; text: string; anchor: string; image?: string };
+
+// HowTo JSON-LD. `url` is the absolute page URL and each step's `anchor`
+// must resolve to an on-page heading id so answer engines can deep-link to the
+// exact visible instruction they quote.
+export function howTo(input: {
+  name: string;
+  description: string;
+  url: string;
+  totalTime: string;
+  steps: HowToStepInput[];
+  tools?: string[];
+  supplies?: string[];
+}): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: input.name,
+    description: input.description,
+    totalTime: input.totalTime,
+    ...(input.tools && input.tools.length > 0
+      ? { tool: input.tools.map((name) => ({ "@type": "HowToTool", name })) }
+      : {}),
+    ...(input.supplies && input.supplies.length > 0
+      ? { supply: input.supplies.map((name) => ({ "@type": "HowToSupply", name })) }
+      : {}),
+    step: input.steps.map((step, i) => ({
+      "@type": "HowToStep",
+      name: step.name,
+      text: step.text,
+      url: `${input.url}${step.anchor}`,
+      position: i + 1,
+      ...(step.image ? { image: step.image } : {}),
+    })),
+  };
+}
+
 // Canonical Organization node reused by every page's schema (and by llms.txt).
 // Organization is enriched for knowledge-panel + E-E-A-T signals. knowsAbout
 // is the key field for AI engines deciding whether to cite us as a topical

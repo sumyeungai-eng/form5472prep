@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { organizationNode, pageMeta, SITE_NAME, SITE_URL } from "./seo";
+import { howTo, organizationNode, pageMeta, SITE_NAME, SITE_URL } from "./seo";
 
 describe("pageMeta", () => {
   it("emits canonical, RSS discovery, Open Graph, and Twitter metadata", () => {
@@ -97,6 +97,80 @@ describe("organizationNode", () => {
         email: "support@form5472prep.com",
         availableLanguage: ["en"],
       },
+    ]);
+  });
+});
+
+describe("howTo", () => {
+  it("emits HowTo schema with anchored, positioned steps", () => {
+    const node = howTo({
+      name: "How to file Form 5472",
+      description: "A step-by-step Form 5472 filing workflow.",
+      url: `${SITE_URL}/file-form-5472`,
+      totalTime: "PT15M",
+      steps: [
+        { name: "Gather records", text: "Collect the LLC and owner records.", anchor: "#step-1" },
+        { name: "Review package", text: "Review the generated filing package.", anchor: "#step-2" },
+      ],
+    }) as {
+      "@context": string;
+      "@type": string;
+      name: string;
+      description: string;
+      totalTime: string;
+      step: Array<{ "@type": string; name: string; text: string; url: string; position: number }>;
+      tool?: unknown;
+      supply?: unknown;
+    };
+
+    expect(node).toMatchObject({
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      name: "How to file Form 5472",
+      description: "A step-by-step Form 5472 filing workflow.",
+      totalTime: "PT15M",
+    });
+    expect(node.step).toEqual([
+      {
+        "@type": "HowToStep",
+        name: "Gather records",
+        text: "Collect the LLC and owner records.",
+        url: `${SITE_URL}/file-form-5472#step-1`,
+        position: 1,
+      },
+      {
+        "@type": "HowToStep",
+        name: "Review package",
+        text: "Review the generated filing package.",
+        url: `${SITE_URL}/file-form-5472#step-2`,
+        position: 2,
+      },
+    ]);
+    expect(node.tool).toBeUndefined();
+    expect(node.supply).toBeUndefined();
+  });
+
+  it("maps tools and supplies when present", () => {
+    const node = howTo({
+      name: "How to prepare an EIN application",
+      description: "Prepare and submit Form SS-4.",
+      url: `${SITE_URL}/ein`,
+      totalTime: "PT10M",
+      tools: ["Form SS-4", "IRS fax line"],
+      supplies: ["LLC formation document", "Responsible party details"],
+      steps: [{ name: "Complete intake", text: "Enter the application details.", anchor: "#step-1" }],
+    }) as {
+      tool: Array<{ "@type": string; name: string }>;
+      supply: Array<{ "@type": string; name: string }>;
+    };
+
+    expect(node.tool).toEqual([
+      { "@type": "HowToTool", name: "Form SS-4" },
+      { "@type": "HowToTool", name: "IRS fax line" },
+    ]);
+    expect(node.supply).toEqual([
+      { "@type": "HowToSupply", name: "LLC formation document" },
+      { "@type": "HowToSupply", name: "Responsible party details" },
     ]);
   });
 });

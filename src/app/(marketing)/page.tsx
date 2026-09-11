@@ -29,6 +29,7 @@ import { getConfirmedFilingsCount, formatFilingCount } from "@/lib/stats";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 import {
   CONTENT_LAST_REVIEWED,
+  howTo,
   organizationNode,
   pageMeta,
 } from "@/lib/seo";
@@ -84,6 +85,51 @@ export const revalidate = 600;
 
 const HOME_DESCRIPTION =
   "Form 5472 and pro forma 1120 filing for a foreign-owned US LLC, from $149. Prepared, reviewed, and filed by fax to the IRS Ogden PIN Unit.";
+
+const processSteps = [
+  {
+    icon: Building2,
+    title: "Complete the LLC details",
+    anchor: "#step-1",
+    body: "Enter the LLC details used across the return: legal name, EIN, address, formation date, state, country of incorporation, and NAICS or principal activity code. These are standard fields, so use the information from your state formation records and existing business records. This gives the pro forma Form 1120 and Form 5472 the entity header information they both need.",
+  },
+  {
+    icon: Globe,
+    title: "Add the owner details",
+    anchor: "#step-2",
+    body: "Enter the foreign owner's full legal name, foreign tax ID or Reference ID, residential address, country of citizenship, and country of tax residence. If another related foreign entity is involved, use the organization details requested in the questionnaire. These answers identify the foreign shareholder and related party sections without asking you to interpret the IRS form line by line.",
+  },
+  {
+    icon: Receipt,
+    title: "Enter the transaction totals",
+    anchor: "#step-3",
+    body: "Add the dollar amounts that may create the reportable transaction picture: capital contributions in, distributions out, owner reimbursements, loans, related-party payments, and year-end total assets. The wizard is simple manual entry and does not require accounting software. Use the records you already keep, then review the totals before the package is generated.",
+  },
+  {
+    icon: FileText,
+    title: "Review the generated package",
+    anchor: "#step-4",
+    body: "Review the package generated from your answers: the cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and reasonable cause statement when the filing is late under DIIRSP. Every package is reviewed by a qualified tax accountant before fax delivery, so the documents match the information you supplied before they move to signature.",
+  },
+  {
+    icon: PenTool,
+    title: "Sign in your browser",
+    anchor: "#step-5",
+    body: "Review the prepared package, then sign once in your browser. We embed that signature into every required signature box on the printable PDF, so there is no printing or scanning in the standard flow. If you prefer a wet-ink signature, print the package, sign in pen, and upload the signed PDF instead. Either way, a qualified tax accountant on our team reviews the package end-to-end before anything is faxed.",
+  },
+  {
+    icon: Send,
+    title: "Send the filing to the IRS",
+    anchor: "#step-6",
+    body: "After signature, we fax the complete package to the IRS Ogden PIN Unit at +1-855-887-7737. Fax delivery is included with every plan, so you do not need your own fax machine, a separate fax service, or any IRS account. The provider receipt records the destination number, the timestamp, the page count, and the reported transmission result.",
+  },
+  {
+    icon: CheckCircle2,
+    title: "Confirm it is done",
+    anchor: "#step-7",
+    body: "Check the email containing your filed copy and the fax transmission report. Keep the exact submitted package together with the provider receipt and our confirmation message in your LLC records. The receipt is transmission evidence rather than an IRS acceptance notice, so save it as proof of what was sent, when it was sent, and where it was sent.",
+  },
+];
 
 export const metadata: Metadata = {
   // `absolute` skips the layout's "%s · Form5472 Prep" template — the homepage title
@@ -415,48 +461,16 @@ function Eligibility() {
 }
 
 function HowItWorks() {
-  const steps = [
-    {
-      icon: Building2,
-      title: "Enter your LLC info",
-      body: "Name, EIN, address, formation date, NAICS code. Standard fields you already know.",
-    },
-    {
-      icon: Globe,
-      title: "Enter your owner info",
-      body: "Your name, foreign tax ID, residential address, country of citizenship and tax residence.",
-    },
-    {
-      icon: Receipt,
-      title: "Add your numbers",
-      body: "Capital contributions in, distributions out, year-end total assets. Simple manual entry — no accounting software required.",
-    },
-    {
-      icon: FileText,
-      title: "We generate the package",
-      body: "Cover letter, reasonable cause statement (if late), filled Form 1120 + 5472, Part V supporting statement. One PDF.",
-    },
-    {
-      icon: PenTool,
-      title: "You sign it",
-      body: "Review the prepared package. Confirm the authorized signer and the signing method appropriate to the document and filing route before submission.",
-    },
-    {
-      icon: Send,
-      title: "We fax to the IRS",
-      body: "Direct to the IRS Ogden PIN Unit at +1-855-887-7737. We store the fax confirmation as proof of filing.",
-    },
-  ];
   return (
     <section id="how-it-works" className="bg-white border-b border-slate-200">
       <div className="max-w-6xl mx-auto px-6 py-20">
         <SectionHead
           eyebrow="How it works"
-          title="Six steps. About fifteen minutes."
+          title="Seven steps. About fifteen minutes."
           subtitle="No CPA back-and-forth. No PDF fields filled in the wrong language. No second-guessing whether you checked the right box."
         />
         <ol className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {steps.map((s, i) => (
+          {processSteps.map((s, i) => (
             <Reveal
               as="li"
               key={s.title}
@@ -469,7 +483,7 @@ function HowItWorks() {
                 </span>
                 <s.icon className="h-5 w-5 text-slate-400 transition-colors duration-300 group-hover:text-accent" />
               </div>
-              <h3 className="font-medium text-slate-900">{s.title}</h3>
+              <h3 id={s.anchor.slice(1)} className="font-medium text-slate-900">{s.title}</h3>
               <p className="mt-1.5 text-sm text-slate-600">{s.body}</p>
             </Reveal>
           ))}
@@ -891,6 +905,16 @@ function StructuredData() {
     ],
   };
 
+  const howToSchema = howTo({
+    name: "How to file Form 5472 with Form5472 Prep",
+    description: HOME_DESCRIPTION,
+    url,
+    totalTime: "PT15M", // Customer hands-on time in the filing questionnaire, not IRS processing time.
+    steps: processSteps.map(({ title, body, anchor }) => ({ name: title, text: body, anchor })),
+    tools: ["Form5472 Prep online filer", "IRS fax delivery to Ogden PIN Unit (+1-855-887-7737)"],
+    supplies: ["LLC and owner information", "Reportable transaction totals", "Year-end total assets"],
+  });
+
   // WebPage + Speakable — flags the hero headline and lead paragraph as the
   // passages voice assistants (Google Assistant, etc.) should read aloud for
   // "how do I file Form 5472" style queries.
@@ -913,6 +937,7 @@ function StructuredData() {
       <JsonLd data={service} />
       <JsonLd data={faq} />
       <JsonLd data={breadcrumb} />
+      <JsonLd data={howToSchema} />
       <JsonLd data={webPage} />
     </>
   );

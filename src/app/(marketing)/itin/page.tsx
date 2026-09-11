@@ -7,6 +7,7 @@ import {
   CONTENT_LAST_REVIEWED,
   SPEAKABLE,
   breadcrumbList,
+  howTo,
   organizationNode,
   pageMeta,
 } from "@/lib/seo";
@@ -68,23 +69,33 @@ const faq = [
 const steps = [
   {
     icon: FileText,
-    title: "Eligibility check",
-    body: "Describe the individual federal tax reason for the ITIN. We check whether the request appears suitable for the application service before document collection.",
+    title: "Confirm you need an ITIN",
+    anchor: "#step-1",
+    body: "Confirm that you need an ITIN before collecting documents. An ITIN is a nine-digit tax ID issued by the IRS to individuals who must file or be identified on a US tax return but are not eligible for a Social Security Number. Many foreign-owned US LLC owners operate with just the LLC's EIN and never need one, so we check eligibility first and email you a short document checklist within 1 business day.",
   },
   {
     icon: UserCheck,
-    title: "CAA document review",
-    body: "Eligible applications are forwarded to an IRS-authorized CAA. The CAA reviews the supporting documents and confirms the available authentication route.",
+    title: "Submit your documents",
+    anchor: "#step-2",
+    body: "Send the identity documents on the checklist through the secure upload. Your passport is the key document: it is the one item that proves both identity and foreign status on its own. You keep the original — nothing is mailed to the IRS, because a CAA-certified copy is accepted in place of the original, and that certification happens in the next step.",
   },
   {
     icon: FileText,
-    title: "Package preparation",
-    body: "For an accepted eligible request, the application package is prepared using the documents and filing basis confirmed for that request.",
+    title: "Complete the CAA certification",
+    anchor: "#step-3",
+    body: "We forward your application to an IRS-authorized Certifying Acceptance Agent, who verifies your identity documents by video call or secure upload and certifies them. The IRS accepts that certification in place of your original passport, which stays with you throughout. Once the certification is complete, we prepare your Form W-7 with the certification attached, ready for submission.",
   },
   {
     icon: Clock,
-    title: "IRS processing",
-    body: "The IRS reviews the package and sends its notice to the mailing address on Form W-7. Its published status timeframes are estimates, not a promise of assignment.",
+    title: "Send the W-7 package",
+    anchor: "#step-4",
+    body: "We submit the Form W-7 package to the IRS ITIN Unit with the certification attached. The IRS says to allow about 7 weeks for a status notice, or 9–11 weeks when applying from overseas or between January 15 and April 30. These are IRS processing estimates and are outside our control, so plan any filing that depends on the ITIN around them.",
+  },
+  {
+    icon: CheckCircle2,
+    title: "Confirm the IRS notice",
+    anchor: "#step-5",
+    body: "Completion is the IRS notice assigning your ITIN, sent to the mailing address on Form W-7. Keep it with your records and use the number wherever a US tax filing asks for it. If the IRS writes to request more information instead, respond by the deadline in the notice; the application stays open until you do, so treat silence as pending, not as approval.",
   },
 ];
 
@@ -182,7 +193,7 @@ export default function ItinPage() {
                   <step.icon className="h-5 w-5 text-accent" />
                 </div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Step {i + 1}</p>
-                <h3 className="text-sm font-semibold text-slate-900 mb-2">{step.title}</h3>
+                <h3 id={step.anchor.slice(1)} className="text-sm font-semibold text-slate-900 mb-2">{step.title}</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">{step.body}</p>
               </div>
             ))}
@@ -206,7 +217,7 @@ export default function ItinPage() {
               <li>Filing a US non-resident tax return (Form 1040-NR)</li>
               <li>Filing a US federal return that requires the individual&apos;s tax ID</li>
               <li>Being an eligible spouse or dependent on a US return</li>
-              <li>Using one of the narrowly documented IRS exceptions to the return requirement</li>
+              <li>Using one of the narrowly documented{" IRS"} exceptions to the return requirement</li>
             </ul>
             <p>
               Most applicants submit Form W-7 with a federal return; an exception needs its own evidence.
@@ -250,7 +261,7 @@ export default function ItinPage() {
               <div className="w-1/2 rounded-lg border border-red-100 bg-red-50 p-4 text-xs text-red-700">
                 <p className="font-semibold mb-2 text-red-800">Direct mail</p>
                 <ul className="space-y-1 list-disc pl-3">
-                  <li>Originals or issuing-agency-certified copies</li>
+                  <li>Originals or issuing-{"agency-certified"} copies</li>
                   <li>IRS returns mailed documents within 60 days</li>
                   <li>Self-prepared package or separate adviser</li>
                   <li>IRS reviews the application</li>
@@ -358,6 +369,16 @@ function ItinStructuredData() {
     { name: "ITIN Acquisition", path: "/itin" },
   ]);
 
+  const howToSchema = howTo({
+    name: "How to apply for an ITIN with support",
+    description: ITIN_DESCRIPTION,
+    url,
+    totalTime: "PT20M", // Customer hands-on time for eligibility and document steps, not IRS processing time.
+    steps: steps.map(({ title, body, anchor }) => ({ name: title, text: body, anchor })),
+    tools: ["Form W-7", "IRS-authorized Certifying Acceptance Agent review"],
+    supplies: ["Federal tax reason or IRS exception evidence", "Identity and foreign-status documents"],
+  });
+
   const webPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -372,6 +393,7 @@ function ItinStructuredData() {
       <JsonLd data={service} />
       <JsonLd data={faqSchema} />
       <JsonLd data={breadcrumb} />
+      <JsonLd data={howToSchema} />
       <JsonLd data={webPage} />
     </>
   );

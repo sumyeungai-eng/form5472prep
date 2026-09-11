@@ -17,7 +17,7 @@ import {
 } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import { env } from "@/lib/env";
-import { CONTENT_LAST_REVIEWED, pageMeta } from "@/lib/seo";
+import { CONTENT_LAST_REVIEWED, howTo, pageMeta } from "@/lib/seo";
 
 // Lock the route to only the known slugs — anything else 404s.
 export const dynamicParams = false;
@@ -715,17 +715,87 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
       { "@type": "ListItem", position: 2, name: page.h1, item: url },
     ],
   };
+  const sectionWordCount = page.sections.reduce(
+    (total, section) => total + (section.body.match(/[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)?/g)?.length ?? 0),
+    0,
+  );
+  const howToMinutes = Math.max(5, Math.ceil(sectionWordCount / 200 / 5) * 5);
+  const orderedListItems = (body: string) => {
+    const items: string[] = [];
+    let current: string[] = [];
+    const flush = () => {
+      const item = current.join(" ").replace(/\s+/g, " ").trim();
+      if (item) items.push(item);
+      current = [];
+    };
+
+    for (const line of body.split("\n")) {
+      const itemStart = line.match(/^\s*\d+\.\s+(.+)$/);
+      if (itemStart) {
+        if (current.length > 0) flush();
+        current = [itemStart[1]];
+      } else if (current.length > 0) {
+        if (line.trim() === "") {
+          flush();
+        } else {
+          current.push(line.trim());
+        }
+      }
+    }
+    if (current.length > 0) flush();
+
+    return items;
+  };
+  const stepNameFromItem = (text: string) => {
+    const leadEnd = text.search(/[.:]/);
+    const lead = (leadEnd >= 0 ? text.slice(0, leadEnd) : text).trim();
+    return lead.length > 80 ? `${lead.slice(0, 77).trimEnd()}...` : lead;
+  };
+  const sectionLevelHowToSteps = page.sections.slice(0, 12).map((s, i) => ({
+    name: s.heading,
+    text: s.body.replace(/\n+/g, " ").trim().slice(0, 600),
+    anchor: `#step-${i + 1}`,
+  }));
+  const splitHowToSteps = page.sections.flatMap((s, i) => {
+    const items = orderedListItems(s.body);
+    if (items.length >= 3) {
+      return items.map((item) => ({
+        name: stepNameFromItem(item),
+        text: item,
+        anchor: `#step-${i + 1}`,
+      }));
+    }
+    return {
+      name: s.heading,
+      text: s.body.replace(/\n+/g, " ").trim().slice(0, 600),
+      anchor: `#step-${i + 1}`,
+    };
+  });
+  // A 25-step HowTo is noise to answer engines, so only split ordered lists
+  // when the page-wide result stays compact; otherwise use section-level steps.
+  const howToSteps = splitHowToSteps.length <= 12 ? splitHowToSteps : sectionLevelHowToSteps;
   // HowTo schema is what unlocks Google AI Overview citation + AI assistant
-  // step-by-step extraction. We derive it from page.sections: each section's
-  // heading becomes a HowToStep, body becomes the step text. Only emit when
-  // we have at least 3 sections so the schema actually represents a process.
-  const howTo = page.sections.length >= 3
+  // step-by-step extraction. We derive it from page.sections; when a section
+  // contains its own ordered process, those numbered items become the steps.
+  // Only emit when we have at least 3 sections so the schema represents a process.
+  const howToJsonLd = page.sections.length >= 3
     ? {
-        "@context": "https://schema.org",
-        "@type": "HowTo",
-        name: page.h1,
-        description: page.metaDescription,
-        totalTime: "PT15M",
+        ...howTo({
+          name: page.h1,
+          description: page.metaDescription,
+          url,
+          totalTime: `PT${howToMinutes}M`,
+          supplies: [
+            "LLC formation documents (EIN, state of formation, date of incorporation)",
+            "Owner identity (legal name, address, country of citizenship + tax residence, FTIN or Reference ID)",
+            "Year-end total assets and a list of reportable transactions with the foreign owner",
+          ],
+          tools: [
+            "Form5472 Prep online filer",
+            "IRS fax delivery to Ogden PIN Unit (+1-855-887-7737) — included on every plan",
+          ],
+          steps: howToSteps,
+        }),
         estimatedCost: {
           "@type": "MonetaryAmount",
           currency: "USD",
@@ -735,22 +805,6 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
             promoTotalCents(page.startSrc ?? page.slug, TIERS.standard.priceCents) / 100,
           ),
         },
-        supply: [
-          { "@type": "HowToSupply", name: "LLC formation documents (EIN, state of formation, date of incorporation)" },
-          { "@type": "HowToSupply", name: "Owner identity (legal name, address, country of citizenship + tax residence, FTIN or Reference ID)" },
-          { "@type": "HowToSupply", name: "Year-end total assets and a list of reportable transactions with the foreign owner" },
-        ],
-        tool: [
-          { "@type": "HowToTool", name: "Form5472 Prep online filer" },
-          { "@type": "HowToTool", name: "IRS fax delivery to Ogden PIN Unit (+1-855-887-7737) — included on every plan" },
-        ],
-        step: page.sections.map((s, i) => ({
-          "@type": "HowToStep",
-          position: i + 1,
-          name: s.heading,
-          text: s.body.replace(/\n+/g, " ").trim().slice(0, 600),
-          url: `${url}#step-${i + 1}`,
-        })),
       }
     : null;
   return (
@@ -758,7 +812,7 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
       <JsonLd data={article} />
       {page.faqs.length > 0 && <JsonLd data={faq} />}
       <JsonLd data={breadcrumb} />
-      {howTo && <JsonLd data={howTo} />}
+      {howToJsonLd && <JsonLd data={howToJsonLd} />}
     </>
   );
 }

@@ -7,6 +7,7 @@ import {
   CONTENT_LAST_REVIEWED,
   SPEAKABLE,
   breadcrumbList,
+  howTo,
   organizationNode,
   pageMeta,
 } from "@/lib/seo";
@@ -57,22 +58,32 @@ const steps = [
   {
     icon: Users,
     title: "Get approved",
-    body: "Submit the short application form with your company details. We set up your partner account manually — usually within one business day.",
+    anchor: "#step-1",
+    body: "Submit the short application form with your company and contact details. We approve partner accounts manually, usually within one business day, then you sign in with a secure email link. The partner account is designed for formation agencies, registered agents, accounting firms, and consultants managing Form 5472 filings for multiple foreign-owned client LLCs.",
   },
   {
     icon: FileText,
     title: "Prepare client filings",
-    body: "Start a filing per client LLC from your dashboard. Same 15-minute wizard, pre-tagged to your account.",
+    anchor: "#step-2",
+    body: "Start one filing for each client LLC from the partner dashboard. The same filing wizard collects LLC details, owner details, reportable transaction totals, and year-end total assets, with the filing pre-tagged to your partner account. Filings started from the dashboard stay grouped under one login for preparation, signature, and submission tracking.",
   },
   {
     icon: Send,
-    title: "Client signs via link",
-    body: "Send each client a secure sign link. They review and sign in the browser — you never chase paperwork.",
+    title: "Send the client the signing link",
+    anchor: "#step-3",
+    body: "Send the secure review-and-sign link to the person authorized to sign for the client LLC. They review the completed package and sign once in their browser; we embed the signature into every required signature box on the printable PDF, so nothing is printed or scanned in the standard flow. A wet-ink alternative — print, sign in pen, upload — is available if the client prefers it.",
   },
   {
     icon: LayoutDashboard,
     title: "Track everything in one place",
-    body: "One dashboard shows every filing's live status through to the IRS fax confirmation receipt.",
+    anchor: "#step-4",
+    body: "Track preparation, signature, submission progress, and provider-reported fax results from one partner dashboard. One login shows live status for every client filing, including the IRS fax confirmation receipt for each package. The receipt is transmission evidence, not IRS acceptance of the return, so it should be retained with the exact submitted package.",
+  },
+  {
+    icon: CheckCircle2,
+    title: "Confirm it is done",
+    anchor: "#step-5",
+    body: "Confirm completion in the partner dashboard when the client's filing shows the IRS fax confirmation receipt. That dashboard status gives your team a concrete record that the package moved through preparation, signature, fax submission, and receipt storage. Use the receipt and the filed package as the client record for the submitted Form 5472 package.",
   },
 ];
 
@@ -175,7 +186,7 @@ export default function PartnersPage() {
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
                   Step {i + 1}
                 </p>
-                <h3 className="text-sm font-semibold text-slate-900 mb-2">{step.title}</h3>
+                <h3 id={step.anchor.slice(1)} className="text-sm font-semibold text-slate-900 mb-2">{step.title}</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">{step.body}</p>
               </div>
             ))}
@@ -268,6 +279,17 @@ function PartnersStructuredData() {
     { name: "Partner Program", path: "/partners" },
   ]);
 
+  const howToSchema = howTo({
+    name: "How the Form5472 Prep partner flow works",
+    description:
+      "Prepare client Form 5472 filings from one partner dashboard, send secure sign links, and track fax receipts.",
+    url,
+    totalTime: "PT10M", // Partner hands-on time per client filing, not IRS processing time.
+    steps: steps.map(({ title, body, anchor }) => ({ name: title, text: body, anchor })),
+    tools: ["Form5472 Prep partner dashboard", "Secure client review and sign link"],
+    supplies: ["Client LLC information", "Client owner information", "Reportable transaction totals"],
+  });
+
   const webPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -282,6 +304,7 @@ function PartnersStructuredData() {
       <JsonLd data={service} />
       <JsonLd data={faqSchema} />
       <JsonLd data={breadcrumb} />
+      <JsonLd data={howToSchema} />
       <JsonLd data={webPage} />
     </>
   );

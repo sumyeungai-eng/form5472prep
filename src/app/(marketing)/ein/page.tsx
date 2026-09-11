@@ -8,6 +8,7 @@ import {
   CONTENT_LAST_REVIEWED,
   SPEAKABLE,
   breadcrumbList,
+  howTo,
   organizationNode,
   pageMeta,
 } from "@/lib/seo";
@@ -67,22 +68,32 @@ const steps = [
   {
     icon: FileText,
     title: "Complete the intake form",
-    body: "A short questionnaire about your LLC (name, state, business purpose) and owner (name, country, passport details). Takes about 5 minutes.",
+    anchor: "#step-1",
+    body: "Complete the seven-question intake form: company name, the owner's full legal name as it appears on their documents, the company's business mailing address, the owner's home address, business type (LLC, Inc. or sole proprietor), business activity, and the principal line of products or services. We also ask for the owner's date of birth. There is no passport to mail and no formation document to certify.",
   },
   {
     icon: FileText,
-    title: "We prepare your Form SS-4",
-    body: "We complete Form SS-4 correctly for a foreign-owned entity — including the \"Foreign\" entry on line 7b — so it isn't rejected. No passport or identity documents required.",
+    title: "We prepare Form SS-4",
+    anchor: "#step-2",
+    body: "We complete Form SS-4 from your answers. For a responsible party without a US Social Security Number or ITIN, line 7b is entered as \"Foreign\" — that is the entire identity requirement, so nothing is certified and nothing is mailed. You do not need to read the form line by line; if anything in your answers is unclear, we email you before the form goes to the IRS.",
   },
   {
     icon: Phone,
-    title: "We contact the IRS",
-    body: "We submit your SS-4 and apply by fax or phone with the IRS on your behalf to obtain the EIN directly — the only route open to applicants without an SSN.",
+    title: "Let us contact the IRS",
+    anchor: "#step-3",
+    body: "Let us submit the SS-4 and contact the IRS by fax or phone on your behalf. Foreign nationals without a US tax ID cannot use the online EIN application, so the paper or phone route is the available path. Once we have everything needed, EIN timing is typically 1-5 business days.",
   },
   {
     icon: CheckCircle2,
-    title: "EIN delivered to you",
-    body: "You receive your 9-digit EIN by email, plus a copy of your completed Form SS-4. CP 575 confirmation letter follows by mail from the IRS.",
+    title: "Receive your EIN",
+    anchor: "#step-4",
+    body: "Receive the nine-digit EIN by email once the IRS issues it. You also receive a copy of the completed Form SS-4 for your records, so you can keep the application details with your LLC formation documents. Use the EIN where your LLC needs a US federal tax ID, including Form 5472 filing.",
+  },
+  {
+    icon: CheckCircle2,
+    title: "Confirm it is done",
+    anchor: "#step-5",
+    body: "Confirm that the email includes the nine-digit EIN and the completed Form SS-4. The IRS also mails the official CP 575 confirmation letter to the LLC address within 4-6 weeks, and banks may ask for that letter. Keep both the emailed SS-4 copy and the CP 575 with your LLC records.",
   },
 ];
 
@@ -179,7 +190,7 @@ export default function EinPage() {
                   <step.icon className="h-5 w-5 text-accent" />
                 </div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Step {i + 1}</p>
-                <h3 className="text-sm font-semibold text-slate-900 mb-2">{step.title}</h3>
+                <h3 id={step.anchor.slice(1)} className="text-sm font-semibold text-slate-900 mb-2">{step.title}</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">{step.body}</p>
               </div>
             ))}
@@ -355,6 +366,17 @@ function EinStructuredData() {
     { name: "EIN Acquisition", path: "/ein" },
   ]);
 
+  const howToSchema = howTo({
+    name: "How to get an EIN for a foreign-owned US LLC",
+    description:
+      "Complete the EIN intake, review Form SS-4, and receive the IRS-issued EIN by email.",
+    url,
+    totalTime: "PT10M", // Customer hands-on time for intake and review, not IRS processing time.
+    steps: steps.map(({ title, body, anchor }) => ({ name: title, text: body, anchor })),
+    tools: ["Form SS-4", "IRS fax or phone application route"],
+    supplies: ["LLC formation document", "Responsible party name and country", "Business activity description"],
+  });
+
   const webPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -369,6 +391,7 @@ function EinStructuredData() {
       <JsonLd data={service} />
       <JsonLd data={faqSchema} />
       <JsonLd data={breadcrumb} />
+      <JsonLd data={howToSchema} />
       <JsonLd data={webPage} />
     </>
   );
