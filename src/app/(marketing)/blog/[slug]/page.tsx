@@ -238,6 +238,11 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeSlug]}
                   components={{
+                    table: ({ children, node: _node, ...props }) => (
+                      <div className="my-6 max-w-full overflow-x-auto rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent" role="region" aria-label="Scrollable data table" tabIndex={0}>
+                        <table {...props} className="min-w-[32rem]">{children}</table>
+                      </div>
+                    ),
                     a: ({ href, children, node: _node, ...props }) => {
                       const slug = blogSlugFromHref(href);
                       // Scheduled sibling posts 404 until publishAt; ISR will restore the link after release.
