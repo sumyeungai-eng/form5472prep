@@ -36,7 +36,7 @@ const contractor = await page("/blog/us-llc-paying-foreign-contractors-tax-forms
 assert(contractor.includes('aria-label="Scrollable data table"'), "Table wrapper missing");
 const ledger = await page("/downloads/form-5472-example-ledger.csv");
 assert.equal(ledger.trim().split(/\r?\n/).length, 6, "Expected header and five invented ledger entries");
-assert(ledger.includes("EX002A") && /hypothetical/i.test(ledger));
+assert(ledger.includes("EX-002A") && /hypothetical/i.test(ledger));
 console.log("PASS table wrapper and hypothetical ledger download");
 const scheduled = ["multiple-related-parties-form-5472", "final-form-5472-closing-foreign-owned-llc"];
 const sitemap = await page("/sitemap.xml");
