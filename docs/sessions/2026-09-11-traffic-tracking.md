@@ -59,3 +59,29 @@ Deploy: guarded watch (deployment newer than the pre-push one) → Ready; build 
 
 - Owner: set `TRAFFIC_IP_SALT` in Vercel if repeat-abuse detection across the 30-day IP window is wanted.
 - Wave B (admin UI) — see the next entry once shipped.
+
+## Shipped — wave B (admin UI)
+
+Commit `066d061`. `/admin/traffic` (summary cards, top countries/pages/sources, GET filter form, 50-row
+paginated table: time · location · IP · page + referrer · source · device · visitor · linked order) and
+`/admin/traffic/[visitorId]` (facts, first-touch attribution, orders, view timeline). Sidebar: Growth →
+Traffic (first item). `src/lib/admin/traffic.ts` batches order linking (3 queries per page, userId
+preferred over sessionId). Verified personally: `tsc` clean, vitest **244** (241 + 3), build clean with both
+routes listed.
+
+Architect fixes on top of the lane: (1) the visitor drill-down no longer hard-codes `isBot:false` — with
+"include bots" on, bot rows' visitor links used to 404; (2) `formatDateInput` renders a LOCAL calendar
+date (it used `toISOString().slice(0,10)`, which drifted the From box one day per resubmit east of
+Greenwich).
+
+WAVE_B_DEPLOY_PLACEHOLDER
+
+## Follow-ups (agent)
+
+- `getPaidCustomerKeys()` scans every paid filing/EIN/ITIN on each Traffic page load for the
+  "became customers" card — fine at today's volume, linear in lifetime orders; rewrite as a
+  `groupBy`/raw distinct when it shows in page timing.
+- Detail-page timeline has no empty state (cosmetic).
+- Definition of "paid customer" in `traffic.ts` = filing status PAID…CONFIRMED or `stripePaymentId`
+  set; applications `paidAt`/`stripePaymentId`/`amountPaid > 0`. Matches the supersede rule's notion
+  (excludes FAILED); keep them aligned if either changes.
