@@ -34,3 +34,25 @@ CAA certification → W-7, IRS 6–11 weeks), portal link. No new claims.
 
 - Owner: approve the EIN/ITIN rewrite above (drafts on request).
 - Owner: confirm the three test emails rendered correctly in hkdcec@gmail.com (Gmail) — logo, spacing, links.
+
+## Shipped 2026-09-11 — EIN/ITIN confirmation emails rewritten (owner-approved copy)
+
+Commit `955b790`. `sendEinApplicationConfirmationEmail` / `sendItinApplicationConfirmationEmail`
+(`src/lib/email.ts`) now take `amountPaidCents` (passed from `app.amountPaid` in
+`src/lib/applicationNotifications.ts`), confirm the amount paid and that no separate payment request
+follows, and list the four next steps with the timelines published on `/ein` and `/itin`. Subjects:
+"EIN application received — {llcName}" / "ITIN application received — {fullName}".
+`scripts/preview-emails.ts` and the admin test-email route updated to the new signatures.
+`src/lib/applicationEmails.test.ts` renders both via `EMAIL_PREVIEW_DIR` (mkdtemp) and asserts amounts,
+key phrases, the portal href, and the absence of "payment link".
+
+Accepted house-style deviations from the approved draft: greeting "Hello {name}," and close
+"Thank you, / The Form5472 Prep team" — both hard-coded in the shared `customerShell`/`customerText`
+helpers used by every customer email; forking them for two emails was not worth the inconsistency.
+
+Lane note: the codex lane edited `scripts/preview-emails.ts` outside its owned list because `tsc` could
+not pass otherwise (call site of the changed signatures) — disclosed, minimal, kept. Its test shipped
+with a session-specific absolute path and a copy-out block; removed before commit (a lane must never
+commit paths from its own scratch space).
+
+EMAIL_DEPLOY_PLACEHOLDER
