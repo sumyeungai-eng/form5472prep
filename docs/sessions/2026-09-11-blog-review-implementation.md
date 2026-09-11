@@ -4,9 +4,9 @@
 
 The owner approved implementation of the preceding blogpost-review with Codex Orchestration. Implemented six refresh areas and four new specialist articles, each dated September 11, with artwork and relevant service links. This was not another arbitrary five-post batch.
 
-Website commits: `947c667` (content, images and shared copy), `40d2566` (responsive table renderer), `94583f4` (homepage signing alignment and evidence). Base was `c1787b1`, the documentation-only coverage review. Production deployment and final live evidence are recorded below after verification.
+Website commits: `947c667` (content, images and shared copy), `40d2566` (responsive table renderer), `94583f4` (homepage signing alignment and evidence). Base was `c1787b1`, the documentation-only coverage review. Release push was `c8d2874..df051d6` to `origin/main`; it included that review and the pre-release handoff. The final documentation-only commit containing this update can be resolved with `git log -1 -- docs/sessions/2026-09-11-blog-review-implementation.md`.
 
-**Release state at this checkpoint: clean-checkout tests, production build and local HTTP checks passed; production verification pending. Do not interpret this checkpoint as deployed.**
+**Published and live-verified.** Git-linked production deployment `dpl_6fr23KxmAiK4udFXTkyUpBU7fx1K` (`form5472prep-3j8hdfta6-form5472prep.vercel.app`, release `df051d6`) reached **Ready**. All new-article checks passed on `https://www.form5472prep.com` at **2026-09-11 09:22:51 UTC**; all refresh checks passed at **09:22:49 UTC**. The sitemap has **127 public blog URLs**; 129 local Markdown posts include the two still-scheduled articles. No approved content remains unshipped.
 
 ## New public articles
 
@@ -34,7 +34,7 @@ The shared blog renderer now puts Markdown tables in keyboard-focusable horizont
 
 | Checkout / branch | Owned files |
 |---|---|
-| Canonical `/Users/sumyeung/Documents/Codex/form5472`, `main` | Four new articles and five refreshed Markdown articles listed above; four WebP images; CSV; artwork renderer; blog alt map and page table component; shared marketing/FAQ/landing files; two verification scripts; four evidence notes; this handoff |
+| Canonical `/Users/sumyeung/Documents/Codex/form5472`, `main` | Four new articles and five refreshed Markdown articles listed above; four WebP images; CSV; artwork renderer; blog alt map and page table component; shared marketing/FAQ/landing files; two verification scripts; four evidence notes; this handoff and its `REPO-STATE.md` index entry |
 | Detached `/tmp/form5472-review-release.AAQMhE` | Verification-only checkout of release commits, shared dependency symlink, `.next` and local logs. No production environment or database credentials copied. |
 
 Existing admin traffic changes in `src/app/admin/traffic/`, `src/lib/admin/traffic.ts` and its test were excluded from every commit. Untracked admin IP work, identity images, email images, old execution briefs, `src/lib/wizard/`, and the separate `hktax/` app were not staged. Do not clean, overwrite, or deploy them on this session's behalf.
@@ -46,6 +46,8 @@ Existing admin traffic changes in `src/app/admin/traffic/`, `src/lib/admin/traff
 - Production builds include Prisma generation, lint and TypeScript checks. Expected local database-unavailable fallback is not a successful production database test. Known pre-existing `MessagesPanel.tsx` Next Image lint warning remains.
 - New-article verifier: HTTP 200, single H1, matching title/date, canonical, indexability, decision table, Article and three-item FAQ schema, WebP response and size, internal links, blog index/sitemap/RSS discovery.
 - Refresh verifier: five refreshed articles plus six public surfaces, dateModified, canonical, CSV, table wrapper and the scheduled-publication gates.
+- Both verifiers passed against production. Three required production markers passed together at **09:23:03 UTC**: empty EIN-checkout validation request returned 400; `/ein/apply` returned 200 with “Owner date of birth”; penalty calculator returned 200. No checkout/payment was created.
+- Production browser check confirmed the spouse guide's actual hero image and canonical, all four cards in `/blog`, and the contractor page at 390px viewport/document width with its scroll region present. Temporary viewport override was reset.
 - Desktop FBAR hero and mobile FBAR/contractor/ITIN layouts visually inspected. Four original artwork files inspected. Mobile overflow correction measured in the DOM.
 - No payment submitted, customer application created, private database accessed, migration manually run, analytics setting changed, or production CLI deploy used.
 

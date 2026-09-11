@@ -150,6 +150,10 @@ index stays complete):
 - `docs/sessions/2026-09-11-aeo-blog-publication.md` — September 11 AEO five-guide batch
 - `docs/sessions/2026-09-11-five-blog-posts.md` — five new blog posts
 - `docs/sessions/2026-09-11-uncommon-blog-posts.md` — five uncommon blog topics
+- `docs/sessions/2026-09-11-blog-coverage-review.md` — coverage inventory and prioritized corrections
+- `docs/sessions/2026-09-11-blog-review-implementation.md` — approved six-area refresh, four new
+  specialist guides, mobile table fix, source ledgers and production verification; read before
+  changing the corrected ITIN, FBAR, delivery or signing copy
 
 ---
 
