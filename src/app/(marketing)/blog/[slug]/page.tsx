@@ -41,7 +41,11 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await getPost(params.slug);
   if (!post) return {};
-  const image = `${env.appUrl}/blog/${post.slug}/opengraph-image`;
+  // No hand-written og:image here. The per-post image comes from the sibling
+  // opengraph-image.tsx file convention, which Next serves at a HASHED url
+  // (/blog/<slug>/opengraph-image-<id>). Writing the unhashed path ourselves
+  // produced a 404 on every post's social preview until 2026-09-11; leaving
+  // `images` out of both openGraph and twitter lets Next inject the real url.
   const publishedTime = new Date(post.publishAt ?? post.date).toISOString();
   const modifiedTime = new Date(post.updated ?? post.publishAt ?? post.date).toISOString();
   const meta = pageMeta({
@@ -49,26 +53,27 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     description: post.description,
     path: `/blog/${post.slug}`,
     type: "article",
-    image,
     publishedTime,
     modifiedTime,
   });
+  const { images: _siteCard, ...og } = meta.openGraph ?? {};
+  const { images: _siteCardTw, ...tw } = meta.twitter ?? {};
   return {
     title: post.title,
     description: post.description,
     ...meta,
     openGraph: {
-      ...meta.openGraph,
+      ...og,
       publishedTime,
       modifiedTime,
       authors: post.author ? [post.author] : undefined,
       tags: post.tags,
     } as NonNullable<Metadata["openGraph"]>,
     twitter: {
+      ...tw,
       card: "summary_large_image",
       title: post.title,
       description: post.description,
-      images: [image],
     },
     keywords: post.tags,
   };
