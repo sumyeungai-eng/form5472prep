@@ -231,6 +231,10 @@ function svg({ accent, motif: kind, glyphs }) {
 }
 
 const POSTS = {
+  "foreign-owned-us-llc-fbar": { accent: C.teal, motif: "globe", glyphs: ["globe", "two", "hash", "doc"] },
+  "us-llc-paying-foreign-contractors-tax-forms": { accent: C.green, motif: "split", glyphs: ["person", "globe", "doc", "two"] },
+  "itin-nonresident-spouse-joint-return-w7": { accent: C.clay, motif: "stack", glyphs: ["two", "person", "hash", "doc"] },
+  "form-5472-owner-becomes-us-tax-resident": { accent: C.amber, motif: "calendar", glyphs: ["globe", "person", "calendar", "doc"] },
   "form-5472-penalty-notice-what-to-do": { accent: C.clay, motif: "notice", glyphs: ["warn", "doc", "clock", "check"] },
   "foreign-owned-llc-filing-requirements-checklist": { accent: C.green, motif: "checklist", glyphs: ["doc", "check", "calendar", "check"] },
   "does-foreign-owned-llc-pay-us-tax": { accent: C.teal, motif: "globe", glyphs: ["person", "doc", "hash", "check"] },

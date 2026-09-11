@@ -1,187 +1,90 @@
 ---
 title: "Form 5472: DIY vs. Hiring a Preparer"
-description: "Form 5472 DIY filing costs less, while a preparer can reduce research and error risk. Compare the work, price, review, and filing support for each option."
+description: "Compare preparing a Form 5472 package yourself with using a preparer: the records, form steps, delivery choices, and questions that matter."
 date: 2026-06-15
-updated: 2026-09-05
+updated: 2026-09-11
 author: "Form5472 Prep"
 tags: ["form-5472", "diy", "tax-preparer", "foreign-owned-llc", "filing-guide"]
 readingMinutes: 8
 draft: false
 ---
 
-**Filing Form 5472 yourself costs $0 in fees but risks the $25,000 penalty on any error; hiring a preparer or fixed-price service (from $149) removes that risk.** DIY makes sense for one clean tax year with simple transactions and time to read the IRS instructions. Pay someone if you have late or multi-year filings, or if you're unsure what counts as a reportable transaction.
+**DIY can be reasonable for a simple, current-year filing if you can follow the current IRS instructions and keep clear records. A preparer can take on preparation and delivery work, but does not eliminate the LLC's compliance responsibility or guarantee an IRS outcome.** A foreign-owned U.S. disregarded entity cannot e-file Form 5472; its package may be faxed or mailed to the dedicated IRS address.
 
-Form 5472 is a two-page information return that reports transactions between your US LLC and you as the foreign owner. It isn't a complex tax calculation — there's no income to compute, no deductions to weigh, no AMT trap. But the penalty for getting it wrong or missing it entirely is $25,000 per form, per year (IRC §6038A(d)). That math changes the DIY vs. preparer question significantly.
+The IRS may assess a $25,000 penalty for a failure to file when due and in the prescribed manner, for a substantially incomplete filing, or for failing to maintain required records. That makes careful scope and evidence more important than a promise that any filing route is risk-free. [Read the current IRS instructions](https://www.irs.gov/instructions/i5472) before choosing a route.
 
-The short answer: **if your LLC had simple, straightforward transactions — one owner, one year, contributions and distributions only — filing yourself is genuinely doable.** If you have multiple years, late filings to resolve, complicated transactions, or simply no appetite for IRS correspondence, a preparer is worth the cost.
+If you want preparation help, [view current service options and pricing](/pricing). This guide compares the work, not a market-price survey.
 
-Here's the full breakdown so you can make the call for your situation.
-
-[Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-diy-vs-preparer-early) if you already know you want the prepared route.
-
----
-
-## TL;DR — DIY vs. Preparer for Form 5472
+## DIY vs. preparer at a glance
 
 | | DIY | Preparer |
 |---|---|---|
-| **Cost** | $0 (your time) | $150–$500 depending on service |
-| **Time** | Roughly 3–8 hours first time | Roughly 15–30 minutes on your end |
-| **Error risk** | Moderate — specific mistakes are common | Low if you use a specialist |
-| **Penalty exposure** | Full $25,000 if filed wrong | Reduced; most services guarantee accuracy |
-| **Fax to IRS included** | No — you arrange your own fax | Depends on service |
-| **Best for** | One clean year, simple transactions, time to spare | Multiple years, late filings, or just want it done |
+| **Direct cost** | No IRS filing fee; you arrange any delivery and spend your own time | Varies by provider and scope; [check current pricing](/pricing) for this service |
+| **Your role** | Collect records, prepare and review every form, and send the package | Supply accurate facts and records; review the proposed filing and provider scope |
+| **Delivery** | Fax or mail the package to the IRS's dedicated destination | Confirm whether the provider sends it and what evidence you receive |
+| **Risk** | You remain responsible for a complete, timely package | You remain responsible; a capable preparer may reduce research and preparation burden, not remove legal risk |
+| **Often suitable for** | One current year, uncomplicated owner transactions, organized records | Late or multiple years, uncertain classifications, or a preference for help with the filing workflow |
 
----
+## What does a DIY Form 5472 filing involve?
 
-## What does filing Form 5472 yourself involve?
+For a foreign-owned U.S. disregarded entity, the IRS instructions call for a pro forma Form 1120 with Form 5472 attached. On the pro forma Form 1120, the instructions require the entity's name and address and items B and E on page 1, with “Foreign-owned U.S. DE” across the top.
 
-To file Form 5472 on your own, you need to produce three things:
+On Form 5472, the practical map is:
 
-**1. Pro forma Form 1120** — This is a mostly blank corporate return that acts as the cover sheet for the Form 5472. You fill in the LLC's name, EIN, address, date incorporated, and total assets at year end. Across the top you write "Foreign-Owned U.S. DE." Everything else stays blank.
+- **Part I:** the reporting corporation (the LLC) and filing information.
+- **Part II:** the 25% foreign shareholder information; for a foreign-owned U.S. DE, this is where the foreign owner is reported. An FTIN is required *if any*; where there is none, the instructions direct DE filers to enter “None” or “N/A.”
+- **Part III:** the related party with which the LLC had reportable transactions. It is not the transaction-category section.
+- **Part IV:** specified monetary transactions, where applicable.
+- **Part V:** a foreign-owned U.S. DE checks this box when it had an “other transaction” not already entered in Part IV—such as contributions to or distributions from the entity—and attaches the required description.
+- **Part VI:** nonmonetary or less-than-full-consideration transactions with a foreign related party, where applicable.
 
-**2. Form 5472** — The actual information return. Part I covers the LLC's details. Part II covers you as the foreign shareholder — including your Foreign Taxpayer Identification Number (FTIN), which is your country's equivalent of a tax ID. Part III identifies which types of transactions occurred. Part V requires a line-item schedule of each monetary transaction with the dollar amount.
+The exact facts determine the parts, lines, and attached descriptions. A contribution or distribution should not be squeezed into an unrelated Part IV line just to fill a field.
 
-**3. Fax transmission** — The complete package (Form 1120 cover + Form 5472) must be faxed to the IRS Ogden PIN Unit at **+1-855-887-7737**. You cannot e-file this. You cannot mail it to a regular IRS service center. You need either a physical fax machine or an online fax service (eFax, FaxZero, or similar).
+### Choose an accepted delivery method
 
-The [IRS instructions for Form 5472](https://www.irs.gov/instructions/i5472) are available at irs.gov. They're not impenetrable — but they do assume familiarity with terms like "disregarded entity," "reportable transaction," and "related party" that don't have obvious plain-English translations.
+The IRS says a foreign-owned U.S. DE cannot file Form 5472 electronically. It permits either of these methods for the pro forma Form 1120 with Form 5472 attached:
 
----
+- Fax at 300 DPI or higher to **855-887-7737**.
+- Mail to **Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112 Attn: PIN Unit, Ogden, UT 84201**.
 
-## Where do DIY Form 5472 filings go wrong?
+Keep a copy of the exact package and objective delivery evidence. A fax provider's completed-transmission report shows what that provider reported about transmission; it does not establish IRS processing, attachment matching, or substantive acceptance.
 
-The error patterns in DIY filings are consistent. These are not obscure technicalities — they're the specific mistakes that trigger penalties or rejection letters.
+## Where DIY filings can go wrong
 
-**1. Filing Form 5472 for the wrong entity type**
+1. **Using the wrong filing route.** A foreign-owned U.S. DE has a pro forma Form 1120 attachment workflow. A domestic corporation or foreign corporation can have a different return and filing context.
+2. **Mixing up the parties and sections.** The LLC is the reporting corporation in Part I. Parts II and III collect distinct owner and related-party information; the transaction categories are not in Part III.
+3. **Treating every money movement alike.** Owner contributions, distributions, loans, reimbursements, services, and noncash transfers can require different analysis. Maintain a ledger and source documents before choosing a description.
+4. **Using an old form or instructions.** Download the current materials from [IRS.gov](https://www.irs.gov/forms-pubs/about-form-5472) and check the revision date.
+5. **Equating delivery evidence with an IRS decision.** Preserve it, but do not treat it as proof that the filing was complete or accepted.
 
-Form 5472 for a foreign-owned disregarded entity is filed with a pro forma Form 1120 cover. Some DIY filers confuse this with two other Form 5472 filings: a 25%-foreign-owned **domestic** US corporation with real income attaches its Form 5472 to an actual (non-pro-forma) Form 1120, and a **foreign** corporation engaged in a US trade or business attaches its Form 5472 to **Form 1120-F**. Different returns, different filing routes.
+## What should you ask a preparer?
 
-**2. Misidentifying the "reporting corporation"**
+A preparer may offer fact collection, form preparation, required attachments, and sending the package. Confirm its actual scope before you buy. Ask whether it covers your entity type and tax years, which records it needs, whether it sends by fax or mail, and what copy and delivery evidence you receive.
 
-Part I of Form 5472 asks for the "reporting corporation." For a foreign-owned single-member LLC, this is the LLC itself — its name and EIN. A common mistake is putting the foreign owner's name and information here instead.
+For late years, ask how the provider handles the facts and required explanation; a reasonable-cause position must be truthful and fact-specific, not a standard result. Complex ownership, loans, noncash transfers, U.S. trade-or-business questions, or related-party service arrangements are reasons to seek appropriately qualified tax advice.
 
-**3. Missing the FTIN field**
+## When can DIY make sense?
 
-Part II requires your Foreign Taxpayer Identification Number — your PAN (India), National Insurance number (UK), SIN (Canada), or equivalent. Many DIY filers either leave this blank or don't know which number to use. The IRS can reject a return with this blank.
+DIY is more manageable when you have one current year, organized entity and bank records, a small number of clearly documented owner transactions, and time to use the current IRS instructions. Pause if you cannot identify the counterparty, direction, purpose, or evidence for each ledger item.
 
-**4. Misclassifying transactions in Part III**
-
-Part III has checkboxes for different transaction categories: sales of inventory, rents, royalties, amounts borrowed, amounts loaned, and so on. The most common error is checking "other" for everything, or missing monetary transactions entirely because the owner didn't realize their initial funding contribution counts as a capital contribution (a reportable transaction).
-
-**5. Sending to the wrong address**
-
-The IRS has multiple service centers. Form 5472 for a foreign-owned disregarded entity goes to the Ogden PIN Unit by fax — *not* by mail, *not* to any other IRS office. Returns sent to the wrong destination get lost, and the penalty clock doesn't stop while the IRS searches for a return you sent.
-
-**6. Using an old form version**
-
-The IRS updates Form 5472 periodically. Using a version from two or three years ago is a common mistake among people who find the form via a Google search and click the first PDF link. Always download from irs.gov, check the revision date in the upper right corner, and confirm it matches the current version.
-
----
-
-## What does a Form 5472 preparer actually do?
-
-A good preparer — whether a CPA, enrolled agent, or specialist service — handles:
-
-- Reviewing your transaction history and categorizing each one correctly
-- Completing the pro forma Form 1120 and Form 5472
-- Preparing the Part V supporting statement with itemized amounts
-- Drafting a reasonable cause statement if you have late years to file
-- Faxing the complete package to the IRS Ogden PIN Unit
-- Providing you with a timestamped fax confirmation receipt as proof of submission
-
-What you provide: your LLC's name, EIN, address, formation date, and a summary of what money moved between you and the LLC during the year. That's roughly a 15–30 minute exercise on your end.
-
-Not all preparers do all of these things. Some deliver the completed forms for you to fax yourself. Some don't help with late filings or reasonable cause statements. If you're comparing services, the most important questions are: (1) is the fax to the IRS included, and (2) do they handle DIIRSP submissions for late filers?
-
----
-
-## How much does a Form 5472 preparer cost?
-
-Prices across the market vary significantly based on who's doing the work and what's included. Based on our review of publicly listed pricing in August 2026, common ranges looked like this:
-
-| Provider type | Typical cost | Fax included? | Late years? |
-|---|---|---|---|
-| Traditional CPA / accounting firm | $300–$700 per year | Rarely | Sometimes, for extra fee |
-| Online compliance services (doola, entity.inc, etc.) | $225–$400 per year | Varies | Limited |
-| Freelancers (Fiverr, Upwork) | $25–$100 | No | No |
-| Form5472 Prep | $149 per year (Standard, 5-7 business days) or $199 (Express, 3 business days) | Yes | Yes — full DIIRSP packages available |
-| DIY | $0 | No (you pay separately) | Possible |
-
-For the live service tiers and turnaround choices, [see current pricing](/pricing).
-
-A few notes on these numbers:
-
-**Traditional CPA firms** charge the most but are the right choice if you have a complex multi-entity structure, multiple foreign owners, or US income that requires a real tax return alongside the Form 5472. For a solo founder with a simple single-member LLC, paying $500+ for a two-page information return is typically not necessary.
-
-**Online compliance services** are a middle option. Pricing is usually transparent and lower than a CPA firm, but review what's actually included before paying. Some services complete the forms but expect you to arrange the fax. Some have limited support for late filers.
-
-**Freelancers** are the highest-risk option. A Form 5472 completed incorrectly — wrong entity type, missing FTIN, wrong fax number — can result in a $25,000 penalty even if you paid someone to prepare it. The IRS holds the filer responsible, not the preparer. Quality on Fiverr ranges from excellent to dangerously wrong, and it's hard to tell from a listing.
-
-**DIY** is $0 upfront but isn't free: it costs you the time to read the instructions, learn the filing workflow, arrange the fax, and carry the risk that something is wrong. For one clean year with simple transactions, this is a reasonable choice for someone who enjoys reading IRS instructions and will be methodical about it. For anything else, the hourly rate comparison doesn't favor DIY once you factor in the time.
-
----
-
-## When does DIY make sense?
-
-File yourself if all of the following are true:
-
-- You have exactly one tax year to file (current year only, no late returns)
-- The transactions are simple: capital contributions in, maybe distributions out, nothing unusual
-- You have your LLC's EIN, formation documents, and bank statements organized
-- You know your country's equivalent of a tax ID (your FTIN)
-- You're willing to read the current IRS instructions for Form 5472 before starting
-- You have access to an online fax service or fax machine
-
-If you meet all six conditions and are willing to put in the 3–5 hours, DIY is a legitimate option. The form isn't incomprehensible.
-
----
-
-## When does hiring a preparer make sense?
-
-Get a preparer if any of the following apply:
-
-- **You have more than one year to file.** Late filings require a DIIRSP package with a reasonable cause statement — that's not a DIY project for most people.
-- **You're not sure what transactions are reportable.** If you've been moving money between your personal accounts and the LLC in ways that are hard to categorize, a preparer who knows the Part III categories will save you hours and potential errors.
-- **You've never done this before and want it done right the first time.** The $25,000 penalty doesn't allow for a "close enough" first attempt.
-- **You want the fax handled for you.** Not everyone has access to a fax service, and the fax step is the one that most often causes problems for people who attempted DIY.
-- **You want proof of filing.** A timestamped fax receipt from a specialist service is cleaner documentation than a screenshot from an online fax service you used once.
-
-The cost difference between DIY and a specialist service is typically $150–$200 for a single year. Against a $25,000 penalty, that math is straightforward.
-
----
+Using a preparer may be more useful when the history spans years, classifications are uncertain, or you prefer help assembling the package and delivery evidence. Compare the provider's stated scope and current price, not an assumed market range.
 
 ## Frequently asked questions
 
-**Can I prepare Form 5472 in a spreadsheet and print it?**
+### Can I prepare Form 5472 in a spreadsheet and print it?
 
-No — you need to use the official IRS form (PDF), available at irs.gov. The form has internal layout requirements that matter for processing. Don't reconstruct it from scratch or use a third-party fillable PDF unless it explicitly matches the current IRS revision.
+Use the official current IRS form and instructions. A spreadsheet can be a workpaper or attachment support, but it is not a substitute for the form.
 
-**What if I make a mistake on a DIY filing?**
+### What if I discover a mistake after filing?
 
-File an amended Form 5472 as soon as you identify the error. Attach a brief explanation of what changed. The IRS can assess penalties for incomplete or inaccurate returns the same as for late ones, so correcting it quickly is important.
+Review the current IRS instructions and consider qualified advice promptly. Do not assume a later submission automatically cures every issue or prevents a penalty.
 
-**Do I need a US address to file Form 5472?**
+### Can a foreign-owned U.S. disregarded entity e-file Form 5472?
 
-No. Your address as the foreign owner goes on Part II as the foreign shareholder's address. The LLC's registered agent address in the US goes on the Form 1120 cover. You don't need a US personal address.
-
-**Is it possible to e-file Form 5472?**
-
-Not for a foreign-owned disregarded entity. The pro forma Form 1120 + Form 5472 package for a DE must be filed by fax to the IRS Ogden PIN Unit. The IRS MeF (Modernized e-File) system does not accept this filing type.
-
-**What is the IRS fax number for Form 5472?**
-
-The IRS Ogden PIN Unit fax number is **+1-855-887-7737** under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472). This is the only correct destination for a Form 5472 attached to a pro forma Form 1120 for a foreign-owned disregarded entity. Keep the fax confirmation — it's your proof of timely filing.
-
-**How do I know if my Form 5472 was accepted?**
-
-The IRS doesn't send an acceptance confirmation for Form 5472 the way it does for e-filed returns. Your timestamped fax confirmation is the documentation that matters. If the IRS has an issue with the return, they'll send a letter, and correspondence can take well over a year.
-
----
+No. The IRS instructions say it cannot file Form 5472 electronically. Fax or use the dedicated Ogden mailing address described above.
 
 ## The bottom line
 
-If you have one clean year, simple transactions, and the time to do it carefully, DIY is workable. If you have late filings to sort out, aren't sure what counts as a reportable transaction, or simply want the form prepared, faxed, and confirmed without the risk — a specialist service at $149 is a small spend against a $25,000 exposure.
+DIY is not inherently wrong, and paid help is not a guarantee. Choose the route that lets you assemble a complete, timely, fact-supported package and retain the records behind it. For current service scope and prices, [see Form5472 Prep pricing](/pricing); for the filing rules, rely on the [current IRS instructions](https://www.irs.gov/instructions/i5472).
 
-For a broader overview of what the form is and who needs to file, see [our Form 5472 guide](/blog/what-is-form-5472). If you have late years to catch up on, the [DIIRSP walkthrough](/blog/form-5472-filed-late-never-filed) explains the procedure.
-
-Ready to get it done? [Start your filing here](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-diy-vs-preparer) — takes about 15 minutes, fax to the IRS included.
+*Educational content only; not tax or legal advice.*

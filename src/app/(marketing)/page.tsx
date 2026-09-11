@@ -58,11 +58,11 @@ const FAQS = [
   },
   {
     q: "Is fax filing really included?",
-    a: "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and a timestamped fax-transmission receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine.",
+    a: "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and a timestamped provider transmission receipt. Keep it with your submitted package; it is transmission evidence, not IRS acceptance or a guarantee of penalty relief. You don't need your own fax machine.",
   },
   {
     q: "Why does the IRS require fax instead of e-file?",
-    a: "Foreign-owned US disregarded entities can't e-file Form 5472 or the attached pro forma Form 1120. The IRS Ogden PIN Unit accepts paper by mail or fax at +1-855-887-7737. Fax is faster, has a transmission receipt, and is the IRS's stated preferred channel.",
+    a: "Foreign-owned U.S. disregarded entities cannot use ordinary corporate e-file for this Form 5472 and pro forma Form 1120 package. The special IRS instructions allow fax to +1-855-887-7737 or mail to the dedicated Ogden PIN Unit address. Our service uses fax and supplies the provider transmission receipt.",
   },
   {
     q: "Are there any hidden fees?",

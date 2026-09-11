@@ -360,7 +360,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "ein-itin",
     question: "What is a Certifying Acceptance Agent, and how do you work with one?",
     answer:
-      "A Certifying Acceptance Agent (CAA) is an IRS-authorized person or firm that can verify and certify your identity documents for an ITIN application. We forward your application to an IRS-authorized CAA, who reviews and certifies your documents so the IRS accepts that certification in place of the original. Your passport stays with you.",
+      "A Certifying Acceptance Agent (CAA) can authenticate permitted identity documents for an ITIN application. We forward your application to an IRS-authorized CAA for the applicable document checks. A plain uploaded copy is not itself sufficient certification; follow the CAA's instructions. This route can avoid mailing an original passport to the IRS, but it does not guarantee ITIN eligibility or approval.",
     source:
       "src/app/(marketing)/itin/page.tsx:44; src/app/(marketing)/itin/page.tsx:78; src/app/(marketing)/itin/page.tsx:243; owner directive 2026-09-05: applications are forwarded to a CAA",
   },
@@ -369,7 +369,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "ein-itin",
     question: "How long does the ITIN take?",
     answer:
-      "The IRS typically issues ITINs within 6-11 weeks of receiving a complete W-7 application. Peak filing season, January-April, can take longer, and IRS processing time is outside our control.",
+      "The IRS says to allow 7 weeks for an ITIN application status notice, or 9-11 weeks when applying from overseas or during January 15 through April 30. These are processing estimates, not a guaranteed issuance date; requests for additional information can delay a decision.",
     source: "src/app/(marketing)/itin/page.tsx:52",
   },
   {
@@ -377,7 +377,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "ein-itin",
     question: "Can I apply for an ITIN and an EIN at the same time?",
     answer:
-      "Yes, we can handle an ITIN and an EIN at the same time. Contact us to coordinate them; EINs are usually obtained faster, in 1-5 business days, than ITINs, which take 6-11 weeks.",
+      "Yes, contact us to coordinate separate EIN and ITIN applications when both are actually needed. The LLC's EIN and the individual's ITIN serve different purposes. Each application has its own eligibility, documentation and IRS processing timeline; obtaining one does not guarantee or automatically require the other.",
     source: "src/app/(marketing)/itin/page.tsx:60",
   },
   {
@@ -385,7 +385,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "how-our-service-works",
     question: "How does the process work, start to finish?",
     answer:
-      "Our process starts with LLC information, owner information, and filing numbers, then we generate the package, collect your signature, and fax it to the IRS. You enter standard LLC and owner fields, add contributions, distributions, and year-end assets, review and sign in your browser, and we store the fax confirmation as proof.",
+      "You provide LLC and owner information, related-party transactions and year-end assets. We prepare the supported package for review, resolve signing requirements, and arrange IRS fax delivery. Keep the exact submitted package and provider transmission receipt together; the receipt documents transmission, not an IRS determination that the filing is complete or accepted.",
     source: "src/app/(marketing)/page.tsx:423; src/app/(marketing)/page.tsx:429; src/app/(marketing)/page.tsx:434; src/app/(marketing)/page.tsx:439; src/app/(marketing)/page.tsx:444; src/app/(marketing)/page.tsx:449",
     speakable: true,
   },
@@ -394,7 +394,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "how-our-service-works",
     question: "Is fax filing to the IRS really included?",
     answer:
-      "Yes, fax delivery to the IRS Ogden PIN Unit is included on every plan with no separate fee. You receive a timestamped transmission receipt as proof of filing, and you do not need your own fax machine.",
+      "Yes, fax delivery to the IRS Ogden PIN Unit is included on every plan with no separate fee, so you do not need your own fax machine. The provider's timestamped receipt is transmission evidence, not an IRS-issued acceptance or a guarantee of penalty relief.",
     source: "src/app/(marketing)/form-5472-filing/page.tsx:63; src/app/(marketing)/pricing/page.tsx:42",
   },
   {
@@ -402,7 +402,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "how-our-service-works",
     question: "How do I sign the forms?",
     answer:
-      "You review the prepared package and sign once in your browser; we embed that signature into every required signature box on the printable PDF, so no printing or scanning is needed. If you prefer a wet-ink signature, you can print, sign in pen, and upload the signed PDF instead.",
+      "Review the completed package and establish who is authorized to sign. Form 5472 has no taxpayer signature block; the pro forma Form 1120 has the relevant block. Ink signing the completed cover and scanning it for fax is a conservative approach. A browser signature feature does not by itself establish IRS authorization for every document or submission route; contact us to resolve the method before submission.",
     source: "src/app/(marketing)/page.tsx:444; src/app/(marketing)/form-5472-filing/page.tsx:460; src/lib/landing-pages.ts:425; src/app/(marketing)/page.tsx:72",
   },
   {
@@ -445,7 +445,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "after-we-file",
     question: "How do I know the IRS received my filing?",
     answer:
-      "You know the IRS received your filing from the timestamped fax transmission receipt. The IRS Ogden PIN Unit’s fax machine acknowledged receipt of every page, and the receipt is saved in your portal and serves as proof of on-time filing if the IRS asks.",
+      "Inspect the provider receipt for the destination, timestamp, page count and reported transmission result. Keep it with the exact submitted package. That record is transmission evidence, not an IRS-issued acknowledgment of processing or acceptance. If delivery is uncertain or an IRS notice arrives, contact us and follow the notice's instructions and deadline.",
     source: "src/components/FaxReceiptProof.tsx:10; src/lib/email.ts:719",
   },
   {
@@ -453,7 +453,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "after-we-file",
     question: "Will the IRS send me a confirmation?",
     answer:
-      "The IRS does not send acknowledgments for faxed Form 5472 filings. You can re-download the receipt and your filing package anytime from your portal, and the fax transmission receipt is the legal proof of timely filing.",
+      "The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. A provider receipt and IRS processing are different things; silence proves neither acceptance nor rejection. Save your own submitted package and receipt rather than relying on indefinite portal storage, and do not resend solely because you have heard nothing.",
     source: "src/lib/email.ts:724; src/lib/landing-pages.ts:1795 (slug: form-5472-fax-number)",
   },
   {

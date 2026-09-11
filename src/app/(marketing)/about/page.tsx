@@ -20,10 +20,10 @@ export const metadata: Metadata = {
 };
 
 const steps = [
-  { icon: FileText, title: "You answer a short intake", body: "About a dozen questions about your LLC, its foreign owner, and year-end totals. No accounting software, no document gathering beyond what you already know." },
-  { icon: ShieldCheck, title: "We prepare the full package", body: "Cover letter, pro forma Form 1120 stamped “Foreign-Owned U.S. DE”, Form 5472 (all parts), the Part V supporting statement, and a reasonable-cause statement if you're filing late." },
-  { icon: PenTool, title: "An accountant reviews and you sign", body: "A qualified tax accountant on our team reviews the package before anything leaves. You sign once, in your browser — no printing or scanning." },
-  { icon: Send, title: "We fax it and prove it", body: "We fax the signed package to the IRS Ogden PIN Unit and send you a timestamped fax-transmission receipt — your proof of filing if a penalty notice is ever questioned." },
+  { icon: FileText, title: "You complete the intake", body: "Provide your LLC and owner details, related-party transactions and year-end assets. Keep supporting records available so the figures can be checked." },
+  { icon: ShieldCheck, title: "We prepare the package", body: "Pro forma Form 1120 marked “Foreign-Owned U.S. DE”, the applicable Form 5472 parts and supporting statements, plus late-filing documentation where appropriate." },
+  { icon: PenTool, title: "Review and resolve signing", body: "A qualified tax accountant reviews the package before submission. Establish signing authority and the method appropriate to the document and delivery route before the completed cover is signed." },
+  { icon: Send, title: "We fax and document transmission", body: "We fax the signed package to the IRS Ogden PIN Unit and provide the timestamped provider transmission receipt. Keep it with the submitted package; it is not IRS acceptance or a guarantee of penalty relief." },
 ];
 
 export default function AboutPage() {
@@ -60,9 +60,9 @@ export default function AboutPage() {
             One filing, done properly.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
-            Form5472 Prep exists to do a single thing well: prepare and file the IRS
-            Form 5472 and pro forma Form 1120 that every foreign-owned US single-member
-            LLC owes each year — and prove it reached the IRS. We are not a general
+            Form5472 Prep prepares and files the IRS Form 5472 and pro forma Form 1120
+            package for supported foreign-owned U.S. single-member disregarded LLCs
+            with reportable transactions. We document transmission. We are not a general
             tax firm and we don&apos;t try to be.
           </p>
         </div>
@@ -80,10 +80,11 @@ export default function AboutPage() {
             channel (fax to the Ogden PIN Unit) most people no longer have.
           </p>
           <p>
-            Generic tax software won&apos;t file it. Most US CPAs rarely see it. So we built a
-            service that does only this filing, for only this profile of taxpayer, and does
-            it end to end — with an accountant reviewing every package and a fax receipt
-            proving delivery.
+            The foreign-owned disregarded-entity package uses special fax or mail
+            instructions rather than ordinary corporate e-file. Our filing service
+            focuses on this profile, with accountant review and a provider receipt
+            documenting transmission. Separate EIN and ITIN application services are
+            available when those numbers are genuinely needed.
           </p>
         </div>
       </section>
@@ -125,7 +126,7 @@ export default function AboutPage() {
                 <li>A form-preparation and filing-courier service for Form 5472 + pro forma 1120.</li>
                 <li>Reviewed by a qualified tax accountant before every submission.</li>
                 <li>Transparent about both tiers and up front about multi-year pricing.</li>
-                <li>Built to give you a timestamped IRS fax receipt as proof of filing.</li>
+                <li>Built to provide a timestamped provider receipt as transmission evidence.</li>
               </ul>
             </div>
             <div>

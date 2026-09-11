@@ -1,0 +1,6 @@
+date,entry_id,counterparty,relationship,transaction_type,source_amount,source_currency,usd_exchange_rate,usd_amount,direction,purpose,source_document,review_note
+2026-01-08,EX-001,Sample Owner,foreign owner,capital contribution,2500.00,USD,1.000000,2500.00,owner to LLC,Opening operating cash,example-owner-bank-2026-01.pdf,Hypothetical example only
+2026-03-01,EX-002A,Sample Owner,foreign owner,owner-paid LLC cost,84.50,USD,1.000000,84.50,owner pays vendor for LLC,Software cost later reimbursed in EX-002,example-receipt-EX-002.pdf,Hypothetical only; determine contribution or payable treatment from actual records
+2026-03-14,EX-002,Sample Owner,foreign owner,reimbursement,84.50,USD,1.000000,84.50,LLC to owner,Reimbursement of documented software expense,example-receipt-EX-002.pdf,Hypothetical example only
+2026-06-30,EX-003,Sample Owner,foreign owner,owner loan,1000.00,USD,1.000000,1000.00,owner to LLC,Short-term working-capital loan,example-loan-note-EX-003.pdf,Hypothetical example only
+2026-10-15,EX-004,Sample Owner,foreign owner,distribution,300.00,USD,1.000000,300.00,LLC to owner,Owner distribution,example-bank-2026-10.pdf,Hypothetical example only

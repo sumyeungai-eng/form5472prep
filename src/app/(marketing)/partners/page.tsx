@@ -34,11 +34,11 @@ const faq = [
   },
   {
     q: "Can filings be batched under a single partner account?",
-    a: "Yes. Every filing you start from your partner dashboard is grouped under your account — one login shows the live status of every client filing: draft, paid, awaiting signature, faxed, and IRS-confirmed.",
+    a: "Yes. Filings started from your partner dashboard are grouped under your account, so one login lets you follow preparation, signature and submission progress. A provider-reported fax result is transmission evidence, not IRS acceptance of the return.",
   },
   {
     q: "Who signs each filing?",
-    a: "Your client does. When a filing is ready, you send them a secure one-click sign link from your dashboard. They review the prepared package and sign in the browser — no printing or scanning. You keep full visibility throughout.",
+    a: "The person authorized to sign for the client LLC reviews the completed package. You can send the secure review/sign link from your dashboard, but signing authority and the method appropriate to the document and filing route must be resolved before submission. Contact us if an ink-signed cover is needed.",
   },
   {
     q: "How does payment work?",

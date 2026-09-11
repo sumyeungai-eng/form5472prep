@@ -444,106 +444,130 @@ export const LANDING_PAGES: LandingPage[] = [
     relatedSlugs: ["file-form-5472", "pro-forma-1120", "form-5472-vs-1120", "irs-form-5472", "form-5472-fax-number"],
   },
   {
-    slug: "foreign-owned-llc-tax",
-    keyword: "foreign owned LLC tax filing",
-    title: "Foreign-Owned US LLC Tax Filing Requirements (2026 Guide)",
-    metaDescription:
-      "Foreign-owned US LLC tax filing requirements include Form 5472, pro forma Form 1120, state obligations, sales tax, identity numbers, and BOI rules.",
-    sources: [
-      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
-      { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
-      { label: "Reg. §301.7701-2", url: "https://www.ecfr.gov/current/title-26/section-301.7701-2" },
-      { label: "FinCEN: Beneficial ownership information", url: "https://www.fincen.gov/boi" },
+    "slug": "foreign-owned-llc-tax",
+    "keyword": "foreign owned LLC tax filing",
+    "title": "Foreign-Owned US LLC Tax Filing Requirements (2026 Guide)",
+    "metaDescription": "Separate Form 5472 and pro forma Form 1120 from personal tax, state filings, FBAR, ITIN and sales tax duties for a foreign-owned U.S. LLC.",
+    "sources": [
+      {
+        "label": "IRS: Instructions for Form 5472",
+        "url": "https://www.irs.gov/instructions/i5472"
+      },
+      {
+        "label": "IRS: Nonresident aliens",
+        "url": "https://www.irs.gov/individuals/international-taxpayers/nonresident-aliens"
+      },
+      {
+        "label": "IRS: FBAR requirements",
+        "url": "https://www.irs.gov/businesses/small-businesses-self-employed/report-of-foreign-bank-and-financial-accounts-fbar"
+      },
+      {
+        "label": "IRS: Form 8938 and FBAR compared",
+        "url": "https://www.irs.gov/businesses/comparison-of-form-8938-and-fbar-requirements"
+      },
+      {
+        "label": "IRS: Instructions for Form W-7",
+        "url": "https://www.irs.gov/instructions/iw7"
+      },
+      {
+        "label": "FinCEN: Beneficial ownership information",
+        "url": "https://www.fincen.gov/boi"
+      }
     ],
-    updated: "2026-09-05",
-    h1: "Foreign-Owned US LLC Tax Filing Requirements",
-    intro:
-      "If you are a non-US person who owns a US single-member LLC, you have specific federal tax filing obligations even if your LLC made zero revenue and owes zero US tax. The main universal requirement is Form 5472 with an attached pro forma Form 1120, due April 15. Beyond that, your state filings, ITIN need, FBAR/FATCA exposure, and sales tax obligations depend on your specific facts. This is the complete map.",
-    sections: [
+    "updated": "2026-09-11",
+    "h1": "Foreign-Owned US LLC Tax Filing Requirements",
+    "intro": "A foreign-owned U.S. single-member LLC treated as a disregarded entity generally files Form 5472 with pro forma Form 1120 when it has reportable related-party transactions. Zero revenue does not remove that test. Personal income tax, state obligations, foreign-account reporting and tax IDs need separate checks; one federal information return does not establish complete compliance.",
+    "sections": [
       {
-        heading: "What forms make up the complete federal filing?",
-        body: "Every foreign-owned US single-member LLC must file Form 5472 with an attached pro forma Form 1120, every tax year. Due April 15 (October 15 with Form 7004 extension). $25,000 penalty per form per year if missed.\n\nThis filing is informational only — it discloses the related-party transactions between you and the LLC. It does not calculate any tax. For most foreign-owned LLCs, the actual US federal tax owed is $0.\n\nThis is not optional and there's no income threshold below which you skip it. A foreign-owned LLC with $0 revenue and one $100 capital contribution still files Form 5472 every year.",
+        "heading": "What forms make up the complete federal filing?",
+        "body": "For a foreign-owned U.S. disregarded LLC with reportable transactions, Form 5472 attaches to a pro forma Form 1120. Reportable events can include owner funding, distributions and owner-paid entity costs. A genuinely transaction-free year is different from a zero-revenue year.\n\nThe special IRS instructions require the entity's name, address and items B and E on Form 1120, with “Foreign-Owned U.S. DE” across the top. Check signing authority separately. The package goes by the dedicated fax or mailing route, not ordinary corporate e-file. Read the [filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) for the preparation sequence.\n\nFor a calendar-year filing, the ordinary deadline is April 15 following the year, subject to applicable adjustments. An extension requires timely action; do not confuse it with the automatic FBAR extension."
       },
       {
-        heading: "Do you owe US federal income tax?",
-        body: "Most foreign-owned single-member LLCs owe $0 in US federal income tax. The default rule: a foreign person is taxed in the US only on US-source income that is effectively connected with a US trade or business (ECI) — or on fixed/determinable annual or periodic US-source income (FDAP) subject to withholding.\n\nWhat doesn't trigger US tax:\n• Selling SaaS, info products, or services from overseas to customers anywhere.\n• Dropshipping or wholesale where you don't have inventory in the US.\n• Consulting performed outside the US.\n• Capital gains from non-US assets held by the LLC.\n\nWhat does trigger US tax:\n• Having a fixed place of business in the US (office, employees, warehouse).\n• Dependent agents acting on your behalf in the US.\n• US-source dividends, interest, royalties (subject to FDAP withholding).\n• Real estate income from US property (always taxable to non-US owners).\n\nIf your facts match the first list, your LLC owes no US income tax and you file only Form 5472 + pro forma 1120. If they match the second, you have additional filing obligations and should consult a CPA — our service handles the universal case, not the complex ones.",
+        "heading": "Do you owe US federal income tax?",
+        "body": "Form 5472 reports transactions; it does not calculate the owner's income tax. Whether a foreign owner needs a personal return depends on U.S. trade or business activity, income source, withholding, treaty provisions and other facts.\n\nServices performed abroad may have a different result from services performed in the U.S. Royalties, inventory sales, real estate and employees require their own analysis. The customer's address, payment currency or U.S. LLC registration alone does not settle all of these questions.\n\nUse [the LLC income-tax guide](/blog/does-foreign-owned-llc-pay-us-tax) to identify the questions, and obtain qualified advice for an uncertain position. Do not assume Form 5472 is the only required filing because there is no tax shown on that form."
       },
       {
-        heading: "What are the state tax filings by state?",
-        body: "State requirements depend on where you formed your LLC, not where you live. Most-popular states for foreign LLC owners:\n\n• Wyoming: no state income tax, no franchise tax. Annual report due in the LLC's formation anniversary month, $60.\n• Delaware: no state income tax for LLCs without DE operations. Annual franchise tax $400, due June 1.\n• New Mexico: no state income tax. Annual report required but no fee.\n• Florida: no state income tax. Annual report due May 1, $138.75.\n• Nevada: no state income tax. State business license $200 + annual list $150 = ~$350/year.\n• Texas: no state income tax. Franchise tax due May 15, $0 for most small LLCs but the report is still required.\n\nIf you formed in California, New York, or another income-tax state, you have additional state-level income tax filings even if you live abroad. These states tax LLCs on their entity-level activity, not just on owner residency.\n\nWe handle the federal Form 5472 + 1120 only. State filings you do directly with the state — it's typically a 10-minute form on the state's website.",
+        "heading": "What are the state tax filings by state?",
+        "body": "Check both where the LLC was formed and where it does business, holds property or creates other state connections. State registration reports, franchise or entity taxes, income taxes and sales taxes are different obligations. There is no universal rule that every state requires the same annual report.\n\nStart with the relevant guide, then verify the current requirement directly with the state:\n• [Wyoming](/blog/wyoming-llc-foreign-owner-tax-filing)\n• [Delaware](/blog/delaware-llc-foreign-owner-tax-filing)\n• [New Mexico](/blog/new-mexico-llc-foreign-owner-tax-filing)\n• [Florida](/blog/florida-llc-foreign-owner-tax-filing)\n• [Nevada](/blog/nevada-llc-foreign-owner-tax-filing)\n• [Texas](/blog/texas-llc-foreign-owner-tax-filing)\n• [California](/blog/california-llc-foreign-owner-tax-filing)\n\nA state with no individual income tax may still impose entity, filing or other obligations. State work is not included in our Form 5472 preparation package."
       },
       {
-        heading: "What are FBAR and FATCA, and do I need to file?",
-        body: "FBAR (Report of Foreign Bank and Financial Accounts) is filed by US persons (US citizens, green-card holders, US tax residents) who have signing authority over foreign financial accounts totaling $10,000+ during the year.\n\nForeign owners of US LLCs are generally NOT US persons and don't file FBAR personally. Whether the LLC itself files FBAR depends on whether the LLC has foreign accounts (rare for most US-formed LLCs).\n\nFATCA Form 8938 (Statement of Specified Foreign Financial Assets) similarly applies to US persons — not foreign owners.\n\nThe rare case where you might need these: if your foreign-owned US LLC opens financial accounts outside the US (e.g. a Wise or Revolut business account based in EU). The LLC is treated as a US person for some federal tax purposes, which can trigger LLC-level FBAR filing. For most foreign-owned US LLCs banking with Mercury, Wise USD, or other US-based options, no FBAR is required.\n\nThis is one area to double-check with a tax professional if your LLC has any non-US bank accounts.",
+        "heading": "What are FBAR and FATCA, and do I need to file?",
+        "body": "Test the U.S. LLC separately from its foreign owner. A U.S.-organized LLC can have an FBAR obligation for foreign financial accounts even when its nonresident owner has no personal FBAR obligation. Disregarded income-tax treatment does not remove the entity's FBAR test.\n\nThe ordinary FBAR threshold is an aggregate foreign-account value exceeding $10,000 during the calendar year, with financial-interest or authority rules and exceptions also relevant. Establish account location from actual account arrangements—not a fintech brand, a USD balance or the owner's address.\n\nForm 8938 has different covered-person, asset and threshold rules. Neither report replaces the other. Use the [LLC FBAR account-evidence guide](/blog/foreign-owned-us-llc-fbar) and obtain qualified review where ownership, location or an exception is uncertain."
       },
       {
-        heading: "Do you need a US ITIN?",
-        body: "Most foreign-owned LLC owners do NOT need an ITIN.\n\nWhen you DON'T need one:\n• You only file Form 5472 + pro forma 1120 (your foreign tax ID / FTIN or a self-assigned Reference ID works in lieu of ITIN).\n• Your LLC owes no US federal income tax.\n• You don't personally file Form 1040-NR.\n\nWhen you DO need one:\n• You have US-source income requiring a personal Form 1040-NR filing.\n• You're claiming a tax treaty benefit (Form W-8BEN with treaty rate).\n• You're the responsible party for a US LLC and want to apply for an EIN online via the IRS portal (online EIN application requires a US tax ID; otherwise apply by fax SS-4 without an ITIN).\n\nGetting an ITIN takes 8-16 weeks and requires a certified copy of your passport submitted with Form W-7. Most foreign LLC owners skip this entirely and use FTIN or Reference ID on Form 5472.",
+        "heading": "Do you need a US ITIN?",
+        "body": "An ITIN is for an individual with a qualifying federal tax purpose who cannot obtain an SSN. LLC ownership, wanting to use the online EIN application, a bank's general request for a tax ID or an ordinary W-8BEN does not automatically establish eligibility.\n\nForm 5472 alone does not require the foreign owner to obtain an ITIN. An individual return or a documented W-7 exception can create a separate need. Read [when a nonresident actually needs an ITIN](/blog/when-nonresident-actually-needs-itin) before applying.\n\nWe offer a separate [ITIN application service](/itin) with eligibility review and CAA handling. It is not included in the Form 5472 price; uncertain tax-return or treaty positions require qualified advice."
       },
       {
-        heading: "Do I need to file sales tax?",
-        body: "If your LLC sells physical goods or certain digital products to US customers, you may have state sales tax obligations after crossing economic nexus thresholds.\n\nTypical thresholds (vary by state):\n• $100,000 in gross sales to that state per year, OR\n• 200 separate transactions to that state per year.\n\nOnce you cross the threshold in a state, you must register, collect, and remit sales tax for that state — even from abroad.\n\nServices and many digital products (SaaS, info products) are exempt in most states, though a growing number now tax SaaS. Physical goods (dropshipping, Amazon FBA, custom merchandise) are generally taxable.\n\nThis is a separate compliance area from Form 5472. We don't handle sales tax — services like TaxJar, Avalara, or Stripe Tax automate the registrations and filings.",
+        "heading": "Do I need to file sales tax?",
+        "body": "Review where you have physical or economic nexus, whether the particular product or service is taxable, and whether a marketplace collects and remits on your behalf. Thresholds, measurement periods and filing duties vary by state; there is no single nationwide sales-tax threshold.\n\nA marketplace collecting tax does not by itself answer every registration or return question. Remote digital sales and physical inventory deserve separate checks. Our Form 5472 package does not include sales-tax registration, advice or returns; use the relevant state revenue authority or a qualified provider."
       },
       {
-        heading: "What is BOI, and do I have to file it?",
-        body: "Under the Corporate Transparency Act, BOI (Beneficial Ownership Information) reporting to FinCEN used to apply to most US LLCs, including foreign-owned ones. That changed on March 26, 2025: FinCEN issued an interim final rule exempting ALL US-formed entities — Wyoming, Delaware, or any other state — from BOI reporting. Only foreign-formed entities that register to do business in a US state still have to file.\n\nIf your LLC was formed under US state law, you do NOT need to file a BOI report, regardless of whether the owner is a foreign person. This is separate from Form 5472, which is a federal tax filing and still fully required.\n\nMany guides online haven't been updated and still say BOI is required for foreign-owned LLCs — that's outdated. Confirm current status anytime at fincen.gov/boi.",
+        "heading": "What is BOI, and do I have to file it?",
+        "body": "FinCEN's current guidance exempts entities created in the United States from BOI reporting under the Corporate Transparency Act. Foreign ownership does not turn a U.S.-formed LLC into a foreign-formed entity for this purpose. Certain entities formed under foreign law and registered in the U.S. remain subject to the rules unless exempt.\n\nThis BOI exemption does not remove Form 5472 or FBAR obligations. Check [FinCEN's current BOI guidance](https://www.fincen.gov/boi) when the entity's formation or registration facts differ."
       },
       {
-        heading: "What our service covers vs. what we don't",
-        body: "We handle:\n\n• Federal Form 5472 + pro forma Form 1120 (annual filing).\n• Multi-year DIIRSP catch-up (2 or 3 years).\n• Reasonable Cause Statement for late filings.\n• IRS Ogden PIN Unit fax delivery + timestamped receipt.\n• Accountant review before submission.\n• 100% money-back guarantee if we fail to submit.\n\nWe don't handle:\n\n• State income tax filings (if your formation state has them).\n• State franchise tax / annual reports (handled directly with the state).\n• Personal Form 1040-NR (if you have US-source income requiring it).\n• ITIN applications.\n• FBAR / FATCA.\n• Sales tax registrations / filings.\n• BOI reports with FinCEN.\n• Bookkeeping / accounting.\n\nFor the standard foreign-owned single-member LLC profile (Wyoming or Delaware LLC, owner abroad, ecommerce or SaaS or consulting income, customers worldwide), our service covers the federal piece that triggers the largest penalty risk. The other items are typically self-serve.",
+        "heading": "What our service covers vs. what we don't",
+        "body": "Our Form 5472 service prepares the supported foreign-owned disregarded-entity package, including pro forma Form 1120 and applicable supporting statements, for review, signature and IRS fax delivery. Late-year work may include a reasonable-cause statement based on the actual facts; penalty relief is not guaranteed. A provider transmission receipt is not IRS acceptance.\n\nSeparate [EIN](/ein) and [ITIN](/itin) application services are available. They are not automatically needed by every foreign LLC owner and are not bundled into the Form 5472 fee.\n\nThe Form 5472 package does not include state returns, personal income-tax returns, FBAR/Form 8938, sales tax or bookkeeping. We are not a CPA firm and do not provide tax advice. Contact us before ordering if your situation involves multiple members, a corporate election or other unsupported complexity."
       },
       {
-        heading: "What is your typical compliance profile by business type?",
-        body: "Ecommerce / dropshipping (Shopify, WooCommerce):\n• Form 5472 + pro forma 1120 (us)\n• State annual report (formation state, self-serve)\n• Sales tax in nexus states (TaxJar / Stripe Tax)\n• No BOI report — US-formed LLCs have been exempt from FinCEN BOI reporting since March 26, 2025\n\nSaaS / digital product:\n• Form 5472 + pro forma 1120 (us)\n• State annual report (formation state, self-serve)\n• Sales tax only in SaaS-taxing states if nexus crossed\n• No BOI report — same March 26, 2025 exemption applies\n\nConsulting / agency:\n• Form 5472 + pro forma 1120 (us)\n• State annual report (formation state, self-serve)\n• Likely no sales tax\n• No BOI report — same March 26, 2025 exemption applies\n• Possible 1040-NR if any US-source consulting work\n\nReal estate / US property holding:\n• Form 5472 + pro forma 1120 (us, but this is the easy case — talk to a CPA)\n• Form 1040-NR personally (CPA)\n• State income tax in the property's state (CPA)\n• Form 8288 withholding on sale (CPA)",
+        "heading": "What is your typical compliance profile by business type?",
+        "body": "Use the business model to identify questions, not to declare a universal tax result:\n\n• Ecommerce: review inventory location, sales-tax connections, marketplace records and owner transactions.\n• SaaS and digital products: distinguish services, licenses and other receipts; check related-company payments, account location and state rules.\n• Consulting and agencies: establish where services are performed and distinguish unrelated contractors from related parties.\n• Real estate: obtain specialist advice on individual returns, withholding, state duties and the entity's separate reporting.\n\nEach profile can involve Form 5472, but the complete filing list depends on actual ownership, classification, activity and accounts. The [recordkeeping guide](/blog/form-5472-recordkeeping-checklist) helps organize the evidence."
       },
       {
-        heading: "File the federal piece in 15 minutes",
-        body: "Federal Form 5472 + pro forma 1120 is the universal filing every foreign-owned US LLC owes and the one with the biggest penalty for missing it ($25,000 per form per year). Our wizard handles the entire package in 15 minutes:\n\n• $149 Standard / $199 Express (fax included)\n• +$99 per additional past year\n\nEvery package is reviewed by an accountant on our team before we fax it to the IRS Ogden PIN Unit. 100% money-back guarantee if we fail to submit.",
-      },
+        "heading": "File the federal piece in 15 minutes",
+        "body": "If your LLC fits the supported foreign-owned single-member disregarded-entity service, the guided intake helps organize the information needed for Form 5472 and pro forma Form 1120. Preparation and delivery take the turnaround stated in your selected plan, rather than the time spent completing the intake.\n\nReview [current pricing](/pricing), then [start your filing](/start). Resolve uncertain personal tax, state, FBAR or entity-classification questions separately so that ordering one service is not mistaken for completing every obligation."
+      }
     ],
-    faqs: [
+    "faqs": [
       {
-        q: "My LLC made zero revenue. Do I still file?",
-        a: "Yes. Form 5472 is required even with zero revenue, as long as you had any reportable transaction — including the initial capital you put in to fund the bank account or pay formation fees.",
+        "q": "My LLC made zero revenue. Do I still file?",
+        "a": "Check reportable transactions, not revenue alone. Owner funding, distributions and owner-paid costs can trigger Form 5472 even with no sales. A truly transaction-free year requires a different review."
       },
       {
-        q: "Do I owe US income tax on my LLC's profits?",
-        a: "Generally no, if your LLC has no US trade or business and no US-source income. Profits flow through to you as the owner, taxable in your country of residence. Form 5472 is still mandatory regardless.",
+        "q": "Do I owe US income tax on my LLC's profits?",
+        "a": "Form 5472 does not decide that. U.S. business activity, income source, withholding, treaties and the owner's circumstances affect the answer. Obtain qualified advice if the income-tax position is uncertain."
       },
       {
-        q: "What if I have employees in the US?",
-        a: "Then you have significantly more requirements: payroll taxes (Form 941), worker's comp insurance, unemployment insurance, and likely state tax filings. Talk to a US payroll service (Gusto, OnPay) and a CPA. This is well beyond Form 5472 territory.",
+        "q": "What if I have employees in the US?",
+        "a": "Employees can create payroll, state and income-tax questions beyond Form 5472. Obtain payroll and tax advice before treating the information-return package as a complete compliance solution."
       },
       {
-        q: "I sell on Amazon FBA in the US. What changes?",
-        a: "FBA inventory stored in US warehouses can create a US trade or business, potentially triggering ECI (effectively connected income) and US tax liability. Plus you have sales tax obligations in every state where FBA stores your inventory. Consult a CPA familiar with foreign sellers — Form 5472 is necessary but not sufficient in your case.",
+        "q": "I sell on Amazon FBA in the US. What changes?",
+        "a": "Review U.S. inventory, business activity, marketplace collection and state connections with a qualified adviser. Marketplace handling of sales tax does not necessarily settle every filing obligation."
       },
       {
-        q: "Do I need a US bank account to file?",
-        a: "No. Most foreign-owned LLCs use Mercury, Wise, Relay, or Brex for banking. Form 5472 doesn't ask which bank you use — just the total assets and the transactions between you and the LLC.",
+        "q": "Do I need a US bank account to file?",
+        "a": "No. Form 5472 focuses on the LLC and its reportable related-party transactions. Foreign accounts may separately require an LLC-level FBAR review; the owner's residence alone does not decide that."
       },
       {
-        q: "I formed my LLC mid-year. Do I file for that year?",
-        a: "Yes. Your first year's Form 5472 covers the partial year from formation date to December 31. The deadline is still April 15 of the following year.",
+        "q": "I formed my LLC mid-year. Do I file for that year?",
+        "a": "Review reportable transactions from formation onward and determine the correct tax year. Formation costs paid by the owner can matter. Do not assume that having no customers means no initial-year filing."
       },
       {
-        q: "Can I file Form 5472 retroactively if I never filed before?",
-        a: "Yes — under DIIRSP. You file all missed years together with a reasonable cause statement requesting penalty abatement. Our 2-year and 3-year catch-up packages handle this.",
+        "q": "Can I file Form 5472 retroactively if I never filed before?",
+        "a": "Past-year filings may need to be prepared. Review each missing year, any IRS notices and the appropriate submission procedure. A reasonable-cause explanation does not guarantee that a penalty will be waived."
       },
       {
-        q: "What if I dissolved my LLC mid-year?",
-        a: "You still file Form 5472 for the partial year ending at dissolution. The deadline is the 15th day of the 4th month after the LLC's final month — same logic as the annual deadline applied to a short tax year.",
+        "q": "What if I dissolved my LLC mid-year?",
+        "a": "Closing the LLC does not erase reporting duties. Review final transactions, the effective closing date and any short-year requirements with the preparer. Do not assume a full-year calendar deadline applies to every closure."
       },
       {
-        q: "Do I need to file in the state where I live?",
-        a: "Your home country's tax rules apply to YOU as the owner — most countries tax their residents on worldwide income, which includes profits from your US LLC. The US filings (Form 5472 + 1120) are separate and required by the IRS regardless of where you live.",
+        "q": "Do I need to file in the state where I live?",
+        "a": "State duties can arise outside the formation state based on business connections or residence. Home-country tax rules are a separate question. Determine the relevant jurisdictions from the facts, not the LLC's mailing address alone."
       },
       {
-        q: "Does your service handle multi-member LLCs?",
-        a: "No. Our service is built specifically for single-member, foreign-owned, disregarded-entity LLCs. Multi-member LLCs require Form 1065 (partnership return), 8865 (foreign partnership) or full Form 1120 with real income reporting — more complex than our wizard supports. You'd need a CPA familiar with international partnerships.",
-      },
+        "q": "Does your service handle multi-member LLCs?",
+        "a": "No. This service is for supported foreign-owned single-member disregarded LLCs. A multi-member entity may have partnership or corporate filing obligations depending on its classification and facts; obtain advice from a qualified professional."
+      }
     ],
-    relatedSlugs: ["wyoming-llc-form-5472", "delaware-llc-form-5472", "form-5472-germany", "form-5472-uae", "single-member-llc-foreign-owner"],
+    "relatedSlugs": [
+      "wyoming-llc-form-5472",
+      "delaware-llc-form-5472",
+      "form-5472-germany",
+      "form-5472-uae",
+      "single-member-llc-foreign-owner"
+    ]
   },
   {
     slug: "late-form-5472",

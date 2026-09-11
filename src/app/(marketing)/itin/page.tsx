@@ -12,16 +12,16 @@ import {
 } from "@/lib/seo";
 
 const ITIN_DESCRIPTION =
-  "Get an ITIN without mailing your passport. An IRS Certifying Acceptance Agent certifies your documents and files Form W-7 for a flat $349 fee.";
+  "ITIN application support for non-residents. Eligible applications are forwarded to an IRS-authorized Certifying Acceptance Agent for document review.";
 
 export const metadata: Metadata = {
   // `absolute` skips the root layout's "%s · Form5472 Prep" template so the
   // brand isn't doubled (the title already ends in "| Form5472 Prep").
-  title: { absolute: "ITIN for Non-Residents — No Passport Mailing | Form5472 Prep" },
+  title: { absolute: "ITIN Application Support for Non-Residents | Form5472 Prep" },
   description: ITIN_DESCRIPTION,
   alternates: { canonical: "/itin" },
   openGraph: pageOpenGraph({
-    title: "ITIN for Non-Residents — No Passport Mailing",
+    title: "ITIN Application Support for Non-Residents",
     description: ITIN_DESCRIPTION,
     path: "/itin",
   }),
@@ -34,23 +34,23 @@ const faq = [
   },
   {
     q: "Who needs an ITIN?",
-    a: "Non-resident and resident aliens who: (1) receive US-source income subject to withholding (e.g. rental income, dividends, royalties); (2) are required to file a US tax return; (3) are claimed as dependents on a US tax return; or (4) need a US tax ID for other purposes such as opening certain bank accounts or completing W-8BEN forms.",
+    a: "An ITIN is for an individual who has a federal tax reason to be identified on a US return or meets a documented IRS exception, and who cannot obtain an SSN. A bank request, Form W-8BEN, or LLC ownership alone does not automatically establish eligibility.",
   },
   {
     q: "Do I need an ITIN to run my US LLC?",
-    a: "Not always. Many foreign-owned US LLC owners operate with just an EIN and never need an ITIN. You may need an ITIN if you receive US-source income that is reportable on a personal tax return, or if a withholding agent (such as a broker or payer) requires one. If you're unsure, email us and we'll help you figure it out.",
+    a: "Not always. Many foreign-owned US LLC owners use the LLC's EIN and do not need an ITIN personally. An ITIN application needs the owner's separate federal tax reason and supporting package; business ownership by itself is not one.",
   },
   {
     q: "What is a Certifying Acceptance Agent and why does it matter?",
-    a: "A CAA is authorized by the IRS to verify and certify identity documents for ITIN applications. Without a CAA, you must mail your original passport to the IRS and wait several months for it to be returned — a major inconvenience. Your documents are reviewed and certified by an IRS-authorized CAA, so the IRS accepts that certification in place of the original. Your passport stays with you.",
+    a: "A CAA is an IRS-authorized person or firm that can authenticate most permitted ITIN supporting documents. We forward eligible applications to an IRS-authorized CAA for review. The CAA determines the document route; some documents and situations may still require originals or issuing-agency-certified copies.",
   },
   {
     q: "What documents do I need?",
-    a: "A valid passport (primary identity document), proof of foreign status (often the same passport), and any supporting tax documents required for your specific W-7 reason code (e.g. a US tax return, withholding agent letter, or exception documentation). We will tell you exactly what applies to your situation after you contact us.",
+    a: "The package normally includes Form W-7, current identity and foreign-status evidence, and either a US federal return or the documents for a specific IRS exception. A valid passport is usually the only stand-alone document, but the required evidence depends on the reason for applying.",
   },
   {
     q: "How long does the ITIN take?",
-    a: "The IRS typically issues ITINs within 6–11 weeks of receiving a complete W-7 application. During peak filing season (January–April) it can take longer. We submit your application promptly after completing the certification; IRS processing time is outside our control.",
+    a: "The IRS says to allow 7 weeks for an ITIN status notice, or 9–11 weeks if you apply during January 15–April 30 or from overseas. Those are IRS timeframes, not a guaranteed issuance date, and incomplete packages can require more information.",
   },
   {
     q: "What is the difference between an EIN and an ITIN?",
@@ -58,34 +58,34 @@ const faq = [
   },
   {
     q: "Can I apply for an ITIN and EIN at the same time?",
-    a: "Yes — we can handle both. Contact us and we'll coordinate them. Note that EINs are usually obtained faster (1–5 business days) than ITINs (6–11 weeks).",
+    a: "An EIN and an ITIN identify different taxpayers: the LLC and the individual. Start only the application that has a real federal purpose; an ITIN should not be ordered merely because the LLC needs an EIN.",
   },
   {
     q: "My ITIN expired. Can you renew it?",
-    a: "Yes. ITINs that haven't been used on a US federal tax return in the past three years expire. Renewal uses the same Form W-7 process with CAA certification. Contact us to renew.",
+    a: "An ITIN generally expires after three consecutive years of nonuse on a US federal return. Renew only when it will be used on a return or another IRS rule requires it; the renewal still needs a qualifying reason and supporting documentation.",
   },
 ];
 
 const steps = [
   {
     icon: FileText,
-    title: "Intake & eligibility check",
-    body: "Tell us why you need an ITIN (W-7 reason code). We confirm your eligibility and tell you exactly which documents are required for your situation.",
+    title: "Eligibility check",
+    body: "Describe the individual federal tax reason for the ITIN. We check whether the request appears suitable for the application service before document collection.",
   },
   {
     icon: UserCheck,
-    title: "CAA identity certification",
-    body: "We collect your passport and other required documents via a video call or secure document upload, which an IRS-authorized CAA then reviews and certifies. No mailing required.",
+    title: "CAA document review",
+    body: "Eligible applications are forwarded to an IRS-authorized CAA. The CAA reviews the supporting documents and confirms the available authentication route.",
   },
   {
     icon: FileText,
-    title: "Form W-7 prepared and submitted",
-    body: "We prepare your Form W-7 application and submit it to the IRS ITIN Unit with the CAA certification attached.",
+    title: "Package preparation",
+    body: "For an accepted eligible request, the application package is prepared using the documents and filing basis confirmed for that request.",
   },
   {
     icon: Clock,
-    title: "ITIN issued in 6–11 weeks",
-    body: "The IRS mails your ITIN assignment letter to your address. We'll help you follow up if there are any IRS questions.",
+    title: "IRS processing",
+    body: "The IRS reviews the package and sends its notice to the mailing address on Form W-7. Its published status timeframes are estimates, not a promise of assignment.",
   },
 ];
 
@@ -108,25 +108,25 @@ export default function ItinPage() {
           <div>
             <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100 mb-6">
               <ShieldCheck className="h-3.5 w-3.5" />
-              Certifying Acceptance Agent — no passport mailing
+              ITIN application support
             </p>
             <h1 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-balance leading-[1.08]">
-              Get a US ITIN<br />
-              <span className="text-accent-100">without mailing your passport.</span>
+              Check whether you may need<br />
+              <span className="text-accent-100">an ITIN for a federal tax purpose.</span>
             </h1>
             <p data-speakable className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
-              Non-residents applying for an ITIN usually have to mail their original passport to the IRS
-              and wait months to get it back. Through our platform, your identity documents are reviewed
-              and certified directly by an{" "}
+              An ITIN is an individual federal tax number, not a general business or banking ID. If you
+              cannot obtain an SSN and have a qualifying federal tax reason, we can assess whether our
+              application service fits. Eligible applications are forwarded to an{" "}
               <strong className="text-white">IRS-authorized Certifying Acceptance Agent (CAA)</strong>{" "}
-              — meaning the IRS accepts a certified copy, and your original passport stays safely with you.
+              for document review; the available document route depends on the applicant and documents.
             </p>
             <ul className="mt-6 space-y-2">
               {[
-                "No original passport mailing — CAA-certified copy accepted",
-                "Form W-7 prepared and submitted on your behalf",
-                "ITIN issued in 6–11 weeks (IRS processing time)",
-                "ITIN renewals also available",
+                "Eligibility assessed before document collection",
+                "Eligible applications forwarded to an IRS-authorized CAA",
+                "IRS status notice: generally 7 weeks; 9–11 in peak season or overseas",
+                "Renewal requests assessed under the same federal-purpose rules",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm text-slate-300">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 shrink-0" />
@@ -145,7 +145,7 @@ export default function ItinPage() {
               href="/itin/apply"
               className="mt-5 flex items-center justify-center gap-2 w-full h-11 rounded-lg bg-accent text-white text-sm font-medium hover:bg-accent-700 transition-colors"
             >
-              Get started
+              Start ITIN application
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
@@ -156,11 +156,11 @@ export default function ItinPage() {
             </Link>
             <ul className="mt-5 space-y-1.5 text-xs text-slate-600">
               {[
-                "No original passport required",
-                "CAA certification included",
-                "Form W-7 prepared for you",
-                "Submitted to IRS ITIN Unit",
-                "Renewals also handled",
+                "Individual federal tax-purpose review",
+                "CAA referral for eligible requests",
+                "Document route confirmed for your case",
+                "Form W-7 package preparation",
+                "IRS decision remains outside our control",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
@@ -205,15 +205,14 @@ export default function ItinPage() {
             <p>Common reasons non-residents need an ITIN:</p>
             <ul className="list-disc pl-5 space-y-1">
               <li>Filing a US non-resident tax return (Form 1040-NR)</li>
-              <li>Receiving US-source income subject to withholding (rental income, royalties, dividends)</li>
-              <li>Being claimed as a dependent or spouse on a US tax return</li>
-              <li>Opening certain US bank or brokerage accounts</li>
-              <li>Completing Form W-8BEN for US withholding agents</li>
+              <li>Filing a US federal return that requires the individual&apos;s tax ID</li>
+              <li>Being an eligible spouse or dependent on a US return</li>
+              <li>Using one of the narrowly documented IRS exceptions to the return requirement</li>
             </ul>
             <p>
-              ITINs are issued by the IRS after a review of Form W-7 along with certified identity
-              documentation. The process typically takes 6–11 weeks once a complete application is
-              submitted.
+              Most applicants submit Form W-7 with a federal return; an exception needs its own evidence.
+              The IRS says to allow 7 weeks for a status notice, or 9–11 weeks in peak season or when
+              applying from overseas. It may request more information or reject an incomplete application.
             </p>
           </div>
         </div>
@@ -227,41 +226,44 @@ export default function ItinPage() {
               Certifying Acceptance Agent
             </p>
             <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-4">
-              Why a CAA is the right way to apply
+              Choose the document route that fits your case
             </h2>
             <p className="text-slate-600 leading-relaxed mb-4">
-              Without a CAA, Form W-7 applicants must mail their <strong>original passport</strong>{" "}
-              (or other primary identity document) to the IRS and wait 4–6 months for it to be returned
-              — during which time they cannot travel internationally.
+              Direct mail generally requires original documents or copies certified by the issuing agency.
+              The IRS says it will return mailed supporting documents to the Form W-7 mailing address
+              within 60 days. An IRS Taxpayer Assistance Center, participating VITA site, or an eligible
+              CAA route can authenticate certain documents and return them at the appointment or review.
             </p>
             <p className="text-slate-600 leading-relaxed mb-4">
-              An IRS-authorized CAA can <strong>certify your identity documents</strong> in place
-              of the originals. The IRS accepts that certification, so your passport stays with you at all
-              times.
+              A CAA can authenticate <strong>most permitted supporting documents</strong>, but IRS rules
+              limit what a CAA can authenticate, especially for some dependent and foreign military-ID
+              cases. Document authentication is not an ITIN approval, and it does not replace the tax
+              return or exception evidence.
             </p>
             <p className="text-slate-600 leading-relaxed">
-              We collect your documents via a secure process, prepare your W-7, attach the CAA
-              certification, and submit everything to the IRS ITIN Unit.
+              We forward eligible requests to an IRS-authorized CAA for review. The application opens
+              paid checkout before team review. If you are unsure about eligibility, documents, or
+              whether related return preparation is included, <Link href="/contact" className="text-accent underline">contact us before purchasing</Link>.
             </p>
           </div>
           <div className="rounded-xl border border-accent/20 bg-white p-6 space-y-4">
             <div className="flex gap-4">
               <div className="w-1/2 rounded-lg border border-red-100 bg-red-50 p-4 text-xs text-red-700">
-                <p className="font-semibold mb-2 text-red-800">Without CAA</p>
+                <p className="font-semibold mb-2 text-red-800">Direct mail</p>
                 <ul className="space-y-1 list-disc pl-3">
-                  <li>Mail original passport to IRS</li>
-                  <li>Wait 4–6 months for return</li>
-                  <li>No international travel</li>
-                  <li>Risk of loss in transit</li>
+                  <li>Originals or issuing-agency-certified copies</li>
+                  <li>IRS returns mailed documents within 60 days</li>
+                  <li>Self-prepared package or separate adviser</li>
+                  <li>IRS reviews the application</li>
                 </ul>
               </div>
               <div className="w-1/2 rounded-lg border border-emerald-100 bg-emerald-50 p-4 text-xs text-emerald-700">
-                <p className="font-semibold mb-2 text-emerald-800">With a CAA</p>
+                <p className="font-semibold mb-2 text-emerald-800">CAA or in-person route</p>
                 <ul className="space-y-1 list-disc pl-3">
-                  <li>Share a passport copy with us</li>
-                  <li>A CAA certifies it for the IRS</li>
-                  <li>Passport stays with you</li>
-                  <li>Travel freely while waiting</li>
+                  <li>Authentication of most eligible documents</li>
+                  <li>Document limits still apply</li>
+                  <li>CAA services may be available abroad</li>
+                  <li>Same IRS processing decision</li>
                 </ul>
               </div>
             </div>
@@ -287,15 +289,16 @@ export default function ItinPage() {
       {/* Bottom CTA */}
       <section className="py-16 bg-accent text-white text-center">
         <div className="max-w-xl mx-auto px-6">
-          <h2 className="text-2xl font-semibold mb-3">Ready to get your ITIN?</h2>
+          <h2 className="text-2xl font-semibold mb-3">Get help with your ITIN application</h2>
           <p className="text-accent-100 mb-6 text-sm leading-relaxed">
-            Flat fee of $349. No passport mailing. CAA certification included.
+            You need an individual federal tax purpose and a suitable document route. Application
+            submission leads to paid checkout before team review. Contact us first if unsure; IRS assignment is never guaranteed.
           </p>
           <Link
             href="/itin/apply"
             className="inline-flex items-center gap-2 bg-white text-accent font-semibold text-sm px-6 py-3 rounded-md hover:bg-accent-50 transition-colors"
           >
-            Start your ITIN application
+            Start ITIN application
             <ArrowRight className="h-4 w-4" />
           </Link>
           <p className="mt-4 text-xs text-accent-200">
@@ -320,7 +323,7 @@ function ItinStructuredData() {
   const service = {
     "@context": "https://schema.org",
     "@type": "Service",
-    serviceType: "ITIN (Form W-7) preparation and CAA certification",
+    serviceType: "ITIN (Form W-7) application support and CAA referral",
     name: "ITIN Acquisition for Non-Residents",
     provider: organizationNode(),
     dateModified: CONTENT_LAST_REVIEWED,
@@ -330,7 +333,7 @@ function ItinStructuredData() {
       audienceType: "Non-resident individuals requiring a US Individual Taxpayer Identification Number",
     },
     description:
-      "IRS Form W-7 preparation with Certifying Acceptance Agent (CAA) document certification — no original passport mailing required. Identity documents are certified by an IRS-authorized Certifying Acceptance Agent and the ITIN application is submitted to the IRS.",
+      "ITIN application support for eligible requests, which are forwarded to an IRS-authorized Certifying Acceptance Agent for document review. The available document route depends on the applicant and supporting documents.",
     offers: {
       "@type": "Offer",
       name: "ITIN Acquisition — flat fee",
@@ -360,7 +363,7 @@ function ItinStructuredData() {
     "@context": "https://schema.org",
     "@type": "WebPage",
     url,
-    name: "ITIN for Non-Residents — No Passport Mailing",
+    name: "ITIN Application Support for Non-Residents",
     dateModified: CONTENT_LAST_REVIEWED,
     speakable: SPEAKABLE,
   };

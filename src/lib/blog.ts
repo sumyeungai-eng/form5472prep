@@ -116,6 +116,10 @@ async function readFile(slug: string): Promise<Post | null> {
 }
 
 const ARTWORK_ALTS: Record<string, string> = {
+  "foreign-owned-us-llc-fbar": "A globe beside account records illustrates the location and ownership questions in an LLC's FBAR review",
+  "us-llc-paying-foreign-contractors-tax-forms": "Two document folders distinguish contractor records from separate LLC reporting obligations",
+  "itin-nonresident-spouse-joint-return-w7": "Paired document stacks and identity symbols illustrate assembling a spouse's W-7 and joint-return package",
+  "form-5472-owner-becomes-us-tax-resident": "A calendar and international identity symbols illustrate reviewing the year an LLC owner's tax residency changes",
   "form-5472-irs-receipt-confirmation-status": "A fax terminal, transmission slip and separate archive folder illustrate sending a filing versus later IRS processing",
   "form-5472-line-1c-total-assets": "A ledger, coins, laptop and inventory boxes illustrate total business assets beyond a bank balance",
   "form-5472-pro-forma-1120-signature": "A pen on a blank document beside a scanner and tablet distinguishes signing and transmission methods",
