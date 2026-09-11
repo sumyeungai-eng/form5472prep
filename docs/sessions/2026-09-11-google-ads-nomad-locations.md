@@ -1,18 +1,22 @@
 # Claude handoff — Google Ads nomad locations, September 11, 2026
 
-## Outcome: blocked on owner sign-in; no advertising changes made
+## Outcome: live Google Ads location update completed and verified
 
-The owner requested restricting Google Ads locations to places with high digital-nomad populations. The preceding website-performance task is paused. The in-app browser reached the Google Ads account sign-in page, not an authenticated account. The sign-in tab was shown and handed off for the owner to authenticate. No campaign settings, budget, status, ads, billing, or exclusions were changed.
+The owner requested restricting Google Ads locations to places with high digital-nomad populations. After the initial sign-in blocker, the owner authenticated and said “continue.” The update was saved through Google Ads and verified after reloading on September 11, 2026. The preceding website-performance task remains paused.
 
-## Scope and proposed execution
+## Exact changes and verification
 
-- Historical campaign: **Form5472 Filing Service**, ID **23875225330**, under the LuxuryAscent account. These identifiers come from the existing Google Ads diagnosis document, not current account verification. Other business campaigns are out of scope.
-- After sign-in, inspect live campaign locations, exclusions, budget, status and location performance before selecting exact city targets. Historical budget notes conflict; do not treat the owner's earlier Facebook $15/day budget as the current Google Ads budget.
-- Initial research shortlist: Lisbon, Bangkok, Mexico City and Tbilisi. Buenos Aires is a reserve; Chiang Mai, Da Nang, Kuala Lumpur and Dubai are additional evidenced hubs. This is a proposed list, **not saved targeting** or evidence of city-level conversion rates.
-- Replace broad inclusions with the selected city-level targets only after inspecting the live account. Verify each location's exact name and type; earlier sessions documented misleading picker results.
-- Use **Presence: people in or regularly in the targeted locations**, rather than Presence or interest. Presence is inferred, not a guarantee of physical location or digital-nomad status.
-- Preserve existing exclusions and ensure India, Pakistan and Indonesia remain excluded, consistent with the owner's stated preference. Preserve current budget, bidding, keywords, ads, languages, networks and campaign status.
-- Retain the campaign's existing Form 5472 intent filtering. Nomad density is not a proxy for foreign-owned U.S. LLC ownership or buying intent. Save only authorized geography changes, then reload and verify all locations/options and unchanged settings.
+- Live-verified account: **LuxuryAscent, 205-421-5211**. Campaign: **Form5472 Filing Service**, ID **23875225330**. No other campaign changed.
+- Replaced 28 broad country/region inclusions with exactly four **city** entries: **Bangkok, Bangkok, Thailand; Lisbon, Lisbon, Portugal; Mexico City, Mexico City, Mexico; Tbilisi, Tbilisi, Georgia**. Final Locations table reads **1–4 of 4**. Expanded campaign settings after reload independently show the four city types.
+- Bulk search initially matched province/region/state entries. These were removed from the unsaved edit and replaced with individually verified city suggestions before saving. No intermediate worldwide or broad-region list was saved.
+- **Presence: People in or regularly in your included locations** was already checked and was preserved. Presence or interest was unchecked. No save was needed for this option; the read-only settings editor was cancelled and closed.
+- Added **India (country)** to exclusions. Preserved all 31 pre-existing exclusions, including **Pakistan (country)** and **Indonesia (country)**. The dedicated exclusion table shows **32** after reload. The campaign settings panel shows only 30 because it omits the two legacy limited-reach “other” entries (Iran and North Korea); no exclusions were removed.
+- Current budget verified before and after: **US$10.00/day**, unchanged. Campaign remains **Enabled / Eligible (Limited)**, limited by budget. **Maximise clicks**, Google Search Network, English, conversion goals and AI Max off were preserved. Keywords, ads, bidding limits, billing and other campaigns were not edited.
+- Pre-change September 4–10 campaign report: **232 impressions, 19 clicks, US$54.16 spend, 0.00 reported conversions**. This short period cannot establish which city converts best. No conversion improvement is claimed.
+
+Previous inclusions for rollback: Australia, Austria, Belgium, Canada, Denmark, Finland, France, Germany, Hong Kong, Ireland, Israel, Italy, Japan, Netherlands, New Zealand, Norway, Poland, Portugal, Saudi Arabia, Singapore, South Korea, Spain, Sweden, Switzerland, Taiwan, United Arab Emirates, United Kingdom, United States.
+
+Preserved exclusions: Algeria, Bangladesh, Belarus, Bolivia, Cambodia, **Cuba, Missouri, United States (city)**, Egypt, Ghana, Honduras, Indonesia, Iran (other), Kenya, Laos, Mongolia, Morocco, Myanmar (Burma), Nepal, Nicaragua, Nigeria, North Korea (other), Pakistan, Paraguay, Philippines, Russia, Sri Lanka, **Sudan, Texas, United States (city)**, Syria, Tanzania, Tunisia, Venezuela, Vietnam. The two U.S. city names were pre-existing; do not represent them as country exclusions. They are irrelevant to the four-city inclusion scope and were not changed.
 
 ## Research evidence and limits
 
@@ -27,6 +31,6 @@ The owner requested restricting Google Ads locations to places with high digital
 | --- | --- |
 | Canonical `/Users/sumyeung/Documents/Codex/form5472`, `main` | This session note only |
 
-Base commit: `1388ac2`. Resolve this documentation commit with `git log -1 -- docs/sessions/2026-09-11-google-ads-nomad-locations.md`. No website code or content changed, no production deployment attempted, and no live campaign change can be claimed. All pre-existing admin traffic edits and untracked files were preserved.
+Initial blocked handoff commit: `60b854e` (base `1388ac2`). Resolve the completion documentation commit with `git log -1 -- docs/sessions/2026-09-11-google-ads-nomad-locations.md`. Google Ads changes are live external settings, not website deployments. No website code or content changed and no production deployment was attempted. All pre-existing admin traffic edits and untracked files were preserved. A temporary desktop viewport was required to operate clipped Google Ads controls and was reset before completion; the final location table was left open.
 
-Owner action: sign in to Google Ads in the displayed browser tab and ask to continue. Then execute and verify the scoped location update and replace this blocked outcome with actual before/after evidence. Do not reactivate a paused campaign or raise its budget as part of this request.
+No owner action is required to activate this change. Future follow-up: assess actual qualified conversions and cost per conversion before expanding targets. No recurring monitor was created. Geography cannot identify only digital nomads, foreign-owned U.S. LLC owners, or buyers; retain service-specific query intent. Do not raise the budget or change bidding on this request's authority.
