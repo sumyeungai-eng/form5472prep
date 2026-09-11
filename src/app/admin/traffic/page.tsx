@@ -8,9 +8,12 @@ import { isAdmin } from "@/lib/admin/auth";
 import { formatAttribution } from "@/lib/attribution";
 import { env } from "@/lib/env";
 import {
+  getIpGroups,
+  getIpVisitorCounts,
   getRecentViews,
   getTrafficFilterOptions,
   getTrafficSummary,
+  type IpGroupRow,
   type LinkedOrder,
   type TrafficFilters,
 } from "@/lib/admin/traffic";
@@ -27,9 +30,12 @@ type SearchParams = {
   includeBots?: string;
   q?: string;
   page?: string;
+  view?: string;
 };
 
 const PAGE_SIZE = 50;
+const IP_GROUPING_CAVEAT =
+  "Grouping is approximate: people behind office networks, mobile carriers or VPNs can share an IP, and one person's IP can change between visits.";
 
 export default async function AdminTrafficPage({
   searchParams,
@@ -39,12 +45,23 @@ export default async function AdminTrafficPage({
   if (!(await isAdmin())) redirect("/admin/login");
 
   const parsed = parseSearchParams(searchParams);
-  const [summary, options, recent] = await Promise.all([
+  const isIpView = parsed.values.view === "ips";
+  const trafficPromise = isIpView
+    ? getIpGroups(parsed.filters, parsed.page, PAGE_SIZE)
+    : getRecentViews(parsed.filters, parsed.page, PAGE_SIZE);
+  const [summary, options, traffic] = await Promise.all([
     getTrafficSummary(parsed.filters),
     getTrafficFilterOptions(parsed.filters),
-    getRecentViews(parsed.filters, parsed.page, PAGE_SIZE),
+    trafficPromise,
   ]);
-  const totalPages = Math.max(1, Math.ceil(recent.total / PAGE_SIZE));
+  const ipGroups = isIpView ? traffic as Awaited<ReturnType<typeof getIpGroups>> : null;
+  const recent = isIpView ? null : traffic as Awaited<ReturnType<typeof getRecentViews>>;
+  const ipVisitorCounts = recent
+    ? await getIpVisitorCounts(parsed.filters, recent.rows.map((row) => row.ip).filter((ip): ip is string => Boolean(ip)))
+    : new Map<string, number>();
+  const total = ipGroups?.total ?? recent?.total ?? 0;
+  const rowCount = ipGroups?.rows.length ?? recent?.rows.length ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
@@ -52,6 +69,8 @@ export default async function AdminTrafficPage({
         title="Traffic"
         description="Every page view by a real browser — who came from where, and which visits became orders."
       />
+
+      <ViewToggle values={parsed.values} />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <StatCard label="Visitors today" value={summary.visitorsToday.toString()} />
@@ -77,6 +96,7 @@ export default async function AdminTrafficPage({
       </div>
 
       <form method="get" className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
+        {parsed.values.view === "ips" ? <input type="hidden" name="view" value="ips" /> : null}
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
           <Field label="From">
             <input
@@ -164,7 +184,9 @@ export default async function AdminTrafficPage({
         </div>
       </form>
 
-      {recent.rows.length === 0 ? (
+      {isIpView ? (
+        <IpGroupsTable groups={ipGroups!.rows} ungroupedViews={ipGroups!.ungroupedViews} />
+      ) : recent!.rows.length === 0 ? (
         <div className="rounded-lg border border-slate-200 bg-white p-12 text-center">
           <Inbox className="mx-auto h-10 w-10 text-slate-300" />
           <p className="mt-4 font-medium text-slate-900">No traffic matches your filters</p>
@@ -186,8 +208,10 @@ export default async function AdminTrafficPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {recent.rows.map((row) => {
+              {recent!.rows.map((row) => {
                 const sourceLabel = formatAttribution({ source: row.source, medium: row.medium });
+                const ipVisitors = row.ip ? ipVisitorCounts.get(row.ip) ?? 0 : 0;
+                const otherBrowsers = Math.max(0, ipVisitors - 1);
                 return (
                   <tr key={row.id} className="hover:bg-slate-50">
                     <td className="whitespace-nowrap px-4 py-3 text-xs text-slate-500">
@@ -200,7 +224,15 @@ export default async function AdminTrafficPage({
                       </div>
                       <div className="text-xs text-slate-400">{row.city ?? "—"}</div>
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-slate-600">{row.ip ?? "—"}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-slate-600">
+                      {row.ip ? (
+                        <Link href={ipHref(row.ip)} className="hover:text-accent hover:underline">
+                          {row.ip}
+                        </Link>
+                      ) : (
+                        "IP expired"
+                      )}
+                    </td>
                     <td className="px-4 py-3">
                       <a
                         href={publicHref(row.path)}
@@ -224,6 +256,15 @@ export default async function AdminTrafficPage({
                       <Link href={`/admin/traffic/${row.visitorId}`} className="font-mono text-xs text-accent hover:underline">
                         {shortId(row.visitorId)}
                       </Link>
+                      {otherBrowsers > 0 ? (
+                        <span
+                          className="ml-1 text-[11px] text-slate-400"
+                          title={`${otherBrowsers} other browsers on this IP`}
+                          aria-label={`${otherBrowsers} other browsers on this IP`}
+                        >
+                          +{otherBrowsers}
+                        </span>
+                      ) : null}
                       {row.isBot ? <div className="text-[11px] text-slate-400">bot</div> : null}
                     </td>
                     <td className="px-4 py-3">
@@ -239,9 +280,9 @@ export default async function AdminTrafficPage({
 
       <div className="mt-4 flex items-center justify-between text-sm text-slate-500">
         <span>
-          Showing {recent.rows.length === 0 ? 0 : (parsed.page - 1) * PAGE_SIZE + 1}
+          Showing {rowCount === 0 ? 0 : (parsed.page - 1) * PAGE_SIZE + 1}
           {"–"}
-          {Math.min(parsed.page * PAGE_SIZE, recent.total)} of {recent.total}
+          {Math.min(parsed.page * PAGE_SIZE, total)} of {total}
         </span>
         <div className="flex gap-2">
           <PageLink page={parsed.page - 1} disabled={parsed.page <= 1} values={parsed.values}>
@@ -262,6 +303,7 @@ function parseSearchParams(searchParams: SearchParams): {
   values: Required<Pick<SearchParams, "from" | "to" | "country" | "source" | "q">> & {
     customersOnly: string;
     includeBots: string;
+    view: "views" | "ips";
   };
 } {
   const now = new Date();
@@ -272,6 +314,7 @@ function parseSearchParams(searchParams: SearchParams): {
   const from = validRange ? parsedFrom : startOfDay(fallbackFrom);
   const to = validRange ? parsedTo : endOfDay(now);
   const page = Math.max(1, Number.parseInt(searchParams.page ?? "1", 10) || 1);
+  const view = searchParams.view === "ips" ? "ips" : "views";
 
   return {
     filters: {
@@ -292,8 +335,113 @@ function parseSearchParams(searchParams: SearchParams): {
       q: clean(searchParams.q) ?? "",
       customersOnly: searchParams.customersOnly === "1" ? "1" : "",
       includeBots: searchParams.includeBots === "1" ? "1" : "",
+      view,
     },
   };
+}
+
+function ViewToggle({ values }: { values: ReturnType<typeof parseSearchParams>["values"] }) {
+  return (
+    <div className="mb-4 inline-flex rounded-md border border-slate-200 bg-white p-0.5">
+      <Link
+        href={viewHref("views", values)}
+        className={`rounded px-3 py-1.5 text-sm ${
+          values.view === "views"
+            ? "bg-slate-100 font-medium text-slate-900"
+            : "text-slate-600 hover:text-slate-900"
+        }`}
+      >
+        Page views
+      </Link>
+      <Link
+        href={viewHref("ips", values)}
+        className={`rounded px-3 py-1.5 text-sm ${
+          values.view === "ips"
+            ? "bg-slate-100 font-medium text-slate-900"
+            : "text-slate-600 hover:text-slate-900"
+        }`}
+      >
+        Visitors by IP
+      </Link>
+    </div>
+  );
+}
+
+function IpGroupsTable({ groups, ungroupedViews }: { groups: IpGroupRow[]; ungroupedViews: number }) {
+  return (
+    <>
+      <p className="mb-3 text-sm text-slate-500">{IP_GROUPING_CAVEAT}</p>
+      {groups.length === 0 ? (
+        <div className="rounded-lg border border-slate-200 bg-white p-12 text-center">
+          <Inbox className="mx-auto h-10 w-10 text-slate-300" />
+          <p className="mt-4 font-medium text-slate-900">No traffic matches your filters</p>
+          <p className="mt-1 text-sm text-slate-500">Try a wider date range or clear the search.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+          <table className="w-full min-w-[1180px] text-sm">
+            <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold">IP</th>
+                <th className="px-4 py-3 text-left font-semibold">Location</th>
+                <th className="px-4 py-3 text-left font-semibold">Visitors</th>
+                <th className="px-4 py-3 text-left font-semibold">Page views</th>
+                <th className="px-4 py-3 text-left font-semibold">Sources</th>
+                <th className="px-4 py-3 text-left font-semibold">Devices</th>
+                <th className="px-4 py-3 text-left font-semibold">First seen</th>
+                <th className="px-4 py-3 text-left font-semibold">Last seen</th>
+                <th className="px-4 py-3 text-left font-semibold">Order</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {groups.map((group) => (
+                <tr key={group.ip} className="hover:bg-slate-50">
+                  <td className="px-4 py-3 font-mono text-xs text-slate-600">
+                    <Link href={ipHref(group.ip)} className="hover:text-accent hover:underline">
+                      {group.ip}
+                    </Link>
+                    {group.isBot ? <div className="text-[11px] text-slate-400">bot</div> : null}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-1.5 text-slate-700">
+                      <CountryFlag country={group.country} />
+                      <span>{group.country ?? "—"}</span>
+                    </div>
+                    <div className="text-xs text-slate-400">{group.city ?? "—"}</div>
+                  </td>
+                  <td className="px-4 py-3 text-slate-700">
+                    <span className="tabular-nums">{group.visitors}</span>
+                    {group.visitors > 1 ? (
+                      <span className="ml-2 rounded-full bg-amber-50 px-1.5 text-[11px] text-amber-700">
+                        {group.visitors} browsers
+                      </span>
+                    ) : null}
+                  </td>
+                  <td className="px-4 py-3 tabular-nums text-slate-700">{group.views}</td>
+                  <td className="px-4 py-3 text-xs text-slate-600">
+                    {group.sources.length > 0
+                      ? group.sources.map((source) => formatAttribution({ source })).join(", ")
+                      : "—"}
+                  </td>
+                  <td className="px-4 py-3 text-slate-600">{group.devices.join(", ") || "—"}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-xs text-slate-500">{formatDateTime(group.firstSeen)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-xs text-slate-500">{formatDateTime(group.lastSeen)}</td>
+                  <td className="px-4 py-3">
+                    <OrderLink linked={group.linked} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {ungroupedViews > 0 ? (
+        <p className="mt-3 text-sm text-slate-500">
+          {ungroupedViews} older page views are not grouped — IP addresses are deleted after 30 days.
+        </p>
+      ) : null}
+    </>
+  );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -388,6 +536,7 @@ function pageHref(page: number, values: ReturnType<typeof parseSearchParams>["va
   const params = new URLSearchParams();
   params.set("from", values.from);
   params.set("to", values.to);
+  if (values.view === "ips") params.set("view", values.view);
   if (values.country) params.set("country", values.country);
   if (values.source) params.set("source", values.source);
   if (values.q) params.set("q", values.q);
@@ -396,6 +545,24 @@ function pageHref(page: number, values: ReturnType<typeof parseSearchParams>["va
   if (page > 1) params.set("page", page.toString());
   const qs = params.toString();
   return qs ? `/admin/traffic?${qs}` : "/admin/traffic";
+}
+
+function viewHref(view: "views" | "ips", values: ReturnType<typeof parseSearchParams>["values"]): string {
+  const params = new URLSearchParams();
+  params.set("from", values.from);
+  params.set("to", values.to);
+  if (view === "ips") params.set("view", view);
+  if (values.country) params.set("country", values.country);
+  if (values.source) params.set("source", values.source);
+  if (values.q) params.set("q", values.q);
+  if (values.customersOnly) params.set("customersOnly", values.customersOnly);
+  if (values.includeBots) params.set("includeBots", values.includeBots);
+  const qs = params.toString();
+  return qs ? `/admin/traffic?${qs}` : "/admin/traffic";
+}
+
+function ipHref(ip: string): string {
+  return `/admin/traffic/ip/${encodeURIComponent(ip)}`;
 }
 
 function parseDateInput(value: string | undefined, edge: "start" | "end"): Date | null {

@@ -36,6 +36,20 @@ export type ViewRow = {
   linked: LinkedOrder | null;
 };
 
+export type IpGroupRow = {
+  ip: string;
+  visitors: number;
+  views: number;
+  firstSeen: Date;
+  lastSeen: Date;
+  country: string | null;
+  city: string | null;
+  sources: string[];
+  devices: string[];
+  isBot: boolean;
+  linked: LinkedOrder | null;
+};
+
 export type TrafficSummary = {
   visitorsToday: number;
   visitors7d: number;
@@ -60,10 +74,6 @@ const PAID_FILING_STATUSES = [
   "CONFIRMED",
 ] as const;
 
-type PageViewWithVisitor = PageView & {
-  visitor: Pick<Visitor, "attrSource" | "attrMedium">;
-};
-
 type EinLink = {
   id: string;
   userId: string | null;
@@ -83,6 +93,16 @@ type ItinLink = {
 type PaidCustomerKeys = {
   userIds: string[];
   sessionIds: string[];
+};
+
+type LinkedOrderWithUpdatedAt = LinkedOrder & {
+  updatedAt: Date;
+};
+
+type LinkCandidate = {
+  id: string;
+  userId: string | null;
+  sessionId: string | null;
 };
 
 export async function getRecentViews(
@@ -126,6 +146,260 @@ export async function getRecentViews(
     })),
     total,
   };
+}
+
+export async function getIpGroups(
+  f: TrafficFilters,
+  page: number,
+  pageSize = 50,
+): Promise<{ rows: IpGroupRow[]; total: number; ungroupedViews: number }> {
+  const where = await buildPageViewWhere(f);
+  const groupedWhere = andPageViewWhere(where, { ip: { not: null } });
+  const safePage = Math.max(1, Math.floor(page) || 1);
+
+  const [groups, totalGroups, ungroupedViews] = await Promise.all([
+    prisma.pageView.groupBy({
+      by: ["ip"],
+      where: groupedWhere,
+      _count: { _all: true },
+      _min: { createdAt: true },
+      _max: { createdAt: true },
+      orderBy: { _max: { createdAt: "desc" } },
+      skip: (safePage - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.pageView.groupBy({
+      by: ["ip"],
+      where: groupedWhere,
+      _count: { _all: true },
+    }),
+    prisma.pageView.count({ where: andPageViewWhere(where, { ip: null }) }),
+  ]);
+
+  const ips = groups.map((group) => group.ip).filter((ip): ip is string => Boolean(ip));
+  if (ips.length === 0) {
+    return { rows: [], total: totalGroups.length, ungroupedViews };
+  }
+
+  const pageWhere = andPageViewWhere(where, { ip: { in: ips } });
+  const [visitorGroups, countryGroups, cityGroups, deviceGroups, linkKeyGroups] = await Promise.all([
+    prisma.pageView.groupBy({
+      by: ["ip", "visitorId"],
+      where: pageWhere,
+      _count: { _all: true },
+    }),
+    prisma.pageView.groupBy({
+      by: ["ip", "country"],
+      where: andPageViewWhere(pageWhere, { country: { not: null } }),
+      _max: { createdAt: true },
+    }),
+    prisma.pageView.groupBy({
+      by: ["ip", "city"],
+      where: andPageViewWhere(pageWhere, { city: { not: null } }),
+      _max: { createdAt: true },
+    }),
+    prisma.pageView.groupBy({
+      by: ["ip", "device"],
+      where: andPageViewWhere(pageWhere, { device: { not: null } }),
+      _count: { _all: true },
+    }),
+    prisma.pageView.groupBy({
+      by: ["ip", "userId", "sessionId"],
+      where: pageWhere,
+      _count: { _all: true },
+    }),
+  ]);
+
+  const visitorIds = uniqueStrings(visitorGroups.map((group) => group.visitorId));
+  const visitors = await prisma.visitor.findMany({
+    where: { id: { in: visitorIds } },
+    select: { id: true, attrSource: true, isBot: true },
+  });
+
+  const visitorById = new Map(visitors.map((visitor) => [visitor.id, visitor]));
+  const groupVisitorIds = new Map<string, Set<string>>();
+  for (const group of visitorGroups) {
+    if (!group.ip) continue;
+    const set = groupVisitorIds.get(group.ip) ?? new Set<string>();
+    set.add(group.visitorId);
+    groupVisitorIds.set(group.ip, set);
+  }
+
+  const sourcesByIp = new Map<string, string[]>();
+  const botByIp = new Map<string, boolean>();
+  for (const [ip, ids] of Array.from(groupVisitorIds.entries())) {
+    const groupVisitors = Array.from(ids)
+      .map((id) => visitorById.get(id))
+      .filter((visitor): visitor is NonNullable<typeof visitor> => Boolean(visitor));
+    const sources = uniqueStrings(groupVisitors.map((visitor) => visitor.attrSource)).sort().slice(0, 3);
+    sourcesByIp.set(ip, sources);
+    botByIp.set(ip, groupVisitors.length > 0 && groupVisitors.every((visitor) => visitor.isBot));
+  }
+
+  const linkedByIp = await resolveIpGroupLinks(linkKeyGroups);
+  const countryByIp = mostRecentValueByIp(countryGroups, "country");
+  const cityByIp = mostRecentValueByIp(cityGroups, "city");
+  const devicesByIp = new Map<string, string[]>();
+  for (const group of deviceGroups) {
+    if (!group.ip || !group.device) continue;
+    const devices = devicesByIp.get(group.ip) ?? [];
+    devices.push(group.device);
+    devicesByIp.set(group.ip, devices);
+  }
+
+  return {
+    rows: groups.map((group) => ({
+      ip: group.ip!,
+      visitors: groupVisitorIds.get(group.ip!)?.size ?? 0,
+      views: group._count._all,
+      firstSeen: group._min.createdAt ?? group._max.createdAt ?? new Date(0),
+      lastSeen: group._max.createdAt ?? group._min.createdAt ?? new Date(0),
+      country: countryByIp.get(group.ip!) ?? null,
+      city: cityByIp.get(group.ip!) ?? null,
+      sources: sourcesByIp.get(group.ip!) ?? [],
+      devices: uniqueStrings(devicesByIp.get(group.ip!) ?? []).sort(),
+      isBot: botByIp.get(group.ip!) ?? false,
+      linked: linkedByIp.get(group.ip!) ?? null,
+    })),
+    total: totalGroups.length,
+    ungroupedViews,
+  };
+}
+
+export async function getIpGroupDetail(ip: string): Promise<{
+  ip: string;
+  visitors: {
+    id: string;
+    firstSeenAt: Date;
+    lastSeenAt: Date;
+    pageViews: number;
+    isBot: boolean;
+    device: string | null;
+    userAgent: string | null;
+    source: string | null;
+    medium: string | null;
+    userId: string | null;
+  }[];
+  views: { id: string; createdAt: Date; path: string; referrer: string | null; visitorId: string; device: string | null }[];
+  orders: LinkedOrder[];
+  country: string | null;
+  city: string | null;
+} | null> {
+  const visitorGroups = await prisma.pageView.groupBy({
+    by: ["visitorId"],
+    where: { ip },
+    _count: { _all: true },
+    _min: { createdAt: true },
+    _max: { createdAt: true },
+    orderBy: { _max: { createdAt: "desc" } },
+  });
+  if (visitorGroups.length === 0) return null;
+
+  const visitorIds = visitorGroups.map((group) => group.visitorId);
+  const [visitors, deviceGroups, views, countryGroups, cityGroups, linkKeyGroups] = await Promise.all([
+    prisma.visitor.findMany({
+      where: { id: { in: visitorIds } },
+      select: {
+        id: true,
+        isBot: true,
+        userAgent: true,
+        attrSource: true,
+        attrMedium: true,
+        userId: true,
+        lastSessionId: true,
+      },
+    }),
+    prisma.pageView.groupBy({
+      by: ["visitorId", "device"],
+      where: { ip, device: { not: null } },
+      _max: { createdAt: true },
+    }),
+    prisma.pageView.findMany({
+      where: { ip },
+      select: { id: true, createdAt: true, path: true, referrer: true, visitorId: true, device: true },
+      orderBy: { createdAt: "desc" },
+      take: 500,
+    }),
+    prisma.pageView.groupBy({
+      by: ["ip", "country"],
+      where: { ip, country: { not: null } },
+      _max: { createdAt: true },
+    }),
+    prisma.pageView.groupBy({
+      by: ["ip", "city"],
+      where: { ip, city: { not: null } },
+      _max: { createdAt: true },
+    }),
+    prisma.pageView.groupBy({
+      by: ["userId", "sessionId"],
+      where: { ip },
+      _count: { _all: true },
+    }),
+  ]);
+
+  const visitorById = new Map(visitors.map((visitor) => [visitor.id, visitor]));
+  const deviceByVisitorId = mostRecentDeviceByVisitor(deviceGroups);
+  const linkCandidates: LinkCandidate[] = [
+    ...linkKeyGroups.map((group, index) => ({
+      id: `view-key-${index}`,
+      userId: group.userId,
+      sessionId: group.sessionId,
+    })),
+    ...visitors.map((visitor) => ({
+      id: `visitor-key-${visitor.id}`,
+      userId: visitor.userId,
+      sessionId: visitor.lastSessionId,
+    })),
+  ];
+  const orders = dedupeLinkedOrders(Array.from((await resolveLinkedOrdersWithUpdatedAt(linkCandidates)).values()));
+
+  return {
+    ip,
+    visitors: visitorGroups.map((group) => {
+      const visitor = visitorById.get(group.visitorId);
+      return {
+        id: group.visitorId,
+        firstSeenAt: group._min.createdAt ?? group._max.createdAt ?? new Date(0),
+        lastSeenAt: group._max.createdAt ?? group._min.createdAt ?? new Date(0),
+        pageViews: group._count._all,
+        isBot: visitor?.isBot ?? false,
+        device: deviceByVisitorId.get(group.visitorId) ?? null,
+        userAgent: visitor?.userAgent ?? null,
+        source: visitor?.attrSource ?? null,
+        medium: visitor?.attrMedium ?? null,
+        userId: visitor?.userId ?? null,
+      };
+    }),
+    views,
+    orders,
+    country: mostRecentValueByIp(countryGroups, "country").get(ip) ?? null,
+    city: mostRecentValueByIp(cityGroups, "city").get(ip) ?? null,
+  };
+}
+
+export async function getIpVisitorCounts(
+  f: TrafficFilters,
+  ips: string[],
+): Promise<Map<string, number>> {
+  const uniqueIps = uniqueStrings(ips);
+  if (uniqueIps.length === 0) return new Map();
+
+  const where = await buildPageViewWhere(f);
+  const groups = await prisma.pageView.groupBy({
+    by: ["ip", "visitorId"],
+    where: andPageViewWhere(where, { ip: { in: uniqueIps } }),
+    _count: { _all: true },
+  });
+
+  const visitorsByIp = new Map<string, Set<string>>();
+  for (const group of groups) {
+    if (!group.ip) continue;
+    const set = visitorsByIp.get(group.ip) ?? new Set<string>();
+    set.add(group.visitorId);
+    visitorsByIp.set(group.ip, set);
+  }
+
+  return new Map(Array.from(visitorsByIp, ([ip, visitorIds]) => [ip, visitorIds.size]));
 }
 
 export async function getTrafficSummary(f: TrafficFilters): Promise<TrafficSummary> {
@@ -394,7 +668,46 @@ async function getPaidCustomerKeys(): Promise<PaidCustomerKeys> {
   return { userIds: Array.from(userIds), sessionIds: Array.from(sessionIds) };
 }
 
-async function resolveLinkedOrders(views: PageViewWithVisitor[]): Promise<Map<string, LinkedOrder>> {
+async function resolveIpGroupLinks(
+  groups: { ip: string | null; userId: string | null; sessionId: string | null }[],
+): Promise<Map<string, LinkedOrder>> {
+  const candidates = groups
+    .filter((group): group is { ip: string; userId: string | null; sessionId: string | null } => Boolean(group.ip))
+    .map((group, index) => ({
+      id: `ip-link-${index}`,
+      ip: group.ip,
+      userId: group.userId,
+      sessionId: group.sessionId,
+    }));
+  const resolved = await resolveLinkedOrdersWithUpdatedAt(candidates);
+  const byIp = new Map<string, LinkedOrderWithUpdatedAt>();
+
+  for (const candidate of candidates) {
+    const linked = resolved.get(candidate.id);
+    if (!linked) continue;
+    const current = byIp.get(candidate.ip);
+    if (!current || linked.updatedAt > current.updatedAt) byIp.set(candidate.ip, linked);
+  }
+
+  return new Map(
+    Array.from(byIp, ([ip, linked]) => [
+      ip,
+      { kind: linked.kind, id: linked.id, label: linked.label, status: linked.status },
+    ]),
+  );
+}
+
+async function resolveLinkedOrders(views: LinkCandidate[]): Promise<Map<string, LinkedOrder>> {
+  const linkedWithDates = await resolveLinkedOrdersWithUpdatedAt(views);
+  return new Map(
+    Array.from(linkedWithDates, ([id, linked]) => [
+      id,
+      { kind: linked.kind, id: linked.id, label: linked.label, status: linked.status },
+    ]),
+  );
+}
+
+async function resolveLinkedOrdersWithUpdatedAt(views: LinkCandidate[]): Promise<Map<string, LinkedOrderWithUpdatedAt>> {
   const userIds = uniqueStrings(views.map((view) => view.userId));
   const sessionIds = uniqueStrings(views.map((view) => view.sessionId));
 
@@ -432,7 +745,7 @@ async function resolveLinkedOrders(views: PageViewWithVisitor[]): Promise<Map<st
   const einByUser = firstBy(einApplications, (app) => app.userId);
   const itinByUser = firstBy(itinApplications, (app) => app.userId);
 
-  const linked = new Map<string, LinkedOrder>();
+  const linked = new Map<string, LinkedOrderWithUpdatedAt>();
   for (const view of views) {
     const filing = (view.userId ? filingByUser.get(view.userId) : undefined)
       ?? (view.sessionId ? filingBySession.get(view.sessionId) : undefined);
@@ -442,6 +755,7 @@ async function resolveLinkedOrders(views: PageViewWithVisitor[]): Promise<Map<st
         id: filing.id,
         label: filing.llcName || "Filing",
         status: filing.status,
+        updatedAt: filing.updatedAt,
       });
       continue;
     }
@@ -454,6 +768,54 @@ async function resolveLinkedOrders(views: PageViewWithVisitor[]): Promise<Map<st
   }
 
   return linked;
+}
+
+function andPageViewWhere(...clauses: Prisma.PageViewWhereInput[]): Prisma.PageViewWhereInput {
+  return { AND: clauses };
+}
+
+function mostRecentValueByIp<K extends "country" | "city">(
+  groups: ({ ip: string | null; _max: { createdAt: Date | null } } & Record<K, string | null>)[],
+  key: K,
+): Map<string, string> {
+  const out = new Map<string, { value: string; createdAt: Date }>();
+  for (const group of groups) {
+    const ip = group.ip;
+    const value = group[key];
+    const createdAt = group._max.createdAt;
+    if (!ip || !value || !createdAt) continue;
+    const current = out.get(ip);
+    if (!current || createdAt > current.createdAt) out.set(ip, { value, createdAt });
+  }
+  return new Map(Array.from(out, ([ip, row]) => [ip, row.value]));
+}
+
+function mostRecentDeviceByVisitor(
+  groups: { visitorId: string; device: string | null; _max: { createdAt: Date | null } }[],
+): Map<string, string> {
+  const out = new Map<string, { value: string; createdAt: Date }>();
+  for (const group of groups) {
+    if (!group.device || !group._max.createdAt) continue;
+    const current = out.get(group.visitorId);
+    if (!current || group._max.createdAt > current.createdAt) {
+      out.set(group.visitorId, { value: group.device, createdAt: group._max.createdAt });
+    }
+  }
+  return new Map(Array.from(out, ([visitorId, row]) => [visitorId, row.value]));
+}
+
+function dedupeLinkedOrders(orders: LinkedOrderWithUpdatedAt[]): LinkedOrder[] {
+  const deduped = new Map<string, LinkedOrderWithUpdatedAt>();
+  for (const order of orders.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())) {
+    const key = `${order.kind}:${order.id}`;
+    if (!deduped.has(key)) deduped.set(key, order);
+  }
+  return Array.from(deduped.values()).map((order) => ({
+    kind: order.kind,
+    id: order.id,
+    label: order.label,
+    status: order.status,
+  }));
 }
 
 function uniqueStrings(values: Array<string | null | undefined>): string[] {
@@ -469,10 +831,10 @@ function firstBy<T>(rows: T[], key: (row: T) => string | null | undefined): Map<
   return map;
 }
 
-function mostRecentApplication(ein?: EinLink, itin?: ItinLink): LinkedOrder | null {
+function mostRecentApplication(ein?: EinLink, itin?: ItinLink): LinkedOrderWithUpdatedAt | null {
   if (!ein && !itin) return null;
   if (ein && (!itin || ein.updatedAt >= itin.updatedAt)) {
-    return { kind: "ein", id: ein.id, label: ein.llcName, status: ein.status };
+    return { kind: "ein", id: ein.id, label: ein.llcName, status: ein.status, updatedAt: ein.updatedAt };
   }
-  return { kind: "itin", id: itin!.id, label: itin!.fullName, status: itin!.status };
+  return { kind: "itin", id: itin!.id, label: itin!.fullName, status: itin!.status, updatedAt: itin!.updatedAt };
 }

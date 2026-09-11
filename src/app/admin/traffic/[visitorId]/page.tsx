@@ -6,9 +6,11 @@ import { StatusBadge } from "../../filings/StatusBadge";
 import { CountryFlag } from "../CountryFlag";
 import { isAdmin } from "@/lib/admin/auth";
 import { formatAttribution } from "@/lib/attribution";
-import { getVisitorDetail } from "@/lib/admin/traffic";
+import { getIpGroupDetail, getVisitorDetail } from "@/lib/admin/traffic";
 
 export const dynamic = "force-dynamic";
+const IP_GROUPING_CAVEAT =
+  "Grouping is approximate: people behind office networks, mobile carriers or VPNs can share an IP, and one person's IP can change between visits.";
 
 export async function generateMetadata({ params }: { params: { visitorId: string } }): Promise<Metadata> {
   return { title: `Visitor ${params.visitorId.slice(0, 8)} · Traffic · Admin` };
@@ -25,6 +27,8 @@ export default async function AdminTrafficVisitorPage({
   if (!detail) notFound();
 
   const { visitor, views, filings, applications } = detail;
+  const ipDetail = visitor.ip ? await getIpGroupDetail(visitor.ip) : null;
+  const siblingBrowsers = ipDetail?.visitors.filter((ipVisitor) => ipVisitor.id !== visitor.id) ?? [];
   const attribution = formatAttribution({
     source: visitor.attrSource,
     medium: visitor.attrMedium,
@@ -72,6 +76,48 @@ export default async function AdminTrafficVisitorPage({
           <Fact label="Last session" value={visitor.lastSessionId ? <span className="font-mono">{visitor.lastSessionId}</span> : "—"} />
         </div>
       </div>
+
+      {visitor.ip && siblingBrowsers.length > 0 ? (
+        <div className="mb-6 rounded-lg border border-slate-200 bg-white">
+          <div className="border-b border-slate-200 px-5 py-4">
+            <h2 className="text-sm font-semibold text-slate-900">Other browsers on this IP</h2>
+            <p className="mt-1 text-xs text-slate-500">{IP_GROUPING_CAVEAT}</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[720px] text-sm">
+              <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold">Visitor</th>
+                  <th className="px-4 py-3 text-left font-semibold">First seen</th>
+                  <th className="px-4 py-3 text-left font-semibold">Last seen</th>
+                  <th className="px-4 py-3 text-left font-semibold">Page views</th>
+                  <th className="px-4 py-3 text-left font-semibold">Device</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {siblingBrowsers.map((sibling) => (
+                  <tr key={sibling.id} className="hover:bg-slate-50">
+                    <td className="px-4 py-3">
+                      <Link href={`/admin/traffic/${sibling.id}`} className="font-mono text-xs text-accent hover:underline">
+                        {shortId(sibling.id)}
+                      </Link>
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-xs text-slate-500">{formatFullDate(sibling.firstSeenAt)}</td>
+                    <td className="whitespace-nowrap px-4 py-3 text-xs text-slate-500">{formatFullDate(sibling.lastSeenAt)}</td>
+                    <td className="px-4 py-3 tabular-nums text-slate-700">{sibling.pageViews}</td>
+                    <td className="px-4 py-3 text-slate-600">{sibling.device ?? "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="border-t border-slate-100 px-5 py-4">
+            <Link href={ipHref(visitor.ip)} className="text-sm font-medium text-accent hover:underline">
+              View all activity on this IP →
+            </Link>
+          </div>
+        </div>
+      ) : null}
 
       <div className="mb-6 rounded-lg border border-slate-200 bg-white">
         <div className="border-b border-slate-200 px-5 py-4">
@@ -129,7 +175,7 @@ export default async function AdminTrafficVisitorPage({
                     {view.referrer ?? "—"}
                   </span>
                 </td>
-                <td className="px-4 py-3 font-mono text-xs text-slate-600">{view.ip ?? "—"}</td>
+                <td className="px-4 py-3 font-mono text-xs text-slate-600">{view.ip ?? "IP expired"}</td>
                 <td className="px-4 py-3 text-slate-600">{view.city ?? "—"}</td>
               </tr>
             ))}
@@ -189,6 +235,14 @@ function OrderRow({
 
 function latestDevice(views: { device: string | null }[]): string | null {
   return views.find((view) => view.device)?.device ?? null;
+}
+
+function shortId(id: string): string {
+  return id.slice(0, 8);
+}
+
+function ipHref(ip: string): string {
+  return `/admin/traffic/ip/${encodeURIComponent(ip)}`;
 }
 
 function formatFullDate(date: Date): string {
