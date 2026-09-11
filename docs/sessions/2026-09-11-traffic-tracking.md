@@ -74,7 +74,11 @@ Architect fixes on top of the lane: (1) the visitor drill-down no longer hard-co
 date (it used `toISOString().slice(0,10)`, which drifted the From box one day per resubmit east of
 Greenwich).
 
-WAVE_B_DEPLOY_PLACEHOLDER
+Deploy: guarded watch → Ready; unauthenticated `/admin/traffic` → 307 to login. Production check from
+the owner's admin session: the page shows the two page views generated from the in-app browser during
+the wave-A check (KR / Seo-gu, IP 211.34.200.10, `/pricing` then `/faq`, Direct, desktop, one visitor)
+— summary cards 1 / 1 / 2 / 0, top country KR, top pages /faq and /pricing. End-to-end capture → storage
+→ admin display verified with real traffic.
 
 ## Follow-ups (agent)
 
