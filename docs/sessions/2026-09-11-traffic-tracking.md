@@ -89,3 +89,30 @@ the wave-A check (KR / Seo-gu, IP 211.34.200.10, `/pricing` then `/faq`, Direct,
 - Definition of "paid customer" in `traffic.ts` = filing status PAID…CONFIRMED or `stripePaymentId`
   set; applications `paidAt`/`stripePaymentId`/`amountPaid > 0`. Matches the supersede rule's notion
   (excludes FAILED); keep them aligned if either changes.
+
+## Shipped — IP grouping
+
+Commit `558ed5b`. `/admin/traffic?view=ips` lists one row per IP (browsers, page views, sources,
+devices, first/last seen, linked order); `/admin/traffic/ip/[ip]` shows the group's browsers, combined
+timeline and deduplicated orders; the page-view list marks shared IPs (`+N`) and links the IP; the
+visitor page lists sibling browsers on the same IP.
+
+**Design constraint, deliberate:** grouping keys on the raw `ip` ONLY. `ipHash` is not used as a
+fallback — `TRAFFIC_IP_SALT` is unset in production (so it is always null) and, were it set later,
+mixing the two key spaces would split a visitor across the 30-day boundary where `ip` is nulled.
+Consequence, surfaced in the UI rather than hidden: views older than 30 days cannot be grouped and are
+reported as "N older page views are not grouped". Both grouped surfaces carry the verbatim caveat that
+office networks / mobile carriers / VPNs share an IP and one person's IP can change.
+
+Query plan (verified by reading, not by the lane's claim): 3 + 5 grouped queries + 1 visitor fetch +
+1 batched order resolution ≈ 10 fixed queries per page, independent of row count. No N+1.
+
+Verified personally: `tsc` clean, vitest **249** (244 + 5), build clean with `/admin/traffic`,
+`/admin/traffic/[visitorId]` and `/admin/traffic/ip/[ip]` all present — the sibling dynamic segments
+do not collide.
+
+IP_GROUP_DEPLOY_PLACEHOLDER
+
+**Lane note:** the codex lane was killed by an API rate limit before it could report, but the codex
+process had already finished writing all five files. The artifact was on disk, so it was verified
+directly instead of re-dispatching — check the working tree before retrying a failed lane.
