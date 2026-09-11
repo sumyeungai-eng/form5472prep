@@ -82,7 +82,11 @@ Verified personally: `tsc` clean, vitest **256**, build clean; built HTML: HowTo
 steps 7/5/5/5, `id="step-1"` present, "Seven steps" rendered, rendered "no formation document to
 certify" intact.
 
-H1_DEPLOY_PLACEHOLDER
+Deploy: guarded watch → Ready. Live: HowTo=1 with 7/5/5/5 steps on `/`, `/ein`, `/itin`, `/partners`;
+step urls resolve to production anchors (e.g. `https://www.form5472prep.com/ein#step-1`; the homepage
+step url is `https://www.form5472prep.com#step-1` — no slash before the fragment, valid but worth a
+`path: "/"` normalisation later); `file-form-5472` HowTo `totalTime` PT10M with 10 steps; three-check
+unchanged.
 
 ## Still open
 
