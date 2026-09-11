@@ -2,7 +2,7 @@
 
 ## Status
 
-Five articles and original hero images completed using the requested Codex Orchestration skill, the sales-blog-geo-aeo workflow and built-in image generation. Release/live evidence will be appended after the Git-linked deployment. This file is a handoff, not an instruction to resend or rewrite existing content.
+Published and checked on September 11, 2026. Five articles and original hero images completed using the requested Codex Orchestration skill, the sales-blog-geo-aeo workflow and built-in image generation. All five public articles, images, metadata and discovery paths passed. This file is a handoff, not an instruction to resend or rewrite existing content.
 
 ## Ownership
 
@@ -41,6 +41,24 @@ No search-volume, demand, low-competition, rankings, indexing, AI citation or sa
 - Desktop hero inspected; mobile 390×844 layout inspected on all five, with the loan-table fix described above. Final checks recorded below after release.
 
 Production must remain `origin/main` deployed by `git push origin main` only. Do not use a Vercel production CLI deployment. Hybrid blog database entries can override/hide filesystem posts; public URL checks are required after alias promotion.
+
+### Clean release verification
+
+Scoped content commit `aa9c996` (`0da36ae..aa9c996`) contains exactly the 14 owned files. Pushed to origin/main successfully. No uncommitted email work was included.
+
+A final shared-tree build encountered an unrelated in-progress email API signature error (`amountPaidCents` missing in `scripts/preview-emails.ts`). Instead of editing that session's files, created a detached temporary verification worktree at `/tmp/form5472-uncommon-release.VwLy9y`, pinned to `aa9c996`. Existing dependencies and local environment were symlinked, without exposing or committing secrets. The isolated exact-release build exited 0 and printed Compiled successfully; log: `/tmp/form5472-uncommon-isolated-build-20260911.log`. Isolated TypeScript exited 0; isolated Vitest passed 217 tests in 14 files. This verifies the released tree independently from the active email edits.
+
+Final local batch verification passed at `2026-09-11T07:09:28.224Z`. All five pages, matching images, six unique body-internal destinations, index, sitemap and feed passed. All 13 unique external source URLs separately returned HTTP 200. Final loan table confirmed three columns and document width 390 at viewport 390×844, no horizontal overflow; viewport reset. The verifier initially rejected port 3001 because the local environment's canonical is localhost:3000; reran the isolated server at its configured origin and passed, without changing site metadata.
+
+### Production evidence
+
+Git-linked deployment `dpl_DMoEUUmV9H69pi33rbhmbR8Qrz8g`, `https://form5472prep-3030dlaea-form5472prep.vercel.app`, reached **Ready** and was aliased to `https://www.form5472prep.com`. No production CLI deploy was used.
+
+Live batch verifier passed at **2026-09-11T07:11:11.403Z** (September 11, 16:11 Asia/Seoul): all five articles HTTP 200; expected titles and one H1; visible September 11 date; correct www canonical; no noindex; decision tables; Article dates and three-question FAQ schema; all five WebP files HTTP 200 and image/webp; six unique body-internal destinations HTTP 200; all five in /blog, /sitemap.xml and /feed.xml; robots did not block the blog.
+
+All three production markers passed together after deployment: empty EIN checkout POST **400**, /ein/apply **200** with **Owner date of birth**, penalty calculator **200**. The empty validation probe did not create a valid application or checkout. Production browser inspection confirmed the spouse-election title, canonical, visible date and loaded hero.
+
+The final handoff update is documentation-only, following the verified content deployment. There are no publication steps remaining for these five articles. Successful public checks do not prove search indexing, AI citations or conversions. No production database query or migration was attempted.
 
 ## Separate follow-ups (not changed)
 
