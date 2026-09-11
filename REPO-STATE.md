@@ -142,6 +142,9 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
 - `docs/sessions/2026-09-11-traffic-tracking.md` — first-party visitor log: `/api/session/ping` beacon,
   `Visitor`/`PageView` models, 30/90-day retention cron, `/admin/traffic`. **Read its "Contracts"
   section before touching the beacon, attribution or retention.**
+- `docs/sessions/2026-09-11-geo-aeo-platform-sprint.md` — GEO/AEO sprint: `pageMeta()` (OG + Twitter +
+  canonical + RSS on every page), blog OG images fixed, one `organizationNode()` everywhere; Brand Kit +
+  Reddit playbook in `docs/marketing/`; HowTo and question-heading waves follow
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
