@@ -1,0 +1,36 @@
+# 2026-09-11 — Confirmation emails: review + admin test-email endpoint
+
+## Ownership
+
+| File | Change |
+|---|---|
+| `src/app/api/admin/test-email/route.ts` | NEW — `POST { to, templates? }`, admin-gated, sends the order / EIN / ITIN confirmation emails with fake sample data to a named address |
+
+Nothing else touched. Commit `e39918d` on `main`; deployed (route 404 → 401 marker, valid because a brand-new route cannot pre-exist).
+
+## Why the endpoint exists
+
+`RESEND_API_KEY` is marked sensitive in Vercel and `.env.local` holds an empty value, so no email can be
+sent from a laptop. Reviewing copy in a real inbox (Gmail/Apple Mail render differently from a local
+HTML preview) therefore needs a production-side sender. The route reads no real filing/application
+and never marks anything as sent, so it cannot leak customer data or disturb the Stripe-driven flow.
+
+Triggered 2026-09-11 from the owner's signed-in admin session: `{"to":"hkdcec@gmail.com","sent":["order","ein","itin"],"failed":[]}`.
+
+## Finding — EIN/ITIN confirmation copy is stale (owner decision pending)
+
+`sendEinApplicationConfirmationEmail` (`src/lib/email.ts:1473`) and `sendItinApplicationConfirmationEmail`
+(`:1562`) still say "Our team will reach out within 1 business day with a document checklist **and payment
+link**" — but since 2026-09-02 applicants pay at submission and these emails are only sent by
+`notifyApplicationPaid` AFTER payment. Every applicant now reads a promise of a payment link right after
+paying $149 / $349. Both emails also omit the amount paid, a receipt link and any "what happens next"
+steps, unlike the filing order confirmation (`sendOrderConfirmationEmail`, `:422`), which is in good shape.
+
+Proposed rewrite (not started): mirror the filing email — confirm what was paid, plain next steps with
+the timelines already published on `/ein` (SS-4 by fax, IRS 1–5 business days) and `/itin` (checklist →
+CAA certification → W-7, IRS 6–11 weeks), portal link. No new claims.
+
+## Still open
+
+- Owner: approve the EIN/ITIN rewrite above (drafts on request).
+- Owner: confirm the three test emails rendered correctly in hkdcec@gmail.com (Gmail) — logo, spacing, links.
