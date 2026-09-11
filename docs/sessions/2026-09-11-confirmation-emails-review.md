@@ -55,4 +55,6 @@ not pass otherwise (call site of the changed signatures) — disclosed, minimal,
 with a session-specific absolute path and a copy-out block; removed before commit (a lane must never
 commit paths from its own scratch space).
 
-EMAIL_DEPLOY_PLACEHOLDER
+Deploy: watched the deployment object (newer than the pre-push one) to Ready. Test copies of both new
+emails sent to hkdcec@gmail.com from the owner's admin session via `/api/admin/test-email`:
+`{"sent":["ein","itin"],"failed":[]}`. Owner to confirm inbox rendering.
