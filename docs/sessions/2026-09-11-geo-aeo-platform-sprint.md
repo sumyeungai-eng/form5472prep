@@ -44,7 +44,16 @@ Copy invariance: 544 rendered title/og:title/og:description strings byte-identic
 
 ## Deploy
 
-DEPLOY_PLACEHOLDER
+Metadata wave `80da4f5` → Ready. Live: `/pricing` has the RSS `<link>` and `twitter:title` == `og:title`;
+`/` Organization node carries `knowsAbout`; three-check unchanged.
+
+**The blog OG image was still 404 after that deploy.** Second half of the bug, found by following the page's
+own `og:image` tag on production: Next 14 serves a file-convention image under a dynamic segment at a HASHED
+url (`/blog/<slug>/opengraph-image-yqks0s?<id>`), and the blog page's `generateMetadata` hand-wrote the
+unhashed path. Fixed in `c3b1709` by omitting `images` from the blog page's openGraph/twitter so Next
+injects the real url. Live after deploy: `what-is-form-5472` and `form-5472-ein-pending-deadline` both
+advertise the hashed url → 200 `image/png`, 1200×630 (73–78 KB). Lesson recorded in doctrine: verify the
+url the page advertises, never the build artifact.
 
 ## Still open
 
