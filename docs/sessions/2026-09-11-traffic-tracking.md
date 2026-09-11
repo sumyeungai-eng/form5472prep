@@ -42,7 +42,9 @@ Architect fixes on top of the lane's work: privacy paragraph moved after the lis
 into; `crypto.randomUUID()` for the visitor key; `getCurrentUserId()` instead of a `getCurrentUser()`
 DB hit per page view; one redundant expression.
 
-WAVE_A_DEPLOY_PLACEHOLDER
+Deploy: guarded watch (deployment newer than the pre-push one) → Ready; build log:
+`Applying migration 20260911120000_visitor_tracking` → `All migrations have been successfully applied.`;
+`POST /api/session/ping {"p":"/pricing"}` → 204 on production.
 
 ## Contracts a future editor must respect
 
