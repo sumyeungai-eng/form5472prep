@@ -2,11 +2,9 @@
 
 Owner-executed only. Every fact below traces to `src/lib/faq.ts` (51 Q&As, last reviewed 2026-09-06). No tax claims beyond that file. Brand name is exactly **Form5472 Prep**. Not a CPA firm, no tax advice, not a CAA — the company forwards ITIN work to an IRS-authorized Certifying Acceptance Agent.
 
-## IMPORTANT — a research limitation you need to know before using Part 1
+## Note — thread sourcing (2026-09-11)
 
-This session tried to pull real Reddit thread titles/URLs/dates via `WebSearch` and `WebFetch` (including `site:reddit.com` queries, Reddit's own `.json` search endpoint, Google, Bing, DuckDuckGo, and the Wayback Machine as a fallback). **Every route to reddit.com and to web.archive.org returned a hard block** ("Claude Code is unable to fetch from www.reddit.com" / same for `old.reddit.com` and `web.archive.org`), and general web search never surfaced a single actual reddit.com URL even without the `site:` filter — the search backend appears not to index or return Reddit at all in this environment. `subredditstats.com` loaded, but its subscriber numbers are rendered by JavaScript the fetch tool doesn't execute, so no live counts came through either.
-
-Given the explicit constraint not to invent URLs, subscriber counts, or thread titles, I did not fabricate any of the three. What follows is: (a) a subreddit shortlist built from stable, well-documented community knowledge — each one flagged as unverified-this-session and worth a quick reread before you post — and (b) a 15-minute manual protocol so *you*, with a normal logged-in browser, can find the real threads this session could not reach. Part 2's answers are written as ready-to-paste templates keyed to the five recurring question patterns, not to a specific verified thread — none exists yet in this file. Paste the real thread URL into each template's `[TARGET]` line once you've run the protocol below.
+The threads in Part 1 and Part 2 below were located by the architect on 2026-09-11 via Google `site:reddit.com` searches filtered to the last 2 years, run in the owner's own logged-in browser (this session still has no live Reddit or web access). Comment counts shown are Google's snippet values, not live counts. **Open each thread before posting** to confirm it's still open, still unanswered or thinly-answered, and that the comment count hasn't moved — Google's snapshot can lag the live thread.
 
 ## Part 1 — Subreddit shortlist (verify before posting)
 
@@ -20,6 +18,68 @@ All subscriber sizes below are rough order-of-magnitude, unverified this session
 | r/Entrepreneur | Very large (multi-million) | Strict-ish — self-promotion rule exists; substance-first comments survive, pure plugs get removed. |
 | r/USExpatTaxes | Small/niche (likely under ~20k) | Moderate — community includes working preparers who disclose their firm; disclosed bias is the norm here, not the exception. |
 | r/digitalnomad | Large (several hundred thousand+) | Moderate — general anti-spam rule; occasional disclosed mention inside a substantive answer is common. |
+
+### Threads found (2026-09-11)
+
+Real threads, per subreddit, from the Google `site:reddit.com` pass described above. Comments = Google's snippet value; recheck live before posting.
+
+**r/tax**
+
+| Title | URL | Comments (snippet) | Suggested use |
+|---|---|---|---|
+| HELP! FOREIGN-OWNED U.S. LLC! FORM 5472 or … | https://www.reddit.com/r/tax/comments/1qfh31c/ | 20+ | Next-5 target |
+| How to fax Form 5472 to the IRS for free (Foreign-owned …) | https://www.reddit.com/r/tax/comments/1rsfrxg/ | 2 | Background — how-to, low priority |
+| From resident to non-resident LLC owner, just discovered … | https://www.reddit.com/r/tax/comments/1tybasp/ | 8 | Background — edge case, monitor |
+| owe multiple years of unfiled Form 5472, just found out … | https://www.reddit.com/r/tax/comments/1ud244u/ | 10+ | Duplicate of the Template 5 target (same thread cross-posted from r/USExpatTaxes) |
+| reportable transactions in form 5472 | https://www.reddit.com/r/tax/comments/1lxziua/ | 9 | Next-5 target |
+| Non-Resident US LLC Owner, Is my understanding correct? | https://www.reddit.com/r/tax/comments/1lqrx8i/ | unlisted — recheck live | Background — general understanding-check |
+
+**r/smallbusiness**
+
+| Title | URL | Comments (snippet) | Suggested use |
+|---|---|---|---|
+| Foreign-owned C Corp (not LLC) - missed Form 5472 for … | https://www.reddit.com/r/smallbusiness/comments/1skyvuu/ | 10+ | Out of scope — C-corp, note only, do not answer |
+| Foreign-owned Wyoming LLC – didn't file Form 5472 for 2 … | https://www.reddit.com/r/smallbusiness/comments/1nl5ef9/ | 10+ | Next-5 target |
+| 25 000$ penalty…IRS FORM 5472, and 1120 for non US- … | https://www.reddit.com/r/smallbusiness/comments/1rnhp7n/ | 10+ | Background — duplicate $25k-penalty framing |
+
+**r/llc**
+
+| Title | URL | Comments (snippet) | Suggested use |
+|---|---|---|---|
+| How the hell do I file Form 5472 + 1120 as a non-US … | https://www.reddit.com/r/llc/comments/1jv144z/ | 10+ | Next-5 target |
+| Do I really need to file Form 5472 + pro forma 1120 for a … | https://www.reddit.com/r/llc/comments/1l5f76n/ | 20+ | Template 1 target ("no income / still file") |
+| 25 000$ penalty, IRS FORM 5472 and 1120 for non US … | https://www.reddit.com/r/llc/comments/1rnhu31/ | 20+ | Background — duplicate $25k-penalty framing |
+| Can foreign own LLC get their EIN through call from IRS … | https://www.reddit.com/r/llc/comments/1knkfbh/ | 11 answers | Template 3 target ("EIN without SSN") |
+| ITIN number for non residents that solely own an LLC. Mine … | https://www.reddit.com/r/llc/comments/1nr4ovm/ | unlisted — recheck live | Template 4 target ("ITIN vs EIN") |
+| Individual Taxpayer Identification Number (ITIN) - US LLC … | https://www.reddit.com/r/llc/comments/1ol2m00/ | unlisted — recheck live | Background — duplicate of the Template 4 target |
+| LLC for a non us-resident | https://www.reddit.com/r/llc/comments/1gtc9uw/ | unlisted — recheck live | Background — general formation, low priority |
+
+**r/Entrepreneur**
+
+No threads located in this pass — rerun the Google `site:reddit.com` query scoped to this subreddit before posting here.
+
+**r/USExpatTaxes**
+
+| Title | URL | Comments (snippet) | Suggested use |
+|---|---|---|---|
+| owe multiple years of unfiled Form 5472, just found out … Has anyone actually gotten the penalty abated? | https://www.reddit.com/r/USExpatTaxes/comments/1ud26an/ | 20+ | Template 5 target ("missed deadline / multiple years") |
+
+**r/digitalnomad**
+
+| Title | URL | Comments (snippet) | Suggested use |
+|---|---|---|---|
+| Top 10 Mistakes I See Often on IRS Form 5472 for Foreign-… | https://www.reddit.com/r/digitalnomad/comments/1roptr2/ | 10+ | Read only — a competitor/advisor's own post, do not answer |
+| Forgot to file Form 5472 for foreign-owned US LLCs? What … | https://www.reddit.com/r/digitalnomad/comments/1tckvny/ | 10+ | Next-5 target |
+| Opening an LLC in the US as an international | https://www.reddit.com/r/digitalnomad/comments/1najtzr/ | unlisted — recheck live | Background — general LLC-opening question, low priority |
+
+**Also seen** — same search surfaced these one-off subreddits; not in the shortlist above, no self-promo rule summarized, confirm live before using:
+
+- r/IRS — [Am I Subject to the $25000 Penalty for Late Form 5472?](https://www.reddit.com/r/IRS/comments/1lvgcmo/) — 7 comments — Template 2 target ("$25k penalty").
+- r/ITIN — [Non-US resident with 2-year-old LLC, EIN + ITIN. How to …](https://www.reddit.com/r/ITIN/comments/1ntrxo1/) — unlisted — background, adjacent to Template 4.
+- r/ecommerce — [Non-US citizen here, do I actually need an SSN to get …](https://www.reddit.com/r/ecommerce/comments/1pnjcnv/) — 21 comments — background, adjacent to Template 3.
+- r/legaltech — [A company says I, a non-resident with no SSN/ITIN, can …](https://www.reddit.com/r/legaltech/comments/1nrx5aw/) — unlisted — background, vendor-claim question, treat cautiously.
+- r/llc_life — [ITIN application for non resident single member LLC owner …](https://www.reddit.com/r/llc_life/comments/1rgqqz0/) — unlisted — background, adjacent to Template 4.
+- r/stripe — [Non-US resident here, need advice on forming a US LLC](https://www.reddit.com/r/stripe/comments/1mw4umq/) — unlisted — background, general formation, low priority.
 
 Two candidates from the brief were *not* added: r/nonresidentalien could not be confirmed to exist as an active subreddit in this session, and r/Fire is a FIRE/early-retirement community with no clear pattern of Form 5472 questions — don't spend time there without checking first.
 
@@ -38,11 +98,11 @@ Rules applied throughout: helpful first, 120–220 words, plain English, one bra
 
 ### Template 1 — "Do I need to file if my LLC made no money?" (fits r/tax)
 
-`[TARGET]`: paste the r/tax thread URL here once found.
+`[TARGET]`: https://www.reddit.com/r/llc/comments/1l5f76n/ — "Do I really need to file Form 5472 + pro forma 1120 for a …" (r/llc, Stripe Atlas Delaware SMLLC, 20+ comments).
 
-r/tax forbids self-promotion outright, so this is **no-brand only** — use it as posted, no second variant needed for this sub. If you reuse this same answer body on a more permissive sub later, see the disclosed variant below.
+This thread is on r/llc (moderate self-promo tolerance), not r/tax — the no-brand body below still works there as posted; use the disclosed variant if you post it. If you separately find/use an r/tax thread for this same pattern, this is **no-brand only** on that sub — no second variant needed.
 
-> No income and no reportable transaction are two different things, and that's the trap here. Form 5472 (with a pro forma Form 1120 attached) is triggered by *reportable transactions* — capital contributions, owner distributions, loans, reimbursements, even the money you wired in to open the LLC's bank account counts. So "we made $0" doesn't get you out of it if any of that happened during the year.
+> For a Stripe Atlas Delaware SMLLC with no income yet, the answer is usually still yes — no income and no reportable transaction are two different things, and that's the trap here. Form 5472 (with a pro forma Form 1120 attached) is triggered by *reportable transactions* — capital contributions, owner distributions, loans, reimbursements, even the money you wired in to open the LLC's bank account counts. So "we made $0" doesn't get you out of it if any of that happened during the year.
 >
 > If your LLC is a single-member LLC owned by a non-US person and it's treated as a disregarded entity, and any of those transactions occurred, you're filing Form 5472 + pro forma 1120, due the 15th day of the 4th month after year end (April 15 for calendar-year filers). It can't be e-filed for this filer type — fax or mail to the IRS only.
 >
@@ -52,9 +112,9 @@ Disclosed variant (for a sub where a service aside is tolerated, e.g. r/llc): ad
 
 ### Template 2 — "$25,000 penalty, just found out I never filed" (fits r/llc or r/USExpatTaxes)
 
-`[TARGET]`: paste the thread URL here.
+`[TARGET]`: https://www.reddit.com/r/IRS/comments/1lvgcmo/ — "Am I Subject to the $25000 Penalty for Late Form 5472?" (r/IRS, 7 comments).
 
-> The $25,000 number is real and it's not discretionary on the IRS's side — IRC §6038A(d) makes the initial penalty automatic when a reporting corporation doesn't furnish the required Form 5472 information on time or files an incomplete return. There's also effectively no statute of limitations until a complete or substantially complete return is filed — filing, even late, is what starts the clock.
+> Short answer: yes, if the return was late or incomplete, you're subject to it — the $25,000 number is real and it's not discretionary on the IRS's side — IRC §6038A(d) makes the initial penalty automatic when a reporting corporation doesn't furnish the required Form 5472 information on time or files an incomplete return. There's also effectively no statute of limitations until a complete or substantially complete return is filed — filing, even late, is what starts the clock.
 >
 > The standard remedy for a first-time miss is filing under DIIRSP (delinquent international information return procedures) with a reasonable cause statement attached. First-time late filers are frequently successful with reasonable-cause abatement when the facts support it, but there's no guarantee — it depends on your specific facts.
 >
@@ -62,11 +122,11 @@ Disclosed variant (for a sub where a service aside is tolerated, e.g. r/llc): ad
 
 ### Template 3 — "How do I get an EIN with no SSN/ITIN?" (fits r/smallbusiness — strict, no-brand)
 
-`[TARGET]`: paste the thread URL here.
+`[TARGET]`: https://www.reddit.com/r/llc/comments/1knkfbh/ — "Can foreign own LLC get their EIN through call from IRS …" (r/llc, 11 answers).
 
-No-brand version (required for r/smallbusiness):
+No-brand version (required for r/smallbusiness; also fine as-is on r/llc):
 
-> The IRS's online EIN tool only works if the responsible party already has a US SSN or ITIN — so if you're a non-resident without either, that tool is a dead end and it's not you doing anything wrong. The actual route is Form SS-4 filed by fax or phone, marking the responsible party's tax ID field "Foreign." It goes to the IRS's international unit rather than the general queue.
+> Calling the IRS is the wrong lever to pull here — the actual blocker is that the IRS's online EIN tool only works if the responsible party already has a US SSN or ITIN, so if you're a non-resident without either, that tool is a dead end and it's not you doing anything wrong. The actual route is Form SS-4 filed by fax or phone, marking the responsible party's tax ID field "Foreign." It goes to the IRS's international unit rather than the general queue.
 >
 > You do not need an SSN or ITIN to get the EIN itself — plenty of foreign-owned single-member LLCs operate for years on just the EIN and never need an ITIN at all (ITIN is a separate, personal tax ID, only relevant if you personally have a US filing requirement beyond the LLC). Typical turnaround once documents are in order is 1–5 business days, though more complex cases take longer.
 >
@@ -76,9 +136,9 @@ Disclosed variant (for r/USExpatTaxes or similar): after "never need an ITIN at 
 
 ### Template 4 — "ITIN vs EIN, do I need both?" (fits r/USExpatTaxes or r/digitalnomad)
 
-`[TARGET]`: paste the thread URL here.
+`[TARGET]`: https://www.reddit.com/r/llc/comments/1nr4ovm/ — "ITIN number for non residents that solely own an LLC. Mine …" (r/llc).
 
-> Short version: your LLC has an EIN, you as a person would have an ITIN (or SSN). They're not interchangeable and getting one doesn't require or guarantee the other. Most foreign-owned single-member LLC owners need the EIN — it's required for Form 5472's header, for opening a US bank account, for Stripe/PayPal, for hiring US contractors. Many of them never need an ITIN at all, because an ITIN only matters if you personally have to file or be identified on a US return for some other reason.
+> Short version for a sole non-resident owner: your LLC has an EIN, you as a person would have an ITIN (or SSN) — owning 100% of the LLC doesn't change that split. They're not interchangeable and getting one doesn't require or guarantee the other. Most foreign-owned single-member LLC owners need the EIN — it's required for Form 5472's header, for opening a US bank account, for Stripe/PayPal, for hiring US contractors. Many of them never need an ITIN at all, because an ITIN only matters if you personally have to file or be identified on a US return for some other reason.
 >
 > If you do need one, a Certifying Acceptance Agent (CAA) can authenticate your identity documents so you're not mailing an original passport to the IRS — but a CAA review doesn't guarantee ITIN eligibility or approval, and a plain uploaded copy isn't itself sufficient certification. The IRS's own estimate is about 7 weeks for a status notice, or 9–11 weeks if you're applying from overseas or during Jan 15–Apr 30 — treat that as an estimate, not a guaranteed date, since requests for more information can push it out.
 >
@@ -86,13 +146,23 @@ Disclosed variant (for r/USExpatTaxes or similar): after "never need an ITIN at 
 
 ### Template 5 — "Missed April 15, what now / does Form 7004 still work?" (fits r/Entrepreneur or r/expats)
 
-`[TARGET]`: paste the thread URL here.
+`[TARGET]`: https://www.reddit.com/r/USExpatTaxes/comments/1ud26an/ — "owe multiple years of unfiled Form 5472, just found out … Has anyone actually gotten the penalty abated?" (r/USExpatTaxes, 20+ comments). Duplicate cross-post: https://www.reddit.com/r/tax/comments/1ud244u/ (r/tax, 10+ comments) — same question, use whichever is still open.
 
-> Two different situations here. If you're not past April 15 yet: Form 7004 filed by the original deadline extends the Form 5472 package (it's attached to the pro forma 1120) out to October 15 — that's a real, useful lever if you're not ready.
+> Multiple unfiled years and a real shot at penalty abatement both come up in threads like this — but which fix applies still comes down to timing. Two different situations here. If you're not past April 15 yet: Form 7004 filed by the original deadline extends the Form 5472 package (it's attached to the pro forma 1120) out to October 15 — that's a real, useful lever if you're not ready.
 >
 > If April 15 already passed with no extension filed: the standard route is filing the actual return now under DIIRSP with a reasonable cause statement, rather than waiting for a "better" time to file. No income and no transactions during the year doesn't change the deadline calculus either — the trigger is reportable transactions, not income, so check whether any occurred (contributions, distributions, loans, reimbursements — even the initial bank-account funding counts) before assuming you're clear.
 >
 > If you've already gotten an IRS notice like a CP-15, that changes the urgency but not the basic path — send the notice number and the tax year it covers to whoever you use for the late filing so they can scope it correctly before you pay for anything. File the complete package as soon as you can; the exposure stays open until you do.
+
+## Next 5 targets
+
+Queued for the next answer-template pass, same sourcing method (Google `site:reddit.com`, last-2-years filter, 2026-09-11) and the same open-and-recheck rule before posting:
+
+1. r/tax — [HELP! FOREIGN-OWNED U.S. LLC! FORM 5472 or …](https://www.reddit.com/r/tax/comments/1qfh31c/) — 20+ comments
+2. r/llc — [How the hell do I file Form 5472 + 1120 as a non-US resident](https://www.reddit.com/r/llc/comments/1jv144z/) — 10+ comments
+3. r/smallbusiness — [Foreign-owned Wyoming LLC – didn't file Form 5472 for 2 …](https://www.reddit.com/r/smallbusiness/comments/1nl5ef9/) — 10+ comments
+4. r/tax — [reportable transactions in form 5472](https://www.reddit.com/r/tax/comments/1lxziua/) — 9 comments
+5. r/digitalnomad — [Forgot to file Form 5472 for foreign-owned US LLCs? What …](https://www.reddit.com/r/digitalnomad/comments/1tckvny/) — 10+ comments
 
 ## Part 3 — Reddit operating rules
 
