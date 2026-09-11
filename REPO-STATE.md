@@ -137,6 +137,19 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
   attribution + backfill, Bing Webmaster Tools setup, partner supersede fix
 - `docs/sessions/2026-09-07-admin-sidebar-redesign.md` — admin left sidebar (wave 1) + page headers /
   Overview / tab titles (wave 2); the counters and full-bleed contracts live there
+- `docs/sessions/2026-09-11-confirmation-emails-review.md` — EIN/ITIN confirmation emails rewritten
+  (they promised a "payment link" after payment was already taken); admin `/api/admin/test-email`
+- `docs/sessions/2026-09-11-traffic-tracking.md` — first-party visitor log: `/api/session/ping` beacon,
+  `Visitor`/`PageView` models, 30/90-day retention cron, `/admin/traffic`. **Read its "Contracts"
+  section before touching the beacon, attribution or retention.**
+
+Written by a concurrent session the same day (content/blog work — not this session's, listed so the
+index stays complete):
+
+- `docs/sessions/2026-09-11-aeo-blog-execution-brief.md` — AEO blog execution brief
+- `docs/sessions/2026-09-11-aeo-blog-publication.md` — September 11 AEO five-guide batch
+- `docs/sessions/2026-09-11-five-blog-posts.md` — five new blog posts
+- `docs/sessions/2026-09-11-uncommon-blog-posts.md` — five uncommon blog topics
 
 ---
 
