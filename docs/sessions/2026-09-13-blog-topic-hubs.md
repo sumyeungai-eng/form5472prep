@@ -19,7 +19,9 @@ root PNGs) were left untouched and unstaged.
 Verified locally: tsc clean; `blog-tags.test.ts` 6/6; `npm run build` exit 0 with 25 prerendered hubs;
 dev server — `/blog` pills link to hubs, `/blog/topics/ein` shows 15 cards (= pill count), index,follow;
 1-post tag `/blog/topics/1099-k` 200 + `noindex, follow`; unknown tag 404; article pills link; no console errors.
-Production verification: see commit following this one / deploy note below.
+Production (commit f60b1f2, deployment form5472prep-9gjme6o78 Ready): `/blog` serves 6 hub links;
+`/blog/topics/ein` and `/form-w-7` 200 index,follow; `/blog/topics/1099-k` 200 noindex,follow;
+unknown tag 404; sitemap.xml lists 25 hubs.
 
 ## Contracts
 - `formatTag` exists ONLY in `src/lib/blog-tags.ts`. Add acronym overrides to `TAG_LABELS`, never a local copy.
