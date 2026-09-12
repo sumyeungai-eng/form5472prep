@@ -26,6 +26,7 @@ import {
 } from "@/lib/blog";
 import { env } from "@/lib/env";
 import { SPEAKABLE, pageMeta } from "@/lib/seo";
+import { formatTag, tagHref } from "@/lib/blog-tags";
 
 // ISR: prerender the slugs known at build time, but `dynamicParams` lets a post
 // published from /admin (DB-only, so absent from the build) render on first
@@ -172,9 +173,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 {post.tags && post.tags.length > 0 && (
                   <div className="mb-5 flex flex-wrap gap-2">
                     {post.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="rounded-full border border-accent/15 bg-white px-3 py-1 text-[11px] font-semibold text-accent shadow-sm">
+                      <Link key={tag} href={tagHref(tag)} className="rounded-full border border-accent/15 bg-white px-3 py-1 text-[11px] font-semibold text-accent shadow-sm transition hover:border-accent/40 hover:bg-accent-50">
                         {formatTag(tag)}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -269,9 +270,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-12 flex flex-wrap gap-2 border-t border-slate-200 pt-6">
                   {post.tags.map((tag) => (
-                    <span key={tag} className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
+                    <Link key={tag} href={tagHref(tag)} className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600 transition hover:bg-accent-50 hover:text-accent">
                       {formatTag(tag)}
-                    </span>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -349,6 +350,3 @@ function OtherPosts({ posts }: { posts: PostMeta[] }) {
   );
 }
 
-function formatTag(tag: string): string {
-  return tag.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-}

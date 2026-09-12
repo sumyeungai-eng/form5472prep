@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { env } from "@/lib/env";
 import { getAllPosts } from "@/lib/blog";
+import { buildTagIndex, MIN_INDEXABLE_TAG_POSTS } from "@/lib/blog-tags";
 import { LANDING_PAGES } from "@/lib/landing-pages";
 
 // ISR: the post list comes partly from the database, so the sitemap has to
@@ -42,6 +43,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  const tagUrls: MetadataRoute.Sitemap = buildTagIndex(posts)
+    .filter((entry) => entry.count >= MIN_INDEXABLE_TAG_POSTS)
+    .map((entry) => ({
+      url: `${base}/blog/topics/${entry.tag}`,
+      lastModified: new Date(entry.posts[0]?.updated ?? entry.posts[0]?.publishAt ?? entry.posts[0]?.date),
+      changeFrequency: "weekly",
+      priority: 0.5,
+    }));
+
   // SEO landing pages — high priority since these target the highest-intent
   // queries. Noindex pages (paid-ad landings) are excluded so Google doesn't
   // discover them via the sitemap.
@@ -54,5 +64,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     }));
 
-  return [...staticUrls, ...landingUrls, ...postUrls];
+  return [...staticUrls, ...landingUrls, ...postUrls, ...tagUrls];
 }

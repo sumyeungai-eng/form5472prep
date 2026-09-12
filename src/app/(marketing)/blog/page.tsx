@@ -4,15 +4,15 @@ import type { Metadata } from "next";
 import {
   ArrowRight,
   BookOpen,
-  Calendar,
   CheckCircle2,
-  Clock,
   FileText,
   ShieldCheck,
 } from "lucide-react";
-import { getAllPosts, formatPostDate, type PostMeta } from "@/lib/blog";
+import { getAllPosts, type PostMeta } from "@/lib/blog";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
+import { buildTagIndex, formatTag, tagHref, type TagEntry } from "@/lib/blog-tags";
+import { AuthorChip, PostCard, PostMetaLine } from "./_components/PostCard";
 
 // ISR: posts published from /admin live in the database, so the index has to
 // re-render without a redeploy. Admin writes also revalidatePath("/blog") for
@@ -35,13 +35,7 @@ export const metadata: Metadata = {
 export default async function BlogIndex() {
   const posts = await getAllPosts();
   const [featured, ...rest] = posts;
-  const tagCounts = new Map<string, number>();
-  for (const post of posts) {
-    for (const tag of post.tags ?? []) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
-  }
-  const popularTags = Array.from(tagCounts.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 6);
+  const popularTags = buildTagIndex(posts).slice(0, 6);
   const collectionJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -106,7 +100,7 @@ export default async function BlogIndex() {
   );
 }
 
-function BlogHeader({ postCount, tags }: { postCount: number; tags: [string, number][] }) {
+function BlogHeader({ postCount, tags }: { postCount: number; tags: TagEntry[] }) {
   return (
     <section className="relative overflow-hidden border-b border-slate-200 bg-paper">
       <div
@@ -132,11 +126,15 @@ function BlogHeader({ postCount, tags }: { postCount: number; tags: [string, num
           </p>
           {tags.length > 0 && (
             <div className="mt-8 flex flex-wrap gap-2">
-              {tags.map(([tag, count]) => (
-                <span key={tag} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs text-slate-700">
-                  {formatTag(tag)}
-                  <span className="font-mono text-[10px] text-slate-400">{count}</span>
-                </span>
+              {tags.map((entry) => (
+                <Link
+                  key={entry.tag}
+                  href={tagHref(entry.tag)}
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs text-slate-700 transition hover:border-accent/30 hover:text-accent hover:shadow-sm"
+                >
+                  {formatTag(entry.tag)}
+                  <span className="font-mono text-[10px] text-slate-400">{entry.count}</span>
+                </Link>
               ))}
             </div>
           )}
@@ -205,65 +203,6 @@ function FeaturedCard({ post }: { post: PostMeta }) {
   );
 }
 
-function PostCard({ post }: { post: PostMeta }) {
-  return (
-    <Link
-      href={`/blog/${post.slug}`}
-      className="group flex min-h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_40px_-32px_rgba(15,23,42,0.5)] transition duration-300 hover:-translate-y-1 hover:border-accent/30 hover:shadow-[0_24px_55px_-32px_rgba(30,58,138,0.35)]"
-    >
-      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
-        <Image
-          src={post.image}
-          alt=""
-          fill
-          sizes="(min-width: 1024px) 360px, (min-width: 768px) 50vw, 100vw"
-          className="object-cover transition duration-700 group-hover:scale-[1.035]"
-        />
-        <div className="absolute inset-0 ring-1 ring-inset ring-black/5" />
-      </div>
-      <div className="flex flex-1 flex-col p-6">
-        <PostMetaLine post={post} compact />
-        <h3 className="mt-4 font-serif text-xl font-semibold leading-snug tracking-tight text-ink transition-colors group-hover:text-accent">
-          {post.title}
-        </h3>
-        <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{post.description}</p>
-        <div className="mt-auto flex items-center justify-between pt-6">
-          <span className="text-xs font-medium text-slate-500">{formatTag(post.tags?.[1] ?? post.tags?.[0] ?? "Filing guide")}</span>
-          <span className="inline-flex items-center text-xs font-semibold text-accent">
-            Read <ArrowRight className="ml-1.5 h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-          </span>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-function PostMetaLine({ post, compact = false }: { post: PostMeta; compact?: boolean }) {
-  return (
-    <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 ${compact ? "text-[11px]" : "text-xs"} font-medium text-slate-500`}>
-      <span className="inline-flex items-center gap-1.5">
-        <Calendar className="h-3.5 w-3.5 text-accent" />
-        {formatPostDate(post.date)}
-      </span>
-      <span className="inline-flex items-center gap-1.5">
-        <Clock className="h-3.5 w-3.5 text-accent" />
-        {post.readingMinutes} min read
-      </span>
-    </div>
-  );
-}
-
-function AuthorChip({ author }: { author: string }) {
-  return (
-    <div className="flex items-center gap-2.5">
-      <div className="relative h-8 w-8 overflow-hidden rounded-full border border-accent/15 bg-accent-50 p-1.5">
-        <Image src="/logo-mark.svg" alt="" fill sizes="32px" className="object-contain p-1.5" />
-      </div>
-      <span className="text-sm text-slate-700">{author}</span>
-    </div>
-  );
-}
-
 function FilingPanel() {
   return (
     <section className="relative mt-20 overflow-hidden rounded-2xl bg-ink px-7 py-10 text-white shadow-[0_30px_80px_-45px_rgba(14,27,51,0.8)] sm:px-10 lg:px-14 lg:py-14">
@@ -298,8 +237,4 @@ function EmptyState() {
       <p className="mt-1 text-sm text-slate-500">New filing guides will appear here.</p>
     </div>
   );
-}
-
-function formatTag(tag: string): string {
-  return tag.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
