@@ -147,6 +147,9 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
   Reddit playbook in `docs/marketing/`; HowTo and question-heading waves follow
 - `docs/sessions/2026-09-13-blog-topic-hubs.md` — tag pills link to `/blog/topics/[tag]` hubs; single
   `formatTag()` in `src/lib/blog-tags.ts`; hubs under 3 posts are noindex and not prerendered
+- `docs/sessions/2026-09-13-snippet-readiness.md` — snippet-readiness wave: landing bodies render real
+  p/ol/ul + optional tables (`landing-body.ts`, `LandingSection.table`), 40–60-word answers locked by
+  tests, `npm run audit:snippets`; EIN apply page redesign. **Read its Contracts before editing landing copy.**
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
