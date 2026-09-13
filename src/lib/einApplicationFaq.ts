@@ -2,6 +2,14 @@ export type FaqItem = { q: string; a: string };
 
 export const EIN_APPLICATION_FAQ: FaqItem[] = [
   {
+    q: "How long does it take to get the EIN?",
+    a: "Typically 1–5 business days once we have your documents. We call the IRS Business & Specialty Tax Line on your behalf and can often obtain the EIN on the call. Complex cases (e.g., trusts as members) may take slightly longer.",
+  },
+  {
+    q: "What do I receive at the end?",
+    a: "Your 9-digit EIN, delivered by email. You also receive a copy of the completed Form SS-4 for your records. The IRS mails the official CP 575 confirmation letter to your LLC address within 4–6 weeks — this is the document banks sometimes ask for.",
+  },
+  {
     q: "What happens after I submit the EIN application?",
     a: "You're taken straight to secure checkout for the $149 fee. Once paid, we review your details within one business day, prepare Form SS-4, and submit it to the IRS on your behalf. You'll receive an email confirmation and a portal login where you can track progress and message us.",
   },
