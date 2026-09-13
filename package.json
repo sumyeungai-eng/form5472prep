@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "email:preview": "tsx scripts/preview-emails.ts",
-    "indexnow": "node scripts/indexnow.mjs"
+    "indexnow": "node scripts/indexnow.mjs",
+    "audit:snippets": "node scripts/snippet-audit.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.97.1",
