@@ -82,8 +82,8 @@ describe("central FAQ content", () => {
 
   it("keeps answers concise enough for answer engines", () => {
     for (const item of FAQ_ITEMS) {
-      expect(wordCount(item.answer), item.id).toBeGreaterThanOrEqual(25);
-      expect(wordCount(item.answer), item.id).toBeLessThanOrEqual(110);
+      expect(wordCount(item.answer), item.id).toBeGreaterThanOrEqual(40);
+      expect(wordCount(item.answer), item.id).toBeLessThanOrEqual(70);
     }
   });
 

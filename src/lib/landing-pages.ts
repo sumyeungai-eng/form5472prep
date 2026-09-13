@@ -2,9 +2,12 @@
 // One page per long-tail query that buyers actually search for.
 // All content funnels back to /start.
 
+export type LandingTable = { caption: string; columns: string[]; rows: string[][] };
+
 export type LandingSection = {
   heading: string;
   body: string; // supports double-newline paragraphs
+  table?: LandingTable;
 };
 
 export type LandingFaq = { q: string; a: string };
@@ -53,7 +56,7 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "How to File IRS Form 5472",
     intro:
-      "Foreign-owned US single-member LLCs must file Form 5472 with an attached pro forma Form 1120 by April 15 each year. You can't e-file — the IRS only accepts these forms by mail or fax to the Ogden PIN Unit at +1-855-887-7737. Below is the full step-by-step process, broken down into every form, field, and decision you'll face — or skip the work entirely and use our accountant-reviewed 15-minute online filer from $149.",
+      "Foreign-owned US single-member LLCs must file Form 5472 with an attached pro forma Form 1120 by April 15 each year. The IRS accepts the annual package by mail or fax to the Ogden PIN Unit at +1-855-887-7737, and our 15-minute online filer starts from $149.",
     sections: [
       {
         heading: "Who has to file Form 5472?",
@@ -61,7 +64,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What forms do you actually file?",
-        body: "You actually file Form 5472 by attaching it to a pro forma Form 1120. The IRS requires you to file it as an attachment to a pro forma Form 1120 (US Corporation Income Tax Return). The 1120 is \"pro forma\" — meaning you don't fill in most of it. You only complete the entity identification section and stamp \"Foreign-Owned U.S. DE\" across the top of page 1.\n\nThe full package is:\n\n1. Cover letter identifying the filing.\n2. Pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp.\n3. Form 5472, Parts I, II, III, IV, V, and VII fully completed.\n4. Part V supporting statement that lists each reportable transaction in detail.\n5. Reasonable Cause Statement (only if you are filing late under DIIRSP).\n\nMissing any one of these can trigger the $25,000 penalty, even if you've technically \"filed\". The IRS treats incomplete returns the same as missing returns under IRC § 6038A.",
+        body: "You file Form 5472 by attaching it to a pro forma Form 1120 (US Corporation Income Tax Return) as the cover. The 1120 is \"pro forma,\" meaning you don't fill in most of it. You only complete the entity identification section and stamp \"Foreign-Owned U.S. DE\" across the top of page 1.\n\nThe full package is:\n\n1. Cover letter identifying the filing.\n2. Pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp.\n3. Form 5472, Parts I, II, III, IV, V, and VII fully completed.\n4. Part V supporting statement that lists each reportable transaction in detail.\n5. Reasonable Cause Statement (only if you are filing late under DIIRSP).\n\nMissing any one of these can trigger the $25,000 penalty, even if you've technically \"filed\". The IRS treats incomplete returns the same as missing returns under IRC § 6038A.",
       },
       {
         heading: "How do you file Form 5472 step by step?",
@@ -69,7 +72,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What goes on each part of Form 5472?",
-        body: "Part I — Reporting Corporation: the LLC. Name, EIN, address, total assets, country of incorporation, principal business activity code, total value of gross payments to/from foreign related parties.\n\nPart II — 25%+ Foreign Shareholder: you, the foreign owner. Name, address, US ITIN (if you have one) or Reference ID, country of citizenship, country of organization.\n\nPart III — Related Party: same as Part II for a single-owner LLC, since you are both the 25%+ shareholder and the related party. For multi-related-party scenarios, you list each one.\n\nPart IV — Monetary Transactions Between Reporting Corporation and Foreign Related Party: dollar amounts of sales, services, rents, royalties, interest, loans, and other payments in each direction.\n\nPart V — Reportable Transactions of a Reporting Corporation That Is a Foreign-Owned U.S. DE: this is where capital contributions, distributions, and most owner-to-LLC payments get reported. Must be backed by a supporting statement.\n\nPart VII — Additional Information for FDE: confirms the LLC is a disregarded entity and identifies it as foreign-owned.",
+        body: "Form 5472 is split by role and transaction type. Part I identifies the LLC, Parts II and III identify the foreign owner or related party, Parts IV and V report payments, contributions and distributions, and Part VII confirms foreign-owned disregarded entity status.\n\nPart II — 25%+ Foreign Shareholder: you, the foreign owner. Name, address, US ITIN (if you have one) or Reference ID, country of citizenship, country of organization.\n\nPart III — Related Party: same as Part II for a single-owner LLC, since you are both the 25%+ shareholder and the related party. For multi-related-party scenarios, you list each one.\n\nPart IV — Monetary Transactions Between Reporting Corporation and Foreign Related Party: dollar amounts of sales, services, rents, royalties, interest, loans, and other payments in each direction.\n\nPart V — Reportable Transactions of a Reporting Corporation That Is a Foreign-Owned U.S. DE: this is where capital contributions, distributions, and most owner-to-LLC payments get reported. Must be backed by a supporting statement.\n\nPart VII — Additional Information for FDE: confirms the LLC is a disregarded entity and identifies it as foreign-owned.",
       },
       {
         heading: "Why can't I e-file?",
@@ -89,7 +92,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What happens after you file Form 5472?",
-        body: "The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. The provider’s transmission record and IRS processing are different evidence. Silence establishes neither delivery nor acceptance, and no filing-specific processing timetable was verified.\n\nKeep the exact submitted package, destination, timestamp, page count, provider receipt and any IRS correspondence together. Do not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline; a transmission record does not guarantee a penalty will be removed. See [receipt confirmation and next steps](/blog/form-5472-irs-receipt-confirmation-status).",
+        body: "After you file Form 5472, the current instructions do not describe a routine acceptance acknowledgment for the faxed package. Keep the exact submitted package, destination, timestamp, page count, provider receipt and any IRS correspondence together because silence establishes neither delivery nor acceptance.\n\nDo not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline; a transmission record does not guarantee a penalty will be removed. See [receipt confirmation and next steps](/blog/form-5472-irs-receipt-confirmation-status).",
       },
       {
         heading: "Skip the work — file in 15 minutes",
@@ -154,11 +157,20 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "The Form 5472 $25,000 Penalty Explained",
     intro:
-      "Under IRC § 6038A(d), the IRS automatically assesses a $25,000 penalty per Form 5472 that is filed late, filed incompletely, or not filed at all — per year, per LLC. The penalty stacks at $25,000 per 30-day period if you don't fix it within 90 days of an IRS notice. Here's exactly how the penalty works, who it applies to, how to either avoid it entirely, and how to request abatement if you've already triggered it.",
+      "Under IRC § 6038A(d), the IRS automatically assesses a $25,000 penalty for each Form 5472 that is late, incomplete, or missing, per year and per LLC. If you do not fix it within 90 days of an IRS notice, the penalty stacks at $25,000 per 30-day period.",
     sections: [
       {
         heading: "How is the penalty calculated?",
         body: "$25,000 per Form 5472, per tax year. If you missed 3 years of filing for one LLC, that's $75,000 in automatic penalties. If you own multiple LLCs and missed all of them, multiply accordingly: 2 LLCs × 3 missed years = 6 forms × $25,000 = $150,000.\n\nThe penalty is automatic — the IRS computer system assesses it without a human reviewing your case. You receive a CP-15 notice in the mail at the LLC's address of record. The notice gives you 90 days to respond before continuation penalties begin.\n\nIt does not matter whether your LLC made any money, owed any US tax, or had any US-source income. The penalty is for failing to file the information return, not for failing to pay tax. A perfectly compliant foreign-owned LLC with $0 income and $0 tax due still owes $25,000 if it misses the filing.",
+        table: {
+          caption: "Form 5472 penalty amounts and triggers",
+          columns: ["Penalty", "Amount", "When it applies"],
+          rows: [
+            ["Initial penalty", "$25,000", "Per Form 5472, per tax year"],
+            ["Continuation penalty", "$25,000", "Each 30-day period after IRS notice"],
+            ["Incomplete return", "$25,000", "Incomplete filings treated like not filed"],
+          ],
+        },
       },
       {
         heading: "What is the continuation penalty?",
@@ -179,6 +191,15 @@ export const LANDING_PAGES: LandingPage[] = [
       {
         heading: "What are real-world penalty scenarios?",
         body: "Scenario A — first-time owner, just missed: Carlos (Mexico) formed his Wyoming LLC in 2024 to run an Amazon FBA store. He learned about Form 5472 in May 2025, one month after the deadline. He files immediately under DIIRSP with a reasonable cause statement explaining first-time foreign owner unawareness. Typical outcome: penalty waived.\n\nScenario B — multi-year catch-up: Mei (Hong Kong) has had a Delaware LLC since 2022 and never filed. In 2026 she discovers the obligation. She files 2022, 2023, 2024, and 2025 together as a single DIIRSP package. Typical outcome: penalty abatement granted for all four years if the reasonable cause statement is well-documented.\n\nScenario C — ignored an IRS notice: Ahmed (UAE) received a CP-15 in July 2024 for missing tax year 2022 and didn't respond. By 2026 his single-year penalty has stacked to $100,000+ through the 30-day continuation rule. He still needs to file, plus negotiate the assessed penalty — much harder than scenarios A and B.\n\nThe takeaway: act fast. Even multi-year catch-ups are vastly cheaper than waiting for an IRS notice and then delaying.",
+        table: {
+          caption: "Penalty examples and response paths",
+          columns: ["Scenario", "Exposure", "What to do"],
+          rows: [
+            ["One month late", "Penalty typically waived", "File immediately under DIIRSP"],
+            ["Four missed years", "Four-year penalty exposure", "File all years together"],
+            ["Ignored CP-15", "$100,000+ stacked penalty", "File and negotiate assessed penalty"],
+          ],
+        },
       },
       {
         heading: "How do you handle the penalty if you can't pay?",
@@ -194,7 +215,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the bottom line on Form 5472 penalties?",
-        body: "The $25,000-per-form-per-year penalty is the single largest compliance risk most foreign LLC owners are unaware of. It's automatic, it stacks if ignored, and it applies even when your LLC owes zero US tax.\n\nThree things keep you safe:\n\n1. File every year, on time, completely, by fax to +1-855-887-7737.\n2. If you've missed filings, catch up under DIIRSP immediately with a reasonable cause statement.\n3. Don't ignore IRS notices — the continuation penalty makes a manageable problem into a six-figure one.\n\nOur 15-minute online filer handles all of this from $149. IRS fax delivery included. +$99 per additional past year. Accountant-reviewed, with a money-back guarantee.",
+        body: "The bottom line is that Form 5472 penalties are the largest compliance risk many foreign LLC owners miss. The $25,000 penalty applies per form and per year, stacks if ignored, and can turn one missed filing into a six-figure problem.\n\nThree things keep you safe:\n\n1. File every year, on time, completely, by fax to +1-855-887-7737.\n2. If you've missed filings, catch up under DIIRSP immediately with a reasonable cause statement.\n3. Don't ignore IRS notices — the continuation penalty makes a manageable problem into a six-figure one.\n\nOur 15-minute online filer handles all of this from $149. IRS fax delivery included. +$99 per additional past year. Accountant-reviewed, with a money-back guarantee.",
       },
     ],
     faqs: [
@@ -255,11 +276,11 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "DIIRSP: Filing Late Form 5472 with Penalty Abatement",
     intro:
-      "The IRS Delinquent International Information Return Submission Procedure (DIIRSP) is the official way to catch up on missed Form 5472 filings while requesting that the $25,000-per-form-per-year penalty be waived. Filing under DIIRSP requires a properly written Reasonable Cause Statement attached to each late return. Get it right and most first-time filers walk away with no penalty assessed. Get it wrong — or do nothing — and the IRS will eventually mail a CP-15 notice and start the clock on continuation penalties.",
+      "The IRS Delinquent International Information Return Submission Procedure (DIIRSP) is the catch-up route for missed Form 5472 filings when you are requesting waiver of the $25,000-per-form-per-year penalty. Each late return needs a properly written Reasonable Cause Statement, or the IRS may issue a CP-15 notice.",
     sections: [
       {
         heading: "What is DIIRSP, really?",
-        body: "DIIRSP — Delinquent International Information Return Submission Procedure — is an IRS-published voluntary disclosure path specifically for international information returns like Form 5472, Form 5471, Form 8865, and Form 8938.\n\nIt is not amnesty. It is not a guaranteed waiver. It is the IRS saying: \"If you submit your delinquent international information returns with a reasonable cause statement, we will evaluate the request and decide whether to assess the penalty.\"\n\nThe procedure exists because the IRS recognizes most foreign-owned LLC owners don't know about Form 5472 until after they've missed years of filings. Without DIIRSP, the penalty system would punish honest catch-up too harshly. With DIIRSP, well-documented voluntary catch-ups have a high acceptance rate.",
+        body: "DIIRSP is the IRS-published catch-up path for delinquent international information returns like Form 5472. It is not amnesty or a guaranteed waiver; the IRS evaluates the submitted late returns and reasonable cause statement before deciding whether to assess the penalty.\n\nIt is not amnesty. It is not a guaranteed waiver. It is the IRS saying: \"If you submit your delinquent international information returns with a reasonable cause statement, we will evaluate the request and decide whether to assess the penalty.\"\n\nThe procedure exists because the IRS recognizes most foreign-owned LLC owners don't know about Form 5472 until after they've missed years of filings. Without DIIRSP, the penalty system would punish honest catch-up too harshly. With DIIRSP, well-documented voluntary catch-ups have a high acceptance rate.",
       },
       {
         heading: "Who qualifies for DIIRSP?",
@@ -268,6 +289,17 @@ export const LANDING_PAGES: LandingPage[] = [
       {
         heading: "How does DIIRSP work — step by step?",
         body: "1. Identify every missed year. If you formed the LLC in 2022 and haven't filed, that's 2022, 2023, 2024.\n2. Prepare the complete filing package for each missed year separately: cover letter, pro forma Form 1120 (with \"Foreign-Owned U.S. DE\" stamp), Form 5472, Part V supporting statement.\n3. Write a single Reasonable Cause Statement that covers all missed years (or one per year if circumstances differ).\n4. Attach the statement to the front of the package.\n5. File all years together — fax the entire set to +1-855-887-7737 (IRS Ogden PIN Unit), or mail certified to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n6. Keep the fax transmission receipt. It records the provider’s transmission event and should be retained with the exact package; it does not establish acceptance of a reasonable cause request.\n7. Preserve the record and monitor correspondence. Silence does not establish processing, acceptance or penalty relief.",
+        table: {
+          caption: "DIIRSP filing requirements in the package",
+          columns: ["Requirement", "What it means", "Where it goes"],
+          rows: [
+            ["Missed years", "Identify every unfiled tax year", "Separate package for each year"],
+            ["Complete package", "Cover letter, 1120, 5472, statement", "Prepared for each missed year"],
+            ["Reasonable cause", "One statement can cover all years", "Attach to the front"],
+            ["Submit together", "File all missed years together", "Ogden PIN Unit fax or mail"],
+            ["Receipt records", "Keep provider transmission evidence", "Retain with exact package"],
+          ],
+        },
       },
       {
         heading: "What makes a good Reasonable Cause Statement?",
@@ -287,7 +319,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What happens after you file under DIIRSP?",
-        body: "The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. The provider’s transmission record and IRS processing are different evidence. Silence establishes neither delivery nor acceptance, and no filing-specific processing timetable was verified.\n\nKeep the exact submitted package, destination, timestamp, page count, provider receipt and any IRS correspondence together. Do not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline; a transmission record does not guarantee a penalty will be removed. See receipt confirmation and next steps.",
+        body: "After a DIIRSP filing, the current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. Keep the exact submitted package, destination, timestamp, page count, provider receipt and IRS correspondence because silence does not establish processing, acceptance or penalty relief.\n\nDo not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline; a transmission record does not guarantee a penalty will be removed. See receipt confirmation and next steps.",
       },
       {
         heading: "What should you NOT do under DIIRSP?",
@@ -364,11 +396,23 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What goes at the top of Form 5472?",
-        body: "The top of Form 5472 uses the tax year, calendar-year or fiscal-year boxes, form count, and total gross payment value.\n\nAbove Part I:\n\n• Tax year — the year that ENDED, not the year you're filing in. A 2024 return is for calendar year 2024 even though you file it in 2025.\n• Calendar year box: check this if your LLC uses Jan-Dec (almost all LLCs do).\n• Fiscal year boxes: leave blank unless you have an actual non-calendar fiscal year.\n• Number of Forms 5472 attached to this Form 1120: \"1\" for a typical single-related-party filing.\n• Total value of gross payments made or received: this is the total dollar amount of all transactions reported on Part IV and Part V combined.\n\nStamp \"Foreign-Owned U.S. DE\" across the top of the attached Form 1120 — this is what tells the IRS Ogden PIN Unit how to route the package.",
+        body: "The top of Form 5472 records the tax year that ended, the calendar or fiscal filing period, the number of Forms 5472 attached to Form 1120, and the total value of gross payments made or received. The entries above Part I should align with the boxes and payment total listed below.\n\nAbove Part I:\n\n• Tax year — the year that ENDED, not the year you're filing in. A 2024 return is for calendar year 2024 even though you file it in 2025.\n• Calendar year box: check this if your LLC uses Jan-Dec (almost all LLCs do).\n• Fiscal year boxes: leave blank unless you have an actual non-calendar fiscal year.\n• Number of Forms 5472 attached to this Form 1120: \"1\" for a typical single-related-party filing.\n• Total value of gross payments made or received: this is the total dollar amount of all transactions reported on Part IV and Part V combined.\n\nStamp \"Foreign-Owned U.S. DE\" across the top of the attached Form 1120 — this is what tells the IRS Ogden PIN Unit how to route the package.",
       },
       {
         heading: "What goes in Part I of Form 5472?",
         body: "Part I identifies the reporting LLC, its business activity, year-end assets, form count and reportable payment totals. Follow the labels on the current IRS form rather than copying field numbers from a different revision. Keep the LLC's information separate from the foreign owner's details in Part II.\n\nForm 5472 asks for total assets. The special pro forma Form 1120 instruction limits its required cover information to name, address and items B and E; that does not by itself settle the asset entry on Form 5472. Determine and document the LLC's year-end book assets, distinguishing this calculation from the limited cover-field rule.\n\nKeep the dollar amount reported on one Form 5472 separate from the combined amount across all Forms 5472 and from the number of forms. Reconcile reportable transactions with Parts IV, V and VI as applicable, without counting a transaction twice.",
+        table: {
+          caption: "Form 5472 parts for foreign-owned LLCs",
+          columns: ["Part", "What it reports", "Foreign-owned single-member LLC entry"],
+          rows: [
+            ["Part I", "Reporting LLC and payment totals", "LLC details, not owner details"],
+            ["Part II", "The 25% foreign shareholder", "You, the foreign owner"],
+            ["Part III", "The related party", "Usually mirrors Part II"],
+            ["Part IV", "Monetary transaction categories", "Often blank for small LLCs"],
+            ["Part V", "Capital contributions and distributions", "Attach a supporting statement"],
+            ["Part VII", "Foreign-owned DE status", "Check yes for FDE"],
+          ],
+        },
       },
       {
         heading: "What goes in Part II of Form 5472?",
@@ -392,7 +436,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you sign the Form 5472 package?",
-        body: "Form 5472 has no taxpayer signature block. The relevant block is at the bottom of Form 1120 page 1, with separate officer signature, date, title and paid-preparer fields.\n\nThe special pro forma instruction does not separately address signatures. A conservative workflow is to have the authorized person sign the completed cover in ink, enter the actual signing date and capacity, and scan that signed page for fax. This is a recommendation, not a ruling that every digital-only signature invalidates a filing.\n\nIRS electronic-signature permission depends on the document and route. Corporate e-file authorization rules do not automatically cover this DE fax package. Ask the preparer to establish signing authority and the applicable method; the general Form 1120 instructions separately address paid preparers. See the current signature guide.",
+        body: "Sign the Form 5472 package through the Form 1120 page 1 signature block, not on Form 5472 itself. That block has separate officer signature, date, title and paid-preparer fields, and a conservative workflow is ink signing the completed cover before faxing.\n\nThe special pro forma instruction does not separately address signatures. A conservative workflow is to have the authorized person sign the completed cover in ink, enter the actual signing date and capacity, and scan that signed page for fax. This is a recommendation, not a ruling that every digital-only signature invalidates a filing.\n\nIRS electronic-signature permission depends on the document and route. Corporate e-file authorization rules do not automatically cover this DE fax package. Ask the preparer to establish signing authority and the applicable method; the general Form 1120 instructions separately address paid preparers. See the current signature guide.",
       },
       {
         heading: "What are the common mistakes that trigger penalties?",
@@ -444,124 +488,147 @@ export const LANDING_PAGES: LandingPage[] = [
     relatedSlugs: ["file-form-5472", "pro-forma-1120", "form-5472-vs-1120", "irs-form-5472", "form-5472-fax-number"],
   },
   {
-    "slug": "foreign-owned-llc-tax",
-    "keyword": "foreign owned LLC tax filing",
-    "title": "Foreign-Owned US LLC Tax Filing Requirements (2026 Guide)",
-    "metaDescription": "Separate Form 5472 and pro forma Form 1120 from personal tax, state filings, FBAR, ITIN and sales tax duties for a foreign-owned U.S. LLC.",
-    "sources": [
+    slug: "foreign-owned-llc-tax",
+    keyword: "foreign owned LLC tax filing",
+    title: "Foreign-Owned US LLC Tax Filing Requirements (2026 Guide)",
+    metaDescription: "Separate Form 5472 and pro forma Form 1120 from personal tax, state filings, FBAR, ITIN and sales tax duties for a foreign-owned U.S. LLC.",
+    sources: [
       {
-        "label": "IRS: Instructions for Form 5472",
-        "url": "https://www.irs.gov/instructions/i5472"
+        label: "IRS: Instructions for Form 5472",
+        url: "https://www.irs.gov/instructions/i5472"
       },
       {
-        "label": "IRS: Nonresident aliens",
-        "url": "https://www.irs.gov/individuals/international-taxpayers/nonresident-aliens"
+        label: "IRS: Nonresident aliens",
+        url: "https://www.irs.gov/individuals/international-taxpayers/nonresident-aliens"
       },
       {
-        "label": "IRS: FBAR requirements",
-        "url": "https://www.irs.gov/businesses/small-businesses-self-employed/report-of-foreign-bank-and-financial-accounts-fbar"
+        label: "IRS: FBAR requirements",
+        url: "https://www.irs.gov/businesses/small-businesses-self-employed/report-of-foreign-bank-and-financial-accounts-fbar"
       },
       {
-        "label": "IRS: Form 8938 and FBAR compared",
-        "url": "https://www.irs.gov/businesses/comparison-of-form-8938-and-fbar-requirements"
+        label: "IRS: Form 8938 and FBAR compared",
+        url: "https://www.irs.gov/businesses/comparison-of-form-8938-and-fbar-requirements"
       },
       {
-        "label": "IRS: Instructions for Form W-7",
-        "url": "https://www.irs.gov/instructions/iw7"
+        label: "IRS: Instructions for Form W-7",
+        url: "https://www.irs.gov/instructions/iw7"
       },
       {
-        "label": "FinCEN: Beneficial ownership information",
-        "url": "https://www.fincen.gov/boi"
+        label: "FinCEN: Beneficial ownership information",
+        url: "https://www.fincen.gov/boi"
       }
     ],
-    "updated": "2026-09-11",
-    "h1": "Foreign-Owned US LLC Tax Filing Requirements",
-    "intro": "A foreign-owned U.S. single-member LLC treated as a disregarded entity generally files Form 5472 with pro forma Form 1120 when it has reportable related-party transactions. Zero revenue does not remove that test. Personal income tax, state obligations, foreign-account reporting and tax IDs need separate checks; one federal information return does not establish complete compliance.",
-    "sections": [
+    updated: "2026-09-11",
+    h1: "Foreign-Owned US LLC Tax Filing Requirements",
+    intro: "A foreign-owned U.S. single-member LLC treated as a disregarded entity generally files Form 5472 with pro forma Form 1120 when it has reportable related-party transactions. Zero revenue does not remove that test. Personal income tax, state obligations, foreign-account reporting and tax IDs need separate checks; one federal information return does not establish complete compliance.",
+    sections: [
       {
-        "heading": "What forms make up the complete federal filing?",
-        "body": "For a foreign-owned U.S. disregarded LLC with reportable transactions, Form 5472 attaches to a pro forma Form 1120. Reportable events can include owner funding, distributions and owner-paid entity costs. A genuinely transaction-free year is different from a zero-revenue year.\n\nThe special IRS instructions require the entity's name, address and items B and E on Form 1120, with “Foreign-Owned U.S. DE” across the top. Check signing authority separately. The package goes by the dedicated fax or mailing route, not ordinary corporate e-file. Read the [filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) for the preparation sequence.\n\nFor a calendar-year filing, the ordinary deadline is April 15 following the year, subject to applicable adjustments. An extension requires timely action; do not confuse it with the automatic FBAR extension."
+        heading: "What forms make up the complete federal filing?",
+        body: "The complete federal filing is Form 5472 attached to a pro forma Form 1120 for a foreign-owned U.S. disregarded LLC with reportable transactions. The special instructions require the entity's name, address and items B and E on the 1120, with the \"Foreign-Owned U.S. DE\" notation, and the package uses the dedicated fax or mailing route.\n\nThe special IRS instructions require the entity's name, address and items B and E on Form 1120, with “Foreign-Owned U.S. DE” across the top. Check signing authority separately. The package goes by the dedicated fax or mailing route, not ordinary corporate e-file. Read the [filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) for the preparation sequence.\n\nFor a calendar-year filing, the ordinary deadline is April 15 following the year, subject to applicable adjustments. An extension requires timely action; do not confuse it with the automatic FBAR extension."
       },
       {
-        "heading": "Do you owe US federal income tax?",
-        "body": "Form 5472 reports transactions; it does not calculate the owner's income tax. Whether a foreign owner needs a personal return depends on U.S. trade or business activity, income source, withholding, treaty provisions and other facts.\n\nServices performed abroad may have a different result from services performed in the U.S. Royalties, inventory sales, real estate and employees require their own analysis. The customer's address, payment currency or U.S. LLC registration alone does not settle all of these questions.\n\nUse [the LLC income-tax guide](/blog/does-foreign-owned-llc-pay-us-tax) to identify the questions, and obtain qualified advice for an uncertain position. Do not assume Form 5472 is the only required filing because there is no tax shown on that form."
+        heading: "Do you owe US federal income tax?",
+        body: "Form 5472 does not decide whether you owe U.S. federal income tax because it reports transactions, not owner income. The answer depends on U.S. trade or business activity, income source, withholding, treaty provisions and other facts, including where services are performed.\n\nServices performed abroad may have a different result from services performed in the U.S. Royalties, inventory sales, real estate and employees require their own analysis. The customer's address, payment currency or U.S. LLC registration alone does not settle all of these questions.\n\nUse [the LLC income-tax guide](/blog/does-foreign-owned-llc-pay-us-tax) to identify the questions, and obtain qualified advice for an uncertain position. Do not assume Form 5472 is the only required filing because there is no tax shown on that form."
       },
       {
-        "heading": "What are the state tax filings by state?",
-        "body": "Check both where the LLC was formed and where it does business, holds property or creates other state connections. State registration reports, franchise or entity taxes, income taxes and sales taxes are different obligations. There is no universal rule that every state requires the same annual report.\n\nStart with the relevant guide, then verify the current requirement directly with the state:\n• [Wyoming](/blog/wyoming-llc-foreign-owner-tax-filing)\n• [Delaware](/blog/delaware-llc-foreign-owner-tax-filing)\n• [New Mexico](/blog/new-mexico-llc-foreign-owner-tax-filing)\n• [Florida](/blog/florida-llc-foreign-owner-tax-filing)\n• [Nevada](/blog/nevada-llc-foreign-owner-tax-filing)\n• [Texas](/blog/texas-llc-foreign-owner-tax-filing)\n• [California](/blog/california-llc-foreign-owner-tax-filing)\n\nA state with no individual income tax may still impose entity, filing or other obligations. State work is not included in our Form 5472 preparation package."
+        heading: "What are the state tax filings by state?",
+        body: "Check both where the LLC was formed and where it does business, holds property or creates other state connections. State registration reports, franchise or entity taxes, income taxes and sales taxes are different obligations. There is no universal rule that every state requires the same annual report.\n\nStart with the relevant guide, then verify the current requirement directly with the state:\n• [Wyoming](/blog/wyoming-llc-foreign-owner-tax-filing)\n• [Delaware](/blog/delaware-llc-foreign-owner-tax-filing)\n• [New Mexico](/blog/new-mexico-llc-foreign-owner-tax-filing)\n• [Florida](/blog/florida-llc-foreign-owner-tax-filing)\n• [Nevada](/blog/nevada-llc-foreign-owner-tax-filing)\n• [Texas](/blog/texas-llc-foreign-owner-tax-filing)\n• [California](/blog/california-llc-foreign-owner-tax-filing)\n\nA state with no individual income tax may still impose entity, filing or other obligations. State work is not included in our Form 5472 preparation package.",
+        table: {
+          caption: "State filing guides named on this page",
+          columns: ["State", "Annual state filing", "Cost or due date"],
+          rows: [
+            ["Wyoming", "Relevant guide listed", "Verify directly with state"],
+            ["Delaware", "Relevant guide listed", "Verify directly with state"],
+            ["New Mexico", "Relevant guide listed", "Verify directly with state"],
+            ["Florida", "Relevant guide listed", "Verify directly with state"],
+            ["Nevada", "Relevant guide listed", "Verify directly with state"],
+            ["Texas", "Relevant guide listed", "Verify directly with state"],
+            ["California", "Relevant guide listed", "Verify directly with state"]
+          ]
+        }
       },
       {
-        "heading": "What are FBAR and FATCA, and do I need to file?",
-        "body": "Test the U.S. LLC separately from its foreign owner. A U.S.-organized LLC can have an FBAR obligation for foreign financial accounts even when its nonresident owner has no personal FBAR obligation. Disregarded income-tax treatment does not remove the entity's FBAR test.\n\nThe ordinary FBAR threshold is an aggregate foreign-account value exceeding $10,000 during the calendar year, with financial-interest or authority rules and exceptions also relevant. Establish account location from actual account arrangements—not a fintech brand, a USD balance or the owner's address.\n\nForm 8938 has different covered-person, asset and threshold rules. Neither report replaces the other. Use the [LLC FBAR account-evidence guide](/blog/foreign-owned-us-llc-fbar) and obtain qualified review where ownership, location or an exception is uncertain."
+        heading: "What are FBAR and FATCA, and do I need to file?",
+        body: "Test the U.S. LLC separately from its foreign owner. A U.S.-organized LLC can have an FBAR obligation for foreign financial accounts even when its nonresident owner has no personal FBAR obligation. Disregarded income-tax treatment does not remove the entity's FBAR test.\n\nThe ordinary FBAR threshold is an aggregate foreign-account value exceeding $10,000 during the calendar year, with financial-interest or authority rules and exceptions also relevant. Establish account location from actual account arrangements—not a fintech brand, a USD balance or the owner's address.\n\nForm 8938 has different covered-person, asset and threshold rules. Neither report replaces the other. Use the [LLC FBAR account-evidence guide](/blog/foreign-owned-us-llc-fbar) and obtain qualified review where ownership, location or an exception is uncertain."
       },
       {
-        "heading": "Do you need a US ITIN?",
-        "body": "An ITIN is for an individual with a qualifying federal tax purpose who cannot obtain an SSN. LLC ownership, wanting to use the online EIN application, a bank's general request for a tax ID or an ordinary W-8BEN does not automatically establish eligibility.\n\nForm 5472 alone does not require the foreign owner to obtain an ITIN. An individual return or a documented W-7 exception can create a separate need. Read [when a nonresident actually needs an ITIN](/blog/when-nonresident-actually-needs-itin) before applying.\n\nWe offer a separate [ITIN application service](/itin) with eligibility review and CAA handling. It is not included in the Form 5472 price; uncertain tax-return or treaty positions require qualified advice."
+        heading: "Do you need a US ITIN?",
+        body: "An ITIN is for an individual with a qualifying federal tax purpose who cannot obtain an SSN. LLC ownership, wanting to use the online EIN application, a bank's general request for a tax ID or an ordinary W-8BEN does not automatically establish eligibility.\n\nForm 5472 alone does not require the foreign owner to obtain an ITIN. An individual return or a documented W-7 exception can create a separate need. Read [when a nonresident actually needs an ITIN](/blog/when-nonresident-actually-needs-itin) before applying.\n\nWe offer a separate [ITIN application service](/itin) with eligibility review and CAA handling. It is not included in the Form 5472 price; uncertain tax-return or treaty positions require qualified advice."
       },
       {
-        "heading": "Do I need to file sales tax?",
-        "body": "Review where you have physical or economic nexus, whether the particular product or service is taxable, and whether a marketplace collects and remits on your behalf. Thresholds, measurement periods and filing duties vary by state; there is no single nationwide sales-tax threshold.\n\nA marketplace collecting tax does not by itself answer every registration or return question. Remote digital sales and physical inventory deserve separate checks. Our Form 5472 package does not include sales-tax registration, advice or returns; use the relevant state revenue authority or a qualified provider."
+        heading: "Do I need to file sales tax?",
+        body: "Review where you have physical or economic nexus, whether the particular product or service is taxable, and whether a marketplace collects and remits on your behalf. Thresholds, measurement periods and filing duties vary by state; there is no single nationwide sales-tax threshold.\n\nA marketplace collecting tax does not by itself answer every registration or return question. Remote digital sales and physical inventory deserve separate checks. Our Form 5472 package does not include sales-tax registration, advice or returns; use the relevant state revenue authority or a qualified provider."
       },
       {
-        "heading": "What is BOI, and do I have to file it?",
-        "body": "FinCEN's current guidance exempts entities created in the United States from BOI reporting under the Corporate Transparency Act. Foreign ownership does not turn a U.S.-formed LLC into a foreign-formed entity for this purpose. Certain entities formed under foreign law and registered in the U.S. remain subject to the rules unless exempt.\n\nThis BOI exemption does not remove Form 5472 or FBAR obligations. Check [FinCEN's current BOI guidance](https://www.fincen.gov/boi) when the entity's formation or registration facts differ."
+        heading: "What is BOI, and do I have to file it?",
+        body: "FinCEN's current guidance exempts entities created in the United States from BOI reporting under the Corporate Transparency Act. Foreign ownership does not turn a U.S.-formed LLC into a foreign-formed entity for this purpose. Certain entities formed under foreign law and registered in the U.S. remain subject to the rules unless exempt.\n\nThis BOI exemption does not remove Form 5472 or FBAR obligations. Check [FinCEN's current BOI guidance](https://www.fincen.gov/boi) when the entity's formation or registration facts differ."
       },
       {
-        "heading": "What does our service cover, and what do you handle elsewhere?",
-        "body": "Our Form 5472 service prepares the supported foreign-owned disregarded-entity package, including pro forma Form 1120 and applicable supporting statements, for review, signature and IRS fax delivery. Late-year work may include a reasonable-cause statement based on the actual facts; penalty relief is not guaranteed. A provider transmission receipt is not IRS acceptance.\n\nSeparate [EIN](/ein) and [ITIN](/itin) application services are available. They are not automatically needed by every foreign LLC owner and are not bundled into the Form 5472 fee.\n\nThe Form 5472 package does not include state returns, personal income-tax returns, FBAR/Form 8938, sales tax or bookkeeping. We are not a CPA firm and do not provide tax advice. Contact us before ordering if your situation involves multiple members, a corporate election or other unsupported complexity."
+        heading: "What does our service cover, and what do you handle elsewhere?",
+        body: "Our Form 5472 service prepares the supported foreign-owned disregarded-entity package, including pro forma Form 1120 and applicable supporting statements, for review, signature and IRS fax delivery. Late-year work may include a reasonable-cause statement based on the actual facts; penalty relief is not guaranteed. A provider transmission receipt is not IRS acceptance.\n\nSeparate [EIN](/ein) and [ITIN](/itin) application services are available. They are not automatically needed by every foreign LLC owner and are not bundled into the Form 5472 fee.\n\nThe Form 5472 package does not include state returns, personal income-tax returns, FBAR/Form 8938, sales tax or bookkeeping. We are not a CPA firm and do not provide tax advice. Contact us before ordering if your situation involves multiple members, a corporate election or other unsupported complexity."
       },
       {
-        "heading": "What is your typical compliance profile by business type?",
-        "body": "Use the business model to identify questions, not to declare a universal tax result:\n\n• Ecommerce: review inventory location, sales-tax connections, marketplace records and owner transactions.\n• SaaS and digital products: distinguish services, licenses and other receipts; check related-company payments, account location and state rules.\n• Consulting and agencies: establish where services are performed and distinguish unrelated contractors from related parties.\n• Real estate: obtain specialist advice on individual returns, withholding, state duties and the entity's separate reporting.\n\nEach profile can involve Form 5472, but the complete filing list depends on actual ownership, classification, activity and accounts. The [recordkeeping guide](/blog/form-5472-recordkeeping-checklist) helps organize the evidence."
+        heading: "What is your typical compliance profile by business type?",
+        body: "Use the business model to identify questions, not to declare a universal tax result:\n\n• Ecommerce: review inventory location, sales-tax connections, marketplace records and owner transactions.\n• SaaS and digital products: distinguish services, licenses and other receipts; check related-company payments, account location and state rules.\n• Consulting and agencies: establish where services are performed and distinguish unrelated contractors from related parties.\n• Real estate: obtain specialist advice on individual returns, withholding, state duties and the entity's separate reporting.\n\nEach profile can involve Form 5472, but the complete filing list depends on actual ownership, classification, activity and accounts. The [recordkeeping guide](/blog/form-5472-recordkeeping-checklist) helps organize the evidence.",
+        table: {
+          caption: "Business profiles and extra compliance checks",
+          columns: ["Business type", "Federal forms", "Extra filings"],
+          rows: [
+            ["Ecommerce", "Can involve Form 5472", "Inventory and sales-tax checks"],
+            ["SaaS and digital products", "Can involve Form 5472", "Account location and state rules"],
+            ["Consulting and agencies", "Can involve Form 5472", "Services location and related-party checks"],
+            ["Real estate", "Can involve Form 5472", "Individual returns, withholding, state duties"]
+          ]
+        }
       },
       {
-        "heading": "File the federal piece in 15 minutes",
-        "body": "If your LLC fits the supported foreign-owned single-member disregarded-entity service, the guided intake helps organize the information needed for Form 5472 and pro forma Form 1120. Preparation and delivery take the turnaround stated in your selected plan, rather than the time spent completing the intake.\n\nReview [current pricing](/pricing), then [start your filing](/start). Resolve uncertain personal tax, state, FBAR or entity-classification questions separately so that ordering one service is not mistaken for completing every obligation."
+        heading: "File the federal piece in 15 minutes",
+        body: "If your LLC fits the supported foreign-owned single-member disregarded-entity service, the guided intake helps organize the information needed for Form 5472 and pro forma Form 1120. Preparation and delivery take the turnaround stated in your selected plan, rather than the time spent completing the intake.\n\nReview [current pricing](/pricing), then [start your filing](/start). Resolve uncertain personal tax, state, FBAR or entity-classification questions separately so that ordering one service is not mistaken for completing every obligation."
       }
     ],
-    "faqs": [
+    faqs: [
       {
-        "q": "My LLC made zero revenue. Do I still file?",
-        "a": "Check reportable transactions, not revenue alone. Owner funding, distributions and owner-paid costs can trigger Form 5472 even with no sales. A truly transaction-free year requires a different review."
+        q: "My LLC made zero revenue. Do I still file?",
+        a: "Check reportable transactions, not revenue alone. Owner funding, distributions and owner-paid costs can trigger Form 5472 even with no sales. A truly transaction-free year requires a different review."
       },
       {
-        "q": "Do I owe US income tax on my LLC's profits?",
-        "a": "Form 5472 does not decide that. U.S. business activity, income source, withholding, treaties and the owner's circumstances affect the answer. Obtain qualified advice if the income-tax position is uncertain."
+        q: "Do I owe US income tax on my LLC's profits?",
+        a: "Form 5472 does not decide that. U.S. business activity, income source, withholding, treaties and the owner's circumstances affect the answer. Obtain qualified advice if the income-tax position is uncertain."
       },
       {
-        "q": "What if I have employees in the US?",
-        "a": "Employees can create payroll, state and income-tax questions beyond Form 5472. Obtain payroll and tax advice before treating the information-return package as a complete compliance solution."
+        q: "What if I have employees in the US?",
+        a: "Employees can create payroll, state and income-tax questions beyond Form 5472. Obtain payroll and tax advice before treating the information-return package as a complete compliance solution."
       },
       {
-        "q": "I sell on Amazon FBA in the US. What changes?",
-        "a": "Review U.S. inventory, business activity, marketplace collection and state connections with a qualified adviser. Marketplace handling of sales tax does not necessarily settle every filing obligation."
+        q: "I sell on Amazon FBA in the US. What changes?",
+        a: "Review U.S. inventory, business activity, marketplace collection and state connections with a qualified adviser. Marketplace handling of sales tax does not necessarily settle every filing obligation."
       },
       {
-        "q": "Do I need a US bank account to file?",
-        "a": "No. Form 5472 focuses on the LLC and its reportable related-party transactions. Foreign accounts may separately require an LLC-level FBAR review; the owner's residence alone does not decide that."
+        q: "Do I need a US bank account to file?",
+        a: "No. Form 5472 focuses on the LLC and its reportable related-party transactions. Foreign accounts may separately require an LLC-level FBAR review; the owner's residence alone does not decide that."
       },
       {
-        "q": "I formed my LLC mid-year. Do I file for that year?",
-        "a": "Review reportable transactions from formation onward and determine the correct tax year. Formation costs paid by the owner can matter. Do not assume that having no customers means no initial-year filing."
+        q: "I formed my LLC mid-year. Do I file for that year?",
+        a: "Review reportable transactions from formation onward and determine the correct tax year. Formation costs paid by the owner can matter. Do not assume that having no customers means no initial-year filing."
       },
       {
-        "q": "Can I file Form 5472 retroactively if I never filed before?",
-        "a": "Past-year filings may need to be prepared. Review each missing year, any IRS notices and the appropriate submission procedure. A reasonable-cause explanation does not guarantee that a penalty will be waived."
+        q: "Can I file Form 5472 retroactively if I never filed before?",
+        a: "Past-year filings may need to be prepared. Review each missing year, any IRS notices and the appropriate submission procedure. A reasonable-cause explanation does not guarantee that a penalty will be waived."
       },
       {
-        "q": "What if I dissolved my LLC mid-year?",
-        "a": "Closing the LLC does not erase reporting duties. Review final transactions, the effective closing date and any short-year requirements with the preparer. Do not assume a full-year calendar deadline applies to every closure."
+        q: "What if I dissolved my LLC mid-year?",
+        a: "Closing the LLC does not erase reporting duties. Review final transactions, the effective closing date and any short-year requirements with the preparer. Do not assume a full-year calendar deadline applies to every closure."
       },
       {
-        "q": "Do I need to file in the state where I live?",
-        "a": "State duties can arise outside the formation state based on business connections or residence. Home-country tax rules are a separate question. Determine the relevant jurisdictions from the facts, not the LLC's mailing address alone."
+        q: "Do I need to file in the state where I live?",
+        a: "State duties can arise outside the formation state based on business connections or residence. Home-country tax rules are a separate question. Determine the relevant jurisdictions from the facts, not the LLC's mailing address alone."
       },
       {
-        "q": "Does your service handle multi-member LLCs?",
-        "a": "No. This service is for supported foreign-owned single-member disregarded LLCs. A multi-member entity may have partnership or corporate filing obligations depending on its classification and facts; obtain advice from a qualified professional."
+        q: "Does your service handle multi-member LLCs?",
+        a: "No. This service is for supported foreign-owned single-member disregarded LLCs. A multi-member entity may have partnership or corporate filing obligations depending on its classification and facts; obtain advice from a qualified professional."
       }
     ],
-    "relatedSlugs": [
+    relatedSlugs: [
       "wyoming-llc-form-5472",
       "delaware-llc-form-5472",
       "form-5472-germany",
@@ -583,11 +650,11 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Filed Form 5472 Late? Here's What to Do Now",
     intro:
-      "If you missed the April 15 deadline for Form 5472, file as soon as possible. The IRS Delinquent International Information Return Submission Procedure (DIIRSP) lets you submit late filings with a Reasonable Cause Statement requesting that the $25,000 penalty be waived. The longer you wait, the higher the risk of an automatic CP-15 penalty notice — and once that notice arrives, your options narrow sharply. This is the complete playbook for getting back into compliance from one missed year to many.",
+      "If you missed the April 15 deadline for Form 5472, file as soon as possible. DIIRSP lets you submit late filings with a Reasonable Cause Statement requesting waiver of the $25,000 penalty, before the risk of an automatic CP-15 penalty notice narrows your options.",
     sections: [
       {
         heading: "How late can you actually file?",
-        body: "Technically there is no statute of limitations on filing Form 5472 itself — you can file for tax years going back to when your LLC was formed.\n\nPractically, the longer you wait, the worse the risk profile:\n\n• Within a few months of the deadline: very low risk. File under DIIRSP with reasonable cause and most filings are accepted with no penalty.\n• 1-2 years late: still very workable. DIIRSP path with reasonable cause is the standard approach, high acceptance rate for first-time delinquencies.\n• 3+ years late: still file (DIIRSP for the most recent 3 years; older years may need a different path), but the IRS may have already issued a notice you didn't see.\n• Already received a CP-15 notice: DIIRSP is no longer the right path for that year — you respond to the notice with an abatement request and appeal if denied.",
+        body: "You can file Form 5472 late for tax years going back to when your LLC was formed. Risk rises with time: a few months late is usually very low risk, 1-2 years is still workable, and 3+ years may need extra handling.\n\nPractically, the longer you wait, the worse the risk profile:\n\n• Within a few months of the deadline: very low risk. File under DIIRSP with reasonable cause and most filings are accepted with no penalty.\n• 1-2 years late: still very workable. DIIRSP path with reasonable cause is the standard approach, high acceptance rate for first-time delinquencies.\n• 3+ years late: still file (DIIRSP for the most recent 3 years; older years may need a different path), but the IRS may have already issued a notice you didn't see.\n• Already received a CP-15 notice: DIIRSP is no longer the right path for that year — you respond to the notice with an abatement request and appeal if denied.",
       },
       {
         heading: "What happens if you miss the deadline entirely?",
@@ -611,15 +678,24 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How long until you hear back from the IRS?",
-        body: "The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. The provider’s transmission record and IRS processing are different evidence. Silence establishes neither delivery nor acceptance, and no filing-specific processing timetable was verified.\n\nKeep the exact submitted package, destination, timestamp, page count, provider receipt and any IRS correspondence together. Do not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline; a transmission record does not guarantee a penalty will be removed. See receipt confirmation and next steps.",
+        body: "After a late Form 5472 filing, the current instructions do not describe a routine acceptance acknowledgment for this faxed package. Keep the exact submitted package, destination, timestamp, page count, provider receipt and IRS correspondence because a transmission record does not guarantee penalty removal.\n\nDo not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline. See receipt confirmation and next steps.",
       },
       {
         heading: "What are real-world late-filing scenarios?",
-        body: "Scenario A — just-missed: Carlos formed his Wyoming LLC in 2023, learned about Form 5472 in May 2025 (one month after the 2024 return was due). Files DIIRSP for tax year 2024 immediately. Typical outcome: no penalty assessed.\n\nScenario B — three-year catch-up: Mei has had a Delaware LLC since 2022, never filed. Discovers obligation in 2026. Files 2022, 2023, 2024, and 2025 together in one DIIRSP package. (Our wizard supports 3 years, so 2022 would run as a separate filing.) Typical outcome: penalty abatement granted across all years.\n\nScenario C — ignored a CP-15: Ahmed received a CP-15 in July 2024 for tax year 2022. By 2026, continuation penalties have stacked to $100,000+. Needs both to file the actual return AND to engage a tax professional to handle the assessed penalty appeal. Much more expensive and stressful than scenarios A and B.\n\nThe takeaway: act fast. Even multi-year catch-up is vastly cheaper than waiting for an IRS notice and then delaying.",
+        body: "Real-world late filings range from a just-missed return to multi-year DIIRSP catch-up or a CP-15 appeal problem. Carlos files one month after the 2024 return was due, Mei catches up several years together, and Ahmed faces $100,000+ continuation penalties by 2026.\n\nScenario B — three-year catch-up: Mei has had a Delaware LLC since 2022, never filed. Discovers obligation in 2026. Files 2022, 2023, 2024, and 2025 together in one DIIRSP package. (Our wizard supports 3 years, so 2022 would run as a separate filing.) Typical outcome: penalty abatement granted across all years.\n\nScenario C — ignored a CP-15: Ahmed received a CP-15 in July 2024 for tax year 2022. By 2026, continuation penalties have stacked to $100,000+. Needs both to file the actual return AND to engage a tax professional to handle the assessed penalty appeal. Much more expensive and stressful than scenarios A and B.\n\nThe takeaway: act fast. Even multi-year catch-up is vastly cheaper than waiting for an IRS notice and then delaying.",
+        table: {
+          caption: "Late filing examples and relief routes",
+          columns: ["Years late", "What you file", "Relief route"],
+          rows: [
+            ["One month late", "Late return plus statement", "DIIRSP before CP-15"],
+            ["Several years", "2022 through 2025 together", "One DIIRSP package"],
+            ["CP-15 ignored", "Actual return plus appeal", "Post-assessment penalty appeal"],
+          ],
+        },
       },
       {
         heading: "Does the IRS notice if you do not file?",
-        body: "No. The IRS has known about foreign-owned single-member LLCs as a focus area since 2017, when the §6038A reporting rule was extended to them. Since 2018, penalty assessment for missed Form 5472 has been automated.\n\nHow the IRS finds you:\n\n• EIN database cross-reference — every EIN issued to a foreign-owned entity is flagged for expected annual returns.\n• Stripe Atlas / Mercury / formation services occasionally share aggregate data with the IRS for compliance purposes.\n• Bank account openings (foreign-owned US LLC accounts trigger reporting under various AML / KYC frameworks).\n• Customer 1099-K reports — if your LLC received payment processing volume from US-based processors (Stripe, PayPal, Square), the IRS sees the LLC's EIN reported on those forms.\n\nThe IRS doesn't usually catch every non-filer in year 1, but the longer you wait the more likely they catch up. CP-15 notices are routine for foreign-owned LLCs that miss Form 5472. Don't bet on silence.",
+        body: "Yes, the IRS can notice if you do not file, even though it may not catch every non-filer in year 1. EIN cross-references, payment processor reports, bank account activity and CP-15 routines all make silence a risky basis for ignoring Form 5472.\n\nHow the IRS finds you:\n\n• EIN database cross-reference — every EIN issued to a foreign-owned entity is flagged for expected annual returns.\n• Stripe Atlas / Mercury / formation services occasionally share aggregate data with the IRS for compliance purposes.\n• Bank account openings (foreign-owned US LLC accounts trigger reporting under various AML / KYC frameworks).\n• Customer 1099-K reports — if your LLC received payment processing volume from US-based processors (Stripe, PayPal, Square), the IRS sees the LLC's EIN reported on those forms.\n\nThe IRS doesn't usually catch every non-filer in year 1, but the longer you wait the more likely they catch up. CP-15 notices are routine for foreign-owned LLCs that miss Form 5472. Don't bet on silence.",
       },
       {
         heading: "Get caught up in 15 minutes",
@@ -684,7 +760,7 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Form 5472 vs Form 1120 — What's the Difference?",
     intro:
-      "Form 5472 and Form 1120 are two separate IRS forms that foreign-owned US LLCs must file together as one package. Form 1120 is the US corporate income tax return. Form 5472 is an information return about related-party transactions. For most foreign-owned single-member LLCs, the 1120 is filed \"pro forma\" — meaning most boxes are blank. Here's exactly what each form is, why you need both, and how the IRS expects them combined.",
+      "Form 5472 and Form 1120 are separate IRS forms that foreign-owned US LLCs file together as one package. Form 1120 is the US corporate income tax return, while Form 5472 reports related-party transactions, and most single-member LLCs file the 1120 \"pro forma\" with most boxes blank.",
     sections: [
       {
         heading: "What is Form 1120?",
@@ -701,6 +777,17 @@ export const LANDING_PAGES: LandingPage[] = [
       {
         heading: "What's the side-by-side comparison of Form 1120 and Form 5472?",
         body: "Form 1120 (pro forma version for foreign-owned DEs):\n• Purpose: corporate income tax return — used as procedural envelope here.\n• Pages: 6 standard, but most are blank for foreign-owned DEs.\n• What you fill in: name, address, item B (EIN), applicable item E boxes; signature workflow considered separately.\n• What's blank: income, deductions, COGS, tax calculation.\n• Special: \"Foreign-Owned U.S. DE\" stamped across the top of page 1.\n• Tax owed: $0 (because the LLC is disregarded).\n\nForm 5472:\n• Purpose: information return reporting related-party transactions.\n• Pages: 2 substantive pages.\n• What you fill in: Part I (reporting corporation = your LLC), Part II (25% foreign shareholder = you), Part III (related party = you again for single-member), Part IV (monetary transactions, usually blank), Part V (reportable transactions — capital in, distributions out), Part VII (FDE confirmation).\n• Required attachments: Part V supporting statement listing each transaction.\n• Tax owed: $0 (informational only).\n\nFiled together as one package, faxed to +1-855-887-7737.",
+        table: {
+          caption: "Form 1120 and Form 5472 compared",
+          columns: ["Item", "Pro forma Form 1120", "Form 5472"],
+          rows: [
+            ["Purpose", "Corporate return used as envelope", "Information return for related transactions"],
+            ["What you complete", "Name, address, EIN, item E", "Parts I, II, III, IV, V, VII"],
+            ["What stays blank", "Income, deductions, tax calculation", "Part IV usually blank"],
+            ["Tax owed", "$0 because LLC is disregarded", "$0 because informational only"],
+            ["Where it is filed", "One package faxed to Ogden", "One package faxed to Ogden"],
+          ],
+        },
       },
       {
         heading: "What is not involved?",
@@ -708,7 +795,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Does this trigger US corporate income tax?",
-        body: "No. Filing pro forma Form 1120 does NOT make your LLC subject to US corporate income tax.\n\nYour LLC remains a disregarded entity for tax purposes. The 1120 is purely the procedural vehicle for filing Form 5472 — not a real income tax return for your LLC.\n\nTax on LLC profits (if any) flows through to you personally:\n• If your LLC has no US-source income that's effectively connected with a US trade or business: $0 US tax. Income is taxable in your home country only.\n• If your LLC has US-source effectively connected income: you'd file Form 1040-NR personally, separate from the pro forma 1120.\n\nMost foreign-owned single-member LLCs (ecommerce, SaaS, consulting, dropshipping with non-US customers) are in the first bucket. They file pro forma 1120 + Form 5472 as informational and owe no US tax.",
+        body: "No, filing pro forma Form 1120 does not make your LLC subject to U.S. corporate income tax. The LLC remains disregarded for tax purposes, and tax on LLC profits, if any, flows through to you personally rather than through the pro forma cover.\n\nYour LLC remains a disregarded entity for tax purposes. The 1120 is purely the procedural vehicle for filing Form 5472 — not a real income tax return for your LLC.\n\nTax on LLC profits (if any) flows through to you personally:\n• If your LLC has no US-source income that's effectively connected with a US trade or business: $0 US tax. Income is taxable in your home country only.\n• If your LLC has US-source effectively connected income: you'd file Form 1040-NR personally, separate from the pro forma 1120.\n\nMost foreign-owned single-member LLCs (ecommerce, SaaS, consulting, dropshipping with non-US customers) are in the first bucket. They file pro forma 1120 + Form 5472 as informational and owe no US tax.",
       },
       {
         heading: "What are common confusions about these forms?",
@@ -785,7 +872,7 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Wyoming LLC Form 5472 Filing Guide",
     intro:
-      "Wyoming is the most popular state for foreign-owned US LLCs because of its low fees, no state income tax, strong privacy laws, and cheap registered agent ecosystem. But Wyoming residency doesn't exempt you from federal filings — every foreign-owned Wyoming LLC must file IRS Form 5472 with pro forma Form 1120 by April 15 each year, with a $25,000 penalty if missed. This is the complete federal + Wyoming-state filing playbook for foreign owners.",
+      "Every foreign-owned Wyoming LLC must file IRS Form 5472 with pro forma Form 1120 by April 15 each year. Wyoming's low fees, no state income tax, privacy laws, and registered agent market do not remove the federal filing or the $25,000 penalty risk if missed.",
     sections: [
       {
         heading: "Why do foreign LLC owners choose Wyoming?",
@@ -793,7 +880,17 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the Wyoming-specific tax timeline?",
-        body: "Annual federal:\n• April 15 — Federal Form 5472 + pro forma Form 1120 due (October 15 with Form 7004 extension).\n\nAnnual Wyoming state:\n• First day of the LLC's formation anniversary month — Wyoming Annual Report due ($60 minimum, can be higher based on assets located in Wyoming). Filed online with the Wyoming Secretary of State.\n\nBOI (FinCEN) — not required:\n• On March 26, 2025, FinCEN exempted all US-formed entities, including Wyoming LLCs, from Beneficial Ownership Information reporting under the Corporate Transparency Act. A Wyoming LLC owned by a foreign person does not need to file a BOI report.\n\nThat's it for the standard foreign-owned Wyoming LLC. No state income tax return, no state franchise tax, no state-level information return.\n\nOptional / situational:\n• Sales tax registrations in any state where you cross economic nexus thresholds (typically $100K in sales).\n• Personal Form 1040-NR only if you have US-source income personally (rare).",
+        body: "The Wyoming-specific timeline has one federal Form 5472 package due April 15, or October 15 with Form 7004, plus a separate Wyoming Annual Report due in the LLC's formation anniversary month. Standard foreign-owned Wyoming LLCs have no BOI report, state income tax return or franchise tax.\n\nAnnual Wyoming state:\n• First day of the LLC's formation anniversary month — Wyoming Annual Report due ($60 minimum, can be higher based on assets located in Wyoming). Filed online with the Wyoming Secretary of State.\n\nBOI (FinCEN) — not required:\n• On March 26, 2025, FinCEN exempted all US-formed entities, including Wyoming LLCs, from Beneficial Ownership Information reporting under the Corporate Transparency Act. A Wyoming LLC owned by a foreign person does not need to file a BOI report.\n\nThat's it for the standard foreign-owned Wyoming LLC. No state income tax return, no state franchise tax, no state-level information return.\n\nOptional / situational:\n• Sales tax registrations in any state where you cross economic nexus thresholds (typically $100K in sales).\n• Personal Form 1040-NR only if you have US-source income personally (rare).",
+        table: {
+          caption: "Wyoming LLC filing timeline and costs",
+          columns: ["Obligation", "Due", "Cost"],
+          rows: [
+            ["Federal Form 5472 package", "April 15", "$149 Standard service"],
+            ["Extended federal package", "October 15", "Form 7004 required"],
+            ["Wyoming Annual Report", "Formation anniversary month", "$60 minimum"],
+            ["BOI report", "Not required", "US-formed entities exempt"],
+          ],
+        },
       },
       {
         heading: "How do you find your Wyoming LLC's filing info?",
@@ -809,7 +906,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What Wyoming registered agent address do you use?",
-        body: "Your Wyoming registered agent address is what goes on Form 1120 line B (US address) and Form 5472 Part I line 1b.\n\nFor most foreign owners, this is the address of your registered agent service: Wyoming Registered Agent LLC, Northwest Registered Agent, IncFile, Cloud Peak Law, etc. The IRS will mail any notices (including CP-15 penalty notices, if any) to this address.\n\nImportant: confirm your registered agent actually forwards or scans IRS mail to you. Some cheap registered agents in Wyoming bounce IRS mail back as undeliverable, which means you might never see a notice — but the penalty is still assessed and accruing.\n\nIf you've changed registered agents since you got your EIN, you may need to update the IRS via Form 8822-B (Change of Address or Responsible Party). Otherwise the CP-575 address on file is what the IRS uses.",
+        body: "Use your Wyoming registered agent address on Form 1120 line B and Form 5472 Part I line 1b. That is usually the registered agent service's address, and it is where the IRS mails notices, including CP-15 penalty notices, if any.\n\nFor most foreign owners, this is the address of your registered agent service: Wyoming Registered Agent LLC, Northwest Registered Agent, IncFile, Cloud Peak Law, etc. The IRS will mail any notices (including CP-15 penalty notices, if any) to this address.\n\nImportant: confirm your registered agent actually forwards or scans IRS mail to you. Some cheap registered agents in Wyoming bounce IRS mail back as undeliverable, which means you might never see a notice — but the penalty is still assessed and accruing.\n\nIf you've changed registered agents since you got your EIN, you may need to update the IRS via Form 8822-B (Change of Address or Responsible Party). Otherwise the CP-575 address on file is what the IRS uses.",
       },
       {
         heading: "How does the Wyoming Annual Report differ from Form 5472?",
@@ -825,7 +922,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the bottom line for Wyoming LLC owners?",
-        body: "Wyoming is a great state for forming a US LLC as a non-US person — low cost, no state income tax, strong privacy. But it does not exempt you from federal Form 5472 + pro forma 1120, due every April 15.\n\nThe $25,000-per-year-per-form federal penalty is the largest compliance risk for your LLC. Wyoming state filings are a minor annual $60 task; federal Form 5472 is the one you have to get right.\n\nOur service handles the federal piece in 15 minutes, accountant-reviewed, with a money-back guarantee. The state piece (Wyoming Annual Report) is a 10-minute self-serve task on the state website.",
+        body: "The bottom line for Wyoming LLC owners is that state advantages do not replace the federal Form 5472 package due every April 15. Wyoming's $60 annual report is minor beside the $25,000-per-year-per-form federal penalty, so Form 5472 is the filing to get right.\n\nThe $25,000-per-year-per-form federal penalty is the largest compliance risk for your LLC. Wyoming state filings are a minor annual $60 task; federal Form 5472 is the one you have to get right.\n\nOur service handles the federal piece in 15 minutes, accountant-reviewed, with a money-back guarantee. The state piece (Wyoming Annual Report) is a 10-minute self-serve task on the state website.",
       },
     ],
     faqs: [
@@ -886,7 +983,7 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Delaware LLC Form 5472 Filing Guide",
     intro:
-      "Delaware is the #2 most popular state for foreign-owned US LLCs after Wyoming. Stripe Atlas defaults to Delaware, so a large share of foreign-founder LLCs are Delaware entities. If you formed a Delaware LLC and you're not a US person, you must file IRS Form 5472 with pro forma Form 1120 every year — even if your LLC had zero revenue. This is the full Delaware-specific filing playbook including the federal Form 5472, the $400 Delaware franchise tax, and the differences from Wyoming.",
+      "Foreign-owned Delaware LLCs must file IRS Form 5472 with pro forma Form 1120 every year, even with zero revenue. Delaware is the #2 state after Wyoming for these LLCs, common for Stripe Atlas founders, and the annual filing sits alongside the $400 Delaware franchise tax.",
     sections: [
       {
         heading: "Why Delaware?",
@@ -894,11 +991,21 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the Delaware-specific tax timeline?",
-        body: "Annual federal:\n• April 15 — Federal Form 5472 + pro forma Form 1120 due to the IRS (October 15 with Form 7004 extension). Faxed to +1-855-887-7737.\n\nAnnual Delaware state:\n• June 1 — Delaware Annual LLC Franchise Tax due. $400/year flat for most foreign-owned single-member LLCs. Filed with the Delaware Division of Corporations at corp.delaware.gov.\n\nBOI (FinCEN) — not required:\n• On March 26, 2025, FinCEN exempted all US-formed entities, including Delaware LLCs, from Beneficial Ownership Information reporting under the Corporate Transparency Act. A Delaware LLC owned by a foreign person does not need to file a BOI report.\n\nDelaware has NO state income tax on LLCs that don't conduct business in Delaware itself. Almost all foreign-owned Delaware LLCs serve non-Delaware customers and qualify for the exemption — their state obligation is just the $400 franchise tax.",
+        body: "The Delaware-specific timeline has federal Form 5472 plus pro forma Form 1120 due April 15, or October 15 with Form 7004, and Delaware franchise tax due June 1. Most foreign-owned single-member LLCs owe a flat $400 state franchise tax annually.\n\nAnnual Delaware state:\n• June 1 — Delaware Annual LLC Franchise Tax due. $400/year flat for most foreign-owned single-member LLCs. Filed with the Delaware Division of Corporations at corp.delaware.gov.\n\nBOI (FinCEN) — not required:\n• On March 26, 2025, FinCEN exempted all US-formed entities, including Delaware LLCs, from Beneficial Ownership Information reporting under the Corporate Transparency Act. A Delaware LLC owned by a foreign person does not need to file a BOI report.\n\nDelaware has NO state income tax on LLCs that don't conduct business in Delaware itself. Almost all foreign-owned Delaware LLCs serve non-Delaware customers and qualify for the exemption — their state obligation is just the $400 franchise tax.",
+        table: {
+          caption: "Delaware LLC filing timeline and costs",
+          columns: ["Obligation", "Due", "Cost"],
+          rows: [
+            ["Federal Form 5472 package", "April 15", "$149 Standard service"],
+            ["Extended federal package", "October 15", "Form 7004 required"],
+            ["Delaware franchise tax", "June 1", "$400 per year"],
+            ["BOI report", "Not required", "US-formed entities exempt"],
+          ],
+        },
       },
       {
         heading: "How do Stripe Atlas LLCs interact with Form 5472?",
-        body: "If you used Stripe Atlas to incorporate, your LLC is almost certainly Delaware. Stripe Atlas is excellent at:\n• Forming the LLC.\n• Getting your EIN (typically within days).\n• Helping with the initial Mercury bank account.\n• Providing legal templates.\n\nWhat Stripe Atlas explicitly does NOT cover:\n• Annual federal tax filings including Form 5472.\n• Delaware franchise tax (they remind you but don't pay it).\n• Ongoing tax compliance.\n\nNote: BOI (Beneficial Ownership Information) reporting isn't on this list because it no longer applies to Stripe Atlas LLCs. Since March 26, 2025, FinCEN has exempted all US-formed entities, including Delaware LLCs, from BOI reporting.\n\nStripe's own documentation states Atlas is a formation product, not an ongoing tax service. The $5K-equivalent value at formation does not include any year-2-onward filing.\n\nWe handle the federal Form 5472 + pro forma 1120 specifically for foreign-owned Stripe Atlas LLCs. $149 Standard (5-7 business days) or $199 Express (3 business days), IRS fax delivery included, same 15-minute filing process. Most Stripe Atlas customers come to us in spring of year 2 once they realize Form 5472 is on them.",
+        body: "Stripe Atlas LLCs still need their own Form 5472 filings because Atlas forms the Delaware LLC, gets the EIN, helps with Mercury and provides templates, but does not cover annual federal tax filings. Most customers discover this in spring of year 2.\n\nWhat Stripe Atlas explicitly does NOT cover:\n• Annual federal tax filings including Form 5472.\n• Delaware franchise tax (they remind you but don't pay it).\n• Ongoing tax compliance.\n\nNote: BOI (Beneficial Ownership Information) reporting isn't on this list because it no longer applies to Stripe Atlas LLCs. Since March 26, 2025, FinCEN has exempted all US-formed entities, including Delaware LLCs, from BOI reporting.\n\nStripe's own documentation states Atlas is a formation product, not an ongoing tax service. The $5K-equivalent value at formation does not include any year-2-onward filing.\n\nWe handle the federal Form 5472 + pro forma 1120 specifically for foreign-owned Stripe Atlas LLCs. $149 Standard (5-7 business days) or $199 Express (3 business days), IRS fax delivery included, same 15-minute filing process. Most Stripe Atlas customers come to us in spring of year 2 once they realize Form 5472 is on them.",
       },
       {
         heading: "How do you file Form 5472 for a Delaware LLC?",
@@ -910,7 +1017,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the Stripe Atlas, Mercury, and Form 5472 stack?",
-        body: "Common setup for foreign founders:\n• Delaware LLC formed via Stripe Atlas ($500 / one-time).\n• EIN issued through Atlas.\n• Mercury business banking account.\n• Stripe for payment processing.\n• Customers anywhere globally (commonly: ecommerce dropshipping, SaaS subscriptions, info products, consulting).\n\nWhat this triggers annually:\n• Federal Form 5472 + pro forma 1120 — yes, every year, $25,000 penalty if missed. Our service: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included. +$99 per additional past year.\n• Delaware franchise tax — $400/year, due June 1. Self-serve at corp.delaware.gov.\n• Stripe Atlas annual fees — if you subscribed to Atlas's ongoing service ($100/month or similar), they handle some of this. The base $500 formation product does NOT include annual filing.\n• BOI report — one-time at formation (FinCEN). Free.\n• Sales tax — only if you cross economic nexus thresholds in specific states (typically not for SaaS or non-US-only ecommerce).\n\nAt the federal level, the largest penalty risk by far is Form 5472. The $400 franchise tax late penalty is small money; the $25,000 IRS penalty is real money.",
+        body: "The Stripe Atlas, Mercury and Form 5472 stack is a common Delaware setup: Atlas forms the LLC, Mercury handles banking, Stripe handles payment processing, and Form 5472 plus pro forma 1120 remains an annual federal filing. Missing it carries the $25,000 penalty risk.\n\nWhat this triggers annually:\n• Federal Form 5472 + pro forma 1120 — yes, every year, $25,000 penalty if missed. Our service: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included. +$99 per additional past year.\n• Delaware franchise tax — $400/year, due June 1. Self-serve at corp.delaware.gov.\n• Stripe Atlas annual fees — if you subscribed to Atlas's ongoing service ($100/month or similar), they handle some of this. The base $500 formation product does NOT include annual filing.\n• BOI report — one-time at formation (FinCEN). Free.\n• Sales tax — only if you cross economic nexus thresholds in specific states (typically not for SaaS or non-US-only ecommerce).\n\nAt the federal level, the largest penalty risk by far is Form 5472. The $400 franchise tax late penalty is small money; the $25,000 IRS penalty is real money.",
       },
       {
         heading: "What are common Delaware LLC scenarios?",
@@ -987,11 +1094,11 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Form 5472 for German-Resident Owners of US LLCs",
     intro:
-      "If you're a German tax resident who owns a single-member US LLC — commonly for ecommerce, Amazon FBA, SaaS, or consulting — you must file IRS Form 5472 with an attached pro forma Form 1120 every year, even if the LLC had zero US tax due. The most common question we get from German owners is which German tax ID goes on the form. Short answer: your personal Steuerliche Identifikationsnummer (Steuer-ID), not your Steuernummer or VAT ID. Here's the complete filing picture.",
+      "German tax residents who own a single-member US LLC must file IRS Form 5472 with an attached pro forma Form 1120 every year, even if the LLC had zero US tax due. For the German tax ID field, use your Steuerliche Identifikationsnummer (Steuer-ID), not your Steuernummer or VAT ID.",
     sections: [
       {
         heading: "Why do German founders use US LLCs?",
-        body: "German founders use US LLCs for faster formation, US-based payment processing, and platforms that prefer or require a US entity.\n\nCommon reasons German residents form a US LLC instead of (or alongside) a German GmbH or Einzelunternehmen:\n\n• Faster, cheaper formation — a Wyoming or Delaware LLC can be set up in days for a few hundred dollars, versus weeks and a notarized €25,000 minimum capital requirement for a GmbH.\n• US-based payment processing — Stripe, PayPal Business, and Mercury banking are simpler to access with a US entity for a US-focused or global customer base.\n• Platforms like Amazon.com or US-based SaaS marketplaces sometimes prefer or require a US entity for certain seller/vendor programs.\n\nThis is a business-structure choice, not a tax-avoidance one — the LLC is a disregarded entity for US federal tax purposes, and as a German tax resident you may still owe German tax on the LLC's income under German rules. Talk to a German Steuerberater about your German-side reporting; we handle the US federal Form 5472 side.",
+        body: "German founders use US LLCs for faster formation, US-based payment processing, and platforms that prefer or require a US entity. A Wyoming or Delaware LLC can be set up in days for a few hundred dollars, unlike the slower GmbH path described later.\n\nCommon reasons German residents form a US LLC instead of (or alongside) a German GmbH or Einzelunternehmen:\n\n• Faster, cheaper formation — a Wyoming or Delaware LLC can be set up in days for a few hundred dollars, versus weeks and a notarized €25,000 minimum capital requirement for a GmbH.\n• US-based payment processing — Stripe, PayPal Business, and Mercury banking are simpler to access with a US entity for a US-focused or global customer base.\n• Platforms like Amazon.com or US-based SaaS marketplaces sometimes prefer or require a US entity for certain seller/vendor programs.\n\nThis is a business-structure choice, not a tax-avoidance one — the LLC is a disregarded entity for US federal tax purposes, and as a German tax resident you may still owe German tax on the LLC's income under German rules. Talk to a German Steuerberater about your German-side reporting; we handle the US federal Form 5472 side.",
       },
       {
         heading: "What is your FTIN as a German founder?",
@@ -1072,19 +1179,19 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Form 5472 for UAE Residents Who Own a US LLC",
     intro:
-      "Many Dubai and Abu Dhabi-based founders run global ecommerce, dropshipping, SaaS, or consulting businesses through a US LLC (usually Wyoming or Delaware) rather than a UAE mainland or free zone company. If that's you, you must file IRS Form 5472 with an attached pro forma Form 1120 every year — but the UAE has no personal income tax and, for most individuals, no personal tax ID either. Here's exactly what to put on the form instead, and the rest of the filing picture.",
+      "Dubai and Abu Dhabi-based founders who run a US LLC must file IRS Form 5472 with an attached pro forma Form 1120 every year. The UAE has no personal income tax and, for most individuals, no personal tax ID, so the filing needs the right substitute identification approach.",
     sections: [
       {
         heading: "Why do UAE-based founders use US LLCs?",
-        body: "UAE-based founders use US LLCs for faster setup, US-based payment rails and banking, and customers or platforms that expect a US-based seller entity.\n\nCommon reasons UAE residents form a US LLC instead of, or alongside, a UAE mainland or free zone entity:\n\n• Faster, cheaper setup for an early-stage, US-focused or globally distributed business — a Wyoming or Delaware LLC can be formed in days for a few hundred dollars.\n• Easier access to US-based payment rails and banking — Stripe, Mercury, and PayPal Business are simpler to open with a US entity.\n• Customers or platforms (Amazon.com, US SaaS marketplaces) that expect or prefer a US-based seller entity.\n\nThis is a business-structure decision, not a way to avoid UAE obligations — if your UAE Corporate Tax or VAT registration status is affected by owning a foreign entity, that's a question for a UAE tax advisor. We handle the US federal Form 5472 side.",
+        body: "UAE-based founders use US LLCs for faster setup, US-based payment rails and banking, and customers or platforms that expect a US-based seller entity. A Wyoming or Delaware LLC can be formed in days for a few hundred dollars for an early-stage global business.\n\nCommon reasons UAE residents form a US LLC instead of, or alongside, a UAE mainland or free zone entity:\n\n• Faster, cheaper setup for an early-stage, US-focused or globally distributed business — a Wyoming or Delaware LLC can be formed in days for a few hundred dollars.\n• Easier access to US-based payment rails and banking — Stripe, Mercury, and PayPal Business are simpler to open with a US entity.\n• Customers or platforms (Amazon.com, US SaaS marketplaces) that expect or prefer a US-based seller entity.\n\nThis is a business-structure decision, not a way to avoid UAE obligations — if your UAE Corporate Tax or VAT registration status is affected by owning a foreign entity, that's a question for a UAE tax advisor. We handle the US federal Form 5472 side.",
       },
       {
         heading: "What should you enter if you don't have a foreign tax ID?",
-        body: "The UAE does not have a personal income tax, and as a result most individuals are never issued a personal tax identification number. The UAE's Tax Registration Number (TRN), issued by the Federal Tax Authority (FTA), exists for VAT and Corporate Tax purposes — it's tied to a registered business, not automatically to you as an individual, unless you personally cross the VAT (AED 375,000 turnover) or Corporate Tax (AED 1,000,000 turnover) registration thresholds running your own business activity.\n\nIf you don't have a TRN or any other UAE tax identifying number, Form 5472 Part II lets you enter a self-assigned reference ID number instead of a foreign tax ID — you don't need to apply to any government agency for this. Just reuse the same reference ID every year for consistency. Your Emirates ID is a residency/identity document, not a tax identifier, and doesn't go in this field.",
+        body: "The UAE has no personal income tax, so most individuals never receive a personal tax identification number. The UAE Tax Registration Number (TRN), issued by the Federal Tax Authority (FTA), is for VAT and Corporate Tax and is tied to a registered business unless you personally cross the VAT (AED 375,000 turnover) or Corporate Tax (AED 1,000,000 turnover) registration thresholds.\n\nIf you don't have a TRN or any other UAE tax identifying number, Form 5472 Part II lets you enter a self-assigned reference ID number instead of a foreign tax ID — you don't need to apply to any government agency for this. Just reuse the same reference ID every year for consistency. Your Emirates ID is a residency/identity document, not a tax identifier, and doesn't go in this field.",
       },
       {
         heading: "How is UAE Corporate Tax separate from Form 5472?",
-        body: "The UAE introduced a federal Corporate Tax (generally 9% above a profit threshold) on UAE businesses. Whether your ownership of a foreign (US) disregarded LLC creates any UAE Corporate Tax nexus or reporting obligation depends on your specific facts — where the LLC's management and activity actually happen, whether you have a separate UAE business, and other jurisdiction-specific rules we're not positioned to advise on.\n\nWhat we can say clearly: Form 5472 is a US federal information return, entirely separate from UAE Corporate Tax. You file it based on your US LLC's activity regardless of your UAE tax position. For the UAE side, talk to a UAE-licensed tax advisor.",
+        body: "UAE Corporate Tax is separate from Form 5472. The UAE tax question depends on where the LLC's management and activity happen, whether you have a separate UAE business, and other jurisdiction-specific rules. Form 5472 is the US federal information return for the US LLC's activity.\n\nWhat we can say clearly: Form 5472 is a US federal information return, entirely separate from UAE Corporate Tax. You file it based on your US LLC's activity regardless of your UAE tax position. For the UAE side, talk to a UAE-licensed tax advisor.",
       },
       {
         heading: "What are common scenarios for UAE-based owners?",
@@ -1157,11 +1264,11 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Pro Forma Form 1120 — Plain-English Guide",
     intro:
-      "Foreign-owned US single-member LLCs file pro forma Form 1120 as the procedural envelope for Form 5472. \"Pro forma\" means most of the form stays blank — you only fill in entity identification fields and stamp \"Foreign-Owned U.S. DE\" at the top. This guide shows exactly which fields to fill, which to leave empty, why the form even exists in this format, and how to assemble the full package the IRS expects.",
+      "Foreign-owned US single-member LLCs file pro forma Form 1120 as the procedural envelope for Form 5472 in the full IRS package. In this context, \"pro forma\" means most of Form 1120 stays blank, with entity identification fields completed and \"Foreign-Owned U.S. DE\" stamped at the top.",
     sections: [
       {
         heading: "What does 'pro forma' mean here?",
-        body: "Pro forma means \"as a matter of form\" — you file the form for procedural compliance, not to calculate tax. The IRS requires Form 5472 to be attached to a tax return, but a foreign-owned disregarded LLC is not subject to US corporate income tax (the LLC is disregarded — income flows to the owner, not the entity). So the 1120 becomes a near-empty envelope just to give Form 5472 something to attach to.\n\nDo NOT fill in income, deductions, or tax calculations on a pro forma 1120. Doing so would incorrectly suggest your LLC is a real C-corporation owing US tax. The IRS specifically designed the pro forma format to keep your LLC's disregarded-entity status intact while still satisfying the §6038A reporting attachment requirement.",
+        body: "Pro forma means filing Form 1120 for procedural compliance, not to calculate tax. For a foreign-owned disregarded LLC, the 1120 is mostly blank because income flows to the owner, not the entity. It serves as the attachment envelope the IRS requires for Form 5472.\n\nDo NOT fill in income, deductions, or tax calculations on a pro forma 1120. Doing so would incorrectly suggest your LLC is a real C-corporation owing US tax. The IRS specifically designed the pro forma format to keep your LLC's disregarded-entity status intact while still satisfying the §6038A reporting attachment requirement.",
       },
       {
         heading: "Which fields do you fill in on the pro forma 1120?",
@@ -1173,7 +1280,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the 'Foreign-Owned U.S. DE' stamp?",
-        body: "This is a literal requirement from the IRS instructions for Form 5472. At the top of page 1 of Form 1120, write or stamp:\n\n\"Foreign-Owned U.S. DE\"\n\nThis tells the IRS Ogden PIN Unit how to route and process the return. Without this stamp:\n\n• The IRS may try to process it as a regular 1120 — triggering deficiency notices for missing income data.\n• The Form 5472 attachment may not be correctly linked to your LLC.\n• The return may be misrouted within the IRS, delaying processing.\n• Worst case: the filing is treated as incomplete, triggering the $25,000 §6038A penalty.\n\nYou can hand-write it, type it, or stamp it — any visible \"Foreign-Owned U.S. DE\" notation at the top margin works. Our wizard automatically adds this text when generating the PDF.",
+        body: "The \"Foreign-Owned U.S. DE\" stamp is the visible notation the IRS instructions require at the top of Form 1120 page 1. It tells the IRS Ogden PIN Unit how to route the return, link the Form 5472 attachment, and avoid regular 1120 processing.\n\n\"Foreign-Owned U.S. DE\"\n\nThis tells the IRS Ogden PIN Unit how to route and process the return. Without this stamp:\n\n• The IRS may try to process it as a regular 1120 — triggering deficiency notices for missing income data.\n• The Form 5472 attachment may not be correctly linked to your LLC.\n• The return may be misrouted within the IRS, delaying processing.\n• Worst case: the filing is treated as incomplete, triggering the $25,000 §6038A penalty.\n\nYou can hand-write it, type it, or stamp it — any visible \"Foreign-Owned U.S. DE\" notation at the top margin works. Our wizard automatically adds this text when generating the PDF.",
       },
       {
         heading: "Why a 'pro forma' format and not a separate form?",
@@ -1189,7 +1296,18 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What's the difference between pro forma 1120 and regular Form 1120?",
-        body: "Pro forma 1120 (for foreign-owned DEs):\n• Used as a procedural envelope for Form 5472.\n• Most fields blank.\n• No tax owed.\n• Stamped \"Foreign-Owned U.S. DE\".\n• Filed once a year by April 15.\n\nRegular Form 1120 (for real US C-corporations):\n• Real corporate income tax return.\n• All income, deductions, and tax fields filled.\n• Tax owed at corporate rates (21% federal).\n• No special stamp.\n• Filed once a year by April 15 (calendar-year corps).\n\nIf your LLC was structured as a C-corp election (Form 8832 \"check the box\" election to be taxed as a corporation), you'd file a regular 1120, not pro forma. Most foreign-owned LLCs do NOT make this election and remain disregarded entities.",
+        body: "Pro forma 1120 is a procedural envelope for foreign-owned DEs, while regular Form 1120 is a real corporate income tax return. The pro forma version leaves most fields blank, owes no tax, carries the \"Foreign-Owned U.S. DE\" stamp, and supports Form 5472.\n\nRegular Form 1120 (for real US C-corporations):\n• Real corporate income tax return.\n• All income, deductions, and tax fields filled.\n• Tax owed at corporate rates (21% federal).\n• No special stamp.\n• Filed once a year by April 15 (calendar-year corps).\n\nIf your LLC was structured as a C-corp election (Form 8832 \"check the box\" election to be taxed as a corporation), you'd file a regular 1120, not pro forma. Most foreign-owned LLCs do NOT make this election and remain disregarded entities.",
+        table: {
+          caption: "Pro forma 1120 versus regular Form 1120",
+          columns: ["Aspect", "Pro forma 1120", "Regular 1120"],
+          rows: [
+            ["Purpose", "Procedural envelope", "Real corporate income tax return"],
+            ["Fields", "Most fields blank", "Income, deductions, tax fields filled"],
+            ["Tax owed", "No tax", "21% federal corporate rate"],
+            ["Stamp", "Foreign-Owned U.S. DE", "No special stamp"],
+            ["Entity type", "Foreign-owned DEs", "Real US C-corporations"],
+          ],
+        },
       },
       {
         heading: "What about Form 1120-F or 1120-S?",
@@ -1258,15 +1376,15 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Form 1120 for Foreign-Owned LLCs",
     intro:
-      "If you are a non-US person who owns a US single-member LLC, you must file Form 1120 — but in a special \"pro forma\" version where almost every field stays blank. The 1120 exists only as an envelope for Form 5472 (the form that actually matters). This is exactly how it works, what to fill in, what to leave empty, how to assemble the full package, and why filing 1120 doesn't subject your LLC to US corporate income tax.",
+      "Non-US owners of US single-member LLCs must file Form 1120 in a special \"pro forma\" version where almost every field stays blank. The 1120 acts as the envelope for Form 5472, and filing it does not by itself subject the LLC to US corporate income tax.",
     sections: [
       {
         heading: "Why does a foreign-owned LLC file 1120 at all?",
-        body: "Your LLC is a \"disregarded entity\" by default — meaning it doesn't pay corporate income tax. The LLC's income flows through to you, the owner, taxable in your home country only (with rare exceptions for US-source effectively connected income).\n\nSo why file Form 1120 (the corporate income tax return)? Because IRS regulations require Form 5472 to be attached to a tax return. For foreign-owned disregarded entities, the IRS picked Form 1120 as the procedural attachment vehicle when they extended §6038A to single-member LLCs in 2017.\n\nYou file a pro forma (mostly blank) 1120 as the cover sheet for your Form 5472. This does NOT make your LLC subject to US corporate tax. The pro forma 1120 is paperwork only — your LLC remains a disregarded entity for all other tax purposes.",
+        body: "A foreign-owned LLC files Form 1120 because IRS regulations require Form 5472 to attach to a tax return. For foreign-owned disregarded entities, the IRS picked Form 1120 as the procedural vehicle, but the pro forma cover does not create corporate income tax.\n\nYou file a pro forma (mostly blank) 1120 as the cover sheet for your Form 5472. This does NOT make your LLC subject to US corporate tax. The pro forma 1120 is paperwork only — your LLC remains a disregarded entity for all other tax purposes.",
       },
       {
         heading: "What does 'pro forma' mean in this context?",
-        body: "Pro forma means \"as a matter of form\" — filed for procedural compliance, not to calculate tax.\n\nA real Form 1120 (filed by US C-corporations) has all income/deduction/tax fields filled in. A pro forma 1120 (filed by foreign-owned DEs) has only the entity identification fields filled in.\n\nThe special signal that tells the IRS you're filing pro forma: the stamp \"Foreign-Owned U.S. DE\" at the top of page 1. Without that stamp, the IRS may attempt to process the return as a real corporate filing — triggering deficiency notices, tax bills, or refund offsets that are all incorrect for a disregarded entity.",
+        body: "Pro forma means Form 1120 is filed for procedural compliance, not to calculate tax. A real Form 1120 has income, deduction and tax fields filled in, while a foreign-owned DE's pro forma 1120 has only entity identification fields filled in.\n\nA real Form 1120 (filed by US C-corporations) has all income/deduction/tax fields filled in. A pro forma 1120 (filed by foreign-owned DEs) has only the entity identification fields filled in.\n\nThe special signal that tells the IRS you're filing pro forma: the stamp \"Foreign-Owned U.S. DE\" at the top of page 1. Without that stamp, the IRS may attempt to process the return as a real corporate filing — triggering deficiency notices, tax bills, or refund offsets that are all incorrect for a disregarded entity.",
       },
       {
         heading: "What do you fill in on the pro forma 1120?",
@@ -1278,7 +1396,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you sign the pro forma 1120?",
-        body: "Form 5472 has no taxpayer signature block. The relevant block is at the bottom of Form 1120 page 1, with separate officer signature, date, title and paid-preparer fields.\n\nThe special pro forma instruction does not separately address signatures. A conservative workflow is to have the authorized person sign the completed cover in ink, enter the actual signing date and capacity, and scan that signed page for fax. This is a recommendation, not a ruling that every digital-only signature invalidates a filing.\n\nIRS electronic-signature permission depends on the document and route. Corporate e-file authorization rules do not automatically cover this DE fax package. Ask the preparer to establish signing authority and the applicable method; the general Form 1120 instructions separately address paid preparers. See the current signature guide.",
+        body: "Sign the pro forma 1120 using the Form 1120 page 1 signature block because Form 5472 has no taxpayer signature block. The relevant fields are officer signature, date, title and paid-preparer details, with ink signing and scanning described as a conservative workflow.\n\nThe special pro forma instruction does not separately address signatures. A conservative workflow is to have the authorized person sign the completed cover in ink, enter the actual signing date and capacity, and scan that signed page for fax. This is a recommendation, not a ruling that every digital-only signature invalidates a filing.\n\nIRS electronic-signature permission depends on the document and route. Corporate e-file authorization rules do not automatically cover this DE fax package. Ask the preparer to establish signing authority and the applicable method; the general Form 1120 instructions separately address paid preparers. See the current signature guide.",
       },
       {
         heading: "How do you file the complete package?",
@@ -1290,7 +1408,16 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How are foreign-owned multi-member LLCs different?",
-        body: "If your LLC has 2+ members, it's NOT a disregarded entity — it's a partnership for tax purposes. Multi-member LLCs file Form 1065 (US Return of Partnership Income), not Form 1120.\n\nWith foreign partners, the multi-member LLC may also need Form 8865 (Information Return of US Persons With Respect to Certain Foreign Partnerships) and Schedule K-1 for each partner. The compliance is significantly more complex than the single-member case.\n\nOur service is built specifically for single-member, foreign-owned, disregarded LLCs. Multi-member LLCs need a CPA familiar with international partnerships.",
+        body: "Foreign-owned multi-member LLCs are different because they are partnerships for tax purposes, not disregarded entities. They file Form 1065 instead of Form 1120, may need Form 8865 and Schedule K-1 for each partner, and require more complex international partnership compliance.\n\nWith foreign partners, the multi-member LLC may also need Form 8865 (Information Return of US Persons With Respect to Certain Foreign Partnerships) and Schedule K-1 for each partner. The compliance is significantly more complex than the single-member case.\n\nOur service is built specifically for single-member, foreign-owned, disregarded LLCs. Multi-member LLCs need a CPA familiar with international partnerships.",
+        table: {
+          caption: "Entity type and federal filing path",
+          columns: ["Entity", "Federal return", "Form 5472?"],
+          rows: [
+            ["Single-member foreign-owned LLC", "Pro forma Form 1120", "Attached to the 1120"],
+            ["Multi-member foreign-owned LLC", "Form 1065", "Not covered by our service"],
+            ["Foreign partners", "May need Form 8865", "CPA review needed"],
+          ],
+        },
       },
       {
         heading: "What are the state 1120 filings?",
@@ -1359,7 +1486,7 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Form 1120 for a Disregarded Entity (Foreign Owner)",
     intro:
-      "A US LLC owned by a single non-US person is a \"disregarded entity\" — meaning the IRS treats it as if it doesn't exist for income tax purposes. So why does it file Form 1120? Because Treasury Regulation § 1.6038A-1 requires Form 5472 to be attached to a tax return, and a pro forma Form 1120 is the IRS-specified attachment vehicle. This is the complete explanation, the regulation's history, what the filing looks like, and how to avoid the common pitfalls.",
+      "A US LLC owned by a single non-US person is a \"disregarded entity,\" but it still files Form 1120 because Form 5472 must attach to a tax return. Treasury Regulation § 1.6038A-1 uses pro forma Form 1120 as the IRS-specified attachment vehicle for that filing.",
     sections: [
       {
         heading: "What is a disregarded entity?",
@@ -1367,7 +1494,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Why does a disregarded entity file Form 1120?",
-        body: "Disregarded entities don't normally file Form 1120 — that's a corporate income tax return for actual corporations.\n\nThe exception is foreign-owned single-member LLCs treated as DEs. Since 2017, Treasury Regulation § 1.6038A-1 says these entities are treated as separate domestic corporations \"solely for purposes of\" Form 5472 reporting under IRC § 6038A. So they file Form 5472 — and the only way the IRS accepts Form 5472 is as an attachment to Form 1120.\n\nThe 1120 is filed \"pro forma\" — mostly empty — as a procedural cover sheet. Filling it in fully would incorrectly suggest your LLC is a real C-corp.\n\nThe procedural status (file 1120 as the envelope for 5472) does not change the substantive tax status (LLC remains disregarded, owes no corporate tax).",
+        body: "A disregarded entity files Form 1120 only when it is a foreign-owned single-member LLC using the pro forma cover for Form 5472. Since 2017, these entities are treated as separate domestic corporations solely for Form 5472 reporting, not full corporate taxation.\n\nThe exception is foreign-owned single-member LLCs treated as DEs. Since 2017, Treasury Regulation § 1.6038A-1 says these entities are treated as separate domestic corporations \"solely for purposes of\" Form 5472 reporting under IRC § 6038A. So they file Form 5472 — and the only way the IRS accepts Form 5472 is as an attachment to Form 1120.\n\nThe 1120 is filed \"pro forma\" — mostly empty — as a procedural cover sheet. Filling it in fully would incorrectly suggest your LLC is a real C-corp.\n\nThe procedural status (file 1120 as the envelope for 5472) does not change the substantive tax status (LLC remains disregarded, owes no corporate tax).",
       },
       {
         heading: "What is the regulatory history of Form 5472?",
@@ -1379,7 +1506,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What does 'solely for purposes of' mean in practice?",
-        body: "The regulation's phrasing — \"solely for purposes of Section 6038A reporting\" — is important. It limits the corporate treatment to one narrow purpose: making the LLC file Form 5472.\n\nIt does NOT:\n• Make the LLC subject to US corporate income tax.\n• Change the LLC's disregarded status for other tax purposes.\n• Require the LLC to file estimated tax payments.\n• Create employee withholding obligations.\n• Require quarterly returns.\n• Make the LLC liable for accumulated earnings tax or personal holding company tax.\n• Trigger 1120-W estimated tax requirements.\n\nThe LLC is treated as a corporation ONLY to satisfy the procedural requirement that Form 5472 attach to a tax return. For everything else (income tax liability, owner's personal taxation, state tax treatment), the LLC stays a disregarded entity.",
+        body: "\"Solely for purposes of\" means the LLC is treated as a corporation only for Section 6038A reporting. It does not create U.S. corporate income tax, change disregarded status, require estimated payments, create employee withholding obligations, or trigger 1120-W estimated tax requirements.\n\nIt does NOT:\n• Make the LLC subject to US corporate income tax.\n• Change the LLC's disregarded status for other tax purposes.\n• Require the LLC to file estimated tax payments.\n• Create employee withholding obligations.\n• Require quarterly returns.\n• Make the LLC liable for accumulated earnings tax or personal holding company tax.\n• Trigger 1120-W estimated tax requirements.\n\nThe LLC is treated as a corporation ONLY to satisfy the procedural requirement that Form 5472 attach to a tax return. For everything else (income tax liability, owner's personal taxation, state tax treatment), the LLC stays a disregarded entity.",
       },
       {
         heading: "How do you file Form 5472 and pro forma 1120?",
@@ -1391,11 +1518,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What if you elect S-corp taxation?",
-        body: "Don't. You can't.\n\nS-corporations require all owners to be US persons (US citizens, green-card holders, US tax residents). A foreign-person owner disqualifies S-corp eligibility.\n\nIf you (a foreign person) try to elect S-corp status for your US LLC, the IRS will reject the election. If you somehow filed S-corp returns despite ineligibility, the IRS would unwind it and assess back taxes.\n\nIgnore S-corp paths entirely if you're a foreign owner. Disregarded entity (default) or C-corp election (Form 8832) are your only legitimate options.",
+        body: "S-corp taxation is not available for a US LLC owned by a foreign person. S-corporations require all owners to be US persons, so a foreign-person owner disqualifies the election, and the IRS will reject it or unwind improper S-corp returns.\n\nIf you (a foreign person) try to elect S-corp status for your US LLC, the IRS will reject the election. If you somehow filed S-corp returns despite ineligibility, the IRS would unwind it and assess back taxes.\n\nIgnore S-corp paths entirely if you're a foreign owner. Disregarded entity (default) or C-corp election (Form 8832) are your only legitimate options.",
       },
       {
         heading: "What are common confusions about these forms?",
-        body: "\"My LLC is disregarded, so I don't file anything?\" — Wrong. Disregarded means no separate income tax computation; it does NOT mean no filings. Foreign-owned DEs still file Form 5472 + pro forma 1120 annually.\n\n\"If I file Form 1120, am I a corporation now?\" — No. Pro forma 1120 is a procedural vehicle. Your LLC stays disregarded.\n\n\"My CPA says I need a real Form 1120 with income.\" — Get a second opinion. Most CPAs see foreign-owned DE filings once or twice in their career. A full 1120 is wrong unless you've elected C-corp via Form 8832.\n\n\"Can I just file Form 5472 by itself?\" — No. The IRS requires it to be attached to a tax return. Pro forma 1120 is that attachment.\n\n\"My LLC had no transactions — am I still disregarded?\" — Yes, the disregarded status is independent of activity. Whether you file Form 5472 depends on whether you had reportable transactions, but the entity classification doesn't change.",
+        body: "Common confusion starts with assuming disregarded means no filings, but foreign-owned DEs still file Form 5472 plus pro forma 1120 annually. The pro forma 1120 is only a procedural vehicle, and a full 1120 is wrong unless the LLC elected C-corp status.\n\n\"If I file Form 1120, am I a corporation now?\" — No. Pro forma 1120 is a procedural vehicle. Your LLC stays disregarded.\n\n\"My CPA says I need a real Form 1120 with income.\" — Get a second opinion. Most CPAs see foreign-owned DE filings once or twice in their career. A full 1120 is wrong unless you've elected C-corp via Form 8832.\n\n\"Can I just file Form 5472 by itself?\" — No. The IRS requires it to be attached to a tax return. Pro forma 1120 is that attachment.\n\n\"My LLC had no transactions — am I still disregarded?\" — Yes, the disregarded status is independent of activity. Whether you file Form 5472 depends on whether you had reportable transactions, but the entity classification doesn't change.",
       },
       {
         heading: "Skip the paperwork — 15-minute filing",
@@ -1460,7 +1587,7 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "1120 Pro Forma Instructions (Foreign-Owned LLCs)",
     intro:
-      "Filling out a pro forma Form 1120 is completely different from a real corporate tax return. You complete almost nothing — fewer than 10 fields total. Below is the field-by-field breakdown of what to fill in, what to leave blank, the schedules to ignore, signature requirements, and the common mistakes that cause the IRS to misprocess your filing as if it were a real corporate return.",
+      "Filling out a pro forma Form 1120 is different from a real corporate tax return because you complete fewer than 10 fields total. The key task is knowing what to fill in, what to leave blank, which schedules to ignore, and how to sign without making it look like a real return.",
     sections: [
       {
         heading: "What do you need to gather before you start?",
@@ -1480,7 +1607,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What tax and payment section details do you leave blank?",
-        body: "Lines 30 through 37 cover:\n• 30: Taxable income.\n• 31: Total tax.\n• 32: Reserved.\n• 33: Total payments and credits.\n• 34: Estimated tax penalty.\n• 35: Amount owed.\n• 36: Overpayment.\n• 37: Refunded vs. applied to estimated tax.\n\nAll blank. Your LLC isn't computing tax. The pro forma 1120 is informational only — there's no liability to calculate, no payment to remit, no refund to claim.",
+        body: "Lines 30 through 37 in the pro forma 1120 tax and payment section stay blank. These fields cover taxable income, total tax, payments, penalties, amounts owed, overpayments, and refund choices, but the LLC is not computing tax, remitting a payment, or claiming a refund on this informational cover.\n\n• 30: Taxable income.\n• 31: Total tax.\n• 32: Reserved.\n• 33: Total payments and credits.\n• 34: Estimated tax penalty.\n• 35: Amount owed.\n• 36: Overpayment.\n• 37: Refunded vs. applied to estimated tax.\n\nAll blank. Your LLC isn't computing tax. The pro forma 1120 is informational only — there's no liability to calculate, no payment to remit, no refund to claim.",
       },
       {
         heading: "What do you do with schedules on pro forma 1120?",
@@ -1488,7 +1615,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you complete the signature block?",
-        body: "Form 5472 has no taxpayer signature block. The relevant block is at the bottom of Form 1120 page 1, with separate officer signature, date, title and paid-preparer fields.\n\nThe special pro forma instruction does not separately address signatures. A conservative workflow is to have the authorized person sign the completed cover in ink, enter the actual signing date and capacity, and scan that signed page for fax. This is a recommendation, not a ruling that every digital-only signature invalidates a filing.\n\nIRS electronic-signature permission depends on the document and route. Corporate e-file authorization rules do not automatically cover this DE fax package. Ask the preparer to establish signing authority and the applicable method; the general Form 1120 instructions separately address paid preparers. See the current signature guide.",
+        body: "Complete the signature block on Form 1120 page 1, not on Form 5472. The section identifies separate officer signature, date, title, and paid-preparer fields, and recommends a conservative workflow: authorized person signs the completed cover in ink, adds the actual signing date and capacity, then scans it for fax.\n\nThe special pro forma instruction does not separately address signatures. A conservative workflow is to have the authorized person sign the completed cover in ink, enter the actual signing date and capacity, and scan that signed page for fax. This is a recommendation, not a ruling that every digital-only signature invalidates a filing.\n\nIRS electronic-signature permission depends on the document and route. Corporate e-file authorization rules do not automatically cover this DE fax package. Ask the preparer to establish signing authority and the applicable method; the general Form 1120 instructions separately address paid preparers. See the current signature guide.",
       },
       {
         heading: "What mistakes on pro forma 1120 trigger IRS notices?",
@@ -1562,11 +1689,11 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "IRS Form 5472 — the complete guide for foreign-owned LLCs",
     intro:
-      "IRS Form 5472 is the information return that foreign-owned US single-member LLCs must file every year with an attached pro forma Form 1120. Skip the form and the IRS charges $25,000 per year, per form. We prepare the full package in 15 minutes — every order is reviewed by an accountant on our team before we fax it to the IRS Ogden PIN Unit. This is the complete guide: who has to file, what's in the package, when it's due, what the penalty looks like in practice, and how to get caught up if you've missed prior years.",
+      "IRS Form 5472 is the information return foreign-owned US single-member LLCs file every year with an attached pro forma Form 1120. Missing it can trigger a $25,000 penalty per year, per form, and our 15-minute workflow prepares the package before faxing it to the IRS Ogden PIN Unit.",
     sections: [
       {
         heading: "What is IRS Form 5472?",
-        body: "Form 5472 — full title \"Information Return of a 25% Foreign-Owned U.S. Corporation or a Foreign Corporation Engaged in a U.S. Trade or Business\" — is the IRS's mechanism for tracking related-party transactions between foreign owners and their US-based entities.\n\nIts purpose: transparency. The IRS wants visibility into money flowing between non-US persons and US entities they control, even when no US tax is actually owed. It's not a tax return — it's an information return.\n\nSince 2017, single-member LLCs owned by non-US persons are treated as corporations for the purpose of Section 6038A reporting under Treasury Regulation § 1.6038A-1. That means even a one-person Wyoming or Delaware LLC owned by someone abroad has to file Form 5472 every year, attached to a stripped-down (pro forma) Form 1120.\n\nThe regulation closed a transparency loophole: before 2017, foreign-owned single-member US LLCs were invisible to the IRS for disclosure purposes. After 2017, they must report every related-party transaction annually or face the $25,000-per-form-per-year penalty.",
+        body: "IRS Form 5472 is the information return the IRS uses to track related-party transactions between foreign owners and the US entities they control. Its purpose is transparency, giving the IRS visibility into money flowing between non-US persons and controlled US entities even when no US tax is owed.\n\nIts purpose: transparency. The IRS wants visibility into money flowing between non-US persons and US entities they control, even when no US tax is actually owed. It's not a tax return — it's an information return.\n\nSince 2017, single-member LLCs owned by non-US persons are treated as corporations for the purpose of Section 6038A reporting under Treasury Regulation § 1.6038A-1. That means even a one-person Wyoming or Delaware LLC owned by someone abroad has to file Form 5472 every year, attached to a stripped-down (pro forma) Form 1120.\n\nThe regulation closed a transparency loophole: before 2017, foreign-owned single-member US LLCs were invisible to the IRS for disclosure purposes. After 2017, they must report every related-party transaction annually or face the $25,000-per-form-per-year penalty.",
       },
       {
         heading: "Who has to file Form 5472?",
@@ -1582,7 +1709,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "When is Form 5472 due?",
-        body: "April 15 of the year following the tax year (e.g. April 15, 2026 for tax year 2025).\n\nExtensions: file Form 7004 by April 15 for an automatic 6-month extension to October 15. Since Form 5472 is attached to the 1120, the extension covers both forms.\n\nFiscal-year LLCs: 15th day of the 4th month after fiscal year-end.\n\nFiling evidence: retain the exact package and transmission or mailing records. A fax timestamp records the provider’s event, not an IRS acceptance or a statutory postmark. Send early and check the rules for your chosen mailing method; do not assume a deadline-day attempt alone establishes timely filing. See the receipt and follow-up guide.\n\nMissed the deadline? Don't panic. File under DIIRSP immediately with a reasonable cause statement — the longer you wait, the higher the risk of a CP-15 penalty notice.",
+        body: "For a calendar-year LLC, Form 5472 is due April 15 of the year following the tax year. A Form 7004 extension filed by April 15 moves the package to October 15, and fiscal-year LLCs follow the 15th day of the 4th month after fiscal year-end.\n\nExtensions: file Form 7004 by April 15 for an automatic 6-month extension to October 15. Since Form 5472 is attached to the 1120, the extension covers both forms.\n\nFiscal-year LLCs: 15th day of the 4th month after fiscal year-end.\n\nFiling evidence: retain the exact package and transmission or mailing records. A fax timestamp records the provider’s event, not an IRS acceptance or a statutory postmark. Send early and check the rules for your chosen mailing method; do not assume a deadline-day attempt alone establishes timely filing. See the receipt and follow-up guide.\n\nMissed the deadline? Don't panic. File under DIIRSP immediately with a reasonable cause statement — the longer you wait, the higher the risk of a CP-15 penalty notice.",
       },
       {
         heading: "How do you file IRS Form 5472?",
@@ -1590,7 +1717,17 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the difference between Form 5472 and Form 1120?",
-        body: "Form 5472 is the information return that reports related-party transactions. Form 1120 is the corporate income tax return.\n\nFor a real US C-corporation, Form 1120 is a substantive tax filing — income, deductions, tax computation. For a foreign-owned single-member LLC, Form 1120 is pro forma — most fields blank, used only as a procedural envelope for Form 5472.\n\nForm 5472 by itself is not a valid IRS submission. The IRS requires it to be attached to a tax return. For foreign-owned disregarded entities, the IRS chose Form 1120 as that attachment.\n\nSo you file both, together, as one package: pro forma 1120 in front, Form 5472 + Part V supporting statement attached behind, faxed as one document. The 1120 is the envelope, the 5472 is the letter.",
+        body: "Form 5472 reports related-party transactions; Form 1120 is the corporate income tax return. For a foreign-owned single-member LLC, the 1120 is only a pro forma procedural envelope with most fields blank, because Form 5472 must be attached to a tax return and filed as one package.\n\nFor a real US C-corporation, Form 1120 is a substantive tax filing — income, deductions, tax computation. For a foreign-owned single-member LLC, Form 1120 is pro forma — most fields blank, used only as a procedural envelope for Form 5472.\n\nForm 5472 by itself is not a valid IRS submission. The IRS requires it to be attached to a tax return. For foreign-owned disregarded entities, the IRS chose Form 1120 as that attachment.\n\nSo you file both, together, as one package: pro forma 1120 in front, Form 5472 + Part V supporting statement attached behind, faxed as one document. The 1120 is the envelope, the 5472 is the letter.",
+        table: {
+          caption: "Form 1120 versus Form 5472 on this page",
+          columns: ["Item", "Pro forma Form 1120", "Form 5472"],
+          rows: [
+            ["Purpose", "Corporate income tax return", "Reports related-party transactions"],
+            ["LLC role", "Pro forma procedural envelope", "Attached information return"],
+            ["Placement", "Filed in front", "Attached behind with statement"],
+            ["Fields", "Most fields blank", "Parts and transactions completed"],
+          ],
+        },
       },
       {
         heading: "How do you catch up with DIIRSP after missed years?",
@@ -1602,7 +1739,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Why use Form5472 Prep instead of a CPA or DIY?",
-        body: "The three ways to file are DIY with IRS forms, a US CPA, or Form5472 Prep.\n\nDIY with IRS forms ($0 fees, 4-8 hours of careful work): you download blank 1120 and 5472 PDFs from irs.gov, fill them by hand, sign, and fax. Risk: any mistake (missing stamp, blank Part V, wrong signature method) can trigger the $25,000 penalty. Many DIY filings fail compliance review.\n\nUS CPA ($400-$800, 1-2 weeks): most CPAs see foreign-owned DE filings once or twice in their career. They'll typically research the requirements from scratch each time, which makes the turnaround long and the cost high. Some will decline the work entirely.\n\nForm5472 Prep ($149 Standard or $199 Express, plus $99 per additional past year, 15 minutes): purpose-built for this exact filing. Wizard pre-fills everything based on 12 simple questions. Generated PDFs follow current IRS instructions. Every package is accountant-reviewed before fax submission. IRS fax delivery included. Money-back guarantee. Reasonable cause statement auto-generated for late filings.\n\nFor the standard foreign-owned single-member LLC profile, our service is dramatically faster and lower-cost than CPA, and dramatically lower risk than DIY.",
+        body: "Form5472 Prep is built for the standard foreign-owned single-member LLC filing workflow rather than a broad CPA engagement or blank IRS-form DIY process. The wizard pre-fills the package from simple questions, the generated PDFs follow current IRS instructions, an accountant reviews before fax submission, and IRS fax delivery is included.\n\nDIY with IRS forms ($0 fees, 4-8 hours of careful work): you download blank 1120 and 5472 PDFs from irs.gov, fill them by hand, sign, and fax. Risk: any mistake (missing stamp, blank Part V, wrong signature method) can trigger the $25,000 penalty. Many DIY filings fail compliance review.\n\nUS CPA ($400-$800, 1-2 weeks): most CPAs see foreign-owned DE filings once or twice in their career. They'll typically research the requirements from scratch each time, which makes the turnaround long and the cost high. Some will decline the work entirely.\n\nForm5472 Prep ($149 Standard or $199 Express, plus $99 per additional past year, 15 minutes): purpose-built for this exact filing. Wizard pre-fills everything based on 12 simple questions. Generated PDFs follow current IRS instructions. Every package is accountant-reviewed before fax submission. IRS fax delivery included. Money-back guarantee. Reasonable cause statement auto-generated for late filings.\n\nFor the standard foreign-owned single-member LLC profile, our service is dramatically faster and lower-cost than CPA, and dramatically lower risk than DIY.",
       },
     ],
     faqs: [
@@ -1663,19 +1800,29 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Form 5472 deadline — when it's due, and what to do if you've missed it",
     intro:
-      "Form 5472 is due April 15 of the year following the tax year. You can get an automatic 6-month extension to October 15 by filing Form 7004 by April 15. Miss the deadline and the IRS charges $25,000 per form — but you can still catch up under DIIRSP. This is the complete deadline guide: exact dates, extension mechanics, what counts as on-time filing, late-filing penalties, the catch-up procedure, and a real timeline showing what happens after you submit.",
+      "Form 5472 is due April 15 of the year following the tax year. Filing Form 7004 by April 15 gives an automatic 6-month extension to October 15, while missing the deadline can trigger a $25,000-per-form penalty that may still be addressed through DIIRSP catch-up filing.",
     sections: [
       {
         heading: "What is the exact deadline for Form 5472?",
         body: "Form 5472 follows the corporate (Form 1120) calendar:\n\n• Calendar-year LLC (Jan 1 - Dec 31 tax year): Form 5472 + pro forma Form 1120 due April 15 of the next year. For tax year 2025, that's April 15, 2026.\n• Fiscal-year LLC: due the 15th day of the 4th month after fiscal year-end. Example: fiscal year ending June 30 → return due October 15.\n• Extension: file Form 7004 by the original due date for an automatic 6-month extension to October 15 (calendar-year LLC) or the equivalent for fiscal-year.\n\nThe extension shifts the filing deadline only — not any tax liability (most foreign-owned disregarded entities owe no US income tax, so this rarely matters).\n\nWeekend / holiday rule: if April 15 falls on a Saturday, Sunday, or federal holiday, the deadline moves to the next business day. (2026: April 15 is a Wednesday — normal deadline.)",
+        table: {
+          caption: "Form 5472 due dates from the deadline guide",
+          columns: ["Situation", "Due date", "Note"],
+          rows: [
+            ["Calendar-year LLC", "April 15 next year", "Tax year 2025 due April 15, 2026"],
+            ["With Form 7004", "October 15", "File extension by original due date"],
+            ["Weekend or holiday", "Next business day", "Saturday, Sunday, or federal holiday"],
+            ["Fiscal-year LLC", "Fourth month, 15th day", "Measured after fiscal year-end"],
+          ],
+        },
       },
       {
         heading: "How do you file Form 7004 for an extension?",
-        body: "You file Form 7004 by the original deadline to get the 6-month extension. It must be filed by the original deadline (April 15 for calendar-year LLCs).\n\nWhat to put on Form 7004:\n• Part I: select form code \"12\" (Form 1120).\n• Identification: LLC name, EIN, address — same as on the eventual 1120.\n• Estimated tax: $0 for foreign-owned DEs (no tax liability).\n\nSubmit Form 7004 by:\n• Fax to +1-855-887-7737 (same Ogden PIN Unit number).\n• Mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n\nThe extension is automatic — the IRS doesn't send a confirmation. Just keep transmission evidence of the 7004 (fax receipt or certified mail receipt). Your Form 5472 + pro forma 1120 is then due by October 15.\n\nDon't file Form 7004 if you're already past April 15 — at that point file the actual Form 5472 + 1120 directly with a DIIRSP reasonable cause statement.",
+        body: "File Form 7004 by the original due date to request the automatic 6-month extension for the Form 5472 package. For calendar-year LLCs, that means April 15; use Form 1120 code 12, the same LLC identification details, and $0 estimated tax for foreign-owned DEs with no tax liability.\n\nWhat to put on Form 7004:\n• Part I: select form code \"12\" (Form 1120).\n• Identification: LLC name, EIN, address — same as on the eventual 1120.\n• Estimated tax: $0 for foreign-owned DEs (no tax liability).\n\nSubmit Form 7004 by:\n• Fax to +1-855-887-7737 (same Ogden PIN Unit number).\n• Mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n\nThe extension is automatic — the IRS doesn't send a confirmation. Just keep transmission evidence of the 7004 (fax receipt or certified mail receipt). Your Form 5472 + pro forma 1120 is then due by October 15.\n\nDon't file Form 7004 if you're already past April 15 — at that point file the actual Form 5472 + 1120 directly with a DIIRSP reasonable cause statement.",
       },
       {
         heading: "What counts as \"on time\"?",
-        body: "A successful fax report is useful transmission evidence, but it is not an IRS acknowledgment or a statutory postmark. The special Form 5472 instructions permit fax filing without specifying a universal sender-local-midnight cutoff or making every provider timestamp conclusive.\n\nSend early enough to resolve failures. For mail, check the applicable postal or IRS-designated private delivery-service rules; do not assume an international postmark or any courier shipment receives the same timely-mailing treatment.\n\nRetain the exact package, the complete report with destination and timestamp/timezone, and any mailing records or IRS correspondence. If a notice questions timeliness, respond using those records; a receipt does not guarantee penalty reversal. See what a fax receipt does and does not prove.",
+        body: "A successful fax report is useful transmission evidence, but it is not an IRS acknowledgment or a statutory postmark. Send early and keep complete records so you can document the package, destination, timestamp, and route if timing is later questioned.\n\nSend early enough to resolve failures. For mail, check the applicable postal or IRS-designated private delivery-service rules; do not assume an international postmark or any courier shipment receives the same timely-mailing treatment.\n\nRetain the exact package, the complete report with destination and timestamp/timezone, and any mailing records or IRS correspondence. If a notice questions timeliness, respond using those records; a receipt does not guarantee penalty reversal. See what a fax receipt does and does not prove.",
       },
       {
         heading: "What happens if you do nothing after the deadline?",
@@ -1763,11 +1910,11 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "The IRS Form 5472 fax number (and how to actually send it)",
     intro:
-      "The IRS Form 5472 fax number is +1-855-887-7737 — the Ogden PIN Unit. Fax is the fastest way to file Form 5472 with its attached pro forma Form 1120, and the fax transmission receipt is your transmission evidence to retain with the exact package. This is exactly what to send, in what order, which fax services work, what to do if the fax fails, and how to get the provider’s transmission record.",
+      "The IRS Form 5472 fax number is +1-855-887-7737, the Ogden PIN Unit. Fax is the fastest filing route for Form 5472 with its attached pro forma Form 1120, and the fax transmission receipt is the evidence to keep with the exact package after submission.",
     sections: [
       {
         heading: "What is the fax number?",
-        body: "Fax to: +1-855-887-7737 (IRS Ogden PIN Unit)\n\nThis is the IRS's published fax number for Form 5472 and the attached pro forma Form 1120 filed by foreign-owned US disregarded entities. The Ogden Service Center processes all of these returns — they cannot be e-filed.\n\nThis number is specific to Form 5472 + pro forma 1120 filings by foreign-owned single-member LLCs. Other tax filings (real corporate returns, partnership returns, personal returns) use different IRS fax numbers. Do not use this fax number for any other type of return.\n\nIt's a US toll-free number, so from outside the US you can call it via any international fax service that supports US destinations. Most online fax services charge $1-$5 per send.",
+        body: "Fax to: +1-855-887-7737 (IRS Ogden PIN Unit). Send the complete Form 5472 plus attached pro forma Form 1120 package to that number, because the Ogden Service Center processes these foreign-owned disregarded-entity filings and they cannot be e-filed. Do not use it for unrelated corporate, partnership, or personal returns.\n\nThis is the IRS's published fax number for Form 5472 and the attached pro forma Form 1120 filed by foreign-owned US disregarded entities. The Ogden Service Center processes all of these returns — they cannot be e-filed.\n\nThis number is specific to Form 5472 + pro forma 1120 filings by foreign-owned single-member LLCs. Other tax filings (real corporate returns, partnership returns, personal returns) use different IRS fax numbers. Do not use this fax number for any other type of return.\n\nIt's a US toll-free number, so from outside the US you can call it via any international fax service that supports US destinations. Most online fax services charge $1-$5 per send.",
       },
       {
         heading: "What do you need to send to the IRS?",
@@ -1787,7 +1934,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What if the fax fails?",
-        body: "A failed or partial fax does not establish a completed filing. Check the provider’s status, destination, page limit and file readability, then retry promptly when the problem is resolved.\n\nIf the deadline is near and fax remains unavailable, assess an authorized mail alternative that can meet the applicable deadline. Use the dedicated destination: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201. Mailing timeliness depends on the applicable postmark and delivery-service rules; do not assume any international courier or a logged fax attempt preserves the deadline.\n\nKeep failed and successful attempt records. If the deadline passes, obtain advice on the late filing rather than assuming a next-day transmission was timely.",
+        body: "A failed or partial fax does not establish a completed filing, so check the provider status and retry promptly once the problem is resolved. If fax remains unavailable near the deadline, assess the dedicated Ogden PIN Unit mailing route and keep both failed and successful attempt records.\n\nIf the deadline is near and fax remains unavailable, assess an authorized mail alternative that can meet the applicable deadline. Use the dedicated destination: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201. Mailing timeliness depends on the applicable postmark and delivery-service rules; do not assume any international courier or a logged fax attempt preserves the deadline.\n\nKeep failed and successful attempt records. If the deadline passes, obtain advice on the late filing rather than assuming a next-day transmission was timely.",
       },
       {
         heading: "What common fax mistakes should you avoid?",
@@ -1799,7 +1946,16 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Which is better: mail or fax?",
-        body: "Fax is the right default for most foreign LLC owners, with mail as a fallback for a specific fax failure.\n\nFax (preferred):\n• Faster delivery — transmission completes in minutes.\n• Immediate provider transmission record — not an IRS acceptance.\n• Avoids physical postal transit, but a transmission record does not establish IRS processing.\n• Cheaper than international certified mail.\n• Works the same from anywhere in the world.\n\nMail (backup):\n• Slower — takes days to weeks for delivery, especially internationally.\n• Mailing evidence depends on applicable postmark and delivery-service rules.\n• Risk of physical misdelivery or loss.\n• More expensive for international senders ($20-$80 vs $0-$5 for fax).\n• Can be the only option if fax service fails.\n\nFor most foreign LLC owners, fax is the right default. Mail can be a fallback for a specific fax failure. Do not automatically fax and mail duplicates merely because the IRS is silent.",
+        body: "Fax is the right default for most foreign LLC owners, while mail is a backup when a specific fax failure requires it. Fax can complete in minutes, gives an immediate provider transmission record, avoids physical postal transit, and usually costs less than international certified mail.\n\nFax (preferred):\n• Faster delivery — transmission completes in minutes.\n• Immediate provider transmission record — not an IRS acceptance.\n• Avoids physical postal transit, but a transmission record does not establish IRS processing.\n• Cheaper than international certified mail.\n• Works the same from anywhere in the world.\n\nMail (backup):\n• Slower — takes days to weeks for delivery, especially internationally.\n• Mailing evidence depends on applicable postmark and delivery-service rules.\n• Risk of physical misdelivery or loss.\n• More expensive for international senders ($20-$80 vs $0-$5 for fax).\n• Can be the only option if fax service fails.\n\nFor most foreign LLC owners, fax is the right default. Mail can be a fallback for a specific fax failure. Do not automatically fax and mail duplicates merely because the IRS is silent.",
+        table: {
+          caption: "Mail, fax, and service delivery evidence",
+          columns: ["Method", "Send to", "Proof you keep"],
+          rows: [
+            ["Fax", "+1-855-887-7737", "Provider transmission record"],
+            ["Certified mail", "Ogden PIN Unit address", "Certified mail and return receipt"],
+            ["Form5472 Prep fax", "+1-855-887-7737", "Timestamped receipt in your portal"],
+          ],
+        },
       },
       {
         heading: "What is your annual fax routine?",
@@ -1865,11 +2021,11 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Single-member LLC with a foreign owner — what you actually have to file",
     intro:
-      "If you are a non-US person who owns a single-member US LLC (Wyoming, Delaware, New Mexico, Florida, Nevada, or any state), you have one critical annual federal filing the IRS imposes on you: Form 5472 attached to a pro forma Form 1120. Miss it and the IRS charges $25,000 per year, per form — automatically, with no warning. This is the complete guide to what you owe, when, what your LLC actually pays (often nothing), and how to file it in 15 minutes.",
+      "Non-US owners of single-member US LLCs, whether in Wyoming, Delaware, New Mexico, Florida, Nevada, or any state, have one critical annual federal filing the IRS imposes: Form 5472 attached to pro forma Form 1120. Missing it can trigger a $25,000 penalty per year, per form.",
     sections: [
       {
         heading: "Why does the IRS single out foreign-owned LLCs?",
-        body: "The IRS singles out foreign-owned single-member LLCs because the 2017 rule added annual related-party disclosure while preserving disregarded income-tax treatment. For US owners that's simple: pile it on your personal Schedule C of Form 1040 and you're done.\n\nFor foreign owners it's different. Before 2017, foreign-owned single-member LLCs were also disregarded for ALL tax purposes — including reporting. That created a transparency loophole: non-US persons could hold US LLCs and the IRS had no visibility into related-party transactions, beneficial ownership, or fund flows.\n\nSince 2017, Treasury Regulation § 1.6038A-1 reclassifies foreign-owned disregarded entities as corporations specifically for Section 6038A reporting. That triggers an annual obligation to file Form 5472 to track every related-party transaction between the foreign owner and the LLC. The substantive tax treatment didn't change — the LLC is still disregarded for income tax. Only the disclosure obligation was added.",
+        body: "The IRS singles out foreign-owned single-member LLCs because the 2017 rule added annual related-party disclosure while preserving disregarded income-tax treatment. Before that change, those entities were also disregarded for reporting, leaving the IRS without visibility into related-party transactions, beneficial ownership, or fund flows involving non-US owners.\n\nSince 2017, Treasury Regulation § 1.6038A-1 reclassifies foreign-owned disregarded entities as corporations specifically for Section 6038A reporting. That triggers an annual obligation to file Form 5472 to track every related-party transaction between the foreign owner and the LLC. The substantive tax treatment didn't change — the LLC is still disregarded for income tax. Only the disclosure obligation was added.",
       },
       {
         heading: "Do you actually have to file?",
@@ -1877,7 +2033,17 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What do you owe, and what do you file?",
-        body: "What you owe and what you file are different things.\n\nForm 5472 + pro forma Form 1120 (always required):\n• Annual federal information return.\n• Discloses related-party transactions.\n• No tax liability calculated on these forms.\n• $25,000 penalty per missed form per year.\n• Due April 15 (October 15 with extension).\n\nUS federal income tax (usually $0):\n• Foreign-owned single-member LLCs are disregarded for tax.\n• If income is foreign-source and you have no US trade or business: $0 US federal income tax.\n• If income is US-source effectively connected with a US trade or business: file Form 1040-NR personally; may owe US tax.\n• Most ecommerce / SaaS / consulting LLCs serving non-US customers owe nothing.\n\nState tax (depends on state):\n• Wyoming, Delaware (out-of-state), Nevada, Florida, Texas, New Mexico: no state income tax on LLCs.\n• California, New York, others: state-level tax may apply.\n• Annual report fee: varies $60-$400/year by state.\n\nMost foreign-owned single-member LLCs that sell internationally owe $0 in US federal tax but still must file Form 5472 + pro forma 1120 every year just to stay compliant.",
+        body: "You usually owe no tax on the Form 5472 package, but you file Form 5472 with a pro forma Form 1120 every year. The federal information return discloses related-party transactions, calculates no tax liability on those forms, carries a $25,000 missed-form penalty, and is due April 15 or October 15 with extension.\n\nForm 5472 + pro forma Form 1120 (always required):\n• Annual federal information return.\n• Discloses related-party transactions.\n• No tax liability calculated on these forms.\n• $25,000 penalty per missed form per year.\n• Due April 15 (October 15 with extension).\n\nUS federal income tax (usually $0):\n• Foreign-owned single-member LLCs are disregarded for tax.\n• If income is foreign-source and you have no US trade or business: $0 US federal income tax.\n• If income is US-source effectively connected with a US trade or business: file Form 1040-NR personally; may owe US tax.\n• Most ecommerce / SaaS / consulting LLCs serving non-US customers owe nothing.\n\nState tax (depends on state):\n• Wyoming, Delaware (out-of-state), Nevada, Florida, Texas, New Mexico: no state income tax on LLCs.\n• California, New York, others: state-level tax may apply.\n• Annual report fee: varies $60-$400/year by state.\n\nMost foreign-owned single-member LLCs that sell internationally owe $0 in US federal tax but still must file Form 5472 + pro forma 1120 every year just to stay compliant.",
+        table: {
+          caption: "Tax owed and filing required",
+          columns: ["Item", "Do you owe it?", "Do you file it?"],
+          rows: [
+            ["Federal income tax", "Usually $0", "Form 1040-NR if US-source ECI"],
+            ["Form 5472", "No tax calculated", "Yes, every year"],
+            ["Pro forma Form 1120", "No tax calculated", "Filed with Form 5472"],
+            ["State filings", "Depends on state", "Annual reports vary by state"],
+          ],
+        },
       },
       {
         heading: "What is the $25,000 penalty in detail?",
@@ -1885,7 +2051,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are typical foreign-owner LLC profiles?",
-        body: "Profile 1: SaaS founder.\n• Delaware LLC formed via Stripe Atlas.\n• Owner abroad (e.g. UK, Singapore, Hong Kong).\n• Selling SaaS via Stripe to global customers.\n• Revenue $50K-$2M.\n• US federal tax: $0 (no US trade or business, foreign-source services).\n• Required filings: Form 5472 + pro forma 1120 federal, Delaware franchise tax $400. No BOI report — US-formed LLCs have been exempt from FinCEN BOI reporting since March 26, 2025. Total federal compliance with us: $149/year.\n\nProfile 2: Ecommerce / dropshipping.\n• Wyoming LLC.\n• Owner in Vietnam, Mexico, etc.\n• Shopify store with worldwide customers (no US warehouse).\n• Revenue $20K-$500K.\n• US federal tax: $0 (no US-source income).\n• Required filings: Form 5472 + pro forma 1120 federal, Wyoming annual report $60, sales tax if nexus crossed. No BOI report — same March 26, 2025 exemption applies. Total federal compliance with us: $149/year.\n\nProfile 3: Consulting / agency.\n• Wyoming or Delaware LLC.\n• Owner in EU, India, Brazil.\n• Consulting clients in US and abroad.\n• Revenue $30K-$300K.\n• US federal tax: $0 if consulting performed outside the US.\n• Required filings: Form 5472 + pro forma 1120 federal, state annual report. With us: $149/year.\n\nProfile 4: Stripe Atlas Delaware LLC, no revenue.\n• Just formed.\n• Funded $5K-$10K to open Mercury bank account.\n• No customers yet.\n• Required filings: Form 5472 + pro forma 1120 federal (the capital contribution counts as a reportable transaction). With us: $149/year.",
+        body: "Profile 1: SaaS founder.\n• Delaware LLC formed via Stripe Atlas.\n• Owner abroad (e.g. UK, Singapore, Hong Kong).\n• Selling SaaS via Stripe to global customers.\n• Revenue $50K-$2M.\n• US federal tax: $0 (no US trade or business, foreign-source services).\n• Required filings: Form 5472 + pro forma 1120 federal, Delaware franchise tax $400. No BOI report — US-formed LLCs have been exempt from FinCEN BOI reporting since March 26, 2025. Total federal compliance with us: $149/year.\n\nProfile 2: Ecommerce / dropshipping.\n• Wyoming LLC.\n• Owner in Vietnam, Mexico, etc.\n• Shopify store with worldwide customers (no US warehouse).\n• Revenue $20K-$500K.\n• US federal tax: $0 (no US-source income).\n• Required filings: Form 5472 + pro forma 1120 federal, Wyoming annual report $60, sales tax if nexus crossed. Total federal compliance with us: $149/year.\n\nProfile 3: Consulting / agency.\n• Wyoming or Delaware LLC.\n• Owner in EU, India, Brazil.\n• Consulting clients in US and abroad.\n• Revenue $30K-$300K.\n• US federal tax: $0 if consulting performed outside the US.\n• Required filings: Form 5472 + pro forma 1120 federal, state annual report. With us: $149/year.\n\nProfile 4: Stripe Atlas Delaware LLC, no revenue.\n• Just formed.\n• Funded $5K-$10K to open Mercury bank account.\n• No customers yet.\n• Required filings: Form 5472 + pro forma 1120 federal (the capital contribution counts as a reportable transaction). With us: $149/year.",
       },
       {
         heading: "What is in the federal filing package?",
@@ -1893,7 +2059,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "When and how do you file?",
-        body: "You file by April 15, or October 15 with Form 7004, by fax or mail to the IRS Ogden PIN Unit.\n\nWhen: April 15 of the year following the tax year. October 15 with Form 7004 extension.\n\nHow:\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit) — preferred. Get a timestamped transmission receipt as transmission evidence.\n• Mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 — backup. Use certified mail with return receipt.\n• E-file: NOT available for foreign-owned DE filings.\n\nWho:\n• Establish who is authorized to sign for the LLC. Ink signing the completed Form 1120 is a conservative workflow; Form 5472 has no separate signature block.\n\nWith us:\n• Wizard (12 questions) → generated PDF → sign once on screen → accountant review → fax to IRS → timestamped receipt. ~15 minutes total. $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included. +$99 per additional past year.",
+        body: "File by April 15, or by October 15 with Form 7004, and send the package by fax or mail to the IRS Ogden PIN Unit. The section lists fax as the preferred route for a timestamped transmission receipt, mail as backup, and e-file as unavailable for foreign-owned DE filings.\n\nWhen: April 15 of the year following the tax year. October 15 with Form 7004 extension.\n\nHow:\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit) — preferred. Get a timestamped transmission receipt as transmission evidence.\n• Mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 — backup. Use certified mail with return receipt.\n• E-file: NOT available for foreign-owned DE filings.\n\nWho:\n• Establish who is authorized to sign for the LLC. Ink signing the completed Form 1120 is a conservative workflow; Form 5472 has no separate signature block.\n\nWith us:\n• Wizard (12 questions) → generated PDF → sign once on screen → accountant review → fax to IRS → timestamped receipt. ~15 minutes total. $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included. +$99 per additional past year.",
       },
       {
         heading: "What do you do if you've missed prior years?",
@@ -1966,11 +2132,21 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Stripe Atlas LLC owners — Form 5472 is on you, not Stripe",
     intro:
-      "Stripe Atlas makes US LLC formation effortless for foreign founders — Delaware LLC + EIN + Mercury bank account in days. What Stripe Atlas explicitly does NOT handle is the annual IRS filing your LLC owes every year: Form 5472 + pro forma Form 1120. Skip it and the IRS charges $25,000 per year, per form. This is the complete Stripe Atlas + Form 5472 playbook — including the typical year-2 surprise, the Delaware franchise tax, and how to catch up if you've missed prior years.",
+      "Stripe Atlas forms Delaware LLCs for foreign founders, but the annual IRS filing remains yours: Form 5472 plus pro forma Form 1120. Stripe Atlas does not handle that package, and skipping it can trigger a $25,000 penalty per year, per form, plus Delaware franchise tax considerations.",
     sections: [
       {
         heading: "What does Stripe Atlas cover and not cover?",
         body: "Stripe Atlas covers formation setup, but it does not cover the annual Form 5472 package.\n\n• Forming your Delaware LLC (typically completes in 1-3 days).\n• Getting your EIN (international applicants get one without needing a US SSN/ITIN).\n• Setting up a US business bank account via Mercury (or similar fintech).\n• Providing legal templates (operating agreement, member resolutions).\n• Issuing equity to founders if you have co-founders.\n• Stripe payment processing integration on day 1.\n\nWhat Stripe Atlas explicitly does NOT cover (and Stripe says so in their own docs):\n\n• Annual federal tax filings, including Form 5472.\n• Pro forma Form 1120 (the attachment to Form 5472).\n• Delaware franchise tax ($400/year — they remind you but don't pay it).\n• State annual reports.\n• Personal Form 1040-NR (if you have US-source income).\n• Sales tax registrations.\n• Bookkeeping or accounting.\n\nNote: BOI (Beneficial Ownership Information) reporting isn't on this list because it no longer applies. Since March 26, 2025, FinCEN has exempted US-formed entities like your Delaware LLC from BOI reporting entirely.\n\nIf you formed your LLC through Stripe Atlas and you're a non-US person, Form 5472 is yours to file — every year, by April 15. Stripe's role ended at formation.",
+        table: {
+          caption: "Stripe Atlas and Form5472 Prep task split",
+          columns: ["Task", "Stripe Atlas", "Form5472 Prep"],
+          rows: [
+            ["LLC formation", "Forms Delaware LLCs", "Built for this profile"],
+            ["Form 5472 package", "Not covered", "$149 Standard filing"],
+            ["IRS fax filing", "Not in formation product", "Fax delivery included"],
+            ["Catch-up for missed years", "Founders discover later", "DIIRSP catch-up packages"],
+          ],
+        },
       },
       {
         heading: "Why does this catch Stripe Atlas founders off guard?",
@@ -1978,7 +2154,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the typical Stripe Atlas compliance stack?",
-        body: "The typical Stripe Atlas compliance stack includes federal Form 5472, Delaware franchise tax, and situational filings.\n\nFederal (us):\n• Form 5472 + pro forma Form 1120 due April 15. $25,000 penalty if missed. Our service: $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included.\n• BOI report to FinCEN — NOT required. Since March 26, 2025, FinCEN has exempted US-formed entities, including Delaware LLCs, from BOI reporting under the Corporate Transparency Act.\n\nState (Delaware, self-serve):\n• Delaware Annual LLC Franchise Tax: $400, due June 1. Self-serve at corp.delaware.gov.\n\nSituational:\n• Personal Form 1040-NR — only if you have US-source income personally (rare for most Stripe Atlas LLCs).\n• Sales tax registrations — only if you cross economic nexus thresholds in specific states (rare for SaaS, more common for physical-goods ecommerce).\n• Payroll taxes — only if you have US employees (rare).\n\nNot Stripe's job after formation:\n• None of the above is included in the Stripe Atlas formation product. Some of Stripe Atlas's optional ongoing services may handle pieces, but the standard formation product ends at year 1 day 1.\n\nTotal annual federal compliance with us: Standard $149 (fax delivery included). Plus $400 Delaware state. Total year 2+: $549/year.",
+        body: "The typical Stripe Atlas compliance stack includes federal Form 5472, Delaware franchise tax, and situational filings. The federal piece is Form 5472 plus pro forma Form 1120 due April 15; Delaware's annual LLC franchise tax is separate and due June 1; personal, sales, or payroll filings depend on facts.\n\nFederal (us):\n• Form 5472 + pro forma Form 1120 due April 15. $25,000 penalty if missed. Our service: $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included.\n• BOI report to FinCEN — NOT required. Since March 26, 2025, FinCEN has exempted US-formed entities, including Delaware LLCs, from BOI reporting under the Corporate Transparency Act.\n\nState (Delaware, self-serve):\n• Delaware Annual LLC Franchise Tax: $400, due June 1. Self-serve at corp.delaware.gov.\n\nSituational:\n• Personal Form 1040-NR — only if you have US-source income personally (rare for most Stripe Atlas LLCs).\n• Sales tax registrations — only if you cross economic nexus thresholds in specific states (rare for SaaS, more common for physical-goods ecommerce).\n• Payroll taxes — only if you have US employees (rare).\n\nNot Stripe's job after formation:\n• None of the above is included in the Stripe Atlas formation product. Some of Stripe Atlas's optional ongoing services may handle pieces, but the standard formation product ends at year 1 day 1.\n\nTotal annual federal compliance with us: Standard $149 (fax delivery included). Plus $400 Delaware state. Total year 2+: $549/year.",
       },
       {
         heading: "What do you actually file for Form 5472?",
@@ -1986,7 +2162,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are common Stripe Atlas LLC scenarios?",
-        body: "Common scenarios include year-one funding, growing SaaS, late discovery, and multiple LLCs.\n\nScenario A — Year 1, no revenue yet: Lucia formed her Stripe Atlas LLC in June 2024. By December 2024 the only activity was: $5K capital contribution to open Mercury account + $500 spent on Stripe Atlas formation fee. Required for tax year 2024: Form 5472 + pro forma 1120. Part V reports the $5K capital contribution. Files by April 15, 2025 with our service for Standard $149 (fax included).\n\nScenario B — Year 2, growing SaaS: Mei has been running her Stripe Atlas Delaware LLC for 2 years selling SaaS to EU customers. Year 2 revenue: $180K, $0 US tax owed. She files Form 5472 + 1120 reporting capital contributions and distributions to/from her HK bank account. Standard $149 (fax included) with our service.\n\nScenario C — Discovered Form 5472 late: Carlos formed his Stripe Atlas LLC in 2022. Three years later (2025) he discovers Form 5472 obligation. He files 2022, 2023, 2024 together under DIIRSP using our 3-year catch-up (Standard $347, fax included). Reasonable cause statement auto-generated for first-time foreign-owner unawareness. Typical outcome: penalty waived.\n\nScenario D — Multiple Stripe Atlas LLCs: Mei has 3 separate Stripe Atlas LLCs for 3 different product lines. Each one needs its own Form 5472 + pro forma 1120 every year — 3 separate filings, Standard $149 each with us = $447/year just for federal compliance.",
+        body: "Common Stripe Atlas LLC scenarios include year-one funding, growing SaaS activity, late discovery, and multiple LLCs. The examples cover a no-revenue first year with a capital contribution, a second-year SaaS business with distributions, DIIRSP catch-up after missed years, and separate annual filings for separate LLCs.\n\nScenario A — Year 1, no revenue yet: Lucia formed her Stripe Atlas LLC in June 2024. By December 2024 the only activity was: $5K capital contribution to open Mercury account + $500 spent on Stripe Atlas formation fee. Required for tax year 2024: Form 5472 + pro forma 1120. Part V reports the $5K capital contribution. Files by April 15, 2025 with our service for Standard $149 (fax included).\n\nScenario B — Year 2, growing SaaS: Mei has been running her Stripe Atlas Delaware LLC for 2 years selling SaaS to EU customers. Year 2 revenue: $180K, $0 US tax owed. She files Form 5472 + 1120 reporting capital contributions and distributions to/from her HK bank account. Standard $149 (fax included) with our service.\n\nScenario C — Discovered Form 5472 late: Carlos formed his Stripe Atlas LLC in 2022. Three years later (2025) he discovers Form 5472 obligation. He files 2022, 2023, 2024 together under DIIRSP using our 3-year catch-up (Standard $347, fax included). Reasonable cause statement auto-generated for first-time foreign-owner unawareness. Typical outcome: penalty waived.\n\nScenario D — Multiple Stripe Atlas LLCs: Mei has 3 separate Stripe Atlas LLCs for 3 different product lines. Each one needs its own Form 5472 + pro forma 1120 every year — 3 separate filings, Standard $149 each with us = $447/year just for federal compliance.",
       },
       {
         heading: "How do we handle Stripe Atlas Form 5472 filings?",
@@ -2067,7 +2243,7 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Reasonable cause statement for Form 5472 — what to include",
     intro:
-      "If you're filing Form 5472 late, the IRS requires a Reasonable Cause Statement under DIIRSP (Delinquent International Information Return Submission Procedure) to request abatement of the $25,000-per-form-per-year penalty. Done right, it can save tens of thousands of dollars. Done poorly — or skipped entirely — and the penalty is assessed automatically. This is the complete guide: what the IRS expects, what to include, what kills a request, sample structure, and how our DIIRSP-aware filer generates one for you that's accountant-reviewed before fax submission.",
+      "Late Form 5472 filings under DIIRSP need a Reasonable Cause Statement for each late return to request abatement of the $25,000-per-form-per-year penalty. Done well, it can prevent major penalties; done poorly or skipped, the penalty is assessed automatically, so the request needs careful structure before fax submission.",
     sections: [
       {
         heading: "What does the IRS expect?",
@@ -2083,7 +2259,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is a sample structure for a Reasonable Cause Statement?",
-        body: "A sample structure has a header, opening paragraph, background, reasonable cause narrative, corrective action, and closing.\n\nA well-structured reasonable cause statement follows this outline:\n\nHeader:\n• [LLC Legal Name]\n• EIN: [XX-XXXXXXX]\n• Foreign Owner: [Your Name]\n• Tax Year(s): [Year(s) being filed late]\n• Subject: Reasonable Cause Statement under DIIRSP\n\nOpening paragraph (1-2 sentences):\n• \"This statement is submitted under the Delinquent International Information Return Submission Procedure (DIIRSP) in support of the attached delinquent Form 5472 + pro forma Form 1120 for tax year(s) [year(s)]. We request that the IRC § 6038A penalties be abated based on reasonable cause as described below.\"\n\nBackground (3-5 sentences):\n• Describe the LLC, its formation date, the foreign owner, and the LLC's basic business activity.\n• Confirm the LLC owes no US federal income tax for the years in question (if true).\n\nReasonable cause narrative (1-3 paragraphs):\n• Specific facts about why the filing was missed.\n• Timeline of when and how you became aware.\n• Why your circumstances qualify as reasonable cause under the IRS's framework.\n\nCorrective action (1 paragraph):\n• Confirmation that all delinquent returns are being filed concurrently.\n• Steps taken to ensure future compliance.\n\nClosing:\n• \"Based on the foregoing, we respectfully request that the IRC § 6038A penalties for the tax year(s) be fully abated under DIIRSP.\"\n• Signature, date, printed name.\n\nThat's the entire structure. Roughly 1-2 pages depending on the depth of the narrative section.",
+        body: "A sample Reasonable Cause Statement structure starts with a header, opening paragraph, background, reasonable cause narrative, corrective action, and closing. The outline then fills in LLC identification, EIN, owner, tax years, DIIRSP request language, business background, specific late-filing facts, concurrent corrective filing, future compliance steps, and signature details.\n\nA well-structured reasonable cause statement follows this outline:\n\nHeader:\n• [LLC Legal Name]\n• EIN: [XX-XXXXXXX]\n• Foreign Owner: [Your Name]\n• Tax Year(s): [Year(s) being filed late]\n• Subject: Reasonable Cause Statement under DIIRSP\n\nOpening paragraph (1-2 sentences):\n• \"This statement is submitted under the Delinquent International Information Return Submission Procedure (DIIRSP) in support of the attached delinquent Form 5472 + pro forma Form 1120 for tax year(s) [year(s)]. We request that the IRC § 6038A penalties be abated based on reasonable cause as described below.\"\n\nBackground (3-5 sentences):\n• Describe the LLC, its formation date, the foreign owner, and the LLC's basic business activity.\n• Confirm the LLC owes no US federal income tax for the years in question (if true).\n\nReasonable cause narrative (1-3 paragraphs):\n• Specific facts about why the filing was missed.\n• Timeline of when and how you became aware.\n• Why your circumstances qualify as reasonable cause under the IRS's framework.\n\nCorrective action (1 paragraph):\n• Confirmation that all delinquent returns are being filed concurrently.\n• Steps taken to ensure future compliance.\n\nClosing:\n• \"Based on the foregoing, we respectfully request that the IRC § 6038A penalties for the tax year(s) be fully abated under DIIRSP.\"\n• Signature, date, printed name.\n\nThat's the entire structure. Roughly 1-2 pages depending on the depth of the narrative section.",
       },
       {
         heading: "What reasonable cause narratives work?",
@@ -2095,7 +2271,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What happens after you file Form 5472?",
-        body: "The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. The provider’s transmission record and IRS processing are different evidence. Silence establishes neither delivery nor acceptance, and no filing-specific processing timetable was verified.\n\nKeep the exact submitted package, destination, timestamp, page count, provider receipt and any IRS correspondence together. Do not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline; a transmission record does not guarantee a penalty will be removed. See receipt confirmation and next steps.",
+        body: "After you file Form 5472, do not assume silence means either acceptance or rejection. The current instructions do not describe a routine acceptance acknowledgment for the faxed package, so keep the submitted package, destination, timestamp, page count, provider receipt, and any IRS correspondence together.\n\nKeep the exact submitted package, destination, timestamp, page count, provider receipt and any IRS correspondence together. Do not send a duplicate solely because you have heard nothing. If a notice arrives, follow its instructions and response deadline; a transmission record does not guarantee a penalty will be removed. See receipt confirmation and next steps.",
       },
       {
         heading: "Pricing for catch-up filings",
@@ -2173,7 +2349,7 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-09-11",
     h1: "Form 5472, filed properly — from $149, everything included.",
     intro:
-      "Answer 12 questions in about 15 minutes. A qualified tax accountant on our team reviews your Form 5472 + pro forma Form 1120 end-to-end, we fax the signed package to the IRS Ogden PIN Unit and you get back the timestamped transmission receipt as your transmission evidence. $149 on Standard, ready in 5-7 business days, or $199 on Express, ready within 3 — the identical filing either way, only the speed differs. That's the filing that keeps a $25,000 §6038A penalty off your LLC.",
+      "Answer 12 questions in about 15 minutes and get a Form 5472 plus pro forma Form 1120 package reviewed by an accountant before fax submission to the IRS Ogden PIN Unit. Standard is $149 and ready in 5-7 business days; Express is $199 and ready within 3.",
     noindex: true,
     pricingMode: "premium",
     sections: [
@@ -2187,7 +2363,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Why should you get this $25,000 filing right?",
-        body: "You should get this filing right because IRC § 6038A assesses $25,000 per form, per year when Form 5472 is filed late, filed incompletely, or not filed at all. The penalty is automatic — the IRS doesn't have to show any harm, and there is no small-LLC exception for an entity with no revenue. Once the IRS issues a notice, another $25,000 accrues for every 30-day period the filing stays outstanding.\n\nThe three ways owners get caught:\n\n1. Never filed — the LLC exists, money moved in and out, and Form 5472 never came up at formation.\n2. Filed Form 5472 on its own — without the pro forma Form 1120 it attaches to, the IRS treats the return as never filed.\n3. Filed, but incomplete — a blank Part V, a missing supporting statement, or a missing owner identifier is scored the same as a missing return.\n\nEvery one of those is avoidable paperwork. That is exactly what the filing fee buys: a complete package, checked by an accountant who files these all year, delivered with dated fax-provider transmission evidence.",
+        body: "This filing matters because IRC § 6038A can assess $25,000 per form, per year when Form 5472 is late, incomplete, or missing. There is no small-LLC exception for no revenue, and an IRS notice can add another $25,000 for every 30-day period outstanding.\n\nThe three ways owners get caught:\n\n1. Never filed — the LLC exists, money moved in and out, and Form 5472 never came up at formation.\n2. Filed Form 5472 on its own — without the pro forma Form 1120 it attaches to, the IRS treats the return as never filed.\n3. Filed, but incomplete — a blank Part V, a missing supporting statement, or a missing owner identifier is scored the same as a missing return.\n\nEvery one of those is avoidable paperwork. That is exactly what the filing fee buys: a complete package, checked by an accountant who files these all year, delivered with dated fax-provider transmission evidence.",
       },
       {
         heading: "How does your filing reach the IRS?",
@@ -2275,11 +2451,21 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "What does doola do for you?",
-        body: "doola's offering covers LLC/C-corp formation, registered agent service, EIN support, bookkeeping software, e-commerce analytics, banking-partner introductions, and a tax package. Its public positioning is aimed heavily at non-US founders, solo founders, and small e-commerce businesses.\n\nIts state guidance is not limited to one state: doola markets formation in all 50 states and identifies Wyoming and Delaware as top picks for non-US founders and online businesses.",
+        body: "doola helps with formation and operating setup, including LLC/C-corp formation, registered agent service, EIN support, bookkeeping software, e-commerce analytics, banking-partner introductions, and a tax package. Its public positioning focuses on non-US founders, solo founders, and small e-commerce businesses, with state guidance covering all 50 states.\n\nIts state guidance is not limited to one state: doola markets formation in all 50 states and identifies Wyoming and Delaware as top picks for non-US founders and online businesses.",
       },
       {
         heading: "What does doola leave with you?",
-        body: "Every foreign-owned single-member US LLC must file Form 5472 with a pro forma Form 1120 annually when it has a reportable transaction. That rule applies regardless of who formed the LLC, obtained the EIN, or serves as registered agent.\n\nThis is a federal information-return obligation. It is separate from state formation, registered agent service, state annual reports, bookkeeping, and payment setup.",
+        body: "doola leaves you with the same annual federal Form 5472 obligation that applies to foreign-owned single-member US LLCs with reportable transactions. That filing pairs Form 5472 with a pro forma Form 1120 and is separate from state formation, registered agent service, state annual reports, bookkeeping, and payment setup.\n\nThis is a federal information-return obligation. It is separate from state formation, registered agent service, state annual reports, bookkeeping, and payment setup.",
+        table: {
+          caption: "doola and Form5472 Prep task split",
+          columns: ["Task", "doola", "Form5472 Prep"],
+          rows: [
+            ["LLC formation", "Forms LLCs and C-corps", "Filing-only alternative"],
+            ["Form 5472 package", "Tax and Compliance plan", "$149 Standard filing"],
+            ["IRS fax filing", "Article describes e-filing", "Ogden fax delivery"],
+            ["Catch-up for missed years", "DIIRSP can be used", "Reasonable cause if late"],
+          ],
+        },
       },
       {
         heading: "What does doola's bundle include?",
@@ -2291,7 +2477,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do we file it?",
-        body: "Our online filer asks 12 questions about the LLC, owner, and year-end totals. We generate the pro forma Form 1120, Form 5472, supporting statement, cover letter, and reasonable cause statement if the filing is late.\n\nEvery package is reviewed by an accountant before submission. We fax the signed package to the IRS Ogden PIN Unit at +1-855-887-7737 and send you the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
+        body: "We file it by collecting the LLC, owner, and year-end facts, generating the package, reviewing it, and faxing it to the IRS Ogden PIN Unit. The package includes pro forma Form 1120, Form 5472, supporting statement, cover letter, and a reasonable cause statement if late, with a timestamped fax receipt returned as evidence.\n\nEvery package is reviewed by an accountant before submission. We fax the signed package to the IRS Ogden PIN Unit at +1-855-887-7737 and send you the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "How do you catch up on multiple missed years?",
@@ -2339,11 +2525,21 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "What does Firstbase do for you?",
-        body: "Firstbase's offering includes LLC/C-corp formation, Agent Autopilot registered-agent service, premium mail/virtual address service, accounting, and federal/state tax filing. Its bundle is positioned for startups and foreign founders that want formation, compliance, and accounting in one place.\n\nThe facts file says Firstbase directly forms companies in Delaware and Wyoming, with foreign qualification into other states offered after initial formation.",
+        body: "Firstbase helps with company formation and bundled startup compliance services, including LLC/C-corp formation, registered-agent service, premium mail or virtual address service, accounting, and federal/state tax filing. The section says its bundle is positioned for startups and foreign founders that want formation, compliance, and accounting in one place.\n\nThe facts file says Firstbase directly forms companies in Delaware and Wyoming, with foreign qualification into other states offered after initial formation.",
       },
       {
         heading: "What does Firstbase leave with you?",
         body: "A foreign-owned single-member US LLC has a federal Form 5472 + pro forma Form 1120 filing obligation each year if it had a reportable transaction. The obligation does not disappear because a formation platform filed the state paperwork, acted as registered agent, or helped open operational services.\n\nForm 5472 is an IRS information return. It sits apart from state formation, state registered agent coverage, mailroom services, accounting subscriptions, and state annual reports.",
+        table: {
+          caption: "Firstbase and Form5472 Prep task split",
+          columns: ["Task", "Firstbase", "Form5472 Prep"],
+          rows: [
+            ["LLC formation", "Forms LLCs and C-corps", "Filing-only alternative"],
+            ["Registered agent", "Agent Autopilot bundled", "Form 5472 package"],
+            ["Form 5472 package", "Firstbase One includes one", "$149 Standard alternative"],
+            ["Catch-up for missed years", "Coverage may predate plan", "DIIRSP reasonable cause"],
+          ],
+        },
       },
       {
         heading: "What does Firstbase One cover?",
@@ -2351,7 +2547,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is your first-year filing timeline?",
-        body: "If the LLC was formed partway through the year, that partial year still counts. The first Form 5472 filing covers the period from formation through year-end whenever there was a reportable transaction.\n\nCapital contributions, distributions, owner payments, and related-party reimbursements can all be reportable. The first wire used to fund the LLC's bank account is usually enough to create the first-year filing obligation.",
+        body: "Your first-year filing timeline starts when the LLC is formed, even if that happens partway through the year. The first Form 5472 covers formation through year-end whenever there was a reportable transaction, and the first wire used to fund the LLC bank account is usually enough.\n\nCapital contributions, distributions, owner payments, and related-party reimbursements can all be reportable. The first wire used to fund the LLC's bank account is usually enough to create the first-year filing obligation.",
       },
       {
         heading: "How do we file it?",
@@ -2408,6 +2604,17 @@ export const LANDING_PAGES: LandingPage[] = [
       {
         heading: "What does Clemta leave with you?",
         body: "A foreign-owned single-member US LLC still has to file Form 5472 and a pro forma Form 1120 annually when it has reportable transactions. The rule applies no matter which company handled formation, EIN application, registered agent service, or business-address setup.\n\nThis is a federal IRS information return. It is different from formation work, state annual compliance, registered agent duties, bookkeeping, and generic business filings.",
+        table: {
+          caption: "Clemta and Form5472 Prep task split",
+          columns: ["Task", "Clemta", "Form5472 Prep"],
+          rows: [
+            ["LLC formation", "LLC and C-corp formation", "Form 5472-specific service"],
+            ["Registered agent", "Registered agent service", "Federal package only"],
+            ["EIN", "EIN application", "Collects filing facts"],
+            ["Form 5472 package", "Public pages unclear", "Prepares IRS package"],
+            ["Catch-up for missed years", "Prior coverage unclear", "DIIRSP reasonable cause"],
+          ],
+        },
       },
       {
         heading: "Do Clemta's public pages itemize the 5472 package?",
@@ -2472,18 +2679,30 @@ export const LANDING_PAGES: LandingPage[] = [
       {
         heading: "What does StartGlobal leave with you?",
         body: "Every foreign-owned single-member US LLC with a reportable transaction must file Form 5472 with a pro forma Form 1120 each year. That annual IRS information return is required regardless of who formed the LLC or provides registered agent, address, bank-account, phone, bookkeeping, or state-report support.\n\nThe federal filing is separate from state formation and state annual compliance. It is also separate from generic tax-filing language unless the provider confirms the specific forms covered.",
+        table: {
+          caption: "StartGlobal and Form5472 Prep task split",
+          columns: ["Task", "StartGlobal", "Form5472 Prep"],
+          rows: [
+            ["LLC formation", "LLC formation included", "Complete Form 5472 package"],
+            ["Registered agent", "Registered agent service", "Federal filing only"],
+            ["EIN", "Business tax number support", "Collects owner information"],
+            ["Form 5472 package", "Not named publicly", "Form 5472-specific service"],
+            ["IRS fax filing", "Generic tax-filing language", "Ogden fax submission"],
+            ["Catch-up for missed years", "Confirm each filed year", "DIIRSP reasonable cause"],
+          ],
+        },
       },
       {
         heading: "Does StartGlobal name Form 5472?",
-        body: "No; the facts file says StartGlobal public pages do not name Form 5472 or pro forma Form 1120. That means there is no public confirmation in the facts file that StartGlobal files 5472 specifically.\n\nDo not assume either way from generic wording. Ask StartGlobal to confirm in writing whether your plan includes Form 5472 + pro forma Form 1120; if it does not itemize those forms, a Form 5472-specific filing service fills the gap.",
+        body: "No, the facts file says StartGlobal public pages do not name Form 5472 or pro forma Form 1120. Because generic Federal Tax Filing language is not public confirmation of the specific 5472 package, ask StartGlobal for written confirmation tied to your plan.\n\nDo not assume either way from generic wording. Ask StartGlobal to confirm in writing whether your plan includes Form 5472 + pro forma Form 1120; if it does not itemize those forms, a Form 5472-specific filing service fills the gap.",
       },
       {
         heading: "What is your first-year filing timeline?",
-        body: "The first filing period starts in the month the LLC is formed. Even a short first year counts if the LLC had a reportable transaction before December 31.\n\nThe initial funding sent to open the LLC's account, pay vendors, or reimburse owner-paid expenses is usually reportable. For newly formed foreign-owned LLCs, that makes a first-year Form 5472 filing the normal outcome.",
+        body: "Your first-year filing timeline starts in the month the LLC is formed, and a short first year still counts if there was a reportable transaction before December 31. Initial funding sent to open the account, pay vendors, or reimburse owner-paid expenses is usually reportable, making first-year filing common.\n\nThe initial funding sent to open the LLC's account, pay vendors, or reimburse owner-paid expenses is usually reportable. For newly formed foreign-owned LLCs, that makes a first-year Form 5472 filing the normal outcome.",
       },
       {
         heading: "How do we file it?",
-        body: "Our 12-question wizard turns your formation details, owner information, year-end assets, and related-party transactions into a complete Form 5472 filing package. If prior years were missed, the wizard also prepares the reasonable cause statement used for DIIRSP catch-up submissions.\n\nEvery package is accountant-reviewed before we fax it to the IRS Ogden PIN Unit at +1-855-887-7737. You receive the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
+        body: "We file it by turning your formation details, owner information, year-end assets, and related-party transactions into a complete Form 5472 package. The 12-question wizard also prepares a DIIRSP reasonable cause statement for missed prior years, then an accountant reviews the package before Ogden PIN Unit fax submission.\n\nEvery package is accountant-reviewed before we fax it to the IRS Ogden PIN Unit at +1-855-887-7737. You receive the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "How do you catch up on multiple missed years?",
@@ -2531,19 +2750,31 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "What does Zenind do for you?",
-        body: "Zenind's offering includes low-cost company formation tiers, registered agent service in all 50 states plus DC, BOI report preparation assistance, EIN application preparation assistance, compliance tracking and annual-report alerts, notary, foreign qualification, and separate accounting services.\n\nThe facts file describes Zenind as budget/DIY-adjacent for startups, e-commerce, and small businesses generally, while also serving non-US founders.",
+        body: "Zenind helps with low-cost company formation and adjacent compliance services, including registered agent service across all 50 states plus DC, BOI report preparation assistance, EIN application preparation assistance, compliance tracking, annual-report alerts, notary, foreign qualification, and separate accounting services. The section describes it as budget/DIY-adjacent for startups and small businesses.\n\nThe facts file describes Zenind as budget/DIY-adjacent for startups, e-commerce, and small businesses generally, while also serving non-US founders.",
       },
       {
         heading: "What does Zenind leave with you?",
-        body: "Foreign-owned single-member US LLCs must file Form 5472 with a pro forma Form 1120 annually when they have reportable transactions. Formation, registered agent service, compliance reminders, EIN application preparation, and annual-report alerts do not replace that IRS filing.\n\nForm 5472 is a federal information return. It is separate from state compliance tracking and from educational guidance explaining what the form is.",
+        body: "Zenind leaves you with the federal Form 5472 filing when your foreign-owned single-member US LLC has reportable transactions. Formation, registered agent service, compliance reminders, EIN application preparation, and annual-report alerts do not replace the IRS filing, which is separate from state compliance tracking and educational guidance.\n\nForm 5472 is a federal information return. It is separate from state compliance tracking and from educational guidance explaining what the form is.",
+        table: {
+          caption: "Zenind and Form5472 Prep task split",
+          columns: ["Task", "Zenind", "Form5472 Prep"],
+          rows: [
+            ["LLC formation", "Low-cost company formation", "Filing service"],
+            ["Registered agent", "Registered agent service", "Federal package only"],
+            ["EIN", "EIN application preparation", "Collects EIN and facts"],
+            ["Form 5472 package", "Not shown as filer in public materials", "Produces 5472 and 1120"],
+            ["IRS fax filing", "Not shown as filer in public materials", "Ogden fax receipt"],
+            ["Catch-up for missed years", "Guide after missed years", "DIIRSP reasonable cause"],
+          ],
+        },
       },
       {
         heading: "Does Zenind teach the process or file it?",
-        body: "Zenind teaches the process in a detailed guide, but the reviewed public materials do not show Zenind as the filer. That guide's How Zenind Can Help section discusses business formation and ongoing compliance workflows, but stops short of saying Zenind will prepare or file the 5472/1120 package, and it includes a disclaimer that the content is not tax or legal advice.\n\nThe facts file also says Zenind's pricing page does not list a Form 5472 or pro forma Form 1120 line item. So the public materials point you from awareness to the filing task, but they do not show Zenind as the filer.",
+        body: "Zenind teaches the process in a detailed guide, but the reviewed public materials do not show Zenind as the filer. Its guide discusses business formation and ongoing compliance workflows, stops short of saying Zenind will prepare or file the 5472/1120 package, and includes a tax and legal advice disclaimer.\n\nThe facts file also says Zenind's pricing page does not list a Form 5472 or pro forma Form 1120 line item. So the public materials point you from awareness to the filing task, but they do not show Zenind as the filer.",
       },
       {
         heading: "What is your first-year filing timeline?",
-        body: "Your first Form 5472 filing period begins when the LLC is formed and ends with that tax year. If anything reportable happened in that first partial year, the filing is due the following filing season.\n\nThe most common first reportable transaction is the owner's initial funding wire into the LLC bank account. Even without revenue, that transaction usually means the newly formed foreign-owned LLC files for year one.",
+        body: "Your first-year filing timeline begins when the LLC is formed and ends with that tax year. If anything reportable happened in that first partial year, the package is due the following filing season; the owner's initial funding wire is the most common first reportable transaction.\n\nThe most common first reportable transaction is the owner's initial funding wire into the LLC bank account. Even without revenue, that transaction usually means the newly formed foreign-owned LLC files for year one.",
       },
       {
         heading: "How do we file it?",
@@ -2595,11 +2826,23 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "What does Northwest Registered Agent do for you?",
-        body: "Northwest Registered Agent offers registered agent service, LLC/corporation/nonprofit formation, annual report filing, EIN service, business address service, legal document templates such as operating agreements and bylaws, and free identity/privacy tools with domain, website, email, and phone add-ons.\n\nThe facts file describes Northwest as a nationwide formation and compliance-filing company, not a tax-preparation firm, with a long track record and privacy-and-service-quality positioning.",
+        body: "Northwest Registered Agent offers registered agent service, LLC/corporation/nonprofit formation, annual report filing, EIN service, business address service, legal document templates such as operating agreements and bylaws, and free identity/privacy tools with domain, website, email, and phone add-ons. Its positioning emphasizes privacy and service quality.\n\nThe facts file describes Northwest as a nationwide formation and compliance-filing company, not a tax-preparation firm, with a long track record and privacy-and-service-quality positioning.",
       },
       {
         heading: "What does Northwest Registered Agent leave with you?",
         body: "A foreign-owned single-member US LLC must file Form 5472 with a pro forma Form 1120 annually when it has reportable transactions. This is true even when a registered agent or formation company handled the state filing, EIN service, business address, or annual report.\n\nForm 5472 is federal tax information reporting. Registered-agent service and state compliance filings do not by themselves complete the federal IRS package.",
+        table: {
+          caption: "Northwest Registered Agent and Form5472 Prep task split",
+          columns: ["Task", "Northwest Registered Agent", "Form5472 Prep"],
+          rows: [
+            ["LLC formation", "Formation filings", "Complete federal package"],
+            ["Registered agent", "Registered agent service", "Federal filing only"],
+            ["EIN", "EIN service", "Collects LLC facts"],
+            ["Form 5472 package", "Points readers to CPA", "Generates federal package"],
+            ["IRS fax filing", "Not offered as a paid service", "Ogden fax receipt"],
+            ["Catch-up for missed years", "DIIRSP if prior years were missed", "DIIRSP catch-up route"],
+          ],
+        },
       },
       {
         heading: "Northwest points readers to a CPA instead of filing it",
@@ -2660,21 +2903,21 @@ export function getLandingPage(slug: string): LandingPage | null {
 // leak into organic neighbours.
 const TOPIC_CLUSTERS: Record<string, string[]> = {
   // Step-by-step / instructional core
-  "how-to": [
+  'how-to': [
     "file-form-5472",
     "form-5472-instructions",
     "irs-form-5472",
     "1120-pro-forma-instructions",
   ],
   // Late filing & penalty mitigation
-  "late-and-penalty": [
+  'late-and-penalty': [
     "diirsp",
     "late-form-5472",
     "form-5472-penalty",
     "form-5472-reasonable-cause-statement",
   ],
   // Pro forma 1120 mechanics
-  "1120": [
+  '1120': [
     "pro-forma-1120",
     "form-1120-foreign-owned-llc",
     "form-1120-disregarded-entity",
@@ -2682,23 +2925,23 @@ const TOPIC_CLUSTERS: Record<string, string[]> = {
     "form-5472-vs-1120",
   ],
   // Operational / logistical
-  "logistics": [
+  logistics: [
     "form-5472-deadline",
     "form-5472-fax-number",
     "file-form-5472",
   ],
   // State-specific guides
-  "state": [
+  state: [
     "wyoming-llc-form-5472",
     "delaware-llc-form-5472",
   ],
   // Country-specific guides (owner's country of tax residence)
-  "country": [
+  country: [
     "form-5472-germany",
     "form-5472-uae",
   ],
   // Audience / persona
-  "audience": [
+  audience: [
     "foreign-owned-llc-tax",
     "single-member-llc-foreign-owner",
     "stripe-atlas-form-5472",

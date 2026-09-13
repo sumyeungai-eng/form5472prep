@@ -14,6 +14,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ComparisonTable, FILING_COMPARISON } from "@/components/ComparisonTable";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
 import {
@@ -467,7 +468,7 @@ function HowItWorks() {
         <SectionHead
           eyebrow="How it works"
           title="How does Form 5472 filing work?"
-          subtitle="You complete LLC, owner, and transaction details, review the package, sign, and confirm the IRS fax transmission. No CPA back-and-forth. No PDF fields filled in the wrong language. No second-guessing whether you checked the right box."
+          subtitle="Form 5472 filing works as a seven-step flow: LLC details, owner details, transaction totals, package review, browser signature, IRS fax delivery, and confirmation. We generate the cover letter, pro forma Form 1120, Form 5472, supporting statement, and late-filing reasonable cause statement when DIIRSP applies, then fax the signed package to Ogden."
         />
         <ol className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {processSteps.map((s, i) => (
@@ -554,17 +555,6 @@ function Deliverables() {
 }
 
 function Comparison() {
-  // Our column comes first (right after the criterion) so it's visible without
-  // horizontal scrolling on mobile — the whole point of the table is what WE
-  // offer. CPA / DIY follow.
-  const rows = [
-    ["Setup time", "15 minutes", "1–2 weeks back-and-forth", "1–4 hours of confusion"],
-    ["Knows Form 5472", "Built only for this", "Hit or miss", "Up to you"],
-    ["Reasonable cause statement (DIIRSP)", "Included", "Usually extra", "DIY"],
-    ["Files with the IRS", "We fax to Ogden", "By mail or fax", "Your problem"],
-    ["Stores filing proof", "Yes, automatic", "Sometimes", "Your problem"],
-    ["Cost", `From ${formatPrice(TIERS.standard.priceCents)}`, "$400 – $800", "Free (until $25k)"],
-  ];
   return (
     <section className="bg-white border-b border-slate-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
@@ -573,28 +563,7 @@ function Comparison() {
           title="Why use Form5472 Prep instead of CPA or DIY?"
           subtitle="Form5472 Prep prepares this filing with IRS fax delivery and filing proof included."
         />
-        <div className="mt-10 overflow-x-auto rounded-lg border border-slate-200">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-left">
-              <tr>
-                <th className="py-3 px-3 sm:px-4 font-medium text-slate-600"></th>
-                <th className="py-3 px-3 sm:px-4 font-medium text-accent">Form5472 Prep</th>
-                <th className="py-3 px-3 sm:px-4 font-medium text-slate-600">CPA</th>
-                <th className="py-3 px-3 sm:px-4 font-medium text-slate-600">DIY</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200">
-              {rows.map((r, i) => (
-                <tr key={i} className="transition-colors hover:bg-slate-50/70">
-                  <td className="py-3 px-3 sm:px-4 font-medium text-slate-900">{r[0]}</td>
-                  <td className="py-3 px-3 sm:px-4 text-slate-900 font-medium bg-accent-50 transition-colors hover:bg-accent-100">{r[1]}</td>
-                  <td className="py-3 px-3 sm:px-4 text-slate-600">{r[2]}</td>
-                  <td className="py-3 px-3 sm:px-4 text-slate-600">{r[3]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ComparisonTable {...FILING_COMPARISON} className="mt-10" />
       </div>
     </section>
   );
@@ -697,7 +666,7 @@ function ToolsAndGuides() {
         <SectionHead
           eyebrow="Resources"
           title="What free tools and guides help before filing?"
-          subtitle="Everything you need to know before you file — and the tools that answer the two questions we get most."
+          subtitle="The free tools and guides help before filing by answering whether you need Form 5472, when it is due, and what late or missed filings cost. We link to the six-question filing checker, the deadline calculator, the penalty calculator, and guides on Form 5472, DIIRSP, the pro forma Form 1120, and late filings."
         />
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {tools.map((tool, i) => (

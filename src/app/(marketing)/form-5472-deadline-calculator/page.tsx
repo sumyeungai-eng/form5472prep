@@ -40,22 +40,22 @@ const deadlineRules = [
   {
     icon: CalendarDays,
     title: "What is the April 15 rule?",
-    body: "For a calendar-year foreign-owned single-member LLC, Form 5472 attaches to a pro forma Form 1120 and is due April 15 after the tax year ends.",
+    body: "The April 15 rule means a calendar-year foreign-owned single-member LLC files Form 5472 with a pro forma Form 1120 by April 15 after the tax year ends. We use that date as the starting point before checking whether a weekend roll, dissolution short year, or timely Form 7004 changes the final deadline.",
   },
   {
     icon: RotateCw,
     title: "How does the weekend roll work?",
-    body: "When the computed due date lands on a Saturday or Sunday, the filing deadline moves to the next Monday.",
+    body: "The weekend roll moves a Saturday or Sunday due date to the next Monday. The calculator applies that same roll after it computes the regular April 15 deadline, the dissolution short-year deadline, or the October 15 date created by a timely Form 7004 extension.",
   },
   {
     icon: FileClock,
     title: "When does a dissolution short year apply?",
-    body: "If the LLC dissolved during the tax year, the final short-year return is due on the 15th day of the fourth month after the month of dissolution.",
+    body: "A dissolution short year applies when the LLC dissolved during the tax year. In that final year, the return is due on the 15th day of the fourth month after the month of dissolution, and the calculator still applies the same weekend roll if the computed date lands on Saturday or Sunday.",
   },
   {
     icon: CalendarClock,
     title: "How does a Form 7004 extension work?",
-    body: "A timely Form 7004 extends the Form 5472 package to October 15, with the same weekend-roll rule applied to the extended date.",
+    body: "A timely Form 7004 extends the Form 5472 package to October 15. It has to be filed by the original April 15 deadline, and the calculator then applies the same weekend-roll rule to the extended date before showing the final due date.",
   },
 ];
 
@@ -146,7 +146,7 @@ function HowDeadlineWorks() {
         <SectionHead
           eyebrow="How the deadline works"
           title="How does the deadline rule work?"
-          subtitle="The calculator applies the filing year, dissolution date, and extension status to the same due-date logic used in the filing workflow."
+          subtitle="The calculator applies the filing year, dissolution date, and extension status to the same due-date logic used in the filing workflow. We start with April 15, switch to the dissolution short-year rule when needed, move weekend dates to the next Monday, and extend timely Form 7004 filings to October 15."
         />
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {deadlineRules.map((rule) => (

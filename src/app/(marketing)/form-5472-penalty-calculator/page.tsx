@@ -146,22 +146,22 @@ function HowPenaltyWorks() {
     {
       icon: FileWarning,
       title: "What is the initial penalty?",
-      body: `The initial penalty is ${formatPrice(PENALTY_PER_FORM_CENTS)} per Form 5472, per year. It applies automatically when the required information is late, missing, or incomplete.`,
+      body: `The initial penalty is ${formatPrice(PENALTY_PER_FORM_CENTS)} per Form 5472, per year. We use it as a statutory exposure estimate because the IRS assesses it automatically when required Form 5472 information is late, missing, or incomplete, before you compare the number with the ordinary catch-up route.`,
     },
     {
       icon: Clock,
       title: "What happens after a notice?",
-      body: `After an IRS notice, there is a ${CONTINUATION_GRACE_DAYS}-day correction period. If the filing is still not fixed, the statute adds ${formatPrice(CONTINUATION_PER_PERIOD_CENTS)} for each 30-day period and does not cap that continuation amount.`,
+      body: `After an IRS notice, there is a ${CONTINUATION_GRACE_DAYS}-day correction period. If the filing is still not fixed after that window, the statute adds ${formatPrice(CONTINUATION_PER_PERIOD_CENTS)} for each 30-day period, so we treat the notice timeline separately from the initial per-form, per-year penalty estimate.`,
     },
     {
       icon: FileQuestion,
       title: "What are common triggers?",
-      body: "The usual issues are never filing, filing Form 5472 without the required pro forma Form 1120, or filing an incomplete Form 5472 package.",
+      body: "Common triggers are never filing, filing Form 5472 without the required pro forma Form 1120, or sending an incomplete package. We also flag no-income cases, since a foreign-owned disregarded LLC can still have a filing obligation when reportable transactions include contributions, distributions, and other owner-LLC activity.",
     },
     {
       icon: ShieldCheck,
       title: "What is the relief path?",
-      body: "DIIRSP filings pair the late information returns with a reasonable-cause statement. The IRS can abate penalties when the facts support reasonable cause.",
+      body: "The relief path is a DIIRSP filing that pairs late information returns with a reasonable-cause statement. We follow the ordinary catch-up route described above: file the missing Form 5472 package, include the statement, and ask the IRS to abate penalties when the facts support reasonable cause.",
     },
   ];
 
@@ -176,7 +176,7 @@ function HowPenaltyWorks() {
             How does the Form 5472 penalty rule work?
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-slate-600">
-            The initial penalty applies per Form 5472 and continuation penalties can add more after an IRS notice.
+            The initial penalty applies per Form 5472, per year, and continuation penalties can add more after an IRS notice. We show both pieces together because the calculator is a statutory exposure estimate, not a prediction, and the ordinary next step is still to fix the filing with the missing package and reasonable-cause statement.
           </p>
         </div>
 

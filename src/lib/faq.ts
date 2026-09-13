@@ -101,7 +101,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "What's the difference between Standard and Express?",
     answer:
-      "Standard and Express differ only by turnaround. Standard is ready in 5-7 business days at $149, while Express is ready within 3 business days at $199 and adds priority email support. Both include the same documents and accountant review.",
+      "Standard and Express differ only by turnaround. Standard is ready in 5-7 business days at $149, while Express is ready within 3 business days at $199 and adds priority email support. Both include the same documents, accountant review, and IRS fax delivery.",
     source: "src/app/(marketing)/form-5472-filing/page.tsx:59; src/lib/pricing.ts:40; src/lib/pricing.ts:41; src/lib/pricing.ts:60; src/lib/pricing.ts:67",
   },
   {
@@ -133,7 +133,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "What's your guarantee?",
     answer:
-      "We offer a 100% money-back guarantee if we fail to submit your filing to the IRS. If the fax does not deliver on the first send, we automatically retry, and if it still fails, you get a full refund.",
+      "We offer a 100% money-back guarantee if we fail to submit your filing to the IRS. If the fax does not deliver on the first send, we automatically retry, and if it still fails after those submission attempts, you get a full refund.",
     source: "src/app/(marketing)/page.tsx:76",
   },
   {
@@ -141,7 +141,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "Are you a CPA firm? Who prepares my filing?",
     answer:
-      "We are not a CPA firm and do not provide tax advice. We prepare and submit your information return as you provide it, with every package reviewed by a qualified tax accountant before submission.",
+      "We are not a CPA firm and do not provide tax advice. We prepare and submit your information return as you provide it, with every package reviewed by a qualified tax accountant before submission. Our role is preparation and submission, not tax-position advice.",
     learnMore: { href: "/about", label: "Read about Form5472 Prep" },
     source: "src/app/(marketing)/pricing/page.tsx:161; src/app/(marketing)/about/page.tsx:134; src/app/(marketing)/about/page.tsx:122",
   },
@@ -159,7 +159,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "the-filing",
     question: "What counts as a reportable transaction?",
     answer:
-      "Reportable transactions are defined broadly and can include capital in, distributions out, any payment between you and the LLC, any loan, and any related-party transaction. Form 5472 reports related-party transactions in dollar amounts.",
+      "Reportable transactions are defined broadly and can include capital in, distributions out, any payment between you and the LLC, any loan, and any related-party transaction. Form 5472 reports those related-party transactions in dollar amounts, and Part V is where capital contributions, distributions, and most owner-to-LLC payments are reported.",
     source: "src/lib/landing-pages.ts:432 (slug: form-5472-instructions); src/lib/landing-pages.ts:728 (slug: form-5472-vs-1120)",
   },
   {
@@ -167,7 +167,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "the-filing",
     question: "Do capital contributions and owner reimbursements count as reportable transactions?",
     answer:
-      "Capital contributions and owner reimbursements can count as reportable transactions. Capital contributions and distributions count, the seed money wired to open the bank account counts, and a reimbursement you took out for a business expense counts.",
+      "Capital contributions and owner reimbursements can count as reportable transactions. Capital contributions and distributions count, the seed money wired to open the bank account counts, and a reimbursement you took out for a business expense counts, even when the LLC had zero revenue.",
     source: "src/lib/landing-pages.ts:60 (slug: file-form-5472)",
   },
   {
@@ -175,7 +175,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "the-filing",
     question: "Can Form 5472 be e-filed?",
     answer:
-      "Form 5472 cannot be e-filed for this filer type. Form 5472 for foreign-owned disregarded entities is fax or mail only, and we prepare the package and fax it to the IRS Ogden PIN Unit.",
+      "Form 5472 cannot be e-filed for this filer type. Foreign-owned US disregarded entities are excluded from IRS e-filing for Form 5472 and the attached pro forma Form 1120. The accepted routes are fax or mail, and we prepare the package and fax it to the IRS Ogden PIN Unit.",
     source: "src/app/(marketing)/form-5472-deadline-calculator/page.tsx:73; src/app/(marketing)/page.tsx:64",
   },
   {
@@ -183,7 +183,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "the-filing",
     question: "Does a first-year LLC still have to file?",
     answer:
-      "A first-year LLC still follows the Form 5472 deadline rules if it had reportable transactions during its formation year. The year of formation counts, and the Form 5472 package follows the same deadline rules.",
+      "A first-year LLC still has to file if it had reportable transactions during its formation year. Review activity from formation onward, including formation costs paid by the owner. The year of formation counts, and the Form 5472 package follows the same deadline rules as other years.",
     source: "src/app/(marketing)/form-5472-deadline-calculator/page.tsx:81",
   },
   {
@@ -191,7 +191,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "the-filing",
     question: "My LLC was dissolved this year — do I still file?",
     answer:
-      "A dissolved LLC still files Form 5472 for the partial year ending at dissolution. The deadline is the 15th day of the 4th month after the LLC’s final month, using the annual deadline logic for a short tax year.",
+      "A dissolved LLC still files Form 5472 for the partial year ending at dissolution. The deadline is the 15th day of the 4th month after the LLC’s final month, using the annual deadline logic for a short tax year rather than ignoring the final period.",
     source: "src/lib/landing-pages.ts:534 (slug: foreign-owned-llc-tax)",
   },
   {
@@ -199,7 +199,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "What is the Form 5472 deadline?",
     answer:
-      "The Form 5472 deadline for a calendar-year LLC is generally April 15, filed with the pro forma Form 1120. Extensions may be available, but the extension process must be handled correctly.",
+      "The Form 5472 deadline for a calendar-year LLC is generally April 15, filed with the pro forma Form 1120. If Form 7004 is filed on time, the deadline can extend to October 15 because Form 5472 is attached to Form 1120. The extension process must be handled correctly.",
     learnMore: { href: "/form-5472-deadline-calculator", label: "Calculate your deadline" },
     source: "src/app/(marketing)/do-i-need-to-file-form-5472/page.tsx:41",
     speakable: true,
@@ -209,7 +209,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "How does the Form 7004 extension work?",
     answer:
-      "Form 7004 must be filed by the original April 15 deadline. If Form 7004 is timely, it extends the Form 5472 package due date to October 15 because Form 5472 is attached to Form 1120.",
+      "Form 7004 must be filed by the original April 15 deadline. If Form 7004 is timely, it extends the Form 5472 package due date to October 15 because Form 5472 is attached to Form 1120. Without it, the April 15 deadline remains.",
     source: "src/app/(marketing)/form-5472-deadline-calculator/page.tsx:77; src/lib/landing-pages.ts:1687 (slug: form-5472-deadline)",
   },
   {
@@ -217,7 +217,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "Does having no income or no transactions change the deadline?",
     answer:
-      "No income or no transactions does not change the Form 5472 deadline. The deadline itself does not change; Form 5472 is triggered by reportable transactions, not income, and if reportable transactions exist, the same due date applies.",
+      "No income or no transactions does not change the Form 5472 deadline. The deadline itself does not change; Form 5472 is triggered by reportable transactions, not income, and if reportable transactions exist, the same due date applies even when the LLC had zero revenue.",
     source: "src/app/(marketing)/form-5472-deadline-calculator/page.tsx:69",
   },
   {
@@ -225,7 +225,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "What happens if Form 5472 is missed?",
     answer:
-      "The IRS penalty is generally $25,000 for a missing or incomplete Form 5472. Late filings can sometimes include a reasonable cause explanation, but the best answer depends on the exact facts.",
+      "The IRS penalty is generally $25,000 for a missing or incomplete Form 5472. If the IRS sends a notice and the filing is still not corrected, another $25,000 can be added every 30 days. Late filings can sometimes include a reasonable cause explanation under DIIRSP.",
     learnMore: { href: "/form-5472-penalty-calculator", label: "Estimate the penalty" },
     source: "src/app/(marketing)/do-i-need-to-file-form-5472/page.tsx:45",
     speakable: true,
@@ -235,7 +235,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "Is the penalty really automatic?",
     answer:
-      "The Form 5472 penalty is automatic. IRC §6038A(d) provides an initial $25,000 penalty when a reporting corporation fails to furnish required Form 5472 information on time or files an incomplete return.",
+      "The Form 5472 penalty is automatic. IRC §6038A(d) provides an initial $25,000 penalty when a reporting corporation fails to furnish required Form 5472 information on time or files an incomplete return. The IRS computer system can assess it without a human reviewing the case first.",
     source: "src/app/(marketing)/form-5472-penalty-calculator/page.tsx:37; src/lib/penalty.ts:1",
   },
   {
@@ -243,7 +243,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "Can the penalty be abated?",
     answer:
-      "The Form 5472 penalty can be abated, but there are no guarantees. Many late filers pursue reasonable-cause relief through DIIRSP, and first-time late filers are frequently successful when the facts support reasonable cause.",
+      "The Form 5472 penalty can be abated, but there are no guarantees. Many late filers pursue reasonable-cause relief through DIIRSP by submitting the late return with a Reasonable Cause Statement. Well-documented first-time delinquencies have a high acceptance rate when the facts support reasonable cause.",
     source: "src/app/(marketing)/form-5472-penalty-calculator/page.tsx:41",
   },
   {
@@ -251,7 +251,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "What is a CP15 notice?",
     answer:
-      "A CP15 notice is an IRS notice assessing a civil penalty. For Form 5472, it is commonly the notice that starts the post-notice timeline for continuation penalties if the filing is still not corrected.",
+      "A CP15 notice is an IRS notice assessing a civil penalty. For Form 5472, it commonly shows the $25,000 amount, the tax year, and the post-notice timeline before continuation penalties begin if the filing is still not corrected. Do not ignore the notice or its response deadline.",
     source: "src/app/(marketing)/form-5472-penalty-calculator/page.tsx:45",
   },
   {
@@ -259,7 +259,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "Is there a statute of limitations?",
     answer:
-      "There is effectively no statute of limitations until a complete or substantially complete Form 5472 return is filed. Filing the return, even late, is what starts the clock; until then the year stays open indefinitely.",
+      "There is effectively no statute of limitations until a complete or substantially complete Form 5472 return is filed. Filing the return, even late, is what starts the clock; until then the year stays open indefinitely. That is why the missing package still matters.",
     source: "src/app/(marketing)/form-5472-penalty-calculator/page.tsx:53",
   },
   {
@@ -276,7 +276,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "The deadline already passed this year — what should I do now?",
     answer:
-      "If the Form 5472 deadline already passed, DIIRSP with a reasonable-cause statement is the standard remedy for a late Form 5472 package. If April 15 was missed without Form 7004, file the actual return under DIIRSP.",
+      "If the Form 5472 deadline already passed, DIIRSP with a reasonable-cause statement is the standard remedy for a late Form 5472 package. If April 15 was missed without Form 7004, file the actual return under DIIRSP with the late filing package.",
     source: "src/app/(marketing)/form-5472-deadline-calculator/page.tsx:65; src/lib/landing-pages.ts:1715 (slug: form-5472-deadline)",
   },
   {
@@ -284,7 +284,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "I've received an IRS notice — can you still help, and what do you need from me?",
     answer:
-      "We can help owners who received an IRS CP-15 notice or §6038A letter and need a properly prepared late filing. Send the notice number, such as CP15, and the tax year it covers; we will explain what a corrected or late filing involves before you pay. We prepare the late filing itself; we do not handle CP-15 penalty appeals, so for an appeal contact a tax attorney or enrolled agent.",
+      "We can help owners who received an IRS CP-15 notice or §6038A letter and need a properly prepared late filing. Send the notice number, such as CP15, and the tax year it covers; we will explain the filing path before you pay. We prepare the late filing itself; we do not handle CP-15 penalty appeals.",
     learnMore: { href: "/contact", label: "Contact support" },
     source: "src/app/(marketing)/form-5472-filing/page.tsx:71; src/app/(marketing)/contact/page.tsx:38; src/lib/landing-pages.ts:644",
   },
@@ -293,7 +293,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "ein-itin",
     question: "Do I need an EIN to file Form 5472?",
     answer:
-      "Yes, Form 5472 requires your LLC’s EIN in the header. We can handle both an EIN and a Form 5472 filing if you need both.",
+      "Yes, Form 5472 requires your LLC’s EIN in the header. The EIN identifies the LLC as the reporting corporation on the package. We can handle both an EIN and a Form 5472 filing if you need both, so the identifier and filing package stay aligned.",
     source: "src/app/(marketing)/ein/page.tsx:56",
     speakable: true,
   },
@@ -319,7 +319,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "ein-itin",
     question: "Do I need a US Social Security Number or ITIN to get an EIN?",
     answer:
-      "No, a non-resident owner without an SSN or ITIN can obtain an EIN. Form SS-4 allows the responsible party’s tax ID to be marked “Foreign,” and the application goes to the IRS international unit.",
+      "No, a non-resident owner without an SSN or ITIN can obtain an EIN. Form SS-4 allows the responsible party’s tax ID to be marked “Foreign,” and the application goes to the IRS international unit. The online EIN tool is different and is only available if you already have a US SSN or ITIN.",
     source: "src/lib/einApplicationFaq.ts:9",
   },
   {
@@ -335,7 +335,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "ein-itin",
     question: "What if my LLC already has an EIN?",
     answer:
-      "If your LLC already has an EIN, you do not need the EIN service. We can also help retrieve a lost or forgotten EIN; contact support@form5472prep.com.",
+      "If your LLC already has an EIN, you do not need the EIN service. Use that EIN for the LLC on the Form 5472 package. Form 5472 identifies the LLC as the reporting corporation and includes the LLC name, EIN, address, and total assets. We can also help retrieve a lost or forgotten EIN; contact support@form5472prep.com.",
     source: "src/app/(marketing)/ein/page.tsx:60",
   },
   {
@@ -427,7 +427,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "how-our-service-works",
     question: "How quickly will you reply to a message?",
     answer:
-      "We reply to messages within one business day, Monday to Friday, from support@form5472prep.com. Check your spam folder if you do not see the reply after you contact us.",
+      "We reply to messages within one business day, Monday to Friday, from support@form5472prep.com. The reply comes from that support address, so search for that sender if it is not in your inbox. Check your spam folder if you do not see the reply after you contact us.",
     learnMore: { href: "/contact", label: "Contact Form5472 Prep" },
     source: "src/app/(marketing)/contact/page.tsx:22",
   },
@@ -477,7 +477,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "after-we-file",
     question: "What is your refund policy?",
     answer:
-      "Fees are non-refundable once a PDF has been generated, except as expressly stated. Fees are refundable if we are unable to transmit your filing to the IRS after three attempts.",
+      "Fees are non-refundable once a PDF has been generated, except as expressly stated. Read that as the cutoff tied to the generated PDF for your filing package. Fees are refundable if we are unable to transmit your filing to the IRS after three attempts.",
     learnMore: { href: "/terms", label: "Read the terms" },
     source: "src/app/(marketing)/terms/page.tsx:42",
   },
