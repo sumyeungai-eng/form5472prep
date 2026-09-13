@@ -12,6 +12,7 @@ import {
 import { formatPrice } from "@/lib/utils";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 import { JsonLd } from "@/components/JsonLd";
+import { ComparisonTable, FILING_COMPARISON } from "@/components/ComparisonTable";
 import { breadcrumbList, pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -161,6 +162,16 @@ export default function PricingPage() {
           not a CPA firm and do not provide tax advice — we prepare and submit
           your information return as you provide it.
         </p>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-6 pb-16 sm:pb-20">
+        <h2 className="text-center font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
+          How does Form5472 Prep compare with a CPA or DIY?
+        </h2>
+        <p className="mt-3 text-center text-sm text-slate-600 max-w-2xl mx-auto">
+          The table compares setup time, filing delivery, proof storage, and cost across Form5472 Prep, CPA, and DIY options.
+        </p>
+        <ComparisonTable {...FILING_COMPARISON} className="mt-8" />
       </section>
 
       {/* EIN / ITIN cross-sell — passes internal-link equity to the newer

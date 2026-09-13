@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { CheckCircle2, ShieldCheck, Phone, FileText, ArrowRight } from "lucide-react";
+import { EinItinTable } from "@/components/EinItinTable";
 import { JsonLd } from "@/components/JsonLd";
 import { EIN_APPLICATION_FAQ } from "@/lib/einApplicationFaq";
 import { env } from "@/lib/env";
@@ -186,18 +187,18 @@ export default function EinPage() {
           <p className="mb-10 max-w-3xl text-sm leading-relaxed text-slate-600">
             You complete the intake form, we prepare Form SS-4, we contact the IRS, and you receive the EIN by email.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <ol className="list-none m-0 p-0 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
-              <div key={step.title} className="relative">
+              <li key={step.title} className="relative">
                 <div className="h-10 w-10 rounded-full bg-accent-50 border border-accent/20 flex items-center justify-center mb-4">
                   <step.icon className="h-5 w-5 text-accent" />
                 </div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Step {i + 1}</p>
                 <h3 id={step.anchor.slice(1)} className="text-sm font-semibold text-slate-900 mb-2">{step.title}</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">{step.body}</p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
@@ -205,6 +206,7 @@ export default function EinPage() {
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-3xl mx-auto px-6">
           <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-5">What is an EIN?</h2>
+          <EinItinTable />
           <div className="prose prose-slate prose-sm max-w-none space-y-4 text-slate-600 leading-relaxed">
             <p>
               An <strong className="text-slate-800">Employer Identification Number (EIN)</strong> is a

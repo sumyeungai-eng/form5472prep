@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { CheckCircle2, ShieldCheck, FileText, Clock, ArrowRight, UserCheck } from "lucide-react";
+import { EinItinTable } from "@/components/EinItinTable";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
 import {
@@ -189,18 +190,18 @@ export default function ItinPage() {
           <p className="mb-10 max-w-3xl text-sm leading-relaxed text-slate-600">
             You confirm the ITIN need, submit documents, complete CAA certification, send the W-7 package, and confirm the IRS notice.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <ol className="list-none m-0 p-0 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
-              <div key={step.title}>
+              <li key={step.title}>
                 <div className="h-10 w-10 rounded-full bg-accent-50 border border-accent/20 flex items-center justify-center mb-4">
                   <step.icon className="h-5 w-5 text-accent" />
                 </div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Step {i + 1}</p>
                 <h3 id={step.anchor.slice(1)} className="text-sm font-semibold text-slate-900 mb-2">{step.title}</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">{step.body}</p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
@@ -293,6 +294,9 @@ export default function ItinPage() {
               <div key={q}>
                 <h3 className="text-sm font-semibold text-slate-900 mb-1">{q}</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">{a}</p>
+                {q === "What is the difference between an EIN and an ITIN?" && (
+                  <EinItinTable />
+                )}
               </div>
             ))}
           </div>

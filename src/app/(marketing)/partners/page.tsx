@@ -180,9 +180,9 @@ export default function PartnersPage() {
           <p className="mb-10 max-w-3xl text-sm leading-relaxed text-slate-600">
             You get approved, prepare client filings, send the client signing link, track every filing, and confirm completion in one dashboard.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <ol className="list-none m-0 p-0 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
-              <div key={step.title}>
+              <li key={step.title}>
                 <div className="h-10 w-10 rounded-full bg-accent-50 border border-accent/20 flex items-center justify-center mb-4">
                   <step.icon className="h-5 w-5 text-accent" />
                 </div>
@@ -191,9 +191,9 @@ export default function PartnersPage() {
                 </p>
                 <h3 id={step.anchor.slice(1)} className="text-sm font-semibold text-slate-900 mb-2">{step.title}</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">{step.body}</p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 

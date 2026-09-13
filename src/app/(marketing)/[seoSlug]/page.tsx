@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { ArrowRight, CheckCircle2, Clock, FileText, Send, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
+import { orderedListItems, parseLandingBody } from "@/lib/landing-body";
 import { LANDING_PAGES, getLandingPage, getRelatedSlugs } from "@/lib/landing-pages";
 import {
   TIERS,
@@ -45,6 +46,41 @@ function renderInlineLinks(text: string): ReactNode {
   if (parts.length === 0) return text;
   if (lastIndex < text.length) parts.push(text.slice(lastIndex));
   return parts;
+}
+
+function renderBody(body: string): ReactNode {
+  return parseLandingBody(body).map((block, i) => {
+    if (block.type === "p") {
+      return (
+        <p key={i}>
+          {block.text.split("\n").map((line, j) => (
+            <Fragment key={j}>
+              {j > 0 && <br />}
+              {renderInlineLinks(line)}
+            </Fragment>
+          ))}
+        </p>
+      );
+    }
+
+    if (block.type === "ol") {
+      return (
+        <ol key={i} className="list-decimal pl-5 space-y-2">
+          {block.items.map((item, j) => (
+            <li key={j}>{renderInlineLinks(item)}</li>
+          ))}
+        </ol>
+      );
+    }
+
+    return (
+      <ul key={i} className="list-disc pl-5 space-y-2">
+        {block.items.map((item, j) => (
+          <li key={j}>{renderInlineLinks(item)}</li>
+        ))}
+      </ul>
+    );
+  });
 }
 
 // A/B test the hero layout to see which converts better.
@@ -248,9 +284,44 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                     #
                   </a>
                 </h2>
-                <div className="mt-3 space-y-3 text-slate-700 leading-relaxed whitespace-pre-line">
-                  {renderInlineLinks(s.body)}
+                <div className="mt-3 space-y-3 text-slate-700 leading-relaxed">
+                  {renderBody(s.body)}
                 </div>
+                {s.table && (
+                  <div className="mt-5 overflow-x-auto rounded-lg border border-slate-200">
+                    <table className="min-w-[28rem] w-full text-sm text-left">
+                      <caption className="px-4 py-2 text-left text-xs font-medium text-slate-500 caption-top">
+                        {s.table.caption}
+                      </caption>
+                      <thead className="bg-slate-50">
+                        <tr>
+                          {s.table.columns.map((c, ci) => (
+                            <th key={ci} scope="col" className="px-4 py-2 font-semibold text-slate-900">
+                              {renderInlineLinks(c)}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {s.table.rows.map((row, ri) => (
+                          <tr key={ri}>
+                            {row.map((cell, ci) =>
+                              ci === 0 ? (
+                                <th key={ci} scope="row" className="px-4 py-2 font-medium text-slate-900">
+                                  {renderInlineLinks(cell)}
+                                </th>
+                              ) : (
+                                <td key={ci} className="px-4 py-2 text-slate-700">
+                                  {renderInlineLinks(cell)}
+                                </td>
+                              ),
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </Reveal>
             ))}
           </div>
@@ -358,7 +429,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                   <Reveal key={f.q} delay={i * 80}>
                     <dt className="font-medium text-slate-900">{f.q}</dt>
                     <dd className="mt-2 text-sm text-slate-600 leading-relaxed">
-                      {renderInlineLinks(f.a)}
+                      {renderBody(f.a)}
                     </dd>
                   </Reveal>
                 ))}
@@ -720,32 +791,6 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
     0,
   );
   const howToMinutes = Math.max(5, Math.ceil(sectionWordCount / 200 / 5) * 5);
-  const orderedListItems = (body: string) => {
-    const items: string[] = [];
-    let current: string[] = [];
-    const flush = () => {
-      const item = current.join(" ").replace(/\s+/g, " ").trim();
-      if (item) items.push(item);
-      current = [];
-    };
-
-    for (const line of body.split("\n")) {
-      const itemStart = line.match(/^\s*\d+\.\s+(.+)$/);
-      if (itemStart) {
-        if (current.length > 0) flush();
-        current = [itemStart[1]];
-      } else if (current.length > 0) {
-        if (line.trim() === "") {
-          flush();
-        } else {
-          current.push(line.trim());
-        }
-      }
-    }
-    if (current.length > 0) flush();
-
-    return items;
-  };
   const stepNameFromItem = (text: string) => {
     const leadEnd = text.search(/[.:]/);
     const lead = (leadEnd >= 0 ? text.slice(0, leadEnd) : text).trim();
