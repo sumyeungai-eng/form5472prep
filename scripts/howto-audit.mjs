@@ -33,6 +33,7 @@ const ENTITY_MAP = {
   trade: "TM",
 };
 
+// keep in sync with src/lib/landing-howto.ts IMPERATIVE_VERBS
 const VERBS = new Set(
   [
     "enter",
@@ -101,6 +102,10 @@ const VERBS = new Set(
     "store",
     "hold",
     "retain",
+    "have",
+    "preserve",
+    "set",
+    "monitor",
   ],
 );
 
@@ -261,7 +266,9 @@ function auditHowTo(ht, box) {
     return first ? VERBS.has(first) : false;
   }).length;
   const last = names.length ? names.at(-1) : "";
-  const verifyLast = /confirm|verify|check|keep|receipt|record|done/i.test(last) ? "y" : "n";
+  const lastText = steps.length && steps.at(-1)?.text ? String(steps.at(-1).text) : "";
+  const verifyLastPattern = /keep|receipt|confirm|verify|check|record|preserve|done/i;
+  const verifyLast = verifyLastPattern.test(last) || verifyLastPattern.test(lastText) ? "y" : "n";
 
   return {
     steps: steps.length,

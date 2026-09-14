@@ -150,6 +150,9 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
 - `docs/sessions/2026-09-13-snippet-readiness.md` — snippet-readiness wave: landing bodies render real
   p/ol/ul + optional tables (`landing-body.ts`, `LandingSection.table`), 40–60-word answers locked by
   tests, `npm run audit:snippets`; EIN apply page redesign. **Read its Contracts before editing landing copy.**
+- `docs/sessions/2026-09-14-howto-structure.md` — HowTo wave: landing HowTo only via `howTo.section`
+  (`deriveHowTo`, `#step-N` on list items, slugified H2 ids), `HowToSummary` box on every HowTo page,
+  `npm run audit:howto`. 16 landing pages deliberately emit no HowTo.
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
