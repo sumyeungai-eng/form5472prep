@@ -153,6 +153,8 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
 - `docs/sessions/2026-09-14-howto-structure.md` — HowTo wave: landing HowTo only via `howTo.section`
   (`deriveHowTo`, `#step-N` on list items, slugified H2 ids), `HowToSummary` box on every HowTo page,
   `npm run audit:howto`. 16 landing pages deliberately emit no HowTo.
+- `docs/sessions/2026-09-15-admin-preview-frame.md` — place-signature iframe fix: X-Frame-Options
+  SAMEORIGIN + frame-ancestors 'self' (was DENY, which blocked the site's own PDF preview).
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
