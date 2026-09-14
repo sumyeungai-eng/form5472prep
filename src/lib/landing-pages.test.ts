@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseLandingBody } from "./landing-body";
+import { deriveHowTo, IMPERATIVE_VERBS, stepName } from "./landing-howto";
 import { LANDING_PAGES } from "./landing-pages";
 
 const questionHeadingPattern =
@@ -111,6 +112,102 @@ describe("landing page intros", () => {
 
       expect(count, page.slug).toBeGreaterThanOrEqual(40);
       expect(count, page.slug).toBeLessThanOrEqual(60);
+    }
+  });
+});
+
+describe("landing page howTo derivation", () => {
+  const howToSlugs = [
+    "file-form-5472",
+    "diirsp",
+    "late-form-5472",
+    "wyoming-llc-form-5472",
+    "delaware-llc-form-5472",
+    "form-5472-germany",
+    "form-5472-uae",
+    "irs-form-5472",
+    "form-5472-deadline",
+    "form-5472-fax-number",
+    "pro-form-5472",
+  ] as const;
+  const howToSlugSet = new Set<string>(howToSlugs);
+  const pagesWithHowTo = LANDING_PAGES.filter((page) => page.howTo);
+
+  it("points each howTo config at exactly one section", () => {
+    for (const page of pagesWithHowTo) {
+      const matchingSections = page.sections.filter(
+        (section) => section.heading === page.howTo?.section,
+      );
+
+      expect(matchingSections, page.slug).toHaveLength(1);
+    }
+  });
+
+  it("derives at least three steps for every configured howTo", () => {
+    for (const page of pagesWithHowTo) {
+      const derived = deriveHowTo(page);
+
+      expect(derived, page.slug).not.toBeNull();
+      expect(derived?.steps.length, page.slug).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it("starts every derived step name with a supported imperative verb", () => {
+    for (const page of pagesWithHowTo) {
+      const derived = deriveHowTo(page);
+
+      expect(derived, page.slug).not.toBeNull();
+
+      for (const step of derived?.steps ?? []) {
+        const derivedName = stepName(step.text);
+        expect(step.name, `${page.slug}: ${step.text}`).toBe(derivedName);
+
+        const firstWord = derivedName
+          .split(/\s+/)[0]
+          .toLowerCase()
+          .replace(/[,:]+$/, "");
+
+        expect(IMPERATIVE_VERBS.has(firstWord), `${page.slug}: ${derivedName}`).toBe(true);
+      }
+    }
+  });
+
+  it("ends every configured howTo with a verification-style step", () => {
+    for (const page of pagesWithHowTo) {
+      const derived = deriveHowTo(page);
+      const lastStep = derived?.steps.at(-1);
+
+      expect(lastStep?.text, page.slug).toMatch(/keep|receipt|confirm|verify|check|record|preserve/i);
+    }
+  });
+
+  it("keeps howTo tools and supplies snippet-sized", () => {
+    for (const page of pagesWithHowTo) {
+      for (const tool of page.howTo?.tools ?? []) {
+        expect(wordCount(tool), `${page.slug}: ${tool}`).toBeLessThanOrEqual(6);
+      }
+
+      for (const supply of page.howTo?.supplies ?? []) {
+        expect(wordCount(supply), `${page.slug}: ${supply}`).toBeLessThanOrEqual(6);
+      }
+    }
+  });
+
+  it("uses ISO-8601 minute or hour durations when totalTime is present", () => {
+    for (const page of pagesWithHowTo) {
+      if (!page.howTo?.totalTime) continue;
+
+      expect(page.howTo.totalTime, page.slug).toMatch(/^PT\d+[HM]/);
+    }
+  });
+
+  it("only configures howTo for the phase B process pages", () => {
+    for (const page of LANDING_PAGES) {
+      if (howToSlugSet.has(page.slug)) {
+        expect(page.howTo, page.slug).toBeDefined();
+      } else {
+        expect(page.howTo, page.slug).toBeUndefined();
+      }
     }
   });
 });

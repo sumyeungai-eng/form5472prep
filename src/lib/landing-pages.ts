@@ -12,6 +12,14 @@ export type LandingSection = {
 
 export type LandingFaq = { q: string; a: string };
 
+export type LandingHowTo = {
+  section: string; // exact heading of the process section on this page
+  tools?: string[]; // <= 6 words each, only things the page names
+  supplies?: string[]; // <= 6 words each, only things the page names
+  totalTime?: string; // ISO 8601, only if the page states a duration for THIS process
+  cost?: { currency: string; value: string }; // only if the page states a price for THIS process
+};
+
 export type LandingPage = {
   slug: string;
   title: string; // <title>
@@ -28,6 +36,9 @@ export type LandingPage = {
   // Used for paid-ad landing pages where we don't want Google to surface
   // the page organically — only ad clicks should reach it.
   noindex?: boolean;
+  // Drives opt-in HowTo JSON-LD and the visible "Before you start" box.
+  // See src/lib/landing-howto.ts for derivation rules.
+  howTo?: LandingHowTo;
   // When set, the page displays PREMIUM_TIERS pricing and the filing
   // started from this page is billed at premium prices end-to-end. The
   // slug must also be added to PREMIUM_SOURCES in src/lib/pricing.ts.
@@ -57,6 +68,16 @@ export const LANDING_PAGES: LandingPage[] = [
     h1: "How to File IRS Form 5472",
     intro:
       "Foreign-owned US single-member LLCs must file Form 5472 with an attached pro forma Form 1120 by April 15 each year. The IRS accepts the annual package by mail or fax to the Ogden PIN Unit at +1-855-887-7737, and our 15-minute online filer starts from $149.",
+    howTo: {
+      section: "How do you file Form 5472 step by step?",
+      supplies: [
+        "LLC legal name and EIN",
+        "Owner passport details",
+        "Year-end financials",
+        "Part V supporting statement",
+        "Signed pro forma 1120",
+      ],
+    },
     sections: [
       {
         heading: "Who has to file Form 5472?",
@@ -68,7 +89,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file Form 5472 step by step?",
-        body: "1. Gather your LLC info: legal name as registered with the state, EIN, US address, date of formation, country of incorporation (US), state of incorporation, NAICS / principal business activity code.\n2. Gather your owner info: full legal name as on passport, foreign tax ID (FTIN) or self-assigned Reference ID, residential address abroad, country of citizenship, country of tax residence, country of organization of any related foreign entities.\n3. Add up year-end financials: capital contributions in, distributions out, total assets at year-end (in USD), and a list of every transaction between the LLC and any related party.\n4. Fill in Form 1120: name, address, item B (EIN) and applicable item E boxes, as the special DE instructions require. Leave income and tax sections blank. Stamp or type \"Foreign-Owned U.S. DE\" across the top margin.\n5. Fill in Form 5472: Part I (reporting corporation), Part II (25%+ foreign shareholder), Part III (related party), Part IV (monetary transactions), Part V (cost-sharing or other transactions), Part VII (foreign disregarded entity info).\n6. Build the Part V supporting statement: one line per reportable transaction with date, amount, related party, and nature.\n7. As a conservative workflow, have the authorized person sign the completed pro forma 1120 in ink, then scan that signed page for fax. Form 5472 has no signature block; [electronic-signature rules depend on the document and route](/blog/form-5472-pro-forma-1120-signature).\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Keep the fax confirmation receipt — it is your transmission evidence.",
+        body: "1. Gather your LLC info: legal name as registered with the state, EIN, US address, date of formation, country of incorporation (US), state of incorporation, NAICS / principal business activity code.\n2. Gather your owner info: full legal name as on passport, foreign tax ID (FTIN) or self-assigned Reference ID, residential address abroad, country of citizenship, country of tax residence, country of organization of any related foreign entities.\n3. Add up year-end financials: capital contributions in, distributions out, total assets at year-end (in USD), and a list of every transaction between the LLC and any related party.\n4. Fill in Form 1120: name, address, item B (EIN) and applicable item E boxes, as the special DE instructions require. Leave income and tax sections blank. Stamp or type \"Foreign-Owned U.S. DE\" across the top margin.\n5. Fill in Form 5472: Part I (reporting corporation), Part II (25%+ foreign shareholder), Part III (related party), Part IV (monetary transactions), Part V (cost-sharing or other transactions), Part VII (foreign disregarded entity info).\n6. Build the Part V supporting statement: one line per reportable transaction with date, amount, related party, and nature.\n7. Have the authorized person sign the completed pro forma 1120 in ink, then scan that signed page for fax, as a conservative workflow. Form 5472 has no signature block; [electronic-signature rules depend on the document and route](/blog/form-5472-pro-forma-1120-signature).\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Keep the fax confirmation receipt — it is your transmission evidence.",
       },
       {
         heading: "What goes on each part of Form 5472?",
@@ -277,6 +298,14 @@ export const LANDING_PAGES: LandingPage[] = [
     h1: "DIIRSP: Filing Late Form 5472 with Penalty Abatement",
     intro:
       "The IRS Delinquent International Information Return Submission Procedure (DIIRSP) is the catch-up route for missed Form 5472 filings when you are requesting waiver of the $25,000-per-form-per-year penalty. Each late return needs a properly written Reasonable Cause Statement, or the IRS may issue a CP-15 notice.",
+    howTo: {
+      section: "How does DIIRSP work — step by step?",
+      supplies: [
+        "Missed tax years",
+        "Complete filing package",
+        "Reasonable Cause Statement",
+      ],
+    },
     sections: [
       {
         heading: "What is DIIRSP, really?",
@@ -288,7 +317,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How does DIIRSP work — step by step?",
-        body: "1. Identify every missed year. If you formed the LLC in 2022 and haven't filed, that's 2022, 2023, 2024.\n2. Prepare the complete filing package for each missed year separately: cover letter, pro forma Form 1120 (with \"Foreign-Owned U.S. DE\" stamp), Form 5472, Part V supporting statement.\n3. Write a single Reasonable Cause Statement that covers all missed years (or one per year if circumstances differ).\n4. Attach the statement to the front of the package.\n5. File all years together — fax the entire set to +1-855-887-7737 (IRS Ogden PIN Unit), or mail certified to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n6. Keep the fax transmission receipt. It records the provider’s transmission event and should be retained with the exact package; it does not establish acceptance of a reasonable cause request.\n7. Preserve the record and monitor correspondence. Silence does not establish processing, acceptance or penalty relief.",
+        body: "1. List every missed year. If you formed the LLC in 2022 and haven't filed, that's 2022, 2023, 2024.\n2. Prepare the complete filing package for each missed year separately: cover letter, pro forma Form 1120 (with \"Foreign-Owned U.S. DE\" stamp), Form 5472, Part V supporting statement.\n3. Write a single Reasonable Cause Statement that covers all missed years (or one per year if circumstances differ).\n4. Attach the statement to the front of the package.\n5. File all years together — fax the entire set to +1-855-887-7737 (IRS Ogden PIN Unit), or mail certified to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n6. Keep the fax transmission receipt. It records the provider’s transmission event and should be retained with the exact package; it does not establish acceptance of a reasonable cause request.\n7. Preserve the record and monitor correspondence. Silence does not establish processing, acceptance or penalty relief.",
         table: {
           caption: "DIIRSP filing requirements in the package",
           columns: ["Requirement", "What it means", "Where it goes"],
@@ -651,6 +680,16 @@ export const LANDING_PAGES: LandingPage[] = [
     h1: "Filed Form 5472 Late? Here's What to Do Now",
     intro:
       "If you missed the April 15 deadline for Form 5472, file as soon as possible. DIIRSP lets you submit late filings with a Reasonable Cause Statement requesting waiver of the $25,000 penalty, before the risk of an automatic CP-15 penalty notice narrows your options.",
+    howTo: {
+      section: "What should you do if you've missed one year?",
+      supplies: [
+        "Cover letter",
+        "Pro forma Form 1120",
+        "Form 5472",
+        "Part V supporting statement",
+        "Reasonable Cause Statement",
+      ],
+    },
     sections: [
       {
         heading: "How late can you actually file?",
@@ -662,7 +701,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What should you do if you've missed one year?",
-        body: "1. Don't panic. The IRS has not yet assessed the penalty if you haven't received a CP-15 notice.\n2. Prepare the late return immediately. You need: cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, AND a Reasonable Cause Statement at the front.\n3. Write the Reasonable Cause Statement (or use our service to generate one tailored to the most common first-time-foreign-owner scenario).\n4. File via DIIRSP — fax to +1-855-887-7737 (IRS Ogden PIN Unit), or mail certified to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n5. Keep the fax transmission receipt as your timestamped transmission evidence.\n6. Set up an annual reminder so you file on time going forward (or sign up for an annual filing service).",
+        body: "1. Check whether you have received a CP-15 notice. The IRS has not yet assessed the penalty if you haven't received one.\n2. Prepare the late return immediately. You need: cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, AND a Reasonable Cause Statement at the front.\n3. Write the Reasonable Cause Statement (or use our service to generate one tailored to the most common first-time-foreign-owner scenario).\n4. File via DIIRSP — fax to +1-855-887-7737 (IRS Ogden PIN Unit), or mail certified to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n5. Set up an annual reminder so you file on time going forward (or sign up for an annual filing service).\n6. Keep the fax transmission receipt as your timestamped transmission evidence.",
       },
       {
         heading: "What should you do if you've missed multiple years?",
@@ -873,6 +912,16 @@ export const LANDING_PAGES: LandingPage[] = [
     h1: "Wyoming LLC Form 5472 Filing Guide",
     intro:
       "Every foreign-owned Wyoming LLC must file IRS Form 5472 with pro forma Form 1120 by April 15 each year. Wyoming's low fees, no state income tax, privacy laws, and registered agent market do not remove the federal filing or the $25,000 penalty risk if missed.",
+    howTo: {
+      section: "How do you file Form 5472 for a Wyoming LLC?",
+      supplies: [
+        "LLC info",
+        "Owner info",
+        "Year-end financials",
+        "Part V supporting statement",
+        "Signed 1120 cover",
+      ],
+    },
     sections: [
       {
         heading: "Why do foreign LLC owners choose Wyoming?",
@@ -902,7 +951,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file Form 5472 for a Wyoming LLC?",
-        body: "1. Gather the items in the previous section (LLC info, owner info, year-end financials).\n2. Fill in the pro forma Form 1120: name, address, item B (EIN) and applicable item E boxes; stamp \"Foreign-Owned U.S. DE\" across the top.\n3. Fill in Form 5472: Part I (your LLC), Part II (you as foreign shareholder), Part III (you again as related party), Part IV (usually blank for foreign-owned DEs), Part V (capital contributions + distributions, with supporting statement), Part VII (FDE confirmation).\n4. For a conservative signing workflow, sign the completed 1120 cover in ink and scan that page for fax.\n5. Fax the complete package (cover letter + 1120 + 5472 + Part V supporting statement) to +1-855-887-7737 (IRS Ogden PIN Unit).\n6. Save the fax transmission receipt as transmission evidence.\n\nOr use our service: Standard $149 covers the entire package including IRS fax delivery, ready in 5-7 business days (Express is the same package within 3, for $199), and every filing is reviewed by an accountant on our team before submission.",
+        body: "1. Gather the items in the previous section (LLC info, owner info, year-end financials).\n2. Fill in the pro forma Form 1120: name, address, item B (EIN) and applicable item E boxes; stamp \"Foreign-Owned U.S. DE\" across the top.\n3. Fill in Form 5472: Part I (your LLC), Part II (you as foreign shareholder), Part III (you again as related party), Part IV (usually blank for foreign-owned DEs), Part V (capital contributions + distributions, with supporting statement), Part VII (FDE confirmation).\n4. Sign the completed 1120 cover in ink and scan that page for fax, for a conservative signing workflow.\n5. Fax the complete package (cover letter + 1120 + 5472 + Part V supporting statement) to +1-855-887-7737 (IRS Ogden PIN Unit).\n6. Save the fax transmission receipt as transmission evidence.\n\nOr use our service: Standard $149 covers the entire package including IRS fax delivery, ready in 5-7 business days (Express is the same package within 3, for $199), and every filing is reviewed by an accountant on our team before submission.",
       },
       {
         heading: "What Wyoming registered agent address do you use?",
@@ -984,6 +1033,16 @@ export const LANDING_PAGES: LandingPage[] = [
     h1: "Delaware LLC Form 5472 Filing Guide",
     intro:
       "Foreign-owned Delaware LLCs must file IRS Form 5472 with pro forma Form 1120 every year, even with zero revenue. Delaware is the #2 state after Wyoming for these LLCs, common for Stripe Atlas founders, and the annual filing sits alongside the $400 Delaware franchise tax.",
+    howTo: {
+      section: "How do you file Form 5472 for a Delaware LLC?",
+      supplies: [
+        "LLC legal name and EIN",
+        "Owner passport details",
+        "Year-end financials",
+        "Part V supporting statement",
+        "Signed 1120 cover",
+      ],
+    },
     sections: [
       {
         heading: "Why Delaware?",
@@ -1009,7 +1068,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file Form 5472 for a Delaware LLC?",
-        body: "Identical to filing for any other state:\n\n1. Gather LLC info: legal name (exactly as on CP-575), EIN, Delaware registered agent address, date of formation, state (DE), NAICS code, total assets at year-end.\n2. Gather your owner info: full legal name as on passport, FTIN or self-assigned Reference ID, residential address in your home country, country of citizenship, country of tax residence.\n3. Add up year-end financials: capital contributions in, distributions out, any related-party payments.\n4. Fill in pro forma Form 1120: entity identification fields only, stamp \"Foreign-Owned U.S. DE\" across the top.\n5. Fill in Form 5472: Parts I, II, III, IV, V, VII.\n6. Build the Part V supporting statement listing each reportable transaction.\n7. For a conservative signing workflow, sign the completed 1120 cover in ink and scan that page for fax.\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Save the transmission receipt.\n\nDelaware doesn't change the federal process at all. Same forms, same fax number, same deadline.",
+        body: "Identical to filing for any other state:\n\n1. Gather LLC info: legal name (exactly as on CP-575), EIN, Delaware registered agent address, date of formation, state (DE), NAICS code, total assets at year-end.\n2. Gather your owner info: full legal name as on passport, FTIN or self-assigned Reference ID, residential address in your home country, country of citizenship, country of tax residence.\n3. Add up year-end financials: capital contributions in, distributions out, any related-party payments.\n4. Fill in pro forma Form 1120: entity identification fields only, stamp \"Foreign-Owned U.S. DE\" across the top.\n5. Fill in Form 5472: Parts I, II, III, IV, V, VII.\n6. Build the Part V supporting statement listing each reportable transaction.\n7. Sign the completed 1120 cover in ink and scan that page for fax, for a conservative signing workflow.\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Save the transmission receipt.\n\nDelaware doesn't change the federal process at all. Same forms, same fax number, same deadline.",
       },
       {
         heading: "How does Delaware franchise tax differ from Form 5472?",
@@ -1095,6 +1154,16 @@ export const LANDING_PAGES: LandingPage[] = [
     h1: "Form 5472 for German-Resident Owners of US LLCs",
     intro:
       "German tax residents who own a single-member US LLC must file IRS Form 5472 with an attached pro forma Form 1120 every year, even if the LLC had zero US tax due. For the German tax ID field, use your Steuerliche Identifikationsnummer (Steuer-ID), not your Steuernummer or VAT ID.",
+    howTo: {
+      section: "How do you file Form 5472 as a German founder?",
+      supplies: [
+        "LLC legal name and EIN",
+        "Owner passport details",
+        "Steuer-ID",
+        "Year-end financials",
+        "Part V supporting statement",
+      ],
+    },
     sections: [
       {
         heading: "Why do German founders use US LLCs?",
@@ -1180,6 +1249,16 @@ export const LANDING_PAGES: LandingPage[] = [
     h1: "Form 5472 for UAE Residents Who Own a US LLC",
     intro:
       "Dubai and Abu Dhabi-based founders who run a US LLC must file IRS Form 5472 with an attached pro forma Form 1120 every year. The UAE has no personal income tax and, for most individuals, no personal tax ID, so the filing needs the right substitute identification approach.",
+    howTo: {
+      section: "How do you file Form 5472 as a UAE founder?",
+      supplies: [
+        "LLC legal name and EIN",
+        "Owner passport details",
+        "UAE tax ID",
+        "Year-end financials",
+        "Part V supporting statement",
+      ],
+    },
     sections: [
       {
         heading: "Why do UAE-based founders use US LLCs?",
@@ -1690,6 +1769,15 @@ export const LANDING_PAGES: LandingPage[] = [
     h1: "IRS Form 5472 — the complete guide for foreign-owned LLCs",
     intro:
       "IRS Form 5472 is the information return foreign-owned US single-member LLCs file every year with an attached pro forma Form 1120. Missing it can trigger a $25,000 penalty per year, per form, and our 15-minute workflow prepares the package before faxing it to the IRS Ogden PIN Unit.",
+    howTo: {
+      section: "How do you catch up with DIIRSP after missed years?",
+      supplies: [
+        "Late Form 5472",
+        "Pro forma 1120",
+        "Reasonable Cause Statement",
+        "Missed year package",
+      ],
+    },
     sections: [
       {
         heading: "What is IRS Form 5472?",
@@ -1731,7 +1819,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you catch up with DIIRSP after missed years?",
-        body: "You catch up with DIIRSP by filing late Form 5472 packages with a reasonable cause statement. Steps:\n\n1. File the late Form 5472 + pro forma 1120 for each missed year.\n2. Include a Reasonable Cause Statement explaining why the filing was late.\n3. Submit all missed years together as one package.\n4. Fax to +1-855-887-7737 with the reasonable cause statement at the front.\n5. Keep the fax transmission receipt — it's your timestamped transmission evidence.\n\nWell-documented first-time catch-ups are accepted at a high rate, with no penalty assessed. The IRS treats voluntary catch-up under DIIRSP far more favorably than waiting for a CP-15 notice and then responding.\n\nOur multi-year DIIRSP packages: 2 years $248 Standard / $298 Express, 3 years $347 Standard / $397 Express (fax included). The Reasonable Cause Statement is auto-generated by our wizard and editable to fit your specific facts.",
+        body: "You catch up with DIIRSP by filing late Form 5472 packages with a reasonable cause statement. Steps:\n\n1. File the late Form 5472 + pro forma 1120 for each missed year.\n2. Attach a Reasonable Cause Statement explaining why the filing was late.\n3. Submit all missed years together as one package.\n4. Fax to +1-855-887-7737 with the reasonable cause statement at the front.\n5. Keep the fax transmission receipt — it's your timestamped transmission evidence.\n\nWell-documented first-time catch-ups are accepted at a high rate, with no penalty assessed. The IRS treats voluntary catch-up under DIIRSP far more favorably than waiting for a CP-15 notice and then responding.\n\nOur multi-year DIIRSP packages: 2 years $248 Standard / $298 Express, 3 years $347 Standard / $397 Express (fax included). The Reasonable Cause Statement is auto-generated by our wizard and editable to fit your specific facts.",
       },
       {
         heading: "Pricing",
@@ -1801,6 +1889,17 @@ export const LANDING_PAGES: LandingPage[] = [
     h1: "Form 5472 deadline — when it's due, and what to do if you've missed it",
     intro:
       "Form 5472 is due April 15 of the year following the tax year. Filing Form 7004 by April 15 gives an automatic 6-month extension to October 15, while missing the deadline can trigger a $25,000-per-form penalty that may still be addressed through DIIRSP catch-up filing.",
+    howTo: {
+      section: "How do you file before the deadline?",
+      tools: ["Form5472 Prep online filer"],
+      supplies: [
+        "LLC info",
+        "Foreign owner info",
+        "Year-end totals",
+        "Reportable transactions",
+        "On-screen signature",
+      ],
+    },
     sections: [
       {
         heading: "What is the exact deadline for Form 5472?",
@@ -1842,7 +1941,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file before the deadline?",
-        body: "You file before the deadline by gathering the facts, generating the package, signing once, and saving the fax receipt.\n\n1. Gather your LLC info (EIN, address, formation date, NAICS code) and your foreign owner info (legal name, FTIN or self-assigned Reference ID, residential address, country of citizenship).\n2. Add up year-end totals: capital contributions in, distributions out, total assets at year-end in USD, list of any other reportable transactions.\n3. Use our 15-minute online filer to generate the full package: cover letter, pro forma 1120 with the \"Foreign-Owned U.S. DE\" stamp, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (only if late).\n4. Sign once on screen — the signature embeds into every required signature box automatically.\n5. An accountant on our team reviews the package end-to-end.\n6. We fax it to the IRS Ogden PIN Unit at +1-855-887-7737 and email you the timestamped receipt as transmission evidence.\n\nPricing: $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included. +$99 per additional past year. 100% money-back guarantee if we fail to submit.",
+        body: "You file before the deadline by gathering the facts, generating the package, signing once, and saving the fax receipt.\n\n1. Gather your LLC info (EIN, address, formation date, NAICS code) and your foreign owner info (legal name, FTIN or self-assigned Reference ID, residential address, country of citizenship).\n2. Add up year-end totals: capital contributions in, distributions out, total assets at year-end in USD, list of any other reportable transactions.\n3. Use our 15-minute online filer to generate the full package: cover letter, pro forma 1120 with the \"Foreign-Owned U.S. DE\" stamp, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (only if late).\n4. Sign once on screen — the signature embeds into every required signature box automatically.\n5. Have an accountant on our team review the package end-to-end.\n6. Get the package faxed to the IRS Ogden PIN Unit at +1-855-887-7737 and get the timestamped receipt emailed to you as transmission evidence.\n\nPricing: $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included. +$99 per additional past year. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "Should you file early?",
@@ -1911,6 +2010,17 @@ export const LANDING_PAGES: LandingPage[] = [
     h1: "The IRS Form 5472 fax number (and how to actually send it)",
     intro:
       "The IRS Form 5472 fax number is +1-855-887-7737, the Ogden PIN Unit. Fax is the fastest filing route for Form 5472 with its attached pro forma Form 1120, and the fax transmission receipt is the evidence to keep with the exact package after submission.",
+    howTo: {
+      section: "How do you actually send a fax in 2026?",
+      tools: ["Fax service"],
+      supplies: [
+        "Signed PDF",
+        "Destination fax number",
+        "Optional cover sheet",
+        "Confirmation email",
+        "Transmission receipt PDF",
+      ],
+    },
     sections: [
       {
         heading: "What is the fax number?",
@@ -1926,7 +2036,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you actually send a fax in 2026?",
-        body: "You send a fax in 2026 through an online fax service: upload the signed PDF, enter +1-855-887-7737, send, and save the receipt.\n\n1. Sign up for an online fax service (FaxZero is free for occasional use; eFax / MyFax for subscriptions).\n2. Upload your signed PDF as the document to fax.\n3. Enter the destination fax number: +18558877737 (some services accept hyphens or parentheses; +1-855-887-7737 also works).\n4. Add an optional cover sheet (most services let you skip this since your cover letter is page 1 of the PDF).\n5. Hit Send.\n6. Wait for the confirmation email. Most US fax transmissions to the IRS complete in 5-30 minutes.\n7. Save the confirmation email and the transmission receipt PDF.\n\nThere's no need for a fax machine, fax modem, landline, or any specialized hardware. Online fax services route through real fax protocols on the receiving side — the IRS Ogden line is a standard US fax line that accepts these transmissions transparently.",
+        body: "You send a fax in 2026 through an online fax service: upload the signed PDF, enter +1-855-887-7737, send, and save the receipt.\n\n1. Sign up for an online fax service (FaxZero is free for occasional use; eFax / MyFax for subscriptions).\n2. Upload your signed PDF as the document to fax.\n3. Enter the destination fax number: +18558877737 (some services accept hyphens or parentheses; +1-855-887-7737 also works).\n4. Add an optional cover sheet (most services let you skip this since your cover letter is page 1 of the PDF).\n5. Send the fax.\n6. Wait for the confirmation email. Most US fax transmissions to the IRS complete in 5-30 minutes.\n7. Save the confirmation email and the transmission receipt PDF.\n\nThere's no need for a fax machine, fax modem, landline, or any specialized hardware. Online fax services route through real fax protocols on the receiving side — the IRS Ogden line is a standard US fax line that accepts these transmissions transparently.",
       },
       {
         heading: "IRS fax delivery — included in every plan",
@@ -2350,6 +2460,19 @@ export const LANDING_PAGES: LandingPage[] = [
     h1: "Form 5472, filed properly — from $149, everything included.",
     intro:
       "Answer 12 questions in about 15 minutes and get a Form 5472 plus pro forma Form 1120 package reviewed by an accountant before fax submission to the IRS Ogden PIN Unit. Standard is $149 and ready in 5-7 business days; Express is $199 and ready within 3.",
+    howTo: {
+      section: "How does your filing reach the IRS?",
+      tools: ["Form5472 Prep online filer"],
+      supplies: [
+        "Wizard answers",
+        "Canvas signature",
+        "Full package",
+        "Signed package",
+        "Fax transmission receipt",
+      ],
+      totalTime: "PT15M",
+      cost: { currency: "USD", value: "149" },
+    },
     noindex: true,
     pricingMode: "premium",
     sections: [
@@ -2367,7 +2490,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How does your filing reach the IRS?",
-        body: "Your filing reaches the IRS by wizard completion, signature, accountant review, fax delivery, and receipt return.\n\n1. Complete the 12-question wizard — about 15 minutes the first year, about 5 minutes for returning customers.\n2. Sign once on screen. The canvas signature is embedded into every required signature box on the forms.\n3. A qualified tax accountant reviews the full package and emails you if anything needs clarifying.\n4. Once review clears, we fax the signed package to the IRS Ogden PIN Unit at +1-855-887-7737 — within 5-7 business days of your signature on Standard, or within 3 on Express.\n5. You receive the timestamped IRS fax transmission receipt by email, and a copy stays in your portal.\n\nYou can't e-file Form 5472. The IRS only accepts it by mail or fax to Ogden, and fax is the route that produces a dated transmission receipt — which is why we use it. In the rare event the Ogden fax line is down for an extended period, we fall back to certified mail with return receipt and send you the tracking details.",
+        body: "Your filing reaches the IRS by wizard completion, signature, accountant review, fax delivery, and receipt return.\n\n1. Complete the 12-question wizard — about 15 minutes the first year, about 5 minutes for returning customers.\n2. Sign once on screen. The canvas signature is embedded into every required signature box on the forms.\n3. Have a qualified tax accountant review the full package and email you if anything needs clarifying.\n4. Get the signed package faxed to the IRS Ogden PIN Unit at +1-855-887-7737 once review clears, within 5-7 business days of your signature on Standard, or within 3 on Express.\n5. Receive the timestamped IRS fax transmission receipt by email, with a copy kept in your portal.\n\nYou can't e-file Form 5472. The IRS only accepts it by mail or fax to Ogden, and fax is the route that produces a dated transmission receipt — which is why we use it. In the rare event the Ogden fax line is down for an extended period, we fall back to certified mail with return receipt and send you the tracking details.",
       },
       {
         heading: "Pricing",

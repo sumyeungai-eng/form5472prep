@@ -3,10 +3,13 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Fragment, type ReactNode } from "react";
 import { ArrowRight, CheckCircle2, Clock, FileText, Send, ShieldCheck } from "lucide-react";
+import { HowToSummary } from "@/components/HowToSummary";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
-import { orderedListItems, parseLandingBody } from "@/lib/landing-body";
+import { parseLandingBody } from "@/lib/landing-body";
+import { slugify } from "@/lib/blog";
+import { deriveHowTo } from "@/lib/landing-howto";
 import { LANDING_PAGES, getLandingPage, getRelatedSlugs } from "@/lib/landing-pages";
 import {
   TIERS,
@@ -48,7 +51,12 @@ function renderInlineLinks(text: string): ReactNode {
   return parts;
 }
 
-function renderBody(body: string): ReactNode {
+function renderBody(
+  body: string,
+  options?: { addStepIdsToFirstOl?: boolean },
+): ReactNode {
+  let addedStepIds = false;
+
   return parseLandingBody(body).map((block, i) => {
     if (block.type === "p") {
       return (
@@ -64,10 +72,19 @@ function renderBody(body: string): ReactNode {
     }
 
     if (block.type === "ol") {
+      const addStepIds = options?.addStepIdsToFirstOl === true && !addedStepIds;
+      addedStepIds = true;
+
       return (
         <ol key={i} className="list-decimal pl-5 space-y-2">
           {block.items.map((item, j) => (
-            <li key={j}>{renderInlineLinks(item)}</li>
+            <li
+              key={j}
+              id={addStepIds ? `step-${j + 1}` : undefined}
+              className={addStepIds ? "scroll-mt-24" : undefined}
+            >
+              {renderInlineLinks(item)}
+            </li>
           ))}
         </ol>
       );
@@ -80,6 +97,17 @@ function renderBody(body: string): ReactNode {
         ))}
       </ul>
     );
+  });
+}
+
+function headingIdsFor(sections: Array<{ heading: string }>): string[] {
+  const seen = new Map<string, number>();
+
+  return sections.map((section, index) => {
+    const base = slugify(section.heading) || `section-${index + 1}`;
+    const count = seen.get(base) ?? 0;
+    seen.set(base, count + 1);
+    return count === 0 ? base : `${base}-${count + 1}`;
   });
 }
 
@@ -132,6 +160,8 @@ export async function generateMetadata({
 export default function SeoLandingPage({ params }: { params: { seoSlug: string } }) {
   const page = getLandingPage(params.seoSlug);
   if (!page) notFound();
+  const derived = deriveHowTo(page);
+  const headingIds = headingIdsFor(page.sections);
 
   // Topic-cluster-derived related pages — see TOPIC_CLUSTERS in
   // landing-pages.ts. Honours page.relatedSlugs[] overrides, falls back to
@@ -234,9 +264,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
           <div className="max-w-3xl mx-auto px-6 py-16 space-y-10">
             {/* In-page Table of Contents — only on pages with 4+ sections
                 (anything shorter doesn't benefit from a TOC and clutters the
-                fold). Links use #step-N anchors that match the HowTo JSON-LD
-                step URLs, so when Google's AI Overview cites a specific step
-                of our guide it can deep-link straight to it. */}
+                fold). Links point to slugified section heading ids. */}
             {page.sections.length >= 4 && (
               <Reveal>
                 <nav
@@ -253,7 +281,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                           {i + 1}.
                         </span>
                         <a
-                          href={`#step-${i + 1}`}
+                          href={`#${headingIds[i]}`}
                           className="text-slate-700 hover:text-accent hover:underline"
                         >
                           {s.heading}
@@ -264,66 +292,79 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                 </nav>
               </Reveal>
             )}
-            {page.sections.map((s, i) => (
-              <Reveal key={s.heading} delay={i * 60}>
-                {/* id="step-N" matches the HowTo JSON-LD step URLs so AI
-                    crawlers can deep-link to each step on the page. The
-                    visible "#" anchor link gives readers a copy-link affordance
-                    (fades in on hover; always visible on touch devices via
-                    sm:opacity-0 vs default opacity-100). */}
-                <h2
-                  id={`step-${i + 1}`}
-                  className="group flex items-center gap-2 font-serif text-2xl font-semibold text-ink tracking-tight scroll-mt-20"
-                >
-                  <span>{s.heading}</span>
-                  <a
-                    href={`#step-${i + 1}`}
-                    aria-label={`Link to ${s.heading}`}
-                    className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-accent text-xl font-light"
+            {page.sections.map((s, i) => {
+              const headingId = headingIds[i];
+              const isHowToSection = derived?.sectionIndex === i;
+
+              return (
+                <Reveal key={s.heading} delay={i * 60}>
+                  {/* Headings use slugified ids. HowTo step anchors live on list
+                    items in the opted-in process section when one is derived. */}
+                  <h2
+                    id={headingId}
+                    className="group flex items-center gap-2 font-serif text-2xl font-semibold text-ink tracking-tight scroll-mt-20"
                   >
-                    #
-                  </a>
-                </h2>
-                <div className="mt-3 space-y-3 text-slate-700 leading-relaxed">
-                  {renderBody(s.body)}
-                </div>
-                {s.table && (
-                  <div className="mt-5 overflow-x-auto rounded-lg border border-slate-200">
-                    <table className="min-w-[28rem] w-full text-sm text-left">
-                      <caption className="px-4 py-2 text-left text-xs font-medium text-slate-500 caption-top">
-                        {s.table.caption}
-                      </caption>
-                      <thead className="bg-slate-50">
-                        <tr>
-                          {s.table.columns.map((c, ci) => (
-                            <th key={ci} scope="col" className="px-4 py-2 font-semibold text-slate-900">
-                              {renderInlineLinks(c)}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {s.table.rows.map((row, ri) => (
-                          <tr key={ri}>
-                            {row.map((cell, ci) =>
-                              ci === 0 ? (
-                                <th key={ci} scope="row" className="px-4 py-2 font-medium text-slate-900">
-                                  {renderInlineLinks(cell)}
-                                </th>
-                              ) : (
-                                <td key={ci} className="px-4 py-2 text-slate-700">
-                                  {renderInlineLinks(cell)}
-                                </td>
-                              ),
-                            )}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    <span>{s.heading}</span>
+                    <a
+                      href={`#${headingId}`}
+                      aria-label={`Link to ${s.heading}`}
+                      className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-accent text-xl font-light"
+                    >
+                      #
+                    </a>
+                  </h2>
+                  {derived && isHowToSection && (
+                    <HowToSummary
+                      totalTime={derived.totalTime}
+                      tools={derived.tools}
+                      supplies={derived.supplies}
+                      cost={derived.cost}
+                      className="mt-4"
+                    />
+                  )}
+                  <div className="mt-3 space-y-3 text-slate-700 leading-relaxed">
+                    {isHowToSection
+                      ? renderBody(s.body, { addStepIdsToFirstOl: true })
+                      : renderBody(s.body)}
                   </div>
-                )}
-              </Reveal>
-            ))}
+                  {s.table && (
+                    <div className="mt-5 overflow-x-auto rounded-lg border border-slate-200">
+                      <table className="min-w-[28rem] w-full text-sm text-left">
+                        <caption className="px-4 py-2 text-left text-xs font-medium text-slate-500 caption-top">
+                          {s.table.caption}
+                        </caption>
+                        <thead className="bg-slate-50">
+                          <tr>
+                            {s.table.columns.map((c, ci) => (
+                              <th key={ci} scope="col" className="px-4 py-2 font-semibold text-slate-900">
+                                {renderInlineLinks(c)}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {s.table.rows.map((row, ri) => (
+                            <tr key={ri}>
+                              {row.map((cell, ci) =>
+                                ci === 0 ? (
+                                  <th key={ci} scope="row" className="px-4 py-2 font-medium text-slate-900">
+                                    {renderInlineLinks(cell)}
+                                  </th>
+                                ) : (
+                                  <td key={ci} className="px-4 py-2 text-slate-700">
+                                    {renderInlineLinks(cell)}
+                                  </td>
+                                ),
+                              )}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </Reveal>
+              );
+            })}
           </div>
         </section>
 
@@ -786,71 +827,18 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
       { "@type": "ListItem", position: 2, name: page.h1, item: url },
     ],
   };
-  const sectionWordCount = page.sections.reduce(
-    (total, section) => total + (section.body.match(/[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)?/g)?.length ?? 0),
-    0,
-  );
-  const howToMinutes = Math.max(5, Math.ceil(sectionWordCount / 200 / 5) * 5);
-  const stepNameFromItem = (text: string) => {
-    const leadEnd = text.search(/[.:]/);
-    const lead = (leadEnd >= 0 ? text.slice(0, leadEnd) : text).trim();
-    return lead.length > 80 ? `${lead.slice(0, 77).trimEnd()}...` : lead;
-  };
-  const sectionLevelHowToSteps = page.sections.slice(0, 12).map((s, i) => ({
-    name: s.heading,
-    text: s.body.replace(/\n+/g, " ").trim().slice(0, 600),
-    anchor: `#step-${i + 1}`,
-  }));
-  const splitHowToSteps = page.sections.flatMap((s, i) => {
-    const items = orderedListItems(s.body);
-    if (items.length >= 3) {
-      return items.map((item) => ({
-        name: stepNameFromItem(item),
-        text: item,
-        anchor: `#step-${i + 1}`,
-      }));
-    }
-    return {
-      name: s.heading,
-      text: s.body.replace(/\n+/g, " ").trim().slice(0, 600),
-      anchor: `#step-${i + 1}`,
-    };
-  });
-  // A 25-step HowTo is noise to answer engines, so only split ordered lists
-  // when the page-wide result stays compact; otherwise use section-level steps.
-  const howToSteps = splitHowToSteps.length <= 12 ? splitHowToSteps : sectionLevelHowToSteps;
-  // HowTo schema is what unlocks Google AI Overview citation + AI assistant
-  // step-by-step extraction. We derive it from page.sections; when a section
-  // contains its own ordered process, those numbered items become the steps.
-  // Only emit when we have at least 3 sections so the schema represents a process.
-  const howToJsonLd = page.sections.length >= 3
-    ? {
-        ...howTo({
-          name: page.h1,
-          description: page.metaDescription,
-          url,
-          totalTime: `PT${howToMinutes}M`,
-          supplies: [
-            "LLC formation documents (EIN, state of formation, date of incorporation)",
-            "Owner identity (legal name, address, country of citizenship + tax residence, FTIN or Reference ID)",
-            "Year-end total assets and a list of reportable transactions with the foreign owner",
-          ],
-          tools: [
-            "Form5472 Prep online filer",
-            "IRS fax delivery to Ogden PIN Unit (+1-855-887-7737) — included on every plan",
-          ],
-          steps: howToSteps,
-        }),
-        estimatedCost: {
-          "@type": "MonetaryAmount",
-          currency: "USD",
-          // Promo pages must not advertise the list price in structured data
-          // while the visible page (and the actual charge) says otherwise.
-          value: String(
-            promoTotalCents(page.startSrc ?? page.slug, TIERS.standard.priceCents) / 100,
-          ),
-        },
-      }
+  const derived = deriveHowTo(page);
+  const howToJsonLd = derived
+    ? howTo({
+        name: page.h1,
+        description: page.metaDescription,
+        url,
+        steps: derived.steps,
+        tools: derived.tools,
+        supplies: derived.supplies,
+        totalTime: derived.totalTime,
+        estimatedCost: derived.cost,
+      })
     : null;
   return (
     <>
