@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { CheckCircle2, ShieldCheck, FileText, Clock, ArrowRight, UserCheck } from "lucide-react";
 import { EinItinTable } from "@/components/EinItinTable";
+import { HowToSummary } from "@/components/HowToSummary";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
 import {
@@ -100,6 +101,13 @@ const steps = [
   },
 ];
 
+const HOW_TO_META = {
+  totalTime: "PT20M", // Customer hands-on time for eligibility and document steps, not IRS processing time.
+  tools: ["Form W-7", "IRS-authorized Certifying Acceptance Agent review"],
+  supplies: ["Federal tax reason or IRS exception evidence", "Identity and foreign-status documents"],
+  cost: { currency: "USD", value: "349" },
+};
+
 export default function ItinPage() {
   return (
     <>
@@ -190,6 +198,7 @@ export default function ItinPage() {
           <p className="mb-10 max-w-3xl text-sm leading-relaxed text-slate-600">
             You confirm the ITIN need, submit documents, complete CAA certification, send the W-7 package, and confirm the IRS notice.
           </p>
+          <HowToSummary {...HOW_TO_META} className="mb-10" />
           <ol className="list-none m-0 p-0 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
               <li key={step.title}>
@@ -380,10 +389,11 @@ function ItinStructuredData() {
     name: "How to apply for an ITIN with support",
     description: ITIN_DESCRIPTION,
     url,
-    totalTime: "PT20M", // Customer hands-on time for eligibility and document steps, not IRS processing time.
+    totalTime: HOW_TO_META.totalTime,
     steps: steps.map(({ title, body, anchor }) => ({ name: title, text: body, anchor })),
-    tools: ["Form W-7", "IRS-authorized Certifying Acceptance Agent review"],
-    supplies: ["Federal tax reason or IRS exception evidence", "Identity and foreign-status documents"],
+    tools: HOW_TO_META.tools,
+    supplies: HOW_TO_META.supplies,
+    estimatedCost: HOW_TO_META.cost,
   });
 
   const webPage = {

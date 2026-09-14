@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { CheckCircle2, ShieldCheck, Phone, FileText, ArrowRight } from "lucide-react";
 import { EinItinTable } from "@/components/EinItinTable";
+import { HowToSummary } from "@/components/HowToSummary";
 import { JsonLd } from "@/components/JsonLd";
 import { EIN_APPLICATION_FAQ } from "@/lib/einApplicationFaq";
 import { env } from "@/lib/env";
@@ -74,7 +75,7 @@ const steps = [
   },
   {
     icon: FileText,
-    title: "We prepare Form SS-4",
+    title: "Receive the prepared Form SS-4",
     anchor: "#step-2",
     body: "We complete Form SS-4 from your answers. For a responsible party without a US Social Security Number or ITIN, line 7b is entered as \"Foreign\" — that is the entire identity requirement, so nothing is certified and nothing is mailed. You do not need to read the form line by line; if anything in your answers is unclear, we email you before the form goes to the IRS.",
   },
@@ -97,6 +98,13 @@ const steps = [
     body: "Confirm that the email includes the nine-digit EIN and the completed Form SS-4. The IRS also mails the official CP 575 confirmation letter to the LLC address within 4-6 weeks, and banks may ask for that letter. Keep both the emailed SS-4 copy and the CP 575 with your LLC records.",
   },
 ];
+
+const HOW_TO_META = {
+  totalTime: "PT10M", // Customer hands-on time for intake and review, not IRS processing time.
+  tools: ["Form SS-4", "IRS fax or phone application route"],
+  supplies: ["LLC formation document", "Responsible party name and country", "Business activity description"],
+  cost: { currency: "USD", value: "149" },
+};
 
 export default function EinPage() {
   return (
@@ -187,6 +195,7 @@ export default function EinPage() {
           <p className="mb-10 max-w-3xl text-sm leading-relaxed text-slate-600">
             You complete the intake form, we prepare Form SS-4, we contact the IRS, and you receive the EIN by email.
           </p>
+          <HowToSummary {...HOW_TO_META} className="mb-10" />
           <ol className="list-none m-0 p-0 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
               <li key={step.title} className="relative">
@@ -376,10 +385,11 @@ function EinStructuredData() {
     description:
       "Complete the EIN intake, review Form SS-4, and receive the IRS-issued EIN by email.",
     url,
-    totalTime: "PT10M", // Customer hands-on time for intake and review, not IRS processing time.
+    totalTime: HOW_TO_META.totalTime,
     steps: steps.map(({ title, body, anchor }) => ({ name: title, text: body, anchor })),
-    tools: ["Form SS-4", "IRS fax or phone application route"],
-    supplies: ["LLC formation document", "Responsible party name and country", "Business activity description"],
+    tools: HOW_TO_META.tools,
+    supplies: HOW_TO_META.supplies,
+    estimatedCost: HOW_TO_META.cost,
   });
 
   const webPage = {

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ComparisonTable, FILING_COMPARISON } from "@/components/ComparisonTable";
+import { HowToSummary } from "@/components/HowToSummary";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
 import {
@@ -131,6 +132,13 @@ const processSteps = [
     body: "Check the email containing your filed copy and the fax transmission report. Keep the exact submitted package together with the provider receipt and our confirmation message in your LLC records. The receipt is transmission evidence rather than an IRS acceptance notice, so save it as proof of what was sent, when it was sent, and where it was sent.",
   },
 ];
+
+const HOW_TO_META = {
+  totalTime: "PT15M", // Customer hands-on time in the filing questionnaire, not IRS processing time.
+  tools: ["Form5472 Prep online filer", "IRS fax delivery to Ogden PIN Unit (+1-855-887-7737)"],
+  supplies: ["LLC and owner information", "Reportable transaction totals", "Year-end total assets"],
+  cost: { currency: "USD", value: "149" },
+};
 
 export const metadata: Metadata = {
   // `absolute` skips the layout's "%s · Form5472 Prep" template — the homepage title
@@ -470,6 +478,7 @@ function HowItWorks() {
           title="How does Form 5472 filing work?"
           subtitle="Form 5472 filing works as a seven-step flow: LLC details, owner details, transaction totals, package review, browser signature, IRS fax delivery, and confirmation. We generate the cover letter, pro forma Form 1120, Form 5472, supporting statement, and late-filing reasonable cause statement when DIIRSP applies, then fax the signed package to Ogden."
         />
+        <HowToSummary {...HOW_TO_META} className="mt-10" />
         <ol className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {processSteps.map((s, i) => (
             <Reveal
@@ -882,10 +891,11 @@ function StructuredData() {
     name: "How to file Form 5472 with Form5472 Prep",
     description: HOME_DESCRIPTION,
     url,
-    totalTime: "PT15M", // Customer hands-on time in the filing questionnaire, not IRS processing time.
+    totalTime: HOW_TO_META.totalTime,
     steps: processSteps.map(({ title, body, anchor }) => ({ name: title, text: body, anchor })),
-    tools: ["Form5472 Prep online filer", "IRS fax delivery to Ogden PIN Unit (+1-855-887-7737)"],
-    supplies: ["LLC and owner information", "Reportable transaction totals", "Year-end total assets"],
+    tools: HOW_TO_META.tools,
+    supplies: HOW_TO_META.supplies,
+    estimatedCost: HOW_TO_META.cost,
   });
 
   // WebPage + Speakable — flags the hero headline and lead paragraph as the

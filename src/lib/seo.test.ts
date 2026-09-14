@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { formatDuration } from "@/components/HowToSummary";
 import { howTo, organizationNode, pageMeta, SITE_NAME, SITE_URL } from "./seo";
 
 describe("pageMeta", () => {
@@ -172,5 +173,43 @@ describe("howTo", () => {
       { "@type": "HowToSupply", name: "LLC formation document" },
       { "@type": "HowToSupply", name: "Responsible party details" },
     ]);
+  });
+
+  it("omits totalTime when it is not passed", () => {
+    const node = howTo({
+      name: "How to prepare a filing",
+      description: "Prepare a filing package.",
+      url: `${SITE_URL}/filing`,
+      steps: [{ name: "Gather records", text: "Collect the records.", anchor: "#step-1" }],
+    }) as Record<string, unknown>;
+
+    expect(node).not.toHaveProperty("totalTime");
+  });
+
+  it("emits estimatedCost when present", () => {
+    const node = howTo({
+      name: "How to prepare a filing",
+      description: "Prepare a filing package.",
+      url: `${SITE_URL}/filing`,
+      estimatedCost: { currency: "USD", value: "149" },
+      steps: [{ name: "Gather records", text: "Collect the records.", anchor: "#step-1" }],
+    }) as Record<string, unknown>;
+
+    expect(node.estimatedCost).toEqual({
+      "@type": "MonetaryAmount",
+      currency: "USD",
+      value: "149",
+    });
+  });
+});
+
+describe("formatDuration", () => {
+  it("formats minute-only ISO 8601 durations", () => {
+    expect(formatDuration("PT15M")).toBe("About 15 minutes");
+    expect(formatDuration("PT20M")).toBe("About 20 minutes");
+  });
+
+  it("formats hour and minute ISO 8601 durations", () => {
+    expect(formatDuration("PT1H30M")).toBe("About 1 hour 30 minutes");
   });
 });

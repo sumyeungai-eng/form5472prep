@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { CheckCircle2, Users, FileText, Send, ArrowRight, LayoutDashboard } from "lucide-react";
+import { HowToSummary } from "@/components/HowToSummary";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
 import {
@@ -86,6 +87,13 @@ const steps = [
     body: "Confirm completion in the partner dashboard when the client's filing shows the IRS fax confirmation receipt. That dashboard status gives your team a concrete record that the package moved through preparation, signature, fax submission, and receipt storage. Use the receipt and the filed package as the client record for the submitted Form 5472 package.",
   },
 ];
+
+const HOW_TO_META = {
+  totalTime: "PT10M", // Partner hands-on time per client filing, not IRS processing time.
+  tools: ["Form5472 Prep partner dashboard", "Secure client review and sign link"],
+  supplies: ["Client LLC information", "Client owner information", "Reportable transaction totals"],
+  cost: { currency: "USD", value: "149" },
+};
 
 export default function PartnersPage() {
   return (
@@ -180,6 +188,7 @@ export default function PartnersPage() {
           <p className="mb-10 max-w-3xl text-sm leading-relaxed text-slate-600">
             You get approved, prepare client filings, send the client signing link, track every filing, and confirm completion in one dashboard.
           </p>
+          <HowToSummary {...HOW_TO_META} className="mb-10" />
           <ol className="list-none m-0 p-0 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, i) => (
               <li key={step.title}>
@@ -287,10 +296,11 @@ function PartnersStructuredData() {
     description:
       "Prepare client Form 5472 filings from one partner dashboard, send secure sign links, and track fax receipts.",
     url,
-    totalTime: "PT10M", // Partner hands-on time per client filing, not IRS processing time.
+    totalTime: HOW_TO_META.totalTime,
     steps: steps.map(({ title, body, anchor }) => ({ name: title, text: body, anchor })),
-    tools: ["Form5472 Prep partner dashboard", "Secure client review and sign link"],
-    supplies: ["Client LLC information", "Client owner information", "Reportable transaction totals"],
+    tools: HOW_TO_META.tools,
+    supplies: HOW_TO_META.supplies,
+    estimatedCost: HOW_TO_META.cost,
   });
 
   const webPage = {

@@ -117,17 +117,27 @@ export function howTo(input: {
   name: string;
   description: string;
   url: string;
-  totalTime: string;
+  totalTime?: string;
   steps: HowToStepInput[];
   tools?: string[];
   supplies?: string[];
+  estimatedCost?: { currency: string; value: string };
 }): object {
   return {
     "@context": "https://schema.org",
     "@type": "HowTo",
     name: input.name,
     description: input.description,
-    totalTime: input.totalTime,
+    ...(input.totalTime ? { totalTime: input.totalTime } : {}),
+    ...(input.estimatedCost
+      ? {
+          estimatedCost: {
+            "@type": "MonetaryAmount",
+            currency: input.estimatedCost.currency,
+            value: input.estimatedCost.value,
+          },
+        }
+      : {}),
     ...(input.tools && input.tools.length > 0
       ? { tool: input.tools.map((name) => ({ "@type": "HowToTool", name })) }
       : {}),
