@@ -16,7 +16,12 @@ const nextConfig = {
         headers: [
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "X-Frame-Options", value: "DENY" },
+          // SAMEORIGIN, not DENY: /admin/filings/[id]/place-signature previews the
+          // signed PDF in a same-origin <iframe>; DENY made Chrome show
+          // "www.form5472prep.com refused to connect" inside it. Third-party framing
+          // stays blocked by both headers.
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
         ],
       },
     ];
