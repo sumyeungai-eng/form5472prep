@@ -155,6 +155,8 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
   `npm run audit:howto`. 16 landing pages deliberately emit no HowTo.
 - `docs/sessions/2026-09-15-admin-preview-frame.md` — place-signature iframe fix: X-Frame-Options
   SAMEORIGIN + frame-ancestors 'self' (was DENY, which blocked the site's own PDF preview).
+- `docs/sessions/2026-09-16-draft-last-seen.md` — DRAFT rows on /admin/filings show last seen / location /
+  IP / last page via `Filing.visitorId` (fs_visitor cookie) or `Visitor.userId`; `filingPresence.ts`.
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
