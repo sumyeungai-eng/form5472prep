@@ -1,7 +1,36 @@
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_TIER, totalPriceCents, type Tier } from "@/lib/pricing";
 import type { Attribution } from "@/lib/attribution";
 import type { Filing, FilingStatus } from "@prisma/client";
+
+// Matches VISITOR_COOKIE in src/app/api/session/ping/route.ts. Not exported
+// from there, so the name is duplicated here rather than imported.
+const VISITOR_COOKIE = "fs_visitor";
+
+// Every caller of findOrCreateDraftFiling is a route handler (request
+// context), same as src/lib/session.ts reading its own cookies directly —
+// so cookies() is safe to call here without threading a param through.
+// Never throws: a missing/unavailable cookie, or no matching Visitor row yet
+// (the beacon may not have fired before the draft is created), just means
+// "no visitor link" — it must never block filing creation.
+//
+// The cookie holds Visitor.visitorKey (a random UUID minted by the ping
+// route), not Visitor.id, so this resolves the row to get the id that
+// Filing.visitorId actually stores and that admin lookups join on.
+async function currentVisitorId(): Promise<string | null> {
+  try {
+    const visitorKey = cookies().get(VISITOR_COOKIE)?.value;
+    if (!visitorKey) return null;
+    const visitor = await prisma.visitor.findUnique({
+      where: { visitorKey },
+      select: { id: true },
+    });
+    return visitor?.id ?? null;
+  } catch {
+    return null;
+  }
+}
 
 const PAID_STATUSES = [
   "PAID",
@@ -72,10 +101,13 @@ export async function findOrCreateDraftFiling(args: FindOrCreateArgs): Promise<{
     return { filing: existing, reused: true };
   }
 
+  const visitorId = await currentVisitorId();
+
   const filing = await prisma.filing.create({
     data: {
       sessionId: sessionId ?? null,
       userId: userId ?? null,
+      visitorId,
       status: "DRAFT",
       tier,
       // Initial amountPaid = base tier price (no extra years yet — taxYears

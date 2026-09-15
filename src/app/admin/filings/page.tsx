@@ -8,6 +8,7 @@ import { formatUsd } from "@/lib/utils";
 import { formatAttribution } from "@/lib/attribution";
 import { filingCompletionIssues } from "@/lib/completeness";
 import { extensionReviewFlags, type ExtensionReviewFlag } from "@/lib/admin/filingActions";
+import { getPresenceForFilings, timeAgo, type FilingPresence } from "@/lib/admin/filingPresence";
 import { AdminPageHeader } from "../_components/AdminPageHeader";
 import { StatusBadge } from "./StatusBadge";
 import { DraftActions } from "./DraftActions";
@@ -93,6 +94,16 @@ export default async function AdminFilingsPage({
       draftIssues.set(f.id, filingCompletionIssues(f, (f.yearData ?? []).map((y) => y.taxYear)));
     }
   }
+
+  // "Where was this unfinished customer last seen?" — DRAFT rows only. Two
+  // fixed queries total (see getPresenceForFilings), independent of row count.
+  const draftPresence: Map<string, FilingPresence> = draftView
+    ? await getPresenceForFilings(
+        filings
+          .filter((f) => f.status === "DRAFT")
+          .map((f) => ({ id: f.id, userId: f.userId, visitorId: f.visitorId })),
+      )
+    : new Map();
   // Filtered in JS rather than SQL — completeness isn't expressible as a where
   // clause, and take:100 keeps the pass trivial.
   const visibleFilings = readyOnly
@@ -257,6 +268,7 @@ export default async function AdminFilingsPage({
                         {f.user?.email ?? <span className="text-slate-400">no email</span>}
                       </div>
                     </Link>
+                    {f.status === "DRAFT" && <PresenceLine presence={draftPresence.get(f.id)} />}
                   </td>
                   <td className="px-4 py-3 text-slate-600">
                     {f.taxYears.length > 0 ? f.taxYears.join(", ") : "—"}
@@ -468,6 +480,33 @@ function PaidCell({ status, amountCents }: { status: string; amountCents: number
     );
   }
   return <span className="text-slate-700">{formatUsd(amountCents)}</span>;
+}
+
+// "When/from where was this unfinished customer last on the site?" — shown
+// only on DRAFT rows, from the Visitor/PageView presence lookup (Filing has
+// no direct FK to Visitor: retention deletes visitor rows, and this line
+// must degrade gracefully rather than break when that happens).
+function PresenceLine({ presence }: { presence: FilingPresence | undefined }) {
+  if (!presence) {
+    return <div className="mt-1 text-xs text-slate-500">No visit data</div>;
+  }
+
+  const location = [presence.city, presence.country].filter(Boolean).join(", ");
+  const parts = [
+    `Last seen ${timeAgo(presence.lastSeenAt)}`,
+    location || null,
+    presence.ip ?? "IP expired",
+    presence.lastPath,
+  ].filter((part): part is string => Boolean(part));
+
+  return (
+    <Link
+      href={`/admin/traffic/${presence.visitorId}`}
+      className="mt-1 block text-xs text-slate-500 hover:underline"
+    >
+      {parts.join(" · ")}
+    </Link>
+  );
 }
 
 function SourceCell({ filing }: { filing: FilingRow }) {

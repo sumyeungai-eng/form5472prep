@@ -102,6 +102,11 @@ model Filing {
   // sessionId binds an anonymous filing to a browser cookie so refreshes
   // don't lose work. Cleared once the filing is linked to a user.
   sessionId String?
+  // Visitor tracking link (Visitor.id), stamped from the `fs_visitor` cookie
+  // when the draft is created. No FK: the traffic-retention cron deletes
+  // orphaned Visitor rows, and this link must survive that deletion so the
+  // admin can still show "last seen" history that predates a purge.
+  visitorId String?
   // Set when a partner (reseller/agency) created this filing on behalf of a
   // client. Null for normal direct-customer filings. The end client is still
   // bound via `userId` (for signing + portal access); partnerId is an
@@ -306,6 +311,7 @@ model Filing {
   // telnyx-webhook + fax-status-poll look up the filing by its Telnyx job id
   // on every inbound event.
   @@index([faxJobId])
+  @@index([visitorId])
 }
 
 // Append-only audit log for changes the AI agent (and admin) make to a
