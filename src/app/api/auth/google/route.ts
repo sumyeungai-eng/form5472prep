@@ -6,6 +6,7 @@ import { getOrCreateSessionId, setUserCookie } from "@/lib/session";
 import { findOrCreateDraftFiling } from "@/lib/findOrCreateDraft";
 import { ATTR_COOKIE, parseAttributionCookie } from "@/lib/attribution";
 import { isTier } from "@/lib/pricing";
+import { decideStartOutcome, type StartOutcome } from "@/lib/startIntent";
 
 export const runtime = "nodejs";
 
@@ -82,26 +83,44 @@ export async function POST(req: Request) {
 
   // For signin intent: just look for an existing DRAFT (don't create one).
   // Frontend redirects to /dashboard regardless of whether filingId comes back.
-  // For start intent: ensure a DRAFT exists so the wizard has something to load.
+  // For start intent: reuse an existing DRAFT, send a returning customer (one
+  // who has filings but no draft) to their filings list instead, and only
+  // create a fresh DRAFT for a genuine first-timer. See decideStartOutcome —
+  // this is what stops "Start filing" + Google sign-in from littering a
+  // returning customer's account (and the admin filings list) with empty
+  // drafts.
   let filing = await prisma.filing.findFirst({
     where: { userId: user.id, status: "DRAFT" },
     orderBy: { updatedAt: "desc" },
   });
-  if (!filing && intent === "start") {
-    const sessionId = getOrCreateSessionId();
-    // First-touch channel from the `f5472_attr` cookie (set by middleware on
-    // the visitor's first page view). Parsing never throws — a malformed
-    // cookie yields all-nulls so sign-in can't break on bad attribution.
-    const attribution = parseAttributionCookie(cookies().get(ATTR_COOKIE)?.value);
-    const created = await findOrCreateDraftFiling({
-      sessionId,
-      userId: user.id,
-      funnelSource,
-      tier: tier ?? undefined,
-      marketingConsent,
-      attribution,
-    });
-    filing = created.filing;
+
+  // Default for intent === "signin": today's behaviour, nothing is created.
+  let outcome: StartOutcome = filing
+    ? { action: "open-draft", reason: "existing-draft" }
+    : { action: "go-to-filings", reason: "returning-customer" };
+
+  if (intent === "start") {
+    const filingCount = await prisma.filing.count({ where: { userId: user.id } });
+    outcome = decideStartOutcome({ hasDraft: !!filing, filingCount });
+    if (outcome.action === "create-draft") {
+      const sessionId = getOrCreateSessionId();
+      // First-touch channel from the `f5472_attr` cookie (set by middleware on
+      // the visitor's first page view). Parsing never throws — a malformed
+      // cookie yields all-nulls so sign-in can't break on bad attribution.
+      const attribution = parseAttributionCookie(cookies().get(ATTR_COOKIE)?.value);
+      const created = await findOrCreateDraftFiling({
+        sessionId,
+        userId: user.id,
+        funnelSource,
+        tier: tier ?? undefined,
+        marketingConsent,
+        attribution,
+      });
+      filing = created.filing;
+    } else if (outcome.action === "go-to-filings") {
+      // Returning customer with no draft: never auto-create one.
+      filing = null;
+    }
   }
 
   if (filing && intent === "start" && marketingConsent && !filing.marketingConsent) {
@@ -111,5 +130,5 @@ export async function POST(req: Request) {
     });
   }
 
-  return NextResponse.json({ filingId: filing?.id ?? null, email });
+  return NextResponse.json({ filingId: filing?.id ?? null, email, outcome: outcome.action });
 }

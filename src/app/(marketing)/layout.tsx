@@ -43,6 +43,12 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               Guide
             </Link>
             <Link
+              href="/partners"
+              className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
+            >
+              Partners
+            </Link>
+            <Link
               href="/contact"
               className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
             >
@@ -93,6 +99,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <li><Link href="/do-i-need-to-file-form-5472" className="hover:text-ink">Do I need to file?</Link></li>
                 <li><Link href="/form-5472-penalty-calculator" className="hover:text-ink">Penalty calculator</Link></li>
                 <li><Link href="/partners" className="hover:text-ink">Become a Partner</Link></li>
+                <li><Link href="/partner/sign-in" className="hover:text-ink">Partner sign in</Link></li>
                 <li><Link href="/blog" className="hover:text-ink">Guides</Link></li>
                 <li><Link href="/faq" className="hover:text-ink">FAQ</Link></li>
                 <li><Link href="/contact" className="hover:text-ink">Contact</Link></li>

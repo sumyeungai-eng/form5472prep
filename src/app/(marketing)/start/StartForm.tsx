@@ -113,10 +113,18 @@ export function StartForm() {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error ?? `Google sign-in failed: ${res.status}`);
       }
-      const { filingId } = await res.json();
+      const { filingId, outcome } = await res.json();
+      if (outcome === "go-to-filings" || !filingId) {
+        // Returning customer signing in from the header CTA: they already
+        // have filings and no draft, so this isn't a new lead — don't fire
+        // either ad conversion, and send them to their filings instead of a
+        // brand-new wizard.
+        router.push("/dashboard");
+        return;
+      }
       fireMetaLead(filingId);
-      // Google-signin start-intent also creates a DRAFT — same conversion
-      // signal as the email path above.
+      // Google-signin start-intent also creates (or reuses) a DRAFT — same
+      // conversion signal as the email path above.
       fireLeadConversion({
         onDone: () => router.push(`/filings/${filingId}/edit`),
       });

@@ -4,13 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Send, Pencil, CheckCircle2, Copy, Archive, ArchiveRestore, UserPlus } from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { Court } from "@/lib/partner/responsibility";
 
-const TONE: Record<string, string> = {
-  slate: "bg-slate-100 text-slate-700",
-  amber: "bg-amber-100 text-amber-800",
-  blue: "bg-blue-100 text-blue-800",
-  emerald: "bg-emerald-100 text-emerald-800",
-  red: "bg-red-100 text-red-800",
+// Visual language for "whose court is it in" — reused from PartnerStatCards'
+// palette (amber = you, sky = client, navy/accent = the IRS, emerald = done).
+const COURT_STYLES: Record<Court, { edge: string; chip: string }> = {
+  you: { edge: "border-l-amber-500", chip: "bg-amber-50 text-amber-800" },
+  client: { edge: "border-l-sky-500", chip: "bg-sky-50 text-sky-800" },
+  irs: { edge: "border-l-accent", chip: "bg-accent-50 text-accent" },
+  done: { edge: "border-l-emerald-500", chip: "bg-emerald-50 text-emerald-800" },
 };
 
 // Statuses where the unsigned PDF exists and no signature has been captured —
@@ -24,8 +27,9 @@ export function PartnerFilingRow({
   taxYears,
   tierLabel,
   updatedAt,
-  statusLabel,
-  statusTone,
+  court,
+  responsibilityLabel,
+  responsibilityHint,
   status,
   hasSignature,
   archived,
@@ -37,8 +41,9 @@ export function PartnerFilingRow({
   taxYears: number[];
   tierLabel: string;
   updatedAt: string;
-  statusLabel: string;
-  statusTone: "slate" | "amber" | "blue" | "emerald" | "red";
+  court: Court;
+  responsibilityLabel: string;
+  responsibilityHint: string;
   status: string;
   hasSignature: boolean;
   archived: boolean;
@@ -225,33 +230,45 @@ export function PartnerFilingRow({
     }
   }
 
+  const styles = COURT_STYLES[court];
+
   return (
-    <div className="p-5">
-      <div className="flex items-start justify-between gap-4">
+    <div className={cn("group relative border-l-[3px] p-5", styles.edge)}>
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
         <div className="min-w-0">
-          <p className="font-medium text-slate-900 truncate">
+          <p className="font-serif text-lg text-ink truncate">
             {llcName ?? <em className="text-slate-400">Unnamed filing</em>}
           </p>
           <p className="text-sm text-slate-500 mt-0.5">
+            {clientEmail ? `${clientEmail} · ` : ""}
             {taxYears.length > 0 ? `Tax years ${taxYears.join(", ")}` : "No years selected"}
             {" · "}
             {tierLabel}
           </p>
           <p className="text-xs text-slate-400 mt-1">
-            {clientEmail ? `Client: ${clientEmail} · ` : ""}Updated {updatedAt}
+            Updated {updatedAt}
+            {clientInvitedAgo ? ` · Client invited ${clientInvitedAgo}` : ""}
           </p>
-          {clientInvitedAgo && (
-            <p className="text-xs text-slate-400 mt-1">Client invited {clientInvitedAgo}</p>
-          )}
         </div>
-        <span
-          className={`flex-none text-xs font-medium rounded-full px-2.5 py-1 ${TONE[statusTone]}`}
-        >
-          {statusLabel}
-        </span>
+        <div className="flex flex-col items-start gap-1 lg:flex-none lg:items-end lg:text-right">
+          <span
+            className={cn(
+              "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+              styles.chip,
+            )}
+          >
+            {responsibilityLabel}
+          </span>
+          <span className="text-xs text-slate-500">{responsibilityHint}</span>
+        </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      <div
+        className={cn(
+          "mt-3 flex flex-wrap items-center gap-2 opacity-100 motion-safe:transition",
+          "lg:opacity-70 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100",
+        )}
+      >
         {isDraft && !archived && (
           <Link
             href={`/filings/${id}/edit`}

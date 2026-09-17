@@ -1,7 +1,11 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { StartForm } from "./StartForm";
 import { SITE_URL } from "@/lib/seo";
+import { getCurrentUser } from "@/lib/session";
+import { prisma } from "@/lib/prisma";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Start your filing",
@@ -14,9 +18,74 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function StartPage() {
+export default async function StartPage() {
+  const user = await getCurrentUser();
+
+  // Signed-in visitors land here both from the header "Start filing" CTA
+  // (may already have filings) and from the January/March renewal reminder
+  // emails (`src/lib/reminders.ts`, linking to /start?utm_campaign=...
+  // -reminder) — those are returning customers who intend to file another
+  // year, so the signed-in card must lead with starting a new filing, not
+  // steer them away from it. "Go to my filings" and any draft-in-progress
+  // are offered as secondary options alongside it.
+  let filingCount = 0;
+  let draftId: string | null = null;
+  if (user) {
+    const [count, recentFilings] = await Promise.all([
+      prisma.filing.count({ where: { userId: user.id } }),
+      prisma.filing.findMany({
+        where: { userId: user.id },
+        orderBy: { updatedAt: "desc" },
+        take: 3,
+        select: { id: true, llcName: true, status: true, taxYears: true, updatedAt: true },
+      }),
+    ]);
+    filingCount = count;
+    draftId = recentFilings.find((f) => f.status === "DRAFT")?.id ?? null;
+  }
+
   return (
     <div className="max-w-md mx-auto px-6 py-20">
+      {user && (
+        <div className="bg-white border border-slate-200 rounded-xl p-8 mb-6">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            Signed in as {user.email}
+            {filingCount > 0 ? ` · ${filingCount} filing${filingCount === 1 ? "" : "s"} on file` : ""}
+          </p>
+          <p className="mt-3 text-sm text-slate-600">
+            Start a filing for another tax year, or check on the filings you already have.
+          </p>
+          <div className="mt-5 space-y-3">
+            <Link href="/filings/new" className="block">
+              <Button size="lg" className="w-full">
+                Start a new filing
+              </Button>
+            </Link>
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
+              <Link href="/dashboard" className="text-accent hover:underline">
+                Go to my filings
+              </Link>
+              {draftId && (
+                <>
+                  <span className="text-slate-300" aria-hidden="true">
+                    &middot;
+                  </span>
+                  <Link href={`/filings/${draftId}/edit`} className="text-accent hover:underline">
+                    Continue your draft
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {user && (
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-400 mb-3 text-center">
+          Or start a filing for a different LLC
+        </p>
+      )}
+
       <div className="bg-white border border-slate-200 rounded-xl p-8">
         <h1 className="text-2xl font-semibold tracking-tight">Start your filing</h1>
         <p className="mt-2 text-sm text-slate-600">

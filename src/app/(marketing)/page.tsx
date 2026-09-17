@@ -183,6 +183,7 @@ export default async function LandingPage() {
       <OtherServices />
       <ToolsAndGuides />
       <Faq />
+      <PartnerPromo />
       <FinalCta />
     </>
   );
@@ -734,6 +735,43 @@ function Faq() {
         <Link href="/faq" className="mt-8 inline-block text-sm text-accent underline underline-offset-2">
           See all questions →
         </Link>
+      </div>
+    </section>
+  );
+}
+
+// Persona-targeted plug for accountancy firms and formation agents, placed
+// right before the closing CTA so the last thing visitors from that audience
+// see before the generic sign-off is a path into the partner program.
+function PartnerPromo() {
+  return (
+    <section className="bg-paper border-b border-paper-edge">
+      <div className="max-w-4xl mx-auto px-6 py-16 sm:py-20 text-center">
+        <p className="font-mono text-xs font-medium uppercase tracking-[0.18em] text-accent">
+          For accountants and formation agents
+        </p>
+        <h2 className="mt-3 font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-ink text-balance">
+          File Form 5472 for your clients
+        </h2>
+        <p className="mt-4 text-slate-600 max-w-2xl mx-auto">
+          Prepare Form 5472 filings for every client from one partner dashboard.
+          Your client signs with a secure link you send, our tax accountant
+          reviews the package, and each filing costs exactly the same as it
+          does for a direct customer.
+        </p>
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link href="/partners">
+            <Button size="lg">Become a partner</Button>
+          </Link>
+          <Link href="/partner/sign-in">
+            <Button variant="outline" size="lg">
+              Partner sign in
+            </Button>
+          </Link>
+        </div>
+        <p className="mt-4 text-sm text-slate-500">
+          Already applied? Sign in with your partner email.
+        </p>
       </div>
     </section>
   );

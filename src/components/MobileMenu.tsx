@@ -14,6 +14,7 @@ const LINKS = [
   { href: "/ein", label: "EIN" },
   { href: "/itin", label: "ITIN" },
   { href: "/blog", label: "Guide" },
+  { href: "/partners", label: "Partners" },
 ];
 
 export function MobileMenu() {
@@ -104,9 +105,16 @@ export function MobileMenu() {
                   <Link
                     href="/sign-in"
                     onClick={() => setOpen(false)}
-                    className="block py-3 text-sm font-medium text-slate-700 hover:text-slate-900"
+                    className="block pt-3 text-sm font-medium text-slate-700 hover:text-slate-900"
                   >
                     Sign in
+                  </Link>
+                  <Link
+                    href="/partner/sign-in"
+                    onClick={() => setOpen(false)}
+                    className="block pb-3 pt-1.5 text-xs text-slate-500 hover:text-slate-700"
+                  >
+                    Partner sign in
                   </Link>
                 </li>
               )}
