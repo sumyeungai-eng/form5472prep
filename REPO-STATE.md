@@ -157,6 +157,9 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
   SAMEORIGIN + frame-ancestors 'self' (was DENY, which blocked the site's own PDF preview).
 - `docs/sessions/2026-09-16-draft-last-seen.md` — DRAFT rows on /admin/filings show last seen / location /
   IP / last page via `Filing.visitorId` (fs_visitor cookie) or `Visitor.userId`; `filingPresence.ts`.
+- `docs/sessions/2026-09-18-partner-portal-wave.md` — partner portal: client intake links, dashboard
+  search/paging/archive, durable `partnerId` access (no more partner `sessionId` on client drafts),
+  save-for-later, admin partner column. **Read its Contracts before touching partner access or signing.**
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
