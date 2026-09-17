@@ -23,11 +23,14 @@ type SearchParams = {
   hidden?: string;
   ready?: string;
   review?: string;
+  partner?: string;
 };
 
 // yearData rides along ONLY on the draft view (conditional include below), so
 // it's optional here — the completeness check is the only consumer.
-type FilingRow = Prisma.FilingGetPayload<{ include: { user: true } }> & {
+type FilingRow = Prisma.FilingGetPayload<{
+  include: { user: true; partner: { select: { id: true; name: true; company: true } } };
+}> & {
   yearData?: { taxYear: number }[];
 };
 
@@ -52,6 +55,9 @@ export default async function AdminFilingsPage({
   // filled everything in and stopped at the payment step.
   const readyOnly = draftView && searchParams.ready === "1";
   const reviewOnly = searchParams.review === "1";
+  // partner=1 narrows to filings started from a partner account; partner=0
+  // narrows to direct-customer filings; absent shows both.
+  const partnerFilter = searchParams.partner === "1" ? true : searchParams.partner === "0" ? false : undefined;
 
   // Default = ALL statuses, drafts included. Drafts used to be hidden by
   // default as "mostly abandoned wizard sessions", but that also hid the
@@ -67,6 +73,8 @@ export default async function AdminFilingsPage({
     whereParts.push({ status: statusFilter });
   }
   if (reviewOnly) whereParts.push({ inReview: true });
+  if (partnerFilter === true) whereParts.push({ partnerId: { not: null } });
+  if (partnerFilter === false) whereParts.push({ partnerId: null });
   if (q) {
     whereParts.push({
       OR: [
@@ -80,7 +88,11 @@ export default async function AdminFilingsPage({
 
   const filings: FilingRow[] = await prisma.filing.findMany({
     where,
-    include: { user: true, ...(draftView ? { yearData: { select: { taxYear: true } } } : {}) },
+    include: {
+      user: true,
+      partner: { select: { id: true, name: true, company: true } },
+      ...(draftView ? { yearData: { select: { taxYear: true } } } : {}),
+    },
     orderBy: { updatedAt: "desc" },
     take: 100,
   });
@@ -143,6 +155,7 @@ export default async function AdminFilingsPage({
   if (q) toggleQuery.set("q", q);
   if (readyOnly) toggleQuery.set("ready", "1");
   if (reviewOnly) toggleQuery.set("review", "1");
+  if (partnerFilter !== undefined) toggleQuery.set("partner", partnerFilter ? "1" : "0");
   if (!showHidden) toggleQuery.set("hidden", "1");
   const toggleQs = toggleQuery.toString();
   const toggleHref = toggleQs ? `/admin/filings?${toggleQs}` : "/admin/filings";
@@ -153,6 +166,7 @@ export default async function AdminFilingsPage({
   if (q) readyQuery.set("q", q);
   if (showHidden) readyQuery.set("hidden", "1");
   if (reviewOnly) readyQuery.set("review", "1");
+  if (partnerFilter !== undefined) readyQuery.set("partner", partnerFilter ? "1" : "0");
   if (!readyOnly) readyQuery.set("ready", "1");
   const readyQs = readyQuery.toString();
   const readyHref = readyQs ? `/admin/filings?${readyQs}` : "/admin/filings";
@@ -163,9 +177,27 @@ export default async function AdminFilingsPage({
   if (q) reviewQuery.set("q", q);
   if (showHidden) reviewQuery.set("hidden", "1");
   if (readyOnly) reviewQuery.set("ready", "1");
+  if (partnerFilter !== undefined) reviewQuery.set("partner", partnerFilter ? "1" : "0");
   if (!reviewOnly) reviewQuery.set("review", "1");
   const reviewQs = reviewQuery.toString();
   const reviewHref = reviewQs ? `/admin/filings?${reviewQs}` : "/admin/filings";
+
+  // "Partner" / "Direct" / "All" filter, preserving every other filter — lets
+  // the owner isolate partner-originated filings from direct-customer ones.
+  function partnerHref(next: boolean | undefined): string {
+    const query = new URLSearchParams();
+    if (statusFilter) query.set("status", statusFilter);
+    if (q) query.set("q", q);
+    if (showHidden) query.set("hidden", "1");
+    if (readyOnly) query.set("ready", "1");
+    if (reviewOnly) query.set("review", "1");
+    if (next !== undefined) query.set("partner", next ? "1" : "0");
+    const qs = query.toString();
+    return qs ? `/admin/filings?${qs}` : "/admin/filings";
+  }
+  const partnerAllHref = partnerHref(undefined);
+  const partnerOnlyHref = partnerHref(true);
+  const partnerDirectHref = partnerHref(false);
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
@@ -232,6 +264,40 @@ export default async function AdminFilingsPage({
         <Link href={reviewHref} className="text-slate-500 hover:text-slate-900 hover:underline">
           {reviewOnly ? "← All rows" : "In review only"}
         </Link>
+        <span className="flex items-center gap-1">
+          <Link
+            href={partnerAllHref}
+            className={
+              partnerFilter === undefined
+                ? "font-medium text-slate-900 underline"
+                : "text-slate-500 hover:text-slate-900 hover:underline"
+            }
+          >
+            All
+          </Link>
+          <span className="text-slate-300">·</span>
+          <Link
+            href={partnerOnlyHref}
+            className={
+              partnerFilter === true
+                ? "font-medium text-slate-900 underline"
+                : "text-slate-500 hover:text-slate-900 hover:underline"
+            }
+          >
+            Partner
+          </Link>
+          <span className="text-slate-300">·</span>
+          <Link
+            href={partnerDirectHref}
+            className={
+              partnerFilter === false
+                ? "font-medium text-slate-900 underline"
+                : "text-slate-500 hover:text-slate-900 hover:underline"
+            }
+          >
+            Direct
+          </Link>
+        </span>
       </div>
 
       {visibleFilings.length === 0 ? (
@@ -251,6 +317,7 @@ export default async function AdminFilingsPage({
                 <th className="text-left font-semibold px-4 py-3">Review</th>
                 <th className="text-left font-semibold px-4 py-3">Signed</th>
                 <th className="text-left font-semibold px-4 py-3">Source</th>
+                <th className="text-left font-semibold px-4 py-3">Partner</th>
                 <th className="text-right font-semibold px-4 py-3">Paid</th>
                 <th className="text-left font-semibold px-4 py-3">Updated</th>
                 <th className="text-right font-semibold px-4 py-3"><span className="sr-only">Actions</span></th>
@@ -287,6 +354,7 @@ export default async function AdminFilingsPage({
                   </td>
                   <td className="px-4 py-3"><SignedCell filing={f} /></td>
                   <td className="px-4 py-3"><SourceCell filing={f} /></td>
+                  <td className="px-4 py-3"><PartnerCell filing={f} /></td>
                   <td className="px-4 py-3 text-right tabular-nums">
                     <PaidCell status={f.status} amountCents={f.amountPaid} />
                   </td>
@@ -528,6 +596,22 @@ function SourceCell({ filing }: { filing: FilingRow }) {
         </div>
       )}
     </>
+  );
+}
+
+// Which partner account (if any) originated this filing — company name takes
+// priority over the contact name since that's how the owner recognizes firms.
+function PartnerCell({ filing }: { filing: FilingRow }) {
+  if (!filing.partner) return <span className="text-slate-400">—</span>;
+  const label = filing.partner.company || filing.partner.name;
+  return (
+    <Link
+      href="/admin/partners"
+      className="text-xs text-slate-600 hover:text-slate-900 hover:underline truncate max-w-[140px] block"
+      title={label}
+    >
+      {label}
+    </Link>
   );
 }
 

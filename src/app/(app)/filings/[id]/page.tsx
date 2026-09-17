@@ -1,11 +1,12 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { getFilingAccess, getCurrentUser } from "@/lib/session";
+import { getFilingAccess, getCurrentUser, partnerOwnsFiling } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { FilingActions } from "@/components/wizard/FilingActions";
 import { FilingStatusBanner } from "@/components/FilingStatusBanner";
 import { FilingLocked } from "@/components/FilingLocked";
+import { PartnerFilingBar } from "@/components/PartnerFilingBar";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { DocumentsUploader } from "@/components/DocumentsUploader";
 import { PurchaseConversionPing } from "./PurchaseConversionPing";
@@ -89,6 +90,8 @@ export default async function FilingDetailPage({
     redirect(`/filings/${owned.id}/edit`);
   }
 
+  const owningPartner = await partnerOwnsFiling(filing.id);
+
   // Filing deadline for the in-flight window. Latest tax year drives the date;
   // a FINAL return shortens that year, so dissolvedAt is passed only when
   // isFinalReturn is set. A valid Form 7004 pushes the date out six months, so
@@ -107,7 +110,15 @@ export default async function FilingDetailPage({
       : null;
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10 space-y-8">
+    <>
+      {owningPartner && (
+        <PartnerFilingBar
+          filingId={filing.id}
+          partnerName={owningPartner.name}
+          llcName={filing.llcName}
+        />
+      )}
+      <div className="max-w-3xl mx-auto px-6 py-10 space-y-8">
       {/* Google Ads purchase conversion — fire on any paid view (not just the
           ?paid=1 redirect), so a customer who closes the Stripe tab or opens
           the filing from their dashboard still converts. Google dedupes on the
@@ -192,6 +203,7 @@ export default async function FilingDetailPage({
           was captured at /start (i.e. filing.user is non-null), even when
           the current browser doesn't have an active user cookie. */}
       <MessagesPanel apiBase={`/api/filings/${filing.id}/messages`} isAdmin={false} />
-    </div>
+      </div>
+    </>
   );
 }

@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { getCurrentUser, getFilingAccess } from "@/lib/session";
+import { getCurrentUser, getFilingAccess, partnerOwnsFiling } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { FilingLocked } from "@/components/FilingLocked";
 import { SignClient } from "./SignClient";
@@ -21,6 +22,38 @@ export default async function SignFilingPage({ params }: { params: { id: string 
     include: { user: true },
   });
   if (!filing) notFound();
+
+  const currentUser = await getCurrentUser();
+
+  // Signing is reserved for the client. A partner "owns" (can view/edit) a
+  // filing they created via partnerId, but must never sign on the client's
+  // behalf — in-portal signing exists specifically to capture the CLIENT'S
+  // own acknowledgment of the package. Send the partner back to their
+  // dashboard with an explanation instead of the signature canvas. The
+  // ordinary sessionId/userId-owned customer flow is untouched —
+  // partnerOwnsFiling is null for it.
+  const owningPartner = await partnerOwnsFiling(filing.id);
+  if (owningPartner && (!currentUser || currentUser.id !== filing.userId)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
+        <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
+          <h1 className="text-xl font-semibold text-slate-900">Only the client can sign this filing</h1>
+          <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+            Signing captures the client&apos;s own acknowledgment of the package, so it has to happen from
+            their sign link, not the partner dashboard. Send (or resend) {filing.llcName ?? "this client"}
+            &apos;s sign link from their filing row, and they can sign from there.
+          </p>
+          <Link
+            href="/partner"
+            className="mt-6 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-accent px-4 text-white text-sm font-semibold shadow-lg shadow-accent/20 hover:shadow-xl hover:shadow-accent/30 transition-all hover:-translate-y-0.5"
+          >
+            Back to partner dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (!filing.generatedPdfKey) {
     // Pre-payment or generation not complete yet — bounce back to the filing
     // detail page where the status banner will explain.
@@ -48,7 +81,6 @@ export default async function SignFilingPage({ params }: { params: { id: string 
   // bound their draft to a victim's email would be served the victim's saved
   // signature image.
   let priorSignatureDataUrl: string | null = null;
-  const currentUser = await getCurrentUser();
   if (currentUser?.id && currentUser.id === filing.userId) {
     const previous = await prisma.filing.findFirst({
       where: {

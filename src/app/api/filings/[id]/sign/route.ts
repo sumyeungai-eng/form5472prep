@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getOwnedFiling } from "@/lib/session";
+import { getOwnedFiling, getCurrentUser, partnerOwnsFiling } from "@/lib/session";
 import { put } from "@/lib/storage";
 
 export const runtime = "nodejs";
@@ -24,6 +24,21 @@ export const maxDuration = 30;
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const owned = await getOwnedFiling(params.id);
   if (!owned) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  // Signing is reserved for the client. A partner "owns" (can view/edit) a
+  // filing they created via partnerId, but must never sign on the client's
+  // behalf — in-portal signing exists specifically to capture the CLIENT'S
+  // own acknowledgment of the package. Refuse when the requester resolves to
+  // the partner who created this filing and isn't also the filing's own
+  // client user (the ordinary sessionId/userId-owned customer flow is
+  // untouched — partnerOwnsFiling is null for it).
+  const owningPartner = await partnerOwnsFiling(owned.id);
+  if (owningPartner) {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.id !== owned.userId) {
+      return NextResponse.json({ error: "Only the client can sign this filing" }, { status: 403 });
+    }
+  }
 
   const filing = await prisma.filing.findUnique({
     where: { id: owned.id },

@@ -1783,3 +1783,90 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 }
+
+// ---------- 6. Client intake link — partner → client ----------
+
+// Fires when a partner hands off a DRAFT filing to their client so the
+// client can fill in the wizard and upload their own documents. Mirrors
+// sendMagicLinkEmail's structure exactly (same helpers, same shell, same
+// sendEmail call shape) — the only difference is the copy, which names the
+// preparer and is explicit that the filing still needs the client's input.
+export async function sendClientIntakeEmail(
+  email: string,
+  link: string,
+  filingLabel: string,
+  preparerName: string,
+  brand?: EmailBrand,
+): Promise<unknown> {
+  const heading = "Your Form 5472 filing needs your details";
+  const bodyHtml = `
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
+      ${escapeHtml(preparerName)} started this filing for <strong>${escapeHtml(filingLabel)}</strong> and
+      needs you to answer the remaining questions and upload your documents.
+    </p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days.</p>`;
+
+  return sendEmail({
+    to: email,
+    fromName: brand?.name,
+    replyTo: brand?.replyTo,
+    subject: `Add your details for ${filingLabel}`,
+    text: customerText(
+      "there",
+      `${preparerName} started this filing for ${filingLabel} and needs you to answer the remaining questions and upload your documents.\n\nOpen your filing:\n\n${link}\n\nThis link is good for 7 days. If you were not expecting this, you can ignore this email.`,
+      undefined,
+      brand,
+    ),
+    html: customerShell({
+      heading,
+      salutation: "there",
+      bodyHtml,
+      cta: { label: "Open my filing", url: link },
+      brand,
+    }),
+  });
+}
+
+// ---------- 7. Resume link — anonymous "save for later" draft ----------
+
+// Fires when an anonymous customer leaves a draft filing partway through the
+// wizard and gives us an email to send themselves back to it. Mirrors
+// sendMagicLinkEmail's structure exactly (same helpers, same shell, same
+// sendEmail call shape) — the copy differs because the filing here is an
+// unfinished DRAFT, not a completed package: there is nothing to download,
+// sign, or fax yet, so the copy only ever promises that the answers already
+// given are saved and that the link reopens the filing to finish it.
+export async function sendResumeFilingEmail(
+  email: string,
+  link: string,
+  filingLabel: string,
+  brand?: EmailBrand,
+): Promise<unknown> {
+  const heading = "Pick up where you left off";
+  const bodyHtml = `
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
+      The answers you already gave for <strong>${escapeHtml(filingLabel)}</strong> are saved. Use the
+      button below to reopen your filing and finish it whenever you are ready.
+    </p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days. If you did not request this, you can ignore this email.</p>`;
+
+  return sendEmail({
+    to: email,
+    fromName: brand?.name,
+    replyTo: brand?.replyTo,
+    subject: "Continue your Form 5472 filing",
+    text: customerText(
+      "there",
+      `The answers you already gave for ${filingLabel} are saved. Use this secure link to reopen your filing and finish it whenever you are ready:\n\n${link}\n\nThis link is good for 7 days. If you did not request this, you can ignore this email.`,
+      undefined,
+      brand,
+    ),
+    html: customerShell({
+      heading,
+      salutation: "there",
+      bodyHtml,
+      cta: { label: "Continue my filing", url: link },
+      brand,
+    }),
+  });
+}

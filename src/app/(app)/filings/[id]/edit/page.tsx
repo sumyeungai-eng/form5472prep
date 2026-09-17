@@ -1,9 +1,11 @@
 import { notFound, redirect } from "next/navigation";
-import { getFilingAccess } from "@/lib/session";
+import { getFilingAccess, partnerOwnsFiling, getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { FilingWizardV3 } from "@/components/wizard-v3/FilingWizardV3";
 import { FilingLocked } from "@/components/FilingLocked";
+import { PartnerFilingBar } from "@/components/PartnerFilingBar";
 import { plaidConfigured } from "@/lib/plaid";
+import { saveForLaterMode } from "@/lib/saveForLater";
 
 export default async function EditFilingPage({ params }: { params: { id: string } }) {
   const access = await getFilingAccess(params.id);
@@ -17,6 +19,15 @@ export default async function EditFilingPage({ params }: { params: { id: string 
     include: { yearData: true, user: true },
   });
   if (!filing) notFound();
+
+  const owningPartner = await partnerOwnsFiling(filing.id);
+
+  // Signed-in test for the wizard's "Save for later" control: only true when
+  // the current viewer IS the user this filing is bound to — a signed-in
+  // customer looking at (or a partner impersonating access to) somebody
+  // else's filing should not be told "save and exit to your dashboard".
+  const currentUser = await getCurrentUser();
+  const isSignedIn = Boolean(currentUser && filing.userId && currentUser.id === filing.userId);
 
   const serialized = {
     ...filing,
@@ -32,5 +43,21 @@ export default async function EditFilingPage({ params }: { params: { id: string 
     })),
   };
 
-  return <FilingWizardV3 filing={serialized} plaidEnabled={plaidConfigured()} />;
+  return (
+    <>
+      {owningPartner && (
+        <PartnerFilingBar
+          filingId={filing.id}
+          partnerName={owningPartner.name}
+          llcName={filing.llcName}
+        />
+      )}
+      <FilingWizardV3
+        filing={serialized}
+        plaidEnabled={plaidConfigured()}
+        saveForLater={saveForLaterMode({ isPartnerFiling: owningPartner !== null, isSignedIn })}
+        defaultEmail={filing.user?.email ?? null}
+      />
+    </>
+  );
 }

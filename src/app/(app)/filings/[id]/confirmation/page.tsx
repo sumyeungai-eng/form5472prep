@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getOwnedFiling } from "@/lib/session";
+import { getOwnedFiling, partnerOwnsFiling } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { PrintButton } from "./PrintButton";
+import { PartnerFilingBar } from "@/components/PartnerFilingBar";
 
 export const dynamic = "force-dynamic";
 
@@ -17,9 +18,18 @@ export default async function FilingConfirmationPage({ params }: { params: { id:
   if (!filing) notFound();
 
   const isDelivered = filing.status === "CONFIRMED";
+  const owningPartner = await partnerOwnsFiling(filing.id);
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10">
+    <>
+      {owningPartner && (
+        <PartnerFilingBar
+          filingId={filing.id}
+          partnerName={owningPartner.name}
+          llcName={filing.llcName}
+        />
+      )}
+      <div className="max-w-2xl mx-auto px-6 py-10">
       {/* On-screen header — hidden when printing */}
       <div className="print:hidden mb-6 flex items-center justify-between">
         <Link href={`/filings/${filing.id}`} className="text-sm text-slate-500 hover:underline">
@@ -83,7 +93,8 @@ export default async function FilingConfirmationPage({ params }: { params: { id:
           </p>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 

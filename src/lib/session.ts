@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "./prisma";
+import { getCurrentPartner } from "./partner/auth";
 
 // Three identities can exist for a request:
 //
@@ -140,10 +141,14 @@ export async function requireUser() {
 // ---- Filing access helpers ----
 
 // Returns the filing IF it belongs either to the current anonymous session
-// (sessionId match) OR to the signed-in user (userId match). Null otherwise.
+// (sessionId match), the signed-in user (userId match), OR the signed-in
+// PARTNER who created it (partnerId match — a partner owns every filing they
+// create for a client, independent of which browser/session created it).
+// Null otherwise.
 export async function getOwnedFiling(filingId: string) {
   const user = await getCurrentUser();
   const sessionId = getSessionId();
+  const partner = await getCurrentPartner();
 
   return prisma.filing.findFirst({
     where: {
@@ -151,9 +156,32 @@ export async function getOwnedFiling(filingId: string) {
       OR: [
         user ? { userId: user.id } : { id: "__never__" },
         sessionId ? { sessionId } : { id: "__never__" },
+        partner ? { partnerId: partner.id } : { id: "__never__" },
       ],
     },
   });
+}
+
+// Returns the current signed-in partner IF they created this filing
+// (filing.partnerId === partner.id), else null. Used by the client-facing
+// filing pages to render the "Partner filing" bar — distinct from
+// getOwnedFiling's access grant, since a partner owning a filing is not
+// itself permission to sign it (the sign route and sign page each check
+// this and additionally require the signed-in client user). Never throws
+// when there is no partner cookie present.
+export async function partnerOwnsFiling(
+  filingId: string,
+): Promise<{ id: string; name: string; company: string | null } | null> {
+  const partner = await getCurrentPartner();
+  if (!partner) return null;
+
+  const filing = await prisma.filing.findUnique({
+    where: { id: filingId },
+    select: { partnerId: true },
+  });
+  if (!filing || filing.partnerId !== partner.id) return null;
+
+  return { id: partner.id, name: partner.name, company: partner.company };
 }
 
 export async function getOwnedEinApplication(id: string) {

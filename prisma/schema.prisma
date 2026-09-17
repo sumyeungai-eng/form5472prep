@@ -254,6 +254,15 @@ model Filing {
   // only ever set on DRAFT filings — paid filings are never hidden.
   adminHidden Boolean @default(false)
 
+  // Partner-archived draft: hidden from the partner dashboard's default view
+  // without destroying the row. Reversible (unarchive), and only ever set on
+  // DRAFT filings — paid filings are never hidden.
+  partnerHidden Boolean @default(false)
+
+  // When the partner last shared the client intake magic link (send or copy).
+  // Display only — does not gate anything.
+  clientInviteSentAt DateTime?
+
   // Set when a later PAID filing from the same customer makes this abandoned
   // draft redundant (false start, then restarted and paid). Superseded drafts
   // are hidden from the admin default view, the customer dashboard and the

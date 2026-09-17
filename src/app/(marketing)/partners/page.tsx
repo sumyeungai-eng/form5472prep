@@ -51,7 +51,7 @@ const faq = [
   },
   {
     q: "Do my clients see Form5472 Prep or my brand?",
-    a: "Clients receive emails from Form5472 Prep — the sign link, filing confirmation, and the IRS fax receipt. You appear as the preparer coordinating the filing. White-label delivery isn't live yet — tell us you want it when you apply and we'll contact you about options.",
+    a: "Clients receive email from Form5472 Prep: the sign link, filing confirmation, and the IRS fax receipt. You appear as the preparer coordinating the filing. White-label delivery is available for approved partners on request, so the partner brand name and reply-to address appear on those emails instead of ours. Ask about it when you apply.",
   },
 ];
 

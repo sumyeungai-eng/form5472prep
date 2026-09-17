@@ -10,6 +10,8 @@ import {
   preflightStatus,
   type PreflightAnswers,
 } from "./PreflightStep";
+import { SaveForLater } from "./SaveForLater";
+import type { SaveForLaterMode } from "@/lib/saveForLater";
 
 // Wraps the existing FilingWizard with a left sidebar matching the
 // competitor's design. The wizard keeps ALL its current logic (validation,
@@ -102,9 +104,13 @@ function resumeStep(f: WizardFiling): V3StepKey {
 export function FilingWizardV3({
   filing: initial,
   plaidEnabled = false,
+  saveForLater,
+  defaultEmail,
 }: {
   filing: WizardFiling;
   plaidEnabled?: boolean;
+  saveForLater: SaveForLaterMode;
+  defaultEmail?: string | null;
 }) {
   // Fresh drafts land on the pre-flight check; returning users resume on the
   // first step they haven't completed (see resumeStep). Lazy initializer so it
@@ -151,6 +157,9 @@ export function FilingWizardV3({
             onJump={jumpTo}
           />
           <div className="flex-1 min-w-0">
+            <div className="mb-4">
+              <SaveForLater filingId={initial.id} mode={saveForLater} defaultEmail={defaultEmail} />
+            </div>
             {stepKey === "preflight" ? (
               <PreflightStep
                 answers={preflightAnswers}

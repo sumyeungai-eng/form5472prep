@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { getOrCreateSessionId } from "@/lib/session";
 import { getCurrentPartner } from "@/lib/partner/auth";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_TIER, totalPriceCents } from "@/lib/pricing";
@@ -19,13 +18,12 @@ export async function GET() {
     return NextResponse.redirect(`${env.appUrl}/partner/sign-in`);
   }
 
-  // A session cookie still anchors the draft to this browser so the partner
-  // can edit it in the shared wizard (getOwnedFiling matches on sessionId).
-  const sessionId = getOrCreateSessionId();
-
+  // Deliberately no sessionId here: partner filings are owned via partnerId
+  // alone, never the partner's browser session, so starting a NEW filing
+  // later in the same browser (e.g. /start's draft-reuse) can never pick up
+  // a client's in-progress draft — getOwnedFiling grants access via partnerId.
   const filing = await prisma.filing.create({
     data: {
-      sessionId,
       partnerId: partner.id,
       status: "DRAFT",
       tier: DEFAULT_TIER,
