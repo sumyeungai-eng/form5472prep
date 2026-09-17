@@ -111,7 +111,7 @@ Starting early helps with document review and name discrepancies, but an early i
 
 Form5472 Prep’s ITIN acquisition and renewal service costs **$349**. We prepare Form W-7, assemble the supporting return or exception evidence, submit the package, and track the CP565 outcome.
 
-As an IRS-authorised Certifying Acceptance Agent, we inspect permitted original identity documents and return them immediately after review. You never mail an original passport to the IRS. The service addresses the application process; the IRS decides eligibility and timing.
+We forward eligible applications to an IRS-authorized Certifying Acceptance Agent, who inspects permitted original identity documents and returns them immediately after review. You never mail an original passport to the IRS. The service addresses the application process; the IRS decides eligibility and timing.
 
 We are not a CPA firm and do not give tax advice. A taxpayer who is unsure whether a US return is required, which credits are available, or whether an exception applies should resolve that tax position before the renewal package is finalised.
 

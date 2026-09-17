@@ -111,7 +111,7 @@ Submit one internally consistent package through the route that protects your do
 
 Form5472 Prep’s ITIN acquisition service costs **$349**. We prepare Form W-7 for a new application or renewal, assemble the supporting federal return or exception evidence, submit the package, and track the case through the CP565 outcome.
 
-As an IRS-authorised Certifying Acceptance Agent, we verify permitted identity documents and return them immediately after review. The applicant never mails an original passport to the IRS. The IRS, not the CAA, decides eligibility and assigns the ITIN, so the published processing window is an estimate rather than a guarantee.
+We forward eligible applications to an IRS-authorized Certifying Acceptance Agent, who verifies permitted identity documents and returns them immediately after review. The applicant never mails an original passport to the IRS. The IRS, not the CAA, decides eligibility and assigns the ITIN, so the published processing window is an estimate rather than a guarantee.
 
 We are not a CPA firm and do not give tax advice. If the unresolved question is whether the owner has US-taxable income, needs Form 1040-NR, or qualifies under a treaty, obtain advice before choosing the W-7 reason.
 

@@ -276,6 +276,11 @@ const POSTS = {
   "itin-application-rejected-cp567-cp566": { accent: C.clay, motif: "notice", glyphs: ["warn", "doc", "person", "check"] },
   "when-nonresident-actually-needs-itin": { accent: C.teal, motif: "split", glyphs: ["two", "hash", "person", "check"] },
   "itin-refund-30-percent-withholding-1042-s": { accent: C.green, motif: "stack", glyphs: ["doc", "hash", "clock", "check"] },
+  "boi-reporting-foreign-owned-us-llc-2026": { accent: C.green, motif: "correct", glyphs: ["doc", "person", "warn", "check"] },
+  "registered-agent-foreign-owned-llc": { accent: C.teal, motif: "card", glyphs: ["person", "doc", "hash", "check"] },
+  "single-member-llc-operating-agreement-foreign-owner": { accent: C.navySoft, motif: "notice", glyphs: ["pen", "doc", "person", "check"] },
+  "certificate-of-good-standing-foreign-owned-llc": { accent: C.amber, motif: "checklist", glyphs: ["doc", "calendar", "hash", "check"] },
+  "sales-tax-nexus-foreign-owned-llc": { accent: C.clay, motif: "globe", glyphs: ["globe", "hash", "doc", "check"] },
 };
 
 const wanted = process.argv.slice(2);
