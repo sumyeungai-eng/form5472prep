@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Send, Pencil, CheckCircle2, Copy, Archive, ArchiveRestore, UserPlus } from "lucide-react";
+import { Send, Pencil, CheckCircle2, Copy, Archive, ArchiveRestore, UserPlus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Court } from "@/lib/partner/responsibility";
+import { canDeleteFiling } from "@/lib/partner/canDelete";
 
 // Visual language for "whose court is it in" — reused from PartnerStatCards'
 // palette (amber = you, sky = client, navy/accent = the IRS, emerald = done).
@@ -32,6 +33,7 @@ export function PartnerFilingRow({
   responsibilityHint,
   status,
   hasSignature,
+  signedPdfKey,
   archived,
   clientInvitedAgo,
 }: {
@@ -46,6 +48,7 @@ export function PartnerFilingRow({
   responsibilityHint: string;
   status: string;
   hasSignature: boolean;
+  signedPdfKey: string | null;
   archived: boolean;
   clientInvitedAgo: string | null;
 }) {
@@ -66,6 +69,10 @@ export function PartnerFilingRow({
   const [archiving, setArchiving] = useState(false);
   const [archiveError, setArchiveError] = useState<string | null>(null);
 
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
   const [showClientSend, setShowClientSend] = useState(false);
   const [clientSendEmailInput, setClientSendEmailInput] = useState(clientEmail ?? "");
   const [clientSending, setClientSending] = useState(false);
@@ -82,6 +89,7 @@ export function PartnerFilingRow({
   const isDraft = status === "DRAFT";
   const canSendSignLink = CAN_SEND_SIGN_LINK.includes(status) && !hasSignature;
   const canInviteClient = isDraft && !archived;
+  const canDelete = canDeleteFiling({ status, signedPdfKey });
 
   async function sendSignLink() {
     if (!emailInput.includes("@")) {
@@ -230,6 +238,22 @@ export function PartnerFilingRow({
     }
   }
 
+  async function deleteFiling() {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch(`/api/filings/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error ?? "Could not delete");
+      }
+      router.refresh();
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "Could not delete");
+      setDeleting(false);
+    }
+  }
+
   const styles = COURT_STYLES[court];
 
   return (
@@ -263,12 +287,41 @@ export function PartnerFilingRow({
         </div>
       </div>
 
-      <div
-        className={cn(
-          "mt-3 flex flex-wrap items-center gap-2 opacity-100 motion-safe:transition",
-          "lg:opacity-70 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100",
-        )}
-      >
+      {showDelete ? (
+        <div className="mt-3 flex flex-wrap items-center gap-3 rounded-md border border-red-200 bg-red-50 p-3">
+          <p className="text-sm text-red-800">
+            Delete this draft permanently? Anything your client uploaded goes with it.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => void deleteFiling()}
+              disabled={deleting}
+              className="text-sm font-medium px-3 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+            >
+              {deleting ? "Deleting..." : "Delete permanently"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowDelete(false);
+                setDeleteError(null);
+              }}
+              disabled={deleting}
+              className="text-sm px-3 py-2 rounded-md border border-slate-300 text-slate-600 hover:bg-white disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          </div>
+          {deleteError && <p className="w-full text-xs text-red-600">{deleteError}</p>}
+        </div>
+      ) : (
+        <div
+          className={cn(
+            "mt-3 flex flex-wrap items-center gap-2 opacity-100 motion-safe:transition",
+            "lg:opacity-70 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100",
+          )}
+        >
         {isDraft && !archived && (
           <Link
             href={`/filings/${id}/edit`}
@@ -390,7 +443,19 @@ export function PartnerFilingRow({
             Restore
           </button>
         )}
+
+        {canDelete && (
+          <button
+            type="button"
+            onClick={() => setShowDelete(true)}
+            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-red-700"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            Delete draft
+          </button>
+        )}
       </div>
+      )}
 
       {archiveError && <p className="mt-2 text-xs text-red-600">{archiveError}</p>}
 

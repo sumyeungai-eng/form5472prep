@@ -226,6 +226,7 @@ export default async function PartnerDashboard({
                     responsibilityHint={responsibility.hint}
                     status={f.status}
                     hasSignature={!!f.signaturePngKey || !!f.signedPdfKey}
+                    signedPdfKey={f.signedPdfKey}
                     archived={f.partnerHidden}
                     clientInvitedAgo={f.clientInviteSentAt ? timeAgo(f.clientInviteSentAt) : null}
                   />

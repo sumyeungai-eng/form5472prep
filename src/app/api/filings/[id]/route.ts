@@ -3,6 +3,8 @@ import { z } from "zod";
 import { getOwnedFiling, bindFilingToEmail } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { totalPriceCents, isTier } from "@/lib/pricing";
+import { del } from "@/lib/storage";
+import { collectFilingStorageKeys, type FilingWithKeys } from "@/lib/filingStorageKeys";
 import {
   entitySchema,
   ownerBaseSchema,
@@ -630,9 +632,56 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
       { status: 400 },
     );
   }
+
+  // Read the key-bearing fields/relations BEFORE the delete so we know what to
+  // purge from object storage afterward. BankStatement doesn't relate to
+  // Filing directly (it hangs off FilingYearData), so it's fetched via
+  // yearData and flattened below.
+  const filingWithKeys = await prisma.filing.findUnique({
+    where: { id: filing.id },
+    select: {
+      generatedPdfKey: true,
+      signedPdfKey: true,
+      faxedPdfKey: true,
+      faxConfirmationKey: true,
+      signaturePngKey: true,
+      extensionProofKey: true,
+      dissolutionCertKey: true,
+      documents: { select: { fileKey: true } },
+      messages: { select: { attachmentKey: true } },
+      yearData: { select: { bankStatements: { select: { fileKey: true } } } },
+    },
+  });
+  const storageKeys = filingWithKeys
+    ? collectFilingStorageKeys({
+        generatedPdfKey: filingWithKeys.generatedPdfKey,
+        signedPdfKey: filingWithKeys.signedPdfKey,
+        faxedPdfKey: filingWithKeys.faxedPdfKey,
+        faxConfirmationKey: filingWithKeys.faxConfirmationKey,
+        signaturePngKey: filingWithKeys.signaturePngKey,
+        extensionProofKey: filingWithKeys.extensionProofKey,
+        dissolutionCertKey: filingWithKeys.dissolutionCertKey,
+        documents: filingWithKeys.documents,
+        bankStatements: filingWithKeys.yearData.flatMap((y) => y.bankStatements),
+        messages: filingWithKeys.messages,
+      } satisfies FilingWithKeys)
+    : [];
+
   await prisma.$transaction(async (tx) => {
     await tx.$executeRawUnsafe(`SET LOCAL form5472.allow_message_delete = 'true'`);
     await tx.filing.delete({ where: { id: filing.id } });
   });
+
+  // Storage purge runs AFTER the row is gone, so an R2/object-storage outage
+  // can never block or fail the delete. Best effort: each key is removed
+  // independently, and any failure is logged for manual cleanup rather than
+  // surfaced to the caller.
+  const results = await Promise.allSettled(storageKeys.map((key) => del(key)));
+  results.forEach((result, i) => {
+    if (result.status === "rejected") {
+      console.error("[filings] storage purge failed", { filingId: filing.id, key: storageKeys[i] });
+    }
+  });
+
   return NextResponse.json({ ok: true });
 }
