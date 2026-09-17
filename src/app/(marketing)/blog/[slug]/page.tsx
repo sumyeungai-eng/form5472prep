@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { BlogToc, extractH2Headings } from "@/components/BlogToc";
+import { BlogOrderCta } from "@/components/blog/BlogOrderCta";
+import { orderProductsForPost } from "@/lib/blog-order-cta";
 import {
   getAllPosts,
   getPost,
@@ -84,6 +86,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const post = await getPost(params.slug);
   if (!post) notFound();
 
+  const orderProducts = orderProductsForPost(post);
   const allPosts = await getAllPosts();
   const publishedSlugs = new Set(allPosts.map((p) => p.slug));
   const otherPosts = allPosts.filter((candidate) => candidate.slug !== post.slug).slice(0, 4);
@@ -219,6 +222,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           </div>
         </header>
 
+        <BlogOrderCta products={orderProducts} placement="top" />
+
         <div className="mx-auto grid max-w-6xl gap-10 px-6 pt-12 lg:grid-cols-[minmax(0,1fr)_310px] lg:gap-14">
           <div className="min-w-0">
             <div className="mb-8 grid gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-3">
@@ -266,6 +271,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   {post.body}
                 </ReactMarkdown>
               </div>
+
+              <BlogOrderCta products={orderProducts} placement="bottom" />
 
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-12 flex flex-wrap gap-2 border-t border-slate-200 pt-6">
