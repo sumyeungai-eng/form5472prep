@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { CheckCircle2, Users, FileText, Send, ArrowRight, LayoutDashboard } from "lucide-react";
 import { HowToSummary } from "@/components/HowToSummary";
 import { JsonLd } from "@/components/JsonLd";
+import { PartnerScreenshots } from "@/components/PartnerScreenshots";
 import { env } from "@/lib/env";
 import {
   CONTENT_LAST_REVIEWED,
@@ -203,6 +204,23 @@ export default function PartnersPage() {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* Dashboard screenshots */}
+      <section className="py-16 border-b border-slate-100">
+        <div className="max-w-5xl mx-auto px-6">
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-accent mb-4">
+            Inside the dashboard
+          </p>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-4">
+            See where every client filing stands
+          </h2>
+          <p className="mb-10 max-w-3xl text-sm leading-relaxed text-slate-600">
+            Filings are grouped by whether they need you, your client, or the IRS, with search and
+            filters, plus sign links and client intake links for each one.
+          </p>
+          <PartnerScreenshots />
         </div>
       </section>
 
