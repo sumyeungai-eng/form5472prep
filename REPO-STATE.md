@@ -165,6 +165,8 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
   draft per returning customer. **Read its Contracts before touching /start or partner UI colours.**
 - `docs/sessions/2026-09-18-partner-delete-and-screenshots.md` — partner draft delete + storage purge on
   filing delete, and the `/partners` dashboard screenshots (includes the headless-Chrome capture recipe).
+- `docs/sessions/2026-09-18-flag-explanation-note.md` — optional customer note on the "This doesn't
+  match my situation" flag (`DeterminationFlag`, `buildFlagMessage`); proposed 7004 method options.
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
