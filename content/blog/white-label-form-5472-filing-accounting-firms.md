@@ -12,7 +12,7 @@ draft: false
 
 This model is useful when a firm's clients occasionally need Form 5472 and a pro forma Form 1120, but building and maintaining an internal workflow for that narrow filing would distract from the firm's core work.
 
-[Request a white-label partner discussion](/partners?utm_source=blog&utm_medium=internal&utm_campaign=white-label-form-5472-filing-accounting-firms#apply) and describe the client-facing touchpoints your firm needs branded.
+[Request a white-label partner discussion](/partners) and describe the client-facing touchpoints your firm needs branded.
 
 ## A specialist back office without surrendering the relationship
 
@@ -99,6 +99,6 @@ Those answers belong in the operating agreement before client data begins moving
 
 Current direct pricing is listed on the [pricing page](/pricing). Start with a small group of suitable client files, document the handoff, and confirm who owns each communication. Once the workflow is stable, the same partner dashboard can manage additional client LLCs without creating separate partner logins.
 
-[Apply for the partner program](/partners?utm_source=blog&utm_medium=internal&utm_campaign=white-label-form-5472-filing-accounting-firms-close#apply) and select white-label interest. Include your expected volume, current workflow, and required brand touchpoints so the approval discussion can be specific.
+[Apply for the partner program](/partners) and select white-label interest. Include your expected volume, current workflow, and required brand touchpoints so the approval discussion can be specific.
 
 *Program information current as of August 31, 2026. White-label scope is agreed individually; this article does not promise a custom domain, portal, invoice, or communication channel unless confirmed for the partner account.*

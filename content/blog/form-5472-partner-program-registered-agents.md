@@ -12,7 +12,7 @@ draft: false
 
 This closes a common compliance gap: the client renews the registered-agent service or files a state annual report and assumes every annual requirement is complete.
 
-[Request a registered-agent partner account](/partners?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-partner-program-registered-agents#apply) to add a standard or white-label federal filing handoff.
+[Request a registered-agent partner account](/partners) to add a standard or white-label federal filing handoff.
 
 ## State maintenance and Form 5472 are different layers
 
@@ -82,6 +82,6 @@ Form5472 Prep is a form-preparation and filing-courier service rather than a CPA
 
 The [foreign-owned LLC filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) can help partners explain the difference between state maintenance, federal information reporting, and owner-level tax analysis.
 
-[Apply to become a registered-agent partner](/partners?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-partner-program-registered-agents-close#apply). Include your client volume, states served, current annual-compliance workflow, and white-label requirements.
+[Apply to become a registered-agent partner](/partners). Include your client volume, states served, current annual-compliance workflow, and white-label requirements.
 
 *Educational and program information only; not tax or legal advice. Verify current IRS and state requirements for each client.*

@@ -12,7 +12,7 @@ draft: false
 
 The program is designed for firms that already help non-US founders form or maintain US companies but do not want every Form 5472 engagement to become a separate email chain.
 
-[Request a partner account](/partners?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-partner-program-how-it-works#apply) if your firm manages more than one foreign-owned US LLC and wants to discuss the standard or white-label workflow.
+[Request a partner account](/partners) if your firm manages more than one foreign-owned US LLC and wants to discuss the standard or white-label workflow.
 
 ## Who the partner program is for
 
@@ -83,6 +83,18 @@ Form5472 Prep is a specialized form-preparation and filing-courier service, not 
 
 That boundary is useful for partners: routine filings follow one repeatable path, while complex cases are identified for separate professional advice instead of being forced through the wrong workflow.
 
-[Apply to become a Form5472 Prep partner](/partners?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-partner-program-how-it-works-close#apply) and describe the clients you serve, expected filing volume, and whether you want white-label delivery.
+## Where to read next
+
+Five companion guides go deeper than this overview:
+
+| If you are deciding | Read |
+|---|---|
+| Whether to prepare filings inside the firm or send them out | [in-house or outsourced](/blog/form-5472-in-house-vs-outsourced-firm) |
+| Whether your firm is permitted to prepare a client's filing at all | [filing without being a CPA](/blog/file-form-5472-for-clients-without-being-a-cpa) |
+| How to package and price the service for your own clients | [offering Form 5472 filing as a service](/blog/offer-form-5472-filing-as-a-service) |
+| What to collect from each client before preparation starts | [the client intake checklist](/blog/form-5472-client-intake-checklist-for-firms) |
+| How to run a whole book of filings through one season | [filing for multiple clients](/blog/file-form-5472-for-multiple-clients) |
+
+[Apply to become a Form5472 Prep partner](/partners) and describe the clients you serve, expected filing volume, and whether you want white-label delivery.
 
 *Program information current as of August 31, 2026. Exact white-label scope, pricing arrangements, and service eligibility are confirmed during partner approval.*

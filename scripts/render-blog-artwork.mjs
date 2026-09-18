@@ -281,6 +281,11 @@ const POSTS = {
   "single-member-llc-operating-agreement-foreign-owner": { accent: C.navySoft, motif: "notice", glyphs: ["pen", "doc", "person", "check"] },
   "certificate-of-good-standing-foreign-owned-llc": { accent: C.amber, motif: "checklist", glyphs: ["doc", "calendar", "hash", "check"] },
   "sales-tax-nexus-foreign-owned-llc": { accent: C.clay, motif: "globe", glyphs: ["globe", "hash", "doc", "check"] },
+  "offer-form-5472-filing-as-a-service": { accent: C.teal, motif: "card", glyphs: ["doc", "person", "hash", "check"] },
+  "file-form-5472-for-multiple-clients": { accent: C.navySoft, motif: "stack", glyphs: ["doc", "person", "calendar", "check"] },
+  "form-5472-in-house-vs-outsourced-firm": { accent: C.amber, motif: "split", glyphs: ["doc", "person", "hash", "check"] },
+  "form-5472-client-intake-checklist-for-firms": { accent: C.green, motif: "checklist", glyphs: ["doc", "pen", "person", "check"] },
+  "file-form-5472-for-clients-without-being-a-cpa": { accent: C.clay, motif: "correct", glyphs: ["person", "doc", "check", "hash"] },
 };
 
 const wanted = process.argv.slice(2);

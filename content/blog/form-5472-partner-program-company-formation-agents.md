@@ -12,7 +12,7 @@ draft: false
 
 The opportunity is not to turn a formation specialist into a tax adviser. It is to create a reliable handoff before the new owner assumes that obtaining an EIN and paying the registered agent completed every federal obligation.
 
-[Request a formation-agency partner account](/partners?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-partner-program-company-formation-agents#apply) to discuss a standard or white-label workflow.
+[Request a formation-agency partner account](/partners) to discuss a standard or white-label workflow.
 
 ## Formation can create the first reportable transaction
 
@@ -89,6 +89,6 @@ For each client LLC, the formation agency should make available:
 
 The [first-year Form 5472 guide](/blog/first-year-form-5472-new-llc) explains why the formation year deserves its own review even when the company opened late in December.
 
-[Apply as a company-formation partner](/partners?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-partner-program-company-formation-agents-close#apply). Include the jurisdictions you serve, approximate annual formation volume, current compliance bundle, and whether white-label communications are required.
+[Apply as a company-formation partner](/partners). Include the jurisdictions you serve, approximate annual formation volume, current compliance bundle, and whether white-label communications are required.
 
 *Educational and program information only; not tax or legal advice. Service eligibility and white-label scope are confirmed during partner approval.*

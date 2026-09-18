@@ -12,7 +12,7 @@ draft: false
 
 White label is available by request. It is not a different tax return or a promise that every system becomes custom branded automatically.
 
-[Apply for the partner program](/partners?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-white-label-vs-standard-partner#apply) and state which delivery model fits your firm.
+[Apply for the partner program](/partners) and state which delivery model fits your firm.
 
 ## Side-by-side decision matrix
 
@@ -98,6 +98,6 @@ Request white-label delivery when all three statements are true:
 
 If the answers are mixed, begin with the standard partner flow for suitable clients and discuss a white-label transition after the process is proven.
 
-[Request your partner account](/partners?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-white-label-vs-standard-partner-close#apply). Include the preferred delivery model, expected filing volume, billing needs, and the communications that must carry your brand.
+[Request your partner account](/partners). Include the preferred delivery model, expected filing volume, billing needs, and the communications that must carry your brand.
 
 *Program information and pricing current as of August 31, 2026. Verify current terms at application; white-label scope is confirmed individually.*
