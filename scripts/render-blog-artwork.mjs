@@ -286,6 +286,16 @@ const POSTS = {
   "form-5472-in-house-vs-outsourced-firm": { accent: C.amber, motif: "split", glyphs: ["doc", "person", "hash", "check"] },
   "form-5472-client-intake-checklist-for-firms": { accent: C.green, motif: "checklist", glyphs: ["doc", "pen", "person", "check"] },
   "file-form-5472-for-clients-without-being-a-cpa": { accent: C.clay, motif: "correct", glyphs: ["person", "doc", "check", "hash"] },
+  "form-5472-thailand-residents-us-llc": { accent: C.teal, motif: "globe", glyphs: ["globe", "person", "doc", "check"] },
+  "form-5472-indonesia-bali-residents-us-llc": { accent: C.green, motif: "globe", glyphs: ["globe", "person", "doc", "check"] },
+  "form-5472-vietnam-residents-us-llc": { accent: C.clay, motif: "globe", glyphs: ["globe", "doc", "person", "check"] },
+  "form-5472-portugal-residents-us-llc": { accent: C.amber, motif: "globe", glyphs: ["globe", "person", "doc", "check"] },
+  "form-5472-digital-nomad-us-llc": { accent: C.navySoft, motif: "globe", glyphs: ["globe", "calendar", "doc", "check"] },
+  "form-5472-philippines-residents-us-llc": { accent: C.teal, motif: "globe", glyphs: ["globe", "doc", "person", "check"] },
+  "form-5472-malaysia-residents-us-llc": { accent: C.clay, motif: "globe", glyphs: ["globe", "person", "doc", "check"] },
+  "form-5472-georgia-country-residents-us-llc": { accent: C.green, motif: "globe", glyphs: ["globe", "hash", "doc", "check"] },
+  "form-5472-colombia-residents-us-llc": { accent: C.amber, motif: "globe", glyphs: ["globe", "doc", "person", "check"] },
+  "form-5472-estonia-residents-us-llc": { accent: C.navy, motif: "globe", glyphs: ["globe", "person", "hash", "check"] },
 };
 
 const wanted = process.argv.slice(2);

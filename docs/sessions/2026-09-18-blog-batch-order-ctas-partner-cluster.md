@@ -147,3 +147,67 @@ silently drops removed **markdown bullet** lines (they render as `-- ` in a diff
 the `+` side kept added bullets. When a verification script disagrees with an obviously
 safe transformation, suspect the script before the transformation — and prefer
 reconstructing the expected content from HEAD over pattern-matching diff output.
+
+## Digital-nomad cluster — ten posts (same session, later)
+
+**What shipped.** Nine country posts following the established
+`form-5472-<country>-residents-us-llc` template — Thailand, Indonesia/Bali, Vietnam,
+Portugal, Philippines, Malaysia, Georgia (the country, disambiguated from the US state in
+slug, title and opening), Colombia, Estonia (with e-Residency) — plus the hub
+`form-5472-digital-nomad-us-llc`. The hub's destinations table links all 15 country
+posts on the site; every new country post links back to the hub. Specs:
+`docs/reviews/new-posts-nomad-batch-spec.md`. Audit:
+`docs/reviews/2026-09-18-nomad-batch-audit.md`.
+
+**Treaty status, read from the IRS A-to-Z list by section rather than keyword** (a
+missing country was confirmed by reading the whole alphabetical section):
+in force — Thailand, Indonesia, Portugal, Philippines, Georgia, Estonia; **not in
+force** — Vietnam (the "V" section lists only Venezuela; a treaty signed 7 July 2015
+never entered into force), Malaysia (no *comprehensive* treaty, but LHDN lists the US as
+a *limited* agreement, P.U. (A) 242/1989 — the post says so), Colombia (no official
+record of a signing found; the post labels any signing claim unverified).
+
+**The audit found one P0, fixed before publishing.** The Vietnam post named the new
+personal income tax law as "No. 63/2025/L-CTN" — "L-CTN" is a presidential promulgation
+order, not the law. The law is **No. 109/2025/QH15**, passed 10 December 2025, in force
+1 July 2026; the orchestrator confirmed the page title on Vietnam's Official Gazette
+(Công báo) before applying it, and the citation moved from state media
+(`vietnamnews.vn`) to that gazette. A P1 in the same post told *every* reader their tax
+code is the 12-digit personal ID; that applies to Vietnamese citizens, while a foreign
+national — the post's actual audience — keeps the 10-digit code the tax authority
+issued. Three lines were corrected. Two P2s were taken: Georgia's 1% small-business
+rate now says it applies to **Georgian-source** income, and Indonesia's NIK-as-NPWP
+rule now follows the regulation's definition of a resident.
+
+**Deliberately not taken:** the Vietnam P2 that business and salary income rules apply
+from the whole 2026 tax year under Article 29(2). The orchestrator did not verify that
+article personally, and "effective 1 July 2026" is accurate for the Article 2 residency
+definition the post actually discusses. Worth adding if someone reads Article 29.
+
+### Contracts for this cluster
+- **A country post's treaty sentence must survive a section-level read of the IRS
+  A-to-Z page.** "No treaty in force", "no comprehensive treaty" and "no treaty ever
+  signed" are three different claims; each post uses exactly the one it can support.
+- **Local tax figures are sourced to the country's own authority or stated as
+  unverified.** Several posts deliberately omit a figure because two official pages
+  disagreed (Estonia's nomad-visa income threshold: gross on one page, net on another;
+  Thailand's "more than 180 days" versus "180 days or more").
+- **Local tax is described in outline only**, as context for why the US filing is
+  separate. No post tells a reader what they owe locally.
+- New cluster posts need a row in the hub's destinations table and a hub backlink
+  above the closing disclaimer.
+
+### Lane notes
+- **A DNS outage (`ENOTFOUND`) killed three lanes at once, and one lane stalled twice.**
+  Three of the four had already written complete files, because the relaunch brief
+  told lanes to write the draft to disk *before* running the gate. Put that instruction
+  in every writing brief: a draft on disk survives a watchdog kill or a network drop, a
+  draft in memory does not. Only Colombia, killed before it wrote anything, had to be
+  re-run.
+- **Orphaned files get the orchestrator's own verification**, because they never ran
+  their self-check. It found that Malaysia's LHDN links returned 500 to curl — LHDN
+  blocks curl's default client; with a browser user-agent both return 200.
+- **Several government sites render content with JavaScript** (LHDN, Matsne), so curl
+  sees CSS rather than the text and cannot confirm a figure. The fact-audit lane read
+  Georgia's Tax Code from the official PDF on the same site instead. "I couldn't read
+  it with curl" is not the same as "it isn't there".
