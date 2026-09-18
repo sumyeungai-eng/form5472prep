@@ -163,6 +163,8 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
 - `docs/sessions/2026-09-18-partner-ui-and-start-draft-bug.md` — partner dashboard redesign (court model,
   stat-card filters), home/nav partner entry points, and the `/start` sign-in bug that created an empty
   draft per returning customer. **Read its Contracts before touching /start or partner UI colours.**
+- `docs/sessions/2026-09-18-partner-delete-and-screenshots.md` — partner draft delete + storage purge on
+  filing delete, and the `/partners` dashboard screenshots (includes the headless-Chrome capture recipe).
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
