@@ -12,7 +12,7 @@ draft: false
 
 The filing is an information return, not a calculation of Spanish or US income tax. A US customer, a US bank account, and a US LLC do not by themselves decide where the owner owes income tax.
 
-If the LLC was funded, paid owner expenses, or returned money to Spain, [start a reviewed Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-spain-residents-us-llc) before assuming that zero profit means zero filing.
+If the LLC was funded, paid owner expenses, or returned money to Spain, [start a reviewed Form 5472 filing](/start) before assuming that zero profit means zero filing.
 
 ## When does a Spain resident’s US LLC file Form 5472?
 
@@ -88,4 +88,4 @@ Not when it is a foreign-owned US disregarded entity using a pro forma Form 1120
 
 ---
 
-A Spain owner should reconcile the NIF, reference ID, and gross related-party ledger before filing. [Start the reviewed Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-spain-residents-us-llc-close), or first review the [Form 5472 filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist).
+A Spain owner should reconcile the NIF, reference ID, and gross related-party ledger before filing. [Start the reviewed Form 5472 package](/start), or first review the [Form 5472 filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist).

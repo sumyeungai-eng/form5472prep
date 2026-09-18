@@ -12,7 +12,7 @@ draft: false
 
 This is the single most confused question in the foreign-owned LLC world, and the confusion runs in both directions. Some owners believe a US LLC is a tax-free structure with nothing to file. Others believe having a US company means paying US corporate tax on everything. Both are wrong, and the second group usually overpays while the first group gets penalized.
 
-The two questions have to be answered separately: **do you owe US tax**, and **do you owe a US filing**. Very often the answers are no and yes. If you already know you need Form 5472, [we prepare and fax the complete package from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=does-foreign-llc-pay-us-tax).
+The two questions have to be answered separately: **do you owe US tax**, and **do you owe a US filing**. Very often the answers are no and yes. If you already know you need Form 5472, [we prepare and fax the complete package from $149](/start).
 
 The [Do I need to file Form 5472? checker](/do-i-need-to-file-form-5472) is useful when the filing answer is still unclear even though the income-tax answer looks like zero.
 
@@ -121,7 +121,7 @@ If you concluded you owe no US income tax, that is very likely correct — and i
 
 **$149** standard (5-7 business days), **$199** express (3 business days), **+$99** per additional past tax year. IRS fax delivery included. We are not a CPA firm and do not give tax advice — for an ECI or treaty determination on your specific facts, use a qualified adviser. What we do is prepare and submit the information return accurately.
 
-[Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=does-foreign-llc-pay-us-tax-cta) — about 15 minutes.
+[Start your filing](/start) — about 15 minutes.
 
 ## Frequently asked questions
 
@@ -153,4 +153,4 @@ Because the form exists to record related-party transactions so the IRS can see 
 
 Owing no US tax is common. Owing no US filing is rare. If your LLC exists and money has moved between you and it, Form 5472 is due.
 
-[File it here](/start?utm_source=blog&utm_medium=internal&utm_campaign=does-foreign-llc-pay-us-tax-close), or read the [full list of what a foreign-owned LLC must file](/blog/foreign-owned-llc-filing-requirements-checklist) first.
+[File it here](/start), or read the [full list of what a foreign-owned LLC must file](/blog/foreign-owned-llc-filing-requirements-checklist) first.

@@ -12,7 +12,7 @@ draft: false
 
 A creator business produces several records for the same economic activity. YouTube shows earnings; AdSense shows payment and withholding details; the bank shows a net deposit; a manager may deduct commission; and the creator may transfer the remainder home. Form 5472 is not a copy of any single statement.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state a **$25,000 penalty per form per year** for a required filing that is missing or substantially incomplete. If mixed platform and personal movements make the filing hard to isolate, [start an accountant-reviewed Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-youtube-creators-influencers).
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state a **$25,000 penalty per form per year** for a required filing that is missing or substantially incomplete. If mixed platform and personal movements make the filing hard to isolate, [start an accountant-reviewed Form 5472 package](/start).
 
 ## Which creator transactions belong on Form 5472?
 
@@ -159,4 +159,4 @@ It can. An owner-controlled foreign editing company is a separate related party.
 
 ---
 
-Creator revenue tells you what the business earned; owner movements tell you what Form 5472 may report. [Prepare and fax the creator LLC package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-youtube-creators-influencers-close), or compare the treatment in [Form 5472 for Stripe, PayPal, and Wise](/blog/stripe-paypal-wise-form-5472).
+Creator revenue tells you what the business earned; owner movements tell you what Form 5472 may report. [Prepare and fax the creator LLC package](/start), or compare the treatment in [Form 5472 for Stripe, PayPal, and Wise](/blog/stripe-paypal-wise-form-5472).

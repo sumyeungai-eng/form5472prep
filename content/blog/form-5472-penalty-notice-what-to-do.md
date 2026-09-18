@@ -12,7 +12,7 @@ draft: false
 
 The notice usually arrives as a **CP215, "Notice of Civil Penalty Charge."** It names your LLC, cites a tax year, and shows a $25,000 charge with a short response window. It is frightening precisely because it arrives with no warning and no explanation of what you did wrong.
 
-This guide explains what triggered the penalty, why the letter you may have already written did not stop it, and what an effective response actually contains. If you still have unfiled years alongside the penalized one, [we prepare and fax complete Form 5472 packages from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-penalty-notice) — filing the missing years is usually the first step in any abatement request.
+This guide explains what triggered the penalty, why the letter you may have already written did not stop it, and what an effective response actually contains. If you still have unfiled years alongside the penalized one, [we prepare and fax complete Form 5472 packages from $149](/start) — filing the missing years is usually the first step in any abatement request.
 
 ## Why did the IRS assess a $25,000 Form 5472 penalty?
 
@@ -131,7 +131,7 @@ For current flat-fee options before you start, [see current pricing](/pricing).
 
 We are not a CPA firm and we do not give tax advice. We prepare and submit the information returns accurately and fast, so the compliance half of your problem stops growing while you deal with the penalty half.
 
-[Start your filing here](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-penalty-notice) — about 15 minutes of your time, IRS fax delivery included.
+[Start your filing here](/start) — about 15 minutes of your time, IRS fax delivery included.
 
 ## Frequently asked questions
 
@@ -167,4 +167,4 @@ Commonly many months for international penalty correspondence. Silence during th
 
 A penalty notice is not the end of the process — but the clock on it is real. File every outstanding year, document your chronology, and respond in writing by the date printed on the notice.
 
-If you have missing years to file, [start here](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-penalty-notice-close). For the full catch-up procedure, see [filing Form 5472 late or never filed](/blog/form-5472-filed-late-never-filed). If you are unsure which years had reportable transactions, [our reportable transactions guide](/blog/form-5472-reportable-transactions-examples) walks through real examples.
+If you have missing years to file, [start here](/start). For the full catch-up procedure, see [filing Form 5472 late or never filed](/blog/form-5472-filed-late-never-filed). If you are unsure which years had reportable transactions, [our reportable transactions guide](/blog/form-5472-reportable-transactions-examples) walks through real examples.

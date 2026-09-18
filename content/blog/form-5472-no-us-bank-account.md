@@ -12,7 +12,7 @@ draft: false
 
 “No bank account” is not the same as “no transaction.” The owner may have supplied value to the LLC through personal cards, foreign accounts, or payments made directly to vendors.
 
-If the owner paid any LLC cost, [start a reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-no-us-bank-account) with the source documents.
+If the owner paid any LLC cost, [start a reviewed filing](/start) with the source documents.
 
 ## Why does Form 5472 apply without a bank account?
 
@@ -97,4 +97,4 @@ No. FBAR generally applies to US persons. A nonresident owner should not assume 
 
 ---
 
-The bank-account question is only a clue; the owner-value ledger decides the filing. [Start the reviewed Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-no-us-bank-account-close), or use the [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist).
+The bank-account question is only a clue; the owner-value ledger decides the filing. [Start the reviewed Form 5472 package](/start), or use the [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist).

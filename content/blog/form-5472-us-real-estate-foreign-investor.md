@@ -12,7 +12,7 @@ draft: false
 
 Foreign real estate investors often buy US property through a single-member LLC because lenders, title companies and property managers understand the structure. The LLC wrapper does not make the federal filing disappear. If the LLC is disregarded and wholly owned by a non-US person, the IRS treats it as a corporation only for Form 5472 reporting.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a foreign-owned US disregarded entity files Form 5472 with a pro forma Form 1120, and the penalty for missing the form is **$25,000** per form, per year. If you already know the LLC has owner funding or owner withdrawals to report, [we prepare the Form 5472 package from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-us-real-estate-foreign-investor).
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a foreign-owned US disregarded entity files Form 5472 with a pro forma Form 1120, and the penalty for missing the form is **$25,000** per form, per year. If you already know the LLC has owner funding or owner withdrawals to report, [we prepare the Form 5472 package from $149](/start).
 
 ## Why does a rental property LLC file Form 5472?
 
@@ -131,4 +131,4 @@ No. Form5472 Prep is not a CPA firm and does not give tax advice. Use a qualifie
 
 A US rental LLC can owe Form 5472 because of purchase funding even when the rental income question belongs somewhere else. Keep the information return separate from the income tax return and keep the Part V statement tied to actual owner transactions.
 
-[Start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-us-real-estate-foreign-investor-close), or read [Form 5472 reportable transaction examples](/blog/form-5472-reportable-transactions-examples) before you classify the property payments.
+[Start the Form 5472 filing](/start), or read [Form 5472 reportable transaction examples](/blog/form-5472-reportable-transactions-examples) before you classify the property payments.

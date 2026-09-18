@@ -12,7 +12,7 @@ draft: false
 
 The common mistake is to treat every dollar entering a US account as reportable. Form 5472 does not duplicate the LLC’s sales ledger. It focuses on money, property, or services exchanged with the foreign owner and other related parties: formation funding, later contributions, draws, loans, reimbursements, and payments to an owner-controlled Chinese company.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that failure to file can trigger a **$25,000 penalty per form, per year**. If reconstructing RMB owner movements is the difficult part, [start a reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-china-residents-us-llc) before treating zero US tax as zero US filing.
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that failure to file can trigger a **$25,000 penalty per form, per year**. If reconstructing RMB owner movements is the difficult part, [start a reviewed filing](/start) before treating zero US tax as zero US filing.
 
 ## When does a China resident’s US LLC file Form 5472?
 
@@ -154,4 +154,4 @@ No. Preserve direction and gross amounts. Convert each movement under a document
 
 ---
 
-For a mainland China owner, the clean filing starts with the Chinese TIN and a complete RMB owner-movement ledger. [Prepare and fax the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-china-residents-us-llc-close), or review [owner loans, contributions, and reimbursements](/blog/form-5472-owner-loans-contributions-reimbursements) before reconciling the year.
+For a mainland China owner, the clean filing starts with the Chinese TIN and a complete RMB owner-movement ledger. [Prepare and fax the Form 5472 package](/start), or review [owner loans, contributions, and reimbursements](/blog/form-5472-owner-loans-contributions-reimbursements) before reconciling the year.

@@ -12,7 +12,7 @@ draft: false
 
 A six-week tax year can still contain formation costs, owner funding, a bank deposit, or a distribution. The short period changes the dates, not the definition of a reportable transaction.
 
-If the LLC was formed before December 31 and the owner paid any setup cost, [start the short-year filing review](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-short-tax-year).
+If the LLC was formed before December 31 and the owner paid any setup cost, [start the short-year filing review](/start).
 
 ## What determines the short-year period?
 
@@ -108,6 +108,6 @@ Keep the legal effective date, tax-year end, EIN confirmation, post-formation ow
 
 Form5472 Prep prepares short-year Form 5472 packages for the standard foreign-owned US single-member disregarded LLC profile. We use the legal period, reconcile owner transactions, prepare the pro forma Form 1120 and supporting statement, obtain accountant review, and provide a timestamped IRS delivery receipt.
 
-[Start the short-year package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-short-tax-year-close) with the formation document, EIN confirmation, and every owner-funded cost through year-end.
+[Start the short-year package](/start) with the formation document, EIN confirmation, and every owner-funded cost through year-end.
 
 *Educational content only; not tax or legal advice.*

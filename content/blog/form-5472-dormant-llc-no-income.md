@@ -24,8 +24,8 @@ The answer most people don't want to hear: **you almost certainly still need to 
 - **The only true exemption** is zero reportable transactions in the tax year AND no other activity. This is narrower than most people assume.
 - **Pro forma Form 1120 is still required** even in years where you might qualify for the zero-transaction exemption — the IRS expects it whenever a foreign-owned DE exists.
 - **The penalty** is $25,000 per form, per year, under IRC §6038A(d).
-- **The fix is simple.** If you haven't filed, [DIIRSP](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income) lets you catch up without criminal exposure in most cases.
-- **Want it handled?** [Start your Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income-tldr) after you collect the LLC EIN and owner transaction history.
+- **The fix is simple.** If you haven't filed, [DIIRSP](/diirsp) lets you catch up without criminal exposure in most cases.
+- **Want it handled?** [Start your Form 5472 filing](/start) after you collect the LLC EIN and owner transaction history.
 
 ---
 
@@ -91,9 +91,9 @@ The LLC existed and was foreign-owned for part of the year. Even a partial year 
 
 The IRS typically catches these through matching programs — if you have a US EIN, eventually the absence of a return gets noticed. But even if it hasn't been flagged yet, the $25,000 penalty per year per form can accumulate fast over a multi-year gap.
 
-The structured way to resolve this is the IRS's **[Delinquent International Information Return Submission Procedure](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures) (DIIRSP)**. You file all the missing returns, attach a reasonable cause statement explaining why you didn't file, and submit everything together. Most foreign owners qualify for penalty abatement under this procedure. See our [DIIRSP guide](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income) for the full walkthrough.
+The structured way to resolve this is the IRS's **[Delinquent International Information Return Submission Procedure](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures) (DIIRSP)**. You file all the missing returns, attach a reasonable cause statement explaining why you didn't file, and submit everything together. Most foreign owners qualify for penalty abatement under this procedure. See our [DIIRSP guide](/diirsp) for the full walkthrough.
 
-If you want to get it done quickly: [start your filing here](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income). We prepare the pro forma Form 1120 and Form 5472 for each outstanding year, draft the reasonable cause statement, and fax the complete package to the IRS Ogden PIN Unit on your behalf.
+If you want to get it done quickly: [start your filing here](/start). We prepare the pro forma Form 1120 and Form 5472 for each outstanding year, draft the reasonable cause statement, and fax the complete package to the IRS Ogden PIN Unit on your behalf.
 
 Standard filing is $149 (5-7 business days), Express $199 (3 business days), +$99 per additional past tax year — IRS fax delivery included on both.
 
@@ -142,8 +142,8 @@ Limited first-time abatement may apply where it is tied to abatement of the rela
 
 "Dormant" is a spectrum. For Form 5472 purposes, it means exactly one thing: zero reportable transactions between the LLC and any foreign related party during the year. If you ever wired money in, paid an expense on behalf of the LLC, or moved money out — your LLC was not dormant in the IRS sense, regardless of whether it earned a dollar of revenue.
 
-The paperwork is not difficult. The penalty for ignoring it is severe. If you have years of unfiled returns, the [DIIRSP process](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income) exists specifically for this situation — and earlier is better, because the $25,000 continuation penalties compound by the month.
+The paperwork is not difficult. The penalty for ignoring it is severe. If you have years of unfiled returns, the [DIIRSP process](/diirsp) exists specifically for this situation — and earlier is better, because the $25,000 continuation penalties compound by the month.
 
 For a broader overview of who needs to file and what the form covers, see our [guide to what Form 5472 is and who must file](/blog/what-is-form-5472).
 
-[Start the dormant-LLC filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-dormant-llc-no-income-close) when you are ready to prepare the return and fax package.
+[Start the dormant-LLC filing](/start) when you are ready to prepare the return and fax package.

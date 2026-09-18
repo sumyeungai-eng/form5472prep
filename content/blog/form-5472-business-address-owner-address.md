@@ -12,7 +12,7 @@ draft: false
 
 Three addresses can exist at once: the LLC’s principal business address, a mailing address in care of a third party, and the foreign owner’s residential or entity address. They are not interchangeable.
 
-For a consistent reviewed package, [start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-business-address-owner-address).
+For a consistent reviewed package, [start the Form 5472 filing](/start).
 
 ## Which address goes on the pro forma Form 1120?
 
@@ -96,4 +96,4 @@ The Form 1120 instructions point businesses to Form 8822-B for a change in busin
 
 ---
 
-Treat principal office, mailing, registered-agent, and owner addresses as four separate roles. [Start a reviewed Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-business-address-owner-address-close), or review the [pro forma Form 1120 guide](/blog/pro-forma-form-1120-foreign-owned-llc).
+Treat principal office, mailing, registered-agent, and owner addresses as four separate roles. [Start a reviewed Form 5472 package](/start), or review the [pro forma Form 1120 guide](/blog/pro-forma-form-1120-foreign-owned-llc).

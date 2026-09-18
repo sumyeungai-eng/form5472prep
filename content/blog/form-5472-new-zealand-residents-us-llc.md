@@ -12,7 +12,7 @@ draft: false
 
 The US information return does not calculate New Zealand tax or determine whether the owner has US effectively connected income. The same LLC can be disregarded in the United States but treated differently in New Zealand.
 
-If the owner funded the LLC or received a payout, [start a reviewed Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-new-zealand-residents-us-llc).
+If the owner funded the LLC or received a payout, [start a reviewed Form 5472 filing](/start).
 
 ## When does a New Zealand owner file Form 5472?
 
@@ -98,4 +98,4 @@ Not for a foreign-owned US disregarded entity. The pro forma Form 1120 and Form 
 
 ---
 
-A New Zealand owner needs the correct IRD number, a gross NZD-to-USD ledger, and a separate local-tax analysis. [Start the reviewed US filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-new-zealand-residents-us-llc-close), or review the [filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist).
+A New Zealand owner needs the correct IRD number, a gross NZD-to-USD ledger, and a separate local-tax analysis. [Start the reviewed US filing](/start), or review the [filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist).

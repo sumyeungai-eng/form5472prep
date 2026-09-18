@@ -10,7 +10,7 @@ draft: false
 
 **An EIN costs $0 when obtained directly from the IRS. Form5472 Prep’s $149 price is not a government charge; it pays for Form SS-4 preparation and handling the international phone or fax application for a foreign-owned U.S. LLC. Choose DIY when you are eligible and comfortable with the process, or paid help when time and error prevention justify it.**
 
-[Start the $149 managed EIN application](/ein/apply?utm_source=blog&utm_medium=internal&utm_campaign=ein-cost) if the LLC is formed and you want the paperwork and IRS contact handled.
+[Start the $149 managed EIN application](/ein/apply) if the LLC is formed and you want the paperwork and IRS contact handled.
 
 ## EIN cost breakdown
 
@@ -70,6 +70,6 @@ Before paying, confirm the total price, refund terms, exact deliverables, proces
 
 If the LLC already has an EIN, locate the original notice, bank record, prior return, or request IRS verification instead of buying a new-number service. If the LLC has not been formed, complete state formation before applying.
 
-[Use Form5472 Prep’s EIN application service](/ein/apply?utm_source=blog&utm_medium=internal&utm_campaign=ein-cost-close) for a flat $149 when you want Form SS-4 prepared and the international application handled. The number itself remains free from the IRS.
+[Use Form5472 Prep’s EIN application service](/ein/apply) for a flat $149 when you want Form SS-4 prepared and the international application handled. The number itself remains free from the IRS.
 
 *Price and IRS routes checked September 3, 2026. Educational information only; not tax or legal advice.*

@@ -10,7 +10,7 @@ draft: false
 
 **A complete ITIN application normally needs Form W-7, proof of identity and foreign status, and a U.S. federal income tax return unless a specific exception applies. Before collecting documents, confirm two threshold facts: you have a federal tax purpose and you are not eligible for a Social Security number.**
 
-This checklist is for non-residents preparing a new Individual Taxpayer Identification Number application. If you already know the reason code that applies, [start the ITIN application](/itin/apply?utm_source=blog&utm_medium=internal&utm_campaign=itin-application-checklist).
+This checklist is for non-residents preparing a new Individual Taxpayer Identification Number application. If you already know the reason code that applies, [start the ITIN application](/itin/apply).
 
 ## First confirm that an ITIN is the right number
 
@@ -65,6 +65,6 @@ Confirm that:
 
 The IRS advises allowing about seven weeks for an ITIN status notice and nine to eleven weeks during tax season or for overseas applications. Those are IRS processing periods, not a provider guarantee. Keep delivery evidence and avoid sending a second application merely because the first is still inside the stated window.
 
-[Start your ITIN application](/itin/apply?utm_source=blog&utm_medium=internal&utm_campaign=itin-application-checklist-close) when you have a genuine federal tax purpose and want Form W-7 preparation plus CAA document certification for a flat $349 fee.
+[Start your ITIN application](/itin/apply) when you have a genuine federal tax purpose and want Form W-7 preparation plus CAA document certification for a flat $349 fee.
 
 *Educational information only; not tax or legal advice. Eligibility, return filing, treaty, withholding, and exception questions depend on the applicant’s facts.*

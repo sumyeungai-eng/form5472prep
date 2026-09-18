@@ -12,7 +12,7 @@ draft: false
 
 Nevada is regularly sold to non-residents on the strength of its tax climate and business reputation. The missing part of that pitch is recurring compliance. Nevada has more state-level maintenance than New Mexico or Wyoming, and the IRS applies the same federal information-reporting rule regardless of where the LLC was formed.
 
-The Nevada Department of Taxation says a business with Nevada gross revenue over **$4,000,000** must file a Commerce Tax return on its [official Commerce Tax FAQ](https://tax.nv.gov/faqs/commerce-tax-faqs/). That threshold is unrelated to Form 5472. If owner funding or draws are the federal gap, [start a reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=nevada-llc-foreign-owner-tax-filing) while handling the Nevada renewal separately.
+The Nevada Department of Taxation says a business with Nevada gross revenue over **$4,000,000** must file a Commerce Tax return on its [official Commerce Tax FAQ](https://tax.nv.gov/faqs/commerce-tax-faqs/). That threshold is unrelated to Form 5472. If owner funding or draws are the federal gap, [start a reviewed filing](/start) while handling the Nevada renewal separately.
 
 ## What does a non-resident Nevada LLC renew each year?
 
@@ -158,4 +158,4 @@ No. A foreign-owned US disregarded entity must fax or mail the Form 5472 package
 
 ---
 
-Nevada requires you to manage a state anniversary calendar and a separate federal reporting calendar. Confirm on SilverFlume before paying, then [prepare the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=nevada-llc-foreign-owner-tax-filing-close) or review [how to fill out Form 5472](/blog/how-to-fill-out-form-5472) before filing.
+Nevada requires you to manage a state anniversary calendar and a separate federal reporting calendar. Confirm on SilverFlume before paying, then [prepare the Form 5472 package](/start) or review [how to fill out Form 5472](/blog/how-to-fill-out-form-5472) before filing.

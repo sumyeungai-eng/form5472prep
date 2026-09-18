@@ -14,7 +14,7 @@ The UAE is one of the largest sources of foreign-owned US LLCs: Dubai-based ecom
 
 Two features of the UAE position change the mechanics of the filing compared with a UK or Indian owner. Neither removes the obligation, and both are handled easily once you know about them.
 
-If you want the filing done rather than explained, [we prepare and fax the complete package from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uae).
+If you want the filing done rather than explained, [we prepare and fax the complete package from $149](/start).
 
 ## Do UAE residents have to file Form 5472?
 
@@ -116,7 +116,7 @@ The UAE specifics — no treaty, no personal tax ID, AED conversion, a free-zone
 
 We are not a CPA firm and do not give tax advice, and we do not advise on UAE corporate tax. We prepare and submit the US information return accurately.
 
-[Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uae-cta) — about 15 minutes.
+[Start your filing](/start) — about 15 minutes.
 
 ## Frequently asked questions
 
@@ -152,4 +152,4 @@ File all outstanding years as soon as possible with a reasonable cause statement
 
 Living in a zero-tax jurisdiction removes the tax question, not the filing question. If money has moved between you and your US LLC, Form 5472 is due.
 
-[File from Dubai in about 15 minutes](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uae-close), or read [what Form 5472 is](/blog/what-is-form-5472) first.
+[File from Dubai in about 15 minutes](/start), or read [what Form 5472 is](/blog/what-is-form-5472) first.

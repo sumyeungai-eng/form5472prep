@@ -14,7 +14,7 @@ An EIN identifies a foreign-owned U.S. disregarded LLC for its Form 5472 package
 
 The obstacle non-residents hit is that the IRS's fast online EIN application requires the responsible party to have an SSN or ITIN. That leads a lot of people to conclude they must first spend months and several hundred dollars obtaining an ITIN. **They do not.** The IRS instructions state it explicitly.
 
-If you would rather have this handled: [we obtain EINs for foreign-owned LLCs for $149](/ein?utm_source=blog&utm_medium=internal&utm_campaign=ein-without-ssn), including preparing Form SS-4 and dealing with the IRS on your behalf.
+If you would rather have this handled: [we obtain EINs for foreign-owned LLCs for $149](/ein), including preparing Form SS-4 and dealing with the IRS on your behalf.
 
 ## Do you need an SSN or ITIN to get an EIN?
 
@@ -104,7 +104,7 @@ If you also need the annual filing, that is our main service: Form 5472 and the 
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the forms accurately.
 
-[Get your EIN](/ein?utm_source=blog&utm_medium=internal&utm_campaign=ein-without-ssn-cta). If you also need the annual Form 5472 filing, gather the entity and owner-transaction records next.
+[Get your EIN](/ein). If you also need the annual Form 5472 filing, gather the entity and owner-transaction records next.
 
 ## Frequently asked questions
 
@@ -136,4 +136,4 @@ No. An EIN is an identification number, not a tax liability. Whether you owe US 
 
 Obtaining the EIN is an important federal setup step, but its assignment date does not start or reset the Form 5472 obligation. Review the entity's classification and reportable transactions for every relevant tax year, including activity before the EIN arrived.
 
-[Get your EIN](/ein?utm_source=blog&utm_medium=internal&utm_campaign=ein-without-ssn-close), or read [what a foreign-owned LLC has to file](/blog/foreign-owned-llc-filing-requirements-checklist).
+[Get your EIN](/ein), or read [what a foreign-owned LLC has to file](/blog/foreign-owned-llc-filing-requirements-checklist).

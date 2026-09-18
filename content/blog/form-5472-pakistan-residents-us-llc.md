@@ -12,7 +12,7 @@ draft: false
 
 The rule reaches freelancers and agencies using a US LLC for client contracts, marketplaces, payment platforms, or US banking. Revenue alone is not the target. The filing reports money, property, and services moving between the LLC and its foreign owner or another related party.
 
-That means a Payoneer or Wise transfer can be either ordinary business activity or an owner distribution depending on who owns the sending and receiving accounts. If you would rather have the federal package prepared and faxed, [start a Pakistan Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-pakistan-residents-us-llc).
+That means a Payoneer or Wise transfer can be either ordinary business activity or an owner distribution depending on who owns the sending and receiving accounts. If you would rather have the federal package prepared and faxed, [start a Pakistan Form 5472 filing](/start).
 
 ## When does a Pakistan-owned LLC have to file Form 5472?
 
@@ -156,4 +156,4 @@ No. A foreign-owned US disregarded entity must fax or mail Form 5472 with a pro 
 
 ---
 
-For a Pakistan owner, correct account ownership, CNIC/NTN reporting, and gross transaction records make the filing defensible. [Start your Pakistan Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-pakistan-residents-us-llc-close), or review [reportable transaction examples](/blog/form-5472-reportable-transactions-examples) first.
+For a Pakistan owner, correct account ownership, CNIC/NTN reporting, and gross transaction records make the filing defensible. [Start your Pakistan Form 5472 package](/start), or review [reportable transaction examples](/blog/form-5472-reportable-transactions-examples) first.

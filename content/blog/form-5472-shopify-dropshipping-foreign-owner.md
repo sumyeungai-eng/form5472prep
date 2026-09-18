@@ -12,7 +12,7 @@ draft: false
 
 A Shopify store can create hundreds of bookkeeping lines from one order: the customer charge, tax, discount, processor fee, reserve, refund, chargeback, currency conversion, payout, supplier bill, and advertising cost. Form 5472 is not a duplicate of that activity report. It asks a narrower question: did the LLC transact with its foreign owner or another related party?
 
-That distinction matters because the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) set a **$25,000 penalty per form per year** for failure to file. When the hard part is separating owner movements from store activity, [start an accountant-reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-shopify-dropshipping-foreign-owner) and provide the reconciled annual records.
+That distinction matters because the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) set a **$25,000 penalty per form per year** for failure to file. When the hard part is separating owner movements from store activity, [start an accountant-reviewed filing](/start) and provide the reconciled annual records.
 
 ## Which Shopify dropshipping transactions go on Form 5472?
 
@@ -169,4 +169,4 @@ No. Sales tax is administered by states and concerns taxable sales and nexus. Fo
 
 ---
 
-For a Shopify dropshipping LLC, reconcile the store first and report the relationships second. [Prepare and fax the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-shopify-dropshipping-foreign-owner-close), or compare the treatment with [Amazon FBA Form 5472 examples](/blog/amazon-fba-foreign-sellers-form-5472).
+For a Shopify dropshipping LLC, reconcile the store first and report the relationships second. [Prepare and fax the Form 5472 package](/start), or compare the treatment with [Amazon FBA Form 5472 examples](/blog/amazon-fba-foreign-sellers-form-5472).

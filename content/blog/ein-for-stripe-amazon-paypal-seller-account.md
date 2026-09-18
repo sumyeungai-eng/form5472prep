@@ -14,7 +14,7 @@ A platform rejection can look like an EIN problem when the number is valid. The 
 
 For a 2026 seller launch, the right preparation is deliberately boring: one formation record, one IRS record, and one consistent set of names and addresses. The IRS charges **$0** to issue an EIN and warns that nobody has to pay a government fee for one on its [online EIN page](https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online). A paid service charges for preparing Form SS-4 and handling the application, not for selling the number.
 
-If seller onboarding is waiting on the federal number, [get the LLC's EIN handled for $149](/ein?utm_source=blog&utm_medium=internal&utm_campaign=ein-for-stripe-amazon-paypal-seller-account). This guide begins after formation and concentrates on getting the EIN record ready for platform review; the separate [EIN application checklist](/blog/ein-application-checklist-foreign-owned-llc) covers the underlying SS-4 inputs.
+If seller onboarding is waiting on the federal number, [get the LLC's EIN handled for $149](/ein). This guide begins after formation and concentrates on getting the EIN record ready for platform review; the separate [EIN application checklist](/blog/ein-application-checklist-foreign-owned-llc) covers the underlying SS-4 inputs.
 
 ## Why do seller platforms ask for an EIN?
 
@@ -144,4 +144,4 @@ No. The EIN resolves the federal entity-identifier step. A platform can separate
 
 ---
 
-Build the seller-account file in one direction: formation record, EIN confirmation, bank evidence, then platform application. When the entity name and owner documentation stay in their proper lanes, a rejection becomes much easier to diagnose. [Get the EIN handled for $149](/ein?utm_source=blog&utm_medium=internal&utm_campaign=ein-for-stripe-amazon-paypal-seller-account-close), or review [how to open a US bank account for a foreign-owned LLC](/blog/us-bank-account-foreign-owned-llc).
+Build the seller-account file in one direction: formation record, EIN confirmation, bank evidence, then platform application. When the entity name and owner documentation stay in their proper lanes, a rejection becomes much easier to diagnose. [Get the EIN handled for $149](/ein), or review [how to open a US bank account for a foreign-owned LLC](/blog/us-bank-account-foreign-owned-llc).

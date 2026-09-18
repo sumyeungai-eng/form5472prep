@@ -12,7 +12,7 @@ draft: false
 
 Part V is where many otherwise careful filings become substantially incomplete. The form gives you only a checkbox, but the instructions require an attached statement describing the transactions. The IRS does not give a friendly template.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that Part V covers amounts paid or received in connection with formation, dissolution, acquisition and disposition of the entity, including contributions to and distributions from the entity. The same instructions state that a missing or substantially incomplete Form 5472 can trigger a **$25,000** penalty. If you want the attachment prepared with the rest of the filing, [we prepare Form 5472 packages from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-part-v-statement-example).
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that Part V covers amounts paid or received in connection with formation, dissolution, acquisition and disposition of the entity, including contributions to and distributions from the entity. The same instructions state that a missing or substantially incomplete Form 5472 can trigger a **$25,000** penalty. If you want the attachment prepared with the rest of the filing, [we prepare Form 5472 packages from $149](/start).
 
 ## What does Form 5472 Part V require?
 
@@ -190,4 +190,4 @@ Use actual records when available. If an estimate is necessary, label the estima
 
 The Part V statement is the bridge between your bank records and the numbers on Form 5472. Make the attachment clear, titled, totaled and tied to line 1f.
 
-[Start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-part-v-statement-example-close), or read [how to fill out Form 5472](/blog/how-to-fill-out-form-5472) and [reportable transaction examples](/blog/form-5472-reportable-transactions-examples).
+[Start the Form 5472 filing](/start), or read [how to fill out Form 5472](/blog/how-to-fill-out-form-5472) and [reportable transaction examples](/blog/form-5472-reportable-transactions-examples).

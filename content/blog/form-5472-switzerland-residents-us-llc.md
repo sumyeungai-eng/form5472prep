@@ -12,7 +12,7 @@ draft: false
 
 The form reports gross related-party transactions. It does not decide whether Switzerland recognizes the LLC as transparent, whether treaty relief applies, or whether US income tax is due.
 
-When owner funding or withdrawals occurred, [start the reviewed filing package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-switzerland-residents-us-llc) before the deadline.
+When owner funding or withdrawals occurred, [start the reviewed filing package](/start) before the deadline.
 
 ## When must a Swiss-owned LLC file Form 5472?
 
@@ -99,4 +99,4 @@ No. The form reports US-dollar values. Preserve the original CHF amount and rate
 
 ---
 
-A Swiss filing turns on accurate owner identification and a gross CHF-to-USD ledger. [Start the reviewed Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-switzerland-residents-us-llc-close), or review [how to fill out the form](/blog/how-to-fill-out-form-5472).
+A Swiss filing turns on accurate owner identification and a gross CHF-to-USD ledger. [Start the reviewed Form 5472 package](/start), or review [how to fill out the form](/blog/how-to-fill-out-form-5472).

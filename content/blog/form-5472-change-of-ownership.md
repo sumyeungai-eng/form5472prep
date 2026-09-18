@@ -12,7 +12,7 @@ draft: false
 
 Ownership changes are not routine annual bookkeeping entries. They can change who is reported, which return is filed, and whether a short-period filing is needed. If the 2025 ownership change affects a calendar-year foreign-owned U.S. disregarded entity, the 2025 Form 5472 package is normally due with the pro forma Form 1120 on 15 April 2026 under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) and [IRS Form 1120 instructions](https://www.irs.gov/instructions/i1120), and [Form 7004](https://www.irs.gov/forms-pubs/about-form-7004) can request a 6-month extension when filed by the regular due date.
 
-The same IRS instructions state that Part V includes transactions connected with formation, dissolution, acquisition and disposition of the entity, including contributions and distributions, and that the penalty for failing to file Form 5472 when due and in the prescribed manner is **$25,000**. [Start the filing review](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-change-ownership) with the purchase agreement, ownership ledger and bank evidence before deciding which return applies.
+The same IRS instructions state that Part V includes transactions connected with formation, dissolution, acquisition and disposition of the entity, including contributions and distributions, and that the penalty for failing to file Form 5472 when due and in the prescribed manner is **$25,000**. [Start the filing review](/start) with the purchase agreement, ownership ledger and bank evidence before deciding which return applies.
 
 ## Is an LLC ownership transfer reportable on Form 5472?
 
@@ -135,4 +135,4 @@ Show the owner or related party relevant to the reporting period and transaction
 
 No. Form 8832 changes classification when validly filed. It does not erase a prior Form 5472 obligation for a year in which the LLC was a foreign-owned U.S. DE.
 
-An ownership change should be treated as a tax reporting event with dates and evidence, not only a state amendment. [Start the Form 5472 review](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-change-ownership-close) or read the [multi-member LLC filing guide](/blog/multi-member-llc-form-5472-or-1065) before assuming the same annual package still applies.
+An ownership change should be treated as a tax reporting event with dates and evidence, not only a state amendment. [Start the Form 5472 review](/start) or read the [multi-member LLC filing guide](/blog/multi-member-llc-form-5472-or-1065) before assuming the same annual package still applies.

@@ -12,7 +12,7 @@ draft: false
 
 Form 5472 reports ownership-linked transactions, not the LLC’s ordinary profit. Japanese and US income-tax conclusions require a separate analysis of activity, source, entity classification, and treaty positions.
 
-If yen was contributed, withdrawn, loaned, or used to pay LLC costs, [start a reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-japan-residents-us-llc).
+If yen was contributed, withdrawn, loaned, or used to pay LLC costs, [start a reviewed filing](/start).
 
 ## What transactions trigger Form 5472 for a Japan owner?
 
@@ -99,4 +99,4 @@ No. A foreign-owned US disregarded entity must fax or mail Form 5472 with the pr
 
 ---
 
-A Japan owner needs secure My Number handling and a traceable yen-to-dollar ledger. [Start the reviewed package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-japan-residents-us-llc-close), or review the [first-year filing guide](/blog/first-year-form-5472-new-llc).
+A Japan owner needs secure My Number handling and a traceable yen-to-dollar ledger. [Start the reviewed package](/start), or review the [first-year filing guide](/blog/first-year-form-5472-new-llc).

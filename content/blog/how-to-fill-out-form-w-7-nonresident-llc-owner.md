@@ -14,7 +14,7 @@ Owning a US LLC does not by itself qualify you for an Individual Taxpayer Identi
 
 Once a genuine trigger exists, accuracy matters across the whole package. The IRS says to allow **7 weeks** for an ITIN status notice, rising to **9–11 weeks** during January 15 through April 30 or when applying from overseas, on its [ITIN information page](https://www.irs.gov/individuals/individual-taxpayer-identification-number). An inconsistent W-7 can turn that wait into a request for evidence or a rejection.
 
-If you want the application prepared and your identity document verified without mailing your original passport, [use our $349 ITIN service](/itin?utm_source=blog&utm_medium=internal&utm_campaign=how-to-fill-out-form-w-7-nonresident-llc-owner). The guidance follows the current [IRS Instructions for Form W-7](https://www.irs.gov/instructions/iw7).
+If you want the application prepared and your identity document verified without mailing your original passport, [use our $349 ITIN service](/itin). The guidance follows the current [IRS Instructions for Form W-7](https://www.irs.gov/instructions/iw7).
 
 ## When should a nonresident LLC owner use Form W-7?
 
@@ -147,4 +147,4 @@ Direct mail requires original documents or issuing-agency-certified copies. A CA
 
 ---
 
-A correct W-7 begins with the right tax reason and ends with a package in which every name, address, document, and attachment agrees. [Have our IRS-authorised CAA prepare and submit your ITIN application for $349](/itin?utm_source=blog&utm_medium=internal&utm_campaign=how-to-fill-out-form-w-7-nonresident-llc-owner-close), or review [why Form 5472 alone does not require an ITIN](/blog/itin-required-form-5472).
+A correct W-7 begins with the right tax reason and ends with a package in which every name, address, document, and attachment agrees. [Have our IRS-authorised CAA prepare and submit your ITIN application for $349](/itin), or review [why Form 5472 alone does not require an ITIN](/blog/itin-required-form-5472).

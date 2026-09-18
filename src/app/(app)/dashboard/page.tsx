@@ -128,7 +128,7 @@ export default async function DashboardPage() {
                 Your LLC and owner details carry over from last year — a returning filing takes about 5 minutes.
               </p>
             </div>
-            <Link href="/start?utm_source=dashboard&utm_medium=banner&utm_campaign=renewal">
+            <Link href="/start">
               <Button>Start {taxYear} filing</Button>
             </Link>
           </div>

@@ -14,7 +14,7 @@ The useful question is which return, withholding rule, or reporting requirement 
 
 The [IRS Form W-7 instructions](https://www.irs.gov/instructions/iw7) define an ITIN as a number for someone who needs a US taxpayer identification number for federal tax purposes but cannot get an SSN. The same instructions say to allow about **7 weeks** for an application status notice, or **9–11 weeks** during 15 January through 30 April or when filing from overseas.
 
-If a real tax trigger applies, [use our $349 ITIN service](/itin?utm_source=blog&utm_medium=internal&utm_campaign=when-nonresident-actually-needs-itin). An IRS-authorised Certifying Acceptance Agent checks the identity documents and returns them immediately, so you do not mail an original passport to the IRS.
+If a real tax trigger applies, [use our $349 ITIN service](/itin). An IRS-authorised Certifying Acceptance Agent checks the identity documents and returns them immediately, so you do not mail an original passport to the IRS.
 
 ## Which situations actually require an ITIN?
 
@@ -143,4 +143,4 @@ Yes. A Certifying Acceptance Agent can verify eligible original identity documen
 
 ---
 
-Many foreign LLC owners never need an ITIN; the right moment to apply is when a documented personal tax purpose creates the need. If your Form 1040-NR, refund, treaty claim, or W-7 exception does, [start the $349 CAA ITIN service](/itin?utm_source=blog&utm_medium=internal&utm_campaign=when-nonresident-actually-needs-itin-close). For the most common false trigger, read [whether Form 5472 requires an ITIN](/blog/itin-required-form-5472).
+Many foreign LLC owners never need an ITIN; the right moment to apply is when a documented personal tax purpose creates the need. If your Form 1040-NR, refund, treaty claim, or W-7 exception does, [start the $349 CAA ITIN service](/itin). For the most common false trigger, read [whether Form 5472 requires an ITIN](/blog/itin-required-form-5472).

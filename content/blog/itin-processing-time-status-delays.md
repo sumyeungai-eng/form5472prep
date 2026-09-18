@@ -10,7 +10,7 @@ draft: false
 
 **The IRS says to allow seven weeks for an ITIN application status notice. It can take nine to eleven weeks during tax season—January 15 through April 30—or when the application is submitted from overseas. As of September 3, 2026, the IRS operations page said it was processing Forms W-7 received in July 2026.**
 
-Those timeframes begin when the IRS receives a complete package, not when you start collecting documents. [Start with a prepared Form W-7 and CAA certification](/itin/apply?utm_source=blog&utm_medium=internal&utm_campaign=itin-processing-time) if you want to reduce avoidable pre-submission errors without mailing your original passport.
+Those timeframes begin when the IRS receives a complete package, not when you start collecting documents. [Start with a prepared Form W-7 and CAA certification](/itin/apply) if you want to reduce avoidable pre-submission errors without mailing your original passport.
 
 ## The ITIN timeline has three separate stages
 
@@ -64,6 +64,6 @@ Form5472 Prep’s $349 service prepares Form W-7 and uses CAA certification so t
 
 If the ITIN will appear on a U.S. return, do not treat the filing date as the day to begin. Allow time to confirm eligibility, prepare the return, complete CAA authentication, send the package, and wait through the published IRS window. If the return deadline is close, consult the return instructions or a qualified tax adviser about filing and extension options; an ITIN application does not automatically extend a return.
 
-[Start the ITIN application](/itin/apply?utm_source=blog&utm_medium=internal&utm_campaign=itin-processing-time-close) for Form W-7 preparation and CAA certification. The flat fee is $349, and your original passport stays with you.
+[Start the ITIN application](/itin/apply) for Form W-7 preparation and CAA certification. The flat fee is $349, and your original passport stays with you.
 
 *Operational status checked September 3, 2026. Processing queues change. Educational information only; not tax or legal advice.*

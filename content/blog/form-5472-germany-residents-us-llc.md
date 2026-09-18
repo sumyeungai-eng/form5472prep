@@ -10,7 +10,7 @@ draft: false
 
 **A German resident who wholly owns a US single-member LLC generally must file Form 5472 with a pro forma Form 1120 when the LLC has a reportable transaction with the owner or another related party. The obligation can arise from capital contributions, withdrawals, loans or owner-paid expenses even if the LLC has no income.**
 
-Form 5472 is a US related-party information return, not a German tax return. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that a required Form 5472 filed late, filed substantially incomplete, or not supported by required records can trigger a **$25,000** penalty. German owners who already know they need the US package can [begin the US filing here](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-germany-residents-us-llc).
+Form 5472 is a US related-party information return, not a German tax return. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that a required Form 5472 filed late, filed substantially incomplete, or not supported by required records can trigger a **$25,000** penalty. German owners who already know they need the US package can [begin the US filing here](/start).
 
 ## When does a German-owned LLC file Form 5472?
 
@@ -161,4 +161,4 @@ No. Form 5472 is US information reporting. German income tax, trade tax, VAT and
 
 ## What should German owners do next?
 
-The safest starting point is a complete owner ledger, not a profit-and-loss report. [Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-germany-residents-us-llc-close), or see [how Form 5472 is completed part by part](/blog/how-to-fill-out-form-5472) before preparing the package.
+The safest starting point is a complete owner ledger, not a profit-and-loss report. [Start your filing](/start), or see [how Form 5472 is completed part by part](/blog/how-to-fill-out-form-5472) before preparing the package.

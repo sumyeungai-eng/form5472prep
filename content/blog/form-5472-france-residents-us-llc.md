@@ -10,7 +10,7 @@ draft: false
 
 **A French resident who wholly owns a US single-member LLC generally files Form 5472 with a pro forma Form 1120 when the company has a reportable transaction with its owner or another related party. Formation funding, contributions, withdrawals, loans and owner-paid expenses may trigger the return even when the LLC earned no income.**
 
-The US filing does not replace French reporting or decide how France classifies the LLC. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that a required Form 5472 filed late, filed substantially incomplete, or not supported by required records can trigger a **$25,000** penalty. A French owner can [start the Form 5472 process online](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-france-residents-us-llc) after gathering the LLC's EIN, owner details and transaction ledger.
+The US filing does not replace French reporting or decide how France classifies the LLC. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that a required Form 5472 filed late, filed substantially incomplete, or not supported by required records can trigger a **$25,000** penalty. A French owner can [start the Form 5472 process online](/start) after gathering the LLC's EIN, owner details and transaction ledger.
 
 ## Who must file for a French-owned US LLC?
 
@@ -160,4 +160,4 @@ No. Form 5472 is US information reporting. French income tax, social charges, VA
 
 ## What should French owners do next?
 
-A clean filing begins with exact owner data and a complete two-way ledger. [Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-france-residents-us-llc-close), or compare the [DIY and prepared-filing routes](/blog/form-5472-diy-vs-preparer) before deciding how to file.
+A clean filing begins with exact owner data and a complete two-way ledger. [Start your filing](/start), or compare the [DIY and prepared-filing routes](/blog/form-5472-diy-vs-preparer) before deciding how to file.

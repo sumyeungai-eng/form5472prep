@@ -12,7 +12,7 @@ draft: false
 
 The key question is not whether the state or registered-agent company is related to the owner. The key question is whether the foreign owner supplied value to the LLC or paid an LLC obligation personally.
 
-If a foreign owner paid setup costs, [start a reviewed Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-formation-costs-registered-agent-fees) with the receipts and payment trail.
+If a foreign owner paid setup costs, [start a reviewed Form 5472 filing](/start) with the receipts and payment trail.
 
 ## Why are formation costs reportable on Form 5472?
 
@@ -102,4 +102,4 @@ Often yes. Formation funding, owner-paid costs, and the opening bank deposit com
 
 ---
 
-Formation costs are small, but the filing consequence is not. [Start the reviewed Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-formation-costs-registered-agent-fees-close), or review [Part V statement examples](/blog/form-5472-part-v-statement-example).
+Formation costs are small, but the filing consequence is not. [Start the reviewed Form 5472 package](/start), or review [Part V statement examples](/blog/form-5472-part-v-statement-example).

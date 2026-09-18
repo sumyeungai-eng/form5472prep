@@ -14,7 +14,7 @@ The distinction determines whether you repair the open case or start again. CP56
 
 The IRS gives a CP566 recipient **45 days from the notice date to reply**, according to its [CP566 notice page](https://www.irs.gov/individuals/understanding-your-cp566-notice). Treat the printed notice and its return address as the working instructions; a generic W-7 mailing address does not replace them.
 
-If document certification or package assembly caused the problem, [our $349 ITIN service](/itin?utm_source=blog&utm_medium=internal&utm_campaign=itin-application-rejected-cp567-cp566) prepares a new or renewal W-7, verifies permitted identity documents through an IRS-authorised CAA, submits the complete package, and tracks the CP565 outcome without requiring original passport mailing.
+If document certification or package assembly caused the problem, [our $349 ITIN service](/itin) prepares a new or renewal W-7, verifies permitted identity documents through an IRS-authorised CAA, submits the complete package, and tracks the CP565 outcome without requiring original passport mailing.
 
 ## What do CP565, CP566, and CP567 mean?
 
@@ -150,4 +150,4 @@ No. A CAA can verify permitted identity documents and improve package consistenc
 
 ---
 
-CP566 calls for a timely, targeted response; CP567 calls for a complete new application after the root cause is fixed. [Have our IRS-authorised CAA rebuild and submit the ITIN package for $349](/itin?utm_source=blog&utm_medium=internal&utm_campaign=itin-application-rejected-cp567-cp566-close), or check [whether an LLC owner genuinely needs an ITIN](/blog/itin-required-form-5472) before reapplying.
+CP566 calls for a timely, targeted response; CP567 calls for a complete new application after the root cause is fixed. [Have our IRS-authorised CAA rebuild and submit the ITIN package for $349](/itin), or check [whether an LLC owner genuinely needs an ITIN](/blog/itin-required-form-5472) before reapplying.

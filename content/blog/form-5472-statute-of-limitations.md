@@ -12,7 +12,7 @@ draft: false
 
 Owners usually ask this after discovering several missed filings at once. The instinct is understandable: if the LLC was formed years ago, maybe the oldest year has aged out. For Form 5472, that is not a reliable assumption.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that the penalty for failure to file is **$25,000** per form, per year, and a substantially incomplete Form 5472 counts as a failure to file. If you need to catch up old years, [we prepare delinquent Form 5472 packages from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-statute-of-limitations) with a Part V statement and fax receipt.
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that the penalty for failure to file is **$25,000** per form, per year, and a substantially incomplete Form 5472 counts as a failure to file. If you need to catch up old years, [we prepare delinquent Form 5472 packages from $149](/start) with a Part V statement and fax receipt.
 
 ## What is the Form 5472 statute of limitations rule?
 
@@ -137,4 +137,4 @@ No reliable IRS statistic gives an enforcement percentage for every foreign-owne
 
 The Form 5472 statute problem is simple: an unfiled international information return can keep the assessment window open. Filing the missing years is what changes the posture.
 
-[Start the catch-up filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-statute-of-limitations-close), or read [filing Form 5472 late or never filed](/blog/form-5472-filed-late-never-filed) and [reasonable-cause letter basics](/blog/form-5472-reasonable-cause-letter).
+[Start the catch-up filing](/start), or read [filing Form 5472 late or never filed](/blog/form-5472-filed-late-never-filed) and [reasonable-cause letter basics](/blog/form-5472-reasonable-cause-letter).

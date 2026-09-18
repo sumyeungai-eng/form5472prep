@@ -12,7 +12,7 @@ draft: false
 
 That makes a bank-only review incomplete. A laptop supplied by the owner, software licensed without an invoice, debt assumed for the LLC, or services exchanged below market can all require attention.
 
-If the owner transferred noncash value to or from the LLC, [start a reviewed Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-noncash-property-transfers) with the transfer evidence and valuation support.
+If the owner transferred noncash value to or from the LLC, [start a reviewed Form 5472 package](/start) with the transfer evidence and valuation support.
 
 ## The noncash transfer matrix
 
@@ -100,6 +100,6 @@ Keep the parties, relationship, transfer date, property or service description, 
 
 Form5472 Prep can prepare the supported federal information-return package for the standard foreign-owned disregarded LLC profile. Complex restructurings, valuable intellectual property, real estate, and below-market arrangements should receive specialist advice.
 
-[Start the noncash-transaction filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-noncash-property-transfers-close) with the ownership documents, transfer description, date, consideration, and valuation evidence.
+[Start the noncash-transaction filing](/start) with the ownership documents, transfer description, date, consideration, and valuation evidence.
 
 *Educational content only; not tax or legal advice.*

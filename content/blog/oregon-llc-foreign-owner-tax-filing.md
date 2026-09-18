@@ -12,7 +12,7 @@ draft: false
 
 The word “foreign” also has two meanings here. Oregon may call an LLC foreign because it was formed in another state, while Form 5472 focuses on ownership by a non-US person.
 
-If a non-US owner funded, withdrew from, lent to, or paid expenses for the LLC, [start the federal Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=oregon-llc-foreign-owner-tax-filing) while resolving Oregon compliance separately.
+If a non-US owner funded, withdrew from, lent to, or paid expenses for the LLC, [start the federal Form 5472 package](/start) while resolving Oregon compliance separately.
 
 ## The Oregon federal-state matrix
 
@@ -106,6 +106,6 @@ Keep Oregon entity records, Oregon-sourced receipts and CAT calculations, federa
 
 Form5472 Prep prepares the federal Form 5472, pro forma Form 1120, and supporting statement for the standard foreign-owned disregarded LLC profile. It does not include the Oregon annual report, CAT, state income or excise tax, payroll, or local filings.
 
-[Start the reviewed federal filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=oregon-llc-foreign-owner-tax-filing-close), and use Oregon's official portals or an Oregon tax professional for state obligations.
+[Start the reviewed federal filing](/start), and use Oregon's official portals or an Oregon tax professional for state obligations.
 
 *Educational content only; not tax or legal advice. State fees and thresholds should be verified when filing.*

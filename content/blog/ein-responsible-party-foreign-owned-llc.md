@@ -10,7 +10,7 @@ draft: false
 
 **For a foreign-owned single-member LLC, the EIN responsible party is normally the individual who ultimately owns or controls the entity and its funds. It is not the registered agent, formation company, mailbox provider, or another nominee with only limited authority. If that foreign individual has no SSN or ITIN and is ineligible for one, Form SS-4 permits “Foreign” or “N/A” on line 7b.**
 
-If you want the responsible-party and line 7b entries checked as part of the application, [start the $149 EIN service](/ein/apply?utm_source=blog&utm_medium=internal&utm_campaign=ein-responsible-party).
+If you want the responsible-party and line 7b entries checked as part of the application, [start the $149 EIN service](/ein/apply).
 
 ## The IRS control test
 
@@ -70,6 +70,6 @@ Confirm the person named:
 - uses an existing SSN or ITIN when applicable; and
 - authorizes the submission correctly.
 
-[Start your EIN application](/ein/apply?utm_source=blog&utm_medium=internal&utm_campaign=ein-responsible-party-close) for $149 when the LLC is formed and the true responsible party is known. Form SS-4 preparation and international IRS application handling are included.
+[Start your EIN application](/ein/apply) for $149 when the LLC is formed and the true responsible party is known. Form SS-4 preparation and international IRS application handling are included.
 
 *Educational information only; not tax or legal advice. Complex ownership and entity classification can require professional analysis.*

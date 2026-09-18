@@ -12,7 +12,7 @@ draft: false
 
 The names are similar enough to cause expensive mistakes. Form 5472 looks inward at a US reporting corporation, including a foreign-owned US disregarded LLC, and asks what it did with foreign related parties. Form 5471 looks outward from a US person and asks what that US person owns, controls or reports in a foreign corporation.
 
-The penalty difference is real: the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state a **$25,000** penalty for a missing Form 5472, while the [IRS Instructions for Form 5471](https://www.irs.gov/instructions/i5471) state a **$10,000** penalty under section 6038(b) for failure to furnish required information for each annual accounting period of each foreign corporation. If your US LLC is foreign-owned and needs the simpler filing, [we prepare Form 5472 packages from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-vs-form-5471).
+The penalty difference is real: the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state a **$25,000** penalty for a missing Form 5472, while the [IRS Instructions for Form 5471](https://www.irs.gov/instructions/i5471) state a **$10,000** penalty under section 6038(b) for failure to furnish required information for each annual accounting period of each foreign corporation. If your US LLC is foreign-owned and needs the simpler filing, [we prepare Form 5472 packages from $149](/start).
 
 ## What is the basic Form 5472 vs Form 5471 difference?
 
@@ -144,4 +144,4 @@ No. Filing the wrong international information return can create inconsistent re
 
 Form 5472 and Form 5471 solve different problems. If the structure is a non-US owner with a US disregarded LLC, the Form 5472 path is usually the one to fix first.
 
-[Start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-vs-form-5471-close), or read [how to fill out Form 5472](/blog/how-to-fill-out-form-5472) for the line-by-line mechanics.
+[Start the Form 5472 filing](/start), or read [how to fill out Form 5472](/blog/how-to-fill-out-form-5472) for the line-by-line mechanics.

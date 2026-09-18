@@ -12,7 +12,7 @@ draft: false
 
 “Check the box” sounds administrative, but the result is structural. A disregarded LLC uses a limited pro forma Form 1120 solely to transmit Form 5472. An LLC taxed as a corporation files a real Form 1120, computes corporate income tax, and may still attach Form 5472 because foreign ownership and related-party transactions remain.
 
-The compliance stakes do not disappear after an election. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) set a **$25,000 penalty per required form per year** for failure to file on time and in the required manner. If the classification is already settled and the entity had related-party transactions, [start the Form 5472 work](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-8832-election-foreign-owned-llc) while the adviser handles the election and income-tax return.
+The compliance stakes do not disappear after an election. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) set a **$25,000 penalty per required form per year** for failure to file on time and in the required manner. If the classification is already settled and the entity had related-party transactions, [start the Form 5472 work](/start) while the adviser handles the election and income-tax return.
 
 ## What does Form 8832 do for a foreign-owned LLC?
 
@@ -169,4 +169,4 @@ Not without legal and tax advice. Investors may prefer a corporate structure, bu
 
 ---
 
-Form 8832 can replace a simple disregarded-entity package with a full corporate tax regime, so model the result before choosing the date. [Start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-8832-election-foreign-owned-llc-close), or compare [Form 5472 with the pro forma Form 1120](/blog/pro-forma-form-1120-foreign-owned-llc).
+Form 8832 can replace a simple disregarded-entity package with a full corporate tax regime, so model the result before choosing the date. [Start the Form 5472 filing](/start), or compare [Form 5472 with the pro forma Form 1120](/blog/pro-forma-form-1120-foreign-owned-llc).

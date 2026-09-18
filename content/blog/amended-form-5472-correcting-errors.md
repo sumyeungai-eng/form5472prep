@@ -14,7 +14,7 @@ Finding an error after filing is uncomfortable, and the instinct to leave it alo
 
 An incomplete or materially wrong return can therefore attract the same **$25,000 penalty** as filing nothing at all. Correcting it voluntarily, before the IRS raises it, is both cheaper and better evidence of good faith.
 
-This guide covers what the IRS does and does not say, which errors are worth correcting, and how to assemble the correction. If you would rather have it prepared for you, [we handle corrected filings from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=amended-form-5472).
+This guide covers what the IRS does and does not say, which errors are worth correcting, and how to assemble the correction. If you would rather have it prepared for you, [we handle corrected filings from $149](/start).
 
 ## Is there an official way to amend Form 5472?
 
@@ -106,7 +106,7 @@ For current corrected-filing options, [see current pricing](/pricing).
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return accurately.
 
-[Start your corrected filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=amended-form-5472-cta) — about 15 minutes.
+[Start your corrected filing](/start) — about 15 minutes.
 
 ## Frequently asked questions
 
@@ -138,4 +138,4 @@ No. Each tax year's Form 5472 stands alone. A correct 2026 return does nothing a
 
 The instructions do not tell you how to correct Form 5472 — but they do tell you that an incomplete one counts as unfiled. That asymmetry is the whole reason to fix it now rather than hope.
 
-[Have the correction prepared](/start?utm_source=blog&utm_medium=internal&utm_campaign=amended-form-5472-close), or review [how the form should have been completed](/blog/how-to-fill-out-form-5472) first.
+[Have the correction prepared](/start), or review [how the form should have been completed](/blog/how-to-fill-out-form-5472) first.

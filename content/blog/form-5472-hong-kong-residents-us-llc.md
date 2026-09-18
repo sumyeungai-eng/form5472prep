@@ -12,7 +12,7 @@ draft: false
 
 That answer applies whether the LLC runs an ecommerce store, invoices consulting clients, holds an investment, or earned no revenue. Form 5472 records transactions between the LLC and related parties; it does not calculate the owner's Hong Kong or US income tax.
 
-The distinction matters because an initial bank deposit, an owner-paid bill, or a withdrawal can create a filing obligation even when customers paid nothing. If you want the federal package prepared and faxed, [start a Hong Kong Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-hong-kong-residents-us-llc).
+The distinction matters because an initial bank deposit, an owner-paid bill, or a withdrawal can create a filing obligation even when customers paid nothing. If you want the federal package prepared and faxed, [start a Hong Kong Form 5472 filing](/start).
 
 ## When must a Hong Kong resident file Form 5472?
 
@@ -153,4 +153,4 @@ No. A foreign-owned US disregarded entity must fax or mail Form 5472 with its pr
 
 ---
 
-A Hong Kong owner's HKID, related-party ledger, and separate treaty analysis are the keys to an accurate filing. [Start your Hong Kong Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-hong-kong-residents-us-llc-close), or read [how to fill out Form 5472](/blog/how-to-fill-out-form-5472) first.
+A Hong Kong owner's HKID, related-party ledger, and separate treaty analysis are the keys to an accurate filing. [Start your Hong Kong Form 5472 package](/start), or read [how to fill out Form 5472](/blog/how-to-fill-out-form-5472) first.

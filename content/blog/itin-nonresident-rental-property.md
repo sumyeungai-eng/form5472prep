@@ -10,7 +10,7 @@ draft: false
 
 **A non-resident owner of U.S. rental property may need an ITIN when the owner must file Form 1040-NR, claims a refund, makes a section 871(d) election, or has another federal tax purpose and is not eligible for an SSN. Property ownership by itself is not enough; the filing, withholding, and ownership structure determine the need.**
 
-If a qualified adviser has confirmed the federal tax purpose, [start the ITIN application](/itin/apply?utm_source=blog&utm_medium=internal&utm_campaign=itin-rental-property) for Form W-7 preparation and CAA certification.
+If a qualified adviser has confirmed the federal tax purpose, [start the ITIN application](/itin/apply) for Form W-7 preparation and CAA certification.
 
 ## Start with the owner, not just the property
 
@@ -68,6 +68,6 @@ CAA involvement does not decide whether the section 871(d) election is beneficia
 
 Before submitting, confirm who owns the property for federal tax purposes, who receives the rent, which return will be filed, whether withholding occurred, and which EIN or ITIN belongs on each document. If an LLC owns the property, separately review its Form 5472 and state filing obligations.
 
-[Apply for the $349 ITIN service](/itin/apply?utm_source=blog&utm_medium=internal&utm_campaign=itin-rental-property-close) after the individual federal tax purpose is established. Form W-7 preparation and CAA certification are included, and the original passport stays with the applicant.
+[Apply for the $349 ITIN service](/itin/apply) after the individual federal tax purpose is established. Form W-7 preparation and CAA certification are included, and the original passport stays with the applicant.
 
 *Educational information only; not tax or legal advice. Nonresident rental taxation and section 871(d) elections require analysis of the owner’s specific facts.*

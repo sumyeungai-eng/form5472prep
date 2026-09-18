@@ -68,10 +68,10 @@ Commit range: `21a1a2c..HEAD` on `main`.
 ## Open items
 
 ### Owner-gated decisions
-- **207 internal `utm_` links remain across 99 posts.** The ten in the partner cluster
-  are stripped. The rest is a mechanical sweep that would touch most of the blog in one
-  diff; it was not in this session's scope and needs a go-ahead before it lands
-  alongside another session's work.
+- ~~207 internal `utm_` links~~ **Done — the owner approved the sweep in-session.** All
+  217 internal `utm_` links are now gone from the blog (10 in the partner cluster, then
+  207 across 94 files), plus one on the `/dashboard` renewal banner. See
+  "The internal utm sweep" below.
 - **Delaware's own site contradicts itself** on the LLC annual tax: the Division of
   Corporations' alt-entity tax instructions say $400, while `/frtax/` and `/taxfaq/`
   still say $300. Posts now cite the $400 page and note the conflict. If Delaware
@@ -106,3 +106,44 @@ Commit range: `21a1a2c..HEAD` on `main`.
   only $300 and concluded the $400 figure was unsupported, when the figure is correct
   and a different official page carries it. A subagent's finding is a lead to verify,
   not a verdict to apply.
+
+## The internal utm sweep (same session, after owner approval)
+
+**What was removed.** Every `](/path?utm_source=…&utm_medium=…&utm_campaign=…)` on an
+internal link in `content/blog/*.md` — 207 links across 94 files, all of the identical
+shape, no mixed query parameters — plus the one on the `/dashboard` renewal banner in
+`src/app/(app)/dashboard/page.tsx`. Targets affected: `/start` (162), `/ein` (13),
+`/itin` (10), `/itin/apply` (9), `/ein/apply` (8), `/diirsp` (5). No blog-to-blog link
+carried utm. Zero external links were touched.
+
+**Why these were dead.** `src/middleware.ts:27` is `if (req.cookies.has(ATTR_COOKIE))
+return res;` — the `f5472_attr` first-touch cookie is written once, on a visitor's very
+first request to any page, and never overwritten for 90 days. A reader who is already
+on a blog post necessarily has the cookie, so the utm parameters on a link they click
+next are never read by our attribution. They also actively harmed GA4, which treats
+utm parameters as a new campaign and would re-attribute an in-progress session to
+"blog / internal".
+
+**What deliberately kept its utm parameters:**
+- `src/lib/reminders.ts:106` builds `/start?utm_source=email&utm_medium=lifecycle&utm_campaign=<campaign>-reminder`
+  for lifecycle emails. **An email click is a genuine external entry point** and can
+  legitimately be a visitor's first touch (for example after the 90-day cookie has
+  expired). Do not strip this one.
+- `src/lib/attribution.ts` and `src/lib/attribution.test.ts` — the parsing logic and
+  its fixtures.
+- `src/lib/blog.test.ts:67` — a `blogSlugFromHref` fixture that intentionally contains
+  a query string.
+
+**How the change was proven safe.** For each of the 94 files, HEAD's blob was fetched,
+the same regex applied to it, and the result compared byte-for-byte against the working
+file: 94 of 94 matched, so nothing but the query strings changed. All six link targets
+were confirmed to resolve (`/diirsp` is served by the `src/app/(marketing)/[seoSlug]`
+SEO catch-all, not a dedicated route — it returns 200 in production). `npx tsc
+--noEmit` clean; full `npx vitest run` green at 388 tests across 103 suites.
+
+**A verification lesson worth keeping.** The first sanity check on this diff reported a
+mismatch. It was wrong: the check filtered diff lines with `grep -E '^\-[^-]'`, which
+silently drops removed **markdown bullet** lines (they render as `-- ` in a diff) while
+the `+` side kept added bullets. When a verification script disagrees with an obviously
+safe transformation, suspect the script before the transformation — and prefer
+reconstructing the expected content from HEAD over pattern-matching diff output.

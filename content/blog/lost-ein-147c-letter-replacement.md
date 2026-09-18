@@ -12,7 +12,7 @@ draft: false
 
 Losing the letter and losing the number are different problems. The EIN may already appear on a saved Form SS-4, a bank record or a prior federal filing. If the number is known but a bank or platform wants IRS proof, Letter 147C addresses the document problem.
 
-The [IRS EIN page](https://www.irs.gov/businesses/employer-identification-number) says the number is free and a business entity should have only one EIN. If the search instead confirms that the LLC never received one, [use our $149 EIN acquisition service](/ein?utm_source=blog&utm_medium=internal&utm_campaign=lost-ein-147c-letter-replacement). Do not use a new application to replace missing paperwork.
+The [IRS EIN page](https://www.irs.gov/businesses/employer-identification-number) says the number is free and a business entity should have only one EIN. If the search instead confirms that the LLC never received one, [use our $149 EIN acquisition service](/ein). Do not use a new application to replace missing paperwork.
 
 ## What is the difference between CP575 and Letter 147C?
 
@@ -140,4 +140,4 @@ The IRS materials reviewed for this guide do not state an expiration date for Le
 
 ---
 
-A lost notice is a records problem, not a reason to create a second federal identity. Search first, then request Letter 147C through an authorised call if written proof is still needed. If the IRS confirms the LLC never received an EIN, [start the $149 EIN application](/ein?utm_source=blog&utm_medium=internal&utm_campaign=lost-ein-147c-letter-replacement-close), or read [how to get an EIN without an SSN](/blog/ein-for-foreign-owned-llc-without-ssn).
+A lost notice is a records problem, not a reason to create a second federal identity. Search first, then request Letter 147C through an authorised call if written proof is still needed. If the IRS confirms the LLC never received an EIN, [start the $149 EIN application](/ein), or read [how to get an EIN without an SSN](/blog/ein-for-foreign-owned-llc-without-ssn).

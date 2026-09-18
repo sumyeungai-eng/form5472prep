@@ -63,6 +63,6 @@ That distinction is central to choosing a provider. Ask whether the quoted servi
 - Choose a **TAC** when you can attend a U.S. appointment and mainly need document authentication.
 - Choose a **CAA** when you want preparation support and passport-safe authentication without relying on a U.S. appointment.
 
-[Start with Form5472 Prep’s CAA service](/itin/apply?utm_source=blog&utm_medium=internal&utm_campaign=itin-caa-vs-mail) for a $349 flat fee. Confirm the federal tax purpose first; the service cannot create eligibility where none exists.
+[Start with Form5472 Prep’s CAA service](/itin/apply) for a $349 flat fee. Confirm the federal tax purpose first; the service cannot create eligibility where none exists.
 
 *Application routes and price checked September 3, 2026. Educational information only; not tax or legal advice.*

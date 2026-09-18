@@ -23,7 +23,7 @@ This guide covers exactly what applies to UK residents specifically: what to fil
 - **The deadline** is April 15 of the following year, extendable to October 15 by filing Form 7004 first.
 - **Zero revenue does not mean zero filing obligation.** The capital you wired into the LLC when you opened it is a reportable transaction.
 - **BOI reporting to FinCEN is NOT required** for US-formed LLCs as of March 26, 2025 — most guides you'll find online have this wrong.
-- **Want the filing handled?** [Start your Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uk-residents-us-llc-tldr), or review [what Form 5472 is](/blog/what-is-form-5472) first.
+- **Want the filing handled?** [Start your Form 5472 package](/start), or review [what Form 5472 is](/blog/what-is-form-5472) first.
 
 ---
 
@@ -113,7 +113,7 @@ Form5472 Prep prepares your Form 5472 and pro forma Form 1120, generates the rea
 
 > **Standard filing is $149 (5-7 business days), Express is $199 (3 business days), and each additional past tax year is +$99 — IRS fax delivery included.** Takes about 15 minutes. 100% money-back guarantee if we fail to submit.
 >
-> [Get your Form 5472 filed →](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uk-residents-us-llc)
+> [Get your Form 5472 filed →](/start)
 
 ---
 
@@ -165,4 +165,4 @@ The LLC must have a US address on its formation documents and on the pro forma F
 
 *Disclaimer: This post is general information about IRS filing obligations, not tax advice for your specific situation. Rules can change — always verify current requirements at [irs.gov/instructions/i5472](https://www.irs.gov/instructions/i5472) or consult a qualified preparer before filing.*
 
-[Start your UK Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-uk-residents-us-llc-close), or read the [late-filing guide](/blog/form-5472-filed-late-never-filed) if you have missed years.
+[Start your UK Form 5472 filing](/start), or read the [late-filing guide](/blog/form-5472-filed-late-never-filed) if you have missed years.

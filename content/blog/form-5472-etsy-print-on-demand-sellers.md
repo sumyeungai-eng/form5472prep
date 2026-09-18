@@ -12,7 +12,7 @@ draft: false
 
 One Etsy order can create a sale, marketplace tax, refund reserve, listing or processing entry, currency conversion, payout, and print-on-demand fulfilment charge. Form 5472 is not a second Etsy ledger. The filing isolates transactions between the LLC and its foreign owner or another foreign related party.
 
-That classification matters because the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) impose a **$25,000 penalty per form per year** when a required filing is missing or substantially incomplete. If the shop records mix owner top-ups with ordinary marketplace cash, [start an accountant-reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-etsy-print-on-demand-sellers).
+That classification matters because the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) impose a **$25,000 penalty per form per year** when a required filing is missing or substantially incomplete. If the shop records mix owner top-ups with ordinary marketplace cash, [start an accountant-reviewed filing](/start).
 
 ## Which Etsy and print-on-demand transactions are reportable?
 
@@ -170,4 +170,4 @@ It can. Formation funding, owner-paid listings or samples, loans, reimbursements
 
 ---
 
-For Etsy and POD sellers, reconcile marketplace operations first and report related-party movements second. [Prepare and fax the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-etsy-print-on-demand-sellers-close), or compare the workflow with [Form 5472 for Shopify dropshipping](/blog/form-5472-shopify-dropshipping-foreign-owner).
+For Etsy and POD sellers, reconcile marketplace operations first and report related-party movements second. [Prepare and fax the Form 5472 package](/start), or compare the workflow with [Form 5472 for Shopify dropshipping](/blog/form-5472-shopify-dropshipping-foreign-owner).

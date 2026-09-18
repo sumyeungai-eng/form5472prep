@@ -12,7 +12,7 @@ draft: false
 
 The legal wrapper and the federal tax classification are related but not identical. A single-member LLC is usually disregarded for federal income tax unless it elects corporate treatment. A C corporation is a separate taxpayer. That difference changes the return, the way profits reach the founder, and the work needed after formation.
 
-The reporting risk exists on both paths. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) impose a **$25,000 penalty per form, per year** when a required Form 5472 is not filed on time and in the prescribed manner. If the entity choice is already made and the foreign-owned business had related-party transactions, [start the information-return filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=llc-vs-c-corp-non-resident-founders) while an adviser reviews the wider structure.
+The reporting risk exists on both paths. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) impose a **$25,000 penalty per form, per year** when a required Form 5472 is not filed on time and in the prescribed manner. If the entity choice is already made and the foreign-owned business had related-party transactions, [start the information-return filing](/start) while an adviser reviews the wider structure.
 
 ## What is the main LLC vs C corp difference for a non-resident founder?
 
@@ -141,4 +141,4 @@ No. A corporation can be formed under another state’s law. Delaware is common 
 
 ---
 
-Choose the entity around funding, cash distributions, treaty position, and exit—not around the shortest formation form. [Start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=llc-vs-c-corp-non-resident-founders-close), or review the [foreign-owned LLC filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist).
+Choose the entity around funding, cash distributions, treaty position, and exit—not around the shortest formation form. [Start the Form 5472 filing](/start), or review the [foreign-owned LLC filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist).

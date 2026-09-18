@@ -13,7 +13,7 @@ draft: false
 
 Form 5472 is an information return, not a profit-and-loss statement. You start with the counterparty, then classify the movement. That is why a customer payment through Stripe can be outside the form while a small owner reimbursement can be reportable.
 
-The IRS instructions state that failing to file Form 5472 when due, filing it in the wrong manner, or failing to maintain required records can trigger a **$25,000** penalty under IRC Section 6038A(d) ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). If you want the complete package prepared and faxed to the IRS, [start your Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-reportable-transactions-examples).
+The IRS instructions state that failing to file Form 5472 when due, filing it in the wrong manner, or failing to maintain required records can trigger a **$25,000** penalty under IRC Section 6038A(d) ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). If you want the complete package prepared and faxed to the IRS, [start your Form 5472 filing](/start).
 
 ## What counts as a reportable transaction on Form 5472?
 
@@ -146,6 +146,6 @@ Usually yes. If the foreign owner paid an LLC obligation personally, include it 
 
 ## What is the bottom line?
 
-Form 5472 is a related-party transaction report, not a list of every LLC payment. Start with the owner, identify other related parties, total every monetary and nonmonetary transfer, and keep a clear audit trail. [Prepare your Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-reportable-transactions-examples-close), or read the [SaaS founder guide](/blog/form-5472-saas-founders) if payment processors are making the owner-transfer trail harder to see.
+Form 5472 is a related-party transaction report, not a list of every LLC payment. Start with the owner, identify other related parties, total every monetary and nonmonetary transfer, and keep a clear audit trail. [Prepare your Form 5472 package](/start), or read the [SaaS founder guide](/blog/form-5472-saas-founders) if payment processors are making the owner-transfer trail harder to see.
 
 *Educational content only; not tax or legal advice.*

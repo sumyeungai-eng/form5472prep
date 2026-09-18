@@ -12,7 +12,7 @@ draft: false
 
 New Mexico is often marketed to non-residents as a private, low-maintenance formation state. The pitch has a sound core: the state does not require an LLC annual report, and the public formation record need not work like a detailed annual ownership return. But “no annual report” is easily misheard as “no annual requirements.”
 
-The federal rule is separate. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that failure to file can trigger a **$25,000 penalty per form per year**. If your New Mexico LLC received money from you, paid money to you, or dealt with another foreign related party, [start a reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=new-mexico-llc-foreign-owner-tax-filing) before treating the company as maintenance-free.
+The federal rule is separate. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that failure to file can trigger a **$25,000 penalty per form per year**. If your New Mexico LLC received money from you, paid money to you, or dealt with another foreign related party, [start a reviewed filing](/start) before treating the company as maintenance-free.
 
 ## What must a non-resident New Mexico LLC owner do annually?
 
@@ -162,4 +162,4 @@ New Mexico has no LLC annual report, while Wyoming has an annual report and lice
 
 ---
 
-A New Mexico LLC can be low maintenance without being filing-free. Separate the state entity record, state tax nexus, and federal related-party return, then [prepare your Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=new-mexico-llc-foreign-owner-tax-filing-close) or use the [foreign-owned LLC filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) to review every obligation.
+A New Mexico LLC can be low maintenance without being filing-free. Separate the state entity record, state tax nexus, and federal related-party return, then [prepare your Form 5472 package](/start) or use the [foreign-owned LLC filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) to review every obligation.

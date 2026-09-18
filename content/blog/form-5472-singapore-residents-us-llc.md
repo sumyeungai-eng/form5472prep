@@ -10,7 +10,7 @@ draft: false
 
 **A Singapore resident or company that wholly owns a US single-member LLC generally files Form 5472 with a pro forma Form 1120 when the LLC has a reportable transaction with its owner or another related party. Contributions, withdrawals, loans, reimbursements and formation costs can trigger filing even when the LLC has no sales.**
 
-Form 5472 reports US related-party information; it does not replace Singapore tax analysis. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that a required Form 5472 filed late, filed substantially incomplete, or not supported by required records can trigger a **$25,000** penalty. Owners ready to prepare the package can [start the guided filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-singapore-residents-us-llc).
+Form 5472 reports US related-party information; it does not replace Singapore tax analysis. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that a required Form 5472 filed late, filed substantially incomplete, or not supported by required records can trigger a **$25,000** penalty. Owners ready to prepare the package can [start the guided filing](/start).
 
 ## When must a Singapore-owned LLC file?
 
@@ -160,4 +160,4 @@ No. Form 5472 is US information reporting. Singapore tax treatment depends on se
 
 ## What should Singapore owners do next?
 
-Organise the owner ledger before the deadline rather than after an IRS notice. [Start your Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-singapore-residents-us-llc-close), or review the [annual filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) before preparing the package.
+Organise the owner ledger before the deadline rather than after an IRS notice. [Start your Form 5472 filing](/start), or review the [annual filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) before preparing the package.

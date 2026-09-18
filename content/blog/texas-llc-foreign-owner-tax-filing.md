@@ -12,7 +12,7 @@ draft: false
 
 Texas changed the practical workflow for many small entities, but it did not eliminate every Texas filing and it did not change the IRS Form 5472 rule. A foreign owner needs one revenue workpaper for Texas and one related-party ledger for the IRS.
 
-The Texas Comptroller's franchise-tax guidance says the No Tax Due Report is not available for 2026 reports; an entity with annualised total revenue less than or equal to the no-tax-due threshold is not required to file a No Tax Due Report, but still must file a Public Information Report or Ownership Information Report, and the 2026 threshold is $2.65 million ([Texas Comptroller franchise tax](https://comptroller.texas.gov/taxes/franchise/)). A foreign owner who contributed or withdrew funds should [start the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=texas-llc-foreign-owner-tax-filing) while handling the Texas filing through the Comptroller.
+The Texas Comptroller's franchise-tax guidance says the No Tax Due Report is not available for 2026 reports; an entity with annualised total revenue less than or equal to the no-tax-due threshold is not required to file a No Tax Due Report, but still must file a Public Information Report or Ownership Information Report, and the 2026 threshold is $2.65 million ([Texas Comptroller franchise tax](https://comptroller.texas.gov/taxes/franchise/)). A foreign owner who contributed or withdrew funds should [start the Form 5472 package](/start) while handling the Texas filing through the Comptroller.
 
 ## What does a foreign-owned Texas LLC file in 2026?
 
@@ -120,7 +120,7 @@ After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 an
 
 For current federal filing tiers, [see current pricing](/pricing).
 
-We are not a CPA firm and do not give Texas franchise-tax advice. If the LLC still needs an EIN, the EIN service is $149 at [/ein](/ein). If the federal package is ready, use the [Texas Form 5472 intake](/start?utm_source=blog&utm_medium=internal&utm_campaign=texas-llc-foreign-owner-tax-filing-product).
+We are not a CPA firm and do not give Texas franchise-tax advice. If the LLC still needs an EIN, the EIN service is $149 at [/ein](/ein). If the federal package is ready, use the [Texas Form 5472 intake](/start).
 
 ## Frequently asked questions
 
@@ -154,4 +154,4 @@ No. Texas franchise-tax reports and PIRs go to the Texas Comptroller. Form 5472 
 
 ---
 
-The cleanest approach is one revenue workpaper for Texas and one related-party ledger for the IRS. The threshold may simplify the Texas franchise-tax report, but it does not erase Form 5472. [Start your federal filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=texas-llc-foreign-owner-tax-filing-close) or review the [reportable-transactions guide](/blog/form-5472-reportable-transactions-examples).
+The cleanest approach is one revenue workpaper for Texas and one related-party ledger for the IRS. The threshold may simplify the Texas franchise-tax report, but it does not erase Form 5472. [Start your federal filing](/start) or review the [reportable-transactions guide](/blog/form-5472-reportable-transactions-examples).

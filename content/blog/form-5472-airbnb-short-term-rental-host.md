@@ -12,7 +12,7 @@ draft: false
 
 A short-term rental creates booking payouts, cleaning charges, platform fees, furniture purchases, owner top-ups and draws. Form 5472 is not a duplicate profit-and-loss statement. It follows movements between a foreign owner and the US LLC.
 
-The distinction has real consequences. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) impose a **$25,000 penalty per form per year** for failure to file; a substantially incomplete form also counts as a failure. If the owner ledger is already reconciled, [start an accountant-reviewed Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-airbnb-short-term-rental-host) rather than treating platform revenue as the reporting total.
+The distinction has real consequences. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) impose a **$25,000 penalty per form per year** for failure to file; a substantially incomplete form also counts as a failure. If the owner ledger is already reconciled, [start an accountant-reviewed Form 5472 filing](/start) rather than treating platform revenue as the reporting total.
 
 ## What does Form 5472 report for a short-term rental LLC?
 
@@ -167,4 +167,4 @@ The filing follows the legal entity, not the listing. Multiple listings in one L
 
 ---
 
-Airbnb and Vrbo payouts are operating revenue; purchase funding, furnishing costs paid personally and every owner draw are the Form 5472 trail. [Start the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-airbnb-short-term-rental-host-close), or compare the operating-host facts with the related [US real estate foreign-investor guide](/blog/form-5472-us-real-estate-foreign-investor).
+Airbnb and Vrbo payouts are operating revenue; purchase funding, furnishing costs paid personally and every owner draw are the Form 5472 trail. [Start the Form 5472 package](/start), or compare the operating-host facts with the related [US real estate foreign-investor guide](/blog/form-5472-us-real-estate-foreign-investor).

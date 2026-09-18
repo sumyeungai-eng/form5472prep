@@ -12,7 +12,7 @@ draft: false
 
 Florida compliance looks simple because the annual report is online and does not ask for a balance sheet. The trap is assuming that Sunbiz is the tax filing. Sunbiz maintains the Florida entity record. Form 5472 reports related-party transactions to the IRS.
 
-The Florida Department of State states that a 2026 annual report for a limited liability company is due by 11:59 PM EST on Friday, May 1, 2026, before a $400 late fee is assessed, and the same page lists the LLC annual report fee as $138.75 ([Florida Sunbiz annual report page](https://dos.fl.gov/sunbiz/manage-business/efile/annual-report/)). If the owner funded or withdrew money from the company, [start the federal filing here](/start?utm_source=blog&utm_medium=internal&utm_campaign=florida-llc-foreign-owner-tax-filing) and keep the Sunbiz filing as a separate state task.
+The Florida Department of State states that a 2026 annual report for a limited liability company is due by 11:59 PM EST on Friday, May 1, 2026, before a $400 late fee is assessed, and the same page lists the LLC annual report fee as $138.75 ([Florida Sunbiz annual report page](https://dos.fl.gov/sunbiz/manage-business/efile/annual-report/)). If the owner funded or withdrew money from the company, [start the federal filing here](/start) and keep the Sunbiz filing as a separate state task.
 
 ## What are the annual requirements for a Florida LLC?
 
@@ -115,7 +115,7 @@ After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 an
 
 For current federal filing tiers, [see current pricing](/pricing).
 
-We are not a CPA firm and do not give Florida tax advice. If the LLC still needs an EIN, the EIN service is $149 at [/ein](/ein). If the federal package is ready, use the [Florida Form 5472 intake](/start?utm_source=blog&utm_medium=internal&utm_campaign=florida-llc-foreign-owner-tax-filing-product).
+We are not a CPA firm and do not give Florida tax advice. If the LLC still needs an EIN, the EIN service is $149 at [/ein](/ein). If the federal package is ready, use the [Florida Form 5472 intake](/start).
 
 ## Frequently asked questions
 
@@ -149,4 +149,4 @@ Yes. Florida's lack of a flat LLC franchise tax does not change the IRS reportin
 
 ---
 
-Keep the Sunbiz confirmation and IRS fax receipt as two different proofs. The state report keeps the Florida record active; Form 5472 satisfies the federal related-party reporting requirement. [Start your federal filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=florida-llc-foreign-owner-tax-filing-close) or read the [first-year Form 5472 guide](/blog/first-year-form-5472-new-llc).
+Keep the Sunbiz confirmation and IRS fax receipt as two different proofs. The state report keeps the Florida record active; Form 5472 satisfies the federal related-party reporting requirement. [Start your federal filing](/start) or read the [first-year Form 5472 guide](/blog/first-year-form-5472-new-llc).

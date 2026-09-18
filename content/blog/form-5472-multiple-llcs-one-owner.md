@@ -12,7 +12,7 @@ draft: false
 
 The number of owners and the number of entities are different counts. One owner can create several reporting entities, and each entity can have more than one related party.
 
-If two or more LLCs had owner funding, withdrawals, loans, reimbursements, or intercompany activity, [start with a separate intake for each LLC](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-multiple-llcs-one-owner).
+If two or more LLCs had owner funding, withdrawals, loans, reimbursements, or intercompany activity, [start with a separate intake for each LLC](/start).
 
 ## The entity-by-party rule
 
@@ -105,6 +105,6 @@ Keep a master control sheet, but do not merge the books. Each LLC should retain 
 
 Form5472 Prep can prepare a separate standard information-return package for each qualifying foreign-owned US disregarded LLC. The package includes the pro forma Form 1120, applicable Form 5472, supporting statement, accountant review, IRS submission, and delivery receipt.
 
-[Start the first LLC's filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-multiple-llcs-one-owner-close), then keep the other entity records separated by exact legal name and EIN. Tiered or series structures should receive an international tax classification review before preparation.
+[Start the first LLC's filing](/start), then keep the other entity records separated by exact legal name and EIN. Tiered or series structures should receive an international tax classification review before preparation.
 
 *Educational content only; not tax or legal advice.*

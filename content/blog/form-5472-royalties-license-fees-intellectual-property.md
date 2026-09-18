@@ -12,7 +12,7 @@ draft: false
 
 Form 5472 disclosure does not itself settle whether US tax must be withheld. Treat those as two connected workstreams.
 
-If the LLC paid its owner or an affiliate for software, a brand, content, a patent, or another right, [start a reviewed Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-royalties-license-fees-intellectual-property) with the agreement and gross-payment ledger.
+If the LLC paid its owner or an affiliate for software, a brand, content, a patent, or another right, [start a reviewed Form 5472 package](/start) with the agreement and gross-payment ledger.
 
 ## Classify the intellectual-property arrangement first
 
@@ -94,6 +94,6 @@ Keep the legal payer and payee, relationship, IP ownership, rights granted, paym
 
 Form5472 Prep prepares the Form 5472, pro forma Form 1120, and supporting statement for the standard foreign-owned US disregarded LLC filing. The package receives accountant review before submission through the dedicated IRS filing route.
 
-[Start the IP transaction filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-royalties-license-fees-intellectual-property-close) when the agreement, ownership chart, gross amounts, currency records, and withholding documents are ready. Use an international tax specialist for pricing, treaty, sourcing, and withholding conclusions.
+[Start the IP transaction filing](/start) when the agreement, ownership chart, gross amounts, currency records, and withholding documents are ready. Use an international tax specialist for pricing, treaty, sourcing, and withholding conclusions.
 
 *Educational content only; not tax or legal advice.*

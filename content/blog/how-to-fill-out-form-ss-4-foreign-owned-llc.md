@@ -12,7 +12,7 @@ draft: false
 
 Form SS-4 is short, but several answers establish the IRS account that later appears on banking records and federal filings. This walkthrough uses the [current IRS Form SS-4](https://www.irs.gov/pub/irs-pdf/fss4.pdf) and its December 2025 revision, current in 2026.
 
-The [IRS EIN application page](https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online) says the EIN is free and limits issuance to **one EIN per responsible party per day**. If you prefer to have the form prepared and the IRS contact handled, [use our $149 EIN service](/ein?utm_source=blog&utm_medium=internal&utm_campaign=how-to-fill-out-form-ss-4-foreign-owned-llc).
+The [IRS EIN application page](https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online) says the EIN is free and limits issuance to **one EIN per responsible party per day**. If you prefer to have the form prepared and the IRS contact handled, [use our $149 EIN service](/ein).
 
 This guide assumes one foreign individual owns a US-organised LLC, no Form 8832 corporate election is in effect, and the LLC needs an EIN for Form 5472 and ordinary business use. A multi-member LLC, foreign entity, trust owner or elected corporation needs a different classification analysis.
 
@@ -170,4 +170,4 @@ No, not when the principal place of business is outside the United States. Use t
 
 ---
 
-A correct SS-4 keeps the LLC's legal name, owner, classification and business facts consistent from the first federal record. [Have Form5472 Prep obtain the EIN for $149](/ein?utm_source=blog&utm_medium=internal&utm_campaign=how-to-fill-out-form-ss-4-foreign-owned-llc-close), or use the [EIN application checklist](/blog/ein-application-checklist-foreign-owned-llc) for a final document review.
+A correct SS-4 keeps the LLC's legal name, owner, classification and business facts consistent from the first federal record. [Have Form5472 Prep obtain the EIN for $149](/ein), or use the [EIN application checklist](/blog/ein-application-checklist-foreign-owned-llc) for a final document review.

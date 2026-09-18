@@ -12,7 +12,7 @@ draft: false
 
 Form 5472 discloses cross-border related-party transactions. It does not determine how Italy classifies the LLC or whether the owner owes US income tax.
 
-If the LLC moved money to or from its Italian owner, [start a reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-italy-residents-us-llc) before the information-return deadline.
+If the LLC moved money to or from its Italian owner, [start a reviewed filing](/start) before the information-return deadline.
 
 ## What triggers Form 5472 for an Italian owner?
 
@@ -104,4 +104,4 @@ No. Treaty benefits concern income taxation; the section 6038A information retur
 
 ---
 
-An Italy-owned LLC needs a clean codice-fiscale field map and transaction-level owner ledger. [Start the reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-italy-residents-us-llc-close), or use the [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) first.
+An Italy-owned LLC needs a clean codice-fiscale field map and transaction-level owner ledger. [Start the reviewed filing](/start), or use the [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) first.

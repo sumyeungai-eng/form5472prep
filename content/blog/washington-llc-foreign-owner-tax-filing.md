@@ -12,7 +12,7 @@ draft: false
 
 Washington has no individual income tax on wages, but that slogan does not remove LLC reporting, gross-receipts tax, retail sales tax, or federal information filing.
 
-If the LLC had funding, withdrawals, loans, reimbursements, or other transactions with its foreign owner, [start the federal Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=washington-llc-foreign-owner-tax-filing) while resolving the Washington filings separately.
+If the LLC had funding, withdrawals, loans, reimbursements, or other transactions with its foreign owner, [start the federal Form 5472 package](/start) while resolving the Washington filings separately.
 
 ## The Washington federal-state matrix
 
@@ -92,6 +92,6 @@ Form5472 Prep handles the federal information-return package for the standard fo
 
 Form5472 Prep handles the federal information-return package for the standard profile. We do not file the Washington annual report, business license application, B&O return, or sales-tax return.
 
-[Start the reviewed federal filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=washington-llc-foreign-owner-tax-filing-close), and use Washington's official portals or a state tax professional for the state obligations.
+[Start the reviewed federal filing](/start), and use Washington's official portals or a state tax professional for the state obligations.
 
 *Educational content only; not tax or legal advice. State fees and thresholds should be verified when filing.*

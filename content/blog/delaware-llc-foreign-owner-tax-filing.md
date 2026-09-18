@@ -12,7 +12,7 @@ draft: false
 
 Delaware is popular because state maintenance is simple. That simplicity causes a specific mistake: a foreign owner pays the Delaware LLC tax, sees no annual report requirement, and assumes the IRS has nothing to receive. Delaware maintenance and federal related-party reporting are separate systems.
 
-The Delaware Division of Corporations states that Delaware limited liability companies do not file an annual report, but they must pay an annual tax of $400 on or before June 1 ([LLC, LP and GP tax instructions](https://corp.delaware.gov/alt-entitytaxinstructions/)); late payment carries a $200 penalty and interest at 1.5% per month ([Delaware annual report and tax information](https://corp.delaware.gov/frtax/)). If the federal transaction ledger is the part you need completed, [start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=delaware-llc-foreign-owner-tax-filing) and treat the Delaware tax as a separate state payment.
+The Delaware Division of Corporations states that Delaware limited liability companies do not file an annual report, but they must pay an annual tax of $400 on or before June 1 ([LLC, LP and GP tax instructions](https://corp.delaware.gov/alt-entitytaxinstructions/)); late payment carries a $200 penalty and interest at 1.5% per month ([Delaware annual report and tax information](https://corp.delaware.gov/frtax/)). If the federal transaction ledger is the part you need completed, [start the Form 5472 filing](/start) and treat the Delaware tax as a separate state payment.
 
 ## What does a foreign-owned Delaware LLC file in 2026?
 
@@ -114,7 +114,7 @@ After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 an
 
 For current federal filing tiers, [see current pricing](/pricing).
 
-We are not a CPA firm and do not give Delaware tax advice. If the LLC still needs an EIN, the EIN service is $149 at [/ein](/ein). If the federal package is ready, use the [Delaware Form 5472 intake](/start?utm_source=blog&utm_medium=internal&utm_campaign=delaware-llc-foreign-owner-tax-filing-product).
+We are not a CPA firm and do not give Delaware tax advice. If the LLC still needs an EIN, the EIN service is $149 at [/ein](/ein). If the federal package is ready, use the [Delaware Form 5472 intake](/start).
 
 ## Frequently asked questions
 
@@ -148,4 +148,4 @@ Usually no. Registered-agent service is state maintenance. Form 5472 is a federa
 
 ---
 
-Treat Delaware maintenance and IRS reporting as two separate jobs. Pay the Delaware LLC tax on time, but do not stop there if owner money moved. [Start your federal filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=delaware-llc-foreign-owner-tax-filing-close) or see the [Form 5472 late-filing guide](/blog/form-5472-filed-late-never-filed) if prior years are missing.
+Treat Delaware maintenance and IRS reporting as two separate jobs. Pay the Delaware LLC tax on time, but do not stop there if owner money moved. [Start your federal filing](/start) or see the [Form 5472 late-filing guide](/blog/form-5472-filed-late-never-filed) if prior years are missing.

@@ -27,7 +27,7 @@ This guide covers what FBA sellers specifically need to report, which transactio
 - **Practitioners report faster, more automated notice generation in 2026** for missing or deficient Form 5472 filings.
 - **The deadline** is April 15, extendable to October 15 with Form 7004.
 
-If the federal filing is the part you want handled, [start your Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=amazon-fba-foreign-sellers-form-5472) — about 15 minutes.
+If the federal filing is the part you want handled, [start your Form 5472 filing](/start) — about 15 minutes.
 
 ---
 
@@ -184,4 +184,4 @@ The form itself isn't complex — two pages plus a supporting statement. The 202
 
 For context on how this fits the broader Form 5472 requirements, see [what Form 5472 is and who must file](/blog/what-is-form-5472). If you have late years to catch up on, the [DIIRSP guide](/blog/form-5472-filed-late-never-filed) covers the procedure start to finish.
 
-[File your Form 5472 now — takes about 15 minutes, fax to the IRS included.](/start?utm_source=blog&utm_medium=internal&utm_campaign=amazon-fba-foreign-sellers-form-5472)
+[File your Form 5472 now — takes about 15 minutes, fax to the IRS included.](/start)

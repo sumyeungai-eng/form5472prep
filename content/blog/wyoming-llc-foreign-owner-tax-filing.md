@@ -14,7 +14,7 @@ Wyoming is the most popular US formation state for non-residents, and for good r
 
 What is often left out of the pitch is that the federal information-reporting obligation is entirely unaffected by the choice of state. A Wyoming LLC owned by a non-US person has exactly the same Form 5472 requirement as a Delaware, Florida or New Mexico one — and the $25,000 penalty for missing it dwarfs everything Wyoming saves you.
 
-If you already know Form 5472 is your gap, [we prepare and fax the complete package from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=wyoming-llc-foreign-owner).
+If you already know Form 5472 is your gap, [we prepare and fax the complete package from $149](/start).
 
 ## What does a foreign-owned Wyoming LLC owe each year?
 
@@ -106,7 +106,7 @@ The state side of a Wyoming LLC is genuinely easy — a $60 report you can file 
 
 For the current federal filing options, [see current pricing](/pricing).
 
-[Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=wyoming-llc-foreign-owner-cta) — about 15 minutes.
+[Start your filing](/start) — about 15 minutes.
 
 ## Frequently asked questions
 
@@ -138,4 +138,4 @@ Yes, if any money moved between you and the LLC — including the transfer that 
 
 Wyoming's annual obligation is $60 and ten minutes. The federal one is the one that carries $25,000 of risk, and it applies to your LLC no matter which state issued the certificate.
 
-[File your Form 5472](/start?utm_source=blog&utm_medium=internal&utm_campaign=wyoming-llc-foreign-owner-close), or start with [the full foreign-owned LLC filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist).
+[File your Form 5472](/start), or start with [the full foreign-owned LLC filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist).

@@ -10,7 +10,7 @@ draft: false
 
 **Fax a foreign-owned US disregarded entity's complete Form 5472 package at 300 DPI or higher to the IRS Ogden PIN Unit at 855-887-7737. Include the pro forma Form 1120, every required Form 5472 and attachment, and any signed statement. Keep the full transmitted file and a timestamped successful-transmission receipt as filing evidence.**
 
-The fax is the submission, not a draft handoff. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) say foreign-owned U.S. disregarded entities file by "Fax (300 DPI or higher) to 855-887-7737" or by mail to the dedicated Ogden PIN Unit address; the same instructions state that the penalty for failing to file Form 5472 when due and in the prescribed manner is **$25,000**. If the package is not complete, [use the guided preparation process](/start?utm_source=blog&utm_medium=internal&utm_campaign=how-to-fax-form-5472) before sending it.
+The fax is the submission, not a draft handoff. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) say foreign-owned U.S. disregarded entities file by "Fax (300 DPI or higher) to 855-887-7737" or by mail to the dedicated Ogden PIN Unit address; the same instructions state that the penalty for failing to file Form 5472 when due and in the prescribed manner is **$25,000**. If the package is not complete, [use the guided preparation process](/start) before sending it.
 
 ## What documents belong in the Form 5472 fax?
 
@@ -134,4 +134,4 @@ Correct the transmission and resend promptly. Preserve both the failed attempt a
 
 Yes. The IRS instructions list a dedicated Ogden PIN Unit mailing address. Use trackable delivery and keep the complete signed package.
 
-Accurate preparation and verifiable delivery are equally important. [Start a prepared-and-filed Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=how-to-fax-form-5472-close) or read the [deadline guide](/blog/form-5472-deadline-2026) before sending a partial fax.
+Accurate preparation and verifiable delivery are equally important. [Start a prepared-and-filed Form 5472 package](/start) or read the [deadline guide](/blog/form-5472-deadline-2026) before sending a partial fax.

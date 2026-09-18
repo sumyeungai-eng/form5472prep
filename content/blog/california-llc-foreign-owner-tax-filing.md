@@ -12,7 +12,7 @@ draft: false
 
 California compliance is a two-agency problem. The Franchise Tax Board handles the annual tax, LLC fee and Form 568. The IRS handles Form 5472 and the pro forma Form 1120.
 
-The California Franchise Tax Board states that every LLC doing business or organised in California must pay an annual tax of $800, and that the yearly tax remains due even when the LLC is not conducting business until the LLC is cancelled ([California FTB LLC page](https://www.ftb.ca.gov/file/business/types/limited-liability-company/index.html)). If the federal related-party ledger is the part you need handled, [start the Form 5472 package here](/start?utm_source=blog&utm_medium=internal&utm_campaign=california-llc-foreign-owner-tax-filing) and keep the California Form 568 work separate.
+The California Franchise Tax Board states that every LLC doing business or organised in California must pay an annual tax of $800, and that the yearly tax remains due even when the LLC is not conducting business until the LLC is cancelled ([California FTB LLC page](https://www.ftb.ca.gov/file/business/types/limited-liability-company/index.html)). If the federal related-party ledger is the part you need handled, [start the Form 5472 package here](/start) and keep the California Form 568 work separate.
 
 ## What must a foreign-owned California LLC file?
 
@@ -126,7 +126,7 @@ After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 an
 
 For current federal filing tiers, [see current pricing](/pricing).
 
-We are not a CPA firm and do not give California tax advice. If you need an EIN first, the EIN service is $149 at [/ein](/ein). If the federal package is ready to start, use the [California Form 5472 intake](/start?utm_source=blog&utm_medium=internal&utm_campaign=california-llc-foreign-owner-tax-filing-product).
+We are not a CPA firm and do not give California tax advice. If you need an EIN first, the EIN service is $149 at [/ein](/ein). If the federal package is ready to start, use the [California Form 5472 intake](/start).
 
 ## Frequently asked questions
 
@@ -160,4 +160,4 @@ File final California and federal returns where required and complete cancellati
 
 ---
 
-Build one calendar with separate California and federal columns. The takeaway is that California maintenance and IRS related-party reporting are different jobs, both easy to miss. [Start the federal Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=california-llc-foreign-owner-tax-filing-close) or review the [foreign-owned LLC annual checklist](/blog/foreign-owned-llc-filing-requirements-checklist).
+Build one calendar with separate California and federal columns. The takeaway is that California maintenance and IRS related-party reporting are different jobs, both easy to miss. [Start the federal Form 5472 filing](/start) or review the [foreign-owned LLC annual checklist](/blog/foreign-owned-llc-filing-requirements-checklist).

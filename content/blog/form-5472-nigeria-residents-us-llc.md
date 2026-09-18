@@ -12,7 +12,7 @@ draft: false
 
 The payment platform is not the reporting category. A client payment routed through Payoneer can remain ordinary revenue, while a transfer from the LLC to the owner through the same platform can be a reportable distribution. The classification follows who paid whom and why.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that failure to file can trigger a **$25,000 penalty per form, per year**. If agency income and owner withdrawals are mixed in one payout history, [start a reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-nigeria-residents-us-llc) before using the net cash received in Nigeria as the Form 5472 total.
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that failure to file can trigger a **$25,000 penalty per form, per year**. If agency income and owner withdrawals are mixed in one payout history, [start a reviewed filing](/start) before using the net cash received in Nigeria as the Form 5472 total.
 
 ## When does a Nigeria resident’s US LLC file Form 5472?
 
@@ -160,4 +160,4 @@ No. Reconcile the payout chain and preserve gross related-party movements by dir
 
 ---
 
-For a Nigerian owner, the strongest filing trail connects the current Tax ID to a reconciled payout chain and gross owner movements. [Prepare and fax the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-nigeria-residents-us-llc-close), or review [Stripe, PayPal, and Wise Form 5472 treatment](/blog/stripe-paypal-wise-form-5472) before classifying transfers.
+For a Nigerian owner, the strongest filing trail connects the current Tax ID to a reconciled payout chain and gross owner movements. [Prepare and fax the Form 5472 package](/start), or review [Stripe, PayPal, and Wise Form 5472 treatment](/blog/stripe-paypal-wise-form-5472) before classifying transfers.

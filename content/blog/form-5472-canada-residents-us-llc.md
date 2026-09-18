@@ -26,7 +26,7 @@ This guide covers what's specific to Canadian residents: what Form 5472 requires
 - **BOI reporting to FinCEN is NOT required** for US-formed LLCs as of March 26, 2025 — many online guides haven't caught up with this.
 - **The deadline** is April 15, extendable to October 15 by filing [Form 7004](https://www.irs.gov/instructions/i7004) in advance.
 
-If you want the federal filing handled, [start your Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-canada-residents-us-llc) — about 15 minutes.
+If you want the federal filing handled, [start your Form 5472 filing](/start) — about 15 minutes.
 
 ---
 
@@ -159,4 +159,4 @@ If you're a Canadian resident who owns a US single-member LLC, your Form 5472 ob
 
 For a broader overview, see [what Form 5472 is and who must file](/blog/what-is-form-5472). If you need to catch up on prior years, the [DIIRSP guide](/blog/form-5472-filed-late-never-filed) covers the process step by step.
 
-Ready to file? [Start your filing here — takes about 15 minutes, fax to the IRS included.](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-canada-residents-us-llc)
+Ready to file? [Start your filing here — takes about 15 minutes, fax to the IRS included.](/start)

@@ -21,7 +21,7 @@ This post explains what Form 5472 actually is, who has to file it, what gets rep
 - **What gets reported:** money moving between the LLC and the owner. Capital you put in, distributions you took out, loans, services. Revenue from customers is *not* reported.
 - **When it's due:** April 15 of the year after the tax year, with an automatic extension to October 15 if you file Form 7004 first. See the [Form 5472 deadline guide](/blog/form-5472-deadline-2026) for the current calendar-year dates.
 - **How it's filed:** by mail or **fax** to the IRS Ogden Service Center, PIN Unit. You cannot e-file Form 5472 for a foreign-owned disregarded entity. The fax number is **+1-855-887-7737** under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472).
-- **Need it prepared?** [Start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=what-is-form-5472-tldr), or use the [part-by-part guide](/blog/how-to-fill-out-form-5472) to see what the form asks for.
+- **Need it prepared?** [Start the Form 5472 filing](/start), or use the [part-by-part guide](/blog/how-to-fill-out-form-5472) to see what the form asks for.
 
 ## Why does this form exist?
 
@@ -120,7 +120,7 @@ Doing it yourself costs $0 in IRS fees but takes hours and risks a $25,000 penal
 
 If you're filing for the first time, the IRS instructions are dense but workable. If you're catching up on multiple years, you'll want a reasonable cause statement that hits the right notes for DIIRSP.
 
-That's exactly what [Form5472 Prep does](/start?utm_source=blog&utm_medium=internal&utm_campaign=what-is-form-5472) — generates the filled forms, the reasonable cause statement, and faxes the signed package to the IRS. About 15 minutes start to finish.
+That's exactly what [Form5472 Prep does](/start) — generates the filled forms, the reasonable cause statement, and faxes the signed package to the IRS. About 15 minutes start to finish.
 
 We are not a CPA firm and do not give tax advice; we prepare and submit the filing package accurately.
 

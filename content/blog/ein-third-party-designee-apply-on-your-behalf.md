@@ -14,7 +14,7 @@ For a 2026 application, the distinction is the whole decision. A responsible par
 
 The IRS charges **$0** to issue an EIN and says applicants never have to pay a government fee on its [online EIN page](https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online). Paying a provider is optional. The provider's fee should buy accurate preparation, submission, IRS contact, and follow-up—not privileged access to a number the IRS sells for nothing.
 
-If handling an international SS-4 call or fax is the problem, [use the $149 EIN service](/ein?utm_source=blog&utm_medium=internal&utm_campaign=ein-third-party-designee-apply-on-your-behalf). Form5472 Prep names the real responsible party, acts only within the signed designee authority, and returns the completed application record with the EIN.
+If handling an international SS-4 call or fax is the problem, [use the $149 EIN service](/ein). Form5472 Prep names the real responsible party, acts only within the signed designee authority, and returns the completed application record with the EIN.
 
 ## What does an SS-4 third-party designee authorise?
 
@@ -162,4 +162,4 @@ No. DIY is viable. A foreign owner can use an available IRS application route an
 
 ---
 
-A third-party designee can carry the SS-4 workload without borrowing the owner's identity or taking continuing control. Keep the real owner in the responsible-party field, sign a complete application, and collect the final record when the temporary authority ends. [Have us obtain the EIN for $149](/ein?utm_source=blog&utm_medium=internal&utm_campaign=ein-third-party-designee-apply-on-your-behalf-close), or read [the EIN application checklist for a foreign-owned LLC](/blog/ein-application-checklist-foreign-owned-llc).
+A third-party designee can carry the SS-4 workload without borrowing the owner's identity or taking continuing control. Keep the real owner in the responsible-party field, sign a complete application, and collect the final record when the temporary authority ends. [Have us obtain the EIN for $149](/ein), or read [the EIN application checklist for a foreign-owned LLC](/blog/ein-application-checklist-foreign-owned-llc).

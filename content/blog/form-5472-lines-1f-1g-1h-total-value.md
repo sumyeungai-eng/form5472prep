@@ -12,7 +12,7 @@ draft: false
 
 The three fields are a reconciliation system. Line 1f is per form, line 1g counts forms, and line 1h ties the entire filing package together.
 
-For a checked calculation and filing, [start the reviewed Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-lines-1f-1g-1h-total-value).
+For a checked calculation and filing, [start the reviewed Form 5472 package](/start).
 
 ## What does Form 5472 line 1f report?
 
@@ -99,4 +99,4 @@ Follow the current instructions carefully. Line 1f is not completed for a form w
 
 ---
 
-Lines 1f, 1g, and 1h should reconcile before the package is signed. [Start a reviewed Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-lines-1f-1g-1h-total-value-close), or review [how to fill out Form 5472](/blog/how-to-fill-out-form-5472).
+Lines 1f, 1g, and 1h should reconcile before the package is signed. [Start a reviewed Form 5472 filing](/start), or review [how to fill out Form 5472](/blog/how-to-fill-out-form-5472).

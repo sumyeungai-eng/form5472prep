@@ -12,7 +12,7 @@ draft: false
 
 The form reports relationships, not the LLC’s entire profit-and-loss statement. Customer receipts, processor payouts, and unrelated supplier bills do not become Form 5472 items merely because they passed through a US account. Owner funding, withdrawals, loans, reimbursements, and payments to an owner-controlled Brazilian company are the movements to isolate.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a missing or substantially incomplete return can trigger a **$25,000 penalty per form, per year**. If the BRL records are spread across Brazilian and US accounts, [start a reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-brazil-residents-us-llc) before assuming a no-tax conclusion means nothing is due.
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a missing or substantially incomplete return can trigger a **$25,000 penalty per form, per year**. If the BRL records are spread across Brazilian and US accounts, [start a reviewed filing](/start) before assuming a no-tax conclusion means nothing is due.
 
 ## When does a Brazil resident’s LLC need Form 5472?
 
@@ -151,4 +151,4 @@ No. Preserve and convert gross movements by direction. Contributions and distrib
 
 ---
 
-For a Brazilian owner, the dependable filing trail connects the correct CPF or CNPJ to every gross related-party movement. [Prepare and fax the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-brazil-residents-us-llc-close), or review the [foreign-owned LLC filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) before closing the year.
+For a Brazilian owner, the dependable filing trail connects the correct CPF or CNPJ to every gross related-party movement. [Prepare and fax the Form 5472 package](/start), or review the [foreign-owned LLC filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) before closing the year.

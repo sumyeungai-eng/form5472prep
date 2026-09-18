@@ -10,7 +10,7 @@ draft: false
 
 **Report Form 5472 amounts in US dollars and attach a schedule showing the exchange rates used. The IRS generally points to the spot rate when an item is received, paid or accrued and accepts a consistently used published rate. The method should match the transaction pattern and be documented, not selected for a preferred result.**
 
-Currency conversion is part of the filing workpapers, not an afterthought. The [IRS yearly average currency exchange rates page](https://www.irs.gov/individuals/international-taxpayers/yearly-average-currency-exchange-rates) says the IRS has no official exchange rate, generally accepts any posted exchange rate used consistently, and currently lists 2025 yearly average rates including Euro Zone euro 0.886, United Kingdom pound 0.759, Canada dollar 1.398 and India rupee 87.133 per U.S. dollar. Owners can [start a guided filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-exchange-rates) after collecting original-currency amounts, transaction dates and statements.
+Currency conversion is part of the filing workpapers, not an afterthought. The [IRS yearly average currency exchange rates page](https://www.irs.gov/individuals/international-taxpayers/yearly-average-currency-exchange-rates) says the IRS has no official exchange rate, generally accepts any posted exchange rate used consistently, and currently lists 2025 yearly average rates including Euro Zone euro 0.886, United Kingdom pound 0.759, Canada dollar 1.398 and India rupee 87.133 per U.S. dollar. Owners can [start a guided filing](/start) after collecting original-currency amounts, transaction dates and statements.
 
 ## What does Form 5472 require for foreign currency?
 
@@ -130,4 +130,4 @@ Yes. Keep the original statement, rate source, calculation and filed attachment 
 
 Usually not merely because customers paid the LLC. Form 5472 focuses on related-party transactions. Owner contributions, distributions, loans and reimbursements are the usual conversion focus.
 
-A transparent method is more defensible than a perfect-looking unexplained total. [Start your Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-exchange-rates-close) or use the [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) before finalising the exchange-rate attachment.
+A transparent method is more defensible than a perfect-looking unexplained total. [Start your Form 5472 filing](/start) or use the [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) before finalising the exchange-rate attachment.

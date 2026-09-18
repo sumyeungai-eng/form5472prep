@@ -12,7 +12,7 @@ draft: false
 
 This is the English guide for the search *residente en México LLC Estados Unidos Form 5472*. It applies to consultants, ecommerce operators, and investors who use a single-member LLC formed in a US state while living in Mexico.
 
-The filing is driven by related-party transactions, not by whether the LLC showed a profit. Formation funding or an owner-paid expense can create the obligation before the first sale. To have the federal package prepared and faxed, [start a Mexico Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-mexico-residents-us-llc).
+The filing is driven by related-party transactions, not by whether the LLC showed a profit. Formation funding or an owner-paid expense can create the obligation before the first sale. To have the federal package prepared and faxed, [start a Mexico Form 5472 filing](/start).
 
 ## When must a Mexico resident file Form 5472?
 
@@ -156,4 +156,4 @@ No. A foreign-owned US disregarded entity must fax or mail Form 5472 with a pro 
 
 ---
 
-For a Mexico owner, the RFC, gross related-party ledger, and separate treaty and Mexican-law analyses keep the filing in the right lane. [Start your Mexico Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-mexico-residents-us-llc-close), or read [what Form 5472 is](/blog/what-is-form-5472) first.
+For a Mexico owner, the RFC, gross related-party ledger, and separate treaty and Mexican-law analyses keep the filing in the right lane. [Start your Mexico Form 5472 package](/start), or read [what Form 5472 is](/blog/what-is-form-5472) first.

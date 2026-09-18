@@ -14,7 +14,7 @@ The current Form 5472 is three pages and has nine parts, most of which a small f
 
 This walkthrough is the short version. It follows [Form 5472 (Rev. December 2023)](https://www.irs.gov/pub/irs-pdf/f5472.pdf) and the [Instructions (Rev. December 2024)](https://www.irs.gov/instructions/i5472), which are the current revisions as of September 2026. Always check the revision date in the top-right corner of the PDF you downloaded — using a stale version is one of the most common DIY errors.
 
-If at any point this stops being worth your afternoon, [we prepare and fax the complete package from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=how-to-fill-out-form-5472).
+If at any point this stops being worth your afternoon, [we prepare and fax the complete package from $149](/start).
 
 ## What documents do you need before you start?
 
@@ -171,7 +171,7 @@ Nothing above is beyond a careful person with an afternoon and the instructions 
 
 **$149** standard, ready in 5-7 business days. **$199** express, ready in 3 business days. **+$99** per additional past tax year. Fax delivery included. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
 
-[Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=how-to-fill-out-form-5472-cta) — about 15 minutes of questions, and we handle the rest.
+[Start your filing](/start) — about 15 minutes of questions, and we handle the rest.
 
 ## Frequently asked questions
 
@@ -203,4 +203,4 @@ One for each related party with which the LLC had reportable transactions. A sin
 
 Nine parts, most of them blank, one attached statement that carries the real content, and a fax number. Work through it carefully or hand it over.
 
-[File with us](/start?utm_source=blog&utm_medium=internal&utm_campaign=how-to-fill-out-form-5472-close), or compare the options in our [DIY vs. preparer breakdown](/blog/form-5472-diy-vs-preparer).
+[File with us](/start), or compare the options in our [DIY vs. preparer breakdown](/blog/form-5472-diy-vs-preparer).

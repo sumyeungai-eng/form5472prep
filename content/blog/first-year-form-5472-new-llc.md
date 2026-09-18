@@ -13,7 +13,7 @@ draft: false
 
 The first-year mistake is simple: owners look for sales, profit, or a tax bill. Form 5472 looks for transactions between the U.S. LLC and its foreign related party, usually the owner. A new company can have no website, no customers, and no revenue, but still have a filing requirement because the owner funded it or paid its setup bills.
 
-The IRS instructions state that a foreign-owned U.S. disregarded entity must file Form 5472 with a pro forma Form 1120 when it has reportable transactions, and they state a **$25,000** penalty for failing to file when due or in the required manner ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). If you already know the first tax year has closed, [start the first-year filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=first-year-form-5472-new-llc) with the formation records and owner-transfer totals ready.
+The IRS instructions state that a foreign-owned U.S. disregarded entity must file Form 5472 with a pro forma Form 1120 when it has reportable transactions, and they state a **$25,000** penalty for failing to file when due or in the required manner ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). If you already know the first tax year has closed, [start the first-year filing](/start) with the formation records and owner-transfer totals ready.
 
 For the tax side of the same structure, read [does a foreign-owned LLC pay U.S. tax?](/blog/does-foreign-owned-llc-pay-us-tax). The filing answer and the income-tax answer are separate.
 
@@ -151,6 +151,6 @@ The IRS instructions state a **$25,000** penalty for failing to file on time or 
 
 ## What is the bottom line?
 
-The first Form 5472 starts with formation, not revenue. Collect every owner-funded setup cost and owner transfer from day one, then file after the tax year closes. [Start the first-year package](/start?utm_source=blog&utm_medium=internal&utm_campaign=first-year-form-5472-new-llc-close), or read [what a foreign-owned LLC pays in U.S. tax](/blog/does-foreign-owned-llc-pay-us-tax) before deciding what else may be required.
+The first Form 5472 starts with formation, not revenue. Collect every owner-funded setup cost and owner transfer from day one, then file after the tax year closes. [Start the first-year package](/start), or read [what a foreign-owned LLC pays in U.S. tax](/blog/does-foreign-owned-llc-pay-us-tax) before deciding what else may be required.
 
 *Educational content only; not tax or legal advice.*

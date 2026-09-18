@@ -14,7 +14,7 @@ A Form 1042-S records income and US tax withheld; it is not a refund voucher. Fi
 
 The [IRS Form 1040-NR instructions](https://www.irs.gov/instructions/i1040nr) state that income not effectively connected with a US trade or business is generally subject to a flat **30%** rate or a lower treaty rate. The instructions also direct a claimant to attach Form 1042-S as proof of tax withheld at source.
 
-If over-withholding is real and you need a personal taxpayer number, [use our $349 ITIN service](/itin?utm_source=blog&utm_medium=internal&utm_campaign=itin-refund-30-percent-withholding-1042-s). An IRS-authorised Certifying Acceptance Agent verifies the identity documents and returns them immediately, so you never mail an original passport to the IRS.
+If over-withholding is real and you need a personal taxpayer number, [use our $349 ITIN service](/itin). An IRS-authorised Certifying Acceptance Agent verifies the identity documents and returns them immediately, so you never mail an original passport to the IRS.
 
 ## Why was 30% withheld from the payment?
 
@@ -152,4 +152,4 @@ No. A Certifying Acceptance Agent verifies eligible original identity documents 
 
 ---
 
-A Form 1042-S showing 30% withholding starts the calculation; it does not prove the refund. Reconcile the statement, establish the correct tax, and file Form 1040-NR with a supported ITIN application when needed. [Start the $349 CAA ITIN service](/itin?utm_source=blog&utm_medium=internal&utm_campaign=itin-refund-30-percent-withholding-1042-s-close), then review [Form W-8BEN versus Form W-9](/blog/w8ben-vs-w9-foreign-owned-llc) before the next payment.
+A Form 1042-S showing 30% withholding starts the calculation; it does not prove the refund. Reconcile the statement, establish the correct tax, and file Form 1040-NR with a supported ITIN application when needed. [Start the $349 CAA ITIN service](/itin), then review [Form W-8BEN versus Form W-9](/blog/w8ben-vs-w9-foreign-owned-llc) before the next payment.

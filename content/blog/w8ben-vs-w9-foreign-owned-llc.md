@@ -12,7 +12,7 @@ draft: false
 
 The confusion is understandable. The LLC was formed in a US state, has an EIN, and may have a US bank account. A platform then asks for “your US tax form” and presents W-9 as the obvious choice. None of those facts makes a nonresident alien a US person or turns a disregarded LLC into a separate beneficial owner for withholding documentation.
 
-The [IRS Instructions for Form W-8BEN](https://www.irs.gov/instructions/iw8ben) say foreign persons can face **30% withholding on specified US-source income** and say the single owner of a disregarded entity is treated as the beneficial owner of income the entity receives. If the W-form question is holding up your compliance work, [start the separate Form 5472 filing here](/start?utm_source=blog&utm_medium=internal&utm_campaign=w8ben-vs-w9-foreign-owned-llc).
+The [IRS Instructions for Form W-8BEN](https://www.irs.gov/instructions/iw8ben) say foreign persons can face **30% withholding on specified US-source income** and say the single owner of a disregarded entity is treated as the beneficial owner of income the entity receives. If the W-form question is holding up your compliance work, [start the separate Form 5472 filing here](/start).
 
 ## Is W-8BEN or W-9 correct for a foreign-owned LLC?
 
@@ -149,4 +149,4 @@ Reassess the payee classification before using the owner-form shortcut. Confirm 
 
 ---
 
-For a disregarded foreign-owned LLC, choose the W-form from the owner outward and prepare Form 5472 as a separate compliance track. [Start the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=w8ben-vs-w9-foreign-owned-llc-close), or read [how Form 5472 differs from Form 5471](/blog/form-5472-vs-form-5471).
+For a disregarded foreign-owned LLC, choose the W-form from the owner outward and prepare Form 5472 as a separate compliance track. [Start the Form 5472 package](/start), or read [how Form 5472 differs from Form 5471](/blog/form-5472-vs-form-5471).

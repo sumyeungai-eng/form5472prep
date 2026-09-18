@@ -13,7 +13,7 @@ draft: false
 
 Payment platforms create noise. A single month can show gross sales, refunds, reserves, fee reversals, currency conversions, and payouts. The filing question is narrower: who was on the other side of the transaction? If the counterparty was the foreign owner or another related party, slow down. If the counterparty was an unrelated customer or processor, keep the record but usually keep it outside Form 5472.
 
-The IRS instructions state that a failure to file Form 5472 when due, filing in the wrong manner, or failing to maintain required records can trigger a **$25,000** penalty ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). If payment-platform statements are mixed with owner transfers, [start an accountant-reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=stripe-paypal-wise-form-5472) and provide the year's totals through the guided intake.
+The IRS instructions state that a failure to file Form 5472 when due, filing in the wrong manner, or failing to maintain required records can trigger a **$25,000** penalty ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). If payment-platform statements are mixed with owner transfers, [start an accountant-reviewed filing](/start) and provide the year's totals through the guided intake.
 
 ## Do Stripe customer payments go on Form 5472?
 
@@ -158,6 +158,6 @@ Treat it as an owner-paid LLC obligation unless the records show another classif
 
 ## What is the bottom line?
 
-Stripe, PayPal, and Wise are payment rails, not Form 5472 categories. Classify the person on the other side of each transfer, then report movements involving the foreign owner or another related party. [Prepare and fax the complete filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=stripe-paypal-wise-form-5472-close), or review [currency conversion for Form 5472](/blog/form-5472-currency-conversion-exchange-rates) before totaling non-dollar transfers.
+Stripe, PayPal, and Wise are payment rails, not Form 5472 categories. Classify the person on the other side of each transfer, then report movements involving the foreign owner or another related party. [Prepare and fax the complete filing](/start), or review [currency conversion for Form 5472](/blog/form-5472-currency-conversion-exchange-rates) before totaling non-dollar transfers.
 
 *Educational content only; not tax or legal advice.*

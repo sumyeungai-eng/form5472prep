@@ -12,7 +12,7 @@ draft: false
 
 Opening the account is an identity, entity, and risk-review process—not a benefit automatically delivered with the LLC. The provider decides which countries, activities, addresses, owners, and documents it will accept. Approval can never be guaranteed by a registered agent or formation service.
 
-The EIN normally comes first. The [IRS explanation of Notice CP575](https://www.irs.gov/individuals/understanding-your-cp575-notice) says the notice confirms an entity’s EIN and may be needed to open a bank account. If the LLC has no EIN confirmation yet, [the EIN service is $149](/ein) and is the practical first step. Once money starts moving, [prepare the LLC’s Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=us-bank-account-foreign-owned-llc) from the same source records.
+The EIN normally comes first. The [IRS explanation of Notice CP575](https://www.irs.gov/individuals/understanding-your-cp575-notice) says the notice confirms an entity’s EIN and may be needed to open a bank account. If the LLC has no EIN confirmation yet, [the EIN service is $149](/ein) and is the practical first step. Once money starts moving, [prepare the LLC’s Form 5472 filing](/start) from the same source records.
 
 ## What does a foreign-owned LLC need to open a US business account?
 
@@ -156,4 +156,4 @@ No. The account itself does not decide income tax. Business activities, income s
 
 ---
 
-Get the EIN, apply with consistent documents, and preserve the first funding trail for Part V. [Start the Form 5472 filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=us-bank-account-foreign-owned-llc-close), or use the [foreign-owned LLC requirements checklist](/blog/foreign-owned-llc-filing-requirements-checklist).
+Get the EIN, apply with consistent documents, and preserve the first funding trail for Part V. [Start the Form 5472 filing](/start), or use the [foreign-owned LLC requirements checklist](/blog/foreign-owned-llc-filing-requirements-checklist).

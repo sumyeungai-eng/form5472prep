@@ -14,7 +14,7 @@ Reference 101 is frustrating because the screen gives a number, not a useful exp
 
 The IRS limits issuance to **one EIN per responsible party per day**, across online, telephone, fax and mail requests, according to the [current Form SS-4 instructions](https://www.irs.gov/instructions/iss4). A same-day retry can therefore create a second problem without resolving the first.
 
-If the LLC is already formed and you want the form and IRS contact handled, [use our $149 EIN service](/ein?utm_source=blog&utm_medium=internal&utm_campaign=ein-application-rejected-reference-number-101). The IRS itself charges **$0** for an EIN; the service fee covers preparation, submission and follow-up.
+If the LLC is already formed and you want the form and IRS contact handled, [use our $149 EIN service](/ein). The IRS itself charges **$0** for an EIN; the service fee covers preparation, submission and follow-up.
 
 ## What does EIN reference number 101 actually mean?
 
@@ -143,4 +143,4 @@ The IRS does not publish a specific processing time for a reference 101 manual r
 
 ---
 
-Reference 101 stops an automated session, not the LLC's ability to receive an EIN. Correct the record, give the IRS the formation evidence it needs and use one valid submission route. [Get the EIN application handled for $149](/ein?utm_source=blog&utm_medium=internal&utm_campaign=ein-application-rejected-reference-number-101-close), or read the [international EIN processing guide](/blog/ein-processing-time-international-applicants).
+Reference 101 stops an automated session, not the LLC's ability to receive an EIN. Correct the record, give the IRS the formation evidence it needs and use one valid submission route. [Get the EIN application handled for $149](/ein), or read the [international EIN processing guide](/blog/ein-processing-time-international-applicants).

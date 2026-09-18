@@ -13,7 +13,7 @@ draft: false
 
 SaaS founders often have clean accounting for revenue and weak accounting for owner movements. Stripe shows customers. The bank shows payouts. The founder remembers taking money out later. Form 5472 cares about the founder link, not the whole revenue chain.
 
-The IRS instructions state that failing to file Form 5472 when due, filing it in the wrong manner, or failing to maintain required records can trigger a **$25,000** penalty under IRC Section 6038A(d) ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). If your SaaS LLC already has its year-end owner-transfer totals, [start the filing here](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-saas-founders).
+The IRS instructions state that failing to file Form 5472 when due, filing it in the wrong manner, or failing to maintain required records can trigger a **$25,000** penalty under IRC Section 6038A(d) ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). If your SaaS LLC already has its year-end owner-transfer totals, [start the filing here](/start).
 
 ## Why does a SaaS LLC file Form 5472?
 
@@ -136,6 +136,6 @@ No. Processor fees reconcile platform cash to the bank account. Owner draws are 
 
 ## What is the bottom line?
 
-SaaS does not change the Form 5472 rule. Separate ordinary customer activity from founder and intercompany transfers, document the latter carefully, and file the information return on time. [Get the complete package prepared and faxed](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-saas-founders-close), or use the [reportable transactions examples](/blog/form-5472-reportable-transactions-examples) to classify edge cases first.
+SaaS does not change the Form 5472 rule. Separate ordinary customer activity from founder and intercompany transfers, document the latter carefully, and file the information return on time. [Get the complete package prepared and faxed](/start), or use the [reportable transactions examples](/blog/form-5472-reportable-transactions-examples) to classify edge cases first.
 
 *Educational content only; not tax or legal advice.*

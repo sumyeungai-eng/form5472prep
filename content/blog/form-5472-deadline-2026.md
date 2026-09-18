@@ -14,7 +14,7 @@ Form 5472 deadlines are simple in outline and easy to miss in practice, because 
 
 Here is the full calendar as it stands in August 2026, plus the extension rule that is specific to foreign-owned disregarded entities and catches out people who assume Form 7004 works the way it does for everyone else.
 
-If a date has already passed for you, [we prepare and fax complete late packages with a reasonable cause letter from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-deadline-2026).
+If a date has already passed for you, [we prepare and fax complete late packages with a reasonable cause letter from $149](/start).
 
 ## The deadline calendar
 
@@ -120,7 +120,7 @@ With the 15 October 2026 extended deadline in view: standard turnaround needs yo
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return, on time.
 
-[Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-deadline-2026-cta) — about 15 minutes.
+[Start your filing](/start) — about 15 minutes.
 
 ## Frequently asked questions
 
@@ -156,4 +156,4 @@ File all of them together with one reasonable cause statement, as soon as possib
 
 15 October 2026 is the live date for the 2025 tax year. After that, the next one is 15 April 2027 — and the best time to prepare it is January, not April.
 
-[Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-deadline-2026-close), or read the [extension rules in detail](/blog/form-5472-extension) if you need more time.
+[Start your filing](/start), or read the [extension rules in detail](/blog/form-5472-extension) if you need more time.

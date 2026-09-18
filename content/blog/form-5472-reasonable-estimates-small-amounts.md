@@ -12,7 +12,7 @@ draft: false
 
 These rules are relief for reporting uncertainty—not permission to ignore records, omit a category, or round every transfer.
 
-If incomplete books are delaying a filing, [start a reviewed Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-reasonable-estimates-small-amounts) with the bank records, owner ledger, and explanation of each gap.
+If incomplete books are delaying a filing, [start a reviewed Form 5472 package](/start) with the bank records, owner ledger, and explanation of each gap.
 
 ## Three different concepts
 
@@ -92,6 +92,6 @@ Compare the filed estimate with the supported actual amount and ask a qualified 
 
 Form5472 Prep prepares the Form 5472, pro forma Form 1120, and supporting statement for the standard foreign-owned disregarded LLC profile. We reconcile the owner ledger to the filing categories and flag unsupported estimates for resolution.
 
-[Start the filing with incomplete records](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-reasonable-estimates-small-amounts-close). Provide every available statement, the related-party list, the estimation method, and the date missing evidence was requested.
+[Start the filing with incomplete records](/start). Provide every available statement, the related-party list, the estimation method, and the date missing evidence was requested.
 
 *Educational content only; not tax or legal advice.*

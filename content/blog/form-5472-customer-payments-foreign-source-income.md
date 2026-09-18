@@ -12,7 +12,7 @@ draft: false
 
 Three ledgers are often confused: customer revenue, related-party transactions, and income-taxable amounts. Accurate filing starts by separating them instead of treating every bank deposit as Form 5472 activity.
 
-For a reviewed reconciliation and filing, [start the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-customer-payments-foreign-source-income).
+For a reviewed reconciliation and filing, [start the Form 5472 package](/start).
 
 ## Are customer payments reportable on Form 5472?
 
@@ -98,4 +98,4 @@ No. The LLC can have foreign-source income and no US income tax yet still file F
 
 ---
 
-Do not copy gross sales into Form 5472. Reconcile customers and related parties separately, then [start the reviewed filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-customer-payments-foreign-source-income-close). See [15 reportable-transaction examples](/blog/form-5472-reportable-transactions-examples) for more classifications.
+Do not copy gross sales into Form 5472. Reconcile customers and related parties separately, then [start the reviewed filing](/start). See [15 reportable-transaction examples](/blog/form-5472-reportable-transactions-examples) for more classifications.

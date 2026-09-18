@@ -10,7 +10,7 @@ draft: false
 
 **An eligible international applicant can receive an EIN during an IRS phone call, while the Form SS-4 instructions describe about four business days by fax and approximately four weeks by mail. Actual queues vary: on September 3, 2026, the IRS operations page reported faxed SS-4 forms being processed nine business days after receipt and paper forms within 30 days.**
 
-Form5472 Prep currently targets EIN delivery in one to five business days by using the appropriate phone or fax route, but IRS workload and case-specific review can extend that estimate. [Start the managed application](/ein/apply?utm_source=blog&utm_medium=internal&utm_campaign=ein-processing-time) if you want the SS-4 and IRS contact handled for $149.
+Form5472 Prep currently targets EIN delivery in one to five business days by using the appropriate phone or fax route, but IRS workload and case-specific review can extend that estimate. [Start the managed application](/ein/apply) if you want the SS-4 and IRS contact handled for $149.
 
 ## International EIN timing by method
 
@@ -63,6 +63,6 @@ If a return is due before assignment, check [what to do when an EIN is pending a
 
 Form the LLC, prepare the SS-4, and apply before a bank, payment processor, contract, or federal filing becomes urgent. Use the phone route when eligible and practical; use fax when you need a documented submission and can accept the current queue; use mail only when the longer path fits the schedule.
 
-[Start the $149 EIN service](/ein/apply?utm_source=blog&utm_medium=internal&utm_campaign=ein-processing-time-close) for Form SS-4 preparation and application handling. Treat one to five business days as the service target, not an IRS guarantee.
+[Start the $149 EIN service](/ein/apply) for Form SS-4 preparation and application handling. Treat one to five business days as the service target, not an IRS guarantee.
 
 *IRS operational status checked September 3, 2026 and should be refreshed before publication. Educational information only; not tax or legal advice.*

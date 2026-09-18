@@ -10,7 +10,7 @@ draft: false
 
 **The IRS charges $0 to issue an ITIN. Any amount you pay is for preparation, document authentication, tax-return work, translation, shipping, or professional assistance—not for purchasing the number from the government. Form5472 Prep charges $349 for Form W-7 preparation and CAA certification so the original passport does not have to be mailed to the IRS.**
 
-If that scope matches what you need, [start the $349 ITIN application](/itin/apply?utm_source=blog&utm_medium=internal&utm_campaign=itin-cost).
+If that scope matches what you need, [start the $349 ITIN application](/itin/apply).
 
 ## ITIN cost comparison
 
@@ -70,6 +70,6 @@ If the goal is only to obtain a business tax number for a foreign-owned U.S. LLC
 
 Choose a free route when you understand the W-7 package, can access a suitable appointment or handle certified documents, and are comfortable managing IRS follow-up. Choose a CAA service when preserving control of the original passport and receiving application support is worth the professional fee.
 
-[Apply for the $349 ITIN service](/itin/apply?utm_source=blog&utm_medium=internal&utm_campaign=itin-cost-close) only after confirming the federal tax purpose. You will receive the intake and payment steps online.
+[Apply for the $349 ITIN service](/itin/apply) only after confirming the federal tax purpose. You will receive the intake and payment steps online.
 
 *Prices and service scope checked September 3, 2026. Educational information only; not tax or legal advice.*

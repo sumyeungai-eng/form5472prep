@@ -25,7 +25,7 @@ This guide covers everything specific to India residents: what to file, how your
 - **Zero revenue doesn't mean zero filing.** The initial transfer you made to open your US bank account is a reportable capital contribution.
 - **BOI reporting to FinCEN is NOT required** for US-formed LLCs as of March 26, 2025. Most guides online still say you must file — they're wrong.
 - **The 2026 US remittance excise tax (IRC §4475) does not reach ordinary bank transfers** from your LLC to your Indian account — only cash/money-order/cashier's-check remittances through a money-transmitter are taxed.
-- **Want the federal filing handled?** [Start your Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-india-residents-us-llc-tldr) after gathering the LLC EIN and owner ledger.
+- **Want the federal filing handled?** [Start your Form 5472 package](/start) after gathering the LLC EIN and owner ledger.
 
 ---
 
@@ -163,4 +163,4 @@ Standard filing is $149 (5-7 business days), Express $199 (3 business days), +$9
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the US information return accurately.
 
-Ready to file your Form 5472? [Start here — takes about 15 minutes](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-india-residents-us-llc).
+Ready to file your Form 5472? [Start here — takes about 15 minutes](/start).

@@ -14,7 +14,7 @@ Adding a second member changes your entire federal filing profile. The obligatio
 
 This guide covers which return applies to which structure, what a partnership with foreign partners actually files, and the three ownership arrangements that put a multi-member LLC back into Form 5472 territory.
 
-If you have concluded you are a single-member disregarded entity after all, [we prepare and fax the Form 5472 package from $149](/start?utm_source=blog&utm_medium=internal&utm_campaign=multi-member-llc-5472).
+If you have concluded you are a single-member disregarded entity after all, [we prepare and fax the Form 5472 package from $149](/start).
 
 ## Which return does your LLC file?
 
@@ -109,7 +109,7 @@ Most people who arrive at this question turn out to be exactly what they thought
 
 We handle single-member foreign-owned disregarded entities. We do not prepare Form 1065 partnership returns — if your LLC is a partnership, you need a CPA or enrolled agent who does. We are not a CPA firm and do not give tax advice.
 
-[Start your filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=multi-member-llc-5472-cta) — about 15 minutes.
+[Start your filing](/start) — about 15 minutes.
 
 ## Frequently asked questions
 
@@ -141,4 +141,4 @@ Then it files a real Form 1120 with tax computed, and if it is at least 25% fore
 
 Count the members, check whether an election was ever filed, then pick the form. Getting that order wrong is what generates penalties in a return you never knew existed.
 
-[File your Form 5472](/start?utm_source=blog&utm_medium=internal&utm_campaign=multi-member-llc-5472-close), or start with [what Form 5472 is and who files it](/blog/what-is-form-5472).
+[File your Form 5472](/start), or start with [what Form 5472 is and who files it](/blog/what-is-form-5472).

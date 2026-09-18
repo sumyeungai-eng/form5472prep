@@ -10,7 +10,7 @@ draft: false
 
 **Form the LLC before applying for its EIN, then prepare the exact legal name, formation date, mailing and physical addresses, responsible-party details, entity classification, reason for applying, business activity, and signed Form SS-4. A foreign responsible party who has no SSN or ITIN and is ineligible for one can enter “Foreign” or “N/A” on line 7b.**
 
-If you want the SS-4 prepared and the international IRS contact handled, [start the $149 EIN application](/ein/apply?utm_source=blog&utm_medium=internal&utm_campaign=ein-application-checklist).
+If you want the SS-4 prepared and the international IRS contact handled, [start the $149 EIN application](/ein/apply).
 
 ## Complete the formation step first
 
@@ -76,6 +76,6 @@ Form5472 Prep prepares Form SS-4 for a foreign-owned U.S. LLC and handles the IR
 
 The IRS itself charges no EIN issuance fee. The $149 is the professional preparation and handling fee.
 
-[Start your EIN application](/ein/apply?utm_source=blog&utm_medium=internal&utm_campaign=ein-application-checklist-close) after the LLC is legally formed. If the only unresolved item is whether an ITIN is needed first, it usually is not.
+[Start your EIN application](/ein/apply) after the LLC is legally formed. If the only unresolved item is whether an ITIN is needed first, it usually is not.
 
 *Educational information only; not tax or legal advice. Confirm entity classification and filing obligations for the LLC’s actual facts.*

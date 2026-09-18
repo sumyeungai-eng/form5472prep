@@ -21,7 +21,7 @@ The IRS notices eventually. But there is a formal procedure for fixing this with
 
 - **The penalty** is $25,000 per form, per year, under [IRC §6038A(d)](https://www.law.cornell.edu/uscode/text/26/6038A). It continues at $25,000 per 30-day period if you still haven't filed 90 days after the IRS mails its notice.
 - **The fix** is the Delinquent International Information Return Submission Procedure (DIIRSP): file all missing returns together with a reasonable cause statement.
-- **Need help catching up?** [Start the DIIRSP filing](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-filed-late-never-filed-tldr) after gathering each missed year's owner transactions.
+- **Need help catching up?** [Start the DIIRSP filing](/diirsp) after gathering each missed year's owner transactions.
 - **No special IRS program needed.** DIIRSP is filed through normal channels — it's a package of returns plus a cover letter, not an online application.
 - **Earlier is better.** Penalties start running from the original due date. The sooner you file, the less exposure you have.
 - **Most foreign owners qualify** for reasonable cause abatement if the failure was due to not knowing about the requirement.
@@ -126,7 +126,7 @@ If you want to handle this yourself, you need:
 - Form 5472 for each year (Part I, Part II, Part III with transactions, and Part V if applicable)
 - A well-drafted reasonable cause statement
 
-If you want someone else to handle it: [we prepare the complete DIIRSP package](/diirsp?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-filed-late-never-filed) — all years, the reasonable cause statement, and fax to the IRS — from $149.
+If you want someone else to handle it: [we prepare the complete DIIRSP package](/diirsp) — all years, the reasonable cause statement, and fax to the IRS — from $149.
 
 Current service tiers and multi-year options are listed on the [pricing page](/pricing).
 
@@ -164,4 +164,4 @@ What makes this worse is waiting. Act before the IRS sends a notice, and you con
 
 See also: [what Form 5472 is and who needs to file](/blog/what-is-form-5472), and our [dormant LLC guide](/blog/form-5472-dormant-llc-no-income) if your LLC had little or no activity during the missed years.
 
-Ready to file? [Start here](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-filed-late-never-filed).
+Ready to file? [Start here](/start).

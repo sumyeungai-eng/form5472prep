@@ -10,7 +10,7 @@ draft: false
 
 **A foreign company may wholly own a US single-member LLC, and the US LLC can remain a disregarded entity for federal tax purposes. When reportable transactions occur, Form 5472 identifies the foreign corporate owner, any ultimate indirect 25% foreign shareholder, and each related party. A separate Form 5472 is generally required for each related party with reportable transactions.**
 
-Corporate ownership adds an ownership-chain exercise to the ordinary Form 5472 filing. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) define a reporting corporation as a 25% foreign-owned U.S. corporation, including a foreign-owned U.S. disregarded entity, or a foreign corporation engaged in a U.S. trade or business; the same instructions state that the initial penalty for failing to file Form 5472 when due is **$25,000**. [Start the filing](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-foreign-corporate-owner) after gathering the foreign company's registration, tax number and shareholder chart.
+Corporate ownership adds an ownership-chain exercise to the ordinary Form 5472 filing. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) define a reporting corporation as a 25% foreign-owned U.S. corporation, including a foreign-owned U.S. disregarded entity, or a foreign corporation engaged in a U.S. trade or business; the same instructions state that the initial penalty for failing to file Form 5472 when due is **$25,000**. [Start the filing](/start) after gathering the foreign company's registration, tax number and shareholder chart.
 
 ## Can a foreign company own a U.S. disregarded LLC?
 
@@ -143,4 +143,4 @@ No. The Form 5472 penalty is tied to the reporting corporation's failure to file
 
 It can be. If the sister company is a related party and had a reportable transaction with the U.S. LLC, a separate Form 5472 may be required.
 
-Corporate ownership is manageable when the entity chart and intercompany ledger agree. [Start the Form 5472 package](/start?utm_source=blog&utm_medium=internal&utm_campaign=form-5472-foreign-corporate-owner-close) or review [how multiple related parties are reported](/blog/multiple-related-parties-form-5472) before combining group activity into one unsupported form.
+Corporate ownership is manageable when the entity chart and intercompany ledger agree. [Start the Form 5472 package](/start) or review [how multiple related parties are reported](/blog/multiple-related-parties-form-5472) before combining group activity into one unsupported form.
