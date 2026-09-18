@@ -24,6 +24,7 @@ import {
 import { formatUsd } from "@/lib/utils";
 import { fireMetaInitiateCheckout } from "@/lib/analytics/meta";
 import { DocumentsUploader } from "@/components/DocumentsUploader";
+import { DeterminationFlag } from "@/components/wizard/DeterminationFlag";
 
 // Generates a self-assigned Reference ID for Form 5472 when the customer
 // leaves the field blank. Uses last-name + first-initial as a human-readable
@@ -1208,10 +1209,6 @@ function YearsStep({
   const [extProofKey, setExtProofKey] = useState<string | null>(filing.extensionProofKey);
   const [extProofUploading, setExtProofUploading] = useState(false);
   const [extProofError, setExtProofError] = useState<string | null>(null);
-  // Escape hatch: "this doesn't match my situation" posts into the existing
-  // per-filing message thread the accountant already watches.
-  const [flagState, setFlagState] = useState<"idle" | "sending" | "sent">("idle");
-  const [flagError, setFlagError] = useState<string | null>(null);
   const maxYear = isFinalReturn ? currentYear : lastCompletedTaxYear;
   const allYears = Array.from({ length: maxYear - 2017 }, (_, i) => 2018 + i);
   const {
@@ -1316,37 +1313,6 @@ function YearsStep({
       setExtProofKey(null);
     } catch {
       setExtProofError("Could not remove the file. Please try again.");
-    }
-  }
-
-  // "This doesn't match my situation" — the escape hatch behind every
-  // automated characterisation. Posts the exact sentence the customer was
-  // shown into the filing's message thread so the accountant can see what the
-  // wizard claimed, not just that it was wrong.
-  async function flagDetermination(sentence: string) {
-    if (flagState !== "idle") return;
-    setFlagState("sending");
-    setFlagError(null);
-    try {
-      const res = await fetch(`/api/filings/${filing.id}/messages?as=customer`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          body:
-            "Customer flagged from the tax-years step: the late/timely determination shown does not match their situation. Shown: " +
-            sentence,
-        }),
-      });
-      if (!res.ok) {
-        const json = (await res.json().catch(() => ({}))) as { error?: string };
-        setFlagError(json.error || `Could not send (${res.status})`);
-        setFlagState("idle");
-        return;
-      }
-      setFlagState("sent");
-    } catch {
-      setFlagError("Could not send. Please try again.");
-      setFlagState("idle");
     }
   }
 
@@ -1874,26 +1840,7 @@ function YearsStep({
         </div>
       )}
       {determinationSentence && (
-        <div className="rounded-md bg-slate-50 border border-slate-200 p-4 text-sm">
-          <p className="text-slate-700">{determinationSentence}</p>
-          <div className="mt-2">
-            {flagState === "sent" ? (
-              <p className="text-xs text-emerald-700">
-                ✓ Flagged — we&apos;ll review and email you.
-              </p>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void flagDetermination(determinationSentence)}
-                disabled={flagState === "sending"}
-                className="text-xs text-slate-500 underline hover:text-slate-700 disabled:opacity-50"
-              >
-                {flagState === "sending" ? "Sending…" : "This doesn't match my situation"}
-              </button>
-            )}
-            {flagError && <p className="text-xs text-red-600 mt-1">{flagError}</p>}
-          </div>
-        </div>
+        <DeterminationFlag filingId={filing.id} sentence={determinationSentence} />
       )}
       <div className="rounded-md bg-slate-50 p-4 text-sm">
         <p className="font-medium">
