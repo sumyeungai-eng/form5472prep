@@ -179,10 +179,7 @@ issued. Three lines were corrected. Two P2s were taken: Georgia's 1% small-busin
 rate now says it applies to **Georgian-source** income, and Indonesia's NIK-as-NPWP
 rule now follows the regulation's definition of a resident.
 
-**Deliberately not taken:** the Vietnam P2 that business and salary income rules apply
-from the whole 2026 tax year under Article 29(2). The orchestrator did not verify that
-article personally, and "effective 1 July 2026" is accurate for the Article 2 residency
-definition the post actually discusses. Worth adding if someone reads Article 29.
+**Vietnam Article 29(2) — taken after verification (owner said "do it").** The orchestrator read Article 29 in the official text of Law No. 109/2025/QH15 (the `.docx` published on Vietnam's Official Gazette, congbao.chinhphu.vn, read in memory). Clause 1: the law takes effect 1 July 2026 except as in clause 2. Clause 2: provisions on business income and salary/wage income of **resident** individuals apply from the **2026 tax period**. The post now says so. The same text confirms passage on 10 December 2025. All audit findings for the nomad batch are now closed.
 
 ### Contracts for this cluster
 - **A country post's treaty sentence must survive a section-level read of the IRS
