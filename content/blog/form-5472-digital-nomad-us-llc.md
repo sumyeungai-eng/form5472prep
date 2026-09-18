@@ -122,6 +122,16 @@ Every combination lands on exactly one row. Absent from the list: where you slep
 
 Local rules change what goes in the FTIN box and what you owe at home, not the US filing.
 
+## Which nomad questions have their own guide?
+
+| If you are asking | Read |
+|---|---|
+| Is my US LLC really tax-free? | [the US LLC tax-free myth](/blog/us-llc-tax-free-digital-nomads-myth) |
+| My formation service set up the LLC — does it file Form 5472? | [Stripe Atlas, doola and Firstbase](/blog/stripe-atlas-doola-firstbase-form-5472) |
+| I freelance on Upwork or Fiverr through the LLC | [Form 5472 for freelancers](/blog/form-5472-freelancers-upwork-fiverr-us-llc) |
+| Which state should the LLC be in? | [Wyoming vs New Mexico vs Delaware](/blog/wyoming-vs-new-mexico-vs-delaware-llc-digital-nomads) |
+| Should I use a US LLC, an Estonian OÜ or a UAE company? | [annual filing burden compared](/blog/us-llc-vs-estonia-ou-vs-uae-company-digital-nomads) |
+
 ## How does a nomad actually file Form 5472?
 
 You cannot e-file. A foreign-owned US DE files on paper.

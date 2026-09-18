@@ -208,3 +208,38 @@ rule now follows the regulation's definition of a resident.
   sees CSS rather than the text and cannot confirm a figure. The fact-audit lane read
   Georgia's Tax Code from the official PDF on the same site instead. "I couldn't read
   it with curl" is not the same as "it isn't there".
+
+## Nomad batch 3 — five search-led topics (same session, after owner approval)
+
+Plan `docs/reviews/nomad-batch-3-plan.md` (approved: "write it"); assignments K–O in
+`docs/reviews/new-posts-nomad-batch-spec.md`; audit
+`docs/reviews/2026-09-18-nomad-batch-3-audit.md`.
+
+Shipped: `us-llc-tax-free-digital-nomads-myth`, `stripe-atlas-doola-firstbase-form-5472`,
+`form-5472-freelancers-upwork-fiverr-us-llc`,
+`wyoming-vs-new-mexico-vs-delaware-llc-digital-nomads`,
+`us-llc-vs-estonia-ou-vs-uae-company-digital-nomads`. The nomad hub gained a "Which
+nomad questions have their own guide?" table linking all five; all five link back.
+
+**Audit: 0 P0, 3 P1, 1 P2 — all applied.**
+- The tax-free post implied occasional US work was safe unless "considerable, continuous
+  and regular". The orchestrator verified IRS Pub 519 verbatim: services performed in the
+  US "at any time during the tax year" usually make you engaged in a US trade or business,
+  with a three-condition exception (foreign employer or contracting party not itself in a
+  US trade or business, 90 days or less, $3,000 or less). The post now quotes it.
+- New Mexico "no annual report" was **confirmed correct**. The widely repeated triennial
+  LLC report comes from 2023 HB 281, which was postponed indefinitely and never enacted;
+  the LLC Act in force (53-19 NMSA) has no periodic report. Both the comparison post and
+  the existing New Mexico post now say so, so readers who saw the false claim elsewhere
+  get an answer.
+- The comparison post's Delaware $300/$400 discrepancy is now explained by HB 400
+  (signed 21 May 2026, effective 1 January 2026). "First payable 1 June 2027" is still
+  deliberately **not** stated — it is an inference, not a sourced fact.
+
+### Contracts added by this batch
+- **Posts naming real companies** (Stripe Atlas, doola, Firstbase) cite only each
+  company's own page, dated "checked 18 September 2026", neutral in tone. If a page is
+  silent the post says "not stated". Re-check these rows when refreshing — pricing and
+  plan pages change more often than tax law.
+- Platform help centres (Upwork, Fiverr) block curl; the posts name the articles in text
+  rather than linking them.

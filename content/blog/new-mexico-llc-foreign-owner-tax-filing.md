@@ -30,7 +30,7 @@ The practical lesson is simple: a clean New Mexico entity record does not prove 
 
 ## Why does New Mexico have no LLC annual report?
 
-New Mexico's LLC law does not create the periodic report imposed on business corporations. The [Secretary of State's official statute index](https://www.sos.nm.gov/business-services/statutes-governing-business-in-nm/) lists “Corporate Reports” and the “Limited Liability Companies” Act as separate chapters. An LLC therefore does not file the corporation report merely because both entities use the same online portal.
+New Mexico's LLC law does not create the periodic report imposed on business corporations. The [Secretary of State's official statute index](https://www.sos.nm.gov/business-services/statutes-governing-business-in-nm/) lists “Corporate Reports” and the “Limited Liability Companies” Act as separate chapters. An LLC therefore does not file the corporation report merely because both entities use the same online portal. You may read online that New Mexico added a triennial LLC report from 2024. That comes from a 2023 bill (HB 281, a revised LLC act) which would have created one but was not enacted; the LLC Act in force, 53-19-1 to 53-19-74 NMSA 1978, contains no periodic report.
 
 That makes New Mexico low maintenance at the entity level. It also explains the privacy marketing: there is no annual LLC report that republishes a fresh manager or member list each year. Privacy is not anonymity, however. Banks, payment processors, the IRS, courts, and tax agencies can still require ownership information. The LLC must also maintain a registered agent for service of process.
 

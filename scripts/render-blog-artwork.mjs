@@ -296,6 +296,11 @@ const POSTS = {
   "form-5472-georgia-country-residents-us-llc": { accent: C.green, motif: "globe", glyphs: ["globe", "hash", "doc", "check"] },
   "form-5472-colombia-residents-us-llc": { accent: C.amber, motif: "globe", glyphs: ["globe", "doc", "person", "check"] },
   "form-5472-estonia-residents-us-llc": { accent: C.navy, motif: "globe", glyphs: ["globe", "person", "hash", "check"] },
+  "us-llc-tax-free-digital-nomads-myth": { accent: C.clay, motif: "correct", glyphs: ["globe", "doc", "hash", "check"] },
+  "stripe-atlas-doola-firstbase-form-5472": { accent: C.teal, motif: "checklist", glyphs: ["doc", "person", "calendar", "check"] },
+  "form-5472-freelancers-upwork-fiverr-us-llc": { accent: C.green, motif: "stack", glyphs: ["person", "doc", "hash", "check"] },
+  "wyoming-vs-new-mexico-vs-delaware-llc-digital-nomads": { accent: C.amber, motif: "split", glyphs: ["doc", "calendar", "hash", "check"] },
+  "us-llc-vs-estonia-ou-vs-uae-company-digital-nomads": { accent: C.navySoft, motif: "split", glyphs: ["globe", "doc", "calendar", "check"] },
 };
 
 const wanted = process.argv.slice(2);

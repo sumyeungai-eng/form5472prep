@@ -348,3 +348,72 @@ it creates a company, and whether it affects the US LLC's Form 5472.
     never entered into force. State the distinction where it applies.
 12. No post may state a local tax **rate**, **turnover ceiling** or **day count** that
     was not fetched from an official source. Omit or label unverified.
+
+---
+
+# Batch 3 — five search-led nomad topics (approved 2026-09-18)
+
+Plan: `docs/reviews/nomad-batch-3-plan.md`. Conversion target `/start`. These are
+**topic** posts, not country posts: do NOT use the country template's headings. Keep the
+shared contract (frontmatter shape, no H1, no utm, bold 40–60 word answer block,
+question H2s, ≥1 table, 6–7 FAQs ≤50 words, `/start` in first screen and near close,
+last line `*Educational content only; not tax or legal advice.*`), the verified US-side
+facts, and the acceptance gate items 1–12.
+
+**Write the full draft to disk before running the gate.** Network drops and watchdog
+kills have hit several lanes today; a draft on disk survives, a draft in memory does not.
+
+Extra internal links allowed for this batch (all exist):
+`/blog/does-foreign-owned-llc-pay-us-tax` · `/blog/form-5472-digital-nomad-us-llc` ·
+`/blog/w8ben-vs-w9-foreign-owned-llc` · `/blog/wyoming-llc-foreign-owner-tax-filing` ·
+`/blog/new-mexico-llc-foreign-owner-tax-filing` · `/blog/delaware-llc-foreign-owner-tax-filing` ·
+`/blog/form-5472-estonia-residents-us-llc` · `/blog/form-5472-uae-dubai-residents-us-llc` ·
+`/blog/form-5472-diy-vs-preparer` · `/blog/llc-vs-c-corp-non-resident-founders`
+
+### K — `content/blog/us-llc-tax-free-digital-nomads-myth.md`
+Title: `Is a US LLC Really Tax-Free for Digital Nomads?`
+Answer: often no US income tax for a nonresident owner with no US trade or business,
+but the LLC still files Form 5472 + pro forma 1120 (penalty $25,000), and the owner's
+home/residence country may tax the income — in outline only.
+Asset: "claim vs reality" table (5–7 common marketing claims). Link
+`/blog/does-foreign-owned-llc-pay-us-tax` for the income-tax test — do not restate it.
+Every US tax statement sourced to IRS pages; say plainly when the answer depends on
+facts (US trade or business, effectively connected income) that need an adviser.
+
+### L — `content/blog/stripe-atlas-doola-firstbase-form-5472.md`
+Title: `Formed With Stripe Atlas, doola or Firstbase? Who Files Your Form 5472`
+Answer: a formation service forms the LLC; whether annual federal filings are included
+depends on the plan you bought, and the owner remains responsible for the filing.
+Asset: table — service · what its own published plan says about annual federal filing /
+Form 5472 · source URL · date checked. **Every row from that company's own pricing, help
+or docs page, fetched today. If a company's page does not say, write "not stated on
+[page]" — never infer.** Neutral tone: no disparagement, no "they won't help you".
+Do not state competitor prices unless fetched from their page; prefer omitting prices.
+
+### M — `content/blog/form-5472-freelancers-upwork-fiverr-us-llc.md`
+Title: `Form 5472 for Freelancers Using a US LLC on Upwork, Fiverr and Toptal`
+Asset: worked example — platform payouts from clients into the LLC (not reportable),
+platform fees (not a related-party transaction), transfers to the owner's personal
+account (reportable), owner-paid LLC expenses (reportable). USD only; check arithmetic.
+Platform tax-form mechanics (W-8BEN-E vs W-9) only via link to
+`/blog/w8ben-vs-w9-foreign-owned-llc`; any platform-specific claim must come from that
+platform's own help centre, otherwise omit.
+
+### N — `content/blog/wyoming-vs-new-mexico-vs-delaware-llc-digital-nomads.md`
+Title: `Wyoming vs New Mexico vs Delaware LLC for Digital Nomads`
+Answer: federal Form 5472 duty is identical in all three; they differ in state annual
+report/tax and cost. Asset: side-by-side table (annual report? · annual state fee/tax ·
+due date · source). **Re-fetch each figure from the state's own site at write time.**
+Delaware: cite https://corp.delaware.gov/alt-entitytaxinstructions/ ($400); note
+`/frtax/` still shows $300. Link the three state posts. No recommendation of a "best"
+state for tax purposes; frame by cost and paperwork only.
+
+### O — `content/blog/us-llc-vs-estonia-ou-vs-uae-company-digital-nomads.md`
+Title: `US LLC vs Estonian OÜ vs UAE Free-Zone Company: Annual Filing Burden`
+Scope: yearly filing and reporting obligations only — not tax planning, not "best".
+Asset: comparison table (entity · where filed · annual return/report · accounts/audit ·
+key deadline · source). US row from IRS/state facts above. Estonia from emta.ee /
+ariregister.rik.ee / e-resident.gov.ee. UAE from the Ministry of Finance / Federal Tax
+Authority (corporate tax registration and returns) — free-zone authority specifics only
+if from an official free-zone site, else state they vary by free zone. **Any cell you
+cannot source reads "varies — check [authority]".** Link Estonia and UAE country posts.
