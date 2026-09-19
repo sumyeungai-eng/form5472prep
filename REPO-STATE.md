@@ -169,6 +169,8 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
   match my situation" flag (`DeterminationFlag`, `buildFlagMessage`); proposed 7004 method options.
 - `docs/sessions/2026-09-19-application-digital-signature.md` — EIN (SS-4) / ITIN (W-7) digital signing:
   staff upload prepared PDF, customer signs bound to the PDF hash, admin stamps via the placement tool.
+- `docs/sessions/2026-09-20-inbound-fax-inbox.md` — receive faxes on the Telnyx number, `/admin/faxes`
+  inbox, link faxes to EIN/ITIN/filings; OFF in production until TELNYX_PUBLIC_KEY is set.
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
