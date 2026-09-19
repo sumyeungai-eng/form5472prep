@@ -77,3 +77,10 @@ codex lane is back (credits reset). Three codex-implementer lanes (foundation, t
 parallel on disjoint files) plus one fix lane. A parallel lane again reported the OTHER lane's files as
 its own codex's "scope violation"; check mtimes and ownership lists before reacting. The one build
 break (client component importing a node:crypto module) was only visible to `next build`.
+
+## Deploy evidence (2026-09-19)
+Feature commit is `eafcd98` before rebase; on `main` see `git log --grep "digital signature"`. Vercel build log:
+"Applying migration `20260919120000_application_signature`" then "All migrations have been successfully
+applied." Production probes without a session: POST `/api/applications/ein/x/sign` 401, GET
+`/api/admin/applications/ein/x/prepared-pdf` 401, GET `/api/applications/itin/x/document` 401,
+`/applications/ein/x/sign` 307 to login.
