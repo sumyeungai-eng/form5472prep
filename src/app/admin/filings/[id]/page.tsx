@@ -14,6 +14,7 @@ import { AdminPageHeader } from "../../_components/AdminPageHeader";
 import { AdminActions } from "./AdminActions";
 import { EditFieldsCard } from "./EditFieldsCard";
 import { MessagesPanel } from "@/components/MessagesPanel";
+import { LinkedFaxes } from "@/components/admin/LinkedFaxes";
 import { YearBreakdown } from "./YearBreakdown";
 
 export const dynamic = "force-dynamic";
@@ -228,6 +229,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
       <div className="mb-6">
         <MessagesPanel apiBase={`/api/filings/${filing.id}/messages`} isAdmin={true} />
       </div>
+      <LinkedFaxes where={{ filingId: filing.id }} />
 
       {/* Two-column details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -980,6 +980,39 @@ export async function sendFaxFailedAdminEmail(args: {
   });
 }
 
+export async function sendFaxReceivedAdminEmail(args: {
+  fromNumber: string;
+  pageCount: number | null;
+  receivedAt: Date;
+  adminLink: string;
+}) {
+  const pageCount = args.pageCount == null ? "unknown" : String(args.pageCount);
+  const receivedAt = args.receivedAt.toUTCString();
+
+  return sendEmail({
+    to: env.adminEmail,
+    subject: `Fax received from ${args.fromNumber}`,
+    text:
+      `Inbound fax received.\n\n` +
+      `From:        ${args.fromNumber}\n` +
+      `Pages:       ${pageCount}\n` +
+      `Received:    ${receivedAt}\n` +
+      `\nAdmin view: ${args.adminLink}\n` +
+      `\nNo PDF is attached because inbound faxes may contain taxpayer data.\n`,
+    html: adminShell({
+      tag: "Inbound fax",
+      heading: "Fax received",
+      rows: [
+        ["From", args.fromNumber],
+        ["Pages", pageCount],
+        ["Received at", receivedAt],
+        ["Admin view", args.adminLink],
+      ],
+      extraHtml: `<p style="margin:0;color:${EMAIL_STYLES.subtle};font-size:13px;line-height:1.6;">No PDF is attached because inbound faxes may contain taxpayer data.</p>`,
+    }),
+  });
+}
+
 // ---------- 4. Fax failed email ----------
 
 export async function sendFaxFailedEmail(args: {

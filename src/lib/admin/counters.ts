@@ -5,6 +5,7 @@ export type AdminCounters = {
   unfinishedDrafts: number;
   applicationsAwaiting: number;
   unreadMessages: number;
+  unreadFaxes: number;
 };
 
 export async function getAdminCounters(): Promise<AdminCounters> {
@@ -14,6 +15,7 @@ export async function getAdminCounters(): Promise<AdminCounters> {
     einApplicationsAwaiting,
     itinApplicationsAwaiting,
     unreadMessages,
+    unreadFaxes,
   ] = await Promise.all([
     prisma.filing.count({
       where: {
@@ -40,6 +42,7 @@ export async function getAdminCounters(): Promise<AdminCounters> {
         readAt: null,
       },
     }),
+    prisma.receivedFax.count({ where: { readAt: null, archivedAt: null } }),
   ]);
 
   return {
@@ -47,5 +50,6 @@ export async function getAdminCounters(): Promise<AdminCounters> {
     unfinishedDrafts,
     applicationsAwaiting: einApplicationsAwaiting + itinApplicationsAwaiting,
     unreadMessages,
+    unreadFaxes,
   };
 }

@@ -310,6 +310,7 @@ model Filing {
   messages         Message[]
   documents        FilingDocument[]
   changeLog        FilingChangeLog[]
+  receivedFaxes    ReceivedFax[]
 
   @@index([partnerId])
   // fax-status-poll (where status=FAXED order by updatedAt) + abandoned-draft
@@ -514,6 +515,7 @@ model EinApplication {
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
   messages Message[]
+  receivedFaxes ReceivedFax[]
 }
 
 enum EinStatus {
@@ -592,6 +594,33 @@ model ItinApplication {
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
   messages Message[]
+  receivedFaxes ReceivedFax[]
+}
+
+model ReceivedFax {
+  id                String           @id @default(cuid())
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  telnyxFaxId       String           @unique
+  fromNumber        String?
+  toNumber          String?
+  pageCount         Int?
+  receivedAt        DateTime
+  pdfKey            String?
+  pdfBytes          Int?
+  downloadError     String?
+  readAt            DateTime?
+  archivedAt        DateTime?
+  note              String?
+  filingId          String?
+  filing            Filing?          @relation(fields: [filingId], references: [id], onDelete: SetNull)
+  einApplicationId  String?
+  einApplication    EinApplication?  @relation(fields: [einApplicationId], references: [id], onDelete: SetNull)
+  itinApplicationId String?
+  itinApplication   ItinApplication? @relation(fields: [itinApplicationId], references: [id], onDelete: SetNull)
+
+  @@index([readAt])
+  @@index([receivedAt])
 }
 
 enum ItinStatus {

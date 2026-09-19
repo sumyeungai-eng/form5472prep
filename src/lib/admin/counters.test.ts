@@ -5,6 +5,7 @@ const db = vi.hoisted(() => ({
   einApplicationCount: vi.fn(),
   itinApplicationCount: vi.fn(),
   messageCount: vi.fn(),
+  receivedFaxCount: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma", () => ({
@@ -21,6 +22,9 @@ vi.mock("@/lib/prisma", () => ({
     message: {
       count: db.messageCount,
     },
+    receivedFax: {
+      count: db.receivedFaxCount,
+    },
   },
 }));
 
@@ -32,6 +36,8 @@ describe("getAdminCounters", () => {
     db.einApplicationCount.mockReset();
     db.itinApplicationCount.mockReset();
     db.messageCount.mockReset();
+    db.receivedFaxCount.mockReset();
+    db.receivedFaxCount.mockResolvedValue(0);
   });
 
   it("counts visible filings currently marked for review", async () => {

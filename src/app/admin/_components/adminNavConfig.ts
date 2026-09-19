@@ -9,6 +9,7 @@ import {
   Handshake,
   LayoutDashboard,
   Newspaper,
+  Printer,
 } from "lucide-react";
 import type { AdminCounters } from "@/lib/admin/counters";
 
@@ -86,6 +87,13 @@ export const ADMIN_NAV: NavGroup[] = [
             param: { key: "type", value: "itin" },
           },
         ],
+      },
+      {
+        label: "Received faxes",
+        href: "/admin/faxes",
+        icon: Printer,
+        badge: "unreadFaxes",
+        match: "prefix",
       },
     ],
   },

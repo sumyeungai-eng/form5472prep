@@ -14,9 +14,12 @@ import {
 import { makeMagicLink } from "@/lib/magicLink";
 import { generateFaxReceiptPdf } from "@/lib/pdf/faxReceipt";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
+import { parseInboundFaxEvent, inboundFaxAllowed, ingestInboundFax } from "@/lib/inboundFax";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Inbound faxes are downloaded inside this request (20 s fetch timeout + R2 write + email).
+export const maxDuration = 60;
 
 // Telnyx fax webhook. Configure your fax connection's webhook URL to
 // {NEXT_PUBLIC_APP_URL}/api/telnyx-webhook. Events we care about:
@@ -91,6 +94,23 @@ export async function POST(req: Request) {
     body = JSON.parse(rawBody);
   } catch {
     body = {};
+  }
+  const inboundEvt = parseInboundFaxEvent(body);
+  if (inboundEvt) {
+    if (!inboundFaxAllowed({ publicKeySet: !!process.env.TELNYX_PUBLIC_KEY, nodeEnv: process.env.NODE_ENV })) {
+      console.error("[telnyx-webhook] inbound fax ignored - TELNYX_PUBLIC_KEY is not set (required in production for inbound faxes)");
+      return NextResponse.json({ ok: true, ignored: "inbound fax requires TELNYX_PUBLIC_KEY" });
+    }
+    const result = await ingestInboundFax(inboundEvt);
+    if (result.status === "failed") {
+      return NextResponse.json({ ok: false, error: result.error }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true, status: result.status });
+  }
+  // Other inbound-direction events that are not fax.received (e.g. fax.receiving.started/failed)
+  // must not touch any Filing.
+  if (body?.data?.payload?.direction === "inbound") {
+    return NextResponse.json({ ok: true });
   }
   const evt = body?.data?.event_type as string | undefined;
   const faxId = body?.data?.payload?.fax_id as string | undefined;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { ApplicationSignaturePanel } from "@/components/admin/ApplicationSignaturePanel";
+import { LinkedFaxes } from "@/components/admin/LinkedFaxes";
 import { isAdmin } from "@/lib/admin/auth";
 import { formLabel } from "@/lib/applicationSignature";
 import { prisma } from "@/lib/prisma";
@@ -145,6 +146,8 @@ export default async function AdminItinApplicationPage({ params }: { params: { i
         currentAdminNotes={app.adminNotes ?? ""}
         currentItin={app.itin ?? ""}
       />
+
+      <LinkedFaxes where={{ itinApplicationId: app.id }} />
 
       <div className="mt-8">
         <MessagesPanel apiBase={`/api/applications/itin/${app.id}/messages`} isAdmin />
