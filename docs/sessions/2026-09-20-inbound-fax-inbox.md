@@ -57,3 +57,10 @@ Follow-ups:
 One codex-implementer lane built everything; it guarded a production query with `?.` only to keep an
 old test mock passing. Fixed by adding the mock to `src/lib/admin/counters.test.ts` instead. Watch
 for production code bent to fit tests.
+
+## Deploy evidence (2026-09-19 20:10 UTC)
+Deployment form5472prep-5b1g6ipx8 Ready. Build log: "Applying migration `20260920090000_received_fax`",
+"All migrations have been successfully applied." Probes without a session: `/admin/faxes` 307 to
+login, `/api/admin/faxes/x/pdf` 401, `/api/admin/faxes/link-search` 401. An unsigned fake
+`fax.received` POST to the webhook returned `{"ok":true,"ignored":"inbound fax requires TELNYX_PUBLIC_KEY"}`
+(no row created, nothing downloaded), confirming the production guard.
