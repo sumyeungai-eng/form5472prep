@@ -493,6 +493,20 @@ model EinApplication {
   stripePaymentId String?
   paidAt          DateTime?
 
+  preparedPdfKey              String?
+  preparedPdfSha256           String?
+  preparedPdfUploadedAt       DateTime?
+  signatureRequestedAt        DateTime?
+  signaturePngKey             String?
+  signedAt                    DateTime?
+  signerName                  String?
+  signatureIp                 String?
+  signatureUserAgent          String?
+  signatureConsentVersion     String?
+  signedDocSha256             String?
+  signedPdfKey                String?
+  signedPdfAt                 DateTime?
+
   status     EinStatus @default(RECEIVED)
   adminNotes String?
   ein        String? // filled when EIN is obtained
@@ -556,6 +570,20 @@ model ItinApplication {
   stripeSessionId String?
   stripePaymentId String?
   paidAt          DateTime?
+
+  preparedPdfKey              String?
+  preparedPdfSha256           String?
+  preparedPdfUploadedAt       DateTime?
+  signatureRequestedAt        DateTime?
+  signaturePngKey             String?
+  signedAt                    DateTime?
+  signerName                  String?
+  signatureIp                 String?
+  signatureUserAgent          String?
+  signatureConsentVersion     String?
+  signedDocSha256             String?
+  signedPdfKey                String?
+  signedPdfAt                 DateTime?
 
   status     ItinStatus @default(RECEIVED)
   adminNotes String?

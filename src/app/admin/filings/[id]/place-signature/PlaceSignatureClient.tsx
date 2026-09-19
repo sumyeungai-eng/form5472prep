@@ -45,6 +45,14 @@ type Placement =
     };
 
 type Mode = "signature" | "date" | "text";
+type PlaceSignatureEndpoints = {
+  pdf: string;
+  signedPdf: string;
+  signaturePng: string;
+  place: string;
+  backHref: string;
+  backLabel: string;
+};
 
 const DEFAULT_DATE_CSS_WIDTH = 110;
 const DEFAULT_DATE_CSS_HEIGHT = 22;
@@ -72,11 +80,13 @@ export function PlaceSignatureClient({
   llcName,
   taxYears,
   hasExistingSignedPdf,
+  endpoints,
 }: {
   filingId: string;
   llcName: string | null;
   taxYears: number[];
   hasExistingSignedPdf: boolean;
+  endpoints?: PlaceSignatureEndpoints;
 }) {
   // useRouter was used to programmatically navigate after save, but the new
   // preview-on-save flow keeps the user on this page (with iframe preview)
@@ -102,6 +112,14 @@ export function PlaceSignatureClient({
   const containerRef = useRef<HTMLDivElement>(null);
   // Each page gets a canvas ref so we can position overlays inside them.
   const pageCanvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
+  const resolvedEndpoints = endpoints ?? {
+    pdf: `/api/admin/filings/${filingId}/pdf`,
+    signedPdf: `/api/admin/filings/${filingId}/pdf?signed=1`,
+    signaturePng: `/api/admin/filings/${filingId}/signature-png`,
+    place: `/api/admin/filings/${filingId}/place-signature`,
+    backHref: `/admin/filings/${filingId}`,
+    backLabel: "filing",
+  };
 
   // Step 1: load pdfjs-dist (dynamic import — has a worker), fetch the PDF,
   // render every page to its own canvas, capture each page's PDF point size.
@@ -121,7 +139,7 @@ export function PlaceSignatureClient({
         }
 
         setLoadingState("Fetching PDF…");
-        const res = await fetch(`/api/admin/filings/${filingId}/pdf`, { cache: "no-store" });
+        const res = await fetch(resolvedEndpoints.pdf, { cache: "no-store" });
         if (!res.ok) throw new Error(`PDF fetch failed: ${res.status}`);
         const data = await res.arrayBuffer();
 
@@ -159,7 +177,7 @@ export function PlaceSignatureClient({
 
         // Step 2: pull the customer signature PNG into a blob URL.
         if (!cancelled) setLoadingState("Loading signature…");
-        const sigRes = await fetch(`/api/admin/filings/${filingId}/signature-png`, { cache: "no-store" });
+        const sigRes = await fetch(resolvedEndpoints.signaturePng, { cache: "no-store" });
         if (!sigRes.ok) throw new Error(`signature fetch failed: ${sigRes.status}`);
         const blob = await sigRes.blob();
         if (!cancelled) setSigUrl(URL.createObjectURL(blob));
@@ -177,7 +195,7 @@ export function PlaceSignatureClient({
     // render and the loop catches them on this render's tick. We pre-render
     // enough canvas slots upfront (see render body) so they exist by the
     // time pdfjs needs them.
-  }, [filingId]);
+  }, [filingId, resolvedEndpoints.pdf, resolvedEndpoints.signaturePng]);
 
   // Pre-allocate canvas slots by guessing 1-50 pages. The actual count is
   // unknown until pdfjs returns it; we mount up to 50 and only fill what
@@ -350,7 +368,7 @@ export function PlaceSignatureClient({
       };
     });
     try {
-      const res = await fetch(`/api/admin/filings/${filingId}/place-signature`, {
+      const res = await fetch(resolvedEndpoints.place, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ placements: pdfPlacements }),
@@ -361,7 +379,7 @@ export function PlaceSignatureClient({
       // Swap into preview mode so the admin can visually verify the embed
       // before navigating away. Cache-bust so a later re-edit + re-save
       // doesn't show stale bytes.
-      setPreviewUrl(`/api/admin/filings/${filingId}/pdf?signed=1&t=${Date.now()}`);
+      setPreviewUrl(withCacheBust(resolvedEndpoints.signedPdf));
       setSaving(false);
     } catch (err) {
       setSaveMsg({ kind: "err", text: err instanceof Error ? err.message : "Save failed" });
@@ -380,8 +398,8 @@ export function PlaceSignatureClient({
     return (
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4">
         <div className="flex items-center justify-between">
-          <Link href={`/admin/filings/${filingId}`} className="text-sm text-slate-500 hover:underline">
-            ← Back to filing
+          <Link href={resolvedEndpoints.backHref} className="text-sm text-slate-500 hover:underline">
+            ← Back to {resolvedEndpoints.backLabel}
           </Link>
           <span className="text-xs uppercase tracking-wider text-emerald-600">Saved · Preview signed PDF</span>
         </div>
@@ -415,10 +433,10 @@ export function PlaceSignatureClient({
             ← Re-edit placement
           </button>
           <Link
-            href={`/admin/filings/${filingId}`}
+            href={resolvedEndpoints.backHref}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-md bg-accent text-white hover:bg-accent/90"
           >
-            Looks good — back to filing
+            Looks good — back to {resolvedEndpoints.backLabel}
           </Link>
         </div>
         <iframe
@@ -434,8 +452,8 @@ export function PlaceSignatureClient({
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4">
       <div className="flex items-center justify-between">
-        <Link href={`/admin/filings/${filingId}`} className="text-sm text-slate-500 hover:underline">
-          ← Back to filing
+        <Link href={resolvedEndpoints.backHref} className="text-sm text-slate-500 hover:underline">
+          ← Back to {resolvedEndpoints.backLabel}
         </Link>
         <span className="text-xs uppercase tracking-wider text-slate-400">Admin · Place signature</span>
       </div>
@@ -654,4 +672,8 @@ export function PlaceSignatureClient({
       </div>
     </div>
   );
+}
+
+function withCacheBust(url: string): string {
+  return `${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`;
 }

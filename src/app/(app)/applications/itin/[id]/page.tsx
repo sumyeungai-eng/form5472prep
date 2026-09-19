@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { MessagesPanel } from "@/components/MessagesPanel";
+import { ApplicationSignatureCard } from "@/components/applications/ApplicationSignatureCard";
+import { signState } from "@/lib/applicationSignature";
 import { requireUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import type { ItinStatus } from "@prisma/client";
@@ -21,10 +23,27 @@ export default async function ItinApplicationPage({ params }: { params: { id: st
   const user = await requireUser();
   const app = await prisma.itinApplication.findFirst({
     where: { id: params.id, userId: user.id },
+    select: {
+      id: true,
+      createdAt: true,
+      fullName: true,
+      itinReason: true,
+      usActivity: true,
+      paidAt: true,
+      preparedPdfKey: true,
+      signaturePngKey: true,
+      signedAt: true,
+      signerName: true,
+      signedPdfKey: true,
+      status: true,
+      adminNotes: true,
+      itin: true,
+    },
   });
   if (!app) notFound();
 
   const s = ITIN_STATUSES[app.status] ?? ITIN_STATUSES.RECEIVED;
+  const signatureState = signState(app);
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-10">
@@ -56,6 +75,18 @@ export default async function ItinApplicationPage({ params }: { params: { id: st
         <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-5 py-4 mb-6">
           <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700 mb-1">Your ITIN</p>
           <p className="text-2xl font-mono font-semibold text-emerald-900">{app.itin}</p>
+        </div>
+      )}
+
+      {app.paidAt && (
+        <div className="mb-6">
+          <ApplicationSignatureCard
+            type="itin"
+            id={app.id}
+            state={signatureState}
+            signedAt={app.signedAt}
+            signerName={app.signerName}
+          />
         </div>
       )}
 

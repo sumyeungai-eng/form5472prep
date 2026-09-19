@@ -7,6 +7,8 @@ import { formatUsd } from "@/lib/utils";
 import { multiYearAddonCents, tierInfo, type Tier } from "@/lib/pricing";
 import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 import type { EmailBrand } from "@/lib/partnerBrand";
+import { formLabel } from "@/lib/applicationSignature";
+import { env } from "@/lib/env";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -1614,6 +1616,66 @@ export async function sendItinApplicationConfirmationEmail(args: {
         <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">You can follow your application&apos;s status at any time in your client portal:</p>`,
       cta: { label: "Open your application →", url: args.portalLink },
       footnoteHtml: "If you have a question, reply to this email or write to support@form5472prep.com.",
+    }),
+  });
+}
+
+export async function sendApplicationSignatureRequestEmail(args: {
+  email: string;
+  fullName: string;
+  type: "ein" | "itin";
+  signLink: string;
+}) {
+  const label = formLabel(args.type);
+  const body = `Your ${label} is prepared and ready for your review.\n\n` +
+    `Please review the form carefully and sign it online when everything looks correct:\n\n` +
+    `${args.signLink}\n\n` +
+    `If anything looks wrong, reply to this email before signing.`;
+
+  return sendEmail({
+    to: args.email,
+    subject: `Your ${label} is ready to review and sign`,
+    text: customerText(args.fullName, body),
+    html: customerShell({
+      heading: `Your ${label} is ready to review and sign`,
+      salutation: args.fullName,
+      bodyHtml: `
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Your ${escapeHtml(label)} is prepared and ready for your review.</p>
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Please review the form carefully and sign it online when everything looks correct.</p>`,
+      cta: { label: "Review and sign", url: args.signLink },
+      footnoteHtml: "If anything looks wrong, reply to this email before signing.",
+    }),
+  });
+}
+
+export async function sendApplicationSignedAdminEmail(args: {
+  type: "ein" | "itin";
+  applicationId: string;
+  fullName: string;
+  adminLink: string;
+}) {
+  const label = formLabel(args.type);
+
+  return sendEmail({
+    to: env.adminEmail,
+    subject: `[Application signed] ${label} ${args.fullName}`,
+    text: [
+      "Application signed",
+      "",
+      `Type: ${label}`,
+      `Application ID: ${args.applicationId}`,
+      `Name: ${args.fullName}`,
+      `Admin link: ${args.adminLink}`,
+    ].join("\n"),
+    html: adminShell({
+      tag: "Application signed",
+      heading: "Application signed",
+      rows: [
+        ["Type", label],
+        ["Application ID", args.applicationId],
+        ["Name", args.fullName],
+        ["Admin link", args.adminLink],
+      ],
     }),
   });
 }

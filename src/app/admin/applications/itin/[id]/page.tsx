@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { MessagesPanel } from "@/components/MessagesPanel";
+import { ApplicationSignaturePanel } from "@/components/admin/ApplicationSignaturePanel";
 import { isAdmin } from "@/lib/admin/auth";
+import { formLabel } from "@/lib/applicationSignature";
 import { prisma } from "@/lib/prisma";
 import { formatAttribution } from "@/lib/attribution";
 import { formatUsd } from "@/lib/utils";
@@ -116,6 +118,25 @@ export default async function AdminItinApplicationPage({ params }: { params: { i
             <Row label="Email" value={app.user.email} />
           </Section>
         )}
+      </div>
+
+      <div className="mb-8">
+        <ApplicationSignaturePanel
+          type="itin"
+          id={app.id}
+          formLabel={formLabel("itin")}
+          paid={!!app.paidAt}
+          preparedUploadedAt={app.preparedPdfUploadedAt?.toISOString() ?? null}
+          preparedSha256={app.preparedPdfSha256}
+          requestedAt={app.signatureRequestedAt?.toISOString() ?? null}
+          signedAt={app.signedAt?.toISOString() ?? null}
+          signerName={app.signerName}
+          signatureIp={app.signatureIp}
+          signatureUserAgent={app.signatureUserAgent}
+          consentVersion={app.signatureConsentVersion}
+          signedDocSha256={app.signedDocSha256}
+          signedPdfAt={app.signedPdfAt?.toISOString() ?? null}
+        />
       </div>
 
       <ItinAdminActions
