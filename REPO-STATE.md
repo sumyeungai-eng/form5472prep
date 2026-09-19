@@ -167,6 +167,8 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
   filing delete, and the `/partners` dashboard screenshots (includes the headless-Chrome capture recipe).
 - `docs/sessions/2026-09-18-flag-explanation-note.md` — optional customer note on the "This doesn't
   match my situation" flag (`DeterminationFlag`, `buildFlagMessage`); proposed 7004 method options.
+- `docs/sessions/2026-09-19-application-digital-signature.md` — EIN (SS-4) / ITIN (W-7) digital signing:
+  staff upload prepared PDF, customer signs bound to the PDF hash, admin stamps via the placement tool.
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
