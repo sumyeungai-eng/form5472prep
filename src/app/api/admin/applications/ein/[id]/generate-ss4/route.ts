@@ -21,6 +21,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       llcName: true,
       llcState: true,
       llcFormedDate: true,
+      llcCounty: true,
+      llcMembers: true,
       businessMailingAddress: true,
       businessType: true,
       businessPurpose: true,
@@ -28,6 +30,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       ownerName: true,
       ownerResidence: true,
       ownerCitizenship: true,
+      responsiblePartyTin: true,
     },
   });
   if (!app) return NextResponse.json({ error: "application not found" }, { status: 404 });
@@ -39,6 +42,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     llcName: app.llcName,
     llcState: app.llcState,
     llcFormedDate: app.llcFormedDate,
+    llcCounty: app.llcCounty,
+    llcMembers: app.llcMembers,
     businessMailingAddress: app.businessMailingAddress,
     businessType: app.businessType,
     businessPurpose: app.businessPurpose,
@@ -46,6 +51,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     ownerName: app.ownerName,
     ownerResidence: app.ownerResidence,
     ownerCitizenship: app.ownerCitizenship,
+    responsiblePartyTin: app.responsiblePartyTin,
   };
   const options = parseSs4Options(body, source);
 

@@ -7,6 +7,18 @@ import { ATTR_COOKIE, parseAttributionCookie } from "@/lib/attribution";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function cleanString(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed ? trimmed.slice(0, 200) : null;
+}
+
+function parseMemberCount(value: unknown): number | null {
+  if (typeof value !== "string") return null;
+  const n = Number.parseInt(value, 10);
+  return Number.isInteger(n) && n >= 1 && n <= 99 ? n : null;
+}
+
 export async function POST(req: Request) {
   const rl = await rateLimit("ein-application", clientIp(req), 5, 3600);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
@@ -23,8 +35,8 @@ export async function POST(req: Request) {
 
   const {
     fullName, email, phone,
-    llcName, llcState, llcFormedDate, businessMailingAddress, businessType, businessPurpose, principalProducts,
-    ownerName, dateOfBirth, ownerHomeAddress, ownerCitizenship, ownerResidence, passportNumber,
+    llcName, llcState, llcFormedDate, llcCounty, llcMembers, businessMailingAddress, businessType, businessPurpose, principalProducts,
+    ownerName, dateOfBirth, ownerHomeAddress, ownerCitizenship, ownerResidence, responsiblePartyTin, passportNumber,
     notes,
   } = body as Record<string, string>;
   const effectiveFullName = fullName || ownerName;
@@ -50,10 +62,12 @@ export async function POST(req: Request) {
     data: {
       fullName: effectiveFullName, email: normalized, phone: phone || null,
       llcName, llcState: llcState || null, llcFormedDate: llcFormedDate || null,
+      llcCounty: cleanString(llcCounty), llcMembers: parseMemberCount(llcMembers),
       businessMailingAddress: businessMailingAddress || null, businessType: businessType || null,
       businessPurpose: businessPurpose || null, principalProducts: principalProducts || null,
       ownerName: ownerName || null, dateOfBirth: dateOfBirth || null, ownerHomeAddress: ownerHomeAddress || null, ownerCitizenship: ownerCitizenship || null,
       ownerResidence: ownerResidence || null, passportNumber: passportNumber || null,
+      responsiblePartyTin: cleanString(responsiblePartyTin),
       notes: notes || null,
       funnelSource,
       attrSource: attribution?.source ?? null,

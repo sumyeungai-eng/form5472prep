@@ -16,6 +16,8 @@ const source: Ss4Source = {
   llcName: "Blue Harbor Trading LLC",
   llcState: "Wyoming",
   llcFormedDate: "2026-03-14",
+  llcCounty: null,
+  llcMembers: null,
   businessMailingAddress: "30 N Gould St, Ste R\nSheridan, WY 82801",
   businessType: "Online retail",
   businessPurpose: "Sell household goods online",
@@ -23,6 +25,7 @@ const source: Ss4Source = {
   ownerName: "Maria Alvarez",
   ownerResidence: "Spain",
   ownerCitizenship: "Spain",
+  responsiblePartyTin: null,
 };
 
 describe("splitAddress", () => {
@@ -44,9 +47,16 @@ describe("splitAddress", () => {
     });
   });
 
-  it("keeps a single-line address whole when it has no US ending", () => {
+  it("splits a foreign single-line address at the last two comma parts", () => {
     expect(splitAddress("Calle Serrano 1, 28001 Madrid, Spain")).toEqual({
-      line: "Calle Serrano 1, 28001 Madrid, Spain",
+      line: "Calle Serrano 1",
+      cityStateZip: "28001 Madrid, Spain",
+    });
+  });
+
+  it("keeps a two-part single-line address whole", () => {
+    expect(splitAddress("1209 Mountain Road Pl NE, Ste N")).toEqual({
+      line: "1209 Mountain Road Pl NE, Ste N",
       cityStateZip: "",
     });
   });
@@ -88,6 +98,47 @@ describe("defaultSs4Options", () => {
     const options = defaultSs4Options({ ...source, businessPurpose: "strategic partnership with suppliers" });
     expect(options.llcMembers).toBe("1");
     expect(options.entityType).toBe("other");
+  });
+
+  it("combines county and state when county does not include county", () => {
+    const options = defaultSs4Options({ ...source, llcCounty: "Sheridan", llcState: "Wyoming" });
+    expect(options.countyAndState).toBe("Sheridan County, Wyoming");
+  });
+
+  it("does not double county when county already includes county", () => {
+    const options = defaultSs4Options({ ...source, llcCounty: "Sheridan County", llcState: "Wyoming" });
+    expect(options.countyAndState).toBe("Sheridan County, Wyoming");
+  });
+
+  it("uses state alone when county is blank", () => {
+    const options = defaultSs4Options({ ...source, llcCounty: null, llcState: "Wyoming" });
+    expect(options.countyAndState).toBe("Wyoming");
+  });
+
+  it("leaves county and state blank when both are blank", () => {
+    const options = defaultSs4Options({ ...source, llcCounty: null, llcState: null });
+    expect(options.countyAndState).toBe("");
+  });
+
+  it("prefers explicit LLC member count from the source", () => {
+    const options = defaultSs4Options({ ...source, llcMembers: 3 });
+    expect(options.llcMembers).toBe("3");
+    expect(options.entityType).toBe("partnership");
+  });
+
+  it("falls back to business type text when explicit LLC member count is blank", () => {
+    const baseOptions = defaultSs4Options({ ...source, llcMembers: null });
+    expect(baseOptions.llcMembers).toBe("1");
+    expect(baseOptions.entityType).toBe("other");
+
+    const inferredOptions = defaultSs4Options({ ...source, llcMembers: null, businessType: "3-member LLC" });
+    expect(inferredOptions.llcMembers).toBe("3");
+    expect(inferredOptions.entityType).toBe("partnership");
+  });
+
+  it("carries responsible party TIN through", () => {
+    const options = defaultSs4Options({ ...source, responsiblePartyTin: "123-45-6789" });
+    expect(options.responsiblePartyTin).toBe("123-45-6789");
   });
 });
 

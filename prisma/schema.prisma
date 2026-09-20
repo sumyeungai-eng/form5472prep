@@ -456,6 +456,8 @@ model EinApplication {
   llcName                String
   llcState               String?
   llcFormedDate          String?
+  llcCounty              String?
+  llcMembers             Int?
   businessMailingAddress String?
   businessType           String?
   businessPurpose        String?
@@ -465,6 +467,7 @@ model EinApplication {
   ownerHomeAddress       String?
   ownerCitizenship       String?
   ownerResidence         String?
+  responsiblePartyTin    String?
   passportNumber         String?
   notes                  String?
 

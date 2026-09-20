@@ -54,6 +54,8 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
     llcName: app.llcName,
     llcState: app.llcState,
     llcFormedDate: app.llcFormedDate,
+    llcCounty: app.llcCounty,
+    llcMembers: app.llcMembers,
     businessMailingAddress: app.businessMailingAddress,
     businessType: app.businessType,
     businessPurpose: app.businessPurpose,
@@ -61,6 +63,7 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
     ownerName: app.ownerName,
     ownerResidence: app.ownerResidence,
     ownerCitizenship: app.ownerCitizenship,
+    responsiblePartyTin: app.responsiblePartyTin,
   };
   const ss4Options = parseSs4Options(app.ss4Options, ss4Source);
   const hasPrepared = !!(app.preparedPdfKey || app.preparedPdfSha256 || app.preparedPdfUploadedAt);
@@ -113,6 +116,8 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
           <Row label="LLC name" value={app.llcName} />
           <Row label="State" value={app.llcState} />
           <Row label="Formed" value={app.llcFormedDate} />
+          <Row label="County" value={app.llcCounty} />
+          <Row label="Members" value={app.llcMembers} />
           <Row label="Business mailing address" value={app.businessMailingAddress} />
           <Row label="Business type" value={app.businessType} />
           <Row label="Business purpose" value={app.businessPurpose} />
@@ -124,6 +129,7 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
           <Row label="Home address" value={app.ownerHomeAddress} />
           <Row label="Citizenship" value={app.ownerCitizenship} />
           <Row label="Residence" value={app.ownerResidence} />
+          <Row label="US tax number" value={app.responsiblePartyTin} />
           <Row label="Passport" value={app.passportNumber} />
         </Section>
         <Section title="Payment">

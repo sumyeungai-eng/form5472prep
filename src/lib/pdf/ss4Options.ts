@@ -34,6 +34,9 @@ export type Ss4Source = {
   ownerName: string | null;
   ownerResidence: string | null;
   ownerCitizenship: string | null;
+  llcCounty?: string | null;
+  llcMembers?: number | null;
+  responsiblePartyTin?: string | null;
 };
 
 const FORM_TEXT_REPLACEMENTS: Record<string, string> = {
@@ -182,7 +185,7 @@ const ENCODING_WARNING_FIELDS = {
 
 export function defaultSs4Options(app: Ss4Source): Ss4Options {
   const mailing = splitAddress(app.businessMailingAddress);
-  const llcMembers = defaultMemberCount(app);
+  const llcMembers = resolveMemberCount(app);
   const isSingleMember = llcMembers === "1";
   const businessDescription = trimToMax(app.businessType ?? app.businessPurpose ?? "", 40);
   const businessType = clean(app.businessType ?? "");
@@ -195,9 +198,9 @@ export function defaultSs4Options(app: Ss4Source): Ss4Options {
     mailingCityStateZip: mailing.cityStateZip,
     streetAddressLine: "",
     streetCityStateZip: "",
-    countyAndState: clean(app.llcState ?? ""),
+    countyAndState: combineCountyAndState(clean(app.llcCounty ?? ""), clean(app.llcState ?? "")),
     responsibleParty,
-    responsiblePartyTin: "",
+    responsiblePartyTin: clean(app.responsiblePartyTin ?? ""),
     isLlc: true,
     llcMembers,
     organizedInUs: true,
@@ -316,6 +319,17 @@ export function splitAddress(raw: string | null): { line: string; cityStateZip: 
       /^(.*?),\s*([^,]+,\s*[A-Za-z]{2}\.?\s+\d{5}(?:-\d{4})?(?:,\s*(?:USA|U\.S\.A\.|US|United States(?: of America)?))?)$/,
     );
     if (usTail && usTail[1].trim()) return { line: usTail[1].trim(), cityStateZip: usTail[2].trim() };
+    const parts = single.split(",").map((p) => p.trim()).filter(Boolean);
+    if (parts.length >= 3) {
+      const lastPart = parts[parts.length - 1];
+      const isUnitOrNumber = /^(ste|suite|unit|apt|apartment|floor|fl|room|rm|#)\b/i.test(lastPart) || /^\d+$/.test(lastPart);
+      if (!isUnitOrNumber) {
+        return {
+          line: parts.slice(0, -2).join(", "),
+          cityStateZip: parts.slice(-2).join(", "),
+        };
+      }
+    }
     return { line: single, cityStateZip: "" };
   }
 
@@ -356,6 +370,19 @@ function defaultMemberCount(app: Ss4Source): string {
   if (word) return String(WORD_NUMBERS[word[1].toLowerCase() as keyof typeof WORD_NUMBERS]);
   if (/\bmulti[\s-]*member\b/i.test(businessType)) return "2";
   return "1";
+}
+
+function resolveMemberCount(app: Ss4Source): string {
+  const n = app.llcMembers;
+  if (typeof n === "number" && Number.isInteger(n) && n >= 1 && n <= 99) return String(n);
+  return defaultMemberCount(app);
+}
+
+function combineCountyAndState(county: string, state: string): string {
+  if (county && state) {
+    return /county/i.test(county) ? `${county}, ${state}` : `${county} County, ${state}`;
+  }
+  return county || state || "";
 }
 
 const WORD_NUMBERS = {

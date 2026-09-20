@@ -12,6 +12,60 @@ const APPLICATION_ID_STORAGE_KEY = "einApplicationId";
 type Status = "idle" | "submitting" | "redirecting" | "retrying" | "success" | "error";
 type PageState = "form" | "received" | "paid" | "canceled";
 
+const US_STATES = [
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "Delaware",
+  "District of Columbia",
+  "Florida",
+  "Georgia",
+  "Hawaii",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Iowa",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Maine",
+  "Maryland",
+  "Massachusetts",
+  "Michigan",
+  "Minnesota",
+  "Mississippi",
+  "Missouri",
+  "Montana",
+  "Nebraska",
+  "Nevada",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
+  "New York",
+  "North Carolina",
+  "North Dakota",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Vermont",
+  "Virginia",
+  "Washington",
+  "West Virginia",
+  "Wisconsin",
+  "Wyoming",
+];
+
 function applicationResponse(input: unknown): { id: string } | null {
   if (typeof input !== "object" || input === null) return null;
   const { id } = input as { id?: unknown };
@@ -33,8 +87,16 @@ export default function EinApplyPage() {
   const [funnelSource, setFunnelSource] = useState<string | null>(null);
   const [form, setForm] = useState({
     email: "",
+    phone: "",
     llcName: "",
+    llcState: "",
+    llcFormedDate: "",
+    llcCounty: "",
+    llcMembers: "1",
     ownerName: "",
+    ownerCitizenship: "",
+    ownerResidence: "",
+    responsiblePartyTin: "",
     dateOfBirth: "",
     businessMailingAddress: "",
     ownerHomeAddress: "",
@@ -243,6 +305,11 @@ export default function EinApplyPage() {
                 <Field label="Email address">
                   <Input required type="email" value={form.email} onChange={set("email")} placeholder="you@example.com" />
                 </Field>
+                <div className="mt-4">
+                  <Field label="Phone number" hint="Optional. Used only if the IRS needs to reach you about this application.">
+                    <Input type="tel" value={form.phone} onChange={set("phone")} />
+                  </Field>
+                </div>
               </div>
             </fieldset>
 
@@ -255,6 +322,37 @@ export default function EinApplyPage() {
                 <div>
                   <Field label="Company name">
                     <Input required value={form.llcName} onChange={set("llcName")} placeholder="Acme LLC" />
+                  </Field>
+                </div>
+                <div>
+                  <Field label="State of formation">
+                    <Select required value={form.llcState} onChange={set("llcState")}>
+                      <option value="">Select a state...</option>
+                      {US_STATES.map((state) => (
+                        <option key={state} value={state}>{state}</option>
+                      ))}
+                    </Select>
+                  </Field>
+                </div>
+                <div>
+                  <Field label="Date the company was formed">
+                    <Input required type="date" value={form.llcFormedDate} onChange={set("llcFormedDate")} />
+                  </Field>
+                </div>
+                <div>
+                  <Field label="County where the business is located" hint="Optional. If you use a registered agent address, use that county.">
+                    <Input value={form.llcCounty} onChange={set("llcCounty")} />
+                  </Field>
+                </div>
+                <div>
+                  <Field label="Number of owners (members)">
+                    <Select value={form.llcMembers} onChange={set("llcMembers")}>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5 or more</option>
+                    </Select>
                   </Field>
                 </div>
                 <div>
@@ -294,6 +392,21 @@ export default function EinApplyPage() {
                 <div>
                   <Field label="Owner full legal name (as on documents)">
                     <Input required value={form.ownerName} onChange={set("ownerName")} placeholder="Full legal name" />
+                  </Field>
+                </div>
+                <div>
+                  <Field label="Country of citizenship">
+                    <Input required value={form.ownerCitizenship} onChange={set("ownerCitizenship")} />
+                  </Field>
+                </div>
+                <div>
+                  <Field label="Country of residence">
+                    <Input required value={form.ownerResidence} onChange={set("ownerResidence")} />
+                  </Field>
+                </div>
+                <div>
+                  <Field label="US tax number (SSN or ITIN)" hint="Optional. Leave blank if you do not have one.">
+                    <Input value={form.responsiblePartyTin} onChange={set("responsiblePartyTin")} />
                   </Field>
                 </div>
                 <div>
@@ -425,8 +538,13 @@ export default function EinApplyPage() {
             </p>
           </div>
         </aside>
+      </main>
 
-        <section className="lg:col-span-2">
+      {/* The FAQ sits OUTSIDE the grid on purpose. A sticky grid item is
+          constrained by the grid container, not by its own grid area, so a
+          full-width row inside this grid slides underneath the sticky sidebar
+          on wide screens. */}
+      <section className="mx-auto max-w-6xl px-6 pb-12">
           <h2 className="font-serif text-2xl font-semibold text-ink">Questions about the application</h2>
           <p className="mt-2 text-sm text-slate-600">Optional — expand any question before you submit.</p>
           <div className="mt-5 grid gap-3 lg:grid-cols-2">
@@ -440,8 +558,7 @@ export default function EinApplyPage() {
               </details>
             ))}
           </div>
-        </section>
-      </main>
+      </section>
     </div>
   );
 }
