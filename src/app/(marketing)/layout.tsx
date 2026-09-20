@@ -43,12 +43,6 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               Guide
             </Link>
             <Link
-              href="/partners"
-              className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
-            >
-              Partners
-            </Link>
-            <Link
               href="/contact"
               className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
             >
