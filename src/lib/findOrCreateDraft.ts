@@ -47,8 +47,25 @@ const PAID_STATUSES = [
 // from a previous paid filing, so they're not reliable markers). If the draft
 // has no tax years and no per-year financial data, it's safe to reuse for
 // repeat /start submissions, refreshes, multi-tab opens, etc.
-function isUntouchedDraft(f: Filing): boolean {
-  return f.status === "DRAFT" && (!f.taxYears || f.taxYears.length === 0);
+// An untouched draft is one the customer has typed NOTHING into, so reusing it
+// cannot lose work or hijack another company. Tax years alone are not enough:
+// the wizard asks for the LLC first ("entity" step) and for years two steps
+// later, so a draft naming company A has empty taxYears. Reusing that when the
+// customer starts a filing for company B dropped them back into company A.
+export function isUntouchedDraft(f: Filing): boolean {
+  if (f.status !== "DRAFT") return false;
+  if (f.taxYears && f.taxYears.length > 0) return false;
+  const entered = [
+    f.llcName,
+    f.llcEin,
+    f.llcAddress,
+    f.llcCity,
+    f.llcZip,
+    f.llcBusinessActivity,
+    f.ownerName,
+    f.ownerAddress,
+  ];
+  return entered.every((value) => value === null || value === "");
 }
 
 type FindOrCreateArgs = {
@@ -86,6 +103,16 @@ export async function findOrCreateDraftFiling(args: FindOrCreateArgs): Promise<{
     where: {
       status: "DRAFT",
       taxYears: { isEmpty: true },
+      // Match isUntouchedDraft in the query too, so an older genuinely empty
+      // draft is found instead of stopping at a newer one that names a company.
+      llcName: null,
+      llcEin: null,
+      llcAddress: null,
+      llcCity: null,
+      llcZip: null,
+      llcBusinessActivity: null,
+      ownerName: null,
+      ownerAddress: null,
       OR: [
         userId ? { userId } : { id: "__never__" },
         sessionId ? { sessionId } : { id: "__never__" },
