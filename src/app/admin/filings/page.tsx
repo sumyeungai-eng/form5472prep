@@ -24,6 +24,7 @@ type SearchParams = {
   ready?: string;
   review?: string;
   partner?: string;
+  paid?: string;
 };
 
 // yearData rides along ONLY on the draft view (conditional include below), so
@@ -50,7 +51,10 @@ export default async function AdminFilingsPage({
   // Every view that can contain DRAFT rows — the default (all statuses), the
   // explicit DRAFT filter, and the archive. Only these pay for the extra
   // yearData join + the completeness pass; a PAID-only filter skips it.
-  const draftView = !statusFilter || statusFilter === "DRAFT" || showHidden;
+  // paid=1 narrows to orders that were actually paid for, at any stage after
+  // checkout (PAID through CONFIRMED, and FAILED faxes that were paid).
+  const paidOnly = searchParams.paid === "1";
+  const draftView = (!statusFilter || statusFilter === "DRAFT" || showHidden) && !paidOnly;
   // ready=1 narrows to the drafts checkout would accept — the customers who
   // filled everything in and stopped at the payment step.
   const readyOnly = draftView && searchParams.ready === "1";
@@ -73,6 +77,9 @@ export default async function AdminFilingsPage({
     whereParts.push({ status: statusFilter });
   }
   if (reviewOnly) whereParts.push({ inReview: true });
+  if (paidOnly) {
+    whereParts.push({ OR: [{ amountPaid: { gt: 0 } }, { stripePaymentId: { not: null } }] });
+  }
   if (partnerFilter === true) whereParts.push({ partnerId: { not: null } });
   if (partnerFilter === false) whereParts.push({ partnerId: null });
   if (q) {
@@ -167,6 +174,7 @@ export default async function AdminFilingsPage({
   if (showHidden) readyQuery.set("hidden", "1");
   if (reviewOnly) readyQuery.set("review", "1");
   if (partnerFilter !== undefined) readyQuery.set("partner", partnerFilter ? "1" : "0");
+  if (paidOnly) readyQuery.set("paid", "1");
   if (!readyOnly) readyQuery.set("ready", "1");
   const readyQs = readyQuery.toString();
   const readyHref = readyQs ? `/admin/filings?${readyQs}` : "/admin/filings";
@@ -178,9 +186,21 @@ export default async function AdminFilingsPage({
   if (showHidden) reviewQuery.set("hidden", "1");
   if (readyOnly) reviewQuery.set("ready", "1");
   if (partnerFilter !== undefined) reviewQuery.set("partner", partnerFilter ? "1" : "0");
+  if (paidOnly) reviewQuery.set("paid", "1");
   if (!reviewOnly) reviewQuery.set("review", "1");
   const reviewQs = reviewQuery.toString();
   const reviewHref = reviewQs ? `/admin/filings?${reviewQs}` : "/admin/filings";
+
+  // "Paid only" / "All rows" toggle, preserving every other filter.
+  const paidQuery = new URLSearchParams();
+  if (statusFilter) paidQuery.set("status", statusFilter);
+  if (q) paidQuery.set("q", q);
+  if (showHidden) paidQuery.set("hidden", "1");
+  if (reviewOnly) paidQuery.set("review", "1");
+  if (partnerFilter !== undefined) paidQuery.set("partner", partnerFilter ? "1" : "0");
+  if (!paidOnly) paidQuery.set("paid", "1");
+  const paidQs = paidQuery.toString();
+  const paidHref = paidQs ? `/admin/filings?${paidQs}` : "/admin/filings";
 
   // "Partner" / "Direct" / "All" filter, preserving every other filter — lets
   // the owner isolate partner-originated filings from direct-customer ones.
@@ -192,6 +212,7 @@ export default async function AdminFilingsPage({
     if (readyOnly) query.set("ready", "1");
     if (reviewOnly) query.set("review", "1");
     if (next !== undefined) query.set("partner", next ? "1" : "0");
+    if (paidOnly) query.set("paid", "1");
     const qs = query.toString();
     return qs ? `/admin/filings?${qs}` : "/admin/filings";
   }
@@ -227,6 +248,8 @@ export default async function AdminFilingsPage({
         {readyOnly && <input type="hidden" name="ready" value="1" />}
         {/* Review narrowing remains sticky while changing search or status. */}
         {reviewOnly && <input type="hidden" name="review" value="1" />}
+        {/* Paid narrowing stays sticky while changing search or status. */}
+        {paidOnly && <input type="hidden" name="paid" value="1" />}
         <input
           type="text"
           name="q"
@@ -263,6 +286,12 @@ export default async function AdminFilingsPage({
         )}
         <Link href={reviewHref} className="text-slate-500 hover:text-slate-900 hover:underline">
           {reviewOnly ? "← All rows" : "In review only"}
+        </Link>
+        <Link
+          href={paidHref}
+          className={paidOnly ? "font-medium text-accent hover:underline" : "text-slate-500 hover:text-slate-900 hover:underline"}
+        >
+          {paidOnly ? "← All rows" : "Paid only"}
         </Link>
         <span className="flex items-center gap-1">
           <Link

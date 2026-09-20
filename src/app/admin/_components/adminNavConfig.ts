@@ -57,6 +57,11 @@ export const ADMIN_NAV: NavGroup[] = [
             param: { key: "review", value: "1" },
           },
           {
+            label: "Paid orders",
+            href: "/admin/filings?paid=1",
+            param: { key: "paid", value: "1" },
+          },
+          {
             label: "Unfinished drafts",
             href: "/admin/filings?status=DRAFT",
             badge: "unfinishedDrafts",
