@@ -87,7 +87,7 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
 // PATCH accepts a partial set of fields and persists them.
 // Wizard steps call this incrementally as the user advances.
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-  const filing = await getOwnedFiling(params.id);
+  const filing = await getOwnedFiling(params.id, "edit");
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (filing.status !== "DRAFT")
     return NextResponse.json({ error: "Filing is locked" }, { status: 409 });

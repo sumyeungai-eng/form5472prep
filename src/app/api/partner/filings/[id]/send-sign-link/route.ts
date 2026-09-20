@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentPartner } from "@/lib/partner/auth";
 import { bindFilingToEmail } from "@/lib/session";
-import { makeMagicLink } from "@/lib/magicLink";
 import { sendMagicLinkEmail } from "@/lib/email";
 import { brandForFiling, type EmailBrand } from "@/lib/partnerBrand";
+import { createFilingInvite } from "@/lib/filingInvite";
 
 export const runtime = "nodejs";
 
@@ -14,9 +14,9 @@ export const runtime = "nodejs";
 //   1. Verify the partner owns this filing (filing.partnerId === partner.id).
 //   2. Require the unsigned PDF to exist (PAID/PDF_GENERATED) — there's nothing
 //      to sign before generation.
-//   3. Bind the filing to the client's email (creates/links a User), so the
-//      magic link authenticates them and the sign page's ownership check passes.
-//   4. Email the client a magic link that deep-links to the sign page.
+//   3. Bind the filing to the client's email (creates/links a User) for later
+//      portal access.
+//   4. Email the client a filing-scoped invite link to the sign page.
 //
 // The client signs as themselves (their own User identity) — the partner never
 // signs on the client's behalf. The partner keeps visibility via partnerId.
@@ -43,15 +43,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: "This filing has already been signed." }, { status: 409 });
   }
 
-  // Bind to the client's email so the magic link authenticates them and the
-  // sign page's getOwnedFiling() ownership check passes.
+  // Bind to the client's email for later portal access, but do not derive the
+  // emailed link from that user identity.
   const user = await bindFilingToEmail(filing.id, email);
-
-  // Magic link that deep-links straight to the sign page after auth. The
-  // /auth/[token] route whitelists same-origin ?next= paths.
-  const baseLink = makeMagicLink(user.id);
-  const sep = baseLink.includes("?") ? "&" : "?";
-  const signLink = `${baseLink}${sep}next=${encodeURIComponent(`/filings/${filing.id}/sign`)}`;
+  const { url: signLink } = await createFilingInvite(filing.id, "sign", email);
 
   const label = filing.llcName ?? `tax year ${filing.taxYears.join(", ")}`;
   let brand: EmailBrand | null = null;

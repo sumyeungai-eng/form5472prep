@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentPartner } from "@/lib/partner/auth";
 import { bindFilingToEmail } from "@/lib/session";
-import { makeMagicLink } from "@/lib/magicLink";
+import { createFilingInvite } from "@/lib/filingInvite";
 
 export const runtime = "nodejs";
 
@@ -32,15 +32,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: "This filing has already been signed." }, { status: 409 });
   }
 
-  // Bind to the client's email so the magic link authenticates them and the
-  // sign page's getOwnedFiling() ownership check passes.
-  const user = await bindFilingToEmail(filing.id, email);
+  // Keep the client bound to this filing for later portal access, but the
+  // copied link itself is scoped to this one filing and purpose.
+  await bindFilingToEmail(filing.id, email);
+  const { url } = await createFilingInvite(filing.id, "sign", email);
 
-  // Magic link that deep-links straight to the sign page after auth. The
-  // /auth/[token] route whitelists same-origin ?next= paths.
-  const baseLink = makeMagicLink(user.id);
-  const sep = baseLink.includes("?") ? "&" : "?";
-  const signLink = `${baseLink}${sep}next=${encodeURIComponent(`/filings/${filing.id}/sign`)}`;
-
-  return NextResponse.json({ url: signLink });
+  return NextResponse.json({ url });
 }

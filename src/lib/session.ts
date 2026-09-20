@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "./prisma";
 import { getCurrentPartner } from "./partner/auth";
+import { INVITE_COOKIE, parseInviteCookie, type InviteScope } from "./filingInvite";
 
 // Three identities can exist for a request:
 //
@@ -140,15 +141,28 @@ export async function requireUser() {
 
 // ---- Filing access helpers ----
 
+export function hasFilingInviteAccess(filingId: string, scope: InviteScope): boolean {
+  const raw = cookies().get(INVITE_COOKIE)?.value;
+  const invite = parseInviteCookie(raw);
+  return invite?.filingId === filingId && invite.scope === scope;
+}
+
 // Returns the filing IF it belongs either to the current anonymous session
 // (sessionId match), the signed-in user (userId match), OR the signed-in
 // PARTNER who created it (partnerId match — a partner owns every filing they
 // create for a client, independent of which browser/session created it).
 // Null otherwise.
-export async function getOwnedFiling(filingId: string) {
+export async function getOwnedFiling(
+  filingId: string,
+  // Invite-cookie access is opt-in. The edit page should pass "edit"; the
+  // sign page and sign API should pass "sign". Existing callers omit this
+  // parameter and receive no invite-cookie access grant.
+  inviteScope?: InviteScope,
+) {
   const user = await getCurrentUser();
   const sessionId = getSessionId();
   const partner = await getCurrentPartner();
+  const inviteMatches = inviteScope ? hasFilingInviteAccess(filingId, inviteScope) : false;
 
   return prisma.filing.findFirst({
     where: {
@@ -157,6 +171,7 @@ export async function getOwnedFiling(filingId: string) {
         user ? { userId: user.id } : { id: "__never__" },
         sessionId ? { sessionId } : { id: "__never__" },
         partner ? { partnerId: partner.id } : { id: "__never__" },
+        inviteMatches ? { id: filingId } : { id: "__never__" },
       ],
     },
   });
@@ -222,12 +237,18 @@ export async function getOwnedItinApplication(id: string) {
 // current visitor can't access it (typically: anonymous session cookie expired
 // or different browser, and the filing is bound to a user account), or
 // "not_found" if the ID doesn't exist at all.
-export async function getFilingAccess(filingId: string): Promise<
+export async function getFilingAccess(
+  filingId: string,
+  // Invite-cookie access is opt-in. The edit page should pass "edit"; the
+  // sign page should pass "sign". Existing callers omit this parameter and
+  // receive no invite-cookie access grant.
+  inviteScope?: InviteScope,
+): Promise<
   | { kind: "owned"; filing: { id: string; status: string } }
   | { kind: "locked"; ownerEmail: string | null }
   | { kind: "not_found" }
 > {
-  const owned = await getOwnedFiling(filingId);
+  const owned = await getOwnedFiling(filingId, inviteScope);
   if (owned) return { kind: "owned", filing: { id: owned.id, status: owned.status } };
 
   const exists = await prisma.filing.findUnique({

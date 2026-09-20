@@ -10,7 +10,7 @@ export async function DELETE(
   _: Request,
   { params }: { params: { id: string; statementId: string } },
 ) {
-  const filing = await getOwnedFiling(params.id);
+  const filing = await getOwnedFiling(params.id, "edit");
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   // Make sure the statement belongs to this filing (defence in depth — the

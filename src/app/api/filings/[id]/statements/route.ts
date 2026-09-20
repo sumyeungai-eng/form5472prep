@@ -15,7 +15,7 @@ const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB
 // Upload a bank statement (CSV or PDF) for one tax year of a filing.
 // Returns the parsed + categorized transactions for client-side review.
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const filing = await getOwnedFiling(params.id);
+  const filing = await getOwnedFiling(params.id, "edit");
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const form = await req.formData();

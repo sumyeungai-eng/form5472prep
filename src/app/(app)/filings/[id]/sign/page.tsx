@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { getCurrentUser, getFilingAccess, partnerOwnsFiling } from "@/lib/session";
+import { getCurrentUser, getFilingAccess, hasFilingInviteAccess, partnerOwnsFiling } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { FilingLocked } from "@/components/FilingLocked";
 import { SignClient } from "./SignClient";
@@ -13,7 +13,7 @@ import { get as getStorageObject } from "@/lib/storage";
 //   - AI validation, if it ran, must NOT be in needs_customer_input state
 //     (otherwise we send the user back to the chat thread first)
 export default async function SignFilingPage({ params }: { params: { id: string } }) {
-  const access = await getFilingAccess(params.id);
+  const access = await getFilingAccess(params.id, "sign");
   if (access.kind === "not_found") notFound();
   if (access.kind === "locked") return <FilingLocked ownerEmail={access.ownerEmail} />;
 
@@ -33,7 +33,8 @@ export default async function SignFilingPage({ params }: { params: { id: string 
   // ordinary sessionId/userId-owned customer flow is untouched —
   // partnerOwnsFiling is null for it.
   const owningPartner = await partnerOwnsFiling(filing.id);
-  if (owningPartner && (!currentUser || currentUser.id !== filing.userId)) {
+  const grantedByInvite = hasFilingInviteAccess(filing.id, "sign");
+  if (owningPartner && !grantedByInvite && (!currentUser || currentUser.id !== filing.userId)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
         <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">

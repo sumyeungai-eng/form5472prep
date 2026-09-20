@@ -52,7 +52,7 @@ function detectType(bytes: Uint8Array): Detected | null {
 
 // Upload (or replace) the Form 7004 proof for this filing.
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const filing = await getOwnedFiling(params.id);
+  const filing = await getOwnedFiling(params.id, "edit");
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   // Deliberately NOT gated on the extension answers. The upload control appears
@@ -111,7 +111,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 // in place — storage cleanup is out of scope, and re-uploading the same format
 // overwrites the same key anyway.
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
-  const filing = await getOwnedFiling(params.id);
+  const filing = await getOwnedFiling(params.id, "edit");
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   await prisma.filing.update({

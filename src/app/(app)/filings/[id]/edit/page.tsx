@@ -8,7 +8,7 @@ import { plaidConfigured } from "@/lib/plaid";
 import { saveForLaterMode } from "@/lib/saveForLater";
 
 export default async function EditFilingPage({ params }: { params: { id: string } }) {
-  const access = await getFilingAccess(params.id);
+  const access = await getFilingAccess(params.id, "edit");
   if (access.kind === "not_found") notFound();
   if (access.kind === "locked") return <FilingLocked ownerEmail={access.ownerEmail} />;
   const owned = access.filing;

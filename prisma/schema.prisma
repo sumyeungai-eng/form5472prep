@@ -263,6 +263,12 @@ model Filing {
   // Display only — does not gate anything.
   clientInviteSentAt DateTime?
 
+  inviteTokenHash String?   @unique
+  inviteScope     String?
+  inviteEmail     String?
+  inviteExpiresAt DateTime?
+  inviteCreatedAt DateTime?
+
   // Set when a later PAID filing from the same customer makes this abandoned
   // draft redundant (false start, then restarted and paid). Superseded drafts
   // are hidden from the admin default view, the customer dashboard and the

@@ -34,7 +34,7 @@ function detectType(bytes: Uint8Array): Detected | null {
 }
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  const filing = await getOwnedFiling(params.id);
+  const filing = await getOwnedFiling(params.id, "edit");
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const documents = await prisma.filingDocument.findMany({
@@ -47,7 +47,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 }
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const filing = await getOwnedFiling(params.id);
+  const filing = await getOwnedFiling(params.id, "edit");
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const existingCount = await prisma.filingDocument.count({

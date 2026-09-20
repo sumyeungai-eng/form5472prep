@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentPartner } from "@/lib/partner/auth";
 import { bindFilingToEmail } from "@/lib/session";
-import { makeMagicLink } from "@/lib/magicLink";
 import { sendClientIntakeEmail } from "@/lib/email";
 import { checkClientInvite } from "@/lib/partner/clientInvite";
 import { brandForFiling, type EmailBrand } from "@/lib/partnerBrand";
+import { createFilingInvite } from "@/lib/filingInvite";
 
 export const runtime = "nodejs";
 
@@ -16,9 +16,9 @@ export const runtime = "nodejs";
 // Flow:
 //   1. Verify the partner owns this filing (filing.partnerId === partner.id)
 //      and it is still an untouched DRAFT (checkClientInvite).
-//   2. Bind the filing to the client's email (creates/links a User), so the
-//      magic link authenticates them and the wizard's ownership check passes.
-//   3. Email the client a magic link that deep-links to the edit wizard.
+//   2. Bind the filing to the client's email (creates/links a User) for later
+//      portal access.
+//   3. Email the client a filing-scoped invite link to the edit wizard.
 //
 // The client fills in their own answers as themselves (their own User
 // identity) — the partner never impersonates the client.
@@ -40,15 +40,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: guard.error }, { status: guard.status });
   }
 
-  // Bind to the client's email so the magic link authenticates them and the
-  // wizard's ownership check passes.
+  // Bind to the client's email for later portal access, but do not derive the
+  // emailed link from that user identity.
   const user = await bindFilingToEmail(filing.id, email);
-
-  // Magic link that deep-links straight into the wizard after auth. The
-  // /auth/[token] route whitelists same-origin ?next= paths.
-  const baseLink = makeMagicLink(user.id);
-  const sep = baseLink.includes("?") ? "&" : "?";
-  const clientLink = `${baseLink}${sep}next=${encodeURIComponent(`/filings/${filing.id}/edit`)}`;
+  const { url: clientLink } = await createFilingInvite(filing.id, "edit", email);
 
   const label = filing.llcName ?? `tax year ${filing.taxYears.join(", ")}`;
   let brand: EmailBrand | null = null;

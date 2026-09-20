@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentPartner } from "@/lib/partner/auth";
 import { bindFilingToEmail } from "@/lib/session";
-import { makeMagicLink } from "@/lib/magicLink";
 import { checkClientInvite } from "@/lib/partner/clientInvite";
+import { createFilingInvite } from "@/lib/filingInvite";
 
 export const runtime = "nodejs";
 
@@ -31,15 +31,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: guard.error }, { status: guard.status });
   }
 
-  // Bind to the client's email so the magic link authenticates them and the
-  // wizard's ownership check passes.
-  const user = await bindFilingToEmail(filing.id, email);
-
-  // Magic link that deep-links straight into the wizard after auth. The
-  // /auth/[token] route whitelists same-origin ?next= paths.
-  const baseLink = makeMagicLink(user.id);
-  const sep = baseLink.includes("?") ? "&" : "?";
-  const url = `${baseLink}${sep}next=${encodeURIComponent(`/filings/${filing.id}/edit`)}`;
+  // Keep the client bound to this filing for later portal access, but the
+  // copied link itself is scoped to this one filing and purpose.
+  await bindFilingToEmail(filing.id, email);
+  const { url } = await createFilingInvite(filing.id, "edit", email);
 
   await prisma.filing.update({
     where: { id: filing.id },

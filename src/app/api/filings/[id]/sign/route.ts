@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getOwnedFiling, getCurrentUser, partnerOwnsFiling } from "@/lib/session";
+import { getOwnedFiling, getCurrentUser, hasFilingInviteAccess, partnerOwnsFiling } from "@/lib/session";
 import { put } from "@/lib/storage";
 
 export const runtime = "nodejs";
@@ -22,7 +22,7 @@ export const maxDuration = 30;
 //      before — populates the wizard signature pre-fill on next year's
 //      return).
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const owned = await getOwnedFiling(params.id);
+  const owned = await getOwnedFiling(params.id, "sign");
   if (!owned) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   // Signing is reserved for the client. A partner "owns" (can view/edit) a
@@ -33,7 +33,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   // client user (the ordinary sessionId/userId-owned customer flow is
   // untouched — partnerOwnsFiling is null for it).
   const owningPartner = await partnerOwnsFiling(owned.id);
-  if (owningPartner) {
+  if (owningPartner && !hasFilingInviteAccess(owned.id, "sign")) {
     const currentUser = await getCurrentUser();
     if (!currentUser || currentUser.id !== owned.userId) {
       return NextResponse.json({ error: "Only the client can sign this filing" }, { status: 403 });

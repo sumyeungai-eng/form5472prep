@@ -10,7 +10,7 @@ export async function GET(
   _req: Request,
   { params }: { params: { id: string; docId: string } },
 ) {
-  const filing = await getOwnedFiling(params.id);
+  const filing = await getOwnedFiling(params.id, "edit");
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const doc = await prisma.filingDocument.findFirst({
@@ -25,7 +25,7 @@ export async function DELETE(
   _req: Request,
   { params }: { params: { id: string; docId: string } },
 ) {
-  const filing = await getOwnedFiling(params.id);
+  const filing = await getOwnedFiling(params.id, "edit");
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const doc = await prisma.filingDocument.findFirst({
