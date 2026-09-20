@@ -64,3 +64,8 @@ A codex run launched through the wrapper's background flag was killed when the w
 inside its turn. Headless Chrome screenshots of a PDF fired before the viewer painted; PyMuPDF
 (`python3 -c "import fitz"`) renders reliably. A spec error of mine (single-line address left whole)
 was only caught by looking at a stress render: always render a second, hostile sample.
+
+## Deploy evidence (2026-09-20 18:37 UTC)
+Build log: "Applying migration `20260920140000_ein_ss4_options`", "All migrations have been successfully
+applied." Production probes: POST `/api/admin/applications/ein/x/generate-ss4` without a session 401;
+`/forms/fss4.pdf` 200 (template deployed).
