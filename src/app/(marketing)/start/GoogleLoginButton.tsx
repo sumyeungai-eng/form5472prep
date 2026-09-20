@@ -33,23 +33,49 @@ export function GoogleLoginButton({
 }) {
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID;
   const buttonRef = useRef<HTMLDivElement>(null);
+  const buttonRenderedRef = useRef(false);
+  const onCredentialRef = useRef(onCredential);
   const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [buttonRendered, setButtonRendered] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
-    if (!clientId || !scriptLoaded || !window.google || !buttonRef.current) return;
-    window.google.accounts.id.initialize({
-      client_id: clientId,
-      callback: (resp) => onCredential(resp.credential),
-    });
-    window.google.accounts.id.renderButton(buttonRef.current, {
-      theme: "outline",
-      size: "large",
-      width: 320,
-      text: "continue_with",
-      shape: "rectangular",
-      logo_alignment: "left",
-    });
-  }, [clientId, scriptLoaded, onCredential]);
+    onCredentialRef.current = onCredential;
+  }, [onCredential]);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      if (!buttonRenderedRef.current) {
+        setLoadFailed(true);
+      }
+    }, 6000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
+  useEffect(() => {
+    if (!clientId || !scriptLoaded || !window.google || !buttonRef.current || buttonRenderedRef.current) return;
+    try {
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: (resp) => onCredentialRef.current(resp.credential),
+      });
+      window.google.accounts.id.renderButton(buttonRef.current, {
+        theme: "outline",
+        size: "large",
+        width: Math.min(320, buttonRef.current.offsetWidth || 320),
+        text: "continue_with",
+        shape: "rectangular",
+        logo_alignment: "left",
+      });
+      buttonRenderedRef.current = true;
+      setButtonRendered(true);
+    } catch {
+      if (!buttonRenderedRef.current) {
+        setLoadFailed(true);
+      }
+    }
+  }, [clientId, scriptLoaded]);
 
   if (!clientId) {
     return (
@@ -78,19 +104,33 @@ export function GoogleLoginButton({
         src="https://accounts.google.com/gsi/client"
         strategy="afterInteractive"
         onLoad={() => setScriptLoaded(true)}
+        onError={() => {
+          if (!buttonRenderedRef.current) {
+            setLoadFailed(true);
+          }
+        }}
       />
       {/* Reserve the slot's space before GIS injects the iframe — otherwise
           the button pops in late and shoves the rest of the form down,
           causing a visible layout shift on first paint. The dimensions
-          mirror the renderButton config above (width: 320, size: large
-          ≈ 40px tall). */}
+          mirror the renderButton config above (capped at 320px wide, size:
+          large is about 40px tall). */}
       <div className="flex justify-center">
         <div
           ref={buttonRef}
-          className="relative w-[320px] h-10 flex items-center justify-center"
+          className="relative w-full max-w-[320px] h-10 flex items-center justify-center"
         >
-          {!scriptLoaded && (
-            <div className="absolute inset-0 rounded-md border border-slate-200 bg-slate-50 animate-pulse" />
+          {!buttonRendered && (
+            loadFailed ? (
+              <p className="text-[11px] text-slate-500 text-center">
+                Google sign-in is not available right now. Use your email below.
+              </p>
+            ) : (
+              <div className="inline-flex items-center justify-center gap-2 h-10 w-full rounded-md border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-400 pointer-events-none">
+                <GoogleGlyph muted />
+                Continue with Google
+              </div>
+            )
           )}
         </div>
       </div>

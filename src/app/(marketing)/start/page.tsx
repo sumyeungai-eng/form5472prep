@@ -46,14 +46,14 @@ export default async function StartPage() {
 
   return (
     <div className="max-w-md mx-auto px-6 py-20">
-      {user && (
-        <div className="bg-white border border-slate-200 rounded-xl p-8 mb-6">
+      {user ? (
+        <div className="bg-white border border-slate-200 rounded-xl p-8">
           <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
             Signed in as {user.email}
             {filingCount > 0 ? ` · ${filingCount} filing${filingCount === 1 ? "" : "s"} on file` : ""}
           </p>
           <p className="mt-3 text-sm text-slate-600">
-            Start a filing for another tax year, or check on the filings you already have.
+            Start a filing for another tax year or another LLC, or check on the filings you already have.
           </p>
           <div className="mt-5 space-y-3">
             <Link href="/filings/new" className="block">
@@ -78,38 +78,33 @@ export default async function StartPage() {
             </div>
           </div>
         </div>
+      ) : (
+        <>
+          <div className="bg-white border border-slate-200 rounded-xl p-8">
+            <h1 className="text-2xl font-semibold tracking-tight">Start your filing</h1>
+            <p className="mt-2 text-sm text-slate-600">
+              We save your progress as you go and email you a link, so you can pick up where you left off on any device.
+            </p>
+            {/* Suspense boundary required by useSearchParams inside StartForm. */}
+            <Suspense fallback={<div className="mt-6 h-[380px]" aria-hidden />}>
+              <StartForm />
+            </Suspense>
+            <p className="mt-6 text-xs text-slate-500 text-center">
+              Already started a filing?{" "}
+              <a className="text-accent hover:underline" href="/sign-in">
+                Sign in
+              </a>
+              .
+            </p>
+          </div>
+          <p className="mt-5 text-xs text-slate-500 text-center flex items-center justify-center gap-1.5">
+            <svg className="h-3.5 w-3.5 text-emerald-500 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Every order is reviewed by a qualified tax accountant before submission to the IRS.
+          </p>
+        </>
       )}
-
-      {user && (
-        <p className="text-xs font-medium uppercase tracking-wide text-slate-400 mb-3 text-center">
-          Or start a filing for a different LLC
-        </p>
-      )}
-
-      <div className="bg-white border border-slate-200 rounded-xl p-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Start your filing</h1>
-        <p className="mt-2 text-sm text-slate-600">
-          We&apos;ll save your progress as you go and email you a magic-link so you can pick up
-          where you left off from any device.
-        </p>
-        {/* Suspense boundary required by useSearchParams inside StartForm. */}
-        <Suspense fallback={<div className="mt-6 h-[380px]" aria-hidden />}>
-          <StartForm />
-        </Suspense>
-        <p className="mt-6 text-xs text-slate-500 text-center">
-          Already started a filing?{" "}
-          <a className="text-accent hover:underline" href="/sign-in">
-            Sign in
-          </a>
-          .
-        </p>
-      </div>
-      <p className="mt-5 text-xs text-slate-500 text-center flex items-center justify-center gap-1.5">
-        <svg className="h-3.5 w-3.5 text-emerald-500 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        Every order is reviewed by a qualified tax accountant before submission to the IRS.
-      </p>
     </div>
   );
 }

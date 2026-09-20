@@ -174,8 +174,7 @@ export function StartForm() {
       <p className="flex items-start gap-2 text-xs text-slate-500">
         <Mail className="h-3.5 w-3.5 mt-0.5 flex-none text-slate-400" />
         <span>
-          We email a reminder if you don&apos;t finish, and a magic-link to sign back in. No
-          spam, no marketing — only what you need to file.
+          We email a reminder if you do not finish, and a link to sign back in. No spam.
         </span>
       </p>
     </div>
