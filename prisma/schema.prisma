@@ -503,6 +503,12 @@ model EinApplication {
   preparedPdfSource           String?
   ss4Options                  Json?
   signatureRequestedAt        DateTime?
+  intakeSignaturePngKey       String?
+  intakeSignedAt              DateTime?
+  intakeSignerName            String?
+  intakeSignatureIp           String?
+  intakeSignatureUserAgent    String?
+  intakeConsentVersion        String?
   signaturePngKey             String?
   signedAt                    DateTime?
   signerName                  String?
@@ -582,6 +588,12 @@ model ItinApplication {
   preparedPdfSha256           String?
   preparedPdfUploadedAt       DateTime?
   signatureRequestedAt        DateTime?
+  intakeSignaturePngKey       String?
+  intakeSignedAt              DateTime?
+  intakeSignerName            String?
+  intakeSignatureIp           String?
+  intakeSignatureUserAgent    String?
+  intakeConsentVersion        String?
   signaturePngKey             String?
   signedAt                    DateTime?
   signerName                  String?

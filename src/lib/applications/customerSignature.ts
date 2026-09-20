@@ -19,6 +19,8 @@ export type SignableApplication = {
   paidAt: Date | null;
   preparedPdfKey: string | null;
   preparedPdfSha256: string | null;
+  intakeSignaturePngKey: string | null;
+  intakeSignerName: string | null;
   signaturePngKey: string | null;
   signedAt: Date | null;
   signerName: string | null;
@@ -46,6 +48,8 @@ export async function loadOwnedApplication(
     paidAt: true,
     preparedPdfKey: true,
     preparedPdfSha256: true,
+    intakeSignaturePngKey: true,
+    intakeSignerName: true,
     signaturePngKey: true,
     signedAt: true,
     signerName: true,
@@ -70,7 +74,7 @@ export async function loadOwnedApplication(
 export function parseSignBody(
   body: unknown,
 ):
-  | { ok: true; pngBytes: Uint8Array; signerName: string; docSha256: string }
+  | { ok: true; pngBytes: Uint8Array | null; signerName: string; docSha256: string }
   | { ok: false; error: string } {
   if (typeof body !== "object" || body === null) {
     return { ok: false, error: "Invalid request body" };
@@ -81,6 +85,7 @@ export function parseSignBody(
     signerName?: unknown;
     consent?: unknown;
     docSha256?: unknown;
+    useIntakeSignature?: unknown;
   };
 
   if (value.consent !== true) {
@@ -94,6 +99,10 @@ export function parseSignBody(
 
   if (typeof value.docSha256 !== "string" || !DOC_SHA_RE.test(value.docSha256)) {
     return { ok: false, error: "Invalid document version." };
+  }
+
+  if (value.useIntakeSignature === true) {
+    return { ok: true, pngBytes: null, signerName, docSha256: value.docSha256 };
   }
 
   if (typeof value.signaturePngDataUrl !== "string" || !value.signaturePngDataUrl.startsWith(PNG_PREFIX)) {
@@ -177,12 +186,20 @@ export async function handleSign(type: ApplicationType, id: string, req: Request
   const parsed = parseSignBody(await req.json().catch(() => null));
   if (!parsed.ok) return jsonError(parsed.error, 400);
 
+  let pngBytes = parsed.pngBytes;
+  if (pngBytes === null) {
+    if (app.intakeSignaturePngKey === null) {
+      return jsonError("We do not have a signature from your application. Draw one below.", 409);
+    }
+    pngBytes = await getStorageObject(app.intakeSignaturePngKey);
+  }
+
   if (parsed.docSha256 !== app.preparedPdfSha256) {
     return jsonError("The form was updated after you opened it. Reload the page and review the new version.", 409);
   }
 
   const signaturePngKey = signatureKeyFor(type, id, parsed.docSha256);
-  await put(signaturePngKey, parsed.pngBytes, "image/png");
+  await put(signaturePngKey, pngBytes, "image/png");
 
   const claim = await updateSignedApplication({
     type,

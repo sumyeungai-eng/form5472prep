@@ -66,7 +66,46 @@ describe("parseSignBody", () => {
   it("accepts a valid signature payload", () => {
     const result = parseSignBody(validBody());
     expect(result).toMatchObject({ ok: true, signerName: "Alex Chen", docSha256: SHA });
-    expect(result.ok && result.pngBytes.byteLength).toBe(200);
+    expect(result.ok && result.pngBytes?.byteLength).toBe(200);
+  });
+
+  it("accepts an intake signature reuse payload", () => {
+    const result = parseSignBody({
+      useIntakeSignature: true,
+      signerName: "  Alex   Chen ",
+      consent: true,
+      docSha256: SHA,
+    });
+
+    expect(result).toEqual({ ok: true, pngBytes: null, signerName: "Alex Chen", docSha256: SHA });
+  });
+
+  it("rejects an intake signature reuse payload without consent", () => {
+    expect(parseSignBody(validBody({ useIntakeSignature: true, consent: undefined }))).toEqual({
+      ok: false,
+      error: "Please confirm your consent before signing.",
+    });
+  });
+
+  it("rejects an intake signature reuse payload without a valid signer name", () => {
+    expect(parseSignBody(validBody({ useIntakeSignature: true, signerName: "   " }))).toEqual({
+      ok: false,
+      error: "Enter your full legal name.",
+    });
+  });
+
+  it("rejects an intake signature reuse payload without a valid document SHA", () => {
+    expect(parseSignBody(validBody({ useIntakeSignature: true, docSha256: "A".repeat(64) }))).toEqual({
+      ok: false,
+      error: "Invalid document version.",
+    });
+  });
+
+  it("still requires a PNG when intake signature reuse is absent", () => {
+    expect(parseSignBody(validBody({ signaturePngDataUrl: undefined }))).toEqual({
+      ok: false,
+      error: "Malformed signature image.",
+    });
   });
 });
 

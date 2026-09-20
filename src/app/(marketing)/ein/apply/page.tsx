@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, ArrowLeft, ArrowRight, Clock, Loader2 } from "lucide-react";
+import { SignaturePad } from "@/components/SignaturePad";
 import { Input, Select, Field } from "@/components/ui/input";
+import { intakeConsentText } from "@/lib/applications/intakeConsent";
 import { sanitizeSrc } from "@/lib/attribution";
 import { EIN_APPLICATION_FAQ } from "@/lib/einApplicationFaq";
 
@@ -84,7 +86,12 @@ export default function EinApplyPage() {
   const [applicationId, setApplicationId] = useState("");
   const [needsCheckoutRetry, setNeedsCheckoutRetry] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [submitError, setSubmitError] = useState("");
   const [funnelSource, setFunnelSource] = useState<string | null>(null);
+  const [signaturePngDataUrl, setSignaturePngDataUrl] = useState<string | null>(null);
+  const [signatureSignerName, setSignatureSignerName] = useState("");
+  const [signatureNameTouched, setSignatureNameTouched] = useState(false);
+  const [signatureConsent, setSignatureConsent] = useState(false);
   const [form, setForm] = useState({
     email: "",
     phone: "",
@@ -119,6 +126,12 @@ export default function EinApplyPage() {
       setNeedsCheckoutRetry(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (!signatureNameTouched && form.ownerName.trim()) {
+      setSignatureSignerName(form.ownerName);
+    }
+  }, [form.ownerName, signatureNameTouched]);
 
   function set(k: keyof typeof form) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -156,13 +169,25 @@ export default function EinApplyPage() {
     e.preventDefault();
     setStatus("submitting");
     setCheckoutError("");
+    setSubmitError("");
     try {
       const res = await fetch("/api/ein-application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, fullName: form.ownerName, funnelSource }),
+        body: JSON.stringify({
+          ...form,
+          fullName: form.ownerName,
+          funnelSource,
+          signaturePngDataUrl,
+          signerName: signatureSignerName,
+          consent: signatureConsent,
+        }),
       });
-      if (!res.ok) throw new Error("Server error");
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        const message = typeof body?.error === "string" ? body.error : "Server error";
+        throw new Error(message);
+      }
       const payload = applicationResponse(await res.json().catch(() => null));
       if (!payload) throw new Error("Missing application id");
       setApplicationId(payload.id);
@@ -175,10 +200,13 @@ export default function EinApplyPage() {
         setPageState("received");
         setStatus("success");
       }
-    } catch {
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "");
       setStatus("error");
     }
   }
+
+  const canSubmitSignature = signatureSignerName.trim().length > 0 && signatureConsent && signaturePngDataUrl !== null;
 
   if (pageState === "paid") {
     return (
@@ -424,6 +452,36 @@ export default function EinApplyPage() {
           </div>
         </section>
 
+        <fieldset className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_20px_60px_-35px_rgba(15,23,42,0.35)] sm:p-8">
+          <legend className="font-serif text-xl font-semibold text-ink">Signature</legend>
+          <p className="mt-1 text-sm leading-6 text-slate-500">
+            Draw your signature once. We use it on the completed form only after you review and confirm it.
+          </p>
+          <div className="mt-5 space-y-4">
+            <Field label="Full legal name">
+              <Input
+                required
+                value={signatureSignerName}
+                onChange={(event) => {
+                  setSignatureNameTouched(true);
+                  setSignatureSignerName(event.target.value);
+                }}
+                autoComplete="name"
+              />
+            </Field>
+            <SignaturePad onChange={setSignaturePngDataUrl} height={180} />
+            <label className="flex gap-3 text-sm leading-6 text-slate-700">
+              <input
+                type="checkbox"
+                checked={signatureConsent}
+                onChange={(event) => setSignatureConsent(event.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-accent focus:ring-accent"
+              />
+              <span>{intakeConsentText("ein")}</span>
+            </label>
+          </div>
+        </fieldset>
+
         <div className="rounded-2xl bg-accent-50 border border-accent/20 px-5 py-4 text-sm text-slate-700">
           <strong>Flat fee: $149</strong> — payment opens in Stripe Checkout immediately after you
           submit this application.
@@ -431,14 +489,18 @@ export default function EinApplyPage() {
 
         {status === "error" && (
           <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-            Something went wrong. Please try again or email{" "}
-            <a href="mailto:support@form5472prep.com" className="underline">support@form5472prep.com</a>.
+            {submitError || (
+              <>
+                Something went wrong. Please try again or email{" "}
+                <a href="mailto:support@form5472prep.com" className="underline">support@form5472prep.com</a>.
+              </>
+            )}
           </p>
         )}
 
         <button
           type="submit"
-          disabled={status === "submitting" || status === "redirecting"}
+          disabled={status === "submitting" || status === "redirecting" || !canSubmitSignature}
           className="w-full h-12 rounded-lg bg-accent text-white font-medium text-sm flex items-center justify-center gap-2 hover:bg-accent-700 disabled:opacity-60 transition-colors"
         >
           {status === "submitting" || status === "redirecting" ? (

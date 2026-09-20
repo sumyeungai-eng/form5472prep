@@ -31,6 +31,8 @@ export default async function SignItinApplicationPage({ params }: { params: { id
           consentText={consentText("itin")}
           defaultName={app.fullName}
           alreadySigned={state === "SIGNED"}
+          hasIntakeSignature={app.intakeSignaturePngKey !== null}
+          intakeSignerName={app.intakeSignerName}
         />
       </div>
     </div>

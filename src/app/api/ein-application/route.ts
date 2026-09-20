@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp, tooManyRequests } from "@/lib/rateLimit";
 import { ATTR_COOKIE, parseAttributionCookie } from "@/lib/attribution";
+import { parseIntakeSignature } from "@/lib/applications/intakeConsent";
+import { storeIntakeSignature } from "@/lib/applications/intakeSignature";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -79,6 +81,23 @@ export async function POST(req: Request) {
       status: "PAYMENT_PENDING",
     },
   });
+
+  if (body.signaturePngDataUrl === undefined && body.signerName === undefined && body.consent === undefined) {
+    await prisma.einApplication.delete({ where: { id: application.id } });
+    return NextResponse.json({ error: "A signature is required to submit this application." }, { status: 400 });
+  }
+
+  const parsedSignature = parseIntakeSignature({
+    signaturePngDataUrl: body.signaturePngDataUrl,
+    signerName: body.signerName,
+    consent: body.consent,
+  });
+  if (!parsedSignature.ok) {
+    await prisma.einApplication.delete({ where: { id: application.id } });
+    return NextResponse.json({ error: parsedSignature.error }, { status: 400 });
+  }
+
+  await storeIntakeSignature("ein", application.id, parsedSignature.pngBytes, parsedSignature.signerName, req);
 
   return NextResponse.json({ ok: true, id: application.id });
 }

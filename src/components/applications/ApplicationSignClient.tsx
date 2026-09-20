@@ -14,6 +14,8 @@ export function ApplicationSignClient({
   consentText,
   defaultName,
   alreadySigned,
+  hasIntakeSignature = false,
+  intakeSignerName = null,
 }: {
   type: ApplicationType;
   id: string;
@@ -22,27 +24,34 @@ export function ApplicationSignClient({
   consentText: string;
   defaultName: string;
   alreadySigned: boolean;
+  hasIntakeSignature?: boolean;
+  intakeSignerName?: string | null;
 }) {
   const router = useRouter();
   const [signaturePngDataUrl, setSignaturePngDataUrl] = useState<string | null>(null);
-  const [signerName, setSignerName] = useState(defaultName);
+  const [signerName, setSignerName] = useState(hasIntakeSignature ? intakeSignerName ?? defaultName : defaultName);
   const [consent, setConsent] = useState(false);
+  const [drawNewSignature, setDrawNewSignature] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const canSubmit = signerName.trim().length > 0 && consent && !!signaturePngDataUrl && !busy;
+  const canSubmitIntake = signerName.trim().length > 0 && consent && !busy;
   const label = type === "ein" ? "Form SS-4" : "Form W-7";
 
-  async function submit() {
-    if (!canSubmit) return;
+  async function submit(useIntakeSignature: boolean) {
+    if (useIntakeSignature ? !canSubmitIntake : !canSubmit) return;
 
     setBusy(true);
     setError(null);
     try {
+      const body = useIntakeSignature
+        ? { useIntakeSignature: true, signerName, consent: true, docSha256 }
+        : { signaturePngDataUrl, signerName, consent, docSha256 };
       const res = await fetch(`/api/applications/${type}/${id}/sign`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ signaturePngDataUrl, signerName, consent, docSha256 }),
+        body: JSON.stringify(body),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -89,41 +98,93 @@ export function ApplicationSignClient({
           </p>
         )}
 
-        <label htmlFor="signerName" className="mt-4 block text-sm font-medium text-slate-700">
-          Full legal name
-        </label>
-        <input
-          id="signerName"
-          value={signerName}
-          onChange={(event) => setSignerName(event.target.value)}
-          className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
-          autoComplete="name"
-        />
+        {hasIntakeSignature && !drawNewSignature ? (
+          <>
+            <label htmlFor="signerName" className="mt-4 block text-sm font-medium text-slate-700">
+              Full legal name
+            </label>
+            <input
+              id="signerName"
+              value={signerName}
+              onChange={(event) => setSignerName(event.target.value)}
+              className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
+              autoComplete="name"
+            />
 
-        <label className="mt-4 flex gap-3 text-sm leading-6 text-slate-700">
-          <input
-            type="checkbox"
-            checked={consent}
-            onChange={(event) => setConsent(event.target.checked)}
-            className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-blue-900 focus:ring-blue-900"
-          />
-          <span>{consentText}</span>
-        </label>
+            <label className="mt-4 flex gap-3 text-sm leading-6 text-slate-700">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(event) => setConsent(event.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-blue-900 focus:ring-blue-900"
+              />
+              <span>{consentText}</span>
+            </label>
 
-        <div className="mt-4">
-          <SignaturePad onChange={setSignaturePngDataUrl} height={180} />
-        </div>
+            <p className="mt-4 text-sm text-slate-600">
+              We will use the signature you drew when you applied.
+            </p>
 
-        {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
+            {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
 
-        <button
-          type="button"
-          onClick={submit}
-          disabled={!canSubmit}
-          className="mt-5 w-full rounded-full bg-blue-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-950 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {busy ? "Saving..." : "Sign and submit"}
-        </button>
+            <button
+              type="button"
+              onClick={() => submit(true)}
+              disabled={!canSubmitIntake}
+              className="mt-5 w-full rounded-full bg-blue-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-950 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {busy ? "Saving..." : "Confirm and sign"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setError(null);
+                setDrawNewSignature(true);
+              }}
+              className="mt-3 w-full text-center text-sm font-semibold text-blue-900 hover:underline"
+            >
+              Draw a new signature instead
+            </button>
+          </>
+        ) : (
+          <>
+            <label htmlFor="signerName" className="mt-4 block text-sm font-medium text-slate-700">
+              Full legal name
+            </label>
+            <input
+              id="signerName"
+              value={signerName}
+              onChange={(event) => setSignerName(event.target.value)}
+              className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
+              autoComplete="name"
+            />
+
+            <label className="mt-4 flex gap-3 text-sm leading-6 text-slate-700">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(event) => setConsent(event.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-blue-900 focus:ring-blue-900"
+              />
+              <span>{consentText}</span>
+            </label>
+
+            <div className="mt-4">
+              <SignaturePad onChange={setSignaturePngDataUrl} height={180} />
+            </div>
+
+            {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
+
+            <button
+              type="button"
+              onClick={() => submit(false)}
+              disabled={!canSubmit}
+              className="mt-5 w-full rounded-full bg-blue-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-950 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {busy ? "Saving..." : "Sign and submit"}
+            </button>
+          </>
+        )}
         <p className="mt-2 text-center text-xs text-slate-500">
           If anything on the form looks wrong, do not sign. Reply to our email and we will correct it.
         </p>
