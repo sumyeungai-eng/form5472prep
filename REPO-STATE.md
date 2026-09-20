@@ -171,6 +171,8 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
   staff upload prepared PDF, customer signs bound to the PDF hash, admin stamps via the placement tool.
 - `docs/sessions/2026-09-20-inbound-fax-inbox.md` — receive faxes on the Telnyx number, `/admin/faxes`
   inbox, link faxes to EIN/ITIN/filings; OFF in production until TELNYX_PUBLIC_KEY is set.
+- `docs/sessions/2026-09-20-ss4-auto-generation.md` — Form SS-4 auto-generation from the EIN application
+  (field map, owner-approved draft defaults), paid-orders filter fix, header partner link removed.
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
