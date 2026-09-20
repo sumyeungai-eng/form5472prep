@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import type { Prisma } from "@prisma/client";
 import { inboundFaxAllowed, formatFaxNumber } from "@/lib/inboundFax";
 import { isAdmin } from "@/lib/admin/auth";
+import { env } from "@/lib/env";
 import { timeAgo } from "@/lib/admin/filingPresence";
 import { prisma } from "@/lib/prisma";
 import { AdminPageHeader } from "../_components/AdminPageHeader";
@@ -44,6 +45,7 @@ export default async function AdminFaxesPage({ searchParams }: { searchParams: S
     prisma.receivedFax.count({ where }),
   ]);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const faxNumber = env.telnyx.faxNumber;
   const inboundEnabled = inboundFaxAllowed({
     publicKeySet: !!process.env.TELNYX_PUBLIC_KEY,
     nodeEnv: process.env.NODE_ENV,
@@ -55,6 +57,23 @@ export default async function AdminFaxesPage({ searchParams }: { searchParams: S
         title="Received faxes"
         description="Inbound Telnyx faxes stored for admin review."
       />
+
+      <div className="mb-6 rounded-lg border border-slate-200 bg-white px-4 py-3">
+        <div className="text-xs font-medium uppercase tracking-wide text-slate-500">Our fax number</div>
+        {faxNumber ? (
+          <>
+            <div className="mt-1 font-mono text-lg text-slate-900 select-all">{formatFaxNumber(faxNumber)}</div>
+            <p className="mt-1 text-sm text-slate-600">
+              Faxes sent to this number arrive here. It is also the number we send from, so the IRS
+              replies to it.
+            </p>
+          </>
+        ) : (
+          <p className="mt-1 text-sm text-slate-600">
+            No number configured. Set TELNYX_FAX_NUMBER in Vercel.
+          </p>
+        )}
+      </div>
 
       {!inboundEnabled ? (
         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
