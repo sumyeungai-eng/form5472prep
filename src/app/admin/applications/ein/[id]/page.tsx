@@ -3,10 +3,12 @@ import { redirect, notFound } from "next/navigation";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { ApplicationSignaturePanel } from "@/components/admin/ApplicationSignaturePanel";
 import { LinkedFaxes } from "@/components/admin/LinkedFaxes";
+import { Ss4Panel } from "@/components/admin/Ss4Panel";
 import { isAdmin } from "@/lib/admin/auth";
 import { formLabel } from "@/lib/applicationSignature";
 import { prisma } from "@/lib/prisma";
 import { formatAttribution } from "@/lib/attribution";
+import { parseSs4Options, type Ss4Source } from "@/lib/pdf/ss4Options";
 import { formatUsd } from "@/lib/utils";
 import { AdminPageHeader } from "../../../_components/AdminPageHeader";
 import { EinAdminActions } from "./EinAdminActions";
@@ -46,6 +48,23 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
     app.attrReferrer ||
     app.attrLanding
   );
+  const ss4Source: Ss4Source = {
+    fullName: app.fullName,
+    phone: app.phone,
+    llcName: app.llcName,
+    llcState: app.llcState,
+    llcFormedDate: app.llcFormedDate,
+    businessMailingAddress: app.businessMailingAddress,
+    businessType: app.businessType,
+    businessPurpose: app.businessPurpose,
+    principalProducts: app.principalProducts,
+    ownerName: app.ownerName,
+    ownerResidence: app.ownerResidence,
+    ownerCitizenship: app.ownerCitizenship,
+  };
+  const ss4Options = parseSs4Options(app.ss4Options, ss4Source);
+  const hasPrepared = !!(app.preparedPdfKey || app.preparedPdfSha256 || app.preparedPdfUploadedAt);
+  const hasSignature = !!(app.signaturePngKey || app.signedAt || app.signedDocSha256);
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
@@ -141,6 +160,17 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
           consentVersion={app.signatureConsentVersion}
           signedDocSha256={app.signedDocSha256}
           signedPdfAt={app.signedPdfAt?.toISOString() ?? null}
+        />
+      </div>
+
+      <div className="mb-8">
+        <Ss4Panel
+          id={app.id}
+          llcName={app.llcName}
+          options={ss4Options}
+          hasPrepared={hasPrepared}
+          preparedSource={app.preparedPdfSource}
+          hasSignature={hasSignature}
         />
       </div>
 

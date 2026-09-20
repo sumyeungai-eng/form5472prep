@@ -497,6 +497,8 @@ model EinApplication {
   preparedPdfKey              String?
   preparedPdfSha256           String?
   preparedPdfUploadedAt       DateTime?
+  preparedPdfSource           String?
+  ss4Options                  Json?
   signatureRequestedAt        DateTime?
   signaturePngKey             String?
   signedAt                    DateTime?

@@ -78,6 +78,24 @@ export async function handleUploadPrepared(type: ApplicationType, id: string, re
     return json({ error: "could not read that PDF" }, 400);
   }
 
+  const stored = await storePreparedPdf(type, id, bytes, "upload");
+
+  return NextResponse.json({
+    ok: true,
+    sha256: stored.sha256,
+    replacedSignature: stored.replacedSignature,
+  });
+}
+
+export async function storePreparedPdf(
+  type: ApplicationType,
+  id: string,
+  bytes: Uint8Array,
+  source: "upload" | "generated",
+): Promise<{ sha256: string; replacedSignature: boolean }> {
+  const app = await findApplication(type, id);
+  if (!app) throw new Error("application not found");
+
   const keys = applicationKeys(type, id);
   const sha256 = sha256Hex(bytes);
   const oldKeys = [app.signaturePngKey, app.signedPdfKey].filter((key): key is string => !!key);
@@ -101,14 +119,14 @@ export async function handleUploadPrepared(type: ApplicationType, id: string, re
     preparedPdfKey: keys.prepared,
     preparedPdfSha256: sha256,
     preparedPdfUploadedAt: new Date(),
+    ...(type === "ein" ? { preparedPdfSource: source } : {}),
   });
   await Promise.allSettled(oldKeys.map((key) => del(key)));
 
-  return NextResponse.json({
-    ok: true,
+  return {
     sha256,
     replacedSignature: !!(app.signaturePngKey || app.signedAt || app.signedDocSha256),
-  });
+  };
 }
 
 export async function handleGetPrepared(type: ApplicationType, id: string, _req: Request): Promise<Response> {
