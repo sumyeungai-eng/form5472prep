@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { sendAbandonedDraftReminderEmail } from "@/lib/email";
+import { abandonedDraftAudience } from "@/lib/reminders";
 import { makeMagicLink } from "@/lib/magicLink";
 import { makeUnsubscribeLink } from "@/lib/unsubscribeToken";
 
@@ -67,11 +68,8 @@ async function processCohort(opts: CohortOpts) {
 
   const drafts = await prisma.filing.findMany({
     where: {
-      status: "DRAFT",
-      supersededAt: null,
-      userId: { not: null },
+      ...abandonedDraftAudience(),
       updatedAt: { lte: idleAtLeast, gte: notOlderThan },
-      user: { is: { emailMarketingOptOut: false } },
       ...unsentFilter(claimField),
     },
     include: { user: true },

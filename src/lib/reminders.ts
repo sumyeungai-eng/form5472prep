@@ -1,3 +1,5 @@
+import type { Prisma } from "@prisma/client";
+import { PAID_FILING_STATUSES } from "@/lib/admin/traffic";
 import { FilingStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
@@ -167,4 +169,34 @@ export async function runCampaign(args: {
 
 function distinct<T>(arr: T[]): T[] {
   return Array.from(new Set(arr));
+}
+
+// Who may receive a "you did not finish" email. Three exclusions matter:
+//   - the customer already paid for a filing. Telling a paying customer their
+//     filing is unfinished is the worst email we can send, and a leftover junk
+//     draft on the same account used to trigger exactly that.
+//   - the draft is empty. Without an LLC name there is nothing to pick up, so
+//     the email would point at a blank wizard.
+//   - the admin archived the draft, or the system superseded it.
+export function abandonedDraftAudience(): Prisma.FilingWhereInput {
+  return {
+    status: "DRAFT",
+    supersededAt: null,
+    adminHidden: false,
+    userId: { not: null },
+    llcName: { not: null },
+    user: {
+      is: {
+        emailMarketingOptOut: false,
+        filings: {
+          none: {
+            OR: [
+              { status: { in: [...PAID_FILING_STATUSES] } },
+              { stripePaymentId: { not: null } },
+            ],
+          },
+        },
+      },
+    },
+  };
 }
