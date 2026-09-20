@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Inbox } from "lucide-react";
 import type { FilingStatus, Prisma } from "@prisma/client";
 import { isAdmin } from "@/lib/admin/auth";
+import { PAID_FILING_STATUSES } from "@/lib/admin/traffic";
 import { prisma } from "@/lib/prisma";
 import { formatUsd } from "@/lib/utils";
 import { formatAttribution } from "@/lib/attribution";
@@ -51,8 +52,8 @@ export default async function AdminFilingsPage({
   // Every view that can contain DRAFT rows — the default (all statuses), the
   // explicit DRAFT filter, and the archive. Only these pay for the extra
   // yearData join + the completeness pass; a PAID-only filter skips it.
-  // paid=1 narrows to orders that were actually paid for, at any stage after
-  // checkout (PAID through CONFIRMED, and FAILED faxes that were paid).
+  // paid=1 narrows to orders money was actually received for, at any stage
+  // after checkout (PAID through CONFIRMED, plus FAILED faxes that were paid).
   const paidOnly = searchParams.paid === "1";
   const draftView = (!statusFilter || statusFilter === "DRAFT" || showHidden) && !paidOnly;
   // ready=1 narrows to the drafts checkout would accept — the customers who
@@ -78,7 +79,13 @@ export default async function AdminFilingsPage({
   }
   if (reviewOnly) whereParts.push({ inReview: true });
   if (paidOnly) {
-    whereParts.push({ OR: [{ amountPaid: { gt: 0 } }, { stripePaymentId: { not: null } }] });
+    // NOT amountPaid: on a Filing that column holds the QUOTED price, written
+    // when the draft is created (findOrCreateDraft.ts), so it is > 0 on rows
+    // nobody ever paid for. Money actually received is a post-DRAFT status or
+    // a Stripe payment id, the same rule src/lib/admin/traffic.ts uses.
+    whereParts.push({
+      OR: [{ status: { in: [...PAID_FILING_STATUSES] } }, { stripePaymentId: { not: null } }],
+    });
   }
   if (partnerFilter === true) whereParts.push({ partnerId: { not: null } });
   if (partnerFilter === false) whereParts.push({ partnerId: null });

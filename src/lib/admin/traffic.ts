@@ -65,7 +65,7 @@ export type TrafficFilterOptions = {
   sources: string[];
 };
 
-const PAID_FILING_STATUSES = [
+export const PAID_FILING_STATUSES = [
   "PAID",
   "PDF_GENERATED",
   "SIGNATURE_PENDING",
