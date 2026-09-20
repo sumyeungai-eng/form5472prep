@@ -243,3 +243,65 @@ nomad questions have their own guide?" table linking all five; all five link bac
   plan pages change more often than tax law.
 - Platform help centres (Upwork, Fiverr) block curl; the posts name the articles in text
   rather than linking them.
+
+## Nomad batch 4 — ten posts (2026-09-20, owner-approved)
+
+Plan `docs/reviews/nomad-batch-4-plan.md`; assignments P–Y in
+`docs/reviews/new-posts-nomad-batch-spec.md`; audit
+`docs/reviews/2026-09-20-nomad-batch-4-audit.md`.
+
+Seven country posts — Türkiye, Hungary, Costa Rica, Argentina, South Korea, Croatia,
+Taiwan — plus three topic posts: `pay-yourself-from-us-llc-non-resident`,
+`form-5472-from-mercury-wise-relay-statements`,
+`form-5472-coaches-consultants-course-creators`. The nomad hub now lists 22 countries
+and 8 topic guides; every new post links back to it. Written in two waves of five
+(ten concurrent lanes caused stalls in batch 2).
+
+### Treaty positions established (IRS A-to-Z read by alphabetical section)
+In force: Türkiye (no caution note), South Korea. **Terminated: Hungary** — the entry
+carries "CAUTION Treaty Terminated". Not in force: Croatia (signed 7 Dec 2022; the
+protocol package reached the Senate 14 Sep 2026 as Treaty Doc. 119-2 — transmission is
+not ratification), Costa Rica, Argentina, Taiwan (absent; the IRS Taiwan treaty page
+404s).
+
+### Audit: 1 P0, several P1/P2 — all applied
+- **P0, South Korea.** The post stated the F-1-D workation visa requires income above
+  **twice** GNI per capita with a one-year stay. The Ministry of Justice changed both
+  with effect from 30 June 2026. The orchestrator verified the MOJ release directly
+  (Korean text): maximum stay rose from two years to **three**, and the flat 2× became a
+  **tiered 1×–2×** by age and region, with 1× (about KRW 52.41m on a 2025 basis) for
+  applicants aged 18–34 outside the capital region. Rewritten and re-sourced to MOJ.
+  Lesson: **a consulate page is not the authority for a visa rule** — cite the ministry.
+- **Hungary VERIFIED by the orchestrator against the IRS Hungary page**, verbatim:
+  termination effective 8 January 2023; ceased for taxes withheld at source 1 January
+  2024; for other taxes, taxable periods beginning on or after 1 January 2024.
+- Korea's resident definition now also cites Income Tax Act art. 1-2(1)(i), not only the
+  Enforcement Decree. Taiwan's May filing period is detached from the MOF citation.
+  Croatia records the Senate transmission. `pay-yourself` links the IRS "Paying
+  yourself" page. Costa Rica no longer attributes an "in force" framing to a page that
+  does not use the phrase. Teachable's article is cited by its current name (Teachable
+  Pay) with a URL, and Kajabi's is linked.
+- **Mercury's help centre returns 403 to automated access even with a browser
+  user-agent.** The post previously inferred its export capability from "most business
+  accounts"; it now says plainly that we could not read the page and does not restate
+  the capability from second-hand sources.
+- Batch-wide P2 applied in 22 places: § 1.6038A-1 now reads "beginning on or after
+  1 January 2017 **and ending on or after 13 December 2017**".
+
+### Verified evidence
+tsc clean · `npx vitest run` 481 passed · all 11 posts parse through `getPost`, 162
+published, FAQ schema clean, no dangling links · `pay-yourself`'s Form 5472 line numbers
+(17/31 balances, 18/32 interest, 29 services, Part V for draws) verified against the
+Rev. December 2023 form text — no hallucinated lines survived.
+
+### Lane notes
+- **A summarised read of the Form 5472 PDF invented "Management fees" lines that do not
+  exist.** The writing lane caught it by extracting the real PDF text. Treat a fetched
+  *summary* of a form as a lead, not as the form.
+- Codex CLI was smoke-tested and is available again (credits restored), but these lanes
+  stayed on Claude subagents because every post needed live government-source fetching.
+  Route mechanical, spec-determined work to codex next time.
+- Argentina's lane corrected the spec: ARCA shows **no 183-day test** for foreign
+  nationals — residency is permanent migratory residence or twelve months on temporary
+  authorisations, with a six-month test only for personal deductions. A lane reporting a
+  spec error is doing its job; the spec was wrong, not the lane.

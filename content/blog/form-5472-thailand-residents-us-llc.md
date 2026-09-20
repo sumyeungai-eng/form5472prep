@@ -24,7 +24,7 @@ Yes, on the same terms as any other non-US owner, when three conditions are met:
 2. Its sole member is a non-US person. A Thai national or foreigner in Thailand who is not a US citizen, green card holder or US tax resident qualifies.
 3. There was at least one **reportable transaction** during the tax year between the LLC and its owner or another foreign related party.
 
-Treasury Regulation § 1.6038A-1 treats a foreign-owned US disregarded entity as a corporation separate from its owner, solely for the § 6038A reporting rules, for tax years beginning on or after 1 January 2017. Whether you pay Thai tax is irrelevant.
+Treasury Regulation § 1.6038A-1 treats a foreign-owned US disregarded entity as a corporation separate from its owner, solely for the § 6038A reporting rules, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017. Whether you pay Thai tax is irrelevant.
 
 Reportable transactions move **between you and your own LLC**, not between the LLC and its customers.
 

@@ -24,7 +24,7 @@ Yes, on the same terms as any other non-US owner. Three conditions:
 2. Its sole member is a non-US person: not a US citizen, green card holder or US tax resident.
 3. There was at least one **reportable transaction** during the tax year between the LLC and its owner or another foreign related party.
 
-Under Treasury Regulation section 1.6038A-1, for tax years beginning on or after 1 January 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the section 6038A reporting rules. That treatment exists only to make the information return possible; it does not turn the LLC into a taxpaying corporation, and it applies whether you have lived in Vietnam for ten years or arrived last month.
+Under Treasury Regulation section 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the section 6038A reporting rules. That treatment exists only to make the information return possible; it does not turn the LLC into a taxpaying corporation, and it applies whether you have lived in Vietnam for ten years or arrived last month.
 
 The filing is year by year. A year in which nothing moved between you and the LLC may need no Form 5472, but the year you formed the LLC almost always does, because putting money into a new account to open it is itself a contribution.
 

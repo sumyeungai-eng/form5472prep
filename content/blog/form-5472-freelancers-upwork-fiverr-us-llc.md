@@ -18,7 +18,7 @@ No platform dashboard tells you what goes on Form 5472, because the form reports
 
 Yes, in most years. A foreign-owned US single-member LLC files if three things are true: it is a disregarded entity for US tax purposes, its owner is a foreign person, and during the tax year it had at least one reportable transaction with that owner or another foreign related party.
 
-Under **Treas. Reg. § 1.6038A-1**, for tax years beginning on or after 1 January 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the § 6038A reporting rules. That is why a one-person freelance LLC that pays no US corporate tax still files a corporate-style information return.
+Under **Treas. Reg. § 1.6038A-1**, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the § 6038A reporting rules. That is why a one-person freelance LLC that pays no US corporate tax still files a corporate-style information return.
 
 Freelancers meet the third condition almost automatically. A single withdrawal to your personal account is a reportable transaction, as is money you put in to open the bank account.
 

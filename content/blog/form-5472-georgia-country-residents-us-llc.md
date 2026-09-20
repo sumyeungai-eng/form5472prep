@@ -26,7 +26,7 @@ Yes, on exactly the same terms as any other non-US owner. Three conditions apply
 2. Its sole member is a non-US person. Someone living in Tbilisi who is not a US citizen, green card holder or US tax resident qualifies.
 3. There was at least one **reportable transaction** during the tax year between the LLC and its owner or another foreign related party.
 
-Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner solely for the § 6038A reporting rules. Georgian registration and residence are irrelevant to it.
+Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner solely for the § 6038A reporting rules. Georgian registration and residence are irrelevant to it.
 
 Reportable transactions are money, property or services moving **between you and your own LLC**: contributions, distributions, loans either way, and payments for goods or services. **Customer revenue is not a reportable transaction.** A Stripe payout from a client does not go on the form; a transfer from that balance to your personal account at TBC Bank or Bank of Georgia does.
 

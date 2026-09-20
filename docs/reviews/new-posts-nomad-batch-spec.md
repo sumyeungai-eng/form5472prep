@@ -417,3 +417,95 @@ ariregister.rik.ee / e-resident.gov.ee. UAE from the Ministry of Finance / Feder
 Authority (corporate tax registration and returns) — free-zone authority specifics only
 if from an official free-zone site, else state they vary by free zone. **Any cell you
 cannot source reads "varies — check [authority]".** Link Estonia and UAE country posts.
+
+---
+
+# Batch 4 — ten posts (approved 2026-09-20)
+
+Plan: `docs/reviews/nomad-batch-4-plan.md`. Conversion target `/start`. Dates in
+frontmatter: `date: 2026-09-20`, `updated: 2026-09-20`.
+
+Country posts (P–V) use the country template (read
+`content/blog/form-5472-uae-dubai-residents-us-llc.md`) and the batch-1/2 rules:
+treaty section sourced to the IRS A-to-Z page read **by alphabetical section**, local
+personal tax number, local residency day rule, the relevant visa from a government
+source, FTIN-box table, numbered filing steps, 6–7 FAQs.
+Topic posts (W–Y) do NOT use the country headings.
+
+All ten: shared contract + gate items 1–12; **write the full draft to disk before running
+the gate**; no `utm_`; `/start` in the first screen and near the close; last line
+`*Educational content only; not tax or legal advice.*`; we are not a CPA firm.
+Extra allowed internal links: any slug already in this file's whitelists, plus
+`/blog/form-5472-digital-nomad-us-llc`, `/blog/us-llc-tax-free-digital-nomads-myth`,
+`/blog/form-5472-freelancers-upwork-fiverr-us-llc`,
+`/blog/stripe-paypal-wise-form-5472`, `/blog/form-5472-part-v-statement-example`,
+`/blog/form-5472-related-party-services-management-fees`,
+`/blog/us-bank-account-foreign-owned-llc`, `/blog/form-5472-recordkeeping-checklist`.
+
+### P — `form-5472-turkey-residents-us-llc` — Turkey (treaty listed; confirm)
+Verify: Turkish tax identification number (vergi kimlik numarası) from gib.gov.tr;
+residency rule; whether Türkiye offers a digital-nomad visa, from a Turkish government
+source (say unverified if not confirmable).
+
+### Q — `form-5472-hungary-residents-us-llc` — Hungary — **HIGHEST RISK IN BATCH**
+The IRS A-to-Z list shows Hungary with "CAUTION Treaty Terminated". Establish from
+IRS/Treasury sources: the termination and the date from which it ceased to apply for
+taxes. State only what those pages say; if the effective date is unclear, say so
+explicitly. Also: Hungarian tax number, 183-day rule, and the White Card residence
+permit from a Hungarian government source. Asset: table of what treaty termination does
+and does not change — it does **not** change Form 5472.
+
+### R — `form-5472-costa-rica-residents-us-llc` — Costa Rica (no treaty in force; confirm)
+Verify: the digital-nomad law/visa from a Costa Rican government source (migracion.go.cr
+or the Gaceta); cédula/NITE identification for foreigners from Hacienda; territorial
+taxation only in outline, sourced.
+
+### S — `form-5472-argentina-residents-us-llc` — Argentina (no treaty; confirm)
+Verify: CUIT/CUIL from AFIP/ARCA; 183-day rule from the income tax law. Peso figures
+only at a dated official rate (BCRA or US Treasury reporting rate) — or omit pesos.
+Make no claim about exchange controls or parallel rates unless officially sourced.
+
+### T — `form-5472-south-korea-residents-us-llc` — Korea (treaty listed; confirm)
+Verify: resident registration number vs taxpayer number for foreigners (NTS/Hometax);
+183-day rule; the workation visa (F-1-D) from a Korean government source.
+
+### U — `form-5472-croatia-residents-us-llc` — Croatia
+A US–Croatia treaty was signed in 2022. Confirm from the IRS A-to-Z page whether it is
+in force; if Croatia is absent, say plainly that a signed treaty not in force gives a
+taxpayer nothing. Verify OIB from porezna-uprava.gov.hr and the digital-nomad temporary
+stay from mup.gov.hr.
+
+### V — `form-5472-taiwan-residents-us-llc` — Taiwan
+Taiwan is not on the IRS treaty list. Check whether any US–Taiwan double-tax relief
+legislation has taken effect; if you cannot confirm it from an official US source, write
+that it is unverified and tell readers to confirm. Verify the Taiwan tax ID / ARC
+number, the 183-day rule, and the Employment Gold Card from a Taiwanese government source.
+
+### W — `pay-yourself-from-us-llc-non-resident` — **route: highest-value topic post**
+Title: `How to Pay Yourself From a US LLC as a Non-Resident`
+Answer: a single-member LLC's owner takes distributions, not a salary; the owner is not
+an employee of a disregarded entity; each movement is a reportable transaction on
+Form 5472.
+Asset: table — owner draw · "salary" · loan to/from the LLC · expense reimbursement ·
+payment for genuine services — each mapped to how it is characterised and where it lands
+on Form 5472 (Part IV category or Part V statement). Sourced to the Form 5472
+instructions and IRS single-member-LLC guidance. Do not advise on home-country tax.
+Link `/blog/form-5472-part-v-statement-example`,
+`/blog/form-5472-related-party-services-management-fees`,
+`/blog/does-foreign-owned-llc-pay-us-tax`.
+
+### X — `form-5472-from-mercury-wise-relay-statements`
+Title: `Building Your Form 5472 Figures From Mercury, Wise or Relay Statements`
+Numbered process: export the year's statements → separate customer revenue from owner
+movements → categorise owner movements → total per category → reconcile to Part IV/V.
+Asset: a worked ledger (10–15 lines) with categories and totals that reconcile; state it
+is illustrative. Any claim about a bank's export features must come from that bank's own
+help centre, fetched; otherwise describe generically ("most business accounts export CSV").
+Do not restate `/blog/stripe-paypal-wise-form-5472` — link it.
+
+### Y — `form-5472-coaches-consultants-course-creators`
+Title: `Form 5472 for Coaches, Consultants and Course Creators With a US LLC`
+Asset: worked example distinct from the freelancer post — course-platform payouts and
+client retainers (not reportable) vs owner withdrawals and owner-paid software
+(reportable). Platform facts only from the platform's own help pages, else omit.
+Link `/blog/form-5472-freelancers-upwork-fiverr-us-llc` and note how the two differ.

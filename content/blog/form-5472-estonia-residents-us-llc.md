@@ -45,7 +45,7 @@ Yes, on the same terms as any other non-US owner. Three conditions:
 2. Its sole member is a non-US person. An Estonia resident or e-resident who is not a US citizen, green card holder or US tax resident qualifies.
 3. There was at least one **reportable transaction** during the tax year between the LLC and its owner or another foreign related party.
 
-Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner solely for the § 6038A reporting rules. Your digital identity plays no part in that test.
+Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner solely for the § 6038A reporting rules. Your digital identity plays no part in that test.
 
 Reportable transactions are money or value moving **between you and your own LLC**: contributions in, distributions out, loans in either direction, and payments for goods or services. **Customer revenue is not reportable.** A Stripe payout from a customer does not go on the form; a transfer of euros from that balance to your personal LHV or Swedbank account does.
 

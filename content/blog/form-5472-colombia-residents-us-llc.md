@@ -24,7 +24,7 @@ Yes. Living in Colombia gives no exemption. The filing is required when three co
 2. Its sole owner is a foreign person: not a US citizen, green card holder or US tax resident.
 3. During the tax year there was at least one **reportable transaction** between the LLC and its owner or another foreign related party.
 
-Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner solely for the § 6038A reporting rules. That is why an LLC that owes no US tax still files.
+Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner solely for the § 6038A reporting rules. That is why an LLC that owes no US tax still files.
 
 A reportable transaction is money, property or services moving **between you and your own LLC**: contributions in, distributions out, loans either way, and payments for goods or services. **Customer revenue is not reportable.** When a client pays your LLC's invoice through Stripe, nothing goes on the form. When you move USD 5,000 from the LLC's Mercury account to your personal Bancolombia account, that transfer does.
 

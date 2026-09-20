@@ -24,7 +24,7 @@ Yes, on exactly the same terms as any other non-US owner. Three conditions:
 2. Its sole member is a non-US person. A UAE resident who is not a US citizen, green card holder or US tax resident qualifies.
 3. There was at least one **reportable transaction** during the tax year between the LLC and its owner or another foreign related party.
 
-Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner solely for the § 6038A reporting rules. Residence in a zero-tax jurisdiction is irrelevant to that rule.
+Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner solely for the § 6038A reporting rules. Residence in a zero-tax jurisdiction is irrelevant to that rule.
 
 Reportable transactions are money, property or services moving **between you and your own LLC**: capital contributions in, distributions out, loans either direction, payments for goods or services. **Customer revenue is not reportable.** A Stripe payout from a customer does not go on the form; a transfer from that balance to your personal Emirates NBD or Wio account does.
 

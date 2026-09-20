@@ -301,6 +301,16 @@ const POSTS = {
   "form-5472-freelancers-upwork-fiverr-us-llc": { accent: C.green, motif: "stack", glyphs: ["person", "doc", "hash", "check"] },
   "wyoming-vs-new-mexico-vs-delaware-llc-digital-nomads": { accent: C.amber, motif: "split", glyphs: ["doc", "calendar", "hash", "check"] },
   "us-llc-vs-estonia-ou-vs-uae-company-digital-nomads": { accent: C.navySoft, motif: "split", glyphs: ["globe", "doc", "calendar", "check"] },
+  "form-5472-turkey-residents-us-llc": { accent: C.clay, motif: "globe", glyphs: ["globe", "person", "doc", "check"] },
+  "form-5472-hungary-residents-us-llc": { accent: C.amber, motif: "notice", glyphs: ["doc", "globe", "hash", "check"] },
+  "form-5472-costa-rica-residents-us-llc": { accent: C.green, motif: "globe", glyphs: ["globe", "doc", "person", "check"] },
+  "form-5472-argentina-residents-us-llc": { accent: C.teal, motif: "globe", glyphs: ["globe", "person", "hash", "check"] },
+  "form-5472-south-korea-residents-us-llc": { accent: C.navySoft, motif: "globe", glyphs: ["globe", "doc", "person", "check"] },
+  "form-5472-croatia-residents-us-llc": { accent: C.navy, motif: "globe", glyphs: ["globe", "hash", "doc", "check"] },
+  "form-5472-taiwan-residents-us-llc": { accent: C.clay, motif: "globe", glyphs: ["globe", "person", "doc", "check"] },
+  "pay-yourself-from-us-llc-non-resident": { accent: C.green, motif: "card", glyphs: ["person", "hash", "doc", "check"] },
+  "form-5472-from-mercury-wise-relay-statements": { accent: C.teal, motif: "stack", glyphs: ["doc", "hash", "calendar", "check"] },
+  "form-5472-coaches-consultants-course-creators": { accent: C.amber, motif: "checklist", glyphs: ["person", "doc", "calendar", "check"] },
 };
 
 const wanted = process.argv.slice(2);

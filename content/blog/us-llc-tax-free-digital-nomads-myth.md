@@ -44,7 +44,7 @@ Most claims pair a true sentence with an omitted one.
 
 Because Form 5472 is an information return about money moving between the LLC and its foreign owner, not a tax return.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a foreign-owned US disregarded entity is treated as a corporation separate from its owner for the limited purposes of section 6038A reporting. Treas. Reg. § 1.6038A-1 applies that rule for tax years beginning on or after 1 January 2017. The same instructions tell a foreign-owned US DE to file a pro forma Form 1120 with Form 5472 attached, completing only the entity's name and address and items B and E on page 1, with "Foreign-owned U.S. DE" written across the top.
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a foreign-owned US disregarded entity is treated as a corporation separate from its owner for the limited purposes of section 6038A reporting. Treas. Reg. § 1.6038A-1 applies that rule for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017. The same instructions tell a foreign-owned US DE to file a pro forma Form 1120 with Form 5472 attached, completing only the entity's name and address and items B and E on page 1, with "Foreign-owned U.S. DE" written across the top.
 
 The trigger is a **reportable transaction** between the LLC and you, or another foreign related party, during the year. The instructions include contributions to and distributions from the entity. In practice that means:
 

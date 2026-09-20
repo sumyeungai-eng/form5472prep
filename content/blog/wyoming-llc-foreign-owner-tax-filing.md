@@ -55,7 +55,7 @@ Two qualifications worth understanding, because "no state income tax" is often o
 
 Yes, if the LLC is a disregarded entity wholly owned by a non-US person and it had at least one **reportable transaction** during the tax year.
 
-Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017, and ending on or after December 13, 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner, solely for the purposes of the § 6038A reporting rules. State of formation is irrelevant to that rule.
+Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, and ending on or after December 13, 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner, solely for the purposes of the § 6038A reporting rules. State of formation is irrelevant to that rule.
 
 Reportable transactions are movements of money, property or services **between the LLC and you** (or another foreign related party): capital contributions in, distributions out, loans either direction, payments for goods or services. **Revenue from customers is not reportable** — a Stripe payout from a customer does not go on the form; a transfer from that balance to your personal account does.
 

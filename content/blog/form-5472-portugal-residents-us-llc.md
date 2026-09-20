@@ -24,7 +24,7 @@ Yes, on the same terms as any other non-US owner. Three conditions:
 2. Its sole member is a non-US person: not a US citizen, green card holder or US tax resident.
 3. At least one **reportable transaction** took place during the tax year between the LLC and its owner or another foreign related party.
 
-Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 a foreign-owned US disregarded entity is treated as a corporation separate from its owner solely for the § 6038A reporting rules. Where the owner pays personal tax is irrelevant to that rule.
+Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017 a foreign-owned US disregarded entity is treated as a corporation separate from its owner solely for the § 6038A reporting rules. Where the owner pays personal tax is irrelevant to that rule.
 
 Reportable transactions are money, property or services moving between you and your own LLC: contributions in, distributions out, loans either way, payments for goods or services. **Customer revenue is not reportable.** A Stripe payout from a client does not go on the form; a transfer from that balance to your personal Millennium bcp or Caixa Geral de Depósitos account does.
 

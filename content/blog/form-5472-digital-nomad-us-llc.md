@@ -24,7 +24,7 @@ Yes. The test has three conditions, and none is about where you live:
 2. Its sole member is a non-US person: not a US citizen, green card holder or US tax resident.
 3. There was at least one **reportable transaction** during the year between the LLC and its owner or another foreign related party.
 
-Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the § 6038A reporting rules. The rule has no residence condition.
+Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the § 6038A reporting rules. The rule has no residence condition.
 
 Reportable transactions are movements **between you and your own LLC**: contributions, distributions, loans either way, payments for goods or services. **Customer revenue is not reportable.** A Stripe payout from a client stays off the form; a transfer from that balance to your personal Wise account goes on it.
 
@@ -113,6 +113,13 @@ Every combination lands on exactly one row. Absent from the list: where you slep
 | Georgia (the country) | [Georgia residents](/blog/form-5472-georgia-country-residents-us-llc) |
 | Colombia | [Colombia residents](/blog/form-5472-colombia-residents-us-llc) |
 | Estonia, including e-Residents | [Estonia residents and e-Residents](/blog/form-5472-estonia-residents-us-llc) |
+| Türkiye | [Turkey residents](/blog/form-5472-turkey-residents-us-llc) |
+| Hungary | [Hungary residents](/blog/form-5472-hungary-residents-us-llc) |
+| Costa Rica | [Costa Rica residents](/blog/form-5472-costa-rica-residents-us-llc) |
+| Argentina | [Argentina residents](/blog/form-5472-argentina-residents-us-llc) |
+| South Korea | [South Korea residents](/blog/form-5472-south-korea-residents-us-llc) |
+| Croatia | [Croatia residents](/blog/form-5472-croatia-residents-us-llc) |
+| Taiwan | [Taiwan residents](/blog/form-5472-taiwan-residents-us-llc) |
 | UAE and Dubai | [UAE and Dubai residents](/blog/form-5472-uae-dubai-residents-us-llc) |
 | Singapore | [Singapore residents](/blog/form-5472-singapore-residents-us-llc) |
 | Hong Kong | [Hong Kong residents](/blog/form-5472-hong-kong-residents-us-llc) |
@@ -131,6 +138,9 @@ Local rules change what goes in the FTIN box and what you owe at home, not the U
 | I freelance on Upwork or Fiverr through the LLC | [Form 5472 for freelancers](/blog/form-5472-freelancers-upwork-fiverr-us-llc) |
 | Which state should the LLC be in? | [Wyoming vs New Mexico vs Delaware](/blog/wyoming-vs-new-mexico-vs-delaware-llc-digital-nomads) |
 | Should I use a US LLC, an Estonian OÜ or a UAE company? | [annual filing burden compared](/blog/us-llc-vs-estonia-ou-vs-uae-company-digital-nomads) |
+| How do I actually pay myself from the LLC? | [paying yourself as a non-resident](/blog/pay-yourself-from-us-llc-non-resident) |
+| How do I turn bank statements into Form 5472 figures? | [from Mercury, Wise or Relay statements](/blog/form-5472-from-mercury-wise-relay-statements) |
+| I coach, consult or sell courses | [Form 5472 for coaches and course creators](/blog/form-5472-coaches-consultants-course-creators) |
 
 ## How does a nomad actually file Form 5472?
 

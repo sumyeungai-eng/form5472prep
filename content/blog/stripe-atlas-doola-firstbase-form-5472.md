@@ -28,7 +28,7 @@ The federal filing is triggered by three conditions, none of which depends on wh
 2. Its owner is a non-US person.
 3. There was at least one reportable transaction between the LLC and the owner during the tax year.
 
-Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the § 6038A reporting rules. That is why a one-person LLC with no US income tax to pay still files Form 5472 attached to a pro forma Form 1120.
+Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the § 6038A reporting rules. That is why a one-person LLC with no US income tax to pay still files Form 5472 attached to a pro forma Form 1120.
 
 Reportable transactions are contributions in, distributions out, loans either way, and payments for goods or services between you and the LLC. **Customer revenue is not a reportable transaction.** A Stripe payout from a customer stays off the form; a transfer from that balance to your personal account goes on it.
 

@@ -28,7 +28,7 @@ Each entity reports to a different authority on a different clock. The table ass
 
 ## What does a foreign-owned US LLC file each year?
 
-A single-member LLC owned by a non-US person files **Form 5472 attached to a pro forma Form 1120** for each tax year in which it had a reportable transaction with its owner or another foreign related party. Under Treas. Reg. § 1.6038A-1, for tax years beginning on or after 1 January 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for these reporting rules.
+A single-member LLC owned by a non-US person files **Form 5472 attached to a pro forma Form 1120** for each tax year in which it had a reportable transaction with its owner or another foreign related party. Under Treas. Reg. § 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for these reporting rules.
 
 - **The pro forma Form 1120** carries "Foreign-owned U.S. DE" across the top of page 1; only the LLC's name and address and items B and E are required.
 - **It cannot be e-filed.** It goes by fax or mail; the steps are below.
