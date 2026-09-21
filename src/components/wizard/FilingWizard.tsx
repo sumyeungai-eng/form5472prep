@@ -26,6 +26,13 @@ import { fireMetaInitiateCheckout } from "@/lib/analytics/meta";
 import { DocumentsUploader } from "@/components/DocumentsUploader";
 import { DeterminationFlag } from "@/components/wizard/DeterminationFlag";
 import { requiresReasonableCause } from "@/lib/completeness";
+import {
+  NO_ACTIVITY_CODE,
+  describePbaCode,
+  pbaCodesFor,
+  searchPbaCodes,
+  type PbaCode,
+} from "@/lib/irsCodes";
 
 // Generates a self-assigned Reference ID for Form 5472 when the customer
 // leaves the field blank. Uses last-name + first-initial as a human-readable
@@ -87,71 +94,62 @@ import { TransactionsReview } from "./TransactionsReview";
 import { ReasonableCauseStep } from "./ReasonableCauseStep";
 
 // Common principal business activities for foreign-owned single-member LLCs,
-// with their IRS 6-digit NAICS codes. The catch-all "Other (please specify)"
-// option falls back to the original free-text input.
-// Curated NAICS list — only the activities our customer base (foreign-owned
-// US LLCs) actually picks. Goal: every customer finds something specific
-// enough that they don't pick "Other" and land on 999999 (or worse, an
-// admin manually-types a wrong code that survives review — e.g. the
-// "Music Publishers (512230)" picked for a non-music publishing business
-// in one historical filing). When in doubt, add more granular entries
-// instead of fewer, generic ones.
-const BUSINESS_ACTIVITIES: { activity: string; code: string }[] = [
+// with IRS Form 1120 Principal Business Activity codes.
+export const BUSINESS_ACTIVITIES: { activity: string; code: string }[] = [
   // ── Software & tech services ────────────────────────────────
   { activity: "Software / SaaS / app development", code: "541512" },
-  { activity: "Software publishing (commercial software products)", code: "511210" },
-  { activity: "IT services / computer systems design", code: "541510" },
+  { activity: "Software publishing (commercial software products)", code: "513210" },
+  { activity: "IT services / computer systems design", code: "541512" },
   { activity: "Web design / web development", code: "541511" },
 
   // ── Consulting & professional services ──────────────────────
-  { activity: "Management consulting", code: "541611" },
-  { activity: "Marketing / advertising consulting", code: "541613" },
-  { activity: "Advertising agency / digital marketing services", code: "541810" },
-  { activity: "Graphic / industrial design services", code: "541430" },
+  { activity: "Management consulting", code: "541600" },
+  { activity: "Marketing / advertising consulting", code: "541800" },
+  { activity: "Advertising agency / digital marketing services", code: "541800" },
+  { activity: "Graphic / industrial design services", code: "541400" },
   { activity: "Financial / accounting / bookkeeping services", code: "541219" },
   { activity: "Legal services", code: "541110" },
   { activity: "Engineering / architectural services", code: "541330" },
 
   // ── Publishing & content ────────────────────────────────────
   // Common foreign-founder content businesses. The split between
-  // 511130 (books), 511199 (other publishers), 519130 (internet
-  // content), 711510 (independent creator), and 512230 (music
-  // publishers) is the one most likely to be mis-coded — keep them
+  // book publishers, other publishers, web content, independent creators,
+  // and music-rights publishing is the one most likely to be mis-coded; keep them
   // all explicitly listed so the picker doesn't force a default.
-  { activity: "Book publishing (ebooks, print books)", code: "511130" },
-  { activity: "Newspaper / periodical / magazine publishing", code: "511120" },
-  { activity: "Other publishing (greeting cards, calendars, etc.)", code: "511199" },
-  { activity: "Music publishing / music rights", code: "512230" },
-  { activity: "Internet content / blog / newsletter / Substack", code: "519130" },
-  { activity: "Affiliate marketing / content monetization", code: "519130" },
+  { activity: "Book publishing (ebooks, print books)", code: "513130" },
+  { activity: "Newspaper / periodical / magazine publishing", code: "513120" },
+  { activity: "Other publishing (greeting cards, calendars, etc.)", code: "513190" },
+  { activity: "Music publishing / music rights", code: "513190" },
+  { activity: "Internet content / blog / newsletter / Substack", code: "516210" },
+  { activity: "Affiliate marketing / content monetization", code: "541800" },
   { activity: "Writing / content creation / translation", code: "711510" },
   { activity: "Independent artist / performer / influencer", code: "711510" },
-  { activity: "Photography / video production", code: "541921" },
-  { activity: "Online education / courses / coaching", code: "611430" },
+  { activity: "Photography / video production", code: "541920" },
+  { activity: "Online education / courses / coaching", code: "611000" },
 
   // ── E-commerce & retail ─────────────────────────────────────
-  { activity: "Online / e-commerce retail (physical products)", code: "454110" },
-  { activity: "Dropshipping / Amazon FBA seller", code: "454110" },
-  { activity: "Print-on-demand (books, apparel, prints)", code: "323111" },
+  { activity: "Online / e-commerce retail (physical products)", code: "455210" },
+  { activity: "Dropshipping / Amazon FBA seller", code: "455210" },
+  { activity: "Print-on-demand (books, apparel, prints)", code: "323100" },
   { activity: "Wholesale distribution / import-export", code: "424990" },
 
   // ── Finance, investment, real estate ────────────────────────
   { activity: "Investment activities / holding company", code: "523900" },
   { activity: "Cryptocurrency / digital asset trading", code: "523900" },
-  { activity: "Real estate — rental property", code: "531110" },
-  { activity: "Real estate — other (flipping, syndication, etc.)", code: "531390" },
+  { activity: "Real estate - rental property", code: "531190" },
+  { activity: "Real estate - other (flipping, syndication, etc.)", code: "531390" },
 
   // ── Goods, services, ops ────────────────────────────────────
   { activity: "Restaurants / food service", code: "722511" },
-  { activity: "Construction / contractor", code: "236220" },
-  { activity: "Manufacturing", code: "339999" },
+  { activity: "Construction / contractor", code: "238900" },
+  { activity: "Manufacturing", code: "339900" },
   { activity: "Transportation / logistics / freight", code: "488510" },
   { activity: "Trucking / delivery", code: "484110" },
   { activity: "Personal services (cleaning, beauty, etc.)", code: "812990" },
   { activity: "Healthcare / wellness services", code: "621399" },
 
   // Fallback. Lives here at the bottom so it's the last option.
-  { activity: "Other (unable to classify)", code: "999999" },
+  { activity: "Other (unable to classify)", code: NO_ACTIVITY_CODE },
 ];
 
 type Filing = {
@@ -731,6 +729,57 @@ function EntityStep({
   const [activityIsOther, setActivityIsOther] = useState<boolean>(
     initialActivity.length > 0 && !initialIsPreset,
   );
+  const pbaTaxYear =
+    filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : new Date().getFullYear() - 1;
+  const initialBusinessCode = filing.llcBusinessCode ?? "";
+  const initialBusinessDescription = initialBusinessCode
+    ? describePbaCode(initialBusinessCode, pbaTaxYear)
+    : null;
+  const [businessCodeQuery, setBusinessCodeQuery] = useState(
+    initialBusinessDescription
+      ? `${initialBusinessCode} - ${initialBusinessDescription}`
+      : initialBusinessCode,
+  );
+  const [codePickerOpen, setCodePickerOpen] = useState(false);
+  const [activeCodeIndex, setActiveCodeIndex] = useState(0);
+  const skipNextBusinessCodeSync = useRef(false);
+  const currentBusinessCode = watch("llcBusinessCode") ?? "";
+  const selectedBusinessDescription = currentBusinessCode
+    ? describePbaCode(currentBusinessCode, pbaTaxYear)
+    : null;
+  const noActivityDescription = describePbaCode(NO_ACTIVITY_CODE, pbaTaxYear) ?? "Unclassified Establishments";
+  const codeResults = useMemo(() => {
+    const results = businessCodeQuery.trim()
+      ? searchPbaCodes(businessCodeQuery, pbaTaxYear)
+      : pbaCodesFor(pbaTaxYear).slice(0, 20);
+    return results.filter((item) => item.code !== NO_ACTIVITY_CODE);
+  }, [businessCodeQuery, pbaTaxYear]);
+  const codeOptions: PbaCode[] = useMemo(
+    () => [{ code: NO_ACTIVITY_CODE, description: noActivityDescription }, ...codeResults],
+    [codeResults, noActivityDescription],
+  );
+
+  useEffect(() => {
+    if (skipNextBusinessCodeSync.current && currentBusinessCode === "") {
+      skipNextBusinessCodeSync.current = false;
+      return;
+    }
+    skipNextBusinessCodeSync.current = false;
+    const description = currentBusinessCode
+      ? describePbaCode(currentBusinessCode, pbaTaxYear)
+      : null;
+    setBusinessCodeQuery(description ? `${currentBusinessCode} - ${description}` : currentBusinessCode);
+  }, [currentBusinessCode, pbaTaxYear]);
+
+  useEffect(() => {
+    if (activeCodeIndex >= codeOptions.length) setActiveCodeIndex(Math.max(0, codeOptions.length - 1));
+  }, [activeCodeIndex, codeOptions.length]);
+
+  function selectBusinessCode(option: PbaCode) {
+    setValue("llcBusinessCode", option.code, { shouldValidate: true, shouldDirty: true });
+    setBusinessCodeQuery(`${option.code} - ${option.description}`);
+    setCodePickerOpen(false);
+  }
 
   function handleActivitySelect(value: string) {
     if (value === "__other__") {
@@ -857,7 +906,7 @@ function EntityStep({
         >
           <option value="">Select your business activity…</option>
           {BUSINESS_ACTIVITIES.map((b) => (
-            <option key={b.code} value={b.activity}>
+            <option key={b.activity} value={b.activity}>
               {b.activity}
             </option>
           ))}
@@ -875,43 +924,98 @@ function EntityStep({
         )}
       </Field>
       <Field
-        label="6-digit business code (NAICS)"
-        hint="The IRS code that best matches what your LLC does."
+        label="Principal business activity code"
+        hint={`Choose a 6-digit code from the IRS Form 1120 list for ${pbaTaxYear}.`}
         error={errors.llcBusinessCode?.message}
         help={
-          <>
-            <p>
-              A <strong>NAICS code</strong> classifies what kind of business you run. Form 1120
-              wants the 6-digit code that most closely matches your principal activity.
-            </p>
-            <p className="mt-2 font-medium text-slate-900">Common ones:</p>
-            <ul className="mt-1 space-y-0.5 list-disc list-inside">
-              <li><code>541512</code> — Computer systems design / software</li>
-              <li><code>541611</code> — Management consulting</li>
-              <li><code>454110</code> — Online / e-commerce retail</li>
-              <li><code>541810</code> — Advertising agencies</li>
-              <li><code>711510</code> — Independent artists, writers, performers</li>
-              <li><code>531390</code> — Real estate (other)</li>
-              <li><code>523900</code> — Investment activities (holding companies)</li>
-              <li><code>999999</code> — Unable to classify / catch-all</li>
-            </ul>
-            <p className="mt-2">
-              Full list at{" "}
-              <a
-                className="text-accent underline"
-                href="https://www.census.gov/naics/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                census.gov/naics
-              </a>
-              . If unsure, use <code>999999</code> — the IRS doesn&apos;t reject filings over
-              this field.
-            </p>
-          </>
+          <p>
+            Form 5472 uses the Principal Business Activity Codes printed in the Form 1120
+            instructions for the tax year. A real NAICS code is only valid here if it appears
+            on that IRS list.
+          </p>
         }
       >
-        <Input {...register("llcBusinessCode")} placeholder="541512" />
+        <div className="relative">
+          <input type="hidden" {...register("llcBusinessCode")} />
+          <Input
+            value={businessCodeQuery}
+            placeholder="Search by code or activity"
+            autoComplete="off"
+            role="combobox"
+            aria-expanded={codePickerOpen}
+            aria-controls="llc-business-code-options"
+            aria-activedescendant={
+              codePickerOpen && codeOptions[activeCodeIndex]
+                ? `llc-business-code-option-${activeCodeIndex}`
+                : undefined
+            }
+            onFocus={() => setCodePickerOpen(true)}
+            onBlur={() => setTimeout(() => setCodePickerOpen(false), 120)}
+            onChange={(e) => {
+              setBusinessCodeQuery(e.target.value);
+              skipNextBusinessCodeSync.current = true;
+              setValue("llcBusinessCode", "", { shouldValidate: true, shouldDirty: true });
+              setActiveCodeIndex(0);
+              setCodePickerOpen(true);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowDown") {
+                e.preventDefault();
+                setCodePickerOpen(true);
+                setActiveCodeIndex((index) => Math.min(index + 1, Math.max(0, codeOptions.length - 1)));
+              } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                setCodePickerOpen(true);
+                setActiveCodeIndex((index) => Math.max(index - 1, 0));
+              } else if (e.key === "Enter" && codePickerOpen && codeOptions[activeCodeIndex]) {
+                e.preventDefault();
+                selectBusinessCode(codeOptions[activeCodeIndex]);
+              } else if (e.key === "Escape") {
+                e.preventDefault();
+                setCodePickerOpen(false);
+              }
+            }}
+          />
+          {codePickerOpen && (
+            <ul
+              id="llc-business-code-options"
+              role="listbox"
+              className="absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-md border border-slate-200 bg-white shadow-lg"
+            >
+              {codeOptions.length === 0 ? (
+                <li className="px-3 py-2 text-sm text-slate-500">No matching IRS codes</li>
+              ) : (
+                codeOptions.map((option, index) => (
+                  <li
+                    id={`llc-business-code-option-${index}`}
+                    key={option.code}
+                    role="option"
+                    aria-selected={index === activeCodeIndex}
+                    className={`cursor-pointer px-3 py-2 text-sm ${
+                      index === activeCodeIndex ? "bg-blue-50 text-blue-950" : "text-slate-800"
+                    }`}
+                    onMouseEnter={() => setActiveCodeIndex(index)}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      selectBusinessCode(option);
+                    }}
+                  >
+                    {option.code === NO_ACTIVITY_CODE ? (
+                      <span className="block font-medium">No business activity yet</span>
+                    ) : null}
+                    <span className="font-mono font-medium">{option.code}</span>
+                    <span className="ml-2 break-words">{option.description}</span>
+                  </li>
+                ))
+              )}
+            </ul>
+          )}
+          {currentBusinessCode && selectedBusinessDescription && (
+            <p className="mt-2 text-sm text-slate-700">
+              Selected: <code>{currentBusinessCode}</code> - {selectedBusinessDescription}
+            </p>
+          )}
+        </div>
       </Field>
       <div className="flex justify-end">
         <Button type="submit" disabled={saving}>
