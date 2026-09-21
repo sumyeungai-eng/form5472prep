@@ -23,7 +23,7 @@ import {
   signerTitleStampPlacement,
 } from "./generatePackage";
 import { runPreflight } from "./preflight";
-import { F1, F2, F3, F4, F5, F7, F8, finalisedAt, fixtures } from "./__fixtures__/filings";
+import { F1, F2, F3, F4, F5, F7, F8, F9, finalisedAt, fixtures } from "./__fixtures__/filings";
 
 const PDF_TIMEOUT = 20_000;
 const IRS_MAIL_ADDRESS_DISPLAY_LINES = [
@@ -231,6 +231,51 @@ describe("generatePackage regressions", () => {
     expect(() => assertRelatedPartyCount(2)).toThrow("More than one related party: route to a reviewer.");
   });
 
+  it("G-10 routes F9's stored member count to review during generation", async () => {
+    await expect(generatePackage(F9, finalisedAt)).rejects.toThrow(NeedsReviewError);
+  }, PDF_TIMEOUT);
+
+  it("G-09 checks Part VI, adds a statement, and counts non-cash value once", async () => {
+    const pkg = await generatePackage(F5, finalisedAt);
+    const year2022 = pkg.record.taxYears.find((year) => year.taxYear === 2022);
+    expect(year2022?.form5472.fields).toContainEqual({
+      form: "5472-2022",
+      field: form5472FieldMap.partVI_attachedStatementBox,
+      value: true,
+    });
+    expect(year2022?.line1f).toBe(25_000);
+    expect(year2022?.partVTotalRounded).toBe(0);
+    expect(pkg.record.authoredDocuments.some((doc) => doc.kind === "partVIStatement" && doc.taxYear === 2022)).toBe(true);
+  }, PDF_TIMEOUT);
+
+  it("C-05 orders F5 pages per tax year", async () => {
+    const pkg = await generatePackage(F5, finalisedAt);
+    expect(pkg.record.pageOrder.map((page) => [page.label, page.taxYear ?? null])).toEqual([
+      ["Cover letter", null],
+      ["Form 1120", 2022],
+      ["Form 5472", 2022],
+      ["Part V Statement", 2022],
+      ["Part VI Statement", 2022],
+      ["Reasonable Cause Statement", 2022],
+      ["Form 1120", 2023],
+      ["Form 5472", 2023],
+      ["Part V Statement", 2023],
+      ["Reasonable Cause Statement", 2023],
+      ["Form 1120", 2024],
+      ["Form 5472", 2024],
+      ["Part V Statement", 2024],
+      ["Reasonable Cause Statement", 2024],
+    ]);
+  }, PDF_TIMEOUT);
+
+  it("C-06 uses the configured signature heading on every authored document kind", async () => {
+    const pkg = await generatePackage(F5, finalisedAt);
+    const byKind = new Map(pkg.record.authoredDocuments.map((doc) => [doc.kind, doc]));
+    for (const kind of ["coverLetter", "partVStatement", "partVIStatement", "reasonableCauseStatement"] as const) {
+      expect(byKind.get(kind)?.lines).toContain(AUTHORED_DOC_SIGNATURE_HEADING);
+    }
+  }, PDF_TIMEOUT);
+
   it.each([
     [2018, form1120_2018FieldMap],
     [2019, form1120_2019FieldMap],
@@ -278,5 +323,20 @@ describe("generatePackage regressions", () => {
     for (const literal of ["Sole Member", "Signed under penalties of perjury", "855-887-7737", "Rulon White"]) {
       expect(source).not.toContain(literal);
     }
+  });
+});
+
+describe("reasonable cause statement prose dates", () => {
+  it("writes the formation date as a long date, not ISO", async () => {
+    const { F5 } = await import("./__fixtures__/filings");
+    const { generatePackage } = await import("./generatePackage");
+    const result = await generatePackage(F5 as never);
+    const rcsLines = result.record.authoredDocuments
+      .filter((d) => d.kind === "reasonableCauseStatement")
+      .flatMap((d) => d.lines)
+      .join(" ");
+    expect(rcsLines.length).toBeGreaterThan(0);
+    expect(rcsLines).toContain("January 1, 2020");
+    expect(rcsLines).not.toMatch(/\b\d{4}-\d{2}-\d{2}\b/);
   });
 });

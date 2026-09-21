@@ -8,6 +8,7 @@ import { submitFax } from "@/lib/fax";
 import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
 import { generatePackage, type GeneratedPackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
+import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { runPreflight } from "@/lib/pdf/preflight";
 import {
   isLegalTransition,
@@ -104,10 +105,22 @@ const filingSelect = {
   llcZip: true,
   llcCountry: true,
   llcCountryBusiness: true,
+  llcMemberCount: true,
+  ownerHasFtin: true,
+  ownerNoPostalCode: true,
+  llcAddressIsRegisteredAgentOnly: true,
+  priorForm5472Filed: true,
+  hasUsSourceIncome: true,
+  usTaxWithheld: true,
   llcBusinessActivity: true,
   llcBusinessCode: true,
   ownerName: true,
   ownerAddress: true,
+  ownerAddressStreet: true,
+  ownerAddressCity: true,
+  ownerAddressState: true,
+  ownerAddressPostal: true,
+  ownerAddressCountry: true,
   ownerCountryCitizenship: true,
   ownerCountryTaxResidence: true,
   ownerCountryBusiness: true,
@@ -157,11 +170,23 @@ const packageFilingSelect = {
   llcZip: true,
   llcCountry: true,
   llcCountryBusiness: true,
+  llcMemberCount: true,
+  ownerHasFtin: true,
+  ownerNoPostalCode: true,
+  llcAddressIsRegisteredAgentOnly: true,
+  priorForm5472Filed: true,
+  hasUsSourceIncome: true,
+  usTaxWithheld: true,
   llcDateIncorporated: true,
   llcBusinessActivity: true,
   llcBusinessCode: true,
   ownerName: true,
   ownerAddress: true,
+  ownerAddressStreet: true,
+  ownerAddressCity: true,
+  ownerAddressState: true,
+  ownerAddressPostal: true,
+  ownerAddressCountry: true,
   ownerCountryCitizenship: true,
   ownerCountryTaxResidence: true,
   ownerCountryBusiness: true,
@@ -185,6 +210,10 @@ const packageFilingSelect = {
       distributions: true,
       otherTransactionsNote: true,
       reportableTransactions: true,
+      nonCashTransfers: true,
+      rcsWhyMissed: true,
+      rcsWhenLearned: true,
+      rcsNoIrsNoticeConfirmed: true,
     },
   },
 } as const;
@@ -328,36 +357,7 @@ export async function runFilingAction(
             full.llcBusinessCode && full.ownerName && full.ownerAddress &&
             full.ownerCountryCitizenship && full.ownerCountryTaxResidence &&
             full.ownerCountryBusiness && full.ownerFtin) {
-          const result = await generatePackage({
-            llcName: full.llcName, llcEin: full.llcEin, llcAddress: full.llcAddress,
-            llcCity: full.llcCity, llcState: full.llcState, llcZip: full.llcZip,
-            llcCountry: full.llcCountry, llcCountryBusiness: full.llcCountryBusiness,
-            llcDateIncorporated: full.llcDateIncorporated,
-            llcBusinessActivity: full.llcBusinessActivity, llcBusinessCode: full.llcBusinessCode,
-            ownerName: full.ownerName, ownerAddress: full.ownerAddress,
-            ownerCountryCitizenship: full.ownerCountryCitizenship,
-            ownerCountryTaxResidence: full.ownerCountryTaxResidence,
-            ownerCountryBusiness: full.ownerCountryBusiness, ownerFtin: full.ownerFtin,
-            ownerItin: full.ownerItin, ownerReferenceId: full.ownerReferenceId,
-            taxYears: full.taxYears, isDiirsp: full.isDiirsp, isFinalReturn: full.isFinalReturn,
-            dissolvedAt: full.dissolvedAt,
-            extensionFiled: full.extensionFiled,
-            extensionTransmittedAt: full.extensionTransmittedAt,
-            reasonableCauseNarrative: full.reasonableCauseNarrative,
-            yearData: full.yearData.map((y) => ({
-              taxYear: y.taxYear,
-              totalAssetsYearEnd: Number(y.totalAssetsYearEnd),
-              contributions: Number(y.contributions),
-              distributions: Number(y.distributions),
-              otherTransactionsNote: y.otherTransactionsNote,
-              reportableTransactions: Array.isArray(y.reportableTransactions)
-                ? (y.reportableTransactions as unknown[]).filter(
-                    (t): t is { date: string; description: string; counterparty?: string; amountCents: number; category: string } =>
-                      !!t && typeof t === "object" && "date" in t && "amountCents" in t && "category" in t,
-                  )
-                : [],
-            })),
-          });
+          const result = await generatePackage(filingToPackageInput(full));
           pdfBytes = result.bytes;
           signatures = result.signatures;
           const key = `${filing.id}_unsigned.pdf`;
@@ -577,36 +577,7 @@ export async function runFilingAction(
       }
       let pkg: GeneratedPackage;
       try {
-        pkg = await generatePackage({
-          llcName: full.llcName, llcEin: full.llcEin, llcAddress: full.llcAddress,
-          llcCity: full.llcCity, llcState: full.llcState, llcZip: full.llcZip,
-          llcCountry: full.llcCountry, llcCountryBusiness: full.llcCountryBusiness,
-          llcDateIncorporated: full.llcDateIncorporated,
-          llcBusinessActivity: full.llcBusinessActivity, llcBusinessCode: full.llcBusinessCode,
-          ownerName: full.ownerName, ownerAddress: full.ownerAddress,
-          ownerCountryCitizenship: full.ownerCountryCitizenship,
-          ownerCountryTaxResidence: full.ownerCountryTaxResidence,
-          ownerCountryBusiness: full.ownerCountryBusiness, ownerFtin: full.ownerFtin,
-          ownerItin: full.ownerItin, ownerReferenceId: full.ownerReferenceId,
-          taxYears: full.taxYears, isDiirsp: full.isDiirsp, isFinalReturn: full.isFinalReturn,
-          dissolvedAt: full.dissolvedAt,
-          extensionFiled: full.extensionFiled,
-          extensionTransmittedAt: full.extensionTransmittedAt,
-          reasonableCauseNarrative: full.reasonableCauseNarrative,
-          yearData: full.yearData.map((y) => ({
-            taxYear: y.taxYear,
-            totalAssetsYearEnd: Number(y.totalAssetsYearEnd),
-            contributions: Number(y.contributions),
-            distributions: Number(y.distributions),
-            otherTransactionsNote: y.otherTransactionsNote,
-            reportableTransactions: Array.isArray(y.reportableTransactions)
-              ? (y.reportableTransactions as unknown[]).filter(
-                  (t): t is { date: string; description: string; counterparty?: string; amountCents: number; category: string } =>
-                    !!t && typeof t === "object" && "date" in t && "amountCents" in t && "category" in t,
-                )
-              : [],
-          })),
-        });
+        pkg = await generatePackage(filingToPackageInput(full));
       } catch (err) {
         const msg = err instanceof Error ? err.message : "unknown";
         throw new FilingActionError(500, "generation_failed", `generation failed: ${msg}`);
@@ -676,9 +647,11 @@ export async function runFilingAction(
       const allowed = new Set<string>([
         "llcName", "llcEin", "llcAddress", "llcCity", "llcState", "llcZip",
         "llcCountry", "llcBusinessActivity", "llcBusinessCode",
+        "llcMemberCount", "llcAddressIsRegisteredAgentOnly", "priorForm5472Filed",
         "ownerName", "ownerAddress",
         "ownerCountryCitizenship", "ownerCountryTaxResidence",
         "ownerCountryBusiness", "ownerFtin", "ownerItin", "ownerReferenceId",
+        "ownerHasFtin", "ownerNoPostalCode", "hasUsSourceIncome", "usTaxWithheld",
         "reasonableCauseNarrative",
         // Form 7004 gate + the late/timely classification it drives. These are
         // the remediation path for orders sold BEFORE the extension question
@@ -701,6 +674,7 @@ export async function runFilingAction(
         extensionFiled: ["yes", "no", "not_sure"],
         extensionMethod: ["fax", "certified_mail", "mail", "not_sure"],
         extensionDestination: ["ogden", "standard", "not_sure"],
+        priorForm5472Filed: ["yes", "no", "not_sure"],
       };
       // Blanking an EXTENSION field is always allowed — it means "we don't
       // have this fact", which is the same as never having asked. The legacy
@@ -710,9 +684,17 @@ export async function runFilingAction(
       const EXTENSION_SCALARS = new Set([
         "extensionFiled", "extensionTransmittedAt", "extensionMethod", "extensionDestination",
       ]);
+      const NULLABLE_ENUM_SCALARS = new Set(Array.from(EXTENSION_SCALARS).concat("priorForm5472Filed"));
+      const NULLABLE_BOOLEANS = new Set([
+        "ownerHasFtin",
+        "ownerNoPostalCode",
+        "llcAddressIsRegisteredAgentOnly",
+        "hasUsSourceIncome",
+        "usTaxWithheld",
+      ]);
       const blank = value === null || value.trim() === "";
-      let writeValue: string | Date | boolean | null =
-        EXTENSION_SCALARS.has(field) && blank ? null : value;
+      let writeValue: string | Date | boolean | number | null =
+        NULLABLE_ENUM_SCALARS.has(field) && blank ? null : value;
       if (field in EXTENSION_ENUMS) {
         if (!blank && !EXTENSION_ENUMS[field].includes(value!)) {
           throw new FilingActionError(
@@ -758,6 +740,19 @@ export async function runFilingAction(
         if (truthy.has(raw)) writeValue = true;
         else if (falsy.has(raw)) writeValue = false;
         else throw new FilingActionError(400, "invalid_value", "isDiirsp must be true or false");
+      } else if (NULLABLE_BOOLEANS.has(field)) {
+        const truthy = new Set(["true", "yes", "1"]);
+        const falsy = new Set(["false", "no", "0"]);
+        const raw = (value ?? "").trim().toLowerCase();
+        if (blank) writeValue = null;
+        else if (truthy.has(raw)) writeValue = true;
+        else if (falsy.has(raw)) writeValue = false;
+        else throw new FilingActionError(400, "invalid_value", `${field} must be true, false, or blank`);
+      } else if (field === "llcMemberCount") {
+        const raw = (value ?? "").trim();
+        if (blank) writeValue = null;
+        else if (/^\d+$/.test(raw)) writeValue = Number.parseInt(raw, 10);
+        else throw new FilingActionError(400, "invalid_value", "llcMemberCount must be an integer or blank");
       }
 
       // ── Grouped rules for the Form 7004 fields ───────────────────────────

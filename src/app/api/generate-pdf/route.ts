@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getOwnedFiling } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { generatePackage } from "@/lib/pdf/generatePackage";
+import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { runPreflight } from "@/lib/pdf/preflight";
 import { putPdf } from "@/lib/storage";
 
@@ -49,48 +50,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: `Missing required field: ${f}` }, { status: 400 });
   }
 
-  const { bytes, signatures, record } = await generatePackage({
-    llcName: filing.llcName!,
-    llcEin: filing.llcEin!,
-    llcAddress: filing.llcAddress!,
-    llcCity: filing.llcCity!,
-    llcState: filing.llcState!,
-    llcZip: filing.llcZip!,
-    llcCountry: filing.llcCountry,
-    llcCountryBusiness: filing.llcCountryBusiness,
-    llcDateIncorporated: filing.llcDateIncorporated!,
-    llcBusinessActivity: filing.llcBusinessActivity!,
-    llcBusinessCode: filing.llcBusinessCode!,
-    ownerName: filing.ownerName!,
-    ownerAddress: filing.ownerAddress!,
-    ownerCountryCitizenship: filing.ownerCountryCitizenship!,
-    ownerCountryTaxResidence: filing.ownerCountryTaxResidence!,
-    ownerCountryBusiness: filing.ownerCountryBusiness!,
-    ownerFtin: filing.ownerFtin!,
-    ownerItin: filing.ownerItin,
-    ownerReferenceId: filing.ownerReferenceId,
-    taxYears: filing.taxYears,
-    isDiirsp: filing.isDiirsp,
-    isFinalReturn: filing.isFinalReturn,
-    dissolvedAt: filing.dissolvedAt,
-    // Form 7004 facts — the generator applies them to max(taxYears) only.
-    extensionFiled: filing.extensionFiled,
-    extensionTransmittedAt: filing.extensionTransmittedAt,
-    reasonableCauseNarrative: filing.reasonableCauseNarrative,
-    yearData: filing.yearData.map((y) => ({
-      taxYear: y.taxYear,
-      totalAssetsYearEnd: Number(y.totalAssetsYearEnd),
-      contributions: Number(y.contributions),
-      distributions: Number(y.distributions),
-      otherTransactionsNote: y.otherTransactionsNote,
-      reportableTransactions: Array.isArray(y.reportableTransactions)
-        ? (y.reportableTransactions as unknown[]).filter(
-            (t): t is { date: string; description: string; counterparty?: string; amountCents: number; category: string } =>
-              !!t && typeof t === "object" && "date" in t && "amountCents" in t && "category" in t,
-          )
-        : [],
-    })),
-  });
+  const { bytes, signatures, record } = await generatePackage(filingToPackageInput(filing));
 
   const key = `${filing.id}_unsigned.pdf`;
   await putPdf(key, bytes);

@@ -13,11 +13,23 @@ const base: FilingFixture = {
   llcZip: "33101",
   llcCountry: "USA",
   llcCountryBusiness: "United States",
+  llcMemberCount: 1,
+  llcAddressIsRegisteredAgentOnly: false,
+  priorForm5472Filed: "yes",
+  hasUsSourceIncome: false,
+  usTaxWithheld: false,
   llcDateIncorporated: new Date("2020-01-01T00:00:00.000Z"),
   llcBusinessActivity: "Investment holding",
   llcBusinessCode: "523900",
   ownerName: "Example Owner",
   ownerAddress: "88 Queen Road Central, Suite 1200, Central, Hong Kong",
+  ownerAddressStreet: "88 Queen Road Central, Suite 1200",
+  ownerAddressCity: "Central",
+  ownerAddressState: "Hong Kong",
+  ownerAddressPostal: "999077",
+  ownerAddressCountry: "Hong Kong",
+  ownerHasFtin: true,
+  ownerNoPostalCode: false,
   ownerCountryCitizenship: "Hong Kong",
   ownerCountryTaxResidence: "Hong Kong",
   ownerCountryBusiness: "Hong Kong",
@@ -38,7 +50,11 @@ function tx(date: string, description: string, amountCents: number, category: "c
   return { date, description, counterparty: "Example Owner", amountCents, category };
 }
 
-function year(taxYear: number, rows = [tx(`${taxYear}-02-15`, "Owner capital contribution", 100_00, "contribution")]) {
+function year(
+  taxYear: number,
+  rows = [tx(`${taxYear}-02-15`, "Owner capital contribution", 100_00, "contribution")],
+  extra: Partial<FilingFixture["yearData"][number]> = {},
+) {
   return {
     taxYear,
     totalAssetsYearEnd: 1000,
@@ -46,6 +62,11 @@ function year(taxYear: number, rows = [tx(`${taxYear}-02-15`, "Owner capital con
     distributions: 0,
     otherTransactionsNote: null,
     reportableTransactions: rows,
+    nonCashTransfers: [],
+    rcsWhyMissed: null,
+    rcsWhenLearned: null,
+    rcsNoIrsNoticeConfirmed: null,
+    ...extra,
   };
 }
 
@@ -64,8 +85,15 @@ export const F2: FilingFixture = {
   ownerName: "Mei Example",
   ownerAddress:
     "Flat 1208, Example Tower, 999 Very Long Harbour View Road, Central District, Hong Kong SAR, Hong Kong",
+  ownerAddressStreet: "Flat 1208, Example Tower, 999 Very Long Harbour View Road",
+  ownerAddressCity: "Central District",
+  ownerAddressState: "Hong Kong SAR",
+  ownerAddressPostal: "999077",
+  ownerAddressCountry: "Hong Kong",
   ownerFtin: "None",
+  ownerHasFtin: false,
   ownerReferenceId: "MEIEXAMPLE2025",
+  priorForm5472Filed: "no",
   taxYears: [2025],
   yearData: [year(2025, [
     tx("2025-04-13", "Owner paid state formation costs", 800_00, "contribution"),
@@ -79,6 +107,7 @@ export const F3: FilingFixture = {
   llcBusinessActivity: "Unclassified establishments",
   llcBusinessCode: "999000",
   llcDateIncorporated: new Date("2025-03-10T00:00:00.000Z"),
+  priorForm5472Filed: "no",
   isFinalReturn: true,
   dissolvedAt: new Date("2025-12-20T00:00:00.000Z"),
   taxYears: [2025],
@@ -96,14 +125,37 @@ export const F4: FilingFixture = {
 export const F5: FilingFixture = {
   ...base,
   llcName: "Example Portfolio LLC",
+  llcDateIncorporated: new Date("2020-01-01T00:00:00.000Z"),
   taxYears: [2022, 2023, 2024],
   extensionFiled: "no",
+  hasUsSourceIncome: true,
+  usTaxWithheld: true,
   reasonableCauseNarrative:
     "The owner learned of the Form 5472 filing requirement after the due dates and promptly arranged this submission.",
   yearData: [
-    year(2022, [tx("2022-02-01", "Securities contribution by owner", 25_000_00, "contribution")]),
-    year(2023, [tx("2023-03-01", "Owner capital contribution", 15_000_00, "contribution")]),
-    year(2024, [tx("2024-07-01", "Owner distribution", -3_000_00, "distribution")]),
+    year(2022, [], {
+      nonCashTransfers: [{
+        date: "2022-02-01",
+        direction: "in",
+        description: "Publicly traded securities contributed by owner",
+        fairMarketValueCents: 25_000_00,
+        valuationMethod: "Brokerage statement closing market value on transfer date",
+        alsoInPartV: false,
+      }],
+      rcsWhyMissed: "the owner was not aware that a disregarded LLC had a separate form 5472 filing obligation",
+      rcsWhenLearned: "the owner learned about the requirement during a 2026 review of prior year filing obligations",
+      rcsNoIrsNoticeConfirmed: true,
+    }),
+    year(2023, [tx("2023-03-01", "Owner capital contribution", 15_000_00, "contribution")], {
+      rcsWhyMissed: "the owner continued to believe the investment account reporting was handled outside the LLC return",
+      rcsWhenLearned: "the owner learned the 2023 form was also required during the same 2026 review",
+      rcsNoIrsNoticeConfirmed: true,
+    }),
+    year(2024, [tx("2024-07-01", "Owner distribution", -3_000_00, "distribution")], {
+      rcsWhyMissed: "the owner did not have a recurring reminder for the information return deadline",
+      rcsWhenLearned: "the owner learned the 2024 form was late before receiving any IRS correspondence",
+      rcsNoIrsNoticeConfirmed: true,
+    }),
   ],
 };
 
@@ -122,6 +174,7 @@ export const F7: FilingFixture = {
   llcState: "DE",
   llcZip: "19808",
   llcCountryBusiness: "United States",
+  llcAddressIsRegisteredAgentOnly: true,
   taxYears: [2025],
   yearData: [year(2025, [tx("2025-01-05", "Owner capital contribution", 2_500_00, "contribution")])],
 };
@@ -138,6 +191,14 @@ export const F8: FilingFixture = {
     year(2018, [tx("2018-02-01", "Owner capital contribution", 12_000_00, "contribution")]),
     year(2019, [tx("2019-03-01", "Owner distribution", -4_500_00, "distribution")]),
   ],
+};
+
+export const F9: FilingFixture = {
+  ...base,
+  llcName: "Example Multi Member LLC",
+  llcMemberCount: 2,
+  taxYears: [2025],
+  yearData: [year(2025, [tx("2025-01-05", "Owner capital contribution", 2_500_00, "contribution")])],
 };
 
 export const fixtures = { F1, F2, F3, F4, F5, F6, F7, F8 };

@@ -65,6 +65,7 @@ export const form5472FieldMap = {
 
   // Part V attached statement checkbox
   partV_attachedStatementBox: "topmostSubform[0].Page2[0].PartV[0].c2_6[0]",
+  partVI_attachedStatementBox: "topmostSubform[0].Page2[0].PartVI[0].c2_7[0]",
 
   // Part VII negatives
   q37_imports_no: "topmostSubform[0].Page3[0].c3_1[1]",

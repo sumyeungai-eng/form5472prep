@@ -5,6 +5,7 @@ import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
 import { MULTI_YEAR_ADDON_CENTS, MULTI_YEAR_ADDON_LABEL, multiYearAddonCents, tierInfo, isTestTier, resolveTier, promoDiscountCents, PROMO_LABEL } from "@/lib/pricing";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
+import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { runPreflight } from "@/lib/pdf/preflight";
 import { putPdf } from "@/lib/storage";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
@@ -153,42 +154,7 @@ export async function POST(req: Request) {
           full.llcBusinessActivity && full.llcBusinessCode && full.ownerName &&
           full.ownerAddress && full.ownerCountryCitizenship &&
           full.ownerCountryTaxResidence && full.ownerCountryBusiness && full.ownerFtin) {
-        const result = await generatePackage({
-          llcName: full.llcName, llcEin: full.llcEin, llcAddress: full.llcAddress,
-          llcCity: full.llcCity, llcState: full.llcState, llcZip: full.llcZip,
-          llcCountry: full.llcCountry, llcCountryBusiness: full.llcCountryBusiness,
-          llcDateIncorporated: full.llcDateIncorporated,
-          llcBusinessActivity: full.llcBusinessActivity, llcBusinessCode: full.llcBusinessCode,
-          ownerName: full.ownerName, ownerAddress: full.ownerAddress,
-          ownerCountryCitizenship: full.ownerCountryCitizenship,
-          ownerCountryTaxResidence: full.ownerCountryTaxResidence,
-          ownerCountryBusiness: full.ownerCountryBusiness, ownerFtin: full.ownerFtin,
-          ownerItin: full.ownerItin, ownerReferenceId: full.ownerReferenceId,
-          taxYears: full.taxYears, isDiirsp: full.isDiirsp,
-          isFinalReturn: full.isFinalReturn,
-          dissolvedAt: full.dissolvedAt,
-          reasonableCauseNarrative: full.reasonableCauseNarrative,
-          // The Form 7004 facts decide the deadline the package prints (and
-          // whether it reads as extended rather than delinquent). Every other
-          // generatePackage call site passes them; this one used to be the sole
-          // omission, so an admin test order silently rendered an extended
-          // filer's package on the unextended April 15 deadline.
-          extensionFiled: full.extensionFiled,
-          extensionTransmittedAt: full.extensionTransmittedAt,
-          yearData: full.yearData.map((y) => ({
-            taxYear: y.taxYear,
-            totalAssetsYearEnd: Number(y.totalAssetsYearEnd),
-            contributions: Number(y.contributions),
-            distributions: Number(y.distributions),
-            otherTransactionsNote: y.otherTransactionsNote,
-            reportableTransactions: Array.isArray(y.reportableTransactions)
-              ? (y.reportableTransactions as unknown[]).filter(
-                  (t): t is { date: string; description: string; counterparty?: string; amountCents: number; category: string } =>
-                    !!t && typeof t === "object" && "date" in t && "amountCents" in t && "category" in t,
-                )
-              : [],
-          })),
-        });
+        const result = await generatePackage(filingToPackageInput(full));
         pdfBytes = result.bytes;
         pdfSignatures = result.signatures;
         const key = `${filing.id}_unsigned.pdf`;
