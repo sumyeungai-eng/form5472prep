@@ -3,15 +3,27 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 import { AUTHORED_DOC_SIGNATURE_HEADING, COVER_LETTER_ENCLOSURE_PHRASE, SIGNER_TITLE } from "@/config/filingPackage";
-import { form5472FieldMap, form1120_2025FieldMap } from "./fieldMaps";
 import {
+  form5472FieldMap,
+  form1120_2018FieldMap,
+  form1120_2019FieldMap,
+  form1120_2020FieldMap,
+  form1120_2021FieldMap,
+  form1120_2022FieldMap,
+  form1120_2023FieldMap,
+  form1120_2024FieldMap,
+  form1120_2025FieldMap,
+} from "./fieldMaps";
+import {
+  assertRelatedPartyCount,
   deriveSignerTitleColumnBounds,
   generatePackage,
+  NeedsReviewError,
   roundedPartVTotalDollars,
   signerTitleStampPlacement,
 } from "./generatePackage";
 import { runPreflight } from "./preflight";
-import { F1, F2, F3, F4, F5, F7, finalisedAt, fixtures } from "./__fixtures__/filings";
+import { F1, F2, F3, F4, F5, F7, F8, finalisedAt, fixtures } from "./__fixtures__/filings";
 
 const PDF_TIMEOUT = 20_000;
 const IRS_MAIL_ADDRESS_DISPLAY_LINES = [
@@ -41,8 +53,8 @@ describe("generatePackage regressions", () => {
   it("G-01 checks Form 5472 line 2 as well as line 3", async () => {
     const pkg = await generatePackage(F1, finalisedAt);
     const fields = pkg.record.taxYears[0].form5472.fields;
-    expect(fields).toContainEqual({ form: "5472-2026", field: form5472FieldMap.box2_foreign50pct, value: true });
-    expect(fields).toContainEqual({ form: "5472-2026", field: form5472FieldMap.box3_foreignOwnedUsDE, value: true });
+    expect(fields).toContainEqual({ form: "5472-2025", field: form5472FieldMap.box2_foreign50pct, value: true });
+    expect(fields).toContainEqual({ form: "5472-2025", field: form5472FieldMap.box3_foreignOwnedUsDE, value: true });
   }, PDF_TIMEOUT);
 
   it("G-02 leaves Form 5472 lines 43a and 43b blank", async () => {
@@ -55,9 +67,9 @@ describe("generatePackage regressions", () => {
   it("G-04 fills full calendar-year 1120 header dates", async () => {
     const pkg = await generatePackage(F1, finalisedAt);
     const fields = pkg.record.taxYears[0].form1120.fields;
-    expect(fields).toContainEqual({ form: "1120-2026", field: form1120_2025FieldMap.taxYearBeginning, value: "01/01/2026" });
-    expect(fields).toContainEqual({ form: "1120-2026", field: form1120_2025FieldMap.taxYearEnding, value: "12/31" });
-    expect(fields).toContainEqual({ form: "1120-2026", field: form1120_2025FieldMap.taxYearEndingYear2, value: "26" });
+    expect(fields).toContainEqual({ form: "1120-2025", field: form1120_2025FieldMap.taxYearBeginning, value: "01/01/2025" });
+    expect(fields).toContainEqual({ form: "1120-2025", field: form1120_2025FieldMap.taxYearEnding, value: "12/31" });
+    expect(fields).toContainEqual({ form: "1120-2025", field: form1120_2025FieldMap.taxYearEndingYear2, value: "25" });
   }, PDF_TIMEOUT);
 
   it("records dissolutionDate only for final returns", async () => {
@@ -65,7 +77,7 @@ describe("generatePackage regressions", () => {
       {
         ...F1,
         isFinalReturn: false,
-        dissolvedAt: new Date("2026-09-30T00:00:00.000Z"),
+        dissolvedAt: new Date("2025-09-30T00:00:00.000Z"),
       },
       finalisedAt,
     );
@@ -79,12 +91,12 @@ describe("generatePackage regressions", () => {
     const year = pkg.record.taxYears[0];
     expect(year.line1oSource).toBe("default_us");
     expect(year.form5472.fields).toContainEqual({
-      form: "5472-2026",
+      form: "5472-2025",
       field: form5472FieldMap["1o_countriesBusinessConducted"],
       value: "United States",
     });
     expect(year.form5472.fields).not.toContainEqual({
-      form: "5472-2026",
+      form: "5472-2025",
       field: form5472FieldMap["1o_countriesBusinessConducted"],
       value: "Hong Kong",
     });
@@ -112,8 +124,8 @@ describe("generatePackage regressions", () => {
   it("formats singular and plural cover letter tax year wording", async () => {
     const single = await generatePackage(F2, finalisedAt);
     const singleText = single.record.authoredDocuments.find((doc) => doc.kind === "coverLetter")?.lines.join(" ") ?? "";
-    expect(singleText).toContain("Tax year: 2026");
-    expect(singleText).toContain("covers tax year 2026.");
+    expect(singleText).toContain("Tax year: 2025");
+    expect(singleText).toContain("covers tax year 2025.");
     expect(singleText).not.toContain("Tax year(s)");
     expect(singleText).not.toContain("tax year(s)");
 
@@ -156,4 +168,115 @@ describe("generatePackage regressions", () => {
       expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
     }
   }, PDF_TIMEOUT);
+
+  it("G-05 records the actual Form 1120 revision used by tax year", async () => {
+    const pkg = await generatePackage(F5, finalisedAt);
+    expect(pkg.record.taxYears.map((year) => [year.taxYear, year.form1120Revision, year.shortYearException])).toEqual([
+      [2022, "2022", false],
+      [2023, "2023", false],
+      [2024, "2024", false],
+    ]);
+  }, PDF_TIMEOUT);
+
+  it("G-05 supports 2018 and 2019 Form 1120 revisions without the short-year fallback", async () => {
+    const pkg = await generatePackage(F8, finalisedAt);
+    const preflight = await runPreflight(pkg.record, pkg.bytes);
+
+    expect(preflight.failures.filter((failure) => failure.id === "A08")).toEqual([]);
+    expect(pkg.record.taxYears.map((year) => [year.taxYear, year.form1120Revision, year.shortYearException])).toEqual([
+      [2018, "2018", false],
+      [2019, "2019", false],
+    ]);
+    expect(pkg.record.taxYears[0].form1120.fields).toContainEqual({
+      form: "1120-2018",
+      field: form1120_2018FieldMap.D_totalAssetsCents,
+      value: "00",
+    });
+  }, PDF_TIMEOUT);
+
+  it("G-05 allows the documented short-year prior-revision exception", async () => {
+    const pkg = await generatePackage(
+      {
+        ...F3,
+        llcDateIncorporated: new Date("2026-03-10T00:00:00.000Z"),
+        dissolvedAt: new Date("2026-09-30T00:00:00.000Z"),
+        taxYears: [2026],
+        extensionFiled: "yes",
+        extensionTransmittedAt: new Date("2026-07-10T00:00:00.000Z"),
+        yearData: [
+          {
+            ...F3.yearData[0],
+            taxYear: 2026,
+            reportableTransactions: [
+              { date: "2026-03-10", description: "Initial funding", amountCents: 1_000_00, category: "contribution" },
+            ],
+          },
+        ],
+      },
+      finalisedAt,
+    );
+
+    expect(pkg.record.taxYears[0].form1120Revision).toBe("2025");
+    expect(pkg.record.taxYears[0].shortYearException).toBe(true);
+    expect(pkg.record.taxYears[0].form1120.fields).toContainEqual({
+      form: "1120-2026",
+      field: form1120_2025FieldMap.taxYearBeginning,
+      value: "03/10/2026",
+    });
+  }, PDF_TIMEOUT);
+
+  it("G-10 routes multi-related-party counts to review", () => {
+    expect(() => assertRelatedPartyCount(1)).not.toThrow();
+    expect(() => assertRelatedPartyCount(2)).toThrow(NeedsReviewError);
+    expect(() => assertRelatedPartyCount(2)).toThrow("More than one related party: route to a reviewer.");
+  });
+
+  it.each([
+    [2018, form1120_2018FieldMap],
+    [2019, form1120_2019FieldMap],
+    [2020, form1120_2020FieldMap],
+    [2021, form1120_2021FieldMap],
+    [2022, form1120_2022FieldMap],
+    [2023, form1120_2023FieldMap],
+    [2024, form1120_2024FieldMap],
+    [2025, form1120_2025FieldMap],
+  ] as const)("uses one font size for Form 1120 header name, street, and city lines in %s", async (taxYear, map) => {
+    const pkg = await generatePackage(
+      {
+        ...F1,
+        taxYears: [taxYear],
+        llcDateIncorporated: new Date("2015-01-01T00:00:00.000Z"),
+        yearData: [
+          {
+            ...F1.yearData[0],
+            taxYear,
+            reportableTransactions: [
+              { date: `${taxYear}-01-10`, description: "Contribution", amountCents: 100_00, category: "contribution" },
+            ],
+          },
+        ],
+      },
+      finalisedAt,
+    );
+    const fields = pkg.record.taxYears[0].form1120.fields as Array<{ field: string; fontSize?: number }>;
+    const fontSizeFor = (field: string) => fields.find((write) => write.field === field)?.fontSize;
+    const expected = pkg.record.llcPrintAddress.fontSize;
+
+    if ("1_street" in map) {
+      for (const field of [map["1a_name"], map["1_street"], map["1_city"], map["1_state"], map["1_country"], map["1_zip"]]) {
+        expect(fontSizeFor(field), field).toBe(expected);
+      }
+    } else {
+      for (const field of [map["1a_name"], map["1_streetSuite"], map["1_cityStateCountryZip"]]) {
+        expect(fontSizeFor(field), field).toBe(expected);
+      }
+    }
+  }, PDF_TIMEOUT);
+
+  it("G-12 keeps filing-package literals out of generatePackage.ts", async () => {
+    const source = await fs.readFile(path.join(process.cwd(), "src/lib/pdf/generatePackage.ts"), "utf8");
+    for (const literal of ["Sole Member", "Signed under penalties of perjury", "855-887-7737", "Rulon White"]) {
+      expect(source).not.toContain(literal);
+    }
+  });
 });

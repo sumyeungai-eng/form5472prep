@@ -19,11 +19,13 @@ export function setText(
   name: string,
   value: string,
   recorder?: PdfWriteRecorder,
+  opts?: { fontSize?: number },
 ) {
   try {
     const field = form.getField(name);
     if (field instanceof PDFTextField) {
       field.setText(value);
+      if (opts?.fontSize) field.setFontSize(opts.fontSize);
       recorder?.writes.push({ form: recorder.form, field: name, value });
     }
   } catch {

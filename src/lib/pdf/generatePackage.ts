@@ -1,7 +1,17 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { PDFDocument, PDFTextField, StandardFonts, rgb, type PDFFont } from "pdf-lib";
-import { form5472FieldMap, form1120_2024FieldMap, form1120_2025FieldMap } from "./fieldMaps";
+import {
+  form5472FieldMap,
+  form1120_2018FieldMap,
+  form1120_2019FieldMap,
+  form1120_2020FieldMap,
+  form1120_2021FieldMap,
+  form1120_2022FieldMap,
+  form1120_2023FieldMap,
+  form1120_2024FieldMap,
+  form1120_2025FieldMap,
+} from "./fieldMaps";
 import {
   setText,
   check,
@@ -21,6 +31,8 @@ import {
   COVER_LETTER_ENCLOSURE_PHRASE,
   GENERATOR_VERSION,
   IRS_MAIL_ADDRESS,
+  IRS_MAIL_ADDRESS_DISPLAY_LINES,
+  IRS_MAIL_ADDRESS_DISPLAY_SINGLE_LINE,
   SIGNER_TITLE,
   assertIrsJuratUntouched,
 } from "@/config/filingPackage";
@@ -143,10 +155,14 @@ export type AuthoredDocumentRecord = {
   kind: "coverLetter" | "partVStatement" | "reasonableCauseStatement";
   taxYear?: number;
   lines: string[];
+  pages?: string[][];
 };
 
 export type PackageRecordYear = {
   taxYear: number;
+  form1120Revision: string;
+  revisionUsed: string;
+  shortYearException: boolean;
   periodStart: string;
   periodEnd: string;
   status: "timely" | "late" | "unresolved";
@@ -163,6 +179,14 @@ export type PackageRecordYear = {
   reasonableCauseIncluded: boolean;
 };
 
+export type PrintAddressRecord = {
+  value: string;
+  fontSize: number;
+  abbreviated: boolean;
+  checkedFieldWidths: { field: string; width: number }[];
+  failures: string[];
+};
+
 export type PackagePageRecord = {
   label: string;
   taxYear?: number;
@@ -177,6 +201,10 @@ export type PackageRecord = {
   finalisedAt: string;
   llcName: string;
   ownerName: string;
+  ownerReferenceId: string | null;
+  llcEin: string;
+  llcPrintAddress: PrintAddressRecord;
+  ownerPrintAddress: PrintAddressRecord;
   formationDate: string | null;
   dissolutionDate: string | null;
   taxYears: PackageRecordYear[];
@@ -194,13 +222,16 @@ type SignerTitleColumnBounds = {
 const SIGNER_TITLE_COLUMN_INSET = 2;
 const SIGNER_TITLE_MAX_SIZE = 10;
 const SIGNER_TITLE_MIN_SIZE = 7;
-const IRS_MAIL_ADDRESS_DISPLAY_LINES = [
-  "Internal Revenue Service",
-  "1973 Rulon White Blvd, M/S 6112",
-  "Attn: PIN Unit",
-  "Ogden, UT 84201",
-] as const;
-const IRS_MAIL_ADDRESS_DISPLAY_SINGLE_LINE = `${IRS_MAIL_ADDRESS_DISPLAY_LINES[0]}, ${IRS_MAIL_ADDRESS_DISPLAY_LINES[1]} ${IRS_MAIL_ADDRESS_DISPLAY_LINES[2]}, ${IRS_MAIL_ADDRESS_DISPLAY_LINES[3]}`;
+const ADDRESS_NORMAL_FONT_SIZE = 10;
+const ADDRESS_MIN_FONT_SIZE = 6.5;
+const ADDRESS_FONT_STEP = 0.25;
+
+export class NeedsReviewError extends Error {
+  readonly name = "NeedsReviewError";
+  constructor(message: string) {
+    super(message);
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tax-year period end (MM/DD) for a given year in the package.
@@ -289,10 +320,197 @@ function line1oCountry(f: Filing): { value: string; source: "llc_field" | "defau
 }
 
 const FORMS_DIR = path.join(process.cwd(), "public", "forms");
+type Form1120Revision = 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025;
+type LegacyForm1120FieldMap = {
+  readonly taxYearBeginning: string;
+  readonly taxYearEnding: string;
+  readonly taxYearEndingYear2: string;
+  readonly "1a_name": string;
+  readonly "1_streetSuite": string;
+  readonly "1_cityStateCountryZip": string;
+  readonly B_ein: string;
+  readonly C_dateIncorporated: string;
+  readonly D_totalAssets: string;
+  readonly D_totalAssetsCents?: string;
+  readonly E_initialReturn: string;
+  readonly E_finalReturn: string;
+  readonly E_nameChange: string;
+  readonly E_addressChange: string;
+};
+type SplitForm1120FieldMap = {
+  readonly taxYearBeginning: string;
+  readonly taxYearEnding: string;
+  readonly taxYearEndingYear2: string;
+  readonly "1a_name": string;
+  readonly "1_street": string;
+  readonly "1_roomSuite": string;
+  readonly "1_city": string;
+  readonly "1_state": string;
+  readonly "1_country": string;
+  readonly "1_zip": string;
+  readonly B_ein: string;
+  readonly C_dateIncorporated: string;
+  readonly D_totalAssets: string;
+  readonly E_initialReturn: string;
+  readonly E_finalReturn: string;
+  readonly E_nameChange: string;
+  readonly E_addressChange: string;
+};
+type Form1120FieldMap = LegacyForm1120FieldMap | SplitForm1120FieldMap;
+
+const FORM1120_MAPS: Record<Form1120Revision, Form1120FieldMap> = {
+  2018: form1120_2018FieldMap,
+  2019: form1120_2019FieldMap,
+  2020: form1120_2020FieldMap,
+  2021: form1120_2021FieldMap,
+  2022: form1120_2022FieldMap,
+  2023: form1120_2023FieldMap,
+  2024: form1120_2024FieldMap,
+  2025: form1120_2025FieldMap,
+};
 
 async function loadBlank(name: string): Promise<PDFDocument> {
   const bytes = await fs.readFile(path.join(FORMS_DIR, name));
   return PDFDocument.load(bytes);
+}
+
+async function formExists(year: number): Promise<boolean> {
+  try {
+    await fs.access(path.join(FORMS_DIR, `f1120--${year}.pdf`));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function isKnown1120Revision(year: number): year is Form1120Revision {
+  return Object.prototype.hasOwnProperty.call(FORM1120_MAPS, year);
+}
+
+function form1120MapForRevision(revision: number): Form1120FieldMap {
+  if (!isKnown1120Revision(revision)) {
+    throw new Error(`No Form 1120 field map for revision ${revision}.`);
+  }
+  return FORM1120_MAPS[revision];
+}
+
+function form1120StreetField(map: Form1120FieldMap): string {
+  return "1_street" in map ? map["1_street"] : map["1_streetSuite"];
+}
+
+function setTextWithRecordedFontSize(
+  form: ReturnType<PDFDocument["getForm"]>,
+  name: string,
+  value: string,
+  recorder: { form: string; writes: PdfFieldWrite[] },
+  fontSize: number,
+) {
+  const before = recorder.writes.length;
+  setText(form, name, value, recorder, { fontSize });
+  for (const write of recorder.writes.slice(before)) {
+    (write as PdfFieldWrite & { fontSize?: number }).fontSize = fontSize;
+  }
+}
+
+async function selectForm1120Revision(
+  f: Filing,
+  year: number,
+): Promise<{ revision: Form1120Revision; fileName: string; shortYearException: boolean }> {
+  if (isKnown1120Revision(year) && await formExists(year)) {
+    return { revision: year, fileName: `f1120--${year}.pdf`, shortYearException: false };
+  }
+
+  const isShortYear = periodStartFor(f, year) !== "01/01" || periodEndFor(f, year) !== "12/31";
+  const priorYear = year - 1;
+  if (isShortYear && isKnown1120Revision(priorYear) && await formExists(priorYear)) {
+    return { revision: priorYear, fileName: `f1120--${priorYear}.pdf`, shortYearException: true };
+  }
+
+  throw new Error(`No blank Form 1120 PDF is available for tax year ${year}.`);
+}
+
+function relatedPartyCount(f: Filing): number {
+  void f;
+  // Multi-party block activates once the questionnaire stores a real member-count field in wave 3.
+  return 1;
+}
+
+export function assertRelatedPartyCount(count: number) {
+  if (count > 1) {
+    throw new NeedsReviewError("More than one related party: route to a reviewer.");
+  }
+}
+
+async function fieldWidth(pdfName: string, fieldName: string): Promise<number> {
+  const pdf = await loadBlank(pdfName);
+  const field = pdf.getForm().getField(fieldName);
+  const rect = field.acroField.getWidgets()[0]?.getRectangle();
+  if (!rect) throw new Error(`Could not measure PDF field ${fieldName} in ${pdfName}.`);
+  return rect.width;
+}
+
+async function computePrintAddress(
+  rawAddress: string,
+  widths: { field: string; width: number }[],
+  font: PDFFont,
+  prefix: string = "",
+): Promise<PrintAddressRecord> {
+  const original = rawAddress.trim().replace(/\s+/g, " ");
+  const firstPass = fittingFontSize(addressMeasureValue(original, prefix), widths, font);
+  if (firstPass !== null) {
+    return { value: original, fontSize: firstPass, abbreviated: false, checkedFieldWidths: widths, failures: [] };
+  }
+
+  const abbreviated = abbreviateAddress(original);
+  const secondPass = fittingFontSize(addressMeasureValue(abbreviated, prefix), widths, font);
+  if (secondPass !== null) {
+    return { value: abbreviated, fontSize: secondPass, abbreviated: abbreviated !== original, checkedFieldWidths: widths, failures: [] };
+  }
+
+  const narrowest = [...widths].sort((a, b) => a.width - b.width)[0];
+  return {
+    value: abbreviated,
+    fontSize: ADDRESS_MIN_FONT_SIZE,
+    abbreviated: abbreviated !== original,
+    checkedFieldWidths: widths,
+    failures: [`${narrowest.field} cannot fit address at ${ADDRESS_MIN_FONT_SIZE}pt`],
+  };
+}
+
+function addressMeasureValue(address: string, prefix: string): string {
+  const cleanPrefix = prefix.trim();
+  return cleanPrefix ? `${cleanPrefix} ${address}` : address;
+}
+
+function fittingFontSize(
+  value: string,
+  widths: { field: string; width: number }[],
+  font: PDFFont,
+): number | null {
+  const minWidth = Math.min(...widths.map((w) => w.width));
+  for (let size = ADDRESS_NORMAL_FONT_SIZE; size >= ADDRESS_MIN_FONT_SIZE; size -= ADDRESS_FONT_STEP) {
+    const rounded = Math.round(size * 100) / 100;
+    if (font.widthOfTextAtSize(value, rounded) <= minWidth) return rounded;
+  }
+  return null;
+}
+
+function abbreviateAddress(value: string): string {
+  const replacements: Array<[RegExp, string]> = [
+    [/\bStreet\b/g, "St"],
+    [/\bAvenue\b/g, "Ave"],
+    [/\bBoulevard\b/g, "Blvd"],
+    [/\bRoad\b/g, "Rd"],
+    [/\bSuite\b/g, "Ste"],
+    [/\bApartment\b/g, "Apt"],
+    [/\bBuilding\b/g, "Bldg"],
+    [/\bFloor\b/g, "Fl"],
+    [/\bNorth\b/g, "N"],
+    [/\bSouth\b/g, "S"],
+    [/\bEast\b/g, "E"],
+    [/\bWest\b/g, "W"],
+  ];
+  return replacements.reduce((text, [pattern, replacement]) => text.replace(pattern, replacement), value);
 }
 
 function fillForm5472(
@@ -300,6 +518,7 @@ function fillForm5472(
   f: Filing,
   year: number,
   line1f: number,
+  printAddresses: { llc: PrintAddressRecord; owner: PrintAddressRecord },
   recorder: { form: string; writes: PdfFieldWrite[] },
 ): { line1oSource: "llc_field" | "default_us" } {
   const form = pdf.getForm();
@@ -324,7 +543,7 @@ function fillForm5472(
 
   // Part I — reporting corp
   setText(form, m["1a_name"], f.llcName, recorder);
-  setText(form, m["1_street"], f.llcAddress, recorder);
+  setText(form, m["1_street"], printAddresses.llc.value, recorder, { fontSize: printAddresses.llc.fontSize });
   setText(form, m["1_cityStateZip"], `${f.llcCity}, ${f.llcState} ${f.llcZip}`, recorder);
   setText(form, m["1b_ein"], f.llcEin, recorder);
   const yearData = f.yearData.find((y) => y.taxYear === year);
@@ -363,7 +582,9 @@ function fillForm5472(
   }
 
   // Part II — direct 25% foreign shareholder (same as Part III for SMLLC)
-  setText(form, m["4a_nameAddress"], `${f.ownerName}\n${f.ownerAddress}`, recorder);
+  setText(form, m["4a_nameAddress"], `${f.ownerName}\n${printAddresses.owner.value}`, recorder, {
+    fontSize: printAddresses.owner.fontSize,
+  });
   if (f.ownerItin) setText(form, m["4b1_usId"], f.ownerItin, recorder);
   if (f.ownerReferenceId) setText(form, m["4b2_referenceId"], f.ownerReferenceId, recorder);
   setText(form, m["4b3_ftin"], f.ownerFtin, recorder);
@@ -374,7 +595,9 @@ function fillForm5472(
   // Part III — related party (same person for SMLLC)
   check(form, m.partIII_foreignPersonBox, recorder);
   check(form, m["8e_25pctShareholder"], recorder);
-  setText(form, m["8a_nameAddress"], `${f.ownerName}\n${f.ownerAddress}`, recorder);
+  setText(form, m["8a_nameAddress"], `${f.ownerName}\n${printAddresses.owner.value}`, recorder, {
+    fontSize: printAddresses.owner.fontSize,
+  });
   if (f.ownerItin) setText(form, m["8b1_usId"], f.ownerItin, recorder);
   if (f.ownerReferenceId) setText(form, m["8b2_referenceId"], f.ownerReferenceId, recorder);
   setText(form, m["8b3_ftin"], f.ownerFtin, recorder);
@@ -418,6 +641,8 @@ async function fillForm1120(
   pdf: PDFDocument,
   f: Filing,
   year: number,
+  revision: Form1120Revision,
+  llcPrintAddress: PrintAddressRecord,
   recorder: { form: string; writes: PdfFieldWrite[] },
 ) {
   const form = pdf.getForm();
@@ -426,34 +651,34 @@ async function fillForm1120(
   const yd = f.yearData.find((y) => y.taxYear === year);
   const totalAssets = yd ? Math.round(yd.totalAssetsYearEnd).toString() : "0";
   const dateIncorporated = formatDateForIrs(f.llcDateIncorporated);
+  const m = form1120MapForRevision(revision);
 
-  if (year >= 2025) {
-    const m = form1120_2025FieldMap;
+  if ("1_street" in m) {
     setText(form, m.taxYearBeginning, `${periodStartFor(f, year)}/${year}`, recorder);
     setText(form, m.taxYearEnding, periodEndFor(f, year), recorder);
     setText(form, m.taxYearEndingYear2, String(year).slice(-2), recorder);
-    setText(form, m["1a_name"], f.llcName, recorder);
+    setTextWithRecordedFontSize(form, m["1a_name"], f.llcName, recorder, llcPrintAddress.fontSize);
     // Split address into the structured 2025 fields when possible; otherwise
     // dump the full street into the street box.
-    setText(form, m["1_street"], f.llcAddress, recorder);
-    setText(form, m["1_city"], f.llcCity, recorder);
-    setText(form, m["1_state"], f.llcState, recorder);
-    setText(form, m["1_country"], f.llcCountry || "USA", recorder);
-    setText(form, m["1_zip"], f.llcZip, recorder);
+    setTextWithRecordedFontSize(form, m["1_street"], llcPrintAddress.value, recorder, llcPrintAddress.fontSize);
+    setTextWithRecordedFontSize(form, m["1_city"], f.llcCity, recorder, llcPrintAddress.fontSize);
+    setTextWithRecordedFontSize(form, m["1_state"], f.llcState, recorder, llcPrintAddress.fontSize);
+    setTextWithRecordedFontSize(form, m["1_country"], f.llcCountry || "USA", recorder, llcPrintAddress.fontSize);
+    setTextWithRecordedFontSize(form, m["1_zip"], f.llcZip, recorder, llcPrintAddress.fontSize);
     setText(form, m.B_ein, f.llcEin, recorder);
     setText(form, m.C_dateIncorporated, dateIncorporated, recorder);
     setText(form, m.D_totalAssets, totalAssets, recorder);
   } else {
-    const m = form1120_2024FieldMap;
     setText(form, m.taxYearBeginning, `${periodStartFor(f, year)}/${year}`, recorder);
     setText(form, m.taxYearEnding, periodEndFor(f, year), recorder);
     setText(form, m.taxYearEndingYear2, String(year).slice(-2), recorder);
-    setText(form, m["1a_name"], f.llcName, recorder);
-    setText(form, m["1_streetSuite"], f.llcAddress, recorder);
-    setText(form, m["1_cityStateCountryZip"], `${f.llcCity}, ${f.llcState} ${f.llcZip}`, recorder);
+    setTextWithRecordedFontSize(form, m["1a_name"], f.llcName, recorder, llcPrintAddress.fontSize);
+    setTextWithRecordedFontSize(form, m["1_streetSuite"], llcPrintAddress.value, recorder, llcPrintAddress.fontSize);
+    setTextWithRecordedFontSize(form, m["1_cityStateCountryZip"], `${f.llcCity}, ${f.llcState} ${f.llcZip}`, recorder, llcPrintAddress.fontSize);
     setText(form, m.B_ein, f.llcEin, recorder);
     setText(form, m.C_dateIncorporated, dateIncorporated, recorder);
     setText(form, m.D_totalAssets, totalAssets, recorder);
+    if (m.D_totalAssetsCents) setText(form, m.D_totalAssetsCents, "00", recorder);
   }
 
   // Item E "Final return" belongs ONLY to the 1120 for the SHORT (dissolution)
@@ -465,8 +690,7 @@ async function fillForm1120(
   // expose E_finalReturn (c1_7[0], verified by pdf-lib enumeration of both blank
   // PDFs); keep the key guard so any future unmapped revision skips it silently.
   const isShortYear = periodEndFor(f, year) !== "12/31";
-  const itemE: typeof form1120_2025FieldMap | typeof form1120_2024FieldMap =
-    year >= 2025 ? form1120_2025FieldMap : form1120_2024FieldMap;
+  const itemE = m;
   if (f.isFinalReturn && isShortYear) {
     if ("E_finalReturn" in itemE) check(form, itemE.E_finalReturn, recorder);
   }
@@ -482,7 +706,7 @@ async function fillForm1120(
     if ("E_initialReturn" in itemE) check(form, itemE.E_initialReturn, recorder);
   }
 
-  const signerTitleBounds = deriveSignerTitleColumnBounds(pdf, year);
+  const signerTitleBounds = deriveSignerTitleColumnBounds(pdf, revision);
 
   flatten(form);
 
@@ -584,6 +808,8 @@ async function buildSupportingStatement(
       ? distributionsTx.reduce((s, t) => s + Math.abs(t.amountCents), 0) / 100
       : (yd?.distributions ?? 0);
   const drawnLines: string[] = [];
+  const pageLines: string[][] = [[]];
+  let currentPageLines = pageLines[0];
 
   const pdf = await PDFDocument.create();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
@@ -609,10 +835,22 @@ async function buildSupportingStatement(
   let page = pdf.addPage([PAGE_W, PAGE_H]);
   let y = MARGIN_TOP;
 
+  const drawStatementHeader = () => {
+    y = MARGIN_TOP;
+    draw("SUPPORTING STATEMENT TO FORM 5472", { font: bold, size: 13 });
+    y -= 16;
+    draw(`Tax Year ${year}`, { font: bold, size: 11 });
+    y -= 14;
+    draw(`Reporting Corporation: ${f.llcName}, EIN ${f.llcEin}`);
+    y -= 22;
+  };
+
   const ensureSpace = (needed: number) => {
     if (y - needed < MARGIN_BOTTOM) {
       page = pdf.addPage([PAGE_W, PAGE_H]);
-      y = MARGIN_TOP;
+      currentPageLines = [];
+      pageLines.push(currentPageLines);
+      drawStatementHeader();
     }
   };
 
@@ -629,16 +867,12 @@ async function buildSupportingStatement(
     }
     page.drawText(text, { x, y, size, font: f, color: rgb(0, 0, 0) });
     drawnLines.push(text);
+    currentPageLines.push(text);
   };
 
   // ---- Header ----
-  draw("SUPPORTING STATEMENT TO FORM 5472", { font: bold, size: 13 });
-  y -= 16;
-  draw(`Tax Year ${year}`, { font: bold, size: 11 });
-  y -= 14;
-  draw(`Reporting Corporation: ${f.llcName}, EIN ${f.llcEin}`);
-  y -= 12;
-  draw("Pursuant to Treas. Reg. § 1.6038A-2(b)(3) and Part V instructions", { font: italic, size: 9 });
+  drawStatementHeader();
+  draw("Pursuant to Treas. Reg. sec. 1.6038A-2(b)(3) and Part V instructions", { font: italic, size: 9 });
   y -= 22;
 
   // ---- Opening paragraph ----
@@ -779,7 +1013,7 @@ async function buildSupportingStatement(
       `constitute all reportable transactions between the reporting corporation and the foreign ` +
       `related party for tax year ${year}.`
     : "Other than the transactions described above, there were no other reportable transactions of " +
-      `the type described in Treas. Reg. § 1.482-1(i)(7) during tax year ${year}.`;
+      `the type described in Treas. Reg. sec. 1.482-1(i)(7) during tax year ${year}.`;
   ensureSpace(16);
   for (const line of wrapAtPx(closing, font, 10, CONTENT_W)) {
     ensureSpace(14);
@@ -787,7 +1021,7 @@ async function buildSupportingStatement(
     y -= 13;
   }
 
-  authoredDocuments.push({ kind: "partVStatement", taxYear: year, lines: drawnLines });
+  authoredDocuments.push({ kind: "partVStatement", taxYear: year, lines: drawnLines, pages: pageLines });
   return pdf;
 }
 
@@ -993,7 +1227,7 @@ async function buildReasonableCause(
     "This statement explains the circumstances giving rise to the late filing of Form 5472 and the " +
       `accompanying pro forma Form 1120 for tax year${years.length > 1 ? "s" : ""} ${years.join(", ")}, ` +
       "and respectfully requests waiver of any penalty pursuant to the reasonable cause standard of " +
-      "IRC § 6038A(d)(3) and Treas. Reg. § 1.6038A-4(b).",
+      "IRC sec. 6038A(d)(3) and Treas. Reg. sec. 1.6038A-4(b).",
   );
   space(10);
 
@@ -1036,7 +1270,7 @@ async function buildReasonableCause(
   drawParagraph("3. Reasonable Cause", { font: bold, size: 11 });
   space(6);
   drawParagraph(
-    "Under Treas. Reg. § 1.6038A-4(b), the reasonable cause standard examines whether the taxpayer " +
+    "Under Treas. Reg. sec. 1.6038A-4(b), the reasonable cause standard examines whether the taxpayer " +
       "exercised ordinary business care and prudence and was nevertheless unable to comply. The " +
       "following factors support a finding of reasonable cause:",
   );
@@ -1059,7 +1293,7 @@ async function buildReasonableCause(
   ];
   for (const item of factors) {
     ensureSpace(14);
-    drawLine("•", { x: MARGIN_L });
+    drawLine("-", { x: MARGIN_L });
     // Indent bullet text
     for (const line of wrapAtPx(item, font, 10, CONTENT_W - 12)) {
       ensureSpace(14);
@@ -1087,7 +1321,7 @@ async function buildReasonableCause(
   drawParagraph("5. Request", { font: bold, size: 11 });
   space(6);
   drawParagraph(
-    "Pursuant to the foregoing, the Owner respectfully requests that any penalty under IRC § 6038A(d) " +
+    "Pursuant to the foregoing, the Owner respectfully requests that any penalty under IRC sec. 6038A(d) " +
       "be waived in full on grounds of reasonable cause.",
   );
   space(24);
@@ -1181,6 +1415,7 @@ export async function generatePackage(
   finalisedAt: Date = new Date(),
 ): Promise<GeneratedPackage> {
   assertIrsJuratUntouched();
+  assertRelatedPartyCount(relatedPartyCount(f));
   const out = await PDFDocument.create();
   const signatures: SignatureLocation[] = [];
   const authoredDocuments: AuthoredDocumentRecord[] = [];
@@ -1188,6 +1423,26 @@ export async function generatePackage(
   const recordYears: PackageRecordYear[] = [];
   const generatedAt = new Date();
   const commit = process.env.VERCEL_GIT_COMMIT_SHA ?? "local";
+  const selected1120 = new Map<number, Awaited<ReturnType<typeof selectForm1120Revision>>>();
+  for (const year of f.taxYears) {
+    selected1120.set(year, await selectForm1120Revision(f, year));
+  }
+  const measurePdf = await PDFDocument.create();
+  const measureFont = await measurePdf.embedFont(StandardFonts.Helvetica);
+  const llcAddressWidths: { field: string; width: number }[] = [
+    { field: form5472FieldMap["1_street"], width: await fieldWidth("f5472.pdf", form5472FieldMap["1_street"]) },
+  ];
+  for (const selected of Array.from(selected1120.values())) {
+    const map = form1120MapForRevision(selected.revision);
+    const field = form1120StreetField(map);
+    llcAddressWidths.push({ field, width: await fieldWidth(selected.fileName, field) });
+  }
+  const ownerAddressWidths = [
+    { field: form5472FieldMap["4a_nameAddress"], width: await fieldWidth("f5472.pdf", form5472FieldMap["4a_nameAddress"]) },
+    { field: form5472FieldMap["8a_nameAddress"], width: await fieldWidth("f5472.pdf", form5472FieldMap["8a_nameAddress"]) },
+  ];
+  const llcPrintAddress = await computePrintAddress(f.llcAddress, llcAddressWidths, measureFont);
+  const ownerPrintAddress = await computePrintAddress(f.ownerAddress, ownerAddressWidths, measureFont, f.ownerName);
 
   // Per-year delinquency. A bundled package can mix late years with a timely one
   // (e.g. a DIIRSP catch-up that ends with a final short year whose deadline
@@ -1259,7 +1514,7 @@ export async function generatePackage(
     signatures.push({
       label: "Reasonable Cause Statement",
       page: out.getPageCount(),
-      instruction: 'Sign and date under "Signed under penalties of perjury" at the end of the statement.',
+      instruction: "Sign and date the statement in the signature block at the end.",
       ...SIG_PLACEMENT.rcs,
     });
   }
@@ -1272,13 +1527,14 @@ export async function generatePackage(
     // late ones gets the plain header.
     const yearDelinquent = delinquentYears.includes(year);
 
-    // Pick the IRS-published Form 1120 that matches the tax year being filed.
-    // The IRS revises Form 1120 annually; using an older revision for a newer
-    // year is technically incorrect and one of the most common DIIRSP gotchas.
-    const f1120FormName = year >= 2025 ? "f1120--2025.pdf" : "f1120--2024.pdf";
-    const f1120 = await loadBlank(f1120FormName);
+    const form1120Selection = selected1120.get(year);
+    if (!form1120Selection) throw new Error(`Missing Form 1120 selection for tax year ${year}.`);
+    const f1120 = await loadBlank(form1120Selection.fileName);
     const f1120Writes: PdfFieldWrite[] = [];
-    await fillForm1120(f1120, f, year, { form: `1120-${year}`, writes: f1120Writes });
+    await fillForm1120(f1120, f, year, form1120Selection.revision, llcPrintAddress, {
+      form: `1120-${year}`,
+      writes: f1120Writes,
+    });
     if (yearDelinquent) await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE — DIIRSP");
     else await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE");
     // Short-period annotation. A year is short when it starts after Jan 1 (the
@@ -1314,12 +1570,15 @@ export async function generatePackage(
       label: `Form 1120 — tax year ${year}`,
       page: f1120FirstPage,
       instruction: `Sign and date in the "Sign Here" box at the bottom of the first page. Enter "${SIGNER_TITLE}" as your title.`,
-      ...(year >= 2025 ? SIG_PLACEMENT.f1120_2025 : SIG_PLACEMENT.f1120_2024),
+      ...(form1120Selection.revision >= 2025 ? SIG_PLACEMENT.f1120_2025 : SIG_PLACEMENT.f1120_2024),
     });
 
     const f5472 = await loadBlank("f5472.pdf");
     const f5472Writes: PdfFieldWrite[] = [];
     const f5472Result = fillForm5472(f5472, f, year, line1f, {
+      llc: llcPrintAddress,
+      owner: ownerPrintAddress,
+    }, {
       form: `5472-${year}`,
       writes: f5472Writes,
     });
@@ -1348,6 +1607,9 @@ export async function generatePackage(
 
     recordYears.push({
       taxYear: year,
+      form1120Revision: String(form1120Selection.revision),
+      revisionUsed: String(form1120Selection.revision),
+      shortYearException: form1120Selection.shortYearException,
       periodStart,
       periodEnd,
       status: unresolvedYear === year ? "unresolved" : yearDelinquent ? "late" : "timely",
@@ -1400,6 +1662,10 @@ export async function generatePackage(
       finalisedAt: finalisedAt.toISOString(),
       llcName: f.llcName,
       ownerName: f.ownerName,
+      ownerReferenceId: f.ownerReferenceId,
+      llcEin: f.llcEin,
+      llcPrintAddress,
+      ownerPrintAddress,
       formationDate: f.llcDateIncorporated ? new Date(f.llcDateIncorporated).toISOString() : null,
       dissolutionDate: f.isFinalReturn && f.dissolvedAt ? new Date(f.dissolvedAt).toISOString() : null,
       taxYears: recordYears,

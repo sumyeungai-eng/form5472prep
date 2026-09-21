@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { totalPriceCents, isTier } from "@/lib/pricing";
 import { del } from "@/lib/storage";
 import { collectFilingStorageKeys, type FilingWithKeys } from "@/lib/filingStorageKeys";
+import { isValidPbaCode } from "@/lib/irsCodes";
 import {
   entitySchema,
   ownerBaseSchema,
@@ -233,6 +234,17 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     : null;
   const requestedMaxYear =
     requestedYears !== null && requestedYears.length > 0 ? Math.max(...requestedYears) : null;
+  if (Object.prototype.hasOwnProperty.call(body, "llcBusinessCode")) {
+    const businessCodeYear =
+      requestedMaxYear ??
+      (filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : new Date().getFullYear() - 1);
+    if (!isValidPbaCode(clean.llcBusinessCode as string, businessCodeYear)) {
+      return NextResponse.json(
+        { error: "Choose a business activity code from the IRS list." },
+        { status: 400 },
+      );
+    }
+  }
   // ONLY an explicit year change triggers this. A body that omits taxYears
   // means "no change" — the wizard omits the extension fields entirely when its
   // section is hidden, and that absence must never be read as "clear".

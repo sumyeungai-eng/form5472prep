@@ -309,6 +309,7 @@ model Filing {
   preflightCheckedAt DateTime?
   preflightOverrideBy String?
   preflightOverrideAt DateTime?
+  preflightOverrideReason String?
   generatorVersion   String?
   generatorCommit    String?
 

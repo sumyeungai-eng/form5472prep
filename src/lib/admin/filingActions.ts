@@ -139,6 +139,7 @@ const filingSelect = {
   preflightCheckedAt: true,
   preflightOverrideBy: true,
   preflightOverrideAt: true,
+  preflightOverrideReason: true,
   generatorVersion: true,
   generatorCommit: true,
   faxedPdfKey: true,
@@ -370,6 +371,9 @@ export async function runFilingAction(
               preflightFailures: preflight.failures,
               preflightWarnings: preflight.warnings,
               preflightCheckedAt: new Date(),
+              preflightOverrideBy: null,
+              preflightOverrideAt: null,
+              preflightOverrideReason: null,
               generatorVersion: result.record.generatorVersion,
               generatorCommit: result.record.commit,
             },
@@ -626,6 +630,7 @@ export async function runFilingAction(
           preflightCheckedAt: new Date(),
           preflightOverrideBy: null,
           preflightOverrideAt: null,
+          preflightOverrideReason: null,
           generatorVersion: pkg.record.generatorVersion,
           generatorCommit: pkg.record.commit,
           status: "PDF_GENERATED",
@@ -880,12 +885,21 @@ export async function runFilingAction(
           "Only a filing with failed pre-flight checks can be approved for override.",
         );
       }
+      const reason = typeof body.reason === "string" ? body.reason.slice(0, 500).trim() : "";
+      if (reason.replace(/\s/g, "").length < 10) {
+        throw new FilingActionError(
+          400,
+          "reason_required",
+          "Write a short reason for approving this package.",
+        );
+      }
       const approvedAt = new Date();
       await prisma.filing.update({
         where: { id: filing.id },
         data: {
           preflightOverrideBy: ctx.adminId,
           preflightOverrideAt: approvedAt,
+          preflightOverrideReason: reason,
         },
         select: { id: true },
       });
@@ -897,12 +911,14 @@ export async function runFilingAction(
         before: {
           preflightOverrideBy: filing.preflightOverrideBy,
           preflightOverrideAt: filing.preflightOverrideAt,
+          preflightOverrideReason: filing.preflightOverrideReason,
         },
         after: {
           preflightOverrideBy: ctx.adminId,
           preflightOverrideAt: approvedAt,
+          preflightOverrideReason: reason,
         },
-        reason: ctx.reason,
+        reason,
       });
       return { ok: true };
     }

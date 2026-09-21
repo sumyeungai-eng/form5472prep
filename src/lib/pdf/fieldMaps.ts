@@ -76,7 +76,58 @@ export const form5472FieldMap = {
   q43a_coveredDebt_no: "topmostSubform[0].Page3[0].c3_9[1]",
 } as const;
 
-export const form1120_2024FieldMap = {
+export const form1120_2018FieldMap = {
+  taxYearBeginning: "topmostSubform[0].Page1[0].Headpage1[0].f1_1[0]",
+  taxYearEnding: "topmostSubform[0].Page1[0].Headpage1[0].f1_2[0]",
+  taxYearEndingYear2: "topmostSubform[0].Page1[0].Headpage1[0].f1_3[0]",
+  "1a_name": "topmostSubform[0].Page1[0].TypeOrPrintBox[0].f1_4[0]",
+  "1_streetSuite": "topmostSubform[0].Page1[0].TypeOrPrintBox[0].f1_5[0]",
+  "1_cityStateCountryZip": "topmostSubform[0].Page1[0].TypeOrPrintBox[0].f1_6[0]",
+  B_ein: "topmostSubform[0].Page1[0].f1_8[0]",
+  C_dateIncorporated: "topmostSubform[0].Page1[0].f1_9[0]",
+  D_totalAssets: "topmostSubform[0].Page1[0].f1_10[0]",
+  D_totalAssetsCents: "topmostSubform[0].Page1[0].f1_11[0]",
+  E_initialReturn: "topmostSubform[0].Page1[0].c1_6[0]",
+  E_finalReturn: "topmostSubform[0].Page1[0].c1_7[0]",
+  E_nameChange: "topmostSubform[0].Page1[0].c1_8[0]",
+  E_addressChange: "topmostSubform[0].Page1[0].c1_9[0]",
+} as const;
+
+export const form1120_2019FieldMap = {
+  taxYearBeginning: "topmostSubform[0].Page1[0].Headpage1[0].f1_1[0]",
+  taxYearEnding: "topmostSubform[0].Page1[0].Headpage1[0].f1_2[0]",
+  taxYearEndingYear2: "topmostSubform[0].Page1[0].Headpage1[0].f1_3[0]",
+  "1a_name": "topmostSubform[0].Page1[0].Headpage1[0].TypeOrPrintBox[0].f1_4[0]",
+  "1_streetSuite": "topmostSubform[0].Page1[0].Headpage1[0].TypeOrPrintBox[0].f1_5[0]",
+  "1_cityStateCountryZip": "topmostSubform[0].Page1[0].Headpage1[0].TypeOrPrintBox[0].f1_6[0]",
+  B_ein: "topmostSubform[0].Page1[0].f1_7[0]",
+  C_dateIncorporated: "topmostSubform[0].Page1[0].f1_8[0]",
+  D_totalAssets: "topmostSubform[0].Page1[0].f1_9[0]",
+  E_initialReturn: "topmostSubform[0].Page1[0].c1_6[0]",
+  E_finalReturn: "topmostSubform[0].Page1[0].c1_7[0]",
+  E_nameChange: "topmostSubform[0].Page1[0].c1_8[0]",
+  E_addressChange: "topmostSubform[0].Page1[0].c1_9[0]",
+} as const;
+
+export const form1120_2020FieldMap = {
+  taxYearBeginning: "topmostSubform[0].Page1[0].PgHeader[0].f1_1[0]",
+  taxYearEnding: "topmostSubform[0].Page1[0].PgHeader[0].f1_2[0]",
+  taxYearEndingYear2: "topmostSubform[0].Page1[0].PgHeader[0].f1_3[0]",
+  "1a_name": "topmostSubform[0].Page1[0].PgHeader[0].TypeOrPrintBox[0].f1_4[0]",
+  "1_streetSuite": "topmostSubform[0].Page1[0].PgHeader[0].TypeOrPrintBox[0].f1_5[0]",
+  "1_cityStateCountryZip": "topmostSubform[0].Page1[0].PgHeader[0].TypeOrPrintBox[0].f1_6[0]",
+  B_ein: "topmostSubform[0].Page1[0].f1_7[0]",
+  C_dateIncorporated: "topmostSubform[0].Page1[0].f1_8[0]",
+  D_totalAssets: "topmostSubform[0].Page1[0].f1_9[0]",
+  E_initialReturn: "topmostSubform[0].Page1[0].c1_6[0]",
+  E_finalReturn: "topmostSubform[0].Page1[0].c1_7[0]",
+  E_nameChange: "topmostSubform[0].Page1[0].c1_8[0]",
+  E_addressChange: "topmostSubform[0].Page1[0].c1_9[0]",
+} as const;
+
+export const form1120_2021FieldMap = form1120_2020FieldMap;
+
+export const form1120_2022FieldMap = {
   taxYearBeginning: "topmostSubform[0].Page1[0].PgHeader[0].f1_1[0]",
   taxYearEnding: "topmostSubform[0].Page1[0].PgHeader[0].f1_2[0]",
   taxYearEndingYear2: "topmostSubform[0].Page1[0].PgHeader[0].f1_3[0]",
@@ -98,6 +149,9 @@ export const form1120_2024FieldMap = {
   E_nameChange:    "topmostSubform[0].Page1[0].c1_8[0]",
   E_addressChange: "topmostSubform[0].Page1[0].c1_9[0]",
 } as const;
+
+export const form1120_2023FieldMap = form1120_2022FieldMap;
+export const form1120_2024FieldMap = form1120_2022FieldMap;
 
 // 2025 Form 1120 restructured the header: the name/address block is split
 // into 7 separate fields (was 3), and item B (EIN), C (date), D (total assets)
