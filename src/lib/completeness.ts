@@ -41,7 +41,7 @@ export type CompletionInput = {
   ownerReferenceId: string | null;
   taxYears: number[];
   isFinalReturn: boolean;
-  dissolvedAt: Date | null;
+  dissolvedAt: Date | string | null;
   isDiirsp: boolean;
   reasonableCauseNarrative: string | null;
   // Form 7004 extension facts. Only the two the delinquency test reads are
@@ -73,6 +73,7 @@ export function requiresReasonableCause(
     CompletionInput,
     "taxYears" | "isFinalReturn" | "dissolvedAt" | "extensionFiled" | "extensionTransmittedAt"
   >,
+  now: Date = new Date(),
 ): boolean {
   if (filing.taxYears.length === 0) return false;
   // Only a final return carries a dissolution date, and only that date
@@ -87,7 +88,7 @@ export function requiresReasonableCause(
   // protection from unambiguously-late earlier years in the same bundle.
   const maxYear = Math.max(...filing.taxYears);
   return filing.taxYears.some((y) =>
-    isYearDelinquent(y, finalDissolved, y === maxYear ? extFacts : null),
+    isYearDelinquent(y, finalDissolved, y === maxYear ? extFacts : null, now),
   );
 }
 
@@ -116,6 +117,7 @@ function extensionAnswerRequired(
     CompletionInput,
     "taxYears" | "isFinalReturn" | "dissolvedAt" | "extensionFiled"
   >,
+  now: Date = new Date(),
 ): boolean {
   if (filing.taxYears.length === 0) return false;
   // Any answer at all — including "no" and "not sure" — discharges the
@@ -125,13 +127,13 @@ function extensionAnswerRequired(
   // Only a final return carries a dissolution date, and only that date
   // shortens the year — same rule requiresReasonableCause applies.
   const dissolved = filing.isFinalReturn ? filing.dissolvedAt : null;
-  const lateOnTheCalendar = isYearDelinquent(maxYear, dissolved, null);
+  const lateOnTheCalendar = isYearDelinquent(maxYear, dissolved, null, now);
   if (!lateOnTheCalendar) return false;
   const hypotheticallyValid: ExtensionFacts = {
     filed: "yes",
     transmittedAt: new Date(filingDueDateUtc(maxYear, dissolved)),
   };
-  return !isYearDelinquent(maxYear, dissolved, hypotheticallyValid);
+  return !isYearDelinquent(maxYear, dissolved, hypotheticallyValid, now);
 }
 
 /**
@@ -140,7 +142,11 @@ function extensionAnswerRequired(
  *
  * @param yearDataYears the taxYear of every FilingYearData row that exists.
  */
-export function filingCompletionIssues(filing: CompletionInput, yearDataYears: number[]): string[] {
+export function filingCompletionIssues(
+  filing: CompletionInput,
+  yearDataYears: number[],
+  now: Date = new Date(),
+): string[] {
   // Validate against the same schemas the wizard enforces.
   const validationFiling = {
     ...filing,
@@ -183,7 +189,7 @@ export function filingCompletionIssues(filing: CompletionInput, yearDataYears: n
   // purely from the calendar — inference standing in for a customer-supplied
   // fact. Checkout refuses to charge until it's answered, and the admin drafts
   // "ready" badge inherits the refusal because it calls this same helper.
-  if (extensionAnswerRequired(filing)) {
+  if (extensionAnswerRequired(filing, now)) {
     if (completionIssues.indexOf("extensionFiled") === -1)
       completionIssues.push("extensionFiled");
   }
@@ -191,7 +197,7 @@ export function filingCompletionIssues(filing: CompletionInput, yearDataYears: n
   // requiresReasonableCause above. The admin drafts "ready" badge inherits
   // this automatically: it calls this same helper, so a draft that quietly
   // went delinquent stops showing as payable there too.
-  const requiresRcs = requiresReasonableCause(filing);
+  const requiresRcs = requiresReasonableCause(filing, now);
   if (requiresRcs && (!filing.reasonableCauseNarrative || !filing.reasonableCauseNarrative.trim())) {
     if (completionIssues.indexOf("reasonableCauseNarrative") === -1)
       completionIssues.push("reasonableCauseNarrative");

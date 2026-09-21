@@ -25,6 +25,7 @@ import { formatUsd } from "@/lib/utils";
 import { fireMetaInitiateCheckout } from "@/lib/analytics/meta";
 import { DocumentsUploader } from "@/components/DocumentsUploader";
 import { DeterminationFlag } from "@/components/wizard/DeterminationFlag";
+import { requiresReasonableCause } from "@/lib/completeness";
 
 // Generates a self-assigned Reference ID for Form 5472 when the customer
 // leaves the field blank. Uses last-name + first-initial as a human-readable
@@ -330,18 +331,34 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
     onFilingChange?.(filing);
   }, [filing, onFilingChange]);
 
-  // RCS step only shown when DIIRSP.
+  // RCS step only shown when the live filing-status gate requires it.
   const steps: { key: StepKey; label: string }[] = useMemo(() => {
     const base: { key: StepKey; label: string }[] = [
       { key: "entity", label: "Entity" },
       { key: "owner", label: "Owner" },
       { key: "years", label: "Tax years" },
     ];
-    if (filing.isDiirsp) base.push({ key: "rcs", label: "Reasonable cause" });
+    if (
+      requiresReasonableCause({
+        taxYears: filing.taxYears,
+        isFinalReturn: filing.isFinalReturn,
+        dissolvedAt: filing.dissolvedAt,
+        extensionFiled: filing.extensionFiled,
+        extensionTransmittedAt: filing.extensionTransmittedAt,
+      })
+    ) {
+      base.push({ key: "rcs", label: "Reasonable cause" });
+    }
     base.push({ key: "transactions", label: "Transactions" });
     base.push({ key: "review", label: "Review" });
     return base;
-  }, [filing.isDiirsp]);
+  }, [
+    filing.taxYears,
+    filing.isFinalReturn,
+    filing.dissolvedAt,
+    filing.extensionFiled,
+    filing.extensionTransmittedAt,
+  ]);
 
   // Internal-vs-controlled step state. Controlled wins when `step` is
   // explicitly passed by the parent.
