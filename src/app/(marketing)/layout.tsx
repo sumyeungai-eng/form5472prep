@@ -60,8 +60,10 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               <Logo />
               <p className="max-w-sm leading-relaxed">
                 Done-for-you Form 5472 + pro forma 1120 filing for foreign-owned US LLCs.
-                A form-preparation and filing-courier service — not a CPA firm, and not tax
-                advice. You are responsible for the accuracy of what you submit.
+                Every filing is reviewed by a qualified accountant before it is submitted.
+                We prepare and submit the forms from the information you give us; we do not
+                provide personalised tax planning. You are responsible for the accuracy of what
+                you submit.
               </p>
               <p className="font-mono text-[11px] uppercase tracking-wide text-slate-500">
                 Filed to the IRS Ogden PIN Unit · +1-855-887-7737
@@ -105,6 +107,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               <ul className="space-y-2">
                 <li><Link href="/terms" className="hover:text-ink">Terms of Service</Link></li>
                 <li><Link href="/privacy" className="hover:text-ink">Privacy Policy</Link></li>
+                <li><Link href="/cookies" className="hover:text-ink">Cookies</Link></li>
                 <li><Link href="/editorial-policy" className="hover:text-ink">Editorial Policy</Link></li>
                 <li><Link href="/data-retention" className="hover:text-ink">Data Retention</Link></li>
                 <li><Link href="/security" className="hover:text-ink">Security</Link></li>

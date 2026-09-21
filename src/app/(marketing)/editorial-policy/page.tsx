@@ -39,7 +39,7 @@ export default function EditorialPolicyPage() {
       <ul>
         <li>We do not invent numbers or attribute claims to sources that don&apos;t support them.</li>
         <li>We do not present opinion as IRS guidance.</li>
-        <li>We do not give personalized tax advice — Form5472 Prep is a filing and courier service, not a CPA firm. For advice specific to your situation, consult a qualified tax professional.</li>
+        <li>General information, not personalised tax planning. For advice on your own situation, speak to a tax professional.</li>
       </ul>
 
       <h2>3. Review and accuracy</h2>

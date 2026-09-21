@@ -158,9 +158,10 @@ export default function PricingPage() {
         </div>
 
         <p className="mt-4 text-xs text-slate-500 text-center max-w-2xl mx-auto">
-          One-time flat fee, billed in USD via Stripe. No subscription. We are
-          not a CPA firm and do not provide tax advice — we prepare and submit
-          your information return as you provide it.
+          One-time flat fee, billed in USD via Stripe. No subscription. Every
+          filing is reviewed by a qualified accountant before it is submitted.
+          We prepare and submit the forms from the information you give us; we
+          do not provide personalised tax planning.
         </p>
       </section>
 

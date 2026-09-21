@@ -195,9 +195,9 @@ export default function ContactPage() {
         </div>
 
         <p className="mt-10 border-t border-slate-200 pt-6 text-xs leading-relaxed text-slate-500">
-          Form5472 Prep is a form-preparation and filing-courier service — not a CPA firm,
-          and nothing here is tax advice. You are responsible for the accuracy of what you
-          submit.
+          Every filing is reviewed by a qualified accountant before it is submitted. We
+          prepare and submit the forms from the information you give us; we do not provide
+          personalised tax planning. You are responsible for the accuracy of what you submit.
         </p>
       </section>
     </main>

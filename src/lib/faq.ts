@@ -141,7 +141,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "Are you a CPA firm? Who prepares my filing?",
     answer:
-      "We are not a CPA firm and do not provide tax advice. We prepare and submit your information return as you provide it, with every package reviewed by a qualified tax accountant before submission. Our role is preparation and submission, not tax-position advice.",
+      "Every filing is reviewed by a qualified accountant before it is submitted. We prepare and submit the forms from the information you give us; we do not provide personalised tax planning. Our role is preparation and submission, not tax-position advice.",
     learnMore: { href: "/about", label: "Read about Form5472 Prep" },
     source: "src/app/(marketing)/pricing/page.tsx:161; src/app/(marketing)/about/page.tsx:134; src/app/(marketing)/about/page.tsx:122",
   },

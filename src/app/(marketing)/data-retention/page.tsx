@@ -4,7 +4,7 @@ import { SITE_URL } from "@/lib/seo";
 export const metadata = {
   title: "Data Retention Policy",
   description:
-    "Bank statements are processed in memory and discarded; signed PDFs are deleted within 72 hours of fax confirmation; fax receipts are retained 7 years.",
+    "Retention periods for filing records, signatures, IRS faxes, uploaded documents, support attachments, and payment records.",
   alternates: {
     canonical: "/data-retention",
     types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function DataRetentionPage() {
   return (
-    <LegalLayout title="Data Retention Policy" lastUpdated="2026-05-20">
+    <LegalLayout title="Data Retention Policy" lastUpdated="2026-09-21">
       <h2>Our principle</h2>
       <p>
         We retain the minimum amount of data needed to (a) prove that your IRS filing was
@@ -55,6 +55,11 @@ export default function DataRetentionPage() {
             <td>Held only to fax to the IRS and return the receipt; deleted after fax confirmation</td>
           </tr>
           <tr>
+            <td>Uploaded dissolution certificates and extension proof</td>
+            <td>Up to 72 hours after the filing or support task is complete</td>
+            <td>Held only to complete the related filing or support task, then deleted</td>
+          </tr>
+          <tr>
             <td>Generated unsigned PDFs</td>
             <td>Regenerated on demand</td>
             <td>Built from your retained entity / owner / totals data; not stored after download</td>
@@ -77,7 +82,22 @@ export default function DataRetentionPage() {
           <tr>
             <td>Fax transmission receipts</td>
             <td>7 years from filing date</td>
-            <td>Proof of filing — matches IRS records retention (26 CFR § 1.6001-1)</td>
+            <td>Proof of filing; matches IRS records retention (26 CFR section 1.6001-1)</td>
+          </tr>
+          <tr>
+            <td>Records of what was signed and when</td>
+            <td>7 years from filing date</td>
+            <td>Proof of the signed authorization and the version of the wording agreed</td>
+          </tr>
+          <tr>
+            <td>IP address and browser recorded at signing</td>
+            <td>7 years from filing date</td>
+            <td>Kept with the signature record to show how the electronic signature was completed</td>
+          </tr>
+          <tr>
+            <td>Faxes received from the IRS</td>
+            <td>7 years from filing date</td>
+            <td>Proof of IRS responses about the customer&apos;s application or filing</td>
           </tr>
           <tr>
             <td>Aggregated contribution and distribution totals per year</td>
@@ -93,6 +113,16 @@ export default function DataRetentionPage() {
             <td>Account email and login records</td>
             <td>Active + 12 months</td>
             <td>To let you retrieve your receipts after a period of inactivity</td>
+          </tr>
+          <tr>
+            <td>Signature images</td>
+            <td>Active + 12 months</td>
+            <td>Used to display and support your signed filing while your account is active</td>
+          </tr>
+          <tr>
+            <td>Support message attachments</td>
+            <td>Active + 12 months, unless needed for a retained filing record</td>
+            <td>Used to resolve support requests and preserve context for follow-up</td>
           </tr>
           <tr>
             <td>Payment records (Stripe metadata)</td>
@@ -111,7 +141,7 @@ export default function DataRetentionPage() {
       <h2>Deletion process</h2>
       <p>
         Records past their retention period are deleted on a rolling monthly basis. Deletion
-        is irreversible — once a filing&apos;s retention period expires we cannot retrieve it.
+        is irreversible; once a filing&apos;s retention period expires we cannot retrieve it.
       </p>
 
       <h2>Early deletion at your request</h2>
@@ -125,13 +155,13 @@ export default function DataRetentionPage() {
 
       <h2>What we do not retain</h2>
       <ul>
-        <li>Bank statement files — discarded immediately after parsing.</li>
-        <li>Individual line-item transactions — discarded after totals are confirmed.</li>
-        <li>Signed PDFs — deleted within 72 hours of fax confirmation.</li>
-        <li>Payment card data — handled and stored exclusively by Stripe.</li>
-        <li>Passwords — we use passwordless authentication (one-time email magic-link or Google OAuth); no passwords are ever stored.</li>
-        <li>Bank login credentials — never seen or stored. Plaid handles authentication directly with your financial institution.</li>
-        <li>Raw transaction data from Plaid — only the contribution/distribution totals are retained for filing reproduction; individual line items are discarded after review.</li>
+        <li>Bank statement files; discarded immediately after parsing.</li>
+        <li>Individual line-item transactions; discarded after totals are confirmed.</li>
+        <li>Signed PDFs; deleted within 72 hours of fax confirmation.</li>
+        <li>Payment card data; handled and stored exclusively by Stripe.</li>
+        <li>Passwords; we use passwordless customer authentication (one-time email magic-link or Google OAuth); no customer passwords are ever stored.</li>
+        <li>Bank login credentials; never seen or stored. Plaid handles authentication directly with your financial institution.</li>
+        <li>Raw transaction data from Plaid; only the contribution/distribution totals are retained for filing reproduction; individual line items are discarded after review.</li>
       </ul>
     </LegalLayout>
   );

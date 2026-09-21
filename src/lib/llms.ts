@@ -32,7 +32,7 @@ const WHAT_WE_DO = `## What we do
 
 const WHAT_WE_DO_NOT_DO = `## What we do NOT do
 
-- We are NOT a CPA firm and do NOT provide tax advice. We prepare and submit your information return as you provide it; we don't render opinions on your specific tax situation.
+- Every filing is reviewed by a qualified accountant before submission. We prepare and submit forms from customer-provided information. General information, not personalised tax planning. For advice on your own situation, speak to a tax professional.
 - We do NOT file actual income-tax returns (Form 1040, Form 1120 with tax computation, Form 1040-NR, state returns, etc.). Form 5472 is an information return; the pro forma Form 1120 is filed as an attachment to Form 5472 for foreign-owned US disregarded entities and does not compute tax.`;
 
 const PRICING = `## Pricing

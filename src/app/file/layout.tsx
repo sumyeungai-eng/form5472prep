@@ -18,7 +18,7 @@ export default function FileFunnelLayout({ children }: { children: React.ReactNo
       </header>
       <main className="flex-1 flex flex-col">{children}</main>
       <footer className="py-6 text-center text-xs text-slate-400">
-        <span>Not a CPA firm. We prepare forms, you verify accuracy.</span>
+        <span>Every filing is reviewed by a qualified accountant before submission. You verify accuracy.</span>
         {" · "}
         <Link href="/terms" className="hover:text-slate-600 underline underline-offset-2">Terms</Link>
         {" · "}

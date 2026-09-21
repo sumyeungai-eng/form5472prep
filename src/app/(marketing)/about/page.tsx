@@ -137,7 +137,6 @@ export default function AboutPage() {
             <div>
               <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-slate-500">We are not</p>
               <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                <li>A CPA firm, and we don&apos;t provide tax advice.</li>
                 <li>A tool for multi-member LLCs or corporations (those file different returns).</li>
                 <li>Responsible for the accuracy of the information you submit — that stays with you.</li>
                 <li>Affiliated with the IRS or any government agency.</li>

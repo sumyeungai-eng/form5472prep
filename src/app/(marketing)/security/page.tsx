@@ -4,7 +4,7 @@ import { SITE_URL } from "@/lib/seo";
 export const metadata = {
   title: "Information Security Policy",
   description:
-    "How Form5472 Prep protects customer information — including bank transaction data accessed via Plaid, government identifiers, and tax filing PDFs.",
+    "How Form5472 Prep protects customer information, including bank transaction data accessed via Plaid, government identifiers, signatures, and tax filing records.",
   alternates: {
     canonical: "/security",
     types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function SecurityPage() {
   return (
-    <LegalLayout title="Information Security Policy" lastUpdated="2026-05-20">
+    <LegalLayout title="Information Security Policy" lastUpdated="2026-09-21">
       <p className="text-sm text-slate-500">Version 1.0</p>
 
       <h2>1. Purpose &amp; Scope</h2>
@@ -27,7 +27,7 @@ export default function SecurityPage() {
       <h2>2. Data Classification</h2>
       <ul>
         <li>
-          <strong>Highly sensitive:</strong> customer banking credentials (never stored —
+          <strong>Highly sensitive:</strong> customer banking credentials (never stored;
           Plaid handles authentication directly with the financial institution), bank
           transaction data, government identifiers (EIN, ITIN), tax filing PDFs.
         </li>
@@ -44,11 +44,15 @@ export default function SecurityPage() {
         <li>Production systems and data are accessible only to authorized personnel.</li>
         <li>All access to admin systems requires authentication via password and session token.</li>
         <li>
+          Admin sign-in uses an email and password over an encrypted connection, and vendor
+          consoles require two-factor authentication.
+        </li>
+        <li>
           Vendor consoles (Vercel, Cloudflare, Plaid, Stripe, Resend) are protected by strong
           unique passwords and two-factor authentication.
         </li>
         <li>
-          No customer banking credentials are ever stored — Plaid handles authentication
+          No customer banking credentials are ever stored; Plaid handles authentication
           directly with financial institutions; we only receive scoped access tokens.
         </li>
       </ul>
@@ -69,14 +73,14 @@ export default function SecurityPage() {
 
       <h2>5. Vendors &amp; Sub-processors</h2>
       <p>
-        We use the following SOC 2 / ISO 27001 compliant infrastructure providers:
+        We use the following infrastructure and service providers to run the Service:
       </p>
       <ul>
-        <li><strong>Vercel</strong> — application hosting</li>
-        <li><strong>Cloudflare R2</strong> — file storage</li>
-        <li><strong>Plaid</strong> — bank account connectivity</li>
-        <li><strong>Stripe</strong> — payment processing</li>
-        <li><strong>Resend</strong> — transactional email</li>
+        <li><strong>Vercel</strong> - application hosting</li>
+        <li><strong>Cloudflare R2</strong> - file storage</li>
+        <li><strong>Plaid</strong> - bank account connectivity</li>
+        <li><strong>Stripe</strong> - payment processing</li>
+        <li><strong>Resend</strong> - transactional email</li>
         <li>Managed PostgreSQL database</li>
       </ul>
       <p>
@@ -84,7 +88,13 @@ export default function SecurityPage() {
         completing the customer&apos;s filing or processing their payment.
       </p>
 
-      <h2>6. Data Retention &amp; Deletion</h2>
+      <h2>6. Payment handling</h2>
+      <p>
+        Card details are entered with Stripe and never reach our servers. We receive payment
+        status and limited payment metadata needed for receipts, refunds, and accounting.
+      </p>
+
+      <h2>7. Data Retention &amp; Deletion</h2>
       <p>
         See our <a href="/data-retention">Data Retention Policy</a> for the full schedule.
         Bank transaction data pulled via Plaid is used solely to prepare the customer&apos;s
@@ -93,7 +103,7 @@ export default function SecurityPage() {
         <a href="mailto:support@form5472prep.com">support@form5472prep.com</a>.
       </p>
 
-      <h2>7. Incident Response</h2>
+      <h2>8. Incident Response</h2>
       <ul>
         <li>Production errors are monitored via Vercel logs and alerting.</li>
         <li>
@@ -107,7 +117,7 @@ export default function SecurityPage() {
         </li>
       </ul>
 
-      <h2>8. Software Development</h2>
+      <h2>9. Software Development</h2>
       <ul>
         <li>All code is version-controlled in a private repository.</li>
         <li>
@@ -116,7 +126,7 @@ export default function SecurityPage() {
         <li>Dependencies are scanned for known vulnerabilities via the package registry.</li>
       </ul>
 
-      <h2>9. Personnel Security</h2>
+      <h2>10. Personnel Security</h2>
       <ul>
         <li>
           Employees and contractors with access to systems sign confidentiality agreements.
@@ -126,7 +136,7 @@ export default function SecurityPage() {
         </li>
       </ul>
 
-      <h2>10. Policy Review</h2>
+      <h2>11. Policy Review</h2>
       <p>This policy is reviewed annually and updated as the business grows.</p>
     </LegalLayout>
   );

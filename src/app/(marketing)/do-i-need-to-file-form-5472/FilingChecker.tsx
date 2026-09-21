@@ -139,7 +139,7 @@ export function FilingChecker() {
           )}
         </div>
         <p className="mt-4 text-center text-xs leading-relaxed text-slate-500">
-          General information, not tax advice. Use this checker as a starting point for your own facts.
+          General information, not personalised tax planning. For advice on your own situation, speak to a tax professional.
         </p>
       </div>
     </section>

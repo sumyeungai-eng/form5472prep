@@ -157,7 +157,7 @@ function BlogHeader({ postCount, tags }: { postCount: number; tags: TagEntry[] }
             ))}
           </ul>
           <div className="mt-6 border-t border-slate-100 pt-5 text-xs leading-5 text-slate-500">
-            Educational content, not tax advice. Every guide links back to primary IRS guidance where relevant.
+            General information, not personalised tax planning. For advice on your own situation, speak to a tax professional.
           </div>
         </div>
       </div>

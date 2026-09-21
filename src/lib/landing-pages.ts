@@ -594,7 +594,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What does our service cover, and what do you handle elsewhere?",
-        body: "Our Form 5472 service prepares the supported foreign-owned disregarded-entity package, including pro forma Form 1120 and applicable supporting statements, for review, signature and IRS fax delivery. Late-year work may include a reasonable-cause statement based on the actual facts; penalty relief is not guaranteed. A provider transmission receipt is not IRS acceptance.\n\nSeparate [EIN](/ein) and [ITIN](/itin) application services are available. They are not automatically needed by every foreign LLC owner and are not bundled into the Form 5472 fee.\n\nThe Form 5472 package does not include state returns, personal income-tax returns, FBAR/Form 8938, sales tax or bookkeeping. We are not a CPA firm and do not provide tax advice. Contact us before ordering if your situation involves multiple members, a corporate election or other unsupported complexity."
+        body: "Our Form 5472 service prepares the supported foreign-owned disregarded-entity package, including pro forma Form 1120 and applicable supporting statements, for review, signature and IRS fax delivery. Late-year work may include a reasonable-cause statement based on the actual facts; penalty relief is not guaranteed. A provider transmission receipt is not IRS acceptance.\n\nSeparate [EIN](/ein) and [ITIN](/itin) application services are available. They are not automatically needed by every foreign LLC owner and are not bundled into the Form 5472 fee.\n\nThe Form 5472 package does not include state returns, personal income-tax returns, FBAR/Form 8938, sales tax or bookkeeping. Every filing is reviewed by a qualified accountant before it is submitted. We prepare and submit the forms from the information you give us; we do not provide personalised tax planning. Contact us before ordering if your situation involves multiple members, a corporate election or other unsupported complexity."
       },
       {
         heading: "What is your typical compliance profile by business type?",
@@ -626,7 +626,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What if I have employees in the US?",
-        a: "Employees can create payroll, state and income-tax questions beyond Form 5472. Obtain payroll and tax advice before treating the information-return package as a complete compliance solution."
+        a: "Employees can create payroll, state and income-tax questions beyond Form 5472. Obtain qualified guidance before treating the information-return package as a complete compliance solution."
       },
       {
         q: "I sell on Amazon FBA in the US. What changes?",
@@ -1175,7 +1175,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What does the Germany-US tax treaty cover?",
-        body: "The United States and Germany have an income tax treaty intended to prevent double taxation of the same income. Two things to keep separate:\n\n1. Form 5472 is an information return, not a tax return. It has nothing to do with treaty relief — you file it regardless of whether any US tax is actually owed, and the $25,000 penalty applies for a missing or incomplete filing even at $0 US tax liability.\n2. As a German tax resident, you may need to report your US LLC's income on your own German Einkommensteuererklärung (income tax return), potentially with a Foreign Tax Credit for any US tax paid. This is a German-side compliance question for a German tax advisor — we don't advise on German tax law.\n\nWe handle the US federal Form 5472 + pro forma 1120 filing. The German reporting side is a separate, parallel obligation you'll want a Steuerberater to confirm.",
+        body: "The United States and Germany have an income tax treaty intended to prevent double taxation of the same income. Two things to keep separate:\n\n1. Form 5472 is an information return, not a tax return. It has nothing to do with treaty relief — you file it regardless of whether any US tax is actually owed, and the $25,000 penalty applies for a missing or incomplete filing even at $0 US tax liability.\n2. As a German tax resident, you may need to report your US LLC's income on your own German Einkommensteuererklärung (income tax return), potentially with a Foreign Tax Credit for any US tax paid. This is a German-side compliance question for a German tax professional — we don't advise on German tax law.\n\nWe handle the US federal Form 5472 + pro forma 1120 filing. The German reporting side is a separate, parallel obligation you'll want a Steuerberater to confirm.",
       },
       {
         heading: "What are common scenarios for German LLC owners?",
@@ -1262,7 +1262,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "Why do UAE-based founders use US LLCs?",
-        body: "UAE-based founders use US LLCs for faster setup, US-based payment rails and banking, and customers or platforms that expect a US-based seller entity. A Wyoming or Delaware LLC can be formed in days for a few hundred dollars for an early-stage global business.\n\nCommon reasons UAE residents form a US LLC instead of, or alongside, a UAE mainland or free zone entity:\n\n• Faster, cheaper setup for an early-stage, US-focused or globally distributed business — a Wyoming or Delaware LLC can be formed in days for a few hundred dollars.\n• Easier access to US-based payment rails and banking — Stripe, Mercury, and PayPal Business are simpler to open with a US entity.\n• Customers or platforms (Amazon.com, US SaaS marketplaces) that expect or prefer a US-based seller entity.\n\nThis is a business-structure decision, not a way to avoid UAE obligations — if your UAE Corporate Tax or VAT registration status is affected by owning a foreign entity, that's a question for a UAE tax advisor. We handle the US federal Form 5472 side.",
+        body: "UAE-based founders use US LLCs for faster setup, US-based payment rails and banking, and customers or platforms that expect a US-based seller entity. A Wyoming or Delaware LLC can be formed in days for a few hundred dollars for an early-stage global business.\n\nCommon reasons UAE residents form a US LLC instead of, or alongside, a UAE mainland or free zone entity:\n\n• Faster, cheaper setup for an early-stage, US-focused or globally distributed business — a Wyoming or Delaware LLC can be formed in days for a few hundred dollars.\n• Easier access to US-based payment rails and banking — Stripe, Mercury, and PayPal Business are simpler to open with a US entity.\n• Customers or platforms (Amazon.com, US SaaS marketplaces) that expect or prefer a US-based seller entity.\n\nThis is a business-structure decision, not a way to avoid UAE obligations — if your UAE Corporate Tax or VAT registration status is affected by owning a foreign entity, that's a question for a UAE tax professional. We handle the US federal Form 5472 side.",
       },
       {
         heading: "What should you enter if you don't have a foreign tax ID?",
@@ -1270,7 +1270,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How is UAE Corporate Tax separate from Form 5472?",
-        body: "UAE Corporate Tax is separate from Form 5472. The UAE tax question depends on where the LLC's management and activity happen, whether you have a separate UAE business, and other jurisdiction-specific rules. Form 5472 is the US federal information return for the US LLC's activity.\n\nWhat we can say clearly: Form 5472 is a US federal information return, entirely separate from UAE Corporate Tax. You file it based on your US LLC's activity regardless of your UAE tax position. For the UAE side, talk to a UAE-licensed tax advisor.",
+        body: "UAE Corporate Tax is separate from Form 5472. The UAE tax question depends on where the LLC's management and activity happen, whether you have a separate UAE business, and other jurisdiction-specific rules. Form 5472 is the US federal information return for the US LLC's activity.\n\nWhat we can say clearly: Form 5472 is a US federal information return, entirely separate from UAE Corporate Tax. You file it based on your US LLC's activity regardless of your UAE tax position. For the UAE side, talk to a UAE-licensed tax professional.",
       },
       {
         heading: "What are common scenarios for UAE-based owners?",
@@ -1308,7 +1308,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Does UAE Corporate Tax affect my Form 5472 filing?",
-        a: "No — they're separate systems. Whether your US LLC creates any UAE Corporate Tax exposure is a UAE-side question for a licensed UAE tax advisor. Form 5472 is a US federal filing you complete regardless of your UAE tax position.",
+        a: "No — they're separate systems. Whether your US LLC creates any UAE Corporate Tax exposure is a UAE-side question for a licensed UAE tax professional. Form 5472 is a US federal filing you complete regardless of your UAE tax position.",
       },
       {
         q: "I have a UAE free zone company and a separate US LLC — does that complicate the filing?",

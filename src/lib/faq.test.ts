@@ -52,10 +52,10 @@ function routeExists(href: string): boolean {
   );
 }
 
-function sentenceContainingTaxAdvice(value: string): string | null {
+function sentenceContainingPersonalisedPlanning(value: string): string | null {
   return value
     .split(/[.!?]\s+/)
-    .find((sentence) => sentence.toLowerCase().includes("tax advice")) ?? null;
+    .find((sentence) => sentence.toLowerCase().includes("personalised tax planning")) ?? null;
 }
 
 function normalizeApostrophes(value: string): string {
@@ -102,9 +102,9 @@ describe("central FAQ content", () => {
         expect(item.answer.toLowerCase(), item.id).not.toContain(phrase.toLowerCase());
       }
 
-      const taxAdviceSentence = sentenceContainingTaxAdvice(item.answer);
-      if (taxAdviceSentence) {
-        expect(taxAdviceSentence.toLowerCase(), item.id).toMatch(/\b(not|do not|don't)\b/);
+      const planningSentence = sentenceContainingPersonalisedPlanning(item.answer);
+      if (planningSentence) {
+        expect(planningSentence.toLowerCase(), item.id).toMatch(/\b(not|do not|don't)\b/);
       }
     }
   });
@@ -137,8 +137,8 @@ describe("central FAQ content", () => {
     expect(item?.answer, item?.id).not.toMatch(/our CAA|our own CAA|in-house/i);
   });
 
-  it("states the non-CPA boundary and keeps balanced coverage", () => {
-    expect(FAQ_ITEMS.some((item) => item.answer.includes("not a CPA firm"))).toBe(true);
+  it("states the accountant-review boundary and keeps balanced coverage", () => {
+    expect(FAQ_ITEMS.some((item) => item.answer.includes("reviewed by a qualified accountant"))).toBe(true);
     expect(FAQ_ITEMS.length).toBeGreaterThanOrEqual(35);
     expect(FAQ_ITEMS.length).toBeLessThanOrEqual(55);
 
