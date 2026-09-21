@@ -237,6 +237,7 @@ describe("regeneratePdf", () => {
     preflightStatus: "passed",
     preflightOverrideBy: "admin_old",
     preflightOverrideAt: new Date("2026-09-20T00:00:00.000Z"),
+    preflightOverrideReason: "Prior override reason.",
     user: { id: "u1", email: "a@b.com" },
   };
 
@@ -311,6 +312,7 @@ describe("regeneratePdf", () => {
       signedPdfKey: null,
       preflightOverrideBy: null,
       preflightOverrideAt: null,
+      preflightOverrideReason: null,
       status: "PDF_GENERATED",
     });
   });
@@ -397,6 +399,7 @@ describe("approvePreflightOverride", () => {
     preflightStatus: "failed",
     preflightOverrideBy: null,
     preflightOverrideAt: null,
+    preflightOverrideReason: null,
     user: { id: "u1", email: "a@b.com" },
   };
 
@@ -424,18 +427,36 @@ describe("approvePreflightOverride", () => {
 
   it("records admin approval and logs the change", async () => {
     db.findUnique.mockResolvedValue(filing);
+    const reason = "Confirmed with the customer by phone, package is accurate.";
 
-    await runFilingAction("filing_1", "approvePreflightOverride", {}, { adminId: "admin_1" });
+    await runFilingAction("filing_1", "approvePreflightOverride", { reason }, { adminId: "admin_1" });
 
     const data = (db.update.mock.calls.at(-1)?.[0] as { data: Record<string, unknown> }).data;
     expect(data.preflightOverrideBy).toBe("admin_1");
     expect(data.preflightOverrideAt).toBeInstanceOf(Date);
+    expect(data.preflightOverrideReason).toBe(reason);
     expect(db.createLog).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({
         filingId: "filing_1",
         adminId: "admin_1",
         field: "preflightOverride",
+        beforeJson: expect.objectContaining({
+          preflightOverrideReason: null,
+        }),
+        afterJson: expect.objectContaining({
+          preflightOverrideReason: reason,
+        }),
+        reason,
       }),
     }));
+  });
+
+  it.each([{}, { reason: "too short" }])("rejects missing or short override reason: %o", async (body) => {
+    db.findUnique.mockResolvedValue(filing);
+
+    await expect(
+      runFilingAction("filing_1", "approvePreflightOverride", body, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 400, code: "reason_required" });
+    expect(db.update).not.toHaveBeenCalled();
   });
 });

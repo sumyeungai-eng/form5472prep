@@ -9,6 +9,7 @@ import { formatUsd } from "@/lib/utils";
 import { publicUrl } from "@/lib/storage";
 import { effectiveDueDateUtc, filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { extensionReviewFlags } from "@/lib/admin/filingActions";
+import { isValidPbaCode } from "@/lib/irsCodes";
 import { StatusBadge } from "../StatusBadge";
 import { AdminPageHeader } from "../../_components/AdminPageHeader";
 import { AdminActions } from "./AdminActions";
@@ -43,6 +44,13 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
     },
   });
   if (!filing) notFound();
+
+  const preflightOverrideAdmin = filing.preflightOverrideBy
+    ? await prisma.admin.findUnique({
+        where: { id: filing.preflightOverrideBy },
+        select: { email: true },
+      })
+    : null;
 
   // Resolve public URLs for any uploaded files.
   const generatedPdfUrl = filing.generatedPdfKey ? await publicUrl(filing.generatedPdfKey) : null;
@@ -117,6 +125,11 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
     filing.extensionDestination != null ||
     filing.extensionProofKey != null;
   const reviewFlags = extensionReviewFlags(filing);
+  const businessCodeTaxYear = maxTaxYear ?? new Date().getFullYear() - 1;
+  const businessCodeWarning =
+    filing.llcBusinessCode != null &&
+    filing.llcBusinessCode.trim().length > 0 &&
+    !isValidPbaCode(filing.llcBusinessCode, businessCodeTaxYear);
 
   // First-touch traffic attribution (captured in middleware, stamped on the
   // draft at creation). Filings created before this shipped have all-null
@@ -172,6 +185,10 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         checkedAt={filing.preflightCheckedAt}
         generatorVersion={filing.generatorVersion}
         generatorCommit={filing.generatorCommit}
+        overrideReason={filing.preflightOverrideReason}
+        overrideByEmail={preflightOverrideAdmin?.email ?? null}
+        overrideById={filing.preflightOverrideBy}
+        overrideAt={filing.preflightOverrideAt}
       />
 
       {/* Quick actions */}
@@ -258,6 +275,16 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           <Field label="Date incorporated" value={filing.llcDateIncorporated?.toISOString().split("T")[0] ?? null} />
           <Field label="Business activity" value={filing.llcBusinessActivity} />
           <Field label="Business code" value={filing.llcBusinessCode} mono />
+          {businessCodeWarning && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-0.5 sm:gap-3 text-sm">
+              <dt className="sr-only">Business code warning</dt>
+              <dd className="sm:col-start-2 sm:col-span-2">
+                <span className="inline-flex rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-800">
+                  Activity code {filing.llcBusinessCode} is not on the IRS Form 1120 list for {businessCodeTaxYear}. Ask the customer to pick one from the list.
+                </span>
+              </dd>
+            </div>
+          )}
         </DetailCard>
 
         {/* Foreign owner */}
@@ -438,6 +465,10 @@ function PreflightPanel({
   checkedAt,
   generatorVersion,
   generatorCommit,
+  overrideReason,
+  overrideByEmail,
+  overrideById,
+  overrideAt,
 }: {
   status: string | null;
   failures: unknown;
@@ -445,11 +476,16 @@ function PreflightPanel({
   checkedAt: Date | null;
   generatorVersion: string | null;
   generatorCommit: string | null;
+  overrideReason: string | null;
+  overrideByEmail: string | null;
+  overrideById: string | null;
+  overrideAt: Date | null;
 }) {
   const failureRows = issueRows(failures);
   const warningRows = issueRows(warnings);
   const isFailed = status === "failed";
   const isPassed = status === "passed";
+  const overrideBy = overrideByEmail ?? overrideById;
   return (
     <div
       className={`border rounded-lg p-5 mb-6 ${
@@ -497,6 +533,28 @@ function PreflightPanel({
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {overrideBy && (
+        <div className="mt-4 border-t border-current/10 pt-3 text-sm text-slate-700">
+          <h3 className="text-xs font-semibold text-slate-900">Override recorded</h3>
+          <dl className="mt-2 space-y-1">
+            <div>
+              <dt className="inline font-medium">Approved by: </dt>
+              <dd className="inline">{overrideBy}</dd>
+            </div>
+            {overrideAt && (
+              <div>
+                <dt className="inline font-medium">Approved at: </dt>
+                <dd className="inline">{overrideAt.toISOString().slice(0, 16).replace("T", " ")} UTC</dd>
+              </div>
+            )}
+            <div>
+              <dt className="inline font-medium">Reason: </dt>
+              <dd className="inline whitespace-pre-wrap">{overrideReason?.trim() || "No reason recorded."}</dd>
+            </div>
+          </dl>
         </div>
       )}
     </div>

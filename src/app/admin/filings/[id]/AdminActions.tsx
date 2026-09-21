@@ -39,19 +39,14 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
     );
   }
 
-  async function confirmPreflightOverride(): Promise<boolean> {
-    return window.confirm(
-      "This package failed automated pre-flight checks. Approve it for faxing anyway?",
-    );
-  }
-
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [uploading, setUploading] = useState<null | "signed" | "reviewed">(null);
   const [status, setStatus] = useState(currentStatus);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [preflightOverrideReason, setPreflightOverrideReason] = useState("");
 
-  async function callApi(body: Record<string, unknown>, okMsg: string) {
+  async function callApi(body: Record<string, unknown>, okMsg: string): Promise<boolean> {
     setMsg(null);
     try {
       const res = await fetch(`/api/admin/filings/${filingId}`, {
@@ -62,12 +57,14 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
       if (!res.ok) {
         const err = await res.text();
         setMsg({ kind: "err", text: err || `HTTP ${res.status}` });
-        return;
+        return false;
       }
       setMsg({ kind: "ok", text: okMsg });
       startTransition(() => router.refresh());
+      return true;
     } catch (e) {
       setMsg({ kind: "err", text: e instanceof Error ? e.message : "Network error" });
+      return false;
     }
   }
 
@@ -135,6 +132,8 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
       setUploading(null);
     }
   }
+
+  const preflightOverrideReady = preflightOverrideReason.trim().replace(/\s/g, "").length >= 10;
 
   return (
     <div className="space-y-4">
@@ -234,22 +233,37 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         </div>
       )}
 
-      <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-        {preflightStatus === "failed" && (
+      {preflightStatus === "failed" && (
+        <div className="pt-2 border-t border-slate-100 space-y-2">
+          <label className="block">
+            <span className="block text-xs font-medium text-slate-600 mb-1">
+              Why is this package safe to send?
+            </span>
+            <textarea
+              value={preflightOverrideReason}
+              onChange={(e) => setPreflightOverrideReason(e.target.value)}
+              disabled={pending || uploading !== null}
+              rows={3}
+              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent disabled:bg-slate-50 disabled:text-slate-400"
+            />
+          </label>
           <ActionButton
-            disabled={pending || uploading !== null}
+            disabled={pending || uploading !== null || !preflightOverrideReady}
             onClick={async () => {
-              if (!(await confirmPreflightOverride())) return;
-              await callApi(
-                { action: "approvePreflightOverride" },
+              const ok = await callApi(
+                { action: "approvePreflightOverride", reason: preflightOverrideReason },
                 "Pre-flight override recorded. Faxing is enabled.",
               );
+              if (ok) setPreflightOverrideReason("");
             }}
             tooltip="Records staff approval to fax a package that failed automated pre-flight checks."
           >
             Approve despite pre-flight failures
           </ActionButton>
-        )}
+        </div>
+      )}
+
+      <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
         <ActionButton
           disabled={pending || uploading !== null || !userEmail}
           onClick={() => callApi({ action: "resendOrderConfirmation" }, "Order confirmation resent")}
