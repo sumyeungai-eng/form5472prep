@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { FilingWizard, type StepKey } from "@/components/wizard/FilingWizard";
+import { useMemo, useRef, useState } from "react";
+import { FilingWizard, type FilingWizardHandle, type StepKey } from "@/components/wizard/FilingWizard";
 import { Sidebar, type SidebarStepDef } from "./Sidebar";
 import { computeStatuses, computeProgressPct, type StepStatus } from "./status";
 import {
@@ -118,6 +118,7 @@ export function FilingWizardV3({
   const [stepKey, setStepKey] = useState<V3StepKey>(() => resumeStep(initial));
   const [filing, setFiling] = useState(initial);
   const [preflightAnswers, setPreflightAnswers] = useState<PreflightAnswers>(EMPTY_PREFLIGHT_ANSWERS);
+  const wizardRef = useRef<FilingWizardHandle>(null);
 
   // RCS step only shown when isDiirsp. Mirror FilingWizard's logic.
   const visibleSteps = useMemo<SidebarStepDef[]>(() => {
@@ -158,7 +159,16 @@ export function FilingWizardV3({
           />
           <div className="flex-1 min-w-0">
             <div className="mb-4">
-              <SaveForLater filingId={initial.id} mode={saveForLater} defaultEmail={defaultEmail} />
+              <SaveForLater
+                filingId={initial.id}
+                mode={saveForLater}
+                defaultEmail={defaultEmail}
+                onBeforeLeave={
+                  stepKey === "preflight"
+                    ? undefined
+                    : async () => (await wizardRef.current?.saveCurrentStep()) ?? true
+                }
+              />
             </div>
             {stepKey === "preflight" ? (
               <PreflightStep
@@ -168,6 +178,7 @@ export function FilingWizardV3({
               />
             ) : (
               <FilingWizard
+                ref={wizardRef}
                 filing={initial}
                 plaidEnabled={plaidEnabled}
                 step={stepKey as StepKey}

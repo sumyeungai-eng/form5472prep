@@ -4,9 +4,10 @@ import { isAdmin } from "@/lib/admin/auth";
 import {
   PREPARED_PDF_MAX_BYTES,
   type ApplicationType,
-  applicationKeys,
   canStamp,
+  preparedKeyFor,
   sha256Hex,
+  signedKeyFor,
 } from "@/lib/applicationSignature";
 import { sendApplicationSignatureRequestEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
@@ -96,12 +97,17 @@ export async function storePreparedPdf(
   const app = await findApplication(type, id);
   if (!app) throw new Error("application not found");
 
-  const keys = applicationKeys(type, id);
   const sha256 = sha256Hex(bytes);
-  const oldKeys = [app.signaturePngKey, app.signedPdfKey].filter((key): key is string => !!key);
+  const key = preparedKeyFor(type, id, sha256);
+  const oldKeys = [app.signaturePngKey, app.signedPdfKey, app.preparedPdfKey]
+    .filter((oldKey): oldKey is string => !!oldKey && oldKey !== key);
 
+  await put(key, bytes, "application/pdf");
   await updateApplication(type, id, {
-    preparedPdfSha256: null,
+    preparedPdfKey: key,
+    preparedPdfSha256: sha256,
+    preparedPdfUploadedAt: new Date(),
+    ...(type === "ein" ? { preparedPdfSource: source } : {}),
     signatureRequestedAt: null,
     signaturePngKey: null,
     signedAt: null,
@@ -112,14 +118,6 @@ export async function storePreparedPdf(
     signedDocSha256: null,
     signedPdfKey: null,
     signedPdfAt: null,
-  });
-
-  await put(keys.prepared, bytes, "application/pdf");
-  await updateApplication(type, id, {
-    preparedPdfKey: keys.prepared,
-    preparedPdfSha256: sha256,
-    preparedPdfUploadedAt: new Date(),
-    ...(type === "ein" ? { preparedPdfSource: source } : {}),
   });
   await Promise.allSettled(oldKeys.map((key) => del(key)));
 
@@ -256,7 +254,7 @@ export async function handlePlaceSignature(type: ApplicationType, id: string, re
     return json({ error: `Embed failed: ${msg}` }, 500);
   }
 
-  const key = applicationKeys(type, id).signed;
+  const key = signedKeyFor(type, id, pdfSha256);
   await putPdf(key, outBytes);
   const claim = await updateStampedApplication(type, id, {
     signedDocSha256: pdfSha256,
@@ -265,6 +263,7 @@ export async function handlePlaceSignature(type: ApplicationType, id: string, re
     signedPdfAt: new Date(),
   });
   if (claim.count === 0) {
+    await del(key).catch(() => undefined);
     return json({ error: "The application changed while stamping. Reload and try again." }, 409);
   }
 

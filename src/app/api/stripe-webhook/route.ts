@@ -97,6 +97,7 @@ export async function POST(req: Request) {
         data: {
           status: "PAID",
           stripePaymentId: session.payment_intent as string,
+          partnerHidden: false,
         },
       });
       if (claim.count === 0) {

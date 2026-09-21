@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -236,6 +236,28 @@ type Filing = {
 // Exported so wrapper components (v3 sidebar layout) can build their own
 // step list and stay in sync with the wizard's current step.
 export type StepKey = "entity" | "owner" | "years" | "rcs" | "transactions" | "review";
+export type FilingWizardHandle = { saveCurrentStep: () => Promise<boolean> };
+
+type YearStepSubmitData = YearScopeForm & {
+  isFinalReturn: boolean;
+  dissolvedAt: string | null;
+  extension: {
+    extensionFiled: string | null;
+    extensionTransmittedAt: string | null;
+    extensionMethod: string | null;
+    extensionDestination: string | null;
+  } | null;
+};
+
+type FilingWizardProps = {
+  filing: Filing;
+  plaidEnabled?: boolean;
+  step?: StepKey;
+  onStepChange?: (next: StepKey) => void;
+  hideTopStepper?: boolean;
+  bareLayout?: boolean;
+  onFilingChange?: (next: Filing) => void;
+};
 
 async function patchFiling(id: string, body: Record<string, unknown>) {
   const res = await fetch(`/api/filings/${id}`, {
@@ -259,7 +281,7 @@ async function patchFiling(id: string, body: Record<string, unknown>) {
   return res.json();
 }
 
-export function FilingWizard({
+export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(function FilingWizard({
   filing: initial,
   plaidEnabled = false,
   // Optional controlled-mode props. When `step` is provided, the parent owns
@@ -279,19 +301,28 @@ export function FilingWizard({
   // returns updated record). Lets the sidebar recompute completion status
   // without reading prisma directly.
   onFilingChange,
-}: {
-  filing: Filing;
-  plaidEnabled?: boolean;
-  step?: StepKey;
-  onStepChange?: (next: StepKey) => void;
-  hideTopStepper?: boolean;
-  bareLayout?: boolean;
-  onFilingChange?: (next: Filing) => void;
-}) {
+}, ref) {
   const router = useRouter();
   const [filing, setFiling] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const currentStepGettersRef = useRef<{
+    entity?: () => EntityForm | null;
+    owner?: () => OwnerStepForm | null;
+    years?: () => YearStepSubmitData | null;
+  }>({});
+  const registerEntityGetter = useCallback((get: (() => EntityForm | null) | null) => {
+    if (get) currentStepGettersRef.current.entity = get;
+    else delete currentStepGettersRef.current.entity;
+  }, []);
+  const registerOwnerGetter = useCallback((get: (() => OwnerStepForm | null) | null) => {
+    if (get) currentStepGettersRef.current.owner = get;
+    else delete currentStepGettersRef.current.owner;
+  }, []);
+  const registerYearsGetter = useCallback((get: (() => YearStepSubmitData | null) | null) => {
+    if (get) currentStepGettersRef.current.years = get;
+    else delete currentStepGettersRef.current.years;
+  }, []);
 
   // Whenever local filing state changes, surface it to the parent so the
   // v3 sidebar can recompute step-status badges.
@@ -348,6 +379,69 @@ export function FilingWizard({
     }
   }
 
+  async function saveYearsStep(data: YearStepSubmitData, advance: boolean) {
+    const updated = await save({
+      taxYears: data.taxYears,
+      isFinalReturn: data.isFinalReturn,
+      // Always sent - null clears any date left over from a previously-ticked
+      // final-return box.
+      dissolvedAt: data.dissolvedAt,
+      // Omit extension fields when the question was not on screen so stored
+      // Form 7004 facts survive unchanged.
+      ...(data.extension ?? {}),
+    });
+    setFiling({
+      ...filing,
+      taxYears: updated.taxYears,
+      isDiirsp: updated.isDiirsp,
+      isFinalReturn: updated.isFinalReturn,
+      dissolvedAt: updated.dissolvedAt,
+      extensionFiled: updated.extensionFiled ?? data.extension?.extensionFiled ?? null,
+      extensionTransmittedAt:
+        updated.extensionTransmittedAt ??
+        data.extension?.extensionTransmittedAt ??
+        null,
+      extensionMethod:
+        updated.extensionMethod ?? data.extension?.extensionMethod ?? null,
+      extensionDestination:
+        updated.extensionDestination ?? data.extension?.extensionDestination ?? null,
+    });
+    if (advance) {
+      setStepKey(updated.isDiirsp ? "rcs" : "transactions");
+    }
+    return updated;
+  }
+
+  useImperativeHandle(ref, () => ({
+    async saveCurrentStep() {
+      try {
+        if (stepKey === "entity") {
+          const values = currentStepGettersRef.current.entity?.();
+          const parsed = entitySchema.safeParse(values);
+          if (!parsed.success) return true;
+          await save(parsed.data);
+          return true;
+        }
+        if (stepKey === "owner") {
+          const values = currentStepGettersRef.current.owner?.();
+          const parsed = ownerStepSchema.safeParse(values);
+          if (!parsed.success) return true;
+          await save(ownerStepFormToPatch(parsed.data));
+          return true;
+        }
+        if (stepKey === "years") {
+          const values = currentStepGettersRef.current.years?.();
+          if (!values) return true;
+          await saveYearsStep(values, false);
+          return true;
+        }
+        return true;
+      } catch {
+        return false;
+      }
+    },
+  }));
+
   // Outer container: v3 sidebar layout asks for `bareLayout` so the parent
   // page owns max-width + padding. Default behavior is the original /edit
   // self-contained look.
@@ -374,6 +468,7 @@ export function FilingWizard({
               await save(data);
               goNext();
             }}
+            onFormReady={registerEntityGetter}
             saving={saving}
           />
         )}
@@ -384,6 +479,7 @@ export function FilingWizard({
               await save(data);
               goNext();
             }}
+            onFormReady={registerOwnerGetter}
             onBack={goBack}
             saving={saving}
           />
@@ -392,44 +488,9 @@ export function FilingWizard({
           <YearsStep
             filing={filing}
             onSubmit={async (data) => {
-              const updated = await save({
-                taxYears: data.taxYears,
-                isFinalReturn: data.isFinalReturn,
-                // Always sent — null clears any date left over from a
-                // previously-ticked final-return box.
-                dissolvedAt: data.dissolvedAt,
-                // The Form 7004 answers are the OPPOSITE: present only when the
-                // question was on screen. The PATCH route reads these four keys
-                // with hasOwnProperty, so OMITTING them means "no change" and
-                // the stored facts survive. Sending nulls (what this used to do
-                // whenever the section was hidden) deleted a customer's recorded
-                // extension on every later re-save — including the ordinary case
-                // of reopening the wizard after the extended window closed.
-                ...(data.extension ?? {}),
-              });
-              setFiling({
-                ...filing,
-                taxYears: updated.taxYears,
-                isDiirsp: updated.isDiirsp,
-                isFinalReturn: updated.isFinalReturn,
-                dissolvedAt: updated.dissolvedAt,
-                // The route returns the whole row, so these keys are always
-                // present and the server's value is authoritative — including
-                // when it is null because the server cleared them. `data.extension`
-                // is only a fallback for a response that omits the field.
-                extensionFiled: updated.extensionFiled ?? data.extension?.extensionFiled ?? null,
-                extensionTransmittedAt:
-                  updated.extensionTransmittedAt ??
-                  data.extension?.extensionTransmittedAt ??
-                  null,
-                extensionMethod:
-                  updated.extensionMethod ?? data.extension?.extensionMethod ?? null,
-                extensionDestination:
-                  updated.extensionDestination ?? data.extension?.extensionDestination ?? null,
-              });
-              // The steps list will pick up the new isDiirsp on the next render.
-              setStepKey(updated.isDiirsp ? "rcs" : "transactions");
+              await saveYearsStep(data, true);
             }}
+            onFormReady={registerYearsGetter}
             onBack={goBack}
             saving={saving}
           />
@@ -528,7 +589,7 @@ export function FilingWizard({
       </div>
     </Outer>
   );
-}
+});
 
 function Stepper({
   steps,
@@ -603,15 +664,18 @@ function Stepper({
 function EntityStep({
   filing,
   onSubmit,
+  onFormReady,
   saving,
 }: {
   filing: Filing;
   onSubmit: (data: EntityForm) => Promise<void>;
+  onFormReady?: (get: (() => EntityForm | null) | null) => void;
   saving: boolean;
 }) {
   const {
     register,
     handleSubmit,
+    getValues,
     setValue,
     watch,
     formState: { errors },
@@ -629,6 +693,11 @@ function EntityStep({
       llcBusinessCode: filing.llcBusinessCode ?? "",
     },
   });
+
+  useEffect(() => {
+    onFormReady?.(() => getValues());
+    return () => onFormReady?.(null);
+  }, [getValues, onFormReady]);
 
   // Pre-existing activity values that aren't in the dropdown list start in
   // "Other" mode so we don't silently lose the customer's prior input.
@@ -836,14 +905,49 @@ function splitOwnerName(full: string | null): { first: string; middle: string; l
   return { first: parts[0], middle: parts.slice(1, -1).join(" "), last: parts[parts.length - 1] };
 }
 
+function ownerStepFormToPatch(data: OwnerStepForm): OwnerForm & Partial<OwnerStepForm> {
+  const { ownerFirstName, ownerMiddleName, ownerLastName,
+          ownerAddressStreet, ownerAddressCity, ownerAddressState,
+          ownerAddressPostal, ownerAddressCountry, ...rest } = data;
+  const ownerName = [ownerFirstName, ownerMiddleName, ownerLastName].filter(Boolean).join(" ");
+  const ownerAddress = [ownerAddressStreet, ownerAddressCity, ownerAddressState, ownerAddressPostal, ownerAddressCountry]
+    .filter(Boolean).join(", ");
+
+  // Form 5472 requires a Reference ID when the owner has no ITIN. If the
+  // customer left the field blank, generate a stable self-assigned ID
+  // (last-name initials + 4 random alphanumeric chars, or "REFXXXX" if
+  // we don't have a name yet) so the filing remains valid. They can edit
+  // it on a return visit if they want a different value.
+  const ownerItinTrim = (rest.ownerItin ?? "").trim();
+  const ownerRefTrim = (rest.ownerReferenceId ?? "").trim();
+  if (!ownerItinTrim && !ownerRefTrim) {
+    rest.ownerReferenceId = generateReferenceId(ownerLastName, ownerFirstName);
+  }
+
+  // Save both the structured parts (so the form can re-hydrate them on
+  // next visit) and the concatenated string (used by PDF generation).
+  return {
+    ownerName,
+    ownerAddress,
+    ownerAddressStreet,
+    ownerAddressCity,
+    ownerAddressState,
+    ownerAddressPostal,
+    ownerAddressCountry,
+    ...rest,
+  };
+}
+
 function OwnerStep({
   filing,
   onSubmit,
+  onFormReady,
   onBack,
   saving,
 }: {
   filing: Filing;
   onSubmit: (data: OwnerForm & Partial<OwnerStepForm>) => Promise<void>;
+  onFormReady?: (get: (() => OwnerStepForm | null) | null) => void;
   onBack: () => void;
   saving: boolean;
 }) {
@@ -851,6 +955,7 @@ function OwnerStep({
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<OwnerStepForm>({
     resolver: zodResolver(ownerStepSchema),
@@ -877,37 +982,13 @@ function OwnerStep({
     },
   });
 
+  useEffect(() => {
+    onFormReady?.(() => getValues());
+    return () => onFormReady?.(null);
+  }, [getValues, onFormReady]);
+
   function handleOwnerSubmit(data: OwnerStepForm) {
-    const { ownerFirstName, ownerMiddleName, ownerLastName,
-            ownerAddressStreet, ownerAddressCity, ownerAddressState,
-            ownerAddressPostal, ownerAddressCountry, ...rest } = data;
-    const ownerName = [ownerFirstName, ownerMiddleName, ownerLastName].filter(Boolean).join(" ");
-    const ownerAddress = [ownerAddressStreet, ownerAddressCity, ownerAddressState, ownerAddressPostal, ownerAddressCountry]
-      .filter(Boolean).join(", ");
-
-    // Form 5472 requires a Reference ID when the owner has no ITIN. If the
-    // customer left the field blank, generate a stable self-assigned ID
-    // (last-name initials + 4 random alphanumeric chars, or "REFXXXX" if
-    // we don't have a name yet) so the filing remains valid. They can edit
-    // it on a return visit if they want a different value.
-    const ownerItinTrim = (rest.ownerItin ?? "").trim();
-    const ownerRefTrim = (rest.ownerReferenceId ?? "").trim();
-    if (!ownerItinTrim && !ownerRefTrim) {
-      rest.ownerReferenceId = generateReferenceId(ownerLastName, ownerFirstName);
-    }
-
-    // Save both the structured parts (so the form can re-hydrate them on
-    // next visit) and the concatenated string (used by PDF generation).
-    return onSubmit({
-      ownerName,
-      ownerAddress,
-      ownerAddressStreet,
-      ownerAddressCity,
-      ownerAddressState,
-      ownerAddressPostal,
-      ownerAddressCountry,
-      ...rest,
-    });
+    return onSubmit(ownerStepFormToPatch(data));
   }
 
   return (
@@ -1129,28 +1210,13 @@ function formatLongDate(iso: string | null | undefined): string | null {
 function YearsStep({
   filing,
   onSubmit,
+  onFormReady,
   onBack,
   saving,
 }: {
   filing: Filing;
-  onSubmit: (
-    data: YearScopeForm & {
-      isFinalReturn: boolean;
-      dissolvedAt: string | null;
-      // The four Form 7004 answers, or NULL when the extension question was not
-      // on screen for this save. Null means "this save asserts nothing about the
-      // extension" and the caller must OMIT the four fields from the PATCH —
-      // sending explicit nulls would DESTROY a stored 7004 record the moment the
-      // window closes or the customer re-saves a not-yet-due year (the schema
-      // comment promises we keep that record; see the parent handler).
-      extension: {
-        extensionFiled: string | null;
-        extensionTransmittedAt: string | null;
-        extensionMethod: string | null;
-        extensionDestination: string | null;
-      } | null;
-    },
-  ) => Promise<void>;
+  onSubmit: (data: YearStepSubmitData) => Promise<void>;
+  onFormReady?: (get: (() => YearStepSubmitData | null) | null) => void;
   onBack: () => void;
   saving: boolean;
 }) {
@@ -1214,6 +1280,7 @@ function YearsStep({
   const {
     register,
     handleSubmit,
+    getValues,
     watch,
     setValue,
     formState: { errors },
@@ -1479,6 +1546,61 @@ function YearsStep({
   // show the full-year end as the placeholder; it updates live as they type.
   const periodEndLabel =
     formatLongDate(dissolvedAt) ?? `December 31, ${dissolvedAtYear}`;
+
+  const getCurrentSubmitData = useCallback((): YearStepSubmitData | null => {
+    const parsed = makeYearScopeSchema(isFinalReturn).safeParse(getValues());
+    if (!parsed.success) return null;
+    if (
+      isFinalReturn &&
+      validateDissolvedAt(
+        dissolvedAt,
+        parsed.data.taxYears,
+        filing.llcDateIncorporated,
+      )
+    ) {
+      return null;
+    }
+    if (extensionWindowOpen && extensionFiled === null) return null;
+    if (showExtensionSection && extensionFiled === "yes" && !extensionTransmittedAt) {
+      return null;
+    }
+    return {
+      ...parsed.data,
+      isFinalReturn,
+      dissolvedAt: isFinalReturn ? dissolvedAt : null,
+      extension: showExtensionSection
+        ? {
+            extensionFiled,
+            extensionTransmittedAt:
+              extensionFiled === "yes" && extensionTransmittedAt
+                ? extensionTransmittedAt
+                : null,
+            extensionMethod:
+              extensionFiled === "yes" && extensionMethod ? extensionMethod : null,
+            extensionDestination:
+              extensionFiled === "yes" && extensionDestination
+                ? extensionDestination
+                : null,
+          }
+        : null,
+    };
+  }, [
+    dissolvedAt,
+    extensionDestination,
+    extensionFiled,
+    extensionMethod,
+    extensionTransmittedAt,
+    extensionWindowOpen,
+    filing.llcDateIncorporated,
+    getValues,
+    isFinalReturn,
+    showExtensionSection,
+  ]);
+
+  useEffect(() => {
+    onFormReady?.(getCurrentSubmitData);
+    return () => onFormReady?.(null);
+  }, [getCurrentSubmitData, onFormReady]);
 
   return (
     <form

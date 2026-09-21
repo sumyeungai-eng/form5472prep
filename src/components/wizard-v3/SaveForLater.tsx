@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LogOut, Save, X } from "lucide-react";
 import type { SaveForLaterMode } from "@/lib/saveForLater";
 
@@ -21,22 +22,72 @@ export function SaveForLater({
   filingId,
   mode,
   defaultEmail,
+  onBeforeLeave,
 }: {
   filingId: string;
   mode: SaveForLaterMode;
   defaultEmail?: string | null;
+  onBeforeLeave?: () => Promise<boolean>;
 }) {
+  const router = useRouter();
+  const [leaving, setLeaving] = useState(false);
+  const [leaveError, setLeaveError] = useState<string | null>(null);
+
   if (mode.kind === "anonymous") {
-    return <AnonymousSaveForLater filingId={filingId} label={mode.label} defaultEmail={defaultEmail} />;
+    return (
+      <AnonymousSaveForLater
+        filingId={filingId}
+        label={mode.label}
+        defaultEmail={defaultEmail}
+        onBeforeLeave={onBeforeLeave}
+      />
+    );
+  }
+
+  if (!onBeforeLeave) {
+    return (
+      <div className="flex flex-wrap items-center gap-3">
+        <Link href={mode.href} className={BUTTON_CLASS}>
+          <LogOut className="h-4 w-4" aria-hidden="true" />
+          {mode.label}
+        </Link>
+        <span className="text-xs text-slate-500">{REASSURANCE}</span>
+      </div>
+    );
+  }
+
+  const beforeLeave = onBeforeLeave;
+  const destinationHref = mode.href;
+
+  async function handleLeave() {
+    setLeaving(true);
+    setLeaveError(null);
+    try {
+      const ok = await beforeLeave();
+      if (ok) {
+        router.push(destinationHref);
+        return;
+      }
+      setLeaveError("We could not save your changes. Try again.");
+    } catch {
+      setLeaveError("We could not save your changes. Try again.");
+    }
+    setLeaving(false);
   }
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Link href={mode.href} className={BUTTON_CLASS}>
+      <button
+        type="button"
+        onClick={handleLeave}
+        disabled={leaving}
+        className={`${BUTTON_CLASS} disabled:opacity-50`}
+      >
         <LogOut className="h-4 w-4" aria-hidden="true" />
-        {mode.label}
-      </Link>
+        {leaving ? "Saving..." : mode.label}
+      </button>
       <span className="text-xs text-slate-500">{REASSURANCE}</span>
+      {leaveError && <span className="basis-full text-sm text-red-600">{leaveError}</span>}
     </div>
   );
 }
@@ -47,10 +98,12 @@ function AnonymousSaveForLater({
   filingId,
   label,
   defaultEmail,
+  onBeforeLeave,
 }: {
   filingId: string;
   label: string;
   defaultEmail?: string | null;
+  onBeforeLeave?: () => Promise<boolean>;
 }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState(defaultEmail ?? "");
@@ -62,6 +115,14 @@ function AnonymousSaveForLater({
     setStatus("submitting");
     setError(null);
     try {
+      if (onBeforeLeave) {
+        const ok = await onBeforeLeave();
+        if (!ok) {
+          setStatus("error");
+          setError("We could not save your changes. Try again.");
+          return;
+        }
+      }
       const res = await fetch(`/api/filings/${filingId}/save-for-later`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

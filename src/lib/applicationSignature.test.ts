@@ -7,8 +7,10 @@ import {
   formLabel,
   isApplicationType,
   normalizeSignerName,
+  preparedKeyFor,
   sha256Hex,
   signatureKeyFor,
+  signedKeyFor,
   signState,
 } from "@/lib/applicationSignature";
 
@@ -33,6 +35,13 @@ describe("applicationSignature", () => {
     expect(signatureKeyFor("itin", "app_456", "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef")).toBe(
       "applications/itin/app_456/signature-0123456789abcdef.png",
     );
+  });
+
+  it("builds document-versioned prepared and signed PDF storage keys", () => {
+    const sha256 = "fedcba98765432100123456789abcdef0123456789abcdef0123456789abcdef";
+
+    expect(preparedKeyFor("ein", "app_123", sha256)).toBe("applications/ein/app_123/prepared-fedcba9876543210.pdf");
+    expect(signedKeyFor("itin", "app_456", sha256)).toBe("applications/itin/app_456/signed-fedcba9876543210.pdf");
   });
 
   it("renders consent text containing the form label", () => {

@@ -26,8 +26,16 @@ export function applicationKeys(type: ApplicationType, id: string): { signature:
   };
 }
 
+export function preparedKeyFor(type: ApplicationType, id: string, sha256: string): string {
+  return `applications/${type}/${id}/prepared-${sha256.slice(0, 16)}.pdf`;
+}
+
 export function signatureKeyFor(type: ApplicationType, id: string, docSha256: string): string {
   return `applications/${type}/${id}/signature-${docSha256.slice(0, 16)}.png`;
+}
+
+export function signedKeyFor(type: ApplicationType, id: string, docSha256: string): string {
+  return `applications/${type}/${id}/signed-${docSha256.slice(0, 16)}.pdf`;
 }
 
 export function sha256Hex(bytes: Uint8Array): string {
