@@ -85,3 +85,12 @@ Two parallel lanes both edited `src/app/(marketing)/layout.tsx`; the merge was c
 files when lanes overlap. A lane's `npm run build` raced another lane's `.next` and failed
 spuriously; a clean `rm -rf .next` build is the reliable signal. `git add -A src` swept in another
 session's untracked `src/lib/wizard/` directory: always stage explicit paths.
+
+## Incident: /start crashed for signed-out visitors (2026-09-21, fixed in ba362d0)
+The Google-button placeholder added on 2026-09-20 was a React child of the element that Google's
+`renderButton` empties. Google removed the node, React then threw `removeChild` and replaced the whole
+page with "Application error". Every signed-out visitor to /start saw it from that deploy until the fix.
+Fix: `GoogleLoginButton` gives Google an element React never renders into; the placeholder is a sibling.
+Contract: never render React children inside an element a third-party script mutates.
+Why it slipped: the lane verified /start with curl, which returns server HTML and never runs client
+scripts. For any client component, verify in a real browser (production build) and read the console.
