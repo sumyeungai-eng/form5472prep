@@ -66,3 +66,38 @@ Two lane wrappers reported "scope violations" that were the other parallel lane'
 and a "moved directory" that had not moved. Check mtimes and the brief before reacting. Codex runs
 launched through the tool's background flag die when the wrapper ends its turn: use nohup + disown and
 poll inside the turn.
+
+---
+
+# Wave 2 (live, merge 338f159)
+
+Commits f55cdc5 (G-03), 191cec1 (wave 2 forms/layout/render), 7842a85 (override reason), 41ed4e1
+(review fixes). Deploy applied `20260922150000_preflight_override_reason`.
+
+- **G-03** Activity codes: `src/lib/irsCodes/pba-{2023,2024,2025}.json` extracted programmatically from the
+  IRS i1120 PDFs by `scripts/extract_pba_codes.py` (405 codes each; the three lists are identical).
+  Searchable picker in the wizard entity step; the filings PATCH route rejects off-list codes; admin page
+  warns on stored off-list codes (never remapped). All 37 `BUSINESS_ACTIVITIES` presets now carry list
+  codes (many carried NAICS codes not on the list, e.g. 541611 for management consulting, now 541600):
+  the likely root cause of a recurring reviewer correction. A05 checks 1e/8d.
+- **G-05** Form 1120 revision per tax year, 2018-2025, field maps probed per revision (2018 splits item D
+  into dollars and cents; 2019 nests the address block under Headpage1; 2022 moves TypeOrPrintBox under
+  Page1; 2025 is a different structure). Short-year exception recorded. A08.
+- **G-10** `NeedsReviewError` for more than one related party; returns 1 until wave 3 stores a member
+  count. **G-12** remaining literals in config (a test greps for them). **R-02** one print address per
+  package, shrink to 6.5pt, abbreviate once, else fail (R02); name/street/city lines share one size.
+  **R-04** Part V wraps and repeats the header per page. A18 A19 (ITIN-only owners with no reference ID
+  pass) A20 A21 A27.
+- **V-02** `npm run test:render` (developer machines/CI only): 300 DPI raster, two text engines, checkbox
+  ink, fixtures F1-F8 (F8 = tax years 2018/2019).
+- Overrides need a written reason (>=10 chars), shown with admin and time; every generation path
+  (regenerate, resend confirmation, customer generate-pdf, Stripe webhook) clears any earlier override.
+
+Verified: tsc; vitest 639/639; render 8/8; clean build; renders of 2018/2019/2022 Form 1120 inspected;
+independent review (3 findings, all fixed; the fourth, list year mismatch, is moot because the lists are
+identical). The picker was driven in a real browser against a production build (typing, arrow keys,
+Enter, preset autofill to 541600) with no client errors; the live draft was not touched.
+
+Open after wave 2: Form 5472 revision for older tax years (every year prints on the Rev. 12-2023 form;
+the plan scopes revision-matching to Form 1120 only) is a question for Sum's reviewer. `/api/generate-pdf`
+500 on an empty body (pre-existing).
