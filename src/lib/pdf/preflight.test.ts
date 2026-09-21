@@ -17,6 +17,8 @@ const goodRecord: PackageRecord = {
   commit: "local",
   generatedAt: "2026-09-22T12:00:00.000Z",
   finalisedAt: "2026-09-22T12:00:00.000Z",
+  llcName: "Example Holdings LLC",
+  ownerName: "Example Owner",
   formationDate: "2026-01-15T00:00:00.000Z",
   dissolutionDate: null,
   taxYears: [
@@ -113,6 +115,46 @@ describe("runPreflight", () => {
   it("A28 fails when fields and widgets remain in the final PDF", async () => {
     const result = await runPreflight(clone(goodRecord), await pdfWithFieldBytes(goodRecord));
     expect(result.failures.some((f) => f.id === "A28")).toBe(true);
+  });
+
+  it("A07 ignores a stale dissolution date when the record is not final", async () => {
+    const record = clone(goodRecord);
+    record.dissolutionDate = null;
+    record.taxYears[0].isFinalYear = false;
+    record.taxYears[0].periodEnd = "12/31";
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.some((f) => f.id === "A07")).toBe(false);
+  });
+
+  it("A22 ignores timeliness words that appear only inside LLC and owner names", async () => {
+    const record = clone(goodRecord);
+    record.llcName = "Late Night Media LLC";
+    record.ownerName = "Timely Ng";
+    record.authoredDocuments[0].lines = [
+      ...IRS_MAIL_ADDRESS_DISPLAY_LINES,
+      "Date: 9/22/2026",
+      `Re: ${COVER_LETTER_ENCLOSURE_PHRASE} for Late Night Media LLC`,
+      `Enclosed please find ${COVER_LETTER_ENCLOSURE_PHRASE} for Late Night Media LLC.`,
+      "Timely Ng",
+      AUTHORED_DOC_SIGNATURE_HEADING,
+    ];
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.some((f) => f.id === "A22")).toBe(false);
+  });
+
+  it("A22 still fails for genuine timeliness language outside names", async () => {
+    const record = clone(goodRecord);
+    record.llcName = "Late Night Media LLC";
+    record.ownerName = "Timely Ng";
+    record.authoredDocuments[0].lines.push("This return is filed late.");
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.some((f) => f.id === "A22")).toBe(true);
   });
 });
 

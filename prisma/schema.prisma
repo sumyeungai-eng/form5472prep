@@ -307,6 +307,8 @@ model Filing {
   preflightFailures  Json?
   preflightWarnings  Json?
   preflightCheckedAt DateTime?
+  preflightOverrideBy String?
+  preflightOverrideAt DateTime?
   generatorVersion   String?
   generatorCommit    String?
 

@@ -186,6 +186,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           hasGeneratedPdf={!!filing.generatedPdfKey}
           hasCustomerSignature={!!filing.signaturePngKey}
           hasFaxedPdf={!!filing.faxedPdfKey}
+          preflightStatus={filing.preflightStatus}
           faxedAt={filing.faxedAt ? filing.faxedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
         />
       </div>

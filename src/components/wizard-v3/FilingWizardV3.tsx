@@ -12,6 +12,7 @@ import {
 } from "./PreflightStep";
 import { SaveForLater } from "./SaveForLater";
 import type { SaveForLaterMode } from "@/lib/saveForLater";
+import { requiresReasonableCause } from "@/lib/completeness";
 
 // Wraps the existing FilingWizard with a left sidebar matching the
 // competitor's design. The wizard keeps ALL its current logic (validation,
@@ -95,7 +96,14 @@ function resumeStep(f: WizardFiling): V3StepKey {
     (k) => st[k] !== "untouched",
   );
   if (!anyStarted) return "preflight";
-  const order: StepKey[] = f.isDiirsp
+  const needsReasonableCause = requiresReasonableCause({
+    taxYears: f.taxYears,
+    isFinalReturn: f.isFinalReturn,
+    dissolvedAt: f.dissolvedAt,
+    extensionFiled: f.extensionFiled,
+    extensionTransmittedAt: f.extensionTransmittedAt,
+  });
+  const order: StepKey[] = needsReasonableCause
     ? ["entity", "owner", "years", "rcs", "transactions", "review"]
     : ["entity", "owner", "years", "transactions", "review"];
   return order.find((k) => st[k] !== "complete") ?? "review";
@@ -120,13 +128,26 @@ export function FilingWizardV3({
   const [preflightAnswers, setPreflightAnswers] = useState<PreflightAnswers>(EMPTY_PREFLIGHT_ANSWERS);
   const wizardRef = useRef<FilingWizardHandle>(null);
 
-  // RCS step only shown when isDiirsp. Mirror FilingWizard's logic.
+  // RCS step only shown when the live filing facts require it. Mirror FilingWizard's logic.
   const visibleSteps = useMemo<SidebarStepDef[]>(() => {
+    const needsReasonableCause = requiresReasonableCause({
+      taxYears: filing.taxYears,
+      isFinalReturn: filing.isFinalReturn,
+      dissolvedAt: filing.dissolvedAt,
+      extensionFiled: filing.extensionFiled,
+      extensionTransmittedAt: filing.extensionTransmittedAt,
+    });
     return ALL_STEPS
-      .filter((s) => s.key !== "rcs" || filing.isDiirsp)
+      .filter((s) => s.key !== "rcs" || needsReasonableCause)
       // Re-number sequentially so badges always read "Step 1..N".
       .map((s, i) => ({ ...s, number: i + 1 }));
-  }, [filing.isDiirsp]);
+  }, [
+    filing.dissolvedAt,
+    filing.extensionFiled,
+    filing.extensionTransmittedAt,
+    filing.isFinalReturn,
+    filing.taxYears,
+  ]);
 
   // Status calc: pre-flight uses its own derivation; other steps reuse the
   // wizard-data-based status helper.

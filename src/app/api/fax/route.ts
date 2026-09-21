@@ -24,6 +24,12 @@ export async function POST(req: Request) {
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (!filing.signedPdfKey)
     return NextResponse.json({ error: "Sign and re-upload first" }, { status: 400 });
+  if (filing.preflightStatus === "failed" && !filing.preflightOverrideBy) {
+    return NextResponse.json(
+      { error: "Fax held: this package failed pre-flight checks. An admin must review it." },
+      { status: 409 },
+    );
+  }
 
   // submitFax falls through to the sandbox stub if TELNYX_API_KEY is unset,
   // in which case the media URL is never fetched. Only resolve a real URL

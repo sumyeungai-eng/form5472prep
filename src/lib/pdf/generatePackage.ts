@@ -175,6 +175,8 @@ export type PackageRecord = {
   commit: string;
   generatedAt: string;
   finalisedAt: string;
+  llcName: string;
+  ownerName: string;
   formationDate: string | null;
   dissolutionDate: string | null;
   taxYears: PackageRecordYear[];
@@ -1396,8 +1398,10 @@ export async function generatePackage(
       commit,
       generatedAt: generatedAt.toISOString(),
       finalisedAt: finalisedAt.toISOString(),
+      llcName: f.llcName,
+      ownerName: f.ownerName,
       formationDate: f.llcDateIncorporated ? new Date(f.llcDateIncorporated).toISOString() : null,
-      dissolutionDate: f.dissolvedAt ? new Date(f.dissolvedAt).toISOString() : null,
+      dissolutionDate: f.isFinalReturn && f.dissolvedAt ? new Date(f.dissolvedAt).toISOString() : null,
       taxYears: recordYears,
       authoredDocuments,
       pageOrder,

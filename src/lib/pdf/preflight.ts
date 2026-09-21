@@ -197,7 +197,11 @@ function checkA22(record: PackageRecord, result: MutableResult) {
   if (/Form 5472 with attached pro forma/i.test(cover.text)) {
     fail(result, "A22", "Cover letter contains the reversed enclosure phrase.");
   }
-  if (/\b(timely|late|delinquent|DIIRSP)\b/i.test(cover.text)) {
+  const timelinessScanText = [record.llcName, record.ownerName].reduce(
+    (text, name) => stripLiteral(text, name),
+    cover.text,
+  );
+  if (/\b(timely|late|delinquent|DIIRSP)\b/i.test(timelinessScanText)) {
     fail(result, "A22", "Cover letter contains removed timeliness or DIIRSP wording.");
   }
 }
@@ -280,6 +284,15 @@ function coverLetterText(record: PackageRecord): { lines: string[]; text: string
   const cover = record.authoredDocuments.find((doc) => doc.kind === "coverLetter");
   const lines = cover?.lines ?? [];
   return { lines, text: lines.join("\n") };
+}
+
+function stripLiteral(text: string, literal: string): string {
+  if (!literal) return text;
+  return text.replace(new RegExp(escapeRegExp(literal), "gi"), "");
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function mmdd(date: Date): string {

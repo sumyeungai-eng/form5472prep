@@ -60,6 +60,20 @@ describe("generatePackage regressions", () => {
     expect(fields).toContainEqual({ form: "1120-2026", field: form1120_2025FieldMap.taxYearEndingYear2, value: "26" });
   }, PDF_TIMEOUT);
 
+  it("records dissolutionDate only for final returns", async () => {
+    const pkg = await generatePackage(
+      {
+        ...F1,
+        isFinalReturn: false,
+        dissolvedAt: new Date("2026-09-30T00:00:00.000Z"),
+      },
+      finalisedAt,
+    );
+
+    expect(pkg.record.dissolutionDate).toBeNull();
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures.some((f) => f.id === "A07")).toBe(false);
+  }, PDF_TIMEOUT);
+
   it("G-06 defaults 1o to United States instead of the owner's country", async () => {
     const pkg = await generatePackage({ ...F2, llcCountryBusiness: null }, finalisedAt);
     const year = pkg.record.taxYears[0];
