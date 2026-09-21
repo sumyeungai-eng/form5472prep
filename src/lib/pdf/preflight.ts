@@ -8,10 +8,15 @@ import {
 import { countWidgetAnnotations } from "./fillForm";
 import {
   form5472FieldMap,
+  form1120_2020FieldMap,
+  form1120_2021FieldMap,
+  form1120_2022FieldMap,
+  form1120_2023FieldMap,
   form1120_2024FieldMap,
   form1120_2025FieldMap,
 } from "./fieldMaps";
-import type { PackageRecord } from "./generatePackage";
+import type { PackageRecord, PackageRecordYear } from "./generatePackage";
+import { isValidPbaCode } from "@/lib/irsCodes";
 
 export type PreflightIssue = { id: string; message: string };
 export type PreflightResult = {
@@ -42,16 +47,24 @@ export async function runPreflight(
   checkA01(record, result);
   checkA02(record, result);
   checkA03(record, result);
+  checkA05(record, result);
   checkA06(record, result);
   checkA07(record, result);
+  checkA08(record, result);
   checkA09(record, result);
   checkA10(record, result);
   checkA12(record, result);
   checkA16(record, result);
+  checkA18(record, result);
+  checkA19(record, result);
+  checkA20(record, result);
+  checkA21(record, result);
   checkA22(record, result);
   checkA23(record, result);
   checkA24(record, result);
   checkA25(record, result);
+  checkA27(record, result);
+  checkR02(record, result);
   await checkA28(pdfBytes, result);
   await checkA30(pdfBytes, record, result);
 
@@ -88,10 +101,32 @@ function checkA03(record: PackageRecord, result: MutableResult) {
   }
 }
 
+// A05: 1e and 8d codes are valid for the tax year, mirror each other, and 1d is non-empty.
+function checkA05(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const activity = textValue(year.form5472.fields, form5472FieldMap["1d_businessActivity"]).trim();
+    const line1e = textValue(year.form5472.fields, form5472FieldMap["1e_businessCode"]).trim();
+    const line8d = textValue(year.form5472.fields, form5472FieldMap["8d_businessCode"]).trim();
+
+    if (!activity) {
+      fail(result, "A05", `Tax year ${year.taxYear}: Form 5472 line 1d business activity is blank.`);
+    }
+    if (!isValidPbaCode(line1e, year.taxYear)) {
+      fail(result, "A05", `Tax year ${year.taxYear}: Form 5472 line 1e business code ${line1e || "(blank)"} is not on the IRS list.`);
+    }
+    if (!isValidPbaCode(line8d, year.taxYear)) {
+      fail(result, "A05", `Tax year ${year.taxYear}: Form 5472 line 8d business code ${line8d || "(blank)"} is not on the IRS list.`);
+    }
+    if (line1e && line8d && line1e !== line8d) {
+      fail(result, "A05", `Tax year ${year.taxYear}: Form 5472 line 1e code ${line1e} does not match line 8d code ${line8d}.`);
+    }
+  }
+}
+
 // A06: 1120 and 5472 header begin/end dates are both populated and identical.
 function checkA06(record: PackageRecord, result: MutableResult) {
   for (const year of record.taxYears) {
-    const m1120 = year.taxYear >= 2025 ? form1120_2025FieldMap : form1120_2024FieldMap;
+    const m1120 = form1120MapForYear(year);
     const begin1120 = textValue(year.form1120.fields, m1120.taxYearBeginning);
     const end1120 = textValue(year.form1120.fields, m1120.taxYearEnding);
     const endYear1120 = textValue(year.form1120.fields, m1120.taxYearEndingYear2);
@@ -114,6 +149,16 @@ function checkA06(record: PackageRecord, result: MutableResult) {
     ) {
       fail(result, "A06", `Tax year ${year.taxYear}: 1120 and 5472 header dates do not match.`);
     }
+  }
+}
+
+// A08: 1120 revision matches tax year, or short-year exception applies.
+function checkA08(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const revision = Number(year.form1120Revision);
+    if (revision === year.taxYear && !year.shortYearException) continue;
+    if (year.shortYearException && revision === year.taxYear - 1 && (year.isInitialYear || year.isFinalYear)) continue;
+    fail(result, "A08", `Tax year ${year.taxYear}: Form 1120 revision ${year.form1120Revision} does not match the tax year.`);
   }
 }
 
@@ -149,7 +194,7 @@ function checkA09(record: PackageRecord, result: MutableResult) {
 // A10: 1120 item E(1)/E(2) checked exactly when first/final.
 function checkA10(record: PackageRecord, result: MutableResult) {
   for (const year of record.taxYears) {
-    const m1120 = year.taxYear >= 2025 ? form1120_2025FieldMap : form1120_2024FieldMap;
+    const m1120 = form1120MapForYear(year);
     const initialChecked = hasChecked(year.form1120.fields, m1120.E_initialReturn);
     const finalChecked = hasChecked(year.form1120.fields, m1120.E_finalReturn);
     if (initialChecked !== year.isInitialYear || finalChecked !== year.isFinalYear) {
@@ -182,6 +227,75 @@ function checkA16(record: PackageRecord, result: MutableResult) {
       fail(result, "A16", `Tax year ${year.taxYear}: line 1o source is invalid.`);
     } else if (year.line1oSource === "default_us") {
       warn(result, "W16", `Tax year ${year.taxYear}: line 1o defaulted to United States.`);
+    }
+  }
+}
+
+// A18: foreign tax ID fields are a real value or exactly "None"; never blank or equal to US ID.
+function checkA18(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    for (const [ftinField, usIdField] of [
+      [form5472FieldMap["4b3_ftin"], form5472FieldMap["4b1_usId"]],
+      [form5472FieldMap["8b3_ftin"], form5472FieldMap["8b1_usId"]],
+    ] as const) {
+      const ftin = textValue(year.form5472.fields, ftinField).trim();
+      const usId = textValue(year.form5472.fields, usIdField).trim();
+      if (!ftin || (ftin !== "None" && ftin === usId)) {
+        fail(result, "A18", `Tax year ${year.taxYear}: foreign tax ID field ${ftinField} is blank or duplicates the US ID.`);
+      }
+    }
+  }
+}
+
+// A19: reference ID is alphanumeric, at most 50 chars, and equals stored ownerReferenceId.
+function checkA19(record: PackageRecord, result: MutableResult) {
+  const stored = record.ownerReferenceId?.trim() ?? "";
+  for (const year of record.taxYears) {
+    for (const field of [form5472FieldMap["4b2_referenceId"], form5472FieldMap["8b2_referenceId"]]) {
+      const value = textValue(year.form5472.fields, field).trim();
+      if (!/^[A-Za-z0-9]{1,50}$/.test(value) || value !== stored) {
+        fail(result, "A19", `Tax year ${year.taxYear}: reference ID field ${field} does not match the stored ownerReferenceId.`);
+      }
+    }
+  }
+}
+
+// A20: LLC name, EIN, and address are identical wherever the generator writes them.
+function checkA20(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const m1120 = form1120MapForYear(year);
+    for (const field of [m1120["1a_name"], form5472FieldMap["1a_name"]]) {
+      const fields = field === m1120["1a_name"] ? year.form1120.fields : year.form5472.fields;
+      if (textValue(fields, field) !== record.llcName) {
+        fail(result, "A20", `Tax year ${year.taxYear}: LLC name is inconsistent in ${field}.`);
+      }
+    }
+    for (const field of [m1120.B_ein, form5472FieldMap["1b_ein"]]) {
+      const fields = field === m1120.B_ein ? year.form1120.fields : year.form5472.fields;
+      if (textValue(fields, field) !== record.llcEin) {
+        fail(result, "A20", `Tax year ${year.taxYear}: EIN is inconsistent in ${field}.`);
+      }
+    }
+    const street1120 = "1_street" in m1120 ? m1120["1_street"] : m1120["1_streetSuite"];
+    for (const [field, fields] of [
+      [street1120, year.form1120.fields],
+      [form5472FieldMap["1_street"], year.form5472.fields],
+    ] as const) {
+      if (textValue(fields, field) !== record.llcPrintAddress.value) {
+        fail(result, "A20", `Tax year ${year.taxYear}: LLC address is inconsistent in ${field}.`);
+      }
+    }
+  }
+}
+
+// A21: 1120 item D equals 5472 line 1c.
+function checkA21(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const m1120 = form1120MapForYear(year);
+    const assets1120 = textValue(year.form1120.fields, m1120.D_totalAssets);
+    const assets5472 = textValue(year.form5472.fields, form5472FieldMap["1c_totalAssets"]);
+    if (!assets1120 || assets1120 !== assets5472) {
+      fail(result, "A21", `Tax year ${year.taxYear}: 1120 item D does not equal 5472 line 1c.`);
     }
   }
 }
@@ -239,6 +353,30 @@ function checkA25(record: PackageRecord, result: MutableResult) {
   }
 }
 
+// A27: every statement page carries LLC name, EIN, and tax year.
+function checkA27(record: PackageRecord, result: MutableResult) {
+  for (const doc of record.authoredDocuments.filter((d) => d.kind === "partVStatement")) {
+    const pages = doc.pages ?? [doc.lines];
+    for (let index = 0; index < pages.length; index++) {
+      const text = pages[index].join("\n");
+      if (
+        !text.includes(record.llcName) ||
+        !text.includes(record.llcEin) ||
+        !text.includes(`Tax Year ${doc.taxYear}`)
+      ) {
+        fail(result, "A27", `Part V statement page ${index + 1} for tax year ${doc.taxYear} is missing the LLC header.`);
+      }
+    }
+  }
+}
+
+// R02: package-level print addresses must fit their narrowest target fields.
+function checkR02(record: PackageRecord, result: MutableResult) {
+  for (const failure of [...record.llcPrintAddress.failures, ...record.ownerPrintAddress.failures]) {
+    fail(result, "R02", failure);
+  }
+}
+
 // A28: final PDF has zero remaining form fields and zero widget annotations.
 async function checkA28(pdfBytes: Uint8Array, result: MutableResult) {
   const pdf = await PDFDocument.load(pdfBytes, { updateMetadata: false });
@@ -274,6 +412,25 @@ function hasChecked(fields: { field: string; value: string | true }[], field: st
 function textValue(fields: { field: string; value: string | true }[], field: string): string {
   const write = fields.find((w) => w.field === field && typeof w.value === "string");
   return typeof write?.value === "string" ? write.value : "";
+}
+
+function form1120MapForYear(year: PackageRecordYear) {
+  switch (year.form1120Revision) {
+    case "2020":
+      return form1120_2020FieldMap;
+    case "2021":
+      return form1120_2021FieldMap;
+    case "2022":
+      return form1120_2022FieldMap;
+    case "2023":
+      return form1120_2023FieldMap;
+    case "2024":
+      return form1120_2024FieldMap;
+    case "2025":
+      return form1120_2025FieldMap;
+    default:
+      return Number(year.taxYear) >= 2025 ? form1120_2025FieldMap : form1120_2024FieldMap;
+  }
 }
 
 function hasLineSequence(lines: string[], expected: readonly string[]): boolean {

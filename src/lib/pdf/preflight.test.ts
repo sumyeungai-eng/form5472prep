@@ -19,11 +19,30 @@ const goodRecord: PackageRecord = {
   finalisedAt: "2026-09-22T12:00:00.000Z",
   llcName: "Example Holdings LLC",
   ownerName: "Example Owner",
+  ownerReferenceId: "EXAMPLEOWNER1",
+  llcEin: "12-3456789",
+  llcPrintAddress: {
+    value: "123 Market Street Suite 400",
+    fontSize: 10,
+    abbreviated: false,
+    checkedFieldWidths: [],
+    failures: [],
+  },
+  ownerPrintAddress: {
+    value: "88 Queen Road Central, Suite 1200, Central, Hong Kong",
+    fontSize: 10,
+    abbreviated: false,
+    checkedFieldWidths: [],
+    failures: [],
+  },
   formationDate: "2026-01-15T00:00:00.000Z",
   dissolutionDate: null,
   taxYears: [
     {
       taxYear: 2026,
+      form1120Revision: "2025",
+      revisionUsed: "2025",
+      shortYearException: true,
       periodStart: "01/15",
       periodEnd: "12/31",
       status: "timely",
@@ -43,6 +62,10 @@ const goodRecord: PackageRecord = {
           { form: "1120-2026", field: form1120_2025FieldMap.taxYearBeginning, value: "01/15/2026" },
           { form: "1120-2026", field: form1120_2025FieldMap.taxYearEnding, value: "12/31" },
           { form: "1120-2026", field: form1120_2025FieldMap.taxYearEndingYear2, value: "26" },
+          { form: "1120-2026", field: form1120_2025FieldMap["1a_name"], value: "Example Holdings LLC" },
+          { form: "1120-2026", field: form1120_2025FieldMap["1_street"], value: "123 Market Street Suite 400" },
+          { form: "1120-2026", field: form1120_2025FieldMap.B_ein, value: "12-3456789" },
+          { form: "1120-2026", field: form1120_2025FieldMap.D_totalAssets, value: "1000" },
           { form: "1120-2026", field: form1120_2025FieldMap.E_initialReturn, value: true },
         ],
         stampedTexts: ["FOREIGN-OWNED U.S. DE"],
@@ -53,8 +76,19 @@ const goodRecord: PackageRecord = {
           { form: "5472-2026", field: form5472FieldMap.taxYearBeginYear, value: "2026" },
           { form: "5472-2026", field: form5472FieldMap.taxYearEndMonthDay, value: "12/31" },
           { form: "5472-2026", field: form5472FieldMap.taxYearEndYear, value: "2026" },
+          { form: "5472-2026", field: form5472FieldMap["1a_name"], value: "Example Holdings LLC" },
+          { form: "5472-2026", field: form5472FieldMap["1_street"], value: "123 Market Street Suite 400" },
+          { form: "5472-2026", field: form5472FieldMap["1b_ein"], value: "12-3456789" },
+          { form: "5472-2026", field: form5472FieldMap["1c_totalAssets"], value: "1000" },
+          { form: "5472-2026", field: form5472FieldMap["1d_businessActivity"], value: "Computer systems design services" },
+          { form: "5472-2026", field: form5472FieldMap["1e_businessCode"], value: "541512" },
           { form: "5472-2026", field: form5472FieldMap.box2_foreign50pct, value: true },
           { form: "5472-2026", field: form5472FieldMap.box3_foreignOwnedUsDE, value: true },
+          { form: "5472-2026", field: form5472FieldMap["4b2_referenceId"], value: "EXAMPLEOWNER1" },
+          { form: "5472-2026", field: form5472FieldMap["4b3_ftin"], value: "FTIN12345" },
+          { form: "5472-2026", field: form5472FieldMap["8b2_referenceId"], value: "EXAMPLEOWNER1" },
+          { form: "5472-2026", field: form5472FieldMap["8b3_ftin"], value: "FTIN12345" },
+          { form: "5472-2026", field: form5472FieldMap["8d_businessCode"], value: "541512" },
         ],
       },
       reasonableCauseIncluded: false,
@@ -71,6 +105,12 @@ const goodRecord: PackageRecord = {
         AUTHORED_DOC_SIGNATURE_HEADING,
       ],
     },
+    {
+      kind: "partVStatement",
+      taxYear: 2026,
+      lines: ["SUPPORTING STATEMENT TO FORM 5472", "Tax Year 2026", "Reporting Corporation: Example Holdings LLC, EIN 12-3456789"],
+      pages: [["SUPPORTING STATEMENT TO FORM 5472", "Tax Year 2026", "Reporting Corporation: Example Holdings LLC, EIN 12-3456789"]],
+    },
   ],
   pageOrder: [{ label: "Cover letter", startPage: 1, endPage: 1 }],
 };
@@ -80,16 +120,24 @@ describe("runPreflight", () => {
     ["A01", (r: PackageRecord) => { r.taxYears[0].form5472.fields = r.taxYears[0].form5472.fields.filter((w) => w.field !== form5472FieldMap.box2_foreign50pct); }],
     ["A02", (r: PackageRecord) => { r.taxYears[0].form5472.fields = r.taxYears[0].form5472.fields.filter((w) => w.field !== form5472FieldMap.box3_foreignOwnedUsDE); }],
     ["A03", (r: PackageRecord) => { r.taxYears[0].form5472.fields.push({ form: "5472-2026", field: form5472FieldMap.q43a_coveredDebt_no, value: true }); }],
+    ["A05", (r: PackageRecord) => { r.taxYears[0].form5472.fields.find((w) => w.field === form5472FieldMap["1e_businessCode"])!.value = "541611"; }],
     ["A06", (r: PackageRecord) => { r.taxYears[0].form1120.fields[0].value = "01/01/2026"; }],
     ["A07", (r: PackageRecord) => { r.taxYears[0].periodStart = "01/01"; }],
+    ["A08", (r: PackageRecord) => { r.taxYears[0].shortYearException = false; }],
     ["A09", (r: PackageRecord) => { r.taxYears[0].form1120.stampedTexts = []; }],
     ["A10", (r: PackageRecord) => { r.taxYears[0].form1120.fields = r.taxYears[0].form1120.fields.filter((w) => w.field !== form1120_2025FieldMap.E_initialReturn); }],
     ["A12", (r: PackageRecord) => { r.taxYears[0].line1f = 1; }],
     ["A16", (r: PackageRecord) => { r.taxYears[0].line1oSource = "owner_field" as "llc_field"; }],
+    ["A18", (r: PackageRecord) => { r.taxYears[0].form5472.fields = r.taxYears[0].form5472.fields.filter((w) => w.field !== form5472FieldMap["4b3_ftin"]); }],
+    ["A19", (r: PackageRecord) => { r.taxYears[0].form5472.fields.find((w) => w.field === form5472FieldMap["4b2_referenceId"])!.value = "BAD-ID"; }],
+    ["A20", (r: PackageRecord) => { r.taxYears[0].form5472.fields.find((w) => w.field === form5472FieldMap["1_street"])!.value = "Different address"; }],
+    ["A21", (r: PackageRecord) => { r.taxYears[0].form1120.fields.find((w) => w.field === form1120_2025FieldMap.D_totalAssets)!.value = "999"; }],
     ["A22", (r: PackageRecord) => { r.authoredDocuments[0].lines.push("These are timely filed."); }],
     ["A23", (r: PackageRecord) => { r.authoredDocuments[0].lines[0] = "Wrong address"; }],
     ["A24", (r: PackageRecord) => { r.taxYears[0].status = "late"; }],
     ["A25", (r: PackageRecord) => { r.authoredDocuments[0].lines = r.authoredDocuments[0].lines.filter((line) => line !== AUTHORED_DOC_SIGNATURE_HEADING); }],
+    ["A27", (r: PackageRecord) => { r.authoredDocuments.find((d) => d.kind === "partVStatement")!.pages = [["Tax Year 2026"]]; }],
+    ["R02", (r: PackageRecord) => { r.llcPrintAddress.failures = ["field cannot fit address"]; }],
     ["A30", (r: PackageRecord) => { r.generatorVersion = "0.0.0"; }],
   ] as const) {
     it(`${id} fails on a broken record and passes on a good record`, async () => {
@@ -115,6 +163,23 @@ describe("runPreflight", () => {
   it("A28 fails when fields and widgets remain in the final PDF", async () => {
     const result = await runPreflight(clone(goodRecord), await pdfWithFieldBytes(goodRecord));
     expect(result.failures.some((f) => f.id === "A28")).toBe(true);
+  });
+
+  it("A05 passes when 1d is filled and lines 1e and 8d carry a tax-year-valid code", async () => {
+    const result = await runPreflight(clone(goodRecord), await goodPdfBytes(goodRecord));
+
+    expect(result.failures.filter((f) => f.id === "A05")).toEqual([]);
+  });
+
+  it("A05 fails when Form 5472 line 1e and 8d use an off-list code for the tax year", async () => {
+    const record = clone(goodRecord);
+    record.taxYears[0].taxYear = 2025;
+    record.taxYears[0].form5472.fields.find((w) => w.field === form5472FieldMap["1e_businessCode"])!.value = "541611";
+    record.taxYears[0].form5472.fields.find((w) => w.field === form5472FieldMap["8d_businessCode"])!.value = "541611";
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.some((f) => f.id === "A05" && f.message.includes("541611"))).toBe(true);
   });
 
   it("A07 ignores a stale dissolution date when the record is not final", async () => {

@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
+    "test:render": "vitest run src/lib/pdf/render.test.ts",
     "test:watch": "vitest",
     "email:preview": "tsx scripts/preview-emails.ts",
     "indexnow": "node scripts/indexnow.mjs",
