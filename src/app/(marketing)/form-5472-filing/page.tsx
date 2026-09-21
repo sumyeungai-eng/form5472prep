@@ -286,7 +286,7 @@ function Includes() {
     "Timestamped fax transmission receipt emailed to you and stored in your portal",
     "Filing confirmation and email support from start to receipt",
     `Ready in ${STANDARD_TURNAROUND}, or within ${EXPRESS_TURNAROUND} on Express`,
-    "A reminder next March so the following year's deadline does not slip past you",
+    "A reminder in the second week of January so the following year's deadline does not slip past you",
     "100% money-back guarantee if we fail to submit",
   ];
 

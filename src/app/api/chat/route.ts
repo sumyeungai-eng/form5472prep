@@ -96,7 +96,7 @@ Ogden PIN Unit is INCLUDED in both (no separate add-on).
 Both tiers include, identically: Form 5472 + pro forma 1120 prepared,
 reviewed by a qualified tax accountant, fax filing to the IRS included,
 filing confirmation receipt, reasonable-cause letter on late / DIIRSP
-filings, priority email support, and a March email reminder for next
+filings, priority email support, and an email reminder in the second week of January for next
 year's filing.
 
 MULTI-YEAR ADD-ON: +$99 per ADDITIONAL past tax year, on either tier.

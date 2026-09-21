@@ -700,7 +700,7 @@ export async function sendFaxDeliveredEmail(args: {
       <strong>$25,000 per return</strong>, so the date is worth noting now.
     </p>
     <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      We will send a reminder in <strong>early January ${escapeHtml(String(nextTaxYear + 1))}</strong>,
+      We will send a reminder in <strong>the second week of January ${escapeHtml(String(nextTaxYear + 1))}</strong>,
       giving over three months' notice before the deadline, and a further reminder if the filing remains
       outstanding. Because company and ownership details are retained on file, a returning filing takes
       about five minutes.
@@ -750,7 +750,7 @@ export async function sendFaxDeliveredEmail(args: {
           `Because this filing was submitted as a final return for a dissolved entity, no further Form 5472 filings are required provided the company does not resume activity. Please retain this message, the IRS Fax Transmission Receipt, and the filed package with your permanent tax records for at least six years.\n\n`
         : `Your next filing obligation\n\n` +
           `Form 5472 remains an annual requirement for as long as ${llcLine} remains a foreign-owned U.S. entity. The next return covers tax year ${nextTaxYear} and is due on ${nextDueDateLabel}. Late or missed filings carry a statutory penalty of $25,000 per return, so the date is worth noting now.\n\n` +
-          `We will send a reminder in early January ${nextTaxYear + 1}, giving over three months' notice before the deadline, and a further reminder if the filing remains outstanding. Because company and ownership details are retained on file, a returning filing takes about five minutes.\n\n`;
+          `We will send a reminder in the second week of January ${nextTaxYear + 1}, giving over three months' notice before the deadline, and a further reminder if the filing remains outstanding. Because company and ownership details are retained on file, a returning filing takes about five minutes.\n\n`;
 
   return sendEmail({
     to: email,

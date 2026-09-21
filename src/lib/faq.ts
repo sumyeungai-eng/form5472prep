@@ -461,7 +461,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "after-we-file",
     question: "Will you remind me next year?",
     answer:
-      "Yes, we send a reminder in early January for the next filing obligation, with a further reminder in March. The January reminder gives over three months’ notice, and for returning customers we pre-fill LLC and owner details from your most recent paid filing.",
+      "Yes, we send a reminder in the second week of January for the next filing obligation, with a further reminder in March if it is still outstanding. The January reminder gives over three months’ notice, and for returning customers we pre-fill LLC and owner details from your most recent paid filing.",
     source: "src/lib/email.ts:701; src/lib/pricing.ts:53; vercel.json (january-reminder + march-reminder crons); src/app/api/filings/route.ts:47",
   },
   {

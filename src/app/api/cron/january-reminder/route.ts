@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300; // 5 min — enough for hundreds of sends
 
-// Triggered by Vercel Cron once a year in early January.
+// Triggered by Vercel Cron once a year on 12 January (second week of January, see vercel.json).
 // Vercel Cron requests include `Authorization: Bearer <CRON_SECRET>` when
 // CRON_SECRET is set in the project env — verify it.
 export async function GET(req: Request) {

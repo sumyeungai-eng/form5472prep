@@ -50,7 +50,7 @@ const SHARED_FEATURES = [
   "IRS Ogden fax delivery + timestamped receipt",
   "Filing confirmation",
   "Reasonable-cause letter for late / DIIRSP filings",
-  "Next-year filing reminder (March email)",
+  "Next-year filing reminder (second week of January)",
 ];
 
 export const TIERS: Record<Tier, TierInfo> = {

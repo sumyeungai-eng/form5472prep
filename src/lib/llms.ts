@@ -42,7 +42,7 @@ Two tiers, one-time per filing, USD. They differ **only** by turnaround speed �
 - **Standard — $149** — ready in 5-7 business days.
 - **Express — $199** — ready within 3 business days.
 
-Both tiers include: Form 5472 + pro forma Form 1120 prepared, reviewed by a qualified tax accountant, IRS fax delivery, filing confirmation, reasonable-cause letter for late / DIIRSP filings, priority email support, and a March email reminder for next year's filing.
+Both tiers include: Form 5472 + pro forma Form 1120 prepared, reviewed by a qualified tax accountant, IRS fax delivery, filing confirmation, reasonable-cause letter for late / DIIRSP filings, priority email support, and an email reminder in the second week of January for next year's filing.
 
 Multi-year add-on: **+$99 per additional past tax year**, on either tier. For example, on Standard: filing with 2 past years = $149 + $99 = $248; filing with 3 past years = $149 + $198 = $347. On Express: 2 past years = $199 + $99 = $298; 3 past years = $199 + $198 = $397.
 
