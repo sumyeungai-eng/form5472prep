@@ -116,21 +116,26 @@ export function GoogleLoginButton({
           mirror the renderButton config above (capped at 320px wide, size:
           large is about 40px tall). */}
       <div className="flex justify-center">
-        <div
-          ref={buttonRef}
-          className="relative w-full max-w-[320px] h-10 flex items-center justify-center"
-        >
+        <div className="relative w-full max-w-[320px] h-10">
+          {/* Google's renderButton REPLACES the children of this element, so
+              React must never render anything inside it. A React child here
+              is removed by Google's script, and React then crashes the whole
+              page with "Failed to execute 'removeChild'" when it tries to
+              remove that node itself. The placeholder is a sibling instead. */}
+          <div ref={buttonRef} className="absolute inset-0 flex items-center justify-center" />
           {!buttonRendered && (
-            loadFailed ? (
-              <p className="text-[11px] text-slate-500 text-center">
-                Google sign-in is not available right now. Use your email below.
-              </p>
-            ) : (
-              <div className="inline-flex items-center justify-center gap-2 h-10 w-full rounded-md border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-400 pointer-events-none">
-                <GoogleGlyph muted />
-                Continue with Google
-              </div>
-            )
+            <div className="absolute inset-0 flex items-center justify-center">
+              {loadFailed ? (
+                <p className="text-[11px] text-slate-500 text-center">
+                  Google sign-in is not available right now. Use your email below.
+                </p>
+              ) : (
+                <div className="inline-flex items-center justify-center gap-2 h-10 w-full rounded-md border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-400 pointer-events-none">
+                  <GoogleGlyph muted />
+                  Continue with Google
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
