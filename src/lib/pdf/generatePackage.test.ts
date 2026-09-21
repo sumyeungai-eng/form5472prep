@@ -5,6 +5,8 @@ import { PDFDocument, StandardFonts } from "pdf-lib";
 import { AUTHORED_DOC_SIGNATURE_HEADING, COVER_LETTER_ENCLOSURE_PHRASE, SIGNER_TITLE } from "@/config/filingPackage";
 import {
   form5472FieldMap,
+  form1120_2018FieldMap,
+  form1120_2019FieldMap,
   form1120_2020FieldMap,
   form1120_2021FieldMap,
   form1120_2022FieldMap,
@@ -21,7 +23,7 @@ import {
   signerTitleStampPlacement,
 } from "./generatePackage";
 import { runPreflight } from "./preflight";
-import { F1, F2, F3, F4, F5, F7, finalisedAt, fixtures } from "./__fixtures__/filings";
+import { F1, F2, F3, F4, F5, F7, F8, finalisedAt, fixtures } from "./__fixtures__/filings";
 
 const PDF_TIMEOUT = 20_000;
 const IRS_MAIL_ADDRESS_DISPLAY_LINES = [
@@ -176,6 +178,22 @@ describe("generatePackage regressions", () => {
     ]);
   }, PDF_TIMEOUT);
 
+  it("G-05 supports 2018 and 2019 Form 1120 revisions without the short-year fallback", async () => {
+    const pkg = await generatePackage(F8, finalisedAt);
+    const preflight = await runPreflight(pkg.record, pkg.bytes);
+
+    expect(preflight.failures.filter((failure) => failure.id === "A08")).toEqual([]);
+    expect(pkg.record.taxYears.map((year) => [year.taxYear, year.form1120Revision, year.shortYearException])).toEqual([
+      [2018, "2018", false],
+      [2019, "2019", false],
+    ]);
+    expect(pkg.record.taxYears[0].form1120.fields).toContainEqual({
+      form: "1120-2018",
+      field: form1120_2018FieldMap.D_totalAssetsCents,
+      value: "00",
+    });
+  }, PDF_TIMEOUT);
+
   it("G-05 allows the documented short-year prior-revision exception", async () => {
     const pkg = await generatePackage(
       {
@@ -214,6 +232,8 @@ describe("generatePackage regressions", () => {
   });
 
   it.each([
+    [2018, form1120_2018FieldMap],
+    [2019, form1120_2019FieldMap],
     [2020, form1120_2020FieldMap],
     [2021, form1120_2021FieldMap],
     [2022, form1120_2022FieldMap],
@@ -225,7 +245,7 @@ describe("generatePackage regressions", () => {
       {
         ...F1,
         taxYears: [taxYear],
-        llcDateIncorporated: new Date("2019-01-01T00:00:00.000Z"),
+        llcDateIncorporated: new Date("2015-01-01T00:00:00.000Z"),
         yearData: [
           {
             ...F1.yearData[0],

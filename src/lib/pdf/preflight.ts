@@ -8,6 +8,8 @@ import {
 import { countWidgetAnnotations } from "./fillForm";
 import {
   form5472FieldMap,
+  form1120_2018FieldMap,
+  form1120_2019FieldMap,
   form1120_2020FieldMap,
   form1120_2021FieldMap,
   form1120_2022FieldMap,
@@ -253,7 +255,11 @@ function checkA19(record: PackageRecord, result: MutableResult) {
   for (const year of record.taxYears) {
     for (const field of [form5472FieldMap["4b2_referenceId"], form5472FieldMap["8b2_referenceId"]]) {
       const value = textValue(year.form5472.fields, field).trim();
-      if (!/^[A-Za-z0-9]{1,50}$/.test(value) || value !== stored) {
+      if (!stored) {
+        if (value) {
+          fail(result, "A19", `Tax year ${year.taxYear}: reference ID field ${field} is not blank when no ownerReferenceId is stored.`);
+        }
+      } else if (!/^[A-Za-z0-9]{1,50}$/.test(value) || value !== stored) {
         fail(result, "A19", `Tax year ${year.taxYear}: reference ID field ${field} does not match the stored ownerReferenceId.`);
       }
     }
@@ -416,6 +422,10 @@ function textValue(fields: { field: string; value: string | true }[], field: str
 
 function form1120MapForYear(year: PackageRecordYear) {
   switch (year.form1120Revision) {
+    case "2018":
+      return form1120_2018FieldMap;
+    case "2019":
+      return form1120_2019FieldMap;
     case "2020":
       return form1120_2020FieldMap;
     case "2021":

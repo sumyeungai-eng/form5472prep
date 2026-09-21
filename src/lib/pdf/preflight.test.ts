@@ -182,6 +182,32 @@ describe("runPreflight", () => {
     expect(result.failures.some((f) => f.id === "A05" && f.message.includes("541611"))).toBe(true);
   });
 
+  it("A19 passes when an ITIN-only owner has no stored reference ID and both reference-ID fields are blank", async () => {
+    const record = clone(goodRecord);
+    record.ownerReferenceId = null;
+    record.taxYears[0].form5472.fields = record.taxYears[0].form5472.fields.filter(
+      (write) =>
+        write.field !== form5472FieldMap["4b2_referenceId"] &&
+        write.field !== form5472FieldMap["8b2_referenceId"],
+    );
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.filter((f) => f.id === "A19")).toEqual([]);
+  });
+
+  it("A19 still fails when written reference IDs differ from the stored ownerReferenceId", async () => {
+    const record = clone(goodRecord);
+    record.ownerReferenceId = "STOREDOWNER1";
+    for (const field of [form5472FieldMap["4b2_referenceId"], form5472FieldMap["8b2_referenceId"]]) {
+      record.taxYears[0].form5472.fields.find((write) => write.field === field)!.value = "WRITTENOWNER1";
+    }
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.some((f) => f.id === "A19")).toBe(true);
+  });
+
   it("A07 ignores a stale dissolution date when the record is not final", async () => {
     const record = clone(goodRecord);
     record.dissolutionDate = null;

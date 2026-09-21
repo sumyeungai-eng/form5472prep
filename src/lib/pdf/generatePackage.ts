@@ -3,6 +3,8 @@ import path from "node:path";
 import { PDFDocument, PDFTextField, StandardFonts, rgb, type PDFFont } from "pdf-lib";
 import {
   form5472FieldMap,
+  form1120_2018FieldMap,
+  form1120_2019FieldMap,
   form1120_2020FieldMap,
   form1120_2021FieldMap,
   form1120_2022FieldMap,
@@ -318,7 +320,7 @@ function line1oCountry(f: Filing): { value: string; source: "llc_field" | "defau
 }
 
 const FORMS_DIR = path.join(process.cwd(), "public", "forms");
-type Form1120Revision = 2020 | 2021 | 2022 | 2023 | 2024 | 2025;
+type Form1120Revision = 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025;
 type LegacyForm1120FieldMap = {
   readonly taxYearBeginning: string;
   readonly taxYearEnding: string;
@@ -329,6 +331,7 @@ type LegacyForm1120FieldMap = {
   readonly B_ein: string;
   readonly C_dateIncorporated: string;
   readonly D_totalAssets: string;
+  readonly D_totalAssetsCents?: string;
   readonly E_initialReturn: string;
   readonly E_finalReturn: string;
   readonly E_nameChange: string;
@@ -356,6 +359,8 @@ type SplitForm1120FieldMap = {
 type Form1120FieldMap = LegacyForm1120FieldMap | SplitForm1120FieldMap;
 
 const FORM1120_MAPS: Record<Form1120Revision, Form1120FieldMap> = {
+  2018: form1120_2018FieldMap,
+  2019: form1120_2019FieldMap,
   2020: form1120_2020FieldMap,
   2021: form1120_2021FieldMap,
   2022: form1120_2022FieldMap,
@@ -673,6 +678,7 @@ async function fillForm1120(
     setText(form, m.B_ein, f.llcEin, recorder);
     setText(form, m.C_dateIncorporated, dateIncorporated, recorder);
     setText(form, m.D_totalAssets, totalAssets, recorder);
+    if (m.D_totalAssetsCents) setText(form, m.D_totalAssetsCents, "00", recorder);
   }
 
   // Item E "Final return" belongs ONLY to the 1120 for the SHORT (dissolution)

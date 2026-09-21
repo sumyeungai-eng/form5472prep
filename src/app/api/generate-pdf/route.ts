@@ -107,6 +107,11 @@ export async function POST(req: Request) {
       preflightCheckedAt: new Date(),
       generatorVersion: record.generatorVersion,
       generatorCommit: record.commit,
+      // A new package needs a new review: an approval given for an earlier
+      // package must never carry over to this one.
+      preflightOverrideBy: null,
+      preflightOverrideAt: null,
+      preflightOverrideReason: null,
     },
   });
 

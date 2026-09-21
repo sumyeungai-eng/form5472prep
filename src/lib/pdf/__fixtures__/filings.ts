@@ -126,4 +126,18 @@ export const F7: FilingFixture = {
   yearData: [year(2025, [tx("2025-01-05", "Owner capital contribution", 2_500_00, "contribution")])],
 };
 
-export const fixtures = { F1, F2, F3, F4, F5, F6, F7 };
+export const F8: FilingFixture = {
+  ...base,
+  llcName: "Example Historical LLC",
+  llcDateIncorporated: new Date("2015-01-01T00:00:00.000Z"),
+  taxYears: [2018, 2019],
+  extensionFiled: "no",
+  reasonableCauseNarrative:
+    "The owner learned of the Form 5472 filing requirement after the due dates and promptly arranged this submission.",
+  yearData: [
+    year(2018, [tx("2018-02-01", "Owner capital contribution", 12_000_00, "contribution")]),
+    year(2019, [tx("2019-03-01", "Owner distribution", -4_500_00, "distribution")]),
+  ],
+};
+
+export const fixtures = { F1, F2, F3, F4, F5, F6, F7, F8 };

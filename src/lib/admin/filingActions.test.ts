@@ -19,6 +19,10 @@ const storage = vi.hoisted(() => ({
   putPdf: vi.fn(),
   publicUrl: vi.fn(async () => "https://example.test/faxed.pdf"),
 }));
+const email = vi.hoisted(() => ({
+  sendMagicLinkEmail: vi.fn(),
+  sendOrderConfirmationEmail: vi.fn(),
+}));
 const pdf = vi.hoisted(() => ({
   generatePackage: vi.fn(async () => ({
     bytes: new Uint8Array([37, 80, 68, 70]),
@@ -42,6 +46,11 @@ vi.mock("@/lib/storage", () => ({
   putPdf: storage.putPdf,
   publicUrl: storage.publicUrl,
 }));
+vi.mock("@/lib/email", () => ({
+  sendMagicLinkEmail: email.sendMagicLinkEmail,
+  sendOrderConfirmationEmail: email.sendOrderConfirmationEmail,
+}));
+vi.mock("@/lib/magicLink", () => ({ makeMagicLink: () => "https://example.test/magic" }));
 vi.mock("@/lib/pdf/generatePackage", () => ({
   generatePackage: pdf.generatePackage,
 }));
@@ -314,6 +323,86 @@ describe("regeneratePdf", () => {
       preflightOverrideAt: null,
       preflightOverrideReason: null,
       status: "PDF_GENERATED",
+    });
+  });
+});
+
+describe("resendOrderConfirmation", () => {
+  const initialFiling = {
+    id: "filing_1",
+    status: "PDF_GENERATED",
+    tier: "standard",
+    amountPaid: 19900,
+    llcName: "Acme LLC",
+    taxYears: [2026],
+    ownerName: "Owner One",
+    faxService: true,
+    isFinalReturn: false,
+    dissolvedAt: null,
+    extensionFiled: "no",
+    extensionTransmittedAt: null,
+    preflightOverrideBy: "admin_old",
+    preflightOverrideAt: new Date("2026-09-20T00:00:00.000Z"),
+    preflightOverrideReason: "Prior override reason.",
+    user: { id: "u1", email: "owner@example.test" },
+  };
+
+  const packageFiling = {
+    llcName: "Acme LLC",
+    llcEin: "12-3456789",
+    llcAddress: "123 Main St",
+    llcCity: "Miami",
+    llcState: "FL",
+    llcZip: "33101",
+    llcCountry: "USA",
+    llcCountryBusiness: "United States",
+    llcDateIncorporated: new Date("2026-01-01T00:00:00.000Z"),
+    llcBusinessActivity: "Investment holding",
+    llcBusinessCode: "523900",
+    ownerName: "Owner One",
+    ownerAddress: "1 Queen Road, Hong Kong",
+    ownerCountryCitizenship: "Hong Kong",
+    ownerCountryTaxResidence: "Hong Kong",
+    ownerCountryBusiness: "Hong Kong",
+    ownerFtin: "HK123",
+    ownerItin: null,
+    ownerReferenceId: "OWNER1",
+    taxYears: [2026],
+    isDiirsp: false,
+    isFinalReturn: false,
+    dissolvedAt: null,
+    extensionFiled: "no",
+    extensionTransmittedAt: null,
+    reasonableCauseNarrative: null,
+    yearData: [],
+  };
+
+  beforeEach(() => {
+    db.findUnique.mockReset();
+    db.update.mockClear();
+    db.createLog.mockClear();
+    db.transaction.mockClear();
+    email.sendOrderConfirmationEmail.mockClear();
+    pdf.generatePackage.mockClear();
+    pdf.runPreflight.mockClear();
+    storage.putPdf.mockClear();
+  });
+
+  it("regenerates the attached PDF and clears the pre-flight override", async () => {
+    db.findUnique
+      .mockResolvedValueOnce(initialFiling)
+      .mockResolvedValueOnce(packageFiling);
+
+    await expect(
+      runFilingAction("filing_1", "resendOrderConfirmation", {}, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, pdfAttached: true });
+
+    const data = (db.update.mock.calls.at(-1)?.[0] as { data: Record<string, unknown> }).data;
+    expect(data).toMatchObject({
+      preflightOverrideBy: null,
+      preflightOverrideAt: null,
+      preflightOverrideReason: null,
+      preflightStatus: "passed",
     });
   });
 });
