@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { nextBusinessDay } from "@/lib/federalHolidays";
 
 // EIN must be 9 digits, optionally formatted XX-XXXXXXX
 export const einSchema = z
@@ -188,24 +189,15 @@ export function validateDissolvedAt(
 // return would be. JS Date.UTC month overflow handles December correctly
 // (m=11 → month 15 → April 15 of the next year).
 //
-// Weekend roll (IRC §7503): a deadline falling on a Saturday or Sunday moves to
-// the next business day, so April 15 2028 (Sat) is really due Mon April 17.
-// Federal HOLIDAYS are deliberately NOT rolled here. §7503 rolls those too, but
-// modelling them needs the DC-Emancipation-Day rule plus the observed-holiday
-// shifts, and getting one wrong in the other direction would mark a still-timely
-// return delinquent. Omitting them can only make us treat a return as due
-// EARLIER than the IRS does — i.e. we might show DIIRSP wording on a package
-// that was technically still on time, which is the safe failure direction (a
-// missing reasonable-cause statement on a late filing is the unprotected
-// $25,000 direction; the reverse error is corrected by the Form 7004
-// extension gate below, which is the customer-supplied fact that overrides
-// this inference).
+// Section 7503 roll: a deadline falling on a Saturday, Sunday, or legal
+// holiday moves to the next business day. The holiday table and observed-date
+// shifts live in federalHolidays.ts so this deadline math stays date-only UTC.
 export function filingDueDateUtc(
   taxYear: number,
   dissolvedAt?: Date | string | null,
 ): number {
   const raw = rawFilingDueDateUtc(taxYear, dissolvedAt);
-  return rollWeekendToMonday(raw);
+  return nextBusinessDay(new Date(raw)).getTime();
 }
 
 function rawFilingDueDateUtc(taxYear: number, dissolvedAt?: Date | string | null): number {
@@ -221,15 +213,6 @@ function rawFilingDueDateUtc(taxYear: number, dissolvedAt?: Date | string | null
 }
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-
-// Saturday → Monday (+2 days), Sunday → Monday (+1 day), everything else
-// unchanged. Read in UTC because the deadline is a date-only instant.
-function rollWeekendToMonday(utcMs: number): number {
-  const dayOfWeek = new Date(utcMs).getUTCDay(); // 0 = Sunday … 6 = Saturday
-  if (dayOfWeek === 6) return utcMs + 2 * ONE_DAY_MS;
-  if (dayOfWeek === 0) return utcMs + ONE_DAY_MS;
-  return utcMs;
-}
 
 // Human-readable deadline for display ("November 16, 2026"). Rendered in UTC so
 // the printed day matches the instant filingDueDateUtc() returns regardless of
@@ -250,6 +233,7 @@ export function isYearDelinquent(
   taxYear: number,
   dissolvedAt?: Date | string | null,
   extension?: ExtensionFacts | null,
+  now: Date = new Date(),
 ): boolean {
   // "I'm not sure" defers THIS year's determination to human review — the one
   // year the extension could affect is not asserted late (no false delinquency
@@ -258,14 +242,14 @@ export function isYearDelinquent(
   // facts only for max(taxYears), earlier bundle years — which no 7004 could
   // rescue — still compute from the calendar and keep their reasonable-cause
   // protection.
-  if (extensionUnclear(extension)) return false;
+  if (extensionUnclear(extension, taxYear, dissolvedAt)) return false;
   // The due-date helpers return UTC MIDNIGHT AT THE START of the due day, so a
   // naive `now > dueMs` marks a return late the moment its own due date begins
   // (00:00 UTC = the evening of the 14th in the US). A return is timely THROUGH
   // the whole due day: it only becomes delinquent at the start of the NEXT day.
   // Hence the +1-day offset and the >= (an instant exactly at the start of the
   // day after the deadline is already late).
-  return Date.now() >= effectiveDueDateUtc(taxYear, dissolvedAt, extension) + ONE_DAY_MS;
+  return now.getTime() >= effectiveDueDateUtc(taxYear, dissolvedAt, extension) + ONE_DAY_MS;
 }
 
 // ─── Form 7004 extension gate ────────────────────────────────────────────────
@@ -303,6 +287,7 @@ export function isExtensionValid(
   extension: ExtensionFacts | null | undefined,
 ): boolean {
   if (!extension || extension.filed !== "yes") return false;
+  if (extension.transmittedAt == null) return true;
   const sent = toUtcMs(extension.transmittedAt);
   if (sent === null) return false;
   // INVARIANT: `transmittedAt` is a DATE-ONLY value (UTC midnight at the start
@@ -324,11 +309,11 @@ export function effectiveDueDateUtc(
 ): number {
   const raw = rawFilingDueDateUtc(taxYear, dissolvedAt);
   if (!isExtensionValid(taxYear, dissolvedAt, extension)) {
-    return rollWeekendToMonday(raw);
+    return nextBusinessDay(new Date(raw)).getTime();
   }
   const d = new Date(raw);
   const extended = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 6, 15);
-  return rollWeekendToMonday(extended);
+  return nextBusinessDay(new Date(extended)).getTime();
 }
 
 // "I'm not sure / my agent may have filed one" must NOT be collapsed into
@@ -337,8 +322,26 @@ export function effectiveDueDateUtc(
 // the reasonable-cause step (no false admission ON THE FORMS) and the order is
 // flagged for the accountant — who already reviews every package before fax —
 // to confirm by email. This helper is the single definition of that state.
-export function extensionUnclear(extension: ExtensionFacts | null | undefined): boolean {
-  return extension?.filed === "not_sure";
+export function extensionUnclear(
+  extension: ExtensionFacts | null | undefined,
+  taxYear?: number,
+  dissolvedAt?: Date | string | null,
+): boolean {
+  if (extension?.filed === "not_sure") return true;
+  if (extension?.filed !== "yes" || taxYear === undefined || dissolvedAt == null) return false;
+
+  const d = dissolvedAt instanceof Date ? dissolvedAt : new Date(dissolvedAt);
+  if (Number.isNaN(d.getTime())) return false;
+
+  // docs/reviews/5472-irs-rule-citations.md, R8 addendum: a final short year
+  // ending June 30 before 2026 may fall under the C-corp 7-month extension
+  // exception. Defer to reviewer rather than classify it late or timely here.
+  return (
+    taxYear < 2026 &&
+    d.getUTCFullYear() === taxYear &&
+    d.getUTCMonth() === 5 &&
+    d.getUTCDate() === 30
+  );
 }
 
 // Both factories build a NEW schema on every call and read the upper bound from

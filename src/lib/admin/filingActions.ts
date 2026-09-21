@@ -7,7 +7,8 @@ import { sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
 import { submitFax } from "@/lib/fax";
 import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
-import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
+import { generatePackage, type GeneratedPackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
+import { runPreflight } from "@/lib/pdf/preflight";
 import {
   isLegalTransition,
   logFilingChange,
@@ -27,6 +28,7 @@ export type FilingActionName =
   | "resendMagicLink"
   | "retryFax"
   | "regeneratePdf"
+  | "approvePreflightOverride"
   | "updateField"
   | "uploadReviewedPdf"
   | "uploadSignedPdf";
@@ -45,6 +47,7 @@ export const FILING_ACTION_NAMES = [
   "resendMagicLink",
   "retryFax",
   "regeneratePdf",
+  "approvePreflightOverride",
   "updateField",
   "uploadReviewedPdf",
   "uploadSignedPdf",
@@ -100,6 +103,7 @@ const filingSelect = {
   llcState: true,
   llcZip: true,
   llcCountry: true,
+  llcCountryBusiness: true,
   llcBusinessActivity: true,
   llcBusinessCode: true,
   ownerName: true,
@@ -129,6 +133,14 @@ const filingSelect = {
   signedPdfKey: true,
   signaturePngKey: true,
   generatedPdfKey: true,
+  preflightStatus: true,
+  preflightFailures: true,
+  preflightWarnings: true,
+  preflightCheckedAt: true,
+  preflightOverrideBy: true,
+  preflightOverrideAt: true,
+  generatorVersion: true,
+  generatorCommit: true,
   faxedPdfKey: true,
   faxJobId: true,
   faxStatus: true,
@@ -143,6 +155,7 @@ const packageFilingSelect = {
   llcState: true,
   llcZip: true,
   llcCountry: true,
+  llcCountryBusiness: true,
   llcDateIncorporated: true,
   llcBusinessActivity: true,
   llcBusinessCode: true,
@@ -317,7 +330,8 @@ export async function runFilingAction(
           const result = await generatePackage({
             llcName: full.llcName, llcEin: full.llcEin, llcAddress: full.llcAddress,
             llcCity: full.llcCity, llcState: full.llcState, llcZip: full.llcZip,
-            llcCountry: full.llcCountry, llcDateIncorporated: full.llcDateIncorporated,
+            llcCountry: full.llcCountry, llcCountryBusiness: full.llcCountryBusiness,
+            llcDateIncorporated: full.llcDateIncorporated,
             llcBusinessActivity: full.llcBusinessActivity, llcBusinessCode: full.llcBusinessCode,
             ownerName: full.ownerName, ownerAddress: full.ownerAddress,
             ownerCountryCitizenship: full.ownerCountryCitizenship,
@@ -347,9 +361,18 @@ export async function runFilingAction(
           signatures = result.signatures;
           const key = `${filing.id}_unsigned.pdf`;
           await putPdf(key, result.bytes);
+          const preflight = await runPreflight(result.record, result.bytes);
           await prisma.filing.update({
             where: { id: filing.id },
-            data: { generatedPdfKey: key },
+            data: {
+              generatedPdfKey: key,
+              preflightStatus: preflight.ok ? "passed" : "failed",
+              preflightFailures: preflight.failures,
+              preflightWarnings: preflight.warnings,
+              preflightCheckedAt: new Date(),
+              generatorVersion: result.record.generatorVersion,
+              generatorCommit: result.record.commit,
+            },
             select: { id: true },
           });
         }
@@ -423,6 +446,13 @@ export async function runFilingAction(
     case "retryFax": {
       if (!filing.signedPdfKey) {
         throw new FilingActionError(400, "signed_pdf_required", "no signed PDF on file");
+      }
+      if (filing.preflightStatus === "failed" && !filing.preflightOverrideBy) {
+        throw new FilingActionError(
+          409,
+          "preflight_failed",
+          "Fax held: this package failed pre-flight checks. An admin must review it.",
+        );
       }
       // A late filing without a reasonable-cause statement is legally naked on
       // the $25,000 exposure — the whole pitch of the service is that late
@@ -505,6 +535,13 @@ export async function runFilingAction(
     // reviews every order before fax.
 
     case "regeneratePdf": {
+      if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
+        throw new FilingActionError(
+          409,
+          "already_signed_or_filed",
+          "This filing has been signed or faxed. Its package cannot be regenerated.",
+        );
+      }
       // Rebuild the unsigned PDF from current DB state. Used after admin
       // edits a field by hand and wants a fresh package without going
       // through the wizard or asking the customer to do anything. If the
@@ -534,12 +571,13 @@ export async function runFilingAction(
           "filing is missing required fields — finish the wizard first",
         );
       }
-      let pkg: { bytes: Uint8Array; signatures: SignatureLocation[] };
+      let pkg: GeneratedPackage;
       try {
         pkg = await generatePackage({
           llcName: full.llcName, llcEin: full.llcEin, llcAddress: full.llcAddress,
           llcCity: full.llcCity, llcState: full.llcState, llcZip: full.llcZip,
-          llcCountry: full.llcCountry, llcDateIncorporated: full.llcDateIncorporated,
+          llcCountry: full.llcCountry, llcCountryBusiness: full.llcCountryBusiness,
+          llcDateIncorporated: full.llcDateIncorporated,
           llcBusinessActivity: full.llcBusinessActivity, llcBusinessCode: full.llcBusinessCode,
           ownerName: full.ownerName, ownerAddress: full.ownerAddress,
           ownerCountryCitizenship: full.ownerCountryCitizenship,
@@ -571,6 +609,7 @@ export async function runFilingAction(
       }
       const key = `${filing.id}_unsigned.pdf`;
       await putPdf(key, pkg.bytes);
+      const preflight = await runPreflight(pkg.record, pkg.bytes);
       // Reset signed PDF + validation state — the old signature was applied
       // to a stale PDF and isn't valid against the new one. Customer (or
       // admin) needs to re-sign.
@@ -581,6 +620,14 @@ export async function runFilingAction(
           signedPdfKey: null,
           validationStatus: "pending",
           validationCheckedAt: null,
+          preflightStatus: preflight.ok ? "passed" : "failed",
+          preflightFailures: preflight.failures,
+          preflightWarnings: preflight.warnings,
+          preflightCheckedAt: new Date(),
+          preflightOverrideBy: null,
+          preflightOverrideAt: null,
+          generatorVersion: pkg.record.generatorVersion,
+          generatorCommit: pkg.record.commit,
           status: "PDF_GENERATED",
         },
         select: { id: true },
@@ -726,19 +773,6 @@ export async function runFilingAction(
             ? (writeValue as Date | null)
             : filing.extensionTransmittedAt;
 
-        // "Yes" with no date can never rescue the return: isExtensionValid()
-        // has nothing to compare against the due date, so it silently reads as
-        // "not extended" — an answered question that changes nothing. Same hard
-        // error the customer PATCH raises. Also fires when the date is BLANKED
-        // while the stored answer is still "yes".
-        if (nextFiled === "yes" && !nextTransmittedAt) {
-          throw new FilingActionError(
-            400,
-            "extension_date_required",
-            'extensionFiled "yes" requires a transmittal date — save extensionTransmittedAt (YYYY-MM-DD) first, then set extensionFiled',
-          );
-        }
-
         // null / "no" / "not_sure": the supporting details describe an
         // extension this filing no longer records. Cleared in the SAME update
         // (and the same transaction) so no stale 7004 date can survive for
@@ -831,12 +865,61 @@ export async function runFilingAction(
       };
     }
 
-    case "uploadReviewedPdf": {
-      if (["FAXED", "CONFIRMED"].includes(filing.status) && !isValidForceOverride(ctx)) {
+    case "approvePreflightOverride": {
+      if (!ctx.adminId) {
+        throw new FilingActionError(
+          403,
+          "identity_required",
+          "A personal admin account is required to approve pre-flight override.",
+        );
+      }
+      if (filing.preflightStatus !== "failed") {
         throw new FilingActionError(
           409,
-          "already_faxed",
-          "This filing has already been faxed or confirmed. Force with a reason to replace its reviewed PDF.",
+          "preflight_not_failed",
+          "Only a filing with failed pre-flight checks can be approved for override.",
+        );
+      }
+      const approvedAt = new Date();
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: {
+          preflightOverrideBy: ctx.adminId,
+          preflightOverrideAt: approvedAt,
+        },
+        select: { id: true },
+      });
+      await logFilingChange({
+        filingId: filing.id,
+        adminId: ctx.adminId,
+        source: "admin",
+        field: "preflightOverride",
+        before: {
+          preflightOverrideBy: filing.preflightOverrideBy,
+          preflightOverrideAt: filing.preflightOverrideAt,
+        },
+        after: {
+          preflightOverrideBy: ctx.adminId,
+          preflightOverrideAt: approvedAt,
+        },
+        reason: ctx.reason,
+      });
+      return { ok: true };
+    }
+
+    case "uploadReviewedPdf": {
+      if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
+        throw new FilingActionError(
+          409,
+          "already_signed_or_filed",
+          "This filing has already been signed, faxed, or confirmed.",
+        );
+      }
+      if (filing.preflightStatus === "failed" && !filing.preflightOverrideBy) {
+        throw new FilingActionError(
+          409,
+          "preflight_failed",
+          "This package failed pre-flight checks. Fix the order data and regenerate.",
         );
       }
       const rawB64 = typeof body.pdfBase64 === "string" ? body.pdfBase64 : "";

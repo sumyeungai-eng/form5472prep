@@ -165,6 +165,15 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         )}
       </div>
 
+      <PreflightPanel
+        status={filing.preflightStatus}
+        failures={filing.preflightFailures}
+        warnings={filing.preflightWarnings}
+        checkedAt={filing.preflightCheckedAt}
+        generatorVersion={filing.generatorVersion}
+        generatorCommit={filing.generatorCommit}
+      />
+
       {/* Quick actions */}
       <div className="bg-white border border-slate-200 rounded-lg p-6 mb-6">
         <h2 className="text-sm font-semibold text-slate-900 mb-3">Actions</h2>
@@ -177,6 +186,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           hasGeneratedPdf={!!filing.generatedPdfKey}
           hasCustomerSignature={!!filing.signaturePngKey}
           hasFaxedPdf={!!filing.faxedPdfKey}
+          preflightStatus={filing.preflightStatus}
           faxedAt={filing.faxedAt ? filing.faxedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
         />
       </div>
@@ -419,6 +429,90 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
       </p>
     </div>
   );
+}
+
+function PreflightPanel({
+  status,
+  failures,
+  warnings,
+  checkedAt,
+  generatorVersion,
+  generatorCommit,
+}: {
+  status: string | null;
+  failures: unknown;
+  warnings: unknown;
+  checkedAt: Date | null;
+  generatorVersion: string | null;
+  generatorCommit: string | null;
+}) {
+  const failureRows = issueRows(failures);
+  const warningRows = issueRows(warnings);
+  const isFailed = status === "failed";
+  const isPassed = status === "passed";
+  return (
+    <div
+      className={`border rounded-lg p-5 mb-6 ${
+        isFailed
+          ? "bg-red-50 border-red-200"
+          : isPassed
+            ? "bg-emerald-50 border-emerald-200"
+            : "bg-slate-50 border-slate-200"
+      }`}
+    >
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className={`text-sm font-semibold ${isFailed ? "text-red-900" : isPassed ? "text-emerald-900" : "text-slate-900"}`}>
+            {isFailed ? "Pre-flight failed" : isPassed ? "Pre-flight passed" : "Pre-flight not run"}
+          </h2>
+          {checkedAt && (
+            <p className="mt-1 text-xs text-slate-500">
+              Checked {checkedAt.toISOString().slice(0, 16).replace("T", " ")} UTC
+            </p>
+          )}
+        </div>
+        <div className="text-xs text-slate-600 sm:text-right">
+          <div>Generator: {generatorVersion ?? "unknown"}</div>
+          <div className="font-mono">Commit: {generatorCommit ?? "unknown"}</div>
+        </div>
+      </div>
+
+      {failureRows.length > 0 && (
+        <ul className="mt-4 space-y-1.5 text-sm text-red-900">
+          {failureRows.map((issue, index) => (
+            <li key={`${issue.id}-${index}`}>
+              <span className="font-mono font-semibold">{issue.id}</span>: {issue.message}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {warningRows.length > 0 && (
+        <div className="mt-4 border-t border-current/10 pt-3">
+          <h3 className="text-xs font-semibold text-amber-900">Warnings</h3>
+          <ul className="mt-2 space-y-1.5 text-sm text-amber-900">
+            {warningRows.map((issue, index) => (
+              <li key={`${issue.id}-${index}`}>
+                <span className="font-mono font-semibold">{issue.id}</span>: {issue.message}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function issueRows(value: unknown): { id: string; message: string }[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is { id: string; message: string } => {
+    return (
+      !!item &&
+      typeof item === "object" &&
+      typeof (item as { id?: unknown }).id === "string" &&
+      typeof (item as { message?: unknown }).message === "string"
+    );
+  });
 }
 
 function PartnerField({ name, email }: { name: string; email: string }) {

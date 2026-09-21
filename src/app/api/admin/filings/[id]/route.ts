@@ -17,7 +17,10 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  if (!(await isAdmin())) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  const principal = await getAdminPrincipal(req);
+  if (!principal && !(await isAdmin())) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
 
   const body = await req.json().catch(() => ({}));
   const action = body?.action as string | undefined;
@@ -47,7 +50,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       action as FilingActionName,
       body,
       {
-        adminId: null,
+        adminId: principal?.adminId ?? null,
         force: true,
         reason: "legacy admin override",
       },

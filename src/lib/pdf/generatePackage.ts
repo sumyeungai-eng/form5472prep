@@ -1,15 +1,29 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import { PDFDocument, PDFTextField, StandardFonts, rgb, type PDFFont } from "pdf-lib";
 import { form5472FieldMap, form1120_2024FieldMap, form1120_2025FieldMap } from "./fieldMaps";
-import { setText, check, stampDiirspHeader, stampShortPeriod, flatten } from "./fillForm";
+import {
+  setText,
+  check,
+  stampDiirspHeader,
+  stampShortPeriod,
+  flatten,
+  type PdfFieldWrite,
+} from "./fillForm";
 import { formatDateForIrs } from "@/lib/utils";
 import {
   extensionUnclear,
-  isExtensionValid,
   isYearDelinquent,
   type ExtensionFacts,
 } from "@/lib/schemas";
+import {
+  AUTHORED_DOC_SIGNATURE_HEADING,
+  COVER_LETTER_ENCLOSURE_PHRASE,
+  GENERATOR_VERSION,
+  IRS_MAIL_ADDRESS,
+  SIGNER_TITLE,
+  assertIrsJuratUntouched,
+} from "@/config/filingPackage";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Country normalization — wizard collects nationality/residence as free text
@@ -75,6 +89,7 @@ type Filing = {
   llcState: string;
   llcZip: string;
   llcCountry: string;
+  llcCountryBusiness?: string | null;
   llcDateIncorporated: Date;
   llcBusinessActivity: string;
   llcBusinessCode: string;
@@ -123,6 +138,69 @@ export type ReportableTx = {
   amountCents: number; // signed: positive = inflow (contribution), negative = outflow (distribution)
   category: string; // "contribution" | "distribution" | other
 };
+
+export type AuthoredDocumentRecord = {
+  kind: "coverLetter" | "partVStatement" | "reasonableCauseStatement";
+  taxYear?: number;
+  lines: string[];
+};
+
+export type PackageRecordYear = {
+  taxYear: number;
+  periodStart: string;
+  periodEnd: string;
+  status: "timely" | "late" | "unresolved";
+  isInitialYear: boolean;
+  isFinalYear: boolean;
+  line1oSource: "llc_field" | "default_us";
+  line1f: number;
+  line1g: number;
+  line1h: number;
+  partVTotalRounded: number;
+  partVRows: ReportableTx[];
+  form1120: { fields: PdfFieldWrite[]; stampedTexts: string[] };
+  form5472: { fields: PdfFieldWrite[] };
+  reasonableCauseIncluded: boolean;
+};
+
+export type PackagePageRecord = {
+  label: string;
+  taxYear?: number;
+  startPage: number;
+  endPage: number;
+};
+
+export type PackageRecord = {
+  generatorVersion: string;
+  commit: string;
+  generatedAt: string;
+  finalisedAt: string;
+  llcName: string;
+  ownerName: string;
+  formationDate: string | null;
+  dissolutionDate: string | null;
+  taxYears: PackageRecordYear[];
+  authoredDocuments: AuthoredDocumentRecord[];
+  pageOrder: PackagePageRecord[];
+};
+
+type SignerTitleColumnBounds = {
+  left: number;
+  right: number;
+  baselineY: number;
+  measuredField: string;
+};
+
+const SIGNER_TITLE_COLUMN_INSET = 2;
+const SIGNER_TITLE_MAX_SIZE = 10;
+const SIGNER_TITLE_MIN_SIZE = 7;
+const IRS_MAIL_ADDRESS_DISPLAY_LINES = [
+  "Internal Revenue Service",
+  "1973 Rulon White Blvd, M/S 6112",
+  "Attn: PIN Unit",
+  "Ogden, UT 84201",
+] as const;
+const IRS_MAIL_ADDRESS_DISPLAY_SINGLE_LINE = `${IRS_MAIL_ADDRESS_DISPLAY_LINES[0]}, ${IRS_MAIL_ADDRESS_DISPLAY_LINES[1]} ${IRS_MAIL_ADDRESS_DISPLAY_LINES[2]}, ${IRS_MAIL_ADDRESS_DISPLAY_LINES[3]}`;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tax-year period end (MM/DD) for a given year in the package.
@@ -191,6 +269,25 @@ function formationYearOf(f: { llcDateIncorporated?: Date | string | null }): num
   return formed.getUTCFullYear();
 }
 
+function partVRowsForYear(f: Filing, year: number): ReportableTx[] {
+  const yd = f.yearData.find((y) => y.taxYear === year);
+  return (yd?.reportableTransactions ?? []).filter(
+    (t) => t.category === "contribution" || t.category === "distribution",
+  );
+}
+
+export function roundedPartVTotalDollars(rows: ReportableTx[]): number {
+  const cents = rows.reduce((sum, tx) => sum + Math.abs(tx.amountCents), 0);
+  return Math.floor((cents + 50) / 100);
+}
+
+function line1oCountry(f: Filing): { value: string; source: "llc_field" | "default_us" } {
+  const llcCountryBusiness = normalizeCountry(f.llcCountryBusiness);
+  return llcCountryBusiness
+    ? { value: llcCountryBusiness, source: "llc_field" }
+    : { value: "United States", source: "default_us" };
+}
+
 const FORMS_DIR = path.join(process.cwd(), "public", "forms");
 
 async function loadBlank(name: string): Promise<PDFDocument> {
@@ -198,7 +295,13 @@ async function loadBlank(name: string): Promise<PDFDocument> {
   return PDFDocument.load(bytes);
 }
 
-function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number) {
+function fillForm5472(
+  pdf: PDFDocument,
+  f: Filing,
+  year: number,
+  line1f: number,
+  recorder: { form: string; writes: PdfFieldWrite[] },
+): { line1oSource: "llc_field" | "default_us" } {
   const form = pdf.getForm();
   const m = form5472FieldMap;
 
@@ -206,51 +309,44 @@ function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number)
   // text; "Canadian" → "Canada", etc. See normalizeCountry() above.
   const ownerCitizenship = normalizeCountry(f.ownerCountryCitizenship);
   const ownerTaxResidence = normalizeCountry(f.ownerCountryTaxResidence);
-  // 1o (principal country business conducted) and 4c/8f (principal country of
-  // the owner/related party) reflect WHERE the business is operated. For a
-  // foreign-owned US DE that's managed remotely by a non-resident owner, this
-  // is the owner's country — NOT "United States". The RCS says explicitly
-  // "operated from outside the United States", so 1o = "United States" was
-  // creating a direct internal contradiction that auto-validators flag.
   const ownerBusinessCountry =
     normalizeCountry(f.ownerCountryBusiness) || ownerTaxResidence || ownerCitizenship;
+  const llcBusinessCountry = line1oCountry(f);
 
   // Period bounds. The START is 01/01 except in the LLC's FORMATION year, where
   // it is the formation date (see periodStartFor()); the END is 12/31 unless
   // this is the final year, in which case it's the dissolution date (see
   // periodEndFor()). A first-and-final filer gets both at once.
-  setText(form, m.taxYearBeginMonthDay, periodStartFor(f, year));
-  setText(form, m.taxYearBeginYear, String(year));
-  setText(form, m.taxYearEndMonthDay, periodEndFor(f, year));
-  setText(form, m.taxYearEndYear, String(year));
+  setText(form, m.taxYearBeginMonthDay, periodStartFor(f, year), recorder);
+  setText(form, m.taxYearBeginYear, String(year), recorder);
+  setText(form, m.taxYearEndMonthDay, periodEndFor(f, year), recorder);
+  setText(form, m.taxYearEndYear, String(year), recorder);
 
   // Part I — reporting corp
-  setText(form, m["1a_name"], f.llcName);
-  setText(form, m["1_street"], f.llcAddress);
-  setText(form, m["1_cityStateZip"], `${f.llcCity}, ${f.llcState} ${f.llcZip}`);
-  setText(form, m["1b_ein"], f.llcEin);
+  setText(form, m["1a_name"], f.llcName, recorder);
+  setText(form, m["1_street"], f.llcAddress, recorder);
+  setText(form, m["1_cityStateZip"], `${f.llcCity}, ${f.llcState} ${f.llcZip}`, recorder);
+  setText(form, m["1b_ein"], f.llcEin, recorder);
   const yearData = f.yearData.find((y) => y.taxYear === year);
-  setText(form, m["1c_totalAssets"], yearData ? yearData.totalAssetsYearEnd.toFixed(0) : "0");
-  setText(form, m["1d_businessActivity"], f.llcBusinessActivity);
-  setText(form, m["1e_businessCode"], f.llcBusinessCode);
-  setText(form, m["1f_totalPaymentsThisForm"], line1f.toFixed(0));
-  setText(form, m["1g_numberOfForms"], "1");
-  setText(form, m["1h_totalPaymentsAllForms"], line1f.toFixed(0));
+  setText(form, m["1c_totalAssets"], yearData ? yearData.totalAssetsYearEnd.toFixed(0) : "0", recorder);
+  setText(form, m["1d_businessActivity"], f.llcBusinessActivity, recorder);
+  setText(form, m["1e_businessCode"], f.llcBusinessCode, recorder);
+  setText(form, m["1f_totalPaymentsThisForm"], line1f.toFixed(0), recorder);
+  setText(form, m["1g_numberOfForms"], "1", recorder);
+  setText(form, m["1h_totalPaymentsAllForms"], line1f.toFixed(0), recorder);
   // 1k expects a number; we never attach Part VIII (no cost-sharing
   // arrangement applies to a sole-member DE), so explicit "0" is cleaner
   // than blank.
-  setText(form, m["1k_partsVIII"], "0");
-  setText(form, m["1l_countryIncorp"], "United States");
-  setText(form, m["1m_dateIncorp"], formatDateForIrs(f.llcDateIncorporated));
+  setText(form, m["1k_partsVIII"], "0", recorder);
+  setText(form, m["1l_countryIncorp"], "United States", recorder);
+  setText(form, m["1m_dateIncorp"], formatDateForIrs(f.llcDateIncorporated), recorder);
   // 1n (tax-resident jurisdiction of the REPORTING CORP) — the LLC is a US
   // entity for US legal/tax purposes. Stays "United States".
-  setText(form, m["1n_countriesTaxResident"], "United States");
-  // 1o (principal country where business is CONDUCTED) — for a remotely-
-  // managed foreign-owned DE, this is the owner's country. Falls back to
-  // citizenship if tax-residence is missing.
-  setText(form, m["1o_countriesBusinessConducted"], ownerBusinessCountry || "United States");
+  setText(form, m["1n_countriesTaxResident"], "United States", recorder);
+  setText(form, m["1o_countriesBusinessConducted"], llcBusinessCountry.value, recorder);
 
-  check(form, m.box3_foreignOwnedUsDE);
+  check(form, m.box2_foreign50pct, recorder);
+  check(form, m.box3_foreignOwnedUsDE, recorder);
   // Initial-year box (1j): "this is the reporting corporation's INITIAL year of
   // existence", not "the first year in this package". The old gate was
   // `year === earliest selected year && earliest >= formationYear`, which ticked
@@ -263,49 +359,49 @@ function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number)
   // asserting an initial year we can't substantiate).
   const formationYear = formationYearOf(f);
   if (formationYear !== null && year === formationYear) {
-    check(form, m["1j_initialYear"]);
+    check(form, m["1j_initialYear"], recorder);
   }
 
   // Part II — direct 25% foreign shareholder (same as Part III for SMLLC)
-  setText(form, m["4a_nameAddress"], `${f.ownerName}\n${f.ownerAddress}`);
-  if (f.ownerItin) setText(form, m["4b1_usId"], f.ownerItin);
-  if (f.ownerReferenceId) setText(form, m["4b2_referenceId"], f.ownerReferenceId);
-  setText(form, m["4b3_ftin"], f.ownerFtin);
-  setText(form, m["4c_principalCountry"], ownerBusinessCountry);
-  setText(form, m["4d_citizenship"], ownerCitizenship);
-  setText(form, m["4e_taxResidence"], ownerTaxResidence);
+  setText(form, m["4a_nameAddress"], `${f.ownerName}\n${f.ownerAddress}`, recorder);
+  if (f.ownerItin) setText(form, m["4b1_usId"], f.ownerItin, recorder);
+  if (f.ownerReferenceId) setText(form, m["4b2_referenceId"], f.ownerReferenceId, recorder);
+  setText(form, m["4b3_ftin"], f.ownerFtin, recorder);
+  setText(form, m["4c_principalCountry"], ownerBusinessCountry, recorder);
+  setText(form, m["4d_citizenship"], ownerCitizenship, recorder);
+  setText(form, m["4e_taxResidence"], ownerTaxResidence, recorder);
 
   // Part III — related party (same person for SMLLC)
-  check(form, m.partIII_foreignPersonBox);
-  check(form, m["8e_25pctShareholder"]);
-  setText(form, m["8a_nameAddress"], `${f.ownerName}\n${f.ownerAddress}`);
-  if (f.ownerItin) setText(form, m["8b1_usId"], f.ownerItin);
-  if (f.ownerReferenceId) setText(form, m["8b2_referenceId"], f.ownerReferenceId);
-  setText(form, m["8b3_ftin"], f.ownerFtin);
-  setText(form, m["8c_businessActivity"], f.llcBusinessActivity);
+  check(form, m.partIII_foreignPersonBox, recorder);
+  check(form, m["8e_25pctShareholder"], recorder);
+  setText(form, m["8a_nameAddress"], `${f.ownerName}\n${f.ownerAddress}`, recorder);
+  if (f.ownerItin) setText(form, m["8b1_usId"], f.ownerItin, recorder);
+  if (f.ownerReferenceId) setText(form, m["8b2_referenceId"], f.ownerReferenceId, recorder);
+  setText(form, m["8b3_ftin"], f.ownerFtin, recorder);
+  setText(form, m["8c_businessActivity"], f.llcBusinessActivity, recorder);
   // 8d (related party's PBA CODE) mirrors Part I 1e for a sole-member DE
   // where the related party IS the controller of the reporting corp.
-  setText(form, m["8d_businessCode"], f.llcBusinessCode);
-  setText(form, m["8f_principalCountry"], ownerBusinessCountry);
-  setText(form, m["8g_taxResidence"], ownerTaxResidence);
+  setText(form, m["8d_businessCode"], f.llcBusinessCode, recorder);
+  setText(form, m["8f_principalCountry"], ownerBusinessCountry, recorder);
+  setText(form, m["8g_taxResidence"], ownerTaxResidence, recorder);
 
   // Part IV totals — zero (no inventory/services with the owner)
-  setText(form, m.line22_totalReceived, "0");
-  setText(form, m.line36_totalPaid, "0");
+  setText(form, m.line22_totalReceived, "0", recorder);
+  setText(form, m.line36_totalPaid, "0", recorder);
 
   // Part V — supporting statement attached
-  check(form, m.partV_attachedStatementBox);
+  check(form, m.partV_attachedStatementBox, recorder);
 
   // Part VII negatives
-  check(form, m.q37_imports_no);
-  check(form, m.q39_csa_no);
-  check(form, m.q40a_267A_no);
-  check(form, m.q41a_fdii_no);
-  check(form, m.q42a_safeHavenInRange_no);
-  check(form, m.q42b_safeHavenOutsideRange_no);
-  check(form, m.q43a_coveredDebt_no);
+  check(form, m.q37_imports_no, recorder);
+  check(form, m.q39_csa_no, recorder);
+  check(form, m.q40a_267A_no, recorder);
+  check(form, m.q41a_fdii_no, recorder);
+  check(form, m.q42a_safeHavenInRange_no, recorder);
+  check(form, m.q42b_safeHavenOutsideRange_no, recorder);
 
   flatten(form);
+  return { line1oSource: llcBusinessCountry.source };
 }
 
 // Form 1120 is filed PRO FORMA — purely as a transmittal for Form 5472.
@@ -318,7 +414,12 @@ function fillForm5472(pdf: PDFDocument, f: Filing, year: number, line1f: number)
 // (total assets) and 1m (date incorporated). Filling them mirrors the
 // 5472 data and removes the ambiguity at zero risk.
 // "Foreign-owned U.S. DE" is stamped across the top by stampDiirspHeader().
-async function fillForm1120(pdf: PDFDocument, f: Filing, year: number) {
+async function fillForm1120(
+  pdf: PDFDocument,
+  f: Filing,
+  year: number,
+  recorder: { form: string; writes: PdfFieldWrite[] },
+) {
   const form = pdf.getForm();
   // Total assets at year-end — mirror Form 5472 line 1c. Pull the year that
   // matches the 1120 we're rendering; fall back to 0 if no yearData row.
@@ -328,34 +429,33 @@ async function fillForm1120(pdf: PDFDocument, f: Filing, year: number) {
 
   if (year >= 2025) {
     const m = form1120_2025FieldMap;
-    setText(form, m["1a_name"], f.llcName);
+    setText(form, m.taxYearBeginning, `${periodStartFor(f, year)}/${year}`, recorder);
+    setText(form, m.taxYearEnding, periodEndFor(f, year), recorder);
+    setText(form, m.taxYearEndingYear2, String(year).slice(-2), recorder);
+    setText(form, m["1a_name"], f.llcName, recorder);
     // Split address into the structured 2025 fields when possible; otherwise
     // dump the full street into the street box.
-    setText(form, m["1_street"], f.llcAddress);
-    setText(form, m["1_city"], f.llcCity);
-    setText(form, m["1_state"], f.llcState);
-    setText(form, m["1_country"], f.llcCountry || "USA");
-    setText(form, m["1_zip"], f.llcZip);
-    setText(form, m.B_ein, f.llcEin);
-    setText(form, m.C_dateIncorporated, dateIncorporated);
-    setText(form, m.D_totalAssets, totalAssets);
+    setText(form, m["1_street"], f.llcAddress, recorder);
+    setText(form, m["1_city"], f.llcCity, recorder);
+    setText(form, m["1_state"], f.llcState, recorder);
+    setText(form, m["1_country"], f.llcCountry || "USA", recorder);
+    setText(form, m["1_zip"], f.llcZip, recorder);
+    setText(form, m.B_ein, f.llcEin, recorder);
+    setText(form, m.C_dateIncorporated, dateIncorporated, recorder);
+    setText(form, m.D_totalAssets, totalAssets, recorder);
   } else {
     const m = form1120_2024FieldMap;
-    setText(form, m["1a_name"], f.llcName);
-    setText(form, m["1_streetSuite"], f.llcAddress);
-    setText(form, m["1_cityStateCountryZip"], `${f.llcCity}, ${f.llcState} ${f.llcZip}`);
-    setText(form, m.B_ein, f.llcEin);
-    setText(form, m.C_dateIncorporated, dateIncorporated);
-    setText(form, m.D_totalAssets, totalAssets);
+    setText(form, m.taxYearBeginning, `${periodStartFor(f, year)}/${year}`, recorder);
+    setText(form, m.taxYearEnding, periodEndFor(f, year), recorder);
+    setText(form, m.taxYearEndingYear2, String(year).slice(-2), recorder);
+    setText(form, m["1a_name"], f.llcName, recorder);
+    setText(form, m["1_streetSuite"], f.llcAddress, recorder);
+    setText(form, m["1_cityStateCountryZip"], `${f.llcCity}, ${f.llcState} ${f.llcZip}`, recorder);
+    setText(form, m.B_ein, f.llcEin, recorder);
+    setText(form, m.C_dateIncorporated, dateIncorporated, recorder);
+    setText(form, m.D_totalAssets, totalAssets, recorder);
   }
 
-  // NOTE (short year): the 1120 header's own "tax year beginning / ending" line
-  // is an AcroForm field neither revision's map exposes, so rather than guess
-  // its name we state the short period with a free-text stamp (stampShortPeriod,
-  // applied in generatePackage just under the header stamp) for the dissolution
-  // year, and Form 5472 also carries it in its mapped period cells (see
-  // periodEndFor). Ordinary full years are left showing their calendar year.
-  //
   // Item E "Final return" belongs ONLY to the 1120 for the SHORT (dissolution)
   // year. In a multi-year DIIRSP catch-up the earlier years are ordinary,
   // complete returns — ticking "Final return" on them would misdeclare a still-
@@ -368,7 +468,7 @@ async function fillForm1120(pdf: PDFDocument, f: Filing, year: number) {
   const itemE: typeof form1120_2025FieldMap | typeof form1120_2024FieldMap =
     year >= 2025 ? form1120_2025FieldMap : form1120_2024FieldMap;
   if (f.isFinalReturn && isShortYear) {
-    if ("E_finalReturn" in itemE) check(form, itemE.E_finalReturn);
+    if ("E_finalReturn" in itemE) check(form, itemE.E_finalReturn, recorder);
   }
 
   // Item E "Initial return" is the mirror flag: this is the entity's FIRST tax
@@ -379,41 +479,111 @@ async function fillForm1120(pdf: PDFDocument, f: Filing, year: number) {
   // maps expose E_initialReturn (c1_6[0], probe-verified alongside c1_7[0]);
   // keep the key guard so a future unmapped revision skips it silently.
   if (formationYearOf(f) === year) {
-    if ("E_initialReturn" in itemE) check(form, itemE.E_initialReturn);
+    if ("E_initialReturn" in itemE) check(form, itemE.E_initialReturn, recorder);
   }
+
+  const signerTitleBounds = deriveSignerTitleColumnBounds(pdf, year);
 
   flatten(form);
 
-  // After flatten, stamp "Sole Member" into the signature-block "Title" slot.
-  // We draw OUTSIDE the form field because the title field's exact AcroForm
-  // name varies between IRS revisions and even between PDF generators; a
-  // free-form text stamp at known coordinates is more robust than trying to
-  // bind to f1_XX[0] field numbers that shift each revision. Coordinates are
-  // PDF points, bottom-left origin, calibrated to land in the "Title" cell to
-  // the right of the signature line on page 1's "Sign Here" block.
-  await stampTitleSoleMember(pdf, year);
+  // After flatten, stamp the configured signer title into the signature-block
+  // "Title" slot. We draw outside the field because the title field's AcroForm
+  // name shifts between IRS revisions; its widget rectangle is stable page
+  // geometry and gives us the true left/right edges.
+  await stampTitleSoleMember(pdf, signerTitleBounds);
 }
 
-async function stampTitleSoleMember(pdf: PDFDocument, year: number) {
+export function deriveSignerTitleColumnBounds(pdf: PDFDocument, year: number): SignerTitleColumnBounds {
+  const page = pdf.getPage(0);
+  const baselineY = year >= 2025 ? 90 : 108;
+  const candidates = pdf
+    .getForm()
+    .getFields()
+    .flatMap((field) => {
+      if (!(field instanceof PDFTextField)) return [];
+      return field.acroField.getWidgets().flatMap((widget) => {
+        const widgetPage = widget.P();
+        if (widgetPage && widgetPage !== page.ref) return [];
+        const rect = widget.getRectangle();
+        if (
+          Math.abs(rect.y - baselineY) > 0.5 ||
+          rect.x < 250 ||
+          rect.x > 500 ||
+          rect.width < 50 ||
+          rect.height > 20
+        ) {
+          return [];
+        }
+        return [{ fieldName: field.getName(), rect }];
+      });
+    })
+    .sort((a, b) => a.rect.x - b.rect.x);
+
+  if (candidates.length !== 1) {
+    throw new Error(`Could not derive Form 1120 signer title column for ${year}; found ${candidates.length} candidates.`);
+  }
+
+  const { fieldName, rect } = candidates[0];
+  return {
+    left: rect.x,
+    right: rect.x + rect.width,
+    baselineY,
+    measuredField: fieldName,
+  };
+}
+
+export function signerTitleStampPlacement(
+  bounds: SignerTitleColumnBounds,
+  font: PDFFont,
+  title: string,
+) {
+  const x = bounds.left + SIGNER_TITLE_COLUMN_INSET;
+  const maxWidth = bounds.right - bounds.left - 2 * SIGNER_TITLE_COLUMN_INSET;
+  const naturalWidth = font.widthOfTextAtSize(title, SIGNER_TITLE_MAX_SIZE);
+  const size =
+    naturalWidth <= maxWidth
+      ? SIGNER_TITLE_MAX_SIZE
+      : Math.max(SIGNER_TITLE_MIN_SIZE, (SIGNER_TITLE_MAX_SIZE * maxWidth) / naturalWidth);
+  const width = font.widthOfTextAtSize(title, size);
+  if (width > maxWidth) {
+    throw new Error(`Configured signer title does not fit the Form 1120 title column at ${SIGNER_TITLE_MIN_SIZE}pt.`);
+  }
+  return { x, y: bounds.baselineY, size, width, right: bounds.right };
+}
+
+async function stampTitleSoleMember(pdf: PDFDocument, bounds: SignerTitleColumnBounds) {
   const page = pdf.getPage(0);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
-  // Title cell sits to the right of the signature line and to the right of the
-  // date cell. Y coordinate matches the signature baseline (98 on 2024 rev,
-  // 113 on 2025 rev — same offset as SIG_PLACEMENT below).
-  const x = 410;
-  const y = year >= 2025 ? 113 : 98;
-  page.drawText("Sole Member", { x, y, size: 10, font, color: rgb(0, 0, 0) });
+  const placement = signerTitleStampPlacement(bounds, font, SIGNER_TITLE);
+  page.drawText(SIGNER_TITLE, {
+    x: placement.x,
+    y: placement.y,
+    size: placement.size,
+    font,
+    color: rgb(0, 0, 0),
+  });
 }
 
 // Build a brand-new PDF with the Part V supporting statement table.
-async function buildSupportingStatement(f: Filing, year: number): Promise<PDFDocument> {
+async function buildSupportingStatement(
+  f: Filing,
+  year: number,
+  authoredDocuments: AuthoredDocumentRecord[],
+): Promise<PDFDocument> {
   const yd = f.yearData.find((y) => y.taxYear === year);
-  const contributionsTotal = yd?.contributions ?? 0;
-  const distributionsTotal = yd?.distributions ?? 0;
   const otherNote = (yd?.otherTransactionsNote ?? "").trim();
   const allTx = yd?.reportableTransactions ?? [];
   const contributionsTx = allTx.filter((t) => t.category === "contribution");
   const distributionsTx = allTx.filter((t) => t.category === "distribution");
+  const contributionsTotal =
+    contributionsTx.length > 0
+      ? contributionsTx.reduce((s, t) => s + Math.abs(t.amountCents), 0) / 100
+      : (yd?.contributions ?? 0);
+  const distributionsTotal =
+    distributionsTx.length > 0
+      ? distributionsTx.reduce((s, t) => s + Math.abs(t.amountCents), 0) / 100
+      : (yd?.distributions ?? 0);
+  const drawnLines: string[] = [];
 
   const pdf = await PDFDocument.create();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
@@ -458,6 +628,7 @@ async function buildSupportingStatement(f: Filing, year: number): Promise<PDFDoc
       x = x - w;
     }
     page.drawText(text, { x, y, size, font: f, color: rgb(0, 0, 0) });
+    drawnLines.push(text);
   };
 
   // ---- Header ----
@@ -616,6 +787,7 @@ async function buildSupportingStatement(f: Filing, year: number): Promise<PDFDoc
     y -= 13;
   }
 
+  authoredDocuments.push({ kind: "partVStatement", taxYear: year, lines: drawnLines });
   return pdf;
 }
 
@@ -639,6 +811,13 @@ function formatTxDate(iso: string): string {
   return `${m[2]}/${m[3]}/${m[1]}`;
 }
 
+function formatFinalisedDate(date: Date): string {
+  const mm = String(date.getUTCMonth() + 1);
+  const dd = String(date.getUTCDate());
+  const yyyy = String(date.getUTCFullYear());
+  return `${mm}/${dd}/${yyyy}`;
+}
+
 // Width-based word wrap for variable-width fonts (the existing `wrap` helper
 // counts characters, which leaves columns ragged on monospace and clips wide
 // chars on Helvetica).
@@ -659,132 +838,61 @@ function wrapAtPx(text: string, f: import("pdf-lib").PDFFont, size: number, maxW
   return lines;
 }
 
+function formatTaxYearList(taxYears: number[]): string {
+  const years = taxYears.map(String);
+  if (years.length <= 2) return years.join(" and ");
+  return `${years.slice(0, -1).join(", ")} and ${years[years.length - 1]}`;
+}
+
+function taxYearLabel(taxYears: number[]): "Tax year" | "Tax years" {
+  return taxYears.length === 1 ? "Tax year" : "Tax years";
+}
+
+function taxYearNoun(taxYears: number[]): "tax year" | "tax years" {
+  return taxYears.length === 1 ? "tax year" : "tax years";
+}
+
 async function buildCoverLetter(
   f: Filing,
-  delinquentYears: number[],
-  // The tax year (if any) that is timely ONLY because a valid Form 7004
-  // extension moved its deadline. Null whenever no extension is in play, and
-  // also when the year would have been timely anyway — the sentence below is a
-  // statement to the IRS about why this return is on time, so it must never
-  // appear on a package where the extension is not what makes it on time.
-  extendedYear: number | null,
-  // The tax year (if any) whose timeliness CANNOT be asserted either way,
-  // because the customer answered "not sure" about a Form 7004. This letter is
-  // signed, so such a year must be excluded from BOTH the delinquent wording
-  // (a false admission) and the timely wording (a false claim) — it gets one
-  // deliberately conspicuous neutral sentence instead, which is what forces the
-  // accountant to resolve the answer in admin and regenerate before faxing.
-  unresolvedYear: number | null,
-  // Whether a reasonable cause statement is actually being attached to this
-  // package. The letter's "A reasonable cause statement is attached." sentence
-  // must track the real attachment decision, never a stale order flag.
-  attachRcs: boolean,
+  finalisedAt: Date,
+  authoredDocuments: AuthoredDocumentRecord[],
 ): Promise<PDFDocument> {
   const pdf = await PDFDocument.create();
   const page = pdf.addPage([612, 792]);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+  const drawnLines: string[] = [];
 
   let y = 750;
   const draw = (text: string, opts: { font?: typeof font; size?: number } = {}) => {
     page.drawText(text, { x: 50, y, size: opts.size ?? 10, font: opts.font ?? font });
+    drawnLines.push(text);
   };
 
-  draw("Internal Revenue Service", { font: bold });
+  if (IRS_MAIL_ADDRESS_DISPLAY_SINGLE_LINE !== IRS_MAIL_ADDRESS) {
+    throw new Error("Cover letter IRS address block no longer matches IRS_MAIL_ADDRESS.");
+  }
+  for (const line of IRS_MAIL_ADDRESS_DISPLAY_LINES) {
+    draw(line, { font: bold });
+    y -= 14;
+  }
   y -= 14;
-  draw("1973 Rulon White Blvd");
-  y -= 14;
-  draw("M/S 6112 Attn: PIN Unit");
-  y -= 14;
-  draw("Ogden, UT 84201");
+
+  draw(`Date: ${formatFinalisedDate(finalisedAt)}`);
   y -= 28;
 
-  draw(`Date: ${new Date().toLocaleDateString("en-US")}`);
-  y -= 28;
-
-  draw(`Re: Form 5472 + Pro Forma Form 1120 for ${f.llcName}`, { font: bold });
+  draw(`Re: ${COVER_LETTER_ENCLOSURE_PHRASE} for ${f.llcName}`, { font: bold });
   y -= 14;
   draw(`EIN: ${f.llcEin}`);
   y -= 14;
-  draw(`Tax year(s): ${f.taxYears.join(", ")}`);
+  const taxYearList = formatTaxYearList(f.taxYears);
+  draw(`${taxYearLabel(f.taxYears)}: ${taxYearList}`);
   y -= 28;
 
-  // Per-year status. The DIIRSP / late-filing language must name ONLY the years
-  // that are actually delinquent — the cover letter is signed, so declaring a
-  // timely year late would be a false statement. Symmetrically, a year whose
-  // timeliness is UNRESOLVED (`unresolvedYear`) is excluded from the timely
-  // wording too: it belongs to neither bucket, and only the neutral pending
-  // sentence at the end of the body may speak about it. Cases:
-  //   • some year(s) delinquent, nothing else in the package → the existing
-  //     DIIRSP wording, VERBATIM (the ordinary catch-up package, kept
-  //     byte-for-byte stable);
-  //   • some delinquent + timely and/or unresolved years → DIIRSP naming ONLY
-  //     the late years, plus a sentence naming the timely one(s) if any;
-  //   • no delinquent years → the timely wording, which names the years
-  //     explicitly whenever an unresolved year is present so "the tax year(s)
-  //     indicated" can never sweep it in;
-  //   • nothing to assert at all (single-year "not sure") → no status sentence.
-  const timelyYears = f.taxYears.filter(
-    (y) => !delinquentYears.includes(y) && y !== unresolvedYear,
-  );
-  // The attachment claim is derived from the ONE attachment decision, so the
-  // letter can never promise a statement the package does not contain.
-  const rcsClause = attachRcs ? ` A reasonable cause statement is attached.` : ``;
-  const dPlural = delinquentYears.length > 1;
-  const tPlural = timelyYears.length > 1;
-  let statusSentence: string;
-  if (delinquentYears.length > 0) {
-    if (timelyYears.length === 0 && unresolvedYear == null) {
-      statusSentence =
-        `These filings are being submitted under the Delinquent International Information ` +
-        `Return Submission Procedures (DIIRSP).` +
-        rcsClause;
-    } else {
-      statusSentence =
-        `The filing${dPlural ? "s" : ""} for tax year${dPlural ? "s" : ""} ${delinquentYears.join(", ")} ` +
-        `${dPlural ? "are" : "is"} being submitted under the Delinquent International Information ` +
-        `Return Submission Procedures (DIIRSP).` +
-        rcsClause;
-      if (timelyYears.length > 0) {
-        statusSentence +=
-          ` This package also includes a timely filed return for tax year${tPlural ? "s" : ""} ${timelyYears.join(", ")}.`;
-      }
-    }
-  } else if (timelyYears.length > 0) {
-    statusSentence =
-      unresolvedYear == null
-        ? `These are timely filed for the tax year(s) indicated.`
-        : `The return${tPlural ? "s" : ""} for tax year${tPlural ? "s" : ""} ${timelyYears.join(", ")} ` +
-          `${tPlural ? "are" : "is"} timely filed.`;
-  } else {
-    // Every year in the package is unresolved — assert nothing here; the
-    // pending sentence below carries the whole story.
-    statusSentence = ``;
-  }
-  // One extra sentence when a Form 7004 is what keeps the latest year timely.
-  // Appended AFTER statusSentence so the all-late and mixed wordings above stay
-  // byte-for-byte what they were. Fires only for a VALID extension, which is
-  // mutually exclusive with `unresolvedYear` (an unclear answer can never be
-  // valid), so these two sentences never both describe the same year.
-  const extensionSentence =
-    extendedYear == null
-      ? ""
-      : ` The return for tax year ${extendedYear} is timely filed under a Form 7004 ` +
-        `extension of time to file.`;
-  // Deliberately conspicuous: it claims neither timeliness nor delinquency and
-  // reads as an open question, so a package that reaches the accountant with
-  // this sentence in it visibly demands the 7004 answer before it is faxed.
-  const pendingSentence =
-    unresolvedYear == null
-      ? ""
-      : ` The return for tax year ${unresolvedYear} is enclosed; its timeliness ` +
-        `determination is pending confirmation of a Form 7004 extension of time to file.`;
   const body = [
-    `Enclosed please find Form 5472 with attached pro forma Form 1120 for the above ` +
-      `foreign-owned U.S. disregarded entity, for the tax year(s) listed.`,
-    statusSentence,
-    extensionSentence,
-    pendingSentence,
+    `Enclosed please find ${COVER_LETTER_ENCLOSURE_PHRASE} for ${f.llcName}.`,
+    `The entity's EIN is ${f.llcEin}.`,
+    `The package covers ${taxYearNoun(f.taxYears)} ${taxYearList}.`,
   ]
     .map((s) => s.trim())
     .filter((s) => s.length > 0)
@@ -796,16 +904,23 @@ async function buildCoverLetter(
   }
   y -= 28;
 
-  draw("Signed:", { font: bold });
+  draw(AUTHORED_DOC_SIGNATURE_HEADING, { font: bold });
   y -= 28;
   draw("________________________________________");
   y -= 14;
-  draw(`${f.ownerName}, Owner`);
+  draw(f.ownerName);
+  y -= 14;
+  draw(SIGNER_TITLE);
 
+  authoredDocuments.push({ kind: "coverLetter", lines: drawnLines });
   return pdf;
 }
 
-async function buildReasonableCause(f: Filing, delinquentYears: number[]): Promise<PDFDocument> {
+async function buildReasonableCause(
+  f: Filing,
+  delinquentYears: number[],
+  authoredDocuments: AuthoredDocumentRecord[],
+): Promise<PDFDocument> {
   const pdf = await PDFDocument.create();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
@@ -826,6 +941,7 @@ async function buildReasonableCause(f: Filing, delinquentYears: number[]): Promi
 
   let page = pdf.addPage([PAGE_W, PAGE_H]);
   let y = MARGIN_TOP;
+  const drawnLines: string[] = [];
 
   const ensureSpace = (needed: number) => {
     if (y - needed < MARGIN_BOTTOM) {
@@ -843,6 +959,7 @@ async function buildReasonableCause(f: Filing, delinquentYears: number[]): Promi
       size: opts.size ?? 10,
       font: opts.font ?? font,
     });
+    drawnLines.push(text);
   };
   const drawParagraph = (text: string, opts: { font?: typeof font; size?: number } = {}) => {
     const f = opts.font ?? font;
@@ -977,16 +1094,17 @@ async function buildReasonableCause(f: Filing, delinquentYears: number[]): Promi
 
   // ---- Signature block ----
   ensureSpace(60);
-  drawLine("Signed under penalties of perjury:", { font: bold });
+  drawLine(AUTHORED_DOC_SIGNATURE_HEADING, { font: bold });
   space(28);
   drawLine("________________________________________");
   space(14);
   drawLine(`${f.ownerName}`);
   space(12);
-  drawLine(`Sole Member, ${f.llcName}`);
+  drawLine(`${SIGNER_TITLE}, ${f.llcName}`);
   space(12);
   drawLine("Date: ______________________");
 
+  authoredDocuments.push({ kind: "reasonableCauseStatement", lines: drawnLines });
   return pdf;
 }
 
@@ -1055,11 +1173,21 @@ export type GeneratedPackage = {
   bytes: Uint8Array;
   signatures: SignatureLocation[];
   totalPages: number;
+  record: PackageRecord;
 };
 
-export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
+export async function generatePackage(
+  f: Filing,
+  finalisedAt: Date = new Date(),
+): Promise<GeneratedPackage> {
+  assertIrsJuratUntouched();
   const out = await PDFDocument.create();
   const signatures: SignatureLocation[] = [];
+  const authoredDocuments: AuthoredDocumentRecord[] = [];
+  const pageOrder: PackagePageRecord[] = [];
+  const recordYears: PackageRecordYear[] = [];
+  const generatedAt = new Date();
+  const commit = process.env.VERCEL_GIT_COMMIT_SHA ?? "local";
 
   // Per-year delinquency. A bundled package can mix late years with a timely one
   // (e.g. a DIIRSP catch-up that ends with a final short year whose deadline
@@ -1084,23 +1212,13 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
     isYearDelinquent(y, dissolvedForDeadline, y === maxTaxYear ? extension : null),
   );
 
-  // Is the latest year timely BECAUSE of the extension? Only then does the
-  // cover letter cite the 7004: a year whose original deadline hasn't passed
-  // yet is timely on its own and needs no explanation.
-  const extendedYear =
-    maxTaxYear != null &&
-    isExtensionValid(maxTaxYear, dissolvedForDeadline, extension) &&
-    !delinquentYears.includes(maxTaxYear) &&
-    isYearDelinquent(maxTaxYear, dissolvedForDeadline, null)
-      ? maxTaxYear
-      : null;
-
   // "Not sure" about a Form 7004 asserts NEITHER timeliness nor delinquency.
   // isYearDelinquent() already keeps such a year out of delinquentYears; this
   // names it so the cover letter can also keep it out of the TIMELY wording,
   // which it would otherwise fall into by default. Only the latest year can
   // carry extension facts, so only it can ever be unresolved.
-  const unresolvedYear = maxTaxYear != null && extensionUnclear(extension) ? maxTaxYear : null;
+  const unresolvedYear =
+    maxTaxYear != null && extensionUnclear(extension, maxTaxYear, dissolvedForDeadline) ? maxTaxYear : null;
 
   // ── The single source of truth for the reasonable cause statement ──────────
   // Everything about the RCS — whether the page is rendered, whether the cover
@@ -1115,8 +1233,10 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
   // no narrative on file there is simply nothing truthful to attach.
   const attachRcs = delinquentYears.length > 0 && !!f.reasonableCauseNarrative?.trim();
 
-  const cover = await buildCoverLetter(f, delinquentYears, extendedYear, unresolvedYear, attachRcs);
+  const cover = await buildCoverLetter(f, finalisedAt, authoredDocuments);
+  const coverStartPage = out.getPageCount() + 1;
   await copyAll(out, cover);
+  pageOrder.push({ label: "Cover letter", startPage: coverStartPage, endPage: out.getPageCount() });
   // Cover letter signature line is at the bottom of the (single) cover page.
   signatures.push({
     label: "Cover letter",
@@ -1128,8 +1248,14 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
   // Rendered iff `attachRcs` — the same boolean the cover letter's attachment
   // sentence reads, so the letter and the package can never disagree.
   if (attachRcs) {
-    const rcs = await buildReasonableCause(f, delinquentYears);
+    const rcs = await buildReasonableCause(f, delinquentYears, authoredDocuments);
+    const rcsStartPage = out.getPageCount() + 1;
     await copyAll(out, rcs);
+    pageOrder.push({
+      label: "Reasonable Cause Statement",
+      startPage: rcsStartPage,
+      endPage: out.getPageCount(),
+    });
     signatures.push({
       label: "Reasonable Cause Statement",
       page: out.getPageCount(),
@@ -1139,8 +1265,8 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
   }
 
   for (const year of f.taxYears) {
-    const yd = f.yearData.find((y) => y.taxYear === year);
-    const line1f = (yd?.contributions ?? 0) + (yd?.distributions ?? 0);
+    const partVRows = partVRowsForYear(f, year);
+    const line1f = roundedPartVTotalDollars(partVRows);
     // Per-year, not per-package: only THIS year's forms carry the DIIRSP banner,
     // and only if this year is actually late. A timely year bundled alongside
     // late ones gets the plain header.
@@ -1151,7 +1277,8 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
     // year is technically incorrect and one of the most common DIIRSP gotchas.
     const f1120FormName = year >= 2025 ? "f1120--2025.pdf" : "f1120--2024.pdf";
     const f1120 = await loadBlank(f1120FormName);
-    await fillForm1120(f1120, f, year);
+    const f1120Writes: PdfFieldWrite[] = [];
+    await fillForm1120(f1120, f, year, { form: `1120-${year}`, writes: f1120Writes });
     if (yearDelinquent) await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE — DIIRSP");
     else await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE");
     // Short-period annotation. A year is short when it starts after Jan 1 (the
@@ -1169,35 +1296,117 @@ export async function generatePackage(f: Filing): Promise<GeneratedPackage> {
           ? "(initial and final return)"
           : isFinalYear
             ? "(final return)"
-            : `(initial return — formed ${periodStart}/${year})`;
+            : `(initial return - formed ${periodStart}/${year})`;
       await stampShortPeriod(f1120, `${periodStart}/${year}`, `${periodEnd}/${year}`, suffix);
     }
     const f1120FirstPage = out.getPageCount() + 1; // 1-based, captured before merge
     await copyAll(out, f1120);
+    pageOrder.push({
+      label: "Form 1120",
+      taxYear: year,
+      startPage: f1120FirstPage,
+      endPage: out.getPageCount(),
+    });
     // Form 1120's "Sign Here" box sits at the bottom of the first page.
     // 2025 revision shifted the box up ~14pt vs 2024 — use the per-revision
     // placement so the signature lands on the blank line in both cases.
     signatures.push({
       label: `Form 1120 — tax year ${year}`,
       page: f1120FirstPage,
-      instruction: 'Sign and date in the "Sign Here" box at the bottom of the first page. Enter "Sole Member" as your title.',
+      instruction: `Sign and date in the "Sign Here" box at the bottom of the first page. Enter "${SIGNER_TITLE}" as your title.`,
       ...(year >= 2025 ? SIG_PLACEMENT.f1120_2025 : SIG_PLACEMENT.f1120_2024),
     });
 
     const f5472 = await loadBlank("f5472.pdf");
-    fillForm5472(f5472, f, year, line1f);
+    const f5472Writes: PdfFieldWrite[] = [];
+    const f5472Result = fillForm5472(f5472, f, year, line1f, {
+      form: `5472-${year}`,
+      writes: f5472Writes,
+    });
     if (yearDelinquent) await stampDiirspHeader(f5472, "FOREIGN-OWNED U.S. DE — DIIRSP");
     else await stampDiirspHeader(f5472, "FOREIGN-OWNED U.S. DE");
+    const f5472StartPage = out.getPageCount() + 1;
     await copyAll(out, f5472);
+    pageOrder.push({
+      label: "Form 5472",
+      taxYear: year,
+      startPage: f5472StartPage,
+      endPage: out.getPageCount(),
+    });
     // Form 5472 itself does not require a separate signature — the Form 1120
     // signature covers it (5472 is an attachment to 1120).
 
-    const supporting = await buildSupportingStatement(f, year);
+    const supporting = await buildSupportingStatement(f, year, authoredDocuments);
+    const supportingStartPage = out.getPageCount() + 1;
     await copyAll(out, supporting);
+    pageOrder.push({
+      label: "Part V Statement",
+      taxYear: year,
+      startPage: supportingStartPage,
+      endPage: out.getPageCount(),
+    });
+
+    recordYears.push({
+      taxYear: year,
+      periodStart,
+      periodEnd,
+      status: unresolvedYear === year ? "unresolved" : yearDelinquent ? "late" : "timely",
+      isInitialYear,
+      isFinalYear,
+      line1oSource: f5472Result.line1oSource,
+      line1f,
+      line1g: 1,
+      line1h: line1f,
+      partVTotalRounded: line1f,
+      partVRows,
+      form1120: {
+        fields: f1120Writes,
+        stampedTexts: [
+          yearDelinquent ? "FOREIGN-OWNED U.S. DE — DIIRSP" : "FOREIGN-OWNED U.S. DE",
+          ...(isInitialYear || isFinalYear
+            ? [
+                `Short tax year: ${periodStart}/${year} - ${periodEnd}/${year} ${
+                  isInitialYear && isFinalYear
+                    ? "(initial and final return)"
+                    : isFinalYear
+                      ? "(final return)"
+                      : `(initial return - formed ${periodStart}/${year})`
+                }`,
+              ]
+            : []),
+        ],
+      },
+      form5472: { fields: f5472Writes },
+      reasonableCauseIncluded: attachRcs && delinquentYears.includes(year),
+    });
   }
 
+  out.setTitle("Form 5472 package");
+  out.setProducer(`form5472prep generator ${GENERATOR_VERSION}`);
+  out.setKeywords([
+    `version=${GENERATOR_VERSION}`,
+    `commit=${commit}`,
+    `generatedAt=${generatedAt.toISOString()}`,
+  ]);
   const bytes = await out.save();
-  return { bytes, signatures, totalPages: out.getPageCount() };
+  return {
+    bytes,
+    signatures,
+    totalPages: out.getPageCount(),
+    record: {
+      generatorVersion: GENERATOR_VERSION,
+      commit,
+      generatedAt: generatedAt.toISOString(),
+      finalisedAt: finalisedAt.toISOString(),
+      llcName: f.llcName,
+      ownerName: f.ownerName,
+      formationDate: f.llcDateIncorporated ? new Date(f.llcDateIncorporated).toISOString() : null,
+      dissolutionDate: f.isFinalReturn && f.dissolvedAt ? new Date(f.dissolvedAt).toISOString() : null,
+      taxYears: recordYears,
+      authoredDocuments,
+      pageOrder,
+    },
+  };
 }
 
 async function copyAll(dest: PDFDocument, src: PDFDocument) {

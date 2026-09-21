@@ -10,12 +10,46 @@ const db = vi.hoisted(() => ({
   createLog: vi.fn((args: unknown) => ({ op: "log.create", args })),
   transaction: vi.fn(async (ops: unknown[]) => ops),
 }));
+const fax = vi.hoisted(() => ({
+  submitFax: vi.fn(async () => ({ id: "fax_job_1", status: "queued" })),
+}));
+const storage = vi.hoisted(() => ({
+  get: vi.fn(async () => new Uint8Array([1, 2, 3])),
+  put: vi.fn(),
+  putPdf: vi.fn(),
+  publicUrl: vi.fn(async () => "https://example.test/faxed.pdf"),
+}));
+const pdf = vi.hoisted(() => ({
+  generatePackage: vi.fn(async () => ({
+    bytes: new Uint8Array([37, 80, 68, 70]),
+    signatures: [],
+    record: { generatorVersion: "test-version", commit: "test-commit" },
+  })),
+  runPreflight: vi.fn(async () => ({ ok: true, failures: [], warnings: [] })),
+}));
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     filing: { findUnique: db.findUnique, update: db.update },
     filingChangeLog: { create: db.createLog },
     $transaction: db.transaction,
+  },
+}));
+vi.mock("@/lib/fax", () => ({ submitFax: fax.submitFax }));
+vi.mock("@/lib/storage", () => ({
+  get: storage.get,
+  put: storage.put,
+  putPdf: storage.putPdf,
+  publicUrl: storage.publicUrl,
+}));
+vi.mock("@/lib/pdf/generatePackage", () => ({
+  generatePackage: pdf.generatePackage,
+}));
+vi.mock("@/lib/pdf/preflight", () => ({ runPreflight: pdf.runPreflight }));
+vi.mock("@/lib/env", () => ({
+  env: {
+    appUrl: "https://example.test",
+    telnyx: { destination: "+18558877737" },
   },
 }));
 
@@ -144,7 +178,7 @@ describe("updateField — Form 7004 grouped rules", () => {
     expect(db.update).not.toHaveBeenCalled();
   });
 
-  it("rejects extensionFiled='yes' when no transmittal date is stored or provided", async () => {
+  it("accepts extensionFiled='yes' when no transmittal date is stored or provided", async () => {
     givenFiling({ extensionFiled: null, extensionTransmittedAt: null });
 
     await expect(
@@ -154,8 +188,9 @@ describe("updateField — Form 7004 grouped rules", () => {
         { field: "extensionFiled", value: "yes" },
         { adminId: "admin_1" },
       ),
-    ).rejects.toMatchObject({ code: "extension_date_required", status: 400 });
-    expect(db.update).not.toHaveBeenCalled();
+    ).resolves.toMatchObject({ ok: true, field: "extensionFiled", after: "yes" });
+
+    expect(updatedData()).toEqual({ extensionFiled: "yes", isDiirsp: false });
   });
 
   it("recomputes isDiirsp: a valid stored 7004 makes the latest year timely again", async () => {
@@ -188,5 +223,219 @@ describe("updateField — Form 7004 grouped rules", () => {
     );
 
     expect(updatedData()).toEqual({ isDiirsp: false });
+  });
+});
+
+describe("regeneratePdf", () => {
+  const initialFiling = {
+    id: "filing_1",
+    status: "PDF_GENERATED",
+    llcName: "Acme LLC",
+    taxYears: [2026],
+    signedPdfKey: "signed.pdf",
+    generatedPdfKey: "old.pdf",
+    preflightStatus: "passed",
+    preflightOverrideBy: "admin_old",
+    preflightOverrideAt: new Date("2026-09-20T00:00:00.000Z"),
+    user: { id: "u1", email: "a@b.com" },
+  };
+
+  const packageFiling = {
+    llcName: "Acme LLC",
+    llcEin: "12-3456789",
+    llcAddress: "123 Main St",
+    llcCity: "Miami",
+    llcState: "FL",
+    llcZip: "33101",
+    llcCountry: "USA",
+    llcCountryBusiness: "United States",
+    llcDateIncorporated: new Date("2026-01-01T00:00:00.000Z"),
+    llcBusinessActivity: "Investment holding",
+    llcBusinessCode: "523900",
+    ownerName: "Owner One",
+    ownerAddress: "1 Queen Road, Hong Kong",
+    ownerCountryCitizenship: "Hong Kong",
+    ownerCountryTaxResidence: "Hong Kong",
+    ownerCountryBusiness: "Hong Kong",
+    ownerFtin: "HK123",
+    ownerItin: null,
+    ownerReferenceId: "OWNER1",
+    taxYears: [2026],
+    isDiirsp: false,
+    isFinalReturn: false,
+    dissolvedAt: null,
+    extensionFiled: "no",
+    extensionTransmittedAt: null,
+    reasonableCauseNarrative: null,
+    yearData: [],
+  };
+
+  beforeEach(() => {
+    db.findUnique.mockReset();
+    db.update.mockClear();
+    db.createLog.mockClear();
+    db.transaction.mockClear();
+    pdf.generatePackage.mockClear();
+    pdf.runPreflight.mockClear();
+    storage.putPdf.mockClear();
+  });
+
+  it.each(["SIGNED_UPLOADED", "FAXED", "CONFIRMED"] as const)(
+    "throws 409 for %s filings",
+    async (status) => {
+      db.findUnique.mockResolvedValue({ ...initialFiling, status });
+
+      await expect(
+        runFilingAction("filing_1", "regeneratePdf", {}, { adminId: "admin_1" }),
+      ).rejects.toMatchObject({
+        status: 409,
+        code: "already_signed_or_filed",
+        message: "This filing has been signed or faxed. Its package cannot be regenerated.",
+      });
+      expect(pdf.generatePackage).not.toHaveBeenCalled();
+      expect(db.update).not.toHaveBeenCalled();
+    },
+  );
+
+  it("allows PDF_GENERATED regeneration and clears the pre-flight override", async () => {
+    db.findUnique
+      .mockResolvedValueOnce(initialFiling)
+      .mockResolvedValueOnce(packageFiling);
+
+    await expect(
+      runFilingAction("filing_1", "regeneratePdf", {}, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true });
+
+    const data = (db.update.mock.calls.at(-1)?.[0] as { data: Record<string, unknown> }).data;
+    expect(data).toMatchObject({
+      signedPdfKey: null,
+      preflightOverrideBy: null,
+      preflightOverrideAt: null,
+      status: "PDF_GENERATED",
+    });
+  });
+});
+
+describe("retryFax pre-flight gate", () => {
+  const filing = {
+    id: "filing_1",
+    status: "SIGNED_UPLOADED",
+    llcName: "Acme LLC",
+    taxYears: [2026],
+    isFinalReturn: false,
+    dissolvedAt: null,
+    extensionFiled: "no",
+    extensionTransmittedAt: null,
+    reasonableCauseNarrative: null,
+    signedPdfKey: "signed.pdf",
+    faxedPdfKey: null,
+    faxJobId: null,
+    faxStatus: null,
+    preflightStatus: "passed",
+    preflightOverrideBy: null,
+    user: { id: "u1", email: "a@b.com" },
+  };
+
+  beforeEach(() => {
+    db.findUnique.mockReset();
+    db.update.mockClear();
+    db.createLog.mockClear();
+    db.transaction.mockClear();
+    fax.submitFax.mockClear();
+    storage.get.mockClear();
+    storage.putPdf.mockClear();
+    storage.publicUrl.mockClear();
+  });
+
+  it("throws 409 and does not call submitFax when failed pre-flight has no override", async () => {
+    db.findUnique.mockResolvedValue({
+      ...filing,
+      preflightStatus: "failed",
+      preflightOverrideBy: null,
+    });
+
+    await expect(
+      runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 409, code: "preflight_failed" });
+    expect(fax.submitFax).not.toHaveBeenCalled();
+  });
+
+  it("calls submitFax when failed pre-flight has an override", async () => {
+    db.findUnique.mockResolvedValue({
+      ...filing,
+      preflightStatus: "failed",
+      preflightOverrideBy: "admin_1",
+    });
+
+    await runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1" });
+
+    expect(fax.submitFax).toHaveBeenCalledWith({
+      mediaUrl: "https://example.test/faxed.pdf",
+      to: "+18558877737",
+    });
+  });
+
+  it("calls submitFax when pre-flight passed without an override", async () => {
+    db.findUnique.mockResolvedValue({
+      ...filing,
+      preflightStatus: "passed",
+      preflightOverrideBy: null,
+    });
+
+    await runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1" });
+
+    expect(fax.submitFax).toHaveBeenCalled();
+  });
+});
+
+describe("approvePreflightOverride", () => {
+  const filing = {
+    id: "filing_1",
+    status: "PDF_GENERATED",
+    llcName: "Acme LLC",
+    taxYears: [2026],
+    preflightStatus: "failed",
+    preflightOverrideBy: null,
+    preflightOverrideAt: null,
+    user: { id: "u1", email: "a@b.com" },
+  };
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-09-22T12:00:00.000Z"));
+    db.findUnique.mockReset();
+    db.update.mockClear();
+    db.createLog.mockClear();
+    db.transaction.mockClear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("throws when pre-flight has not failed", async () => {
+    db.findUnique.mockResolvedValue({ ...filing, preflightStatus: "passed" });
+
+    await expect(
+      runFilingAction("filing_1", "approvePreflightOverride", {}, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 409, code: "preflight_not_failed" });
+    expect(db.update).not.toHaveBeenCalled();
+  });
+
+  it("records admin approval and logs the change", async () => {
+    db.findUnique.mockResolvedValue(filing);
+
+    await runFilingAction("filing_1", "approvePreflightOverride", {}, { adminId: "admin_1" });
+
+    const data = (db.update.mock.calls.at(-1)?.[0] as { data: Record<string, unknown> }).data;
+    expect(data.preflightOverrideBy).toBe("admin_1");
+    expect(data.preflightOverrideAt).toBeInstanceOf(Date);
+    expect(db.createLog).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        filingId: "filing_1",
+        adminId: "admin_1",
+        field: "preflightOverride",
+      }),
+    }));
   });
 });

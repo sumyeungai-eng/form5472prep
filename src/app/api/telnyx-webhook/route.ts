@@ -257,6 +257,12 @@ export async function POST(req: Request) {
     // (faxedPdfKey) when present, falling back to signedPdfKey.
     const faxSource = filing.faxedPdfKey ?? filing.signedPdfKey;
     if (retryCount < MAX_RETRIES && faxSource) {
+      if (filing.preflightStatus === "failed" && !filing.preflightOverrideBy) {
+        console.error(
+          `[telnyx-webhook] ${filing.id} fax retry held: Fax held: this package failed pre-flight checks. An admin must review it.`,
+        );
+        return NextResponse.json({ ok: true, held: "preflight_failed" });
+      }
       // Atomic retry claim — race-safe against a duplicate/overlapping
       // fax.failed redelivery. Pin the CURRENT faxJobId AND faxStatus so two
       // concurrent events can't both pass and both re-fax the IRS: Postgres

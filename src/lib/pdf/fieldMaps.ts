@@ -77,6 +77,9 @@ export const form5472FieldMap = {
 } as const;
 
 export const form1120_2024FieldMap = {
+  taxYearBeginning: "topmostSubform[0].Page1[0].PgHeader[0].f1_1[0]",
+  taxYearEnding: "topmostSubform[0].Page1[0].PgHeader[0].f1_2[0]",
+  taxYearEndingYear2: "topmostSubform[0].Page1[0].PgHeader[0].f1_3[0]",
   "1a_name": "topmostSubform[0].Page1[0].TypeOrPrintBox[0].f1_4[0]",
   "1_streetSuite": "topmostSubform[0].Page1[0].TypeOrPrintBox[0].f1_5[0]",
   "1_cityStateCountryZip": "topmostSubform[0].Page1[0].TypeOrPrintBox[0].f1_6[0]",
@@ -100,6 +103,9 @@ export const form1120_2024FieldMap = {
 // into 7 separate fields (was 3), and item B (EIN), C (date), D (total assets)
 // shift downward in the numbering accordingly.
 export const form1120_2025FieldMap = {
+  taxYearBeginning: "topmostSubform[0].Page1[0].PgHeader[0].f1_1[0]",
+  taxYearEnding: "topmostSubform[0].Page1[0].PgHeader[0].f1_2[0]",
+  taxYearEndingYear2: "topmostSubform[0].Page1[0].PgHeader[0].f1_3[0]",
   "1a_name":      "topmostSubform[0].Page1[0].NameFieldsReadOrder[0].f1_4[0]",
   "1_street":     "topmostSubform[0].Page1[0].NameFieldsReadOrder[0].f1_5[0]",
   "1_roomSuite":  "topmostSubform[0].Page1[0].NameFieldsReadOrder[0].f1_6[0]",

@@ -25,6 +25,7 @@ import { formatUsd } from "@/lib/utils";
 import { fireMetaInitiateCheckout } from "@/lib/analytics/meta";
 import { DocumentsUploader } from "@/components/DocumentsUploader";
 import { DeterminationFlag } from "@/components/wizard/DeterminationFlag";
+import { requiresReasonableCause } from "@/lib/completeness";
 
 // Generates a self-assigned Reference ID for Form 5472 when the customer
 // leaves the field blank. Uses last-name + first-initial as a human-readable
@@ -330,18 +331,34 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
     onFilingChange?.(filing);
   }, [filing, onFilingChange]);
 
-  // RCS step only shown when DIIRSP.
+  // RCS step only shown when the live filing-status gate requires it.
   const steps: { key: StepKey; label: string }[] = useMemo(() => {
     const base: { key: StepKey; label: string }[] = [
       { key: "entity", label: "Entity" },
       { key: "owner", label: "Owner" },
       { key: "years", label: "Tax years" },
     ];
-    if (filing.isDiirsp) base.push({ key: "rcs", label: "Reasonable cause" });
+    if (
+      requiresReasonableCause({
+        taxYears: filing.taxYears,
+        isFinalReturn: filing.isFinalReturn,
+        dissolvedAt: filing.dissolvedAt,
+        extensionFiled: filing.extensionFiled,
+        extensionTransmittedAt: filing.extensionTransmittedAt,
+      })
+    ) {
+      base.push({ key: "rcs", label: "Reasonable cause" });
+    }
     base.push({ key: "transactions", label: "Transactions" });
     base.push({ key: "review", label: "Review" });
     return base;
-  }, [filing.isDiirsp]);
+  }, [
+    filing.taxYears,
+    filing.isFinalReturn,
+    filing.dissolvedAt,
+    filing.extensionFiled,
+    filing.extensionTransmittedAt,
+  ]);
 
   // Internal-vs-controlled step state. Controlled wins when `step` is
   // explicitly passed by the parent.
@@ -390,7 +407,7 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
       // Form 7004 facts survive unchanged.
       ...(data.extension ?? {}),
     });
-    setFiling({
+    const nextFiling: Filing = {
       ...filing,
       taxYears: updated.taxYears,
       isDiirsp: updated.isDiirsp,
@@ -405,9 +422,17 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
         updated.extensionMethod ?? data.extension?.extensionMethod ?? null,
       extensionDestination:
         updated.extensionDestination ?? data.extension?.extensionDestination ?? null,
-    });
+    };
+    setFiling(nextFiling);
     if (advance) {
-      setStepKey(updated.isDiirsp ? "rcs" : "transactions");
+      const needsReasonableCause = requiresReasonableCause({
+        taxYears: nextFiling.taxYears,
+        isFinalReturn: nextFiling.isFinalReturn,
+        dissolvedAt: nextFiling.dissolvedAt,
+        extensionFiled: nextFiling.extensionFiled,
+        extensionTransmittedAt: nextFiling.extensionTransmittedAt,
+      });
+      setStepKey(needsReasonableCause ? "rcs" : "transactions");
     }
     return updated;
   }
@@ -1561,9 +1586,6 @@ function YearsStep({
       return null;
     }
     if (extensionWindowOpen && extensionFiled === null) return null;
-    if (showExtensionSection && extensionFiled === "yes" && !extensionTransmittedAt) {
-      return null;
-    }
     return {
       ...parsed.data,
       isFinalReturn,
@@ -1636,14 +1658,6 @@ function YearsStep({
           return;
         }
         setExtensionAnswerError(null);
-        // A "yes" without a transmittal date is unusable: isExtensionValid()
-        // can't compare an absent date to the deadline, so it would silently
-        // fall back to "not extended" — the exact misclassification this gate
-        // exists to prevent. Mirrors the server's own required-when-yes rule.
-        if (showExtensionSection && extensionFiled === "yes" && !extensionTransmittedAt) {
-          setExtensionDateError("Enter the date you sent Form 7004");
-          return;
-        }
         setExtensionDateError(null);
         await onSubmit({
           ...data,
@@ -1866,7 +1880,7 @@ function YearsStep({
           {extensionFiled === "yes" && (
             <div className="mt-4 space-y-3">
               <Field
-                label="Date you sent Form 7004"
+                label="Date you sent Form 7004 (optional)"
                 hint="The day it was faxed or postmarked — not the day you prepared it."
                 error={extensionDateError ?? undefined}
               >
@@ -1877,7 +1891,6 @@ function YearsStep({
                     setExtensionTransmittedAt(e.target.value);
                     if (extensionDateError) setExtensionDateError(null);
                   }}
-                  aria-required
                 />
               </Field>
               {/* Amber, not red: a late 7004 is a real answer worth saving, it
@@ -1890,7 +1903,7 @@ function YearsStep({
                   we&apos;ll include a reasonable-cause statement protecting you.
                 </div>
               )}
-              <Field label="How did you send it?">
+              <Field label="How did you send it? (optional)">
                 <Select
                   value={extensionMethod}
                   onChange={(e) => setExtensionMethod(e.target.value)}
@@ -1902,7 +1915,7 @@ function YearsStep({
                   <option value="not_sure">Not sure</option>
                 </Select>
               </Field>
-              <Field label="Where did you send it?">
+              <Field label="Where did you send it? (optional)">
                 <Select
                   value={extensionDestination}
                   onChange={(e) => setExtensionDestination(e.target.value)}

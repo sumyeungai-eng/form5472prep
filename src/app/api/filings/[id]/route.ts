@@ -316,23 +316,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       }
     }
 
-    // "Yes" without a date is the one hard error: isExtensionValid compares the
-    // transmission date against the original due date, so a dateless "yes"
-    // could never rescue the return — and silently storing it would look like
-    // an answered question that changes nothing.
-    //
-    // NOTE the deliberate asymmetry: a date AFTER the original due date is NOT
-    // rejected. A late-sent 7004 is a true fact worth recording (the
-    // accountant sees it, and the customer isn't dead-ended by a form that
-    // won't accept their real answer); it simply fails isExtensionValid and so
-    // doesn't make the return timely.
-    if (effectiveExtensionFiled === "yes" && !effectiveExtensionTransmittedAt) {
-      const message = "Enter the date you sent Form 7004";
-      return NextResponse.json(
-        { error: message, issues: [{ field: "extensionTransmittedAt", message }] },
-        { status: 400 },
-      );
-    }
+    // A supplied transmission date must be real, but it is optional. The
+    // customer's statement that a Form 7004 was filed is accepted as given.
+    // A late-sent 7004 is also a true fact worth recording; it simply fails
+    // isExtensionValid and so does not make the return timely.
 
     if (effectiveExtensionFiled === "yes") {
       data.extensionFiled = "yes";

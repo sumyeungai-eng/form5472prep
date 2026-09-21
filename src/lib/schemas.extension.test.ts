@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   effectiveDueDateUtc,
   extensionUnclear,
@@ -9,22 +9,15 @@ import {
   type ExtensionFacts,
 } from "./schemas";
 
-afterEach(() => {
-  vi.restoreAllMocks();
-});
-
-function pinNow(utcMs: number) {
-  vi.spyOn(Date, "now").mockReturnValue(utcMs);
-}
-
 describe("filingDueDateUtc: ordinary due dates", () => {
   it("2025 calendar year is due April 15 2026 (a Wednesday — no weekend roll)", () => {
     expect(filingDueDateUtc(2025)).toBe(Date.UTC(2026, 3, 15));
   });
 
-  it("rolls a Saturday due date to the following Monday (April 15 2028 is a Saturday)", () => {
+  it("rolls a Saturday due date past the observed DC Emancipation Day holiday", () => {
     // taxYear 2027 -> raw due date April 15, 2028, which falls on a Saturday.
-    expect(filingDueDateUtc(2027)).toBe(Date.UTC(2028, 3, 17));
+    // Monday April 17 is observed DC Emancipation Day, so the due date is Tuesday.
+    expect(filingDueDateUtc(2027)).toBe(Date.UTC(2028, 3, 18));
   });
 });
 
@@ -86,46 +79,46 @@ describe("isExtensionValid boundaries", () => {
     expect(isExtensionValid(2025, null, extension)).toBe(false);
   });
 
-  it("a missing transmittedAt is invalid even when filed is 'yes'", () => {
+  it("a missing transmittedAt is valid when filed is 'yes'", () => {
     const extension: ExtensionFacts = { filed: "yes", transmittedAt: null };
-    expect(isExtensionValid(2025, null, extension)).toBe(false);
+    expect(isExtensionValid(2025, null, extension)).toBe(true);
   });
 });
 
 describe("isYearDelinquent: due-day inclusivity (whole due day is timely)", () => {
   it("is NOT delinquent at noon UTC on the due date itself (April 15 2026, no extension)", () => {
-    pinNow(Date.UTC(2026, 3, 15, 12, 0, 0));
-    expect(isYearDelinquent(2025)).toBe(false);
+    const now = new Date(Date.UTC(2026, 3, 15, 12, 0, 0));
+    expect(isYearDelinquent(2025, null, null, now)).toBe(false);
   });
 
   it("becomes delinquent one second after midnight the day after the due date", () => {
-    pinNow(Date.UTC(2026, 3, 16, 0, 0, 1));
-    expect(isYearDelinquent(2025)).toBe(true);
+    const now = new Date(Date.UTC(2026, 3, 16, 0, 0, 1));
+    expect(isYearDelinquent(2025, null, null, now)).toBe(true);
   });
 
   it("with a valid extension, is NOT delinquent at noon UTC on the extended due date (Oct 15 2026)", () => {
     const extension: ExtensionFacts = { filed: "yes", transmittedAt: "2026-04-10" };
-    pinNow(Date.UTC(2026, 9, 15, 12, 0, 0));
-    expect(isYearDelinquent(2025, null, extension)).toBe(false);
+    const now = new Date(Date.UTC(2026, 9, 15, 12, 0, 0));
+    expect(isYearDelinquent(2025, null, extension, now)).toBe(false);
   });
 
   it("with a valid extension, becomes delinquent the day after the extended due date (Oct 16 2026)", () => {
     const extension: ExtensionFacts = { filed: "yes", transmittedAt: "2026-04-10" };
-    pinNow(Date.UTC(2026, 9, 16, 0, 0, 1));
-    expect(isYearDelinquent(2025, null, extension)).toBe(true);
+    const now = new Date(Date.UTC(2026, 9, 16, 0, 0, 1));
+    expect(isYearDelinquent(2025, null, extension, now)).toBe(true);
   });
 });
 
 describe("isYearDelinquent: 'not_sure' deferral applies only to the year it's passed for", () => {
   it("an old year with no extension facts passed is delinquent", () => {
-    pinNow(Date.UTC(2026, 7, 1)); // pinned to Aug 2026, per the spec
-    expect(isYearDelinquent(2023, null, null)).toBe(true);
+    const now = new Date(Date.UTC(2026, 7, 1)); // pinned to Aug 2026, per the spec
+    expect(isYearDelinquent(2023, null, null, now)).toBe(true);
   });
 
   it("the year the accountant is still confirming ('not_sure') is not marked delinquent", () => {
-    pinNow(Date.UTC(2026, 7, 1));
+    const now = new Date(Date.UTC(2026, 7, 1));
     const extension: ExtensionFacts = { filed: "not_sure", transmittedAt: null };
-    expect(isYearDelinquent(2025, null, extension)).toBe(false);
+    expect(isYearDelinquent(2025, null, extension, now)).toBe(false);
   });
 });
 

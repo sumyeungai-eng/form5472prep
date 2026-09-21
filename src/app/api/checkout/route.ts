@@ -5,6 +5,7 @@ import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
 import { MULTI_YEAR_ADDON_CENTS, MULTI_YEAR_ADDON_LABEL, multiYearAddonCents, tierInfo, isTestTier, resolveTier, promoDiscountCents, PROMO_LABEL } from "@/lib/pricing";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
+import { runPreflight } from "@/lib/pdf/preflight";
 import { putPdf } from "@/lib/storage";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
@@ -155,7 +156,8 @@ export async function POST(req: Request) {
         const result = await generatePackage({
           llcName: full.llcName, llcEin: full.llcEin, llcAddress: full.llcAddress,
           llcCity: full.llcCity, llcState: full.llcState, llcZip: full.llcZip,
-          llcCountry: full.llcCountry, llcDateIncorporated: full.llcDateIncorporated,
+          llcCountry: full.llcCountry, llcCountryBusiness: full.llcCountryBusiness,
+          llcDateIncorporated: full.llcDateIncorporated,
           llcBusinessActivity: full.llcBusinessActivity, llcBusinessCode: full.llcBusinessCode,
           ownerName: full.ownerName, ownerAddress: full.ownerAddress,
           ownerCountryCitizenship: full.ownerCountryCitizenship,
@@ -191,9 +193,19 @@ export async function POST(req: Request) {
         pdfSignatures = result.signatures;
         const key = `${filing.id}_unsigned.pdf`;
         await putPdf(key, result.bytes);
+        const preflight = await runPreflight(result.record, result.bytes);
         await prisma.filing.update({
           where: { id: filing.id },
-          data: { generatedPdfKey: key, status: "PDF_GENERATED" },
+          data: {
+            generatedPdfKey: key,
+            status: "PDF_GENERATED",
+            preflightStatus: preflight.ok ? "passed" : "failed",
+            preflightFailures: preflight.failures,
+            preflightWarnings: preflight.warnings,
+            preflightCheckedAt: new Date(),
+            generatorVersion: result.record.generatorVersion,
+            generatorCommit: result.record.commit,
+          },
         });
       } else {
         console.warn("[checkout test] PDF generation skipped — required fields missing");
