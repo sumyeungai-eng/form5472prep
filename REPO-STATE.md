@@ -175,6 +175,8 @@ After any sprint, **write or update a file in `docs/sessions/`** (`YYYY-MM-DD-<t
   (field map, owner-approved draft defaults), paid-orders filter fix, header partner link removed.
 - `docs/sessions/2026-09-21-review-fixes-and-legal.md` — Codex review fixes incl. the partner
   link account-takeover fix (filing-scoped invites), signature storage integrity, and the legal pages.
+- `docs/sessions/2026-09-22-generator-wave-1.md` — Form 5472 generator wave 1 LIVE: line 2, 43a/b blank,
+  1120 header, 1o from LLC, cover letter, extension gate + holidays, pre-flight check that gates signing and fax.
 
 Written by a concurrent session the same day (content/blog work — not this session's, listed so the
 index stays complete):
