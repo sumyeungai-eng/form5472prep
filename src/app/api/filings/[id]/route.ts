@@ -13,6 +13,9 @@ import {
   makeYearDataSchema,
   makeYearScopeSchema,
   reportableTransactionsSchema,
+  nonCashTransfersSchema,
+  looksLikeUsItin,
+  ITIN_IN_FTIN_MESSAGE,
   validateDissolvedAt,
   isYearDelinquent,
   type ExtensionFacts,
@@ -94,6 +97,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     return NextResponse.json({ error: "Filing is locked" }, { status: 409 });
 
   const body = await req.json();
+  const hasKey = (k: string) => Object.prototype.hasOwnProperty.call(body, k);
 
   // Whitelist editable fields.
   const stringFields = [
@@ -104,6 +108,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     "llcState",
     "llcZip",
     "llcCountry",
+    "llcCountryBusiness",
     "llcBusinessActivity",
     "llcBusinessCode",
     "ownerName",
@@ -120,6 +125,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     "ownerItin",
     "ownerReferenceId",
     "reasonableCauseNarrative",
+    "priorForm5472Filed",
   ] as const;
 
   // Validate the whitelisted fields that are present against the shared wizard
@@ -142,8 +148,106 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
   const clean = parsed.data as Record<string, unknown>;
 
+  if (typeof clean.ownerFtin === "string" && looksLikeUsItin(clean.ownerFtin)) {
+    return NextResponse.json(
+      {
+        error: "Validation failed",
+        issues: [{ field: "ownerFtin", message: ITIN_IN_FTIN_MESSAGE }],
+      },
+      { status: 400 },
+    );
+  }
+
   const data: Record<string, unknown> = {};
   for (const k of stringFields) if (clean[k] !== undefined) data[k] = clean[k];
+
+  for (const k of [
+    "ownerHasFtin",
+    "ownerNoPostalCode",
+    "llcAddressIsRegisteredAgentOnly",
+    "hasUsSourceIncome",
+    "usTaxWithheld",
+  ] as const) {
+    if (hasKey(k) && typeof body[k] !== "boolean" && body[k] !== null) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          issues: [{ field: k, message: "Expected true or false" }],
+        },
+        { status: 400 },
+      );
+    }
+    if (typeof body[k] === "boolean" || body[k] === null) data[k] = body[k];
+  }
+  if (data.ownerHasFtin === false) data.ownerFtin = null;
+
+  if (hasKey("llcMemberCount") && body.llcMemberCount !== null && typeof body.llcMemberCount !== "number") {
+    return NextResponse.json(
+      {
+        error: "Validation failed",
+        issues: [{ field: "llcMemberCount", message: "Member count must be 1 or 2" }],
+      },
+      { status: 400 },
+    );
+  }
+  if (typeof body.llcMemberCount === "number") {
+    const parsedCount = z.number().int().min(1).max(2).safeParse(body.llcMemberCount);
+    if (!parsedCount.success) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          issues: [{ field: "llcMemberCount", message: "Member count must be 1 or 2" }],
+        },
+        { status: 400 },
+      );
+    }
+    data.llcMemberCount = parsedCount.data;
+  } else if (hasKey("llcMemberCount")) {
+    data.llcMemberCount = null;
+  }
+
+  const ownerAddressTouched = [
+    "ownerAddressStreet",
+    "ownerAddressCity",
+    "ownerAddressState",
+    "ownerAddressPostal",
+    "ownerAddressCountry",
+    "ownerNoPostalCode",
+  ].some((k) => hasKey(k));
+  if (ownerAddressTouched) {
+    const effectiveOwnerNoPostalCode = hasKey("ownerNoPostalCode")
+      ? body.ownerNoPostalCode === true
+      : filing.ownerNoPostalCode === true;
+    const effectivePostal = hasKey("ownerAddressPostal")
+      ? String(body.ownerAddressPostal ?? "").trim()
+      : (filing.ownerAddressPostal ?? "").trim();
+    const effectiveState = hasKey("ownerAddressState")
+      ? String(body.ownerAddressState ?? "").trim()
+      : (filing.ownerAddressState ?? "").trim();
+    if (!effectiveState) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          issues: [{ field: "ownerAddressState", message: "Required" }],
+        },
+        { status: 400 },
+      );
+    }
+    if (!effectiveOwnerNoPostalCode && !effectivePostal) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          issues: [
+            {
+              field: "ownerAddressPostal",
+              message: "Required unless your country does not use postal codes",
+            },
+          ],
+        },
+        { status: 400 },
+      );
+    }
+  }
 
   if (clean.llcDateIncorporated) data.llcDateIncorporated = new Date(clean.llcDateIncorporated as string);
 
@@ -206,7 +310,6 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   // answers are the customer-supplied fact that overrides the inference; we
   // persist the raw INPUTS and re-derive the verdict through the shared
   // helpers, so the record shows what the customer told us and when.
-  const hasKey = (k: string) => Object.prototype.hasOwnProperty.call(body, k);
   const extensionTouched =
     hasKey("extensionFiled") ||
     hasKey("extensionTransmittedAt") ||
@@ -505,6 +608,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     otherTransactionsNote: unknown;
     noReportableTransactions: boolean;
     cleanTransactions: z.infer<typeof reportableTransactionsSchema> | undefined;
+    nonCashTransfers: z.infer<typeof nonCashTransfersSchema>;
+    rcsWhyMissed: string | null;
+    rcsWhenLearned: string | null;
+    rcsNoIrsNoticeConfirmed: boolean | null;
   }> = [];
   if (Array.isArray(body.yearData)) {
     for (const y of body.yearData) {
@@ -517,6 +624,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         contributions: y?.contributions ?? 0,
         distributions: y?.distributions ?? 0,
         noReportableTransactions: y?.noReportableTransactions,
+        nonCashTransfers: y?.nonCashTransfers,
+        rcsWhyMissed: y?.rcsWhyMissed,
+        rcsWhenLearned: y?.rcsWhenLearned,
+        rcsNoIrsNoticeConfirmed: y?.rcsNoIrsNoticeConfirmed,
       });
       if (!yv.success) {
         return NextResponse.json(
@@ -552,6 +663,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         otherTransactionsNote: y?.otherTransactionsNote,
         noReportableTransactions: noneReported,
         cleanTransactions,
+        nonCashTransfers: yv.data.nonCashTransfers ?? [],
+        rcsWhyMissed: yv.data.rcsWhyMissed ?? null,
+        rcsWhenLearned: yv.data.rcsWhenLearned ?? null,
+        rcsNoIrsNoticeConfirmed: yv.data.rcsNoIrsNoticeConfirmed ?? null,
       });
     }
   }
@@ -593,6 +708,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             // undefined when the incoming list is empty/absent → leaves stored
             // detail untouched (the anti-data-loss guard above).
             reportableTransactions: y.noReportableTransactions ? [] : y.cleanTransactions ?? undefined,
+            nonCashTransfers: y.nonCashTransfers,
+            rcsWhyMissed: y.rcsWhyMissed,
+            rcsWhenLearned: y.rcsWhenLearned,
+            rcsNoIrsNoticeConfirmed: y.rcsNoIrsNoticeConfirmed,
           },
           create: {
             filingId: filing.id,
@@ -605,6 +724,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
               : typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : null,
             noReportableTransactions: y.noReportableTransactions,
             reportableTransactions: y.noReportableTransactions ? [] : y.cleanTransactions ?? [],
+            nonCashTransfers: y.nonCashTransfers,
+            rcsWhyMissed: y.rcsWhyMissed,
+            rcsWhenLearned: y.rcsWhenLearned,
+            rcsNoIrsNoticeConfirmed: y.rcsNoIrsNoticeConfirmed,
           },
         });
       }

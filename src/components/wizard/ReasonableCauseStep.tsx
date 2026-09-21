@@ -1,124 +1,158 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 
-const REASONS = [
-  {
-    key: "unaware",
-    label: "I was unaware of the requirement",
-    template:
-      "The taxpayer was unaware of the Form 5472 filing requirement applicable to foreign-owned U.S. disregarded entities. Upon learning of the requirement, the taxpayer acted promptly and in good faith to come into compliance by preparing and submitting this filing under the Delinquent International Information Return Submission Procedures. The failure was not willful and no U.S. tax was due for the year(s) at issue.",
-  },
-  {
-    key: "preparer",
-    label: "My prior preparer didn't advise me of this requirement",
-    template:
-      "The taxpayer relied in good faith on a tax professional who did not advise the taxpayer of the Form 5472 filing requirement applicable to foreign-owned U.S. disregarded entities. Upon learning of the requirement from another source, the taxpayer acted promptly to come into compliance under the Delinquent International Information Return Submission Procedures. The failure was not willful and no U.S. tax was due for the year(s) at issue.",
-  },
-  {
-    key: "personal",
-    label: "Personal circumstances (illness, family, relocation)",
-    template:
-      "The taxpayer was unable to timely meet the Form 5472 filing requirement due to extenuating personal circumstances during the period in question. Upon being able to address the matter, the taxpayer acted promptly to come into compliance under the Delinquent International Information Return Submission Procedures. The failure was not willful and no U.S. tax was due for the year(s) at issue.",
-  },
-  {
-    key: "admin",
-    label: "Administrative oversight by my team",
-    template:
-      "The taxpayer experienced an administrative oversight that resulted in the Form 5472 filing requirement not being met on a timely basis. Upon identifying the oversight, the taxpayer implemented corrective procedures and acted promptly to come into compliance under the Delinquent International Information Return Submission Procedures. The failure was not willful and no U.S. tax was due for the year(s) at issue.",
-  },
-];
+export type ReasonableCauseYearInput = {
+  taxYear: number;
+  rcsWhyMissed: string;
+  rcsWhenLearned: string;
+  rcsNoIrsNoticeConfirmed: boolean;
+};
+
+type FieldErrors = Record<string, string>;
+
+export function validateReasonableCauseYears(rows: ReasonableCauseYearInput[]): FieldErrors {
+  const errors: FieldErrors = {};
+  for (const row of rows) {
+    const prefix = String(row.taxYear);
+    if (!row.rcsWhyMissed.trim()) {
+      errors[`${prefix}.rcsWhyMissed`] = `Explain why the filing for ${row.taxYear} was missed.`;
+    }
+    if (!row.rcsWhenLearned.trim()) {
+      errors[`${prefix}.rcsWhenLearned`] = "Enter when you learned that this form was required.";
+    }
+    if (row.rcsNoIrsNoticeConfirmed !== true) {
+      errors[`${prefix}.rcsNoIrsNoticeConfirmed`] =
+        `Confirm you have not received an IRS notice about this ${row.taxYear} return.`;
+    }
+  }
+  return errors;
+}
 
 export function ReasonableCauseStep({
-  initial,
+  years,
   onSubmit,
   onBack,
   saving,
 }: {
-  initial: string;
-  onSubmit: (text: string) => Promise<void>;
+  years: ReasonableCauseYearInput[];
+  onSubmit: (years: ReasonableCauseYearInput[]) => Promise<void>;
   onBack: () => void;
   saving: boolean;
 }) {
-  // Try to recognise which reason matches the saved narrative; otherwise treat as custom.
-  const matchedKey =
-    REASONS.find((r) => initial.startsWith(r.template.slice(0, 40)))?.key ?? null;
-  const [reasonKey, setReasonKey] = useState<string | null>(matchedKey ?? "unaware");
-  const [extra, setExtra] = useState(matchedKey ? initial.slice(REASONS.find((r) => r.key === matchedKey)!.template.length).trim() : initial ? initial : "");
+  const [rows, setRows] = useState<ReasonableCauseYearInput[]>(years);
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const sortedRows = useMemo(() => rows.slice().sort((a, b) => a.taxYear - b.taxYear), [rows]);
 
-  function buildText(): string {
-    if (!reasonKey) return extra.trim();
-    const base = REASONS.find((r) => r.key === reasonKey)?.template ?? "";
-    return [base, extra.trim()].filter(Boolean).join("\n\n");
+  function update(taxYear: number, patch: Partial<ReasonableCauseYearInput>) {
+    setRows((current) =>
+      current.map((row) => (row.taxYear === taxYear ? { ...row, ...patch } : row)),
+    );
+    setErrors((current) => {
+      const next = { ...current };
+      for (const key of Object.keys(patch)) delete next[`${taxYear}.${key}`];
+      return next;
+    });
   }
 
-  // Keep textarea preview in sync if user switches reason.
-  const [preview, setPreview] = useState(buildText());
-  useEffect(() => {
-    setPreview(buildText());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reasonKey, extra]);
+  async function submit() {
+    const nextErrors = validateReasonableCauseYears(rows);
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
+    await onSubmit(rows);
+  }
 
   return (
     <div className="space-y-5">
       <div>
         <h2 className="text-xl font-semibold">Reasonable cause statement</h2>
         <p className="text-sm text-slate-500 mt-1">
-          The IRS needs a written explanation of why the filing is late. Pick the closest reason
-          and add any specifics. We&apos;ll attach this statement to your package.
+          This return is being filed after its due date. We include a reasonable-cause statement explaining why.
         </p>
       </div>
 
-      <div className="space-y-2">
-        {REASONS.map((r) => (
-          <label
-            key={r.key}
-            className={`flex items-start gap-3 p-3 rounded-md border cursor-pointer ${
-              reasonKey === r.key
-                ? "border-accent bg-accent-50"
-                : "border-slate-200 bg-white hover:border-slate-300"
-            }`}
-          >
-            <input
-              type="radio"
-              name="reason"
-              value={r.key}
-              checked={reasonKey === r.key}
-              onChange={() => setReasonKey(r.key)}
-              className="mt-1"
-            />
-            <span className="text-sm text-slate-900">{r.label}</span>
-          </label>
-        ))}
-      </div>
+      <div className="space-y-4">
+        {sortedRows.map((row) => {
+          const prefix = String(row.taxYear);
+          return (
+            <section
+              key={row.taxYear}
+              className="rounded-md border border-slate-200 bg-white p-4"
+              aria-labelledby={`rcs-heading-${row.taxYear}`}
+            >
+              <h3 id={`rcs-heading-${row.taxYear}`} className="text-sm font-semibold text-slate-900">
+                Tax year {row.taxYear}
+              </h3>
+              <div className="mt-4 space-y-4">
+                <div>
+                  <label
+                    htmlFor={`rcs-why-${row.taxYear}`}
+                    className="block text-sm font-medium text-slate-700"
+                  >
+                    Why was the filing for {row.taxYear} missed?
+                  </label>
+                  <textarea
+                    id={`rcs-why-${row.taxYear}`}
+                    rows={4}
+                    value={row.rcsWhyMissed}
+                    onChange={(e) => update(row.taxYear, { rcsWhyMissed: e.target.value })}
+                    className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                  />
+                  {errors[`${prefix}.rcsWhyMissed`] && (
+                    <p className="mt-1 text-xs text-red-600">{errors[`${prefix}.rcsWhyMissed`]}</p>
+                  )}
+                </div>
 
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1.5">
-          Optional: add specifics
-        </label>
-        <textarea
-          value={extra}
-          onChange={(e) => setExtra(e.target.value)}
-          rows={3}
-          placeholder="E.g. 'I learned about the requirement in March 2025 while preparing my LLC's first tax return.'"
-          className="block w-full rounded-md border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-        />
-      </div>
+                <div>
+                  <label
+                    htmlFor={`rcs-when-${row.taxYear}`}
+                    className="block text-sm font-medium text-slate-700"
+                  >
+                    When did you learn that this form was required?
+                  </label>
+                  <textarea
+                    id={`rcs-when-${row.taxYear}`}
+                    rows={3}
+                    value={row.rcsWhenLearned}
+                    onChange={(e) => update(row.taxYear, { rcsWhenLearned: e.target.value })}
+                    className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                  />
+                  {errors[`${prefix}.rcsWhenLearned`] && (
+                    <p className="mt-1 text-xs text-red-600">{errors[`${prefix}.rcsWhenLearned`]}</p>
+                  )}
+                </div>
 
-      <div>
-        <p className="text-xs font-medium text-slate-500 mb-1.5">Preview — final statement</p>
-        <div className="rounded-md bg-slate-50 border border-slate-200 p-4 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
-          {preview || <em className="text-slate-400">Pick a reason above.</em>}
-        </div>
+                <label className="flex items-start gap-2 text-sm text-slate-800">
+                  <input
+                    type="checkbox"
+                    checked={row.rcsNoIrsNoticeConfirmed}
+                    onChange={(e) =>
+                      update(row.taxYear, { rcsNoIrsNoticeConfirmed: e.target.checked })
+                    }
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+                  />
+                  <span>
+                    I confirm I have not received an IRS notice about this {row.taxYear} return.
+                  </span>
+                </label>
+                {errors[`${prefix}.rcsNoIrsNoticeConfirmed`] && (
+                  <p className="text-xs text-red-600">
+                    {errors[`${prefix}.rcsNoIrsNoticeConfirmed`]}
+                  </p>
+                )}
+              </div>
+            </section>
+          );
+        })}
       </div>
 
       <div className="flex justify-between">
         <Button type="button" variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button onClick={() => onSubmit(preview)} disabled={saving || !preview}>
-          {saving ? "Saving…" : "Continue"}
+        <Button onClick={() => void submit()} disabled={saving}>
+          {saving ? "Saving..." : "Continue"}
         </Button>
       </div>
     </div>

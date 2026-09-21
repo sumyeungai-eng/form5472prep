@@ -58,6 +58,7 @@ import { z } from "zod";
 import {
   entitySchema,
   ownerBaseSchema,
+  refineOwnerFtin,
   makeYearScopeSchema,
   validateDissolvedAt,
   isYearDelinquent,
@@ -84,11 +85,29 @@ const ownerStepObject = ownerBaseSchema.omit({ ownerName: true, ownerAddress: tr
   ownerLastName: z.string().trim().min(1, "Required"),
   ownerAddressStreet: z.string().trim().min(2, "Required"),
   ownerAddressCity: z.string().trim().min(1, "Required"),
-  ownerAddressState: z.string().trim().optional().or(z.literal("")),
+  ownerAddressState: z.string().trim().min(1, "Required"),
   ownerAddressPostal: z.string().trim().optional().or(z.literal("")),
   ownerAddressCountry: z.string().trim().min(1, "Required"),
 });
-const ownerStepSchema = ownerStepObject;
+const ownerStepSchema = ownerStepObject.superRefine((val, ctx) => {
+  if (val.ownerHasFtin !== true && val.ownerHasFtin !== false) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Select yes or no",
+      path: ["ownerHasFtin"],
+    });
+  }
+  if (val.ownerHasFtin === true || (val.ownerFtin ?? "").trim()) {
+    refineOwnerFtin(val, ctx);
+  }
+  if (val.ownerNoPostalCode !== true && !(val.ownerAddressPostal ?? "").trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Required unless your country does not use postal codes",
+      path: ["ownerAddressPostal"],
+    });
+  }
+});
 type OwnerStepForm = z.infer<typeof ownerStepObject>;
 import { TransactionsReview } from "./TransactionsReview";
 import { ReasonableCauseStep } from "./ReasonableCauseStep";
@@ -161,6 +180,12 @@ type Filing = {
   llcCity: string | null;
   llcState: string | null;
   llcZip: string | null;
+  llcCountryBusiness: string | null;
+  llcMemberCount: number | null;
+  llcAddressIsRegisteredAgentOnly: boolean | null;
+  priorForm5472Filed: string | null;
+  hasUsSourceIncome: boolean | null;
+  usTaxWithheld: boolean | null;
   llcDateIncorporated: string | null;
   llcBusinessActivity: string | null;
   llcBusinessCode: string | null;
@@ -174,6 +199,8 @@ type Filing = {
   ownerCountryCitizenship: string | null;
   ownerCountryTaxResidence: string | null;
   ownerCountryBusiness: string | null;
+  ownerHasFtin: boolean | null;
+  ownerNoPostalCode: boolean | null;
   ownerFtin: string | null;
   ownerItin: string | null;
   ownerReferenceId: string | null;
@@ -229,6 +256,10 @@ type Filing = {
     distributions: string;
     otherTransactionsNote: string | null;
     noReportableTransactions: boolean;
+    nonCashTransfers?: unknown;
+    rcsWhyMissed?: string | null;
+    rcsWhenLearned?: string | null;
+    rcsNoIrsNoticeConfirmed?: boolean | null;
   }[];
 };
 
@@ -449,7 +480,7 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
           const values = currentStepGettersRef.current.owner?.();
           const parsed = ownerStepSchema.safeParse(values);
           if (!parsed.success) return true;
-          await save(ownerStepFormToPatch(parsed.data));
+          await save(ownerStepFormToPatch(parsed.data, filing.ownerReferenceId));
           return true;
         }
         if (stepKey === "years") {
@@ -520,10 +551,71 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
         )}
         {stepKey === "rcs" && (
           <ReasonableCauseStep
-            initial={filing.reasonableCauseNarrative ?? ""}
-            onSubmit={async (text) => {
-              await save({ reasonableCauseNarrative: text });
-              setFiling({ ...filing, reasonableCauseNarrative: text });
+            years={filing.taxYears
+              .filter((year) => {
+                const maxYear = filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : year;
+                const extensionFacts =
+                  year === maxYear
+                    ? {
+                        filed: filing.extensionFiled,
+                        transmittedAt: filing.extensionTransmittedAt,
+                      }
+                    : null;
+                return isYearDelinquent(
+                  year,
+                  filing.isFinalReturn ? filing.dissolvedAt : null,
+                  extensionFacts,
+                );
+              })
+              .map((year) => {
+                const existing = filing.yearData.find((d) => d.taxYear === year);
+                return {
+                  taxYear: year,
+                  rcsWhyMissed: existing?.rcsWhyMissed ?? "",
+                  rcsWhenLearned: existing?.rcsWhenLearned ?? "",
+                  rcsNoIrsNoticeConfirmed: existing?.rcsNoIrsNoticeConfirmed === true,
+                };
+              })}
+            onSubmit={async (rows) => {
+              const yearData = rows.map((row) => {
+                const existing = filing.yearData.find((d) => d.taxYear === row.taxYear);
+                return {
+                  taxYear: row.taxYear,
+                  totalAssetsYearEnd: existing ? Number(existing.totalAssetsYearEnd) : 0,
+                  contributions: existing ? Number(existing.contributions) : 0,
+                  distributions: existing ? Number(existing.distributions) : 0,
+                  reportableTransactions: [],
+                  otherTransactionsNote: existing?.otherTransactionsNote ?? "",
+                  noReportableTransactions: existing?.noReportableTransactions ?? false,
+                  nonCashTransfers: existing?.nonCashTransfers ?? [],
+                  rcsWhyMissed: row.rcsWhyMissed,
+                  rcsWhenLearned: row.rcsWhenLearned,
+                  rcsNoIrsNoticeConfirmed: row.rcsNoIrsNoticeConfirmed,
+                };
+              });
+              await save({ yearData });
+              const mergedYearData = filing.yearData.map((existing) => {
+                const next = rows.find((row) => row.taxYear === existing.taxYear);
+                return next ? { ...existing, ...next } : existing;
+              });
+              for (const row of rows) {
+                if (!mergedYearData.some((existing) => existing.taxYear === row.taxYear)) {
+                  mergedYearData.push({
+                    ...row,
+                    taxYear: row.taxYear,
+                    totalAssetsYearEnd: "0",
+                    contributions: "0",
+                    distributions: "0",
+                    otherTransactionsNote: null,
+                    noReportableTransactions: false,
+                    nonCashTransfers: [],
+                  });
+                }
+              }
+              setFiling({
+                ...filing,
+                yearData: mergedYearData,
+              });
               goNext();
             }}
             onBack={goBack}
@@ -549,12 +641,17 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
                 distributions: ex ? Number(ex.distributions) : 0,
                 otherTransactionsNote: ex?.otherTransactionsNote ?? "",
                 noReportableTransactions: ex?.noReportableTransactions ?? false,
+                nonCashTransfers: ex?.nonCashTransfers ?? [],
               };
             })}
-            onSubmit={async (yearData) => {
-              await save({ yearData });
+            initialHasUsSourceIncome={filing.hasUsSourceIncome}
+            initialUsTaxWithheld={filing.usTaxWithheld}
+            onSubmit={async (yearData, incomeAnswers) => {
+              await save({ ...incomeAnswers, yearData });
               setFiling({
                 ...filing,
+                hasUsSourceIncome: incomeAnswers.hasUsSourceIncome,
+                usTaxWithheld: incomeAnswers.usTaxWithheld,
                 yearData: yearData.map((y) => ({
                   taxYear: y.taxYear,
                   totalAssetsYearEnd: String(y.totalAssetsYearEnd),
@@ -562,6 +659,16 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
                   distributions: String(y.distributions),
                   otherTransactionsNote: y.otherTransactionsNote || null,
                   noReportableTransactions: y.noReportableTransactions,
+                  nonCashTransfers: y.nonCashTransfers,
+                  rcsWhyMissed:
+                    filing.yearData.find((existing) => existing.taxYear === y.taxYear)
+                      ?.rcsWhyMissed ?? null,
+                  rcsWhenLearned:
+                    filing.yearData.find((existing) => existing.taxYear === y.taxYear)
+                      ?.rcsWhenLearned ?? null,
+                  rcsNoIrsNoticeConfirmed:
+                    filing.yearData.find((existing) => existing.taxYear === y.taxYear)
+                      ?.rcsNoIrsNoticeConfirmed ?? null,
                 })),
               });
               goNext();
@@ -711,6 +818,14 @@ function EntityStep({
       llcCity: filing.llcCity ?? "",
       llcState: filing.llcState ?? "",
       llcZip: filing.llcZip ?? "",
+      llcCountryBusiness: filing.llcCountryBusiness ?? "United States",
+      llcAddressIsRegisteredAgentOnly: filing.llcAddressIsRegisteredAgentOnly ?? null,
+      priorForm5472Filed:
+        filing.priorForm5472Filed === "yes" ||
+        filing.priorForm5472Filed === "no" ||
+        filing.priorForm5472Filed === "not_sure"
+          ? filing.priorForm5472Filed
+          : null,
       llcDateIncorporated: filing.llcDateIncorporated?.slice(0, 10) ?? "",
       llcBusinessActivity: filing.llcBusinessActivity ?? "",
       llcBusinessCode: filing.llcBusinessCode ?? "",
@@ -804,7 +919,7 @@ function EntityStep({
   const isPrefilled = !!filing.llcName;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit((data) => onSubmit(data as EntityForm))} className="space-y-5">
       <div>
         <h2 className="text-xl font-semibold">LLC information</h2>
         <p className="text-sm text-slate-500 mt-1">
@@ -878,6 +993,48 @@ function EntityStep({
           <Input {...register("llcZip")} placeholder="82001" />
         </Field>
       </div>
+      <fieldset className="space-y-2">
+        <legend className="block text-sm font-medium text-slate-700">
+          Does the LLC receive its mail at this U.S. address?
+        </legend>
+        <div className="space-y-2">
+          <label className="flex items-start gap-2 rounded-md border border-slate-300 bg-white p-3 text-sm">
+            <input
+              type="radio"
+              value="false"
+              checked={watch("llcAddressIsRegisteredAgentOnly") === false}
+              onChange={() =>
+                setValue("llcAddressIsRegisteredAgentOnly", false, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+            />
+            <span>Yes, the LLC gets its mail here</span>
+          </label>
+          <label className="flex items-start gap-2 rounded-md border border-slate-300 bg-white p-3 text-sm">
+            <input
+              type="radio"
+              value="true"
+              checked={watch("llcAddressIsRegisteredAgentOnly") === true}
+              onChange={() =>
+                setValue("llcAddressIsRegisteredAgentOnly", true, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+            />
+            <span>No, this is only my registered agent&apos;s address</span>
+          </label>
+        </div>
+        {watch("llcAddressIsRegisteredAgentOnly") === true && (
+          <p className="text-xs text-slate-500">
+            We will put your own address on the forms so IRS letters reach you.
+          </p>
+        )}
+      </fieldset>
       <Field
         label="Date of formation"
         error={errors.llcDateIncorporated?.message}
@@ -889,6 +1046,26 @@ function EntityStep({
         }
       >
         <Input type="date" {...register("llcDateIncorporated")} />
+      </Field>
+      <Field
+        label="Where does the LLC mainly do business?"
+        hint="This is about the LLC, not about you. Most U.S. LLCs answer United States."
+        error={errors.llcCountryBusiness?.message}
+      >
+        <Select {...register("llcCountryBusiness")}>
+          {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+        </Select>
+      </Field>
+      <Field
+        label="Has a Form 5472 been filed for this LLC for any earlier year?"
+        error={errors.priorForm5472Filed?.message}
+      >
+        <Select {...register("priorForm5472Filed")}>
+          <option value="">Select…</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+          <option value="not_sure">Not sure</option>
+        </Select>
       </Field>
       <Field
         label="Principal business activity"
@@ -1034,7 +1211,10 @@ function splitOwnerName(full: string | null): { first: string; middle: string; l
   return { first: parts[0], middle: parts.slice(1, -1).join(" "), last: parts[parts.length - 1] };
 }
 
-function ownerStepFormToPatch(data: OwnerStepForm): OwnerForm & Partial<OwnerStepForm> {
+export function ownerStepFormToPatch(
+  data: OwnerStepForm,
+  existingOwnerReferenceId?: string | null,
+): OwnerForm & Partial<OwnerStepForm> {
   const { ownerFirstName, ownerMiddleName, ownerLastName,
           ownerAddressStreet, ownerAddressCity, ownerAddressState,
           ownerAddressPostal, ownerAddressCountry, ...rest } = data;
@@ -1049,8 +1229,14 @@ function ownerStepFormToPatch(data: OwnerStepForm): OwnerForm & Partial<OwnerSte
   // it on a return visit if they want a different value.
   const ownerItinTrim = (rest.ownerItin ?? "").trim();
   const ownerRefTrim = (rest.ownerReferenceId ?? "").trim();
-  if (!ownerItinTrim && !ownerRefTrim) {
+  const existingRefTrim = (existingOwnerReferenceId ?? "").trim();
+  if (!ownerRefTrim && existingRefTrim) {
+    rest.ownerReferenceId = existingRefTrim;
+  } else if (!ownerItinTrim && !ownerRefTrim) {
     rest.ownerReferenceId = generateReferenceId(ownerLastName, ownerFirstName);
+  }
+  if (rest.ownerHasFtin === false) {
+    rest.ownerFtin = "";
   }
 
   // Save both the structured parts (so the form can re-hydrate them on
@@ -1085,6 +1271,8 @@ function OwnerStep({
     register,
     handleSubmit,
     getValues,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<OwnerStepForm>({
     resolver: zodResolver(ownerStepSchema),
@@ -1105,11 +1293,21 @@ function OwnerStep({
       ownerCountryCitizenship: filing.ownerCountryCitizenship ?? "",
       ownerCountryTaxResidence: filing.ownerCountryTaxResidence ?? "",
       ownerCountryBusiness: filing.ownerCountryBusiness ?? "",
+      ownerHasFtin: filing.ownerHasFtin ?? (filing.ownerFtin ? true : null),
+      ownerNoPostalCode: filing.ownerNoPostalCode ?? false,
       ownerFtin: filing.ownerFtin ?? "",
       ownerItin: filing.ownerItin ?? "",
       ownerReferenceId: filing.ownerReferenceId ?? "",
     },
   });
+  const ownerHasFtin = watch("ownerHasFtin");
+  const ownerNoPostalCode = watch("ownerNoPostalCode");
+  const ownerFtinValue = watch("ownerFtin") ?? "";
+  const ftinLength = ownerFtinValue.trim().length;
+  const ftinSoftWarning =
+    ownerHasFtin === true && ftinLength > 0 && (ftinLength < 5 || ftinLength > 20)
+      ? "This tax number length looks unusual. You can continue if it is correct."
+      : null;
 
   useEffect(() => {
     onFormReady?.(() => getValues());
@@ -1117,7 +1315,7 @@ function OwnerStep({
   }, [getValues, onFormReady]);
 
   function handleOwnerSubmit(data: OwnerStepForm) {
-    return onSubmit(ownerStepFormToPatch(data));
+    return onSubmit(ownerStepFormToPatch(data, filing.ownerReferenceId));
   }
 
   return (
@@ -1145,12 +1343,16 @@ function OwnerStep({
           <Input {...register("ownerAddressCity")} placeholder="Hong Kong" />
         </Field>
         <Field label="State / Province" error={errors.ownerAddressState?.message}>
-          <Input {...register("ownerAddressState")} placeholder="(optional)" />
+          <Input {...register("ownerAddressState")} placeholder="State, province, or region" />
         </Field>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Postal / ZIP code" error={errors.ownerAddressPostal?.message}>
-          <Input {...register("ownerAddressPostal")} placeholder="(optional)" />
+          <Input
+            {...register("ownerAddressPostal")}
+            placeholder={ownerNoPostalCode ? "Not used" : "Postal code"}
+            disabled={ownerNoPostalCode === true}
+          />
         </Field>
         <Field label="Country" error={errors.ownerAddressCountry?.message}>
           <Select {...register("ownerAddressCountry")}>
@@ -1159,6 +1361,26 @@ function OwnerStep({
           </Select>
         </Field>
       </div>
+      <label className="flex items-start gap-2 text-sm text-slate-700">
+        <input
+          type="checkbox"
+          checked={ownerNoPostalCode === true}
+          onChange={(e) => {
+            setValue("ownerNoPostalCode", e.target.checked, {
+              shouldValidate: true,
+              shouldDirty: true,
+            });
+            if (e.target.checked) {
+              setValue("ownerAddressPostal", "", {
+                shouldValidate: true,
+                shouldDirty: true,
+              });
+            }
+          }}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+        />
+        <span>My country does not use postal codes</span>
+      </label>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Field
           label="Citizenship"
@@ -1213,38 +1435,85 @@ function OwnerStep({
           </Select>
         </Field>
       </div>
-      <Field
-        label="Foreign tax ID (FTIN)"
-        hint="The number your home country uses to identify you for tax purposes."
-        error={errors.ownerFtin?.message}
-        help={
-          <>
-            <p className="font-medium text-slate-900 mb-1.5">What goes here?</p>
-            <p>
-              The tax identification number issued to you by your <strong>home country</strong>
-              {" "}— not the United States. The IRS uses this on Form 5472 to identify you as the
-              foreign owner.
-            </p>
-            <p className="mt-2 font-medium text-slate-900">Common examples by country:</p>
-            <ul className="mt-1 space-y-0.5 list-disc list-inside">
-              <li><strong>Hong Kong:</strong> HKID number (e.g. A123456(7))</li>
-              <li><strong>United Kingdom:</strong> UTR (10 digits) or National Insurance number</li>
-              <li><strong>Singapore:</strong> NRIC / FIN number</li>
-              <li><strong>Canada:</strong> SIN (Social Insurance Number)</li>
-              <li><strong>Australia:</strong> TFN (Tax File Number)</li>
-              <li><strong>EU countries:</strong> your national tax / personal ID number</li>
-              <li><strong>BVI, Cayman, other tax-free jurisdictions:</strong> your national ID or
-                passport number</li>
-            </ul>
-            <p className="mt-2">
-              If your country doesn&apos;t issue a tax ID number, use your passport number and
-              fill the Reference ID field below.
-            </p>
-          </>
-        }
-      >
-        <Input {...register("ownerFtin")} placeholder="Your home-country tax ID number" />
-      </Field>
+      <fieldset className="space-y-2">
+        <legend className="block text-sm font-medium text-slate-700">
+          Do you have a tax number in your country of residence?
+        </legend>
+        {errors.ownerHasFtin?.message && (
+          <p className="text-xs text-red-600">{errors.ownerHasFtin.message}</p>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <label className="flex items-start gap-2 rounded-md border border-slate-300 bg-white p-3 text-sm">
+            <input
+              type="radio"
+              value="true"
+              checked={ownerHasFtin === true}
+              onChange={() =>
+                setValue("ownerHasFtin", true, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+            />
+            <span>Yes</span>
+          </label>
+          <label className="flex items-start gap-2 rounded-md border border-slate-300 bg-white p-3 text-sm">
+            <input
+              type="radio"
+              value="false"
+              checked={ownerHasFtin === false}
+              onChange={() => {
+                setValue("ownerHasFtin", false, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                });
+                setValue("ownerFtin", "", {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                });
+              }}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+            />
+            <span>No</span>
+          </label>
+        </div>
+      </fieldset>
+      {ownerHasFtin === true && (
+        <Field
+          label="Foreign tax ID (FTIN)"
+          hint={ftinSoftWarning ?? "The number your home country uses to identify you for tax purposes."}
+          error={errors.ownerFtin?.message}
+          help={
+            <>
+              <p className="font-medium text-slate-900 mb-1.5">What goes here?</p>
+              <p>
+                The tax identification number issued to you by your <strong>home country</strong>
+                {" "}- not the United States. The IRS uses this on Form 5472 to identify you as the
+                foreign owner.
+              </p>
+              <p className="mt-2 font-medium text-slate-900">Common examples by country:</p>
+              <ul className="mt-1 space-y-0.5 list-disc list-inside">
+                <li><strong>Hong Kong:</strong> HKID number (e.g. A123456(7))</li>
+                <li><strong>United Kingdom:</strong> UTR (10 digits) or National Insurance number</li>
+                <li><strong>Singapore:</strong> NRIC / FIN number</li>
+                <li><strong>Canada:</strong> SIN (Social Insurance Number)</li>
+                <li><strong>Australia:</strong> TFN (Tax File Number)</li>
+                <li><strong>EU countries:</strong> your national tax / personal ID number</li>
+                <li><strong>BVI, Cayman, other tax-free jurisdictions:</strong> your national ID or
+                  passport number</li>
+              </ul>
+            </>
+          }
+        >
+          <Input {...register("ownerFtin")} placeholder="Your home-country tax ID number" />
+        </Field>
+      )}
+      {ownerHasFtin === false && (
+        <p className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+          We will print &apos;None&apos; on the form and use your reference ID.
+        </p>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field
           label="US ITIN (optional)"

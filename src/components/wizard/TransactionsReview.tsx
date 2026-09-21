@@ -41,9 +41,35 @@ type YearState = {
   // Free-text disclosure of other related-party transactions (loans, sales,
   // services, rent, etc.) — flows into the Part V supporting statement.
   otherTransactionsNote?: string;
+  nonCashTransfers: NonCashTransferDraft[];
+};
+
+type NonCashTransferDraft = {
+  date: string;
+  direction: "in" | "out";
+  description: string;
+  fairMarketValueUsd: string;
+  valuationMethod: string;
+  alsoInPartV: boolean;
 };
 
 const MAX_FILES_PER_YEAR = 13;
+
+function normalizeNonCashTransfers(value: unknown): NonCashTransferDraft[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((row) => {
+    const item = row as Record<string, unknown>;
+    const cents = typeof item.fairMarketValueCents === "number" ? item.fairMarketValueCents : 0;
+    return {
+      date: typeof item.date === "string" ? item.date : "",
+      direction: item.direction === "out" ? "out" : "in",
+      description: typeof item.description === "string" ? item.description : "",
+      fairMarketValueUsd: cents > 0 ? (cents / 100).toFixed(2) : "",
+      valuationMethod: typeof item.valuationMethod === "string" ? item.valuationMethod : "",
+      alsoInPartV: item.alsoInPartV === true,
+    };
+  });
+}
 
 export function TransactionsReview({
   filingId,
@@ -56,6 +82,8 @@ export function TransactionsReview({
   formationYear,
   isFinalReturn = false,
   initialYears,
+  initialHasUsSourceIncome,
+  initialUsTaxWithheld,
   onSubmit,
   onBack,
   saving,
@@ -76,7 +104,10 @@ export function TransactionsReview({
     distributions: number;
     otherTransactionsNote?: string;
     noReportableTransactions?: boolean;
+    nonCashTransfers?: unknown;
   }[];
+  initialHasUsSourceIncome: boolean | null;
+  initialUsTaxWithheld: boolean | null;
   onSubmit: (years: {
     taxYear: number;
     totalAssetsYearEnd: number;
@@ -85,7 +116,15 @@ export function TransactionsReview({
     reportableTransactions: CategorizedTransaction[];
     otherTransactionsNote: string;
     noReportableTransactions: boolean;
-  }[]) => Promise<void>;
+    nonCashTransfers: {
+      date: string;
+      direction: "in" | "out";
+      description: string;
+      fairMarketValueCents: number;
+      valuationMethod: string;
+      alsoInPartV: boolean;
+    }[];
+  }[], incomeAnswers: { hasUsSourceIncome: boolean | null; usTaxWithheld: boolean | null }) => Promise<void>;
   onBack: () => void;
   saving: boolean;
 }) {
@@ -101,7 +140,14 @@ export function TransactionsReview({
       plaidConnections: [],
       totalAssetsAutoFilled: false,
       otherTransactionsNote: y.otherTransactionsNote ?? "",
+      nonCashTransfers: normalizeNonCashTransfers(y.nonCashTransfers),
     })),
+  );
+  const [hasUsSourceIncome, setHasUsSourceIncome] = useState<boolean | null>(
+    initialHasUsSourceIncome,
+  );
+  const [usTaxWithheld, setUsTaxWithheld] = useState<boolean | null>(
+    initialUsTaxWithheld,
   );
   const [noneForAllYears, setNoneForAllYears] = useState<boolean>(
     initialYears.length > 0 && initialYears.every((y) => y.noReportableTransactions === true),
@@ -493,13 +539,65 @@ export function TransactionsReview({
         reportableTransactions: y.transactions.filter((tx) => REPORTABLE.includes(tx.category)),
         otherTransactionsNote: (y.otherTransactionsNote ?? "").trim(),
         noReportableTransactions: noneForAllYears,
+        nonCashTransfers: y.nonCashTransfers.map((row) => ({
+          date: row.date,
+          direction: row.direction,
+          description: row.description.trim(),
+          fairMarketValueCents: Math.max(
+            0,
+            Math.round((Number(row.fairMarketValueUsd) || 0) * 100),
+          ),
+          valuationMethod: row.valuationMethod.trim(),
+          alsoInPartV: row.alsoInPartV,
+        })),
       };
     });
-    await onSubmit(payload);
+    await onSubmit(payload, {
+      hasUsSourceIncome,
+      usTaxWithheld: hasUsSourceIncome ? usTaxWithheld : null,
+    });
   }
 
   function setOtherTransactionsNote(taxYear: number, note: string) {
     setYears((all) => all.map((y) => (y.taxYear === taxYear ? { ...y, otherTransactionsNote: note } : y)));
+  }
+
+  function setNonCashTransfers(taxYear: number, rows: NonCashTransferDraft[]) {
+    setYears((all) =>
+      all.map((y) => (y.taxYear === taxYear ? { ...y, nonCashTransfers: rows } : y)),
+    );
+  }
+
+  function addNonCashTransfer(taxYear: number) {
+    const row: NonCashTransferDraft = {
+      date: `${taxYear}-12-31`,
+      direction: "in",
+      description: "",
+      fairMarketValueUsd: "",
+      valuationMethod: "",
+      alsoInPartV: false,
+    };
+    const year = years.find((y) => y.taxYear === taxYear);
+    setNonCashTransfers(taxYear, [...(year?.nonCashTransfers ?? []), row]);
+  }
+
+  function updateNonCashTransfer(
+    taxYear: number,
+    index: number,
+    patch: Partial<NonCashTransferDraft>,
+  ) {
+    const year = years.find((y) => y.taxYear === taxYear);
+    if (!year) return;
+    setNonCashTransfers(
+      taxYear,
+      year.nonCashTransfers.map((row, i) => (i === index ? { ...row, ...patch } : row)),
+    );
+  }
+
+  function removeNonCashTransfer(taxYear: number, index: number) {
+    const year = years.find((y) => y.taxYear === taxYear);
+    if (!year) return;
+    setNonCashTransfers(taxYear, year.nonCashTransfers.filter((_, i) => i !== index));
   }
 
   // Empty state when the user lands here without picking tax years first.
@@ -599,6 +697,62 @@ export function TransactionsReview({
           (or the spot rate at the date of each transaction).
         </p>
       </div>
+
+      <fieldset className="rounded-md border border-slate-200 bg-white p-4">
+        <legend className="text-sm font-medium text-slate-900">
+          Did the LLC receive any U.S.-source income, such as dividends from U.S. shares?
+        </legend>
+        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <label className="flex items-start gap-2 rounded-md border border-slate-300 p-3 text-sm">
+            <input
+              type="radio"
+              checked={hasUsSourceIncome === true}
+              onChange={() => setHasUsSourceIncome(true)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+            />
+            <span>Yes</span>
+          </label>
+          <label className="flex items-start gap-2 rounded-md border border-slate-300 p-3 text-sm">
+            <input
+              type="radio"
+              checked={hasUsSourceIncome === false}
+              onChange={() => {
+                setHasUsSourceIncome(false);
+                setUsTaxWithheld(null);
+              }}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+            />
+            <span>No</span>
+          </label>
+        </div>
+        {hasUsSourceIncome === true && (
+          <fieldset className="mt-4">
+            <legend className="text-sm font-medium text-slate-900">
+              Was U.S. tax withheld from it?
+            </legend>
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <label className="flex items-start gap-2 rounded-md border border-slate-300 p-3 text-sm">
+                <input
+                  type="radio"
+                  checked={usTaxWithheld === true}
+                  onChange={() => setUsTaxWithheld(true)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+                />
+                <span>Yes</span>
+              </label>
+              <label className="flex items-start gap-2 rounded-md border border-slate-300 p-3 text-sm">
+                <input
+                  type="radio"
+                  checked={usTaxWithheld === false}
+                  onChange={() => setUsTaxWithheld(false)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+                />
+                <span>No</span>
+              </label>
+            </div>
+          </fieldset>
+        )}
+      </fieldset>
 
       {/* Formation-contribution reminder. The single most common Part V
           omission is the initial capital contribution made at LLC formation
@@ -1115,6 +1269,144 @@ export function TransactionsReview({
                   placeholder="None"
                   className="mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
                 />
+              </div>
+
+              <div className="mt-5 pt-5 border-t border-slate-100">
+                <fieldset>
+                  <legend className="block text-sm font-medium text-slate-700">
+                    Did you transfer anything other than cash into or out of the LLC this year, such as shares, crypto or equipment?
+                  </legend>
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <label className="flex items-start gap-2 rounded-md border border-slate-300 p-3 text-sm">
+                      <input
+                        type="radio"
+                        checked={y.nonCashTransfers.length > 0}
+                        onChange={() => {
+                          if (y.nonCashTransfers.length === 0) addNonCashTransfer(y.taxYear);
+                        }}
+                        className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+                      />
+                      <span>Yes</span>
+                    </label>
+                    <label className="flex items-start gap-2 rounded-md border border-slate-300 p-3 text-sm">
+                      <input
+                        type="radio"
+                        checked={y.nonCashTransfers.length === 0}
+                        onChange={() => setNonCashTransfers(y.taxYear, [])}
+                        className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+                      />
+                      <span>No</span>
+                    </label>
+                  </div>
+                </fieldset>
+                {y.nonCashTransfers.length > 0 && (
+                  <div className="mt-4 space-y-4">
+                    {y.nonCashTransfers.map((row, index) => (
+                      <div
+                        key={index}
+                        className="rounded-md border border-slate-200 bg-slate-50 p-3"
+                      >
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <label className="block text-xs font-medium text-slate-600">
+                            Date
+                            <Input
+                              type="date"
+                              value={row.date}
+                              onChange={(e) =>
+                                updateNonCashTransfer(y.taxYear, index, { date: e.target.value })
+                              }
+                              className="mt-1"
+                            />
+                          </label>
+                          <label className="block text-xs font-medium text-slate-600">
+                            Direction
+                            <select
+                              value={row.direction}
+                              onChange={(e) =>
+                                updateNonCashTransfer(y.taxYear, index, {
+                                  direction: e.target.value === "out" ? "out" : "in",
+                                })
+                              }
+                              className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+                            >
+                              <option value="in">Into the LLC</option>
+                              <option value="out">Out of the LLC</option>
+                            </select>
+                          </label>
+                          <label className="block text-xs font-medium text-slate-600 sm:col-span-2">
+                            Description of what was transferred
+                            <Input
+                              value={row.description}
+                              onChange={(e) =>
+                                updateNonCashTransfer(y.taxYear, index, {
+                                  description: e.target.value,
+                                })
+                              }
+                              className="mt-1"
+                            />
+                          </label>
+                          <label className="block text-xs font-medium text-slate-600">
+                            Fair market value in USD
+                            <Input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={row.fairMarketValueUsd}
+                              onChange={(e) =>
+                                updateNonCashTransfer(y.taxYear, index, {
+                                  fairMarketValueUsd: e.target.value,
+                                })
+                              }
+                              className="mt-1"
+                            />
+                          </label>
+                          <label className="block text-xs font-medium text-slate-600">
+                            How the value was worked out
+                            <Input
+                              value={row.valuationMethod}
+                              onChange={(e) =>
+                                updateNonCashTransfer(y.taxYear, index, {
+                                  valuationMethod: e.target.value,
+                                })
+                              }
+                              className="mt-1"
+                            />
+                          </label>
+                        </div>
+                        <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                          <label className="flex items-start gap-2 text-sm text-slate-700">
+                            <input
+                              type="checkbox"
+                              checked={row.alsoInPartV}
+                              onChange={(e) =>
+                                updateNonCashTransfer(y.taxYear, index, {
+                                  alsoInPartV: e.target.checked,
+                                })
+                              }
+                              className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+                            />
+                            <span>I also listed this as a cash contribution above</span>
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => removeNonCashTransfer(y.taxYear, index)}
+                            className="self-start text-sm text-red-600 hover:underline"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addNonCashTransfer(y.taxYear)}
+                    >
+                      Add another non-cash transfer
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           );
