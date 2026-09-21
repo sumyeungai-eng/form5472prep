@@ -129,6 +129,7 @@ model Filing {
   llcState            String?
   llcZip              String?
   llcCountry          String    @default("USA")
+  llcCountryBusiness  String?
   llcDateIncorporated DateTime?
   llcBusinessActivity String?
   llcBusinessCode     String?
@@ -299,6 +300,15 @@ model Filing {
   validationStatus     String?
   validationIssuesJson Json?
   validationCheckedAt  DateTime?
+
+  // In-process PDF package pre-flight. Separate from validationStatus, which
+  // belongs to the retired AI compliance-check lifecycle.
+  preflightStatus    String?
+  preflightFailures  Json?
+  preflightWarnings  Json?
+  preflightCheckedAt DateTime?
+  generatorVersion   String?
+  generatorCommit    String?
 
   // Who currently "owns" the customer support thread for the AI conversation loop.
   //   null   = no AI conversation in flight (validation hasn't flagged yet, or status is passed/error)

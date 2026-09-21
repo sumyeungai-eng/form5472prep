@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getOwnedFiling } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { generatePackage } from "@/lib/pdf/generatePackage";
+import { runPreflight } from "@/lib/pdf/preflight";
 import { putPdf } from "@/lib/storage";
 
 export const runtime = "nodejs";
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: `Missing required field: ${f}` }, { status: 400 });
   }
 
-  const { bytes, signatures } = await generatePackage({
+  const { bytes, signatures, record } = await generatePackage({
     llcName: filing.llcName!,
     llcEin: filing.llcEin!,
     llcAddress: filing.llcAddress!,
@@ -56,6 +57,7 @@ export async function POST(req: Request) {
     llcState: filing.llcState!,
     llcZip: filing.llcZip!,
     llcCountry: filing.llcCountry,
+    llcCountryBusiness: filing.llcCountryBusiness,
     llcDateIncorporated: filing.llcDateIncorporated!,
     llcBusinessActivity: filing.llcBusinessActivity!,
     llcBusinessCode: filing.llcBusinessCode!,
@@ -92,10 +94,20 @@ export async function POST(req: Request) {
 
   const key = `${filing.id}_unsigned.pdf`;
   await putPdf(key, bytes);
+  const preflight = await runPreflight(record, bytes);
 
   await prisma.filing.update({
     where: { id: filing.id },
-    data: { generatedPdfKey: key, status: "PDF_GENERATED" },
+    data: {
+      generatedPdfKey: key,
+      status: "PDF_GENERATED",
+      preflightStatus: preflight.ok ? "passed" : "failed",
+      preflightFailures: preflight.failures,
+      preflightWarnings: preflight.warnings,
+      preflightCheckedAt: new Date(),
+      generatorVersion: record.generatorVersion,
+      generatorCommit: record.commit,
+    },
   });
 
   return NextResponse.json({ key, signatures });

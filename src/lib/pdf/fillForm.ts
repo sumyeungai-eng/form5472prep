@@ -1,13 +1,30 @@
-import { PDFDocument, PDFTextField, PDFCheckBox, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, PDFTextField, PDFCheckBox, rgb, StandardFonts, PDFName } from "pdf-lib";
+
+export type PdfFieldWrite = {
+  form: string;
+  field: string;
+  value: string | true;
+};
+
+export type PdfWriteRecorder = {
+  form: string;
+  writes: PdfFieldWrite[];
+};
 
 // Set a text field by name. Logs and skips if the field is missing —
 // IRS PDFs occasionally rename fields between revisions, and we'd rather
 // produce a slightly-incomplete PDF than crash the whole generation.
-export function setText(form: ReturnType<PDFDocument["getForm"]>, name: string, value: string) {
+export function setText(
+  form: ReturnType<PDFDocument["getForm"]>,
+  name: string,
+  value: string,
+  recorder?: PdfWriteRecorder,
+) {
   try {
     const field = form.getField(name);
     if (field instanceof PDFTextField) {
       field.setText(value);
+      recorder?.writes.push({ form: recorder.form, field: name, value });
     }
   } catch {
     console.warn(`[pdf] missing text field: ${name}`);
@@ -16,10 +33,17 @@ export function setText(form: ReturnType<PDFDocument["getForm"]>, name: string, 
 
 // Check a checkbox. PDF AcroForm checkboxes accept .check(); we
 // don't need the '/1' value — pdf-lib handles export values internally.
-export function check(form: ReturnType<PDFDocument["getForm"]>, name: string) {
+export function check(
+  form: ReturnType<PDFDocument["getForm"]>,
+  name: string,
+  recorder?: PdfWriteRecorder,
+) {
   try {
     const field = form.getField(name);
-    if (field instanceof PDFCheckBox) field.check();
+    if (field instanceof PDFCheckBox) {
+      field.check();
+      recorder?.writes.push({ form: recorder.form, field: name, value: true });
+    }
   } catch {
     console.warn(`[pdf] missing checkbox: ${name}`);
   }
@@ -63,9 +87,8 @@ export async function stampShortPeriod(
 ) {
   const page = pdf.getPage(0);
   const font = await pdf.embedFont(StandardFonts.HelveticaBold);
-  // en-dash between the dates, matching typographic convention for ranges.
   const tail = suffix ? ` ${suffix}` : "";
-  page.drawText(`Short tax year: ${beginText} – ${endText}${tail}`, {
+  page.drawText(`Short tax year: ${beginText} - ${endText}${tail}`, {
     x: opts?.x ?? 200,
     y: opts?.y ?? 766,
     size: 9,
@@ -80,6 +103,29 @@ export function flatten(form: ReturnType<PDFDocument["getForm"]>) {
   try {
     form.flatten();
   } catch (err) {
-    console.warn("[pdf] flatten failed; leaving fields editable", err);
+    throw new Error(`PDF form flatten failed: ${err instanceof Error ? err.message : String(err)}`);
   }
+
+  const remainingFields = form.getFields().length;
+  const remainingWidgets = countWidgetAnnotations(form.doc);
+  if (remainingFields !== 0 || remainingWidgets !== 0) {
+    throw new Error(
+      `PDF form flatten incomplete: ${remainingFields} AcroForm fields and ${remainingWidgets} widget annotations remain`,
+    );
+  }
+}
+
+export function countWidgetAnnotations(pdf: PDFDocument): number {
+  let widgets = 0;
+  for (const page of pdf.getPages()) {
+    const annots = page.node.Annots();
+    if (!annots) continue;
+    for (const annotRef of annots.asArray()) {
+      const annot = pdf.context.lookup(annotRef);
+      const subtype = (annot as { get?: (key: unknown) => unknown }).get?.(PDFName.of("Subtype"));
+      const encodedName = (subtype as { encodedName?: string } | undefined)?.encodedName;
+      if (encodedName === "/Widget") widgets++;
+    }
+  }
+  return widgets;
 }

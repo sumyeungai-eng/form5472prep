@@ -7,7 +7,8 @@ import { sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
 import { submitFax } from "@/lib/fax";
 import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
-import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
+import { generatePackage, type GeneratedPackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
+import { runPreflight } from "@/lib/pdf/preflight";
 import {
   isLegalTransition,
   logFilingChange,
@@ -100,6 +101,7 @@ const filingSelect = {
   llcState: true,
   llcZip: true,
   llcCountry: true,
+  llcCountryBusiness: true,
   llcBusinessActivity: true,
   llcBusinessCode: true,
   ownerName: true,
@@ -129,6 +131,12 @@ const filingSelect = {
   signedPdfKey: true,
   signaturePngKey: true,
   generatedPdfKey: true,
+  preflightStatus: true,
+  preflightFailures: true,
+  preflightWarnings: true,
+  preflightCheckedAt: true,
+  generatorVersion: true,
+  generatorCommit: true,
   faxedPdfKey: true,
   faxJobId: true,
   faxStatus: true,
@@ -143,6 +151,7 @@ const packageFilingSelect = {
   llcState: true,
   llcZip: true,
   llcCountry: true,
+  llcCountryBusiness: true,
   llcDateIncorporated: true,
   llcBusinessActivity: true,
   llcBusinessCode: true,
@@ -317,7 +326,8 @@ export async function runFilingAction(
           const result = await generatePackage({
             llcName: full.llcName, llcEin: full.llcEin, llcAddress: full.llcAddress,
             llcCity: full.llcCity, llcState: full.llcState, llcZip: full.llcZip,
-            llcCountry: full.llcCountry, llcDateIncorporated: full.llcDateIncorporated,
+            llcCountry: full.llcCountry, llcCountryBusiness: full.llcCountryBusiness,
+            llcDateIncorporated: full.llcDateIncorporated,
             llcBusinessActivity: full.llcBusinessActivity, llcBusinessCode: full.llcBusinessCode,
             ownerName: full.ownerName, ownerAddress: full.ownerAddress,
             ownerCountryCitizenship: full.ownerCountryCitizenship,
@@ -347,9 +357,18 @@ export async function runFilingAction(
           signatures = result.signatures;
           const key = `${filing.id}_unsigned.pdf`;
           await putPdf(key, result.bytes);
+          const preflight = await runPreflight(result.record, result.bytes);
           await prisma.filing.update({
             where: { id: filing.id },
-            data: { generatedPdfKey: key },
+            data: {
+              generatedPdfKey: key,
+              preflightStatus: preflight.ok ? "passed" : "failed",
+              preflightFailures: preflight.failures,
+              preflightWarnings: preflight.warnings,
+              preflightCheckedAt: new Date(),
+              generatorVersion: result.record.generatorVersion,
+              generatorCommit: result.record.commit,
+            },
             select: { id: true },
           });
         }
@@ -534,12 +553,13 @@ export async function runFilingAction(
           "filing is missing required fields — finish the wizard first",
         );
       }
-      let pkg: { bytes: Uint8Array; signatures: SignatureLocation[] };
+      let pkg: GeneratedPackage;
       try {
         pkg = await generatePackage({
           llcName: full.llcName, llcEin: full.llcEin, llcAddress: full.llcAddress,
           llcCity: full.llcCity, llcState: full.llcState, llcZip: full.llcZip,
-          llcCountry: full.llcCountry, llcDateIncorporated: full.llcDateIncorporated,
+          llcCountry: full.llcCountry, llcCountryBusiness: full.llcCountryBusiness,
+          llcDateIncorporated: full.llcDateIncorporated,
           llcBusinessActivity: full.llcBusinessActivity, llcBusinessCode: full.llcBusinessCode,
           ownerName: full.ownerName, ownerAddress: full.ownerAddress,
           ownerCountryCitizenship: full.ownerCountryCitizenship,
@@ -571,6 +591,7 @@ export async function runFilingAction(
       }
       const key = `${filing.id}_unsigned.pdf`;
       await putPdf(key, pkg.bytes);
+      const preflight = await runPreflight(pkg.record, pkg.bytes);
       // Reset signed PDF + validation state — the old signature was applied
       // to a stale PDF and isn't valid against the new one. Customer (or
       // admin) needs to re-sign.
@@ -581,6 +602,12 @@ export async function runFilingAction(
           signedPdfKey: null,
           validationStatus: "pending",
           validationCheckedAt: null,
+          preflightStatus: preflight.ok ? "passed" : "failed",
+          preflightFailures: preflight.failures,
+          preflightWarnings: preflight.warnings,
+          preflightCheckedAt: new Date(),
+          generatorVersion: pkg.record.generatorVersion,
+          generatorCommit: pkg.record.commit,
           status: "PDF_GENERATED",
         },
         select: { id: true },
@@ -832,11 +859,18 @@ export async function runFilingAction(
     }
 
     case "uploadReviewedPdf": {
-      if (["FAXED", "CONFIRMED"].includes(filing.status) && !isValidForceOverride(ctx)) {
+      if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
         throw new FilingActionError(
           409,
-          "already_faxed",
-          "This filing has already been faxed or confirmed. Force with a reason to replace its reviewed PDF.",
+          "already_signed_or_filed",
+          "This filing has already been signed, faxed, or confirmed.",
+        );
+      }
+      if (filing.preflightStatus === "failed") {
+        throw new FilingActionError(
+          409,
+          "preflight_failed",
+          "This package failed pre-flight checks. Fix the order data and regenerate.",
         );
       }
       const rawB64 = typeof body.pdfBase64 === "string" ? body.pdfBase64 : "";

@@ -8,6 +8,7 @@ import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendNewOrderAdminEmail 
 import { resolveTier } from "@/lib/pricing";
 import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
+import { runPreflight } from "@/lib/pdf/preflight";
 import { putPdf } from "@/lib/storage";
 import { sendMetaPurchase } from "@/lib/analytics/metaServer";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
@@ -189,6 +190,7 @@ export async function POST(req: Request) {
             llcState: full.llcState,
             llcZip: full.llcZip,
             llcCountry: full.llcCountry,
+            llcCountryBusiness: full.llcCountryBusiness,
             llcDateIncorporated: full.llcDateIncorporated,
             llcBusinessActivity: full.llcBusinessActivity,
             llcBusinessCode: full.llcBusinessCode,
@@ -227,11 +229,18 @@ export async function POST(req: Request) {
           pdfSignatures = result.signatures;
           const key = `${filing.id}_unsigned.pdf`;
           await putPdf(key, result.bytes);
+          const preflight = await runPreflight(result.record, result.bytes);
           await prisma.filing.update({
             where: { id: filing.id },
             data: {
               generatedPdfKey: key,
               status: "PDF_GENERATED",
+              preflightStatus: preflight.ok ? "passed" : "failed",
+              preflightFailures: preflight.failures,
+              preflightWarnings: preflight.warnings,
+              preflightCheckedAt: new Date(),
+              generatorVersion: result.record.generatorVersion,
+              generatorCommit: result.record.commit,
             },
           });
         } else {
