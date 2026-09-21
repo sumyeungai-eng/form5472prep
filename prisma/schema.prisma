@@ -151,6 +151,15 @@ model Filing {
   ownerFtin                String?
   ownerItin                String?
   ownerReferenceId         String?
+  // Wave 3 questionnaire (docs/TASK-5472-generator-fixes.md, amendments sec. 10). All nullable:
+  // orders created before these questions existed keep null, and the reviewer is told what is unanswered.
+  llcMemberCount                  Int?     // G-10: more than 1 -> route to a reviewer, no package
+  ownerHasFtin                    Boolean? // Q-03: false -> print "None" on 4b(3)/8b(3)
+  ownerNoPostalCode               Boolean? // Q-04: owner's country has no postal codes
+  llcAddressIsRegisteredAgentOnly Boolean? // Q-05 / sec. 5.5: true -> use the owner's address on the forms
+  priorForm5472Filed              String?  // Q-06: "yes" | "no" | "not_sure"; drives line 1j
+  hasUsSourceIncome               Boolean? // Q-07: U.S.-source income such as dividends from U.S. shares
+  usTaxWithheld                   Boolean? // Q-07: U.S. tax withheld at source on that income
 
   // Filing scope
   taxYears                 Int[]
@@ -423,6 +432,13 @@ model FilingYearData {
   // supporting statement. Null = user hasn't answered; empty string = explicitly
   // confirmed no other transactions.
   otherTransactionsNote  String?
+  // Q-08 / G-09 Part VI: non-cash transfers between owner and LLC. JSON array of
+  // { date: "YYYY-MM-DD", direction: "in" | "out", description, fairMarketValueCents, valuationMethod, alsoInPartV }
+  nonCashTransfers        Json?
+  // Q-13 / C-04: the client's own account for a late year, in their words
+  rcsWhyMissed            String?
+  rcsWhenLearned          String?
+  rcsNoIrsNoticeConfirmed Boolean?
 
   bankStatements BankStatement[]
 
