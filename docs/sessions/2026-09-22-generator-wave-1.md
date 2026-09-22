@@ -101,3 +101,48 @@ Enter, preset autofill to 541600) with no client errors; the live draft was not 
 Open after wave 2: Form 5472 revision for older tax years (every year prints on the Rev. 12-2023 form;
 the plan scopes revision-matching to Form 1120 only) is a question for Sum's reviewer. `/api/generate-pdf`
 500 on an empty body (pre-existing).
+
+---
+
+# Wave 3 (live, merge 3511cff)
+
+Commits cad9f33 (schema), c9ea5be (questionnaire), 8d3c39c (generator), dc34f37 (review fixes). Deploy
+applied `20260923090000_wave3_questionnaire` (Filing: llcMemberCount, ownerHasFtin, ownerNoPostalCode,
+llcAddressIsRegisteredAgentOnly, priorForm5472Filed, hasUsSourceIncome, usTaxWithheld; FilingYearData:
+nonCashTransfers, rcsWhyMissed, rcsWhenLearned, rcsNoIrsNoticeConfirmed; all nullable).
+
+- Questions: Q-03 FTIN yes/no (ITIN pattern rejected, reference ID generated once), Q-04 structured owner
+  address (state and postal required unless "no postal codes"), Q-05 registered-agent-only address, Q-06
+  prior Form 5472, Q-07 U.S.-source income and withholding, Q-08 per-year non-cash transfers, Q-10 LLC
+  country of business, Q-13 per late year why missed / when learned / no IRS notice. Eligibility
+  multi-member answer stored as llcMemberCount.
+- Generator: `src/lib/pdf/packageInput.ts` is the ONE mapper from a Prisma filing to generator input, used
+  by the Stripe webhook, checkout, generate-pdf and filingActions. G-07 1j, section 5.5 owner address when
+  the U.S. address is agent-only, G-09 Part VI box and statement (value counted once), C-04 reasonable
+  cause from the client's own per-year answers, C-05 one statement per late year after that year's forms,
+  C-06 heading everywhere, G-10 multi-member routes to review. A11 A13 A14 A15 A24 A26.
+- Review caught three P0s before merge, all fixed: late filers were blocked at checkout (gate still
+  required the legacy narrative); a later per-year save wiped the reasonable-cause answers; owners with no
+  FTIN could not pay. Also fixed: the reasonable cause statement no longer asserts "dormant" / "no
+  customers" (only what the data supports, signed under penalties of perjury); owner address no longer
+  printed twice; older orders get warnings (W15 W15b W17 W18 W26), not failures, for questions that did
+  not exist when they ordered.
+- Verified: tsc; vitest 677/677; render 8/8; clean build; new questions driven in a local production
+  preview (ITIN rejected, postal required, radios are fieldsets with legends and visible labels); live
+  wizard loads with no console errors.
+
+## Contracts added in wave 3
+- Never assert a fact in a reasonable cause statement that is not a questionnaire answer or derivable from
+  the customer's data. It is signed under penalties of perjury.
+- Per-year saves only overwrite keys present in the payload.
+- New assertions must WARN, not fail, when the question did not exist for an older order.
+- Add a generator input field in `packageInput.ts`, never in a caller.
+
+## Open after wave 3
+- Admins cannot yet edit the per-year fields (rcs answers, non-cash transfers) from the admin page.
+- Reference ID is stored per filing, so a returning customer gets a new one next year (section 5.2 wants
+  one per owner forever): needs an owner-level store.
+- Form 5472 revision for older tax years (question for Sum's reviewer).
+- Remaining: wave 4 (Q-01 owner-paid costs, Q-02 explicit zeros, Q-09, Q-11 EIN checks, Q-12, Q-14
+  tax-year list from the clock, C-07 customer-copy sweep) and wave 5 (CI, S-03 hardening, S-04 open-order
+  sweep, S-05 rules doc).
