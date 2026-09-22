@@ -1,6 +1,19 @@
 import { z } from "zod";
 import { nextBusinessDay } from "@/lib/federalHolidays";
 
+export const DATE_ONLY_RE = /^\d{4}-\d{2}-\d{2}$/;
+export const PRIOR_FORM_5472_ANSWERS = ["yes", "no", "not_sure"] as const;
+export const NON_CASH_TRANSFER_DIRECTIONS = ["in", "out"] as const;
+export const ITIN_IN_FTIN_MESSAGE =
+  "This looks like a U.S. ITIN. Put it in the ITIN field instead.";
+
+const optionalTrimmedString = (max = 2000) => z.string().trim().max(max).optional().nullable();
+
+export function looksLikeUsItin(value: string | null | undefined): boolean {
+  const digits = (value ?? "").replace(/\D/g, "");
+  return digits.length === 9 && digits.startsWith("9");
+}
+
 // EIN must be 9 digits, optionally formatted XX-XXXXXXX
 export const einSchema = z
   .string()
@@ -15,6 +28,9 @@ export const entitySchema = z.object({
   llcCity: z.string().trim().min(1, "Required"),
   llcState: z.string().trim().length(2, "2-letter state code"),
   llcZip: z.string().trim().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP"),
+  llcCountryBusiness: z.string().trim().min(1, "Required").max(2000),
+  llcAddressIsRegisteredAgentOnly: z.boolean().optional().nullable(),
+  priorForm5472Filed: z.enum(PRIOR_FORM_5472_ANSWERS).optional().nullable(),
   llcDateIncorporated: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD"),
@@ -35,7 +51,9 @@ export const ownerBaseSchema = z.object({
   ownerCountryCitizenship: z.string().trim().min(2, "Required"),
   ownerCountryTaxResidence: z.string().trim().min(2, "Required"),
   ownerCountryBusiness: z.string().trim().min(2, "Required"),
-  ownerFtin: z.string().trim().min(2, "Required"),
+  ownerHasFtin: z.boolean().optional().nullable(),
+  ownerNoPostalCode: z.boolean().optional().nullable(),
+  ownerFtin: z.string().trim().max(2000).optional().nullable().or(z.literal("")),
   ownerItin: z.string().trim().optional().or(z.literal("")),
   // IRS Instructions for Form 5472: the reference ID must be alphanumeric with
   // no special characters or spaces, 50 chars or less. Reject hyphens etc. so
@@ -47,6 +65,27 @@ export const ownerBaseSchema = z.object({
     .optional()
     .or(z.literal("")),
 });
+
+export function refineOwnerFtin(
+  val: { ownerHasFtin?: boolean | null; ownerFtin?: string | null },
+  ctx: z.RefinementCtx,
+) {
+  const ftin = (val.ownerFtin ?? "").trim();
+  if (ftin && looksLikeUsItin(ftin)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: ITIN_IN_FTIN_MESSAGE,
+      path: ["ownerFtin"],
+    });
+  }
+  if (val.ownerHasFtin !== false && !ftin) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Required",
+      path: ["ownerFtin"],
+    });
+  }
+}
 
 // Per IRS Form 5472 line 4b: must have either US ITIN OR a reference ID.
 // Exported as a plain refiner callback so derived schemas in the wizard can
@@ -67,7 +106,20 @@ export function refineUsIdOrReferenceId(
   }
 }
 
-export const ownerSchema = ownerBaseSchema.superRefine(refineUsIdOrReferenceId);
+export const ownerSchema = ownerBaseSchema
+  .superRefine(refineOwnerFtin)
+  .superRefine(refineUsIdOrReferenceId);
+
+export const nonCashTransferSchema = z.object({
+  date: z.string().trim().regex(DATE_ONLY_RE, "Use YYYY-MM-DD"),
+  direction: z.enum(NON_CASH_TRANSFER_DIRECTIONS),
+  description: z.string().trim().min(1, "Required").max(2000),
+  fairMarketValueCents: z.number().int().min(0),
+  valuationMethod: z.string().trim().min(1, "Required").max(2000),
+  alsoInPartV: z.boolean().optional(),
+});
+
+export const nonCashTransfersSchema = z.array(nonCashTransferSchema);
 
 // The last COMPLETED tax year — a filing can't be for a year that hasn't
 // ended yet. Bounds both the wizard picker and the server-side validation.
@@ -364,6 +416,10 @@ export function makeYearDataSchema(isFinalReturn: boolean) {
     contributions: z.coerce.number().min(0),
     distributions: z.coerce.number().min(0),
     noReportableTransactions: z.boolean().optional(),
+    nonCashTransfers: nonCashTransfersSchema.optional().nullable(),
+    rcsWhyMissed: optionalTrimmedString(),
+    rcsWhenLearned: optionalTrimmedString(),
+    rcsNoIrsNoticeConfirmed: z.boolean().optional().nullable(),
   });
 }
 
@@ -398,3 +454,4 @@ export type EntityForm = z.infer<typeof entitySchema>;
 export type OwnerForm = z.infer<typeof ownerSchema>;
 export type YearScopeForm = z.infer<typeof yearScopeSchema>;
 export type YearDataForm = z.infer<typeof yearDataSchema>;
+export type NonCashTransfer = z.infer<typeof nonCashTransferSchema>;

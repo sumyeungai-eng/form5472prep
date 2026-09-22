@@ -36,6 +36,7 @@ export type CompletionInput = {
   ownerCountryCitizenship: string | null;
   ownerCountryTaxResidence: string | null;
   ownerCountryBusiness: string | null;
+  ownerHasFtin?: boolean | null;
   ownerFtin: string | null;
   ownerItin: string | null;
   ownerReferenceId: string | null;
@@ -50,7 +51,18 @@ export type CompletionInput = {
   // them would only add obligations on callers for nothing.
   extensionFiled: string | null;
   extensionTransmittedAt: Date | string | null;
+  yearData?: ReasonableCauseYearData[];
 };
+
+type ReasonableCauseYearData = {
+  taxYear: number;
+  rcsWhyMissed?: string | null;
+  rcsWhenLearned?: string | null;
+  rcsNoIrsNoticeConfirmed?: boolean | null;
+};
+
+const nonEmpty = (value: string | null | undefined): boolean =>
+  typeof value === "string" && value.trim().length > 0;
 
 /**
  * Whether this filing needs a reasonable-cause (DIIRSP) narrative, decided
@@ -90,6 +102,51 @@ export function requiresReasonableCause(
   return filing.taxYears.some((y) =>
     isYearDelinquent(y, finalDissolved, y === maxYear ? extFacts : null, now),
   );
+}
+
+export function lateYearsForReasonableCause(
+  filing: Pick<
+    CompletionInput,
+    "taxYears" | "isFinalReturn" | "dissolvedAt" | "extensionFiled" | "extensionTransmittedAt"
+  >,
+  now: Date = new Date(),
+): number[] {
+  if (filing.taxYears.length === 0) return [];
+  const finalDissolved = filing.isFinalReturn ? filing.dissolvedAt : null;
+  const maxYear = Math.max(...filing.taxYears);
+  const extFacts: ExtensionFacts = {
+    filed: filing.extensionFiled,
+    transmittedAt: filing.extensionTransmittedAt,
+  };
+  return filing.taxYears.filter((y) =>
+    isYearDelinquent(y, finalDissolved, y === maxYear ? extFacts : null, now),
+  );
+}
+
+export function hasCompleteReasonableCause(
+  filing: Pick<
+    CompletionInput,
+    | "taxYears"
+    | "isFinalReturn"
+    | "dissolvedAt"
+    | "extensionFiled"
+    | "extensionTransmittedAt"
+    | "reasonableCauseNarrative"
+  >,
+  yearData: ReasonableCauseYearData[],
+  now: Date = new Date(),
+): boolean {
+  const lateYears = lateYearsForReasonableCause(filing, now);
+  if (lateYears.length === 0) return true;
+  if (nonEmpty(filing.reasonableCauseNarrative)) return true;
+  return lateYears.every((taxYear) => {
+    const row = yearData.find((y) => y.taxYear === taxYear);
+    return (
+      nonEmpty(row?.rcsWhyMissed) &&
+      nonEmpty(row?.rcsWhenLearned) &&
+      row?.rcsNoIrsNoticeConfirmed === true
+    );
+  });
 }
 
 /**
@@ -144,7 +201,7 @@ function extensionAnswerRequired(
  */
 export function filingCompletionIssues(
   filing: CompletionInput,
-  yearDataYears: number[],
+  yearDataYears: number[] | ReasonableCauseYearData[],
   now: Date = new Date(),
 ): string[] {
   // Validate against the same schemas the wizard enforces.
@@ -172,8 +229,11 @@ export function filingCompletionIssues(
       }
     }
   }
+  const yearsPresent = yearDataYears.map((year) =>
+    typeof year === "number" ? year : year.taxYear,
+  );
   for (const taxYear of filing.taxYears) {
-    if (!yearDataYears.find((year) => year === taxYear)) {
+    if (!yearsPresent.find((year) => year === taxYear)) {
       const field = `yearData.${taxYear}`;
       if (completionIssues.indexOf(field) === -1) completionIssues.push(field);
     }
@@ -198,7 +258,11 @@ export function filingCompletionIssues(
   // this automatically: it calls this same helper, so a draft that quietly
   // went delinquent stops showing as payable there too.
   const requiresRcs = requiresReasonableCause(filing, now);
-  if (requiresRcs && (!filing.reasonableCauseNarrative || !filing.reasonableCauseNarrative.trim())) {
+  const detailedYearData =
+    yearDataYears.length > 0 && typeof yearDataYears[0] !== "number"
+      ? (yearDataYears as ReasonableCauseYearData[])
+      : filing.yearData ?? [];
+  if (requiresRcs && !hasCompleteReasonableCause(filing, detailedYearData, now)) {
     if (completionIssues.indexOf("reasonableCauseNarrative") === -1)
       completionIssues.push("reasonableCauseNarrative");
   }

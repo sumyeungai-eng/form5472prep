@@ -55,8 +55,13 @@ export async function runPreflight(
   checkA08(record, result);
   checkA09(record, result);
   checkA10(record, result);
+  checkA11(record, result);
   checkA12(record, result);
+  checkA13(record, result);
+  checkA14(record, result);
+  checkA15(record, result);
   checkA16(record, result);
+  checkA17(record, result);
   checkA18(record, result);
   checkA19(record, result);
   checkA20(record, result);
@@ -65,6 +70,7 @@ export async function runPreflight(
   checkA23(record, result);
   checkA24(record, result);
   checkA25(record, result);
+  checkA26(record, result);
   checkA27(record, result);
   checkR02(record, result);
   await checkA28(pdfBytes, result);
@@ -208,16 +214,87 @@ function checkA10(record: PackageRecord, result: MutableResult) {
 // A12: 1f equals rounded Part V total; 1h equals sum of 1f; 1g equals number of Forms 5472.
 function checkA12(record: PackageRecord, result: MutableResult) {
   for (const year of record.taxYears) {
-    const cents = year.partVRows.reduce((sum, row) => sum + Math.abs(row.amountCents), 0);
-    const rounded = Math.floor((cents + 50) / 100);
-    if (year.partVTotalRounded !== rounded || year.line1f !== rounded) {
-      fail(result, "A12", `Tax year ${year.taxYear}: line 1f does not equal the rounded Part V total.`);
+    const roundedPartV = Math.floor((year.partVTotalCents + 50) / 100);
+    const roundedLine1f = Math.floor((year.partVTotalCents + year.partVICentsAddedToLine1f + 50) / 100);
+    if (year.partVTotalRounded !== roundedPartV || year.line1f !== roundedLine1f) {
+      fail(result, "A12", `Tax year ${year.taxYear}: line 1f does not equal the rounded Part V plus Part VI total.`);
     }
     if (year.line1g !== 1) {
       fail(result, "A12", `Tax year ${year.taxYear}: line 1g does not equal the number of Forms 5472.`);
     }
     if (year.line1h !== year.line1f) {
       fail(result, "A12", `Tax year ${year.taxYear}: line 1h does not equal the sum of line 1f values.`);
+    }
+  }
+}
+
+// A11: signer title stays inside the measured title column and below the declaration text.
+function checkA11(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const rect = year.signerTitleRect;
+    const column = year.signerTitleColumnBounds;
+    const declaration = year.signerDeclarationBounds;
+    if (rect.left < column.left || rect.right > column.right || rect.bottom < column.bottom || rect.top > column.top) {
+      fail(result, "A11", `Tax year ${year.taxYear}: signer title is outside the measured title column.`);
+    }
+    if (rectsOverlap(rect, declaration)) {
+      fail(result, "A11", `Tax year ${year.taxYear}: signer title overlaps the 1120 declaration text region.`);
+    }
+  }
+}
+
+// A13: Part V box checked; every row has date in period, description, and non-zero amount.
+function checkA13(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    if (!hasChecked(year.form5472.fields, form5472FieldMap.partV_attachedStatementBox)) {
+      fail(result, "A13", `Tax year ${year.taxYear}: Part V attached-statement box is not checked.`);
+    }
+    for (const row of year.partVRows) {
+      if (!row.description?.trim() || Math.abs(row.amountCents) <= 0 || !dateInsidePeriod(row.date, year.taxYear, year.periodStart, year.periodEnd)) {
+        fail(result, "A13", `Tax year ${year.taxYear}: Part V row is missing a valid date, description, or amount.`);
+      }
+    }
+  }
+}
+
+// A14: Part VI box checked iff non-cash transfers exist, and the statement exists.
+function checkA14(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const hasTransfers = year.nonCashTransfers.length > 0;
+    const boxChecked = hasChecked(year.form5472.fields, form5472FieldMap.partVI_attachedStatementBox);
+    const hasStatement = record.authoredDocuments.some((doc) => doc.kind === "partVIStatement" && doc.taxYear === year.taxYear);
+    if (boxChecked !== hasTransfers || hasStatement !== hasTransfers) {
+      fail(result, "A14", `Tax year ${year.taxYear}: Part VI checkbox and statement do not match non-cash transfers.`);
+    }
+  }
+}
+
+// A15: 1j follows formation year plus prior-filing answer, with reviewer warnings for legacy/uncertain answers.
+function checkA15(record: PackageRecord, result: MutableResult) {
+  const formationYear = record.formationDate ? new Date(record.formationDate).getUTCFullYear() : null;
+  for (const year of record.taxYears) {
+    const expected =
+      formationYear !== null &&
+      year.taxYear === formationYear &&
+      (year.priorForm5472Filed == null || year.priorForm5472Filed === "no");
+    const checked = hasChecked(year.form5472.fields, form5472FieldMap["1j_initialYear"]);
+    if (checked !== expected || year.line1jChecked !== expected) {
+      fail(result, "A15", `Tax year ${year.taxYear}: Form 5472 line 1j does not match the prior-filing answer.`);
+    }
+    if (year.priorForm5472Filed == null) {
+      warn(result, "W15b", "Prior-filing question not answered.");
+    } else if (
+      formationYear !== null &&
+      formationYear === year.taxYear &&
+      (year.priorForm5472Filed === "yes" || year.priorForm5472Filed === "not_sure")
+    ) {
+      warn(result, "W15", "Formation-year prior Form 5472 answer needs reviewer confirmation.");
+    } else if (
+      formationYear !== null &&
+      formationYear < year.taxYear &&
+      (year.priorForm5472Filed === "no" || year.priorForm5472Filed === "not_sure")
+    ) {
+      warn(result, "W15", "An earlier year may not have been filed.");
     }
   }
 }
@@ -233,6 +310,24 @@ function checkA16(record: PackageRecord, result: MutableResult) {
   }
 }
 
+// A17: owner address has province/state and postal, unless no postal code was explicitly answered.
+function checkA17(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const legacySingleLineOwnerAddress =
+      !year.ownerAddressState &&
+      !year.ownerAddressPostal &&
+      year.ownerNoPostalCode === null &&
+      record.ownerPrintAddress.value.trim().length > 0;
+    if (legacySingleLineOwnerAddress) {
+      warn(result, "W17", `Tax year ${year.taxYear}: Owner address not in structured form (older order).`);
+      continue;
+    }
+    if (!year.ownerAddressState || (!year.ownerAddressPostal && year.ownerNoPostalCode !== true)) {
+      fail(result, "A17", `Tax year ${year.taxYear}: owner address is missing state/province or postal-code confirmation.`);
+    }
+  }
+}
+
 // A18: foreign tax ID fields are a real value or exactly "None"; never blank or equal to US ID.
 function checkA18(record: PackageRecord, result: MutableResult) {
   for (const year of record.taxYears) {
@@ -242,6 +337,10 @@ function checkA18(record: PackageRecord, result: MutableResult) {
     ] as const) {
       const ftin = textValue(year.form5472.fields, ftinField).trim();
       const usId = textValue(year.form5472.fields, usIdField).trim();
+      if (!ftin && year.ownerHasFtin == null) {
+        warn(result, "W18", `Tax year ${year.taxYear}: Owner FTIN answer not in structured form (older order).`);
+        continue;
+      }
       if (!ftin || (ftin !== "None" && ftin === usId)) {
         fail(result, "A18", `Tax year ${year.taxYear}: foreign tax ID field ${ftinField} is blank or duplicates the US ID.`);
       }
@@ -342,26 +441,54 @@ function checkA23(record: PackageRecord, result: MutableResult) {
 function checkA24(record: PackageRecord, result: MutableResult) {
   const lateYears = record.taxYears.filter((year) => year.status === "late");
   const rcsDocs = record.authoredDocuments.filter((doc) => doc.kind === "reasonableCauseStatement");
-  if (lateYears.length === 0 && rcsDocs.length > 0) {
-    fail(result, "A24", "Reasonable-cause statement is present but no tax year is late.");
+  const lateSet = new Set(lateYears.map((year) => year.taxYear));
+  if (rcsDocs.length !== lateYears.length) {
+    fail(result, "A24", "Reasonable-cause statements do not match the late tax years one-for-one.");
   }
-  if (lateYears.length > 0 && rcsDocs.length === 0) {
-    fail(result, "A24", "At least one tax year is late but no reasonable-cause statement is present.");
+  for (const doc of rcsDocs) {
+    if (doc.taxYear == null || !lateSet.has(doc.taxYear)) {
+      fail(result, "A24", "Reasonable-cause statement is present for a non-late tax year.");
+      continue;
+    }
+    const text = doc.lines.join("\n");
+    if (!text.includes(`tax year ${doc.taxYear}`) || /tax year in question/i.test(text)) {
+      fail(result, "A24", `Reasonable-cause statement for ${doc.taxYear} does not name its own tax year.`);
+    }
   }
 }
 
 // A25: authored-document signature heading equals config value.
 function checkA25(record: PackageRecord, result: MutableResult) {
-  for (const doc of record.authoredDocuments.filter((d) => d.kind !== "partVStatement")) {
+  for (const doc of record.authoredDocuments) {
     if (!doc.lines.includes(AUTHORED_DOC_SIGNATURE_HEADING)) {
       fail(result, "A25", `${doc.kind} does not use the configured signature heading.`);
     }
   }
 }
 
+// A26: RCS text must not contradict questionnaire facts.
+function checkA26(record: PackageRecord, result: MutableResult) {
+  for (const doc of record.authoredDocuments.filter((d) => d.kind === "reasonableCauseStatement")) {
+    const year = record.taxYears.find((y) => y.taxYear === doc.taxYear);
+    const text = doc.lines.join(" ");
+    if (doc.rcsFallbackUsed) {
+      warn(result, "W26", "Reasonable cause text predates the per-year questions.");
+    }
+    if (doc.rcsMissingAnswers && doc.taxYear != null) {
+      fail(result, "A26", `Reasonable cause answers missing for ${doc.taxYear}.`);
+    }
+    if (year && !doc.rcsFallbackUsed && /\b(dormant|no customers|no vendors|did not operate with customers or vendors|customer payments|vendor invoices)\b/i.test(text)) {
+      fail(result, "A26", `Tax year ${year.taxYear}: RCS contains unsupported operations wording.`);
+    }
+    if (year?.hasUsSourceIncome === true && /\b(no U\.S\. income(?! tax return)|no tax owed)\b/i.test(text)) {
+      fail(result, "A26", `Tax year ${year.taxYear}: RCS contradicts U.S.-source income facts.`);
+    }
+  }
+}
+
 // A27: every statement page carries LLC name, EIN, and tax year.
 function checkA27(record: PackageRecord, result: MutableResult) {
-  for (const doc of record.authoredDocuments.filter((d) => d.kind === "partVStatement")) {
+  for (const doc of record.authoredDocuments.filter((d) => d.kind === "partVStatement" || d.kind === "partVIStatement")) {
     const pages = doc.pages ?? [doc.lines];
     for (let index = 0; index < pages.length; index++) {
       const text = pages[index].join("\n");
@@ -370,7 +497,7 @@ function checkA27(record: PackageRecord, result: MutableResult) {
         !text.includes(record.llcEin) ||
         !text.includes(`Tax Year ${doc.taxYear}`)
       ) {
-        fail(result, "A27", `Part V statement page ${index + 1} for tax year ${doc.taxYear} is missing the LLC header.`);
+        fail(result, "A27", `${doc.kind} page ${index + 1} for tax year ${doc.taxYear} is missing the LLC header.`);
       }
     }
   }
@@ -464,6 +591,24 @@ function escapeRegExp(value: string): string {
 
 function mmdd(date: Date): string {
   return `${String(date.getUTCMonth() + 1).padStart(2, "0")}/${String(date.getUTCDate()).padStart(2, "0")}`;
+}
+
+function dateInsidePeriod(iso: string, year: number, periodStart: string, periodEnd: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
+  const date = new Date(`${iso}T00:00:00.000Z`);
+  if (Number.isNaN(date.getTime())) return false;
+  const [startMonth, startDay] = periodStart.split("/").map(Number);
+  const [endMonth, endDay] = periodEnd.split("/").map(Number);
+  const start = new Date(Date.UTC(year, startMonth - 1, startDay));
+  const end = new Date(Date.UTC(year, endMonth - 1, endDay));
+  return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
+}
+
+function rectsOverlap(
+  a: { left: number; right: number; top: number; bottom: number },
+  b: { left: number; right: number; top: number; bottom: number },
+): boolean {
+  return a.left < b.right && a.right > b.left && a.bottom < b.top && a.top > b.bottom;
 }
 
 function formatFinalisedDate(date: Date): string {

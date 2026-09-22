@@ -79,8 +79,16 @@ describe("render-check", () => {
           { page: statementPage, value: `Tax Year ${year.taxYear}`, label: `${name} ${year.taxYear} statement year` },
           { page: statementPage, value: filing.llcName, label: `${name} ${year.taxYear} statement LLC name` },
           { page: statementPage, value: filing.llcEin, label: `${name} ${year.taxYear} statement EIN` },
-          { page: statementPage, value: money(year.line1f), label: `${name} ${year.taxYear} statement total` },
+          { page: statementPage, value: money(year.partVTotalRounded), label: `${name} ${year.taxYear} Part V statement total` },
         );
+        if (year.nonCashTransfers.length > 0) {
+          const partVIPage = findPage(pkg.record, "Part VI Statement", year.taxYear);
+          text.push(
+            { page: partVIPage, value: `Tax Year ${year.taxYear}`, label: `${name} ${year.taxYear} Part VI year` },
+            { page: partVIPage, value: filing.llcName, label: `${name} ${year.taxYear} Part VI LLC name` },
+            { page: partVIPage, value: money(year.line1f).replace(".00", ""), label: `${name} ${year.taxYear} Part VI value` },
+          );
+        }
         checkboxes.push(
           {
             page: form5472Page,
@@ -97,7 +105,7 @@ describe("render-check", () => {
           {
             page: form5472Page,
             rect: rasterRect(CHECKBOXES.line1jInitial),
-            checked: year.isInitialYear,
+            checked: year.line1jChecked,
             label: `${name} ${year.taxYear} line 1j`,
           },
         );

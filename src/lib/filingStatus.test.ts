@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { requiresReasonableCause } from "./completeness";
+import { filingCompletionIssues, hasCompleteReasonableCause, requiresReasonableCause, type CompletionInput } from "./completeness";
 import {
   effectiveDueDateUtc,
   extensionUnclear,
@@ -119,5 +119,116 @@ describe("filing status rule 5.6", () => {
         now,
       ),
     ).toBe(false);
+  });
+});
+
+const completeFiling: CompletionInput = {
+  llcName: "Example LLC",
+  llcEin: "12-3456789",
+  llcAddress: "123 Main St",
+  llcCity: "Miami",
+  llcState: "FL",
+  llcZip: "33101",
+  llcDateIncorporated: "2020-01-01",
+  llcBusinessActivity: "Investment holding",
+  llcBusinessCode: "523900",
+  ownerName: "Example Owner",
+  ownerAddress: "1 Example Street, Toronto, Ontario M5H 2N2, Canada",
+  ownerCountryCitizenship: "Canada",
+  ownerCountryTaxResidence: "Canada",
+  ownerCountryBusiness: "Canada",
+  ownerFtin: "CA12345",
+  ownerItin: "",
+  ownerReferenceId: "EXAMPLE123",
+  taxYears: [2025],
+  isFinalReturn: false,
+  dissolvedAt: null,
+  isDiirsp: true,
+  reasonableCauseNarrative: null,
+  extensionFiled: "no",
+  extensionTransmittedAt: null,
+};
+
+describe("reasonable-cause completeness", () => {
+  const now = new Date(Date.UTC(2026, 8, 21));
+
+  it("accepts per-year answers for every late year", () => {
+    expect(
+      hasCompleteReasonableCause(
+        { ...completeFiling, taxYears: [2024, 2025] },
+        [
+          {
+            taxYear: 2024,
+            rcsWhyMissed: "I did not know the form was required.",
+            rcsWhenLearned: "I learned in 2026.",
+            rcsNoIrsNoticeConfirmed: true,
+          },
+          {
+            taxYear: 2025,
+            rcsWhyMissed: "I missed the reminder.",
+            rcsWhenLearned: "I learned in 2026.",
+            rcsNoIrsNoticeConfirmed: true,
+          },
+        ],
+        now,
+      ),
+    ).toBe(true);
+  });
+
+  it("uses filing.yearData when a caller passes only the present tax years", () => {
+    const issues = filingCompletionIssues(
+      {
+        ...completeFiling,
+        yearData: [
+          {
+            taxYear: 2025,
+            rcsWhyMissed: "I did not know the form was required.",
+            rcsWhenLearned: "I learned in 2026.",
+            rcsNoIrsNoticeConfirmed: true,
+          },
+        ],
+      },
+      [2025],
+      now,
+    );
+
+    expect(issues).not.toContain("reasonableCauseNarrative");
+  });
+
+  it("accepts a legacy narrative for older orders", () => {
+    expect(
+      hasCompleteReasonableCause(
+        { ...completeFiling, reasonableCauseNarrative: "Legacy reasonable cause narrative." },
+        [],
+        now,
+      ),
+    ).toBe(true);
+  });
+
+  it("rejects a late filing when a late year is missing one per-year answer and no legacy narrative exists", () => {
+    const issues = filingCompletionIssues(
+      completeFiling,
+      [
+        {
+          taxYear: 2025,
+          rcsWhyMissed: "I did not know the form was required.",
+          rcsWhenLearned: "",
+          rcsNoIrsNoticeConfirmed: true,
+        },
+      ],
+      now,
+    );
+
+    expect(issues).toContain("reasonableCauseNarrative");
+  });
+
+  it("treats no-FTIN owner data as complete when ownerHasFtin is false", () => {
+    const issues = filingCompletionIssues(
+      { ...completeFiling, ownerHasFtin: false, ownerFtin: "", reasonableCauseNarrative: "Legacy narrative." },
+      [{ taxYear: 2025 }],
+      now,
+    );
+
+    expect(issues).not.toContain("ownerFtin");
   });
 });

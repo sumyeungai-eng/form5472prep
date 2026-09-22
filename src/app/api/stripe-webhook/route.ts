@@ -8,6 +8,7 @@ import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendNewOrderAdminEmail 
 import { resolveTier } from "@/lib/pricing";
 import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
+import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { runPreflight } from "@/lib/pdf/preflight";
 import { putPdf } from "@/lib/storage";
 import { sendMetaPurchase } from "@/lib/analytics/metaServer";
@@ -181,50 +182,9 @@ export async function POST(req: Request) {
             full.llcState && full.llcZip && full.llcDateIncorporated &&
             full.llcBusinessActivity && full.llcBusinessCode && full.ownerName &&
             full.ownerAddress && full.ownerCountryCitizenship &&
-            full.ownerCountryTaxResidence && full.ownerCountryBusiness && full.ownerFtin) {
-          const result = await generatePackage({
-            llcName: full.llcName,
-            llcEin: full.llcEin,
-            llcAddress: full.llcAddress,
-            llcCity: full.llcCity,
-            llcState: full.llcState,
-            llcZip: full.llcZip,
-            llcCountry: full.llcCountry,
-            llcCountryBusiness: full.llcCountryBusiness,
-            llcDateIncorporated: full.llcDateIncorporated,
-            llcBusinessActivity: full.llcBusinessActivity,
-            llcBusinessCode: full.llcBusinessCode,
-            ownerName: full.ownerName,
-            ownerAddress: full.ownerAddress,
-            ownerCountryCitizenship: full.ownerCountryCitizenship,
-            ownerCountryTaxResidence: full.ownerCountryTaxResidence,
-            ownerCountryBusiness: full.ownerCountryBusiness,
-            ownerFtin: full.ownerFtin,
-            ownerItin: full.ownerItin,
-            ownerReferenceId: full.ownerReferenceId,
-            taxYears: full.taxYears,
-            isDiirsp: full.isDiirsp,
-            isFinalReturn: full.isFinalReturn,
-            dissolvedAt: full.dissolvedAt,
-            // Form 7004 facts — the generator applies them to max(taxYears)
-            // only, and a valid extension suppresses the late-filing language.
-            extensionFiled: full.extensionFiled,
-            extensionTransmittedAt: full.extensionTransmittedAt,
-            reasonableCauseNarrative: full.reasonableCauseNarrative,
-            yearData: full.yearData.map((y) => ({
-              taxYear: y.taxYear,
-              totalAssetsYearEnd: Number(y.totalAssetsYearEnd),
-              contributions: Number(y.contributions),
-              distributions: Number(y.distributions),
-              otherTransactionsNote: y.otherTransactionsNote,
-              reportableTransactions: Array.isArray(y.reportableTransactions)
-                ? (y.reportableTransactions as unknown[]).filter(
-                    (t): t is { date: string; description: string; counterparty?: string; amountCents: number; category: string } =>
-                      !!t && typeof t === "object" && "date" in t && "amountCents" in t && "category" in t,
-                  )
-                : [],
-            })),
-          });
+            full.ownerCountryTaxResidence && full.ownerCountryBusiness &&
+            (full.ownerFtin || full.ownerHasFtin === false)) {
+          const result = await generatePackage(filingToPackageInput(full));
           pdfBytes = result.bytes;
           pdfSignatures = result.signatures;
           const key = `${filing.id}_unsigned.pdf`;

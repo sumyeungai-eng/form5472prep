@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { FilingWizard, type FilingWizardHandle, type StepKey } from "@/components/wizard/FilingWizard";
 import { Sidebar, type SidebarStepDef } from "./Sidebar";
 import { computeStatuses, computeProgressPct, type StepStatus } from "./status";
@@ -125,8 +125,21 @@ export function FilingWizardV3({
   // runs once from the server-provided filing.
   const [stepKey, setStepKey] = useState<V3StepKey>(() => resumeStep(initial));
   const [filing, setFiling] = useState(initial);
-  const [preflightAnswers, setPreflightAnswers] = useState<PreflightAnswers>(EMPTY_PREFLIGHT_ANSWERS);
+  const [preflightAnswers, setPreflightAnswers] = useState<PreflightAnswers>(() => ({
+    ...EMPTY_PREFLIGHT_ANSWERS,
+    isMultiMember:
+      initial.llcMemberCount === 1 ? false : initial.llcMemberCount === 2 ? true : null,
+  }));
   const wizardRef = useRef<FilingWizardHandle>(null);
+  const saveMemberCount = useCallback(async (isMultiMember: boolean) => {
+    const llcMemberCount = isMultiMember ? 2 : 1;
+    setFiling((current) => ({ ...current, llcMemberCount }));
+    await fetch(`/api/filings/${initial.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ llcMemberCount }),
+    });
+  }, [initial.id]);
 
   // RCS step only shown when the live filing facts require it. Mirror FilingWizard's logic.
   const visibleSteps = useMemo<SidebarStepDef[]>(() => {
@@ -194,7 +207,13 @@ export function FilingWizardV3({
             {stepKey === "preflight" ? (
               <PreflightStep
                 answers={preflightAnswers}
-                onAnswers={setPreflightAnswers}
+                onAnswers={(next) => {
+                  const previous = preflightAnswers.isMultiMember;
+                  setPreflightAnswers(next);
+                  if (next.isMultiMember !== null && next.isMultiMember !== previous) {
+                    void saveMemberCount(next.isMultiMember);
+                  }
+                }}
                 onContinue={() => setStepKey("entity")}
               />
             ) : (

@@ -23,7 +23,8 @@ import {
   signerTitleStampPlacement,
 } from "./generatePackage";
 import { runPreflight } from "./preflight";
-import { F1, F2, F3, F4, F5, F7, F8, finalisedAt, fixtures } from "./__fixtures__/filings";
+import { filingToPackageInput } from "./packageInput";
+import { F1, F2, F3, F4, F5, F7, F8, F9, finalisedAt, fixtures } from "./__fixtures__/filings";
 
 const PDF_TIMEOUT = 20_000;
 const IRS_MAIL_ADDRESS_DISPLAY_LINES = [
@@ -100,6 +101,23 @@ describe("generatePackage regressions", () => {
       field: form5472FieldMap["1o_countriesBusinessConducted"],
       value: "Hong Kong",
     });
+  }, PDF_TIMEOUT);
+
+  it("generates a no-FTIN package with None in both FTIN fields", async () => {
+    const pkg = await generatePackage({ ...F2, ownerFtin: "" }, finalisedAt);
+    const fields = pkg.record.taxYears[0].form5472.fields;
+
+    expect(fields).toContainEqual({
+      form: "5472-2025",
+      field: form5472FieldMap["4b3_ftin"],
+      value: "None",
+    });
+    expect(fields).toContainEqual({
+      form: "5472-2025",
+      field: form5472FieldMap["8b3_ftin"],
+      value: "None",
+    });
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
   }, PDF_TIMEOUT);
 
   it("G-08 sums cents and rounds half-up once for line 1f", async () => {
@@ -231,6 +249,127 @@ describe("generatePackage regressions", () => {
     expect(() => assertRelatedPartyCount(2)).toThrow("More than one related party: route to a reviewer.");
   });
 
+  it("G-10 routes F9's stored member count to review during generation", async () => {
+    await expect(generatePackage(F9, finalisedAt)).rejects.toThrow(NeedsReviewError);
+  }, PDF_TIMEOUT);
+
+  it("routes malformed transaction and non-cash transfer rows to review with the tax year named", () => {
+    expect(() =>
+      filingToPackageInput({
+        ...F1,
+        yearData: [
+          {
+            ...F1.yearData[0],
+            reportableTransactions: [{ date: "2025-01-01", amountCents: "bad", category: "contribution" }],
+          },
+        ],
+      }),
+    ).toThrow("Tax year 2025: reportable transaction row 1 is malformed.");
+
+    expect(() =>
+      filingToPackageInput({
+        ...F1,
+        yearData: [
+          {
+            ...F1.yearData[0],
+            nonCashTransfers: [{ date: "2025-01-01", direction: "in" }],
+          },
+        ],
+      }),
+    ).toThrow("Tax year 2025: non-cash transfer row 1 is malformed.");
+  });
+
+  it("keeps pre-wave mapper defaults for llcCountry and isFinalReturn", () => {
+    const mapped = filingToPackageInput({
+      ...F1,
+      llcCountry: null,
+      isFinalReturn: null,
+    });
+
+    expect(mapped.llcCountry).toBe("");
+    expect(mapped.isFinalReturn).toBe(false);
+  });
+
+  it("G-09 checks Part VI, adds a statement, and counts non-cash value once", async () => {
+    const pkg = await generatePackage(F5, finalisedAt);
+    const year2022 = pkg.record.taxYears.find((year) => year.taxYear === 2022);
+    expect(year2022?.form5472.fields).toContainEqual({
+      form: "5472-2022",
+      field: form5472FieldMap.partVI_attachedStatementBox,
+      value: true,
+    });
+    expect(year2022?.line1f).toBe(25_000);
+    expect(year2022?.partVTotalRounded).toBe(0);
+    expect(pkg.record.authoredDocuments.some((doc) => doc.kind === "partVIStatement" && doc.taxYear === 2022)).toBe(true);
+  }, PDF_TIMEOUT);
+
+  it("C-04 describes only supported operations facts in the reasonable-cause statement", async () => {
+    const pkg = await generatePackage(F5, finalisedAt);
+    const rcsText = pkg.record.authoredDocuments
+      .filter((doc) => doc.kind === "reasonableCauseStatement")
+      .flatMap((doc) => doc.lines)
+      .join(" ");
+
+    expect(rcsText).toContain("The Company's business activity is Investment holding.");
+    expect(rcsText).toContain(
+      "no U.S. income tax return was required, and U.S. tax on that U.S.-source income was satisfied by withholding at source",
+    );
+    expect(rcsText).not.toMatch(/\b(dividends|dormant|no customers|no vendors|did not operate with customers or vendors)\b/i);
+  }, PDF_TIMEOUT);
+
+  it("uses structured owner address parts once when the LLC uses the owner's address", async () => {
+    const pkg = await generatePackage(F7, finalisedAt);
+    const year = pkg.record.taxYears[0];
+    const street1120 = year.form1120.fields.find((write) => write.field === form1120_2025FieldMap["1_street"])?.value;
+    const city1120 = year.form1120.fields.find((write) => write.field === form1120_2025FieldMap["1_city"])?.value;
+    const state1120 = year.form1120.fields.find((write) => write.field === form1120_2025FieldMap["1_state"])?.value;
+    const zip1120 = year.form1120.fields.find((write) => write.field === form1120_2025FieldMap["1_zip"])?.value;
+    const country1120 = year.form1120.fields.find((write) => write.field === form1120_2025FieldMap["1_country"])?.value;
+    const street5472 = year.form5472.fields.find((write) => write.field === form5472FieldMap["1_street"])?.value;
+    const city5472 = year.form5472.fields.find((write) => write.field === form5472FieldMap["1_cityStateZip"])?.value;
+
+    expect(street1120).toBe(F7.ownerAddressStreet);
+    expect(street5472).toBe(F7.ownerAddressStreet);
+    expect(city1120).toBe(F7.ownerAddressCity);
+    expect(state1120).toBe(F7.ownerAddressState);
+    expect(zip1120).toBe(F7.ownerAddressPostal);
+    expect(country1120).toBe(F7.ownerAddressCountry);
+    expect(street1120).not.toBe(F7.ownerAddress);
+    expect(street5472).not.toBe(F7.ownerAddress);
+    expect(city5472).toContain(F7.ownerAddressCity!);
+    expect(city5472).toContain(F7.ownerAddressState!);
+    expect(city5472).toContain(F7.ownerAddressPostal!);
+    expect(city5472).toContain(F7.ownerAddressCountry!);
+  }, PDF_TIMEOUT);
+
+  it("C-05 orders F5 pages per tax year", async () => {
+    const pkg = await generatePackage(F5, finalisedAt);
+    expect(pkg.record.pageOrder.map((page) => [page.label, page.taxYear ?? null])).toEqual([
+      ["Cover letter", null],
+      ["Form 1120", 2022],
+      ["Form 5472", 2022],
+      ["Part V Statement", 2022],
+      ["Part VI Statement", 2022],
+      ["Reasonable Cause Statement", 2022],
+      ["Form 1120", 2023],
+      ["Form 5472", 2023],
+      ["Part V Statement", 2023],
+      ["Reasonable Cause Statement", 2023],
+      ["Form 1120", 2024],
+      ["Form 5472", 2024],
+      ["Part V Statement", 2024],
+      ["Reasonable Cause Statement", 2024],
+    ]);
+  }, PDF_TIMEOUT);
+
+  it("C-06 uses the configured signature heading on every authored document kind", async () => {
+    const pkg = await generatePackage(F5, finalisedAt);
+    const byKind = new Map(pkg.record.authoredDocuments.map((doc) => [doc.kind, doc]));
+    for (const kind of ["coverLetter", "partVStatement", "partVIStatement", "reasonableCauseStatement"] as const) {
+      expect(byKind.get(kind)?.lines).toContain(AUTHORED_DOC_SIGNATURE_HEADING);
+    }
+  }, PDF_TIMEOUT);
+
   it.each([
     [2018, form1120_2018FieldMap],
     [2019, form1120_2019FieldMap],
@@ -278,5 +417,20 @@ describe("generatePackage regressions", () => {
     for (const literal of ["Sole Member", "Signed under penalties of perjury", "855-887-7737", "Rulon White"]) {
       expect(source).not.toContain(literal);
     }
+  });
+});
+
+describe("reasonable cause statement prose dates", () => {
+  it("writes the formation date as a long date, not ISO", async () => {
+    const { F5 } = await import("./__fixtures__/filings");
+    const { generatePackage } = await import("./generatePackage");
+    const result = await generatePackage(F5 as never);
+    const rcsLines = result.record.authoredDocuments
+      .filter((d) => d.kind === "reasonableCauseStatement")
+      .flatMap((d) => d.lines)
+      .join(" ");
+    expect(rcsLines.length).toBeGreaterThan(0);
+    expect(rcsLines).toContain("January 1, 2020");
+    expect(rcsLines).not.toMatch(/\b\d{4}-\d{2}-\d{2}\b/);
   });
 });

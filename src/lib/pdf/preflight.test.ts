@@ -53,10 +53,24 @@ const goodRecord: PackageRecord = {
       line1g: 1,
       line1h: 279,
       partVTotalRounded: 279,
+      partVTotalCents: 27_850,
       partVRows: [
         { date: "2026-01-20", description: "Contribution", amountCents: 10_000, category: "contribution" },
         { date: "2026-02-20", description: "Distribution", amountCents: -17_850, category: "distribution" },
       ],
+      nonCashTransfers: [],
+      partVICentsAddedToLine1f: 0,
+      line1jChecked: true,
+      priorForm5472Filed: "no",
+      ownerHasFtin: true,
+      ownerAddressState: "Hong Kong",
+      ownerAddressPostal: "999077",
+      ownerNoPostalCode: false,
+      signerTitleRect: { left: 326, right: 382, bottom: 90, top: 100 },
+      signerTitleColumnBounds: { left: 324, right: 460.8, bottom: 90, top: 104, measuredField: "title" },
+      signerDeclarationBounds: { left: 324, right: 460.8, bottom: 106, top: 148, measuredFrom: "title" },
+      trades: true,
+      hasUsSourceIncome: false,
       form1120: {
         fields: [
           { form: "1120-2026", field: form1120_2025FieldMap.taxYearBeginning, value: "01/15/2026" },
@@ -82,6 +96,7 @@ const goodRecord: PackageRecord = {
           { form: "5472-2026", field: form5472FieldMap["1c_totalAssets"], value: "1000" },
           { form: "5472-2026", field: form5472FieldMap["1d_businessActivity"], value: "Computer systems design services" },
           { form: "5472-2026", field: form5472FieldMap["1e_businessCode"], value: "541512" },
+          { form: "5472-2026", field: form5472FieldMap["1j_initialYear"], value: true },
           { form: "5472-2026", field: form5472FieldMap.box2_foreign50pct, value: true },
           { form: "5472-2026", field: form5472FieldMap.box3_foreignOwnedUsDE, value: true },
           { form: "5472-2026", field: form5472FieldMap["4b2_referenceId"], value: "EXAMPLEOWNER1" },
@@ -89,6 +104,7 @@ const goodRecord: PackageRecord = {
           { form: "5472-2026", field: form5472FieldMap["8b2_referenceId"], value: "EXAMPLEOWNER1" },
           { form: "5472-2026", field: form5472FieldMap["8b3_ftin"], value: "FTIN12345" },
           { form: "5472-2026", field: form5472FieldMap["8d_businessCode"], value: "541512" },
+          { form: "5472-2026", field: form5472FieldMap.partV_attachedStatementBox, value: true },
         ],
       },
       reasonableCauseIncluded: false,
@@ -108,8 +124,8 @@ const goodRecord: PackageRecord = {
     {
       kind: "partVStatement",
       taxYear: 2026,
-      lines: ["SUPPORTING STATEMENT TO FORM 5472", "Tax Year 2026", "Reporting Corporation: Example Holdings LLC, EIN 12-3456789"],
-      pages: [["SUPPORTING STATEMENT TO FORM 5472", "Tax Year 2026", "Reporting Corporation: Example Holdings LLC, EIN 12-3456789"]],
+      lines: ["SUPPORTING STATEMENT TO FORM 5472", "Tax Year 2026", "Reporting Corporation: Example Holdings LLC, EIN 12-3456789", AUTHORED_DOC_SIGNATURE_HEADING],
+      pages: [["SUPPORTING STATEMENT TO FORM 5472", "Tax Year 2026", "Reporting Corporation: Example Holdings LLC, EIN 12-3456789", AUTHORED_DOC_SIGNATURE_HEADING]],
     },
   ],
   pageOrder: [{ label: "Cover letter", startPage: 1, endPage: 1 }],
@@ -126,8 +142,13 @@ describe("runPreflight", () => {
     ["A08", (r: PackageRecord) => { r.taxYears[0].shortYearException = false; }],
     ["A09", (r: PackageRecord) => { r.taxYears[0].form1120.stampedTexts = []; }],
     ["A10", (r: PackageRecord) => { r.taxYears[0].form1120.fields = r.taxYears[0].form1120.fields.filter((w) => w.field !== form1120_2025FieldMap.E_initialReturn); }],
+    ["A11", (r: PackageRecord) => { r.taxYears[0].signerTitleRect.left = 200; }],
     ["A12", (r: PackageRecord) => { r.taxYears[0].line1f = 1; }],
+    ["A13", (r: PackageRecord) => { r.taxYears[0].partVRows[0].date = "2025-12-31"; }],
+    ["A14", (r: PackageRecord) => { r.taxYears[0].nonCashTransfers = [{ date: "2026-03-01", direction: "in", description: "Securities", fairMarketValueCents: 100_00, valuationMethod: "Statement", alsoInPartV: false }]; }],
+    ["A15", (r: PackageRecord) => { r.taxYears[0].form5472.fields = r.taxYears[0].form5472.fields.filter((w) => w.field !== form5472FieldMap["1j_initialYear"]); }],
     ["A16", (r: PackageRecord) => { r.taxYears[0].line1oSource = "owner_field" as "llc_field"; }],
+    ["A17", (r: PackageRecord) => { r.taxYears[0].ownerAddressPostal = null; }],
     ["A18", (r: PackageRecord) => { r.taxYears[0].form5472.fields = r.taxYears[0].form5472.fields.filter((w) => w.field !== form5472FieldMap["4b3_ftin"]); }],
     ["A19", (r: PackageRecord) => { r.taxYears[0].form5472.fields.find((w) => w.field === form5472FieldMap["4b2_referenceId"])!.value = "BAD-ID"; }],
     ["A20", (r: PackageRecord) => { r.taxYears[0].form5472.fields.find((w) => w.field === form5472FieldMap["1_street"])!.value = "Different address"; }],
@@ -136,6 +157,7 @@ describe("runPreflight", () => {
     ["A23", (r: PackageRecord) => { r.authoredDocuments[0].lines[0] = "Wrong address"; }],
     ["A24", (r: PackageRecord) => { r.taxYears[0].status = "late"; }],
     ["A25", (r: PackageRecord) => { r.authoredDocuments[0].lines = r.authoredDocuments[0].lines.filter((line) => line !== AUTHORED_DOC_SIGNATURE_HEADING); }],
+    ["A26", (r: PackageRecord) => { r.taxYears[0].status = "late"; r.authoredDocuments.push({ kind: "reasonableCauseStatement", taxYear: 2026, lines: ["tax year 2026", "customer payments", AUTHORED_DOC_SIGNATURE_HEADING] }); r.taxYears[0].trades = false; }],
     ["A27", (r: PackageRecord) => { r.authoredDocuments.find((d) => d.kind === "partVStatement")!.pages = [["Tax Year 2026"]]; }],
     ["R02", (r: PackageRecord) => { r.llcPrintAddress.failures = ["field cannot fit address"]; }],
     ["A30", (r: PackageRecord) => { r.generatorVersion = "0.0.0"; }],
@@ -158,6 +180,47 @@ describe("runPreflight", () => {
     const result = await runPreflight(record, await goodPdfBytes(record));
     expect(result.failures.some((f) => f.id === "A16")).toBe(false);
     expect(result.warnings.some((w) => w.id === "W16")).toBe(true);
+  });
+
+  it("A15 emits W15 when the formation-year prior filing answer is yes or not_sure", async () => {
+    for (const answer of ["yes", "not_sure"] as const) {
+      const record = clone(goodRecord);
+      record.taxYears[0].priorForm5472Filed = answer;
+      record.taxYears[0].line1jChecked = false;
+      record.taxYears[0].form5472.fields = record.taxYears[0].form5472.fields.filter(
+        (write) => write.field !== form5472FieldMap["1j_initialYear"],
+      );
+
+      const result = await runPreflight(record, await goodPdfBytes(record));
+
+      expect(result.failures.some((f) => f.id === "A15")).toBe(false);
+      expect(result.warnings.some((w) => w.id === "W15")).toBe(true);
+    }
+  });
+
+  it("A17 emits W17 instead of failing for legacy single-line owner addresses", async () => {
+    const record = clone(goodRecord);
+    record.taxYears[0].ownerAddressState = null;
+    record.taxYears[0].ownerAddressPostal = null;
+    record.taxYears[0].ownerNoPostalCode = null;
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.some((f) => f.id === "A17")).toBe(false);
+    expect(result.warnings.some((w) => w.id === "W17")).toBe(true);
+  });
+
+  it("A18 emits W18 instead of failing when legacy orders predate the no-FTIN answer", async () => {
+    const record = clone(goodRecord);
+    record.taxYears[0].ownerHasFtin = null;
+    for (const field of [form5472FieldMap["4b3_ftin"], form5472FieldMap["8b3_ftin"]]) {
+      record.taxYears[0].form5472.fields.find((write) => write.field === field)!.value = "";
+    }
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.some((f) => f.id === "A18")).toBe(false);
+    expect(result.warnings.some((w) => w.id === "W18")).toBe(true);
   });
 
   it("A28 fails when fields and widgets remain in the final PDF", async () => {
@@ -235,6 +298,30 @@ describe("runPreflight", () => {
     const result = await runPreflight(record, await goodPdfBytes(record));
 
     expect(result.failures.some((f) => f.id === "A22")).toBe(false);
+  });
+
+  it("A26 fails unsupported generated operations claims but not legacy fallback text", async () => {
+    const generated = clone(goodRecord);
+    generated.taxYears[0].status = "late";
+    generated.authoredDocuments.push({
+      kind: "reasonableCauseStatement",
+      taxYear: 2026,
+      lines: ["tax year 2026", "The Company was dormant and had no customers or no vendors.", AUTHORED_DOC_SIGNATURE_HEADING],
+    });
+    let result = await runPreflight(generated, await goodPdfBytes(generated));
+    expect(result.failures.some((f) => f.id === "A26")).toBe(true);
+
+    const legacy = clone(goodRecord);
+    legacy.taxYears[0].status = "late";
+    legacy.authoredDocuments.push({
+      kind: "reasonableCauseStatement",
+      taxYear: 2026,
+      lines: ["tax year 2026", "The Company was dormant and had no customers or no vendors.", AUTHORED_DOC_SIGNATURE_HEADING],
+      rcsFallbackUsed: true,
+    });
+    result = await runPreflight(legacy, await goodPdfBytes(legacy));
+    expect(result.failures.some((f) => f.id === "A26")).toBe(false);
+    expect(result.warnings.some((w) => w.id === "W26")).toBe(true);
   });
 
   it("A22 still fails for genuine timeliness language outside names", async () => {

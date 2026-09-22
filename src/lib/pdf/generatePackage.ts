@@ -102,11 +102,23 @@ type Filing = {
   llcZip: string;
   llcCountry: string;
   llcCountryBusiness?: string | null;
+  llcMemberCount?: number | null;
+  llcAddressIsRegisteredAgentOnly?: boolean | null;
+  priorForm5472Filed?: string | null;
+  hasUsSourceIncome?: boolean | null;
+  usTaxWithheld?: boolean | null;
   llcDateIncorporated: Date;
   llcBusinessActivity: string;
   llcBusinessCode: string;
   ownerName: string;
   ownerAddress: string;
+  ownerAddressStreet?: string | null;
+  ownerAddressCity?: string | null;
+  ownerAddressState?: string | null;
+  ownerAddressPostal?: string | null;
+  ownerAddressCountry?: string | null;
+  ownerHasFtin?: boolean | null;
+  ownerNoPostalCode?: boolean | null;
   ownerCountryCitizenship: string;
   ownerCountryTaxResidence: string;
   ownerCountryBusiness: string;
@@ -140,8 +152,14 @@ type Filing = {
     distributions: number;
     otherTransactionsNote: string | null;
     reportableTransactions?: ReportableTx[];
+    nonCashTransfers?: NonCashTransfer[];
+    rcsWhyMissed?: string | null;
+    rcsWhenLearned?: string | null;
+    rcsNoIrsNoticeConfirmed?: boolean | null;
   }[];
 };
+
+export type PackageInput = Filing;
 
 export type ReportableTx = {
   date: string; // YYYY-MM-DD
@@ -151,11 +169,22 @@ export type ReportableTx = {
   category: string; // "contribution" | "distribution" | other
 };
 
+export type NonCashTransfer = {
+  date: string;
+  direction: "in" | "out";
+  description: string;
+  fairMarketValueCents: number;
+  valuationMethod: string;
+  alsoInPartV: boolean;
+};
+
 export type AuthoredDocumentRecord = {
-  kind: "coverLetter" | "partVStatement" | "reasonableCauseStatement";
+  kind: "coverLetter" | "partVStatement" | "partVIStatement" | "reasonableCauseStatement";
   taxYear?: number;
   lines: string[];
   pages?: string[][];
+  rcsFallbackUsed?: boolean;
+  rcsMissingAnswers?: boolean;
 };
 
 export type PackageRecordYear = {
@@ -173,7 +202,21 @@ export type PackageRecordYear = {
   line1g: number;
   line1h: number;
   partVTotalRounded: number;
+  partVTotalCents: number;
   partVRows: ReportableTx[];
+  nonCashTransfers: NonCashTransfer[];
+  partVICentsAddedToLine1f: number;
+  line1jChecked: boolean;
+  priorForm5472Filed: string | null;
+  ownerHasFtin: boolean | null;
+  ownerAddressState: string | null;
+  ownerAddressPostal: string | null;
+  ownerNoPostalCode: boolean | null;
+  signerTitleRect: { left: number; right: number; top: number; bottom: number };
+  signerTitleColumnBounds: { left: number; right: number; top: number; bottom: number; measuredField: string };
+  signerDeclarationBounds: { left: number; right: number; top: number; bottom: number; measuredFrom: string };
+  trades: boolean;
+  hasUsSourceIncome: boolean | null;
   form1120: { fields: PdfFieldWrite[]; stampedTexts: string[] };
   form5472: { fields: PdfFieldWrite[] };
   reasonableCauseIncluded: boolean;
@@ -307,9 +350,27 @@ function partVRowsForYear(f: Filing, year: number): ReportableTx[] {
   );
 }
 
+function nonCashTransfersForYear(f: Filing, year: number): NonCashTransfer[] {
+  const yd = f.yearData.find((y) => y.taxYear === year);
+  return yd?.nonCashTransfers ?? [];
+}
+
+function partVTotalCents(rows: ReportableTx[]): number {
+  return rows.reduce((sum, tx) => sum + Math.abs(tx.amountCents), 0);
+}
+
 export function roundedPartVTotalDollars(rows: ReportableTx[]): number {
-  const cents = rows.reduce((sum, tx) => sum + Math.abs(tx.amountCents), 0);
+  return roundedCentsToDollars(partVTotalCents(rows));
+}
+
+function roundedCentsToDollars(cents: number): number {
   return Math.floor((cents + 50) / 100);
+}
+
+function nonCashCentsForLine1f(transfers: NonCashTransfer[]): number {
+  return transfers
+    .filter((transfer) => transfer.alsoInPartV === false)
+    .reduce((sum, transfer) => sum + Math.abs(transfer.fairMarketValueCents), 0);
 }
 
 function line1oCountry(f: Filing): { value: string; source: "llc_field" | "default_us" } {
@@ -317,6 +378,132 @@ function line1oCountry(f: Filing): { value: string; source: "llc_field" | "defau
   return llcCountryBusiness
     ? { value: llcCountryBusiness, source: "llc_field" }
     : { value: "United States", source: "default_us" };
+}
+
+function structuredOwnerAddress(f: Filing): string | null {
+  const parts = [
+    f.ownerAddressStreet,
+    f.ownerAddressCity,
+    f.ownerAddressState,
+    f.ownerAddressPostal,
+    f.ownerAddressCountry,
+  ].map((part) => part?.trim()).filter((part): part is string => !!part);
+  return parts.length > 0 ? parts.join(", ") : null;
+}
+
+function ownerAddressForForms(f: Filing): string {
+  return structuredOwnerAddress(f) ?? f.ownerAddress;
+}
+
+function hasStructuredOwnerAddress(f: Filing): boolean {
+  return [
+    f.ownerAddressStreet,
+    f.ownerAddressCity,
+    f.ownerAddressState,
+    f.ownerAddressPostal,
+    f.ownerAddressCountry,
+  ].some((part) => !!part?.trim());
+}
+
+function ownerStreetForForms(f: Filing): string {
+  if (!hasStructuredOwnerAddress(f)) return f.ownerAddress;
+  return f.ownerAddressStreet?.trim() || "";
+}
+
+function llcStreetAddressSource(f: Filing): string {
+  return f.llcAddressIsRegisteredAgentOnly === true ? ownerStreetForForms(f) : f.llcAddress;
+}
+
+function llcCityForForms(f: Filing): string {
+  return f.llcAddressIsRegisteredAgentOnly === true
+    ? (f.ownerAddressCity?.trim() || "")
+    : f.llcCity;
+}
+
+function llcStateForForms(f: Filing): string {
+  return f.llcAddressIsRegisteredAgentOnly === true
+    ? (f.ownerAddressState?.trim() || "")
+    : f.llcState;
+}
+
+function llcZipForForms(f: Filing): string {
+  return f.llcAddressIsRegisteredAgentOnly === true
+    ? (f.ownerAddressPostal?.trim() || "")
+    : f.llcZip;
+}
+
+function llcCountryForForms(f: Filing): string {
+  return f.llcAddressIsRegisteredAgentOnly === true
+    ? (f.ownerAddressCountry?.trim() || normalizeCountry(f.ownerCountryTaxResidence) || f.llcCountry || "USA")
+    : (f.llcCountry || "USA");
+}
+
+function llcCityStateZipForForms(f: Filing): string {
+  const city = llcCityForForms(f);
+  const state = llcStateForForms(f);
+  const zip = llcZipForForms(f);
+  const country = llcCountryForForms(f);
+  return [city, [state, zip].filter(Boolean).join(" "), country].filter(Boolean).join(", ");
+}
+
+function ownerStateForA17(f: Filing): string | null {
+  return f.ownerAddressState?.trim() || null;
+}
+
+function ownerPostalForA17(f: Filing): string | null {
+  return f.ownerAddressPostal?.trim() || null;
+}
+
+function ownerFtinForForms(f: Filing): string {
+  return f.ownerHasFtin === false ? "None" : f.ownerFtin;
+}
+
+function shouldCheckLine1j(f: Filing, year: number): boolean {
+  const formationYear = formationYearOf(f);
+  if (formationYear === null || year !== formationYear) return false;
+  if (f.priorForm5472Filed === null || f.priorForm5472Filed === undefined) return true;
+  return f.priorForm5472Filed === "no";
+}
+
+function cleanSentence(value: string | null | undefined): string {
+  const cleaned = (value ?? "").trim().replace(/\s+/g, " ");
+  if (!cleaned) return "";
+  const capitalized = cleaned[0].toUpperCase() + cleaned.slice(1);
+  return /[.!?]$/.test(capitalized) ? capitalized : `${capitalized}.`;
+}
+
+function stateNameForProse(value: string): string {
+  const states: Record<string, string> = {
+    AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+    CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
+    HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
+    KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
+    MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi",
+    MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire",
+    NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina",
+    ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania",
+    RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee",
+    TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington",
+    WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming", DC: "District of Columbia",
+  };
+  return states[value.toUpperCase()] ?? value;
+}
+
+function yearTrades(f: Filing, year: number): boolean {
+  const yd = f.yearData.find((y) => y.taxYear === year);
+  const haystack = [
+    yd?.otherTransactionsNote,
+    ...(yd?.reportableTransactions ?? []).map((tx) => `${tx.category} ${tx.description} ${tx.counterparty ?? ""}`),
+  ].join(" ").toLowerCase();
+  return /\b(customer|client|vendor|invoice|sale|sales|merchant|processor|stripe|paypal)\b/.test(haystack);
+}
+
+function operationsParagraph(f: Filing): string {
+  const activity = cleanSentence(`The Company's business activity is ${f.llcBusinessActivity}`);
+  if (f.hasUsSourceIncome === true || f.llcBusinessCode === "523900") {
+    return `${activity} The Company was used for holding or investment activity during the tax year.`;
+  }
+  return activity;
 }
 
 const FORMS_DIR = path.join(process.cwd(), "public", "forms");
@@ -430,9 +617,7 @@ async function selectForm1120Revision(
 }
 
 function relatedPartyCount(f: Filing): number {
-  void f;
-  // Multi-party block activates once the questionnaire stores a real member-count field in wave 3.
-  return 1;
+  return f.llcMemberCount ?? 1;
 }
 
 export function assertRelatedPartyCount(count: number) {
@@ -544,7 +729,7 @@ function fillForm5472(
   // Part I — reporting corp
   setText(form, m["1a_name"], f.llcName, recorder);
   setText(form, m["1_street"], printAddresses.llc.value, recorder, { fontSize: printAddresses.llc.fontSize });
-  setText(form, m["1_cityStateZip"], `${f.llcCity}, ${f.llcState} ${f.llcZip}`, recorder);
+  setText(form, m["1_cityStateZip"], llcCityStateZipForForms(f), recorder);
   setText(form, m["1b_ein"], f.llcEin, recorder);
   const yearData = f.yearData.find((y) => y.taxYear === year);
   setText(form, m["1c_totalAssets"], yearData ? yearData.totalAssetsYearEnd.toFixed(0) : "0", recorder);
@@ -576,8 +761,7 @@ function fillForm5472(
   // the initial year, and only if that year is actually being filed. An LLC
   // whose formation year is missing or unparseable ticks nothing (safer than
   // asserting an initial year we can't substantiate).
-  const formationYear = formationYearOf(f);
-  if (formationYear !== null && year === formationYear) {
+  if (shouldCheckLine1j(f, year)) {
     check(form, m["1j_initialYear"], recorder);
   }
 
@@ -587,7 +771,7 @@ function fillForm5472(
   });
   if (f.ownerItin) setText(form, m["4b1_usId"], f.ownerItin, recorder);
   if (f.ownerReferenceId) setText(form, m["4b2_referenceId"], f.ownerReferenceId, recorder);
-  setText(form, m["4b3_ftin"], f.ownerFtin, recorder);
+  setText(form, m["4b3_ftin"], ownerFtinForForms(f), recorder);
   setText(form, m["4c_principalCountry"], ownerBusinessCountry, recorder);
   setText(form, m["4d_citizenship"], ownerCitizenship, recorder);
   setText(form, m["4e_taxResidence"], ownerTaxResidence, recorder);
@@ -600,7 +784,7 @@ function fillForm5472(
   });
   if (f.ownerItin) setText(form, m["8b1_usId"], f.ownerItin, recorder);
   if (f.ownerReferenceId) setText(form, m["8b2_referenceId"], f.ownerReferenceId, recorder);
-  setText(form, m["8b3_ftin"], f.ownerFtin, recorder);
+  setText(form, m["8b3_ftin"], ownerFtinForForms(f), recorder);
   setText(form, m["8c_businessActivity"], f.llcBusinessActivity, recorder);
   // 8d (related party's PBA CODE) mirrors Part I 1e for a sole-member DE
   // where the related party IS the controller of the reporting corp.
@@ -614,6 +798,9 @@ function fillForm5472(
 
   // Part V — supporting statement attached
   check(form, m.partV_attachedStatementBox, recorder);
+  if (nonCashTransfersForYear(f, year).length > 0) {
+    check(form, m.partVI_attachedStatementBox, recorder);
+  }
 
   // Part VII negatives
   check(form, m.q37_imports_no, recorder);
@@ -644,7 +831,11 @@ async function fillForm1120(
   revision: Form1120Revision,
   llcPrintAddress: PrintAddressRecord,
   recorder: { form: string; writes: PdfFieldWrite[] },
-) {
+): Promise<{
+  signerTitleRect: PackageRecordYear["signerTitleRect"];
+  signerTitleColumnBounds: PackageRecordYear["signerTitleColumnBounds"];
+  signerDeclarationBounds: PackageRecordYear["signerDeclarationBounds"];
+}> {
   const form = pdf.getForm();
   // Total assets at year-end — mirror Form 5472 line 1c. Pull the year that
   // matches the 1120 we're rendering; fall back to 0 if no yearData row.
@@ -661,10 +852,10 @@ async function fillForm1120(
     // Split address into the structured 2025 fields when possible; otherwise
     // dump the full street into the street box.
     setTextWithRecordedFontSize(form, m["1_street"], llcPrintAddress.value, recorder, llcPrintAddress.fontSize);
-    setTextWithRecordedFontSize(form, m["1_city"], f.llcCity, recorder, llcPrintAddress.fontSize);
-    setTextWithRecordedFontSize(form, m["1_state"], f.llcState, recorder, llcPrintAddress.fontSize);
-    setTextWithRecordedFontSize(form, m["1_country"], f.llcCountry || "USA", recorder, llcPrintAddress.fontSize);
-    setTextWithRecordedFontSize(form, m["1_zip"], f.llcZip, recorder, llcPrintAddress.fontSize);
+    setTextWithRecordedFontSize(form, m["1_city"], llcCityForForms(f), recorder, llcPrintAddress.fontSize);
+    setTextWithRecordedFontSize(form, m["1_state"], llcStateForForms(f), recorder, llcPrintAddress.fontSize);
+    setTextWithRecordedFontSize(form, m["1_country"], llcCountryForForms(f), recorder, llcPrintAddress.fontSize);
+    setTextWithRecordedFontSize(form, m["1_zip"], llcZipForForms(f), recorder, llcPrintAddress.fontSize);
     setText(form, m.B_ein, f.llcEin, recorder);
     setText(form, m.C_dateIncorporated, dateIncorporated, recorder);
     setText(form, m.D_totalAssets, totalAssets, recorder);
@@ -674,7 +865,7 @@ async function fillForm1120(
     setText(form, m.taxYearEndingYear2, String(year).slice(-2), recorder);
     setTextWithRecordedFontSize(form, m["1a_name"], f.llcName, recorder, llcPrintAddress.fontSize);
     setTextWithRecordedFontSize(form, m["1_streetSuite"], llcPrintAddress.value, recorder, llcPrintAddress.fontSize);
-    setTextWithRecordedFontSize(form, m["1_cityStateCountryZip"], `${f.llcCity}, ${f.llcState} ${f.llcZip}`, recorder, llcPrintAddress.fontSize);
+    setTextWithRecordedFontSize(form, m["1_cityStateCountryZip"], llcCityStateZipForForms(f), recorder, llcPrintAddress.fontSize);
     setText(form, m.B_ein, f.llcEin, recorder);
     setText(form, m.C_dateIncorporated, dateIncorporated, recorder);
     setText(form, m.D_totalAssets, totalAssets, recorder);
@@ -714,7 +905,19 @@ async function fillForm1120(
   // "Title" slot. We draw outside the field because the title field's AcroForm
   // name shifts between IRS revisions; its widget rectangle is stable page
   // geometry and gives us the true left/right edges.
-  await stampTitleSoleMember(pdf, signerTitleBounds);
+  const signerTitleRect = await stampTitleSoleMember(pdf, signerTitleBounds);
+  const signerDeclarationBounds = deriveSignerDeclarationBounds(signerTitleBounds);
+  return {
+    signerTitleRect,
+    signerTitleColumnBounds: {
+      left: signerTitleBounds.left,
+      right: signerTitleBounds.right,
+      bottom: signerTitleBounds.baselineY,
+      top: signerTitleBounds.baselineY + 14,
+      measuredField: signerTitleBounds.measuredField,
+    },
+    signerDeclarationBounds,
+  };
 }
 
 export function deriveSignerTitleColumnBounds(pdf: PDFDocument, year: number): SignerTitleColumnBounds {
@@ -772,7 +975,7 @@ export function signerTitleStampPlacement(
   if (width > maxWidth) {
     throw new Error(`Configured signer title does not fit the Form 1120 title column at ${SIGNER_TITLE_MIN_SIZE}pt.`);
   }
-  return { x, y: bounds.baselineY, size, width, right: bounds.right };
+  return { x, y: bounds.baselineY, size, width, height: size, right: bounds.right };
 }
 
 async function stampTitleSoleMember(pdf: PDFDocument, bounds: SignerTitleColumnBounds) {
@@ -786,6 +989,22 @@ async function stampTitleSoleMember(pdf: PDFDocument, bounds: SignerTitleColumnB
     font,
     color: rgb(0, 0, 0),
   });
+  return {
+    left: placement.x,
+    right: placement.x + placement.width,
+    bottom: placement.y,
+    top: placement.y + placement.height,
+  };
+}
+
+function deriveSignerDeclarationBounds(bounds: SignerTitleColumnBounds): PackageRecordYear["signerDeclarationBounds"] {
+  return {
+    left: bounds.left,
+    right: bounds.right,
+    bottom: bounds.baselineY + 16,
+    top: bounds.baselineY + 58,
+    measuredFrom: bounds.measuredField,
+  };
 }
 
 // Build a brand-new PDF with the Part V supporting statement table.
@@ -1021,7 +1240,135 @@ async function buildSupportingStatement(
     y -= 13;
   }
 
+  y -= 18;
+  ensureSpace(70);
+  draw(AUTHORED_DOC_SIGNATURE_HEADING, { font: bold });
+  y -= 28;
+  draw("________________________________________");
+  y -= 14;
+  draw(f.ownerName);
+  y -= 14;
+  draw(SIGNER_TITLE);
+
   authoredDocuments.push({ kind: "partVStatement", taxYear: year, lines: drawnLines, pages: pageLines });
+  return pdf;
+}
+
+async function buildPartVIStatement(
+  f: Filing,
+  year: number,
+  transfers: NonCashTransfer[],
+  authoredDocuments: AuthoredDocumentRecord[],
+): Promise<PDFDocument> {
+  const pdf = await PDFDocument.create();
+  const font = await pdf.embedFont(StandardFonts.Helvetica);
+  const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+  const italic = await pdf.embedFont(StandardFonts.HelveticaOblique);
+  const drawnLines: string[] = [];
+  const pageLines: string[][] = [[]];
+  let currentPageLines = pageLines[0];
+
+  const PAGE_W = 612;
+  const PAGE_H = 792;
+  const MARGIN_L = 50;
+  const MARGIN_R = 50;
+  const MARGIN_TOP = 750;
+  const MARGIN_BOTTOM = 60;
+  const CONTENT_W = PAGE_W - MARGIN_L - MARGIN_R;
+  const COL_DATE_X = MARGIN_L;
+  const COL_DATE_W = 70;
+  const COL_DIRECTION_X = COL_DATE_X + COL_DATE_W + 8;
+  const COL_DIRECTION_W = 48;
+  const COL_DESC_X = COL_DIRECTION_X + COL_DIRECTION_W + 8;
+  const COL_AMOUNT_RIGHT = PAGE_W - MARGIN_R;
+  const COL_AMOUNT_W = 82;
+  const COL_DESC_W = COL_AMOUNT_RIGHT - COL_AMOUNT_W - COL_DESC_X - 8;
+
+  let page = pdf.addPage([PAGE_W, PAGE_H]);
+  let y = MARGIN_TOP;
+
+  const draw = (
+    text: string,
+    opts: { x?: number; size?: number; font?: typeof font; align?: "left" | "right" } = {},
+  ) => {
+    const size = opts.size ?? 10;
+    const fnt = opts.font ?? font;
+    let x = opts.x ?? MARGIN_L;
+    if (opts.align === "right") x -= fnt.widthOfTextAtSize(text, size);
+    page.drawText(text, { x, y, size, font: fnt, color: rgb(0, 0, 0) });
+    drawnLines.push(text);
+    currentPageLines.push(text);
+  };
+  const drawHeader = () => {
+    y = MARGIN_TOP;
+    draw("PART VI STATEMENT TO FORM 5472", { font: bold, size: 13 });
+    y -= 16;
+    draw(`Tax Year ${year}`, { font: bold, size: 11 });
+    y -= 14;
+    draw(`Reporting Corporation: ${f.llcName}, EIN ${f.llcEin}`);
+    y -= 22;
+  };
+  const ensureSpace = (needed: number) => {
+    if (y - needed < MARGIN_BOTTOM) {
+      page = pdf.addPage([PAGE_W, PAGE_H]);
+      currentPageLines = [];
+      pageLines.push(currentPageLines);
+      drawHeader();
+    }
+  };
+  const drawParagraph = (text: string, opts: { font?: typeof font; size?: number } = {}) => {
+    const fnt = opts.font ?? font;
+    const size = opts.size ?? 10;
+    for (const line of wrapAtPx(text, fnt, size, CONTENT_W)) {
+      ensureSpace(14);
+      draw(line, opts);
+      y -= 13;
+    }
+  };
+
+  drawHeader();
+  drawParagraph("The following non-cash transfers between the foreign owner and the disregarded entity are reported for Part VI of Form 5472.", { font: italic, size: 9 });
+  y -= 14;
+
+  ensureSpace(18);
+  draw("Date", { x: COL_DATE_X, font: bold, size: 9 });
+  draw("In/Out", { x: COL_DIRECTION_X, font: bold, size: 9 });
+  draw("Description and valuation method", { x: COL_DESC_X, font: bold, size: 9 });
+  draw("FMV (USD)", { x: COL_AMOUNT_RIGHT, font: bold, size: 9, align: "right" });
+  y -= 4;
+  page.drawLine({ start: { x: MARGIN_L, y }, end: { x: PAGE_W - MARGIN_R, y }, thickness: 0.5, color: rgb(0.6, 0.6, 0.6) });
+  y -= 11;
+
+  for (const transfer of transfers) {
+    const note = transfer.alsoInPartV ? " Also appears in the Part V statement; value is not counted again on line 1f." : "";
+    const desc = `${transfer.description}. Valuation method: ${transfer.valuationMethod}.${note}`;
+    const descLines = wrapAtPx(desc, font, 10, COL_DESC_W);
+    const rowH = Math.max(14, descLines.length * 13 + 2);
+    ensureSpace(rowH);
+    const rowTop = y;
+    draw(formatTxDate(transfer.date), { x: COL_DATE_X });
+    draw(transfer.direction === "in" ? "In" : "Out", { x: COL_DIRECTION_X });
+    for (let i = 0; i < descLines.length; i++) {
+      if (i > 0) y -= 13;
+      draw(descLines[i], { x: COL_DESC_X });
+    }
+    const savedY = y;
+    y = rowTop;
+    draw(formatWholeDollars(transfer.fairMarketValueCents), { x: COL_AMOUNT_RIGHT, align: "right" });
+    y = savedY - 8;
+  }
+
+  y -= 18;
+  ensureSpace(70);
+  draw(AUTHORED_DOC_SIGNATURE_HEADING, { font: bold });
+  y -= 28;
+  draw("________________________________________");
+  y -= 14;
+  draw(f.ownerName);
+  y -= 14;
+  draw(SIGNER_TITLE);
+
+  authoredDocuments.push({ kind: "partVIStatement", taxYear: year, lines: drawnLines, pages: pageLines });
   return pdf;
 }
 
@@ -1036,6 +1383,11 @@ function describeTx(tx: ReportableTx): string {
 
 function formatMoney(dollars: number): string {
   return `$${dollars.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function formatWholeDollars(cents: number): string {
+  const dollars = roundedCentsToDollars(Math.abs(cents));
+  return `$${dollars.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 }
 
 function formatTxDate(iso: string): string {
@@ -1152,18 +1504,12 @@ async function buildCoverLetter(
 
 async function buildReasonableCause(
   f: Filing,
-  delinquentYears: number[],
+  year: number,
   authoredDocuments: AuthoredDocumentRecord[],
 ): Promise<PDFDocument> {
   const pdf = await PDFDocument.create();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
-
-  // The RCS explains why the LATE returns are late, so every year it names must
-  // be a delinquent one — never a timely (or unresolved) year bundled in the
-  // same package. The caller renders this document only when `attachRcs`, which
-  // requires a non-empty delinquentYears, so there is nothing to fall back to.
-  const years = delinquentYears;
 
   const MARGIN_L = 50;
   const MARGIN_R = 50;
@@ -1205,16 +1551,17 @@ async function buildReasonableCause(
     }
   };
   const space = (n: number) => { y -= n; };
+  const yd = f.yearData.find((row) => row.taxYear === year);
+  const why = cleanSentence(yd?.rcsWhyMissed);
+  const learned = cleanSentence(yd?.rcsWhenLearned);
+  const hasPerYearAnswers = !!why || !!learned;
+  const fallback = !hasPerYearAnswers ? f.reasonableCauseNarrative?.trim() ?? "" : "";
+  const missingAnswers = !hasPerYearAnswers && !fallback;
 
   // ---- Header ----
   drawLine("REASONABLE CAUSE STATEMENT", { font: bold, size: 13 });
   space(16);
-  drawLine(
-    "(Attached to Form 5472 / Pro Forma Form 1120 submission for tax year" +
-      (years.length > 1 ? "s" : "") +
-      ` ${years.join(", ")})`,
-    { size: 10 },
-  );
+  drawLine(`(Attached to Form 5472 / Pro Forma Form 1120 submission for tax year ${year})`, { size: 10 });
   space(18);
   drawLine(`Reporting Corporation: ${f.llcName}`);
   space(12);
@@ -1225,82 +1572,65 @@ async function buildReasonableCause(
 
   drawParagraph(
     "This statement explains the circumstances giving rise to the late filing of Form 5472 and the " +
-      `accompanying pro forma Form 1120 for tax year${years.length > 1 ? "s" : ""} ${years.join(", ")}, ` +
-      "and respectfully requests waiver of any penalty pursuant to the reasonable cause standard of " +
-      "IRC sec. 6038A(d)(3) and Treas. Reg. sec. 1.6038A-4(b).",
+      `accompanying pro forma Form 1120 for tax year ${year}.`,
   );
   space(10);
 
   // ---- 1. Background ----
   drawParagraph("1. Background", { font: bold, size: 11 });
   space(6);
+  // Prose date, e.g. "January 1, 2020" (UTC so a midnight-UTC date never shifts a day).
   const incDateStr = f.llcDateIncorporated
-    ? f.llcDateIncorporated.toISOString().slice(0, 10)
+    ? f.llcDateIncorporated.toLocaleDateString("en-US", {
+        timeZone: "UTC",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
     : "(formation date on file)";
   // Normalize country/nationality the same way the 5472 form fields do, so
   // the RCS prose and the form cells agree on the spelling (avoids "resident
   // and citizen of Canadian" — demonym in a country-name context).
   const rcsOwnerCitizenship = normalizeCountry(f.ownerCountryCitizenship);
   const rcsOwnerTaxResidence = normalizeCountry(f.ownerCountryTaxResidence);
+  const stateName = stateNameForProse(f.llcState);
   drawParagraph(
     `${f.ownerName} ("the Owner") is a resident and citizen of ${rcsOwnerCitizenship}. The Owner formed ${f.llcName} ` +
-      `("the Company") on ${incDateStr} in ${f.llcState} as a single-member LLC. The Company is a ` +
-      "foreign-owned U.S. disregarded entity for U.S. federal income tax purposes. It has at all " +
-      "times been operated from outside the United States. It has no U.S. employees, no U.S. office, " +
-      "no U.S. effectively connected income, and no U.S. federal income tax liability. Its only U.S. " +
-      "nexus is its state-of-incorporation registration and U.S. bank account(s) used to receive " +
-      "customer payments and pay vendor invoices.",
+      `("the Company") on ${incDateStr} in ${stateName} as a single-member LLC. The Company is a ` +
+      "foreign-owned U.S. disregarded entity for U.S. federal income tax purposes. " +
+      operationsParagraph(f),
   );
+  if (f.hasUsSourceIncome === true && f.usTaxWithheld === true) {
+    drawParagraph(
+      "The Company received U.S.-source income for which no U.S. income tax return was required, and U.S. tax on that U.S.-source income was satisfied by withholding at source.",
+    );
+  }
   space(10);
 
   // ---- 2. Cause of the delinquency ----
   drawParagraph("2. Cause of the Delinquency", { font: bold, size: 11 });
   space(6);
-  // The customer's OWN narrative, always. There is deliberately no canned
-  // fallback here: this document is signed under penalties of perjury, and a
-  // generated account of the taxpayer's personal circumstances ("the Owner did
-  // not have a compliance calendar reminder…") is a statement of fact nobody
-  // verified — worse than attaching no statement at all. `attachRcs` in the
-  // caller already requires a non-empty narrative, so this is always present;
-  // the `?? ""` is only a type guard, never a rendered value.
-  drawParagraph(f.reasonableCauseNarrative?.trim() ?? "");
+  if (fallback) {
+    drawParagraph(fallback);
+  } else if (missingAnswers) {
+    drawParagraph(`Reasonable cause answers missing for ${year}.`);
+  } else {
+    if (why) drawParagraph(why);
+    if (learned) {
+      space(6);
+      drawParagraph(learned);
+    }
+  }
   space(10);
 
   // ---- 3. Reasonable cause analysis ----
-  drawParagraph("3. Reasonable Cause", { font: bold, size: 11 });
+  drawParagraph("3. Filing History and Notice Status", { font: bold, size: 11 });
   space(6);
   drawParagraph(
-    "Under Treas. Reg. sec. 1.6038A-4(b), the reasonable cause standard examines whether the taxpayer " +
-      "exercised ordinary business care and prudence and was nevertheless unable to comply. The " +
-      "following factors support a finding of reasonable cause:",
+    `The Owner is tax-domiciled in ${rcsOwnerTaxResidence} and is submitting the tax year ${year} return with the accompanying Form 5472 package.`,
   );
-  space(4);
-  const factors = [
-    `The Owner is a foreign individual, resident and tax-domiciled in ${rcsOwnerTaxResidence}, ` +
-      "managing the Company remotely without a recurring U.S. tax preparer.",
-    "The Company generated no U.S. taxable income and no U.S. tax was owed, so no income tax filing " +
-      "reminder or payment obligation served as a deadline trigger.",
-    "Activity levels are modest, and the underlying reportable transactions consist solely of " +
-      "capital contributions and distributions between the Owner and the Company, as disclosed on " +
-      "the attached Part V supporting statement.",
-    "The Owner moved promptly to voluntary compliance upon discovery of the lapse, without any " +
-      "prior contact from the Internal Revenue Service.",
-    "The reporting failure was non-willful and arose from inadvertent administrative oversight, not " +
-      "from any attempt to conceal information or evade U.S. tax.",
-    "Complete books and records of the Company's transactions have been maintained and are " +
-      "available for inspection.",
-    "No U.S. taxpayer or counterparty has been disadvantaged by the late filing.",
-  ];
-  for (const item of factors) {
-    ensureSpace(14);
-    drawLine("-", { x: MARGIN_L });
-    // Indent bullet text
-    for (const line of wrapAtPx(item, font, 10, CONTENT_W - 12)) {
-      ensureSpace(14);
-      drawLine(line, { x: MARGIN_L + 12 });
-      y -= 13;
-    }
-    space(2);
+  if (yd?.rcsNoIrsNoticeConfirmed === true) {
+    drawParagraph("No IRS notice has been received regarding this return.");
   }
   space(8);
 
@@ -1308,23 +1638,9 @@ async function buildReasonableCause(
   drawParagraph("4. Voluntary Compliance and Forward-Looking Statement", { font: bold, size: 11 });
   space(6);
   drawParagraph(
-    "This submission is voluntary and is being made before any IRS contact regarding the missing " +
-      `return${years.length > 1 ? "s" : ""}. To the best of the Owner's knowledge, the Owner is not currently under civil examination, ` +
-      "criminal investigation, or under examination by the IRS with respect to Form 5472 reporting. " +
-      "The Owner has now established a recurring annual reminder for the April 15 filing deadline " +
-      "and will retain qualified assistance as needed to ensure timely future compliance with the " +
-      "Form 5472 obligation for as long as the Company remains in existence.",
+    "The Owner has arranged this submission and will retain qualified assistance as needed for future Form 5472 obligations while the Company remains in existence.",
   );
   space(10);
-
-  // ---- 5. Request ----
-  drawParagraph("5. Request", { font: bold, size: 11 });
-  space(6);
-  drawParagraph(
-    "Pursuant to the foregoing, the Owner respectfully requests that any penalty under IRC sec. 6038A(d) " +
-      "be waived in full on grounds of reasonable cause.",
-  );
-  space(24);
 
   // ---- Signature block ----
   ensureSpace(60);
@@ -1338,7 +1654,13 @@ async function buildReasonableCause(
   space(12);
   drawLine("Date: ______________________");
 
-  authoredDocuments.push({ kind: "reasonableCauseStatement", lines: drawnLines });
+  authoredDocuments.push({
+    kind: "reasonableCauseStatement",
+    taxYear: year,
+    lines: drawnLines,
+    rcsFallbackUsed: !!fallback,
+    rcsMissingAnswers: missingAnswers,
+  });
   return pdf;
 }
 
@@ -1441,8 +1763,9 @@ export async function generatePackage(
     { field: form5472FieldMap["4a_nameAddress"], width: await fieldWidth("f5472.pdf", form5472FieldMap["4a_nameAddress"]) },
     { field: form5472FieldMap["8a_nameAddress"], width: await fieldWidth("f5472.pdf", form5472FieldMap["8a_nameAddress"]) },
   ];
-  const llcPrintAddress = await computePrintAddress(f.llcAddress, llcAddressWidths, measureFont);
-  const ownerPrintAddress = await computePrintAddress(f.ownerAddress, ownerAddressWidths, measureFont, f.ownerName);
+  const ownerAddress = ownerAddressForForms(f);
+  const llcPrintAddress = await computePrintAddress(llcStreetAddressSource(f), llcAddressWidths, measureFont);
+  const ownerPrintAddress = await computePrintAddress(ownerAddress, ownerAddressWidths, measureFont, f.ownerName);
 
   // Per-year delinquency. A bundled package can mix late years with a timely one
   // (e.g. a DIIRSP catch-up that ends with a final short year whose deadline
@@ -1475,19 +1798,6 @@ export async function generatePackage(
   const unresolvedYear =
     maxTaxYear != null && extensionUnclear(extension, maxTaxYear, dissolvedForDeadline) ? maxTaxYear : null;
 
-  // ── The single source of truth for the reasonable cause statement ──────────
-  // Everything about the RCS — whether the page is rendered, whether the cover
-  // letter claims an attachment, and which years it names — is derived from
-  // this one boolean. It intentionally does NOT read f.isDiirsp: that flag is a
-  // snapshot the server stamped when the order was sold, and it disagrees with
-  // today's facts in both directions (a filing sold as a late catch-up whose
-  // Form 7004 later turned out to be valid; a filing sold as timely that has
-  // since slipped past its deadline). delinquentYears is what the shared rule
-  // says NOW. The narrative requirement is the second half: an RCS is signed
-  // under penalties of perjury and must be the taxpayer's own account, so with
-  // no narrative on file there is simply nothing truthful to attach.
-  const attachRcs = delinquentYears.length > 0 && !!f.reasonableCauseNarrative?.trim();
-
   const cover = await buildCoverLetter(f, finalisedAt, authoredDocuments);
   const coverStartPage = out.getPageCount() + 1;
   await copyAll(out, cover);
@@ -1500,28 +1810,12 @@ export async function generatePackage(
     ...SIG_PLACEMENT.coverLetter,
   });
 
-  // Rendered iff `attachRcs` — the same boolean the cover letter's attachment
-  // sentence reads, so the letter and the package can never disagree.
-  if (attachRcs) {
-    const rcs = await buildReasonableCause(f, delinquentYears, authoredDocuments);
-    const rcsStartPage = out.getPageCount() + 1;
-    await copyAll(out, rcs);
-    pageOrder.push({
-      label: "Reasonable Cause Statement",
-      startPage: rcsStartPage,
-      endPage: out.getPageCount(),
-    });
-    signatures.push({
-      label: "Reasonable Cause Statement",
-      page: out.getPageCount(),
-      instruction: "Sign and date the statement in the signature block at the end.",
-      ...SIG_PLACEMENT.rcs,
-    });
-  }
-
   for (const year of f.taxYears) {
     const partVRows = partVRowsForYear(f, year);
-    const line1f = roundedPartVTotalDollars(partVRows);
+    const nonCashTransfers = nonCashTransfersForYear(f, year);
+    const partVCents = partVTotalCents(partVRows);
+    const partVICentsAddedToLine1f = nonCashCentsForLine1f(nonCashTransfers);
+    const line1f = roundedCentsToDollars(partVCents + partVICentsAddedToLine1f);
     // Per-year, not per-package: only THIS year's forms carry the DIIRSP banner,
     // and only if this year is actually late. A timely year bundled alongside
     // late ones gets the plain header.
@@ -1531,7 +1825,7 @@ export async function generatePackage(
     if (!form1120Selection) throw new Error(`Missing Form 1120 selection for tax year ${year}.`);
     const f1120 = await loadBlank(form1120Selection.fileName);
     const f1120Writes: PdfFieldWrite[] = [];
-    await fillForm1120(f1120, f, year, form1120Selection.revision, llcPrintAddress, {
+    const f1120Meta = await fillForm1120(f1120, f, year, form1120Selection.revision, llcPrintAddress, {
       form: `1120-${year}`,
       writes: f1120Writes,
     });
@@ -1605,6 +1899,37 @@ export async function generatePackage(
       endPage: out.getPageCount(),
     });
 
+    if (nonCashTransfers.length > 0) {
+      const partVI = await buildPartVIStatement(f, year, nonCashTransfers, authoredDocuments);
+      const partVIStartPage = out.getPageCount() + 1;
+      await copyAll(out, partVI);
+      pageOrder.push({
+        label: "Part VI Statement",
+        taxYear: year,
+        startPage: partVIStartPage,
+        endPage: out.getPageCount(),
+      });
+    }
+
+    const reasonableCauseIncluded = yearDelinquent;
+    if (reasonableCauseIncluded) {
+      const rcs = await buildReasonableCause(f, year, authoredDocuments);
+      const rcsStartPage = out.getPageCount() + 1;
+      await copyAll(out, rcs);
+      pageOrder.push({
+        label: "Reasonable Cause Statement",
+        taxYear: year,
+        startPage: rcsStartPage,
+        endPage: out.getPageCount(),
+      });
+      signatures.push({
+        label: `Reasonable Cause Statement — tax year ${year}`,
+        page: out.getPageCount(),
+        instruction: "Sign and date the statement in the signature block at the end.",
+        ...SIG_PLACEMENT.rcs,
+      });
+    }
+
     recordYears.push({
       taxYear: year,
       form1120Revision: String(form1120Selection.revision),
@@ -1619,8 +1944,22 @@ export async function generatePackage(
       line1f,
       line1g: 1,
       line1h: line1f,
-      partVTotalRounded: line1f,
+      partVTotalRounded: roundedCentsToDollars(partVCents),
+      partVTotalCents: partVCents,
       partVRows,
+      nonCashTransfers,
+      partVICentsAddedToLine1f,
+      line1jChecked: shouldCheckLine1j(f, year),
+      priorForm5472Filed: f.priorForm5472Filed ?? null,
+      ownerHasFtin: f.ownerHasFtin ?? null,
+      ownerAddressState: ownerStateForA17(f),
+      ownerAddressPostal: ownerPostalForA17(f),
+      ownerNoPostalCode: f.ownerNoPostalCode ?? null,
+      signerTitleRect: f1120Meta.signerTitleRect,
+      signerTitleColumnBounds: f1120Meta.signerTitleColumnBounds,
+      signerDeclarationBounds: f1120Meta.signerDeclarationBounds,
+      trades: yearTrades(f, year),
+      hasUsSourceIncome: f.hasUsSourceIncome ?? null,
       form1120: {
         fields: f1120Writes,
         stampedTexts: [
@@ -1639,7 +1978,7 @@ export async function generatePackage(
         ],
       },
       form5472: { fields: f5472Writes },
-      reasonableCauseIncluded: attachRcs && delinquentYears.includes(year),
+      reasonableCauseIncluded,
     });
   }
 
