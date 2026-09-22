@@ -439,6 +439,13 @@ model FilingYearData {
   rcsWhyMissed            String?
   rcsWhenLearned          String?
   rcsNoIrsNoticeConfirmed Boolean?
+  // Q-01 wave 4: costs the owner paid personally for the LLC; each is a capital contribution row in Part V.
+  // JSON array of { category: "state_filing_fee" | "registered_agent" | "formation_or_ein_service" |
+  //   "software_subscriptions" | "initial_bank_funding" | "other", date: "YYYY-MM-DD", amountCents, note? }
+  ownerPaidCosts          Json?
+  // Q-02 wave 4: explicit "none this year" per category, so a skipped category is distinguishable from zero.
+  // JSON object { contributions?, distributions?, loansFromOwner?, loansToOwner?, ownerPaidCosts? } of booleans
+  zeroConfirmations       Json?
 
   bankStatements BankStatement[]
 
