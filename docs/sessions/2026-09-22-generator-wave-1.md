@@ -146,3 +146,43 @@ nonCashTransfers, rcsWhyMissed, rcsWhenLearned, rcsNoIrsNoticeConfirmed; all nul
 - Remaining: wave 4 (Q-01 owner-paid costs, Q-02 explicit zeros, Q-09, Q-11 EIN checks, Q-12, Q-14
   tax-year list from the clock, C-07 customer-copy sweep) and wave 5 (CI, S-03 hardening, S-04 open-order
   sweep, S-05 rules doc).
+
+---
+
+# Waves 4-5 and review before signature (live, merge 8ea773a)
+
+Migrations applied: `20260924090000_wave4_owner_costs` (FilingYearData ownerPaidCosts, zeroConfirmations),
+`20260924120000_review_before_signature` (Filing reviewApprovedAt, reviewApprovedBy).
+
+- **Owner request (2026-09-22): customer flow is generate -> qualified accountant reviews (may message
+  questions) -> customer signs -> we fax.** Customers can sign only after an admin clicks "Approve for
+  signature" (needs a passed or overridden pre-flight; uploading a reviewed PDF also approves). Gate is
+  enforced in the sign API, the sign page, and partner sign-link / send-sign-link; SIGNATURE_PENDING and
+  later are grandfathered. Every package-generation path clears the approval. Customer gets a "ready to
+  sign" email; a send failure is reported to the admin. Portal shows four steps (Generate your forms /
+  Accountant review / Sign digitally / We fax to the IRS). Admin list shows "Awaiting review".
+- Wave 4: Q-01 owner-paid costs -> Part V contribution rows; Q-02 explicit "None this year" per category
+  (W02 for older orders); loans to/from owner as Part V sections; Q-11 EIN checks; Q-14 selectable years
+  from the formation year (not before 2018) via an injectable clock; reference ID reused only when owner
+  name AND FTIN (or address) match; a draft for a different owner never inherits identity fields.
+- C-07: no DIIRSP/delinquent in customer screens or emails; late wording only when a year is live-late.
+- S-02 CI: `.github/workflows/ci.yml` (typecheck, vitest, render test that fails if skipped, lint).
+- S-03/S-04: admins edit every wave 3-4 field incl. per-year answers; `/api/admin/preflight-sweep` is
+  read-only and reports open packages' pre-flight results.
+- A04: lines 37, 39, 40a, 41a, 42a, 42b answered; 38a and 38c left blank unless line 37 is Yes.
+
+## LIVE REGRESSION FOUND IN REVIEW (fixed by this merge; affected orders need a human)
+From the wave-1 deploy (2026-09-21 21:12 UTC) until this merge, lines 1f/1h were computed only from Part V
+rows. Orders whose year data held contribution/distribution TOTALS without rows printed 1f = 0 and an
+empty Part V statement, and pre-flight passed. The sweep button now lists "Possible zero-total packages
+since 21 September" (including signed and faxed filings, read-only). Action for Sum: run it, regenerate
+unsigned ones, and decide on corrections for any that were faxed.
+
+## Deploy-day action
+Orders in PDF_GENERATED at deploy time had no approval and now show "Awaiting review"; a reviewer must
+approve them before customers can sign.
+
+## Open
+- CI has not yet been observed running on GitHub (gh CLI not authenticated here); check the Actions tab.
+- Form 5472 revision for tax years before 2023 (question for Sum's reviewer).
+- A29 render check runs in CI only by design.
