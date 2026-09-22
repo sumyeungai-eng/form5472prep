@@ -24,7 +24,10 @@ See `docs/marketing/2026-09-22-nomad-location-blog-brief.md` for the page map, s
 - Ten original 1280×720 WebPs rendered and visually inspected as a contact sheet; approximately 17–26 KB each. City labels distinguish covers. No stock-photo or customer-evidence claims.
 - `npm test -- src/lib/blog.test.ts src/lib/blog-order-cta.test.ts`: 28 tests passed. First attempt ran before Prisma generation completed; rerun passed.
 - `tsc --noEmit`: passed. `git diff --check`: passed.
-- Local production build and rendered/live verification are in progress; release evidence will be appended before final handoff.
+- Local `npm run build`: passed (exit 0), with an existing `MessagesPanel.tsx` image warning and expected file-fallback warnings against a deliberately unavailable local database. No production database credentials were used.
+- `node scripts/verify-nomad-blogs-20260922.mjs http://localhost:3007`: passed all ten pages, visible dates/text, canonical/indexability, cover and social-preview images, Article and two-question FAQ structured data, all internal targets, blog index, sitemap, RSS feed, and hub discovery links.
+- In-app browser preview: all ten pages checked at 390×844; no page-level horizontal overflow, all ten tables and filing CTAs present. Lisbon screenshot and actual image loading inspected; table uses its own horizontal scroll region.
+- Content commit: `ff20740`. Production publication and live verification follow this pre-release record; do not infer live status from this section alone.
 
 ## Contracts to preserve
 

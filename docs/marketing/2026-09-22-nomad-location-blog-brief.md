@@ -53,7 +53,7 @@ Material claims are mapped in `2026-09-22-nomad-location-evidence.csv`. All fina
 
 The ten practical assets are original editorial recordkeeping frameworks, not official forms or tested tax-planning tools. Artwork is original programmatically rendered editorial illustration, explicitly described as such in alt text, not photography or proof of results.
 
-Draft-review rubric (0–3 diagnostic; not an SEO score): intent/completeness 2; evidence 2; contribution 3; reasoning 2; voice/clarity 2; conversion 2; search/presentation pending rendered checks. Weakest-dimension improvements: every page explicitly identifies its foreign-owner/entity scope; hypothetical examples retain assumptions; personal versus LLC accounts are distinguished; local regimes are not promised. Final implementation outcomes belong in the session handoff.
+Editorial-review rubric (0–3 diagnostic; not an SEO score): intent/completeness 2; evidence 2; contribution 3; reasoning 2; voice/clarity 2; conversion 2; search/presentation 2 after rendered checks. Weakest-dimension improvements: every page explicitly identifies its foreign-owner/entity scope; hypothetical examples retain assumptions; personal versus LLC accounts are distinguished; local regimes are not promised. Full build, ten-page HTTP checks, and 390-pixel mobile checks passed before release. Final implementation outcomes belong in the session handoff.
 
 Narrow hub corrections accompany the new links: unrelated versus related customer receipts; business costs versus personal spending; no-residence claim does not prove non-U.S. status; no universal 183-day rule. No full historic-blog tax audit is claimed.
 
