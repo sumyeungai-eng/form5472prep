@@ -191,7 +191,7 @@ function motif(kind, accent) {
 
 // ---- composition ---------------------------------------------------------
 
-function svg({ accent, motif: kind, glyphs }) {
+function svg({ accent, motif: kind, glyphs, location }) {
   const chips = glyphs
     .map((g, i) =>
       chip({
@@ -215,6 +215,7 @@ function svg({ accent, motif: kind, glyphs }) {
 
     <rect width="${W}" height="${H}" fill="url(#ground)"/>
     <rect width="${W}" height="118" fill="${C.navy}"/>
+    ${location ? `<text x="76" y="78" fill="${C.paper}" font-family="Arial, sans-serif" font-size="44" font-weight="700" letter-spacing="4">${location.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</text>` : ""}
     <rect x="0" y="118" width="${W}" height="8" fill="${accent}"/>
     <rect x="0" y="126" width="${W}" height="26" fill="#000" opacity="0.05"/>
     <circle cx="1136" cy="59" r="30" fill="${accent}" opacity="0.55"/>
@@ -231,6 +232,16 @@ function svg({ accent, motif: kind, glyphs }) {
 }
 
 const POSTS = {
+  "lisbon-digital-nomad-us-llc-accountant-handoff": { location: "LISBON", accent: C.teal, motif: "split", glyphs: ["globe", "calendar", "two", "doc"] },
+  "bangkok-digital-nomad-llc-transfer-remittance-records": { location: "BANGKOK", accent: C.amber, motif: "stack", glyphs: ["doc", "person", "globe", "check"] },
+  "mexico-city-digital-nomad-us-llc-work-location-log": { location: "MEXICO CITY", accent: C.green, motif: "globe", glyphs: ["calendar", "pen", "globe", "doc"] },
+  "tbilisi-digital-nomad-georgian-ie-us-llc-records": { location: "TBILISI", accent: C.clay, motif: "split", glyphs: ["person", "two", "doc", "check"] },
+  "chiang-mai-digital-nomad-llc-coworking-owner-paid-costs": { location: "CHIANG MAI", accent: C.green, motif: "checklist", glyphs: ["person", "doc", "hash", "check"] },
+  "buenos-aires-digital-nomad-llc-usd-ars-reconciliation": { location: "BUENOS AIRES", accent: C.amber, motif: "correct", glyphs: ["hash", "two", "doc", "check"] },
+  "dubai-digital-nomad-us-llc-corporate-tax-review-pack": { location: "DUBAI", accent: C.teal, motif: "stack", glyphs: ["person", "globe", "two", "doc"] },
+  "kuala-lumpur-digital-nomad-cross-year-tax-records": { location: "KUALA LUMPUR", accent: C.green, motif: "calendar", glyphs: ["calendar", "clock", "globe", "doc"] },
+  "medellin-digital-nomad-rolling-365-day-tax-log": { location: "MEDELLÍN", accent: C.clay, motif: "calendar", glyphs: ["globe", "calendar", "pen", "check"] },
+  "barcelona-digital-nomad-visa-us-llc-tax-election": { location: "BARCELONA", accent: C.navySoft, motif: "card", glyphs: ["person", "doc", "two", "check"] },
   "foreign-owned-us-llc-fbar": { accent: C.teal, motif: "globe", glyphs: ["globe", "two", "hash", "doc"] },
   "us-llc-paying-foreign-contractors-tax-forms": { accent: C.green, motif: "split", glyphs: ["person", "globe", "doc", "two"] },
   "itin-nonresident-spouse-joint-return-w7": { accent: C.clay, motif: "stack", glyphs: ["two", "person", "hash", "doc"] },

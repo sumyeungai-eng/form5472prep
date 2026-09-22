@@ -116,6 +116,16 @@ async function readFile(slug: string): Promise<Post | null> {
 }
 
 const ARTWORK_ALTS: Record<string, string> = {
+  "lisbon-digital-nomad-us-llc-accountant-handoff": "Lisbon editorial illustration with two document folders for the Portuguese and U.S. accountant handoff",
+  "bangkok-digital-nomad-llc-transfer-remittance-records": "Bangkok editorial illustration with linked document stacks for LLC transfers and personal remittance records",
+  "mexico-city-digital-nomad-us-llc-work-location-log": "Mexico City editorial illustration with a globe and calendar icons for a physical work-location log",
+  "tbilisi-digital-nomad-georgian-ie-us-llc-records": "Tbilisi editorial illustration with separate folders for individual entrepreneur and U.S. LLC records",
+  "chiang-mai-digital-nomad-llc-coworking-owner-paid-costs": "Chiang Mai editorial illustration with a checklist for owner-paid costs and reimbursement evidence",
+  "buenos-aires-digital-nomad-llc-usd-ars-reconciliation": "Buenos Aires editorial illustration with a corrected ledger for reconciling dollar and peso records",
+  "dubai-digital-nomad-us-llc-corporate-tax-review-pack": "Dubai editorial illustration with document stacks separating individual and LLC tax review records",
+  "kuala-lumpur-digital-nomad-cross-year-tax-records": "Kuala Lumpur editorial illustration with a calendar for a travel log spanning two tax years",
+  "medellin-digital-nomad-rolling-365-day-tax-log": "Medellín editorial illustration with a calendar for tracking presence over a rolling 365-day period",
+  "barcelona-digital-nomad-visa-us-llc-tax-election": "Barcelona editorial illustration with an identity card and documents for separate visa and tax reviews",
   "foreign-owned-us-llc-fbar": "A globe beside account records illustrates the location and ownership questions in an LLC's FBAR review",
   "us-llc-paying-foreign-contractors-tax-forms": "Two document folders distinguish contractor records from separate LLC reporting obligations",
   "itin-nonresident-spouse-joint-return-w7": "Paired document stacks and identity symbols illustrate assembling a spouse's W-7 and joint-return package",

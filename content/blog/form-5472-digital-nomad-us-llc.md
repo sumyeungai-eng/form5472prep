@@ -2,7 +2,7 @@
 title: "Form 5472 for Digital Nomads: Filing With No Fixed Tax Residence"
 description: "Form 5472 follows your US LLC and your non-US-person status, not where you sleep. What nomads put in the FTIN and address boxes, and the one real US risk."
 date: 2026-09-18
-updated: 2026-09-18
+updated: 2026-09-22
 author: "Form5472 Prep"
 tags: ["form-5472", "digital-nomad", "foreign-owned-llc", "ftin", "tax-residency"]
 draft: false
@@ -26,14 +26,14 @@ Yes. The test has three conditions, and none is about where you live:
 
 Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the § 6038A reporting rules. The rule has no residence condition.
 
-Reportable transactions are movements **between you and your own LLC**: contributions, distributions, loans either way, payments for goods or services. **Customer revenue is not reportable.** A Stripe payout from a client stays off the form; a transfer from that balance to your personal Wise account goes on it.
+Reportable transactions include movements **between you and your own LLC**: contributions, distributions, loans either way, and other related-party transactions. **An unrelated customer's payment is not a related-party transaction merely because it comes from abroad.** Disclose related customers separately. A transfer from the LLC to your personal account needs its own classification and reporting review under the [IRS instructions](https://www.irs.gov/instructions/i5472).
 
 | Movement during the year | Reportable? |
 |---|---|
-| Clients paid the LLC through Stripe | No — customer revenue |
+| Unrelated clients paid the LLC through Stripe | Not a related-party transaction on these facts |
 | You funded the LLC's account at formation | Yes — contribution |
 | You moved profit to your personal account | Yes — distribution |
-| The LLC card paid your flights and coworking | Yes — document it as a distribution |
+| The LLC paid your personal costs | Owner-related transaction to review; distinguish personal spending from genuine LLC business costs |
 
 More cases: [reportable transaction examples](/blog/form-5472-reportable-transactions-examples).
 
@@ -43,9 +43,9 @@ The [IRS instructions](https://www.irs.gov/instructions/i5472) state that a **$2
 
 Because the 183-day rule nomads discuss constantly is a **local** residency test, and Form 5472 does not use it.
 
-Thailand, Portugal and most other countries use a day count to decide whether *they* treat you as a tax resident. That settles which personal tax system you sit in. It has no input into Form 5472, which asks only whether the entity is a domestic disregarded entity and whether its owner is a foreign person.
+Countries have their own tax-residency tests, which may include day counts, homes, and other connections. There is no universal 183-day exemption. Those local tests do not replace the separate U.S. review of the entity, owner status, and reportable transactions.
 
-Falling below every country's threshold therefore reduces nothing. Someone tax resident nowhere is still a **foreign person** for US purposes — the status that triggers Form 5472. The only day count that changes the US picture is the US substantial presence test, below.
+Claiming no tax residence elsewhere does not establish that you are a **foreign person** for U.S. purposes. U.S. citizenship, green-card status, substantial presence, and applicable elections or exceptions need their own review. A U.S. citizen abroad does not become a foreign person simply by travelling.
 
 ## What goes in the FTIN box if no country has given you a tax number?
 
@@ -142,6 +142,23 @@ Local rules change what goes in the FTIN box and what you owe at home, not the U
 | How do I turn bank statements into Form 5472 figures? | [from Mercury, Wise or Relay statements](/blog/form-5472-from-mercury-wise-relay-statements) |
 | I coach, consult or sell courses | [Form 5472 for coaches and course creators](/blog/form-5472-coaches-consultants-course-creators) |
 
+## Practical records guides by digital-nomad destination
+
+These city-focused guides address specific recordkeeping and adviser-handoff decisions. They are not rankings of nomad populations or promises of local tax exemptions.
+
+| Destination | Practical guide |
+| --- | --- |
+| Lisbon | [Prepare a two-country accountant handoff](/blog/lisbon-digital-nomad-us-llc-accountant-handoff) |
+| Bangkok | [Trace LLC transfers and personal remittances separately](/blog/bangkok-digital-nomad-llc-transfer-remittance-records) |
+| Mexico City | [Keep a physical work-location log](/blog/mexico-city-digital-nomad-us-llc-work-location-log) |
+| Tbilisi | [Reconcile Georgian IE and U.S. LLC records](/blog/tbilisi-digital-nomad-georgian-ie-us-llc-records) |
+| Chiang Mai | [Capture owner-paid costs and reimbursements](/blog/chiang-mai-digital-nomad-llc-coworking-owner-paid-costs) |
+| Buenos Aires | [Reconcile dollar receipts and peso spending](/blog/buenos-aires-digital-nomad-llc-usd-ars-reconciliation) |
+| Dubai | [Build a separate individual and entity tax-review pack](/blog/dubai-digital-nomad-us-llc-corporate-tax-review-pack) |
+| Kuala Lumpur | [Preserve travel records across December 31](/blog/kuala-lumpur-digital-nomad-cross-year-tax-records) |
+| Medellín | [Check a rolling 365-day presence log](/blog/medellin-digital-nomad-rolling-365-day-tax-log) |
+| Barcelona | [Separate visa approval and tax-election records](/blog/barcelona-digital-nomad-visa-us-llc-tax-election) |
+
 ## How does a nomad actually file Form 5472?
 
 You cannot e-file. A foreign-owned US DE files on paper.
@@ -166,7 +183,7 @@ We are not a CPA firm and do not give tax advice, and we do not advise on any co
 
 ### I am not a tax resident anywhere. Do I still file Form 5472?
 
-Yes, if the LLC is a US disregarded entity and had a reportable transaction with you. Having no tax residence anywhere confirms you are a non-US person; it does not remove the obligation.
+Yes, if you are a foreign person for U.S. tax purposes and your U.S. disregarded LLC had a reportable related-party transaction. Having no tax residence elsewhere does not establish foreign-person status or remove the filing obligation.
 
 ### Does staying under 183 days in every country help?
 
