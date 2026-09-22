@@ -27,7 +27,34 @@ See `docs/marketing/2026-09-22-nomad-location-blog-brief.md` for the page map, s
 - Local `npm run build`: passed (exit 0), with an existing `MessagesPanel.tsx` image warning and expected file-fallback warnings against a deliberately unavailable local database. No production database credentials were used.
 - `node scripts/verify-nomad-blogs-20260922.mjs http://localhost:3007`: passed all ten pages, visible dates/text, canonical/indexability, cover and social-preview images, Article and two-question FAQ structured data, all internal targets, blog index, sitemap, RSS feed, and hub discovery links.
 - In-app browser preview: all ten pages checked at 390×844; no page-level horizontal overflow, all ten tables and filing CTAs present. Lisbon screenshot and actual image loading inspected; table uses its own horizontal scroll region.
-- Content commit: `ff20740`. Production publication and live verification follow this pre-release record; do not infer live status from this section alone.
+- Content commit: `ff20740`; preview-evidence commit and production release: `644815c`.
+
+## Published and checked — September 22, 2026, 09:23 UTC
+
+- Fast-forwarded the isolated checkout's `main` from `8168881` through `644815c`; deployed using **`git push origin main` only**.
+- Vercel Git deployment `dpl_8LwQdQLUhfxJ9EW7NvQ28YY9Zrzi` / `form5472prep-4nvd0o7s4-form5472prep.vercel.app` reached **READY** and aliases include `www.form5472prep.com`. CLI use was read-only `list`/`inspect`, never a CLI deployment.
+- `node scripts/verify-nomad-blogs-20260922.mjs https://www.form5472prep.com` passed the complete batch. All ten live URLs return 200 with expected titles/dates, self-canonicals, no noindex, working WebP and social images, Article and two-question FAQ schema. All internal targets return 200. All ten appear in `/blog`, `/sitemap.xml`, `/feed.xml`, and the existing nomad hub.
+- In-app browser confirmed the live Lisbon article's cover, title, canonical, and filing links; the live index shows **173 articles** and links every new page. Mobile checks covered all ten in the identical-source local production build; no page-level horizontal overflow at 390×844. Normal viewport restored.
+- Required regression markers passed together: empty JSON POST to `/api/applications/ein/checkout` rejected with 400 (no order created); `/ein/apply` contains “Owner date of birth”; `/form-5472-penalty-calculator` returns 200.
+- No claim of indexing, rankings, AI citations, or increased conversions is made. No analytics configuration, ad targeting, indexing submission, or recurring monitor was changed.
+- This final handoff update changes documentation only; the verified content release is `644815c`.
+
+### Live articles
+
+1. [Lisbon — accountant handoff](https://www.form5472prep.com/blog/lisbon-digital-nomad-us-llc-accountant-handoff)
+2. [Bangkok — LLC transfers and remittances](https://www.form5472prep.com/blog/bangkok-digital-nomad-llc-transfer-remittance-records)
+3. [Mexico City — work-location log](https://www.form5472prep.com/blog/mexico-city-digital-nomad-us-llc-work-location-log)
+4. [Tbilisi — Georgian IE and LLC records](https://www.form5472prep.com/blog/tbilisi-digital-nomad-georgian-ie-us-llc-records)
+5. [Chiang Mai — owner-paid costs](https://www.form5472prep.com/blog/chiang-mai-digital-nomad-llc-coworking-owner-paid-costs)
+6. [Buenos Aires — USD/ARS reconciliation](https://www.form5472prep.com/blog/buenos-aires-digital-nomad-llc-usd-ars-reconciliation)
+7. [Dubai — individual and entity review pack](https://www.form5472prep.com/blog/dubai-digital-nomad-us-llc-corporate-tax-review-pack)
+8. [Kuala Lumpur — cross-year records](https://www.form5472prep.com/blog/kuala-lumpur-digital-nomad-cross-year-tax-records)
+9. [Medellín — rolling 365-day log](https://www.form5472prep.com/blog/medellin-digital-nomad-rolling-365-day-tax-log)
+10. [Barcelona — visa versus tax election](https://www.form5472prep.com/blog/barcelona-digital-nomad-visa-us-llc-tax-election)
+
+### Next-session safety
+
+The original `/Users/sumyeung/Documents/Codex/form5472` checkout remains on the dirty generator branch. Its local `main` ref now includes these published commits because Git refs are shared across worktrees. **Do not copy or reset the original working tree.** When continuing generator work, integrate current `origin/main` using the established safe merge workflow so the new articles are not omitted from the next release. No generator work was stashed, discarded, or deployed by this session.
 
 ## Contracts to preserve
 
