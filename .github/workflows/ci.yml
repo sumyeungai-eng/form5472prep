@@ -1,0 +1,110 @@
+name: CI
+
+"on":
+  push:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install render test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+          python3 -m pip install --upgrade pip
+          python3 -m pip install PyMuPDF
+
+      - name: Verify render test dependencies
+        run: |
+          python3 --version
+          python3 -c "import fitz; print(fitz.__doc__ or 'fitz ok')"
+
+      - name: Validate and generate Prisma client
+        env:
+          DATABASE_URL: postgresql://u:p@localhost:5432/x
+        run: |
+          npx prisma validate
+          npx prisma generate
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      # The render test self-skips when python3 or PyMuPDF is missing. Run it
+      # with JSON output and fail if Vitest reports any skipped tests or zero passes.
+      - name: Run render test and prove it did not skip
+        run: |
+          npx vitest run src/lib/pdf/render.test.ts --reporter=json --outputFile=render-result.json
+          node <<'NODE'
+          const fs = require("fs");
+          const result = JSON.parse(fs.readFileSync("render-result.json", "utf8"));
+          const statuses = [];
+
+          function walk(value) {
+            if (!value || typeof value !== "object") return;
+            if (typeof value.status === "string") statuses.push(value.status.toLowerCase());
+            for (const child of Object.values(value)) {
+              if (Array.isArray(child)) child.forEach(walk);
+              else walk(child);
+            }
+          }
+
+          walk(result);
+
+          const skippedStatuses = statuses.filter((status) =>
+            ["pending", "skipped", "skip", "todo"].includes(status),
+          );
+          const passedStatuses = statuses.filter((status) => status === "passed" || status === "pass");
+          const reportedPending =
+            Number(result.numPendingTests ?? 0) +
+            Number(result.numTodoTests ?? 0) +
+            Number(result.numSkippedTests ?? 0);
+          const reportedPassed = Number(result.numPassedTests ?? 0);
+
+          if (reportedPending > 0 || skippedStatuses.length > 0) {
+            console.error("Render test was skipped or pending.");
+            process.exit(1);
+          }
+
+          if (reportedPassed + passedStatuses.length === 0) {
+            console.error("Render test reported zero passed tests.");
+            process.exit(1);
+          }
+
+          console.log(`Render test status check passed: ${reportedPassed + passedStatuses.length} passed, 0 skipped.`);
+          NODE
+
+      - name: Run Vitest suite
+        run: npx vitest run --exclude src/lib/pdf/render.test.ts
+
+      - name: Lint
+        run: npx next lint
