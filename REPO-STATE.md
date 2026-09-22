@@ -202,3 +202,5 @@ Claude and Codex sessions share these folders. Practical rules:
 - `hktax/` and `content/blog/` are actively owned by other sessions.
 - Before pushing, `git fetch origin main` and merge — `main` moves often.
 - Preserve work you must move past (`git diff > some.patch`) and say so in your report.
+- `docs/sessions/2026-09-22-branded-checkout.md` — Stripe checkout branded per session (logo, colours,
+  product images, review note); versioned idempotency keys; retry without branding if rejected.
