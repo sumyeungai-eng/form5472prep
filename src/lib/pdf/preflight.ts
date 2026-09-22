@@ -46,9 +46,11 @@ export async function runPreflight(
 ): Promise<PreflightResult> {
   const result: MutableResult = { failures: [], warnings: [] };
 
+  checkW02(record, result);
   checkA01(record, result);
   checkA02(record, result);
   checkA03(record, result);
+  checkA04(record, result);
   checkA05(record, result);
   checkA06(record, result);
   checkA07(record, result);
@@ -79,6 +81,38 @@ export async function runPreflight(
   return { ok: result.failures.length === 0, ...result };
 }
 
+// W02: older orders may predate explicit per-category transaction confirmations.
+function checkW02(record: PackageRecord, result: MutableResult) {
+  const labels = {
+    contributions: "money put in",
+    distributions: "money taken out",
+    loansFromOwner: "loans from owner to LLC",
+    loansToOwner: "loans from LLC to owner",
+    ownerPaidCosts: "costs paid personally",
+  } as const;
+  const keys = Object.keys(labels) as Array<keyof typeof labels>;
+  for (const year of record.taxYears) {
+    const confirmations = year.zeroConfirmations ?? {};
+    const has = {
+      contributions: year.partVRows.some((row) => row.category === "contribution"),
+      distributions: year.partVRows.some((row) => row.category === "distribution"),
+      loansFromOwner: year.partVRows.some((row) => row.category === "loan_from_owner"),
+      loansToOwner: year.partVRows.some((row) => row.category === "loan_to_owner"),
+      ownerPaidCosts: year.ownerPaidCosts.length > 0,
+    };
+    const missing = keys.filter(
+      (key) => !has[key] && confirmations[key] !== true,
+    );
+    if (missing.length > 0) {
+      warn(
+        result,
+        "W02",
+        `Tax year ${year.taxYear}: Some transaction categories were never confirmed (${missing.map((key) => labels[key]).join(", ")}).`,
+      );
+    }
+  }
+}
+
 // A01: 5472 line 2 checked.
 function checkA01(record: PackageRecord, result: MutableResult) {
   for (const year of record.taxYears) {
@@ -105,6 +139,43 @@ function checkA03(record: PackageRecord, result: MutableResult) {
     );
     if (wrote43) {
       fail(result, "A03", `Tax year ${year.taxYear}: Form 5472 line 43a or 43b was written.`);
+    }
+  }
+}
+
+// A04: Form 5472 lines 37 through 42 are each answered where a Yes/No box exists.
+function checkA04(record: PackageRecord, result: MutableResult) {
+  // Lines answered on every Form 5472.
+  const requiredPairs = [
+    ["37", form5472FieldMap.q37_imports_yes, form5472FieldMap.q37_imports_no],
+    ["39", form5472FieldMap.q39_csa_yes, form5472FieldMap.q39_csa_no],
+    ["40a", form5472FieldMap.q40a_267A_yes, form5472FieldMap.q40a_267A_no],
+    ["41a", form5472FieldMap.q41a_fdii_yes, form5472FieldMap.q41a_fdii_no],
+    ["42a", form5472FieldMap.q42a_safeHavenInRange_yes, form5472FieldMap.q42a_safeHavenInRange_no],
+    ["42b", form5472FieldMap.q42b_safeHavenOutsideRange_yes, form5472FieldMap.q42b_safeHavenOutsideRange_no],
+  ] as const;
+  // Lines 38a and 38c only apply "If 'Yes'" to line 37.
+  const conditionalOn37 = [
+    ["38a", form5472FieldMap.q38a_customsValue_yes, form5472FieldMap.q38a_customsValue_no],
+    ["38c", form5472FieldMap.q38c_importDocumentation_yes, form5472FieldMap.q38c_importDocumentation_no],
+  ] as const;
+  for (const year of record.taxYears) {
+    const fields = year.form5472.fields;
+    const missing = requiredPairs
+      .filter(([, yesField, noField]) => !hasChecked(fields, yesField) && !hasChecked(fields, noField))
+      .map(([line]) => line);
+    if (missing.length > 0) {
+      fail(result, "A04", `Tax year ${year.taxYear}: Form 5472 lines ${missing.join(", ")} are not answered.`);
+    }
+    const line37Yes = hasChecked(fields, form5472FieldMap.q37_imports_yes);
+    for (const [line, yesField, noField] of conditionalOn37) {
+      const answered = hasChecked(fields, yesField) || hasChecked(fields, noField);
+      if (!line37Yes && answered) {
+        fail(result, "A04", `Tax year ${year.taxYear}: Form 5472 line ${line} must be blank when line 37 is No.`);
+      }
+      if (line37Yes && !answered) {
+        fail(result, "A04", `Tax year ${year.taxYear}: Form 5472 line ${line} must be answered when line 37 is Yes.`);
+      }
     }
   }
 }

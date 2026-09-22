@@ -6,8 +6,27 @@ import { Loader2 } from "lucide-react";
 
 // Whitelisted fields the admin can edit on a filing. Mirrors the server
 // allowlist in /api/admin/filings/[id]/route.ts (action="updateField"). Each
-// entry: column key, label, multiline?
-const FIELDS: Array<{ key: string; label: string; multiline?: boolean; placeholder?: string }> = [
+// entry: column key, label, control type.
+const BOOLEAN_OPTIONS = [
+  { value: "", label: "Not recorded" },
+  { value: "true", label: "Yes" },
+  { value: "false", label: "No" },
+];
+
+const PRIOR_FORM_OPTIONS = [
+  { value: "", label: "Not recorded" },
+  { value: "yes", label: "Yes" },
+  { value: "no", label: "No" },
+  { value: "not_sure", label: "Not sure" },
+];
+
+const FIELDS: Array<{
+  key: string;
+  label: string;
+  kind?: "text" | "textarea" | "number" | "select";
+  options?: Array<{ value: string; label: string }>;
+  placeholder?: string;
+}> = [
   { key: "llcName", label: "LLC name" },
   { key: "llcEin", label: "LLC EIN", placeholder: "12-3456789" },
   { key: "llcAddress", label: "LLC address" },
@@ -15,18 +34,35 @@ const FIELDS: Array<{ key: string; label: string; multiline?: boolean; placehold
   { key: "llcState", label: "LLC state" },
   { key: "llcZip", label: "LLC ZIP" },
   { key: "llcCountry", label: "LLC country" },
+  { key: "llcCountryBusiness", label: "LLC country of business" },
+  { key: "llcMemberCount", label: "LLC member count", kind: "number" },
+  { key: "llcAddressIsRegisteredAgentOnly", label: "LLC address is registered agent only", kind: "select", options: BOOLEAN_OPTIONS },
   { key: "llcBusinessActivity", label: "LLC business activity" },
   { key: "llcBusinessCode", label: "LLC business code (NAICS)" },
   { key: "ownerName", label: "Owner name" },
   { key: "ownerAddress", label: "Owner address (single line)" },
+  { key: "ownerHasFtin", label: "Owner has FTIN", kind: "select", options: BOOLEAN_OPTIONS },
+  { key: "ownerNoPostalCode", label: "Owner has no postal code", kind: "select", options: BOOLEAN_OPTIONS },
   { key: "ownerCountryCitizenship", label: "Owner country of citizenship" },
   { key: "ownerCountryTaxResidence", label: "Owner country of tax residence" },
   { key: "ownerCountryBusiness", label: "Owner country of business" },
   { key: "ownerFtin", label: "Owner FTIN" },
   { key: "ownerItin", label: "Owner ITIN" },
   { key: "ownerReferenceId", label: "Owner Reference ID" },
-  { key: "reasonableCauseNarrative", label: "Reasonable cause narrative (DIIRSP)", multiline: true },
+  { key: "priorForm5472Filed", label: "Prior Form 5472 filed", kind: "select", options: PRIOR_FORM_OPTIONS },
+  { key: "hasUsSourceIncome", label: "Has US-source income", kind: "select", options: BOOLEAN_OPTIONS },
+  { key: "usTaxWithheld", label: "US tax withheld", kind: "select", options: BOOLEAN_OPTIONS },
+  { key: "reasonableCauseNarrative", label: "Reasonable cause narrative (DIIRSP)", kind: "textarea" },
 ];
+
+const YEAR_FIELDS = [
+  { key: "rcsWhyMissed", label: "Why missed", kind: "textarea" },
+  { key: "rcsWhenLearned", label: "When learned", kind: "textarea" },
+  { key: "rcsNoIrsNoticeConfirmed", label: "No IRS notice confirmed", kind: "select" },
+  { key: "nonCashTransfers", label: "Non-cash transfers", kind: "json" },
+  { key: "ownerPaidCosts", label: "Owner-paid costs", kind: "json" },
+  { key: "zeroConfirmations", label: "Zero confirmations", kind: "json" },
+] as const;
 
 // ─── Form 7004 extension group ──────────────────────────────────────────────
 // The remediation path for orders sold BEFORE the extension question existed:
@@ -104,9 +140,18 @@ const EXTENSION_FIELDS: Array<{
 type Props = {
   filingId: string;
   initial: Record<string, string | null>;
+  years: Array<{
+    taxYear: number;
+    rcsWhyMissed: string | null;
+    rcsWhenLearned: string | null;
+    rcsNoIrsNoticeConfirmed: boolean | null;
+    nonCashTransfers: unknown;
+    ownerPaidCosts: unknown;
+    zeroConfirmations: unknown;
+  }>;
 };
 
-export function EditFieldsCard({ filingId, initial }: Props) {
+export function EditFieldsCard({ filingId, initial, years }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   // Values are stored as strings; null DB values render as "".
@@ -118,9 +163,24 @@ export function EditFieldsCard({ filingId, initial }: Props) {
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ key: string; kind: "ok" | "err"; text: string } | null>(null);
   const [reason, setReason] = useState("");
+  const [yearValues, setYearValues] = useState<Record<string, string>>(() => {
+    const entries: Array<[string, string]> = [];
+    for (const year of years) {
+      for (const field of YEAR_FIELDS) {
+        entries.push([yearKey(year.taxYear, field.key), yearDisplayValue(year, field.key)]);
+      }
+    }
+    return Object.fromEntries(entries);
+  });
+  const [yearInitial, setYearInitial] = useState<Record<string, string>>(() => ({ ...yearValues }));
 
   function dirty(key: string): boolean {
     return values[key] !== (initial[key] ?? "");
+  }
+
+  function yearDirty(taxYear: number, field: string): boolean {
+    const key = yearKey(taxYear, field);
+    return yearValues[key] !== (yearInitial[key] ?? "");
   }
 
   async function save(key: string) {
@@ -146,6 +206,55 @@ export function EditFieldsCard({ filingId, initial }: Props) {
       setMsg({ key, kind: "ok", text: "Saved. Remember to regenerate the PDF." });
       // Update initial to the new value so dirty() goes false again.
       initial[key] = values[key].trim() || null;
+      setSavingKey(null);
+      startTransition(() => router.refresh());
+    } catch (e) {
+      setMsg({ key, kind: "err", text: e instanceof Error ? e.message : "Network error" });
+      setSavingKey(null);
+    }
+  }
+
+  async function saveYear(taxYear: number, field: string) {
+    const key = yearKey(taxYear, field);
+    setMsg(null);
+    setSavingKey(key);
+
+    let value: unknown = yearValues[key] ?? "";
+    if (YEAR_FIELDS.find((f) => f.key === field)?.kind === "json") {
+      const raw = String(value).trim();
+      if (!raw) {
+        value = null;
+      } else {
+        try {
+          value = JSON.parse(raw);
+        } catch {
+          setMsg({ key, kind: "err", text: "JSON is invalid." });
+          setSavingKey(null);
+          return;
+        }
+      }
+    }
+
+    try {
+      const res = await fetch(`/api/admin/filings/${filingId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "updateYearField",
+          taxYear,
+          field,
+          value,
+          reason: reason.trim() || `Admin edit on ${new Date().toISOString().slice(0, 10)}`,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.text();
+        setMsg({ key, kind: "err", text: err || `HTTP ${res.status}` });
+        setSavingKey(null);
+        return;
+      }
+      setMsg({ key, kind: "ok", text: "Saved. Remember to regenerate the PDF." });
+      setYearInitial((current) => ({ ...current, [key]: yearValues[key] ?? "" }));
       setSavingKey(null);
       startTransition(() => router.refresh());
     } catch (e) {
@@ -182,7 +291,7 @@ export function EditFieldsCard({ filingId, initial }: Props) {
             <div key={f.key} className="space-y-1">
               <label className="block text-xs">
                 <span className="block text-slate-600 font-medium mb-1">{f.label}</span>
-                {f.multiline ? (
+                {f.kind === "textarea" ? (
                   <textarea
                     value={values[f.key]}
                     onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
@@ -193,9 +302,24 @@ export function EditFieldsCard({ filingId, initial }: Props) {
                       isDirty ? "border-accent" : "border-slate-300"
                     }`}
                   />
+                ) : f.kind === "select" ? (
+                  <select
+                    value={values[f.key]}
+                    onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+                    disabled={pending || isSaving}
+                    className={`w-full px-2 py-1.5 text-sm border rounded-md bg-white ${
+                      isDirty ? "border-accent" : "border-slate-300"
+                    }`}
+                  >
+                    {f.options!.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
                 ) : (
                   <input
-                    type="text"
+                    type={f.kind === "number" ? "number" : "text"}
                     value={values[f.key]}
                     onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
                     disabled={pending || isSaving}
@@ -301,6 +425,106 @@ export function EditFieldsCard({ filingId, initial }: Props) {
           })}
         </div>
       </div>
+
+      <div className="rounded-md border border-slate-200 p-3 space-y-3">
+        <div>
+          <h3 className="text-xs font-semibold text-slate-900">
+            Per-year reasonable-cause and transaction fields
+          </h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Edits are saved per tax year and included the next time the PDF package is regenerated.
+          </p>
+        </div>
+        {years.length === 0 ? (
+          <p className="text-xs text-slate-500">No per-year rows exist for this filing.</p>
+        ) : (
+          <div className="space-y-4">
+            {years.map((year) => (
+              <div key={year.taxYear} className="border-t border-slate-100 pt-3 first:border-t-0 first:pt-0">
+                <h4 className="text-xs font-semibold text-slate-700 mb-2">Tax year {year.taxYear}</h4>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {YEAR_FIELDS.map((f) => {
+                    const key = yearKey(year.taxYear, f.key);
+                    const isDirty = yearDirty(year.taxYear, f.key);
+                    const isSaving = savingKey === key;
+                    const fieldMsg = msg?.key === key ? msg : null;
+                    return (
+                      <div key={key} className="space-y-1">
+                        <label className="block text-xs">
+                          <span className="block text-slate-600 font-medium mb-1">{f.label}</span>
+                          {f.kind === "select" ? (
+                            <select
+                              value={yearValues[key] ?? ""}
+                              onChange={(e) => setYearValues((v) => ({ ...v, [key]: e.target.value }))}
+                              disabled={pending || isSaving}
+                              className={`w-full px-2 py-1.5 text-sm border rounded-md bg-white ${
+                                isDirty ? "border-accent" : "border-slate-300"
+                              }`}
+                            >
+                              {BOOLEAN_OPTIONS.map((o) => (
+                                <option key={o.value} value={o.value}>
+                                  {o.label}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <textarea
+                              value={yearValues[key] ?? ""}
+                              onChange={(e) => setYearValues((v) => ({ ...v, [key]: e.target.value }))}
+                              disabled={pending || isSaving}
+                              rows={f.kind === "json" ? 7 : 3}
+                              spellCheck={f.kind !== "json"}
+                              className={`w-full px-2 py-1.5 text-sm border rounded-md ${
+                                f.kind === "json" ? "font-mono" : ""
+                              } ${isDirty ? "border-accent" : "border-slate-300"}`}
+                            />
+                          )}
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => saveYear(year.taxYear, f.key)}
+                            disabled={!isDirty || isSaving || pending}
+                            className="px-2.5 py-1 text-xs font-medium rounded-md bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
+                          >
+                            {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
+                          </button>
+                          {fieldMsg && (
+                            <span
+                              className={`text-xs ${
+                                fieldMsg.kind === "ok" ? "text-emerald-700" : "text-red-700"
+                              }`}
+                            >
+                              {fieldMsg.text}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
+}
+
+function yearKey(taxYear: number, field: string): string {
+  return `${taxYear}:${field}`;
+}
+
+function yearDisplayValue(
+  year: Props["years"][number],
+  field: (typeof YEAR_FIELDS)[number]["key"],
+): string {
+  const value = year[field];
+  if (value === null || value === undefined) return "";
+  if (field === "nonCashTransfers" || field === "ownerPaidCosts" || field === "zeroConfirmations") {
+    return JSON.stringify(value, null, 2);
+  }
+  if (typeof value === "boolean") return value ? "true" : "false";
+  return String(value);
 }

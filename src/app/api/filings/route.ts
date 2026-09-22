@@ -4,7 +4,11 @@ import { FilingStatus } from "@prisma/client";
 import { getOrCreateSessionId, getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_TIER, isTier, type Tier } from "@/lib/pricing";
-import { findOrCreateDraftFiling } from "@/lib/findOrCreateDraft";
+import {
+  findLatestPaidOwnerReferenceId,
+  findOrCreateDraftFiling,
+  ownerNamesMatchForReferenceId,
+} from "@/lib/findOrCreateDraft";
 import { ATTR_COOKIE, parseAttributionCookie } from "@/lib/attribution";
 
 // Statuses that mean "this customer actually filed before" — we only copy
@@ -27,6 +31,10 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
   const requestedTier = body?.tier as string | undefined;
   const marketingConsent = body?.marketingConsent === true;
+  const requestedOwnerName =
+    typeof body?.ownerName === "string" && body.ownerName.trim()
+      ? body.ownerName.trim()
+      : null;
   // Sanitize funnelSource — user-controllable (set client-side from ?src=
   // on /start). Cap length and restrict to slug-safe chars so a tampered
   // request body can't store huge or weird strings in the DB / admin UI.
@@ -54,6 +62,20 @@ export async function POST(req: Request) {
       orderBy: { updatedAt: "desc" },
     });
     if (previous) {
+      const shouldPrefillOwnerIdentity =
+        !requestedOwnerName || ownerNamesMatchForReferenceId(requestedOwnerName, previous.ownerName);
+      const ownerReferenceId = shouldPrefillOwnerIdentity
+        ? await findLatestPaidOwnerReferenceId(
+            user.id,
+            requestedOwnerName ?? previous.ownerName,
+            {
+              ownerFtin: previous.ownerFtin,
+              ownerAddress: previous.ownerAddress,
+              ownerAddressStreet: previous.ownerAddressStreet,
+              ownerAddressPostal: previous.ownerAddressPostal,
+            },
+          )
+        : null;
       prefill = {
         llcName: previous.llcName,
         llcEin: previous.llcEin,
@@ -65,14 +87,23 @@ export async function POST(req: Request) {
         llcDateIncorporated: previous.llcDateIncorporated,
         llcBusinessActivity: previous.llcBusinessActivity,
         llcBusinessCode: previous.llcBusinessCode,
-        ownerName: previous.ownerName,
-        ownerAddress: previous.ownerAddress,
-        ownerCountryCitizenship: previous.ownerCountryCitizenship,
-        ownerCountryTaxResidence: previous.ownerCountryTaxResidence,
-        ownerCountryBusiness: previous.ownerCountryBusiness,
-        ownerFtin: previous.ownerFtin,
-        ownerItin: previous.ownerItin,
-        ownerReferenceId: previous.ownerReferenceId,
+        ownerName: requestedOwnerName ?? previous.ownerName,
+        ...(shouldPrefillOwnerIdentity
+          ? {
+              ownerAddress: previous.ownerAddress,
+              ownerAddressStreet: previous.ownerAddressStreet,
+              ownerAddressCity: previous.ownerAddressCity,
+              ownerAddressState: previous.ownerAddressState,
+              ownerAddressPostal: previous.ownerAddressPostal,
+              ownerAddressCountry: previous.ownerAddressCountry,
+              ownerCountryCitizenship: previous.ownerCountryCitizenship,
+              ownerCountryTaxResidence: previous.ownerCountryTaxResidence,
+              ownerCountryBusiness: previous.ownerCountryBusiness,
+              ownerFtin: previous.ownerFtin,
+              ownerItin: previous.ownerItin,
+              ownerReferenceId,
+            }
+          : {}),
       };
     }
   }

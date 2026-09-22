@@ -68,12 +68,23 @@ export const form5472FieldMap = {
   partVI_attachedStatementBox: "topmostSubform[0].Page2[0].PartVI[0].c2_7[0]",
 
   // Part VII negatives
+  q37_imports_yes: "topmostSubform[0].Page3[0].c3_1[0]",
   q37_imports_no: "topmostSubform[0].Page3[0].c3_1[1]",
+  q38a_customsValue_yes: "topmostSubform[0].Page3[0].c3_2[0]",
+  q38a_customsValue_no: "topmostSubform[0].Page3[0].c3_2[1]",
+  q38c_importDocumentation_yes: "topmostSubform[0].Page3[0].c3_3[0]",
+  q38c_importDocumentation_no: "topmostSubform[0].Page3[0].c3_3[1]",
+  q39_csa_yes: "topmostSubform[0].Page3[0].c3_4[0]",
   q39_csa_no: "topmostSubform[0].Page3[0].c3_4[1]",
+  q40a_267A_yes: "topmostSubform[0].Page3[0].c3_5[0]",
   q40a_267A_no: "topmostSubform[0].Page3[0].c3_5[1]",
+  q41a_fdii_yes: "topmostSubform[0].Page3[0].c3_6[0]",
   q41a_fdii_no: "topmostSubform[0].Page3[0].c3_6[1]",
+  q42a_safeHavenInRange_yes: "topmostSubform[0].Page3[0].c3_7[0]",
   q42a_safeHavenInRange_no: "topmostSubform[0].Page3[0].c3_7[1]",
+  q42b_safeHavenOutsideRange_yes: "topmostSubform[0].Page3[0].c3_8[0]",
   q42b_safeHavenOutsideRange_no: "topmostSubform[0].Page3[0].c3_8[1]",
+  q43a_coveredDebt_yes: "topmostSubform[0].Page3[0].c3_9[0]",
   q43a_coveredDebt_no: "topmostSubform[0].Page3[0].c3_9[1]",
 } as const;
 

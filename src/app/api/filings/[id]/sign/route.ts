@@ -7,6 +7,15 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
+const REVIEW_PENDING_MESSAGE = "Your forms are still being reviewed. We will email you when they are ready to sign.";
+const REVIEW_GATE_GRANDFATHERED_STATUSES = new Set([
+  "SIGNATURE_PENDING",
+  "SIGNED_UPLOADED",
+  "FAXED",
+  "CONFIRMED",
+  "FAILED",
+]);
+
 // POST /api/filings/[id]/sign
 //
 // Stores the customer's drawn signature PNG for record-keeping and marks
@@ -47,6 +56,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (!filing.generatedPdfKey) {
     return NextResponse.json({ error: "Filing has not been generated yet" }, { status: 400 });
+  }
+  if (!filing.reviewApprovedAt && !REVIEW_GATE_GRANDFATHERED_STATUSES.has(filing.status)) {
+    return NextResponse.json({ error: REVIEW_PENDING_MESSAGE }, { status: 409 });
   }
   // Guard against a stale open tab / double-submit / direct re-POST after the
   // package has been finalized. Once the accountant has uploaded the signed PDF

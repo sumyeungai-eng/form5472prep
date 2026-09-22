@@ -51,6 +51,12 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         select: { email: true },
       })
     : null;
+  const reviewApprovedAdmin = filing.reviewApprovedBy
+    ? await prisma.admin.findUnique({
+        where: { id: filing.reviewApprovedBy },
+        select: { email: true },
+      })
+    : null;
 
   // Resolve public URLs for any uploaded files.
   const generatedPdfUrl = filing.generatedPdfKey ? await publicUrl(filing.generatedPdfKey) : null;
@@ -204,6 +210,9 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           hasCustomerSignature={!!filing.signaturePngKey}
           hasFaxedPdf={!!filing.faxedPdfKey}
           preflightStatus={filing.preflightStatus}
+          preflightOverrideBy={filing.preflightOverrideBy}
+          reviewApprovedAt={filing.reviewApprovedAt ? filing.reviewApprovedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
+          reviewApprovedBy={reviewApprovedAdmin?.email ?? filing.reviewApprovedBy}
           faxedAt={filing.faxedAt ? filing.faxedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
         />
       </div>
@@ -223,6 +232,11 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             llcState: filing.llcState,
             llcZip: filing.llcZip,
             llcCountry: filing.llcCountry,
+            llcCountryBusiness: filing.llcCountryBusiness,
+            llcMemberCount: filing.llcMemberCount == null ? null : String(filing.llcMemberCount),
+            ownerHasFtin: nullableBooleanString(filing.ownerHasFtin),
+            ownerNoPostalCode: nullableBooleanString(filing.ownerNoPostalCode),
+            llcAddressIsRegisteredAgentOnly: nullableBooleanString(filing.llcAddressIsRegisteredAgentOnly),
             llcBusinessActivity: filing.llcBusinessActivity,
             llcBusinessCode: filing.llcBusinessCode,
             ownerName: filing.ownerName,
@@ -233,6 +247,9 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             ownerFtin: filing.ownerFtin,
             ownerItin: filing.ownerItin,
             ownerReferenceId: filing.ownerReferenceId,
+            priorForm5472Filed: filing.priorForm5472Filed,
+            hasUsSourceIncome: nullableBooleanString(filing.hasUsSourceIncome),
+            usTaxWithheld: nullableBooleanString(filing.usTaxWithheld),
             reasonableCauseNarrative: filing.reasonableCauseNarrative,
             // Form 7004 remediation fields — seeded so the editor shows the
             // stored answer and clearing a value registers as dirty.
@@ -243,6 +260,15 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             extensionMethod: filing.extensionMethod,
             extensionDestination: filing.extensionDestination,
           }}
+          years={filing.yearData.map((year) => ({
+            taxYear: year.taxYear,
+            rcsWhyMissed: year.rcsWhyMissed,
+            rcsWhenLearned: year.rcsWhenLearned,
+            rcsNoIrsNoticeConfirmed: year.rcsNoIrsNoticeConfirmed,
+            nonCashTransfers: year.nonCashTransfers,
+            ownerPaidCosts: year.ownerPaidCosts,
+            zeroConfirmations: year.zeroConfirmations,
+          }))}
         />
       </div>
 
@@ -764,4 +790,9 @@ function DocumentFileRow({
 function formatFileSize(bytes: number): string {
   if (bytes >= 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
   return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
+
+function nullableBooleanString(value: boolean | null): string | null {
+  if (value === null) return null;
+  return value ? "true" : "false";
 }

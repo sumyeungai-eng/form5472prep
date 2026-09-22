@@ -1,9 +1,9 @@
-import type { FilingStatus } from "@prisma/client";
+import { Prisma, type FilingStatus } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { resolveTier } from "@/lib/pricing";
 import { makeMagicLink } from "@/lib/magicLink";
-import { sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
+import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendReadyToSignEmail } from "@/lib/email";
 import { submitFax } from "@/lib/fax";
 import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
@@ -21,7 +21,7 @@ import {
   formatDueDate,
   isYearDelinquent,
 } from "@/lib/schemas";
-import { hasCompleteReasonableCause } from "@/lib/completeness";
+import { hasCompleteReasonableCause, requiresReasonableCause } from "@/lib/completeness";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 
 export type FilingActionName =
@@ -31,7 +31,9 @@ export type FilingActionName =
   | "retryFax"
   | "regeneratePdf"
   | "approvePreflightOverride"
+  | "approveForSignature"
   | "updateField"
+  | "updateYearField"
   | "uploadReviewedPdf"
   | "uploadSignedPdf";
 
@@ -50,7 +52,9 @@ export const FILING_ACTION_NAMES = [
   "retryFax",
   "regeneratePdf",
   "approvePreflightOverride",
+  "approveForSignature",
   "updateField",
+  "updateYearField",
   "uploadReviewedPdf",
   "uploadSignedPdf",
 ] as const satisfies readonly FilingActionName[];
@@ -60,6 +64,7 @@ export const SIDE_EFFECTING_ACTIONS: ReadonlySet<FilingActionName> = new Set<Fil
   "resendOrderConfirmation",
   "resendMagicLink",
   "regeneratePdf",
+  "approveForSignature",
 ]);
 
 export class FilingActionError extends Error {
@@ -154,6 +159,8 @@ const filingSelect = {
   preflightOverrideBy: true,
   preflightOverrideAt: true,
   preflightOverrideReason: true,
+  reviewApprovedAt: true,
+  reviewApprovedBy: true,
   generatorVersion: true,
   generatorCommit: true,
   faxedPdfKey: true,
@@ -170,7 +177,7 @@ const filingSelect = {
   },
 } as const;
 
-const packageFilingSelect = {
+export const packageFilingSelect = {
   llcName: true,
   llcEin: true,
   llcAddress: true,
@@ -220,12 +227,94 @@ const packageFilingSelect = {
       otherTransactionsNote: true,
       reportableTransactions: true,
       nonCashTransfers: true,
+      ownerPaidCosts: true,
+      zeroConfirmations: true,
       rcsWhyMissed: true,
       rcsWhenLearned: true,
       rcsNoIrsNoticeConfirmed: true,
     },
   },
 } as const;
+
+const YEAR_NULLABLE_STRINGS = new Set(["rcsWhyMissed", "rcsWhenLearned"]);
+const YEAR_NULLABLE_BOOLEANS = new Set(["rcsNoIrsNoticeConfirmed"]);
+
+const adminNonCashTransferSchema = z.object({
+  date: z.string().trim().min(1),
+  direction: z.enum(["in", "out"]),
+  description: z.string().trim().min(1),
+  fairMarketValueCents: z.number().int().finite(),
+  valuationMethod: z.string().trim().min(1),
+  alsoInPartV: z.boolean(),
+}).strict();
+
+const adminOwnerPaidCostSchema = z.object({
+  category: z.enum([
+    "state_filing_fee",
+    "registered_agent",
+    "formation_or_ein_service",
+    "software_subscriptions",
+    "initial_bank_funding",
+    "other",
+  ]),
+  date: z.string().trim().min(1),
+  amountCents: z.number().int().finite(),
+  note: z.string().optional(),
+}).strict();
+
+const adminZeroConfirmationsSchema = z.object({
+  contributions: z.boolean().optional(),
+  distributions: z.boolean().optional(),
+  loansFromOwner: z.boolean().optional(),
+  loansToOwner: z.boolean().optional(),
+  ownerPaidCosts: z.boolean().optional(),
+}).strict();
+
+const YEAR_JSON_SCHEMAS = {
+  nonCashTransfers: z.array(adminNonCashTransferSchema),
+  ownerPaidCosts: z.array(adminOwnerPaidCostSchema),
+  zeroConfirmations: adminZeroConfirmationsSchema,
+} as const;
+
+function parseNullableBoolean(field: string, value: string | null): boolean | null {
+  const blank = value === null || value.trim() === "";
+  const truthy = new Set(["true", "yes", "1"]);
+  const falsy = new Set(["false", "no", "0"]);
+  const raw = (value ?? "").trim().toLowerCase();
+  if (blank) return null;
+  if (truthy.has(raw)) return true;
+  if (falsy.has(raw)) return false;
+  throw new FilingActionError(400, "invalid_value", `${field} must be true, false, or blank`);
+}
+
+function parseYearJsonField(field: keyof typeof YEAR_JSON_SCHEMAS, value: unknown): unknown {
+  if (value === null) return null;
+  if (typeof value === "string") {
+    if (value.trim() === "") return null;
+    try {
+      value = JSON.parse(value);
+    } catch {
+      throw new FilingActionError(400, "invalid_value", `${field} must be valid JSON`);
+    }
+  }
+  const parsed = YEAR_JSON_SCHEMAS[field].safeParse(value);
+  if (!parsed.success) {
+    throw new FilingActionError(400, "invalid_value", `${field} has an invalid shape`);
+  }
+  return parsed.data;
+}
+
+function yearJsonWriteValue(value: unknown) {
+  if (value === null) return Prisma.JsonNull;
+  return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+}
+
+function hasPreflightApproval(filing: {
+  preflightStatus: string | null;
+  preflightOverrideBy: string | null;
+}): boolean {
+  return filing.preflightStatus === "passed" || !!filing.preflightOverrideBy;
+}
 
 // ─── Extension review flags (internal only) ──────────────────────────────────
 // Three things about a Form 7004 answer that a human must look at before the
@@ -383,6 +472,8 @@ export async function runFilingAction(
               preflightOverrideBy: null,
               preflightOverrideAt: null,
               preflightOverrideReason: null,
+              reviewApprovedAt: null,
+              reviewApprovedBy: null,
               generatorVersion: result.record.generatorVersion,
               generatorCommit: result.record.commit,
             },
@@ -421,6 +512,15 @@ export async function runFilingAction(
                 ),
               )
             : null,
+        requiresReasonableCause: requiresReasonableCause(filing),
+        extensionUnclear:
+          filing.taxYears.length > 0
+            ? extensionUnclear(
+                { filed: filing.extensionFiled, transmittedAt: filing.extensionTransmittedAt },
+                Math.max(...filing.taxYears),
+                filing.isFinalReturn ? filing.dissolvedAt : null,
+              )
+            : false,
       });
       await logFilingChange({
         filingId: filing.id,
@@ -607,6 +707,8 @@ export async function runFilingAction(
           preflightOverrideBy: null,
           preflightOverrideAt: null,
           preflightOverrideReason: null,
+          reviewApprovedAt: null,
+          reviewApprovedBy: null,
           generatorVersion: pkg.record.generatorVersion,
           generatorCommit: pkg.record.commit,
           status: "PDF_GENERATED",
@@ -651,7 +753,7 @@ export async function runFilingAction(
 
       const allowed = new Set<string>([
         "llcName", "llcEin", "llcAddress", "llcCity", "llcState", "llcZip",
-        "llcCountry", "llcBusinessActivity", "llcBusinessCode",
+        "llcCountry", "llcCountryBusiness", "llcBusinessActivity", "llcBusinessCode",
         "llcMemberCount", "llcAddressIsRegisteredAgentOnly", "priorForm5472Filed",
         "ownerName", "ownerAddress",
         "ownerCountryCitizenship", "ownerCountryTaxResidence",
@@ -870,6 +972,84 @@ export async function runFilingAction(
       };
     }
 
+    case "updateYearField": {
+      if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
+        throw new FilingActionError(
+          409,
+          "already_signed_or_filed",
+          "This filing has been signed or faxed. Its package cannot be regenerated.",
+        );
+      }
+
+      const taxYear = Number(body.taxYear);
+      if (!Number.isInteger(taxYear)) {
+        throw new FilingActionError(400, "invalid_value", "taxYear must be an integer");
+      }
+      const field = typeof body.field === "string" ? body.field : "";
+      const reason = typeof body.reason === "string" ? body.reason.slice(0, 500) : "";
+      const allowed = new Set<string>([
+        "rcsWhyMissed",
+        "rcsWhenLearned",
+        "rcsNoIrsNoticeConfirmed",
+        "nonCashTransfers",
+        "ownerPaidCosts",
+        "zeroConfirmations",
+      ]);
+      if (!allowed.has(field)) {
+        throw new FilingActionError(400, "field_not_editable", `field "${field}" is not editable`);
+      }
+
+      let after: unknown;
+      let writeValue: unknown;
+      if (YEAR_NULLABLE_STRINGS.has(field)) {
+        const raw = body.value === undefined || body.value === null ? null : String(body.value);
+        after = raw === null || raw.trim() === "" ? null : raw;
+        writeValue = after;
+      } else if (YEAR_NULLABLE_BOOLEANS.has(field)) {
+        const raw = body.value === undefined || body.value === null ? null : String(body.value);
+        after = parseNullableBoolean(field, raw);
+        writeValue = after;
+      } else if (field in YEAR_JSON_SCHEMAS) {
+        after = parseYearJsonField(field as keyof typeof YEAR_JSON_SCHEMAS, body.value);
+        writeValue = yearJsonWriteValue(after);
+      } else {
+        throw new FilingActionError(400, "field_not_editable", `field "${field}" is not editable`);
+      }
+
+      const year = await prisma.filingYearData.findUnique({
+        where: { filingId_taxYear: { filingId: filing.id, taxYear } },
+        select: {
+          id: true,
+          rcsWhyMissed: true,
+          rcsWhenLearned: true,
+          rcsNoIrsNoticeConfirmed: true,
+          nonCashTransfers: true,
+          ownerPaidCosts: true,
+          zeroConfirmations: true,
+        },
+      });
+      if (!year) {
+        throw new FilingActionError(404, "year_not_found", "filing year not found");
+      }
+
+      const before = (year as unknown as Record<string, unknown>)[field] ?? null;
+      await prisma.filingYearData.update({
+        where: { filingId_taxYear: { filingId: filing.id, taxYear } },
+        data: { [field]: writeValue } as never,
+        select: { id: true },
+      });
+      await logFilingChange({
+        filingId: filing.id,
+        adminId: ctx.adminId,
+        source: "admin",
+        field: `year:${taxYear}:${field}`,
+        before,
+        after,
+        reason: reason || ctx.reason,
+      });
+      return { ok: true };
+    }
+
     case "approvePreflightOverride": {
       if (!ctx.adminId) {
         throw new FilingActionError(
@@ -923,7 +1103,94 @@ export async function runFilingAction(
       return { ok: true };
     }
 
+    case "approveForSignature": {
+      if (!ctx.adminId) {
+        throw new FilingActionError(
+          403,
+          "identity_required",
+          "A personal admin account is required to approve this filing for signature.",
+        );
+      }
+      if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
+        throw new FilingActionError(
+          409,
+          "already_signed_or_filed",
+          "This filing has already been signed, faxed, or confirmed.",
+        );
+      }
+      if (!filing.generatedPdfKey) {
+        throw new FilingActionError(
+          409,
+          "generated_package_required",
+          "Generate the filing package before approving it for signature.",
+        );
+      }
+      if (!hasPreflightApproval(filing)) {
+        throw new FilingActionError(
+          409,
+          "preflight_not_approved",
+          "Pre-flight must pass or be overridden before approval for signature.",
+        );
+      }
+      if (!filing.user) {
+        throw new FilingActionError(400, "no_customer_email", "no customer email");
+      }
+
+      const approvedAt = new Date();
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: {
+          reviewApprovedAt: approvedAt,
+          reviewApprovedBy: ctx.adminId,
+        },
+        select: { id: true },
+      });
+      await logFilingChange({
+        filingId: filing.id,
+        adminId: ctx.adminId,
+        source: "admin",
+        field: "reviewApproval",
+        before: {
+          reviewApprovedAt: filing.reviewApprovedAt,
+          reviewApprovedBy: filing.reviewApprovedBy,
+        },
+        after: {
+          reviewApprovedAt: approvedAt,
+          reviewApprovedBy: ctx.adminId,
+        },
+        reason: ctx.reason,
+      });
+
+      try {
+        await sendReadyToSignEmail({
+          email: filing.user.email,
+          recipientName: filing.ownerName,
+          filingId: filing.id,
+          llcName: filing.llcName,
+          taxYears: filing.taxYears,
+          portalLink: makeMagicLink(filing.user.id),
+        });
+      } catch (err) {
+        console.error("[approveForSignature] ready-to-sign email failed", err);
+        return {
+          ok: true,
+          approvedAt,
+          emailSent: false,
+          emailError: err instanceof Error ? err.message : String(err),
+        };
+      }
+
+      return { ok: true, approvedAt, emailSent: true };
+    }
+
     case "uploadReviewedPdf": {
+      if (!ctx.adminId) {
+        throw new FilingActionError(
+          403,
+          "identity_required",
+          "A personal admin account is required to approve this filing for signature.",
+        );
+      }
       if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
         throw new FilingActionError(
           409,
@@ -962,6 +1229,7 @@ export async function runFilingAction(
       // drawn signature is already on file, return to SIGNATURE_PENDING (admin
       // stamps the saved signature onto this version next), not PDF_GENERATED.
       const reviewedStatus = filing.signaturePngKey ? "SIGNATURE_PENDING" : "PDF_GENERATED";
+      const approvedAt = new Date();
       await prisma.filing.update({
         where: { id: filing.id },
         data: {
@@ -970,6 +1238,8 @@ export async function runFilingAction(
           signedAt: null,
           validationStatus: "pending",
           validationCheckedAt: null,
+          reviewApprovedAt: approvedAt,
+          reviewApprovedBy: ctx.adminId,
           status: reviewedStatus,
         },
         select: { id: true },
@@ -988,9 +1258,25 @@ export async function runFilingAction(
           generatedPdfKey: key,
           signedPdfKey: null,
           status: reviewedStatus,
+          reviewApprovedAt: approvedAt,
+          reviewApprovedBy: ctx.adminId,
         },
         reason: ctx.reason,
       });
+      if (!filing.signaturePngKey && filing.user) {
+        try {
+          await sendReadyToSignEmail({
+            email: filing.user.email,
+            recipientName: filing.ownerName,
+            filingId: filing.id,
+            llcName: filing.llcName,
+            taxYears: filing.taxYears,
+            portalLink: makeMagicLink(filing.user.id),
+          });
+        } catch (err) {
+          console.error("[uploadReviewedPdf] ready-to-sign email failed", err);
+        }
+      }
       return { ok: true, key, bytes: bytes.length };
     }
 

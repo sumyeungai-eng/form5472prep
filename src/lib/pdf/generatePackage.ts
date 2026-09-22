@@ -145,15 +145,17 @@ type Filing = {
   extensionFiled?: string | null;
   extensionTransmittedAt?: Date | string | null;
   reasonableCauseNarrative: string | null;
-  yearData: {
-    taxYear: number;
-    totalAssetsYearEnd: number;
-    contributions: number;
-    distributions: number;
-    otherTransactionsNote: string | null;
-    reportableTransactions?: ReportableTx[];
-    nonCashTransfers?: NonCashTransfer[];
-    rcsWhyMissed?: string | null;
+    yearData: {
+      taxYear: number;
+      totalAssetsYearEnd: number;
+      contributions: number;
+      distributions: number;
+      otherTransactionsNote: string | null;
+      reportableTransactions?: ReportableTx[];
+      nonCashTransfers?: NonCashTransfer[];
+      ownerPaidCosts?: OwnerPaidCost[];
+      zeroConfirmations?: ZeroConfirmations;
+      rcsWhyMissed?: string | null;
     rcsWhenLearned?: string | null;
     rcsNoIrsNoticeConfirmed?: boolean | null;
   }[];
@@ -177,6 +179,27 @@ export type NonCashTransfer = {
   valuationMethod: string;
   alsoInPartV: boolean;
 };
+
+export type OwnerPaidCost = {
+  category:
+    | "state_filing_fee"
+    | "registered_agent"
+    | "formation_or_ein_service"
+    | "software_subscriptions"
+    | "initial_bank_funding"
+    | "other";
+  date: string;
+  amountCents: number;
+  note?: string;
+};
+
+export type ZeroConfirmations = Partial<{
+  contributions: true;
+  distributions: true;
+  loansFromOwner: true;
+  loansToOwner: true;
+  ownerPaidCosts: true;
+}>;
 
 export type AuthoredDocumentRecord = {
   kind: "coverLetter" | "partVStatement" | "partVIStatement" | "reasonableCauseStatement";
@@ -203,9 +226,11 @@ export type PackageRecordYear = {
   line1h: number;
   partVTotalRounded: number;
   partVTotalCents: number;
-  partVRows: ReportableTx[];
-  nonCashTransfers: NonCashTransfer[];
-  partVICentsAddedToLine1f: number;
+    partVRows: ReportableTx[];
+    nonCashTransfers: NonCashTransfer[];
+    ownerPaidCosts: OwnerPaidCost[];
+    zeroConfirmations: ZeroConfirmations;
+    partVICentsAddedToLine1f: number;
   line1jChecked: boolean;
   priorForm5472Filed: string | null;
   ownerHasFtin: boolean | null;
@@ -345,9 +370,42 @@ function formationYearOf(f: { llcDateIncorporated?: Date | string | null }): num
 
 function partVRowsForYear(f: Filing, year: number): ReportableTx[] {
   const yd = f.yearData.find((y) => y.taxYear === year);
-  return (yd?.reportableTransactions ?? []).filter(
-    (t) => t.category === "contribution" || t.category === "distribution",
+  if (!yd) return [];
+  const rows = (yd.reportableTransactions ?? []).filter((t) =>
+    ["contribution", "distribution", "loan_from_owner", "loan_to_owner"].includes(t.category),
   );
+  const hasContributionRows = rows.some((t) => t.category === "contribution");
+  const hasDistributionRows = rows.some((t) => t.category === "distribution");
+  const [periodEndMonth, periodEndDay] = periodEndFor(f, year).split("/");
+  const periodEndIso = `${year}-${periodEndMonth}-${periodEndDay}`;
+  if (!hasContributionRows && yd.contributions > 0) {
+    rows.push({
+      date: periodEndIso,
+      description: "Capital contribution total entered by customer",
+      counterparty: f.ownerName,
+      amountCents: Math.round(yd.contributions * 100),
+      category: "contribution",
+    });
+  }
+  if (!hasDistributionRows && yd.distributions > 0) {
+    rows.push({
+      date: periodEndIso,
+      description: "Distribution total entered by customer",
+      counterparty: f.ownerName,
+      amountCents: -Math.round(yd.distributions * 100),
+      category: "distribution",
+    });
+  }
+  for (const cost of yd.ownerPaidCosts ?? []) {
+    rows.push({
+      date: cost.date,
+      description: ownerPaidCostDescription(cost),
+      counterparty: f.ownerName,
+      amountCents: Math.abs(cost.amountCents),
+      category: "contribution",
+    });
+  }
+  return rows;
 }
 
 function nonCashTransfersForYear(f: Filing, year: number): NonCashTransfer[] {
@@ -357,6 +415,21 @@ function nonCashTransfersForYear(f: Filing, year: number): NonCashTransfer[] {
 
 function partVTotalCents(rows: ReportableTx[]): number {
   return rows.reduce((sum, tx) => sum + Math.abs(tx.amountCents), 0);
+}
+
+function ownerPaidCostDescription(cost: OwnerPaidCost): string {
+  if (cost.category === "other") {
+    return (cost.note ?? "").trim() || "Cost paid personally by owner";
+  }
+  const label: Record<OwnerPaidCost["category"], string> = {
+    state_filing_fee: "State filing fee paid personally by owner",
+    registered_agent: "Registered agent fee paid personally by owner",
+    formation_or_ein_service: "Formation or EIN service paid personally by owner",
+    software_subscriptions: "Software or subscription cost paid personally by owner",
+    initial_bank_funding: "Initial bank funding paid personally by owner",
+    other: "Cost paid personally by owner",
+  };
+  return label[cost.category];
 }
 
 export function roundedPartVTotalDollars(rows: ReportableTx[]): number {
@@ -804,6 +877,8 @@ function fillForm5472(
 
   // Part VII negatives
   check(form, m.q37_imports_no, recorder);
+  // Lines 38a and 38c are conditional ("If 'Yes' [to line 37]"). Line 37 is answered No for every
+  // package this product produces, so 38a and 38c stay blank, like 43a/43b.
   check(form, m.q39_csa_no, recorder);
   check(form, m.q40a_267A_no, recorder);
   check(form, m.q41a_fdii_no, recorder);
@@ -1015,17 +1090,11 @@ async function buildSupportingStatement(
 ): Promise<PDFDocument> {
   const yd = f.yearData.find((y) => y.taxYear === year);
   const otherNote = (yd?.otherTransactionsNote ?? "").trim();
-  const allTx = yd?.reportableTransactions ?? [];
+  const allTx = partVRowsForYear(f, year);
   const contributionsTx = allTx.filter((t) => t.category === "contribution");
   const distributionsTx = allTx.filter((t) => t.category === "distribution");
-  const contributionsTotal =
-    contributionsTx.length > 0
-      ? contributionsTx.reduce((s, t) => s + Math.abs(t.amountCents), 0) / 100
-      : (yd?.contributions ?? 0);
-  const distributionsTotal =
-    distributionsTx.length > 0
-      ? distributionsTx.reduce((s, t) => s + Math.abs(t.amountCents), 0) / 100
-      : (yd?.distributions ?? 0);
+  const loansFromOwnerTx = allTx.filter((t) => t.category === "loan_from_owner");
+  const loansToOwnerTx = allTx.filter((t) => t.category === "loan_to_owner");
   const drawnLines: string[] = [];
   const pageLines: string[][] = [[]];
   let currentPageLines = pageLines[0];
@@ -1097,8 +1166,8 @@ async function buildSupportingStatement(
   // ---- Opening paragraph ----
   const opening =
     "The following reportable transactions of the foreign-owned U.S. disregarded entity are " +
-    "reported pursuant to Part V of Form 5472. These transactions consist of capital contributions " +
-    "to, and distributions from, the disregarded entity by its foreign owner.";
+    "reported pursuant to Part V of Form 5472. These transactions include capital contributions, " +
+    "distributions, loans, and owner-paid costs between the disregarded entity and its foreign owner.";
   for (const line of wrapAtPx(opening, font, 10, CONTENT_W)) {
     ensureSpace(14);
     draw(line);
@@ -1161,45 +1230,54 @@ async function buildSupportingStatement(
     y -= 16;
   };
 
-  // ---- Capital Contributions ----
-  ensureSpace(22);
-  draw("Capital Contributions from Foreign Owner", { font: bold, size: 11 });
-  y -= 16;
-  if (contributionsTx.length > 0) {
+  const drawTransactionSection = (heading: string, totalLabel: string, rows: ReportableTx[]) => {
+    ensureSpace(22);
+    draw(heading, { font: bold, size: 11 });
+    y -= 16;
     drawTableHeader();
-    for (const tx of contributionsTx) drawTableRow(tx);
-    const sumCents = contributionsTx.reduce((s, t) => s + Math.abs(t.amountCents), 0);
-    drawTableTotal(`Total Capital Contributions, Tax Year ${year}`, sumCents);
-  } else {
-    drawTableTotal(
-      `Total Capital Contributions, Tax Year ${year}`,
-      Math.round(contributionsTotal * 100),
-    );
-  }
-  y -= 6;
+    for (const tx of rows) drawTableRow(tx);
+    const sumCents = rows.reduce((s, t) => s + Math.abs(t.amountCents), 0);
+    drawTableTotal(totalLabel, sumCents);
+    y -= 6;
+  };
 
-  // ---- Distributions ----
-  ensureSpace(22);
-  draw("Distributions to Foreign Owner", { font: bold, size: 11 });
-  y -= 16;
-  if (distributionsTx.length > 0) {
-    drawTableHeader();
-    for (const tx of distributionsTx) drawTableRow(tx);
-    const sumCents = distributionsTx.reduce((s, t) => s + Math.abs(t.amountCents), 0);
-    drawTableTotal(`Total Distributions, Tax Year ${year}`, sumCents);
-  } else {
-    drawTableTotal(
-      `Total Distributions, Tax Year ${year}`,
-      Math.round(distributionsTotal * 100),
+  if (contributionsTx.length > 0) {
+    drawTransactionSection(
+      "Capital Contributions from Foreign Owner",
+      `Total Capital Contributions, Tax Year ${year}`,
+      contributionsTx,
     );
   }
-  y -= 6;
+  if (distributionsTx.length > 0) {
+    drawTransactionSection(
+      "Distributions to Foreign Owner",
+      `Total Distributions, Tax Year ${year}`,
+      distributionsTx,
+    );
+  }
+  if (loansFromOwnerTx.length > 0) {
+    drawTransactionSection(
+      "Loans from Foreign Owner to LLC",
+      `Total Loans from Foreign Owner, Tax Year ${year}`,
+      loansFromOwnerTx,
+    );
+  }
+  if (loansToOwnerTx.length > 0) {
+    drawTransactionSection(
+      "Loans from LLC to Foreign Owner",
+      `Total Loans to Foreign Owner, Tax Year ${year}`,
+      loansToOwnerTx,
+    );
+  }
+  if (allTx.length === 0) {
+    drawTableTotal(`Total Part V Rows, Tax Year ${year}`, 0);
+  }
 
   // ---- Grand total ----
   ensureSpace(36);
   draw("Total Reportable Transactions (Part V)", { font: bold, size: 11 });
   y -= 16;
-  const grandTotal = contributionsTotal + distributionsTotal;
+  const grandTotal = partVTotalCents(allTx) / 100;
   for (const line of wrapAtPx(
     `Total Part V reportable transactions, tax year ${year}: ${formatMoney(grandTotal)} ` +
       "(entered on Form 5472 lines 1f and 1h).",
@@ -1811,6 +1889,7 @@ export async function generatePackage(
   });
 
   for (const year of f.taxYears) {
+    const yd = f.yearData.find((row) => row.taxYear === year);
     const partVRows = partVRowsForYear(f, year);
     const nonCashTransfers = nonCashTransfersForYear(f, year);
     const partVCents = partVTotalCents(partVRows);
@@ -1948,6 +2027,8 @@ export async function generatePackage(
       partVTotalCents: partVCents,
       partVRows,
       nonCashTransfers,
+      ownerPaidCosts: yd?.ownerPaidCosts ?? [],
+      zeroConfirmations: yd?.zeroConfirmations ?? {},
       partVICentsAddedToLine1f,
       line1jChecked: shouldCheckLine1j(f, year),
       priorForm5472Filed: f.priorForm5472Filed ?? null,

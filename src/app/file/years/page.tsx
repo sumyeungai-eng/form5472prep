@@ -16,14 +16,14 @@ const OPTIONS = [
     icon: CalendarRange,
     label: "Two years — catch-up",
     description: "Missed last year and need to file both together.",
-    tag: "DIIRSP",
+    tag: "Catch-up filing",
   },
   {
     id: "3",
     icon: Layers,
     label: "Three or more years",
-    description: "Multiple missed years — full delinquent catch-up filing.",
-    tag: "DIIRSP",
+    description: "Multiple missed years — full catch-up filing.",
+    tag: "Catch-up filing",
   },
 ];
 
@@ -47,7 +47,7 @@ export default function YearsStepPage() {
             How many tax years do you need to file?
           </h1>
           <p className="mt-3 text-slate-500">
-            Each missed year needs its own Form 5472. Filing together under DIIRSP is the approved catch-up route.
+            Each missed year needs its own Form 5472. Filing them together is the standard catch-up route.
           </p>
         </div>
 

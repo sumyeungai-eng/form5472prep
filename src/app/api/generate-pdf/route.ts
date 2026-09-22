@@ -74,6 +74,8 @@ export async function POST(req: Request) {
       preflightOverrideBy: null,
       preflightOverrideAt: null,
       preflightOverrideReason: null,
+      reviewApprovedAt: null,
+      reviewApprovedBy: null,
     },
   });
 

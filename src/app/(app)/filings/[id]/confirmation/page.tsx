@@ -4,6 +4,7 @@ import { getOwnedFiling, partnerOwnsFiling } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { PrintButton } from "./PrintButton";
 import { PartnerFilingBar } from "@/components/PartnerFilingBar";
+import { requiresReasonableCause } from "@/lib/completeness";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,16 @@ export default async function FilingConfirmationPage({ params }: { params: { id:
 
   const isDelivered = filing.status === "CONFIRMED";
   const owningPartner = await partnerOwnsFiling(filing.id);
+  const needsReasonableCause = requiresReasonableCause(
+    {
+      taxYears: filing.taxYears,
+      isFinalReturn: filing.isFinalReturn,
+      dissolvedAt: filing.dissolvedAt,
+      extensionFiled: filing.extensionFiled,
+      extensionTransmittedAt: filing.extensionTransmittedAt,
+    },
+    new Date(),
+  );
 
   return (
     <>
@@ -68,8 +79,8 @@ export default async function FilingConfirmationPage({ params }: { params: { id:
           <Row
             label="Filing type"
             value={
-              filing.isDiirsp
-                ? "IRS late-filing procedure, with a reasonable-cause statement included"
+              needsReasonableCause
+                ? "Form 5472 + pro forma Form 1120. This return was filed after its due date. We included a reasonable-cause statement explaining why."
                 : "Form 5472 + pro forma Form 1120"
             }
           />

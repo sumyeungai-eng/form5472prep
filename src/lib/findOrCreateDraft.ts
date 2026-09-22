@@ -42,6 +42,112 @@ const PAID_STATUSES = [
   "FAILED",
 ] as const satisfies readonly FilingStatus[];
 
+export function normalizeOwnerNameForReferenceId(value: string | null | undefined): string {
+  return (value ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+export function ownerNamesMatchForReferenceId(
+  a: string | null | undefined,
+  b: string | null | undefined,
+): boolean {
+  const left = normalizeOwnerNameForReferenceId(a);
+  const right = normalizeOwnerNameForReferenceId(b);
+  return left.length > 0 && left === right;
+}
+
+type OwnerReferenceRow = {
+  ownerName: string | null;
+  ownerReferenceId: string | null;
+  ownerFtin?: string | null;
+  ownerAddress?: string | null;
+  ownerAddressStreet?: string | null;
+  ownerAddressPostal?: string | null;
+};
+
+type OwnerReferenceIdentity = {
+  ownerFtin?: string | null;
+  ownerAddress?: string | null;
+  ownerAddressStreet?: string | null;
+  ownerAddressPostal?: string | null;
+};
+
+export function selectOwnerReferenceIdForOwnerName(
+  rows: OwnerReferenceRow[],
+  ownerName: string | null | undefined,
+  ownerIdentity: OwnerReferenceIdentity = {},
+): string | null {
+  const match = rows.find((row) =>
+    ownerNamesMatchForReferenceId(row.ownerName, ownerName) &&
+    ownerIdentityMatchesForReferenceId(row, ownerIdentity),
+  );
+  return match?.ownerReferenceId?.trim() || null;
+}
+
+export async function findLatestPaidOwnerReferenceId(
+  userId: string,
+  ownerName: string | null | undefined,
+  ownerIdentity: OwnerReferenceIdentity = {},
+): Promise<string | null> {
+  if (!normalizeOwnerNameForReferenceId(ownerName)) return null;
+  const rows = await prisma.filing.findMany({
+    where: {
+      userId,
+      status: { in: [...PAID_STATUSES] },
+      ownerName: { not: null },
+    },
+    orderBy: { updatedAt: "desc" },
+    select: {
+      ownerName: true,
+      ownerReferenceId: true,
+      ownerFtin: true,
+      ownerAddress: true,
+      ownerAddressStreet: true,
+      ownerAddressPostal: true,
+    },
+  });
+  return selectOwnerReferenceIdForOwnerName(rows, ownerName, ownerIdentity);
+}
+
+function ownerIdentityMatchesForReferenceId(
+  row: OwnerReferenceRow,
+  ownerIdentity: OwnerReferenceIdentity,
+): boolean {
+  const rowFtin = normalizedIdentityToken(row.ownerFtin);
+  const ownerFtin = normalizedIdentityToken(ownerIdentity.ownerFtin);
+  if (rowFtin || ownerFtin) return rowFtin.length > 0 && rowFtin === ownerFtin;
+
+  const rowAddress = comparableOwnerAddress(row);
+  const ownerAddress = comparableOwnerAddress(ownerIdentity);
+  return Boolean(
+    rowAddress.street &&
+    rowAddress.postal &&
+    rowAddress.street === ownerAddress.street &&
+    rowAddress.postal === ownerAddress.postal,
+  );
+}
+
+function comparableOwnerAddress(value: OwnerReferenceIdentity): { street: string; postal: string } {
+  const legacyParts = legacyAddressParts(value.ownerAddress);
+  return {
+    street: normalizedIdentityToken(value.ownerAddressStreet) || legacyParts.street,
+    postal: normalizedIdentityToken(value.ownerAddressPostal) || legacyParts.postal,
+  };
+}
+
+function legacyAddressParts(value: string | null | undefined): { street: string; postal: string } {
+  const normalized = normalizedIdentityToken(value);
+  if (!normalized) return { street: "", postal: "" };
+  const parts = normalized.split(/[,|\n]/).map((part) => part.trim()).filter(Boolean);
+  return {
+    street: parts[0] ?? normalized,
+    postal: normalized,
+  };
+}
+
+function normalizedIdentityToken(value: string | null | undefined): string {
+  return (value ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+}
+
 // "Untouched" = the customer hasn't *advanced* in the wizard yet. Selecting
 // tax years is the first wizard-only action (entity/owner can be auto-prefilled
 // from a previous paid filing, so they're not reliable markers). If the draft

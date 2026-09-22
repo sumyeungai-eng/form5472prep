@@ -10,7 +10,7 @@ import { runPreflight } from "@/lib/pdf/preflight";
 import { putPdf } from "@/lib/storage";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
-import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { effectiveDueDateUtc, extensionUnclear, formatDueDate } from "@/lib/schemas";
 import { filingCompletionIssues, requiresReasonableCause } from "@/lib/completeness";
 import { brandForFiling } from "@/lib/partnerBrand";
 
@@ -170,6 +170,11 @@ export async function POST(req: Request) {
             preflightFailures: preflight.failures,
             preflightWarnings: preflight.warnings,
             preflightCheckedAt: new Date(),
+            preflightOverrideBy: null,
+            preflightOverrideAt: null,
+            preflightOverrideReason: null,
+            reviewApprovedAt: null,
+            reviewApprovedBy: null,
             generatorVersion: result.record.generatorVersion,
             generatorCommit: result.record.commit,
           },
@@ -225,6 +230,15 @@ export async function POST(req: Request) {
                   ),
                 )
               : null,
+          requiresReasonableCause: requiresReasonableCause(full),
+          extensionUnclear:
+            full.taxYears.length > 0
+              ? extensionUnclear(
+                  { filed: full.extensionFiled, transmittedAt: full.extensionTransmittedAt },
+                  Math.max(...full.taxYears),
+                  full.isFinalReturn ? full.dissolvedAt : null,
+                )
+              : false,
           brand: brand ?? undefined,
         });
       } catch (err) {

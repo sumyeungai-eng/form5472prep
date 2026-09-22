@@ -14,6 +14,7 @@ import { AdminPageHeader } from "../_components/AdminPageHeader";
 import { StatusBadge } from "./StatusBadge";
 import { DraftActions } from "./DraftActions";
 import { ReviewToggle } from "./ReviewToggle";
+import { PreflightSweepButton } from "./PreflightSweepButton";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Filings · Admin" };
@@ -24,6 +25,7 @@ type SearchParams = {
   hidden?: string;
   ready?: string;
   review?: string;
+  awaitingReview?: string;
   partner?: string;
   paid?: string;
 };
@@ -60,6 +62,7 @@ export default async function AdminFilingsPage({
   // filled everything in and stopped at the payment step.
   const readyOnly = draftView && searchParams.ready === "1";
   const reviewOnly = searchParams.review === "1";
+  const awaitingReviewOnly = searchParams.awaitingReview === "1";
   // partner=1 narrows to filings started from a partner account; partner=0
   // narrows to direct-customer filings; absent shows both.
   const partnerFilter = searchParams.partner === "1" ? true : searchParams.partner === "0" ? false : undefined;
@@ -78,6 +81,12 @@ export default async function AdminFilingsPage({
     whereParts.push({ status: statusFilter });
   }
   if (reviewOnly) whereParts.push({ inReview: true });
+  if (awaitingReviewOnly) {
+    whereParts.push({
+      status: { in: ["PAID", "PDF_GENERATED"] },
+      reviewApprovedAt: null,
+    });
+  }
   if (paidOnly) {
     // NOT amountPaid: on a Filing that column holds the QUOTED price, written
     // when the draft is created (findOrCreateDraft.ts), so it is > 0 on rows
@@ -169,6 +178,7 @@ export default async function AdminFilingsPage({
   if (q) toggleQuery.set("q", q);
   if (readyOnly) toggleQuery.set("ready", "1");
   if (reviewOnly) toggleQuery.set("review", "1");
+  if (awaitingReviewOnly) toggleQuery.set("awaitingReview", "1");
   if (partnerFilter !== undefined) toggleQuery.set("partner", partnerFilter ? "1" : "0");
   if (!showHidden) toggleQuery.set("hidden", "1");
   const toggleQs = toggleQuery.toString();
@@ -180,6 +190,7 @@ export default async function AdminFilingsPage({
   if (q) readyQuery.set("q", q);
   if (showHidden) readyQuery.set("hidden", "1");
   if (reviewOnly) readyQuery.set("review", "1");
+  if (awaitingReviewOnly) readyQuery.set("awaitingReview", "1");
   if (partnerFilter !== undefined) readyQuery.set("partner", partnerFilter ? "1" : "0");
   if (paidOnly) readyQuery.set("paid", "1");
   if (!readyOnly) readyQuery.set("ready", "1");
@@ -192,11 +203,25 @@ export default async function AdminFilingsPage({
   if (q) reviewQuery.set("q", q);
   if (showHidden) reviewQuery.set("hidden", "1");
   if (readyOnly) reviewQuery.set("ready", "1");
+  if (awaitingReviewOnly) reviewQuery.set("awaitingReview", "1");
   if (partnerFilter !== undefined) reviewQuery.set("partner", partnerFilter ? "1" : "0");
   if (paidOnly) reviewQuery.set("paid", "1");
   if (!reviewOnly) reviewQuery.set("review", "1");
   const reviewQs = reviewQuery.toString();
   const reviewHref = reviewQs ? `/admin/filings?${reviewQs}` : "/admin/filings";
+
+  // "Awaiting review" / "All rows" toggle, preserving every other filter.
+  const awaitingReviewQuery = new URLSearchParams();
+  if (statusFilter) awaitingReviewQuery.set("status", statusFilter);
+  if (q) awaitingReviewQuery.set("q", q);
+  if (showHidden) awaitingReviewQuery.set("hidden", "1");
+  if (readyOnly) awaitingReviewQuery.set("ready", "1");
+  if (reviewOnly) awaitingReviewQuery.set("review", "1");
+  if (partnerFilter !== undefined) awaitingReviewQuery.set("partner", partnerFilter ? "1" : "0");
+  if (paidOnly) awaitingReviewQuery.set("paid", "1");
+  if (!awaitingReviewOnly) awaitingReviewQuery.set("awaitingReview", "1");
+  const awaitingReviewQs = awaitingReviewQuery.toString();
+  const awaitingReviewHref = awaitingReviewQs ? `/admin/filings?${awaitingReviewQs}` : "/admin/filings";
 
   // "Paid only" / "All rows" toggle, preserving every other filter.
   const paidQuery = new URLSearchParams();
@@ -204,6 +229,7 @@ export default async function AdminFilingsPage({
   if (q) paidQuery.set("q", q);
   if (showHidden) paidQuery.set("hidden", "1");
   if (reviewOnly) paidQuery.set("review", "1");
+  if (awaitingReviewOnly) paidQuery.set("awaitingReview", "1");
   if (partnerFilter !== undefined) paidQuery.set("partner", partnerFilter ? "1" : "0");
   if (!paidOnly) paidQuery.set("paid", "1");
   const paidQs = paidQuery.toString();
@@ -218,6 +244,7 @@ export default async function AdminFilingsPage({
     if (showHidden) query.set("hidden", "1");
     if (readyOnly) query.set("ready", "1");
     if (reviewOnly) query.set("review", "1");
+    if (awaitingReviewOnly) query.set("awaitingReview", "1");
     if (next !== undefined) query.set("partner", next ? "1" : "0");
     if (paidOnly) query.set("paid", "1");
     const qs = query.toString();
@@ -233,6 +260,8 @@ export default async function AdminFilingsPage({
         title="Filings"
         description="Every Form 5472 order — drafts, paid, signed, faxed. Filter by status or search by company or email."
       />
+
+      <PreflightSweepButton />
 
       {/* Quick stats — last 30 days */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
@@ -255,6 +284,8 @@ export default async function AdminFilingsPage({
         {readyOnly && <input type="hidden" name="ready" value="1" />}
         {/* Review narrowing remains sticky while changing search or status. */}
         {reviewOnly && <input type="hidden" name="review" value="1" />}
+        {/* Review-gate narrowing remains sticky while changing search or status. */}
+        {awaitingReviewOnly && <input type="hidden" name="awaitingReview" value="1" />}
         {/* Paid narrowing stays sticky while changing search or status. */}
         {paidOnly && <input type="hidden" name="paid" value="1" />}
         <input
@@ -293,6 +324,9 @@ export default async function AdminFilingsPage({
         )}
         <Link href={reviewHref} className="text-slate-500 hover:text-slate-900 hover:underline">
           {reviewOnly ? "← All rows" : "In review only"}
+        </Link>
+        <Link href={awaitingReviewHref} className="text-slate-500 hover:text-slate-900 hover:underline">
+          {awaitingReviewOnly ? "← All rows" : "Awaiting review"}
         </Link>
         <Link
           href={paidHref}
@@ -459,6 +493,14 @@ function SignedCell({ filing: f }: { filing: FilingRow }) {
           {f.signedAt ? formatRelative(f.signedAt) : "uploaded"}
         </div>
       </>
+    );
+  }
+
+  if (["PAID", "PDF_GENERATED"].includes(f.status) && !f.reviewApprovedAt) {
+    return (
+      <span className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-100 text-amber-800">
+        Awaiting review
+      </span>
     );
   }
 

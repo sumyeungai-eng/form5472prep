@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { makeMagicLink } from "@/lib/magicLink";
 import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { resolveTier } from "@/lib/pricing";
-import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { effectiveDueDateUtc, extensionUnclear, formatDueDate } from "@/lib/schemas";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { runPreflight } from "@/lib/pdf/preflight";
@@ -17,6 +17,7 @@ import { formatUsd } from "@/lib/utils";
 import { brandForFiling } from "@/lib/partnerBrand";
 import { notifyApplicationPaid } from "@/lib/applicationNotifications";
 import { supersedeDraftsFor } from "@/lib/supersedeDrafts";
+import { requiresReasonableCause } from "@/lib/completeness";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -206,6 +207,8 @@ export async function POST(req: Request) {
               preflightOverrideBy: null,
               preflightOverrideAt: null,
               preflightOverrideReason: null,
+              reviewApprovedAt: null,
+              reviewApprovedBy: null,
             },
           });
         } else {
@@ -229,7 +232,7 @@ export async function POST(req: Request) {
 
       // Send the order confirmation email directly — AI compliance check has
       // been removed from the order flow (every package is reviewed by our
-      // tax accountant before fax instead). If PDF generation succeeded the
+      // qualified accountant before fax instead). If PDF generation succeeded the
       // email includes the unsigned PDF attachment + signature locations so
       // the customer can sign in-portal immediately. If generation failed
       // (missing required fields) the email goes out without an attachment
@@ -292,6 +295,15 @@ export async function POST(req: Request) {
             signatures: pdfSignatures,
             isFinalReturn: filing.isFinalReturn,
             dueDateText,
+            requiresReasonableCause: requiresReasonableCause(filing),
+            extensionUnclear:
+              maxYear == null
+                ? false
+                : extensionUnclear(
+                    { filed: filing.extensionFiled, transmittedAt: filing.extensionTransmittedAt },
+                    maxYear,
+                    filing.isFinalReturn ? filing.dissolvedAt : null,
+                  ),
             brand: brand ?? undefined,
           });
         } catch (err) {

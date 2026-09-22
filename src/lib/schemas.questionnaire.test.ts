@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  EIN_DEGENERATE_MESSAGE,
   ITIN_IN_FTIN_MESSAGE,
+  einSchema,
   entitySchema,
+  makeOwnerPaidCostsSchema,
   makeYearDataSchema,
+  selectableTaxYears,
   ownerSchema,
 } from "./schemas";
 
@@ -77,6 +81,34 @@ describe("questionnaire schemas", () => {
     expect(invalid.success).toBe(false);
   });
 
+  it("rejects degenerate EINs while preserving the normal format rule", () => {
+    expect(einSchema.safeParse("12-3456789").success).toBe(true);
+    for (const value of ["00-0000000", "111111111", "22-2222222"]) {
+      const parsed = einSchema.safeParse(value);
+      expect(parsed.success).toBe(false);
+      expect(parsed.error?.issues[0]?.message).toBe(EIN_DEGENERATE_MESSAGE);
+    }
+    expect(einSchema.safeParse("12-345678").success).toBe(false);
+  });
+
+  it("builds selectable tax years from formation year and an injected clock", () => {
+    expect(selectableTaxYears(false, null, new Date("2026-12-31T23:59:59.000Z"))).toEqual([
+      2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025,
+    ]);
+    expect(selectableTaxYears(false, null, new Date("2027-01-01T00:00:00.000Z"))).toEqual([
+      2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026,
+    ]);
+    expect(selectableTaxYears(false, "2021-05-10", new Date("2026-09-22T00:00:00.000Z"))).toEqual([
+      2021, 2022, 2023, 2024, 2025,
+    ]);
+    expect(selectableTaxYears(false, "2016-05-10", new Date("2026-09-22T00:00:00.000Z"))).toEqual([
+      2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025,
+    ]);
+    expect(selectableTaxYears(true, "2021-05-10", new Date("2026-09-22T00:00:00.000Z"))).toEqual([
+      2021, 2022, 2023, 2024, 2025, 2026,
+    ]);
+  });
+
   it("validates non-cash transfer direction, date format, and non-negative cents", () => {
     const schema = makeYearDataSchema(false);
     const base = {
@@ -113,6 +145,25 @@ describe("questionnaire schemas", () => {
         ...base,
         nonCashTransfers: [{ ...base.nonCashTransfers[0], date: "06/01/2025" }],
       }).success,
+    ).toBe(false);
+  });
+
+  it("validates owner-paid costs by shape, note, and tax-year date", () => {
+    const schema = makeOwnerPaidCostsSchema(2025);
+    expect(
+      schema.safeParse([
+        { category: "state_filing_fee", date: "2025-01-15", amountCents: 150_00 },
+        { category: "other", date: "2025-02-01", amountCents: 25_00, note: "Courier" },
+      ]).success,
+    ).toBe(true);
+    expect(
+      schema.safeParse([{ category: "other", date: "2025-02-01", amountCents: 25_00 }]).success,
+    ).toBe(false);
+    expect(
+      schema.safeParse([{ category: "registered_agent", date: "2024-12-31", amountCents: 25_00 }]).success,
+    ).toBe(false);
+    expect(
+      schema.safeParse([{ category: "registered_agent", date: "2025-02-30", amountCents: 25_00 }]).success,
     ).toBe(false);
   });
 });

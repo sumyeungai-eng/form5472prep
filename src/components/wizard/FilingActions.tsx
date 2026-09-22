@@ -8,6 +8,9 @@ type Filing = {
   id: string;
   status: string;
   generatedPdfKey: string | null;
+  reviewApprovedAt: string | null;
+  reviewApprovedBy: string | null;
+  unreadTeamMessages: number;
   // R2 key for the customer's signature PNG, captured on the in-portal sign
   // page. Populated immediately when the customer hits "Acknowledge & sign";
   // the admin later embeds it into a finalized PDF (signedPdfKey). For the
@@ -24,9 +27,28 @@ type Filing = {
   faxConfirmationKey: string | null;
 };
 
+const SIGNING_STARTED_STATUSES = new Set([
+  "SIGNATURE_PENDING",
+  "SIGNED_UPLOADED",
+  "FAXED",
+  "CONFIRMED",
+  "FAILED",
+]);
+
 export function FilingActions({ filing }: { filing: Filing }) {
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
+  const reviewApproved = !!filing.reviewApprovedAt;
+  const signingStarted = SIGNING_STARTED_STATUSES.has(filing.status);
+  const canSign = !!filing.generatedPdfKey && (reviewApproved || signingStarted);
+  const signed = !!filing.signaturePngKey || !!filing.signedPdfKey;
+  const approvedDate = filing.reviewApprovedAt
+    ? new Date(filing.reviewApprovedAt).toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : null;
 
   async function generate() {
     setBusy("generate");
@@ -54,7 +76,7 @@ export function FilingActions({ filing }: { filing: Filing }) {
     <div className="space-y-6">
       <Step
         n={1}
-        title="Generate filing PDFs"
+        title="Generate your forms"
         done={!!filing.generatedPdfKey}
         active={filing.status === "PAID" && !filing.generatedPdfKey}
       >
@@ -68,29 +90,38 @@ export function FilingActions({ filing }: { filing: Filing }) {
           </Button>
         ) : (
           <p className="text-sm text-slate-700">
-            <span className="font-medium">PDF generated.</span> You&apos;ll be able to preview and
-            sign it in the next step. The complete signed package is available for download once
-            it&apos;s been reviewed by our accountant and is ready to fax.
+            <span className="font-medium">PDF generated.</span> Your forms are ready for review.
           </p>
         )}
       </Step>
 
       <Step
         n={2}
-        title="Sign in your portal"
-        // Step 2 is done as soon as the customer's signature PNG is captured
-        // (or the admin has uploaded the finalized signed PDF). Previously
-        // this gated on signedPdfKey alone, which the admin sets *after*
-        // embedding the signature — leaving every paid customer stuck in
-        // "needs to sign" right after they signed. See sign endpoint at
-        // src/app/api/filings/[id]/sign/route.ts — it writes signaturePngKey
-        // and bumps status to SIGNATURE_PENDING.
-        done={!!filing.signaturePngKey || !!filing.signedPdfKey}
-        active={
-          !!filing.generatedPdfKey &&
-          !filing.signaturePngKey &&
-          !filing.signedPdfKey
-        }
+        title="Accountant review"
+        done={reviewApproved}
+        active={!!filing.generatedPdfKey && !reviewApproved}
+      >
+        {filing.unreadTeamMessages > 0 ? (
+          <p className="text-sm text-slate-700">
+            <span className="font-medium text-amber-800">We have a question for you</span>{" "}
+            <a href="#messages" className="text-accent hover:underline">Open messages</a>
+          </p>
+        ) : reviewApproved ? (
+          <p className="text-sm text-slate-700">
+            <span className="font-medium text-emerald-700">Approved on {approvedDate}</span>
+          </p>
+        ) : (
+          <p className="text-sm text-slate-600">
+            A qualified accountant is reviewing your forms. If anything needs clarifying, we will message you here.
+          </p>
+        )}
+      </Step>
+
+      <Step
+        n={3}
+        title="Sign digitally"
+        done={signed}
+        active={canSign && !signed}
       >
         <>
           {filing.generatedPdfKey && (
@@ -120,20 +151,18 @@ export function FilingActions({ filing }: { filing: Filing }) {
           ) : filing.signaturePngKey ? (
             <p className="text-sm text-slate-600">
               <span className="font-medium text-emerald-700">Signature received.</span>{" "}
-              Our accountant is reviewing your filing and will fax it to the IRS Ogden
-              PIN Unit shortly. You&apos;ll get an email the moment it&apos;s sent.
+              We will fax it to the IRS Ogden PIN Unit shortly. You&apos;ll get an email the moment it&apos;s sent.
             </p>
           ) : (
             <>
               <p className="text-sm text-slate-600 mb-3">
-                Draw your signature once — we embed it into every required box automatically. No printing,
-                scanning, or uploading needed.
+                Draw your signature once. No printing, scanning, or uploading needed.
               </p>
               <Button
                 onClick={() => router.push(`/filings/${filing.id}/sign`)}
-                disabled={!filing.generatedPdfKey}
+                disabled={!canSign}
               >
-                {filing.generatedPdfKey ? "Sign my filing" : "Generate PDF first"}
+                {canSign ? "Sign my filing" : "Available after review"}
               </Button>
             </>
           )}
@@ -142,8 +171,8 @@ export function FilingActions({ filing }: { filing: Filing }) {
 
       {filing.faxService ? (
         <Step
-          n={3}
-          title="IRS submission"
+          n={4}
+          title="We fax to the IRS"
           done={!!filing.faxJobId}
           active={!!filing.signedPdfKey && !filing.faxJobId}
         >
@@ -173,19 +202,22 @@ export function FilingActions({ filing }: { filing: Filing }) {
               )}
             </>
           ) : (
-            <div className="rounded-md bg-amber-50 border border-amber-200 p-3 text-sm text-amber-800">
-              <p className="font-medium">Under review</p>
-              <p className="mt-1 text-amber-700">
-                Our team will submit your forms to the IRS once reviewed by our accountant.
-                You&apos;ll receive an email confirmation once it&apos;s been faxed.
+            <div className="rounded-md bg-slate-50 border border-slate-200 p-3 text-sm text-slate-700">
+              <p className="font-medium">
+                {filing.signaturePngKey || filing.signedPdfKey ? "Preparing to fax" : "After you sign"}
+              </p>
+              <p className="mt-1 text-slate-600">
+                {filing.signaturePngKey || filing.signedPdfKey
+                  ? "We are faxing your signed forms to the IRS. We will email you the fax confirmation as soon as it goes through."
+                  : "Once you sign, we fax your forms to the IRS and email you the fax confirmation."}
               </p>
             </div>
           )}
         </Step>
       ) : (
         <Step
-          n={3}
-          title="Fax to the IRS yourself"
+          n={4}
+          title="We fax to the IRS"
           done={false}
           active={!!filing.signedPdfKey}
         >

@@ -403,6 +403,12 @@ type OrderConfirmationArgs = {
   // Pre-rendered deadline string (e.g. "April 15, 2026"). Caller computes it
   // from filingDueDateUtc() so the email never re-derives tax logic.
   dueDateText?: string | null;
+  // Callers MUST pass the LIVE decision from requiresReasonableCause() in
+  // src/lib/completeness.ts (or the equivalent per-year check), NEVER the
+  // stored stale wizard snapshot; when omitted/false, no line is rendered,
+  // so every existing caller is unaffected.
+  requiresReasonableCause?: boolean;
+  extensionUnclear?: boolean;
   brand?: EmailBrand;
 };
 
@@ -424,7 +430,7 @@ function portalLinkWithNext(portalLink: string, nextPath: string): string {
 export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const {
     email, recipientName, llcName, taxYears, tier, amountPaidCents, portalLink, receiptUrl,
-    pdfBytes, signatures, isFinalReturn, dueDateText, brand,
+    pdfBytes, signatures, isFinalReturn, dueDateText, requiresReasonableCause, extensionUnclear, brand,
   } = args;
   const salutation = firstNameFrom(recipientName) ?? "there";
   const brandName = brand?.name ?? "Form5472 Prep";
@@ -448,6 +454,14 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     ? `<p style="margin:0 0 12px;color:${EMAIL_STYLES.slate};line-height:1.6;font-size:14px;">
          <strong style="color:${EMAIL_STYLES.ink};">Your filing deadline:</strong> ${escapeHtml(dueDateText)} — we prepare and file well before this.
        </p>`
+    : "";
+  const filingStatusNoticeText = requiresReasonableCause
+    ? "This return is being filed after its due date. We include a reasonable-cause statement explaining why."
+    : extensionUnclear
+      ? "We are checking whether an extension was filed for this year. We will confirm before anything is sent."
+      : "";
+  const filingStatusNoticeHtml = filingStatusNoticeText
+    ? `<p style="margin:0 0 12px;color:${EMAIL_STYLES.slate};line-height:1.6;font-size:14px;">${filingStatusNoticeText}</p>`
     : "";
 
   // Amber warning — FINAL RETURNS ONLY, and deliberately the loudest block in
@@ -480,18 +494,18 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     : "";
 
   const step3Html = `<li style="margin-bottom:6px;">We fax it to the IRS Ogden PIN Unit and send you a delivery confirmation email.</li>`;
-  const step3Text = `  3. We fax it to the IRS Ogden PIN Unit and email you confirmation.`;
+  const step3Text = `  4. We fax it to the IRS Ogden PIN Unit and email you confirmation.`;
 
   const introCopy = hasPdf
-    ? "Thanks for your order. Your IRS filing package is ready — open your portal to review and sign it."
+    ? "Thanks for your order. Your IRS filing package has been generated and is now in review."
     : "Thanks for your order. We've received your payment and started preparing your IRS filing. You'll get the generated PDF in your portal within a few minutes.";
 
   const signaturesHtml = hasPdf && sigCount > 0
     ? `
-    <!-- Sign in portal -->
-    <p style="margin:24px 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Sign your filing</p>
+    <!-- Review in portal -->
+    <p style="margin:24px 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Review in your portal</p>
     <p style="margin:0 0 12px;color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.5;">
-      Open your portal, review the package, and draw your signature to acknowledge it. Our tax accountant will sign the final IRS forms before fax — no printing or uploading required on your end.
+      Open your portal to view the generated package. A qualified accountant reviews it before signing opens, and we will email you when it is ready.
     </p>`
     : "";
 
@@ -500,6 +514,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       ${introCopy}
     </p>
     ${dueDateHtml}
+    ${filingStatusNoticeHtml}
     <p style="margin:0 0 20px;color:${EMAIL_STYLES.muted};font-size:13px;">
       Save <strong>donotreply@form5472prep.com</strong> to your contacts to make sure our filing emails reach your inbox.
     </p>
@@ -525,7 +540,8 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next</p>
     <ol style="margin:0 0 24px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       <li style="margin-bottom:6px;">We generate your filled <strong>Form 5472 + pro forma Form 1120</strong> (≈ 2 min).</li>
-      <li style="margin-bottom:6px;">You open your portal, review the package, and draw your signature to acknowledge it. A qualified tax accountant on our team then reviews the package end-to-end before we fax it to the IRS.</li>
+      <li style="margin-bottom:6px;">A qualified accountant reviews the package and may message you if anything needs clarifying.</li>
+      <li style="margin-bottom:6px;">After approval, we email you a secure link to sign digitally.</li>
       ${step3Html}
     </ol>
 
@@ -540,22 +556,27 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     : "";
 
   const signaturesText = hasPdf && sigCount > 0
-    ? `\nReview the package in your portal and draw your signature to acknowledge it. Our accountant signs the IRS forms before fax.\n`
+    ? `\nReview the generated package in your portal. A qualified accountant reviews it before signing opens.\n`
     : "";
 
   const nextStepsText = hasPdf
     ? `What to do next:\n` +
       `  1. Open your portal: ${portalLink}\n` +
-      `  2. Draw your signature once — we apply it to every required box.\n` +
+      `  2. A qualified accountant reviews the package and may message you with questions.\n` +
+      `  3. After approval, we email you a secure link to sign digitally.\n` +
       step3Text + "\n"
     : `What happens next:\n` +
       `  1. We generate your Form 5472 + pro forma 1120 (≈ 2 min).\n` +
-      `  2. You open the portal to sign in-browser. A qualified tax accountant on our team reviews the package end-to-end before we fax it to the IRS.\n` +
+      `  2. A qualified accountant reviews the package and may message you with questions.\n` +
+      `  3. After approval, we email you a secure link to sign digitally.\n` +
       step3Text + "\n";
 
   // Plain-text mirror of the post-purchase sequencing section above.
   const dueDateLineText = dueDateText
     ? `Your filing deadline: ${dueDateText} — we prepare and file well before this.\n\n`
+    : "";
+  const filingStatusNoticeLineText = filingStatusNoticeText
+    ? `${filingStatusNoticeText}\n\n`
     : "";
   const nextImportantText =
     `What happens next — important\n\n` +
@@ -577,12 +598,13 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     fromName: brand?.name,
     replyTo: brand?.replyTo,
     subject: hasPdf
-      ? `Your Form 5472 filing package — ${sigCount} signature${sigCount === 1 ? "" : "s"} needed`
+      ? "Your Form 5472 filing package is in review"
       : `Order confirmed — ${brandName} filing (${yearsLabel})`,
     text: customerText(
       salutation,
       `Thank you for your order.\n\n` +
       dueDateLineText +
+      filingStatusNoticeLineText +
       `Tip: save donotreply@form5472prep.com to your contacts so our emails reach your inbox.\n\n` +
       `Order summary:\n` +
       `  LLC:           ${llcLine}\n` +
@@ -599,15 +621,61 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       brand,
     ),
     html: customerShell({
-      heading: hasPdf ? "Your filing is ready to sign" : "Order confirmed",
+      heading: hasPdf ? "Your forms are being reviewed" : "Order confirmed",
       salutation,
       bodyHtml,
-      // When the PDF is ready, deep-link straight to the sign page via the
-      // magic-link's ?next= deeplink so the customer skips the dashboard.
+      // The package is generated, but signing opens only after accountant
+      // review. Send customers to the filing overview, not the signature pad.
       cta: hasPdf
-        ? { label: "Sign my filing", url: portalLinkWithNext(portalLink, `/filings/${args.filingId ?? ""}/sign`) }
+        ? { label: "Open my filing", url: portalLinkWithNext(portalLink, `/filings/${args.filingId ?? ""}`) }
         : { label: "Open my filing", url: portalLink },
       brand,
+    }),
+  });
+}
+
+// ---------- 2b. Review approved email ----------
+
+export async function sendReadyToSignEmail(args: {
+  email: string;
+  recipientName?: string | null;
+  filingId: string;
+  llcName: string | null;
+  taxYears: number[];
+  portalLink: string;
+  brand?: EmailBrand;
+}) {
+  const salutation = firstNameFrom(args.recipientName) ?? "there";
+  const yearsLabel = args.taxYears.join(", ");
+  const llcLine = args.llcName ?? "your filing";
+  const signLink = portalLinkWithNext(args.portalLink, `/filings/${args.filingId}/sign`);
+  const bodyHtml = `
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
+      A qualified accountant has reviewed your forms for <strong>${escapeHtml(llcLine)}</strong>${yearsLabel ? `, tax year${args.taxYears.length === 1 ? "" : "s"} ${escapeHtml(yearsLabel)}` : ""}.
+    </p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
+      Your forms are ready to sign digitally. After you sign, we prepare the package for faxing to the IRS.
+    </p>`;
+
+  return sendEmail({
+    to: args.email,
+    fromName: args.brand?.name,
+    replyTo: args.brand?.replyTo,
+    subject: "Your forms are ready to sign",
+    text: customerText(
+      salutation,
+      `A qualified accountant has reviewed your forms for ${llcLine}${yearsLabel ? `, tax year${args.taxYears.length === 1 ? "" : "s"} ${yearsLabel}` : ""}.\n\n` +
+      `Your forms are ready to sign digitally. After you sign, we prepare the package for faxing to the IRS.\n\n` +
+      `Sign your forms: ${signLink}`,
+      undefined,
+      args.brand,
+    ),
+    html: customerShell({
+      heading: "Your forms are ready to sign",
+      salutation,
+      bodyHtml,
+      cta: { label: "Sign my forms", url: signLink },
+      brand: args.brand,
     }),
   });
 }

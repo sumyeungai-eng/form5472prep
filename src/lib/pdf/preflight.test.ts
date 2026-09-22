@@ -59,6 +59,12 @@ const goodRecord: PackageRecord = {
         { date: "2026-02-20", description: "Distribution", amountCents: -17_850, category: "distribution" },
       ],
       nonCashTransfers: [],
+      ownerPaidCosts: [],
+      zeroConfirmations: {
+        loansFromOwner: true,
+        loansToOwner: true,
+        ownerPaidCosts: true,
+      },
       partVICentsAddedToLine1f: 0,
       line1jChecked: true,
       priorForm5472Filed: "no",
@@ -105,6 +111,12 @@ const goodRecord: PackageRecord = {
           { form: "5472-2026", field: form5472FieldMap["8b3_ftin"], value: "FTIN12345" },
           { form: "5472-2026", field: form5472FieldMap["8d_businessCode"], value: "541512" },
           { form: "5472-2026", field: form5472FieldMap.partV_attachedStatementBox, value: true },
+          { form: "5472-2026", field: form5472FieldMap.q37_imports_no, value: true },
+          { form: "5472-2026", field: form5472FieldMap.q39_csa_no, value: true },
+          { form: "5472-2026", field: form5472FieldMap.q40a_267A_no, value: true },
+          { form: "5472-2026", field: form5472FieldMap.q41a_fdii_no, value: true },
+          { form: "5472-2026", field: form5472FieldMap.q42a_safeHavenInRange_no, value: true },
+          { form: "5472-2026", field: form5472FieldMap.q42b_safeHavenOutsideRange_no, value: true },
         ],
       },
       reasonableCauseIncluded: false,
@@ -136,6 +148,7 @@ describe("runPreflight", () => {
     ["A01", (r: PackageRecord) => { r.taxYears[0].form5472.fields = r.taxYears[0].form5472.fields.filter((w) => w.field !== form5472FieldMap.box2_foreign50pct); }],
     ["A02", (r: PackageRecord) => { r.taxYears[0].form5472.fields = r.taxYears[0].form5472.fields.filter((w) => w.field !== form5472FieldMap.box3_foreignOwnedUsDE); }],
     ["A03", (r: PackageRecord) => { r.taxYears[0].form5472.fields.push({ form: "5472-2026", field: form5472FieldMap.q43a_coveredDebt_no, value: true }); }],
+    ["A04", (r: PackageRecord) => { r.taxYears[0].form5472.fields = r.taxYears[0].form5472.fields.filter((w) => w.field !== form5472FieldMap.q42b_safeHavenOutsideRange_no); }],
     ["A05", (r: PackageRecord) => { r.taxYears[0].form5472.fields.find((w) => w.field === form5472FieldMap["1e_businessCode"])!.value = "541611"; }],
     ["A06", (r: PackageRecord) => { r.taxYears[0].form1120.fields[0].value = "01/01/2026"; }],
     ["A07", (r: PackageRecord) => { r.taxYears[0].periodStart = "01/01"; }],
@@ -180,6 +193,44 @@ describe("runPreflight", () => {
     const result = await runPreflight(record, await goodPdfBytes(record));
     expect(result.failures.some((f) => f.id === "A16")).toBe(false);
     expect(result.warnings.some((w) => w.id === "W16")).toBe(true);
+  });
+
+  it("W02 warns when transaction categories were never confirmed", async () => {
+    const record = clone(goodRecord);
+    record.taxYears[0].zeroConfirmations = {};
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.some((f) => f.id === "W02")).toBe(false);
+    expect(result.warnings.some((w) => w.id === "W02")).toBe(true);
+  });
+
+  it("A04 passes when every Form 5472 line 37 through 42 Yes/No box is answered", async () => {
+    const result = await runPreflight(clone(goodRecord), await goodPdfBytes(goodRecord));
+
+    expect(result.failures.filter((f) => f.id === "A04")).toEqual([]);
+  });
+
+  it("A04 fails when a required line 37 through 42 Yes/No box is unanswered", async () => {
+    const record = clone(goodRecord);
+    record.taxYears[0].form5472.fields = record.taxYears[0].form5472.fields.filter(
+      (write) => write.field !== form5472FieldMap.q42b_safeHavenOutsideRange_no,
+    );
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.some((f) => f.id === "A04" && f.message.includes("42b"))).toBe(true);
+  });
+
+  it("A04 fails when conditional line 38a or 38c is answered while line 37 is No", async () => {
+    const record = clone(goodRecord);
+    record.taxYears[0].form5472.fields.push(
+      { form: "5472-2026", field: form5472FieldMap.q38a_customsValue_no, value: true },
+    );
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.some((f) => f.id === "A04" && f.message.includes("38a must be blank"))).toBe(true);
   });
 
   it("A15 emits W15 when the formation-year prior filing answer is yes or not_sure", async () => {

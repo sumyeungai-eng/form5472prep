@@ -14,11 +14,20 @@ export function looksLikeUsItin(value: string | null | undefined): boolean {
   return digits.length === 9 && digits.startsWith("9");
 }
 
+export const EIN_FORMAT_MESSAGE = "EIN must be 9 digits (XX-XXXXXXX)";
+export const EIN_DEGENERATE_MESSAGE = "Enter the EIN exactly as it appears on your IRS letter.";
+
+function isDegenerateEin(value: string): boolean {
+  const digits = value.replace(/\D/g, "");
+  return digits.length === 9 && /^(\d)\1{8}$/.test(digits);
+}
+
 // EIN must be 9 digits, optionally formatted XX-XXXXXXX
 export const einSchema = z
   .string()
   .trim()
-  .regex(/^\d{2}-?\d{7}$/, "EIN must be 9 digits (XX-XXXXXXX)")
+  .regex(/^\d{2}-?\d{7}$/, EIN_FORMAT_MESSAGE)
+  .refine((s) => !isDegenerateEin(s), EIN_DEGENERATE_MESSAGE)
   .transform((s) => (s.includes("-") ? s : `${s.slice(0, 2)}-${s.slice(2)}`));
 
 export const entitySchema = z.object({
@@ -141,9 +150,35 @@ export const currentTaxYear = new Date().getUTCFullYear();
 // otherwise keep enforcing last year's bound after New Year, rejecting the
 // year that just became filable. The constants stay for display callers that
 // render once per request anyway.
-export function maxSelectableTaxYear(isFinalReturn: boolean): number {
-  const nowYear = new Date().getUTCFullYear();
+export function maxSelectableTaxYear(isFinalReturn: boolean, now = new Date()): number {
+  const nowYear = now.getUTCFullYear();
   return isFinalReturn ? nowYear : nowYear - 1;
+}
+
+export function formationYearFrom(value: Date | string | number | null | undefined): number | null {
+  if (typeof value === "number" && Number.isInteger(value)) return value;
+  if (value == null || value === "") return null;
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.getUTCFullYear();
+}
+
+export function minSelectableTaxYear(
+  formationDateOrYear?: Date | string | number | null,
+): number {
+  const formationYear = formationYearFrom(formationDateOrYear);
+  return Math.max(2018, formationYear ?? 2018);
+}
+
+export function selectableTaxYears(
+  isFinalReturn: boolean,
+  formationDateOrYear?: Date | string | number | null,
+  now = new Date(),
+): number[] {
+  const minYear = minSelectableTaxYear(formationDateOrYear);
+  const maxYear = maxSelectableTaxYear(isFinalReturn, now);
+  if (maxYear < minYear) return [];
+  return Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
 }
 
 // ─── Dissolution date (final short-year returns) ─────────────────────────────
@@ -401,17 +436,27 @@ export function extensionUnclear(
 // Nothing here closes over the module-level lastCompletedTaxYear/currentTaxYear
 // constants: a server process alive across New Year's Eve would otherwise keep
 // rejecting the year that just became filable until it restarted.
-export function makeYearScopeSchema(isFinalReturn: boolean) {
+export function makeYearScopeSchema(
+  isFinalReturn: boolean,
+  formationDateOrYear?: Date | string | number | null,
+  now = new Date(),
+) {
+  const minYear = minSelectableTaxYear(formationDateOrYear);
   return z.object({
     taxYears: z
-      .array(z.number().int().min(2018).max(maxSelectableTaxYear(isFinalReturn)))
+      .array(z.number().int().min(minYear).max(maxSelectableTaxYear(isFinalReturn, now)))
       .min(1, "Select at least one year"),
   });
 }
 
-export function makeYearDataSchema(isFinalReturn: boolean) {
+export function makeYearDataSchema(
+  isFinalReturn: boolean,
+  formationDateOrYear?: Date | string | number | null,
+  now = new Date(),
+) {
+  const minYear = minSelectableTaxYear(formationDateOrYear);
   return z.object({
-    taxYear: z.number().int().min(2018).max(maxSelectableTaxYear(isFinalReturn)),
+    taxYear: z.number().int().min(minYear).max(maxSelectableTaxYear(isFinalReturn, now)),
     totalAssetsYearEnd: z.coerce.number().min(0),
     contributions: z.coerce.number().min(0),
     distributions: z.coerce.number().min(0),
@@ -450,8 +495,78 @@ export const reportableTransactionSchema = z.object({
 });
 export const reportableTransactionsSchema = z.array(reportableTransactionSchema);
 
+export const OWNER_PAID_COST_CATEGORIES = [
+  "state_filing_fee",
+  "registered_agent",
+  "formation_or_ein_service",
+  "software_subscriptions",
+  "initial_bank_funding",
+  "other",
+] as const;
+
+export const ZERO_CONFIRMATION_KEYS = [
+  "contributions",
+  "distributions",
+  "loansFromOwner",
+  "loansToOwner",
+  "ownerPaidCosts",
+] as const;
+
+export const zeroConfirmationsSchema = z
+  .object({
+    contributions: z.boolean().optional(),
+    distributions: z.boolean().optional(),
+    loansFromOwner: z.boolean().optional(),
+    loansToOwner: z.boolean().optional(),
+    ownerPaidCosts: z.boolean().optional(),
+  })
+  .strict();
+
+function isDateInsideTaxYear(value: string, taxYear: number): boolean {
+  if (!DATE_ONLY_RE.test(value)) return false;
+  const [year, month, day] = value.split("-").map(Number);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  return (
+    parsed.getUTCFullYear() === year &&
+    parsed.getUTCMonth() === month - 1 &&
+    parsed.getUTCDate() === day &&
+    year === taxYear
+  );
+}
+
+export function makeOwnerPaidCostsSchema(taxYear: number) {
+  return z
+    .array(
+      z
+        .object({
+          category: z.enum(OWNER_PAID_COST_CATEGORIES),
+          date: z.string().trim().regex(DATE_ONLY_RE, "Use YYYY-MM-DD"),
+          amountCents: z.number().int().min(0),
+          note: z.string().trim().max(2000).optional(),
+        })
+        .superRefine((row, ctx) => {
+          if (!isDateInsideTaxYear(row.date, taxYear)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `Date must fall within ${taxYear}`,
+              path: ["date"],
+            });
+          }
+          if (row.category === "other" && !(row.note ?? "").trim()) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Describe the cost",
+              path: ["note"],
+            });
+          }
+        }),
+    );
+}
+
 export type EntityForm = z.infer<typeof entitySchema>;
 export type OwnerForm = z.infer<typeof ownerSchema>;
 export type YearScopeForm = z.infer<typeof yearScopeSchema>;
 export type YearDataForm = z.infer<typeof yearDataSchema>;
 export type NonCashTransfer = z.infer<typeof nonCashTransferSchema>;
+export type OwnerPaidCost = z.infer<ReturnType<typeof makeOwnerPaidCostsSchema>>[number];
+export type ZeroConfirmations = z.infer<typeof zeroConfirmationsSchema>;
