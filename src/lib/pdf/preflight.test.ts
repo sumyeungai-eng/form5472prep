@@ -225,7 +225,7 @@ describe("runPreflight", () => {
   it("A04 fails when conditional line 38a or 38c is answered while line 37 is No", async () => {
     const record = clone(goodRecord);
     record.taxYears[0].form5472.fields.push(
-      { form: "5472-2026", field: form5472FieldMap.q38a_basesErosionPayment_no, value: true },
+      { form: "5472-2026", field: form5472FieldMap.q38a_customsValue_no, value: true },
     );
 
     const result = await runPreflight(record, await goodPdfBytes(record));

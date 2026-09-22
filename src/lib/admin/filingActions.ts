@@ -1172,9 +1172,15 @@ export async function runFilingAction(
         });
       } catch (err) {
         console.error("[approveForSignature] ready-to-sign email failed", err);
+        return {
+          ok: true,
+          approvedAt,
+          emailSent: false,
+          emailError: err instanceof Error ? err.message : String(err),
+        };
       }
 
-      return { ok: true, approvedAt };
+      return { ok: true, approvedAt, emailSent: true };
     }
 
     case "uploadReviewedPdf": {

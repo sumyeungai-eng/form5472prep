@@ -175,6 +175,69 @@ describe("generatePackage regressions", () => {
     expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
   }, PDF_TIMEOUT);
 
+  it("dates synthesized Part V contribution totals on the final short year's actual period end", async () => {
+    const pkg = await generatePackage(
+      {
+        ...F1,
+        taxYears: [2026],
+        isFinalReturn: true,
+        dissolvedAt: new Date("2026-06-15T00:00:00.000Z"),
+        yearData: [
+          {
+            ...F1.yearData[0],
+            taxYear: 2026,
+            contributions: 500,
+            distributions: 0,
+            reportableTransactions: [],
+            ownerPaidCosts: [],
+            zeroConfirmations: { distributions: true, loansFromOwner: true, loansToOwner: true, ownerPaidCosts: true },
+          },
+        ],
+      },
+      finalisedAt,
+    );
+    const year = pkg.record.taxYears[0];
+
+    expect(year.partVRows).toContainEqual(expect.objectContaining({
+      category: "contribution",
+      date: "2026-06-15",
+      amountCents: 500_00,
+    }));
+    expect(year.partVRows.some((row) => row.date === "2026-12-31")).toBe(false);
+    expect(year.line1f).toBe(500);
+    expect(year.line1h).toBe(500);
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures.filter((failure) => failure.id === "A13")).toEqual([]);
+  }, PDF_TIMEOUT);
+
+  it("uses explicit Part V category rows instead of double-counting stored totals", async () => {
+    const pkg = await generatePackage(
+      {
+        ...F1,
+        yearData: [
+          {
+            ...F1.yearData[0],
+            contributions: 999,
+            distributions: 888,
+            reportableTransactions: [
+              { date: "2025-01-10", description: "Owner contribution", amountCents: 100_00, category: "contribution" },
+              { date: "2025-02-10", description: "Owner distribution", amountCents: -20_00, category: "distribution" },
+            ],
+            ownerPaidCosts: [],
+            zeroConfirmations: {},
+          },
+        ],
+      },
+      finalisedAt,
+    );
+    const year = pkg.record.taxYears[0];
+
+    expect(year.partVRows.map((row) => [row.category, row.amountCents])).toEqual([
+      ["contribution", 100_00],
+      ["distribution", -20_00],
+    ]);
+    expect(year.line1f).toBe(120);
+  }, PDF_TIMEOUT);
+
   it("C-03 uses the exact cover letter phrase and removes timeliness wording", async () => {
     const pkg = await generatePackage(F5, finalisedAt);
     const cover = pkg.record.authoredDocuments.find((doc) => doc.kind === "coverLetter");

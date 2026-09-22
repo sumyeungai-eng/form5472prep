@@ -154,11 +154,10 @@ function checkA04(record: PackageRecord, result: MutableResult) {
     ["42a", form5472FieldMap.q42a_safeHavenInRange_yes, form5472FieldMap.q42a_safeHavenInRange_no],
     ["42b", form5472FieldMap.q42b_safeHavenOutsideRange_yes, form5472FieldMap.q42b_safeHavenOutsideRange_no],
   ] as const;
-  // Lines 38a and 38c only apply "If 'Yes'" to line 37. Field names in the map are historical:
-  // c3_2 is line 38a and c3_3 is line 38c on Form 5472 (Rev. 12-2023), page 3.
+  // Lines 38a and 38c only apply "If 'Yes'" to line 37.
   const conditionalOn37 = [
-    ["38a", form5472FieldMap.q38a_basesErosionPayment_yes, form5472FieldMap.q38a_basesErosionPayment_no],
-    ["38c", form5472FieldMap.q38b_basesErosionTaxBenefit_yes, form5472FieldMap.q38b_basesErosionTaxBenefit_no],
+    ["38a", form5472FieldMap.q38a_customsValue_yes, form5472FieldMap.q38a_customsValue_no],
+    ["38c", form5472FieldMap.q38c_importDocumentation_yes, form5472FieldMap.q38c_importDocumentation_no],
   ] as const;
   for (const year of record.taxYears) {
     const fields = year.form5472.fields;

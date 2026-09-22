@@ -371,7 +371,7 @@ describe("approveForSignature", () => {
 
     await expect(
       runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
-    ).resolves.toMatchObject({ ok: true });
+    ).resolves.toMatchObject({ ok: true, emailSent: true });
 
     expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
       where: { id: "filing_1" },
@@ -405,6 +405,26 @@ describe("approveForSignature", () => {
     await expect(
       runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
     ).resolves.toMatchObject({ ok: true });
+  });
+
+  it("reports approval success with email failure details when the ready-to-sign email fails", async () => {
+    db.findUnique.mockResolvedValue(filing);
+    email.sendReadyToSignEmail.mockRejectedValueOnce(new Error("SMTP unavailable"));
+
+    await expect(
+      runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({
+      ok: true,
+      emailSent: false,
+      emailError: "SMTP unavailable",
+    });
+
+    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+      data: {
+        reviewApprovedAt: new Date("2026-09-22T12:00:00.000Z"),
+        reviewApprovedBy: "admin_1",
+      },
+    }));
   });
 
   it("rejects approval when pre-flight failed without an override", async () => {

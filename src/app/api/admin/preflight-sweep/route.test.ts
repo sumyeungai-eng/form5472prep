@@ -6,6 +6,7 @@ const auth = vi.hoisted(() => ({
 
 const db = vi.hoisted(() => ({
   findMany: vi.fn(),
+  count: vi.fn(),
   update: vi.fn(),
   create: vi.fn(),
   delete: vi.fn(),
@@ -36,6 +37,7 @@ vi.mock("@/lib/prisma", () => ({
   prisma: {
     filing: {
       findMany: db.findMany,
+      count: db.count,
       update: db.update,
       create: db.create,
       delete: db.delete,
@@ -57,6 +59,7 @@ describe("GET /api/admin/preflight-sweep", () => {
   beforeEach(() => {
     auth.isAdmin.mockReset();
     db.findMany.mockReset();
+    db.count.mockReset();
     db.update.mockReset();
     db.create.mockReset();
     db.delete.mockReset();
@@ -71,46 +74,66 @@ describe("GET /api/admin/preflight-sweep", () => {
   it("returns 401 for unauthenticated requests", async () => {
     auth.isAdmin.mockResolvedValue(false);
 
-    const res = await GET();
+    const res = await GET(new Request("https://example.test/api/admin/preflight-sweep"));
 
     expect(res.status).toBe(401);
     expect(db.findMany).not.toHaveBeenCalled();
+    expect(db.count).not.toHaveBeenCalled();
   });
 
   it("reports sweep results without database or storage writes or PII in the response", async () => {
     auth.isAdmin.mockResolvedValue(true);
-    db.findMany.mockResolvedValue([
-      {
-        id: "filing_safe_1",
-        preflightStatus: "passed",
-        llcName: "Sensitive Holdings LLC",
-        ownerName: "Private Owner",
-        user: { email: "owner@example.test" },
-        taxYears: [2025],
-        yearData: [{ taxYear: 2025, rcsWhyMissed: "Sensitive reason" }],
-      },
-      {
-        id: "filing_safe_2",
-        preflightStatus: "failed",
-        llcName: "Second Sensitive LLC",
-        ownerName: "Second Private Owner",
-        taxYears: [2025],
-        yearData: [{ taxYear: 2025, rcsWhyMissed: null }],
-      },
-    ]);
+    db.count.mockResolvedValueOnce(2).mockResolvedValueOnce(1);
+    db.findMany
+      .mockResolvedValueOnce([
+        {
+          id: "filing_safe_1",
+          preflightStatus: "passed",
+          llcName: "Sensitive Holdings LLC",
+          ownerName: "Private Owner",
+          ownerReferenceId: "EXAMPLEOWNER1",
+          user: { email: "owner@example.test" },
+          taxYears: [2025],
+          yearData: [{ taxYear: 2025, rcsWhyMissed: "Sensitive reason" }],
+        },
+        {
+          id: "filing_safe_2",
+          preflightStatus: "failed",
+          llcName: "Second Sensitive LLC",
+          ownerName: "Second Private Owner",
+          ownerReferenceId: "EXAMPLEOWNER1",
+          taxYears: [2025],
+          yearData: [{ taxYear: 2025, rcsWhyMissed: null }],
+        },
+      ])
+      .mockResolvedValueOnce([
+        {
+          id: "filing_possible_1",
+          status: "SIGNED_UPLOADED",
+          yearData: [
+            {
+              taxYear: 2025,
+              contributions: 1200,
+              distributions: 0,
+              reportableTransactions: [],
+              ownerPaidCosts: [],
+            },
+          ],
+        },
+      ]);
     pdf.generatePackage
       .mockResolvedValueOnce({
         record: { id: "record_1" },
         bytes: new Uint8Array([37, 80, 68, 70]),
       })
-      .mockRejectedValueOnce(new Error("Could not generate Second Sensitive LLC package"));
+      .mockRejectedValueOnce(new Error("Could not generate Second Sensitive LLC package for EXAMPLEOWNER1"));
     pdf.runPreflight.mockResolvedValueOnce({
       ok: true,
       failures: [],
       warnings: [{ id: "A20", message: "Review this package" }],
     });
 
-    const res = await GET();
+    const res = await GET(new Request("https://example.test/api/admin/preflight-sweep"));
     const body = await res.json();
 
     expect(res.status).toBe(200);
@@ -126,12 +149,16 @@ describe("GET /api/admin/preflight-sweep", () => {
           orderBy: { taxYear: "asc" },
         }),
       }),
-      take: 200,
+      take: 50,
       orderBy: { updatedAt: "asc" },
     });
     expect(body).toMatchObject({
+      limit: 50,
+      candidatesFound: 2,
+      processed: 2,
+      skippedForLimit: 0,
+      skippedForTime: 0,
       totalChecked: 2,
-      cappedAt200: false,
       results: [
         {
           filingId: "filing_safe_1",
@@ -146,15 +173,61 @@ describe("GET /api/admin/preflight-sweep", () => {
           sweepResult: "error",
           failedAssertionIds: [],
           warningIds: [],
-          errorMessage: "Could not generate [redacted] package",
+          errorMessage: "Could not generate [redacted] package for [redacted]",
         },
       ],
+      possibleZeroTotalSince: {
+        since: "2026-09-21T21:12:00.000Z",
+        limit: 50,
+        candidatesFound: 1,
+        processed: 1,
+        skippedForLimit: 0,
+        results: [
+          {
+            filingId: "filing_possible_1",
+            status: "SIGNED_UPLOADED",
+            affectedYears: [
+              {
+                taxYear: 2025,
+                storedLine1f: null,
+                storedContributions: 1200,
+                storedDistributions: 0,
+                missingContributionRows: true,
+                missingDistributionRows: false,
+              },
+            ],
+          },
+        ],
+      },
+    });
+    expect(db.findMany).toHaveBeenNthCalledWith(2, {
+      where: {
+        generatedPdfKey: { not: null },
+        preflightCheckedAt: { gte: new Date("2026-09-21T21:12:00.000Z") },
+      },
+      select: {
+        id: true,
+        status: true,
+        yearData: {
+          select: {
+            taxYear: true,
+            contributions: true,
+            distributions: true,
+            reportableTransactions: true,
+            ownerPaidCosts: true,
+          },
+          orderBy: { taxYear: "asc" },
+        },
+      },
+      take: 50,
+      orderBy: { preflightCheckedAt: "asc" },
     });
     const serialized = JSON.stringify(body);
     expect(serialized).not.toContain("Sensitive Holdings LLC");
     expect(serialized).not.toContain("Private Owner");
     expect(serialized).not.toContain("owner@example.test");
     expect(serialized).not.toContain("Second Sensitive LLC");
+    expect(serialized).not.toContain("EXAMPLEOWNER1");
     expect(db.update).not.toHaveBeenCalled();
     expect(db.create).not.toHaveBeenCalled();
     expect(db.delete).not.toHaveBeenCalled();

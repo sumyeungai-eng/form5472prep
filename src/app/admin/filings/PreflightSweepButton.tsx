@@ -8,6 +8,11 @@ type SweepResult = "passed" | "needs_review" | "failed" | "error";
 
 type SweepResponse = {
   checkedAt: string;
+  limit: number;
+  candidatesFound: number;
+  processed: number;
+  skippedForLimit: number;
+  skippedForTime: number;
   totalChecked: number;
   cappedAt200: boolean;
   results: Array<{
@@ -18,6 +23,25 @@ type SweepResponse = {
     warningIds: string[];
     errorMessage?: string;
   }>;
+  possibleZeroTotalSince: {
+    since: string;
+    limit: number;
+    candidatesFound: number;
+    processed: number;
+    skippedForLimit: number;
+    results: Array<{
+      filingId: string;
+      status: string;
+      affectedYears: Array<{
+        taxYear: number;
+        storedLine1f: number | null;
+        storedContributions: number | null;
+        storedDistributions: number | null;
+        missingContributionRows: boolean;
+        missingDistributionRows: boolean;
+      }>;
+    }>;
+  };
 };
 
 const RESULT_TONES: Record<SweepResult, { bg: string; text: string; label: string }> = {
@@ -59,9 +83,8 @@ export function PreflightSweepButton() {
           <h2 className="text-sm font-semibold text-slate-900">Open-order pre-flight sweep</h2>
           {data ? (
             <p className="mt-1 text-xs text-slate-500">
-              Checked {data.totalChecked} filing{data.totalChecked === 1 ? "" : "s"} at{" "}
-              {new Date(data.checkedAt).toLocaleString()}
-              {data.cappedAt200 ? ". Results are capped at 200 oldest updated filings." : "."}
+              Found {data.candidatesFound}, processed {data.processed}, skipped{" "}
+              {data.skippedForLimit + data.skippedForTime} at {new Date(data.checkedAt).toLocaleString()}.
             </p>
           ) : (
             <p className="mt-1 text-xs text-slate-500">
@@ -119,6 +142,65 @@ export function PreflightSweepButton() {
           </table>
         </div>
       )}
+
+      {data && (
+        <div className="mt-4">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-1">
+            <div>
+              <h3 className="text-sm font-semibold text-slate-900">
+                Possible zero-total packages since 21 September
+              </h3>
+              <p className="mt-1 text-xs text-slate-500">
+                Found {data.possibleZeroTotalSince.candidatesFound}, scanned{" "}
+                {data.possibleZeroTotalSince.processed}, flagged{" "}
+                {data.possibleZeroTotalSince.results.length}.
+                {data.possibleZeroTotalSince.skippedForLimit > 0
+                  ? ` Skipped ${data.possibleZeroTotalSince.skippedForLimit} due to the limit.`
+                  : ""}
+              </p>
+            </div>
+          </div>
+          {data.possibleZeroTotalSince.results.length > 0 ? (
+            <div className="mt-2 overflow-x-auto border border-slate-200 rounded-md">
+              <table className="w-full min-w-[760px] text-xs">
+                <thead className="bg-slate-50 border-b border-slate-200 uppercase tracking-wider text-slate-500">
+                  <tr>
+                    <th className="text-left font-semibold px-3 py-2">Filing</th>
+                    <th className="text-left font-semibold px-3 py-2">Status</th>
+                    <th className="text-left font-semibold px-3 py-2">Years</th>
+                    <th className="text-left font-semibold px-3 py-2">Stored totals</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {data.possibleZeroTotalSince.results.map((row) => (
+                    <tr key={row.filingId}>
+                      <td className="px-3 py-2 font-mono">
+                        <Link href={`/admin/filings/${row.filingId}`} className="text-accent hover:underline">
+                          {row.filingId}
+                        </Link>
+                      </td>
+                      <td className="px-3 py-2 text-slate-600">{row.status}</td>
+                      <td className="px-3 py-2 text-slate-600">
+                        {row.affectedYears.map((year) => year.taxYear).join(", ")}
+                      </td>
+                      <td className="px-3 py-2 text-slate-600">
+                        {row.affectedYears.map((year) => (
+                          <span key={year.taxYear} className="mr-3 whitespace-nowrap">
+                            {year.taxYear}: 1f {year.storedLine1f ?? "not stored"}, contrib{" "}
+                            {formatAmount(year.storedContributions)}, dist {formatAmount(year.storedDistributions)}
+                          </span>
+                        ))}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="mt-2 text-xs text-slate-500">No possible zero-total packages found.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -134,6 +216,10 @@ function ResultBadge({ result }: { result: SweepResult }) {
 
 function formatIds(ids: string[]): string {
   return ids.length > 0 ? ids.join(", ") : "None";
+}
+
+function formatAmount(value: number | null): string {
+  return value === null ? "not stored" : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
 async function readError(res: Response): Promise<string | null> {

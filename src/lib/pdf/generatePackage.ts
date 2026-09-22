@@ -376,9 +376,11 @@ function partVRowsForYear(f: Filing, year: number): ReportableTx[] {
   );
   const hasContributionRows = rows.some((t) => t.category === "contribution");
   const hasDistributionRows = rows.some((t) => t.category === "distribution");
+  const [periodEndMonth, periodEndDay] = periodEndFor(f, year).split("/");
+  const periodEndIso = `${year}-${periodEndMonth}-${periodEndDay}`;
   if (!hasContributionRows && yd.contributions > 0) {
     rows.push({
-      date: `${year}-12-31`,
+      date: periodEndIso,
       description: "Capital contribution total entered by customer",
       counterparty: f.ownerName,
       amountCents: Math.round(yd.contributions * 100),
@@ -387,7 +389,7 @@ function partVRowsForYear(f: Filing, year: number): ReportableTx[] {
   }
   if (!hasDistributionRows && yd.distributions > 0) {
     rows.push({
-      date: `${year}-12-31`,
+      date: periodEndIso,
       description: "Distribution total entered by customer",
       counterparty: f.ownerName,
       amountCents: -Math.round(yd.distributions * 100),

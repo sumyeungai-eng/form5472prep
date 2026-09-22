@@ -9,7 +9,7 @@ import {
 
 type NullablePartial<T> = { [K in keyof T]?: T[K] | null };
 
-type PackageFilingRow = NullablePartial<Omit<PackageInput, "yearData">> & {
+export type PackageFilingRow = NullablePartial<Omit<PackageInput, "yearData">> & {
   yearData: Array<{
     taxYear: number;
     totalAssetsYearEnd: unknown;

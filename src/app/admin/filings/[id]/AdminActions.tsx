@@ -49,7 +49,10 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const [preflightOverrideReason, setPreflightOverrideReason] = useState("");
 
-  async function callApi(body: Record<string, unknown>, okMsg: string): Promise<boolean> {
+  async function callApi(
+    body: Record<string, unknown>,
+    okMsg: string | ((responseBody: Record<string, unknown>) => string),
+  ): Promise<boolean> {
     setMsg(null);
     try {
       const res = await fetch(`/api/admin/filings/${filingId}`, {
@@ -62,7 +65,8 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         setMsg({ kind: "err", text: err || `HTTP ${res.status}` });
         return false;
       }
-      setMsg({ kind: "ok", text: okMsg });
+      const payload = await res.json().catch(() => ({})) as Record<string, unknown>;
+      setMsg({ kind: "ok", text: typeof okMsg === "function" ? okMsg(payload) : okMsg });
       startTransition(() => router.refresh());
       return true;
     } catch (e) {
@@ -288,7 +292,17 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         )}
         <ActionButton
           disabled={pending || uploading !== null || !!approvalDisabledReason}
-          onClick={() => callApi({ action: "approveForSignature" }, "Customer can sign now. Ready-to-sign email sent.")}
+          onClick={() =>
+            callApi({ action: "approveForSignature" }, (body) => {
+              if (body.emailSent === false) {
+                const message = typeof body.emailError === "string" && body.emailError.trim()
+                  ? body.emailError.trim()
+                  : "Unknown email error";
+                return `Approved, but the email to the customer failed: ${message}`;
+              }
+              return "Customer can sign now. Ready-to-sign email sent.";
+            })
+          }
           tooltip={approvalDisabledReason ?? "Approve the generated package and email the customer to sign."}
           primary
         >

@@ -4,7 +4,11 @@ import { FilingStatus } from "@prisma/client";
 import { getOrCreateSessionId, getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_TIER, isTier, type Tier } from "@/lib/pricing";
-import { findLatestPaidOwnerReferenceId, findOrCreateDraftFiling } from "@/lib/findOrCreateDraft";
+import {
+  findLatestPaidOwnerReferenceId,
+  findOrCreateDraftFiling,
+  ownerNamesMatchForReferenceId,
+} from "@/lib/findOrCreateDraft";
 import { ATTR_COOKIE, parseAttributionCookie } from "@/lib/attribution";
 
 // Statuses that mean "this customer actually filed before" — we only copy
@@ -58,11 +62,20 @@ export async function POST(req: Request) {
       orderBy: { updatedAt: "desc" },
     });
     if (previous) {
-      const ownerNameForReferenceId = requestedOwnerName ?? previous.ownerName;
-      const ownerReferenceId = await findLatestPaidOwnerReferenceId(
-        user.id,
-        ownerNameForReferenceId,
-      );
+      const shouldPrefillOwnerIdentity =
+        !requestedOwnerName || ownerNamesMatchForReferenceId(requestedOwnerName, previous.ownerName);
+      const ownerReferenceId = shouldPrefillOwnerIdentity
+        ? await findLatestPaidOwnerReferenceId(
+            user.id,
+            requestedOwnerName ?? previous.ownerName,
+            {
+              ownerFtin: previous.ownerFtin,
+              ownerAddress: previous.ownerAddress,
+              ownerAddressStreet: previous.ownerAddressStreet,
+              ownerAddressPostal: previous.ownerAddressPostal,
+            },
+          )
+        : null;
       prefill = {
         llcName: previous.llcName,
         llcEin: previous.llcEin,
@@ -75,13 +88,22 @@ export async function POST(req: Request) {
         llcBusinessActivity: previous.llcBusinessActivity,
         llcBusinessCode: previous.llcBusinessCode,
         ownerName: requestedOwnerName ?? previous.ownerName,
-        ownerAddress: previous.ownerAddress,
-        ownerCountryCitizenship: previous.ownerCountryCitizenship,
-        ownerCountryTaxResidence: previous.ownerCountryTaxResidence,
-        ownerCountryBusiness: previous.ownerCountryBusiness,
-        ownerFtin: previous.ownerFtin,
-        ownerItin: previous.ownerItin,
-        ownerReferenceId,
+        ...(shouldPrefillOwnerIdentity
+          ? {
+              ownerAddress: previous.ownerAddress,
+              ownerAddressStreet: previous.ownerAddressStreet,
+              ownerAddressCity: previous.ownerAddressCity,
+              ownerAddressState: previous.ownerAddressState,
+              ownerAddressPostal: previous.ownerAddressPostal,
+              ownerAddressCountry: previous.ownerAddressCountry,
+              ownerCountryCitizenship: previous.ownerCountryCitizenship,
+              ownerCountryTaxResidence: previous.ownerCountryTaxResidence,
+              ownerCountryBusiness: previous.ownerCountryBusiness,
+              ownerFtin: previous.ownerFtin,
+              ownerItin: previous.ownerItin,
+              ownerReferenceId,
+            }
+          : {}),
       };
     }
   }

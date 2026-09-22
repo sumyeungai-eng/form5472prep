@@ -202,11 +202,14 @@ export function FilingActions({ filing }: { filing: Filing }) {
               )}
             </>
           ) : (
-            <div className="rounded-md bg-amber-50 border border-amber-200 p-3 text-sm text-amber-800">
-              <p className="font-medium">Under review</p>
-              <p className="mt-1 text-amber-700">
-                Our team will submit your forms to the IRS once reviewed by a qualified accountant.
-                You&apos;ll receive an email confirmation once it&apos;s been faxed.
+            <div className="rounded-md bg-slate-50 border border-slate-200 p-3 text-sm text-slate-700">
+              <p className="font-medium">
+                {filing.signaturePngKey || filing.signedPdfKey ? "Preparing to fax" : "After you sign"}
+              </p>
+              <p className="mt-1 text-slate-600">
+                {filing.signaturePngKey || filing.signedPdfKey
+                  ? "We are faxing your signed forms to the IRS. We will email you the fax confirmation as soon as it goes through."
+                  : "Once you sign, we fax your forms to the IRS and email you the fax confirmation."}
               </p>
             </div>
           )}
