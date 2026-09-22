@@ -3,6 +3,7 @@ import { env } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { EIN_PRICE_CENTS, ITIN_PRICE_CENTS } from "@/lib/pricing";
 import { stripe } from "@/lib/stripe";
+import { createBrandedSession } from "@/lib/stripeCheckoutBranding";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -68,14 +69,16 @@ export async function POST(req: Request, { params }: { params: { type: string } 
     type === "ein"
       ? {
           name: "EIN application (Form SS-4) preparation",
-          description: "Preparation support for a U.S. EIN application.",
+          description: "Form SS-4 prepared from your answers, reviewed, and submitted to the IRS on your behalf.",
+          images: [`${env.appUrl}/brand/product-ein-itin.png`],
         }
       : {
           name: "ITIN application (Form W-7) preparation",
-          description: "Preparation support for a U.S. ITIN application.",
+          description: "Form W-7 prepared from your answers and reviewed; we guide you through submission.",
+          images: [`${env.appUrl}/brand/product-ein-itin.png`],
         };
 
-  const session = await stripe().checkout.sessions.create(
+  const session = await createBrandedSession(
     {
       mode: "payment",
       payment_method_types: ["card"],
@@ -93,8 +96,15 @@ export async function POST(req: Request, { params }: { params: { type: string } 
       success_url: `${env.appUrl}/${type}/apply?paid=1`,
       cancel_url: `${env.appUrl}/${type}/apply?canceled=1`,
       metadata: { applicationType: type, applicationId: app.id },
+      custom_text: {
+        submit: {
+          message: "Your application is prepared from your answers and reviewed by our team before anything is sent.",
+        },
+      },
     },
-    { idempotencyKey: `appcheckout_${type}_${app.id}` },
+    // v2: see src/app/api/checkout/route.ts (keys from before the branded checkout must not be reused).
+    { idempotencyKey: `appcheckout_v2_${type}_${app.id}` },
+    (p, o) => stripe().checkout.sessions.create(p, o),
   );
 
   await saveStripeSessionId(type, app.id, session.id);
