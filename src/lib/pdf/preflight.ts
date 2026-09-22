@@ -46,6 +46,7 @@ export async function runPreflight(
 ): Promise<PreflightResult> {
   const result: MutableResult = { failures: [], warnings: [] };
 
+  checkW02(record, result);
   checkA01(record, result);
   checkA02(record, result);
   checkA03(record, result);
@@ -77,6 +78,38 @@ export async function runPreflight(
   await checkA30(pdfBytes, record, result);
 
   return { ok: result.failures.length === 0, ...result };
+}
+
+// W02: older orders may predate explicit per-category transaction confirmations.
+function checkW02(record: PackageRecord, result: MutableResult) {
+  const labels = {
+    contributions: "money put in",
+    distributions: "money taken out",
+    loansFromOwner: "loans from owner to LLC",
+    loansToOwner: "loans from LLC to owner",
+    ownerPaidCosts: "costs paid personally",
+  } as const;
+  const keys = Object.keys(labels) as Array<keyof typeof labels>;
+  for (const year of record.taxYears) {
+    const confirmations = year.zeroConfirmations ?? {};
+    const has = {
+      contributions: year.partVRows.some((row) => row.category === "contribution"),
+      distributions: year.partVRows.some((row) => row.category === "distribution"),
+      loansFromOwner: year.partVRows.some((row) => row.category === "loan_from_owner"),
+      loansToOwner: year.partVRows.some((row) => row.category === "loan_to_owner"),
+      ownerPaidCosts: year.ownerPaidCosts.length > 0,
+    };
+    const missing = keys.filter(
+      (key) => !has[key] && confirmations[key] !== true,
+    );
+    if (missing.length > 0) {
+      warn(
+        result,
+        "W02",
+        `Tax year ${year.taxYear}: Some transaction categories were never confirmed (${missing.map((key) => labels[key]).join(", ")}).`,
+      );
+    }
+  }
 }
 
 // A01: 5472 line 2 checked.

@@ -1,4 +1,11 @@
-import { NeedsReviewError, type PackageInput, type ReportableTx, type NonCashTransfer } from "./generatePackage";
+import {
+  NeedsReviewError,
+  type PackageInput,
+  type ReportableTx,
+  type NonCashTransfer,
+  type OwnerPaidCost,
+  type ZeroConfirmations,
+} from "./generatePackage";
 
 type NullablePartial<T> = { [K in keyof T]?: T[K] | null };
 
@@ -11,6 +18,8 @@ type PackageFilingRow = NullablePartial<Omit<PackageInput, "yearData">> & {
     otherTransactionsNote: string | null;
     reportableTransactions?: unknown;
     nonCashTransfers?: unknown;
+    ownerPaidCosts?: unknown;
+    zeroConfirmations?: unknown;
     rcsWhyMissed?: string | null;
     rcsWhenLearned?: string | null;
     rcsNoIrsNoticeConfirmed?: boolean | null;
@@ -67,11 +76,63 @@ export function filingToPackageInput(filing: PackageFilingRow): PackageInput {
       otherTransactionsNote: year.otherTransactionsNote,
       reportableTransactions: parseReportableTransactions(year.reportableTransactions, year.taxYear),
       nonCashTransfers: parseNonCashTransfers(year.nonCashTransfers, year.taxYear),
+      ownerPaidCosts: parseOwnerPaidCosts(year.ownerPaidCosts, year.taxYear),
+      zeroConfirmations: parseZeroConfirmations(year.zeroConfirmations),
       rcsWhyMissed: year.rcsWhyMissed ?? null,
       rcsWhenLearned: year.rcsWhenLearned ?? null,
       rcsNoIrsNoticeConfirmed: year.rcsNoIrsNoticeConfirmed ?? null,
     })),
   };
+}
+
+function parseOwnerPaidCosts(value: unknown, taxYear: number): OwnerPaidCost[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((item, index) => {
+    if (!item || typeof item !== "object") {
+      throw new NeedsReviewError(`Tax year ${taxYear}: owner-paid cost row ${index + 1} is malformed.`);
+    }
+    const cost = item as Record<string, unknown>;
+    const validCategory = [
+      "state_filing_fee",
+      "registered_agent",
+      "formation_or_ein_service",
+      "software_subscriptions",
+      "initial_bank_funding",
+      "other",
+    ].includes(cost.category as string);
+    const valid =
+      validCategory &&
+      typeof cost.category === "string" &&
+      typeof cost.date === "string" &&
+      typeof cost.amountCents === "number" &&
+      Number.isFinite(cost.amountCents) &&
+      (cost.note === undefined || typeof cost.note === "string");
+    if (!valid) {
+      throw new NeedsReviewError(`Tax year ${taxYear}: owner-paid cost row ${index + 1} is malformed.`);
+    }
+    return {
+      category: cost.category as OwnerPaidCost["category"],
+      date: cost.date as string,
+      amountCents: cost.amountCents as number,
+      note: cost.note as string | undefined,
+    };
+  });
+}
+
+function parseZeroConfirmations(value: unknown): ZeroConfirmations {
+  if (!value || typeof value !== "object") return {};
+  const raw = value as Record<string, unknown>;
+  const out: ZeroConfirmations = {};
+  for (const key of [
+    "contributions",
+    "distributions",
+    "loansFromOwner",
+    "loansToOwner",
+    "ownerPaidCosts",
+  ] as const) {
+    if (raw[key] === true) out[key] = true;
+  }
+  return out;
 }
 
 function requiredString(value: string | null | undefined): string {

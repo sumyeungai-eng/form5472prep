@@ -127,6 +127,54 @@ describe("generatePackage regressions", () => {
     ])).toBe(27_880);
   }, PDF_TIMEOUT);
 
+  it("Q-01/Q-02 includes owner-paid costs and loan rows in Part V and line 1f", async () => {
+    const pkg = await generatePackage(
+      {
+        ...F1,
+        yearData: [
+          {
+            ...F1.yearData[0],
+            contributions: 0,
+            distributions: 0,
+            reportableTransactions: [
+              { date: "2025-01-10", description: "Owner contribution", amountCents: 100_00, category: "contribution" },
+              { date: "2025-02-10", description: "Owner distribution", amountCents: -20_00, category: "distribution" },
+              { date: "2025-03-10", description: "Short-term loan from owner", amountCents: 200_00, category: "loan_from_owner" },
+              { date: "2025-04-10", description: "Loan advance to owner", amountCents: -50_00, category: "loan_to_owner" },
+            ],
+            ownerPaidCosts: [
+              {
+                category: "state_filing_fee",
+                date: "2025-05-10",
+                amountCents: 150_00,
+              },
+            ],
+            zeroConfirmations: {},
+          },
+        ],
+      },
+      finalisedAt,
+    );
+    const year = pkg.record.taxYears[0];
+    const partVText = pkg.record.authoredDocuments
+      .filter((doc) => doc.kind === "partVStatement")
+      .flatMap((doc) => doc.lines)
+      .join(" ");
+
+    expect(year.partVRows.map((row) => [row.category, row.amountCents])).toEqual([
+      ["contribution", 100_00],
+      ["distribution", -20_00],
+      ["loan_from_owner", 200_00],
+      ["loan_to_owner", -50_00],
+      ["contribution", 150_00],
+    ]);
+    expect(year.partVTotalCents).toBe(520_00);
+    expect(year.line1f).toBe(520);
+    expect(partVText).toContain("State filing fee paid personally by owner");
+    expect(partVText).toContain("Loans from Foreign Owner to LLC");
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
+  }, PDF_TIMEOUT);
+
   it("C-03 uses the exact cover letter phrase and removes timeliness wording", async () => {
     const pkg = await generatePackage(F5, finalisedAt);
     const cover = pkg.record.authoredDocuments.find((doc) => doc.kind === "coverLetter");

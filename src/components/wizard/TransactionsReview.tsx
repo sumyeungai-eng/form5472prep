@@ -10,9 +10,38 @@ import { formatUsd } from "@/lib/utils";
 // button is hidden on the transactions page. Restore alongside the JSX
 // when re-enabling.
 
-const CATEGORY_LABELS: Record<Category, string> = {
+type ManualOnlyCategory = "loan_from_owner" | "loan_to_owner";
+type WizardCategory = Category | ManualOnlyCategory;
+type WizardTransaction = Omit<CategorizedTransaction, "category"> & { category: WizardCategory };
+type ZeroConfirmationKey =
+  | "contributions"
+  | "distributions"
+  | "loansFromOwner"
+  | "loansToOwner"
+  | "ownerPaidCosts";
+
+type ZeroConfirmations = Partial<Record<ZeroConfirmationKey, boolean>>;
+
+type OwnerPaidCostCategory =
+  | "state_filing_fee"
+  | "registered_agent"
+  | "formation_or_ein_service"
+  | "software_subscriptions"
+  | "initial_bank_funding"
+  | "other";
+
+type OwnerPaidCostDraft = {
+  category: OwnerPaidCostCategory;
+  date: string;
+  amountUsd: string;
+  note: string;
+};
+
+const CATEGORY_LABELS: Record<WizardCategory, string> = {
   contribution: "Contribution (Part V)",
   distribution: "Distribution (Part V)",
+  loan_from_owner: "Loan from you to LLC (Part V)",
+  loan_to_owner: "Loan from LLC to you (Part V)",
   revenue: "Revenue",
   vendor_expense: "Vendor expense",
   card_reimbursement: "Card reimbursement",
@@ -20,12 +49,46 @@ const CATEGORY_LABELS: Record<Category, string> = {
   unknown: "Unknown",
 };
 
-const REPORTABLE: Category[] = ["contribution", "distribution"];
+const REPORTABLE: WizardCategory[] = ["contribution", "distribution", "loan_from_owner", "loan_to_owner"];
+
+const OWNER_PAID_COST_LABELS: Record<OwnerPaidCostCategory, string> = {
+  state_filing_fee: "State filing fee",
+  registered_agent: "Registered agent",
+  formation_or_ein_service: "Formation or EIN service",
+  software_subscriptions: "Software or subscriptions",
+  initial_bank_funding: "Initial bank funding",
+  other: "Other",
+};
+
+const ZERO_CONFIRMATION_LABELS: Array<{
+  key: ZeroConfirmationKey;
+  label: string;
+  helper?: string;
+}> = [
+  { key: "contributions", label: "Money you put in" },
+  {
+    key: "distributions",
+    label: "Money you took out",
+    helper:
+      "Money you moved to yourself, personal spending from the LLC account, and card or Zelle payments to yourself all count.",
+  },
+  { key: "loansFromOwner", label: "Loans from you to the LLC" },
+  { key: "loansToOwner", label: "Loans from the LLC to you" },
+  { key: "ownerPaidCosts", label: "Costs you paid personally" },
+];
+
+const ALL_ZERO_CONFIRMATIONS: ZeroConfirmations = {
+  contributions: true,
+  distributions: true,
+  loansFromOwner: true,
+  loansToOwner: true,
+  ownerPaidCosts: true,
+};
 
 type YearState = {
   taxYear: number;
   totalAssetsYearEnd: number;
-  transactions: CategorizedTransaction[];
+  transactions: WizardTransaction[];
   // Manual override path: user enters totals directly without uploading.
   manualContributions?: number;
   manualDistributions?: number;
@@ -42,6 +105,8 @@ type YearState = {
   // services, rent, etc.) — flows into the Part V supporting statement.
   otherTransactionsNote?: string;
   nonCashTransfers: NonCashTransferDraft[];
+  ownerPaidCosts: OwnerPaidCostDraft[];
+  zeroConfirmations: ZeroConfirmations;
 };
 
 type NonCashTransferDraft = {
@@ -69,6 +134,59 @@ function normalizeNonCashTransfers(value: unknown): NonCashTransferDraft[] {
       alsoInPartV: item.alsoInPartV === true,
     };
   });
+}
+
+function normalizeOwnerPaidCosts(value: unknown): OwnerPaidCostDraft[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((row) => {
+    const item = row as Record<string, unknown>;
+    const category = Object.prototype.hasOwnProperty.call(OWNER_PAID_COST_LABELS, item.category as string)
+      ? (item.category as OwnerPaidCostCategory)
+      : "state_filing_fee";
+    const cents = typeof item.amountCents === "number" ? item.amountCents : 0;
+    return {
+      category,
+      date: typeof item.date === "string" ? item.date : "",
+      amountUsd: cents > 0 ? (cents / 100).toFixed(2) : "",
+      note: typeof item.note === "string" ? item.note : "",
+    };
+  });
+}
+
+function normalizeReportableTransactions(value: unknown): WizardTransaction[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((row): WizardTransaction[] => {
+    if (!row || typeof row !== "object") return [];
+    const item = row as Record<string, unknown>;
+    if (
+      typeof item.date !== "string" ||
+      typeof item.description !== "string" ||
+      typeof item.amountCents !== "number" ||
+      !Number.isFinite(item.amountCents) ||
+      typeof item.category !== "string"
+    ) {
+      return [];
+    }
+    if (!REPORTABLE.includes(item.category as WizardCategory)) return [];
+    return [{
+      date: item.date,
+      description: item.description,
+      counterparty: typeof item.counterparty === "string" ? item.counterparty : "",
+      amountCents: item.amountCents,
+      category: item.category as WizardCategory,
+      rule: "Saved transaction",
+    }];
+  });
+}
+
+function normalizeZeroConfirmations(value: unknown): ZeroConfirmations {
+  if (!value || typeof value !== "object") return {};
+  const raw = value as Record<string, unknown>;
+  const out: ZeroConfirmations = {};
+  for (const key of ZERO_CONFIRMATION_LABELS.map((item) => item.key)) {
+    if (raw[key] === true) out[key] = true;
+  }
+  return out;
 }
 
 export function TransactionsReview({
@@ -104,7 +222,10 @@ export function TransactionsReview({
     distributions: number;
     otherTransactionsNote?: string;
     noReportableTransactions?: boolean;
+    reportableTransactions?: unknown;
     nonCashTransfers?: unknown;
+    ownerPaidCosts?: unknown;
+    zeroConfirmations?: unknown;
   }[];
   initialHasUsSourceIncome: boolean | null;
   initialUsTaxWithheld: boolean | null;
@@ -113,9 +234,17 @@ export function TransactionsReview({
     totalAssetsYearEnd: number;
     contributions: number;
     distributions: number;
-    reportableTransactions: CategorizedTransaction[];
+    reportableTransactions: WizardTransaction[];
     otherTransactionsNote: string;
     noReportableTransactions: boolean;
+    replaceReportableTransactions: boolean;
+    ownerPaidCosts: {
+      category: OwnerPaidCostCategory;
+      date: string;
+      amountCents: number;
+      note?: string;
+    }[];
+    zeroConfirmations: ZeroConfirmations;
     nonCashTransfers: {
       date: string;
       direction: "in" | "out";
@@ -132,7 +261,7 @@ export function TransactionsReview({
     initialYears.map((y) => ({
       taxYear: y.taxYear,
       totalAssetsYearEnd: y.totalAssetsYearEnd,
-      transactions: [],
+      transactions: normalizeReportableTransactions(y.reportableTransactions),
       manualContributions: y.contributions || undefined,
       manualDistributions: y.distributions || undefined,
       uploadWarnings: [],
@@ -141,6 +270,10 @@ export function TransactionsReview({
       totalAssetsAutoFilled: false,
       otherTransactionsNote: y.otherTransactionsNote ?? "",
       nonCashTransfers: normalizeNonCashTransfers(y.nonCashTransfers),
+      ownerPaidCosts: normalizeOwnerPaidCosts(y.ownerPaidCosts),
+      zeroConfirmations: y.noReportableTransactions
+        ? { ...ALL_ZERO_CONFIRMATIONS }
+        : normalizeZeroConfirmations(y.zeroConfirmations),
     })),
   );
   const [hasUsSourceIncome, setHasUsSourceIncome] = useState<boolean | null>(
@@ -159,7 +292,7 @@ export function TransactionsReview({
 
   // Draft state for the inline "add transaction manually" form, keyed by year.
   // null means the form is hidden for that year.
-  type Draft = { description: string; amountUsd: string; category: Category };
+  type Draft = { description: string; amountUsd: string; category: WizardCategory };
   const [drafts, setDrafts] = useState<Record<number, Draft | null>>({});
   // Bulk-paste textarea state, keyed by year. null = hidden.
   const [bulkPaste, setBulkPaste] = useState<Record<number, string | null>>({});
@@ -205,17 +338,17 @@ export function TransactionsReview({
     taxYear: number,
     description: string,
     amount: number,
-    category: Category,
+    category: WizardCategory,
   ) {
     const cents = Math.round(Math.abs(amount) * 100);
-    // Contribution = money INTO the LLC (positive); distribution = money OUT (negative).
-    const signedCents = category === "distribution" ? -cents : cents;
+    const signedCents =
+      category === "distribution" || category === "loan_to_owner" ? -cents : cents;
     // Default the transaction date to the LAST day of the tax year being
     // filed (not today). Manual entries without a specific date should fall
     // within the period the form covers — otherwise the AI compliance check
     // (correctly) flags a tax-year-vs-date mismatch.
     const defaultDate = `${taxYear}-12-31`;
-    const newTx: CategorizedTransaction = {
+    const newTx: WizardTransaction = {
       date: defaultDate,
       description,
       counterparty: "",
@@ -259,9 +392,13 @@ export function TransactionsReview({
       if (!desc || !Number.isFinite(num) || num === 0) continue;
       const signedNum = isParenNeg ? -Math.abs(num) : num;
       // Determine category: explicit 3rd column wins; else infer from sign.
-      let category: Category = "contribution";
+      let category: WizardCategory = "contribution";
       const typeHint = (parts[2] ?? "").toLowerCase();
-      if (typeHint.includes("dist") || typeHint.includes("out")) {
+      if (typeHint.includes("loan") && (typeHint.includes("to owner") || typeHint.includes("from llc"))) {
+        category = "loan_to_owner";
+      } else if (typeHint.includes("loan")) {
+        category = "loan_from_owner";
+      } else if (typeHint.includes("dist") || typeHint.includes("out")) {
         category = "distribution";
       } else if (typeHint.includes("contrib") || typeHint.includes("in")) {
         category = "contribution";
@@ -357,7 +494,7 @@ export function TransactionsReview({
     }
   }
 
-  function setCategory(taxYear: number, idx: number, category: Category) {
+  function setCategory(taxYear: number, idx: number, category: WizardCategory) {
     setYears((all) =>
       all.map((y) =>
         y.taxYear === taxYear
@@ -444,7 +581,7 @@ export function TransactionsReview({
     );
   }
 
-  function bulkReclassify(taxYear: number, from: Category, to: Category) {
+  function bulkReclassify(taxYear: number, from: WizardCategory, to: WizardCategory) {
     setYears((all) =>
       all.map((y) =>
         y.taxYear === taxYear
@@ -491,6 +628,10 @@ export function TransactionsReview({
     );
   }
 
+  function allZeroConfirmations(): ZeroConfirmations {
+    return { ...ALL_ZERO_CONFIRMATIONS };
+  }
+
   function toggleNoneForAllYears(checked: boolean) {
     setNoneForAllYears(checked);
     if (checked) {
@@ -502,9 +643,99 @@ export function TransactionsReview({
           manualContributions: 0,
           manualDistributions: 0,
           otherTransactionsNote: "",
+          ownerPaidCosts: [],
+          zeroConfirmations: allZeroConfirmations(),
         })),
       );
     }
+  }
+
+  function setZeroConfirmation(taxYear: number, key: ZeroConfirmationKey, checked: boolean) {
+    setYears((all) =>
+      all.map((y) => {
+        if (y.taxYear !== taxYear) return y;
+        const next = { ...y.zeroConfirmations };
+        if (checked) next[key] = true;
+        else delete next[key];
+        return { ...y, zeroConfirmations: next };
+      }),
+    );
+  }
+
+  function setOwnerPaidCosts(taxYear: number, rows: OwnerPaidCostDraft[]) {
+    setYears((all) =>
+      all.map((y) => (y.taxYear === taxYear ? { ...y, ownerPaidCosts: rows } : y)),
+    );
+  }
+
+  function addOwnerPaidCost(taxYear: number) {
+    const year = years.find((y) => y.taxYear === taxYear);
+    const row: OwnerPaidCostDraft = {
+      category: "state_filing_fee",
+      date: `${taxYear}-12-31`,
+      amountUsd: "",
+      note: "",
+    };
+    setOwnerPaidCosts(taxYear, [...(year?.ownerPaidCosts ?? []), row]);
+  }
+
+  function updateOwnerPaidCost(
+    taxYear: number,
+    index: number,
+    patch: Partial<OwnerPaidCostDraft>,
+  ) {
+    const year = years.find((y) => y.taxYear === taxYear);
+    if (!year) return;
+    setOwnerPaidCosts(
+      taxYear,
+      year.ownerPaidCosts.map((row, i) => (i === index ? { ...row, ...patch } : row)),
+    );
+  }
+
+  function removeOwnerPaidCost(taxYear: number, index: number) {
+    const year = years.find((y) => y.taxYear === taxYear);
+    if (!year) return;
+    setOwnerPaidCosts(taxYear, year.ownerPaidCosts.filter((_, i) => i !== index));
+  }
+
+  function ownerPaidCostIsValid(row: OwnerPaidCostDraft, taxYear: number): boolean {
+    const amount = Number(row.amountUsd);
+    return (
+      row.date >= `${taxYear}-01-01` &&
+      row.date <= `${taxYear}-12-31` &&
+      row.amountUsd.trim().length > 0 &&
+      Number.isFinite(amount) &&
+      amount >= 0 &&
+      (row.category !== "other" || row.note.trim().length > 0)
+    );
+  }
+
+  function hasAnsweredWithAmount(y: YearState, key: ZeroConfirmationKey): boolean {
+    const t = totalsFor(y);
+    if (key === "contributions") {
+      return t.contributions > 0 || y.transactions.some((tx) => tx.category === "contribution");
+    }
+    if (key === "distributions") {
+      return t.distributions > 0 || y.transactions.some((tx) => tx.category === "distribution");
+    }
+    if (key === "loansFromOwner") {
+      return y.transactions.some((tx) => tx.category === "loan_from_owner");
+    }
+    if (key === "loansToOwner") {
+      return y.transactions.some((tx) => tx.category === "loan_to_owner");
+    }
+    return y.ownerPaidCosts.length > 0;
+  }
+
+  function unansweredCategoriesFor(y: YearState): string[] {
+    return ZERO_CONFIRMATION_LABELS
+      .filter(({ key }) => !hasAnsweredWithAmount(y, key) && y.zeroConfirmations[key] !== true)
+      .map(({ label }) => label);
+  }
+
+  function ownerPaidCostErrorForYear(y: YearState): string | null {
+    if (y.ownerPaidCosts.every((row) => ownerPaidCostIsValid(row, y.taxYear))) return null;
+    return "Check the owner-paid cost dates, amounts, and other notes.";
   }
 
   function setFormationContributionConfirmation(taxYear: number, checked: boolean) {
@@ -527,6 +758,15 @@ export function TransactionsReview({
         y.taxYear === formationYear &&
         !confirmedNoFormationContributions.has(y.taxYear),
     );
+  const unansweredByYear = years.map((y) => ({
+    taxYear: y.taxYear,
+    labels: unansweredCategoriesFor(y),
+  })).filter((row) => row.labels.length > 0);
+  const ownerPaidCostErrors = years
+    .map((y) => ({ taxYear: y.taxYear, message: ownerPaidCostErrorForYear(y) }))
+    .filter((row): row is { taxYear: number; message: string } => row.message !== null);
+  const transactionsIncomplete =
+    unansweredByYear.length > 0 || ownerPaidCostErrors.length > 0;
 
   async function handleSubmit() {
     const payload = years.map((y) => {
@@ -539,6 +779,22 @@ export function TransactionsReview({
         reportableTransactions: y.transactions.filter((tx) => REPORTABLE.includes(tx.category)),
         otherTransactionsNote: (y.otherTransactionsNote ?? "").trim(),
         noReportableTransactions: noneForAllYears,
+        replaceReportableTransactions: true,
+        ownerPaidCosts: y.ownerPaidCosts.map((row) => {
+          const note = row.note.trim();
+          return {
+            category: row.category,
+            date: row.date,
+            amountCents: Math.max(0, Math.round((Number(row.amountUsd) || 0) * 100)),
+            ...(note ? { note } : {}),
+          };
+        }),
+        zeroConfirmations: ZERO_CONFIRMATION_LABELS.reduce((acc, { key }) => {
+          if (!hasAnsweredWithAmount(y, key) && y.zeroConfirmations[key] === true) {
+            acc[key] = true;
+          }
+          return acc;
+        }, {} as ZeroConfirmations),
         nonCashTransfers: y.nonCashTransfers.map((row) => ({
           date: row.date,
           direction: row.direction,
@@ -929,13 +1185,15 @@ export function TransactionsReview({
                           value={drafts[y.taxYear]!.category}
                           onChange={(e) =>
                             updateDraft(y.taxYear, {
-                              category: e.target.value as Category,
+                              category: e.target.value as WizardCategory,
                             })
                           }
                           className="w-full text-sm border border-slate-300 rounded-md px-2 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
                         >
                           <option value="contribution">Contribution (you → LLC)</option>
                           <option value="distribution">Distribution (LLC → you)</option>
+                          <option value="loan_from_owner">Loan from you to the LLC</option>
+                          <option value="loan_to_owner">Loan from the LLC to you</option>
                         </select>
                       </div>
                     </div>
@@ -1087,11 +1345,11 @@ export function TransactionsReview({
                                 <select
                                   value={tx.category}
                                   onChange={(e) =>
-                                    setCategory(y.taxYear, i, e.target.value as Category)
+	                                  setCategory(y.taxYear, i, e.target.value as WizardCategory)
                                   }
                                   className="text-xs border border-slate-300 rounded px-2 py-1 bg-white"
                                 >
-                                  {(Object.keys(CATEGORY_LABELS) as Category[]).map((k) => (
+	                                  {(Object.keys(CATEGORY_LABELS) as WizardCategory[]).map((k) => (
                                     <option key={k} value={k}>
                                       {CATEGORY_LABELS[k]}
                                     </option>
@@ -1246,6 +1504,151 @@ export function TransactionsReview({
                       : "Money the LLC paid to you personally."
                   }
                 />
+              </div>
+
+              <div className="mt-5 pt-5 border-t border-slate-100">
+                <fieldset>
+                  <legend className="block text-sm font-medium text-slate-700">
+                    Did you pay any of the LLC&apos;s costs yourself, from your own money?
+                  </legend>
+                  <p className="mt-1 text-xs text-slate-500">
+                    Costs you paid personally for the LLC count as money you put into it.
+                  </p>
+                  <div className="mt-4 space-y-4">
+                    {y.ownerPaidCosts.map((row, index) => (
+                      <div
+                        key={index}
+                        className="rounded-md border border-slate-200 bg-slate-50 p-3"
+                      >
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                          <label className="block text-xs font-medium text-slate-600">
+                            Category
+                            <select
+                              value={row.category}
+                              onChange={(e) =>
+                                updateOwnerPaidCost(y.taxYear, index, {
+                                  category: e.target.value as OwnerPaidCostCategory,
+                                })
+                              }
+                              className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+                            >
+                              {(Object.keys(OWNER_PAID_COST_LABELS) as OwnerPaidCostCategory[]).map((key) => (
+                                <option key={key} value={key}>
+                                  {OWNER_PAID_COST_LABELS[key]}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+                          <label className="block text-xs font-medium text-slate-600">
+                            Date
+                            <Input
+                              type="date"
+                              min={`${y.taxYear}-01-01`}
+                              max={`${y.taxYear}-12-31`}
+                              value={row.date}
+                              onChange={(e) =>
+                                updateOwnerPaidCost(y.taxYear, index, { date: e.target.value })
+                              }
+                              className="mt-1"
+                            />
+                          </label>
+                          <label className="block text-xs font-medium text-slate-600">
+                            Amount (USD)
+                            <Input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={row.amountUsd}
+                              onChange={(e) =>
+                                updateOwnerPaidCost(y.taxYear, index, {
+                                  amountUsd: e.target.value,
+                                })
+                              }
+                              className="mt-1"
+                            />
+                          </label>
+                          {row.category === "other" && (
+                            <label className="block text-xs font-medium text-slate-600 sm:col-span-3">
+                              Note
+                              <Input
+                                value={row.note}
+                                onChange={(e) =>
+                                  updateOwnerPaidCost(y.taxYear, index, { note: e.target.value })
+                                }
+                                className="mt-1"
+                              />
+                            </label>
+                          )}
+                        </div>
+                        <div className="mt-3 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => removeOwnerPaidCost(y.taxYear, index)}
+                            className="text-sm text-red-600 hover:underline"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addOwnerPaidCost(y.taxYear)}
+                    >
+                      Add a cost paid personally
+                    </Button>
+                  </div>
+                </fieldset>
+              </div>
+
+              <div className="mt-5 pt-5 border-t border-slate-100">
+                <fieldset>
+                  <legend className="block text-sm font-medium text-slate-700">
+                    Confirm any categories with nothing to report
+                  </legend>
+                  <div className="mt-3 space-y-2">
+                    {ZERO_CONFIRMATION_LABELS.map(({ key, label, helper }) => {
+                      const answeredWithAmount = hasAnsweredWithAmount(y, key);
+                      return (
+                        <label
+                          key={key}
+                          className={`flex items-start gap-2 rounded-md border p-3 text-sm ${
+                            answeredWithAmount ? "border-emerald-200 bg-emerald-50" : "border-slate-300 bg-white"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={answeredWithAmount || y.zeroConfirmations[key] === true}
+                            disabled={answeredWithAmount}
+                            onChange={(e) => setZeroConfirmation(y.taxYear, key, e.target.checked)}
+                            className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
+                          />
+                          <span>
+                            <span className="font-medium text-slate-900">
+                              {answeredWithAmount ? "Entered: " : "None this year: "}
+                              {label}
+                            </span>
+                            {helper && (
+                              <span className="mt-1 block text-xs text-slate-500">{helper}</span>
+                            )}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+                {unansweredCategoriesFor(y).length > 0 && (
+                  <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+                    Still unanswered for {y.taxYear}: {unansweredCategoriesFor(y).join(", ")}.
+                  </div>
+                )}
+                {ownerPaidCostErrorForYear(y) && (
+                  <div className="mt-3 rounded-md border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+                    {ownerPaidCostErrorForYear(y)}
+                  </div>
+                )}
               </div>
 
               <div className="mt-5 pt-5 border-t border-slate-100">
@@ -1418,13 +1821,27 @@ export function TransactionsReview({
         <Button type="button" variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button
-          type="button"
-          onClick={handleSubmit}
-          disabled={saving || needsFormationContributionConfirmation}
-        >
-          {saving ? "Saving…" : "Continue"}
-        </Button>
+        <div className="flex flex-col items-end gap-2">
+          {transactionsIncomplete && (
+            <div className="max-w-sm text-right text-xs text-amber-700">
+              {unansweredByYear.map((row) => (
+                <p key={row.taxYear}>
+                  {row.taxYear}: answer {row.labels.join(", ")}.
+                </p>
+              ))}
+              {ownerPaidCostErrors.map((row) => (
+                <p key={row.taxYear}>{row.taxYear}: {row.message}</p>
+              ))}
+            </div>
+          )}
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            disabled={saving || needsFormationContributionConfirmation || transactionsIncomplete}
+          >
+            {saving ? "Saving…" : "Continue"}
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -1590,22 +2007,24 @@ function CategorySummary({
   transactions,
   onBulkReclassify,
 }: {
-  transactions: CategorizedTransaction[];
-  onBulkReclassify: (from: Category, to: Category) => void;
+  transactions: WizardTransaction[];
+  onBulkReclassify: (from: WizardCategory, to: WizardCategory) => void;
 }) {
   const counts = transactions.reduce(
     (acc, t) => {
       acc[t.category] = (acc[t.category] ?? 0) + 1;
       return acc;
     },
-    {} as Record<Category, number>,
+    {} as Record<WizardCategory, number>,
   );
 
   const unknownCount = counts.unknown ?? 0;
 
-  const pillTone: Record<Category, string> = {
+  const pillTone: Record<WizardCategory, string> = {
     contribution: "bg-accent-50 text-accent border-accent/20",
     distribution: "bg-accent-50 text-accent border-accent/20",
+    loan_from_owner: "bg-accent-50 text-accent border-accent/20",
+    loan_to_owner: "bg-accent-50 text-accent border-accent/20",
     revenue: "bg-emerald-50 text-emerald-700 border-emerald-200",
     vendor_expense: "bg-slate-100 text-slate-700 border-slate-200",
     card_reimbursement: "bg-slate-100 text-slate-700 border-slate-200",
@@ -1614,9 +2033,11 @@ function CategorySummary({
   };
 
   // Order: reportable first, then non-reportable, then unknown last.
-  const order: Category[] = [
+  const order: WizardCategory[] = [
     "contribution",
     "distribution",
+    "loan_from_owner",
+    "loan_to_owner",
     "revenue",
     "vendor_expense",
     "card_reimbursement",

@@ -59,6 +59,12 @@ const goodRecord: PackageRecord = {
         { date: "2026-02-20", description: "Distribution", amountCents: -17_850, category: "distribution" },
       ],
       nonCashTransfers: [],
+      ownerPaidCosts: [],
+      zeroConfirmations: {
+        loansFromOwner: true,
+        loansToOwner: true,
+        ownerPaidCosts: true,
+      },
       partVICentsAddedToLine1f: 0,
       line1jChecked: true,
       priorForm5472Filed: "no",
@@ -180,6 +186,16 @@ describe("runPreflight", () => {
     const result = await runPreflight(record, await goodPdfBytes(record));
     expect(result.failures.some((f) => f.id === "A16")).toBe(false);
     expect(result.warnings.some((w) => w.id === "W16")).toBe(true);
+  });
+
+  it("W02 warns when transaction categories were never confirmed", async () => {
+    const record = clone(goodRecord);
+    record.taxYears[0].zeroConfirmations = {};
+
+    const result = await runPreflight(record, await goodPdfBytes(record));
+
+    expect(result.failures.some((f) => f.id === "W02")).toBe(false);
+    expect(result.warnings.some((w) => w.id === "W02")).toBe(true);
   });
 
   it("A15 emits W15 when the formation-year prior filing answer is yes or not_sure", async () => {

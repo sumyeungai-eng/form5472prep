@@ -12,7 +12,9 @@ import {
   currentTaxYear,
   makeYearDataSchema,
   makeYearScopeSchema,
+  makeOwnerPaidCostsSchema,
   reportableTransactionsSchema,
+  zeroConfirmationsSchema,
   nonCashTransfersSchema,
   looksLikeUsItin,
   ITIN_IN_FTIN_MESSAGE,
@@ -520,7 +522,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
     // Validate + dedupe: reject empty, duplicate, or out-of-range years (which
     // would otherwise charge a fee but produce no/duplicate/wrong-revision forms).
-    const parsedYears = makeYearScopeSchema(effectiveFinal).safeParse({
+    const parsedYears = makeYearScopeSchema(effectiveFinal, effectiveFormedAt).safeParse({
       taxYears: Array.from(new Set(body.taxYears)),
     });
     if (!parsedYears.success) {
@@ -608,6 +610,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     otherTransactionsNote: unknown;
     noReportableTransactions: boolean;
     cleanTransactions: z.infer<typeof reportableTransactionsSchema> | undefined;
+    replaceReportableTransactions: boolean;
+    cleanOwnerPaidCosts: z.infer<ReturnType<typeof makeOwnerPaidCostsSchema>> | undefined;
+    cleanZeroConfirmations: z.infer<typeof zeroConfirmationsSchema> | undefined;
     nonCashTransfers: z.infer<typeof nonCashTransfersSchema>;
     rcsWhyMissed: string | null;
     rcsWhenLearned: string | null;
@@ -619,10 +624,11 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }> = [];
   if (Array.isArray(body.yearData)) {
     for (const y of body.yearData) {
+      const yHasKey = (k: string) => Object.prototype.hasOwnProperty.call(y ?? {}, k);
       // Validate the reported financial figures (these become the actual
       // Part IV/V dollar amounts on the IRS forms). Reject bad taxYear or
       // negative/non-numeric amounts instead of coercing garbage to 0.
-      const yv = makeYearDataSchema(effectiveFinal).safeParse({
+      const yv = makeYearDataSchema(effectiveFinal, effectiveFormedAt).safeParse({
         taxYear: y?.taxYear,
         totalAssetsYearEnd: y?.totalAssetsYearEnd ?? 0,
         contributions: y?.contributions ?? 0,
@@ -658,8 +664,38 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         }
         cleanTransactions = tv.data;
       }
+      const replaceReportableTransactions = yHasKey("replaceReportableTransactions")
+        ? y.replaceReportableTransactions === true
+        : false;
+      let cleanOwnerPaidCosts: z.infer<ReturnType<typeof makeOwnerPaidCostsSchema>> | undefined;
+      if (yHasKey("ownerPaidCosts")) {
+        const cv = makeOwnerPaidCostsSchema(yv.data.taxYear).safeParse(y.ownerPaidCosts ?? []);
+        if (!cv.success) {
+          return NextResponse.json(
+            {
+              error: "Invalid owner-paid costs",
+              issues: cv.error.issues.map((i) => ({ field: i.path.join("."), message: i.message })),
+            },
+            { status: 400 },
+          );
+        }
+        cleanOwnerPaidCosts = cv.data;
+      }
+      let cleanZeroConfirmations: z.infer<typeof zeroConfirmationsSchema> | undefined;
+      if (yHasKey("zeroConfirmations")) {
+        const zv = zeroConfirmationsSchema.safeParse(y.zeroConfirmations ?? {});
+        if (!zv.success) {
+          return NextResponse.json(
+            {
+              error: "Invalid zero confirmations",
+              issues: zv.error.issues.map((i) => ({ field: i.path.join("."), message: i.message })),
+            },
+            { status: 400 },
+          );
+        }
+        cleanZeroConfirmations = zv.data;
+      }
       const noneReported = yv.data.noReportableTransactions === true;
-      const yHasKey = (k: string) => Object.prototype.hasOwnProperty.call(y ?? {}, k);
       resolvedYearData.push({
         taxYear: yv.data.taxYear,
         totalAssetsYearEnd: yv.data.totalAssetsYearEnd,
@@ -668,6 +704,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         otherTransactionsNote: y?.otherTransactionsNote,
         noReportableTransactions: noneReported,
         cleanTransactions,
+        replaceReportableTransactions,
+        cleanOwnerPaidCosts,
+        cleanZeroConfirmations,
         nonCashTransfers: yv.data.nonCashTransfers ?? [],
         rcsWhyMissed: yv.data.rcsWhyMissed ?? null,
         rcsWhenLearned: yv.data.rcsWhenLearned ?? null,
@@ -716,7 +755,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             // an empty, non-rehydrated client state.
             // undefined when the incoming list is empty/absent → leaves stored
             // detail untouched (the anti-data-loss guard above).
-            reportableTransactions: y.noReportableTransactions ? [] : y.cleanTransactions ?? undefined,
+            reportableTransactions: y.noReportableTransactions
+              ? []
+              : y.replaceReportableTransactions
+                ? y.cleanTransactions ?? []
+                : y.cleanTransactions ?? undefined,
+            ...(y.cleanOwnerPaidCosts !== undefined ? { ownerPaidCosts: y.noReportableTransactions ? [] : y.cleanOwnerPaidCosts } : {}),
+            ...(y.cleanZeroConfirmations !== undefined ? { zeroConfirmations: y.cleanZeroConfirmations } : {}),
             ...(y.hasNonCashTransfers ? { nonCashTransfers: y.nonCashTransfers } : {}),
             ...(y.hasRcsWhyMissed ? { rcsWhyMissed: y.rcsWhyMissed } : {}),
             ...(y.hasRcsWhenLearned ? { rcsWhenLearned: y.rcsWhenLearned } : {}),
@@ -735,6 +780,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
               : typeof y.otherTransactionsNote === "string" ? y.otherTransactionsNote : null,
             noReportableTransactions: y.noReportableTransactions,
             reportableTransactions: y.noReportableTransactions ? [] : y.cleanTransactions ?? [],
+            ownerPaidCosts: y.noReportableTransactions ? [] : y.cleanOwnerPaidCosts ?? [],
+            zeroConfirmations: y.cleanZeroConfirmations ?? {},
             nonCashTransfers: y.nonCashTransfers,
             rcsWhyMissed: y.rcsWhyMissed,
             rcsWhenLearned: y.rcsWhenLearned,

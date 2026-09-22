@@ -61,7 +61,7 @@ const ALL_STEPS: SidebarStepDef[] = [
     key: "rcs",
     number: 5,
     title: "Reasonable cause",
-    formSection: "DIIRSP attachment",
+    formSection: "Reasonable-cause statement",
     subtitle: "Late-filing reasonable cause statement.",
   },
   {

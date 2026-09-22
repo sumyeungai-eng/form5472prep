@@ -42,6 +42,47 @@ const PAID_STATUSES = [
   "FAILED",
 ] as const satisfies readonly FilingStatus[];
 
+export function normalizeOwnerNameForReferenceId(value: string | null | undefined): string {
+  return (value ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+export function ownerNamesMatchForReferenceId(
+  a: string | null | undefined,
+  b: string | null | undefined,
+): boolean {
+  const left = normalizeOwnerNameForReferenceId(a);
+  const right = normalizeOwnerNameForReferenceId(b);
+  return left.length > 0 && left === right;
+}
+
+export function selectOwnerReferenceIdForOwnerName(
+  rows: Array<{ ownerName: string | null; ownerReferenceId: string | null }>,
+  ownerName: string | null | undefined,
+): string | null {
+  const match = rows.find((row) => ownerNamesMatchForReferenceId(row.ownerName, ownerName));
+  return match?.ownerReferenceId?.trim() || null;
+}
+
+export async function findLatestPaidOwnerReferenceId(
+  userId: string,
+  ownerName: string | null | undefined,
+): Promise<string | null> {
+  if (!normalizeOwnerNameForReferenceId(ownerName)) return null;
+  const rows = await prisma.filing.findMany({
+    where: {
+      userId,
+      status: { in: [...PAID_STATUSES] },
+      ownerName: { not: null },
+    },
+    orderBy: { updatedAt: "desc" },
+    select: {
+      ownerName: true,
+      ownerReferenceId: true,
+    },
+  });
+  return selectOwnerReferenceIdForOwnerName(rows, ownerName);
+}
+
 // "Untouched" = the customer hasn't *advanced* in the wizard yet. Selecting
 // tax years is the first wizard-only action (entity/owner can be auto-prefilled
 // from a previous paid filing, so they're not reliable markers). If the draft

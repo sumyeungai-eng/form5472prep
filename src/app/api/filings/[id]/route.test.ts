@@ -145,6 +145,26 @@ describe("filing PATCH Form 7004 extension fields", () => {
     });
   });
 
+  it("rejects degenerate EINs in incremental entity saves", async () => {
+    const res = await PATCH(
+      new Request("https://example.test/api/filings/filing_1", {
+        method: "PATCH",
+        body: JSON.stringify({ llcEin: "00-0000000" }),
+      }),
+      { params: { id: "filing_1" } },
+    );
+
+    expect(res.status).toBe(400);
+    await expect(res.json()).resolves.toMatchObject({
+      issues: [
+        {
+          field: "llcEin",
+          message: "Enter the EIN exactly as it appears on your IRS letter.",
+        },
+      ],
+    });
+  });
+
   it("stores an empty FTIN string when the owner has no FTIN", async () => {
     const res = await PATCH(
       new Request("https://example.test/api/filings/filing_1", {
@@ -205,6 +225,90 @@ describe("filing PATCH Form 7004 extension fields", () => {
         }),
       }),
     );
+  });
+
+  it("persists owner-paid costs, zero confirmations, and explicit empty transaction replacements", async () => {
+    const res = await PATCH(
+      new Request("https://example.test/api/filings/filing_1", {
+        method: "PATCH",
+        body: JSON.stringify({
+          yearData: [
+            {
+              taxYear: 2025,
+              totalAssetsYearEnd: 0,
+              contributions: 0,
+              distributions: 0,
+              reportableTransactions: [],
+              replaceReportableTransactions: true,
+              ownerPaidCosts: [
+                {
+                  category: "state_filing_fee",
+                  date: "2025-01-15",
+                  amountCents: 150_00,
+                },
+              ],
+              zeroConfirmations: {
+                distributions: true,
+                loansFromOwner: true,
+                loansToOwner: true,
+              },
+            },
+          ],
+        }),
+      }),
+      { params: { id: "filing_1" } },
+    );
+
+    expect(res.status).toBe(200);
+    expect(db.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        update: expect.objectContaining({
+          reportableTransactions: [],
+          ownerPaidCosts: [
+            expect.objectContaining({
+              category: "state_filing_fee",
+              amountCents: 150_00,
+            }),
+          ],
+          zeroConfirmations: expect.objectContaining({
+            distributions: true,
+            loansFromOwner: true,
+            loansToOwner: true,
+          }),
+        }),
+      }),
+    );
+  });
+
+  it("rejects owner-paid costs outside the saved tax year", async () => {
+    const res = await PATCH(
+      new Request("https://example.test/api/filings/filing_1", {
+        method: "PATCH",
+        body: JSON.stringify({
+          yearData: [
+            {
+              taxYear: 2025,
+              totalAssetsYearEnd: 0,
+              contributions: 0,
+              distributions: 0,
+              ownerPaidCosts: [
+                {
+                  category: "registered_agent",
+                  date: "2024-12-31",
+                  amountCents: 150_00,
+                },
+              ],
+            },
+          ],
+        }),
+      }),
+      { params: { id: "filing_1" } },
+    );
+
+    expect(res.status).toBe(400);
+    await expect(res.json()).resolves.toMatchObject({
+      error: "Invalid owner-paid costs",
+    });
   });
 
   it("does not clear saved reasonable-cause answers or non-cash transfers when a later year save omits those keys", async () => {

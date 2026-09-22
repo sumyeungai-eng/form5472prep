@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { Filing } from "@prisma/client";
-import { isUntouchedDraft } from "./findOrCreateDraft";
+import {
+  isUntouchedDraft,
+  ownerNamesMatchForReferenceId,
+  selectOwnerReferenceIdForOwnerName,
+} from "./findOrCreateDraft";
 
 function draft(overrides: Partial<Filing> = {}): Filing {
   return {
@@ -44,5 +48,23 @@ describe("isUntouchedDraft", () => {
   it("never reuses a draft with tax years, or one that is not a draft", () => {
     expect(isUntouchedDraft(draft({ taxYears: [2025] }))).toBe(false);
     expect(isUntouchedDraft(draft({ status: "PAID" }))).toBe(false);
+  });
+});
+
+describe("owner reference ID owner-name matching", () => {
+  it("matches owner names case-insensitively after trimming and normalizing spaces", () => {
+    expect(ownerNamesMatchForReferenceId("  Jane   Example ", "jane example")).toBe(true);
+    expect(ownerNamesMatchForReferenceId("Jane Example", "Janet Example")).toBe(false);
+  });
+
+  it("reuses the most recent paid-family reference ID only for the same owner name", () => {
+    const rows = [
+      { ownerName: "Different Owner", ownerReferenceId: "DIFFERENT123" },
+      { ownerName: " Jane   Example ", ownerReferenceId: "SAME123" },
+      { ownerName: "Jane Example", ownerReferenceId: "OLDER456" },
+    ];
+
+    expect(selectOwnerReferenceIdForOwnerName(rows, "jane example")).toBe("SAME123");
+    expect(selectOwnerReferenceIdForOwnerName(rows, "Another Owner")).toBeNull();
   });
 });
