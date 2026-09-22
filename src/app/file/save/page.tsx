@@ -86,7 +86,7 @@ function SaveForm() {
           <div className="mt-4 pt-4 border-t border-accent/10 space-y-1.5">
             {[
               "Filled Form 5472 + pro forma 1120",
-              "Reasonable cause statement (if DIIRSP)",
+              "Reasonable cause statement (included for late years)",
               "IRS fax delivery to Ogden PIN Unit (included)",
               "Standard turnaround: ready in 5-7 business days",
             ].map((item) => (

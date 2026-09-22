@@ -403,6 +403,12 @@ type OrderConfirmationArgs = {
   // Pre-rendered deadline string (e.g. "April 15, 2026"). Caller computes it
   // from filingDueDateUtc() so the email never re-derives tax logic.
   dueDateText?: string | null;
+  // Callers MUST pass the LIVE decision from requiresReasonableCause() in
+  // src/lib/completeness.ts (or the equivalent per-year check), NEVER the
+  // stored stale wizard snapshot; when omitted/false, no line is rendered,
+  // so every existing caller is unaffected.
+  requiresReasonableCause?: boolean;
+  extensionUnclear?: boolean;
   brand?: EmailBrand;
 };
 
@@ -424,7 +430,7 @@ function portalLinkWithNext(portalLink: string, nextPath: string): string {
 export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const {
     email, recipientName, llcName, taxYears, tier, amountPaidCents, portalLink, receiptUrl,
-    pdfBytes, signatures, isFinalReturn, dueDateText, brand,
+    pdfBytes, signatures, isFinalReturn, dueDateText, requiresReasonableCause, extensionUnclear, brand,
   } = args;
   const salutation = firstNameFrom(recipientName) ?? "there";
   const brandName = brand?.name ?? "Form5472 Prep";
@@ -448,6 +454,14 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     ? `<p style="margin:0 0 12px;color:${EMAIL_STYLES.slate};line-height:1.6;font-size:14px;">
          <strong style="color:${EMAIL_STYLES.ink};">Your filing deadline:</strong> ${escapeHtml(dueDateText)} — we prepare and file well before this.
        </p>`
+    : "";
+  const filingStatusNoticeText = requiresReasonableCause
+    ? "This return is being filed after its due date. We include a reasonable-cause statement explaining why."
+    : extensionUnclear
+      ? "We are checking whether an extension was filed for this year. We will confirm before anything is sent."
+      : "";
+  const filingStatusNoticeHtml = filingStatusNoticeText
+    ? `<p style="margin:0 0 12px;color:${EMAIL_STYLES.slate};line-height:1.6;font-size:14px;">${filingStatusNoticeText}</p>`
     : "";
 
   // Amber warning — FINAL RETURNS ONLY, and deliberately the loudest block in
@@ -500,6 +514,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       ${introCopy}
     </p>
     ${dueDateHtml}
+    ${filingStatusNoticeHtml}
     <p style="margin:0 0 20px;color:${EMAIL_STYLES.muted};font-size:13px;">
       Save <strong>donotreply@form5472prep.com</strong> to your contacts to make sure our filing emails reach your inbox.
     </p>
@@ -557,6 +572,9 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const dueDateLineText = dueDateText
     ? `Your filing deadline: ${dueDateText} — we prepare and file well before this.\n\n`
     : "";
+  const filingStatusNoticeLineText = filingStatusNoticeText
+    ? `${filingStatusNoticeText}\n\n`
+    : "";
   const nextImportantText =
     `What happens next — important\n\n` +
     (isFinalReturn
@@ -583,6 +601,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       salutation,
       `Thank you for your order.\n\n` +
       dueDateLineText +
+      filingStatusNoticeLineText +
       `Tip: save donotreply@form5472prep.com to your contacts so our emails reach your inbox.\n\n` +
       `Order summary:\n` +
       `  LLC:           ${llcLine}\n` +
