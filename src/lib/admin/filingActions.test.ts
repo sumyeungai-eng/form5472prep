@@ -7,6 +7,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const db = vi.hoisted(() => ({
   findUnique: vi.fn(),
   update: vi.fn((args: unknown) => ({ op: "filing.update", args })),
+  yearFindUnique: vi.fn(),
+  yearUpdate: vi.fn((args: unknown) => ({ op: "filingYearData.update", args })),
   createLog: vi.fn((args: unknown) => ({ op: "log.create", args })),
   transaction: vi.fn(async (ops: unknown[]) => ops),
 }));
@@ -35,6 +37,7 @@ const pdf = vi.hoisted(() => ({
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     filing: { findUnique: db.findUnique, update: db.update },
+    filingYearData: { findUnique: db.yearFindUnique, update: db.yearUpdate },
     filingChangeLog: { create: db.createLog },
     $transaction: db.transaction,
   },
@@ -68,6 +71,7 @@ import {
   runFilingAction,
   SIDE_EFFECTING_ACTIONS,
 } from "./filingActions";
+import { filingToPackageInput } from "@/lib/pdf/packageInput";
 
 describe("SIDE_EFFECTING_ACTIONS", () => {
   it("contains exactly the four externally side-effecting filing actions", () => {
@@ -323,6 +327,157 @@ describe("regeneratePdf", () => {
       preflightOverrideAt: null,
       preflightOverrideReason: null,
       status: "PDF_GENERATED",
+    });
+  });
+});
+
+describe("updateYearField", () => {
+  const filing = {
+    id: "filing_1",
+    status: "PDF_GENERATED",
+    llcName: "Acme LLC",
+    taxYears: [2025, 2026],
+    user: { id: "u1", email: "a@b.com" },
+  };
+
+  beforeEach(() => {
+    db.findUnique.mockReset();
+    db.yearFindUnique.mockReset();
+    db.update.mockClear();
+    db.yearUpdate.mockClear();
+    db.createLog.mockClear();
+    db.transaction.mockClear();
+  });
+
+  it("writes rcsWhyMissed for the correct filing year and logs the change", async () => {
+    db.findUnique.mockResolvedValue(filing);
+    db.yearFindUnique.mockResolvedValue({
+      id: "year_2025",
+      rcsWhyMissed: "Old reason",
+      rcsWhenLearned: null,
+      rcsNoIrsNoticeConfirmed: null,
+      nonCashTransfers: null,
+      ownerPaidCosts: null,
+      zeroConfirmations: null,
+    });
+
+    await expect(
+      runFilingAction(
+        "filing_1",
+        "updateYearField",
+        { taxYear: 2025, field: "rcsWhyMissed", value: "New reason", reason: "customer correction" },
+        { adminId: "admin_1" },
+      ),
+    ).resolves.toEqual({ ok: true });
+
+    expect(db.yearUpdate).toHaveBeenCalledWith({
+      where: { filingId_taxYear: { filingId: "filing_1", taxYear: 2025 } },
+      data: { rcsWhyMissed: "New reason" },
+      select: { id: true },
+    });
+    expect(db.createLog).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        filingId: "filing_1",
+        adminId: "admin_1",
+        field: "year:2025:rcsWhyMissed",
+        beforeJson: "Old reason",
+        afterJson: "New reason",
+        reason: "customer correction",
+      }),
+    }));
+  });
+
+  it.each(["SIGNED_UPLOADED", "FAXED", "CONFIRMED"] as const)(
+    "refuses %s filings",
+    async (status) => {
+      db.findUnique.mockResolvedValue({ ...filing, status });
+
+      await expect(
+        runFilingAction(
+          "filing_1",
+          "updateYearField",
+          { taxYear: 2025, field: "rcsWhyMissed", value: "New reason" },
+          { adminId: "admin_1" },
+        ),
+      ).rejects.toMatchObject({ status: 409, code: "already_signed_or_filed" });
+      expect(db.yearUpdate).not.toHaveBeenCalled();
+      expect(db.createLog).not.toHaveBeenCalled();
+    },
+  );
+
+  it("rejects an invalid ownerPaidCosts JSON shape with no write", async () => {
+    db.findUnique.mockResolvedValue(filing);
+
+    await expect(
+      runFilingAction(
+        "filing_1",
+        "updateYearField",
+        {
+          taxYear: 2025,
+          field: "ownerPaidCosts",
+          value: JSON.stringify([{ category: "invalid", date: "2025-01-01", amountCents: 100 }]),
+        },
+        { adminId: "admin_1" },
+      ),
+    ).rejects.toMatchObject({ status: 400, code: "invalid_value" });
+    expect(db.yearUpdate).not.toHaveBeenCalled();
+    expect(db.createLog).not.toHaveBeenCalled();
+  });
+});
+
+describe("filingToPackageInput per-year reasonable cause", () => {
+  it("passes edited rcsWhyMissed through to the package input year record", () => {
+    const input = filingToPackageInput({
+      llcName: "Acme LLC",
+      llcEin: "12-3456789",
+      llcAddress: "123 Main St",
+      llcCity: "Miami",
+      llcState: "FL",
+      llcZip: "33101",
+      llcCountry: "USA",
+      llcCountryBusiness: "United States",
+      llcMemberCount: 1,
+      llcAddressIsRegisteredAgentOnly: false,
+      priorForm5472Filed: "yes",
+      hasUsSourceIncome: false,
+      usTaxWithheld: false,
+      llcDateIncorporated: new Date("2024-01-01T00:00:00.000Z"),
+      llcBusinessActivity: "Investment holding",
+      llcBusinessCode: "523900",
+      ownerName: "Owner One",
+      ownerAddress: "1 Queen Road, Hong Kong",
+      ownerHasFtin: true,
+      ownerNoPostalCode: false,
+      ownerCountryCitizenship: "Hong Kong",
+      ownerCountryTaxResidence: "Hong Kong",
+      ownerCountryBusiness: "Hong Kong",
+      ownerFtin: "HK123",
+      ownerItin: null,
+      ownerReferenceId: "OWNER1",
+      taxYears: [2025],
+      isDiirsp: true,
+      isFinalReturn: false,
+      dissolvedAt: null,
+      extensionFiled: "no",
+      extensionTransmittedAt: null,
+      reasonableCauseNarrative: null,
+      yearData: [{
+        taxYear: 2025,
+        totalAssetsYearEnd: 1000,
+        contributions: 0,
+        distributions: 0,
+        otherTransactionsNote: null,
+        reportableTransactions: [],
+        nonCashTransfers: [],
+        rcsWhyMissed: "The owner relied on an incorrect filing calendar.",
+        rcsWhenLearned: null,
+        rcsNoIrsNoticeConfirmed: null,
+      }],
+    });
+
+    expect(input.yearData[0]).toMatchObject({
+      taxYear: 2025,
+      rcsWhyMissed: "The owner relied on an incorrect filing calendar.",
     });
   });
 });

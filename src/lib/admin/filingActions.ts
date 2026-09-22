@@ -1,4 +1,4 @@
-import type { FilingStatus } from "@prisma/client";
+import { Prisma, type FilingStatus } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { resolveTier } from "@/lib/pricing";
@@ -32,6 +32,7 @@ export type FilingActionName =
   | "regeneratePdf"
   | "approvePreflightOverride"
   | "updateField"
+  | "updateYearField"
   | "uploadReviewedPdf"
   | "uploadSignedPdf";
 
@@ -51,6 +52,7 @@ export const FILING_ACTION_NAMES = [
   "regeneratePdf",
   "approvePreflightOverride",
   "updateField",
+  "updateYearField",
   "uploadReviewedPdf",
   "uploadSignedPdf",
 ] as const satisfies readonly FilingActionName[];
@@ -170,7 +172,7 @@ const filingSelect = {
   },
 } as const;
 
-const packageFilingSelect = {
+export const packageFilingSelect = {
   llcName: true,
   llcEin: true,
   llcAddress: true,
@@ -220,12 +222,87 @@ const packageFilingSelect = {
       otherTransactionsNote: true,
       reportableTransactions: true,
       nonCashTransfers: true,
+      ownerPaidCosts: true,
+      zeroConfirmations: true,
       rcsWhyMissed: true,
       rcsWhenLearned: true,
       rcsNoIrsNoticeConfirmed: true,
     },
   },
 } as const;
+
+const YEAR_NULLABLE_STRINGS = new Set(["rcsWhyMissed", "rcsWhenLearned"]);
+const YEAR_NULLABLE_BOOLEANS = new Set(["rcsNoIrsNoticeConfirmed"]);
+
+const adminNonCashTransferSchema = z.object({
+  date: z.string().trim().min(1),
+  direction: z.enum(["in", "out"]),
+  description: z.string().trim().min(1),
+  fairMarketValueCents: z.number().int().finite(),
+  valuationMethod: z.string().trim().min(1),
+  alsoInPartV: z.boolean(),
+}).strict();
+
+const adminOwnerPaidCostSchema = z.object({
+  category: z.enum([
+    "state_filing_fee",
+    "registered_agent",
+    "formation_or_ein_service",
+    "software_subscriptions",
+    "initial_bank_funding",
+    "other",
+  ]),
+  date: z.string().trim().min(1),
+  amountCents: z.number().int().finite(),
+  note: z.string().optional(),
+}).strict();
+
+const adminZeroConfirmationsSchema = z.object({
+  contributions: z.boolean().optional(),
+  distributions: z.boolean().optional(),
+  loansFromOwner: z.boolean().optional(),
+  loansToOwner: z.boolean().optional(),
+  ownerPaidCosts: z.boolean().optional(),
+}).strict();
+
+const YEAR_JSON_SCHEMAS = {
+  nonCashTransfers: z.array(adminNonCashTransferSchema),
+  ownerPaidCosts: z.array(adminOwnerPaidCostSchema),
+  zeroConfirmations: adminZeroConfirmationsSchema,
+} as const;
+
+function parseNullableBoolean(field: string, value: string | null): boolean | null {
+  const blank = value === null || value.trim() === "";
+  const truthy = new Set(["true", "yes", "1"]);
+  const falsy = new Set(["false", "no", "0"]);
+  const raw = (value ?? "").trim().toLowerCase();
+  if (blank) return null;
+  if (truthy.has(raw)) return true;
+  if (falsy.has(raw)) return false;
+  throw new FilingActionError(400, "invalid_value", `${field} must be true, false, or blank`);
+}
+
+function parseYearJsonField(field: keyof typeof YEAR_JSON_SCHEMAS, value: unknown): unknown {
+  if (value === null) return null;
+  if (typeof value === "string") {
+    if (value.trim() === "") return null;
+    try {
+      value = JSON.parse(value);
+    } catch {
+      throw new FilingActionError(400, "invalid_value", `${field} must be valid JSON`);
+    }
+  }
+  const parsed = YEAR_JSON_SCHEMAS[field].safeParse(value);
+  if (!parsed.success) {
+    throw new FilingActionError(400, "invalid_value", `${field} has an invalid shape`);
+  }
+  return parsed.data;
+}
+
+function yearJsonWriteValue(value: unknown) {
+  if (value === null) return Prisma.JsonNull;
+  return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+}
 
 // ─── Extension review flags (internal only) ──────────────────────────────────
 // Three things about a Form 7004 answer that a human must look at before the
@@ -651,7 +728,7 @@ export async function runFilingAction(
 
       const allowed = new Set<string>([
         "llcName", "llcEin", "llcAddress", "llcCity", "llcState", "llcZip",
-        "llcCountry", "llcBusinessActivity", "llcBusinessCode",
+        "llcCountry", "llcCountryBusiness", "llcBusinessActivity", "llcBusinessCode",
         "llcMemberCount", "llcAddressIsRegisteredAgentOnly", "priorForm5472Filed",
         "ownerName", "ownerAddress",
         "ownerCountryCitizenship", "ownerCountryTaxResidence",
@@ -868,6 +945,84 @@ export async function runFilingAction(
         after,
         derived: Object.fromEntries(derivedKeys.map((k) => [k, toJson(update[k])])),
       };
+    }
+
+    case "updateYearField": {
+      if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
+        throw new FilingActionError(
+          409,
+          "already_signed_or_filed",
+          "This filing has been signed or faxed. Its package cannot be regenerated.",
+        );
+      }
+
+      const taxYear = Number(body.taxYear);
+      if (!Number.isInteger(taxYear)) {
+        throw new FilingActionError(400, "invalid_value", "taxYear must be an integer");
+      }
+      const field = typeof body.field === "string" ? body.field : "";
+      const reason = typeof body.reason === "string" ? body.reason.slice(0, 500) : "";
+      const allowed = new Set<string>([
+        "rcsWhyMissed",
+        "rcsWhenLearned",
+        "rcsNoIrsNoticeConfirmed",
+        "nonCashTransfers",
+        "ownerPaidCosts",
+        "zeroConfirmations",
+      ]);
+      if (!allowed.has(field)) {
+        throw new FilingActionError(400, "field_not_editable", `field "${field}" is not editable`);
+      }
+
+      let after: unknown;
+      let writeValue: unknown;
+      if (YEAR_NULLABLE_STRINGS.has(field)) {
+        const raw = body.value === undefined || body.value === null ? null : String(body.value);
+        after = raw === null || raw.trim() === "" ? null : raw;
+        writeValue = after;
+      } else if (YEAR_NULLABLE_BOOLEANS.has(field)) {
+        const raw = body.value === undefined || body.value === null ? null : String(body.value);
+        after = parseNullableBoolean(field, raw);
+        writeValue = after;
+      } else if (field in YEAR_JSON_SCHEMAS) {
+        after = parseYearJsonField(field as keyof typeof YEAR_JSON_SCHEMAS, body.value);
+        writeValue = yearJsonWriteValue(after);
+      } else {
+        throw new FilingActionError(400, "field_not_editable", `field "${field}" is not editable`);
+      }
+
+      const year = await prisma.filingYearData.findUnique({
+        where: { filingId_taxYear: { filingId: filing.id, taxYear } },
+        select: {
+          id: true,
+          rcsWhyMissed: true,
+          rcsWhenLearned: true,
+          rcsNoIrsNoticeConfirmed: true,
+          nonCashTransfers: true,
+          ownerPaidCosts: true,
+          zeroConfirmations: true,
+        },
+      });
+      if (!year) {
+        throw new FilingActionError(404, "year_not_found", "filing year not found");
+      }
+
+      const before = (year as unknown as Record<string, unknown>)[field] ?? null;
+      await prisma.filingYearData.update({
+        where: { filingId_taxYear: { filingId: filing.id, taxYear } },
+        data: { [field]: writeValue } as never,
+        select: { id: true },
+      });
+      await logFilingChange({
+        filingId: filing.id,
+        adminId: ctx.adminId,
+        source: "admin",
+        field: `year:${taxYear}:${field}`,
+        before,
+        after,
+        reason: reason || ctx.reason,
+      });
+      return { ok: true };
     }
 
     case "approvePreflightOverride": {

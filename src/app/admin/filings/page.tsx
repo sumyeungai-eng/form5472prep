@@ -14,6 +14,7 @@ import { AdminPageHeader } from "../_components/AdminPageHeader";
 import { StatusBadge } from "./StatusBadge";
 import { DraftActions } from "./DraftActions";
 import { ReviewToggle } from "./ReviewToggle";
+import { PreflightSweepButton } from "./PreflightSweepButton";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Filings · Admin" };
@@ -233,6 +234,8 @@ export default async function AdminFilingsPage({
         title="Filings"
         description="Every Form 5472 order — drafts, paid, signed, faxed. Filter by status or search by company or email."
       />
+
+      <PreflightSweepButton />
 
       {/* Quick stats — last 30 days */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
