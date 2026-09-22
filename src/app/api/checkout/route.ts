@@ -13,6 +13,7 @@ import { makeMagicLink } from "@/lib/magicLink";
 import { effectiveDueDateUtc, extensionUnclear, formatDueDate } from "@/lib/schemas";
 import { filingCompletionIssues, requiresReasonableCause } from "@/lib/completeness";
 import { brandForFiling } from "@/lib/partnerBrand";
+import { createBrandedSession } from "@/lib/stripeCheckoutBranding";
 
 export async function POST(req: Request) {
   const { filingId, email } = await req.json();
@@ -272,11 +273,12 @@ export async function POST(req: Request) {
         currency: "usd" as const,
         unit_amount: tier.priceCents,
         product_data: {
-          name: `Form5472 Prep — ${tier.label}`,
+          name: `Form5472 Prep filing, ${checkoutYearsLabel(filing.taxYears)}`,
           // The turnaround is the ONLY thing the tier buys, so it has to be on
           // the Checkout page and the receipt — otherwise an Express customer
           // has nothing on paper saying what the extra $50 was for.
-          description: `Filing for ${filing.llcName ?? "your LLC"} — ${filing.taxYears.join(", ") || "tax year"} · ${tier.subtitle} (IRS fax delivery included)`,
+          description: `Filing for ${filing.llcName ?? "your LLC"}, ${filing.taxYears.join(", ") || "tax year"}. ${tier.subtitle}. IRS fax delivery included.`,
+          images: [`${env.appUrl}/brand/product-5472.png`],
         },
       },
       quantity: 1,
@@ -289,7 +291,8 @@ export async function POST(req: Request) {
         unit_amount: MULTI_YEAR_ADDON_CENTS,
         product_data: {
           name: MULTI_YEAR_ADDON_LABEL,
-          description: `Each additional past tax year beyond the first (${extraYears} × $${(MULTI_YEAR_ADDON_CENTS / 100).toFixed(0)}).`,
+          description: `Each additional past tax year beyond the first (${extraYears} x $${(MULTI_YEAR_ADDON_CENTS / 100).toFixed(0)}).`,
+          images: [`${env.appUrl}/brand/product-5472.png`],
         },
       },
       quantity: extraYears,
@@ -341,7 +344,7 @@ export async function POST(req: Request) {
     "filing:", filing.id,
   );
 
-  const session = await stripe().checkout.sessions.create(
+  const session = await createBrandedSession(
     {
       mode: "payment",
       payment_method_types: ["card"],
@@ -358,7 +361,10 @@ export async function POST(req: Request) {
     // included, so a promo and non-promo session for the same filing can never
     // collide) — a retried identical create returns the same session instead of
     // a second one.
-    { idempotencyKey: `checkout_${filing.id}_${tier.priceCents}_${yearCount}_${discountCents}` },
+    // v2: the branded checkout sends different session params, and Stripe rejects a reused key
+    // with different params, so keys from before the branding deploy must not be reused.
+    { idempotencyKey: `checkout_v2_${filing.id}_${tier.priceCents}_${yearCount}_${discountCents}` },
+    (p, o) => stripe().checkout.sessions.create(p, o),
   );
 
   await prisma.filing.update({
@@ -367,4 +373,13 @@ export async function POST(req: Request) {
   });
 
   return NextResponse.json({ url: session.url });
+}
+
+// "tax year 2025", "tax years 2023-2025" for consecutive years, "tax years 2022, 2024" otherwise.
+function checkoutYearsLabel(years: number[]): string {
+  const sorted = [...years].sort((a, b) => a - b);
+  if (sorted.length === 0) return "tax year";
+  if (sorted.length === 1) return `tax year ${sorted[0]}`;
+  const consecutive = sorted.every((y, i) => i === 0 || y === sorted[i - 1] + 1);
+  return consecutive ? `tax years ${sorted[0]}-${sorted[sorted.length - 1]}` : `tax years ${sorted.join(", ")}`;
 }
