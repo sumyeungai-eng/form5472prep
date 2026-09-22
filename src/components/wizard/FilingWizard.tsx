@@ -2193,10 +2193,10 @@ function YearsStep({
         )}
       </div>
       {showExtensionSection && (
-        <div className="rounded-md border border-slate-200 bg-white p-4">
-          <p className="text-sm font-medium text-slate-900">
+        <fieldset className="rounded-md border border-slate-200 bg-white p-4">
+          <legend className="text-sm font-medium text-slate-900">
             Did you file Form 7004 (extension of time to file) for this tax year?
-          </p>
+          </legend>
           <p className="text-xs text-slate-500 mt-1">
             A Form 7004 filed on time gives you six extra months — if you have one, this
             return isn&apos;t late at all.
@@ -2207,7 +2207,7 @@ function YearsStep({
               { value: "no", label: "No" },
               {
                 value: "not_sure",
-                label: "I'm not sure / my formation agent may have filed one",
+                label: "I am not sure / my formation agent may have filed one",
                 helper:
                   "Formation agents sometimes file extensions without telling you — if in doubt, pick this and we'll confirm before filing.",
               },
@@ -2345,7 +2345,7 @@ function YearsStep({
               </Field>
             </div>
           )}
-        </div>
+        </fieldset>
       )}
       {determinationSentence && (
         <DeterminationFlag filingId={filing.id} sentence={determinationSentence} />

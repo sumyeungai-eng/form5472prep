@@ -179,7 +179,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
     if (typeof body[k] === "boolean" || body[k] === null) data[k] = body[k];
   }
-  if (data.ownerHasFtin === false) data.ownerFtin = null;
+  if (data.ownerHasFtin === false) data.ownerFtin = "";
 
   if (hasKey("llcMemberCount") && body.llcMemberCount !== null && typeof body.llcMemberCount !== "number") {
     return NextResponse.json(
@@ -612,6 +612,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     rcsWhyMissed: string | null;
     rcsWhenLearned: string | null;
     rcsNoIrsNoticeConfirmed: boolean | null;
+    hasNonCashTransfers: boolean;
+    hasRcsWhyMissed: boolean;
+    hasRcsWhenLearned: boolean;
+    hasRcsNoIrsNoticeConfirmed: boolean;
   }> = [];
   if (Array.isArray(body.yearData)) {
     for (const y of body.yearData) {
@@ -655,6 +659,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         cleanTransactions = tv.data;
       }
       const noneReported = yv.data.noReportableTransactions === true;
+      const yHasKey = (k: string) => Object.prototype.hasOwnProperty.call(y ?? {}, k);
       resolvedYearData.push({
         taxYear: yv.data.taxYear,
         totalAssetsYearEnd: yv.data.totalAssetsYearEnd,
@@ -667,6 +672,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         rcsWhyMissed: yv.data.rcsWhyMissed ?? null,
         rcsWhenLearned: yv.data.rcsWhenLearned ?? null,
         rcsNoIrsNoticeConfirmed: yv.data.rcsNoIrsNoticeConfirmed ?? null,
+        hasNonCashTransfers: yHasKey("nonCashTransfers"),
+        hasRcsWhyMissed: yHasKey("rcsWhyMissed"),
+        hasRcsWhenLearned: yHasKey("rcsWhenLearned"),
+        hasRcsNoIrsNoticeConfirmed: yHasKey("rcsNoIrsNoticeConfirmed"),
       });
     }
   }
@@ -708,10 +717,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             // undefined when the incoming list is empty/absent → leaves stored
             // detail untouched (the anti-data-loss guard above).
             reportableTransactions: y.noReportableTransactions ? [] : y.cleanTransactions ?? undefined,
-            nonCashTransfers: y.nonCashTransfers,
-            rcsWhyMissed: y.rcsWhyMissed,
-            rcsWhenLearned: y.rcsWhenLearned,
-            rcsNoIrsNoticeConfirmed: y.rcsNoIrsNoticeConfirmed,
+            ...(y.hasNonCashTransfers ? { nonCashTransfers: y.nonCashTransfers } : {}),
+            ...(y.hasRcsWhyMissed ? { rcsWhyMissed: y.rcsWhyMissed } : {}),
+            ...(y.hasRcsWhenLearned ? { rcsWhenLearned: y.rcsWhenLearned } : {}),
+            ...(y.hasRcsNoIrsNoticeConfirmed
+              ? { rcsNoIrsNoticeConfirmed: y.rcsNoIrsNoticeConfirmed }
+              : {}),
           },
           create: {
             filingId: filing.id,

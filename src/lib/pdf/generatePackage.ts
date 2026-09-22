@@ -208,6 +208,7 @@ export type PackageRecordYear = {
   partVICentsAddedToLine1f: number;
   line1jChecked: boolean;
   priorForm5472Filed: string | null;
+  ownerHasFtin: boolean | null;
   ownerAddressState: string | null;
   ownerAddressPostal: string | null;
   ownerNoPostalCode: boolean | null;
@@ -394,8 +395,23 @@ function ownerAddressForForms(f: Filing): string {
   return structuredOwnerAddress(f) ?? f.ownerAddress;
 }
 
+function hasStructuredOwnerAddress(f: Filing): boolean {
+  return [
+    f.ownerAddressStreet,
+    f.ownerAddressCity,
+    f.ownerAddressState,
+    f.ownerAddressPostal,
+    f.ownerAddressCountry,
+  ].some((part) => !!part?.trim());
+}
+
+function ownerStreetForForms(f: Filing): string {
+  if (!hasStructuredOwnerAddress(f)) return f.ownerAddress;
+  return f.ownerAddressStreet?.trim() || "";
+}
+
 function llcStreetAddressSource(f: Filing): string {
-  return f.llcAddressIsRegisteredAgentOnly === true ? ownerAddressForForms(f) : f.llcAddress;
+  return f.llcAddressIsRegisteredAgentOnly === true ? ownerStreetForForms(f) : f.llcAddress;
 }
 
 function llcCityForForms(f: Filing): string {
@@ -482,14 +498,12 @@ function yearTrades(f: Filing, year: number): boolean {
   return /\b(customer|client|vendor|invoice|sale|sales|merchant|processor|stripe|paypal)\b/.test(haystack);
 }
 
-function operationsParagraph(f: Filing, year: number): string {
-  if (yearTrades(f, year)) {
-    return "The Company operated a trading business during the tax year, with business activity reflected in its books and bank records.";
-  }
+function operationsParagraph(f: Filing): string {
+  const activity = cleanSentence(`The Company's business activity is ${f.llcBusinessActivity}`);
   if (f.hasUsSourceIncome === true || f.llcBusinessCode === "523900") {
-    return "The Company was used for holding or investment activity during the tax year and did not operate with customers or vendors.";
+    return `${activity} The Company was used for holding or investment activity during the tax year.`;
   }
-  return "The Company was dormant during the tax year and did not operate with customers or vendors.";
+  return activity;
 }
 
 const FORMS_DIR = path.join(process.cwd(), "public", "forms");
@@ -1584,11 +1598,11 @@ async function buildReasonableCause(
     `${f.ownerName} ("the Owner") is a resident and citizen of ${rcsOwnerCitizenship}. The Owner formed ${f.llcName} ` +
       `("the Company") on ${incDateStr} in ${stateName} as a single-member LLC. The Company is a ` +
       "foreign-owned U.S. disregarded entity for U.S. federal income tax purposes. " +
-      operationsParagraph(f, year),
+      operationsParagraph(f),
   );
   if (f.hasUsSourceIncome === true && f.usTaxWithheld === true) {
     drawParagraph(
-      "The Company received U.S.-source dividends for which no U.S. income tax return was required, and U.S. tax on the dividends was satisfied by withholding at source.",
+      "The Company received U.S.-source income for which no U.S. income tax return was required, and U.S. tax on that U.S.-source income was satisfied by withholding at source.",
     );
   }
   space(10);
@@ -1937,6 +1951,7 @@ export async function generatePackage(
       partVICentsAddedToLine1f,
       line1jChecked: shouldCheckLine1j(f, year),
       priorForm5472Filed: f.priorForm5472Filed ?? null,
+      ownerHasFtin: f.ownerHasFtin ?? null,
       ownerAddressState: ownerStateForA17(f),
       ownerAddressPostal: ownerPostalForA17(f),
       ownerNoPostalCode: f.ownerNoPostalCode ?? null,

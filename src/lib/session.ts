@@ -174,6 +174,7 @@ export async function getOwnedFiling(
         inviteMatches ? { id: filingId } : { id: "__never__" },
       ],
     },
+    include: { yearData: true },
   });
 }
 

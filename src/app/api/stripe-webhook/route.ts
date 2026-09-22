@@ -182,7 +182,8 @@ export async function POST(req: Request) {
             full.llcState && full.llcZip && full.llcDateIncorporated &&
             full.llcBusinessActivity && full.llcBusinessCode && full.ownerName &&
             full.ownerAddress && full.ownerCountryCitizenship &&
-            full.ownerCountryTaxResidence && full.ownerCountryBusiness && full.ownerFtin) {
+            full.ownerCountryTaxResidence && full.ownerCountryBusiness &&
+            (full.ownerFtin || full.ownerHasFtin === false)) {
           const result = await generatePackage(filingToPackageInput(full));
           pdfBytes = result.bytes;
           pdfSignatures = result.signatures;

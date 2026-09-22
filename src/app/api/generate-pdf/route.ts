@@ -43,11 +43,13 @@ export async function POST(req: Request) {
     "ownerCountryCitizenship",
     "ownerCountryTaxResidence",
     "ownerCountryBusiness",
-    "ownerFtin",
   ];
   for (const f of requiredFields) {
     if (filing[f] == null || filing[f] === "")
       return NextResponse.json({ error: `Missing required field: ${f}` }, { status: 400 });
+  }
+  if (!filing.ownerFtin && filing.ownerHasFtin !== false) {
+    return NextResponse.json({ error: "Missing required field: ownerFtin" }, { status: 400 });
   }
 
   const { bytes, signatures, record } = await generatePackage(filingToPackageInput(filing));

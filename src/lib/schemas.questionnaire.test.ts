@@ -43,6 +43,13 @@ describe("questionnaire schemas", () => {
         ownerFtin: "",
       }).success,
     ).toBe(true);
+    expect(
+      ownerSchema.safeParse({
+        ...ownerBase,
+        ownerHasFtin: false,
+        ownerFtin: null,
+      }).success,
+    ).toBe(true);
   });
 
   it("validates the prior Form 5472 enum", () => {

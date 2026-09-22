@@ -53,7 +53,7 @@ export const ownerBaseSchema = z.object({
   ownerCountryBusiness: z.string().trim().min(2, "Required"),
   ownerHasFtin: z.boolean().optional().nullable(),
   ownerNoPostalCode: z.boolean().optional().nullable(),
-  ownerFtin: z.string().trim().max(2000).optional().or(z.literal("")),
+  ownerFtin: z.string().trim().max(2000).optional().nullable().or(z.literal("")),
   ownerItin: z.string().trim().optional().or(z.literal("")),
   // IRS Instructions for Form 5472: the reference ID must be alphanumeric with
   // no special characters or spaces, 50 chars or less. Reject hyphens etc. so
@@ -67,7 +67,7 @@ export const ownerBaseSchema = z.object({
 });
 
 export function refineOwnerFtin(
-  val: { ownerHasFtin?: boolean | null; ownerFtin?: string },
+  val: { ownerHasFtin?: boolean | null; ownerFtin?: string | null },
   ctx: z.RefinementCtx,
 ) {
   const ftin = (val.ownerFtin ?? "").trim();

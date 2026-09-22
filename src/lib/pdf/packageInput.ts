@@ -1,4 +1,4 @@
-import type { PackageInput, ReportableTx, NonCashTransfer } from "./generatePackage";
+import { NeedsReviewError, type PackageInput, type ReportableTx, type NonCashTransfer } from "./generatePackage";
 
 type NullablePartial<T> = { [K in keyof T]?: T[K] | null };
 
@@ -25,7 +25,7 @@ export function filingToPackageInput(filing: PackageFilingRow): PackageInput {
     llcCity: requiredString(filing.llcCity),
     llcState: requiredString(filing.llcState),
     llcZip: requiredString(filing.llcZip),
-    llcCountry: filing.llcCountry ?? "USA",
+    llcCountry: requiredString(filing.llcCountry),
     llcCountryBusiness: filing.llcCountryBusiness,
     llcMemberCount: filing.llcMemberCount,
     llcAddressIsRegisteredAgentOnly: filing.llcAddressIsRegisteredAgentOnly,
@@ -47,12 +47,14 @@ export function filingToPackageInput(filing: PackageFilingRow): PackageInput {
     ownerCountryCitizenship: requiredString(filing.ownerCountryCitizenship),
     ownerCountryTaxResidence: requiredString(filing.ownerCountryTaxResidence),
     ownerCountryBusiness: requiredString(filing.ownerCountryBusiness),
-    ownerFtin: filing.ownerHasFtin === false ? (filing.ownerFtin ?? "None") : requiredString(filing.ownerFtin),
+    ownerFtin: filing.ownerHasFtin === false
+      ? ((filing.ownerFtin ?? "").trim() || "None")
+      : requiredString(filing.ownerFtin),
     ownerItin: filing.ownerItin ?? null,
     ownerReferenceId: filing.ownerReferenceId ?? null,
     taxYears: filing.taxYears ?? [],
     isDiirsp: filing.isDiirsp ?? false,
-    isFinalReturn: filing.isFinalReturn ?? undefined,
+    isFinalReturn: filing.isFinalReturn ?? false,
     dissolvedAt: filing.dissolvedAt ?? null,
     extensionFiled: filing.extensionFiled ?? null,
     extensionTransmittedAt: filing.extensionTransmittedAt,
@@ -63,8 +65,8 @@ export function filingToPackageInput(filing: PackageFilingRow): PackageInput {
       contributions: Number(year.contributions),
       distributions: Number(year.distributions),
       otherTransactionsNote: year.otherTransactionsNote,
-      reportableTransactions: parseReportableTransactions(year.reportableTransactions),
-      nonCashTransfers: parseNonCashTransfers(year.nonCashTransfers),
+      reportableTransactions: parseReportableTransactions(year.reportableTransactions, year.taxYear),
+      nonCashTransfers: parseNonCashTransfers(year.nonCashTransfers, year.taxYear),
       rcsWhyMissed: year.rcsWhyMissed ?? null,
       rcsWhenLearned: year.rcsWhenLearned ?? null,
       rcsNoIrsNoticeConfirmed: year.rcsNoIrsNoticeConfirmed ?? null,
@@ -80,35 +82,45 @@ function requiredDate(value: Date | string | null | undefined): Date {
   return value instanceof Date ? value : new Date(value ?? 0);
 }
 
-function parseReportableTransactions(value: unknown): ReportableTx[] {
+function parseReportableTransactions(value: unknown, taxYear: number): ReportableTx[] {
   if (!Array.isArray(value)) return [];
-  return value.filter((item): item is ReportableTx => {
-    if (!item || typeof item !== "object") return false;
+  return value.map((item, index): ReportableTx => {
+    if (!item || typeof item !== "object") {
+      throw new NeedsReviewError(`Tax year ${taxYear}: reportable transaction row ${index + 1} is malformed.`);
+    }
     const tx = item as Record<string, unknown>;
-    return (
+    const valid =
       typeof tx.date === "string" &&
       typeof tx.description === "string" &&
       typeof tx.amountCents === "number" &&
       Number.isFinite(tx.amountCents) &&
       typeof tx.category === "string" &&
-      (tx.counterparty === undefined || typeof tx.counterparty === "string")
-    );
+      (tx.counterparty === undefined || typeof tx.counterparty === "string");
+    if (!valid) {
+      throw new NeedsReviewError(`Tax year ${taxYear}: reportable transaction row ${index + 1} is malformed.`);
+    }
+    return tx as ReportableTx;
   });
 }
 
-function parseNonCashTransfers(value: unknown): NonCashTransfer[] {
+function parseNonCashTransfers(value: unknown, taxYear: number): NonCashTransfer[] {
   if (!Array.isArray(value)) return [];
-  return value.filter((item): item is NonCashTransfer => {
-    if (!item || typeof item !== "object") return false;
+  return value.map((item, index): NonCashTransfer => {
+    if (!item || typeof item !== "object") {
+      throw new NeedsReviewError(`Tax year ${taxYear}: non-cash transfer row ${index + 1} is malformed.`);
+    }
     const transfer = item as Record<string, unknown>;
-    return (
+    const valid =
       typeof transfer.date === "string" &&
       (transfer.direction === "in" || transfer.direction === "out") &&
       typeof transfer.description === "string" &&
       typeof transfer.fairMarketValueCents === "number" &&
       Number.isFinite(transfer.fairMarketValueCents) &&
       typeof transfer.valuationMethod === "string" &&
-      typeof transfer.alsoInPartV === "boolean"
-    );
+      typeof transfer.alsoInPartV === "boolean";
+    if (!valid) {
+      throw new NeedsReviewError(`Tax year ${taxYear}: non-cash transfer row ${index + 1} is malformed.`);
+    }
+    return transfer as NonCashTransfer;
   });
 }

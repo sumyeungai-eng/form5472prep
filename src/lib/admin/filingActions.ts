@@ -21,6 +21,7 @@ import {
   formatDueDate,
   isYearDelinquent,
 } from "@/lib/schemas";
+import { hasCompleteReasonableCause } from "@/lib/completeness";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 
 export type FilingActionName =
@@ -159,6 +160,14 @@ const filingSelect = {
   faxJobId: true,
   faxStatus: true,
   user: { select: { id: true, email: true } },
+  yearData: {
+    select: {
+      taxYear: true,
+      rcsWhyMissed: true,
+      rcsWhenLearned: true,
+      rcsNoIrsNoticeConfirmed: true,
+    },
+  },
 } as const;
 
 const packageFilingSelect = {
@@ -356,7 +365,7 @@ export async function runFilingAction(
             full.llcZip && full.llcDateIncorporated && full.llcBusinessActivity &&
             full.llcBusinessCode && full.ownerName && full.ownerAddress &&
             full.ownerCountryCitizenship && full.ownerCountryTaxResidence &&
-            full.ownerCountryBusiness && full.ownerFtin) {
+            full.ownerCountryBusiness && (full.ownerFtin || full.ownerHasFtin === false)) {
           const result = await generatePackage(filingToPackageInput(full));
           pdfBytes = result.bytes;
           signatures = result.signatures;
@@ -465,13 +474,8 @@ export async function runFilingAction(
       // package was generated. The admin can override with force+reason for
       // the rare deliberate case; the override is captured in the change log.
       {
-        const maxYear = filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : null;
-        const anyLate = filing.taxYears.some((y) =>
-          isYearDelinquent(y, filing.isFinalReturn ? filing.dissolvedAt : null, y === maxYear
-            ? { filed: filing.extensionFiled, transmittedAt: filing.extensionTransmittedAt }
-            : null),
-        );
-        if (anyLate && !filing.reasonableCauseNarrative?.trim() && !isValidForceOverride(ctx)) {
+        const rcsComplete = hasCompleteReasonableCause(filing, filing.yearData ?? []);
+        if (!rcsComplete && !isValidForceOverride(ctx)) {
           throw new FilingActionError(
             409,
             "rcs_missing_for_late_filing",
@@ -568,7 +572,8 @@ export async function runFilingAction(
           !full.llcState || !full.llcZip || !full.llcDateIncorporated ||
           !full.llcBusinessActivity || !full.llcBusinessCode || !full.ownerName ||
           !full.ownerAddress || !full.ownerCountryCitizenship ||
-          !full.ownerCountryTaxResidence || !full.ownerCountryBusiness || !full.ownerFtin) {
+          !full.ownerCountryTaxResidence || !full.ownerCountryBusiness ||
+          !(full.ownerFtin || full.ownerHasFtin === false)) {
         throw new FilingActionError(
           400,
           "missing_required_fields",

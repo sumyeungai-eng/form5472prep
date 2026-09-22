@@ -285,6 +285,12 @@ function checkA15(record: PackageRecord, result: MutableResult) {
       warn(result, "W15b", "Prior-filing question not answered.");
     } else if (
       formationYear !== null &&
+      formationYear === year.taxYear &&
+      (year.priorForm5472Filed === "yes" || year.priorForm5472Filed === "not_sure")
+    ) {
+      warn(result, "W15", "Formation-year prior Form 5472 answer needs reviewer confirmation.");
+    } else if (
+      formationYear !== null &&
       formationYear < year.taxYear &&
       (year.priorForm5472Filed === "no" || year.priorForm5472Filed === "not_sure")
     ) {
@@ -307,6 +313,15 @@ function checkA16(record: PackageRecord, result: MutableResult) {
 // A17: owner address has province/state and postal, unless no postal code was explicitly answered.
 function checkA17(record: PackageRecord, result: MutableResult) {
   for (const year of record.taxYears) {
+    const legacySingleLineOwnerAddress =
+      !year.ownerAddressState &&
+      !year.ownerAddressPostal &&
+      year.ownerNoPostalCode === null &&
+      record.ownerPrintAddress.value.trim().length > 0;
+    if (legacySingleLineOwnerAddress) {
+      warn(result, "W17", `Tax year ${year.taxYear}: Owner address not in structured form (older order).`);
+      continue;
+    }
     if (!year.ownerAddressState || (!year.ownerAddressPostal && year.ownerNoPostalCode !== true)) {
       fail(result, "A17", `Tax year ${year.taxYear}: owner address is missing state/province or postal-code confirmation.`);
     }
@@ -322,6 +337,10 @@ function checkA18(record: PackageRecord, result: MutableResult) {
     ] as const) {
       const ftin = textValue(year.form5472.fields, ftinField).trim();
       const usId = textValue(year.form5472.fields, usIdField).trim();
+      if (!ftin && year.ownerHasFtin == null) {
+        warn(result, "W18", `Tax year ${year.taxYear}: Owner FTIN answer not in structured form (older order).`);
+        continue;
+      }
       if (!ftin || (ftin !== "None" && ftin === usId)) {
         fail(result, "A18", `Tax year ${year.taxYear}: foreign tax ID field ${ftinField} is blank or duplicates the US ID.`);
       }
@@ -458,8 +477,8 @@ function checkA26(record: PackageRecord, result: MutableResult) {
     if (doc.rcsMissingAnswers && doc.taxYear != null) {
       fail(result, "A26", `Reasonable cause answers missing for ${doc.taxYear}.`);
     }
-    if (year && !year.trades && /\b(customer payments|vendor invoices)\b/i.test(text)) {
-      fail(result, "A26", `Tax year ${year.taxYear}: RCS uses trading wording for a non-trading LLC.`);
+    if (year && !doc.rcsFallbackUsed && /\b(dormant|no customers|no vendors|did not operate with customers or vendors|customer payments|vendor invoices)\b/i.test(text)) {
+      fail(result, "A26", `Tax year ${year.taxYear}: RCS contains unsupported operations wording.`);
     }
     if (year?.hasUsSourceIncome === true && /\b(no U\.S\. income(?! tax return)|no tax owed)\b/i.test(text)) {
       fail(result, "A26", `Tax year ${year.taxYear}: RCS contradicts U.S.-source income facts.`);

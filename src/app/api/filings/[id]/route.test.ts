@@ -145,6 +145,20 @@ describe("filing PATCH Form 7004 extension fields", () => {
     });
   });
 
+  it("stores an empty FTIN string when the owner has no FTIN", async () => {
+    const res = await PATCH(
+      new Request("https://example.test/api/filings/filing_1", {
+        method: "PATCH",
+        body: JSON.stringify({ ownerHasFtin: false, ownerFtin: "SHOULD_CLEAR" }),
+      }),
+      { params: { id: "filing_1" } },
+    );
+
+    expect(res.status).toBe(200);
+    const data = (db.update.mock.calls.at(-1)?.[0] as { data: Record<string, unknown> }).data;
+    expect(data).toMatchObject({ ownerHasFtin: false, ownerFtin: "" });
+  });
+
   it("persists valid non-cash transfers and reasonable-cause fields", async () => {
     const res = await PATCH(
       new Request("https://example.test/api/filings/filing_1", {
@@ -191,6 +205,82 @@ describe("filing PATCH Form 7004 extension fields", () => {
         }),
       }),
     );
+  });
+
+  it("does not clear saved reasonable-cause answers or non-cash transfers when a later year save omits those keys", async () => {
+    const saveAnswers = await PATCH(
+      new Request("https://example.test/api/filings/filing_1", {
+        method: "PATCH",
+        body: JSON.stringify({
+          yearData: [
+            {
+              taxYear: 2025,
+              totalAssetsYearEnd: 0,
+              contributions: 0,
+              distributions: 0,
+              nonCashTransfers: [
+                {
+                  date: "2025-06-01",
+                  direction: "in",
+                  description: "Shares",
+                  fairMarketValueCents: 100_00,
+                  valuationMethod: "Broker statement",
+                  alsoInPartV: true,
+                },
+              ],
+              rcsWhyMissed: "I did not know the form was required.",
+              rcsWhenLearned: "I learned in 2026.",
+              rcsNoIrsNoticeConfirmed: true,
+            },
+          ],
+        }),
+      }),
+      { params: { id: "filing_1" } },
+    );
+    expect(saveAnswers.status).toBe(200);
+    expect(db.upsert.mock.calls.at(-1)?.[0]).toEqual(
+      expect.objectContaining({
+        update: expect.objectContaining({
+          nonCashTransfers: expect.any(Array),
+          rcsWhyMissed: "I did not know the form was required.",
+          rcsWhenLearned: "I learned in 2026.",
+          rcsNoIrsNoticeConfirmed: true,
+        }),
+      }),
+    );
+
+    db.upsert.mockClear();
+    const saveTransactions = await PATCH(
+      new Request("https://example.test/api/filings/filing_1", {
+        method: "PATCH",
+        body: JSON.stringify({
+          yearData: [
+            {
+              taxYear: 2025,
+              totalAssetsYearEnd: 500,
+              contributions: 100,
+              distributions: 0,
+              reportableTransactions: [
+                {
+                  date: "2025-07-01",
+                  description: "Owner contribution",
+                  amountCents: 100_00,
+                  category: "contribution",
+                },
+              ],
+            },
+          ],
+        }),
+      }),
+      { params: { id: "filing_1" } },
+    );
+
+    expect(saveTransactions.status).toBe(200);
+    const update = (db.upsert.mock.calls.at(-1)?.[0] as { update: Record<string, unknown> }).update;
+    expect(update).not.toHaveProperty("nonCashTransfers");
+    expect(update).not.toHaveProperty("rcsWhyMissed");
+    expect(update).not.toHaveProperty("rcsWhenLearned");
+    expect(update).not.toHaveProperty("rcsNoIrsNoticeConfirmed");
   });
 
   it("rejects invalid non-cash transfer payloads", async () => {
