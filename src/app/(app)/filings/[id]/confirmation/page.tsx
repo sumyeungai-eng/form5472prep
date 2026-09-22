@@ -80,7 +80,7 @@ export default async function FilingConfirmationPage({ params }: { params: { id:
             label="Filing type"
             value={
               needsReasonableCause
-                ? "Form 5472 + pro forma Form 1120. This return is being filed after its due date. We include a reasonable-cause statement explaining why."
+                ? "Form 5472 + pro forma Form 1120. This return was filed after its due date. We included a reasonable-cause statement explaining why."
                 : "Form 5472 + pro forma Form 1120"
             }
           />

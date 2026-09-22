@@ -94,7 +94,7 @@ Do not use the registered agent's address. If the client says the LLC genuinely 
 | A01 | Form 5472 line 2 is checked for each tax year. | Yes |
 | A02 | Form 5472 line 3 is checked for each tax year. | Yes |
 | A03 | Form 5472 lines 43a, 43b(1), and 43b(2) are completely blank. | Yes |
-| A04 | Form 5472 lines 37 through 42 are each answered. | No |
+| A04 | Form 5472 lines 37 through 42 are each answered. | Yes |
 | A05 | Lines 1e and 8d use valid Form 1120 activity codes for the tax year, line 1d is not blank, and the codes match. | Yes |
 | A06 | Form 1120 and Form 5472 header begin and end dates are populated and match. | Yes |
 | A07 | First-year start date equals the formation date, and final-year end date equals the dissolution date. | Yes |
@@ -119,16 +119,17 @@ Do not use the registered agent's address. If the client says the LLC genuinely 
 | A26 | Reasonable cause text does not contradict questionnaire facts and required per-year answers are present. | Yes |
 | A27 | Every Part V and Part VI statement page includes LLC name, EIN, and tax year. | Yes |
 | A28 | The final PDF has zero AcroForm fields and zero widget annotations. | Yes |
-| A29 | The render check V-02 passed. Per Amendment 1, V-02 cannot run in-process on Vercel because it uses native render dependencies, so it is enforced by CI as a separate check and not inside `runPreflight`. | No |
+| A29 | The render check V-02 passed. Per Amendment 1, V-02 cannot run in-process on Vercel because it uses native render dependencies, so it is enforced by CI as a separate check and not inside `runPreflight`. | CI only |
 | A30 | PDF metadata carries package title, generator version, commit hash, and generation timestamp. | Yes |
 | R02 | Package print addresses fit their narrowest target fields, or validation fails. | Yes |
 
-Implementation status is based on reading `src/lib/pdf/preflight.ts`: `runPreflight` calls `checkA01` through `checkA03`, `checkA05` through `checkA27`, `checkR02`, and awaits `checkA28` and `checkA30`. No `checkA04` or `checkA29` function is defined or called there.
+Implementation status is based on reading `src/lib/pdf/preflight.ts`: `runPreflight` calls `checkW02`, `checkA01` through `checkA28` except `checkA29`, `checkR02`, and `checkA30`. `checkA29` is intentionally absent because render verification runs in CI only.
 
 ## Warnings (non-blocking) referenced in preflight.ts
 
 | ID | Condition | Message |
 |---|---|---|
+| W02 | A transaction category has no rows and was not explicitly confirmed as zero. | `Tax year [year]: Some transaction categories were never confirmed ([categories]).` |
 | W15b | `priorForm5472Filed` is missing. | `Prior-filing question not answered.` |
 | W15 | In formation year, prior Form 5472 answer is `yes` or `not_sure`; after formation year, prior Form 5472 answer is `no` or `not_sure`. | `Formation-year prior Form 5472 answer needs reviewer confirmation.` or `An earlier year may not have been filed.` |
 | W16 | Line 1o source is `default_us`. | `Tax year [year]: line 1o defaulted to United States.` |
@@ -136,7 +137,13 @@ Implementation status is based on reading `src/lib/pdf/preflight.ts`: `runPrefli
 | W18 | FTIN is blank and `ownerHasFtin` is not structured. | `Tax year [year]: Owner FTIN answer not in structured form (older order).` |
 | W26 | Reasonable cause statement uses fallback text predating per-year questions. | `Reasonable cause text predates the per-year questions.` |
 
-W02 was requested for this document but does not exist anywhere in the codebase as of this writing; nothing is implemented under that ID. Confirm with Sum whether it was meant to be a different ID or is still pending implementation.
+W02 is implemented in `src/lib/pdf/preflight.ts` as a warning, not a blocking assertion.
+
+## Review before signature
+
+Customers cannot sign a newly generated package until a qualified accountant approves it. Approval records `reviewApprovedAt` and `reviewApprovedBy`, then emails the customer a secure sign link. Uploading a reviewed package is also an approval.
+
+Every stored package generation or regeneration clears `reviewApprovedAt` and `reviewApprovedBy`, so approval never carries across to changed bytes. Filings already at `SIGNATURE_PENDING` or later are grandfathered for compatibility with pre-existing data.
 
 ## Amendments
 
@@ -157,6 +164,8 @@ These amendments were approved by Sum on 21 September 2026. They override anythi
 7. Ship in approved waves on `fix/generator-review-defects`, merging each wave to `main` only after typecheck, full test suite, production build, relevant fixtures green, and independent review. Wave 1 covers P0 form logic, extension gate, reasonable-cause suppression, fail-loud flatten, version stamp, fixtures, and validator core. Wave 2 covers remaining P0/P1 form and rendering items. Wave 3 covers reasonable-cause content and multi-year ordering. Wave 4 covers questionnaire work. Wave 5 covers CI, reviewer overrides, open-order sweep, and this rules doc. Packages already signed or faxed are never regenerated.
 
 8. Before code depends on them, cite the IRS source for lines 43a/43b being blank for a foreign-owned U.S. DE, `999000` as the Form 1120 unclassified code, and printing `None` when the owner has no foreign tax ID. If the source does not support a rule, stop and report instead of coding it.
+
+Note: A29 is a CI-only render check by design. It must not run inside `runPreflight` because Vercel cannot rely on the native render dependencies used by V-02.
 
 9. Validation status must be a new nullable column, not a new filing-status enum value, because payment, cron, and webhook code switch on status.
 

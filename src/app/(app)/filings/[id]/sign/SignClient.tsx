@@ -63,9 +63,9 @@ export function SignClient({
 
         <h1 className="text-2xl font-semibold text-slate-900">Acknowledge & sign — {label}</h1>
         <p className="mt-1.5 text-sm text-slate-600">
-          Review the package on the left and draw your signature below to acknowledge
-          you&apos;ve checked it. Our tax accountant will then sign the final IRS package
-          on your behalf and fax it to the IRS Ogden PIN Unit.
+          A qualified accountant has reviewed the package. Review it on the left and draw
+          your signature below to acknowledge you&apos;ve checked it, then we will fax it to
+          the IRS Ogden PIN Unit.
         </p>
 
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">

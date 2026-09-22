@@ -6,6 +6,15 @@ import { FilingLocked } from "@/components/FilingLocked";
 import { SignClient } from "./SignClient";
 import { get as getStorageObject } from "@/lib/storage";
 
+const REVIEW_PENDING_MESSAGE = "Your forms are still being reviewed. We will email you when they are ready to sign.";
+const REVIEW_GATE_GRANDFATHERED_STATUSES = new Set([
+  "SIGNATURE_PENDING",
+  "SIGNED_UPLOADED",
+  "FAXED",
+  "CONFIRMED",
+  "FAILED",
+]);
+
 // Page where customers sign their filing in-portal. Replaces the prior
 // "download + sign offline + upload signed PDF" loop. Gated to:
 //   - filing must exist and be owned by the requester
@@ -59,6 +68,24 @@ export default async function SignFilingPage({ params }: { params: { id: string 
     // Pre-payment or generation not complete yet — bounce back to the filing
     // detail page where the status banner will explain.
     redirect(`/filings/${filing.id}`);
+  }
+  if (!filing.reviewApprovedAt && !REVIEW_GATE_GRANDFATHERED_STATUSES.has(filing.status)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
+        <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
+          <h1 className="text-xl font-semibold text-slate-900">Review in progress</h1>
+          <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+            {REVIEW_PENDING_MESSAGE}
+          </p>
+          <Link
+            href={`/filings/${filing.id}`}
+            className="mt-6 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-accent px-4 text-white text-sm font-semibold shadow-lg shadow-accent/20 hover:shadow-xl hover:shadow-accent/30 transition-all hover:-translate-y-0.5"
+          >
+            Back to filing
+          </Link>
+        </div>
+      </div>
+    );
   }
   if (filing.signedPdfKey || filing.signaturePngKey) {
     // Already signed — either the customer signed in-portal (signaturePngKey

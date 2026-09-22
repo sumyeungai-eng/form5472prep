@@ -50,6 +50,7 @@ export async function runPreflight(
   checkA01(record, result);
   checkA02(record, result);
   checkA03(record, result);
+  checkA04(record, result);
   checkA05(record, result);
   checkA06(record, result);
   checkA07(record, result);
@@ -138,6 +139,44 @@ function checkA03(record: PackageRecord, result: MutableResult) {
     );
     if (wrote43) {
       fail(result, "A03", `Tax year ${year.taxYear}: Form 5472 line 43a or 43b was written.`);
+    }
+  }
+}
+
+// A04: Form 5472 lines 37 through 42 are each answered where a Yes/No box exists.
+function checkA04(record: PackageRecord, result: MutableResult) {
+  // Lines answered on every Form 5472.
+  const requiredPairs = [
+    ["37", form5472FieldMap.q37_imports_yes, form5472FieldMap.q37_imports_no],
+    ["39", form5472FieldMap.q39_csa_yes, form5472FieldMap.q39_csa_no],
+    ["40a", form5472FieldMap.q40a_267A_yes, form5472FieldMap.q40a_267A_no],
+    ["41a", form5472FieldMap.q41a_fdii_yes, form5472FieldMap.q41a_fdii_no],
+    ["42a", form5472FieldMap.q42a_safeHavenInRange_yes, form5472FieldMap.q42a_safeHavenInRange_no],
+    ["42b", form5472FieldMap.q42b_safeHavenOutsideRange_yes, form5472FieldMap.q42b_safeHavenOutsideRange_no],
+  ] as const;
+  // Lines 38a and 38c only apply "If 'Yes'" to line 37. Field names in the map are historical:
+  // c3_2 is line 38a and c3_3 is line 38c on Form 5472 (Rev. 12-2023), page 3.
+  const conditionalOn37 = [
+    ["38a", form5472FieldMap.q38a_basesErosionPayment_yes, form5472FieldMap.q38a_basesErosionPayment_no],
+    ["38c", form5472FieldMap.q38b_basesErosionTaxBenefit_yes, form5472FieldMap.q38b_basesErosionTaxBenefit_no],
+  ] as const;
+  for (const year of record.taxYears) {
+    const fields = year.form5472.fields;
+    const missing = requiredPairs
+      .filter(([, yesField, noField]) => !hasChecked(fields, yesField) && !hasChecked(fields, noField))
+      .map(([line]) => line);
+    if (missing.length > 0) {
+      fail(result, "A04", `Tax year ${year.taxYear}: Form 5472 lines ${missing.join(", ")} are not answered.`);
+    }
+    const line37Yes = hasChecked(fields, form5472FieldMap.q37_imports_yes);
+    for (const [line, yesField, noField] of conditionalOn37) {
+      const answered = hasChecked(fields, yesField) || hasChecked(fields, noField);
+      if (!line37Yes && answered) {
+        fail(result, "A04", `Tax year ${year.taxYear}: Form 5472 line ${line} must be blank when line 37 is No.`);
+      }
+      if (line37Yes && !answered) {
+        fail(result, "A04", `Tax year ${year.taxYear}: Form 5472 line ${line} must be answered when line 37 is Yes.`);
+      }
     }
   }
 }

@@ -24,6 +24,7 @@ const storage = vi.hoisted(() => ({
 const email = vi.hoisted(() => ({
   sendMagicLinkEmail: vi.fn(),
   sendOrderConfirmationEmail: vi.fn(),
+  sendReadyToSignEmail: vi.fn(),
 }));
 const pdf = vi.hoisted(() => ({
   generatePackage: vi.fn(async () => ({
@@ -52,6 +53,7 @@ vi.mock("@/lib/storage", () => ({
 vi.mock("@/lib/email", () => ({
   sendMagicLinkEmail: email.sendMagicLinkEmail,
   sendOrderConfirmationEmail: email.sendOrderConfirmationEmail,
+  sendReadyToSignEmail: email.sendReadyToSignEmail,
 }));
 vi.mock("@/lib/magicLink", () => ({ makeMagicLink: () => "https://example.test/magic" }));
 vi.mock("@/lib/pdf/generatePackage", () => ({
@@ -76,6 +78,7 @@ import { filingToPackageInput } from "@/lib/pdf/packageInput";
 describe("SIDE_EFFECTING_ACTIONS", () => {
   it("contains exactly the four externally side-effecting filing actions", () => {
     expect(Array.from(SIDE_EFFECTING_ACTIONS).sort()).toEqual([
+      "approveForSignature",
       "regeneratePdf",
       "resendMagicLink",
       "resendOrderConfirmation",
@@ -251,6 +254,8 @@ describe("regeneratePdf", () => {
     preflightOverrideBy: "admin_old",
     preflightOverrideAt: new Date("2026-09-20T00:00:00.000Z"),
     preflightOverrideReason: "Prior override reason.",
+    reviewApprovedAt: new Date("2026-09-21T00:00:00.000Z"),
+    reviewApprovedBy: "admin_old",
     user: { id: "u1", email: "a@b.com" },
   };
 
@@ -326,9 +331,107 @@ describe("regeneratePdf", () => {
       preflightOverrideBy: null,
       preflightOverrideAt: null,
       preflightOverrideReason: null,
+      reviewApprovedAt: null,
+      reviewApprovedBy: null,
       status: "PDF_GENERATED",
     });
   });
+});
+
+describe("approveForSignature", () => {
+  const filing = {
+    id: "filing_1",
+    status: "PDF_GENERATED",
+    llcName: "Acme LLC",
+    ownerName: "Owner One",
+    taxYears: [2026],
+    generatedPdfKey: "unsigned.pdf",
+    preflightStatus: "passed",
+    preflightOverrideBy: null,
+    reviewApprovedAt: null,
+    reviewApprovedBy: null,
+    user: { id: "u1", email: "owner@example.test" },
+  };
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-09-22T12:00:00.000Z"));
+    db.findUnique.mockReset();
+    db.update.mockClear();
+    db.createLog.mockClear();
+    email.sendReadyToSignEmail.mockClear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("records review approval, logs it, and emails the customer", async () => {
+    db.findUnique.mockResolvedValue(filing);
+
+    await expect(
+      runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true });
+
+    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: "filing_1" },
+      data: {
+        reviewApprovedAt: new Date("2026-09-22T12:00:00.000Z"),
+        reviewApprovedBy: "admin_1",
+      },
+      select: { id: true },
+    }));
+    expect(db.createLog).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        filingId: "filing_1",
+        adminId: "admin_1",
+        field: "reviewApproval",
+      }),
+    }));
+    expect(email.sendReadyToSignEmail).toHaveBeenCalledWith(expect.objectContaining({
+      email: "owner@example.test",
+      filingId: "filing_1",
+      portalLink: "https://example.test/magic",
+    }));
+  });
+
+  it("allows approval when failed pre-flight has an override", async () => {
+    db.findUnique.mockResolvedValue({
+      ...filing,
+      preflightStatus: "failed",
+      preflightOverrideBy: "admin_override",
+    });
+
+    await expect(
+      runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true });
+  });
+
+  it("rejects approval when pre-flight failed without an override", async () => {
+    db.findUnique.mockResolvedValue({
+      ...filing,
+      preflightStatus: "failed",
+      preflightOverrideBy: null,
+    });
+
+    await expect(
+      runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 409, code: "preflight_not_approved" });
+    expect(db.update).not.toHaveBeenCalled();
+    expect(email.sendReadyToSignEmail).not.toHaveBeenCalled();
+  });
+
+  it.each(["SIGNED_UPLOADED", "FAXED", "CONFIRMED"] as const)(
+    "rejects %s filings",
+    async (status) => {
+      db.findUnique.mockResolvedValue({ ...filing, status });
+
+      await expect(
+        runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+      ).rejects.toMatchObject({ status: 409, code: "already_signed_or_filed" });
+      expect(db.update).not.toHaveBeenCalled();
+    },
+  );
 });
 
 describe("updateYearField", () => {
@@ -499,6 +602,8 @@ describe("resendOrderConfirmation", () => {
     preflightOverrideBy: "admin_old",
     preflightOverrideAt: new Date("2026-09-20T00:00:00.000Z"),
     preflightOverrideReason: "Prior override reason.",
+    reviewApprovedAt: new Date("2026-09-21T00:00:00.000Z"),
+    reviewApprovedBy: "admin_old",
     user: { id: "u1", email: "owner@example.test" },
   };
 
@@ -557,8 +662,14 @@ describe("resendOrderConfirmation", () => {
       preflightOverrideBy: null,
       preflightOverrideAt: null,
       preflightOverrideReason: null,
+      reviewApprovedAt: null,
+      reviewApprovedBy: null,
       preflightStatus: "passed",
     });
+    expect(email.sendOrderConfirmationEmail).toHaveBeenCalledWith(expect.objectContaining({
+      requiresReasonableCause: false,
+      extensionUnclear: false,
+    }));
   });
 });
 

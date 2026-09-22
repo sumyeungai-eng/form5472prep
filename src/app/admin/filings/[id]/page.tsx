@@ -51,6 +51,12 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         select: { email: true },
       })
     : null;
+  const reviewApprovedAdmin = filing.reviewApprovedBy
+    ? await prisma.admin.findUnique({
+        where: { id: filing.reviewApprovedBy },
+        select: { email: true },
+      })
+    : null;
 
   // Resolve public URLs for any uploaded files.
   const generatedPdfUrl = filing.generatedPdfKey ? await publicUrl(filing.generatedPdfKey) : null;
@@ -204,6 +210,9 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           hasCustomerSignature={!!filing.signaturePngKey}
           hasFaxedPdf={!!filing.faxedPdfKey}
           preflightStatus={filing.preflightStatus}
+          preflightOverrideBy={filing.preflightOverrideBy}
+          reviewApprovedAt={filing.reviewApprovedAt ? filing.reviewApprovedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
+          reviewApprovedBy={reviewApprovedAdmin?.email ?? filing.reviewApprovedBy}
           faxedAt={filing.faxedAt ? filing.faxedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
         />
       </div>

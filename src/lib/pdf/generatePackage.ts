@@ -145,17 +145,17 @@ type Filing = {
   extensionFiled?: string | null;
   extensionTransmittedAt?: Date | string | null;
   reasonableCauseNarrative: string | null;
-	  yearData: {
-	    taxYear: number;
-	    totalAssetsYearEnd: number;
-	    contributions: number;
-	    distributions: number;
-	    otherTransactionsNote: string | null;
-	    reportableTransactions?: ReportableTx[];
-	    nonCashTransfers?: NonCashTransfer[];
-	    ownerPaidCosts?: OwnerPaidCost[];
-	    zeroConfirmations?: ZeroConfirmations;
-	    rcsWhyMissed?: string | null;
+    yearData: {
+      taxYear: number;
+      totalAssetsYearEnd: number;
+      contributions: number;
+      distributions: number;
+      otherTransactionsNote: string | null;
+      reportableTransactions?: ReportableTx[];
+      nonCashTransfers?: NonCashTransfer[];
+      ownerPaidCosts?: OwnerPaidCost[];
+      zeroConfirmations?: ZeroConfirmations;
+      rcsWhyMissed?: string | null;
     rcsWhenLearned?: string | null;
     rcsNoIrsNoticeConfirmed?: boolean | null;
   }[];
@@ -226,11 +226,11 @@ export type PackageRecordYear = {
   line1h: number;
   partVTotalRounded: number;
   partVTotalCents: number;
-	  partVRows: ReportableTx[];
-	  nonCashTransfers: NonCashTransfer[];
-	  ownerPaidCosts: OwnerPaidCost[];
-	  zeroConfirmations: ZeroConfirmations;
-	  partVICentsAddedToLine1f: number;
+    partVRows: ReportableTx[];
+    nonCashTransfers: NonCashTransfer[];
+    ownerPaidCosts: OwnerPaidCost[];
+    zeroConfirmations: ZeroConfirmations;
+    partVICentsAddedToLine1f: number;
   line1jChecked: boolean;
   priorForm5472Filed: string | null;
   ownerHasFtin: boolean | null;
@@ -875,6 +875,8 @@ function fillForm5472(
 
   // Part VII negatives
   check(form, m.q37_imports_no, recorder);
+  // Lines 38a and 38c are conditional ("If 'Yes' [to line 37]"). Line 37 is answered No for every
+  // package this product produces, so 38a and 38c stay blank, like 43a/43b.
   check(form, m.q39_csa_no, recorder);
   check(form, m.q40a_267A_no, recorder);
   check(form, m.q41a_fdii_no, recorder);

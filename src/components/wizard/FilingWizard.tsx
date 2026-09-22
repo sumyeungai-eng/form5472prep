@@ -255,13 +255,13 @@ type Filing = {
     totalAssetsYearEnd: string;
     contributions: string;
     distributions: string;
-	    otherTransactionsNote: string | null;
-	    noReportableTransactions: boolean;
-	    reportableTransactions?: unknown;
-	    nonCashTransfers?: unknown;
-	    ownerPaidCosts?: unknown;
-	    zeroConfirmations?: unknown;
-	    rcsWhyMissed?: string | null;
+      otherTransactionsNote: string | null;
+      noReportableTransactions: boolean;
+      reportableTransactions?: unknown;
+      nonCashTransfers?: unknown;
+      ownerPaidCosts?: unknown;
+      zeroConfirmations?: unknown;
+      rcsWhyMissed?: string | null;
     rcsWhenLearned?: string | null;
     rcsNoIrsNoticeConfirmed?: boolean | null;
   }[];
@@ -588,13 +588,13 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
                   totalAssetsYearEnd: existing ? Number(existing.totalAssetsYearEnd) : 0,
                   contributions: existing ? Number(existing.contributions) : 0,
                   distributions: existing ? Number(existing.distributions) : 0,
-	                  otherTransactionsNote: existing?.otherTransactionsNote ?? "",
-	                  noReportableTransactions: existing?.noReportableTransactions ?? false,
-	                  reportableTransactions: existing?.reportableTransactions ?? [],
-	                  nonCashTransfers: existing?.nonCashTransfers ?? [],
-	                  ownerPaidCosts: existing?.ownerPaidCosts ?? [],
-	                  zeroConfirmations: existing?.zeroConfirmations ?? {},
-	                  rcsWhyMissed: row.rcsWhyMissed,
+                    otherTransactionsNote: existing?.otherTransactionsNote ?? "",
+                    noReportableTransactions: existing?.noReportableTransactions ?? false,
+                    reportableTransactions: existing?.reportableTransactions ?? [],
+                    nonCashTransfers: existing?.nonCashTransfers ?? [],
+                    ownerPaidCosts: existing?.ownerPaidCosts ?? [],
+                    zeroConfirmations: existing?.zeroConfirmations ?? {},
+                    rcsWhyMissed: row.rcsWhyMissed,
                   rcsWhenLearned: row.rcsWhenLearned,
                   rcsNoIrsNoticeConfirmed: row.rcsNoIrsNoticeConfirmed,
                 };
@@ -613,12 +613,12 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
                     contributions: "0",
                     distributions: "0",
                     otherTransactionsNote: null,
-	                    noReportableTransactions: false,
-	                    reportableTransactions: [],
-	                    nonCashTransfers: [],
-	                    ownerPaidCosts: [],
-	                    zeroConfirmations: {},
-	                  });
+                      noReportableTransactions: false,
+                      reportableTransactions: [],
+                      nonCashTransfers: [],
+                      ownerPaidCosts: [],
+                      zeroConfirmations: {},
+                    });
                 }
               }
               setFiling({
@@ -649,12 +649,12 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
                 contributions: ex ? Number(ex.contributions) : 0,
                 distributions: ex ? Number(ex.distributions) : 0,
                 otherTransactionsNote: ex?.otherTransactionsNote ?? "",
-	                noReportableTransactions: ex?.noReportableTransactions ?? false,
-	                reportableTransactions: ex?.reportableTransactions ?? [],
-	                nonCashTransfers: ex?.nonCashTransfers ?? [],
-	                ownerPaidCosts: ex?.ownerPaidCosts ?? [],
-	                zeroConfirmations: ex?.zeroConfirmations ?? {},
-	              };
+                  noReportableTransactions: ex?.noReportableTransactions ?? false,
+                  reportableTransactions: ex?.reportableTransactions ?? [],
+                  nonCashTransfers: ex?.nonCashTransfers ?? [],
+                  ownerPaidCosts: ex?.ownerPaidCosts ?? [],
+                  zeroConfirmations: ex?.zeroConfirmations ?? {},
+                };
             })}
             initialHasUsSourceIncome={filing.hasUsSourceIncome}
             initialUsTaxWithheld={filing.usTaxWithheld}
@@ -670,11 +670,11 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
                   contributions: String(y.contributions),
                   distributions: String(y.distributions),
                   otherTransactionsNote: y.otherTransactionsNote || null,
-	                  noReportableTransactions: y.noReportableTransactions,
-	                  reportableTransactions: y.reportableTransactions,
-	                  ownerPaidCosts: y.ownerPaidCosts,
-	                  zeroConfirmations: y.zeroConfirmations,
-	                  nonCashTransfers: y.nonCashTransfers,
+                    noReportableTransactions: y.noReportableTransactions,
+                    reportableTransactions: y.reportableTransactions,
+                    ownerPaidCosts: y.ownerPaidCosts,
+                    zeroConfirmations: y.zeroConfirmations,
+                    nonCashTransfers: y.nonCashTransfers,
                   rcsWhyMissed:
                     filing.yearData.find((existing) => existing.taxYear === y.taxYear)
                       ?.rcsWhyMissed ?? null,
@@ -1937,7 +1937,7 @@ function YearsStep({
           ? `We'll confirm your extension status for ${latestSelectedYear} by email before anything is filed. The earlier year${lateYears.length > 1 ? "s" : ""} ${lateYears.join(", ")} ${lateYears.length > 1 ? "are" : "is"} being filed after ${lateYears.length > 1 ? "their due dates" : "its due date"}, so a reasonable-cause statement is included for ${lateYears.length > 1 ? "them" : "it"}.`
           : "We'll confirm your extension status by email before anything is filed — you can continue for now."
         : lateYears.length > 0
-	          ? "This return is being filed after its due date. We include a reasonable-cause statement explaining why."
+            ? "This return is being filed after its due date. We include a reasonable-cause statement explaining why."
           : extensionIsValid
             ? `We've recorded this as a timely filing under your Form 7004 extension, due ${formatDueDate(determinationDueMs)}.`
             : `Your filing deadline is ${formatDueDate(determinationDueMs)} — this return is on time.`;
@@ -2293,8 +2293,8 @@ function YearsStep({
                   customer on a fact they can't change. */}
               {extensionSentLate && originalDueMs !== null && (
                 <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-	                  This return is being filed after its due date. We include a
-	                  reasonable-cause statement explaining why.
+                    This return is being filed after its due date. We include a
+                    reasonable-cause statement explaining why.
                 </div>
               )}
               <Field label="How did you send it? (optional)">
@@ -2383,8 +2383,8 @@ function YearsStep({
         <p className="text-slate-600 mt-1">IRS fax delivery included.</p>
         {wouldBeDiirsp && (
           <p className="text-xs text-accent mt-2">
-	            This return is being filed after its due date. We include a reasonable-cause
-	            statement explaining why.
+              This return is being filed after its due date. We include a reasonable-cause
+              statement explaining why.
           </p>
         )}
       </div>
@@ -2681,7 +2681,7 @@ function ReviewStep({
         <svg className="flex-none h-4 w-4 mt-0.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <span>Every order is reviewed by a qualified tax accountant before submission to the IRS.</span>
+        <span>Every order is reviewed by a qualified accountant before submission to the IRS.</span>
       </div>
       <div className="flex justify-between">
         <Button type="button" variant="outline" onClick={onBack}>

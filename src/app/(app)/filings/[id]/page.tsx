@@ -91,6 +91,13 @@ export default async function FilingDetailPage({
   }
 
   const owningPartner = await partnerOwnsFiling(filing.id);
+  const unreadTeamMessages = await prisma.message.count({
+    where: {
+      filingId: filing.id,
+      fromAdmin: true,
+      readAt: null,
+    },
+  });
 
   // Filing deadline for the in-flight window. Latest tax year drives the date;
   // a FINAL return shortens that year, so dissolvedAt is passed only when
@@ -162,6 +169,9 @@ export default async function FilingDetailPage({
           id: filing.id,
           status: filing.status,
           generatedPdfKey: filing.generatedPdfKey,
+          reviewApprovedAt: filing.reviewApprovedAt?.toISOString() ?? null,
+          reviewApprovedBy: filing.reviewApprovedBy,
+          unreadTeamMessages,
           signaturePngKey: filing.signaturePngKey,
           signedPdfKey: filing.signedPdfKey,
           faxJobId: filing.faxJobId,
@@ -202,7 +212,9 @@ export default async function FilingDetailPage({
           post; admin notifications go to the filing's owner email if one
           was captured at /start (i.e. filing.user is non-null), even when
           the current browser doesn't have an active user cookie. */}
-      <MessagesPanel apiBase={`/api/filings/${filing.id}/messages`} isAdmin={false} />
+      <div id="messages">
+        <MessagesPanel apiBase={`/api/filings/${filing.id}/messages`} isAdmin={false} />
+      </div>
       </div>
     </>
   );

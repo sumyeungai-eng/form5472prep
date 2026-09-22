@@ -8,6 +8,15 @@ import { createFilingInvite } from "@/lib/filingInvite";
 
 export const runtime = "nodejs";
 
+const REVIEW_PENDING_MESSAGE = "Your forms are still being reviewed. We will email you when they are ready to sign.";
+const REVIEW_GATE_GRANDFATHERED_STATUSES = new Set([
+  "SIGNATURE_PENDING",
+  "SIGNED_UPLOADED",
+  "FAXED",
+  "CONFIRMED",
+  "FAILED",
+]);
+
 // Partner sends their client a secure link to review + sign a filing.
 //
 // Flow:
@@ -38,6 +47,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       { error: "Generate the filing PDF first (finish the wizard and pay), then send the sign link." },
       { status: 409 },
     );
+  }
+  if (!filing.reviewApprovedAt && !REVIEW_GATE_GRANDFATHERED_STATUSES.has(filing.status)) {
+    return NextResponse.json({ error: REVIEW_PENDING_MESSAGE }, { status: 409 });
   }
   if (filing.signaturePngKey || filing.signedPdfKey) {
     return NextResponse.json({ error: "This filing has already been signed." }, { status: 409 });

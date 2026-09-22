@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { resolveTier } from "@/lib/pricing";
 import { makeMagicLink } from "@/lib/magicLink";
-import { sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
+import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendReadyToSignEmail } from "@/lib/email";
 import { submitFax } from "@/lib/fax";
 import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
@@ -21,7 +21,7 @@ import {
   formatDueDate,
   isYearDelinquent,
 } from "@/lib/schemas";
-import { hasCompleteReasonableCause } from "@/lib/completeness";
+import { hasCompleteReasonableCause, requiresReasonableCause } from "@/lib/completeness";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 
 export type FilingActionName =
@@ -31,6 +31,7 @@ export type FilingActionName =
   | "retryFax"
   | "regeneratePdf"
   | "approvePreflightOverride"
+  | "approveForSignature"
   | "updateField"
   | "updateYearField"
   | "uploadReviewedPdf"
@@ -51,6 +52,7 @@ export const FILING_ACTION_NAMES = [
   "retryFax",
   "regeneratePdf",
   "approvePreflightOverride",
+  "approveForSignature",
   "updateField",
   "updateYearField",
   "uploadReviewedPdf",
@@ -62,6 +64,7 @@ export const SIDE_EFFECTING_ACTIONS: ReadonlySet<FilingActionName> = new Set<Fil
   "resendOrderConfirmation",
   "resendMagicLink",
   "regeneratePdf",
+  "approveForSignature",
 ]);
 
 export class FilingActionError extends Error {
@@ -156,6 +159,8 @@ const filingSelect = {
   preflightOverrideBy: true,
   preflightOverrideAt: true,
   preflightOverrideReason: true,
+  reviewApprovedAt: true,
+  reviewApprovedBy: true,
   generatorVersion: true,
   generatorCommit: true,
   faxedPdfKey: true,
@@ -302,6 +307,13 @@ function parseYearJsonField(field: keyof typeof YEAR_JSON_SCHEMAS, value: unknow
 function yearJsonWriteValue(value: unknown) {
   if (value === null) return Prisma.JsonNull;
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+}
+
+function hasPreflightApproval(filing: {
+  preflightStatus: string | null;
+  preflightOverrideBy: string | null;
+}): boolean {
+  return filing.preflightStatus === "passed" || !!filing.preflightOverrideBy;
 }
 
 // ─── Extension review flags (internal only) ──────────────────────────────────
@@ -460,6 +472,8 @@ export async function runFilingAction(
               preflightOverrideBy: null,
               preflightOverrideAt: null,
               preflightOverrideReason: null,
+              reviewApprovedAt: null,
+              reviewApprovedBy: null,
               generatorVersion: result.record.generatorVersion,
               generatorCommit: result.record.commit,
             },
@@ -498,6 +512,15 @@ export async function runFilingAction(
                 ),
               )
             : null,
+        requiresReasonableCause: requiresReasonableCause(filing),
+        extensionUnclear:
+          filing.taxYears.length > 0
+            ? extensionUnclear(
+                { filed: filing.extensionFiled, transmittedAt: filing.extensionTransmittedAt },
+                Math.max(...filing.taxYears),
+                filing.isFinalReturn ? filing.dissolvedAt : null,
+              )
+            : false,
       });
       await logFilingChange({
         filingId: filing.id,
@@ -684,6 +707,8 @@ export async function runFilingAction(
           preflightOverrideBy: null,
           preflightOverrideAt: null,
           preflightOverrideReason: null,
+          reviewApprovedAt: null,
+          reviewApprovedBy: null,
           generatorVersion: pkg.record.generatorVersion,
           generatorCommit: pkg.record.commit,
           status: "PDF_GENERATED",
@@ -1078,7 +1103,88 @@ export async function runFilingAction(
       return { ok: true };
     }
 
+    case "approveForSignature": {
+      if (!ctx.adminId) {
+        throw new FilingActionError(
+          403,
+          "identity_required",
+          "A personal admin account is required to approve this filing for signature.",
+        );
+      }
+      if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
+        throw new FilingActionError(
+          409,
+          "already_signed_or_filed",
+          "This filing has already been signed, faxed, or confirmed.",
+        );
+      }
+      if (!filing.generatedPdfKey) {
+        throw new FilingActionError(
+          409,
+          "generated_package_required",
+          "Generate the filing package before approving it for signature.",
+        );
+      }
+      if (!hasPreflightApproval(filing)) {
+        throw new FilingActionError(
+          409,
+          "preflight_not_approved",
+          "Pre-flight must pass or be overridden before approval for signature.",
+        );
+      }
+      if (!filing.user) {
+        throw new FilingActionError(400, "no_customer_email", "no customer email");
+      }
+
+      const approvedAt = new Date();
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: {
+          reviewApprovedAt: approvedAt,
+          reviewApprovedBy: ctx.adminId,
+        },
+        select: { id: true },
+      });
+      await logFilingChange({
+        filingId: filing.id,
+        adminId: ctx.adminId,
+        source: "admin",
+        field: "reviewApproval",
+        before: {
+          reviewApprovedAt: filing.reviewApprovedAt,
+          reviewApprovedBy: filing.reviewApprovedBy,
+        },
+        after: {
+          reviewApprovedAt: approvedAt,
+          reviewApprovedBy: ctx.adminId,
+        },
+        reason: ctx.reason,
+      });
+
+      try {
+        await sendReadyToSignEmail({
+          email: filing.user.email,
+          recipientName: filing.ownerName,
+          filingId: filing.id,
+          llcName: filing.llcName,
+          taxYears: filing.taxYears,
+          portalLink: makeMagicLink(filing.user.id),
+        });
+      } catch (err) {
+        console.error("[approveForSignature] ready-to-sign email failed", err);
+      }
+
+      return { ok: true, approvedAt };
+    }
+
     case "uploadReviewedPdf": {
+      if (!ctx.adminId) {
+        throw new FilingActionError(
+          403,
+          "identity_required",
+          "A personal admin account is required to approve this filing for signature.",
+        );
+      }
       if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
         throw new FilingActionError(
           409,
@@ -1117,6 +1223,7 @@ export async function runFilingAction(
       // drawn signature is already on file, return to SIGNATURE_PENDING (admin
       // stamps the saved signature onto this version next), not PDF_GENERATED.
       const reviewedStatus = filing.signaturePngKey ? "SIGNATURE_PENDING" : "PDF_GENERATED";
+      const approvedAt = new Date();
       await prisma.filing.update({
         where: { id: filing.id },
         data: {
@@ -1125,6 +1232,8 @@ export async function runFilingAction(
           signedAt: null,
           validationStatus: "pending",
           validationCheckedAt: null,
+          reviewApprovedAt: approvedAt,
+          reviewApprovedBy: ctx.adminId,
           status: reviewedStatus,
         },
         select: { id: true },
@@ -1143,9 +1252,25 @@ export async function runFilingAction(
           generatedPdfKey: key,
           signedPdfKey: null,
           status: reviewedStatus,
+          reviewApprovedAt: approvedAt,
+          reviewApprovedBy: ctx.adminId,
         },
         reason: ctx.reason,
       });
+      if (!filing.signaturePngKey && filing.user) {
+        try {
+          await sendReadyToSignEmail({
+            email: filing.user.email,
+            recipientName: filing.ownerName,
+            filingId: filing.id,
+            llcName: filing.llcName,
+            taxYears: filing.taxYears,
+            portalLink: makeMagicLink(filing.user.id),
+          });
+        } catch (err) {
+          console.error("[uploadReviewedPdf] ready-to-sign email failed", err);
+        }
+      }
       return { ok: true, key, bytes: bytes.length };
     }
 
