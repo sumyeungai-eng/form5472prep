@@ -319,6 +319,11 @@ model Filing {
   preflightOverrideBy String?
   preflightOverrideAt DateTime?
   preflightOverrideReason String?
+  // Accountant review gate: the customer can sign only after a reviewer approves the package.
+  // Set by the admin "Approve for signature" action (and by uploading a reviewed PDF); cleared when a new
+  // package is generated, because a new package needs a new review.
+  reviewApprovedAt        DateTime?
+  reviewApprovedBy        String?
   generatorVersion   String?
   generatorCommit    String?
 
