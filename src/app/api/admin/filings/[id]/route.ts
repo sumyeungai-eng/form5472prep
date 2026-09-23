@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAdminPrincipal, isAdmin } from "@/lib/admin/auth";
+import { adminLoginEmail, getAdminPrincipal, isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { sendAbandonedDraftReminderEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
@@ -51,6 +51,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       body,
       {
         adminId: principal?.adminId ?? null,
+        // The shared password login has no personal admin id; attribute its approvals to the
+        // configured admin sign-in email so they are never anonymous.
+        approver: principal?.adminId ?? adminLoginEmail(),
         force: true,
         reason: "legacy admin override",
       },

@@ -395,6 +395,26 @@ describe("approveForSignature", () => {
     }));
   });
 
+  it("lets the shared admin login approve, attributed to its sign-in email", async () => {
+    db.findUnique.mockResolvedValue(filing);
+
+    await expect(
+      runFilingAction("filing_1", "approveForSignature", {}, { adminId: null, approver: "admin@example.test" }),
+    ).resolves.toMatchObject({ ok: true });
+
+    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ reviewApprovedBy: "admin@example.test" }),
+    }));
+  });
+
+  it("still refuses when the admin cannot be identified at all", async () => {
+    db.findUnique.mockResolvedValue(filing);
+
+    await expect(
+      runFilingAction("filing_1", "approveForSignature", {}, { adminId: null }),
+    ).rejects.toMatchObject({ status: 403 });
+  });
+
   it("allows approval when failed pre-flight has an override", async () => {
     db.findUnique.mockResolvedValue({
       ...filing,

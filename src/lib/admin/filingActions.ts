@@ -39,6 +39,9 @@ export type FilingActionName =
 
 export type FilingActionContext = {
   adminId: string | null;
+  /** Who is approving: the personal admin id, or the shared admin login's email. Null only when
+   *  the caller could not be identified at all. Used for approvals that must be attributed. */
+  approver?: string | null;
   force?: boolean;
   reason?: string;
 };
@@ -1051,11 +1054,11 @@ export async function runFilingAction(
     }
 
     case "approvePreflightOverride": {
-      if (!ctx.adminId) {
+      if (!(ctx.approver ?? ctx.adminId)) {
         throw new FilingActionError(
           403,
           "identity_required",
-          "A personal admin account is required to approve pre-flight override.",
+          "We could not tell which admin is signed in. Sign out of the admin portal and sign in again.",
         );
       }
       if (filing.preflightStatus !== "failed") {
@@ -1077,7 +1080,7 @@ export async function runFilingAction(
       await prisma.filing.update({
         where: { id: filing.id },
         data: {
-          preflightOverrideBy: ctx.adminId,
+          preflightOverrideBy: ctx.approver ?? ctx.adminId,
           preflightOverrideAt: approvedAt,
           preflightOverrideReason: reason,
         },
@@ -1094,7 +1097,7 @@ export async function runFilingAction(
           preflightOverrideReason: filing.preflightOverrideReason,
         },
         after: {
-          preflightOverrideBy: ctx.adminId,
+          preflightOverrideBy: ctx.approver ?? ctx.adminId,
           preflightOverrideAt: approvedAt,
           preflightOverrideReason: reason,
         },
@@ -1104,11 +1107,11 @@ export async function runFilingAction(
     }
 
     case "approveForSignature": {
-      if (!ctx.adminId) {
+      if (!(ctx.approver ?? ctx.adminId)) {
         throw new FilingActionError(
           403,
           "identity_required",
-          "A personal admin account is required to approve this filing for signature.",
+          "We could not tell which admin is signed in. Sign out of the admin portal and sign in again.",
         );
       }
       if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
@@ -1141,7 +1144,7 @@ export async function runFilingAction(
         where: { id: filing.id },
         data: {
           reviewApprovedAt: approvedAt,
-          reviewApprovedBy: ctx.adminId,
+          reviewApprovedBy: ctx.approver ?? ctx.adminId,
         },
         select: { id: true },
       });
@@ -1156,7 +1159,7 @@ export async function runFilingAction(
         },
         after: {
           reviewApprovedAt: approvedAt,
-          reviewApprovedBy: ctx.adminId,
+          reviewApprovedBy: ctx.approver ?? ctx.adminId,
         },
         reason: ctx.reason,
       });
@@ -1184,11 +1187,11 @@ export async function runFilingAction(
     }
 
     case "uploadReviewedPdf": {
-      if (!ctx.adminId) {
+      if (!(ctx.approver ?? ctx.adminId)) {
         throw new FilingActionError(
           403,
           "identity_required",
-          "A personal admin account is required to approve this filing for signature.",
+          "We could not tell which admin is signed in. Sign out of the admin portal and sign in again.",
         );
       }
       if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
@@ -1239,7 +1242,7 @@ export async function runFilingAction(
           validationStatus: "pending",
           validationCheckedAt: null,
           reviewApprovedAt: approvedAt,
-          reviewApprovedBy: ctx.adminId,
+          reviewApprovedBy: ctx.approver ?? ctx.adminId,
           status: reviewedStatus,
         },
         select: { id: true },
@@ -1259,7 +1262,7 @@ export async function runFilingAction(
           signedPdfKey: null,
           status: reviewedStatus,
           reviewApprovedAt: approvedAt,
-          reviewApprovedBy: ctx.adminId,
+          reviewApprovedBy: ctx.approver ?? ctx.adminId,
         },
         reason: ctx.reason,
       });

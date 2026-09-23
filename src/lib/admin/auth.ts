@@ -31,6 +31,12 @@ const SECRET = process.env.ADMIN_SESSION_SECRET || DEV_SECRET;
 // login form doesn't matter. Not a secret — it's a second identifying factor
 // alongside the password.
 const LOGIN_EMAIL = (process.env.ADMIN_LOGIN_EMAIL || DEV_LOGIN_EMAIL).toLowerCase().trim();
+
+/** The sign-in email of the shared admin login, used to name who approved something
+ *  when the session is the password login rather than a personal admin account. */
+export function adminLoginEmail(): string {
+  return LOGIN_EMAIL;
+}
 const COOKIE_NAME = "form5472_admin";
 const TTL_SECONDS = 60 * 60 * 12; // 12 hours
 
