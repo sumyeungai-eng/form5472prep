@@ -44,6 +44,11 @@ export async function POST(req: NextRequest) {
 
   if (!isTrackablePath(body.p)) return noContent();
 
+  // Bots and crawlers never touch the database: each ping costs several writes
+  // (rate limit, daily budget, visitor, page view) and bot traffic alone kept the
+  // Neon compute from ever scaling to zero (free allowance exhausted 2026-09-23).
+  if (isBotUserAgent(req.headers.get("user-agent"))) return noContent();
+
   const ip = clientIpFromHeaders(req.headers);
 
   // This is an unauthenticated write endpoint sharing the RateLimit table and

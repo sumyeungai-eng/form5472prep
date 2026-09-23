@@ -32,7 +32,9 @@ export function useAdminCounters(): AdminCounters | null {
     }
 
     void load();
-    const interval = window.setInterval(loadIfVisible, 60_000);
+    // Every 5 minutes, not every minute: an admin tab left open was enough to keep
+    // the database compute awake around the clock.
+    const interval = window.setInterval(loadIfVisible, 5 * 60_000);
     document.addEventListener("visibilitychange", loadIfVisible);
 
     return () => {
