@@ -31,3 +31,12 @@ NOT verified: a real Stripe Checkout page render (no Stripe key on this machine)
   settings", the account refused per-session branding and the Stripe Dashboard branding page is the
   alternative.
 - Optional: a custom checkout domain (checkout.form5472prep.com) is a Stripe Dashboard setting.
+
+## 2026-09-23 Neon compute allowance exhausted (resolved)
+Neon free plan (100 CU-hours/month) hit 100% for project File5472form; owner upgraded to the Launch plan
+the same day. Cause: the database never scaled to zero. Each page-view ping did several writes (rate
+limit, daily budget, visitor, page view) including bots, and an open admin tab polled counters every
+minute. Commit dbccca9: bot/crawler pings return before any database work (test proves zero DB calls);
+admin counters poll every 5 minutes. Owner advised to cap compute at 0.25 CU with scale-to-zero on.
+Hosting decision: stay on Vercel + Neon through the 15 October deadline; a database-only move to the
+owner's Hostinger VPS is an option afterwards (Hostinger Business shared plan is MySQL-only: not viable).
