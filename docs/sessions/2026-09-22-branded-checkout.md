@@ -38,5 +38,5 @@ the same day. Cause: the database never scaled to zero. Each page-view ping did 
 limit, daily budget, visitor, page view) including bots, and an open admin tab polled counters every
 minute. Commit dbccca9: bot/crawler pings return before any database work (test proves zero DB calls);
 admin counters poll every 5 minutes. Owner advised to cap compute at 0.25 CU with scale-to-zero on.
-Hosting decision: stay on Vercel + Neon through the 15 October deadline; a database-only move to the
-owner's Hostinger VPS is an option afterwards (Hostinger Business shared plan is MySQL-only: not viable).
+Hosting decision (owner, 2026-09-23): stay on Vercel + Neon (Launch plan). No move to the Hostinger VPS
+or Business plan is planned; do not start one without a new instruction from the owner.
