@@ -40,3 +40,5 @@ minute. Commit dbccca9: bot/crawler pings return before any database work (test 
 admin counters poll every 5 minutes. Owner advised to cap compute at 0.25 CU with scale-to-zero on.
 Hosting decision (owner, 2026-09-23): stay on Vercel + Neon (Launch plan). No move to the Hostinger VPS
 or Business plan is planned; do not start one without a new instruction from the owner.
+
+Neon compute setting (2026-09-23, owner-approved, done in the Neon console): project File5472form, branch production, primary compute autoscaling capped at 0.25-0.25 CU (was 0.25-8 CU); scale to zero after 5 minutes stays on. Region: AWS Europe West 2 (London).
