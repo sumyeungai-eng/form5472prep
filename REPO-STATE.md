@@ -204,3 +204,5 @@ Claude and Codex sessions share these folders. Practical rules:
 - Preserve work you must move past (`git diff > some.patch`) and say so in your report.
 - `docs/sessions/2026-09-22-branded-checkout.md` — Stripe checkout branded per session (logo, colours,
   product images, review note); versioned idempotency keys; retry without branding if rejected.
+- `docs/sessions/2026-09-24-rcs-dropdowns.md` — reasonable-cause step now uses dropdowns + "Other"
+  free text; composes sentences into the same rcsWhyMissed/rcsWhenLearned fields.
