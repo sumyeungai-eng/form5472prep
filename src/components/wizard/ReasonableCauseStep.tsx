@@ -3,20 +3,17 @@
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  LEARNED_SOURCE_OPTIONS,
   WHY_MISSED_OPTIONS,
-  composeWhenLearned,
   composeWhyMissed,
-  parseWhenLearned,
   parseWhyMissed,
-  validateSelections,
-  type WhenLearnedSelection,
+  validateWhySelection,
   type WhyMissedSelection,
 } from "@/lib/reasonableCauseOptions";
 
 export type ReasonableCauseYearInput = {
   taxYear: number;
   rcsWhyMissed: string;
+  /** No longer asked; an earlier saved answer is passed through unchanged. */
   rcsWhenLearned: string;
   rcsNoIrsNoticeConfirmed: boolean;
 };
@@ -30,9 +27,6 @@ export function validateReasonableCauseYears(rows: ReasonableCauseYearInput[]): 
     if (!row.rcsWhyMissed.trim()) {
       errors[`${prefix}.rcsWhyMissed`] = `Explain why the filing for ${row.taxYear} was missed.`;
     }
-    if (!row.rcsWhenLearned.trim()) {
-      errors[`${prefix}.rcsWhenLearned`] = "Enter when you learned that this form was required.";
-    }
     if (row.rcsNoIrsNoticeConfirmed !== true) {
       errors[`${prefix}.rcsNoIrsNoticeConfirmed`] =
         `Confirm you have not received an IRS notice about this ${row.taxYear} return.`;
@@ -41,15 +35,8 @@ export function validateReasonableCauseYears(rows: ReasonableCauseYearInput[]): 
   return errors;
 }
 
-type Selection = { why: WhyMissedSelection; when: WhenLearnedSelection };
-
 const FIELD_CLASS =
   "block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
-
-function currentMonth(): string {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-}
 
 export function ReasonableCauseStep({
   years,
@@ -63,17 +50,11 @@ export function ReasonableCauseStep({
   saving: boolean;
 }) {
   const [rows, setRows] = useState<ReasonableCauseYearInput[]>(years);
-  const [selections, setSelections] = useState<Record<number, Selection>>(() =>
-    Object.fromEntries(
-      years.map((row) => [
-        row.taxYear,
-        { why: parseWhyMissed(row.rcsWhyMissed), when: parseWhenLearned(row.rcsWhenLearned) },
-      ]),
-    ),
+  const [selections, setSelections] = useState<Record<number, WhyMissedSelection>>(() =>
+    Object.fromEntries(years.map((row) => [row.taxYear, parseWhyMissed(row.rcsWhyMissed)])),
   );
   const [errors, setErrors] = useState<FieldErrors>({});
   const sortedRows = useMemo(() => rows.slice().sort((a, b) => a.taxYear - b.taxYear), [rows]);
-  const maxMonth = useMemo(currentMonth, []);
 
   function clearErrors(taxYear: number, keys: string[]) {
     setErrors((current) => {
@@ -83,33 +64,22 @@ export function ReasonableCauseStep({
     });
   }
 
-  function setSelection(taxYear: number, next: Selection) {
+  function setSelection(taxYear: number, next: WhyMissedSelection) {
     setSelections((current) => ({ ...current, [taxYear]: next }));
     setRows((current) =>
       current.map((row) =>
-        row.taxYear === taxYear
-          ? { ...row, rcsWhyMissed: composeWhyMissed(next.why), rcsWhenLearned: composeWhenLearned(next.when) }
-          : row,
+        row.taxYear === taxYear ? { ...row, rcsWhyMissed: composeWhyMissed(next) } : row,
       ),
     );
-  }
-
-  function updateWhy(taxYear: number, patch: Partial<WhyMissedSelection>) {
-    const current = selections[taxYear];
-    setSelection(taxYear, { ...current, why: { ...current.why, ...patch } });
     clearErrors(taxYear, ["rcsWhyMissed"]);
   }
 
-  function updateWhen(taxYear: number, patch: Partial<WhenLearnedSelection>) {
-    const current = selections[taxYear];
-    setSelection(taxYear, { ...current, when: { ...current.when, ...patch } });
-    clearErrors(taxYear, ["rcsWhenLearned"]);
+  function updateWhy(taxYear: number, patch: Partial<WhyMissedSelection>) {
+    setSelection(taxYear, { ...selections[taxYear], ...patch });
   }
 
   function copyFrom(fromYear: number, toYear: number) {
-    const source = selections[fromYear];
-    setSelection(toYear, { why: { ...source.why }, when: { ...source.when } });
-    clearErrors(toYear, ["rcsWhyMissed", "rcsWhenLearned"]);
+    setSelection(toYear, { ...selections[fromYear] });
   }
 
   function update(taxYear: number, patch: Partial<ReasonableCauseYearInput>) {
@@ -122,10 +92,7 @@ export function ReasonableCauseStep({
   async function submit() {
     const selectionErrors = Object.assign(
       {},
-      ...rows.map((row) => {
-        const sel = selections[row.taxYear];
-        return validateSelections(row.taxYear, sel.why, sel.when);
-      }),
+      ...rows.map((row) => validateWhySelection(row.taxYear, selections[row.taxYear])),
     ) as FieldErrors;
     const nextErrors = { ...validateReasonableCauseYears(rows), ...selectionErrors };
     setErrors(nextErrors);
@@ -138,9 +105,8 @@ export function ReasonableCauseStep({
       <div>
         <h2 className="text-xl font-semibold">Reasonable cause statement</h2>
         <p className="text-sm text-slate-500 mt-1">
-          This return is being filed after its due date. Pick the answers that fit best and we will
-          write the reasonable-cause statement for you. You can always choose &ldquo;Other&rdquo; and
-          write your own.
+          This return is being filed after its due date, so the IRS needs a short explanation. Pick
+          the reason that fits best, or choose &ldquo;Other&rdquo; and write your own.
         </p>
       </div>
 
@@ -148,10 +114,8 @@ export function ReasonableCauseStep({
         {sortedRows.map((row, index) => {
           const prefix = String(row.taxYear);
           const sel = selections[row.taxYear];
-          const whyOption = WHY_MISSED_OPTIONS.find((o) => o.key === sel.why.key);
-          const whenIsOther = sel.when.source === "other";
+          const whyOption = WHY_MISSED_OPTIONS.find((o) => o.key === sel.key);
           const previousYear = index > 0 ? sortedRows[index - 1].taxYear : null;
-          const preview = [row.rcsWhyMissed, row.rcsWhenLearned].filter(Boolean).join(" ");
           return (
             <section
               key={row.taxYear}
@@ -182,7 +146,7 @@ export function ReasonableCauseStep({
                   </label>
                   <select
                     id={`rcs-why-${row.taxYear}`}
-                    value={sel.why.key}
+                    value={sel.key}
                     onChange={(e) =>
                       updateWhy(row.taxYear, { key: e.target.value as WhyMissedSelection["key"] })
                     }
@@ -212,7 +176,7 @@ export function ReasonableCauseStep({
                       <textarea
                         id={`rcs-why-detail-${row.taxYear}`}
                         rows={whyOption.detailRequired ? 3 : 2}
-                        value={sel.why.detail}
+                        value={sel.detail}
                         onChange={(e) => updateWhy(row.taxYear, { detail: e.target.value })}
                         placeholder={
                           whyOption.key === "other"
@@ -230,74 +194,13 @@ export function ReasonableCauseStep({
                   )}
                 </div>
 
-                <div>
-                  <label
-                    htmlFor={`rcs-when-${row.taxYear}`}
-                    className="block text-sm font-medium text-slate-700"
-                  >
-                    How and when did you find out that this form was required?
-                  </label>
-                  <div className="mt-1 grid gap-2 sm:grid-cols-[1fr_11rem]">
-                    <select
-                      id={`rcs-when-${row.taxYear}`}
-                      value={sel.when.source}
-                      onChange={(e) =>
-                        updateWhen(row.taxYear, {
-                          source: e.target.value as WhenLearnedSelection["source"],
-                        })
-                      }
-                      className={FIELD_CLASS}
-                    >
-                      <option value="" disabled>
-                        Choose one…
-                      </option>
-                      {LEARNED_SOURCE_OPTIONS.map((o) => (
-                        <option key={o.key} value={o.key}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      type="month"
-                      aria-label={`Month you found out (tax year ${row.taxYear})`}
-                      value={sel.when.month}
-                      max={maxMonth}
-                      onChange={(e) => updateWhen(row.taxYear, { month: e.target.value })}
-                      className={FIELD_CLASS}
-                    />
-                  </div>
-                  {sel.when.source && (
-                    <div className="mt-2">
-                      <label
-                        htmlFor={`rcs-when-detail-${row.taxYear}`}
-                        className="block text-xs font-medium text-slate-600"
-                      >
-                        {whenIsOther ? "Tell us how and when you found out" : "Add details (optional)"}
-                      </label>
-                      <textarea
-                        id={`rcs-when-detail-${row.taxYear}`}
-                        rows={2}
-                        value={sel.when.detail}
-                        onChange={(e) => updateWhen(row.taxYear, { detail: e.target.value })}
-                        placeholder={
-                          whenIsOther
-                            ? "E.g. A friend with a U.S. LLC mentioned it in early 2026."
-                            : "Optional."
-                        }
-                        className={`mt-1 ${FIELD_CLASS}`}
-                      />
-                    </div>
-                  )}
-                  {errors[`${prefix}.rcsWhenLearned`] && (
-                    <p className="mt-1 text-xs text-red-600">{errors[`${prefix}.rcsWhenLearned`]}</p>
-                  )}
-                </div>
-
-                {preview && (
-                  <div>
-                    <p className="text-xs font-medium text-slate-500">What your statement will say</p>
-                    <p className="mt-1 rounded-md border border-slate-200 bg-slate-50 p-3 text-sm leading-relaxed text-slate-700">
-                      {preview}
+                {whyOption && (!whyOption.detailRequired || sel.detail.trim()) && (
+                  <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+                    <p className="font-medium">That&apos;s all we need for {row.taxYear}.</p>
+                    <p className="mt-1 text-emerald-800">
+                      We&apos;ll turn your answer into a formal reasonable-cause statement and attach it
+                      to your filing package. A qualified accountant reviews it before anything is
+                      submitted.
                     </p>
                   </div>
                 )}

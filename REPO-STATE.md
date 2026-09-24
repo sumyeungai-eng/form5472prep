@@ -206,3 +206,5 @@ Claude and Codex sessions share these folders. Practical rules:
   product images, review note); versioned idempotency keys; retry without branding if rejected.
 - `docs/sessions/2026-09-24-rcs-dropdowns.md` — reasonable-cause step now uses dropdowns + "Other"
   free text; composes sentences into the same rcsWhyMissed/rcsWhenLearned fields.
+- `docs/sessions/2026-09-25-rcs-no-when-question.md` — "when did you learn" question removed;
+  rcsWhenLearned optional everywhere; PDF closes the cause paragraph itself.

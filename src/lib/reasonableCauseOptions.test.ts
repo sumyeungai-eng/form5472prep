@@ -1,12 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  LEARNED_SOURCE_OPTIONS,
   WHY_MISSED_OPTIONS,
-  composeWhenLearned,
   composeWhyMissed,
-  parseWhenLearned,
   parseWhyMissed,
-  validateSelections,
+  validateWhySelection,
 } from "./reasonableCauseOptions";
 
 describe("why-missed dropdown", () => {
@@ -51,74 +48,36 @@ describe("why-missed dropdown", () => {
   });
 });
 
-describe("when-learned dropdown", () => {
-  it("writes source and month as prose", () => {
-    expect(composeWhenLearned({ source: "bank", month: "2026-03", detail: "" })).toBe(
-      "The Owner learned of the requirement when the Company's bank or payment provider requested tax information in March 2026.",
-    );
-  });
-
-  it("needs a month for preset sources", () => {
-    expect(composeWhenLearned({ source: "online", month: "", detail: "" })).toBe("");
-  });
-
-  it("other works with or without a month", () => {
-    expect(composeWhenLearned({ source: "other", month: "", detail: "a friend told me" })).toBe(
-      "A friend told me.",
-    );
-    expect(composeWhenLearned({ source: "other", month: "2025-11", detail: "a friend told me" })).toBe(
-      "The Owner learned of the requirement in November 2025. A friend told me.",
-    );
-  });
-
-  it("round-trips every source", () => {
-    for (const option of LEARNED_SOURCE_OPTIONS) {
-      const sel = { source: option.key, month: "2026-01", detail: "more detail" };
-      const parsed = parseWhenLearned(composeWhenLearned(sel));
-      expect(parsed.source).toBe(option.key);
-      expect(parsed.month).toBe("2026-01");
-      expect(composeWhenLearned(parsed)).toBe(composeWhenLearned(sel));
+describe("wording safety", () => {
+  it("no preset sentence trips the pre-flight A26 wording checks", () => {
+    // Same patterns as checkA26 in src/lib/pdf/preflight.ts.
+    const unsupportedOps = /\b(dormant|no customers|no vendors|did not operate with customers or vendors|customer payments|vendor invoices)\b/i;
+    const contradictsUsIncome = /\b(no U\.S\. income(?! tax return)|no tax owed)\b/i;
+    for (const option of WHY_MISSED_OPTIONS) {
+      expect(option.sentence).not.toMatch(unsupportedOps);
+      expect(option.sentence).not.toMatch(contradictsUsIncome);
     }
   });
 
-  it("loads legacy free text as Other", () => {
-    expect(parseWhenLearned("I learned in 2026.")).toEqual({
-      source: "other",
-      month: "",
-      detail: "I learned in 2026.",
-    });
+  it("answers saved with an earlier wording reopen on the same option", () => {
+    const earlier =
+      "Because no U.S. income tax was owed, the Owner believed that no U.S. return or information return was required.";
+    expect(parseWhyMissed(earlier)).toEqual({ key: "no_us_tax", detail: "" });
   });
 });
 
-describe("validateSelections", () => {
-  const now = new Date("2026-09-24T12:00:00Z");
-
-  it("requires a choice for both questions", () => {
-    const errors = validateSelections(2024, { key: "", detail: "" }, { source: "", month: "", detail: "" }, now);
-    expect(errors).toHaveProperty("2024.rcsWhyMissed");
-    expect(errors).toHaveProperty("2024.rcsWhenLearned");
+describe("validateWhySelection", () => {
+  it("requires a choice", () => {
+    expect(validateWhySelection(2024, { key: "", detail: "" })).toHaveProperty("2024.rcsWhyMissed");
   });
 
   it("requires own words for Other and hardship", () => {
-    expect(validateSelections(2024, { key: "other", detail: " " }, { source: "online", month: "2026-01", detail: "" }, now))
-      .toHaveProperty("2024.rcsWhyMissed");
-    expect(validateSelections(2024, { key: "hardship", detail: "" }, { source: "online", month: "2026-01", detail: "" }, now))
-      .toHaveProperty("2024.rcsWhyMissed");
+    expect(validateWhySelection(2024, { key: "other", detail: " " })).toHaveProperty("2024.rcsWhyMissed");
+    expect(validateWhySelection(2024, { key: "hardship", detail: "" })).toHaveProperty("2024.rcsWhyMissed");
   });
 
-  it("requires a month for preset sources and rejects future months", () => {
-    expect(validateSelections(2024, { key: "not_aware", detail: "" }, { source: "online", month: "", detail: "" }, now))
-      .toHaveProperty("2024.rcsWhenLearned");
-    expect(validateSelections(2024, { key: "not_aware", detail: "" }, { source: "online", month: "2026-10", detail: "" }, now))
-      .toHaveProperty("2024.rcsWhenLearned");
-  });
-
-  it("accepts a complete answer", () => {
-    expect(
-      validateSelections(2024, { key: "not_aware", detail: "" }, { source: "online", month: "2026-09", detail: "" }, now),
-    ).toEqual({});
-    expect(
-      validateSelections(2024, { key: "other", detail: "x" }, { source: "other", month: "", detail: "y" }, now),
-    ).toEqual({});
+  it("accepts a preset without details", () => {
+    expect(validateWhySelection(2024, { key: "not_aware", detail: "" })).toEqual({});
+    expect(validateWhySelection(2024, { key: "other", detail: "x" })).toEqual({});
   });
 });

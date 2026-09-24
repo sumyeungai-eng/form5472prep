@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { validateReasonableCauseYears } from "./ReasonableCauseStep";
 
 describe("validateReasonableCauseYears", () => {
-  it("requires all three answers for each late year", () => {
+  it("requires a reason and the no-notice confirmation for each late year", () => {
     expect(
       validateReasonableCauseYears([
         {
@@ -23,7 +23,7 @@ describe("validateReasonableCauseYears", () => {
           rcsNoIrsNoticeConfirmed: true,
         },
       ]),
-    ).toHaveProperty("2024.rcsWhenLearned");
+    ).toEqual({});
 
     expect(
       validateReasonableCauseYears([

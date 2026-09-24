@@ -143,7 +143,6 @@ export function hasCompleteReasonableCause(
     const row = yearData.find((y) => y.taxYear === taxYear);
     return (
       nonEmpty(row?.rcsWhyMissed) &&
-      nonEmpty(row?.rcsWhenLearned) &&
       row?.rcsNoIrsNoticeConfirmed === true
     );
   });

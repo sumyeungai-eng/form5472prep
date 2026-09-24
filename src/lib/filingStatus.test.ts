@@ -211,6 +211,23 @@ describe("reasonable-cause completeness", () => {
       [
         {
           taxYear: 2025,
+          rcsWhyMissed: "",
+          rcsWhenLearned: "I learned in 2026.",
+          rcsNoIrsNoticeConfirmed: true,
+        },
+      ],
+      now,
+    );
+
+    expect(issues).toContain("reasonableCauseNarrative");
+  });
+
+  it("no longer needs a when-learned answer for a late year", () => {
+    const issues = filingCompletionIssues(
+      completeFiling,
+      [
+        {
+          taxYear: 2025,
           rcsWhyMissed: "I did not know the form was required.",
           rcsWhenLearned: "",
           rcsNoIrsNoticeConfirmed: true,
@@ -219,7 +236,7 @@ describe("reasonable-cause completeness", () => {
       now,
     );
 
-    expect(issues).toContain("reasonableCauseNarrative");
+    expect(issues).not.toContain("reasonableCauseNarrative");
   });
 
   it("treats no-FTIN owner data as complete when ownerHasFtin is false", () => {

@@ -1694,10 +1694,13 @@ async function buildReasonableCause(
     drawParagraph(`Reasonable cause answers missing for ${year}.`);
   } else {
     if (why) drawParagraph(why);
-    if (learned) {
-      space(6);
-      drawParagraph(learned);
-    }
+    space(6);
+    // The wizard no longer asks when the owner learned of the requirement;
+    // older filings may still carry that answer.
+    drawParagraph(
+      learned ||
+        "Upon learning of the filing requirement, the Owner promptly arranged for this return and the accompanying Form 5472 to be prepared and submitted.",
+    );
   }
   space(10);
 

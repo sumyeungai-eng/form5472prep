@@ -98,7 +98,6 @@ function rcsStatus(f: FilingShape): StepStatus {
     const row = f.yearData.find((yd) => yd.taxYear === year);
     return (
       nonEmpty(row?.rcsWhyMissed) &&
-      nonEmpty(row?.rcsWhenLearned) &&
       row?.rcsNoIrsNoticeConfirmed === true
     );
   });

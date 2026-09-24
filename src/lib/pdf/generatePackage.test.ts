@@ -428,6 +428,18 @@ describe("generatePackage regressions", () => {
     expect(rcsText).not.toMatch(/\b(dividends|dormant|no customers|no vendors|did not operate with customers or vendors)\b/i);
   }, PDF_TIMEOUT);
 
+  it("closes the cause paragraph itself when no when-learned answer was given", async () => {
+    const filing = { ...F5, yearData: F5.yearData.map((year) => ({ ...year, rcsWhenLearned: null })) };
+    const pkg = await generatePackage(filing, finalisedAt);
+    const statements = pkg.record.authoredDocuments.filter((doc) => doc.kind === "reasonableCauseStatement");
+    expect(statements.length).toBeGreaterThan(0);
+    for (const doc of statements) {
+      const text = doc.lines.join(" ");
+      expect(text).toContain("Upon learning of the filing requirement, the Owner promptly arranged");
+      expect(doc.rcsMissingAnswers).toBe(false);
+    }
+  }, PDF_TIMEOUT);
+
   it("uses structured owner address parts once when the LLC uses the owner's address", async () => {
     const pkg = await generatePackage(F7, finalisedAt);
     const year = pkg.record.taxYears[0];

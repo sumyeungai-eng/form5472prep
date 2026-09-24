@@ -1,8 +1,8 @@
 // Dropdown choices for the reasonable-cause step. The customer picks a reason
 // (or "Other" and writes their own); we store a finished third-person sentence
-// in the existing rcsWhyMissed / rcsWhenLearned fields, so the PDF generator,
-// API and admin editor keep working on plain text. Pure module: safe to import
-// from client components.
+// in the existing rcsWhyMissed field, so the PDF generator, API and admin
+// editor keep working on plain text. Pure module: safe to import from client
+// components.
 
 export type WhyMissedKey =
   | "not_aware"
@@ -14,14 +14,6 @@ export type WhyMissedKey =
   | "hardship"
   | "other";
 
-export type LearnedSourceKey =
-  | "online"
-  | "filing_service"
-  | "bank"
-  | "advisor"
-  | "agent"
-  | "other";
-
 type WhyOption = {
   key: WhyMissedKey;
   label: string;
@@ -29,6 +21,8 @@ type WhyOption = {
   sentence: string;
   /** Whether the customer must add their own words. */
   detailRequired: boolean;
+  /** Earlier wordings of `sentence`, so answers saved with them reopen on this option. */
+  previousSentences?: readonly string[];
 };
 
 export const WHY_MISSED_OPTIONS: readonly WhyOption[] = [
@@ -49,9 +43,14 @@ export const WHY_MISSED_OPTIONS: readonly WhyOption[] = [
   {
     key: "no_us_tax",
     label: "No U.S. tax was owed, so I thought no return was needed",
+    // Avoid "no U.S. income" / "no tax owed": pre-flight A26 flags those phrases
+    // when the filing reports U.S.-source income.
     sentence:
-      "Because no U.S. income tax was owed, the Owner believed that no U.S. return or information return was required.",
+      "Because the Company did not owe any U.S. income tax, the Owner believed that no U.S. return or information return was required.",
     detailRequired: false,
+    previousSentences: [
+      "Because no U.S. income tax was owed, the Owner believed that no U.S. return or information return was required.",
+    ],
   },
   {
     key: "agent_not_told",
@@ -88,34 +87,7 @@ export const WHY_MISSED_OPTIONS: readonly WhyOption[] = [
   },
 ];
 
-type LearnedOption = {
-  key: LearnedSourceKey;
-  label: string;
-  /** Phrase after "The Owner learned of the requirement "; empty for "other". */
-  phrase: string;
-};
-
-export const LEARNED_SOURCE_OPTIONS: readonly LearnedOption[] = [
-  { key: "online", label: "Researching U.S. filing rules online", phrase: "while researching U.S. filing requirements online" },
-  { key: "filing_service", label: "From a filing or compliance service", phrase: "from a U.S. filing and compliance service" },
-  { key: "bank", label: "My bank or payment provider asked for tax information", phrase: "when the Company's bank or payment provider requested tax information" },
-  { key: "advisor", label: "From an accountant or tax advisor", phrase: "from an accountant or tax advisor" },
-  { key: "agent", label: "From my registered agent or formation service", phrase: "from the Company's registered agent or formation service" },
-  { key: "other", label: "Other (write your own)", phrase: "" },
-];
-
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-
 export type WhyMissedSelection = { key: WhyMissedKey | ""; detail: string };
-export type WhenLearnedSelection = {
-  source: LearnedSourceKey | "";
-  /** "YYYY-MM" as produced by <input type="month">, or "". */
-  month: string;
-  detail: string;
-};
 
 function tidy(value: string): string {
   return value.trim().replace(/\s+/g, " ");
@@ -126,21 +98,6 @@ function asSentence(value: string): string {
   if (!t) return "";
   const capitalized = t[0].toUpperCase() + t.slice(1);
   return /[.!?]$/.test(capitalized) ? capitalized : `${capitalized}.`;
-}
-
-function monthToProse(month: string): string {
-  const m = /^(\d{4})-(\d{2})$/.exec(month);
-  if (!m) return "";
-  const idx = Number(m[2]) - 1;
-  if (idx < 0 || idx > 11) return "";
-  return `${MONTHS[idx]} ${m[1]}`;
-}
-
-function proseToMonth(prose: string): string {
-  const m = /^([A-Z][a-z]+) (\d{4})$/.exec(prose);
-  if (!m) return "";
-  const idx = MONTHS.indexOf(m[1]);
-  return idx < 0 ? "" : `${m[2]}-${String(idx + 1).padStart(2, "0")}`;
 }
 
 export function composeWhyMissed(sel: WhyMissedSelection): string {
@@ -156,72 +113,26 @@ export function parseWhyMissed(stored: string | null | undefined): WhyMissedSele
   const text = tidy(stored ?? "");
   if (!text) return { key: "", detail: "" };
   for (const option of WHY_MISSED_OPTIONS) {
-    if (!option.sentence || !text.startsWith(option.sentence)) continue;
-    let detail = text.slice(option.sentence.length).trim();
+    const prefix = [option.sentence, ...(option.previousSentences ?? [])].find(
+      (sentence) => sentence && text.startsWith(sentence),
+    );
+    if (!prefix) continue;
+    let detail = text.slice(prefix.length).trim();
     if (option.key === "hardship") detail = detail.replace(/\.$/, "");
     return { key: option.key, detail };
   }
   return { key: "other", detail: text };
 }
 
-export function composeWhenLearned(sel: WhenLearnedSelection): string {
-  const option = LEARNED_SOURCE_OPTIONS.find((o) => o.key === sel.source);
-  if (!option) return "";
-  const when = monthToProse(sel.month);
-  const detail = asSentence(sel.detail);
-  if (option.key === "other") {
-    const lead = when ? `The Owner learned of the requirement in ${when}.` : "";
-    return [lead, detail].filter(Boolean).join(" ");
+/** Selection-level problem for one year, keyed like validateReasonableCauseYears ("2024.rcsWhyMissed"). */
+export function validateWhySelection(taxYear: number, why: WhyMissedSelection): Record<string, string> {
+  const option = WHY_MISSED_OPTIONS.find((o) => o.key === why.key);
+  if (!option) return { [`${taxYear}.rcsWhyMissed`]: `Choose why the filing for ${taxYear} was missed.` };
+  if (option.detailRequired && !tidy(why.detail)) {
+    return {
+      [`${taxYear}.rcsWhyMissed`]:
+        option.key === "other" ? "Write a short explanation." : "Add a few words about what happened.",
+    };
   }
-  if (!when) return "";
-  const lead = `The Owner learned of the requirement ${option.phrase} in ${when}.`;
-  return detail ? `${lead} ${detail}` : lead;
-}
-
-export function parseWhenLearned(stored: string | null | undefined): WhenLearnedSelection {
-  const text = tidy(stored ?? "");
-  if (!text) return { source: "", month: "", detail: "" };
-  const prefix = "The Owner learned of the requirement ";
-  if (text.startsWith(prefix)) {
-    const rest = text.slice(prefix.length);
-    for (const option of LEARNED_SOURCE_OPTIONS) {
-      const head = option.phrase ? `${option.phrase} in ` : "in ";
-      if (!rest.startsWith(head)) continue;
-      const m = /^([A-Z][a-z]+ \d{4})\.\s*(.*)$/.exec(rest.slice(head.length));
-      const month = m ? proseToMonth(m[1]) : "";
-      if (!month) continue;
-      return { source: option.key, month, detail: m![2] };
-    }
-  }
-  return { source: "other", month: "", detail: text };
-}
-
-/** Selection-level problems, keyed like validateReasonableCauseYears ("2024.rcsWhyMissed"). */
-export function validateSelections(
-  taxYear: number,
-  why: WhyMissedSelection,
-  when: WhenLearnedSelection,
-  now: Date = new Date(),
-): Record<string, string> {
-  const errors: Record<string, string> = {};
-  const whyOption = WHY_MISSED_OPTIONS.find((o) => o.key === why.key);
-  if (!whyOption) {
-    errors[`${taxYear}.rcsWhyMissed`] = `Choose why the filing for ${taxYear} was missed.`;
-  } else if (whyOption.detailRequired && !tidy(why.detail)) {
-    errors[`${taxYear}.rcsWhyMissed`] =
-      whyOption.key === "other" ? "Write a short explanation." : "Add a few words about what happened.";
-  }
-
-  const whenOption = LEARNED_SOURCE_OPTIONS.find((o) => o.key === when.source);
-  const currentMonth = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
-  if (!whenOption) {
-    errors[`${taxYear}.rcsWhenLearned`] = "Choose how you found out about this form.";
-  } else if (whenOption.key === "other" && !tidy(when.detail)) {
-    errors[`${taxYear}.rcsWhenLearned`] = "Write how and when you found out.";
-  } else if (whenOption.key !== "other" && !monthToProse(when.month)) {
-    errors[`${taxYear}.rcsWhenLearned`] = "Pick the month you found out.";
-  } else if (when.month && when.month > currentMonth) {
-    errors[`${taxYear}.rcsWhenLearned`] = "That month is in the future.";
-  }
-  return errors;
+  return {};
 }
