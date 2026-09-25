@@ -208,3 +208,5 @@ Claude and Codex sessions share these folders. Practical rules:
   free text; composes sentences into the same rcsWhyMissed/rcsWhenLearned fields.
 - `docs/sessions/2026-09-25-rcs-no-when-question.md` — "when did you learn" question removed;
   rcsWhenLearned optional everywhere; PDF closes the cause paragraph itself.
+- `docs/sessions/2026-09-25-simple-transactions-step.md` — Transactions step rebuilt as 3 questions per
+  year + 1 per filing; same data model; checkout map (Codex clone is live, Claude work clone stale).
