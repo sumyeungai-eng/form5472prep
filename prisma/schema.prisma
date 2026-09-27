@@ -797,3 +797,11 @@ model Post {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// Delivery state for paid-order Telegram alerts; Stripe retries failed sends.
+model TelegramOrderNotification {
+  id         String    @id
+  sentAt     DateTime?
+  leaseUntil DateTime?
+  createdAt  DateTime  @default(now())
+}

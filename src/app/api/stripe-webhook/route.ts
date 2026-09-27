@@ -1,3 +1,4 @@
+import { notifyPaidOrderTelegram } from "@/lib/telegram";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
@@ -21,6 +22,7 @@ import { requiresReasonableCause } from "@/lib/completeness";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature");
@@ -35,8 +37,12 @@ export async function POST(req: Request) {
     return new NextResponse(`Webhook signature failed: ${msg}`, { status: 400 });
   }
 
-  if (event.type === "checkout.session.completed") {
+  let telegramDelivered = true;
+  if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     const session = event.data.object as Stripe.Checkout.Session;
+    if (session.payment_status !== "paid" && session.payment_status !== "no_payment_required") {
+      return NextResponse.json({ received: true, awaitingPayment: true });
+    }
     const applicationType = session.metadata?.applicationType;
     const applicationId = session.metadata?.applicationId;
     if (applicationType === "ein" || applicationType === "itin") {
@@ -72,15 +78,17 @@ export async function POST(req: Request) {
 
       if (claim.count === 0) {
         console.log(`[stripe-webhook] ${applicationType} application ${applicationId} already paid or not payable — skipping duplicate checkout.session.completed`);
-        return NextResponse.json({ received: true, deduplicated: true });
+        const delivered = await notifyPaidOrderTelegram(session);
+        return NextResponse.json({ received: true, deduplicated: true, telegramDelivered: delivered }, { status: delivered ? 200 : 500 });
       }
+      telegramDelivered = await notifyPaidOrderTelegram(session);
       console.log(`[stripe-webhook] ${applicationType} application ${applicationId} payment recorded`);
       try {
         await notifyApplicationPaid(applicationType, applicationId);
       } catch (err) {
         console.error("[stripe-webhook] application paid notification failed", err);
       }
-      return NextResponse.json({ received: true });
+      return NextResponse.json({ received: true, telegramDelivered }, { status: telegramDelivered ? 200 : 500 });
     }
 
     const filingId = session.metadata?.filingId;
@@ -105,7 +113,8 @@ export async function POST(req: Request) {
       });
       if (claim.count === 0) {
         console.log(`[stripe-webhook] ${filingId} already fulfilled — skipping duplicate checkout.session.completed`);
-        return NextResponse.json({ received: true, deduplicated: true });
+        const delivered = await notifyPaidOrderTelegram(session);
+        return NextResponse.json({ received: true, deduplicated: true, telegramDelivered: delivered }, { status: delivered ? 200 : 500 });
       }
       const filing = await prisma.filing.findUnique({
         where: { id: filingId },
@@ -133,6 +142,8 @@ export async function POST(req: Request) {
         });
         return NextResponse.json({ received: true, staleSession: true });
       }
+
+      telegramDelivered = await notifyPaidOrderTelegram(session);
 
       // Record the amount actually charged (the DB previously held only the
       // pre-checkout expected amount).
@@ -342,5 +353,5 @@ export async function POST(req: Request) {
     }
   }
 
-  return NextResponse.json({ received: true });
+  return NextResponse.json({ received: true, telegramDelivered }, { status: telegramDelivered ? 200 : 500 });
 }
