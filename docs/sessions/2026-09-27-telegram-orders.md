@@ -20,7 +20,12 @@ Base: `6194f33` from `origin/main`.
 ## Verification / release
 - Telegram getMe confirmed the provided token and existing private destination. Setup-test message accepted by Telegram (message ID 11); no real order/customer was created.
 - TypeScript, scoped ESLint, focused 26-test notification/webhook suite, and full suite (68 files, 791 tests) passed. Production build completed successfully (exit 0). Known unrelated MessagesPanel image warning and local blog database fallbacks remain.
-- Release must be via `git push origin main` only. Never CLI production deploy.
+- Shipped commit `6310786` via fast-forward into canonical `main` and `git push origin main`. Vercel built that exact Git commit (confirmed in build logs).
+- Production deployment `dpl_Ew6V8X8ocmqBVkqMniyoKRH8ccdM`, `https://form5472prep-4xz40w2g2-form5472prep.vercel.app`, reached READY with `www.form5472prep.com` and `form5472prep.com` aliases.
+- Vercel applied `20260927120000_telegram_order_notifications` successfully; existing tables were unchanged.
+- Post-deployment live checks: `/`, `/pricing`, `/ein/apply`, `/itin/apply`, `/contact`, and `/form-5472-penalty-calculator` all HTTP 200; EIN page contains "Owner date of birth"; empty EIN checkout request HTTP 400; unsigned Stripe webhook HTTP 400. All three REPO-STATE markers passed together.
+- Telegram accepted the final activation confirmation (message ID 12). No customer orders were generated or replayed during verification. The automated tests verify actual order formatting, routing, retry, and duplicate handling; the first real post-release order will exercise the production order-to-Telegram path.
+- Removed the temporary local token file after setup; runtime credentials remain only in Vercel. This release-evidence update changes documentation only.
 
 ## Contracts / limits
 - Keep credentials server-only and out of logs. No Telegram webhook receiver is needed.
@@ -30,4 +35,4 @@ Base: `6194f33` from `origin/main`.
 - Never backfill old orders or create a real payment merely to test this feature without a separate user request.
 
 ## Open
-- Production release and live verification pending below.
+- No owner action needed. No code follow-ups remain. Normal real-order delivery has not been observed yet; setup messages and payment-path tests passed.
