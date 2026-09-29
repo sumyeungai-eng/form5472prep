@@ -55,7 +55,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
       <main className="flex-1">{children}</main>
       <footer className="border-t border-paper-edge bg-paper text-xs text-slate-500">
         <div className="mx-auto max-w-6xl px-6 py-14">
-          <div className="grid gap-10 sm:grid-cols-4 sm:gap-8">
+          <div className="grid gap-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-5">
             <div className="sm:col-span-2 space-y-4">
               <Logo />
               <p className="max-w-sm leading-relaxed">
@@ -91,15 +91,25 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <li><Link href="/pricing" className="hover:text-ink">Form 5472 Filing</Link></li>
                 <li><Link href="/ein" className="hover:text-ink">EIN Acquisition</Link></li>
                 <li><Link href="/itin" className="hover:text-ink">ITIN Acquisition</Link></li>
-                <li><Link href="/form-5472-deadline-calculator" className="hover:text-ink">Deadline calculator</Link></li>
-                <li><Link href="/do-i-need-to-file-form-5472" className="hover:text-ink">Do I need to file?</Link></li>
-                <li><Link href="/form-5472-penalty-calculator" className="hover:text-ink">Penalty calculator</Link></li>
                 <li><Link href="/partners" className="hover:text-ink">Become a Partner</Link></li>
                 <li><Link href="/partner/sign-in" className="hover:text-ink">Partner sign in</Link></li>
                 <li><Link href="/blog" className="hover:text-ink">Guides</Link></li>
                 <li><Link href="/faq" className="hover:text-ink">FAQ</Link></li>
                 <li><Link href="/contact" className="hover:text-ink">Contact</Link></li>
                 <li><Link href="/about" className="hover:text-ink">About</Link></li>
+              </ul>
+            </nav>
+            <nav className="space-y-2.5">
+              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-ink">Free tools</p>
+              <ul className="space-y-2">
+                <li><Link href="/do-i-need-to-file-form-5472" className="hover:text-ink">Do I need to file?</Link></li>
+                <li><Link href="/form-5472-deadline-calculator" className="hover:text-ink">Deadline calculator</Link></li>
+                <li><Link href="/form-5472-penalty-calculator" className="hover:text-ink">Penalty calculator</Link></li>
+                <li><Link href="/irs-yearly-average-exchange-rates" className="hover:text-ink">IRS exchange rates</Link></li>
+                <li><Link href="/form-5472-reportable-transactions-checker" className="hover:text-ink">Reportable transactions</Link></li>
+                <li><Link href="/form-5472-late-filing-checker" className="hover:text-ink">Late-filing checker</Link></li>
+                <li><Link href="/foreign-owned-llc-compliance-calendar" className="hover:text-ink">Compliance calendar</Link></li>
+                <li><Link href="/llc-annual-fees-by-state" className="hover:text-ink">LLC fees by state</Link></li>
               </ul>
             </nav>
             <nav className="space-y-2.5">

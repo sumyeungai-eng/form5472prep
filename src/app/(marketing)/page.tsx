@@ -657,6 +657,31 @@ function ToolsAndGuides() {
       title: "Penalty calculator",
       description: "What late or missed filings cost under IRC §6038A.",
     },
+    {
+      href: "/irs-yearly-average-exchange-rates",
+      title: "IRS yearly average exchange rates",
+      description: "Every IRS yearly average rate for 2021–2025, plus a converter to U.S. dollars.",
+    },
+    {
+      href: "/form-5472-reportable-transactions-checker",
+      title: "Is it a reportable transaction?",
+      description: "Check whether owner payments, loans or fees go on Form 5472.",
+    },
+    {
+      href: "/form-5472-late-filing-checker",
+      title: "Late-filing route checker",
+      description: "Missed Form 5472? See which IRS route applies to you.",
+    },
+    {
+      href: "/foreign-owned-llc-compliance-calendar",
+      title: "Compliance calendar",
+      description: "Every federal and state deadline for your LLC, with a calendar download.",
+    },
+    {
+      href: "/llc-annual-fees-by-state",
+      title: "LLC annual fees by state",
+      description: "Annual fees, franchise taxes and due dates in 10 popular states.",
+    },
   ];
 
   const guides = [
@@ -676,9 +701,9 @@ function ToolsAndGuides() {
         <SectionHead
           eyebrow="Resources"
           title="What free tools and guides help before filing?"
-          subtitle="The free tools and guides help before filing by answering whether you need Form 5472, when it is due, and what late or missed filings cost. We link to the six-question filing checker, the deadline calculator, the penalty calculator, and guides on Form 5472, DIIRSP, the pro forma Form 1120, and late filings."
+          subtitle="The free tools answer whether you need Form 5472, what counts as a reportable transaction, when everything is due, what it costs to keep your LLC in good standing, how to convert foreign-currency amounts at IRS rates, and which route applies if you filed late. The guides cover Form 5472, DIIRSP, the pro forma Form 1120, and late filings."
         />
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {tools.map((tool, i) => (
             <Reveal as="div" key={tool.href} delay={i * 100}>
               <Link
