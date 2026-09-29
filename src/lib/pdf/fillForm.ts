@@ -1,3 +1,4 @@
+import { toPdfSafe } from "../pdfText";
 import { PDFDocument, PDFTextField, PDFCheckBox, rgb, StandardFonts, PDFName } from "pdf-lib";
 
 export type PdfFieldWrite = {
@@ -24,6 +25,8 @@ export function setText(
   try {
     const field = form.getField(name);
     if (field instanceof PDFTextField) {
+      // Preserve layout separators; record the exact text written to the PDF.
+      value = value.split(/\r\n|\r|\n/).map(toPdfSafe).join("\n");
       field.setText(value);
       if (opts?.fontSize) field.setFontSize(opts.fontSize);
       recorder?.writes.push({ form: recorder.form, field: name, value });
@@ -59,7 +62,7 @@ export async function stampDiirspHeader(
 ) {
   const page = pdf.getPage(0);
   const font = await pdf.embedFont(StandardFonts.HelveticaBold);
-  page.drawText(text, {
+  page.drawText(toPdfSafe(text), {
     x: opts?.x ?? 200,
     y: opts?.y ?? 778,
     size: 10,
@@ -90,7 +93,7 @@ export async function stampShortPeriod(
   const page = pdf.getPage(0);
   const font = await pdf.embedFont(StandardFonts.HelveticaBold);
   const tail = suffix ? ` ${suffix}` : "";
-  page.drawText(`Short tax year: ${beginText} - ${endText}${tail}`, {
+  page.drawText(toPdfSafe(`Short tax year: ${beginText} - ${endText}${tail}`), {
     x: opts?.x ?? 200,
     y: opts?.y ?? 766,
     size: 9,

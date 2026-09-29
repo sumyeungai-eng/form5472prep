@@ -1,3 +1,4 @@
+import { isPdfEncodable, PDF_TEXT_MESSAGE } from "@/lib/pdfText";
 import { Prisma, type FilingStatus } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -259,11 +260,11 @@ const YEAR_NULLABLE_STRINGS = new Set(["rcsWhyMissed", "rcsWhenLearned"]);
 const YEAR_NULLABLE_BOOLEANS = new Set(["rcsNoIrsNoticeConfirmed"]);
 
 const adminNonCashTransferSchema = z.object({
-  date: z.string().trim().min(1),
+  date: z.string().trim().min(1).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   direction: z.enum(["in", "out"]),
-  description: z.string().trim().min(1),
+  description: z.string().trim().min(1).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   fairMarketValueCents: z.number().int().finite(),
-  valuationMethod: z.string().trim().min(1),
+  valuationMethod: z.string().trim().min(1).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   alsoInPartV: z.boolean(),
 }).strict();
 
@@ -276,9 +277,9 @@ const adminOwnerPaidCostSchema = z.object({
     "initial_bank_funding",
     "other",
   ]),
-  date: z.string().trim().min(1),
+  date: z.string().trim().min(1).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   amountCents: z.number().int().finite(),
-  note: z.string().optional(),
+  note: z.string().refine(isPdfEncodable, PDF_TEXT_MESSAGE).optional(),
 }).strict();
 
 const adminZeroConfirmationsSchema = z.object({
@@ -318,6 +319,9 @@ function parseYearJsonField(field: keyof typeof YEAR_JSON_SCHEMAS, value: unknow
   }
   const parsed = YEAR_JSON_SCHEMAS[field].safeParse(value);
   if (!parsed.success) {
+    if (parsed.error.issues.some((issue) => issue.message === PDF_TEXT_MESSAGE)) {
+      throw new FilingActionError(400, "invalid_value", PDF_TEXT_MESSAGE);
+    }
     throw new FilingActionError(400, "invalid_value", `${field} has an invalid shape`);
   }
   return parsed.data;
@@ -890,6 +894,10 @@ export async function runFilingAction(
         throw new FilingActionError(400, "field_not_editable", `field "${field}" is not editable`);
       }
 
+      if (value !== null && !isPdfEncodable(value)) {
+        throw new FilingActionError(400, "invalid_value", PDF_TEXT_MESSAGE);
+      }
+
       // Typed coercion + validation. The generic path writes strings, but
       // extensionTransmittedAt is a DateTime and isDiirsp a Boolean, and the
       // three extension answers are closed enums shared with the wizard — an
@@ -1121,6 +1129,9 @@ export async function runFilingAction(
       let writeValue: unknown;
       if (YEAR_NULLABLE_STRINGS.has(field)) {
         const raw = body.value === undefined || body.value === null ? null : String(body.value);
+        if (raw !== null && !isPdfEncodable(raw)) {
+          throw new FilingActionError(400, "invalid_value", PDF_TEXT_MESSAGE);
+        }
         after = raw === null || raw.trim() === "" ? null : raw;
         writeValue = after;
       } else if (YEAR_NULLABLE_BOOLEANS.has(field)) {

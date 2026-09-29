@@ -1,3 +1,4 @@
+import { toPdfSafe } from "../pdfText";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { PDFDocument, PDFTextField, StandardFonts, rgb, type PDFFont } from "pdf-lib";
@@ -713,7 +714,7 @@ async function computePrintAddress(
   font: PDFFont,
   prefix: string = "",
 ): Promise<PrintAddressRecord> {
-  const original = rawAddress.trim().replace(/\s+/g, " ");
+  const original = toPdfSafe(rawAddress.trim().replace(/\s+/g, " "));
   const firstPass = fittingFontSize(addressMeasureValue(original, prefix), widths, font);
   if (firstPass !== null) {
     return { value: original, fontSize: firstPass, abbreviated: false, checkedFieldWidths: widths, failures: [] };
@@ -748,7 +749,7 @@ function fittingFontSize(
   const minWidth = Math.min(...widths.map((w) => w.width));
   for (let size = ADDRESS_NORMAL_FONT_SIZE; size >= ADDRESS_MIN_FONT_SIZE; size -= ADDRESS_FONT_STEP) {
     const rounded = Math.round(size * 100) / 100;
-    if (font.widthOfTextAtSize(value, rounded) <= minWidth) return rounded;
+    if (font.widthOfTextAtSize(toPdfSafe(value), rounded) <= minWidth) return rounded;
   }
   return null;
 }
@@ -1041,12 +1042,12 @@ export function signerTitleStampPlacement(
 ) {
   const x = bounds.left + SIGNER_TITLE_COLUMN_INSET;
   const maxWidth = bounds.right - bounds.left - 2 * SIGNER_TITLE_COLUMN_INSET;
-  const naturalWidth = font.widthOfTextAtSize(title, SIGNER_TITLE_MAX_SIZE);
+  const naturalWidth = font.widthOfTextAtSize(toPdfSafe(title), SIGNER_TITLE_MAX_SIZE);
   const size =
     naturalWidth <= maxWidth
       ? SIGNER_TITLE_MAX_SIZE
       : Math.max(SIGNER_TITLE_MIN_SIZE, (SIGNER_TITLE_MAX_SIZE * maxWidth) / naturalWidth);
-  const width = font.widthOfTextAtSize(title, size);
+  const width = font.widthOfTextAtSize(toPdfSafe(title), size);
   if (width > maxWidth) {
     throw new Error(`Configured signer title does not fit the Form 1120 title column at ${SIGNER_TITLE_MIN_SIZE}pt.`);
   }
@@ -1057,7 +1058,7 @@ async function stampTitleSoleMember(pdf: PDFDocument, bounds: SignerTitleColumnB
   const page = pdf.getPage(0);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const placement = signerTitleStampPlacement(bounds, font, SIGNER_TITLE);
-  page.drawText(SIGNER_TITLE, {
+  page.drawText(toPdfSafe(SIGNER_TITLE), {
     x: placement.x,
     y: placement.y,
     size: placement.size,
@@ -1150,12 +1151,12 @@ async function buildSupportingStatement(
     const f = opts.font ?? font;
     let x = opts.x ?? MARGIN_L;
     if (opts.align === "right") {
-      const w = f.widthOfTextAtSize(text, size);
+      const w = f.widthOfTextAtSize(toPdfSafe(text), size);
       x = x - w;
     }
-    page.drawText(text, { x, y, size, font: f, color: rgb(0, 0, 0) });
-    drawnLines.push(text);
-    currentPageLines.push(text);
+    page.drawText(toPdfSafe(text), { x, y, size, font: f, color: rgb(0, 0, 0) });
+    drawnLines.push(toPdfSafe(text));
+    currentPageLines.push(toPdfSafe(text));
   };
 
   // ---- Header ----
@@ -1372,10 +1373,10 @@ async function buildPartVIStatement(
     const size = opts.size ?? 10;
     const fnt = opts.font ?? font;
     let x = opts.x ?? MARGIN_L;
-    if (opts.align === "right") x -= fnt.widthOfTextAtSize(text, size);
-    page.drawText(text, { x, y, size, font: fnt, color: rgb(0, 0, 0) });
-    drawnLines.push(text);
-    currentPageLines.push(text);
+    if (opts.align === "right") x -= fnt.widthOfTextAtSize(toPdfSafe(text), size);
+    page.drawText(toPdfSafe(text), { x, y, size, font: fnt, color: rgb(0, 0, 0) });
+    drawnLines.push(toPdfSafe(text));
+    currentPageLines.push(toPdfSafe(text));
   };
   const drawHeader = () => {
     y = MARGIN_TOP;
@@ -1491,7 +1492,7 @@ function wrapAtPx(text: string, f: import("pdf-lib").PDFFont, size: number, maxW
   let current = "";
   for (const w of words) {
     const candidate = current ? `${current} ${w}` : w;
-    if (f.widthOfTextAtSize(candidate, size) > maxWidth && current) {
+    if (f.widthOfTextAtSize(toPdfSafe(candidate), size) > maxWidth && current) {
       lines.push(current);
       current = w;
     } else {
@@ -1529,8 +1530,8 @@ async function buildCoverLetter(
 
   let y = 750;
   const draw = (text: string, opts: { font?: typeof font; size?: number } = {}) => {
-    page.drawText(text, { x: 50, y, size: opts.size ?? 10, font: opts.font ?? font });
-    drawnLines.push(text);
+    page.drawText(toPdfSafe(text), { x: 50, y, size: opts.size ?? 10, font: opts.font ?? font });
+    drawnLines.push(toPdfSafe(text));
   };
 
   if (IRS_MAIL_ADDRESS_DISPLAY_SINGLE_LINE !== IRS_MAIL_ADDRESS) {
@@ -1611,13 +1612,13 @@ async function buildReasonableCause(
     text: string,
     opts: { font?: typeof font; size?: number; x?: number } = {},
   ) => {
-    page.drawText(text, {
+    page.drawText(toPdfSafe(text), {
       x: opts.x ?? MARGIN_L,
       y,
       size: opts.size ?? 10,
       font: opts.font ?? font,
     });
-    drawnLines.push(text);
+    drawnLines.push(toPdfSafe(text));
   };
   const drawParagraph = (text: string, opts: { font?: typeof font; size?: number } = {}) => {
     const f = opts.font ?? font;
@@ -2083,10 +2084,10 @@ export async function generatePackage(
       commit,
       generatedAt: generatedAt.toISOString(),
       finalisedAt: finalisedAt.toISOString(),
-      llcName: f.llcName,
-      ownerName: f.ownerName,
+      llcName: toPdfSafe(f.llcName),
+      ownerName: toPdfSafe(f.ownerName),
       ownerReferenceId: f.ownerReferenceId,
-      llcEin: f.llcEin,
+      llcEin: toPdfSafe(f.llcEin),
       llcPrintAddress,
       ownerPrintAddress,
       formationDate: f.llcDateIncorporated ? new Date(f.llcDateIncorporated).toISOString() : null,

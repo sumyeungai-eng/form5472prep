@@ -1,5 +1,7 @@
 "use client";
 
+import { isPdfEncodable, PDF_TEXT_MESSAGE } from "@/lib/pdfText";
+
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -81,14 +83,14 @@ import {
 // DB, just without bouncing the customer back to fill in a field they
 // don't need to think about.
 const ownerStepObject = ownerBaseSchema.omit({ ownerName: true, ownerAddress: true }).extend({
-  ownerFirstName: z.string().trim().min(1, "Required"),
-  ownerMiddleName: z.string().trim().optional().or(z.literal("")),
-  ownerLastName: z.string().trim().min(1, "Required"),
-  ownerAddressStreet: z.string().trim().min(2, "Required"),
-  ownerAddressCity: z.string().trim().min(1, "Required"),
-  ownerAddressState: z.string().trim().min(1, "Required"),
-  ownerAddressPostal: z.string().trim().optional().or(z.literal("")),
-  ownerAddressCountry: z.string().trim().min(1, "Required"),
+  ownerFirstName: z.string().trim().min(1, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  ownerMiddleName: z.string().trim().refine(isPdfEncodable, PDF_TEXT_MESSAGE).optional().or(z.literal("")),
+  ownerLastName: z.string().trim().min(1, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  ownerAddressStreet: z.string().trim().min(2, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  ownerAddressCity: z.string().trim().min(1, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  ownerAddressState: z.string().trim().min(1, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  ownerAddressPostal: z.string().trim().refine(isPdfEncodable, PDF_TEXT_MESSAGE).optional().or(z.literal("")),
+  ownerAddressCountry: z.string().trim().min(1, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
 });
 const ownerStepSchema = ownerStepObject.superRefine((val, ctx) => {
   if (val.ownerHasFtin !== true && val.ownerHasFtin !== false) {

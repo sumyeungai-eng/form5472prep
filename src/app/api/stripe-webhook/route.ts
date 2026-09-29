@@ -1,3 +1,4 @@
+import { isSupersededCheckout, sendSupersededCheckoutAlert } from "@/lib/checkoutSessions";
 import { notifyPaidOrderTelegram } from "@/lib/telegram";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
@@ -5,7 +6,7 @@ import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { makeMagicLink } from "@/lib/magicLink";
-import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
+import { sendEmail, sendMagicLinkEmail, sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { resolveTier } from "@/lib/pricing";
 import { effectiveDueDateUtc, extensionUnclear, formatDueDate } from "@/lib/schemas";
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
@@ -93,6 +94,12 @@ export async function POST(req: Request) {
 
     const filingId = session.metadata?.filingId;
     if (filingId) {
+      const paymentIntentId = typeof session.payment_intent === "string"
+        ? session.payment_intent : session.payment_intent?.id ?? null;
+      const alertRefund = () => sendSupersededCheckoutAlert(env.adminEmail, {
+        filingId, paidSessionId: session.id, amountCents: session.amount_total,
+        currency: session.currency, paymentIntent: session.payment_intent,
+      }, sendEmail, console.error);
       // Idempotency guard, keyed on stripePaymentId (NOT status). Stripe
       // delivers events at-least-once, AND the post-payment success page
       // (filings/[id]/page.tsx) promotes DRAFT->PAID as a redirect fallback
@@ -107,11 +114,20 @@ export async function POST(req: Request) {
         where: { id: filingId, stripePaymentId: null },
         data: {
           status: "PAID",
-          stripePaymentId: session.payment_intent as string,
+          stripePaymentId: paymentIntentId,
           partnerHidden: false,
         },
       });
       if (claim.count === 0) {
+        const fulfilled = await prisma.filing.findUnique({
+          where: { id: filingId }, select: { stripePaymentId: true },
+        });
+        if (fulfilled && paymentIntentId && paymentIntentId !== fulfilled.stripePaymentId) {
+          await alertRefund();
+          return NextResponse.json({ received: true, deduplicated: true });
+        }
+        // The existing Telegram helper deduplicates delivered order alerts,
+        // but must still retry a previously failed notification.
         console.log(`[stripe-webhook] ${filingId} already fulfilled — skipping duplicate checkout.session.completed`);
         const delivered = await notifyPaidOrderTelegram(session);
         return NextResponse.json({ received: true, deduplicated: true, telegramDelivered: delivered }, { status: delivered ? 200 : 500 });
@@ -129,10 +145,10 @@ export async function POST(req: Request) {
       // tab) must be rejected — otherwise they'd get the bigger package for the
       // old price. Release the idempotency claim so the current session can
       // still fulfill, and don't process this one. (An orphaned charge here
-      // needs a manual refund — surfaced via this warn log.)
-      if (session.id !== filing.stripeSessionId) {
+      // needs a manual refund — email the operator as well as logging it.)
+      if (isSupersededCheckout(session.id, filing.stripeSessionId)) {
         await prisma.filing.updateMany({
-          where: { id: filing.id, stripePaymentId: session.payment_intent as string },
+          where: { id: filing.id, stripePaymentId: paymentIntentId },
           data: { status: "DRAFT", stripePaymentId: null },
         });
         console.warn("[stripe-webhook] stale checkout session rejected", {
@@ -140,6 +156,7 @@ export async function POST(req: Request) {
           paidSessionId: session.id,
           currentSessionId: filing.stripeSessionId,
         });
+        await alertRefund();
         return NextResponse.json({ received: true, staleSession: true });
       }
 

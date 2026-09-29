@@ -1,5 +1,7 @@
 "use client";
 
+import { isPdfEncodable, PDF_TEXT_MESSAGE } from "@/lib/pdfText";
+
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +28,9 @@ export function validateReasonableCauseYears(rows: ReasonableCauseYearInput[]): 
     const prefix = String(row.taxYear);
     if (!row.rcsWhyMissed.trim()) {
       errors[`${prefix}.rcsWhyMissed`] = `Explain why the filing for ${row.taxYear} was missed.`;
+    }
+    for (const field of ["rcsWhyMissed", "rcsWhenLearned"] as const) {
+      if (!isPdfEncodable(row[field])) errors[`${prefix}.${field}`] = PDF_TEXT_MESSAGE;
     }
     if (row.rcsNoIrsNoticeConfirmed !== true) {
       errors[`${prefix}.rcsNoIrsNoticeConfirmed`] =
@@ -188,6 +193,17 @@ export function ReasonableCauseStep({
                         className={`mt-1 ${FIELD_CLASS}`}
                       />
                     </div>
+                  )}
+                  {!isPdfEncodable(years.find((year) => year.taxYear === row.taxYear)?.rcsWhenLearned ?? "") && (
+                    <label className="block text-xs text-slate-700">
+                      When you learned about the filing requirement (saved answer)
+                      <textarea
+                        value={row.rcsWhenLearned}
+                        onChange={(e) => update(row.taxYear, { rcsWhenLearned: e.target.value })}
+                        className={FIELD_CLASS}
+                      />
+                      <span className="text-red-600">{errors[`${prefix}.rcsWhenLearned`]}</span>
+                    </label>
                   )}
                   {errors[`${prefix}.rcsWhyMissed`] && (
                     <p className="mt-1 text-xs text-red-600">{errors[`${prefix}.rcsWhyMissed`]}</p>

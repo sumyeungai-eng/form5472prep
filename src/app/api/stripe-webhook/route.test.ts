@@ -11,7 +11,7 @@ vi.mock("@/lib/telegram", () => ({ notifyPaidOrderTelegram: mock.telegram }));
 vi.mock("@/lib/applicationNotifications", () => ({ notifyApplicationPaid: mock.applications }));
 vi.mock("@/lib/pdf/generatePackage", () => ({ generatePackage: vi.fn() }));
 vi.mock("@/lib/storage", () => ({ putPdf: vi.fn() }));
-vi.mock("@/lib/email", () => ({ sendMagicLinkEmail: vi.fn(), sendOrderConfirmationEmail: vi.fn(), sendNewOrderAdminEmail: vi.fn() }));
+vi.mock("@/lib/email", () => ({ sendEmail: vi.fn(), sendMagicLinkEmail: vi.fn(), sendOrderConfirmationEmail: vi.fn(), sendNewOrderAdminEmail: vi.fn() }));
 vi.mock("@/lib/apns", () => ({ apnsConfigured: () => false, sendAdminPush: vi.fn() }));
 import { POST } from "./route";
 const req = () => new Request("https://example.com/api/stripe-webhook", { method: "POST", headers: { "stripe-signature": "sig" }, body: "{}" });
@@ -35,7 +35,7 @@ describe("Stripe order alerts", () => {
     event({ filingId: "filing1" }); mock.telegram.mockResolvedValue(false);
     expect((await POST(req())).status).toBe(500);
     expect(mock.telegram).toHaveBeenCalledOnce();
-    expect(mock.filing.findUnique).not.toHaveBeenCalled();
+    expect(mock.filing.findUnique).toHaveBeenCalledWith({ where: { id: "filing1" }, select: { stripePaymentId: true } });
     mock.telegram.mockResolvedValue(true);
     expect((await POST(req())).status).toBe(200);
   });

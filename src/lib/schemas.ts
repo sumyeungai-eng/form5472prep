@@ -1,3 +1,4 @@
+import { isPdfEncodable, PDF_TEXT_MESSAGE } from "./pdfText";
 import { z } from "zod";
 import { nextBusinessDay } from "@/lib/federalHolidays";
 
@@ -7,7 +8,7 @@ export const NON_CASH_TRANSFER_DIRECTIONS = ["in", "out"] as const;
 export const ITIN_IN_FTIN_MESSAGE =
   "This looks like a U.S. ITIN. Put it in the ITIN field instead.";
 
-const optionalTrimmedString = (max = 2000) => z.string().trim().max(max).optional().nullable();
+const optionalTrimmedString = (max = 2000) => z.string().trim().max(max).refine(isPdfEncodable, PDF_TEXT_MESSAGE).optional().nullable();
 
 export function looksLikeUsItin(value: string | null | undefined): boolean {
   const digits = (value ?? "").replace(/\D/g, "");
@@ -31,19 +32,19 @@ export const einSchema = z
   .transform((s) => (s.includes("-") ? s : `${s.slice(0, 2)}-${s.slice(2)}`));
 
 export const entitySchema = z.object({
-  llcName: z.string().trim().min(2, "Required"),
+  llcName: z.string().trim().min(2, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   llcEin: einSchema,
-  llcAddress: z.string().trim().min(3, "Required"),
-  llcCity: z.string().trim().min(1, "Required"),
-  llcState: z.string().trim().length(2, "2-letter state code"),
+  llcAddress: z.string().trim().min(3, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  llcCity: z.string().trim().min(1, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  llcState: z.string().trim().length(2, "2-letter state code").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   llcZip: z.string().trim().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP"),
-  llcCountryBusiness: z.string().trim().min(1, "Required").max(2000),
+  llcCountryBusiness: z.string().trim().min(1, "Required").max(2000).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   llcAddressIsRegisteredAgentOnly: z.boolean().optional().nullable(),
   priorForm5472Filed: z.enum(PRIOR_FORM_5472_ANSWERS).optional().nullable(),
   llcDateIncorporated: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD"),
-  llcBusinessActivity: z.string().trim().min(2, "Required"),
+  llcBusinessActivity: z.string().trim().min(2, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   llcBusinessCode: z
     .string()
     .trim()
@@ -55,15 +56,15 @@ export const entitySchema = z.object({
 // from the refined `ownerSchema` because `.omit()` / `.extend()` can't be
 // called on a ZodEffects (the result of `.superRefine()`).
 export const ownerBaseSchema = z.object({
-  ownerName: z.string().trim().min(2, "Required"),
-  ownerAddress: z.string().trim().min(3, "Required"),
-  ownerCountryCitizenship: z.string().trim().min(2, "Required"),
-  ownerCountryTaxResidence: z.string().trim().min(2, "Required"),
-  ownerCountryBusiness: z.string().trim().min(2, "Required"),
+  ownerName: z.string().trim().min(2, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  ownerAddress: z.string().trim().min(3, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  ownerCountryCitizenship: z.string().trim().min(2, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  ownerCountryTaxResidence: z.string().trim().min(2, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  ownerCountryBusiness: z.string().trim().min(2, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   ownerHasFtin: z.boolean().optional().nullable(),
   ownerNoPostalCode: z.boolean().optional().nullable(),
-  ownerFtin: z.string().trim().max(2000).optional().nullable().or(z.literal("")),
-  ownerItin: z.string().trim().optional().or(z.literal("")),
+  ownerFtin: z.string().trim().max(2000).refine(isPdfEncodable, PDF_TEXT_MESSAGE).optional().nullable().or(z.literal("")),
+  ownerItin: z.string().trim().refine(isPdfEncodable, PDF_TEXT_MESSAGE).optional().or(z.literal("")),
   // IRS Instructions for Form 5472: the reference ID must be alphanumeric with
   // no special characters or spaces, 50 chars or less. Reject hyphens etc. so
   // a manually-entered ID like "SMITH-J-A7B2" can't reach the PDF.
@@ -120,11 +121,11 @@ export const ownerSchema = ownerBaseSchema
   .superRefine(refineUsIdOrReferenceId);
 
 export const nonCashTransferSchema = z.object({
-  date: z.string().trim().regex(DATE_ONLY_RE, "Use YYYY-MM-DD"),
+  date: z.string().trim().regex(DATE_ONLY_RE, "Use YYYY-MM-DD").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   direction: z.enum(NON_CASH_TRANSFER_DIRECTIONS),
-  description: z.string().trim().min(1, "Required").max(2000),
+  description: z.string().trim().min(1, "Required").max(2000).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   fairMarketValueCents: z.number().int().min(0),
-  valuationMethod: z.string().trim().min(1, "Required").max(2000),
+  valuationMethod: z.string().trim().min(1, "Required").max(2000).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   alsoInPartV: z.boolean().optional(),
 });
 
@@ -483,15 +484,18 @@ export const yearDataListSchema = z.object({
   years: z.array(yearDataSchema).min(1),
 });
 
+export const reasonableCauseNarrativeSchema = z.string().max(20000).refine(isPdfEncodable, PDF_TEXT_MESSAGE);
+export const statementTextSchema = z.string().refine(isPdfEncodable, PDF_TEXT_MESSAGE);
+
 // A single Part IV/V reportable transaction. These amounts become the actual
 // dollar figures on the IRS forms, so validate strictly: amountCents must be a
 // finite integer (no NaN/"abc"), and the descriptive fields must be non-empty.
 export const reportableTransactionSchema = z.object({
-  date: z.string().trim().min(1),
-  description: z.string().trim().min(1),
-  counterparty: z.string().trim().optional(),
+  date: z.string().trim().min(1).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  description: z.string().trim().min(1).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+  counterparty: z.string().trim().refine(isPdfEncodable, PDF_TEXT_MESSAGE).optional(),
   amountCents: z.number().int().finite(),
-  category: z.string().trim().min(1),
+  category: z.string().trim().min(1).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
 });
 export const reportableTransactionsSchema = z.array(reportableTransactionSchema);
 
@@ -540,9 +544,9 @@ export function makeOwnerPaidCostsSchema(taxYear: number) {
       z
         .object({
           category: z.enum(OWNER_PAID_COST_CATEGORIES),
-          date: z.string().trim().regex(DATE_ONLY_RE, "Use YYYY-MM-DD"),
+          date: z.string().trim().regex(DATE_ONLY_RE, "Use YYYY-MM-DD").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
           amountCents: z.number().int().min(0),
-          note: z.string().trim().max(2000).optional(),
+          note: z.string().trim().max(2000).refine(isPdfEncodable, PDF_TEXT_MESSAGE).optional(),
         })
         .superRefine((row, ctx) => {
           if (!isDateInsideTaxYear(row.date, taxYear)) {

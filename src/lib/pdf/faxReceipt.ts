@@ -1,3 +1,4 @@
+import { toPdfSafe } from "../pdfText";
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 
 // Renders a one-page "IRS FAX TRANSMISSION RECEIPT" PDF that customers can
@@ -168,7 +169,7 @@ function drawText(
   size: number,
   color: ReturnType<typeof rgb>,
 ) {
-  page.drawText(text, { x, y, size, font, color });
+  page.drawText(toPdfSafe(text), { x, y, size, font, color });
 }
 
 // Naive word-wrap. Splits on whitespace, accumulates words until the next
@@ -190,8 +191,8 @@ function drawParagraph(
 
   for (const word of words) {
     const candidate = buffer ? `${buffer} ${word}` : word;
-    if (font.widthOfTextAtSize(candidate, size) > maxWidth) {
-      page.drawText(buffer, { x, y, size, font, color });
+    if (font.widthOfTextAtSize(toPdfSafe(candidate), size) > maxWidth) {
+      page.drawText(toPdfSafe(buffer), { x, y, size, font, color });
       y -= lineHeight;
       buffer = word;
     } else {
@@ -199,7 +200,7 @@ function drawParagraph(
     }
   }
   if (buffer) {
-    page.drawText(buffer, { x, y, size, font, color });
+    page.drawText(toPdfSafe(buffer), { x, y, size, font, color });
     y -= lineHeight;
   }
   return y;

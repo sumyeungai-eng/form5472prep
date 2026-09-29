@@ -1,3 +1,4 @@
+import { isPdfEncodable } from "@/lib/pdfText";
 import {
   entitySchema,
   ownerBaseSchema,
@@ -22,6 +23,13 @@ const ownerCompletionSchema = ownerBaseSchema.superRefine(refineUsIdOrReferenceI
  * through.
  */
 export type CompletionInput = {
+  llcCountry?: string | null;
+  llcCountryBusiness?: string | null;
+  ownerAddressStreet?: string | null;
+  ownerAddressCity?: string | null;
+  ownerAddressState?: string | null;
+  ownerAddressPostal?: string | null;
+  ownerAddressCountry?: string | null;
   llcName: string | null;
   llcEin: string | null;
   llcAddress: string | null;
@@ -55,6 +63,10 @@ export type CompletionInput = {
 };
 
 type ReasonableCauseYearData = {
+  otherTransactionsNote?: string | null;
+  reportableTransactions?: unknown;
+  nonCashTransfers?: unknown;
+  ownerPaidCosts?: unknown;
   taxYear: number;
   rcsWhyMissed?: string | null;
   rcsWhenLearned?: string | null;
@@ -264,6 +276,33 @@ export function filingCompletionIssues(
   if (requiresRcs && !hasCompleteReasonableCause(filing, detailedYearData, now)) {
     if (completionIssues.indexOf("reasonableCauseNarrative") === -1)
       completionIssues.push("reasonableCauseNarrative");
+  }
+  // Check legacy values even when their step is currently optional. Return
+  // field names (not row indices) consistently with the checkout issue contract.
+  const checkText = (field: string, value: unknown) => {
+    if (typeof value === "string" && !isPdfEncodable(value) && !completionIssues.includes(field)) {
+      completionIssues.push(field);
+    }
+  };
+  for (const field of [
+    "llcName", "llcEin", "llcAddress", "llcCity", "llcState", "llcZip", "llcCountry",
+    "llcCountryBusiness", "llcBusinessActivity", "llcBusinessCode", "ownerName", "ownerAddress",
+    "ownerAddressStreet", "ownerAddressCity", "ownerAddressState", "ownerAddressPostal", "ownerAddressCountry",
+    "ownerCountryCitizenship", "ownerCountryTaxResidence", "ownerCountryBusiness", "ownerFtin",
+    "ownerItin", "ownerReferenceId", "reasonableCauseNarrative",
+  ] as const) checkText(field, filing[field]);
+  for (const row of detailedYearData) {
+    for (const field of ["rcsWhyMissed", "rcsWhenLearned", "otherTransactionsNote"] as const) checkText(field, row[field]);
+    for (const field of ["reportableTransactions", "nonCashTransfers", "ownerPaidCosts"] as const) {
+      const entries = row[field];
+      if (!Array.isArray(entries)) continue;
+      for (const entry of entries) {
+        if (!entry || typeof entry !== "object") continue;
+        for (const key of ["date", "description", "counterparty", "category", "direction", "valuationMethod", "note"]) {
+          checkText(key, entry[key]);
+        }
+      }
+    }
   }
   return completionIssues;
 }

@@ -1,3 +1,4 @@
+import { toPdfSafe } from "../pdfText";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { PDFCheckBox, PDFDocument, PDFTextField } from "pdf-lib";
@@ -193,6 +194,7 @@ function setTextField(form: ReturnType<PDFDocument["getForm"]>, name: string, va
     if (field instanceof PDFTextField) {
       setAutoFontSize(field, 9);
       const maxLength = field.getMaxLength();
+      value = value.split(/\r\n|\r|\n/).map(toPdfSafe).join("\n");
       field.setText(maxLength && maxLength > 0 && value.length > maxLength ? value.slice(0, maxLength) : value);
     }
   } catch {

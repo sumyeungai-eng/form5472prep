@@ -1,3 +1,4 @@
+import { statementTextSchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
 import { getOwnedFiling } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -100,6 +101,19 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     fullName: filing.ownerName ?? "",
     aliases: [],
   });
+
+  // These descriptions can later become supporting-statement rows.
+  const textIssues = categorized.flatMap((transaction, index) =>
+    (["date", "description", "counterparty", "category"] as const).flatMap((field) => {
+      const result = statementTextSchema.optional().safeParse(transaction[field]);
+      return result.success ? [] : result.error.issues.map((issue) => ({
+        field: `transactions.${index}.${field}`, message: issue.message,
+      }));
+    }),
+  );
+  if (textIssues.length > 0) {
+    return NextResponse.json({ error: "Invalid statement text", issues: textIssues }, { status: 400 });
+  }
 
   // Persist the raw file to storage for audit.
   const key = makeKey(`statements/${filing.id}/${taxYear}/${Date.now()}_${fileName}`);

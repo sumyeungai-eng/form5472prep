@@ -1,3 +1,4 @@
+import { toPdfSafe, isPdfEncodable, PDF_TEXT_MESSAGE } from "../pdfText";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import sharp from "sharp";
 
@@ -70,6 +71,7 @@ export function parsePlacements(body: unknown): { ok: true; placements: Placemen
       if (!text.trim()) {
         return { ok: false, error: `${kind} placement requires non-empty text` };
       }
+      if (!isPdfEncodable(text)) return { ok: false, error: PDF_TEXT_MESSAGE };
       if (text.length > maxLen) {
         return { ok: false, error: `${kind} text too long (max ${maxLen} chars)` };
       }
@@ -131,7 +133,7 @@ export async function stampPlacements(
     if (p.kind === "signature" && signatureImage) {
       page.drawImage(signatureImage, { x: p.x, y: p.y, width: p.width, height: p.height });
     } else if ((p.kind === "date" || p.kind === "text") && textFont) {
-      page.drawText(p.text, {
+      page.drawText(toPdfSafe(p.text), {
         x: p.x,
         y: p.y,
         size: p.fontSize,

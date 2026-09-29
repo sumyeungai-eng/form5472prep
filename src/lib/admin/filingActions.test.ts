@@ -1021,3 +1021,26 @@ describe("canResendFaxConfirmation", () => {
     expect(canResendFaxConfirmation(filing)).toBe(expected);
   });
 });
+
+describe("admin PDF text guard", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    db.findUnique.mockResolvedValue({ id: "filing_1", status: "PDF_GENERATED", taxYears: [2023] });
+    db.yearFindUnique.mockResolvedValue({ id: "year_1" });
+  });
+  it.each(["llcName", "ownerName", "llcCountry", "reasonableCauseNarrative"])("rejects unencodable %s before writing", async (field) => {
+    await expect(runFilingAction("filing_1", "updateField", { field, value: "王小明" }, { adminId: "admin_1" }))
+      .rejects.toThrow("Use English letters only — as spelled in the Latin (English) letters on your passport or company documents.");
+    expect(db.update).not.toHaveBeenCalled();
+  });
+  it.each([
+    ["rcsWhyMissed", "王小明"],
+    ["rcsWhenLearned", "王小明"],
+    ["nonCashTransfers", [{ date: "2023-01-01", direction: "in", description: "王小明", fairMarketValueCents: 100, valuationMethod: "Market", alsoInPartV: false }]],
+    ["ownerPaidCosts", [{ date: "2023-01-01", category: "other", amountCents: 100, note: "王小明" }]],
+  ])("rejects unencodable yearly %s before writing", async (field, value) => {
+    await expect(runFilingAction("filing_1", "updateYearField", { taxYear: 2023, field, value }, { adminId: "admin_1" }))
+      .rejects.toThrow("Use English letters only — as spelled in the Latin (English) letters on your passport or company documents.");
+    expect(db.yearUpdate).not.toHaveBeenCalled();
+  });
+});

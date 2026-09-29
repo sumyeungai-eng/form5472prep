@@ -1,3 +1,4 @@
+import { isPdfEncodable, PDF_TEXT_MESSAGE } from "@/lib/pdfText";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getOwnedFiling, bindFilingToEmail } from "@/lib/session";
@@ -8,6 +9,7 @@ import { collectFilingStorageKeys, type FilingWithKeys } from "@/lib/filingStora
 import { isValidPbaCode } from "@/lib/irsCodes";
 import {
   entitySchema,
+  reasonableCauseNarrativeSchema,
   ownerBaseSchema,
   currentTaxYear,
   makeYearDataSchema,
@@ -34,13 +36,13 @@ const patchFieldSchema = z
   .object({
     ...entitySchema.shape,
     ...ownerBaseSchema.shape,
-    llcCountry: z.string().trim().min(1).max(60),
-    ownerAddressStreet: z.string().trim().max(200),
-    ownerAddressCity: z.string().trim().max(120),
-    ownerAddressState: z.string().trim().max(120),
-    ownerAddressPostal: z.string().trim().max(40),
-    ownerAddressCountry: z.string().trim().max(60),
-    reasonableCauseNarrative: z.string().max(20000),
+    llcCountry: z.string().trim().min(1).max(60).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+    ownerAddressStreet: z.string().trim().max(200).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+    ownerAddressCity: z.string().trim().max(120).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+    ownerAddressState: z.string().trim().max(120).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+    ownerAddressPostal: z.string().trim().max(40).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+    ownerAddressCountry: z.string().trim().max(60).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
+    reasonableCauseNarrative: reasonableCauseNarrativeSchema,
   })
   .partial();
 
@@ -696,6 +698,11 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         cleanZeroConfirmations = zv.data;
       }
       const noneReported = yv.data.noReportableTransactions === true;
+      if (!noneReported && typeof y.otherTransactionsNote === "string" && !isPdfEncodable(y.otherTransactionsNote)) {
+        return NextResponse.json({ error: "Invalid statement text", issues: [
+          { field: "otherTransactionsNote", message: PDF_TEXT_MESSAGE },
+        ] }, { status: 400 });
+      }
       resolvedYearData.push({
         taxYear: yv.data.taxYear,
         totalAssetsYearEnd: yv.data.totalAssetsYearEnd,

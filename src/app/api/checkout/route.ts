@@ -1,3 +1,4 @@
+import { preparePreviousCheckout } from "@/lib/checkoutSessions";
 import { NextResponse } from "next/server";
 import { getOwnedFiling, bindFilingToEmail } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
   // drafts this gate would accept.
   const completionIssues = filingCompletionIssues(
     filing,
-    yearDataRows.map((yearData) => yearData.taxYear),
+    yearDataRows,
   );
   if (completionIssues.length > 0) {
     return NextResponse.json(
@@ -93,35 +94,17 @@ export async function POST(req: Request) {
     },
   });
 
-  // Idempotency — if a still-open Stripe session already exists for this filing
-  // (double-click / retried request), reuse it instead of minting a second
-  // payable session that could double-charge the customer.
-  //
-  // ONLY when its amount still matches what this request would charge. The
-  // customer can abandon Checkout (cancel_url drops them back in the wizard),
-  // switch Standard ⇄ Express or add a tax year, and come back — reusing the
-  // stale session would then bill them the OLD plan's price while the wizard
-  // and the confirmation email say otherwise. A price mismatch falls through
-  // to create a fresh session; the create below is itself idempotent on
-  // (filing, tier price, year count, discount), so that can't double-charge.
+  // Retire a previous payable price before opening its replacement.
   if (!isTestTier(filing.tier) && filing.stripeSessionId) {
-    try {
-      const existingSession = await stripe().checkout.sessions.retrieve(filing.stripeSessionId);
-      if (
-        existingSession.status === "open" &&
-        existingSession.url &&
-        existingSession.amount_total === expectedChargeCents
-      ) {
-        return NextResponse.json({ url: existingSession.url });
-      }
-      if (existingSession.status === "open" && existingSession.amount_total !== expectedChargeCents) {
-        console.log(
-          "[checkout] existing session priced at", existingSession.amount_total,
-          "but this order is", expectedChargeCents, "— creating a new session. filing:", filing.id,
-        );
-      }
-    } catch (err) {
-      console.warn("[checkout] existing Stripe session could not be reused", err);
+    const decision = await preparePreviousCheckout(
+      filing.stripeSessionId, expectedChargeCents, stripe().checkout.sessions, console.warn,
+    );
+    if (decision.action === "reuse") return NextResponse.json({ url: decision.url });
+    if (decision.action === "processing") {
+      return NextResponse.json(
+        { error: "Your payment is being processed. Please wait before trying again." },
+        { status: 409 },
+      );
     }
   }
 
@@ -360,10 +343,10 @@ export async function POST(req: Request) {
     // Idempotency key scoped to the filing + its priced inputs (discount
     // included, so a promo and non-promo session for the same filing can never
     // collide) — a retried identical create returns the same session instead of
-    // a second one.
+    // a second one. The predecessor prevents replaying a session expired at an earlier price.
     // v2: the branded checkout sends different session params, and Stripe rejects a reused key
     // with different params, so keys from before the branding deploy must not be reused.
-    { idempotencyKey: `checkout_v2_${filing.id}_${tier.priceCents}_${yearCount}_${discountCents}` },
+    { idempotencyKey: `checkout_v2_${filing.id}_${tier.priceCents}_${yearCount}_${discountCents}_${filing.stripeSessionId ?? "initial"}` },
     (p, o) => stripe().checkout.sessions.create(p, o),
   );
 
