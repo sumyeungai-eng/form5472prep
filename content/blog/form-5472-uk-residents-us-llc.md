@@ -2,7 +2,7 @@
 title: "Form 5472 for UK Residents With a U.S. LLC"
 description: "Form 5472 for UK residents covers the annual filing package for a foreign-owned US LLC, reportable transactions, deadlines, and late-filing consequences."
 date: 2026-05-21
-updated: 2026-08-14
+updated: 2026-09-29
 author: "Form5472 Prep"
 tags: ["form-5472", "uk-residents", "foreign-owned-llc", "disregarded-entity"]
 draft: false
@@ -125,7 +125,7 @@ Many guides you'll find online — including some published by US CPAs — still
 
 The remaining BOI obligation applies only to **foreign companies** (formed under the law of a foreign country) that have registered to do business in a US state. A UK-resident who owns a Wyoming LLC does not trigger this obligation — the LLC itself is the US entity, and it's now exempt.
 
-*Note: This rule was published as an interim final rule and FinCEN has indicated it intends to finalize it. This post reflects the status as of August 2026 — confirm at [fincen.gov/boi](https://www.fincen.gov/boi) if you're filing after this date.*
+*Note: This rule was originally published as an interim final rule. FinCEN has since issued a final rule, effective 14 August 2026, making the exemption permanent — confirm at [fincen.gov/boi](https://www.fincen.gov/boi) if anything changes.*
 
 ---
 

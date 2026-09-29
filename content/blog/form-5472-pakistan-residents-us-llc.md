@@ -2,7 +2,7 @@
 title: "Form 5472 for Pakistan Residents With a US LLC"
 description: "Pakistan owners of US LLCs usually file Form 5472 using a CNIC or NTN. Learn how platform payouts, treaty status and PKR conversion work."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-29
 author: "Form5472 Prep"
 tags: ["form-5472", "pakistan", "foreign-owned-llc", "freelancers", "ftin"]
 draft: false
@@ -108,7 +108,7 @@ Prepare a paper or fax package for the dedicated IRS Ogden PIN Unit because a fo
 
 For a calendar-year LLC, the 2025 filing was due **15 April 2026**. Form 7004, faxed or mailed to the same PIN Unit by the regular due date, extended it to **15 October 2026**. See the [deadline guide](/blog/form-5472-deadline-2026) for the full timing rules.
 
-US-formed LLCs have been exempt from FinCEN BOI reporting since the interim final rule effective 26 March 2025. The BOI change does not affect Form 5472, state compliance, or any US or Pakistan income-tax return.
+US-formed LLCs have been exempt from FinCEN BOI reporting since the interim final rule effective 26 March 2025, and FinCEN's final rule, effective 14 August 2026, made that exemption permanent. The BOI change does not affect Form 5472, state compliance, or any US or Pakistan income-tax return.
 
 ## What should a Pakistan owner do if a year was missed?
 

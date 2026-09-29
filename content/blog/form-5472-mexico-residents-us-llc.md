@@ -2,7 +2,7 @@
 title: "Form 5472 for Mexico Residents With a US LLC"
 description: "Mexico residents with US LLCs usually file Form 5472 using an RFC as the FTIN. See treaty, transaction, conversion and deadline rules."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-29
 author: "Form5472 Prep"
 tags: ["form-5472", "mexico", "foreign-owned-llc", "rfc", "ftin"]
 draft: false
@@ -108,7 +108,7 @@ The foreign-owned US disregarded entity must fax or mail the package to the dedi
 
 The 2025 package for a calendar-year LLC was due **15 April 2026**. A Form 7004 faxed or mailed to the same PIN Unit by the regular due date extended Form 5472 to **15 October 2026**. See our [deadline guide](/blog/form-5472-deadline-2026) for the extension sequence.
 
-US-formed LLCs have been exempt from FinCEN BOI reporting since the interim final rule effective 26 March 2025. The BOI exemption does not cancel Form 5472 or replace state, federal income-tax, real-estate, sales-tax, or Mexican obligations.
+US-formed LLCs have been exempt from FinCEN BOI reporting since the interim final rule effective 26 March 2025, and FinCEN's final rule, effective 14 August 2026, made that exemption permanent. The BOI exemption does not cancel Form 5472 or replace state, federal income-tax, real-estate, sales-tax, or Mexican obligations.
 
 ## What should a Mexico owner do after a missed filing?
 

@@ -2,7 +2,7 @@
 title: "Form 5472 for Hong Kong Residents With a US LLC"
 description: "Hong Kong owners of US LLCs usually file Form 5472 using an HKID as the FTIN. See the treaty, transaction, deadline and filing rules."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-29
 author: "Form5472 Prep"
 tags: ["form-5472", "hong-kong", "foreign-owned-llc", "ftin"]
 draft: false
@@ -105,7 +105,7 @@ The package must be complete, signed, and sent to the dedicated IRS Ogden PIN Un
 
 For a calendar-year LLC, the 2025 package was due **15 April 2026**. A Form 7004 sent to the same PIN Unit by that regular due date extended the filing to **15 October 2026**. The [Form 5472 deadline guide](/blog/form-5472-deadline-2026) explains the calendar.
 
-US-formed LLCs are currently exempt from BOI reporting under FinCEN's interim final rule effective 26 March 2025. That exemption does not change the IRS filing. State annual reports, income-tax returns, sales tax, and Hong Kong filings also remain separate questions.
+US-formed LLCs are exempt from BOI reporting under FinCEN's interim final rule effective 26 March 2025, an exemption FinCEN's final rule made permanent effective 14 August 2026. That exemption does not change the IRS filing. State annual reports, income-tax returns, sales tax, and Hong Kong filings also remain separate questions.
 
 ## What should a Hong Kong owner do after a missed deadline?
 

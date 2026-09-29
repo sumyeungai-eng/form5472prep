@@ -2,7 +2,7 @@
 title: "Wyoming LLC Foreign-Owner Filing Checklist"
 description: "Wyoming has no state income tax, but a foreign-owned Wyoming LLC still owes an annual report and, in most cases, Form 5472 backed by a $25,000 penalty."
 date: 2026-08-15
-updated: 2026-09-05
+updated: 2026-09-29
 author: "Form5472 Prep"
 tags: ["form-5472", "wyoming-llc", "foreign-owned-llc", "compliance", "annual-report"]
 draft: false
@@ -24,7 +24,7 @@ If you already know Form 5472 is your gap, [we prepare and fax the complete pack
 | **Registered agent** | Typically $50-$200 | Per your agent's contract | Your registered agent |
 | **IRS Form 5472 + pro forma 1120** | No IRS fee; preparation from $149 | 15 April (15 October if extended) | IRS Ogden PIN Unit, by fax or mail |
 | **Wyoming state income tax** | None | — | — |
-| **FinCEN BOI report** | Not required for US-formed LLCs since March 2025 | — | — |
+| **FinCEN BOI report** | Not required for US-formed LLCs — exempt since March 2025, permanently since FinCEN's final rule took effect 14 August 2026 | — | — |
 | **US federal income tax return** | Only if you have US-source or effectively connected income | Varies | IRS |
 
 Two rows do the work: the state annual report, which is cheap and easy to remember because Wyoming emails a reminder, and Form 5472, which is neither.
@@ -65,7 +65,7 @@ The penalty is **$25,000 per form, per year** under IRC § 6038A(d). The [IRS In
 
 ## Does a Wyoming LLC still have to file a BOI report?
 
-**No.** FinCEN's interim final rule of 26 March 2025 redefined "reporting company" to cover only entities formed under the law of a foreign country that have registered to do business in a US state. Every entity created in the United States — including a Wyoming LLC with a foreign owner — is exempt from beneficial ownership reporting and is not required to update or correct any BOI previously reported. The scope is set out in the [Federal Register notice](https://www.federalregister.gov/documents/2025/03/26/2025-05199/beneficial-ownership-information-reporting-requirement-revision-and-deadline-extension) and on [FinCEN's BOI page](https://www.fincen.gov/boi).
+**No.** FinCEN's interim final rule of 26 March 2025 redefined "reporting company" to cover only entities formed under the law of a foreign country that have registered to do business in a US state, and FinCEN's [final rule](https://www.federalregister.gov/documents/2026/08/14/2026-16576/beneficial-ownership-information-reporting-requirement-revision) — issued 11 August 2026, effective 14 August 2026 — made that exemption permanent. Every entity created in the United States — including a Wyoming LLC with a foreign owner — is exempt from beneficial ownership reporting and is not required to update or correct any BOI previously reported. See [FinCEN's BOI page](https://www.fincen.gov/boi) for the current rule.
 
 If a Wyoming formation agent is still billing you an annual BOI filing fee for a US-formed LLC, that filing is not required. Because BOI has shifted repeatedly through litigation and rulemaking since 2024, check FinCEN's own page before acting.
 
@@ -124,7 +124,7 @@ For a small online business, the differences are mostly cost and privacy, not ta
 
 ### Do I need a BOI report for my Wyoming LLC?
 
-No. Since FinCEN's 26 March 2025 interim final rule, all US-formed entities including foreign-owned Wyoming LLCs are exempt from beneficial ownership reporting. Only foreign-formed companies registered to do business in a US state remain reporting companies.
+No. FinCEN's final rule, effective 14 August 2026, permanently exempts all US-formed entities — including foreign-owned Wyoming LLCs — from beneficial ownership reporting. Only foreign-formed companies registered to do business in a US state remain reporting companies.
 
 ### My formation agent files my annual report — am I covered for Form 5472?
 

@@ -2,7 +2,7 @@
 title: "Form 5472 for India Residents With a US LLC"
 description: "Form 5472 for India residents covers the US LLC filing package, PAN-as-FTIN rules, and which owner transactions to report."
 date: 2026-05-28
-updated: 2026-07-06
+updated: 2026-09-29
 author: "Form5472 Prep"
 tags: ["form-5472", "india-residents", "foreign-owned-llc", "disregarded-entity"]
 readingMinutes: 8
@@ -83,9 +83,9 @@ Similarly, if you qualify for treaty benefits that reduce your US withholding on
 
 Until early 2025, most foreign-owned US LLCs were expected to file a Beneficial Ownership Information (BOI) report with FinCEN under the Corporate Transparency Act.
 
-On March 26, 2025, the Treasury Department issued an **interim final rule** that **exempted all US-formed entities** — including domestic LLCs formed in Wyoming, Delaware, New Mexico, Florida, or any other US state — from the BOI filing requirement. Only foreign-formed entities that register to do business in the US still need to file ([Federal Register notice](https://www.federalregister.gov/documents/2025/03/26/2025-05199/beneficial-ownership-information-reporting-requirement-revision-and-deadline-extension)).
+On March 26, 2025, the Treasury Department issued an **interim final rule** that **exempted all US-formed entities** — including domestic LLCs formed in Wyoming, Delaware, New Mexico, Florida, or any other US state — from the BOI filing requirement. Only foreign-formed entities that register to do business in the US still need to file ([Federal Register notice](https://www.federalregister.gov/documents/2025/03/26/2025-05199/beneficial-ownership-information-reporting-requirement-revision-and-deadline-extension)). FinCEN then issued a **final rule**, effective 14 August 2026, that made this exemption permanent rather than interim.
 
-If you formed your LLC in a US state (which is the typical structure for Indian founders accessing Stripe and US banking), **you do not need to file a BOI report**. A large number of online guides and advisors still say you do — they haven't been updated since the rule change. The exemption is real and in effect.
+If you formed your LLC in a US state (which is the typical structure for Indian founders accessing Stripe and US banking), **you do not need to file a BOI report**. A large number of online guides and advisors still say you do — they haven't been updated since the rule change. The exemption is real, permanent, and in effect.
 
 This has nothing to do with Form 5472, which is still fully required. The BOI exemption only covers the FinCEN BOI reporting obligation.
 
