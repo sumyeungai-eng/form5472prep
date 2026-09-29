@@ -71,7 +71,7 @@ DB-reading pages (e.g. the homepage filings counter) catch the connection error 
 - `filings/[id]/sign` — stores the customer signature PNG.
 - `admin/filings/[id]` — admin actions incl. `retryFax` (snapshots the exact faxed bytes to `faxedPdfKey`).
 - `telnyx-webhook` — fax delivered/failed events; atomic claims dedupe against the poll cron; retries re-fax the immutable snapshot.
-- `cron/*` — Vercel Cron: `fax-status-poll` (daily), `january-reminder`, `march-reminder`, `abandoned-draft-reminder`. Schedules in `vercel.json`.
+- `cron/*` — Vercel Cron: `fax-status-poll` (hourly backstop for the Telnyx webhook; shares `src/lib/fax/finalize.ts`), `january-reminder`, `march-reminder`, `abandoned-draft-reminder`. Schedules in `vercel.json`.
 - `ask`, `chat`, `auth/send-link`, `partner/send-link`, `ein-application`, `itin-application` — public endpoints, now **rate-limited** (see `src/lib/rateLimit.ts`).
 
 **Key libraries** (`src/lib/`):

@@ -1,47 +1,41 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { env } from "@/lib/env";
-import { makeMagicLink } from "@/lib/magicLink";
-import { get as getStorageObject, putPdf } from "@/lib/storage";
-import { generateFaxReceiptPdf } from "@/lib/pdf/faxReceipt";
+import { finalizeFaxDelivered, finalizeFaxFailed } from "@/lib/fax/finalize";
+import { isPollable, pollCandidatesWhere, POLL_MAX_ROWS } from "@/lib/fax/pollCandidates";
 import {
-  sendFaxDeliveredEmail,
-  sendFaxDeliveredAdminEmail,
-  sendFaxFailedEmail,
-  sendFaxFailedAdminEmail,
-  type FaxProof,
-} from "@/lib/email";
-import { apnsConfigured, sendAdminPush } from "@/lib/apns";
-import { brandForFiling } from "@/lib/partnerBrand";
+  deliveryFactsFromTelnyx,
+  fetchTelnyxFax,
+  isTelnyxFailedStatus,
+  TELNYX_DELIVERED_STATUS,
+} from "@/lib/fax/telnyxStatus";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-// Reconciles fax delivery status against Telnyx for any filing whose webhook
-// might have been missed. Runs every few minutes via Vercel Cron. Idempotent:
-// we only act on filings still in an in-flight faxStatus (queued, sending,
-// retry_*), so once the webhook OR a prior cron pass moves the row to
-// CONFIRMED/FAILED it won't be re-processed.
+// Backstop for /api/telnyx-webhook. Runs HOURLY via Vercel Cron (vercel.json
+// — not more often: the DB is Neon with scale-to-zero, and every run wakes
+// it). For every filing whose fax outcome is still unknown it asks Telnyx's
+// API directly and, on a delivered/failed answer, calls the SAME finalize
+// functions the webhook uses (lib/fax/finalize.ts). Their atomic claim makes
+// a webhook/poll race produce exactly one customer email and one receipt.
 //
-// Rationale: Telnyx will hit /api/telnyx-webhook on every status change, but
-// network blips or transient 5xx from us mean the webhook can silently fail.
-// Without this poller, a stuck "queued" can sit forever and the customer
-// never gets their proof-of-fax email.
+// "Outcome unknown" = has a faxJobId, status is not CONFIRMED, and faxStatus
+// is not terminal (see isTerminalFaxStatus). That includes every in-progress
+// label the webhook stores (queued, media.processed, sending.started, ...),
+// our retry_N labels, and null — the old poll only matched queued/sending/
+// retry_*, so a fax whose last webhook said "sending.started" was never
+// reconciled if the fax.delivered webhook then went missing.
+//
+// Bounded to faxes sent/updated in the last 14 days: Telnyx settles a fax in
+// minutes-to-hours, so anything older that is still non-terminal needs a
+// human, not another API call every hour.
 
-const IN_FLIGHT = ["queued", "sending"];
-
-type TelnyxFax = {
-  id: string;
-  status: string; // queued | sending | delivered | failed | sending.failed
-  failure_reason?: string | null;
-  page_count?: number | null;
-  call_duration_secs?: number | null;
-  from?: string | null;
-  to?: string | null;
-  updated_at?: string | null;
-  created_at?: string | null;
-};
+// Stop starting new Telnyx lookups with headroom before maxDuration.
+const TIME_BUDGET_MS = 45 * 1000;
+// A failure only minutes old belongs to the webhook, which may still re-fax
+// it (the poll never retries). Give it this long before the poll gives up.
+const FAILURE_GRACE_MS = 10 * 60 * 1000;
 
 export async function GET(req: Request) {
   if (!isAuthorized(req)) {
@@ -53,62 +47,75 @@ export async function GET(req: Request) {
     return NextResponse.json({ skipped: "TELNYX_API_KEY not set" });
   }
 
-  // In-flight: faxStatus literally "queued" / "sending", OR one of our retry
-  // labels ("retry_1", "retry_2", ...). Plain prisma 'in' can't easily express
-  // both, so pull the FAXED rows and filter in JS.
-  //
-  // NOTE: we deliberately do NOT bound this by updatedAt. An earlier version
-  // only polled rows updated within the last 7 days, but a still-"queued" fax
-  // never has its updatedAt touched (the still-sending branch leaves the row
-  // as-is), so a genuinely stuck fax aged out of the window after 7 days and
-  // was NEVER polled again — stuck in FAXED forever, customer never emailed.
-  // The set is naturally bounded (only FAXED + in-flight faxStatus); oldest
-  // first so the most-overdue faxes are reconciled first under the take cap.
+  const startedAt = Date.now();
+  const now = new Date(startedAt);
   const candidates = await prisma.filing.findMany({
-    where: {
-      status: "FAXED",
-      faxJobId: { not: null },
-    },
+    where: pollCandidatesWhere(now),
     include: { user: true },
+    // Oldest first so the most-overdue faxes are reconciled first under the cap.
     orderBy: { updatedAt: "asc" },
-    take: 100,
+    take: POLL_MAX_ROWS,
   });
-
-  const inFlight = candidates.filter(
-    (f) => f.faxStatus && (IN_FLIGHT.includes(f.faxStatus) || f.faxStatus.startsWith("retry_")),
-  );
+  const pollable = candidates.filter((f) => isPollable(f, now));
 
   const result = {
     candidates: candidates.length,
-    inFlight: inFlight.length,
+    inFlight: pollable.length,
     reconciled: 0,
     delivered: 0,
     failed: 0,
+    alreadyFinalized: 0,
     stillSending: 0,
+    recentFailureLeftForWebhook: 0,
+    deferred: 0,
     errors: [] as string[],
   };
 
-  for (const filing of inFlight) {
+  let processed = 0;
+  for (const filing of pollable) {
+    if (Date.now() - startedAt > TIME_BUDGET_MS) {
+      // Out of time — the rest are picked up by the next hourly run.
+      result.deferred = pollable.length - processed;
+      break;
+    }
+    processed++;
     try {
-      const res = await fetch(`https://api.telnyx.com/v2/faxes/${filing.faxJobId}`, {
-        headers: { Authorization: `Bearer ${apiKey}` },
-      });
-      if (!res.ok) {
-        result.errors.push(`${filing.id}: Telnyx GET ${res.status}`);
+      const lookup = await fetchTelnyxFax(filing.faxJobId!, { apiKey });
+      if (!lookup.ok) {
+        result.errors.push(`${filing.id}: ${lookup.error}`);
         continue;
       }
-      const tx = ((await res.json()) as { data: TelnyxFax }).data;
+      const tx = lookup.fax;
 
-      if (tx.status === "delivered") {
-        await handleDelivered(filing, tx);
-        result.delivered++;
-        result.reconciled++;
-      } else if (tx.status === "failed" || tx.status === "sending.failed") {
-        await handleFailed(filing, tx);
-        result.failed++;
-        result.reconciled++;
+      if (tx.status === TELNYX_DELIVERED_STATUS) {
+        const outcome = await finalizeFaxDelivered(filing, deliveryFactsFromTelnyx(tx), { source: "poll" });
+        if (outcome.claimed) {
+          result.delivered++;
+          result.reconciled++;
+        } else {
+          result.alreadyFinalized++;
+        }
+      } else if (isTelnyxFailedStatus(tx.status)) {
+        // The poll never re-faxes; retries are the webhook's job. This is the
+        // same give-up path the webhook takes once retries are exhausted.
+        const failedAt = tx.updated_at ? Date.parse(tx.updated_at) : NaN;
+        if (Number.isFinite(failedAt) && startedAt - failedAt < FAILURE_GRACE_MS) {
+          result.recentFailureLeftForWebhook++;
+          continue;
+        }
+        const outcome = await finalizeFaxFailed(
+          filing,
+          { faxId: filing.faxJobId!, failureReason: tx.failure_reason ?? null, deliveryAttempts: 0 },
+          { source: "poll" },
+        );
+        if (outcome.claimed) {
+          result.failed++;
+          result.reconciled++;
+        } else {
+          result.alreadyFinalized++;
+        }
       } else {
-        // Still queued/sending — leave DB as-is so the next pass re-checks.
+        // Still queued/sending — leave the row as-is; the next pass re-checks.
         result.stillSending++;
       }
     } catch (err) {
@@ -117,197 +124,6 @@ export async function GET(req: Request) {
   }
 
   return NextResponse.json(result);
-}
-
-async function handleDelivered(
-  filing: { id: string; faxJobId: string | null; signedPdfKey: string | null; llcName: string | null; llcEin: string | null; ownerName: string | null; isFinalReturn: boolean; dissolvedAt: Date | null; taxYears: number[]; userId: string | null; user: { email: string } | null },
-  tx: TelnyxFax,
-) {
-  const submittedAtIso = tx.created_at ?? new Date().toISOString();
-  const deliveredAtIso = tx.updated_at ?? new Date().toISOString();
-
-  // Atomic claim — race-safe against the telnyx-webhook firing for the same
-  // fax. updateMany returns the number of rows actually matched; if it's 0,
-  // another path already flipped the filing to CONFIRMED and we MUST skip
-  // the rest of this handler so the operator doesn't receive duplicate
-  // "Fax delivered" admin emails + duplicate fax-receipt PDFs.
-  const claim = await prisma.filing.updateMany({
-    where: { id: filing.id, status: { not: "CONFIRMED" } },
-    data: { faxStatus: "delivered", status: "CONFIRMED" },
-  });
-  if (claim.count === 0) {
-    console.log(`[fax-status-poll] ${filing.id} already CONFIRMED — webhook beat us, skipping`);
-    return;
-  }
-
-  const proof: FaxProof = {
-    faxId: filing.faxJobId ?? tx.id,
-    deliveredAt: deliveredAtIso,
-    pageCount: tx.page_count ?? null,
-    durationSecs: tx.call_duration_secs ?? null,
-    from: tx.from ?? null,
-    to: tx.to ?? env.telnyx.destination,
-  };
-  const adminFilingUrl = `${env.appUrl}/admin/filings/${filing.id}`;
-
-  let signedPdfBytes: Uint8Array | undefined;
-  if (filing.signedPdfKey) {
-    try {
-      signedPdfBytes = await getStorageObject(filing.signedPdfKey);
-    } catch (err) {
-      console.error(`[fax-status-poll] read signed PDF for ${filing.id} failed`, err);
-    }
-  }
-
-  // Generate + persist the IRS Fax Transmission Receipt PDF. Same generator
-  // and storage key the telnyx-webhook uses, so the customer always ends up
-  // with one receipt regardless of which path detected the delivery.
-  let receiptPdfBytes: Uint8Array | undefined;
-  try {
-    receiptPdfBytes = await generateFaxReceiptPdf({
-      filingId: filing.id,
-      llcName: filing.llcName,
-      llcEin: filing.llcEin,
-      taxYears: filing.taxYears,
-      ownerName: filing.ownerName,
-      telnyxFaxId: filing.faxJobId ?? tx.id,
-      fromFax: proof.from ?? null,
-      toFax: proof.to ?? null,
-      submittedAtIso,
-      deliveredAtIso,
-      pageCount: proof.pageCount ?? null,
-    });
-    const receiptKey = `${filing.id}_fax_receipt.pdf`;
-    await putPdf(receiptKey, receiptPdfBytes);
-    await prisma.filing.update({
-      where: { id: filing.id },
-      data: { faxConfirmationKey: receiptKey },
-    });
-  } catch (err) {
-    console.error(`[fax-status-poll] receipt PDF for ${filing.id} failed`, err);
-  }
-
-  if (filing.user && filing.userId) {
-    let brand = null;
-    try {
-      brand = await brandForFiling(filing.id);
-    } catch (err) {
-      console.error(`[fax-status-poll] brand lookup for ${filing.id} failed`, err);
-    }
-
-    try {
-      // Customer: receipt only (signed package stays in portal).
-      await sendFaxDeliveredEmail({
-        email: filing.user.email,
-        recipientName: filing.ownerName,
-        llcName: filing.llcName,
-        taxYears: filing.taxYears,
-        portalLink: makeMagicLink(filing.userId),
-        proof,
-        receiptPdfBytes,
-        isFinalReturn: filing.isFinalReturn,
-        dissolvedAt: filing.dissolvedAt,
-        brand: brand ?? undefined,
-      });
-    } catch (err) {
-      console.error(`[fax-status-poll] customer delivered email for ${filing.id} failed`, err);
-    }
-  }
-  try {
-    // Admin: receipt + frozen signed PDF, both in one email.
-    await sendFaxDeliveredAdminEmail({
-      adminEmail: env.adminEmail,
-      customerEmail: filing.user?.email ?? null,
-      llcName: filing.llcName,
-      taxYears: filing.taxYears,
-      filingId: filing.id,
-      adminFilingUrl,
-      proof,
-      receiptPdfBytes,
-      signedPdfBytes,
-    });
-  } catch (err) {
-    console.error(`[fax-status-poll] admin delivered email for ${filing.id} failed`, err);
-  }
-  if (apnsConfigured()) {
-    try {
-      await sendAdminPush({
-        title: "Fax delivered",
-        body: `${filing.llcName ?? filing.id} — delivered to IRS`,
-        threadId: filing.id,
-      });
-    } catch {}
-  }
-}
-
-async function handleFailed(
-  filing: { id: string; faxJobId: string | null; llcName: string | null; ownerName: string | null; taxYears: number[]; userId: string | null; user: { email: string } | null },
-  tx: TelnyxFax,
-) {
-  const failureReason = tx.failure_reason ?? null;
-  // Atomic claim — race-safe against the telnyx-webhook firing for the same
-  // fax, and against this poll re-observing a failure it already recorded.
-  // Only flip to FAILED from a still-in-flight state; if the row is already
-  // CONFIRMED or FAILED, skip so we don't regress a delivered fax or send a
-  // duplicate "fax failed" email.
-  const claim = await prisma.filing.updateMany({
-    where: { id: filing.id, status: { notIn: ["CONFIRMED", "FAILED"] } },
-    data: {
-      faxStatus: failureReason ? `failed:${failureReason}` : "failed",
-      status: "FAILED",
-    },
-  });
-  if (claim.count === 0) {
-    console.log(`[fax-status-poll] ${filing.id} already CONFIRMED/FAILED — skipping duplicate failure`);
-    return;
-  }
-
-  const adminFilingUrl = `${env.appUrl}/admin/filings/${filing.id}`;
-  if (filing.user && filing.userId) {
-    let brand = null;
-    try {
-      brand = await brandForFiling(filing.id);
-    } catch (err) {
-      console.error(`[fax-status-poll] brand lookup for ${filing.id} failed`, err);
-    }
-
-    try {
-      await sendFaxFailedEmail({
-        email: filing.user.email,
-        recipientName: filing.ownerName,
-        llcName: filing.llcName,
-        taxYears: filing.taxYears,
-        portalLink: makeMagicLink(filing.userId),
-        brand: brand ?? undefined,
-      });
-    } catch (err) {
-      console.error(`[fax-status-poll] customer failed email for ${filing.id} failed`, err);
-    }
-  }
-  try {
-    await sendFaxFailedAdminEmail({
-      adminEmail: env.adminEmail,
-      customerEmail: filing.user?.email ?? null,
-      llcName: filing.llcName,
-      taxYears: filing.taxYears,
-      filingId: filing.id,
-      adminFilingUrl,
-      faxId: filing.faxJobId ?? tx.id,
-      failureReason,
-      deliveryAttempts: 0, // not known here; webhook path tracks attempts
-    });
-  } catch (err) {
-    console.error(`[fax-status-poll] admin failed email for ${filing.id} failed`, err);
-  }
-  if (apnsConfigured()) {
-    try {
-      await sendAdminPush({
-        title: "Fax failed",
-        body: `${filing.llcName ?? filing.id} — ${failureReason ?? "unknown error"}`,
-        threadId: filing.id,
-      });
-    } catch {}
-  }
 }
 
 function isAuthorized(req: Request): boolean {

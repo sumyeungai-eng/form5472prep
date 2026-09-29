@@ -17,6 +17,7 @@ import { EditFieldsCard } from "./EditFieldsCard";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { LinkedFaxes } from "@/components/admin/LinkedFaxes";
 import { YearBreakdown } from "./YearBreakdown";
+import { EmailLogTable } from "./EmailLogTable";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +83,18 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
   const extensionProofUrl = filing.extensionProofKey
     ? await publicUrl(filing.extensionProofKey)
     : null;
+  // Every email we handed to Resend for this filing (EmailLog), newest first.
+  // Null = the query failed; the card says so instead of breaking the page.
+  const emailLogs = await prisma.emailLog
+    .findMany({
+      where: { filingId: filing.id },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    })
+    .catch((err: unknown) => {
+      console.error("[admin filing] EmailLog query failed", err);
+      return null;
+    });
   const customerDocuments = await prisma.filingDocument.findMany({
     where: { filingId: filing.id },
     orderBy: { createdAt: "asc" },
@@ -209,6 +222,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           hasGeneratedPdf={!!filing.generatedPdfKey}
           hasCustomerSignature={!!filing.signaturePngKey}
           hasFaxedPdf={!!filing.faxedPdfKey}
+          hasFaxReceipt={!!filing.faxConfirmationKey}
           preflightStatus={filing.preflightStatus}
           preflightOverrideBy={filing.preflightOverrideBy}
           reviewApprovedAt={filing.reviewApprovedAt ? filing.reviewApprovedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
@@ -441,6 +455,12 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
               }
             />
           </DetailCard>
+        </div>
+
+        {/* Own wrapper (same look as DetailCard): a <table> doesn't belong in DetailCard's <dl>. */}
+        <div className="md:col-span-2 bg-white border border-slate-200 rounded-lg p-5">
+          <h2 className="text-sm font-semibold text-slate-900 mb-3">Emails</h2>
+          <EmailLogTable rows={emailLogs} />
         </div>
 
         <div className="md:col-span-2">

@@ -235,7 +235,7 @@ export async function POST(req: Request) {
         const link = makeMagicLink(filing.user.id);
         const label = filing.llcName ?? `tax year ${filing.taxYears.join(", ")}`;
         try {
-          await sendMagicLinkEmail(filing.user.email, link, label);
+          await sendMagicLinkEmail(filing.user.email, link, label, undefined, filing.id);
         } catch (err) {
           console.error("[stripe-webhook] magic link email failed", err);
         }

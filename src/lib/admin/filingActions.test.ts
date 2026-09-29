@@ -25,7 +25,9 @@ const email = vi.hoisted(() => ({
   sendMagicLinkEmail: vi.fn(),
   sendOrderConfirmationEmail: vi.fn(),
   sendReadyToSignEmail: vi.fn(),
+  sendFaxDeliveredEmail: vi.fn(),
 }));
+const brand = vi.hoisted(() => ({ brandForFiling: vi.fn(async () => null) }));
 const pdf = vi.hoisted(() => ({
   generatePackage: vi.fn(async () => ({
     bytes: new Uint8Array([37, 80, 68, 70]),
@@ -54,7 +56,9 @@ vi.mock("@/lib/email", () => ({
   sendMagicLinkEmail: email.sendMagicLinkEmail,
   sendOrderConfirmationEmail: email.sendOrderConfirmationEmail,
   sendReadyToSignEmail: email.sendReadyToSignEmail,
+  sendFaxDeliveredEmail: email.sendFaxDeliveredEmail,
 }));
+vi.mock("@/lib/partnerBrand", () => ({ brandForFiling: brand.brandForFiling }));
 vi.mock("@/lib/magicLink", () => ({ makeMagicLink: () => "https://example.test/magic" }));
 vi.mock("@/lib/pdf/generatePackage", () => ({
   generatePackage: pdf.generatePackage,
@@ -76,10 +80,11 @@ import {
 import { filingToPackageInput } from "@/lib/pdf/packageInput";
 
 describe("SIDE_EFFECTING_ACTIONS", () => {
-  it("contains exactly the four externally side-effecting filing actions", () => {
+  it("contains exactly the externally side-effecting filing actions", () => {
     expect(Array.from(SIDE_EFFECTING_ACTIONS).sort()).toEqual([
       "approveForSignature",
       "regeneratePdf",
+      "resendFaxConfirmation",
       "resendMagicLink",
       "resendOrderConfirmation",
       "retryFax",
@@ -853,5 +858,134 @@ describe("approvePreflightOverride", () => {
       runFilingAction("filing_1", "approvePreflightOverride", body, { adminId: "admin_1" }),
     ).rejects.toMatchObject({ status: 400, code: "reason_required" });
     expect(db.update).not.toHaveBeenCalled();
+  });
+});
+
+describe("resendFaxConfirmation", () => {
+  const confirmedFiling = {
+    id: "filing_fax",
+    status: "CONFIRMED",
+    llcName: "Acme LLC",
+    ownerName: "Owner One",
+    taxYears: [2025],
+    isFinalReturn: false,
+    dissolvedAt: null,
+    faxJobId: "fax-uuid-1",
+    faxStatus: "delivered",
+    faxConfirmationKey: "filing_fax_fax_receipt.pdf",
+    user: { id: "u1", email: "owner@example.test" },
+  };
+  const receipt = new Uint8Array([37, 80, 68, 70, 45]);
+  const telnyxRecord = {
+    data: {
+      id: "fax-uuid-1",
+      status: "delivered",
+      page_count: 7,
+      call_duration_secs: 95,
+      from: "+15550001111",
+      to: "+18558877737",
+      created_at: "2026-09-20T10:00:00.000Z",
+      updated_at: "2026-09-20T10:03:00.000Z",
+    },
+  };
+
+  beforeEach(() => {
+    db.findUnique.mockReset();
+    db.createLog.mockClear();
+    storage.get.mockReset();
+    storage.get.mockResolvedValue(receipt);
+    email.sendFaxDeliveredEmail.mockReset();
+    email.sendFaxDeliveredEmail.mockResolvedValue({ id: "resend_1" });
+    brand.brandForFiling.mockClear();
+    process.env.TELNYX_API_KEY = "test-telnyx-key";
+  });
+
+  afterEach(() => {
+    delete process.env.TELNYX_API_KEY;
+    vi.unstubAllGlobals();
+  });
+
+  it("re-sends the delivered email to the customer on file with the stored receipt attached, and logs it", async () => {
+    db.findUnique.mockResolvedValue(confirmedFiling);
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify(telnyxRecord), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      runFilingAction("filing_fax", "resendFaxConfirmation", { to: "attacker@example.test" }, { adminId: "admin_1" }),
+    ).resolves.toEqual({ ok: true, to: "owner@example.test", receiptAttached: true, proofIncluded: true });
+
+    expect(storage.get).toHaveBeenCalledWith("filing_fax_fax_receipt.pdf");
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.telnyx.com/v2/faxes/fax-uuid-1",
+      expect.objectContaining({ headers: expect.objectContaining({ Authorization: "Bearer test-telnyx-key" }) }),
+    );
+    expect(email.sendFaxDeliveredEmail).toHaveBeenCalledTimes(1);
+    // Recipient comes from the filing, never from the request payload.
+    expect(email.sendFaxDeliveredEmail).toHaveBeenCalledWith(expect.objectContaining({
+      email: "owner@example.test",
+      receiptPdfBytes: receipt,
+      attachReceipt: true,
+      filingId: "filing_fax",
+      logKind: "fax_delivered_resend",
+      portalLink: "https://example.test/magic",
+      proof: expect.objectContaining({ faxId: "fax-uuid-1", pageCount: 7, deliveredAt: "2026-09-20T10:03:00.000Z" }),
+    }));
+    expect(db.createLog).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        filingId: "filing_fax",
+        adminId: "admin_1",
+        source: "admin",
+        field: "email",
+        afterJson: expect.objectContaining({ action: "resendFaxConfirmation", to: "owner@example.test" }),
+      }),
+    }));
+  });
+
+  it("still sends (receipt attached, no proof table) when Telnyx cannot be reached", async () => {
+    db.findUnique.mockResolvedValue(confirmedFiling);
+    vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("network down"); }));
+
+    await expect(
+      runFilingAction("filing_fax", "resendFaxConfirmation", {}, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, proofIncluded: false });
+    expect(email.sendFaxDeliveredEmail).toHaveBeenCalledWith(expect.objectContaining({
+      attachReceipt: true,
+      receiptPdfBytes: receipt,
+      proof: undefined,
+    }));
+  });
+
+  it("is not available when no fax receipt is on file — nothing is sent or logged", async () => {
+    db.findUnique.mockResolvedValue({ ...confirmedFiling, status: "FAXED", faxConfirmationKey: null });
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      runFilingAction("filing_fax", "resendFaxConfirmation", {}, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 409, code: "no_fax_receipt" });
+    expect(storage.get).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(email.sendFaxDeliveredEmail).not.toHaveBeenCalled();
+    expect(db.createLog).not.toHaveBeenCalled();
+  });
+
+  it("refuses when the filing has no customer email", async () => {
+    db.findUnique.mockResolvedValue({ ...confirmedFiling, user: null });
+
+    await expect(
+      runFilingAction("filing_fax", "resendFaxConfirmation", {}, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 400, code: "no_customer_email" });
+    expect(email.sendFaxDeliveredEmail).not.toHaveBeenCalled();
+  });
+
+  it("surfaces an email failure as a 502 with the reason and writes no success log", async () => {
+    db.findUnique.mockResolvedValue(confirmedFiling);
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify(telnyxRecord), { status: 200 })));
+    email.sendFaxDeliveredEmail.mockRejectedValue(new Error("Resend send failed: 422 invalid"));
+
+    await expect(
+      runFilingAction("filing_fax", "resendFaxConfirmation", {}, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 502, code: "email_failed" });
+    expect(db.createLog).not.toHaveBeenCalled();
   });
 });

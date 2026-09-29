@@ -76,7 +76,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     console.error("[partner send-sign-link] brand lookup failed", err);
   }
   try {
-    await sendMagicLinkEmail(user.email, signLink, label, brand ?? undefined);
+    await sendMagicLinkEmail(user.email, signLink, label, brand ?? undefined, filing.id);
   } catch (err) {
     console.error("[partner send-sign-link] email failed", err);
     return NextResponse.json({ error: "Could not send the email. Try again." }, { status: 500 });

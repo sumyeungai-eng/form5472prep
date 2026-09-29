@@ -3,7 +3,12 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { resolveTier } from "@/lib/pricing";
 import { makeMagicLink } from "@/lib/magicLink";
-import { sendMagicLinkEmail, sendOrderConfirmationEmail, sendReadyToSignEmail } from "@/lib/email";
+import {
+  sendFaxDeliveredEmail,
+  sendMagicLinkEmail,
+  sendOrderConfirmationEmail,
+  sendReadyToSignEmail,
+} from "@/lib/email";
 import { submitFax } from "@/lib/fax";
 import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
@@ -23,11 +28,19 @@ import {
 } from "@/lib/schemas";
 import { hasCompleteReasonableCause, requiresReasonableCause } from "@/lib/completeness";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
+import { brandForFiling } from "@/lib/partnerBrand";
+import {
+  deliveryFactsFromTelnyx,
+  faxProofFromFacts,
+  fetchTelnyxFax,
+  TELNYX_DELIVERED_STATUS,
+} from "@/lib/fax/telnyxStatus";
 
 export type FilingActionName =
   | "setStatus"
   | "resendOrderConfirmation"
   | "resendMagicLink"
+  | "resendFaxConfirmation"
   | "retryFax"
   | "regeneratePdf"
   | "approvePreflightOverride"
@@ -52,6 +65,7 @@ export const FILING_ACTION_NAMES = [
   "setStatus",
   "resendOrderConfirmation",
   "resendMagicLink",
+  "resendFaxConfirmation",
   "retryFax",
   "regeneratePdf",
   "approvePreflightOverride",
@@ -66,6 +80,7 @@ export const SIDE_EFFECTING_ACTIONS: ReadonlySet<FilingActionName> = new Set<Fil
   "retryFax",
   "resendOrderConfirmation",
   "resendMagicLink",
+  "resendFaxConfirmation",
   "regeneratePdf",
   "approveForSignature",
 ]);
@@ -169,6 +184,7 @@ const filingSelect = {
   faxedPdfKey: true,
   faxJobId: true,
   faxStatus: true,
+  faxConfirmationKey: true,
   user: { select: { id: true, email: true } },
   yearData: {
     select: {
@@ -546,7 +562,7 @@ export async function runFilingAction(
         throw new FilingActionError(400, "no_customer_email", "no customer email");
       }
       const label = filing.llcName ?? `tax year ${filing.taxYears.join(", ")}`;
-      await sendMagicLinkEmail(filing.user.email, makeMagicLink(filing.user.id), label);
+      await sendMagicLinkEmail(filing.user.email, makeMagicLink(filing.user.id), label, undefined, filing.id);
       await logFilingChange({
         filingId: filing.id,
         adminId: ctx.adminId,
@@ -557,6 +573,86 @@ export async function runFilingAction(
         reason: ctx.reason,
       });
       return { ok: true };
+    }
+
+    case "resendFaxConfirmation": {
+      // Support tool for "I never got the confirmation": re-sends the fax-
+      // delivered email to the customer email on file (never a free-text
+      // recipient) with the stored IRS Fax Transmission Receipt ATTACHED.
+      // Only offered once a receipt exists, i.e. delivery was confirmed.
+      if (!filing.faxConfirmationKey) {
+        throw new FilingActionError(
+          409,
+          "no_fax_receipt",
+          "No fax receipt on file: delivery has not been confirmed, so there is nothing to resend.",
+        );
+      }
+      if (!filing.user) {
+        throw new FilingActionError(400, "no_customer_email", "no customer email");
+      }
+      let receiptPdfBytes: Uint8Array;
+      try {
+        receiptPdfBytes = await getStorageObject(filing.faxConfirmationKey);
+      } catch (err) {
+        console.error("[admin resendFaxConfirmation] receipt read failed", err);
+        throw new FilingActionError(
+          502,
+          "receipt_unavailable",
+          "Could not read the stored fax receipt, so nothing was sent. Try again in a minute.",
+        );
+      }
+      // Proof table (delivered-at, pages, Telnyx id) comes from Telnyx's API,
+      // best-effort: if it is unreachable the email still goes out and the
+      // attached receipt carries the same facts.
+      let proof: ReturnType<typeof faxProofFromFacts> | undefined;
+      if (filing.faxJobId) {
+        const lookup = await fetchTelnyxFax(filing.faxJobId, { timeoutMs: 5_000 });
+        if (lookup.ok && lookup.fax.status === TELNYX_DELIVERED_STATUS) {
+          proof = faxProofFromFacts(deliveryFactsFromTelnyx(lookup.fax));
+        }
+      }
+      let brand: Awaited<ReturnType<typeof brandForFiling>> = null;
+      try {
+        brand = await brandForFiling(filing.id);
+      } catch (err) {
+        console.error("[admin resendFaxConfirmation] brand lookup failed", err);
+      }
+      try {
+        await sendFaxDeliveredEmail({
+          email: filing.user.email,
+          recipientName: filing.ownerName,
+          llcName: filing.llcName,
+          taxYears: filing.taxYears,
+          portalLink: makeMagicLink(filing.user.id),
+          proof,
+          receiptPdfBytes,
+          attachReceipt: true,
+          isFinalReturn: filing.isFinalReturn,
+          dissolvedAt: filing.dissolvedAt,
+          brand: brand ?? undefined,
+          filingId: filing.id,
+          logKind: "fax_delivered_resend",
+        });
+      } catch (err) {
+        // sendEmail has already recorded the failed attempt in EmailLog.
+        const message = err instanceof Error ? err.message : String(err);
+        throw new FilingActionError(502, "email_failed", `The email could not be sent: ${message}`);
+      }
+      await logFilingChange({
+        filingId: filing.id,
+        adminId: ctx.adminId,
+        source: "admin",
+        field: "email",
+        before: null,
+        after: {
+          action: "resendFaxConfirmation",
+          to: filing.user.email,
+          receiptAttached: true,
+          proofIncluded: !!proof,
+        },
+        reason: ctx.reason,
+      });
+      return { ok: true, to: filing.user.email, receiptAttached: true, proofIncluded: !!proof };
     }
 
     case "retryFax": {

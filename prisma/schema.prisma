@@ -344,6 +344,7 @@ model Filing {
   documents        FilingDocument[]
   changeLog        FilingChangeLog[]
   receivedFaxes    ReceivedFax[]
+  emailLogs        EmailLog[]
 
   @@index([partnerId])
   // fax-status-poll (where status=FAXED order by updatedAt) + abandoned-draft
@@ -804,4 +805,28 @@ model TelegramOrderNotification {
   sentAt     DateTime?
   leaseUntil DateTime?
   createdAt  DateTime  @default(now())
+}
+
+// Audit trail of every email handed to Resend, so support can prove what was
+// sent, to whom, and (once the Resend webhook is configured) whether it was
+// delivered or bounced. Written best-effort by sendEmail() in lib/email.ts —
+// a logging failure never blocks a send. Updated by /api/resend-webhook.
+model EmailLog {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  filingId    String?
+  filing      Filing?   @relation(fields: [filingId], references: [id], onDelete: SetNull)
+  // What the email was, e.g. "fax_delivered", "fax_delivered_resend",
+  // "order_confirmation", "ready_to_sign", "magic_link", "other".
+  kind        String
+  to          String
+  subject     String
+  // Resend's email id — the key delivery webhooks are matched on.
+  resendId    String?   @unique
+  // "sent" | "failed" | "delivered" | "bounced" | "complained" | "delivery_delayed"
+  status      String
+  error       String?
+  lastEventAt DateTime?
+
+  @@index([filingId])
 }

@@ -15,7 +15,7 @@
     },
     {
       "path": "/api/cron/fax-status-poll",
-      "schedule": "0 13 * * *"
+      "schedule": "17 * * * *"
     },
     {
       "path": "/api/cron/traffic-retention",

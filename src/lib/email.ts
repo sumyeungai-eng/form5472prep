@@ -44,6 +44,11 @@ type SendAttachment = {
   contentType?: string; // defaults to application/pdf for .pdf, octet-stream otherwise
 };
 
+// Audit-trail tag for the EmailLog row sendEmail() writes after every Resend
+// call. `kind` names the email ("fax_delivered", "order_confirmation", ...);
+// `filingId` ties it to a filing so the admin filing page can list it.
+export type EmailLogTag = { kind: string; filingId?: string | null };
+
 type SendArgs = {
   to: string;
   subject: string;
@@ -54,7 +59,62 @@ type SendArgs = {
   attachments?: SendAttachment[];
   headers?: Record<string, string>;
   fromName?: string;
+  log?: EmailLogTag;
 };
+
+// How long a (best-effort) EmailLog write may hold up the caller after the
+// email itself has already been handed to Resend.
+const EMAIL_LOG_TIMEOUT_MS = 5_000;
+
+// Record one send attempt in EmailLog. Best-effort by contract: the email has
+// already been sent (or has already failed) by the time this runs, so any
+// error or slowness here is swallowed and logged — it must never change what
+// sendEmail() returns or throws. Prisma is imported lazily so render-only
+// callers (preview script, EMAIL_PREVIEW_DIR tests) never load a DB client.
+async function recordEmailLog(entry: {
+  log: EmailLogTag | undefined;
+  to: string;
+  subject: string;
+  status: "sent" | "failed";
+  resendId?: string | null;
+  error?: string | null;
+}): Promise<void> {
+  try {
+    const { prisma } = await import("@/lib/prisma");
+    const insert = (filingId: string | null) =>
+      prisma.emailLog.create({
+        data: {
+          kind: entry.log?.kind || "other",
+          filingId,
+          to: entry.to,
+          subject: entry.subject,
+          status: entry.status,
+          resendId: entry.resendId ?? null,
+          error: entry.error ? entry.error.slice(0, 2000) : null,
+        },
+        select: { id: true },
+      });
+    const filingId = entry.log?.filingId ?? null;
+    // A filingId that isn't a real Filing (e.g. the admin test-email route's
+    // "sample") fails the foreign key (P2003): keep the audit row, unlinked.
+    const write = insert(filingId).catch((err: unknown) => {
+      if (filingId && (err as { code?: unknown } | null)?.code === "P2003") return insert(null);
+      throw err;
+    });
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error("EmailLog write timed out")), EMAIL_LOG_TIMEOUT_MS);
+      if (typeof timer === "object" && timer && "unref" in timer) timer.unref();
+    });
+    try {
+      await Promise.race([write, timeout]);
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  } catch (err) {
+    console.error("[email] EmailLog write failed (email send unaffected)", err);
+  }
+}
 
 // Sender address. Must NOT match any inbox we monitor — sending FROM and TO
 // the same mailbox (e.g. orders@ → orders@ for admin alerts) is a classic
@@ -75,7 +135,7 @@ function brandedFrom(fromName: string | undefined): string {
   return `"${fromName.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}" <${fromAddress(FROM)}>`;
 }
 
-export async function sendEmail({ to, subject, html, text, replyTo, bcc, attachments, headers, fromName }: SendArgs) {
+export async function sendEmail({ to, subject, html, text, replyTo, bcc, attachments, headers, fromName, log }: SendArgs) {
   const previewDir = process.env.EMAIL_PREVIEW_DIR;
   if (previewDir) {
     const slug = slugifySubject(subject);
@@ -108,28 +168,49 @@ export async function sendEmail({ to, subject, html, text, replyTo, bcc, attachm
       a.contentType ?? (a.filename.toLowerCase().endsWith(".pdf") ? "application/pdf" : "application/octet-stream"),
   }));
 
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: brandedFrom(fromName),
+  let res: Response;
+  try {
+    res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: brandedFrom(fromName),
+        to,
+        subject,
+        html,
+        text,
+        reply_to: replyTo ?? REPLY_TO,
+        ...(bcc ? { bcc } : {}),
+        ...(resendAttachments && resendAttachments.length > 0 ? { attachments: resendAttachments } : {}),
+        ...(headers && Object.keys(headers).length > 0 ? { headers } : {}),
+      }),
+    });
+  } catch (err) {
+    // Network-level failure: record it, then surface the ORIGINAL error.
+    await recordEmailLog({
+      log,
       to,
       subject,
-      html,
-      text,
-      reply_to: replyTo ?? REPLY_TO,
-      ...(bcc ? { bcc } : {}),
-      ...(resendAttachments && resendAttachments.length > 0 ? { attachments: resendAttachments } : {}),
-      ...(headers && Object.keys(headers).length > 0 ? { headers } : {}),
-    }),
-  });
-  if (!res.ok) {
-    throw new Error(`Resend send failed: ${res.status} ${await res.text()}`);
+      status: "failed",
+      error: err instanceof Error ? err.message : String(err),
+    });
+    throw err;
   }
-  return res.json();
+  if (!res.ok) {
+    const failure = new Error(`Resend send failed: ${res.status} ${await res.text()}`);
+    await recordEmailLog({ log, to, subject, status: "failed", error: failure.message });
+    throw failure;
+  }
+  const json = await res.json();
+  const resendId =
+    json && typeof json === "object" && typeof (json as { id?: unknown }).id === "string"
+      ? (json as { id: string }).id
+      : null;
+  await recordEmailLog({ log, to, subject, status: "sent", resendId });
+  return json;
 }
 
 // ---------- Shared email shell ----------
@@ -274,7 +355,14 @@ export function firstNameFrom(name: string | null | undefined): string | null {
 
 // ---------- 1. Magic-link email (existing) ----------
 
-export async function sendMagicLinkEmail(email: string, link: string, filingLabel: string, brand?: EmailBrand) {
+export async function sendMagicLinkEmail(
+  email: string,
+  link: string,
+  filingLabel: string,
+  brand?: EmailBrand,
+  // Optional: ties the EmailLog audit row to the filing this link opens.
+  filingId?: string | null,
+) {
   const heading = "Open your filing";
   const brandName = brand?.name ?? "Form5472 Prep";
   const bodyHtml = `
@@ -285,6 +373,7 @@ export async function sendMagicLinkEmail(email: string, link: string, filingLabe
     <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days.</p>`;
 
   return sendEmail({
+    log: { kind: "magic_link", filingId: filingId ?? null },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
@@ -317,6 +406,7 @@ export async function sendPartnerLoginEmail(email: string, link: string, partner
     <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days.</p>`;
 
   return sendEmail({
+    log: { kind: "partner_login" },
     to: email,
     subject: "Your Form5472 Prep partner sign-in link",
     text: customerText(
@@ -349,6 +439,7 @@ export async function sendPartnerApplicationAckEmail(email: string, name: string
     `;
 
   return sendEmail({
+    log: { kind: "partner_application_ack" },
     to: email,
     subject: "We received your Form5472 Prep partner application",
     text: customerText(
@@ -594,6 +685,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     `  Keep your filed copy and the transmission report with your LLC records for at least six years.\n`;
 
   return sendEmail({
+    log: { kind: "order_confirmation", filingId: args.filingId ?? null },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
@@ -658,6 +750,7 @@ export async function sendReadyToSignEmail(args: {
     </p>`;
 
   return sendEmail({
+    log: { kind: "ready_to_sign", filingId: args.filingId },
     to: args.email,
     fromName: args.brand?.name,
     replyTo: args.brand?.replyTo,
@@ -727,8 +820,19 @@ export async function sendFaxDeliveredEmail(args: {
   brand?: EmailBrand;
   isFinalReturn?: boolean;
   dissolvedAt?: Date | string | null;
+  // Attach the receipt PDF to this email. Off for the automatic delivery
+  // email: commit 4e7160c deliberately moved customer PDFs out of email and
+  // into the portal (copy says "saved in your portal"). The admin "Resend fax
+  // confirmation" action turns it on, because that resend exists precisely for
+  // customers who could not find their proof.
+  attachReceipt?: boolean;
+  // EmailLog audit tag. logKind defaults to "fax_delivered"; the admin resend
+  // passes "fax_delivered_resend".
+  filingId?: string | null;
+  logKind?: string;
 }) {
   const { email, recipientName, llcName, taxYears, portalLink, proof, signedPdfBytes, receiptPdfBytes, brand, isFinalReturn } = args;
+  const attachReceipt = !!(args.attachReceipt && receiptPdfBytes && receiptPdfBytes.byteLength > 0);
   const salutation = firstNameFrom(recipientName) ?? "there";
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "your filing";
@@ -785,7 +889,11 @@ export async function sendFaxDeliveredEmail(args: {
       <strong>✓ Delivered to the IRS</strong> — please retain this message with your permanent tax records as evidence of timely submission.
     </div>
     ${proofTable}
-    ${receiptPdfBytes ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
+    ${attachReceipt ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
+      A timestamped <strong>IRS Fax Transmission Receipt</strong> is attached to this email and saved
+      in your portal. Please keep it with your tax records. Under IRC § 6038A, it serves as proof of
+      on-time filing if the IRS ever asks.
+    </p>` : receiptPdfBytes ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       A timestamped <strong>IRS Fax Transmission Receipt</strong> is saved in your portal. Please
       download it and keep it with your tax records. Under IRC § 6038A, it serves as proof of
       on-time filing if the IRS ever asks.
@@ -806,9 +914,18 @@ export async function sendFaxDeliveredEmail(args: {
       (proof.from ? `  Sent from:      ${proof.from}\n` : "") +
       `  Confirmation:   ${proof.faxId}\n`
     : "";
-  const receiptText = receiptPdfBytes
-    ? `A timestamped IRS Fax Transmission Receipt is saved in your portal. Please download it and keep it with your tax records. Under IRC § 6038A, it serves as proof of on-time filing if the IRS ever asks.\n\n`
-    : "";
+  const receiptText = attachReceipt
+    ? `A timestamped IRS Fax Transmission Receipt is attached to this email and saved in your portal. Please keep it with your tax records. Under IRC § 6038A, it serves as proof of on-time filing if the IRS ever asks.\n\n`
+    : receiptPdfBytes
+      ? `A timestamped IRS Fax Transmission Receipt is saved in your portal. Please download it and keep it with your tax records. Under IRC § 6038A, it serves as proof of on-time filing if the IRS ever asks.\n\n`
+      : "";
+  // Same filename scheme as the admin copy (sendFaxDeliveredAdminEmail).
+  const receiptAttachment = attachReceipt && receiptPdfBytes
+    ? [{
+        filename: `IRS-fax-receipt-${llcLine.replace(/[^a-zA-Z0-9-]+/g, "_")}-${yearsLabel.replace(/[^0-9-]+/g, "-")}.pdf`,
+        content: receiptPdfBytes,
+      }]
+    : undefined;
   // Final returns do not promise next-year reminders because the entity has dissolved.
   const closingText =
     nextTaxYear == null || nextDueDateLabel == null
@@ -821,6 +938,7 @@ export async function sendFaxDeliveredEmail(args: {
           `We will send a reminder in the second week of January ${nextTaxYear + 1}, giving over three months' notice before the deadline, and a further reminder if the filing remains outstanding. Because company and ownership details are retained on file, a returning filing takes about five minutes.\n\n`;
 
   return sendEmail({
+    log: { kind: args.logKind ?? "fax_delivered", filingId: args.filingId ?? null },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
@@ -845,6 +963,7 @@ export async function sendFaxDeliveredEmail(args: {
       cta: { label: "View my filing", url: portalLink },
       brand,
     }),
+    attachments: receiptAttachment,
   });
 }
 
@@ -884,6 +1003,7 @@ export async function sendNewOrderAdminEmail(args: {
   const amountLabel = isTestOrder ? "$0.00 (TEST ORDER)" : formatUsd(amountPaidCents);
 
   return sendEmail({
+    log: { kind: "admin_new_order", filingId },
     to: adminEmail,
     subject: `${isTestOrder ? "[Test order]" : "[New order]"} ${llcLine} (${yearsLabel})`,
     text:
@@ -964,6 +1084,7 @@ export async function sendFaxDeliveredAdminEmail(args: {
   }
 
   return sendEmail({
+    log: { kind: "admin_fax_delivered", filingId },
     to: adminEmail,
     subject: `[Fax delivered] ${llcLine} (${yearsLabel})`,
     text:
@@ -1019,6 +1140,7 @@ export async function sendFaxFailedAdminEmail(args: {
   const llcLine = llcName ?? "(no LLC name)";
 
   return sendEmail({
+    log: { kind: "admin_fax_failed", filingId: args.filingId },
     to: adminEmail,
     subject: `[Fax failed] ${llcLine} (${yearsLabel}) — ${failureReason ?? "unknown"}`,
     text:
@@ -1058,6 +1180,7 @@ export async function sendFaxReceivedAdminEmail(args: {
   const receivedAt = args.receivedAt.toUTCString();
 
   return sendEmail({
+    log: { kind: "admin_fax_received" },
     to: env.adminEmail,
     subject: `Fax received from ${args.fromNumber}`,
     text:
@@ -1090,6 +1213,8 @@ export async function sendFaxFailedEmail(args: {
   taxYears: number[];
   portalLink: string;
   brand?: EmailBrand;
+  // Ties the EmailLog audit row to the filing.
+  filingId?: string | null;
 }) {
   const { email, recipientName, llcName, taxYears, portalLink, brand } = args;
   const salutation = firstNameFrom(recipientName) ?? "there";
@@ -1113,6 +1238,7 @@ export async function sendFaxFailedEmail(args: {
   `;
 
   return sendEmail({
+    log: { kind: "fax_failed", filingId: args.filingId ?? null },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
@@ -1168,6 +1294,7 @@ export async function sendNewMessageToCustomerEmail(args: {
   `;
 
   return sendEmail({
+    log: { kind: "new_message_customer" },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
@@ -1206,6 +1333,7 @@ export async function sendNewMessageToAdminEmail(args: {
   const llcLine = llcName ?? "(no LLC name)";
 
   return sendEmail({
+    log: { kind: "admin_new_message", filingId },
     to: adminEmail,
     subject: `[New message] ${llcLine} from ${customerEmail}`,
     text:
@@ -1242,6 +1370,7 @@ export async function sendNewApplicationMessageAdminEmail(args: {
   const { adminEmail, customerEmail, kind, subjectLabel, applicationId, adminUrl, bodyExcerpt } = args;
 
   return sendEmail({
+    log: { kind: "admin_application_message" },
     to: adminEmail,
     subject: `[${kind} application] New message from ${customerEmail}`,
     text:
@@ -1287,6 +1416,7 @@ export async function sendNewApplicationMessageCustomerEmail(args: {
   `;
 
   return sendEmail({
+    log: { kind: "application_message_customer" },
     to: email,
     subject: `New message about your ${kind} application`,
     text: customerText(
@@ -1343,6 +1473,7 @@ export async function sendJanuaryReminderEmail(args: ReminderArgs) {
   `;
 
   return sendEmail({
+    log: { kind: "january_reminder" },
     to: email,
     subject: `Time to file your ${taxYearToFile} Form 5472`,
     text:
@@ -1397,6 +1528,7 @@ export async function sendMarchReminderEmail(args: ReminderArgs) {
   `;
 
   return sendEmail({
+    log: { kind: "march_reminder" },
     to: email,
     subject: `30 days left — file your ${taxYearToFile} Form 5472 before ${deadline}`,
     text:
@@ -1469,6 +1601,7 @@ export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) 
     </div>`;
 
   return sendEmail({
+    log: { kind: "abandoned_draft_reminder" },
     to: email,
     subject,
     text:
@@ -1518,6 +1651,7 @@ export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs
   const value = (input?: string | null, fallback = "(not provided)") => input || fallback;
   const paymentText = args.amountPaidCents && args.amountPaidCents > 0 ? `Payment: ${formatUsd(args.amountPaidCents)} received` : null;
   return sendEmail({
+    log: { kind: "admin_ein_application" },
     to: args.adminEmail,
     replyTo: args.email,
     subject: `${paymentText ? "[Paid] " : ""}[EIN Application] ${args.fullName} — ${args.llcName}`,
@@ -1592,6 +1726,7 @@ export async function sendEinApplicationConfirmationEmail(args: {
     `${args.portalLink}\n\n` +
     `If you have a question, reply to this email or write to support@form5472prep.com.`;
   return sendEmail({
+    log: { kind: "ein_application_confirmation" },
     to: args.email,
     subject: `EIN application received — ${args.llcName}`,
     text: customerText(args.fullName, body),
@@ -1635,6 +1770,7 @@ export async function sendItinApplicationAdminEmail(args: ItinApplicationEmailAr
   const value = (input?: string, fallback = "(not provided)") => input || fallback;
   const paymentText = args.amountPaidCents && args.amountPaidCents > 0 ? `Payment: ${formatUsd(args.amountPaidCents)} received` : null;
   return sendEmail({
+    log: { kind: "admin_itin_application" },
     to: args.adminEmail,
     replyTo: args.email,
     subject: `${paymentText ? "[Paid] " : ""}[ITIN Application] ${args.fullName} — ${args.itinReason}`,
@@ -1699,6 +1835,7 @@ export async function sendItinApplicationConfirmationEmail(args: {
     `${args.portalLink}\n\n` +
     `If you have a question, reply to this email or write to support@form5472prep.com.`;
   return sendEmail({
+    log: { kind: "itin_application_confirmation" },
     to: args.email,
     subject: `ITIN application received — ${args.fullName}`,
     text: customerText(args.fullName, body),
@@ -1734,6 +1871,7 @@ export async function sendApplicationSignatureRequestEmail(args: {
     `If anything looks wrong, reply to this email before signing.`;
 
   return sendEmail({
+    log: { kind: "application_signature_request" },
     to: args.email,
     subject: `Your ${label} is ready to review and sign`,
     text: customerText(args.fullName, body),
@@ -1758,6 +1896,7 @@ export async function sendApplicationSignedAdminEmail(args: {
   const label = formLabel(args.type);
 
   return sendEmail({
+    log: { kind: "admin_application_signed" },
     to: env.adminEmail,
     subject: `[Application signed] ${label} ${args.fullName}`,
     text: [
@@ -1800,6 +1939,7 @@ export async function sendWebsiteQuestionAdminEmail(args: {
   const displayName = args.name || "(not provided)";
   const subjectParts = [args.topicLabel, args.name, subjectSnippet(args.message)].filter(Boolean).join(" — ");
   return sendEmail({
+    log: { kind: "admin_website_question" },
     to: args.adminEmail,
     replyTo: args.email,
     subject: `[Website question] ${subjectParts}`,
@@ -1838,6 +1978,7 @@ export async function sendAdminLoginEmail(args: {
 }) {
   const body = `Use this secure link to sign in to Form5472 Prep:\n\nSign in on the web:\n${args.link}\n\nSign in on the iPhone app:\n${args.appLink}\n\nThis link expires in 15 minutes and can only be used once. Using either link consumes it, so choose the service you want to use.`;
   return sendEmail({
+    log: { kind: "admin_login" },
     to: args.email,
     subject: "Your Form5472 Prep admin sign-in link",
     text: customerText("administrator", body),
@@ -1886,6 +2027,7 @@ export async function sendPartnerApplicationAdminEmail(args: {
   const wantsWhiteLabel = args.wantsWhiteLabel === true;
   const whiteLabelText = wantsWhiteLabel ? "Yes — wants their own branding" : "No";
   return sendEmail({
+    log: { kind: "admin_partner_application" },
     to: args.adminEmail,
     replyTo: args.email,
     subject: `[Partner application] ${args.name}${args.company ? ` — ${args.company}` : ""}`,
@@ -1970,6 +2112,7 @@ export async function sendClientIntakeEmail(
     <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days.</p>`;
 
   return sendEmail({
+    log: { kind: "client_intake" },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
@@ -2014,6 +2157,7 @@ export async function sendResumeFilingEmail(
     <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days. If you did not request this, you can ignore this email.</p>`;
 
   return sendEmail({
+    log: { kind: "resume_filing" },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
