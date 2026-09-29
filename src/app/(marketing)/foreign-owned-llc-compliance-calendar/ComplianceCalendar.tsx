@@ -42,7 +42,9 @@ function eventDescription(event: CalendarEvent): string {
   const parts = [event.detail];
   if (event.amount) parts.unshift(`Amount: ${event.amount}.`);
   if (event.note) parts.push(event.note);
-  parts.push(`Source: ${event.source.label} — ${event.source.url}`);
+  for (const src of [event.source, ...(event.moreSources ?? [])]) {
+    parts.push(`Source: ${src.label} — ${src.url}`);
+  }
   parts.push(
     "General information from form5472prep.com, not personalised tax advice. Confirm the date and amount with the IRS or the state before relying on it.",
   );
@@ -298,15 +300,20 @@ export function ComplianceCalendar({ states }: { states: StateOption[] }) {
                   </p>
                   <p className="mt-1 text-sm leading-relaxed text-slate-600">{event.detail}</p>
                   {event.note && <p className="mt-1 text-xs leading-relaxed text-slate-500">{event.note}</p>}
-                  <a
-                    href={event.source.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
-                  >
-                    {event.source.label}
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
+                  <div className="mt-2 flex flex-col gap-1">
+                    {[event.source, ...(event.moreSources ?? [])].map((src) => (
+                      <a
+                        key={src.url}
+                        href={src.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+                      >
+                        {src.label}
+                        <ExternalLink className="h-3 w-3 flex-none" />
+                      </a>
+                    ))}
+                  </div>
                 </li>
               );
             })}

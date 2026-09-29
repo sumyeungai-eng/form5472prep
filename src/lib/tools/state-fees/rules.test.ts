@@ -60,6 +60,19 @@ describe("ruleOccurrences", () => {
     ).toEqual(["2026-03-31", "2028-03-31", "2030-03-31"]);
   });
 
+  it("dates a filing months after the anniversary month, rolling across a year end", () => {
+    const rule = { kind: "months-after-anniversary", monthsAfter: 2, firstYearOffset: 1 } as const;
+    expect(ruleOccurrences(rule, CTX, "2024-01-01", "2026-12-31")).toEqual(["2025-05-31", "2026-05-31"]);
+    expect(ruleOccurrences(rule, { formed: "2024-12-02", fyeMonth: 12 }, "2024-01-01", "2027-03-01")).toEqual([
+      "2026-02-28",
+      "2027-02-28",
+    ]);
+    // Formed in February of a leap-year window: due end of April, never clamped oddly.
+    expect(ruleOccurrences(rule, { formed: "2023-02-28", fyeMonth: 12 }, "2024-01-01", "2024-12-31")).toEqual([
+      "2024-04-30",
+    ]);
+  });
+
   it("dates tax-year rules from formation, then from each fiscal-year start", () => {
     // 15th day of the 4th month of each taxable year; first year starts 10 March 2024.
     expect(

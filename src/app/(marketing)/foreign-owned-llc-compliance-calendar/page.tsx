@@ -77,7 +77,7 @@ const CALENDAR_FAQS = [
   },
   {
     q: "Are the state dates moved for weekends too?",
-    a: "Not by the calendar. It shows each state's date as the state publishes it; only federal dates are moved under the IRS weekend and holiday rule. Where a state allows the next business day, as Texas does, the entry says so — otherwise pay by the date shown.",
+    a: "Not by the calendar. It shows each state's date as the state publishes it; only federal dates are moved under the IRS weekend and holiday rule. Where a state allows the next business day, as Texas and California do, the entry says so — otherwise pay by the date shown.",
   },
   {
     q: "How do I add these deadlines to Google Calendar or Outlook?",

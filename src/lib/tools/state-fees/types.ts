@@ -23,6 +23,12 @@ export type DueRule =
   // A day in the LLC's anniversary month (the month it was formed), every
   // `everyYears` years, the first one `firstYearOffset` years after formation.
   | { kind: "anniversary-month"; day: "first" | "last"; everyYears: 1 | 2; firstYearOffset: number }
+  // The last day of the month that is `monthsAfter` months after the LLC's
+  // anniversary month (its formation month), every year from
+  // `firstYearOffset` years after formation. Colorado: "no later than the last
+  // day of the second calendar month following the first anniversary of the
+  // calendar month" of formation, then annually (C.R.S. § 7-90-501(4)(c)(I)).
+  | { kind: "months-after-anniversary"; monthsAfter: number; firstYearOffset: number }
   // The `day` of the `monthOfTaxYear`-th month of each taxable year, counting
   // the month the taxable year begins as month 1 (California's annual LLC tax:
   // "15th day of the 4th month" of the taxable year). The first taxable year
@@ -48,7 +54,9 @@ export type StateObligation = {
   inCalendar: boolean;
   appliesTo?: string; // condition, e.g. "Only if total revenue exceeds …"
   late?: string; // late penalty, only when the source states it
-  source: SourceRef;
+  source: SourceRef; // the page that shows the amount
+  // Further official pages, e.g. the statute that sets the due-date rule.
+  moreSources?: SourceRef[];
   verified: boolean;
 };
 
@@ -64,8 +72,9 @@ export type StateFees = {
   annualReport: "yes" | "no" | "biennial";
   reportName: string | null;
   authority: string;
-  // Official page backing the headline row of the comparison table.
+  // Official pages backing the headline row of the comparison table.
   primarySource: SourceRef;
+  moreRowSources?: SourceRef[];
   obligations: StateObligation[];
   notes: string[];
 };

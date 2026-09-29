@@ -58,12 +58,12 @@ do business in a US state remain reporting companies — outside this tool's aud
 - Unit test `federal.test.ts` asserts equality with `filingDueDateUtc` / `effectiveDueDateUtc` for
   every calendar year 2018–2035, so the two tools cannot drift.
 - State dates are never rolled (the federal §7503 rule does not govern state deadlines); where a
-  state's own source allows the next business day (Texas), the entry's text says so.
+  state's own source allows the next business day (Texas, California FTB), the entry's text says so.
 - Window: the reader's local "today" through 18 months (minus a day). A recurring state filing with
   no date inside the window (e.g. a biennial report due just after it) is listed as "Next, just after
   this window" and included in the .ics. One-time filings already past are dropped.
-- Conditional state items (NY IT-204-LL, CA LLC fee) and anything unverified (Colorado's report
-  month) are listed under "Also check" without a date.
+- Conditional state items (NY IT-204-LL, CA LLC fee) are listed under "Also check" without a date.
+  Colorado's periodic report is dated from C.R.S. § 7-90-501(4)(c)(I) (see state-fees.md).
 - .ics: RFC 5545 all-day VEVENTs (DTSTART;VALUE=DATE + exclusive DTEND), stable UIDs
   (`<event-id>-<state>-<formed>@form5472prep.com`), escaped TEXT, 75-octet folding, CRLF, one
   14-day VALARM per event; generated client-side (`ics.ts`, tested in `ics.test.ts`).

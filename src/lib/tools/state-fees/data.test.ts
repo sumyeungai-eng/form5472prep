@@ -24,11 +24,35 @@ describe("state fee data integrity", () => {
     // nmonesource.com is the New Mexico Compilation Commission's official NMSA.
     const official = /\.gov$|\.us$|^nmonesource\.com$/;
     for (const state of STATE_FEES) {
-      for (const src of [state.primarySource, ...state.obligations.map((o) => o.source)]) {
+      const all = [
+        state.primarySource,
+        ...(state.moreRowSources ?? []),
+        ...state.obligations.flatMap((o) => [o.source, ...(o.moreSources ?? [])]),
+      ];
+      for (const src of all) {
         const host = new URL(src.url).hostname;
         expect(src.url.startsWith("https://"), src.url).toBe(true);
         expect(official.test(host), host).toBe(true);
       }
+    }
+  });
+
+  it("links each amount to the page that shows it (fact-check 2026-09-29)", () => {
+    const src = (code: StateCode, id: string) =>
+      getStateFees(code).obligations.find((o) => o.id === id)!.source.url;
+    expect(src("FL", "fl-annual-report")).toBe("https://dos.fl.gov/sunbiz/manage-business/efile/annual-report/");
+    expect(src("MT", "mt-annual-report")).toBe("https://sosmt.gov/business/fees/");
+    expect(src("CO", "co-periodic")).toBe("https://www.sos.state.co.us/pubs/info_center/fees/business.html");
+    expect(src("NY", "ny-publication")).toBe("https://dos.ny.gov/faqs-corporations-business-entities");
+    expect(getStateFees("NV").moreRowSources?.map((s) => s.url)).toEqual([
+      "https://www.leg.state.nv.us/NRS/NRS-076.html",
+    ]);
+  });
+
+  it("says California allows the next business day, like Texas", () => {
+    for (const id of ["ca-annual-tax", "ca-568"]) {
+      const o = getStateFees("CA").obligations.find((x) => x.id === id)!;
+      expect(o.due, id).toMatch(/next business day/);
     }
   });
 
@@ -94,14 +118,30 @@ describe("next state due date for an LLC formed 10 March 2024 (calendar year), f
     expect(nextDue("MT", "mt-annual-report")).toBe("2027-04-15");
   });
 
-  it("Colorado: periodic report is not dated (report month unverified)", () => {
-    const co = getStateFees("CO").obligations[0];
-    expect(co.inCalendar).toBe(false);
-    expect(nextDue("CO", "co-periodic")).toBeUndefined();
+  it("Colorado: periodic report by 31 May 2027 (last day of the 2nd month after March)", () => {
+    expect(getStateFees("CO").obligations[0].inCalendar).toBe(true);
+    expect(nextDue("CO", "co-periodic")).toBe("2027-05-31");
   });
 });
 
 describe("first-year timing", () => {
+  it("Colorado: formed 10 March 2024 → first periodic report due 31 May 2025, then 31 May yearly (C.R.S. 7-90-501(4)(c)(I))", () => {
+    const rule = getStateFees("CO").obligations[0].rule;
+    expect(ruleOccurrences(rule, CTX, "2024-01-01", "2027-12-31")).toEqual([
+      "2025-05-31",
+      "2026-05-31",
+      "2027-05-31",
+    ]);
+  });
+
+  it("Colorado: a November formation rolls the due month into January of the year after next", () => {
+    const rule = getStateFees("CO").obligations[0].rule;
+    expect(ruleOccurrences(rule, { formed: "2024-11-20", fyeMonth: 12 }, "2024-01-01", "2027-02-28")).toEqual([
+      "2026-01-31",
+      "2027-01-31",
+    ]);
+  });
+
   it("Wyoming: an LLC formed 15 January first reports on 1 January of the next year (SOS FAQ example)", () => {
     const rule = getStateFees("WY").obligations[0].rule;
     expect(ruleOccurrences(rule, { formed: "2025-01-15", fyeMonth: 12 }, "2025-01-01", "2026-12-31")).toEqual([

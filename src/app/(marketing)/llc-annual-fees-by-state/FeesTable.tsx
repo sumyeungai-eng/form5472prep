@@ -173,15 +173,19 @@ export function FeesTable({ rows }: { rows: StateFees[] }) {
                     {row.reportName ? <span className="block text-xs text-slate-500">{row.reportName}</span> : null}
                   </td>
                   <td className="px-4 py-4">
-                    <a
-                      href={row.primarySource.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-accent hover:underline"
-                    >
-                      {new URL(row.primarySource.url).hostname.replace(/^www\./, "")}
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
+                    {[row.primarySource, ...(row.moreRowSources ?? [])].map((src) => (
+                      <a
+                        key={src.url}
+                        href={src.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={src.label}
+                        className="flex items-center gap-1 text-accent hover:underline"
+                      >
+                        {new URL(src.url).hostname.replace(/^www\./, "")}
+                        <ExternalLink className="h-3 w-3 flex-none" />
+                      </a>
+                    ))}
                     <a href={`#notes-${row.code}`} className="mt-1 block text-xs text-slate-500 hover:text-accent">
                       All {row.name} details
                     </a>

@@ -84,13 +84,20 @@ describe("buildComplianceCalendar", () => {
     expect(result.events.map((e) => e.date)).toEqual(["2027-04-15"]);
   });
 
-  it("keeps Colorado's undated periodic report under 'also check'", () => {
+  it("dates Colorado's periodic report and leaves nothing under 'also check'", () => {
     const result = buildComplianceCalendar(
       { state: "CO", formed: "2023-06-01", fyeMonth: 12, extension: false },
       TODAY,
     );
-    expect(result.events.some((e) => e.jurisdiction === "CO")).toBe(false);
-    expect(result.notScheduled.map((o) => o.id)).toEqual(["co-periodic"]);
+    // Formed June → due the last day of August each year.
+    expect(result.events.filter((e) => e.jurisdiction === "CO").map((e) => e.date)).toEqual([
+      "2027-08-31",
+    ]);
+    expect(result.notScheduled).toEqual([]);
+    const co = result.events.find((e) => e.jurisdiction === "CO")!;
+    expect(co.moreSources?.map((s) => s.url)).toContain(
+      "https://content.leg.colorado.gov/sites/default/files/images/olls/crs2024-title-07.pdf",
+    );
   });
 
   it("uses a fiscal year end for federal dates", () => {

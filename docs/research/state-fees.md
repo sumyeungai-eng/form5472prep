@@ -110,9 +110,11 @@ date is shown unrolled with the Comptroller's next-business-day wording in the t
 | Publication within 120 days (one time) | [NY LLC Law § 206](https://www.nysenate.gov/legislation/laws/LLC/206) † | "Within one hundred twenty days after the effectiveness of the initial articles of organization … shall be published once in each week for six successive weeks, in two newspapers of the county" |
 | Suspension if not done | same † | "the authority of such limited liability company to carry on, conduct or transact any business in this state shall be suspended" |
 | Certificate of Publication fee $50 | [NY DOS — FAQs](https://dos.ny.gov/faqs-corporations-business-entities) † | "The fee for filing the Certificate of Publication is $50." |
+| (same FAQ) 120-day rule | same † | "fail to comply with the publication requirements within 120 days after their formation or qualification will have their authority to carry on, conduct or transact any business suspended." |
 | LLC filing fee $25 (disregarded SMLLC), only with NY-source items | [IT-204-LL instructions](https://www.tax.ny.gov/pdf/current_forms/it/it204lli.pdf) | "If your LLC is treated as a disregarded entity … the filing fee is $25." (applies if the LLC "has any income, gain, loss, or deduction from New York sources") |
 | IT-204-LL due date | same | "on or before the 15th day of the third month following the close of your calendar or fiscal tax year" |
 
+Links: the publication entry links the DOS FAQ (shows the $50) first and § 206 second.
 Calendar: biennial statement dated at the last day of the formation month every 2 years from
 formation + 2 (inference from "every two years" + "calendar month"; the page says so); publication
 dated formation + 120 days (only shown if still in the window). IT-204-LL is conditional → "Also check".
@@ -127,6 +129,7 @@ dated formation + 120 days (only shown if still in the window). IT-204-LL is con
 | First-year exemption expired (2021–2023 only) | same | "For tax years beginning on or after January 1, 2021, and before January 1, 2024, LLCs that organize, register, or file with the Secretary of State to do business in California are not subject to the annual tax of $800 for their first tax year." |
 | 15-day rule | [FTB — Single-member LLC](https://www.ftb.ca.gov/file/business/types/limited-liability-company/single-member-llc.html) | "They did not conduct any business in California during the tax year Their tax year was 15 days or fewer" |
 | SMLLC files Form 568 | same | "We require an SMLLC to file Form 568 , even though they are considered a disregarded entity for tax purposes." |
+| Weekend / holiday → next business day (FTB) | [FTB — Business due dates](https://www.ftb.ca.gov/file/when-to-file/due-dates-business.html) | "If the due date falls on a weekend or holiday, you have until the next business day to file and pay." (stated in the entry text; dates are shown unrolled, as for Texas) |
 | Form 568 due (SMLLC owned by an individual) | [FTB — Business due dates](https://www.ftb.ca.gov/file/when-to-file/due-dates-business.html) | "Single member LLC (owned by an individual or a non-pass through entity) Return due date 15th day of the 4th month after the close of your tax year. Extended filing due date 15th day of the 10th month" |
 | LLC fee (FTB 3536) $900–$11,790 from $250,000 income; estimate by 15th day of 6th month | FTB — LLC; Business due dates | "You must estimate and pay the fee by the 15th day of the 6th month of the current tax year." |
 | Statement of Information $20, 90 days then every 2 years | [CA SOS — LLC Statement of Information](https://www.sos.ca.gov/business-programs/business-entities/forms/limited-liability-companies-statement-information) | "Due within 90 days of initial registration and every two years thereafter. Form LLC-12 (PDF) $20.00" |
@@ -137,19 +140,22 @@ Calendar: $800 via `tax-year-month 4/15` (first year counted from formation, mat
 September 15 example); Form 568 via `after-tax-year-end 4/15`; initial SOI formation + 90 days;
 biennial SOI at the end of the formation month every 2 years. LLC fee is conditional → "Also check".
 
-## Colorado (fee V, report month U)
+## Colorado (V)
 
 | Fact | Source | Quote |
 |---|---|---|
 | Periodic report $25, late $50 | [CO SOS — Business fees](https://www.sos.state.co.us/pubs/info_center/fees/business.html) | "Periodic Report $25.00 n/a Periodic Report Late Filing Penalty $50.00" |
 | Every year | [CO SOS — Periodic reports FAQ](https://www.sos.state.co.us/pubs/business/FAQs/reports.html) | "required by law to submit a Periodic Report each year to the Secretary of State" |
-| Filing window around the report month | same | "You can find your reporting month on the entity's Summary page under 'Periodic report month'. The Periodic Report can be filed two months prior to the Periodic Report month or two months after without any penalty." |
+| Early filing window | same | "The Periodic Report can be filed two months prior to the Periodic Report month or two months after without any penalty." |
+| First report and annual due date | [C.R.S. § 7-90-501(4)(c)(I)](https://content.leg.colorado.gov/sites/default/files/images/olls/crs2024-title-07.pdf) — Colorado Revised Statutes 2024, Title 7, p. 358 ("Uncertified Printout"), read from the Wayback copy of the official PDF, [capture 2026-09-17](https://web.archive.org/web/20260917000753/https://content.leg.colorado.gov/sites/default/files/images/olls/crs2024-title-07.pdf) (the live file returns HTTP 403 to this machine) | "a reporting entity shall deliver its first periodic report … no later than the last day of the second calendar month following the first anniversary of the calendar month in which the reporting entity's constituent filed document … became effective" · "thereafter, the periodic report shall be delivered to the secretary of state by each reporting entity annually." |
+| Alternative anniversary month | same, § 7-90-501(4)(c)(II) | "A reporting entity may, at the time of filing the constituent filed document or the periodic report, select an anniversary month different than the anniversary month as established in subparagraph (I)" |
 | Fee change | CO SOS press release, 17 June 2024 | "Beginning July 1, 2024, the Periodic Report filing fee will increase to $25." |
 
-**U:** how the Periodic Report Month is assigned (commonly said to be the formation month) and the
-year of the first report. Tried: C.R.S. Title 7 PDFs on leg.colorado.gov / content.leg.colorado.gov
-(HTTP 403), CO SOS help pages (REPORT_HELP, LLC checklist), glossary and filing FAQs. The table says
-"verify with the state"; the calendar lists Colorado under "Also check" without a date.
+Calendar: `months-after-anniversary, monthsAfter 2, offset 1` — last day of (formation month + 2)
+every year from the year after formation; e.g. formed 10 March 2024 → 31 May 2025, then 31 May each
+year; formed November → 31 January. An LLC that elected another anniversary month (or biennial
+filing under (III)) must use its own month — the note says so. Resolved 2026-09-29 after the
+independent fact-check; previously listed as unverified.
 
 ## Montana (V)
 
@@ -160,4 +166,6 @@ year of the first report. Tried: C.R.S. Title 7 PDFs on leg.colorado.gov / conte
 | Waived in 2026 and 2027 | [MT SOS press release](https://sosmt.gov/secretary-christi-jacobsen-continues-montana-business-support-by-waiving-fees-once-again/) | "waiving the annual report filing fee in 2026. She also announced that it will be waived again in 2027" |
 | First report the year after formation, 1 Jan – 15 Apr | [MCA § 35-8-208(3)](https://mca.legmt.gov/bills/mca/title_0350/chapter_0080/part_0020/section_0080/0350-0080-0020-0080.html) | "The first annual report must be delivered … between January 1 and April 15 of the year following the calendar year in which a domestic limited liability company is organized" |
 
-Calendar: 15 April every year from formation + 1.
+Calendar: 15 April every year from formation + 1. Links: fee page (shows $20/$35, WAIVED) first,
+MCA § 35-8-208 second. Florida likewise links Sunbiz ($138.75) first, § 605.0212 second; the Nevada
+table row links both NRS 86 (list, $150) and NRS 76 (licence, $200).

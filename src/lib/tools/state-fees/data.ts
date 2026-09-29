@@ -3,7 +3,7 @@
 // statute — URLs and verbatim quotes are in docs/research/state-fees.md
 // (retrieved 2026-09-29). If a rule could not be verified from a primary
 // source, the obligation is marked verified: false / inCalendar: false and the
-// page says "verify with the state" instead of guessing.
+// page says "verify with the state" instead of guessing (none as of 2026-09-29).
 //
 // Update checklist when a state changes a fee: amount + amountUsd +
 // minYearlyUsd + headline strings + the research note + LAST_REVIEWED.
@@ -63,6 +63,10 @@ const SRC = {
     url: "https://www.nysenate.gov/legislation/laws/LLC/206",
     label: "New York LLC Law § 206 — Publication",
   },
+  nyFaq: {
+    url: "https://dos.ny.gov/faqs-corporations-business-entities",
+    label: "New York Department of State — Corporations and business entities FAQ",
+  },
   nyFilingFee: {
     url: "https://www.tax.ny.gov/pdf/current_forms/it/it204lli.pdf",
     label: "NY Department of Taxation — Form IT-204-LL instructions",
@@ -82,6 +86,10 @@ const SRC = {
   coFees: {
     url: "https://www.sos.state.co.us/pubs/info_center/fees/business.html",
     label: "Colorado Secretary of State — Business fees",
+  },
+  coStatute: {
+    url: "https://content.leg.colorado.gov/sites/default/files/images/olls/crs2024-title-07.pdf",
+    label: "Colorado Revised Statutes § 7-90-501 — Periodic reports (C.R.S. 2024, Title 7)",
   },
   coReports: {
     url: "https://www.sos.state.co.us/pubs/business/FAQs/reports.html",
@@ -167,7 +175,8 @@ const NEW_YORK: StateFees = {
       rule: { kind: "days-after-formation", days: 120 },
       inCalendar: true,
       late: "the LLC's authority to do business in New York is suspended until it complies",
-      source: SRC.nyPublication,
+      source: SRC.nyFaq,
+      moreSources: [SRC.nyPublication],
       verified: true,
     },
     {
@@ -208,11 +217,12 @@ const CALIFORNIA: StateFees = {
       amount: "$800",
       amountUsd: 800,
       frequency: "annual",
-      due: "15th day of the 4th month of each tax year — 15 April for a calendar-year LLC. The first payment is due the 15th day of the 4th month after the LLC files with the Secretary of State.",
+      due: "15th day of the 4th month of each tax year — 15 April for a calendar-year LLC. The first payment is due the 15th day of the 4th month after the LLC files with the Secretary of State. If the date falls on a weekend or holiday, the FTB allows until the next business day.",
       rule: { kind: "tax-year-month", monthOfTaxYear: 4, day: 15 },
       inCalendar: true,
       appliesTo: "Due every year until the LLC is cancelled, even if it does no business.",
       source: SRC.caLlc,
+      moreSources: [SRC.caDueDates],
       verified: true,
     },
     {
@@ -221,7 +231,7 @@ const CALIFORNIA: StateFees = {
       amount: "No fee — return only",
       amountUsd: 0,
       frequency: "annual",
-      due: "15th day of the 4th month after the tax year ends, for a single-member LLC owned by an individual (extended due date: 15th day of the 10th month).",
+      due: "15th day of the 4th month after the tax year ends, for a single-member LLC owned by an individual (extended due date: 15th day of the 10th month). If the date falls on a weekend or holiday, the FTB allows until the next business day.",
       rule: { kind: "after-tax-year-end", monthsAfter: 4, day: 15 },
       inCalendar: true,
       source: SRC.caDueDates,
@@ -279,7 +289,7 @@ const COLORADO: StateFees = {
   feeName: "Periodic report",
   headlineAmount: "$25",
   minYearlyUsd: 25,
-  headlineDue: "Around your LLC's Periodic Report Month — verify with the state",
+  headlineDue: "Last day of the 2nd month after the anniversary month",
   annualReport: "yes",
   reportName: "Periodic report (Secretary of State)",
   authority: "Colorado Secretary of State",
@@ -291,17 +301,18 @@ const COLORADO: StateFees = {
       amount: "$25",
       amountUsd: 25,
       frequency: "annual",
-      due: "File from two months before to two months after the LLC's Periodic Report Month without penalty. The month is shown on the LLC's Colorado Secretary of State summary page — verify it with the state.",
-      rule: { kind: "none" },
-      inCalendar: false,
+      due: "By the last day of the second month after the LLC's anniversary month (the month it was formed, unless it chose another), every year from the year after formation. It can be filed from two months before the anniversary month.",
+      rule: { kind: "months-after-anniversary", monthsAfter: 2, firstYearOffset: 1 },
+      inCalendar: true,
       late: "$50 late filing penalty",
-      source: SRC.coReports,
+      source: SRC.coFees,
+      moreSources: [SRC.coStatute, SRC.coReports],
       verified: true,
     },
   ],
   notes: [
     "The periodic report fee rose from $10 to $25 on 1 July 2024 and is filed online only.",
-    "We could not confirm from an official source how the Periodic Report Month is assigned, so the calendar does not date this report.",
+    "The report month is the formation month unless the LLC elected a different anniversary month (C.R.S. § 7-90-501(4)(c)(II)); the Secretary of State shows it on the LLC's summary page.",
   ],
 };
 
@@ -327,7 +338,8 @@ const MONTANA: StateFees = {
       rule: { kind: "fixed-date", month: 4, day: 15, firstYearOffset: 1 },
       inCalendar: true,
       late: "$35 fee instead of $20 after 15 April",
-      source: SRC.mtStatute,
+      source: SRC.mtFees,
+      moreSources: [SRC.mtStatute],
       verified: true,
     },
   ],
@@ -439,7 +451,8 @@ const FLORIDA: StateFees = {
       rule: { kind: "fixed-date", month: 5, day: 1, firstYearOffset: 1 },
       inCalendar: true,
       late: "$400 late fee after 1 May",
-      source: SRC.flStatute,
+      source: SRC.flAnnualReport,
+      moreSources: [SRC.flStatute],
       verified: true,
     },
   ],
@@ -460,6 +473,7 @@ const NEVADA: StateFees = {
   reportName: "Annual list of managers or managing members",
   authority: "Nevada Secretary of State",
   primarySource: SRC.nvList,
+  moreRowSources: [SRC.nvLicense],
   obligations: [
     {
       id: "nv-annual-list",

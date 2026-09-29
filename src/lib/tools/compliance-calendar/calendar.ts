@@ -34,6 +34,7 @@ export type CalendarEvent = {
   detail: string;
   note?: string;
   source: SourceRef;
+  moreSources?: SourceRef[];
 };
 
 export type CalendarResult = {
@@ -149,6 +150,7 @@ export function buildComplianceCalendar(
     detail: obligation.appliesTo ? `${obligation.due} ${obligation.appliesTo}` : obligation.due,
     note: obligation.late ? `Late: ${obligation.late}.` : undefined,
     source: obligation.source,
+    moreSources: obligation.moreSources,
   });
   for (const obligation of state.obligations) {
     if (!obligation.inCalendar || !obligation.verified) {

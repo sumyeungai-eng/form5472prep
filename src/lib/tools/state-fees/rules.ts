@@ -56,6 +56,16 @@ export function ruleOccurrences(
       return out;
     }
 
+    case "months-after-anniversary": {
+      // Target month may roll into the next year (formed in November → due January).
+      for (let y = formed.y + rule.firstYearOffset; y <= end.y; y += 1) {
+        const target = ymd(y, formed.m + rule.monthsAfter, 1);
+        const date = lastDayOfMonth(target.y, target.m);
+        if (inWindow(date, from, to)) out.push(date);
+      }
+      return out;
+    }
+
     case "tax-year-month": {
       // Taxable years start on the formation date, then the day after each fiscal-year end.
       let start: IsoDate = ctx.formed;

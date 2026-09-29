@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 const FEES_FAQS = [
   {
     q: "Which state has the lowest LLC annual fee?",
-    a: "New Mexico: no annual report and no annual state fee. Texas also costs $0 below $2.65 million of revenue, though a report is still due each 15 May. Among paid filings, Montana ($20, waived if on time in 2026–27), Colorado ($25) and Wyoming ($60 minimum) are cheapest.",
+    a: "New Mexico: no annual report or fee. Texas costs $0 at or below $2.65 million of revenue, with a report each 15 May. Cheapest paid filings: New York ($9 every two years, plus a one-time publication cost), Montana ($20, waived if on time in 2026–27), Colorado ($25), Wyoming ($60 minimum).",
   },
   {
     q: "How much is the Delaware LLC annual tax?",
@@ -127,9 +127,8 @@ export default function LlcAnnualFeesByStatePage() {
             <FeesTable rows={rows} />
           </div>
           <p className="mt-4 text-xs leading-relaxed text-slate-500">
-            Amounts are for an LLC formed in that state. “Verify with the state” means we could not confirm the rule
-            from an official source. Last reviewed {LAST_REVIEWED_LABEL}; fees change — confirm with the state before
-            paying.
+            Amounts are for an LLC formed in that state. Anniversary month means the month the LLC was formed. Last
+            reviewed {LAST_REVIEWED_LABEL}; fees change — confirm with the state before paying.
           </p>
         </div>
       </section>
@@ -208,15 +207,20 @@ export default function LlcAnnualFeesByStatePage() {
                       <p className="mt-0.5">{o.due}</p>
                       {o.appliesTo && <p className="mt-0.5 text-slate-600">{o.appliesTo}</p>}
                       {o.late && <p className="mt-0.5 text-slate-600">Late: {o.late}.</p>}
-                      <a
-                        href={o.source.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
-                      >
-                        {o.source.label}
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
+                      <span className="mt-1 flex flex-col gap-1">
+                        {[o.source, ...(o.moreSources ?? [])].map((src) => (
+                          <a
+                            key={src.url}
+                            href={src.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+                          >
+                            {src.label}
+                            <ExternalLink className="h-3 w-3 flex-none" />
+                          </a>
+                        ))}
+                      </span>
                     </li>
                   ))}
                 </ul>
