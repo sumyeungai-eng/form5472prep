@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Download } from "lucide-react";
 import { getOwnedFiling, partnerOwnsFiling } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { PrintButton } from "./PrintButton";
@@ -48,6 +49,20 @@ export default async function FilingConfirmationPage({ params }: { params: { id:
         </Link>
         <PrintButton />
       </div>
+
+      {filing.faxConfirmationKey && (
+        <div className="print:hidden mb-6">
+          <a
+            href={`/api/filings/${filing.id}/fax-receipt`}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline"
+          >
+            <Download className="h-4 w-4" />
+            Download IRS fax receipt (PDF)
+          </a>
+        </div>
+      )}
 
       {/* Printable card */}
       <div className="bg-white border border-slate-200 rounded-lg p-8 print:border-0 print:p-0">
