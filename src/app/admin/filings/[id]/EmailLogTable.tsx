@@ -46,7 +46,7 @@ export function EmailLogTable({ rows }: { rows: EmailLogRow[] | null }) {
               <th className="py-1.5 px-1 font-medium">Time</th>
               <th className="py-1.5 px-1 font-medium">Kind</th>
               <th className="py-1.5 px-1 font-medium">To</th>
-              <th className="py-1.5 px-1 font-medium">Subject</th>
+              <th className="py-1.5 px-1 font-medium w-full">Subject</th>
               <th className="py-1.5 px-1 font-medium">Status</th>
             </tr>
           </thead>
@@ -55,7 +55,7 @@ export function EmailLogTable({ rows }: { rows: EmailLogRow[] | null }) {
               <tr key={row.id} className="align-top">
                 <td className="py-1.5 px-1 whitespace-nowrap text-slate-600 tabular-nums">{formatUtc(row.createdAt)}</td>
                 <td className="py-1.5 px-1 font-mono text-xs text-slate-700">{row.kind}</td>
-                <td className="py-1.5 px-1 text-slate-700 break-all">{row.to}</td>
+                <td className="py-1.5 px-1 text-slate-700 whitespace-nowrap">{row.to}</td>
                 <td className="py-1.5 px-1 text-slate-700">{row.subject}</td>
                 <td className="py-1.5 px-1">
                   <span

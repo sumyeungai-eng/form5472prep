@@ -398,6 +398,18 @@ export function extensionReviewFlags(f: ExtensionReviewInput): ExtensionReviewFl
   return flags;
 }
 
+// When the admin "Resend fax confirmation" action is offered: delivery was
+// confirmed — a receipt is on file, or the filing is CONFIRMED with a Telnyx
+// job (the receipt PDF can fail to generate even though the fax delivered).
+// Shared by the action and the admin page so the button and server agree.
+export function canResendFaxConfirmation(filing: {
+  faxConfirmationKey: string | null;
+  status: string;
+  faxJobId: string | null;
+}): boolean {
+  return !!filing.faxConfirmationKey || (filing.status === "CONFIRMED" && !!filing.faxJobId);
+}
+
 export async function runFilingAction(
   filingId: string,
   action: FilingActionName,
@@ -578,29 +590,36 @@ export async function runFilingAction(
     case "resendFaxConfirmation": {
       // Support tool for "I never got the confirmation": re-sends the fax-
       // delivered email to the customer email on file (never a free-text
-      // recipient) with the stored IRS Fax Transmission Receipt ATTACHED.
-      // Only offered once a receipt exists, i.e. delivery was confirmed.
-      if (!filing.faxConfirmationKey) {
+      // recipient), with the stored IRS Fax Transmission Receipt ATTACHED when
+      // one exists. Offered once delivery was confirmed: a receipt is on file,
+      // or the filing is CONFIRMED with a fax job (receipt generation can fail
+      // independently of the delivery — then the email goes without it).
+      if (!canResendFaxConfirmation(filing)) {
         throw new FilingActionError(
           409,
           "no_fax_receipt",
-          "No fax receipt on file: delivery has not been confirmed, so there is nothing to resend.",
+          "Fax delivery has not been confirmed for this filing, so there is nothing to resend.",
         );
       }
       if (!filing.user) {
         throw new FilingActionError(400, "no_customer_email", "no customer email");
       }
-      let receiptPdfBytes: Uint8Array;
-      try {
-        receiptPdfBytes = await getStorageObject(filing.faxConfirmationKey);
-      } catch (err) {
-        console.error("[admin resendFaxConfirmation] receipt read failed", err);
-        throw new FilingActionError(
-          502,
-          "receipt_unavailable",
-          "Could not read the stored fax receipt, so nothing was sent. Try again in a minute.",
-        );
+      let receiptPdfBytes: Uint8Array | undefined;
+      if (filing.faxConfirmationKey) {
+        try {
+          receiptPdfBytes = await getStorageObject(filing.faxConfirmationKey);
+        } catch (err) {
+          // Transient storage error on a receipt that exists: fail so a retry
+          // sends the complete email rather than a receipt-less one.
+          console.error("[admin resendFaxConfirmation] receipt read failed", err);
+          throw new FilingActionError(
+            502,
+            "receipt_unavailable",
+            "Could not read the stored fax receipt, so nothing was sent. Try again in a minute.",
+          );
+        }
       }
+      const receiptAttached = !!receiptPdfBytes;
       // Proof table (delivered-at, pages, Telnyx id) comes from Telnyx's API,
       // best-effort: if it is unreachable the email still goes out and the
       // attached receipt carries the same facts.
@@ -626,7 +645,7 @@ export async function runFilingAction(
           portalLink: makeMagicLink(filing.user.id),
           proof,
           receiptPdfBytes,
-          attachReceipt: true,
+          attachReceipt: receiptAttached,
           isFinalReturn: filing.isFinalReturn,
           dissolvedAt: filing.dissolvedAt,
           brand: brand ?? undefined,
@@ -647,12 +666,12 @@ export async function runFilingAction(
         after: {
           action: "resendFaxConfirmation",
           to: filing.user.email,
-          receiptAttached: true,
+          receiptAttached,
           proofIncluded: !!proof,
         },
         reason: ctx.reason,
       });
-      return { ok: true, to: filing.user.email, receiptAttached: true, proofIncluded: !!proof };
+      return { ok: true, to: filing.user.email, receiptAttached, proofIncluded: !!proof };
     }
 
     case "retryFax": {

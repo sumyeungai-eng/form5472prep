@@ -8,7 +8,7 @@ const db = vi.hoisted(() => ({
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: { emailLog: { create: db.create } } }));
 
-import { sendEmail, sendFaxDeliveredEmail } from "@/lib/email";
+import { sendEmail, sendFaxDeliveredAdminEmail, sendFaxDeliveredEmail } from "@/lib/email";
 
 const BASE = { to: "owner@example.test", subject: "Hello", html: "<p>x</p>", text: "x" };
 
@@ -181,5 +181,49 @@ describe("sendFaxDeliveredEmail receipt attachment", () => {
     expect(db.create).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ kind: "fax_delivered_resend", filingId: "filing_1" }),
     }));
+  });
+});
+
+describe("sendFaxDeliveredAdminEmail customer-email notice", () => {
+  const base = {
+    adminEmail: "support@example.test",
+    customerEmail: "owner@example.test",
+    llcName: "Acme LLC",
+    taxYears: [2025],
+    filingId: "filing_1",
+    adminFilingUrl: "https://example.test/admin/filings/filing_1",
+    proof: { faxId: "fax-1", deliveredAt: "2026-09-20T10:03:00.000Z" },
+  };
+  let fetchMock: ReturnType<typeof vi.fn>;
+  beforeEach(() => {
+    delete process.env.EMAIL_PREVIEW_DIR;
+    process.env.RESEND_API_KEY = "re_test_key";
+    db.create.mockReset();
+    db.create.mockResolvedValue({ id: "log_1" });
+    fetchMock = vi.fn(async () => new Response(JSON.stringify({ id: "resend-adm" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+  });
+  afterEach(() => {
+    delete process.env.RESEND_API_KEY;
+    vi.unstubAllGlobals();
+  });
+  function sent() {
+    return JSON.parse((fetchMock.mock.calls[0][1] as FetchInit).body!) as { subject: string; text: string; html: string };
+  }
+
+  it("flags a failed customer email in the subject, text and HTML", async () => {
+    await sendFaxDeliveredAdminEmail({ ...base, customerEmailStatus: "failed" });
+    const body = sent();
+    expect(body.subject).toBe("[Fax delivered — customer email FAILED] Acme LLC (2025)");
+    expect(body.text).toContain("Customer email FAILED — use \u201cResend fax confirmation\u201d on the admin page.");
+    expect(body.html).toContain("Customer email FAILED");
+    expect(body.html).toContain("Resend fax confirmation");
+  });
+
+  it("stays unchanged when the customer email was sent", async () => {
+    await sendFaxDeliveredAdminEmail({ ...base, customerEmailStatus: "sent" });
+    const body = sent();
+    expect(body.subject).toBe("[Fax delivered] Acme LLC (2025)");
+    expect(body.text).not.toContain("FAILED");
   });
 });

@@ -72,6 +72,7 @@ vi.mock("@/lib/env", () => ({
 }));
 
 import {
+  canResendFaxConfirmation,
   FilingActionError,
   isValidForceOverride,
   runFilingAction,
@@ -955,7 +956,26 @@ describe("resendFaxConfirmation", () => {
     }));
   });
 
-  it("is not available when no fax receipt is on file — nothing is sent or logged", async () => {
+  it("sends without an attachment when the filing is CONFIRMED with a fax job but no receipt PDF", async () => {
+    db.findUnique.mockResolvedValue({ ...confirmedFiling, faxConfirmationKey: null });
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify(telnyxRecord), { status: 200 })));
+
+    await expect(
+      runFilingAction("filing_fax", "resendFaxConfirmation", {}, { adminId: "admin_1" }),
+    ).resolves.toEqual({ ok: true, to: "owner@example.test", receiptAttached: false, proofIncluded: true });
+    expect(storage.get).not.toHaveBeenCalled();
+    expect(email.sendFaxDeliveredEmail).toHaveBeenCalledWith(expect.objectContaining({
+      email: "owner@example.test",
+      receiptPdfBytes: undefined,
+      attachReceipt: false,
+      logKind: "fax_delivered_resend",
+    }));
+    expect(db.createLog).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ afterJson: expect.objectContaining({ receiptAttached: false }) }),
+    }));
+  });
+
+  it("is not available when delivery is unconfirmed (no receipt, not CONFIRMED) — nothing is sent or logged", async () => {
     db.findUnique.mockResolvedValue({ ...confirmedFiling, status: "FAXED", faxConfirmationKey: null });
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
@@ -987,5 +1007,17 @@ describe("resendFaxConfirmation", () => {
       runFilingAction("filing_fax", "resendFaxConfirmation", {}, { adminId: "admin_1" }),
     ).rejects.toMatchObject({ status: 502, code: "email_failed" });
     expect(db.createLog).not.toHaveBeenCalled();
+  });
+});
+
+describe("canResendFaxConfirmation", () => {
+  it.each([
+    [{ faxConfirmationKey: "r.pdf", status: "CONFIRMED", faxJobId: "fax-1" }, true],
+    [{ faxConfirmationKey: "r.pdf", status: "FAXED", faxJobId: "fax-1" }, true],
+    [{ faxConfirmationKey: null, status: "CONFIRMED", faxJobId: "fax-1" }, true],
+    [{ faxConfirmationKey: null, status: "CONFIRMED", faxJobId: null }, false],
+    [{ faxConfirmationKey: null, status: "FAXED", faxJobId: "fax-1" }, false],
+  ] as const)("%o → %s", (filing, expected) => {
+    expect(canResendFaxConfirmation(filing)).toBe(expected);
   });
 });

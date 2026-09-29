@@ -1050,6 +1050,10 @@ export async function sendFaxDeliveredAdminEmail(args: {
   proof: FaxProof;
   receiptPdfBytes?: Uint8Array | Buffer;
   signedPdfBytes?: Uint8Array | Buffer;
+  // Outcome of the customer's own "delivered" email, sent just before this
+  // one. "failed" puts a loud action line in the subject and body so the
+  // operator knows the customer has NOT been told.
+  customerEmailStatus?: "sent" | "failed" | "no_customer";
 }) {
   const {
     adminEmail,
@@ -1061,9 +1065,16 @@ export async function sendFaxDeliveredAdminEmail(args: {
     proof,
     receiptPdfBytes,
     signedPdfBytes,
+    customerEmailStatus,
   } = args;
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "(no LLC name)";
+  const customerNotice =
+    customerEmailStatus === "failed"
+      ? FAX_CUSTOMER_EMAIL_FAILED_NOTICE
+      : customerEmailStatus === "no_customer"
+        ? "No customer email on file — the customer was not emailed."
+        : null;
 
   // Filename hygiene: scrub the LLC name down to alphanumerics + dashes so
   // mail clients don't choke on Unicode / punctuation in attachment headers.
@@ -1086,9 +1097,10 @@ export async function sendFaxDeliveredAdminEmail(args: {
   return sendEmail({
     log: { kind: "admin_fax_delivered", filingId },
     to: adminEmail,
-    subject: `[Fax delivered] ${llcLine} (${yearsLabel})`,
+    subject: `${customerEmailStatus === "failed" ? "[Fax delivered — customer email FAILED]" : "[Fax delivered]"} ${llcLine} (${yearsLabel})`,
     text:
       `Fax delivered to IRS.\n\n` +
+      (customerNotice ? `>>> ${customerNotice}\n\n` : "") +
       `Customer:    ${customerEmail ?? "(anonymous)"}\n` +
       `LLC:         ${llcLine}\n` +
       `Tax year(s): ${yearsLabel}\n` +
@@ -1115,11 +1127,42 @@ export async function sendFaxDeliveredAdminEmail(args: {
         ["Telnyx confirmation ID", proof.faxId],
         ["Admin view", adminFilingUrl],
       ],
-      extraHtml: attachments.length > 0
-        ? `<p style="margin:0;color:${EMAIL_STYLES.subtle};font-size:13px;line-height:1.6;"><strong>Attachments:</strong> ${escapeHtml(attachments.map((attachment) => attachment.filename).join(", "))}</p>`
-        : undefined,
+      extraHtml:
+        (customerNotice
+          ? `<div style="margin:0 0 16px;padding:12px 14px;background:${EMAIL_STYLES.redBg};border:1px solid ${EMAIL_STYLES.redBorder};border-radius:6px;color:${EMAIL_STYLES.redDark};font-size:14px;font-weight:600;">${escapeHtml(customerNotice)}</div>`
+          : "") +
+        (attachments.length > 0
+          ? `<p style="margin:0;color:${EMAIL_STYLES.subtle};font-size:13px;line-height:1.6;"><strong>Attachments:</strong> ${escapeHtml(attachments.map((attachment) => attachment.filename).join(", "))}</p>`
+          : "") || undefined,
     }),
     attachments: attachments.length > 0 ? attachments : undefined,
+  });
+}
+
+export const FAX_CUSTOMER_EMAIL_FAILED_NOTICE =
+  "Customer email FAILED — use \u201cResend fax confirmation\u201d on the admin page.";
+
+// Operator alert for a fax the automatic retry could not account for: the
+// resubmission outcome is unknown, or Telnyx accepted it but we could not
+// record the new fax id. Either way a human must check Telnyx before anyone
+// re-faxes — a second IRS fax must never be sent blind.
+export async function sendFaxAttentionAdminEmail(args: {
+  adminEmail: string;
+  filingId: string;
+  llcName: string | null;
+  adminFilingUrl: string;
+  headline: string;
+  details: Array<[label: string, value: string]>;
+}) {
+  const { adminEmail, filingId, llcName, adminFilingUrl, headline, details } = args;
+  const llcLine = llcName ?? "(no LLC name)";
+  const rows: Array<[string, string]> = [["LLC", llcLine], ["Filing ID", filingId], ...details, ["Admin view", adminFilingUrl]];
+  return sendEmail({
+    log: { kind: "admin_fax_attention", filingId },
+    to: adminEmail,
+    subject: `[Fax needs attention] ${llcLine}`,
+    text: `${headline}\n\n` + rows.map(([k, v]) => `${k}: ${v}`).join("\n") + "\n",
+    html: adminShell({ tag: "Fax delivery", heading: "Fax needs attention", rows, extraHtml: `<p style="margin:0;color:${EMAIL_STYLES.redDark};font-size:14px;line-height:1.6;">${escapeHtml(headline)}</p>` }),
   });
 }
 

@@ -89,6 +89,7 @@ const email = vi.hoisted(() => ({
   sendFaxFailedEmail: vi.fn(async (_args: Record<string, unknown>) => ({ id: "re_3" })),
   sendFaxFailedAdminEmail: vi.fn(async (_args: Record<string, unknown>) => ({ id: "re_4" })),
   sendFaxReceivedAdminEmail: vi.fn(),
+  sendFaxAttentionAdminEmail: vi.fn(async (_args: Record<string, unknown>) => ({ id: "re_5" })),
 }));
 const storage = vi.hoisted(() => ({
   get: vi.fn(async (_key: string) => new Uint8Array([1, 2, 3])),
@@ -99,9 +100,19 @@ const storage = vi.hoisted(() => ({
 const receipt = vi.hoisted(() => ({
   generateFaxReceiptPdf: vi.fn(async (_input: Record<string, unknown>) => new Uint8Array([37, 80, 68, 70])),
 }));
-const fax = vi.hoisted(() => ({
-  submitFax: vi.fn(async () => ({ id: "fax-retry-job", status: "queued" })),
-}));
+const fax = vi.hoisted(() => {
+  class TelnyxSubmitRejectedError extends Error {
+    readonly httpStatus: number;
+    constructor(httpStatus: number, body: string) {
+      super(`Telnyx fax failed: ${httpStatus} ${body}`);
+      this.httpStatus = httpStatus;
+    }
+  }
+  return {
+    TelnyxSubmitRejectedError,
+    submitFax: vi.fn(async (_opts: { mediaUrl: string; to?: string }) => ({ id: "fax-retry-job", status: "queued" })),
+  };
+});
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -131,8 +142,8 @@ vi.mock("@/lib/env", () => ({
 
 import { POST as telnyxWebhook } from "@/app/api/telnyx-webhook/route";
 import { GET as faxStatusPoll } from "@/app/api/cron/fax-status-poll/route";
-import { finalizeFaxDelivered } from "@/lib/fax/finalize";
-import { isPollable, pollCandidatesWhere } from "@/lib/fax/pollCandidates";
+import { finalizeFaxDelivered, finalizeFaxFailed } from "@/lib/fax/finalize";
+import { isPollable, pollCandidatesWhere, staleRetryClaim } from "@/lib/fax/pollCandidates";
 import { isTerminalFaxStatus, type FaxDeliveryFacts } from "@/lib/fax/telnyxStatus";
 
 const FAX_ID = "8c2f0b3e-1111-4222-8333-944455556666";
@@ -209,6 +220,23 @@ function webhookRequest(eventType: string, payload: Record<string, unknown> = {}
   });
 }
 
+// A webhook signed the way Telnyx signs: Ed25519 over `${timestamp}|${body}`.
+function signedWebhookRequest(eventType: string, payload: Record<string, unknown> = {}) {
+  const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
+  const rawPublic = publicKey.export({ format: "der", type: "spki" }).subarray(12);
+  vi.stubEnv("TELNYX_PUBLIC_KEY", Buffer.from(rawPublic).toString("base64"));
+  const body = JSON.stringify({
+    data: { event_type: eventType, payload: { fax_id: FAX_ID, direction: "outbound", ...payload } },
+  });
+  const timestamp = String(Math.floor(Date.now() / 1000));
+  const signature = crypto.sign(null, Buffer.from(`${timestamp}|${body}`), privateKey).toString("base64");
+  return new Request("https://example.test/api/telnyx-webhook", {
+    method: "POST",
+    headers: { "content-type": "application/json", "telnyx-signature-ed25519": signature, "telnyx-timestamp": timestamp },
+    body,
+  });
+}
+
 function pollRequest(auth = "Bearer cron-secret") {
   return new Request("https://example.test/api/cron/fax-status-poll", { headers: { authorization: auth } });
 }
@@ -252,14 +280,13 @@ describe("telnyx-webhook: unsigned terminal events are confirmed with the Telnyx
     expect(email.sendFaxDeliveredAdminEmail).not.toHaveBeenCalled();
   });
 
-  it("does NOT finalize when the Telnyx API errors — answers 200 and leaves it for the poll", async () => {
+  it("does NOT finalize when the Telnyx API errors — answers 503 so Telnyx can redeliver", async () => {
     seedFiling();
     stubTelnyx(() => new Response("upstream error", { status: 502 }));
 
     const res = await telnyxWebhook(webhookRequest("fax.delivered"));
 
-    expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ ok: true, deferred: "telnyx_unconfirmed" });
+    expect(res.status).toBe(503);
     expect(row().status).toBe("FAXED");
     expect(email.sendFaxDeliveredEmail).not.toHaveBeenCalled();
   });
@@ -272,9 +299,21 @@ describe("telnyx-webhook: unsigned terminal events are confirmed with the Telnyx
 
     const res = await telnyxWebhook(webhookRequest("fax.delivered"));
 
-    expect(await res.json()).toMatchObject({ deferred: "telnyx_unconfirmed" });
+    expect(res.status).toBe(503);
     expect(row().status).toBe("FAXED");
     expect(email.sendFaxDeliveredEmail).not.toHaveBeenCalled();
+  });
+
+  it("answers 503 (not a silent 200) when a fax.failed cannot be confirmed — no retry, no FAILED", async () => {
+    seedFiling({ faxStatus: "queued" });
+    stubTelnyx(() => new Response("upstream error", { status: 500 }));
+
+    const res = await telnyxWebhook(webhookRequest("fax.failed"));
+
+    expect(res.status).toBe(503);
+    expect(fax.submitFax).not.toHaveBeenCalled();
+    expect(row()).toMatchObject({ status: "FAXED", faxStatus: "queued" });
+    expect(email.sendFaxFailedEmail).not.toHaveBeenCalled();
   });
 
   it("does NOT trust the payload in production when TELNYX_API_KEY is missing", async () => {
@@ -285,7 +324,7 @@ describe("telnyx-webhook: unsigned terminal events are confirmed with the Telnyx
 
     const res = await telnyxWebhook(webhookRequest("fax.delivered"));
 
-    expect(await res.json()).toMatchObject({ deferred: "telnyx_unconfirmed" });
+    expect(res.status).toBe(503);
     expect(fetchMock).not.toHaveBeenCalled();
     expect(row().status).toBe("FAXED");
   });
@@ -334,6 +373,29 @@ describe("telnyx-webhook: unsigned terminal events are confirmed with the Telnyx
     expect(state.changeLog).toEqual([
       expect.objectContaining({ filingId: "filing_1", source: "system", field: "status" }),
     ]);
+  });
+
+  it("unsigned webhook: receipt facts come only from the Telnyx API, never from the payload", async () => {
+    seedFiling();
+    // API record without pages / from / duration.
+    stubTelnyx(() => new Response(JSON.stringify({ data: { id: FAX_ID, status: "delivered", updated_at: "2026-09-20T10:03:00.000Z" } }), { status: 200 }));
+
+    await telnyxWebhook(webhookRequest("fax.delivered", { page_count: 99, from: "+19990000000", call_duration_secs: 1 }));
+
+    expect(receipt.generateFaxReceiptPdf).toHaveBeenCalledWith(expect.objectContaining({ pageCount: null, fromFax: null }));
+    expect(email.sendFaxDeliveredEmail).toHaveBeenCalledWith(expect.objectContaining({
+      proof: expect.objectContaining({ pageCount: null, durationSecs: null, from: null }),
+    }));
+  });
+
+  it("signed webhook: a verified payload may fill fields the API record omits", async () => {
+    seedFiling();
+    stubTelnyx(() => new Response(JSON.stringify({ data: { id: FAX_ID, status: "delivered", updated_at: "2026-09-20T10:03:00.000Z" } }), { status: 200 }));
+
+    const res = await telnyxWebhook(signedWebhookRequest("fax.delivered", { page_count: 6, from: "+15550001111" }));
+
+    expect(res.status).toBe(200);
+    expect(receipt.generateFaxReceiptPdf).toHaveBeenCalledWith(expect.objectContaining({ pageCount: 6, fromFax: "+15550001111" }));
   });
 
   it("rejects a bad signature when TELNYX_PUBLIC_KEY is configured (existing fail-closed check kept)", async () => {
@@ -457,28 +519,47 @@ describe("fax-status-poll", () => {
     });
   });
 
-  it("leaves a failure only minutes old to the webhook (which may still re-fax it)", async () => {
-    seedFiling({ faxStatus: "sending.started" });
-    const justNow = new Date(Date.now() - 60 * 1000).toISOString();
-    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed", { updated_at: justNow })), { status: 200 }));
-
-    const body = await (await faxStatusPoll(pollRequest())).json();
-
-    expect(body).toMatchObject({ recentFailureLeftForWebhook: 1, failed: 0 });
-    expect(row().status).toBe("FAXED");
-    expect(email.sendFaxFailedEmail).not.toHaveBeenCalled();
-  });
-
-  it("marks a Telnyx-confirmed failure FAILED without re-faxing", async () => {
+  it("re-faxes a Telnyx-confirmed failure while retries remain (webhook missed) — no FAILED, no customer email", async () => {
     seedFiling({ faxStatus: "sending.started" });
     stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed", { failure_reason: "busy" })), { status: 200 }));
 
     const body = await (await faxStatusPoll(pollRequest())).json();
 
-    expect(body).toMatchObject({ failed: 1, reconciled: 1 });
+    expect(body).toMatchObject({ retried: 1, failed: 0 });
+    expect(fax.submitFax).toHaveBeenCalledTimes(1);
+    expect(fax.submitFax).toHaveBeenCalledWith({
+      mediaUrl: "https://storage.example.test/filing_1_faxed.pdf",
+      to: "+18558877737",
+    });
+    expect(row()).toMatchObject({ status: "FAXED", faxJobId: "fax-retry-job", faxStatus: "retry_1" });
+    expect(email.sendFaxFailedEmail).not.toHaveBeenCalled();
+    expect(state.changeLog).toEqual([expect.objectContaining({ field: "fax", source: "system" })]);
+  });
+
+  it("marks FAILED (and emails) only once retries are exhausted", async () => {
+    seedFiling({ faxStatus: "retry_3" });
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed", { failure_reason: "busy" })), { status: 200 }));
+
+    const body = await (await faxStatusPoll(pollRequest())).json();
+
+    expect(body).toMatchObject({ failed: 1, reconciled: 1, retried: 0 });
     expect(row()).toMatchObject({ status: "FAILED", faxStatus: "failed:busy" });
     expect(fax.submitFax).not.toHaveBeenCalled();
     expect(email.sendFaxFailedEmail).toHaveBeenCalledTimes(1);
+    expect(email.sendFaxFailedAdminEmail).toHaveBeenCalledWith(expect.objectContaining({ deliveryAttempts: 3 }));
+  });
+
+  it("never touches a stale retrying_N claim (its fax may be in flight) — flags it instead", async () => {
+    seedFiling({ faxStatus: "retrying_2", updatedAt: new Date(Date.now() - 60 * 60 * 1000) });
+    const fetchMock = stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed")), { status: 200 }));
+
+    const body = await (await faxStatusPoll(pollRequest())).json();
+
+    expect(body).toMatchObject({ inFlight: 0, stuckRetryClaims: ["filing_1"] });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(fax.submitFax).not.toHaveBeenCalled();
+    expect(row()).toMatchObject({ status: "FAXED", faxStatus: "retrying_2" });
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining("STUCK_RETRY_CLAIM filing=filing_1"));
   });
 
   it("keeps CRON_SECRET auth", async () => {
@@ -555,18 +636,22 @@ describe("poll candidate rules", () => {
     ["failed", false],
     ["failed:no_answer", false],
   ] as const)("faxStatus %s → pollable=%s", (faxStatus, expected) => {
-    expect(isPollable({ ...base, faxStatus }, now)).toBe(expected);
+    expect(isPollable({ ...base, faxStatus })).toBe(expected);
     expect(isTerminalFaxStatus(faxStatus)).toBe(!expected);
   });
 
   it("skips CONFIRMED filings and sandbox fax ids", () => {
-    expect(isPollable({ ...base, faxStatus: "queued", status: "CONFIRMED" }, now)).toBe(false);
-    expect(isPollable({ ...base, faxStatus: "queued", faxJobId: "sandbox_1" }, now)).toBe(false);
+    expect(isPollable({ ...base, faxStatus: "queued", status: "CONFIRMED" })).toBe(false);
+    expect(isPollable({ ...base, faxStatus: "queued", faxJobId: "sandbox_1" })).toBe(false);
   });
 
-  it("leaves a fresh retrying_N claim to the webhook but reclaims an abandoned one", () => {
-    expect(isPollable({ ...base, faxStatus: "retrying_1", updatedAt: new Date("2026-09-29T11:55:00.000Z") }, now)).toBe(false);
-    expect(isPollable({ ...base, faxStatus: "retrying_1", updatedAt: new Date("2026-09-29T11:00:00.000Z") }, now)).toBe(true);
+  it("never polls a retrying_N claim; flags it as stuck once it outlives the grace period", () => {
+    const fresh = { ...base, faxStatus: "retrying_1", updatedAt: new Date("2026-09-29T11:55:00.000Z") };
+    const stale = { ...base, faxStatus: "retrying_1", updatedAt: new Date("2026-09-29T11:00:00.000Z") };
+    expect(isPollable(fresh)).toBe(false);
+    expect(isPollable(stale)).toBe(false);
+    expect(staleRetryClaim(fresh, now)).toBe(false);
+    expect(staleRetryClaim(stale, now)).toBe(true);
   });
 
   it("bounds the SQL to non-CONFIRMED, non-terminal faxes touched in the last 14 days", () => {
@@ -581,5 +666,157 @@ describe("poll candidate rules", () => {
         { OR: [{ faxStatus: null }, { NOT: { faxStatus: { startsWith: "failed" } } }] },
       ],
     });
+  });
+});
+
+describe("automatic retry is claim-guarded (no duplicate IRS fax)", () => {
+  it("webhook retry vs poll retry racing on the same failed fax → exactly one submitFax", async () => {
+    seedFiling({ faxStatus: "sending.started" });
+    // Slow submit: both callers reach their claim while the winner's
+    // resubmission is still in flight (faxJobId not yet replaced).
+    const slowSubmit = () =>
+      new Promise<{ id: string; status: string }>((resolve) =>
+        setTimeout(() => resolve({ id: "fax-retry-job", status: "queued" }), 20),
+      );
+    fax.submitFax.mockImplementationOnce(slowSubmit).mockImplementationOnce(slowSubmit);
+    stubTelnyx(
+      () =>
+        new Promise<Response>((resolve) =>
+          setTimeout(() => resolve(new Response(JSON.stringify(telnyxRecord("failed")), { status: 200 })), 5),
+        ),
+    );
+
+    const [webhookRes, pollRes] = await Promise.all([
+      telnyxWebhook(webhookRequest("fax.failed")),
+      faxStatusPoll(pollRequest()),
+    ]);
+    const webhookBody = await webhookRes.json();
+    const pollBody = await pollRes.json();
+
+    expect(fax.submitFax).toHaveBeenCalledTimes(1);
+    expect(row()).toMatchObject({ status: "FAXED", faxJobId: "fax-retry-job", faxStatus: "retry_1" });
+    expect(email.sendFaxFailedEmail).not.toHaveBeenCalled();
+    const webhookRetried = webhookBody.retried === true;
+    const pollRetried = pollBody.retried === 1;
+    expect(webhookRetried !== pollRetried).toBe(true);
+  });
+
+  it("a redelivered fax.failed for the replaced job cannot re-fax again", async () => {
+    seedFiling({ faxStatus: "queued" });
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed")), { status: 200 }));
+
+    await telnyxWebhook(webhookRequest("fax.failed"));
+    const again = await telnyxWebhook(webhookRequest("fax.failed"));
+
+    expect(again.status).toBe(200);
+    expect(fax.submitFax).toHaveBeenCalledTimes(1);
+  });
+
+  it("releases the claim when Telnyx rejects the resubmission (nothing sent) and answers 503", async () => {
+    seedFiling({ faxStatus: "queued" });
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed")), { status: 200 }));
+    fax.submitFax.mockRejectedValueOnce(new fax.TelnyxSubmitRejectedError(422, "invalid media"));
+
+    const res = await telnyxWebhook(webhookRequest("fax.failed"));
+
+    expect(res.status).toBe(503);
+    expect(row()).toMatchObject({ status: "FAXED", faxJobId: FAX_ID, faxStatus: "queued" });
+    expect(email.sendFaxAttentionAdminEmail).not.toHaveBeenCalled();
+  });
+
+  it("keeps the claim and alerts the operator when the resubmission outcome is ambiguous", async () => {
+    seedFiling({ faxStatus: "queued" });
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed")), { status: 200 }));
+    fax.submitFax.mockRejectedValueOnce(new Error("socket hang up"));
+
+    const res = await telnyxWebhook(webhookRequest("fax.failed"));
+
+    expect(await res.json()).toMatchObject({ ok: true, attention: "ambiguous_submit" });
+    expect(row()).toMatchObject({ faxJobId: FAX_ID, faxStatus: "retrying_1" });
+    expect(console.error).toHaveBeenCalledWith(
+      expect.stringContaining("AMBIGUOUS_FAX_SUBMIT filing=filing_1"),
+      expect.any(Error),
+    );
+    expect(email.sendFaxAttentionAdminEmail).toHaveBeenCalledTimes(1);
+    // A later poll must not resubmit from that claim.
+    await faxStatusPoll(pollRequest());
+    expect(fax.submitFax).toHaveBeenCalledTimes(1);
+  });
+
+  it("logs UNTRACKED_FAX_JOB with the new fax id (and alerts) when the DB write after submit fails", async () => {
+    seedFiling({ faxStatus: "queued" });
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed")), { status: 200 }));
+    db.update.mockRejectedValueOnce(new Error("db down")).mockRejectedValueOnce(new Error("db down"));
+
+    const res = await telnyxWebhook(webhookRequest("fax.failed"));
+
+    expect(await res.json()).toMatchObject({ retried: true, attention: "untracked_fax_job" });
+    expect(console.error).toHaveBeenCalledWith(
+      expect.stringMatching(/UNTRACKED_FAX_JOB filing=filing_1 newFaxId=fax-retry-job/),
+    );
+    expect(email.sendFaxAttentionAdminEmail).toHaveBeenCalledWith(expect.objectContaining({
+      filingId: "filing_1",
+      details: expect.arrayContaining([["New Telnyx fax id", "fax-retry-job"]]),
+    }));
+    // Claim kept: nothing automatic will re-fax this filing.
+    expect(row().faxStatus).toBe("retrying_1");
+  });
+});
+
+describe("finalize claims are pinned to the fax job", () => {
+  const oldJobFacts: FaxDeliveryFacts = {
+    faxId: FAX_ID,
+    submittedAtIso: "2026-09-20T10:00:00.000Z",
+    deliveredAtIso: "2026-09-20T10:03:00.000Z",
+    pageCount: 7,
+    durationSecs: 95,
+    from: null,
+    to: null,
+  };
+
+  it("a stale job's delivered result cannot confirm a filing whose newer retry is in flight", async () => {
+    const filing = seedFiling({ faxJobId: "newer-retry-job", faxStatus: "retry_1" });
+
+    const result = await finalizeFaxDelivered(filing as never, oldJobFacts, { source: "poll" });
+
+    expect(result.claimed).toBe(false);
+    expect(row()).toMatchObject({ status: "FAXED", faxJobId: "newer-retry-job", faxStatus: "retry_1" });
+    expect(email.sendFaxDeliveredEmail).not.toHaveBeenCalled();
+  });
+
+  it("a stale job's failure cannot fail a filing whose newer retry is in flight", async () => {
+    const filing = seedFiling({ faxJobId: "newer-retry-job", faxStatus: "retry_1" });
+
+    const result = await finalizeFaxFailed(
+      filing as never,
+      { faxId: FAX_ID, failureReason: "busy", deliveryAttempts: 3 },
+      { source: "webhook" },
+    );
+
+    expect(result.claimed).toBe(false);
+    expect(row().status).toBe("FAXED");
+    expect(email.sendFaxFailedEmail).not.toHaveBeenCalled();
+  });
+});
+
+describe("customer email failure after the claim is not silent", () => {
+  it("the admin delivered email and push say the customer email FAILED", async () => {
+    seedFiling();
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("delivered")), { status: 200 }));
+    email.sendFaxDeliveredEmail.mockRejectedValueOnce(new Error("Resend send failed: 500"));
+
+    await telnyxWebhook(webhookRequest("fax.delivered"));
+
+    expect(row().status).toBe("CONFIRMED");
+    expect(email.sendFaxDeliveredAdminEmail).toHaveBeenCalledWith(expect.objectContaining({ customerEmailStatus: "failed" }));
+  });
+
+  it("reports sent when the customer email went out", async () => {
+    seedFiling();
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("delivered")), { status: 200 }));
+
+    await telnyxWebhook(webhookRequest("fax.delivered"));
+
+    expect(email.sendFaxDeliveredAdminEmail).toHaveBeenCalledWith(expect.objectContaining({ customerEmailStatus: "sent" }));
   });
 });

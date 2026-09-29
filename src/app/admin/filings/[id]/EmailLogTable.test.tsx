@@ -34,6 +34,9 @@ describe("EmailLogTable (admin filing page › Emails card)", () => {
     expect(html).toContain("2026-09-29 09:15 UTC");
     expect(html).toContain("fax_delivered_resend");
     expect(html).toContain("owner@example.test");
+    // The address never wraps mid-word; the table scrolls on narrow screens.
+    expect(html).toContain('whitespace-nowrap">owner@example.test</td>');
+    expect(html).toContain("overflow-x-auto");
     expect(html).toContain("Confirmation of IRS filing");
     expect(html).toContain("delivered");
     expect(html).toContain("bounced");

@@ -9,8 +9,9 @@ import { isRetryLabel, isSandboxFaxId, isTerminalFaxStatus } from "@/lib/fax/tel
 // weeks needs a human, not another API call every hour.
 export const POLL_LOOKBACK_DAYS = 14;
 export const POLL_MAX_ROWS = 100;
-// A webhook retry holds "retrying_N" only for the seconds it takes to
-// re-submit. Leave such rows alone unless the claim looks abandoned.
+// A resubmission holds "retrying_N" only for the seconds it takes to call
+// Telnyx. One older than this was abandoned mid-flight (crash, ambiguous
+// submit, or a new job id that could not be recorded).
 export const RETRY_CLAIM_GRACE_MS = 15 * 60 * 1000;
 
 // "Outcome unknown": has a Telnyx job, not CONFIRMED, faxStatus non-terminal,
@@ -30,21 +31,29 @@ export function pollCandidatesWhere(now: Date): Prisma.FilingWhereInput {
   };
 }
 
+type PollRow = { faxJobId: string | null; faxStatus: string | null; status: string; updatedAt: Date };
+
+function isRetryClaim(faxStatus: string | null): boolean {
+  return !!faxStatus && faxStatus.startsWith("retrying_") && isRetryLabel(faxStatus);
+}
+
 // Final in-process filter (belt and braces over the SQL, plus the rules SQL
-// can't express: sandbox ids and a webhook retry that is mid-flight).
-export function isPollable(
-  filing: { faxJobId: string | null; faxStatus: string | null; status: string; updatedAt: Date },
-  now: Date,
-): boolean {
+// can't express). Never polls a row under a "retrying_N" claim, fresh or
+// stale: a resubmission may already be with Telnyx, and acting on the OLD
+// job's failure again could send the IRS a second fax.
+export function isPollable(filing: PollRow): boolean {
   if (!filing.faxJobId || isSandboxFaxId(filing.faxJobId)) return false;
   if (filing.status === "CONFIRMED") return false;
   if (isTerminalFaxStatus(filing.faxStatus)) return false;
-  if (
-    filing.faxStatus?.startsWith("retrying_") &&
-    isRetryLabel(filing.faxStatus) &&
-    now.getTime() - filing.updatedAt.getTime() < RETRY_CLAIM_GRACE_MS
-  ) {
-    return false;
-  }
+  if (isRetryClaim(filing.faxStatus)) return false;
   return true;
+}
+
+// A "retrying_N" claim older than the grace period: needs a human.
+export function staleRetryClaim(filing: PollRow, now: Date): boolean {
+  return (
+    isRetryClaim(filing.faxStatus) &&
+    filing.status !== "CONFIRMED" &&
+    now.getTime() - filing.updatedAt.getTime() >= RETRY_CLAIM_GRACE_MS
+  );
 }

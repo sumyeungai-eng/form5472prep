@@ -5,6 +5,20 @@ import { env } from "./env";
 
 export type FaxJob = { id: string; status: "queued" | "delivered" | "failed" };
 
+// Telnyx answered the submission with an HTTP error, so no fax job was
+// created. Anything else submitFax() throws (network error, timeout, bad
+// JSON) is AMBIGUOUS: the fax may or may not have been queued. The automatic
+// retry path (lib/fax/retry.ts) only re-arms itself after this error, never
+// after an ambiguous one — a second IRS fax must never be sent by accident.
+export class TelnyxSubmitRejectedError extends Error {
+  readonly httpStatus: number;
+  constructor(httpStatus: number, body: string) {
+    super(`Telnyx fax failed: ${httpStatus} ${body}`);
+    this.name = "TelnyxSubmitRejectedError";
+    this.httpStatus = httpStatus;
+  }
+}
+
 export async function submitFax(opts: {
   mediaUrl: string;
   to?: string;
@@ -32,7 +46,7 @@ export async function submitFax(opts: {
       store_media: true,
     }),
   });
-  if (!res.ok) throw new Error(`Telnyx fax failed: ${res.status} ${await res.text()}`);
+  if (!res.ok) throw new TelnyxSubmitRejectedError(res.status, await res.text());
   const json = await res.json();
   return { id: json.data?.id, status: json.data?.status ?? "queued" };
 }

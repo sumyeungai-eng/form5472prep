@@ -8,7 +8,7 @@ import { formatAttribution, hasAttribution } from "@/lib/attribution";
 import { formatUsd } from "@/lib/utils";
 import { publicUrl } from "@/lib/storage";
 import { effectiveDueDateUtc, filingDueDateUtc, formatDueDate } from "@/lib/schemas";
-import { extensionReviewFlags } from "@/lib/admin/filingActions";
+import { canResendFaxConfirmation, extensionReviewFlags } from "@/lib/admin/filingActions";
 import { isValidPbaCode } from "@/lib/irsCodes";
 import { StatusBadge } from "../StatusBadge";
 import { AdminPageHeader } from "../../_components/AdminPageHeader";
@@ -223,6 +223,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           hasCustomerSignature={!!filing.signaturePngKey}
           hasFaxedPdf={!!filing.faxedPdfKey}
           hasFaxReceipt={!!filing.faxConfirmationKey}
+          canResendFaxConfirmation={canResendFaxConfirmation(filing)}
           preflightStatus={filing.preflightStatus}
           preflightOverrideBy={filing.preflightOverrideBy}
           reviewApprovedAt={filing.reviewApprovedAt ? filing.reviewApprovedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}

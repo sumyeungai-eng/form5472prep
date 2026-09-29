@@ -1,11 +1,9 @@
 import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { submitFax } from "@/lib/fax";
-import { publicUrl } from "@/lib/storage";
-import { env } from "@/lib/env";
 import { parseInboundFaxEvent, inboundFaxAllowed, ingestInboundFax } from "@/lib/inboundFax";
-import { finalizeFaxDelivered, finalizeFaxFailed } from "@/lib/fax/finalize";
+import { finalizeFaxDelivered } from "@/lib/fax/finalize";
+import { handleConfirmedFaxFailure } from "@/lib/fax/retry";
 import {
   deliveryFactsFromTelnyx,
   fetchTelnyxFax,
@@ -27,7 +25,6 @@ export const maxDuration = 60;
 //   the Telnyx API, then finalized via lib/fax/finalize.ts, the same path the
 //   fax-status-poll cron uses) and in-progress events (display only).
 
-const MAX_RETRIES = 3;
 const TERMINAL_EVENTS: ReadonlySet<string> = new Set(["fax.delivered", "fax.failed", "fax.sending.failed"]);
 // Reject events whose timestamp is older than this — blocks replay of a
 // previously-captured valid webhook.
@@ -94,6 +91,9 @@ export async function POST(req: Request) {
   if (!verifyTelnyxSignature(rawBody, req)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
+  // verifyTelnyxSignature passes unsigned requests when no key is configured;
+  // only with a key did we actually verify Telnyx's signature.
+  const signatureVerified = !!process.env.TELNYX_PUBLIC_KEY;
   let body: Record<string, unknown> & { data?: { event_type?: string; payload?: Record<string, unknown> } };
   try {
     body = JSON.parse(rawBody);
@@ -132,17 +132,21 @@ export async function POST(req: Request) {
   // ── Terminal events: confirm with Telnyx's API before acting ──
   // The payload is only a hint. Without a verified signature (and even with
   // one) a delivered/failed outcome moves the filing ONLY when Telnyx's own
-  // authenticated API reports the same status for this fax id. If Telnyx
-  // can't be reached we do nothing and answer 200 (so Telnyx doesn't storm
-  // retries): the hourly fax-status-poll re-checks every non-terminal fax.
+  // authenticated API reports the same status for this fax id. If the API
+  // can't be reached we change nothing and answer 503, so Telnyx can
+  // redeliver; the hourly fax-status-poll re-checks every non-terminal fax
+  // (and retries/finalizes through the same shared code) either way.
   if (evt && TERMINAL_EVENTS.has(evt)) {
     const payload = (body?.data?.payload ?? {}) as Record<string, unknown>;
+    // Payload facts may only reach the customer's receipt, the failure label
+    // or the retry ceiling when Telnyx's signature on them was verified.
+    const trustedPayload = signatureVerified ? payload : null;
     const confirmation = await confirmWithTelnyx(faxId, evt, payload);
     if (!confirmation.ok) {
       console.warn(
-        `[telnyx-webhook] ${filing.id}: could not confirm ${evt} with the Telnyx API (${confirmation.error}) — leaving it for fax-status-poll`,
+        `[telnyx-webhook] ${filing.id}: could not confirm ${evt} with the Telnyx API (${confirmation.error}) — answering 503 so Telnyx can redeliver; fax-status-poll is the backstop`,
       );
-      return NextResponse.json({ ok: true, deferred: "telnyx_unconfirmed" });
+      return NextResponse.json({ error: "could not confirm fax status with Telnyx" }, { status: 503 });
     }
     const tx = confirmation.fax;
 
@@ -153,7 +157,7 @@ export async function POST(req: Request) {
         );
         return NextResponse.json({ ok: true, ignored: "status_mismatch" });
       }
-      const result = await finalizeFaxDelivered(filing, deliveryFactsFromTelnyx(tx, payload), {
+      const result = await finalizeFaxDelivered(filing, deliveryFactsFromTelnyx(tx, trustedPayload), {
         source: "webhook",
       });
       if (!result.claimed) return NextResponse.json({ ok: true, deduplicated: true });
@@ -167,77 +171,42 @@ export async function POST(req: Request) {
       );
       return NextResponse.json({ ok: true, ignored: "status_mismatch" });
     }
-    // The attempt ceiling must be driven by OUR own retry label, not Telnyx's
-    // delivery_attempts: each retry calls submitFax() which creates a brand-new
-    // fax job whose delivery_attempts resets to 0, so trusting the payload alone
-    // would let us re-fax the IRS indefinitely. Derive from our "retry_N" label
-    // and take the max of the two as a belt-and-braces cap.
-    const labelMatch = filing.faxStatus?.match(/^retry_(\d+)$/);
-    const appAttempts = labelMatch ? Number(labelMatch[1]) : 0;
-    const retryCount = Math.max(appAttempts, Number(payload.delivery_attempts ?? 0) || 0);
-    // Re-fax the SAME bytes originally transmitted — the immutable snapshot
-    // (faxedPdfKey) when present, falling back to signedPdfKey.
-    const faxSource = filing.faxedPdfKey ?? filing.signedPdfKey;
-    if (retryCount < MAX_RETRIES && faxSource) {
-      if (filing.preflightStatus === "failed" && !filing.preflightOverrideBy) {
-        console.error(
-          `[telnyx-webhook] ${filing.id} fax retry held: Fax held: this package failed pre-flight checks. An admin must review it.`,
-        );
-        return NextResponse.json({ ok: true, held: "preflight_failed" });
-      }
-      // Atomic retry claim — race-safe against a duplicate/overlapping
-      // fax.failed redelivery. Pin the CURRENT faxJobId AND faxStatus so two
-      // concurrent events can't both pass and both re-fax the IRS: Postgres
-      // serializes the UPDATEs, and the loser's WHERE (stale faxStatus) matches
-      // 0 rows. Only the winner submits.
-      const nextLabel = `retry_${retryCount + 1}`;
-      const claim = await prisma.filing.updateMany({
-        where: {
-          id: filing.id,
-          faxJobId: filing.faxJobId,
-          faxStatus: filing.faxStatus,
-          status: { notIn: ["CONFIRMED", "FAILED"] },
-        },
-        data: { faxStatus: `retrying_${retryCount + 1}` },
-      });
-      if (claim.count === 0) {
-        return NextResponse.json({ ok: true, deduplicated: true });
-      }
-      const mediaUrl = await publicUrl(faxSource);
-      let retry: Awaited<ReturnType<typeof submitFax>>;
-      try {
-        retry = await submitFax({ mediaUrl, to: env.telnyx.destination });
-      } catch (err) {
-        // submitFax threw after we claimed — release the claim so a later
-        // event can retry instead of leaving the filing stuck at retrying_N.
-        await prisma.filing
-          .updateMany({
-            where: { id: filing.id, faxStatus: `retrying_${retryCount + 1}` },
-            data: { faxStatus: filing.faxStatus },
-          })
-          .catch(() => {});
-        throw err;
-      }
-      await prisma.filing.update({
-        where: { id: filing.id },
-        data: { faxJobId: retry.id, faxStatus: nextLabel },
-      });
-      return NextResponse.json({ ok: true, retried: true });
-    }
-    // Retries exhausted (or nothing to re-send): the shared give-up path.
-    // Its atomic claim only moves an in-flight filing to FAILED, so a late or
-    // duplicate failure never regresses CONFIRMED or double-sends the emails.
+    // Retry-or-give-up lives in lib/fax/retry.ts, shared with the poll: its
+    // claim guarantees webhook, redelivered webhook and poll can never both
+    // resubmit the same failed fax.
     const failureReason =
       (typeof tx.failure_reason === "string" && tx.failure_reason) ||
-      (typeof payload.failure_reason === "string" && payload.failure_reason) ||
+      (typeof trustedPayload?.failure_reason === "string" && trustedPayload.failure_reason) ||
       null;
-    const result = await finalizeFaxFailed(
+    const reportedAttempts = Math.max(
+      typeof tx.delivery_attempts === "number" ? tx.delivery_attempts : 0,
+      Number(trustedPayload?.delivery_attempts ?? 0) || 0,
+    );
+    const result = await handleConfirmedFaxFailure(
       filing,
-      { faxId, failureReason, deliveryAttempts: retryCount },
+      { faxId, failureReason, reportedAttempts },
       { source: "webhook" },
     );
-    if (!result.claimed) return NextResponse.json({ ok: true, deduplicated: true });
-    return NextResponse.json({ ok: true, gaveUp: true });
+    switch (result.outcome) {
+      case "retried":
+        return NextResponse.json({ ok: true, retried: true });
+      case "retried_untracked":
+        return NextResponse.json({ ok: true, retried: true, attention: "untracked_fax_job" });
+      case "held_preflight":
+        return NextResponse.json({ ok: true, held: "preflight_failed" });
+      case "submit_rejected":
+        // Nothing was sent and the claim was released: ask Telnyx to
+        // redeliver; the poll retries within the hour regardless.
+        return NextResponse.json({ error: "fax resubmission rejected", detail: result.error }, { status: 503 });
+      case "submit_ambiguous":
+        return NextResponse.json({ ok: true, attention: "ambiguous_submit" });
+      case "gave_up":
+        return result.claimed
+          ? NextResponse.json({ ok: true, gaveUp: true })
+          : NextResponse.json({ ok: true, deduplicated: true });
+      case "not_claimed":
+        return NextResponse.json({ ok: true, deduplicated: true });
+    }
   }
 
   // ── In-progress events (queued, media.processed, sending.started, ...) ──
@@ -279,12 +248,20 @@ async function confirmWithTelnyx(
 ): Promise<TelnyxFaxLookup> {
   if (!process.env.TELNYX_API_KEY && process.env.NODE_ENV !== "production") {
     console.error("[telnyx-webhook] TELNYX_API_KEY not set — trusting the payload (non-production only)");
+    const str = (v: unknown) => (typeof v === "string" ? v : null);
+    const num = (v: unknown) => (typeof v === "number" ? v : null);
     return {
       ok: true,
       fax: {
         id: faxId,
         status: evt === "fax.delivered" ? TELNYX_DELIVERED_STATUS : "failed",
-        failure_reason: typeof payload.failure_reason === "string" ? payload.failure_reason : null,
+        failure_reason: str(payload.failure_reason),
+        page_count: num(payload.page_count),
+        call_duration_secs: num(payload.call_duration_secs),
+        from: str(payload.from),
+        to: str(payload.to),
+        created_at: str(payload.created_at),
+        updated_at: str(payload.updated_at),
       },
     };
   }

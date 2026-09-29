@@ -62,11 +62,59 @@ resend uses it.
 Verification: see the commit message and the lane report (vitest, tsc, eslint and
 `npm run build` all exit 0).
 
+## Review fixes (second commit on the branch, after the coordinator's merge f16a53a)
+
+An independent review of ca9c583 said "ship after fixes". The fixes:
+
+1. HIGH — a transient Telnyx API failure could turn an automatic retry into a
+   customer-facing FAILED. Now:
+   - The webhook answers **503** when it cannot confirm a terminal event with Telnyx,
+     and also when a resubmission is rejected.
+   - Retry-or-give-up moved into `src/lib/fax/retry.ts` (`handleConfirmedFaxFailure`),
+     which both the webhook and the poll use. The poll now re-faxes a confirmed
+     failure while retries remain, and marks FAILED only once they are exhausted. The
+     old 10-minute grace window is gone.
+   - The resubmission claim is one `updateMany` pinned on the failed `faxJobId` and
+     the exact observed non-`retrying_` `faxStatus`, so only one caller can resubmit.
+   - A `retrying_N` claim is released only when the fax provably did not go out: the
+     media URL failed, or Telnyx rejected it (new `TelnyxSubmitRejectedError` in
+     `src/lib/fax.ts`).
+   - After an ambiguous submit error the claim is kept, `AMBIGUOUS_FAX_SUBMIT` is
+     logged, and the admin gets an attention email.
+   - The poll never polls a `retrying_N` row. Once a claim is older than 15 minutes it
+     logs `STUCK_RETRY_CLAIM` on every run.
+2. MEDIUM — the delivered and failed finalize claims now pin `faxJobId` to the job the
+   outcome is about. The failed claim also pins the observed `faxStatus`, so a late
+   result for a replaced job does nothing.
+3. MEDIUM — if the customer email fails after the claim, the admin delivered email
+   subject reads "[Fax delivered — customer email FAILED]". Its body line says to use
+   Resend fax confirmation, and the push notification says the same. The resend
+   action and button are available when a receipt exists OR the filing is CONFIRMED
+   with a `faxJobId` (`canResendFaxConfirmation`, shared by the page and the server).
+   With no receipt, the email is sent without an attachment.
+4. LOW — the webhook payload fills receipt, proof, failure-reason and attempt-count
+   gaps only when `TELNYX_PUBLIC_KEY` verified its signature; otherwise facts come from
+   the Telnyx API alone.
+5. LOW — if the new job id cannot be recorded after `submitFax` (one retry of the DB
+   write), the code logs `[fax-retry] UNTRACKED_FAX_JOB filing=… newFaxId=…`, keeps
+   the claim, and sends an admin attention email containing the new fax id.
+6. UI — in the Emails card, the "To" column no longer wraps (`whitespace-nowrap`; the
+   table scrolls in `overflow-x-auto`) and Subject takes the remaining width.
+
+Coordinator-owned, not touched: merge f16a53a (`src/app/(app)/**`) and the
+untracked `src/app/design-preview/fax/page.tsx`. At the coordinator's request this pass
+did not run `npm run build`; vitest, tsc and eslint were run.
+
 ## Contracts a future editor must respect
 
 - Never move a filing to CONFIRMED/FAILED or send a fax outcome email outside
   `lib/fax/finalize.ts`. Keep the claim-first, side-effects-after order.
+- Never resubmit a fax outside `lib/fax/retry.ts` (the admin "Retry fax" button is the
+  only manual exception). Release a `retrying_N` claim only when the fax provably did
+  not go out.
+- Finalize claims stay pinned to `faxJobId`.
 - A terminal Telnyx event must be confirmed by `fetchTelnyxFax` before it is acted on.
+  Unsigned payload fields never reach the customer's receipt.
 - Never overwrite `retry_N` / `retrying_N` in `faxStatus`.
 - `sendEmail` must stay throw-compatible: a log failure never changes its return value
   or error.
@@ -89,9 +137,13 @@ Owner-gated:
   one-line `attachReceipt: true` in `finalizeFaxDelivered`.
 
 Follow-ups:
-- The poll never auto-retries a failed fax. If the webhook could not reach Telnyx for a
-  `fax.failed`, the poll gives up after the grace period without re-faxing; an admin
-  can use "Retry fax".
+- Whether Telnyx redelivers webhooks after a non-2xx answer could not be verified
+  offline. The hourly poll is the guaranteed backstop either way.
+- A `STUCK_RETRY_CLAIM` / `UNTRACKED_FAX_JOB` filing needs a human. Check Telnyx for
+  the resubmitted fax, then set `faxJobId` / `faxStatus` by hand before anyone presses
+  "Retry fax".
+- Possible improvement: when the receipt is missing, "Resend fax confirmation" could
+  regenerate it from the Telnyx record instead of sending without an attachment.
 - Filing `cmu6pgo49000di304vbiwnggd`: after deploy, use "Resend fax confirmation".
   The Emails card will then show the attempt and, once the webhook is configured, its
   delivery outcome.

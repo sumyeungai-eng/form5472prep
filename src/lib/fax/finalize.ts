@@ -9,6 +9,10 @@
 //
 // Callers must only invoke these after Telnyx's own API has confirmed the
 // outcome (see lib/fax/telnyxStatus.ts) — never on an unverified payload.
+//
+// Every claim is pinned to the Telnyx job the outcome is ABOUT (faxJobId):
+// once a retry has replaced the job, a late result for the old job can no
+// longer confirm or fail the filing.
 
 import type { FilingStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
@@ -65,7 +69,7 @@ export function faxReceiptKey(filingId: string): string {
   return `${filingId}_fax_receipt.pdf`;
 }
 
-async function safeChangeLog(
+export async function safeChangeLog(
   tag: string,
   entry: { filingId: string; field: string; before: unknown; after: unknown; reason: string },
 ): Promise<void> {
@@ -99,14 +103,15 @@ export async function finalizeFaxDelivered(
   };
 
   // Atomic claim. count === 0 means the other path (or a redelivered event)
-  // already confirmed this filing — do NOTHING else, or the customer and the
-  // operator get duplicate emails and a second receipt.
+  // already confirmed this filing, or the filing has moved on to a newer fax
+  // job — do NOTHING else, or the customer and the operator get duplicate
+  // emails and a second receipt.
   const claim = await prisma.filing.updateMany({
-    where: { id: filing.id, status: { not: "CONFIRMED" } },
+    where: { id: filing.id, faxJobId: facts.faxId, status: { not: "CONFIRMED" } },
     data: { faxStatus: "delivered", status: "CONFIRMED" },
   });
   if (claim.count !== 1) {
-    console.log(`[${tag}] ${filing.id} already CONFIRMED — skipping duplicate delivery`);
+    console.log(`[${tag}] ${filing.id} already CONFIRMED or no longer on fax job ${facts.faxId} — skipping`);
     return result;
   }
   result.claimed = true;
@@ -163,6 +168,7 @@ export async function finalizeFaxDelivered(
   }
 
   const customerUserId = filing.user?.id ?? filing.userId;
+  let customerEmailStatus: "sent" | "failed" | "no_customer" = "no_customer";
   if (filing.user && customerUserId) {
     const brand = await safeBrand(tag, filing.id);
     try {
@@ -181,7 +187,11 @@ export async function finalizeFaxDelivered(
         logKind: "fax_delivered",
       });
       result.customerEmailed = true;
+      customerEmailStatus = "sent";
     } catch (err) {
+      // The claim is spent, so nothing will resend this automatically: the
+      // admin email below says so loudly and points at the resend button.
+      customerEmailStatus = "failed";
       console.error(`[${tag}] customer delivered email for ${filing.id} failed`, err);
     }
   }
@@ -198,6 +208,7 @@ export async function finalizeFaxDelivered(
       proof,
       receiptPdfBytes,
       signedPdfBytes,
+      customerEmailStatus,
     });
     result.adminEmailed = true;
   } catch (err) {
@@ -207,8 +218,11 @@ export async function finalizeFaxDelivered(
   if (apnsConfigured()) {
     try {
       await sendAdminPush({
-        title: "Fax delivered",
-        body: `${filing.llcName ?? filing.id} — delivered to IRS`,
+        title: customerEmailStatus === "failed" ? "Fax delivered — customer email FAILED" : "Fax delivered",
+        body:
+          customerEmailStatus === "failed"
+            ? `${filing.llcName ?? filing.id} — delivered to IRS. Customer email failed: use Resend fax confirmation.`
+            : `${filing.llcName ?? filing.id} — delivered to IRS`,
         threadId: filing.id,
       });
     } catch {}
@@ -217,9 +231,11 @@ export async function finalizeFaxDelivered(
 }
 
 // Give-up path for a fax Telnyx has confirmed failed and that will NOT be
-// retried (the webhook decides retries before calling this; the poll never
-// retries). Only moves to FAILED from a still-in-flight status, so a late or
-// duplicate failure can never regress a CONFIRMED filing or double-email.
+// retried (lib/fax/retry.ts decides that and is the only caller). Only moves
+// to FAILED from the exact state the caller observed — same fax job, same
+// faxStatus, not yet CONFIRMED/FAILED — so a late or duplicate failure can
+// never regress a CONFIRMED filing, double-email, or fail a filing whose
+// retry was claimed in the meantime.
 export async function finalizeFaxFailed(
   filing: FaxFinalizeFiling,
   failure: { faxId: string; failureReason: string | null; deliveryAttempts: number },
@@ -230,7 +246,12 @@ export async function finalizeFaxFailed(
   const faxStatus = failure.failureReason ? `failed:${failure.failureReason}` : "failed";
 
   const claim = await prisma.filing.updateMany({
-    where: { id: filing.id, status: { notIn: ["CONFIRMED", "FAILED"] } },
+    where: {
+      id: filing.id,
+      faxJobId: failure.faxId,
+      faxStatus: filing.faxStatus,
+      status: { notIn: ["CONFIRMED", "FAILED"] },
+    },
     data: { faxStatus, status: "FAILED" },
   });
   if (claim.count !== 1) {

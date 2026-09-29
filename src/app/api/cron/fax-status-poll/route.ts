@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { finalizeFaxDelivered, finalizeFaxFailed } from "@/lib/fax/finalize";
-import { isPollable, pollCandidatesWhere, POLL_MAX_ROWS } from "@/lib/fax/pollCandidates";
+import { finalizeFaxDelivered } from "@/lib/fax/finalize";
+import { handleConfirmedFaxFailure } from "@/lib/fax/retry";
+import { isPollable, pollCandidatesWhere, POLL_MAX_ROWS, staleRetryClaim } from "@/lib/fax/pollCandidates";
 import {
   deliveryFactsFromTelnyx,
   fetchTelnyxFax,
@@ -16,9 +17,11 @@ export const maxDuration = 60;
 // Backstop for /api/telnyx-webhook. Runs HOURLY via Vercel Cron (vercel.json
 // — not more often: the DB is Neon with scale-to-zero, and every run wakes
 // it). For every filing whose fax outcome is still unknown it asks Telnyx's
-// API directly and, on a delivered/failed answer, calls the SAME finalize
-// functions the webhook uses (lib/fax/finalize.ts). Their atomic claim makes
-// a webhook/poll race produce exactly one customer email and one receipt.
+// API directly and, on a delivered/failed answer, calls the SAME shared code
+// the webhook uses: lib/fax/finalize.ts for delivered, lib/fax/retry.ts for
+// failed (automatic re-fax while retries remain, FAILED only once they are
+// exhausted). Their atomic claims make a webhook/poll race produce exactly
+// one customer email, one receipt, and at most one resubmission.
 //
 // "Outcome unknown" = has a faxJobId, status is not CONFIRMED, and faxStatus
 // is not terminal (see isTerminalFaxStatus). That includes every in-progress
@@ -33,9 +36,6 @@ export const maxDuration = 60;
 
 // Stop starting new Telnyx lookups with headroom before maxDuration.
 const TIME_BUDGET_MS = 45 * 1000;
-// A failure only minutes old belongs to the webhook, which may still re-fax
-// it (the poll never retries). Give it this long before the poll gives up.
-const FAILURE_GRACE_MS = 10 * 60 * 1000;
 
 export async function GET(req: Request) {
   if (!isAuthorized(req)) {
@@ -56,18 +56,30 @@ export async function GET(req: Request) {
     orderBy: { updatedAt: "asc" },
     take: POLL_MAX_ROWS,
   });
-  const pollable = candidates.filter((f) => isPollable(f, now));
-
+  const pollable = candidates.filter((f) => isPollable(f));
+  // A retrying_N claim that outlived its grace period means a resubmission
+  // crashed mid-flight: its fax may or may not be with Telnyx, so nothing
+  // automatic may touch it. Flag it every run until a human resolves it.
+  const stuckRetryClaims = candidates.filter((f) => staleRetryClaim(f, now)).map((f) => f.id);
+  for (const id of stuckRetryClaims) {
+    const f = candidates.find((c) => c.id === id)!;
+    console.error(
+      `[fax-status-poll] STUCK_RETRY_CLAIM filing=${id} faxStatus=${f.faxStatus} faxJobId=${f.faxJobId} since ${f.updatedAt.toISOString()} — check Telnyx for a resubmitted fax before re-faxing`,
+    );
+  }
   const result = {
     candidates: candidates.length,
     inFlight: pollable.length,
     reconciled: 0,
     delivered: 0,
     failed: 0,
+    retried: 0,
     alreadyFinalized: 0,
     stillSending: 0,
-    recentFailureLeftForWebhook: 0,
+    heldPreflight: 0,
     deferred: 0,
+    stuckRetryClaims,
+    attention: [] as string[],
     errors: [] as string[],
   };
 
@@ -96,23 +108,46 @@ export async function GET(req: Request) {
           result.alreadyFinalized++;
         }
       } else if (isTelnyxFailedStatus(tx.status)) {
-        // The poll never re-faxes; retries are the webhook's job. This is the
-        // same give-up path the webhook takes once retries are exhausted.
-        const failedAt = tx.updated_at ? Date.parse(tx.updated_at) : NaN;
-        if (Number.isFinite(failedAt) && startedAt - failedAt < FAILURE_GRACE_MS) {
-          result.recentFailureLeftForWebhook++;
-          continue;
-        }
-        const outcome = await finalizeFaxFailed(
+        // Same retry-or-give-up code the webhook runs: re-fax while retries
+        // remain, FAILED + customer email only once they are exhausted.
+        const outcome = await handleConfirmedFaxFailure(
           filing,
-          { faxId: filing.faxJobId!, failureReason: tx.failure_reason ?? null, deliveryAttempts: 0 },
+          {
+            faxId: filing.faxJobId!,
+            failureReason: tx.failure_reason ?? null,
+            reportedAttempts: typeof tx.delivery_attempts === "number" ? tx.delivery_attempts : null,
+          },
           { source: "poll" },
         );
-        if (outcome.claimed) {
-          result.failed++;
-          result.reconciled++;
-        } else {
-          result.alreadyFinalized++;
+        switch (outcome.outcome) {
+          case "retried":
+            result.retried++;
+            result.reconciled++;
+            break;
+          case "retried_untracked":
+            result.retried++;
+            result.attention.push(`${filing.id}: untracked retry fax ${outcome.newFaxId}`);
+            break;
+          case "submit_ambiguous":
+            result.attention.push(`${filing.id}: ambiguous resubmission — ${outcome.error}`);
+            break;
+          case "submit_rejected":
+            result.errors.push(`${filing.id}: resubmission rejected — ${outcome.error}`);
+            break;
+          case "held_preflight":
+            result.heldPreflight++;
+            break;
+          case "gave_up":
+            if (outcome.claimed) {
+              result.failed++;
+              result.reconciled++;
+            } else {
+              result.alreadyFinalized++;
+            }
+            break;
+          case "not_claimed":
+            result.alreadyFinalized++;
+            break;
         }
       } else {
         // Still queued/sending — leave the row as-is; the next pass re-checks.

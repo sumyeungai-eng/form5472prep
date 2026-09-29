@@ -18,6 +18,7 @@ export type TelnyxFax = {
   failure_reason?: string | null;
   page_count?: number | null;
   call_duration_secs?: number | null;
+  delivery_attempts?: number | null;
   from?: string | null;
   to?: string | null;
   updated_at?: string | null;
@@ -46,10 +47,10 @@ export function isTerminalFaxStatus(faxStatus: string | null | undefined): boole
   return faxStatus === "delivered" || faxStatus === "failed" || faxStatus.startsWith("failed:");
 }
 
-// "retry_N" = the webhook re-submitted the fax (N = our attempt counter);
-// "retrying_N" = the webhook's short-lived claim while it re-submits. The
-// failed-path attempt ceiling is derived from these labels, so they must
-// never be overwritten by an in-progress status event.
+// "retry_N" = the fax was automatically re-submitted (N = our attempt
+// counter); "retrying_N" = the claim held while a re-submission is in flight
+// (see lib/fax/retry.ts). The attempt ceiling is derived from these labels,
+// so they must never be overwritten by an in-progress status event.
 export function isRetryLabel(faxStatus: string | null | undefined): boolean {
   return !!faxStatus && /^retr(?:y|ying)_\d+$/.test(faxStatus);
 }
@@ -105,9 +106,10 @@ function num(v: unknown): number | null {
   return typeof v === "number" && Number.isFinite(v) ? v : null;
 }
 
-// Telnyx's API record wins; the (possibly unsigned) webhook payload only
-// fills fields the API response left out (e.g. page_count / call_duration_secs,
-// which the webhook payload always carries).
+// Telnyx's API record wins. `fallback` fills fields the API response left out
+// — callers pass a webhook payload ONLY when its signature was verified: these
+// facts are printed on the customer's legal proof-of-filing receipt, so an
+// unsigned (forgeable) payload must never supply them.
 export function deliveryFactsFromTelnyx(
   fax: TelnyxFax,
   fallback: Record<string, unknown> | null | undefined = null,
