@@ -353,7 +353,7 @@ function FinalCta() {
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-accent-100">
           Our late-filing package prepares the missing Form 5472 and pro forma Form 1120 for each year,
-          plus a reasonable-cause statement. A qualified tax accountant reviews every package before
+          plus a reasonable-cause statement. Every filing is reviewed by a qualified accountant before
           it is submitted. {formatPrice(TIERS.standard.priceCents)} for the first year,{" "}
           {formatPrice(MULTI_YEAR_ADDON_CENTS)} for each additional year.
         </p>

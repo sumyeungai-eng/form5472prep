@@ -53,7 +53,7 @@ const RATE_FAQS = [
   },
   {
     q: "How often does the IRS update this table?",
-    a: "The IRS typically posts the new full-year rates each January, once the prior tax year has ended, and keeps a rolling multi-year window on the same page.",
+    a: "The IRS adds a newly completed year to the same page after that year ends and keeps a rolling multi-year window. We revisit the table whenever the IRS updates it.",
   },
 ] as const;
 
@@ -160,8 +160,8 @@ function RatesTable() {
             IRS yearly average exchange rate table ({YEARS[YEARS.length - 1]}–{YEARS[0]})
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-slate-600">
-            Rates are units of foreign currency per 1 U.S. dollar, exactly as
-            published by the IRS. Source:{" "}
+            Rates are units of foreign currency per 1 U.S. dollar, as
+            published by the IRS (two typos corrected, see below). Source:{" "}
             <a
               href={SOURCE_URL}
               target="_blank"
@@ -247,12 +247,7 @@ function RatesTable() {
                 </span>
               );
             })}
-            . We show the corrected value above and use it in the converter;
-            see{" "}
-            <span className="font-medium">
-              our source notes for the raw HTML evidence
-            </span>
-            .
+            . We show the corrected value above and use it in the converter.
           </p>
         ) : null}
       </div>
@@ -311,15 +306,13 @@ function HowWeCalculate() {
             for additional rates and resources not listed in this table.
           </p>
           <p>
-            The IRS typically adds the newly completed tax year&rsquo;s rates
-            to this table each January and keeps a rolling multi-year window,
-            so we revisit this table when the IRS updates it.
+            The IRS adds each newly completed tax year&rsquo;s rates to this
+            table after the year ends and keeps a rolling multi-year window, so
+            we revisit this table when the IRS updates it.
           </p>
           <p className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500">
             Last reviewed {PAGE_LAST_REVIEWED_LABEL}. Rates captured directly
-            from irs.gov; see our{" "}
-            <span className="font-medium text-slate-600">source research notes</span>{" "}
-            for the exact retrieval method.
+            from the irs.gov table.
           </p>
         </div>
       </div>

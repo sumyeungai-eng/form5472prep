@@ -370,7 +370,7 @@ function OutcomeCta({
         </Link>
         <p className="mt-2 text-xs leading-relaxed text-slate-600">
           Form 5472 + pro forma 1120 for each late year and a reasonable-cause statement, reviewed by a
-          qualified tax accountant before submission.
+          qualified accountant before it is submitted.
           {years
             ? ` Standard package for ${years.count} ${years.count === 1 ? "year" : "years"}: ${formatPrice(
                 packagePriceCents(years),

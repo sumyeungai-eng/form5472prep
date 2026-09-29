@@ -65,7 +65,7 @@ const CALENDAR_FAQS = [
   },
   {
     q: "Does my LLC use a calendar year or a fiscal year?",
-    a: "The IRS says a foreign-owned disregarded LLC uses its owner's US tax year or, if the owner has none, the calendar year. Most foreign owners have no US filing requirement, so their LLC's year ends 31 December.",
+    a: "The IRS says a foreign-owned disregarded LLC uses its owner's US tax year or, if the owner has none, the calendar year. If the owner has no US tax year, the LLC's year ends 31 December.",
   },
   {
     q: "Does a foreign-owned LLC still need to file a BOI report?",
@@ -112,7 +112,7 @@ export default function ComplianceCalendarPage() {
               Foreign-owned LLC compliance calendar.
             </h1>
             <p data-speakable className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-300">
-              A foreign-owned single-member LLC has one federal deadline a year: Form 5472 attached to a pro forma
+              A foreign-owned single-member LLC has one federal filing of its own each year: Form 5472 attached to a pro forma
               Form 1120, due the 15th day of the 4th month after its tax year ends — 15 April for a calendar year, or
               15 October with a timely Form 7004. On top of that comes its state&apos;s annual tax or report. US-formed
               LLCs no longer file FinCEN BOI reports.

@@ -214,9 +214,9 @@ export function PenaltyCalculator() {
                 Filing now under the IRS Delinquent International Information
                 Return Submission Procedures (DIIRSP), with a reasonable-cause
                 statement, is the standard resolution path for many late Form
-                5472 cases. These penalties are frequently abated for first-time
-                late filers who can document reasonable cause, though the IRS
-                decides each case on its facts.
+                5472 cases. The IRS can excuse these penalties for reasonable
+                cause, deciding each case on its facts; there is no guarantee, and
+                First Time Abate generally does not apply.
               </p>
               <p className="mt-3 text-sm leading-relaxed text-emerald-950">
                 Read the late-filing overview{" "}

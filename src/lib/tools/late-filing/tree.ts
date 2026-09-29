@@ -170,7 +170,7 @@ const DIIRSP_MEANING =
   "This is the IRS's Delinquent International Information Return Submission Procedures (DIIRSP). The IRS says taxpayers who are not under a civil examination or criminal investigation, and have not already been contacted by the IRS about the delinquent returns, should file them through normal filing procedures.";
 
 const DIIRSP_FILING =
-  "For each late year: a pro forma Form 1120 with Form 5472 attached, faxed or mailed to the IRS the way the Form 5472 instructions direct for foreign-owned U.S. disregarded entities.";
+  "For each late year: a pro forma Form 1120 with Form 5472 attached, faxed or mailed to the IRS the way the Form 5472 instructions direct for foreign-owned U.S. disregarded entities. (The DIIRSP page talks about attaching late returns to an amended income tax return; for an LLC that never filed, our reading is that the missing pro forma Form 1120 itself is filed.)";
 
 const ALL_YEARS_TOGETHER =
   "Every late year at the same time. The IRS manual recommends that reasonable cause not be considered for any year until all delinquent returns have been filed.";

@@ -43,7 +43,8 @@ export const TX_CHECKER_FAQS: ReadonlyArray<Faq> = [
   },
   {
     q: "What if I leave a reportable transaction off Form 5472?",
-    a: "Filing a substantially incomplete Form 5472 counts as failing to file. The penalty is $25,000 per year under IRC §6038A(d), plus $25,000 for each 30-day period, or part of one, that the failure continues more than 90 days after an IRS notice.",
+    a: "Leaving transactions off can make the form substantially incomplete, which the IRS treats as not filing. The penalty is $25,000 per year under IRC §6038A(d), plus $25,000 per 30-day period the failure continues more than 90 days after an IRS notice.",
+
   },
   {
     q: "Does my LLC file if none of its transactions are reportable?",

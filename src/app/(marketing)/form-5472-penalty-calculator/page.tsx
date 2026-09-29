@@ -39,11 +39,11 @@ const PENALTY_FAQS = [
   },
   {
     q: "Can the penalty be abated?",
-    a: "Yes, but there are no guarantees. Many late filers pursue reasonable-cause relief through DIIRSP, and first-time late filers are frequently successful when the facts support reasonable cause.",
+    a: "Possibly, but there is no guarantee. Treas. Reg. §1.6038A-4(b) lets the IRS excuse a late Form 5472 for reasonable cause, decided case by case. First Time Abate generally does not apply to Form 5472 penalties.",
   },
   {
     q: "What is a CP15 notice?",
-    a: "A CP15 is an IRS notice assessing a civil penalty. For Form 5472, it is commonly the notice that starts the post-notice timeline for continuation penalties if the filing is still not corrected.",
+    a: "It is an IRS notice assessing a civil penalty. For Form 5472 penalties the IRS manual names notice CP 215. Once the IRS has notified you of the failure, continuation penalties can start 90 days later if the filing is still not corrected.",
   },
   {
     q: "Does having no income exempt me from the penalty?",
@@ -108,7 +108,7 @@ function Hero() {
             data-speakable
             className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300"
           >
-            The IRS assesses $25,000 per Form 5472, per year, automatically, and
+            The IRS can assess $25,000 per Form 5472, per year, often automatically when a late return is processed, and
             another $25,000 per 30 days once 90 days pass after a notice.
           </p>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-slate-400">
@@ -146,7 +146,7 @@ function HowPenaltyWorks() {
     {
       icon: FileWarning,
       title: "What is the initial penalty?",
-      body: `The initial penalty is ${formatPrice(PENALTY_PER_FORM_CENTS)} per Form 5472, per year. We use it as a statutory exposure estimate because the IRS assesses it automatically when required Form 5472 information is late, missing, or incomplete, before you compare the number with the ordinary catch-up route.`,
+      body: `The initial penalty is ${formatPrice(PENALTY_PER_FORM_CENTS)} per Form 5472, per year. We use it as a statutory exposure estimate because the IRS can assess it when required Form 5472 information is late, missing, or substantially incomplete (often automatically when a late return is processed), before you compare the number with the ordinary catch-up route.`,
     },
     {
       icon: Clock,
@@ -161,7 +161,7 @@ function HowPenaltyWorks() {
     {
       icon: ShieldCheck,
       title: "What is the relief path?",
-      body: "The relief path is a DIIRSP filing that pairs late information returns with a reasonable-cause statement. We follow the ordinary catch-up route described above: file the missing Form 5472 package, include the statement, and ask the IRS to abate penalties when the facts support reasonable cause.",
+      body: "If the IRS has not contacted you yet, the relief path is a DIIRSP filing that pairs late information returns with a reasonable-cause statement. We follow the ordinary catch-up route described above: file the missing Form 5472 package, include the statement, and ask the IRS to abate penalties when the facts support reasonable cause.",
     },
   ];
 
