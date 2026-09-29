@@ -67,9 +67,14 @@ export function DashboardRow({
 
   return (
     <div className="relative">
-      <Link href={href} className="flex items-center justify-between p-5 hover:bg-slate-50">
+      <Link
+        href={href}
+        className="flex flex-col gap-3 p-5 hover:bg-slate-50 sm:flex-row sm:items-center sm:justify-between"
+      >
+        {/* Phones: details on top, status/price row underneath, so a long LLC
+            name or many tax years never get squeezed into a narrow column. */}
         <div className="min-w-0">
-          <p className="font-medium text-slate-900 truncate">
+          <p className="font-medium text-slate-900 break-words sm:truncate">
             {llcName ?? <em className="text-slate-400">Unnamed filing</em>}
           </p>
           <p className="text-sm text-slate-500 mt-0.5">
@@ -79,7 +84,7 @@ export function DashboardRow({
           </p>
           <p className="text-xs text-slate-400 mt-1">Last updated {updatedAt}</p>
         </div>
-        <div className="flex-none text-right ml-4 flex items-center gap-3">
+        <div className="flex flex-none items-center gap-3 sm:ml-4 sm:text-right">
           {unreadMessages > 0 && (
             <span
               className="inline-flex items-center gap-1 rounded-full bg-blue-900 text-white text-xs font-medium px-2.5 py-1"
@@ -89,13 +94,13 @@ export function DashboardRow({
               {unreadMessages}
             </span>
           )}
-          <div>
+          <div className="flex items-center gap-2 sm:block">
             <span
               className={`inline-block text-xs font-medium px-2.5 py-1 rounded-full ${TONE[statusTone]}`}
             >
               {statusLabel}
             </span>
-            <p className="text-xs text-slate-500 mt-2">{formatUsd(amountPaid)}</p>
+            <p className="text-xs text-slate-500 sm:mt-2">{formatUsd(amountPaid)}</p>
           </div>
           {canDelete && (
             <button
@@ -104,7 +109,7 @@ export function DashboardRow({
               disabled={deleting}
               aria-label="Delete draft filing"
               title="Delete draft filing"
-              className="p-2 -mr-2 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="ml-auto p-2 -mr-2 rounded-md text-slate-400 sm:ml-0 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -112,7 +117,7 @@ export function DashboardRow({
         </div>
       </Link>
       {hasFaxReceipt && (
-        <div className="px-5 pb-4 -mt-2">
+        <div className="px-5 pb-4 -mt-1 sm:-mt-2">
           <a
             href={`/api/filings/${id}/fax-receipt`}
             target="_blank"

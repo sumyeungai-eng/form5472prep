@@ -150,6 +150,13 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
 
   const preflightOverrideReady = preflightOverrideReason.trim().replace(/\s/g, "").length >= 10;
   const preflightAllowsSignature = preflightStatus === "passed" || !!preflightOverrideBy;
+  // A fax already went out (in flight or delivered): sending again needs an
+  // explicit confirm so the IRS never gets a duplicate by accident.
+  const alreadyFaxed = currentStatus === "FAXED" || currentStatus === "CONFIRMED";
+  const faxAgainWarning =
+    currentStatus === "CONFIRMED"
+      ? "This filing was already DELIVERED to the IRS. Faxing again sends the IRS a second copy of the package. Only do this if the IRS asked for it. Continue?"
+      : "A fax for this filing is already on its way or waiting for delivery confirmation. Sending again may give the IRS a duplicate. Continue?";
   const approvalBlockedByStatus = ["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(currentStatus);
   const approvalDisabledReason = !hasGeneratedPdf
     ? "Generate the filing package first."
@@ -185,6 +192,74 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         >
           {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
         </button>
+      </div>
+
+      {preflightStatus === "failed" && (
+        <div className="pt-2 border-t border-slate-100 space-y-2">
+          <label className="block">
+            <span className="block text-xs font-medium text-slate-600 mb-1">
+              Why is this package safe to send?
+            </span>
+            <textarea
+              value={preflightOverrideReason}
+              onChange={(e) => setPreflightOverrideReason(e.target.value)}
+              disabled={pending || uploading !== null}
+              rows={3}
+              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent disabled:bg-slate-50 disabled:text-slate-400"
+            />
+          </label>
+          <ActionButton
+            disabled={pending || uploading !== null || !preflightOverrideReady}
+            onClick={async () => {
+              const ok = await callApi(
+                { action: "approvePreflightOverride", reason: preflightOverrideReason },
+                "Pre-flight override recorded. Faxing is enabled.",
+              );
+              if (ok) setPreflightOverrideReason("");
+            }}
+            tooltip="Records staff approval to fax a package that failed automated pre-flight checks."
+          >
+            Approve despite pre-flight failures
+          </ActionButton>
+        </div>
+      )}
+
+      <div className="pt-2 border-t border-slate-100 space-y-2">
+        <p className="text-xs text-slate-500">Review approval</p>
+        {reviewApprovedAt ? (
+          <p className="text-sm text-emerald-700">
+            ✓ Approved for signature by {reviewApprovedBy ?? "unknown admin"} at {reviewApprovedAt}.
+          </p>
+        ) : (
+          <p className="text-sm text-slate-500">Not approved for customer signature yet.</p>
+        )}
+        {/* Past signing there is nothing to approve — hide the button
+            instead of showing a disabled one with a warning. */}
+        {!approvalBlockedByStatus && (
+          <>
+            <ActionButton
+              disabled={pending || uploading !== null || !!approvalDisabledReason}
+              onClick={() =>
+                callApi({ action: "approveForSignature" }, (body) => {
+                  if (body.emailSent === false) {
+                    const message = typeof body.emailError === "string" && body.emailError.trim()
+                      ? body.emailError.trim()
+                      : "Unknown email error";
+                    return `Approved, but the email to the customer failed: ${message}`;
+                  }
+                  return "Customer can sign now. Ready-to-sign email sent.";
+                })
+              }
+              tooltip={approvalDisabledReason ?? "Approve the generated package and email the customer to sign."}
+              primary={!reviewApprovedAt}
+            >
+              Approve for signature
+            </ActionButton>
+            {approvalDisabledReason && (
+              <p className="text-xs text-amber-700">{approvalDisabledReason}</p>
+            )}
+          </>
+        )}
       </div>
 
       {/* Sign the package — two paths, pick one:
@@ -241,210 +316,176 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         </p>
       </div>
 
-      {/* Send fax — primary action when signed PDF is ready */}
+      {/* Fax submission. Once a fax is out, sending again is a deliberate,
+          confirmed step — one click must never give the IRS a duplicate. */}
       {hasFaxService && (
-        <div className="pt-2 border-t border-slate-100">
-          <p className="text-xs text-slate-500 mb-2">Fax submission</p>
+        <div className="pt-2 border-t border-slate-100 space-y-2">
+          <p className="text-xs text-slate-500">Fax submission</p>
+          {currentStatus === "CONFIRMED" && (
+            <p className="text-sm text-emerald-700">
+              ✓ Delivered to the IRS{faxedAt ? ` (sent ${formatUtc(faxedAt)})` : ""}.
+            </p>
+          )}
+          {currentStatus === "FAXED" && (
+            <p className="text-sm text-slate-700">
+              Fax sent{faxedAt ? ` ${formatUtc(faxedAt)}` : ""} — waiting for delivery confirmation.
+            </p>
+          )}
           <ActionButton
             disabled={pending || uploading !== null || !hasSignedPdf}
-            onClick={() => callApi({ action: "retryFax" }, "Fax submitted to IRS ✓")}
+            onClick={async () => {
+              if (alreadyFaxed && !window.confirm(faxAgainWarning)) return;
+              await callApi({ action: "retryFax" }, "Fax submitted to IRS ✓");
+            }}
             tooltip={!hasSignedPdf ? "No signed PDF uploaded yet" : undefined}
-            primary
+            primary={!alreadyFaxed}
           >
-            {currentStatus === "FAXED" || currentStatus === "CONFIRMED" ? "Retry fax" : "Send fax to IRS"}
+            {alreadyFaxed ? "Fax again…" : currentStatus === "FAILED" ? "Retry fax" : "Send fax to IRS"}
           </ActionButton>
           {!hasSignedPdf && (
-            <p className="text-xs text-slate-400 mt-1">Waiting for customer to upload signed PDF</p>
+            <p className="text-xs text-slate-400">Waiting for customer to upload signed PDF</p>
           )}
         </div>
       )}
 
-      {preflightStatus === "failed" && (
-        <div className="pt-2 border-t border-slate-100 space-y-2">
-          <label className="block">
-            <span className="block text-xs font-medium text-slate-600 mb-1">
-              Why is this package safe to send?
-            </span>
-            <textarea
-              value={preflightOverrideReason}
-              onChange={(e) => setPreflightOverrideReason(e.target.value)}
-              disabled={pending || uploading !== null}
-              rows={3}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent disabled:bg-slate-50 disabled:text-slate-400"
-            />
-          </label>
-          <ActionButton
-            disabled={pending || uploading !== null || !preflightOverrideReady}
-            onClick={async () => {
-              const ok = await callApi(
-                { action: "approvePreflightOverride", reason: preflightOverrideReason },
-                "Pre-flight override recorded. Faxing is enabled.",
-              );
-              if (ok) setPreflightOverrideReason("");
-            }}
-            tooltip="Records staff approval to fax a package that failed automated pre-flight checks."
-          >
-            Approve despite pre-flight failures
-          </ActionButton>
-        </div>
-      )}
-
       <div className="pt-2 border-t border-slate-100 space-y-2">
-        <p className="text-xs text-slate-500">Review approval</p>
-        {reviewApprovedAt ? (
-          <p className="text-sm text-slate-700">
-            Approved for signature by {reviewApprovedBy ?? "unknown admin"} at {reviewApprovedAt}.
-          </p>
-        ) : (
-          <p className="text-sm text-slate-500">Not approved for customer signature yet.</p>
-        )}
-        <ActionButton
-          disabled={pending || uploading !== null || !!approvalDisabledReason}
-          onClick={() =>
-            callApi({ action: "approveForSignature" }, (body) => {
-              if (body.emailSent === false) {
-                const message = typeof body.emailError === "string" && body.emailError.trim()
-                  ? body.emailError.trim()
-                  : "Unknown email error";
-                return `Approved, but the email to the customer failed: ${message}`;
-              }
-              return "Customer can sign now. Ready-to-sign email sent.";
-            })
-          }
-          tooltip={approvalDisabledReason ?? "Approve the generated package and email the customer to sign."}
-          primary
-        >
-          Approve for signature
-        </ActionButton>
-        {approvalDisabledReason && (
-          <p className="text-xs text-amber-700">{approvalDisabledReason}</p>
-        )}
+        <p className="text-xs text-slate-500">Customer emails</p>
+        <div className="flex flex-wrap items-center gap-2">
+            <ActionButton
+              disabled={pending || uploading !== null || !userEmail}
+              onClick={() => callApi({ action: "resendOrderConfirmation" }, "Order confirmation resent")}
+              tooltip={!userEmail ? "No customer email on file" : undefined}
+            >
+              Resend order confirmation
+            </ActionButton>
+            <ActionButton
+              disabled={pending || uploading !== null || !userEmail}
+              onClick={() => callApi({ action: "resendMagicLink" }, "Magic link resent")}
+              tooltip={!userEmail ? "No customer email on file" : undefined}
+            >
+              Resend magic link
+            </ActionButton>
+            {canResendFaxConfirmation && (
+              <ActionButton
+                disabled={pending || uploading !== null || !userEmail || resendingFaxConfirmation}
+                onClick={async () => {
+                  setResendingFaxConfirmation(true);
+                  try {
+                    await callApi({ action: "resendFaxConfirmation" }, (body) => {
+                      const to = typeof body.to === "string" ? body.to : userEmail ?? "the customer";
+                      const receipt =
+                        body.receiptAttached === false
+                          ? "without a receipt attachment (no receipt PDF is on file)"
+                          : "with the receipt attached";
+                      const proof =
+                        body.proofIncluded === false ? " Telnyx details were unavailable, so the proof table was left out." : "";
+                      return `Fax confirmation resent to ${to} ${receipt}.${proof}`;
+                    });
+                  } finally {
+                    setResendingFaxConfirmation(false);
+                  }
+                }}
+                tooltip={
+                  !userEmail
+                    ? "No customer email on file"
+                    : hasFaxReceipt
+                      ? `Re-sends the "delivered to the IRS" email to ${userEmail} with the IRS fax transmission receipt PDF attached.`
+                      : `Re-sends the "delivered to the IRS" email to ${userEmail}. No receipt PDF is on file, so it goes without an attachment.`
+                }
+              >
+                {resendingFaxConfirmation ? "Resending fax confirmation…" : "Resend fax confirmation"}
+              </ActionButton>
+            )}
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-        <ActionButton
-          disabled={pending || uploading !== null || !userEmail}
-          onClick={() => callApi({ action: "resendOrderConfirmation" }, "Order confirmation resent")}
-          tooltip={!userEmail ? "No customer email on file" : undefined}
-        >
-          Resend order confirmation
-        </ActionButton>
-        <ActionButton
-          disabled={pending || uploading !== null || !userEmail}
-          onClick={() => callApi({ action: "resendMagicLink" }, "Magic link resent")}
-          tooltip={!userEmail ? "No customer email on file" : undefined}
-        >
-          Resend magic link
-        </ActionButton>
-        {canResendFaxConfirmation && (
-          <ActionButton
-            disabled={pending || uploading !== null || !userEmail || resendingFaxConfirmation}
-            onClick={async () => {
-              setResendingFaxConfirmation(true);
-              try {
-                await callApi({ action: "resendFaxConfirmation" }, (body) => {
-                  const to = typeof body.to === "string" ? body.to : userEmail ?? "the customer";
-                  const receipt =
-                    body.receiptAttached === false
-                      ? "without a receipt attachment (no receipt PDF is on file)"
-                      : "with the receipt attached";
-                  const proof =
-                    body.proofIncluded === false ? " Telnyx details were unavailable, so the proof table was left out." : "";
-                  return `Fax confirmation resent to ${to} ${receipt}.${proof}`;
-                });
-              } finally {
-                setResendingFaxConfirmation(false);
-              }
-            }}
-            tooltip={
-              !userEmail
-                ? "No customer email on file"
-                : hasFaxReceipt
-                  ? `Re-sends the "delivered to the IRS" email to ${userEmail} with the IRS fax transmission receipt PDF attached.`
-                  : `Re-sends the "delivered to the IRS" email to ${userEmail}. No receipt PDF is on file, so it goes without an attachment.`
-            }
-          >
-            {resendingFaxConfirmation ? "Resending fax confirmation…" : "Resend fax confirmation"}
-          </ActionButton>
-        )}
-        <ActionButton
-          disabled={pending || uploading !== null}
-          onClick={async () => {
-            if (!(await confirmRegenerate())) return;
-            await callApi({ action: "regeneratePdf" }, "PDF regenerated from current filing data");
-          }}
-          tooltip="Rebuilds the unsigned PDF from current filing fields. Use after editing fields by hand. Discards any existing signed PDF — customer must re-sign."
-        >
-          Regenerate PDF
-        </ActionButton>
-        <div className="flex flex-col gap-1">
-          <label>
-            <span
-              className={`inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-slate-300 bg-white ${
-                pending || uploading !== null ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-50 cursor-pointer"
-              }`}
-            >
-              {uploading === "reviewed" ? "Uploading reviewed package…" : "Upload reviewed package…"}
-            </span>
-            <input
-              type="file"
-              accept="application/pdf,.pdf"
-              disabled={pending || uploading !== null}
-              onChange={(e) => {
-                const input = e.currentTarget;
-                const file = e.target.files?.[0];
-                void handleReviewedPdfUpload(file).finally(() => {
-                  input.value = "";
-                });
+      <div className="pt-2 border-t border-slate-100 space-y-2">
+        <p className="text-xs text-slate-500">PDFs</p>
+        <div className="flex flex-wrap items-center gap-2">
+            {/* Quick preview link — opens the current unsigned PDF in a new
+                tab. Uses the admin-auth endpoint with Cache-Control: no-store
+                so a regen always shows the latest bytes (no stale CDN copy). */}
+            <a
+              href={`/api/admin/filings/${filingId}/pdf?t=${Date.now()}`}
+              target="_blank"
+              rel="noopener"
+              aria-disabled={!hasGeneratedPdf}
+              onClick={(e) => {
+                if (!hasGeneratedPdf) e.preventDefault();
               }}
-              className="sr-only"
-            />
-          </label>
-          <p className="max-w-xs text-xs text-slate-400">
-            The customer sees this file on their portal. Their saved signature is kept — use Place customer signature to stamp it onto this version before faxing.</p>
+              className={`inline-flex items-center px-3 py-1.5 text-sm rounded-md border transition-colors ${
+                hasGeneratedPdf
+                  ? "border-accent text-accent bg-accent/5 hover:bg-accent/10"
+                  : "border-slate-200 bg-slate-50 text-slate-300 cursor-not-allowed"
+              }`}
+              title={hasGeneratedPdf ? "Opens the current unsigned PDF in a new tab" : "Generate the PDF first"}
+            >
+              View unsigned PDF ↗
+            </a>
+            {hasSignedPdf && (
+              <a
+                href={`/api/admin/filings/${filingId}/pdf?signed=1&t=${Date.now()}`}
+                target="_blank"
+                rel="noopener"
+                className="inline-flex items-center px-3 py-1.5 text-sm rounded-md border border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
+                title="Opens the signed PDF (what will be faxed to the IRS on next Send fax)"
+              >
+                View signed PDF ↗
+              </a>
+            )}
+            {hasFaxedPdf && (
+              <a
+                href={`/api/admin/filings/${filingId}/pdf?faxed=1&t=${Date.now()}`}
+                target="_blank"
+                rel="noopener"
+                className="inline-flex items-center px-3 py-1.5 text-sm rounded-md border border-slate-400 text-slate-700 bg-slate-50 hover:bg-slate-100"
+                title={`Snapshot of the exact bytes faxed to the IRS${faxedAt ? ` at ${faxedAt}` : ""}`}
+              >
+                View faxed PDF ↗
+              </a>
+            )}
         </div>
-        {/* Quick preview link — opens the current unsigned PDF in a new
-            tab. Uses the admin-auth endpoint with Cache-Control: no-store
-            so a regen always shows the latest bytes (no stale CDN copy). */}
-        <a
-          href={`/api/admin/filings/${filingId}/pdf?t=${Date.now()}`}
-          target="_blank"
-          rel="noopener"
-          aria-disabled={!hasGeneratedPdf}
-          onClick={(e) => {
-            if (!hasGeneratedPdf) e.preventDefault();
-          }}
-          className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
-            hasGeneratedPdf
-              ? "border-accent text-accent bg-accent/5 hover:bg-accent/10"
-              : "border-slate-200 bg-slate-50 text-slate-300 cursor-not-allowed"
-          }`}
-          title={hasGeneratedPdf ? "Opens the current unsigned PDF in a new tab" : "Generate the PDF first"}
-        >
-          View unsigned PDF ↗
-        </a>
-        {hasSignedPdf && (
-          <a
-            href={`/api/admin/filings/${filingId}/pdf?signed=1&t=${Date.now()}`}
-            target="_blank"
-            rel="noopener"
-            className="px-3 py-1.5 text-sm rounded-md border border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
-            title="Opens the signed PDF (what will be faxed to the IRS on next Send fax)"
-          >
-            View signed PDF ↗
-          </a>
-        )}
-        {hasFaxedPdf && (
-          <a
-            href={`/api/admin/filings/${filingId}/pdf?faxed=1&t=${Date.now()}`}
-            target="_blank"
-            rel="noopener"
-            className="px-3 py-1.5 text-sm rounded-md border border-slate-400 text-slate-700 bg-slate-50 hover:bg-slate-100"
-            title={`Snapshot of the exact bytes faxed to the IRS${faxedAt ? ` at ${faxedAt}` : ""}`}
-          >
-            View faxed PDF ↗
-          </a>
-        )}
+      </div>
+
+      <div className="pt-2 border-t border-slate-100 space-y-2">
+        <p className="text-xs text-slate-500">Change the package</p>
+        <div className="flex flex-wrap items-center gap-2">
+            <ActionButton
+              disabled={pending || uploading !== null}
+              onClick={async () => {
+                if (!(await confirmRegenerate())) return;
+                await callApi({ action: "regeneratePdf" }, "PDF regenerated from current filing data");
+              }}
+              tooltip="Rebuilds the unsigned PDF from current filing fields. Use after editing fields by hand. Discards any existing signed PDF — customer must re-sign."
+            >
+              Regenerate PDF
+            </ActionButton>
+          <label>
+              <span
+                className={`inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-slate-300 bg-white ${
+                  pending || uploading !== null ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-50 cursor-pointer"
+                }`}
+              >
+                {uploading === "reviewed" ? "Uploading reviewed package…" : "Upload reviewed package…"}
+              </span>
+              <input
+                type="file"
+                accept="application/pdf,.pdf"
+                disabled={pending || uploading !== null}
+                onChange={(e) => {
+                  const input = e.currentTarget;
+                  const file = e.target.files?.[0];
+                  void handleReviewedPdfUpload(file).finally(() => {
+                    input.value = "";
+                  });
+                }}
+                className="sr-only"
+              />
+          </label>
+        </div>
+        <p className="max-w-prose text-xs text-slate-400">
+          Upload reviewed package: the customer sees this file on their portal. Their saved signature is kept — use Place customer signature to stamp it onto this version before faxing.
+        </p>
       </div>
 
       {msg && (
@@ -490,4 +531,9 @@ function ActionButton({
       {children}
     </button>
   );
+}
+
+function formatUtc(iso: string): string {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? iso : `${d.toISOString().slice(0, 16).replace("T", " ")} UTC`;
 }

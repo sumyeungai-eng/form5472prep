@@ -212,3 +212,5 @@ Claude and Codex sessions share these folders. Practical rules:
   year + 1 per filing; same data model; checkout map (Codex clone is live, Claude work clone stale).
 - `docs/sessions/2026-09-29-fax-email-hardening.md` — EmailLog audit trail + Resend webhook, one
   claim-guarded fax finalize/retry path (webhook + hourly poll), admin resend fax confirmation, receipt links.
+- `docs/sessions/2026-09-29-admin-actions-and-portal-layout.md` — admin actions regrouped in workflow order,
+  guarded "Fax again…"; portal rows stack on phones; plain-language fax steps.

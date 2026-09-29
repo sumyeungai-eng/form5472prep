@@ -137,7 +137,11 @@ export function FilingActions({ filing }: { filing: Filing }) {
           {filing.signedPdfKey ? (
             <>
               <p className="text-sm text-slate-600 mb-3">
-                Signed PDF is ready. The complete package is being prepared for fax.
+                {filing.faxJobId
+                  ? "Signed and sent to the IRS."
+                  : filing.faxService
+                    ? "Signed PDF is ready. The complete package is being prepared for fax."
+                    : "Signed. Fax the signed PDF to the IRS as shown in step 4."}
               </p>
               <a
                 href={`/api/filings/${filing.id}/signed-pdf`}
@@ -178,27 +182,31 @@ export function FilingActions({ filing }: { filing: Filing }) {
         >
           {filing.faxJobId ? (
             <>
+              {/* Plain-language fax status; the job id stays as a small reference. */}
               <p className="text-sm">
-                <span className="font-medium">Fax job:</span>{" "}
-                <span className="font-mono">{filing.faxJobId}</span> ·{" "}
-                <span className="font-medium">Status:</span> {filing.faxStatus}
+                {filing.faxStatus === "delivered" ? (
+                  <span className="font-medium text-emerald-700">Delivered to the IRS ✓</span>
+                ) : filing.faxStatus?.startsWith("failed") ? (
+                  <span className="text-slate-700">
+                    The last fax attempt didn&apos;t go through. Our team has been notified and will
+                    follow up.
+                  </span>
+                ) : (
+                  <span className="text-slate-700">
+                    Sending to the IRS — we&apos;ll email you as soon as it&apos;s delivered.
+                  </span>
+                )}
               </p>
+              <p className="mt-1 text-xs text-slate-400 break-all">Fax reference: {filing.faxJobId}</p>
               {filing.faxConfirmationKey && (
-                <div className="mt-3 rounded-md bg-emerald-50 border border-emerald-200 p-3 text-sm">
-                  <p className="font-medium text-emerald-900">Proof of filing ready</p>
-                  <p className="mt-1 text-emerald-800 text-xs leading-relaxed">
-                    Timestamped IRS Fax Transmission Receipt — keep with your tax records as
-                    proof of on-time filing under IRC § 6038A.
-                  </p>
-                  <a
-                    href={`/api/filings/${filing.id}/fax-receipt`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-3 inline-block"
-                  >
-                    <Button variant="outline">Download fax receipt (PDF)</Button>
-                  </a>
-                </div>
+                <a
+                  href={`/api/filings/${filing.id}/fax-receipt`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-block text-sm text-accent hover:underline"
+                >
+                  Download IRS fax receipt (PDF)
+                </a>
               )}
             </>
           ) : (
