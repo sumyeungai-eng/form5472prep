@@ -1,15 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, ExternalLink, ShieldCheck } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
+import { SPEAKABLE, breadcrumbList, organizationNode, pageMeta } from "@/lib/seo";
 import {
-  CONTENT_LAST_REVIEWED,
-  SPEAKABLE,
-  breadcrumbList,
-  organizationNode,
-  pageMeta,
-} from "@/lib/seo";
+  LAST_REVIEWED_ISO,
+  LAST_REVIEWED_LABEL,
+  SOURCES,
+  type SourceId,
+} from "@/lib/tools/filing-checker/sources";
 import { FilingChecker } from "./FilingChecker";
 
 const PAGE_PATH = "/do-i-need-to-file-form-5472";
@@ -42,7 +42,7 @@ const CHECKER_FAQS = [
   },
   {
     q: "What happens if Form 5472 is missed?",
-    a: "The IRS penalty is generally $25,000 for a missing or incomplete Form 5472. Late filings can sometimes include a reasonable cause explanation, but the best answer depends on the exact facts.",
+    a: "The penalty is $25,000 for a Form 5472 that is not filed when due or is substantially incomplete. Late filings can sometimes include a reasonable cause explanation, but the best answer depends on the exact facts.",
   },
 ];
 
@@ -53,6 +53,7 @@ export default function DoINeedToFileForm5472Page() {
       <Hero />
       <FilingChecker />
       <PlainEnglishRule />
+      <HowWeDecide />
       <Faq />
       <FinalCta />
     </>
@@ -82,7 +83,7 @@ function Hero() {
           </h1>
           <p data-speakable className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
             A foreign-owned US single-member LLC with any reportable transaction during the year
-            must file Form 5472 with a pro forma Form 1120, due April 15.
+            must file Form 5472 with a pro forma Form 1120, due April 15 for a calendar-year LLC.
           </p>
           <ul className="mt-7 grid gap-2 text-sm text-slate-300 sm:grid-cols-3">
             {["No email required", "Honest no-filing paths", "Built for foreign-owned LLCs"].map(
@@ -129,6 +130,99 @@ function PlainEnglishRule() {
             when the facts point elsewhere.
           </p>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function SourceLink({ id }: { id: SourceId }) {
+  const source = SOURCES[id];
+  return (
+    <a
+      href={source.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex max-w-full items-start gap-1 break-words font-medium text-accent underline underline-offset-4 hover:no-underline"
+    >
+      <span className="min-w-0">{source.label}</span>
+      <ExternalLink className="mt-1 h-3 w-3 shrink-0" aria-hidden />
+    </a>
+  );
+}
+
+function HowWeDecide() {
+  const rules: Array<{ title: string; body: string; sources: SourceId[] }> = [
+    {
+      title: "Who must file",
+      body: "A U.S. LLC wholly owned by one foreign person is disregarded for income tax, but the regulations treat it as a corporation for section 6038A, which makes it a “reporting corporation”. A reporting corporation must file Form 5472 if it had a reportable transaction with a related party, and a foreign-owned LLC files it attached to a pro forma Form 1120.",
+      sources: ["reg7701_2", "reg6038a1", "i5472"],
+    },
+    {
+      title: "One owner or two or more",
+      body: "By default a U.S. LLC with two or more members is a partnership, and one with a single owner is disregarded. Partnerships file Form 1065, so a multi-member LLC gets the “different rules” result. The pro forma Form 1120 route is written for the single-owner case.",
+      sources: ["reg7701_3", "i1065"],
+    },
+    {
+      title: "A U.S. owner",
+      body: "The disregarded-entity rule applies when one foreign person owns the LLC. A single-member LLC owned by a U.S. person isn't covered by it, so the checker shows no Form 5472 filing.",
+      sources: ["reg7701_2", "i5472"],
+    },
+    {
+      title: "A corporate election",
+      body: "An LLC that elected to be taxed as a corporation files its own corporate income tax return. If it is at least 25% foreign-owned it is a reporting corporation and attaches Form 5472 to that return, so the filing path differs. “Not sure” is treated as no election, because the default classification applies unless the LLC elected otherwise.",
+      sources: ["i5472", "irc6038a", "reg7701_3"],
+    },
+    {
+      title: "The tax year",
+      body: "Form 5472 reports transactions during the reporting corporation’s tax year, so the checker asks whether the LLC existed at any point in the year. A foreign-owned LLC uses its owner’s U.S. tax year or, if the owner has none, the calendar year.",
+      sources: ["i5472"],
+    },
+    {
+      title: "Reportable transactions",
+      body: "For a foreign-owned LLC, reportable transactions include amounts paid or received in connection with forming, dissolving, acquiring or disposing of the LLC, including contributions to and distributions from it, as well as payments such as loans listed in Part IV of the form. No income is not the same as no transactions. The instructions excuse a year with no reportable transactions.",
+      sources: ["reg6038a2", "i5472"],
+    },
+    {
+      title: "Deadline and penalty",
+      body: "The pro forma Form 1120 is due by the 15th day of the 4th month after the tax year ends (April 15 for a calendar year), or later with a timely Form 7004. Not filing Form 5472 when due, or filing a substantially incomplete one, carries a $25,000 penalty.",
+      sources: ["i1120", "i5472", "irc6038a"],
+    },
+  ];
+
+  return (
+    <section id="how-we-decide" className="border-b border-slate-100 bg-paper py-16">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6">
+        <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent">
+          How we decide
+        </p>
+        <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">
+          Which rules does the checker follow?
+        </h2>
+        <p className="mt-4 text-sm leading-relaxed text-slate-600">
+          Each question applies one rule from the primary sources below. Where you answer
+          &ldquo;Not sure&rdquo; about money moving, the checker leans towards filing; that is our
+          cautious choice, not an IRS rule.
+        </p>
+        <div className="mt-8 space-y-4">
+          {rules.map((rule) => (
+            <article key={rule.title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 className="text-base font-semibold text-slate-900">{rule.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">{rule.body}</p>
+              <ul className="mt-3 space-y-1 text-sm">
+                {rule.sources.map((id) => (
+                  <li key={id} className="min-w-0">
+                    <SourceLink id={id} />
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+        <p className="mt-6 text-sm text-slate-600">
+          <span className="font-semibold text-slate-800">Last reviewed {LAST_REVIEWED_LABEL}</span>{" "}
+          against the Form 5472 instructions (Rev. 12/2024), the Form 1120 and Form 1065 instructions,
+          IRC §6038A and the Treasury regulations linked above. General information, not tax advice.
+        </p>
       </div>
     </section>
   );
@@ -187,7 +281,7 @@ function CheckerStructuredData() {
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web",
     isAccessibleForFree: true,
-    dateModified: CONTENT_LAST_REVIEWED,
+    dateModified: LAST_REVIEWED_ISO,
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     description: PAGE_DESCRIPTION,
     publisher: organization,
@@ -214,9 +308,16 @@ function CheckerStructuredData() {
     "@type": "WebPage",
     url,
     name: PAGE_TITLE,
-    dateModified: CONTENT_LAST_REVIEWED,
+    description: PAGE_DESCRIPTION,
+    dateModified: LAST_REVIEWED_ISO,
+    lastReviewed: LAST_REVIEWED_ISO,
     speakable: SPEAKABLE,
     publisher: organization,
+    citation: Object.values(SOURCES).map((source) => ({
+      "@type": "CreativeWork",
+      name: source.label,
+      url: source.url,
+    })),
   };
 
   return (

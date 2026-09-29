@@ -1,8 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, CalendarDays, CheckCircle2, Clock3 } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  CalendarDays,
+  Check,
+  CheckCircle2,
+  Clock3,
+  Link2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   effectiveDueDateUtc,
   filingDueDateUtc,
@@ -11,6 +20,16 @@ import {
 } from "@/lib/schemas";
 import { TIERS } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
+import {
+  DEADLINE_PARAMS,
+  deadlineQuery,
+  defaultTaxYear as pickDefaultTaxYear,
+  hasDeadlineParams,
+  isJuneShortYearBefore2026,
+  parseDeadlineParams,
+  taxYearOptions as buildTaxYearOptions,
+  type DeadlineInput,
+} from "@/lib/tools/deadline/params";
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -18,18 +37,19 @@ type DeadlineState = "upcoming" | "urgent" | "overdue";
 
 export function DeadlineCalculator() {
   const currentUtcYear = new Date().getUTCFullYear();
-  const taxYearOptions = useMemo(
-    () => Array.from({ length: 7 }, (_, index) => currentUtcYear - index),
-    [currentUtcYear],
-  );
-  const defaultTaxYear = taxYearOptions.includes(lastCompletedTaxYear)
-    ? lastCompletedTaxYear
-    : taxYearOptions[0];
+  const taxYearOptions = useMemo(() => buildTaxYearOptions(currentUtcYear), [currentUtcYear]);
+  const defaultTaxYear = pickDefaultTaxYear(taxYearOptions, lastCompletedTaxYear);
 
   const [taxYear, setTaxYear] = useState(defaultTaxYear);
   const [isDissolved, setIsDissolved] = useState(false);
   const [dissolvedAt, setDissolvedAt] = useState("");
   const [hasExtension, setHasExtension] = useState(false);
+  const [loadedFromUrl, setLoadedFromUrl] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "manual">("idle");
+  // Only start writing ?year=… into the address bar once the visitor has
+  // changed something (or arrived on a shared link), so a plain visit keeps
+  // the plain URL.
+  const syncUrl = useRef(false);
 
   const minDissolvedAt = `${taxYear}-01-01`;
   const maxDissolvedAt = `${taxYear}-12-31`;
@@ -43,6 +63,65 @@ export function DeadlineCalculator() {
       setDissolvedAt("");
     }
   }, [dissolvedAt, isDissolved, maxDissolvedAt, minDissolvedAt]);
+
+  // Read a shared result from the URL once, after hydration.
+  useEffect(() => {
+    const search = window.location.search;
+    if (hasDeadlineParams(search)) {
+      const parsed = parseDeadlineParams(search, {
+        years: taxYearOptions,
+        defaultYear: defaultTaxYear,
+      });
+      setTaxYear(parsed.taxYear);
+      setIsDissolved(parsed.dissolvedAt !== null);
+      setDissolvedAt(parsed.dissolvedAt ?? "");
+      setHasExtension(parsed.extension);
+      syncUrl.current = true;
+    }
+    setLoadedFromUrl(true);
+    // Read once on mount; afterwards the inputs drive the URL.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const input: DeadlineInput = {
+    taxYear,
+    dissolvedAt: isDissolved && dissolvedAt ? dissolvedAt : null,
+    extension: hasExtension,
+  };
+  const query = deadlineQuery(input);
+
+  // Keep the address bar in step with the inputs so the result is shareable.
+  // replaceState: no new history entry and no scroll jump. Other params
+  // (utm_* and the like) are kept.
+  useEffect(() => {
+    if (!loadedFromUrl || !syncUrl.current) return;
+    const next = new URLSearchParams(window.location.search);
+    for (const key of DEADLINE_PARAMS) next.delete(key);
+    new URLSearchParams(query).forEach((value, key) => next.set(key, value));
+    const url = `${window.location.pathname}?${next.toString()}${window.location.hash}`;
+    if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+      window.history.replaceState(window.history.state, "", url);
+    }
+  }, [loadedFromUrl, query]);
+
+  function edited() {
+    syncUrl.current = true;
+    setCopyState("idle");
+  }
+
+  function shareUrl(): string {
+    return `${window.location.origin}${window.location.pathname}?${query}`;
+  }
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(shareUrl());
+      setCopyState("copied");
+      window.setTimeout(() => setCopyState((s) => (s === "copied" ? "idle" : s)), 2500);
+    } catch {
+      setCopyState("manual");
+    }
+  }
 
   const result = useMemo(() => {
     const dissolvedAtOrNull = isDissolved && dissolvedAt ? dissolvedAt : null;
@@ -85,7 +164,7 @@ export function DeadlineCalculator() {
       band: "border-red-200 bg-red-50 text-red-900",
       badge: "bg-red-100 text-red-900",
       title: `${Math.abs(result.days)} days overdue`,
-      body: "The deadline has passed. Late filing under DIIRSP with a reasonable-cause statement is the standard path.",
+      body: "The deadline has passed. If the IRS hasn't contacted you, its DIIRSP procedures say to file the late return through normal filing procedures, optionally with a reasonable-cause statement. Penalties may still be assessed.",
     },
   }[result.state];
 
@@ -121,7 +200,10 @@ export function DeadlineCalculator() {
           <select
             id="tax-year"
             value={taxYear}
-            onChange={(event) => setTaxYear(Number(event.target.value))}
+            onChange={(event) => {
+              edited();
+              setTaxYear(Number(event.target.value));
+            }}
             className="mt-2 block h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-ink outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/10"
           >
             {taxYearOptions.map((year) => (
@@ -138,7 +220,10 @@ export function DeadlineCalculator() {
               id="is-dissolved"
               type="checkbox"
               checked={isDissolved}
-              onChange={(event) => setIsDissolved(event.target.checked)}
+              onChange={(event) => {
+                edited();
+                setIsDissolved(event.target.checked);
+              }}
               className="mt-1 h-4 w-4 rounded border-slate-300 text-accent focus:ring-accent"
             />
             <span>
@@ -160,7 +245,10 @@ export function DeadlineCalculator() {
                 min={minDissolvedAt}
                 max={maxDissolvedAt}
                 value={dissolvedAt}
-                onChange={(event) => setDissolvedAt(event.target.value)}
+                onChange={(event) => {
+                  edited();
+                  setDissolvedAt(event.target.value);
+                }}
                 className="mt-2 block h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-ink outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/10"
               />
             </label>
@@ -172,7 +260,10 @@ export function DeadlineCalculator() {
             id="has-extension"
             type="checkbox"
             checked={hasExtension}
-            onChange={(event) => setHasExtension(event.target.checked)}
+            onChange={(event) => {
+              edited();
+              setHasExtension(event.target.checked);
+            }}
             className="mt-1 h-4 w-4 rounded border-slate-300 text-accent focus:ring-accent"
           />
           <span>
@@ -198,6 +289,35 @@ export function DeadlineCalculator() {
           {formatDueDate(result.dueMs)}
         </p>
         <p className="mt-3 text-sm leading-relaxed">{stateStyles.body}</p>
+        {!hasExtension && isJuneShortYearBefore2026(taxYear, input.dissolvedAt) ? (
+          <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs leading-relaxed text-amber-950">
+            Final year ending in June: for a tax year that began before 2026, the Form 1120
+            instructions set the due date one month earlier, on the 15th day of the 3rd month
+            (September 15, or the next business day). This calculator uses the 4th-month rule, so
+            the date above may be a month late for this case.
+          </p>
+        ) : null}
+        <div className="mt-4 border-t border-black/10 pt-4">
+          <Button type="button" variant="outline" size="sm" onClick={copyLink} className="gap-2 bg-white">
+            {copyState === "copied" ? (
+              <Check className="h-3.5 w-3.5" aria-hidden />
+            ) : (
+              <Link2 className="h-3.5 w-3.5" aria-hidden />
+            )}
+            {copyState === "copied" ? "Link copied" : "Copy link to this result"}
+          </Button>
+          {copyState === "manual" ? (
+            <label className="mt-3 block text-xs text-slate-700">
+              Copy this link:
+              <input
+                readOnly
+                value={shareUrl()}
+                onFocus={(event) => event.currentTarget.select()}
+                className="mt-1 block w-full min-w-0 rounded-md border border-slate-300 bg-white px-2 py-1.5 font-mono text-xs text-slate-800"
+              />
+            </label>
+          ) : null}
+        </div>
       </div>
 
       <Link

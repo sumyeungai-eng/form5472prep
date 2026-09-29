@@ -4,20 +4,20 @@ import {
   ArrowRight,
   CalendarClock,
   CalendarDays,
+  ExternalLink,
   FileClock,
   RotateCw,
 } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { TIERS } from "@/lib/pricing";
-import {
-  CONTENT_LAST_REVIEWED,
-  SITE_URL,
-  SPEAKABLE,
-  breadcrumbList,
-  organizationNode,
-  pageMeta,
-} from "@/lib/seo";
+import { SITE_URL, SPEAKABLE, breadcrumbList, organizationNode, pageMeta } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
+import {
+  LAST_REVIEWED_ISO,
+  LAST_REVIEWED_LABEL,
+  SOURCES,
+  type SourceId,
+} from "@/lib/tools/deadline/sources";
 import { DeadlineCalculator } from "./DeadlineCalculator";
 
 const PAGE_PATH = "/form-5472-deadline-calculator";
@@ -36,33 +36,42 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const deadlineRules = [
+const deadlineRules: Array<{
+  icon: typeof CalendarDays;
+  title: string;
+  body: string;
+  sources: SourceId[];
+}> = [
   {
     icon: CalendarDays,
     title: "What is the April 15 rule?",
-    body: "The April 15 rule means a calendar-year foreign-owned single-member LLC files Form 5472 with a pro forma Form 1120 by April 15 after the tax year ends. We use that date as the starting point before checking whether a weekend roll, dissolution short year, or timely Form 7004 changes the final deadline.",
+    body: "A foreign-owned single-member LLC files Form 5472 with a pro forma Form 1120 by the due date of that Form 1120: the 15th day of the 4th month after its tax year ends, which is April 15 for a calendar year. We use that date as the starting point before checking whether a dissolution short year, a timely Form 7004, or a weekend or legal holiday changes the final deadline.",
+    sources: ["i5472", "i1120", "irc6072"],
   },
   {
     icon: RotateCw,
-    title: "How does the weekend roll work?",
-    body: "The weekend roll moves a Saturday or Sunday due date to the next Monday. The calculator applies that same roll after it computes the regular April 15 deadline, the dissolution short-year deadline, or the October 15 date created by a timely Form 7004 extension.",
+    title: "How does the weekend and holiday roll work?",
+    body: "When a due date falls on a Saturday, Sunday or legal holiday, filing on the next business day counts as on time. The legal holidays are those of the District of Columbia, so DC Emancipation Day on April 16 counts too. The calculator applies the roll last, to the regular, short-year or extended date.",
+    sources: ["irc7503", "p509", "i1120"],
   },
   {
     icon: FileClock,
     title: "When does a dissolution short year apply?",
-    body: "A dissolution short year applies when the LLC dissolved during the tax year. In that final year, the return is due on the 15th day of the fourth month after the month of dissolution, and the calculator still applies the same weekend roll if the computed date lands on Saturday or Sunday.",
+    body: "A dissolution short year applies when the LLC dissolved during the tax year. A dissolved corporation generally files by the 15th day of the 4th month after the date it dissolved; the calculator uses the 15th of the 4th month after the month of dissolution, then applies the same weekend and holiday roll.",
+    sources: ["i1120"],
   },
   {
     icon: CalendarClock,
     title: "How does a Form 7004 extension work?",
-    body: "A timely Form 7004 extends the Form 5472 package to October 15. It has to be filed by the original April 15 deadline, and the calculator then applies the same weekend-roll rule to the extended date before showing the final due date.",
+    body: "A Form 7004 filed by the regular due date gives an automatic extension, generally 6 months: October 15 for a calendar year, or six months after a short-year due date. The calculator adds six months to the unrolled due date, then applies the weekend and holiday roll. It takes your word that the Form 7004 was filed on time.",
+    sources: ["i7004", "i5472"],
   },
 ];
 
 const DEADLINE_FAQS = [
   {
     q: "What if the Form 5472 deadline already passed?",
-    a: "DIIRSP, the IRS Delinquent International Information Return Submission Procedures, with a reasonable-cause statement is the standard remedy for a late Form 5472 package.",
+    a: "If you are not under IRS examination or investigation and the IRS hasn't contacted you about the missing return, its Delinquent International Information Return Submission Procedures (DIIRSP) say to file it through normal filing procedures, optionally with a reasonable-cause statement. Penalties may still be assessed.",
   },
   {
     q: "Does having no income or no reportable transactions change the deadline?",
@@ -74,7 +83,7 @@ const DEADLINE_FAQS = [
   },
   {
     q: "How does the Form 7004 extension work?",
-    a: "Form 7004 must be filed by the original April 15 deadline. If it is timely, it extends the Form 5472 package due date to October 15.",
+    a: "Form 7004 must be filed by the regular due date of the return, April 15 for a calendar-year LLC. If it is timely, the automatic extension, generally 6 months, moves the Form 5472 package due date to October 15.",
   },
   {
     q: "Does a first-year LLC still have this deadline?",
@@ -87,7 +96,7 @@ export default function Form5472DeadlineCalculatorPage() {
     <main className="bg-white">
       <DeadlineStructuredData />
       <Hero />
-      <HowDeadlineWorks />
+      <HowWeCalculate />
       <Faq />
       <FinalCta />
     </main>
@@ -115,7 +124,7 @@ function Hero() {
             Form 5472 deadline calculator.
           </h1>
           <p data-speakable className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-300">
-            Form 5472 plus the pro forma Form 1120 for a foreign-owned single-member LLC is due April 15 of the following year, and this calculator handles weekend rolls and dissolution short-years below.
+            Form 5472 plus the pro forma Form 1120 for a calendar-year foreign-owned single-member LLC is due April 15 of the following year, and this calculator handles weekend and holiday rolls, dissolution short years and Form 7004 extensions below.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
@@ -139,29 +148,75 @@ function Hero() {
   );
 }
 
-function HowDeadlineWorks() {
+function SourceLink({ id }: { id: SourceId }) {
+  const source = SOURCES[id];
   return (
-    <section className="border-b border-paper-edge bg-paper">
-      <div className="mx-auto max-w-6xl px-6 py-20">
+    <a
+      href={source.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex max-w-full items-start gap-1 break-words font-medium text-accent underline underline-offset-4 hover:no-underline"
+    >
+      <span className="min-w-0">{source.label}</span>
+      <ExternalLink className="mt-1 h-3 w-3 shrink-0" aria-hidden />
+    </a>
+  );
+}
+
+function HowWeCalculate() {
+  return (
+    <section id="how-we-calculate" className="border-b border-paper-edge bg-paper">
+      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <SectionHead
-          eyebrow="How the deadline works"
+          eyebrow="How we calculate this"
           title="How does the deadline rule work?"
-          subtitle="The calculator applies the filing year, dissolution date, and extension status to the same due-date logic used in the filing workflow. We start with April 15, switch to the dissolution short-year rule when needed, move weekend dates to the next Monday, and extend timely Form 7004 filings to October 15."
+          subtitle="The calculator applies the filing year, dissolution date, and extension status to the same due-date logic used in our filing workflow. We start with April 15, switch to the dissolution short-year rule when needed, add six months for a timely Form 7004, and move a date that lands on a weekend or DC legal holiday to the next business day."
         />
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-4 md:grid-cols-2">
           {deadlineRules.map((rule) => (
-            <div
-              key={rule.title}
-              className="rounded-xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-lg hover:shadow-accent/10"
-            >
+            <div key={rule.title} className="min-w-0 rounded-xl border border-slate-200 bg-white p-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accent-50 text-accent">
                 <rule.icon className="h-5 w-5" />
               </div>
               <h3 className="mt-4 font-semibold text-ink">{rule.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">{rule.body}</p>
+              <ul className="mt-3 space-y-1 text-sm">
+                {rule.sources.map((id) => (
+                  <li key={id} className="min-w-0">
+                    <SourceLink id={id} />
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
+        <div className="mx-auto mt-8 max-w-3xl rounded-xl border border-slate-200 bg-white p-6">
+          <h3 className="font-semibold text-ink">What the calculator does not cover</h3>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-600">
+            <li>
+              It assumes a calendar tax year. A foreign-owned LLC uses its owner&apos;s U.S. tax year
+              or, if the owner has none, the calendar year. <SourceLink id="i5472" />
+            </li>
+            <li>
+              A final year ending in June that began before 2026. The Form 1120 instructions treat it
+              as ending June 30 and make it due on the 15th day of the 3rd month, and Form 7004&apos;s
+              instructions give it a 7-month extension. The calculator uses the 4th-month rule and 6
+              months, so its unextended date is a month later than the instructions&apos; for this
+              case; the result shows a caution when it applies. <SourceLink id="i1120" />{" "}
+              <SourceLink id="i7004" />
+            </li>
+            <li>
+              A missed deadline: if the IRS hasn&apos;t contacted you, the IRS says to file the late
+              return through normal filing procedures, and penalties may still be assessed.{" "}
+              <SourceLink id="diirsp" />
+            </li>
+          </ul>
+        </div>
+        <p className="mx-auto mt-6 max-w-3xl text-center text-sm text-slate-600">
+          <span className="font-semibold text-slate-800">Last reviewed {LAST_REVIEWED_LABEL}</span>{" "}
+          against the Form 1120, Form 7004 and Form 5472 instructions and IRC §§6072 and 7503.
+          General information, not tax advice.
+        </p>
       </div>
     </section>
   );
@@ -258,9 +313,13 @@ function DeadlineStructuredData() {
     name: "Form 5472 Deadline Calculator",
     url,
     applicationCategory: "FinanceApplication",
-    dateModified: CONTENT_LAST_REVIEWED,
+    operatingSystem: "Web",
+    isAccessibleForFree: true,
+    description: PAGE_DESCRIPTION,
+    dateModified: LAST_REVIEWED_ISO,
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     publisher: organizationNode(),
+    author: organizationNode(),
   };
 
   const faqSchema = {
@@ -284,8 +343,16 @@ function DeadlineStructuredData() {
     "@type": "WebPage",
     url,
     name: PAGE_TITLE,
-    dateModified: CONTENT_LAST_REVIEWED,
+    description: PAGE_DESCRIPTION,
+    dateModified: LAST_REVIEWED_ISO,
+    lastReviewed: LAST_REVIEWED_ISO,
     speakable: SPEAKABLE,
+    publisher: organizationNode(),
+    citation: Object.values(SOURCES).map((source) => ({
+      "@type": "CreativeWork",
+      name: source.label,
+      url: source.url,
+    })),
   };
 
   return (

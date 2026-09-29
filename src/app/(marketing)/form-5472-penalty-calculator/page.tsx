@@ -4,6 +4,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Clock,
+  ExternalLink,
   FileQuestion,
   FileWarning,
   ShieldCheck,
@@ -11,13 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
-import {
-  CONTENT_LAST_REVIEWED,
-  SPEAKABLE,
-  breadcrumbList,
-  organizationNode,
-  pageMeta,
-} from "@/lib/seo";
+import { SPEAKABLE, breadcrumbList, organizationNode, pageMeta } from "@/lib/seo";
 import {
   CONTINUATION_GRACE_DAYS,
   CONTINUATION_PER_PERIOD_CENTS,
@@ -25,6 +20,12 @@ import {
 } from "@/lib/penalty";
 import { TIERS } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
+import {
+  LAST_REVIEWED_ISO,
+  LAST_REVIEWED_LABEL,
+  SOURCES,
+  type SourceId,
+} from "@/lib/tools/penalty/sources";
 import { PenaltyCalculator } from "./PenaltyCalculator";
 
 const PAGE_PATH = "/form-5472-penalty-calculator";
@@ -35,15 +36,15 @@ const PAGE_DESCRIPTION =
 const PENALTY_FAQS = [
   {
     q: "Is the Form 5472 penalty really automatic?",
-    a: `Yes. IRC §6038A(d) provides an initial ${formatPrice(PENALTY_PER_FORM_CENTS)} penalty when a reporting corporation fails to furnish required Form 5472 information on time or files an incomplete return.`,
+    a: `It can be. IRC §6038A(d) sets an initial ${formatPrice(PENALTY_PER_FORM_CENTS)} penalty when a reporting corporation doesn't furnish the required Form 5472 information on time, and a substantially incomplete Form 5472 counts as not filed. The IRS manual says the penalty may be assessed systemically when a late Form 5472 is processed with a late Form 1120.`,
   },
   {
     q: "Can the penalty be abated?",
     a: "Possibly, but there is no guarantee. Treas. Reg. §1.6038A-4(b) lets the IRS excuse a late Form 5472 for reasonable cause, decided case by case. First Time Abate generally does not apply to Form 5472 penalties.",
   },
   {
-    q: "What is a CP15 notice?",
-    a: "It is an IRS notice assessing a civil penalty. For Form 5472 penalties the IRS manual names notice CP 215. Once the IRS has notified you of the failure, continuation penalties can start 90 days later if the filing is still not corrected.",
+    q: "What is a CP 215 notice?",
+    a: "It is the IRS's Notice of Penalty Charge. The IRS manual says a CP 215 is generated and sent once a Form 5472 penalty is assessed. Once the IRS has notified you of the failure, continuation penalties can start 90 days later if the filing is still not corrected.",
   },
   {
     q: "Does having no income exempt me from the penalty?",
@@ -51,7 +52,7 @@ const PENALTY_FAQS = [
   },
   {
     q: "Is there a statute of limitations?",
-    a: "There effectively is not one until a complete or substantially complete return is filed.",
+    a: "Under IRC §6501(c)(8), the time to assess tax for a return or period the Form 5472 information relates to does not expire until 3 years after the IRS is furnished that information.",
     href: "/blog/form-5472-statute-of-limitations",
     linkText: "Read the Form 5472 statute of limitations guide.",
   },
@@ -76,6 +77,7 @@ export default function Form5472PenaltyCalculatorPage() {
         <Hero />
         <PenaltyCalculator />
         <HowPenaltyWorks />
+        <HowWeCalculate />
         <Faq />
         <FinalCta />
       </main>
@@ -127,7 +129,8 @@ function Hero() {
           </p>
           <p className="mt-3 text-sm leading-relaxed text-slate-600">
             The number below is not a prediction. It is a statutory framework
-            calculator paired with the relief path late filers commonly use.
+            calculator paired with the IRS&apos;s route for filing late
+            information returns.
           </p>
           <Link href="/start?src=tool-penalty" className="group mt-5 block">
             <Button className="h-12 w-full gap-2">
@@ -151,7 +154,7 @@ function HowPenaltyWorks() {
     {
       icon: Clock,
       title: "What happens after a notice?",
-      body: `After an IRS notice, there is a ${CONTINUATION_GRACE_DAYS}-day correction period. If the filing is still not fixed after that window, the statute adds ${formatPrice(CONTINUATION_PER_PERIOD_CENTS)} for each 30-day period, so we treat the notice timeline separately from the initial per-form, per-year penalty estimate.`,
+      body: `After an IRS notice, there is a ${CONTINUATION_GRACE_DAYS}-day correction period. If the filing is still not fixed after that window, the statute adds ${formatPrice(CONTINUATION_PER_PERIOD_CENTS)} for each 30-day period or part of one, so we treat the notice timeline separately from the initial per-form, per-year penalty estimate.`,
     },
     {
       icon: FileQuestion,
@@ -198,6 +201,96 @@ function HowPenaltyWorks() {
             </div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+function SourceLink({ id }: { id: SourceId }) {
+  const source = SOURCES[id];
+  return (
+    <a
+      href={source.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex max-w-full items-start gap-1 break-words font-medium text-accent underline underline-offset-4 hover:no-underline"
+    >
+      <span className="min-w-0">{source.label}</span>
+      <ExternalLink className="mt-1 h-3 w-3 shrink-0" aria-hidden />
+    </a>
+  );
+}
+
+const PENALTY = formatPrice(PENALTY_PER_FORM_CENTS);
+const CONTINUATION = formatPrice(CONTINUATION_PER_PERIOD_CENTS);
+
+function HowWeCalculate() {
+  const rules: Array<{ title: string; body: string; sources: SourceId[] }> = [
+    {
+      title: `Initial penalty: ${PENALTY} × LLCs × unfiled years`,
+      body: `The statute sets ${PENALTY} for each taxable year a reporting corporation fails to furnish the information, and the IRS applies it to each failure to file a complete and correct Form 5472. We count one Form 5472 per LLC per year, which assumes one related party (usually the foreign owner). The IRS manual asserts the initial penalty once per related party per taxable year, so an LLC that dealt with more related parties can face more.`,
+      sources: ["irc6038a", "intlPenalties", "irm20_1_9", "i5472"],
+    },
+    {
+      title: "Continuation penalty: counted from your notice date",
+      body: `If the failure continues more than ${CONTINUATION_GRACE_DAYS} days after the IRS mails notice of it, another ${CONTINUATION} applies for each 30-day period or part of one. The statute counts from the day the notice is mailed; we use the notice date you enter. Day ${CONTINUATION_GRACE_DAYS + 1} starts the first period and each further 30 days (or part) adds one, per LLC per year, up to today. The IRS says there is no maximum penalty amount.`,
+      sources: ["irc6038a", "reg6038a4", "intlPenalties"],
+    },
+    {
+      title: "How the IRS assesses it",
+      body: "The IRS manual says the penalty may be assessed systemically during initial processing of a late Form 5472 attached to a late Form 1120, and that a CP 215 Notice of Penalty Charge is sent once a penalty is assessed. That is why the calculator treats the initial penalty as exposure from the day a return is late.",
+      sources: ["irm20_1_9", "cp215"],
+    },
+    {
+      title: "What the estimate leaves out",
+      body: "Relief. The IRS can excuse a late Form 5472 for reasonable cause, case by case, and must apply that rule liberally to small corporations that meet its conditions. If reasonable cause existed, the 90-day period starts no earlier than the last day it did. First Time Abate isn't on the IRS's list of eligible penalties. The calculator shows none of these reductions.",
+      sources: ["reg6038a4", "irc6038a", "adminRelief"],
+    },
+    {
+      title: "Filing late before the IRS contacts you",
+      body: "If you're not under IRS examination or investigation and haven't been contacted about the missing returns, the IRS says to file them through normal filing procedures, and you may attach a reasonable-cause statement. Penalties may still be assessed.",
+      sources: ["diirsp"],
+    },
+    {
+      title: "How long the IRS has",
+      body: "The time to assess tax for a return or period the Form 5472 information relates to doesn't expire until 3 years after the IRS is furnished that information, so that 3-year period hasn't started while the form is unfiled. If the failure was due to reasonable cause and not willful neglect, the rule covers only the related items.",
+      sources: ["irc6501"],
+    },
+  ];
+
+  return (
+    <section id="how-we-calculate" className="border-b border-slate-100 bg-white py-16">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        <p className="font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-accent">
+          How we calculate this
+        </p>
+        <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink">
+          How does the calculator work out the estimate?
+        </h2>
+        <p className="mt-4 text-sm leading-relaxed text-slate-600">
+          The figures come from IRC §6038A(d) and the IRS&apos;s own guidance. Each rule below links
+          to its primary source.
+        </p>
+        <div className="mt-8 space-y-4">
+          {rules.map((rule) => (
+            <article key={rule.title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 className="text-base font-semibold text-slate-900">{rule.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">{rule.body}</p>
+              <ul className="mt-3 space-y-1 text-sm">
+                {rule.sources.map((id) => (
+                  <li key={id} className="min-w-0">
+                    <SourceLink id={id} />
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+        <p className="mt-6 text-sm text-slate-600">
+          <span className="font-semibold text-slate-800">Last reviewed {LAST_REVIEWED_LABEL}</span>{" "}
+          against IRC §6038A(d), Treas. Reg. §1.6038A-4, the Form 5472 instructions (Rev. 12/2024),
+          IRM 20.1.9 and the IRS pages linked above. General information, not tax advice.
+        </p>
       </div>
     </section>
   );
@@ -276,7 +369,9 @@ function PenaltyCalculatorStructuredData() {
     url,
     applicationCategory: "FinanceApplication",
     operatingSystem: "Web",
-    dateModified: CONTENT_LAST_REVIEWED,
+    isAccessibleForFree: true,
+    description: PAGE_DESCRIPTION,
+    dateModified: LAST_REVIEWED_ISO,
     provider: organizationNode(),
     offers: {
       "@type": "Offer",
@@ -311,8 +406,16 @@ function PenaltyCalculatorStructuredData() {
     "@type": "WebPage",
     url,
     name: PAGE_TITLE,
-    dateModified: CONTENT_LAST_REVIEWED,
+    description: PAGE_DESCRIPTION,
+    dateModified: LAST_REVIEWED_ISO,
+    lastReviewed: LAST_REVIEWED_ISO,
     speakable: SPEAKABLE,
+    publisher: organizationNode(),
+    citation: Object.values(SOURCES).map((source) => ({
+      "@type": "CreativeWork",
+      name: source.label,
+      url: source.url,
+    })),
   };
 
   return (

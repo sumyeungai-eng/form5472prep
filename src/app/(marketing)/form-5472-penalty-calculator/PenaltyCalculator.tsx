@@ -1,12 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { ArrowRight, Calculator, FileWarning, ShieldCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  ArrowRight,
+  Calculator,
+  Check,
+  FileWarning,
+  Link2,
+  ShieldCheck,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   CONTINUATION_GRACE_DAYS,
-  PENALTY_CITATIONS,
   PENALTY_PER_FORM_CENTS,
   continuationPenaltyCents,
   continuationPeriods,
@@ -15,9 +21,16 @@ import {
 } from "@/lib/penalty";
 import { TIERS } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
+import { SOURCES, type SourceId } from "@/lib/tools/penalty/sources";
+import {
+  FORM_COUNT_OPTIONS,
+  YEAR_COUNT_OPTIONS,
+  parsePenaltyParams,
+  penaltyQuery,
+} from "@/lib/tools/penalty/params";
 
-const FORM_COUNT_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
-const YEAR_COUNT_OPTIONS = [1, 2, 3, 4, 5, 6] as const;
+// Cited under the estimate; the full list is in "How we calculate this".
+const RESULT_SOURCES: SourceId[] = ["irc6038a", "i5472", "intlPenalties", "reg6038a4"];
 
 function dateInputValue(date: Date): string {
   const year = date.getFullYear();
@@ -39,6 +52,55 @@ export function PenaltyCalculator() {
   const [yearCount, setYearCount] = useState(1);
   const [noticeReceived, setNoticeReceived] = useState(false);
   const [noticeDateValue, setNoticeDateValue] = useState("");
+  const [loadedFromUrl, setLoadedFromUrl] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "manual">("idle");
+
+  // Read a shared result from the URL once, after hydration.
+  useEffect(() => {
+    const parsed = parsePenaltyParams(window.location.search, dateInputValue(new Date()));
+    setFormCount(parsed.formCount);
+    setYearCount(parsed.yearCount);
+    setNoticeReceived(parsed.noticeDate !== null);
+    setNoticeDateValue(parsed.noticeDate ?? "");
+    setLoadedFromUrl(true);
+  }, []);
+
+  const sharedNoticeDate = noticeReceived && noticeDateValue ? noticeDateValue : null;
+  const query = penaltyQuery({ formCount, yearCount, noticeDate: sharedNoticeDate });
+
+  // Keep the address bar in step with the inputs so the estimate is
+  // shareable. replaceState: no new history entry and no scroll jump. Other
+  // params (utm_* and the like) are kept.
+  useEffect(() => {
+    if (!loadedFromUrl) return;
+    const next = penaltyQuery(
+      { formCount, yearCount, noticeDate: sharedNoticeDate },
+      window.location.search,
+    );
+    const url = `${window.location.pathname}${next ? `?${next}` : ""}${window.location.hash}`;
+    if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+      window.history.replaceState(window.history.state, "", url);
+    }
+  }, [formCount, loadedFromUrl, sharedNoticeDate, yearCount]);
+
+  // A changed estimate needs a fresh copy.
+  useEffect(() => {
+    setCopyState("idle");
+  }, [query]);
+
+  function shareUrl(): string {
+    return `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ""}`;
+  }
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(shareUrl());
+      setCopyState("copied");
+      window.setTimeout(() => setCopyState((s) => (s === "copied" ? "idle" : s)), 2500);
+    } catch {
+      setCopyState("manual");
+    }
+  }
 
   const asOf = new Date();
   const maxNoticeDate = dateInputValue(asOf);
@@ -117,7 +179,7 @@ export function PenaltyCalculator() {
                   />
                   <span>
                     <span className="block text-sm font-medium text-slate-900">
-                      Received an IRS penalty notice (e.g. CP15)?
+                      Received an IRS penalty notice (e.g. CP 215)?
                     </span>
                     <span className="mt-1 block text-xs leading-relaxed text-slate-500">
                       Turn this on only if the IRS has already sent a penalty
@@ -202,6 +264,33 @@ export function PenaltyCalculator() {
                     {formatPrice(totalExposure)}
                   </p>
                 </div>
+                <div className="mt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={copyLink}
+                    className="gap-2"
+                  >
+                    {copyState === "copied" ? (
+                      <Check className="h-3.5 w-3.5" aria-hidden />
+                    ) : (
+                      <Link2 className="h-3.5 w-3.5" aria-hidden />
+                    )}
+                    {copyState === "copied" ? "Link copied" : "Copy link to this result"}
+                  </Button>
+                  {copyState === "manual" ? (
+                    <label className="mt-3 block text-xs text-slate-600">
+                      Copy this link:
+                      <input
+                        readOnly
+                        value={shareUrl()}
+                        onFocus={(event) => event.currentTarget.select()}
+                        className="mt-1 block w-full min-w-0 rounded-md border border-slate-300 bg-white px-2 py-1.5 font-mono text-xs text-slate-800"
+                      />
+                    </label>
+                  ) : null}
+                </div>
               </div>
             </div>
 
@@ -211,10 +300,11 @@ export function PenaltyCalculator() {
                 The fix
               </div>
               <p className="mt-3 text-sm leading-relaxed text-emerald-950">
-                Filing now under the IRS Delinquent International Information
-                Return Submission Procedures (DIIRSP), with a reasonable-cause
-                statement, is the standard resolution path for many late Form
-                5472 cases. The IRS can excuse these penalties for reasonable
+                If you&apos;re not under IRS examination and the IRS hasn&apos;t
+                contacted you about the missing returns, its Delinquent
+                International Information Return Submission Procedures (DIIRSP)
+                say to file them through normal filing procedures, and you may
+                attach a reasonable-cause statement. The IRS can excuse these penalties for reasonable
                 cause, deciding each case on its facts; there is no guarantee, and
                 First Time Abate generally does not apply.
               </p>
@@ -246,18 +336,21 @@ export function PenaltyCalculator() {
             <div className="mt-5 border-t border-slate-100 pt-5">
               <p className="text-xs leading-relaxed text-slate-500">
                 Statutory exposure under IRC §6038A(d), not a prediction of what
-                the IRS will assess.
+                the IRS will assess.{" "}
+                <a href="#how-we-calculate" className="font-medium text-accent underline underline-offset-4 hover:no-underline">
+                  How we calculate this
+                </a>
               </p>
               <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs">
-                {PENALTY_CITATIONS.map((citation) => (
-                  <li key={citation.url}>
+                {RESULT_SOURCES.map((id) => (
+                  <li key={id} className="min-w-0">
                     <a
-                      href={citation.url}
+                      href={SOURCES[id].url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-medium text-accent hover:underline"
+                      className="break-words font-medium text-accent hover:underline"
                     >
-                      {citation.label}
+                      {SOURCES[id].label}
                     </a>
                   </li>
                 ))}
