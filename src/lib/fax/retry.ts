@@ -127,6 +127,11 @@ export async function handleConfirmedFaxFailure(
   let job: Awaited<ReturnType<typeof submitFax>>;
   try {
     job = await submitFax({ mediaUrl, to: env.telnyx.destination });
+    // Belt and braces over submitFax's own check: without a string id we
+    // would record nothing yet set retry_N, leaving the OLD job armed.
+    if (typeof job?.id !== "string" || job.id.trim() === "") {
+      throw new Error("Telnyx accepted the fax but returned no fax id — it may be in flight");
+    }
   } catch (err) {
     if (err instanceof TelnyxSubmitRejectedError) {
       // Telnyx refused it — no fax job exists. Release; webhook redelivery or
@@ -175,6 +180,56 @@ export async function handleConfirmedFaxFailure(
     reason: `Automatic fax retry ${attempt}/${MAX_FAX_RETRIES} after Telnyx confirmed failure (${failure.failureReason ?? "no reason given"}), detected by ${opts.source}`,
   });
   return { outcome: "retried", newFaxId: job.id, attempt };
+}
+
+// A stale "retrying_N" claim (a resubmission crashed between claim and
+// record) needs a human. The poll flags it every hour in the logs; this emails
+// the operator at most once per filing per 24h, using a FilingChangeLog
+// marker (field STUCK_ALERT_FIELD) as the "already told" record.
+export const STUCK_ALERT_FIELD = "faxStuckRetryAlert";
+const STUCK_ALERT_EVERY_MS = 24 * 60 * 60 * 1000;
+
+export async function alertStuckRetryClaim(
+  filing: Pick<FaxRetryFiling, "id" | "llcName" | "faxJobId" | "faxStatus"> & { updatedAt: Date },
+  now: Date,
+): Promise<"alerted" | "recently_alerted" | "failed"> {
+  try {
+    const recent = await prisma.filingChangeLog.findFirst({
+      where: {
+        filingId: filing.id,
+        field: STUCK_ALERT_FIELD,
+        changedAt: { gte: new Date(now.getTime() - STUCK_ALERT_EVERY_MS) },
+      },
+      select: { id: true },
+    });
+    if (recent) return "recently_alerted";
+    await sendFaxAttentionAdminEmail({
+      adminEmail: env.adminEmail,
+      filingId: filing.id,
+      llcName: filing.llcName,
+      adminFilingUrl: `${env.appUrl}/admin/filings/${filing.id}`,
+      headline: "Automatic fax retry is stuck mid-resubmission",
+      details: [
+        ["faxStatus", filing.faxStatus ?? "(none)"],
+        ["Fax id on record", filing.faxJobId ?? "(none)"],
+        ["Stuck since", filing.updatedAt.toISOString()],
+        ["What to do", `A resubmission may or may not have reached Telnyx. Check Telnyx for a newer outbound fax to the IRS for this filing; if there is one, set faxJobId to it and faxStatus to retry_N by hand. Only press "Retry fax" if Telnyx shows none.`],
+      ],
+    });
+    // Marker written only after a successful send, so a failed email is
+    // retried on the next hourly run.
+    await safeChangeLog("fax-status-poll", {
+      filingId: filing.id,
+      field: STUCK_ALERT_FIELD,
+      before: null,
+      after: { faxStatus: filing.faxStatus, faxJobId: filing.faxJobId },
+      reason: "Admin alerted: stale retrying_N claim",
+    });
+    return "alerted";
+  } catch (err) {
+    console.error(`[fax-status-poll] stuck-claim alert for ${filing.id} failed`, err);
+    return "failed";
+  }
 }
 
 // Record the new job id. One immediate retry covers a transient DB blip.

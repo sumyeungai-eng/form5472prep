@@ -78,8 +78,17 @@ const db = vi.hoisted(() => ({
     return { id: row.id };
   }),
   logCreate: vi.fn(async (args: { data: Record<string, unknown> }) => {
-    state.changeLog.push(args.data);
+    state.changeLog.push({ changedAt: new Date(), ...args.data });
     return { id: `log_${state.changeLog.length}` };
+  }),
+  logFindFirst: vi.fn(async (args: { where: { filingId: string; field: string; changedAt: { gte: Date } } }) => {
+    const hit = state.changeLog.find(
+      (e) =>
+        e.filingId === args.where.filingId &&
+        e.field === args.where.field &&
+        (e.changedAt as Date) >= args.where.changedAt.gte,
+    );
+    return hit ? { id: "log_hit" } : null;
   }),
 }));
 
@@ -122,7 +131,7 @@ vi.mock("@/lib/prisma", () => ({
       updateMany: db.updateMany,
       update: db.update,
     },
-    filingChangeLog: { create: db.logCreate },
+    filingChangeLog: { create: db.logCreate, findFirst: db.logFindFirst },
   },
 }));
 vi.mock("@/lib/email", () => email);
@@ -549,6 +558,44 @@ describe("fax-status-poll", () => {
     expect(email.sendFaxFailedAdminEmail).toHaveBeenCalledWith(expect.objectContaining({ deliveryAttempts: 3 }));
   });
 
+  it("emails the admin about a stale retrying_N claim once, not again within 24h, and again after", async () => {
+    seedFiling({ faxStatus: "retrying_2", updatedAt: new Date(Date.now() - 60 * 60 * 1000) });
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed")), { status: 200 }));
+
+    const first = await (await faxStatusPoll(pollRequest())).json();
+    const second = await (await faxStatusPoll(pollRequest())).json();
+
+    expect(first).toMatchObject({ stuckRetryClaims: ["filing_1"], stuckAlertsSent: 1 });
+    expect(second).toMatchObject({ stuckRetryClaims: ["filing_1"], stuckAlertsSent: 0 });
+    expect(email.sendFaxAttentionAdminEmail).toHaveBeenCalledTimes(1);
+    expect(email.sendFaxAttentionAdminEmail).toHaveBeenCalledWith(expect.objectContaining({
+      filingId: "filing_1",
+      headline: expect.stringContaining("stuck"),
+    }));
+    const markers = state.changeLog.filter((e) => e.field === "faxStuckRetryAlert");
+    expect(markers).toHaveLength(1);
+
+    // 25h later the reminder goes out again.
+    markers[0].changedAt = new Date(Date.now() - 25 * 60 * 60 * 1000);
+    const third = await (await faxStatusPoll(pollRequest())).json();
+    expect(third).toMatchObject({ stuckAlertsSent: 1 });
+    expect(email.sendFaxAttentionAdminEmail).toHaveBeenCalledTimes(2);
+    expect(fax.submitFax).not.toHaveBeenCalled();
+  });
+
+  it("retries the stuck-claim email next run if sending failed (no marker written)", async () => {
+    seedFiling({ faxStatus: "retrying_1", updatedAt: new Date(Date.now() - 60 * 60 * 1000) });
+    stubTelnyx(() => new Response("{}", { status: 200 }));
+    email.sendFaxAttentionAdminEmail.mockRejectedValueOnce(new Error("Resend down"));
+
+    const first = await (await faxStatusPoll(pollRequest())).json();
+    const second = await (await faxStatusPoll(pollRequest())).json();
+
+    expect(first).toMatchObject({ stuckAlertsSent: 0 });
+    expect(second).toMatchObject({ stuckAlertsSent: 1 });
+    expect(email.sendFaxAttentionAdminEmail).toHaveBeenCalledTimes(2);
+  });
+
   it("never touches a stale retrying_N claim (its fax may be in flight) — flags it instead", async () => {
     seedFiling({ faxStatus: "retrying_2", updatedAt: new Date(Date.now() - 60 * 60 * 1000) });
     const fetchMock = stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed")), { status: 200 }));
@@ -739,6 +786,22 @@ describe("automatic retry is claim-guarded (no duplicate IRS fax)", () => {
     );
     expect(email.sendFaxAttentionAdminEmail).toHaveBeenCalledTimes(1);
     // A later poll must not resubmit from that claim.
+    await faxStatusPoll(pollRequest());
+    expect(fax.submitFax).toHaveBeenCalledTimes(1);
+  });
+
+  it("treats a 2xx submit without a fax id as ambiguous: claim kept, old job not re-armed, admin alerted", async () => {
+    seedFiling({ faxStatus: "queued" });
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed")), { status: 200 }));
+    fax.submitFax.mockResolvedValueOnce({ id: undefined as unknown as string, status: "queued" });
+
+    const res = await telnyxWebhook(webhookRequest("fax.failed"));
+
+    expect(await res.json()).toMatchObject({ ok: true, attention: "ambiguous_submit" });
+    expect(row()).toMatchObject({ faxJobId: FAX_ID, faxStatus: "retrying_1", status: "FAXED" });
+    expect(db.update).not.toHaveBeenCalled();
+    expect(email.sendFaxAttentionAdminEmail).toHaveBeenCalledTimes(1);
+    // And nothing automatic resubmits from that claim later.
     await faxStatusPoll(pollRequest());
     expect(fax.submitFax).toHaveBeenCalledTimes(1);
   });

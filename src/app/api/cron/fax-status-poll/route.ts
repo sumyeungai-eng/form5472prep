@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { finalizeFaxDelivered } from "@/lib/fax/finalize";
-import { handleConfirmedFaxFailure } from "@/lib/fax/retry";
+import { alertStuckRetryClaim, handleConfirmedFaxFailure } from "@/lib/fax/retry";
 import { isPollable, pollCandidatesWhere, POLL_MAX_ROWS, staleRetryClaim } from "@/lib/fax/pollCandidates";
 import {
   deliveryFactsFromTelnyx,
@@ -59,13 +59,16 @@ export async function GET(req: Request) {
   const pollable = candidates.filter((f) => isPollable(f));
   // A retrying_N claim that outlived its grace period means a resubmission
   // crashed mid-flight: its fax may or may not be with Telnyx, so nothing
-  // automatic may touch it. Flag it every run until a human resolves it.
-  const stuckRetryClaims = candidates.filter((f) => staleRetryClaim(f, now)).map((f) => f.id);
-  for (const id of stuckRetryClaims) {
-    const f = candidates.find((c) => c.id === id)!;
+  // automatic may touch it. Logged every run; the admin is emailed at most
+  // once per filing per 24h.
+  const stuck = candidates.filter((f) => staleRetryClaim(f, now));
+  const stuckRetryClaims = stuck.map((f) => f.id);
+  let stuckAlertsSent = 0;
+  for (const f of stuck) {
     console.error(
-      `[fax-status-poll] STUCK_RETRY_CLAIM filing=${id} faxStatus=${f.faxStatus} faxJobId=${f.faxJobId} since ${f.updatedAt.toISOString()} — check Telnyx for a resubmitted fax before re-faxing`,
+      `[fax-status-poll] STUCK_RETRY_CLAIM filing=${f.id} faxStatus=${f.faxStatus} faxJobId=${f.faxJobId} since ${f.updatedAt.toISOString()} — check Telnyx for a resubmitted fax before re-faxing`,
     );
+    if ((await alertStuckRetryClaim(f, now)) === "alerted") stuckAlertsSent++;
   }
   const result = {
     candidates: candidates.length,
@@ -79,6 +82,7 @@ export async function GET(req: Request) {
     heldPreflight: 0,
     deferred: 0,
     stuckRetryClaims,
+    stuckAlertsSent,
     attention: [] as string[],
     errors: [] as string[],
   };

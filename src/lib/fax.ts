@@ -10,6 +10,18 @@ export type FaxJob = { id: string; status: "queued" | "delivered" | "failed" };
 // JSON) is AMBIGUOUS: the fax may or may not have been queued. The automatic
 // retry path (lib/fax/retry.ts) only re-arms itself after this error, never
 // after an ambiguous one — a second IRS fax must never be sent by accident.
+// Telnyx answered 2xx but without a usable fax id: the fax may well be
+// queued, yet we cannot track it. Deliberately NOT a TelnyxSubmitRejectedError
+// — callers must treat it as ambiguous (never auto-resubmit).
+export class TelnyxSubmitMissingIdError extends Error {
+  constructor(httpStatus: number) {
+    super(
+      `Telnyx accepted the fax (HTTP ${httpStatus}) but returned no fax id — it may be in flight; check Telnyx before re-sending`,
+    );
+    this.name = "TelnyxSubmitMissingIdError";
+  }
+}
+
 export class TelnyxSubmitRejectedError extends Error {
   readonly httpStatus: number;
   constructor(httpStatus: number, body: string) {
@@ -47,6 +59,9 @@ export async function submitFax(opts: {
     }),
   });
   if (!res.ok) throw new TelnyxSubmitRejectedError(res.status, await res.text());
-  const json = await res.json();
-  return { id: json.data?.id, status: json.data?.status ?? "queued" };
+  const json = (await res.json().catch(() => null)) as { data?: { id?: unknown; status?: unknown } } | null;
+  const id = json?.data?.id;
+  if (typeof id !== "string" || id.trim() === "") throw new TelnyxSubmitMissingIdError(res.status);
+  const status = json?.data?.status;
+  return { id, status: (typeof status === "string" ? status : "queued") as FaxJob["status"] };
 }

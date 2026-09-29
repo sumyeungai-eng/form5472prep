@@ -101,6 +101,14 @@ An independent review of ca9c583 said "ship after fixes". The fixes:
 6. UI — in the Emails card, the "To" column no longer wraps (`whitespace-nowrap`; the
    table scrolls in `overflow-x-auto`) and Subject takes the remaining width.
 
+Re-review hardening (third commit): `submitFax` now throws `TelnyxSubmitMissingIdError`
+when Telnyx answers 2xx without a string fax id. The retry path also checks the id
+itself and treats it as `submit_ambiguous`: the claim is kept and the admin is alerted,
+so the old job is never re-armed. A stale `retrying_N` claim now also emails the admin
+via `alertStuckRetryClaim`. It emails at most once per filing per 24h, using a
+`FilingChangeLog` marker (field `faxStuckRetryAlert`) that is written only after a
+successful send.
+
 Coordinator-owned, not touched: merge f16a53a (`src/app/(app)/**`) and the
 untracked `src/app/design-preview/fax/page.tsx`. At the coordinator's request this pass
 did not run `npm run build`; vitest, tsc and eslint were run.
