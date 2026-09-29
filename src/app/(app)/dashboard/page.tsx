@@ -166,6 +166,7 @@ export default async function DashboardPage() {
                 statusTone={s.tone}
                 canDelete={f.status === "DRAFT"}
                 unreadMessages={unreadByFiling.get(f.id) ?? 0}
+                hasFaxReceipt={Boolean(f.faxConfirmationKey)}
               />
             );
           })}

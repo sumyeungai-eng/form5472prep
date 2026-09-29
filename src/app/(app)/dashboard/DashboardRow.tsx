@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, MessageSquare } from "lucide-react";
+import { Trash2, MessageSquare, Download } from "lucide-react";
 import { formatUsd } from "@/lib/utils";
 
 const TONE: Record<string, string> = {
@@ -26,6 +26,7 @@ export function DashboardRow({
   statusTone,
   canDelete,
   unreadMessages = 0,
+  hasFaxReceipt = false,
 }: {
   id: string;
   href: string;
@@ -38,6 +39,7 @@ export function DashboardRow({
   statusTone: "slate" | "amber" | "blue" | "emerald" | "red";
   canDelete: boolean;
   unreadMessages?: number;
+  hasFaxReceipt?: boolean;
 }) {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
@@ -109,6 +111,19 @@ export function DashboardRow({
           )}
         </div>
       </Link>
+      {hasFaxReceipt && (
+        <div className="px-5 pb-4 -mt-2">
+          <a
+            href={`/api/filings/${id}/fax-receipt`}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Download IRS fax receipt
+          </a>
+        </div>
+      )}
     </div>
   );
 }
