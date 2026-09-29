@@ -14,7 +14,7 @@ trusted.
 
 Not touched: `src/app/(app)/**`, `src/components/wizard/**`, `content/**`.
 
-## What shipped (committed locally on the branch, NOT pushed / NOT deployed)
+## What shipped (merged to main and deployed by the coordinating session)
 
 1. **EmailLog** table (additive migration: new table, unique `resendId`, index on
    `filingId`, FK `ON DELETE SET NULL`). `sendEmail()` writes one row after every
@@ -164,3 +164,21 @@ Follow-ups:
 - The migration SQL was generated offline (`prisma migrate diff` from a copy of the
   old schema, with `DATABASE_URL` overridden to a dead localhost URL). No command
   connected to the database.
+
+## Coordinator addendum (merge + deploy)
+- Trigger: customer Peter Rowshangah (METAVERSE LIFE LLC, filing cmu6pgo49000di304vbiwnggd) reported no
+  fax confirmation email. Investigation: fax delivered 2026-09-24 10:45 UTC (11 pages); the delivered
+  email was accepted by Resend (no send error logged) — most likely Outlook junk filtering; delivery
+  unprovable because nothing recorded the Resend id. That gap is what this work closes.
+- Also merged `feat/receipt-visible` (8e8085b, sonnet lane): "Download IRS fax receipt" on the My filings
+  row, a "Your IRS fax receipt is ready" card at the top of the filing page, and a link on the
+  confirmation page. Only a boolean reaches the client, never the storage key.
+- Review: two independent fable-advisor passes (ship after fixes → ship). Fixes are in 4e2f2f7 and a72eba9.
+- Verification by coordinator: vitest 911/911, tsc 0, production build 0 (needs a throwaway
+  MAGIC_LINK_SECRET locally because `.env.local` has an empty SESSION_SECRET), browser check of the
+  dashboard receipt link and Emails card via a temporary preview page (deleted).
+- Owner-gated: RESEND_WEBHOOK_SECRET (Resend → Webhooks → endpoint
+  https://www.form5472prep.com/api/resend-webhook, events delivered/bounced/complained/delivery_delayed);
+  optional TELNYX_PUBLIC_KEY. After deploy: "Resend fax confirmation" for cmu6pgo49000di304vbiwnggd.
+- Follow-ups: `/api/filings/[id]/fax-receipt` only allows the owning customer (partner viewers get 404);
+  admin "Retry fax" still ignores in-flight/retrying labels, so a human can double-fax (reviewer note).

@@ -210,3 +210,5 @@ Claude and Codex sessions share these folders. Practical rules:
   rcsWhenLearned optional everywhere; PDF closes the cause paragraph itself.
 - `docs/sessions/2026-09-25-simple-transactions-step.md` — Transactions step rebuilt as 3 questions per
   year + 1 per filing; same data model; checkout map (Codex clone is live, Claude work clone stale).
+- `docs/sessions/2026-09-29-fax-email-hardening.md` — EmailLog audit trail + Resend webhook, one
+  claim-guarded fax finalize/retry path (webhook + hourly poll), admin resend fax confirmation, receipt links.
