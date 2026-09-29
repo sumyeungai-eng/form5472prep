@@ -101,7 +101,7 @@ export function ExchangeRateConverter() {
     <section className="border-b border-slate-100 bg-white py-12 sm:py-16">
       <div className="mx-auto max-w-6xl px-6">
         <div className="grid gap-8 lg:grid-cols-[420px_1fr] lg:items-start">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-accent">
               <Calculator className="h-3.5 w-3.5" />
               Converter inputs
@@ -231,7 +231,7 @@ export function ExchangeRateConverter() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-accent">
               <ArrowLeftRight className="h-3.5 w-3.5" />
               Conversion result
@@ -253,14 +253,14 @@ export function ExchangeRateConverter() {
                   <p className="text-xs font-mono uppercase tracking-[0.14em] text-slate-500">
                     Formula
                   </p>
-                  <p className="mt-2 font-mono text-sm text-slate-800">
+                  <p className="mt-2 break-words font-mono text-sm text-slate-800">
                     {result.formula}
                   </p>
                 </div>
 
                 <div className="mt-5 py-2">
                   <p className="text-sm font-semibold text-slate-900">Result</p>
-                  <p className="mt-1 font-serif text-5xl font-semibold tracking-tight text-ink">
+                  <p className="mt-1 break-words font-serif text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
                     {direction === "to-usd"
                       ? new Intl.NumberFormat("en-US", {
                           style: "currency",

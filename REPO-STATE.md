@@ -214,3 +214,5 @@ Claude and Codex sessions share these folders. Practical rules:
   claim-guarded fax finalize/retry path (webhook + hourly poll), admin resend fax confirmation, receipt links.
 - `docs/sessions/2026-09-29-admin-actions-and-portal-layout.md` — admin actions regrouped in workflow order,
   guarded "Fax again…"; portal rows stack on phones; plain-language fax steps.
+- `docs/sessions/2026-09-29-ai-citation-tools.md` — five free tools (IRS rates, reportable-transactions,
+  late-filing route, compliance calendar, state fees), fact-checked; penalty-calculator claims corrected.
