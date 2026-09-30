@@ -218,3 +218,5 @@ Claude and Codex sessions share these folders. Practical rules:
   late-filing route, compliance calendar, state fees), fact-checked; penalty-calculator claims corrected.
 - `docs/sessions/2026-09-29-tools-followups.md` — older three tools get shareable links + sourced method
   sections; blog BOI final-rule update; open: June-30 short-year rule in the deadline calculator.
+- `docs/sessions/2026-09-30-fix-everything-else.md` — payment page redesign, re-fax guard, June due-date
+  rule, USD-only checkout, receipt/RCS wording fixes, 5 blog posts.
