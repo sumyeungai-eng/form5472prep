@@ -52,8 +52,15 @@ export async function createBrandedSession(
     options?: Stripe.RequestOptions,
   ) => Promise<CheckoutSession>,
 ): Promise<CheckoutSession> {
-  const brandedParams: SessionCreateParams = {
+  // USD only: Adaptive Pricing would show local-currency prices with a 2–4%
+  // FX markup paid by the customer, while prices, ads and the LLC's books are
+  // all in USD. Set explicitly so the Dashboard toggle can't turn it back on.
+  const usdParams: SessionCreateParams = {
     ...params,
+    adaptive_pricing: params.adaptive_pricing ?? { enabled: false },
+  };
+  const brandedParams: SessionCreateParams = {
+    ...usdParams,
     branding_settings: brandingSettings(env.appUrl),
     // A caller-supplied note wins (the EIN/ITIN checkout has its own wording).
     custom_text: params.custom_text ?? checkoutCustomText(),
@@ -74,7 +81,7 @@ export async function createBrandedSession(
       const retryOptions = options?.idempotencyKey
         ? { ...options, idempotencyKey: `${options.idempotencyKey}_plain` }
         : options;
-      return create(params, retryOptions);
+      return create(usdParams, retryOptions);
     }
     throw error;
   }

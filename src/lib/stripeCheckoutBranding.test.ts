@@ -79,6 +79,7 @@ describe("createBrandedSession", () => {
     expect(create).toHaveBeenCalledWith(
       {
         ...params,
+        adaptive_pricing: { enabled: false },
         branding_settings: brandingSettings("http://localhost:3000"),
         custom_text: checkoutCustomText(),
         locale: "auto",
@@ -88,6 +89,14 @@ describe("createBrandedSession", () => {
     expect(params).not.toHaveProperty("branding_settings");
     expect(params).not.toHaveProperty("custom_text");
     expect(params).not.toHaveProperty("locale");
+    expect(params).not.toHaveProperty("adaptive_pricing");
+  });
+
+  it("keeps a caller's explicit adaptive_pricing choice", async () => {
+    const session = { id: "cs_test_ap", url: "https://checkout.stripe.test/ap" } as CheckoutSession;
+    const create = vi.fn().mockResolvedValue(session);
+    await createBrandedSession({ ...params, adaptive_pricing: { enabled: true } }, undefined, create);
+    expect(create.mock.calls[0][0].adaptive_pricing).toEqual({ enabled: true });
   });
 
   it("retries once with original params and a plain idempotency key when Stripe rejects branding", async () => {
@@ -107,13 +116,18 @@ describe("createBrandedSession", () => {
       1,
       {
         ...params,
+        adaptive_pricing: { enabled: false },
         branding_settings: brandingSettings("http://localhost:3000"),
         custom_text: checkoutCustomText(),
         locale: "auto",
       },
       { idempotencyKey: "checkout_123" },
     );
-    expect(create).toHaveBeenNthCalledWith(2, params, { idempotencyKey: "checkout_123_plain" });
+    expect(create).toHaveBeenNthCalledWith(
+      2,
+      { ...params, adaptive_pricing: { enabled: false } },
+      { idempotencyKey: "checkout_123_plain" },
+    );
   });
 
   it("rethrows non-branding errors without retrying", async () => {

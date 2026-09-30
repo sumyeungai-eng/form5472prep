@@ -203,7 +203,10 @@ describe("GET /api/admin/preflight-sweep", () => {
     expect(db.findMany).toHaveBeenNthCalledWith(2, {
       where: {
         generatedPdfKey: { not: null },
-        preflightCheckedAt: { gte: new Date("2026-09-21T21:12:00.000Z") },
+        preflightCheckedAt: {
+          gte: new Date("2026-09-21T21:12:00.000Z"),
+          lt: new Date("2026-09-22T10:48:00.000Z"),
+        },
       },
       select: {
         id: true,

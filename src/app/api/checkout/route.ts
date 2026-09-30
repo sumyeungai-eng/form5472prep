@@ -354,7 +354,7 @@ export async function POST(req: Request) {
     // a second one. The predecessor prevents replaying a session expired at an earlier price.
     // v2: the branded checkout sends different session params, and Stripe rejects a reused key
     // with different params, so keys from before the branding deploy must not be reused.
-    { idempotencyKey: `checkout_v2_${filing.id}_${tier.priceCents}_${yearCount}_${discountCents}_${filing.stripeSessionId ?? "initial"}` },
+    { idempotencyKey: `checkout_v3_${filing.id}_${tier.priceCents}_${yearCount}_${discountCents}_${filing.stripeSessionId ?? "initial"}` },
     (p, o) => stripe().checkout.sessions.create(p, o),
   );
 

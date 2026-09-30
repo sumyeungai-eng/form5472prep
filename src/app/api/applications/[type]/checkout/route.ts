@@ -103,7 +103,7 @@ export async function POST(req: Request, { params }: { params: { type: string } 
       },
     },
     // v2: see src/app/api/checkout/route.ts (keys from before the branded checkout must not be reused).
-    { idempotencyKey: `appcheckout_v2_${type}_${app.id}` },
+    { idempotencyKey: `appcheckout_v3_${type}_${app.id}` },
     (p, o) => stripe().checkout.sessions.create(p, o),
   );
 

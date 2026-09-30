@@ -17,6 +17,10 @@ const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;
 const SWEEP_TIME_BUDGET_MS = 100_000;
 const POSSIBLE_ZERO_TOTAL_SINCE = new Date("2026-09-21T21:12:00.000Z");
+// Fix merged 8ea773a at 2026-09-22T10:48Z. A package regenerated after that
+// gets a newer preflightCheckedAt, so only generations inside the window can
+// carry the zero-total bug; without this bound correct filings were flagged.
+const POSSIBLE_ZERO_TOTAL_UNTIL = new Date("2026-09-22T10:48:00.000Z");
 
 type SweepFiling = PackageFilingRow & { id: string; preflightStatus: string | null };
 
@@ -120,7 +124,7 @@ function parseLimit(req: Request): number {
 async function possibleZeroTotalReport(limit: number) {
   const where = {
     generatedPdfKey: { not: null },
-    preflightCheckedAt: { gte: POSSIBLE_ZERO_TOTAL_SINCE },
+    preflightCheckedAt: { gte: POSSIBLE_ZERO_TOTAL_SINCE, lt: POSSIBLE_ZERO_TOTAL_UNTIL },
   };
   const candidateCount = await prisma.filing.count({ where });
   const filings = await prisma.filing.findMany({
@@ -157,6 +161,7 @@ async function possibleZeroTotalReport(limit: number) {
 
   return {
     since: POSSIBLE_ZERO_TOTAL_SINCE.toISOString(),
+    until: POSSIBLE_ZERO_TOTAL_UNTIL.toISOString(),
     limit,
     candidatesFound: candidateCount,
     processed: filings.length,
