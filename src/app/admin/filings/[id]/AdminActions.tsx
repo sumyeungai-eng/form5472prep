@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
@@ -56,30 +56,78 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
   // Customer-facing email: keep the button disabled for the whole request so
   // a double-click can't send the confirmation twice.
   const [resendingFaxConfirmation, setResendingFaxConfirmation] = useState(false);
+  // Fax: disabled for the whole request (a double click must never fax the IRS
+  // twice); the "send again" confirmation is an inline form, and the server's
+  // answer is shown right under the fax buttons.
+  const [faxing, setFaxing] = useState(false);
+  // Synchronous twin of `faxing`: two clicks inside one render both see
+  // faxing === false, but not this.
+  const faxInFlight = useRef(false);
+  const [refaxOpen, setRefaxOpen] = useState(false);
+  const [refaxPrompt, setRefaxPrompt] = useState("");
+  const [refaxReason, setRefaxReason] = useState("");
+  const [faxMsg, setFaxMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
-  async function callApi(
-    body: Record<string, unknown>,
-    okMsg: string | ((responseBody: Record<string, unknown>) => string),
-  ): Promise<boolean> {
-    setMsg(null);
+  async function postAction(body: Record<string, unknown>): Promise<ActionResponse> {
     try {
       const res = await fetch(`/api/admin/filings/${filingId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (!res.ok) {
-        const err = await res.text();
-        setMsg({ kind: "err", text: err || `HTTP ${res.status}` });
-        return false;
-      }
+      if (!res.ok) return { ok: false, ...parseActionError(await res.text(), res.status) };
       const payload = await res.json().catch(() => ({})) as Record<string, unknown>;
-      setMsg({ kind: "ok", text: typeof okMsg === "function" ? okMsg(payload) : okMsg });
-      startTransition(() => router.refresh());
-      return true;
+      return { ok: true, payload };
     } catch (e) {
-      setMsg({ kind: "err", text: e instanceof Error ? e.message : "Network error" });
+      return { ok: false, message: e instanceof Error ? e.message : "Network error" };
+    }
+  }
+
+  async function callApi(
+    body: Record<string, unknown>,
+    okMsg: string | ((responseBody: Record<string, unknown>) => string),
+  ): Promise<boolean> {
+    setMsg(null);
+    const result = await postAction(body);
+    if (!result.ok) {
+      setMsg({ kind: "err", text: result.message });
       return false;
+    }
+    setMsg({ kind: "ok", text: typeof okMsg === "function" ? okMsg(result.payload) : okMsg });
+    startTransition(() => router.refresh());
+    return true;
+  }
+
+  // withReason: the admin confirmed "send again" in the inline form. Without
+  // it the server sends only when no earlier fax can still reach the IRS; if
+  // it answers refax_reason_required, the form opens with its explanation.
+  async function sendFax(withReason: boolean) {
+    if (faxInFlight.current) return;
+    faxInFlight.current = true;
+    setFaxing(true);
+    setFaxMsg(null);
+    try {
+      const result = await postAction(
+        withReason
+          ? { action: "retryFax", force: true, reason: refaxReason }
+          : { action: "retryFax" },
+      );
+      if (result.ok) {
+        setRefaxOpen(false);
+        setRefaxReason("");
+        setFaxMsg({ kind: "ok", text: "Fax submitted to IRS ✓" });
+        startTransition(() => router.refresh());
+        return;
+      }
+      if (result.code === "refax_reason_required" && !refaxOpen) {
+        setRefaxPrompt(result.message);
+        setRefaxOpen(true);
+        return;
+      }
+      setFaxMsg({ kind: "err", text: result.message });
+    } finally {
+      faxInFlight.current = false;
+      setFaxing(false);
     }
   }
 
@@ -150,13 +198,15 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
 
   const preflightOverrideReady = preflightOverrideReason.trim().replace(/\s/g, "").length >= 10;
   const preflightAllowsSignature = preflightStatus === "passed" || !!preflightOverrideBy;
-  // A fax already went out (in flight or delivered): sending again needs an
-  // explicit confirm so the IRS never gets a duplicate by accident.
+  // A fax already went out (in flight or delivered): sending again needs a
+  // written reason (the server enforces it too) so the IRS never gets a
+  // duplicate by accident.
   const alreadyFaxed = currentStatus === "FAXED" || currentStatus === "CONFIRMED";
   const faxAgainWarning =
     currentStatus === "CONFIRMED"
-      ? "This filing was already DELIVERED to the IRS. Faxing again sends the IRS a second copy of the package. Only do this if the IRS asked for it. Continue?"
-      : "A fax for this filing is already on its way or waiting for delivery confirmation. Sending again may give the IRS a duplicate. Continue?";
+      ? "This filing was already DELIVERED to the IRS. Faxing again sends the IRS a second copy of the package. Only do this if the IRS asked for it."
+      : "A fax for this filing is already on its way or waiting for delivery confirmation. Sending again may give the IRS a duplicate — check Telnyx first.";
+  const refaxReasonReady = refaxReasonIsValid(refaxReason);
   const approvalBlockedByStatus = ["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(currentStatus);
   const approvalDisabledReason = !hasGeneratedPdf
     ? "Generate the filing package first."
@@ -331,17 +381,79 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
               Fax sent{faxedAt ? ` ${formatUtc(faxedAt)}` : ""} — waiting for delivery confirmation.
             </p>
           )}
-          <ActionButton
-            disabled={pending || uploading !== null || !hasSignedPdf}
-            onClick={async () => {
-              if (alreadyFaxed && !window.confirm(faxAgainWarning)) return;
-              await callApi({ action: "retryFax" }, "Fax submitted to IRS ✓");
-            }}
-            tooltip={!hasSignedPdf ? "No signed PDF uploaded yet" : undefined}
-            primary={!alreadyFaxed}
-          >
-            {alreadyFaxed ? "Fax again…" : currentStatus === "FAILED" ? "Retry fax" : "Send fax to IRS"}
-          </ActionButton>
+          {!refaxOpen && (
+            <ActionButton
+              disabled={pending || uploading !== null || !hasSignedPdf || faxing}
+              onClick={() => {
+                setFaxMsg(null);
+                if (alreadyFaxed) {
+                  setRefaxPrompt(faxAgainWarning);
+                  setRefaxOpen(true);
+                  return;
+                }
+                void sendFax(false);
+              }}
+              tooltip={!hasSignedPdf ? "No signed PDF uploaded yet" : undefined}
+              primary={!alreadyFaxed}
+            >
+              {faxing
+                ? "Sending fax…"
+                : alreadyFaxed
+                  ? "Fax again…"
+                  : currentStatus === "FAILED"
+                    ? "Retry fax"
+                    : "Send fax to IRS"}
+            </ActionButton>
+          )}
+          {refaxOpen && (
+            <div className="space-y-2 rounded-md border border-amber-300 bg-amber-50 p-3">
+              <p className="text-sm text-amber-900">{refaxPrompt}</p>
+              <label className="block">
+                <span className="mb-1 block text-xs font-medium text-slate-600">
+                  Why send this fax again? (at least {REFAX_MIN_REASON_CHARS} characters, saved to the change log)
+                </span>
+                <textarea
+                  value={refaxReason}
+                  onChange={(e) => setRefaxReason(e.target.value)}
+                  disabled={faxing}
+                  rows={3}
+                  className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30 disabled:bg-slate-50 disabled:text-slate-400"
+                />
+              </label>
+              <div className="flex flex-wrap gap-2">
+                <ActionButton
+                  disabled={pending || uploading !== null || !hasSignedPdf || faxing || !refaxReasonReady}
+                  onClick={() => void sendFax(true)}
+                  tooltip={refaxReasonReady ? undefined : `Write a reason of at least ${REFAX_MIN_REASON_CHARS} characters first`}
+                  primary
+                >
+                  {faxing ? "Sending fax…" : "Send to the IRS again"}
+                </ActionButton>
+                <ActionButton
+                  disabled={faxing}
+                  onClick={() => {
+                    setRefaxOpen(false);
+                    setRefaxReason("");
+                    setFaxMsg(null);
+                  }}
+                >
+                  Cancel
+                </ActionButton>
+              </div>
+            </div>
+          )}
+          {faxMsg && (
+            <p
+              role={faxMsg.kind === "err" ? "alert" : "status"}
+              className={`rounded-md border px-3 py-2 text-sm ${
+                faxMsg.kind === "ok"
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                  : "border-red-200 bg-red-50 text-red-800"
+              }`}
+            >
+              {faxMsg.text}
+            </p>
+          )}
           {!hasSignedPdf && (
             <p className="text-xs text-slate-400">Waiting for customer to upload signed PDF</p>
           )}
@@ -501,6 +613,35 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
       )}
     </div>
   );
+}
+
+type ActionResponse =
+  | { ok: true; payload: Record<string, unknown> }
+  | { ok: false; message: string; code?: string };
+
+// Must match MIN_REFAX_REASON_CHARS in lib/admin/filingActions.ts (not
+// imported: that module is server-only). The server re-checks it anyway.
+export const REFAX_MIN_REASON_CHARS = 10;
+
+export function refaxReasonIsValid(reason: string): boolean {
+  return reason.replace(/\s/g, "").length >= REFAX_MIN_REASON_CHARS;
+}
+
+// The admin route answers errors as { error, code }; older/other failures may
+// be plain text or an HTML error page.
+export function parseActionError(text: string, httpStatus: number): { message: string; code?: string } {
+  try {
+    const parsed = JSON.parse(text) as { error?: unknown; code?: unknown } | null;
+    if (parsed && typeof parsed.error === "string" && parsed.error.trim()) {
+      return {
+        message: parsed.error,
+        ...(typeof parsed.code === "string" ? { code: parsed.code } : {}),
+      };
+    }
+  } catch {
+    // not JSON — fall through
+  }
+  return { message: text.trim() && text.length <= 500 ? text.trim() : `HTTP ${httpStatus}` };
 }
 
 function ActionButton({
