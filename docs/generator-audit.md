@@ -10,7 +10,7 @@ Prepared per `docs/TASK-5472-generator-fixes.md` §4, as amended by §10. No cod
 - **Object storage:** Cloudflare R2 via `@aws-sdk/client-s3` (fields are commented "R2 key" throughout `prisma/schema.prisma`, e.g. `generatedPdfKey`, `signedPdfKey`, `dissolutionCertKey`).
 - **Payments:** Stripe (`src/app/api/checkout`, `src/app/api/stripe-webhook`).
 - **Bank data:** Plaid (`plaid` SDK, `src/app/api/plaid`) plus manual CSV/XLSX upload (`papaparse`, `xlsx`) parsed in `src/lib/bank/parsers.ts`.
-- **Fax:** Telnyx (`src/app/api/telnyx-webhook`, `src/app/api/fax`, `ReceivedFax` model).
+- **Fax:** Telnyx (`src/app/api/telnyx-webhook`, admin `retryFax` in `src/lib/admin/filingActions.ts` (`/api/fax` removed 2026-09-30), `ReceivedFax` model).
 - **Auth:** hand-rolled HMAC session tokens for customers (`src/lib/session.ts`), admins (`src/lib/admin/auth.ts`, `src/lib/admin/identity.ts`) and partners (`src/lib/partner/auth.ts`) — all `crypto.createHmac`/`timingSafeEqual`. A `.clerk/` directory exists at the repo root but `@clerk/nextjs` is **not** in `package.json` dependencies; it appears vestigial, not the live auth path.
 - **Tests:** Vitest 4 (`npm test` → `vitest run`).
 - Two unrelated products share this repo: `hktax/` (a separate Hong Kong salaries-tax app) and this Form 5472 product. `src/lib/wizard/{mapping.ts,schemas.ts,wizardState.ts}` and `src/lib/tax/*` are leftover Hong Kong tax code (types like `PAPersonInput`, MPF calculations) with **zero importers** under `src/app` or `src/components`; `mapping.ts` even imports `@/lib/tax/params`, which doesn't exist in this repo, so it wouldn't compile if ever wired in. These are dead code, not part of the Form 5472 questionnaire. The real field-level schemas live in `src/lib/schemas.ts`.

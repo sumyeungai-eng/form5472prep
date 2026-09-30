@@ -136,11 +136,12 @@ Per IRS instructions for foreign-owned US DEs, Form 5472 line 1f includes Part V
 | `/api/checkout` | POST | Create Stripe Checkout Session |
 | `/api/stripe-webhook` | POST | Stripe webhook → mark PAID |
 | `/api/telnyx-webhook` | POST | Telnyx fax webhook → delivery / retry / failure |
+
+Faxes are sent only through the admin `retryFax` action (`src/lib/admin/filingActions.ts`), which refuses a re-fax without a logged reason; `POST /api/fax` was removed on 2026-09-30.
 | `/api/generate-pdf` | POST | Build the filing package PDF |
 | `/api/upload-signed` | POST | Multipart upload of signed PDF |
-| `/api/fax` | POST | Submit to Telnyx (sandbox if `TELNYX_API_KEY` unset) |
 
-All `/api/filings/*`, `/api/checkout`, `/api/generate-pdf`, `/api/upload-signed`, `/api/fax` routes are gated by Clerk middleware.
+All `/api/filings/*`, `/api/checkout`, `/api/generate-pdf`, `/api/upload-signed` routes are gated by Clerk middleware.
 
 ## Google sign-in (optional)
 
