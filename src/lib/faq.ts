@@ -191,7 +191,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "the-filing",
     question: "My LLC was dissolved this year — do I still file?",
     answer:
-      "A dissolved LLC still files Form 5472 for the partial year ending at dissolution. The deadline is the 15th day of the 4th month after the LLC’s final month, using the annual deadline logic for a short tax year rather than ignoring the final period.",
+      "A dissolved LLC still files Form 5472 for the partial year ending at dissolution. The deadline is generally the 15th day of the 4th month after the LLC’s final month; a short year ending in June of a tax year that began before 2026 is due the 15th day of the 3rd month instead.",
     source: "src/lib/landing-pages.ts:534 (slug: foreign-owned-llc-tax)",
   },
   {

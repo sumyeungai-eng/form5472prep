@@ -985,7 +985,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "I dissolved my Wyoming LLC last year. Do I still file Form 5472?",
-        a: "Yes. For the partial year the LLC was active before dissolution, you still need to file a final Form 5472 + 1120 covering that period. The deadline is the 15th day of the 4th month after the LLC's final month.",
+        a: "Yes. For the partial year the LLC was active before dissolution, you still need to file a final Form 5472 + 1120 covering that period. The deadline is generally the 15th day of the 4th month after the LLC's final month (the 3rd month if the final year ended in June and began before 2026).",
       },
       {
         q: "Wyoming has no state income tax — does that mean no IRS filing too?",
