@@ -89,8 +89,8 @@ export function Sidebar({
           attached. This workflow does not e-file.
         </p>
         <p className="mt-2">
-          After payment, we generate the forms, run an AI compliance check, and let you sign
-          in-portal before faxing to the IRS Ogden PIN Unit.
+          After payment, we generate the forms and a qualified accountant reviews your package.
+          You then sign in the portal, and we fax it to the IRS Ogden PIN Unit.
         </p>
       </div>
     </aside>

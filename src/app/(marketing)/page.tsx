@@ -88,48 +88,47 @@ export const revalidate = 600;
 const HOME_DESCRIPTION =
   "Form 5472 and pro forma 1120 filing for a foreign-owned US LLC, from $149. Prepared, reviewed, and filed by fax to the IRS Ogden PIN Unit.";
 
+// Homepage "How it works" — mirrors the real filing flow in FilingActions:
+// enter details -> we generate the package -> accountant review (gates signing)
+// -> browser signature -> fax -> timestamped fax receipt. `id` is the stable DOM
+// id on each step heading; the same array feeds the visible list and the HowTo
+// JSON-LD (see `howToSchema` below), so the two can never drift apart.
 const processSteps = [
   {
+    id: "how-step-1",
     icon: Building2,
-    title: "Complete the LLC details",
-    anchor: "#step-1",
-    body: "Enter the LLC details used across the return: legal name, EIN, address, formation date, state, country of incorporation, and NAICS or principal activity code. These are standard fields, so use the information from your state formation records and existing business records. This gives the pro forma Form 1120 and Form 5472 the entity header information they both need.",
+    title: "Enter your LLC, owner, and money details",
+    body: "Answer the guided questions about your LLC (name, EIN, address, formation details), the foreign owner (name, tax ID, country of residence), and the year's money movements: capital in, distributions out, loans, and year-end total assets. It takes about fifteen minutes, and no accounting software is needed.",
   },
   {
-    icon: Globe,
-    title: "Add the owner details",
-    anchor: "#step-2",
-    body: "Enter the foreign owner's full legal name, foreign tax ID or Reference ID, residential address, country of citizenship, and country of tax residence. If another related foreign entity is involved, use the organization details requested in the questionnaire. These answers identify the foreign shareholder and related party sections without asking you to interpret the IRS form line by line.",
-  },
-  {
-    icon: Receipt,
-    title: "Enter the transaction totals",
-    anchor: "#step-3",
-    body: "Add the dollar amounts that may create the reportable transaction picture: capital contributions in, distributions out, owner reimbursements, loans, related-party payments, and year-end total assets. The wizard is simple manual entry and does not require accounting software. Use the records you already keep, then review the totals before the package is generated.",
-  },
-  {
+    id: "how-step-2",
     icon: FileText,
-    title: "Review the generated package",
-    anchor: "#step-4",
-    body: "Review the package generated from your answers: the cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and reasonable cause statement when the filing is late under DIIRSP. Every package is reviewed by a qualified tax accountant before fax delivery, so the documents match the information you supplied before they move to signature.",
+    title: "We prepare your filing package",
+    body: "After payment, we generate the package from your answers: the cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and, when the filing is late under the IRS DIIRSP procedure, a reasonable cause statement. Everything arrives as one PDF, so you never fill in an IRS form line by line.",
   },
   {
+    id: "how-step-3",
+    icon: ShieldCheck,
+    title: "A qualified accountant reviews it",
+    body: "Every filing is reviewed by a qualified accountant before it is submitted. The accountant checks the package against the answers you gave, and if anything needs clarifying we message you on your filing page. Signing opens only after the review is approved, so you never sign an unchecked package.",
+  },
+  {
+    id: "how-step-4",
     icon: PenTool,
-    title: "Sign in your browser",
-    anchor: "#step-5",
-    body: "Review the prepared package, then sign once in your browser. We embed that signature into every required signature box on the printable PDF, so there is no printing or scanning in the standard flow. If you prefer a wet-ink signature, print the package, sign in pen, and upload the signed PDF instead. Either way, a qualified tax accountant on our team reviews the package end-to-end before anything is faxed.",
+    title: "You sign online",
+    body: "Once the review is approved, read the package and draw your signature once in your browser. We place it in every required signature box on the PDF, so there is no printing, scanning, or uploading. Nothing is sent to the IRS until you have signed.",
   },
   {
+    id: "how-step-5",
     icon: Send,
-    title: "Send the filing to the IRS",
-    anchor: "#step-6",
-    body: "After signature, we fax the complete package to the IRS Ogden PIN Unit at +1-855-887-7737. Fax delivery is included with every plan, so you do not need your own fax machine, a separate fax service, or any IRS account. The provider receipt records the destination number, the timestamp, the page count, and the reported transmission result.",
+    title: "We fax it to the IRS",
+    body: "After you sign, we fax the complete package to the IRS Ogden PIN Unit at +1-855-887-7737. Fax delivery is included with every plan, so you do not need your own fax machine, a separate fax service, or any IRS account. We email you when the fax is delivered.",
   },
   {
+    id: "how-step-6",
     icon: CheckCircle2,
-    title: "Confirm it is done",
-    anchor: "#step-7",
-    body: "Check the email containing your filed copy and the fax transmission report. Keep the exact submitted package together with the provider receipt and our confirmation message in your LLC records. The receipt is transmission evidence rather than an IRS acceptance notice, so save it as proof of what was sent, when it was sent, and where it was sent.",
+    title: "You get the timestamped IRS fax receipt",
+    body: "You receive the fax provider's transmission receipt and can download it from your filing page. It records the destination number, the timestamp, the page count, and the reported result. Keep it with your submitted package: it is proof of what was sent and when, not an IRS acceptance notice.",
   },
 ];
 
@@ -477,7 +476,7 @@ function HowItWorks() {
         <SectionHead
           eyebrow="How it works"
           title="How does Form 5472 filing work?"
-          subtitle="Form 5472 filing works as a seven-step flow: LLC details, owner details, transaction totals, package review, browser signature, IRS fax delivery, and confirmation. We generate the cover letter, pro forma Form 1120, Form 5472, supporting statement, and late-filing reasonable cause statement when DIIRSP applies, then fax the signed package to Ogden."
+          subtitle="Form 5472 filing works as a six-step flow: you enter your details, we prepare the package, a qualified accountant reviews it, you sign online, we fax it to the IRS, and you get the timestamped fax receipt. The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and a late-filing reasonable cause statement when the IRS DIIRSP procedure applies."
         />
         <HowToSummary {...HOW_TO_META} className="mt-10" />
         <ol className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -494,7 +493,7 @@ function HowItWorks() {
                 </span>
                 <s.icon className="h-5 w-5 text-slate-400 transition-colors duration-300 group-hover:text-accent" />
               </div>
-              <h3 id={s.anchor.slice(1)} className="font-medium text-slate-900">{s.title}</h3>
+              <h3 id={s.id} className="font-medium text-slate-900">{s.title}</h3>
               <p className="mt-1.5 text-sm text-slate-600">{s.body}</p>
             </Reveal>
           ))}
@@ -534,7 +533,7 @@ function Deliverables() {
         <SectionHead
           eyebrow="What you get"
           title="What is included in the filing package?"
-          subtitle="The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and reasonable cause statement when the filing is late. The exact same documents a CPA would prepare. Every order is reviewed by a qualified tax accountant before we submit to the IRS. Bundled as one PDF, ready for your signature."
+          subtitle="The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and reasonable cause statement when the filing is late. Every filing is reviewed by a qualified accountant before it is submitted. Bundled as one PDF, ready for your signature."
         />
         <ul className="mt-10 space-y-3">
           {docs.map((d, i) => (
@@ -955,7 +954,7 @@ function StructuredData() {
     description: HOME_DESCRIPTION,
     url,
     totalTime: HOW_TO_META.totalTime,
-    steps: processSteps.map(({ title, body, anchor }) => ({ name: title, text: body, anchor })),
+    steps: processSteps.map(({ id, title, body }) => ({ name: title, text: body, anchor: `#${id}` })),
     tools: HOW_TO_META.tools,
     supplies: HOW_TO_META.supplies,
     estimatedCost: HOW_TO_META.cost,
