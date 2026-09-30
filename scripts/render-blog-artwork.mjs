@@ -322,6 +322,11 @@ const POSTS = {
   "pay-yourself-from-us-llc-non-resident": { accent: C.green, motif: "card", glyphs: ["person", "hash", "doc", "check"] },
   "form-5472-from-mercury-wise-relay-statements": { accent: C.teal, motif: "stack", glyphs: ["doc", "hash", "calendar", "check"] },
   "form-5472-coaches-consultants-course-creators": { accent: C.amber, motif: "checklist", glyphs: ["person", "doc", "calendar", "check"] },
+  "form-5472-small-corporation-reasonable-cause": { accent: C.clay, motif: "notice", glyphs: ["warn", "doc", "pen", "check"] },
+  "foreign-owned-llc-compliance-calendar-2027": { accent: C.green, motif: "calendar", glyphs: ["calendar", "clock", "doc", "check"] },
+  "llc-annual-report-late-fees-by-state": { accent: C.amber, motif: "notice", glyphs: ["warn", "calendar", "hash", "check"] },
+  "form-5472-family-members-related-parties": { accent: C.teal, motif: "split", glyphs: ["person", "two", "doc", "check"] },
+  "irs-official-exchange-rate-form-5472": { accent: C.navySoft, motif: "stack", glyphs: ["globe", "hash", "doc", "check"] },
 };
 
 const wanted = process.argv.slice(2);

@@ -290,6 +290,11 @@ const ARTWORK_ALTS: Record<string, string> = {
   "form-5472-reasonable-estimates-small-amounts": "A calculator, receipts, and ledger organized to support Form 5472 estimates",
   "washington-llc-foreign-owner-tax-filing": "Washington State compliance folders beside a Seattle and evergreen landscape",
   "oregon-llc-foreign-owner-tax-filing": "Oregon compliance folders beside the coast, forests, and state silhouette",
+  "form-5472-small-corporation-reasonable-cause": "A notice and a signed statement illustrate a small foreign-owned LLC's reasonable cause case for a late Form 5472",
+  "foreign-owned-llc-compliance-calendar-2027": "A 2027 calendar with a marked deadline illustrates a foreign-owned LLC's federal and state filing dates",
+  "llc-annual-report-late-fees-by-state": "A late-fee notice beside a calendar illustrates the penalties for a missed state LLC annual report",
+  "form-5472-family-members-related-parties": "Two linked folders illustrate family members treated as separate related parties on Form 5472",
+  "irs-official-exchange-rate-form-5472": "Stacked rate tables beside a globe illustrate comparing IRS, Treasury and Federal Reserve exchange rates",
 };
 
 function artworkAlt(slug: string, title: string): string {
