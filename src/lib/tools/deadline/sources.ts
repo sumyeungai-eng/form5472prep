@@ -1,10 +1,20 @@
 // Primary sources behind every rule the Form 5472 deadline calculator applies.
 // Research notes with the exact quotes: docs/research/deadline-calculator.md.
 // The date math itself lives in src/lib/schemas.ts (filingDueDateUtc /
-// effectiveDueDateUtc) and src/lib/federalHolidays.ts; this file only names
-// the sources the page cites. Only irs.gov and Cornell LII URLs belong here.
+// effectiveDueDateUtc), which applies the shared Form 1120 rule in
+// src/lib/form1120DueDate.ts, and src/lib/federalHolidays.ts; this file only
+// names the sources the page cites. Only irs.gov, Cornell LII and govinfo.gov
+// (the official text of a public law) URLs belong here.
 
-export type SourceId = "i1120" | "irc6072" | "irc7503" | "p509" | "i7004" | "i5472" | "diirsp";
+export type SourceId =
+  | "i1120"
+  | "irc6072"
+  | "irc7503"
+  | "p509"
+  | "i7004"
+  | "i5472"
+  | "plaw11441"
+  | "diirsp";
 
 export type Source = { id: SourceId; label: string; url: string };
 
@@ -39,6 +49,11 @@ export const SOURCES: Record<SourceId, Source> = {
     label: "IRS — Instructions for Form 5472 (Rev. 12/2024), foreign-owned U.S. DEs",
     url: "https://www.irs.gov/instructions/i5472",
   },
+  plaw11441: {
+    id: "plaw11441",
+    label: "Pub. L. 114-41 §2006(a)(3)(B) and (c) — June 30 year-ends beginning before 2026",
+    url: "https://www.govinfo.gov/content/pkg/PLAW-114publ41/html/PLAW-114publ41.htm",
+  },
   diirsp: {
     id: "diirsp",
     label: "IRS — Delinquent international information return submission procedures",
@@ -47,5 +62,5 @@ export const SOURCES: Record<SourceId, Source> = {
 };
 
 // The date the rules above were last checked against their sources.
-export const LAST_REVIEWED_ISO = "2026-09-29";
-export const LAST_REVIEWED_LABEL = "29 September 2026";
+export const LAST_REVIEWED_ISO = "2026-09-30";
+export const LAST_REVIEWED_LABEL = "30 September 2026";

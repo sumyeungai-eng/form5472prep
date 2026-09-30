@@ -82,17 +82,3 @@ export function deadlineQuery(input: DeadlineInput, existing?: string | URLSearc
   if (input.extension) params.set("ext", "1");
   return params.toString();
 }
-
-/**
- * A final short year that ends in June, in a tax year that began before
- * January 1, 2026. The Form 1120 instructions treat it as ending June 30 and
- * make it due on the 15th day of the 3rd month (with a 7-month Form 7004
- * extension), one month earlier than the general 4th-month rule the shared
- * due-date code applies. The calculator's date is unchanged; the page shows a
- * caution for this case instead. See docs/research/deadline-calculator.md.
- */
-export function isJuneShortYearBefore2026(taxYear: number, dissolvedAt: string | null): boolean {
-  if (!dissolvedAt || !isDissolutionInYear(dissolvedAt, taxYear)) return false;
-  // A calendar-year LLC's final year began on January 1 of `taxYear`.
-  return taxYear < 2026 && dissolvedAt.slice(5, 7) === "06";
-}

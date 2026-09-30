@@ -1,6 +1,7 @@
 import { isPdfEncodable, PDF_TEXT_MESSAGE } from "./pdfText";
 import { z } from "zod";
 import { nextBusinessDay } from "@/lib/federalHolidays";
+import { form1120StatutoryDue, type Form1120StatutoryDue } from "@/lib/form1120DueDate";
 
 export const DATE_ONLY_RE = /^\d{4}-\d{2}-\d{2}$/;
 export const PRIOR_FORM_5472_ANSWERS = ["yes", "no", "not_sure"] as const;
@@ -268,14 +269,20 @@ export function validateDissolvedAt(
 
 // ─── Filing deadline / delinquency (single source of truth) ──────────────────
 // IRS due date for the Form 5472 / pro forma 1120 package covering `taxYear`.
-// Normal calendar year: 15th day of the 4th month after year end = April 15,
-// taxYear+1. Final SHORT year (dissolvedAt inside taxYear): the tax year ends
-// on the dissolution date, so the deadline is the 15th day of the 4th month
-// after the month the short year ends (IRC §6072 timing applied to the short
-// period) — NOT the following April 15. A return dissolved early in the year is
-// therefore already due (and can be delinquent) months before a full-year
-// return would be. JS Date.UTC month overflow handles December correctly
-// (m=11 → month 15 → April 15 of the next year).
+// The rule itself lives in src/lib/form1120DueDate.ts (shared with the
+// compliance calendar); this block maps the product's calendar-year model onto
+// it. Normal calendar year: 15th day of the 4th month after year end = April
+// 15, taxYear+1. Final SHORT year (dissolvedAt inside taxYear): the tax year
+// ends on the dissolution date, so the deadline is the 15th day of the 4th
+// month after the month the short year ends — NOT the following April 15. A
+// return dissolved early in the year is therefore already due (and can be
+// delinquent) months before a full-year return would be.
+//
+// June rule (owner decision 2026-09-30, applied to the pro forma 1120): a short
+// year ending anytime in June is treated as ending June 30, and a June 30 year
+// that began before 1 January 2026 is due on the 15th day of the 3rd month
+// (September 15) with a 7-month Form 7004 extension (to April 15). From tax
+// year 2026 a June dissolution uses the general rule (October 15, 6 months).
 //
 // Section 7503 roll: a deadline falling on a Saturday, Sunday, or legal
 // holiday moves to the next business day. The holiday table and observed-date
@@ -284,20 +291,32 @@ export function filingDueDateUtc(
   taxYear: number,
   dissolvedAt?: Date | string | null,
 ): number {
-  const raw = rawFilingDueDateUtc(taxYear, dissolvedAt);
+  const raw = filingDueRule(taxYear, dissolvedAt).originalStatutoryUtc;
   return nextBusinessDay(new Date(raw)).getTime();
 }
 
-function rawFilingDueDateUtc(taxYear: number, dissolvedAt?: Date | string | null): number {
+/**
+ * The Form 1120 due-date rule and unrolled dates for `taxYear`, cut short by
+ * `dissolvedAt` when that date falls inside the year. Exposed so callers (the
+ * deadline calculator) can say which rule produced a date without re-deriving it.
+ */
+export function filingDueRule(
+  taxYear: number,
+  dissolvedAt?: Date | string | null,
+): Form1120StatutoryDue {
+  // A calendar-year LLC's tax year — full, first (from formation) or final —
+  // always begins inside `taxYear`, so 1 January of `taxYear` answers the June
+  // rule's "begins before January 1, 2026" test exactly.
+  const start = `${String(taxYear).padStart(4, "0")}-01-01`;
   if (dissolvedAt != null) {
     const d = dissolvedAt instanceof Date ? dissolvedAt : new Date(dissolvedAt);
     // Only a dissolution that actually falls in `taxYear` shortens it. An
     // invalid date, or one in another year, falls through to the normal rule.
     if (!Number.isNaN(d.getTime()) && d.getUTCFullYear() === taxYear) {
-      return Date.UTC(taxYear, d.getUTCMonth() + 4, 15);
+      return form1120StatutoryDue(start, taxYear, d.getUTCMonth() + 1);
     }
   }
-  return Date.UTC(taxYear + 1, 3, 15);
+  return form1120StatutoryDue(start, taxYear, 12);
 }
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -386,22 +405,22 @@ export function isExtensionValid(
   return sent <= filingDueDateUtc(taxYear, dissolvedAt);
 }
 
-// Effective due date = original due date, plus six calendar months when a
-// valid extension exists. The six months extend the RAW statutory date (so
-// April 15 → October 15, and a short-year November 15 → May 15 of the next
-// year); the weekend roll is applied after, to the date that actually governs.
+// Effective due date = original due date, plus the Form 7004 extension when a
+// valid one exists: six calendar months, or seven for the pre-2026 June rule
+// (see filingDueRule). The months extend the RAW statutory date (so April 15 →
+// October 15, a short-year November 15 → May 15 of the next year, and a
+// pre-2026 June short year's September 15 → April 15); the weekend roll is
+// applied after, to the date that actually governs.
 export function effectiveDueDateUtc(
   taxYear: number,
   dissolvedAt?: Date | string | null,
   extension?: ExtensionFacts | null,
 ): number {
-  const raw = rawFilingDueDateUtc(taxYear, dissolvedAt);
-  if (!isExtensionValid(taxYear, dissolvedAt, extension)) {
-    return nextBusinessDay(new Date(raw)).getTime();
-  }
-  const d = new Date(raw);
-  const extended = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 6, 15);
-  return nextBusinessDay(new Date(extended)).getTime();
+  const due = filingDueRule(taxYear, dissolvedAt);
+  const raw = isExtensionValid(taxYear, dissolvedAt, extension)
+    ? due.extendedStatutoryUtc
+    : due.originalStatutoryUtc;
+  return nextBusinessDay(new Date(raw)).getTime();
 }
 
 // "I'm not sure / my agent may have filed one" must NOT be collapsed into
@@ -424,6 +443,9 @@ export function extensionUnclear(
   // docs/reviews/5472-irs-rule-citations.md, R8 addendum: a final short year
   // ending June 30 before 2026 may fall under the C-corp 7-month extension
   // exception. Defer to reviewer rather than classify it late or timely here.
+  // Since 2026-09-30 the due-date math applies that rule (filingDueRule: 3rd
+  // month, 7 months); this reviewer deferral is kept unchanged until the owner
+  // decides to drop it (note it checks June 30 only, the rule any June day).
   return (
     taxYear < 2026 &&
     d.getUTCFullYear() === taxYear &&

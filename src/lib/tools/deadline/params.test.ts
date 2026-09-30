@@ -1,12 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { effectiveDueDateUtc, filingDueRule, formatDueDate } from "@/lib/schemas";
 import {
   deadlineQuery,
   defaultTaxYear,
   hasDeadlineParams,
   isDissolutionInYear,
   isIsoDate,
-  isJuneShortYearBefore2026,
   parseDeadlineParams,
   taxYearOptions,
   type DeadlineInput,
@@ -122,18 +121,34 @@ describe("deadline rules shown on the page", () => {
   });
 });
 
-describe("June short-year caution", () => {
-  it("flags a final year ending in June that began before 2026", () => {
-    expect(isJuneShortYearBefore2026(2025, "2025-06-01")).toBe(true);
-    expect(isJuneShortYearBefore2026(2025, "2025-06-30")).toBe(true);
-    expect(isJuneShortYearBefore2026(2022, "2022-06-15")).toBe(true);
+describe("June rule shown on the page", () => {
+  const due = (taxYear: number, dissolvedAt: string | null, extension: boolean) => {
+    const ext = extension ? { filed: "yes" as const, transmittedAt: null } : null;
+    return formatDueDate(effectiveDueDateUtc(taxYear, dissolvedAt, ext));
+  };
+
+  it("a final year ending anytime in June that began before 2026: 3rd month, 7-month extension", () => {
+    expect(due(2025, "2025-06-30", false)).toBe("September 15, 2025");
+    expect(due(2025, "2025-06-30", true)).toBe("April 15, 2026");
+    // Treated as ending June 30 whatever the day in June.
+    expect(due(2025, "2025-06-01", false)).toBe("September 15, 2025");
+    // September 15, 2024 was a Sunday.
+    expect(due(2024, "2024-06-12", false)).toBe("September 16, 2024");
+    expect(filingDueRule(2025, "2025-06-30").june30Transition).toBe(true);
   });
 
-  it("does not flag other months, 2026 onwards, or no dissolution", () => {
-    expect(isJuneShortYearBefore2026(2025, "2025-07-01")).toBe(false);
-    expect(isJuneShortYearBefore2026(2025, "2025-05-31")).toBe(false);
-    expect(isJuneShortYearBefore2026(2026, "2026-06-30")).toBe(false);
-    expect(isJuneShortYearBefore2026(2025, null)).toBe(false);
-    expect(isJuneShortYearBefore2026(2025, "2024-06-30")).toBe(false);
+  it("from tax year 2026 a June dissolution uses the 4th month and 6 months", () => {
+    expect(due(2026, "2026-06-30", false)).toBe("October 15, 2026");
+    expect(due(2026, "2026-06-30", true)).toBe("April 15, 2027");
+    expect(filingDueRule(2026, "2026-06-30").june30Transition).toBe(false);
+  });
+
+  it("does not touch other months or a full calendar year", () => {
+    expect(due(2025, "2025-05-31", false)).toBe("September 15, 2025");
+    expect(due(2025, "2025-07-01", false)).toBe("November 17, 2025");
+    expect(filingDueRule(2025, "2025-05-31").june30Transition).toBe(false);
+    expect(filingDueRule(2025, null).june30Transition).toBe(false);
+    // A dissolution date outside the tax year does not shorten it.
+    expect(filingDueRule(2025, "2024-06-30").june30Transition).toBe(false);
   });
 });
