@@ -2,7 +2,8 @@ import { toPdfSafe } from "../pdfText";
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 
 // Renders a one-page "IRS FAX TRANSMISSION RECEIPT" PDF that customers can
-// keep as proof of on-time filing under IRC § 6038A. Layout mirrors what
+// keep as evidence of when the package reached the IRS (transmission
+// evidence — not a legal determination of timely filing). Layout mirrors what
 // competitors offer: bold header, green DELIVERED status, two-column
 // key/value rows, and a legal paragraph at the bottom citing the IRC code.
 //
@@ -136,7 +137,7 @@ export async function generateFaxReceiptPdf(input: FaxReceiptInput): Promise<Uin
     `Internal Revenue Service (IRS) at ${toLabel} on ${formatIsoUtc(input.deliveredAtIso)} UTC.`;
 
   const legal2 =
-    `This timestamped transmission receipt constitutes proof of on-time filing and may be ` +
+    `This timestamped transmission receipt is evidence of when the filing reached the IRS and may be ` +
     `presented to the IRS in the event of any penalty assessment under IRC Section 6038A.`;
 
   y = drawParagraph(page, legal1, margin.left, y, font, 10, TONE.text, PAGE_WIDTH - margin.left - margin.right);

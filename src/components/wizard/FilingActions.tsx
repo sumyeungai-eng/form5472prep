@@ -241,7 +241,7 @@ export function FilingActions({ filing }: { filing: Filing }) {
             </div>
             <p className="text-xs text-slate-500 mt-2">
               Recommended online fax services: eFax, FaxZero, or Google Voice (Workspace).
-              Keep your fax confirmation receipt — it&apos;s your proof of timely filing.
+              Keep your fax confirmation receipt — it&apos;s your proof of when you filed.
             </p>
           </div>
           {filing.signedPdfKey ? (

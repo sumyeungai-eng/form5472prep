@@ -40,7 +40,7 @@ const PRICING_FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Is fax filing really included?",
-    a: "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and the timestamped fax receipt as proof of on-time filing under IRC § 6038A. You don't need your own fax machine.",
+    a: "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and the timestamped fax receipt as proof of when your package reached the IRS. You don't need your own fax machine.",
   },
   {
     q: "What if I'm filing for multiple past years (DIIRSP)?",

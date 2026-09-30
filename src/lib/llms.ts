@@ -27,7 +27,7 @@ const WHAT_WE_DO = `## What we do
 - Generate a Part V supporting statement itemizing reportable transactions.
 - For late filings (DIIRSP), generate a cover letter and reasonable cause statement requesting penalty abatement under Rev. Proc. 2020-29.
 - Every package is reviewed by a qualified tax accountant on our team before it is faxed to the IRS.
-- Fax the signed package to the IRS Ogden Service Center PIN Unit at ${IRS_OGDEN_FAX} and return the fax confirmation receipt as proof of timely filing.
+- Fax the signed package to the IRS Ogden Service Center PIN Unit at ${IRS_OGDEN_FAX} and return the fax confirmation receipt as proof of when the package reached the IRS.
 - Store basic entity/owner data to one-click pre-fill next year's filing (7-year retention to match IRS records-retention guidance).`;
 
 const WHAT_WE_DO_NOT_DO = `## What we do NOT do

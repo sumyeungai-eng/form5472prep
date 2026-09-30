@@ -891,12 +891,12 @@ export async function sendFaxDeliveredEmail(args: {
     ${proofTable}
     ${attachReceipt ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       A timestamped <strong>IRS Fax Transmission Receipt</strong> is attached to this email and saved
-      in your portal. Please keep it with your tax records. Under IRC § 6038A, it serves as proof of
-      on-time filing if the IRS ever asks.
+      in your portal. Please keep it with your tax records. It shows exactly
+      when your package reached the IRS, if the IRS ever asks.
     </p>` : receiptPdfBytes ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       A timestamped <strong>IRS Fax Transmission Receipt</strong> is saved in your portal. Please
-      download it and keep it with your tax records. Under IRC § 6038A, it serves as proof of
-      on-time filing if the IRS ever asks.
+      download it and keep it with your tax records. It shows exactly when your package
+      reached the IRS, if the IRS ever asks.
     </p>` : ""}
     <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       The IRS does not send acknowledgments for faxed Form 5472 filings. You can re-download the
@@ -915,9 +915,9 @@ export async function sendFaxDeliveredEmail(args: {
       `  Confirmation:   ${proof.faxId}\n`
     : "";
   const receiptText = attachReceipt
-    ? `A timestamped IRS Fax Transmission Receipt is attached to this email and saved in your portal. Please keep it with your tax records. Under IRC § 6038A, it serves as proof of on-time filing if the IRS ever asks.\n\n`
+    ? `A timestamped IRS Fax Transmission Receipt is attached to this email and saved in your portal. Please keep it with your tax records. It shows exactly when your package reached the IRS, if the IRS ever asks.\n\n`
     : receiptPdfBytes
-      ? `A timestamped IRS Fax Transmission Receipt is saved in your portal. Please download it and keep it with your tax records. Under IRC § 6038A, it serves as proof of on-time filing if the IRS ever asks.\n\n`
+      ? `A timestamped IRS Fax Transmission Receipt is saved in your portal. Please download it and keep it with your tax records. It shows exactly when your package reached the IRS, if the IRS ever asks.\n\n`
       : "";
   // Same filename scheme as the admin copy (sendFaxDeliveredAdminEmail).
   const receiptAttachment = attachReceipt && receiptPdfBytes
