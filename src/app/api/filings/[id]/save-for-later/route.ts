@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getOwnedFiling, bindFilingToEmail } from "@/lib/session";
+import { getOwnedFiling, bindFilingToEmail, FilingAccessLostError } from "@/lib/session";
 import { makeMagicLink } from "@/lib/magicLink";
 import { sendResumeFilingEmail } from "@/lib/email";
 import { brandForFiling } from "@/lib/partnerBrand";
@@ -16,23 +16,34 @@ export const runtime = "nodejs";
 //
 // Guard order: rate limit (same per-IP helper as other public routes, e.g.
 // partner/send-link) first so an abusive caller never reaches the DB; then
-// ownership (getOwnedFiling — 404s for a filing this session/user/partner
+// body parsing, then ownership (getOwnedFiling — 404s for a filing this session/user/partner
 // doesn't already have access to, so this can't be used to hijack someone
 // else's draft); then email validation; then bind + email send.
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const rl = await rateLimit("save-for-later", clientIp(req), 5, 600);
   if (!rl.ok) return tooManyRequests(rl.retryAfterSec);
 
+  // Finish reading before authorising so a slow upload cannot keep a passed
+  // access check alive while the account owner takes over the filing.
+  const body = await req.json().catch(() => ({}));
+
   const filing = await getOwnedFiling(params.id);
   if (!filing) return NextResponse.json({ error: "not found" }, { status: 404 });
 
-  const body = await req.json().catch(() => ({}));
   const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
   if (!email || !email.includes("@")) {
     return NextResponse.json({ error: "invalid email" }, { status: 400 });
   }
 
-  const user = await bindFilingToEmail(params.id, email);
+  let user;
+  try {
+    user = await bindFilingToEmail(params.id, email);
+  } catch (err) {
+    if (err instanceof FilingAccessLostError) {
+      return NextResponse.json({ error: "not found" }, { status: 404 });
+    }
+    throw err;
+  }
 
   const baseLink = makeMagicLink(user.id);
   const sep = baseLink.includes("?") ? "&" : "?";

@@ -1,7 +1,7 @@
 import { isPdfEncodable, PDF_TEXT_MESSAGE } from "@/lib/pdfText";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getOwnedFiling, bindFilingToEmail } from "@/lib/session";
+import { getOwnedFiling, bindFilingToEmail, FilingAccessLostError } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { totalPriceCents, isTier } from "@/lib/pricing";
 import { del } from "@/lib/storage";
@@ -82,6 +82,15 @@ function isRealCalendarDate(value: string): boolean {
   );
 }
 
+// Filing.sessionId is the fs_session cookie value (a bearer credential) and
+// must never be serialised — the same rule as toClientFiling in @/lib/session.
+// Inlined here because route tests mock @/lib/session wholesale.
+function withoutSessionId<T extends { sessionId: string | null }>(filing: T): Omit<T, "sessionId"> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { sessionId, ...rest } = filing;
+  return rest;
+}
+
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const owned = await getOwnedFiling(params.id);
   if (!owned) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -89,7 +98,8 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
     where: { id: owned.id },
     include: { yearData: true },
   });
-  return NextResponse.json(filing);
+  if (!(await getOwnedFiling(owned.id))) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  return NextResponse.json(filing ? withoutSessionId(filing) : null);
 }
 
 // PATCH accepts a partial set of fields and persists them.
@@ -729,7 +739,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   // If an email was provided at the Review step, upsert the user and bind
   // this filing to them. Idempotent.
   if (typeof body.email === "string" && body.email.includes("@")) {
-    await bindFilingToEmail(filing.id, body.email);
+    try {
+      await bindFilingToEmail(filing.id, body.email, "edit");
+    } catch (err) {
+      if (err instanceof FilingAccessLostError) return NextResponse.json({ error: "Not found" }, { status: 404 });
+      throw err;
+    }
   }
 
   const updated = await prisma.$transaction(async (tx) => {
@@ -801,7 +816,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     return updatedFiling;
   });
 
-  return NextResponse.json(updated);
+  // A request can wait for its body while the owner takes over and types.
+  // Re-check the same scoped grant before echoing potentially private data.
+  if (!(await getOwnedFiling(filing.id, "edit"))) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  return NextResponse.json(withoutSessionId(updated));
 }
 
 // Allow deleting a DRAFT filing only. Paid filings have downstream artifacts

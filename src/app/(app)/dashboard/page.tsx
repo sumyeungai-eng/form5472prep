@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FileText, Plus, ArrowRight } from "lucide-react";
-import { requireUser } from "@/lib/session";
+import { claimAccountFilings, requireUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { getTiersForSource } from "@/lib/pricing";
@@ -70,7 +70,7 @@ function ItinStatusBadge({ status }: { status: ItinStatus }) {
 export default async function DashboardPage() {
   const user = await requireUser();
   const filings = await prisma.filing.findMany({
-    where: { userId: user.id, supersededAt: null },
+    where: { ...await claimAccountFilings(user.id), supersededAt: null },
     orderBy: { updatedAt: "desc" },
   });
   const taxYear = taxYearForSend();

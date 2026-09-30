@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { FilingStatus } from "@prisma/client";
-import { getOrCreateSessionId, getCurrentUser } from "@/lib/session";
+import { claimAccountFilings, toClientFiling, getOrCreateSessionId, getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_TIER, isTier, type Tier } from "@/lib/pricing";
 import {
@@ -159,9 +159,9 @@ export async function GET() {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json([]);
   const filings = await prisma.filing.findMany({
-    where: { userId: user.id },
+    where: await claimAccountFilings(user.id),
     orderBy: { updatedAt: "desc" },
     include: { yearData: true },
   });
-  return NextResponse.json(filings);
+  return NextResponse.json(filings.map(toClientFiling));
 }

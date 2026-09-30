@@ -1,6 +1,6 @@
 import { preparePreviousCheckout } from "@/lib/checkoutSessions";
 import { NextResponse } from "next/server";
-import { getOwnedFiling, bindFilingToEmail } from "@/lib/session";
+import { getOwnedFiling, bindFilingToEmail, FilingAccessLostError } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
@@ -110,7 +110,15 @@ export async function POST(req: Request) {
 
   // Bind the filing to the email before payment so the Stripe webhook can
   // look up the user and email the magic link even if the cookie is lost.
-  const user = await bindFilingToEmail(filing.id, email);
+  let user: Awaited<ReturnType<typeof bindFilingToEmail>>;
+  try {
+    user = await bindFilingToEmail(filing.id, email);
+  } catch (err) {
+    if (err instanceof FilingAccessLostError) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    throw err;
+  }
 
   // ─── Admin-only $0 test path ───
   // Skip Stripe entirely. Mark PAID, generate the PDF inline (mirroring the

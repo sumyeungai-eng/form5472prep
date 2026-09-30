@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_TIER, totalPriceCents, type Tier } from "@/lib/pricing";
 import type { Attribution } from "@/lib/attribution";
-import type { Filing, FilingStatus } from "@prisma/client";
+import type { Filing, FilingStatus, Prisma } from "@prisma/client";
 
 // Matches VISITOR_COOKIE in src/app/api/session/ping/route.ts. Not exported
 // from there, so the name is duplicated here rather than imported.
@@ -194,6 +194,43 @@ type FindOrCreateArgs = {
 // untouched DRAFT. Once a customer signs in, any prior anonymous draft they
 // matched on session sticks to them via `userId`, so the user-scoped lookup
 // catches both cases on subsequent visits.
+// SECURITY (review 2026-09-28, C2): an email reaches a draft without proof of
+// inbox control (save-for-later, Review step), so a draft linked to this
+// account may have been planted by whoever holds it in another browser. A
+// reused draft is then written into by the account owner — POST /api/filings
+// copies their prior EIN/FTIN onto it before they even see it — so reuse only
+// a draft no other browser or account can read:
+//   - account match: the draft must not be held by a different browser
+//     (sessionId null, or this browser's own session);
+//   - session match while signed in: the draft must not be linked to a
+//     different account (shared computer, or a mistyped email).
+// Partner and unexpired invite grants can also read the row, independently
+// of browser/account ownership. Never reuse those drafts for account prefill.
+// A draft skipped here stays where it is; the owner simply gets a new one.
+function reuseScope(userId: string | null, sessionId: string | undefined): Prisma.FilingWhereInput[] {
+  const scopes: Prisma.FilingWhereInput[] = [];
+  if (userId) {
+    scopes.push({
+      partnerId: null,
+      userId,
+      OR: sessionId ? [{ sessionId: null }, { sessionId }] : [{ sessionId: null }],
+    });
+  }
+  if (sessionId) {
+    scopes.push(userId ? { partnerId: null, sessionId, OR: [{ userId: null }, { userId }] } : { partnerId: null, sessionId });
+  }
+  return scopes.length > 0 ? scopes : [{ id: "__never__" }];
+}
+
+// Same rule as reuseScope, checked again on the row the query returned.
+function isReusableBy(f: Filing, userId: string | null, sessionId: string | undefined, now: Date): boolean {
+  if (f.partnerId !== null || (f.inviteExpiresAt !== null && f.inviteExpiresAt > now)) return false;
+  const heldByThisBrowser = !!sessionId && f.sessionId === sessionId;
+  if (userId && f.userId === userId) return f.sessionId === null || heldByThisBrowser;
+  if (heldByThisBrowser) return !userId || f.userId === null;
+  return false;
+}
+
 export async function findOrCreateDraftFiling(args: FindOrCreateArgs): Promise<{ filing: Filing; reused: boolean }> {
   const {
     sessionId,
@@ -205,6 +242,7 @@ export async function findOrCreateDraftFiling(args: FindOrCreateArgs): Promise<{
     attribution = null,
   } = args;
 
+  const now = new Date();
   const existing = await prisma.filing.findFirst({
     where: {
       status: "DRAFT",
@@ -219,14 +257,12 @@ export async function findOrCreateDraftFiling(args: FindOrCreateArgs): Promise<{
       llcBusinessActivity: null,
       ownerName: null,
       ownerAddress: null,
-      OR: [
-        userId ? { userId } : { id: "__never__" },
-        sessionId ? { sessionId } : { id: "__never__" },
-      ],
+      OR: reuseScope(userId, sessionId),
+      AND: [{ OR: [{ inviteExpiresAt: null }, { inviteExpiresAt: { lte: now } }] }],
     },
     orderBy: { createdAt: "desc" },
   });
-  if (existing && isUntouchedDraft(existing)) {
+  if (existing && isUntouchedDraft(existing) && isReusableBy(existing, userId, sessionId, now)) {
     // Deliberately NOT touching the attr* columns here. The row already carries
     // the attribution captured when it was created; a reused draft means the
     // visitor came back (often through a different channel), and re-stamping it

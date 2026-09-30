@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { getFilingAccess, partnerOwnsFiling, getCurrentUser } from "@/lib/session";
+import { toClientFiling, getFilingAccess, partnerOwnsFiling, getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { FilingWizardV3 } from "@/components/wizard-v3/FilingWizardV3";
 import { FilingLocked } from "@/components/FilingLocked";
@@ -16,7 +16,7 @@ export default async function EditFilingPage({ params }: { params: { id: string 
 
   const filing = await prisma.filing.findUnique({
     where: { id: owned.id },
-    include: { yearData: true, user: true },
+    include: { yearData: true, user: { select: { email: true } } },
   });
   if (!filing) notFound();
 
@@ -29,9 +29,19 @@ export default async function EditFilingPage({ params }: { params: { id: string 
   const currentUser = await getCurrentUser();
   const isSignedIn = Boolean(currentUser && filing.userId && currentUser.id === filing.userId);
 
+  // The full-row read above can overlap owner takeover. Do not serialize
+  // newly entered owner data to a browser whose earlier grant has expired.
+  const currentAccess = await getFilingAccess(filing.id, "edit");
+  if (currentAccess.kind === "not_found") notFound();
+  if (currentAccess.kind === "locked") return <FilingLocked ownerEmail={currentAccess.ownerEmail} />;
+
+  // The wizard needs only the account email, not its row or filing delivery /
+  // payment metadata. Keep these server-only fields out of client props.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { user, createdAt, inviteEmail, inviteTokenHash, stripeSessionId, ...clientFiling } = filing;
   const serialized = {
-    ...filing,
-    email: filing.user?.email ?? null,
+    ...toClientFiling(clientFiling),
+    email: user?.email ?? null,
     llcDateIncorporated: filing.llcDateIncorporated?.toISOString() ?? null,
     yearData: filing.yearData.map((y) => ({
       taxYear: y.taxYear,
@@ -56,7 +66,7 @@ export default async function EditFilingPage({ params }: { params: { id: string 
         filing={serialized}
         plaidEnabled={plaidConfigured()}
         saveForLater={saveForLaterMode({ isPartnerFiling: owningPartner !== null, isSignedIn })}
-        defaultEmail={filing.user?.email ?? null}
+        defaultEmail={user?.email ?? null}
       />
     </>
   );

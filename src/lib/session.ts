@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "./prisma";
 import { getCurrentPartner } from "./partner/auth";
 import { INVITE_COOKIE, parseInviteCookie, type InviteScope } from "./filingInvite";
@@ -141,6 +142,35 @@ export async function requireUser() {
 
 // ---- Filing access helpers ----
 
+// Filing.sessionId IS the value of this browser's fs_session cookie, and
+// getSessionId() trusts that cookie verbatim — so the column is a bearer
+// credential. It must never reach a browser: every filing row sent to the
+// client (API JSON, client-component props) goes through this. An explicit
+// omission rather than a field allowlist because the wizard consumes ~80
+// columns and sessionId is the only credential among them (userId/partnerId
+// are identifiers; the fs_user cookie is HMAC-signed, not the raw id).
+export function toClientFiling<T extends { sessionId?: unknown }>(filing: T): Omit<T, "sessionId"> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { sessionId, ...rest } = filing;
+  return rest;
+}
+
+// The identities this request presents, as filing filters. Shared by the
+// access check and the write-time re-checks below so they cannot drift.
+function requestScope(userId: string | null, sessionId: string | undefined): Prisma.FilingWhereInput[] {
+  const scope: Prisma.FilingWhereInput[] = [];
+  if (userId) scope.push({ userId });
+  if (sessionId) scope.push({ sessionId });
+  return scope.length > 0 ? scope : [{ id: "__never__" }];
+}
+
+// "Nobody but this browser (or nobody at all) holds it anonymously."
+function notHeldElsewhere(sessionId: string | undefined): Prisma.FilingWhereInput {
+  return { OR: sessionId ? [{ sessionId: null }, { sessionId }] : [{ sessionId: null }] };
+}
+
+const MAX_TAKEOVER_ATTEMPTS = 3;
+
 export function hasFilingInviteAccess(filingId: string, scope: InviteScope): boolean {
   const raw = cookies().get(INVITE_COOKIE)?.value;
   const invite = parseInviteCookie(raw);
@@ -164,18 +194,50 @@ export async function getOwnedFiling(
   const partner = await getCurrentPartner();
   const inviteMatches = inviteScope ? hasFilingInviteAccess(filingId, inviteScope) : false;
 
-  return prisma.filing.findFirst({
+  const scope = requestScope(user?.id ?? null, sessionId);
+  if (partner) scope.push({ partnerId: partner.id });
+  if (inviteMatches) scope.push({ id: filingId });
+
+  for (let attempt = 0; attempt < MAX_TAKEOVER_ATTEMPTS; attempt++) {
+    const filing = await prisma.filing.findFirst({
+      where: { id: filingId, OR: scope },
+      include: { yearData: true },
+    });
+    if (!filing) return null;
+
+    // Independent legitimate grants survive takeover. But a foreign anonymous
+    // cookie is not evidence of partner/invite authority: drop it before any
+    // verified holder sees or edits the filing, just as for the account owner.
+    const verifiedHolder = (user && filing.userId === user.id) ||
+      (partner && filing.partnerId === partner.id) || inviteMatches;
+    if (!verifiedHolder || !filing.sessionId || filing.sessionId === sessionId) return filing;
+
+    // Compare-and-set, then RE-READ even if count=0 (the holder may have rebound
+    // the filing between queries). Never return the pre-takeover snapshot.
+    await prisma.filing.updateMany({
+      where: { id: filing.id, userId: filing.userId, partnerId: filing.partnerId, sessionId: filing.sessionId },
+      data: { sessionId: null },
+    });
+  }
+  return null;
+}
+
+// Account-wide takeover, for views that show the account's filings together
+// (dashboard, GET /api/filings): drop every anonymous hold another browser
+// has on this account's filings, then return the filter that lists only
+// filings no other browser holds — so a filing bound to the account by
+// someone else in the instant between the two queries is simply not listed
+// until the next view, rather than listed while that browser can read it.
+export async function claimAccountFilings(userId: string): Promise<Prisma.FilingWhereInput> {
+  const sessionId = getSessionId();
+  await prisma.filing.updateMany({
     where: {
-      id: filingId,
-      OR: [
-        user ? { userId: user.id } : { id: "__never__" },
-        sessionId ? { sessionId } : { id: "__never__" },
-        partner ? { partnerId: partner.id } : { id: "__never__" },
-        inviteMatches ? { id: filingId } : { id: "__never__" },
-      ],
+      userId,
+      AND: [{ sessionId: { not: null } }, ...(sessionId ? [{ sessionId: { not: sessionId } }] : [])],
     },
-    include: { yearData: true },
+    data: { sessionId: null },
   });
+  return { userId, ...notHeldElsewhere(sessionId) };
 }
 
 // Returns the current signed-in partner IF they created this filing
@@ -260,22 +322,52 @@ export async function getFilingAccess(
   return { kind: "locked", ownerEmail: exists.user?.email ?? null };
 }
 
+// Thrown by bindFilingToEmail when the caller no longer holds the filing at
+// the moment of the write. Routes map it to 404, same as "not yours".
+export class FilingAccessLostError extends Error {
+  constructor(filingId: string) {
+    super(`caller no longer holds filing ${filingId}`);
+    this.name = "FilingAccessLostError";
+  }
+}
+
 // Upgrade an anonymous draft Filing to be owned by a real (email-bound) User.
 // Idempotent: if the filing is already bound, just updates the email.
 // We DO NOT clear sessionId here — the browser may not have a fs_user cookie
 // yet (they only get one by clicking the magic-link we email after payment),
 // so dropping sessionId would lock them out of their own draft. Both
-// identities can co-exist on the row; the magic-link flow takes over later.
-export async function bindFilingToEmail(filingId: string, email: string) {
+// identities can co-exist on the row until the account owner opens it from
+// another browser — then getOwnedFiling drops the anonymous hold.
+//
+// UNVERIFIED: the caller has not proven they control `email`. Nothing may
+// treat the resulting filing.userId as proof that the requester IS that user —
+// compare against getCurrentUser() instead (see the sign page's prior-signature
+// guard and findOrCreateDraftFiling's reuse rule).
+//
+// Write-time authority: callers authorise first (getOwnedFiling, or the
+// partner route's partnerId check), but a request can sit between that check
+// and this write — e.g. a slowly-sent body — while the owner takes the filing
+// over. So the link is written ONLY if the caller still holds the filing now:
+// same identities as getOwnedFiling (this user / this browser), plus the
+// signed-in partner that owns it. Otherwise FilingAccessLostError, and nothing
+// is changed — a stale request can never re-link a filing out from under the
+// owner who just took it over.
+export async function bindFilingToEmail(filingId: string, email: string, inviteScope?: InviteScope) {
   const normalized = email.trim().toLowerCase();
+  const [currentUser, partner] = await Promise.all([getCurrentUser(), getCurrentPartner()]);
+  const scope = requestScope(currentUser?.id ?? null, getSessionId());
+  if (partner) scope.push({ partnerId: partner.id });
+
   const user = await prisma.user.upsert({
     where: { email: normalized },
     update: {},
     create: { email: normalized },
   });
-  await prisma.filing.update({
-    where: { id: filingId },
+  if (inviteScope && hasFilingInviteAccess(filingId, inviteScope)) scope.push({ id: filingId });
+  const { count } = await prisma.filing.updateMany({
+    where: { id: filingId, OR: scope },
     data: { userId: user.id },
   });
+  if (count === 0) throw new FilingAccessLostError(filingId);
   return user;
 }

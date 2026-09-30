@@ -81,6 +81,8 @@ export async function POST(req: Request) {
   });
   setUserCookie(user.id);
 
+  const sessionId = getOrCreateSessionId();
+
   // For signin intent: just look for an existing DRAFT (don't create one).
   // Frontend redirects to /dashboard regardless of whether filingId comes back.
   // For start intent: reuse an existing DRAFT, send a returning customer (one
@@ -90,7 +92,16 @@ export async function POST(req: Request) {
   // returning customer's account (and the admin filings list) with empty
   // drafts.
   let filing = await prisma.filing.findFirst({
-    where: { userId: user.id, status: "DRAFT" },
+    // An email binding alone is not proof of ownership. Keep the existing
+    // returning-customer policy, but never open a draft held by another
+    // browser, a partner, or an unexpired invite.
+    where: {
+      userId: user.id,
+      status: "DRAFT",
+      partnerId: null,
+      OR: [{ sessionId: null }, { sessionId }],
+      AND: [{ OR: [{ inviteExpiresAt: null }, { inviteExpiresAt: { lte: new Date() } }] }],
+    },
     orderBy: { updatedAt: "desc" },
   });
 
@@ -103,7 +114,6 @@ export async function POST(req: Request) {
     const filingCount = await prisma.filing.count({ where: { userId: user.id } });
     outcome = decideStartOutcome({ hasDraft: !!filing, filingCount });
     if (outcome.action === "create-draft") {
-      const sessionId = getOrCreateSessionId();
       // First-touch channel from the `f5472_attr` cookie (set by middleware on
       // the visitor's first page view). Parsing never throws — a malformed
       // cookie yields all-nulls so sign-in can't break on bad attribution.
