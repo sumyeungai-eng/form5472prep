@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { finalizeFaxDelivered } from "@/lib/fax/finalize";
 import { alertStuckRetryClaim, handleConfirmedFaxFailure } from "@/lib/fax/retry";
-import { isPollable, pollCandidatesWhere, POLL_MAX_ROWS, staleRetryClaim } from "@/lib/fax/pollCandidates";
+import {
+  isPollable,
+  pollCandidatesWhere,
+  POLL_MAX_ROWS,
+  staleRetryClaim,
+  stuckClaimScanWhere,
+} from "@/lib/fax/pollCandidates";
 import {
   deliveryFactsFromTelnyx,
   fetchTelnyxFax,
@@ -60,8 +66,16 @@ export async function GET(req: Request) {
   // A retrying_N claim that outlived its grace period means a resubmission
   // crashed mid-flight: its fax may or may not be with Telnyx, so nothing
   // automatic may touch it. Logged every run; the admin is emailed at most
-  // once per filing per 24h.
-  const stuck = candidates.filter((f) => staleRetryClaim(f, now));
+  // once per filing per 24h. Found by its OWN query, not from `candidates`:
+  // a manual first send's claim has no fax job yet, and such rows must never
+  // become Telnyx lookup candidates.
+  const claimRows = await prisma.filing.findMany({
+    where: stuckClaimScanWhere(now),
+    select: { id: true, llcName: true, faxJobId: true, faxStatus: true, status: true, updatedAt: true },
+    orderBy: { updatedAt: "asc" },
+    take: POLL_MAX_ROWS,
+  });
+  const stuck = claimRows.filter((f) => staleRetryClaim(f, now));
   const stuckRetryClaims = stuck.map((f) => f.id);
   let stuckAlertsSent = 0;
   for (const f of stuck) {

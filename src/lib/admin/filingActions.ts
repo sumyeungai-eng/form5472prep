@@ -10,7 +10,8 @@ import {
   sendOrderConfirmationEmail,
   sendReadyToSignEmail,
 } from "@/lib/email";
-import { submitFax } from "@/lib/fax";
+import { submitFax, TelnyxSubmitRejectedError } from "@/lib/fax";
+import { RETRY_CLAIM_GRACE_MS } from "@/lib/fax/pollCandidates";
 import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
 import { generatePackage, type GeneratedPackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
@@ -34,6 +35,7 @@ import {
   deliveryFactsFromTelnyx,
   faxProofFromFacts,
   fetchTelnyxFax,
+  isTerminalFaxStatus,
   TELNYX_DELIVERED_STATUS,
 } from "@/lib/fax/telnyxStatus";
 
@@ -58,6 +60,11 @@ export type FilingActionContext = {
   approver?: string | null;
   force?: boolean;
   reason?: string;
+  /** retryFax only: the deliberate "send this fax again" confirmation carried by THIS request
+   *  (see refaxDecision). Kept apart from `force`/`reason` because the web admin route sets those
+   *  blanket-true for its legacy gates — a blanket flag must never count as a re-fax confirmation.
+   *  When absent, `force`/`reason` are used (the v1 API passes them per request). */
+  refax?: RefaxOverride;
 };
 
 export type FilingActionResult = { ok: true; [k: string]: unknown };
@@ -102,6 +109,125 @@ export function isValidForceOverride(
   ctx: Pick<FilingActionContext, "force" | "reason">,
 ): boolean {
   return ctx.force === true && typeof ctx.reason === "string" && ctx.reason.trim().length > 0;
+}
+
+// ---- Re-fax guard ----------------------------------------------------------
+//
+// DUPLICATE IRS FAXES MUST NOT BE ONE CLICK AWAY. retryFax sends freely only
+// when no earlier fax can still reach the IRS: the first send (no fax job yet)
+// or a retry after a CONFIRMED failure (faxStatus "failed…"). Once a fax went
+// out or may still go out, a human must confirm with force + a written reason;
+// while a resubmission claim ("retrying_N", see lib/fax/retry.ts) is fresh,
+// nothing may send at all. Status names follow lib/fax/telnyxStatus.ts.
+
+export type RefaxOverride = { force: boolean; reason: string | null };
+
+export const MIN_REFAX_REASON_CHARS = 10;
+
+// Claim label held while a MANUAL send is between "decided" and "recorded".
+// Reuses the retrying_N convention (N = 0: not an automatic attempt), so the
+// webhook, the hourly poll, the automatic retry and this guard all already
+// treat it as "a submission may be with Telnyx — hands off".
+export const MANUAL_FAX_CLAIM = "retrying_0";
+
+export type RefaxState =
+  | "retry_claim_stale"
+  | "delivered"
+  | "fax_in_flight"
+  | "outcome_unknown";
+
+export type RefaxDecision =
+  | { kind: "allowed" }
+  | { kind: "needs_override"; state: RefaxState; message: string }
+  | { kind: "refused"; message: string };
+
+function isRetryClaimLabel(faxStatus: string | null | undefined): boolean {
+  return !!faxStatus && /^retrying_\d+$/.test(faxStatus);
+}
+
+function nonSpaceLength(text: string): number {
+  return text.replace(/\s/g, "").length;
+}
+
+const REASON_HINT = `To send anyway, confirm with a reason (at least ${MIN_REFAX_REASON_CHARS} characters).`;
+
+export function refaxDecision(
+  filing: {
+    status: string;
+    faxJobId: string | null;
+    faxStatus: string | null;
+    /** Row's last write; for a retrying_N claim, when the claim was taken. */
+    updatedAt?: Date | null;
+  },
+  now: Date,
+): RefaxDecision {
+  const { status, faxJobId, faxStatus } = filing;
+
+  if (isRetryClaimLabel(faxStatus)) {
+    // A claim with no readable timestamp (or one from the future) counts as fresh.
+    const ageMs = filing.updatedAt ? now.getTime() - filing.updatedAt.getTime() : -1;
+    if (ageMs < RETRY_CLAIM_GRACE_MS) {
+      const mins = Math.max(0, Math.floor(ageMs / 60_000));
+      const clearsAt = filing.updatedAt
+        ? formatUtcMinute(new Date(filing.updatedAt.getTime() + RETRY_CLAIM_GRACE_MS))
+        : "15 minutes from now";
+      return {
+        kind: "refused",
+        message:
+          `A fax submission for this filing is in progress right now (fax status ${faxStatus}, started ${mins} min ago) — ` +
+          `an automatic retry or another admin's send. Sending another fax now could give the IRS a duplicate, so this is ` +
+          `refused even with a reason. If it has not cleared by ${clearsAt}, check Telnyx for a newer outbound fax to the ` +
+          `IRS for this filing before sending again.`,
+      };
+    }
+    return {
+      kind: "needs_override",
+      state: "retry_claim_stale",
+      message:
+        `A fax submission for this filing started ${Math.floor(ageMs / 60_000)} min ago (fax status ${faxStatus}) and never ` +
+        `recorded its result — that fax may or may not have reached Telnyx. Check Telnyx for a newer outbound fax to the ` +
+        `IRS for this filing first. ${REASON_HINT}`,
+    };
+  }
+
+  if (status === "CONFIRMED" || faxStatus === "delivered") {
+    return {
+      kind: "needs_override",
+      state: "delivered",
+      message:
+        `This filing was already delivered to the IRS${faxJobId ? ` (fax ${faxJobId})` : ""}. Faxing again sends the IRS ` +
+        `a second copy of the package — only do this if the IRS asked for it. ${REASON_HINT}`,
+    };
+  }
+
+  if (status === "FAXED") {
+    return {
+      kind: "needs_override",
+      state: "fax_in_flight",
+      message:
+        `A fax for this filing is already on its way or waiting for delivery confirmation (fax status ` +
+        `${faxStatus ?? "unknown"}). Sending again may give the IRS a duplicate — check Telnyx first. ${REASON_HINT}`,
+    };
+  }
+
+  // Not FAXED, but the last job never reported an outcome (e.g. the status was
+  // overridden by hand while Telnyx was still sending). A terminal failure
+  // ("failed" / "failed:<reason>") is the only outcome that frees a re-send.
+  if (faxJobId && !isTerminalFaxStatus(faxStatus)) {
+    return {
+      kind: "needs_override",
+      state: "outcome_unknown",
+      message:
+        `Fax ${faxJobId} for this filing has not reported an outcome yet (fax status ${faxStatus ?? "unknown"}), even ` +
+        `though the filing is marked ${status}. It may still reach the IRS — check Telnyx first. ${REASON_HINT}`,
+    };
+  }
+
+  return { kind: "allowed" };
+}
+
+function formatUtcMinute(d: Date): string {
+  return `${d.toISOString().slice(0, 16).replace("T", " ")} UTC`;
 }
 
 const VALID_STATUSES: ReadonlySet<string> = new Set([
@@ -186,6 +312,8 @@ const filingSelect = {
   faxJobId: true,
   faxStatus: true,
   faxConfirmationKey: true,
+  // retryFax's re-fax guard: for a retrying_N claim, when it was taken.
+  updatedAt: true,
   user: { select: { id: true, email: true } },
   yearData: {
     select: {
@@ -682,6 +810,38 @@ export async function runFilingAction(
       if (!filing.signedPdfKey) {
         throw new FilingActionError(400, "signed_pdf_required", "no signed PDF on file");
       }
+      // Re-fax guard (see refaxDecision): the first send and a retry after a
+      // confirmed failure go straight through; anything that could hand the
+      // IRS a duplicate needs force + a written reason from THIS request; a
+      // fresh resubmission claim refuses outright.
+      const refax = ctx.refax ?? { force: ctx.force === true, reason: ctx.reason ?? null };
+      const refaxReason = typeof refax.reason === "string" ? refax.reason.slice(0, 500).trim() : "";
+      const decision = refaxDecision(filing, new Date());
+      if (decision.kind === "refused") {
+        throw new FilingActionError(409, "fax_submission_in_progress", decision.message);
+      }
+      let refaxOverride: { state: RefaxState; by: string; reason: string } | null = null;
+      if (decision.kind === "needs_override") {
+        if (refax.force !== true) {
+          throw new FilingActionError(409, "refax_reason_required", decision.message);
+        }
+        if (nonSpaceLength(refaxReason) < MIN_REFAX_REASON_CHARS) {
+          throw new FilingActionError(
+            400,
+            "refax_reason_required",
+            `Write a reason of at least ${MIN_REFAX_REASON_CHARS} characters for sending this fax again. ${decision.message}`,
+          );
+        }
+        const by = ctx.approver ?? ctx.adminId;
+        if (!by) {
+          throw new FilingActionError(
+            403,
+            "identity_required",
+            "We could not tell which admin is signed in, so this re-send cannot be attributed. Sign out of the admin portal and sign in again.",
+          );
+        }
+        refaxOverride = { state: decision.state, by, reason: refaxReason };
+      }
       if (filing.preflightStatus === "failed" && !filing.preflightOverrideBy) {
         throw new FilingActionError(
           409,
@@ -705,6 +865,63 @@ export async function runFilingAction(
           );
         }
       }
+
+      // Claim before submit: pinned on the exact fax state the guard judged,
+      // so of two racing sends (double click, two admins, or an automatic
+      // retry landing now) only one proceeds. The claim is released only when
+      // the fax provably did NOT go out; after an ambiguous submit it is kept,
+      // and the guard above then refuses (fresh) or demands a reason (stale).
+      const claim = await prisma.filing.updateMany({
+        where: {
+          id: filing.id,
+          status: filing.status,
+          faxJobId: filing.faxJobId,
+          faxStatus: filing.faxStatus,
+        },
+        data: { faxStatus: MANUAL_FAX_CLAIM },
+      });
+      if (claim.count !== 1) {
+        throw new FilingActionError(
+          409,
+          "fax_state_changed",
+          "This filing's fax state changed while you were sending (another send or a fax update just landed). Nothing was sent. Refresh the page and check it before trying again.",
+        );
+      }
+      const release = async () => {
+        try {
+          await prisma.filing.updateMany({
+            where: { id: filing.id, faxJobId: filing.faxJobId, faxStatus: MANUAL_FAX_CLAIM },
+            data: { faxStatus: filing.faxStatus },
+          });
+        } catch (err) {
+          console.error(`[retryFax] ${filing.id} could not release ${MANUAL_FAX_CLAIM}`, err);
+        }
+      };
+
+      // The reason is on file BEFORE anything reaches the IRS: no audit row,
+      // no fax.
+      if (refaxOverride) {
+        try {
+          await logFilingChange({
+            filingId: filing.id,
+            adminId: ctx.adminId,
+            source: "admin",
+            field: "faxRefaxOverride",
+            before: { status: filing.status, faxJobId: filing.faxJobId, faxStatus: filing.faxStatus },
+            after: { overridden: refaxOverride.state, by: refaxOverride.by, reason: refaxOverride.reason },
+            reason: refaxOverride.reason,
+          });
+        } catch (err) {
+          console.error("[retryFax] re-fax override audit write failed", err);
+          await release();
+          throw new FilingActionError(
+            500,
+            "audit_log_failed",
+            "Could not record the reason for this re-send, so nothing was sent. Try again in a minute.",
+          );
+        }
+      }
+
       // Snapshot the EXACT bytes we're about to fax under a stable key so the
       // admin can later verify "what was sent to the IRS". Hard precondition:
       // if the copy fails we do NOT fax and do NOT mark FAXED — otherwise the
@@ -712,51 +929,97 @@ export async function runFilingAction(
       // current signedPdfKey (a manual re-fax may follow a regenerate+re-sign,
       // so the snapshot must reflect THIS submission's bytes, not a stale one).
       const faxedKey = `${filing.id}_faxed.pdf`;
+      let mediaUrl: string;
       try {
         const bytes = await getStorageObject(filing.signedPdfKey);
         await putPdf(faxedKey, bytes);
+        // Fax the snapshotted bytes so the transmitted content and the
+        // recorded faxedPdfKey are guaranteed identical.
+        mediaUrl = await publicUrl(faxedKey);
       } catch (err) {
         console.error("[retryFax] faxed-snapshot copy failed", err);
+        await release();
         throw new FilingActionError(
           500,
           "fax_snapshot_failed",
           "Could not snapshot the PDF for the fax audit trail; fax not sent.",
         );
       }
-      // Fax the snapshotted bytes so the transmitted content and the recorded
-      // faxedPdfKey are guaranteed identical.
-      const mediaUrl = await publicUrl(faxedKey);
-      const job = await submitFax({ mediaUrl, to: env.telnyx.destination });
-      await prisma.filing.update({
-        where: { id: filing.id },
-        data: {
-          faxJobId: job.id,
-          faxStatus: "queued",
-          status: "FAXED",
-          faxedPdfKey: faxedKey,
-          faxedAt: new Date(),
-        },
-        select: { id: true },
-      });
-      await logFilingChange({
-        filingId: filing.id,
-        adminId: ctx.adminId,
-        source: "admin",
-        field: "fax",
-        before: {
-          faxJobId: filing.faxJobId,
-          faxStatus: filing.faxStatus,
-          faxedPdfKey: filing.faxedPdfKey,
-          status: filing.status,
-        },
-        after: {
-          faxJobId: job.id,
-          faxStatus: "queued",
-          faxedPdfKey: faxedKey,
-          status: "FAXED",
-        },
-        reason: ctx.reason,
-      });
+
+      let job: Awaited<ReturnType<typeof submitFax>>;
+      try {
+        job = await submitFax({ mediaUrl, to: env.telnyx.destination });
+        if (typeof job?.id !== "string" || job.id.trim() === "") {
+          throw new Error("Telnyx accepted the fax but returned no fax id — it may be in flight");
+        }
+      } catch (err) {
+        const detail = err instanceof Error ? err.message : String(err);
+        if (err instanceof TelnyxSubmitRejectedError) {
+          // Telnyx refused it: no fax job exists, so the claim can go.
+          await release();
+          throw new FilingActionError(502, "fax_submit_rejected", `Telnyx refused the fax, so nothing was sent: ${detail}`);
+        }
+        console.error(
+          `[retryFax] AMBIGUOUS_FAX_SUBMIT filing=${filing.id} claim=${MANUAL_FAX_CLAIM} — outcome unknown; check Telnyx before re-faxing`,
+          err,
+        );
+        throw new FilingActionError(
+          502,
+          "fax_submit_ambiguous",
+          `We could not tell whether Telnyx accepted the fax (${detail}). The filing is held at fax status ${MANUAL_FAX_CLAIM} so nothing sends it again for now. Check Telnyx for an outbound fax to the IRS for this filing before sending again.`,
+        );
+      }
+
+      const faxedAt = new Date();
+      try {
+        await prisma.filing.update({
+          where: { id: filing.id },
+          data: {
+            faxJobId: job.id,
+            faxStatus: "queued",
+            status: "FAXED",
+            faxedPdfKey: faxedKey,
+            faxedAt,
+          },
+          select: { id: true },
+        });
+      } catch (err) {
+        console.error(
+          `[retryFax] UNTRACKED_FAX_JOB filing=${filing.id} newFaxId=${job.id} — Telnyx accepted the fax but the filing still shows ${MANUAL_FAX_CLAIM}`,
+          err,
+        );
+        throw new FilingActionError(
+          500,
+          "fax_record_failed",
+          `Telnyx accepted fax ${job.id}, but it could not be recorded on this filing. Do NOT send again: set faxJobId to ${job.id}, faxStatus to queued and status to FAXED by hand.`,
+        );
+      }
+      try {
+        await logFilingChange({
+          filingId: filing.id,
+          adminId: ctx.adminId,
+          source: "admin",
+          field: "fax",
+          before: {
+            faxJobId: filing.faxJobId,
+            faxStatus: filing.faxStatus,
+            faxedPdfKey: filing.faxedPdfKey,
+            status: filing.status,
+          },
+          after: {
+            faxJobId: job.id,
+            faxStatus: "queued",
+            faxedPdfKey: faxedKey,
+            status: "FAXED",
+            ...(refaxOverride ? { refaxOverride } : {}),
+          },
+          reason: refaxOverride?.reason ?? ctx.reason,
+        });
+      } catch (err) {
+        // The fax is out and recorded; a lost log line must not report failure
+        // (an admin who reads "failed" may send the IRS a second copy).
+        console.error(`[retryFax] ${filing.id} fax change-log write failed (fax ${job.id} was sent)`, err);
+      }
       return { ok: true, faxJobId: job.id };
     }
 

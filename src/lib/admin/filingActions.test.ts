@@ -7,13 +7,22 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const db = vi.hoisted(() => ({
   findUnique: vi.fn(),
   update: vi.fn((args: unknown) => ({ op: "filing.update", args })),
+  // retryFax's claim/release; count 1 = the claim won.
+  updateMany: vi.fn(async (_args: unknown) => ({ count: 1 })),
   yearFindUnique: vi.fn(),
   yearUpdate: vi.fn((args: unknown) => ({ op: "filingYearData.update", args })),
   createLog: vi.fn((args: unknown) => ({ op: "log.create", args })),
   transaction: vi.fn(async (ops: unknown[]) => ops),
 }));
 const fax = vi.hoisted(() => ({
-  submitFax: vi.fn(async () => ({ id: "fax_job_1", status: "queued" })),
+  submitFax: vi.fn(async (_opts: unknown) => ({ id: "fax_job_1", status: "queued" })),
+  TelnyxSubmitRejectedError: class TelnyxSubmitRejectedError extends Error {
+    readonly httpStatus: number;
+    constructor(httpStatus: number, body: string) {
+      super(`Telnyx fax failed: ${httpStatus} ${body}`);
+      this.httpStatus = httpStatus;
+    }
+  },
 }));
 const storage = vi.hoisted(() => ({
   get: vi.fn(async () => new Uint8Array([1, 2, 3])),
@@ -39,13 +48,16 @@ const pdf = vi.hoisted(() => ({
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    filing: { findUnique: db.findUnique, update: db.update },
+    filing: { findUnique: db.findUnique, update: db.update, updateMany: db.updateMany },
     filingYearData: { findUnique: db.yearFindUnique, update: db.yearUpdate },
     filingChangeLog: { create: db.createLog },
     $transaction: db.transaction,
   },
 }));
-vi.mock("@/lib/fax", () => ({ submitFax: fax.submitFax }));
+vi.mock("@/lib/fax", () => ({
+  submitFax: fax.submitFax,
+  TelnyxSubmitRejectedError: fax.TelnyxSubmitRejectedError,
+}));
 vi.mock("@/lib/storage", () => ({
   get: storage.get,
   put: storage.put,
@@ -75,6 +87,8 @@ import {
   canResendFaxConfirmation,
   FilingActionError,
   isValidForceOverride,
+  MANUAL_FAX_CLAIM,
+  refaxDecision,
   runFilingAction,
   SIDE_EFFECTING_ACTIONS,
 } from "./filingActions";
@@ -788,6 +802,296 @@ describe("retryFax pre-flight gate", () => {
     await runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1" });
 
     expect(fax.submitFax).toHaveBeenCalled();
+  });
+});
+
+describe("refaxDecision — when may retryFax send?", () => {
+  const NOW = new Date("2026-09-30T12:00:00.000Z");
+  const minsAgo = (m: number) => new Date(NOW.getTime() - m * 60_000);
+
+  it.each([
+    ["first send: signed, no fax job yet", { status: "SIGNED_UPLOADED", faxJobId: null, faxStatus: null }],
+    ["retry after a confirmed failure", { status: "FAILED", faxJobId: "fax_1", faxStatus: "failed:busy" }],
+    ["retry after a confirmed failure without a reason", { status: "FAILED", faxJobId: "fax_1", faxStatus: "failed" }],
+  ])("allowed without a reason — %s", (_label, filing) => {
+    expect(refaxDecision(filing, NOW)).toEqual({ kind: "allowed" });
+  });
+
+  it.each([
+    ["FAXED, queued", { status: "FAXED", faxJobId: "fax_1", faxStatus: "queued" }, "fax_in_flight"],
+    ["FAXED, sending.started", { status: "FAXED", faxJobId: "fax_1", faxStatus: "sending.started" }, "fax_in_flight"],
+    ["FAXED, media.processed", { status: "FAXED", faxJobId: "fax_1", faxStatus: "media.processed" }, "fax_in_flight"],
+    ["FAXED, automatic retry_2 awaiting its outcome", { status: "FAXED", faxJobId: "fax_2", faxStatus: "retry_2" }, "fax_in_flight"],
+    ["CONFIRMED (delivered)", { status: "CONFIRMED", faxJobId: "fax_1", faxStatus: "delivered" }, "delivered"],
+    ["delivered, status overridden to FAILED by hand", { status: "FAILED", faxJobId: "fax_1", faxStatus: "delivered" }, "delivered"],
+    ["FAILED by hand while Telnyx is still sending", { status: "FAILED", faxJobId: "fax_1", faxStatus: "sending" }, "outcome_unknown"],
+    ["rolled back to SIGNED_UPLOADED with a job still queued", { status: "SIGNED_UPLOADED", faxJobId: "fax_1", faxStatus: "queued" }, "outcome_unknown"],
+  ])("needs force + reason — %s", (_label, filing, state) => {
+    expect(refaxDecision(filing, NOW)).toMatchObject({ kind: "needs_override", state });
+  });
+
+  it("refuses outright while an automatic retry claim is fresh, and says when it clears", () => {
+    const decision = refaxDecision(
+      { status: "FAXED", faxJobId: "fax_1", faxStatus: "retrying_2", updatedAt: minsAgo(5) },
+      NOW,
+    );
+    expect(decision.kind).toBe("refused");
+    expect(decision).toMatchObject({ message: expect.stringContaining("refused even with a reason") });
+    expect(decision).toMatchObject({ message: expect.stringContaining("2026-09-30 12:10 UTC") });
+  });
+
+  it("treats a claim with no timestamp as fresh (fail closed)", () => {
+    expect(
+      refaxDecision({ status: "SIGNED_UPLOADED", faxJobId: null, faxStatus: MANUAL_FAX_CLAIM }, NOW).kind,
+    ).toBe("refused");
+  });
+
+  it("a claim 15+ minutes old is stale: allowed only with force + reason, with a check-Telnyx warning", () => {
+    for (const age of [15, 90]) {
+      const decision = refaxDecision(
+        { status: "FAXED", faxJobId: "fax_1", faxStatus: "retrying_1", updatedAt: minsAgo(age) },
+        NOW,
+      );
+      expect(decision).toMatchObject({ kind: "needs_override", state: "retry_claim_stale" });
+      expect(decision).toMatchObject({ message: expect.stringContaining("Check Telnyx") });
+    }
+    expect(
+      refaxDecision({ status: "FAXED", faxJobId: "fax_1", faxStatus: "retrying_1", updatedAt: minsAgo(14.9) }, NOW).kind,
+    ).toBe("refused");
+  });
+});
+
+describe("retryFax re-fax guard (server side)", () => {
+  const NOW = new Date("2026-09-30T12:00:00.000Z");
+  const REASON = "IRS letter CP-1 asked for a second copy";
+  const base = {
+    id: "filing_1",
+    status: "SIGNED_UPLOADED",
+    llcName: "Acme LLC",
+    taxYears: [2026],
+    isFinalReturn: false,
+    dissolvedAt: null,
+    extensionFiled: "no",
+    extensionTransmittedAt: null,
+    reasonableCauseNarrative: null,
+    signedPdfKey: "signed.pdf",
+    faxedPdfKey: null as string | null,
+    faxJobId: null as string | null,
+    faxStatus: null as string | null,
+    preflightStatus: "passed",
+    preflightOverrideBy: null,
+    updatedAt: new Date("2026-09-29T10:00:00.000Z"),
+    user: { id: "u1", email: "a@b.com" },
+  };
+  const delivered = { ...base, status: "CONFIRMED", faxJobId: "fax_old", faxStatus: "delivered", faxedPdfKey: "filing_1_faxed.pdf" };
+  const inFlight = { ...base, status: "FAXED", faxJobId: "fax_old", faxStatus: "queued", faxedPdfKey: "filing_1_faxed.pdf" };
+  const admin = { adminId: "admin_1", approver: "admin_1" };
+
+  function given(filing: Partial<typeof base>) {
+    db.findUnique.mockResolvedValue({ ...base, ...filing });
+  }
+  const logs = () =>
+    db.createLog.mock.calls.map(([arg]) => (arg as { data: Record<string, unknown> }).data);
+  const claimCalls = () =>
+    db.updateMany.mock.calls.map(([arg]) => arg as { where: Record<string, unknown>; data: Record<string, unknown> });
+  function expectNothingSent() {
+    expect(fax.submitFax).not.toHaveBeenCalled();
+    expect(storage.putPdf).not.toHaveBeenCalled();
+    expect(db.update).not.toHaveBeenCalled();
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(NOW);
+    db.findUnique.mockReset();
+    db.update.mockClear();
+    db.updateMany.mockReset();
+    db.updateMany.mockResolvedValue({ count: 1 });
+    db.createLog.mockReset();
+    db.createLog.mockImplementation((args: unknown) => ({ op: "log.create", args }));
+    fax.submitFax.mockReset();
+    fax.submitFax.mockResolvedValue({ id: "fax_new", status: "queued" });
+    storage.get.mockClear();
+    storage.putPdf.mockClear();
+    storage.publicUrl.mockClear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("first send from SIGNED_UPLOADED needs no reason: claims, faxes, records FAXED", async () => {
+    given({});
+    await expect(runFilingAction("filing_1", "retryFax", {}, admin)).resolves.toEqual({ ok: true, faxJobId: "fax_new" });
+
+    expect(claimCalls()).toEqual([
+      {
+        where: { id: "filing_1", status: "SIGNED_UPLOADED", faxJobId: null, faxStatus: null },
+        data: { faxStatus: MANUAL_FAX_CLAIM },
+      },
+    ]);
+    expect(fax.submitFax).toHaveBeenCalledTimes(1);
+    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ faxJobId: "fax_new", faxStatus: "queued", status: "FAXED" }),
+    }));
+    // No override → no override audit row; just the usual fax log line.
+    expect(logs().map((l) => l.field)).toEqual(["fax"]);
+  });
+
+  it("retry after a FAILED fax needs no reason", async () => {
+    given({ status: "FAILED", faxJobId: "fax_old", faxStatus: "failed:busy", faxedPdfKey: "filing_1_faxed.pdf" });
+    await runFilingAction("filing_1", "retryFax", {}, admin);
+    expect(fax.submitFax).toHaveBeenCalledTimes(1);
+  });
+
+  it("refuses a CONFIRMED filing without force (409 refax_reason_required) and sends nothing", async () => {
+    given(delivered);
+    await expect(runFilingAction("filing_1", "retryFax", {}, admin)).rejects.toMatchObject({
+      status: 409,
+      code: "refax_reason_required",
+      message: expect.stringContaining("already delivered to the IRS"),
+    });
+    expectNothingSent();
+    expect(db.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("refuses FAXED (in flight) with force but a reason under 10 non-space characters", async () => {
+    given(inFlight);
+    await expect(
+      runFilingAction("filing_1", "retryFax", {}, { ...admin, refax: { force: true, reason: "a b c d e f g h i      " } }),
+    ).rejects.toMatchObject({ status: 400, code: "refax_reason_required" });
+    await expect(
+      runFilingAction("filing_1", "retryFax", {}, { ...admin, refax: { force: false, reason: REASON } }),
+    ).rejects.toMatchObject({ status: 409, code: "refax_reason_required" });
+    expectNothingSent();
+  });
+
+  it("with force + reason, records reason and admin in FilingChangeLog BEFORE the fax leaves", async () => {
+    given(inFlight);
+    await runFilingAction("filing_1", "retryFax", {}, {
+      adminId: null,
+      approver: "ops@example.test",
+      refax: { force: true, reason: `  ${REASON}  ` },
+    });
+
+    const [override, faxLog] = logs();
+    expect(override).toMatchObject({
+      field: "faxRefaxOverride",
+      adminId: null,
+      source: "admin",
+      reason: REASON,
+      afterJson: { overridden: "fax_in_flight", by: "ops@example.test", reason: REASON },
+      beforeJson: { status: "FAXED", faxJobId: "fax_old", faxStatus: "queued" },
+    });
+    expect(faxLog).toMatchObject({
+      field: "fax",
+      reason: REASON,
+      afterJson: expect.objectContaining({ faxJobId: "fax_new", refaxOverride: expect.objectContaining({ by: "ops@example.test" }) }),
+    });
+    expect(db.createLog.mock.invocationCallOrder[0]).toBeLessThan(fax.submitFax.mock.invocationCallOrder[0]);
+  });
+
+  it("the web route's blanket force/reason never counts as a re-fax confirmation", async () => {
+    given(delivered);
+    await expect(
+      runFilingAction("filing_1", "retryFax", {}, {
+        ...admin,
+        force: true,
+        reason: "legacy admin override",
+        refax: { force: false, reason: null },
+      }),
+    ).rejects.toMatchObject({ status: 409, code: "refax_reason_required" });
+    expectNothingSent();
+  });
+
+  it("without ctx.refax (v1 API), the per-request force + reason is the confirmation", async () => {
+    given(delivered);
+    await runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1", force: true, reason: REASON });
+    expect(fax.submitFax).toHaveBeenCalledTimes(1);
+    expect(logs()[0]).toMatchObject({ field: "faxRefaxOverride", adminId: "admin_1", reason: REASON });
+  });
+
+  it("refuses a forced re-send it cannot attribute to an admin", async () => {
+    given(inFlight);
+    await expect(
+      runFilingAction("filing_1", "retryFax", {}, { adminId: null, refax: { force: true, reason: REASON } }),
+    ).rejects.toMatchObject({ status: 403, code: "identity_required" });
+    expectNothingSent();
+  });
+
+  it("refuses even with force + reason while an automatic retry claim is fresh", async () => {
+    given({ ...inFlight, faxStatus: "retrying_2", updatedAt: new Date(NOW.getTime() - 5 * 60_000) });
+    await expect(
+      runFilingAction("filing_1", "retryFax", {}, { ...admin, refax: { force: true, reason: REASON } }),
+    ).rejects.toMatchObject({
+      status: 409,
+      code: "fax_submission_in_progress",
+      message: expect.stringContaining("12:10 UTC"),
+    });
+    expectNothingSent();
+    expect(db.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("a stale claim (15+ min) needs force + reason, then sends", async () => {
+    given({ ...inFlight, faxStatus: "retrying_2", updatedAt: new Date(NOW.getTime() - 20 * 60_000) });
+    await expect(runFilingAction("filing_1", "retryFax", {}, admin)).rejects.toMatchObject({
+      status: 409,
+      code: "refax_reason_required",
+      message: expect.stringContaining("never recorded its result"),
+    });
+    expectNothingSent();
+
+    await runFilingAction("filing_1", "retryFax", {}, { ...admin, refax: { force: true, reason: REASON } });
+    expect(fax.submitFax).toHaveBeenCalledTimes(1);
+    expect(claimCalls()[0].where).toMatchObject({ faxStatus: "retrying_2", faxJobId: "fax_old" });
+  });
+
+  it("loses the claim race (double click / second admin): 409 fax_state_changed, nothing sent", async () => {
+    given({});
+    db.updateMany.mockResolvedValueOnce({ count: 0 });
+    await expect(runFilingAction("filing_1", "retryFax", {}, admin)).rejects.toMatchObject({
+      status: 409,
+      code: "fax_state_changed",
+    });
+    expectNothingSent();
+  });
+
+  it("releases the claim when Telnyx rejects the submission (nothing was sent)", async () => {
+    given({ status: "FAILED", faxJobId: "fax_old", faxStatus: "failed:busy" });
+    fax.submitFax.mockRejectedValueOnce(new fax.TelnyxSubmitRejectedError(422, "bad media"));
+    await expect(runFilingAction("filing_1", "retryFax", {}, admin)).rejects.toMatchObject({
+      status: 502,
+      code: "fax_submit_rejected",
+    });
+    expect(claimCalls()[1]).toEqual({
+      where: { id: "filing_1", faxJobId: "fax_old", faxStatus: MANUAL_FAX_CLAIM },
+      data: { faxStatus: "failed:busy" },
+    });
+    expect(db.update).not.toHaveBeenCalled();
+  });
+
+  it("keeps the claim after an ambiguous submit error, so nothing re-sends blindly", async () => {
+    given({});
+    fax.submitFax.mockRejectedValueOnce(new Error("socket hang up"));
+    await expect(runFilingAction("filing_1", "retryFax", {}, admin)).rejects.toMatchObject({
+      status: 502,
+      code: "fax_submit_ambiguous",
+      message: expect.stringContaining("Check Telnyx"),
+    });
+    expect(db.updateMany).toHaveBeenCalledTimes(1); // the claim; no release
+    expect(db.update).not.toHaveBeenCalled();
+  });
+
+  it("sends nothing (and releases the claim) when the override audit row cannot be written", async () => {
+    given(delivered);
+    db.createLog.mockImplementationOnce(() => {
+      throw new Error("db down");
+    });
+    await expect(
+      runFilingAction("filing_1", "retryFax", {}, { ...admin, refax: { force: true, reason: REASON } }),
+    ).rejects.toMatchObject({ status: 500, code: "audit_log_failed" });
+    expectNothingSent();
+    expect(claimCalls()[1]).toMatchObject({ data: { faxStatus: "delivered" } });
   });
 });
 

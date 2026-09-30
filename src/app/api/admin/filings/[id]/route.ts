@@ -56,12 +56,25 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         approver: principal?.adminId ?? adminLoginEmail(),
         force: true,
         reason: "legacy admin override",
+        // The blanket force above must never count as "yes, fax the IRS
+        // again": retryFax's re-fax guard reads only what the admin sent with
+        // THIS request ({ force: true, reason } from the "Fax again" form).
+        ...(action === "retryFax"
+          ? {
+              refax: {
+                force: body?.force === true,
+                reason: typeof body?.reason === "string" ? body.reason : null,
+              },
+            }
+          : {}),
       },
     );
     return NextResponse.json(result);
   } catch (error) {
     if (error instanceof FilingActionError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
+      // `code` lets the admin UI react to a specific refusal (e.g. open the
+      // re-fax reason form on "refax_reason_required").
+      return NextResponse.json({ error: error.message, code: error.code }, { status: error.status });
     }
     throw error;
   }
