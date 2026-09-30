@@ -533,7 +533,7 @@ function Deliverables() {
         <SectionHead
           eyebrow="What you get"
           title="What is included in the filing package?"
-          subtitle="The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and reasonable cause statement when the filing is late. The exact same documents a CPA would prepare. Every order is reviewed by a qualified tax accountant before we submit to the IRS. Bundled as one PDF, ready for your signature."
+          subtitle="The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and reasonable cause statement when the filing is late. Every filing is reviewed by a qualified accountant before it is submitted. Bundled as one PDF, ready for your signature."
         />
         <ul className="mt-10 space-y-3">
           {docs.map((d, i) => (
