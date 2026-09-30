@@ -31,6 +31,22 @@ export function pollCandidatesWhere(now: Date): Prisma.FilingWhereInput {
   };
 }
 
+// Stuck-claim scan: every "retrying_N" claim that has outlived the grace
+// period, INCLUDING claims with no fax job at all — a manual first send whose
+// submit was ambiguous holds retrying_0 with faxJobId null (see retryFax in
+// lib/admin/filingActions.ts) — and claims on a CONFIRMED filing (a forced
+// manual re-send). Used ONLY to alert a human: these rows are never polled
+// (isPollable rejects every retrying_N claim, and a null fax id has nothing to
+// look up). Same 14-day window as pollCandidatesWhere.
+export function stuckClaimScanWhere(now: Date): Prisma.FilingWhereInput {
+  const cutoff = new Date(now.getTime() - POLL_LOOKBACK_DAYS * 24 * 60 * 60 * 1000);
+  return {
+    faxStatus: { startsWith: "retrying_" },
+    updatedAt: { lte: new Date(now.getTime() - RETRY_CLAIM_GRACE_MS) },
+    OR: [{ faxedAt: { gte: cutoff } }, { updatedAt: { gte: cutoff } }],
+  };
+}
+
 type PollRow = { faxJobId: string | null; faxStatus: string | null; status: string; updatedAt: Date };
 
 function isRetryClaim(faxStatus: string | null): boolean {
@@ -49,11 +65,14 @@ export function isPollable(filing: PollRow): boolean {
   return true;
 }
 
-// A "retrying_N" claim older than the grace period: needs a human.
-export function staleRetryClaim(filing: PollRow, now: Date): boolean {
+// A "retrying_N" claim older than the grace period: needs a human, whatever
+// the filing's status or fax job (see stuckClaimScanWhere).
+export function staleRetryClaim(
+  filing: Pick<PollRow, "faxStatus" | "updatedAt">,
+  now: Date,
+): boolean {
   return (
     isRetryClaim(filing.faxStatus) &&
-    filing.status !== "CONFIRMED" &&
     now.getTime() - filing.updatedAt.getTime() >= RETRY_CLAIM_GRACE_MS
   );
 }

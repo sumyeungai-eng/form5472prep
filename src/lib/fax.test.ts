@@ -6,7 +6,12 @@ vi.mock("@/lib/env", () => ({
   },
 }));
 
-import { submitFax, TelnyxSubmitMissingIdError, TelnyxSubmitRejectedError } from "@/lib/fax";
+import {
+  submitFax,
+  TelnyxSubmitAmbiguousError,
+  TelnyxSubmitMissingIdError,
+  TelnyxSubmitRejectedError,
+} from "@/lib/fax";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -18,9 +23,34 @@ describe("submitFax (Telnyx stubbed — nothing is sent)", () => {
     await expect(submitFax({ mediaUrl: "https://example.test/a.pdf" })).resolves.toEqual({ id: "fax-new", status: "queued" });
   });
 
-  it("throws TelnyxSubmitRejectedError on an HTTP error (no fax created)", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("bad media", { status: 422 })));
-    await expect(submitFax({ mediaUrl: "https://example.test/a.pdf" })).rejects.toBeInstanceOf(TelnyxSubmitRejectedError);
+  it.each([400, 401, 422, 429])(
+    "throws TelnyxSubmitRejectedError on HTTP %i: Telnyx said no, no fax was created",
+    async (status) => {
+      vi.stubGlobal("fetch", vi.fn(async () => new Response("bad media", { status })));
+      const err = await submitFax({ mediaUrl: "https://example.test/a.pdf" }).catch((e: unknown) => e);
+      expect(err).toBeInstanceOf(TelnyxSubmitRejectedError);
+      expect(err).toMatchObject({ httpStatus: status });
+    },
+  );
+
+  it.each([500, 502, 503, 504])(
+    "treats HTTP %i as ambiguous (a gateway may answer after Telnyx queued the fax), never as a rejection",
+    async (status) => {
+      vi.stubGlobal("fetch", vi.fn(async () => new Response("Bad Gateway", { status })));
+      const err = await submitFax({ mediaUrl: "https://example.test/a.pdf" }).catch((e: unknown) => e);
+      expect(err).toBeInstanceOf(TelnyxSubmitAmbiguousError);
+      expect(err).not.toBeInstanceOf(TelnyxSubmitRejectedError);
+      expect(err).toMatchObject({ httpStatus: status, message: expect.stringContaining("check Telnyx") });
+    },
+  );
+
+  it("lets a network error or timeout surface as-is (ambiguous — not a rejection)", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => {
+      throw new TypeError("fetch failed");
+    }));
+    const err = await submitFax({ mediaUrl: "https://example.test/a.pdf" }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(TypeError);
+    expect(err).not.toBeInstanceOf(TelnyxSubmitRejectedError);
   });
 
   it.each([

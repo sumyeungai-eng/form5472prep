@@ -59,8 +59,18 @@ const db = vi.hoisted(() => ({
   }),
   findMany: vi.fn(async (args: unknown) => {
     state.findManyArgs.push(args);
-    // SQL-side filter approximated coarsely; lib/fax/pollCandidates.isPollable
-    // is the in-process filter under test.
+    const where = (args as { where?: { faxStatus?: { startsWith?: string } } }).where;
+    // The stuck-claim scan (stuckClaimScanWhere): every retrying_* row, with
+    // or without a fax job, whatever its status. staleRetryClaim is the
+    // in-process age filter under test.
+    if (where?.faxStatus?.startsWith) {
+      const prefix = where.faxStatus.startsWith;
+      return Array.from(state.rows.values())
+        .filter((r) => typeof r.faxStatus === "string" && r.faxStatus.startsWith(prefix))
+        .map((r) => structuredClone(r));
+    }
+    // Poll candidates: SQL-side filter approximated coarsely;
+    // lib/fax/pollCandidates.isPollable is the in-process filter under test.
     return Array.from(state.rows.values())
       .filter((r) => r.faxJobId != null && r.status !== "CONFIRMED")
       .map((r) => structuredClone(r));
@@ -152,7 +162,7 @@ vi.mock("@/lib/env", () => ({
 import { POST as telnyxWebhook } from "@/app/api/telnyx-webhook/route";
 import { GET as faxStatusPoll } from "@/app/api/cron/fax-status-poll/route";
 import { finalizeFaxDelivered, finalizeFaxFailed } from "@/lib/fax/finalize";
-import { isPollable, pollCandidatesWhere, staleRetryClaim } from "@/lib/fax/pollCandidates";
+import { isPollable, pollCandidatesWhere, staleRetryClaim, stuckClaimScanWhere } from "@/lib/fax/pollCandidates";
 import { isTerminalFaxStatus, type FaxDeliveryFacts } from "@/lib/fax/telnyxStatus";
 
 const FAX_ID = "8c2f0b3e-1111-4222-8333-944455556666";
@@ -609,6 +619,52 @@ describe("fax-status-poll", () => {
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining("STUCK_RETRY_CLAIM filing=filing_1"));
   });
 
+  it("alerts on a stale claim with NO fax job (ambiguous manual first send), once per 24h, and never looks it up", async () => {
+    seedFiling({
+      status: "SIGNED_UPLOADED",
+      faxJobId: null,
+      faxStatus: "retrying_0",
+      faxedAt: null,
+      updatedAt: new Date(Date.now() - 60 * 60 * 1000),
+    });
+    const fetchMock = stubTelnyx(() => new Response("{}", { status: 200 }));
+
+    const first = await (await faxStatusPoll(pollRequest())).json();
+    const second = await (await faxStatusPoll(pollRequest())).json();
+
+    expect(first).toMatchObject({ candidates: 0, inFlight: 0, stuckRetryClaims: ["filing_1"], stuckAlertsSent: 1 });
+    expect(second).toMatchObject({ stuckRetryClaims: ["filing_1"], stuckAlertsSent: 0 });
+    expect(email.sendFaxAttentionAdminEmail).toHaveBeenCalledTimes(1);
+    expect(email.sendFaxAttentionAdminEmail).toHaveBeenCalledWith(expect.objectContaining({
+      filingId: "filing_1",
+      details: expect.arrayContaining([["Fax id on record", "(none)"]]),
+    }));
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining("STUCK_RETRY_CLAIM filing=filing_1 faxStatus=retrying_0 faxJobId=null"));
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(fax.submitFax).not.toHaveBeenCalled();
+    expect(row()).toMatchObject({ status: "SIGNED_UPLOADED", faxJobId: null, faxStatus: "retrying_0" });
+  });
+
+  it("alerts on a stale manual re-send claim on a CONFIRMED filing too", async () => {
+    seedFiling({ status: "CONFIRMED", faxStatus: "retrying_0", updatedAt: new Date(Date.now() - 60 * 60 * 1000) });
+    const fetchMock = stubTelnyx(() => new Response("{}", { status: 200 }));
+
+    const body = await (await faxStatusPoll(pollRequest())).json();
+
+    expect(body).toMatchObject({ stuckRetryClaims: ["filing_1"], stuckAlertsSent: 1 });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("does not alert on a fresh no-fax-job claim (still inside the 15-minute grace)", async () => {
+    seedFiling({ status: "SIGNED_UPLOADED", faxJobId: null, faxStatus: "retrying_0", updatedAt: new Date(Date.now() - 5 * 60 * 1000) });
+    stubTelnyx(() => new Response("{}", { status: 200 }));
+
+    const body = await (await faxStatusPoll(pollRequest())).json();
+
+    expect(body).toMatchObject({ stuckRetryClaims: [], stuckAlertsSent: 0 });
+    expect(email.sendFaxAttentionAdminEmail).not.toHaveBeenCalled();
+  });
+
   it("keeps CRON_SECRET auth", async () => {
     seedFiling();
     const fetchMock = stubTelnyx(() => new Response("{}", { status: 200 }));
@@ -699,6 +755,25 @@ describe("poll candidate rules", () => {
     expect(isPollable(stale)).toBe(false);
     expect(staleRetryClaim(fresh, now)).toBe(false);
     expect(staleRetryClaim(stale, now)).toBe(true);
+  });
+
+  it("never polls a claim with no fax job, but the stuck-claim scan covers it", () => {
+    const manual = { faxJobId: null, status: "SIGNED_UPLOADED", faxStatus: "retrying_0", updatedAt: new Date("2026-09-29T11:00:00.000Z") };
+    expect(isPollable(manual)).toBe(false);
+    expect(staleRetryClaim(manual, now)).toBe(true);
+    const onConfirmed = { ...manual, status: "CONFIRMED" };
+    expect(staleRetryClaim(onConfirmed, now)).toBe(true);
+  });
+
+  it("scans stale retrying_* claims in the 14-day window, with no fax-job or status filter", () => {
+    expect(stuckClaimScanWhere(now)).toEqual({
+      faxStatus: { startsWith: "retrying_" },
+      updatedAt: { lte: new Date("2026-09-29T11:45:00.000Z") },
+      OR: [
+        { faxedAt: { gte: new Date("2026-09-15T12:00:00.000Z") } },
+        { updatedAt: { gte: new Date("2026-09-15T12:00:00.000Z") } },
+      ],
+    });
   });
 
   it("bounds the SQL to non-CONFIRMED, non-terminal faxes touched in the last 14 days", () => {
