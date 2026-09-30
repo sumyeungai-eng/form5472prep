@@ -222,7 +222,7 @@ export function ReviewStep({
             <SectionHeading id="review-delivery-title" icon={Send} title="Delivery to the IRS" />
             <p className="mt-4 rounded-xl border border-paper-edge bg-paper p-4 text-sm leading-relaxed text-slate-700">
               We fax your signed package to the IRS Ogden PIN Unit and return the
-              timestamped fax receipt as proof of on-time filing. Fax delivery is
+              timestamped fax receipt as proof of when your package reached the IRS. Fax delivery is
               included on every plan — no separate fee.
             </p>
           </section>
