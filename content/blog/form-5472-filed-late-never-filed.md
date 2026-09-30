@@ -51,7 +51,7 @@ It works like this:
 
 1. **Prepare all missing returns.** For each year you didn't file, you need a pro forma Form 1120 and a Form 5472. For most foreign-owned single-member LLCs, this is a straightforward package — the Form 1120 is essentially blank, and the Form 5472 lists your intercompany transactions (capital contributions, distributions, loans).
 
-2. **Write a reasonable cause statement.** This is a letter — typically one to two pages — explaining why you didn't file. For most foreign owners, the honest reason is that they didn't know the requirement existed. That's generally sufficient for the IRS to waive penalties, provided it's credible and consistent with your situation.
+2. **Write a reasonable cause statement.** This is a letter — typically one to two pages — explaining why you didn't file. For most foreign owners, the honest reason is that they didn't know the requirement existed. The IRS decides each case on its facts, so the statement has to be specific, credible and consistent with your situation — there is no guarantee the penalty will be waived.
 
 3. **Assemble the package.** The cover letter cites the DIIRSP submission. Behind it go the pro forma 1120 and Form 5472 for each tax year, in chronological order, with the reasonable cause statement at the front.
 
@@ -65,7 +65,7 @@ That's the entire procedure. There's no application to submit, no online form, n
 
 There's no statute of limitations on unfiled returns in most circumstances. For returns that were never filed, the three-year assessment period doesn't start running. In theory, the IRS could go back indefinitely.
 
-Many practitioners cover the last six years as a rule of thumb; the IRS publishes no DIIRSP lookback period. If your LLC has existed for fewer than six years, you'd file for every year it existed. If it's older, filing six years of returns is generally sufficient to demonstrate good faith and stop the accumulating exposure.
+Many practitioners cover the last six years as a rule of thumb; the IRS publishes no DIIRSP lookback period. If your LLC has existed for fewer than six years, you'd file for every year it existed. If it's older, many practitioners treat six years of returns as enough to show good faith and stop the accumulating exposure, but the IRS sets no rule.
 
 If there are reasons to go further back — for example, an IRS notice already references a specific year, or you have unusual circumstances — file those years too. The goal is to have no gaps.
 

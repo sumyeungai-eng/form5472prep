@@ -64,7 +64,7 @@ const FAQS = [
   },
   {
     q: "What if I'm two or three years late (DIIRSP)?",
-    a: `Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each. All delinquent years go to the IRS together under DIIRSP with one comprehensive reasonable cause statement, and the exact totals are shown in the multi-year table above. If you're more than three years behind, email ${ORG_EMAIL} to scope it first.`,
+    a: `Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each. All delinquent years go to the IRS together under DIIRSP, each with its own reasonable cause statement, and the exact totals are shown in the multi-year table above. If you're more than three years behind, email ${ORG_EMAIL} to scope it first.`,
   },
   {
     q: "I already received an IRS notice — can you still help?",

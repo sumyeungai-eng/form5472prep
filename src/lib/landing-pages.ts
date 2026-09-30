@@ -340,7 +340,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you handle multi-year DIIRSP filings?",
-        body: "If you've missed 2 or 3+ years, file them all at once with one comprehensive Reasonable Cause Statement covering the entire period. The IRS treats a single comprehensive catch-up far more favorably than serial late filings spaced out over time.\n\nOur flat-rate DIIRSP catch-up packages:\n\n• 2-year DIIRSP catch-up: $248 Standard / $298 Express (fax included)\n• 3-year DIIRSP catch-up: $347 Standard / $397 Express (fax included)\n\nThe per-year price is cheaper than filing separately, and we use one consistent reasonable cause narrative across all years. Every package is reviewed by an accountant on our team before we fax it to the IRS.\n\nFor 4+ missed years, you'd run two packages back-to-back or message us to coordinate — the IRS still accepts the comprehensive catch-up approach but the multi-year package limit is 3 years per wizard session.",
+        body: "If you've missed 2 or 3+ years, file them all at once, with a Reasonable Cause Statement attached to each late year's return. The IRS manual recommends that reasonable cause not be considered for any year until all delinquent returns have been filed, so one catch-up beats filings spaced out over time.\n\nOur flat-rate DIIRSP catch-up packages:\n\n• 2-year DIIRSP catch-up: $248 Standard / $298 Express (fax included)\n• 3-year DIIRSP catch-up: $347 Standard / $397 Express (fax included)\n\nThe per-year price is cheaper than filing separately, and each year's reasonable cause statement tells the same consistent story. Every package is reviewed by an accountant on our team before we fax it to the IRS.\n\nFor 4+ missed years, you'd run two packages back-to-back or message us to coordinate — the IRS still accepts the comprehensive catch-up approach but the multi-year package limit is 3 years per wizard session.",
       },
       {
         heading: "How do DIIRSP, Streamlined, and Quiet Disclosure differ?",
@@ -2423,7 +2423,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Can I submit the same reasonable cause statement for multiple years?",
-        a: "Yes — one statement can cover multiple late years. In fact, the IRS prefers one comprehensive statement covering all missed years over separate per-year statements. Our wizard auto-formats the statement to cover all years in the catch-up package.",
+        a: "We prepare a reasonable cause statement for each late year and attach it to that year's return, with the same consistent facts across all of them, and submit every late year together. The IRS manual recommends that reasonable cause not be considered for any year until all delinquent returns have been filed.",
       },
       {
         q: "What if my reasonable cause is rejected?",

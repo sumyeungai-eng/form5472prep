@@ -243,7 +243,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "Can the penalty be abated?",
     answer:
-      "The Form 5472 penalty can be abated, but there are no guarantees. Many late filers pursue reasonable-cause relief through DIIRSP by submitting the late return with a Reasonable Cause Statement. Well-documented first-time delinquencies have a high acceptance rate when the facts support reasonable cause.",
+      "The Form 5472 penalty can be abated, but there are no guarantees. Many late filers pursue reasonable-cause relief through DIIRSP by submitting the late return with a Reasonable Cause Statement. The IRS decides each case on its facts, and Treas. Reg. §1.6038A-4(b) requires showing reasonable cause and good faith.",
     source: "src/app/(marketing)/form-5472-penalty-calculator/page.tsx:41",
   },
   {
