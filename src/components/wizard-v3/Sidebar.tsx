@@ -92,6 +92,9 @@ export function Sidebar({
           After payment, we generate the forms, run an AI compliance check, and let you sign
           in-portal before faxing to the IRS Ogden PIN Unit.
         </p>
+        <p className="mt-2">
+          A qualified accountant reviews your package before you sign.
+        </p>
       </div>
     </aside>
   );
