@@ -40,6 +40,8 @@ export type ReviewStepFiling = {
   isDiirsp: boolean;
   extensionFiled: string | null;
   reasonableCauseNarrative: string | null;
+  /** Per-year reasonable-cause answers (the RCS step saves these, not the legacy narrative). */
+  yearData?: { taxYear: number; rcsWhyMissed?: string | null }[];
   tier: string | null;
   funnelSource: string | null;
 };

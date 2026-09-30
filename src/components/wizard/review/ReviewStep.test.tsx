@@ -127,3 +127,24 @@ describe("tier feature split", () => {
     }
   });
 });
+
+describe("ReviewStep reasonable-cause row", () => {
+  it("shows per-year answers instead of 'missing' for a late filing", () => {
+    const html = render({
+      ...baseFiling,
+      taxYears: [2024, 2025],
+      isDiirsp: true,
+      yearData: [
+        { taxYear: 2025, rcsWhyMissed: "The Owner was not aware of the requirement." },
+        { taxYear: 2024, rcsWhyMissed: "The Owner was not aware of the requirement." },
+      ],
+    });
+    expect(html).toContain("Answered for 2024, 2025");
+    expect(html).not.toContain(">missing<");
+  });
+
+  it("still flags a late filing with no answers at all", () => {
+    const html = render({ ...baseFiling, isDiirsp: true, yearData: [] });
+    expect(html).toContain("missing");
+  });
+});

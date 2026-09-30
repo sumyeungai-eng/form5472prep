@@ -35,13 +35,7 @@ export function FilingDetails({ filing }: { filing: ReviewStepFiling }) {
       {filing.isDiirsp && (
         <Row
           label="Reasonable cause"
-          value={
-            filing.reasonableCauseNarrative
-              ? `${filing.reasonableCauseNarrative.slice(0, 80)}${
-                  filing.reasonableCauseNarrative.length > 80 ? "…" : ""
-                }`
-              : null
-          }
+          value={reasonableCauseSummary(filing)}
         />
       )}
     </dl>
@@ -71,4 +65,20 @@ function Row({
       </dd>
     </div>
   );
+}
+
+// The RCS step saves one answer per late year (yearData.rcsWhyMissed); older
+// filings may only have the legacy single narrative. Checkout already refuses
+// a late filing without answers, so "missing" here means genuinely missing.
+function reasonableCauseSummary(filing: ReviewStepFiling): string | null {
+  const answered = (filing.yearData ?? [])
+    .filter((y) => (y.rcsWhyMissed ?? "").trim().length > 0)
+    .map((y) => y.taxYear)
+    .sort((a, b) => a - b);
+  if (answered.length > 0) {
+    return `Answered for ${answered.join(", ")} — we write a statement for each late year`;
+  }
+  const legacy = filing.reasonableCauseNarrative;
+  if (legacy) return `${legacy.slice(0, 80)}${legacy.length > 80 ? "…" : ""}`;
+  return null;
 }
