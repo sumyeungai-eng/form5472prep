@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import {
   effectiveDueDateUtc,
   filingDueDateUtc,
+  filingDueRule,
   formatDueDate,
   lastCompletedTaxYear,
 } from "@/lib/schemas";
@@ -25,7 +26,6 @@ import {
   deadlineQuery,
   defaultTaxYear as pickDefaultTaxYear,
   hasDeadlineParams,
-  isJuneShortYearBefore2026,
   parseDeadlineParams,
   taxYearOptions as buildTaxYearOptions,
   type DeadlineInput,
@@ -140,8 +140,10 @@ export function DeadlineCalculator() {
     );
     const days = Math.round((dueMs - todayUtc) / ONE_DAY_MS);
     const state: DeadlineState = days < 0 ? "overdue" : days < 30 ? "urgent" : "upcoming";
+    // Only to explain the date: the shared due-date code already applied the rule.
+    const juneRule = filingDueRule(taxYear, dissolvedAtOrNull).june30Transition;
 
-    return { dueMs, days, state };
+    return { dueMs, days, state, juneRule };
   }, [dissolvedAt, hasExtension, isDissolved, taxYear]);
 
   const stateStyles = {
@@ -289,12 +291,11 @@ export function DeadlineCalculator() {
           {formatDueDate(result.dueMs)}
         </p>
         <p className="mt-3 text-sm leading-relaxed">{stateStyles.body}</p>
-        {!hasExtension && isJuneShortYearBefore2026(taxYear, input.dissolvedAt) ? (
-          <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs leading-relaxed text-amber-950">
-            Final year ending in June: for a tax year that began before 2026, the Form 1120
-            instructions set the due date one month earlier, on the 15th day of the 3rd month
-            (September 15, or the next business day). This calculator uses the 4th-month rule, so
-            the date above may be a month late for this case.
+        {result.juneRule ? (
+          <p className="mt-3 text-xs leading-relaxed">
+            Final year ending in June, begun before 2026: it is treated as ending June 30, so it is
+            due on the 15th day of the 3rd month (September 15, or the next business day), and a
+            timely Form 7004 adds 7 months instead of 6.
           </p>
         ) : null}
         <div className="mt-4 border-t border-black/10 pt-4">

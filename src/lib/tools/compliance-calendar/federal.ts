@@ -22,13 +22,13 @@
 //   deadline calculator can never disagree.
 
 import { nextBusinessDay } from "@/lib/federalHolidays";
+import { form1120StatutoryDue } from "@/lib/form1120DueDate";
 import {
   type IsoDate,
   addDays,
   compareIso,
   isoFromUtcMs,
   lastDayOfMonth,
-  monthsAfter,
   parseIsoDate,
   utcMs,
 } from "@/lib/tools/state-fees/dates";
@@ -61,7 +61,9 @@ export const FEDERAL_SOURCES = {
 } as const;
 
 // The June 30 special rule applies only to tax years that begin before this date.
-export const JUNE_30_RULE_ENDS_FOR_YEARS_BEGINNING = "2026-01-01";
+// The rule itself (3rd month, 7-month extension) lives in src/lib/form1120DueDate.ts,
+// shared with the filing workflow's due-date code in src/lib/schemas.ts.
+export { JUNE_30_RULE_ENDS_FOR_YEARS_BEGINNING } from "@/lib/form1120DueDate";
 
 export type TaxYear = {
   start: IsoDate;
@@ -113,15 +115,12 @@ export function taxYearsFrom(formed: IsoDate, fyeMonth: number, lastEnd: IsoDate
 export function federalDueFor(taxYear: TaxYear): FederalDue {
   const end = parseIsoDate(taxYear.end);
   if (!end) throw new Error(`Invalid tax year end: ${taxYear.end}`);
-  const june30Transition =
-    end.m === 6 && compareIso(taxYear.start, JUNE_30_RULE_ENDS_FOR_YEARS_BEGINNING) < 0;
-  const monthsAfterEnd = june30Transition ? 3 : 4;
-  const extensionMonths: 6 | 7 = june30Transition ? 7 : 6;
-  const originalStatutory = monthsAfter(end.y, end.m, monthsAfterEnd, 15);
-  const o = parseIsoDate(originalStatutory)!;
+  const due = form1120StatutoryDue(taxYear.start, end.y, end.m);
+  const { june30Transition, extensionMonths } = due;
+  const originalStatutory = isoFromUtcMs(due.originalStatutoryUtc);
   // The extension runs from the statutory (unrolled) date; the roll is applied
   // to whichever date actually governs — same order as effectiveDueDateUtc().
-  const extendedStatutory = monthsAfter(o.y, o.m, extensionMonths, 15);
+  const extendedStatutory = isoFromUtcMs(due.extendedStatutoryUtc);
   return {
     taxYear,
     june30Transition,

@@ -4,6 +4,7 @@ import {
   ArrowRight,
   CalendarClock,
   CalendarDays,
+  CalendarRange,
   ExternalLink,
   FileClock,
   RotateCw,
@@ -57,13 +58,19 @@ const deadlineRules: Array<{
   {
     icon: FileClock,
     title: "When does a dissolution short year apply?",
-    body: "A dissolution short year applies when the LLC dissolved during the tax year. A dissolved corporation generally files by the 15th day of the 4th month after the date it dissolved; the calculator uses the 15th of the 4th month after the month of dissolution, then applies the same weekend and holiday roll.",
+    body: "A dissolution short year applies when the LLC dissolved during the tax year. A dissolved corporation generally files by the 15th day of the 4th month after the date it dissolved; the calculator uses the 15th of the 4th month after the month of dissolution (the 3rd month for a June dissolution in a year that began before 2026, below), then applies the same weekend and holiday roll.",
     sources: ["i1120"],
+  },
+  {
+    icon: CalendarRange,
+    title: "What changes for a year ending in June?",
+    body: "A tax year ending June 30 that began before January 1, 2026 is due on the 15th day of the 3rd month after it ends (September 15), and a timely Form 7004 extends it by 7 months instead of 6 (to April 15). A short year ending anytime in June is treated as ending June 30, so this covers an LLC that dissolved in June 2025 or earlier. For tax years beginning in 2026 or later, the general 4th-month date and 6-month extension apply.",
+    sources: ["i1120", "i7004", "plaw11441"],
   },
   {
     icon: CalendarClock,
     title: "How does a Form 7004 extension work?",
-    body: "A Form 7004 filed by the regular due date gives an automatic extension, generally 6 months: October 15 for a calendar year, or six months after a short-year due date. The calculator adds six months to the unrolled due date, then applies the weekend and holiday roll. It takes your word that the Form 7004 was filed on time.",
+    body: "A Form 7004 filed by the regular due date gives an automatic extension, generally 6 months: October 15 for a calendar year, or six months after a short-year due date (seven for a June year-end that began before 2026). The calculator adds the extension to the unrolled due date, then applies the weekend and holiday roll. It takes your word that the Form 7004 was filed on time.",
     sources: ["i7004", "i5472"],
   },
 ];
@@ -170,7 +177,7 @@ function HowWeCalculate() {
         <SectionHead
           eyebrow="How we calculate this"
           title="How does the deadline rule work?"
-          subtitle="The calculator applies the filing year, dissolution date, and extension status to the same due-date logic used in our filing workflow. We start with April 15, switch to the dissolution short-year rule when needed, add six months for a timely Form 7004, and move a date that lands on a weekend or DC legal holiday to the next business day."
+          subtitle="The calculator applies the filing year, dissolution date, and extension status to the same due-date logic used in our filing workflow. We start with April 15, switch to the dissolution short-year rule when needed (including the earlier June rule for years that began before 2026), add the Form 7004 extension for a timely filing, and move a date that lands on a weekend or DC legal holiday to the next business day."
         />
         <div className="mt-10 grid gap-4 md:grid-cols-2">
           {deadlineRules.map((rule) => (
@@ -198,14 +205,6 @@ function HowWeCalculate() {
               or, if the owner has none, the calendar year. <SourceLink id="i5472" />
             </li>
             <li>
-              A final year ending in June that began before 2026. The Form 1120 instructions treat it
-              as ending June 30 and make it due on the 15th day of the 3rd month, and Form 7004&apos;s
-              instructions give it a 7-month extension. The calculator uses the 4th-month rule and 6
-              months, so its unextended date is a month later than the instructions&apos; for this
-              case; the result shows a caution when it applies. <SourceLink id="i1120" />{" "}
-              <SourceLink id="i7004" />
-            </li>
-            <li>
               A missed deadline: if the IRS hasn&apos;t contacted you, the IRS says to file the late
               return through normal filing procedures, and penalties may still be assessed.{" "}
               <SourceLink id="diirsp" />
@@ -214,7 +213,8 @@ function HowWeCalculate() {
         </div>
         <p className="mx-auto mt-6 max-w-3xl text-center text-sm text-slate-600">
           <span className="font-semibold text-slate-800">Last reviewed {LAST_REVIEWED_LABEL}</span>{" "}
-          against the Form 1120, Form 7004 and Form 5472 instructions and IRC §§6072 and 7503.
+          against the Form 1120, Form 7004 and Form 5472 instructions, IRC §§6072 and 7503, and
+          Pub. L. 114-41 §2006.
           General information, not tax advice.
         </p>
       </div>

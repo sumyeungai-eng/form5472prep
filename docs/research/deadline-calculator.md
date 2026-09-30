@@ -3,8 +3,10 @@
 Tool: `/form-5472-deadline-calculator`. URL state: `src/lib/tools/deadline/params.ts`; sources:
 `src/lib/tools/deadline/sources.ts`. The date math is the shared due-date code the filing workflow
 uses (`filingDueDateUtc` / `effectiveDueDateUtc` in `src/lib/schemas.ts`, holidays in
-`src/lib/federalHolidays.ts`); this work did not change it. Researched and last reviewed
-2026-09-29; all sources fetched live that day.
+`src/lib/federalHolidays.ts`). Since 2026-09-30 the Form 1120 rule itself (general 4th month / 6
+months, and the pre-2026 June rule) lives in `src/lib/form1120DueDate.ts`, shared with the
+compliance calendar (`src/lib/tools/compliance-calendar/federal.ts`). Researched 2026-09-29; the
+June rule sources below re-fetched live and re-quoted 2026-09-30.
 
 ## Shareable URL
 
@@ -57,6 +59,42 @@ fallbacks, and the due dates the page states).
   return." / "The automatic extension period for time to file is generally 6 months."
 - i5472: "The DE must file Form 7004 by the regular due date of the return."
 
+### June year-ends that began before 2026 (applied 2026-09-30)
+Owner decision 2026-09-30: apply the rule to the pro forma Form 1120, including a dissolution
+short year ending in June. Sources fetched with curl (browser User-Agent) on 2026-09-30:
+- Instructions for Form 1120 (2025), When To File, <https://www.irs.gov/instructions/i1120> ("Page
+  Last Reviewed or Updated: 30-Apr-2026"): "However, a corporation with a fiscal tax year ending
+  June 30 must file by the 15th day of the 3rd month after the end of its tax year. A corporation
+  with a short tax year ending anytime in June will be treated as if the short year ended on June
+  30, and must file by the 15th day of the 3rd month after the end of its tax year."
+- Instructions for Form 7004 (Rev. 12/2025), Extension Period, <https://www.irs.gov/instructions/i7004>:
+  "C corporations with tax years ending June 30 and beginning before January 1, 2026, are eligible
+  for an automatic 7-month extension of time to file (6-month extension if filing Form 1120-POL).
+  For tax years beginning in 2026, the automatic extension period is 6 months." and "Note: A
+  corporation with a short tax year ending anytime in June is treated as if the short tax year
+  ended on June 30."
+- Pub. L. 114-41 §2006(a)(3)(B),
+  <https://www.govinfo.gov/content/pkg/PLAW-114publ41/html/PLAW-114publ41.htm>: "In the case of any
+  C corporation with a taxable year ending on June 30, the amendments made by this subsection shall
+  apply to returns for taxable years beginning after December 31, 2025." (The subsection is the one
+  that moved C corporations to the 4th month under IRC §6072.)
+- Pub. L. 114-41 §2006(c)(1)(B), same URL, adding to IRC §6081(b): "In the case of any return for a
+  taxable year of a C corporation which ends on June 30 and begins before January 1, 2026, the
+  first sentence of this subsection shall be applied by substituting `7 months' for `6 months'."
+
+What the code does (`form1120DueRule` / `form1120StatutoryDue`): a tax year whose end month is June
+and whose first day is before 2026-01-01 is due on the 15th of the 3rd month after June (September
+15) and a timely Form 7004 adds 7 months to that unrolled date (April 15); every other year uses the
+4th month and 6 months. The day inside June never matters ("anytime in June"). In the calculator's
+calendar-year model the year starts in `taxYear`, so the test is simply `taxYear < 2026` with a
+June dissolution date. The §7503 roll is applied last, as before.
+
+Tests: `src/lib/form1120DueDate.test.ts` (FYE 30 Jun 2025 begun 1 Jul 2024 → 15 Sep 2025 / 15 Apr
+2026; dissolved 30 Jun 2025 → 15 Sep 2025; FYE 30 Jun 2026 begun 1 Jul 2025 → 15 Sep 2026; June
+years begun in 2026 → 15 Oct / 6 months; every other month and calendar year pinned to the old
+formula; calculator and compliance calendar equal for every month-end short year 2018–2035) and
+`src/lib/tools/deadline/params.test.ts` ("June rule shown on the page").
+
 ### Missed deadline
 - IRS, Delinquent international information return submission procedures,
   <https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures>
@@ -69,24 +107,15 @@ fallbacks, and the due dates the page states).
 - i5472: "If you are a foreign-owned U.S. DE, you cannot file Form 5472 electronically." Fax to
   855-887-7737 or mail to the Ogden PIN Unit.
 
-## Known gap in the shared due-date code (flagged, not changed)
+## Former gap, closed 2026-09-30
 
-i1120 (2025 instructions): "However, a corporation with a fiscal tax year ending June 30 must file by
-the 15th day of the 3rd month after the end of its tax year. A corporation with a short tax year
-ending anytime in June will be treated as if the short year ended on June 30, and must file by the
-15th day of the 3rd month after the end of its tax year."
-i7004: "C corporations with tax years ending June 30 and beginning before January 1, 2026, are
-eligible for an automatic 7-month extension of time to file ... For tax years beginning in 2026, the
-automatic extension period is 6 months."
-
-`filingDueDateUtc` always uses the 4th month, so for an LLC that dissolved in June of a tax year that
-began before 2026 the unextended date shown is one month later than the instructions' date (with an
-extension both land on April 15). The brief did not allow changing the shared code or the
-calculator's results, so the result now shows a caution for that case
-(`isJuneShortYearBefore2026`) and the page lists it under "What the calculator does not cover".
-Whether the June rule applies to a pro forma Form 1120 filed by a disregarded entity is an
-interpretation question for the owner/accountant. (`extensionUnclear` in `schemas.ts` only checks a
-June 30 date, while i1120 says "anytime in June".)
+Until 2026-09-30 `filingDueDateUtc` always used the 4th month, and the calculator showed a caution
+(`isJuneShortYearBefore2026`, now removed) for a June dissolution in a year that began before 2026.
+The shared code now applies the June rule (section above) and the result shows a short note saying
+which rule produced the date. Still open for the owner: `extensionUnclear` in `schemas.ts` keeps
+routing a final year ending exactly June 30 before 2026 with "Form 7004 filed = yes" to reviewer
+review (it predates the owner's decision, and checks June 30 only while the rule covers any June
+day); the filing workflow's delinquency answer for that case is therefore still "defer".
 
 ## Other limits stated on the page
 - Calendar tax year assumed. i5472: "The foreign-owned U.S. DE has the same tax year used by its
