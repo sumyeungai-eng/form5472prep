@@ -1,5 +1,6 @@
 ---
 title: "Kuala Lumpur Digital Nomads: Keep Tax Records Across December 31"
+seoTitle: "Kuala Lumpur Digital Nomads: Tax Records Across December 31"
 description: "A cross-year travel-log example for Kuala Lumpur digital nomads with U.S. LLCs. Separate Malaysian residency review from the LLC's annual Form 5472 file."
 date: "2026-09-22"
 author: "Form5472 Prep Team"

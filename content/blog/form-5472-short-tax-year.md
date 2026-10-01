@@ -1,5 +1,6 @@
 ---
 title: "Form 5472 for a Short Tax Year or LLC Formed Late in the Year"
+seoTitle: "Form 5472 for a Short Tax Year or Late-Formed LLC"
 description: "An LLC formed late in the year may have a short first Form 5472 period. See the reporting dates, deadline, and transactions that belong in it."
 date: 2026-08-28
 updated: 2026-09-05

@@ -1,5 +1,6 @@
 ---
 title: "Form 5472 Reasonable Estimates and the $50,000 Reporting Rule"
+seoTitle: "Form 5472 Reasonable Estimates and the $50,000 Rule"
 description: "Learn when Form 5472 permits a reasonable estimate, what the 75%-to-125% standard means, and why $50,000 is not a filing exemption."
 date: 2026-08-28
 updated: 2026-09-05

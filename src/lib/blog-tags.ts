@@ -2,8 +2,23 @@ import { slugify, type PostMeta } from "@/lib/blog";
 
 export type TagEntry = { tag: string; label: string; count: number; posts: PostMeta[] };
 
-/** Tags with fewer posts than this render but are noindex (thin content). */
-export const MIN_INDEXABLE_TAG_POSTS = 3;
+/**
+ * Tags with fewer posts than this render but are noindex AND left out of the
+ * sitemap (thin content). Raised 3 -> 7 on 2026-10-01: the crawl found 23
+ * indexable tag pages of 168-288 words, all with 3-6 posts.
+ */
+export const MIN_INDEXABLE_TAG_POSTS = 7;
+
+/**
+ * Spelling variants that must collapse onto one canonical tag slug, so two
+ * near-identical topic pages never compete (crawl 2026-10-01: /nonresident and
+ * /non-resident both rendered "Non-resident guides"). Each alias also needs a
+ * permanent redirect in next.config.mjs (see TAG_SLUG_ALIASES there).
+ */
+export const TAG_SLUG_ALIASES: Record<string, string> = {
+  nonresident: "non-resident",
+  "digital-nomads": "digital-nomad",
+};
 
 const TAG_LABELS: Record<string, string> = {
   ein: "EIN",
@@ -26,7 +41,6 @@ const TAG_LABELS: Record<string, string> = {
   "pro-forma-1120": "Pro forma 1120",
   "foreign-owned-llc": "Foreign-owned LLC",
   "non-resident": "Non-resident",
-  nonresident: "Non-resident",
   "amazon-fba": "Amazon FBA",
   "delaware-llc": "Delaware LLC",
   "california-llc": "California LLC",
@@ -36,7 +50,8 @@ const TAG_LABELS: Record<string, string> = {
 
 /** Normalise a raw frontmatter/DB tag to its URL segment. */
 export function tagSlug(tag: string): string {
-  return slugify(tag);
+  const slug = slugify(tag);
+  return TAG_SLUG_ALIASES[slug] ?? slug;
 }
 
 /** Human label. Applies TAG_LABELS overrides first, else title-cases the slug. */

@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, ExternalLink, ShieldCheck } from "lucide-reac
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
 import { SPEAKABLE, breadcrumbList, organizationNode, pageMeta } from "@/lib/seo";
+import { seoTitle } from "@/lib/seo-title";
 import {
   CONTINUATION_GRACE_DAYS,
   CONTINUATION_PER_PERIOD_CENTS,
@@ -31,11 +32,14 @@ const PAGE_PATH = "/form-5472-late-filing-checker";
 const PAGE_TITLE = "Missed Form 5472? Late-Filing Route Checker";
 const PAGE_DESCRIPTION =
   "Answer five questions to see which IRS late-filing route fits your foreign-owned LLC: DIIRSP with a reasonable-cause statement, a penalty-notice response, or a review first.";
+// <meta description> only (<= 160 chars); og: and JSON-LD keep PAGE_DESCRIPTION.
+const META_DESCRIPTION =
+  "Answer five questions to see which IRS late-filing route fits your foreign-owned LLC: DIIRSP with reasonable cause, a penalty-notice response, or a review.";
 const START_HREF = "/start?src=tool-latefile";
 
 export const metadata: Metadata = {
-  title: { absolute: `${PAGE_TITLE} | Form5472 Prep` },
-  description: PAGE_DESCRIPTION,
+  title: seoTitle(PAGE_TITLE),
+  description: META_DESCRIPTION,
   ...pageMeta({
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,

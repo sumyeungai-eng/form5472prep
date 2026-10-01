@@ -1,5 +1,6 @@
 ---
 title: "Did the IRS Receive My Form 5472? Fax Confirmation, Processing and Next Steps"
+seoTitle: "Did the IRS Receive My Form 5472? Fax Confirmation Steps"
 description: "Learn what a Form 5472 fax receipt shows, what it cannot prove, how IRS processing evidence differs, and what to do after filing."
 date: 2026-09-11
 updated: 2026-09-11

@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
 import { CONTENT_LAST_REVIEWED, organizationNode, pageMeta } from "@/lib/seo";
+import { seoTitle } from "@/lib/seo-title";
 
 export const metadata: Metadata = {
-  title: "About Form5472 Prep",
+  // Brand is already in the title — seoTitle() stops the template doubling it.
+  title: seoTitle("About Form5472 Prep"),
   description:
     "About Form5472 Prep: done-for-you filing and courier service for a foreign-owned single-member LLC's Form 5472 + pro forma 1120.",
   ...pageMeta({

@@ -1,5 +1,6 @@
 ---
 title: "Mexico City Digital Nomads: Keep a U.S. LLC Work-Location Log"
+seoTitle: "Mexico City Digital Nomads: A US LLC Work-Location Log"
 description: "U.S. clients and a U.S. bank do not show where services happened. Use this Mexico City work-location log to prepare a clearer cross-border tax file."
 date: "2026-09-22"
 author: "Form5472 Prep Team"

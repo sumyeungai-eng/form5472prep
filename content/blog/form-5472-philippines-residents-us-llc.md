@@ -1,6 +1,7 @@
 ---
 title: "Form 5472 for Philippines Residents with a US LLC"
 description: "Philippines-based US LLC owners still file Form 5472 yearly. See what the US treaty changes, when your BIR TIN goes in the FTIN box, and why BIR filings don't replace it."
+seoDescription: "Philippines-based US LLC owners still file Form 5472. What the treaty changes, when your BIR TIN goes in the FTIN box, and why BIR filings don't replace it."
 date: 2026-09-18
 updated: 2026-09-18
 author: "Form5472 Prep"

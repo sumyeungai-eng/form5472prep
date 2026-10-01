@@ -1,5 +1,6 @@
 ---
 title: "ITIN for a Nonresident Spouse Filing a Joint Return: Form W-7 Package"
+seoTitle: "ITIN for a Nonresident Spouse Filing Jointly: Form W-7"
 description: "Learn what belongs in a nonresident spouse's ITIN package when a joint federal return and Form W-7 are appropriate, and where personal tax advice is needed."
 date: 2026-09-11
 updated: 2026-09-11

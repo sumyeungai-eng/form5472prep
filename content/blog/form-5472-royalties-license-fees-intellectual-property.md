@@ -1,5 +1,6 @@
 ---
 title: "Form 5472 for Royalties, License Fees, and Intellectual Property"
+seoTitle: "Form 5472 for Royalties, License Fees and IP"
 description: "Related-party royalties, software licenses, trademarks, patents, and other IP transactions may require Form 5472 and a separate US withholding review."
 date: 2026-08-28
 updated: 2026-09-05

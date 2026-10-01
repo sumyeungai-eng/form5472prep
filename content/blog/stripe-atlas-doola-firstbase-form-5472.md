@@ -1,5 +1,6 @@
 ---
 title: "Formed With Stripe Atlas, doola or Firstbase? Who Files Your Form 5472"
+seoTitle: "Stripe Atlas, doola or Firstbase: Who Files Your Form 5472?"
 description: "Your formation service formed the LLC. Whether it also files Form 5472 depends on the plan you bought. What each provider's own pages say, checked today."
 date: 2026-09-18
 updated: 2026-09-18

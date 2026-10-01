@@ -1,5 +1,6 @@
 ---
 title: "Form 5472 for Estonia Residents and e-Residents with a US LLC"
+seoTitle: "Form 5472 for Estonia Residents and e-Residents (US LLC)"
 description: "Estonian e-Residency is not tax residency and does not change your US LLC's Form 5472. See what Estonia residents and e-residents put in the FTIN box."
 date: 2026-09-18
 updated: 2026-09-18

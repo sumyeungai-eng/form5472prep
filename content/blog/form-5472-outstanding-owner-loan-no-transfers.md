@@ -1,5 +1,6 @@
 ---
 title: "Form 5472 for an Outstanding Owner Loan With No New Transfers"
+seoTitle: "Form 5472 for an Outstanding Owner Loan, No New Transfers"
 description: "An owner loan carried from last year can still matter for Form 5472 even when no new cash moved. See which balances and records to review."
 date: 2026-09-11
 updated: 2026-09-11

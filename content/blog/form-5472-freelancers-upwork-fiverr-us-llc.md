@@ -1,5 +1,6 @@
 ---
 title: "Form 5472 for Freelancers Using a US LLC on Upwork, Fiverr and Toptal"
+seoTitle: "Form 5472 for Freelancers on Upwork, Fiverr and Toptal"
 description: "Client payouts from Upwork, Fiverr or Toptal stay off Form 5472; your withdrawals and owner-paid costs do not. See a worked freelancer year."
 date: 2026-09-18
 updated: 2026-09-18

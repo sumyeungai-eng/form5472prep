@@ -1,5 +1,6 @@
 ---
 title: "Building Your Form 5472 Figures From Mercury, Wise or Relay Statements"
+seoTitle: "Form 5472 Figures From Mercury, Wise or Relay Statements"
 description: "Turn a Mercury, Wise or Relay export into Form 5472 numbers: separate revenue from owner movements, categorize, total, and reconcile."
 date: 2026-09-20
 updated: 2026-09-20
