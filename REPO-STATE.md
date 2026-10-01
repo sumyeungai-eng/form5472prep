@@ -220,3 +220,4 @@ Claude and Codex sessions share these folders. Practical rules:
   sections; blog BOI final-rule update; open: June-30 short-year rule in the deadline calculator.
 - `docs/sessions/2026-09-30-fix-everything-else.md` — payment page redesign, re-fax guard, June due-date
   rule, USD-only checkout, receipt/RCS wording fixes, 5 blog posts.
+- `docs/sessions/2026-10-01-seo-compact-keywords.md` — /services hub + 8 BOFU pages, technical SEO fixes, Moz research.

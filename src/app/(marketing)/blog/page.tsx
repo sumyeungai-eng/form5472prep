@@ -136,6 +136,12 @@ function BlogHeader({ postCount, tags }: { postCount: number; tags: TagEntry[] }
                   <span className="font-mono text-[10px] text-slate-400">{entry.count}</span>
                 </Link>
               ))}
+              <Link
+                href="/blog/topics"
+                className="inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium text-accent hover:underline"
+              >
+                All topics →
+              </Link>
             </div>
           )}
         </div>

@@ -2001,7 +2001,7 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "form 5472 fax number",
     title: "Form 5472 Fax Number — IRS Ogden PIN Unit",
     metaDescription:
-      "Form 5472 fax number guidance explains what to send to the IRS Ogden PIN Unit, how to transmit the full filing package, and which transmission evidence to retain.",
+      "Form 5472 fax number guidance: what to send to the IRS Ogden PIN Unit, how to transmit the full filing package, and which transmission evidence to keep.",
     sources: [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
