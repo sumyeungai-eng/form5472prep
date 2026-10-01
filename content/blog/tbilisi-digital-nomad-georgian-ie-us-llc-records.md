@@ -1,5 +1,6 @@
 ---
 title: "Tbilisi Digital Nomads: Georgian IE and U.S. LLC Records Must Agree"
+seoTitle: "Tbilisi Digital Nomads: Georgian IE and US LLC Records"
 description: "Using a Georgian individual entrepreneur registration alongside a U.S. LLC? Map contracts, account ownership, and related-party transfers before filing."
 date: "2026-09-22"
 author: "Form5472 Prep Team"

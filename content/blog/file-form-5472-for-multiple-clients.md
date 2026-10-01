@@ -1,5 +1,6 @@
 ---
 title: "How to File Form 5472 for Multiple Clients Without Losing Track"
+seoTitle: "How to File Form 5472 for Multiple Clients"
 description: "Run a book of Form 5472 filings without losing track: the season workflow, the artefact that proves each stage, and a capacity model for 10 to 50 clients."
 date: 2026-09-18
 updated: 2026-09-18

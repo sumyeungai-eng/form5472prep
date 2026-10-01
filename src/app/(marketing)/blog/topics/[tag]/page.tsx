@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { getAllPosts } from "@/lib/blog";
 import { SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
+import { seoTitle } from "@/lib/seo-title";
 import { buildTagIndex, findTag, MIN_INDEXABLE_TAG_POSTS, tagHref } from "@/lib/blog-tags";
 import { PostCard } from "../../_components/PostCard";
 
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: { params: { tag: string } }):
   const path = `/blog/topics/${entry.tag}`;
 
   return {
-    title,
+    title: seoTitle(title),
     description,
     ...pageMeta({
       title: `${title} · Form5472 Prep`,
@@ -70,6 +71,7 @@ export default async function TopicPage({ params }: { params: { tag: string } })
         data={breadcrumbList([
           { name: "Home", path: "/" },
           { name: "Guides", path: "/blog" },
+          { name: "Topics", path: "/blog/topics" },
           { name: entry.label, path },
         ])}
       />
@@ -84,9 +86,9 @@ export default async function TopicPage({ params }: { params: { tag: string } })
         />
         <div aria-hidden className="absolute -right-24 -top-40 h-[520px] w-[520px] rounded-full bg-accent-100/70 blur-3xl" />
         <div className="relative mx-auto max-w-6xl px-6 py-16 lg:py-20">
-          <Link href="/blog" className="inline-flex items-center text-sm font-semibold text-accent transition hover:text-ink">
+          <Link href="/blog/topics" className="inline-flex items-center text-sm font-semibold text-accent transition hover:text-ink">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to guides
+            All topics
           </Link>
           <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-accent/15 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm">
             <BookOpen className="h-3.5 w-3.5 text-accent" />

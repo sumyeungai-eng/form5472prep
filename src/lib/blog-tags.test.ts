@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import type { PostMeta } from "@/lib/blog";
-import { buildTagIndex, findTag, formatTag, tagHref } from "@/lib/blog-tags";
+import {
+  buildTagIndex,
+  findTag,
+  formatTag,
+  MIN_INDEXABLE_TAG_POSTS,
+  TAG_SLUG_ALIASES,
+  tagHref,
+  tagSlug,
+} from "@/lib/blog-tags";
 
 function post(slug: string, tags: string[]): PostMeta {
   return {
@@ -41,16 +49,35 @@ describe("blog tag helpers", () => {
     ]);
   });
 
-  it("keeps non-resident and nonresident separate while sharing the label", () => {
+  it("collapses tag-slug aliases onto one canonical topic", () => {
     const entries = buildTagIndex([
       post("one", ["non-resident"]),
       post("two", ["nonresident"]),
+      post("three", ["digital-nomads", "digital-nomad"]),
     ]);
 
     expect(entries).toEqual([
-      expect.objectContaining({ tag: "non-resident", label: "Non-resident", count: 1 }),
-      expect.objectContaining({ tag: "nonresident", label: "Non-resident", count: 1 }),
+      expect.objectContaining({ tag: "non-resident", label: "Non-resident", count: 2 }),
+      expect.objectContaining({ tag: "digital-nomad", count: 1 }),
     ]);
+    expect(tagSlug("Nonresident")).toBe("non-resident");
+    expect(tagHref("nonresident")).toBe("/blog/topics/non-resident");
+  });
+
+  it("every tag alias has a permanent redirect in next.config.mjs", async () => {
+    const { default: nextConfig } = await import("../../next.config.mjs");
+    const redirects = (await nextConfig.redirects?.()) ?? [];
+    for (const [alias, canonical] of Object.entries(TAG_SLUG_ALIASES)) {
+      expect(redirects).toContainEqual({
+        source: `/blog/topics/${alias}`,
+        destination: `/blog/topics/${canonical}`,
+        permanent: true,
+      });
+    }
+  });
+
+  it("thin-tag threshold keeps small topics out of the index", () => {
+    expect(MIN_INDEXABLE_TAG_POSTS).toBeGreaterThanOrEqual(7);
   });
 
   it("returns undefined when a slug has no posts", () => {

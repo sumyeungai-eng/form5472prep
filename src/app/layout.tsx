@@ -34,14 +34,19 @@ export const metadata: Metadata = {
     default: "Form5472 Prep — File IRS Form 5472 and pro forma 1120 in 15 minutes",
     template: "%s · Form5472 Prep",
   },
+  // <= 160 chars: inherited by any page that sets no description of its own
+  // (e.g. /partner/sign-in rendered this at 279 chars in the 2026-10-01 crawl).
   description:
-    "Done-for-you IRS Form 5472 and pro forma Form 1120 filing for foreign-owned US single-member LLCs. We prepare, you sign, we fax to the IRS Ogden PIN Unit. From $149 in 5-7 business days, or $199 for express within 3 — IRS fax delivery included on both. 100% money-back guarantee.",
+    "Done-for-you IRS Form 5472 and pro forma 1120 filing for foreign-owned US LLCs. We prepare, you sign, we fax it to the IRS. From $149, money-back guarantee.",
   applicationName: "Form5472 Prep",
   authors: [{ name: "Form5472 Prep" }],
   creator: "Form5472 Prep",
   publisher: "Form5472 Prep",
+  // No root canonical: a layout-level `canonical: "/"` is inherited by every
+  // page that sets no `alternates`, silently canonicalising it to the homepage
+  // (crawl 2026-10-01: /partner/sign-in). Indexable pages set their own
+  // self-canonical via pageMeta() in src/lib/seo.ts.
   alternates: {
-    canonical: "/",
     types: { "application/rss+xml": "/feed.xml" },
   },
   openGraph: {

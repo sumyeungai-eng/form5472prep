@@ -28,6 +28,7 @@ import {
 } from "@/lib/blog";
 import { env } from "@/lib/env";
 import { SPEAKABLE, pageMeta } from "@/lib/seo";
+import { seoTitle } from "@/lib/seo-title";
 import { formatTag, tagHref } from "@/lib/blog-tags";
 
 // ISR: prerender the slugs known at build time, but `dynamicParams` lets a post
@@ -62,8 +63,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const { images: _siteCard, ...og } = meta.openGraph ?? {};
   const { images: _siteCardTw, ...tw } = meta.twitter ?? {};
   return {
-    title: post.title,
-    description: post.description,
+    // <title>/<meta description> may use the shorter SEO overrides; og:,
+    // twitter: and JSON-LD keep the full title/description.
+    title: seoTitle(post.seoTitle ?? post.title),
+    description: post.seoDescription ?? post.description,
     ...meta,
     openGraph: {
       ...og,

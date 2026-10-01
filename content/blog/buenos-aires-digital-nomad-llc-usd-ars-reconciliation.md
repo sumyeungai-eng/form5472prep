@@ -1,5 +1,6 @@
 ---
 title: "Buenos Aires Digital Nomads: Reconcile USD and ARS LLC Records"
+seoTitle: "Buenos Aires Digital Nomads: Reconcile USD and ARS Records"
 description: "A worked reconciliation for digital nomads in Buenos Aires: separate customer receipts, fees, owner transfers, and peso spending in your U.S. LLC records."
 date: "2026-09-22"
 author: "Form5472 Prep Team"

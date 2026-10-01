@@ -4,6 +4,7 @@ import { ArrowRight, CalendarDays, ExternalLink, Landmark } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { TIERS } from "@/lib/pricing";
 import { SITE_URL, SPEAKABLE, breadcrumbList, organizationNode, pageMeta } from "@/lib/seo";
+import { seoTitle } from "@/lib/seo-title";
 import { formatPrice } from "@/lib/utils";
 import { LAST_REVIEWED, LAST_REVIEWED_LABEL, STATE_FEES } from "@/lib/tools/state-fees/data";
 import type { StateFees } from "@/lib/tools/state-fees/types";
@@ -15,9 +16,15 @@ const PAGE_TITLE = "LLC Annual Fees by State (2026): Delaware, Wyoming, New Mexi
 const PAGE_DESCRIPTION =
   "Annual LLC fees, franchise taxes and report due dates for 10 states foreign owners use — Delaware, Wyoming, New Mexico, Florida, Texas, Nevada and more — from official sources.";
 
+// <title> and <meta description> only (<= 60 / <= 160 chars); og: and JSON-LD
+// keep the full PAGE_TITLE / PAGE_DESCRIPTION.
+const SEO_TITLE = "LLC Annual Fees by State (2026): Delaware, Wyoming & More";
+const META_DESCRIPTION =
+  "Annual LLC fees, franchise taxes and report due dates for the 10 states foreign owners use most, incl. Delaware, Wyoming and New Mexico. Official sources.";
+
 export const metadata: Metadata = {
-  title: { absolute: PAGE_TITLE },
-  description: PAGE_DESCRIPTION,
+  title: seoTitle(SEO_TITLE),
+  description: META_DESCRIPTION,
   ...pageMeta({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH }),
   robots: { index: true, follow: true },
 };

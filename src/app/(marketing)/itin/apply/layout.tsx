@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
+import { seoTitle } from "@/lib/seo-title";
 
 // The apply page itself is a client component ("use client") and can't export
 // metadata. This server layout sets it instead. The intake form is a thin
@@ -7,7 +8,7 @@ import { pageMeta } from "@/lib/seo";
 // index (it's also absent from sitemap.ts) while leaving it fully reachable
 // from the /itin service page.
 export const metadata: Metadata = {
-  title: "ITIN Application — Form5472 Prep",
+  title: seoTitle("ITIN Application"),
   description:
     "Start your ITIN application. Your identity documents are certified by an IRS Certifying Acceptance Agent and we submit Form W-7 — no passport mailing required.",
   ...pageMeta({

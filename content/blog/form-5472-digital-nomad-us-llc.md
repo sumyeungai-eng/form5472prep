@@ -1,5 +1,6 @@
 ---
 title: "Form 5472 for Digital Nomads: Filing With No Fixed Tax Residence"
+seoTitle: "Form 5472 for Digital Nomads With No Fixed Tax Residence"
 description: "Form 5472 follows your US LLC and your non-US-person status, not where you sleep. What nomads put in the FTIN and address boxes, and the one real US risk."
 date: 2026-09-18
 updated: 2026-09-22

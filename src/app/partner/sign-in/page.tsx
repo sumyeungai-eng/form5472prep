@@ -6,6 +6,10 @@ import { PartnerSignInForm } from "./PartnerSignInForm";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Partner sign in",
+  // Own description + self-canonical so nothing is inherited from the root
+  // layout (its long description / former canonical "/" leaked here).
+  description: "Sign in to the Form5472 Prep partner portal to submit and track your clients' Form 5472 filings.",
+  alternates: { canonical: "/partner/sign-in" },
   robots: { index: false, follow: false },
 };
 

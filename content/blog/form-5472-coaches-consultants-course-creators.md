@@ -1,5 +1,6 @@
 ---
 title: "Form 5472 for Coaches, Consultants and Course Creators With a US LLC"
+seoTitle: "Form 5472 for Coaches, Consultants and Course Creators"
 description: "Course-platform payouts and client retainers stay off Form 5472; your withdrawals and owner-paid software do not. See a worked coaching-year example."
 date: 2026-09-20
 updated: 2026-09-20

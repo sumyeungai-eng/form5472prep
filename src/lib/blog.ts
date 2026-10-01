@@ -36,6 +36,13 @@ const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 export type PostFrontmatter = {
   title: string;
   description: string;
+  // Optional search-snippet overrides (file posts only). `seoTitle` is used for
+  // <title> only — the H1, og:title, JSON-LD headline and llms.txt keep
+  // `title`. Set it when `title` is over 60 chars; start it with the same
+  // primary keyword. `seoDescription` (<= 160 chars) likewise replaces only
+  // <meta name="description">; og/JSON-LD/llms.txt keep `description`.
+  seoTitle?: string;
+  seoDescription?: string;
   date: string;
   // Optional ISO-8601 instant used for timed publishing. `date` remains the
   // human-facing publication date.
@@ -98,6 +105,8 @@ async function readFile(slug: string): Promise<Post | null> {
     slug,
     title: fm.title,
     description: fm.description,
+    seoTitle: fm.seoTitle || undefined,
+    seoDescription: fm.seoDescription || undefined,
     date: normDate(fm.date),
     publishAt: fm.publishAt
       ? fm.publishAt instanceof Date

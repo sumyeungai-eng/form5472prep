@@ -1,5 +1,6 @@
 ---
 title: "Dubai Digital Nomads: A U.S. LLC Tax Review Is Not Just a Visa Check"
+seoTitle: "Dubai Digital Nomads: US LLC Tax Review vs Visa Check"
 description: "Build a Dubai review pack that separates your UAE residence documents, natural-person business activity, U.S. LLC classification, and Form 5472 records."
 date: "2026-09-22"
 author: "Form5472 Prep Team"

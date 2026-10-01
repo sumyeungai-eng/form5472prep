@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, ExternalLink, ShieldCheck } from "lucide-reac
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
 import { SPEAKABLE, breadcrumbList, organizationNode, pageMeta } from "@/lib/seo";
+import { seoTitle } from "@/lib/seo-title";
 import {
   LAST_REVIEWED_ISO,
   LAST_REVIEWED_LABEL,
@@ -18,7 +19,8 @@ const PAGE_DESCRIPTION =
   "Use this free checker to see whether your foreign-owned US LLC likely needs Form 5472 and pro forma 1120 for the tax year.";
 
 export const metadata: Metadata = {
-  title: { absolute: `${PAGE_TITLE} | Form5472 Prep` },
+  // seoTitle(): brand only when it fits in 60 chars (it does not here).
+  title: seoTitle(PAGE_TITLE),
   description: PAGE_DESCRIPTION,
   ...pageMeta({
     title: PAGE_TITLE,

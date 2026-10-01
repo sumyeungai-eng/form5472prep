@@ -1,5 +1,6 @@
 ---
 title: "Bangkok Digital Nomads: Trace LLC Transfers Before Thai Remittances"
+seoTitle: "Bangkok Digital Nomads: LLC Transfers and Thai Remittances"
 description: "Separate U.S. LLC owner distributions from later transfers into Thailand with a three-stage ledger for Bangkok digital nomads preparing Form 5472."
 date: "2026-09-22"
 author: "Form5472 Prep Team"

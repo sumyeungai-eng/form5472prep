@@ -7,6 +7,18 @@ const nextConfig = {
         destination: "/form-5472-filing",
         permanent: true,
       },
+      // Tag-slug aliases — keep in sync with TAG_SLUG_ALIASES in
+      // src/lib/blog-tags.ts (the variant slug no longer renders its own page).
+      {
+        source: "/blog/topics/nonresident",
+        destination: "/blog/topics/non-resident",
+        permanent: true,
+      },
+      {
+        source: "/blog/topics/digital-nomads",
+        destination: "/blog/topics/digital-nomad",
+        permanent: true,
+      },
     ];
   },
   async headers() {

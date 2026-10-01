@@ -1,5 +1,6 @@
 ---
 title: "My Foreign-Owned LLC Received a 1099-K: Does It Go on Form 5472?"
+seoTitle: "Form 5472 and Form 1099-K for a Foreign-Owned LLC"
 description: "Reconcile Form 1099-K gross payments to payouts, separate owner withdrawals for Form 5472, and check errors without assuming U.S. income tax is due."
 date: 2026-09-11
 updated: 2026-09-11

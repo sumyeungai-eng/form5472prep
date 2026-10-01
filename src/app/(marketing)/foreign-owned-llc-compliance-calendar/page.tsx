@@ -4,6 +4,7 @@ import { ArrowRight, CalendarClock, CalendarDays, FileClock, RotateCw, ShieldChe
 import { JsonLd } from "@/components/JsonLd";
 import { TIERS } from "@/lib/pricing";
 import { SITE_URL, SPEAKABLE, breadcrumbList, organizationNode, pageMeta } from "@/lib/seo";
+import { seoTitle } from "@/lib/seo-title";
 import { formatPrice } from "@/lib/utils";
 import { buildComplianceCalendar } from "@/lib/tools/compliance-calendar/calendar";
 import { FEDERAL_SOURCES } from "@/lib/tools/compliance-calendar/federal";
@@ -17,8 +18,11 @@ const PAGE_TITLE = "Foreign-Owned LLC Compliance Calendar — Federal and State 
 const PAGE_DESCRIPTION =
   "Free deadline calendar for foreign-owned single-member LLCs: Form 5472, Form 7004 and your state's annual tax or report, with an .ics download.";
 
+// <title> only (<= 60 chars); og:title / JSON-LD keep PAGE_TITLE.
+const SEO_TITLE = "Foreign-Owned LLC Compliance Calendar: Federal & State Dates";
+
 export const metadata: Metadata = {
-  title: { absolute: PAGE_TITLE },
+  title: seoTitle(SEO_TITLE),
   description: PAGE_DESCRIPTION,
   ...pageMeta({ title: PAGE_TITLE, description: PAGE_DESCRIPTION, path: PAGE_PATH }),
   robots: { index: true, follow: true },

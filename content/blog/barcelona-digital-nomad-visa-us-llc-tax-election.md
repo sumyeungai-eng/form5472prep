@@ -1,5 +1,6 @@
 ---
 title: "Barcelona Digital Nomads With a U.S. LLC: Visa vs Tax Election"
+seoTitle: "Barcelona Digital Nomads With a US LLC: Visa vs Tax Election"
 description: "Moving to Barcelona with a U.S. LLC? Separate immigration approval, Spain's special tax-regime review, and your LLC's Form 5472 filing obligations."
 date: "2026-09-22"
 author: "Form5472 Prep Team"

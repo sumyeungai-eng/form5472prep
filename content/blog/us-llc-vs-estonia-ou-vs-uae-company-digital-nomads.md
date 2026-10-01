@@ -1,5 +1,6 @@
 ---
 title: "US LLC vs Estonian OÜ vs UAE Free-Zone Company: Annual Filing Burden"
+seoTitle: "US LLC vs Estonian OÜ vs UAE Company: Annual Filing Burden"
 description: "What a US LLC, an Estonian OÜ and a UAE free-zone company each file every year, where and by when, sourced to the IRS, Estonia and the UAE."
 date: 2026-09-18
 updated: 2026-09-18
