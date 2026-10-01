@@ -53,8 +53,8 @@ describe("services pages: on-page rules", () => {
   it("has the 8 pages from docs/seo/keyword-sheet.csv", () => {
     expect(SERVICE_PAGES.map((p) => p.slug).sort()).toEqual(
       [
-        "dormant-llc-form-5472-filing",
-        "final-form-5472-dissolved-llc",
+        "form-5472-filing-for-dormant-llc",
+        "final-form-5472-for-dissolved-llc",
         "foreign-owned-llc-tax-filing-service",
         "form-5472-fax-filing-service",
         "form-5472-filing-service",

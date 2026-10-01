@@ -2,6 +2,18 @@
 const nextConfig = {
   async redirects() {
     return [
+      // Service-page slugs renamed on 2026-10-01 so the URL holds the keyword
+      // in typed word order (Moz "keyword in URL" factor).
+      {
+        source: "/services/dormant-llc-form-5472-filing",
+        destination: "/services/form-5472-filing-for-dormant-llc",
+        permanent: true,
+      },
+      {
+        source: "/services/final-form-5472-dissolved-llc",
+        destination: "/services/final-form-5472-for-dissolved-llc",
+        permanent: true,
+      },
       {
         source: "/form-5472-50-off",
         destination: "/form-5472-filing",

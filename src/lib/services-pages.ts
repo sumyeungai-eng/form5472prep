@@ -770,7 +770,7 @@ You keep the client relationship. We handle preparation, review, IRS fax deliver
 
   // ── 7 ───────────────────────────────────────────────────────────────────
   {
-    slug: "dormant-llc-form-5472-filing",
+    slug: "form-5472-filing-for-dormant-llc",
     keyword: "form 5472 filing for dormant llc",
     secondaryKeywords: ["form 5472 for llc with no activity"],
     category: "situations",
@@ -784,7 +784,7 @@ You keep the client relationship. We handle preparation, review, IRS fax deliver
     intro: `Form 5472 filing for dormant LLC owners usually comes down to one question: did any money move between you and the LLC? **A foreign-owned LLC with no bank activity can still have a reportable transaction. Paying its state fee or registered agent from your own pocket is one, and then the LLC files Form 5472 with a pro forma 1120 like any other year.**
 
 The Form 5472 instructions do excuse a year with no reportable transactions at all. This page explains where that line sits.`,
-    cta: startCta("svc-dormant-llc-form-5472-filing"),
+    cta: startCta("svc-form-5472-filing-for-dormant-llc"),
     sections: [
       {
         heading: "When a dormant LLC still files",
@@ -814,7 +814,7 @@ The questionnaire asks about each type of transaction in turn, so a fee paid per
         body: `- **The LLC paid its fees from its own account.** Payments from the LLC's account to unrelated vendors, such as the registered agent, are not reportable. If nothing else moved between you and the LLC, the year may have no reportable transaction.
 - **The LLC existed for part of the year.** It still had a tax year, and formation payments in that year count.
 - **The LLC has no EIN yet.** The forms need one. Our [EIN service](/ein) can obtain it.
-- **You plan to close it.** The last year has its own due date and a final-return box; see the [final Form 5472 for a dissolved LLC](/services/final-form-5472-dissolved-llc).
+- **You plan to close it.** The last year has its own due date and a final-return box; see the [final Form 5472 for a dissolved LLC](/services/final-form-5472-for-dissolved-llc).
 
 The free [reportable transactions checker](/form-5472-reportable-transactions-checker) goes through each case with the regulation behind it.`,
       },
@@ -878,7 +878,7 @@ See the [pricing page](/pricing).`,
 
   // ── 8 ───────────────────────────────────────────────────────────────────
   {
-    slug: "final-form-5472-dissolved-llc",
+    slug: "final-form-5472-for-dissolved-llc",
     keyword: "final form 5472 for dissolved llc",
     secondaryKeywords: ["close foreign owned us llc tax filing"],
     category: "situations",
@@ -892,7 +892,7 @@ See the [pricing page](/pricing).`,
     intro: `A final Form 5472 for dissolved LLC owners closes the federal reporting of a foreign-owned US LLC: one last Form 5472 and pro forma 1120 for the short year that ends on dissolution. **It is generally due by the 15th day of the 4th month after the LLC dissolved. The final-return box on the pro forma 1120 is checked, and money you take out on closing is reportable.**
 
 Closing with the state does not file it for you.`,
-    cta: startCta("svc-final-form-5472-dissolved-llc"),
+    cta: startCta("svc-final-form-5472-for-dissolved-llc"),
     sections: [
       {
         heading: "Preparing the final Form 5472 for dissolved LLC owners",
@@ -986,11 +986,11 @@ const RELATED_PLAN: Record<string, { services: string[]; tools: Array<keyof type
     tools: ["reportable", "deadline"],
   },
   "pro-forma-1120-filing-service": {
-    services: ["form-5472-filing-service", "dormant-llc-form-5472-filing", "final-form-5472-dissolved-llc"],
+    services: ["form-5472-filing-service", "form-5472-filing-for-dormant-llc", "final-form-5472-for-dissolved-llc"],
     tools: ["needToFile", "reportable"],
   },
   "late-form-5472-filing-service": {
-    services: ["form-5472-filing-service", "dormant-llc-form-5472-filing"],
+    services: ["form-5472-filing-service", "form-5472-filing-for-dormant-llc"],
     tools: ["late", "penalty", "fx"],
   },
   "foreign-owned-llc-tax-filing-service": {
@@ -1005,12 +1005,12 @@ const RELATED_PLAN: Record<string, { services: string[]; tools: Array<keyof type
     services: ["form-5472-filing-service", "late-form-5472-filing-service", "form-5472-fax-filing-service"],
     tools: ["calendar"],
   },
-  "dormant-llc-form-5472-filing": {
-    services: ["final-form-5472-dissolved-llc", "late-form-5472-filing-service"],
+  "form-5472-filing-for-dormant-llc": {
+    services: ["final-form-5472-for-dissolved-llc", "late-form-5472-filing-service"],
     tools: ["reportable", "needToFile"],
   },
-  "final-form-5472-dissolved-llc": {
-    services: ["dormant-llc-form-5472-filing", "late-form-5472-filing-service"],
+  "final-form-5472-for-dissolved-llc": {
+    services: ["form-5472-filing-for-dormant-llc", "late-form-5472-filing-service"],
     tools: ["deadline", "calendar", "penalty"],
   },
 };
