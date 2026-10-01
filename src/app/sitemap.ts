@@ -3,6 +3,7 @@ import { env } from "@/lib/env";
 import { getAllPosts } from "@/lib/blog";
 import { buildTagIndex, MIN_INDEXABLE_TAG_POSTS } from "@/lib/blog-tags";
 import { LANDING_PAGES } from "@/lib/landing-pages";
+import { serviceSitemapEntries } from "@/lib/services-pages";
 
 // ISR: the post list comes partly from the database, so the sitemap has to
 // refresh between deploys as admins publish.
@@ -38,6 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/data-retention`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/security`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    ...serviceSitemapEntries(base, now),
   ];
 
   const posts = await getAllPosts();

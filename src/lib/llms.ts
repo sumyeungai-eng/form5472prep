@@ -1,6 +1,14 @@
 import { getAllPosts, getPost, type PostMeta } from "@/lib/blog";
 import { LANDING_PAGES } from "@/lib/landing-pages";
 import {
+  SERVICES_HUB,
+  SERVICES_HUB_PATH,
+  SERVICES_LAST_REVIEWED,
+  SERVICE_PAGES,
+  servicePath,
+  toPlainText,
+} from "@/lib/services-pages";
+import {
   CONTENT_LAST_REVIEWED,
   IRS_OGDEN_FAX,
   ORG_EMAIL,
@@ -131,6 +139,29 @@ function buildCorePages(): string {
   ).join("\n")}`;
 }
 
+function buildServicePages(): string {
+  const lines = [
+    `- [${SERVICES_HUB.h1}](${SITE_URL}${SERVICES_HUB_PATH}): ${SERVICES_HUB.longDescription}`,
+    ...SERVICE_PAGES.map(
+      (page) => `- [${page.h1}](${SITE_URL}${servicePath(page.slug)}): ${page.longDescription}`,
+    ),
+  ];
+  return `## Services\n\n${lines.join("\n")}`;
+}
+
+function buildServiceDocument(page: (typeof SERVICE_PAGES)[number]): string {
+  const sections = page.sections
+    .map((section) => `## ${section.heading}\n\n${toPlainText(section.body)}`)
+    .join("\n\n");
+  const faqs = page.faqs.map((faq) => `### ${faq.q}\n\n${toPlainText(faq.a)}`).join("\n\n");
+  return [
+    `# ${page.h1}\nSource: ${SITE_URL}${servicePath(page.slug)}\nLast reviewed: ${SERVICES_LAST_REVIEWED}`,
+    toPlainText(page.intro),
+    sections,
+    `## Frequently asked questions\n\n${faqs}`,
+  ].join("\n\n");
+}
+
 function indexableLandingPages() {
   return LANDING_PAGES.filter((page) => !page.noindex).sort((a, b) =>
     a.slug.localeCompare(b.slug),
@@ -174,6 +205,7 @@ export async function buildLlmsTxt(): Promise<string> {
     PRIVACY,
     ADDITIONAL_SERVICES,
     buildCorePages(),
+    buildServicePages(),
     buildTopicPages(),
     buildGuides(posts),
     `Full text of every guide and topic page: ${SITE_URL}/llms-full.txt`,
@@ -227,7 +259,8 @@ export async function buildLlmsFullTxt(): Promise<string> {
     `Pricing is authoritative at ${SITE_URL}/pricing — treat any pricing figures below as informational and defer to that page if they ever disagree.`,
   ].join("\n\n");
   const landingDocuments = indexableLandingPages().map(buildLandingDocument);
+  const serviceDocuments = SERVICE_PAGES.map(buildServiceDocument);
   const blogDocuments = await buildBlogDocuments(posts);
 
-  return `${header}\n\n${[...landingDocuments, ...blogDocuments].join(SECTION_SEPARATOR)}\n`;
+  return `${header}\n\n${[...serviceDocuments, ...landingDocuments, ...blogDocuments].join(SECTION_SEPARATOR)}\n`;
 }

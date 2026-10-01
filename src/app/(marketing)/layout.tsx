@@ -88,6 +88,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <nav className="space-y-2.5">
               <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-ink">Services</p>
               <ul className="space-y-2">
+                <li><Link href="/services" className="hover:text-ink">Form 5472 filing services</Link></li>
                 <li><Link href="/pricing" className="hover:text-ink">Form 5472 Filing</Link></li>
                 <li><Link href="/ein" className="hover:text-ink">EIN Acquisition</Link></li>
                 <li><Link href="/itin" className="hover:text-ink">ITIN Acquisition</Link></li>
