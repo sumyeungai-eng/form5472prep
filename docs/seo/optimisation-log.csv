@@ -1,0 +1,10 @@
+date,url,keyword,moz_helping,moz_hurting,keyword_locations,notes,recheck_on
+2026-10-01,/services/form-5472-filing-service,form 5472 filing service,26,1,"title1 body8 meta1 url1 alt0",remaining hurt = image alt (no images; expected),2026-10-15
+2026-10-01,/services/pro-forma-1120-filing-service,pro forma 1120 filing service,26,1,"title1 body3 meta1 url1 alt0",,2026-10-15
+2026-10-01,/services/late-form-5472-filing-service,late form 5472 filing service,26,1,"title1 body3 meta1 url1 alt0",,2026-10-15
+2026-10-01,/services/foreign-owned-llc-tax-filing-service,foreign owned llc tax filing service,26,1,"title1 body3 meta1 url1 alt0",,2026-10-15
+2026-10-01,/services/form-5472-fax-filing-service,form 5472 fax filing service,26,1,"title1 body3 meta1 url1 alt0",,2026-10-15
+2026-10-01,/services/white-label-form-5472-filing,white label form 5472 filing,26,1,"title1 body3 meta1 url1 alt0",,2026-10-15
+2026-10-01,/services/form-5472-filing-for-dormant-llc,form 5472 filing for dormant llc,26,1,"title1 body3 meta1 url1 alt0",was 25/2 at /services/dormant-llc-form-5472-filing (renamed + 308),2026-10-15
+2026-10-01,/services/final-form-5472-for-dissolved-llc,final form 5472 for dissolved llc,26,1,"title1 body3 meta1 url1 alt0",was 25/2 at /services/final-form-5472-dissolved-llc (renamed + 308),2026-10-15
+2026-10-01,/form-5472-penalty-calculator,form 5472 penalty calculator,25,2,"title1 body0 meta0 url1 alt0",baseline existing page; keyword missing from meta description,2026-10-15
