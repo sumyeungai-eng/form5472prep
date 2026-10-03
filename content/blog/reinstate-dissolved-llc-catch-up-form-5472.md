@@ -1,6 +1,6 @@
 ---
 title: "Your LLC Was Administratively Dissolved — Do You Still Owe Form 5472?"
-description: "Administrative dissolution is a state action. It does not erase a Form 5472 that was already due. Here are the two tracks, in order, and which one we handle."
+description: "Administrative dissolution is a state action. It does not erase a Form 5472 that was already due. The two tracks, in order, and which one we handle."
 date: 2026-10-03
 publishAt: auto
 updated: 2026-10-03
@@ -46,7 +46,7 @@ Each track has its own authority, its own document set and its own proof of comp
 | What you get back | A state-issued confirmation or reinstatement certificate | A transmission receipt; IRS silence is the usual outcome |
 | Who handles it | You, your registered agent or a local provider — not us | Us, if you want it prepared and delivered |
 
-No figure for the state column appears above on purpose. Reinstatement fees, back-report fees, the window in which reinstatement remains available at all, and whether your entity name is still held for you differ by state and change over time. Any number quoted in a blog post is a number that can be wrong by the time you read it, so the only reliable source is your formation state's own page.
+No figure for the state column appears on purpose. Reinstatement fees, back-report fees, the window in which reinstatement remains available, and whether your entity name is still held differ by state and change over time, so the only reliable source is your formation state's own page.
 
 ## Which Form 5472 years are still outstanding?
 
@@ -87,7 +87,7 @@ Reinstatement makes sense when the LLC still has a working bank account, a live 
 
 Closing properly is its own procedure with its own final-year reporting, which our guide to the [final Form 5472 after closing a foreign-owned US LLC](/blog/final-form-5472-closing-foreign-owned-llc) covers. The one thing an abandoned entity does not do is clear the years that were already due.
 
-One detail worth separating from the classification question: the IRS [single-member LLC page](https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies) states that "For income tax purposes, an LLC with only one member is treated as an entity disregarded as separate from its owner, unless it files Form 8832 and affirmatively elects to be treated as a corporation," and that such an LLC "is treated as a separate entity for purposes of employment tax and certain excise taxes." Disregarded treatment for income tax is not a general erasure of the entity, which is part of why a dissolved LLC's federal paper trail outlives its state registration.
+The IRS [single-member LLC page](https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies) states that "For income tax purposes, an LLC with only one member is treated as an entity disregarded as separate from its owner, unless it files Form 8832 and affirmatively elects to be treated as a corporation," and that such an LLC "is treated as a separate entity for purposes of employment tax and certain excise taxes." Disregarded treatment for income tax is not a general erasure of the entity.
 
 ## What does the federal side cost?
 

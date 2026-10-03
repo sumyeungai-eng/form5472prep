@@ -13,13 +13,13 @@ draft: false
 
 An affiliate business is easy to run through a US LLC and easy to mix up with yourself. The sites predate the LLC, the hosting renews on an old personal card, and sponsors email you rather than the company. None of that changes what Form 5472 asks for; all of it changes your answer.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a **$25,000 penalty** will be assessed on a reporting corporation that fails to file when due and in the manner prescribed, and that a substantially incomplete form counts as a failure to file. [We prepare and fax the complete package from $149](/start).
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a **$25,000 penalty** will be assessed on a reporting corporation that fails to file when due and in the manner prescribed, and that a substantially incomplete form counts as a failure to file. [We prepare and fax the package from $149](/start).
 
 ## Does an affiliate or content site's US LLC have to file Form 5472?
 
 Yes, in almost every year it operated. A foreign-owned US single-member LLC files when three things are true: it is a disregarded entity for US tax purposes, its owner is a foreign person, and during the tax year it had at least one reportable transaction with that owner or another foreign related party.
 
-Under **Treas. Reg. § 1.6038A-1**, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the § 6038A reporting rules. A content LLC that owes no US corporate tax still files a corporate-style information return.
+Under **Treas. Reg. § 1.6038A-1**, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the § 6038A reporting rules. A content LLC owing no US corporate tax still files a corporate-style information return.
 
 Affiliates clear the third condition without noticing: funding the bank account, letting a renewal hit your own card, or sending a month's commissions home each creates a reportable transaction, in a record year and in a year the sites earned nothing.
 
@@ -45,15 +45,15 @@ Part IV line numbers move between revisions, so the table names categories inste
 
 ## Are affiliate commissions reportable because they are called "commissions"?
 
-No. Part IV has lines for commissions, and that wording catches people out, but every Part IV line reports an amount exchanged with a **foreign related party**. A commission an unrelated network pays your LLC is customer revenue, and never appears on the form however large it is.
+No. Part IV has lines for commissions, and that wording catches people out, but every Part IV line reports an amount exchanged with a **foreign related party**. A commission an unrelated network pays your LLC is customer revenue, and never appears on the form.
 
 Keep the network account, payout method and bank account in the LLC's name: revenue that lands on you first becomes an owner movement when you pass it on.
 
 ## Which card paid the subscription?
 
-Whichever card paid it decides the answer, and in a content business the card is usually the wrong one. Hosting, a premium theme and a keyword tool were set up years before the LLC and still renew on a personal card. The bill is the LLC's cost, the money came from you, and that is a transaction between owner and LLC.
+Whichever card paid it decides the answer, and in a content business the card is usually the wrong one. Hosting, a premium theme and a keyword tool were set up before the LLC existed and still renew on a personal card. The bill is the LLC's cost, the money came from you, and that is a transaction between owner and LLC.
 
-Those renewals are small enough that owners skip them and file a form that understates owner movements. Instead, pull twelve months of statements for every card that ever paid a site expense, mark each charge as the LLC's cost or genuinely personal, keep the invoice naming the site, and decide in writing whether the total is a contribution, a loan or a reimbursable amount.
+Those renewals are small enough that owners skip them and file a form that understates owner movements. Instead, pull twelve months of statements for every card that paid a site expense, mark each charge as the LLC's cost or genuinely personal, keep the invoice naming the site, and decide in writing whether the total is a contribution, a loan or a reimbursable amount.
 
 A reimbursement you pay yourself in a later year is a second reportable movement in that later year, not a cancellation of the first. [Owner loans, contributions and reimbursements](/blog/form-5472-owner-loans-contributions-reimbursements) sets out the categories.
 
@@ -75,7 +75,7 @@ Selling a site to an unrelated buyer is not reportable. The buyer is a third par
 
 - **Selling a site is not selling the LLC.** Selling membership interests changes the LLC's ownership, a separate question handled in [Form 5472 and a change of ownership](/blog/form-5472-change-of-ownership).
 - **Selling to yourself or your own company is not a third-party sale.** That is a related-party disposition and goes on the form.
-One commercial detail, not a tax one: Amazon's **Associates Program Operating Agreement** (updated October 15, 2025, checked 3 October 2026) states, "You may not assign this Agreement, by operation of law or otherwise, without our express prior written approval." A buyer usually opens their own network accounts, which shapes the deal, not the filing.
+One commercial detail, not a tax one: Amazon's **Associates Program Operating Agreement** (updated October 15, 2025, checked 3 October 2026) states, "You may not assign this Agreement, by operation of law or otherwise, without our express prior written approval." A buyer therefore usually opens their own accounts, which shapes the deal, not the filing.
 
 ## What do the ad and affiliate platforms' own pages say about payouts?
 
@@ -84,7 +84,7 @@ We describe only what the companies' own pages state, checked 3 October 2026.
 - **Google AdSense.** The [AdSense "Steps to getting paid" page](https://support.google.com/adsense/answer/1709858) says that "if your current balance reaches the payment threshold by the end of the month, and there are no other payment holds, you'll be issued a payment between the 21st and the 26th of the month." It does not state one universal payment threshold, pointing instead to a separate reference, so we state no threshold figure.
 - **Amazon Associates.** The [Associates Program Operating Agreement](https://affiliate-program.amazon.com/help/operating/agreement), updated October 15, 2025, refers to commission income "paid or payable to you" and sets out no payout mechanics, so we describe none.
 
-Neither page addresses Form 5472, and neither needs to: both describe a platform settling unrelated-party money into an account you nominate. We state no commission rate or fee percentage for either company.
+Neither page addresses Form 5472, and neither needs to: both describe a platform settling unrelated-party money into an account you nominate.
 
 ## When and how is the affiliate LLC's package filed?
 
@@ -103,7 +103,7 @@ The [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472) links
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your network reports and owner-movement schedule, have a qualified tax accountant review the package, fax it to the IRS and send you the receipt.
 
-Standard is **$149** and takes 5–7 business days; Express is **$199** within 3 business days; each additional past tax year is **+$99**; IRS fax delivery is included. [Start your Form 5472 package](/start).
+Standard is **$149** (5–7 business days); Express is **$199** (within 3 business days); each additional past tax year is **+$99**; IRS fax delivery is included. [Start your Form 5472 package](/start).
 
 We are not a CPA firm and we do not give tax advice. Valuing a contributed site, whether your income is effectively connected with a US trade or business, and your home-country return are questions for the appropriate adviser. If part of your income is coaching or courses rather than content, [Form 5472 for coaches and course creators](/blog/form-5472-coaches-consultants-course-creators) covers that mix.
 
@@ -135,6 +135,6 @@ Possibly. A renewal on your personal card, money you put in, or anything you too
 
 ---
 
-Your dashboards show what the sites earned. Form 5472 asks a narrower question: what passed between you and the company. Get the owner-movement schedule right and the filing follows. [Start your Form 5472 package](/start).
+Your dashboards show what the sites earned. Form 5472 asks a narrower question: what passed between you and the company. [Start your Form 5472 package](/start).
 
 *Educational content only; not tax or legal advice.*

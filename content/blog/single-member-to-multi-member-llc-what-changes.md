@@ -11,9 +11,9 @@ draft: false
 
 **Adding a second member to a foreign-owned US LLC generally ends the disregarded-entity treatment that puts it inside the Form 5472 regime, and moves the entity toward a partnership return. A Form 5472 package may still be due for the period before the change. The effective date and any mid-year split are adviser questions.**
 
-You are about to sign in a partner, an investor or a co-founder. The paperwork in front of you is a state filing and an amended operating agreement, so the change looks like a company-law step. Federally it is something larger: it can move your LLC out of one filing regime and into another, and it can leave a Form 5472 obligation behind it for the stretch of the year the LLC was still a one-owner entity.
+You are about to sign in a partner, an investor or a co-founder. The paperwork in front of you is a state filing and an amended operating agreement, so the change looks like a company-law step. Federally it is larger: it can move the LLC out of one filing regime into another, and it can leave a Form 5472 obligation behind for the stretch of the year the LLC was still a one-owner entity.
 
-This post covers what the classification change is, what the before and after picture looks like, what you should gather while the records are fresh, and — just as important — which parts of this we will not compute for you. If the pre-change period still needs a Form 5472 package, [we prepare and fax it from $149](/start).
+Below: what the classification change is, the before and after picture, what to gather while the records are fresh, and which parts of this we will not compute for you. If the pre-change period still needs a Form 5472 package, [we prepare and fax it from $149](/start).
 
 ## What does a second member do to your LLC's federal tax classification?
 
@@ -21,19 +21,17 @@ A second member generally converts the LLC from a disregarded entity into a part
 
 The [IRS single-member LLC page](https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies) states that "a domestic LLC with at least two members is classified as a partnership for federal income tax purposes unless it files Form 8832 and elects to be treated as a corporation," and that "for income tax purposes, an LLC with only one member is treated as an entity disregarded as separate from its owner, unless it files Form 8832 and affirmatively elects to be treated as a corporation."
 
-Two things follow from reading those sentences side by side. The test is the **number of members**, not the nationality of the owners, the ownership split or what the business does. And the partnership result is a **default**, not something you opt into — nothing is filed to make it happen.
-
-The [IRS limited liability company page](https://www.irs.gov/businesses/small-businesses-self-employed/limited-liability-company-llc) carries the same default rule and adds a timing point about elections: "an election specifying an LLC's classification cannot take effect more than 75 days prior to the date the election is filed, nor can it take effect later than 12 months after the date the election is filed." That window exists for Form 8832 elections. It is not a rule about when a default classification change takes effect, and this post does not treat it as one.
+Two things follow from reading those sentences side by side. The test is the **number of members**, not the owners' nationality, the ownership split or what the business does. And the partnership result is a **default** — nothing is filed to make it happen.
 
 ## Why does losing disregarded-entity status matter for Form 5472?
 
-Disregarded-entity status is the exact hook that puts a foreign-owned US LLC into the Form 5472 regime, so removing it removes the hook.
+Disregarded-entity status is the hook that puts a foreign-owned US LLC into the Form 5472 regime, so removing it removes the hook.
 
 The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that "for tax years beginning on or after January 1, 2017, and ending on or after December 13, 2017, a foreign-owned U.S. DE is treated as an entity separate from its owner and classified as a corporation for the limited purposes of the requirements under section 6038A that apply to 25% foreign-owned domestic corporations." The same instructions define a reporting corporation as "either: A 25% foreign-owned U.S. corporation (including a foreign-owned U.S. disregarded entity (DE)), or A foreign corporation engaged in a trade or business within the United States."
 
 Read that list against a partnership and nothing matches. A partnership is not a 25%-foreign-owned domestic corporation, it is not a foreign corporation with a US trade or business, and once there are two members it is not a disregarded entity either. That is the whole mechanism: the LLC was in scope because it was a foreign-owned DE, and a second member is what stops it being one.
 
-One exception is worth naming because formation agents create it by accident: an LLC that has **elected corporate treatment** on Form 8832 and is at least 25% foreign-owned is a reporting corporation regardless of member count. The structures that keep a multi-member LLC inside Form 5472 are set out in [multi-member LLC: Form 5472 or Form 1065](/blog/multi-member-llc-form-5472-or-1065), which also covers what a partnership with foreign partners actually files — withholding, partner schedules and all — in more detail than belongs here.
+One exception is worth naming, because formation agents create it by accident: an LLC that has **elected corporate treatment** on Form 8832 and is at least 25% foreign-owned is a reporting corporation regardless of member count. The structures that keep a multi-member LLC inside Form 5472 are set out in [multi-member LLC: Form 5472 or Form 1065](/blog/multi-member-llc-form-5472-or-1065), which also covers what a partnership with foreign partners actually files.
 
 ## What exactly changes between the before and after picture?
 
@@ -42,32 +40,31 @@ Classification, the return, the signature, the reportable-transaction list and t
 | What | Before: one foreign member | After: two or more members |
 |---|---|---|
 | Federal classification | Disregarded entity, separate from its owner only for § 6038A reporting | Partnership by default; corporation instead if a valid Form 8832 election is in force |
-| What gets filed | Pro forma Form 1120 with "Foreign-owned U.S. DE" across the top, Form 5472 attached, faxed or mailed — the instructions state a foreign-owned US DE "cannot file Form 5472 electronically" | A partnership information return. [Form 1065](https://www.irs.gov/forms-pubs/about-form-1065) is how "partnerships file an information return to report their income, gains, losses, deductions, credits, etc.", and the partnership "does not pay tax on its income but 'passes through' any profits or losses to its partners" on Schedule K-1 |
-| Who signs | The owner or a person authorised to sign for the LLC signs the pro forma Form 1120 package. The Form 5472 instructions set out no separate signature rule for a DE — treat anything beyond that as unverified and ask your adviser |
-| | | The Form 1065 instructions head the signature block "Any Partner or LLC Member" |
-| Which transactions are reportable | Owner contributions, distributions, loans either way, owner-paid company costs and payments for services between owner and LLC. Customer and platform revenue is **not** a reportable transaction | The partnership regime reports partner-level items on partner schedules instead. Related-party reporting of the Form 5472 kind generally stops with the DE status — subject to the corporate-election exception above |
-| What the EIN does | Stays the LLC's filing account for the DE package | Needs review, not an assumption. The [IRS Instructions for Form SS-4](https://www.irs.gov/instructions/iss4) state that "if the disregarded entity is requesting an EIN because it has acquired one or more additional owners and its classification has changed to partnership under the default rules of Regulations section 301.7701-3(f), check the Partnership box for line 9a" |
-| Due date | The DE package follows the Form 1120 due date | The partnership return has its own, earlier due date — covered in the multi-member guide |
+| What gets filed | Pro forma Form 1120 with "Foreign-owned U.S. DE" across the top, Form 5472 attached, faxed or mailed — the instructions state a foreign-owned US DE "cannot file Form 5472 electronically" | A partnership information return. On [Form 1065](https://www.irs.gov/forms-pubs/about-form-1065), "partnerships file an information return to report their income, gains, losses, deductions, credits, etc." and pass profits or losses through to the partners |
+| Who signs | The owner, or a person authorised to sign for the LLC, signs the pro forma Form 1120 package. The Form 5472 instructions set out no separate signature rule for a DE — treat anything beyond that as unverified | The Form 1065 instructions head the signature block "Any Partner or LLC Member" |
+| Which transactions are reportable | Owner contributions, distributions, loans either way, owner-paid company costs and owner-LLC service payments. Customer and platform revenue is **not** reportable | Partner-level items go on partner schedules instead. Form 5472 reporting generally stops with the DE status, subject to the corporate-election exception |
+| What the EIN does | Stays the LLC's filing account for the DE package | Needs review, not an assumption. The [IRS Instructions for Form SS-4](https://www.irs.gov/instructions/iss4) state that "if the disregarded entity is requesting an EIN because it has acquired one or more additional owners and its classification has changed to partnership under the default rules of Regulations section 301.7701-3(f), check the Partnership box for line 9a." Whether that describes your facts is an adviser question |
+| Due date | Follows the Form 1120 due date | Earlier, and separate — covered in the multi-member guide |
 
-The useful way to use that table is as a handover sheet. One column is the regime you are leaving and the evidence it needs closed out; the other is the regime your new adviser is picking up.
+Use that table as a handover sheet. One column is the regime you are leaving and the evidence it needs closed out; the other is the regime your new adviser picks up.
 
 ## Do you still owe Form 5472 for the period before the second member joined?
 
-Potentially yes, and that is the single most expensive thing to get wrong here. Classification changing going forward does not retroactively unwind a reporting obligation that already attached.
+Potentially yes, and it is the most expensive thing to get wrong here. A classification change going forward does not unwind a reporting obligation that already attached.
 
 Every earlier tax year in which the LLC was a foreign-owned US disregarded entity with reportable transactions sits on its own. The Form 5472 instructions state that "a penalty of $25,000 will be assessed on any reporting corporation that fails to file Form 5472 when due and in the manner prescribed," and a substantially incomplete form counts as a failure to file. The penalty is per form, per year. A partner joining in 2026 does nothing about 2024 or 2025.
 
-The period inside the change year is the harder question, and it is the one we will not answer for you. Whether there is a short reporting period before the conversion, what its boundaries are, and what has to be filed for it depends on the legal and tax-effective dates of the admission and on facts in your documents. Put that question to a qualified tax adviser, in writing, before anyone files anything.
+The change year itself is the harder question, and it is the one we will not answer. Whether a reporting period exists before the conversion, where its boundaries fall, and what has to be filed for it depend on the admission's legal and tax-effective dates and on facts in your documents. Put that to a qualified tax adviser, in writing, before anyone files anything.
 
-What the event itself might need reported is a separate strand again: admission of a member can be an acquisition or disposition transaction in its own right. [Form 5472 after a change of LLC ownership](/blog/form-5472-change-of-ownership) covers that reporting and the evidence it takes. If the plan is to wind the LLC up rather than take a partner into it, [the final Form 5472 guide](/blog/final-form-5472-closing-foreign-owned-llc) covers the closing package instead.
+Admission of a member can also be an acquisition or disposition transaction in its own right. [Form 5472 after a change of LLC ownership](/blog/form-5472-change-of-ownership) covers that reporting and the evidence it takes. If the plan is to wind the LLC up instead of taking a partner into it, [the final Form 5472 guide](/blog/final-form-5472-closing-foreign-owned-llc) covers the closing package.
 
 ## Who decides the effective date and the mid-year split?
 
 A qualified tax adviser does, on your documents — not this post, and not us.
 
-We will not state an effective-date rule for a default classification change, because we have not found one stated on an IRS page in terms we can quote, and a confident-sounding rule here would be worse than no rule. The same goes for how a change year splits, whether a short period exists on either side of it, and what a Form 8832 election would do if one were filed around the same time. Each of those is a determination with a dollar consequence attached, and each turns on paperwork only your adviser has.
+We will not state an effective-date rule for a default classification change, because we have not found one stated on an IRS page in terms we can quote, and a confident-sounding rule here would be worse than none. The same goes for how a change year splits and what a Form 8832 election filed around the same time would do. Each is a determination with a dollar consequence, and each turns on paperwork only your adviser has.
 
-Treat the table below as the list you take into that conversation. Every row is a question, deliberately — none of them is a rule.
+Take the table below into that conversation. Every row is a question, deliberately — none is a rule.
 
 | Question to ask | Why the answer changes what gets filed |
 |---|---|
@@ -83,23 +80,23 @@ Treat the table below as the list you take into that conversation. Every row is 
 
 Gather the evidence while it is still a live transaction rather than a memory. Work in this order:
 
-1. **Pin the dates.** The signed admission document, the state amendment date, and whatever the parties intend as the tax-effective date, all recorded in one place.
-2. **Print the ownership position before and after.** Members, percentages, and the capital contributed by the incoming member.
-3. **Close out the DE year's owner movements.** Every contribution, distribution, loan either way, owner-paid company cost and owner-LLC service payment, with the bank line that evidences each one.
-4. **Separate revenue from owner movement.** Customer and platform receipts are not reportable transactions; the owner's withdrawal of that money is the part that matters.
+1. **Pin the dates.** The signed admission document, the state amendment date, and whatever the parties intend as the tax-effective date, in one place.
+2. **Print ownership before and after.** Members, percentages, and the capital the incoming member contributed.
+3. **Close out the DE year's owner movements.** Every contribution, distribution, loan either way, owner-paid company cost and owner-LLC service payment, with the bank line evidencing each.
+4. **Separate revenue from owner movement.** Customer and platform receipts are not reportable; the owner's withdrawal of that money is.
 5. **Pull the election history.** Confirm in writing whether Form 8832 or Form 2553 was ever filed — formation packages sometimes include one.
 6. **Check the SS-4 record.** What entity type was declared when the EIN was issued, and does it still match reality?
-7. **Fix an owner for each track.** Name who owns the pre-change federal filings and who owns the partnership return from the change date.
+7. **Fix an owner for each track.** Name who holds the pre-change federal filings and who holds the partnership return from the change date.
 
-Steps 3 and 4 are the ones that decay. Bank portals age out, platform dashboards get closed, and a co-founder arriving mid-year is exactly when nobody is reconciling.
+Steps 3 and 4 decay fastest. Bank portals age out, platform dashboards close, and a co-founder arriving mid-year is exactly when nobody is reconciling.
 
 ## How does Form5472 Prep fit into a change like this?
 
-We prepare the one piece that belongs to the period you are leaving: the Form 5472 package for a foreign-owned US single-member disregarded entity.
+We prepare the one piece belonging to the period you are leaving: the Form 5472 package for a foreign-owned US single-member disregarded entity.
 
-That means Form 5472, the pro forma Form 1120 marked "Foreign-owned U.S. DE", and the Part V supporting statement, reviewed by a qualified tax accountant and delivered by fax to the IRS Ogden PIN Unit with a timestamped transmission receipt. A fax receipt is evidence of transmission, not IRS acceptance. Standard is **$149** in 5–7 business days, Express is **$199** within 3 business days, and each additional past tax year is **+$99** — [see current pricing](/pricing).
+That means Form 5472, the pro forma Form 1120 marked "Foreign-owned U.S. DE", and the Part V supporting statement, reviewed by a qualified tax accountant and faxed to the IRS Ogden PIN Unit with a timestamped receipt — which is evidence of transmission, not IRS acceptance. Standard is **$149** in 5–7 business days, Express **$199** within 3 business days, each additional past tax year **+$99** — [see current pricing](/pricing).
 
-What we do not do: we are not a CPA firm and we do not give tax advice, we do not prepare partnership returns, and we will not tell you how your change year splits or when your classification change took effect. Those are for your adviser. If the pre-change years need filing, [start the filing](/start) and we will handle that part.
+What we do not do: we are not a CPA firm and we do not give tax advice, we do not prepare partnership returns, and we will not tell you how your change year splits or when your classification change took effect. Those are for your adviser. If the pre-change years need filing, [start the filing](/start).
 
 ## Frequently asked questions
 
@@ -117,7 +114,7 @@ No. The IRS states a domestic LLC with at least two members is classified as a p
 
 ### Does the LLC need a new EIN?
 
-Ask before applying. The Form SS-4 instructions address a disregarded entity requesting an EIN after acquiring additional owners and changing to partnership status. Whether that describes your facts is an adviser question, and filing under a wrong number creates account mismatches.
+Ask before applying. The Form SS-4 instructions address a disregarded entity requesting an EIN after acquiring additional owners and changing to partnership status under the default rules. Whether that describes your facts is an adviser question.
 
 ### When exactly does the change take effect?
 
@@ -131,6 +128,6 @@ Filing a form that was not required causes no penalty in itself, but it does not
 
 Then whether there are two owners for federal purposes is genuinely unclear, and layered structures can leave one owner — which can mean disregarded-entity treatment continues. Get that determination in writing from an adviser rather than assuming either answer.
 
-A second member is a federal filing event, not just a state amendment. Pin the dates, close out the disregarded-entity years, and hand the mid-year questions to someone qualified to answer them. [Start a pre-change Form 5472 filing](/start) while the bank records are still open.
+A second member is a federal filing event, not just a state amendment. Pin the dates, close out the disregarded-entity years, and hand the change-year questions to someone qualified to answer them. [Start a pre-change Form 5472 filing](/start) while the bank records are still open.
 
 *Educational content only; not tax or legal advice.*

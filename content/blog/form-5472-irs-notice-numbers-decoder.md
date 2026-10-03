@@ -29,7 +29,7 @@ Nine numbers account for most of the mail a foreign-owned US LLC gets after a fi
 | [CP518](https://www.irs.gov/individuals/understanding-your-cp518-notice) | The individual counterpart: "we still don't have a record that you filed your prior year tax returns." | The delinquent return with Form 15103, or Form 15103 alone | None published | Check who it is addressed to — the owner or the LLC |
 | [CP161](https://www.irs.gov/individuals/understanding-your-cp161-notice) | "You received this notice because you have an unpaid balance due." | Payment by the due date on the notice | "Contact us within 10 days of the date of your notice if you think we made a mistake" | Compare the figure with your own records before paying |
 | [CP162](https://www.irs.gov/individuals/understanding-your-cp162-notice) | A penalty charged because a return was not filed electronically as required; the page discusses partnerships and treats a REMIC return as a partnership return. | Full payment, or a call from an authorised partner or officer meeting the stated criteria | Payment "by the date shown on your letter" | Establish which return it attaches to — not Form 5472 |
-| [CP504](https://www.irs.gov/individuals/understanding-your-cp504-notice) | "This notice is your Notice of Intent to Levy (Internal Revenue Code section 6331(d))." | Immediate payment of the unpaid balance | None published; the page says to pay "immediately" | Get help the same week — collection has begun |
+| [CP504](https://www.irs.gov/individuals/understanding-your-cp504-notice) | "This notice is your Notice of Intent to Levy (Internal Revenue Code section 6331(d))." | Immediate payment of the unpaid balance | None published; the page says to pay "immediately" | Get help this week — collection has begun |
 | [LT11 / Letter 1058](https://www.irs.gov/individuals/understanding-your-lt11-notice-or-letter-1058) | "We intend to seize your property or rights to property." | Payment, or an appeal of the proposed levy | None published; the page points to Form 12153 and the collection due process FAQs | Read the appeal instructions on the letter first |
 | [Notice 972CG](https://www.irs.gov/payments/information-return-penalties) | A proposed penalty for information returns filed late, not filed electronically when required, or filed with missing or incorrect payee TINs. | A reasonable-cause response before assessment | "Respond within 45 days (60 days if you're a foreign filer)" | Identify which returns — 1099-type filings, not Form 5472 |
 
@@ -57,7 +57,7 @@ Neither notice is a penalty. Each is a request for a return or an explanation, w
 
 No. Notice 972CG concerns information returns such as 1099-type filings — the IRS [information return penalties](https://www.irs.gov/payments/information-return-penalties) page, reviewed 11 May 2026, describes it as covering returns filed late, not filed electronically when required, or filed with missing or incorrect payee taxpayer identification numbers.
 
-Two points still matter. The IRS calls it **Notice 972CG**, not Letter 972CG, and publishes the response window: "Respond within 45 days (60 days if you're a foreign filer) before we assess the penalty." That 60-day figure is one of the few places the IRS states a longer window for a filer outside the US.
+Two points matter. The IRS calls it **Notice 972CG**, not Letter 972CG, and publishes the response window: "Respond within 45 days (60 days if you're a foreign filer) before we assess the penalty." That 60-day figure is one of the few places the IRS states a longer window for a filer outside the US.
 
 A foreign-owned LLC can still receive it. An LLC that paid US contractors and filed the resulting forms late is in scope for 972CG while also owing Form 5472 for the same year. The two obligations are unrelated.
 
@@ -105,7 +105,7 @@ It belongs to Notice 972CG only. The IRS information return penalties page state
 
 ### My notice number is not on your table. Is it a scam?
 
-Not necessarily, and assuming so is risky. The table covers a narrow set. Search your number on the IRS notices hub; if it does not appear or the letter looks suspicious, the hub says to call 800-829-1040 and follow the representative's instructions.
+Not necessarily — assuming so is risky. The table covers a narrow set. Search your number on the IRS notices hub; if it does not appear or the letter looks suspicious, the hub says to call 800-829-1040 and follow the representative's instructions.
 
 ### Can you tell me what my specific notice means?
 
