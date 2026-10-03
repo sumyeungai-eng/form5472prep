@@ -1,8 +1,8 @@
 ---
 title: "What the IRS Can Ask For: Form 5472 Records and § 1.6038A-3"
 description: "The $25,000 Form 5472 penalty also hits failure to keep records. See what § 1.6038A-3 requires and which document evidences each reportable transaction."
-date: 2026-10-03
-publishAt: auto
+date: 2026-10-06
+publishAt: "2026-10-06T09:00:00+01:00"
 updated: 2026-10-03
 author: "Form5472 Prep"
 tags: ["form-5472", "recordkeeping", "6038a-3", "penalty", "foreign-owned-llc"]
@@ -42,7 +42,7 @@ That qualifier matters: several of the six categories in paragraph (c)(2) were d
 | (iii) Pricing documents | Support for the rate the LLC paid the owner or an owner-controlled company for services |
 | (iv) Foreign country and third party filings | Home-country filings describing the same transfers |
 | (v) Ownership and capital structure records | A one-page chart naming the owner, the LLC and any other company the owner controls |
-| (vi) Loans, services and other transactions | Owner-loan notes, interest schedules, service agreements |
+| (vi) Loans, services and other non-sales transactions | Owner-loan notes, interest schedules, service agreements |
 
 ## Can a small LLC use the small-corporation exception to skip the records rule?
 

@@ -1,8 +1,9 @@
 ---
 title: "What Changes When Your Foreign-Owned US LLC Hires in the United States"
+seoTitle: "Foreign-Owned LLC Hiring in the US"
 description: "Hiring in the US makes your disregarded LLC a separate entity for employment-tax purposes — and changes nothing about its Form 5472 obligation."
-date: 2026-10-03
-publishAt: auto
+date: 2026-10-09
+publishAt: "2026-10-09T09:00:00+01:00"
 updated: 2026-10-03
 author: "Form5472 Prep"
 tags: ["form-5472", "hiring", "us-employees", "independent-contractors", "foreign-owned-llc"]

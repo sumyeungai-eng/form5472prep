@@ -1,8 +1,8 @@
 ---
 title: "Form 5472 for Affiliate Marketers and Content Site Owners"
 description: "Affiliate and ad-network payouts stay off Form 5472; your withdrawals, owner-paid tools and a site contributed in kind do not. See the money-flow table."
-date: 2026-10-03
-publishAt: auto
+date: 2026-10-12
+publishAt: "2026-10-12T09:00:00+01:00"
 updated: 2026-10-03
 author: "Form5472 Prep"
 tags: ["form-5472", "affiliate-marketing", "content-sites", "foreign-owned-llc", "adsense"]

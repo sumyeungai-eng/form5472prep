@@ -1,8 +1,9 @@
 ---
 title: "Form 5472 for App Developers Selling on the App Store and Google Play"
+seoTitle: "Form 5472 for App Store and Play Developers"
 description: "App Store and Google Play payouts are customer revenue, not Form 5472 items. See a worked two-store example of what your owner transfers report."
-date: 2026-10-03
-publishAt: auto
+date: 2026-10-10
+publishAt: "2026-10-10T09:00:00+01:00"
 updated: 2026-10-03
 author: "Form5472 Prep"
 tags: ["form-5472", "app-developers", "app-store", "google-play", "foreign-owned-llc"]

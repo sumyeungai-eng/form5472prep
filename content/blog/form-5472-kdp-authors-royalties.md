@@ -1,8 +1,9 @@
 ---
 title: "Form 5472 for Self-Published Authors Earning KDP and Audiobook Royalties"
+seoTitle: "Form 5472 for KDP and Audiobook Authors"
 description: "KDP and audiobook royalties paid to your US LLC stay off Form 5472; the money you move to yourself does not. Platform tax forms are separate."
-date: 2026-10-03
-publishAt: auto
+date: 2026-10-11
+publishAt: "2026-10-11T09:00:00+01:00"
 updated: 2026-10-03
 author: "Form5472 Prep"
 tags: ["form-5472", "kdp", "self-published-authors", "royalties", "foreign-owned-llc"]

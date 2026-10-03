@@ -1,8 +1,8 @@
 ---
 title: "Form 5472 vs FBAR vs Form 8938: Which Ones Apply to You?"
 description: "Form 5472, the FBAR and Form 8938 answer different questions and go to different bodies. Compare who files each, the deadlines, penalties and authority."
-date: 2026-10-03
-publishAt: auto
+date: 2026-10-04
+publishAt: "2026-10-04T09:00:00+01:00"
 updated: 2026-10-03
 author: "Form5472 Prep"
 tags: ["form-5472", "fbar", "form-8938", "foreign-owned-llc", "comparison"]
@@ -33,9 +33,9 @@ Every cell below comes from the IRS page named in that row's authority column.
 
 | Report | Who files | What it reports | Filed with | Deadline | Headline penalty | Authority |
 |---|---|---|---|---|---|---|
-| **Form 5472** | A reporting corporation, including a foreign-owned US disregarded entity, that "had a reportable transaction with a foreign or domestic related party" | Monetary, nonmonetary and less-than-full-consideration transactions with related parties | The IRS — attached to the corporation's income tax return; a foreign-owned US DE uses a pro forma Form 1120, faxed or mailed to the Ogden PIN Unit | That return's due date "(including extensions)" — generally 15 April for a calendar-year filer | "$25,000 will be assessed on any reporting corporation that fails to file Form 5472 when due and in the manner prescribed," plus $25,000 more after 90 days | IRC §§ 6038A and 6038C; Treas. Reg. § 1.6038A-1 (Instructions for Form 5472) |
-| **FBAR (FinCEN Form 114)** | "A U.S. person" — a list that expressly includes a "limited liability company" — with a financial interest in or authority over a foreign account whose "aggregate value … exceeded $10,000 at any time during the calendar year" | Financial accounts located outside the United States | FinCEN, electronically through the BSA E-Filing System. "You don't file the FBAR with your federal tax return." | "April 15 following the calendar year reported," automatic extension to October 15 | "Civil monetary penalties and/or criminal penalties for FBAR reporting and/or recordkeeping violations," adjusted annually for inflation | Bank Secrecy Act; Title 31 of the US Code and 31 CFR (IRS FBAR page) |
-| **Form 8938** | "Specified individuals and specified domestic entities that have an interest in specified foreign financial assets and meet the reporting threshold" | Specified foreign financial assets | The IRS. "Attach Form 8938 to your annual return" | That return's due date, "including extensions" | "A penalty of $10,000" where a required filer does not file a complete and correct form by the due date, plus more after IRS notice | IRC § 6038D (Instructions for Form 8938) |
+| **Form 5472** | A reporting corporation, including a foreign-owned US disregarded entity, that "had a reportable transaction with a foreign or domestic related party" | Monetary, nonmonetary and less-than-full-consideration transactions with related parties | The IRS — attached to the corporation's income tax return; a foreign-owned US DE uses a pro forma Form 1120, faxed or mailed to the Ogden PIN Unit | That return's due date "(including extensions)" — generally 15 April for a calendar-year filer | "A penalty of $25,000 will be assessed on any reporting corporation that fails to file Form 5472 when due and in the manner prescribed." Where the failure continues more than 90 days after IRS notification, an additional $25,000 applies per related party for each 30-day period it continues — there is no ceiling | IRC §§ 6038A and 6038C; Treas. Reg. § 1.6038A-1 (Instructions for Form 5472) |
+| **FBAR (FinCEN Form 114)** | "A U.S. person" — a list that expressly includes a "limited liability company" — with a financial interest in or authority over a foreign account whose "aggregate value of those foreign financial accounts exceeded $10,000 at any time during the calendar year reported" | Financial accounts located outside the United States | FinCEN, electronically through the BSA E-Filing System. "You don't file the FBAR with your federal tax return." | "April 15 following the calendar year reported," automatic extension to October 15 | "You may be subject to civil monetary penalties and/or criminal penalties for FBAR reporting and/or recordkeeping violations" | Bank Secrecy Act; Title 31 of the US Code and 31 CFR (IRS FBAR page) |
+| **Form 8938** | "Specified individuals and specified domestic entities that have an interest in specified foreign financial assets and meet the reporting threshold" | Specified foreign financial assets | The IRS. "Attach Form 8938 to your annual return" | That return's due date, "including extensions" | "A penalty of $10,000" where a required filer does not file a complete and correct form by the due date | IRC § 6038D (who-files wording from the IRS Form 8938 / FBAR comparison page; penalty from the Instructions for Form 8938) |
 
 Two agencies appear there: the IRS takes Form 5472 and Form 8938, FinCEN takes the FBAR. Filing with the wrong body does not count as filing.
 
@@ -65,7 +65,7 @@ Form 8938 is filed by "specified individuals and specified domestic entities" ho
 
 The Instructions for Form 8938 describe a specified individual as a US citizen or "a resident alien of the United States for any part of the tax year," among other categories, and define a specified domestic entity separately, by reference to certain closely held corporations and trusts. Whether a person or LLC falls inside either definition is a legal analysis of your facts.
 
-**The thresholds vary, and we deliberately do not reproduce them.** The instructions state that "your applicable reporting threshold depends upon whether you are married, file a joint federal income tax return, and live inside (or outside) the United States." Read the figures from the IRS, not a blog: quoting the wrong row is how people conclude they are safe when they are not.
+**The thresholds vary, and we deliberately do not reproduce them.** The instructions state that "your applicable reporting threshold depends upon whether you are married, file a joint federal income tax return, and live inside (or outside) the United States." Read the figures from the IRS, not a blog.
 
 One structural point carries across cleanly: Form 8938 attaches to an annual income tax return, so a person who files no US return has nothing to attach it to — but whether you must file one is itself an adviser's question.
 
@@ -125,6 +125,6 @@ If it is a foreign-owned US disregarded entity with a reportable transaction, ye
 
 ### Which of the three has the largest headline penalty?
 
-On the pages cited here, Form 5472 carries $25,000 for failure to file when due and in the manner prescribed; Form 8938 starts at $10,000. FBAR penalties sit in Title 31 and adjust for inflation.
+On the pages cited here, Form 5472 carries $25,000 for failure to file when due and in the manner prescribed; Form 8938 starts at $10,000. FBAR penalties sit in Title 31, and the IRS comparison page notes civil amounts adjust annually for inflation.
 
 *Educational content only; not tax or legal advice.*

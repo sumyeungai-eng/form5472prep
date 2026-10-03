@@ -1,8 +1,9 @@
 ---
 title: "Your LLC Was Administratively Dissolved — Do You Still Owe Form 5472?"
+seoTitle: "Dissolved LLC: Do You Still Owe Form 5472?"
 description: "Administrative dissolution is a state action. It does not erase a Form 5472 that was already due. The two tracks, in order, and which one we handle."
-date: 2026-10-03
-publishAt: auto
+date: 2026-10-08
+publishAt: "2026-10-08T09:00:00+01:00"
 updated: 2026-10-03
 author: "Form5472 Prep"
 tags: ["form-5472", "administrative-dissolution", "llc-reinstatement", "late-filing", "foreign-owned-llc"]

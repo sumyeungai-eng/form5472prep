@@ -1,8 +1,9 @@
 ---
 title: "Which IRS Notice Did You Get? Decoding Form 5472 Penalty Letters"
+seoTitle: "Decoding IRS Form 5472 Penalty Notices"
 description: "Decode the number on your IRS envelope — CP215, CP259, CP518B, CP161, CP162, CP504, LT11 and Notice 972CG — and what each one asks a filer for."
-date: 2026-10-03
-publishAt: auto
+date: 2026-10-05
+publishAt: "2026-10-05T09:00:00+01:00"
 updated: 2026-10-03
 author: "Form5472 Prep"
 tags: ["form-5472", "irs-notice", "penalty", "foreign-owned-llc", "cp215"]
@@ -55,7 +56,7 @@ Neither notice is a penalty. Each is a request for a return or an explanation, w
 
 ## Is Notice 972CG the same as a Form 5472 penalty?
 
-No. Notice 972CG concerns information returns such as 1099-type filings — the IRS [information return penalties](https://www.irs.gov/payments/information-return-penalties) page, reviewed 11 May 2026, describes it as covering returns filed late, not filed electronically when required, or filed with missing or incorrect payee taxpayer identification numbers.
+No. Notice 972CG concerns information returns such as 1099-type filings — the IRS [information return penalties](https://www.irs.gov/payments/information-return-penalties) page, checked 3 October 2026, describes it as covering returns filed late, not filed electronically when required, or filed with missing or incorrect payee taxpayer identification numbers.
 
 Two points matter. The IRS calls it **Notice 972CG**, not Letter 972CG, and publishes the response window: "Respond within 45 days (60 days if you're a foreign filer) before we assess the penalty." That 60-day figure is one of the few places the IRS states a longer window for a filer outside the US.
 

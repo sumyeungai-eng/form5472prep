@@ -1,8 +1,9 @@
 ---
 title: "Taking On a Partner: What Changes When a Single-Member LLC Becomes Multi-Member"
+seoTitle: "Single-Member LLC Taking On a Partner"
 description: "A second member generally ends the disregarded-entity treatment behind Form 5472 and moves the LLC toward a partnership return. What to check first."
-date: 2026-10-03
-publishAt: auto
+date: 2026-10-07
+publishAt: "2026-10-07T09:00:00+01:00"
 updated: 2026-10-03
 author: "Form5472 Prep"
 tags: ["form-5472", "multi-member-llc", "entity-classification", "taking-on-a-partner", "foreign-owned-llc"]
