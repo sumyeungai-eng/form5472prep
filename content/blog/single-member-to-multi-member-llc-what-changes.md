@@ -45,7 +45,7 @@ Classification, the return, the signature, the reportable-transaction list and t
 | Which transactions are reportable | Owner contributions, distributions, loans either way, owner-paid company costs and owner-LLC service payments. Customer and platform revenue is **not** reportable | Partner-level items go on partner schedules. Form 5472 reporting generally stops with the DE status, subject to the corporate-election exception |
 | What the EIN does | Stays the LLC's filing account for the DE package | Needs review, not an assumption. The [IRS Instructions for Form SS-4](https://www.irs.gov/instructions/iss4) state that "if the disregarded entity is requesting an EIN because it has acquired one or more additional owners and its classification has changed to partnership under the default rules of Regulations section 301.7701-3(f), check the Partnership box for line 9a." Whether that describes your facts is an adviser question |
 
-Use that table as a handover sheet: one column is the regime you are leaving and the evidence it needs closed out, the other is what your new adviser picks up.
+Use that table as a handover sheet: one column is the regime you are leaving, the other is what your new adviser picks up.
 
 ## Do you still owe Form 5472 for the period before the second member joined?
 
@@ -72,7 +72,6 @@ Take the table below into that conversation. Every row is a question — none is
 | Was Form 8832 or Form 2553 ever filed for this LLC, by anyone? | A live corporate election keeps the LLC in the Form 5472 regime |
 | Are the two members genuinely two owners for federal purposes? | Layered structures can leave one owner, which can mean the DE regime continues |
 | Which prior years were DE years with reportable transactions, and were they filed? | Unfiled years carry the $25,000 exposure independently |
-| Does a new EIN need applying for, or does the existing one carry? | The wrong number creates account mismatches |
 | Who prepares the partnership return, and from what date? | Your current preparer may not do them |
 
 ## What should you gather before the second member signs?
@@ -87,7 +86,7 @@ Gather the evidence while it is still a live transaction rather than a memory. W
 6. **Check the SS-4 record.** What entity type was declared when the EIN was issued, and does it still match?
 7. **Fix an owner for each track.** Name who holds the pre-change filings and who holds the partnership return.
 
-Steps 3 and 4 decay fastest. Bank portals age out, platform dashboards close, and a co-founder arriving mid-year is exactly when nobody is reconciling.
+Steps 3 and 4 decay fastest: bank portals age out, dashboards close, and a co-founder arriving mid-year is exactly when nobody is reconciling.
 
 ## How does Form5472 Prep fit into a change like this?
 
