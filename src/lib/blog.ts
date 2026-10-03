@@ -132,6 +132,16 @@ async function readFile(slug: string): Promise<Post | null> {
 }
 
 const ARTWORK_ALTS: Record<string, string> = {
+  "form-5472-affiliate-marketers-content-sites": "Stacked payout records illustrate which affiliate and ad revenue movements reach Form 5472",
+  "form-5472-app-developers-app-store-google-play": "Two store payout columns illustrate an app developer's LLC revenue and owner transfers",
+  "form-5472-kdp-authors-royalties": "Royalty statements and a signing pen illustrate an author's separate US filing obligations",
+  "form-5472-irs-notice-numbers-decoder": "A notice and calendar illustrate decoding an IRS letter number and its stated deadline",
+  "foreign-owned-llc-hiring-us-employees-contractors": "Worker and document symbols illustrate which paperwork hiring in the US triggers",
+  "form-5472-newsletter-membership-creators": "Subscription cards and a calendar illustrate recurring revenue against reportable owner transfers",
+  "form-5472-vs-fbar-vs-form-8938": "Three document columns compare Form 5472, the FBAR and Form 8938",
+  "single-member-to-multi-member-llc-what-changes": "Two owner symbols beside filing documents illustrate an LLC becoming multi-member",
+  "reinstate-dissolved-llc-catch-up-form-5472": "A lapsed certificate beside federal filings illustrates state reinstatement and federal catch-up",
+  "foreign-owned-llc-irs-records-request-6038a-3": "Ledger pages and supporting documents illustrate the records Form 5472 filings must evidence",
   "lisbon-digital-nomad-us-llc-accountant-handoff": "Lisbon editorial illustration with two document folders for the Portuguese and U.S. accountant handoff",
   "bangkok-digital-nomad-llc-transfer-remittance-records": "Bangkok editorial illustration with linked document stacks for LLC transfers and personal remittance records",
   "mexico-city-digital-nomad-us-llc-work-location-log": "Mexico City editorial illustration with a globe and calendar icons for a physical work-location log",

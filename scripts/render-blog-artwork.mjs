@@ -232,6 +232,16 @@ function svg({ accent, motif: kind, glyphs, location }) {
 }
 
 const POSTS = {
+  "form-5472-affiliate-marketers-content-sites": { accent: C.teal, motif: "stack", glyphs: ["doc", "hash", "person", "check"] },
+  "form-5472-app-developers-app-store-google-play": { accent: C.navySoft, motif: "split", glyphs: ["doc", "hash", "person", "check"] },
+  "form-5472-kdp-authors-royalties": { accent: C.amber, motif: "stack", glyphs: ["doc", "pen", "hash", "check"] },
+  "form-5472-irs-notice-numbers-decoder": { accent: C.clay, motif: "notice", glyphs: ["doc", "hash", "calendar", "check"] },
+  "foreign-owned-llc-hiring-us-employees-contractors": { accent: C.green, motif: "checklist", glyphs: ["person", "doc", "hash", "check"] },
+  "form-5472-newsletter-membership-creators": { accent: C.teal, motif: "card", glyphs: ["person", "calendar", "doc", "check"] },
+  "form-5472-vs-fbar-vs-form-8938": { accent: C.navy, motif: "split", glyphs: ["doc", "globe", "hash", "check"] },
+  "single-member-to-multi-member-llc-what-changes": { accent: C.amber, motif: "correct", glyphs: ["person", "person", "doc", "check"] },
+  "reinstate-dissolved-llc-catch-up-form-5472": { accent: C.clay, motif: "notice", glyphs: ["doc", "calendar", "hash", "check"] },
+  "foreign-owned-llc-irs-records-request-6038a-3": { accent: C.green, motif: "checklist", glyphs: ["doc", "hash", "calendar", "check"] },
   "lisbon-digital-nomad-us-llc-accountant-handoff": { location: "LISBON", accent: C.teal, motif: "split", glyphs: ["globe", "calendar", "two", "doc"] },
   "bangkok-digital-nomad-llc-transfer-remittance-records": { location: "BANGKOK", accent: C.amber, motif: "stack", glyphs: ["doc", "person", "globe", "check"] },
   "mexico-city-digital-nomad-us-llc-work-location-log": { location: "MEXICO CITY", accent: C.green, motif: "globe", glyphs: ["calendar", "pen", "globe", "doc"] },
