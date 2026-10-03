@@ -7,6 +7,14 @@ import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { AdminPageHeader } from "../_components/AdminPageHeader";
+import {
+  PUBLISH_TIME,
+  formatLondon,
+  londonHhmm,
+  londonInstant,
+  londonYmd,
+  parsePublishAt,
+} from "@/lib/blogSchedule";
 
 export type PostEditorInitial = {
   slug?: string;
@@ -17,16 +25,23 @@ export type PostEditorInitial = {
   tags: string;
   draft: boolean;
   content: string;
+  // Scheduled release, London wall-clock. schedule=false = publish on save.
+  schedule: boolean;
+  publishDate: string;
+  publishTime: string;
 };
 
 export function PostEditor({
   mode,
   initial,
   originalSlug,
+  nextSlot,
 }: {
   mode: "create" | "edit";
   initial: PostEditorInitial;
   originalSlug?: string;
+  // Next free daily drip slot (ISO), computed server-side from all posts.
+  nextSlot: string;
 }) {
   const router = useRouter();
   const [state, setState] = useState(initial);
@@ -38,14 +53,38 @@ export function PostEditor({
     setState((s) => ({ ...s, [key]: value }));
   }
 
+  const nextSlotAt = parsePublishAt(nextSlot);
+  const publishAt =
+    state.schedule && state.publishDate
+      ? londonInstant(state.publishDate, state.publishTime || PUBLISH_TIME)
+      : "";
+  const releaseAt = parsePublishAt(publishAt);
+  const isFutureRelease = !!releaseAt && releaseAt.getTime() > Date.now();
+
+  function applyNextSlot() {
+    if (!nextSlotAt) return;
+    setState((s) => ({
+      ...s,
+      schedule: true,
+      publishDate: londonYmd(nextSlotAt),
+      publishTime: londonHhmm(nextSlotAt),
+    }));
+  }
+
   async function save() {
+    if (state.schedule && !state.publishDate) {
+      setError("Pick a publish date, or choose “Publish immediately”.");
+      return;
+    }
     setSaving(true);
     setError(null);
     const payload = {
       slug: state.slug?.trim() || undefined,
       title: state.title.trim(),
       description: state.description.trim(),
-      date: state.date,
+      // A scheduled post's human-facing date is its release day.
+      date: state.schedule && state.publishDate ? state.publishDate : state.date,
+      publishAt,
       author: state.author.trim() || undefined,
       tags: state.tags
         .split(",")
@@ -116,7 +155,7 @@ export function PostEditor({
             </Button>
           )}
           <Button onClick={save} disabled={saving || !state.title}>
-            {saving ? "Saving…" : state.draft ? "Save draft" : "Publish"}
+            {saving ? "Saving…" : state.draft ? "Save draft" : isFutureRelease ? "Schedule" : "Publish"}
           </Button>
         </div>
         }
@@ -197,6 +236,62 @@ export function PostEditor({
                 Save as draft (not visible publicly)
               </label>
             </div>
+            <fieldset className="space-y-2 border-t border-slate-200 pt-4">
+              <legend className="text-sm font-medium text-slate-700">When to publish</legend>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="when"
+                  checked={!state.schedule}
+                  onChange={() => set("schedule", false)}
+                />
+                Publish immediately
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="when"
+                  checked={state.schedule}
+                  onChange={() => (state.publishDate ? set("schedule", true) : applyNextSlot())}
+                />
+                Schedule
+              </label>
+              {state.schedule && (
+                <div className="space-y-2 pl-6">
+                  <div className="flex gap-2">
+                    <Input
+                      type="date"
+                      aria-label="Publish date"
+                      value={state.publishDate}
+                      onChange={(e) => set("publishDate", e.target.value)}
+                    />
+                    <Input
+                      type="time"
+                      aria-label="Publish time (London)"
+                      className="w-28"
+                      value={state.publishTime}
+                      onChange={(e) => set("publishTime", e.target.value)}
+                    />
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    London time. {publishAt
+                      ? isFutureRelease
+                        ? `Goes live ${formatLondon(publishAt)}.`
+                        : `Released ${formatLondon(publishAt)}.`
+                      : "Pick a date."}
+                  </p>
+                  {nextSlotAt && (
+                    <button
+                      type="button"
+                      onClick={applyNextSlot}
+                      className="text-xs font-medium text-accent hover:underline"
+                    >
+                      Use next free day ({formatLondon(nextSlot)})
+                    </button>
+                  )}
+                </div>
+              )}
+            </fieldset>
             <Field label="Slug" hint="lowercase, hyphens. Empty = auto from title.">
               <Input
                 value={state.slug ?? ""}
@@ -204,7 +299,7 @@ export function PostEditor({
                 onChange={(e) => set("slug", e.target.value)}
               />
             </Field>
-            <Field label="Date">
+            <Field label="Date" hint={state.schedule ? "Set from the publish date when scheduled." : undefined}>
               <Input type="date" value={state.date} onChange={(e) => set("date", e.target.value)} />
             </Field>
             <Field label="Author">

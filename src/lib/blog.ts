@@ -24,6 +24,13 @@ import { prisma } from "@/lib/prisma";
 //
 // File name (without .md) becomes the URL slug.
 //
+// Scheduling: a future `publishAt` keeps the post off every public surface
+// until that instant (ISR picks it up within 60s; the daily
+// /api/cron/blog-release job refreshes listings and pings IndexNow). To drip a
+// batch one-a-day at 09:00 London, write `publishAt: auto` and run
+// `npm run blog:schedule` (see src/lib/blogSchedule.ts). Never commit an
+// unresolved `auto` — the content guard in blogSchedule.test.ts fails on it.
+//
 // Database — everything published from /admin/posts lands in the `Post` table,
 // because Vercel's runtime filesystem is read-only (writing a .md there throws
 // EROFS). For any given slug a non-deleted DB row WINS over the file, and a row

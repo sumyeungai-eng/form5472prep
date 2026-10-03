@@ -8,6 +8,7 @@ import {
   renamePost,
   slugify,
 } from "@/lib/blog";
+import { isUnresolvedPublishAt } from "@/lib/blogSchedule";
 
 export const runtime = "nodejs";
 
@@ -30,6 +31,12 @@ export async function PATCH(req: Request, { params }: { params: { slug: string }
 
   const body = await req.json();
   const desiredSlug = (body.slug?.trim() || slugify(body.title ?? params.slug)) as string;
+  // publishAt: absent = keep, "" = publish now (clear the schedule), ISO = schedule.
+  const publishAt =
+    typeof body.publishAt === "string" ? body.publishAt.trim() : existing.publishAt;
+  if (isUnresolvedPublishAt(publishAt)) {
+    return NextResponse.json({ error: "Invalid publish date/time" }, { status: 400 });
+  }
 
   try {
     if (desiredSlug !== params.slug) {
@@ -49,7 +56,7 @@ export async function PATCH(req: Request, { params }: { params: { slug: string }
         title: body.title ?? existing.title,
         description: body.description ?? existing.description,
         date: body.date ?? existing.date,
-        publishAt: body.publishAt ?? existing.publishAt,
+        publishAt: publishAt || undefined,
         // Carried through explicitly: a file-backed post can have `updated` in
         // its frontmatter, and editing it here must not silently drop it.
         updated: body.updated ?? existing.updated,

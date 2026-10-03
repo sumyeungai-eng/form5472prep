@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { isAdmin } from "@/lib/admin/auth";
 import { writePost, getPostIncludingDraft, slugify } from "@/lib/blog";
+import { isUnresolvedPublishAt } from "@/lib/blogSchedule";
 
 export const runtime = "nodejs";
 
@@ -24,6 +25,11 @@ export async function POST(req: Request) {
   const slug = body.slug?.trim() || slugify(title ?? "");
 
   if (!slug) return NextResponse.json({ error: "Need a title or slug" }, { status: 400 });
+  // Optional ISO instant for a scheduled release; "" / absent = publish now.
+  const publishAt = typeof body.publishAt === "string" ? body.publishAt.trim() : "";
+  if (isUnresolvedPublishAt(publishAt)) {
+    return NextResponse.json({ error: "Invalid publish date/time" }, { status: 400 });
+  }
 
   const existing = await getPostIncludingDraft(slug);
   if (existing) {
@@ -40,6 +46,7 @@ export async function POST(req: Request) {
         title,
         description,
         date: date || new Date().toISOString().slice(0, 10),
+        publishAt: publishAt || undefined,
         author,
         tags: Array.isArray(tags) ? tags : [],
         draft: !!draft,

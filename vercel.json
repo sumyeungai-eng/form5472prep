@@ -20,6 +20,10 @@
     {
       "path": "/api/cron/traffic-retention",
       "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/blog-release",
+      "schedule": "5 9 * * *"
     }
   ]
 }

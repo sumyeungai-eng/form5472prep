@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "email:preview": "tsx scripts/preview-emails.ts",
     "indexnow": "node scripts/indexnow.mjs",
+    "blog:schedule": "npx --yes tsx scripts/schedule-blog-posts.ts",
     "audit:snippets": "node scripts/snippet-audit.mjs",
     "audit:howto": "node scripts/howto-audit.mjs"
   },
