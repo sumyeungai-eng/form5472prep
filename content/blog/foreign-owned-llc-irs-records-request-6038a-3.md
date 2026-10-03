@@ -23,7 +23,7 @@ Two sentences, two failures, one amount. The second is the one almost nobody rea
 
 The instructions add that where a failure continues more than 90 days after IRS notification, "an additional penalty of $25,000 will apply," per related party for each 30-day period it continues, and that criminal penalties under sections 7203, 7206 and 7207 may also apply.
 
-A penalty already assessed is a separate problem with its own response window: see [what to do about a Form 5472 penalty notice](/blog/form-5472-penalty-notice-what-to-do).
+A penalty already assessed is a separate problem with its own response window: see [the Form 5472 penalty notice guide](/blog/form-5472-penalty-notice-what-to-do).
 
 ## What does Treas. Reg. § 1.6038A-3 actually require you to keep?
 
@@ -50,7 +50,7 @@ No — and this is the trap. [Treas. Reg. § 1.6038A-1](https://www.law.cornell.
 
 Paragraph (h) reads: "A reporting corporation (other than an entity that is a reporting corporation as a result of being treated as a corporation under § 301.7701-2(c)(2)(vi) of this chapter) that has less than $10,000,000 in U.S. gross receipts for a taxable year is not subject to §§ 1.6038A-3 and 1.6038A-5 for that taxable year." The de minimis exception in paragraph (i) carries the identical parenthetical for related-party payments of "not more than $5,000,000" that are also under 10 percent of US gross income.
 
-The parenthetical is the whole story. Section 301.7701-2(c)(2)(vi), headed "Special rule for reporting under section 6038A," is the provision treating a domestic disregarded entity solely owned by one foreign person as a separate corporation for § 6038A purposes — the reason the LLC files Form 5472 at all. The rule that pulls the LLC into the regime is the rule that disqualifies it from size-based relief.
+The parenthetical is the whole story. Section 301.7701-2(c)(2)(vi), headed "Special rule for reporting under section 6038A," treats a domestic disregarded entity solely owned by one foreign person as a separate corporation for § 6038A purposes — the reason the LLC files Form 5472 at all. The rule that pulls the LLC into the regime is the rule denying it size-based relief.
 
 So a dormant LLC with $0 of gross receipts gets no size-based pass on § 1.6038A-3. Both paragraphs also confirm that an exempt corporation "remains subject to … the general record maintenance requirements of section 6001."
 
@@ -80,7 +80,7 @@ A relevance test with a floor, then, rather than a fixed term. A document stays 
 
 ## What happens when the records are outside the United States?
 
-The regulation's default is US maintenance, with an express alternative for records held abroad — the normal position for a non-resident owner. Paragraph (f)(1) provides that records "must be maintained within the United States, unless the conditions described in paragraph (f)(2) of this section are met," and (f)(2) permits a corporation to "maintain outside the United States records not ordinarily maintained in the United States."
+The default is US maintenance, with an express alternative for records held abroad — the normal position for a non-resident owner. Paragraph (f)(1) provides that records "must be maintained within the United States, unless the conditions described in paragraph (f)(2) of this section are met," and (f)(2) permits a corporation to "maintain outside the United States records not ordinarily maintained in the United States."
 
 The conditions are deadlines that start when the IRS asks. Under (f)(2), a corporation keeping records abroad must do one of two things after a request by the Service:
 
@@ -93,7 +93,7 @@ Sixty days is the figure to plan around. A folder that is complete, named and in
 
 ## What should you do before any request arrives?
 
-Build the file in the year the transactions happen. One routine, run at year end:
+Build the file in the year the transactions happen. One routine at year end:
 
 1. List every movement between the LLC and the owner, or the LLC and any company the owner controls, for the year.
 2. Classify each — contribution, distribution, loan advance, loan repayment, owner-paid cost, payment for services — and write that classification where the entry lives.
@@ -103,7 +103,7 @@ Build the file in the year the transactions happen. One routine, run at year end
 
 The folder-by-folder build is set out in the [Form 5472 recordkeeping checklist](/blog/form-5472-recordkeeping-checklist), which includes a downloadable example ledger.
 
-Source note: we read § 1.6038A-3 on the [Legal Information Institute's CFR text](https://www.law.cornell.edu/cfr/text/26/1.6038A-3) at Cornell Law School on 3 October 2026, because the eCFR copy redirected to an access interstitial instead of serving its text.
+Source note: we read § 1.6038A-3 on the [Legal Information Institute's CFR text](https://www.law.cornell.edu/cfr/text/26/1.6038A-3) at Cornell Law School on 3 October 2026, because the eCFR copy redirected to an access interstitial.
 
 ## Frequently asked questions
 
