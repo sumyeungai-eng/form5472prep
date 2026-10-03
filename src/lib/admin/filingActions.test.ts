@@ -36,7 +36,9 @@ const email = vi.hoisted(() => ({
   sendReadyToSignEmail: vi.fn(),
   sendFaxDeliveredEmail: vi.fn(),
 }));
-const brand = vi.hoisted(() => ({ brandForFiling: vi.fn(async () => null) }));
+const brand = vi.hoisted(() => ({
+  brandForFiling: vi.fn(async (): Promise<{ name: string; replyTo?: string } | null> => null),
+}));
 const pdf = vi.hoisted(() => ({
   generatePackage: vi.fn(async () => ({
     bytes: new Uint8Array([37, 80, 68, 70]),
@@ -412,6 +414,20 @@ describe("approveForSignature", () => {
       email: "owner@example.test",
       filingId: "filing_1",
       portalLink: "https://example.test/magic",
+    }));
+  });
+
+  it("sends the ready-to-sign email under a white-label partner's brand", async () => {
+    db.findUnique.mockResolvedValue(filing);
+    brand.brandForFiling.mockResolvedValueOnce({ name: "ExitGuru", replyTo: "team@exitguru.test" });
+
+    await expect(
+      runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, emailSent: true });
+
+    expect(email.sendReadyToSignEmail).toHaveBeenCalledWith(expect.objectContaining({
+      filingId: "filing_1",
+      brand: { name: "ExitGuru", replyTo: "team@exitguru.test" },
     }));
   });
 

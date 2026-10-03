@@ -1553,6 +1553,14 @@ export async function runFilingAction(
         reason: ctx.reason,
       });
 
+      // White-label partner filings go out under the partner's brand, like
+      // every other customer email for the filing.
+      let brand: Awaited<ReturnType<typeof brandForFiling>> = null;
+      try {
+        brand = await brandForFiling(filing.id);
+      } catch (err) {
+        console.error("[approveForSignature] brand lookup failed", err);
+      }
       try {
         await sendReadyToSignEmail({
           email: filing.user.email,
@@ -1561,6 +1569,7 @@ export async function runFilingAction(
           llcName: filing.llcName,
           taxYears: filing.taxYears,
           portalLink: makeMagicLink(filing.user.id),
+          brand: brand ?? undefined,
         });
       } catch (err) {
         console.error("[approveForSignature] ready-to-sign email failed", err);
