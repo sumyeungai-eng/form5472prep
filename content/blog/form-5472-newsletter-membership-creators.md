@@ -11,21 +11,21 @@ draft: false
 
 **If your single-member US LLC collects paid newsletter or membership money, it files Form 5472 with a pro forma Form 1120 for every year it had a reportable transaction with you, its foreign owner. Subscriber payments, deferred annual plans, platform-held balances, refunds and chargebacks are not reported. What you withdraw or put in is.**
 
-A subscription business has a money problem a one-off sale does not: at any moment some cash is collected but not earned, some earned but not paid out, and some may yet be clawed back. An annual plan charged in January funds a year of issues, a platform sits on a balance between payout runs, one supporter disputes a charge, another cancels a pledge before it clears.
+A subscription business has a money problem a one-off sale does not: at any moment some cash is collected but not earned, some earned but not paid out, some may yet be clawed back. An annual plan charged in January funds a year of issues, a platform sits on a balance between payout runs, one supporter disputes a charge, another cancels a pledge before it clears.
 
 None of that is a related-party transaction. It is customer revenue in motion between unrelated parties — subscribers, card networks, platforms, the LLC's own accounts. The one moment Form 5472 cares about is money crossing between the LLC and you. [We prepare and fax the complete package from $149](/start).
 
 ## Does a paid newsletter or membership LLC have to file Form 5472?
 
-Yes, in almost every year it operates. A foreign-owned US single-member LLC files when three things are true: it is a disregarded entity for US tax purposes, its owner is a foreign person, and during the tax year it had at least one reportable transaction with that owner or another foreign related party.
+Yes, in almost every year it operates. A foreign-owned US single-member LLC files when three things are true: it is a disregarded entity for US tax purposes, its owner is a foreign person, and during the tax year it had a reportable transaction with that owner or another foreign related party.
 
 Under **Treas. Reg. § 1.6038A-1**, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the § 6038A reporting rules — which is why a newsletter LLC owing no US corporate tax still files a corporate-style information return.
 
-The third condition is met the first time subscription money moves out to your personal account, or the LLC's hosting bill goes on your own card. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that "a penalty of $25,000 will be assessed on any reporting corporation that fails to file Form 5472 when due and in the manner prescribed," and that a substantially incomplete form counts as a failure to file.
+The third condition is met the first time subscription money moves out to your personal account, or an LLC bill goes on your own card. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that "a penalty of $25,000 will be assessed on any reporting corporation that fails to file Form 5472 when due and in the manner prescribed," and that a substantially incomplete form counts as a failure to file.
 
 ## Which newsletter and membership money flows are reportable?
 
-Sort every flow by who stands on the other side. Subscribers, supporters, platforms, processors and software vendors are unrelated. You are a related party, and so is any company you own or control.
+Sort every flow by who stands on the other side. Subscribers, supporters, platforms, processors and software vendors are unrelated. You are a related party, as is any company you own or control.
 
 | Money flow in a subscription business | Other side of the flow | Reportable? | Where it lands |
 |---|---|---|---|
@@ -48,13 +48,13 @@ Part IV covers "Monetary Transactions Between Reporting Corporations and Foreign
 
 ## Is an annual subscription collected up front reportable before it is earned?
 
-No. When subscription revenue is earned has no bearing on Form 5472, because the subscriber is not a related party in January, in July, or at any point in the term. A reader who pays twelve months up front has bought a service from the LLC, and nothing about that charge belongs on the form. Deferred revenue still matters to the LLC's books and accounting basis; it simply never becomes an owner transaction by sitting unearned.
+No. When subscription revenue is earned has no bearing on Form 5472, because the subscriber is not a related party in January, in July, or at any point in the term. A reader who pays twelve months up front has bought a service from the LLC, and nothing about that charge belongs on the form. Deferred revenue still matters to the LLC's books; it simply never becomes an owner transaction by sitting unearned.
 
-Up-front annual money creates a Form 5472 question only through what it tempts you to do. January cash funding a year of work is easy to withdraw in one movement, and that transfer is reportable in full, in the year it is made, not spread over the months the subscriptions cover.
+Up-front annual money creates a Form 5472 question only through what it tempts you to do. January cash funding a year of work is easy to withdraw in one movement, and that transfer is reportable in full, in the year it is made — not spread over the months it covers.
 
 ## What happens on Form 5472 when subscribers refund, dispute or cancel?
 
-Nothing. A refund, a lost dispute and a pledge that never cleared are events between the LLC and unrelated parties, so none is a reportable transaction, and none is netted against the amounts reported in the owner column.
+Nothing. A refund, a lost dispute and a pledge that never cleared are all events between the LLC and unrelated parties, so none is reportable, and none is netted against the owner column.
 
 - **Reversals change the revenue figure, not the owner figure.** A refund paid from a platform balance in March does not shrink a distribution taken in February.
 - **A clawback covered personally is its own reportable movement.** If the platform balance cannot absorb a chargeback and you top the LLC up from personal money, that top-up is an owner contribution or loan.
@@ -62,13 +62,13 @@ Nothing. A refund, a lost dispute and a pledge that never cleared are events bet
 
 ## What do the platforms' own help pages say about holding and paying out subscription money?
 
-We describe only what each platform's own page states, on the date checked. No fee figures appear here.
+We describe only what each platform's own page states, on the date checked, and quote no fee figures.
 
 - **Ghost**, checked 3 October 2026. Ghost's [tiers help page](https://ghost.org/help/tiers/) says a paid tier "can have its own name, description, monthly and yearly prices, and list of benefits," and that "if you have Stripe connected, tiers can be created from the Settings → Membership → Tiers area in Ghost Admin." Yearly pricing is built in, so up-front annual cash is ordinary; and because billing runs through a connected Stripe account, keep that account and its payout bank in the LLC's name.
 - **Buy Me a Coffee**, checked 3 October 2026. The public [FAQ](https://buymeacoffee.com/faq) states that "you get paid directly to your bank account." A payout schedule, a minimum balance and whether funds are held first are **not stated on that FAQ**, so treat your own dashboard history as the record.
 - **Substack and Patreon**, checked 3 October 2026. Both help centres returned an access error to us, so nothing is quoted from either. Read their payout and refund articles while signed in, and take figures from your own exports.
 
-Generically, these platforms all do the thing that matters: collect from unrelated subscribers, perhaps hold a balance, deduct their charges, and settle the rest into an account you nominate. No step of that is a related-party transaction. For how processor payouts map onto the form, see [Stripe, PayPal and Wise payouts](/blog/stripe-paypal-wise-form-5472).
+Generically, these platforms do the same thing: collect from unrelated subscribers, perhaps hold a balance, deduct their charges, and settle the rest into an account you nominate. No step of that is a related-party transaction. For how processor payouts map onto the form, see [Stripe, PayPal and Wise payouts](/blog/stripe-paypal-wise-form-5472).
 
 ## How do you reconcile a platform balance to the owner-movement total at year end?
 
@@ -77,13 +77,13 @@ Run this once after the year closes, and the filing writes itself.
 1. Fix the window: the LLC's tax year, with its exact first and last day at the top of the workpaper.
 2. Export the platform's payout and gross transaction reports for that window, plus the same from any separate processor.
 3. Export the LLC's bank and business card statements for the identical window.
-4. Record the platform's opening and closing balances. Both are LLC assets held by a third party, not transactions with you.
-5. Tie each payout on the platform report to a bank deposit line, and list every payout or deposit that fails to match.
+4. Record the platform's opening and closing balances. Both are LLC assets held by a third party, not transactions.
+5. Tie each payout on the platform report to a bank deposit line, and list anything that fails to match.
 6. Total refunds, lost disputes and cancelled subscriptions separately. They reduce revenue and never enter the owner column.
-7. List every movement between the LLC and you — date, direction, amount, currency, reason — from the statements, not from memory.
+7. List every movement between the LLC and you — date, direction, amount, currency, reason — from the statements, not memory.
 8. Label each owner movement a contribution, distribution, loan or reimbursement, and total the two directions separately, never netted.
 9. Convert any non-USD amount to US dollars, recording the rate and its source beside it.
-10. Confirm every owner movement has a document behind it, then carry only those totals to the form.
+10. Confirm every owner movement has a document behind it, then carry those totals to the form.
 
 The $25,000 penalty also reaches a failure to maintain required records: the instructions call for records "sufficient to establish the correctness of the reporting corporation's federal income tax return, including information or records that might be relevant to determine the correct treatment of transactions with related parties." A fuller list sits in the [Form 5472 recordkeeping checklist](/blog/form-5472-recordkeeping-checklist).
 
@@ -100,13 +100,13 @@ The [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472) links
 
 ## How does a subscription business differ from a coaching or course business here?
 
-The filing mechanics are identical; only the money's shape differs. A membership runs on recurring, deferrable, reversible subscriber money partly held by platforms, while [Form 5472 for coaches, consultants and course creators](/blog/form-5472-coaches-consultants-course-creators) covers retainer invoices and one-off course sales.
+The filing mechanics are identical; only the money's shape differs: a membership runs on recurring, deferrable, reversible subscriber money partly held by platforms, while [Form 5472 for coaches, consultants and course creators](/blog/form-5472-coaches-consultants-course-creators) covers retainers and one-off course sales.
 
 ## How can Form5472 Prep handle a newsletter or membership filing?
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your payout exports and owner-movement schedule, have a qualified tax accountant review the package, fax it to the IRS, and send the timestamped receipt.
 
-Standard is **$149** over 5–7 business days; Express is **$199** within 3 business days; each additional past tax year is **+$99**; IRS fax delivery is included. We are not a CPA firm and do not give tax advice — we prepare and submit the information return. Whether your income is effectively connected with a US trade or business, and what your home country wants, belong to an adviser.
+Standard is **$149** over 5–7 business days; Express is **$199** within 3 business days; each additional past tax year is **+$99**; IRS fax delivery is included. We are not a CPA firm and do not give tax advice — we prepare and submit the information return. Effectively connected income and your home-country tax belong to a qualified adviser.
 
 ## Frequently asked questions
 
