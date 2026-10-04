@@ -35,7 +35,15 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 type DeadlineState = "upcoming" | "urgent" | "overdue";
 
-export function DeadlineCalculator() {
+type DeadlineCalculatorProps = {
+  /** Embed mode (iframe on third-party sites): no card shadow, no share-link
+   *  button, and the CTA is absolute and opens in a new tab. */
+  embedded?: boolean;
+  /** Absolute site origin used for links in embed mode. */
+  siteUrl?: string;
+};
+
+export function DeadlineCalculator({ embedded = false, siteUrl = "" }: DeadlineCalculatorProps = {}) {
   const currentUtcYear = new Date().getUTCFullYear();
   const taxYearOptions = useMemo(() => buildTaxYearOptions(currentUtcYear), [currentUtcYear]);
   const defaultTaxYear = pickDefaultTaxYear(taxYearOptions, lastCompletedTaxYear);
@@ -180,7 +188,11 @@ export function DeadlineCalculator() {
     <section
       id="calculator"
       aria-labelledby="deadline-calculator-heading"
-      className="rounded-xl border border-slate-200 bg-white p-5 text-slate-900 shadow-2xl shadow-black/25 sm:p-6"
+      className={
+        embedded
+          ? "rounded-xl border border-slate-200 bg-white p-4 text-slate-900"
+          : "rounded-xl border border-slate-200 bg-white p-5 text-slate-900 shadow-2xl shadow-black/25 sm:p-6"
+      }
     >
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -298,7 +310,7 @@ export function DeadlineCalculator() {
             timely Form 7004 adds 7 months instead of 6.
           </p>
         ) : null}
-        <div className="mt-4 border-t border-black/10 pt-4">
+        <div className={embedded ? "hidden" : "mt-4 border-t border-black/10 pt-4"}>
           <Button type="button" variant="outline" size="sm" onClick={copyLink} className="gap-2 bg-white">
             {copyState === "copied" ? (
               <Check className="h-3.5 w-3.5" aria-hidden />
@@ -322,7 +334,8 @@ export function DeadlineCalculator() {
       </div>
 
       <Link
-        href="/start?src=tool-deadline"
+        href={embedded ? `${siteUrl}/start?src=embed-deadline` : "/start?src=tool-deadline"}
+        {...(embedded ? { target: "_blank", rel: "noopener" } : {})}
         className="group mt-5 inline-flex h-12 w-full items-center justify-center rounded-lg bg-accent px-5 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent-700"
       >
         {ctaLabel}

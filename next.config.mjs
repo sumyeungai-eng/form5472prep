@@ -36,7 +36,10 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: "/:path*",
+        // Every path EXCEPT /embed/*. Next.js merges matching header entries
+        // and a same-key later entry does not reliably replace
+        // X-Frame-Options, so the framing-locked rule must not match /embed at all.
+        source: "/((?!embed(?:/|$)).*)",
         headers: [
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Content-Type-Options", value: "nosniff" },
@@ -46,6 +49,17 @@ const nextConfig = {
           // stays blocked by both headers.
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
+        ],
+      },
+      {
+        // The embeddable free tools (src/app/embed) exist to be iframed by
+        // third-party sites. No X-Frame-Options here (it has no "allow any
+        // origin" value); CSP frame-ancestors * governs. Nothing else is framable.
+        source: "/embed/:path*",
+        headers: [
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Content-Security-Policy", value: "frame-ancestors *" },
         ],
       },
     ];
