@@ -19,7 +19,8 @@ import {
   SOURCES,
   type SourceId,
 } from "@/lib/tools/deadline/sources";
-import { DeadlineCalculator } from "./DeadlineCalculator";
+import { EmbedThisCalculator } from "@/components/embed/EmbedThisCalculator";
+import { DeadlineCalculator } from "@/components/tools/DeadlineCalculator";
 
 const PAGE_PATH = "/form-5472-deadline-calculator";
 const PAGE_TITLE = "Form 5472 Deadline Calculator — When Is Your Filing Due?";
@@ -98,12 +99,22 @@ const DEADLINE_FAQS = [
   },
 ];
 
+// iframe height that fits /embed/form-5472-deadline-calculator at 640px wide with no inner scroll.
+const EMBED_HEIGHT = 960;
+
 export default function Form5472DeadlineCalculatorPage() {
   return (
     <main className="bg-white">
       <DeadlineStructuredData />
       <Hero />
       <HowWeCalculate />
+      <EmbedThisCalculator
+        embedPath="/embed/form-5472-deadline-calculator"
+        toolPath="/form-5472-deadline-calculator"
+        title="Form 5472 deadline calculator"
+        linkText="Form 5472 deadline calculator"
+        height={EMBED_HEIGHT}
+      />
       <Faq />
       <FinalCta />
     </main>

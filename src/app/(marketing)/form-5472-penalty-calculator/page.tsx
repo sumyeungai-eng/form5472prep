@@ -26,9 +26,12 @@ import {
   SOURCES,
   type SourceId,
 } from "@/lib/tools/penalty/sources";
-import { PenaltyCalculator } from "./PenaltyCalculator";
+import { EmbedThisCalculator } from "@/components/embed/EmbedThisCalculator";
+import { PenaltyCalculator } from "@/components/tools/PenaltyCalculator";
 
 const PAGE_PATH = "/form-5472-penalty-calculator";
+// iframe height that fits /embed/form-5472-penalty-calculator at 640px wide with no inner scroll.
+const EMBED_HEIGHT = 1620;
 const PAGE_TITLE = "Form 5472 Penalty Calculator — What Late Filing Costs";
 const PAGE_DESCRIPTION =
   "Estimate Form 5472 late-filing exposure, see IRS penalty citations, and review the DIIRSP reasonable-cause path for catching up.";
@@ -78,6 +81,13 @@ export default function Form5472PenaltyCalculatorPage() {
         <PenaltyCalculator />
         <HowPenaltyWorks />
         <HowWeCalculate />
+        <EmbedThisCalculator
+          embedPath="/embed/form-5472-penalty-calculator"
+          toolPath={PAGE_PATH}
+          title="Form 5472 penalty calculator"
+          linkText="Form 5472 penalty calculator"
+          height={EMBED_HEIGHT}
+        />
         <Faq />
         <FinalCta />
       </main>

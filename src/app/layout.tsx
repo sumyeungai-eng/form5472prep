@@ -116,7 +116,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             function gtag(){dataLayer.push(arguments);}
             window.gtag = gtag;
             gtag('js', new Date());
-            gtag('config', '${GOOGLE_ADS_TAG_ID}');
+            // Embeddable tools run inside third-party pages: no ad tag there.
+            if (!location.pathname.startsWith('/embed/')) gtag('config', '${GOOGLE_ADS_TAG_ID}');
           `}
         </Script>
         <Script

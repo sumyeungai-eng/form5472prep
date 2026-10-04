@@ -47,7 +47,17 @@ function parseNoticeDate(value: string): Date | null {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-export function PenaltyCalculator() {
+type PenaltyCalculatorProps = {
+  /** Embed mode (iframe on third-party sites): compact padding, no share-link
+   *  button, and every link is absolute and opens in a new tab. */
+  embedded?: boolean;
+  /** Absolute site origin used for links in embed mode. */
+  siteUrl?: string;
+};
+
+export function PenaltyCalculator({ embedded = false, siteUrl = "" }: PenaltyCalculatorProps = {}) {
+  const linkBase = embedded ? siteUrl : "";
+  const linkTarget = embedded ? ({ target: "_blank", rel: "noopener" } as const) : {};
   const [formCount, setFormCount] = useState(1);
   const [yearCount, setYearCount] = useState(1);
   const [noticeReceived, setNoticeReceived] = useState(false);
@@ -123,8 +133,14 @@ export function PenaltyCalculator() {
   );
 
   return (
-    <section className="border-b border-slate-100 bg-white py-12 sm:py-16">
-      <div className="mx-auto max-w-6xl px-6">
+    <section
+      className={
+        embedded
+          ? "bg-white py-3"
+          : "border-b border-slate-100 bg-white py-12 sm:py-16"
+      }
+    >
+      <div className={embedded ? "mx-auto max-w-6xl px-3" : "mx-auto max-w-6xl px-6"}>
         <div className="grid gap-8 lg:grid-cols-[380px_1fr] lg:items-start">
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-accent">
@@ -264,7 +280,7 @@ export function PenaltyCalculator() {
                     {formatPrice(totalExposure)}
                   </p>
                 </div>
-                <div className="mt-4">
+                <div className={embedded ? "hidden" : "mt-4"}>
                   <Button
                     type="button"
                     variant="outline"
@@ -311,21 +327,27 @@ export function PenaltyCalculator() {
               <p className="mt-3 text-sm leading-relaxed text-emerald-950">
                 Read the late-filing overview{" "}
                 <Link
-                  href="/blog/form-5472-filed-late-never-filed"
+                  href={`${linkBase}/blog/form-5472-filed-late-never-filed`}
+                  {...linkTarget}
                   className="font-medium underline decoration-emerald-700/40 underline-offset-4 hover:text-emerald-800"
                 >
                   for DIIRSP late-filing steps
                 </Link>{" "}
                 and the reasonable-cause letter guide{" "}
                 <Link
-                  href="/blog/form-5472-reasonable-cause-letter"
+                  href={`${linkBase}/blog/form-5472-reasonable-cause-letter`}
+                  {...linkTarget}
                   className="font-medium underline decoration-emerald-700/40 underline-offset-4 hover:text-emerald-800"
                 >
                   for abatement letter requirements
                 </Link>
                 .
               </p>
-              <Link href="/start?src=tool-penalty" className="group mt-5 inline-block">
+              <Link
+                href={`${linkBase}/start?src=${embedded ? "embed-penalty" : "tool-penalty"}`}
+                {...linkTarget}
+                className="group mt-5 inline-block"
+              >
                 <Button className="min-h-12 gap-2 bg-emerald-700 px-5 text-white hover:bg-emerald-800">
                   File the late years — {formatPrice(TIERS.standard.priceCents)}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -337,7 +359,11 @@ export function PenaltyCalculator() {
               <p className="text-xs leading-relaxed text-slate-500">
                 Statutory exposure under IRC §6038A(d), not a prediction of what
                 the IRS will assess.{" "}
-                <a href="#how-we-calculate" className="font-medium text-accent underline underline-offset-4 hover:no-underline">
+                <a
+                  href={embedded ? `${siteUrl}/form-5472-penalty-calculator#how-we-calculate` : "#how-we-calculate"}
+                  {...linkTarget}
+                  className="font-medium text-accent underline underline-offset-4 hover:no-underline"
+                >
                   How we calculate this
                 </a>
               </p>
