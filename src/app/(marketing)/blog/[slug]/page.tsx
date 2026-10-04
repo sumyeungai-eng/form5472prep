@@ -27,7 +27,10 @@ import {
   type PostMeta,
 } from "@/lib/blog";
 import { env } from "@/lib/env";
-import { SPEAKABLE, pageMeta } from "@/lib/seo";
+import { ORG_REF, SPEAKABLE, organizationNode, pageMeta } from "@/lib/seo";
+import { serviceForBlogTags } from "@/lib/service-links";
+import { relatedPosts } from "@/lib/related-posts";
+import { ServiceCard } from "@/components/seo/ServiceCard";
 import { seoTitle } from "@/lib/seo-title";
 import { formatTag, tagHref } from "@/lib/blog-tags";
 
@@ -92,7 +95,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const orderProducts = orderProductsForPost(post);
   const allPosts = await getAllPosts();
   const publishedSlugs = new Set(allPosts.map((p) => p.slug));
-  const otherPosts = allPosts.filter((candidate) => candidate.slug !== post.slug).slice(0, 4);
+  // allPosts already excludes drafts and not-yet-released scheduled posts
+  // (getAllPosts filters with isPubliclyAvailable), and relatedPosts re-checks.
+  const otherPosts = relatedPosts(post, allPosts, 4);
+  const serviceSlug = serviceForBlogTags(post.tags);
   const articleJsonLd = {
     "@type": "BlogPosting",
     "@id": `${env.appUrl}/blog/${post.slug}#article`,
@@ -101,9 +107,11 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     image: `${env.appUrl}${post.image}`,
     datePublished: new Date(post.publishAt ?? post.date).toISOString(),
     dateModified: new Date(post.updated ?? post.publishAt ?? post.date).toISOString(),
+    // [data-speakable] is the bold answer-first lead paragraph of the article
+    // body (marked in the ReactMarkdown `p` override below), plus the H1.
     speakable: SPEAKABLE,
-    author: { "@id": `${env.appUrl}#organization` },
-    publisher: { "@id": `${env.appUrl}#organization` },
+    author: ORG_REF,
+    publisher: ORG_REF,
     mainEntityOfPage: { "@type": "WebPage", "@id": `${env.appUrl}/blog/${post.slug}` },
     keywords: post.tags?.join(", "),
   };
@@ -116,6 +124,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       { "@type": "ListItem", position: 3, name: post.title, item: `${env.appUrl}/blog/${post.slug}` },
     ],
   };
+  let leadMarked = false;
   const faqs = extractFaqs(post.body);
   const howTo = extractHowTo(post.body);
   const tocHeadings = extractH2Headings(post.body);
@@ -143,13 +152,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         })),
       }
     : null;
-  const organizationJsonLd = {
-    "@type": "Organization",
-    "@id": `${env.appUrl}#organization`,
-    name: "Form5472 Prep",
-    url: env.appUrl,
-    logo: { "@type": "ImageObject", url: `${env.appUrl}/logo-mark.svg` },
-  };
+  // The one full Organization node for this page; the article references it
+  // by @id (ORG_REF), so there is a single entity, not a second inline copy.
+  const organizationJsonLd = organizationNode();
   const schemaGraph = {
     "@context": "https://schema.org",
     "@graph": [
@@ -188,7 +193,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 <h1 className="font-serif text-4xl font-semibold leading-[1.08] tracking-tight text-ink sm:text-5xl lg:text-[3.35rem]">
                   {post.title}
                 </h1>
-                <p data-speakable className="mt-6 text-lg leading-8 text-slate-600">{post.description}</p>
+                <p className="mt-6 text-lg leading-8 text-slate-600">{post.description}</p>
                 <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-slate-500">
                   <span className="inline-flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-accent" />
@@ -263,6 +268,16 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                         <table {...props} className="min-w-[32rem]">{children}</table>
                       </div>
                     ),
+                    // First paragraph of the body = the bold answer-first lead.
+                    // Tag it so the Speakable cssSelector hits the lead, not
+                    // the meta description in the hero.
+                    p: ({ children, node: _node, ...props }) => {
+                      if (!leadMarked) {
+                        leadMarked = true;
+                        return <p data-speakable="" {...props}>{children}</p>;
+                      }
+                      return <p {...props}>{children}</p>;
+                    },
                     a: ({ href, children, node: _node, ...props }) => {
                       const slug = blogSlugFromHref(href);
                       // Scheduled sibling posts 404 until publishAt; ISR will restore the link after release.
@@ -274,6 +289,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   {post.body}
                 </ReactMarkdown>
               </div>
+
+              {/* End of article, where intent peaks: one specific next step
+                  into the matching /services page, ahead of the generic order
+                  CTA. (Not right after the lead: the answer-first opening and
+                  the top order CTA already sit there.) */}
+              <ServiceCard serviceSlug={serviceSlug} className="mt-10" />
 
               <BlogOrderCta products={orderProducts} placement="bottom" />
 
@@ -287,6 +308,14 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 </div>
               )}
             </div>
+
+            {/* Mobile/tablet: the sidebar is desktop-only, so related guides
+                get their own block below the article. */}
+            {otherPosts.length > 0 && (
+              <div className="mt-10 lg:hidden">
+                <OtherPosts posts={otherPosts} heading="Related guides" />
+              </div>
+            )}
 
             <aside className="mt-10 rounded-2xl bg-ink p-7 text-center text-white lg:hidden">
               <h2 className="font-serif text-2xl font-semibold">Ready to prepare your Form 5472?</h2>
@@ -334,10 +363,10 @@ function BlogCta() {
   );
 }
 
-function OtherPosts({ posts }: { posts: PostMeta[] }) {
+function OtherPosts({ posts, heading = "Continue reading" }: { posts: PostMeta[]; heading?: string }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Continue reading</h3>
+      <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{heading}</h3>
       <ul className="mt-4 space-y-5">
         {posts.map((post) => (
           <li key={post.slug}>

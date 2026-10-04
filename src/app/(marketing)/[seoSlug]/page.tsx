@@ -20,8 +20,17 @@ import {
   promoTotalCents,
 } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
-import { env } from "@/lib/env";
-import { CONTENT_LAST_REVIEWED, howTo, pageMeta } from "@/lib/seo";
+import {
+  CONTENT_LAST_REVIEWED,
+  DEFAULT_OG_IMAGE,
+  ORG_REF,
+  SITE_URL,
+  howTo,
+  organizationDocument,
+  pageMeta,
+} from "@/lib/seo";
+import { serviceForLanding } from "@/lib/service-links";
+import { ServiceCard } from "@/components/seo/ServiceCard";
 
 // Lock the route to only the known slugs — anything else 404s.
 export const dynamicParams = false;
@@ -297,7 +306,8 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
               const isHowToSection = derived?.sectionIndex === i;
 
               return (
-                <Reveal key={s.heading} delay={i * 60}>
+                <Fragment key={s.heading}>
+                <Reveal delay={i * 60}>
                   {/* Headings use slugified ids. HowTo step anchors live on list
                     items in the opted-in process section when one is derived. */}
                   <h2
@@ -363,6 +373,11 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                     </div>
                   )}
                 </Reveal>
+                {/* One contextual link into the matching /services page, right
+                    after the first section: early enough to be seen, late
+                    enough not to interrupt the direct answer above. */}
+                {i === 0 && <ServiceCard serviceSlug={serviceForLanding(page.slug)} />}
+                </Fragment>
               );
             })}
           </div>
@@ -765,15 +780,17 @@ function PricingSection({
 }
 
 function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof getLandingPage>> }) {
-  const url = `${env.appUrl}/${page.slug}`;
+  const url = `${SITE_URL}/${page.slug}`;
   const article = {
     "@context": "https://schema.org",
     "@type": "Article",
+    "@id": `${url}#article`,
     headline: page.h1,
     description: page.metaDescription,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    datePublished: page.updated ?? CONTENT_LAST_REVIEWED,
+    datePublished: page.published ?? page.updated ?? CONTENT_LAST_REVIEWED,
     dateModified: page.updated ?? CONTENT_LAST_REVIEWED,
+    image: `${SITE_URL}${DEFAULT_OG_IMAGE.url}`,
     citation:
       page.sources?.map((source) => ({
         "@type": "CreativeWork",
@@ -781,27 +798,11 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
         url: source.url,
       })) ?? [],
     inLanguage: "en-US",
-    author: {
-      "@type": "Organization",
-      name: "Form5472 Prep",
-      url: env.appUrl,
-      // knowsAbout signals topical expertise (E-E-A-T) — helps AI engines
-      // (Perplexity, ChatGPT) decide whether to cite us as a source.
-      knowsAbout: [
-        "IRS Form 5472",
-        "IRS Form 1120",
-        "Foreign-owned US LLC tax filing",
-        "DIIRSP — Delinquent International Information Return Submission Procedure",
-        "IRC § 6038A",
-        "Treasury Regulation § 1.6038A-1",
-      ],
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Form5472 Prep",
-      url: env.appUrl,
-      logo: { "@type": "ImageObject", url: `${env.appUrl}/logo-mark.svg` },
-    },
+    // One Organization entity: the full node (with knowsAbout / E-E-A-T
+    // fields) is emitted once below via organizationDocument(); the Article
+    // only references it by @id.
+    author: ORG_REF,
+    publisher: ORG_REF,
     // Speakable picks the H1 + intro paragraph for voice-assistant readback
     // (Google Assistant, Alexa). Cheap to declare; only takes effect on
     // pages an assistant actually serves.
@@ -823,7 +824,7 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: env.appUrl },
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
       { "@type": "ListItem", position: 2, name: page.h1, item: url },
     ],
   };
@@ -842,6 +843,7 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
     : null;
   return (
     <>
+      <JsonLd data={organizationDocument()} />
       <JsonLd data={article} />
       {page.faqs.length > 0 && <JsonLd data={faq} />}
       <JsonLd data={breadcrumb} />
