@@ -31,8 +31,10 @@ import { getConfirmedFilingsCount, formatFilingCount } from "@/lib/stats";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 import {
   CONTENT_LAST_REVIEWED,
+  ORG_REF,
+  SITE_NAME,
   howTo,
-  organizationNode,
+  organizationDocument,
   pageMeta,
 } from "@/lib/seo";
 
@@ -880,36 +882,28 @@ function Criterion({
 // - FAQPage powers Google's expandable FAQ rich result + AI direct-answer pulls.
 function StructuredData() {
   const url = env.appUrl;
-  // Organization — enriched for knowledge-panel + E-E-A-T signals. knowsAbout
-  // is the key field for AI engines deciding whether to cite us as a topical
-  // source on a Form 5472 / DIIRSP question.
-  const organization = {
-    "@context": "https://schema.org",
-    ...organizationNode(),
-  };
+  // Organization — the single full node (enriched for knowledge-panel +
+  // E-E-A-T; knowsAbout tells AI engines we are a topical source on Form 5472
+  // / DIIRSP). Everything else on this page references it by ORG_REF.
+  const organization = organizationDocument();
 
-  // WebSite + SearchAction declares a site-search action so Google can
-  // render a sitelinks search box for the brand. Even without on-site
-  // search, declaring intent at /blog?q= unlocks the box for branded queries.
+  // WebSite. No SearchAction: the site has no search, and /blog?q= does
+  // nothing, so declaring one would be dishonest structured data.
   const website = {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${url}/#website`,
     url,
-    name: "Form5472 Prep",
-    publisher: { "@type": "Organization", name: "Form5472 Prep", url },
+    name: SITE_NAME,
+    publisher: ORG_REF,
     inLanguage: "en-US",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: { "@type": "EntryPoint", urlTemplate: `${url}/blog?q={search_term_string}` },
-      "query-input": "required name=search_term_string",
-    },
   };
 
   const service = {
     "@context": "https://schema.org",
     "@type": "Service",
     serviceType: "IRS Form 5472 and pro forma Form 1120 preparation and filing",
-    provider: { "@type": "Organization", name: "Form5472 Prep", url },
+    provider: ORG_REF,
     areaServed: { "@type": "Country", name: "United States" },
     audience: {
       "@type": "Audience",

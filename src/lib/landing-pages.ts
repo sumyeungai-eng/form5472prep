@@ -30,7 +30,8 @@ export type LandingPage = {
   sections: LandingSection[];
   faqs: LandingFaq[];
   sources?: Array<{ label: string; url: string }>;
-  updated?: string; // ISO date YYYY-MM-DD
+  updated?: string; // ISO date YYYY-MM-DD (last reviewed / dateModified)
+  published?: string; // ISO date YYYY-MM-DD the page first shipped (datePublished); falls back to `updated`
   relatedSlugs?: string[]; // for internal linking
   // Hide from organic search (noindex + nofollow + excluded from sitemap).
   // Used for paid-ad landing pages where we don't want Google to surface
@@ -64,6 +65,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 1120", url: "https://www.irs.gov/instructions/i1120" },
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "How to File IRS Form 5472",
     intro:
@@ -175,6 +177,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "The Form 5472 $25,000 Penalty Explained",
     intro:
@@ -294,6 +297,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "DIIRSP: Filing Late Form 5472 with Penalty Abatement",
     intro:
@@ -414,6 +418,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "Form 5472 Instructions: Plain-English Walkthrough",
     intro:
@@ -547,6 +552,7 @@ export const LANDING_PAGES: LandingPage[] = [
         url: "https://www.fincen.gov/boi"
       }
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "Foreign-Owned US LLC Tax Filing Requirements",
     intro: "A foreign-owned U.S. single-member LLC treated as a disregarded entity generally files Form 5472 with pro forma Form 1120 when it has reportable related-party transactions. Zero revenue does not remove that test. Personal income tax, state obligations, foreign-account reporting and tax IDs need separate checks; one federal information return does not establish complete compliance.",
@@ -676,6 +682,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "Filed Form 5472 Late? Here's What to Do Now",
     intro:
@@ -796,6 +803,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "Form 5472 vs Form 1120 — What's the Difference?",
     intro:
@@ -908,6 +916,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "Wyoming LLC Form 5472 Filing Guide",
     intro:
@@ -1029,6 +1038,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "Delaware LLC Form 5472 Filing Guide",
     intro:
@@ -1150,6 +1160,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    published: "2026-07-03",
     updated: "2026-09-11",
     h1: "Form 5472 for German-Resident Owners of US LLCs",
     intro:
@@ -1245,6 +1256,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    published: "2026-07-03",
     updated: "2026-09-11",
     h1: "Form 5472 for UAE Residents Who Own a US LLC",
     intro:
@@ -1340,6 +1352,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
       { label: "IRS: Instructions for Form 1120", url: "https://www.irs.gov/instructions/i1120" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "Pro Forma Form 1120 — Plain-English Guide",
     intro:
@@ -1452,6 +1465,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "Form 1120 for Foreign-Owned LLCs",
     intro:
@@ -1562,6 +1576,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "Form 1120 for a Disregarded Entity (Foreign Owner)",
     intro:
@@ -1663,6 +1678,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 1120", url: "https://www.irs.gov/instructions/i1120" },
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
+    published: "2026-05-19",
     updated: "2026-09-11",
     h1: "1120 Pro Forma Instructions (Foreign-Owned LLCs)",
     intro:
@@ -1765,6 +1781,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    published: "2026-05-22",
     updated: "2026-09-11",
     h1: "IRS Form 5472 — the complete guide for foreign-owned LLCs",
     intro:
@@ -1885,6 +1902,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 7004", url: "https://www.irs.gov/forms-pubs/about-form-7004" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
     ],
+    published: "2026-05-22",
     updated: "2026-09-11",
     h1: "Form 5472 deadline — when it's due, and what to do if you've missed it",
     intro:
@@ -2006,6 +2024,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
     ],
+    published: "2026-05-22",
     updated: "2026-09-11",
     h1: "The IRS Form 5472 fax number (and how to actually send it)",
     intro:
@@ -2128,6 +2147,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    published: "2026-05-22",
     updated: "2026-09-11",
     h1: "Single-member LLC with a foreign owner — what you actually have to file",
     intro:
@@ -2239,6 +2259,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
     ],
+    published: "2026-05-22",
     updated: "2026-09-11",
     h1: "Stripe Atlas LLC owners — Form 5472 is on you, not Stripe",
     intro:
@@ -2350,6 +2371,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    published: "2026-05-22",
     updated: "2026-09-11",
     h1: "Reasonable cause statement for Form 5472 — what to include",
     intro:
@@ -2456,6 +2478,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
+    published: "2026-05-22",
     updated: "2026-09-11",
     h1: "Form 5472, filed properly — from $149, everything included.",
     intro:
@@ -2566,6 +2589,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
+    published: "2026-08-31",
     updated: "2026-09-11",
     startSrc: "doola-form-5472",
     h1: "Formed your LLC with doola? Check what is actually included.",
@@ -2640,6 +2664,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
+    published: "2026-08-31",
     updated: "2026-09-11",
     startSrc: "firstbase-form-5472",
     h1: "Using Firstbase for your US company? Put Form 5472 in context.",
@@ -2714,6 +2739,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
+    published: "2026-08-31",
     updated: "2026-08-28",
     startSrc: "clemta-form-5472",
     h1: "Clemta customer? Get written clarity on Form 5472.",
@@ -2789,6 +2815,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
+    published: "2026-08-31",
     updated: "2026-09-11",
     startSrc: "startglobal-form-5472",
     h1: "StartGlobal formed the LLC. Now confirm the 5472 filing.",
@@ -2865,6 +2892,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
+    published: "2026-08-31",
     updated: "2026-09-11",
     startSrc: "zenind-form-5472",
     h1: "Zenind explains Form 5472. Filing it is the next step.",
@@ -2941,6 +2969,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
+    published: "2026-08-31",
     updated: "2026-08-28",
     startSrc: "northwest-registered-agent-form-5472",
     h1: "Northwest Registered Agent handled formation. The 5472 is federal tax.",

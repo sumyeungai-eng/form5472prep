@@ -4,6 +4,7 @@ import {
   FORMATION_PROVIDER_SLUGS,
   SERVICES_HUB,
   SERVICE_PAGES,
+  serviceHowTo,
   serviceHubCategories,
   servicePlainBody,
   serviceSitemapEntries,
@@ -147,6 +148,33 @@ describe("services pages: on-page rules", () => {
         );
         for (const p of prices) expect(allowed).toContain(p);
         if (!page.showOffer) expect(prices).toEqual([]);
+      });
+
+      it("links out to at least 2 distinct official IRS pages", () => {
+        const urls = page.irsSources.map((s) => s.url);
+        expect(new Set(urls).size).toBe(urls.length);
+        expect(urls.length).toBeGreaterThanOrEqual(2);
+        for (const s of page.irsSources) {
+          expect(s.url, s.label).toMatch(/^https:\/\/www\.irs\.gov\/[a-z0-9\-/_.]+$/);
+          expect(s.label.length).toBeGreaterThan(10);
+          expect(s.blurb.length).toBeGreaterThan(20);
+        }
+        // Copy rules apply to the outbound-link copy too.
+        const copy = page.irsSources.map((s) => `${s.label} ${s.blurb}`).join(" ");
+        expect(copy).not.toMatch(/\bCPA\b|licensed|IRS[- ]approved|guarantee/i);
+      });
+
+      it("HowTo steps come only from a real numbered list on the page", () => {
+        const howTo = serviceHowTo(page);
+        const hasList = page.sections.some((s) => /^\s*1\.\s/m.test(s.body));
+        expect(howTo !== null).toBe(hasList);
+        if (!howTo) return;
+        expect(page.sections.map((s) => s.heading)).toContain(howTo.heading);
+        expect(howTo.steps.length).toBeGreaterThanOrEqual(2);
+        for (const step of howTo.steps) {
+          expect(step.name.length).toBeGreaterThan(0);
+          expect(step.text).not.toMatch(/\*\*/);
+        }
       });
 
       it("internal links point at known routes", () => {

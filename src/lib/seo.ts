@@ -11,6 +11,13 @@ export const ORG_EMAIL = "support@form5472prep.com";
 export const TRUSTPILOT_PROFILE_URL = "https://www.trustpilot.com/review/form5472prep.com";
 export const ORG_SAME_AS = [TRUSTPILOT_PROFILE_URL];
 
+// The ONE Organization entity. Search/answer engines consolidate entities by
+// @id, so every page must either embed organizationNode() (which carries this
+// id) or reference it as ORG_REF — never an anonymous inline Organization and
+// never a differently-spelled id (e.g. `${SITE_URL}#organization`, no slash).
+export const ORG_ID = `${SITE_URL}/#organization`;
+export const ORG_REF = { "@id": ORG_ID } as const;
+
 // Date the evergreen service pages (home, pricing, EIN, ITIN, partners,
 // about) and the programmatic landing pages were last reviewed for accuracy.
 // Bump this whenever pricing/process copy changes. Blog posts carry their own
@@ -163,7 +170,7 @@ export function howTo(input: {
 export function organizationNode(extra: Record<string, unknown> = {}) {
   return {
     "@type": "Organization",
-    "@id": `${SITE_URL}/#organization`,
+    "@id": ORG_ID,
     name: SITE_NAME,
     legalName: SITE_NAME,
     url: SITE_URL,
@@ -200,6 +207,13 @@ export function organizationNode(extra: Record<string, unknown> = {}) {
     ],
     ...extra,
   };
+}
+
+// Full Organization node as a standalone JSON-LD document. Render it once per
+// page (<JsonLd data={organizationDocument()} />) and reference it everywhere
+// else on the page with ORG_REF.
+export function organizationDocument() {
+  return { "@context": "https://schema.org", ...organizationNode() };
 }
 
 // Speakable spec for answer engines / voice: point at the H1 and the

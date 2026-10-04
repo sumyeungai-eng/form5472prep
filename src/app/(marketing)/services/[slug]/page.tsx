@@ -10,6 +10,7 @@ import {
   SERVICES_LAST_REVIEWED,
   SERVICE_PAGES,
   getServicePage,
+  serviceHowTo,
   servicePath,
   toPlainText,
   type ServicePage,
@@ -17,13 +18,24 @@ import {
 import { TIERS, TIER_ORDER } from "@/lib/pricing";
 import { slugify } from "@/lib/blog";
 import { formatPrice } from "@/lib/utils";
-import { SITE_NAME, SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
+import { ORG_REF, SITE_URL, breadcrumbList, howTo, organizationDocument, pageMeta } from "@/lib/seo";
 import { ServiceRichText } from "../ServiceRichText";
 
 // Bottom-of-funnel service pages under the /services hub. Copy, keywords and
 // the on-page contract live in src/lib/services-pages.ts (tested in
 // services-pages.test.ts). Fully static: only the known slugs are built.
 export const dynamicParams = false;
+
+// "October 1, 2026" from the ISO date constant that also feeds the JSON-LD
+// dateModified, so the visible date and the structured date cannot drift.
+function formatReviewed(iso: string): string {
+  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
 
 export function generateStaticParams() {
   return SERVICE_PAGES.map((p) => ({ slug: p.slug }));
@@ -93,6 +105,10 @@ export default function ServicePageRoute({ params }: { params: { slug: string } 
             <h1 className="mt-4 font-serif text-3xl font-semibold leading-[1.1] tracking-tight text-balance break-words sm:text-4xl lg:text-5xl">
               {page.h1}
             </h1>
+            <p className="mt-4 text-xs text-slate-400">
+              Last reviewed{" "}
+              <time dateTime={SERVICES_LAST_REVIEWED}>{formatReviewed(SERVICES_LAST_REVIEWED)}</time>
+            </p>
             <div className="mt-6 space-y-4 text-lg leading-relaxed text-slate-300">
               <ServiceRichText body={page.intro} tone="dark" firstParagraphClassName="lead" />
             </div>
@@ -179,6 +195,34 @@ export default function ServicePageRoute({ params }: { params: { slug: string } 
           </div>
         </section>
 
+        {/* Official IRS sources: contextual outbound links to the primary
+            authority for this page (followed, new tab, no nofollow). */}
+        <section className="border-b border-slate-200">
+          <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
+            <h2 id="official-irs-sources" className="scroll-mt-20 font-serif text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+              Official IRS sources for this page
+            </h2>
+            <p className="mt-2 text-sm text-slate-600">
+              The IRS pages this page relies on. Check them for the current form year before you file.
+            </p>
+            <ul className="mt-5 space-y-4 text-sm">
+              {page.irsSources.map((source) => (
+                <li key={source.url}>
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noopener"
+                    className="font-medium text-accent underline-offset-2 hover:underline"
+                  >
+                    {source.label}
+                  </a>
+                  <p className="mt-1 leading-6 text-slate-600">{source.blurb}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
         {/* Related services and free tools */}
         <section className="border-b border-slate-200 bg-slate-50">
           <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16">
@@ -221,7 +265,7 @@ function ServiceStructuredData({ page }: { page: ServicePage }) {
     description: page.longDescription,
     url,
     dateModified: SERVICES_LAST_REVIEWED,
-    provider: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    provider: ORG_REF,
     audience: {
       "@type": "BusinessAudience",
       audienceType:
@@ -250,6 +294,21 @@ function ServiceStructuredData({ page }: { page: ServicePage }) {
       acceptedAnswer: { "@type": "Answer", text: toPlainText(f.a) },
     })),
   };
+  // HowTo mirrors the page's own numbered list (only three pages have one).
+  // Step anchors resolve to the heading of the section that holds the list.
+  const steps = serviceHowTo(page);
+  const howToJsonLd = steps
+    ? howTo({
+        name: steps.heading,
+        description: page.metaDescription,
+        url,
+        steps: steps.steps.map((st) => ({
+          name: st.name,
+          text: st.text,
+          anchor: `#${slugify(steps.heading)}`,
+        })),
+      })
+    : null;
   const breadcrumb = breadcrumbList([
     { name: "Home", path: "/" },
     { name: "Services", path: SERVICES_HUB_PATH },
@@ -257,8 +316,10 @@ function ServiceStructuredData({ page }: { page: ServicePage }) {
   ]);
   return (
     <>
+      <JsonLd data={organizationDocument()} />
       <JsonLd data={service} />
       <JsonLd data={faq} />
+      {howToJsonLd && <JsonLd data={howToJsonLd} />}
       <JsonLd data={breadcrumb} />
     </>
   );

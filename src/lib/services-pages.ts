@@ -25,6 +25,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { MULTI_YEAR_ADDON_CENTS, STANDARD_TURNAROUND, EXPRESS_TURNAROUND, TIERS } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
+import { parseLandingBody } from "@/lib/landing-body";
 
 export const SERVICES_HUB_PATH = "/services";
 export const SERVICES_LAST_REVIEWED = "2026-10-01";
@@ -64,6 +65,10 @@ export type ServicePage = {
   serviceType: string;
   /** False for the partner page: partner pricing is not published. */
   showOffer: boolean;
+  /** Official IRS pages relevant to this page, rendered as visible outbound
+   *  links (target=_blank, followed). Every URL must be on https://www.irs.gov/
+   *  and return HTTP 200; services-pages.test.ts requires at least two. */
+  irsSources: Array<{ label: string; url: string; blurb: string }>;
 };
 
 const startCta = (src: string) => ({ href: `/start?src=${src}`, label: "Start your filing" });
@@ -220,6 +225,18 @@ Fax delivery and the accountant review are included in both. See the [pricing pa
     related: [], // filled below from slugs + tools
     serviceType: "Form 5472 and pro forma Form 1120 preparation and IRS fax filing",
     showOffer: true,
+    irsSources: [
+      {
+        label: "About Form 5472 (IRS)",
+        url: "https://www.irs.gov/forms-pubs/about-form-5472",
+        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+      },
+      {
+        label: "Instructions for Form 5472 (IRS)",
+        url: "https://www.irs.gov/instructions/i5472",
+        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+      },
+    ],
   },
 
   // ── 2 ───────────────────────────────────────────────────────────────────
@@ -331,6 +348,23 @@ See the [pricing page](/pricing) for everything each plan includes.`,
     related: [],
     serviceType: "Pro forma Form 1120 preparation for foreign-owned US disregarded entities",
     showOffer: true,
+    irsSources: [
+      {
+        label: "Instructions for Form 5472 (IRS)",
+        url: "https://www.irs.gov/instructions/i5472",
+        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+      },
+      {
+        label: "About Form 1120 (IRS)",
+        url: "https://www.irs.gov/forms-pubs/about-form-1120",
+        blurb: "The IRS page for Form 1120, the return a foreign-owned disregarded entity files in pro forma form with Form 5472.",
+      },
+      {
+        label: "Instructions for Form 1120 (IRS)",
+        url: "https://www.irs.gov/instructions/i1120",
+        blurb: "The IRS instructions for Form 1120, the form the pro forma return is based on.",
+      },
+    ],
   },
 
   // ── 3 ───────────────────────────────────────────────────────────────────
@@ -435,6 +469,23 @@ Every late year includes its own reasonable-cause statement. See the [pricing pa
     related: [],
     serviceType: "Delinquent Form 5472 and pro forma Form 1120 filing with reasonable-cause statements",
     showOffer: true,
+    irsSources: [
+      {
+        label: "Delinquent International Information Return Submission Procedures (IRS)",
+        url: "https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures",
+        blurb: "The IRS description of the procedure for filing late international information returns, and who it is for.",
+      },
+      {
+        label: "Penalty relief for reasonable cause (IRS)",
+        url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause",
+        blurb: "How the IRS describes reasonable-cause relief from penalties.",
+      },
+      {
+        label: "International information reporting penalties (IRS)",
+        url: "https://www.irs.gov/payments/international-information-reporting-penalties",
+        blurb: "The IRS overview of penalties for international information returns, including Form 5472.",
+      },
+    ],
   },
 
   // ── 4 ───────────────────────────────────────────────────────────────────
@@ -544,6 +595,23 @@ See the [pricing page](/pricing) for everything included.`,
     related: [],
     serviceType: "Federal information-return filing for foreign-owned US single-member LLCs",
     showOffer: true,
+    irsSources: [
+      {
+        label: "Single member limited liability companies (IRS)",
+        url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies",
+        blurb: "How the IRS treats a single-member LLC for federal tax purposes.",
+      },
+      {
+        label: "About Form 5472 (IRS)",
+        url: "https://www.irs.gov/forms-pubs/about-form-5472",
+        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+      },
+      {
+        label: "Instructions for Form 5472 (IRS)",
+        url: "https://www.irs.gov/instructions/i5472",
+        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+      },
+    ],
   },
 
   // ── 5 ───────────────────────────────────────────────────────────────────
@@ -663,6 +731,18 @@ See the [pricing page](/pricing).`,
     related: [],
     serviceType: "IRS fax filing of Form 5472 and pro forma Form 1120",
     showOffer: true,
+    irsSources: [
+      {
+        label: "Instructions for Form 5472 (IRS)",
+        url: "https://www.irs.gov/instructions/i5472",
+        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+      },
+      {
+        label: "About Form 5472 (IRS)",
+        url: "https://www.irs.gov/forms-pubs/about-form-5472",
+        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+      },
+    ],
   },
 
   // ── 6 ───────────────────────────────────────────────────────────────────
@@ -766,6 +846,18 @@ You keep the client relationship. We handle preparation, review, IRS fax deliver
     related: [],
     serviceType: "White-label Form 5472 filing for formation agents and registered agents",
     showOffer: false,
+    irsSources: [
+      {
+        label: "About Form 5472 (IRS)",
+        url: "https://www.irs.gov/forms-pubs/about-form-5472",
+        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+      },
+      {
+        label: "Instructions for Form 5472 (IRS)",
+        url: "https://www.irs.gov/instructions/i5472",
+        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+      },
+    ],
   },
 
   // ── 7 ───────────────────────────────────────────────────────────────────
@@ -874,6 +966,18 @@ See the [pricing page](/pricing).`,
     related: [],
     serviceType: "Form 5472 and pro forma Form 1120 filing for dormant foreign-owned LLCs",
     showOffer: true,
+    irsSources: [
+      {
+        label: "Instructions for Form 5472 (IRS)",
+        url: "https://www.irs.gov/instructions/i5472",
+        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+      },
+      {
+        label: "About Form 5472 (IRS)",
+        url: "https://www.irs.gov/forms-pubs/about-form-5472",
+        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+      },
+    ],
   },
 
   // ── 8 ───────────────────────────────────────────────────────────────────
@@ -974,6 +1078,18 @@ See the [pricing page](/pricing).`,
     related: [],
     serviceType: "Final-year Form 5472 and pro forma Form 1120 filing for dissolved foreign-owned LLCs",
     showOffer: true,
+    irsSources: [
+      {
+        label: "Closing a business (IRS)",
+        url: "https://www.irs.gov/businesses/small-businesses-self-employed/closing-a-business",
+        blurb: "The IRS checklist for the federal steps when a business closes, including final returns.",
+      },
+      {
+        label: "Instructions for Form 5472 (IRS)",
+        url: "https://www.irs.gov/instructions/i5472",
+        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+      },
+    ],
   },
 ];
 
@@ -1140,4 +1256,33 @@ export function servicePlainBody(page: ServicePage): string {
   ]
     .map(toPlainText)
     .join("\n\n");
+}
+
+// ── HowTo (JSON-LD) ─────────────────────────────────────────────────────────
+
+export type ServiceHowTo = {
+  /** Heading of the section that holds the steps (its slugified id is the anchor). */
+  heading: string;
+  steps: Array<{ name: string; text: string }>;
+};
+
+/** The page's first numbered list, as HowTo steps. Only three pages have one;
+ *  the others describe a service rather than a procedure, so they get no
+ *  HowTo (structured data must mirror visible content). A step's name is its
+ *  bold lead-in ("Questionnaire."), or its first sentence when it has none. */
+export function serviceHowTo(page: ServicePage): ServiceHowTo | null {
+  for (const section of page.sections) {
+    const list = parseLandingBody(section.body).find((b) => b.type === "ol");
+    if (!list || list.type !== "ol" || list.items.length < 2) continue;
+    return {
+      heading: section.heading,
+      steps: list.items.map((item) => {
+        const text = toPlainText(item).trim();
+        const lead = item.match(/^\*\*([^*]+?)\.?\*\*/)?.[1];
+        const name = lead ?? text.split(/(?<=[.!?])\s+/)[0];
+        return { name: name.trim(), text };
+      }),
+    };
+  }
+  return null;
 }
