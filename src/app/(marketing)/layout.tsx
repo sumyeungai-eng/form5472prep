@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { MobileMenu } from "@/components/MobileMenu";
 import { HeaderAuthButtons } from "@/components/HeaderAuthButtons";
+import { SERVICE_PAGES, servicePath } from "@/lib/services-pages";
 
 // No `force-dynamic` and no cookie reads here: the auth-dependent header bits are
 // client islands (MobileMenu + HeaderAuthButtons) that poll /api/me after paint,
@@ -98,6 +99,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <li><Link href="/faq" className="hover:text-ink">FAQ</Link></li>
                 <li><Link href="/contact" className="hover:text-ink">Contact</Link></li>
                 <li><Link href="/about" className="hover:text-ink">About</Link></li>
+                <li><Link href="/press" className="hover:text-ink">Press kit</Link></li>
               </ul>
             </nav>
             <nav className="space-y-2.5">
@@ -125,6 +127,15 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               </ul>
             </nav>
           </div>
+          <nav aria-label="Filing services" className="mt-10 space-y-3 border-t border-paper-edge pt-8">
+            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-ink">Filing services</p>
+            <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+              {SERVICE_PAGES.map((p) => (
+                <li key={p.slug}><Link href={servicePath(p.slug)} className="hover:text-ink">{p.h1}</Link></li>
+              ))}
+              <li><Link href="/compare" className="hover:text-ink">Compare providers</Link></li>
+            </ul>
+          </nav>
           <div className="mt-10 border-t border-paper-edge pt-6">
             <p>&copy; {new Date().getFullYear()} Form5472 Prep. All rights reserved.</p>
           </div>
