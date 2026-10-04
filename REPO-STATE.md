@@ -221,3 +221,4 @@ Claude and Codex sessions share these folders. Practical rules:
 - `docs/sessions/2026-09-30-fix-everything-else.md` — payment page redesign, re-fax guard, June due-date
   rule, USD-only checkout, receipt/RCS wording fixes, 5 blog posts.
 - `docs/sessions/2026-10-01-seo-compact-keywords.md` — /services hub + 8 BOFU pages, technical SEO fixes, Moz research.
+- `docs/sessions/2026-10-05-seo-course-gaps.md` — full-course gap pass: one Organization @id, service-page IRS links/HowTo, contextual service cards, /press, /compare, embeddable calculators, off-site kit.
