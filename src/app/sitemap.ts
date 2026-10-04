@@ -35,6 +35,9 @@ const STATIC_PAGE_UPDATED: Record<string, string> = {
   "/cookies": "2026-09-21",
   "/data-retention": "2026-09-21",
   "/security": "2026-09-21",
+  // New hub pages, written 2026-10-04.
+  "/press": "2026-10-04",
+  "/compare": "2026-10-04",
 };
 
 const TOOL_PAGE_REVIEWED: Record<string, string> = {
@@ -92,6 +95,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/cookies`, lastModified: at("/cookies"), changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/data-retention`, lastModified: at("/data-retention"), changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/security`, lastModified: at("/security"), changeFrequency: "yearly", priority: 0.3 },
+    { url: `${base}/compare`, lastModified: at("/compare"), changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/press`, lastModified: at("/press"), changeFrequency: "yearly", priority: 0.4 },
     // Service pages: written 2026-10-01; bump this date only on real edits.
     ...serviceSitemapEntries(base, new Date("2026-10-01T00:00:00Z")),
   ];
