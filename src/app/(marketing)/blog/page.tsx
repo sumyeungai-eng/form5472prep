@@ -11,7 +11,7 @@ import {
 import { getAllPosts, type PostMeta } from "@/lib/blog";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
-import { buildTagIndex, formatTag, tagHref, type TagEntry } from "@/lib/blog-tags";
+import { buildTagIndex, formatTag, MIN_INDEXABLE_TAG_POSTS, tagHref, type TagEntry } from "@/lib/blog-tags";
 import { AuthorChip, PostCard, PostMetaLine } from "./_components/PostCard";
 
 // ISR: posts published from /admin live in the database, so the index has to
@@ -35,7 +35,10 @@ export const metadata: Metadata = {
 export default async function BlogIndex() {
   const posts = await getAllPosts();
   const [featured, ...rest] = posts;
-  const popularTags = buildTagIndex(posts).slice(0, 6);
+  // Only indexable topic hubs are linked (thin topic pages are noindex).
+  const popularTags = buildTagIndex(posts)
+    .filter((entry) => entry.count >= MIN_INDEXABLE_TAG_POSTS)
+    .slice(0, 6);
   const collectionJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",

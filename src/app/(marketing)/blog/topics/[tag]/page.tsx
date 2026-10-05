@@ -43,7 +43,10 @@ export default async function TopicPage({ params }: { params: { tag: string } })
   if (!entry) notFound();
 
   const entries = buildTagIndex(posts);
-  const otherTopics = entries.filter((topic) => topic.tag !== entry.tag).slice(0, 12);
+  // Cross-links go to indexable hubs only; thin topic pages are noindex.
+  const otherTopics = entries
+    .filter((topic) => topic.tag !== entry.tag && topic.count >= MIN_INDEXABLE_TAG_POSTS)
+    .slice(0, 12);
   const path = `/blog/topics/${entry.tag}`;
   const description = `${entry.count} practical guides on ${entry.label} for foreign-owned US LLC owners.`;
   const collectionJsonLd = {

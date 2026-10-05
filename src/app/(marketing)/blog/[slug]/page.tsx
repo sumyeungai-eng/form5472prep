@@ -32,7 +32,7 @@ import { serviceForBlogTags } from "@/lib/service-links";
 import { relatedPosts } from "@/lib/related-posts";
 import { ServiceCard } from "@/components/seo/ServiceCard";
 import { seoTitle } from "@/lib/seo-title";
-import { formatTag, tagHref } from "@/lib/blog-tags";
+import { formatTag, indexableTagSlugs, tagHref, tagSlug } from "@/lib/blog-tags";
 
 // ISR: prerender the slugs known at build time, but `dynamicParams` lets a post
 // published from /admin (DB-only, so absent from the build) render on first
@@ -98,6 +98,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   // allPosts already excludes drafts and not-yet-released scheduled posts
   // (getAllPosts filters with isPubliclyAvailable), and relatedPosts re-checks.
   const otherPosts = relatedPosts(post, allPosts, 4);
+  // Only topic hubs that are indexable get a link; thin (noindex) topic pages
+  // render as plain chips so every post stops linking to pages Google ignores.
+  const linkableTags = indexableTagSlugs(allPosts);
   const serviceSlug = serviceForBlogTags(post.tags);
   const articleJsonLd = {
     "@type": "BlogPosting",
@@ -183,11 +186,17 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               <div>
                 {post.tags && post.tags.length > 0 && (
                   <div className="mb-5 flex flex-wrap gap-2">
-                    {post.tags.slice(0, 3).map((tag) => (
-                      <Link key={tag} href={tagHref(tag)} className="rounded-full border border-accent/15 bg-white px-3 py-1 text-[11px] font-semibold text-accent shadow-sm transition hover:border-accent/40 hover:bg-accent-50">
-                        {formatTag(tag)}
-                      </Link>
-                    ))}
+                    {post.tags.slice(0, 3).map((tag) =>
+                      linkableTags.has(tagSlug(tag)) ? (
+                        <Link key={tag} href={tagHref(tag)} className="rounded-full border border-accent/15 bg-white px-3 py-1 text-[11px] font-semibold text-accent shadow-sm transition hover:border-accent/40 hover:bg-accent-50">
+                          {formatTag(tag)}
+                        </Link>
+                      ) : (
+                        <span key={tag} className="rounded-full border border-accent/15 bg-white px-3 py-1 text-[11px] font-semibold text-accent shadow-sm">
+                          {formatTag(tag)}
+                        </span>
+                      ),
+                    )}
                   </div>
                 )}
                 <h1 className="font-serif text-4xl font-semibold leading-[1.08] tracking-tight text-ink sm:text-5xl lg:text-[3.35rem]">
@@ -300,11 +309,17 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-12 flex flex-wrap gap-2 border-t border-slate-200 pt-6">
-                  {post.tags.map((tag) => (
-                    <Link key={tag} href={tagHref(tag)} className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600 transition hover:bg-accent-50 hover:text-accent">
-                      {formatTag(tag)}
-                    </Link>
-                  ))}
+                  {post.tags.map((tag) =>
+                    linkableTags.has(tagSlug(tag)) ? (
+                      <Link key={tag} href={tagHref(tag)} className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600 transition hover:bg-accent-50 hover:text-accent">
+                        {formatTag(tag)}
+                      </Link>
+                    ) : (
+                      <span key={tag} className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
+                        {formatTag(tag)}
+                      </span>
+                    ),
+                  )}
                 </div>
               )}
             </div>

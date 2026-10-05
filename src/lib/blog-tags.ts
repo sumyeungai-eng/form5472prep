@@ -88,6 +88,20 @@ export function buildTagIndex(posts: PostMeta[]): TagEntry[] {
   return Array.from(byTag.values()).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 }
 
+/**
+ * Tag slugs whose topic page is indexable (>= MIN_INDEXABLE_TAG_POSTS posts).
+ * Only these get a rendered <Link>: sub-threshold topic pages are
+ * noindex,follow, and linking every post to them wasted ~300 internal links on
+ * pages Google is told to ignore (Moz crawl 2026-10-05).
+ */
+export function indexableTagSlugs(posts: PostMeta[]): Set<string> {
+  return new Set(
+    buildTagIndex(posts)
+      .filter((entry) => entry.count >= MIN_INDEXABLE_TAG_POSTS)
+      .map((entry) => entry.tag),
+  );
+}
+
 /** Exact lookup by URL segment; returns undefined when the tag has no posts. */
 export function findTag(posts: PostMeta[], slug: string): TagEntry | undefined {
   return buildTagIndex(posts).find((entry) => entry.tag === slug);

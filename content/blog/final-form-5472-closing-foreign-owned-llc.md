@@ -66,7 +66,7 @@ Do not assume state dissolution makes the federal return immediately due or elim
 
 ## How does Form5472 Prep handle a final year?
 
-Form5472 Prep prepares the pro forma Form 1120, Form 5472, Part V supporting statement, and filing package based on the closure transactions you provide. Every package is accountant-reviewed and faxed to the IRS with a timestamped delivery receipt.
+Form5472 Prep prepares the pro forma Form 1120, Form 5472, Part V supporting statement, and filing package based on the closure transactions you provide. Every package is accountant-reviewed and faxed to the IRS with a timestamped delivery receipt. Our service page on the [final Form 5472 for a dissolved LLC](/services/final-form-5472-for-dissolved-llc) lists what the final-year filing covers and what to have ready.
 
 [Start the final-year filing](/start) while the bank statements and owner records are still accessible.
 

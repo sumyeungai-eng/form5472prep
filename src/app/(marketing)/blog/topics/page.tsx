@@ -135,20 +135,21 @@ export default async function TopicsIndexPage(): Promise<JSX.Element> {
               More topics
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-              Narrower subjects with a handful of guides each.
+              Narrower subjects with a handful of guides each, covered across the guide library.
             </p>
-            <div className="mt-5 flex flex-wrap gap-2">
+            {/* Plain labels, not links: these topic pages are noindex (below
+                MIN_INDEXABLE_TAG_POSTS), so we don't spend internal links on them. */}
+            <ul className="mt-5 flex flex-wrap gap-2">
               {more.map((topic) => (
-                <Link
+                <li
                   key={topic.tag}
-                  href={tagHref(topic.tag)}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs text-slate-700 transition hover:border-accent/30 hover:text-accent hover:shadow-sm"
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs text-slate-700"
                 >
                   {topic.label}
                   <span className="font-mono text-[10px] text-slate-400">{topic.count}</span>
-                </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
         )}
 

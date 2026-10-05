@@ -4,6 +4,7 @@ import {
   buildTagIndex,
   findTag,
   formatTag,
+  indexableTagSlugs,
   MIN_INDEXABLE_TAG_POSTS,
   TAG_SLUG_ALIASES,
   tagHref,
@@ -86,5 +87,13 @@ describe("blog tag helpers", () => {
 
   it("normalises tag hrefs from non-slug database tags", () => {
     expect(tagHref("Form 5472")).toBe("/blog/topics/form-5472");
+  });
+
+  it("only tags at or above the threshold are indexable (link targets)", () => {
+    const hub = Array.from({ length: MIN_INDEXABLE_TAG_POSTS }, (_, i) => post(`hub-${i}`, ["Form 5472"]));
+    const thin = Array.from({ length: MIN_INDEXABLE_TAG_POSTS - 1 }, (_, i) => post(`thin-${i}`, ["dormant-llc"]));
+    const slugs = indexableTagSlugs([...hub, ...thin]);
+    expect(slugs.has("form-5472")).toBe(true);
+    expect(slugs.has("dormant-llc")).toBe(false);
   });
 });

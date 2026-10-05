@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { FAQ_CATEGORIES, FAQ_ITEMS } from "./faq";
 import { LANDING_PAGES } from "./landing-pages";
+import { SERVICE_PAGES } from "./services-pages";
 
 const FORBIDDEN_PHRASES = [
   "our CPA",
@@ -33,6 +34,8 @@ const MARKETING_ROOT = join(ROOT, "src/app/(marketing)");
 const APP_ROOT = join(ROOT, "src/app");
 const CATEGORY_IDS = new Set(FAQ_CATEGORIES.map((category) => category.id));
 const LANDING_SLUGS = new Set(LANDING_PAGES.map((page) => page.slug));
+// /services/[slug] is a dynamic route; its pages come from SERVICE_PAGES.
+const SERVICE_PATHS = new Set(SERVICE_PAGES.map((page) => `services/${page.slug}`));
 
 function wordCount(value: string): number {
   return value.trim().split(/\s+/).filter(Boolean).length;
@@ -46,6 +49,7 @@ function routeExists(href: string): boolean {
   const pathname = href.split(/[?#]/)[0]?.replace(/^\/+|\/+$/g, "") ?? "";
   if (!pathname) return existsSync(join(APP_ROOT, "page.tsx"));
   if (LANDING_SLUGS.has(pathname)) return true;
+  if (SERVICE_PATHS.has(pathname)) return true;
   return (
     existsSync(join(MARKETING_ROOT, pathname, "page.tsx")) ||
     existsSync(join(APP_ROOT, pathname, "page.tsx"))

@@ -150,8 +150,9 @@ export const SERVICE_PAGES: ServicePage[] = [
       src: "/services/services_form-5472-filing-service_form-and-checkmark.webp",
       alt: "Form 5472 filing service: a completed Form 5472 with a confirmation checkmark",
     },
-    secondaryKeywords: ["form 5472 and pro forma 1120 filing service", "form 5472 online filing"],
+    secondaryKeywords: ["form 5472 and pro forma 1120 filing service", "form 5472 online filing", "1120 and 5472 filing service"],
     category: "annual",
+    lastModified: "2026-10-06",
     title: "Form 5472 Filing Service, Faxed to the IRS | Form5472 Prep",
     metaDescription:
       "Form 5472 filing service for foreign-owned US LLCs: Form 5472 and pro forma 1120 prepared, reviewed by a qualified accountant and faxed to the IRS.",
@@ -161,7 +162,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     shortBlurb: "The annual Form 5472 and pro forma 1120 package, prepared, reviewed and faxed for you.",
     intro: `Our Form 5472 filing service prepares the Form 5472 and pro forma 1120 package for a foreign-owned US single-member LLC, then sends it to the IRS for you. **You answer about 15 minutes of questions, a qualified accountant reviews the package, you sign online, and we fax it to the IRS Ogden PIN Unit and give you the timestamped fax receipt.**
 
-It is a filing service, not tax advice. The forms are built from the information you give us.`,
+Because the two forms travel together, it is a Form 1120 and 5472 filing service in one order. It is a filing service, not tax advice. The forms are built from the information you give us.`,
     cta: startCta("svc-form-5472-filing-service"),
     sections: [
       {
@@ -178,7 +179,7 @@ It is a filing service, not tax advice. The forms are built from the information
 - A reminder in the second week of January for next year's filing`,
       },
       {
-        heading: "How the filing works, step by step",
+        heading: "How the Form 1120 and 5472 filing service works, step by step",
         body: `${PROCESS_STEPS}
 
 A foreign-owned disregarded entity cannot e-file this package. It goes to the IRS by fax or mail, which is why fax delivery is part of the service rather than an extra.`,
@@ -399,6 +400,7 @@ See the [pricing page](/pricing) for everything each plan includes.`,
     },
     secondaryKeywords: ["delinquent form 5472 filing service", "form 5472 catch up filing multiple years"],
     category: "situations",
+    lastModified: "2026-10-06",
     title: "Late Form 5472 Filing Service for Past Years | Form5472 Prep",
     metaDescription:
       "Late Form 5472 filing service for missed years: a package and reasonable-cause statement for each year, reviewed and faxed to the IRS Ogden PIN Unit.",
@@ -1256,9 +1258,9 @@ For a calendar-year LLC the filing is due April 15. Full details are on the [pri
       src: "/services/services_form-5472-preparer_magnifier-over-form.webp",
       alt: "Form 5472 preparer: a magnifier checking Form 5472 on top of its pro forma 1120 cover",
     },
-    secondaryKeywords: ["who prepares form 5472", "form 5472 tax preparer"],
+    secondaryKeywords: ["who prepares form 5472", "form 5472 tax preparer", "form 5472 preparation service"],
     category: "annual",
-    lastModified: AUDIENCE_PAGES_ADDED,
+    lastModified: "2026-10-06",
     title: "Form 5472 Preparer, Reviewed Before You Sign | Form5472 Prep",
     metaDescription:
       "Form 5472 preparer for foreign-owned US LLCs: what a preparer does for Form 5472 and the pro forma 1120, how to choose one, and how our review works.",
@@ -1266,7 +1268,7 @@ For a calendar-year LLC the filing is due April 15. Full details are on the [pri
       "What a Form 5472 preparer does for a foreign-owned US single-member LLC: sorting the year's reportable transactions, completing Form 5472, the Part V statement and the pro forma Form 1120 marked \"Foreign-owned U.S. DE\", and getting the package to the IRS by fax or mail. Includes a checklist for choosing a preparer and how Form5472 Prep's qualified-accountant review works before the owner signs online.",
     h1: "A Form 5472 Preparer for Foreign-Owned US LLCs",
     shortBlurb: "What a preparer actually does, a checklist for choosing one, and how our review works.",
-    intro: `A Form 5472 preparer turns what you know about your LLC's year into the two IRS forms a foreign-owned single-member LLC files. **The preparer completes Form 5472 and the pro forma Form 1120 it is attached to, checks them and gets them to the IRS; you, as the person authorized for the LLC, review and sign.**
+    intro: `A Form 5472 preparer turns what you know about your LLC's year into the two IRS forms a foreign-owned single-member LLC files. **The preparer completes Form 5472 and the pro forma Form 1120 it is attached to, checks them and gets them to the IRS; you, as the person authorized for the LLC, review and sign.** Our Form 5472 preparation service does that work for you, with a qualified accountant review before you sign.
 
 Here is what that work involves, how to choose someone for it, and how we do it.`,
     cta: startCta("svc-form-5472-preparer"),
@@ -1295,7 +1297,7 @@ Here is what that work involves, how to choose someone for it, and how we do it.
 A clear answer to each matters more than a firm's size or location.`,
       },
       {
-        heading: "How our review works",
+        heading: "How our Form 5472 preparation service reviews your filing",
         body: `Every filing is reviewed by a qualified accountant before it is submitted. In practice:
 
 - The package is generated from your questionnaire answers, so the forms and the Part V statement use the same figures.
@@ -1369,19 +1371,20 @@ A clear answer to each matters more than a firm's size or location.`,
       "form 5472 filing for cpa firms",
       "form 5472 for accounting firms",
       "outsource form 5472 preparation",
+      "form 5472 for cpas",
     ],
     category: "partners",
-    lastModified: AUDIENCE_PAGES_ADDED,
-    title: "Form 5472 for Accountants: We Prepare, You Keep the Client",
+    lastModified: "2026-10-06",
+    title: "Form 5472 for Accountants and CPAs: You Keep the Client",
     metaDescription:
       "Form 5472 for accountants, tax preparers and CPA firms: refer clients, or run their filings from a partner account while we prepare, review and fax.",
     longDescription:
       "Form 5472 and pro forma Form 1120 filing for accountants, tax preparers, CPA firms and accounting firms that do not want to prepare foreign-owned LLC information returns in-house: refer the client to file directly, start and track client filings from a partner account, or enable white-label delivery so client emails carry the firm's brand. Form5472 Prep prepares each package, has a qualified accountant review it, collects the client's online signature and faxes it to the IRS Ogden PIN Unit with a timestamped receipt.",
-    h1: "Form 5472 for Accountants and Tax Preparers",
+    h1: "Form 5472 for Accountants, CPAs and Tax Preparers",
     shortBlurb: "Hand off Form 5472 work without losing the client: refer, partner or white label.",
     intro: `Form 5472 for accountants is often small, seasonal work that does not fit the rest of the practice. **You can hand the preparation to us and keep the client: refer them to file directly, run their filings from a partner account, or offer the filing under your own brand while we prepare, review and fax each package.**
 
-Whichever route you choose, the client reviews and signs their own return.`,
+Form 5472 for CPAs works the same way: we prepare the package, you keep the client relationship. Whichever route you choose, the client reviews and signs their own return.`,
     cta: { href: "/partners#apply", label: "Apply as a partner" },
     sections: [
       {
@@ -1587,7 +1590,12 @@ const RELATED_PLAN: Record<string, { services: string[]; tools: Array<keyof type
     tools: ["needToFile", "reportable"],
   },
   "late-form-5472-filing-service": {
-    services: ["form-5472-filing-service", "form-5472-filing-for-dormant-llc"],
+    services: [
+      "form-5472-filing-service",
+      "form-5472-filing-for-dormant-llc",
+      "form-5472-fax-filing-service",
+      "form-5472-preparer",
+    ],
     tools: ["late", "penalty", "fx"],
   },
   "foreign-owned-llc-tax-filing-service": {

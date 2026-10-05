@@ -267,12 +267,24 @@ describe("services hub", () => {
     expect(rows[0].url).toBe("https://www.example.com/services");
   });
 
-  it("audience pages carry their own sitemap date; the hub takes the newest", () => {
+  it("pages carry their own sitemap date; the hub takes the newest", () => {
     const base = new Date("2026-10-01T00:00:00Z");
     const rows = serviceSitemapEntries("https://www.example.com", base);
     const at = (slug: string) => rows.find((r) => r.url.endsWith(`/services/${slug}`))?.lastModified.toISOString();
-    for (const slug of Array.from(AUDIENCE_PAGES)) expect(at(slug)).toBe("2026-10-05T00:00:00.000Z");
-    expect(at("form-5472-filing-service")).toBe(base.toISOString());
-    expect(rows[0].lastModified.toISOString()).toBe("2026-10-05T00:00:00.000Z");
+    // Audience pages went live 2026-10-05; the Moz keyword-gap pass edited
+    // two of them (plus two original pages) on 2026-10-06.
+    for (const slug of ["form-5472-for-bookkeepers", "hire-someone-to-file-form-5472"]) {
+      expect(at(slug), slug).toBe("2026-10-05T00:00:00.000Z");
+    }
+    for (const slug of [
+      "form-5472-preparer",
+      "form-5472-for-accountants",
+      "form-5472-filing-service",
+      "late-form-5472-filing-service",
+    ]) {
+      expect(at(slug), slug).toBe("2026-10-06T00:00:00.000Z");
+    }
+    expect(at("foreign-owned-llc-tax-filing-service")).toBe(base.toISOString());
+    expect(rows[0].lastModified.toISOString()).toBe("2026-10-06T00:00:00.000Z");
   });
 });
