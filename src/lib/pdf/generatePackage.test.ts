@@ -24,7 +24,22 @@ import {
 } from "./generatePackage";
 import { runPreflight } from "./preflight";
 import { filingToPackageInput } from "./packageInput";
-import { F1, F2, F3, F4, F5, F7, F8, F9, finalisedAt, fixtures } from "./__fixtures__/filings";
+import {
+  F1,
+  F2,
+  F3,
+  F4,
+  F5,
+  F7,
+  F8,
+  F9,
+  F10,
+  F10NoExtension,
+  finalisedAt,
+  fixtures,
+  reviewFinalisedAt,
+} from "./__fixtures__/filings";
+import { drawnTextWidth, usableFieldWidth } from "./fitText";
 
 const PDF_TIMEOUT = 20_000;
 const IRS_MAIL_ADDRESS_DISPLAY_LINES = [
@@ -440,6 +455,12 @@ describe("generatePackage regressions", () => {
     }
   }, PDF_TIMEOUT);
 
+  it("keeps a state that shares the city's name in the joined city line", async () => {
+    const pkg = await generatePackage({ ...F1, llcCity: "New York", llcState: "New York", llcZip: "10001" }, finalisedAt);
+    const line = pkg.record.taxYears[0].form5472.fields.find((w) => w.field === form5472FieldMap["1_cityStateZip"])?.value;
+    expect(line).toBe("New York, New York 10001, USA");
+  }, PDF_TIMEOUT);
+
   it("uses structured owner address parts once when the LLC uses the owner's address", async () => {
     const pkg = await generatePackage(F7, finalisedAt);
     const year = pkg.record.taxYears[0];
@@ -555,5 +576,183 @@ describe("reasonable cause statement prose dates", () => {
     expect(rcsLines.length).toBeGreaterThan(0);
     expect(rcsLines).toContain("January 1, 2020");
     expect(rcsLines).not.toMatch(/\b\d{4}-\d{2}-\d{2}\b/);
-  });
+  }, PDF_TIMEOUT);
+});
+
+// Regressions from the independent review of a real 3-year Hong Kong package
+// generated 2026-10-05 (generator 2.1.0). F10 mirrors that filing's shape.
+describe("2026-10-05 review package (F10)", () => {
+  const textOf = (pkg: Awaited<ReturnType<typeof generatePackage>>, kind: string, taxYear?: number) =>
+    pkg.record.authoredDocuments
+      .filter((doc) => doc.kind === kind && (taxYear === undefined || doc.taxYear === taxYear))
+      .flatMap((doc) => doc.lines)
+      .join(" ");
+  const write = (fields: { field: string; value: string | true }[], field: string) =>
+    fields.find((w) => w.field === field) as ({ field: string; value: string; fontSize?: number } | undefined);
+
+  it("prints 'Name, address' on one fitted line in Form 5472 lines 4a and 8a", async () => {
+    const pkg = await generatePackage(F10, reviewFinalisedAt);
+    // Region "Hong Kong" repeats the country, so it is printed once.
+    const expected = "Mei Ling Example, Example House, Sample Court, Yau Tong, Kowloon, Hong Kong";
+    const font = await (await PDFDocument.create()).embedFont(StandardFonts.Helvetica);
+    for (const year of pkg.record.taxYears) {
+      for (const field of [form5472FieldMap["4a_nameAddress"], form5472FieldMap["8a_nameAddress"]]) {
+        const w = write(year.form5472.fields, field);
+        expect(w?.value).toBe(expected);
+        expect(w?.value).not.toContain("\n");
+        // Inside the 540pt-wide field at the recorded size.
+        expect(drawnTextWidth(font, expected, pkg.record.ownerPrintAddress.fontSize)).toBeLessThanOrEqual(usableFieldWidth(540));
+      }
+    }
+    expect(pkg.record.ownerPrintAddress.fontSize).toBeGreaterThanOrEqual(6);
+    expect(pkg.record.ownerPrintAddress.failures).toEqual([]);
+  }, PDF_TIMEOUT);
+
+  it("shrinks an over-long 8a line below the minimum to stay inside the field and fails R02", async () => {
+    const pkg = await generatePackage(
+      {
+        ...F10,
+        ownerName: "Maximilian Alexander Konstantin von Hohenzollern-Sigmaringen",
+        ownerAddressStreet:
+          "Flat 4512, Tower 7, The Grand Harbour Residences Phase III, 88 Extraordinarily Long Waterfront Promenade Road North Extension",
+      },
+      reviewFinalisedAt,
+    );
+    const font = await (await PDFDocument.create()).embedFont(StandardFonts.Helvetica);
+    const line = write(pkg.record.taxYears[0].form5472.fields, form5472FieldMap["8a_nameAddress"])?.value ?? "";
+    expect(pkg.record.ownerPrintAddress.fontSize).toBeLessThan(6);
+    expect(drawnTextWidth(font, line, pkg.record.ownerPrintAddress.fontSize)).toBeLessThanOrEqual(usableFieldWidth(540));
+    const preflight = await runPreflight(pkg.record, pkg.bytes);
+    expect(preflight.failures.filter((f) => f.id === "R02").map((f) => f.message)).toEqual(
+      expect.arrayContaining([expect.stringContaining("Form 5472 line 8a cannot fit its text at 6pt")]),
+    );
+  }, PDF_TIMEOUT);
+
+  it("stamps exactly 'Foreign-owned U.S. DE' and never DIIRSP", async () => {
+    for (const filing of [F10, F10NoExtension, F5, F8]) {
+      const pkg = await generatePackage(filing, reviewFinalisedAt);
+      for (const year of pkg.record.taxYears) {
+        expect(year.form1120.stampedTexts[0]).toBe("Foreign-owned U.S. DE");
+      }
+      const everything = [
+        ...pkg.record.taxYears.flatMap((year) => year.form1120.stampedTexts),
+        ...pkg.record.authoredDocuments.flatMap((doc) => doc.lines),
+      ].join(" ");
+      expect(everything).not.toMatch(/DIIRSP|Delinquent International Information Return/i);
+      expect((await runPreflight(pkg.record, pkg.bytes)).failures.filter((f) => f.id === "A31")).toEqual([]);
+    }
+  }, PDF_TIMEOUT * 2);
+
+  it("treats the extended latest year as timely: no RCS page, no late wording", async () => {
+    const pkg = await generatePackage(F10, reviewFinalisedAt);
+    expect(pkg.record.taxYears.map((y) => [y.taxYear, y.status, y.reasonableCauseIncluded])).toEqual([
+      [2023, "late", true],
+      [2024, "late", true],
+      [2025, "timely", false],
+    ]);
+    expect(pkg.record.pageOrder.some((p) => p.label === "Reasonable Cause Statement" && p.taxYear === 2025)).toBe(false);
+    expect(pkg.record.authoredDocuments.filter((d) => d.kind === "reasonableCauseStatement").map((d) => d.taxYear)).toEqual([
+      2023, 2024,
+    ]);
+    expect(textOf(pkg, "coverLetter")).not.toMatch(/\b(late|delinquen\w*|timely)\b/i);
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
+  }, PDF_TIMEOUT);
+
+  it("treats the latest year as late without an extension", async () => {
+    const pkg = await generatePackage(F10NoExtension, reviewFinalisedAt);
+    expect(pkg.record.taxYears.map((y) => [y.taxYear, y.status])).toEqual([
+      [2023, "late"],
+      [2024, "late"],
+      [2025, "late"],
+    ]);
+    expect(pkg.record.pageOrder.some((p) => p.label === "Reasonable Cause Statement" && p.taxYear === 2025)).toBe(true);
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
+  }, PDF_TIMEOUT);
+
+  it("decides lateness from the injected finalisedAt, day-inclusive at the extended due date", async () => {
+    // 2025 + valid Form 7004: due Thursday 2026-10-15; late from 2026-10-16.
+    const onDueDate = await generatePackage(F10, new Date("2026-10-15T23:00:00.000Z"));
+    expect(onDueDate.record.taxYears.find((y) => y.taxYear === 2025)?.status).toBe("timely");
+    const dayAfter = await generatePackage(F10, new Date("2026-10-16T00:00:00.000Z"));
+    expect(dayAfter.record.taxYears.find((y) => y.taxYear === 2025)?.status).toBe("late");
+    // Without the extension 2025 is due 2026-04-15: timely on that day, late the next.
+    const noExtOnTime = await generatePackage(F10NoExtension, new Date("2026-04-15T12:00:00.000Z"));
+    expect(noExtOnTime.record.taxYears.find((y) => y.taxYear === 2025)?.status).toBe("timely");
+  }, PDF_TIMEOUT * 2);
+
+  it("writes the Hong Kong permanent-resident and no-U.S.-income facts into the RCS", async () => {
+    const pkg = await generatePackage(F10, reviewFinalisedAt);
+    const rcs = textOf(pkg, "reasonableCauseStatement", 2023);
+    expect(rcs).toContain('Mei Ling Example ("the Owner") is a Hong Kong permanent resident.');
+    expect(rcs).not.toMatch(/citizen of Hong Kong|resident and citizen/);
+    expect(rcs).toContain(
+      "The Company had no U.S.-source income in tax year 2023, and no U.S. income tax was due or withheld for that year.",
+    );
+    // The customer's chosen reason is kept, and no "when learned" date is invented.
+    expect(rcs).toContain("The Owner was not aware that a foreign-owned single-member LLC must file Form 5472");
+    expect(rcs).toContain("Upon learning of the filing requirement, the Owner promptly arranged");
+  }, PDF_TIMEOUT);
+
+  it("adds the no-U.S.-income facts only when the intake supports them", async () => {
+    const unknown = await generatePackage({ ...F10, hasUsSourceIncome: null }, reviewFinalisedAt);
+    expect(textOf(unknown, "reasonableCauseStatement")).not.toContain("no U.S.-source income");
+    const trading = await generatePackage(
+      { ...F10, yearData: F10.yearData.map((y) => ({ ...y, otherTransactionsNote: "Stripe payouts from customers" })) },
+      reviewFinalisedAt,
+    );
+    const tradingText = textOf(trading, "reasonableCauseStatement", 2023);
+    expect(tradingText).toContain("The Company had no U.S.-source income in tax year 2023, and no U.S. income tax was withheld for that year.");
+    expect(tradingText).not.toContain("was due");
+    const withIncome = await generatePackage(F5, reviewFinalisedAt);
+    expect(textOf(withIncome, "reasonableCauseStatement")).not.toContain("no U.S.-source income");
+  }, PDF_TIMEOUT * 2);
+
+  it("prints one clear sentence for a $0 Part V year", async () => {
+    const pkg = await generatePackage(F10, reviewFinalisedAt);
+    const text = textOf(pkg, "partVStatement", 2024);
+    expect(text).toContain(
+      "There were no reportable transactions between Example Harbour Software LLC and its foreign owner during tax year 2024; Form 5472 lines 1f and 1h are $0.",
+    );
+    expect(text).not.toMatch(/These transactions include|Total Part V Rows|Total Reportable Transactions|Other than the transactions described above/);
+  }, PDF_TIMEOUT);
+
+  it("keeps each Part V heading above the table and total it labels", async () => {
+    const pkg = await generatePackage(F1, finalisedAt);
+    const lines = pkg.record.authoredDocuments.find((d) => d.kind === "partVStatement")?.lines ?? [];
+    const at = (needle: string) => lines.findIndex((line) => line.startsWith(needle));
+    expect(at("Capital Contributions from Foreign Owner")).toBeLessThan(at("Total Capital Contributions"));
+    expect(at("Distributions to Foreign Owner")).toBeLessThan(at("Total Distributions"));
+    expect(at("Total Reportable Transactions (Part V)")).toBeLessThan(at("Total Part V reportable transactions"));
+    expect(at("Total Distributions")).toBeLessThan(at("Total Reportable Transactions (Part V)"));
+  }, PDF_TIMEOUT);
+
+  it("title-cases the lower-case city everywhere it prints", async () => {
+    const pkg = await generatePackage(F10, reviewFinalisedAt);
+    const y2023 = pkg.record.taxYears.find((y) => y.taxYear === 2023)!;
+    const y2025 = pkg.record.taxYears.find((y) => y.taxYear === 2025)!;
+    expect(write(y2023.form1120.fields, form1120_2023FieldMap["1_cityStateCountryZip"])?.value).toBe(
+      "Kowloon, Hong Kong",
+    );
+    expect(write(y2025.form1120.fields, form1120_2025FieldMap["1_city"])?.value).toBe("Kowloon");
+    expect(write(y2023.form5472.fields, form5472FieldMap["1_cityStateZip"])?.value).toBe("Kowloon, Hong Kong");
+    expect(pkg.record.ownerPrintAddress.value).toContain("Kowloon");
+    const all = [
+      ...pkg.record.taxYears.flatMap((y) => [...y.form1120.fields, ...y.form5472.fields]).map((w) => String(w.value)),
+      ...pkg.record.authoredDocuments.flatMap((d) => d.lines),
+    ].join(" ");
+    expect(all).not.toContain("kowloon");
+  }, PDF_TIMEOUT);
+
+  it("raises the three customer-data warnings without failing pre-flight", async () => {
+    const pkg = await generatePackage(F10, reviewFinalisedAt);
+    const preflight = await runPreflight(pkg.record, pkg.bytes);
+    expect(preflight.failures).toEqual([]);
+    const ids = preflight.warnings.map((w) => w.id);
+    expect(ids).toEqual(expect.arrayContaining(["W31", "W32", "W33"]));
+    expect(preflight.warnings.find((w) => w.id === "W31")?.message).toContain("Hong Kong: HKID number");
+    expect(preflight.warnings.find((w) => w.id === "W32")?.message).toContain("Example House, Sample Court, Yau Tong");
+    expect(preflight.warnings.filter((w) => w.id === "W33").map((w) => w.message)).toEqual([
+      expect.stringContaining("Tax year 2023 includes the LLC's formation date"),
+    ]);
+  }, PDF_TIMEOUT);
 });

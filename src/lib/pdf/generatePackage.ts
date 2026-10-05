@@ -16,11 +16,13 @@ import {
 import {
   setText,
   check,
-  stampDiirspHeader,
+  stampForeignOwnedDeHeader,
   stampShortPeriod,
   flatten,
   type PdfFieldWrite,
 } from "./fillForm";
+import { fitFontSize, measureFieldBox, type FieldBox, type FitLine } from "./fitText";
+import { countryForProse, displayCaseAddressPart, ownerNationalityClause } from "./textFormat";
 import { formatDateForIrs } from "@/lib/utils";
 import {
   extensionUnclear,
@@ -30,6 +32,7 @@ import {
 import {
   AUTHORED_DOC_SIGNATURE_HEADING,
   COVER_LETTER_ENCLOSURE_PHRASE,
+  FOREIGN_OWNED_DE_HEADER,
   GENERATOR_VERSION,
   IRS_MAIL_ADDRESS,
   IRS_MAIL_ADDRESS_DISPLAY_LINES,
@@ -274,6 +277,10 @@ export type PackageRecord = {
   llcEin: string;
   llcPrintAddress: PrintAddressRecord;
   ownerPrintAddress: PrintAddressRecord;
+  // Owner's street line as entered (structured street, or the whole legacy
+  // single-line address). Read by pre-flight W32 (no flat/floor/street number).
+  // Optional so records built before generator 2.1.0 still type-check.
+  ownerStreet?: string | null;
   formationDate: string | null;
   dissolutionDate: string | null;
   taxYears: PackageRecordYear[];
@@ -292,8 +299,13 @@ const SIGNER_TITLE_COLUMN_INSET = 2;
 const SIGNER_TITLE_MAX_SIZE = 10;
 const SIGNER_TITLE_MIN_SIZE = 7;
 const ADDRESS_NORMAL_FONT_SIZE = 10;
-const ADDRESS_MIN_FONT_SIZE = 6.5;
-const ADDRESS_FONT_STEP = 0.25;
+// Smallest size we accept for a name/address line on a 300 DPI fax. Below it
+// the text is still drawn inside its field (see fitFontSize) but pre-flight R02
+// fails so a person shortens the input.
+const ADDRESS_MIN_FONT_SIZE = 6;
+// Form 5472's text fields carry an 8pt default appearance (/DA). Part I lines
+// 1a and the city line keep that size unless their text would overflow.
+const FORM5472_DEFAULT_FONT_SIZE = 8;
 
 export class NeedsReviewError extends Error {
   readonly name = "NeedsReviewError";
@@ -311,7 +323,7 @@ export class NeedsReviewError extends Error {
 // overstates the period the reported figures cover.
 //
 // Only the year the dissolution actually falls in is short. A multi-year
-// (DIIRSP catch-up) package that ends with a final year still has ordinary,
+// (late catch-up) package that ends with a final year still has ordinary,
 // complete years before it, and those must keep 12/31 — hence the year match.
 // Read in UTC because the stored value is a date-only instant (UTC midnight);
 // local getters would slide it a day backwards on a west-of-UTC host.
@@ -336,7 +348,7 @@ export function periodEndFor(f: Pick<Filing, "isFinalReturn" | "dissolvedAt">, y
 // months of existence that never happened, and would contradict Form 5472 line
 // 1m (date incorporated) on the same page.
 //
-// Only the FORMATION year gets the late start. In a multi-year DIIRSP catch-up
+// Only the FORMATION year gets the late start. In a multi-year late catch-up
 // the years after formation are ordinary years that really do begin Jan 1 —
 // hence the year match, same shape as periodEndFor().
 // Read in UTC: the stored value is a date-only instant (UTC midnight), and local
@@ -454,14 +466,38 @@ function line1oCountry(f: Filing): { value: string; source: "llc_field" | "defau
     : { value: "United States", source: "default_us" };
 }
 
+// City and state/province are printed with display casing (see
+// displayCaseAddressPart): an all-lower-case "kowloon" prints "Kowloon", an
+// all-caps "NEW YORK" prints "New York", mixed case is left exactly as typed.
+// Every printed copy of the owner/LLC address goes through these accessors, so
+// the forms, the cover letter and the statements can never disagree.
+function ownerCityForPrint(f: Filing): string {
+  return displayCaseAddressPart(f.ownerAddressCity, "city");
+}
+
+function ownerStateForPrint(f: Filing): string {
+  return displayCaseAddressPart(f.ownerAddressState, "region");
+}
+
+// For single-line renderings only: a region that merely repeats the COUNTRY
+// ("Hong Kong" region in Hong Kong) would print "…, Hong Kong, Hong Kong", so
+// it is left out. A region equal to the CITY is kept — "New York, New York"
+// (city, state) are distinct components. Forms with their own state/province
+// box keep that field unchanged.
+function regionForLine(region: string, country: string | null | undefined): string {
+  const r = region.trim();
+  if (!r) return "";
+  return country && country.trim().toLocaleLowerCase("en-US") === r.toLocaleLowerCase("en-US") ? "" : r;
+}
+
 function structuredOwnerAddress(f: Filing): string | null {
   const parts = [
-    f.ownerAddressStreet,
-    f.ownerAddressCity,
-    f.ownerAddressState,
-    f.ownerAddressPostal,
-    f.ownerAddressCountry,
-  ].map((part) => part?.trim()).filter((part): part is string => !!part);
+    f.ownerAddressStreet?.trim(),
+    ownerCityForPrint(f),
+    regionForLine(ownerStateForPrint(f), f.ownerAddressCountry),
+    f.ownerAddressPostal?.trim(),
+    f.ownerAddressCountry?.trim(),
+  ].filter((part): part is string => !!part);
   return parts.length > 0 ? parts.join(", ") : null;
 }
 
@@ -490,14 +526,14 @@ function llcStreetAddressSource(f: Filing): string {
 
 function llcCityForForms(f: Filing): string {
   return f.llcAddressIsRegisteredAgentOnly === true
-    ? (f.ownerAddressCity?.trim() || "")
-    : f.llcCity;
+    ? ownerCityForPrint(f)
+    : displayCaseAddressPart(f.llcCity, "city");
 }
 
 function llcStateForForms(f: Filing): string {
   return f.llcAddressIsRegisteredAgentOnly === true
-    ? (f.ownerAddressState?.trim() || "")
-    : f.llcState;
+    ? ownerStateForPrint(f)
+    : displayCaseAddressPart(f.llcState, "region");
 }
 
 function llcZipForForms(f: Filing): string {
@@ -517,7 +553,8 @@ function llcCityStateZipForForms(f: Filing): string {
   const state = llcStateForForms(f);
   const zip = llcZipForForms(f);
   const country = llcCountryForForms(f);
-  return [city, [state, zip].filter(Boolean).join(" "), country].filter(Boolean).join(", ");
+  const stateShown = regionForLine(state, country);
+  return [city, [stateShown, zip].filter(Boolean).join(" "), country].filter(Boolean).join(", ");
 }
 
 function ownerStateForA17(f: Filing): string | null {
@@ -700,58 +737,72 @@ export function assertRelatedPartyCount(count: number) {
   }
 }
 
-async function fieldWidth(pdfName: string, fieldName: string): Promise<number> {
-  const pdf = await loadBlank(pdfName);
-  const field = pdf.getForm().getField(fieldName);
-  const rect = field.acroField.getWidgets()[0]?.getRectangle();
-  if (!rect) throw new Error(`Could not measure PDF field ${fieldName} in ${pdfName}.`);
-  return rect.width;
+type BlankCache = Map<string, Promise<PDFDocument>>;
+
+async function fieldBox(cache: BlankCache, pdfName: string, fieldName: string, label: string): Promise<FieldBox> {
+  let pending = cache.get(pdfName);
+  if (!pending) {
+    pending = loadBlank(pdfName);
+    cache.set(pdfName, pending);
+  }
+  return measureFieldBox(await pending, fieldName, label);
 }
 
-async function computePrintAddress(
+// The exact single line printed in a name-and-address field: "Name, address".
+function nameAndAddressLine(name: string, address: string): string {
+  const cleanName = toPdfSafe(name.trim().replace(/\s+/g, " "));
+  if (!cleanName) return address;
+  return address ? `${cleanName}, ${address}` : cleanName;
+}
+
+function tooLongMessage(label: string, printedAt: number): string {
+  return (
+    `${label} cannot fit its text at ${ADDRESS_MIN_FONT_SIZE}pt (printed at ${printedAt}pt to stay inside ` +
+    "the field); shorten the name or address"
+  );
+}
+
+// Choose one font size (and, if needed, the abbreviated spelling) for an
+// address that prints in several fields. `prefix` is printed in front of the
+// address on the same line (Form 5472 lines 4a and 8a print "Name, address");
+// `companions` are other lines that must share the font size (the Form 1120
+// name and city lines print at the street line's size). When nothing fits at
+// ADDRESS_MIN_FONT_SIZE the size drops further so the text still stays inside
+// every field, and `failures` names each overflowing field for pre-flight R02.
+function computePrintAddress(
   rawAddress: string,
-  widths: { field: string; width: number }[],
+  targets: FieldBox[],
   font: PDFFont,
-  prefix: string = "",
-): Promise<PrintAddressRecord> {
+  opts: { prefix?: string; companions?: FitLine[] } = {},
+): PrintAddressRecord {
   const original = toPdfSafe(rawAddress.trim().replace(/\s+/g, " "));
-  const firstPass = fittingFontSize(addressMeasureValue(original, prefix), widths, font);
-  if (firstPass !== null) {
-    return { value: original, fontSize: firstPass, abbreviated: false, checkedFieldWidths: widths, failures: [] };
+  const companions = opts.companions ?? [];
+  const checkedFieldWidths = [...targets, ...companions].map((box) => ({ field: box.field, width: box.width }));
+  const linesFor = (address: string): FitLine[] => [
+    ...targets.map((box) => ({
+      ...box,
+      text: opts.prefix !== undefined ? nameAndAddressLine(opts.prefix, address) : address,
+    })),
+    ...companions,
+  ];
+  const range = { max: ADDRESS_NORMAL_FONT_SIZE, min: ADDRESS_MIN_FONT_SIZE };
+
+  const firstPass = fitFontSize(linesFor(original), font, range);
+  if (firstPass.fits) {
+    return { value: original, fontSize: firstPass.fontSize, abbreviated: false, checkedFieldWidths, failures: [] };
   }
 
   const abbreviated = abbreviateAddress(original);
-  const secondPass = fittingFontSize(addressMeasureValue(abbreviated, prefix), widths, font);
-  if (secondPass !== null) {
-    return { value: abbreviated, fontSize: secondPass, abbreviated: abbreviated !== original, checkedFieldWidths: widths, failures: [] };
-  }
-
-  const narrowest = [...widths].sort((a, b) => a.width - b.width)[0];
+  const secondPass = fitFontSize(linesFor(abbreviated), font, range);
   return {
     value: abbreviated,
-    fontSize: ADDRESS_MIN_FONT_SIZE,
+    fontSize: secondPass.fontSize,
     abbreviated: abbreviated !== original,
-    checkedFieldWidths: widths,
-    failures: [`${narrowest.field} cannot fit address at ${ADDRESS_MIN_FONT_SIZE}pt`],
+    checkedFieldWidths,
+    failures: secondPass.fits
+      ? []
+      : secondPass.overflowing.map((label) => tooLongMessage(label, secondPass.fontSize)),
   };
-}
-
-function addressMeasureValue(address: string, prefix: string): string {
-  const cleanPrefix = prefix.trim();
-  return cleanPrefix ? `${cleanPrefix} ${address}` : address;
-}
-
-function fittingFontSize(
-  value: string,
-  widths: { field: string; width: number }[],
-  font: PDFFont,
-): number | null {
-  const minWidth = Math.min(...widths.map((w) => w.width));
-  for (let size = ADDRESS_NORMAL_FONT_SIZE; size >= ADDRESS_MIN_FONT_SIZE; size -= ADDRESS_FONT_STEP) {
-    const rounded = Math.round(size * 100) / 100;
-    if (font.widthOfTextAtSize(toPdfSafe(value), rounded) <= minWidth) return rounded;
-  }
-  return null;
 }
 
 function abbreviateAddress(value: string): string {
@@ -772,12 +823,22 @@ function abbreviateAddress(value: string): string {
   return replacements.reduce((text, [pattern, replacement]) => text.replace(pattern, replacement), value);
 }
 
+// Package-level print decisions shared by every year's forms.
+type PrintLayout = {
+  llc: PrintAddressRecord;
+  owner: PrintAddressRecord;
+  // Form 5472 Part I line 1a and the city/state/ZIP line. Undefined keeps the
+  // field's own 8pt default; a number is the shrunk size that fits the text.
+  form5472NameFontSize?: number;
+  form5472CityFontSize?: number;
+};
+
 function fillForm5472(
   pdf: PDFDocument,
   f: Filing,
   year: number,
   line1f: number,
-  printAddresses: { llc: PrintAddressRecord; owner: PrintAddressRecord },
+  printAddresses: PrintLayout,
   recorder: { form: string; writes: PdfFieldWrite[] },
 ): { line1oSource: "llc_field" | "default_us" } {
   const form = pdf.getForm();
@@ -801,9 +862,11 @@ function fillForm5472(
   setText(form, m.taxYearEndYear, String(year), recorder);
 
   // Part I — reporting corp
-  setText(form, m["1a_name"], f.llcName, recorder);
+  setText(form, m["1a_name"], f.llcName, recorder, { fontSize: printAddresses.form5472NameFontSize });
   setText(form, m["1_street"], printAddresses.llc.value, recorder, { fontSize: printAddresses.llc.fontSize });
-  setText(form, m["1_cityStateZip"], llcCityStateZipForForms(f), recorder);
+  setText(form, m["1_cityStateZip"], llcCityStateZipForForms(f), recorder, {
+    fontSize: printAddresses.form5472CityFontSize,
+  });
   setText(form, m["1b_ein"], f.llcEin, recorder);
   const yearData = f.yearData.find((y) => y.taxYear === year);
   setText(form, m["1c_totalAssets"], yearData ? yearData.totalAssetsYearEnd.toFixed(0) : "0", recorder);
@@ -839,9 +902,15 @@ function fillForm5472(
     check(form, m["1j_initialYear"], recorder);
   }
 
-  // Part II — direct 25% foreign shareholder (same as Part III for SMLLC)
-  setText(form, m["4a_nameAddress"], `${f.ownerName}\n${printAddresses.owner.value}`, recorder, {
+  // Part II — direct 25% foreign shareholder (same as Part III for SMLLC).
+  // Lines 4a and 8a are ONE text line tall, so name and address print on one
+  // line as "Name, address" at the package-level fitted size (see
+  // computePrintAddress). A newline here used to push the address out of the
+  // 8a box entirely and ran name and street together with no comma in 4a.
+  const ownerNameAndAddress = nameAndAddressLine(f.ownerName, printAddresses.owner.value);
+  setText(form, m["4a_nameAddress"], ownerNameAndAddress, recorder, {
     fontSize: printAddresses.owner.fontSize,
+    singleLine: true,
   });
   if (f.ownerItin) setText(form, m["4b1_usId"], f.ownerItin, recorder);
   if (f.ownerReferenceId) setText(form, m["4b2_referenceId"], f.ownerReferenceId, recorder);
@@ -853,8 +922,9 @@ function fillForm5472(
   // Part III — related party (same person for SMLLC)
   check(form, m.partIII_foreignPersonBox, recorder);
   check(form, m["8e_25pctShareholder"], recorder);
-  setText(form, m["8a_nameAddress"], `${f.ownerName}\n${printAddresses.owner.value}`, recorder, {
+  setText(form, m["8a_nameAddress"], ownerNameAndAddress, recorder, {
     fontSize: printAddresses.owner.fontSize,
+    singleLine: true,
   });
   if (f.ownerItin) setText(form, m["8b1_usId"], f.ownerItin, recorder);
   if (f.ownerReferenceId) setText(form, m["8b2_referenceId"], f.ownerReferenceId, recorder);
@@ -899,7 +969,7 @@ function fillForm5472(
 // IRS reviewer and a cross-form inconsistency vs. Form 5472 line 1c
 // (total assets) and 1m (date incorporated). Filling them mirrors the
 // 5472 data and removes the ambiguity at zero risk.
-// "Foreign-owned U.S. DE" is stamped across the top by stampDiirspHeader().
+// "Foreign-owned U.S. DE" is stamped across the top by stampForeignOwnedDeHeader().
 async function fillForm1120(
   pdf: PDFDocument,
   f: Filing,
@@ -949,7 +1019,7 @@ async function fillForm1120(
   }
 
   // Item E "Final return" belongs ONLY to the 1120 for the SHORT (dissolution)
-  // year. In a multi-year DIIRSP catch-up the earlier years are ordinary,
+  // year. In a multi-year late catch-up the earlier years are ordinary,
   // complete returns — ticking "Final return" on them would misdeclare a still-
   // live entity as closed for a year it was operating. periodEndFor() returns a
   // non-12/31 end exactly for the dissolution year, so it is the correct gate
@@ -1083,10 +1153,15 @@ function deriveSignerDeclarationBounds(bounds: SignerTitleColumnBounds): Package
   };
 }
 
+// Vertical advance from one statement table row to the next (10pt type).
+const TABLE_ROW_ADVANCE = 15;
+
 // Build a brand-new PDF with the Part V supporting statement table.
 async function buildSupportingStatement(
   f: Filing,
   year: number,
+  line1fDollars: number,
+  partVICentsAddedToLine1f: number,
   authoredDocuments: AuthoredDocumentRecord[],
 ): Promise<PDFDocument> {
   const yd = f.yearData.find((y) => y.taxYear === year);
@@ -1164,17 +1239,40 @@ async function buildSupportingStatement(
   draw("Pursuant to Treas. Reg. sec. 1.6038A-2(b)(3) and Part V instructions", { font: italic, size: 9 });
   y -= 22;
 
-  // ---- Opening paragraph ----
-  const opening =
-    "The following reportable transactions of the foreign-owned U.S. disregarded entity are " +
-    "reported pursuant to Part V of Form 5472. These transactions include capital contributions, " +
-    "distributions, loans, and owner-paid costs between the disregarded entity and its foreign owner.";
-  for (const line of wrapAtPx(opening, font, 10, CONTENT_W)) {
-    ensureSpace(14);
-    draw(line);
-    y -= 13;
+  const drawParagraph = (text: string, opts: { font?: typeof font } = {}) => {
+    for (const line of wrapAtPx(text, opts.font ?? font, 10, CONTENT_W)) {
+      ensureSpace(14);
+      draw(line, opts);
+      y -= 13;
+    }
+  };
+
+  // A year with no Part V rows and no "other transactions" note gets ONE clear
+  // sentence instead of an empty table, a $0 sub-total and a total heading that
+  // labels nothing. Line 1f can still be non-zero in that case when Part VI
+  // non-cash transfers are counted on it, so the sentence says so instead of $0.
+  const noPartVRows = allTx.length === 0;
+  const zeroStatement = noPartVRows && !otherNote;
+  if (zeroStatement) {
+    const sentence =
+      line1fDollars === 0
+        ? `There were no reportable transactions between ${f.llcName} and its foreign owner during ` +
+          `tax year ${year}; Form 5472 lines 1f and 1h are $0.`
+        : `There were no Part V reportable transactions between ${f.llcName} and its foreign owner during ` +
+          `tax year ${year}. The non-cash transfers listed in the attached Part VI statement are the amounts ` +
+          "included on Form 5472 lines 1f and 1h.";
+    drawParagraph(sentence);
+  } else {
+    // ---- Opening paragraph ----
+    const opening = noPartVRows
+      ? `No capital contributions, distributions, loans or owner-paid costs between ${f.llcName} and its ` +
+        `foreign owner are reported for tax year ${year}. Other transactions are described below.`
+      : "The following reportable transactions of the foreign-owned U.S. disregarded entity are " +
+        "reported pursuant to Part V of Form 5472. These transactions include capital contributions, " +
+        "distributions, loans, and owner-paid costs between the disregarded entity and its foreign owner.";
+    drawParagraph(opening);
+    y -= 8;
   }
-  y -= 8;
 
   // ---- Table renderer ----
   const drawTableHeader = () => {
@@ -1208,7 +1306,10 @@ async function buildSupportingStatement(
     const savedY = y;
     y = rowTop;
     draw(amount, { x: COL_AMOUNT_RIGHT, size: 10, align: "right" });
-    y = savedY - 8;
+    // Advance a full line (plus a little air) below the row's last description
+    // line. This used to be 8pt, less than the 10pt type, so two rows in the
+    // same table were drawn on top of each other.
+    y = savedY - TABLE_ROW_ADVANCE;
   };
 
   const drawTableTotal = (label: string, amountCents: number) => {
@@ -1232,7 +1333,9 @@ async function buildSupportingStatement(
   };
 
   const drawTransactionSection = (heading: string, totalLabel: string, rows: ReportableTx[]) => {
-    ensureSpace(22);
+    // Keep the section heading on the same page as its table header and first
+    // row, so a heading never sits alone at the foot of a page.
+    ensureSpace(22 + 18 + 16);
     draw(heading, { font: bold, size: 11 });
     y -= 16;
     drawTableHeader();
@@ -1270,27 +1373,22 @@ async function buildSupportingStatement(
       loansToOwnerTx,
     );
   }
-  if (allTx.length === 0) {
-    drawTableTotal(`Total Part V Rows, Tax Year ${year}`, 0);
+  // ---- Grand total ---- (heading first, then the total it labels; skipped
+  // for the one-sentence no-transactions statement above)
+  if (!zeroStatement) {
+    ensureSpace(36);
+    draw("Total Reportable Transactions (Part V)", { font: bold, size: 11 });
+    y -= 16;
+    const grandTotal = partVTotalCents(allTx) / 100;
+    drawParagraph(
+      `Total Part V reportable transactions, tax year ${year}: ${formatMoney(grandTotal)} ` +
+        (partVICentsAddedToLine1f > 0
+          ? "(included on Form 5472 lines 1f and 1h together with the non-cash transfers in the attached Part VI statement)."
+          : "(entered on Form 5472 lines 1f and 1h)."),
+      { font: bold },
+    );
+    y -= 8;
   }
-
-  // ---- Grand total ----
-  ensureSpace(36);
-  draw("Total Reportable Transactions (Part V)", { font: bold, size: 11 });
-  y -= 16;
-  const grandTotal = partVTotalCents(allTx) / 100;
-  for (const line of wrapAtPx(
-    `Total Part V reportable transactions, tax year ${year}: ${formatMoney(grandTotal)} ` +
-      "(entered on Form 5472 lines 1f and 1h).",
-    bold,
-    10,
-    CONTENT_W,
-  )) {
-    ensureSpace(14);
-    draw(line, { font: bold });
-    y -= 13;
-  }
-  y -= 8;
 
   // ---- Other transactions disclosure ----
   if (otherNote) {
@@ -1306,17 +1404,20 @@ async function buildSupportingStatement(
   }
 
   // ---- Closing ----
+  // Skipped when the year has neither rows nor a note: "other than the
+  // transactions described above" would refer to nothing, and the one-sentence
+  // statement already says there were none.
   const closing = otherNote
     ? `The transactions above (capital contributions, distributions, and the items disclosed) ` +
       `constitute all reportable transactions between the reporting corporation and the foreign ` +
       `related party for tax year ${year}.`
-    : "Other than the transactions described above, there were no other reportable transactions of " +
-      `the type described in Treas. Reg. sec. 1.482-1(i)(7) during tax year ${year}.`;
-  ensureSpace(16);
-  for (const line of wrapAtPx(closing, font, 10, CONTENT_W)) {
-    ensureSpace(14);
-    draw(line);
-    y -= 13;
+    : zeroStatement
+      ? ""
+      : "Other than the transactions described above, there were no other reportable transactions of " +
+        `the type described in Treas. Reg. sec. 1.482-1(i)(7) during tax year ${year}.`;
+  if (closing) {
+    ensureSpace(16);
+    drawParagraph(closing);
   }
 
   y -= 18;
@@ -1434,7 +1535,7 @@ async function buildPartVIStatement(
     const savedY = y;
     y = rowTop;
     draw(formatWholeDollars(transfer.fairMarketValueCents), { x: COL_AMOUNT_RIGHT, align: "right" });
-    y = savedY - 8;
+    y = savedY - TABLE_ROW_ADVANCE;
   }
 
   y -= 18;
@@ -1581,6 +1682,30 @@ async function buildCoverLetter(
   return pdf;
 }
 
+// The no-U.S.-income facts for the cause section, ONLY as far as the intake
+// supports them (the statement is signed under penalties of perjury):
+//  - hasUsSourceIncome === false is the customer's own answer to "Did the LLC
+//    earn any U.S.-source income?" — asked once per filing, so it covers every
+//    year in the package. null (never asked) or true adds nothing.
+//  - "no U.S. income tax was withheld" follows from having no U.S.-source
+//    income, unless a stale usTaxWithheld === true says otherwise.
+//  - "no U.S. income tax was due" also needs the LLC not to have been trading
+//    (a U.S. trade or business can create effectively connected income even
+//    without U.S.-source investment income), so it is left out whenever the
+//    year's transactions mention customers, sales or payment processors.
+// Avoid the pre-flight A26 phrases ("no U.S. income", "no tax owed"); they are
+// only checked when hasUsSourceIncome is true, but keep the wording distinct.
+function noUsIncomeSentence(f: Filing, year: number): string | null {
+  if (f.hasUsSourceIncome !== false) return null;
+  const withheld = f.usTaxWithheld !== true;
+  const due = !yearTrades(f, year);
+  const opening = `The Company had no U.S.-source income in tax year ${year}`;
+  if (due && withheld) return `${opening}, and no U.S. income tax was due or withheld for that year.`;
+  if (due) return `${opening}, and no U.S. income tax was due for that year.`;
+  if (withheld) return `${opening}, and no U.S. income tax was withheld for that year.`;
+  return `${opening}.`;
+}
+
 async function buildReasonableCause(
   f: Filing,
   year: number,
@@ -1672,9 +1797,16 @@ async function buildReasonableCause(
   // and citizen of Canadian" — demonym in a country-name context).
   const rcsOwnerCitizenship = normalizeCountry(f.ownerCountryCitizenship);
   const rcsOwnerTaxResidence = normalizeCountry(f.ownerCountryTaxResidence);
-  const stateName = stateNameForProse(f.llcState);
+  const stateName = stateNameForProse(displayCaseAddressPart(f.llcState, "region"));
+  // "is a Hong Kong permanent resident" / "is a citizen and resident of X" /
+  // "is a citizen of X and a resident of Y" — see ownerNationalityClause() for
+  // why Hong Kong and Macau are never called a country of citizenship.
+  const nationality = ownerNationalityClause(rcsOwnerCitizenship, rcsOwnerTaxResidence);
+  const ownerIntro = nationality
+    ? `${f.ownerName} ("the Owner") ${nationality}. The Owner formed ${f.llcName} `
+    : `${f.ownerName} ("the Owner") formed ${f.llcName} `;
   drawParagraph(
-    `${f.ownerName} ("the Owner") is a resident and citizen of ${rcsOwnerCitizenship}. The Owner formed ${f.llcName} ` +
+    ownerIntro +
       `("the Company") on ${incDateStr} in ${stateName} as a single-member LLC. The Company is a ` +
       "foreign-owned U.S. disregarded entity for U.S. federal income tax purposes. " +
       operationsParagraph(f),
@@ -1689,13 +1821,22 @@ async function buildReasonableCause(
   // ---- 2. Cause of the delinquency ----
   drawParagraph("2. Cause of the Delinquency", { font: bold, size: 11 });
   space(6);
+  const noUsIncome = noUsIncomeSentence(f, year);
   if (fallback) {
     drawParagraph(fallback);
+    if (noUsIncome) {
+      space(6);
+      drawParagraph(noUsIncome);
+    }
   } else if (missingAnswers) {
     drawParagraph(`Reasonable cause answers missing for ${year}.`);
   } else {
     if (why) drawParagraph(why);
     space(6);
+    if (noUsIncome) {
+      drawParagraph(noUsIncome);
+      space(6);
+    }
     // The wizard no longer asks when the owner learned of the requirement;
     // older filings may still carry that answer.
     drawParagraph(
@@ -1709,7 +1850,9 @@ async function buildReasonableCause(
   drawParagraph("3. Filing History and Notice Status", { font: bold, size: 11 });
   space(6);
   drawParagraph(
-    `The Owner is tax-domiciled in ${rcsOwnerTaxResidence} and is submitting the tax year ${year} return with the accompanying Form 5472 package.`,
+    rcsOwnerTaxResidence
+      ? `The Owner is tax-domiciled in ${countryForProse(rcsOwnerTaxResidence)} and is submitting the tax year ${year} return with the accompanying Form 5472 package.`
+      : `The Owner is submitting the tax year ${year} return with the accompanying Form 5472 package.`,
   );
   if (yd?.rcsNoIrsNoticeConfirmed === true) {
     drawParagraph("No IRS notice has been received regarding this return.");
@@ -1775,7 +1918,8 @@ function wrapParagraph(text: string, width: number): string[] {
 }
 
 // Build the full filing package as a single PDF Uint8Array.
-// Order: cover letter, RCS (if DIIRSP), then per year: 1120, 5472, supporting statement.
+// Order: cover letter, then per year: 1120, 5472, Part V statement, Part VI
+// statement (if any), reasonable cause statement (late years only).
 export type SignatureLocation = {
   label: string;       // e.g. "Cover letter"
   page: number;        // 1-based page number in the merged PDF
@@ -1833,35 +1977,103 @@ export async function generatePackage(
   }
   const measurePdf = await PDFDocument.create();
   const measureFont = await measurePdf.embedFont(StandardFonts.Helvetica);
-  const llcAddressWidths: { field: string; width: number }[] = [
-    { field: form5472FieldMap["1_street"], width: await fieldWidth("f5472.pdf", form5472FieldMap["1_street"]) },
+  const blanks: BlankCache = new Map();
+
+  // LLC address block. The street prints in Form 5472 line 1 and in every
+  // selected Form 1120 revision; the 1120 name and city lines print at the
+  // street's size (one size per header), so they are fitted together with it.
+  const llcStreetTargets: FieldBox[] = [
+    await fieldBox(blanks, "f5472.pdf", form5472FieldMap["1_street"], "Form 5472 Part I street line"),
   ];
+  const llc1120Companions: FitLine[] = [];
   for (const selected of Array.from(selected1120.values())) {
     const map = form1120MapForRevision(selected.revision);
-    const field = form1120StreetField(map);
-    llcAddressWidths.push({ field, width: await fieldWidth(selected.fileName, field) });
+    const form = `Form 1120 (${selected.revision} revision)`;
+    llcStreetTargets.push(await fieldBox(blanks, selected.fileName, form1120StreetField(map), `${form} street line`));
+    const companionTexts: Array<[string, string, string]> =
+      "1_street" in map
+        ? [
+            [map["1a_name"], f.llcName, "name line"],
+            [map["1_city"], llcCityForForms(f), "city"],
+            [map["1_state"], llcStateForForms(f), "state or province"],
+            [map["1_country"], llcCountryForForms(f), "country"],
+            [map["1_zip"], llcZipForForms(f), "ZIP or postal code"],
+          ]
+        : [
+            [map["1a_name"], f.llcName, "name line"],
+            [map["1_cityStateCountryZip"], llcCityStateZipForForms(f), "city/state/country/ZIP line"],
+          ];
+    for (const [field, text, what] of companionTexts) {
+      llc1120Companions.push({
+        ...(await fieldBox(blanks, selected.fileName, field, `${form} ${what}`)),
+        text: toPdfSafe(text),
+      });
+    }
   }
-  const ownerAddressWidths = [
-    { field: form5472FieldMap["4a_nameAddress"], width: await fieldWidth("f5472.pdf", form5472FieldMap["4a_nameAddress"]) },
-    { field: form5472FieldMap["8a_nameAddress"], width: await fieldWidth("f5472.pdf", form5472FieldMap["8a_nameAddress"]) },
-  ];
-  const ownerAddress = ownerAddressForForms(f);
-  const llcPrintAddress = await computePrintAddress(llcStreetAddressSource(f), llcAddressWidths, measureFont);
-  const ownerPrintAddress = await computePrintAddress(ownerAddress, ownerAddressWidths, measureFont, f.ownerName);
+  const llcPrintAddress = computePrintAddress(llcStreetAddressSource(f), llcStreetTargets, measureFont, {
+    companions: llc1120Companions,
+  });
 
-  // Per-year delinquency. A bundled package can mix late years with a timely one
-  // (e.g. a DIIRSP catch-up that ends with a final short year whose deadline
-  // hasn't passed yet). The DIIRSP header stamp, the cover letter's late-filing
-  // language, and the reasonable cause statement are signed under penalties of
-  // perjury, so they must apply to the delinquent years ONLY — declaring a
-  // timely year "delinquent" would be a false statement. Use the same shared
-  // rule the server used to set isDiirsp, so the two never disagree.
+  // Form 5472 Part I line 1a and city line keep the form's 8pt default and
+  // only shrink when the text would not fit; failures join the LLC address
+  // record so pre-flight R02 reports them.
+  const fit5472Line = async (field: string, text: string, label: string): Promise<number | undefined> => {
+    const box = await fieldBox(blanks, "f5472.pdf", field, label);
+    const fit = fitFontSize([{ ...box, text: toPdfSafe(text) }], measureFont, {
+      max: FORM5472_DEFAULT_FONT_SIZE,
+      min: ADDRESS_MIN_FONT_SIZE,
+    });
+    if (!fit.fits) llcPrintAddress.failures.push(tooLongMessage(label, fit.fontSize));
+    return fit.fontSize < FORM5472_DEFAULT_FONT_SIZE ? fit.fontSize : undefined;
+  };
+  const form5472NameFontSize = await fit5472Line(form5472FieldMap["1a_name"], f.llcName, "Form 5472 line 1a");
+  const form5472CityFontSize = await fit5472Line(
+    form5472FieldMap["1_cityStateZip"],
+    llcCityStateZipForForms(f),
+    "Form 5472 Part I city/state/ZIP line",
+  );
+
+  // Owner: lines 4a and 8a each print "Name, address" on one line.
+  const ownerTargets: FieldBox[] = [
+    await fieldBox(blanks, "f5472.pdf", form5472FieldMap["4a_nameAddress"], "Form 5472 line 4a"),
+    await fieldBox(blanks, "f5472.pdf", form5472FieldMap["8a_nameAddress"], "Form 5472 line 8a"),
+  ];
+  const ownerPrintAddress = computePrintAddress(ownerAddressForForms(f), ownerTargets, measureFont, {
+    prefix: f.ownerName,
+  });
+  const printLayout: PrintLayout = {
+    llc: llcPrintAddress,
+    owner: ownerPrintAddress,
+    form5472NameFontSize,
+    form5472CityFontSize,
+  };
+
+  // Per-year delinquency, decided year by year. A bundled package can mix late
+  // years with timely ones (a catch-up whose latest year is still inside its
+  // Form 7004 window, or a final short year whose deadline hasn't passed). The
+  // reasonable cause statement is signed under penalties of perjury, so it is
+  // attached to the delinquent years ONLY — declaring a timely year
+  // "delinquent" would be a false statement. A timely year gets no RCS page and
+  // no late-filing wording anywhere (the cover letter carries none for any year).
   //
-  // Form 7004 gate: a timely extension moves a year's deadline six months, so
-  // an extended year is NOT delinquent even though the calendar says its
-  // original date has passed. One 7004 covers ONE tax year, and on a multi-year
-  // catch-up the only year it can still rescue is the latest one — so the facts
-  // are passed for max(taxYears) and null for every earlier year.
+  // A year is late only when the package date (`finalisedAt`, the date printed
+  // on the cover letter; production callers pass nothing, so it is the moment
+  // of generation) falls after that year's due date. The due date comes from
+  // the shared rule — isYearDelinquent → effectiveDueDateUtc → filingDueRule →
+  // form1120StatutoryDue in src/lib/form1120DueDate.ts — so the June-30 rule,
+  // the short final year (dissolution) rule, the §7503 weekend/holiday roll and
+  // the day-inclusive deadline are the same ones the wizard and the server use.
+  //
+  // Which year the Form 7004 answer belongs to (checked against the intake,
+  // 2026-10-05): the wizard asks "Did you file Form 7004 ... for this tax
+  // year?" ONCE per filing and stores a single extensionFiled /
+  // extensionTransmittedAt pair. FilingWizard.tsx (`latestSelectedYear`,
+  // `extensionAnswerYearRef`) ties that answer to max(taxYears) and clears it
+  // whenever the latest selected year changes, and the PATCH route clears the
+  // same fields server-side. One 7004 covers ONE tax year, and on a multi-year
+  // catch-up only the latest year can still be inside its extended window — so
+  // the facts are applied to max(taxYears) and to no earlier year. A valid
+  // extension adds 6 months (7 for a pre-2026 June year) to that year only.
   const dissolvedForDeadline = f.isFinalReturn ? f.dissolvedAt : null;
   const maxTaxYear = f.taxYears.length > 0 ? Math.max(...f.taxYears) : null;
   const extension: ExtensionFacts = {
@@ -1869,7 +2081,7 @@ export async function generatePackage(
     transmittedAt: f.extensionTransmittedAt ?? null,
   };
   const delinquentYears = f.taxYears.filter((y) =>
-    isYearDelinquent(y, dissolvedForDeadline, y === maxTaxYear ? extension : null),
+    isYearDelinquent(y, dissolvedForDeadline, y === maxTaxYear ? extension : null, finalisedAt),
   );
 
   // "Not sure" about a Form 7004 asserts NEITHER timeliness nor delinquency.
@@ -1899,9 +2111,10 @@ export async function generatePackage(
     const partVCents = partVTotalCents(partVRows);
     const partVICentsAddedToLine1f = nonCashCentsForLine1f(nonCashTransfers);
     const line1f = roundedCentsToDollars(partVCents + partVICentsAddedToLine1f);
-    // Per-year, not per-package: only THIS year's forms carry the DIIRSP banner,
-    // and only if this year is actually late. A timely year bundled alongside
-    // late ones gets the plain header.
+    // Per-year, not per-package: only a year that is actually late gets the
+    // reasonable cause statement. Every year's forms carry the same plain
+    // "Foreign-owned U.S. DE" header — no procedure label (house position: no
+    // DIIRSP reference on generated documents).
     const yearDelinquent = delinquentYears.includes(year);
 
     const form1120Selection = selected1120.get(year);
@@ -1912,8 +2125,7 @@ export async function generatePackage(
       form: `1120-${year}`,
       writes: f1120Writes,
     });
-    if (yearDelinquent) await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE — DIIRSP");
-    else await stampDiirspHeader(f1120, "FOREIGN-OWNED U.S. DE");
+    await stampForeignOwnedDeHeader(f1120, FOREIGN_OWNED_DE_HEADER);
     // Short-period annotation. A year is short when it starts after Jan 1 (the
     // LLC was formed mid-year) OR ends before Dec 31 (it was dissolved
     // mid-year), so this stamp tracks BOTH bounds and lands exactly where at
@@ -1952,15 +2164,11 @@ export async function generatePackage(
 
     const f5472 = await loadBlank("f5472.pdf");
     const f5472Writes: PdfFieldWrite[] = [];
-    const f5472Result = fillForm5472(f5472, f, year, line1f, {
-      llc: llcPrintAddress,
-      owner: ownerPrintAddress,
-    }, {
+    const f5472Result = fillForm5472(f5472, f, year, line1f, printLayout, {
       form: `5472-${year}`,
       writes: f5472Writes,
     });
-    if (yearDelinquent) await stampDiirspHeader(f5472, "FOREIGN-OWNED U.S. DE — DIIRSP");
-    else await stampDiirspHeader(f5472, "FOREIGN-OWNED U.S. DE");
+    await stampForeignOwnedDeHeader(f5472, FOREIGN_OWNED_DE_HEADER);
     const f5472StartPage = out.getPageCount() + 1;
     await copyAll(out, f5472);
     pageOrder.push({
@@ -1972,7 +2180,7 @@ export async function generatePackage(
     // Form 5472 itself does not require a separate signature — the Form 1120
     // signature covers it (5472 is an attachment to 1120).
 
-    const supporting = await buildSupportingStatement(f, year, authoredDocuments);
+    const supporting = await buildSupportingStatement(f, year, line1f, partVICentsAddedToLine1f, authoredDocuments);
     const supportingStartPage = out.getPageCount() + 1;
     await copyAll(out, supporting);
     pageOrder.push({
@@ -2048,7 +2256,7 @@ export async function generatePackage(
       form1120: {
         fields: f1120Writes,
         stampedTexts: [
-          yearDelinquent ? "FOREIGN-OWNED U.S. DE — DIIRSP" : "FOREIGN-OWNED U.S. DE",
+          FOREIGN_OWNED_DE_HEADER,
           ...(isInitialYear || isFinalYear
             ? [
                 `Short tax year: ${periodStart}/${year} - ${periodEnd}/${year} ${
@@ -2090,6 +2298,7 @@ export async function generatePackage(
       llcEin: toPdfSafe(f.llcEin),
       llcPrintAddress,
       ownerPrintAddress,
+      ownerStreet: toPdfSafe(ownerStreetForForms(f).trim()) || null,
       formationDate: f.llcDateIncorporated ? new Date(f.llcDateIncorporated).toISOString() : null,
       dissolutionDate: f.isFinalReturn && f.dissolvedAt ? new Date(f.dissolvedAt).toISOString() : null,
       taxYears: recordYears,

@@ -14,7 +14,16 @@ export const IRS_MAIL_ADDRESS_DISPLAY_LINES = [
 export const IRS_MAIL_ADDRESS_DISPLAY_SINGLE_LINE = `${IRS_MAIL_ADDRESS_DISPLAY_LINES[0]}, ${IRS_MAIL_ADDRESS_DISPLAY_LINES[1]} ${IRS_MAIL_ADDRESS_DISPLAY_LINES[2]}, ${IRS_MAIL_ADDRESS_DISPLAY_LINES[3]}`;
 export const COVER_LETTER_ENCLOSURE_PHRASE = "pro forma Form 1120 with Form 5472 attached";
 export const FAX_RENDER_DPI = 300;
-export const GENERATOR_VERSION = "2.0.0";
+// 2.1.0 (2026-10-05, review of a real 3-year package): Form 5472 lines 4a/8a
+// print "Name, address" on one fitted line; header is "Foreign-owned U.S. DE"
+// (no DIIRSP suffix); RCS owner nationality wording (Hong Kong / Macau
+// permanent resident) and no-U.S.-income facts; per-year late treatment uses
+// finalisedAt as "now"; $0 Part V statement wording; city/state display casing.
+export const GENERATOR_VERSION = "2.1.0";
+// The IRS-required marking written across the top of the pro forma Form 1120
+// (Form 5472 instructions, "Foreign-owned U.S. DE"); also stamped on Form 5472.
+// House position: no "DIIRSP" suffix or other procedure label on the forms.
+export const FOREIGN_OWNED_DE_HEADER = "Foreign-owned U.S. DE";
 
 export function assertIrsJuratUntouched() {
   if (IRS_JURAT_UNTOUCHED !== true) {

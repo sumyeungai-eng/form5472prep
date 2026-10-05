@@ -75,6 +75,10 @@ export async function runPreflight(
   checkA26(record, result);
   checkA27(record, result);
   checkR02(record, result);
+  checkA31(record, result);
+  checkW31(record, result);
+  checkW32(record, result);
+  checkW33(record, result);
   await checkA28(pdfBytes, result);
   await checkA30(pdfBytes, record, result);
 
@@ -578,6 +582,101 @@ function checkA27(record: PackageRecord, result: MutableResult) {
 function checkR02(record: PackageRecord, result: MutableResult) {
   for (const failure of [...record.llcPrintAddress.failures, ...record.ownerPrintAddress.failures]) {
     fail(result, "R02", failure);
+  }
+}
+
+// A31: house position — no generated page names DIIRSP (the Delinquent
+// International Information Return Submission Procedures) as a live procedure:
+// not the header stamps on the IRS forms and not any authored document.
+function checkA31(record: PackageRecord, result: MutableResult) {
+  const pattern = /\bDIIRSP\b|Delinquent International Information Return/i;
+  for (const year of record.taxYears) {
+    if (year.form1120.stampedTexts.some((line) => pattern.test(line))) {
+      fail(result, "A31", `Tax year ${year.taxYear}: Form 1120 header stamp references DIIRSP.`);
+    }
+  }
+  for (const doc of record.authoredDocuments) {
+    const text = [record.llcName, record.ownerName].reduce(
+      (acc, name) => stripLiteral(acc, name),
+      doc.lines.join("\n"),
+    );
+    if (pattern.test(text)) {
+      fail(result, "A31", `${doc.kind}${doc.taxYear ? ` ${doc.taxYear}` : ""} references DIIRSP.`);
+    }
+  }
+}
+
+// ── Customer-data warnings (non-blocking) ───────────────────────────────────
+// The generator prints what the customer entered; these flag answers that are
+// valid but often wrong, so the reviewer confirms them before faxing.
+
+// Individual taxpayer ID names by tax-residence country, for the W31 hint.
+const FTIN_EXAMPLES: Record<string, string> = {
+  "hong kong": "HKID number",
+  macau: "Macau resident identity card number",
+  china: "Resident Identity Card number",
+  taiwan: "National ID number",
+  singapore: "NRIC or FIN",
+  india: "PAN",
+  japan: "My Number",
+  "south korea": "resident registration number",
+  australia: "Tax File Number",
+  "new zealand": "IRD number",
+  canada: "Social Insurance Number",
+  "united kingdom": "National Insurance number or UTR",
+  germany: "tax identification number (Steuer-ID)",
+  brazil: "CPF",
+  mexico: "RFC",
+};
+
+function ftinExample(residence: string): string {
+  const known = FTIN_EXAMPLES[residence.trim().toLowerCase()];
+  return known ? `${residence.trim()}: ${known}` : "Hong Kong: HKID number";
+}
+
+// W31: owner has no foreign tax ID — lines 4b(3) and 8b(3) print "None".
+function checkW31(record: PackageRecord, result: MutableResult) {
+  const noFtin = record.taxYears.find((year) => {
+    const ftin = textValue(year.form5472.fields, form5472FieldMap["4b3_ftin"]).trim();
+    return year.ownerHasFtin === false || /^none$/i.test(ftin);
+  });
+  if (!noFtin) return;
+  const residence = textValue(noFtin.form5472.fields, form5472FieldMap["4e_taxResidence"]);
+  warn(
+    result,
+    "W31",
+    `Owner foreign tax ID is "None" on Form 5472 lines 4b(3) and 8b(3). Most countries issue individual tax IDs ` +
+      `(e.g. ${ftinExample(residence)}); confirm with the client before filing.`,
+  );
+}
+
+// W32: owner street address has no digit at all — no flat, floor, unit or
+// street number — so IRS mail may not reach the owner.
+function checkW32(record: PackageRecord, result: MutableResult) {
+  const street = record.ownerStreet?.trim();
+  if (!street || /\d/.test(street)) return;
+  warn(
+    result,
+    "W32",
+    `Owner street address "${street}" has no flat, floor, unit or street number. Confirm the flat/floor/unit ` +
+      "with the client so IRS mail reaches the owner.",
+  );
+}
+
+// W33: the LLC's formation year reports $0 of Part V transactions. Formation
+// costs the owner paid personally are usually reportable contributions.
+function checkW33(record: PackageRecord, result: MutableResult) {
+  const formationYear = record.formationDate ? new Date(record.formationDate).getUTCFullYear() : null;
+  if (formationYear === null || Number.isNaN(formationYear)) return;
+  for (const year of record.taxYears) {
+    if (year.taxYear !== formationYear || year.partVTotalCents !== 0) continue;
+    warn(
+      result,
+      "W33",
+      `Tax year ${year.taxYear} includes the LLC's formation date but reports $0 of Part V transactions. ` +
+        "Formation costs the owner paid personally (state filing fee, registered agent fee) are usually " +
+        "reportable capital contributions; confirm with the client.",
+    );
   }
 }
 

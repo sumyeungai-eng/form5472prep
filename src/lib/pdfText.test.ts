@@ -7,7 +7,7 @@ import {
   reportableTransactionSchema, statementTextSchema, makeYearDataSchema, nonCashTransferSchema, makeOwnerPaidCostsSchema,
 } from "./schemas";
 import { filingCompletionIssues, type CompletionInput } from "./completeness";
-import { setText, stampDiirspHeader, stampShortPeriod } from "./pdf/fillForm";
+import { setText, stampForeignOwnedDeHeader, stampShortPeriod } from "./pdf/fillForm";
 import { generateFaxReceiptPdf } from "./pdf/faxReceipt";
 import { parsePlacements, stampPlacements } from "./pdf/stampPlacements";
 import { validateReasonableCauseYears } from "@/components/wizard/ReasonableCauseStep";
@@ -132,7 +132,7 @@ describe("legacy PDF paths", () => {
   it("sanitizes both free-text stamps", async () => {
     const pdf = await PDFDocument.create();
     pdf.addPage();
-    await expect(stampDiirspHeader(pdf, mixedAddress)).resolves.toBeUndefined();
+    await expect(stampForeignOwnedDeHeader(pdf, mixedAddress)).resolves.toBeUndefined();
     await expect(stampShortPeriod(pdf, "王小明", "Łukasz", "Nguyễn")).resolves.toBeUndefined();
   });
   it("renders a fax receipt including Unicode in measured paragraphs", async () => {

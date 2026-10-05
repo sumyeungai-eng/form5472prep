@@ -173,6 +173,7 @@ describe("runPreflight", () => {
     ["A26", (r: PackageRecord) => { r.taxYears[0].status = "late"; r.authoredDocuments.push({ kind: "reasonableCauseStatement", taxYear: 2026, lines: ["tax year 2026", "customer payments", AUTHORED_DOC_SIGNATURE_HEADING] }); r.taxYears[0].trades = false; }],
     ["A27", (r: PackageRecord) => { r.authoredDocuments.find((d) => d.kind === "partVStatement")!.pages = [["Tax Year 2026"]]; }],
     ["R02", (r: PackageRecord) => { r.llcPrintAddress.failures = ["field cannot fit address"]; }],
+    ["A31", (r: PackageRecord) => { r.taxYears[0].form1120.stampedTexts = ["FOREIGN-OWNED U.S. DE — DIIRSP"]; }],
     ["A30", (r: PackageRecord) => { r.generatorVersion = "0.0.0"; }],
   ] as const) {
     it(`${id} fails on a broken record and passes on a good record`, async () => {
@@ -186,6 +187,77 @@ describe("runPreflight", () => {
       expect(bad.failures.some((f) => f.id === id)).toBe(true);
     });
   }
+
+  it("A31 fails when an authored document names the delinquent-submission procedure", async () => {
+    const record = clone(goodRecord);
+    record.authoredDocuments[0].lines.push("Submitted under the Delinquent International Information Return Submission Procedures.");
+    const result = await runPreflight(record, await goodPdfBytes(record));
+    expect(result.failures.some((f) => f.id === "A31")).toBe(true);
+  });
+
+  it("A31 ignores DIIRSP inside the LLC name", async () => {
+    const record = clone(goodRecord);
+    record.llcName = "DIIRSP Holdings LLC";
+    record.authoredDocuments[0].lines.push("Re: pro forma Form 1120 with Form 5472 attached for DIIRSP Holdings LLC");
+    const result = await runPreflight(record, await goodPdfBytes(record));
+    expect(result.failures.some((f) => f.id === "A31")).toBe(false);
+  });
+
+  it("W31 warns, without failing, when the owner's foreign tax ID is None", async () => {
+    const good = await runPreflight(clone(goodRecord), await goodPdfBytes(goodRecord));
+    expect(good.warnings.some((w) => w.id === "W31")).toBe(false);
+
+    const record = clone(goodRecord);
+    record.taxYears[0].ownerHasFtin = false;
+    for (const field of [form5472FieldMap["4b3_ftin"], form5472FieldMap["8b3_ftin"]]) {
+      record.taxYears[0].form5472.fields.find((w) => w.field === field)!.value = "None";
+    }
+    record.taxYears[0].form5472.fields.push({ form: "5472-2026", field: form5472FieldMap["4e_taxResidence"], value: "Hong Kong" });
+    const result = await runPreflight(record, await goodPdfBytes(record));
+    expect(result.failures.some((f) => f.id === "A18" || f.id === "W31")).toBe(false);
+    expect(result.warnings.filter((w) => w.id === "W31")).toEqual([
+      expect.objectContaining({ message: expect.stringContaining("e.g. Hong Kong: HKID number") }),
+    ]);
+  });
+
+  it("W32 warns when the owner's street line has no flat, floor or street number", async () => {
+    const withNumber = clone(goodRecord);
+    withNumber.ownerStreet = "88 Queen Road Central, Suite 1200";
+    expect((await runPreflight(withNumber, await goodPdfBytes(withNumber))).warnings.some((w) => w.id === "W32")).toBe(false);
+
+    const record = clone(goodRecord);
+    record.ownerStreet = "Exam House, Sample Court, Yau Tong";
+    const result = await runPreflight(record, await goodPdfBytes(record));
+    expect(result.failures).toEqual([]);
+    expect(result.warnings.find((w) => w.id === "W32")?.message).toContain("flat/floor/unit");
+
+    const legacy = clone(goodRecord);
+    delete legacy.ownerStreet;
+    expect((await runPreflight(legacy, await goodPdfBytes(legacy))).warnings.some((w) => w.id === "W32")).toBe(false);
+  });
+
+  it("W33 warns when the formation year reports $0 of Part V transactions", async () => {
+    const good = await runPreflight(clone(goodRecord), await goodPdfBytes(goodRecord));
+    expect(good.warnings.some((w) => w.id === "W33")).toBe(false);
+
+    const record = clone(goodRecord);
+    record.taxYears[0].partVRows = [];
+    record.taxYears[0].partVTotalCents = 0;
+    record.taxYears[0].partVTotalRounded = 0;
+    record.taxYears[0].line1f = 0;
+    record.taxYears[0].line1h = 0;
+    const result = await runPreflight(record, await goodPdfBytes(record));
+    expect(result.failures.filter((f) => f.id === "W33")).toEqual([]);
+    expect(result.warnings.find((w) => w.id === "W33")?.message).toContain(
+      "Formation costs the owner paid personally (state filing fee, registered agent fee)",
+    );
+
+    const notFormationYear = clone(record);
+    notFormationYear.formationDate = "2020-03-01T00:00:00.000Z";
+    expect(
+      (await runPreflight(notFormationYear, await goodPdfBytes(notFormationYear))).warnings.some((w) => w.id === "W33"),
+    ).toBe(false);
+  });
 
   it("A16 emits W16, not a failure, when line 1o defaults to United States", async () => {
     const record = clone(goodRecord);

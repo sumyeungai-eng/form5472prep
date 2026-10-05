@@ -76,10 +76,25 @@ describe("render-check", () => {
           { page: form1120Page, value: pkg.record.llcPrintAddress.value, label: `${name} ${year.taxYear} 1120 address` },
           { page: form5472Page, value: filing.ownerName, label: `${name} ${year.taxYear} 5472 owner` },
           { page: form5472Page, value: pkg.record.ownerPrintAddress.value, label: `${name} ${year.taxYear} 5472 owner address` },
+          // Lines 4a (page 1) and 8a (page 2) print "Name, address" on one line.
+          {
+            page: form5472Page,
+            value: `${filing.ownerName}, ${pkg.record.ownerPrintAddress.value}`,
+            label: `${name} ${year.taxYear} 5472 line 4a name and address`,
+          },
+          {
+            page: form5472Page + 1,
+            value: `${filing.ownerName}, ${pkg.record.ownerPrintAddress.value}`,
+            label: `${name} ${year.taxYear} 5472 line 8a name and address`,
+          },
           { page: statementPage, value: `Tax Year ${year.taxYear}`, label: `${name} ${year.taxYear} statement year` },
           { page: statementPage, value: filing.llcName, label: `${name} ${year.taxYear} statement LLC name` },
           { page: statementPage, value: filing.llcEin, label: `${name} ${year.taxYear} statement EIN` },
-          { page: statementPage, value: money(year.partVTotalRounded), label: `${name} ${year.taxYear} Part V statement total` },
+          // A year with no Part V rows prints one "no reportable transactions"
+          // sentence instead of a $0.00 total (generator 2.1.0).
+          year.partVRows.length === 0
+            ? { page: statementPage, value: "reportable transactions between", label: `${name} ${year.taxYear} Part V no-transactions sentence` }
+            : { page: statementPage, value: money(year.partVTotalRounded), label: `${name} ${year.taxYear} Part V statement total` },
         );
         if (year.nonCashTransfers.length > 0) {
           const partVIPage = findPage(pkg.record, "Part VI Statement", year.taxYear);

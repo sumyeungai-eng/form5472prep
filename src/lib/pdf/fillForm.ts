@@ -20,13 +20,19 @@ export function setText(
   name: string,
   value: string,
   recorder?: PdfWriteRecorder,
-  opts?: { fontSize?: number },
+  opts?: { fontSize?: number; singleLine?: boolean },
 ) {
   try {
     const field = form.getField(name);
     if (field instanceof PDFTextField) {
       // Preserve layout separators; record the exact text written to the PDF.
       value = value.split(/\r\n|\r|\n/).map(toPdfSafe).join("\n");
+      // Some IRS fields are flagged multiline although they are one text line
+      // tall (Form 5472 line 8a). pdf-lib top-aligns multiline text, so a
+      // one-line value would sit low and be clipped; the single-line layout
+      // centres it vertically inside the box instead. The field is flattened
+      // straight after filling, so the flag never reaches the filed PDF.
+      if (opts?.singleLine && field.isMultiline()) field.disableMultiline();
       field.setText(value);
       if (opts?.fontSize) field.setFontSize(opts.fontSize);
       recorder?.writes.push({ form: recorder.form, field: name, value });
@@ -54,8 +60,8 @@ export function check(
   }
 }
 
-// Stamp DIIRSP header text on page 1, top of form.
-export async function stampDiirspHeader(
+// Stamp the red "Foreign-owned U.S. DE" header text on page 1, top of form.
+export async function stampForeignOwnedDeHeader(
   pdf: PDFDocument,
   text: string,
   opts?: { x?: number; y?: number },
@@ -71,14 +77,14 @@ export async function stampDiirspHeader(
   });
 }
 
-// Stamp the SHORT tax-year period just under the DIIRSP header line. A short
+// Stamp the SHORT tax-year period just under the red header line. A short
 // year covers less than 01/01 → 12/31 — because the LLC was formed mid-year
 // (initial return), dissolved mid-year (final return), or both — and the 1120
 // header's own "tax year beginning / ending" cells are an unmapped AcroForm
-// field, so we free-draw the period the same way stampDiirspHeader draws its
+// field, so we free-draw the period the same way stampForeignOwnedDeHeader draws its
 // banner. Placed ~12pt below the header (y 778 → 766) so the two stamps never
 // overlap; black (not the header's red) because this is a factual period
-// statement, not a filing-procedure flag.
+// statement, not a header flag.
 //
 // `suffix` names WHY the year is short (e.g. "(initial and final return)") so
 // the stamp agrees with whichever item E boxes the caller ticked. Pass "" to

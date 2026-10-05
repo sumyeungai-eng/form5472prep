@@ -201,4 +201,70 @@ export const F9: FilingFixture = {
   yearData: [year(2025, [tx("2025-01-05", "Owner capital contribution", 2_500_00, "contribution")])],
 };
 
-export const fixtures = { F1, F2, F3, F4, F5, F6, F7, F8 };
+// F10 mirrors the shape of a real 2026-10-05 review package (synthetic names
+// and street only): Hong Kong owner whose street line has no flat/floor/street
+// number, city typed in lower case ("kowloon"), no postal code, no FTIN, LLC
+// using the owner's address (registered-agent-only), formed 2023-01-17 (so its
+// 2023 period starts 01/17), three years filed together with $0 of
+// transactions, no U.S.-source income, and a Form 7004 answer for the latest
+// year (2025). Generated on `reviewFinalisedAt`, 2023 and 2024 are late; 2025
+// is timely under the extension (due 2026-10-15) and late without it (due
+// 2026-04-15).
+export const reviewFinalisedAt = new Date("2026-10-05T16:00:00.000Z");
+
+const ZERO_CONFIRMED = {
+  contributions: true,
+  distributions: true,
+  loansFromOwner: true,
+  loansToOwner: true,
+  ownerPaidCosts: true,
+} as const;
+
+function zeroYear(taxYear: number) {
+  return year(taxYear, [], {
+    totalAssetsYearEnd: 0,
+    zeroConfirmations: { ...ZERO_CONFIRMED },
+    rcsWhyMissed:
+      "The Owner was not aware that a foreign-owned single-member LLC must file Form 5472 with a pro forma Form 1120, even when no U.S. tax is owed.",
+    rcsNoIrsNoticeConfirmed: true,
+  });
+}
+
+export const F10: FilingFixture = {
+  ...base,
+  llcName: "Example Harbour Software LLC",
+  llcAddress: "30 N Gould St Ste R",
+  llcCity: "Sheridan",
+  llcState: "WY",
+  llcZip: "82801",
+  llcCountryBusiness: "Hong Kong",
+  llcAddressIsRegisteredAgentOnly: true,
+  priorForm5472Filed: "no",
+  hasUsSourceIncome: false,
+  usTaxWithheld: null,
+  llcDateIncorporated: new Date("2023-01-17T00:00:00.000Z"),
+  llcBusinessActivity: "Software / SaaS / app development",
+  llcBusinessCode: "541512",
+  ownerName: "Mei Ling Example",
+  ownerAddress: "Example House, Sample Court, Yau Tong, kowloon, Hong Kong, Hong Kong",
+  ownerAddressStreet: "Example House, Sample Court, Yau Tong",
+  ownerAddressCity: "kowloon",
+  ownerAddressState: "Hong Kong",
+  ownerAddressPostal: null,
+  ownerAddressCountry: "Hong Kong",
+  ownerNoPostalCode: true,
+  ownerHasFtin: false,
+  ownerFtin: "None",
+  ownerCountryCitizenship: "Hong Kong",
+  ownerCountryTaxResidence: "Hong Kong",
+  ownerCountryBusiness: "Hong Kong",
+  ownerReferenceId: "EXAMPLEHK2023",
+  taxYears: [2023, 2024, 2025],
+  extensionFiled: "yes",
+  extensionTransmittedAt: null,
+  yearData: [zeroYear(2023), zeroYear(2024), zeroYear(2025)],
+};
+
+export const F10NoExtension: FilingFixture = { ...F10, extensionFiled: "no" };
+
+export const fixtures = { F1, F2, F3, F4, F5, F6, F7, F8, F10 };

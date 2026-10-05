@@ -772,8 +772,8 @@ export function TransactionsReview({
                 </legend>
                 <p className="mt-1 text-xs text-slate-500">
                   {isFormationYear
-                    ? `This includes the state filing fee, registered agent or bank deposit you paid yourself when forming the LLC in ${y.taxYear}.`
-                    : "Includes paying the LLC's state filing fee or registered agent yourself."}
+                    ? `This includes LLC costs you paid personally when forming the LLC in ${y.taxYear} — the state filing fee, registered agent fee and any annual report fee — and any bank deposit you made.`
+                    : "Includes LLC costs you paid personally, such as the state filing fee, registered agent fee or annual report fee."}
                 </p>
                 <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <label className={RADIO_LABEL}>
