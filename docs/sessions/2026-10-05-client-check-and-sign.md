@@ -53,3 +53,9 @@
 - **Owner:** walk one real filing through the flow: upload reviewed PDF → email → check → sign; also try Request a change.
 - **Owner/legal:** the IRS signature line on pro forma 1120 page 1 is the owner's. Confirm whether the package is signed by placing the client's drawn signature (place-signature) or by an accountant offline. Older code comments said "accountant signs offline", and that would need the client's authority (Form 2848 limits). Customer copy is now neutral ("authorize us to submit by fax").
 - **Follow-up:** the change-request note isn't surfaced as a badge on the admin filings list (it's in the thread + email).
+
+## Follow-up (same day): who signs the 1120 — RESOLVED
+Owner confirmed that the pro forma 1120 is signed by placing the **client's own drawn signature** with the admin "Place customer signature" tool. Staff never sign for the client.
+- **Sign page:** now tells the client their signature goes on the owner's signature line of Form 1120 page 1.
+- **Admin "Upload already-signed PDF":** relabelled as being only for a PDF the client signed themselves outside the portal.
+- **Code comments:** updated to match.

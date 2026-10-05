@@ -299,8 +299,10 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
           (1) In-app placement tool: drop the customer's drawn signature on
               the unsigned PDF via click-to-place. Only available if the
               customer drew their signature in the portal.
-          (2) Upload externally-signed PDF: accountant signs offline (Adobe
-              Acrobat, print + scan, etc.) and uploads the finished file. */}
+          (2) Upload already-signed PDF: the CLIENT signed outside the portal
+              (wet-ink scan or their own e-signature) and sent it to us.
+          The pro forma 1120 signature is always the owner's own — staff
+          never sign it on the client's behalf (owner rule, 2026-10-05). */}
       <div className="pt-2 border-t border-slate-100 space-y-2">
         <p className="text-xs text-slate-500">Sign the package</p>
         <div className="flex flex-wrap gap-2">
@@ -343,7 +345,7 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
           </label>
         </div>
         <p className="text-xs text-slate-400">
-          The upload path is for a finished, already-signed PDF: it populates{" "}
+          Only the client signs the Form 1120. Upload a PDF here only if the client signed it themselves outside the portal. It populates{" "}
           <code className="font-mono">signedPdfKey</code> + bumps status to{" "}
           <code className="font-mono">SIGNED_UPLOADED</code> so the fax button enables.
         </p>

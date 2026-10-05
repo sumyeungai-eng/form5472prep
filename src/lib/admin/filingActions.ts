@@ -1723,7 +1723,8 @@ export async function runFilingAction(
     }
 
     case "uploadSignedPdf": {
-      // Admin/accountant uploads the externally-signed final PDF. Body:
+      // Admin uploads a final PDF the CLIENT signed outside the portal (staff
+      // never sign the 1120 for the client). Body:
       // { action: "uploadSignedPdf", pdfBase64: "<base64-encoded PDF>" }.
       // Stores at the same signedPdfKey path so the existing "Send fax to
       // IRS" button works downstream without further changes.

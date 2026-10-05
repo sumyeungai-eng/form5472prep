@@ -270,8 +270,9 @@ export function SignClient({
               {busy ? "Saving…" : "Confirm & sign"}
             </button>
             <p className="mt-2 text-xs text-slate-400 text-center">
-              By signing, you confirm the forms above are correct and authorize us to submit them to the
-              IRS by fax.
+              Your signature is placed on the owner&apos;s signature line of the pro forma Form 1120 (page 1).
+              By signing, you confirm the forms above are correct and authorize us to submit them to the IRS
+              by fax.
             </p>
           </section>
         </div>
