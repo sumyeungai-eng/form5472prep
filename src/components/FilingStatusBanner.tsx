@@ -99,8 +99,8 @@ function viewFor(status: string): View {
         body: "text-violet-800",
         icon: "text-violet-600",
         iconNode: <FileCheck2 className="h-5 w-5" />,
-        headline: "Signature received — accountant reviewing",
-        detail: "Thanks for signing. Our accountant is reviewing your filing now. We'll fax it to the IRS Ogden PIN Unit and email you the timestamped receipt as soon as it's sent.",
+        headline: "Signature received — preparing to fax",
+        detail: "Thanks for checking and signing. We're preparing the final package and will fax it to the IRS Ogden PIN Unit, then email you the timestamped receipt as soon as it's sent.",
       };
     case "SIGNED_UPLOADED":
       return {

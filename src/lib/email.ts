@@ -726,7 +726,11 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   });
 }
 
-// ---------- 2b. Review approved email ----------
+// ---------- 2b. Check-and-sign email ----------
+//
+// Sent when admin uploads the accountant-reviewed PDF. The magic link logs the
+// client in and lands on /filings/{id}/sign, where they check the exact PDF,
+// confirm it's correct, and sign — or ask for a change instead.
 
 export async function sendReadyToSignEmail(args: {
   email: string;
@@ -736,17 +740,36 @@ export async function sendReadyToSignEmail(args: {
   taxYears: number[];
   portalLink: string;
   brand?: EmailBrand;
+  // True when the client had signed an earlier version: we uploaded a
+  // corrected package, so their earlier signature no longer applies.
+  resign?: boolean;
 }) {
   const salutation = firstNameFrom(args.recipientName) ?? "there";
   const yearsLabel = args.taxYears.join(", ");
   const llcLine = args.llcName ?? "your filing";
+  const yearsSuffix = yearsLabel ? `, tax year${args.taxYears.length === 1 ? "" : "s"} ${yearsLabel}` : "";
   const signLink = portalLinkWithNext(args.portalLink, `/filings/${args.filingId}/sign`);
+  const subject = args.resign
+    ? "Updated forms: please check and sign again"
+    : "Please check and sign your forms";
+  const intro = args.resign
+    ? `We've updated your forms for ${llcLine}${yearsSuffix} after review. Because the package changed, we need you to check the new version and sign it again.`
+    : `A qualified accountant has reviewed your forms for ${llcLine}${yearsSuffix}. Before we fax them to the IRS, please check that everything is correct.`;
+  const checks = [
+    "LLC name, EIN and address",
+    "Your name, address and foreign tax ID",
+    "The amounts and the tax year(s)",
+  ];
   const bodyHtml = `
     <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      A qualified accountant has reviewed your forms for <strong>${escapeHtml(llcLine)}</strong>${yearsLabel ? `, tax year${args.taxYears.length === 1 ? "" : "s"} ${escapeHtml(yearsLabel)}` : ""}.
+      ${escapeHtml(intro)}
     </p>
+    <p style="margin:0 0 8px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Please check:</p>
+    <ul style="margin:0 0 14px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
+      ${checks.map((c) => `<li>${escapeHtml(c)}</li>`).join("")}
+    </ul>
     <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      Your forms are ready to sign digitally. After you sign, we prepare the package for faxing to the IRS.
+      If everything is correct, sign digitally on the same page. If something needs changing, tell us there (or reply to this email) and we'll fix it before anything is sent.
     </p>`;
 
   return sendEmail({
@@ -754,20 +777,21 @@ export async function sendReadyToSignEmail(args: {
     to: args.email,
     fromName: args.brand?.name,
     replyTo: args.brand?.replyTo,
-    subject: "Your forms are ready to sign",
+    subject,
     text: customerText(
       salutation,
-      `A qualified accountant has reviewed your forms for ${llcLine}${yearsLabel ? `, tax year${args.taxYears.length === 1 ? "" : "s"} ${yearsLabel}` : ""}.\n\n` +
-      `Your forms are ready to sign digitally. After you sign, we prepare the package for faxing to the IRS.\n\n` +
-      `Sign your forms: ${signLink}`,
+      `${intro}\n\n` +
+      `Please check:\n${checks.map((c) => `- ${c}`).join("\n")}\n\n` +
+      `If everything is correct, sign digitally on the same page. If something needs changing, tell us there (or reply to this email) and we'll fix it before anything is sent.\n\n` +
+      `Check and sign your forms: ${signLink}`,
       undefined,
       args.brand,
     ),
     html: customerShell({
-      heading: "Your forms are ready to sign",
+      heading: args.resign ? "Please check your updated forms" : "Please check and sign your forms",
       salutation,
       bodyHtml,
-      cta: { label: "Sign my forms", url: signLink },
+      cta: { label: "Check & sign my forms", url: signLink },
       brand: args.brand,
     }),
   });

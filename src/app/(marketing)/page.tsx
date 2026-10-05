@@ -781,8 +781,8 @@ function PartnerPromo() {
         </h2>
         <p className="mt-4 text-slate-600 max-w-2xl mx-auto">
           Prepare Form 5472 filings for every client from one partner dashboard.
-          Your client signs with a secure link you send, our tax accountant
-          reviews the package, and each filing costs exactly the same as it
+          Our tax accountant reviews each package, your client checks and signs
+          it with a secure link, and each filing costs exactly the same as it
           does for a direct customer.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">

@@ -180,15 +180,30 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         setMsg({ kind: "err", text: "Please pick a .pdf file." });
         return;
       }
+      if (
+        hasCustomerSignature &&
+        !window.confirm(
+          "The client has already signed an earlier version. Uploading this reviewed PDF sets that signature aside and emails them to check and sign the new version. Continue?",
+        )
+      ) {
+        return;
+      }
       if (file.size > 10 * 1024 * 1024) {
         setMsg({ kind: "err", text: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max 10 MB.` });
         return;
       }
       const pdfBase64 = await fileToBase64(file);
-      await callApi(
-        { action: "uploadReviewedPdf", pdfBase64 },
-        `Reviewed package uploaded (${(file.size / 1024).toFixed(0)} KB). Customer can sign it now.`,
-      );
+      await callApi({ action: "uploadReviewedPdf", pdfBase64 }, (body) => {
+        const size = `${(file.size / 1024).toFixed(0)} KB`;
+        if (body.emailSent === false) {
+          const why = typeof body.emailError === "string" && body.emailError.trim()
+            ? body.emailError.trim()
+            : "Unknown email error";
+          return `Reviewed PDF uploaded (${size}), but the client was NOT emailed: ${why}`;
+        }
+        const to = typeof body.emailTo === "string" ? body.emailTo : userEmail ?? "the client";
+        return `Reviewed PDF uploaded (${size}). ${to} has been emailed a link to check and sign it.`;
+      });
     } catch (e) {
       setMsg({ kind: "err", text: e instanceof Error ? e.message : "Upload failed" });
     } finally {
@@ -207,16 +222,6 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
       ? "This filing was already DELIVERED to the IRS. Faxing again sends the IRS a second copy of the package. Only do this if the IRS asked for it."
       : "A fax for this filing is already on its way or waiting for delivery confirmation. Sending again may give the IRS a duplicate — check Telnyx first.";
   const refaxReasonReady = refaxReasonIsValid(refaxReason);
-  const approvalBlockedByStatus = ["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(currentStatus);
-  const approvalDisabledReason = !hasGeneratedPdf
-    ? "Generate the filing package first."
-    : approvalBlockedByStatus
-      ? "This filing has already been signed, faxed, or confirmed."
-      : !preflightAllowsSignature
-        ? "Pre-flight has failed and no override is recorded."
-        : !userEmail
-          ? "No customer email on file."
-          : null;
 
   return (
     <div className="space-y-4">
@@ -275,40 +280,18 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
       )}
 
       <div className="pt-2 border-t border-slate-100 space-y-2">
-        <p className="text-xs text-slate-500">Review approval</p>
+        <p className="text-xs text-slate-500">Client check &amp; signature</p>
         {reviewApprovedAt ? (
           <p className="text-sm text-emerald-700">
-            ✓ Approved for signature by {reviewApprovedBy ?? "unknown admin"} at {reviewApprovedAt}.
+            ✓ Sent to the client to check and sign by {reviewApprovedBy ?? "unknown admin"} at {reviewApprovedAt}.
           </p>
         ) : (
-          <p className="text-sm text-slate-500">Not approved for customer signature yet.</p>
+          <p className="text-sm text-slate-500">
+            Not sent to the client yet. Upload the reviewed PDF (under &ldquo;Change the package&rdquo;) — that emails the client a link to check it and sign.
+          </p>
         )}
-        {/* Past signing there is nothing to approve — hide the button
-            instead of showing a disabled one with a warning. */}
-        {!approvalBlockedByStatus && (
-          <>
-            <ActionButton
-              disabled={pending || uploading !== null || !!approvalDisabledReason}
-              onClick={() =>
-                callApi({ action: "approveForSignature" }, (body) => {
-                  if (body.emailSent === false) {
-                    const message = typeof body.emailError === "string" && body.emailError.trim()
-                      ? body.emailError.trim()
-                      : "Unknown email error";
-                    return `Approved, but the email to the customer failed: ${message}`;
-                  }
-                  return "Customer can sign now. Ready-to-sign email sent.";
-                })
-              }
-              tooltip={approvalDisabledReason ?? "Approve the generated package and email the customer to sign."}
-              primary={!reviewApprovedAt}
-            >
-              Approve for signature
-            </ActionButton>
-            {approvalDisabledReason && (
-              <p className="text-xs text-amber-700">{approvalDisabledReason}</p>
-            )}
-          </>
+        {!preflightAllowsSignature && (
+          <p className="text-xs text-amber-700">Pre-flight has failed and no override is recorded — the reviewed PDF can&apos;t be sent yet.</p>
         )}
       </div>
 
@@ -316,8 +299,10 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
           (1) In-app placement tool: drop the customer's drawn signature on
               the unsigned PDF via click-to-place. Only available if the
               customer drew their signature in the portal.
-          (2) Upload externally-signed PDF: accountant signs offline (Adobe
-              Acrobat, print + scan, etc.) and uploads the finished file. */}
+          (2) Upload already-signed PDF: the CLIENT signed outside the portal
+              (wet-ink scan or their own e-signature) and sent it to us.
+          The pro forma 1120 signature is always the owner's own — staff
+          never sign it on the client's behalf (owner rule, 2026-10-05). */}
       <div className="pt-2 border-t border-slate-100 space-y-2">
         <p className="text-xs text-slate-500">Sign the package</p>
         <div className="flex flex-wrap gap-2">
@@ -360,7 +345,7 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
           </label>
         </div>
         <p className="text-xs text-slate-400">
-          The upload path is for a finished, already-signed PDF: it populates{" "}
+          Only the client signs the Form 1120. Upload a PDF here only if the client signed it themselves outside the portal. It populates{" "}
           <code className="font-mono">signedPdfKey</code> + bumps status to{" "}
           <code className="font-mono">SIGNED_UPLOADED</code> so the fax button enables.
         </p>
@@ -578,7 +563,7 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
                   pending || uploading !== null ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-50 cursor-pointer"
                 }`}
               >
-                {uploading === "reviewed" ? "Uploading reviewed package…" : "Upload reviewed package…"}
+                {uploading === "reviewed" ? "Uploading reviewed PDF…" : "Upload reviewed PDF & send to client…"}
               </span>
               <input
                 type="file"
@@ -596,7 +581,7 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
           </label>
         </div>
         <p className="max-w-prose text-xs text-slate-400">
-          Upload reviewed package: the customer sees this file on their portal. Their saved signature is kept — use Place customer signature to stamp it onto this version before faxing.
+          Upload reviewed PDF: the client is emailed a magic link to check this exact file and sign it (or ask for a change). Any signature they drew on an earlier version is set aside, so they always sign the version that gets faxed.
         </p>
       </div>
 

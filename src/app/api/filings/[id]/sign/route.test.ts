@@ -26,7 +26,7 @@ vi.mock("@/lib/prisma", () => ({
   prisma: {
     filing: {
       findUnique: db.findUnique,
-      update: db.update,
+      updateMany: db.update,
     },
   },
 }));
@@ -36,12 +36,13 @@ import { POST } from "./route";
 
 const REVIEW_PENDING_MESSAGE = "Your forms are still being reviewed. We will email you when they are ready to sign.";
 
-function request() {
+function request(extra: Record<string, unknown> = { confirmed: true, pdfKey: "unsigned.pdf" }) {
   return new Request("https://example.test/api/filings/filing_1/sign", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       pngDataUrl: `data:image/png;base64,${Buffer.alloc(300, 1).toString("base64")}`,
+      ...extra,
     }),
   });
 }
@@ -72,7 +73,7 @@ describe("POST /api/filings/[id]/sign review gate", () => {
     session.getOwnedFiling.mockResolvedValue({ id: "filing_1" });
     session.partnerOwnsFiling.mockResolvedValue(null);
     storage.put.mockResolvedValue(undefined);
-    db.update.mockResolvedValue({ id: "filing_1" });
+    db.update.mockResolvedValue({ count: 1 });
   });
 
   it("blocks signing when the package is not approved and signing has not started", async () => {
@@ -97,7 +98,7 @@ describe("POST /api/filings/[id]/sign review gate", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body).toMatchObject({ ok: true, signatureKey: "filing_1_signature.png" });
+    expect(body).toMatchObject({ ok: true, signatureKey: expect.stringMatching(/^filing_1_signature_\d+\.png$/) });
     expect(storage.put).toHaveBeenCalled();
     expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ status: "SIGNATURE_PENDING" }),
@@ -116,5 +117,41 @@ describe("POST /api/filings/[id]/sign review gate", () => {
     expect(res.status).toBe(200);
     expect(storage.put).toHaveBeenCalled();
     expect(db.update).toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/filings/[id]/sign check confirmation", () => {
+  beforeEach(() => {
+    session.getOwnedFiling.mockReset();
+    session.partnerOwnsFiling.mockReset();
+    db.findUnique.mockReset();
+    db.update.mockReset();
+    storage.put.mockReset();
+    session.getOwnedFiling.mockResolvedValue({ id: "filing_1" });
+    session.partnerOwnsFiling.mockResolvedValue(null);
+    db.findUnique.mockResolvedValue({ ...baseFiling, reviewApprovedAt: new Date("2026-10-05T10:00:00Z") });
+  });
+
+  it("refuses a signature for a PDF version the client was not shown", async () => {
+    const res = await POST(request({ confirmed: true, pdfKey: "old_version.pdf" }), { params: { id: "filing_1" } });
+    expect(res.status).toBe(409);
+    expect(storage.put).not.toHaveBeenCalled();
+  });
+
+  it("asks for a reload when the PDF changed between read and write", async () => {
+    storage.put.mockResolvedValue(undefined);
+    db.update.mockResolvedValueOnce({ count: 0 });
+    const res = await POST(request(), { params: { id: "filing_1" } });
+    expect(res.status).toBe(409);
+    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ generatedPdfKey: "unsigned.pdf" }),
+    }));
+  });
+
+  it("refuses to sign unless the client confirmed everything is correct", async () => {
+    const res = await POST(request({}), { params: { id: "filing_1" } });
+    expect(res.status).toBe(400);
+    expect(storage.put).not.toHaveBeenCalled();
+    expect(db.update).not.toHaveBeenCalled();
   });
 });

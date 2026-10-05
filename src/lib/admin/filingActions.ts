@@ -606,9 +606,18 @@ export async function runFilingAction(
       // Regenerate the PDF fresh against the latest generator code, store to
       // R2, and attach to the email — so a stale PDF (e.g. from a previous
       // template version) is never what the customer receives.
+      // Never once the package has been reviewed or signed: rebuilding would
+      // silently replace the accountant-reviewed upload (or the version the
+      // client signed) with an unreviewed one. The email then goes without
+      // the PDF; the client sees the current package in their portal.
+      const packageLocked =
+        !!filing.reviewApprovedAt ||
+        !!filing.signaturePngKey ||
+        !!filing.signedPdfKey ||
+        ["SIGNATURE_PENDING", "SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status);
       let pdfBytes: Uint8Array | null = null;
       let signatures: SignatureLocation[] = [];
-      try {
+      if (!packageLocked) try {
         const full = await prisma.filing.findUnique({
           where: { id: filing.id },
           select: packageFilingSelect,
@@ -1083,6 +1092,9 @@ export async function runFilingAction(
         data: {
           generatedPdfKey: key,
           signedPdfKey: null,
+          // The client's drawn signature was for the old PDF too.
+          signaturePngKey: null,
+          signedAt: null,
           validationStatus: "pending",
           validationCheckedAt: null,
           preflightStatus: preflight.ok ? "passed" : "failed",
@@ -1626,16 +1638,21 @@ export async function runFilingAction(
       await put(key, bytes, "application/pdf");
       // Repoint generatedPdfKey so sign, preview, place-signature, and fax paths
       // read the reviewed package; the timestamp avoids stale caches and keeps
-      // the original artifact in R2. Customer-signs-first flow: when their
-      // drawn signature is already on file, return to SIGNATURE_PENDING (admin
-      // stamps the saved signature onto this version next), not PDF_GENERATED.
-      const reviewedStatus = filing.signaturePngKey ? "SIGNATURE_PENDING" : "PDF_GENERATED";
+      // the original artifact in R2.
+      //
+      // Owner rule (2026-10-05): uploading the reviewed PDF is THE step that
+      // hands the package to the client. The client must check and sign the
+      // exact version they will be filed with, so any signature drawn on an
+      // earlier version is set aside (the PNG stays in storage and in the
+      // change log) and the client is emailed to check and sign again.
+      const reviewedStatus = "PDF_GENERATED";
       const approvedAt = new Date();
       await prisma.filing.update({
         where: { id: filing.id },
         data: {
           generatedPdfKey: key,
           signedPdfKey: null,
+          signaturePngKey: null,
           signedAt: null,
           validationStatus: "pending",
           validationCheckedAt: null,
@@ -1653,36 +1670,61 @@ export async function runFilingAction(
         before: {
           generatedPdfKey: filing.generatedPdfKey,
           signedPdfKey: filing.signedPdfKey,
+          signaturePngKey: filing.signaturePngKey,
           status: filing.status,
         },
         after: {
           generatedPdfKey: key,
           signedPdfKey: null,
+          signaturePngKey: null,
           status: reviewedStatus,
           reviewApprovedAt: approvedAt,
           reviewApprovedBy: ctx.approver ?? ctx.adminId,
         },
         reason: ctx.reason,
       });
-      if (!filing.signaturePngKey && filing.user) {
-        try {
-          await sendReadyToSignEmail({
-            email: filing.user.email,
-            recipientName: filing.ownerName,
-            filingId: filing.id,
-            llcName: filing.llcName,
-            taxYears: filing.taxYears,
-            portalLink: makeMagicLink(filing.user.id),
-          });
-        } catch (err) {
-          console.error("[uploadReviewedPdf] ready-to-sign email failed", err);
-        }
+      if (!filing.user) {
+        return {
+          ok: true,
+          key,
+          bytes: bytes.length,
+          emailSent: false,
+          emailError: "No customer email on this filing yet (partner clients get their link from the partner).",
+        };
       }
-      return { ok: true, key, bytes: bytes.length };
+      let brand: Awaited<ReturnType<typeof brandForFiling>> = null;
+      try {
+        brand = await brandForFiling(filing.id);
+      } catch (err) {
+        console.error("[uploadReviewedPdf] brand lookup failed", err);
+      }
+      try {
+        await sendReadyToSignEmail({
+          email: filing.user.email,
+          recipientName: filing.ownerName,
+          filingId: filing.id,
+          llcName: filing.llcName,
+          taxYears: filing.taxYears,
+          portalLink: makeMagicLink(filing.user.id),
+          brand: brand ?? undefined,
+          resign: !!filing.signaturePngKey,
+        });
+      } catch (err) {
+        console.error("[uploadReviewedPdf] check-and-sign email failed", err);
+        return {
+          ok: true,
+          key,
+          bytes: bytes.length,
+          emailSent: false,
+          emailError: err instanceof Error ? err.message : String(err),
+        };
+      }
+      return { ok: true, key, bytes: bytes.length, emailSent: true, emailTo: filing.user.email };
     }
 
     case "uploadSignedPdf": {
-      // Admin/accountant uploads the externally-signed final PDF. Body:
+      // Admin uploads a final PDF the CLIENT signed outside the portal (staff
+      // never sign the 1120 for the client). Body:
       // { action: "uploadSignedPdf", pdfBase64: "<base64-encoded PDF>" }.
       // Stores at the same signedPdfKey path so the existing "Send fax to
       // IRS" button works downstream without further changes.
