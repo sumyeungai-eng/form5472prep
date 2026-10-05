@@ -40,6 +40,8 @@ const STATIC_PAGE_UPDATED: Record<string, string> = {
   "/compare": "2026-10-04",
   // Statistics page; mirrors STATS_LAST_REVIEWED in src/lib/form5472-stats.ts.
   "/form-5472-statistics": "2026-10-05",
+  // Price comparison; mirrors PRICES_CHECKED_ON in src/lib/provider-prices.ts.
+  "/compare/form-5472-filing-services": "2026-10-05",
 };
 
 const TOOL_PAGE_REVIEWED: Record<string, string> = {
@@ -100,6 +102,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/compare`, lastModified: at("/compare"), changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/press`, lastModified: at("/press"), changeFrequency: "yearly", priority: 0.4 },
     { url: `${base}/form-5472-statistics`, lastModified: at("/form-5472-statistics"), changeFrequency: "monthly", priority: 0.7 },
+    {
+      url: `${base}/compare/form-5472-filing-services`,
+      lastModified: at("/compare/form-5472-filing-services"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
     // Service pages: written 2026-10-01; bump this date only on real edits.
     ...serviceSitemapEntries(base, new Date("2026-10-01T00:00:00Z")),
   ];
