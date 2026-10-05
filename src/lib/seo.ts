@@ -7,6 +7,10 @@ export const SITE_NAME = "Form5472 Prep";
 export const SITE_URL = env.appUrl; // always the www form
 // IRS Ogden PIN Unit fax line for Form 5472 — NOT our phone; never emit as Organization.telephone
 export const IRS_OGDEN_FAX = "+1-855-887-7737";
+// IRS Ogden PIN Unit mailing address for a foreign-owned US DE's Form 5472 +
+// pro forma 1120, exactly as the IRS Instructions for Form 5472 give it.
+export const IRS_OGDEN_MAIL_ADDRESS =
+  "Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201";
 export const ORG_EMAIL = "support@form5472prep.com";
 export const TRUSTPILOT_PROFILE_URL = "https://www.trustpilot.com/review/form5472prep.com";
 export const ORG_SAME_AS = [TRUSTPILOT_PROFILE_URL];

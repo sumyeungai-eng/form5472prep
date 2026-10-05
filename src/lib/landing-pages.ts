@@ -66,7 +66,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
     published: "2026-05-19",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     h1: "How to File IRS Form 5472",
     intro:
       "Foreign-owned US single-member LLCs must file Form 5472 with an attached pro forma Form 1120 by April 15 each year. The IRS accepts the annual package by mail or fax to the Ogden PIN Unit at +1-855-887-7737, and our 15-minute online filer starts from $149.",
@@ -111,7 +111,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How much does it cost to file?",
-        body: "Three ways to do it:\n\n1. DIY with IRS forms: $0 in fees but 4-8 hours of careful work, and any mistake risks the $25,000 penalty. You also need a fax service ($2-$5).\n\n2. Hire a US CPA: $400-$800 typical. Most CPAs are unfamiliar with Form 5472 for foreign-owned disregarded entities, so expect them to either decline the work or take 1-3 weeks while they research it.\n\n3. Use Form5472 Prep: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included. +$99 per additional past year.\n\nEvery package we prepare is reviewed by an accountant on our team before we fax it to the IRS. 100% money-back guarantee if we fail to submit.",
+        body: "Three ways to do it:\n\n1. DIY with IRS forms: $0 in fees, but the IRS estimates 6 hr 34 min per Form 5472 (3 hr 4 min learning about the form plus 3 hr 30 min preparing and sending it, before recordkeeping), and any mistake risks the $25,000 penalty. You also need a fax service ($2-$5).\n\n2. Hire a US CPA: $400-$800 typical. Most CPAs are unfamiliar with Form 5472 for foreign-owned disregarded entities, so expect them to either decline the work or take 1-3 weeks while they research it.\n\n3. Use Form5472 Prep: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — same filing either way. IRS fax delivery included. +$99 per additional past year.\n\nEvery package we prepare is reviewed by an accountant on our team before we fax it to the IRS. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "What happens after you file Form 5472?",
@@ -178,7 +178,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
     published: "2026-05-19",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     h1: "The Form 5472 $25,000 Penalty Explained",
     intro:
       "Under IRC § 6038A(d), the IRS automatically assesses a $25,000 penalty for each Form 5472 that is late, incomplete, or missing, per year and per LLC. If you do not fix it within 90 days of an IRS notice, the penalty stacks at $25,000 per 30-day period.",
@@ -206,7 +206,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you get the penalty abated under DIIRSP?",
-        body: "If you've already missed filings, the IRS Delinquent International Information Return Submission Procedure (DIIRSP) lets you submit late returns with a Reasonable Cause Statement requesting penalty abatement. The statement must:\n\n• Explain specifically why the form wasn't filed on time.\n• Show that you acted in good faith and exercised ordinary business care and prudence.\n• Describe the circumstances honestly (lack of awareness as a first-time foreign LLC owner, reliance on a tax professional who didn't flag the obligation, illness, language barrier, etc.).\n• Confirm that you're now filing all delinquent returns concurrently and have taken steps to ensure future compliance.\n\nThe IRS does NOT guarantee abatement, but well-documented first-time delinquencies have a high acceptance rate. Generic boilerplate statements are far less likely to succeed than ones tied to specific personal circumstances.",
+        body: "If you've already missed filings, the IRS Delinquent International Information Return Submission Procedure (DIIRSP) lets you submit late returns with a Reasonable Cause Statement requesting penalty abatement. The statement must:\n\n• Explain specifically why the form wasn't filed on time.\n• Show that you acted in good faith and exercised ordinary business care and prudence.\n• Describe the circumstances honestly (lack of awareness as a first-time foreign LLC owner, reliance on a tax professional who didn't flag the obligation, illness, language barrier, etc.).\n• Confirm that you're now filing all delinquent returns concurrently and have taken steps to ensure future compliance.\n\nThe IRS does NOT guarantee abatement. The IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP15) follows.",
       },
       {
         heading: "What triggers the penalty besides missing the filing deadline?",
@@ -214,12 +214,12 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are real-world penalty scenarios?",
-        body: "Scenario A — first-time owner, just missed: Carlos (Mexico) formed his Wyoming LLC in 2024 to run an Amazon FBA store. He learned about Form 5472 in May 2025, one month after the deadline. He files immediately under DIIRSP with a reasonable cause statement explaining first-time foreign owner unawareness. Typical outcome: penalty waived.\n\nScenario B — multi-year catch-up: Mei (Hong Kong) has had a Delaware LLC since 2022 and never filed. In 2026 she discovers the obligation. She files 2022, 2023, 2024, and 2025 together as a single DIIRSP package. Typical outcome: penalty abatement granted for all four years if the reasonable cause statement is well-documented.\n\nScenario C — ignored an IRS notice: Ahmed (UAE) received a CP-15 in July 2024 for missing tax year 2022 and didn't respond. By 2026 his single-year penalty has stacked to $100,000+ through the 30-day continuation rule. He still needs to file, plus negotiate the assessed penalty — much harder than scenarios A and B.\n\nThe takeaway: act fast. Even multi-year catch-ups are vastly cheaper than waiting for an IRS notice and then delaying.",
+        body: "Scenario A — first-time owner, just missed: Carlos (Mexico) formed his Wyoming LLC in 2024 to run an Amazon FBA store. He learned about Form 5472 in May 2025, one month after the deadline. He files immediately under DIIRSP with a reasonable cause statement explaining first-time foreign owner unawareness. No outcome is guaranteed.\n\nScenario B — multi-year catch-up: Mei (Hong Kong) has had a Delaware LLC since 2022 and never filed. In 2026 she discovers the obligation. She files 2022, 2023, 2024, and 2025 together as a single DIIRSP package. No outcome is guaranteed: penalties may still be assessed during processing, and her documented statement is then the basis for responding.\n\nScenario C — ignored an IRS notice: Ahmed (UAE) received a CP-15 in July 2024 for missing tax year 2022 and didn't respond. By 2026 his single-year penalty has stacked to $100,000+ through the 30-day continuation rule. He still needs to file, plus negotiate the assessed penalty — much harder than scenarios A and B.\n\nThe takeaway: act fast. Even multi-year catch-ups are vastly cheaper than waiting for an IRS notice and then delaying.",
         table: {
           caption: "Penalty examples and response paths",
           columns: ["Scenario", "Exposure", "What to do"],
           rows: [
-            ["One month late", "Penalty typically waived", "File immediately under DIIRSP"],
+            ["One month late", "Penalty may still be assessed", "File immediately under DIIRSP"],
             ["Four missed years", "Four-year penalty exposure", "File all years together"],
             ["Ignored CP-15", "$100,000+ stacked penalty", "File and negotiate assessed penalty"],
           ],
@@ -239,7 +239,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the bottom line on Form 5472 penalties?",
-        body: "The bottom line is that Form 5472 penalties are the largest compliance risk many foreign LLC owners miss. The $25,000 penalty applies per form and per year, stacks if ignored, and can turn one missed filing into a six-figure problem.\n\nThree things keep you safe:\n\n1. File every year, on time, completely, by fax to +1-855-887-7737.\n2. If you've missed filings, catch up under DIIRSP immediately with a reasonable cause statement.\n3. Don't ignore IRS notices — the continuation penalty makes a manageable problem into a six-figure one.\n\nOur 15-minute online filer handles all of this from $149. IRS fax delivery included. +$99 per additional past year. Accountant-reviewed, with a money-back guarantee.",
+        body: "The bottom line is that Form 5472 penalties are the largest compliance risk many foreign LLC owners miss. The $25,000 penalty applies per form and per year, stacks if ignored, and can turn one missed filing into a six-figure problem.\n\nThree things keep you safe:\n\n1. File every year, on time, completely, by fax to +1-855-887-7737.\n2. If you've missed filings, catch up under DIIRSP immediately with a reasonable cause statement.\n3. Don't ignore IRS notices — the continuation penalty makes a manageable problem into a six-figure one.\n\nOur 15-minute online filer handles all of this from $149. IRS fax delivery included. +$99 per additional past year. Accountant-reviewed, with a money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -257,7 +257,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "If I file under DIIRSP, am I guaranteed the penalty is waived?",
-        a: "No, DIIRSP is a request, not a guarantee. That said, well-documented first-time late filings are typically accepted — the IRS published the procedure specifically to encourage voluntary catch-up by international information return filers.",
+        a: "No, DIIRSP is not a guarantee. The IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP15) follows.",
       },
       {
         q: "What's a CP-15 notice?",
@@ -289,7 +289,7 @@ export const LANDING_PAGES: LandingPage[] = [
   {
     slug: "diirsp",
     keyword: "DIIRSP filing",
-    title: "DIIRSP Filing — Late International Return Procedure",
+    title: "DIIRSP Filing: Late Form 5472 + Reasonable-Cause Statement",
     metaDescription:
       "DIIRSP helps foreign-owned US LLCs submit late Form 5472 returns with a reasonable cause statement and request penalty relief. Learn the process.",
     sources: [
@@ -298,10 +298,10 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
     published: "2026-05-19",
-    updated: "2026-09-11",
-    h1: "DIIRSP: Filing Late Form 5472 with Penalty Abatement",
+    updated: "2026-10-05",
+    h1: "DIIRSP: How to File a Late Form 5472 with a Reasonable-Cause Statement",
     intro:
-      "The IRS Delinquent International Information Return Submission Procedure (DIIRSP) is the catch-up route for missed Form 5472 filings when you are requesting waiver of the $25,000-per-form-per-year penalty. Each late return needs a properly written Reasonable Cause Statement, or the IRS may issue a CP-15 notice.",
+      "The IRS Delinquent International Information Return Submission Procedures (DIIRSP) are the IRS's published route for filing missed Form 5472 returns late. You file each late return with a reasonable-cause statement; the IRS may still assess the $25,000-per-form-per-year penalty during processing, and the statement is then the basis for your response.",
     howTo: {
       section: "How does DIIRSP work — step by step?",
       supplies: [
@@ -313,11 +313,11 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "What is DIIRSP, really?",
-        body: "DIIRSP is the IRS-published catch-up path for delinquent international information returns like Form 5472. It is not amnesty or a guaranteed waiver; the IRS evaluates the submitted late returns and reasonable cause statement before deciding whether to assess the penalty.\n\nIt is not amnesty. It is not a guaranteed waiver. It is the IRS saying: \"If you submit your delinquent international information returns with a reasonable cause statement, we will evaluate the request and decide whether to assess the penalty.\"\n\nThe procedure exists because the IRS recognizes most foreign-owned LLC owners don't know about Form 5472 until after they've missed years of filings. Without DIIRSP, the penalty system would punish honest catch-up too harshly. With DIIRSP, well-documented voluntary catch-ups have a high acceptance rate.",
+        body: "DIIRSP is the IRS's published route for filing late international information returns such as Form 5472. You file the late returns with a reasonable-cause statement; the IRS may still assess the $25,000 penalty during processing, and you then respond with the reasonable-cause facts.\n\nIt is not amnesty and it is not a guaranteed waiver. The IRS's DIIRSP page tells eligible taxpayers to file the delinquent returns through normal filing procedures; only for Forms 3520 and 3520-A is the reasonable-cause statement considered before a penalty is assessed.\n\nThe IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP15) follows.",
       },
       {
         heading: "Who qualifies for DIIRSP?",
-        body: "DIIRSP is available to any taxpayer who:\n\n• Has not been contacted by the IRS about the specific delinquency yet (no CP-15 notice, no audit letter, no examination opened).\n• Has not been notified that they are under criminal investigation.\n• Is not currently under examination or audit for the tax year in question.\n• Does not owe any US income tax for the year in question (DIIRSP is for information-return delinquencies, not unpaid-tax cases).\n\nIf the IRS has already sent you a CP-15 notice for the $25,000 penalty, you can still respond — but the path is penalty abatement appeal, not DIIRSP. DIIRSP is preventative; once a notice is issued you're in the formal appeal process.\n\nMost foreign-owned single-member LLCs satisfy all four criteria — they have $0 US tax liability and have never been contacted by the IRS. DIIRSP is the right path for almost all of them.",
+        body: "DIIRSP is available to any taxpayer who:\n\n• Has not been contacted by the IRS about the specific delinquency yet (no CP-15 notice, no audit letter, no examination opened).\n• Has not been notified that they are under criminal investigation.\n• Is not currently under examination or audit for the tax year in question.\n\nIf the IRS has already sent you a CP-15 notice for the $25,000 penalty, you can still respond — but the path is penalty abatement appeal, not DIIRSP. DIIRSP is preventative; once a notice is issued you're in the formal appeal process.\n\nThe IRS's DIIRSP page lists only two conditions: not under civil examination or criminal investigation, and not already contacted by the IRS about the delinquent returns. Owners who find the missed filings themselves, before any IRS contact, generally meet both.",
       },
       {
         heading: "How does DIIRSP work — step by step?",
@@ -348,7 +348,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do DIIRSP, Streamlined, and Quiet Disclosure differ?",
-        body: "Three commonly confused IRS catch-up paths:\n\n• DIIRSP — for delinquent international information returns (Form 5472, 5471, 8865, 8938) where no US tax is owed. Reasonable cause statement required.\n\n• Streamlined Filing Compliance Procedures — for US persons (citizens, green-card holders) with delinquent FBAR or income-tax filings. Requires a Streamlined Certification and is more complex. Almost never the right path for a foreign-owned US LLC with $0 US tax.\n\n• Quiet disclosure — informal term for filing late without explanation. Strongly discouraged. The IRS often assesses penalties anyway and there's no documented good-faith effort to abate.\n\nFor foreign-owned single-member LLCs with no US tax liability, DIIRSP is the right path 99% of the time.",
+        body: "Three commonly confused IRS catch-up paths:\n\n• DIIRSP — for delinquent international information returns such as Form 5472, when you are not under IRS examination or investigation and have not been contacted about the missing returns. A reasonable cause statement may be attached to each late return.\n\n• Streamlined Filing Compliance Procedures — for US persons (citizens, green-card holders) with delinquent FBAR or income-tax filings. Requires a Streamlined Certification and is more complex. Almost never the right path for a foreign-owned US LLC with $0 US tax.\n\n• Quiet disclosure — informal term for filing late without explanation. Strongly discouraged. The IRS often assesses penalties anyway and there's no documented good-faith effort to abate.\n\nFor a foreign-owned single-member LLC that the IRS has not yet contacted, DIIRSP is the usual route.",
       },
       {
         heading: "What happens after you file under DIIRSP?",
@@ -366,7 +366,7 @@ export const LANDING_PAGES: LandingPage[] = [
     faqs: [
       {
         q: "Does DIIRSP guarantee my penalty is waived?",
-        a: "No. DIIRSP is the official IRS process for requesting abatement, but each request is evaluated on its facts. Well-written first-time DIIRSP submissions have a high acceptance rate, but there's no formal guarantee.",
+        a: "No. DIIRSP is the IRS's published route for filing late international information returns, not a guaranteed waiver. The IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP15) follows.",
       },
       {
         q: "How long after a DIIRSP filing will I hear back?",
@@ -390,7 +390,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What's the difference between DIIRSP and just filing late?",
-        a: "Filing late without a reasonable cause statement is a quiet disclosure — the IRS sees the late filing, assesses the $25,000 penalty automatically, and you're stuck responding to the CP-15. DIIRSP is the same filing PLUS a reasonable cause statement requesting abatement upfront. Much better outcomes.",
+        a: "DIIRSP is the IRS's published procedure for filing late international information returns, and it lets you attach a reasonable-cause statement to each late return. Filing late with no explanation (a quiet disclosure) leaves nothing on record. Either way, the IRS's DIIRSP page says penalties may be assessed during processing without considering the statement, and you then respond to the notice with your reasonable-cause facts.",
       },
       {
         q: "Can DIIRSP cover both Form 5472 and other international returns at the same time?",
@@ -398,7 +398,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Does the IRS publish DIIRSP acceptance statistics?",
-        a: "No. The IRS does not publish acceptance rates for DIIRSP submissions. From practitioner experience, well-documented first-time foreign-owner catch-ups are accepted at a high rate. Repeat delinquencies or filings with weak reasonable cause are accepted less often.",
+        a: "No. The IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP15) follows.",
       },
       {
         q: "If accepted, do I still need to file in future years?",
@@ -683,7 +683,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
     published: "2026-05-19",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     h1: "Filed Form 5472 Late? Here's What to Do Now",
     intro:
       "If you missed the April 15 deadline for Form 5472, file as soon as possible. DIIRSP lets you submit late filings with a Reasonable Cause Statement requesting waiver of the $25,000 penalty, before the risk of an automatic CP-15 penalty notice narrows your options.",
@@ -700,11 +700,11 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "How late can you actually file?",
-        body: "You can file Form 5472 late for tax years going back to when your LLC was formed. Risk rises with time: a few months late is usually very low risk, 1-2 years is still workable, and 3+ years may need extra handling.\n\nPractically, the longer you wait, the worse the risk profile:\n\n• Within a few months of the deadline: very low risk. File under DIIRSP with reasonable cause and most filings are accepted with no penalty.\n• 1-2 years late: still very workable. DIIRSP path with reasonable cause is the standard approach, high acceptance rate for first-time delinquencies.\n• 3+ years late: still file (DIIRSP for the most recent 3 years; older years may need a different path), but the IRS may have already issued a notice you didn't see.\n• Already received a CP-15 notice: DIIRSP is no longer the right path for that year — you respond to the notice with an abatement request and appeal if denied.",
+        body: "You can file Form 5472 late for any missed tax year, back to when your LLC was formed. There is no IRS cut-off for filing a late return, but the longer a return stays unfiled, the more likely an IRS penalty notice arrives first and DIIRSP no longer applies to that year.\n\nPractically:\n\n• Within a few months of the deadline: file now under DIIRSP with a reasonable-cause statement.\n• 1-2 years late: the same DIIRSP route, filing every missed year together.\n• 3+ years late: still file every missed year, but the IRS may have already issued a notice you didn't see, so check your mail first.\n• Already received a CP-15 notice: DIIRSP is no longer the right path for that year — you respond to the notice with an abatement request and appeal if denied.\n\nThe IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP15) follows.",
       },
       {
         heading: "What happens if you miss the deadline entirely?",
-        body: "Within 6-18 months of the missed deadline, the IRS automated system issues a CP-15 notice to the LLC's US address of record, assessing the $25,000 penalty. Once that notice arrives, your options narrow:\n\n• Pay the $25,000 (worst outcome for most owners).\n• File a Form 843 abatement claim — much harder than DIIRSP and lower success rate because the IRS already evaluated.\n• Appeal through the IRS Office of Appeals (months of process).\n• Ignore the notice — the worst path. Continuation penalties accrue at $25,000 per 30-day period after the 90-day grace window. Collection action can begin against the LLC's US-banked funds.\n\nIf the LLC's US address can't receive mail (e.g. a virtual mailbox that bounces IRS mail), you might not even see the CP-15 — but the penalty is still assessed and accruing.",
+        body: "Within 6-18 months of the missed deadline, the IRS automated system issues a CP-15 notice to the LLC's US address of record, assessing the $25,000 penalty. Once that notice arrives, your options narrow:\n\n• Pay the $25,000 (worst outcome for most owners).\n• Request abatement, for example with Form 843 and a written reasonable-cause statement, as the notice directs. The IRS does not publish outcome data, and a specific, documented statement is the strongest basis for that response.\n• Appeal through the IRS Office of Appeals (months of process).\n• Ignore the notice — the worst path. Continuation penalties accrue at $25,000 per 30-day period after the 90-day grace window. Collection action can begin against the LLC's US-banked funds.\n\nIf the LLC's US address can't receive mail (e.g. a virtual mailbox that bounces IRS mail), you might not even see the CP-15 — but the penalty is still assessed and accruing.",
       },
       {
         heading: "What should you do if you've missed one year?",
@@ -728,7 +728,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are real-world late-filing scenarios?",
-        body: "Real-world late filings range from a just-missed return to multi-year DIIRSP catch-up or a CP-15 appeal problem. Carlos files one month after the 2024 return was due, Mei catches up several years together, and Ahmed faces $100,000+ continuation penalties by 2026.\n\nScenario B — three-year catch-up: Mei has had a Delaware LLC since 2022, never filed. Discovers obligation in 2026. Files 2022, 2023, 2024, and 2025 together in one DIIRSP package. (Our wizard supports 3 years, so 2022 would run as a separate filing.) Typical outcome: penalty abatement granted across all years.\n\nScenario C — ignored a CP-15: Ahmed received a CP-15 in July 2024 for tax year 2022. By 2026, continuation penalties have stacked to $100,000+. Needs both to file the actual return AND to engage a tax professional to handle the assessed penalty appeal. Much more expensive and stressful than scenarios A and B.\n\nThe takeaway: act fast. Even multi-year catch-up is vastly cheaper than waiting for an IRS notice and then delaying.",
+        body: "Real-world late filings range from a just-missed return to multi-year DIIRSP catch-up or a CP-15 appeal problem. Carlos files one month after the 2024 return was due, Mei catches up several years together, and Ahmed faces $100,000+ continuation penalties by 2026.\n\nScenario B — three-year catch-up: Mei has had a Delaware LLC since 2022, never filed. Discovers obligation in 2026. Files 2022, 2023, 2024, and 2025 together in one DIIRSP package. (Our wizard supports 3 years, so 2022 would run as a separate filing.) No outcome is guaranteed: penalties may still be assessed during processing, and her documented statement is then the basis for responding.\n\nScenario C — ignored a CP-15: Ahmed received a CP-15 in July 2024 for tax year 2022. By 2026, continuation penalties have stacked to $100,000+. Needs both to file the actual return AND to engage a tax professional to handle the assessed penalty appeal. Much more expensive and stressful than scenarios A and B.\n\nThe takeaway: act fast. Even multi-year catch-up is vastly cheaper than waiting for an IRS notice and then delaying.",
         table: {
           caption: "Late filing examples and relief routes",
           columns: ["Years late", "What you file", "Relief route"],
@@ -917,7 +917,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 1120", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
     ],
     published: "2026-05-19",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     h1: "Wyoming LLC Form 5472 Filing Guide",
     intro:
       "Every foreign-owned Wyoming LLC must file IRS Form 5472 with pro forma Form 1120 by April 15 each year. Wyoming's low fees, no state income tax, privacy laws, and registered agent market do not remove the federal filing or the $25,000 penalty risk if missed.",
@@ -980,7 +980,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the bottom line for Wyoming LLC owners?",
-        body: "The bottom line for Wyoming LLC owners is that state advantages do not replace the federal Form 5472 package due every April 15. Wyoming's $60 annual report is minor beside the $25,000-per-year-per-form federal penalty, so Form 5472 is the filing to get right.\n\nThe $25,000-per-year-per-form federal penalty is the largest compliance risk for your LLC. Wyoming state filings are a minor annual $60 task; federal Form 5472 is the one you have to get right.\n\nOur service handles the federal piece in 15 minutes, accountant-reviewed, with a money-back guarantee. The state piece (Wyoming Annual Report) is a 10-minute self-serve task on the state website.",
+        body: "The bottom line for Wyoming LLC owners is that state advantages do not replace the federal Form 5472 package due every April 15. Wyoming's $60 annual report is minor beside the $25,000-per-year-per-form federal penalty, so Form 5472 is the filing to get right.\n\nThe $25,000-per-year-per-form federal penalty is the largest compliance risk for your LLC. Wyoming state filings are a minor annual $60 task; federal Form 5472 is the one you have to get right.\n\nOur service handles the federal piece in 15 minutes, accountant-reviewed, with a money-back guarantee if we fail to submit. The state piece (Wyoming Annual Report) is a 10-minute self-serve task on the state website.",
       },
     ],
     faqs: [
@@ -1782,7 +1782,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
     published: "2026-05-22",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     h1: "IRS Form 5472 — the complete guide for foreign-owned LLCs",
     intro:
       "IRS Form 5472 is the information return foreign-owned US single-member LLCs file every year with an attached pro forma Form 1120. Missing it can trigger a $25,000 penalty per year, per form, and our 15-minute workflow prepares the package before faxing it to the IRS Ogden PIN Unit.",
@@ -1836,7 +1836,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you catch up with DIIRSP after missed years?",
-        body: "You catch up with DIIRSP by filing late Form 5472 packages with a reasonable cause statement. Steps:\n\n1. File the late Form 5472 + pro forma 1120 for each missed year.\n2. Attach a Reasonable Cause Statement explaining why the filing was late.\n3. Submit all missed years together as one package.\n4. Fax to +1-855-887-7737 with the reasonable cause statement at the front.\n5. Keep the fax transmission receipt — it's your timestamped transmission evidence.\n\nWell-documented first-time catch-ups are accepted at a high rate, with no penalty assessed. The IRS treats voluntary catch-up under DIIRSP far more favorably than waiting for a CP-15 notice and then responding.\n\nOur multi-year DIIRSP packages: 2 years $248 Standard / $298 Express, 3 years $347 Standard / $397 Express (fax included). The Reasonable Cause Statement is auto-generated by our wizard and editable to fit your specific facts.",
+        body: "You catch up with DIIRSP by filing late Form 5472 packages with a reasonable cause statement. Steps:\n\n1. File the late Form 5472 + pro forma 1120 for each missed year.\n2. Attach a Reasonable Cause Statement explaining why the filing was late.\n3. Submit all missed years together as one package.\n4. Fax to +1-855-887-7737 with the reasonable cause statement at the front.\n5. Keep the fax transmission receipt — it's your timestamped transmission evidence.\n\nThe IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP15) follows.\n\nOur multi-year DIIRSP packages: 2 years $248 Standard / $298 Express, 3 years $347 Standard / $397 Express (fax included). The Reasonable Cause Statement is auto-generated by our wizard and editable to fit your specific facts.",
       },
       {
         heading: "Pricing",
@@ -1844,7 +1844,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Why use Form5472 Prep instead of a CPA or DIY?",
-        body: "Form5472 Prep is built for the standard foreign-owned single-member LLC filing workflow rather than a broad CPA engagement or blank IRS-form DIY process. The wizard pre-fills the package from simple questions, the generated PDFs follow current IRS instructions, an accountant reviews before fax submission, and IRS fax delivery is included.\n\nDIY with IRS forms ($0 fees, 4-8 hours of careful work): you download blank 1120 and 5472 PDFs from irs.gov, fill them by hand, sign, and fax. Risk: any mistake (missing stamp, blank Part V, wrong signature method) can trigger the $25,000 penalty. Many DIY filings fail compliance review.\n\nUS CPA ($400-$800, 1-2 weeks): most CPAs see foreign-owned DE filings once or twice in their career. They'll typically research the requirements from scratch each time, which makes the turnaround long and the cost high. Some will decline the work entirely.\n\nForm5472 Prep ($149 Standard or $199 Express, plus $99 per additional past year, 15 minutes): purpose-built for this exact filing. Wizard pre-fills everything based on 12 simple questions. Generated PDFs follow current IRS instructions. Every package is accountant-reviewed before fax submission. IRS fax delivery included. Money-back guarantee. Reasonable cause statement auto-generated for late filings.\n\nFor the standard foreign-owned single-member LLC profile, our service is dramatically faster and lower-cost than CPA, and dramatically lower risk than DIY.",
+        body: "Form5472 Prep is built for the standard foreign-owned single-member LLC filing workflow rather than a broad CPA engagement or blank IRS-form DIY process. The wizard pre-fills the package from simple questions, the generated PDFs follow current IRS instructions, an accountant reviews before fax submission, and IRS fax delivery is included.\n\nDIY with IRS forms ($0 fees; the IRS estimates 6 hr 34 min per Form 5472 to learn about and prepare it, before recordkeeping): you download blank 1120 and 5472 PDFs from irs.gov, fill them by hand, sign, and fax. Risk: any mistake (missing stamp, blank Part V, wrong signature method) can trigger the $25,000 penalty. Many DIY filings fail compliance review.\n\nUS CPA ($400-$800, 1-2 weeks): most CPAs see foreign-owned DE filings once or twice in their career. They'll typically research the requirements from scratch each time, which makes the turnaround long and the cost high. Some will decline the work entirely.\n\nForm5472 Prep ($149 Standard or $199 Express, plus $99 per additional past year, 15 minutes): purpose-built for this exact filing. Wizard pre-fills everything based on 12 simple questions. Generated PDFs follow current IRS instructions. Every package is accountant-reviewed before fax submission. IRS fax delivery included. Money-back guarantee if we fail to submit. Reasonable cause statement auto-generated for late filings.\n\nFor the standard foreign-owned single-member LLC profile, our service is dramatically faster and lower-cost than CPA, and dramatically lower risk than DIY.",
       },
     ],
     faqs: [
@@ -1903,7 +1903,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
     ],
     published: "2026-05-22",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     h1: "Form 5472 deadline — when it's due, and what to do if you've missed it",
     intro:
       "Form 5472 is due April 15 of the year following the tax year. Filing Form 7004 by April 15 gives an automatic 6-month extension to October 15, while missing the deadline can trigger a $25,000-per-form penalty that may still be addressed through DIIRSP catch-up filing.",
@@ -1947,7 +1947,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you use DIIRSP after missing the deadline?",
-        body: "You use DIIRSP after missing the deadline by filing late with a Reasonable Cause Statement requesting penalty abatement. The IRS provides a relief path called DIIRSP — Delinquent International Information Return Submission Procedure — that lets you file late with a Reasonable Cause Statement requesting penalty abatement.\n\nDIIRSP is available as long as:\n• The IRS has NOT yet contacted you about the specific delinquency.\n• You're not under IRS examination or criminal investigation.\n• You don't owe US income tax (DIIRSP is for information-return delinquencies).\n\nMost foreign-owned single-member LLCs meet all three criteria. DIIRSP is the right path for almost all late filings.\n\nThere's no guarantee the IRS will waive the penalty, but well-documented first-time late filings have a high acceptance rate. Generic statements with no specific facts get rejected more often.\n\nOur DIIRSP-aware filer automatically attaches the Reasonable Cause Statement for late filings. Multi-year catch-up packages on Standard: $248 for 2 years, $347 for 3 years. Every package is reviewed by an accountant on our team before we fax it.",
+        body: "You use DIIRSP after missing the deadline by filing late with a Reasonable Cause Statement requesting penalty abatement. The IRS provides a relief path called DIIRSP — Delinquent International Information Return Submission Procedure — that lets you file late with a Reasonable Cause Statement requesting penalty abatement.\n\nDIIRSP is available as long as:\n• The IRS has NOT yet contacted you about the specific delinquency.\n• You're not under IRS examination or criminal investigation.\n\nThose are the only two conditions on the IRS's DIIRSP page. Owners who find the missed filing themselves, before any IRS contact, generally meet both.\n\nThere's no guarantee the IRS will waive the penalty. The IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP15) follows.\n\nOur DIIRSP-aware filer automatically attaches the Reasonable Cause Statement for late filings. Multi-year catch-up packages on Standard: $248 for 2 years, $347 for 3 years. Every package is reviewed by an accountant on our team before we fax it.",
       },
       {
         heading: "What is the late-filing penalty in detail?",
@@ -1955,7 +1955,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are real-world deadline scenarios?",
-        body: "Scenario A — on-time filing: Carlos files his Wyoming LLC's tax year 2024 Form 5472 on April 10, 2025 via our wizard. We fax to the IRS Ogden PIN Unit. Fax receipt timestamps the filing at April 10 — well before April 15. No penalty risk.\n\nScenario B — extension: Mei is traveling in April and won't have her year-end financials ready until summer. On April 14, 2026 she faxes Form 7004 to +1-855-887-7737, requesting the 6-month extension. New deadline: October 15, 2026. She files Form 5472 + 1120 on September 30, 2026 — on time.\n\nScenario C — DIIRSP catch-up: Ahmed forgot about Form 5472 for tax year 2023. He learns about it in June 2025 (14 months late). He files under DIIRSP immediately with a reasonable cause statement explaining first-time foreign-owner unawareness. The IRS hasn't sent a CP-15 yet, so DIIRSP is the right path. Typical outcome: penalty waived.\n\nScenario D — CP-15 already received: Lin missed tax year 2022 and received a $25,000 CP-15 in November 2024. DIIRSP is no longer available for that year. She responds with Form 843 abatement plus the late return — much harder path with lower success rate. She also files under DIIRSP for 2023 and 2024 (where she hasn't been contacted yet).\n\nTakeaway: act before the IRS contacts you. DIIRSP is dramatically easier than post-assessment appeal.",
+        body: "Scenario A — on-time filing: Carlos files his Wyoming LLC's tax year 2024 Form 5472 on April 10, 2025 via our wizard. We fax to the IRS Ogden PIN Unit. Fax receipt timestamps the filing at April 10 — well before April 15. No penalty risk.\n\nScenario B — extension: Mei is traveling in April and won't have her year-end financials ready until summer. On April 14, 2026 she faxes Form 7004 to +1-855-887-7737, requesting the 6-month extension. New deadline: October 15, 2026. She files Form 5472 + 1120 on September 30, 2026 — on time.\n\nScenario C — DIIRSP catch-up: Ahmed forgot about Form 5472 for tax year 2023. He learns about it in June 2025 (14 months late). He files under DIIRSP immediately with a reasonable cause statement explaining first-time foreign-owner unawareness. The IRS hasn't sent a CP-15 yet, so DIIRSP is the right path. No outcome is guaranteed: if a penalty is assessed during processing, his statement is the basis for responding.\n\nScenario D — CP-15 already received: Lin missed tax year 2022 and received a $25,000 CP-15 in November 2024. DIIRSP is no longer available for that year. She responds with a Form 843 abatement request plus the late return, a post-assessment path where her documented reasonable-cause statement is the basis for the response. She also files under DIIRSP for 2023 and 2024 (where she hasn't been contacted yet).\n\nTakeaway: act before the IRS contacts you. DIIRSP is dramatically easier than post-assessment appeal.",
       },
       {
         heading: "How do you file before the deadline?",
@@ -2260,7 +2260,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
     ],
     published: "2026-05-22",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     h1: "Stripe Atlas LLC owners — Form 5472 is on you, not Stripe",
     intro:
       "Stripe Atlas forms Delaware LLCs for foreign founders, but the annual IRS filing remains yours: Form 5472 plus pro forma Form 1120. Stripe Atlas does not handle that package, and skipping it can trigger a $25,000 penalty per year, per form, plus Delaware franchise tax considerations.",
@@ -2293,7 +2293,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are common Stripe Atlas LLC scenarios?",
-        body: "Common Stripe Atlas LLC scenarios include year-one funding, growing SaaS activity, late discovery, and multiple LLCs. The examples cover a no-revenue first year with a capital contribution, a second-year SaaS business with distributions, DIIRSP catch-up after missed years, and separate annual filings for separate LLCs.\n\nScenario A — Year 1, no revenue yet: Lucia formed her Stripe Atlas LLC in June 2024. By December 2024 the only activity was: $5K capital contribution to open Mercury account + $500 spent on Stripe Atlas formation fee. Required for tax year 2024: Form 5472 + pro forma 1120. Part V reports the $5K capital contribution. Files by April 15, 2025 with our service for Standard $149 (fax included).\n\nScenario B — Year 2, growing SaaS: Mei has been running her Stripe Atlas Delaware LLC for 2 years selling SaaS to EU customers. Year 2 revenue: $180K, $0 US tax owed. She files Form 5472 + 1120 reporting capital contributions and distributions to/from her HK bank account. Standard $149 (fax included) with our service.\n\nScenario C — Discovered Form 5472 late: Carlos formed his Stripe Atlas LLC in 2022. Three years later (2025) he discovers Form 5472 obligation. He files 2022, 2023, 2024 together under DIIRSP using our 3-year catch-up (Standard $347, fax included). Reasonable cause statement auto-generated for first-time foreign-owner unawareness. Typical outcome: penalty waived.\n\nScenario D — Multiple Stripe Atlas LLCs: Mei has 3 separate Stripe Atlas LLCs for 3 different product lines. Each one needs its own Form 5472 + pro forma 1120 every year — 3 separate filings, Standard $149 each with us = $447/year just for federal compliance.",
+        body: "Common Stripe Atlas LLC scenarios include year-one funding, growing SaaS activity, late discovery, and multiple LLCs. The examples cover a no-revenue first year with a capital contribution, a second-year SaaS business with distributions, DIIRSP catch-up after missed years, and separate annual filings for separate LLCs.\n\nScenario A — Year 1, no revenue yet: Lucia formed her Stripe Atlas LLC in June 2024. By December 2024 the only activity was: $5K capital contribution to open Mercury account + $500 spent on Stripe Atlas formation fee. Required for tax year 2024: Form 5472 + pro forma 1120. Part V reports the $5K capital contribution. Files by April 15, 2025 with our service for Standard $149 (fax included).\n\nScenario B — Year 2, growing SaaS: Mei has been running her Stripe Atlas Delaware LLC for 2 years selling SaaS to EU customers. Year 2 revenue: $180K, $0 US tax owed. She files Form 5472 + 1120 reporting capital contributions and distributions to/from her HK bank account. Standard $149 (fax included) with our service.\n\nScenario C — Discovered Form 5472 late: Carlos formed his Stripe Atlas LLC in 2022. Three years later (2025) he discovers Form 5472 obligation. He files 2022, 2023, 2024 together under DIIRSP using our 3-year catch-up (Standard $347, fax included). Reasonable cause statement auto-generated for first-time foreign-owner unawareness. No outcome is guaranteed: if a penalty is assessed during processing, the statement is the basis for responding.\n\nScenario D — Multiple Stripe Atlas LLCs: Mei has 3 separate Stripe Atlas LLCs for 3 different product lines. Each one needs its own Form 5472 + pro forma 1120 every year — 3 separate filings, Standard $149 each with us = $447/year just for federal compliance.",
       },
       {
         heading: "How do we handle Stripe Atlas Form 5472 filings?",
@@ -2313,7 +2313,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Bottom line for Stripe Atlas LLC owners",
-        body: "Stripe Atlas got you the LLC, the EIN, and the Mercury account. That's where their job ended. From year 1 onward, Form 5472 + pro forma 1120 is on you, due April 15 each year, with a $25,000 penalty per year if missed.\n\nOur service is built for this profile — fixed pricing, accountant-reviewed, with a money-back guarantee. $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included. Most of our customers come from Stripe Atlas, Mercury, and similar foreign-founder onboarding paths.\n\nFile early, file every year, keep the fax receipt for your records. The $25,000 penalty is the single largest compliance risk for your LLC — bigger than every other federal/state obligation combined.",
+        body: "Stripe Atlas got you the LLC, the EIN, and the Mercury account. That's where their job ended. From year 1 onward, Form 5472 + pro forma 1120 is on you, due April 15 each year, with a $25,000 penalty per year if missed.\n\nOur service is built for this profile — fixed pricing, accountant-reviewed, with a money-back guarantee if we fail to submit. $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included. Most of our customers come from Stripe Atlas, Mercury, and similar foreign-founder onboarding paths.\n\nFile early, file every year, keep the fax receipt for your records. The $25,000 penalty is the single largest compliance risk for your LLC — bigger than every other federal/state obligation combined.",
       },
     ],
     faqs: [
@@ -2372,14 +2372,14 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
     published: "2026-05-22",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     h1: "Reasonable cause statement for Form 5472 — what to include",
     intro:
       "Late Form 5472 filings under DIIRSP need a Reasonable Cause Statement for each late return to request abatement of the $25,000-per-form-per-year penalty. Done well, it can prevent major penalties; done poorly or skipped, the penalty is assessed automatically, so the request needs careful structure before fax submission.",
     sections: [
       {
         heading: "What does the IRS expect?",
-        body: "A reasonable cause statement is the IRS's standard mechanism for requesting penalty relief on a late international information return (Forms 5472, 5471, 8865, 8938). It must demonstrate that:\n\n1. You acted in good faith and exercised ordinary business care and prudence.\n2. Your failure to file on time was due to circumstances beyond your reasonable control or based on a reasonable misunderstanding of the law.\n3. You corrected the failure as soon as you became aware of it.\n\nThe IRS evaluates each statement on its merits — there's no automatic waiver, but well-documented reasonable cause is typically accepted for first-time delinquencies. The IRS published DIIRSP specifically to encourage voluntary catch-up filing by international information return filers, and accepting most reasonable-cause requests is the implicit goal of the procedure.\n\nThe \"ordinary business care and prudence\" standard is the same one the IRS uses across penalty abatement contexts. The question isn't whether you were perfect — it's whether a reasonable person in similar circumstances would have known to file.",
+        body: "A reasonable cause statement is the IRS's standard mechanism for requesting penalty relief on a late international information return (Forms 5472, 5471, 8865, 8938). It must demonstrate that:\n\n1. You acted in good faith and exercised ordinary business care and prudence.\n2. Your failure to file on time was due to circumstances beyond your reasonable control or based on a reasonable misunderstanding of the law.\n3. You corrected the failure as soon as you became aware of it.\n\nThere's no automatic waiver. The IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP15) follows.\n\nThe \"ordinary business care and prudence\" standard is the same one the IRS uses across penalty abatement contexts. The question isn't whether you were perfect — it's whether a reasonable person in similar circumstances would have known to file.",
       },
       {
         heading: "What should you include in your Reasonable Cause Statement?",
@@ -2479,7 +2479,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
     published: "2026-05-22",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     h1: "Form 5472, filed properly — from $149, everything included.",
     intro:
       "Answer 12 questions in about 15 minutes and get a Form 5472 plus pro forma Form 1120 package reviewed by an accountant before fax submission to the IRS Ogden PIN Unit. Standard is $149 and ready in 5-7 business days; Express is $199 and ready within 3.",
@@ -2521,7 +2521,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What happens if the IRS still assesses a penalty?",
-        body: "DIIRSP (Delinquent International Information Return Submission Procedure) is the IRS-published path for catch-up filings with reasonable cause requests. Most well-documented first-time late filings are accepted with no penalty assessed. There's no formal IRS guarantee, but the acceptance rate for properly-prepared DIIRSP submissions is high.\n\nTwo different scenarios here. If the IRS assesses a penalty because of an error in our preparation — a mistake on our end — we handle the response with the IRS at no charge. If instead the IRS assesses a penalty despite a correctly prepared, complete DIIRSP submission (a discretionary IRS call on your specific facts, not something we got wrong), the accountant who reviewed your package will still help you respond and appeal; that follow-up work sits outside the filing fee and may carry an additional fee, though having the original preparer already familiar with your case speeds it up.\n\nOur 100% money-back guarantee covers failure-to-submit and, separately, any penalty caused by our own preparation error. No service can guarantee an IRS outcome on a correctly filed return — that discretion sits with the IRS.",
+        body: "DIIRSP (Delinquent International Information Return Submission Procedure) is the IRS-published path for catch-up filings with reasonable cause requests. There's no IRS guarantee: the IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement.\n\nTwo different scenarios here. If the IRS assesses a penalty because of an error in our preparation — a mistake on our end — we handle the response with the IRS at no charge. If instead the IRS assesses a penalty despite a correctly prepared, complete DIIRSP submission (a discretionary IRS call on your specific facts, not something we got wrong), the accountant who reviewed your package will still help you respond and appeal; that follow-up work sits outside the filing fee and may carry an additional fee, though having the original preparer already familiar with your case speeds it up.\n\nOur 100% money-back guarantee covers failure-to-submit and, separately, any penalty caused by our own preparation error. No service can guarantee an IRS outcome on a correctly filed return — that discretion sits with the IRS.",
       },
       {
         heading: "How are confidentiality and data handled?",

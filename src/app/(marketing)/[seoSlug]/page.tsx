@@ -310,11 +310,15 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                 <Reveal delay={i * 60}>
                   {/* Headings use slugified ids. HowTo step anchors live on list
                     items in the opted-in process section when one is derived. */}
-                  <h2
-                    id={headingId}
-                    className="group flex items-center gap-2 font-serif text-2xl font-semibold text-ink tracking-tight scroll-mt-20"
-                  >
-                    <span>{s.heading}</span>
+                  {/* The # permalink sits beside the <h2>, not inside it, so
+                    text extractors read the heading without a trailing "#". */}
+                  <div className="group flex items-center gap-2">
+                    <h2
+                      id={headingId}
+                      className="font-serif text-2xl font-semibold text-ink tracking-tight scroll-mt-20"
+                    >
+                      {s.heading}
+                    </h2>
                     <a
                       href={`#${headingId}`}
                       aria-label={`Link to ${s.heading}`}
@@ -322,7 +326,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                     >
                       #
                     </a>
-                  </h2>
+                  </div>
                   {derived && isHowToSection && (
                     <HowToSummary
                       totalTime={derived.totalTime}
@@ -416,9 +420,11 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
         {/* Mid-page CTA */}
         <section className="border-y border-paper-edge bg-paper">
           <Reveal as="div" className="relative max-w-3xl mx-auto px-6 py-14 text-center">
-            <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink">
+            {/* CTA banner, not a content heading: a <p> keeps answer-engine
+              chunkers from splitting a junk "passage" on it. */}
+            <p className="font-serif text-2xl sm:text-3xl font-semibold text-ink">
               Skip the work — file in 15 minutes.
-            </h2>
+            </p>
             <p className="mt-3 text-slate-600 max-w-xl mx-auto">
               {promoPricing ? (
                 <>
@@ -443,7 +449,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                 "Filled IRS Form 5472 + pro forma 1120",
                 "Reasonable cause statement (if late)",
                 "Faxed to IRS Ogden PIN Unit",
-                "100% money-back guarantee",
+                "100% money-back guarantee if we fail to submit",
               ].map((it, i) => (
                 <li
                   key={it}
@@ -671,9 +677,9 @@ function PricingSection({
       <div className="max-w-5xl mx-auto px-6 py-16">
         <Reveal as="div" className="text-center">
           <p className="font-mono text-xs font-medium uppercase tracking-[0.18em] text-accent">Pricing</p>
-          <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink">
+          <p className="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink">
             Flat-rate Form 5472 filing.
-          </h2>
+          </p>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto">
             One-time fee per filing. No subscription. Both tiers include the
             identical filing and IRS fax delivery to the Ogden PIN Unit — only

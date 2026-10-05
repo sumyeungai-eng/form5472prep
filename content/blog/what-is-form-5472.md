@@ -2,7 +2,7 @@
 title: "What Is IRS Form 5472? A Jargon-Free Guide"
 description: "Form 5472 is an IRS return foreign-owned US LLCs must file yearly, even with zero revenue. See who must file it and what a missed filing actually costs."
 date: 2026-05-19
-updated: 2026-08-28
+updated: 2026-10-05
 author: "Form5472 Prep"
 tags: ["form-5472", "foreign-owned-llc", "getting-started"]
 draft: false
@@ -78,7 +78,7 @@ For an LLC with a calendar tax year (the default):
 - **April 15** of the following year — the standard due date.
 - **October 15** — extended due date, if you file Form 7004 by April 15 first.
 
-If you're outside the US on April 15, you get an automatic 2-month extension to **June 15**, no form required.
+Do not rely on an automatic extension for living abroad. The Form 5472 instructions don't address Reg. §1.6081-5 for a foreign-owned DE's pro forma Form 1120; file Form 7004 by April 15 to move the deadline to October 15.
 
 ## What are some common Form 5472 scenarios?
 

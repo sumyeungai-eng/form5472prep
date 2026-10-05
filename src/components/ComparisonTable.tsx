@@ -12,7 +12,7 @@ export const FILING_COMPARISON: ComparisonTableProps = {
   caption: "",
   columns: ["", "Form5472 Prep", "CPA", "DIY"],
   rows: [
-    ["Setup time", "15 minutes", "1–2 weeks back-and-forth", "1–4 hours of confusion"],
+    ["Setup time", "15 minutes", "1–2 weeks back-and-forth", "6 hr 34 min (IRS estimate, before recordkeeping)"],
     ["Knows Form 5472", "Built only for this", "Hit or miss", "Up to you"],
     ["Late-filing reasonable cause statement (IRS DIIRSP procedure)", "Included", "Usually extra", "DIY"],
     ["Files with the IRS", "We fax to Ogden", "By mail or fax", "Your problem"],
