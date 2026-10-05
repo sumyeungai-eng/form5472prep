@@ -38,6 +38,8 @@ const STATIC_PAGE_UPDATED: Record<string, string> = {
   // New hub pages, written 2026-10-04.
   "/press": "2026-10-04",
   "/compare": "2026-10-04",
+  // Statistics page; mirrors STATS_LAST_REVIEWED in src/lib/form5472-stats.ts.
+  "/form-5472-statistics": "2026-10-05",
 };
 
 const TOOL_PAGE_REVIEWED: Record<string, string> = {
@@ -97,6 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/security`, lastModified: at("/security"), changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/compare`, lastModified: at("/compare"), changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/press`, lastModified: at("/press"), changeFrequency: "yearly", priority: 0.4 },
+    { url: `${base}/form-5472-statistics`, lastModified: at("/form-5472-statistics"), changeFrequency: "monthly", priority: 0.7 },
     // Service pages: written 2026-10-01; bump this date only on real edits.
     ...serviceSitemapEntries(base, new Date("2026-10-01T00:00:00Z")),
   ];

@@ -96,6 +96,7 @@ const CORE_PAGES = [
   ["Is it a reportable transaction?", "/form-5472-reportable-transactions-checker", "Checks whether common owner–LLC transactions (money in or out, owner-paid fees, loans, property, related companies) are reportable on Form 5472, with the regulation behind each answer."],
   ["Late-filing route checker", "/form-5472-late-filing-checker", "A few questions that show which late-filing route applies to a missed Form 5472 (DIIRSP with a reasonable-cause statement, responding to a notice, or other IRS programmes), with IRS sources."],
   ["Compliance calendar", "/foreign-owned-llc-compliance-calendar", "Builds a personal list of federal (Form 5472 / pro forma 1120, Form 7004) and state deadlines for a foreign-owned single-member LLC, with an .ics calendar download."],
+  ["Form 5472 statistics", "/form-5472-statistics", "Form 5472 facts and figures with official sources: the $25,000 IRC §6038A(d) penalty and continuation penalty, IRS systemic-assessment and abatement data, T.D. 9796 dates, deadlines, recordkeeping estimates and IRS SOI filer counts."],
   ["LLC annual fees by state", "/llc-annual-fees-by-state", "Annual LLC fees, franchise taxes and report due dates for Delaware, Wyoming, New Mexico, Florida, Texas, Nevada, New York, California, Colorado and Montana, with official sources."],
   ["EIN Acquisition", "/ein", "EIN service for foreign-owned US LLC owners — CAA certification, no passport mailing."],
   ["ITIN Acquisition", "/itin", "ITIN service for non-residents — CAA certification, no passport mailing."],

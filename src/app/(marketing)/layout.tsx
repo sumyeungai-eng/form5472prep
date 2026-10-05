@@ -113,6 +113,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <li><Link href="/form-5472-late-filing-checker" className="hover:text-ink">Late-filing checker</Link></li>
                 <li><Link href="/foreign-owned-llc-compliance-calendar" className="hover:text-ink">Compliance calendar</Link></li>
                 <li><Link href="/llc-annual-fees-by-state" className="hover:text-ink">LLC fees by state</Link></li>
+                <li><Link href="/form-5472-statistics" className="hover:text-ink">Form 5472 statistics</Link></li>
               </ul>
             </nav>
             <nav className="space-y-2.5">
