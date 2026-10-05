@@ -125,7 +125,7 @@ export default function PartnersPage() {
             </h1>
             <p data-speakable className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
               Batch filings for every foreign-owned LLC you manage. You prepare each filing in
-              minutes, your client signs with a secure link, our tax accountant reviews, and we fax
+              minutes, our tax accountant reviews, your client checks and signs with a secure link, and we fax
               to the IRS Ogden PIN Unit — with a timestamped receipt for every one.
             </p>
             <ul className="mt-6 space-y-2">

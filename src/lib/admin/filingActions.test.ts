@@ -510,6 +510,81 @@ describe("approveForSignature", () => {
   );
 });
 
+describe("uploadReviewedPdf — hands the package to the client", () => {
+  const pdfBase64 = Buffer.concat([Buffer.from("%PDF-1.7\n"), Buffer.alloc(400, 32)]).toString("base64");
+  const filing = {
+    id: "filing_1",
+    status: "PDF_GENERATED",
+    llcName: "Acme LLC",
+    ownerName: "Owner One",
+    taxYears: [2026],
+    generatedPdfKey: "unsigned.pdf",
+    signedPdfKey: null,
+    signaturePngKey: null as string | null,
+    preflightStatus: "passed",
+    preflightOverrideBy: null,
+    reviewApprovedAt: null,
+    reviewApprovedBy: null,
+    user: { id: "u1", email: "owner@example.test" } as { id: string; email: string } | null,
+  };
+
+  beforeEach(() => {
+    db.findUnique.mockReset();
+    db.update.mockClear();
+    db.createLog.mockClear();
+    storage.put.mockClear();
+    email.sendReadyToSignEmail.mockClear();
+    brand.brandForFiling.mockClear();
+  });
+
+  it("stores the PDF, marks it sent for review, and emails the client to check and sign", async () => {
+    db.findUnique.mockResolvedValue(filing);
+    brand.brandForFiling.mockResolvedValueOnce({ name: "Demo Partner" });
+
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64 }, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, emailSent: true, emailTo: "owner@example.test" });
+
+    expect(storage.put).toHaveBeenCalled();
+    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ status: "PDF_GENERATED", signaturePngKey: null, reviewApprovedBy: "admin_1" }),
+    }));
+    expect(email.sendReadyToSignEmail).toHaveBeenCalledWith(expect.objectContaining({
+      email: "owner@example.test",
+      filingId: "filing_1",
+      brand: { name: "Demo Partner" },
+      resign: false,
+    }));
+  });
+
+  it("sets aside an earlier signature and asks the client to sign the new version", async () => {
+    db.findUnique.mockResolvedValue({ ...filing, status: "SIGNATURE_PENDING", signaturePngKey: "filing_1_signature.png" });
+
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64 }, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, emailSent: true });
+
+    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ status: "PDF_GENERATED", signaturePngKey: null }),
+    }));
+    expect(email.sendReadyToSignEmail).toHaveBeenCalledWith(expect.objectContaining({ resign: true }));
+  });
+
+  it("reports when the client could not be emailed", async () => {
+    db.findUnique.mockResolvedValue({ ...filing, user: null });
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64 }, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, emailSent: false });
+    expect(email.sendReadyToSignEmail).not.toHaveBeenCalled();
+
+    db.findUnique.mockResolvedValue(filing);
+    email.sendReadyToSignEmail.mockRejectedValueOnce(new Error("SMTP unavailable"));
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64 }, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, emailSent: false, emailError: "SMTP unavailable" });
+  });
+});
+
 describe("updateYearField", () => {
   const filing = {
     id: "filing_1",
@@ -724,9 +799,21 @@ describe("resendOrderConfirmation", () => {
     storage.putPdf.mockClear();
   });
 
+  it("never rebuilds a package that has been reviewed (sent to the client) or signed", async () => {
+    db.findUnique.mockResolvedValueOnce(initialFiling); // reviewApprovedAt set
+
+    await expect(
+      runFilingAction("filing_1", "resendOrderConfirmation", {}, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, pdfAttached: false });
+
+    expect(pdf.generatePackage).not.toHaveBeenCalled();
+    expect(storage.putPdf).not.toHaveBeenCalled();
+    expect(email.sendOrderConfirmationEmail).toHaveBeenCalled();
+  });
+
   it("regenerates the attached PDF and clears the pre-flight override", async () => {
     db.findUnique
-      .mockResolvedValueOnce(initialFiling)
+      .mockResolvedValueOnce({ ...initialFiling, reviewApprovedAt: null, reviewApprovedBy: null })
       .mockResolvedValueOnce(packageFiling);
 
     await expect(

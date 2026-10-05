@@ -18,18 +18,16 @@ const REVIEW_GATE_GRANDFATHERED_STATUSES = new Set([
 
 // POST /api/filings/[id]/sign
 //
-// Stores the customer's drawn signature PNG for record-keeping and marks
-// the filing as SIGNATURE_PENDING ("customer acknowledged + signed; awaiting
-// accountant-finalized PDF"). The signature is NOT pasted onto the PDF —
-// our accountant signs the package offline and uploads the final signed PDF
-// via the admin portal. That upload populates `signedPdfKey` and bumps the
-// status to SIGNED_UPLOADED.
+// The client's "check & sign" step. Requires `confirmed: true` (they ticked
+// "everything is correct") and `pdfKey` = the generatedPdfKey of the exact
+// PDF they were shown, so a signature can never attach to a version they
+// didn't see (e.g. a stale tab after admin uploaded a corrected PDF).
 //
-// Keeping the customer-facing signature pad serves two purposes:
-//   1. Captures customer acknowledgment that they've reviewed the package.
-//   2. Stores their signature for reuse on future filings (same logic as
-//      before — populates the wizard signature pre-fill on next year's
-//      return).
+// Stores the drawn signature PNG (versioned key — re-signing never
+// overwrites the earlier image) and marks the filing SIGNATURE_PENDING.
+// Admin then places this signature on the package (place-signature) or
+// uploads a finalized signed PDF, which sets `signedPdfKey` and
+// SIGNED_UPLOADED. The PNG is also reused to pre-fill future filings.
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const owned = await getOwnedFiling(params.id, "sign");
   if (!owned) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -73,7 +71,25 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     );
   }
 
-  const body = (await req.json().catch(() => ({}))) as { pngDataUrl?: unknown };
+  const body = (await req.json().catch(() => ({}))) as {
+    pngDataUrl?: unknown;
+    confirmed?: unknown;
+    pdfKey?: unknown;
+  };
+  // The client must explicitly confirm they checked the exact PDF they're
+  // signing (the "everything is correct" tick on the check-and-sign page).
+  if (body.confirmed !== true) {
+    return NextResponse.json(
+      { error: "Please confirm you've checked your forms and everything is correct." },
+      { status: 400 },
+    );
+  }
+  if (typeof body.pdfKey !== "string" || body.pdfKey !== filing.generatedPdfKey) {
+    return NextResponse.json(
+      { error: "Your forms were updated since you opened this page. Please reload and check the new version." },
+      { status: 409 },
+    );
+  }
   // Accept the canonical "data:image/png;base64,..." prefix AND tolerate the
   // less-common "data:image/png;charset=utf-8;base64,..." that some browsers
   // emit. Anything else gets rejected with a specific reason.
@@ -95,11 +111,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     );
   }
 
-  // Store the signature PNG only — for audit + reuse on future filings.
-  // We do NOT embed it into the PDF anymore. The accountant signs offline
-  // and uploads the finalized signed PDF via /admin, which writes
-  // signedPdfKey and bumps status to SIGNED_UPLOADED.
-  const signatureKey = `${filing.id}_signature.png`;
+  // Versioned key: an earlier signature (set aside when a corrected PDF was
+  // uploaded) stays in storage for the audit trail.
+  const signatureKey = `${filing.id}_signature_${Date.now()}.png`;
   try {
     await put(signatureKey, pngBytes, "image/png");
   } catch (err) {
@@ -108,8 +122,14 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: `Failed to save signature: ${msg}` }, { status: 500 });
   }
 
-  await prisma.filing.update({
-    where: { id: filing.id },
+  // Conditional write: if admin swapped the PDF between our read and now,
+  // nothing matches and the client is asked to reload.
+  const written = await prisma.filing.updateMany({
+    where: {
+      id: filing.id,
+      generatedPdfKey: body.pdfKey,
+      status: { in: ["PDF_GENERATED", "SIGNATURE_PENDING"] },
+    },
     data: {
       signaturePngKey: signatureKey,
       signedAt: new Date(),
@@ -118,6 +138,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       status: "SIGNATURE_PENDING",
     },
   });
+  if (written.count === 0) {
+    return NextResponse.json(
+      { error: "Your forms were updated since you opened this page. Please reload and check the new version." },
+      { status: 409 },
+    );
+  }
 
   return NextResponse.json({ ok: true, signatureKey });
 }

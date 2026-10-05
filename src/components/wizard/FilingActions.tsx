@@ -160,13 +160,15 @@ export function FilingActions({ filing }: { filing: Filing }) {
           ) : (
             <>
               <p className="text-sm text-slate-600 mb-3">
-                Draw your signature once. No printing, scanning, or uploading needed.
+                {canSign
+                  ? "Your reviewed forms are ready. Check them, then sign online. No printing, scanning, or uploading needed."
+                  : "Once our accountant has reviewed your forms, we'll email you a link to check them and sign online."}
               </p>
               <Button
                 onClick={() => router.push(`/filings/${filing.id}/sign`)}
                 disabled={!canSign}
               >
-                {canSign ? "Sign my filing" : "Available after review"}
+                {canSign ? "Check & sign my forms" : "Available after review"}
               </Button>
             </>
           )}

@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 // blocking the iframe render in Chrome/Firefox. Pass ?download=1 to force a
 // download dialog (no current caller uses it; kept for symmetry).
 export async function GET(req: Request, { params }: { params: { id: string } }) {
-  const filing = await getOwnedFiling(params.id);
+  const filing = await getOwnedFiling(params.id, "sign");
   if (!filing?.generatedPdfKey)
     return NextResponse.json({ error: "Not generated yet" }, { status: 404 });
 

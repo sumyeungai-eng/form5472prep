@@ -92,7 +92,7 @@ export default async function SignFilingPage({ params }: { params: { id: string 
     // set, status SIGNATURE_PENDING) or the admin already embedded and
     // uploaded the finalized PDF (signedPdfKey set). Either way, don't show
     // them the canvas again — bounce back to the filing detail page so the
-    // "Signature received — accountant reviewing" banner explains what's
+    // "Signature received — preparing to fax" banner explains what's
     // happening. Without this gate, a returning customer hits a blank canvas,
     // re-signs, gets bounced back to the filing page, sees "Sign my filing"
     // again (pre-fix), and loops forever.
@@ -135,6 +135,8 @@ export default async function SignFilingPage({ params }: { params: { id: string 
       llcName={filing.llcName}
       taxYears={filing.taxYears}
       priorSignatureDataUrl={priorSignatureDataUrl}
+      pdfKey={filing.generatedPdfKey!}
+      showFilingLink={!(grantedByInvite && (!currentUser || currentUser.id !== filing.userId))}
     />
   );
 }

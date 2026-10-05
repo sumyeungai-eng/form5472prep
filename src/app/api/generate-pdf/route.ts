@@ -22,6 +22,14 @@ export async function POST(req: Request) {
   // (idempotent re-generation before signing). DRAFT = not paid (402); any
   // later state (SIGNATURE_PENDING/SIGNED_UPLOADED/FAXED/CONFIRMED/FAILED)
   // must NOT be regressed by re-generating, so reject with 409.
+  // Once the accountant-reviewed PDF has been sent to the client, the
+  // customer must not be able to replace it with a fresh unreviewed build.
+  if (filing.reviewApprovedAt) {
+    return NextResponse.json(
+      { error: "Your forms have already been reviewed. Message us if something needs changing." },
+      { status: 409 },
+    );
+  }
   if (filing.status !== "PAID" && filing.status !== "PDF_GENERATED") {
     return filing.status === "DRAFT"
       ? NextResponse.json({ error: "Not paid yet" }, { status: 402 })
