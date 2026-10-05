@@ -1,4 +1,4 @@
-// Contextual links from content (landing pages, blog posts) into the eight
+// Contextual links from content (landing pages, blog posts) into the
 // bottom-of-funnel /services/* pages (src/lib/services-pages.ts). Those pages
 // were orphaned except for the footer and the hub; every content page now
 // points at the ONE service page that best matches its topic.
@@ -16,7 +16,10 @@ export type ServiceSlug =
   | "foreign-owned-llc-tax-filing-service"
   | "form-5472-filing-for-dormant-llc"
   | "final-form-5472-for-dissolved-llc"
-  | "white-label-form-5472-filing";
+  | "white-label-form-5472-filing"
+  | "hire-someone-to-file-form-5472"
+  | "form-5472-preparer"
+  | "form-5472-for-accountants";
 
 const ANNUAL: ServiceSlug = "form-5472-filing-service";
 const PRO_FORMA: ServiceSlug = "pro-forma-1120-filing-service";
@@ -26,6 +29,9 @@ const TAX: ServiceSlug = "foreign-owned-llc-tax-filing-service";
 const DORMANT: ServiceSlug = "form-5472-filing-for-dormant-llc";
 const FINAL: ServiceSlug = "final-form-5472-for-dissolved-llc";
 const PARTNER: ServiceSlug = "white-label-form-5472-filing";
+const HIRE: ServiceSlug = "hire-someone-to-file-form-5472";
+const PREPARER: ServiceSlug = "form-5472-preparer";
+const ACCOUNTANTS: ServiceSlug = "form-5472-for-accountants";
 
 /** Landing-page slug -> service page slug (src/lib/landing-pages.ts). */
 export const LANDING_SERVICE_MAP: Record<string, ServiceSlug> = {
@@ -80,10 +86,14 @@ const BLOG_TAG_RULES: Array<{ service: ServiceSlug; tags: string[] }> = [
   { service: DORMANT, tags: ["dormant-llc", "inactive-llc"] },
   { service: FAX, tags: ["fax", "irs-ogden"] },
   { service: PRO_FORMA, tags: ["pro-forma-1120", "form-1120", "form-1120-f"] },
-  {
-    service: PARTNER,
-    tags: ["partner-program", "white-label", "accounting-firms", "company-formation-agents", "registered-agents"],
-  },
+  // White-label posts stay on the white-label page; accounting-firm and
+  // outsourcing posts (without a white-label tag) go to the accountants page.
+  { service: PARTNER, tags: ["white-label", "white-label-tax-preparation"] },
+  { service: ACCOUNTANTS, tags: ["accounting-firms", "tax-preparer-credentials", "outsourcing"] },
+  { service: PARTNER, tags: ["partner-program", "company-formation-agents", "registered-agents"] },
+  // "Should I use a preparer / do it myself?" posts.
+  { service: PREPARER, tags: ["tax-preparer"] },
+  { service: HIRE, tags: ["diy"] },
   { service: TAX, tags: ["us-tax", "tax-residency", "withholding", "form-1040-nr", "eci"] },
 ];
 

@@ -43,6 +43,30 @@ describe("serviceForBlogTags", () => {
     expect(serviceForBlogTags(["us-tax", "foreign-owned-llc"])).toBe("foreign-owned-llc-tax-filing-service");
   });
 
+  it("routes accountant, outsourcing and preparer posts to the audience pages", () => {
+    // form-5472-in-house-vs-outsourced-firm / file-form-5472-for-clients-without-being-a-cpa
+    expect(serviceForBlogTags(["partner-program", "form-5472", "accounting-firms", "outsourcing"])).toBe(
+      "form-5472-for-accountants",
+    );
+    expect(serviceForBlogTags(["partner-program", "form-5472", "tax-preparer-credentials"])).toBe(
+      "form-5472-for-accountants",
+    );
+    // White-label posts tagged accounting-firms stay on the white-label page.
+    expect(serviceForBlogTags(["white-label", "partner-program", "form-5472", "accounting-firms"])).toBe(
+      "white-label-form-5472-filing",
+    );
+    expect(serviceForBlogTags(["white-label-tax-preparation", "accounting-firms", "form-5472"])).toBe(
+      "white-label-form-5472-filing",
+    );
+    // form-5472-diy-vs-preparer
+    expect(serviceForBlogTags(["form-5472", "diy", "tax-preparer", "foreign-owned-llc"])).toBe("form-5472-preparer");
+    expect(serviceForBlogTags(["form-5472", "diy"])).toBe("hire-someone-to-file-form-5472");
+    // how-to-fill-out-form-5472 keeps its pro forma 1120 card.
+    expect(serviceForBlogTags(["form-5472", "filing-guide", "diy", "pro-forma-1120"])).toBe(
+      "pro-forma-1120-filing-service",
+    );
+  });
+
   it("prefers late-filing over dissolution when both are tagged", () => {
     expect(
       serviceForBlogTags(["form-5472", "administrative-dissolution", "llc-reinstatement", "late-filing"]),

@@ -35,6 +35,14 @@ const words = (s: string) =>
     .split(/[^a-z0-9§$.,]+/)
     .map((w) => w.replace(/[.,]+$/g, "").replace(/^[.,]+/g, ""))
     .filter(Boolean);
+// The four short audience pages (docs/seo/audience-keywords-2026-10-05.md):
+// 400–700 words instead of 800–1,200.
+const AUDIENCE_PAGES = new Set([
+  "hire-someone-to-file-form-5472",
+  "form-5472-preparer",
+  "form-5472-for-accountants",
+  "form-5472-for-bookkeepers",
+]);
 const wordCount = (s: string) => s.split(/\s+/).filter((w) => /[A-Za-z0-9]/.test(w)).length;
 
 function firstSentence(markup: string): string {
@@ -51,7 +59,7 @@ function indexOfPhrase(haystack: string[], needle: string[]): number {
 }
 
 describe("services pages: on-page rules", () => {
-  it("has the 8 pages from docs/seo/keyword-sheet.csv", () => {
+  it("has the 8 keyword-sheet pages plus the 4 audience pages", () => {
     expect(SERVICE_PAGES.map((p) => p.slug).sort()).toEqual(
       [
         "form-5472-filing-for-dormant-llc",
@@ -62,6 +70,10 @@ describe("services pages: on-page rules", () => {
         "late-form-5472-filing-service",
         "pro-forma-1120-filing-service",
         "white-label-form-5472-filing",
+        "hire-someone-to-file-form-5472",
+        "form-5472-preparer",
+        "form-5472-for-accountants",
+        "form-5472-for-bookkeepers",
       ].sort(),
     );
   });
@@ -100,6 +112,10 @@ describe("services pages: on-page rules", () => {
         expect(norm(page.metaDescription).startsWith(kw)).toBe(true);
         expect(page.metaDescription.length).toBeLessThanOrEqual(160);
         expect(page.longDescription.length).toBeGreaterThan(page.metaDescription.length);
+        if (AUDIENCE_PAGES.has(page.slug)) {
+          expect(page.metaDescription.length).toBeGreaterThanOrEqual(120);
+          expect(page.metaDescription.length).toBeLessThanOrEqual(155);
+        }
       });
 
       it("H1 contains the keyword in exact word order", () => {
@@ -118,7 +134,7 @@ describe("services pages: on-page rules", () => {
 
       it("opens with a bold direct answer and has a CTA", () => {
         expect(page.intro).toMatch(/\*\*[^*]{40,}\*\*/);
-        expect(page.cta.href).toMatch(page.slug === "white-label-form-5472-filing" ? /^\/partners/ : /^\/start\?src=/);
+        expect(page.cta.href).toMatch(page.category === "partners" ? /^\/partners/ : /^\/start\?src=/);
       });
 
       it("has a 'what it is not / nobody can promise' section", () => {
@@ -136,16 +152,21 @@ describe("services pages: on-page rules", () => {
         expect(new Set(page.related.map((r) => r.href)).size).toBe(page.related.length);
       });
 
-      it("body is 800–1,200 words", () => {
+      const [minWords, maxWords] = AUDIENCE_PAGES.has(page.slug) ? [400, 700] : [800, 1200];
+      it(`body is ${minWords}–${maxWords} words`, () => {
         const n = wordCount(servicePlainBody(page));
-        expect(n).toBeGreaterThanOrEqual(800);
-        expect(n).toBeLessThanOrEqual(1200);
+        expect(n).toBeGreaterThanOrEqual(minWords);
+        expect(n).toBeLessThanOrEqual(maxWords);
       });
 
       it("follows the copy rules", () => {
-        const text = [page.title, page.metaDescription, page.longDescription, page.h1, servicePlainBody(page)].join(" ");
+        let text = [page.title, page.metaDescription, page.longDescription, page.h1, servicePlainBody(page)].join(" ");
+        // "CPA firms" is allowed only as an audience word on the accountants page.
+        if (page.slug === "form-5472-for-accountants") text = text.replace(/\bCPA firms\b/g, "");
         expect(text).not.toMatch(/\bCPA\b/);
-        expect(text).not.toMatch(/licensed|IRS[- ]approved|guarantee|best\b|leading\b/i);
+        expect(text).not.toMatch(/licensed|IRS[- ]approved|guarantee|best\b|leading\b|enrolled agent|US-based|#1\b/i);
+        // We never sign for the client.
+        expect(text).not.toMatch(/\bwe sign\b|\bwe will sign\b|sign on your behalf/i);
       });
 
       it("quotes only the prices in pricing.ts", () => {
@@ -240,9 +261,18 @@ describe("services hub", () => {
     expect(EIN_ITIN_LINKS.map((l) => l.href)).toEqual(["/ein", "/itin"]);
   });
 
-  it("sitemap rows cover the hub and all 8 pages", () => {
+  it("sitemap rows cover the hub and every page", () => {
     const rows = serviceSitemapEntries("https://www.example.com", new Date(0));
     expect(rows).toHaveLength(SERVICE_PAGES.length + 1);
     expect(rows[0].url).toBe("https://www.example.com/services");
+  });
+
+  it("audience pages carry their own sitemap date; the hub takes the newest", () => {
+    const base = new Date("2026-10-01T00:00:00Z");
+    const rows = serviceSitemapEntries("https://www.example.com", base);
+    const at = (slug: string) => rows.find((r) => r.url.endsWith(`/services/${slug}`))?.lastModified.toISOString();
+    for (const slug of Array.from(AUDIENCE_PAGES)) expect(at(slug)).toBe("2026-10-05T00:00:00.000Z");
+    expect(at("form-5472-filing-service")).toBe(base.toISOString());
+    expect(rows[0].lastModified.toISOString()).toBe("2026-10-05T00:00:00.000Z");
   });
 });

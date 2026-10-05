@@ -244,6 +244,68 @@ const SCENES = {
       <path d="M45 130V70a40 40 0 0 1 80 0v60" fill="${C.navySoft}"/>
       <rect x="28" y="20" width="114" height="22" rx="11" fill="${C.navySoft}"/>
     </g>`,
+
+  // Hire someone: a folder of records slides across a desk to a finished,
+  // checked form.
+  "folder-handover": (a) => `
+    <rect x="90" y="560" width="1100" height="26" rx="13" fill="${C.navy}" opacity="0.14"/>
+    ${folder({ x: 140, y: 300, w: 400, h: 250, fill: C.navySoft, flap: C.navy, rotate: -4, filter: "url(#deep)" })}
+    <path d="M560 420H690" stroke="${a}" stroke-width="12" stroke-linecap="round"/>
+    <path d="M670 386l40 34-40 34" stroke="${a}" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    ${formCard({ x: 740, y: 110, w: 380, h: 450, label: "5472", accent: a, rotate: 3 })}
+    ${badgeCheck({ cx: 1090, cy: 520, r: 64 })}`,
+
+  // Preparer: a magnifier checking a Form 5472 that sits on its 1120 cover.
+  "magnifier-over-form": (a) => `
+    ${formCard({ x: 250, y: 150, w: 380, h: 470, label: "1120", accent: C.navy, rotate: -6, boxes: false })}
+    ${formCard({ x: 470, y: 100, w: 420, h: 520, label: "5472", accent: a, rotate: 2 })}
+    <g transform="translate(860 400)" filter="url(#deep)">
+      <path d="M70 70L190 190" stroke="${C.navy}" stroke-width="40" stroke-linecap="round"/>
+      <circle r="120" fill="#DDE5EE" opacity="0.55"/>
+      <circle r="120" fill="none" stroke="${C.navy}" stroke-width="22"/>
+      <rect x="-70" y="-36" width="120" height="14" rx="7" fill="${C.ruleDark}"/>
+      <rect x="-70" y="-4" width="80" height="12" rx="6" fill="${C.rule}"/>
+      <path d="M-34 40l18 20 36-40" stroke="${C.green}" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>`,
+
+  // Accountants: two firm desks, each with a screen, linked over one form.
+  "linked-firm-desks": (a) => {
+    const desk = (x, fill) => `
+      <g transform="translate(${x} 330)" filter="url(#deep)">
+        <rect x="40" y="0" width="240" height="150" rx="14" fill="${fill}"/>
+        <rect x="58" y="18" width="204" height="114" rx="8" fill="#DDE5EE"/>
+        <rect x="76" y="40" width="120" height="12" rx="6" fill="${C.ruleDark}"/>
+        <rect x="76" y="66" width="160" height="10" rx="5" fill="${C.rule}"/>
+        <rect x="76" y="88" width="100" height="10" rx="5" fill="${C.rule}"/>
+        <rect x="140" y="150" width="40" height="40" fill="${fill}"/>
+        <rect x="0" y="190" width="320" height="22" rx="8" fill="${C.navy}"/>
+        <rect x="20" y="212" width="16" height="110" fill="${C.navySoft}"/>
+        <rect x="284" y="212" width="16" height="110" fill="${C.navySoft}"/>
+      </g>`;
+    return `
+    ${desk(110, C.navy)}
+    ${desk(850, a)}
+    ${formCard({ x: 520, y: 90, w: 240, h: 300, label: "5472", accent: a, rotate: 0, boxes: false })}
+    <path d="M440 470C540 430 740 430 840 470" stroke="${C.navy}" stroke-width="6" stroke-dasharray="3 14" stroke-linecap="round" fill="none" opacity="0.55"/>
+    ${link({ cx: 640, cy: 480, r: 46, sw: 12 })}`;
+  },
+
+  // Bookkeepers: an open ledger whose totals flow into the form.
+  "ledger-handoff": (a) => `
+    <g filter="url(#deep)">
+      <path d="M110 200H390V560H110z" fill="${C.paper}"/>
+      <path d="M420 200H700V560H420z" fill="${C.paper}"/>
+      <path d="M390 200H420V560H390z" fill="${C.creamDeep}"/>
+      <rect x="96" y="180" width="310" height="28" rx="10" fill="${C.navy}"/>
+      <rect x="404" y="180" width="310" height="28" rx="10" fill="${C.navy}"/>
+    </g>
+    ${[0, 1, 2, 3, 4, 5, 6].map((i) => `<path d="M136 ${256 + i * 40}H366M446 ${256 + i * 40}H676" stroke="${C.rule}" stroke-width="3"/><rect x="${i % 2 ? 300 : 290}" y="${244 + i * 40}" width="${i % 2 ? 60 : 70}" height="10" rx="5" fill="${i === 6 ? a : C.ruleDark}" opacity="${i === 6 ? 1 : 0.6}"/>`).join("")}
+    <rect x="446" y="232" width="150" height="14" rx="7" fill="${C.ruleDark}"/>
+    <rect x="600" y="476" width="76" height="14" rx="7" fill="${a}"/>
+    <path d="M700 480C740 480 750 420 778 404" stroke="${a}" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M748 386l34 16-22 32" stroke="${a}" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    ${formCard({ x: 820, y: 120, w: 360, h: 460, label: "5472", accent: a, rotate: 3 })}
+    <rect x="200" y="610" width="880" height="14" rx="7" fill="${C.navy}" opacity="0.1"/>`,
 };
 
 // slug -> descriptor (file name part), scene, accent
@@ -256,6 +318,10 @@ export const SERVICES = {
   "white-label-form-5472-filing": { descriptor: "partner-handoff", accent: C.amber },
   "form-5472-filing-for-dormant-llc": { descriptor: "empty-ledger", accent: C.clay },
   "final-form-5472-for-dissolved-llc": { descriptor: "closed-folder-stamp", accent: C.clay },
+  "hire-someone-to-file-form-5472": { descriptor: "folder-handover", accent: C.green },
+  "form-5472-preparer": { descriptor: "magnifier-over-form", accent: C.teal },
+  "form-5472-for-accountants": { descriptor: "linked-firm-desks", accent: C.amber },
+  "form-5472-for-bookkeepers": { descriptor: "ledger-handoff", accent: C.clay },
 };
 
 export const fileName = (slug) => `services_${slug}_${SERVICES[slug].descriptor}.webp`;
