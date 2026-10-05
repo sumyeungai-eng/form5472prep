@@ -15,6 +15,14 @@ const MAX_MESSAGE = 4000;
 const MAX_EMAIL = 320;
 const MAX_NAME = 200;
 
+// One plausible address: something@domain.tld, no spaces or list separators.
+// The visitor's address becomes the email's Reply-To, and Resend rejects the
+// whole send for an invalid Reply-To — so "jose@altorven" or two addresses
+// used to lose the question with a generic 500 (customer report 2026-10-05).
+const EMAIL_RE = /^[^\s@,;<>()]+@[^\s@,;<>()]+\.[a-z]{2,}$/i;
+const INVALID_EMAIL_ERROR =
+  "Please check your email address. It should look like name@company.com, so we can reply to you.";
+
 const TOPIC_LABELS = {
   service: "Pre-sales question",
   "in-progress": "Filing in progress",
@@ -46,8 +54,11 @@ export async function POST(req: Request) {
   // Optional context: which page they asked from.
   const pageUrl = typeof body.pageUrl === "string" ? body.pageUrl.trim().slice(0, 500) : "";
 
-  if (!email || !email.includes("@") || !message) {
+  if (!email || !message) {
     return NextResponse.json({ error: "Email and message are required" }, { status: 400 });
+  }
+  if (!EMAIL_RE.test(email)) {
+    return NextResponse.json({ error: INVALID_EMAIL_ERROR }, { status: 400 });
   }
 
   if (honeypot) {
@@ -55,18 +66,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   }
 
+  const question = { adminEmail: env.adminEmail, name, email, message, topicLabel, pageUrl };
   try {
-    await sendWebsiteQuestionAdminEmail({
-      adminEmail: env.adminEmail,
-      name,
-      email,
-      message,
-      topicLabel,
-      pageUrl,
-    });
+    await sendWebsiteQuestionAdminEmail(question);
   } catch (err) {
-    console.error("[ask] email send failed", err);
-    return NextResponse.json({ error: "Could not send. Please email support@form5472prep.com." }, { status: 500 });
+    console.error("[ask] email send failed; retrying without Reply-To", err);
+    // Never lose the question: retry once without the visitor as Reply-To
+    // (the usual rejection cause). Their address is still in the body.
+    try {
+      await sendWebsiteQuestionAdminEmail({ ...question, replyToVisitor: false });
+    } catch (retryErr) {
+      console.error("[ask] email send failed on retry", retryErr);
+      return NextResponse.json({ error: "Could not send. Please email support@form5472prep.com." }, { status: 500 });
+    }
   }
 
   return NextResponse.json({ ok: true });

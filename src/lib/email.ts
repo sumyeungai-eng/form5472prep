@@ -2044,13 +2044,16 @@ export async function sendWebsiteQuestionAdminEmail(args: {
   message: string;
   topicLabel?: string;
   pageUrl?: string;
+  // False = don't set the visitor as Reply-To (fallback when Resend rejects
+  // their address); the address still appears in the body.
+  replyToVisitor?: boolean;
 }) {
   const displayName = args.name || "(not provided)";
   const subjectParts = [args.topicLabel, args.name, subjectSnippet(args.message)].filter(Boolean).join(" — ");
   return sendEmail({
     log: { kind: "admin_website_question" },
     to: args.adminEmail,
-    replyTo: args.email,
+    ...(args.replyToVisitor === false ? {} : { replyTo: args.email }),
     subject: `[Website question] ${subjectParts}`,
     text: [
       "New question from the website",
