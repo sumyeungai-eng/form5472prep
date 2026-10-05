@@ -211,3 +211,19 @@ describe("landing page howTo derivation", () => {
     }
   });
 });
+
+describe("landing page public copy", () => {
+  // Internal research-note phrasing (references to our private notes file)
+  // once leaked into live provider pages. Competitor statements must be
+  // attributed to the provider's own page instead.
+  const INTERNAL_PHRASES = [/\bfacts\s+file\b/i, /\bthe section (says|describes|notes)\b/i];
+
+  it("never leaks internal research-note phrasing", () => {
+    for (const page of LANDING_PAGES) {
+      const text = JSON.stringify(page);
+      for (const pattern of INTERNAL_PHRASES) {
+        expect(text, `${page.slug}: ${pattern}`).not.toMatch(pattern);
+      }
+    }
+  });
+});

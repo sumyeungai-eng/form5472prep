@@ -2258,24 +2258,29 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Single-member LLCs", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
+      { label: "IRS: Delinquent international information return procedures", url: "https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures" },
+      { label: "Stripe Atlas: Pricing and inclusions", url: "https://stripe.com/atlas" },
+      { label: "Stripe Docs: Atlas business taxes", url: "https://docs.stripe.com/atlas/business-taxes" },
+      { label: "Stripe: How to open an LLC in the USA as a nonresident", url: "https://stripe.com/resources/more/how-to-open-an-llc-in-the-usa-for-nonresidents" },
     ],
     published: "2026-05-22",
     updated: "2026-10-05",
     h1: "Stripe Atlas LLC owners — Form 5472 is on you, not Stripe",
     intro:
-      "Stripe Atlas forms Delaware LLCs for foreign founders, but the annual IRS filing remains yours: Form 5472 plus pro forma Form 1120. Stripe Atlas does not handle that package, and skipping it can trigger a $25,000 penalty per year, per form, plus Delaware franchise tax considerations.",
+      "Stripe Atlas incorporates Delaware LLCs and C corps, but Atlas's published inclusions do not list the annual Form 5472 plus pro forma Form 1120 filing. For a foreign-owned single-member LLC that package stays with the owner, and missing it can trigger a $25,000 penalty per form, per year.",
     sections: [
       {
         heading: "What does Stripe Atlas cover and not cover?",
-        body: "Stripe Atlas covers formation setup, but it does not cover the annual Form 5472 package.\n\n• Forming your Delaware LLC (typically completes in 1-3 days).\n• Getting your EIN (international applicants get one without needing a US SSN/ITIN).\n• Setting up a US business bank account via Mercury (or similar fintech).\n• Providing legal templates (operating agreement, member resolutions).\n• Issuing equity to founders if you have co-founders.\n• Stripe payment processing integration on day 1.\n\nWhat Stripe Atlas explicitly does NOT cover (and Stripe says so in their own docs):\n\n• Annual federal tax filings, including Form 5472.\n• Pro forma Form 1120 (the attachment to Form 5472).\n• Delaware franchise tax ($400/year — they remind you but don't pay it).\n• State annual reports.\n• Personal Form 1040-NR (if you have US-source income).\n• Sales tax registrations.\n• Bookkeeping or accounting.\n\nNote: BOI (Beneficial Ownership Information) reporting isn't on this list because it no longer applies. Since March 26, 2025, FinCEN has exempted US-formed entities like your Delaware LLC from BOI reporting entirely.\n\nIf you formed your LLC through Stripe Atlas and you're a non-US person, Form 5472 is yours to file — every year, by April 15. Stripe's role ended at formation.",
+        body: "Stripe Atlas's pricing section (checked October 5, 2026) lists a US$500 one-time fee covering Delaware incorporation, a company tax ID, founder equity, an 83(b) election filing, document templates and the first year of registered agent service. Form 5472 is not on that list.\n\nListed in Atlas's US$500 setup fee:\n\n• Company incorporation in Delaware, including expedited processing and state filing fees.\n• Company tax ID (EIN).\n• Founder equity issuance and share purchase.\n• 83(b) election filing.\n• Document templates created with Cooley LLP.\n• First year of registered agent service (then US$100 a year).\n\nNot in Atlas's published inclusions (its business-taxes docs point founders to partner tax and accounting services):\n\n• Annual federal tax filings, including Form 5472.\n• Pro forma Form 1120 (the attachment to Form 5472).\n• Delaware annual LLC tax ($400/year, due June 1).\n• State annual reports outside Delaware.\n• Personal Form 1040-NR (if you have US-source income).\n• Sales tax registrations.\n• Bookkeeping or accounting.\n\nNote: BOI (Beneficial Ownership Information) reporting isn't on this list because it no longer applies. Since March 26, 2025, FinCEN has exempted US-formed entities like your Delaware LLC from BOI reporting entirely.\n\nIf you formed your LLC through Stripe Atlas and you're a non-US person, Form 5472 is yours to file — every year, by April 15. Atlas's published ongoing service is registered agent renewal, not the annual IRS filing.",
+
         table: {
           caption: "Stripe Atlas and Form5472 Prep task split",
           columns: ["Task", "Stripe Atlas", "Form5472 Prep"],
           rows: [
             ["LLC formation", "Forms Delaware LLCs", "Built for this profile"],
-            ["Form 5472 package", "Not covered", "$149 Standard filing"],
-            ["IRS fax filing", "Not in formation product", "Fax delivery included"],
-            ["Catch-up for missed years", "Founders discover later", "DIIRSP catch-up packages"],
+            ["Form 5472 package", "Not in published inclusions", "$149 Standard filing"],
+            ["IRS fax filing", "Not in published inclusions", "Fax delivery included"],
+            ["Catch-up for missed years", "Not in published inclusions", "+$99 per additional past year"],
           ],
         },
       },
@@ -2285,7 +2290,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the typical Stripe Atlas compliance stack?",
-        body: "The typical Stripe Atlas compliance stack includes federal Form 5472, Delaware franchise tax, and situational filings. The federal piece is Form 5472 plus pro forma Form 1120 due April 15; Delaware's annual LLC franchise tax is separate and due June 1; personal, sales, or payroll filings depend on facts.\n\nFederal (us):\n• Form 5472 + pro forma Form 1120 due April 15. $25,000 penalty if missed. Our service: $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included.\n• BOI report to FinCEN — NOT required. Since March 26, 2025, FinCEN has exempted US-formed entities, including Delaware LLCs, from BOI reporting under the Corporate Transparency Act.\n\nState (Delaware, self-serve):\n• Delaware Annual LLC Franchise Tax: $400, due June 1. Self-serve at corp.delaware.gov.\n\nSituational:\n• Personal Form 1040-NR — only if you have US-source income personally (rare for most Stripe Atlas LLCs).\n• Sales tax registrations — only if you cross economic nexus thresholds in specific states (rare for SaaS, more common for physical-goods ecommerce).\n• Payroll taxes — only if you have US employees (rare).\n\nNot Stripe's job after formation:\n• None of the above is included in the Stripe Atlas formation product. Some of Stripe Atlas's optional ongoing services may handle pieces, but the standard formation product ends at year 1 day 1.\n\nTotal annual federal compliance with us: Standard $149 (fax delivery included). Plus $400 Delaware state. Total year 2+: $549/year.",
+        body: "The typical Stripe Atlas compliance stack includes federal Form 5472, Delaware franchise tax, and situational filings. The federal piece is Form 5472 plus pro forma Form 1120 due April 15; Delaware's annual LLC franchise tax is separate and due June 1; personal, sales, or payroll filings depend on facts.\n\nFederal (us):\n• Form 5472 + pro forma Form 1120 due April 15. $25,000 penalty if missed. Our service: $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included.\n• BOI report to FinCEN — NOT required. Since March 26, 2025, FinCEN has exempted US-formed entities, including Delaware LLCs, from BOI reporting under the Corporate Transparency Act.\n\nState (Delaware, self-serve):\n• Delaware Annual LLC Franchise Tax: $400, due June 1. Self-serve at corp.delaware.gov.\n\nSituational:\n• Personal Form 1040-NR — only if you have US-source income personally (rare for most Stripe Atlas LLCs).\n• Sales tax registrations — only if you cross economic nexus thresholds in specific states (rare for SaaS, more common for physical-goods ecommerce).\n• Payroll taxes — only if you have US employees (rare).\n\nBeyond formation:\n• Atlas's published ongoing service is registered agent renewal (US$100 a year after year one). Its business-taxes docs point founders to partner tax and accounting services that offer discounts to Atlas users.\n\nTotal annual federal compliance with us: Standard $149 (fax delivery included). Plus $400 Delaware state. Total year 2+: $549/year.",
       },
       {
         heading: "What do you actually file for Form 5472?",
@@ -2301,25 +2306,25 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What do you do if you've missed prior years as a Stripe Atlas user?",
-        body: "Many Stripe Atlas founders discover Form 5472 a year or two after forming their LLC. The IRS provides DIIRSP — Delinquent International Information Return Submission Procedure — as the standard catch-up:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement explaining first-time foreign-owner unawareness.\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit).\n• Most first-time catch-ups are accepted with no penalty assessed.\n\nDIIRSP eligibility: you have not yet been contacted by the IRS about the specific year's delinquency. As long as no CP-15 notice has arrived for those years, DIIRSP is available.\n\nOur multi-year packages:\n• 2-year catch-up: $248 Standard / $298 Express (fax included).\n• 3-year catch-up: $347 Standard / $397 Express (fax included).\n\nDon't wait. Once the IRS issues a CP-15, that year's DIIRSP eligibility ends and you're in the harder post-assessment appeal process.",
+        body: "Many Stripe Atlas founders discover Form 5472 a year or two after forming their LLC. The IRS provides DIIRSP — Delinquent International Information Return Submission Procedure — as the standard catch-up:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement explaining first-time foreign-owner unawareness.\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit).\n• Expect no guaranteed outcome: the IRS may still assess a penalty during processing, and the statement is then the basis for responding.\n\nDIIRSP eligibility: you have not yet been contacted by the IRS about the specific year's delinquency. As long as no CP-15 notice has arrived for those years, DIIRSP is available.\n\nOur multi-year packages:\n• 2-year catch-up: $248 Standard / $298 Express (fax included).\n• 3-year catch-up: $347 Standard / $397 Express (fax included).\n\nDon't wait. Once the IRS issues a CP-15, that year's DIIRSP eligibility ends and you're in the harder post-assessment appeal process.",
       },
       {
         heading: "The Stripe Atlas + Mercury banking dimension",
-        body: "Most Stripe Atlas LLCs bank with Mercury. Mercury is a US-based fintech, so the LLC's main bank account is considered US — no FBAR (foreign bank account report) is required just for the Mercury account.\n\nIf you supplement Mercury with Wise USD, Brex, Relay, or other US-based business banking — also fine, no FBAR.\n\nFBAR enters the picture only if your LLC opens accounts OUTSIDE the US (e.g. Wise EUR account, Revolut Business EU). In those cases the LLC itself may need to file FBAR, separate from Form 5472. Talk to a tax professional if your LLC has non-US accounts.\n\nFor the standard Stripe Atlas + Mercury / Wise USD / Brex profile, Form 5472 + Delaware franchise tax is the complete compliance picture — BOI reporting doesn't apply since FinCEN exempted US-formed entities on March 26, 2025. No FBAR needed.",
+        body: "If your Stripe Atlas LLC banks with Mercury, a US-based fintech, the LLC's main bank account is considered US — no FBAR (foreign bank account report) is required just for the Mercury account.\n\nIf you supplement Mercury with Wise USD, Brex, Relay, or other US-based business banking — also fine, no FBAR.\n\nFBAR enters the picture only if your LLC opens accounts OUTSIDE the US (e.g. Wise EUR account, Revolut Business EU). In those cases the LLC itself may need to file FBAR, separate from Form 5472. Talk to a tax professional if your LLC has non-US accounts.\n\nFor the standard Stripe Atlas + Mercury / Wise USD / Brex profile, Form 5472 + Delaware franchise tax is the complete compliance picture — BOI reporting doesn't apply since FinCEN exempted US-formed entities on March 26, 2025. No FBAR needed.",
       },
       {
         heading: "What are common Stripe Atlas + Form 5472 mistakes?",
-        body: "Common mistakes include assuming Atlas handles annual filings, starting too late, following outdated BOI advice, and filing without the pro forma 1120.\n\n• Assuming Stripe Atlas \"handles everything\" — they don't. Annual federal filings (including Form 5472) are explicitly excluded from the formation product.\n\n• Waiting until April 14 to start — gather records earlier. Year 1 you'll need: Mercury statements, Stripe payout reports, any wires you made to/from the LLC.\n\n• Believing you still owe a BOI report — outdated advice. Since March 26, 2025, FinCEN has exempted US-formed entities, including Delaware LLCs, from Beneficial Ownership Information reporting. Don't pay anyone to file one for you.\n\n• Forgetting Delaware franchise tax — $400/year due June 1. Different deadline from Form 5472. Pay directly at corp.delaware.gov.\n\n• Assuming your CPA back home (in your country) knows about Form 5472 — they almost certainly don't. This is US-specific.\n\n• Filing only Form 5472 without the pro forma 1120 — invalid filing, triggers $25,000 penalty.\n\n• Filing through a regular tax software like TurboTax — doesn't support Form 5472 for foreign-owned DEs. Fax or mail only.",
+        body: "Common mistakes include assuming Atlas handles annual filings, starting too late, following outdated BOI advice, and filing without the pro forma 1120.\n\n• Assuming Stripe Atlas \"handles everything\" — Atlas's published inclusions do not list Form 5472 or other annual federal filings.\n\n• Waiting until April 14 to start — gather records earlier. Year 1 you'll need: Mercury statements, Stripe payout reports, any wires you made to/from the LLC.\n\n• Believing you still owe a BOI report — outdated advice. Since March 26, 2025, FinCEN has exempted US-formed entities, including Delaware LLCs, from Beneficial Ownership Information reporting. Don't pay anyone to file one for you.\n\n• Forgetting Delaware franchise tax — $400/year due June 1. Different deadline from Form 5472. Pay directly at corp.delaware.gov.\n\n• Assuming your CPA back home (in your country) knows about Form 5472 — they almost certainly don't. This is US-specific.\n\n• Filing only Form 5472 without the pro forma 1120 — invalid filing, triggers $25,000 penalty.\n\n• Planning to e-file the package — the IRS Form 5472 instructions send a foreign-owned DE's Form 5472 and pro forma 1120 by fax or mail.",
       },
       {
         heading: "Bottom line for Stripe Atlas LLC owners",
-        body: "Stripe Atlas got you the LLC, the EIN, and the Mercury account. That's where their job ended. From year 1 onward, Form 5472 + pro forma 1120 is on you, due April 15 each year, with a $25,000 penalty per year if missed.\n\nOur service is built for this profile — fixed pricing, accountant-reviewed, with a money-back guarantee if we fail to submit. $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included. Most of our customers come from Stripe Atlas, Mercury, and similar foreign-founder onboarding paths.\n\nFile early, file every year, keep the fax receipt for your records. The $25,000 penalty is the single largest compliance risk for your LLC — bigger than every other federal/state obligation combined.",
+        body: "Stripe Atlas got you the LLC, the tax ID, and the first year of registered agent service. Its published inclusions stop short of the annual IRS filing. From year 1 onward, Form 5472 + pro forma 1120 is on you, due April 15 each year, with a $25,000 penalty per year if missed.\n\nOur service is built for this profile — fixed pricing, accountant-reviewed, with a money-back guarantee if we fail to submit. $149 Standard (ready in 5-7 business days) or $199 Express (within 3) — identical filing, IRS fax delivery included. Most of our customers come from Stripe Atlas, Mercury, and similar foreign-founder onboarding paths.\n\nFile early, file every year, keep the fax receipt for your records. The $25,000 penalty is the single largest compliance risk for your LLC — bigger than every other federal/state obligation combined.",
       },
     ],
     faqs: [
       {
         q: "Does Stripe Atlas file Form 5472 for me?",
-        a: "No. Stripe Atlas's own documentation explicitly states they do not handle annual federal tax filings, including Form 5472. You're responsible for filing it every year. Their optional ongoing services may include some help; the standard formation product ends after year 1 day 1.",
+        a: "Not according to Atlas's published inclusions (checked October 5, 2026): the US$500 fee covers incorporation, tax ID, equity, 83(b) filing, templates and first-year registered agent. Atlas's business-taxes docs point to partner tax and accounting services. Plan to file Form 5472 yourself or through a filing service.",
       },
       {
         q: "I just got my Stripe Atlas LLC this year — do I file Form 5472 already?",
@@ -2338,12 +2343,12 @@ export const LANDING_PAGES: LandingPage[] = [
         a: "Yes. Each LLC files its own Form 5472 + pro forma 1120 separately. Three LLCs = three filings = $447/year at our Standard rate (3 × $149, fax included). Each gets its own fax receipt.",
       },
       {
-        q: "Stripe Atlas says I don't owe US tax — so why file Form 5472?",
-        a: "Both are true. You owe $0 US federal income tax (Stripe Atlas is right). But you still must file Form 5472 + pro forma 1120 as an INFORMATION return — disclosure only, not tax. The $25,000 penalty applies to non-filing regardless of whether tax is owed.",
+        q: "My Stripe Atlas LLC owes no US income tax — why file Form 5472?",
+        a: "Owing no US income tax and filing Form 5472 are separate questions. Form 5472 + pro forma 1120 is an information return (disclosure, not tax), and the $25,000 penalty applies to non-filing whether or not tax is owed.",
       },
       {
         q: "Does Stripe send my info to the IRS automatically?",
-        a: "Stripe issues a 1099-K to your LLC each year showing payment processing volume (if it exceeds reporting thresholds). The IRS sees this and knows your LLC has revenue. That makes them more likely to notice if you don't file Form 5472. Filing protects you from the penalty regardless.",
+        a: "Payment processors may file Form 1099-K when IRS reporting thresholds are met, but that report is not Form 5472 and does not satisfy it. Your LLC still files Form 5472 + pro forma 1120 itself whenever it had a reportable transaction.",
       },
       {
         q: "I formed my LLC through Atlas but moved it to Wyoming. Does that change anything?",
@@ -2351,7 +2356,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "I missed Stripe's note about Form 5472. Is it really my responsibility?",
-        a: "Yes. The IRS doesn't care whose website you read. Once you formed a US LLC as a foreign person, the Form 5472 obligation is yours. The good news: if you missed prior years and haven't been contacted by the IRS, DIIRSP catch-up is available and most first-time foreign-owner cases are accepted without penalty.",
+        a: "Yes. Once you formed a US LLC as a foreign person, the Form 5472 obligation is yours. If you missed prior years and the IRS has not contacted you, DIIRSP lets you file the late returns with a reasonable cause statement; no outcome is guaranteed.",
       },
       {
         q: "Does your service work for Stripe Atlas LLCs specifically?",
@@ -2581,42 +2586,46 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "doola form 5472",
     title: "doola Form 5472 — Bundle vs Flat-Fee Filing",
     metaDescription:
-      "Formed an LLC with doola? Compare its bundled Form 5472 coverage with a flat-fee filing-only option for foreign-owned US LLCs.",
+      "Formed an LLC with doola? See what doola's own pages say about Form 5472 price and coverage, and compare a flat-fee filing-only option.",
     sources: [
-      { label: "doola: Form 5472 for Foreign-Owned LLCs", url: "https://www.doola.com/blog/learn-how-to-file-form-5472-foreign-owned-llcs/" },
       { label: "doola: Pricing", url: "https://www.doola.com/pricing/" },
+      { label: "doola Help Center: Subscription and add-on service pricing", url: "https://help.doola.com/subscription-and-add-on-service-pricing" },
+      { label: "doola Help Center: Standalone Tax Filing-only service", url: "https://ask.doola.com/article/8a192242-doola-standalone-tax-filing-only-service-pricing-and-service-details" },
+      { label: "doola Help Center: Does Tax and Compliance cover Form 5472?", url: "https://ask.doola.com/article/bcf02a47-does-tax-and-compliance-cover-form-5472-and-1120-pro-forma-for-foreign-owned-single-member-llcs" },
+      { label: "doola Help Center: What is the Tax and Compliance plan?", url: "https://ask.doola.com/article/5fae8a5f-what-is-the-doola-tax-and-compliance-plan" },
+      { label: "doola: Form 5472 for Foreign-Owned LLCs", url: "https://www.doola.com/blog/learn-how-to-file-form-5472-foreign-owned-llcs/" },
       { label: "doola: Wyoming or Delaware guide", url: "https://help.doola.com/should-i-form-in-wyoming-or-delaware-doola-help-center" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
     published: "2026-08-31",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     startSrc: "doola-form-5472",
     h1: "Formed your LLC with doola? Check what is actually included.",
     intro:
-      "doola forms LLCs and C-corps, provides registered agent service and EIN support, and sells bookkeeping, analytics, banking-partner introductions, and a tax package for non-US founders and e-commerce sellers. If your LLC was formed through doola, your next question is whether your plan includes the annual Form 5472 + pro forma Form 1120 filing or whether you need a filing-only option.",
+      "doola forms US LLCs and C corps for founders worldwide and sells bookkeeping, analytics, banking help and tax plans. If doola formed your foreign-owned single-member LLC, check whether your plan covers the annual Form 5472 + pro forma Form 1120 filing; doola's own pages describe that coverage in more than one way.",
     sections: [
       {
         heading: "What does doola do for you?",
-        body: "doola helps with formation and operating setup, including LLC/C-corp formation, registered agent service, EIN support, bookkeeping software, e-commerce analytics, banking-partner introductions, and a tax package. Its public positioning focuses on non-US founders, solo founders, and small e-commerce businesses, with state guidance covering all 50 states.\n\nIts state guidance is not limited to one state: doola markets formation in all 50 states and identifies Wyoming and Delaware as top picks for non-US founders and online businesses.",
+        body: "doola's home and pricing pages describe LLC or C corp formation, an EIN, a US business address, registered agent service, bookkeeping, e-commerce analytics, US bank account guidance and tax filing plans. Its pricing page lists Starter at $297/yr, Tax and Compliance at $1,999/yr and Business-in-a-Box at $2,999/yr, each plus state fees (checked October 5, 2026).\n\ndoola's help center says Wyoming is the most popular state for non-residents running online and e-commerce businesses, and recommends Delaware if you may later convert to a C corp to raise venture capital from US investors.",
       },
       {
         heading: "What does doola leave with you?",
-        body: "doola leaves you with the same annual federal Form 5472 obligation that applies to foreign-owned single-member US LLCs with reportable transactions. That filing pairs Form 5472 with a pro forma Form 1120 and is separate from state formation, registered agent service, state annual reports, bookkeeping, and payment setup.\n\nThis is a federal information-return obligation. It is separate from state formation, registered agent service, state annual reports, bookkeeping, and payment setup.",
+        body: "Whoever formed the LLC, a foreign-owned single-member US LLC with reportable transactions owes the annual federal Form 5472 + pro forma Form 1120 filing. It is separate from state formation, registered agent service, state annual reports, bookkeeping and payment setup, so confirm which service, if any, covers it.\n\ndoola's help center says its $199 Annual State Filing service covers the state annual report only and does not include any federal tax filings.",
         table: {
           caption: "doola and Form5472 Prep task split",
           columns: ["Task", "doola", "Form5472 Prep"],
           rows: [
-            ["LLC formation", "Forms LLCs and C-corps", "Filing-only alternative"],
-            ["Form 5472 package", "Tax and Compliance plan", "$149 Standard filing"],
-            ["IRS fax filing", "Article describes e-filing", "Ogden fax delivery"],
-            ["Catch-up for missed years", "DIIRSP can be used", "Reasonable cause if late"],
+            ["LLC formation", "Forms LLCs and C corps", "Filing-only alternative"],
+            ["Form 5472 package", "$1,500/yr Tax Filing-only service", "$149 Standard filing"],
+            ["IRS filing method", "Help center: mail or fax", "Ogden fax delivery"],
+            ["Catch-up for missed years", "Extra-year price not published", "+$99 per additional past year"],
           ],
         },
       },
       {
-        heading: "What does doola's bundle include?",
-        body: "doola's own Form 5472 article says it prepares the pro-forma 1120 and Form 5472, and the facts file ties that coverage to doola's Tax and Compliance plan, listed at $1,999/yr and discounted to $1,499/yr. The same facts file notes that doola's page describes e-filing, while current IRS instructions require foreign-owned disregarded-entity Form 5472 packages to be paper-filed or faxed.\n\nIf you want the broader doola compliance bundle, that may be the right fit. If you only need the federal Form 5472 + pro forma 1120 package filed, Form5472 Prep is the flat-fee alternative: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — identical filing, IRS fax delivery included.",
+        heading: "What do doola's pages say about Form 5472 price and coverage?",
+        body: "doola's help center (checked October 5, 2026) lists a standalone Tax Filing-only service at $1,500 per year covering federal filings \"including Form 5472 and the accompanying pro forma Form 1120 when they apply\". Its pricing page lists Tax and Compliance at $1,999/yr plus state fees: Starter plus federal and state tax filing and a 1:1 tax consultation.\n\ndoola's pages differ on whether Tax and Compliance always includes Form 5472. Its Form 5472 blog article and one help article say it does (the help article says \"in most cases\"), while another help article lists Form 5472 among optional add-ons that \"may carry an extra fee\". Check your plan dashboard or ask doola in writing.\n\nIf you only need the federal Form 5472 + pro forma 1120 package filed, Form5472 Prep is a flat-fee alternative: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — identical filing, IRS fax delivery included.",
       },
       {
         heading: "What is your first-year filing timeline?",
@@ -2634,19 +2643,19 @@ export const LANDING_PAGES: LandingPage[] = [
     faqs: [
       {
         q: "Does doola's Tax and Compliance plan include Form 5472?",
-        a: "Yes. The facts file says doola offers Form 5472 filing inside its Tax and Compliance plan, listed at $1,999/yr and discounted to $1,499/yr. Its public pricing page does not publish a standalone 5472-only price.",
+        a: "doola's pages differ. Its blog and one help article say Tax and Compliance covers Form 5472 and pro forma 1120 (\"in most cases\"); another help article lists Form 5472 as an optional add-on that may cost extra. Check your plan dashboard or ask doola in writing.",
       },
       {
         q: "I used doola Starter or another formation-only package. Am I covered?",
-        a: "Check your plan and invoice. The facts file's angle is that doola customers on formation or registered-agent-only tiers have not necessarily paid for the 5472 filing; the confirmed coverage is the Tax and Compliance tier.",
+        a: "Check your plan and invoice. doola's pricing page describes Starter as formation, an EIN and a US business address; federal tax filing is listed under Tax and Compliance, and doola's help center lists a $1,500/yr Tax Filing-only service separately.",
       },
       {
         q: "doola got my EIN. Does that change the Form 5472 deadline?",
         a: "No. EIN issuance is separate from the annual federal information return. If the foreign-owned single-member LLC had a reportable transaction during the year, it still files Form 5472 + pro forma Form 1120.",
       },
       {
-        q: "Why mention fax if doola's article talks about e-filing?",
-        a: "The facts file flags that doola's page describes e-filing, but current IRS instructions require foreign-owned disregarded-entity Form 5472 packages to be filed by paper or fax. Our service uses IRS Ogden PIN Unit fax delivery.",
+        q: "Can doola's Form 5472 package be e-filed?",
+        a: "doola's help center says these forms \"cannot be filed electronically\" and go by mail or fax, matching the IRS Form 5472 instructions for foreign-owned disregarded entities. One passage of doola's blog article mentions e-filing, so ask doola how your filing will be sent. We deliver by IRS fax.",
       },
     ],
     relatedSlugs: ["wyoming-llc-form-5472", "delaware-llc-form-5472"],
@@ -2656,24 +2665,24 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "firstbase form 5472",
     title: "Firstbase Form 5472 — What the Bundle Covers",
     metaDescription:
-      "Firstbase One includes one Form 5472 in a larger bundle. See what that means and when a flat filing-only service may fit better.",
+      "Firstbase lists an $899/yr tax package for non-US-owned single-member LLCs that names Form 5472. See what it covers and when a filing-only service fits.",
     sources: [
-      { label: "Firstbase: Tax Filing announcement", url: "https://www.firstbase.io/blog/announcing-firstbase-tax-filing" },
+      { label: "Firstbase: Pricing", url: "https://www.firstbase.io/pricing" },
+      { label: "Firstbase: Tax filing", url: "https://www.firstbase.io/tax-software" },
       { label: "Firstbase: Firstbase One", url: "https://www.firstbase.io/one" },
-      { label: "Firstbase: Delaware vs Wyoming guide", url: "https://www.firstbase.io/blog/delaware-vs-wyoming-where-to-incorporate-llc" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
     published: "2026-08-31",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     startSrc: "firstbase-form-5472",
     h1: "Using Firstbase for your US company? Put Form 5472 in context.",
     intro:
-      "Firstbase forms LLCs and C-corps, primarily in Delaware and Wyoming, and offers registered-agent, mailroom, accounting, and tax-filing services through its broader Firstbase One bundle. If you formed a foreign-owned single-member LLC through Firstbase, the practical question is whether your exact plan includes the Form 5472 + pro forma Form 1120 filing.",
+      "Firstbase forms companies in Delaware or Wyoming and sells registered agent, mailroom, accounting and tax filing subscriptions. Its pricing page lists an $899-per-year Tax Filing package for non-US-owned single-member LLCs that names Form 5472 and a pro forma Form 1120, and the Firstbase One bundle includes Tax Filing.",
     sections: [
       {
         heading: "What does Firstbase do for you?",
-        body: "Firstbase helps with company formation and bundled startup compliance services, including LLC/C-corp formation, registered-agent service, premium mail or virtual address service, accounting, and federal/state tax filing. The section says its bundle is positioned for startups and foreign founders that want formation, compliance, and accounting in one place.\n\nThe facts file says Firstbase directly forms companies in Delaware and Wyoming, with foreign qualification into other states offered after initial formation.",
+        body: "Firstbase's pricing page lists Start, a one-time formation offer for companies in Delaware or Wyoming with EIN setup and banking-partner access, plus standalone Registered Agent, Mailroom Premium, Accounting and Tax Filing subscriptions. Firstbase One bundles those four subscriptions at $199 per month, billed yearly at $2,388 (checked October 5, 2026).\n\nThe Firstbase One page says its tax team covers federal, state and local forms, \"even the tricky ones like 5472 for foreign-owned companies\".",
       },
       {
         heading: "What does Firstbase leave with you?",
@@ -2682,16 +2691,16 @@ export const LANDING_PAGES: LandingPage[] = [
           caption: "Firstbase and Form5472 Prep task split",
           columns: ["Task", "Firstbase", "Form5472 Prep"],
           rows: [
-            ["LLC formation", "Forms LLCs and C-corps", "Filing-only alternative"],
-            ["Registered agent", "Agent Autopilot bundled", "Form 5472 package"],
-            ["Form 5472 package", "Firstbase One includes one", "$149 Standard alternative"],
-            ["Catch-up for missed years", "Coverage may predate plan", "DIIRSP reasonable cause"],
+            ["LLC formation", "Delaware or Wyoming formation", "Filing-only alternative"],
+            ["Registered agent", "Agent subscription or Firstbase One", "Not included; federal filing only"],
+            ["Form 5472 package", "$899/yr Tax Filing package", "$149 Standard filing"],
+            ["Catch-up for missed years", "Extra-year price not published", "+$99 per additional past year"],
           ],
         },
       },
       {
-        heading: "What does Firstbase One cover?",
-        body: "Firstbase's tax-filing announcement states that the base Tax Package for foreign-owned LLCs includes one Form 5472 and one pro forma Form 1120. The facts file ties that to Firstbase One at $199/month, billed yearly at $2,388/yr, with Agent Autopilot, Mailroom Premium, Accounting, and Tax Filing bundled together.\n\nFirstbase does not publish a standalone 5472-only public price in the facts file. For owners who do not need the full bundle, Form5472 Prep is a filing-only alternative: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — identical filing, IRS fax delivery included.",
+        heading: "What do Firstbase's pages say about Form 5472 price?",
+        body: "Firstbase's pricing and tax pages list a Tax Filing package for single-member LLCs owned by a non-US citizen or resident at $899 annually per package. It names Forms 5472, a pro forma Form 1120, unlimited Forms 1099-NEC or 1099-MISC and an IRS extension if needed (checked October 5, 2026).\n\nFirstbase One includes that Tax Filing subscription alongside Registered Agent, Mailroom Premium and Accounting. Firstbase's tax page still shows 2025 deadline dates, and the pages checked do not publish an extra-year price, filing method or turnaround, so confirm current terms with Firstbase in writing.\n\nFor owners who do not need the package or the bundle, Form5472 Prep is a filing-only alternative: $149 Standard (ready in 5-7 business days) or $199 Express (within 3 business days) — identical filing, IRS fax delivery included.",
       },
       {
         heading: "What is your first-year filing timeline?",
@@ -2709,15 +2718,15 @@ export const LANDING_PAGES: LandingPage[] = [
     faqs: [
       {
         q: "Does Firstbase One include Form 5472?",
-        a: "Yes. The facts file says Firstbase's tax-filing announcement includes one Form 5472 and one pro forma Form 1120 for foreign-owned LLCs inside the Firstbase One bundle.",
+        a: "Firstbase One includes Firstbase's Tax Filing subscription, and the Firstbase One page says its tax team handles \"5472 for foreign-owned companies\". The Tax Filing package for non-US-owned single-member LLCs lists Forms 5472 and a pro forma Form 1120. Confirm coverage for your tax year in writing.",
       },
       {
         q: "Can I buy only Firstbase Form 5472 filing at a published price?",
-        a: "The facts file did not find a public standalone 5472-only SKU. It found Firstbase One listed at $199/month, billed yearly at $2,388/yr, with tax filing included among several bundled services.",
+        a: "Yes, as part of a package. Firstbase's pricing page lists Tax Filing for single-member LLCs owned by a non-US citizen or resident at $899 annually per package, covering Forms 5472 and a pro forma Form 1120. Firstbase One ($2,388 per year) bundles Tax Filing with three other subscriptions.",
       },
       {
         q: "What if I only bought Firstbase Start or an older plan?",
-        a: "Check your plan, invoice, or support history for explicit Form 5472 + pro forma Form 1120 coverage. The facts file notes that customers on formation-only or legacy plans may not have 5472 filing coverage.",
+        a: "Check your plan, invoice, or support history for Form 5472 + pro forma Form 1120 coverage. Firstbase's pricing page lists Start as formation, EIN setup and banking-partner access; tax filing is a separate subscription or part of Firstbase One.",
       },
       {
         q: "Does Firstbase forming in Delaware or Wyoming change the federal filing?",
@@ -2734,21 +2743,22 @@ export const LANDING_PAGES: LandingPage[] = [
       "Clemta lists Federal Tax Filing, but public pages do not clearly itemize Form 5472. Learn what to confirm and how to file if needed.",
     sources: [
       { label: "Clemta: Pricing", url: "https://clemta.com/pricing" },
+      { label: "Clemta: Federal tax filing", url: "https://clemta.com/federal-tax-filing" },
       { label: "Clemta: What Is Form 5472?", url: "https://clemta.com/blog/what-is-form-5472" },
       { label: "Clemta: USA company registration", url: "https://clemta.com/usa-company-registration" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
     published: "2026-08-31",
-    updated: "2026-08-28",
+    updated: "2026-10-05",
     startSrc: "clemta-form-5472",
     h1: "Clemta customer? Get written clarity on Form 5472.",
     intro:
-      "Clemta provides LLC/C-corp formation, EIN application, registered agent and US business address services, mail receipt, banking support, invoicing, bookkeeping, and tiered Federal Tax Filing add-ons for non-US founders. If your LLC was formed or maintained through Clemta, the public-plan question is whether Form 5472 + pro forma Form 1120 is specifically included for your account.",
+      "Clemta sells annual plans for international founders that include company formation, an EIN, a registered agent and US business address, and financial tools. Its pricing page includes Federal Tax Filing in the Pro and Premium plans but does not name Form 5472, so confirm Form 5472 + pro forma Form 1120 coverage for your account.",
     sections: [
       {
         heading: "What does Clemta do for you?",
-        body: "Clemta's offering includes LLC/C-corp formation, EIN application, registered agent service with a US business address, mail receipt, banking support, invoicing, bookkeeping through Clemta Books, and paid Federal Tax Filing features. Its public materials aim at non-US founders, international entrepreneurs, small businesses, e-commerce sellers, freelancers, and VC-track startups.\n\nThe facts file says Clemta prominently promotes Wyoming and Delaware while listing many additional US states and territories as available.",
+        body: "Clemta's pricing page lists three annual plans: Essentials at $349, Pro at $1,068 and Premium at $2,879, each plus state fee. Every plan includes company formation, an EIN, a registered agent, a business address with mail forwarding, bank account application support and invoicing tools (checked October 5, 2026).\n\nClemta's company registration page covers LLC and C corporation formation for international founders and compares Wyoming and Delaware, noting that other states may also fit.",
       },
       {
         heading: "What does Clemta leave with you?",
@@ -2760,14 +2770,14 @@ export const LANDING_PAGES: LandingPage[] = [
             ["LLC formation", "LLC and C-corp formation", "Form 5472-specific service"],
             ["Registered agent", "Registered agent service", "Federal package only"],
             ["EIN", "EIN application", "Collects filing facts"],
-            ["Form 5472 package", "Public pages unclear", "Prepares IRS package"],
-            ["Catch-up for missed years", "Prior coverage unclear", "DIIRSP reasonable cause"],
+            ["Form 5472 package", "Not named on pricing page", "Prepares IRS package"],
+            ["Catch-up for missed years", "Extra-year terms not published", "DIIRSP reasonable cause"],
           ],
         },
       },
       {
         heading: "Do Clemta's public pages itemize the 5472 package?",
-        body: "No; the facts file says Clemta's plan comparison does not name Form 5472 or pro forma Form 1120 as included. Clemta's own Form 5472 explainer mentions assistance with Form 5472 filings, but does not state a price or confirm automatic inclusion in a specific tier.\n\nThat is not a confirmed no. It is a public-pages gap. Ask Clemta to confirm in writing whether your plan or invoice includes Form 5472 + pro forma Form 1120; if it is not itemized, a Form 5472-specific service closes that exact gap.",
+        body: "No. Clemta's pricing page lists \"Federal Tax Filing\" as included in the Pro and Premium plans and not included in Essentials, but neither it nor Clemta's federal tax filing page names Form 5472 or a pro forma Form 1120 (checked October 5, 2026).\n\nClemta's Form 5472 blog article says Clemta offers \"assistance with Form 5472 filings\" but gives no price or plan. That is not a confirmed no; it is a public-pages gap. Ask Clemta to confirm in writing whether your plan or invoice includes Form 5472 + pro forma Form 1120; if it is not itemized, a Form 5472-specific service closes that exact gap.",
       },
       {
         heading: "What is your first-year filing timeline?",
@@ -2785,11 +2795,11 @@ export const LANDING_PAGES: LandingPage[] = [
     faqs: [
       {
         q: "Does Clemta's Federal Tax Filing line definitely include Form 5472?",
-        a: "It is not clear from the public pages summarized in the facts file. The pricing page lists Federal Tax Filing, while the facts file says it does not name Form 5472 or pro forma Form 1120 in the plan comparison.",
+        a: "Clemta does not say so publicly. Its pricing page includes Federal Tax Filing in the Pro and Premium plans, but neither the pricing page nor its federal tax filing page names Form 5472 or pro forma Form 1120. Ask Clemta in writing.",
       },
       {
         q: "Clemta's blog mentions Form 5472 assistance. Is that enough?",
-        a: "Not by itself. The facts file says the blog mentions assistance with Form 5472 filings but does not state a price or confirm that the filing is automatically included in a specific plan tier.",
+        a: "Not by itself. Clemta's Form 5472 article says it offers \"assistance with Form 5472 filings\" but states no price and does not tie the filing to a specific plan. Get written confirmation for your plan and tax year.",
       },
       {
         q: "What should I ask Clemta before buying another filing service?",
@@ -2807,16 +2817,17 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "startglobal form 5472",
     title: "StartGlobal Form 5472 — Check the Filing Scope",
     metaDescription:
-      "StartGlobal offers Federal Tax Filing, but public pages do not name Form 5472. See what to verify and how filing-only help works.",
+      "StartGlobal sells Federal Tax Filing, but its pricing and federal tax pages do not name Form 5472. See what to verify and how filing-only help works.",
     sources: [
       { label: "StartGlobal: Pricing", url: "https://startglobal.co/pricing/" },
+      { label: "StartGlobal: Federal tax filing", url: "https://startglobal.co/llc-management/federal-tax-filing/" },
       { label: "StartGlobal: LLC formation", url: "https://startglobal.co/llc-formation/" },
-      { label: "StartGlobal: Wyoming LLC formation", url: "https://startglobal.co/us/wyoming/llc-formation/" },
+      { label: "StartGlobal: Home", url: "https://startglobal.co/" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
     published: "2026-08-31",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     startSrc: "startglobal-form-5472",
     h1: "StartGlobal formed the LLC. Now confirm the 5472 filing.",
     intro:
@@ -2824,7 +2835,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "What does StartGlobal do for you?",
-        body: "StartGlobal's public offering includes LLC formation with state fees included, registered agent service, EIN/business tax number support, remote US bank account setup, virtual US mailing address, US phone number, invoicing/payments, bookkeeping, Federal Tax Filing, and state annual reports. The services are sold a la carte or through a Managed LLC plan.\n\nThe facts file says StartGlobal explicitly targets non-US founders and positions Wyoming as the default for most international founders, with Delaware pitched to founders planning to raise venture capital.",
+        body: "StartGlobal's public offering includes LLC formation with state fees included, registered agent service, EIN/business tax number support, remote US bank account setup, virtual US mailing address, US phone number, invoicing/payments, bookkeeping, Federal Tax Filing, and state annual reports. The services are sold a la carte or through a Managed LLC plan.\n\nStartGlobal's LLC formation page calls Wyoming or Delaware excellent choices for most international founders, with Delaware preferred for businesses planning to raise venture capital. Its pricing page lists formation at $399 one-time, state fees included, and the Managed LLC plan at $149 per month (checked October 5, 2026).",
       },
       {
         heading: "What does StartGlobal leave with you?",
@@ -2833,18 +2844,18 @@ export const LANDING_PAGES: LandingPage[] = [
           caption: "StartGlobal and Form5472 Prep task split",
           columns: ["Task", "StartGlobal", "Form5472 Prep"],
           rows: [
-            ["LLC formation", "LLC formation included", "Complete Form 5472 package"],
+            ["LLC formation", "$399 formation, state fees included", "Complete Form 5472 package"],
             ["Registered agent", "Registered agent service", "Federal filing only"],
             ["EIN", "Business tax number support", "Collects owner information"],
-            ["Form 5472 package", "Not named publicly", "Form 5472-specific service"],
-            ["IRS fax filing", "Generic tax-filing language", "Ogden fax submission"],
+            ["Form 5472 package", "Not named on pricing page", "Form 5472-specific service"],
+            ["IRS fax filing", "Method for 5472 not published", "Ogden fax submission"],
             ["Catch-up for missed years", "Confirm each filed year", "DIIRSP reasonable cause"],
           ],
         },
       },
       {
         heading: "Does StartGlobal name Form 5472?",
-        body: "No, the facts file says StartGlobal public pages do not name Form 5472 or pro forma Form 1120. Because generic Federal Tax Filing language is not public confirmation of the specific 5472 package, ask StartGlobal for written confirmation tied to your plan.\n\nDo not assume either way from generic wording. Ask StartGlobal to confirm in writing whether your plan includes Form 5472 + pro forma Form 1120; if it does not itemize those forms, a Form 5472-specific filing service fills the gap.",
+        body: "Not as a service on the pages we checked. StartGlobal's pricing page prices Federal Tax Filing \"by your revenue\" a la carte and includes it in the $149-per-month Managed LLC plan; its federal tax filing page names Form 1065 and K-1s, not Form 5472 (checked October 5, 2026).\n\nStartGlobal's home page says it handles annual federal tax filing for single-member and multi-member LLCs, \"including the forms non-resident owners need\", without naming them. Ask StartGlobal to confirm in writing whether your plan includes Form 5472 + pro forma Form 1120; if it does not itemize those forms, a Form 5472-specific filing service fills the gap.",
       },
       {
         heading: "What is your first-year filing timeline?",
@@ -2862,11 +2873,11 @@ export const LANDING_PAGES: LandingPage[] = [
     faqs: [
       {
         q: "Does StartGlobal's Managed LLC plan clearly list Form 5472?",
-        a: "The facts file says the public pages list Federal Tax Filing but do not name Form 5472 or pro forma Form 1120. Ask StartGlobal for written confirmation tied to your plan and tax year.",
+        a: "No. StartGlobal's pricing page lists federal tax filing in the $149-per-month Managed LLC plan \"at any revenue\", but does not name Form 5472 or pro forma Form 1120. Ask StartGlobal for written confirmation tied to your plan and tax year.",
       },
       {
         q: "StartGlobal charges for Federal Tax Filing by revenue. Is that the same thing?",
-        a: "Not necessarily. The facts file treats it as unclear because the public pages do not identify the specific Form 5472 + pro forma 1120 package. Confirm the forms, not just the category name.",
+        a: "Not necessarily. A la carte, StartGlobal prices Federal Tax Filing \"by your revenue\" without a published figure, and its federal tax filing page describes Form 1065 and K-1s. Confirm the specific forms, Form 5472 + pro forma 1120, not just the category name.",
       },
       {
         q: "Does StartGlobal's bank-account setup create the filing by itself?",
@@ -2884,7 +2895,7 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "zenind form 5472",
     title: "Zenind Form 5472 — From Guide to Actual Filing",
     metaDescription:
-      "Zenind publishes a Form 5472 guide but does not offer the filing in its public tiers. Learn the next step for foreign-owned LLCs.",
+      "Zenind publishes a Form 5472 guide, and its pricing page lists no Form 5472 filing. Learn the next step for foreign-owned LLCs.",
     sources: [
       { label: "Zenind: Form 5472 and pro forma 1120 guide", url: "https://www.zenind.com/en-US/help/post/how-to-file-form-5472-and-pro-forma-form-1120-for-a-foreign-owned-single-member-llc" },
       { label: "Zenind: Pricing", url: "https://www.zenind.com/en-US/pricing" },
@@ -2893,35 +2904,35 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
     published: "2026-08-31",
-    updated: "2026-09-11",
+    updated: "2026-10-05",
     startSrc: "zenind-form-5472",
     h1: "Zenind explains Form 5472. Filing it is the next step.",
     intro:
-      "Zenind offers low-cost US company formation, registered agent service across all 50 states and DC, EIN application preparation assistance, BOI report preparation assistance, compliance tracking, annual-report alerts, notary, foreign qualification, and separate accounting services. Its own Form 5472 guide can help you understand the rule, but a foreign-owned single-member LLC still needs the annual IRS package filed.",
+      "Zenind offers online US company formation, registered agent service in all 50 states and DC, EIN application preparation, compliance tracking and annual report filing, notary, foreign qualification and accounting services. Its Form 5472 guide explains the rule, but a foreign-owned single-member LLC still needs the annual IRS package prepared and filed.",
     sections: [
       {
         heading: "What does Zenind do for you?",
-        body: "Zenind helps with low-cost company formation and adjacent compliance services, including registered agent service across all 50 states plus DC, BOI report preparation assistance, EIN application preparation assistance, compliance tracking, annual-report alerts, notary, foreign qualification, and separate accounting services. The section describes it as budget/DIY-adjacent for startups and small businesses.\n\nThe facts file describes Zenind as budget/DIY-adjacent for startups, e-commerce, and small businesses generally, while also serving non-US founders.",
+        body: "Zenind's home page lists company formation, registered agent service in 50 states and the District of Columbia, compliance tracking and annual report filing, EIN application preparation assistance, notary services, foreign qualification and accounting services. Its home page says it serves businesses of every scale, from solo entrepreneurs upward (checked October 5, 2026).",
       },
       {
         heading: "What does Zenind leave with you?",
-        body: "Zenind leaves you with the federal Form 5472 filing when your foreign-owned single-member US LLC has reportable transactions. Formation, registered agent service, compliance reminders, EIN application preparation, and annual-report alerts do not replace the IRS filing, which is separate from state compliance tracking and educational guidance.\n\nForm 5472 is a federal information return. It is separate from state compliance tracking and from educational guidance explaining what the form is.",
+        body: "The federal Form 5472 filing stays with you unless a provider confirms in writing that it prepares and files it. Formation, registered agent service, compliance reminders, EIN application preparation and annual report filing do not replace the IRS filing, which is separate from state compliance tracking and educational guidance.\n\nForm 5472 is a federal information return. It is separate from state compliance tracking and from educational guidance explaining what the form is.",
         table: {
           caption: "Zenind and Form5472 Prep task split",
           columns: ["Task", "Zenind", "Form5472 Prep"],
           rows: [
-            ["LLC formation", "Low-cost company formation", "Filing service"],
+            ["LLC formation", "Online company formation", "Filing service"],
             ["Registered agent", "Registered agent service", "Federal package only"],
             ["EIN", "EIN application preparation", "Collects EIN and facts"],
-            ["Form 5472 package", "Not shown as filer in public materials", "Produces 5472 and 1120"],
-            ["IRS fax filing", "Not shown as filer in public materials", "Ogden fax receipt"],
+            ["Form 5472 package", "No 5472 line on pricing page", "Produces 5472 and 1120"],
+            ["IRS fax filing", "Not described on pages checked", "Ogden fax receipt"],
             ["Catch-up for missed years", "Guide after missed years", "DIIRSP reasonable cause"],
           ],
         },
       },
       {
         heading: "Does Zenind teach the process or file it?",
-        body: "Zenind teaches the process in a detailed guide, but the reviewed public materials do not show Zenind as the filer. Its guide discusses business formation and ongoing compliance workflows, stops short of saying Zenind will prepare or file the 5472/1120 package, and includes a tax and legal advice disclaimer.\n\nThe facts file also says Zenind's pricing page does not list a Form 5472 or pro forma Form 1120 line item. So the public materials point you from awareness to the filing task, but they do not show Zenind as the filer.",
+        body: "Zenind's Form 5472 guide teaches the process. Its \"How Zenind Can Help\" section describes formation and ongoing compliance workflows that keep filing deadlines visible, but it does not say Zenind prepares or files the Form 5472 + pro forma 1120 package, and the article carries a legal and tax advice disclaimer.\n\nZenind's pricing page lists no Form 5472 or pro forma Form 1120 line item (checked October 5, 2026). If you want Zenind to handle the filing, ask Zenind in writing; otherwise prepare the package yourself or use a Form 5472-specific filing service.",
       },
       {
         heading: "What is your first-year filing timeline?",
@@ -2939,7 +2950,7 @@ export const LANDING_PAGES: LandingPage[] = [
     faqs: [
       {
         q: "Does Zenind file Form 5472 for customers?",
-        a: "The facts file says no public Zenind page reviewed offers to prepare or file Form 5472 + pro forma Form 1120. Its detailed guide is educational and includes a tax/legal-advice disclaimer.",
+        a: "Zenind's pricing page lists no Form 5472 filing, and its Form 5472 guide does not say Zenind prepares or files the package; the guide carries a legal and tax advice disclaimer. If you want Zenind to handle it, ask Zenind in writing.",
       },
       {
         q: "Zenind prepared my EIN application. Does that cover federal tax filing?",
@@ -2947,7 +2958,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Does Zenind's compliance tracking mean the IRS received my return?",
-        a: "Not based on the facts file. Compliance tracking and annual-report alerts help keep obligations visible, but the reviewed public materials do not show Zenind filing the 5472 package.",
+        a: "No. Compliance tracking keeps deadlines visible; it is not proof of filing. Evidence that your Form 5472 package was sent is a fax transmission receipt or mailing record, and that shows transmission, not IRS acceptance.",
       },
       {
         q: "What should I do after reading Zenind's Form 5472 guide?",
@@ -2959,26 +2970,24 @@ export const LANDING_PAGES: LandingPage[] = [
   {
     slug: "northwest-registered-agent-form-5472",
     keyword: "northwest registered agent form 5472",
-    title: "Northwest Registered Agent Form 5472 — Tax Filing Gap",
+    title: "Northwest Registered Agent Form 5472 — What to Check",
     metaDescription:
-      "Northwest Registered Agent explains Form 5472 and tells readers to check with a CPA. See how foreign-owned LLCs can file the IRS package.",
+      "Used Northwest Registered Agent? Form 5472 is a separate federal filing. See what to confirm in writing and how to file the IRS package.",
     sources: [
-      { label: "Northwest Registered Agent: IRS Form 5472", url: "https://www.northwestregisteredagent.com/start-a-business/irs-form-5472" },
-      { label: "Northwest Registered Agent: Registered agent service", url: "https://www.northwestregisteredagent.com/registered-agent" },
-      { label: "Northwest Registered Agent: Incorporation service", url: "https://www.northwestregisteredagent.com/incorporation-service" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+      { label: "IRS: Delinquent international information return procedures", url: "https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures" },
     ],
     published: "2026-08-31",
-    updated: "2026-08-28",
+    updated: "2026-10-05",
     startSrc: "northwest-registered-agent-form-5472",
-    h1: "Northwest Registered Agent handled formation. The 5472 is federal tax.",
+    h1: "Used Northwest Registered Agent? Form 5472 is a separate federal filing.",
     intro:
-      "Northwest Registered Agent provides registered agent service, formation filings, annual report filing, EIN service, business address services, legal document templates, and privacy-focused business tools across all 50 states. If your foreign-owned single-member LLC was formed through Northwest, Form 5472 is the separate IRS information-return package to confirm and file.",
+      "A registered agent receives legal papers and official state notices for your LLC; it does not by itself file federal information returns. If Northwest Registered Agent formed or serves your foreign-owned single-member LLC, Form 5472 + pro forma Form 1120 is a separate annual IRS package, so confirm in writing whether any service you bought covers it.",
     sections: [
       {
         heading: "What does Northwest Registered Agent do for you?",
-        body: "Northwest Registered Agent offers registered agent service, LLC/corporation/nonprofit formation, annual report filing, EIN service, business address service, legal document templates such as operating agreements and bylaws, and free identity/privacy tools with domain, website, email, and phone add-ons. Its positioning emphasizes privacy and service quality.\n\nThe facts file describes Northwest as a nationwide formation and compliance-filing company, not a tax-preparation firm, with a long track record and privacy-and-service-quality positioning.",
+        body: "As its name says, Northwest Registered Agent is a registered agent company. A registered agent accepts service of process and official state notices for your LLC. Northwest's plans and prices are not summarized here; check Northwest's own site or your invoice for what your order includes, including any tax filing service.",
       },
       {
         heading: "What does Northwest Registered Agent leave with you?",
@@ -2987,18 +2996,16 @@ export const LANDING_PAGES: LandingPage[] = [
           caption: "Northwest Registered Agent and Form5472 Prep task split",
           columns: ["Task", "Northwest Registered Agent", "Form5472 Prep"],
           rows: [
-            ["LLC formation", "Formation filings", "Complete federal package"],
-            ["Registered agent", "Registered agent service", "Federal filing only"],
-            ["EIN", "EIN service", "Collects LLC facts"],
-            ["Form 5472 package", "Points readers to CPA", "Generates federal package"],
-            ["IRS fax filing", "Not offered as a paid service", "Ogden fax receipt"],
-            ["Catch-up for missed years", "DIIRSP if prior years were missed", "DIIRSP catch-up route"],
+            ["Registered agent", "Registered agent service", "Not included; federal filing only"],
+            ["Form 5472 package", "Confirm with Northwest in writing", "Generates federal package"],
+            ["IRS fax filing", "Confirm with Northwest in writing", "Ogden fax receipt"],
+            ["Catch-up for missed years", "Confirm with Northwest in writing", "+$99 per additional past year"],
           ],
         },
       },
       {
-        heading: "Northwest points readers to a CPA instead of filing it",
-        body: "The facts file says Northwest's own Form 5472 blog post is explanatory: it covers what the form is, who must file, and Form 5471 versus Form 5472. It ends by telling readers that, to determine whether Form 5472 is necessary, it is a good idea to check with a CPA.\n\nThe same facts file says no reviewed Northwest page offers to prepare or file Form 5472 or a pro forma Form 1120 as a paid service. That is a neutral scope line: Northwest handles formation and registered-agent work; the Form 5472 filing is separate.",
+        heading: "How do you confirm whether Northwest covers Form 5472?",
+        body: "Ask Northwest in writing whether any service on your account prepares and files Form 5472 with a pro forma Form 1120 for a specific tax year. Registered agent and state compliance work does not by itself complete the federal package, so a written answer tied to your invoice settles the question.\n\nIf the answer is no, or you cannot confirm coverage for past years, you can prepare and fax the package yourself or use a Form 5472-specific filing service.",
       },
       {
         heading: "What is your first-year filing timeline?",
@@ -3010,25 +3017,25 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you catch up on multiple missed years?",
-        body: "If your Northwest-formed LLC has been around for multiple years and the 5472 package was never filed, DIIRSP is the usual voluntary catch-up route when the IRS has not already contacted you. That means filing the missed-year packages together with a reasonable cause statement requesting penalty relief.\n\nForm5472 Prep is an independent service and is not affiliated with, endorsed by, or connected to Northwest Registered Agent.",
+        body: "If your LLC has been around for multiple years and the 5472 package was never filed, DIIRSP is the usual voluntary catch-up route when the IRS has not already contacted you. That means filing the missed-year packages together with a reasonable cause statement requesting penalty relief.\n\nForm5472 Prep is an independent service and is not affiliated with, endorsed by, or connected to Northwest Registered Agent.",
       },
     ],
     faqs: [
       {
         q: "Does Northwest Registered Agent prepare Form 5472?",
-        a: "The facts file says no reviewed Northwest page offers Form 5472 or pro forma Form 1120 preparation or filing. Its own Form 5472 article sends readers to check with a CPA.",
+        a: "Check with Northwest directly. Registered agent and state filing services do not by themselves complete the federal Form 5472 + pro forma Form 1120 package. Ask Northwest in writing whether anything on your account covers it, for which tax years and at what price.",
       },
       {
         q: "Is a registered agent responsible for my federal Form 5472?",
         a: "No. Registered agent service receives legal and state correspondence; it does not automatically prepare federal information returns. The foreign-owned LLC owner remains responsible for Form 5472 when required.",
       },
       {
-        q: "Northwest got my EIN. Is that different from Form 5472?",
+        q: "My registered agent got my EIN. Is that different from Form 5472?",
         a: "Yes. EIN service obtains the LLC's IRS identification number. Form 5472 + pro forma Form 1120 is the annual federal package that reports related-party transactions.",
       },
       {
-        q: "Why might Northwest source URLs show 403 in command-line checks?",
-        a: "The facts file says Northwest's site-wide WAF returns 403 to curl and non-browser requests, including the homepage, while the listed URLs were separately verified live in a browser on 2026-08-28.",
+        q: "Where does the Form 5472 package go if I file it myself?",
+        a: "The IRS Form 5472 instructions direct a foreign-owned disregarded entity to send Form 5472 with a pro forma Form 1120 by fax to the Ogden PIN Unit at +1-855-887-7737 or by mail. Keep the fax receipt or mailing record as evidence of transmission.",
       },
     ],
     relatedSlugs: ["file-form-5472", "diirsp"],
