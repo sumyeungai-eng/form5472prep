@@ -59,3 +59,7 @@ Owner confirmed that the pro forma 1120 is signed by placing the **client's own 
 - **Sign page:** now tells the client their signature goes on the owner's signature line of Form 1120 page 1.
 - **Admin "Upload already-signed PDF":** relabelled as being only for a PDF the client signed themselves outside the portal.
 - **Code comments:** updated to match.
+
+## Follow-up: mobile polish (visually verified in a local preview at 375px)
+- **Full-PDF button:** a "View full forms (all pages)" button now sits ABOVE the PDF preview, with a phone-only hint, because iPhone Safari often renders only page 1 of an embedded PDF. The preview is 360px tall on phones and 480px on larger screens.
+- **Bottom padding:** `pb-28` on the page so the floating "Ask a question" button no longer covers the signing note.

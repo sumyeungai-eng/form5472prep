@@ -139,7 +139,9 @@ export function SignClient({
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      {/* pb-28: room below the content so the floating "Ask a question"
+          button never covers the signing note on phones. */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8 pb-28">
         <div className="mb-6 flex items-center justify-between">
           {showFilingLink ? (
             <Link href={`/filings/${filingId}`} className="text-sm text-slate-500 hover:underline">
@@ -166,19 +168,24 @@ export function SignClient({
               <li>Your name, address and foreign tax ID</li>
               <li>The amounts and the tax year(s)</li>
             </ul>
-            <iframe
-              src={`/api/filings/${filingId}/pdf?v=${encodeURIComponent(pdfKey)}#toolbar=0`}
-              className="mt-3 w-full h-[480px] rounded-lg border border-slate-200"
-              title="Your forms to check"
-            />
+            {/* iPhone Safari often renders only page 1 of an embedded PDF, so
+                the full-PDF button sits above the preview where it's seen. */}
             <a
               href={`/api/filings/${filingId}/pdf?v=${encodeURIComponent(pdfKey)}`}
               target="_blank"
               rel="noreferrer"
-              className="mt-2 inline-block text-xs text-slate-500 hover:underline"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-blue-900 px-4 py-2.5 text-sm font-semibold text-blue-900 hover:bg-blue-50"
             >
-              Open the PDF in a new tab
+              View full forms (all pages) ↗
             </a>
+            <p className="mt-1.5 text-xs text-slate-500 sm:hidden">
+              On a phone the preview below may show only the first page — tap the button above to check every page.
+            </p>
+            <iframe
+              src={`/api/filings/${filingId}/pdf?v=${encodeURIComponent(pdfKey)}#toolbar=0`}
+              className="mt-3 w-full h-[360px] sm:h-[480px] rounded-lg border border-slate-200"
+              title="Your forms to check"
+            />
 
             <label className="mt-4 flex items-start gap-2.5 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-800">
               <input
