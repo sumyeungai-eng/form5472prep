@@ -33,3 +33,10 @@ form5472prep.com strong on SEO / AEO / GEO. Follows `2026-10-01-seo-compact-keyw
 ## Open
 Owner-gated: GSC (Domain + URL-prefix properties, sitemap, request indexing for /press, /compare, services), Bing Webmaster Tools, a real named reviewer/author with verifiable credentials, postal address/phone (NAP), directory/Product Hunt/quote-platform/podcast/Reddit accounts, real reviews before any Review schema, apex 307→308.
 Follow-ups: audience pages (accountants/tax preparers, outsourcing, bulk filing, holding-company, rental-property LLC) once Moz is reachable — Claude-in-Chrome blocked every site with "Could not verify this site's safety category" on 2026-10-05; most other audience angles already have blog posts. Image SEO (keyword-named hero image per service page) and a sourced statistics page remain from the plan's Wave 2.
+
+## Part 2 (same day) — owner said "use chrome to complete all"
+- GSC (sumyeungai@ = Chrome authuser 2, property `sc-domain:form5472prep.com`): 193 indexed / 137 not (86 noindex by design, 40 discovered-not-indexed). Requested indexing: /compare, /press, /blog, and 4 discovered-not-indexed posts (in-house-vs-outsourced, first-year, reportable-transactions-examples, ein-without-ssn). /services + 7 service pages already indexed. GSC throttled further requests.
+- Vercel: apex `form5472prep.com` redirect → www now **308** (was 307) via API; verified `curl -I` 308.
+- Branches `seo-img` (8 keyword-named service hero images, `scripts/render-service-artwork.mjs`, `heroImage` field + tests) and `seo-stats` (`/form-5472-statistics`, 25 facts, evidence `docs/seo/stats-sources-2026-10-05.md`) merged; tsc clean, vitest 1790/1790, build OK.
+- Contracts: every stat in `src/lib/form5472-stats.ts` needs an official-domain https source (test-enforced) and a row in the evidence file; service hero alt must contain the page keyword (test-enforced).
+- Still owner-gated: account-based off-site work (directories, Product Hunt, quote platforms, podcasts, Reddit), named reviewer, NAP, real reviews.
