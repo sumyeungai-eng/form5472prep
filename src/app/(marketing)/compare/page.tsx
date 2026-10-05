@@ -177,6 +177,12 @@ export default function ComparePage() {
             the annual Form 5472 and pro forma Form 1120 filing fits. Plans change, so check the provider&apos;s
             current terms.
           </p>
+          <p className="mt-4 max-w-3xl leading-relaxed text-slate-300">
+            Comparing prices across filing services instead?{" "}
+            <Link href="/compare/form-5472-filing-services" className="font-medium text-white underline underline-offset-2">
+              Form 5472 filing services compared: 2026 prices
+            </Link>
+          </p>
           <p className="mt-4 text-xs text-slate-400">
             Last reviewed <time dateTime={LAST_REVIEWED}>{LAST_REVIEWED_LABEL}</time>
           </p>

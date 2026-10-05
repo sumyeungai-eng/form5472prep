@@ -163,6 +163,7 @@ const CORE_PAGES: readonly PageLink[] = [
   ["Contact", "/contact", "Contact Form5472 Prep for Form 5472, pro forma 1120, EIN, ITIN, and catch-up filing questions."],
   ["About", "/about", "Who we are, how we work, and what we are and aren't."],
   ["Compare Form 5472 filing services", "/compare", "Neutral comparison pages for formation and registered-agent providers (Stripe Atlas, doola, Firstbase, Clemta, StartGlobal, Zenind, Northwest Registered Agent) and what to confirm about Form 5472."],
+  ["Form 5472 filing services compared: 2026 prices", "/compare/form-5472-filing-services", "Sourced price table of Form 5472 filing services, software tools, CPA firms and formation-provider bundles, copied from each provider's own pricing page with the date checked. Form5472 Prep is one of the services listed."],
   ["Press kit", "/press", "Short blurb, boilerplate, key facts, logo files, brand colours and press contact for describing Form5472 Prep accurately."],
   ["Editorial policy", "/editorial-policy", "How our guides are sourced, reviewed, and kept current."],
   ["Security", "/security", "How customer data is protected in transit and at rest."],
