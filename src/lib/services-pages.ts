@@ -43,6 +43,10 @@ export type ServicePage = {
   slug: string;
   /** Primary keyword, lower case, exactly as people type it. */
   keyword: string;
+  /** The page's single image (first on the page, so it alone carries the
+   *  keyword in its alt). 1280x720 webp under public/services/, rendered by
+   *  scripts/render-service-artwork.mjs; the file name carries the slug. */
+  heroImage: { src: string; alt: string };
   secondaryKeywords: string[];
   category: ServiceCategory;
   /** Absolute <title>; starts with the keyword; ≤60 chars. */
@@ -132,6 +136,10 @@ export const SERVICE_PAGES: ServicePage[] = [
   {
     slug: "form-5472-filing-service",
     keyword: "form 5472 filing service",
+    heroImage: {
+      src: "/services/services_form-5472-filing-service_form-and-checkmark.webp",
+      alt: "Form 5472 filing service: a completed Form 5472 with a confirmation checkmark",
+    },
     secondaryKeywords: ["form 5472 and pro forma 1120 filing service", "form 5472 online filing"],
     category: "annual",
     title: "Form 5472 Filing Service, Faxed to the IRS | Form5472 Prep",
@@ -243,6 +251,10 @@ Fax delivery and the accountant review are included in both. See the [pricing pa
   {
     slug: "pro-forma-1120-filing-service",
     keyword: "pro forma 1120 filing service",
+    heroImage: {
+      src: "/services/services_pro-forma-1120-filing-service_form-pair.webp",
+      alt: "Pro forma 1120 filing service: Form 1120 and Form 5472 prepared as one filing set",
+    },
     secondaryKeywords: ["pro forma 1120 preparer for non resident"],
     category: "annual",
     title: "Pro Forma 1120 Filing Service with Form 5472 | Form5472 Prep",
@@ -371,6 +383,10 @@ See the [pricing page](/pricing) for everything each plan includes.`,
   {
     slug: "late-form-5472-filing-service",
     keyword: "late form 5472 filing service",
+    heroImage: {
+      src: "/services/services_late-form-5472-filing-service_past-year-returns.webp",
+      alt: "Late Form 5472 filing service: stacked folders of missed-year returns and a clock",
+    },
     secondaryKeywords: ["delinquent form 5472 filing service", "form 5472 catch up filing multiple years"],
     category: "situations",
     title: "Late Form 5472 Filing Service for Past Years | Form5472 Prep",
@@ -492,6 +508,10 @@ Every late year includes its own reasonable-cause statement. See the [pricing pa
   {
     slug: "foreign-owned-llc-tax-filing-service",
     keyword: "foreign owned llc tax filing service",
+    heroImage: {
+      src: "/services/services_foreign-owned-llc-tax-filing-service_globe-and-form.webp",
+      alt: "Foreign owned LLC tax filing service: a globe beside a Form 5472 information return",
+    },
     secondaryKeywords: ["us tax filing service for non resident llc owner", "non resident llc compliance service"],
     category: "annual",
     title: "Foreign Owned LLC Tax Filing Service | Form5472 Prep",
@@ -618,6 +638,10 @@ See the [pricing page](/pricing) for everything included.`,
   {
     slug: "form-5472-fax-filing-service",
     keyword: "form 5472 fax filing service",
+    heroImage: {
+      src: "/services/services_form-5472-fax-filing-service_fax-machine-receipt.webp",
+      alt: "Form 5472 fax filing service: a fax machine sending the return, with a confirmation receipt",
+    },
     secondaryKeywords: ["fax form 5472 to irs service"],
     category: "annual",
     title: "Form 5472 Fax Filing Service with Receipt | Form5472 Prep",
@@ -749,6 +773,10 @@ See the [pricing page](/pricing).`,
   {
     slug: "white-label-form-5472-filing",
     keyword: "white label form 5472 filing",
+    heroImage: {
+      src: "/services/services_white-label-form-5472-filing_partner-handoff.webp",
+      alt: "White label Form 5472 filing: two partner forms linked for formation agents",
+    },
     secondaryKeywords: ["form 5472 filing for company formation agents", "form 5472 filing for registered agents"],
     category: "partners",
     title: "White Label Form 5472 Filing for Agents | Form5472 Prep",
@@ -864,6 +892,10 @@ You keep the client relationship. We handle preparation, review, IRS fax deliver
   {
     slug: "form-5472-filing-for-dormant-llc",
     keyword: "form 5472 filing for dormant llc",
+    heroImage: {
+      src: "/services/services_form-5472-filing-for-dormant-llc_empty-ledger.webp",
+      alt: "Form 5472 filing for dormant LLC: an empty ledger under a crescent moon",
+    },
     secondaryKeywords: ["form 5472 for llc with no activity"],
     category: "situations",
     title: "Form 5472 Filing for Dormant LLC Owners | Form5472 Prep",
@@ -984,6 +1016,10 @@ See the [pricing page](/pricing).`,
   {
     slug: "final-form-5472-for-dissolved-llc",
     keyword: "final form 5472 for dissolved llc",
+    heroImage: {
+      src: "/services/services_final-form-5472-for-dissolved-llc_closed-folder-stamp.webp",
+      alt: "Final Form 5472 for dissolved LLC: a closed company folder with a final-return stamp",
+    },
     secondaryKeywords: ["close foreign owned us llc tax filing"],
     category: "situations",
     title: "Final Form 5472 for Dissolved LLC Owners | Form5472 Prep",

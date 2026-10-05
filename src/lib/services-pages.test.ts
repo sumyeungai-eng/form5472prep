@@ -10,7 +10,7 @@ import {
   serviceSitemapEntries,
   toPlainText,
 } from "./services-pages";
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { LANDING_PAGES, getLandingPage } from "./landing-pages";
 import { TIERS, MULTI_YEAR_ADDON_CENTS } from "./pricing";
@@ -66,6 +66,11 @@ describe("services pages: on-page rules", () => {
     );
   });
 
+  it("hero images are unique per page", () => {
+    const srcs = SERVICE_PAGES.map((p) => p.heroImage.src);
+    expect(new Set(srcs).size).toBe(srcs.length);
+  });
+
   for (const page of SERVICE_PAGES) {
     describe(page.slug, () => {
       const kw = norm(page.keyword);
@@ -73,6 +78,17 @@ describe("services pages: on-page rules", () => {
       it("URL contains the keyword's words", () => {
         const slugWords = page.slug.split("-");
         for (const w of kw.split(" ").filter((w) => !STOPWORDS.has(w))) expect(slugWords).toContain(w);
+      });
+
+      it("has a hero image: file exists, name carries the slug, alt carries the keyword", () => {
+        const { src, alt } = page.heroImage;
+        expect(src.startsWith("/services/")).toBe(true);
+        const file = path.join(__dirname, "../../public", src);
+        expect(existsSync(file)).toBe(true);
+        expect(statSync(file).size).toBeLessThan(120 * 1024);
+        expect(path.basename(src)).toMatch(new RegExp(`^services_${page.slug}_[a-z0-9-]+\\.webp$`));
+        expect(norm(alt)).toContain(kw);
+        expect(alt.length).toBeLessThanOrEqual(125);
       });
 
       it("title starts with the keyword and is ≤60 chars", () => {

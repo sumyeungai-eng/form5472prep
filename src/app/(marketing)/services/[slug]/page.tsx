@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -129,6 +130,21 @@ export default function ServicePageRoute({ params }: { params: { slug: string } 
             <p className="mt-6 text-xs text-slate-400">
               Every filing is reviewed by a qualified accountant before it is submitted.
             </p>
+            {/* The page's one image, after H1 -> intro -> CTA so on phones the
+                order is text first. Fixed 16:9 box (width/height set) so it
+                cannot shift layout; priority because it is above the fold on
+                desktop. Only this image carries the keyword in its alt. */}
+            <figure className="mt-10 overflow-hidden rounded-xl border border-white/10 bg-paper shadow-xl shadow-black/20">
+              <Image
+                src={page.heroImage.src}
+                alt={page.heroImage.alt}
+                width={1280}
+                height={720}
+                priority
+                sizes="(min-width: 768px) 768px, 100vw"
+                className="h-auto w-full"
+              />
+            </figure>
           </div>
         </section>
 
@@ -264,6 +280,7 @@ function ServiceStructuredData({ page }: { page: ServicePage }) {
     serviceType: page.serviceType,
     description: page.longDescription,
     url,
+    image: `${SITE_URL}${page.heroImage.src}`,
     dateModified: SERVICES_LAST_REVIEWED,
     provider: ORG_REF,
     audience: {
