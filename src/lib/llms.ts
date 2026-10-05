@@ -3,7 +3,7 @@ import { LANDING_PAGES } from "@/lib/landing-pages";
 import {
   SERVICES_HUB,
   SERVICES_HUB_PATH,
-  SERVICES_LAST_REVIEWED,
+  serviceLastReviewed,
   SERVICE_PAGES,
   servicePath,
   toPlainText,
@@ -158,7 +158,7 @@ function buildServiceDocument(page: (typeof SERVICE_PAGES)[number]): string {
     .join("\n\n");
   const faqs = page.faqs.map((faq) => `### ${faq.q}\n\n${toPlainText(faq.a)}`).join("\n\n");
   return [
-    `# ${page.h1}\nSource: ${SITE_URL}${servicePath(page.slug)}\nLast reviewed: ${SERVICES_LAST_REVIEWED}`,
+    `# ${page.h1}\nSource: ${SITE_URL}${servicePath(page.slug)}\nLast reviewed: ${serviceLastReviewed(page)}`,
     toPlainText(page.intro),
     sections,
     `## Frequently asked questions\n\n${faqs}`,

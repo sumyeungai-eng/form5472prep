@@ -52,6 +52,8 @@ export type ServicePage = {
    *  keyword in its alt). 1280x720 webp under public/services/, rendered by
    *  scripts/render-service-artwork.mjs; the file name carries the slug. */
   heroImage: { src: string; alt: string };
+  /** Per-page review date (YYYY-MM-DD); falls back to SERVICES_LAST_REVIEWED. */
+  lastReviewed?: string;
   secondaryKeywords: string[];
   category: ServiceCategory;
   /** ISO date the page was added or last materially changed, for the sitemap.
@@ -1145,6 +1147,7 @@ See the [pricing page](/pricing).`,
   // words, unique copy concentrated in the first screen.
   {
     slug: "hire-someone-to-file-form-5472",
+    lastReviewed: "2026-10-05",
     keyword: "hire someone to file form 5472",
     heroImage: {
       src: "/services/services_hire-someone-to-file-form-5472_folder-handover.webp",
@@ -1247,6 +1250,7 @@ For a calendar-year LLC the filing is due April 15. Full details are on the [pri
   // ── 10 ──────────────────────────────────────────────────────────────────
   {
     slug: "form-5472-preparer",
+    lastReviewed: "2026-10-05",
     keyword: "form 5472 preparer",
     heroImage: {
       src: "/services/services_form-5472-preparer_magnifier-over-form.webp",
@@ -1354,6 +1358,7 @@ A clear answer to each matters more than a firm's size or location.`,
   // ── 11 ──────────────────────────────────────────────────────────────────
   {
     slug: "form-5472-for-accountants",
+    lastReviewed: "2026-10-05",
     keyword: "form 5472 for accountants",
     heroImage: {
       src: "/services/services_form-5472-for-accountants_linked-firm-desks.webp",
@@ -1455,6 +1460,7 @@ You keep the wider relationship, such as income-tax returns, state filings or bo
   // ── 12 ──────────────────────────────────────────────────────────────────
   {
     slug: "form-5472-for-bookkeepers",
+    lastReviewed: "2026-10-05",
     keyword: "form 5472 for bookkeepers",
     heroImage: {
       src: "/services/services_form-5472-for-bookkeepers_ledger-handoff.webp",
@@ -1788,4 +1794,8 @@ export function serviceHowTo(page: ServicePage): ServiceHowTo | null {
     };
   }
   return null;
+}
+
+export function serviceLastReviewed(page: Pick<ServicePage, "lastReviewed">): string {
+  return page.lastReviewed ?? SERVICES_LAST_REVIEWED;
 }

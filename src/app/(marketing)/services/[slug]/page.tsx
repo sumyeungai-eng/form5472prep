@@ -8,7 +8,7 @@ import { JsonLd } from "@/components/JsonLd";
 import {
   SERVICES_HUB,
   SERVICES_HUB_PATH,
-  SERVICES_LAST_REVIEWED,
+  serviceLastReviewed,
   SERVICE_PAGES,
   getServicePage,
   serviceHowTo,
@@ -108,7 +108,7 @@ export default function ServicePageRoute({ params }: { params: { slug: string } 
             </h1>
             <p className="mt-4 text-xs text-slate-400">
               Last reviewed{" "}
-              <time dateTime={SERVICES_LAST_REVIEWED}>{formatReviewed(SERVICES_LAST_REVIEWED)}</time>
+              <time dateTime={serviceLastReviewed(page)}>{formatReviewed(serviceLastReviewed(page))}</time>
             </p>
             <div className="mt-6 space-y-4 text-lg leading-relaxed text-slate-300">
               <ServiceRichText body={page.intro} tone="dark" firstParagraphClassName="lead" />
@@ -281,7 +281,7 @@ function ServiceStructuredData({ page }: { page: ServicePage }) {
     description: page.longDescription,
     url,
     image: `${SITE_URL}${page.heroImage.src}`,
-    dateModified: SERVICES_LAST_REVIEWED,
+    dateModified: serviceLastReviewed(page),
     provider: ORG_REF,
     audience: {
       "@type": "BusinessAudience",
