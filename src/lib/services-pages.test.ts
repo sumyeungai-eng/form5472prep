@@ -13,7 +13,7 @@ import {
 import { existsSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { LANDING_PAGES, getLandingPage } from "./landing-pages";
-import { TIERS, MULTI_YEAR_ADDON_CENTS } from "./pricing";
+import { TIERS, MULTI_YEAR_ADDON_CENTS, STANDARD_TURNAROUND, EXPRESS_TURNAROUND } from "./pricing";
 import { formatPrice } from "./utils";
 
 // The compact-keywords on-page checklist (playbook §6), asserted per page.
@@ -49,6 +49,14 @@ function firstSentence(markup: string): string {
   const plain = toPlainText(markup).split(/\n\s*\n/)[0];
   return plain.split(/(?<=[.!?])\s+/)[0];
 }
+
+// Answer-engine contract: the first block under each H2 is a standalone answer
+// ("capsule"): a prose paragraph, 12-60 words, that is not a list, does not end
+// on a colon and does not point elsewhere ("This ...", "Here ...", "Below ...").
+const plain = (s: string) => s.replace(/\[([^\]]+)\]\((\/[^)\s]*)\)/g, "$1").replace(/\*\*/g, "");
+const firstBlock = (body: string) => body.split(/\n\s*\n/)[0].trim();
+const LIST_START = /^(?:[-•–]|\d+\.)\s/;
+const POINTER_START = /^(this|these|here|below|everything below|have these)\b/i;
 
 function indexOfPhrase(haystack: string[], needle: string[]): number {
   outer: for (let i = 0; i <= haystack.length - needle.length; i++) {
@@ -137,6 +145,23 @@ describe("services pages: on-page rules", () => {
         expect(page.cta.href).toMatch(page.category === "partners" ? /^\/partners/ : /^\/start\?src=/);
       });
 
+      it("every section H2 is a question that ends in '?'", () => {
+        for (const s of page.sections) expect(s.heading, s.heading).toMatch(/\?$/);
+        for (const f of page.faqs) expect(f.q, f.q).toMatch(/\?$/);
+      });
+
+      it("every section opens with a standalone answer of 12-60 words", () => {
+        for (const s of page.sections) {
+          const first = firstBlock(s.body);
+          expect(first, `${s.heading}: opens with a list`).not.toMatch(LIST_START);
+          expect(first, `${s.heading}: ends on a colon`).not.toMatch(/:\s*$/);
+          expect(first, `${s.heading}: opens with a pointer`).not.toMatch(POINTER_START);
+          const n = wordCount(plain(first));
+          expect(n, `${s.heading}: ${n} words`).toBeGreaterThanOrEqual(12);
+          expect(n, `${s.heading}: ${n} words`).toBeLessThanOrEqual(60);
+        }
+      });
+
       it("has a 'what it is not / nobody can promise' section", () => {
         expect(page.sections.some((s) => /\bnot\b|nobody|cannot/i.test(s.heading))).toBe(true);
       });
@@ -184,7 +209,24 @@ describe("services pages: on-page rules", () => {
           (p) => p !== "$25,000" && p !== "$20,000,000",
         );
         for (const p of prices) expect(allowed).toContain(p);
-        if (!page.showOffer) expect(prices).toEqual([]);
+      });
+
+      // Every page, partner pages included, states both plans' prices and
+      // turnarounds so an answer engine can quote them from this page alone.
+      it("states the Standard and Express prices and turnarounds", () => {
+        const body = servicePlainBody(page);
+        expect(body).toContain(formatPrice(TIERS.standard.priceCents));
+        expect(body).toContain(formatPrice(TIERS.express.priceCents));
+        expect(body).toContain(STANDARD_TURNAROUND);
+        expect(body).toContain(EXPRESS_TURNAROUND);
+      });
+
+      it("shows the IRS Ogden mailing address only in its current form", () => {
+        const text = servicePlainBody(page);
+        expect(text).not.toMatch(/6273/);
+        if (/1973 Rulon White/.test(text)) {
+          expect(text).toContain("Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201");
+        }
       });
 
       it("links out to at least 2 distinct official IRS pages", () => {
@@ -238,6 +280,20 @@ describe("services pages: on-page rules", () => {
 });
 
 describe("services hub", () => {
+  it("opens with a capsule that states both prices, at most 60 words", () => {
+    expect(SERVICES_HUB.intro).toContain(formatPrice(TIERS.standard.priceCents));
+    expect(SERVICES_HUB.intro).toContain(formatPrice(TIERS.express.priceCents));
+    expect(wordCount(SERVICES_HUB.intro)).toBeLessThanOrEqual(60);
+  });
+
+  it("category H2s are questions and each opens with a standalone answer", () => {
+    for (const c of serviceHubCategories()) {
+      expect(c.heading, c.heading).toMatch(/\?$/);
+      expect(c.description, c.heading).not.toMatch(POINTER_START);
+      expect(wordCount(c.description), c.heading).toBeLessThanOrEqual(60);
+    }
+  });
+
   it("title and meta fit", () => {
     expect(SERVICES_HUB.title.length).toBeLessThanOrEqual(60);
     expect(SERVICES_HUB.metaDescription.length).toBeLessThanOrEqual(160);
