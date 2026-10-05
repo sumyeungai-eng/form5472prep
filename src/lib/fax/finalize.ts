@@ -185,6 +185,7 @@ export async function finalizeFaxDelivered(
         brand,
         filingId: filing.id,
         logKind: "fax_delivered",
+        reviewInvite: true,
       });
       result.customerEmailed = true;
       customerEmailStatus = "sent";

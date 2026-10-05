@@ -829,6 +829,38 @@ function formatFaxProofRows(proof: FaxProof): string {
     .join("");
 }
 
+function withTrustpilotSnippet(html: string, snippet: string | undefined): string {
+  if (!snippet) return html;
+  return html.includes("</body>") ? html.replace("</body>", `${snippet}\n</body>`) : `${html}${snippet}`;
+}
+
+// ---------- Trustpilot review invitations ----------
+//
+// Trustpilot Automatic Feedback Service: BCC'ing this address on an email makes
+// Trustpilot send the recipient one review invitation. The structured-data
+// snippet tells Trustpilot exactly who the customer is (the BCC copy would
+// otherwise be parsed for To/name) and gives a reference to dedupe on.
+// Set TRUSTPILOT_AFS_BCC="" to switch invitations off without a deploy.
+export const TRUSTPILOT_AFS_BCC_DEFAULT = "form5472prep.com+70ae06b610@invite.trustpilot.com";
+
+export function trustpilotInvite(args: {
+  recipientEmail: string;
+  recipientName?: string | null;
+  referenceId?: string | null;
+  brand?: EmailBrand;
+}): { bcc: string; snippet: string } | null {
+  const bcc = (process.env.TRUSTPILOT_AFS_BCC ?? TRUSTPILOT_AFS_BCC_DEFAULT).trim();
+  // White-label partner clients are the partner's customers: never invite
+  // them to review Form5472 Prep.
+  if (!bcc || args.brand) return null;
+  const payload: Record<string, string> = { recipientEmail: args.recipientEmail };
+  if (args.recipientName?.trim()) payload.recipientName = args.recipientName.trim();
+  if (args.referenceId) payload.referenceId = args.referenceId;
+  // Escape "<" so customer-supplied text can't close the script tag.
+  const json = JSON.stringify(payload).replace(/</g, "\\u003c");
+  return { bcc, snippet: `<script type="application/json+trustpilot">${json}</script>` };
+}
+
 export async function sendFaxDeliveredEmail(args: {
   email: string;
   recipientName?: string | null;
@@ -854,8 +886,14 @@ export async function sendFaxDeliveredEmail(args: {
   // passes "fax_delivered_resend".
   filingId?: string | null;
   logKind?: string;
+  // BCC Trustpilot so the customer gets one review invitation. Only the
+  // automatic first delivery email sets this — admin resends don't.
+  reviewInvite?: boolean;
 }) {
   const { email, recipientName, llcName, taxYears, portalLink, proof, signedPdfBytes, receiptPdfBytes, brand, isFinalReturn } = args;
+  const invite = args.reviewInvite
+    ? trustpilotInvite({ recipientEmail: email, recipientName, referenceId: args.filingId, brand })
+    : null;
   const attachReceipt = !!(args.attachReceipt && receiptPdfBytes && receiptPdfBytes.byteLength > 0);
   const salutation = firstNameFrom(recipientName) ?? "there";
   const yearsLabel = taxYears.join(", ");
@@ -980,14 +1018,18 @@ export async function sendFaxDeliveredEmail(args: {
       undefined,
       brand,
     ),
-    html: customerShell({
-      heading: "Your filing was delivered to the IRS",
-      salutation,
-      bodyHtml,
-      cta: { label: "View my filing", url: portalLink },
-      brand,
-    }),
+    html: withTrustpilotSnippet(
+      customerShell({
+        heading: "Your filing was delivered to the IRS",
+        salutation,
+        bodyHtml,
+        cta: { label: "View my filing", url: portalLink },
+        brand,
+      }),
+      invite?.snippet,
+    ),
     attachments: receiptAttachment,
+    ...(invite ? { bcc: invite.bcc } : {}),
   });
 }
 
