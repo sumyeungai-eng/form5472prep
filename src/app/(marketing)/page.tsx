@@ -178,6 +178,7 @@ export default async function LandingPage() {
       <FaxReceiptProof />
       <TrustStrip />
       <Eligibility />
+      <Deadline />
       <HowItWorks />
       <Deliverables />
       <Comparison />
@@ -273,7 +274,7 @@ function Hero({ filingsCount }: { filingsCount: number }) {
               <br />
               <span className="text-accent-100">No hidden fees.</span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300" data-speakable>
               Done-for-you Form 5472 + pro forma 1120 for foreign-owned US LLCs.
               Avoid the $25,000-per-form IRS penalty — with fax delivery to the
               IRS Ogden PIN Unit included on every plan.
@@ -471,6 +472,33 @@ function Eligibility() {
   );
 }
 
+// Deadline answer: a standalone capsule an answer engine can quote for
+// "when is Form 5472 due?" — the date rule, the extension and the fiscal-year
+// case in two sentences. Facts match /form-5472-deadline-calculator and the
+// services pages (Form 7004 extends; we do not file it).
+function Deadline() {
+  return (
+    <section id="deadline" className="bg-white border-b border-slate-200">
+      <div className="max-w-6xl mx-auto px-6 py-16 sm:py-20">
+        <SectionHead
+          eyebrow="Deadline"
+          title="When is Form 5472 due?"
+          subtitle="For a calendar-year LLC, Form 5472 and the pro forma Form 1120 are due April 15 of the following year, or October 15 if Form 7004 is filed by April 15. A fiscal-year LLC files by the 15th day of the 4th month after year-end."
+          speakable
+        />
+        <p className="mt-6 text-center text-sm">
+          <Link
+            href="/form-5472-deadline-calculator"
+            className="font-medium text-accent underline underline-offset-2 hover:text-accent-dark"
+          >
+            Work out your exact due date with the deadline calculator →
+          </Link>
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function HowItWorks() {
   return (
     <section id="how-it-works" className="bg-white border-b border-slate-200">
@@ -478,6 +506,7 @@ function HowItWorks() {
         <SectionHead
           eyebrow="How it works"
           title="How does Form 5472 filing work?"
+          speakable
           subtitle="Form 5472 filing works as a six-step flow: you enter your details, we prepare the package, a qualified accountant reviews it, you sign online, we fax it to the IRS, and you get the timestamped fax receipt. The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and a late-filing reasonable cause statement when the IRS DIIRSP procedure applies."
         />
         <HowToSummary {...HOW_TO_META} className="mt-10" />
@@ -572,7 +601,7 @@ function Comparison() {
         <SectionHead
           eyebrow="vs. the alternatives"
           title="Why use Form5472 Prep instead of CPA or DIY?"
-          subtitle="Form5472 Prep prepares this filing with IRS fax delivery and filing proof included."
+          subtitle={`Form5472 Prep is a fixed-fee specialist: ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} (within ${EXPRESS_TURNAROUND}), with qualified-accountant review, IRS fax delivery and a timestamped receipt included.`}
         />
         <ComparisonTable {...FILING_COMPARISON} className="mt-10" />
       </div>
@@ -840,10 +869,13 @@ function SectionHead({
   eyebrow,
   title,
   subtitle,
+  speakable = false,
 }: {
   eyebrow: string;
   title: string;
   subtitle?: string;
+  /** Mark the subtitle (the section's answer capsule) for Speakable. */
+  speakable?: boolean;
 }) {
   return (
     <Reveal className="max-w-2xl mx-auto text-center">
@@ -851,7 +883,11 @@ function SectionHead({
       <h2 className="mt-3 font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-ink text-balance">
         {title}
       </h2>
-      {subtitle && <p className="mt-4 text-slate-600">{subtitle}</p>}
+      {subtitle && (
+        <p className="mt-4 text-slate-600" data-speakable={speakable ? true : undefined}>
+          {subtitle}
+        </p>
+      )}
     </Reveal>
   );
 }
@@ -910,7 +946,7 @@ function StructuredData() {
       audienceType: "Foreign-owned US single-member LLC owners",
     },
     description:
-      "Self-service preparation and fax-delivery of IRS Form 5472 with pro forma Form 1120 for foreign-owned US single-member LLCs. Includes reasonable cause statement generation for DIIRSP delinquent filings.",
+      "Done-for-you preparation, qualified-accountant review and fax delivery to the IRS Ogden PIN Unit of IRS Form 5472 with pro forma Form 1120 for foreign-owned US single-member LLCs. Includes a reasonable-cause statement for late (DIIRSP) filings.",
     offers: TIER_ORDER.map((key) => {
       const t = TIERS[key];
       return {
@@ -954,9 +990,10 @@ function StructuredData() {
     estimatedCost: HOW_TO_META.cost,
   });
 
-  // WebPage + Speakable — flags the hero headline and lead paragraph as the
-  // passages voice assistants (Google Assistant, etc.) should read aloud for
-  // "how do I file Form 5472" style queries.
+  // WebPage + Speakable — flags the hero headline and the answer capsules
+  // (hero summary, "How does Form 5472 filing work?" and "When is Form 5472
+  // due?") as the passages voice assistants should read aloud. Every selector
+  // must match real elements: [data-speakable] is set only on those <p>s.
   const webPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -965,7 +1002,7 @@ function StructuredData() {
     dateModified: CONTENT_LAST_REVIEWED,
     speakable: {
       "@type": "SpeakableSpecification",
-      cssSelector: ["h1", "section p"],
+      cssSelector: ["h1", "[data-speakable]"],
     },
   };
 

@@ -12,9 +12,10 @@ import {
   SERVICE_PAGES,
   serviceHubCategories,
   servicePath,
+  servicesHubLastModified,
   type HubCategory,
 } from "@/lib/services-pages";
-import { SITE_NAME, SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
+import { ORG_REF, SITE_NAME, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pageMeta } from "@/lib/seo";
 
 // /services hub: H1 + intro, H2 categories with styled panels linking each
 // child (anchor = the child's H1), CTA at the bottom. Linked from the
@@ -42,28 +43,45 @@ function hubCategories(): HubCategory[] {
   return [
     ...serviceHubCategories(),
     {
-      heading: "For clients of formation services",
+      heading: "Which pages cover Form 5472 for clients of formation services?",
       description:
-        "Formed your LLC through a formation company or registered agent? These pages explain where Form 5472 fits next to what that provider sells, and how to send the package to the IRS.",
+        "A formation or registered-agent plan may or may not include the yearly Form 5472, so each page shows where the filing fits next to what that provider sells and how the package reaches the IRS.",
       links: formationLinks,
     },
     {
-      heading: "EIN & ITIN",
-      description: "The identification numbers a foreign-owned LLC and its owner may need before filing.",
+      heading: "Do I need an EIN or ITIN before filing?",
+      description:
+        "A foreign-owned LLC needs an EIN to file Form 5472, and its owner needs an ITIN only when there is a qualifying federal tax reason. We help with both.",
       links: EIN_ITIN_LINKS,
     },
   ];
 }
 
+// "October 6, 2026" from the same ISO date that feeds the JSON-LD dateModified.
+function formatReviewed(iso: string): string {
+  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 export default function ServicesHubPage() {
   const categories = hubCategories();
+  const modified = servicesHubLastModified();
   const collection = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: SERVICES_HUB.h1,
     description: SERVICES_HUB.longDescription,
     url: `${SITE_URL}${SERVICES_HUB_PATH}`,
+    dateModified: modified,
+    inLanguage: "en-US",
     isPartOf: { "@type": "WebSite", name: SITE_NAME, url: SITE_URL },
+    publisher: ORG_REF,
+    provider: ORG_REF,
+    speakable: SPEAKABLE,
     mainEntity: {
       "@type": "ItemList",
       itemListElement: SERVICE_PAGES.map((p, i) => ({
@@ -77,6 +95,7 @@ export default function ServicesHubPage() {
 
   return (
     <>
+      <JsonLd data={organizationDocument()} />
       <JsonLd data={collection} />
       <JsonLd
         data={breadcrumbList([
@@ -108,7 +127,12 @@ export default function ServicesHubPage() {
           <h1 className="mt-8 font-serif text-3xl font-semibold leading-[1.1] tracking-tight text-balance sm:text-4xl lg:text-5xl">
             {SERVICES_HUB.h1}
           </h1>
-          <p className="lead mt-6 max-w-3xl text-lg leading-relaxed text-slate-300">{SERVICES_HUB.intro}</p>
+          <p className="lead mt-6 max-w-3xl text-lg leading-relaxed text-slate-300" data-speakable>
+            {SERVICES_HUB.intro}
+          </p>
+          <p className="mt-4 text-xs text-slate-400">
+            Last reviewed <time dateTime={modified}>{formatReviewed(modified)}</time>
+          </p>
         </div>
       </section>
 

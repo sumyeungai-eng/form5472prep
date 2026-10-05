@@ -192,7 +192,7 @@ export default function Form5472StatisticsPage() {
               Editors&rsquo; pick
             </p>
             <h2 id="editors-pick" className="mt-3 font-serif text-2xl font-semibold tracking-tight text-ink">
-              Top 5 Form 5472 statistics
+              What are the top 5 Form 5472 statistics?
             </h2>
             <ol className="mt-6 space-y-5">
               {PICKS.map((s, i) => (
@@ -264,7 +264,7 @@ export default function Form5472StatisticsPage() {
 
           <section aria-labelledby="cite" className="rounded-xl border border-slate-200 bg-slate-50 p-6">
             <h2 id="cite" className="font-serif text-2xl font-semibold tracking-tight text-ink">
-              How to cite this page
+              How can I cite these statistics?
             </h2>
             <p className="mt-2 text-sm text-slate-600">
               You are welcome to quote these figures. Please link to this page and, where you can, to the official
@@ -281,7 +281,7 @@ export default function Form5472StatisticsPage() {
 
           <section aria-labelledby="method">
             <h2 id="method" className="font-serif text-2xl font-semibold tracking-tight text-ink">
-              How these figures were collected
+              How were these figures collected?
             </h2>
             <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
               Every figure was read directly from an official source: the US Code, Treasury regulations on eCFR, the
@@ -298,7 +298,7 @@ export default function Form5472StatisticsPage() {
 
           <section aria-labelledby="faq">
             <h2 id="faq" className="font-serif text-2xl font-semibold tracking-tight text-ink">
-              Form 5472 statistics: common questions
+              What are common questions about Form 5472 statistics?
             </h2>
             <div className="mt-6 space-y-3">
               {FAQS.map((f) => (

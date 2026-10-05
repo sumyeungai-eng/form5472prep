@@ -133,14 +133,16 @@ export default function FaqPage() {
 
               <dl className="mt-8 space-y-9">
                 {items.map((item) => (
-                  <div key={item.id}>
-                    <dt
-                      id={item.id}
-                      data-speakable={item.speakable ? true : undefined}
-                      className="scroll-mt-28 font-semibold text-slate-900"
-                    >
-                      {item.question}
-                    </dt>
+                  // The id and data-speakable sit on this wrapper (a <div> inside
+                  // <dl>, allowed by HTML) so the Speakable cssSelector `#id`
+                  // selects the question AND its answer, not the <dt> alone.
+                  <div
+                    key={item.id}
+                    id={item.id}
+                    data-speakable={item.speakable ? true : undefined}
+                    className="scroll-mt-28"
+                  >
+                    <dt className="font-semibold text-slate-900">{item.question}</dt>
                     <dd className="mt-2">
                       <p className="text-sm leading-relaxed text-slate-600">{item.answer}</p>
                       {item.learnMore && (

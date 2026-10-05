@@ -19,7 +19,7 @@ import {
 import { TIERS, TIER_ORDER } from "@/lib/pricing";
 import { slugify } from "@/lib/blog";
 import { formatPrice } from "@/lib/utils";
-import { ORG_REF, SITE_URL, breadcrumbList, howTo, organizationDocument, pageMeta } from "@/lib/seo";
+import { ORG_REF, SITE_NAME, SITE_URL, SPEAKABLE, breadcrumbList, howTo, organizationDocument, pageMeta } from "@/lib/seo";
 import { ServiceRichText } from "../ServiceRichText";
 
 // Bottom-of-funnel service pages under the /services hub. Copy, keywords and
@@ -110,7 +110,10 @@ export default function ServicePageRoute({ params }: { params: { slug: string } 
               Last reviewed{" "}
               <time dateTime={serviceLastReviewed(page)}>{formatReviewed(serviceLastReviewed(page))}</time>
             </p>
-            <div className="mt-6 space-y-4 text-lg leading-relaxed text-slate-300">
+            {/* data-speakable: the Speakable cssSelector ("h1", "[data-speakable]")
+                reads the H1 and this intro, whose first sentence and bold span
+                are the page's direct answer. Exactly one element per page. */}
+            <div data-speakable className="mt-6 space-y-4 text-lg leading-relaxed text-slate-300">
               <ServiceRichText body={page.intro} tone="dark" firstParagraphClassName="lead" />
             </div>
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -302,6 +305,22 @@ function ServiceStructuredData({ page }: { page: ServicePage }) {
         }
       : {}),
   };
+  // WebPage + Speakable: names the H1 and the intro as the passages to read
+  // aloud, and carries the visible "Last reviewed" date as dateModified.
+  const webPage = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: page.title,
+    description: page.metaDescription,
+    dateModified: serviceLastReviewed(page),
+    inLanguage: "en-US",
+    isPartOf: { "@type": "WebSite", name: SITE_NAME, url: SITE_URL },
+    mainEntity: { "@id": `${url}#service` },
+    publisher: ORG_REF,
+    speakable: SPEAKABLE,
+  };
   const faq = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -335,6 +354,7 @@ function ServiceStructuredData({ page }: { page: ServicePage }) {
     <>
       <JsonLd data={organizationDocument()} />
       <JsonLd data={service} />
+      <JsonLd data={webPage} />
       <JsonLd data={faq} />
       {howToJsonLd && <JsonLd data={howToJsonLd} />}
       <JsonLd data={breadcrumb} />

@@ -42,6 +42,21 @@ describe("form5472-stats data", () => {
     }
   });
 
+  // Answer-engine contract: each category H2 is a question, and the opener under
+  // it is a standalone answer (12-60 words, a concrete figure, not a topic
+  // description such as "How penalties are assessed...").
+  it("every category is a question that opens with a standalone answer", () => {
+    for (const c of STAT_CATEGORIES) {
+      expect(c.question, c.id).toMatch(/\?$/);
+      const n = c.intro.trim().split(/\s+/).length;
+      expect(n, `${c.id}: ${n} words`).toBeGreaterThanOrEqual(12);
+      expect(n, `${c.id}: ${n} words`).toBeLessThanOrEqual(60);
+      expect(c.intro, c.id).toMatch(/\d/);
+      expect(c.intro, c.id).not.toMatch(/^(this|these|here|below|how|ownership thresholds|irs time estimates)\b/i);
+      expect(c.intro, c.id).not.toMatch(/\bCPA\b|licensed|IRS-approved|guarantee|\bbest\b|#1/i);
+    }
+  });
+
   it("uses an ISO review date", () => {
     expect(STATS_LAST_REVIEWED).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });

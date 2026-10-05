@@ -4,9 +4,16 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
 import { getLandingPage } from "@/lib/landing-pages";
+import {
+  EXPRESS_TURNAROUND,
+  MULTI_YEAR_ADDON_CENTS,
+  STANDARD_TURNAROUND,
+  TIERS,
+} from "@/lib/pricing";
 import { SERVICES_HUB_PATH } from "@/lib/services-pages";
-import { SITE_NAME, SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
+import { ORG_REF, SITE_NAME, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pageMeta } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
+import { formatPrice } from "@/lib/utils";
 
 // /compare: alternatives hub. Lists the provider comparison landing pages
 // (src/lib/landing-pages.ts) with a neutral one-line summary each. Summaries
@@ -15,6 +22,9 @@ import { seoTitle } from "@/lib/seo-title";
 // beyond that. Mirrors the /services hub layout.
 
 const PATH = "/compare";
+// Visible "Last reviewed" line and JSON-LD dateModified share this constant.
+const LAST_REVIEWED = "2026-10-05";
+const LAST_REVIEWED_LABEL = "October 5, 2026";
 const H1 = "Compare Form 5472 filing services";
 const DESCRIPTION =
   "How formation and registered-agent providers such as doola, Firstbase, Clemta, StartGlobal, Zenind, Northwest and Stripe Atlas relate to Form 5472 filing.";
@@ -45,6 +55,38 @@ function summarise(intro: string): string {
   return cut.endsWith(".") ? cut : `${cut}.`;
 }
 
+const STD = formatPrice(TIERS.standard.priceCents);
+const EXP = formatPrice(TIERS.express.priceCents);
+const ADD = formatPrice(MULTI_YEAR_ADDON_CENTS);
+
+// The capsule under the H1. Prices and turnarounds come from pricing.ts.
+const CAPSULE = `Formation and registered-agent providers differ on whether Form 5472 is included, who prepares it, how it reaches the IRS and what proof you get. Form5472 Prep is a filing-only service at ${STD} (${STANDARD_TURNAROUND}) or ${EXP} (within ${EXPRESS_TURNAROUND}), plus ${ADD} per extra year, with fax delivery included.`;
+
+// Visible FAQs, mirrored 1:1 in the FAQPage JSON-LD. Statements about a
+// provider repeat only what that provider's page on this site already says.
+const FAQS: Array<{ q: string; a: string }> = [
+  {
+    q: "Does Stripe Atlas file Form 5472?",
+    a: "Not in its standard formation product, according to our Stripe Atlas page: Atlas forms the LLC and obtains an EIN, but the yearly Form 5472 and pro forma Form 1120 remain the LLC owner's responsibility. Plans change, so check Stripe's current terms.",
+  },
+  {
+    q: "Is Form 5472 included in my formation provider's plan?",
+    a: "It depends on the provider and the plan, so check the written terms. Ask whether the plan names Form 5472 and the pro forma Form 1120, which years it covers, who reviews the package and what proof of transmission you receive.",
+  },
+  {
+    q: "How does a Form 5472 filing reach the IRS?",
+    a: "A foreign-owned disregarded entity cannot e-file this package, so it goes to the IRS Ogden PIN Unit by fax or mail. Compare providers on who sends it and what transmission receipt you get afterwards.",
+  },
+  {
+    q: "Can I file Form 5472 myself instead of using a service?",
+    a: "Yes. The IRS forms are free. You complete Form 5472 and the pro forma Form 1120, sign them and send them to the IRS by fax or mail yourself; a service prepares, reviews and sends them for you.",
+  },
+  {
+    q: "What does Form5472 Prep cost?",
+    a: `${STD} on Standard (${STANDARD_TURNAROUND}) or ${EXP} on Express (within ${EXPRESS_TURNAROUND}) per filing year, plus ${ADD} for each additional past year. IRS fax delivery and the accountant review are included on both plans.`,
+  },
+];
+
 const CHECKLIST = [
   "Whether the plan names Form 5472 and the pro forma Form 1120 specifically, rather than a general tax-filing line.",
   "Which tax years the plan covers, and how late or missed years are handled.",
@@ -66,7 +108,11 @@ export default function ComparePage() {
     name: H1,
     description: LONG_DESCRIPTION,
     url: `${SITE_URL}${PATH}`,
+    dateModified: LAST_REVIEWED,
+    inLanguage: "en-US",
     isPartOf: { "@type": "WebSite", name: SITE_NAME, url: SITE_URL },
+    publisher: ORG_REF,
+    speakable: SPEAKABLE,
     mainEntity: {
       "@type": "ItemList",
       itemListElement: items.map((it, i) => ({
@@ -78,9 +124,21 @@ export default function ComparePage() {
     },
   };
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   return (
     <>
+      <JsonLd data={organizationDocument()} />
       <JsonLd data={collection} />
+      <JsonLd data={faqJsonLd} />
       <JsonLd
         data={breadcrumbList([
           { name: "Home", path: "/" },
@@ -111,10 +169,16 @@ export default function ComparePage() {
             {H1}
           </h1>
           <p className="lead mt-6 max-w-3xl text-lg leading-relaxed text-slate-300" data-speakable>
+            {CAPSULE}
+          </p>
+          <p className="mt-4 max-w-3xl leading-relaxed text-slate-400">
             Many foreign founders form their US LLC through a formation or registered-agent company and then have to
             work out who files Form 5472. Each page below looks at one provider, says what it sells, and shows where
             the annual Form 5472 and pro forma Form 1120 filing fits. Plans change, so check the provider&apos;s
             current terms.
+          </p>
+          <p className="mt-4 text-xs text-slate-400">
+            Last reviewed <time dateTime={LAST_REVIEWED}>{LAST_REVIEWED_LABEL}</time>
           </p>
         </div>
       </section>
@@ -123,10 +187,11 @@ export default function ComparePage() {
         <div className="mx-auto max-w-4xl space-y-14 px-4 py-14 sm:px-6 sm:py-16">
           <section aria-labelledby="providers">
             <h2 id="providers" className="font-serif text-2xl font-semibold tracking-tight text-ink">
-              Formation and registered-agent providers
+              Which formation and registered-agent providers have a Form 5472 page?
             </h2>
             <p className="mt-2 max-w-2xl text-slate-600">
-              Seven providers, each with a page on what its plans include and what to confirm about Form 5472.
+              {items.length} providers have one: {items.map((it) => it.name).join(", ").replace(/, ([^,]+)$/, " and $1")}.
+              Each page shows what the provider&apos;s plans include and what to confirm about Form 5472.
             </p>
             <ul className="mt-6 grid gap-4 sm:grid-cols-2">
               {items.map((it) => (
@@ -149,8 +214,13 @@ export default function ComparePage() {
 
           <section aria-labelledby="checklist">
             <h2 id="checklist" className="font-serif text-2xl font-semibold tracking-tight text-ink">
-              What to confirm before choosing a filing service
+              What should you confirm before choosing a filing service?
             </h2>
+            <p className="mt-2 max-w-2xl text-slate-600">
+              Confirm five things: whether the plan names Form 5472 and the pro forma Form 1120, which years it
+              covers, who reviews the package, how it reaches the IRS and what proof you get, and the turnaround and
+              total price.
+            </p>
             <ul className="mt-4 list-disc space-y-2 pl-5 leading-relaxed text-slate-700 marker:text-accent">
               {CHECKLIST.map((c) => (
                 <li key={c}>{c}</li>
@@ -167,6 +237,20 @@ export default function ComparePage() {
               </Link>{" "}
               pages.
             </p>
+          </section>
+
+          <section aria-labelledby="faq">
+            <h2 id="faq" className="font-serif text-2xl font-semibold tracking-tight text-ink">
+              What do people ask about formation providers and Form 5472?
+            </h2>
+            <dl className="mt-6 space-y-6">
+              {FAQS.map((f) => (
+                <div key={f.q}>
+                  <dt className="font-medium text-slate-900">{f.q}</dt>
+                  <dd className="mt-2 text-sm leading-relaxed text-slate-600">{f.a}</dd>
+                </div>
+              ))}
+            </dl>
           </section>
         </div>
       </div>

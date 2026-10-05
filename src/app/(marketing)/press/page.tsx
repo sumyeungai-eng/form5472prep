@@ -3,12 +3,21 @@ import type { Metadata } from "next";
 import { ArrowRight, ChevronRight, Download } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { CopyButton } from "@/components/press/CopyButton";
-import { EXPRESS_TURNAROUND, STANDARD_TURNAROUND } from "@/lib/pricing";
+import {
+  EIN_PRICE_CENTS,
+  EXPRESS_TURNAROUND,
+  ITIN_PRICE_CENTS,
+  MULTI_YEAR_ADDON_CENTS,
+  STANDARD_TURNAROUND,
+  TIERS,
+} from "@/lib/pricing";
+import { formatPrice } from "@/lib/utils";
 import { SERVICES_HUB_PATH, SERVICE_PAGES, servicePath } from "@/lib/services-pages";
 import {
   ORG_EMAIL,
   SITE_NAME,
   SITE_URL,
+  SPEAKABLE,
   TRUSTPILOT_PROFILE_URL,
   breadcrumbList,
   organizationNode,
@@ -18,11 +27,14 @@ import { seoTitle } from "@/lib/seo-title";
 
 // /press: press kit. Journalists, bloggers, directories and answer engines use
 // it to describe the brand correctly. Every statement here must be verifiable
-// from the repo (services-pages.ts, /about, llms.ts); no founders, dates,
-// customer counts, awards or quotes. Prices are never written out: the page
-// links to /pricing, and turnaround comes from src/lib/pricing.ts constants.
+// from the repo (services-pages.ts, /about, llms.ts); no founders, customer
+// counts, awards or quotes. Journalists and answer engines lift numbers
+// straight from a press kit, so the key facts state the prices and turnarounds,
+// always interpolated from src/lib/pricing.ts (never typed here). The founding
+// year is read from Organization.foundingDate so the page and the schema agree.
 
 const PATH = "/press";
+const FOUNDED = String(organizationNode().foundingDate);
 const DESCRIPTION =
   "Press kit for Form5472 Prep: a short blurb, boilerplate, key facts, logo files, brand colours, free tools and the press contact, for citing the service.";
 
@@ -98,10 +110,11 @@ const KEY_FACTS: string[] = [
   "Who it is for: non-US owners of single-member US LLCs, plus formation agents, registered agents and accounting firms that file for client LLCs.",
   "Review: every filing is reviewed by a qualified accountant before it is submitted.",
   "Delivery: the signed package is faxed to the IRS Ogden PIN Unit and a timestamped transmission receipt is stored.",
-  `Turnaround: two filing tiers that differ only in speed, Standard (${STANDARD_TURNAROUND}) and Express (${EXPRESS_TURNAROUND}). Current prices are on the pricing page.`,
+  `Prices: Standard ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}), Express ${formatPrice(TIERS.express.priceCents)} (within ${EXPRESS_TURNAROUND}), +${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past tax year; IRS fax delivery included. The two tiers differ only in speed. EIN service ${formatPrice(EIN_PRICE_CENTS)}; ITIN service ${formatPrice(ITIN_PRICE_CENTS)}.`,
   "Other services: late (DIIRSP) catch-up filings, dormant-LLC and final-year filings, EIN and ITIN application support, white-label filing for partners.",
   `Free tools: ${FREE_TOOLS.length} calculators, checkers and reference tables (listed below).`,
   "Scope: Form5472 Prep prepares and submits forms from the information customers give it. It is not a general tax firm and does not give personalised tax planning.",
+  `Founded: ${FOUNDED}.`,
   "Website: www.form5472prep.com. Reviews: Trustpilot.",
 ];
 
@@ -139,6 +152,8 @@ export default function PressPage() {
         about: { "@id": `${SITE_URL}/#organization` },
         publisher: { "@id": `${SITE_URL}/#organization` },
         inLanguage: "en",
+        // The H1, the lead and the short blurb carry data-speakable.
+        speakable: SPEAKABLE,
       },
       organizationNode(),
     ],
@@ -187,7 +202,7 @@ export default function PressPage() {
         <div className="mx-auto max-w-4xl space-y-16 px-4 py-14 sm:px-6 sm:py-16">
           <section aria-labelledby="blurb">
             <h2 id="blurb" className="font-serif text-2xl font-semibold tracking-tight text-ink">
-              About Form5472 Prep
+              What is Form5472 Prep?
             </h2>
             <p className="mt-1 text-xs text-slate-500">Short blurb, {wordCount(BLURB)} words.</p>
             <div className="mt-4 rounded-lg border border-slate-200 bg-paper p-5">
@@ -223,14 +238,14 @@ export default function PressPage() {
           </section>
 
           <section aria-labelledby="facts">
-            <h2 id="facts" className="font-serif text-2xl font-semibold tracking-tight text-ink">Key facts</h2>
+            <h2 id="facts" className="font-serif text-2xl font-semibold tracking-tight text-ink">What are the key facts about Form5472 Prep?</h2>
             <ul className="mt-4 list-disc space-y-2 pl-5 leading-relaxed text-slate-700 marker:text-accent">
               {KEY_FACTS.map((f) => (
                 <li key={f}>{f}</li>
               ))}
             </ul>
             <p className="mt-4 text-sm text-slate-600">
-              Current pricing is on the{" "}
+              Full plan details are on the{" "}
               <Link href="/pricing" className="font-medium text-accent underline-offset-4 hover:underline">pricing page</Link>
               . Reviews are on{" "}
               <a
@@ -347,7 +362,7 @@ export default function PressPage() {
           </section>
 
           <section aria-labelledby="contact" className="rounded-lg border border-paper-edge bg-paper p-6">
-            <h2 id="contact" className="font-serif text-2xl font-semibold tracking-tight text-ink">Press contact</h2>
+            <h2 id="contact" className="font-serif text-2xl font-semibold tracking-tight text-ink">Who is the press contact?</h2>
             <p className="mt-3 text-slate-700">
               For press enquiries, interview requests and corrections, email{" "}
               <a href={`mailto:${ORG_EMAIL}`} className="font-medium text-accent underline-offset-4 hover:underline">

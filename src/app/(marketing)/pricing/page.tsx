@@ -5,6 +5,7 @@ import {
   TIERS,
   TIER_ORDER,
   MULTI_YEAR_ADDON_CENTS,
+  MULTI_YEAR_ADDON_LABEL,
   STANDARD_TURNAROUND,
   EXPRESS_TURNAROUND,
   type Tier,
@@ -13,7 +14,7 @@ import { formatPrice } from "@/lib/utils";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 import { JsonLd } from "@/components/JsonLd";
 import { ComparisonTable, FILING_COMPARISON } from "@/components/ComparisonTable";
-import { breadcrumbList, pageMeta } from "@/lib/seo";
+import { ORG_REF, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Pricing for Form 5472 Filing",
@@ -29,6 +30,15 @@ export const metadata: Metadata = {
 
 const tierEntries = TIER_ORDER.map((key) => [key, TIERS[key]] as const);
 
+// Visible "Last reviewed" date and the WebPage dateModified share this one
+// constant so they cannot drift. Bump it whenever pricing or process copy changes.
+const PRICING_LAST_REVIEWED = "2026-10-05";
+const PRICING_LAST_REVIEWED_LABEL = "October 5, 2026";
+
+// The answer capsule under "How much does Form 5472 filing cost?": prices and
+// turnarounds come from src/lib/pricing.ts, never typed here.
+const COST_ANSWER = `Form 5472 filing costs ${formatPrice(TIERS.standard.priceCents)} on Standard (ready in ${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} on Express (ready within ${EXPRESS_TURNAROUND}), plus ${formatPrice(MULTI_YEAR_ADDON_CENTS)} for each additional past tax year. IRS fax delivery and a qualified-accountant review are included on both plans, with no subscription.`;
+
 const PRICING_FAQS: { q: string; a: string }[] = [
   {
     q: "How much does it cost?",
@@ -40,7 +50,7 @@ const PRICING_FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Is fax filing really included?",
-    a: "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and the timestamped fax receipt as proof of when your package reached the IRS. You don't need your own fax machine.",
+    a: "Yes — every plan includes fax delivery to the IRS Ogden PIN Unit and the fax provider's transmission receipt (destination, timestamp, page count, result): evidence of transmission, not IRS acceptance. You don't need your own fax machine.",
   },
   {
     q: "What if I'm filing for multiple past years (DIIRSP)?",
@@ -57,19 +67,52 @@ const PRICING_FAQS: { q: string; a: string }[] = [
 const productJsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
+  "@id": `${SITE_URL}/pricing#product`,
   name: "Form 5472 + Pro Forma 1120 Filing Service",
   description:
     "Done-for-you IRS Form 5472 and pro forma Form 1120 filing for foreign-owned single-member US LLCs. Fax delivery to the IRS Ogden PIN Unit is included on every plan.",
-  brand: { "@type": "Brand", name: "Form5472 Prep" },
-  offers: tierEntries.map(([slug, t]) => ({
-    "@type": "Offer",
-    name: `${t.label} — ${t.subtitle}`,
-    priceCurrency: "USD",
-    price: (t.priceCents / 100).toFixed(2),
-    url: `https://www.form5472prep.com/start?tier=${slug}`,
-    availability: "https://schema.org/InStock",
-    eligibleQuantity: { "@type": "QuantitativeValue", value: 1, unitText: "filing" },
-  })),
+  // Same Organization @id as every other page, so engines consolidate the brand.
+  brand: ORG_REF,
+  manufacturer: ORG_REF,
+  offers: [
+    ...tierEntries.map(([slug, t]) => ({
+      "@type": "Offer",
+      name: `${t.label} — ${t.subtitle}`,
+      priceCurrency: "USD",
+      price: (t.priceCents / 100).toFixed(2),
+      url: `${SITE_URL}/start?tier=${slug}`,
+      availability: "https://schema.org/InStock",
+      seller: ORG_REF,
+      eligibleQuantity: { "@type": "QuantitativeValue", value: 1, unitText: "filing" },
+    })),
+    // The flat add-on for every tax year past the first, on either tier.
+    {
+      "@type": "Offer",
+      name: MULTI_YEAR_ADDON_LABEL,
+      description: "Flat add-on for each additional past tax year, on either tier.",
+      priceCurrency: "USD",
+      price: (MULTI_YEAR_ADDON_CENTS / 100).toFixed(2),
+      url: `${SITE_URL}/start`,
+      availability: "https://schema.org/InStock",
+      seller: ORG_REF,
+      eligibleQuantity: { "@type": "QuantitativeValue", value: 1, unitText: "additional tax year" },
+    },
+  ],
+};
+
+// WebPage + Speakable: the H1 and the cost capsule are the passages to read
+// aloud; dateModified matches the visible "Last reviewed" line.
+const pricingWebPageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${SITE_URL}/pricing#webpage`,
+  url: `${SITE_URL}/pricing`,
+  name: "Form 5472 filing pricing",
+  dateModified: PRICING_LAST_REVIEWED,
+  inLanguage: "en-US",
+  publisher: ORG_REF,
+  about: { "@id": `${SITE_URL}/pricing#product` },
+  speakable: SPEAKABLE,
 };
 
 const pricingFaqJsonLd = {
@@ -85,7 +128,9 @@ const pricingFaqJsonLd = {
 export default function PricingPage() {
   return (
     <main className="bg-white">
+      <JsonLd data={organizationDocument()} />
       <JsonLd data={productJsonLd} />
+      <JsonLd data={pricingWebPageJsonLd} />
       <JsonLd data={pricingFaqJsonLd} />
       <JsonLd
         data={breadcrumbList([
@@ -123,6 +168,10 @@ export default function PricingPage() {
               the $25,000-per-form IRS penalty.
             </p>
 
+            <p className="mt-5 text-xs text-slate-400">
+              Last reviewed <time dateTime={PRICING_LAST_REVIEWED}>{PRICING_LAST_REVIEWED_LABEL}</time>
+            </p>
+
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white ring-1 ring-white/15">
                 <Send className="h-4 w-4 text-accent-100" />
@@ -138,6 +187,14 @@ export default function PricingPage() {
       </section>
 
       <section className="max-w-6xl mx-auto px-6 py-12 sm:py-16">
+        <div className="max-w-3xl mx-auto mb-10 text-center">
+          <h2 id="cost" className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
+            How much does Form 5472 filing cost?
+          </h2>
+          <p className="mt-3 text-slate-600" data-speakable>
+            {COST_ANSWER}
+          </p>
+        </div>
         <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto items-stretch">
           {tierEntries.map(([slug, t]) => (
             <TierCard key={slug} slug={slug} tier={t} />

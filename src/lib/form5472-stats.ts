@@ -53,27 +53,32 @@ export const STAT_CATEGORIES: Array<{ id: StatCategory; question: string; intro:
   {
     id: "penalties",
     question: "How much is the Form 5472 penalty?",
-    intro: "The penalty amounts are set by statute in Internal Revenue Code section 6038A(d).",
+    intro:
+      "The penalty is $25,000 per tax year under Internal Revenue Code section 6038A(d)(1). If the failure continues more than 90 days after the IRS mails a notice, another $25,000 applies for each 30-day period or fraction of one, and the IRS states there is no maximum.",
   },
   {
     id: "enforcement",
     question: "How does the IRS enforce Form 5472 penalties?",
-    intro: "How penalties are assessed, how often they are abated, and how long the IRS can assess tax.",
+    intro:
+      "Since 2013 the IRS has systemically assessed the initial penalty on each Form 5472 attached to a late-filed Form 1120. In 2018, 55% of the systemic Form 5471 and 5472 penalties were abated, or 71% by dollar value, according to the National Taxpayer Advocate.",
   },
   {
     id: "who-files",
     question: "Who has to file Form 5472?",
-    intro: "Ownership thresholds and the 2016 rule that brought foreign-owned single-member LLCs in.",
+    intro:
+      "Form 5472 is filed by a US corporation that is at least 25% foreign-owned and, under T.D. 9796 (for tax years beginning on or after January 1, 2017 and ending on or after December 13, 2017), by every US single-member LLC wholly owned by one foreign person that has a reportable transaction.",
   },
   {
     id: "deadlines",
     question: "When is Form 5472 due?",
-    intro: "Form 5472 is attached to a (pro forma) Form 1120 and follows that return's due date.",
+    intro:
+      "Form 5472 is attached to a Form 1120 (a pro forma Form 1120 for a foreign-owned LLC), so it is generally due the 15th day of the 4th month after the tax year ends. Form 7004 gives an automatic extension that is generally 6 months.",
   },
   {
     id: "records",
     question: "How much recordkeeping does Form 5472 involve?",
-    intro: "IRS time estimates and the regulation deadlines for producing records.",
+    intro:
+      "The IRS estimates 17 hours 42 minutes of recordkeeping per Form 5472 for non-business filers, plus 3 hours 4 minutes to learn the form and 3 hours 30 minutes to prepare and send it. Records kept outside the US must reach the US within 60 days of an IRS request.",
   },
   {
     id: "irs-data",
