@@ -519,16 +519,6 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
             >
               View unsigned PDF ↗
             </a>
-            {/* One ZIP with every stored document for this filing (package,
-                signed, faxed, receipt, signature, proofs, attachments). */}
-            <a
-              href={`/api/admin/filings/${filingId}/download-all`}
-              download
-              className="inline-flex items-center px-3 py-1.5 text-sm rounded-md border border-slate-900 bg-slate-900 text-white hover:bg-slate-800"
-              title="Downloads every stored document for this filing as one ZIP file"
-            >
-              Download all (ZIP) ↓
-            </a>
             {hasSignedPdf && (
               <a
                 href={`/api/admin/filings/${filingId}/pdf?signed=1&t=${Date.now()}`}

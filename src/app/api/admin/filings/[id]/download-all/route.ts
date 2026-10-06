@@ -3,7 +3,6 @@ import { zipSync } from "fflate";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { get } from "@/lib/storage";
-import { faxReceiptKey } from "@/lib/fax/finalize";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,22 +10,29 @@ export const maxDuration = 60;
 
 // GET /api/admin/filings/[id]/download-all
 //
-// Admin "Download all": every stored document for one filing in a single ZIP —
-// the current package, the signed PDF, the exact bytes faxed, the fax receipt,
-// the client's signature, any extension proof / dissolution certificate, and
-// files attached to the filing's message thread. A README lists what is
-// included and what was not on file. Read-only: nothing is regenerated.
+// Admin "Download customer uploads": everything the CUSTOMER uploaded for this
+// filing, in one ZIP, for the accountant's review — supporting documents,
+// bank statements (per tax year), files they attached in the message thread,
+// Form 7004 extension proof and the dissolution certificate. Our own generated
+// documents (packages, signed/faxed PDFs, receipts, signatures) are NOT
+// included; those have their own buttons. A README lists what's inside.
 // Files are STOREd, not deflated (PDFs/images are already compressed).
 
-type Entry = { label: string; key: string | null | undefined; name: string };
+type Entry = { folder: string; key: string; fileName: string; note: string };
 
-function safePart(value: string): string {
-  return value.replace(/[^A-Za-z0-9._-]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 80) || "file";
+function safeName(value: string): string {
+  return value.replace(/[\\/:*?"<>|\u0000-\u001f]+/g, "_").replace(/\s+/g, " ").trim().slice(0, 120) || "file";
 }
 
-function extOf(key: string, fallback: string): string {
+function extOf(key: string): string {
   const m = key.match(/\.([A-Za-z0-9]{2,5})$/);
-  return m ? m[1].toLowerCase() : fallback;
+  return m ? `.${m[1].toLowerCase()}` : "";
+}
+
+// Keep the customer's own file name; add the stored extension if theirs lacks one.
+function displayName(original: string | null | undefined, key: string, fallback: string): string {
+  const base = safeName(original?.trim() || fallback);
+  return /\.[A-Za-z0-9]{2,5}$/.test(base) ? base : `${base}${extOf(key)}`;
 }
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
@@ -38,69 +44,96 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       id: true,
       llcName: true,
       taxYears: true,
-      generatedPdfKey: true,
-      signedPdfKey: true,
-      faxedPdfKey: true,
-      signaturePngKey: true,
       extensionProofKey: true,
       dissolutionCertKey: true,
-      messages: {
-        where: { attachmentKey: { not: null } },
+      documents: {
+        where: { uploadedBy: "customer" },
         orderBy: { createdAt: "asc" },
-        select: { attachmentKey: true, attachmentName: true, createdAt: true, fromAdmin: true },
+        select: { fileKey: true, fileName: true, createdAt: true },
+      },
+      yearData: {
+        orderBy: { taxYear: "asc" },
+        select: {
+          taxYear: true,
+          bankStatements: {
+            orderBy: { uploadedAt: "asc" },
+            select: { fileKey: true, fileName: true, uploadedAt: true },
+          },
+        },
+      },
+      messages: {
+        where: { fromAdmin: false, attachmentKey: { not: null } },
+        orderBy: { createdAt: "asc" },
+        select: { attachmentKey: true, attachmentName: true, createdAt: true },
       },
     },
   });
   if (!filing) return NextResponse.json({ error: "filing not found" }, { status: 404 });
 
+  const day = (d: Date) => d.toISOString().slice(0, 10);
   const entries: Entry[] = [
-    { label: "Filing package (current, unsigned/reviewed)", key: filing.generatedPdfKey, name: "01_package_unsigned" },
-    { label: "Signed package", key: filing.signedPdfKey, name: "02_package_signed" },
-    { label: "Faxed package (exact bytes sent to the IRS)", key: filing.faxedPdfKey, name: "03_package_faxed" },
-    { label: "IRS fax transmission receipt", key: faxReceiptKey(filing.id), name: "04_fax_receipt" },
-    { label: "Client signature", key: filing.signaturePngKey, name: "05_client_signature" },
-    { label: "Form 7004 extension proof", key: filing.extensionProofKey, name: "06_extension_proof" },
-    { label: "Dissolution certificate", key: filing.dissolutionCertKey, name: "07_dissolution_certificate" },
-    ...filing.messages.map((m, i) => ({
-      label: `Message attachment from ${m.fromAdmin ? "admin" : "client"} (${m.createdAt.toISOString().slice(0, 10)})`,
-      key: m.attachmentKey,
-      name: `08_attachment_${String(i + 1).padStart(2, "0")}_${safePart((m.attachmentName ?? "file").replace(/\.[A-Za-z0-9]{2,5}$/, ""))}`,
+    ...filing.documents.map((d) => ({
+      folder: "Documents",
+      key: d.fileKey,
+      fileName: displayName(d.fileName, d.fileKey, "document"),
+      note: `uploaded ${day(d.createdAt)}`,
     })),
+    ...filing.yearData.flatMap((y) =>
+      y.bankStatements.map((s) => ({
+        folder: `Bank statements/${y.taxYear}`,
+        key: s.fileKey,
+        fileName: displayName(s.fileName, s.fileKey, "statement"),
+        note: `tax year ${y.taxYear}, uploaded ${day(s.uploadedAt)}`,
+      })),
+    ),
+    ...filing.messages.map((m) => ({
+      folder: "Message attachments",
+      key: m.attachmentKey!,
+      fileName: `${day(m.createdAt)} ${displayName(m.attachmentName, m.attachmentKey!, "attachment")}`,
+      note: `sent with a message on ${day(m.createdAt)}`,
+    })),
+    ...(filing.extensionProofKey
+      ? [{ folder: "Extension proof", key: filing.extensionProofKey, fileName: displayName(null, filing.extensionProofKey, "form-7004-extension-proof"), note: "Form 7004 extension proof" }]
+      : []),
+    ...(filing.dissolutionCertKey
+      ? [{ folder: "Dissolution certificate", key: filing.dissolutionCertKey, fileName: displayName(null, filing.dissolutionCertKey, "dissolution-certificate"), note: "certificate of dissolution/cancellation" }]
+      : []),
   ];
+
+  if (entries.length === 0) {
+    return NextResponse.json({ error: "The customer hasn't uploaded any files for this filing." }, { status: 404 });
+  }
 
   const files: Record<string, Uint8Array> = {};
   const included: string[] = [];
-  const missing: string[] = [];
+  const failed: string[] = [];
   for (const entry of entries) {
-    if (!entry.key) {
-      missing.push(`${entry.label}: not on file`);
-      continue;
+    // Two uploads with the same name in one folder get " (2)", " (3)"…
+    let path = `${entry.folder}/${entry.fileName}`;
+    for (let n = 2; files[path]; n++) {
+      path = `${entry.folder}/${entry.fileName.replace(/(\.[A-Za-z0-9]{2,5})?$/, ` (${n})$1`)}`;
     }
     try {
-      const bytes = await get(entry.key);
-      const fileName = `${entry.name}.${extOf(entry.key, "bin")}`;
-      files[fileName] = bytes;
-      included.push(`${fileName} — ${entry.label}`);
+      files[path] = await get(entry.key);
+      included.push(`${path} (${entry.note})`);
     } catch {
-      // The fax receipt key is derived, so "not stored yet" lands here too.
-      missing.push(`${entry.label}: not found in storage`);
+      failed.push(`${path} (${entry.note}): file missing from storage`);
     }
   }
 
-  const base = safePart(`${filing.llcName ?? "filing"}_${filing.taxYears.join("-")}_${filing.id}`);
-  const readme = [
-    `Documents for ${filing.llcName ?? "(no LLC name)"} — tax year(s) ${filing.taxYears.join(", ")}`,
-    `Filing ID: ${filing.id}`,
-    `Downloaded: ${new Date().toISOString()}`,
-    "",
-    "Included:",
-    ...(included.length ? included.map((l) => `  - ${l}`) : ["  (none)"]),
-    "",
-    "Not included:",
-    ...(missing.length ? missing.map((l) => `  - ${l}`) : ["  (nothing missing)"]),
-    "",
-  ].join("\n");
-  files["README.txt"] = new TextEncoder().encode(readme);
+  const base = safeName(`${filing.llcName ?? "filing"} ${filing.taxYears.join("-")} customer uploads`).replace(/ /g, "_");
+  files["README.txt"] = new TextEncoder().encode(
+    [
+      `Customer uploads for ${filing.llcName ?? "(no LLC name)"} — tax year(s) ${filing.taxYears.join(", ")}`,
+      `Filing ID: ${filing.id}`,
+      `Downloaded: ${new Date().toISOString()}`,
+      "",
+      `Included (${included.length}):`,
+      ...included.map((l) => `  - ${l}`),
+      ...(failed.length ? ["", "Could not be included:", ...failed.map((l) => `  - ${l}`)] : []),
+      "",
+    ].join("\n"),
+  );
 
   const zip = zipSync(
     Object.fromEntries(Object.entries(files).map(([name, bytes]) => [`${base}/${name}`, [bytes, { level: 0 }]])),

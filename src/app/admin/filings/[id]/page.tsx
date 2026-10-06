@@ -99,6 +99,17 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
     where: { filingId: filing.id },
     orderBy: { createdAt: "asc" },
   });
+  // Everything the customer uploaded for review — must match what
+  // /api/admin/filings/[id]/download-all puts in the ZIP.
+  const clientAttachmentCount = await prisma.message.count({
+    where: { filingId: filing.id, fromAdmin: false, attachmentKey: { not: null } },
+  });
+  const customerUploadCount =
+    customerDocuments.filter((doc) => doc.uploadedBy === "customer").length +
+    filing.yearData.reduce((sum, year) => sum + year.bankStatements.length, 0) +
+    clientAttachmentCount +
+    (filing.extensionProofKey ? 1 : 0) +
+    (filing.dissolutionCertKey ? 1 : 0);
   const customerDocumentRows = await Promise.all(
     customerDocuments.map(async (doc) => ({
       ...doc,
@@ -466,6 +477,26 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
 
         <div className="md:col-span-2">
           <DetailCard title="Customer documents">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <p className="text-xs text-slate-500">
+                {customerUploadCount === 0
+                  ? "The customer hasn't uploaded any files yet."
+                  : `${customerUploadCount} file${customerUploadCount === 1 ? "" : "s"} uploaded by the customer (documents, bank statements, message attachments, extension proof, dissolution certificate).`}
+              </p>
+              {customerUploadCount > 0 ? (
+                <a
+                  href={`/api/admin/filings/${filing.id}/download-all`}
+                  download
+                  className="inline-flex items-center rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800"
+                >
+                  Download all customer uploads (ZIP) ↓
+                </a>
+              ) : (
+                <span className="inline-flex cursor-not-allowed items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-400">
+                  Download all (nothing uploaded)
+                </span>
+              )}
+            </div>
             {customerDocumentRows.length === 0 ? (
               <p className="text-sm text-slate-400">None uploaded.</p>
             ) : (
