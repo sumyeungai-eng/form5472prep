@@ -90,12 +90,25 @@ type WizardFiling = React.ComponentProps<typeof FilingWizard>["filing"];
 // server-provided filing, so it's deterministic across SSR/hydration (no
 // localStorage, no mismatch) and a refresh mid-wizard no longer bounces the
 // user all the way back to step 1.
+function hasStartedFiling(f: WizardFiling): boolean {
+  const st = computeStatuses(f);
+  return (["entity", "owner", "years", "transactions"] as StepKey[]).some((k) => st[k] !== "untouched");
+}
+
+// Pre-flight answers aren't stored, so rebuild them on load. A draft with saved
+// data could only get past pre-flight with all three answered and none
+// blocking (see resumeStep), so it shows as complete instead of resetting to
+// "missing" after every Save and exit (customer report 2026-10-08). A saved
+// member count of 2 still surfaces as multi-member.
+export function initialPreflightAnswers(f: WizardFiling): PreflightAnswers {
+  const isMultiMember = f.llcMemberCount === 1 ? false : f.llcMemberCount === 2 ? true : null;
+  if (!hasStartedFiling(f)) return { ...EMPTY_PREFLIGHT_ANSWERS, isMultiMember };
+  return { isForeignOwnedSmllc: true, isMultiMember: isMultiMember ?? false, hasEin: true };
+}
+
 function resumeStep(f: WizardFiling): V3StepKey {
   const st = computeStatuses(f);
-  const anyStarted = (["entity", "owner", "years", "transactions"] as StepKey[]).some(
-    (k) => st[k] !== "untouched",
-  );
-  if (!anyStarted) return "preflight";
+  if (!hasStartedFiling(f)) return "preflight";
   const needsReasonableCause = requiresReasonableCause({
     taxYears: f.taxYears,
     isFinalReturn: f.isFinalReturn,
@@ -125,11 +138,9 @@ export function FilingWizardV3({
   // runs once from the server-provided filing.
   const [stepKey, setStepKey] = useState<V3StepKey>(() => resumeStep(initial));
   const [filing, setFiling] = useState(initial);
-  const [preflightAnswers, setPreflightAnswers] = useState<PreflightAnswers>(() => ({
-    ...EMPTY_PREFLIGHT_ANSWERS,
-    isMultiMember:
-      initial.llcMemberCount === 1 ? false : initial.llcMemberCount === 2 ? true : null,
-  }));
+  const [preflightAnswers, setPreflightAnswers] = useState<PreflightAnswers>(() =>
+    initialPreflightAnswers(initial),
+  );
   const wizardRef = useRef<FilingWizardHandle>(null);
   const saveMemberCount = useCallback(async (isMultiMember: boolean) => {
     const llcMemberCount = isMultiMember ? 2 : 1;
