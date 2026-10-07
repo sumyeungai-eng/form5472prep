@@ -82,7 +82,7 @@ Two points apply to every row. The pro forma Form 1120 needs only the LLC's name
 
 ## How does the Form 5472 extension work?
 
-You extend by filing **Form 7004** by the regular due date. That buys six months, to 15 October for a calendar-year LLC. There is no second extension.
+You extend by filing **Form 7004** by the regular due date. That generally buys six months (seven for the June-30 fiscal-year exception above), to 15 October for a calendar-year LLC. There is no second extension.
 
 **The part that is specific to foreign-owned LLCs, and that catches people out:** you cannot file Form 7004 the normal way. The IRS Form 5472 instructions direct a foreign-owned US DE to **"fax or mail the Form 7004 to the fax number or mailing address identified earlier, by the due date (excluding extensions) of the return."**
 
