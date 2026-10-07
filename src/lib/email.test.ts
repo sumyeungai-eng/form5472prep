@@ -127,4 +127,21 @@ describe("order confirmation email", () => {
     expect(existingCallerShape.text).not.toContain(EXTENSION_UNCLEAR_SENTENCE);
     expect(existingCallerShape.html).not.toMatch(/<p[^>]*>\s*<\/p>/i);
   });
+
+  it("promises a one-business-day review on express orders only", async () => {
+    await usePreviewDir();
+    const express = await readRenderedOrderEmail(
+      await sendOrderConfirmationEmail({ ...minimalOrderArgs(), tier: "express" }),
+    );
+    expect(express.html).toContain("a qualified accountant will review your filing within one business day.");
+    expect(express.html).toContain("reviews the package within one business day");
+    expect(express.text).toContain("Express order: a qualified accountant will review your filing within one business day.");
+    expect(express.text).toContain("reviews the package within one business day");
+
+    const standard = await readRenderedOrderEmail(
+      await sendOrderConfirmationEmail(minimalOrderArgs()),
+    );
+    expect(standard.html).not.toContain("one business day");
+    expect(standard.text).not.toContain("one business day");
+  });
 });

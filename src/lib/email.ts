@@ -530,6 +530,17 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const t = tierInfo(tier);
   const tierLabel = t.label;
   const tierPrice = formatUsd(t.priceCents);
+  // Express orders are promised an accountant review within one business day;
+  // standard orders get no timeframe. Legacy "rush" resolves to standard.
+  const isExpress = tier === "express";
+  const expressReviewText =
+    "Express order: a qualified accountant will review your filing within one business day.";
+  const reviewStepText = isExpress
+    ? "A qualified accountant reviews the package within one business day and may message you if anything needs clarifying."
+    : "A qualified accountant reviews the package and may message you if anything needs clarifying.";
+  const reviewStepPlain = isExpress
+    ? "A qualified accountant reviews the package within one business day and may message you with questions."
+    : "A qualified accountant reviews the package and may message you with questions.";
   const yearCount = taxYears.length || 1;
   const extraYears = Math.max(0, yearCount - 1);
   const addOnCents = multiYearAddonCents(yearCount);
@@ -551,6 +562,11 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     : extensionUnclear
       ? "We are checking whether an extension was filed for this year. We will confirm before anything is sent."
       : "";
+  const expressReviewHtml = isExpress
+    ? `<div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-left:4px solid ${EMAIL_STYLES.brand};border-radius:8px;padding:12px 16px;margin:0 0 12px;color:${EMAIL_STYLES.ink};font-size:14px;line-height:1.6;">
+         <strong>Express order:</strong> a qualified accountant will review your filing within one business day.
+       </div>`
+    : "";
   const filingStatusNoticeHtml = filingStatusNoticeText
     ? `<p style="margin:0 0 12px;color:${EMAIL_STYLES.slate};line-height:1.6;font-size:14px;">${filingStatusNoticeText}</p>`
     : "";
@@ -604,6 +620,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     <p style="margin:0 0 12px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       ${introCopy}
     </p>
+    ${expressReviewHtml}
     ${dueDateHtml}
     ${filingStatusNoticeHtml}
     <p style="margin:0 0 20px;color:${EMAIL_STYLES.muted};font-size:13px;">
@@ -631,7 +648,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next</p>
     <ol style="margin:0 0 24px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       <li style="margin-bottom:6px;">We generate your filled <strong>Form 5472 + pro forma Form 1120</strong> (≈ 2 min).</li>
-      <li style="margin-bottom:6px;">A qualified accountant reviews the package and may message you if anything needs clarifying.</li>
+      <li style="margin-bottom:6px;">${reviewStepText}</li>
       <li style="margin-bottom:6px;">After approval, we email you a secure link to sign digitally.</li>
       ${step3Html}
     </ol>
@@ -653,12 +670,12 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const nextStepsText = hasPdf
     ? `What to do next:\n` +
       `  1. Open your portal: ${portalLink}\n` +
-      `  2. A qualified accountant reviews the package and may message you with questions.\n` +
+      `  2. ${reviewStepPlain}\n` +
       `  3. After approval, we email you a secure link to sign digitally.\n` +
       step3Text + "\n"
     : `What happens next:\n` +
       `  1. We generate your Form 5472 + pro forma 1120 (≈ 2 min).\n` +
-      `  2. A qualified accountant reviews the package and may message you with questions.\n` +
+      `  2. ${reviewStepPlain}\n` +
       `  3. After approval, we email you a secure link to sign digitally.\n` +
       step3Text + "\n";
 
@@ -695,6 +712,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     text: customerText(
       salutation,
       `Thank you for your order.\n\n` +
+      (isExpress ? `${expressReviewText}\n\n` : "") +
       dueDateLineText +
       filingStatusNoticeLineText +
       `Tip: save donotreply@form5472prep.com to your contacts so our emails reach your inbox.\n\n` +
