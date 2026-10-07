@@ -22,7 +22,7 @@ The counterparty is the first classification test. An unrelated guest pays for a
 
 The movement can be reportable even when it never touches the LLC bank. Paying an LLC furniture supplier or cleaner personally funds an LLC obligation. The books should classify the funding as a contribution, loan or reimbursable cost. Keep a later reimbursement as a separate gross movement.
 
-Treasury Regulation §1.6038A-2 supplies the Part IV reportable-transaction framework. The Form 5472 instructions also direct a foreign-owned US disregarded entity to Part V for contributions, distributions and other entity transactions not entered in Part IV.
+Treasury Regulation §1.6038A-2 supplies the Part IV reportable-transaction framework. The [Form 5472 instructions](/form-5472-instructions) also direct a foreign-owned US disregarded entity to Part V for contributions, distributions and other entity transactions not entered in Part IV.
 
 ## Which Airbnb host cash flows belong on Form 5472?
 
@@ -119,7 +119,7 @@ Winter inactivity does not erase transactions from the rest of the tax year. Sum
 
 ## When and how does the LLC file the Form 5472 package?
 
-A calendar-year foreign-owned US disregarded entity files Form 5472 with a pro forma Form 1120. For the **2025 tax year**, the due date was **15 April 2026**, or **15 October 2026** when Form 7004 was filed by the regular due date.
+A calendar-year foreign-owned US disregarded entity files Form 5472 with a pro forma Form 1120. For the **2025 tax year**, the due date was **15 April 2026**, or **15 October 2026** when Form 7004 was filed by the regular due date. For the filing steps, see [how to file Form 5472](/file-form-5472).
 
 Part II identifies the foreign owner. Enter the owner's FTIN on line 4b(3). If no FTIN exists, enter “None” or “N/A”; do not leave the field blank. When line 4b(1) has no US identifying number, line 4b(2) requires a reference ID, and the same reference ID should be used each year.
 

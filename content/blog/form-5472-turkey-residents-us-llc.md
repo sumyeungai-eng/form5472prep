@@ -46,7 +46,7 @@ Enter the Turkish tax identification number the Revenue Administration holds for
 
 Foreigners without one apply to the Revenue Administration's Digital Tax Office for a [potential tax identification number for foreigners](https://dijital.gib.gov.tr/foreigners/kimlikNoBasvuru) (potansiyel vergi kimlik numarası) — the same number people obtain to open a Turkish bank account. A residence permit is not part of that application.
 
-The Form 5472 instructions require a foreign-owned US DE to enter an FTIN, if any, for each foreign owner in Part II, on line 4b(3); if you have none, enter "None" or "N/A" rather than leaving it blank. Where line 4b(1) has no US identifying number, a self-assigned reference ID goes on line 4b(2), used identically every year.
+The [Form 5472 instructions](/form-5472-instructions) require a foreign-owned US DE to enter an FTIN, if any, for each foreign owner in Part II, on line 4b(3); if you have none, enter "None" or "N/A" rather than leaving it blank. Where line 4b(1) has no US identifying number, a self-assigned reference ID goes on line 4b(2), used identically every year.
 
 Read the third column first. It is identical in every row, and that is the point.
 

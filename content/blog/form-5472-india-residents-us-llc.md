@@ -73,7 +73,7 @@ You do not need to obtain a US Individual Taxpayer Identification Number (ITIN) 
 
 No. The India–US Double Taxation Avoidance Agreement (DTAA) covers income tax — it determines whether certain income is taxed in India, the US, or both, and at what rates. It doesn't touch the Form 5472 obligation at all.
 
-Form 5472 is an **information return**, not a tax payment mechanism. The IRS uses it to understand related-party transactions, not to calculate tax. The treaty has nothing to do with whether you need to file it.
+Form 5472 is an **information return**, not a tax payment mechanism. The IRS uses it to understand related-party transactions, not to calculate tax. The treaty has nothing to do with whether you need to file it. See [who must file Form 5472](/do-i-need-to-file-form-5472) for the test that does apply.
 
 Similarly, if you qualify for treaty benefits that reduce your US withholding on dividends or royalties, that doesn't change your Form 5472 obligations. The two things are entirely separate.
 
@@ -121,7 +121,7 @@ The deadline is **April 15** of the year following the tax year (e.g., April 15,
 
 ## What if you've missed previous years?
 
-The fix is the **Delinquent International Information Return Submission Procedure (DIIRSP)**. You file all missing years together, attach a reasonable cause statement explaining why you didn't file, and send the complete package to the IRS Ogden PIN Unit.
+The fix is the **Delinquent International Information Return Submission Procedure (DIIRSP)**. You file all missing years together, attach a [reasonable cause statement](/form-5472-reasonable-cause-statement) explaining why you didn't file, and send the complete package to the IRS Ogden PIN Unit.
 
 Most India-based LLC owners who simply didn't know about the requirement can present a reasonable-cause case, though relief is evaluated individually and is not automatic. The key is filing proactively, before the IRS sends a notice. Once the IRS flags the issue and sends a notice of failure, the continuation penalty ($25,000 per 30-day period once a failure runs more than 90 days past the IRS notice) starts running. See our [late-filing guide](/blog/form-5472-filed-late-never-filed) for the full playbook.
 

@@ -69,7 +69,7 @@ The better question is not “Was the LLC open long enough?” It is “Did a re
 
 ## What if the owner has a fiscal year?
 
-The Form 5472 instructions tie a foreign-owned disregarded entity to the owner's US tax year when the owner has one. A foreign corporate owner with a US filing obligation may therefore create a non-calendar answer.
+The [Form 5472 instructions](/form-5472-instructions) tie a foreign-owned disregarded entity to the owner's US tax year when the owner has one. A foreign corporate owner with a US filing obligation may therefore create a non-calendar answer. For the filing steps, see [how to file Form 5472](/file-form-5472).
 
 Do not rely only on the “closing month” entered on Form SS-4. Entity classification, the owner's actual US filing year, and any required-year rules control the analysis. A foreign corporate parent or an election to corporate treatment can also change which return is being filed. Use the [Form 5472 versus 1120-F guide](/blog/form-5472-vs-1120-f) when a foreign company owns the LLC.
 

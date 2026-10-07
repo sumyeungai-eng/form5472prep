@@ -89,7 +89,7 @@ Yes, Form 5472 can apply to both, but the filing package differs. A foreign-owne
 
 A domestic C corporation generally tests Form 5472 when it is at least 25% foreign-owned and had a reportable transaction with a foreign related party. Ordinary unrelated customer revenue is not transformed into a related-party transaction merely because the shareholder is foreign.
 
-For a calendar-year **2025 tax year**, the due date was **15 April 2026**, or **15 October 2026** with a timely Form 7004 extension. A disregarded LLC writes “Foreign-owned U.S. DE” across its pro forma Form 1120 and cannot e-file the package. It faxes at **300 DPI or higher** to **855-887-7737**, or mails the Ogden PIN Unit at the address in the Form 5472 instructions. A corporation follows its Form 1120 filing method.
+For a calendar-year **2025 tax year**, the due date was **15 April 2026**, or **15 October 2026** with a timely Form 7004 extension. A disregarded LLC writes “Foreign-owned U.S. DE” across its pro forma Form 1120 and cannot e-file the package. It faxes at **300 DPI or higher** to **855-887-7737**, or mails the Ogden PIN Unit at the address in the Form 5472 instructions. A corporation follows its Form 1120 filing method. For the fax number and address, see [where to file Form 5472](/form-5472-fax-number).
 
 If the foreign owner has no US identifying number, the required Part II reference ID must be used consistently each year. The FTIN field takes the owner’s foreign tax number or “None” or “N/A” when none exists. Leaving both identity paths unexplained can make the return incomplete.
 

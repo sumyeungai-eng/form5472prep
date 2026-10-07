@@ -98,7 +98,7 @@ Wise multi-currency activity should be documented with both source currency and 
 
 Do not combine three different facts into one line called "Wise." For example, owner funding in euros, a conversion into U.S. dollars, and a payout to an unrelated vendor are separate bookkeeping facts. The Form 5472 item is the owner funding, not the internal currency conversion or the unrelated vendor payment.
 
-For exchange-rate handling, read [Form 5472 currency conversion and exchange rates](/blog/form-5472-currency-conversion-exchange-rates). The IRS Form 5472 instructions require U.S.-dollar amounts, and the support file should make the conversion method easy to follow.
+For exchange-rate handling, read [Form 5472 currency conversion and exchange rates](/blog/form-5472-currency-conversion-exchange-rates). The IRS Form 5472 instructions require U.S.-dollar amounts, and the support file should make the conversion method easy to follow. The [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) tool lists the published figures.
 
 ## What documentation should you keep for Stripe, PayPal, and Wise?
 

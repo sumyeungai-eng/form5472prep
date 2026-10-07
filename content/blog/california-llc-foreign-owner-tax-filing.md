@@ -8,7 +8,7 @@ tags: ["form-5472", "california-llc", "foreign-owned-llc", "form-568"]
 draft: false
 ---
 
-**A foreign-owned California single-member LLC can have three distinct obligations: the $800 California annual tax, California Form 568, and federal Form 5472 attached to a pro forma Form 1120 when related-party transactions occurred. The state duties generally continue even with no business activity, while Form 5472 depends on ownership, classification and reportable transactions.**
+**A foreign-owned California single-member LLC can have three distinct obligations: the $800 California annual tax, California Form 568, and federal Form 5472 attached to a [pro forma Form 1120](/pro-forma-1120) when related-party transactions occurred. The state duties generally continue even with no business activity, while Form 5472 depends on ownership, classification and reportable transactions.**
 
 California compliance is a two-agency problem. The Franchise Tax Board handles the annual tax, LLC fee and Form 568. The IRS handles Form 5472 and the pro forma Form 1120.
 

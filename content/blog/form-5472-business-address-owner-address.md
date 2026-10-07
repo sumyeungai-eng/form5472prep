@@ -12,7 +12,7 @@ draft: false
 
 Three addresses can exist at once: the LLC’s principal business address, a mailing address in care of a third party, and the foreign owner’s residential or entity address. They are not interchangeable.
 
-For a consistent reviewed package, [start the Form 5472 filing](/start).
+For a consistent reviewed package, [start the Form 5472 filing](/start). For the rest of the cover page, see our [1120 pro forma instructions](/1120-pro-forma-instructions).
 
 ## Which address goes on the pro forma Form 1120?
 

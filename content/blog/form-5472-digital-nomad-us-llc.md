@@ -9,7 +9,7 @@ tags: ["form-5472", "digital-nomad", "foreign-owned-llc", "ftin", "tax-residency
 draft: false
 ---
 
-**Form 5472 follows your LLC and your status as a non-US person, not your location. If your US single-member LLC had a reportable transaction with you during the tax year, the filing is due with a pro forma Form 1120 — whether you spent the year in one country, four, or none. Having no tax residence anywhere removes nothing.**
+**Form 5472 follows your LLC and your status as a non-US person, not your location. If your US single-member LLC had a reportable transaction with you during the tax year, the filing is due with a [pro forma Form 1120](/pro-forma-1120) — whether you spent the year in one country, four, or none. Having no tax residence anywhere removes nothing.**
 
 The pattern is familiar: a Wyoming or New Mexico LLC, a Mercury account, Stripe or Wise collecting client payments, and an owner who was in Bangkok in January and Lisbon by summer, with no country calling them a tax resident.
 

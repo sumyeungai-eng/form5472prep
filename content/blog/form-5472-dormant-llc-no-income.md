@@ -91,9 +91,9 @@ The LLC existed and was foreign-owned for part of the year. Even a partial year 
 
 The IRS typically catches these through matching programs — if you have a US EIN, eventually the absence of a return gets noticed. But even if it hasn't been flagged yet, the $25,000 penalty per year per form can accumulate fast over a multi-year gap.
 
-The structured way to resolve this is the IRS's **[Delinquent International Information Return Submission Procedure](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures) (DIIRSP)**. You file all the missing returns, attach a reasonable cause statement explaining why you didn't file, and submit everything together. Most foreign owners qualify for penalty abatement under this procedure. See our [DIIRSP guide](/diirsp) for the full walkthrough.
+The structured way to resolve this is the IRS's **[Delinquent International Information Return Submission Procedure](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures) (DIIRSP)**. You file all the missing returns, attach a [reasonable cause statement](/form-5472-reasonable-cause-statement) explaining why you didn't file, and submit everything together. Most foreign owners qualify for penalty abatement under this procedure. See our [DIIRSP guide](/diirsp) for the full walkthrough.
 
-If you want to get it done quickly: [start your filing here](/start). We prepare the pro forma Form 1120 and Form 5472 for each outstanding year, draft the reasonable cause statement, and fax the complete package to the IRS Ogden PIN Unit on your behalf.
+If you want to get it done quickly: [start your filing here](/start). We prepare the pro forma Form 1120 and Form 5472 for each outstanding year, draft the reasonable cause statement, and fax the complete package to the IRS Ogden PIN Unit on your behalf. If you are filing for yourself instead, see [how to file Form 5472](/file-form-5472).
 
 Standard filing is $149 (5-7 business days), Express $199 (3 business days), +$99 per additional past tax year — IRS fax delivery included on both.
 
@@ -142,7 +142,7 @@ Limited first-time abatement may apply where it is tied to abatement of the rela
 
 "Dormant" is a spectrum. For Form 5472 purposes, it means exactly one thing: zero reportable transactions between the LLC and any foreign related party during the year. If you ever wired money in, paid an expense on behalf of the LLC, or moved money out — your LLC was not dormant in the IRS sense, regardless of whether it earned a dollar of revenue.
 
-The paperwork is not difficult. The penalty for ignoring it is severe. If you have years of unfiled returns, the [DIIRSP process](/diirsp) exists specifically for this situation — and earlier is better, because the $25,000 continuation penalties compound by the month.
+The paperwork is not difficult. The penalty for ignoring it is severe. If you have years of unfiled returns, the [DIIRSP process](/diirsp) exists specifically for this situation — and earlier is better, because the $25,000 continuation penalties compound by the month. The [Form 5472 penalty calculator](/form-5472-penalty-calculator) models the exposure year by year.
 
 For a broader overview of who needs to file and what the form covers, see our [guide to what Form 5472 is and who must file](/blog/what-is-form-5472).
 

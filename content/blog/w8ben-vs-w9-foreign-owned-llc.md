@@ -107,7 +107,7 @@ A founder previously filed an entity-classification election. The disregarded-en
 
 A calendar-year foreign-owned disregarded LLC files Form 5472 with a pro forma Form 1120 by **15 April 2026** for the 2025 tax year, or by **15 October 2026** after a timely Form 7004 extension.
 
-Write “Foreign-owned U.S. DE” across the top of the pro forma Form 1120. The package cannot be e-filed. Fax it at **300 DPI or higher** to **855-887-7737**, or mail it to the dedicated Ogden PIN Unit address in the Form 5472 instructions. Keep the complete signed package and timestamped delivery proof.
+Write “Foreign-owned U.S. DE” across the top of the pro forma Form 1120. The package cannot be e-filed. Fax it at **300 DPI or higher** to **855-887-7737**, or mail it to the dedicated Ogden PIN Unit address in the Form 5472 instructions. Keep the complete signed package and timestamped delivery proof. The [Form 5472 fax number](/form-5472-fax-number) page lists where to send it.
 
 ## How can Form5472 Prep handle the separate filing?
 

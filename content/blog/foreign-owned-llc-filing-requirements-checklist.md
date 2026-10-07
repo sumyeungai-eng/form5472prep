@@ -10,7 +10,7 @@ draft: false
 
 **A foreign-owned U.S. single-member LLC with a reportable related-party transaction generally has a federal Form 5472 filing package: Form 5472 attached to a pro forma Form 1120. It also needs to meet the ongoing requirements of its formation state.** Other filings—including an FBAR, an income-tax return, or a withholding return—depend on the entity, account, income, and payment facts; do not treat the owner's non-U.S. status as a complete answer for the LLC.
 
-This is a compliance map, not a substitute for advice on income tax, withholding, or account reporting. If Form 5472 is the item you need help preparing, [see current service options and pricing](/pricing).
+This is a compliance map, not a substitute for advice on income tax, withholding, or account reporting. If Form 5472 is the item you need help preparing, [see current service options and pricing](/pricing). To confirm whether the filing applies to your LLC, see [who must file Form 5472](/do-i-need-to-file-form-5472).
 
 ## The checklist at a glance
 
@@ -29,7 +29,7 @@ A foreign-owned U.S. disregarded entity is a domestic disregarded entity wholly 
 
 Common owner-to-LLC movements may be reportable, but classification turns on the actual facts. Keep an itemized ledger and source documents for contributions, distributions, loans, reimbursements, services, and noncash transfers. Unrelated customer revenue is not automatically a related-party transaction merely because it entered the LLC's account; a later owner transfer can raise a separate question. See [worked transaction examples](/blog/form-5472-reportable-transactions-examples).
 
-For a foreign-owned U.S. DE, Form 5472 is attached to a pro forma Form 1120. The IRS instructions require the entity's name and address and items B and E on page 1 of that Form 1120, with “Foreign-owned U.S. DE” across the top. The entity cannot e-file this Form 5472 package. It may fax at 300 DPI or higher to **855-887-7737** or mail to **Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112 Attn: PIN Unit, Ogden, UT 84201**.
+For a foreign-owned U.S. DE, Form 5472 is attached to a pro forma Form 1120. The IRS instructions require the entity's name and address and items B and E on page 1 of that Form 1120, with “Foreign-owned U.S. DE” across the top. The entity cannot e-file this Form 5472 package. It may fax at 300 DPI or higher to **855-887-7737** or mail to **Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112 Attn: PIN Unit, Ogden, UT 84201**. Our [Form 5472 fax number](/form-5472-fax-number) page covers the fax option in more detail. Our [1120 pro forma instructions](/1120-pro-forma-instructions) guide walks through the cover page.
 
 The IRS states that a $25,000 penalty may apply for failure to file when due and in the prescribed manner, a substantially incomplete Form 5472, or failure to maintain required records. That is not an automatic result of every mistake, and a paid service cannot eliminate the risk.
 

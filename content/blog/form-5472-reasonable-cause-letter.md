@@ -10,11 +10,11 @@ draft: false
 
 **A Form 5472 reasonable cause letter should give a dated, fact-specific account showing that the taxpayer exercised ordinary business care and prudence, explain exactly what prevented timely compliance, document steps taken before and after the failure, and confirm prompt correction. A template alone cannot establish reasonable cause, because the IRS evaluates all facts and circumstances.**
 
-A late package should be complete before the letter is polished. The [IRS penalty relief page](https://www.irs.gov/payments/penalty-relief-for-reasonable-cause) says reasonable cause is determined case by case from all facts and circumstances, and that a taxpayer may qualify for failure-to-file relief by showing ordinary care and prudence but still being unable to file on time. [Start the catch-up filing](/start) so the chronology, forms and supporting records agree.
+A late package should be complete before the letter is polished. The [IRS penalty relief page](https://www.irs.gov/payments/penalty-relief-for-reasonable-cause) says reasonable cause is determined case by case from all facts and circumstances, and that a taxpayer may qualify for failure-to-file relief by showing ordinary care and prudence but still being unable to file on time. [Start the catch-up filing](/start) so the chronology, forms and supporting records agree. Our [Form 5472 reasonable cause statement](/form-5472-reasonable-cause-statement) guide covers the statement that goes with a late package.
 
 For Form 5472, the [IRS instructions](https://www.irs.gov/instructions/i5472) state that a **$25,000** penalty is assessed when a reporting corporation fails to file when due and in the prescribed manner. A reasonable cause letter is therefore not a formality. It is the factual record that explains why the penalty should not apply.
 
-Before drafting the letter, the [Form 5472 penalty calculator](/form-5472-penalty-calculator) helps frame which years and continuation periods are actually in play.
+Before drafting the letter, the [Form 5472 penalty calculator](/form-5472-penalty-calculator) helps frame which years and continuation periods are actually in play. For the penalty itself, see [Form 5472 penalty relief](/form-5472-penalty).
 
 ## What is reasonable cause for a late Form 5472?
 

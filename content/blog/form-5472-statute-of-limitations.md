@@ -24,7 +24,7 @@ Translated: filing the missing Form 5472 is what starts the three-year post-fili
 
 ## Can the IRS penalize a missing Form 5472 from years ago?
 
-Yes. The Form 5472 penalty is tied to the failure to file the required information return for that year. There is no practical "just skip the old years" option for a foreign-owned US disregarded LLC that had reportable transactions.
+Yes. The [Form 5472 penalty](/form-5472-penalty) is tied to the failure to file the required information return for that year. There is no practical "just skip the old years" option for a foreign-owned US disregarded LLC that had reportable transactions.
 
 The penalty under section 6038A(d) applies per form, per year. If the IRS sends a notice and the failure continues more than 90 days after the notice, the instructions state that an additional **$25,000** applies for each 30-day period, or fraction of one, that the failure continues. Those are legal penalty amounts, not estimates of what the IRS will do in a specific case.
 

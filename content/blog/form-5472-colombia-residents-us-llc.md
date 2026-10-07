@@ -116,7 +116,7 @@ No treaty, a NIT some owners have and others lack, COP conversion, sometimes a C
 
 We prepare the pro forma Form 1120, Form 5472 and the Part V statement; a qualified tax accountant reviews each package; we fax it to the IRS and send you the transmission receipt.
 
-**$149** Standard, 5 to 7 business days. **$199** Express, within 3 business days. **+$99** per additional past tax year. IRS fax delivery included.
+**$149** Standard, 5 to 7 business days. **$199** Express, within 3 business days. **+$99** per additional past tax year. IRS fax delivery included. For a breakdown of what filing costs, see [Form 5472 filing cost](/blog/form-5472-cost).
 
 We are not a CPA firm and do not give tax advice, US or Colombian. We prepare and submit the US information return.
 

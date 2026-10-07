@@ -11,9 +11,9 @@ draft: false
 
 **DIY can be reasonable for a simple, current-year filing if you can follow the current IRS instructions and keep clear records. A preparer can take on preparation and delivery work, but does not eliminate the LLC's compliance responsibility or guarantee an IRS outcome.** A foreign-owned U.S. disregarded entity cannot e-file Form 5472; its package may be faxed or mailed to the dedicated IRS address.
 
-The IRS may assess a $25,000 penalty for a failure to file when due and in the prescribed manner, for a substantially incomplete filing, or for failing to maintain required records. That makes careful scope and evidence more important than a promise that any filing route is risk-free. [Read the current IRS instructions](https://www.irs.gov/instructions/i5472) before choosing a route.
+The IRS may assess a $25,000 penalty for a failure to file when due and in the prescribed manner, for a substantially incomplete filing, or for failing to maintain required records. That makes careful scope and evidence more important than a promise that any filing route is risk-free. [Read the current IRS instructions](https://www.irs.gov/instructions/i5472) before choosing a route. Our [how to file Form 5472](/file-form-5472) guide walks through the filing steps.
 
-If you want preparation help, [view current service options and pricing](/pricing). This guide compares the work, not a market-price survey.
+If you want preparation help, [view current service options and pricing](/pricing). This guide compares the work, not a market-price survey. For what each route costs, see [Form 5472 filing cost](/blog/form-5472-cost).
 
 ## DIY vs. preparer at a glance
 
@@ -27,7 +27,7 @@ If you want preparation help, [view current service options and pricing](/pricin
 
 ## What does a DIY Form 5472 filing involve?
 
-For a foreign-owned U.S. disregarded entity, the IRS instructions call for a pro forma Form 1120 with Form 5472 attached. On the pro forma Form 1120, the instructions require the entity's name and address and items B and E on page 1, with “Foreign-owned U.S. DE” across the top.
+For a foreign-owned U.S. disregarded entity, the IRS instructions call for a pro forma Form 1120 with Form 5472 attached. On the pro forma Form 1120, the instructions require the entity's name and address and items B and E on page 1, with “Foreign-owned U.S. DE” across the top. Our [1120 pro forma instructions](/1120-pro-forma-instructions) guide walks through the cover page.
 
 On Form 5472, the practical map is:
 

@@ -13,7 +13,7 @@ draft: false
 
 The first-year mistake is simple: owners look for sales, profit, or a tax bill. Form 5472 looks for transactions between the U.S. LLC and its foreign related party, usually the owner. A new company can have no website, no customers, and no revenue, but still have a filing requirement because the owner funded it or paid its setup bills.
 
-The IRS instructions state that a foreign-owned U.S. disregarded entity must file Form 5472 with a pro forma Form 1120 when it has reportable transactions, and they state a **$25,000** penalty for failing to file when due or in the required manner ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). If you already know the first tax year has closed, [start the first-year filing](/start) with the formation records and owner-transfer totals ready.
+The IRS instructions state that a foreign-owned U.S. disregarded entity must file Form 5472 with a [pro forma Form 1120](/pro-forma-1120) when it has reportable transactions, and they state a **$25,000** penalty for failing to file when due or in the required manner ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). If you already know the first tax year has closed, [start the first-year filing](/start) with the formation records and owner-transfer totals ready.
 
 For the tax side of the same structure, read [does a foreign-owned LLC pay U.S. tax?](/blog/does-foreign-owned-llc-pay-us-tax). The filing answer and the income-tax answer are separate.
 
@@ -117,7 +117,7 @@ The foreign owner's Form 5472 section can include an FTIN and, where required, a
 
 ## How does Form5472 Prep prepare a first-year return?
 
-Form5472 Prep is the answer when the first-year issue is mechanical filing, not tax planning. We prepare Form 5472, the pro forma Form 1120, and the Part V statement; a qualified tax accountant reviews the package; and we fax it to the IRS Ogden PIN Unit at **855-887-7737** with a timestamped receipt. The IRS instructions list that fax number for foreign-owned U.S. disregarded entities ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)).
+Form5472 Prep is the answer when the first-year issue is mechanical filing, not tax planning. We prepare Form 5472, the pro forma Form 1120, and the Part V statement; a qualified tax accountant reviews the package; and we fax it to the IRS Ogden PIN Unit at **855-887-7737** with a timestamped receipt. The IRS instructions list that fax number for foreign-owned U.S. disregarded entities ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). Our [how to file Form 5472](/file-form-5472) guide walks through the filing steps.
 
 The Standard package is **$149** and ready in 5-7 business days. Express is **$199** and ready in 3 business days. Each additional past tax year is **+$99**. IRS fax delivery is included. EIN service is **$149** at [/ein](/ein).
 

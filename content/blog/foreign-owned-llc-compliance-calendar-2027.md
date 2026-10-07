@@ -8,7 +8,7 @@ tags: ["form-5472", "foreign-owned-llc", "deadline", "form-7004", "compliance-ca
 draft: false
 ---
 
-**For a calendar-year foreign-owned single-member LLC, the main 2027 date is Thursday 15 April 2027. The pro forma Form 1120 and Form 5472 for tax year 2026 are due that day, or Form 7004 to extend them to Friday 15 October 2027. State dates depend on the formation state, and BOI reports are no longer due.**
+**For a calendar-year foreign-owned single-member LLC, the main 2027 date is Thursday 15 April 2027. The [pro forma Form 1120](/pro-forma-1120) and Form 5472 for tax year 2026 are due that day, or Form 7004 to extend them to Friday 15 October 2027. State dates depend on the formation state, and BOI reports are no longer due.**
 
 A foreign-owned LLC runs on two calendars that never talk to each other. The IRS calendar is the same in every state. The formation state's calendar is different in each one, and several states key their dates to the month the LLC was formed.
 

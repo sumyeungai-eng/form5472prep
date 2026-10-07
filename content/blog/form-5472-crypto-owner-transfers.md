@@ -34,7 +34,7 @@ A wallet controlled by the owner is not necessarily the owner's personal propert
 
 ## Build a dollar-value trail, not just a token total
 
-The Form 5472 instructions require US-dollar reporting and specify valuation information for nonmonetary exchanges. Keep the quantity and the dollar calculation together. Notice 2014-21 also explains using a reasonable, consistently applied exchange-rate method to establish dollar fair market value in the situations it covers. [IRS sources: Form 5472 instructions](https://www.irs.gov/instructions/i5472), [Notice 2014-21, questions 1 and 5](https://www.irs.gov/pub/irs-drop/n-14-21.pdf).
+The [Form 5472 instructions](/form-5472-instructions) require US-dollar reporting and specify valuation information for nonmonetary exchanges. Keep the quantity and the dollar calculation together. Notice 2014-21 also explains using a reasonable, consistently applied exchange-rate method to establish dollar fair market value in the situations it covers. [IRS sources: Form 5472 instructions](https://www.irs.gov/instructions/i5472), [Notice 2014-21, questions 1 and 5](https://www.irs.gov/pub/irs-drop/n-14-21.pdf). The [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) tool lists the published figures.
 
 For each owner transfer, retain:
 

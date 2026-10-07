@@ -142,7 +142,7 @@ The deadline is **April 15**, extendable to **October 15** by filing Form 7004 b
 
 ## What if you have multiple years of unfiled Form 5472?
 
-The fix is the **Delinquent International Information Return Submission Procedure (DIIRSP)**. You file all missing years together with a reasonable cause statement explaining why you didn't file. Most foreign FBA sellers who didn't know about the requirement qualify for penalty abatement. The key: file before the IRS contacts you. Once you receive a notice, the continuation penalty starts immediately.
+The fix is the **Delinquent International Information Return Submission Procedure (DIIRSP)**. You file all missing years together with a [reasonable cause statement](/form-5472-reasonable-cause-statement) explaining why you didn't file. Most foreign FBA sellers who didn't know about the requirement qualify for penalty abatement. The key: file before the IRS contacts you. Once you receive a notice, the continuation penalty starts immediately.
 
 See the [full DIIRSP guide](/blog/form-5472-filed-late-never-filed) for the step-by-step process.
 

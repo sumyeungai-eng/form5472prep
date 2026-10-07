@@ -25,7 +25,7 @@ A foreign-owned Texas LLC should screen for a Texas information report, Texas fr
 | Form 5472 + pro forma 1120 | IRS | Foreign-owned disregarded entity had a reportable related-party transaction | Owner transaction ledger |
 | Other Texas tax accounts | Texas Comptroller or workforce agencies | Sales, employees or regulated activity exists | Activity-specific records |
 
-The IRS Form 5472 instructions say a reporting corporation includes a foreign-owned U.S. disregarded entity and generally must file Form 5472 when it had a reportable transaction with a related party ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). Texas revenue and related-party transactions are different measurements. A zero-revenue LLC can still have reportable owner funding.
+The IRS [Form 5472 instructions](/form-5472-instructions) say a reporting corporation includes a foreign-owned U.S. disregarded entity and generally must file Form 5472 when it had a reportable transaction with a related party ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). Texas revenue and related-party transactions are different measurements. A zero-revenue LLC can still have reportable owner funding.
 
 ## Does a zero-revenue Texas LLC file a PIR?
 

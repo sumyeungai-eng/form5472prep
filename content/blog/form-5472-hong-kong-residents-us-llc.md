@@ -67,7 +67,7 @@ Hong Kong's system is also separate. The [Hong Kong Inland Revenue Department ex
 
 ## How should HKD transactions be converted to US dollars?
 
-Convert each reportable amount to US dollars using a reasonable, consistently applied rate and attach a schedule showing the exchange rates used. A transaction-date rate is usually easier to defend than converting an unexplained year-end net balance.
+Convert each reportable amount to US dollars using a reasonable, consistently applied rate and attach a schedule showing the exchange rates used. A transaction-date rate is usually easier to defend than converting an unexplained year-end net balance. The [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) tool lists the published figures.
 
 The following is an **illustrative workpaper**, not a market-rate claim. Assume the owner's records show HKD 7.80 per USD on each example transaction date:
 
@@ -109,7 +109,7 @@ US-formed LLCs are exempt from BOI reporting under FinCEN's interim final rule e
 
 ## What should a Hong Kong owner do after a missed deadline?
 
-File the missing package promptly and assess whether a reasonable-cause statement is supportable under Treasury Regulation §1.6038A-4(b). Reasonable cause is fact-specific and relief is not automatic; a statement should describe the actual events, compliance steps, and supporting evidence rather than rely on a template excuse.
+File the missing package promptly and assess whether a [reasonable-cause statement](/form-5472-reasonable-cause-statement) is supportable under Treasury Regulation §1.6038A-4(b). Reasonable cause is fact-specific and relief is not automatic; a statement should describe the actual events, compliance steps, and supporting evidence rather than rely on a template excuse.
 
 The $25,000 exposure applies separately to each missing form and year. If the IRS has already sent a notice, the 90-day continuation timetable makes a quick, accurate response especially important. Our [late Form 5472 guide](/blog/form-5472-filed-late-never-filed) explains the catch-up sequence.
 

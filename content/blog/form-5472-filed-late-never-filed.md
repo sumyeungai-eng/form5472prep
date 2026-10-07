@@ -39,7 +39,7 @@ So if you missed Form 5472 for three years, the initial exposure is $75,000. If 
 
 For a year-by-year estimate before you decide what to file first, the [Form 5472 penalty calculator](/form-5472-penalty-calculator) shows the statutory exposure for late and unfiled years.
 
-One clarification worth making: the $25,000 penalty is per **form**, not per **transaction**. If you have one LLC and one foreign owner, that's typically one Form 5472 per year — so $25,000 per missed year.
+One clarification worth making: the $25,000 penalty is per **form**, not per **transaction**. If you have one LLC and one foreign owner, that's typically one Form 5472 per year — so $25,000 per missed year. The [Form 5472 penalty relief](/form-5472-penalty) guide covers the penalty in more detail.
 
 ---
 
@@ -85,7 +85,7 @@ What doesn't work: "I was busy," "the penalties seem harsh," or vague references
 
 ## What goes in the reasonable cause statement?
 
-A solid reasonable cause statement covers:
+A solid [reasonable cause statement](/form-5472-reasonable-cause-statement) covers:
 
 1. **Your background**: Who you are, where you're based, when you formed the LLC and why.
 2. **How you became aware of the filing requirement**: Date you found out, how (accountant, article, etc.).

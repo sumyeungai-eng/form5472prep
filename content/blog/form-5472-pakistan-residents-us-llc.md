@@ -69,7 +69,7 @@ Pakistan's treatment of the LLC and its profits is another separate analysis. A 
 
 ## How should PKR transactions be converted to dollars?
 
-Report Form 5472 amounts in US dollars and attach a schedule showing the exchange rates used. A consistent transaction-date method gives each transfer a traceable connection to the bank or platform record.
+Report Form 5472 amounts in US dollars and attach a schedule showing the exchange rates used. A consistent transaction-date method gives each transfer a traceable connection to the bank or platform record. The [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) tool lists the published figures.
 
 The following figures are an **illustrative conversion workpaper**, not a historical exchange-rate claim. Assume the supporting record shows PKR 280 per USD on each example date:
 

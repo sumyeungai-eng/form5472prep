@@ -115,7 +115,7 @@ The pattern across all four: the tax answer varies; the filing answer does not.
 
 ## Getting the filing part right
 
-If you concluded you owe no US income tax, that is very likely correct — and it changes nothing about Form 5472. The filing is annual, cannot be e-filed, is not supported by any consumer tax software, and carries a fixed $25,000 penalty that ignores how small your business is.
+If you concluded you owe no US income tax, that is very likely correct — and it changes nothing about Form 5472. The filing is annual, cannot be e-filed, is not supported by any consumer tax software, and carries a fixed $25,000 penalty that ignores how small your business is. The [Form 5472 penalty](/form-5472-penalty) guide has the detail.
 
 [Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120 stamped "Foreign-owned U.S. DE", and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation as your proof of filing.
 

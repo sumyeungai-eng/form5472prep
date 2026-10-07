@@ -28,7 +28,7 @@ Do not fax a loose Form 5472 without the pro forma Form 1120 envelope when the f
 
 ## What is the correct Form 5472 fax number?
 
-The current IRS fax number for a foreign-owned U.S. disregarded entity Form 5472 package is 855-887-7737. The same instruction line requires the fax to be 300 DPI or higher.
+The current IRS fax number for a foreign-owned U.S. disregarded entity Form 5472 package is 855-887-7737. The same instruction line requires the fax to be 300 DPI or higher. For the mailing address and the choice between fax and mail, see [where to file Form 5472](/form-5472-fax-number).
 
 Before every filing, verify the number on the current IRS instructions rather than relying on an old bookmark, formation-company article or saved cover sheet. Tax forms and routing instructions can change, and a misrouted fax can be worse than no fax if the owner assumes the return was filed.
 

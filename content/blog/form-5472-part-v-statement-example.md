@@ -10,7 +10,7 @@ draft: false
 
 **A Form 5472 Part V statement is an attachment that describes foreign-owned US disregarded entity transactions not already reported in Part IV, including formation funding, owner contributions, owner distributions, dissolution amounts, acquisitions and dispositions. The statement should show dates, descriptions, direction, US dollar amounts, conversion basis and totals.**
 
-Part V is where many otherwise careful filings become substantially incomplete. The form gives you only a checkbox, but the instructions require an attached statement describing the transactions. The IRS does not give a friendly template.
+Part V is where many otherwise careful filings become substantially incomplete. The form gives you only a checkbox, but the instructions require an attached statement describing the transactions. The IRS does not give a friendly template. For the rest of the form, see our [Form 5472 instructions](/form-5472-instructions) walkthrough.
 
 The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that Part V covers amounts paid or received in connection with formation, dissolution, acquisition and disposition of the entity, including contributions to and distributions from the entity. The same instructions state that a missing or substantially incomplete Form 5472 can trigger a **$25,000** penalty. If you want the attachment prepared with the rest of the filing, [we prepare Form 5472 packages from $149](/start).
 

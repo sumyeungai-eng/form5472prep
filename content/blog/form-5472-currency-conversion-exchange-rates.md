@@ -77,7 +77,7 @@ Each contribution, withdrawal and loan movement should be converted as its own e
 
 Example: an owner contributes EUR 20,000 and later withdraws EUR 5,000. The workpaper should show two rows, two dates, two rates and two U.S.-dollar results. Netting to EUR 15,000 hides the distribution and can make the attachment inconsistent with the legal transaction history.
 
-Loans need even more care. The Form 5472 instructions provide line-specific rules for amounts borrowed and amounts loaned, including outstanding balance or monthly average treatment for amounts loaned. Keep principal advances, repayments and interest separate before converting the totals. The [owner-loans and contributions guide](/blog/form-5472-owner-loans-contributions-reimbursements) explains the classification step before the exchange-rate step.
+Loans need even more care. The [Form 5472 instructions](/form-5472-instructions) provide line-specific rules for amounts borrowed and amounts loaned, including outstanding balance or monthly average treatment for amounts loaned. Keep principal advances, repayments and interest separate before converting the totals. The [owner-loans and contributions guide](/blog/form-5472-owner-loans-contributions-reimbursements) explains the classification step before the exchange-rate step.
 
 ## Which exchange-rate mistakes create amendment risk?
 

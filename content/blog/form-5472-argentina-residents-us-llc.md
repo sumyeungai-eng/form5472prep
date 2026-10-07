@@ -101,7 +101,7 @@ The Argentine specifics — no treaty, a CUIT or a reference ID rather than a gu
 
 Form5472 Prep prepares the whole package: Form 5472 with the identifying numbers handled correctly, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews each one before we fax it to the IRS Ogden PIN Unit and return the timestamped confirmation. Late years include a reasonable cause cover letter.
 
-**$149** Standard, ready in 5 to 7 business days. **$199** Express, within 3 business days. **+$99** per additional past year. IRS fax delivery included — see [pricing](/pricing).
+**$149** Standard, ready in 5 to 7 business days. **$199** Express, within 3 business days. **+$99** per additional past year. IRS fax delivery included — see [pricing](/pricing). For a breakdown of what filing costs, see [Form 5472 filing cost](/blog/form-5472-cost).
 
 We are not a CPA firm and we do not give tax advice, and we do not advise on Argentine tax or currency rules. We prepare and submit the US information return accurately.
 

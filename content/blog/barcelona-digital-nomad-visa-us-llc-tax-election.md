@@ -43,7 +43,7 @@ Include the formation document, operating agreement, ownership history, any U.S.
 
 For example, a Barcelona-based designer may receive client income in an LLC account and later withdraw money personally. The Spanish adviser needs to determine the local treatment of the arrangement and income. The U.S. preparer needs the LLC's reportable related-party transactions. Neither should have to infer those facts from the transfer memo alone.
 
-Under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472), contributions and distributions can be reportable for a foreign-owned U.S. disregarded entity. A Spanish tax election does not replace a required Form 5472 and pro forma Form 1120.
+Under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472), contributions and distributions can be reportable for a foreign-owned U.S. disregarded entity. A Spanish tax election does not replace a required Form 5472 and [pro forma Form 1120](/pro-forma-1120).
 
 Changing destinations? The [digital-nomad filing hub](/blog/form-5472-digital-nomad-us-llc) links the related country guides and practical checklists.
 

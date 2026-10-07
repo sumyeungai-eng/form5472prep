@@ -24,7 +24,7 @@ The forms can overlap only when the structure has both a US reporting corporatio
 
 ## Who files each form?
 
-The person or entity required to file is different. Form 5472 is filed by the reporting corporation. Form 5471 is attached by the US person to that person's own return.
+The person or entity required to file is different. Form 5472 is filed by the reporting corporation. Form 5471 is attached by the US person to that person's own return. For Form 5472 specifically, see [who must file Form 5472](/do-i-need-to-file-form-5472).
 
 | Issue | Form 5472 | Form 5471 |
 |---|---|---|

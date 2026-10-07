@@ -57,7 +57,7 @@ The country questions are not interchangeable. “Country of citizenship,” “
 
 ## How does Form5472 Prep handle owner identifiers?
 
-The guided intake asks for LLC and owner identifiers separately, checks prior-year consistency, and produces the completed Form 5472 plus pro forma Form 1120. The $149 Standard plan includes accountant review, fax delivery to the IRS, and a timestamped receipt, ready in 5-7 business days; Express delivers the same package in 3 business days for $199.
+The guided intake asks for LLC and owner identifiers separately, checks prior-year consistency, and produces the completed Form 5472 plus pro forma Form 1120. The $149 Standard plan includes accountant review, fax delivery to the IRS, and a timestamped receipt, ready in 5-7 business days; Express delivers the same package in 3 business days for $199. To file on your own instead, see [how to file Form 5472](/file-form-5472).
 
 [Start your filing](/start) with the EIN notice and prior-year return nearby.
 

@@ -18,7 +18,7 @@ If you already have an LLC and the federal return is what you need, [we prepare 
 
 ## Does the formation state change the Form 5472 requirement?
 
-No. The formation state has no effect on whether a foreign-owned single-member LLC must file Form 5472.
+No. The formation state has no effect on whether a foreign-owned single-member LLC must file Form 5472. See [who must file Form 5472](/do-i-need-to-file-form-5472) for the test that does apply.
 
 Under **Treas. Reg. § 1.6038A-1**, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner **solely** for the § 6038A reporting rules. That rule applies to a US disregarded entity wholly owned by one foreign person. It does not ask which state formed the entity.
 

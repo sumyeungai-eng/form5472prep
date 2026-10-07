@@ -11,7 +11,7 @@ draft: false
 
 **Last updated: September 2026**
 
-A foreign-owned U.S. single-member LLC generally files a final Form 5472 with a pro forma Form 1120 for the year it closes when reportable transactions occurred. Dissolution expenses, owner-paid bills, debt settlements, and final distributions can be reportable. Mark the pro forma Form 1120 as final, send the package by the applicable deadline, and retain proof of delivery.
+A foreign-owned U.S. single-member LLC generally files a final Form 5472 with a [pro forma Form 1120](/pro-forma-1120) for the year it closes when reportable transactions occurred. Dissolution expenses, owner-paid bills, debt settlements, and final distributions can be reportable. Mark the pro forma Form 1120 as final, send the package by the applicable deadline, and retain proof of delivery. For the filing steps, see [how to file Form 5472](/file-form-5472).
 
 [Start a final-year filing](/start) before closing the LLC’s records.
 
@@ -41,7 +41,7 @@ Record the gross events separately. A bank account that ends at zero can still c
 
 The pro forma Form 1120 includes a “Final return” checkbox in item E. Marking that box tells the IRS the filing covers the entity’s final return period. The Form 5472 remains attached as the information return.
 
-The IRS says a foreign-owned U.S. disregarded entity cannot e-file Form 5472. The package must be faxed or mailed to the dedicated Ogden PIN Unit under the [current filing instructions](https://www.irs.gov/instructions/i5472).
+The IRS says a foreign-owned U.S. disregarded entity cannot e-file Form 5472. The package must be faxed or mailed to the dedicated Ogden PIN Unit under the [current filing instructions](https://www.irs.gov/instructions/i5472). See [where to file Form 5472](/form-5472-fax-number) for the fax number and address.
 
 ## What else should happen when an LLC closes?
 

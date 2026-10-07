@@ -46,7 +46,7 @@ Add a client LLC to the list when your firm takes it on rather than in January, 
 
 For a calendar-year client LLC the regular due date is generally 15 April of the following year, and 15 October with a timely extension. Our [Form 5472 deadline guide](/blog/form-5472-deadline-2026) carries the full calendar, including fiscal-year cases.
 
-The extension mechanic catches firms out. The extension is requested on Form 7004 by the regular due date, and the Form 5472 instructions direct a foreign-owned US DE to fax or mail that Form 7004 to the same destination used for the return itself — the IRS Ogden PIN Unit. An extension pushed through ordinary e-file channels may never reach the unit that handles the return. See the [Form 7004 instructions](https://www.irs.gov/instructions/i7004) and the [Form 1120 instructions](https://www.irs.gov/instructions/i1120) for the underlying due dates.
+The extension mechanic catches firms out. The extension is requested on Form 7004 by the regular due date, and the Form 5472 instructions direct a foreign-owned US DE to fax or mail that Form 7004 to the same destination used for the return itself — the IRS Ogden PIN Unit. An extension pushed through ordinary e-file channels may never reach the unit that handles the return. See the [Form 7004 instructions](https://www.irs.gov/instructions/i7004) and the [Form 1120 instructions](https://www.irs.gov/instructions/i1120) for the underlying due dates. The fax number and mailing address are on our [where to file Form 5472](/form-5472-fax-number) page.
 
 For a book of clients, 15 April is two deadlines: the filing deadline for every prepared client, and the extension deadline for everyone not ready. Decide which clients fall into which group in March.
 

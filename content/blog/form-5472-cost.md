@@ -28,7 +28,7 @@ For a foreign-owned U.S. disregarded entity, the IRS instructions require Form 5
 
 The Form 5472 content depends on the facts. Part I identifies the reporting corporation, Part II reports the foreign owner for a foreign-owned U.S. DE, and Part III identifies the related party. Monetary transactions can be reported in Part IV. Part V applies to certain other DE transactions, including contributions and distributions, with an attached description. Part VI addresses qualifying nonmonetary or less-than-full-consideration transactions with foreign related parties. Do not assume that a generic “Part V schedule” is required or sufficient for every fact pattern.
 
-The package cannot be e-filed by a foreign-owned U.S. DE. The [IRS instructions](https://www.irs.gov/instructions/i5472) allow either fax at 300 DPI or higher to 855-887-7737 or mail to the dedicated Ogden PIN Unit address. Delivery cost and proof therefore vary by method.
+The package cannot be e-filed by a foreign-owned U.S. DE. The [IRS instructions](https://www.irs.gov/instructions/i5472) allow either fax at 300 DPI or higher to 855-887-7737 or mail to the dedicated Ogden PIN Unit address. Delivery cost and proof therefore vary by method. See [where to file Form 5472](/form-5472-fax-number) for the fax number and mailing address.
 
 ## What changes the cost for late or multiple years?
 

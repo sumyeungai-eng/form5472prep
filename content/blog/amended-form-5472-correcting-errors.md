@@ -90,7 +90,7 @@ Two Form 1120 errors are worth singling out because they change how the return i
 
 ## Do not forget the records requirement
 
-The $25,000 penalty attaches to two separate failures, and most people only know about one. The instructions state that the penalty "also applies for failure to maintain records as required by Regulations section 1.6038A-3."
+The $25,000 penalty attaches to two separate failures, and most people only know about one. The instructions state that the penalty "also applies for failure to maintain records as required by Regulations section 1.6038A-3." Our [Form 5472 penalty relief](/form-5472-penalty) guide covers the penalty in more detail.
 
 So an entity that files a perfect Form 5472 but cannot produce the underlying records supporting it has a second, independent exposure. If you are correcting a return because you could not reconstruct the figures the first time, fix the record-keeping at the same time — otherwise you have corrected the symptom and left the cause. Our [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) sets out what to retain and for how long: retain the bank and payment-processor statements, the ledger of owner transfers, and the fax confirmation receipt for every year filed.
 

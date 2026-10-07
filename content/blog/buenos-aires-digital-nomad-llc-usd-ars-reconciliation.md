@@ -38,7 +38,7 @@ If the processor or customer is a related party, disclose that separately; the e
 
 ## Keep the conversion method visible
 
-For each transaction that needs translation, preserve the original currency, date, amount, rate source, rate direction, fees, and resulting dollar amount. “1 USD equals X ARS” is different from “1 ARS equals X USD.” An inverted rate can produce a plausible-looking but incorrect spreadsheet.
+For each transaction that needs translation, preserve the original currency, date, amount, rate source, rate direction, fees, and resulting dollar amount. “1 USD equals X ARS” is different from “1 ARS equals X USD.” An inverted rate can produce a plausible-looking but incorrect spreadsheet. The [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) tool lists the published figures.
 
 The [IRS foreign-currency guidance](https://www.irs.gov/individuals/international-taxpayers/foreign-currency-and-currency-exchange-rates) discusses functional currency and using the exchange rate appropriate to the transaction. Do not automatically apply one annual average to every transfer, asset balance, or tax form. Ask the preparer to confirm a suitable method for the records being reported.
 

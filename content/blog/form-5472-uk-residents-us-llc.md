@@ -103,7 +103,7 @@ So a UK founder who hasn't filed for three years, gets an IRS notice, and ignore
 
 The mistake we see most often: people assume that because the LLC had no US income, no US tax return is required, so nothing needs to happen. That logic applies to income tax. Form 5472 is an information return — it reports transactions, not taxable income. The two obligations are completely separate.
 
-**Already missed a year?** File under the [DIIRSP procedure](/diirsp) (Delinquent International Information Return Submission Procedure) with a reasonable cause statement. The IRS reviews these individually — it is not a free pass, but filing late with a strong statement is vastly better than not filing at all.
+**Already missed a year?** File under the [DIIRSP procedure](/diirsp) (Delinquent International Information Return Submission Procedure) with a [reasonable cause statement](/form-5472-reasonable-cause-statement). The IRS reviews these individually — it is not a free pass, but filing late with a strong statement is vastly better than not filing at all.
 
 ---
 

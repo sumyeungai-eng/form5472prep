@@ -56,7 +56,7 @@ The [IRS Administrative penalty relief page](https://www.irs.gov/payments/admini
 - Failure to pay (IRC § 6651(a)(2), § 6651(a)(3))
 - Failure to deposit (IRC § 6656)
 
-International information return penalties under IRC § 6038A do not appear on that list. A clean three-year compliance history is helpful context inside a reasonable cause argument, but "this is my first offense" is not, by itself, a basis for relief on a Form 5472 penalty.
+International information return penalties under IRC § 6038A do not appear on that list. A clean three-year compliance history is helpful context inside a reasonable cause argument, but "this is my first offense" is not, by itself, a basis for relief on a [Form 5472 penalty](/form-5472-penalty).
 
 The route that does exist is statutory. IRC § 6038A(d)(3) provides that the penalty does not apply where the failure was **due to reasonable cause and not willful neglect**. That is the standard your letter has to meet.
 

@@ -20,7 +20,7 @@ The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) dir
 
 Line 1f is gross, not net. If the foreign owner contributes $10,000 and later receives a $3,000 distribution, the per-form total is generally $13,000—not $7,000.
 
-Do not complete line 1f for a form reporting a US related party, as the current IRS instructions specify.
+Do not complete line 1f for a form reporting a US related party, as the current IRS instructions specify. The [Form 5472 instructions](/form-5472-instructions) guide walks through the other lines.
 
 ## What do lines 1g and 1h report?
 

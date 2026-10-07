@@ -126,7 +126,7 @@ A calendar-year foreign-owned US disregarded LLC generally files its 2025 Form 5
 
 Part II identifies the owner. Enter the FTIN on line 4b(3), or “None” or “N/A” when none exists. A reference ID on line 4b(2) is required whenever line 4b(1) has no US identifying number, and that reference ID must remain consistent each year.
 
-Write **“Foreign-owned U.S. DE”** across the top of the pro forma Form 1120. The package cannot be e-filed. Fax it at **300 DPI or higher** to **855-887-7737**, or mail it to the IRS Ogden PIN Unit address in the instructions. Keep the signed package, source schedules, and timestamped delivery record.
+Write **“Foreign-owned U.S. DE”** across the top of the [pro forma Form 1120](/pro-forma-1120). The package cannot be e-filed. Fax it at **300 DPI or higher** to **855-887-7737**, or mail it to the IRS Ogden PIN Unit address in the instructions. Keep the signed package, source schedules, and timestamped delivery record. The [Form 5472 fax number](/form-5472-fax-number) page has the details.
 
 After 90 days from an IRS notice, a continuing failure can add **$25,000 for each 30-day period or fraction** under §6038A(d)(2). Etsy or KDP tax documentation does not replace the LLC’s information return.
 

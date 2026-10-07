@@ -66,7 +66,7 @@ Two lines are routinely left out, and they are the two that hurt. **Error rework
 
 ## Why does review depth decide the risk?
 
-Because an incomplete filing is treated as no filing. The IRS Instructions for Form 5472 state that a **$25,000** penalty may apply for failure to file when due and in the prescribed manner, for filing a substantially incomplete Form 5472, or for failure to maintain the required records. That penalty is not automatic for every mistake, and it applies per failure.
+Because an incomplete filing is treated as no filing. The IRS Instructions for Form 5472 state that a **$25,000** penalty may apply for failure to file when due and in the prescribed manner, for filing a substantially incomplete Form 5472, or for failure to maintain the required records. That penalty is not automatic for every mistake, and it applies per failure. The [Form 5472 penalty calculator](/form-5472-penalty-calculator) models the exposure.
 
 The consequence is specific: a cheap preparation with no independent review is not cheap. A complete, reconciled, reviewed package keeps a client out of the substantially-incomplete category, and review depth is the one factor where an under-resourced in-house process loses to both alternatives, a properly staffed in-house team and an outsourced specialist alike.
 

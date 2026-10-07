@@ -12,7 +12,7 @@ Form 5472 line 1c asks for total assets, not revenue or profit. For a foreign-ow
 
 ## Why do the two forms seem to disagree?
 
-The Form 5472 instructions direct domestic reporting corporations to the asset figure in Form 1120, page 1, item D. Separately, their special foreign-owned U.S. DE provision limits the cover's required information to the entity's name, address, and items B and E. Item D is absent from that list. [IRS instructions, “Line 1c” and “Foreign-owned U.S. DEs”](https://www.irs.gov/instructions/i5472).
+The [Form 5472 instructions](/form-5472-instructions) direct domestic reporting corporations to the asset figure in Form 1120, page 1, item D. Separately, their special foreign-owned U.S. DE provision limits the cover's required information to the entity's name, address, and items B and E. Item D is absent from that list. [IRS instructions, “Line 1c” and “Foreign-owned U.S. DEs”](https://www.irs.gov/instructions/i5472).
 
 The distinction is between an asset calculation and which cover fields are required. The special provision does not expressly tell these LLCs to omit line 1c on Form 5472. If a preparer also enters assets on the cover for consistency, that should be described as a preparation choice—not an additional express requirement in the special provision.
 

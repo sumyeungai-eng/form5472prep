@@ -95,7 +95,7 @@ Florida scenarios turn on timing and owner payments.
 
 **2. Existing Florida LLC, no customer revenue, owner paid Sunbiz personally.** The Sunbiz report keeps the entity active. The owner-paid annual report fee is a related-party movement that should be reviewed for Form 5472. No customer revenue does not make the federal filing disappear.
 
-**3. Florida LLC misses the 2026 annual report deadline.** Arithmetic using the state figures: $138.75 annual report fee + $400 late fee = $538.75 before any reinstatement-related costs. That state cost does not include, replace or reduce the IRS Form 5472 penalty risk.
+**3. Florida LLC misses the 2026 annual report deadline.** Arithmetic using the state figures: $138.75 annual report fee + $400 late fee = $538.75 before any reinstatement-related costs. That state cost does not include, replace or reduce the IRS [Form 5472 penalty](/form-5472-penalty) risk.
 
 **4. Florida LLC closes after distributing remaining cash.** The Florida dissolution filing can end future Sunbiz annual reports when done properly. The final distribution to the foreign owner is a related-party transaction, so the final federal Form 5472 year still needs review.
 

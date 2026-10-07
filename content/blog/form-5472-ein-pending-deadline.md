@@ -39,7 +39,7 @@ Under “EIN applied for, but not received,” the [SS-4 instructions](https://w
 
 The [2025 Form 1120 instructions, item B](https://www.irs.gov/instructions/i1120), give the same pending-EIN direction for a corporation's return and separately require an EIN for ordinary electronic filing. That supports the general paper-return guidance; it is not a special ruling about every Form 5472 attachment field or Form 7004 extension.
 
-There is an important limit. The [special Form 5472 instructions for foreign-owned U.S. DEs](https://www.irs.gov/instructions/i5472) require a pro forma Form 1120 with the entity's name, address and items B and E. Item B is the EIN field. Those instructions do not provide a separate, step-by-step pending-EIN procedure covering every identifier field in the attached package.
+There is an important limit. The [special Form 5472 instructions for foreign-owned U.S. DEs](https://www.irs.gov/instructions/i5472) require a pro forma Form 1120 with the entity's name, address and items B and E. Item B is the EIN field. Those instructions do not provide a separate, step-by-step pending-EIN procedure covering every identifier field in the attached package. For the filing steps, see [how to file Form 5472](/file-form-5472). The [1120 pro forma instructions](/1120-pro-forma-instructions) guide covers the cover-page items in more detail.
 
 Consequently, this guide does **not** promise that writing those words anywhere in the package guarantees processing or a valid extension. Bring the general guidance, your actual SS-4 submission date and your specific forms to an authorized IRS contact or tax adviser. Do not invent a nine-digit number, use another entity's EIN, or substitute the owner's ITIN for the LLC's EIN.
 
@@ -51,7 +51,7 @@ Where an EIN has already been assigned, the special DE extension route is clear 
 
 1. Prepare Form 7004 using the Form 1120 return code on Part I, line 1.
 2. Mark the top “Foreign-owned U.S. DE.”
-3. Send it by the regular return due date using the dedicated Form 5472 fax number or mailing address, not the ordinary Form 7004 mailing address.
+3. Send it by the regular return due date using the dedicated [Form 5472 fax number](/form-5472-fax-number) or mailing address, not the ordinary Form 7004 mailing address.
 4. Retain the submitted extension and transmission or mailing evidence.
 
 That route does not establish that a numberless extension will be valid. If assignment remains unresolved, seek help before the deadline rather than relying on an online field accepting text. Software validation, successful fax transmission and IRS processing are different events.

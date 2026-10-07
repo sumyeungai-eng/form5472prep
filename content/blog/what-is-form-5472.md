@@ -67,7 +67,7 @@ The IRS doesn't have a standalone form to attach Form 5472 to for a disregarded 
 
 The penalty for failing to file Form 5472, or filing it late or incompletely, is **$25,000 per form, per year** under IRC § 6038A(d), as described in the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472). The IRS assesses it automatically — you don't have to do anything special to trigger it.
 
-If you've missed prior years, there's a procedure called **DIIRSP** (Delinquent International Information Return Submission Procedure) that lets you catch up. You file the late returns with a written **reasonable cause statement** explaining why you didn't file on time. If the IRS accepts the statement, the penalty may be abated.
+If you've missed prior years, there's a procedure called **DIIRSP** (Delinquent International Information Return Submission Procedure) that lets you catch up. You file the late returns with a written **[reasonable cause statement](/form-5472-reasonable-cause-statement)** explaining why you didn't file on time. If the IRS accepts the statement, the penalty may be abated.
 
 The DIIRSP procedure isn't a free pass. The IRS reviews each reasonable cause statement individually. But filing late with a reasonable cause statement is much better than not filing at all — and waiting only makes it worse.
 

@@ -60,7 +60,7 @@ Brazil’s own rules remain separate. Receita Federal’s [official guidance on 
 
 ## How should BRL amounts be converted for Form 5472?
 
-Build the US-dollar schedule from gross owner movements, using a documented exchange-rate source and a method applied consistently. Keep the original BRL amount, transaction date, direction, USD calculation, and evidence of the rate.
+Build the US-dollar schedule from gross owner movements, using a documented exchange-rate source and a method applied consistently. Keep the original BRL amount, transaction date, direction, USD calculation, and evidence of the rate. The [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) tool lists the published figures.
 
 Use this annual procedure:
 

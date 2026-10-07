@@ -36,7 +36,7 @@ There is a treaty, it is in force, and it changes nothing at all about Form 5472
 
 Indonesia appears on the [IRS list of United States income tax treaties](https://www.irs.gov/businesses/international-businesses/united-states-income-tax-treaties-a-to-z), which links the 1988 convention and its technical explanation. Indonesia's own tax authority, the Direktorat Jenderal Pajak, records the [convention with the United States](https://www.pajak.go.id/en/node/116210) as signed on 11 July 1988, entering into force on 30 December 1990 and taking effect from 1 January 1991, as amended by the 1996 Protocol, with its status listed as effective.
 
-A treaty allocates taxing rights over income between two countries. Form 5472 is an information return under IRC § 6038A, and the treaty text says nothing about information returns, so it grants no exemption from one.
+A treaty allocates taxing rights over income between two countries. Form 5472 is an information return under IRC § 6038A, and the treaty text says nothing about information returns, so it grants no exemption from one. See [who must file Form 5472](/do-i-need-to-file-form-5472) for the test that does apply.
 
 ## What goes in the FTIN box if you have an Indonesian NPWP?
 

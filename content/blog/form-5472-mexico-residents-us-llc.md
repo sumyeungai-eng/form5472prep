@@ -69,7 +69,7 @@ Mexican law is also separate from the US disregarded-entity label. SAT maintains
 
 ## How should MXN transactions be converted to US dollars?
 
-Convert reportable transactions to US dollars with a reasonable, consistently applied method and attach a schedule showing each exchange rate used. Keep the bank or platform evidence supporting the transaction-date rate.
+Convert reportable transactions to US dollars with a reasonable, consistently applied method and attach a schedule showing each exchange rate used. Keep the bank or platform evidence supporting the transaction-date rate. The [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) tool lists the published figures.
 
 The following is an **illustrative workpaper**, not a statement of a historical market rate. Assume the owner's records show MXN 18 per USD on each example date:
 

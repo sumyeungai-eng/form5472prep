@@ -26,7 +26,7 @@ A foreign-owned Delaware LLC should screen for the Delaware annual LLC tax, fede
 | Form 7004 extension | IRS Ogden PIN Unit | By the regular federal due date | More time is needed for the federal package |
 | Other tax filings | Federal, state or local agency | Fact-specific | Payroll, sales, U.S.-source income or elected corporate treatment exists |
 
-The IRS Form 5472 instructions say a reporting corporation includes a foreign-owned U.S. disregarded entity and generally must file Form 5472 when it had a reportable transaction with a related party ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). The foreign owner is a related party, so owner funding, withdrawals and reimbursements are often enough to create a filing requirement.
+The IRS [Form 5472 instructions](/form-5472-instructions) say a reporting corporation includes a foreign-owned U.S. disregarded entity and generally must file Form 5472 when it had a reportable transaction with a related party ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)). The foreign owner is a related party, so owner funding, withdrawals and reimbursements are often enough to create a filing requirement.
 
 The point is not that every Delaware LLC owes U.S. income tax. Many foreign-owned single-member LLCs owe no U.S. federal income tax. The point is that no-tax and no-filing are different conclusions.
 
@@ -102,7 +102,7 @@ Delaware scenarios usually turn on whether the owner moved money, not whether De
 
 Delaware's no-report rule does not reduce IRS Form 5472 risk. Delaware is saying the LLC does not file a Delaware annual report; the IRS is asking whether a foreign-owned U.S. disregarded entity had reportable related-party transactions.
 
-The penalty difference is also stark. Delaware's late-payment penalty for the LLC tax is $200, plus interest. The IRS Form 5472 penalty is $25,000 per form, per year under the Form 5472 instructions, with additional penalties if the failure continues after IRS notice ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)).
+The penalty difference is also stark. Delaware's late-payment penalty for the LLC tax is $200, plus interest. The IRS [Form 5472 penalty](/form-5472-penalty) is $25,000 per form, per year under the Form 5472 instructions, with additional penalties if the failure continues after IRS notice ([IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472)).
 
 That mismatch explains why foreign owners should not let the easy Delaware filing create false confidence. Paying the state keeps the entity in better standing. Filing Form 5472 keeps the federal information-return obligation from becoming a fixed-dollar penalty problem.
 

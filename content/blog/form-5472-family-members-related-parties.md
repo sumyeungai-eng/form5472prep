@@ -139,6 +139,6 @@ On your parent's own Form 5472, Part IV, line 17, amounts borrowed, using beginn
 
 ---
 
-Family payments are ordinary business, but on Form 5472 each related relative is a separate return with a separate penalty exposure. List the year's counterparties, test each one, and [start your filing](/start) with the full list so every form is prepared together. For the wider set of owner transactions, see our [Form 5472 reportable transactions examples](/blog/form-5472-reportable-transactions-examples).
+Family payments are ordinary business, but on Form 5472 each related relative is a separate return with a separate penalty exposure. List the year's counterparties, test each one, and [start your filing](/start) with the full list so every form is prepared together. For the wider set of owner transactions, see our [Form 5472 reportable transactions examples](/blog/form-5472-reportable-transactions-examples). The [Form 5472 penalty calculator](/form-5472-penalty-calculator) shows the exposure per form.
 
 *Educational content only; not tax or legal advice.*

@@ -100,7 +100,7 @@ On paper, once a year. A foreign-owned US DE cannot file Form 5472 electronicall
 4. **Sign, then fax to 855-887-7737** (an IRS line), or mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.
 5. **Keep the timestamped fax receipt** and the bank statements behind every figure.
 
-For a calendar-year LLC the due date is generally **15 April**, and Form 7004 extends it. If you bought the "tax-free" story and never filed, file every outstanding year promptly; our [late filing guide](/blog/form-5472-filed-late-never-filed) covers the reasonable cause statement.
+For a calendar-year LLC the due date is generally **15 April**, and Form 7004 extends it. If you bought the "tax-free" story and never filed, file every outstanding year promptly; our [late filing guide](/blog/form-5472-filed-late-never-filed) covers the [reasonable cause statement](/form-5472-reasonable-cause-statement).
 
 ## Getting the filing done without a US address or fax machine
 

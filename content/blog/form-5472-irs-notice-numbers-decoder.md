@@ -66,7 +66,7 @@ A foreign-owned LLC can still receive it. An LLC that paid US contractors and fi
 
 CP504 and LT11 are both collection notices, and they differ in which rights they carry. CP504 identifies itself as the Notice of Intent to Levy under Internal Revenue Code section 6331(d) and lists what can be taken, including a state tax refund. LT11 and Letter 1058 share one IRS page, titled "Understanding your LT11 notice or letter 1058," which states the intent to seize property and points to the appeal route: Form 12153 and the collection due process FAQs.
 
-Neither page publishes a day count, and both say to act immediately. An unpaid Form 5472 penalty at either stage is past the point for a self-prepared letter — this is where a tax attorney or CPA earns the fee.
+Neither page publishes a day count, and both say to act immediately. An unpaid [Form 5472 penalty](/form-5472-penalty) at either stage is past the point for a self-prepared letter — this is where a tax attorney or CPA earns the fee.
 
 ## What should you do in the first hour after opening the envelope?
 
