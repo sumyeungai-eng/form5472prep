@@ -6,6 +6,8 @@ import { timeAgo } from "@/lib/admin/filingPresence";
 import { prisma } from "@/lib/prisma";
 import { orderSummaryByEmail } from "@/lib/admin/websiteQuestions";
 import { AdminPageHeader } from "../_components/AdminPageHeader";
+import { supportImapConfig } from "@/lib/supportMail/imap";
+import { MailboxSync } from "./MailboxSync";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Questions - Admin" };
@@ -31,17 +33,19 @@ export default async function AdminQuestionsPage({ searchParams }: { searchParam
   const page = Math.max(1, Number.parseInt(searchParams.page ?? "1", 10) || 1);
   const where = VIEWS[view].where;
 
-  const [questions, total, openCount] = await Promise.all([
+  const [questions, total, openCount, lastSync] = await Promise.all([
     prisma.websiteQuestion.findMany({
       where,
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
-      include: { _count: { select: { replies: true } } },
+      include: { _count: { select: { replies: { where: { fromVisitor: false } } } } },
     }),
     prisma.websiteQuestion.count({ where }),
     prisma.websiteQuestion.count({ where: VIEWS.open.where }),
+    prisma.supportMailSyncRun.findFirst({ orderBy: { startedAt: "desc" } }),
   ]);
+  const mailboxConnected = supportImapConfig() !== null;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const orders = await orderSummaryByEmail(questions.map((q) => q.email));
 
@@ -50,7 +54,31 @@ export default async function AdminQuestionsPage({ searchParams }: { searchParam
       <AdminPageHeader
         title="Questions"
         description="Questions visitors sent from the website's “Ask a question” box and contact page. Open one to reply by email."
+        actions={<MailboxSync connected={mailboxConnected} />}
       />
+
+      <div className="mb-6 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+        {!mailboxConnected ? (
+          <>
+            <span className="font-medium text-slate-900">support@ mailbox not connected.</span> Answers you send from
+            support@form5472prep.com will appear under each question once SUPPORT_IMAP_PASSWORD (the support@ mailbox
+            password) is added in Vercel and the site is redeployed.
+          </>
+        ) : lastSync ? (
+          <>
+            <span className="font-medium text-slate-900">support@ mailbox:</span> answers you send by email are linked
+            here every hour. Last checked {timeAgo(lastSync.startedAt)}
+            {lastSync.ok ? "." : (
+              <span className="text-red-700"> and it failed: {lastSync.error ?? "unknown error"}</span>
+            )}
+          </>
+        ) : (
+          <>
+            <span className="font-medium text-slate-900">support@ mailbox connected.</span> Not checked yet. Use
+            “Import past emails” once to bring in earlier questions and your email answers.
+          </>
+        )}
+      </div>
 
       <div className="mb-6 flex gap-1 border-b border-slate-200 overflow-x-auto">
         {(Object.keys(VIEWS) as View[]).map((tab) => (

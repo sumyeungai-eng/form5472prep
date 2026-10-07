@@ -21,6 +21,7 @@ vi.mock("@/lib/prisma", () => ({
   prisma: {
     websiteQuestion: { findMany: db.findMany, count: db.count, findUnique: db.findUnique, update: db.update },
     user: { findFirst: db.userFindFirst },
+    supportMailSyncRun: { findFirst: vi.fn(async () => null) },
     filing: { findMany: db.filingFindMany },
   },
 }));

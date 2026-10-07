@@ -31,7 +31,9 @@
     "github-slugger": "^2.0.0",
     "google-auth-library": "^10.6.2",
     "gray-matter": "^4.0.3",
+    "imapflow": "^1.7.8",
     "lucide-react": "^1.16.0",
+    "mailparser": "^3.9.36",
     "next": "14.2.35",
     "papaparse": "^5.5.3",
     "pdf-lib": "^1.17.1",
@@ -53,6 +55,7 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.19",
+    "@types/mailparser": "^3.9.0",
     "@types/node": "^20",
     "@types/papaparse": "^5.5.2",
     "@types/pdf-parse": "^1.1.5",

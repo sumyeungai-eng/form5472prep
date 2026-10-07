@@ -72,22 +72,31 @@ export default async function AdminQuestionDetailPage({ params }: { params: { id
             <p className="whitespace-pre-wrap break-words text-[15px] leading-relaxed text-slate-900">{question.message}</p>
           </div>
 
-          {question.replies.map((r) => (
-            <div key={r.id} className="ml-6 rounded-lg border border-emerald-200 bg-emerald-50/50 p-5">
-              <div className="mb-2 text-xs text-slate-500">
-                Our reply · {fmt(r.createdAt)}
-                {r.sentBy ? ` · ${r.sentBy}` : ""}
+          {question.replies.map((r) =>
+            r.fromVisitor ? (
+              <div key={r.id} className="mr-6 rounded-lg border border-slate-200 bg-white p-5">
+                <div className="mb-2 text-xs text-slate-500">
+                  Customer follow-up by email · {fmt(r.createdAt)}
+                </div>
+                <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-800">{r.body}</p>
               </div>
-              <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-800">{r.body}</p>
-            </div>
-          ))}
+            ) : (
+              <div key={r.id} className="ml-6 rounded-lg border border-emerald-200 bg-emerald-50/50 p-5">
+                <div className="mb-2 text-xs text-slate-500">
+                  Our reply {r.source === "email" ? "(sent from support@ mailbox)" : "(sent from admin)"} · {fmt(r.createdAt)}
+                  {r.sentBy && r.source !== "email" ? ` · ${r.sentBy}` : ""}
+                </div>
+                <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-800">{r.body}</p>
+              </div>
+            ),
+          )}
 
           <QuestionActions
             questionId={question.id}
             email={question.email}
             replied={!!question.repliedAt}
             archived={!!question.archivedAt}
-            hasReplies={question.replies.length > 0}
+            hasReplies={question.replies.some((r) => !r.fromVisitor)}
           />
         </div>
 

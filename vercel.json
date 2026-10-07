@@ -24,6 +24,10 @@
     {
       "path": "/api/cron/blog-release",
       "schedule": "5 9 * * *"
+    },
+    {
+      "path": "/api/cron/support-mail-sync",
+      "schedule": "41 * * * *"
     }
   ]
 }
