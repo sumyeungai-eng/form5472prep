@@ -570,6 +570,22 @@ describe("uploadReviewedPdf — hands the package to the client", () => {
     expect(email.sendReadyToSignEmail).toHaveBeenCalledWith(expect.objectContaining({ resign: true }));
   });
 
+  it("uploads quietly when the admin unticks 'Email the client', still setting aside the old signature", async () => {
+    db.findUnique.mockResolvedValue({ ...filing, status: "SIGNATURE_PENDING", signaturePngKey: "filing_1_signature.png" });
+
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64, notifyClient: false }, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, emailSent: false, emailSkipped: true });
+
+    expect(storage.put).toHaveBeenCalled();
+    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ status: "PDF_GENERATED", signaturePngKey: null, signedPdfKey: null }),
+    }));
+    expect((db.createLog.mock.calls[0][0] as { data: { afterJson: unknown } }).data.afterJson).toMatchObject({ clientEmailed: false, signaturePngKey: null });
+    expect(email.sendReadyToSignEmail).not.toHaveBeenCalled();
+    expect(brand.brandForFiling).not.toHaveBeenCalled();
+  });
+
   it("reports when the client could not be emailed", async () => {
     db.findUnique.mockResolvedValue({ ...filing, user: null });
     await expect(

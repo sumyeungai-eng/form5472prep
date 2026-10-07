@@ -1680,9 +1680,16 @@ export async function runFilingAction(
           status: reviewedStatus,
           reviewApprovedAt: approvedAt,
           reviewApprovedBy: ctx.approver ?? ctx.adminId,
+          clientEmailed: body.notifyClient !== false,
         },
         reason: ctx.reason,
       });
+      // Owner option (2026-10-07): upload a corrected version without emailing
+      // the client (e.g. they are already in touch by email). The signature
+      // is still set aside above, so they must sign this exact version.
+      if (body.notifyClient === false) {
+        return { ok: true, key, bytes: bytes.length, emailSent: false, emailSkipped: true };
+      }
       if (!filing.user) {
         return {
           ok: true,

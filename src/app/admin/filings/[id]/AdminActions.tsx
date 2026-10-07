@@ -50,6 +50,8 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [uploading, setUploading] = useState<null | "signed" | "reviewed">(null);
+  // Reviewed-PDF upload emails the client by default; untick to upload quietly.
+  const [notifyClient, setNotifyClient] = useState(true);
   const [status, setStatus] = useState(currentStatus);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const [preflightOverrideReason, setPreflightOverrideReason] = useState("");
@@ -183,7 +185,9 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
       if (
         hasCustomerSignature &&
         !window.confirm(
-          "The client has already signed an earlier version. Uploading this reviewed PDF sets that signature aside and emails them to check and sign the new version. Continue?",
+          notifyClient
+            ? "The client has already signed an earlier version. Uploading this reviewed PDF sets that signature aside and emails them to check and sign the new version. Continue?"
+            : "The client has already signed an earlier version. Uploading this reviewed PDF sets that signature aside, so they must sign the new version. They will NOT be emailed. Continue?",
         )
       ) {
         return;
@@ -193,8 +197,11 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         return;
       }
       const pdfBase64 = await fileToBase64(file);
-      await callApi({ action: "uploadReviewedPdf", pdfBase64 }, (body) => {
+      await callApi({ action: "uploadReviewedPdf", pdfBase64, notifyClient }, (body) => {
         const size = `${(file.size / 1024).toFixed(0)} KB`;
+        if (body.emailSkipped === true) {
+          return `Reviewed PDF uploaded (${size}). The client was not emailed. It is ready for them to sign in their portal.`;
+        }
         if (body.emailSent === false) {
           const why = typeof body.emailError === "string" && body.emailError.trim()
             ? body.emailError.trim()
@@ -563,7 +570,11 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
                   pending || uploading !== null ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-50 cursor-pointer"
                 }`}
               >
-                {uploading === "reviewed" ? "Uploading reviewed PDF…" : "Upload reviewed PDF & send to client…"}
+                {uploading === "reviewed"
+                  ? "Uploading reviewed PDF…"
+                  : notifyClient
+                    ? "Upload reviewed PDF & send to client…"
+                    : "Upload reviewed PDF (no email)…"}
               </span>
               <input
                 type="file"
@@ -579,9 +590,19 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
                 className="sr-only"
               />
           </label>
+          <label className="inline-flex items-center gap-1.5 text-xs text-slate-600">
+            <input
+              type="checkbox"
+              checked={notifyClient}
+              onChange={(e) => setNotifyClient(e.target.checked)}
+              disabled={pending || uploading !== null}
+              className="h-3.5 w-3.5 rounded border-slate-300"
+            />
+            Email the client to check and sign
+          </label>
         </div>
         <p className="max-w-prose text-xs text-slate-400">
-          Upload reviewed PDF: the client is emailed a magic link to check this exact file and sign it (or ask for a change). Any signature they drew on an earlier version is set aside, so they always sign the version that gets faxed.
+          Upload reviewed PDF: the client is emailed a magic link to check this exact file and sign it (or ask for a change). Untick &ldquo;Email the client&rdquo; to upload a new version quietly; it is still the version they sign in their portal. Any signature they drew on an earlier version is set aside, so they always sign the version that gets faxed.
         </p>
       </div>
 
