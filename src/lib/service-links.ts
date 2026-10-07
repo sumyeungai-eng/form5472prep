@@ -70,6 +70,10 @@ export const LANDING_SERVICE_MAP: Record<string, ServiceSlug> = {
   "startglobal-form-5472": ANNUAL,
   "zenind-form-5472": ANNUAL,
   "northwest-registered-agent-form-5472": ANNUAL,
+  // New pages from the 2026-10-07 Moz keyword gap.
+  "form-5472-example": ANNUAL,
+  "can-a-foreigner-own-a-us-llc": TAX,
+  "what-is-a-disregarded-entity": PRO_FORMA,
 };
 
 export function serviceForLanding(slug: string): ServiceSlug | null {

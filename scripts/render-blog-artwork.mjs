@@ -337,6 +337,8 @@ const POSTS = {
   "llc-annual-report-late-fees-by-state": { accent: C.amber, motif: "notice", glyphs: ["warn", "calendar", "hash", "check"] },
   "form-5472-family-members-related-parties": { accent: C.teal, motif: "split", glyphs: ["person", "two", "doc", "check"] },
   "irs-official-exchange-rate-form-5472": { accent: C.navySoft, motif: "stack", glyphs: ["globe", "hash", "doc", "check"] },
+  "form-5472-software-turbotax-taxact-hr-block": { accent: C.teal, motif: "split", glyphs: ["doc", "hash", "warn", "check"] },
+  "form-966-closing-foreign-owned-llc": { accent: C.clay, motif: "notice", glyphs: ["doc", "calendar", "pen", "check"] },
 };
 
 const wanted = process.argv.slice(2);

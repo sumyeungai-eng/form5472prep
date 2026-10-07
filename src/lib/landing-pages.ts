@@ -3075,6 +3075,384 @@ export const LANDING_PAGES: LandingPage[] = [
     ],
     relatedSlugs: ["file-form-5472", "diirsp"],
   },
+  // ── New pages from the Moz keyword gap (docs/seo/moz-full-report-2026-10-07.md §3.6, items 1, 4, 8, 18) ──
+  {
+    slug: "form-5472-example",
+    keyword: "form 5472 example",
+    title: "Form 5472 Example: Completed Sample With Pro Forma 1120",
+    metaDescription:
+      "A fictional, filled-in Form 5472 for a foreign-owned single-member LLC, line by line, with the pro forma 1120 header and a watermarked sample PDF.",
+    sources: [
+      { label: "IRS: Form 5472 (Rev. December 2023)", url: "https://www.irs.gov/pub/irs-pdf/f5472.pdf" },
+      { label: "IRS: Instructions for Form 5472 (Rev. December 2024)", url: "https://www.irs.gov/instructions/i5472" },
+      { label: "IRS: Form 1120 (2025)", url: "https://www.irs.gov/pub/irs-pdf/f1120.pdf" },
+      { label: "IRS: Instructions for Form 1120 (business activity codes)", url: "https://www.irs.gov/instructions/i1120" },
+    ],
+    published: "2026-10-07",
+    updated: "2026-10-07",
+    h1: "Form 5472 Example: A Completed Sample With the Pro Forma 1120",
+    intro:
+      "This is a fictional, clearly labelled Form 5472 example for a foreign-owned single-member US LLC, filled in line by line, with the pro forma Form 1120 it is attached to. Every name, number and amount is invented. Use it to see what a completed package looks like, then check your own facts against the IRS instructions.",
+    sections: [
+      {
+        heading: "What does a completed Form 5472 look like?",
+        body: "A completed Form 5472 for a foreign-owned single-member LLC is the three-page IRS form plus a Part V statement, attached to a pro forma Form 1120. Most boxes stay blank. The sample below uses an invented Wyoming LLC, Sample Widget Studio LLC, owned by an invented UK resident, Alex Sample.\n\nDownload the [watermarked sample package (PDF)](/samples/form-5472-example-sample.pdf): cover letter, pro forma Form 1120, Form 5472 and the Part V statement, produced by the same generator that builds customer packages and stamped SAMPLE – NOT FOR FILING on every page. Identifying numbers are placeholders such as XX-XXXXXXX.",
+        table: {
+          caption: "The invented facts behind this Form 5472 example",
+          columns: ["Fact", "Sample value"],
+          rows: [
+            ["Reporting LLC", "Sample Widget Studio LLC, Wyoming"],
+            ["LLC EIN", "XX-XXXXXXX (placeholder)"],
+            ["Date formed", "1 March 2024; first Form 5472 filed for 2024"],
+            ["Sole owner", "Alex Sample, UK-resident individual, no SSN or ITIN"],
+            ["Tax year", "Calendar year 2025"],
+            ["Owner contribution", "$10,000 on 15 January 2025"],
+            ["Distribution to owner", "$4,000 on 20 November 2025"],
+            ["Total assets at year-end", "$15,000"],
+          ],
+        },
+      },
+      {
+        heading: "What goes at the top of Form 5472?",
+        body: "The top of Form 5472 records the reporting corporation's tax year. A foreign-owned US disregarded entity uses its owner's US tax year or, if the owner has none, the calendar year, so the sample enters 1 January 2025 to 31 December 2025. The form's note requires English entries and US-dollar amounts.",
+        table: {
+          caption: "Form 5472 header entries in the sample",
+          columns: ["Entry", "Sample value"],
+          rows: [
+            ["Tax year beginning", "01/01, 2025"],
+            ["Tax year ending", "12/31, 2025"],
+            ["Language and currency", "English; every amount in US dollars"],
+          ],
+        },
+      },
+      {
+        heading: "Which Part I lines identify the LLC in the example?",
+        body: "Part I identifies the reporting corporation, which for a foreign-owned disregarded entity is the LLC itself, not its owner. Use the LLC's legal name, EIN and US address exactly as the IRS has them. The instructions tell domestic filers to take total assets from Form 1120, item D.\n\nLine 1o must list the actual countries where business is conducted; the instructions say not to enter \"worldwide\". The sample enters the United States on line 1n, as our package generator does for a US-formed LLC, and on line 1o because the invented LLC conducts its business there. Codes for line 1e come from the principal business activity list in the Form 1120 instructions.",
+        table: {
+          caption: "Form 5472 Part I identification lines, sample entries",
+          columns: ["Line", "What it asks", "Sample entry"],
+          rows: [
+            ["1a", "LLC name and US address", "Sample Widget Studio LLC, Cheyenne, WY"],
+            ["1b", "Employer identification number", "XX-XXXXXXX"],
+            ["1c", "Total assets", "15000"],
+            ["1d and 1e", "Principal business activity and code", "Custom computer programming services, 541511"],
+            ["1l", "Country of incorporation", "United States"],
+            ["1m", "Date of incorporation", "03/01/2024"],
+            ["1n", "Countries where it files as a resident", "United States"],
+            ["1o", "Principal countries where business is conducted", "United States (an invented fact)"],
+          ],
+        },
+      },
+      {
+        heading: "Which Part I totals and checkboxes does the example complete?",
+        body: "Line 1f totals the foreign related-party transactions on this form, and for a foreign-owned disregarded entity that total includes Part V. The sample's $10,000 contribution plus $4,000 distribution gives $14,000. Line 3 is the box that identifies the filer as a foreign-owned U.S. DE.\n\nWith one related party, one Form 5472 is filed, so lines 1f and 1h match. Line 1j stays unchecked because the invented LLC first filed for 2024. Line 2 is checked because a foreign person owns 100%. Line 1k is 0 because there is no cost sharing arrangement, so no Part VIII is attached.",
+        table: {
+          caption: "Form 5472 Part I totals and checkboxes, sample entries",
+          columns: ["Line", "What it asks", "Sample entry"],
+          rows: [
+            ["1f", "Payments made or received on this form", "14000"],
+            ["1g", "Number of Forms 5472 filed for the year", "1"],
+            ["1h", "Payments on all Forms 5472 filed", "14000"],
+            ["1i", "Consolidated filing", "Not checked"],
+            ["1j", "Initial year of filing Form 5472", "Not checked"],
+            ["1k", "Number of Parts VIII attached", "0"],
+            ["2", "Foreign person owns at least 50%", "Checked"],
+            ["3", "Foreign-owned U.S. DE", "Checked"],
+          ],
+        },
+      },
+      {
+        heading: "What goes in Part II for a single foreign owner?",
+        body: "Part II names the 25% foreign shareholder, and for a foreign-owned disregarded entity the instructions say to report the foreign owner there. A reference ID is required only when no US identifying number is entered, and a DE must enter the owner's FTIN, or \"None\" or \"N/A\" if there is none.\n\nReference IDs are self-assigned: alphanumeric, no spaces or special characters, at most 50 characters, and used consistently every year. The sample's SAMPLEOWNER01 follows those rules, and the FTIN is a placeholder. Lines 5a to 7e stay blank because there is one direct owner and no indirect owner.",
+        table: {
+          caption: "Form 5472 Part II for one foreign individual, sample entries",
+          columns: ["Line", "What it asks", "Sample entry"],
+          rows: [
+            ["4a", "Name and address of direct 25% foreign shareholder", "Alex Sample, invented UK address"],
+            ["4b(1)", "US identifying number, if any", "Blank: no SSN or ITIN"],
+            ["4b(2)", "Reference ID number", "SAMPLEOWNER01"],
+            ["4b(3)", "Foreign taxpayer identification number (FTIN)", "XXXXXXXXXX (placeholder)"],
+            ["4c", "Principal countries where business is conducted", "United Kingdom"],
+            ["4d", "Country of citizenship, organization, or incorporation", "United Kingdom"],
+            ["4e", "Countries where the owner files as a tax resident", "United Kingdom"],
+            ["5a to 7e", "Second direct and ultimate indirect shareholders", "Blank"],
+          ],
+        },
+      },
+      {
+        heading: "What goes in Part III when the owner is the related party?",
+        body: "All filers complete Part III, even when the related party is already listed in Part II. In the sample the related party is Alex Sample again, so line 8a repeats the owner's name and address, the foreign person box is checked, and line 8e marks the 25% foreign shareholder.\n\nA separate Form 5472 is filed for each related party with which the LLC had a reportable transaction, and line 1g counts those forms. If the owner's other company had also paid the LLC, that company would need its own Form 5472.",
+        table: {
+          caption: "Form 5472 Part III, sample entries",
+          columns: ["Line", "What it asks", "Sample entry"],
+          rows: [
+            ["Heading", "Foreign person or U.S. person?", "Foreign person"],
+            ["8a", "Name and address of related party", "Alex Sample, invented UK address"],
+            ["8b(1) to 8b(3)", "US number, reference ID, FTIN", "Blank, SAMPLEOWNER01, XXXXXXXXXX"],
+            ["8c and 8d", "Principal business activity and code", "Custom computer programming services, 541511"],
+            ["8e", "Relationship", "25% foreign shareholder"],
+            ["8f", "Principal countries where business is conducted", "United Kingdom"],
+            ["8g", "Countries where it files as a tax resident", "United Kingdom"],
+          ],
+        },
+      },
+      {
+        heading: "Why is Part IV mostly blank in this example?",
+        body: "Part IV lists monetary transactions by category, such as sales, rents, royalties, services, loans and interest, and must be completed when the related party is a foreign person. The sample owner sold nothing to the LLC, lent nothing and charged no fees, so lines 22 and 36 show zero.\n\nIf the owner had lent money to the LLC, the balance would go on line 17 (amounts borrowed) and any interest on line 32. A payment by the LLC for the owner's services would go on line 29. Amounts are stated in US dollars with a schedule of the exchange rates used, and an amount of $50,000 or less may be reported as \"$50,000 or less\".",
+      },
+      {
+        heading: "What goes in Part V and its attached statement?",
+        body: "Part V is the part written for foreign-owned DEs. Check its box and attach a statement describing other transactions under Treas. Reg. §1.482-1(i)(7), including amounts paid or received on formation, dissolution, acquisition and disposition, and contributions to and distributions from the entity.\n\nThe sample statement lists each transaction with its date, description and US-dollar amount, and its total ties to line 1f. A longer worked version with more transaction types is in the [Part V statement example](/blog/form-5472-part-v-statement-example).",
+        table: {
+          caption: "Part V supporting statement in the sample",
+          columns: ["Date", "Transaction", "Amount (USD)"],
+          rows: [
+            ["01/15/2025", "Capital contribution from Alex Sample", "10,000"],
+            ["11/20/2025", "Distribution to Alex Sample", "4,000"],
+            ["Total", "Part V transactions for tax year 2025", "14,000"],
+          ],
+        },
+      },
+      {
+        heading: "Which parts of Form 5472 do not apply in this example, and why?",
+        body: "Part VII applies to every filer, so the sample answers its questions rather than skipping them. Parts VI, VIII and IX describe transactions the sample LLC did not have, so they stay blank, and the instructions tell a foreign-owned DE not to complete lines 43a and 43b.",
+        table: {
+          caption: "Parts left blank or answered No in the sample",
+          columns: ["Part or line", "Sample treatment"],
+          rows: [
+            ["Part VI", "Box not checked: no nonmonetary or less-than-full-consideration transactions"],
+            ["Part VII, lines 37, 39, 40a, 41a, 42a, 42b", "Answered No"],
+            ["Lines 38a to 38c", "Blank, because line 37 is No"],
+            ["Lines 43a and 43b", "Blank: not completed by a foreign-owned U.S. DE"],
+            ["Part VIII", "Not attached: no cost sharing arrangement"],
+            ["Part IX", "Blank: no base erosion amounts in the sample"],
+          ],
+        },
+      },
+      {
+        heading: "What goes on a pro forma 1120 for a foreign-owned LLC?",
+        body: "Only the name and address of the foreign-owned DE and items B and E on page 1 are required, and \"Foreign-owned U.S. DE\" is written across the top. The income, deduction and tax lines stay blank because a foreign-owned DE has no income tax return filing requirement of its own.\n\nItem E has four boxes: initial return, final return, name change and address change. None applies to the sample year. Items C and D are not on the required list; our generator mirrors them from Form 5472 lines 1m and 1c so the two forms agree. Signing the page 1 block is covered in [how to sign the pro forma 1120](/blog/form-5472-pro-forma-1120-signature).",
+        table: {
+          caption: "Pro forma Form 1120 header in the sample",
+          columns: ["Item", "Sample entry"],
+          rows: [
+            ["Top margin", "Foreign-owned U.S. DE"],
+            ["Tax year", "Calendar year 2025"],
+            ["Name and address", "Sample Widget Studio LLC, Cheyenne, WY"],
+            ["Item B, employer identification number", "XX-XXXXXXX"],
+            ["Item E checkboxes", "None checked"],
+            ["Items C and D (optional mirror)", "03/01/2024 and 15000"],
+            ["Lines 1 to 37 and schedules", "Blank"],
+          ],
+        },
+      },
+      {
+        heading: "How is the example package assembled and sent?",
+        body: "The package is assembled in a fixed order and sent by fax or mail, because a foreign-owned U.S. DE cannot file Form 5472 electronically.\n\n1. Put a short cover letter first that names the LLC, its EIN and the tax year (our packages include one; the IRS does not prescribe it).\n2. Place the pro forma Form 1120 next, with \"Foreign-owned U.S. DE\" across the top.\n3. Attach all three pages of Form 5472 behind the Form 1120.\n4. Attach the Part V statement, plus an exchange-rate schedule if Part IV amounts were converted.\n5. Fax at 300 DPI or higher to the IRS at 855-887-7737, or mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n6. Keep the complete package and the fax or mailing record together.",
+      },
+      {
+        heading: "Can we prepare your real Form 5472 package?",
+        body: "Yes. Form5472 Prep prepares the pro forma Form 1120, Form 5472 and Part V statement from your answers, then faxes the package to the IRS and sends you the transmission record. Every filing is reviewed by a qualified accountant before it is submitted. See the [Form 5472 filing service](/services/form-5472-filing-service).\n\nFor the line-by-line rules behind this sample, read the plain-English [Form 5472 instructions](/form-5472-instructions).",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is this Form 5472 example a real filing?",
+        a: "No. Every name, address, identifying number and amount in this example is invented, and the sample PDF is stamped SAMPLE – NOT FOR FILING on every page. Use it to understand the layout, then prepare your own package from your LLC's records and the current IRS instructions.",
+      },
+      {
+        q: "Do I have to fill in every line of Form 5472?",
+        a: "No. A foreign-owned LLC completes Part I, Part II for its foreign owner, Part III, the Part IV totals when the related party is foreign, Part V when it had reportable transactions, and the Part VII questions. Parts VI, VIII and IX apply only when those transactions exist.",
+      },
+      {
+        q: "Does an LLC with no transactions need a Form 5472 example?",
+        a: "Not usually. The first exception in the IRS instructions excuses a foreign-owned DE with no reportable transactions of the types in Parts IV, V and VI. Money the owner puts in to form or fund the LLC is a Part V transaction, so a funded LLC normally has something to report.",
+      },
+      {
+        q: "Can I use the sample PDF as a template?",
+        a: "Only as a visual reference. It is watermarked, uses placeholder identifiers such as XX-XXXXXXX, and reflects one invented fact pattern. Download the current blank Form 5472 and Form 1120 from irs.gov and enter your own LLC's facts.",
+      },
+      {
+        q: "Does a catch-up filing need one package per year?",
+        a: "Yes. Each tax year gets its own pro forma Form 1120 with its own Form 5472 attached, built from that year's transactions. Late packages may also carry a reasonable-cause statement under the IRS delinquent international information return procedures.",
+      },
+    ],
+    relatedSlugs: ["form-5472-instructions", "pro-forma-1120", "irs-form-5472", "file-form-5472"],
+  },
+  {
+    slug: "can-a-foreigner-own-a-us-llc",
+    keyword: "can a foreigner own a us llc",
+    title: "Can a Foreigner Own a US LLC? Rules and Yearly Filings",
+    metaDescription:
+      "Yes. Non-residents and foreign companies can own a US LLC. What each ownership setup files with the IRS every year, and how to get an EIN without an SSN.",
+    sources: [
+      { label: "IRS: Limited Liability Company (LLC)", url: "https://www.irs.gov/businesses/small-businesses-self-employed/limited-liability-company-llc" },
+      { label: "IRS: Single member limited liability companies", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
+      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+      { label: "Treas. Reg. §301.7701-3 (default classification)", url: "https://www.ecfr.gov/current/title-26/section-301.7701-3" },
+      { label: "IRS: Partnership withholding (section 1446)", url: "https://www.irs.gov/individuals/international-taxpayers/partnership-withholding" },
+      { label: "IRS: Instructions for Form 1065", url: "https://www.irs.gov/instructions/i1065" },
+      { label: "IRS: Instructions for Form SS-4", url: "https://www.irs.gov/instructions/iss4" },
+      { label: "IRS: Instructions for Form 1120-F", url: "https://www.irs.gov/instructions/i1120f" },
+    ],
+    published: "2026-10-07",
+    updated: "2026-10-07",
+    h1: "Can a Foreigner Own a US LLC?",
+    intro:
+      "Yes. The IRS notes that most states do not restrict LLC ownership, so members may include individuals, corporations, other LLCs and foreign entities. What foreign ownership changes is the federal filing: one foreign owner means a pro forma Form 1120 with Form 5472 in reportable years, while two or more members default to partnership filing.",
+    sections: [
+      {
+        heading: "Can a non-resident alien own a US LLC?",
+        body: "Yes. The IRS notes that most states do not restrict LLC ownership, and the federal default classification rules turn on the number of members, not where they live. Formation is a state filing; the federal question for a non-resident owner is which return the LLC files each year.\n\nWith one non-resident owner and no election, the LLC is disregarded for income tax. Because that owner is a foreign person, Treas. Reg. §301.7701-2(c)(2)(vi) treats the LLC as a corporation for section 6038A reporting only, which is why it files [Form 5472](/blog/what-is-form-5472) in any year it has a reportable transaction with its owner.",
+      },
+      {
+        heading: "Can a foreign company own a US LLC?",
+        body: "Yes. A foreign corporation can be the sole member or one of several members. If it is the only member, the LLC is a foreign-owned disregarded entity, files Form 5472 with a pro forma Form 1120 in any year with a reportable transaction, and lists the foreign company in Part II.\n\nA disregarded LLC's activities are treated as those of its owner, so a foreign company whose LLC carries on a US trade or business may have its own return to file: the Form 1120-F instructions require one from a foreign corporation engaged in a US trade or business during the year. Ownership chains and ultimate owners are covered in [Form 5472 when a foreign company owns the LLC](/blog/form-5472-foreign-corporate-owner).",
+      },
+      {
+        heading: "What if a US LLC has more than one foreign member?",
+        body: "A domestic LLC with two or more members is classified as a partnership unless it elects to be taxed as a corporation. A partnership is not a disregarded entity, so the foreign-owned DE rule behind the pro forma Form 1120 does not apply; the LLC files Form 1065 instead.\n\nThe Form 1065 instructions require every domestic partnership to file unless it neither receives income nor incurs expenditures treated as deductions or credits. A partnership with income effectively connected with a US trade or business must also pay section 1446 withholding tax on the share allocable to foreign partners, reported on Forms 8804 and 8805. See [multi-member LLCs with foreign owners](/blog/multi-member-llc-form-5472-or-1065).\n\nIf the LLC elects to be taxed as a corporation, it files a regular Form 1120 instead, and Form 5472 can apply because a 25% foreign shareholder makes it a reporting corporation.",
+      },
+      {
+        heading: "What does each foreign ownership setup file every year?",
+        body: "The annual filing follows the LLC's federal classification, and the classification follows the number of members and any Form 8832 election. A single foreign owner files the pro forma package; a multi-member LLC files a partnership return; an LLC that elects corporate status files a regular Form 1120.\n\nThe table covers the LLC's own federal filings. Owners can have separate US returns of their own, for example when the LLC's income is effectively connected with a US trade or business, and state filings are separate again.",
+        table: {
+          caption: "Annual federal filings by foreign ownership setup",
+          columns: ["Owner setup", "Default federal treatment", "Annual federal filing"],
+          rows: [
+            ["One non-resident individual", "Disregarded; a corporation for section 6038A only", "Pro forma Form 1120 with Form 5472"],
+            ["One foreign company", "Disregarded; a corporation for section 6038A only", "Pro forma Form 1120 with Form 5472"],
+            ["Two or more members, any of them foreign", "Partnership", "Form 1065; section 1446 forms if effectively connected income"],
+            ["Any LLC that elects corporate status", "Corporation", "Form 1120, with Form 5472 if 25% foreign-owned"],
+          ],
+        },
+      },
+      {
+        heading: "How does a foreign owner get an EIN without an SSN?",
+        body: "Apply on Form SS-4 by fax or mail. The IRS online application requires the responsible party to have a valid SSN, ITIN or EIN, and international applicants with no US legal residence, principal place of business or office can apply by telephone at 267-941-1099 (not toll-free).\n\nForm 5472 line 1b asks for the LLC's EIN, so the number is needed before the first filing. Step by step: [EIN for a foreign-owned LLC without an SSN](/blog/ein-for-foreign-owned-llc-without-ssn).",
+      },
+      {
+        heading: "What happens if a foreign-owned LLC skips Form 5472?",
+        body: "The IRS instructions set a $25,000 penalty for failing to file Form 5472 when due and in the manner prescribed, and a substantially incomplete form counts as a failure to file. If the failure continues more than 90 days after IRS notice, a further $25,000 applies for each 30-day period.\n\nOwners who missed earlier years can start with the [late Form 5472 guide](/late-form-5472).",
+      },
+      {
+        heading: "Can we handle the annual filing for a foreign-owned LLC?",
+        body: "Yes. For a single-member LLC owned by a non-resident or a foreign company, Form5472 Prep prepares the pro forma Form 1120, Form 5472 and Part V statement, and faxes the package to the IRS. Every filing is reviewed by a qualified accountant before it is submitted. We do not prepare partnership returns.\n\nSee the [foreign-owned LLC tax filing service](/services/foreign-owned-llc-tax-filing-service) for what is and is not included.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Do I need to live in the US to own an LLC?",
+        a: "No. The IRS notes that most states do not restrict LLC ownership, and its list of possible members includes foreign entities. Each formation state sets its own requirements for the formation filing itself, so check that state's business-filing office.",
+      },
+      {
+        q: "Can an LLC have only foreign members?",
+        a: "Yes. A single foreign member makes the LLC a foreign-owned disregarded entity, and two or more members make it a partnership by default under Treas. Reg. §301.7701-3(b)(1), whatever the members' nationality.",
+      },
+      {
+        q: "Does a foreign-owned LLC pay US tax?",
+        a: "Not automatically. A disregarded LLC's activities are treated as its owner's, so the question is whether the owner has US-taxable income, such as income effectively connected with a US trade or business. The Form 5472 filing applies either way when there is a reportable transaction.",
+      },
+      {
+        q: "Does a foreign owner need an ITIN for Form 5472?",
+        a: "No. Part II accepts a self-assigned reference ID when the owner has no US identifying number, and a foreign-owned DE enters the owner's FTIN or \"None\". An ITIN may still be needed for other purposes, such as the owner's own US tax return.",
+      },
+      {
+        q: "Can a foreign company and an individual co-own one US LLC?",
+        a: "Yes. With two members the LLC is a partnership by default and files Form 1065, not the pro forma Form 1120 package. If it elects corporate status instead, it files Form 1120, and Form 5472 can apply to its related-party transactions.",
+      },
+    ],
+    relatedSlugs: ["single-member-llc-foreign-owner", "foreign-owned-llc-tax", "what-is-a-disregarded-entity", "form-5472-example"],
+  },
+  {
+    slug: "what-is-a-disregarded-entity",
+    keyword: "what is a disregarded entity",
+    title: "What Is a Disregarded Entity? Definition and Form 5472",
+    metaDescription:
+      "A disregarded entity is a one-owner business the IRS ignores for income tax. Why a foreign-owned one is still a corporation for Form 5472 reporting.",
+    sources: [
+      { label: "Treas. Reg. §301.7701-2 (business entities)", url: "https://www.ecfr.gov/current/title-26/section-301.7701-2" },
+      { label: "Treas. Reg. §301.7701-3 (classification elections)", url: "https://www.ecfr.gov/current/title-26/section-301.7701-3" },
+      { label: "Treas. Reg. §1.6038A-1 (reporting corporation)", url: "https://www.ecfr.gov/current/title-26/section-1.6038A-1" },
+      { label: "T.D. 9796 (Internal Revenue Bulletin 2017-3)", url: "https://www.irs.gov/irb/2017-03_IRB#TD-9796" },
+      { label: "IRS: Single member limited liability companies", url: "https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies" },
+      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+    ],
+    published: "2026-10-07",
+    updated: "2026-10-07",
+    h1: "What Is a Disregarded Entity?",
+    intro:
+      "A disregarded entity is a business entity with one owner that federal income tax treats as part of that owner, not as a separate taxpayer. Under Treas. Reg. §301.7701-3, a US single-member LLC is disregarded by default. If one foreign person owns it, it is still treated as a corporation for Form 5472 reporting.",
+    sections: [
+      {
+        heading: "What is a disregarded entity under IRS rules?",
+        body: "Treas. Reg. §301.7701-2(a) says a business entity with only one owner is classified as a corporation or is disregarded, and a disregarded entity's activities are treated like a sole proprietorship, branch or division of the owner. The entity still exists under state law.\n\nDisregarded means ignored for federal income tax, not dissolved. The IRS single-member LLC page notes that the LLC is still treated as a separate entity for employment tax and certain excise taxes.",
+      },
+      {
+        heading: "When is an LLC a disregarded entity by default?",
+        body: "A domestic eligible entity with a single owner is disregarded by default under Treas. Reg. §301.7701-3(b)(1), unless it elects otherwise. A domestic LLC with two or more members defaults to a partnership. Either can file Form 8832 to elect classification as a corporation.",
+        table: {
+          caption: "Default federal classification by entity type",
+          columns: ["Entity", "Default classification"],
+          rows: [
+            ["US LLC with one member", "Disregarded entity"],
+            ["US LLC with two or more members", "Partnership"],
+            ["Eligible entity that files Form 8832", "Corporation, if it elects that"],
+            ["Foreign eligible entity, one owner without limited liability", "Disregarded entity"],
+            ["Foreign eligible entity, all members with limited liability", "Association, taxed as a corporation"],
+            ["Corporation formed under a state corporation statute", "Corporation; cannot be disregarded"],
+          ],
+        },
+      },
+      {
+        heading: "Why does a foreign-owned disregarded entity file Form 5472?",
+        body: "Treas. Reg. §301.7701-2(c)(2)(vi) treats a domestic entity that is otherwise disregarded as a corporation for section 6038A if one foreign person has direct or indirect sole ownership. That makes it a 25% foreign-owned reporting corporation, which reports related-party transactions on Form 5472.\n\nThe rule came from T.D. 9796 (81 FR 89850, 13 December 2016) and applies to tax years beginning after 31 December 2016 and ending on or after 13 December 2017. Outside section 6038A, the entity keeps its disregarded status. The filing itself is explained in [what is Form 5472](/blog/what-is-form-5472).",
+      },
+      {
+        heading: "What does a foreign-owned disregarded entity file each year?",
+        body: "A foreign-owned US disregarded entity has no income tax return filing requirement of its own, but it must file a pro forma Form 1120 with Form 5472 attached by the 1120's due date, including extensions. Only the name, address and items B and E on page 1 are completed.\n\nIt cannot file Form 5472 electronically. The package goes by fax to the IRS at 855-887-7737 or by mail to the Ogden PIN Unit, and Form 7004 extends the deadline. The cover return is explained in the [pro forma 1120](/pro-forma-1120) guide, and a filled-in sample is in the [Form 5472 example](/form-5472-example).",
+      },
+      {
+        heading: "Does a disregarded entity with no transactions file Form 5472?",
+        body: "No, if it had no reportable transactions of the types listed in Parts IV, V and VI of Form 5472. That is the first exception in the instructions. Several other exceptions, including the Form 5471 exception and the exception for transactions between two non-US persons, expressly do not apply to foreign-owned DEs.\n\nOwner contributions and distributions are Part V transactions, so a year with any money moving between the owner and the LLC is normally a filing year. See [Form 5472 for a dormant LLC](/blog/form-5472-dormant-llc-no-income).",
+      },
+      {
+        heading: "Is a disregarded entity the same as a sole proprietorship?",
+        body: "Not legally. A disregarded LLC remains a separate legal entity under state law; the regulation only treats its activities for federal income tax in the same manner as a sole proprietorship, branch or division of its owner. For employment taxes and certain excise taxes it is treated as separate.\n\nFor a US individual owner, the IRS says the LLC's activities are generally reported on the owner's own return. For a foreign owner, the LLC still files Form 5472 under the section 6038A rule.",
+      },
+      {
+        heading: "How does a disregarded entity change its classification?",
+        body: "An eligible entity can elect to be classified as a corporation by filing Form 8832, and an LLC that adds a second member falls under the default rule for two or more members, which is a partnership. Either change replaces the pro forma Form 1120 package with a full corporate return or a partnership return.\n\nWhat changes when a second owner joins is covered in [single-member to multi-member LLC](/blog/single-member-to-multi-member-llc-what-changes).",
+      },
+      {
+        heading: "Can Form5472 Prep file for a foreign-owned disregarded entity?",
+        body: "Yes. We prepare the pro forma Form 1120, Form 5472 and Part V statement that a foreign-owned US disregarded entity files each year, and fax the package to the IRS Ogden PIN Unit. Every filing is reviewed by a qualified accountant before it is submitted. We do not prepare partnership or full corporate returns.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is a foreign-owned disregarded entity a corporation?",
+        a: "Only for section 6038A reporting. Treas. Reg. §1.6038A-1(c)(1) classifies it as a domestic corporation for that purpose, which brings Form 5472 and the related recordkeeping rules. For other income tax purposes it remains disregarded.",
+      },
+      {
+        q: "Is a disregarded entity taxed?",
+        a: "Not as a separate income taxpayer. Its activities are reflected on its owner's federal return. It can still owe employment taxes and certain excise taxes in its own name, and a foreign-owned one still files Form 5472.",
+      },
+      {
+        q: "Does a disregarded entity need its own EIN?",
+        a: "A foreign-owned one filing Form 5472 does, because line 1b asks for the reporting corporation's EIN. The IRS single-member LLC page says a disregarded LLC with no employees or excise tax liability does not otherwise need one, though it can get one for a bank account.",
+      },
+      {
+        q: "Is a multi-member LLC a disregarded entity?",
+        a: "No. A domestic LLC with two or more members is a partnership by default, or a corporation if it elects. Neither is a disregarded entity, so the pro forma Form 1120 rule for foreign-owned DEs does not apply.",
+      },
+      {
+        q: "When did foreign-owned disregarded entities start filing Form 5472?",
+        a: "For tax years beginning after 31 December 2016 and ending on or after 13 December 2017, under final regulations in T.D. 9796. Earlier years were not covered by the section 6038A rule for disregarded entities.",
+      },
+    ],
+    relatedSlugs: ["form-1120-disregarded-entity", "pro-forma-1120", "can-a-foreigner-own-a-us-llc", "single-member-llc-foreign-owner"],
+  },
 ];
 
 export function getLandingPage(slug: string): LandingPage | null {
@@ -3139,6 +3517,19 @@ const TOPIC_CLUSTERS: Record<string, string[]> = {
     "foreign-owned-llc-tax",
     "single-member-llc-foreign-owner",
     "stripe-atlas-form-5472",
+  ],  // Worked examples of the filing itself
+  examples: [
+    "form-5472-example",
+    "form-5472-instructions",
+    "pro-forma-1120",
+    "1120-pro-forma-instructions",
+  ],
+  // Ownership and entity classification
+  ownership: [
+    "can-a-foreigner-own-a-us-llc",
+    "what-is-a-disregarded-entity",
+    "single-member-llc-foreign-owner",
+    "form-1120-disregarded-entity",
   ],
 };
 

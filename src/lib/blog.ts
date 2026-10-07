@@ -132,6 +132,8 @@ async function readFile(slug: string): Promise<Post | null> {
 }
 
 const ARTWORK_ALTS: Record<string, string> = {
+  "form-5472-software-turbotax-taxact-hr-block": "Two document folders and a warning mark illustrate checking tax software against the Form 5472 fax-only rule",
+  "form-966-closing-foreign-owned-llc": "A marked closing notice with document, calendar and pen icons illustrates the final Form 5472 year instead of Form 966",
   "form-5472-affiliate-marketers-content-sites": "Stacked payout records illustrate which affiliate and ad revenue movements reach Form 5472",
   "form-5472-app-developers-app-store-google-play": "Two store payout columns illustrate an app developer's LLC revenue and owner transfers",
   "form-5472-kdp-authors-royalties": "Royalty statements and a signing pen illustrate an author's separate US filing obligations",
