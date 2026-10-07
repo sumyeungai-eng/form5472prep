@@ -33,11 +33,15 @@ export async function runSupportMailSync(trigger: "cron" | "admin" | "admin-full
     });
     return { configured: true as const, ok: true as const, ...result };
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    // Prisma errors echo the whole record (customer text) — keep the last
+    // line, which names the actual problem.
+    const full = err instanceof Error ? err.message : String(err);
+    const lines = full.split("\n").map((l) => l.trim()).filter(Boolean);
+    const message = (lines.length > 1 ? lines[lines.length - 1] : full).slice(0, 300);
     console.error("[support-mail-sync] failed", err);
     await prisma.supportMailSyncRun.update({
       where: { id: run.id },
-      data: { ok: false, finishedAt: new Date(), error: message.slice(0, 1000) },
+      data: { ok: false, finishedAt: new Date(), error: message },
     });
     return { configured: true as const, ok: false as const, error: message };
   }

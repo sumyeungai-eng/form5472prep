@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const db = vi.hoisted(() => ({ findUnique: vi.fn(), update: vi.fn() }));
-vi.mock("@/lib/prisma", () => ({ prisma: { websiteQuestion: { findUnique: db.findUnique, update: db.update } } }));
+const db = vi.hoisted(() => ({ findUnique: vi.fn(), update: vi.fn(), create: vi.fn(), createReply: vi.fn() }));
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    websiteQuestion: { findUnique: db.findUnique, update: db.update, create: db.create },
+    websiteQuestionReply: { create: db.createReply },
+  },
+}));
 
 import { prismaQuestionStore } from "./store";
 
@@ -30,5 +35,30 @@ describe("prismaQuestionStore.refreshStatus", () => {
     db.findUnique.mockResolvedValue(question([[0, false]], t(5)));
     await prismaQuestionStore.refreshStatus("q", false);
     expect(db.update).not.toHaveBeenCalled();
+  });
+});
+
+describe("prismaQuestionStore writes only schema fields", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("createQuestion drops extra keys such as the parser's questionId", async () => {
+    db.create.mockResolvedValue({ id: "q" });
+    const args = {
+      name: "Ana", email: "ana@example.test", topic: null, pageUrl: null, message: "Hi",
+      createdAt: t(1), sourceMessageId: "<m@x>", questionId: null,
+    };
+    await prismaQuestionStore.createQuestion(args as Parameters<typeof prismaQuestionStore.createQuestion>[0]);
+    expect(Object.keys(db.create.mock.calls[0][0].data).sort()).toEqual(
+      ["createdAt", "email", "message", "name", "pageUrl", "readAt", "sourceMessageId", "topic"],
+    );
+  });
+
+  it("createReply records the email source", async () => {
+    await prismaQuestionStore.createReply({
+      questionId: "q", body: "b", sentBy: "s", fromVisitor: false, createdAt: t(1), sourceMessageId: "<r@x>",
+    });
+    expect(db.createReply.mock.calls[0][0].data).toEqual({
+      questionId: "q", body: "b", sentBy: "s", fromVisitor: false, createdAt: t(1), sourceMessageId: "<r@x>", source: "email",
+    });
   });
 });

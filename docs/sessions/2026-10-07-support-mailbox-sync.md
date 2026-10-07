@@ -15,14 +15,19 @@ Follows `2026-10-07-admin-website-questions.md` (Questions inbox, 3b95af3 / 75a2
 - Hourly cron `/api/cron/support-mail-sync` (minute 41, last 7 days); admin buttons "Check mailbox now" (7 days) and "Import past emails" (since 2026-06-01). Every run logged in `SupportMailSyncRun`; the Questions page shows last check / failure.
 - Evidence: targeted vitest 45/45 (parse, sync with fake mailbox, store status rules, cron auth, admin pages/API, /api/ask); `tsc` + eslint clean; `next build` OK (routes listed). Hostinger IMAP reachable at imap.hostinger.com:993 (AUTH=PLAIN/LOGIN). **Not yet run against the real mailbox** — needs the password.
 
+### Fix (same day)
+- First live run: IMAP login + parsing worked, but `createQuestion` failed — the sync spread the parser result (incl. `questionId`) into Prisma ("Unknown argument `questionId`"). Store/sync now pass explicit fields; the in-memory test store rejects unknown keys like Prisma (verified: fails on the old code, passes on the fix). Sync errors stored/shown are now the last line only (no customer text).
+- Owner step done: `SUPPORT_IMAP_PASSWORD` added in Vercel (Production, secret) and redeployed.
+
 ## Contracts
+- Store methods write explicit Prisma fields only — never spread caller objects into `data`.
 - Every mailbox item is keyed by Message-ID (`@unique` on both tables) — sync is idempotent; never key on anything else.
 - Cron requires `CRON_SECRET` (no dev fallback).
 - `stripQuotedReply` keeps only the new text (Gmail/Apple/Roundcube/Outlook quote headers); the original email stays in the mailbox.
 - Schema change is additive (nullable/defaulted columns + one table).
 
 ## Open
-- **Owner-gated:** add `SUPPORT_IMAP_PASSWORD` (support@ mailbox password) in Vercel → Production, redeploy, then press "Import past emails" once. Optional overrides: `SUPPORT_IMAP_USER`, `SUPPORT_IMAP_HOST`, `SUPPORT_IMAP_PORT`.
+- `SUPPORT_IMAP_PASSWORD` is set (2026-10-07). Optional overrides: `SUPPORT_IMAP_USER`, `SUPPORT_IMAP_HOST`, `SUPPORT_IMAP_PORT`.
 - Follow-ups: first real run should be eyeballed (folder names on Hostinger, quote stripping on real replies). Emails to/from a visitor about other matters within 90 days attach to their question thread.
 
 ## Lane notes

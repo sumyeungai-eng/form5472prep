@@ -18,6 +18,10 @@ function memoryStore(initial: Q[] = []) {
     },
     async setQuestionSource(id, mid) { questions.find((q) => q.id === id)!.sourceMessageId = mid; },
     async createQuestion(a) {
+      // Mirror Prisma: unknown keys reject the whole create.
+      const allowed = ["name", "email", "topic", "pageUrl", "message", "createdAt", "sourceMessageId"];
+      const extra = Object.keys(a).filter((k) => !allowed.includes(k));
+      if (extra.length) throw new Error(`Unknown argument \`${extra[0]}\``);
       const id = `imp_${++n}`;
       questions.push({ id, email: a.email, message: a.message, createdAt: a.createdAt, sourceMessageId: a.sourceMessageId, name: a.name });
       return id;

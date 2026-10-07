@@ -127,7 +127,15 @@ export async function syncSupportMailbox(opts: {
       continue;
     }
     imported.push(
-      await store.createQuestion({ ...parsed, createdAt: env.date, sourceMessageId: env.messageId }),
+      await store.createQuestion({
+        name: parsed.name,
+        email: parsed.email,
+        topic: parsed.topic,
+        pageUrl: parsed.pageUrl,
+        message: parsed.message,
+        createdAt: env.date,
+        sourceMessageId: env.messageId,
+      }),
     );
     result.questionsImported += 1;
   }

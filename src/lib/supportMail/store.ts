@@ -32,8 +32,19 @@ export const prismaQuestionStore: QuestionStore = {
 
   async createQuestion(args) {
     // Already seen in the mailbox, so not "unread" in admin.
+    // Explicit fields: a stray key (e.g. the parser's questionId) makes
+    // Prisma reject the whole create.
     const q = await prisma.websiteQuestion.create({
-      data: { ...args, readAt: args.createdAt },
+      data: {
+        name: args.name,
+        email: args.email,
+        topic: args.topic,
+        pageUrl: args.pageUrl,
+        message: args.message,
+        createdAt: args.createdAt,
+        sourceMessageId: args.sourceMessageId,
+        readAt: args.createdAt,
+      },
       select: { id: true },
     });
     return q.id;
@@ -53,7 +64,17 @@ export const prismaQuestionStore: QuestionStore = {
   },
 
   async createReply(args) {
-    await prisma.websiteQuestionReply.create({ data: { ...args, source: "email" } });
+    await prisma.websiteQuestionReply.create({
+      data: {
+        questionId: args.questionId,
+        body: args.body,
+        sentBy: args.sentBy,
+        fromVisitor: args.fromVisitor,
+        createdAt: args.createdAt,
+        sourceMessageId: args.sourceMessageId,
+        source: "email",
+      },
+    });
   },
 
   // Answered = our latest message is newer than the visitor's latest. A new
