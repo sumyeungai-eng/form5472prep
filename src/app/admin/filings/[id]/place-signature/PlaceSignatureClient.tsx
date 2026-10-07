@@ -93,6 +93,7 @@ export function PlaceSignatureClient({
   hasExistingSignedPdf,
   endpoints,
   allowPreparerSignature = false,
+  canSavePreparerSignature = false,
 }: {
   filingId: string;
   llcName: string | null;
@@ -101,6 +102,8 @@ export function PlaceSignatureClient({
   endpoints?: PlaceSignatureEndpoints;
   // Form 5472 / 1120 filings only (not EIN/ITIN applications).
   allowPreparerSignature?: boolean;
+  // False on the shared-password session: there is no personal account.
+  canSavePreparerSignature?: boolean;
 }) {
   // useRouter was used to programmatically navigate after save, but the new
   // preview-on-save flow keeps the user on this page (with iframe preview)
@@ -120,7 +123,7 @@ export function PlaceSignatureClient({
   const [preparerSig, setPreparerSig] = useState<{ url: string; source: "saved" | "drawn" } | null>(null);
   const [hasSavedPreparerSig, setHasSavedPreparerSig] = useState(false);
   const [showPreparerPad, setShowPreparerPad] = useState(false);
-  const [rememberPreparerSig, setRememberPreparerSig] = useState(true);
+  const [rememberPreparerSig, setRememberPreparerSig] = useState(canSavePreparerSignature);
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
@@ -654,6 +657,7 @@ export function PlaceSignatureClient({
       {allowPreparerSignature && showPreparerPad && (
         <PreparerSignaturePad
           hasSaved={hasSavedPreparerSig}
+          canSave={canSavePreparerSignature}
           remember={rememberPreparerSig}
           onRememberChange={setRememberPreparerSig}
           onCancel={() => setShowPreparerPad(false)}
@@ -787,12 +791,14 @@ export function PlaceSignatureClient({
 // server's chroma-key turns it transparent like the client signature.
 function PreparerSignaturePad({
   hasSaved,
+  canSave,
   remember,
   onRememberChange,
   onCancel,
   onUse,
 }: {
   hasSaved: boolean;
+  canSave: boolean;
   remember: boolean;
   onRememberChange: (v: boolean) => void;
   onCancel: () => void;
@@ -872,10 +878,17 @@ function PreparerSignaturePad({
         <button type="button" onClick={clear} className="px-3 py-1.5 rounded border border-slate-300 bg-white hover:bg-slate-50">
           Clear
         </button>
-        <label className="inline-flex items-center gap-1.5 text-slate-700">
-          <input type="checkbox" checked={remember} onChange={(e) => onRememberChange(e.target.checked)} />
-          {hasSaved ? "Replace my saved signature with this one" : "Save to my admin account for next time"}
-        </label>
+        {canSave ? (
+          <label className="inline-flex items-center gap-1.5 text-slate-700">
+            <input type="checkbox" checked={remember} onChange={(e) => onRememberChange(e.target.checked)} />
+            {hasSaved ? "Replace my saved signature with this one" : "Save to my admin account for next time"}
+          </label>
+        ) : (
+          <span className="text-slate-500">
+            Signed in with the shared admin password, so this signature can&apos;t be saved for next time. Sign in
+            with your own admin email to keep it.
+          </span>
+        )}
         <div className="flex-1" />
         <button type="button" onClick={onCancel} className="px-3 py-1.5 rounded border border-slate-300 bg-white hover:bg-slate-50">
           Cancel

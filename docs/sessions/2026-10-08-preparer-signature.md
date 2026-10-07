@@ -11,6 +11,9 @@
 - Server: placement kind `preparerSignature` (only accepted where `allowPreparerSignature`), separate PNG passed to `stampPlacements` (4th arg); drawn PNG validated (PNG magic, ≤1 MB, decodable by sharp); per-filing copy `${filingId}_preparer_signature_<ts>_<rand>.png`; change log `field: "preparer_signature"` with `signedBy`. GET/DELETE `/api/admin/preparer-signature` returns/forgets the caller's own saved signature only.
 - Evidence: targeted vitest 65/65 (stampPlacements, preparerSignature, place-signature route, EIN/ITIN adminSignature callers), tsc 0, eslint 0, build OK. Codex review: P2 key collisions + P3 corrupt PNG → fixed; re-check "ship".
 
+### Follow-up (same day)
+- Live check on the owner's filing showed the session is the shared admin password (adminId null), so "Save to my admin account" silently did nothing. The page now passes `canSavePreparerSignature` (personal login only) and the pad explains that the shared session can't keep a signature. tsc/eslint/route tests/build OK.
+
 ## Contracts
 - Client signature (`signature`) and preparer signature (`preparerSignature`) are separate images end to end; never swap or reuse one as the other.
 - Preparer signatures come only from the signed-in admin (drawn now or their own saved copy). Shared-password sessions (adminId null) can draw but can't save/reuse.

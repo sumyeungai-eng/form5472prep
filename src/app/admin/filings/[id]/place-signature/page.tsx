@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { isAdmin } from "@/lib/admin/auth";
+import { getAdminPrincipal } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { PlaceSignatureClient } from "./PlaceSignatureClient";
 
@@ -12,7 +12,8 @@ export const metadata = { robots: { index: false, follow: false } };
 // drag-and-drop that signature image onto the correct spots on the
 // unsigned PDF, then click Save to produce the final signed PDF.
 export default async function PlaceSignaturePage({ params }: { params: { id: string } }) {
-  if (!(await isAdmin())) redirect("/admin/login");
+  const principal = await getAdminPrincipal().catch(() => null);
+  if (!principal) redirect("/admin/login");
 
   const filing = await prisma.filing.findUnique({
     where: { id: params.id },
@@ -49,6 +50,8 @@ export default async function PlaceSignaturePage({ params }: { params: { id: str
       taxYears={filing.taxYears}
       hasExistingSignedPdf={!!filing.signedPdfKey}
       allowPreparerSignature
+      // Only a personal admin login has an account to keep a signature on.
+      canSavePreparerSignature={!!principal.adminId}
     />
   );
 }
