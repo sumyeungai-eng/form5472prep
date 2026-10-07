@@ -1,4 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+// slugify lives in blog.ts, which imports prisma; no database in unit tests.
+vi.mock("@/lib/prisma", () => ({ prisma: {} }));
+
+import { slugify } from "./blog";
 import { parseLandingBody } from "./landing-body";
 import { deriveHowTo, IMPERATIVE_VERBS, stepName } from "./landing-howto";
 import { LANDING_PAGES } from "./landing-pages";
@@ -225,5 +230,39 @@ describe("landing page public copy", () => {
         expect(text, `${page.slug}: ${pattern}`).not.toMatch(pattern);
       }
     }
+  });
+});
+
+describe("landing page in-guide anchor links", () => {
+  // Mirrors headingIdsFor() in src/app/(marketing)/[seoSlug]/page.tsx: each
+  // section <h2> gets slugify(heading), with -2, -3 suffixes for repeats.
+  const idsBySlug = new Map(
+    LANDING_PAGES.map((page) => {
+      const seen = new Map<string, number>();
+      const ids = page.sections.map((section, index) => {
+        const base = slugify(section.heading) || `section-${index + 1}`;
+        const count = seen.get(base) ?? 0;
+        seen.set(base, count + 1);
+        return count === 0 ? base : `${base}-${count + 1}`;
+      });
+      return [page.slug, new Set(ids)] as const;
+    }),
+  );
+
+  it("points every /<guide>#anchor link at a real section heading", () => {
+    let checked = 0;
+    for (const page of LANDING_PAGES) {
+      const text = JSON.stringify(page.sections);
+      const linkPattern = /\]\(\/([a-z0-9-]+)#([^)\s]+)\)/g;
+      let match: RegExpExecArray | null;
+      while ((match = linkPattern.exec(text)) !== null) {
+        const [, slug, anchor] = match;
+        const ids = idsBySlug.get(slug);
+        if (!ids) continue; // not a guide page; other routes own their anchors
+        expect(ids.has(anchor), `${page.slug} links to /${slug}#${anchor}`).toBe(true);
+        checked += 1;
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
   });
 });

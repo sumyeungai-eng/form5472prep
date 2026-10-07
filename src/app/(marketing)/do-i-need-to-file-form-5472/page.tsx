@@ -3,7 +3,14 @@ import type { Metadata } from "next";
 import { ArrowRight, CheckCircle2, ExternalLink, ShieldCheck } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
-import { SPEAKABLE, breadcrumbList, organizationNode, pageMeta } from "@/lib/seo";
+import {
+  IRS_OGDEN_FAX,
+  IRS_OGDEN_MAIL_ADDRESS,
+  SPEAKABLE,
+  breadcrumbList,
+  organizationNode,
+  pageMeta,
+} from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
 import {
   LAST_REVIEWED_ISO,
@@ -16,7 +23,7 @@ import { FilingChecker } from "./FilingChecker";
 const PAGE_PATH = "/do-i-need-to-file-form-5472";
 const PAGE_TITLE = "Do I Need to File Form 5472? 2-Minute Checker";
 const PAGE_DESCRIPTION =
-  "Use this free checker to see whether your foreign-owned US LLC likely needs Form 5472 and pro forma 1120 for the tax year.";
+  "Who must file Form 5472 and the filing requirements, from the IRS instructions, plus a free checker to see whether your foreign-owned US LLC needs Form 5472 and pro forma 1120.";
 
 export const metadata: Metadata = {
   // seoTitle(): brand only when it fits in 60 chars (it does not here).
@@ -55,6 +62,7 @@ export default function DoINeedToFileForm5472Page() {
       <Hero />
       <FilingChecker />
       <PlainEnglishRule />
+      <FilingRequirements />
       <HowWeDecide />
       <Faq />
       <FinalCta />
@@ -131,6 +139,111 @@ function PlainEnglishRule() {
             process. This checker separates those cases so the answer is not forced into a filing sale
             when the facts point elsewhere.
           </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Answer-first capsules for "who must file Form 5472" and "Form 5472 filing
+// requirements" (docs/seo/moz-full-report-2026-10-07.md §3.6 item 7). Every
+// statement is from the Form 5472 instructions (Rev. 12/2024), Treas. Reg.
+// §301.7701-2(c)(2)(vi) or IRM 20.1.9.5.1; keep each lead answer under 60 words.
+function FilingRequirements() {
+  return (
+    <section id="filing-requirements" className="border-b border-slate-100 bg-white py-16">
+      <div className="mx-auto max-w-3xl space-y-12 px-6">
+        <div>
+          <h2 id="who-must-file-form-5472" className="font-serif text-2xl font-semibold text-ink sm:text-3xl">
+            Who must file Form 5472?
+          </h2>
+          <div className="mt-6 space-y-4 text-sm leading-relaxed text-slate-600">
+            <p data-speakable>
+              Generally, a &ldquo;reporting corporation&rdquo; that had a reportable transaction with a foreign
+              or domestic related party must file Form 5472. The IRS defines a reporting corporation as
+              a 25% foreign-owned US corporation, including a foreign-owned US disregarded entity, or a
+              foreign corporation engaged in a trade or business within the United States.
+            </p>
+            <p>That covers three kinds of filer:</p>
+            <ul className="list-disc space-y-2 pl-5">
+              <li>
+                <strong className="text-slate-800">A 25% foreign-owned US corporation:</strong> at least
+                one foreign person owns, directly or indirectly, at least 25% of the total voting power
+                or total value of its stock at any time during the tax year.
+              </li>
+              <li>
+                <strong className="text-slate-800">
+                  A foreign corporation engaged in a US trade or business.
+                </strong>
+              </li>
+              <li>
+                <strong className="text-slate-800">A foreign-owned US disregarded entity:</strong> a
+                domestic entity, such as a single-member LLC, that one foreign person wholly owns,
+                directly or indirectly. Treas. Reg. §301.7701-2(c)(2)(vi) treats it as a corporation for
+                section 6038A purposes, so it is a reporting corporation even though it is disregarded
+                for income tax.
+              </li>
+            </ul>
+            <p>
+              A reporting corporation does not file for a year with no reportable transactions of the
+              types listed in Parts IV and VI of the form, and, for a foreign-owned US disregarded
+              entity, Part V. Several other exceptions in the instructions, such as the Form 5471
+              exception, do not apply to foreign-owned US disregarded entities.
+            </p>
+          </div>
+        </div>
+        <div>
+          <h2
+            id="form-5472-filing-requirements"
+            className="font-serif text-2xl font-semibold text-ink sm:text-3xl"
+          >
+            What are the Form 5472 filing requirements?
+          </h2>
+          <div className="mt-6 space-y-4 text-sm leading-relaxed text-slate-600">
+            <p data-speakable>
+              A reporting corporation files a separate Form 5472 for each related party it had
+              reportable transactions with, attached to its income tax return by that return&rsquo;s
+              due date, including extensions. A foreign-owned US disregarded entity attaches Form 5472
+              to a pro forma Form 1120 and must fax or mail it; it cannot e-file.
+            </p>
+            <ul className="list-disc space-y-2 pl-5">
+              <li>
+                <strong className="text-slate-800">The pro forma Form 1120:</strong> only the
+                LLC&rsquo;s name and address and items B and E on page 1 are required, with
+                &ldquo;Foreign-owned U.S. DE&rdquo; written across the top.
+              </li>
+              <li>
+                <strong className="text-slate-800">Where to send it:</strong> fax (300 DPI or higher)
+                to {IRS_OGDEN_FAX}, or mail to {IRS_OGDEN_MAIL_ADDRESS}. See{" "}
+                <Link href="/form-5472-fax-number" className="font-medium text-accent hover:underline">
+                  where to file Form 5472
+                </Link>
+                .
+              </li>
+              <li>
+                <strong className="text-slate-800">When:</strong> by the Form 1120 due date, April 15
+                for a calendar-year LLC, or later with a Form 7004 extension filed by the original due
+                date.
+              </li>
+              <li>
+                <strong className="text-slate-800">Records:</strong> the reporting corporation must keep
+                books and records sufficient to establish the correctness of its federal tax return,
+                including records relevant to the correct treatment of related-party transactions.
+              </li>
+              <li>
+                <strong className="text-slate-800">Penalty:</strong> $25,000 for not filing when due
+                and in the manner prescribed, or for not keeping the required records; a substantially
+                incomplete Form 5472 counts as not filed.
+              </li>
+            </ul>
+            <p>
+              For a part-by-part walkthrough, read our{" "}
+              <Link href="/form-5472-instructions" className="font-medium text-accent hover:underline">
+                Form 5472 instructions
+              </Link>{" "}
+              guide.
+            </p>
+          </div>
         </div>
       </div>
     </section>

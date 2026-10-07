@@ -2,6 +2,8 @@
 // One page per long-tail query that buyers actually search for.
 // All content funnels back to /start.
 
+import { IRS_OGDEN_FAX, IRS_OGDEN_MAIL_ADDRESS } from "@/lib/seo";
+
 export type LandingTable = { caption: string; columns: string[]; rows: string[][] };
 
 export type LandingSection = {
@@ -66,7 +68,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
     published: "2026-05-19",
-    updated: "2026-10-05",
+    updated: "2026-10-07",
     h1: "How to File IRS Form 5472",
     intro:
       "Foreign-owned US single-member LLCs must file Form 5472 with an attached pro forma Form 1120 by April 15 each year. The IRS accepts the annual package by mail or fax to the Ogden PIN Unit at +1-855-887-7737, and our 15-minute online filer starts from $149.",
@@ -98,8 +100,8 @@ export const LANDING_PAGES: LandingPage[] = [
         body: "Form 5472 is split by role and transaction type. Part I identifies the LLC, Parts II and III identify the foreign owner or related party, Parts IV and V report payments, contributions and distributions, and Part VII confirms foreign-owned disregarded entity status.\n\nPart II — 25%+ Foreign Shareholder: you, the foreign owner. Name, address, US ITIN (if you have one) or Reference ID, country of citizenship, country of organization.\n\nPart III — Related Party: same as Part II for a single-owner LLC, since you are both the 25%+ shareholder and the related party. For multi-related-party scenarios, you list each one.\n\nPart IV — Monetary Transactions Between Reporting Corporation and Foreign Related Party: dollar amounts of sales, services, rents, royalties, interest, loans, and other payments in each direction.\n\nPart V — Reportable Transactions of a Reporting Corporation That Is a Foreign-Owned U.S. DE: this is where capital contributions, distributions, and most owner-to-LLC payments get reported. Must be backed by a supporting statement.\n\nPart VII — Additional Information for FDE: confirms the LLC is a disregarded entity and identifies it as foreign-owned.",
       },
       {
-        heading: "Why can't I e-file?",
-        body: "Foreign-owned US disregarded entities are explicitly excluded from IRS e-filing for Form 5472 and the attached pro forma Form 1120. The IRS Modernized e-File (MeF) system cannot process these returns — the IRS publishes their fax number (+1-855-887-7737) specifically because there's no e-file option.\n\nFax is faster than mail and gives you a transmission receipt with a timestamp — which is your transmission evidence to retain with the exact package. Certified mail with a return receipt works too, but takes longer and is harder to track.\n\nDo not try to file through a normal e-file service like TurboTax, FreeTaxUSA, or H&R Block. They cannot submit Form 5472 for a foreign-owned single-member LLC even if they accept your money. The return will simply not reach the IRS.",
+        heading: "Can Form 5472 be filed online or e-filed?",
+        body: `No, not for a foreign-owned US disregarded entity. The IRS Instructions for Form 5472 (Rev. December 2024) state that a foreign-owned U.S. DE cannot file Form 5472 electronically. It files Form 5472 and the pro forma Form 1120 by fax to the IRS at ${IRS_OGDEN_FAX} or by mail to the dedicated Ogden address.\n\nThe e-file rule is different for other reporting corporations: the instructions tell a corporation that files its income tax return electronically to see that return's instructions for general information about electronic filing. The ban applies to the foreign-owned DE route, which is the single-member LLC case this page covers.\n\n"Filing online" for a foreign-owned LLC therefore means preparing the package online and sending it by fax. Consumer e-file software is not a route for this package. Fax gives you a timestamped transmission receipt to keep with the exact package; certified mail with a return receipt also works but takes longer. See [where to file Form 5472](/form-5472-fax-number) for the fax number and mailing address.`,
       },
       {
         heading: "What does a real Form 5472 filing look like?",
@@ -171,21 +173,30 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "form 5472 $25,000 penalty",
     title: "Form 5472 $25,000 Penalty — How to Avoid or Reduce It",
     metaDescription:
-      "The IRS automatically charges $25,000 per missed or late Form 5472. Learn how to avoid it, request abatement under DIIRSP, and file safely online from $149.",
+      "The Form 5472 penalty is $25,000 under IRC §6038A(d). How to ask the IRS to remove it, what counts as reasonable cause, whether first-time abatement applies, and how to appeal.",
     sources: [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+      { label: "IRM 20.1.9: International penalties", url: "https://www.irs.gov/irm/part20/irm_20-001-009" },
+      { label: "IRM 20.1.1: Penalty relief (incl. 20.1.1.3.3.2.1 First Time Abate)", url: "https://www.irs.gov/irm/part20/irm_20-001-001r" },
+      { label: "IRS: Penalty relief", url: "https://www.irs.gov/payments/penalty-relief" },
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
+      { label: "IRS: Penalty appeal", url: "https://www.irs.gov/appeals/penalty-appeal" },
+      { label: "Treas. Reg. §1.6038A-4 (penalties, reasonable cause)", url: "https://www.ecfr.gov/current/title-26/section-1.6038A-4" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
     published: "2026-05-19",
-    updated: "2026-10-05",
+    updated: "2026-10-07",
     h1: "The Form 5472 $25,000 Penalty Explained",
     intro:
-      "Under IRC § 6038A(d), the IRS automatically assesses a $25,000 penalty for each Form 5472 that is late, incomplete, or missing, per year and per LLC. If you do not fix it within 90 days of an IRS notice, the penalty stacks at $25,000 per 30-day period.",
+      "Under IRC §6038A(d), the Form 5472 penalty is $25,000 for each required Form 5472 not filed on time or filed substantially incomplete, plus $25,000 per 30-day period if the failure continues 90 days after an IRS notice. This guide covers how relief works: reasonable cause, first-time abatement and appeals.",
     sections: [
       {
+        heading: "What is the Form 5472 penalty?",
+        body: "The Form 5472 penalty is $25,000 under IRC §6038A(d) for each failure to file a required Form 5472 when due and in the manner prescribed, or to keep the required records. The IRS instructions say a substantially incomplete Form 5472 counts as a failure to file.\n\nIf the failure continues for more than 90 days after the IRS mails a notice, an additional $25,000 applies for each 30-day period, or part of one, that it continues. The IRS manual says this continuation penalty has no maximum and that the initial penalty is asserted once per related party per tax year (IRM 20.1.9.5.4). For tax years beginning before January 1, 2018, both amounts were $10,000.\n\nThe penalty is for the missing information, not for unpaid tax, so it can apply to an LLC that owes no US income tax. Estimate your own exposure with the [Form 5472 penalty calculator](/form-5472-penalty-calculator).",
+      },
+      {
         heading: "How is the penalty calculated?",
-        body: "$25,000 per Form 5472, per tax year. If you missed 3 years of filing for one LLC, that's $75,000 in automatic penalties. If you own multiple LLCs and missed all of them, multiply accordingly: 2 LLCs × 3 missed years = 6 forms × $25,000 = $150,000.\n\nThe penalty is automatic — the IRS computer system assesses it without a human reviewing your case. You receive a CP-15 notice in the mail at the LLC's address of record. The notice gives you 90 days to respond before continuation penalties begin.\n\nIt does not matter whether your LLC made any money, owed any US tax, or had any US-source income. The penalty is for failing to file the information return, not for failing to pay tax. A perfectly compliant foreign-owned LLC with $0 income and $0 tax due still owes $25,000 if it misses the filing.",
+        body: "$25,000 per Form 5472, per tax year. If you missed 3 years of filing for one LLC, that's $75,000 in initial penalties. If you own multiple LLCs and missed all of them, multiply accordingly: 2 LLCs × 3 missed years = 6 forms × $25,000 = $150,000.\n\nAn LLC with more than one related party files one Form 5472 per related party, and the IRS manual says the initial penalty applies per related party per tax year.",
         table: {
           caption: "Form 5472 penalty amounts and triggers",
           columns: ["Penalty", "Amount", "When it applies"],
@@ -202,11 +213,27 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you avoid the penalty entirely?",
-        body: "1. File on time — by April 15 of the year following the tax year, or by October 15 if you filed Form 7004 for an extension by April 15.\n2. File completely — Parts I, II, III, IV, V, and VII of Form 5472, plus the pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp, plus the Part V supporting statement.\n3. File by the right method — fax to +1-855-887-7737 (IRS Ogden PIN Unit) or mail certified to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201. The IRS does not accept these via e-file or email.\n4. Keep your fax transmission receipt — it records provider-reported transmission, not IRS acceptance. The current instructions do not describe a routine acceptance acknowledgment for this faxed package.\n5. Use a US address that can actually receive mail in case the IRS sends a notice.",
+        body: `1. File on time — by April 15 of the year following the tax year, or by October 15 if you filed Form 7004 for an extension by April 15.\n2. File completely — Parts I, II, III, IV, V, and VII of Form 5472, plus the pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp, plus the Part V supporting statement.\n3. File by the right method — fax to ${IRS_OGDEN_FAX} or mail to ${IRS_OGDEN_MAIL_ADDRESS}. The IRS instructions say a foreign-owned US DE cannot file Form 5472 electronically.\n4. Keep your fax transmission receipt — it records provider-reported transmission, not IRS acceptance. The current instructions do not describe a routine acceptance acknowledgment for this faxed package.\n5. Use a US address that can actually receive mail in case the IRS sends a notice.`,
+      },
+      {
+        heading: "How do I ask the IRS to remove (abate) a Form 5472 penalty?",
+        body: "Follow the instructions on the IRS penalty notice and send a written request showing reasonable cause. Treasury Regulation §1.6038A-4(b) requires an affirmative showing of all the facts in a written statement made under penalties of perjury. The IRS penalty relief page says relief can be requested in writing with Form 843.\n\nWhat the IRS sources say about the request:\n\n• File every missing return first. The IRS manual recommends that reasonable cause not be considered for any year until all delinquent returns have been filed (IRM 20.1.9.5.5).\n• Sign under penalties of perjury. The manual says requests to abate international penalties for reasonable cause should contain that declaration (IRM 20.1.9.1.5).\n• Treat the continuation penalty separately. The manual says the latest date reasonable cause can exist is 90 days after the IRS notice, so there is no reasonable cause exception for the continuation penalty (IRM 20.1.9.5.5).\n• Do not rely on relief for the Form 1120. The manual says relief granted on the related income tax return does not automatically relieve the failure to file the information return (IRM 20.1.9.1.5).\n\nOur [Form 5472 reasonable cause statement](/form-5472-reasonable-cause-statement) guide covers what to put in the statement. If the returns themselves are still missing, our [late Form 5472 filing service](/services/late-form-5472-filing-service) prepares them. No request is guaranteed to succeed.",
+      },
+      {
+        heading: "What counts as reasonable cause?",
+        body: "Reasonable cause means you acted in good faith and the failure happened despite ordinary business care and prudence; the IRS decides it case by case. For Form 5472, Treasury Regulation §1.6038A-4(b) says reasonable cause is applied liberally for a small corporation that meets specific conditions.\n\nUnder §1.6038A-4(b)(2)(ii), as summarised in IRM 20.1.9.5.5, that liberal approach applies to a small corporation that:\n\n• had no knowledge of the section 6038A requirements;\n• has limited presence in and contact with the United States;\n• promptly and fully complies with all IRS requests to file Form 5472; and\n• promptly and fully complies with all requests for books and records relevant to the reportable transaction.\n\nThe manual defines a small corporation as one with gross receipts of $20,000,000 or less for the tax year, and notes there is no small-corporation exception from filing Form 5472 itself.\n\nThe manual also lists reasons that are not enough on their own: that a foreign country would penalize disclosure, that a foreign trustee refused to provide information, or that you relied on another person to file the return (IRM 20.1.9.1.5). Whether your facts qualify is for the IRS to decide.",
+      },
+      {
+        heading: "Does first-time abatement apply to Form 5472 penalties?",
+        body: "Generally no. The IRS manual (IRM 20.1.1.3.3.2.1) lists Form 5472 among returns where first-time abatement does not apply, because it is an event-based filing. IRM 20.1.9.5.5 gives one narrow exception, tied to first-time abatement of the failure-to-file penalty on the related Form 1120.\n\nThe exception covers the initial penalty the IRS assesses systemically when a late Form 5472 is attached to a late-filed Form 1120. Under IRM 20.1.9.5.5, that penalty may also be abated under first-time abatement when the failure-to-file penalty on the related Form 1120 is abated that way, or would have been eligible but was not assessed because there was $0 tax due or the return was fully paid, and:\n\n• there were no similar Form 5472 penalties in the three prior periods; and\n• the related Form 1120 was not filed late in the three prior periods.\n\nThe manual does not say how this exception applies to a foreign-owned LLC's pro forma Form 1120, so treat it as a question to raise, not a promise. Where it does not apply, the manual says relief is still available if reasonable cause is shown.",
+      },
+      {
+        heading: "How do I appeal a Form 5472 penalty?",
+        body: "If the IRS denies your written request to remove the penalty, you may be able to request a conference with the IRS Independent Office of Appeals. The IRS says you generally have 30 days from the date of the rejection letter, and the letter gives the exact deadline.\n\nFor international information return penalties such as this one, the IRS manual says Appeals provides a prepayment, post-assessment appeal process, and an accelerated process for certain international penalties (IRM 20.1.9.1.5). IRS Publication 4576 gives an overview of the penalty appeals process.\n\nThe IRS says to send an explanation of the detailed facts and circumstances with your appeal request. Anyone other than you can discuss the penalty with the IRS only with an authorization such as Form 2848 or Form 8821 (IRM 20.1.9.1.5). An appeal is a review, not a guaranteed result.",
       },
       {
         heading: "How do you get the penalty abated under DIIRSP?",
-        body: "If you've already missed filings, the IRS Delinquent International Information Return Submission Procedure (DIIRSP) lets you submit late returns with a Reasonable Cause Statement requesting penalty abatement. The statement must:\n\n• Explain specifically why the form wasn't filed on time.\n• Show that you acted in good faith and exercised ordinary business care and prudence.\n• Describe the circumstances honestly (lack of awareness as a first-time foreign LLC owner, reliance on a tax professional who didn't flag the obligation, illness, language barrier, etc.).\n• Confirm that you're now filing all delinquent returns concurrently and have taken steps to ensure future compliance.\n\nThe IRS does NOT guarantee abatement. The IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP15) follows.",
+        body: "If you've already missed filings, the IRS Delinquent International Information Return Submission Procedure (DIIRSP) lets you submit late returns with a Reasonable Cause Statement requesting penalty abatement. The statement must:\n\n• Explain specifically why the form wasn't filed on time.\n• Show that you acted in good faith and exercised ordinary business care and prudence.\n• Describe the circumstances honestly and specifically. The IRS manual says relying on another person to file is not, by itself, reasonable cause.\n• Confirm that you're now filing all delinquent returns concurrently and have taken steps to ensure future compliance.\n\nThe IRS does NOT guarantee abatement. The IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP15) follows.",
       },
       {
         heading: "What triggers the penalty besides missing the filing deadline?",
@@ -227,19 +254,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you handle the penalty if you can't pay?",
-        body: "If the IRS assesses a penalty and you don't qualify for full abatement, you have options:\n\n• Partial abatement: the IRS may waive part of the penalty based on partial reasonable cause.\n• Installment agreement: pay over time, typically up to 72 months.\n• Offer in Compromise: in cases of genuine financial hardship, the IRS may accept less than the full amount.\n• First-Time Abate (FTA): a separate program for taxpayers with a clean compliance history of the prior 3 years.\n\nNone of these are guaranteed and all are more complex than just filing on time. If you're already in penalty territory, talk to a tax professional or enrolled agent who handles international information returns.",
+        body: "If the IRS assesses a penalty and you don't qualify for full abatement, you have options:\n\n• Partial abatement: the IRS may waive part of the penalty based on partial reasonable cause.\n• Installment agreement: ask the IRS about paying over time.\n• Offer in Compromise: in cases of genuine financial hardship, the IRS may accept less than the full amount.\n• First-Time Abate (FTA): the IRS manual says it generally does not apply to Form 5472 penalties, apart from the narrow Form 1120-linked exception described above.\n\nNone of these are guaranteed and all are more complex than just filing on time. If you're already in penalty territory, talk to a tax professional or enrolled agent who handles international information returns.",
       },
       {
         heading: "Does the penalty apply to multi-member LLCs?",
         body: "Form 5472 also applies to US corporations that are 25%+ owned by a foreign person, but the filing is different and outside the scope of our service. The $25,000 penalty applies the same way for those filings under IRC § 6038A — but the actual forms include real income and tax calculations, not just a pro forma 1120.\n\nIf your LLC has more than one member, our wizard will flag you out at the pre-flight step. You'll need a CPA familiar with foreign-owned partnerships (Form 8865) or corporations (Form 5472 + full Form 1120). The good news: we handle the most common foreign-owned LLC case (single-member, foreign-owned, disregarded for tax) at flat rates.",
-      },
-      {
-        heading: "How do we handle the DIIRSP process?",
-        body: "Form5472 Prep automatically generates a Reasonable Cause Statement when you file a late return. The narrative is tailored to first-time foreign LLC owners — the most common DIIRSP scenario — and you can edit it in the wizard if your circumstances are different.\n\nPricing for catch-up filings:\n• 1 year: $149 Standard / $199 Express (fax included)\n• 2-year DIIRSP catch-up: $248 Standard / $298 Express (fax included)\n• 3-year DIIRSP catch-up: $347 Standard / $397 Express (fax included)\n\nFiling all missed years together with one comprehensive reasonable cause statement gives the strongest abatement argument. Every package is reviewed by an accountant on our team before we fax to the IRS Ogden PIN Unit. 100% money-back guarantee if we fail to submit.",
-      },
-      {
-        heading: "What is the bottom line on Form 5472 penalties?",
-        body: "The bottom line is that Form 5472 penalties are the largest compliance risk many foreign LLC owners miss. The $25,000 penalty applies per form and per year, stacks if ignored, and can turn one missed filing into a six-figure problem.\n\nThree things keep you safe:\n\n1. File every year, on time, completely, by fax to +1-855-887-7737.\n2. If you've missed filings, catch up under DIIRSP immediately with a reasonable cause statement.\n3. Don't ignore IRS notices — the continuation penalty makes a manageable problem into a six-figure one.\n\nOur 15-minute online filer handles all of this from $149. IRS fax delivery included. +$99 per additional past year. Accountant-reviewed, with a money-back guarantee if we fail to submit.",
       },
     ],
     faqs: [
@@ -248,12 +267,16 @@ export const LANDING_PAGES: LandingPage[] = [
         a: "Both. It's $25,000 per Form 5472 you should have filed — and each LLC files one form per tax year. If you own 2 LLCs and missed 3 years on each, that's 6 forms × $25,000 = $150,000.",
       },
       {
+        q: "Is there a deadline to appeal a Form 5472 penalty?",
+        a: "The IRS says you generally have 30 days from the date of the letter rejecting your penalty relief request to ask for an Appeals conference. The rejection letter states the exact deadline, so check it as soon as it arrives.",
+      },
+      {
         q: "Will the IRS waive the penalty automatically?",
         a: "No. You must affirmatively request abatement with a Reasonable Cause Statement filed alongside the late return. The IRS doesn't apply waivers on its own.",
       },
       {
         q: "Has the IRS actually enforced this?",
-        a: "Yes. The IRS has automated penalty assessment for Form 5472 since 2018. Thousands of foreign LLC owners have received $25,000+ CP-15 notices in the mail. It is not a paper-tiger penalty.",
+        a: "Yes. The IRS manual says the penalty may be assessed systemically when a late Form 5472 is attached to a late-filed Form 1120, and examiners can also assert it (IRM 20.1.9.5.3). Treat it as a real exposure, not a paper-tiger penalty.",
       },
       {
         q: "If I file under DIIRSP, am I guaranteed the penalty is waived?",
@@ -278,10 +301,6 @@ export const LANDING_PAGES: LandingPage[] = [
       {
         q: "Can I pay the penalty and skip the filing?",
         a: "No. Paying a CP-15 penalty does not satisfy the filing requirement. You still owe the Form 5472 — and continuation penalties continue to stack until you actually file.",
-      },
-      {
-        q: "What does your service cost vs. the penalty exposure?",
-        a: "Our service is $149 on Standard (ready in 5-7 business days) or $199 on Express (within 3), plus $99 per additional past year. The penalty for a single missed year is $25,000 — a fraction of our service price. For multi-year catch-up packages (add $99 per additional past year), the math is even more compelling against ignoring the obligation.",
       },
     ],
     relatedSlugs: ["diirsp", "late-form-5472", "file-form-5472", "form-5472-reasonable-cause-statement", "form-5472-deadline"],
@@ -336,7 +355,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What makes a good Reasonable Cause Statement?",
-        body: "The IRS evaluates whether you acted with \"ordinary business care and prudence.\" Strong statements include:\n\n• A clear timeline of when and how you became aware of the filing requirement.\n• Specific personal circumstances — first-time foreign LLC owner, reliance on a tax professional who didn't flag the obligation, language barrier, the LLC was formed as part of a Stripe Atlas / startup accelerator package and the filing wasn't part of the onboarding, etc.\n• Evidence you took corrective action immediately upon learning (and how soon — \"I learned in March 2026 and am filing in April 2026\" is much stronger than \"I learned in 2024 and am filing now\").\n• Explicit confirmation that no US tax is owed and that this is purely an information-return delinquency.\n• A statement that you will comply going forward, ideally citing the system you've put in place (e.g. annual filing reminder, signed up for an annual filing service).\n• Concise — typically 1-2 pages.\n\nGeneric statements like \"I didn't know\" are weak. Specific, factual statements tied to your real circumstances work.",
+        body: "The IRS evaluates whether you acted with \"ordinary business care and prudence.\" Strong statements include:\n\n• A clear timeline of when and how you became aware of the filing requirement.\n• Specific personal circumstances — first-time foreign LLC owner, reliance on a tax professional who didn't flag the obligation, language barrier, the LLC was formed as part of a Stripe Atlas / startup accelerator package and the filing wasn't part of the onboarding, etc.\n• Evidence you took corrective action immediately upon learning (and how soon — \"I learned in March 2026 and am filing in April 2026\" is much stronger than \"I learned in 2024 and am filing now\").\n• Explicit confirmation that no US tax is owed and that this is purely an information-return delinquency.\n• A statement that you will comply going forward, ideally citing the system you've put in place (e.g. annual filing reminder, signed up for an annual filing service).\n• Concise — typically 1-2 pages.\n\nGeneric statements like \"I didn't know\" are weak. Specific, factual statements tied to your real circumstances work.\n\nFor a sample structure and what to include, see our [Form 5472 reasonable cause statement](/form-5472-reasonable-cause-statement) guide.",
       },
       {
         heading: "What weakens a Reasonable Cause Statement?",
@@ -412,18 +431,26 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "form 5472 instructions",
     title: "Form 5472 Instructions (2026) — Plain-English Walkthrough",
     metaDescription:
-      "Form 5472 instructions for foreign-owned US LLCs explain each part, common mistakes, and how to submit the complete package to the IRS Ogden PIN Unit.",
+      "Form 5472 instructions (Rev. December 2024) in plain English for foreign-owned US LLCs: what to enter in each part, common mistakes, and how to file the package.",
     sources: [
-      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
-      { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
+      { label: "IRS: Instructions for Form 5472 (Rev. December 2024)", url: "https://www.irs.gov/instructions/i5472" },
+      { label: "IRS: About Form 5472 (current revision)", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
     published: "2026-05-19",
-    updated: "2026-09-11",
+    updated: "2026-10-07",
     h1: "Form 5472 Instructions: Plain-English Walkthrough",
     intro:
-      "The official IRS instructions for Form 5472 are 12 pages of dense regulatory language written for tax professionals. This is what each part actually means without the jargon, exactly what to put in each box, the common mistakes that trigger the $25,000 penalty, and how to put together a complete filing that the IRS will accept on the first read.",
+      "This guide walks through the IRS Instructions for Form 5472 (Rev. December 2024), the current revision on IRS.gov, in plain English. It explains what each part means for a foreign-owned US single-member LLC, what to enter, the mistakes that can trigger the $25,000 penalty, and how to assemble a complete filing package.",
     sections: [
+      {
+        heading: "Which Form 5472 instructions apply to tax year 2025?",
+        body: "As of October 2026, IRS.gov lists the Instructions for Form 5472 (Rev. December 2024) as the current revision, for use with the December 2023 revision of Form 5472. Unless the IRS posts a newer revision, those are the versions for tax year 2025 returns filed in 2026.\n\nThe What's New section of the December 2024 revision has one change: the joint-return exception in the definition of foreign person now cites Code sections 6013(g) and (h). The rules a foreign-owned US disregarded entity relies on — the pro forma Form 1120, the dedicated fax and mailing route, and no e-filing — sit under When and Where To File.\n\nTo see the instructions applied to a filled-in return, look at our [Form 5472 example](/form-5472-example).",
+      },
+      {
+        heading: "What's on this page?",
+        body: "This walkthrough follows the IRS form from top to bottom, one part at a time, for a foreign-owned US single-member LLC.\n\n• [What to gather before you start](/form-5472-instructions#what-do-you-need-to-gather-before-you-start): EIN letter, NAICS code, FTIN or Reference ID.\n• [The top of the form](/form-5472-instructions#what-goes-at-the-top-of-form-5472): tax year, number of forms, total payments.\n• [Part I](/form-5472-instructions#what-goes-in-part-i-of-form-5472): the reporting LLC.\n• [Part II](/form-5472-instructions#what-goes-in-part-ii-of-form-5472): the 25% foreign shareholder.\n• [Part III](/form-5472-instructions#what-goes-in-part-iii-of-form-5472): the related party.\n• [Part IV](/form-5472-instructions#what-goes-in-part-iv-of-form-5472): monetary transactions.\n• [Part V](/form-5472-instructions#what-goes-in-part-v-of-form-5472): contributions, distributions and other DE transactions.\n• [Part VII](/form-5472-instructions#what-goes-in-part-vii-of-form-5472): additional information.\n• [Signing the package](/form-5472-instructions#how-do-you-sign-the-form-5472-package): the Form 1120 signature block.\n• [Common mistakes](/form-5472-instructions#what-are-the-common-mistakes-that-trigger-penalties) that create penalty exposure.",
+      },
       {
         heading: "What do you need to gather before you start?",
         body: "You need your LLC CP-575, formation details, NAICS code, year-end assets, reportable transactions, FTIN or Reference ID, address, citizenship, and tax-residence countries before you start.\n\n• Your LLC's CP-575 EIN confirmation letter from the IRS (gives you the legal name, EIN, and US address exactly as the IRS has them).\n• Your LLC's date of formation and state of formation.\n• A NAICS principal business activity code (look up at naics.com).\n• Total assets at year-end in USD.\n• A list of every reportable transaction during the year — capital contributions in, distributions out, payments to/from you, loans, anything between the LLC and you or any related party.\n• Your foreign tax ID (FTIN) from your country of residence, OR a self-assigned Reference ID if you don't have a FTIN.\n• Your residential address in your home country.\n• Country of citizenship and country of tax residence.\n\nIf you're missing the CP-575, look in your email — the IRS sends a digital copy with the EIN. If you applied via SS-4 fax, the CP-575 was the response document.",
@@ -532,6 +559,10 @@ export const LANDING_PAGES: LandingPage[] = [
         url: "https://www.irs.gov/instructions/i5472"
       },
       {
+        label: "IRS: Instructions for Form 1065 (LLC classification)",
+        url: "https://www.irs.gov/instructions/i1065"
+      },
+      {
         label: "IRS: Nonresident aliens",
         url: "https://www.irs.gov/individuals/international-taxpayers/nonresident-aliens"
       },
@@ -553,13 +584,17 @@ export const LANDING_PAGES: LandingPage[] = [
       }
     ],
     published: "2026-05-19",
-    updated: "2026-09-11",
+    updated: "2026-10-07",
     h1: "Foreign-Owned US LLC Tax Filing Requirements",
     intro: "A foreign-owned U.S. single-member LLC treated as a disregarded entity generally files Form 5472 with pro forma Form 1120 when it has reportable related-party transactions. Zero revenue does not remove that test. Personal income tax, state obligations, foreign-account reporting and tax IDs need separate checks; one federal information return does not establish complete compliance.",
     sections: [
       {
-        heading: "What forms make up the complete federal filing?",
-        body: "The complete federal filing is Form 5472 attached to a pro forma Form 1120 for a foreign-owned U.S. disregarded LLC with reportable transactions. The special instructions require the entity's name, address and items B and E on the 1120, with the \"Foreign-Owned U.S. DE\" notation, and the package uses the dedicated fax or mailing route.\n\nThe special IRS instructions require the entity's name, address and items B and E on Form 1120, with “Foreign-Owned U.S. DE” across the top. Check signing authority separately. The package goes by the dedicated fax or mailing route, not ordinary corporate e-file. Read the [filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) for the preparation sequence.\n\nFor a calendar-year filing, the ordinary deadline is April 15 following the year, subject to applicable adjustments. An extension requires timely action; do not confuse it with the automatic FBAR extension."
+        heading: "Does a non-resident's US LLC file a tax return?",
+        body: "Usually yes, but not an ordinary income tax return. The IRS Form 5472 instructions say a foreign-owned US disregarded entity has no income tax return filing requirement, yet must file a pro forma Form 1120 with Form 5472 attached, by the Form 1120 due date including extensions, when it has reportable transactions.\n\nThat rule covers a US LLC wholly owned by one foreign person that has not elected corporate tax treatment. The Form 1065 instructions say a domestic LLC with at least two members that does not file Form 8832 is classified as a partnership, so a multi-member LLC follows partnership filing rules instead. An LLC that elected corporate treatment files its own Form 1120.\n\nWhether you, the owner, must also file a personal US return is a separate question that depends on the LLC's activity and income; see [does a foreign-owned LLC pay US tax](/blog/does-foreign-owned-llc-pay-us-tax)."
+      },
+      {
+        heading: "What does a foreign-owned single-member LLC file each year?",
+        body: "Each year it has a reportable transaction, a foreign-owned single-member LLC files Form 5472 attached to a pro forma Form 1120. The IRS requires only the LLC's name and address and items B and E on page 1 of the Form 1120, with “Foreign-owned U.S. DE” written across the top.\n\nThe IRS says a foreign-owned U.S. DE cannot file Form 5472 electronically, so the package goes by fax or mail to the dedicated IRS address; see [where to file Form 5472](/form-5472-fax-number). It is due by the Form 1120 due date, April 15 for a calendar-year LLC, or later with a timely Form 7004 extension. Check signing authority separately, and read the [filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) for the preparation sequence.\n\nDo not confuse the Form 7004 extension with the automatic FBAR extension. Form 5472 is one federal information return; the sections below cover the other obligations to check."
       },
       {
         heading: "Do you owe US federal income tax?",
@@ -1206,7 +1241,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the bottom line for German-resident LLC owners?",
-        body: "German-resident LLC owners have two compliance tracks: the US federal Form 5472 + pro forma 1120 (our job), and German-side reporting of the LLC's income on their own tax return (your Steuerberater's job). Missing the US filing risks a $25,000 penalty per year, regardless of how much — or how little — US tax is actually owed.\n\nOur service handles the federal piece in about 15 minutes, accountant-reviewed, with a money-back guarantee if we fail to submit — and if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge.",
+        body: "German-resident LLC owners have two compliance tracks: the US federal Form 5472 + pro forma 1120 (our job), and German-side reporting of the LLC's income on their own tax return (your Steuerberater's job). Missing the US filing risks a $25,000 penalty per year, regardless of how much — or how little — US tax is actually owed.\n\nOur service handles the federal piece in about 15 minutes, accountant-reviewed, with a money-back guarantee if we fail to submit — and if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge.\n\nFor a longer walkthrough with German-specific examples, read [Form 5472 for Germany residents](/blog/form-5472-germany-residents-us-llc).",
       },
     ],
     faqs: [
@@ -1302,7 +1337,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the bottom line for UAE-resident LLC owners?",
-        body: "Owning a US LLC from the UAE means filing Form 5472 + pro forma 1120 every year regardless of the UAE's 0% personal income tax — the two systems don't offset each other. Most UAE-resident owners won't have a personal foreign tax ID to enter, and that's fine: a self-assigned reference ID is the correct, IRS-sanctioned workaround.\n\nOur service handles the federal filing in about 15 minutes, accountant-reviewed, with a money-back guarantee if we fail to submit — and if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge.",
+        body: "Owning a US LLC from the UAE means filing Form 5472 + pro forma 1120 every year regardless of the UAE's 0% personal income tax — the two systems don't offset each other. Most UAE-resident owners won't have a personal foreign tax ID to enter, and that's fine: a self-assigned reference ID is the correct, IRS-sanctioned workaround.\n\nOur service handles the federal filing in about 15 minutes, accountant-reviewed, with a money-back guarantee if we fail to submit — and if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge.\n\nFor a longer walkthrough with UAE-specific examples, read [Form 5472 for UAE residents](/blog/form-5472-uae-dubai-residents-us-llc).",
       },
     ],
     faqs: [
@@ -1903,7 +1938,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
     ],
     published: "2026-05-22",
-    updated: "2026-10-05",
+    updated: "2026-10-07",
     h1: "Form 5472 deadline — when it's due, and what to do if you've missed it",
     intro:
       "Form 5472 is due April 15 of the year following the tax year. Filing Form 7004 by April 15 gives an automatic 6-month extension to October 15, while missing the deadline can trigger a $25,000-per-form penalty that may still be addressed through DIIRSP catch-up filing.",
@@ -1921,7 +1956,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "What is the exact deadline for Form 5472?",
-        body: "Form 5472 follows the corporate (Form 1120) calendar:\n\n• Calendar-year LLC (Jan 1 - Dec 31 tax year): Form 5472 + pro forma Form 1120 due April 15 of the next year. For tax year 2025, that's April 15, 2026.\n• Fiscal-year LLC: due the 15th day of the 4th month after fiscal year-end. Example: fiscal year ending June 30 → return due October 15.\n• Extension: file Form 7004 by the original due date for an automatic 6-month extension to October 15 (calendar-year LLC) or the equivalent for fiscal-year.\n\nThe extension shifts the filing deadline only — not any tax liability (most foreign-owned disregarded entities owe no US income tax, so this rarely matters).\n\nWeekend / holiday rule: if April 15 falls on a Saturday, Sunday, or federal holiday, the deadline moves to the next business day. (2026: April 15 is a Wednesday — normal deadline.)",
+        body: "Form 5472 follows the corporate (Form 1120) calendar:\n\n• Calendar-year LLC (Jan 1 - Dec 31 tax year): Form 5472 + pro forma Form 1120 due April 15 of the next year. For tax year 2025, that's April 15, 2026.\n• Fiscal-year LLC: due the 15th day of the 4th month after fiscal year-end. Example: fiscal year ending June 30 → return due October 15.\n• Extension: file Form 7004 by the original due date for an automatic 6-month extension to October 15 (calendar-year LLC) or the equivalent for fiscal-year.\n\nThe extension shifts the filing deadline only — not any tax liability (most foreign-owned disregarded entities owe no US income tax, so this rarely matters).\n\nWeekend / holiday rule: if April 15 falls on a Saturday, Sunday, or federal holiday, the deadline moves to the next business day. (2026: April 15 is a Wednesday — normal deadline.)\n\nFor the 2026 dates explained in more detail, read our [Form 5472 deadline](/blog/form-5472-deadline-2026) guide. To work out the due date for your own tax year, extension and weekend rules included, use the [Form 5472 deadline calculator](/form-5472-deadline-calculator).",
         table: {
           caption: "Form 5472 due dates from the deadline guide",
           columns: ["Situation", "Due date", "Note"],
@@ -1935,7 +1970,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file Form 7004 for an extension?",
-        body: "File Form 7004 by the original due date to request the automatic 6-month extension for the Form 5472 package. For calendar-year LLCs, that means April 15; use Form 1120 code 12, the same LLC identification details, and $0 estimated tax for foreign-owned DEs with no tax liability.\n\nWhat to put on Form 7004:\n• Part I: select form code \"12\" (Form 1120).\n• Identification: LLC name, EIN, address — same as on the eventual 1120.\n• Estimated tax: $0 for foreign-owned DEs (no tax liability).\n\nSubmit Form 7004 by:\n• Fax to +1-855-887-7737 (same Ogden PIN Unit number).\n• Mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n\nThe extension is automatic — the IRS doesn't send a confirmation. Just keep transmission evidence of the 7004 (fax receipt or certified mail receipt). Your Form 5472 + pro forma 1120 is then due by October 15.\n\nDon't file Form 7004 if you're already past April 15 — at that point file the actual Form 5472 + 1120 directly with a DIIRSP reasonable cause statement.",
+        body: `File Form 7004 by the original due date to request the automatic 6-month extension for the Form 5472 package. For calendar-year LLCs, that means April 15; use Form 1120 code 12, the same LLC identification details, and $0 estimated tax for foreign-owned DEs with no tax liability.\n\nWhat to put on Form 7004:\n• Part I: select form code \"12\" (Form 1120).\n• Identification: LLC name, EIN, address — same as on the eventual 1120.\n• Estimated tax: $0 for foreign-owned DEs (no tax liability).\n\nSubmit Form 7004 by:\n• Fax to ${IRS_OGDEN_FAX} (the same IRS fax number as the return).\n• Mail to ${IRS_OGDEN_MAIL_ADDRESS}.\n\nThe extension is automatic — the IRS doesn't send a confirmation. Just keep transmission evidence of the 7004 (fax receipt or certified mail receipt). Your Form 5472 + pro forma 1120 is then due by October 15.\n\nDon't file Form 7004 if you're already past April 15 — at that point file the actual Form 5472 + 1120 directly with a DIIRSP reasonable cause statement.`,
       },
       {
         heading: "What counts as \"on time\"?",
@@ -2017,18 +2052,18 @@ export const LANDING_PAGES: LandingPage[] = [
   {
     slug: "form-5472-fax-number",
     keyword: "form 5472 fax number",
-    title: "Form 5472 Fax Number — IRS Ogden PIN Unit",
+    title: "Where to File Form 5472: Fax Number and Mailing Address",
     metaDescription:
-      "Form 5472 fax number guidance: what to send to the IRS Ogden PIN Unit, how to transmit the full filing package, and which transmission evidence to keep.",
+      `Where to file Form 5472: the IRS fax number (${IRS_OGDEN_FAX}) and Ogden mailing address for foreign-owned US LLCs, what to send, and which proof to keep.`,
     sources: [
-      { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+      { label: "IRS: Instructions for Form 5472 (When and Where To File)", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
     ],
     published: "2026-05-22",
-    updated: "2026-09-11",
-    h1: "The IRS Form 5472 fax number (and how to actually send it)",
+    updated: "2026-10-07",
+    h1: "Where to File Form 5472: Fax Number and Mailing Address",
     intro:
-      "The IRS Form 5472 fax number is +1-855-887-7737, the Ogden PIN Unit. Fax is the fastest filing route for Form 5472 with its attached pro forma Form 1120, and the fax transmission receipt is the evidence to keep with the exact package after submission.",
+      `Where to file Form 5472 depends on who files it. A foreign-owned US disregarded entity faxes Form 5472 and its pro forma Form 1120 to the IRS at ${IRS_OGDEN_FAX} or mails them to the IRS Ogden PIN Unit. The IRS says these filers cannot e-file and must not use the ordinary Form 1120 addresses.`,
     howTo: {
       section: "How do you actually send a fax in 2026?",
       tools: ["Fax service"],
@@ -2042,8 +2077,12 @@ export const LANDING_PAGES: LandingPage[] = [
     },
     sections: [
       {
+        heading: "Where do I file Form 5472?",
+        body: `A foreign-owned US disregarded entity files Form 5472, attached to a pro forma Form 1120, with the IRS by fax or by mail, using the dedicated route in the Form 5472 instructions. The IRS fax number is ${IRS_OGDEN_FAX}. The IRS mailing address is ${IRS_OGDEN_MAIL_ADDRESS}.\n\nThe instructions say these filers must write "Foreign-owned U.S. DE" across the top of the Form 1120, fax at 300 DPI or higher, and not use the mailing addresses in the Form 1120 instructions. They also say a foreign-owned U.S. DE cannot file Form 5472 electronically. Other reporting corporations attach Form 5472 to their own income tax return and file it with that return.\n\nFor the step-by-step mechanics, read [how to fax Form 5472](/blog/how-to-fax-form-5472-irs). If you would rather not send it yourself, our [Form 5472 fax filing service](/services/form-5472-fax-filing-service) faxes the package for you and gives you the timestamped receipt.`,
+      },
+      {
         heading: "What is the fax number?",
-        body: "Fax to: +1-855-887-7737 (IRS Ogden PIN Unit). Send the complete Form 5472 plus attached pro forma Form 1120 package to that number, because the Ogden Service Center processes these foreign-owned disregarded-entity filings and they cannot be e-filed. Do not use it for unrelated corporate, partnership, or personal returns.\n\nThis is the IRS's published fax number for Form 5472 and the attached pro forma Form 1120 filed by foreign-owned US disregarded entities. The Ogden Service Center processes all of these returns — they cannot be e-filed.\n\nThis number is specific to Form 5472 + pro forma 1120 filings by foreign-owned single-member LLCs. Other tax filings (real corporate returns, partnership returns, personal returns) use different IRS fax numbers. Do not use this fax number for any other type of return.\n\nIt's a US toll-free number, so from outside the US you can call it via any international fax service that supports US destinations. Most online fax services charge $1-$5 per send.",
+        body: "Fax to: +1-855-887-7737 (IRS Ogden PIN Unit). Send the complete Form 5472 plus attached pro forma Form 1120 package to that number, because the Ogden Service Center processes these foreign-owned disregarded-entity filings and they cannot be e-filed. Do not use it for unrelated corporate, partnership, or personal returns.\n\nIt's a US toll-free number, so from outside the US you can call it via any international fax service that supports US destinations. Most online fax services charge $1-$5 per send.",
       },
       {
         heading: "What do you need to send to the IRS?",
@@ -2063,7 +2102,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What if the fax fails?",
-        body: "A failed or partial fax does not establish a completed filing, so check the provider status and retry promptly once the problem is resolved. If fax remains unavailable near the deadline, assess the dedicated Ogden PIN Unit mailing route and keep both failed and successful attempt records.\n\nIf the deadline is near and fax remains unavailable, assess an authorized mail alternative that can meet the applicable deadline. Use the dedicated destination: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201. Mailing timeliness depends on the applicable postmark and delivery-service rules; do not assume any international courier or a logged fax attempt preserves the deadline.\n\nKeep failed and successful attempt records. If the deadline passes, obtain advice on the late filing rather than assuming a next-day transmission was timely.",
+        body: `A failed or partial fax does not establish a completed filing, so check the provider status and retry promptly once the problem is resolved. If fax remains unavailable near the deadline, assess the dedicated Ogden PIN Unit mailing route and keep both failed and successful attempt records.\n\nIf the deadline is near and fax remains unavailable, assess an authorized mail alternative that can meet the applicable deadline. Use the dedicated destination: ${IRS_OGDEN_MAIL_ADDRESS}. Mailing timeliness depends on the applicable postmark and delivery-service rules; do not assume any international courier or a logged fax attempt preserves the deadline.\n\nKeep failed and successful attempt records. If the deadline passes, obtain advice on the late filing rather than assuming a next-day transmission was timely.`,
       },
       {
         heading: "What common fax mistakes should you avoid?",
@@ -2086,15 +2125,11 @@ export const LANDING_PAGES: LandingPage[] = [
           ],
         },
       },
-      {
-        heading: "What is your annual fax routine?",
-        body: "Your annual fax routine is to prepare after year-end, sign, fax to +1-855-887-7737, save the receipt, and repeat next year.\n\n• Tax year ends December 31.\n• In January or February, prepare the filing (12-question wizard with us, ~5-10 minutes for returning customers).\n• Sign on screen.\n• We fax to +1-855-887-7737 and email you the timestamped receipt (included in every plan).\n• Save the transmission receipt.\n• Done until next year.\n\nTotal time investment: about 15 minutes once a year. Cost: Standard $149 with us (fax delivery included). Penalty avoided: $25,000.\n\nMost of our returning customers fax in early February and have the obligation handled with 10+ weeks of buffer before the April 15 deadline.",
-      },
     ],
     faqs: [
       {
         q: "Is +1-855-887-7737 the right fax number for Form 5472 in 2026?",
-        a: "Yes. This is the current IRS Ogden PIN Unit fax number for Form 5472 + pro forma 1120 filings by foreign-owned US disregarded entities. Has been the same number since the §6038A rule extension in 2017.",
+        a: "Yes. The current IRS Instructions for Form 5472 (Rev. December 2024) give 855-887-7737 as the fax number for Form 5472 + pro forma 1120 filings by foreign-owned US disregarded entities.",
       },
       {
         q: "Can I email Form 5472 to the IRS instead?",
@@ -2110,7 +2145,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What's the IRS Ogden mailing address?",
-        a: "The dedicated address is Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201. Retain mailing and delivery evidence; timely-mailing treatment depends on the applicable postal or designated delivery-service rules.",
+        a: `The dedicated address is ${IRS_OGDEN_MAIL_ADDRESS}. Retain mailing and delivery evidence; timely-mailing treatment depends on the applicable postal or designated delivery-service rules.`,
       },
       {
         q: "Can I fax from outside the US?",
