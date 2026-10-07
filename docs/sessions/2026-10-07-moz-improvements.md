@@ -22,3 +22,8 @@ Lane worktrees under `~/Developer/f5472-wt/` (links, guides, newpages, chrome, b
 ## Open
 - Owner-gated (unchanged): entity name + sameAs profiles, YouTube/Reddit, snapfile.tax, guarantee vs Terms §6 / IRS-response FAQ, Nov 301 merges, GA4, directory/comparison outreach.
 - Follow-ups: "CP-15" still in `faq.ts`, `llms.ts`, contact and form-5472-filing pages; unsupported penalty-timing claims ("6–18 months", "Day 60–180", "assessed automatically… no human review"); blog posts still hard-code prices; PageSpeed API quota blocked (retry later); GSC request indexing for changed pages after deploy (quota ~10/day); re-read Moz Oct 11/12 vs report §5.
+
+## Post-deploy (same day)
+- Live: all new/changed URLs 200; footer Guides band, `alternateName`, "Where to File Form 5472…" title verified; sitemap has the 3 new guides + bookkeepers page; `$undefined` strings in HTML are RSC payload only (visible prices correct).
+- IndexNow: 31 changed URLs, HTTP 200 (covers Bing).
+- GSC (Chrome authuser 2): 225 indexed / 137 not (noindex 90, discovered-not-indexed 34, crawled-not-indexed 4, duplicate-no-canonical 6, redirect 3). Manual actions: none. Requested indexing for 9 URLs (penalty calculator, 6 blog posts, compare page, bookkeepers). `/form-5472-instructions` and `/form-5472-fax-number` were "unknown to Google"; `/form-5472-reasonable-cause-statement` "discovered, not indexed" — **request these + the 3 new guides tomorrow** (quota ~10/day).
