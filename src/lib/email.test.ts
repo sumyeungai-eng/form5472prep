@@ -145,3 +145,35 @@ describe("order confirmation email", () => {
     expect(standard.text).not.toContain("one business day");
   });
 });
+
+describe("sendWebsiteQuestionReplyEmail", () => {
+  let dir: string | null = null;
+  afterEach(async () => {
+    if (dir) await rm(dir, { recursive: true, force: true });
+    dir = null;
+    delete process.env.EMAIL_PREVIEW_DIR;
+  });
+
+  it("greets by first name, escapes the reply and quotes the original question", async () => {
+    dir = await mkdtemp(join(tmpdir(), "question-reply-"));
+    process.env.EMAIL_PREVIEW_DIR = dir;
+    const { sendWebsiteQuestionReplyEmail } = await import("@/lib/email");
+    const result = (await sendWebsiteQuestionReplyEmail({
+      to: "visitor@example.test",
+      name: "Ana Lopez",
+      reply: "Yes, you need to file.\n\nSee <our guide> & pricing.",
+      originalMessage: "Do I need to file Form 5472?",
+      askedAt: new Date("2026-10-01T10:00:00Z"),
+    })) as { htmlPath: string; textPath: string };
+    const html = await readFile(result.htmlPath, "utf8");
+    const text = await readFile(result.textPath, "utf8");
+
+    expect(html).toContain("Hello Ana,");
+    expect(html).toContain("See &lt;our guide&gt; &amp; pricing.");
+    expect(html).not.toContain("<our guide>");
+    expect(html).toContain("Do I need to file Form 5472?");
+    expect(html).toContain("October 1, 2026");
+    expect(text).toContain("Hello Ana,");
+    expect(text).toContain("> Do I need to file Form 5472?");
+  });
+});

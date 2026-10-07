@@ -2062,6 +2062,8 @@ export async function sendWebsiteQuestionAdminEmail(args: {
   message: string;
   topicLabel?: string;
   pageUrl?: string;
+  // /admin/questions/<id> — set when the question was stored.
+  adminLink?: string;
   // False = don't set the visitor as Reply-To (fallback when Resend rejects
   // their address); the address still appears in the body.
   replyToVisitor?: boolean;
@@ -2085,6 +2087,7 @@ export async function sendWebsiteQuestionAdminEmail(args: {
       args.message,
       "",
       "Reply directly to this email to answer the visitor.",
+      args.adminLink ? `Or answer it in admin: ${args.adminLink}` : "",
     ].filter(Boolean).join("\n"),
     html: adminShell({
       tag: "Website question",
@@ -2096,7 +2099,54 @@ export async function sendWebsiteQuestionAdminEmail(args: {
         ...(args.pageUrl ? [["Page", args.pageUrl] as [string, string]] : []),
         ["Message", args.message],
       ],
-      extraHtml: `<p style="margin:0;color:${EMAIL_STYLES.muted};font-size:13px;">Reply directly to this email to answer the visitor.</p>`,
+      extraHtml: `<p style="margin:0;color:${EMAIL_STYLES.muted};font-size:13px;">Reply directly to this email to answer the visitor.${
+        args.adminLink
+          ? ` Or <a href="${escapeHtml(args.adminLink)}" style="color:${EMAIL_STYLES.brand};text-decoration:none;">answer it in admin</a>.`
+          : ""
+      }</p>`,
+    }),
+  });
+}
+
+// Admin's answer to a website question, sent from /admin/questions/[id].
+// Replies to it land in support@ (the default Reply-To), so the conversation
+// can continue by email.
+export async function sendWebsiteQuestionReplyEmail(args: {
+  to: string;
+  name?: string | null;
+  reply: string;
+  originalMessage: string;
+  askedAt: Date;
+}) {
+  const salutation = firstNameFrom(args.name) ?? "there";
+  const askedOn = args.askedAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+  const paragraphs = args.reply
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${escapeHtml(p).replace(/\n/g, "<br/>")}</p>`)
+    .join("");
+  const quoted = `<div style="margin:8px 0 24px;padding:12px 16px;border-left:3px solid ${EMAIL_STYLES.border};background:${EMAIL_STYLES.bg};color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.6;">
+      <div style="margin:0 0 6px;font-weight:600;">Your question (${escapeHtml(askedOn)}):</div>
+      ${escapeHtml(args.originalMessage).replace(/\n/g, "<br/>")}
+    </div>`;
+  const quotedText = args.originalMessage.split("\n").map((line) => `> ${line}`).join("\n");
+  return sendEmail({
+    log: { kind: "website_question_reply" },
+    to: args.to,
+    subject: "Re: your question to Form5472 Prep",
+    text: customerText(
+      salutation,
+      `${args.reply.trim()}\n\nYour question (${askedOn}):\n${quotedText}`,
+      "You can reply to this email if you have any other questions.",
+    ),
+    html: customerShell({
+      heading: "Our answer to your question",
+      salutation,
+      // shell() inserts the preheader raw, so escape the admin-typed text.
+      preheader: escapeHtml(subjectSnippet(args.reply.trim(), 90)),
+      bodyHtml: `${paragraphs}${quoted}`,
+      footnoteHtml: "You can reply to this email if you have any other questions.",
     }),
   });
 }

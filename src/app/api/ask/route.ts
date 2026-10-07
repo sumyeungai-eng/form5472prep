@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { sendWebsiteQuestionAdminEmail } from "@/lib/email";
 import { env } from "@/lib/env";
+import { prisma } from "@/lib/prisma";
 import { rateLimit, clientIp, tooManyRequests } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // Public "Ask a question" widget endpoint. Collects a visitor's question
-// (+ their email so we can reply) and emails it to the admin inbox. No auth —
+// (+ their email so we can reply), stores it for /admin/questions and emails
+// it to the admin inbox. No auth —
 // it's a contact form — so we validate + cap lengths to keep it tidy and
 // reply-to the visitor's address so the operator can answer directly.
 
@@ -66,7 +68,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const question = { adminEmail: env.adminEmail, name, email, message, topicLabel, pageUrl };
+  // Store it for the admin Questions page. Best-effort: a database hiccup must
+  // never lose the question, which still reaches the inbox by email below.
+  let adminLink: string | undefined;
+  try {
+    const saved = await prisma.websiteQuestion.create({
+      data: { name: name || null, email, message, topic: topicLabel || null, pageUrl: pageUrl || null },
+      select: { id: true },
+    });
+    adminLink = `${env.appUrl}/admin/questions/${saved.id}`;
+  } catch (err) {
+    console.error("[ask] could not store question; emailing only", err);
+  }
+
+  const question = { adminEmail: env.adminEmail, name, email, message, topicLabel, pageUrl, adminLink };
   try {
     await sendWebsiteQuestionAdminEmail(question);
   } catch (err) {
@@ -77,7 +92,11 @@ export async function POST(req: Request) {
       await sendWebsiteQuestionAdminEmail({ ...question, replyToVisitor: false });
     } catch (retryErr) {
       console.error("[ask] email send failed on retry", retryErr);
-      return NextResponse.json({ error: "Could not send. Please email support@form5472prep.com." }, { status: 500 });
+      // Stored questions still show up in /admin/questions, so only fail the
+      // visitor when the question exists nowhere.
+      if (!adminLink) {
+        return NextResponse.json({ error: "Could not send. Please email support@form5472prep.com." }, { status: 500 });
+      }
     }
   }
 

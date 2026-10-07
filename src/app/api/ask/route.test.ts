@@ -2,7 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const email = vi.hoisted(() => ({ sendWebsiteQuestionAdminEmail: vi.fn() }));
 vi.mock("@/lib/email", () => ({ sendWebsiteQuestionAdminEmail: email.sendWebsiteQuestionAdminEmail }));
-vi.mock("@/lib/env", () => ({ env: { adminEmail: "support@example.test" } }));
+vi.mock("@/lib/env", () => ({ env: { adminEmail: "support@example.test", appUrl: "https://app.example.test" } }));
+const db = vi.hoisted(() => ({ create: vi.fn() }));
+vi.mock("@/lib/prisma", () => ({ prisma: { websiteQuestion: { create: db.create } } }));
 vi.mock("@/lib/rateLimit", () => ({
   rateLimit: vi.fn(async () => ({ ok: true })),
   clientIp: () => "127.0.0.1",
@@ -25,6 +27,8 @@ describe("POST /api/ask", () => {
   beforeEach(() => {
     email.sendWebsiteQuestionAdminEmail.mockReset();
     email.sendWebsiteQuestionAdminEmail.mockResolvedValue({ id: "1" });
+    db.create.mockReset();
+    db.create.mockResolvedValue({ id: "q_1" });
   });
 
   it.each(["jose@altorven", "a@b.com, c@d.com", "jose altorven@x.com", "no-at-sign.com"])(
@@ -55,7 +59,45 @@ describe("POST /api/ask", () => {
     });
   });
 
-  it("only shows the fallback error when both attempts fail", async () => {
+  it("stores the question for the admin Questions page and links it in the email", async () => {
+    const res = await ask({ email: "jose@altorven.com", name: "Jose", topic: "billing", pageUrl: "https://x.test/pricing" });
+    expect(res.status).toBe(200);
+    expect(db.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          name: "Jose",
+          email: "jose@altorven.com",
+          message: "Hello, I need help with my EIN.",
+          topic: "Billing or refund",
+          pageUrl: "https://x.test/pricing",
+        },
+      }),
+    );
+    expect(email.sendWebsiteQuestionAdminEmail.mock.calls[0][0].adminLink).toBe("https://app.example.test/admin/questions/q_1");
+  });
+
+  it("does not store honeypot spam or invalid addresses", async () => {
+    await ask({ email: "bot@spam.test", company: "Acme" });
+    await ask({ email: "jose@altorven" });
+    expect(db.create).not.toHaveBeenCalled();
+  });
+
+  it("still emails the question when the database write fails", async () => {
+    db.create.mockRejectedValueOnce(new Error("db down"));
+    const res = await ask({ email: "jose@altorven.com" });
+    expect(res.status).toBe(200);
+    expect(email.sendWebsiteQuestionAdminEmail).toHaveBeenCalledTimes(1);
+    expect(email.sendWebsiteQuestionAdminEmail.mock.calls[0][0].adminLink).toBeUndefined();
+  });
+
+  it("succeeds when both emails fail but the question was stored", async () => {
+    email.sendWebsiteQuestionAdminEmail.mockRejectedValue(new Error("down"));
+    const res = await ask({ email: "jose@altorven.com" });
+    expect(res.status).toBe(200);
+  });
+
+  it("only shows the fallback error when the question was neither stored nor emailed", async () => {
+    db.create.mockRejectedValueOnce(new Error("db down"));
     email.sendWebsiteQuestionAdminEmail.mockRejectedValue(new Error("down"));
     const res = await ask({ email: "jose@altorven.com" });
     expect(res.status).toBe(500);

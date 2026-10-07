@@ -8,6 +8,7 @@ import {
   Globe,
   Handshake,
   LayoutDashboard,
+  MessageCircleQuestion,
   Newspaper,
   Printer,
 } from "lucide-react";
@@ -92,6 +93,13 @@ export const ADMIN_NAV: NavGroup[] = [
             param: { key: "type", value: "itin" },
           },
         ],
+      },
+      {
+        label: "Questions",
+        href: "/admin/questions",
+        icon: MessageCircleQuestion,
+        badge: "openQuestions",
+        match: "prefix",
       },
       {
         label: "Received faxes",

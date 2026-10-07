@@ -6,6 +6,7 @@ const db = vi.hoisted(() => ({
   itinApplicationCount: vi.fn(),
   messageCount: vi.fn(),
   receivedFaxCount: vi.fn(),
+  websiteQuestionCount: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma", () => ({
@@ -25,6 +26,9 @@ vi.mock("@/lib/prisma", () => ({
     receivedFax: {
       count: db.receivedFaxCount,
     },
+    websiteQuestion: {
+      count: db.websiteQuestionCount,
+    },
   },
 }));
 
@@ -38,6 +42,19 @@ describe("getAdminCounters", () => {
     db.messageCount.mockReset();
     db.receivedFaxCount.mockReset();
     db.receivedFaxCount.mockResolvedValue(0);
+    db.websiteQuestionCount.mockReset();
+    db.websiteQuestionCount.mockResolvedValue(0);
+  });
+
+  it("counts website questions that are neither answered nor archived", async () => {
+    db.filingCount.mockResolvedValue(0);
+    db.einApplicationCount.mockResolvedValue(0);
+    db.itinApplicationCount.mockResolvedValue(0);
+    db.messageCount.mockResolvedValue(0);
+    db.websiteQuestionCount.mockResolvedValue(4);
+
+    await expect(getAdminCounters()).resolves.toMatchObject({ openQuestions: 4 });
+    expect(db.websiteQuestionCount).toHaveBeenCalledWith({ where: { repliedAt: null, archivedAt: null } });
   });
 
   it("counts visible filings currently marked for review", async () => {

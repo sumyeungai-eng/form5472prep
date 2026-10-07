@@ -830,3 +830,36 @@ model EmailLog {
 
   @@index([filingId])
 }
+
+// Questions sent through the public "Ask a question" widget and /contact form
+// (/api/ask). Stored so the admin can read and answer them at /admin/questions;
+// the admin-inbox email still goes out as before. repliedAt is set when an
+// admin replies from the admin page OR marks it answered (replied by Gmail).
+model WebsiteQuestion {
+  id         String                 @id @default(cuid())
+  createdAt  DateTime               @default(now())
+  name       String?
+  email      String
+  message    String
+  topic      String?
+  pageUrl    String?
+  readAt     DateTime?
+  repliedAt  DateTime?
+  archivedAt DateTime?
+  replies    WebsiteQuestionReply[]
+
+  @@index([createdAt])
+  @@index([email])
+}
+
+// One admin reply emailed to the visitor from /admin/questions/[id].
+model WebsiteQuestionReply {
+  id         String          @id @default(cuid())
+  createdAt  DateTime        @default(now())
+  questionId String
+  question   WebsiteQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  body       String
+  sentBy     String?
+
+  @@index([questionId, createdAt])
+}
