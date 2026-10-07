@@ -449,7 +449,7 @@ For each year we ask for the money that moved between you and the LLC, loans, re
 - An honest misunderstanding of fact or law, reasonable for someone with your experience, can qualify.
 - For a small corporation (gross receipts of $20,000,000 or less) that did not know the rules, has limited US presence and promptly complies with IRS requests, the regulation tells the IRS to apply the exception liberally.
 
-We write each statement from your facts. We do not invent reasons, and you sign it.`,
+We write each statement from your facts. We do not invent reasons, and you sign it. For how the statement is structured, see our guide to the [Form 5472 reasonable cause statement](/form-5472-reasonable-cause-statement).`,
       },
       {
         heading: "Does each late year need its own reasonable-cause statement?",
@@ -1262,8 +1262,8 @@ Missed earlier years add ${ADD} per extra year on either plan, each with its own
     cta: startCta("svc-form-5472-preparer"),
     sections: [
       {
-        heading: "What does a Form 5472 preparer actually do?",
-        body: `A Form 5472 preparer sorts the year's money movements, completes the forms and gets the package to the IRS. The forms are short; the judgement is in what goes on them.
+        heading: "What does a Form 5472 preparer do?",
+        body: `A Form 5472 preparer prepares the Form 5472 and pro forma 1120 from the owner's records, flags any missing information and assembles the package for fax or mail. The forms are short; the judgement is in what goes on them.
 
 - **Sorts the year's money movements.** Contributions, distributions, loans and owner-paid LLC costs are identified and totalled by type.
 - **Completes Form 5472.** Owner details, related-party information, the transaction totals and year-end total assets.

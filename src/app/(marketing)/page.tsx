@@ -265,11 +265,11 @@ function Hero({ filingsCount }: { filingsCount: number }) {
         <div className="grid items-center gap-12 lg:grid-cols-[1fr_360px] lg:gap-16">
           {/* Left: the pitch */}
           <div className="animate-fade-in-up">
-            <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              For foreign-owned US LLCs
-            </p>
-            <h1 className="mt-5 font-serif text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl lg:text-6xl">
+            <h1 className="font-serif text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl lg:text-6xl">
+              <span className="mb-5 flex items-center gap-2 font-mono text-[11px] font-medium uppercase leading-normal tracking-[0.2em] text-accent-100">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Form5472 Prep · For foreign-owned US LLCs
+              </span>
               Flat-rate Form 5472 filing.
               <br />
               <span className="text-accent-100">No hidden fees.</span>
@@ -931,6 +931,7 @@ function StructuredData() {
     "@id": `${url}/#website`,
     url,
     name: SITE_NAME,
+    alternateName: ["Form5472Prep", "form5472prep.com"],
     publisher: ORG_REF,
     inLanguage: "en-US",
   };

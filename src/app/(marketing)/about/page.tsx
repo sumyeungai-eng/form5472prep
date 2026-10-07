@@ -58,8 +58,11 @@ export default function AboutPage() {
             About us
           </p>
           <h1 className="mt-5 font-serif text-4xl sm:text-5xl font-semibold leading-[1.08] tracking-tight text-balance">
-            One filing, done properly.
+            About Form5472 Prep
           </h1>
+          <p className="mt-4 font-serif text-xl text-accent-100">
+            One filing, done properly. Founded in {String(organizationNode().foundingDate)}, we prepare Form 5472 and pro forma 1120 filings for foreign-owned U.S. LLCs.
+          </p>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
             Form5472 Prep prepares and files the IRS Form 5472 and pro forma Form 1120
             package for supported foreign-owned U.S. single-member disregarded LLCs

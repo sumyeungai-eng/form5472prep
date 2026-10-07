@@ -570,6 +570,13 @@ export default function Form5472FilingServicesComparePage() {
             <h2 id="faq" className="font-serif text-2xl font-semibold tracking-tight text-ink">
               Form 5472 filing costs: common questions
             </h2>
+            <p className="mt-3 text-sm leading-relaxed text-slate-600">
+              For a wider look at what drives price, see our guide to{" "}
+              <Link href="/blog/form-5472-cost" className="font-medium text-accent underline underline-offset-2 hover:text-accent-700">
+                Form 5472 filing cost
+              </Link>
+              .
+            </p>
             <div className="mt-6 space-y-3">
               {FAQS.map((f) => (
                 <details key={f.q} className="group rounded-xl border border-slate-200 bg-white p-5">

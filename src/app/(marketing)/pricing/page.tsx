@@ -213,6 +213,13 @@ export default function PricingPage() {
             </span>
           </span>
         </div>
+        <p className="mt-4 text-center text-sm text-slate-600">
+          Want the full breakdown? Read our guide to{" "}
+          <Link href="/blog/form-5472-cost" className="font-medium text-accent underline underline-offset-2 hover:text-accent-700">
+            Form 5472 filing cost
+          </Link>
+          .
+        </p>
 
         <p className="mt-4 text-xs text-slate-500 text-center max-w-2xl mx-auto">
           One-time flat fee, billed in USD via Stripe. No subscription. Every

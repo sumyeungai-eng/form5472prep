@@ -176,6 +176,7 @@ export function organizationNode(extra: Record<string, unknown> = {}) {
     "@type": "Organization",
     "@id": ORG_ID,
     name: SITE_NAME,
+    alternateName: ["Form5472Prep", "form5472prep.com"],
     legalName: SITE_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/logo-mark.svg`,
