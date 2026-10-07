@@ -638,3 +638,47 @@ Not shared. The Settings → Budget panel is a plain "Set your average daily bud
 **Read:** the budget cap is costing almost nothing right now (1.19% lost to budget) — the overwhelming majority of missed impression share (76.19%) is lost to Rank, not budget. Resetting to $10/day should not meaningfully change today's traffic pattern; Quality Score / ad rank is the binding constraint, not the daily cap.
 
 No bids, keywords, ads, or campaign status changed this session beyond the Task 2 budget edit.
+
+## Session 14 — country expansion (2026-10-07)
+
+**Found on arrival (undocumented change by an unknown session or the owner):**
+- Targeted locations had been narrowed from the 28 countries of Session D to **4 cities**:
+  Bangkok, Lisbon, Mexico City, Tbilisi (digital-nomad hubs).
+- Daily budget had been raised from $10 to **$50/day**; bidding still Maximise clicks,
+  status "Eligible (Learning) — bid strategy learning".
+- Account-wide last 7 days (30 Sep – 6 Oct): **0 impressions, $0 spend**. Four cities under
+  Presence targeting is too small an audience to serve.
+
+**Owner request:** "more countries, not restricting on only a few; potential countries just add it."
+
+**Applied (Chrome, Settings → Locations → Advanced search → Add locations in bulk):**
+- Targeted **81 locations** = 80 countries + Mexico City.
+  - The original 28: US, Canada, UK, Ireland, Germany, France, Netherlands, Spain, Italy,
+    Portugal, Switzerland, Austria, Belgium, Sweden, Norway, Denmark, Finland, Poland, UAE,
+    Saudi Arabia, Israel, Singapore, Hong Kong, Japan, South Korea, Taiwan, Australia, New Zealand.
+  - Added Europe: Luxembourg, Iceland, Estonia, Latvia, Lithuania, Czechia, Slovakia, Slovenia,
+    Hungary, Romania, Bulgaria, Croatia, Greece, Cyprus, Malta, Monaco, Liechtenstein, Ukraine,
+    Serbia, Georgia, Armenia, Montenegro, Albania, North Macedonia, Bosnia and Herzegovina, Moldova.
+  - Added Middle East: Qatar, Kuwait, Bahrain, Oman, Jordan, Lebanon.
+  - Added Asia: Malaysia, Thailand, Kazakhstan, Uzbekistan, Macao.
+  - Added Americas/Caribbean: Uruguay, Peru, Ecuador, Costa Rica, Panama, Dominican Republic,
+    Guatemala, El Salvador, Jamaica, Trinidad and Tobago, The Bahamas, Cayman Islands, Bermuda, Barbados.
+  - Added Africa: Mauritius.
+  - Bangkok, Lisbon, Tbilisi removed as redundant (their countries are now targeted).
+    Mexico City kept: Mexico as a country was dropped by the owner on 2026-08-26.
+- Every ambiguous name was checked at country scale before saving (e.g. Georgia reach 3.55M =
+  the country, not the US state; Jordan, Lebanon, Peru, Jamaica, Panama likewise).
+- **Not re-added:** the 8 the owner dropped on 2026-08-26 (India, Turkey, Brazil, Mexico,
+  Argentina, Colombia, Chile, South Africa).
+- **Exclusions untouched (30):** Algeria, Bangladesh, Belarus, Bolivia, Cambodia, Egypt, Ghana,
+  Honduras, India, Indonesia, Kenya, Laos, Mongolia, Morocco, Myanmar, Nepal, Nicaragua, Nigeria,
+  Pakistan, Paraguay, Philippines, Russia, Sri Lanka, Syria, Tanzania, Tunisia, Venezuela, Vietnam,
+  plus two mis-picked US towns: "Cuba, Missouri" and "Sudan, Texas" (meant as the countries; both
+  are OFAC-sanctioned and unserved by Google anyway — harmless, left as found).
+- Location option unchanged: **Presence**. Budget left at $50/day (owner's setting).
+- Saved without a "Confirm it's you" block. **Verified after a fresh reload:** "Targeted: Albania
+  (country) + 80 more · Excluded: Algeria (country) + 29 more".
+
+**Watch:** with Maximise clicks and a now-binding budget, spend tends to drift to the cheapest
+clicks. Check Insights → Locations (Matched locations, by country) after ~7 days and add
+negative bid adjustments or exclusions for countries with spend but no leads.
