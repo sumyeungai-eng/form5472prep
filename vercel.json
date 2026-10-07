@@ -27,7 +27,7 @@
     },
     {
       "path": "/api/cron/support-mail-sync",
-      "schedule": "41 * * * *"
+      "schedule": "*/10 * * * *"
     }
   ]
 }

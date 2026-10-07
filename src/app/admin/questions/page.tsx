@@ -8,6 +8,7 @@ import { orderSummaryByEmail } from "@/lib/admin/websiteQuestions";
 import { AdminPageHeader } from "../_components/AdminPageHeader";
 import { supportImapConfig } from "@/lib/supportMail/imap";
 import { MailboxSync } from "./MailboxSync";
+import { AutoMailboxCheck } from "./AutoMailboxCheck";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Questions - Admin" };
@@ -57,6 +58,7 @@ export default async function AdminQuestionsPage({ searchParams }: { searchParam
         actions={<MailboxSync connected={mailboxConnected} />}
       />
 
+      <AutoMailboxCheck connected={mailboxConnected} lastRunAt={lastSync?.startedAt.toISOString() ?? null} />
       <div className="mb-6 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
         {!mailboxConnected ? (
           <>
@@ -66,8 +68,8 @@ export default async function AdminQuestionsPage({ searchParams }: { searchParam
           </>
         ) : lastSync ? (
           <>
-            <span className="font-medium text-slate-900">support@ mailbox:</span> answers you send by email are linked
-            here every hour. Last checked {timeAgo(lastSync.startedAt)}
+            <span className="font-medium text-slate-900">support@ mailbox:</span> your email answers and customer replies
+            are linked here every 10 minutes and whenever you open this page. Last checked {timeAgo(lastSync.startedAt)}
             {lastSync.ok ? "." : (
               <span className="text-red-700"> and it failed: {lastSync.error ?? "unknown error"}</span>
             )}

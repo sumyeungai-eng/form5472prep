@@ -12,7 +12,7 @@ Follows `2026-10-07-admin-website-questions.md` (Questions inbox, 3b95af3 / 75a2
 - "[Website question]" notifications → `WebsiteQuestion`: questions asked before 2026-10-07 are **imported**; ones already stored are **matched** (admin link id, else email + message within 30 min) via `sourceMessageId`.
 - Our answers in the **Sent** folder → `WebsiteQuestionReply` (source `email`), visitor follow-ups in the inbox → `fromVisitor` replies. Filed under the asker's latest question created before the email, within 90 days.
 - Status: answered when our latest message is newer than the visitor's; a new follow-up reopens + marks unread. Imported questions >30 days old with no answer found are archived.
-- Hourly cron `/api/cron/support-mail-sync` (minute 41, last 7 days); admin buttons "Check mailbox now" (7 days) and "Import past emails" (since 2026-06-01). Every run logged in `SupportMailSyncRun`; the Questions page shows last check / failure.
+- Cron `/api/cron/support-mail-sync` (now every 10 min with an IMAP-only new-mail probe; see below); admin buttons "Check mailbox now" (7 days) and "Import past emails" (since 2026-06-01). Every run logged in `SupportMailSyncRun`; the Questions page shows last check / failure.
 - Evidence: targeted vitest 45/45 (parse, sync with fake mailbox, store status rules, cron auth, admin pages/API, /api/ask); `tsc` + eslint clean; `next build` OK (routes listed). Hostinger IMAP reachable at imap.hostinger.com:993 (AUTH=PLAIN/LOGIN). **Not yet run against the real mailbox** — needs the password.
 
 ### Fix (same day)
@@ -31,7 +31,14 @@ Follows `2026-10-07-admin-website-questions.md` (Questions inbox, 3b95af3 / 75a2
 - 7-day check: 3 questions imported. Full import (since 2026-06-01): 6 more questions, 18 email answers, 10 customer follow-ups linked, 1 old unanswered archived.
 - Spot check of a 15-message thread: chronological, no quoted-text leakage, status Answered (our reply last), order card shows the customer's paid filing.
 
+### Faster pickup of customer replies (same day, later)
+- Owner: customer replies "go back to my email but not in the system". They were synced, but only hourly.
+- Cron now `*/10 * * * *` → `runSupportMailSyncIfNewMail`: an IMAP-only probe (`hasMailSince`, 25-min window, same folders as the sync via shared `folderKind`) — the DB is touched only when new mail exists (Neon scale-to-zero). Probe errors fall through to a recorded run.
+- `AutoMailboxCheck`: opening /admin/questions or a question runs the 7-day sync if the last recorded run is >2 min old, then refreshes.
+- Codex review: 1 MEDIUM (probe ignored non-INBOX/Sent folders) → fixed with shared `folderKind`; re-check "ship it". Targeted vitest 44/44 (+ admin questions API), tsc 0, eslint 0, build OK.
+
 ## Contracts
+- The probe and the full scan must use the same `folderKind()`; never let them diverge.
 - Visitor-supplied URLs are only ever rendered as links via `safeHttpUrl` (src/lib/safeHttpUrl.ts).
 - Store methods write explicit Prisma fields only — never spread caller objects into `data`.
 - Every mailbox item is keyed by Message-ID (`@unique` on both tables) — sync is idempotent; never key on anything else.

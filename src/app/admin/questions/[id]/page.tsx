@@ -6,6 +6,8 @@ import { isPaidStatus } from "@/lib/admin/websiteQuestions";
 import { safeHttpUrl } from "@/lib/safeHttpUrl";
 import { AdminPageHeader } from "../../_components/AdminPageHeader";
 import { QuestionActions } from "./QuestionActions";
+import { AutoMailboxCheck } from "../AutoMailboxCheck";
+import { supportImapConfig } from "@/lib/supportMail/imap";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Question - Admin" };
@@ -46,6 +48,11 @@ export default async function AdminQuestionDetailPage({ params }: { params: { id
     }),
   ]);
 
+  const lastSync = await prisma.supportMailSyncRun.findFirst({
+    orderBy: { startedAt: "desc" },
+    select: { startedAt: true },
+  });
+
   const fmt = (d: Date) => d.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
 
   return (
@@ -63,6 +70,7 @@ export default async function AdminQuestionDetailPage({ params }: { params: { id
         }
       />
 
+      <AutoMailboxCheck connected={supportImapConfig() !== null} lastRunAt={lastSync?.startedAt.toISOString() ?? null} />
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="min-w-0 space-y-4">
           <div className="rounded-lg border border-slate-200 bg-white p-5">
