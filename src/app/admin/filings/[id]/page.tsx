@@ -18,6 +18,7 @@ import { MessagesPanel } from "@/components/MessagesPanel";
 import { LinkedFaxes } from "@/components/admin/LinkedFaxes";
 import { YearBreakdown } from "./YearBreakdown";
 import { EmailLogTable } from "./EmailLogTable";
+import { questionsForEmail } from "@/lib/admin/websiteQuestions";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,9 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
     },
   });
   if (!filing) notFound();
+
+  // Website questions this customer sent before/after ordering (same email).
+  const websiteQuestions = filing.user?.email ? await questionsForEmail(filing.user.email, 10) : [];
 
   const preflightOverrideAdmin = filing.preflightOverrideBy
     ? await prisma.admin.findUnique({
@@ -468,6 +472,26 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             />
           </DetailCard>
         </div>
+
+        {websiteQuestions.length > 0 ? (
+          <div className="md:col-span-2 bg-white border border-slate-200 rounded-lg p-5">
+            <h2 className="text-sm font-semibold text-slate-900 mb-3">Website questions from this customer</h2>
+            <ul className="divide-y divide-slate-100">
+              {websiteQuestions.map((q) => (
+                <li key={q.id} className="py-2 first:pt-0 last:pb-0">
+                  <Link href={`/admin/questions/${q.id}`} className="block text-sm text-slate-800 hover:text-accent">
+                    <span className="line-clamp-2">{q.message}</span>
+                  </Link>
+                  <div className="mt-0.5 text-xs text-slate-500">
+                    {q.createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                    {" · "}
+                    {q.repliedAt ? "Answered" : "Needs reply"}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
 
         {/* Own wrapper (same look as DetailCard): a <table> doesn't belong in DetailCard's <dl>. */}
         <div className="md:col-span-2 bg-white border border-slate-200 rounded-lg p-5">

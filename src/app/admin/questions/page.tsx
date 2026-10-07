@@ -4,6 +4,7 @@ import type { Prisma } from "@prisma/client";
 import { isAdmin } from "@/lib/admin/auth";
 import { timeAgo } from "@/lib/admin/filingPresence";
 import { prisma } from "@/lib/prisma";
+import { orderSummaryByEmail } from "@/lib/admin/websiteQuestions";
 import { AdminPageHeader } from "../_components/AdminPageHeader";
 
 export const dynamic = "force-dynamic";
@@ -42,6 +43,7 @@ export default async function AdminQuestionsPage({ searchParams }: { searchParam
     prisma.websiteQuestion.count({ where: VIEWS.open.where }),
   ]);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const orders = await orderSummaryByEmail(questions.map((q) => q.email));
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
@@ -76,6 +78,7 @@ export default async function AdminQuestionsPage({ searchParams }: { searchParam
           <div className="divide-y divide-slate-100">
             {questions.map((q) => {
               const unread = !q.readAt;
+              const order = orders.get(q.email.toLowerCase());
               return (
                 <Link
                   key={q.id}
@@ -101,6 +104,13 @@ export default async function AdminQuestionsPage({ searchParams }: { searchParam
                       ) : (
                         <span className="rounded-full bg-amber-50 px-2 py-0.5 font-medium text-amber-800">Needs reply</span>
                       )}
+                      {order && order.paidOrders > 0 ? (
+                        <span className="rounded-full bg-blue-50 px-2 py-0.5 font-medium text-blue-700">
+                          Customer · {order.paidOrders} paid order{order.paidOrders === 1 ? "" : "s"}
+                        </span>
+                      ) : order && order.drafts > 0 ? (
+                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-slate-600">Started an order (unpaid)</span>
+                      ) : null}
                       {q.archivedAt ? <span className="rounded-full bg-slate-100 px-2 py-0.5 text-slate-600">Archived</span> : null}
                     </div>
                   </div>

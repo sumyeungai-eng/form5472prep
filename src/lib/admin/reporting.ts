@@ -18,7 +18,7 @@ export type DashboardSummary = {
   needsAttention: AttentionItem[];
 };
 
-const PAID_STATUSES = new Set<FilingStatus>([
+export const PAID_STATUSES = new Set<FilingStatus>([
   FilingStatus.PAID,
   FilingStatus.PDF_GENERATED,
   FilingStatus.SIGNATURE_PENDING,

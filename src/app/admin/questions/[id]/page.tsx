@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
+import { isPaidStatus } from "@/lib/admin/websiteQuestions";
 import { AdminPageHeader } from "../../_components/AdminPageHeader";
 import { QuestionActions } from "./QuestionActions";
 
@@ -32,7 +33,7 @@ export default async function AdminQuestionDetailPage({ params }: { params: { id
           where: { supersededAt: null },
           orderBy: { createdAt: "desc" },
           take: 5,
-          select: { id: true, llcName: true, taxYears: true, status: true },
+          select: { id: true, llcName: true, taxYears: true, status: true, createdAt: true },
         },
       },
     }),
@@ -106,20 +107,31 @@ export default async function AdminQuestionDetailPage({ params }: { params: { id
           </div>
 
           <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm">
-            <div className="text-xs font-medium uppercase tracking-wide text-slate-500">Customer?</div>
+            <div className="text-xs font-medium uppercase tracking-wide text-slate-500">Orders with this email</div>
             {customer && customer.filings.length > 0 ? (
-              <ul className="mt-2 space-y-1">
-                {customer.filings.map((f) => (
-                  <li key={f.id}>
-                    <Link href={`/admin/filings/${f.id}`} className="text-accent hover:underline">
-                      {f.llcName || "Untitled filing"}
-                    </Link>
-                    <span className="text-slate-500"> · {f.taxYears.length > 0 ? f.taxYears.join(", ") : "—"} · {f.status}</span>
-                  </li>
-                ))}
+              <ul className="mt-2 space-y-2">
+                {customer.filings.map((f) => {
+                  const paid = isPaidStatus(f.status);
+                  return (
+                    <li key={f.id}>
+                      <Link href={`/admin/filings/${f.id}`} className="text-accent hover:underline">
+                        {f.llcName || "Untitled filing"}
+                      </Link>
+                      <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs">
+                        <span className={`rounded-full px-2 py-0.5 font-medium ${paid ? "bg-blue-50 text-blue-700" : "bg-slate-100 text-slate-600"}`}>
+                          {paid ? "Paid" : "Unpaid draft"}
+                        </span>
+                        <span className="text-slate-500">
+                          {f.taxYears.length > 0 ? f.taxYears.join(", ") : "—"} · {f.status}
+                          {f.createdAt > question.createdAt ? " · started after this question" : ""}
+                        </span>
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             ) : (
-              <p className="mt-1 text-slate-600">{customer ? "Has an account, no filings yet." : "No account with this email."}</p>
+              <p className="mt-1 text-slate-600">{customer ? "Has an account, no orders yet." : "No orders with this email yet. If they order later with the same email, it shows here."}</p>
             )}
           </div>
 

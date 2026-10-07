@@ -15,11 +15,13 @@ const db = vi.hoisted(() => ({
   findUnique: vi.fn(),
   update: vi.fn(),
   userFindFirst: vi.fn(),
+  filingFindMany: vi.fn(async (_args: { where: unknown }) => [] as unknown[]),
 }));
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     websiteQuestion: { findMany: db.findMany, count: db.count, findUnique: db.findUnique, update: db.update },
     user: { findFirst: db.userFindFirst },
+    filing: { findMany: db.filingFindMany },
   },
 }));
 
@@ -29,7 +31,10 @@ import AdminQuestionDetailPage from "./[id]/page";
 const asked = new Date("2026-10-06T09:30:00Z");
 
 describe("admin questions pages", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    db.filingFindMany.mockResolvedValue([]);
+  });
 
   it("lists open questions with a needs-reply chip and an open-count badge", async () => {
     db.findMany.mockResolvedValue([
@@ -45,6 +50,28 @@ describe("admin questions pages", () => {
     expect(html).toContain("Needs reply");
     expect(html).toContain("Replied ×2");
     expect(html).toContain("li@example.test");
+    expect(html).not.toContain("paid order");
+  });
+
+  it("flags askers who later ordered with the same email (case-insensitive)", async () => {
+    db.findMany.mockResolvedValue([
+      { id: "q_1", name: "Ana", email: "Ana@Example.test", message: "Hi", topic: null, createdAt: asked, readAt: asked, repliedAt: asked, archivedAt: null, _count: { replies: 1 } },
+      { id: "q_2", name: "Li", email: "li@example.test", message: "Hi", topic: null, createdAt: asked, readAt: asked, repliedAt: null, archivedAt: null, _count: { replies: 0 } },
+    ]);
+    db.count.mockResolvedValue(1);
+    db.filingFindMany.mockResolvedValue([
+      { status: "PAID", user: { email: "ana@example.test" } },
+      { status: "FAXED", user: { email: "ana@example.test" } },
+      { status: "DRAFT", user: { email: "li@example.test" } },
+    ]);
+
+    const html = renderToStaticMarkup(await AdminQuestionsPage({ searchParams: {} }));
+    expect(db.filingFindMany.mock.calls[0][0].where).toEqual({
+      supersededAt: null,
+      user: { email: { in: ["ana@example.test", "li@example.test"], mode: "insensitive" } },
+    });
+    expect(html).toContain("Customer · 2 paid orders");
+    expect(html).toContain("Started an order (unpaid)");
   });
 
   it("uses the requested tab and falls back to To answer for unknown ones", async () => {
@@ -63,7 +90,12 @@ describe("admin questions pages", () => {
       pageUrl: "https://www.form5472prep.com/pricing", createdAt: asked, readAt: null, repliedAt: asked, archivedAt: null,
       replies: [{ id: "r_1", body: "Yes, you do.", createdAt: asked, sentBy: "admin@example.test" }],
     });
-    db.userFindFirst.mockResolvedValue({ filings: [{ id: "f_1", llcName: "Synthetic Test LLC", taxYears: [2025], status: "PAID" }] });
+    db.userFindFirst.mockResolvedValue({
+      filings: [
+        { id: "f_1", llcName: "Synthetic Test LLC", taxYears: [2025], status: "PAID", createdAt: new Date("2026-10-07T08:00:00Z") },
+        { id: "f_2", llcName: "Synthetic Draft LLC", taxYears: [2024], status: "DRAFT", createdAt: new Date("2026-09-01T08:00:00Z") },
+      ],
+    });
     db.findMany.mockResolvedValue([{ id: "q_0", createdAt: asked, message: "Earlier question" }]);
 
     const html = renderToStaticMarkup(await AdminQuestionDetailPage({ params: { id: "q_1" } }));
@@ -72,6 +104,9 @@ describe("admin questions pages", () => {
     expect(html).toContain("Yes, you do.");
     expect(html).toContain('href="/admin/filings/f_1"');
     expect(html).toContain("Synthetic Test LLC");
+    expect(html).toContain("Paid");
+    expect(html).toContain("Unpaid draft");
+    expect(html.match(/started after this question/g)).toHaveLength(1);
     expect(html).toContain("Earlier question");
     expect(html).toContain("Send another reply");
     expect(html).toContain("Move back to “To answer”");
