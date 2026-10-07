@@ -13,6 +13,17 @@ const DEFAULT_SIG_CSS_HEIGHT = 45;
 type Placement =
   | {
       id: string;
+      // The signing admin's OWN signature for the 1120 "Paid Preparer Use Only"
+      // box — a different image from the client's, shown in violet.
+      kind: "preparer";
+      pageIndex: number;
+      cssX: number;
+      cssY: number;
+      cssWidth: number;
+      cssHeight: number;
+    }
+  | {
+      id: string;
       kind: "signature";
       pageIndex: number; // 0-based
       // CSS pixel coords relative to the rendered canvas, top-left origin
@@ -44,7 +55,7 @@ type Placement =
       cssFontSize: number;
     };
 
-type Mode = "signature" | "date" | "text";
+type Mode = "signature" | "preparer" | "date" | "text";
 type PlaceSignatureEndpoints = {
   pdf: string;
   signedPdf: string;
@@ -81,12 +92,15 @@ export function PlaceSignatureClient({
   taxYears,
   hasExistingSignedPdf,
   endpoints,
+  allowPreparerSignature = false,
 }: {
   filingId: string;
   llcName: string | null;
   taxYears: number[];
   hasExistingSignedPdf: boolean;
   endpoints?: PlaceSignatureEndpoints;
+  // Form 5472 / 1120 filings only (not EIN/ITIN applications).
+  allowPreparerSignature?: boolean;
 }) {
   // useRouter was used to programmatically navigate after save, but the new
   // preview-on-save flow keeps the user on this page (with iframe preview)
@@ -101,6 +115,12 @@ export function PlaceSignatureClient({
   const [defaultTextValue, setDefaultTextValue] = useState<string>("");
   const [pageSizes, setPageSizes] = useState<PageSize[]>([]);
   const [sigUrl, setSigUrl] = useState<string | null>(null);
+  // Preparer signature: "saved" = the admin's account copy (object URL),
+  // "drawn" = drawn on the pad just now (PNG data URL, sent on save).
+  const [preparerSig, setPreparerSig] = useState<{ url: string; source: "saved" | "drawn" } | null>(null);
+  const [hasSavedPreparerSig, setHasSavedPreparerSig] = useState(false);
+  const [showPreparerPad, setShowPreparerPad] = useState(false);
+  const [rememberPreparerSig, setRememberPreparerSig] = useState(true);
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
@@ -197,6 +217,27 @@ export function PlaceSignatureClient({
     // time pdfjs needs them.
   }, [filingId, resolvedEndpoints.pdf, resolvedEndpoints.signaturePng]);
 
+  // Load the admin's saved preparer signature, if any (404 = none saved).
+  useEffect(() => {
+    if (!allowPreparerSignature) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/preparer-signature", { cache: "no-store" });
+        if (!res.ok || cancelled) return;
+        const url = URL.createObjectURL(await res.blob());
+        if (cancelled) return;
+        setHasSavedPreparerSig(true);
+        setPreparerSig((cur) => cur ?? { url, source: "saved" });
+      } catch {
+        // No saved signature — the admin draws one.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [allowPreparerSignature]);
+
   // Pre-allocate canvas slots by guessing 1-50 pages. The actual count is
   // unknown until pdfjs returns it; we mount up to 50 and only fill what
   // the doc has. Unused canvases stay 0x0 and aren't visible.
@@ -207,17 +248,21 @@ export function PlaceSignatureClient({
   function handlePageClick(pageIndex: number, e: React.MouseEvent<HTMLDivElement>) {
     // Signature mode needs the signature image loaded; date mode doesn't.
     if (mode === "signature" && !sigUrl) return;
+    if (mode === "preparer" && !preparerSig) {
+      setShowPreparerPad(true);
+      return;
+    }
     const wrapper = e.currentTarget;
     const rect = wrapper.getBoundingClientRect();
     const id = `p_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-    if (mode === "signature") {
+    if (mode === "signature" || mode === "preparer") {
       const cssX = e.clientX - rect.left - DEFAULT_SIG_CSS_WIDTH / 2;
       const cssY = e.clientY - rect.top - DEFAULT_SIG_CSS_HEIGHT / 2;
       setPlacements((arr) => [
         ...arr,
         {
           id,
-          kind: "signature",
+          kind: mode,
           pageIndex,
           cssX: Math.max(0, cssX),
           cssY: Math.max(0, cssY),
@@ -287,8 +332,8 @@ export function PlaceSignatureClient({
           // Resize. For signatures: preserve aspect ratio so the strokes
           // don't squish. For dates / text: scale the font size proportionally
           // to the width change so the text stays legible relative to handle drag.
-          if (p.kind === "signature") {
-            const sStart = start as Extract<Placement, { kind: "signature" }>;
+          if (p.kind === "signature" || p.kind === "preparer") {
+            const sStart = start as Extract<Placement, { kind: "signature" | "preparer" }>;
             const newW = Math.max(40, sStart.cssWidth + dx);
             const ratio = sStart.cssHeight / sStart.cssWidth;
             return { ...p, cssWidth: newW, cssHeight: newW * ratio };
@@ -337,9 +382,9 @@ export function PlaceSignatureClient({
       if (!size) throw new Error(`No size for page ${p.pageIndex + 1}`);
       const pdfX = p.cssX / RENDER_SCALE;
       const pdfYBottom = size.heightPts - (p.cssY + p.cssHeight) / RENDER_SCALE;
-      if (p.kind === "signature") {
+      if (p.kind === "signature" || p.kind === "preparer") {
         return {
-          kind: "signature" as const,
+          kind: p.kind === "preparer" ? ("preparerSignature" as const) : ("signature" as const),
           page: p.pageIndex + 1,
           x: pdfX,
           y: pdfYBottom,
@@ -371,7 +416,14 @@ export function PlaceSignatureClient({
       const res = await fetch(resolvedEndpoints.place, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ placements: pdfPlacements }),
+        body: JSON.stringify({
+          placements: pdfPlacements,
+          ...(placements.some((p) => p.kind === "preparer") && preparerSig
+            ? preparerSig.source === "drawn"
+              ? { preparerSignaturePng: preparerSig.url, rememberPreparerSignature: rememberPreparerSig }
+              : { useSavedPreparerSignature: true }
+            : {}),
+        }),
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body?.error ?? `HTTP ${res.status}`);
@@ -485,6 +537,18 @@ export function PlaceSignatureClient({
           >
             Signature
           </button>
+          {allowPreparerSignature && (
+            <button
+              type="button"
+              onClick={() => {
+                setMode("preparer");
+                if (!preparerSig) setShowPreparerPad(true);
+              }}
+              className={`px-3 py-1.5 font-medium border-l border-slate-300 ${mode === "preparer" ? "bg-violet-600 text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
+            >
+              Preparer signature
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setMode("date")}
@@ -500,6 +564,22 @@ export function PlaceSignatureClient({
             Text
           </button>
         </div>
+        {mode === "preparer" && (
+          <span className="text-xs text-slate-600 inline-flex items-center gap-2">
+            {preparerSig ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element -- internal admin tool: object/data URL of the preparer's own drawn signature. */}
+                <img src={preparerSig.url} alt="your preparer signature" className="h-6 w-auto border border-violet-200 bg-white" />
+                <span>{preparerSig.source === "saved" ? "Your saved signature" : "Drawn just now"}</span>
+              </>
+            ) : (
+              <span>No preparer signature yet</span>
+            )}
+            <button type="button" onClick={() => setShowPreparerPad(true)} className="text-violet-700 hover:underline">
+              {preparerSig ? "Draw a new one" : "Draw your signature"}
+            </button>
+          </span>
+        )}
         {mode === "date" && (
           <label className="text-xs text-slate-600 inline-flex items-center gap-1.5">
             <span>New dates use:</span>
@@ -528,6 +608,12 @@ export function PlaceSignatureClient({
         <span className="text-xs text-slate-500">
           {placements.filter((p) => p.kind === "signature").length} sig
           {" · "}
+          {allowPreparerSignature && (
+            <>
+              {placements.filter((p) => p.kind === "preparer").length} preparer
+              {" · "}
+            </>
+          )}
           {placements.filter((p) => p.kind === "date").length} date
           {" · "}
           {placements.filter((p) => p.kind === "text").length} text
@@ -564,6 +650,20 @@ export function PlaceSignatureClient({
           {saving ? "Saving…" : "Save signed PDF"}
         </button>
       </div>
+
+      {allowPreparerSignature && showPreparerPad && (
+        <PreparerSignaturePad
+          hasSaved={hasSavedPreparerSig}
+          remember={rememberPreparerSig}
+          onRememberChange={setRememberPreparerSig}
+          onCancel={() => setShowPreparerPad(false)}
+          onUse={(dataUrl) => {
+            setPreparerSig({ url: dataUrl, source: "drawn" });
+            setShowPreparerPad(false);
+            setMode("preparer");
+          }}
+        />
+      )}
 
       {loadingState && (
         <div className="flex items-center gap-2 text-sm text-slate-600">
@@ -611,6 +711,15 @@ export function PlaceSignatureClient({
                           alt="customer signature"
                           draggable={false}
                           className="w-full h-full object-contain ring-2 ring-accent/50 ring-dashed bg-white/0 pointer-events-none"
+                        />
+                      )}
+                      {p.kind === "preparer" && preparerSig && (
+                        // eslint-disable-next-line @next/next/no-img-element -- internal admin tool: object/data URL of the preparer's own drawn signature.
+                        <img
+                          src={preparerSig.url}
+                          alt="preparer signature"
+                          draggable={false}
+                          className="w-full h-full object-contain ring-2 ring-violet-500/60 ring-dashed bg-white/0 pointer-events-none"
                         />
                       )}
                       {p.kind === "date" && (
@@ -669,6 +778,119 @@ export function PlaceSignatureClient({
             </div>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+// Drawing pad for the PREPARER's own signature. White background so the
+// server's chroma-key turns it transparent like the client signature.
+function PreparerSignaturePad({
+  hasSaved,
+  remember,
+  onRememberChange,
+  onCancel,
+  onUse,
+}: {
+  hasSaved: boolean;
+  remember: boolean;
+  onRememberChange: (v: boolean) => void;
+  onCancel: () => void;
+  onUse: (dataUrl: string) => void;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const drawing = useRef(false);
+  const [hasInk, setHasInk] = useState(false);
+
+  useEffect(() => {
+    const c = canvasRef.current;
+    const ctx = c?.getContext("2d");
+    if (!c || !ctx) return;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, c.width, c.height);
+  }, []);
+
+  function point(e: React.PointerEvent<HTMLCanvasElement>) {
+    const c = canvasRef.current!;
+    const r = c.getBoundingClientRect();
+    return { x: ((e.clientX - r.left) * c.width) / r.width, y: ((e.clientY - r.top) * c.height) / r.height };
+  }
+  function down(e: React.PointerEvent<HTMLCanvasElement>) {
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    drawing.current = true;
+    const { x, y } = point(e);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  }
+  function move(e: React.PointerEvent<HTMLCanvasElement>) {
+    if (!drawing.current) return;
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+    const { x, y } = point(e);
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#111827";
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    setHasInk(true);
+  }
+  function up() {
+    drawing.current = false;
+  }
+  function clear() {
+    const c = canvasRef.current;
+    const ctx = c?.getContext("2d");
+    if (!c || !ctx) return;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, c.width, c.height);
+    setHasInk(false);
+  }
+
+  return (
+    <div className="rounded-lg border border-violet-200 bg-violet-50/60 p-4 space-y-3">
+      <div>
+        <p className="text-sm font-semibold text-violet-900">Preparer signature (your own)</p>
+        <p className="text-xs text-violet-800">
+          For the Form 1120 &ldquo;Paid Preparer Use Only&rdquo; box. Sign as yourself, the paid preparer. This is
+          never the client&apos;s signature.
+        </p>
+      </div>
+      <canvas
+        ref={canvasRef}
+        width={600}
+        height={160}
+        onPointerDown={down}
+        onPointerMove={move}
+        onPointerUp={up}
+        onPointerLeave={up}
+        className="w-full max-w-xl h-[120px] rounded border border-violet-300 bg-white touch-none cursor-crosshair"
+      />
+      <div className="flex flex-wrap items-center gap-3 text-xs">
+        <button type="button" onClick={clear} className="px-3 py-1.5 rounded border border-slate-300 bg-white hover:bg-slate-50">
+          Clear
+        </button>
+        <label className="inline-flex items-center gap-1.5 text-slate-700">
+          <input type="checkbox" checked={remember} onChange={(e) => onRememberChange(e.target.checked)} />
+          {hasSaved ? "Replace my saved signature with this one" : "Save to my admin account for next time"}
+        </label>
+        <div className="flex-1" />
+        <button type="button" onClick={onCancel} className="px-3 py-1.5 rounded border border-slate-300 bg-white hover:bg-slate-50">
+          Cancel
+        </button>
+        <button
+          type="button"
+          disabled={!hasInk}
+          onClick={() => {
+            const c = canvasRef.current;
+            if (c) onUse(c.toDataURL("image/png"));
+          }}
+          className="px-3 py-1.5 rounded bg-violet-600 text-white font-medium hover:bg-violet-700 disabled:opacity-50"
+        >
+          Use this signature
+        </button>
       </div>
     </div>
   );

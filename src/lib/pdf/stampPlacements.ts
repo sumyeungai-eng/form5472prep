@@ -2,7 +2,18 @@ import { toPdfSafe, isPdfEncodable, PDF_TEXT_MESSAGE } from "../pdfText";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import sharp from "sharp";
 
+// "signature" = the CLIENT's own drawn signature (taxpayer line).
+// "preparerSignature" = the signing admin's OWN signature for the 1120
+// "Paid Preparer Use Only" box. Two different images; never interchangeable.
 export type Placement =
+  | {
+      kind: "preparerSignature";
+      page: number;
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    }
   | {
       kind: "signature";
       page: number;
@@ -28,7 +39,10 @@ export type Placement =
       fontSize: number;
     };
 
-export function parsePlacements(body: unknown): { ok: true; placements: Placement[] } | { ok: false; error: string } {
+export function parsePlacements(
+  body: unknown,
+  opts: { allowPreparerSignature?: boolean } = {},
+): { ok: true; placements: Placement[] } | { ok: false; error: string } {
   if (!body || typeof body !== "object") {
     return { ok: false, error: "placements array required" };
   }
@@ -43,8 +57,17 @@ export function parsePlacements(body: unknown): { ok: true; placements: Placemen
       return { ok: false, error: "placement entry must be an object" };
     }
     const p = raw as Record<string, unknown>;
-    const kind: "signature" | "date" | "text" =
-      p.kind === "date" ? "date" : p.kind === "text" ? "text" : "signature";
+    if (p.kind === "preparerSignature" && !opts.allowPreparerSignature) {
+      return { ok: false, error: "preparer signatures are not supported here" };
+    }
+    const kind: "signature" | "preparerSignature" | "date" | "text" =
+      p.kind === "date"
+        ? "date"
+        : p.kind === "text"
+          ? "text"
+          : p.kind === "preparerSignature"
+            ? "preparerSignature"
+            : "signature";
     const page = Number(p.page);
     const x = Number(p.x);
     const y = Number(p.y);
@@ -54,7 +77,7 @@ export function parsePlacements(body: unknown): { ok: true; placements: Placemen
     if ([x, y].some((n) => !Number.isFinite(n))) {
       return { ok: false, error: "x/y must be numbers" };
     }
-    if (kind === "signature") {
+    if (kind === "signature" || kind === "preparerSignature") {
       const width = Number(p.width);
       const height = Number(p.height);
       if ([width, height].some((n) => !Number.isFinite(n))) {
@@ -63,7 +86,7 @@ export function parsePlacements(body: unknown): { ok: true; placements: Placemen
       if (width <= 0 || height <= 0 || width > 612 || height > 200) {
         return { ok: false, error: "signature width/height out of range" };
       }
-      placements.push({ kind: "signature", page: Math.round(page), x, y, width, height });
+      placements.push({ kind, page: Math.round(page), x, y, width, height });
     } else {
       const maxLen = kind === "date" ? 60 : 200;
       const text = typeof p.text === "string" ? p.text : "";
@@ -116,11 +139,16 @@ export async function stampPlacements(
   pdfBytes: Uint8Array,
   signaturePngBytes: Uint8Array | null,
   placements: Placement[],
+  preparerSignaturePngBytes: Uint8Array | null = null,
 ): Promise<Uint8Array> {
   const pdf = await PDFDocument.load(pdfBytes);
   const needsSignatureImage = placements.some((p) => p.kind === "signature");
   const transparentPng = needsSignatureImage && signaturePngBytes ? await chromaKeySignaturePng(signaturePngBytes) : null;
   const signatureImage = transparentPng ? await pdf.embedPng(transparentPng) : null;
+  const needsPreparerImage = placements.some((p) => p.kind === "preparerSignature");
+  const preparerPng =
+    needsPreparerImage && preparerSignaturePngBytes ? await chromaKeySignaturePng(preparerSignaturePngBytes) : null;
+  const preparerImage = preparerPng ? await pdf.embedPng(preparerPng) : null;
   const needsTextFont = placements.some((p) => p.kind === "date" || p.kind === "text");
   const textFont = needsTextFont ? await pdf.embedFont(StandardFonts.Helvetica) : null;
 
@@ -132,6 +160,8 @@ export async function stampPlacements(
     const page = pdf.getPage(idx);
     if (p.kind === "signature" && signatureImage) {
       page.drawImage(signatureImage, { x: p.x, y: p.y, width: p.width, height: p.height });
+    } else if (p.kind === "preparerSignature" && preparerImage) {
+      page.drawImage(preparerImage, { x: p.x, y: p.y, width: p.width, height: p.height });
     } else if ((p.kind === "date" || p.kind === "text") && textFont) {
       page.drawText(toPdfSafe(p.text), {
         x: p.x,

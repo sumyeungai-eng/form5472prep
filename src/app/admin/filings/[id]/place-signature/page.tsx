@@ -48,6 +48,7 @@ export default async function PlaceSignaturePage({ params }: { params: { id: str
       llcName={filing.llcName}
       taxYears={filing.taxYears}
       hasExistingSignedPdf={!!filing.signedPdfKey}
+      allowPreparerSignature
     />
   );
 }

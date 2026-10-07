@@ -72,4 +72,54 @@ describe("stampPlacements", () => {
     const loaded = await PDFDocument.load(stamped);
     expect(loaded.getPageCount()).toBe(1);
   });
+
+  it("only accepts preparer signatures where the caller allows them", () => {
+    const body = { placements: [{ kind: "preparerSignature", page: 1, x: 5, y: 5, width: 90, height: 30 }] };
+    expect(parsePlacements(body)).toEqual({ ok: false, error: "preparer signatures are not supported here" });
+    expect(parsePlacements(body, { allowPreparerSignature: true })).toEqual({
+      ok: true,
+      placements: [{ kind: "preparerSignature", page: 1, x: 5, y: 5, width: 90, height: 30 }],
+    });
+  });
+
+  it("stamps the client and preparer signatures as two separate images", async () => {
+    const pdf = await PDFDocument.create();
+    pdf.addPage([300, 200]);
+    const pdfBytes = await pdf.save();
+    const png = async (shade: number) =>
+      new Uint8Array(
+        await sharp({ create: { width: 4, height: 4, channels: 4, background: { r: shade, g: shade, b: shade, alpha: 1 } } })
+          .png()
+          .toBuffer(),
+      );
+    const countImages = async (bytes: Uint8Array) => {
+      const doc = await PDFDocument.load(bytes);
+      return doc.context
+        .enumerateIndirectObjects()
+        .filter(([, obj]) => String((obj as { dict?: { get?: (k: unknown) => unknown } }).dict?.get?.(doc.context.obj("Subtype")) ?? "") === "/Image").length;
+    };
+
+    const clientOnly = await stampPlacements(pdfBytes, await png(20), [
+      { kind: "signature", page: 1, x: 10, y: 20, width: 80, height: 24 },
+    ]);
+    const both = await stampPlacements(
+      pdfBytes,
+      await png(20),
+      [
+        { kind: "signature", page: 1, x: 10, y: 20, width: 80, height: 24 },
+        { kind: "preparerSignature", page: 1, x: 10, y: 120, width: 80, height: 24 },
+      ],
+      await png(60),
+    );
+    // A preparer placement with no preparer image draws nothing extra.
+    const preparerMissing = await stampPlacements(pdfBytes, await png(20), [
+      { kind: "signature", page: 1, x: 10, y: 20, width: 80, height: 24 },
+      { kind: "preparerSignature", page: 1, x: 10, y: 120, width: 80, height: 24 },
+    ]);
+
+    const base = await countImages(clientOnly);
+    expect(base).toBeGreaterThan(0);
+    expect(await countImages(both)).toBeGreaterThan(base);
+    expect(await countImages(preparerMissing)).toBe(base);
+  });
 });
