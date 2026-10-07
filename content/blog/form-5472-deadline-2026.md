@@ -12,22 +12,22 @@ draft: false
 
 Form 5472 deadlines are simple in outline and easy to miss in practice, because this foreign-owned U.S. DE package is not e-filed. The current Form 5472 instructions do not describe a routine acceptance acknowledgment for the faxed package, so keep the exact submission and its transmission evidence. Silence establishes neither acceptance nor rejection.
 
-Here is the full calendar as it stands in August 2026, plus the extension rule that is specific to foreign-owned disregarded entities and catches out people who assume Form 7004 works the way it does for everyone else.
+Here is the full calendar for tax years 2024 to 2027, plus the extension rule that is specific to foreign-owned disregarded entities and catches out people who assume Form 7004 works the way it does for everyone else.
 
 If a date has already passed for you, [we prepare and fax complete late packages with a reasonable cause letter from $149](/start).
 
 ## The deadline calendar
 
-| Tax year | Standard due date | Extended due date (with Form 7004) | Status as of August 2026 |
+| Tax year | Standard due date | Extended due date (with Form 7004) | Status at 7 October 2026 |
 |---|---|---|---|
 | **2024** | 15 April 2025 | 15 October 2025 | Both passed — file late now |
-| **2025** | 15 April 2026 | **15 October 2026** | Extension deadline approaching |
+| **2025** | 15 April 2026 | **15 October 2026** | Extended deadline 15 October 2026; late since 16 April 2026 without Form 7004 |
 | **2026** | 15 April 2027 | 15 October 2027 | Upcoming |
 | **2027** | 15 April 2028 | 15 October 2028 | Upcoming |
 
 If a due date falls on a Saturday, Sunday or legal holiday, it moves to the next business day.
 
-**The date that matters most right now is 15 October 2026** — the extended deadline for the 2025 tax year. If you filed Form 7004 by 15 April 2026, that is your final date and there is no further extension. If you did not file Form 7004, your 2025 return has been late since 16 April 2026 and the penalty exposure is already running.
+**For the 2025 tax year, the last possible date is 15 October 2026**, and only if Form 7004 was filed by 15 April 2026. There is no further extension. If you did not file Form 7004, your 2025 return has been late since 16 April 2026 and the penalty exposure is already running. Once 15 October 2026 has passed, an unfiled 2025 return is late either way, so file it as soon as possible.
 
 ## When is Form 5472 due?
 
@@ -149,7 +149,7 @@ Note that the March buffer also gives you time to discover that a prior year was
 
 For current turnaround tiers before choosing a start date, [see current pricing](/pricing).
 
-With the 15 October 2026 extended deadline in view: standard turnaround needs you to start by roughly the end of September; express covers you into early October. Starting earlier is always cheaper than starting later, because the express upgrade exists precisely to buy back time you have already spent.
+Work backwards from your deadline: standard needs 5-7 business days and express needs 3, counted from when your details are complete, so leave room for both the turnaround and the fax. For a 2025 return still unprepared in the days before 15 October 2026, express is the tier whose turnaround still fits. If the deadline has already passed, file as soon as you can rather than waiting for the next one. Starting earlier is always cheaper than starting later, because the express upgrade exists precisely to buy back time you have already spent.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return, on time.
 
@@ -187,6 +187,6 @@ File all of them together with one reasonable cause statement, as soon as possib
 
 ---
 
-15 October 2026 is the live date for the 2025 tax year. After that, the next one is 15 April 2027 — and the best time to prepare it is January, not April.
+15 October 2026 is the final extended date for the 2025 tax year. The next deadline after it is 15 April 2027, for the 2026 tax year — and the best time to prepare it is January, not April.
 
 [Start your filing](/start), or read the [extension rules in detail](/blog/form-5472-extension) if you need more time.

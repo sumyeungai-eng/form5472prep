@@ -135,7 +135,8 @@ describe("llms-full.txt core corpus", () => {
     expect(llmsFull).toContain(`${SITE_URL}/llms-guides.txt`);
   });
 
-  it("stays within ~400 KB so truncating AI fetchers still read it all", () => {
-    expect(Buffer.byteLength(llmsFull)).toBeLessThan(420_000);
+  it("stays under 460 KB so truncating AI fetchers still read it all", () => {
+    // 2026-10-07: raised from 420_000 when the example, foreigner-LLC and disregarded-entity guides were added.
+    expect(Buffer.byteLength(llmsFull)).toBeLessThan(460_000);
   });
 });
