@@ -76,6 +76,11 @@ describe("POST /api/ask", () => {
     expect(email.sendWebsiteQuestionAdminEmail.mock.calls[0][0].adminLink).toBe("https://app.example.test/admin/questions/q_1");
   });
 
+  it.each(["javascript:alert(1)", "data:text/html,hi", "not a url"])("drops a non-http page URL (%s)", async (pageUrl) => {
+    await ask({ email: "jose@altorven.com", pageUrl });
+    expect(db.create.mock.calls[0][0].data.pageUrl).toBeNull();
+  });
+
   it("does not store honeypot spam or invalid addresses", async () => {
     await ask({ email: "bot@spam.test", company: "Acme" });
     await ask({ email: "jose@altorven" });

@@ -29,8 +29,11 @@ function memoryStore(initial: Q[] = []) {
     async questionsForEmails(emails) {
       return questions.filter((q) => emails.includes(q.email.toLowerCase())).map(({ id, email, createdAt }) => ({ id, email, createdAt }));
     },
+    async questionIdForMessage(mid) {
+      return questions.find((q) => q.sourceMessageId === mid)?.id ?? replies.find((r) => r.sourceMessageId === mid)?.questionId ?? null;
+    },
     async replyExists(mid) { return replies.some((r) => r.sourceMessageId === mid); },
-    async createReply(a) { replies.push(a); },
+    async createReply(a) { replies.push(a); return true; },
     async refreshStatus(id, v) { refreshed.push([id, v]); },
     async archiveIfUnanswered(ids, before) {
       const stale = ids.filter((id) => {
@@ -55,7 +58,7 @@ function reader(mails: Array<MailEnvelope & { text: string }>): MailboxReader & 
 
 let uid = 0;
 function mail(p: Partial<MailEnvelope> & { text: string; date: Date; messageId: string }): MailEnvelope & { text: string } {
-  return { folder: p.isSent ? "INBOX.Sent" : "INBOX", uid: ++uid, isSent: false, from: "", to: [], replyTo: [], subject: "", ...p };
+  return { folder: p.isSent ? "INBOX.Sent" : "INBOX", uid: ++uid, isSent: false, from: "", to: [], replyTo: [], subject: "", inReplyTo: null, ...p };
 }
 
 const notification = (id: string, date: Date, email: string, message: string, link = "") =>
@@ -144,6 +147,41 @@ describe("syncSupportMailbox", () => {
     expect(mem.replies.map((r) => [r.questionId, r.body])).toEqual([["old", "For old"], ["new", "For new"]]);
     expect(box.fetched).not.toContain("<s5@x>");
     expect(box.fetched).not.toContain("<i1@x>");
+  });
+
+  it("files an answer under the question it replies to (In-Reply-To), not the asker's newest", async () => {
+    const mem = memoryStore([
+      { id: "q1", email: "ana@example.test", message: "First", createdAt: d("2026-10-05T09:00:00"), sourceMessageId: "<n1@x>", name: null },
+      { id: "q2", email: "ana@example.test", message: "Second", createdAt: d("2026-10-06T09:00:00"), sourceMessageId: "<n2@x>", name: null },
+    ]);
+    await syncSupportMailbox({
+      reader: reader([
+        mail({ messageId: "<a1@x>", isSent: true, inReplyTo: "<n1@x>", date: d("2026-10-07T09:00:00"), from: "support@form5472prep.com", to: ["ana@example.test"], text: "Answer to first" }),
+        mail({ messageId: "<f1@x>", inReplyTo: "<a1@x>", date: d("2026-10-07T10:00:00"), from: "ana@example.test", to: ["support@form5472prep.com"], text: "Thanks for the first" }),
+        mail({ messageId: "<a2@x>", isSent: true, date: d("2026-10-07T11:00:00"), from: "support@form5472prep.com", to: ["ana@example.test"], text: "No thread header" }),
+      ]),
+      store: mem.store,
+      ...opts,
+    });
+    expect(mem.replies.map((r) => [r.questionId, r.body])).toEqual([
+      ["q1", "Answer to first"],
+      ["q1", "Thanks for the first"],
+      ["q2", "No thread header"],
+    ]);
+  });
+
+  it("does not count a reply a concurrent run already stored", async () => {
+    const mem = memoryStore([
+      { id: "q1", email: "ana@example.test", message: "Q", createdAt: d("2026-10-01T09:00:00"), sourceMessageId: "<n@x>", name: null },
+    ]);
+    mem.store.createReply = async () => false;
+    const res = await syncSupportMailbox({
+      reader: reader([mail({ messageId: "<a@x>", isSent: true, date: d("2026-10-01T10:00:00"), from: "support@form5472prep.com", to: ["ana@example.test"], text: "Answer" })]),
+      store: mem.store,
+      ...opts,
+    });
+    expect(res.answersImported).toBe(0);
+    expect(mem.refreshed).toEqual([]);
   });
 
   it("archives imported questions older than 30 days when no answer is found", async () => {

@@ -111,5 +111,18 @@ describe("admin questions pages", () => {
     expect(html).toContain("Earlier question");
     expect(html).toContain("Send another reply");
     expect(html).toContain("Move back to “To answer”");
+    expect(html).toContain('href="https://www.form5472prep.com/pricing"');
+  });
+
+  it("never renders a non-http page URL as a link", async () => {
+    db.findUnique.mockResolvedValue({
+      id: "q_x", name: null, email: "x@example.test", message: "Hi", topic: null,
+      pageUrl: "javascript:alert(document.cookie)", createdAt: asked, readAt: asked, repliedAt: null, archivedAt: null, replies: [],
+    });
+    db.userFindFirst.mockResolvedValue(null);
+    db.findMany.mockResolvedValue([]);
+    const html = renderToStaticMarkup(await AdminQuestionDetailPage({ params: { id: "q_x" } }));
+    expect(html).not.toMatch(/href="javascript:/i);
+    expect(html).toContain("javascript:alert(document.cookie)");
   });
 });

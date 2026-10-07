@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { sendWebsiteQuestionAdminEmail } from "@/lib/email";
 import { env } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
+import { safeHttpUrl } from "@/lib/safeHttpUrl";
 import { rateLimit, clientIp, tooManyRequests } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
@@ -54,7 +55,8 @@ export async function POST(req: Request) {
   // (so the bot thinks it worked) but don't email.
   const honeypot = typeof body.company === "string" ? body.company.trim() : "";
   // Optional context: which page they asked from.
-  const pageUrl = typeof body.pageUrl === "string" ? body.pageUrl.trim().slice(0, 500) : "";
+  // Only real http(s) page URLs: it is rendered as a link in admin.
+  const pageUrl = (typeof body.pageUrl === "string" ? safeHttpUrl(body.pageUrl.trim().slice(0, 500)) : null) ?? "";
 
   if (!email || !message) {
     return NextResponse.json({ error: "Email and message are required" }, { status: 400 });

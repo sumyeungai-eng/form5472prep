@@ -42,6 +42,8 @@ export async function withImapReader<T>(config: ImapConfig, run: (reader: Mailbo
           if (box.specialUse && SKIP_SPECIAL_USE.has(box.specialUse)) continue;
           if (/^(trash|spam|junk|drafts?|deleted)/i.test(box.name)) continue;
           const isSent = box.specialUse === "\\Sent" || /^sent/i.test(box.name);
+          // Server logs only (names, no content): confirms Sent detection on Hostinger.
+          console.log(`[support-mail-sync] folder ${box.path}${box.specialUse ? ` ${box.specialUse}` : ""} sent=${isSent}`);
           const lock = await client.getMailboxLock(box.path, { readOnly: true });
           try {
             const uids = await client.search({ since }, { uid: true });
@@ -59,6 +61,7 @@ export async function withImapReader<T>(config: ImapConfig, run: (reader: Mailbo
                 to: [...(e.to ?? []), ...(e.cc ?? [])].map((a) => a.address ?? "").filter(Boolean),
                 replyTo: (e.replyTo ?? []).map((a) => a.address ?? "").filter(Boolean),
                 subject: e.subject ?? "",
+                inReplyTo: e.inReplyTo?.trim() || null,
               });
             }
           } finally {

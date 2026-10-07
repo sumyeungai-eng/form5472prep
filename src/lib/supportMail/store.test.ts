@@ -8,7 +8,10 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
+import { Prisma } from "@prisma/client";
 import { prismaQuestionStore } from "./store";
+
+const uniqueViolation = () => new Prisma.PrismaClientKnownRequestError("Unique constraint failed", { code: "P2002", clientVersion: "6" });
 
 const t = (h: number) => new Date(Date.UTC(2026, 9, 1, h));
 
@@ -60,5 +63,27 @@ describe("prismaQuestionStore writes only schema fields", () => {
     expect(db.createReply.mock.calls[0][0].data).toEqual({
       questionId: "q", body: "b", sentBy: "s", fromVisitor: false, createdAt: t(1), sourceMessageId: "<r@x>", source: "email",
     });
+  });
+});
+
+describe("prismaQuestionStore is safe when two syncs overlap", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("createReply reports false on a Message-ID unique violation and rethrows other errors", async () => {
+    const args = { questionId: "q", body: "b", sentBy: "s", fromVisitor: false, createdAt: t(1), sourceMessageId: "<r@x>" };
+    db.createReply.mockRejectedValueOnce(uniqueViolation());
+    await expect(prismaQuestionStore.createReply(args)).resolves.toBe(false);
+    db.createReply.mockRejectedValueOnce(new Error("db down"));
+    await expect(prismaQuestionStore.createReply(args)).rejects.toThrow("db down");
+  });
+
+  it("createQuestion returns the existing row when another run created it first", async () => {
+    db.create.mockRejectedValueOnce(uniqueViolation());
+    db.findUnique.mockResolvedValueOnce({ id: "existing" });
+    await expect(
+      prismaQuestionStore.createQuestion({
+        name: null, email: "a@example.test", topic: null, pageUrl: null, message: "Hi", createdAt: t(1), sourceMessageId: "<m@x>",
+      }),
+    ).resolves.toBe("existing");
   });
 });

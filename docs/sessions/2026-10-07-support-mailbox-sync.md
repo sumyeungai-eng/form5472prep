@@ -19,7 +19,15 @@ Follows `2026-10-07-admin-website-questions.md` (Questions inbox, 3b95af3 / 75a2
 - First live run: IMAP login + parsing worked, but `createQuestion` failed — the sync spread the parser result (incl. `questionId`) into Prisma ("Unknown argument `questionId`"). Store/sync now pass explicit fields; the in-memory test store rejects unknown keys like Prisma (verified: fails on the old code, passes on the fix). Sync errors stored/shown are now the last line only (no customer text).
 - Owner step done: `SUPPORT_IMAP_PASSWORD` added in Vercel (Production, secret) and redeployed.
 
+### Codex review (gpt-5.5, read-only, diff 63120dc..HEAD) — all 4 findings verified and fixed
+- HIGH stored XSS: visitor `pageUrl` rendered as href → `safeHttpUrl` at ingestion (/api/ask) and render (detail page); `javascript:` etc. shown as text.
+- HIGH misfiling: answers went to the asker's newest question → thread by `In-Reply-To` (notification or earlier synced Message-ID) first, email+latest only as fallback.
+- MEDIUM race: overlapping cron/admin runs could P2002 and fail → store creates treat Message-ID unique violations as "already stored".
+- LOW Sent detection: folder names + sent flag now logged (server logs) to confirm on Hostinger.
+- Evidence: targeted vitest 65/65, tsc 0, eslint 0, next build OK.
+
 ## Contracts
+- Visitor-supplied URLs are only ever rendered as links via `safeHttpUrl` (src/lib/safeHttpUrl.ts).
 - Store methods write explicit Prisma fields only — never spread caller objects into `data`.
 - Every mailbox item is keyed by Message-ID (`@unique` on both tables) — sync is idempotent; never key on anything else.
 - Cron requires `CRON_SECRET` (no dev fallback).

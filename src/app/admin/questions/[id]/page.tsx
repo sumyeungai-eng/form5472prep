@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { isPaidStatus } from "@/lib/admin/websiteQuestions";
+import { safeHttpUrl } from "@/lib/safeHttpUrl";
 import { AdminPageHeader } from "../../_components/AdminPageHeader";
 import { QuestionActions } from "./QuestionActions";
 
@@ -108,9 +109,13 @@ export default async function AdminQuestionDetailPage({ params }: { params: { id
             {question.pageUrl ? (
               <>
                 <div className="mt-3 text-xs font-medium uppercase tracking-wide text-slate-500">Asked from page</div>
-                <a href={question.pageUrl} target="_blank" rel="noreferrer" className="break-all text-slate-700 hover:underline">
-                  {question.pageUrl.replace(/^https?:\/\/(www\.)?/, "")}
-                </a>
+                {safeHttpUrl(question.pageUrl) ? (
+                  <a href={safeHttpUrl(question.pageUrl)!} target="_blank" rel="noreferrer" className="block break-all text-slate-700 hover:underline">
+                    {question.pageUrl.replace(/^https?:\/\/(www\.)?/, "")}
+                  </a>
+                ) : (
+                  <span className="block break-all text-slate-700">{question.pageUrl}</span>
+                )}
               </>
             ) : null}
           </div>

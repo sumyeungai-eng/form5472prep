@@ -24,6 +24,8 @@ export type MailEnvelope = {
   to: string[];
   replyTo: string[];
   subject: string;
+  // Message-ID this email answers, when the client set In-Reply-To.
+  inReplyTo: string | null;
 };
 
 export interface MailboxReader {
@@ -49,6 +51,8 @@ export interface QuestionStore {
     sourceMessageId: string;
   }): Promise<string>;
   questionsForEmails(emails: string[]): Promise<StoredQuestion[]>;
+  // Question a Message-ID belongs to: its notification, or a stored reply.
+  questionIdForMessage(messageId: string): Promise<string | null>;
   replyExists(messageId: string): Promise<boolean>;
   createReply(args: {
     questionId: string;
@@ -57,7 +61,7 @@ export interface QuestionStore {
     fromVisitor: boolean;
     createdAt: Date;
     sourceMessageId: string;
-  }): Promise<void>;
+  }): Promise<boolean>; // false = already stored (a concurrent run won)
   refreshStatus(questionId: string, newVisitorMessage: boolean): Promise<void>;
   archiveIfUnanswered(questionIds: string[], createdBefore: Date): Promise<number>;
 }
@@ -161,16 +165,23 @@ export async function syncSupportMailbox(opts: {
       : byEmail.has(normalizeEmail(env.from)) ? normalizeEmail(env.from) : undefined;
     if (!visitor) continue;
 
-    const question = (byEmail.get(visitor) ?? [])
-      .filter((q) => q.createdAt.getTime() <= env.date.getTime() + SKEW_MS)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0];
+    const asked = byEmail.get(visitor) ?? [];
+    // Prefer the thread the email client recorded (In-Reply-To the question
+    // notification or an earlier synced message), so an answer to an older
+    // question isn't filed under the asker's newest one.
+    const threadId = env.inReplyTo ? await store.questionIdForMessage(env.inReplyTo) : null;
+    const question =
+      asked.find((q) => q.id === threadId) ??
+      asked
+        .filter((q) => q.createdAt.getTime() <= env.date.getTime() + SKEW_MS)
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0];
     if (!question || env.date.getTime() - question.createdAt.getTime() > THREAD_WINDOW_MS) continue;
     if (await store.replyExists(env.messageId)) continue;
 
     const body = stripQuotedReply(await reader.fetchText(env)).slice(0, MAX_BODY);
     if (!body) continue;
     const fromVisitor = !env.isSent;
-    await store.createReply({
+    const created = await store.createReply({
       questionId: question.id,
       body,
       sentBy: fromVisitor ? visitor : normalizeEmail(env.from) || "support@form5472prep.com",
@@ -178,6 +189,7 @@ export async function syncSupportMailbox(opts: {
       createdAt: env.date,
       sourceMessageId: env.messageId,
     });
+    if (!created) continue;
     if (fromVisitor) result.followUpsImported += 1;
     else result.answersImported += 1;
     touched.set(question.id, (touched.get(question.id) ?? false) || fromVisitor);

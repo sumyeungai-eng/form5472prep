@@ -1,7 +1,14 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { QuestionStore } from "./sync";
 
-// Prisma implementation of the mailbox-sync store (see sync.ts).
+// Prisma implementation of the mailbox-sync store (see sync.ts). Creates are
+// race-safe: the cron and the admin button can overlap, and the loser of a
+// Message-ID unique race treats the row as already stored.
+
+function isUniqueViolation(err: unknown): boolean {
+  return err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002";
+}
 export const prismaQuestionStore: QuestionStore = {
   async questionIdBySource(messageId) {
     const q = await prisma.websiteQuestion.findUnique({ where: { sourceMessageId: messageId }, select: { id: true } });
@@ -27,27 +34,41 @@ export const prismaQuestionStore: QuestionStore = {
   },
 
   async setQuestionSource(id, messageId) {
-    await prisma.websiteQuestion.update({ where: { id }, data: { sourceMessageId: messageId } });
+    try {
+      await prisma.websiteQuestion.update({ where: { id }, data: { sourceMessageId: messageId } });
+    } catch (err) {
+      if (!isUniqueViolation(err)) throw err;
+    }
   },
 
   async createQuestion(args) {
-    // Already seen in the mailbox, so not "unread" in admin.
-    // Explicit fields: a stray key (e.g. the parser's questionId) makes
-    // Prisma reject the whole create.
-    const q = await prisma.websiteQuestion.create({
-      data: {
-        name: args.name,
-        email: args.email,
-        topic: args.topic,
-        pageUrl: args.pageUrl,
-        message: args.message,
-        createdAt: args.createdAt,
-        sourceMessageId: args.sourceMessageId,
-        readAt: args.createdAt,
-      },
-      select: { id: true },
-    });
-    return q.id;
+    try {
+      // Explicit fields: a stray key (e.g. the parser's questionId) makes
+      // Prisma reject the whole create.
+      const q = await prisma.websiteQuestion.create({
+        data: {
+          name: args.name,
+          email: args.email,
+          topic: args.topic,
+          pageUrl: args.pageUrl,
+          message: args.message,
+          createdAt: args.createdAt,
+          sourceMessageId: args.sourceMessageId,
+          // Already seen in the mailbox, so not "unread" in admin.
+          readAt: args.createdAt,
+        },
+        select: { id: true },
+      });
+      return q.id;
+    } catch (err) {
+      if (!isUniqueViolation(err)) throw err;
+      const existing = await prisma.websiteQuestion.findUnique({
+        where: { sourceMessageId: args.sourceMessageId },
+        select: { id: true },
+      });
+      if (!existing) throw err;
+      return existing.id;
+    }
   },
 
   async questionsForEmails(emails) {
@@ -58,23 +79,39 @@ export const prismaQuestionStore: QuestionStore = {
     });
   },
 
+  async questionIdForMessage(messageId) {
+    const q = await prisma.websiteQuestion.findUnique({ where: { sourceMessageId: messageId }, select: { id: true } });
+    if (q) return q.id;
+    const r = await prisma.websiteQuestionReply.findUnique({
+      where: { sourceMessageId: messageId },
+      select: { questionId: true },
+    });
+    return r?.questionId ?? null;
+  },
+
   async replyExists(messageId) {
     const r = await prisma.websiteQuestionReply.findUnique({ where: { sourceMessageId: messageId }, select: { id: true } });
     return r !== null;
   },
 
   async createReply(args) {
-    await prisma.websiteQuestionReply.create({
-      data: {
-        questionId: args.questionId,
-        body: args.body,
-        sentBy: args.sentBy,
-        fromVisitor: args.fromVisitor,
-        createdAt: args.createdAt,
-        sourceMessageId: args.sourceMessageId,
-        source: "email",
-      },
-    });
+    try {
+      await prisma.websiteQuestionReply.create({
+        data: {
+          questionId: args.questionId,
+          body: args.body,
+          sentBy: args.sentBy,
+          fromVisitor: args.fromVisitor,
+          createdAt: args.createdAt,
+          sourceMessageId: args.sourceMessageId,
+          source: "email",
+        },
+      });
+      return true;
+    } catch (err) {
+      if (isUniqueViolation(err)) return false;
+      throw err;
+    }
   },
 
   // Answered = our latest message is newer than the visitor's latest. A new
