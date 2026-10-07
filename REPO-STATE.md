@@ -223,3 +223,4 @@ Claude and Codex sessions share these folders. Practical rules:
 - `docs/sessions/2026-10-01-seo-compact-keywords.md` — /services hub + 8 BOFU pages, technical SEO fixes, Moz research.
 - `docs/sessions/2026-10-05-seo-course-gaps.md` — full-course gap pass: one Organization @id, service-page IRS links/HowTo, contextual service cards, /press, /compare, embeddable calculators, off-site kit.
 - `docs/sessions/2026-10-06-geo-aeo-pass.md` — GEO/AEO pass: AI-quotable fact fixes (DIIRSP, IRS address, llms facts from code), llms-full split, service-page question H2s + capsules, sourced /compare/form-5472-filing-services price table, provider pages re-sourced.
+- `docs/sessions/2026-10-07-moz-full-report.md` — full Moz read-out (campaign, AI dashboard, links, keyword gap) + prioritised improvement report `docs/seo/moz-full-report-2026-10-07.md`; spam PBN links, do not disavow.
