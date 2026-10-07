@@ -56,6 +56,7 @@ import {
   refineOwnerFtin,
   makeYearScopeSchema,
   selectableTaxYears,
+  formationYearFrom,
   validateDissolvedAt,
   isYearDelinquent,
   filingDueDateUtc,
@@ -545,6 +546,7 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
             }}
             onFormReady={registerYearsGetter}
             onBack={goBack}
+            onEditFormationDate={() => setStepKey("entity")}
             saving={saving}
           />
         )}
@@ -1622,17 +1624,19 @@ function formatLongDate(iso: string | null | undefined): string | null {
   });
 }
 
-function YearsStep({
+export function YearsStep({
   filing,
   onSubmit,
   onFormReady,
   onBack,
+  onEditFormationDate,
   saving,
 }: {
   filing: Filing;
   onSubmit: (data: YearStepSubmitData) => Promise<void>;
   onFormReady?: (get: (() => YearStepSubmitData | null) | null) => void;
   onBack: () => void;
+  onEditFormationDate?: () => void;
   saving: boolean;
 }) {
   const currentYear = new Date().getUTCFullYear();
@@ -1692,6 +1696,25 @@ function YearsStep({
   const [extProofError, setExtProofError] = useState<string | null>(null);
   const maxYear = isFinalReturn ? currentYear : lastCompletedTaxYear;
   const allYears = selectableTaxYears(isFinalReturn, filing.llcDateIncorporated);
+  // Formed this year and not closed: no tax year has ended yet, so nothing is
+  // filable. Say so (customer report 2026-10-07: an LLC dated 2026-04-10 saw an
+  // empty picker and couldn't continue) instead of showing an empty grid.
+  const noFilableYearYet = allYears.length === 0;
+  const formationYear = formationYearFrom(filing.llcDateIncorporated);
+  const formationDateLabel = filing.llcDateIncorporated
+    ? new Date(filing.llcDateIncorporated).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC",
+      })
+    : null;
+  // Never pre-select a year the picker can't show (it used to default to last
+  // year even for an LLC formed this year, which also surfaced the 7004 block
+  // for a year that can't be filed).
+  const initialYears = (filing.taxYears.length ? filing.taxYears : [lastCompletedTaxYear]).filter((y) =>
+    allYears.includes(y),
+  );
   const {
     register,
     handleSubmit,
@@ -1701,7 +1724,7 @@ function YearsStep({
     formState: { errors },
   } = useForm<YearScopeForm>({
     resolver: zodResolver(makeYearScopeSchema(isFinalReturn, filing.llcDateIncorporated)),
-    defaultValues: { taxYears: filing.taxYears.length ? filing.taxYears : [lastCompletedTaxYear] },
+    defaultValues: { taxYears: initialYears },
   });
   const selected = watch("taxYears");
 
@@ -1868,7 +1891,7 @@ function YearsStep({
   // drives the determination (and the admin's review flags), so hiding it would
   // leave a stored fact influencing the outcome with no way to see or correct
   // it — and the customer would have no way to fix a mistyped 7004 date.
-  const showExtensionSection = extensionWindowOpen || filing.extensionFiled != null;
+  const showExtensionSection = !noFilableYearYet && (extensionWindowOpen || filing.extensionFiled != null);
   // Facts that reach the shared helpers. Deliberately null whenever the
   // section isn't on screen — an answer the customer can't currently see must
   // not silently keep driving the determination after they change years.
@@ -2087,6 +2110,25 @@ function YearsStep({
         </p>
       </div>
       <input type="hidden" {...register("taxYears", { valueAsNumber: false })} />
+      {noFilableYearYet && (
+        <div role="status" className="rounded-md border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900 space-y-2">
+          <p className="font-medium">There&apos;s no tax year to file yet.</p>
+          <p>
+            You told us your LLC was formed on {formationDateLabel ?? "a date this year"}. Form 5472 is filed
+            after a tax year ends, so your first return covers {formationYear ?? currentYear} and can be filed
+            from January {(formationYear ?? currentYear) + 1}.
+          </p>
+          <p>
+            If that formation date is wrong, please correct it in the Entity step.
+            {" "}If your LLC has already been closed, tick the final-return box below.
+          </p>
+          {onEditFormationDate && (
+            <Button type="button" variant="outline" size="sm" onClick={onEditFormationDate}>
+              Fix the formation date
+            </Button>
+          )}
+        </div>
+      )}
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
         {allYears.map((y) => {
           const checked = selected.includes(y);
