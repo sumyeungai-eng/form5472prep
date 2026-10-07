@@ -26,6 +26,11 @@ Follows `2026-10-07-admin-website-questions.md` (Questions inbox, 3b95af3 / 75a2
 - LOW Sent detection: folder names + sent flag now logged (server logs) to confirm on Hostinger.
 - Evidence: targeted vitest 65/65, tsc 0, eslint 0, next build OK.
 
+### Live verification (2026-10-07 ~17:30, production f61ry86kp)
+- `SUPPORT_IMAP_PASSWORD` set (Production, secret) + redeployed. Hostinger folders seen: `INBOX` (\Inbox), `INBOX.Sent` (\Sent → sent=true), `INBOX.Archive` — Sent detection confirmed (Codex LOW item closed).
+- 7-day check: 3 questions imported. Full import (since 2026-06-01): 6 more questions, 18 email answers, 10 customer follow-ups linked, 1 old unanswered archived.
+- Spot check of a 15-message thread: chronological, no quoted-text leakage, status Answered (our reply last), order card shows the customer's paid filing.
+
 ## Contracts
 - Visitor-supplied URLs are only ever rendered as links via `safeHttpUrl` (src/lib/safeHttpUrl.ts).
 - Store methods write explicit Prisma fields only — never spread caller objects into `data`.
