@@ -183,11 +183,11 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
         return;
       }
       if (
-        hasCustomerSignature &&
+        (hasCustomerSignature || hasSignedPdf) &&
         !window.confirm(
           notifyClient
-            ? "The client has already signed an earlier version. Uploading this reviewed PDF sets that signature aside and emails them to check and sign the new version. Continue?"
-            : "The client has already signed an earlier version. Uploading this reviewed PDF sets that signature aside, so they must sign the new version. They will NOT be emailed. Continue?",
+            ? "The client has already signed an earlier version. Uploading this reviewed PDF replaces it: the signed version is kept on record but set aside, and the client is emailed to check and sign the new version. Their old signature is never reused. Continue?"
+            : "The client has already signed an earlier version. Uploading this reviewed PDF replaces it: the signed version is kept on record but set aside, and the client must sign the new version in their portal. They will NOT be emailed, so tell them yourself. Their old signature is never reused. Continue?",
         )
       ) {
         return;

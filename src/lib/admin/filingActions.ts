@@ -309,6 +309,7 @@ const filingSelect = {
   generatorVersion: true,
   generatorCommit: true,
   faxedPdfKey: true,
+  faxedAt: true,
   faxJobId: true,
   faxStatus: true,
   faxConfirmationKey: true,
@@ -1604,11 +1605,21 @@ export async function runFilingAction(
           "We could not tell which admin is signed in. Sign out of the admin portal and sign in again.",
         );
       }
-      if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
+      // Owner decision (2026-10-07): a signed package may be replaced until it
+      // is faxed — the client then signs the new version (their old signature
+      // is never reused). Anything that has touched the fax path (sent, being
+      // sent, or a send claim held after an ambiguous submit) stays locked:
+      // that version is, or may be, with the IRS.
+      const faxTouched =
+        ["FAXED", "CONFIRMED"].includes(filing.status) ||
+        !!filing.faxJobId ||
+        !!filing.faxedAt ||
+        !!filing.faxStatus;
+      if (faxTouched) {
         throw new FilingActionError(
           409,
-          "already_signed_or_filed",
-          "This filing has already been signed, faxed, or confirmed.",
+          "already_faxed",
+          "This filing has already been faxed (or a fax is being sent), so its package can't be replaced. A correction after faxing is a new filing.",
         );
       }
       if (filing.preflightStatus === "failed" && !filing.preflightOverrideBy) {
@@ -1647,42 +1658,61 @@ export async function runFilingAction(
       // change log) and the client is emailed to check and sign again.
       const reviewedStatus = "PDF_GENERATED";
       const approvedAt = new Date();
-      await prisma.filing.update({
-        where: { id: filing.id },
-        data: {
-          generatedPdfKey: key,
-          signedPdfKey: null,
-          signaturePngKey: null,
-          signedAt: null,
-          validationStatus: "pending",
-          validationCheckedAt: null,
-          reviewApprovedAt: approvedAt,
-          reviewApprovedBy: ctx.approver ?? ctx.adminId,
-          status: reviewedStatus,
-        },
-        select: { id: true },
-      });
-      await logFilingChange({
-        filingId: filing.id,
-        adminId: ctx.adminId,
-        source: "admin",
-        field: "pdf",
-        before: {
-          generatedPdfKey: filing.generatedPdfKey,
-          signedPdfKey: filing.signedPdfKey,
-          signaturePngKey: filing.signaturePngKey,
-          status: filing.status,
-        },
-        after: {
-          generatedPdfKey: key,
-          signedPdfKey: null,
-          signaturePngKey: null,
-          status: reviewedStatus,
-          reviewApprovedAt: approvedAt,
-          reviewApprovedBy: ctx.approver ?? ctx.adminId,
-          clientEmailed: body.notifyClient !== false,
-        },
-        reason: ctx.reason,
+      // One transaction: the conditional update (pinned on the fax state the
+      // guard saw, so a fax send starting at the same moment can't race this
+      // replacement) and the change-log entry that records the set-aside
+      // signed PDF / signature keys either both land or neither does.
+      await prisma.$transaction(async (tx) => {
+        const replaced = await tx.filing.updateMany({
+          where: {
+            id: filing.id,
+            status: filing.status,
+            faxJobId: null,
+            faxStatus: null,
+            faxedAt: null,
+          },
+          data: {
+            generatedPdfKey: key,
+            signedPdfKey: null,
+            signaturePngKey: null,
+            signedAt: null,
+            validationStatus: "pending",
+            validationCheckedAt: null,
+            reviewApprovedAt: approvedAt,
+            reviewApprovedBy: ctx.approver ?? ctx.adminId,
+            status: reviewedStatus,
+          },
+        });
+        if (replaced.count !== 1) {
+          throw new FilingActionError(
+            409,
+            "filing_state_changed",
+            "This filing changed while you were uploading (for example a fax just started). Nothing was replaced. Refresh the page and check it.",
+          );
+        }
+        await logFilingChange({
+          filingId: filing.id,
+          adminId: ctx.adminId,
+          source: "admin",
+          field: "pdf",
+          before: {
+            generatedPdfKey: filing.generatedPdfKey,
+            signedPdfKey: filing.signedPdfKey,
+            signaturePngKey: filing.signaturePngKey,
+            status: filing.status,
+          },
+          after: {
+            generatedPdfKey: key,
+            signedPdfKey: null,
+            signaturePngKey: null,
+            status: reviewedStatus,
+            reviewApprovedAt: approvedAt,
+            reviewApprovedBy: ctx.approver ?? ctx.adminId,
+            clientEmailed: body.notifyClient !== false,
+          },
+          reason: ctx.reason,
+          tx,
+        });
       });
       // Owner option (2026-10-07): upload a corrected version without emailing
       // the client (e.g. they are already in touch by email). The signature

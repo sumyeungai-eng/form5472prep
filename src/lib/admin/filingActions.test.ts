@@ -12,7 +12,15 @@ const db = vi.hoisted(() => ({
   yearFindUnique: vi.fn(),
   yearUpdate: vi.fn((args: unknown) => ({ op: "filingYearData.update", args })),
   createLog: vi.fn((args: unknown) => ({ op: "log.create", args })),
-  transaction: vi.fn(async (ops: unknown[]) => ops),
+  // Array form returns the ops; callback form runs with a tx that reuses the
+  // same mocks (filing.updateMany / filingChangeLog.create).
+  transaction: vi.fn(async (ops: unknown): Promise<unknown> =>
+    typeof ops === "function"
+      ? (ops as (tx: unknown) => Promise<unknown>)({
+          filing: { updateMany: db.updateMany, update: db.update },
+          filingChangeLog: { create: db.createLog },
+        })
+      : ops),
 }));
 const fax = vi.hoisted(() => ({
   submitFax: vi.fn(async (_opts: unknown) => ({ id: "fax_job_1", status: "queued" })),
@@ -525,12 +533,17 @@ describe("uploadReviewedPdf — hands the package to the client", () => {
     preflightOverrideBy: null,
     reviewApprovedAt: null,
     reviewApprovedBy: null,
+    faxJobId: null as string | null,
+    faxStatus: null as string | null,
+    faxedAt: null as Date | null,
     user: { id: "u1", email: "owner@example.test" } as { id: string; email: string } | null,
   };
 
   beforeEach(() => {
     db.findUnique.mockReset();
     db.update.mockClear();
+    db.updateMany.mockClear();
+    db.updateMany.mockResolvedValue({ count: 1 });
     db.createLog.mockClear();
     storage.put.mockClear();
     email.sendReadyToSignEmail.mockClear();
@@ -546,7 +559,7 @@ describe("uploadReviewedPdf — hands the package to the client", () => {
     ).resolves.toMatchObject({ ok: true, emailSent: true, emailTo: "owner@example.test" });
 
     expect(storage.put).toHaveBeenCalled();
-    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+    expect(db.updateMany).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ status: "PDF_GENERATED", signaturePngKey: null, reviewApprovedBy: "admin_1" }),
     }));
     expect(email.sendReadyToSignEmail).toHaveBeenCalledWith(expect.objectContaining({
@@ -564,7 +577,7 @@ describe("uploadReviewedPdf — hands the package to the client", () => {
       runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64 }, { adminId: "admin_1" }),
     ).resolves.toMatchObject({ ok: true, emailSent: true });
 
-    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+    expect(db.updateMany).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ status: "PDF_GENERATED", signaturePngKey: null }),
     }));
     expect(email.sendReadyToSignEmail).toHaveBeenCalledWith(expect.objectContaining({ resign: true }));
@@ -578,12 +591,73 @@ describe("uploadReviewedPdf — hands the package to the client", () => {
     ).resolves.toMatchObject({ ok: true, emailSent: false, emailSkipped: true });
 
     expect(storage.put).toHaveBeenCalled();
-    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+    expect(db.updateMany).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ status: "PDF_GENERATED", signaturePngKey: null, signedPdfKey: null }),
     }));
     expect((db.createLog.mock.calls[0][0] as { data: { afterJson: unknown } }).data.afterJson).toMatchObject({ clientEmailed: false, signaturePngKey: null });
     expect(email.sendReadyToSignEmail).not.toHaveBeenCalled();
     expect(brand.brandForFiling).not.toHaveBeenCalled();
+  });
+
+  it("replaces a signed but never-faxed package; the client must sign again (old signature not reused)", async () => {
+    db.findUnique.mockResolvedValue({
+      ...filing,
+      status: "SIGNED_UPLOADED",
+      signaturePngKey: "filing_1_signature.png",
+      signedPdfKey: "filing_1_signed.pdf",
+    });
+
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64, notifyClient: false }, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, emailSkipped: true });
+
+    expect(db.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: "filing_1", status: "SIGNED_UPLOADED", faxJobId: null, faxStatus: null, faxedAt: null },
+      data: expect.objectContaining({ status: "PDF_GENERATED", signedPdfKey: null, signaturePngKey: null, signedAt: null }),
+    }));
+    // The set-aside signed PDF stays on record in the change log.
+    expect((db.createLog.mock.calls[0][0] as { data: { beforeJson: unknown } }).data.beforeJson).toMatchObject({
+      signedPdfKey: "filing_1_signed.pdf",
+      signaturePngKey: "filing_1_signature.png",
+    });
+  });
+
+  it.each([
+    ["FAXED", {}],
+    ["CONFIRMED", {}],
+    ["SIGNED_UPLOADED", { faxStatus: "retrying_0" }],
+    ["SIGNED_UPLOADED", { faxJobId: "fax_123" }],
+    ["SIGNED_UPLOADED", { faxedAt: new Date("2026-10-01T00:00:00Z") }],
+  ])("refuses to replace a package that has touched the fax path (%s %o)", async (status, fax) => {
+    db.findUnique.mockResolvedValue({ ...filing, status, signedPdfKey: "s.pdf", ...fax });
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64 }, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 409, code: "already_faxed" });
+    expect(storage.put).not.toHaveBeenCalled();
+    expect(db.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("refuses when a fax starts while the upload is in progress", async () => {
+    db.findUnique.mockResolvedValue({ ...filing, status: "SIGNED_UPLOADED", signedPdfKey: "s.pdf" });
+    db.updateMany.mockResolvedValueOnce({ count: 0 });
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64 }, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 409, code: "filing_state_changed" });
+    expect(email.sendReadyToSignEmail).not.toHaveBeenCalled();
+    expect(db.createLog).not.toHaveBeenCalled();
+  });
+
+  it("rolls back the replacement when the change-log entry can't be written", async () => {
+    db.findUnique.mockResolvedValue({ ...filing, status: "SIGNED_UPLOADED", signedPdfKey: "s.pdf" });
+    db.createLog.mockImplementationOnce(() => {
+      throw new Error("log table down");
+    });
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64 }, { adminId: "admin_1" }),
+    ).rejects.toThrow("log table down");
+    // Both writes ran inside the one transaction, so Postgres undoes the update.
+    expect(db.transaction).toHaveBeenCalledWith(expect.any(Function));
+    expect(email.sendReadyToSignEmail).not.toHaveBeenCalled();
   });
 
   it("reports when the client could not be emailed", async () => {
