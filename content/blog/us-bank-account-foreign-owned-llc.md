@@ -2,7 +2,7 @@
 title: "US Bank Account for a Foreign-Owned LLC"
 description: "A foreign-owned LLC can often open a US business account after getting an EIN. See the documents, remote options and Form 5472 record trail."
 date: 2026-08-28
-updated: 2026-08-28
+updated: 2026-10-07
 author: "Form5472 Prep"
 tags: ["foreign-owned-llc", "us-bank-account", "ein", "form-5472", "non-resident-founder"]
 draft: false
@@ -52,6 +52,23 @@ Yes, a remote application can be possible through an online provider, but eligib
 A branch-based bank can follow a different process. Chase, for example, describes both online and in-person paths but states that the relevant people for a member-managed LLC or manager-managed LLC need to be present at account opening under its in-person requirements. That supports a general rule of thumb: traditional banks often require a branch visit for a foreign-owned LLC even though some entity and applicant combinations can apply online.
 
 Remote does not mean “US address only.” A provider may distinguish the LLC’s registered address from its real operating address and the owner’s residential address. Give each address according to the field label. Do not claim that a registered-agent, mailbox, or virtual-office address is where the owner lives or where the business operates.
+
+## Can a foreign company open a US bank account?
+
+**Sometimes. A company formed outside the United States can apply to US providers in its own name, but acceptance is each provider's decision and some accept only US-formed entities. The common alternative is a US LLC owned by the foreign company, which gets its own EIN and applies as a US entity.**
+
+The two routes lead to different paperwork:
+
+| Route | Account holder | Identifier and tax form usually involved | Annual US information return |
+|---|---|---|---|
+| Foreign company applies directly | The foreign company | Home-country registration documents; the provider may ask for Form W-8BEN-E | Depends on the company's own US activity, not on the account |
+| Foreign company forms a US single-member LLC | The US LLC | The LLC's EIN and CP575 or other accepted confirmation | Form 5472 with a pro forma Form 1120 for each year with a reportable transaction |
+
+The IRS describes [Form W-8BEN-E](https://www.irs.gov/forms-pubs/about-form-w-8-ben-e) as the form foreign entities use to document their status for chapter 3 and chapter 4 purposes, which is why a US provider dealing with a non-US company may request it.
+
+The LLC route brings its own filing. The Form 5472 instructions define a foreign person to include any company or corporation not created or organised in the United States, so a US single-member LLC wholly owned by a foreign company is a foreign-owned US disregarded entity, with the same annual Form 5472 obligation as one owned by an individual. The parent's funding of the LLC is a reportable transaction in exactly the way an individual owner's would be.
+
+Either way, expect the provider to ask about the people who ultimately own or control the foreign company, not only about the company. Nothing in either route guarantees approval.
 
 ## How should a foreign owner apply for a US business account?
 

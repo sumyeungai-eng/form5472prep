@@ -2,7 +2,7 @@
 title: "How to Pay Yourself From a US LLC as a Non-Resident"
 description: "A non-resident owner takes distributions, not a salary. How each way of moving money is characterised and exactly where it lands on Form 5472."
 date: 2026-09-20
-updated: 2026-09-20
+updated: 2026-10-07
 author: "Form5472 Prep"
 tags: ["form-5472", "owner-distributions", "foreign-owned-llc", "disregarded-entity"]
 draft: false
@@ -58,6 +58,29 @@ Line numbers below are those on the December 2023 revision of [Form 5472](https:
 Part V is worth reading in the original: *describe on an attached separate sheet any other transaction as defined by Regulations section 1.482-1(i)(7), such as amounts paid or received in connection with the formation, dissolution, acquisition, and disposition of the entity, including contributions to and distributions from the entity, and check here.* That sheet is where an ordinary owner draw gets reported, and our [Part V statement example](/blog/form-5472-part-v-statement-example) shows the format we use.
 
 For the service row, the label has to be earned. Routine things you do in your capacity as owner are not automatically a service transaction, and inventing a fee to fill a line creates a pricing problem instead of solving a reporting one — read [related-party services and management fees](/blog/form-5472-related-party-services-management-fees) before using line 29.
+
+## Is an owner distribution a reportable transaction on Form 5472?
+
+**Yes. For a foreign-owned US disregarded entity, every distribution to the owner is a reportable transaction: Treasury Regulation §1.6038A-2(b)(3)(xi) covers amounts tied to the entity's formation, dissolution, acquisition and disposition, "including contributions to and distributions from the entity." Each distribution goes in the Part V statement, reported gross, whether or not the LLC owed US tax.**
+
+The [Form 5472 instructions](https://www.irs.gov/instructions/i5472) put the regulation into practice: a foreign-owned DE completes Part V for any such transaction not already entered in Part IV, and must "describe these on an attached statement." Because the rule comes from the reportable-transaction definition, not from a tax computation, a loss year or a zero year-end balance does not remove the distributions from the filing.
+
+Each Part V entry for a distribution should let a reader see:
+
+- the date the money left the LLC
+- that it was a distribution to the owner, and not a loan, reimbursement or service payment
+- the direction, LLC to owner
+- the US-dollar amount, with the exchange-rate basis if the transfer was converted
+
+The instructions do not prescribe a layout for the statement; our [Part V statement example](/blog/form-5472-part-v-statement-example) shows the format we use.
+
+## Does money you put into the LLC count as a reportable capital contribution?
+
+**Yes. Money you put into your foreign-owned LLC without a documented loan agreement is a capital contribution, and contributions are reportable under the same regulation as distributions. Each one goes in the Part V statement, including the deposit that first funded the bank account, listed separately from the distributions you took out.**
+
+Gross reporting matters most when money goes in both directions in one year. Take an owner who funds the LLC with **$10,000** in January and draws **$1,500** a month from July to December. The Part V statement shows a contribution of **$10,000** and distributions of **$9,000 = 6 × $1,500**. It does not show a net **$1,000**, because netting would hide seven transactions behind one figure.
+
+If you want money you put in to be a loan instead, the note has to exist before the transfer, and the loan is then reported as a balance on Part IV line 17 rather than in Part V. The classification rules are set out in [owner loans, contributions and reimbursements on Form 5472](/blog/form-5472-owner-loans-contributions-reimbursements).
 
 ## What actually separates a distribution from a loan?
 

@@ -2,7 +2,7 @@
 title: "Form 5472 for UAE and Dubai Residents with a US LLC"
 description: "No US-UAE tax treaty and no UAE personal tax ID change how Dubai owners file Form 5472. See what goes in the FTIN box and what the $25,000 penalty means."
 date: 2026-08-15
-updated: 2026-08-15
+updated: 2026-10-07
 author: "Form5472 Prep"
 tags: ["form-5472", "uae", "dubai", "foreign-owned-llc", "ftin"]
 draft: false
@@ -12,7 +12,7 @@ draft: false
 
 The UAE is one of the largest sources of foreign-owned US LLCs: Dubai-based ecommerce operators, agency owners, consultants and SaaS founders form Wyoming, Delaware and New Mexico LLCs to access US banking and payment processors, while living somewhere with no personal income tax.
 
-Two features of the UAE position change the mechanics of the filing compared with a UK or Indian owner. Neither removes the obligation, and both are handled easily once you know about them.
+Two features of the UAE position change the mechanics of the filing compared with a UK or Indian owner. Neither removes the obligation, and both are handled easily once you know about them. For a condensed version of the filing package, identification fields and deadlines, see our Form 5472 guide page for the [UAE resident US LLC](/form-5472-uae).
 
 If you want the filing done rather than explained, [we prepare and fax the complete package from $149](/start).
 

@@ -1,8 +1,8 @@
 ---
-title: "Multi-Member LLC with Foreign Owners: 5472 or 1065?"
+title: "Foreign-Owned Multi-Member LLC: Form 5472 or 1065?"
 description: "A 2-member LLC defaults to a partnership and files Form 1065, not Form 5472. See when the switch happens and which structures bring back Form 5472."
 date: 2026-08-15
-updated: 2026-08-28
+updated: 2026-10-07
 author: "Form5472 Prep"
 tags: ["form-5472", "form-1065", "multi-member-llc", "partnership", "foreign-owned-llc"]
 draft: false
@@ -12,7 +12,7 @@ draft: false
 
 Adding a second member changes your entire federal filing profile. The obligations do not get lighter — a partnership with foreign partners has more moving parts than a foreign-owned disregarded entity, including potential withholding at 37% — but the specific form changes, and filing the wrong one wastes months. If Form 5472 was required before the second member joined, the missed-form penalty is **$25,000 per form, per year** under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472).
 
-This guide covers which return applies to which structure, what a partnership with foreign partners actually files, and the three ownership arrangements that put a multi-member LLC back into Form 5472 territory.
+This guide covers which return applies to which structure, what a foreign-owned multi-member LLC actually files, and the three ownership arrangements that put a multi-member LLC back into Form 5472 territory.
 
 If you have concluded you are a single-member disregarded entity after all, [we prepare and fax the Form 5472 package from $149](/start).
 
@@ -42,9 +42,13 @@ Two consequences catch people out:
 
 **Ownership percentage is irrelevant.** A 99%/1% split is still two members and still a partnership. There is no de minimis second member.
 
-## What does a partnership with foreign partners file?
+## What does a foreign-owned multi-member LLC file?
 
-More than a disregarded entity does. The core set:
+**A foreign-owned multi-member LLC that has not elected corporate treatment is a partnership, so it files Form 1065 with a Schedule K-1 for each member and, generally, Schedules K-2 and K-3. If it has income effectively connected with a US business, it must also pay section 1446 withholding tax for its foreign partners.**
+
+That is more than a foreign-owned disregarded entity files. Per the [Form 1065 instructions](https://www.irs.gov/instructions/i1065), a domestic partnership files by the 15th day of the 3rd month after its tax year ends, which is 15 March for a calendar year. Nationality does not change the classification: two foreign members, or one foreign and one US member, still make a partnership by default.
+
+The core set:
 
 **Form 1065, US Return of Partnership Income.** Due 15 March for a calendar-year partnership, extendable six months to 15 September on Form 7004. Unlike the Form 5472 package, Form 1065 **can** be e-filed, and is frequently required to be.
 

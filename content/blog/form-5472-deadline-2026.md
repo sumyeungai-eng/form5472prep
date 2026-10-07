@@ -2,7 +2,7 @@
 title: "Form 5472 Deadline for 2026 and 2027"
 description: "The 2025 Form 5472 is due October 15, 2026 if extended. See every 2026-2027 deadline, the Form 7004 extension rule, and what to do if you're already late."
 date: 2026-08-15
-updated: 2026-09-11
+updated: 2026-10-07
 author: "Form5472 Prep"
 tags: ["form-5472", "deadline", "extension", "form-7004", "foreign-owned-llc"]
 draft: false
@@ -46,6 +46,39 @@ The due date does not change based on:
 - Whether you live outside the United States
 - Whether the LLC was dormant all year
 - Whether this is your first year of filing
+
+## When is the Form 5472 for tax year 2025 due?
+
+**For a calendar-year foreign-owned LLC, the tax year 2025 Form 5472 and its pro forma Form 1120 were due 15 April 2026. If Form 7004 reached the Ogden PIN Unit by that date, the final deadline is 15 October 2026. Without a timely Form 7004, the 2025 return is already late and should be filed as soon as possible.**
+
+"Tax year 2025" means the year in which the transactions happened, 1 January to 31 December 2025 for a calendar-year LLC, not the year you send the package. The 2025 return is the one filed during 2026.
+
+Most foreign-owned LLCs are on the calendar year. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that a foreign-owned US disregarded entity uses the same tax year as its owner uses for US filing purposes, or the calendar year if the owner has none. An owner who files no US return of their own is therefore on the calendar year.
+
+To place your 2025 return:
+
+1. **Check whether Form 7004 was faxed or mailed to the Ogden PIN Unit by 15 April 2026.** An extension filed through ordinary e-file channels may not have reached the right unit.
+2. **If it was, your deadline is 15 October 2026.** There is no second extension.
+3. **If it was not, the return is late.** File the complete package now, with a reasonable cause statement.
+
+For a fiscal-year or short first year, the [Form 5472 deadline calculator](/form-5472-deadline-calculator) works out the specific date.
+
+## When is the pro forma 1120 due?
+
+**The pro forma Form 1120 is due on the same day as Form 5472, because Form 5472 is filed attached to it. For a calendar-year foreign-owned LLC that is 15 April, or 15 October with a timely Form 7004. A fiscal-year LLC generally files by the 15th day of the fourth month after its tax year ends.**
+
+The Form 5472 instructions say a foreign-owned US DE must file "a pro forma Form 1120, U.S. Corporation Income Tax Return, with Form 5472 attached by the due date (including extensions) of that Form 1120." The pro forma return has no deadline of its own. It takes the corporate due date in the [Form 1120 instructions](https://www.irs.gov/instructions/i1120): generally the 15th day of the 4th month after the end of the tax year, moved to the next business day if that falls on a weekend or legal holiday.
+
+| Tax year of the LLC | Pro forma 1120 + Form 5472 due | Extended due date (Form 7004) |
+|---|---|---|
+| Calendar year 2025 | 15 April 2026 | 15 October 2026 |
+| Calendar year 2026 | 15 April 2027 | 15 October 2027 |
+| Fiscal year ending 31 March 2026 | 15 July 2026 | 15 January 2027 |
+| Fiscal year ending 30 June 2026 (began 1 July 2025) | 15 September 2026 | 15 April 2027 |
+
+The 30 June row is the exception: a year ending 30 June that began before 1 January 2026 is due on the 15th day of the **third** month, with a seven-month extension, under the [Form 7004 instructions](https://www.irs.gov/instructions/i7004). A June year beginning in 2026 or later follows the standard fourth-month rule.
+
+Two points apply to every row. The pro forma Form 1120 needs only the LLC's name and address and items B and E on page 1, with "Foreign-owned U.S. DE" written across the top. And it goes to the same place as Form 5472, the Ogden PIN Unit by fax or mail, not to the Form 1120 addresses used by ordinary corporations.
 
 ## How does the Form 5472 extension work?
 
@@ -142,7 +175,7 @@ $25,000 per form, per year, under IRC § 6038A(d). If the failure continues more
 
 ### How long does the IRS take to confirm receipt?
 
-The current Form 5472 instructions do not describe a routine acceptance acknowledgment for this faxed package. A provider receipt can document the reported transmission, while later IRS account information or correspondence may provide different evidence. Do not treat silence as receipt or acceptance, and do not send an automatic duplicate solely because no response arrived. See our [Form 5472 receipt and status guide](/blog/form-5472-irs-receipt-confirmation-status).
+The current Form 5472 instructions describe no routine acceptance acknowledgment for this faxed package. A provider receipt documents the transmission; later IRS correspondence may provide other evidence. Do not treat silence as acceptance or send an automatic duplicate. See our [Form 5472 receipt and status guide](/blog/form-5472-irs-receipt-confirmation-status).
 
 ### Does the deadline change if my LLC had no activity?
 

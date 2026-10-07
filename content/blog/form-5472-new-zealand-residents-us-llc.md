@@ -1,8 +1,8 @@
 ---
-title: "Form 5472 for New Zealand Owners of a US LLC"
+title: "Form 5472 for New Zealand Residents With a US LLC"
 description: "New Zealand owners of US LLCs may need Form 5472 after owner transactions. See the IRD number, local classification, and filing rules."
 date: 2026-08-25
-updated: 2026-08-25
+updated: 2026-10-07
 author: "Form5472 Prep"
 tags: ["form-5472", "new-zealand", "foreign-owned-llc", "ird-number"]
 draft: false

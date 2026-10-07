@@ -1,8 +1,8 @@
 ---
-title: "Form 5472 for German Owners of a US LLC"
+title: "Form 5472 for Germany Residents With a US LLC"
 description: "German owners of a single-member US LLC may need Form 5472 and a pro forma 1120. Learn the owner-ID, transaction and filing rules."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-10-07
 author: "Form5472 Prep"
 tags: ["form-5472", "germany", "foreign-owned-llc", "ftin"]
 draft: false
@@ -10,7 +10,7 @@ draft: false
 
 **A German resident who wholly owns a US single-member LLC generally must file Form 5472 with a pro forma Form 1120 when the LLC has a reportable transaction with the owner or another related party. The obligation can arise from capital contributions, withdrawals, loans or owner-paid expenses even if the LLC has no income.**
 
-Form 5472 is a US related-party information return, not a German tax return. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that a required Form 5472 filed late, filed substantially incomplete, or not supported by required records can trigger a **$25,000** penalty. German owners who already know they need the US package can [begin the US filing here](/start).
+Form 5472 is a US related-party information return, not a German tax return. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that a required Form 5472 filed late, filed substantially incomplete, or not supported by required records can trigger a **$25,000** penalty. German owners who already know they need the US package can [begin the US filing here](/start). Our Form 5472 guide page for the [German LLC owner](/form-5472-germany) sets out the same filing package, FTIN field and deadlines in condensed form.
 
 ## When does a German-owned LLC file Form 5472?
 
