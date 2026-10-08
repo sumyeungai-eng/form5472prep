@@ -22,6 +22,7 @@ export function DashboardRow({
   tierLabel,
   updatedAt,
   amountPaid,
+  includedInOrder = false,
   statusLabel,
   statusTone,
   canDelete,
@@ -35,6 +36,8 @@ export function DashboardRow({
   tierLabel: string;
   updatedAt: string;
   amountPaid: number;
+  // An extra return added to an existing order: no separate price.
+  includedInOrder?: boolean;
   statusLabel: string;
   statusTone: "slate" | "amber" | "blue" | "emerald" | "red";
   canDelete: boolean;
@@ -100,7 +103,9 @@ export function DashboardRow({
             >
               {statusLabel}
             </span>
-            <p className="text-xs text-slate-500 sm:mt-2">{formatUsd(amountPaid)}</p>
+            <p className="text-xs text-slate-500 sm:mt-2">
+              {includedInOrder ? "Included in your order" : formatUsd(amountPaid)}
+            </p>
           </div>
           {canDelete && (
             <button

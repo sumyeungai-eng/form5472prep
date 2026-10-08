@@ -69,6 +69,7 @@ describe("admin questions pages", () => {
     const html = renderToStaticMarkup(await AdminQuestionsPage({ searchParams: {} }));
     expect(db.filingFindMany.mock.calls[0][0].where).toEqual({
       supersededAt: null,
+      linkedToFilingId: null,
       user: { email: { in: ["ana@example.test", "li@example.test"], mode: "insensitive" } },
     });
     expect(html).toContain("Customer · 2 paid orders");

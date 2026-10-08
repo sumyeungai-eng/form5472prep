@@ -15,6 +15,8 @@ export async function orderSummaryByEmail(emails: string[]): Promise<Map<string,
   const filings = await prisma.filing.findMany({
     where: {
       supersededAt: null,
+      // An extra return on an existing order is the same order, not another.
+      linkedToFilingId: null,
       user: { email: { in: unique, mode: "insensitive" } },
     },
     select: { status: true, user: { select: { email: true } } },

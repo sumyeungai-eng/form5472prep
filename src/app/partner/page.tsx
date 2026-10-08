@@ -212,9 +212,11 @@ export default async function PartnerDashboard({
                     clientEmail={f.user?.email ?? null}
                     taxYears={f.taxYears}
                     tierLabel={
-                      getTiersForSource(f.funnelSource)[
-                        f.tier as "single_year" | "two_year_diirsp" | "multi_year_diirsp"
-                      ]?.label ?? f.tier
+                      f.linkedToFilingId
+                        ? "Additional return (included in the order)"
+                        : getTiersForSource(f.funnelSource)[
+                            f.tier as "single_year" | "two_year_diirsp" | "multi_year_diirsp"
+                          ]?.label ?? f.tier
                     }
                     updatedAt={f.updatedAt.toLocaleDateString("en-US", {
                       year: "numeric",

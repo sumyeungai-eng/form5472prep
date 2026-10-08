@@ -49,6 +49,8 @@ export default async function AdminSourcesPage() {
   // (b) groupBy's typing is awkward and we'd end up doing three separate
   // queries anyway, (c) one pass over the array is straightforward.
   const filings = await prisma.filing.findMany({
+    // Extra returns added to an existing order aren't separate sales.
+    where: { linkedToFilingId: null },
     select: { funnelSource: true, status: true, amountPaid: true },
   });
 

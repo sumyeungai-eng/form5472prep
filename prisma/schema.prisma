@@ -289,6 +289,12 @@ model Filing {
   // clearing it fully restores the draft.
   supersededAt   DateTime?
   supersededById String?
+  // Set on a second (third…) return added to an existing paid order by an
+  // admin ("Add another return to this order"): points at the ORIGINAL
+  // filing. Such filings are paid under that order (amountPaid 0), go
+  // through review / signing / fax on their own, and are left out of sales
+  // and revenue reports so the order isn't counted twice.
+  linkedToFilingId String?
 
   // Admin review marker: true while staff is actively reviewing this filing.
   // Internal only and independent of customer-facing status; never set by
@@ -355,6 +361,7 @@ model Filing {
   // selection all filter on status, often with updatedAt.
   @@index([status, updatedAt])
   @@index([status, supersededAt])
+  @@index([linkedToFilingId])
   // telnyx-webhook + fax-status-poll look up the filing by its Telnyx job id
   // on every inbound event.
   @@index([faxJobId])

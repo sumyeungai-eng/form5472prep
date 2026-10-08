@@ -18,6 +18,7 @@ import { MessagesPanel } from "@/components/MessagesPanel";
 import { LinkedFaxes } from "@/components/admin/LinkedFaxes";
 import { YearBreakdown } from "./YearBreakdown";
 import { EmailLogTable } from "./EmailLogTable";
+import { LinkedReturns } from "./LinkedReturns";
 import { questionsForEmail } from "@/lib/admin/websiteQuestions";
 
 export const dynamic = "force-dynamic";
@@ -62,6 +63,21 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         select: { email: true },
       })
     : null;
+
+  // Returns on the same order: the original plus any linked extra returns.
+  const linkedRootId = filing.linkedToFilingId ?? filing.id;
+  const linkedFilings = await prisma.filing.findMany({
+    where: { OR: [{ id: linkedRootId }, { linkedToFilingId: linkedRootId }] },
+    select: { id: true, taxYears: true, status: true, createdAt: true },
+    orderBy: { createdAt: "asc" },
+  });
+  const linkedRows = linkedFilings.map((r) => ({
+    id: r.id,
+    taxYears: r.taxYears,
+    status: r.status,
+    isOriginal: r.id === linkedRootId,
+    isCurrent: r.id === filing.id,
+  }));
 
   // Resolve public URLs for any uploaded files.
   const generatedPdfUrl = filing.generatedPdfKey ? await publicUrl(filing.generatedPdfKey) : null;
@@ -224,6 +240,10 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         overrideById={filing.preflightOverrideBy}
         overrideAt={filing.preflightOverrideAt}
       />
+
+      {(linkedRows.length > 1 || filing.status !== "DRAFT") && (
+        <LinkedReturns filingId={filing.id} rows={linkedRows} canAdd={filing.status !== "DRAFT" && !filing.supersededAt} />
+      )}
 
       {/* Quick actions */}
       <div className="bg-white border border-slate-200 rounded-lg p-6 mb-6">

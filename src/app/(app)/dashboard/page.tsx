@@ -162,6 +162,7 @@ export default async function DashboardPage() {
                   day: "numeric",
                 })}
                 amountPaid={f.amountPaid}
+                includedInOrder={Boolean(f.linkedToFilingId)}
                 statusLabel={s.label}
                 statusTone={s.tone}
                 canDelete={f.status === "DRAFT"}

@@ -150,7 +150,8 @@ export default async function AdminFilingsPage({
   // Quick stats: last 30 days
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
   const [statsPaid, statsConfirmed, statsFailed, statsRevenue, statsUnfinished] = await Promise.all([
-    prisma.filing.count({ where: { status: "PAID", updatedAt: { gte: since } } }),
+    // Extra returns on an existing order aren't new paid orders.
+    prisma.filing.count({ where: { status: "PAID", linkedToFilingId: null, updatedAt: { gte: since } } }),
     prisma.filing.count({ where: { status: "CONFIRMED", updatedAt: { gte: since } } }),
     prisma.filing.count({ where: { status: "FAILED", updatedAt: { gte: since } } }),
     prisma.filing.aggregate({
@@ -427,6 +428,11 @@ export default async function AdminFilingsPage({
                     <div className="flex flex-wrap items-center gap-1">
                       <StatusBadge status={f.status} />
                       {f.inReview && <ReviewBadge filing={f} />}
+                      {f.linkedToFilingId && (
+                        <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-medium text-indigo-700">
+                          Additional return
+                        </span>
+                      )}
                     </div>
                     {/* Draft views only: did they actually finish the wizard? */}
                     {draftIssues.has(f.id) && <CompletenessHint issues={draftIssues.get(f.id)!} />}

@@ -131,7 +131,9 @@ export default async function FilingDetailPage({
           ?paid=1 redirect), so a customer who closes the Stripe tab or opens
           the filing from their dashboard still converts. Google dedupes on the
           transaction_id (= filing id). Only reachable when status !== DRAFT. */}
-      {(filing.status as string) !== "DRAFT" && (
+      {/* Never for an extra return added to an existing order: it isn't a
+          purchase (paid under the original order), so it must not report one. */}
+      {(filing.status as string) !== "DRAFT" && !filing.linkedToFilingId && (
         <PurchaseConversionPing amountCents={filing.amountPaid} filingId={filing.id} />
       )}
       <div>

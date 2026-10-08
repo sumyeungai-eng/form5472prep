@@ -139,6 +139,8 @@ export async function getDashboardSummary(range: DateRange): Promise<DashboardSu
     prisma.filing.findMany({
       where: {
         tier: { not: TEST_TIER_VALUE },
+        // Extra returns on an existing order aren't new orders or revenue.
+        linkedToFilingId: null,
         createdAt: { gte: previousStart, lt: end },
       },
       select: { status: true, amountPaid: true, createdAt: true },
@@ -193,6 +195,7 @@ export async function getRevenueSeries(range: DateRange, bucket: Bucket): Promis
   const filings = await prisma.filing.findMany({
     where: {
       tier: { not: TEST_TIER_VALUE },
+      linkedToFilingId: null,
       status: { in: Array.from(PAID_STATUSES) },
       createdAt: { gte: start, lt: end },
     },
@@ -220,6 +223,7 @@ export async function getSourceAttribution(range: DateRange): Promise<SourceRow[
   const filings = await prisma.filing.findMany({
     where: {
       tier: { not: TEST_TIER_VALUE },
+      linkedToFilingId: null,
       createdAt: { gte: start, lt: end },
     },
     select: { funnelSource: true, status: true, amountPaid: true },
@@ -264,6 +268,7 @@ export async function getPartnerPerformance(range: DateRange): Promise<PartnerRo
   const { start, end } = rangeToDates(range, new Date());
   const filingWhere = {
     tier: { not: TEST_TIER_VALUE },
+    linkedToFilingId: null,
     createdAt: { gte: start, lt: end },
   };
   const partners = await prisma.partner.findMany({
