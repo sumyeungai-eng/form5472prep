@@ -24,7 +24,7 @@ const actions = vi.hoisted(() => {
 });
 
 vi.mock("@/lib/admin/auth", () => ({
-  adminLoginEmail: () => "login@x.test",
+  SHARED_ADMIN_LABEL: "Form5472 Prep team (shared admin login)",
   getAdminPrincipal: auth.getAdminPrincipal,
   isAdmin: auth.isAdmin,
 }));
@@ -78,10 +78,10 @@ describe("POST /api/admin/filings/[id] — retryFax confirmation plumbing", () =
     expect(ctxOfLastCall()).not.toHaveProperty("refax");
   });
 
-  it("attributes the shared-password login to the configured admin email", async () => {
+  it("records shared-password actions as the team, never the sign-in email", async () => {
     auth.getAdminPrincipal.mockResolvedValue(null);
     await post({ action: "retryFax", force: true, reason: "IRS asked for a second copy" });
-    expect(ctxOfLastCall()).toMatchObject({ adminId: null, approver: "login@x.test" });
+    expect(ctxOfLastCall()).toMatchObject({ adminId: null, approver: "Form5472 Prep team (shared admin login)" });
   });
 
   it("returns a refusal as { error, code } with its HTTP status", async () => {

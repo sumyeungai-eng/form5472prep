@@ -1,7 +1,7 @@
 import { isPdfEncodable, PDF_TEXT_MESSAGE } from "@/lib/pdfText";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getOwnedFiling, bindFilingToEmail, FilingAccessLostError } from "@/lib/session";
+import { getOwnedFiling, bindFilingToEmail, FilingAccessLostError, toClientFiling } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { totalPriceCents, isTier } from "@/lib/pricing";
 import { del } from "@/lib/storage";
@@ -85,10 +85,9 @@ function isRealCalendarDate(value: string): boolean {
 // Filing.sessionId is the fs_session cookie value (a bearer credential) and
 // must never be serialised — the same rule as toClientFiling in @/lib/session.
 // Inlined here because route tests mock @/lib/session wholesale.
-function withoutSessionId<T extends { sessionId: string | null }>(filing: T): Omit<T, "sessionId"> {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { sessionId, ...rest } = filing;
-  return rest;
+// Customer API: drop the session credential AND staff-only columns.
+function withoutSessionId<T extends { sessionId: string | null }>(filing: T) {
+  return toClientFiling(filing);
 }
 
 export async function GET(_: Request, { params }: { params: { id: string } }) {

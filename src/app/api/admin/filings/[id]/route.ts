@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { adminLoginEmail, getAdminPrincipal, isAdmin } from "@/lib/admin/auth";
+import { getAdminPrincipal, isAdmin, SHARED_ADMIN_LABEL } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { sendAbandonedDraftReminderEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
@@ -53,7 +53,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         adminId: principal?.adminId ?? null,
         // The shared password login has no personal admin id; attribute its approvals to the
         // configured admin sign-in email so they are never anonymous.
-        approver: principal?.adminId ?? adminLoginEmail(),
+        approver: principal?.adminId ?? SHARED_ADMIN_LABEL,
         force: true,
         reason: "legacy admin override",
         // The blanket force above must never count as "yes, fax the IRS
@@ -99,7 +99,7 @@ async function handleReviewAction(
         ? {
             inReview: true,
             reviewStartedAt: new Date(),
-            reviewedBy: principal?.email ?? principal?.adminId ?? null,
+            reviewedBy: principal?.adminId ? (principal.email ?? principal.adminId) : SHARED_ADMIN_LABEL,
           }
         : {
             inReview: false,

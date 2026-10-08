@@ -82,3 +82,21 @@ describe("partnerOwnsFiling", () => {
     await expect(partnerOwnsFiling("missing_filing")).resolves.toBeNull();
   });
 });
+
+describe("toClientFiling", () => {
+  it("drops the session credential and staff-only identity fields", async () => {
+    const { toClientFiling, STAFF_ONLY_FILING_FIELDS } = await import("./session");
+    const out = toClientFiling({
+      id: "f1",
+      sessionId: "s",
+      llcName: "Synthetic Test LLC",
+      reviewedBy: "a@gmail.com",
+      reviewApprovedBy: "a@gmail.com",
+      preflightOverrideBy: "a@gmail.com",
+      preflightOverrideReason: "internal",
+      reviewApprovedAt: "2026-10-07T00:00:00Z",
+    });
+    expect(out).toEqual({ id: "f1", llcName: "Synthetic Test LLC", reviewApprovedAt: "2026-10-07T00:00:00Z" });
+    expect(STAFF_ONLY_FILING_FIELDS).toContain("reviewApprovedBy");
+  });
+});

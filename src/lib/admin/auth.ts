@@ -37,6 +37,17 @@ const LOGIN_EMAIL = (process.env.ADMIN_LOGIN_EMAIL || DEV_LOGIN_EMAIL).toLowerCa
 export function adminLoginEmail(): string {
   return LOGIN_EMAIL;
 }
+
+/** Recorded as "who did it" for actions taken on the shared password login,
+ *  instead of the sign-in email (a personal Gmail must never be stored where a
+ *  customer-facing surface could pick it up). */
+export const SHARED_ADMIN_LABEL = "Form5472 Prep team (shared admin login)";
+
+/** Display helper: older rows stored the shared login's sign-in email. */
+export function displayStaffIdentity(value: string | null | undefined): string | null {
+  if (!value) return null;
+  return value.trim().toLowerCase() === LOGIN_EMAIL ? SHARED_ADMIN_LABEL : value;
+}
 const COOKIE_NAME = "form5472_admin";
 const TTL_SECONDS = 60 * 60 * 12; // 12 hours
 

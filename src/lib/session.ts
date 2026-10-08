@@ -149,10 +149,26 @@ export async function requireUser() {
 // omission rather than a field allowlist because the wizard consumes ~80
 // columns and sessionId is the only credential among them (userId/partnerId
 // are identifiers; the fs_user cookie is HMAC-signed, not the raw id).
-export function toClientFiling<T extends { sessionId?: unknown }>(filing: T): Omit<T, "sessionId"> {
+// Staff-only columns: who reviewed / approved / overrode, and the internal
+// override reason. They can hold an admin's personal email (the shared admin
+// login records its sign-in address), so they never go to a customer browser
+// or customer API (owner rule 2026-10-08: no client ever sees staff emails).
+export const STAFF_ONLY_FILING_FIELDS = [
+  "reviewedBy",
+  "reviewApprovedBy",
+  "preflightOverrideBy",
+  "preflightOverrideReason",
+] as const;
+type StaffOnlyFilingField = (typeof STAFF_ONLY_FILING_FIELDS)[number];
+
+export function toClientFiling<T extends { sessionId?: unknown }>(
+  filing: T,
+): Omit<T, "sessionId" | StaffOnlyFilingField> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { sessionId, ...rest } = filing;
-  return rest;
+  const out = { ...rest } as Record<string, unknown>;
+  for (const field of STAFF_ONLY_FILING_FIELDS) delete out[field];
+  return out as Omit<T, "sessionId" | StaffOnlyFilingField>;
 }
 
 // The identities this request presents, as filing filters. Shared by the

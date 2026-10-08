@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Mail, ExternalLink } from "lucide-react";
-import { isAdmin } from "@/lib/admin/auth";
+import { displayStaffIdentity, isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { formatAttribution, hasAttribution } from "@/lib/attribution";
 import { formatUsd } from "@/lib/utils";
@@ -242,7 +242,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           preflightStatus={filing.preflightStatus}
           preflightOverrideBy={filing.preflightOverrideBy}
           reviewApprovedAt={filing.reviewApprovedAt ? filing.reviewApprovedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
-          reviewApprovedBy={reviewApprovedAdmin?.email ?? filing.reviewApprovedBy}
+          reviewApprovedBy={reviewApprovedAdmin?.email ?? displayStaffIdentity(filing.reviewApprovedBy)}
           faxedAt={filing.faxedAt ? filing.faxedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
         />
       </div>
@@ -587,7 +587,7 @@ function PreflightPanel({
   const warningRows = issueRows(warnings);
   const isFailed = status === "failed";
   const isPassed = status === "passed";
-  const overrideBy = overrideByEmail ?? overrideById;
+  const overrideBy = overrideByEmail ?? displayStaffIdentity(overrideById);
   return (
     <div
       className={`border rounded-lg p-5 mb-6 ${

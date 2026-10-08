@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Inbox } from "lucide-react";
 import type { FilingStatus, Prisma } from "@prisma/client";
-import { isAdmin } from "@/lib/admin/auth";
+import { displayStaffIdentity, isAdmin } from "@/lib/admin/auth";
 import { PAID_FILING_STATUSES } from "@/lib/admin/traffic";
 import { prisma } from "@/lib/prisma";
 import { formatUsd } from "@/lib/utils";
@@ -455,7 +455,7 @@ export default async function AdminFilingsPage({
 
 function ReviewBadge({ filing: f }: { filing: FilingRow }) {
   const title = [
-    f.reviewedBy ? `Started by ${f.reviewedBy}` : null,
+    f.reviewedBy ? `Started by ${displayStaffIdentity(f.reviewedBy)}` : null,
     f.reviewStartedAt ? `Started ${f.reviewStartedAt.toLocaleString()}` : null,
   ]
     .filter(Boolean)

@@ -20,15 +20,17 @@ const db = vi.hoisted(() => {
   };
 });
 
-vi.mock("@/lib/session", () => ({
+vi.mock("@/lib/session", async (orig) => ({
+  ...(await orig<typeof import("@/lib/session")>()),
   getOwnedFiling: session.getOwnedFiling,
   bindFilingToEmail: session.bindFilingToEmail,
 }));
+const findUnique = vi.hoisted(() => vi.fn());
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     $transaction: db.transaction,
     filing: {
-      findUnique: vi.fn(),
+      findUnique,
       update: db.update,
     },
     filingYearData: {
@@ -40,7 +42,45 @@ vi.mock("@/lib/storage", () => ({
   del: vi.fn(),
 }));
 
-import { PATCH } from "./route";
+import { GET, PATCH } from "./route";
+
+describe("customer filing API never exposes staff identities", () => {
+  const stored = {
+    id: "filing_1",
+    sessionId: "secret-session",
+    status: "PDF_GENERATED",
+    llcName: "Synthetic Test LLC",
+    reviewApprovedAt: new Date("2026-10-07T22:49:00Z"),
+    reviewApprovedBy: "staff.member@gmail.com",
+    reviewedBy: "staff.member@gmail.com",
+    preflightOverrideBy: "staff.member@gmail.com",
+    preflightOverrideReason: "internal note",
+    yearData: [],
+  };
+
+  it("GET strips the session id and every staff-only field", async () => {
+    session.getOwnedFiling.mockResolvedValue({ id: "filing_1" });
+    findUnique.mockResolvedValue(stored);
+    const res = await GET(new Request("https://example.test/api/filings/filing_1"), { params: { id: "filing_1" } });
+    const body = await res.json();
+    const text = JSON.stringify(body);
+    expect(text).not.toContain("gmail.com");
+    expect(text).not.toContain("internal note");
+    expect(body).not.toHaveProperty("sessionId");
+    expect(body).toMatchObject({ id: "filing_1", llcName: "Synthetic Test LLC", reviewApprovedAt: "2026-10-07T22:49:00.000Z" });
+  });
+
+  it("PATCH responses are stripped too", async () => {
+    session.getOwnedFiling.mockResolvedValue({ ...stored, taxYears: [2025], tier: "standard", status: "DRAFT" });
+    db.update.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => ({ ...stored, ...data }));
+    const res = await PATCH(
+      new Request("https://example.test/api/filings/filing_1", { method: "PATCH", body: JSON.stringify({ llcName: "Renamed LLC" }) }),
+      { params: { id: "filing_1" } },
+    );
+    expect(res.status).toBe(200);
+    expect(JSON.stringify(await res.json())).not.toContain("gmail.com");
+  });
+});
 
 describe("filing PATCH Form 7004 extension fields", () => {
   const filing = {

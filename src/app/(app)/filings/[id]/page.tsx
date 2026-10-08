@@ -173,7 +173,6 @@ export default async function FilingDetailPage({
           status: filing.status,
           generatedPdfKey: filing.generatedPdfKey,
           reviewApprovedAt: filing.reviewApprovedAt?.toISOString() ?? null,
-          reviewApprovedBy: filing.reviewApprovedBy,
           unreadTeamMessages,
           signaturePngKey: filing.signaturePngKey,
           signedPdfKey: filing.signedPdfKey,

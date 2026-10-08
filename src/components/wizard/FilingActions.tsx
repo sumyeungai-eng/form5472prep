@@ -9,7 +9,6 @@ type Filing = {
   status: string;
   generatedPdfKey: string | null;
   reviewApprovedAt: string | null;
-  reviewApprovedBy: string | null;
   unreadTeamMessages: number;
   // R2 key for the customer's signature PNG, captured on the in-portal sign
   // page. Populated immediately when the customer hits "Acknowledge & sign";
