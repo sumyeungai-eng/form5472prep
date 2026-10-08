@@ -12,3 +12,6 @@
 
 ## Open
 - Owner: optionally switch off Automatic Feedback Service in Trustpilot Business so nothing is sent if the BCC address is ever reused.
+
+## Reversed the same day
+Owner: "bring back trust pilot auto send review email". `finalize.ts` passes `reviewInvite: true` again and the privacy paragraph is restored, byte-identical to before `24f43cb`. Behaviour is back to `docs/sessions/2026-10-05-trustpilot-invites.md`: one AFS BCC on the automatic delivered email; partner filings and admin resends excluded; kill switch `TRUSTPILOT_AFS_BCC=""`.
