@@ -185,7 +185,7 @@ export async function finalizeFaxDelivered(
         brand,
         filingId: filing.id,
         logKind: "fax_delivered",
-        reviewInvite: true,
+        // No Trustpilot review invitation on automatic emails (owner, 2026-10-08).
       });
       result.customerEmailed = true;
       customerEmailStatus = "sent";

@@ -161,11 +161,6 @@ export default function PrivacyPage() {
         marketing email has an unsubscribe link. Opting out of marketing emails does not affect
         emails about an order, payment, filing, account security, or support request.
       </p>
-      <p>
-        After your filing is delivered to the IRS, we may ask Trustpilot to send you one
-        invitation to review our service. For this, Trustpilot receives your name, email address
-        and an order reference. Leaving a review is entirely optional.
-      </p>
 
       <h2>7. Where we store it</h2>
       <p>
