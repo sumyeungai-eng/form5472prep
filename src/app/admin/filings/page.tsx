@@ -13,6 +13,8 @@ import { getPresenceForFilings, timeAgo, type FilingPresence } from "@/lib/admin
 import { AdminPageHeader } from "../_components/AdminPageHeader";
 import { StatusBadge } from "./StatusBadge";
 import { DraftActions } from "./DraftActions";
+import { ArchiveCheckbox, ArchiveSelectAll, BulkArchiveBar } from "./BulkArchive";
+import { isArchivableStatus } from "@/lib/admin/archive";
 import { ReviewToggle } from "./ReviewToggle";
 import { PreflightSweepButton } from "./PreflightSweepButton";
 
@@ -377,10 +379,13 @@ export default async function AdminFilingsPage({
           <p className="mt-1 text-sm text-slate-500">Try a different status or clear the search.</p>
         </div>
       ) : (
+        <>
+        <BulkArchiveBar archiveView={showHidden} />
         <div className="bg-white border border-slate-200 rounded-lg overflow-x-auto">
           <table className="w-full text-sm min-w-[780px]">
             <thead className="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
               <tr>
+                <th className="w-8 pl-4 py-3"><ArchiveSelectAll /></th>
                 <th className="text-left font-semibold px-4 py-3">Customer / LLC</th>
                 <th className="text-left font-semibold px-4 py-3">Years</th>
                 <th className="text-left font-semibold px-4 py-3">Status</th>
@@ -396,6 +401,14 @@ export default async function AdminFilingsPage({
             <tbody className="divide-y divide-slate-200">
               {visibleFilings.map((f) => (
                 <tr key={f.id} className="hover:bg-slate-50">
+                  <td className="w-8 pl-4 py-3 align-top">
+                    {(showHidden ? f.adminHidden : isArchivableStatus(f.status)) && (
+                      <ArchiveCheckbox
+                        filingId={f.id}
+                        label={`${showHidden ? "Unarchive" : "Archive"} ${f.llcName || f.user?.email || "this order"}`}
+                      />
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <Link href={`/admin/filings/${f.id}`} className="block">
                       <div className="font-medium text-slate-900 truncate max-w-[280px]">
@@ -442,6 +455,7 @@ export default async function AdminFilingsPage({
             </tbody>
           </table>
         </div>
+        </>
       )}
 
       {filings.length === 100 && (
