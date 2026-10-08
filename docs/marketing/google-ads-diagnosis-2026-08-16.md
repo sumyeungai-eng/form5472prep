@@ -682,3 +682,46 @@ No bids, keywords, ads, or campaign status changed this session beyond the Task 
 **Watch:** with Maximise clicks and a now-binding budget, spend tends to drift to the cheapest
 clicks. Check Insights → Locations (Matched locations, by country) after ~7 days and add
 negative bid adjustments or exclusions for countries with spend but no leads.
+
+## Session 15 — delivery confirmed + asset optimisation (2026-10-08 HKT / 2026-10-07 ET)
+
+**Owner:** "can you optimise the ads? so far i spent 0 on it"
+
+**Diagnosis — the $0 was the 4-city targeting, now fixed.** After Session 14 widened targeting,
+the campaign served the same day (account time, ET): **82 impressions, 3 clicks, $17.55, $5.85 avg CPC**.
+Ruled out, each checked directly: billing (Amex, $90.82 charged 1 Oct for September, balance $0);
+ads (4 RSAs Eligible — AG1/AG2 "Good", AG3 "Poor", 4 old ones paused); keywords (Eligible, incl.
+`"form 5472"`); bidding (Maximise clicks, **no** max-CPC cap); no end date; Search network only.
+Campaign diagnostics: "hasn't served in the past week" with only "New bid strategy is learning" flagged.
+
+**Root cause of the 3 disapproved sitelinks: "Government Documents and Official Services" policy.**
+They pointed at `/pricing` and `/blog`, which sell / write about EIN and ITIN applications
+(free-from-IRS documents). Evidence: EIN/ITIN mention counts — `/form-5472-filing` (approved ads LP)
+4 each = site chrome only; `/pricing` 12; `/blog` 80+ incl. "EIN Application". The three tool pages
+match the LP (4 each). **Rule for future assets: never point an ad, sitelink or price item at
+`/pricing`, `/ein`, `/itin` or `/blog`.**
+
+**Applied:**
+- Paused (not removed — reversible): sitelinks "Pricing Information", "Pricing - $149 Flat",
+  "Free Form 5472 Guides" (all disapproved), and "Partner Program" (B2B page burning ~$6 B2C clicks).
+- New sitelinks: "Do I Need to File 5472?" → `/do-i-need-to-file-form-5472` (**Eligible**);
+  "Form 5472 Penalty Calc" → `/form-5472-penalty-calculator` (**Eligible**);
+  "Form 5472 Due Date" → `/form-5472-deadline-calculator` (under review).
+- Attached existing account-level structured snippet "Service catalog: Form 5472 Prep, Pro Forma
+  1120, Late Filing, Penalty Help" to the campaign (Eligible).
+- New price asset (Services, USD): Standard Filing $149 "5-7 business days"; Express Filing $199
+  "Within 3 business days"; Extra Past Tax Year $99 "Per additional year" — values from
+  `src/lib/pricing.ts` (TIERS, MULTI_YEAR_ADDON_CENTS, *_TURNAROUND); all → `/form-5472-filing?src=gads`.
+  Status: under review.
+- Not touched: bid strategy (in learning — leave 1–2 weeks), budget $50/day, keywords, ads,
+  search partners (kept off), Google tag gateway / Customer Match recommendations.
+
+**Owner to decide (ad-copy claims, left as found):**
+- Sitelink "Get Started" says "Fax-filed in 5 business days"; the site's standard tier is 5-7.
+- Sitelinks "IRS Penalty Notice?" and "Late or Never Filed?" say "Reasonable-cause letter included" —
+  confirm the service includes one.
+- Sitelink "Blog Center" is Eligible today but `/blog` triggers the policy; it may be disapproved on re-review.
+- Notification "Apply for financial products and services certification" is generic; ads are not limited by it.
+
+**Next check (~2026-10-14):** search terms (add negatives), Locations by country (cut spenders with no
+leads), AG3 ad strength "Poor", conversions vs $5.85 CPC (a $149 sale needs ≥4% conversion to cover click cost).
