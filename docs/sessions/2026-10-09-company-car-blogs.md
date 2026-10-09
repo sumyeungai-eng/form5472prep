@@ -32,7 +32,11 @@ Respect October 3 owner decision: one daily release at 09:00 London, weekends in
 
 All four are 10:00 Warsaw / 08:00 UTC. Future article URLs must return 404 and remain absent from index/sitemap/feed before release. No new cron or indexing submission is created.
 
-Content checkpoint: `234d698`. Deployment will use only `git push origin main`, never CLI production deployment. Original checkout's `main` is occupied and dirty; use an independent release clone with its own `main`, cherry-picking only scoped task commits. Preserve the canonical checkout and its unrelated files.
+Content checkpoint: `234d698`; QA checkpoint: `8b60d1c`. Only `git push origin main` was used, never CLI production deployment. Original checkout's `main` is occupied and dirty; an independent release clone with its own `main` cherry-picked only scoped task commits. The canonical checkout and its unrelated files remain unchanged.
+
+Production commits: `8e19073` (content and artwork) and `a92310e` (verifier and editorial/QA handoff), fast-forwarded from `5116a7c`. The independent release tree was byte-for-byte equivalent to the tested feature tree (`git diff --exit-code 8b60d1c HEAD` passed) before pushing. Git push succeeded. Git-linked Vercel content deployment `dpl_4UTEcbZPjBuiTRsiQrx3MXduKH61`, `form5472prep-42sbdzuyj-form5472prep.vercel.app`, is READY and assigned to `www.form5472prep.com`. Read-only Vercel API confirmed Git source `main` and full commit `a92310ed7dfaf2656c93e4e675aa7e1bde5ea402`.
+
+Status: **written, reviewed, deployed to the daily queue and live-gate checked**. Not yet publicly released: the articles remain intentionally unavailable until October 16–19. The final verification-log update is documentation only; it does not change the tested runtime or publication dates.
 
 ## Verification
 
@@ -45,7 +49,9 @@ Content checkpoint: `234d698`. Deployment will use only `git push origin main`, 
 - TypeScript `tsc --noEmit` passed. Full suite with its expected `http://localhost:3000` app URL: 2,166 passed / 3 failed across 132 files. The three failures also reproduce at unchanged production `5116a7c`: `pdfInputs.test.ts` (two) and `irsCodes/index.test.ts` (one), all because their session mock lacks `toClientFiling`. These files and the filing API are untouched. Initial port-3009 test run had two additional Stripe branding expectation failures; those pass with the expected port 3000. No assertion was changed to make tests pass.
 - Production-mode `npm run build` completed successfully (compile, lint/type checks, static generation and finalization; exit 0) with the restored schedule. Local-only dummy database/Stripe/session values were used; no production credentials or customer records. Expected unavailable-local-database fallback logs and the pre-existing `MessagesPanel.tsx` image warning remain. An initial build lacked the now-required local session secret; retrying with a dummy session value resolved that environment issue without source edits.
 - The built local production server passed the batch verifier: four scheduled 404s, byte-identical 200 covers, no pre-release discovery in blog/sitemap/feed, and existing internal links 200. Production credentials were not used.
-- Git-linked production release checks are pending; this is not yet a claim of publication or deployment. Prior live deployment `dpl_2RhErSGqGSia6NB64hs2pXvConvG` was READY on main `5116a7c`.
+- Live verification completed October 9, 2026, 15:18:22 UTC against `https://www.form5472prep.com`: all four scheduled article URLs 404; all four covers 200 and byte-identical to committed assets; blog, sitemap and feed 200 with all four new slugs absent; linked existing destinations 200. This verifies deployed assets and current release gates, not future indexing or conversion performance.
+- All three production markers passed together: empty EIN checkout request 400 (rejected before database/Stripe access), `/ein/apply` 200 containing `Owner date of birth`, and `/form-5472-penalty-calculator` 200. No application was submitted or customer record created. Prior live deployment was `dpl_2RhErSGqGSia6NB64hs2pXvConvG` on main `5116a7c`; new content deployment is confirmed above.
+- Existing `publishAt` filtering and 60-second ISR will expose each post on its scheduled day. Existing `blog-release` cron refreshes discovery and handles its already-authorized IndexNow flow. It was not manually invoked, modified or newly scheduled by this session. To check a released page later, run the batch verifier against production; it changes expected status from 404 to 200 based on each committed release time.
 
 ## Open follow-ups
 
@@ -59,4 +65,4 @@ Content checkpoint: `234d698`. Deployment will use only `git push origin main`, 
 - UK article applies normal VAT rules only and does not determine the US LLC's VAT eligibility or local classification.
 - Examples and artwork are hypothetical/editorial; no actual vehicle test, client result, fabricated credentials or traffic forecast.
 - New-post internal links render as text while sibling posts remain scheduled; existing template behavior restores them after release.
-- No price, tax package, customer data, application code, migration or unrelated draft released.
+- No price, tax-preparation workflow, customer data, database migration or unrelated draft was changed or released. The only runtime change is four descriptive artwork alt-text entries in the blog library.
