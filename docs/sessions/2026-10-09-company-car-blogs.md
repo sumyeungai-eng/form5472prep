@@ -4,7 +4,9 @@
 
 Working checkout: `/Users/sumyeung/.codex/worktrees/nomad-location-blogs/form5472`, branch `codex/company-car-blogs-20261009`, from production `5116a7c`. Original canonical checkout is dirty on local `main` behind production; none of its modified/untracked blog, email, image or wizard files were edited or committed.
 
-Owned files: four new company-car Markdown articles, four corresponding WebP covers, four artwork configurations and a new vehicle motif in `scripts/render-blog-artwork.mjs`, four `ARTWORK_ALTS` entries in `src/lib/blog.ts`, the research brief/claim ledger and this handoff.
+Release checkout: `/Users/sumyeung/Developer/f5472-wt/company-car-release-20261009`, an independent SSH clone with its own `main`. It shares only the ignored dependency directory for local diagnostics; it does not share Git branch references with the canonical checkout. Baseline diagnostics ran at unchanged `5116a7c` before scoped cherry-picks.
+
+Owned files: four new company-car Markdown articles, four corresponding WebP covers, four artwork configurations and a new vehicle motif in `scripts/render-blog-artwork.mjs`, four `ARTWORK_ALTS` entries in `src/lib/blog.ts`, the batch verification script, the research brief/claim ledger and this handoff.
 
 User requested a few articles covering company cars, deductibility, electric cars and VAT. Four guides written for the existing foreign-owned US LLC audience; VAT article explicitly UK-only. US-tax skill used for entity and nonresident deduction boundaries, sales-blog skill used for intent, primary authority research, worked examples, scope-fitting CTAs and publication checks. No licensed human tax review claimed.
 
@@ -19,9 +21,36 @@ Evidence and editorial decisions: `docs/marketing/2026-10-09-company-car-blog-br
 
 ## Release workflow
 
-Respect October 3 owner decision: one daily release at 09:00 London, weekends included. New files start with `publishAt: auto`; the existing scheduler assigns dates after occupied slots. Future article URLs must return 404 and remain absent from index/sitemap/feed before release. No new cron or indexing submission is created.
+Respect October 3 owner decision: one daily release at 09:00 London, weekends included. The existing scheduler resolved new `publishAt: auto` entries after the occupied October 10–15 slots:
 
-Work in progress: scheduling, artwork, preview/build checks and release evidence will be recorded before completion. Deployment only through `git push origin main`; never CLI production deployment. Original checkout's `main` is occupied and dirty, so deploy a scoped tested worktree commit with a fast-forward refspec if necessary, preserving the canonical tree.
+| London release | Article |
+|---|---|
+| October 16, 2026, 09:00 | Company-car deductions |
+| October 17, 2026, 09:00 | Mileage versus actual expenses |
+| October 18, 2026, 09:00 | Electric-car deductions versus credits |
+| October 19, 2026, 09:00 | UK company-car VAT |
+
+All four are 10:00 Warsaw / 08:00 UTC. Future article URLs must return 404 and remain absent from index/sitemap/feed before release. No new cron or indexing submission is created.
+
+Content checkpoint: `234d698`. Deployment will use only `git push origin main`, never CLI production deployment. Original checkout's `main` is occupied and dirty; use an independent release clone with its own `main`, cherry-picking only scoped task commits. Preserve the canonical checkout and its unrelated files.
+
+## Verification
+
+- Four related test files / 237 tests passed: blog, blog-order CTA, publication schedule and SEO title.
+- All four articles previewed locally with the scheduled visibility temporarily removed. Each returned 200, one H1, canonical, indexable metadata, expected BlogPosting and two-item FAQ schema, working cover/social image, data table and `/start` CTA. Publication fields were restored to the committed October 16–19 schedule immediately after preview.
+- Blog, sitemap and feed discovery checked in the temporary preview; eight internal destinations and all 15 external citation destinations returned 200. Primary source passage review is recorded separately in the claim ledger; an HTTP response alone is not treated as factual verification.
+- Mobile preview at 390 × 844 on all four pages: images loaded, no page-level horizontal overflow, wide tables scroll inside their containers. Company-car and UK VAT screenshots visually reviewed; all four original 1280 × 720 covers inspected.
+- Description lengths, absent editorial comments/placeholders, artwork dimensions and all example arithmetic checked by `scripts/verify-company-car-blogs-20261009.mjs`.
+- Restored scheduled tree locally: all four article URLs return 404, all four covers return 200, and no new slugs appear in blog, sitemap or feed. Existing linked destinations still return 200.
+- TypeScript `tsc --noEmit` passed. Full suite with its expected `http://localhost:3000` app URL: 2,166 passed / 3 failed across 132 files. The three failures also reproduce at unchanged production `5116a7c`: `pdfInputs.test.ts` (two) and `irsCodes/index.test.ts` (one), all because their session mock lacks `toClientFiling`. These files and the filing API are untouched. Initial port-3009 test run had two additional Stripe branding expectation failures; those pass with the expected port 3000. No assertion was changed to make tests pass.
+- Production-mode `npm run build` completed successfully (compile, lint/type checks, static generation and finalization; exit 0) with the restored schedule. Local-only dummy database/Stripe/session values were used; no production credentials or customer records. Expected unavailable-local-database fallback logs and the pre-existing `MessagesPanel.tsx` image warning remain. An initial build lacked the now-required local session secret; retrying with a dummy session value resolved that environment issue without source edits.
+- The built local production server passed the batch verifier: four scheduled 404s, byte-identical 200 covers, no pre-release discovery in blog/sitemap/feed, and existing internal links 200. Production credentials were not used.
+- Git-linked production release checks are pending; this is not yet a claim of publication or deployment. Prior live deployment `dpl_2RhErSGqGSia6NB64hs2pXvConvG` was READY on main `5116a7c`.
+
+## Open follow-ups
+
+- Separate application-test maintenance: add the appropriate `toClientFiling` mock in the two existing test files and rerun the full suite. Not part of this editorial task and not implemented here.
+- No owner decision blocks this scoped series. VAT jurisdiction default is explicitly UK; if the owner wants another country, research a separately scoped replacement before changing the article.
 
 ## Contracts
 

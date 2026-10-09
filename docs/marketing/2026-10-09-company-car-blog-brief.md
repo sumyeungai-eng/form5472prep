@@ -1,6 +1,6 @@
 # Company-car article series — editorial brief
 
-Assignment: a few articles on company cars, deductibility, electric cars and VAT. Four complete guides for Form5472 Prep's English-speaking foreign-owned US LLC audience. Publishing authorization persists from the conversation and CLAUDE.md; the newer October 3 owner decision is daily releases at 09:00 London. Use `publishAt: auto` and the existing scheduler, preserving the occupied October 10–13 slots.
+Assignment: a few articles on company cars, deductibility, electric cars and VAT. Four complete guides for Form5472 Prep's English-speaking foreign-owned US LLC audience. Publishing authorization persists from the conversation and CLAUDE.md; the newer October 3 owner decision is daily releases at 09:00 London. The existing scheduler resolved the new `publishAt: auto` entries to October 16–19, preserving the occupied October 10–15 slots.
 
 Jurisdiction: US federal rules for non-US individual owners of disregarded single-member LLCs; one explicitly UK-scoped VAT article. A non-blocking jurisdiction question was sent; no answer was available when drafting, so the stated default was used. No EU-wide VAT treatment, personalized liability decision or licensed review is claimed.
 
