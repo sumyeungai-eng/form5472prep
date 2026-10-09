@@ -85,6 +85,23 @@ function chip({ cx, cy, r = 46, fill = C.navy, glyph = "doc" }) {
 /** The accent object that distinguishes one post's card from the next. */
 function motif(kind, accent) {
   switch (kind) {
+    case "car":
+    case "car-route":
+    case "car-electric":
+    case "car-vat":
+      return `
+      <g transform="translate(788 188)" filter="url(#soft)">
+        <rect x="4" y="270" width="408" height="12" rx="6" fill="${accent}" opacity="0.35"/>
+        <path d="M24 168l46-82q10-18 34-18h164q20 0 34 18l58 82q30 5 30 36v34H8v-35q0-26 16-35z" fill="${C.navy}"/>
+        <path d="M90 98h90v66H52zM196 98h66q12 0 19 10l38 56H196z" fill="${C.paper}" opacity="0.9"/>
+        <rect x="184" y="181" width="27" height="6" rx="3" fill="${accent}"/>
+        <rect x="338" y="190" width="39" height="15" rx="7" fill="${accent}"/>
+        <circle cx="89" cy="236" r="36" fill="${C.navySoft}" stroke="${C.paper}" stroke-width="8"/>
+        <circle cx="309" cy="236" r="36" fill="${C.navySoft}" stroke="${C.paper}" stroke-width="8"/>
+        ${kind === "car-electric" ? `<rect x="320" y="-32" width="60" height="90" rx="12" fill="${accent}"/><path d="M353-16l-15 31h16l-10 28" fill="none" stroke="${C.paper}" stroke-width="6" stroke-linejoin="round"/><path d="M380 0q32 0 32 36v114h-25" fill="none" stroke="${accent}" stroke-width="6"/>` : ""}
+        ${kind === "car-route" ? `<path d="M18 12h114q25 0 25 20t25 20h114" fill="none" stroke="${accent}" stroke-width="7" stroke-dasharray="12 9"/><circle cx="18" cy="12" r="12" fill="${accent}"/><circle cx="296" cy="52" r="12" fill="${accent}"/>` : ""}
+        ${kind === "car-vat" ? `<rect x="285" y="-32" width="100" height="112" rx="10" fill="${C.paper}"/><text x="304" y="9" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="${accent}">VAT</text><path d="M303 29h60M303 49h42" stroke="${C.ruleDark}" stroke-width="7" stroke-linecap="round"/>` : ""}
+      </g>`;
     case "notice": // a stamped notice sheet, corner folded
       return `
       <g transform="translate(830 120) rotate(6)" filter="url(#soft)">
@@ -232,6 +249,10 @@ function svg({ accent, motif: kind, glyphs, location }) {
 }
 
 const POSTS = {
+  "company-car-deductions-foreign-owned-us-llc": { location: "COMPANY CAR", accent: C.teal, motif: "car", glyphs: ["person", "doc", "hash", "check"] },
+  "business-car-mileage-vs-actual-expenses-2026": { location: "MILEAGE OR ACTUAL COSTS", accent: C.amber, motif: "car-route", glyphs: ["calendar", "pen", "hash", "check"] },
+  "electric-company-car-us-llc-tax-credits-2026": { location: "ELECTRIC COMPANY CAR", accent: C.green, motif: "car-electric", glyphs: ["calendar", "doc", "warn", "check"] },
+  "uk-company-car-vat-buy-lease-electric": { location: "UK CAR VAT", accent: C.navySoft, motif: "car-vat", glyphs: ["doc", "hash", "two", "check"] },
   "form-5472-affiliate-marketers-content-sites": { accent: C.teal, motif: "stack", glyphs: ["doc", "hash", "person", "check"] },
   "form-5472-app-developers-app-store-google-play": { accent: C.navySoft, motif: "split", glyphs: ["doc", "hash", "person", "check"] },
   "form-5472-kdp-authors-royalties": { accent: C.amber, motif: "stack", glyphs: ["doc", "pen", "hash", "check"] },
