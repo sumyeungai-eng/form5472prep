@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { PDFDocument } from "pdf-lib";
-import { AUTHORED_DOC_SIGNATURE_HEADING, COVER_LETTER_ENCLOSURE_PHRASE, GENERATOR_VERSION } from "@/config/filingPackage";
+import { AUTHORED_DOC_SIGNATURE_HEADING, COVER_LETTER_CLOSING, COVER_LETTER_ENCLOSURE_PHRASE, GENERATOR_VERSION } from "@/config/filingPackage";
 import { form5472FieldMap, form1120_2025FieldMap } from "./fieldMaps";
 import { runPreflight } from "./preflight";
 import type { PackageRecord } from "./generatePackage";
@@ -130,7 +130,7 @@ const goodRecord: PackageRecord = {
         "Date: 9/22/2026",
         `Re: ${COVER_LETTER_ENCLOSURE_PHRASE} for Example Holdings LLC`,
         `Enclosed please find ${COVER_LETTER_ENCLOSURE_PHRASE} for Example Holdings LLC.`,
-        AUTHORED_DOC_SIGNATURE_HEADING,
+        COVER_LETTER_CLOSING,
       ],
     },
     {
@@ -169,7 +169,16 @@ describe("runPreflight", () => {
     ["A22", (r: PackageRecord) => { r.authoredDocuments[0].lines.push("These are timely filed."); }],
     ["A23", (r: PackageRecord) => { r.authoredDocuments[0].lines[0] = "Wrong address"; }],
     ["A24", (r: PackageRecord) => { r.taxYears[0].status = "late"; }],
-    ["A25", (r: PackageRecord) => { r.authoredDocuments[0].lines = r.authoredDocuments[0].lines.filter((line) => line !== AUTHORED_DOC_SIGNATURE_HEADING); }],
+    ["A25", (r: PackageRecord) => {
+      const statement = r.authoredDocuments.find((d) => d.kind !== "coverLetter")!;
+      statement.lines = statement.lines.filter((line) => line !== AUTHORED_DOC_SIGNATURE_HEADING);
+    }],
+    // Generator 2.2.0: a cover letter that still carries the penalties-of-
+    // perjury heading is also an A25 failure.
+    ["A25", (r: PackageRecord) => {
+      const cover = r.authoredDocuments.find((d) => d.kind === "coverLetter")!;
+      cover.lines = [...cover.lines, AUTHORED_DOC_SIGNATURE_HEADING];
+    }],
     ["A26", (r: PackageRecord) => { r.taxYears[0].status = "late"; r.authoredDocuments.push({ kind: "reasonableCauseStatement", taxYear: 2026, lines: ["tax year 2026", "customer payments", AUTHORED_DOC_SIGNATURE_HEADING] }); r.taxYears[0].trades = false; }],
     ["A27", (r: PackageRecord) => { r.authoredDocuments.find((d) => d.kind === "partVStatement")!.pages = [["Tax Year 2026"]]; }],
     ["R02", (r: PackageRecord) => { r.llcPrintAddress.failures = ["field cannot fit address"]; }],
@@ -415,7 +424,7 @@ describe("runPreflight", () => {
       `Re: ${COVER_LETTER_ENCLOSURE_PHRASE} for Late Night Media LLC`,
       `Enclosed please find ${COVER_LETTER_ENCLOSURE_PHRASE} for Late Night Media LLC.`,
       "Timely Ng",
-      AUTHORED_DOC_SIGNATURE_HEADING,
+      COVER_LETTER_CLOSING,
     ];
 
     const result = await runPreflight(record, await goodPdfBytes(record));

@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { PDFDocument, StandardFonts } from "pdf-lib";
-import { AUTHORED_DOC_SIGNATURE_HEADING, COVER_LETTER_ENCLOSURE_PHRASE, SIGNER_TITLE } from "@/config/filingPackage";
+import { AUTHORED_DOC_SIGNATURE_HEADING, COVER_LETTER_CLOSING, COVER_LETTER_ENCLOSURE_PHRASE, SIGNER_TITLE } from "@/config/filingPackage";
 import {
   form5472FieldMap,
   form1120_2018FieldMap,
@@ -257,7 +257,11 @@ describe("generatePackage regressions", () => {
     const pkg = await generatePackage(F5, finalisedAt);
     const cover = pkg.record.authoredDocuments.find((doc) => doc.kind === "coverLetter");
     expect(cover?.lines.slice(0, 4)).toEqual([...IRS_MAIL_ADDRESS_DISPLAY_LINES]);
-    expect(cover?.lines).toContain(AUTHORED_DOC_SIGNATURE_HEADING);
+    // Generator 2.2.0: the cover letter closes "Sincerely," — never under
+    // penalties of perjury (that heading stays on the statements only).
+    expect(cover?.lines).toContain(COVER_LETTER_CLOSING);
+    expect(cover?.lines).not.toContain(AUTHORED_DOC_SIGNATURE_HEADING);
+    expect(cover?.lines.join(" ")).not.toMatch(/penalties of perjury/i);
     expect(cover?.lines).toContain(SIGNER_TITLE);
     const text = cover?.lines.join("\n") ?? "";
     expect(text).toContain(COVER_LETTER_ENCLOSURE_PHRASE);
@@ -506,10 +510,11 @@ describe("generatePackage regressions", () => {
     ]);
   }, PDF_TIMEOUT);
 
-  it("C-06 uses the configured signature heading on every authored document kind", async () => {
+  it("C-06 uses the configured signature heading on every authored statement (not the cover letter)", async () => {
     const pkg = await generatePackage(F5, finalisedAt);
     const byKind = new Map(pkg.record.authoredDocuments.map((doc) => [doc.kind, doc]));
-    for (const kind of ["coverLetter", "partVStatement", "partVIStatement", "reasonableCauseStatement"] as const) {
+    expect(byKind.get("coverLetter")?.lines).not.toContain(AUTHORED_DOC_SIGNATURE_HEADING);
+    for (const kind of ["partVStatement", "partVIStatement", "reasonableCauseStatement"] as const) {
       expect(byKind.get(kind)?.lines).toContain(AUTHORED_DOC_SIGNATURE_HEADING);
     }
   }, PDF_TIMEOUT);

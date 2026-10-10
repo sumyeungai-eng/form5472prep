@@ -31,6 +31,7 @@ import {
 } from "@/lib/schemas";
 import {
   AUTHORED_DOC_SIGNATURE_HEADING,
+  COVER_LETTER_CLOSING,
   COVER_LETTER_ENCLOSURE_PHRASE,
   FOREIGN_OWNED_DE_HEADER,
   GENERATOR_VERSION,
@@ -1670,7 +1671,8 @@ async function buildCoverLetter(
   }
   y -= 28;
 
-  draw(AUTHORED_DOC_SIGNATURE_HEADING, { font: bold });
+  // A transmittal letter: plain closing, no penalties-of-perjury heading.
+  draw(COVER_LETTER_CLOSING);
   y -= 28;
   draw("________________________________________");
   y -= 14;

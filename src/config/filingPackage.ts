@@ -1,4 +1,9 @@
+// Heading above the signature on the authored STATEMENTS (Part V, Part VI,
+// reasonable-cause). The cover letter is only a transmittal letter, so it
+// closes with COVER_LETTER_CLOSING instead (owner decision 2026-10-10); the
+// Form 1120 carries its own IRS jurat.
 export const AUTHORED_DOC_SIGNATURE_HEADING = "Signed under penalties of perjury:";
+export const COVER_LETTER_CLOSING = "Sincerely,";
 export const IRS_JURAT_UNTOUCHED = true;
 export const PAID_PREPARER_BLOCK = "blank";
 export const SIGNER_TITLE = "Sole Member";
@@ -19,7 +24,10 @@ export const FAX_RENDER_DPI = 300;
 // (no DIIRSP suffix); RCS owner nationality wording (Hong Kong / Macau
 // permanent resident) and no-U.S.-income facts; per-year late treatment uses
 // finalisedAt as "now"; $0 Part V statement wording; city/state display casing.
-export const GENERATOR_VERSION = "2.1.0";
+// 2.2.0 (2026-10-10): cover letter closes with "Sincerely," — no
+// "Signed under penalties of perjury" heading on the cover letter (statements
+// unchanged).
+export const GENERATOR_VERSION = "2.2.0";
 // The IRS-required marking written across the top of the pro forma Form 1120
 // (Form 5472 instructions, "Foreign-owned U.S. DE"); also stamped on Form 5472.
 // House position: no "DIIRSP" suffix or other procedure label on the forms.

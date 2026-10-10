@@ -1,6 +1,7 @@
 import { PDFDocument } from "pdf-lib";
 import {
   AUTHORED_DOC_SIGNATURE_HEADING,
+  COVER_LETTER_CLOSING,
   COVER_LETTER_ENCLOSURE_PHRASE,
   GENERATOR_VERSION,
   IRS_MAIL_ADDRESS,
@@ -532,9 +533,20 @@ function checkA24(record: PackageRecord, result: MutableResult) {
   }
 }
 
-// A25: authored-document signature heading equals config value.
+// A25: every authored STATEMENT carries the configured signature heading; the
+// cover letter closes with COVER_LETTER_CLOSING and must NOT carry the
+// penalties-of-perjury heading (generator 2.2.0).
 function checkA25(record: PackageRecord, result: MutableResult) {
   for (const doc of record.authoredDocuments) {
+    if (doc.kind === "coverLetter") {
+      if (doc.lines.includes(AUTHORED_DOC_SIGNATURE_HEADING)) {
+        fail(result, "A25", "coverLetter must not carry the penalties-of-perjury signature heading.");
+      }
+      if (!doc.lines.includes(COVER_LETTER_CLOSING)) {
+        fail(result, "A25", "coverLetter does not use the configured closing.");
+      }
+      continue;
+    }
     if (!doc.lines.includes(AUTHORED_DOC_SIGNATURE_HEADING)) {
       fail(result, "A25", `${doc.kind} does not use the configured signature heading.`);
     }
