@@ -54,6 +54,18 @@ input", client length check). `tsc` 0; `next build` 0 (with a local throwaway
 NO FINDINGS. It noted that a long non-Latin answer reports both the length
 message and the English-letters message server-side; that is acceptable.
 
+## Follow-up commit: cap raised to 20,000 (owner decision)
+The owner chose 20,000 (same as the filing-level narrative cap) so a customer
+can paste a full statement. `RCS_TEXT_MAX` = 20000 applies to both
+`rcsWhyMissed` and `rcsWhenLearned`. The statement page draws the answer with
+`drawParagraph` (wrap + `ensureSpace` → new page), so long answers paginate.
+New `src/lib/pdf/longReasonableCause.test.ts` proves a near-cap answer adds at
+least 3 pages without throwing. A rendered page was inspected by eye: text
+stays within the margins and the following sections continue normally.
+Limitation: whitespace (including paragraph breaks) is collapsed into one
+block in the PDF (`cleanSentence`). The admin per-year editor has no
+separate cap.
+
 ## Contracts
 - Never declare a React component inside another component's render body.
   It remounts the subtree on every render.
@@ -69,8 +81,6 @@ message and the English-letters message server-side; that is acceptable.
   2,000 characters. Whether a longer statement goes into the admin "Reasonable
   cause narrative (DIIRSP)" field (20,000 cap), and whether that was agreed,
   is the owner's call.
-- Owner-gated: whether 2,000 is the right cap for `rcsWhyMissed` (PDF layout
-  impact not assessed).
 - Follow-up: other wizard banners still show only messages, not field names.
 - Follow-up (from the earlier session today): refresh the main checkout's
   `node_modules`.

@@ -17,7 +17,9 @@ export const ITIN_IN_FTIN_MESSAGE =
 
 // Longest per-year reasonable-cause answer (rcsWhyMissed / rcsWhenLearned).
 // Shared with the wizard so the browser rejects an over-long answer before saving.
-export const RCS_TEXT_MAX = 2000;
+// Matches the filing-level narrative cap; the statement page wraps and paginates
+// (drawParagraph → ensureSpace), so a long answer flows onto further pages.
+export const RCS_TEXT_MAX = 20000;
 export function rcsTooLongMessage(length: number, max = RCS_TEXT_MAX): string {
   return `Keep this to ${max.toLocaleString("en-US")} characters or fewer (it is ${length.toLocaleString("en-US")}).`;
 }

@@ -106,7 +106,7 @@ describe("PATCH PDF text validation", () => {
 
 // The exact body the wizard's reasonable-cause step sends when the year has
 // no saved row yet (incident 2026-10-10: every answer failed with a bare
-// "Invalid input" because an over-long answer hit the 2,000-char cap).
+// "Invalid input" because an over-long answer hit the then 2,000-char cap).
 function rcsStepBody(rcsWhyMissed: string) {
   return { yearData: [{
     taxYear: 2023, totalAssetsYearEnd: 0, contributions: 0, distributions: 0,
@@ -117,16 +117,21 @@ function rcsStepBody(rcsWhyMissed: string) {
 }
 
 describe("PATCH reasonable-cause step", () => {
+  it("accepts a long multi-paragraph statement under the 20,000 cap", async () => {
+    const why = "The Owner was not aware of the filing requirement. ".repeat(60).trim();
+    expect(why.length).toBeGreaterThan(2000);
+    expect((await patch(rcsStepBody(why))).status).toBe(200);
+  });
   it("accepts the wizard's reasonable-cause body", async () => {
     const why = "The Owner was not aware that a foreign-owned single-member LLC must file Form 5472 with a pro forma Form 1120, even when no U.S. tax is owed.";
     expect((await patch(rcsStepBody(why))).status).toBe(200);
     expect(fake.upsert).toHaveBeenCalledWith(expect.objectContaining({ update: expect.objectContaining({ rcsWhyMissed: why, rcsNoIrsNoticeConfirmed: true }) }));
   });
   it("rejects an over-long answer with a readable limit message before writing", async () => {
-    const response = await patch(rcsStepBody("x".repeat(2050)));
+    const response = await patch(rcsStepBody("x".repeat(20050)));
     expect(response.status).toBe(400);
     const json = await response.json();
-    expect(json.issues).toContainEqual({ field: "rcsWhyMissed", message: "Keep this to 2,000 characters or fewer (it is 2,050)." });
+    expect(json.issues).toContainEqual({ field: "rcsWhyMissed", message: "Keep this to 20,000 characters or fewer (it is 20,050)." });
     expect(fake.upsert).not.toHaveBeenCalled();
   });
   it("gives built-in checks an English message, not a bare 'Invalid input'", async () => {

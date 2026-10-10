@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import { validateReasonableCauseYears } from "./ReasonableCauseStep";
 
 describe("validateReasonableCauseYears", () => {
-  it("rejects an answer over the 2,000-character server cap before saving", () => {
-    const row = { taxYear: 2025, rcsWhyMissed: "x".repeat(2001), rcsWhenLearned: "", rcsNoIrsNoticeConfirmed: true };
+  it("rejects an answer over the 20,000-character server cap before saving", () => {
+    const row = { taxYear: 2025, rcsWhyMissed: "x".repeat(20001), rcsWhenLearned: "", rcsNoIrsNoticeConfirmed: true };
     expect(validateReasonableCauseYears([row])).toEqual({
-      "2025.rcsWhyMissed": "Keep this to 2,000 characters or fewer (it is 2,001).",
+      "2025.rcsWhyMissed": "Keep this to 20,000 characters or fewer (it is 20,001).",
     });
-    expect(validateReasonableCauseYears([{ ...row, rcsWhyMissed: "x".repeat(2000) }])).toEqual({});
+    expect(validateReasonableCauseYears([{ ...row, rcsWhyMissed: "x".repeat(20000) }])).toEqual({});
   });
   it("requires a reason and the no-notice confirmation for each late year", () => {
     expect(
