@@ -5,7 +5,8 @@ const db = vi.hoisted(() => ({ findUnique: vi.fn() }));
 vi.mock("@/lib/prisma", () => ({ prisma: { filing: { findUnique: db.findUnique } } }));
 vi.mock("@/lib/storage", () => ({ getPdf: vi.fn(async () => new Uint8Array([37, 80, 68, 70])) }));
 
-import { downloadFileName, GET } from "./route";
+import { downloadFileName } from "@/lib/pdf/downloadFileName";
+import { GET } from "./route";
 
 const get = (qs: string) => GET(new Request(`https://x.test/api/admin/filings/f1/pdf${qs}`), { params: { id: "f1" } });
 

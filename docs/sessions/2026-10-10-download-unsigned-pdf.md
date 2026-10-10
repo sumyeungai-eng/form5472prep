@@ -10,5 +10,9 @@
 - Admin PDF route: `?download=1` → `Content-Disposition: attachment` with a readable ASCII name, e.g. `Form5472_Acme-Holdings-LLC_2024-2025_unsigned.pdf` (`downloadFileName`, accents stripped). Default stays inline (View, place-signature tool unchanged). Works for `?signed=1` / `?faxed=1` too.
 - Evidence: route + admin filing tests 17/17, tsc 0, eslint 0, build OK.
 
+### Build fix
+- f19566f was pushed with a failing `next build` (my command chain didn't stop on the build exit code): route files may only export handlers, and `downloadFileName` was exported from `route.ts`. Moved to `src/lib/pdf/downloadFileName.ts`; build now passes. The failed Vercel build left the previous deploy live (no outage).
+
 ## Contracts
+- Never export helpers from Next.js `route.ts` files (Next's route type check fails the build; `tsc --noEmit` does not catch it).
 - Without `download=1` the route stays inline — the place-signature tool fetches it.
