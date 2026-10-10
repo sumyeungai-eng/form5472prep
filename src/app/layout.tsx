@@ -8,7 +8,7 @@ import { ChatWidget } from "@/components/ChatWidget";
 import { MetaPixel } from "@/components/MetaPixel";
 import { VisitPing } from "@/components/VisitPing";
 import { GOOGLE_ADS_TAG_ID } from "@/lib/analytics/googleAds";
-import { EXPRESS_TURNAROUND, STANDARD_TURNAROUND, TIERS } from "@/lib/pricing";
+import { EXPRESS_TURNAROUND, PRIORITY_TURNAROUND, STANDARD_TURNAROUND, TIERS } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import "./globals.css";
 
@@ -55,13 +55,13 @@ export const metadata: Metadata = {
     url: env.appUrl,
     siteName: "Form5472 Prep",
     title: "File IRS Form 5472 and pro forma 1120 in 15 minutes — Form5472 Prep",
-    description: `For foreign-owned US LLCs. We prepare, you sign, we fax to the IRS Ogden PIN Unit. From ${formatPrice(TIERS.standard.priceCents)} in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for express within ${EXPRESS_TURNAROUND} — fax delivery included on both. 100% money-back guarantee if we fail to submit.`,
+    description: `For foreign-owned US LLCs. We prepare, you sign, we fax to the IRS Ogden PIN Unit. From ${formatPrice(TIERS.standard.priceCents)} in ${STANDARD_TURNAROUND}, ${formatPrice(TIERS.express.priceCents)} for express within ${EXPRESS_TURNAROUND}, or ${formatPrice(TIERS.priority.priceCents)} for 24-hour filing, ready to sign within ${PRIORITY_TURNAROUND} — fax delivery included on every plan. 100% money-back guarantee if we fail to submit.`,
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title: "File IRS Form 5472 and pro forma 1120 in 15 minutes",
-    description: `Done-for-you Form 5472 filing for foreign-owned US LLCs. From ${formatPrice(TIERS.standard.priceCents)}, or ${formatPrice(TIERS.express.priceCents)} for express filing within ${EXPRESS_TURNAROUND} — IRS fax delivery included on both.`,
+    description: `Done-for-you Form 5472 filing for foreign-owned US LLCs. From ${formatPrice(TIERS.standard.priceCents)}, ${formatPrice(TIERS.express.priceCents)} for express filing within ${EXPRESS_TURNAROUND}, or ${formatPrice(TIERS.priority.priceCents)} for 24-hour filing, ready to sign within ${PRIORITY_TURNAROUND} — IRS fax delivery included on every plan.`,
   },
   robots: {
     index: true,

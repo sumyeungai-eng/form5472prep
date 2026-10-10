@@ -681,7 +681,7 @@ function PricingSection({
             Flat-rate Form 5472 filing.
           </p>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto">
-            One-time fee per filing. No subscription. Both tiers include the
+            One-time fee per filing. No subscription. All three tiers include the
             identical filing and IRS fax delivery to the Ogden PIN Unit — only
             the turnaround differs.
           </p>
@@ -694,7 +694,7 @@ function PricingSection({
             </div>
           </div>
         </Reveal>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto items-stretch">
+        <div className="mt-10 grid gap-6 md:grid-cols-3 max-w-5xl mx-auto items-stretch">
           {tiers.map(([key, t], idx) => {
             const highlighted = !!t.highlight;
             return (
@@ -774,7 +774,7 @@ function PricingSection({
         ) : (
           <p className="mt-6 text-center text-sm text-slate-600">
             <span className="font-semibold text-slate-900">
-              + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year, either tier
+              + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year, any tier
             </span>
             <span className="mx-2 text-slate-400">·</span>
             Saves you from the $25,000-per-form IRS penalty

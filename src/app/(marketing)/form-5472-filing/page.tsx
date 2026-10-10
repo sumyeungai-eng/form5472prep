@@ -18,6 +18,7 @@ import { Reveal } from "@/components/Reveal";
 import {
   EXPRESS_TURNAROUND,
   MULTI_YEAR_ADDON_CENTS,
+  PRIORITY_TURNAROUND,
   STANDARD_TURNAROUND,
   TIERS,
   TIER_ORDER,
@@ -55,8 +56,8 @@ const FAQS = [
     a: `The price includes Form 5472 + pro forma Form 1120 with the Part V supporting statement, review by a qualified tax accountant, a reasonable cause letter if you're late, IRS fax delivery, a timestamped receipt, filing confirmation, and a reminder before next year's deadline. There is no separate fax fee, setup fee, or subscription. Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each.`,
   },
   {
-    q: "What's the difference between Standard and Express?",
-    a: `Turnaround only. Standard is ready in ${STANDARD_TURNAROUND} at ${formatPrice(TIERS.standard.priceCents)}; Express is ready within ${EXPRESS_TURNAROUND} at ${formatPrice(TIERS.express.priceCents)}. Both include the same documents and accountant review. Express buys speed and priority email support.`,
+    q: "What's the difference between Standard, Express and 24-Hour?",
+    a: `Turnaround only. Standard is ready in ${STANDARD_TURNAROUND} at ${formatPrice(TIERS.standard.priceCents)}; Express is ready within ${EXPRESS_TURNAROUND} at ${formatPrice(TIERS.express.priceCents)}; 24-Hour has your reviewed package ready to check and sign within ${PRIORITY_TURNAROUND} of your order, 7 days a week, at ${formatPrice(TIERS.priority.priceCents)}. All three include the same documents and accountant review, and the fax goes to the IRS once you sign. Express and 24-Hour add speed and priority email support.`,
   },
   {
     q: "Is fax filing to the IRS really included?",
@@ -139,7 +140,7 @@ function Hero() {
               Accountant-reviewed, faxed to the IRS, timestamped receipt in your inbox.
             </p>
             <p className="order-5 mt-6 max-w-xl text-lg leading-relaxed text-slate-300 lg:order-none">
-              Get an accountant-reviewed Form 5472 + pro forma 1120, faxed to the IRS Ogden PIN Unit with a timestamped receipt as proof of filing. The complete package is ready in {STANDARD_TURNAROUND}, or within {EXPRESS_TURNAROUND} on Express.
+              Get an accountant-reviewed Form 5472 + pro forma 1120, faxed to the IRS Ogden PIN Unit with a timestamped receipt as proof of filing. The complete package is ready in {STANDARD_TURNAROUND}, within {EXPRESS_TURNAROUND} on Express, or ready to sign within {PRIORITY_TURNAROUND} on 24-Hour.
             </p>
           </div>
 
@@ -285,7 +286,7 @@ function Includes() {
     "Fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) with no separate fax fee",
     "Timestamped fax transmission receipt emailed to you and stored in your portal",
     "Filing confirmation and email support from start to receipt",
-    `Ready in ${STANDARD_TURNAROUND}, or within ${EXPRESS_TURNAROUND} on Express`,
+    `Ready in ${STANDARD_TURNAROUND}, within ${EXPRESS_TURNAROUND} on Express, or ready to sign within ${PRIORITY_TURNAROUND} on 24-Hour`,
     "A reminder in the second week of January so the following year's deadline does not slip past you",
     "100% money-back guarantee if we fail to submit",
   ];
@@ -329,10 +330,10 @@ function Pricing() {
         <SectionHead
           eyebrow="Pricing"
           title="Choose your turnaround"
-          subtitle="Both tiers include the same forms, accountant review, IRS fax delivery, and timestamped receipt. Only timing and support priority differ."
+          subtitle="All three tiers include the same forms, accountant review, IRS fax delivery, and timestamped receipt. Only timing and support priority differ."
         />
 
-        <div className="mx-auto mt-10 grid max-w-3xl items-stretch gap-6 sm:grid-cols-2">
+        <div className="mx-auto mt-10 grid max-w-5xl items-stretch gap-6 md:grid-cols-3">
           {TIER_ORDER.map((key, index) => (
             <TierCard key={key} slug={key} delay={index * 120} />
           ))}

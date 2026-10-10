@@ -92,16 +92,16 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "How much does it cost?",
     answer:
-      "Form 5472 filing costs $149 for Standard filing, ready in 5-7 business days, or $199 for Express filing, ready within 3 business days. Additional past tax years are $99 each on either tier, and IRS fax delivery to the Ogden PIN Unit is included.",
+      "Form 5472 filing costs $149 for Standard filing, ready in 5-7 business days, $199 for Express filing, ready within 3 business days, or $299 for 24-Hour filing, ready for you to check and sign within 24 hours. Additional past tax years are $99 each on any tier, and IRS fax delivery to the Ogden PIN Unit is included.",
     learnMore: { href: "/pricing", label: "See pricing" },
     source: "src/app/(marketing)/pricing/page.tsx:34; src/lib/pricing.ts:40; src/lib/pricing.ts:41; src/lib/pricing.ts:60; src/lib/pricing.ts:67; src/lib/pricing.ts:86",
   },
   {
     id: "standard-vs-express",
     category: "before-you-order",
-    question: "What's the difference between Standard and Express?",
+    question: "What's the difference between Standard, Express and 24-Hour?",
     answer:
-      "Standard and Express differ only by turnaround. Standard is ready in 5-7 business days at $149, while Express is ready within 3 business days at $199 and adds priority email support. Both include the same documents, accountant review, and IRS fax delivery.",
+      "The plans differ only by turnaround. Standard is ready in 5-7 business days at $149. Express is ready within 3 business days at $199 and adds priority email support. 24-Hour filing is $299: your reviewed package is ready for you to check and sign within 24 hours of your order, 7 days a week, with priority email support. Every plan includes the same documents, accountant review, and IRS fax delivery.",
     source: "src/app/(marketing)/form-5472-filing/page.tsx:59; src/lib/pricing.ts:40; src/lib/pricing.ts:41; src/lib/pricing.ts:60; src/lib/pricing.ts:67",
   },
   {
@@ -414,7 +414,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "how-our-service-works",
     question: "How long does the whole thing take?",
     answer:
-      "The filing takes about 15 minutes of your time in the wizard. On our side, Standard is reviewed and faxed to the IRS Ogden PIN Unit within 5-7 business days of your signature; Express is the same package within 3 business days.",
+      "The filing takes about 15 minutes of your time in the wizard. On our side, Standard is reviewed and faxed to the IRS Ogden PIN Unit within 5-7 business days of your signature; Express is the same package within 3 business days. On 24-Hour filing, your reviewed package is ready for you to check and sign within 24 hours of your order, and we fax it once you sign.",
     source: "src/lib/landing-pages.ts:2199 (slug: pro-form-5472)",
   },
   {

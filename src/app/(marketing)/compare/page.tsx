@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { getLandingPage } from "@/lib/landing-pages";
 import {
   EXPRESS_TURNAROUND,
+  PRIORITY_TURNAROUND,
   MULTI_YEAR_ADDON_CENTS,
   STANDARD_TURNAROUND,
   TIERS,
@@ -57,10 +58,11 @@ function summarise(intro: string): string {
 
 const STD = formatPrice(TIERS.standard.priceCents);
 const EXP = formatPrice(TIERS.express.priceCents);
+const H24 = formatPrice(TIERS.priority.priceCents);
 const ADD = formatPrice(MULTI_YEAR_ADDON_CENTS);
 
 // The capsule under the H1. Prices and turnarounds come from pricing.ts.
-const CAPSULE = `Formation and registered-agent providers differ on whether Form 5472 is included, who prepares it, how it reaches the IRS and what proof you get. Form5472 Prep is a filing-only service at ${STD} (${STANDARD_TURNAROUND}) or ${EXP} (within ${EXPRESS_TURNAROUND}), plus ${ADD} per extra year, with fax delivery included.`;
+const CAPSULE = `Formation and registered-agent providers differ on whether Form 5472 is included, who prepares it, how it reaches the IRS and what proof you get. Form5472 Prep is a filing-only service at ${STD} (${STANDARD_TURNAROUND}), ${EXP} (within ${EXPRESS_TURNAROUND}) or ${H24} (ready to sign within ${PRIORITY_TURNAROUND}), plus ${ADD} per extra year, with fax delivery included.`;
 
 // Visible FAQs, mirrored 1:1 in the FAQPage JSON-LD. Statements about a
 // provider repeat only what that provider's page on this site already says.
@@ -83,7 +85,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: "What does Form5472 Prep cost?",
-    a: `${STD} on Standard (${STANDARD_TURNAROUND}) or ${EXP} on Express (within ${EXPRESS_TURNAROUND}) per filing year, plus ${ADD} for each additional past year. IRS fax delivery and the accountant review are included on both plans.`,
+    a: `${STD} on Standard (${STANDARD_TURNAROUND}), ${EXP} on Express (within ${EXPRESS_TURNAROUND}) or ${H24} on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}) per filing year, plus ${ADD} for each additional past year. IRS fax delivery and the accountant review are included on every plan.`,
   },
 ];
 

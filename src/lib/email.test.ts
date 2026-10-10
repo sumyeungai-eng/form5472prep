@@ -128,6 +128,19 @@ describe("order confirmation email", () => {
     expect(existingCallerShape.html).not.toMatch(/<p[^>]*>\s*<\/p>/i);
   });
 
+  it("promises a ready-to-sign package within 24 hours on 24-Hour orders, never 'filed within 24 hours'", async () => {
+    await usePreviewDir();
+    const priority = await readRenderedOrderEmail(
+      await sendOrderConfirmationEmail({ ...minimalOrderArgs(), tier: "priority" }),
+    );
+    expect(priority.html).toContain("24-Hour order:");
+    expect(priority.html).toContain("ready for you to check and sign within 24 hours of your order");
+    expect(priority.text).toContain("ready for you to check and sign within 24 hours of your order");
+    expect(priority.html).not.toMatch(/filed within 24 hours|faxed within 24 hours/i);
+    expect(priority.html).not.toContain("one business day");
+    expect(priority.html).toContain("$299");
+  });
+
   it("promises a one-business-day review on express orders only", async () => {
     await usePreviewDir();
     const express = await readRenderedOrderEmail(

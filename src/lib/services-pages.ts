@@ -26,13 +26,13 @@
 //   - the first block under each H2 is a standalone answer ("capsule"): a
 //     prose paragraph of at most 60 words, not a list, not a lead-in that
 //     ends in a colon, and not a pointer ("This ...", "Here ...");
-//   - every page states the Standard and Express prices.
+//   - every page states the Standard, Express and 24-Hour prices.
 //
 // Body markup (rendered by src/app/(marketing)/services/ServiceRichText.tsx):
 // blank line = new block; "- " = bullet; "1. " = numbered step;
 // **bold**; [label](/internal-path).
 // ─────────────────────────────────────────────────────────────────────────────
-import { MULTI_YEAR_ADDON_CENTS, STANDARD_TURNAROUND, EXPRESS_TURNAROUND, TIERS } from "@/lib/pricing";
+import { MULTI_YEAR_ADDON_CENTS, STANDARD_TURNAROUND, EXPRESS_TURNAROUND, PRIORITY_TURNAROUND, TIERS } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import { parseLandingBody } from "@/lib/landing-body";
 
@@ -44,6 +44,7 @@ const AUDIENCE_PAGES_ADDED = "2026-10-05";
 
 const STD = formatPrice(TIERS.standard.priceCents);
 const EXP = formatPrice(TIERS.express.priceCents);
+const H24 = formatPrice(TIERS.priority.priceCents);
 const ADD = formatPrice(MULTI_YEAR_ADDON_CENTS);
 const STD_2Y = formatPrice(TIERS.standard.priceCents + MULTI_YEAR_ADDON_CENTS);
 const STD_3Y = formatPrice(TIERS.standard.priceCents + MULTI_YEAR_ADDON_CENTS * 2);
@@ -176,7 +177,7 @@ Because the two forms travel together, it is a Form 1120 and 5472 filing service
     sections: [
       {
         heading: "What does the Form 5472 filing service include?",
-        body: `Both plans include Form 5472 and the pro forma Form 1120 prepared from your answers, review by a qualified accountant, online signing, fax delivery to the IRS Ogden PIN Unit and a timestamped fax receipt. Standard is ${STD} (ready in ${STANDARD_TURNAROUND}); Express is ${EXP} (ready within ${EXPRESS_TURNAROUND}).
+        body: `Every plan includes Form 5472 and the pro forma Form 1120 prepared from your answers, review by a qualified accountant, online signing, fax delivery to the IRS Ogden PIN Unit and a timestamped fax receipt. Standard is ${STD} (ready in ${STANDARD_TURNAROUND}); Express is ${EXP} (ready within ${EXPRESS_TURNAROUND}); 24-Hour is ${H24} (ready to sign within ${PRIORITY_TURNAROUND}).
 
 - Form 5472, completed for a foreign-owned disregarded entity
 - The pro forma Form 1120 cover, marked "Foreign-owned U.S. DE" as the instructions require
@@ -227,7 +228,7 @@ Whichever you choose, ask four questions. Who reviews the package? Who sends it 
       },
       {
         heading: "How much does the Form 5472 filing service cost?",
-        body: `The Form 5472 filing service costs ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year on either plan. Fax delivery and the accountant review are included in both, with no subscription.
+        body: `The Form 5472 filing service costs ${STD} on Standard (ready in ${STANDARD_TURNAROUND}), ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}) or ${H24} on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}), plus ${ADD} for each additional past year on any plan. Fax delivery and the accountant review are included in every plan, with no subscription.
 
 See the [pricing page](/pricing) for the full list, or start the questionnaire now.`,
       },
@@ -353,7 +354,7 @@ Not sure? The free [Do I need to file Form 5472?](/do-i-need-to-file-form-5472) 
       },
       {
         heading: "How much does a pro forma 1120 filing service cost?",
-        body: `The pro forma 1120 is never priced on its own: it is part of every Form 5472 filing, at ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year.
+        body: `The pro forma 1120 is never priced on its own: it is part of every Form 5472 filing, at ${STD} on Standard (ready in ${STANDARD_TURNAROUND}), ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}) or ${H24} on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}), plus ${ADD} for each additional past year.
 
 See the [pricing page](/pricing) for everything each plan includes.`,
       },
@@ -478,7 +479,7 @@ Before deciding, the [penalty calculator](/form-5472-penalty-calculator) shows t
       },
       {
         heading: "How much does a late Form 5472 filing cost?",
-        body: `A late Form 5472 filing costs ${STD} for the first year on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}), then ${ADD} for each additional past year. Two years on Standard cost ${STD_2Y} and three cost ${STD_3Y}.
+        body: `A late Form 5472 filing costs ${STD} for the first year on Standard (ready in ${STANDARD_TURNAROUND}), ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}) or ${H24} on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}), then ${ADD} for each additional past year. Two years on Standard cost ${STD_2Y} and three cost ${STD_3Y}.
 
 Every late year includes its own reasonable-cause statement. See the [pricing page](/pricing).`,
       },
@@ -604,7 +605,7 @@ An all-in-one compliance subscription suits some owners. Others already have a r
       },
       {
         heading: "How much does the foreign owned LLC tax filing service cost?",
-        body: `Each filing year is a one-time fee with no subscription: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year.
+        body: `Each filing year is a one-time fee with no subscription: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}), ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}) or ${H24} on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}), plus ${ADD} for each additional past year.
 
 See the [pricing page](/pricing) for everything included.`,
       },
@@ -624,7 +625,7 @@ See the [pricing page](/pricing) for everything included.`,
       },
       {
         q: "What does US tax filing cost for a non-resident LLC owner?",
-        a: `With us, ${STD} for Standard or ${EXP} for Express per filing, plus ${ADD} for each additional past year. IRS fax delivery and the accountant review are included in both plans.`,
+        a: `With us, ${STD} for Standard, ${EXP} for Express or ${H24} for 24-Hour per filing, plus ${ADD} for each additional past year. IRS fax delivery and the accountant review are included in every plan.`,
       },
     ],
     related: [],
@@ -732,7 +733,7 @@ In each case the fax is sent only after review and signature, and the receipt is
       },
       {
         heading: "How much does Form 5472 fax filing cost?",
-        body: `There is no separate fax fee: fax delivery is included in both plans, at ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year.
+        body: `There is no separate fax fee: fax delivery is included in every plan, at ${STD} on Standard (ready in ${STANDARD_TURNAROUND}), ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}) or ${H24} on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}), plus ${ADD} for each additional past year.
 
 See the [pricing page](/pricing).`,
       },
@@ -857,7 +858,7 @@ Accountants and bookkeepers weighing these options can start with [Form 5472 for
       },
       {
         heading: "How much does white label Form 5472 filing cost?",
-        body: `Partner filings cost the same as direct filings: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year, with IRS fax delivery included.
+        body: `Partner filings cost the same as direct filings: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}), ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}) or ${H24} on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}), plus ${ADD} for each additional past year, with IRS fax delivery included.
 
 See the [pricing page](/pricing), and ask about volume pricing or consolidated invoicing when you apply through the [partner program](/partners).`,
       },
@@ -981,7 +982,7 @@ The free [reportable transactions checker](/form-5472-reportable-transactions-ch
       },
       {
         heading: "How much does Form 5472 filing for a dormant LLC cost?",
-        body: `A dormant-year filing costs the same as any other year: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year.
+        body: `A dormant-year filing costs the same as any other year: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}), ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}) or ${H24} on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}), plus ${ADD} for each additional past year.
 
 See the [pricing page](/pricing).`,
       },
@@ -1099,7 +1100,7 @@ The [deadline calculator](/form-5472-deadline-calculator) works out the exact da
       },
       {
         heading: "How much does a final Form 5472 for a dissolved LLC cost?",
-        body: `A final-year filing is priced like any other year: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}), plus ${ADD} for each missing earlier year.
+        body: `A final-year filing is priced like any other year: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}), ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}) or ${H24} on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}), plus ${ADD} for each missing earlier year.
 
 See the [pricing page](/pricing).`,
       },
@@ -1188,9 +1189,9 @@ Not sure whether a payment counts? The [reportable transactions checker](/form-5
       },
       {
         heading: "How long does hiring us take, and what does it cost?",
-        body: `Your part takes about 15 minutes of questions plus a few minutes to review and sign. The package is ready in ${STANDARD_TURNAROUND} on Standard (${STD}) or within ${EXPRESS_TURNAROUND} on Express (${EXP}).
+        body: `Your part takes about 15 minutes of questions plus a few minutes to review and sign. The package is ready in ${STANDARD_TURNAROUND} on Standard (${STD}), within ${EXPRESS_TURNAROUND} on Express (${EXP}) or ready to sign within ${PRIORITY_TURNAROUND} on 24-Hour (${H24}).
 
-Missed earlier years add ${ADD} per extra year on either plan, each with its own reasonable-cause statement. For a calendar-year LLC the filing is due April 15. Full details are on the [pricing page](/pricing).`,
+Missed years add ${ADD} each on any plan, with their own reasonable-cause statements. For a calendar-year LLC the filing is due April 15. Full details are on the [pricing page](/pricing).`,
       },
       {
         heading: "What do you still do yourself?",
@@ -1263,7 +1264,7 @@ Missed earlier years add ${ADD} per extra year on either plan, each with its own
     sections: [
       {
         heading: "What does a Form 5472 preparer do?",
-        body: `A Form 5472 preparer prepares the Form 5472 and pro forma 1120 from the owner's records, flags any missing information and assembles the package for fax or mail. The forms are short; the judgement is in what goes on them.
+        body: `A Form 5472 preparer prepares the Form 5472 and pro forma 1120 from the owner's records, flags any missing information and assembles the package for fax or mail.
 
 - **Sorts the year's money movements.** Contributions, distributions, loans and owner-paid LLC costs are identified and totalled by type.
 - **Completes Form 5472.** Owner details, related-party information, the transaction totals and year-end total assets.
@@ -1300,7 +1301,7 @@ Missed earlier years add ${ADD} per extra year on either plan, each with its own
       },
       {
         heading: "How much does a Form 5472 preparer cost?",
-        body: `Our Form 5472 preparation costs **${STD}** on Standard (ready in ${STANDARD_TURNAROUND}) or **${EXP}** on Express (ready within ${EXPRESS_TURNAROUND}), with the accountant review and IRS fax included in both. Each additional past year adds ${ADD}. See [pricing](/pricing), or start the questionnaire now.`,
+        body: `Our Form 5472 preparation costs **${STD}** on Standard (ready in ${STANDARD_TURNAROUND}), **${EXP}** on Express (ready within ${EXPRESS_TURNAROUND}) or **${H24}** on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}), with the accountant review and IRS fax included in every plan. Each additional past year adds ${ADD}. See [pricing](/pricing), or start the questionnaire now.`,
       },
     ],
     faqs: [
@@ -1415,7 +1416,7 @@ Other returns means Form 1065, a full Form 1120 for an LLC taxed as a corporatio
       },
       {
         q: "What does each client filing cost?",
-        a: `Partner filings cost the same as direct filings: ${STD} on Standard (${STANDARD_TURNAROUND}), ${EXP} on Express (within ${EXPRESS_TURNAROUND}), +${ADD} per additional past year, IRS fax delivery included. Ask about volume pricing or consolidated invoicing when you apply.`,
+        a: `Partner filings cost the same as direct filings: ${STD} on Standard (${STANDARD_TURNAROUND}), ${EXP} on Express (within ${EXPRESS_TURNAROUND}), ${H24} on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}), +${ADD} per additional past year, IRS fax delivery included. Ask about volume pricing or consolidated invoicing when you apply.`,
       },
       {
         q: "Can my firm enter the client's information?",
@@ -1499,7 +1500,7 @@ Close the year early. For a calendar-year LLC the filing is due April 15, and th
         heading: "Should you refer the owner or open a partner account?",
         body: `For one or two clients, refer the owner to [start a filing](/start?src=svc-form-5472-for-bookkeepers) with your totals in hand. If you keep the books for several foreign-owned LLCs, a [partner account](/partners) lets you start and track every client's filing from one dashboard. Firms that want client emails under their own brand can read about [white label Form 5472 filing](/services/white-label-form-5472-filing).
 
-Each filing costs ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}), plus ${ADD} per additional past year.`,
+Each filing costs ${STD} on Standard (ready in ${STANDARD_TURNAROUND}), ${EXP} on Express (ready within ${EXPRESS_TURNAROUND}) or ${H24} on 24-Hour (ready to sign within ${PRIORITY_TURNAROUND}), plus ${ADD} per additional past year.`,
       },
       {
         heading: "What do we not take over?",
@@ -1652,7 +1653,7 @@ export const SERVICES_HUB = {
   h1: "Form 5472 filing services",
   // The capsule under the H1: what the filing is, what it costs and how long it
   // takes (prices from pricing.ts; the test caps it at 60 words).
-  intro: `Every service here is one filing: Form 5472 with a pro forma Form 1120 for a US LLC owned by one foreign person, at ${STD} (ready in ${STANDARD_TURNAROUND}) or ${EXP} (ready within ${EXPRESS_TURNAROUND}) per year. Every filing is reviewed by a qualified accountant before it is submitted, then faxed to the IRS with a timestamped receipt.`,
+  intro: `Each service is one filing: Form 5472 with a pro forma Form 1120 for a US LLC owned by one foreign person, at ${STD} (ready in ${STANDARD_TURNAROUND}), ${EXP} (within ${EXPRESS_TURNAROUND}) or ${H24} (ready to sign within ${PRIORITY_TURNAROUND}) per year. Each is reviewed by a qualified accountant, then faxed to the IRS with a timestamped receipt.`,
 } as const;
 
 export type HubLink = { href: string; label: string; blurb: string };

@@ -2,10 +2,15 @@
 // PRICING — source of truth for every customer-facing price on the site.
 //
 // Model (2026):
-//   TWO tiers that differ ONLY by turnaround — the filing itself, the
+//   THREE tiers that differ ONLY by turnaround — the filing itself, the
 //   accountant review and everything in the package are identical:
 //     standard $149 — ready in 5-7 business days
 //     express  $199 — ready within 3 business days
+//     priority $299 — "24-Hour filing": reviewed package ready for the client
+//                     to check and sign within 24 hours of the order, 7 days
+//                     a week (owner decision 2026-10-10). The promise stops at
+//                     "ready to sign" — the fax goes out once the client signs,
+//                     so the clock never depends on the client.
 //   The ranges deliberately don't overlap, so the upgrade buys a real,
 //   stateable difference rather than a vague "faster".
 //   Fax delivery is INCLUDED on both (no separate add-on).
@@ -20,7 +25,7 @@
 //   falls back to a live tier so nothing crashes.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type Tier = "standard" | "express";
+export type Tier = "standard" | "express" | "priority";
 export type LegacyTier = "rush" | "premium" | "single_year" | "two_year_diirsp" | "multi_year_diirsp";
 export type AnyTierValue = Tier | LegacyTier | string;
 
@@ -39,6 +44,10 @@ export type TierInfo = {
 // service-level complaint starts.
 export const STANDARD_TURNAROUND = "5-7 business days";
 export const EXPRESS_TURNAROUND = "3 business days";
+// 24-Hour filing: 24 clock hours, 7 days a week, from the order to the
+// reviewed package being ready for the client to check and sign.
+export const PRIORITY_TURNAROUND = "24 hours";
+export const PRIORITY_PROMISE = `Ready for you to check and sign within ${PRIORITY_TURNAROUND}, 7 days a week`;
 
 // The EIN and ITIN marketing application pages quote these exact prices.
 export const EIN_PRICE_CENTS = 14900;
@@ -75,9 +84,16 @@ export const TIERS: Record<Tier, TierInfo> = {
       "Priority email support",
     ],
   },
+  priority: {
+    label: "24-Hour filing",
+    subtitle: `Ready to sign within ${PRIORITY_TURNAROUND}`,
+    priceCents: 29900,
+    ctaLabel: "Start 24-hour filing",
+    features: [PRIORITY_PROMISE, ...SHARED_FEATURES, "Priority email support"],
+  },
 };
 
-export const TIER_ORDER: Tier[] = ["standard", "express"];
+export const TIER_ORDER: Tier[] = ["standard", "express", "priority"];
 
 // Flat add-on for every tax year past the first, on either tier. Deliberately
 // below the base fee — an extra year that costs as much as the whole first
@@ -247,6 +263,8 @@ export function getTiersForSource(
 ): Record<string, TierInfo> {
   return {
     standard: TIERS.standard,
+    express: TIERS.express,
+    priority: TIERS.priority,
     rush: { ...TIERS.standard, label: "Rush (legacy plan)" },
     premium: { ...TIERS.standard, label: "Premium (legacy plan)" },
     single_year: { ...TIERS.standard, label: "Single year (legacy plan)" },

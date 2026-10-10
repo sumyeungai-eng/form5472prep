@@ -3,7 +3,7 @@ import { TIERS, TIER_ORDER, type Tier } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
 import { tierOnlyFeatures } from "./tierFeatures";
 
-// The two turnaround cards. Presentational only: selection state, the
+// The turnaround cards (one per tier in TIER_ORDER). Presentational only: selection state, the
 // optimistic switch and the in-flight guard all live in ReviewStep, which
 // passes `disabled` while a tier PATCH is in flight.
 export function TierChooser({
@@ -19,7 +19,7 @@ export function TierChooser({
     <div
       role="radiogroup"
       aria-label="Choose your turnaround"
-      className="grid gap-3 sm:grid-cols-2"
+      className="grid gap-3 md:grid-cols-3"
     >
       {TIER_ORDER.map((key) => {
         const info = TIERS[key];

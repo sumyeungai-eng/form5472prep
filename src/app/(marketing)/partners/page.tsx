@@ -44,7 +44,7 @@ const faq = [
   },
   {
     q: "How does payment work?",
-    a: "Each filing is paid individually at checkout with the same pricing as direct customers — Standard $149 (ready in 5-7 business days) or Express $199 (within 3 business days), +$99 per additional past year on either tier, IRS fax delivery included. The filing and the accountant review are identical on both tiers; only the speed differs. For volume pricing or consolidated invoicing, email support@form5472prep.com.",
+    a: "Each filing is paid individually at checkout with the same pricing as direct customers — Standard $149 (ready in 5-7 business days), Express $199 (within 3 business days) or 24-Hour $299 (ready to sign within 24 hours), +$99 per additional past year on any tier, IRS fax delivery included. The filing and the accountant review are identical on every tier; only the speed differs. For volume pricing or consolidated invoicing, email support@form5472prep.com.",
   },
   {
     q: "How do I become a partner?",
