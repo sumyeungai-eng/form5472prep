@@ -66,6 +66,18 @@ Limitation: whitespace (including paragraph breaks) is collapsed into one
 block in the PDF (`cleanSentence`). The admin per-year editor has no
 separate cap.
 
+## Follow-up commit: GitHub CI green again
+CI (`.github/workflows/ci.yml`, full Vitest suite on every push) had failed on
+every push since d2a9924 (2026-10-08, 16 runs), which emailed the owner each
+time. Cause: the same `toClientFiling` mock drift as `pdfInputs.test.ts`, in
+`src/lib/irsCodes/index.test.ts`. It uses `vi.doMock`, so this morning's
+`vi.mock("@/lib/session"` search and the Codex review both missed it. Switched
+it to an `importOriginal` partial mock. Local full suite: 134 files / 2,173
+tests passed; `tsc` 0; `next lint` 0. Lesson: when a shared module gains an
+export, search for `vi.mock(` AND `vi.doMock(` of it. Run the full suite once
+(the CI command) before declaring CI fixed; targeted runs miss
+cross-file breakage.
+
 ## Contracts
 - Never declare a React component inside another component's render body.
   It remounts the subtree on every render.

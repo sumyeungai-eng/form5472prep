@@ -92,7 +92,11 @@ describe("filing PATCH PBA code validation", () => {
       bindFilingToEmail: vi.fn(),
     };
     const update = vi.fn(async ({ data }) => ({ ...filing, ...data }));
-    vi.doMock("@/lib/session", () => session);
+    // Partial mock: the route serialises through the real toClientFiling.
+    vi.doMock("@/lib/session", async (importOriginal) => ({
+      ...(await importOriginal<typeof import("@/lib/session")>()),
+      ...session,
+    }));
     vi.doMock("@/lib/prisma", () => ({
       prisma: {
         $transaction: vi.fn(async (fn) => fn({ filing: { update } })),
