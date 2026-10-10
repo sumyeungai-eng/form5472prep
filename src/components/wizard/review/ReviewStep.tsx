@@ -201,7 +201,7 @@ export function ReviewStep({
                     {tierSaving ? "Updating…" : ""}
                   </span>
                 }
-                description="Every plan includes the same package and the same accountant review — the only difference is how fast it's ready. You can switch until you pay."
+                description="Both plans include the same package and the same accountant review — the only difference is how fast it goes out. You can switch until you pay."
               />
               <div className="mt-4">
                 <TierChooser
@@ -213,7 +213,7 @@ export function ReviewStep({
               {extraYears > 0 && (
                 <p className="mt-3 text-xs text-slate-500">
                   Prices shown are for the first tax year. Each additional past year adds{" "}
-                  {formatUsd(MULTI_YEAR_ADDON_CENTS)} on any plan.
+                  {formatUsd(MULTI_YEAR_ADDON_CENTS)} on either plan.
                 </p>
               )}
               <IncludedFeatures features={sharedTierFeatures()} />

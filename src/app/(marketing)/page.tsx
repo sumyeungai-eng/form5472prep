@@ -24,7 +24,6 @@ import {
   MULTI_YEAR_ADDON_CENTS,
   STANDARD_TURNAROUND,
   EXPRESS_TURNAROUND,
-  PRIORITY_TURNAROUND,
 } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import { env } from "@/lib/env";
@@ -47,15 +46,15 @@ import {
 const FAQS = [
   {
     q: "How much does it cost?",
-    a: `Three flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}; ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready within ${EXPRESS_TURNAROUND}; or ${formatPrice(TIERS.priority.priceCents)} for ${TIERS.priority.label.toLowerCase()}, ready for you to check and sign within ${PRIORITY_TURNAROUND}, 7 days a week. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on every tier. IRS fax delivery to the Ogden PIN Unit is included on all three — no separate add-on.`,
+    a: `Two flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready within ${EXPRESS_TURNAROUND}. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on either tier. IRS fax delivery to the Ogden PIN Unit is included on both — no separate add-on.`,
   },
   {
-    q: "What's the difference between the three tiers?",
-    a: `Only the turnaround. The filing is identical on every tier: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation — plus a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready within ${EXPRESS_TURNAROUND} and adds priority email support; ${TIERS.priority.label.toLowerCase()} (${formatPrice(TIERS.priority.priceCents)}) has your reviewed package ready to check and sign within ${PRIORITY_TURNAROUND} of your order, 7 days a week, with priority email support. The fax goes to the IRS once you sign.`,
+    q: "What's the difference between the two tiers?",
+    a: `Only the turnaround. The filing is identical on both: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation — plus a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready within ${EXPRESS_TURNAROUND} and adds priority email support.`,
   },
   {
     q: "What if I've missed prior years?",
-    a: `Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing is +${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past year on every tier.`,
+    a: `Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing is +${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past year on either tier.`,
   },
   {
     q: "Do I really need Form 5472 and Form 1120 if my LLC made no money?",
@@ -157,7 +156,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
     description:
-      `For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. From ${formatPrice(TIERS.standard.priceCents)}, or ${formatPrice(TIERS.express.priceCents)} Express and ${formatPrice(TIERS.priority.priceCents)} 24-Hour for a faster turnaround.`,
+      "For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. From $149, or $199 for express filing within 3 business days.",
     images: ["/opengraph-image"],
   },
 };
@@ -327,34 +326,32 @@ function Hero({ filingsCount }: { filingsCount: number }) {
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-soft-pulse" />
                 Start filing now
               </div>
-              <div className="mt-3 grid grid-cols-1 gap-2">
+              <div className="mt-3 grid grid-cols-2 gap-3">
                 {TIER_ORDER.map((key) => {
                   const t = TIERS[key];
                   return (
                     <div
                       key={key}
                       className={[
-                        "flex items-center justify-between gap-3 rounded-lg px-3 py-2.5",
+                        "rounded-lg px-3 py-3",
                         t.highlight
                           ? "border-2 border-accent bg-accent-50/50"
                           : "border border-slate-200 bg-white",
                       ].join(" ")}
                     >
-                      <div className="min-w-0">
-                        <p className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">
-                          {t.label}
-                        </p>
-                        <p className="mt-0.5 text-xs text-slate-600">{t.subtitle}</p>
-                      </div>
-                      <p className="font-serif text-2xl font-semibold tracking-tight text-ink">
+                      <p className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">
+                        {t.label}
+                      </p>
+                      <p className="mt-1 font-serif text-3xl font-semibold tracking-tight text-ink">
                         {formatPrice(t.priceCents)}
                       </p>
+                      <p className="mt-1 text-xs text-slate-600">{t.subtitle}</p>
                     </div>
                   );
                 })}
               </div>
               <p className="mt-3 text-sm text-slate-600">
-                Same filing on every plan — accountant review, IRS fax delivery,
+                Same filing either way — accountant review, IRS fax delivery,
                 filing confirmation. Only the turnaround differs.{" "}
                 <Link href="/pricing" className="text-accent underline underline-offset-2">
                   See what&apos;s included
@@ -604,7 +601,7 @@ function Comparison() {
         <SectionHead
           eyebrow="vs. the alternatives"
           title="Why use Form5472 Prep instead of CPA or DIY?"
-          subtitle={`Form5472 Prep is a fixed-fee specialist: ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}), ${formatPrice(TIERS.express.priceCents)} (within ${EXPRESS_TURNAROUND}) or ${formatPrice(TIERS.priority.priceCents)} (ready to sign within ${PRIORITY_TURNAROUND}), with qualified-accountant review, IRS fax delivery and a timestamped receipt included.`}
+          subtitle={`Form5472 Prep is a fixed-fee specialist: ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} (within ${EXPRESS_TURNAROUND}), with qualified-accountant review, IRS fax delivery and a timestamped receipt included.`}
         />
         <ComparisonTable {...FILING_COMPARISON} className="mt-10" />
       </div>
@@ -616,7 +613,7 @@ function Pricing() {
   return (
     <section id="pricing" className="bg-white border-b border-slate-200 scroll-mt-20">
       <div className="max-w-6xl mx-auto px-6 pt-4 pb-16 sm:pt-8 sm:pb-20">
-        <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto items-stretch">
+        <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto items-stretch">
           {TIER_ORDER.map((key, idx) => {
             const t = TIERS[key];
             const highlighted = !!t.highlight;
@@ -661,7 +658,7 @@ function Pricing() {
           })}
         </div>
         <p className="mt-6 text-center text-sm text-slate-600">
-          <span className="font-semibold text-ink">+ {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year, any tier</span>
+          <span className="font-semibold text-ink">+ {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year, either tier</span>
           <span className="mx-2 text-slate-400">·</span>
           Saves you from the $25,000-per-form IRS penalty
         </p>

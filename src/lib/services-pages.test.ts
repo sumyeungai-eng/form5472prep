@@ -199,7 +199,6 @@ describe("services pages: on-page rules", () => {
           [
             TIERS.standard.priceCents,
             TIERS.express.priceCents,
-            TIERS.priority.priceCents,
             MULTI_YEAR_ADDON_CENTS,
             TIERS.standard.priceCents + MULTI_YEAR_ADDON_CENTS,
             TIERS.standard.priceCents + 2 * MULTI_YEAR_ADDON_CENTS,

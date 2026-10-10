@@ -530,29 +530,17 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const t = tierInfo(tier);
   const tierLabel = t.label;
   const tierPrice = formatUsd(t.priceCents);
-  // Speed promise by tier. Express: accountant review within one business day.
-  // 24-Hour ("priority"): reviewed package ready to check and sign within 24
-  // hours, 7 days a week — never "filed within 24 hours" (the fax follows the
-  // client's signature). Standard gets no timeframe. Legacy "rush" → standard.
+  // Express orders are promised an accountant review within one business day;
+  // standard orders get no timeframe. Legacy "rush" resolves to standard.
   const isExpress = tier === "express";
-  const isPriority = tier === "priority";
-  const speedLabel = isPriority ? "24-Hour order:" : isExpress ? "Express order:" : null;
-  const speedBody = isPriority
-    ? "your reviewed filing package will be ready for you to check and sign within 24 hours of your order. We will email you as soon as it is ready."
-    : isExpress
-      ? "a qualified accountant will review your filing within one business day."
-      : null;
-  const expressReviewText = speedLabel && speedBody ? `${speedLabel} ${speedBody}` : "";
-  const reviewStepText = isPriority
-    ? "A qualified accountant reviews the package, and it is ready for you to check and sign within 24 hours of your order. We may message you if anything needs clarifying."
-    : isExpress
-      ? "A qualified accountant reviews the package within one business day and may message you if anything needs clarifying."
-      : "A qualified accountant reviews the package and may message you if anything needs clarifying.";
-  const reviewStepPlain = isPriority
-    ? "A qualified accountant reviews the package, and it is ready for you to check and sign within 24 hours of your order. We may message you with questions."
-    : isExpress
-      ? "A qualified accountant reviews the package within one business day and may message you with questions."
-      : "A qualified accountant reviews the package and may message you with questions.";
+  const expressReviewText =
+    "Express order: a qualified accountant will review your filing within one business day.";
+  const reviewStepText = isExpress
+    ? "A qualified accountant reviews the package within one business day and may message you if anything needs clarifying."
+    : "A qualified accountant reviews the package and may message you if anything needs clarifying.";
+  const reviewStepPlain = isExpress
+    ? "A qualified accountant reviews the package within one business day and may message you with questions."
+    : "A qualified accountant reviews the package and may message you with questions.";
   const yearCount = taxYears.length || 1;
   const extraYears = Math.max(0, yearCount - 1);
   const addOnCents = multiYearAddonCents(yearCount);
@@ -574,9 +562,9 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     : extensionUnclear
       ? "We are checking whether an extension was filed for this year. We will confirm before anything is sent."
       : "";
-  const expressReviewHtml = speedLabel && speedBody
+  const expressReviewHtml = isExpress
     ? `<div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-left:4px solid ${EMAIL_STYLES.brand};border-radius:8px;padding:12px 16px;margin:0 0 12px;color:${EMAIL_STYLES.ink};font-size:14px;line-height:1.6;">
-         <strong>${speedLabel}</strong> ${speedBody}
+         <strong>Express order:</strong> a qualified accountant will review your filing within one business day.
        </div>`
     : "";
   const filingStatusNoticeHtml = filingStatusNoticeText
@@ -724,7 +712,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     text: customerText(
       salutation,
       `Thank you for your order.\n\n` +
-      (expressReviewText ? `${expressReviewText}\n\n` : "") +
+      (isExpress ? `${expressReviewText}\n\n` : "") +
       dueDateLineText +
       filingStatusNoticeLineText +
       `Tip: save donotreply@form5472prep.com to your contacts so our emails reach your inbox.\n\n` +
@@ -1101,9 +1089,7 @@ export async function sendNewOrderAdminEmail(args: {
   return sendEmail({
     log: { kind: "admin_new_order", filingId },
     to: adminEmail,
-    // 24-Hour orders carry a promise (ready to sign within 24h, 7 days a
-    // week) — make them stand out in the inbox.
-    subject: `${isTestOrder ? "[Test order]" : tier === "priority" ? "[New order · 24-HOUR]" : "[New order]"} ${llcLine} (${yearsLabel})`,
+    subject: `${isTestOrder ? "[Test order]" : "[New order]"} ${llcLine} (${yearsLabel})`,
     text:
       `${isTestOrder ? "Admin test order created (Stripe bypassed, $0)." : "New paid order received."}\n\n` +
       `Customer:      ${customerEmail ?? "(anonymous)"}\n` +

@@ -18,7 +18,6 @@
 import {
   EXPRESS_TURNAROUND,
   MULTI_YEAR_ADDON_CENTS,
-  PRIORITY_TURNAROUND,
   STANDARD_TURNAROUND,
   TIERS,
 } from "@/lib/pricing";
@@ -91,7 +90,6 @@ function ourFeature(pattern: RegExp): string {
 
 const OUR_STANDARD_USD = TIERS.standard.priceCents / 100;
 const OUR_EXPRESS_USD = TIERS.express.priceCents / 100;
-const OUR_PRIORITY_USD = TIERS.priority.priceCents / 100;
 const OUR_EXTRA_YEAR_USD = MULTI_YEAR_ADDON_CENTS / 100;
 
 const OURS: ProviderPrice = {
@@ -102,18 +100,18 @@ const OURS: ProviderPrice = {
   kind: "done-for-you filing service",
   reviewNote: ourFeature(/^Reviewed by/i),
   oneYearPriceUsd: OUR_STANDARD_USD,
-  priceNote: `${usd(OUR_STANDARD_USD)} Standard / ${usd(OUR_EXPRESS_USD)} Express / ${usd(OUR_PRIORITY_USD)} 24-Hour`,
+  priceNote: `${usd(OUR_STANDARD_USD)} Standard / ${usd(OUR_EXPRESS_USD)} Express`,
   billing: "One-off",
-  extraYearNote: `+${usd(OUR_EXTRA_YEAR_USD)} per additional past year, any tier`,
+  extraYearNote: `+${usd(OUR_EXTRA_YEAR_USD)} per additional past year, either tier`,
   filingMethodNote: `${ourFeature(/fax delivery/i)} (included)`,
-  turnaroundNote: `Standard ${STANDARD_TURNAROUND}; Express within ${EXPRESS_TURNAROUND}; 24-Hour ready to sign within ${PRIORITY_TURNAROUND}`,
+  turnaroundNote: `Standard ${STANDARD_TURNAROUND}; Express within ${EXPRESS_TURNAROUND}`,
   lateYears: {
     firstYearUsd: OUR_STANDARD_USD,
     eachAdditionalUsd: OUR_EXTRA_YEAR_USD,
     note: `${ourFeature(/reasonable-cause/i)} included`,
   },
   sourceUrl: `${SITE_URL}/pricing`,
-  sourceQuote: `${TIERS.standard.label} ${usd(OUR_STANDARD_USD)}, ${TIERS.express.label} ${usd(OUR_EXPRESS_USD)}, ${TIERS.priority.label} ${usd(OUR_PRIORITY_USD)}`,
+  sourceQuote: `${TIERS.standard.label} ${usd(OUR_STANDARD_USD)}, ${TIERS.express.label} ${usd(OUR_EXPRESS_USD)}`,
   checkedOn: PRICES_CHECKED_ON,
 };
 

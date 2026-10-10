@@ -6,7 +6,6 @@ import { CopyButton } from "@/components/press/CopyButton";
 import {
   EIN_PRICE_CENTS,
   EXPRESS_TURNAROUND,
-  PRIORITY_TURNAROUND,
   ITIN_PRICE_CENTS,
   MULTI_YEAR_ADDON_CENTS,
   STANDARD_TURNAROUND,
@@ -111,7 +110,7 @@ const KEY_FACTS: string[] = [
   "Who it is for: non-US owners of single-member US LLCs, plus formation agents, registered agents and accounting firms that file for client LLCs.",
   "Review: every filing is reviewed by a qualified accountant before it is submitted.",
   "Delivery: the signed package is faxed to the IRS Ogden PIN Unit and a timestamped transmission receipt is stored.",
-  `Prices: Standard ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}), Express ${formatPrice(TIERS.express.priceCents)} (within ${EXPRESS_TURNAROUND}), 24-Hour ${formatPrice(TIERS.priority.priceCents)} (ready to sign within ${PRIORITY_TURNAROUND}), +${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past tax year; IRS fax delivery included. The three tiers differ only in speed. EIN service ${formatPrice(EIN_PRICE_CENTS)}; ITIN service ${formatPrice(ITIN_PRICE_CENTS)}.`,
+  `Prices: Standard ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}), Express ${formatPrice(TIERS.express.priceCents)} (within ${EXPRESS_TURNAROUND}), +${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past tax year; IRS fax delivery included. The two tiers differ only in speed. EIN service ${formatPrice(EIN_PRICE_CENTS)}; ITIN service ${formatPrice(ITIN_PRICE_CENTS)}.`,
   "Other services: late (DIIRSP) catch-up filings, dormant-LLC and final-year filings, EIN and ITIN application support, white-label filing for partners.",
   `Free tools: ${FREE_TOOLS.length} calculators, checkers and reference tables (listed below).`,
   "Scope: Form5472 Prep prepares and submits forms from the information customers give it. It is not a general tax firm and does not give personalised tax planning.",

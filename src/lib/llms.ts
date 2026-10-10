@@ -9,7 +9,6 @@ import {
   EXPRESS_TURNAROUND,
   ITIN_PRICE_CENTS,
   MULTI_YEAR_ADDON_CENTS,
-  PRIORITY_TURNAROUND,
   STANDARD_TURNAROUND,
   TIERS,
   TIER_ORDER,
@@ -47,8 +46,6 @@ import { formatPrice } from "@/lib/utils";
 
 const STD = formatPrice(TIERS.standard.priceCents);
 const EXP = formatPrice(TIERS.express.priceCents);
-const H24 = formatPrice(TIERS.priority.priceCents);
-const TIER_NAMES = { standard: "Standard", express: "Express", priority: "24-Hour" } as const;
 const ADDON = formatPrice(MULTI_YEAR_ADDON_CENTS);
 const EIN_PRICE = formatPrice(EIN_PRICE_CENTS);
 const ITIN_PRICE = formatPrice(ITIN_PRICE_CENTS);
@@ -56,7 +53,7 @@ const PENALTY = formatPrice(PENALTY_PER_FORM_CENTS);
 const CONTINUATION = formatPrice(CONTINUATION_PER_PERIOD_CENTS);
 const MONEY_BACK = "100% money-back guarantee if we fail to submit the filing to the IRS.";
 
-export const ENTITY_SUMMARY = `Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition (${EIN_PRICE}) and ITIN acquisition (${ITIN_PRICE}) for non-residents — identity documents for ITIN applications are certified by an IRS-authorized Certifying Acceptance Agent (CAA), so eligible applicants never need to mail their original passport. Form5472 Prep prepares all required IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit. Three pricing tiers that differ by turnaround speed: Standard ${STD} (ready in ${STANDARD_TURNAROUND}), Express ${EXP} (ready within ${EXPRESS_TURNAROUND}) and 24-Hour ${H24} (reviewed package ready for the customer to check and sign within ${PRIORITY_TURNAROUND}, 7 days a week), plus ${ADDON} per additional past tax year on every tier. IRS fax delivery is included on every tier. The filing itself, the accountant review and the package contents are identical on every tier; Express and 24-Hour are faster and add priority email support. Every package is reviewed by a qualified tax accountant before submission. ${MONEY_BACK}`;
+export const ENTITY_SUMMARY = `Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition (${EIN_PRICE}) and ITIN acquisition (${ITIN_PRICE}) for non-residents — identity documents for ITIN applications are certified by an IRS-authorized Certifying Acceptance Agent (CAA), so eligible applicants never need to mail their original passport. Form5472 Prep prepares all required IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit. Two pricing tiers that differ by turnaround speed: Standard ${STD} (ready in ${STANDARD_TURNAROUND}) and Express ${EXP} (ready within ${EXPRESS_TURNAROUND}), plus ${ADDON} per additional past tax year on either tier. IRS fax delivery is included on both. The filing itself, the accountant review and the package contents are identical on both tiers; Express is faster and adds priority email support. Every package is reviewed by a qualified tax accountant before submission. ${MONEY_BACK}`;
 
 const WHO_THIS_IS_FOR = `## Who this is for
 
@@ -83,7 +80,7 @@ const WHAT_WE_DO_NOT_DO = `## What we do NOT do
 
 function multiYearExamples(): string {
   return TIER_ORDER.map((key) => {
-    const label = TIER_NAMES[key];
+    const label = key === "standard" ? "Standard" : "Express";
     const two = formatPrice(totalPriceCents(key, 2));
     const three = formatPrice(totalPriceCents(key, 3));
     return `${label}: 2 years = ${two}; 3 years = ${three}`;
@@ -93,17 +90,17 @@ function multiYearExamples(): string {
 function buildPricing(): string {
   const tierLines = TIER_ORDER.map((key) => {
     const tier = TIERS[key];
-    const name = TIER_NAMES[key];
+    const name = key === "standard" ? "Standard" : "Express";
     return `- **${name} — ${formatPrice(tier.priceCents)}** — ${tier.subtitle.toLowerCase()}. Includes: ${tier.features.join("; ")}.`;
   });
 
   return `## Pricing
 
-Three tiers, one-time per filing, USD. The filing, the accountant review and everything in the package are identical on every tier; the tiers differ by turnaround, and Express and 24-Hour add priority email support. The 24-Hour promise is that the reviewed package is ready for you to check and sign within 24 hours of the order; the fax goes to the IRS once you sign:
+Two tiers, one-time per filing, USD. The filing, the accountant review and everything in the package are identical on both; the tiers differ by turnaround, and Express adds priority email support:
 
 ${tierLines.join("\n")}
 
-Multi-year add-on: **+${ADDON} per additional past tax year**, on every tier. ${multiYearExamples()}.
+Multi-year add-on: **+${ADDON} per additional past tax year**, on either tier. ${multiYearExamples()}.
 
 **Fax delivery to the IRS Ogden PIN Unit is included on every plan** — no separate fax fee. The price you see is the price you pay. No subscription, no setup fee, no per-page surcharge.
 
@@ -155,7 +152,7 @@ const TOOL_PAGES: readonly PageLink[] = [
 
 const CORE_PAGES: readonly PageLink[] = [
   ["Home", "/", "Form5472 Prep home — Form 5472 + pro forma 1120 filing for foreign-owned US LLCs."],
-  ["Pricing", "/pricing", `Standard ${STD}, Express ${EXP} and 24-Hour ${H24} filing tiers with the full feature list.`],
+  ["Pricing", "/pricing", `Standard ${STD} and Express ${EXP} filing tiers with the full feature list.`],
   ["FAQ", "/faq", "Canonical short answers to customer questions about filing, deadlines, penalties, EIN, ITIN, proof, records, and service scope."],
   ...TOOL_PAGES,
   ["Form 5472 statistics", "/form-5472-statistics", `Form 5472 facts and figures with official sources: the ${PENALTY} IRC §6038A(d) penalty and continuation penalty, IRS systemic-assessment and abatement data, T.D. 9796 dates, deadlines, recordkeeping estimates and IRS SOI filer counts.`],
@@ -398,7 +395,7 @@ Source: ${SITE_URL}/about and ${SITE_URL}/press
 - Founded: ${foundingDate}.
 - Review: every filing is reviewed by a qualified tax accountant before it is submitted.
 - Delivery: the signed package is faxed to the IRS Ogden PIN Unit (${IRS_OGDEN_FAX}) and a timestamped transmission receipt is stored. The receipt is evidence of transmission, not IRS acceptance.
-- Prices: Standard ${STD} (${STANDARD_TURNAROUND}), Express ${EXP} (within ${EXPRESS_TURNAROUND}), 24-Hour ${H24} (ready to sign within ${PRIORITY_TURNAROUND}), +${ADDON} per additional past tax year; IRS fax delivery included. EIN service ${EIN_PRICE}; ITIN service ${ITIN_PRICE}.
+- Prices: Standard ${STD} (${STANDARD_TURNAROUND}), Express ${EXP} (within ${EXPRESS_TURNAROUND}), +${ADDON} per additional past tax year; IRS fax delivery included. EIN service ${EIN_PRICE}; ITIN service ${ITIN_PRICE}.
 - Other services: late (DIIRSP) catch-up filings, dormant-LLC and final-year filings, EIN and ITIN application support, white-label filing for partners.
 - Scope: ${SITE_NAME} prepares and submits forms from the information customers give it. It is not a CPA firm or a general tax firm, does not give personalised tax advice or tax planning, and does not represent customers before the IRS.
 - Contact: ${ORG_EMAIL}. Reviews: ${TRUSTPILOT_PROFILE_URL}.`;

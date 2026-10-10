@@ -428,14 +428,6 @@ export default async function AdminFilingsPage({
                     <div className="flex flex-wrap items-center gap-1">
                       <StatusBadge status={f.status} />
                       {f.inReview && <ReviewBadge filing={f} />}
-                      {f.tier === "priority" && f.status !== "DRAFT" && !f.reviewApprovedAt && (
-                        <span
-                          className="rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700"
-                          title="24-Hour order: the reviewed package must be ready for the client to sign within 24 hours of the order, 7 days a week."
-                        >
-                          24-Hour
-                        </span>
-                      )}
                       {f.linkedToFilingId && (
                         <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-medium text-indigo-700">
                           Additional return
