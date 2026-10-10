@@ -83,9 +83,9 @@ function isRealCalendarDate(value: string): boolean {
 }
 
 // Filing.sessionId is the fs_session cookie value (a bearer credential) and
-// must never be serialised — the same rule as toClientFiling in @/lib/session.
-// Inlined here because route tests mock @/lib/session wholesale.
-// Customer API: drop the session credential AND staff-only columns.
+// must never be serialised. Customer API: drop the session credential AND
+// staff-only columns via toClientFiling (route tests must partially mock
+// @/lib/session so the real helper runs).
 function withoutSessionId<T extends { sessionId: string | null }>(filing: T) {
   return toClientFiling(filing);
 }

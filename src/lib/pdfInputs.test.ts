@@ -7,7 +7,12 @@ const fake = vi.hoisted(() => ({
   upsert: vi.fn(), transaction: vi.fn(), count: vi.fn(), create: vi.fn(),
   put: vi.fn(), parse: vi.fn(), findUnique: vi.fn(), stripeCreate: vi.fn(),
 }));
-vi.mock("@/lib/session", () => ({ getOwnedFiling: fake.getOwnedFiling, bindFilingToEmail: fake.bindFilingToEmail }));
+// Partial mock: the route serialises through the real toClientFiling.
+vi.mock("@/lib/session", async (orig) => ({
+  ...(await orig<typeof import("@/lib/session")>()),
+  getOwnedFiling: fake.getOwnedFiling,
+  bindFilingToEmail: fake.bindFilingToEmail,
+}));
 vi.mock("@/lib/prisma", () => ({ prisma: {
   filing: { update: fake.update, findUnique: fake.findUnique },
   filingYearData: { upsert: fake.upsert },
