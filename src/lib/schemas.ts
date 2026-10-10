@@ -1,5 +1,11 @@
 import { isPdfEncodable, PDF_TEXT_MESSAGE } from "./pdfText";
 import { z } from "zod";
+
+// zod declares "sideEffects": false, so webpack drops the import that installs
+// its English messages and every built-in check reached customers as a bare
+// "Invalid input" (incident 2026-10-10, reasonable-cause step). Install the
+// locale explicitly from our own module so it survives tree-shaking.
+z.config(z.locales.en());
 import { nextBusinessDay } from "@/lib/federalHolidays";
 import { form1120StatutoryDue, type Form1120StatutoryDue } from "@/lib/form1120DueDate";
 
@@ -9,7 +15,23 @@ export const NON_CASH_TRANSFER_DIRECTIONS = ["in", "out"] as const;
 export const ITIN_IN_FTIN_MESSAGE =
   "This looks like a U.S. ITIN. Put it in the ITIN field instead.";
 
-const optionalTrimmedString = (max = 2000) => z.string().trim().max(max).refine(isPdfEncodable, PDF_TEXT_MESSAGE).optional().nullable();
+// Longest per-year reasonable-cause answer (rcsWhyMissed / rcsWhenLearned).
+// Shared with the wizard so the browser rejects an over-long answer before saving.
+export const RCS_TEXT_MAX = 2000;
+export function rcsTooLongMessage(length: number, max = RCS_TEXT_MAX): string {
+  return `Keep this to ${max.toLocaleString("en-US")} characters or fewer (it is ${length.toLocaleString("en-US")}).`;
+}
+
+const optionalTrimmedString = (max = RCS_TEXT_MAX) =>
+  z
+    .string()
+    .trim()
+    .superRefine((s, ctx) => {
+      if (s.length > max) ctx.addIssue({ code: "custom", message: rcsTooLongMessage(s.length, max) });
+    })
+    .refine(isPdfEncodable, PDF_TEXT_MESSAGE)
+    .optional()
+    .nullable();
 
 export function looksLikeUsItin(value: string | null | undefined): boolean {
   const digits = (value ?? "").replace(/\D/g, "");

@@ -1,6 +1,7 @@
 "use client";
 
 import { isPdfEncodable, PDF_TEXT_MESSAGE } from "@/lib/pdfText";
+import { RCS_TEXT_MAX, rcsTooLongMessage } from "@/lib/schemas";
 
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,9 @@ export function validateReasonableCauseYears(rows: ReasonableCauseYearInput[]): 
       errors[`${prefix}.rcsWhyMissed`] = `Explain why the filing for ${row.taxYear} was missed.`;
     }
     for (const field of ["rcsWhyMissed", "rcsWhenLearned"] as const) {
-      if (!isPdfEncodable(row[field])) errors[`${prefix}.${field}`] = PDF_TEXT_MESSAGE;
+      const length = row[field].trim().length;
+      if (length > RCS_TEXT_MAX) errors[`${prefix}.${field}`] = rcsTooLongMessage(length);
+      else if (!isPdfEncodable(row[field])) errors[`${prefix}.${field}`] = PDF_TEXT_MESSAGE;
     }
     if (row.rcsNoIrsNoticeConfirmed !== true) {
       errors[`${prefix}.rcsNoIrsNoticeConfirmed`] =
@@ -192,6 +195,16 @@ export function ReasonableCauseStep({
                         }
                         className={`mt-1 ${FIELD_CLASS}`}
                       />
+                      {sel.detail.trim() && (
+                        <p
+                          className={`mt-1 text-xs ${
+                            row.rcsWhyMissed.length > RCS_TEXT_MAX ? "text-red-600" : "text-slate-500"
+                          }`}
+                        >
+                          {row.rcsWhyMissed.length.toLocaleString("en-US")} /{" "}
+                          {RCS_TEXT_MAX.toLocaleString("en-US")} characters
+                        </p>
+                      )}
                     </div>
                   )}
                   {!isPdfEncodable(years.find((year) => year.taxYear === row.taxYear)?.rcsWhenLearned ?? "") && (

@@ -499,13 +499,11 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
   // Outer container: v3 sidebar layout asks for `bareLayout` so the parent
   // page owns max-width + padding. Default behavior is the original /edit
   // self-contained look.
-  const Outer: React.FC<{ children: React.ReactNode }> = ({ children }) =>
-    bareLayout
-      ? <div className="w-full">{children}</div>
-      : <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10">{children}</div>;
-
+  // A plain element, not a component declared in this body: a component type
+  // recreated on every render remounts the whole step on each state change,
+  // so a failed save wiped the customer's unsaved answers (2026-10-10).
   return (
-    <Outer>
+    <div className={bareLayout ? "w-full" : "max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10"}>
       {!hideTopStepper && (
         <Stepper steps={steps} current={stepIndex} onJumpTo={(key) => setStepKey(key)} />
       )}
@@ -729,7 +727,7 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
           />
         )}
       </div>
-    </Outer>
+    </div>
   );
 });
 
