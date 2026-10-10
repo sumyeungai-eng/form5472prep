@@ -198,6 +198,10 @@ export function resolveTier(value: string | null | undefined): ResolvedTier {
     // amountPaid; price math falls back to the single current plan.
     case "rush":
       return { tier: "standard", isLegacy: true, legacyLabel: "Rush (legacy plan)" };
+    // "24-Hour filing" was offered briefly on 2026-10-10 and withdrawn the
+    // same day. A draft that picked it falls back to standard price math.
+    case "priority":
+      return { tier: "standard", isLegacy: true, legacyLabel: "24-Hour filing (retired plan)" };
     case "premium":
       return { tier: "standard", isLegacy: true, legacyLabel: "Premium (legacy plan)" };
     case "single_year":
@@ -247,6 +251,8 @@ export function getTiersForSource(
 ): Record<string, TierInfo> {
   return {
     standard: TIERS.standard,
+    express: TIERS.express,
+    priority: { ...TIERS.standard, label: "24-Hour filing (retired plan)" },
     rush: { ...TIERS.standard, label: "Rush (legacy plan)" },
     premium: { ...TIERS.standard, label: "Premium (legacy plan)" },
     single_year: { ...TIERS.standard, label: "Single year (legacy plan)" },
