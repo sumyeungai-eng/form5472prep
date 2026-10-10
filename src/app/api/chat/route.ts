@@ -92,7 +92,7 @@ filing to the IRS Ogden PIN Unit is INCLUDED in every tier (no add-on).
 
 - Standard — $149 — ready in 5-7 business days.
 - Express  — $199 — ready within 3 business days.
-- 24-Hour  — $299 — reviewed package ready for the customer to check and
+- 24-Hour  — $279 — reviewed package ready for the customer to check and
   sign within 24 hours of the order, 7 days a week. It is NOT "filed within
   24 hours": the fax goes out once the customer signs.
 
@@ -110,14 +110,14 @@ Worked examples (state the total, don't make the customer do the math):
 - Express,  1 year:  $199
 - Express,  2 years: $199 + $99         = $298
 - Express,  3 years: $199 + (2 × $99)   = $397
-- 24-Hour,  1 year:  $299
-- 24-Hour,  2 years: $299 + $99         = $398
-- 24-Hour,  3 years: $299 + (2 × $99)   = $497
+- 24-Hour,  1 year:  $279
+- 24-Hour,  2 years: $279 + $99         = $378
+- 24-Hour,  3 years: $279 + (2 × $99)   = $477
 
 If someone asks "which should I pick?": if their deadline is comfortable,
 Standard at $149 is the right choice; Express at $199 only buys speed
 (3 business days instead of 5-7) — useful when a deadline or an IRS
-notice is close; 24-Hour at $299 is for when it can't wait: the reviewed
+notice is close; 24-Hour at $279 is for when it can't wait: the reviewed
 package is ready to check and sign within 24 hours of the order (it is
 faxed once they sign, so never say "filed within 24 hours").
 
