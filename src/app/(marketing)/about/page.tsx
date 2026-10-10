@@ -169,7 +169,7 @@ export default function AboutPage() {
         <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-seal/50" />
         <div className="relative mx-auto max-w-3xl px-6 py-16 text-center">
           <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-white text-balance">Ready to file?</h2>
-          <p className="mt-3 text-slate-300">$149 in 5-7 business days, $199 in 3, or $279 ready to sign within 24 hours — same filing, accountant-reviewed, faxed to the IRS with a receipt.</p>
+          <p className="mt-3 text-slate-300">$149 in 5-7 business days, $199 in 3, or $299 ready to sign within 24 hours — same filing, accountant-reviewed, faxed to the IRS with a receipt.</p>
           <div className="mt-7">
             <Link href="/start" className="group inline-block">
               <Button size="lg" className="bg-white !text-ink hover:bg-slate-100">

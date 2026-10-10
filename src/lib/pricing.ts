@@ -6,7 +6,7 @@
 //   accountant review and everything in the package are identical:
 //     standard $149 — ready in 5-7 business days
 //     express  $199 — ready within 3 business days
-//     priority $279 — "24-Hour filing": reviewed package ready for the client
+//     priority $299 — "24-Hour filing": reviewed package ready for the client
 //                     to check and sign within 24 hours of the order, 7 days
 //                     a week (owner decision 2026-10-10). The promise stops at
 //                     "ready to sign" — the fax goes out once the client signs,
@@ -87,7 +87,7 @@ export const TIERS: Record<Tier, TierInfo> = {
   priority: {
     label: "24-Hour filing",
     subtitle: `Ready to sign within ${PRIORITY_TURNAROUND}`,
-    priceCents: 27900,
+    priceCents: 29900,
     ctaLabel: "Start 24-hour filing",
     features: [PRIORITY_PROMISE, ...SHARED_FEATURES, "Priority email support"],
   },

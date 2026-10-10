@@ -92,7 +92,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "How much does it cost?",
     answer:
-      "Form 5472 filing costs $149 for Standard filing, ready in 5-7 business days, $199 for Express filing, ready within 3 business days, or $279 for 24-Hour filing, ready for you to check and sign within 24 hours. Additional past tax years are $99 each on any tier, and IRS fax delivery to the Ogden PIN Unit is included.",
+      "Form 5472 filing costs $149 for Standard filing, ready in 5-7 business days, $199 for Express filing, ready within 3 business days, or $299 for 24-Hour filing, ready for you to check and sign within 24 hours. Additional past tax years are $99 each on any tier, and IRS fax delivery to the Ogden PIN Unit is included.",
     learnMore: { href: "/pricing", label: "See pricing" },
     source: "src/app/(marketing)/pricing/page.tsx:34; src/lib/pricing.ts:40; src/lib/pricing.ts:41; src/lib/pricing.ts:60; src/lib/pricing.ts:67; src/lib/pricing.ts:86",
   },
@@ -101,7 +101,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "What's the difference between Standard, Express and 24-Hour?",
     answer:
-      "The plans differ only by turnaround. Standard is ready in 5-7 business days at $149. Express is ready within 3 business days at $199 and adds priority email support. 24-Hour filing is $279: your reviewed package is ready for you to check and sign within 24 hours of your order, 7 days a week, with priority email support. Every plan includes the same documents, accountant review, and IRS fax delivery.",
+      "The plans differ only by turnaround. Standard is ready in 5-7 business days at $149. Express is ready within 3 business days at $199 and adds priority email support. 24-Hour filing is $299: your reviewed package is ready for you to check and sign within 24 hours of your order, 7 days a week, with priority email support. Every plan includes the same documents, accountant review, and IRS fax delivery.",
     source: "src/app/(marketing)/form-5472-filing/page.tsx:59; src/lib/pricing.ts:40; src/lib/pricing.ts:41; src/lib/pricing.ts:60; src/lib/pricing.ts:67",
   },
   {
