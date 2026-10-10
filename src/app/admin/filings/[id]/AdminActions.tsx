@@ -526,6 +526,22 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
             >
               View unsigned PDF ↗
             </a>
+            <a
+              href={`/api/admin/filings/${filingId}/pdf?download=1&t=${Date.now()}`}
+              download
+              aria-disabled={!hasGeneratedPdf}
+              onClick={(e) => {
+                if (!hasGeneratedPdf) e.preventDefault();
+              }}
+              className={`inline-flex items-center px-3 py-1.5 text-sm rounded-md border transition-colors ${
+                hasGeneratedPdf
+                  ? "border-accent text-accent bg-white hover:bg-accent/5"
+                  : "border-slate-200 bg-slate-50 text-slate-300 cursor-not-allowed"
+              }`}
+              title={hasGeneratedPdf ? "Downloads the current unsigned PDF to your computer" : "Generate the PDF first"}
+            >
+              Download unsigned PDF ↓
+            </a>
             {hasSignedPdf && (
               <a
                 href={`/api/admin/filings/${filingId}/pdf?signed=1&t=${Date.now()}`}
