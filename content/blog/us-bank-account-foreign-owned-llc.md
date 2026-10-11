@@ -66,7 +66,7 @@ The two routes lead to different paperwork:
 
 The IRS describes [Form W-8BEN-E](https://www.irs.gov/forms-pubs/about-form-w-8-ben-e) as the form foreign entities use to document their status for chapter 3 and chapter 4 purposes, which is why a US provider dealing with a non-US company may request it.
 
-The LLC route brings its own filing. The Form 5472 instructions define a foreign person to include any company or corporation not created or organised in the United States, so a US single-member LLC wholly owned by a foreign company is a foreign-owned US disregarded entity, with the same annual Form 5472 obligation as one owned by an individual. The parent's funding of the LLC is a reportable transaction in exactly the way an individual owner's would be.
+The LLC route brings its own filing, although ownership itself is open: [a foreigner can own a US LLC](/can-a-foreigner-own-a-us-llc), whether an individual or a company. The Form 5472 instructions define a foreign person to include any company or corporation not created or organised in the United States, so a US single-member LLC wholly owned by a foreign company is a foreign-owned US [disregarded entity](/what-is-a-disregarded-entity), with the same annual Form 5472 obligation as one owned by an individual. The parent's funding of the LLC is a reportable transaction in exactly the way an individual owner's would be.
 
 Either way, expect the provider to ask about the people who ultimately own or control the foreign company, not only about the company. Nothing in either route guarantees approval.
 

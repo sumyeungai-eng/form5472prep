@@ -95,9 +95,9 @@ You attach Form 5472 to the pro forma 1120 and file them together.
 
 ## The penalty — what it actually costs UK founders
 
-The IRS assesses a **$25,000 penalty** per Form 5472, per year, automatically under IRC §6038A(d). You don't have to do anything special to trigger it — miss the deadline, and the penalty is assessed.
+IRC §6038A(d) sets a **$25,000 penalty** per Form 5472, per year. You don't have to do anything special to trigger it — miss the deadline, and the penalty applies. If you file late, the IRS can assess it systemically while processing the return.
 
-Worse: if the IRS sends you a notice and you don't file within 90 days of receiving it, you owe an additional **$25,000 for each 30-day period** after that 90-day window. There is no cap.
+Worse: if the IRS sends you a notice and you still haven't filed 90 days after it was mailed, you owe an additional **$25,000 for each 30-day period** after that 90-day window. There is no cap.
 
 So a UK founder who hasn't filed for three years, gets an IRS notice, and ignores it for another six months could realistically face penalties in the hundreds of thousands of dollars on a business that never turned a profit.
 

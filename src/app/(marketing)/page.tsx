@@ -460,8 +460,9 @@ function Eligibility() {
           <div className="text-sm text-amber-900">
             <p className="font-medium">The penalty is $25,000 per form, per year.</p>
             <p className="mt-1 text-amber-800">
-              The IRS automatically assesses the penalty for late or missing Form 5472 and
-              Form 1120 filings. If you&apos;ve missed prior years, the Delinquent International
+              The penalty applies to late and missing Form 5472 filings, and the IRS can assess it
+              systemically when a late Form 5472 is processed with a late Form 1120. If you&apos;ve
+              missed prior years, the Delinquent International
               Information Return Submission Procedure (DIIRSP) lets you catch up with a
               reasonable cause statement — we generate this for you.
             </p>

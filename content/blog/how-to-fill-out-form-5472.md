@@ -10,9 +10,9 @@ draft: false
 
 **To complete Form 5472 as a foreign-owned US single-member LLC: fill Part I with the LLC's details and check the box on line 3, Part II with the foreign owner's details and foreign tax ID, Part III with the related party, Part IV with monetary transactions, and Part V with contributions and distributions on an attached statement. Attach it to a pro forma Form 1120 and fax to 855-887-7737. A missed or incomplete filing can trigger the $25,000 penalty under [IRC §6038A(d)](https://www.irs.gov/instructions/i5472).**
 
-The current Form 5472 is three pages and has nine parts, most of which a small foreign-owned LLC leaves blank. The difficulty is not volume — it is knowing which parts apply to a disregarded entity, because the form was designed for foreign multinationals and only later extended to single-member LLCs. The instructions never quite say "here is the short version for you."
+The current Form 5472 is three pages and has nine parts, most of which a small foreign-owned LLC leaves blank. The difficulty is not volume — it is knowing which parts apply to a [disregarded entity](/what-is-a-disregarded-entity), because the form was designed for foreign multinationals and only later extended to single-member LLCs. The instructions never quite say "here is the short version for you."
 
-This walkthrough is the short version. It follows [Form 5472 (Rev. December 2023)](https://www.irs.gov/pub/irs-pdf/f5472.pdf) and the [Instructions (Rev. December 2024)](https://www.irs.gov/instructions/i5472), which are the current revisions as of September 2026. Always check the revision date in the top-right corner of the PDF you downloaded — using a stale version is one of the most common DIY errors. Our plain-English [Form 5472 instructions](/form-5472-instructions) guide covers the same ground.
+This walkthrough is the short version. It follows [Form 5472 (Rev. December 2023)](https://www.irs.gov/pub/irs-pdf/f5472.pdf) and the [Instructions (Rev. December 2024)](https://www.irs.gov/instructions/i5472), which are the current revisions as of September 2026. Always check the revision date in the top-right corner of the PDF you downloaded — using a stale version is one of the most common DIY errors. Our plain-English [Form 5472 instructions](/form-5472-instructions) guide covers the same ground, and the [completed Form 5472 example](/form-5472-example) shows a finished return to check your work against.
 
 If at any point this stops being worth your afternoon, [we prepare and fax the complete package from $149](/start).
 
@@ -165,7 +165,7 @@ Every one of these is the kind of error the instructions treat as a substantiall
 
 ## If you would rather not do this yourself
 
-Nothing above is beyond a careful person with an afternoon and the instructions open. The problem is the asymmetry: a few hours saved against a $25,000 penalty for a mistake you would not know you had made until a notice arrived 12 months later. For the steps around the form itself, see [how to file Form 5472](/file-form-5472).
+Nothing above is beyond a careful person with an afternoon and the instructions open. The problem is the asymmetry: a few hours saved against a $25,000 penalty for a mistake you would not know you had made until a penalty notice arrived. For the steps around the form itself, see [how to file Form 5472](/file-form-5472).
 
 [Form5472 Prep](/) prepares the whole package from your entity and transaction details — pro forma Form 1120, Form 5472 with the correct parts completed and the rest correctly left blank, the Part V supporting statement, and a reasonable cause letter for late years — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning your timestamped confirmation receipt.
 

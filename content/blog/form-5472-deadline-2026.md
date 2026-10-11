@@ -101,7 +101,7 @@ The penalty is **$25,000 per form, per year**, under IRC § 6038A(d). The [IRS I
 
 Three features of the penalty make missing a deadline more serious than it first looks:
 
-1. **It is systemic.** No one weighs your circumstances before it is assessed. A computer notices the missing return and charges the penalty.
+1. **It can be systemic.** When a late Form 5472 is attached to a late Form 1120, the IRS manual says the penalty may be assessed during processing, before anyone weighs your circumstances (IRM 20.1.9.5.3).
 2. **A substantially incomplete return counts as a failure to file.** Filing on time but wrong can produce the same $25,000 as not filing at all.
 3. **It escalates.** If the failure continues more than 90 days after the IRS mails its notice, an additional $25,000 applies **for each 30-day period (or fraction of one) that the failure continues after that 90-day window** — per related party, with no stated cap (IRC §6038A(d)(2)).
 

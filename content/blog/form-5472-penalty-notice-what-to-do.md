@@ -32,7 +32,7 @@ If you need to size the notice and any still-unfiled years before responding, th
 Two clarifications that matter for your response letter:
 
 - The penalty is **not a tax**. It is not calculated from income. An LLC with zero revenue and one $500 capital contribution can owe the full $25,000, because the penalty is charged for the missing information return, not for unpaid tax.
-- The penalty is **systemically assessed**. No human reviewed your file and decided you were culpable. A computer noticed a missing or late return and issued the charge.
+- The penalty may have been **systemically assessed**. When a late Form 5472 is attached to a late Form 1120, the IRS manual says the penalty may be charged during processing, before anyone weighs your circumstances (IRM 20.1.9.5.3).
 
 ## Why was my reasonable cause letter ignored?
 

@@ -20,7 +20,7 @@ If you would rather have this handled: [we obtain EINs for foreign-owned LLCs fo
 
 **Yes. A US single-member LLC wholly owned by a foreign person must file Form 5472 with a pro forma Form 1120, and the IRS Form SS-4 instructions name that filing as a purpose for which the disregarded LLC uses its own name and EIN. The owner can get the EIN without an SSN or ITIN.**
 
-The [SS-4 instructions](https://www.irs.gov/instructions/iss4) list the purposes for which a disregarded entity must use its own name and EIN, including, "where a U.S. disregarded entity is wholly owned by a foreign person, to file information returns on Form 5472." They also give the wording for the application: a disregarded entity requesting an EIN for purposes of filing Form 5472 under section 6038A checks "Other" on line 9a and writes **"Foreign-owned U.S. disregarded entity-Form 5472."**
+The [SS-4 instructions](https://www.irs.gov/instructions/iss4) list the purposes for which a [disregarded entity](/what-is-a-disregarded-entity) must use its own name and EIN, including, "where a U.S. disregarded entity is wholly owned by a foreign person, to file information returns on Form 5472." They also give the wording for the application: a disregarded entity requesting an EIN for purposes of filing Form 5472 under section 6038A checks "Other" on line 9a and writes **"Foreign-owned U.S. disregarded entity-Form 5472."**
 
 That is the difference from a US-owned single-member LLC. The IRS page on [single-member LLCs](https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies) says a disregarded LLC generally uses its owner's SSN or EIN for income-tax information returns, and needs its own EIN when it has employees or excise tax filings. A foreign-owned LLC has a filing in its own right, so the owner's number cannot stand in for it.
 
@@ -31,7 +31,7 @@ That is the difference from a US-owned single-member LLC. The IRS page on [singl
 | US individual, no employees or excise taxes | Not always for income tax | The owner's SSN or EIN generally covers income-tax reporting |
 | Any owner, LLC has employees | Yes | Employment taxes are reported under the LLC's own name and EIN |
 
-Banks and payment platforms will usually ask for the LLC's EIN as well, but the federal reason is the Form 5472 filing.
+Banks and payment platforms will usually ask for the LLC's EIN as well, but the federal reason is the Form 5472 filing. Whether a non-resident can own the LLC in the first place is a separate question, covered in [can a foreigner own a US LLC](/can-a-foreigner-own-a-us-llc).
 
 ## Do you need an SSN or ITIN to get an EIN?
 

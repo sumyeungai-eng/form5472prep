@@ -12,7 +12,7 @@ draft: false
 
 Adding a second member changes your entire federal filing profile. The obligations do not get lighter — a partnership with foreign partners has more moving parts than a foreign-owned disregarded entity, including potential withholding at 37% — but the specific form changes, and filing the wrong one wastes months. If Form 5472 was required before the second member joined, the missed-form penalty is **$25,000 per form, per year** under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472).
 
-This guide covers which return applies to which structure, what a foreign-owned multi-member LLC actually files, and the three ownership arrangements that put a multi-member LLC back into Form 5472 territory.
+This guide covers which return applies to which structure, what a foreign-owned multi-member LLC actually files, and the three ownership arrangements that put a multi-member LLC back into Form 5472 territory. For the ownership rules themselves, see [can a foreigner own a US LLC](/can-a-foreigner-own-a-us-llc).
 
 If you have concluded you are a single-member disregarded entity after all, [we prepare and fax the Form 5472 package from $149](/start).
 
@@ -26,7 +26,7 @@ If you have concluded you are a single-member disregarded entity after all, [we 
 | Any LLC that filed Form 8832 / 2553 electing corporate treatment, ≥25% foreign-owned | Corporation | Real Form 1120 (or 1120-S) | **Yes** — Form 5472 attached |
 | Two members who are the same foreign person's disregarded entities | Still effectively one owner | Pro forma Form 1120 | **Likely yes** — see below |
 
-The rule that decides most cases is simple: **Form 5472 is filed by a "reporting corporation."** For these purposes that means a 25%-foreign-owned domestic corporation, a foreign corporation engaged in a US trade or business, or — since the 2017 extension in Treasury Regulation § 1.6038A-1 — a foreign-owned US **disregarded entity**. A partnership is none of those.
+The rule that decides most cases is simple: **Form 5472 is filed by a "reporting corporation."** For these purposes that means a 25%-foreign-owned domestic corporation, a foreign corporation engaged in a US trade or business, or — since the 2017 extension in Treasury Regulation § 1.6038A-1 — a foreign-owned US **[disregarded entity](/what-is-a-disregarded-entity)**. A partnership is none of those.
 
 If you are not sure whether you are in the single-member disregarded-entity row, the [Do I need to file Form 5472? checker](/do-i-need-to-file-form-5472) helps separate Form 5472 cases from Form 1065 cases.
 
@@ -107,7 +107,7 @@ If steps 2 or 3 produce anything unexpected, that is the point to bring in a tax
 
 Most people who arrive at this question turn out to be exactly what they thought: one foreign owner, one LLC, disregarded entity, Form 5472 due every year there was money moving between them.
 
-[Form5472 Prep](/) prepares that package — Form 5472, the pro forma Form 1120 stamped "Foreign-owned U.S. DE", and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt as proof of filing. Late years include a reasonable cause cover letter.
+[Form5472 Prep](/) prepares that package — Form 5472, the pro forma Form 1120 stamped "Foreign-owned U.S. DE", and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt as proof of filing. Late years include a reasonable cause cover letter. To see what the finished package looks like, read the [Form 5472 example](/form-5472-example).
 
 **$149** standard (5-7 business days), **$249** express (ready to sign within 24 hours), **+$99** per additional past tax year. IRS fax delivery included.
 

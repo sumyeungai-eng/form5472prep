@@ -293,7 +293,7 @@ We prepare both, have them reviewed, and fax them to the IRS.`,
         heading: "What is a pro forma 1120, in plain terms?",
         body: `A pro forma 1120 is the Form 1120 cover that a foreign-owned US single-member LLC attaches Form 5472 to. It carries only identifying details, is marked "Foreign-owned U.S. DE", and reports no income or tax.
 
-Under Treas. Reg. §1.6038A-1(c), a US LLC wholly owned by one foreign person is treated as a domestic corporation for Form 5472 purposes only. That is why it uses a Form 1120 at all.
+Under Treas. Reg. §1.6038A-1(c), a US LLC wholly owned by one foreign person is treated as a domestic corporation for Form 5472 purposes only. That is why it uses a Form 1120 at all. For income tax it stays a [disregarded entity](/what-is-a-disregarded-entity).
 
 The Form 5472 instructions require it to file a pro forma Form 1120 with Form 5472 attached. Only a few page-1 items apply:
 
@@ -302,7 +302,7 @@ The Form 5472 instructions require it to file a pro forma Form 1120 with Form 54
 - The applicable item E boxes: initial return, final return, name change, address change
 - "Foreign-owned U.S. DE" written across the top
 
-The income, deduction and tax sections stay blank. No tax is computed on it.`,
+The income, deduction and tax sections stay blank. No tax is computed on it. For a filled-in sample, see the [completed Form 5472 example](/form-5472-example).`,
       },
       {
         heading: "What does our pro forma 1120 filing service do?",
@@ -330,7 +330,7 @@ The checks include:
         heading: "Who needs a pro forma 1120 preparer for a non-resident-owned LLC?",
         body: `You most likely need the filing if the LLC is a US LLC with a single owner who is a foreign individual or company, it has not elected to be taxed as a corporation, and it had a reportable transaction in the year, such as money you put in or took out, or LLC fees you paid personally.
 
-Not sure? The free [Do I need to file Form 5472?](/do-i-need-to-file-form-5472) checker walks through these questions with IRS sources.`,
+Not sure? The free [Do I need to file Form 5472?](/do-i-need-to-file-form-5472) checker walks through these questions with IRS sources. If the LLC is not formed yet, see [can a foreigner own a US LLC](/can-a-foreigner-own-a-us-llc).`,
       },
       {
         heading: "What is a pro forma 1120 not, and what can nobody promise?",

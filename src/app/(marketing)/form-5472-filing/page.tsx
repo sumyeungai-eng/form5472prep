@@ -68,7 +68,7 @@ const FAQS = [
   },
   {
     q: "I already received an IRS notice — can you still help?",
-    a: "Yes. We help owners who received an IRS CP-15 notice or §6038A letter and need a properly prepared late filing, including the required forms and a reasonable cause statement based on their circumstances.",
+    a: "Yes. We help owners who received an IRS CP 215 penalty notice or §6038A letter and need a properly prepared late filing, including the required forms and a reasonable cause statement based on their circumstances.",
   },
   {
     q: "Are there any hidden fees?",
@@ -560,7 +560,7 @@ function WhoItsFor() {
   const items = [
     "Non-US owners of a US single-member LLC in any state who need this year's filing done correctly",
     "Owners who only just discovered the requirement and are one, two, or three years behind",
-    "Owners who received an IRS CP-15 notice or § 6038A letter and need a properly prepared late filing",
+    "Owners who received an IRS CP 215 penalty notice or § 6038A letter and need a properly prepared late filing",
     "Owners of several LLCs who want every entity filed the same way each year",
     "CPAs and tax attorneys who want a foreign client's package prepared, reviewed, and faxed",
   ];

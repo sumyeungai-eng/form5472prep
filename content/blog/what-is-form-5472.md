@@ -33,7 +33,7 @@ The wrinkle for solo entrepreneurs: the rules were quietly extended in 2017 (via
 
 You need to file Form 5472 if **all three** of the following are true for the tax year:
 
-1. You own a US LLC.
+1. You own a US LLC. Foreign ownership is allowed; see [can a foreigner own a US LLC](/can-a-foreigner-own-a-us-llc).
 2. You are not a US person — not a US citizen, green card holder, or US tax resident.
 3. There was at least one **reportable transaction** between the LLC and you (or another foreign related party) during the year.
 
@@ -61,7 +61,7 @@ When in doubt, file. The penalty for not filing is a five-figure number; the cos
 
 ## What's the pro forma 1120 thing?
 
-The IRS doesn't have a standalone form to attach Form 5472 to for a disregarded entity, so the rule says you file Form 5472 **attached to a pro forma Form 1120**. The Form 1120 is mostly blank — just the entity name, EIN, address, formation date, and total assets at year end. Across the top of page 1 you write "Foreign-Owned U.S. DE." It's a vehicle for the Form 5472, not a real income tax return.
+The IRS doesn't have a standalone form to attach Form 5472 to for a [disregarded entity](/what-is-a-disregarded-entity), so the rule says you file Form 5472 **attached to a pro forma Form 1120**. The Form 1120 is mostly blank — just the entity name, EIN, address, formation date, and total assets at year end. Across the top of page 1 you write "Foreign-Owned U.S. DE." It's a vehicle for the Form 5472, not a real income tax return. To see the finished package, look at a [completed Form 5472 example](/form-5472-example).
 
 ## How much is the Form 5472 penalty?
 

@@ -141,6 +141,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-ink">Guides</p>
             <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
               <li><Link href="/form-5472-instructions" className="hover:text-ink">Form 5472 instructions</Link></li>
+              <li><Link href="/form-5472-example" className="hover:text-ink">Form 5472 example</Link></li>
               <li><Link href="/form-5472-penalty" className="hover:text-ink">Form 5472 penalty</Link></li>
               <li><Link href="/form-5472-reasonable-cause-statement" className="hover:text-ink">Reasonable cause statement</Link></li>
               <li><Link href="/form-5472-fax-number" className="hover:text-ink">Where to file Form 5472</Link></li>

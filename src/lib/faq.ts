@@ -253,9 +253,9 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
   {
     id: "cp15-notice",
     category: "deadlines-penalties",
-    question: "What is a CP15 notice?",
+    question: "What is a CP 215 notice?",
     answer:
-      "A CP15 notice is an IRS notice assessing a civil penalty. For Form 5472, it commonly shows the $25,000 amount, the tax year, and the post-notice timeline before continuation penalties begin if the filing is still not corrected. Do not ignore the notice or its response deadline.",
+      "CP 215 is the IRS Notice of Penalty Charge for business accounts. The IRS manual (IRM 20.1.9.5.2) says a CP 215 is generated once a Form 5472 penalty is assessed; CP 15 is the equivalent notice for individual accounts. Check the amount, tax year and response date on it, and do not ignore it.",
     source: "src/app/(marketing)/form-5472-penalty-calculator/page.tsx:45",
   },
   {
@@ -288,7 +288,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "I've received an IRS notice — can you still help, and what do you need from me?",
     answer:
-      "We can help owners who received an IRS CP-15 notice or §6038A letter and need a properly prepared late filing. Send the notice number, such as CP15, and the tax year it covers; we will explain the filing path before you pay. We prepare the late filing itself; we do not handle CP-15 penalty appeals.",
+      "We can help owners who received an IRS CP 215 penalty notice or §6038A letter and need a properly prepared late filing. Send the notice number, such as CP 215, and the tax year it covers; we will explain the filing path before you pay. We prepare the late filing itself; we do not handle penalty appeals.",
     learnMore: { href: "/contact", label: "Contact support" },
     source: "src/app/(marketing)/form-5472-filing/page.tsx:71; src/app/(marketing)/contact/page.tsx:38; src/lib/landing-pages.ts:644",
   },

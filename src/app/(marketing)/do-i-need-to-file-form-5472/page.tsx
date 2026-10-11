@@ -125,8 +125,16 @@ function PlainEnglishRule() {
           <p>
             The common Form 5472 case is a US single-member LLC that is wholly owned by a non-US
             person or foreign company and has not elected corporate tax treatment. The IRS treats that
-            LLC as a disregarded entity for income tax purposes, but still requires an information
-            filing when reportable transactions occur.
+            LLC as a{" "}
+            <Link href="/what-is-a-disregarded-entity" className="font-medium text-accent hover:underline">
+              disregarded entity
+            </Link>{" "}
+            for income tax purposes, but still requires an information filing when reportable
+            transactions occur. If the LLC is not formed yet, see{" "}
+            <Link href="/can-a-foreigner-own-a-us-llc" className="font-medium text-accent hover:underline">
+              can a foreigner own a US LLC
+            </Link>
+            .
           </p>
           <p>
             Reportable transactions are broader than sales revenue. Owner capital contributions,
