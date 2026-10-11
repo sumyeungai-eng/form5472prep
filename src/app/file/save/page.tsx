@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowRight, Lock, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // The /file mini-funnel always uses the Standard tier — it's the entry-level
-// "just file my Form 5472" path (ready in 5-7 business days; Express at $249
+// "just file my Form 5472" path (ready in 5-7 business days; Express at $199
 // is the same filing, ready to sign within 24 hours). The yearsKey maps to year count; additional past
 // years add $99 each on top of the $149 Standard base.
 const TIER_MAP: Record<string, { tier: string; yearLabel: string; price: string; perYear: string }> = {

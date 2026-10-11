@@ -109,7 +109,7 @@ Form5472 Prep's EIN acquisition service costs **$149**. We prepare Form SS-4 for
 
 The IRS charges **$0** for the EIN itself. The service price pays for the form work, submission and follow-up. Where an ITIN is genuinely required for a separate reason, our **$349** ITIN service uses an IRS-authorised Certifying Acceptance Agent to certify identity documents, so no original passport mailing is needed.
 
-Annual Form 5472 filing is separate: **$149** standard, **$249** express and **+$99** per extra past year. We are not a CPA firm and do not give tax advice.
+Annual Form 5472 filing is separate: **$149** standard, **$199** express and **+$99** per extra past year. We are not a CPA firm and do not give tax advice.
 
 ## Frequently asked questions
 

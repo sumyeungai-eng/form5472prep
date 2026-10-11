@@ -131,7 +131,7 @@ Two choices there are deliberate. Citizenship and tax residence are asked as a v
 
 We prepare and submit the package, and a qualified tax accountant reviews every one. We are not a CPA firm and do not give tax advice, so a client's tax question belongs with a qualified adviser. Apply the same caution to your own marketing: describe the filing service you provide, not advice your firm is not qualified to give.
 
-Partner pricing matches direct customers — $149 Standard in 5 to 7 business days, $249 Express ready to sign within 24 hours, plus $99 per additional past year, IRS fax included, no platform fee. What your firm charges its own client on top is your own decision, and we pay no commission.
+Partner pricing matches direct customers — $149 Standard in 5 to 7 business days, $199 Express ready to sign within 24 hours, plus $99 per additional past year, IRS fax included, no platform fee. What your firm charges its own client on top is your own decision, and we pay no commission.
 
 ## Frequently asked questions
 

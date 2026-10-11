@@ -101,7 +101,7 @@ Nothing merges. An Estonian annual report or a UAE corporate tax return does not
 
 ## Getting the US filing done
 
-We prepare the US half — Form 5472 and the pro forma Form 1120 — and fax it to the IRS. **Standard is $149 (5–7 business days), Express is $249 (ready to sign within 24 hours), each additional past tax year is +$99, and IRS fax delivery is included.** A qualified tax accountant reviews each package before it goes out.
+We prepare the US half — Form 5472 and the pro forma Form 1120 — and fax it to the IRS. **Standard is $149 (5–7 business days), Express is $199 (ready to sign within 24 hours), each additional past tax year is +$99, and IRS fax delivery is included.** A qualified tax accountant reviews each package before it goes out.
 
 We are not a CPA firm and do not give tax advice. We do not prepare Estonian, UAE or free-zone filings; those belong with a local accountant.
 

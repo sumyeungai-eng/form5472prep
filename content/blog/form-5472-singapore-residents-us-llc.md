@@ -128,7 +128,7 @@ That Singapore point is intentionally narrow because local tax depends on facts 
 
 Form5472 Prep is useful when the Singapore owner needs the US information-return package prepared and submitted, while tax advice remains with Singapore and US professionals. The service prepares Form 5472, the pro forma Form 1120 and the Part V statement, and the package is reviewed by a qualified tax accountant.
 
-After signature, Form5472 Prep faxes the package to the IRS Ogden PIN Unit at 855-887-7737 and returns a timestamped receipt. Standard service is **$149** and takes 5-7 business days. Express service is **$249** and is ready to check and sign within 24 hours. Each additional past tax year is **+$99**. Fax delivery is included.
+After signature, Form5472 Prep faxes the package to the IRS Ogden PIN Unit at 855-887-7737 and returns a timestamped receipt. Standard service is **$149** and takes 5-7 business days. Express service is **$199** and is ready to check and sign within 24 hours. Each additional past tax year is **+$99**. Fax delivery is included.
 
 If the LLC still needs an EIN, the EIN service is **$149** at [/ein](/ein). Form5472 Prep is not a CPA firm and does not give tax advice, but it does prepare and submit the Form 5472 package that a foreign-owned disregarded entity cannot e-file.
 

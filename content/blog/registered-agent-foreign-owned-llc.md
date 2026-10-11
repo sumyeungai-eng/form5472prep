@@ -67,7 +67,7 @@ If a registered agent resigns without a successor being appointed, or the agent'
 
 ## Where Form5472 Prep fits
 
-[Form5472 Prep](/) prepares and faxes the annual federal Form 5472 and pro forma Form 1120 for foreign-owned US disregarded entities — $149 standard (5–7 business days), $249 express (ready to sign within 24 hours), plus $99 per additional past year. EIN service is $149 at [/ein](/ein); ITIN service is $349 at [/itin](/itin). **We do not act as a registered agent, form LLCs, or file BOI reports, and we are not a law or CPA firm** — nothing here is legal or tax advice; for your registered-agent appointment itself, use a licensed registered-agent provider or your formation state's own process.
+[Form5472 Prep](/) prepares and faxes the annual federal Form 5472 and pro forma Form 1120 for foreign-owned US disregarded entities — $149 standard (5–7 business days), $199 express (ready to sign within 24 hours), plus $99 per additional past year. EIN service is $149 at [/ein](/ein); ITIN service is $349 at [/itin](/itin). **We do not act as a registered agent, form LLCs, or file BOI reports, and we are not a law or CPA firm** — nothing here is legal or tax advice; for your registered-agent appointment itself, use a licensed registered-agent provider or your formation state's own process.
 
 ## Frequently asked questions
 

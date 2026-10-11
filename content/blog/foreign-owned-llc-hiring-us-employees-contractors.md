@@ -103,7 +103,7 @@ Only item 5, and anything flagged by item 6, reaches the filing we prepare; our 
 
 At the Form 5472 package. We prepare Form 5472, the pro forma Form 1120 with "Foreign-owned U.S. DE" across page 1, and the Part V statement; a qualified tax accountant reviews each one; we fax it to the IRS at **855-887-7737** or mail it to Ogden, because it cannot be e-filed; and we send you the timestamped receipt — transmission evidence, not IRS acceptance.
 
-Standard is **$149** (5–7 business days), Express **$249** (ready to sign within 24 hours), and each additional past tax year is **+$99**, IRS fax delivery included. For a calendar-year LLC the regular due date is generally **15 April**; a timely Form 7004 extends it.
+Standard is **$149** (5–7 business days), Express **$199** (ready to sign within 24 hours), and each additional past tax year is **+$99**, IRS fax delivery included. For a calendar-year LLC the regular due date is generally **15 April**; a timely Form 7004 extends it.
 
 We are not a CPA firm and we do not give tax advice. Worker classification, payroll operation, employment-tax filings and any state obligation that comes with hiring are outside our scope and belong to a qualified US payroll provider or adviser. [Start your Form 5472 package](/start) and leave the hiring questions with them.
 

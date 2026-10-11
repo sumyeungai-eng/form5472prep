@@ -105,7 +105,7 @@ Read the [Form 8832 election guide](/blog/form-8832-election-foreign-owned-llc) 
 
 Form5472 Prep can prepare the Form 5472 information return for either structure. For a disregarded LLC, the standard package includes Form 5472, the pro forma Form 1120, and the Part V statement, reviewed by a qualified tax accountant and faxed to the IRS Ogden PIN Unit with a timestamped receipt. A C corporation also needs its full Form 1120 prepared as an income-tax return by the appropriate adviser.
 
-Standard is **$149** and ready in **5-7 business days**. Express is **$249** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+$99**, and fax delivery is included. EIN service is **$149** at [/ein](/ein).
+Standard is **$149** and ready in **5-7 business days**. Express is **$199** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+$99**, and fax delivery is included. EIN service is **$149** at [/ein](/ein).
 
 We are not a CPA firm and do not give tax advice. LLC-versus-corporation selection, treaty analysis, income-tax returns, financing documents, and exit modelling require qualified advisers. We prepare and submit the information-return component once the structure and transactions are clear.
 

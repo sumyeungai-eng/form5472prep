@@ -107,7 +107,7 @@ No treaty to invoke, an FTIN that changed form in 2025, VND conversion with a st
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120 and the Part V statement, has a qualified tax accountant review the package, faxes it to the IRS Ogden PIN Unit and returns the timestamped receipt.
 
-**$149** standard, ready in 5-7 business days. **$249** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included.
+**$149** standard, ready in 5-7 business days. **$199** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, in the US or in Vietnam. We prepare and submit the US information return.
 

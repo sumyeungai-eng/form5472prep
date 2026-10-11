@@ -92,7 +92,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "How much does it cost?",
     answer:
-      "Form 5472 filing costs $149 for Standard filing, ready in 5-7 business days, or $249 for Express filing, ready for you to check and sign within 24 hours, 7 days a week. Additional past tax years are $99 each on either tier, and IRS fax delivery to the Ogden PIN Unit is included.",
+      "Form 5472 filing costs $149 for Standard filing, ready in 5-7 business days, or $199 for Express filing, ready for you to check and sign within 24 hours, 7 days a week. Additional past tax years are $99 each on either tier, and IRS fax delivery to the Ogden PIN Unit is included.",
     learnMore: { href: "/pricing", label: "See pricing" },
     source: "src/app/(marketing)/pricing/page.tsx:34; src/lib/pricing.ts:40; src/lib/pricing.ts:41; src/lib/pricing.ts:60; src/lib/pricing.ts:67; src/lib/pricing.ts:86",
   },
@@ -101,7 +101,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "What's the difference between Standard and Express?",
     answer:
-      "Standard and Express differ only by turnaround. Standard is ready in 5-7 business days at $149, while Express is ready for you to check and sign within 24 hours of your order, 7 days a week, at $249 and adds priority email support. We fax Express filings once you sign, the same as Standard. Both include the same documents, accountant review, and IRS fax delivery.",
+      "Standard and Express differ only by turnaround. Standard is ready in 5-7 business days at $149, while Express is ready for you to check and sign within 24 hours of your order, 7 days a week, at $199 and adds priority email support. We fax Express filings once you sign, the same as Standard. Both include the same documents, accountant review, and IRS fax delivery.",
     source: "src/app/(marketing)/form-5472-filing/page.tsx:59; src/lib/pricing.ts:40; src/lib/pricing.ts:41; src/lib/pricing.ts:60; src/lib/pricing.ts:67",
   },
   {

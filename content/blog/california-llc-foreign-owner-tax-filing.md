@@ -122,7 +122,7 @@ California scenarios are easiest to analyse by separating the California tax res
 
 Form5472 Prep handles the federal information-return package, not the California Form 568 or California tax-advice work. For a foreign-owned California LLC, that means we prepare Form 5472, the pro forma Form 1120 and the Part V statement, then have the package reviewed by a qualified tax accountant.
 
-After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped receipt. Standard service is $149 and takes 5-7 business days. Express service is $249 and is ready to check and sign within 24 hours. Each additional past tax year is +$99. Fax delivery is included.
+After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped receipt. Standard service is $149 and takes 5-7 business days. Express service is $199 and is ready to check and sign within 24 hours. Each additional past tax year is +$99. Fax delivery is included.
 
 For current federal filing tiers, [see current pricing](/pricing).
 

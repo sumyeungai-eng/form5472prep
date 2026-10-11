@@ -25,7 +25,7 @@ So the question is not "can our staff fill in a form". It is whether your firm w
 | Factor | Prepared in-house | Outsourced to a specialist |
 |---|---|---|
 | **Setup effort** | Train staff on the DE pro forma 1120 route, write a procedure, arrange fax at 300 DPI or higher, build retention | Short application on `/partners`, approved manually in about one business day, passwordless email sign-in |
-| **Per-filing cost** | Staff and reviewer time at your own charge-out rates, plus a share of training, fax and retention overhead | $149 Standard, ready in 5–7 business days; $249 Express, ready to sign within 24 hours; +$99 per additional past tax year; IRS fax included |
+| **Per-filing cost** | Staff and reviewer time at your own charge-out rates, plus a share of training, fax and retention overhead | $149 Standard, ready in 5–7 business days; $199 Express, ready to sign within 24 hours; +$99 per additional past tax year; IRS fax included |
 | **Review depth** | As deep as your own second-reviewer discipline: strong in an established 1120 practice, weak where one person does everything | A qualified tax accountant reviews every package before submission; we are not a CPA firm and do not give tax advice |
 | **Submission evidence** | Yours end to end: your fax report, your copy of the exact package, your retention schedule | Provider fax receipt per filing in the dashboard, which is transmission evidence, not IRS acceptance |
 | **Liability and client** | Your firm is the preparer and carries that exposure; check your indemnity cover extends to it | Your firm keeps the client and sets its own fee; we are the back office and pay no commission |

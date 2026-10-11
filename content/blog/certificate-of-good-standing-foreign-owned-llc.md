@@ -71,7 +71,7 @@ No. State good standing and federal tax compliance are two completely separate s
 
 ## What we do and don't do
 
-Form5472 Prep prepares and faxes the annual Form 5472 and pro forma Form 1120 from your related-party transaction records — Standard is $149 (5–7 business days), Express is $249 (ready to sign within 24 hours), and each additional past tax year is +$99. EIN service is $149 at [/ein](/ein), ITIN service is $349 at [/itin](/itin). We do not order certificates of good standing, act as your registered agent, or file state annual reports, and we do not maintain your LLC's state standing on your behalf. We are not a law firm or a CPA firm, and nothing here is legal or tax advice — for state compliance questions specific to your entity, use your formation state's Secretary of State site or a local attorney.
+Form5472 Prep prepares and faxes the annual Form 5472 and pro forma Form 1120 from your related-party transaction records — Standard is $149 (5–7 business days), Express is $199 (ready to sign within 24 hours), and each additional past tax year is +$99. EIN service is $149 at [/ein](/ein), ITIN service is $349 at [/itin](/itin). We do not order certificates of good standing, act as your registered agent, or file state annual reports, and we do not maintain your LLC's state standing on your behalf. We are not a law firm or a CPA firm, and nothing here is legal or tax advice — for state compliance questions specific to your entity, use your formation state's Secretary of State site or a local attorney.
 
 ## Frequently asked questions
 

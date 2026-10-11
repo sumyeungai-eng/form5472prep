@@ -117,7 +117,7 @@ The Portuguese details — NIF, Portuguese address, euro conversion, a second fo
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement, have a qualified tax accountant review the package, and fax it to the IRS Ogden PIN Unit, returning the timestamped receipt. Late years include a reasonable cause letter.
 
-**$149** standard, ready in 5–7 business days. **$249** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included.
+**$149** standard, ready in 5–7 business days. **$199** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, Portuguese or US. We prepare and submit the US information return.
 

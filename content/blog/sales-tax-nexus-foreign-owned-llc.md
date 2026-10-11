@@ -94,7 +94,7 @@ Whether a digital product or SaaS subscription is taxable at all varies by state
 
 ## Does Form5472 Prep handle sales tax registration?
 
-No. Form5472 Prep prepares and faxes the annual federal Form 5472 and pro forma Form 1120 for a foreign-owned US disregarded entity — standard filing is $149 (5–7 business days), express is $249 (ready to sign within 24 hours), and each additional past tax year is +$99. We also offer an EIN service at [/ein](/ein) for $149 and an ITIN service at [/itin](/itin) for $349. We do not register LLCs for sales tax, collect or remit sales tax on a client's behalf, act as a registered agent, draft operating agreements, or file state annual reports. We are not a law firm or a CPA firm and do not give legal or tax advice — a state-by-state sales tax nexus determination should go to a state tax professional or a sales tax compliance service.
+No. Form5472 Prep prepares and faxes the annual federal Form 5472 and pro forma Form 1120 for a foreign-owned US disregarded entity — standard filing is $149 (5–7 business days), express is $199 (ready to sign within 24 hours), and each additional past tax year is +$99. We also offer an EIN service at [/ein](/ein) for $149 and an ITIN service at [/itin](/itin) for $349. We do not register LLCs for sales tax, collect or remit sales tax on a client's behalf, act as a registered agent, draft operating agreements, or file state annual reports. We are not a law firm or a CPA firm and do not give legal or tax advice — a state-by-state sales tax nexus determination should go to a state tax professional or a sales tax compliance service.
 
 ## Frequently asked questions
 

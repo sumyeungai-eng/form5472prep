@@ -51,7 +51,7 @@ A reference ID is created by the filer; the IRS does not issue or preapprove it.
 
 ## How does Form5472 Prep help?
 
-Form5472 Prep’s guided intake separates LLC identifiers from owner identifiers and produces the Form 5472 plus pro forma Form 1120. The $149 Standard plan includes accountant review, IRS fax delivery, and a timestamped delivery receipt, ready in 5-7 business days; Express is $249 and the same filing is ready for you to check and sign within 24 hours; we fax it once you sign.
+Form5472 Prep’s guided intake separates LLC identifiers from owner identifiers and produces the Form 5472 plus pro forma Form 1120. The $149 Standard plan includes accountant review, IRS fax delivery, and a timestamped delivery receipt, ready in 5-7 business days; Express is $199 and the same filing is ready for you to check and sign within 24 hours; we fax it once you sign.
 
 [Start the filing](/start). If the LLC still needs an EIN, use the site’s [EIN service](/ein) before preparing Form 5472.
 

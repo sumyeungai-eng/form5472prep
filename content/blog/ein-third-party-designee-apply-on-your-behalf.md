@@ -126,7 +126,7 @@ Form5472 Prep prepares Form SS-4 for the foreign-owned entity, submits it, deals
 
 When an ITIN is genuinely needed for a separate US tax purpose, the **$349** service at [/itin](/itin) includes identity-document certification through an IRS-authorised Certifying Acceptance Agent, so no original passport mailing is required. An ITIN is not required merely because a foreign owner appoints an EIN designee.
 
-Annual Form 5472 filing is a separate service: **$149** standard, **$249** express, and **+$99** for each additional past tax year. If the filing is due, [/start](/start) is the separate secondary route after the EIN is secured.
+Annual Form 5472 filing is a separate service: **$149** standard, **$199** express, and **+$99** for each additional past tax year. If the filing is due, [/start](/start) is the separate secondary route after the EIN is secured.
 
 We are not a CPA firm and do not give tax advice. Our role is form preparation, submission, and application handling within the authority the client signs.
 

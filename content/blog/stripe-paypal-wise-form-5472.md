@@ -126,7 +126,7 @@ Whether the foreign owner separately owes U.S. income tax or must file Form 1040
 
 Form5472 Prep is the answer when the hard part is turning noisy platform records into a clean owner and related-party schedule. We prepare Form 5472, the pro forma Form 1120, and the Part V statement; a qualified tax accountant reviews the package; and we fax it to the IRS Ogden PIN Unit at **855-887-7737** with a timestamped receipt. The IRS instructions list that fax number for foreign-owned U.S. disregarded entities ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)).
 
-The Standard package is **$149** and ready in 5-7 business days. Express is **$249** and ready for you to check and sign within 24 hours. Each additional past tax year is **+$99**. IRS fax delivery is included. EIN service is **$149** at [/ein](/ein).
+The Standard package is **$149** and ready in 5-7 business days. Express is **$199** and ready for you to check and sign within 24 hours. Each additional past tax year is **+$99**. IRS fax delivery is included. EIN service is **$149** at [/ein](/ein).
 
 We are not a CPA firm and we do not give tax advice. We prepare and submit the information return accurately, and you or your adviser remain responsible for income-tax, sales-tax, and home-country tax positions.
 

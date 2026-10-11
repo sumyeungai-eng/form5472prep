@@ -145,11 +145,11 @@ Note that the March buffer also gives you time to discover that a prior year was
 
 [Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning a timestamped provider transmission receipt. The receipt is useful transmission evidence; it is not an IRS acceptance notice. For late years we include a reasonable cause cover letter.
 
-**$149** standard, ready in **5-7 business days**. **$249** express, ready for you to check and sign within **24 hours**. **+$99** per additional past tax year. IRS fax delivery included on both.
+**$149** standard, ready in **5-7 business days**. **$199** express, ready for you to check and sign within **24 hours**. **+$99** per additional past tax year. IRS fax delivery included on both.
 
 For current turnaround tiers before choosing a start date, [see current pricing](/pricing).
 
-Work backwards from your deadline: standard needs 5-7 business days and express needs 3, counted from when your details are complete, so leave room for both the turnaround and the fax. For a 2025 return still unprepared in the days before 15 October 2026, express is the tier whose turnaround still fits. If the deadline has already passed, file as soon as you can rather than waiting for the next one. Starting earlier is always cheaper than starting later, because the express upgrade exists precisely to buy back time you have already spent.
+Work backwards from your deadline: standard needs 5-7 business days and express is ready to sign within 24 hours, counted from when your details are complete, so leave room for both the turnaround and the fax. For a 2025 return still unprepared in the days before 15 October 2026, express is the tier whose turnaround still fits. If the deadline has already passed, file as soon as you can rather than waiting for the next one. Starting earlier is always cheaper than starting later, because the express upgrade exists precisely to buy back time you have already spent.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return, on time.
 

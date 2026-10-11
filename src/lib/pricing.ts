@@ -5,9 +5,10 @@
 //   TWO tiers that differ ONLY by turnaround — the filing itself, the
 //   accountant review and everything in the package are identical:
 //     standard $149 — ready in 5-7 business days
-//     express  $249 — reviewed package ready for the client to check and
+//     express  $199 — reviewed package ready for the client to check and
 //                     sign within 24 hours of the order, 7 days a week
-//                     (owner decision 2026-10-11; was $199 / 3 business days).
+//                     (owner decision 2026-10-11: $199, was $249 earlier the same day;
+//                     before that $199 / 3 business days).
 //                     The promise stops at "ready to sign" — the fax goes out
 //                     once the client signs, so the clock never depends on them.
 //   The ranges deliberately don't overlap, so the upgrade buys a real,
@@ -70,7 +71,7 @@ export const TIERS: Record<Tier, TierInfo> = {
   express: {
     label: "Express filing",
     subtitle: `Ready to sign within ${EXPRESS_TURNAROUND}`,
-    priceCents: 24900,
+    priceCents: 19900,
     // No tier carries `highlight` (the "Most popular" badge + emphasised
     // border). Nudging customers toward the dearer plan isn't the pitch here,
     // and we have no order data that would make a "most popular" claim true.
@@ -128,7 +129,7 @@ export const FAX_FEE_LABEL = "IRS fax delivery (included)";
 //   Standard 1 year   $149        → $99
 //   Standard 2 years  $149+$99    → $198
 //   Standard 3 years  $149+$198   → $297
-//   Express  1 year   $249        → $199
+//   Express  1 year   $199        → $149
 //
 // List prices in TIERS are untouched — this is a discount off list, not a
 // second price list, so /pricing, the homepage and the blog keep quoting the

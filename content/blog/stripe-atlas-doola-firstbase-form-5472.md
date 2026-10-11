@@ -104,7 +104,7 @@ We do one thing: prepare and submit Form 5472 with the pro forma Form 1120 for f
 You answer a short online questionnaire. We prepare the package, a qualified tax accountant reviews it, and we fax it to the IRS and send you the timestamped transmission receipt.
 
 - **$149 Standard** — delivered in 5–7 business days
-- **$249 Express** — ready to sign within 24 hours
+- **$199 Express** — ready to sign within 24 hours
 - **+$99** per additional past tax year
 - **IRS fax delivery included** in both
 

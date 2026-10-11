@@ -131,7 +131,7 @@ After **90 days** from an IRS notice, continued failure can add **$25,000 for ea
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120 and the Part V statement from the related-party ledger. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
-Standard service is **$149** and ready in **5-7 business days**. Express service is **$249** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+$99**, and fax delivery is included. EIN service is **$149** at [/ein](/ein).
+Standard service is **$149** and ready in **5-7 business days**. Express service is **$199** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+$99**, and fax delivery is included. EIN service is **$149** at [/ein](/ein).
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return; section 871(d), Form 1040-NR, service-income, withholding, lodging-tax and home-country decisions belong with the appropriate adviser.
 

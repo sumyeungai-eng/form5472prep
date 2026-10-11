@@ -117,7 +117,7 @@ The Hungarian specifics — a terminated treaty that changes nothing here, an *a
 
 We prepare the package — Form 5472, the pro forma 1120 and the Part V statement — have it reviewed by a qualified tax accountant, and fax it to the IRS Ogden PIN Unit, returning the timestamped confirmation. Late years include a reasonable cause cover letter.
 
-**$149** standard, ready in 5-7 business days. **$249** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included, so you never send a fax from Budapest. Terms: our [pricing page](/pricing).
+**$149** standard, ready in 5-7 business days. **$199** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included, so you never send a fax from Budapest. Terms: our [pricing page](/pricing).
 
 We are not a CPA firm and do not give tax advice, and we do not advise on Hungarian tax. We prepare and submit the US information return accurately.
 

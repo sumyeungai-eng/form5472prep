@@ -106,7 +106,7 @@ The key is not memorizing both forms. The key is identifying the direction of ow
 
 Form5472 Prep handles the Form 5472 package for foreign-owned US disregarded LLCs: Form 5472, pro forma Form 1120, Part V statement, qualified tax accountant review, and fax filing to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
-Standard service is **$149** and ready in 5-7 business days. Express service is **$249** and ready for you to check and sign within 24 hours. Each additional past tax year is **+$99**. Fax delivery is included. EIN service is **$149** at [/ein](/ein), and ITIN service is **$349** at [/itin](/itin).
+Standard service is **$149** and ready in 5-7 business days. Express service is **$199** and ready for you to check and sign within 24 hours. Each additional past tax year is **+$99**. Fax delivery is included. EIN service is **$149** at [/ein](/ein), and ITIN service is **$349** at [/itin](/itin).
 
 We are not a CPA firm and do not give tax advice. We do not prepare Form 5471. If your structure has a foreign corporation and a US person filer, use a CPA or tax attorney who works with controlled foreign corporation reporting.
 

@@ -108,7 +108,7 @@ Form5472 Prep can prepare Form SS-4 correctly for a foreign-owned entity, submit
 
 If an ITIN is genuinely required for a separate US tax purpose, the **$349** ITIN service at [/itin](/itin) includes identity-document certification through an IRS-authorised Certifying Acceptance Agent, so the applicant does not mail an original passport. An ITIN is not a prerequisite merely to obtain the LLC's EIN.
 
-Annual Form 5472 filing is separate: **$149** standard, **$249** express, and **+$99** for each additional past tax year. If that annual filing is also due, [/start](/start) is the secondary next step after the EIN is available.
+Annual Form 5472 filing is separate: **$149** standard, **$199** express, and **+$99** for each additional past tax year. If that annual filing is also due, [/start](/start) is the secondary next step after the EIN is available.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the forms within the stated service scope; banks and seller platforms make their own account decisions.
 

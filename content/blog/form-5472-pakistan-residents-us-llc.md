@@ -120,7 +120,7 @@ The $25,000 exposure applies per missing form and year. An IRS notice also start
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit with a timestamped confirmation receipt returned to you.
 
-Standard filing is **$149** and is ready in **5-7 business days**. Express filing is **$249** and is ready for you to check and sign within **24 hours**. Each additional past tax year is **+$99**. IRS fax delivery is included.
+Standard filing is **$149** and is ready in **5-7 business days**. Express filing is **$199** and is ready for you to check and sign within **24 hours**. Each additional past tax year is **+$99**. IRS fax delivery is included.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the US information return; treaty eligibility, US income tax, state obligations, and Pakistan tax treatment require the appropriate adviser.
 

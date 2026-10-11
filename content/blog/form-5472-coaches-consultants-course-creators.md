@@ -116,7 +116,7 @@ The [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472) links
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your course-platform reports and owner-movement schedule, have a qualified accountant review each package, fax it to the IRS, and send you the timestamped receipt.
 
-Standard is **$149** (5–7 business days); Express is **$249** (ready to sign within 24 hours); each additional past year is **+$99**; IRS fax delivery is included. See [Form 5472 cost](/blog/form-5472-cost).
+Standard is **$149** (5–7 business days); Express is **$199** (ready to sign within 24 hours); each additional past year is **+$99**; IRS fax delivery is included. See [Form 5472 cost](/blog/form-5472-cost).
 
 We are not a CPA firm and do not give tax advice; we prepare and submit the information return. Whether your income is effectively connected with a US trade or business, and your home-country tax, are questions for the appropriate adviser.
 
