@@ -8,6 +8,7 @@ import { ChatWidget } from "@/components/ChatWidget";
 import { MetaPixel } from "@/components/MetaPixel";
 import { VisitPing } from "@/components/VisitPing";
 import { GOOGLE_ADS_TAG_ID } from "@/lib/analytics/googleAds";
+import { googleAdsBootstrapScript } from "@/lib/analytics/googleAdsLoader";
 import { EXPRESS_TURNAROUND, STANDARD_TURNAROUND, TIERS } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import "./globals.css";
@@ -103,26 +104,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-white text-slate-900 font-sans antialiased">
         {/* Warm the connection to the tag host ahead of the deferred loader. */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
-        {/* Google Ads conversion tag. The external gtag.js loads lazily (on idle,
-            after the page is interactive) to keep it off the critical path and
-            out of Total Blocking Time — conversion events queue in `dataLayer`
-            via the inline init below and flush once the script loads, so nothing
-            is lost. The conversion event itself is dispatched from
+        {/* Google Ads conversion tag. The external gtag.js is injected only after
+            the page has loaded AND recorded its first contentful paint (then on
+            idle) — see src/lib/analytics/googleAdsLoader.ts for why lazyOnload
+            alone was not enough. Conversion events queue in `dataLayer` via the
+            inline init and flush once the script loads, so nothing is lost. The
+            conversion event itself is dispatched from
             src/lib/analytics/googleAds.ts. */}
         <Script id="google-ads-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            window.gtag = gtag;
-            gtag('js', new Date());
-            // Embeddable tools run inside third-party pages: no ad tag there.
-            if (!location.pathname.startsWith('/embed/')) gtag('config', '${GOOGLE_ADS_TAG_ID}');
-          `}
+          {googleAdsBootstrapScript(GOOGLE_ADS_TAG_ID)}
         </Script>
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_TAG_ID}`}
-          strategy="lazyOnload"
-        />
         {children}
         <MetaPixel />
         <ChatWidget />
