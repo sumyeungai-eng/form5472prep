@@ -226,3 +226,4 @@ Claude and Codex sessions share these folders. Practical rules:
 - `docs/sessions/2026-10-07-moz-full-report.md` — full Moz read-out (campaign, AI dashboard, links, keyword gap) + prioritised improvement report `docs/seo/moz-full-report-2026-10-07.md`; spam PBN links, do not disavow.
 - `docs/sessions/2026-10-07-moz-improvements.md` — code-side Moz actions: 85 blog→guide links, footer Guides band, brand H1/alternateName, penalty-relief/where-to-file/e-file/instructions guide upgrades, 3 new guides + 2 scheduled posts, CP 215 + price-from-pricing.ts guard.
 - `docs/sessions/2026-10-08-no-trustpilot-email.md` — Trustpilot AFS invite removed from the automatic fax-delivered email, then restored the same day (owner); net: invites ON.
+- `docs/sessions/2026-10-11-moz-reread-plan.md` — Moz re-read (ranks/AI not yet refreshed; Oct 11 crawl) + plan `docs/seo/plan-2026-10-11-moz.md`: link the orphan new guides, finish CP 215, GSC requests.
