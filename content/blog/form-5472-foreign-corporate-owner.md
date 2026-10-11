@@ -111,7 +111,7 @@ The [multiple-related-parties guide](/blog/multiple-related-parties-form-5472) e
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120 and the Part V statement for foreign-owned U.S. disregarded entities, including cases where the owner is a foreign company. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
-Standard service is **$149** in 5-7 business days, Express is **$199** in 3 business days, each additional past tax year is **+$99**, and fax delivery is included. EIN service is **$149** at [/ein](/ein). We are not a CPA firm and do not give tax advice, so transfer pricing, treaty, corporate-election and foreign-parent tax questions should go to your adviser.
+Standard service is **$149** in 5-7 business days, Express is **$249**, ready to sign within 24 hours, each additional past tax year is **+$99**, and fax delivery is included. EIN service is **$149** at [/ein](/ein). We are not a CPA firm and do not give tax advice, so transfer pricing, treaty, corporate-election and foreign-parent tax questions should go to your adviser.
 
 ## Frequently asked questions
 

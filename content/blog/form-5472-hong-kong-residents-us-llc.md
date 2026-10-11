@@ -117,7 +117,7 @@ The $25,000 exposure applies separately to each missing form and year. If the IR
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V supporting statement; a qualified tax accountant reviews the package. We fax it to the IRS Ogden PIN Unit and return the timestamped confirmation receipt.
 
-Standard filing is **$149** and is ready in **5-7 business days**. Express filing is **$199** and is ready in **3 business days**. Each additional past tax year is **+$99**. IRS fax delivery is included.
+Standard filing is **$149** and is ready in **5-7 business days**. Express filing is **$249** and is ready for you to check and sign within **24 hours**. Each additional past tax year is **+$99**. IRS fax delivery is included.
 
 We are not a CPA firm and do not give tax advice. Hong Kong profits-tax treatment, US income-tax exposure, treaty questions, and state obligations require the appropriate adviser; our service prepares and submits the US information-return package.
 

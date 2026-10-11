@@ -106,7 +106,7 @@ The filing mechanics are identical; only the money's shape differs: a membership
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your payout exports and owner-movement schedule, have a qualified tax accountant review the package, fax it to the IRS, and send the timestamped receipt.
 
-Standard is **$149** over 5–7 business days; Express is **$199** within 3 business days; each additional past tax year is **+$99**; IRS fax delivery is included. We are not a CPA firm and do not give tax advice — we prepare and submit the information return. Effectively connected income and your home-country tax belong to a qualified adviser.
+Standard is **$149** over 5–7 business days; Express is **$249** ready to sign within 24 hours; each additional past tax year is **+$99**; IRS fax delivery is included. We are not a CPA firm and do not give tax advice — we prepare and submit the information return. Effectively connected income and your home-country tax belong to a qualified adviser.
 
 ## Frequently asked questions
 

@@ -14,7 +14,7 @@ const order: OrderAlert = {
 };
 const session = (overrides = {}) => ({
   id: "cs_live", payment_intent: "pi_live", payment_status: "paid", livemode: true,
-  amount_total: 19900, currency: "usd", metadata: { filingId: "123" }, ...overrides,
+  amount_total: 34800, currency: "usd", metadata: { filingId: "123" }, ...overrides,
 }) as unknown as Stripe.Checkout.Session;
 beforeEach(() => {
   vi.resetAllMocks();
@@ -77,7 +77,7 @@ describe("paid-order routing", () => {
   it("uses Stripe's actual paid amount and includes filing years", async () => {
     expect(await notifyPaidOrderTelegram(session())).toBe(true);
     const body = JSON.parse(vi.mocked(fetch).mock.calls[0][1]!.body as string);
-    expect(body.text).toContain("Express filing"); expect(body.text).toContain("$199.00"); expect(body.text).toContain("2024, 2025");
+    expect(body.text).toContain("Express filing"); expect(body.text).toContain("$348.00"); expect(body.text).toContain("2024, 2025");
   });
   it.each(["ein", "itin"])("covers %s paid applications without exporting tax identity data", async (type) => {
     const app = { id: "app1", fullName: "Alex", email: "alex@example.com", stripePaymentId: "pi_live", ...(type === "ein" ? { llcName: "Example LLC" } : {}) };

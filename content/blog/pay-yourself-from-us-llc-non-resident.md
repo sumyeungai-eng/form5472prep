@@ -119,7 +119,7 @@ If payroll filings or Forms W-2 were actually issued for the owner, that is beyo
 
 Our work is the classification and the paperwork: reading the year's statements, separating customer revenue from owner movements, drafting the Part V statement, completing Form 5472 and the pro forma Form 1120, and faxing the package to the Ogden PIN Unit with a timestamped receipt — transmission evidence, not IRS acceptance.
 
-**$149** standard (5–7 business days), **$199** express (within 3 business days), **+$99** per additional past tax year, IRS fax delivery included; see [pricing](/pricing).
+**$149** standard (5–7 business days), **$249** express (ready to sign within 24 hours), **+$99** per additional past tax year, IRS fax delivery included; see [pricing](/pricing).
 
 A qualified tax accountant reviews each package before submission. We are not a CPA firm and do not give tax advice: we do not decide income tax positions, treaty positions or withholding, and we do not advise on any other country's tax.
 

@@ -74,7 +74,7 @@ It is the coordinate-only branch, built as a product. Your firm applies on [/par
 
 Our posture, plainly: **we are not a CPA firm and we do not give tax advice.** We prepare and submit the information return, and a qualified tax accountant reviews every package. The person authorized to sign for the client LLC signs it — your firm does not sign for the client, and neither do we.
 
-Pricing matches what a direct customer pays, so your margin is whatever you charge your own client: $149 Standard, ready in 5 to 7 business days, or $199 Express, within 3 business days, plus $99 per additional past tax year. IRS fax delivery is included, there is no platform fee and no subscription, and each filing is paid individually at checkout — see [/pricing](/pricing). We pay no commission, referral fee or revenue share, because none exists.
+Pricing matches what a direct customer pays, so your margin is whatever you charge your own client: $149 Standard, ready in 5 to 7 business days, or $249 Express, ready to sign within 24 hours, plus $99 per additional past tax year. IRS fax delivery is included, there is no platform fee and no subscription, and each filing is paid individually at checkout — see [/pricing](/pricing). We pay no commission, referral fee or revenue share, because none exists.
 
 This route suits a firm that wants to coordinate a filing without becoming the paid preparer of record. It is not a route around a credential requirement, and nobody here can tell you whether your firm needs one.
 

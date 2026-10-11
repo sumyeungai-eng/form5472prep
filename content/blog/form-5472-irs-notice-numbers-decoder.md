@@ -78,7 +78,7 @@ Neither page publishes a day count, and both say to act immediately. An unpaid [
 6. **Diarise the printed deadline and work backwards.** If the date is close and your package is not ready, a written request for more time beats silence.
 7. **Keep the envelope and the postmark.** Dates of receipt occasionally matter later.
 
-If step 4 shows a year with no package at all, that gap is fixable this week. We prepare the pro forma Form 1120, Form 5472 and the Part V statement for each outstanding year, have a qualified tax accountant review it, and fax it to the IRS Ogden PIN Unit at 855-887-7737, returning the timestamped confirmation. Standard is $149 in 5–7 business days, Express $199 within 3 business days, each extra past year $99; [see pricing](/pricing).
+If step 4 shows a year with no package at all, that gap is fixable this week. We prepare the pro forma Form 1120, Form 5472 and the Part V statement for each outstanding year, have a qualified tax accountant review it, and fax it to the IRS Ogden PIN Unit at 855-887-7737, returning the timestamped confirmation. Standard is $149 in 5–7 business days, Express $249 ready to sign within 24 hours, each extra past year $99; [see pricing](/pricing).
 
 We are not a CPA firm and we do not give tax advice. A provider fax receipt is transmission evidence, not IRS acceptance — but it is a dated fact you can put in front of the IRS. To move a missing year, [start your filing here](/start). If the notice concerns a deadline you can still meet, [the Form 5472 deadline guide](/blog/form-5472-deadline-2026) sets out the dates.
 

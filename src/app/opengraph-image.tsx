@@ -105,7 +105,7 @@ export default async function OG() {
             display: "flex",
           }}
         >
-          From $149 · $199 express in 3 days · We fax to the IRS
+          From $149 · $249 express, ready to sign in 24h · We fax to the IRS
         </div>
       </div>
     ),

@@ -530,16 +530,17 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const t = tierInfo(tier);
   const tierLabel = t.label;
   const tierPrice = formatUsd(t.priceCents);
-  // Express orders are promised an accountant review within one business day;
-  // standard orders get no timeframe. Legacy "rush" resolves to standard.
+  // Express orders: reviewed package ready to check and sign within 24 hours
+  // of the order, 7 days a week (2026-10-11). Standard gets no timeframe.
+  // Legacy "rush" resolves to standard.
   const isExpress = tier === "express";
   const expressReviewText =
-    "Express order: a qualified accountant will review your filing within one business day.";
+    "Express order: your reviewed filing package will be ready for you to check and sign within 24 hours of your order. We will email you as soon as it is ready.";
   const reviewStepText = isExpress
-    ? "A qualified accountant reviews the package within one business day and may message you if anything needs clarifying."
+    ? "A qualified accountant reviews the package, and it is ready for you to check and sign within 24 hours of your order. We may message you if anything needs clarifying."
     : "A qualified accountant reviews the package and may message you if anything needs clarifying.";
   const reviewStepPlain = isExpress
-    ? "A qualified accountant reviews the package within one business day and may message you with questions."
+    ? "A qualified accountant reviews the package, and it is ready for you to check and sign within 24 hours of your order. We may message you with questions."
     : "A qualified accountant reviews the package and may message you with questions.";
   const yearCount = taxYears.length || 1;
   const extraYears = Math.max(0, yearCount - 1);
@@ -564,7 +565,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       : "";
   const expressReviewHtml = isExpress
     ? `<div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-left:4px solid ${EMAIL_STYLES.brand};border-radius:8px;padding:12px 16px;margin:0 0 12px;color:${EMAIL_STYLES.ink};font-size:14px;line-height:1.6;">
-         <strong>Express order:</strong> a qualified accountant will review your filing within one business day.
+         <strong>Express order:</strong> your reviewed filing package will be ready for you to check and sign within 24 hours of your order. We will email you as soon as it is ready.
        </div>`
     : "";
   const filingStatusNoticeHtml = filingStatusNoticeText
@@ -1089,7 +1090,8 @@ export async function sendNewOrderAdminEmail(args: {
   return sendEmail({
     log: { kind: "admin_new_order", filingId },
     to: adminEmail,
-    subject: `${isTestOrder ? "[Test order]" : "[New order]"} ${llcLine} (${yearsLabel})`,
+    // Express orders carry a 24-hour ready-to-sign promise — flag them.
+    subject: `${isTestOrder ? "[Test order]" : tier === "express" ? "[New order · EXPRESS 24h]" : "[New order]"} ${llcLine} (${yearsLabel})`,
     text:
       `${isTestOrder ? "Admin test order created (Stripe bypassed, $0)." : "New paid order received."}\n\n` +
       `Customer:      ${customerEmail ?? "(anonymous)"}\n` +

@@ -46,11 +46,11 @@ import {
 const FAQS = [
   {
     q: "How much does it cost?",
-    a: `Two flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready within ${EXPRESS_TURNAROUND}. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on either tier. IRS fax delivery to the Ogden PIN Unit is included on both — no separate add-on.`,
+    a: `Two flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready to sign within ${EXPRESS_TURNAROUND}. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on either tier. IRS fax delivery to the Ogden PIN Unit is included on both — no separate add-on.`,
   },
   {
     q: "What's the difference between the two tiers?",
-    a: `Only the turnaround. The filing is identical on both: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation — plus a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready within ${EXPRESS_TURNAROUND} and adds priority email support.`,
+    a: `Only the turnaround. The filing is identical on both: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation — plus a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready to sign within ${EXPRESS_TURNAROUND} and adds priority email support.`,
   },
   {
     q: "What if I've missed prior years?",
@@ -156,7 +156,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
     description:
-      "For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. From $149, or $199 for express filing within 3 business days.",
+      `For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. From ${formatPrice(TIERS.standard.priceCents)}, or ${formatPrice(TIERS.express.priceCents)} for express, ready to sign within ${EXPRESS_TURNAROUND}.`,
     images: ["/opengraph-image"],
   },
 };
@@ -601,7 +601,7 @@ function Comparison() {
         <SectionHead
           eyebrow="vs. the alternatives"
           title="Why use Form5472 Prep instead of CPA or DIY?"
-          subtitle={`Form5472 Prep is a fixed-fee specialist: ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} (within ${EXPRESS_TURNAROUND}), with qualified-accountant review, IRS fax delivery and a timestamped receipt included.`}
+          subtitle={`Form5472 Prep is a fixed-fee specialist: ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} (ready to sign within ${EXPRESS_TURNAROUND}), with qualified-accountant review, IRS fax delivery and a timestamped receipt included.`}
         />
         <ComparisonTable {...FILING_COMPARISON} className="mt-10" />
       </div>

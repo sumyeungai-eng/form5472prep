@@ -110,7 +110,7 @@ That mismatch explains why foreign owners should not let the easy Delaware filin
 
 Form5472 Prep handles the federal package for foreign-owned Delaware LLCs. We prepare Form 5472, the pro forma Form 1120 and the Part V statement, then have the package reviewed by a qualified tax accountant.
 
-After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped receipt. Standard service is $149 and takes 5-7 business days. Express service is $199 and takes 3 business days. Each additional past tax year is +$99. Fax delivery is included.
+After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped receipt. Standard service is $149 and takes 5-7 business days. Express service is $249 and is ready to check and sign within 24 hours. Each additional past tax year is +$99. Fax delivery is included.
 
 For current federal filing tiers, [see current pricing](/pricing).
 

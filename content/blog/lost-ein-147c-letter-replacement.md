@@ -106,7 +106,7 @@ Our **$149** EIN service is for acquiring an EIN when the IRS has not assigned o
 
 The acquisition service is not a reason to request a duplicate EIN for an LLC that already has one. Use the record search and Letter 147C procedure for an existing number.
 
-Where an ITIN is genuinely needed for a separate purpose, our **$349** ITIN service uses an IRS-authorised Certifying Acceptance Agent to certify identity documents, avoiding original passport mailing. Annual Form 5472 filing is separate at **$149** standard, **$199** express and **+$99** per extra past year. We are not a CPA firm and do not give tax advice.
+Where an ITIN is genuinely needed for a separate purpose, our **$349** ITIN service uses an IRS-authorised Certifying Acceptance Agent to certify identity documents, avoiding original passport mailing. Annual Form 5472 filing is separate at **$149** standard, **$249** express and **+$99** per extra past year. We are not a CPA firm and do not give tax advice.
 
 ## Frequently asked questions
 

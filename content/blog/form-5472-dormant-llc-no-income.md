@@ -95,7 +95,7 @@ The structured way to resolve this is the IRS's **[Delinquent International Info
 
 If you want to get it done quickly: [start your filing here](/start). We prepare the pro forma Form 1120 and Form 5472 for each outstanding year, draft the reasonable cause statement, and fax the complete package to the IRS Ogden PIN Unit on your behalf. If you are filing for yourself instead, see [how to file Form 5472](/file-form-5472).
 
-Standard filing is $149 (5-7 business days), Express $199 (3 business days), +$99 per additional past tax year — IRS fax delivery included on both.
+Standard filing is $149 (5-7 business days), Express $249 (ready to sign within 24 hours), +$99 per additional past tax year — IRS fax delivery included on both.
 
 For current flat-fee options before catching up, [see current pricing](/pricing).
 

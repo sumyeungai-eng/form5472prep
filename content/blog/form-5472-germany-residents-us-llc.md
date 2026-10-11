@@ -129,7 +129,7 @@ That local question can involve more than income tax. German trade tax, VAT, boo
 
 Form5472 Prep handles the US filing mechanics when the German owner has already identified the related-party activity and needs the annual package prepared correctly. The service prepares Form 5472, the pro forma Form 1120 and the Part V statement, and the package is reviewed by a qualified tax accountant.
 
-After signature, Form5472 Prep faxes the package to the IRS Ogden PIN Unit at 855-887-7737 and returns a timestamped receipt. Standard service is **$149** and takes 5-7 business days. Express service is **$199** and takes 3 business days. Each additional past tax year is **+$99**. Fax delivery is included.
+After signature, Form5472 Prep faxes the package to the IRS Ogden PIN Unit at 855-887-7737 and returns a timestamped receipt. Standard service is **$149** and takes 5-7 business days. Express service is **$249** and is ready to check and sign within 24 hours. Each additional past tax year is **+$99**. Fax delivery is included.
 
 If the LLC still needs an EIN, the EIN service is **$149** at [/ein](/ein). Form5472 Prep is not a CPA firm and does not give German or US tax advice, but it does prepare and submit the information-return package German owners often cannot e-file themselves.
 

@@ -102,7 +102,7 @@ The state side of a Wyoming LLC is genuinely easy — a $60 report you can file 
 
 [Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt. For missed years we include a reasonable cause cover letter.
 
-**$149** standard, ready in 5-7 business days. **$199** express, ready in 3 business days. **+$99** per additional past tax year. IRS fax delivery included. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
+**$149** standard, ready in 5-7 business days. **$249** express, ready for you to check and sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
 
 For the current federal filing options, [see current pricing](/pricing).
 

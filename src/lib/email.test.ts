@@ -128,21 +128,22 @@ describe("order confirmation email", () => {
     expect(existingCallerShape.html).not.toMatch(/<p[^>]*>\s*<\/p>/i);
   });
 
-  it("promises a one-business-day review on express orders only", async () => {
+  it("promises a ready-to-sign package within 24 hours on Express orders only, never 'filed within 24 hours'", async () => {
     await usePreviewDir();
     const express = await readRenderedOrderEmail(
       await sendOrderConfirmationEmail({ ...minimalOrderArgs(), tier: "express" }),
     );
-    expect(express.html).toContain("a qualified accountant will review your filing within one business day.");
-    expect(express.html).toContain("reviews the package within one business day");
-    expect(express.text).toContain("Express order: a qualified accountant will review your filing within one business day.");
-    expect(express.text).toContain("reviews the package within one business day");
+    expect(express.html).toContain("ready for you to check and sign within 24 hours of your order");
+    expect(express.text).toContain("Express order: your reviewed filing package will be ready for you to check and sign within 24 hours of your order.");
+    expect(express.html).not.toMatch(/(filed|faxed|submitted) within 24 hours/i);
+    expect(express.html).not.toContain("one business day");
+    expect(express.html).toContain("$249");
 
     const standard = await readRenderedOrderEmail(
       await sendOrderConfirmationEmail(minimalOrderArgs()),
     );
-    expect(standard.html).not.toContain("one business day");
-    expect(standard.text).not.toContain("one business day");
+    expect(standard.html).not.toContain("24 hours");
+    expect(standard.text).not.toContain("24 hours");
   });
 });
 

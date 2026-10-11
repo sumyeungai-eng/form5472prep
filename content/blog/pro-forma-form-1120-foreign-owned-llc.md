@@ -147,7 +147,7 @@ The arithmetic does not mean only 700 is reportable. The contribution and distri
 
 Form5472 Prep prepares the whole federal package: Form 5472, the pro forma Form 1120 and the Part V statement. A qualified tax accountant reviews the package before filing.
 
-After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped provider transmission receipt. The receipt records the provider's reported destination, time, status, and available page details; it is not an IRS acceptance notice. Standard service is $149 and takes 5-7 business days. Express service is $199 and takes 3 business days. Each additional past tax year is +$99. Fax delivery is included.
+After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped provider transmission receipt. The receipt records the provider's reported destination, time, status, and available page details; it is not an IRS acceptance notice. Standard service is $149 and takes 5-7 business days. Express service is $249 and is ready to check and sign within 24 hours. Each additional past tax year is +$99. Fax delivery is included.
 
 We are not a CPA firm and do not give tax advice. If the LLC still needs an EIN, the EIN service is $149 at [/ein](/ein). If the Form 5472 package is ready, use the [pro forma 1120 intake](/start).
 

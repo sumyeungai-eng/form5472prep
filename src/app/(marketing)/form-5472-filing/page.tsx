@@ -56,7 +56,7 @@ const FAQS = [
   },
   {
     q: "What's the difference between Standard and Express?",
-    a: `Turnaround only. Standard is ready in ${STANDARD_TURNAROUND} at ${formatPrice(TIERS.standard.priceCents)}; Express is ready within ${EXPRESS_TURNAROUND} at ${formatPrice(TIERS.express.priceCents)}. Both include the same documents and accountant review. Express buys speed and priority email support.`,
+    a: `Turnaround only. Standard is ready in ${STANDARD_TURNAROUND} at ${formatPrice(TIERS.standard.priceCents)}; Express is ready to sign within ${EXPRESS_TURNAROUND} at ${formatPrice(TIERS.express.priceCents)}. Both include the same documents and accountant review. Express buys speed and priority email support.`,
   },
   {
     q: "Is fax filing to the IRS really included?",
@@ -139,7 +139,7 @@ function Hero() {
               Accountant-reviewed, faxed to the IRS, timestamped receipt in your inbox.
             </p>
             <p className="order-5 mt-6 max-w-xl text-lg leading-relaxed text-slate-300 lg:order-none">
-              Get an accountant-reviewed Form 5472 + pro forma 1120, faxed to the IRS Ogden PIN Unit with a timestamped receipt as proof of filing. The complete package is ready in {STANDARD_TURNAROUND}, or within {EXPRESS_TURNAROUND} on Express.
+              Get an accountant-reviewed Form 5472 + pro forma 1120, faxed to the IRS Ogden PIN Unit with a timestamped receipt as proof of filing. The complete package is ready in {STANDARD_TURNAROUND}, or ready to sign within {EXPRESS_TURNAROUND} on Express.
             </p>
           </div>
 
@@ -178,7 +178,7 @@ function Hero() {
                 data-attribution={ATTRIBUTION_SRC}
                 className="group mt-2 flex min-h-11 items-center justify-center rounded-lg px-2 text-center text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-accent"
               >
-                Need it within {EXPRESS_TURNAROUND}? Express&nbsp;
+                Need it ready to sign within {EXPRESS_TURNAROUND}? Express&nbsp;
                 {formatPrice(TIERS.express.priceCents)}
                 <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
@@ -285,7 +285,7 @@ function Includes() {
     "Fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) with no separate fax fee",
     "Timestamped fax transmission receipt emailed to you and stored in your portal",
     "Filing confirmation and email support from start to receipt",
-    `Ready in ${STANDARD_TURNAROUND}, or within ${EXPRESS_TURNAROUND} on Express`,
+    `Ready in ${STANDARD_TURNAROUND}, or ready to sign within ${EXPRESS_TURNAROUND} on Express`,
     "A reminder in the second week of January so the following year's deadline does not slip past you",
     "100% money-back guarantee if we fail to submit",
   ];

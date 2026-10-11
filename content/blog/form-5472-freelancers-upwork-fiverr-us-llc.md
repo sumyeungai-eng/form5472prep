@@ -120,7 +120,7 @@ The IRS's [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472)
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your platform reports and owner-movement schedule. A qualified tax accountant reviews each package, and we fax it to the IRS and send you the timestamped receipt.
 
-Standard is **$149**, ready in **5–7 business days**. Express is **$199**, ready **within 3 business days**. Each additional past tax year is **+$99**. IRS fax delivery is included.
+Standard is **$149**, ready in **5–7 business days**. Express is **$249**, ready to sign **within 24 hours**. Each additional past tax year is **+$99**. IRS fax delivery is included.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return. Withholding forms, treaty claims, whether your income is effectively connected with a US trade or business, and your home-country tax are questions for the appropriate adviser. If you travel between countries while freelancing, the residence questions are covered in [Form 5472 for digital nomads](/blog/form-5472-digital-nomad-us-llc).
 

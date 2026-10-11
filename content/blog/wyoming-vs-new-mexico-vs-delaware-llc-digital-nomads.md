@@ -113,7 +113,7 @@ Then handle the state item separately, on the state's own calendar.
 We prepare the Form 5472 and pro forma Form 1120 package and fax it to the IRS. The state filing stays with you or your registered agent.
 
 - **Standard:** $149, delivered in 5–7 business days
-- **Express:** $199, within 3 business days
+- **Express:** $249, ready to sign within 24 hours
 - **Each additional past tax year:** +$99
 - **IRS fax delivery:** included
 

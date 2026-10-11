@@ -137,7 +137,7 @@ The initial failure-to-file penalty is **$25,000 per form per year**, and a subs
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement from the LLC’s related-party records. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt.
 
-Standard is **$149** and ready in **5-7 business days**. Express is **$199** and ready in **3 business days**. Each additional past tax year is **+$99**, and fax delivery is included. If the missing prerequisite is the federal number, EIN service is **$149** at [/ein](/ein).
+Standard is **$149** and ready in **5-7 business days**. Express is **$249** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+$99**, and fax delivery is included. If the missing prerequisite is the federal number, EIN service is **$149** at [/ein](/ein).
 
 We are not a CPA firm and do not give tax advice. We do not open, recommend, or guarantee bank accounts. We prepare the federal information return; income tax, licensing, banking eligibility, and home-country questions need the appropriate advisers and providers.
 

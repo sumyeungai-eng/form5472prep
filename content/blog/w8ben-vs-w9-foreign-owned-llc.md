@@ -113,7 +113,7 @@ Write “Foreign-owned U.S. DE” across the top of the pro forma Form 1120. The
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt.
 
-Standard is **$149** and ready in **5-7 business days**. Express is **$199** and ready in **3 business days**. Each additional past tax year is **+$99**, and fax delivery is included. EIN service is **$149** at [/ein](/ein).
+Standard is **$149** and ready in **5-7 business days**. Express is **$249** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+$99**, and fax delivery is included. EIN service is **$149** at [/ein](/ein).
 
 We are not a CPA firm and do not give tax advice. We prepare the Form 5472 information return; the payer, withholding, treaty, effectively connected income, and entity-election analysis may require an appropriate tax adviser.
 

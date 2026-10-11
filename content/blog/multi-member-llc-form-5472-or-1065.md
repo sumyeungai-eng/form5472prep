@@ -109,7 +109,7 @@ Most people who arrive at this question turn out to be exactly what they thought
 
 [Form5472 Prep](/) prepares that package — Form 5472, the pro forma Form 1120 stamped "Foreign-owned U.S. DE", and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt as proof of filing. Late years include a reasonable cause cover letter.
 
-**$149** standard (5-7 business days), **$199** express (3 business days), **+$99** per additional past tax year. IRS fax delivery included.
+**$149** standard (5-7 business days), **$249** express (ready to sign within 24 hours), **+$99** per additional past tax year. IRS fax delivery included.
 
 We handle single-member foreign-owned disregarded entities. We do not prepare Form 1065 partnership returns — if your LLC is a partnership, you need a CPA or enrolled agent who does. We are not a CPA firm and do not give tax advice.
 

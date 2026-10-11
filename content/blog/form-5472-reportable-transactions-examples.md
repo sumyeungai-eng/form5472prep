@@ -110,7 +110,7 @@ If the LLC never reimburses the owner by year-end, the owner-paid cost still bel
 
 Form5472 Prep is the answer when you have owner funding, withdrawals, loans, reimbursements, or related-company activity and need the information return package prepared cleanly. We prepare Form 5472, the pro forma Form 1120, and the Part V statement; a qualified tax accountant reviews the package; and we fax it to the IRS Ogden PIN Unit at **855-887-7737** with a timestamped receipt. The IRS instructions list that fax number for foreign-owned U.S. disregarded entities ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)).
 
-The Standard package is **$149** and ready in 5-7 business days. Express is **$199** and ready in 3 business days. Each additional past tax year is **+$99**. IRS fax delivery is included. EIN service is **$149** at [/ein](/ein).
+The Standard package is **$149** and ready in 5-7 business days. Express is **$249** and ready for you to check and sign within 24 hours. Each additional past tax year is **+$99**. IRS fax delivery is included. EIN service is **$149** at [/ein](/ein).
 
 We are not a CPA firm and we do not give tax advice. Unusual ownership, U.S. trade or business, real estate, employees, or entity-classification elections may require a qualified tax professional.
 

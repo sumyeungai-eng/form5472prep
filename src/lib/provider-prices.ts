@@ -104,7 +104,7 @@ const OURS: ProviderPrice = {
   billing: "One-off",
   extraYearNote: `+${usd(OUR_EXTRA_YEAR_USD)} per additional past year, either tier`,
   filingMethodNote: `${ourFeature(/fax delivery/i)} (included)`,
-  turnaroundNote: `Standard ${STANDARD_TURNAROUND}; Express within ${EXPRESS_TURNAROUND}`,
+  turnaroundNote: `Standard ${STANDARD_TURNAROUND}; Express ready to sign within ${EXPRESS_TURNAROUND}`,
   lateYears: {
     firstYearUsd: OUR_STANDARD_USD,
     eachAdditionalUsd: OUR_EXTRA_YEAR_USD,

@@ -60,7 +60,7 @@ White label should not be treated as a vague promise that every screen, domain, 
 
 There is no platform subscription for the standard partner account. Each filing is paid individually using the current public service tiers. [Check current pricing](/pricing) before quoting a client because pricing and turnaround can change.
 
-The current plans are Standard at $149 with a 5–7-business-day turnaround and Express at $199 within 3 business days. Each additional past tax year adds $99, and IRS fax delivery is included. Firms needing volume pricing or consolidated invoicing can request a discussion during onboarding.
+The current plans are Standard at $149 with a 5–7-business-day turnaround and Express at $249, ready to sign within 24 hours. Each additional past tax year adds $99, and IRS fax delivery is included. Firms needing volume pricing or consolidated invoicing can request a discussion during onboarding.
 
 Your client price and commercial relationship remain your decision. Do not promise a margin, commission, or wholesale rate until it is confirmed in writing for your account.
 

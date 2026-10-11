@@ -103,7 +103,7 @@ A good schedule lets anyone reproduce each dollar figure without asking you. The
 We work from your original-currency records. We convert each reportable transaction using a documented source, attach the exchange-rate schedule the instructions require, and prepare the pro forma Form 1120, Form 5472 and Part V statement. We then fax the package to the IRS Ogden PIN Unit with a timestamped transmission receipt. Every filing is reviewed by a qualified accountant before it is submitted.
 
 - **Standard:** $149, ready in 5–7 business days
-- **Express:** $199, within 3 business days
+- **Express:** $249, ready to sign within 24 hours
 - **Each additional past tax year:** +$99
 - **IRS fax delivery:** included
 

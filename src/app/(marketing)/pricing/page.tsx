@@ -19,11 +19,11 @@ import { ORG_REF, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pag
 export const metadata: Metadata = {
   title: "Pricing for Form 5472 Filing",
   description:
-    `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} within ${EXPRESS_TURNAROUND}. We fax to the IRS Ogden PIN Unit.`,
+    `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} ready in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} ready to sign within ${EXPRESS_TURNAROUND}. We fax to the IRS Ogden PIN Unit.`,
   ...pageMeta({
     title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
     description:
-      `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} within ${EXPRESS_TURNAROUND}. We fax to the IRS Ogden PIN Unit.`,
+      `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} ready in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} ready to sign within ${EXPRESS_TURNAROUND}. We fax to the IRS Ogden PIN Unit.`,
     path: "/pricing",
   }),
 };
@@ -32,21 +32,21 @@ const tierEntries = TIER_ORDER.map((key) => [key, TIERS[key]] as const);
 
 // Visible "Last reviewed" date and the WebPage dateModified share this one
 // constant so they cannot drift. Bump it whenever pricing or process copy changes.
-const PRICING_LAST_REVIEWED = "2026-10-05";
-const PRICING_LAST_REVIEWED_LABEL = "October 5, 2026";
+const PRICING_LAST_REVIEWED = "2026-10-11";
+const PRICING_LAST_REVIEWED_LABEL = "October 11, 2026";
 
 // The answer capsule under "How much does Form 5472 filing cost?": prices and
 // turnarounds come from src/lib/pricing.ts, never typed here.
-const COST_ANSWER = `Form 5472 filing costs ${formatPrice(TIERS.standard.priceCents)} on Standard (ready in ${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} on Express (ready within ${EXPRESS_TURNAROUND}), plus ${formatPrice(MULTI_YEAR_ADDON_CENTS)} for each additional past tax year. IRS fax delivery and a qualified-accountant review are included on both plans, with no subscription.`;
+const COST_ANSWER = `Form 5472 filing costs ${formatPrice(TIERS.standard.priceCents)} on Standard (ready in ${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${formatPrice(MULTI_YEAR_ADDON_CENTS)} for each additional past tax year. IRS fax delivery and a qualified-accountant review are included on both plans, with no subscription.`;
 
 const PRICING_FAQS: { q: string; a: string }[] = [
   {
     q: "How much does it cost?",
-    a: `Two flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready within ${EXPRESS_TURNAROUND}. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on either tier. IRS fax delivery to the Ogden PIN Unit is included in both.`,
+    a: `Two flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready to sign within ${EXPRESS_TURNAROUND}. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on either tier. IRS fax delivery to the Ogden PIN Unit is included in both.`,
   },
   {
     q: "What's the difference between the two tiers?",
-    a: `Only the turnaround. The filing itself is identical: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. Both tiers also include a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready within ${EXPRESS_TURNAROUND} and comes with priority email support.`,
+    a: `Only the turnaround. The filing itself is identical: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. Both tiers also include a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready to sign within ${EXPRESS_TURNAROUND} and comes with priority email support.`,
   },
   {
     q: "Is fax filing really included?",
@@ -163,7 +163,7 @@ export default function PricingPage() {
             <p className="mt-6 text-lg leading-relaxed text-slate-300 max-w-2xl mx-auto">
               Done-for-you Form 5472 + pro forma 1120 for foreign-owned US LLCs.
               Same filing either way — pick the turnaround you need:{" "}
-              {STANDARD_TURNAROUND} or within {EXPRESS_TURNAROUND}. Fax delivery
+              ready in {STANDARD_TURNAROUND}, or ready to sign within {EXPRESS_TURNAROUND} on Express. Fax delivery
               to the IRS Ogden PIN Unit is included on both plans, so you avoid
               the $25,000-per-form IRS penalty.
             </p>

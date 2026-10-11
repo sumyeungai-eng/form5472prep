@@ -101,7 +101,7 @@ The Turkish specifics — a treaty that is real but irrelevant here, a vergi kim
 
 Form5472 Prep prepares the complete package: Form 5472 with the FTIN and reference ID handled correctly, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews each one, we fax it to the IRS Ogden PIN Unit, and you get the timestamped confirmation receipt back. Past years include a reasonable cause cover letter.
 
-**$149** standard, ready in 5-7 business days. **$199** express, within 3 business days. **+$99** per additional past tax year. IRS fax delivery included, so you never send an international fax from Türkiye.
+**$149** standard, ready in 5-7 business days. **$249** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included, so you never send an international fax from Türkiye.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on Turkish tax. We prepare and submit the US information return accurately.
 

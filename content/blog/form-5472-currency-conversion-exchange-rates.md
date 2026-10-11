@@ -98,7 +98,7 @@ If a filed Form 5472 contains a material conversion error, review the [amended F
 
 Form5472 Prep prepares the filing package from the source records, not from a single typed total. We identify the transaction category, preserve the original-currency amount, apply a documented exchange-rate method, prepare Form 5472 plus the pro forma Form 1120 and Part V statement, and fax the signed package to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
-Standard service is **$149** in 5-7 business days, Express is **$199** in 3 business days, each additional past tax year is **+$99**, and fax delivery is included. EIN service is **$149** at [/ein](/ein). We are not a CPA firm and we do not give tax advice, but we do make the information-return workpaper auditable.
+Standard service is **$149** in 5-7 business days, Express is **$249**, ready to sign within 24 hours, each additional past tax year is **+$99**, and fax delivery is included. EIN service is **$149** at [/ein](/ein). We are not a CPA firm and we do not give tax advice, but we do make the information-return workpaper auditable.
 
 ## Frequently asked questions
 

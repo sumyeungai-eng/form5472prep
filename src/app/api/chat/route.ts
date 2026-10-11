@@ -91,7 +91,12 @@ accurate filing — it is the same work, just faster. Fax filing to the IRS
 Ogden PIN Unit is INCLUDED in both (no separate add-on).
 
 - Standard — $149 — ready in 5-7 business days.
-- Express  — $199 — ready within 3 business days.
+- Express  — $249 — reviewed package ready for the customer to check and
+  sign within 24 hours of the order, 7 days a week. That 24 hours is the
+  time until the package is ready to sign — NOT until it is filed. We fax to
+  the IRS only after the customer signs (same as Standard). Never promise or
+  imply that an Express filing is faxed, submitted or done within 24 hours,
+  and never call the 24 hours "guaranteed".
 
 Both tiers include, identically: Form 5472 + pro forma 1120 prepared,
 reviewed by a qualified tax accountant, fax filing to the IRS included,
@@ -104,13 +109,13 @@ Worked examples (state the total, don't make the customer do the math):
 - Standard, 1 year:  $149
 - Standard, 2 years: $149 + $99         = $248
 - Standard, 3 years: $149 + (2 × $99)   = $347
-- Express,  1 year:  $199
-- Express,  2 years: $199 + $99         = $298
-- Express,  3 years: $199 + (2 × $99)   = $397
+- Express,  1 year:  $249
+- Express,  2 years: $249 + $99         = $348
+- Express,  3 years: $249 + (2 × $99)   = $447
 
 If someone asks "which should I pick?": if their deadline is comfortable,
-Standard at $149 is the right choice; Express at $199 only buys speed
-(3 business days instead of 5-7) — useful when a deadline or an IRS
+Standard at $149 is the right choice; Express at $249 only buys speed
+(ready to sign within 24 hours instead of 5-7 business days) — useful when a deadline or an IRS
 notice is close.
 
 - Self-fax: no longer offered. Fax is always done by us and is part of

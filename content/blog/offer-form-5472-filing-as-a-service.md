@@ -45,7 +45,7 @@ Two boundaries there matter commercially. The person authorised to sign for the 
 
 ## How should you price the service to your own client?
 
-Price it as one fixed annual fee, quoted before you start, covering your coordination plus our filing fee. Our published fees are the same for partners as for direct customers: **$149 Standard**, ready in 5–7 business days; **$199 Express**, within 3 business days; **+$99 per additional past tax year** on either tier. IRS fax delivery is included, there is no platform fee and no subscription, and each filing is paid individually at checkout. Check [current pricing](/pricing) before publishing a number.
+Price it as one fixed annual fee, quoted before you start, covering your coordination plus our filing fee. Our published fees are the same for partners as for direct customers: **$149 Standard**, ready in 5–7 business days; **$249 Express**, ready to sign within 24 hours; **+$99 per additional past tax year** on either tier. IRS fax delivery is included, there is no platform fee and no subscription, and each filing is paid individually at checkout. Check [current pricing](/pricing) before publishing a number.
 
 The filing work and the accountant review are identical on both tiers; only speed differs. Express is therefore a scheduling product, not a quality one: price it as a rush surcharge.
 
@@ -68,11 +68,11 @@ Twenty clients at $399 is $7,980 in, twenty Standard filings at $149 is $2,980 o
 
 A real book is mixed. Suppose 16 of the 20 go Standard, 4 need Express, 3 also need one additional past tax year, and you charge $499 for Express and $249 per past year:
 
-- **Paid to us:** (16 × $149) + (4 × $199) + (3 × $99) = $2,384 + $796 + $297 = **$3,477**
+- **Paid to us:** (16 × $149) + (4 × $249) + (3 × $99) = $2,384 + $996 + $297 = **$3,677**
 - **Billed to your clients:** (16 × $399) + (4 × $499) + (3 × $249) = $6,384 + $1,996 + $747 = **$9,127**
-- **Your gross margin:** $9,127 − $3,477 = **$5,650**
+- **Your gross margin:** $9,127 − $3,677 = **$5,450**
 
-Check by line, not total: $250 × 16 = $4,000 on Standard, $300 × 4 = $1,200 on Express, $150 × 3 = $450 on extra years, totalling $5,650.
+Check by line, not total: $250 × 16 = $4,000 on Standard, $250 × 4 = $1,000 on Express, $150 × 3 = $450 on extra years, totalling $5,450.
 
 That is gross margin, not profit. Subtract your own time. If a filing costs your staff 40 minutes of intake, chasing and receipt-filing, a $250 margin implies about $375 an hour. If real handling time is two hours, the same $250 implies $125 an hour, and it is the price that needs revisiting, not the workflow. For market context, see [what Form 5472 filing costs](/blog/form-5472-cost).
 
@@ -121,7 +121,7 @@ Whether client emails carry your brand or ours is a separate decision, made at a
 
 ### Do we pay a platform fee or subscription to offer this?
 
-No. There is no platform fee and no subscription for a partner account. Each filing is paid individually at checkout at the published rate — $149 Standard, $199 Express, plus $99 per additional past tax year.
+No. There is no platform fee and no subscription for a partner account. Each filing is paid individually at checkout at the published rate — $149 Standard, $249 Express, plus $99 per additional past tax year.
 
 ### What commission or revenue share do you pay partners?
 

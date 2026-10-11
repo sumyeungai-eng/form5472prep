@@ -267,7 +267,7 @@ export async function POST(req: Request) {
           name: `Form5472 Prep filing, ${checkoutYearsLabel(filing.taxYears)}`,
           // The turnaround is the ONLY thing the tier buys, so it has to be on
           // the Checkout page and the receipt — otherwise an Express customer
-          // has nothing on paper saying what the extra $50 was for.
+          // has nothing on paper saying what the extra money was for.
           description: `Filing for ${filing.llcName ?? "your LLC"}, ${filing.taxYears.join(", ") || "tax year"}. ${tier.subtitle}. IRS fax delivery included.`,
           images: [`${env.appUrl}/brand/product-5472.png`],
         },
