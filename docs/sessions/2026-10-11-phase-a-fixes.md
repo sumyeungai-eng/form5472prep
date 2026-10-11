@@ -18,3 +18,8 @@ Worktree `~/Developer/f5472-wt/phase-a` (own `npm ci`), branch `seo/phase-a-2026
 
 ## Open
 - Phase B re-read on 2026-10-13 (Moz ranks Oct 11 run, AI Oct 12 run). Phase C owner items unchanged.
+
+## Later the same day (owner asked about Moz crawl issues)
+- **Crawl issues (169, Oct 11 crawl):** `robots.ts` now disallows `/start?` (the ~110 tracked `/start?src=…` noindex variants; `/start` itself stays crawlable) — `ccaa240`. Apex redirect switched 308 → **301** via Vercel API (Moz labels 308 "temporary"); the http→https hop is Vercel's own 308 and can't be changed. "URL too long" (52 blog slugs) deliberately left — never rename indexed slugs.
+- **Speed:** local Lighthouse (PSI API quota exhausted) showed mobile LCP 5.4 s on `/` and 5.2 s on `/blog/what-is-form-5472` vs ~2.9 s elsewhere. Cause: `next/script lazyOnload` could inject the 170 KB Google Ads gtag.js before a slow first paint, so Lighthouse's simulation counted it as an LCP dependency. Fix (`27aa3cf`): `src/lib/analytics/googleAdsLoader.ts` injects gtag.js only after `load` + first-contentful-paint (6 s fallback); `dataLayer` queueing and the `/embed/*` config guard unchanged, so conversions still fire. Remaining ~3 s floor = shared framework JS (separate project).
+- Contract: don't move the Google Ads tag back to `lazyOnload`/`afterInteractive` src loading without re-running Lighthouse.
