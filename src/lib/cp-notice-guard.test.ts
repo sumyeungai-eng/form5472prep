@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -7,7 +7,15 @@ import { describe, expect, it } from "vitest";
 // version and was wrongly cited across the site until 2026-10-11
 // (docs/seo/plan-2026-10-11-moz.md §3, A2). Lower-case "cp15" in ids and slug
 // regexes is allowed so existing anchors keep working.
-const FILES = ["src/lib/faq.ts", "src/lib/landing-pages.ts", "src/lib/llms.ts"];
+// Every source that renders public copy: lib modules, app pages and blog posts.
+function walk(dir: string): string[] {
+  return readdirSync(join(process.cwd(), dir)).flatMap((name) => {
+    const rel = join(dir, name);
+    if (statSync(join(process.cwd(), rel)).isDirectory()) return walk(rel);
+    return /\.(tsx?|md)$/.test(name) && !/\.test\.tsx?$/.test(name) ? [rel] : [];
+  });
+}
+const FILES = [...walk("src/lib"), ...walk("src/app"), ...walk("content/blog")];
 const WRONG_NOTICE = /\bCP-?15(?!\d)/;
 
 describe("Form 5472 penalty notice code", () => {
