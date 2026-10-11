@@ -89,7 +89,7 @@ If that describes you, catching up voluntarily — before the IRS makes contact 
 
 You cannot e-file it. The IRS instructions state that a foreign-owned US DE cannot file Form 5472 electronically, and no consumer tax software supports it.
 
-1. Complete the **pro forma Form 1120** — the LLC's name, EIN, US address, formation date and year-end total assets — signed, with **"Foreign-owned U.S. DE"** written across the top of page 1.
+1. Complete the **pro forma Form 1120** — the LLC's name and address, EIN (item B) and the applicable item E boxes — signed, with **"Foreign-owned U.S. DE"** written across the top of page 1.
 2. Complete **Form 5472**: Part I for the LLC (including the line 3 foreign-owned US DE box), Part II for you as the foreign owner with your foreign tax ID and, where no U.S. identifying number is entered, a reference ID, Part III for the related party, Part IV for listed monetary transactions, and **Part V with an attached statement** itemizing capital contributions and distributions.
 3. **Fax to 855-887-7737** or mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.
 4. **Keep the timestamped fax receipt.** The IRS sends no acknowledgement; the receipt is your only proof of filing.

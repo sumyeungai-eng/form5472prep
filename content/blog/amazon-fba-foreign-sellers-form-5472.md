@@ -114,12 +114,13 @@ From your records, identify:
 
 **Step 2: Complete the pro forma Form 1120**
 
-The pro forma Form 1120 is a one-page cover sheet. Fill in:
-- LLC legal name and EIN
-- Registered agent address in the formation state
-- Date incorporated
-- Total assets at year end (check your Mercury/Relay balance at December 31)
-- Write "Foreign-Owned U.S. DE" across the top of page 1
+The pro forma Form 1120 is a cover sheet. The Form 5472 instructions require only:
+- LLC legal name and address
+- EIN (item B)
+- The applicable item E boxes (initial return, final return, name change, address change)
+- "Foreign-owned U.S. DE" written across the top of page 1
+
+The date incorporated and total assets at year end (check your Mercury/Relay balance at December 31) go on Form 5472, lines 1m and 1c.
 
 **Step 3: Complete Form 5472**
 
@@ -180,7 +181,7 @@ No, in the usual setup. The 1% remittance transfer tax (IRC §4475) reaches only
 
 Amazon FBA is one of the clearest use cases for Form 5472: a foreign person owns a US LLC, funds it with personal capital, sells products through it, and periodically sweeps profits home. Every one of those steps generates a reportable transaction.
 
-The form itself isn't complex — two pages plus a supporting statement. The 2026 environment and faster notice generation make getting it right more consequential than in prior years.
+The form itself isn't complex — three pages plus a supporting statement. The $25,000 penalty is what makes getting it right worth the care.
 
 For context on how this fits the broader Form 5472 requirements, see [what Form 5472 is and who must file](/blog/what-is-form-5472). If you have late years to catch up on, the [DIIRSP guide](/blog/form-5472-filed-late-never-filed) covers the procedure start to finish.
 

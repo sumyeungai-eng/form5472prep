@@ -21,8 +21,8 @@ The answer most people don't want to hear: **you almost certainly still need to 
 
 - **No income ≠ no filing obligation.** Form 5472 is triggered by *transactions* between you and the LLC, not by revenue.
 - **Opening a bank account and funding it** is a capital contribution — that's a reportable transaction.
-- **The only true exemption** is zero reportable transactions in the tax year AND no other activity. This is narrower than most people assume.
-- **Pro forma Form 1120 is still required** even in years where you might qualify for the zero-transaction exemption — the IRS expects it whenever a foreign-owned DE exists.
+- **The only exemption** is a tax year with no reportable transactions of the types in Parts IV, V and VI of Form 5472. This is narrower than most people assume.
+- **Forming or funding the LLC counts.** The instructions treat contributions and amounts paid in connection with forming the LLC as Part V transactions, so a genuinely transaction-free year is rare.
 - **The penalty** is $25,000 per form, per year, under IRC §6038A(d).
 - **The fix is simple.** If you haven't filed, [DIIRSP](/diirsp) lets you catch up without criminal exposure in most cases.
 - **Want it handled?** [Start your Form 5472 filing](/start) after you collect the LLC EIN and owner transaction history.
@@ -59,7 +59,7 @@ So if:
 
 If you are trying to distinguish a true zero-transaction year from a quiet-but-reportable one, the [Do I need to file Form 5472? checker](/do-i-need-to-file-form-5472) walks through the threshold facts.
 
-But here's the catch: **even in a zero-transaction year, the IRS expects you to file a pro forma Form 1120** that identifies the LLC as a foreign-owned disregarded entity. The Form 5472 would have a checkbox checked indicating no transactions occurred. The alternative — filing nothing at all — is the position that attracts $25,000 penalties.
+But check carefully before relying on it. The instructions excuse only a year with no reportable transactions of the types in Parts IV, V and VI, and they list amounts paid or received in connection with forming the LLC, including contributions, as Part V transactions. **If any such transaction happened, the full package is due.** Filing nothing for a year that had one is what attracts the $25,000 penalty.
 
 The safest approach in any year your LLC exists: file the pro forma 1120 with either a completed Form 5472 (if there were transactions) or a Form 5472 checked as "no transactions" (if there genuinely weren't any).
 
@@ -103,11 +103,11 @@ For current flat-fee options before catching up, [see current pricing](/pricing)
 
 ## What do you file for a dormant LLC?
 
-For each tax year your foreign-owned LLC existed, you need:
+For each tax year with a reportable transaction, you need:
 
-- **Pro forma Form 1120**: Entity name, EIN, address, total assets at year end (if zero, enter 0), date incorporated. Write "Foreign-Owned U.S. DE" across the top of page 1.
-- **Form 5472**: Complete Part I (filer info), Part II (foreign shareholder info), Part III (transactions). If there were no transactions, check the box on Part III indicating no reportable transactions occurred.
-- **Part V supporting statement** (if there were transactions): Itemized list of amounts for each transaction type.
+- **Pro forma Form 1120**: the LLC's name and address, EIN (item B) and the applicable item E boxes, the only items the Form 5472 instructions require. Write "Foreign-owned U.S. DE" across the top of page 1.
+- **Form 5472**: Part I for the LLC (including total assets on line 1c and date of incorporation on line 1m), Part II for the foreign owner, Part III for the related party, and Part IV or Part V for the transactions.
+- **Part V supporting statement** (for Part V transactions): Itemized list of amounts for each transaction type.
 - **Reasonable cause statement** (if filing late): A short letter explaining the circumstances and why you had reasonable cause for the late filing.
 
 All of this gets faxed to the IRS Ogden PIN Unit at **+1-855-887-7737**. You cannot e-file this package.
@@ -118,7 +118,7 @@ All of this gets faxed to the IRS Ogden PIN Unit at **+1-855-887-7737**. You can
 
 **If my LLC had zero bank activity, do I still need to file?**
 
-If there were genuinely no transactions between you and the LLC — no capital contributions, loans, services or other value — you may not need Form 5472. But the IRS still expects a pro forma Form 1120 showing the foreign-owned DE exists. Filing nothing is riskier.
+If there were genuinely no transactions between you and the LLC — no capital contributions, loans, services or other value — the Form 5472 instructions do not require the filing for that year. Check first: an owner-paid fee or money put in to form or fund the LLC counts as a reportable transaction.
 
 **What if I didn't have an EIN?**
 
@@ -142,7 +142,7 @@ Limited first-time abatement may apply where it is tied to abatement of the rela
 
 "Dormant" is a spectrum. For Form 5472 purposes, it means exactly one thing: zero reportable transactions between the LLC and any foreign related party during the year. If you ever wired money in, paid an expense on behalf of the LLC, or moved money out — your LLC was not dormant in the IRS sense, regardless of whether it earned a dollar of revenue.
 
-The paperwork is not difficult. The penalty for ignoring it is severe. If you have years of unfiled returns, the [DIIRSP process](/diirsp) exists specifically for this situation — and earlier is better, because the $25,000 continuation penalties compound by the month. The [Form 5472 penalty calculator](/form-5472-penalty-calculator) models the exposure year by year.
+The paperwork is not difficult. The penalty for ignoring it is severe. If you have years of unfiled returns, the [DIIRSP process](/diirsp) exists specifically for this situation — and earlier is better, because once the IRS mails a notice, continuation penalties of $25,000 per 30-day period can start after 90 days. The [Form 5472 penalty calculator](/form-5472-penalty-calculator) models the exposure year by year.
 
 For a broader overview of who needs to file and what the form covers, see our [guide to what Form 5472 is and who must file](/blog/what-is-form-5472).
 

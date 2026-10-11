@@ -67,7 +67,7 @@ A concrete example: you're a UK-based developer. You opened a Wyoming LLC to rec
 
 Two documents, submitted together:
 
-**1. Pro forma Form 1120** — this is the US corporation income tax return, but you don't fill most of it in. You complete the entity identification section at the top (LLC name, EIN, US address, formation date, year-end total assets) and write **"Foreign-Owned U.S. DE"** in bold across the top of page 1. That's it. No income figures. No deductions. It's purely a structural envelope for Form 5472.
+**1. Pro forma Form 1120** — this is the US corporation income tax return, but you don't fill most of it in. You complete only the LLC's name and address, EIN (item B) and the applicable item E boxes, the items the Form 5472 instructions require, and write **"Foreign-Owned U.S. DE"** in bold across the top of page 1. That's it. No income figures. No deductions. It's purely a structural envelope for Form 5472.
 
 **2. Form 5472** — the actual information return. You fill in:
 - Part I: entity details (LLC) and owner details (you, as a UK resident)

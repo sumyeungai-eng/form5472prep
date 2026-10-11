@@ -87,7 +87,7 @@ That third point is the one most often missed in Dubai structures, where a US LL
 
 You cannot e-file. The IRS instructions state that a foreign-owned US DE cannot file Form 5472 electronically, and no consumer tax software supports it.
 
-1. **Prepare the pro forma Form 1120** — the LLC's name, EIN, US address, formation date and year-end total assets — signed, with **"Foreign-owned U.S. DE"** written across the top of page 1.
+1. **Prepare the pro forma Form 1120** — the LLC's name and address, EIN (item B) and the applicable item E boxes — signed, with **"Foreign-owned U.S. DE"** written across the top of page 1.
 2. **Prepare Form 5472** — Part I for the LLC including the line 3 foreign-owned US DE box, Part II for you with your UAE address, "None" or "N/A" in the FTIN block and a reference ID, Part III for the related party, Part IV for listed monetary transactions, and **Part V with an attached statement** itemizing contributions and distributions.
 3. **Convert everything to US dollars.** AED amounts must be converted at a reasonable rate for the transaction date, applied consistently. The UAE government's fact sheet states that the AED is pegged to the dollar at [1 USD = AED 3.6725](https://u.ae/en/about-the-uae/fact-sheet), which makes this simpler than for most currencies — but state your basis in the Part V statement.
 4. **Fax to 855-887-7737**, or mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.

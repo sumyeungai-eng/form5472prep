@@ -101,9 +101,9 @@ If you send money from the LLC's US bank account to your Indian bank account by 
 
 ## What do you actually need to file?
 
-**For each tax year** your foreign-owned US LLC existed:
+**For each tax year** with a reportable transaction:
 
-1. **Pro forma Form 1120**: Entity name, EIN, address, date incorporated, total assets at year end. Write "Foreign-Owned U.S. DE" across the top of page 1. Leave income and deduction fields blank.
+1. **Pro forma Form 1120**: the LLC's name and address, EIN (item B) and the applicable item E boxes, the only items the Form 5472 instructions require. Write "Foreign-owned U.S. DE" across the top of page 1. Leave income and deduction fields blank.
 
 2. **Form 5472**:
    - Part I: The LLC's information (EIN, name, address, tax year)
@@ -153,7 +153,7 @@ A single-member LLC has exactly one owner. If there are two of you, the entity i
 
 ## The bottom line
 
-The Form 5472 obligation applies to Indian residents exactly as it does to anyone else who is a non-US person owning a US single-member LLC. The form isn't complex — typically two pages of information plus a supporting statement. The penalty for ignoring it is not.
+The Form 5472 obligation applies to Indian residents exactly as it does to anyone else who is a non-US person owning a US single-member LLC. The form isn't complex — three pages plus a supporting statement. The penalty for ignoring it is not.
 
 Use your PAN number as your FTIN, remember that the BOI obligation has been lifted for US-formed LLCs, and file by April 15 (or extend to October 15 with Form 7004). The penalty for ignoring the federal package is **$25,000 per form, per year** (IRC §6038A(d)).
 

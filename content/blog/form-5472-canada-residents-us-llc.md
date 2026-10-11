@@ -101,9 +101,9 @@ This structure is more complex and often warrants a tax professional who handles
 
 ## What do you actually file?
 
-For each tax year your Canadian-owned US LLC existed, you need:
+For each tax year with a reportable transaction, you need:
 
-1. **Pro forma Form 1120**: LLC name, EIN, address, date incorporated, total assets at year end. Write "Foreign-Owned U.S. DE" across the top of page 1. Leave income fields blank.
+1. **Pro forma Form 1120**: the LLC's name and address, EIN (item B) and the applicable item E boxes, the only items the Form 5472 instructions require. Write "Foreign-owned U.S. DE" across the top of page 1. Leave income fields blank.
 
 2. **Form 5472**:
    - Part I: LLC's information (EIN, name, address, tax year)

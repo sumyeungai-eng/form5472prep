@@ -2,7 +2,7 @@
 title: "What Is IRS Form 5472? A Jargon-Free Guide"
 description: "Form 5472 is an IRS return foreign-owned US LLCs must file yearly, even with zero revenue. See who must file it and what a missed filing actually costs."
 date: 2026-05-19
-updated: 2026-10-05
+updated: 2026-10-11
 author: "Form5472 Prep"
 tags: ["form-5472", "foreign-owned-llc", "getting-started"]
 draft: false
@@ -54,14 +54,14 @@ This is the trap. Plenty of foreign-owned LLCs are quiet — no customers, just 
 
 Wrong. Two things to know:
 
-1. **Reportable transactions include contributions and distributions.** If you put $500 into the LLC's Mercury account when you opened it, that's a reportable transaction.
-2. **Even with zero reportable transactions, the IRS expects a pro forma Form 1120 with the boxes checked indicating you're a foreign-owned DE.** The current view is that filing is still safest in any year the LLC exists and is owned by a non-US person.
+1. **Reportable transactions include contributions and distributions.** The Form 5472 instructions list amounts paid or received in connection with forming the LLC, including contributions to it and distributions from it, as Part V transactions. If you put $500 into the LLC's Mercury account when you opened it, that's a reportable transaction.
+2. **The only exception is a year with no reportable transactions.** The instructions excuse a foreign-owned DE only for a year with no transactions of the types listed in Parts IV, V and VI of the form. Because forming and funding the LLC counts, a year in which truly nothing moved between you and the LLC is rarer than most owners think.
 
 When in doubt, file. The penalty for not filing is a five-figure number; the cost of filing is much less.
 
 ## What's the pro forma 1120 thing?
 
-The IRS doesn't have a standalone form to attach Form 5472 to for a [disregarded entity](/what-is-a-disregarded-entity), so the rule says you file Form 5472 **attached to a pro forma Form 1120**. The Form 1120 is mostly blank — just the entity name, EIN, address, formation date, and total assets at year end. Across the top of page 1 you write "Foreign-Owned U.S. DE." It's a vehicle for the Form 5472, not a real income tax return. To see the finished package, look at a [completed Form 5472 example](/form-5472-example).
+The IRS doesn't have a standalone form to attach Form 5472 to for a [disregarded entity](/what-is-a-disregarded-entity), so the rule says you file Form 5472 **attached to a pro forma Form 1120**. The Form 5472 instructions say the only information required on the Form 1120 is the LLC's name and address and items B (EIN) and E on page 1, and that "Foreign-owned U.S. DE" should be written across the top. The date of incorporation and total assets are asked on Form 5472 itself (lines 1m and 1c). It's a vehicle for the Form 5472, not a real income tax return. To see the finished package, look at a [completed Form 5472 example](/form-5472-example).
 
 ## How much is the Form 5472 penalty?
 
@@ -90,7 +90,7 @@ Do not rely on an automatic extension for living abroad. The Form 5472 instructi
 
 ### Do I need to file Form 5472 if my LLC had no income?
 
-Almost certainly yes. Form 5472 reports *transactions*, not income. Money you wired into the LLC is a reportable capital contribution, and withdrawals count too. You can skip only a year with no money, property, or services moving either way, and the IRS still expects a pro forma Form 1120.
+Almost certainly yes. Form 5472 reports *transactions*, not income. Money you wired into the LLC is a reportable capital contribution, and withdrawals count too. You can skip only a year with no reportable transactions of the types in Parts IV, V and VI, meaning no money, property or services moved either way. For that year the instructions do not require Form 5472, and a foreign-owned DE has no separate income tax return to file.
 
 ### Can I e-file Form 5472?
 
@@ -98,11 +98,11 @@ No. A foreign-owned US disregarded entity cannot e-file Form 5472 or its pro for
 
 ### What is the fax number for Form 5472?
 
-The IRS Ogden PIN Unit fax number is **+1-855-887-7737**. Fax the complete package — pro forma Form 1120, Form 5472, and the Part V supporting statement — and keep the timestamped transmission receipt as your proof of timely filing under IRC § 6038A.
+The IRS Ogden PIN Unit fax number is **+1-855-887-7737**. Fax the complete package — pro forma Form 1120, Form 5472, and the Part V supporting statement — and keep the timestamped transmission receipt as your record of what was sent and when. It is not an IRS acceptance notice.
 
 ### Does Form 5472 need a signature?
 
-Yes. The pro forma Form 1120 that Form 5472 attaches to must be signed. The IRS requires an ink/wet signature on these filings — a digital-only signature is not accepted for a foreign-owned disregarded entity return.
+Yes. The pro forma Form 1120 that Form 5472 attaches to has a signature block and is signed by a person authorized to sign for the LLC. The Form 5472 instructions do not set a separate signature method for this fax-or-mail package, so keep a record of who signed and how.
 
 ### Do I need an ITIN or SSN to file Form 5472?
 
