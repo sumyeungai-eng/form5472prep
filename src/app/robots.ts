@@ -7,7 +7,10 @@ import { env } from "@/lib/env";
 // reaching Google. We explicitly opt every major AI crawler into the
 // public marketing surface; the disallow list matches what we hide from
 // general search engines too (authenticated app routes + API).
-const APP_ROUTES_TO_HIDE = ["/dashboard", "/filings", "/admin", "/api/"];
+// "/start?" blocks only the tracked CTA variants (/start?src=…, ~110 URLs):
+// they are noindex duplicates of /start and were 110 of Moz's 114 "meta
+// noindex" crawl issues (2026-10-11). /start itself stays crawlable.
+const APP_ROUTES_TO_HIDE = ["/dashboard", "/filings", "/admin", "/api/", "/start?"];
 
 // AI crawler user-agents we explicitly allow. Maintaining this list (vs.
 // relying on the default `User-agent: *`) ensures we keep access even if
