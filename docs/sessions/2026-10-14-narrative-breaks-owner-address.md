@@ -16,3 +16,6 @@ Worktree `~/Developer/f5472-wt/a26-fix` (branch `fix/a26-newline-address` from o
 
 ## Open
 - Owner-gated: whether to override A26 on the live order or reword its narrative.
+
+## Addendum — override button hint
+- Owner reported "Approve despite pre-flight failures doesn't work": the button is disabled until the reason has ≥10 non-space characters and nothing said so. `AdminActions.tsx` now shows "Type a reason above to enable this button (N more characters needed)." (+ test). Agents may type the reason but the approval click is the owner's (auto-mode classifier blocks it).

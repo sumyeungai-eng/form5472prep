@@ -226,7 +226,8 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
     }
   }
 
-  const preflightOverrideReady = preflightOverrideReason.trim().replace(/\s/g, "").length >= 10;
+  const preflightOverrideChars = preflightOverrideReason.trim().replace(/\s/g, "").length;
+  const preflightOverrideReady = preflightOverrideChars >= 10;
   const preflightAllowsSignature = preflightStatus === "passed" || !!preflightOverrideBy;
   // Same rule as the server's upload gate: failed pre-flight with no override.
   const reviewedUploadBlocked = preflightStatus === "failed" && !preflightOverrideBy;
@@ -280,6 +281,12 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent disabled:bg-slate-50 disabled:text-slate-400"
             />
           </label>
+          {!preflightOverrideReady && (
+            <p className="text-xs text-amber-700">
+              Type a reason above to enable this button ({10 - preflightOverrideChars} more{" "}
+              {10 - preflightOverrideChars === 1 ? "character" : "characters"} needed).
+            </p>
+          )}
           <ActionButton
             disabled={pending || uploading !== null || !preflightOverrideReady}
             onClick={async () => {

@@ -86,6 +86,13 @@ describe("AdminActions › pre-flight gate on the reviewed-PDF upload (spec item
     "Pre-flight failed (checked 2026-10-10 12:14 UTC) and no override is recorded, so the reviewed PDF can't be uploaded yet. Failing checks: A32.";
   const reviewProps = { ...baseProps, currentStatus: "PDF_GENERATED", hasSignedPdf: false, hasCustomerSignature: false };
 
+  it("explains why the override button is disabled until a reason is typed", () => {
+    const html = renderToStaticMarkup(
+      <AdminActions {...reviewProps} preflightStatus="failed" preflightBlockedReason={blockedReason} />,
+    );
+    expect(html).toContain("Type a reason above to enable this button (10 more characters needed).");
+  });
+
   it("shows the upload visibly disabled, with the reason inline and a link to the override form", () => {
     const html = renderToStaticMarkup(
       <AdminActions {...reviewProps} preflightStatus="failed" preflightBlockedReason={blockedReason} />,
