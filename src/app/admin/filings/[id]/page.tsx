@@ -7,12 +7,25 @@ import { prisma } from "@/lib/prisma";
 import { formatAttribution, hasAttribution } from "@/lib/attribution";
 import { formatUsd } from "@/lib/utils";
 import { publicUrl } from "@/lib/storage";
-import { effectiveDueDateUtc, filingDueDateUtc, formatDueDate } from "@/lib/schemas";
-import { canResendFaxConfirmation, extensionReviewFlags } from "@/lib/admin/filingActions";
+import {
+  effectiveDueDateUtc,
+  filingDueDateUtc,
+  formatDueDate,
+  isYearDelinquent,
+  isYearDelinquentForPackage,
+} from "@/lib/schemas";
+import {
+  canResendFaxConfirmation,
+  extensionReviewFlags,
+  isReviewedPdfKey,
+  PACKAGE_DATA_CHANGE_WHERE,
+  preflightBlockedMessage,
+} from "@/lib/admin/filingActions";
+import { housePreparerConfigStatus } from "@/config/housePreparer";
 import { isValidPbaCode } from "@/lib/irsCodes";
 import { StatusBadge } from "../StatusBadge";
 import { AdminPageHeader } from "../../_components/AdminPageHeader";
-import { AdminActions } from "./AdminActions";
+import { AdminActions, RerunPreflightButton } from "./AdminActions";
 import { EditFieldsCard } from "./EditFieldsCard";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { LinkedFaxes } from "@/components/admin/LinkedFaxes";
@@ -63,6 +76,24 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         select: { email: true },
       })
     : null;
+
+  // Stale pre-flight (spec item 1): the newest change-logged edit to the data
+  // the package is built from, compared with when pre-flight last ran.
+  // Filing.updatedAt is not used: fax polls, emails and review flags touch it.
+  const latestDataChange = await prisma.filingChangeLog
+    .findFirst({
+      where: { filingId: filing.id, ...PACKAGE_DATA_CHANGE_WHERE },
+      orderBy: { changedAt: "desc" },
+      select: { changedAt: true, field: true },
+    })
+    .catch((err: unknown) => {
+      console.error("[admin filing] change-log query failed", err);
+      return null;
+    });
+  const preflightStale =
+    !!filing.preflightCheckedAt &&
+    !!latestDataChange &&
+    latestDataChange.changedAt.getTime() > filing.preflightCheckedAt.getTime();
 
   // Returns on the same order: the original plus any linked extra returns.
   const linkedRootId = filing.linkedToFilingId ?? filing.id;
@@ -175,6 +206,26 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
     filing.extensionDestination != null ||
     filing.extensionProofKey != null;
   const reviewFlags = extensionReviewFlags(filing);
+  // Late years as the PACKAGE sees them (generator 2.3.0, D2): a "not sure"
+  // Form 7004 counts as no extension there, while customer screens (and the
+  // stored isDiirsp flag) keep treating that year as undetermined. Shown so
+  // this page never contradicts the package it is about to send.
+  const extensionFacts = { filed: filing.extensionFiled, transmittedAt: filing.extensionTransmittedAt };
+  const packageYears = [...filing.taxYears]
+    .sort((a, b) => a - b)
+    .map((taxYear) => {
+      const facts = taxYear === maxTaxYear ? extensionFacts : null;
+      const late = isYearDelinquentForPackage(taxYear, dissolvedForDeadline, facts);
+      return { taxYear, late, unconfirmed: late && !isYearDelinquent(taxYear, dissolvedForDeadline, facts) };
+    });
+  const packageLateYears = packageYears.filter((y) => y.late);
+  const packageLateText =
+    packageLateYears.length === 0
+      ? "None — every year is timely"
+      : packageLateYears
+          .map((y) => (y.unconfirmed ? `${y.taxYear} (late per package — extension not confirmed)` : String(y.taxYear)))
+          .join(", ");
+  const diirspContradiction = !filing.isDiirsp && packageLateYears.length > 0;
   const businessCodeTaxYear = maxTaxYear ?? new Date().getFullYear() - 1;
   const businessCodeWarning =
     filing.llcBusinessCode != null &&
@@ -229,6 +280,9 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
       </div>
 
       <PreflightPanel
+        filingId={filing.id}
+        stale={preflightStale}
+        latestDataChange={latestDataChange}
         status={filing.preflightStatus}
         failures={filing.preflightFailures}
         warnings={filing.preflightWarnings}
@@ -261,6 +315,10 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           canResendFaxConfirmation={canResendFaxConfirmation(filing)}
           preflightStatus={filing.preflightStatus}
           preflightOverrideBy={filing.preflightOverrideBy}
+          preflightBlockedReason={
+            filing.preflightStatus === "failed" && !filing.preflightOverrideBy ? preflightBlockedMessage(filing) : null
+          }
+          hasReviewedPdf={isReviewedPdfKey(filing.generatedPdfKey)}
           reviewApprovedAt={filing.reviewApprovedAt ? filing.reviewApprovedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
           reviewApprovedBy={reviewApprovedAdmin?.email ?? displayStaffIdentity(filing.reviewApprovedBy)}
           faxedAt={filing.faxedAt ? filing.faxedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
@@ -309,16 +367,24 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
               : null,
             extensionMethod: filing.extensionMethod,
             extensionDestination: filing.extensionDestination,
+            // Generator 2.3.0 paid preparer block (staff-only).
+            paidPreparerMode: filing.paidPreparerMode === "house" ? "house" : null,
+            irsMayDiscussWithPreparer: filing.irsMayDiscussWithPreparer,
           }}
           years={filing.yearData.map((year) => ({
             taxYear: year.taxYear,
             rcsWhyMissed: year.rcsWhyMissed,
             rcsWhenLearned: year.rcsWhenLearned,
             rcsNoIrsNoticeConfirmed: year.rcsNoIrsNoticeConfirmed,
+            rcsAdminNarrative: year.rcsAdminNarrative,
+            rcsLearnedOn: year.rcsLearnedOn ? year.rcsLearnedOn.toISOString().slice(0, 10) : null,
+            rcsSmallCorpParagraph: year.rcsSmallCorpParagraph,
+            packageLate: packageYears.some((y) => y.taxYear === year.taxYear && y.late),
             nonCashTransfers: year.nonCashTransfers,
             ownerPaidCosts: year.ownerPaidCosts,
             zeroConfirmations: year.zeroConfirmations,
           }))}
+          housePreparerConfig={housePreparerConfigStatus()}
         />
       </div>
 
@@ -383,9 +449,19 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             label="Fax delivery"
             value={filing.faxService ? "We fax it (paid)" : "Customer self-faxes (DIY — no action needed from us)"}
           />
-          <Field label="DIIRSP" value={filing.isDiirsp ? "Yes — delinquent submission" : "No (current year)"} />
-          {filing.isDiirsp && (
-            <Field label="Reasonable cause" value={filing.reasonableCauseNarrative} multiline />
+          <Field
+            label="DIIRSP"
+            value={
+              filing.isDiirsp
+                ? "Yes — delinquent submission"
+                : diirspContradiction
+                  ? "No on customer screens — but the package treats the year(s) below as late"
+                  : "No (current year)"
+            }
+          />
+          {maxTaxYear != null && <Field label="Late years (package)" value={packageLateText} />}
+          {filing.reasonableCauseNarrative?.trim() && (
+            <Field label="Customer's reasonable-cause message (never printed)" value={filing.reasonableCauseNarrative} multiline />
           )}
           {/* Final-return block. The dissolution certificate is OPTIONAL —
               when it's missing the row prompts the preparer to confirm the
@@ -472,7 +548,14 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         {/* Files — span both columns */}
         <div className="md:col-span-2">
           <DetailCard title="Files">
-            <FileRow label="Generated PDF (unsigned)" url={generatedPdfUrl} />
+            <FileRow
+              label={
+                isReviewedPdfKey(filing.generatedPdfKey)
+                  ? "Current client version (reviewed upload — the client signs this)"
+                  : "Generated PDF (unsigned — the client signs this once reviewed)"
+              }
+              url={generatedPdfUrl}
+            />
             <FileRow label="Signed PDF (current)" url={signedPdfUrl} />
             <FileRow
               label={filing.faxedAt ? `Faxed PDF snapshot (sent ${filing.faxedAt.toISOString().slice(0, 16).replace("T", " ")} UTC)` : "Faxed PDF snapshot"}
@@ -581,6 +664,9 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
 }
 
 function PreflightPanel({
+  filingId,
+  stale,
+  latestDataChange,
   status,
   failures,
   warnings,
@@ -592,6 +678,9 @@ function PreflightPanel({
   overrideById,
   overrideAt,
 }: {
+  filingId: string;
+  stale: boolean;
+  latestDataChange: { changedAt: Date; field: string } | null;
   status: string | null;
   failures: unknown;
   warnings: unknown;
@@ -622,14 +711,30 @@ function PreflightPanel({
         <div>
           <h2 className={`text-sm font-semibold ${isFailed ? "text-red-900" : isPassed ? "text-emerald-900" : "text-slate-900"}`}>
             {isFailed ? "Pre-flight failed" : isPassed ? "Pre-flight passed" : "Pre-flight not run"}
+            {stale && (
+              <span className="ml-2 inline-flex rounded-full border border-amber-300 bg-amber-100 px-2 py-0.5 align-middle text-[11px] font-medium text-amber-900">
+                Stale
+              </span>
+            )}
           </h2>
           {checkedAt && (
             <p className="mt-1 text-xs text-slate-500">
-              Checked {checkedAt.toISOString().slice(0, 16).replace("T", " ")} UTC
+              Checked {formatUtcMinute(checkedAt)} UTC
             </p>
           )}
+          {stale && latestDataChange && (
+            <p className="mt-1 text-xs text-amber-900">
+              Order data changed after this check ({latestDataChange.field}, {formatUtcMinute(latestDataChange.changedAt)} UTC).
+              Re-run pre-flight to see current findings.
+            </p>
+          )}
+          <p className="mt-1 text-xs text-slate-500">
+            Pre-flight checks the order data (the package is rebuilt in memory), not an uploaded PDF. It re-runs after every
+            field save and after Regenerate.
+          </p>
         </div>
-        <div className="text-xs text-slate-600 sm:text-right">
+        <div className="flex flex-col gap-2 text-xs text-slate-600 sm:items-end sm:text-right">
+          <RerunPreflightButton filingId={filingId} />
           <div>Generator: {generatorVersion ?? "unknown"}</div>
           <div className="font-mono">Commit: {generatorCommit ?? "unknown"}</div>
         </div>
@@ -669,7 +774,7 @@ function PreflightPanel({
             {overrideAt && (
               <div>
                 <dt className="inline font-medium">Approved at: </dt>
-                <dd className="inline">{overrideAt.toISOString().slice(0, 16).replace("T", " ")} UTC</dd>
+                <dd className="inline">{formatUtcMinute(overrideAt)} UTC</dd>
               </div>
             )}
             <div>
@@ -681,6 +786,10 @@ function PreflightPanel({
       )}
     </div>
   );
+}
+
+function formatUtcMinute(date: Date): string {
+  return date.toISOString().slice(0, 16).replace("T", " ");
 }
 
 function issueRows(value: unknown): { id: string; message: string }[] {

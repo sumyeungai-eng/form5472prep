@@ -3,7 +3,13 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => {} }) }));
 
-import { AdminActions, parseActionError, refaxReasonIsValid } from "./AdminActions";
+import {
+  AdminActions,
+  parseActionError,
+  REVIEWED_PDF_REGENERATE_CONFIRM,
+  refaxReasonIsValid,
+  RerunPreflightButton,
+} from "./AdminActions";
 
 const baseProps = {
   filingId: "filing_1",
@@ -72,5 +78,62 @@ describe("parseActionError", () => {
     expect(parseActionError("Bad gateway", 502)).toEqual({ message: "Bad gateway" });
     expect(parseActionError("", 500)).toEqual({ message: "HTTP 500" });
     expect(parseActionError(`<html>${"x".repeat(600)}</html>`, 500)).toEqual({ message: "HTTP 500" });
+  });
+});
+
+describe("AdminActions › pre-flight gate on the reviewed-PDF upload (spec item 1)", () => {
+  const blockedReason =
+    "Pre-flight failed (checked 2026-10-10 12:14 UTC) and no override is recorded, so the reviewed PDF can't be uploaded yet. Failing checks: A32.";
+  const reviewProps = { ...baseProps, currentStatus: "PDF_GENERATED", hasSignedPdf: false, hasCustomerSignature: false };
+
+  it("shows the upload visibly disabled, with the reason inline and a link to the override form", () => {
+    const html = renderToStaticMarkup(
+      <AdminActions {...reviewProps} preflightStatus="failed" preflightBlockedReason={blockedReason} />,
+    );
+    expect(html).toContain("Upload reviewed PDF (blocked by pre-flight)");
+    expect(html).toContain('aria-disabled="true"');
+    expect(html).not.toContain("Upload reviewed PDF &amp; send to client…");
+    expect(html).toContain("Failing checks: A32.");
+    expect(html).toContain('href="#preflight-override"');
+    expect(html).toContain('id="preflight-override"');
+    expect(html).toContain("Approve despite pre-flight failures");
+  });
+
+  it("enables the upload once an override is recorded (or pre-flight passes)", () => {
+    for (const props of [
+      { preflightStatus: "failed", preflightOverrideBy: "admin_2" },
+      { preflightStatus: "passed", preflightOverrideBy: null },
+    ]) {
+      const html = renderToStaticMarkup(<AdminActions {...reviewProps} {...props} preflightBlockedReason={null} />);
+      expect(html).toContain("Upload reviewed PDF &amp; send to client…");
+      expect(html).not.toContain("blocked by pre-flight");
+    }
+  });
+});
+
+describe("AdminActions › reviewed PDF is the client version (spec item 12)", () => {
+  it("offers the latest generated draft and explains which file the client signs and which is faxed", () => {
+    const html = renderToStaticMarkup(<AdminActions {...baseProps} currentStatus="SIGNATURE_PENDING" hasReviewedPdf />);
+    expect(html).toContain("Download latest generated draft");
+    expect(html).toContain("/api/admin/filings/filing_1/pdf?variant=draft&amp;download=1");
+    expect(html).toContain("current client version");
+    expect(html).toContain("Regenerate only writes a draft and never replaces the reviewed upload.");
+    expect(html).toContain("The fax sends the");
+  });
+
+  it("does not offer a draft download when no reviewed PDF is current", () => {
+    expect(renderToStaticMarkup(<AdminActions {...baseProps} />)).not.toContain("Download latest generated draft");
+  });
+
+  it("uses the spec's confirmation text", () => {
+    expect(REVIEWED_PDF_REGENERATE_CONFIRM).toBe(
+      "A reviewed PDF is the current client version. Regenerating will not replace it unless you upload again.",
+    );
+  });
+});
+
+describe("RerunPreflightButton", () => {
+  it("renders the Re-run pre-flight control", () => {
+    expect(renderToStaticMarkup(<RerunPreflightButton filingId="filing_1" />)).toContain("Re-run pre-flight");
   });
 });

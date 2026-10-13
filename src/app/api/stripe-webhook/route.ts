@@ -12,6 +12,7 @@ import { effectiveDueDateUtc, extensionUnclear, formatDueDate } from "@/lib/sche
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { runPreflight } from "@/lib/pdf/preflight";
+import { persistNewPackagePreflight } from "@/lib/pdf/persistPreflight";
 import { putPdf } from "@/lib/storage";
 import { sendMetaPurchase } from "@/lib/analytics/metaServer";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
@@ -218,23 +219,22 @@ export async function POST(req: Request) {
           pdfSignatures = result.signatures;
           const key = `${filing.id}_unsigned.pdf`;
           await putPdf(key, result.bytes);
+          // A failed pre-flight is staff-only: it never changes what the
+          // customer is sent (the confirmation below says the package is in
+          // review either way) and it is stripped from every customer API.
+          // Every new late order fails A32 until an admin writes the RCS
+          // narrative; the admin page shows why and how to fix it.
           const preflight = await runPreflight(result.record, result.bytes);
-          await prisma.filing.update({
-            where: { id: filing.id },
+          await persistNewPackagePreflight({
+            filingId: filing.id,
+            preflight,
+            record: result.record,
             data: {
               generatedPdfKey: key,
               status: "PDF_GENERATED",
-              preflightStatus: preflight.ok ? "passed" : "failed",
-              preflightFailures: preflight.failures,
-              preflightWarnings: preflight.warnings,
-              preflightCheckedAt: new Date(),
-              generatorVersion: result.record.generatorVersion,
-              generatorCommit: result.record.commit,
               // A new package needs a new review: an approval given for an earlier
-              // package must never carry over to this one.
-              preflightOverrideBy: null,
-              preflightOverrideAt: null,
-              preflightOverrideReason: null,
+              // package must never carry over to this one (the helper also
+              // clears any pre-flight override).
               reviewApprovedAt: null,
               reviewApprovedBy: null,
             },

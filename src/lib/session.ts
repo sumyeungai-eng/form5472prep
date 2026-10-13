@@ -161,6 +161,11 @@ export const STAFF_ONLY_FILING_FIELDS = [
   // Generator 2.3.0 admin settings for the Form 1120 paid preparer block.
   "paidPreparerMode",
   "irsMayDiscussWithPreparer",
+  // Pre-flight findings are staff-only: since 2026-10-14 they quote the
+  // admin-authored RCS narrative and the customer's own explanation (spec
+  // item 2), and no customer screen reads them.
+  "preflightFailures",
+  "preflightWarnings",
 ] as const;
 type StaffOnlyFilingField = (typeof STAFF_ONLY_FILING_FIELDS)[number];
 

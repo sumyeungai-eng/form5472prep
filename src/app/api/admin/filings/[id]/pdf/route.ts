@@ -12,6 +12,10 @@ export const dynamic = "force-dynamic";
 // the unsigned PDF for click-to-place. ?signed=1 returns the signed PDF if
 // one exists (for previewing after embedding). ?download=1 sends it as a
 // file download with a readable name instead of opening it in the browser.
+// ?variant=draft returns the latest GENERATED package (`${id}_unsigned.pdf`)
+// even while an accountant-reviewed upload is the client version
+// (generatedPdfKey = *_reviewed_*): Regenerate writes the draft there and
+// leaves the client version alone (spec item 12).
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   if (!(await isAdmin())) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
@@ -24,9 +28,13 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   const url = new URL(req.url);
   const wantSigned = url.searchParams.get("signed") === "1";
   const wantFaxed = url.searchParams.get("faxed") === "1";
+  const wantDraft = url.searchParams.get("variant") === "draft";
   let key: string | null;
   let missingLabel: string;
-  if (wantFaxed) {
+  if (wantDraft) {
+    key = `${params.id}_unsigned.pdf`;
+    missingLabel = "no generated draft on file";
+  } else if (wantFaxed) {
     key = filing.faxedPdfKey;
     missingLabel = "no faxed PDF snapshot on file (faxing predates the snapshot feature, or fax hasn't been sent yet)";
   } else if (wantSigned) {
@@ -40,9 +48,15 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     return NextResponse.json({ error: missingLabel }, { status: 404 });
   }
 
-  const bytes = await getPdf(key);
+  let bytes: Uint8Array;
+  try {
+    bytes = await getPdf(key);
+  } catch (err) {
+    if (!wantDraft) throw err;
+    return NextResponse.json({ error: missingLabel }, { status: 404 });
+  }
   const download = url.searchParams.get("download") === "1";
-  const kind = wantFaxed ? "faxed" : wantSigned ? "signed" : "unsigned";
+  const kind = wantDraft ? "draft" : wantFaxed ? "faxed" : wantSigned ? "signed" : "unsigned";
   return new NextResponse(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",

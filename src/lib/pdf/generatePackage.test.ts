@@ -862,7 +862,12 @@ describe("generator 2.3.0: preflight-generator spec", () => {
     // Customer explanation is on the record for the admin/pre-flight only.
     expect(year.rcs?.customerExplanation.whyMissed).toBe(CUSTOMER_INTAKE_TEXT);
     const preflight = await runPreflight(pkg.record, pkg.bytes);
-    expect(preflight.failures).toContainEqual({ id: "A26", message: "Reasonable cause answers missing for 2024." });
+    // Lane B (item 3): the dedicated A32 error replaces the generic A26 "answers missing" message.
+    expect(preflight.failures).toContainEqual({
+      id: "A32",
+      message: expect.stringContaining("RCS narrative not written for tax year 2024."),
+    });
+    expect(preflight.failures.some((f) => f.id === "A26")).toBe(false);
   }, PDF_TIMEOUT);
 
   it("item 3: an admin narrative renders as the only cause narrative", async () => {

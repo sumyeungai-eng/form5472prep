@@ -12,6 +12,8 @@ const db = vi.hoisted(() => ({
   yearFindUnique: vi.fn(),
   yearUpdate: vi.fn((args: unknown) => ({ op: "filingYearData.update", args })),
   createLog: vi.fn((args: unknown) => ({ op: "log.create", args })),
+  // Latest "preflightOverride" change-log row (the override's approvedFailures).
+  findFirstLog: vi.fn(async (_args: unknown): Promise<unknown> => null),
   // Array form returns the ops; callback form runs with a tx that reuses the
   // same mocks (filing.updateMany / filingChangeLog.create).
   transaction: vi.fn(async (ops: unknown): Promise<unknown> =>
@@ -53,14 +55,20 @@ const pdf = vi.hoisted(() => ({
     signatures: [],
     record: { generatorVersion: "test-version", commit: "test-commit" },
   })),
-  runPreflight: vi.fn(async () => ({ ok: true, failures: [], warnings: [] })),
+  runPreflight: vi.fn(
+    async (): Promise<{
+      ok: boolean;
+      failures: Array<{ id: string; message: string }>;
+      warnings: Array<{ id: string; message: string }>;
+    }> => ({ ok: true, failures: [], warnings: [] }),
+  ),
 }));
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     filing: { findUnique: db.findUnique, update: db.update, updateMany: db.updateMany },
     filingYearData: { findUnique: db.yearFindUnique, update: db.yearUpdate },
-    filingChangeLog: { create: db.createLog },
+    filingChangeLog: { create: db.createLog, findFirst: db.findFirstLog },
     $transaction: db.transaction,
   },
 }));
@@ -95,7 +103,10 @@ vi.mock("@/lib/env", () => ({
 
 import {
   canResendFaxConfirmation,
+  FILING_ACTION_NAMES,
   FilingActionError,
+  isPackageDataChangeField,
+  isReviewedPdfKey,
   isValidForceOverride,
   MANUAL_FAX_CLAIM,
   refaxDecision,
@@ -114,6 +125,11 @@ describe("SIDE_EFFECTING_ACTIONS", () => {
       "resendOrderConfirmation",
       "retryFax",
     ]);
+  });
+
+  it("offers rerunPreflight as an action that needs no idempotency key (it writes no PDF and sends nothing)", () => {
+    expect(FILING_ACTION_NAMES).toContain("rerunPreflight");
+    expect(SIDE_EFFECTING_ACTIONS.has("rerunPreflight")).toBe(false);
   });
 });
 
@@ -712,7 +728,7 @@ describe("updateYearField", () => {
         { taxYear: 2025, field: "rcsWhyMissed", value: "New reason", reason: "customer correction" },
         { adminId: "admin_1" },
       ),
-    ).resolves.toEqual({ ok: true });
+    ).resolves.toMatchObject({ ok: true });
 
     expect(db.yearUpdate).toHaveBeenCalledWith({
       where: { filingId_taxYear: { filingId: "filing_1", taxYear: 2025 } },
@@ -1539,5 +1555,370 @@ describe("admin PDF text guard", () => {
     await expect(runFilingAction("filing_1", "updateYearField", { taxYear: 2023, field, value }, { adminId: "admin_1" }))
       .rejects.toThrow("Use English letters only — as spelled in the Latin (English) letters on your passport or company documents.");
     expect(db.yearUpdate).not.toHaveBeenCalled();
+  });
+});
+
+// ─── Pre-flight workflow (spec items 1, 7, 8, 12; decisions D10, D11) ─────────
+describe("pre-flight workflow", () => {
+  const PACKAGE_FILING = {
+    llcName: "Example Catchup Holdings LLC",
+    llcEin: "12-3456789",
+    llcAddress: "30 N Example St Ste 100",
+    llcCity: "Sheridan",
+    llcState: "WY",
+    llcZip: "82801",
+    llcCountry: "USA",
+    llcCountryBusiness: "Hong Kong",
+    llcDateIncorporated: new Date("2024-11-02T00:00:00.000Z"),
+    llcBusinessActivity: "Software / SaaS / app development",
+    llcBusinessCode: "541512",
+    ownerName: "Alex Example",
+    ownerAddress: "88 Queen Road Central, Suite 1200, Central, Hong Kong",
+    ownerCountryCitizenship: "Hong Kong",
+    ownerCountryTaxResidence: "Hong Kong",
+    ownerCountryBusiness: "Hong Kong",
+    ownerFtin: "HK1234567",
+    ownerItin: null,
+    ownerReferenceId: "ALEXEXAMPLE2024",
+    taxYears: [2024, 2025],
+    isDiirsp: true,
+    isFinalReturn: false,
+    dissolvedAt: null,
+    extensionFiled: "not_sure",
+    extensionTransmittedAt: null,
+    reasonableCauseNarrative: null,
+    yearData: [],
+  };
+  const A32_2024 = { id: "A32", message: "RCS narrative not written for tax year 2024." };
+  const A32_2025 = { id: "A32", message: "RCS narrative not written for tax year 2025." };
+  const STALE_CHECK = new Date("2026-10-10T12:14:00.000Z");
+  const filingRow = {
+    id: "filing_1",
+    status: "PDF_GENERATED",
+    llcName: "Example Catchup Holdings LLC",
+    ownerName: "Alex Example",
+    taxYears: [2024, 2025],
+    generatedPdfKey: "filing_1_unsigned.pdf",
+    signedPdfKey: null as string | null,
+    signaturePngKey: null as string | null,
+    preflightStatus: "failed" as string | null,
+    preflightFailures: [A32_2024, A32_2025] as unknown,
+    preflightWarnings: [] as unknown,
+    preflightCheckedAt: STALE_CHECK as Date | null,
+    preflightOverrideBy: null as string | null,
+    preflightOverrideAt: null as Date | null,
+    preflightOverrideReason: null as string | null,
+    reviewApprovedAt: null as Date | null,
+    reviewApprovedBy: null as string | null,
+    faxJobId: null as string | null,
+    faxStatus: null as string | null,
+    faxedAt: null as Date | null,
+    user: { id: "u1", email: "owner@example.test" } as { id: string; email: string } | null,
+  };
+  const pdfBase64 = Buffer.concat([Buffer.from("%PDF-1.7\n"), Buffer.alloc(400, 32)]).toString("base64");
+
+  // The `data` of every filing.update call, in order.
+  const updates = () => db.update.mock.calls.map((call) => (call[0] as { data: Record<string, unknown> }).data);
+  const logs = () =>
+    db.createLog.mock.calls.map((call) => (call[0] as { data: Record<string, unknown> }).data);
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    db.findUnique.mockReset();
+    db.findFirstLog.mockReset();
+    db.findFirstLog.mockResolvedValue(null);
+    db.yearFindUnique.mockReset();
+    db.updateMany.mockResolvedValue({ count: 1 });
+    pdf.runPreflight.mockResolvedValue({ ok: true, failures: [], warnings: [] });
+  });
+
+  function givenFiling(overrides: Partial<typeof filingRow> = {}) {
+    db.findUnique.mockImplementation(async (args: { select?: Record<string, unknown> }) =>
+      // filingSelect asks for `status`; the package select does not.
+      args?.select && "status" in args.select ? { ...filingRow, ...overrides } : PACKAGE_FILING,
+    );
+  }
+
+  it("Re-run pre-flight rebuilds the package in memory, writes no PDF and stores fresh findings + timestamp", async () => {
+    givenFiling();
+    pdf.runPreflight.mockResolvedValueOnce({
+      ok: false,
+      failures: [A32_2025],
+      warnings: [{ id: "W36", message: "Tax year 2025: Extension unclear." }],
+    });
+
+    const result = await runFilingAction("filing_1", "rerunPreflight", {}, { adminId: "admin_1" });
+
+    expect(result).toMatchObject({ ok: true, ran: true, status: "failed", failures: [A32_2025], overrideCleared: false });
+    expect(pdf.generatePackage).toHaveBeenCalledOnce();
+    expect(storage.putPdf).not.toHaveBeenCalled();
+    expect(storage.put).not.toHaveBeenCalled();
+    const data = updates().at(-1)!;
+    expect(data).toMatchObject({
+      preflightStatus: "failed",
+      preflightFailures: [A32_2025],
+      preflightWarnings: [{ id: "W36", message: "Tax year 2025: Extension unclear." }],
+    });
+    expect((data.preflightCheckedAt as Date).getTime()).toBeGreaterThan(STALE_CHECK.getTime());
+    expect(data).not.toHaveProperty("generatedPdfKey");
+    expect(data).not.toHaveProperty("reviewApprovedAt");
+    expect(logs()).toEqual([
+      expect.objectContaining({
+        field: "preflight",
+        adminId: "admin_1",
+        afterJson: expect.objectContaining({ action: "rerunPreflight", trigger: "manual", preflightStatus: "failed", failureIds: ["A32"] }),
+      }),
+    ]);
+  });
+
+  it("refuses to re-run for an unpaid draft or a filing missing package fields", async () => {
+    givenFiling({ status: "DRAFT" });
+    await expect(runFilingAction("filing_1", "rerunPreflight", {}, { adminId: "admin_1" })).rejects.toMatchObject({
+      status: 409,
+      code: "not_paid",
+    });
+
+    db.findUnique.mockImplementation(async (args: { select?: Record<string, unknown> }) =>
+      args?.select && "status" in args.select ? filingRow : { ...PACKAGE_FILING, llcEin: null },
+    );
+    await expect(runFilingAction("filing_1", "rerunPreflight", {}, { adminId: "admin_1" })).rejects.toMatchObject({
+      status: 400,
+      code: "missing_required_fields",
+    });
+    expect(db.update).not.toHaveBeenCalled();
+  });
+
+  it("editing a field re-runs pre-flight automatically: timestamp and findings update, both changes are logged", async () => {
+    givenFiling();
+    db.yearFindUnique.mockResolvedValue({ id: "y2024", rcsAdminNarrative: null, noReportableTransactions: false });
+    pdf.runPreflight.mockResolvedValueOnce({ ok: false, failures: [A32_2025], warnings: [] });
+
+    const result = await runFilingAction(
+      "filing_1",
+      "updateYearField",
+      { taxYear: 2024, field: "rcsAdminNarrative", value: "I relied on my formation service and did not know of the requirement." },
+      { adminId: "admin_1" },
+    );
+
+    expect(result).toMatchObject({ ok: true, preflight: { ran: true, status: "failed", failures: [A32_2025] } });
+    expect(db.yearUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      data: { rcsAdminNarrative: "I relied on my formation service and did not know of the requirement." },
+    }));
+    expect(updates().at(-1)).toMatchObject({ preflightStatus: "failed", preflightFailures: [A32_2025] });
+    expect(logs().map((row) => row.field)).toEqual(["year:2024:rcsAdminNarrative", "preflight"]);
+    expect(logs()[1].afterJson).toMatchObject({ trigger: "updateYearField:2024:rcsAdminNarrative" });
+  });
+
+  it("updateField also re-runs pre-flight after the change-logged save", async () => {
+    givenFiling();
+    const result = await runFilingAction("filing_1", "updateField", { field: "ownerFtin", value: "HK7654321" }, { adminId: "admin_1" });
+    expect(result).toMatchObject({ ok: true, preflight: { ran: true, status: "passed" } });
+    expect(updates().at(-1)).toMatchObject({ preflightStatus: "passed", preflightFailures: [] });
+  });
+
+  it("a failed automatic re-run never fails the save it follows", async () => {
+    givenFiling();
+    db.yearFindUnique.mockResolvedValue({ id: "y2024", rcsLearnedOn: null });
+    pdf.generatePackage.mockRejectedValueOnce(new Error("template missing"));
+    const result = await runFilingAction(
+      "filing_1",
+      "updateYearField",
+      { taxYear: 2024, field: "rcsLearnedOn", value: "2026-09-20" },
+      { adminId: "admin_1" },
+    );
+    expect(result).toMatchObject({ ok: true, preflight: { ran: false, reason: "generation_failed" } });
+    expect(db.yearUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      data: { rcsLearnedOn: new Date("2026-09-20T00:00:00.000Z") },
+    }));
+    expect(logs()[0]).toMatchObject({ field: "year:2024:rcsLearnedOn", afterJson: "2026-09-20" });
+  });
+
+  it("keeps a recorded override when the re-run's failures are ones it approved", async () => {
+    givenFiling({
+      preflightFailures: [A32_2024],
+      preflightOverrideBy: "admin_2",
+      preflightOverrideAt: new Date("2026-10-11T00:00:00.000Z"),
+      preflightOverrideReason: "Narrative is being written by the accountant today.",
+    });
+    db.findFirstLog.mockResolvedValue({ afterJson: { approvedFailures: [A32_2024, A32_2025] } });
+    pdf.runPreflight.mockResolvedValueOnce({ ok: false, failures: [A32_2025], warnings: [] });
+
+    const result = await runFilingAction("filing_1", "rerunPreflight", {}, { adminId: "admin_1" });
+
+    expect(result).toMatchObject({ overrideCleared: false });
+    expect(updates().at(-1)).not.toHaveProperty("preflightOverrideBy");
+    expect(logs().map((row) => row.field)).toEqual(["preflight"]);
+    expect(logs()[0].afterJson).toMatchObject({ overrideKept: true });
+  });
+
+  it("clears the override (change-logged) when the re-run finds a failure it did not approve", async () => {
+    givenFiling({
+      preflightFailures: [A32_2024],
+      preflightOverrideBy: "admin_2",
+      preflightOverrideAt: new Date("2026-10-11T00:00:00.000Z"),
+      preflightOverrideReason: "Narrative is being written by the accountant today.",
+    });
+    db.findFirstLog.mockResolvedValue({ afterJson: { approvedFailures: [A32_2024] } });
+    const a26 = { id: "A26", message: 'Tax year 2024 → RCS narrative (admin): "I had no transactions."' };
+    pdf.runPreflight.mockResolvedValueOnce({ ok: false, failures: [A32_2024, a26], warnings: [] });
+
+    const result = await runFilingAction("filing_1", "rerunPreflight", {}, { adminId: "admin_1" });
+
+    expect(result).toMatchObject({ overrideCleared: true });
+    expect(updates().at(-1)).toMatchObject({
+      preflightStatus: "failed",
+      preflightOverrideBy: null,
+      preflightOverrideAt: null,
+      preflightOverrideReason: null,
+    });
+    expect(logs().map((row) => row.field)).toEqual(["preflight", "preflightOverride"]);
+    expect(logs()[1]).toMatchObject({
+      beforeJson: expect.objectContaining({ preflightOverrideBy: "admin_2" }),
+      afterJson: expect.objectContaining({ cleared: true, notApprovedFailures: [a26] }),
+    });
+  });
+
+  it("records an override only with a reason, logged with the admin, the time and the failures it approves", async () => {
+    givenFiling();
+    await expect(
+      runFilingAction("filing_1", "approvePreflightOverride", { reason: "ok" }, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 400, code: "reason_required" });
+
+    await runFilingAction(
+      "filing_1",
+      "approvePreflightOverride",
+      { reason: "Accountant reviewed the narrative by phone with the client." },
+      { adminId: "admin_1", approver: "admin_1" },
+    );
+    expect(updates().at(-1)).toMatchObject({
+      preflightOverrideBy: "admin_1",
+      preflightOverrideReason: "Accountant reviewed the narrative by phone with the client.",
+    });
+    expect(logs().at(-1)).toMatchObject({
+      field: "preflightOverride",
+      adminId: "admin_1",
+      reason: "Accountant reviewed the narrative by phone with the client.",
+      afterJson: expect.objectContaining({
+        preflightOverrideBy: "admin_1",
+        preflightOverrideAt: expect.any(String),
+        approvedFailures: [A32_2024, A32_2025],
+      }),
+    });
+  });
+
+  it("blocks the reviewed-PDF upload while pre-flight failed with no override, and says why", async () => {
+    givenFiling();
+    const err = await runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64 }, { adminId: "admin_1" }).catch(
+      (e: unknown) => e,
+    );
+    expect(err).toBeInstanceOf(FilingActionError);
+    expect(err).toMatchObject({ status: 409, code: "preflight_failed" });
+    const message = (err as FilingActionError).message;
+    expect(message).toContain("Pre-flight failed (checked 2026-10-10 12:14 UTC)");
+    expect(message).toContain("Failing checks: A32");
+    expect(message).toContain("Approve despite pre-flight failures");
+    expect(message).toContain("not the uploaded PDF");
+    expect(storage.put).not.toHaveBeenCalled();
+  });
+
+  it("accepts the reviewed-PDF upload once an override is recorded", async () => {
+    givenFiling({ preflightOverrideBy: "admin_2", preflightOverrideAt: new Date(), preflightOverrideReason: "Reviewed and approved." });
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64, notifyClient: false }, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true });
+    expect(storage.put).toHaveBeenCalled();
+  });
+
+  it("Regenerate while a reviewed PDF is current writes a draft only and keeps the client version", async () => {
+    givenFiling({
+      status: "SIGNATURE_PENDING",
+      generatedPdfKey: "filing_1_reviewed_1760000000000.pdf",
+      signaturePngKey: "filing_1_signature.png",
+      reviewApprovedAt: new Date("2026-10-13T00:00:00.000Z"),
+      reviewApprovedBy: "admin_2",
+      preflightStatus: "passed",
+      preflightFailures: [],
+    });
+
+    const result = await runFilingAction("filing_1", "regeneratePdf", {}, { adminId: "admin_1" });
+
+    expect(result).toMatchObject({ ok: true, draftOnly: true, draftKey: "filing_1_unsigned.pdf", preflightStatus: "passed" });
+    expect(storage.putPdf).toHaveBeenCalledWith("filing_1_unsigned.pdf", expect.any(Uint8Array));
+    for (const data of updates()) {
+      for (const key of ["generatedPdfKey", "reviewApprovedAt", "reviewApprovedBy", "signaturePngKey", "signedPdfKey", "status"]) {
+        expect(data).not.toHaveProperty(key);
+      }
+    }
+    expect(updates().at(-1)).toMatchObject({ preflightStatus: "passed" });
+    expect(logs().map((row) => row.field)).toEqual(["preflight", "pdf"]);
+    expect(logs()[1].afterJson).toMatchObject({
+      draftOnly: true,
+      draftKey: "filing_1_unsigned.pdf",
+      generatedPdfKey: "filing_1_reviewed_1760000000000.pdf",
+    });
+  });
+
+  it("an admin owner-paid cost entry clears the customer's 'no reportable transactions' flag, change-logged", async () => {
+    givenFiling();
+    db.yearFindUnique.mockResolvedValue({ id: "y2024", ownerPaidCosts: null, noReportableTransactions: true });
+    const costs = [{ category: "registered_agent", date: "2024-11-02", amountCents: 4900 }];
+
+    const result = await runFilingAction(
+      "filing_1",
+      "updateYearField",
+      { taxYear: 2024, field: "ownerPaidCosts", value: costs, reason: "Client confirmed the agent fee" },
+      { adminId: "admin_1" },
+    );
+
+    expect(result).toMatchObject({ ok: true, derived: { noReportableTransactions: false } });
+    expect(db.yearUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      data: { ownerPaidCosts: costs, noReportableTransactions: false },
+    }));
+    expect(logs().slice(0, 2)).toEqual([
+      expect.objectContaining({ field: "year:2024:ownerPaidCosts", afterJson: costs }),
+      expect.objectContaining({
+        field: "year:2024:noReportableTransactions",
+        beforeJson: true,
+        afterJson: false,
+        reason: expect.stringContaining("Client confirmed the agent fee — derived from ownerPaidCosts edit"),
+      }),
+    ]);
+  });
+
+  it("validates the new admin fields: paid preparer settings, learned-on date, small-corporation toggle", async () => {
+    givenFiling();
+    await expect(
+      runFilingAction("filing_1", "updateField", { field: "paidPreparerMode", value: "cpa_firm" }, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 400, code: "invalid_value" });
+    await expect(
+      runFilingAction("filing_1", "updateField", { field: "irsMayDiscussWithPreparer", value: "maybe" }, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 400, code: "invalid_value" });
+
+    await runFilingAction("filing_1", "updateField", { field: "paidPreparerMode", value: "house" }, { adminId: "admin_1" });
+    expect(db.update.mock.calls[0][0]).toMatchObject({ data: { paidPreparerMode: "house" } });
+    db.update.mockClear();
+    await runFilingAction("filing_1", "updateField", { field: "irsMayDiscussWithPreparer", value: "" }, { adminId: "admin_1" });
+    expect(db.update.mock.calls[0][0]).toMatchObject({ data: { irsMayDiscussWithPreparer: null } });
+
+    db.yearFindUnique.mockResolvedValue({ id: "y2025" });
+    await expect(
+      runFilingAction("filing_1", "updateYearField", { taxYear: 2025, field: "rcsLearnedOn", value: "2026-02-31" }, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 400, code: "invalid_value" });
+    await runFilingAction("filing_1", "updateYearField", { taxYear: 2025, field: "rcsSmallCorpParagraph", value: "false" }, { adminId: "admin_1" });
+    expect(db.yearUpdate).toHaveBeenLastCalledWith(expect.objectContaining({ data: { rcsSmallCorpParagraph: false } }));
+    await runFilingAction("filing_1", "updateYearField", { taxYear: 2025, field: "rcsSmallCorpParagraph", value: "" }, { adminId: "admin_1" });
+    expect(db.yearUpdate).toHaveBeenLastCalledWith(expect.objectContaining({ data: { rcsSmallCorpParagraph: null } }));
+  });
+
+  it("classifies change-log rows: data edits make pre-flight stale, runs/overrides/PDFs do not", () => {
+    for (const field of ["ownerFtin", "isDiirsp", "extensionProofKey", "paidPreparerMode", "year:2024:rcsAdminNarrative"]) {
+      expect(isPackageDataChangeField(field)).toBe(true);
+    }
+    for (const field of ["preflight", "preflightOverride", "pdf", "email", "reviewApproval", "status"]) {
+      expect(isPackageDataChangeField(field)).toBe(false);
+    }
+    expect(isReviewedPdfKey("f_reviewed_123.pdf")).toBe(true);
+    expect(isReviewedPdfKey("f_unsigned.pdf")).toBe(false);
+    expect(isReviewedPdfKey(null)).toBe(false);
   });
 });

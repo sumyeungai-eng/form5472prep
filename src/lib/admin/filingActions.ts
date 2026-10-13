@@ -16,7 +16,15 @@ import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
 import { generatePackage, type GeneratedPackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { filingToPackageInput } from "@/lib/pdf/packageInput";
-import { runPreflight } from "@/lib/pdf/preflight";
+import { runPreflight, type PreflightIssue, type PreflightResult } from "@/lib/pdf/preflight";
+import {
+  CLEARED_PREFLIGHT_OVERRIDE,
+  overrideCoversFailures,
+  persistNewPackagePreflight,
+  preflightIssueKey,
+  preflightIssues,
+  preflightResultColumns,
+} from "@/lib/pdf/persistPreflight";
 import {
   isLegalTransition,
   logFilingChange,
@@ -47,6 +55,7 @@ export type FilingActionName =
   | "retryFax"
   | "regeneratePdf"
   | "approvePreflightOverride"
+  | "rerunPreflight"
   | "approveForSignature"
   | "updateField"
   | "updateYearField"
@@ -77,6 +86,7 @@ export const FILING_ACTION_NAMES = [
   "retryFax",
   "regeneratePdf",
   "approvePreflightOverride",
+  "rerunPreflight",
   "approveForSignature",
   "updateField",
   "updateYearField",
@@ -279,6 +289,9 @@ const filingSelect = {
   ownerItin: true,
   ownerReferenceId: true,
   reasonableCauseNarrative: true,
+  // Generator 2.3.0 paid preparer settings (updateField logs their BEFORE value).
+  paidPreparerMode: true,
+  irsMayDiscussWithPreparer: true,
   taxYears: true,
   isDiirsp: true,
   isFinalReturn: true,
@@ -322,6 +335,10 @@ const filingSelect = {
       rcsWhyMissed: true,
       rcsWhenLearned: true,
       rcsNoIrsNoticeConfirmed: true,
+      // Generator 2.3.0 admin RCS fields (staff-only).
+      rcsAdminNarrative: true,
+      rcsLearnedOn: true,
+      rcsSmallCorpParagraph: true,
     },
   },
 } as const;
@@ -392,8 +409,71 @@ export const packageFilingSelect = {
   },
 } as const;
 
-const YEAR_NULLABLE_STRINGS = new Set(["rcsWhyMissed", "rcsWhenLearned"]);
-const YEAR_NULLABLE_BOOLEANS = new Set(["rcsNoIrsNoticeConfirmed"]);
+const YEAR_NULLABLE_STRINGS = new Set(["rcsWhyMissed", "rcsWhenLearned", "rcsAdminNarrative"]);
+const YEAR_NULLABLE_BOOLEANS = new Set(["rcsNoIrsNoticeConfirmed", "rcsSmallCorpParagraph"]);
+const YEAR_NULLABLE_DATES = new Set(["rcsLearnedOn"]);
+// The admin-authored RCS narrative renders into a signed IRS statement; keep it
+// to a length that fits the statement page.
+const MAX_RCS_NARRATIVE_CHARS = 4000;
+
+// Filing columns an admin may edit with updateField (same set the customer can
+// edit in the wizard, plus the Form 7004 remediation fields and the paid
+// preparer settings). Exported so the admin page can tell a package-data edit
+// from other change-log rows (stale pre-flight badge).
+export const ADMIN_EDITABLE_FILING_FIELDS = [
+  "llcName", "llcEin", "llcAddress", "llcCity", "llcState", "llcZip",
+  "llcCountry", "llcCountryBusiness", "llcBusinessActivity", "llcBusinessCode",
+  "llcMemberCount", "llcAddressIsRegisteredAgentOnly", "priorForm5472Filed",
+  "ownerName", "ownerAddress",
+  "ownerCountryCitizenship", "ownerCountryTaxResidence",
+  "ownerCountryBusiness", "ownerFtin", "ownerItin", "ownerReferenceId",
+  "ownerHasFtin", "ownerNoPostalCode", "hasUsSourceIncome", "usTaxWithheld",
+  "reasonableCauseNarrative",
+  // Form 7004 gate + the late/timely classification it drives. These are
+  // the remediation path for orders sold BEFORE the extension question
+  // existed: a customer who writes in "I filed a 7004 on April 10" gets
+  // the facts recorded here, isDiirsp corrected, and the package
+  // regenerated — no wizard round-trip, no re-purchase.
+  "extensionFiled", "extensionTransmittedAt", "extensionMethod",
+  "extensionDestination", "isDiirsp",
+  // Generator 2.3.0: per-order paid preparer block (staff-only settings).
+  "paidPreparerMode", "irsMayDiscussWithPreparer",
+] as const;
+
+export const ADMIN_EDITABLE_YEAR_FIELDS = [
+  "rcsWhyMissed",
+  "rcsWhenLearned",
+  "rcsNoIrsNoticeConfirmed",
+  "rcsAdminNarrative",
+  "rcsLearnedOn",
+  "rcsSmallCorpParagraph",
+  "nonCashTransfers",
+  "ownerPaidCosts",
+  "zeroConfirmations",
+] as const;
+
+// Columns updateField may change as a side effect of an edit (cascade or
+// recompute); each gets its own change-log row.
+const DERIVED_FILING_FIELDS = ["extensionProofKey"] as const;
+
+// True for change-log rows that record a change to the data the package is
+// built from: updateField rows (and their derived rows) and updateYearField
+// rows ("year:<YYYY>:<field>"). Pre-flight runs, overrides, PDFs, emails and
+// status changes are not data changes.
+export function isPackageDataChangeField(field: string): boolean {
+  return (
+    field.startsWith("year:") ||
+    (ADMIN_EDITABLE_FILING_FIELDS as readonly string[]).includes(field) ||
+    (DERIVED_FILING_FIELDS as readonly string[]).includes(field)
+  );
+}
+
+export const PACKAGE_DATA_CHANGE_WHERE = {
+  OR: [
+    { field: { startsWith: "year:" } },
+    { field: { in: [...ADMIN_EDITABLE_FILING_FIELDS, ...DERIVED_FILING_FIELDS] as string[] } },
+  ],
+} satisfies Prisma.FilingChangeLogWhereInput;
 
 const adminNonCashTransferSchema = z.object({
   date: z.string().trim().min(1).refine(isPdfEncodable, PDF_TEXT_MESSAGE),
@@ -466,6 +546,24 @@ function parseYearJsonField(field: keyof typeof YEAR_JSON_SCHEMAS, value: unknow
 function yearJsonWriteValue(value: unknown) {
   if (value === null) return Prisma.JsonNull;
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+}
+
+// Why the reviewed-PDF upload is blocked, in words the admin can act on. The
+// gate reads the stored pre-flight of the ORDER DATA, not the uploaded file.
+export function preflightBlockedMessage(filing: {
+  preflightFailures: unknown;
+  preflightCheckedAt: Date | null;
+}): string {
+  const ids = Array.from(new Set(preflightIssues(filing.preflightFailures).map((issue) => issue.id)));
+  const checked = filing.preflightCheckedAt
+    ? ` (checked ${filing.preflightCheckedAt.toISOString().slice(0, 16).replace("T", " ")} UTC)`
+    : "";
+  return (
+    `Pre-flight failed${checked} and no override is recorded, so the reviewed PDF can't be uploaded yet` +
+    `${ids.length > 0 ? `. Failing checks: ${ids.join(", ")}` : ""}. Pre-flight checks the order data, not the ` +
+    "uploaded PDF: fix the data (pre-flight re-runs after each save) or click \"Re-run pre-flight\", or record " +
+    "\"Approve despite pre-flight failures\" with a reason."
+  );
 }
 
 function hasPreflightApproval(filing: {
@@ -548,6 +646,204 @@ export function canResendFaxConfirmation(filing: {
   faxJobId: string | null;
 }): boolean {
   return !!filing.faxConfirmationKey || (filing.status === "CONFIRMED" && !!filing.faxJobId);
+}
+
+// ─── Pre-flight re-run (spec item 1, decision D11) ──────────────────────────
+// Pre-flight evaluates the ORDER DATA (the package is rebuilt in memory), never
+// an uploaded PDF. It re-runs on demand ("Re-run pre-flight"), after every
+// change-logged field save, and after Regenerate, so the result an upload is
+// gated on is current. A re-run writes no PDF.
+
+type FilingRow = Prisma.FilingGetPayload<{ select: typeof filingSelect }>;
+
+export type PreflightRerunSummary =
+  | {
+      ran: true;
+      status: "passed" | "failed";
+      failures: PreflightIssue[];
+      warnings: PreflightIssue[];
+      checkedAt: string;
+      overrideCleared: boolean;
+    }
+  | {
+      ran: false;
+      reason: "missing_required_fields" | "generation_failed" | "not_applicable";
+      message: string;
+    };
+
+const MISSING_PACKAGE_FIELDS_MESSAGE = "filing is missing required fields — finish the wizard first";
+
+// The reviewed upload is the client version while generatedPdfKey points at it.
+export function isReviewedPdfKey(key: string | null | undefined): boolean {
+  return !!key && key.includes("_reviewed_");
+}
+
+async function loadPackageFiling(filingId: string) {
+  return prisma.filing.findUnique({
+    where: { id: filingId },
+    select: {
+      ...packageFilingSelect,
+      yearData: {
+        ...packageFilingSelect.yearData,
+        orderBy: { taxYear: "asc" as const },
+      },
+    },
+  });
+}
+
+type PackageFilingLoaded = NonNullable<Awaited<ReturnType<typeof loadPackageFiling>>>;
+
+function hasPackageRequiredFields(full: PackageFilingLoaded): boolean {
+  return !!(
+    full.llcName && full.llcEin && full.llcAddress && full.llcCity &&
+    full.llcState && full.llcZip && full.llcDateIncorporated &&
+    full.llcBusinessActivity && full.llcBusinessCode && full.ownerName &&
+    full.ownerAddress && full.ownerCountryCitizenship &&
+    full.ownerCountryTaxResidence && full.ownerCountryBusiness &&
+    (full.ownerFtin || full.ownerHasFtin === false)
+  );
+}
+
+// The failures the admin approved when recording the current override: stored
+// on its change-log row (approvedFailures). Overrides recorded before that was
+// stored fall back to the failures on the filing, which nothing re-ran since.
+async function approvedFailuresForOverride(filing: FilingRow): Promise<PreflightIssue[]> {
+  try {
+    const entry = await prisma.filingChangeLog.findFirst({
+      where: { filingId: filing.id, field: "preflightOverride" },
+      orderBy: { changedAt: "desc" },
+      select: { afterJson: true },
+    });
+    const approved = (entry?.afterJson as { approvedFailures?: unknown } | null | undefined)?.approvedFailures;
+    if (Array.isArray(approved)) return preflightIssues(approved);
+  } catch (err) {
+    console.error(`[preflight] ${filing.id} override lookup failed`, err);
+  }
+  return preflightIssues(filing.preflightFailures);
+}
+
+// Persist a pre-flight result for the package that is ALREADY with the client
+// (a re-run, or a draft-only regenerate while a reviewed PDF is current). The
+// recorded override is kept only if every new failure was one it approved;
+// otherwise it is cleared and that is change-logged too.
+async function persistRerunPreflight(
+  filing: FilingRow,
+  preflight: PreflightResult,
+  ctx: FilingActionContext,
+  trigger: string,
+): Promise<{ checkedAt: Date; overrideCleared: boolean }> {
+  const checkedAt = new Date();
+  let overrideCleared = false;
+  let approved: PreflightIssue[] = [];
+  if (filing.preflightOverrideBy && preflight.failures.length > 0) {
+    approved = await approvedFailuresForOverride(filing);
+    overrideCleared = !overrideCoversFailures(approved, preflight.failures);
+  }
+  await prisma.filing.update({
+    where: { id: filing.id },
+    data: {
+      ...preflightResultColumns(preflight, checkedAt),
+      ...(overrideCleared ? CLEARED_PREFLIGHT_OVERRIDE : {}),
+    },
+    select: { id: true },
+  });
+  const ids = (issues: PreflightIssue[]) => issues.map((issue) => issue.id);
+  await logFilingChange({
+    filingId: filing.id,
+    adminId: ctx.adminId,
+    source: "admin",
+    field: "preflight",
+    before: {
+      preflightStatus: filing.preflightStatus,
+      preflightCheckedAt: filing.preflightCheckedAt,
+      failureIds: ids(preflightIssues(filing.preflightFailures)),
+    },
+    after: {
+      action: "rerunPreflight",
+      trigger,
+      preflightStatus: preflight.ok ? "passed" : "failed",
+      preflightCheckedAt: checkedAt,
+      failureIds: ids(preflight.failures),
+      warningIds: ids(preflight.warnings),
+      overrideKept: !!filing.preflightOverrideBy && !overrideCleared,
+    },
+    reason: ctx.reason,
+  });
+  if (overrideCleared) {
+    const approvedKeys = new Set(approved.map(preflightIssueKey));
+    await logFilingChange({
+      filingId: filing.id,
+      adminId: ctx.adminId,
+      source: "admin",
+      field: "preflightOverride",
+      before: {
+        preflightOverrideBy: filing.preflightOverrideBy,
+        preflightOverrideAt: filing.preflightOverrideAt,
+        preflightOverrideReason: filing.preflightOverrideReason,
+      },
+      after: {
+        cleared: true,
+        trigger,
+        notApprovedFailures: preflight.failures.filter((issue) => !approvedKeys.has(preflightIssueKey(issue))),
+      },
+      reason: "Pre-flight re-run found failures the recorded override did not approve; the override was cleared.",
+    });
+  }
+  return { checkedAt, overrideCleared };
+}
+
+async function rerunPreflightNow(
+  filing: FilingRow,
+  ctx: FilingActionContext,
+  trigger: string,
+): Promise<PreflightRerunSummary> {
+  const full = await loadPackageFiling(filing.id);
+  if (!full || !hasPackageRequiredFields(full)) {
+    return { ran: false, reason: "missing_required_fields", message: MISSING_PACKAGE_FIELDS_MESSAGE };
+  }
+  let pkg: GeneratedPackage;
+  try {
+    pkg = await generatePackage(filingToPackageInput(full));
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "unknown";
+    return { ran: false, reason: "generation_failed", message: `The package could not be built in memory: ${msg}` };
+  }
+  const preflight = await runPreflight(pkg.record, pkg.bytes);
+  const { checkedAt, overrideCleared } = await persistRerunPreflight(filing, preflight, ctx, trigger);
+  return {
+    ran: true,
+    status: preflight.ok ? "passed" : "failed",
+    failures: preflight.failures,
+    warnings: preflight.warnings,
+    checkedAt: checkedAt.toISOString(),
+    overrideCleared,
+  };
+}
+
+// After a change-logged field save. Never fails the save it follows: a
+// problem is reported in the result (and the page then shows the stale badge).
+async function autoRerunPreflight(
+  filing: FilingRow,
+  ctx: FilingActionContext,
+  trigger: string,
+): Promise<PreflightRerunSummary> {
+  if (["DRAFT", "FAXED", "CONFIRMED"].includes(filing.status)) {
+    return {
+      ran: false,
+      reason: "not_applicable",
+      message: `Pre-flight is not re-run automatically for a ${filing.status} filing.`,
+    };
+  }
+  try {
+    return await rerunPreflightNow(filing, ctx, trigger);
+  } catch (err) {
+    console.error(`[preflight] ${filing.id} automatic re-run after ${trigger} failed`, err);
+    return {
+      ran: false,
+      reason: "generation_failed",
+      message: err instanceof Error ? err.message : "Pre-flight re-run failed",
+    };
+  }
 }
 
 export async function runFilingAction(
@@ -641,23 +937,15 @@ export async function runFilingAction(
           const key = `${filing.id}_unsigned.pdf`;
           await putPdf(key, result.bytes);
           const preflight = await runPreflight(result.record, result.bytes);
-          await prisma.filing.update({
-            where: { id: filing.id },
+          await persistNewPackagePreflight({
+            filingId: filing.id,
+            preflight,
+            record: result.record,
             data: {
               generatedPdfKey: key,
-              preflightStatus: preflight.ok ? "passed" : "failed",
-              preflightFailures: preflight.failures,
-              preflightWarnings: preflight.warnings,
-              preflightCheckedAt: new Date(),
-              preflightOverrideBy: null,
-              preflightOverrideAt: null,
-              preflightOverrideReason: null,
               reviewApprovedAt: null,
               reviewApprovedBy: null,
-              generatorVersion: result.record.generatorVersion,
-              generatorCommit: result.record.commit,
             },
-            select: { id: true },
           });
         }
       } catch (err) {
@@ -1057,30 +1345,12 @@ export async function runFilingAction(
       // through the wizard or asking the customer to do anything. If the
       // existing PDF had a signature on it, regenerating discards the
       // signed version too — surface that risk to the admin via the UI.
-      const full = await prisma.filing.findUnique({
-        where: { id: filing.id },
-        select: {
-          ...packageFilingSelect,
-          yearData: {
-            ...packageFilingSelect.yearData,
-            orderBy: { taxYear: "asc" as const },
-          },
-        },
-      });
+      const full = await loadPackageFiling(filing.id);
       if (!full) {
         throw new FilingActionError(404, "not_found", "filing not found");
       }
-      if (!full.llcName || !full.llcEin || !full.llcAddress || !full.llcCity ||
-          !full.llcState || !full.llcZip || !full.llcDateIncorporated ||
-          !full.llcBusinessActivity || !full.llcBusinessCode || !full.ownerName ||
-          !full.ownerAddress || !full.ownerCountryCitizenship ||
-          !full.ownerCountryTaxResidence || !full.ownerCountryBusiness ||
-          !(full.ownerFtin || full.ownerHasFtin === false)) {
-        throw new FilingActionError(
-          400,
-          "missing_required_fields",
-          "filing is missing required fields — finish the wizard first",
-        );
+      if (!hasPackageRequiredFields(full)) {
+        throw new FilingActionError(400, "missing_required_fields", MISSING_PACKAGE_FIELDS_MESSAGE);
       }
       let pkg: GeneratedPackage;
       try {
@@ -1092,11 +1362,58 @@ export async function runFilingAction(
       const key = `${filing.id}_unsigned.pdf`;
       await putPdf(key, pkg.bytes);
       const preflight = await runPreflight(pkg.record, pkg.bytes);
+
+      // Spec item 12 / D10: while an accountant-reviewed upload is the client
+      // version (generatedPdfKey = *_reviewed_*), Regenerate writes a DRAFT
+      // only. The client keeps checking and signing the reviewed PDF; review
+      // approval, signature and status are untouched. The admin downloads the
+      // draft ("Download latest generated draft") and uploads it as the
+      // reviewed PDF if it should replace the client version. Pre-flight
+      // re-runs on the current data either way.
+      if (isReviewedPdfKey(filing.generatedPdfKey)) {
+        const { overrideCleared } = await persistRerunPreflight(
+          filing,
+          preflight,
+          ctx,
+          "regeneratePdf (draft only; reviewed PDF kept)",
+        );
+        await logFilingChange({
+          filingId: filing.id,
+          adminId: ctx.adminId,
+          source: "admin",
+          field: "pdf",
+          before: { generatedPdfKey: filing.generatedPdfKey, status: filing.status },
+          after: {
+            draftOnly: true,
+            draftKey: key,
+            generatedPdfKey: filing.generatedPdfKey,
+            status: filing.status,
+            generatorVersion: pkg.record.generatorVersion,
+            generatorCommit: pkg.record.commit,
+          },
+          reason: ctx.reason,
+        });
+        return {
+          ok: true,
+          draftOnly: true,
+          draftKey: key,
+          pdfBytes: pkg.bytes.length,
+          signatureCount: pkg.signatures.length,
+          preflightStatus: preflight.ok ? "passed" : "failed",
+          overrideCleared,
+          note:
+            "A reviewed PDF is the current client version, so it was kept. The regenerated draft was saved separately: " +
+            "use \"Download latest generated draft\", and upload it as the reviewed PDF if it should replace the client version.",
+        };
+      }
+
       // Reset signed PDF + validation state — the old signature was applied
       // to a stale PDF and isn't valid against the new one. Customer (or
       // admin) needs to re-sign.
-      await prisma.filing.update({
-        where: { id: filing.id },
+      await persistNewPackagePreflight({
+        filingId: filing.id,
+        preflight,
+        record: pkg.record,
         data: {
           generatedPdfKey: key,
           signedPdfKey: null,
@@ -1105,20 +1422,10 @@ export async function runFilingAction(
           signedAt: null,
           validationStatus: "pending",
           validationCheckedAt: null,
-          preflightStatus: preflight.ok ? "passed" : "failed",
-          preflightFailures: preflight.failures,
-          preflightWarnings: preflight.warnings,
-          preflightCheckedAt: new Date(),
-          preflightOverrideBy: null,
-          preflightOverrideAt: null,
-          preflightOverrideReason: null,
           reviewApprovedAt: null,
           reviewApprovedBy: null,
-          generatorVersion: pkg.record.generatorVersion,
-          generatorCommit: pkg.record.commit,
           status: "PDF_GENERATED",
         },
-        select: { id: true },
       });
       await logFilingChange({
         filingId: filing.id,
@@ -1134,6 +1441,7 @@ export async function runFilingAction(
           generatedPdfKey: key,
           signedPdfKey: null,
           status: "PDF_GENERATED",
+          preflightStatus: preflight.ok ? "passed" : "failed",
         },
         reason: ctx.reason,
       });
@@ -1141,6 +1449,7 @@ export async function runFilingAction(
         ok: true,
         pdfBytes: pkg.bytes.length,
         signatureCount: pkg.signatures.length,
+        preflightStatus: preflight.ok ? "passed" : "failed",
         note: filing.signedPdfKey ? "Existing signed PDF was discarded — re-sign required." : undefined,
       };
     }
@@ -1156,23 +1465,7 @@ export async function runFilingAction(
         : String(body.value);
       const reason = typeof body.reason === "string" ? body.reason.slice(0, 500) : "";
 
-      const allowed = new Set<string>([
-        "llcName", "llcEin", "llcAddress", "llcCity", "llcState", "llcZip",
-        "llcCountry", "llcCountryBusiness", "llcBusinessActivity", "llcBusinessCode",
-        "llcMemberCount", "llcAddressIsRegisteredAgentOnly", "priorForm5472Filed",
-        "ownerName", "ownerAddress",
-        "ownerCountryCitizenship", "ownerCountryTaxResidence",
-        "ownerCountryBusiness", "ownerFtin", "ownerItin", "ownerReferenceId",
-        "ownerHasFtin", "ownerNoPostalCode", "hasUsSourceIncome", "usTaxWithheld",
-        "reasonableCauseNarrative",
-        // Form 7004 gate + the late/timely classification it drives. These are
-        // the remediation path for orders sold BEFORE the extension question
-        // existed: a customer who writes in "I filed a 7004 on April 10" gets
-        // the facts recorded here, isDiirsp corrected, and the package
-        // regenerated — no wizard round-trip, no re-purchase.
-        "extensionFiled", "extensionTransmittedAt", "extensionMethod",
-        "extensionDestination", "isDiirsp",
-      ]);
+      const allowed = new Set<string>(ADMIN_EDITABLE_FILING_FIELDS);
       if (!allowed.has(field)) {
         throw new FilingActionError(400, "field_not_editable", `field "${field}" is not editable`);
       }
@@ -1191,6 +1484,9 @@ export async function runFilingAction(
         extensionMethod: ["fax", "certified_mail", "mail", "not_sure"],
         extensionDestination: ["ogden", "standard", "not_sure"],
         priorForm5472Filed: ["yes", "no", "not_sure"],
+        // Generator 2.3.0 paid preparer settings. Blank = None / Blank.
+        paidPreparerMode: ["none", "house"],
+        irsMayDiscussWithPreparer: ["yes", "no"],
       };
       // Blanking an EXTENSION field is always allowed — it means "we don't
       // have this fact", which is the same as never having asked. The legacy
@@ -1200,7 +1496,9 @@ export async function runFilingAction(
       const EXTENSION_SCALARS = new Set([
         "extensionFiled", "extensionTransmittedAt", "extensionMethod", "extensionDestination",
       ]);
-      const NULLABLE_ENUM_SCALARS = new Set(Array.from(EXTENSION_SCALARS).concat("priorForm5472Filed"));
+      const NULLABLE_ENUM_SCALARS = new Set(
+        Array.from(EXTENSION_SCALARS).concat("priorForm5472Filed", "paidPreparerMode", "irsMayDiscussWithPreparer"),
+      );
       const NULLABLE_BOOLEANS = new Set([
         "ownerHasFtin",
         "ownerNoPostalCode",
@@ -1372,12 +1670,15 @@ export async function runFilingAction(
           }),
         ),
       ]);
+      // Spec item 1: every change-logged save re-runs pre-flight on the new data.
+      const preflightRerun = await autoRerunPreflight(filing, ctx, `updateField:${field}`);
       return {
         ok: true,
         field,
         before,
         after,
         derived: Object.fromEntries(derivedKeys.map((k) => [k, toJson(update[k])])),
+        preflight: preflightRerun,
       };
     }
 
@@ -1396,14 +1697,7 @@ export async function runFilingAction(
       }
       const field = typeof body.field === "string" ? body.field : "";
       const reason = typeof body.reason === "string" ? body.reason.slice(0, 500) : "";
-      const allowed = new Set<string>([
-        "rcsWhyMissed",
-        "rcsWhenLearned",
-        "rcsNoIrsNoticeConfirmed",
-        "nonCashTransfers",
-        "ownerPaidCosts",
-        "zeroConfirmations",
-      ]);
+      const allowed = new Set<string>(ADMIN_EDITABLE_YEAR_FIELDS);
       if (!allowed.has(field)) {
         throw new FilingActionError(400, "field_not_editable", `field "${field}" is not editable`);
       }
@@ -1415,8 +1709,33 @@ export async function runFilingAction(
         if (raw !== null && !isPdfEncodable(raw)) {
           throw new FilingActionError(400, "invalid_value", PDF_TEXT_MESSAGE);
         }
+        if (field === "rcsAdminNarrative" && raw !== null && raw.length > MAX_RCS_NARRATIVE_CHARS) {
+          throw new FilingActionError(
+            400,
+            "invalid_value",
+            `The RCS narrative must be ${MAX_RCS_NARRATIVE_CHARS} characters or fewer.`,
+          );
+        }
         after = raw === null || raw.trim() === "" ? null : raw;
         writeValue = after;
+      } else if (YEAR_NULLABLE_DATES.has(field)) {
+        // DATE-ONLY (YYYY-MM-DD), stored at UTC midnight, like extensionTransmittedAt.
+        const raw = body.value === undefined || body.value === null ? "" : String(body.value).trim();
+        if (raw === "") {
+          after = null;
+          writeValue = null;
+        } else {
+          const parsed = new Date(`${raw}T00:00:00.000Z`);
+          if (
+            !/^\d{4}-\d{2}-\d{2}$/.test(raw) ||
+            Number.isNaN(parsed.getTime()) ||
+            parsed.toISOString().slice(0, 10) !== raw
+          ) {
+            throw new FilingActionError(400, "invalid_value", `${field} must be a real date in YYYY-MM-DD form`);
+          }
+          after = raw;
+          writeValue = parsed;
+        }
       } else if (YEAR_NULLABLE_BOOLEANS.has(field)) {
         const raw = body.value === undefined || body.value === null ? null : String(body.value);
         after = parseNullableBoolean(field, raw);
@@ -1435,21 +1754,38 @@ export async function runFilingAction(
           rcsWhyMissed: true,
           rcsWhenLearned: true,
           rcsNoIrsNoticeConfirmed: true,
+          rcsAdminNarrative: true,
+          rcsLearnedOn: true,
+          rcsSmallCorpParagraph: true,
           nonCashTransfers: true,
           ownerPaidCosts: true,
           zeroConfirmations: true,
+          noReportableTransactions: true,
         },
       });
       if (!year) {
         throw new FilingActionError(404, "year_not_found", "filing year not found");
       }
 
-      const before = (year as unknown as Record<string, unknown>)[field] ?? null;
+      const rawBefore = (year as unknown as Record<string, unknown>)[field] ?? null;
+      const before = rawBefore instanceof Date ? rawBefore.toISOString().slice(0, 10) : rawBefore;
+      const data: Record<string, unknown> = { [field]: writeValue };
+      // Spec item 7: owner-paid costs entered by an admin are reportable Part V
+      // contributions, so the customer's display-only "no reportable
+      // transactions" declaration for that year no longer holds. Cleared in the
+      // same write and change-logged on its own row.
+      const clearsNoneDeclared =
+        field === "ownerPaidCosts" &&
+        Array.isArray(after) &&
+        after.length > 0 &&
+        year.noReportableTransactions === true;
+      if (clearsNoneDeclared) data.noReportableTransactions = false;
       await prisma.filingYearData.update({
         where: { filingId_taxYear: { filingId: filing.id, taxYear } },
-        data: { [field]: writeValue } as never,
+        data: data as never,
         select: { id: true },
       });
+      const logReason = reason || ctx.reason;
       await logFilingChange({
         filingId: filing.id,
         adminId: ctx.adminId,
@@ -1457,9 +1793,28 @@ export async function runFilingAction(
         field: `year:${taxYear}:${field}`,
         before,
         after,
-        reason: reason || ctx.reason,
+        reason: logReason,
       });
-      return { ok: true };
+      if (clearsNoneDeclared) {
+        await logFilingChange({
+          filingId: filing.id,
+          adminId: ctx.adminId,
+          source: "admin",
+          field: `year:${taxYear}:noReportableTransactions`,
+          before: true,
+          after: false,
+          reason:
+            `${logReason ? `${logReason} — ` : ""}derived from ownerPaidCosts edit: admin-entered owner-paid costs ` +
+            "override the customer's \"no reportable transactions\" declaration",
+        });
+      }
+      // Spec item 1: every change-logged save re-runs pre-flight on the new data.
+      const preflightRerun = await autoRerunPreflight(filing, ctx, `updateYearField:${taxYear}:${field}`);
+      return {
+        ok: true,
+        ...(clearsNoneDeclared ? { derived: { noReportableTransactions: false } } : {}),
+        preflight: preflightRerun,
+      };
     }
 
     case "approvePreflightOverride": {
@@ -1509,10 +1864,33 @@ export async function runFilingAction(
           preflightOverrideBy: ctx.approver ?? ctx.adminId,
           preflightOverrideAt: approvedAt,
           preflightOverrideReason: reason,
+          // What the admin approved: a later re-run keeps this override only
+          // while every failure it finds is in this list (D11).
+          approvedFailures: preflightIssues(filing.preflightFailures),
+          preflightCheckedAt: filing.preflightCheckedAt,
         },
         reason,
       });
       return { ok: true };
+    }
+
+    case "rerunPreflight": {
+      if (filing.status === "DRAFT") {
+        throw new FilingActionError(
+          409,
+          "not_paid",
+          "This order is not paid yet. Pre-flight runs when the package is generated at payment.",
+        );
+      }
+      const summary = await rerunPreflightNow(filing, ctx, "manual");
+      if (!summary.ran) {
+        throw new FilingActionError(
+          summary.reason === "missing_required_fields" ? 400 : 500,
+          summary.reason,
+          summary.message,
+        );
+      }
+      return { ok: true, ...summary };
     }
 
     case "approveForSignature": {
@@ -1630,11 +2008,7 @@ export async function runFilingAction(
         );
       }
       if (filing.preflightStatus === "failed" && !filing.preflightOverrideBy) {
-        throw new FilingActionError(
-          409,
-          "preflight_failed",
-          "This package failed pre-flight checks. Fix the order data and regenerate.",
-        );
+        throw new FilingActionError(409, "preflight_failed", preflightBlockedMessage(filing));
       }
       const rawB64 = typeof body.pdfBase64 === "string" ? body.pdfBase64 : "";
       const cleaned = rawB64.includes(",") ? rawB64.slice(rawB64.indexOf(",") + 1) : rawB64;

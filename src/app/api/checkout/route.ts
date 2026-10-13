@@ -8,6 +8,7 @@ import { MULTI_YEAR_ADDON_CENTS, MULTI_YEAR_ADDON_LABEL, multiYearAddonCents, ti
 import { generatePackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { runPreflight } from "@/lib/pdf/preflight";
+import { persistNewPackagePreflight } from "@/lib/pdf/persistPreflight";
 import { putPdf } from "@/lib/storage";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
@@ -152,23 +153,17 @@ export async function POST(req: Request) {
         pdfSignatures = result.signatures;
         const key = `${filing.id}_unsigned.pdf`;
         await putPdf(key, result.bytes);
+        // Staff-only result (see the Stripe webhook): never shown to the customer.
         const preflight = await runPreflight(result.record, result.bytes);
-        await prisma.filing.update({
-          where: { id: filing.id },
+        await persistNewPackagePreflight({
+          filingId: filing.id,
+          preflight,
+          record: result.record,
           data: {
             generatedPdfKey: key,
             status: "PDF_GENERATED",
-            preflightStatus: preflight.ok ? "passed" : "failed",
-            preflightFailures: preflight.failures,
-            preflightWarnings: preflight.warnings,
-            preflightCheckedAt: new Date(),
-            preflightOverrideBy: null,
-            preflightOverrideAt: null,
-            preflightOverrideReason: null,
             reviewApprovedAt: null,
             reviewApprovedBy: null,
-            generatorVersion: result.record.generatorVersion,
-            generatorCommit: result.record.commit,
           },
         });
       } else {

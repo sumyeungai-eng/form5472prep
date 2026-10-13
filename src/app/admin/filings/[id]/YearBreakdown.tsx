@@ -44,6 +44,12 @@ export function YearBreakdown({ year }: YearBreakdownProps) {
   const reconciliationWarnings =
     transactions && transactions.length > 0 ? buildReconciliationWarnings(year, transactions) : [];
   const note = year.otherTransactionsNote?.trim();
+  // Owner-paid costs (admin or wizard entry) are Part V capital contributions:
+  // the generator adds them to that year's Part V statement and to Form 5472
+  // lines 1f and 1h (spec item 7). The typed "Contributions" total above does
+  // not include them, so show them and the combined Part V figure here.
+  const ownerPaidCosts = ownerPaidCostRows(year.ownerPaidCosts);
+  const ownerPaidTotalCents = ownerPaidCosts.reduce((sum, cost) => sum + Math.abs(cost.amountCents), 0);
 
   return (
     <div className="space-y-4">
@@ -56,10 +62,40 @@ export function YearBreakdown({ year }: YearBreakdownProps) {
         </div>
       </div>
 
-      {year.noReportableTransactions && (
+      {year.noReportableTransactions && ownerPaidCosts.length === 0 && (
         <span className="block w-fit text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200">
           Customer declared: no reportable transactions for this year.
         </span>
+      )}
+
+      {ownerPaidCosts.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="text-xs uppercase tracking-wider text-slate-500">
+            Owner-paid costs (Part V capital contributions)
+          </h4>
+          <table className="w-full text-sm">
+            <tbody className="divide-y divide-slate-100">
+              {ownerPaidCosts.map((cost, index) => (
+                <tr key={`${cost.date}-${cost.category}-${index}`}>
+                  <td className="py-1.5 pr-3 text-slate-700 whitespace-nowrap">{cost.date}</td>
+                  <td className="py-1.5 pr-3 text-slate-900">
+                    {OWNER_PAID_COST_LABELS[cost.category] ?? cost.category}
+                    {cost.note?.trim() ? <span className="text-slate-500"> — {cost.note}</span> : null}
+                  </td>
+                  <td className="py-1.5 text-right tabular-nums text-slate-900">{formatUsd(Math.abs(cost.amountCents))}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot className="border-t border-slate-200">
+              <tr>
+                <td colSpan={2} className="py-1.5 pr-3 text-right font-medium text-slate-700">
+                  Owner-paid total (added to Part V and lines 1f/1h)
+                </td>
+                <td className="py-1.5 text-right tabular-nums font-semibold text-slate-900">{formatUsd(ownerPaidTotalCents)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       )}
 
       <div className="space-y-2">
@@ -164,6 +200,29 @@ export function YearBreakdown({ year }: YearBreakdownProps) {
         </div>
       )}
     </div>
+  );
+}
+
+const OWNER_PAID_COST_LABELS: Record<string, string> = {
+  state_filing_fee: "State filing fee",
+  registered_agent: "Registered agent fee",
+  formation_or_ein_service: "Formation or EIN service fee",
+  software_subscriptions: "Software subscriptions",
+  initial_bank_funding: "Initial bank funding",
+  other: "Other",
+};
+
+type OwnerPaidCostRow = { category: string; date: string; amountCents: number; note?: string };
+
+function ownerPaidCostRows(value: unknown): OwnerPaidCostRow[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(
+    (row): row is OwnerPaidCostRow =>
+      !!row &&
+      typeof row === "object" &&
+      typeof (row as { category?: unknown }).category === "string" &&
+      typeof (row as { date?: unknown }).date === "string" &&
+      typeof (row as { amountCents?: unknown }).amountCents === "number",
   );
 }
 

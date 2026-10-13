@@ -2,8 +2,9 @@ import { describe, expect, it } from "vitest";
 import { PDFDocument } from "pdf-lib";
 import { AUTHORED_DOC_SIGNATURE_HEADING, COVER_LETTER_CLOSING, COVER_LETTER_ENCLOSURE_PHRASE, GENERATOR_VERSION } from "@/config/filingPackage";
 import { form5472FieldMap, form1120_2025FieldMap } from "./fieldMaps";
-import { runPreflight } from "./preflight";
-import type { PackageRecord } from "./generatePackage";
+import { isValidBrazilianCpf, isValidCanadianSin, runPreflight } from "./preflight";
+import { generatePackage, type PackageRecord, type RcsYearRecord } from "./generatePackage";
+import { CUSTOMER_INTAKE_TEXT, F11, lateCatchUpFinalisedAt } from "./__fixtures__/filings";
 
 const IRS_MAIL_ADDRESS_DISPLAY_LINES = [
   "Internal Revenue Service",
@@ -491,6 +492,383 @@ describe("runPreflight", () => {
 
     expect(result.failures.some((f) => f.id === "A22")).toBe(true);
   });
+});
+
+// ─── Generator 2.3.0 pre-flight (spec items 2-5, 7, 8, 10, 11, 13, 14) ───────
+// All identifiers below are synthetic. Tax-ID test numbers are generated here
+// so that they pass (or fail) the checksum; they are not real IDs.
+
+function luhnCheckDigit(prefix8: string): string {
+  let sum = 0;
+  for (let index = 0; index < 8; index++) {
+    let digit = Number(prefix8[index]);
+    if (index % 2 === 1) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+    sum += digit;
+  }
+  return String((10 - (sum % 10)) % 10);
+}
+
+function cpfWithCheckDigits(prefix9: string): string {
+  const digits = prefix9.split("").map(Number);
+  for (const length of [9, 10]) {
+    let sum = 0;
+    for (let index = 0; index < length; index++) sum += digits[index] * (length + 1 - index);
+    const remainder = (sum * 10) % 11;
+    digits.push(remainder === 10 ? 0 : remainder);
+  }
+  return digits.join("");
+}
+
+const SYNTHETIC_SIN = `12345678${luhnCheckDigit("12345678")}`;
+const SYNTHETIC_CPF = cpfWithCheckDigits("123456780");
+
+function rcsYear(overrides: Partial<RcsYearRecord> = {}): RcsYearRecord {
+  return {
+    narrativeSource: "admin",
+    narrative: "I did not know that my LLC had to file Form 5472. No adviser told me about it.",
+    customerExplanation: { whyMissed: null, whenLearned: null },
+    learnedOn: "2026-09-20",
+    dueDate: "2027-04-15",
+    dueDateProse: "April 15, 2027",
+    isFirstLateYear: true,
+    stillUnaware: { needed: false, rendered: false },
+    noticeConfirmed: true,
+    noticeSentence: true,
+    firstTaxYearSentence: true,
+    smallCorpParagraph: {
+      setting: null,
+      conditionsMet: false,
+      conditions: { lateYear: true, registeredAgentOnly: false, noGrossReceiptsSignal: true, notKnownBeforeDueDate: true },
+      rendered: false,
+    },
+    ...overrides,
+  };
+}
+
+// goodRecord made late (generator 2.3.0 shape): one RCS whose cause section is
+// the admin narrative.
+function lateRecord(rcs: Partial<RcsYearRecord> = {}): PackageRecord {
+  const record = clone(goodRecord);
+  const year = record.taxYears[0];
+  year.status = "late";
+  year.reasonableCauseIncluded = true;
+  year.rcs = rcsYear(rcs);
+  year.partVStatementLine1fPrinted = year.line1f;
+  year.form5472.fields.push(
+    { form: "5472-2026", field: form5472FieldMap["1f_totalPaymentsThisForm"], value: String(year.line1f) },
+    { form: "5472-2026", field: form5472FieldMap["1h_totalPaymentsAllForms"], value: String(year.line1f) },
+  );
+  record.authoredDocuments.push({
+    kind: "reasonableCauseStatement",
+    taxYear: 2026,
+    lines: [
+      "REASONABLE CAUSE STATEMENT",
+      "This statement explains why I did not file for tax year 2026 by the due date.",
+      "2. Cause of the Delinquency",
+      ...(year.rcs.narrative ? year.rcs.narrative.split(/(?<=\.) /) : []),
+      AUTHORED_DOC_SIGNATURE_HEADING,
+    ],
+    rcsMissingAnswers: year.rcs.narrativeSource === null,
+    rcsNarrativeSource: year.rcs.narrativeSource,
+  });
+  return record;
+}
+
+async function preflightOf(record: PackageRecord) {
+  return runPreflight(record, await goodPdfBytes(record));
+}
+
+const ids = (issues: { id: string }[]) => issues.map((issue) => issue.id);
+
+describe("pre-flight 2.3.0: reasonable cause statement (items 2-5)", () => {
+  it("A26 names the field, quotes each matched phrase and states the rule (narrative = error)", async () => {
+    const record = lateRecord({
+      narrative:
+        "I did not know about Form 5472. The LLC had no operating expenses, employees, or transactions during the year.",
+    });
+    const result = await preflightOf(record);
+    const a26 = result.failures.filter((f) => f.id === "A26");
+    expect(a26).toHaveLength(1);
+    expect(a26[0].message).toContain("Tax year 2026 → RCS narrative (admin):");
+    expect(a26[0].message).toContain('"The LLC had no operating expenses, employees, or transactions during the year."');
+    expect(a26[0].message).toContain(
+      "claims about operations, expenses, employees or transactions that the order data does not support or contradicts",
+    );
+    expect(a26[0].message).toContain("This year reports $278.50 of Part V transactions.");
+  });
+
+  it("A26 truncates a long quote to about 80 characters around the match", async () => {
+    const long =
+      "Because my formation agent never mentioned any annual federal information return obligations for foreign-owned LLCs, I assumed the LLC with no employees needed nothing further from me at all in any year whatsoever.";
+    const result = await preflightOf(lateRecord({ narrative: long }));
+    const quote = /"([^"]+)"/.exec(result.failures.find((f) => f.id === "A26")!.message)![1];
+    expect(quote).toContain("no employees");
+    expect(quote.length).toBeLessThanOrEqual(82);
+    expect(quote.startsWith("…") || quote.endsWith("…")).toBe(true);
+  });
+
+  it("customer text with the same claim is a labelled W26b warning, never an error, while no narrative is written", async () => {
+    const record = lateRecord({
+      narrativeSource: null,
+      narrative: null,
+      customerExplanation: { whyMissed: CUSTOMER_INTAKE_TEXT, whenLearned: null },
+    });
+    const result = await preflightOf(record);
+    expect(result.failures.filter((f) => f.id === "A26")).toEqual([]);
+    const w26b = result.warnings.find((w) => w.id === "W26b")!;
+    expect(w26b.message).toContain("Tax year 2026 → Customer's explanation: why missed (customer text, never printed)");
+    expect(w26b.message).toContain('"The Owner has no operating expenses, employees, or transactions."');
+  });
+
+  it("A32: a late year without an admin narrative fails with one clear message (no generic A26 answers-missing)", async () => {
+    const result = await preflightOf(lateRecord({ narrativeSource: null, narrative: null }));
+    expect(result.failures.filter((f) => f.id === "A32")).toEqual([
+      expect.objectContaining({ message: expect.stringContaining("RCS narrative not written for tax year 2026") }),
+    ]);
+    expect(result.failures.some((f) => f.id === "A26")).toBe(false);
+  });
+
+  it("A33 blocks questions and notes addressed to us in text that renders, naming the field", async () => {
+    const cases: Array<[string, string]> = [
+      ["Could you check whether I need to file this?", '"Could you check whether I need to file this?"'],
+      ["Please review the dates below before filing.", '"Please review the dates below before filing."'],
+      ["My objective is to keep the LLC open at minimal cost.", '"My objective is to keep the LLC open at minimal cost."'],
+      ["I relied on [CPA Name] for advice.", '"I relied on [CPA Name] for advice."'],
+    ];
+    for (const [narrative, quote] of cases) {
+      const result = await preflightOf(lateRecord({ narrative }));
+      const a33 = result.failures.find((f) => f.id === "A33");
+      expect(a33?.message, narrative).toContain("Tax year 2026 → RCS narrative (admin):");
+      expect(a33?.message).toContain(quote);
+    }
+  });
+
+  it("A33 also catches free text that only exists in a rendered statement (e.g. a Part V note)", async () => {
+    const record = lateRecord();
+    record.authoredDocuments.find((d) => d.kind === "partVStatement")!.lines.splice(3, 0, "Could you add the bank fees?");
+    const a33 = (await preflightOf(record)).failures.find((f) => f.id === "A33")!;
+    expect(a33.message).toContain('Tax year 2026 → Part V statement text: "Could you add the bank fees?"');
+  });
+
+  it("W34 warns when a later late year has no learned-on date; W35 when no IRS notice is not confirmed", async () => {
+    const record = lateRecord({ stillUnaware: { needed: true, rendered: false }, learnedOn: null, noticeConfirmed: null, noticeSentence: false });
+    const result = await preflightOf(record);
+    expect(result.failures).toEqual([]);
+    expect(result.warnings.find((w) => w.id === "W34")?.message).toContain('"Learned of requirement on" is not recorded');
+    expect(result.warnings.find((w) => w.id === "W35")?.message).toContain("was left out of the RCS");
+  });
+
+  it("W36 surfaces a 'not sure' Form 7004 answer before upload", async () => {
+    const record = lateRecord();
+    record.taxYears[0].extensionUnclear = true;
+    expect((await preflightOf(record)).warnings.find((w) => w.id === "W36")?.message).toContain(
+      "Extension unclear — confirm with customer before fax",
+    );
+  });
+});
+
+describe("pre-flight 2.3.0: totals, preparer, prior years (items 7, 8, 10)", () => {
+  it("A34 fails when the Part V statement total does not equal lines 1f and 1h", async () => {
+    const ok = await preflightOf(lateRecord());
+    expect(ok.failures.filter((f) => f.id === "A34")).toEqual([]);
+
+    const printedWrong = lateRecord();
+    printedWrong.taxYears[0].partVStatementLine1fPrinted = 424;
+    expect((await preflightOf(printedWrong)).failures.find((f) => f.id === "A34")?.message).toContain(
+      "Part V statement total ($424) must equal Form 5472 line 1f ($279) and line 1h ($279)",
+    );
+
+    const formWrong = lateRecord();
+    formWrong.taxYears[0].form5472.fields.find((w) => w.field === form5472FieldMap["1h_totalPaymentsAllForms"])!.value = "49";
+    expect((await preflightOf(formWrong)).failures.some((f) => f.id === "A34")).toBe(true);
+  });
+
+  it("A35 fails a house preparer with incomplete config, and 'I prepared' while a preparer is shown", async () => {
+    const config = lateRecord();
+    config.paidPreparerMode = "house";
+    config.housePreparer = { configComplete: false, missing: ["HOUSE_PREPARER_PTIN"], invalid: ["HOUSE_PREPARER_FIRM_EIN"] };
+    expect((await preflightOf(config)).failures.find((f) => f.id === "A35")?.message).toContain(
+      "missing HOUSE_PREPARER_PTIN; invalid HOUSE_PREPARER_FIRM_EIN",
+    );
+
+    const prepared = lateRecord({ narrative: "I prepared these returns myself once I learned of the requirement." });
+    prepared.paidPreparerMode = "house";
+    prepared.housePreparer = { configComplete: true, missing: [], invalid: [] };
+    prepared.taxYears[0].paidPreparer = { shown: true, discuss: null, fitFailures: [] };
+    expect((await preflightOf(prepared)).failures.find((f) => f.id === "A35")?.message).toContain('"I prepared these returns');
+
+    const noPreparer = lateRecord({ narrative: "I prepared these returns myself once I learned of the requirement." });
+    expect((await preflightOf(noPreparer)).failures.some((f) => f.id === "A35")).toBe(false);
+  });
+
+  // goodRecord's only year is its formation year; add a later year to test W15.
+  function twoYearRecord(): PackageRecord {
+    const record = clone(goodRecord);
+    const later = clone(record.taxYears[0]);
+    later.taxYear = 2027;
+    later.isInitialYear = false;
+    later.line1jChecked = false;
+    later.form5472.fields = later.form5472.fields.filter((w) => w.field !== form5472FieldMap["1j_initialYear"]);
+    record.taxYears.push(later);
+    return record;
+  }
+
+  it("W15 is suppressed when the earliest year contains the formation date or has line 1j checked", async () => {
+    const formationFirst = twoYearRecord();
+    formationFirst.taxYears[0].isFormationYear = true;
+    expect(ids((await preflightOf(formationFirst)).warnings)).not.toContain("W15");
+
+    const legacyShape = twoYearRecord(); // no isFormationYear flag: falls back to the formation date + 1j
+    expect(ids((await preflightOf(legacyShape)).warnings)).not.toContain("W15");
+
+    const startsLater = twoYearRecord();
+    startsLater.taxYears.shift();
+    startsLater.formationDate = "2025-03-01T00:00:00.000Z";
+    const result = await preflightOf(startsLater);
+    expect(result.warnings).toContainEqual({ id: "W15", message: "An earlier year may not have been filed." });
+  });
+});
+
+describe("pre-flight 2.3.0: owner data warnings (items 11, 13)", () => {
+  it("validates the synthetic SIN and CPF helpers", () => {
+    expect(isValidCanadianSin(SYNTHETIC_SIN)).toBe(true);
+    expect(isValidCanadianSin(`${SYNTHETIC_SIN.slice(0, 3)} ${SYNTHETIC_SIN.slice(3, 6)} ${SYNTHETIC_SIN.slice(6)}`)).toBe(true);
+    expect(isValidCanadianSin(`12345678${(Number(luhnCheckDigit("12345678")) + 1) % 10}`)).toBe(false);
+    expect(isValidCanadianSin("123456789012")).toBe(false);
+    expect(isValidBrazilianCpf(SYNTHETIC_CPF)).toBe(true);
+    expect(isValidBrazilianCpf(`${SYNTHETIC_CPF.slice(0, 3)}.${SYNTHETIC_CPF.slice(3, 6)}.${SYNTHETIC_CPF.slice(6, 9)}-${SYNTHETIC_CPF.slice(9)}`)).toBe(true);
+    expect(isValidBrazilianCpf(`${SYNTHETIC_CPF.slice(0, 10)}${(Number(SYNTHETIC_CPF[10]) + 1) % 10}`)).toBe(false);
+    expect(isValidBrazilianCpf("11111111111")).toBe(false);
+  });
+
+  function withOwnerIds(residence: string, ftin: string, referenceId = "EXAMPLEOWNER1"): PackageRecord {
+    const record = clone(goodRecord);
+    record.ownerReferenceId = referenceId;
+    const fields = record.taxYears[0].form5472.fields;
+    for (const field of [form5472FieldMap["4b3_ftin"], form5472FieldMap["8b3_ftin"]]) fields.find((w) => w.field === field)!.value = ftin;
+    for (const field of [form5472FieldMap["4b2_referenceId"], form5472FieldMap["8b2_referenceId"]]) fields.find((w) => w.field === field)!.value = referenceId;
+    fields.push({ form: "5472-2026", field: form5472FieldMap["4e_taxResidence"], value: residence });
+    return record;
+  }
+
+  it("W37 checks a Canadian FTIN as a SIN and a Brazilian FTIN as a CPF (warnings, never failures)", async () => {
+    expect(ids((await preflightOf(withOwnerIds("Canada", SYNTHETIC_SIN))).warnings)).not.toContain("W37");
+    const badSin = await preflightOf(withOwnerIds("Canada", "123456789012"));
+    expect(badSin.failures).toEqual([]);
+    expect(badSin.warnings.find((w) => w.id === "W37")?.message).toContain("Canadian Social Insurance Number");
+
+    expect(ids((await preflightOf(withOwnerIds("Brazil", SYNTHETIC_CPF))).warnings)).not.toContain("W37");
+    expect((await preflightOf(withOwnerIds("Brazil", "12345678901"))).warnings.find((w) => w.id === "W37")?.message).toContain("Brazilian CPF");
+  });
+
+  it("W37 only checks length elsewhere", async () => {
+    expect(ids((await preflightOf(withOwnerIds("Hong Kong", "HK1234567"))).warnings)).not.toContain("W37");
+    expect((await preflightOf(withOwnerIds("Hong Kong", "1234"))).warnings.find((w) => w.id === "W37")?.message).toContain("4 characters long");
+  });
+
+  it("W38 flags possible swapped fields: the Reference ID is a valid SIN and the FTIN is not", async () => {
+    const result = await preflightOf(withOwnerIds("Canada", "123456789012", SYNTHETIC_SIN));
+    expect(result.warnings.find((w) => w.id === "W38")?.message).toContain("Possible swapped fields");
+    expect(result.warnings.find((w) => w.id === "W38")?.message).not.toContain(SYNTHETIC_SIN);
+    expect(ids((await preflightOf(withOwnerIds("Canada", SYNTHETIC_SIN, SYNTHETIC_SIN))).warnings)).not.toContain("W38");
+  });
+
+  it("W39 flags an all-lowercase street and a bare trailing number with no unit label, and never rewrites it", async () => {
+    const lower = clone(goodRecord);
+    lower.ownerStreet = "12 sample road, flat 5";
+    const lowerResult = await preflightOf(lower);
+    expect(lowerResult.warnings.find((w) => w.id === "W39")?.message).toContain("is all lowercase");
+    expect(lower.ownerStreet).toBe("12 sample road, flat 5");
+
+    const bare = clone(goodRecord);
+    bare.ownerStreet = "12 Main St 5";
+    expect((await preflightOf(bare)).warnings.find((w) => w.id === "W39")?.message).toContain('ends "St 5"');
+
+    for (const street of ["12 Main St Apt 5", "12 Main St #5", "88 Queen Road Central, Suite 1200", "Calle Mayor 5", "12 Route 66"]) {
+      const ok = clone(goodRecord);
+      ok.ownerStreet = street;
+      expect(ids((await preflightOf(ok)).warnings), street).not.toContain("W39");
+    }
+  });
+
+  it("A22 recognises an LLC name that wraps across cover-letter lines", async () => {
+    const record = clone(goodRecord);
+    record.llcName = "Late Night Media LLC";
+    record.authoredDocuments[0].lines = [
+      ...IRS_MAIL_ADDRESS_DISPLAY_LINES,
+      "Date: 9/22/2026",
+      `Re: ${COVER_LETTER_ENCLOSURE_PHRASE} for Late Night Media LLC`,
+      `Enclosed please find ${COVER_LETTER_ENCLOSURE_PHRASE} for Late Night`,
+      "Media LLC. The package covers tax year 2026.",
+      COVER_LETTER_CLOSING,
+    ];
+    expect((await preflightOf(record)).failures.some((f) => f.id === "A22")).toBe(false);
+  });
+});
+
+// Definition of done: Lane A's synthetic two-year late fixture (owner-paid
+// costs both years, admin narratives, learned-on dates) with the IRS notice
+// confirmed for both years passes pre-flight with NO errors, and warns only
+// where data is genuinely missing.
+describe("pre-flight 2.3.0: definition of done (F11)", () => {
+  const confirmed = {
+    ...F11,
+    yearData: F11.yearData.map((year) => ({ ...year, rcsNoIrsNoticeConfirmed: true })),
+  };
+
+  it("passes with no errors; the only warning is the genuinely unconfirmed Form 7004 answer", async () => {
+    const pkg = await generatePackage(confirmed, lateCatchUpFinalisedAt);
+    const result = await runPreflight(pkg.record, pkg.bytes);
+    expect(result.failures).toEqual([]);
+    expect(result.ok).toBe(true);
+    expect(ids(result.warnings)).toEqual(["W36"]);
+    // Item 10: the earliest year (2024) contains the formation date, so W15 is gone.
+    expect(ids(result.warnings)).not.toContain("W15");
+  }, 60_000);
+
+  it("with the extension answered 'no' it raises no warnings at all", async () => {
+    const pkg = await generatePackage({ ...confirmed, extensionFiled: "no" }, lateCatchUpFinalisedAt);
+    const result = await runPreflight(pkg.record, pkg.bytes);
+    expect(result.failures).toEqual([]);
+    expect(result.warnings).toEqual([]);
+  }, 60_000);
+
+  it("customer text but no admin narrative: no RCS body text, A32 for each late year, customer text only as context", async () => {
+    const noNarrative = {
+      ...confirmed,
+      yearData: confirmed.yearData.map((year) => ({ ...year, rcsAdminNarrative: null })),
+    };
+    const pkg = await generatePackage(noNarrative, lateCatchUpFinalisedAt);
+    const rendered = pkg.record.authoredDocuments.flatMap((doc) => doc.lines).join(" ");
+    expect(rendered).not.toContain("Could you please review");
+    const result = await runPreflight(pkg.record, pkg.bytes);
+    expect(result.failures.map((f) => f.message.split(".")[0])).toEqual([
+      "RCS narrative not written for tax year 2024",
+      "RCS narrative not written for tax year 2025",
+    ]);
+    expect(result.warnings.find((w) => w.id === "W26b")?.message).toContain("customer text, never printed");
+  }, 60_000);
+
+  it("customer text pasted into the narrative fails A26 and A33 with quotes", async () => {
+    const pasted = {
+      ...confirmed,
+      yearData: confirmed.yearData.map((year) =>
+        year.taxYear === 2024 ? { ...year, rcsAdminNarrative: CUSTOMER_INTAKE_TEXT } : year,
+      ),
+    };
+    const pkg = await generatePackage(pasted, lateCatchUpFinalisedAt);
+    const result = await runPreflight(pkg.record, pkg.bytes);
+    const a26 = result.failures.find((f) => f.id === "A26")!;
+    expect(a26.message).toContain('Tax year 2024 → RCS narrative (admin): "The Owner has no operating expenses, employees, or transactions."');
+    expect(a26.message).toContain("This year reports $424.00 of Part V transactions.");
+    const a33 = result.failures.find((f) => f.id === "A33")!;
+    expect(a33.message).toContain("Could you please review whether Form 5472 and 1120 are required for my LLC?");
+    expect(a33.message).toContain("My objective is to maintain the LLC at minimal cost.");
+    expect(result.failures.filter((f) => f.id === "A33")).toHaveLength(1);
+  }, 60_000);
 });
 
 function clone<T>(value: T): T {

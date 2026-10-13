@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { generatePackage } from "@/lib/pdf/generatePackage";
 import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { runPreflight } from "@/lib/pdf/preflight";
+import { persistNewPackagePreflight } from "@/lib/pdf/persistPreflight";
 import { putPdf } from "@/lib/storage";
 
 export const runtime = "nodejs";
@@ -66,26 +67,22 @@ export async function POST(req: Request) {
   await putPdf(key, bytes);
   const preflight = await runPreflight(record, bytes);
 
-  await prisma.filing.update({
-    where: { id: filing.id },
+  await persistNewPackagePreflight({
+    filingId: filing.id,
+    preflight,
+    record,
     data: {
       generatedPdfKey: key,
       status: "PDF_GENERATED",
-      preflightStatus: preflight.ok ? "passed" : "failed",
-      preflightFailures: preflight.failures,
-      preflightWarnings: preflight.warnings,
-      preflightCheckedAt: new Date(),
-      generatorVersion: record.generatorVersion,
-      generatorCommit: record.commit,
       // A new package needs a new review: an approval given for an earlier
-      // package must never carry over to this one.
-      preflightOverrideBy: null,
-      preflightOverrideAt: null,
-      preflightOverrideReason: null,
+      // package must never carry over to this one (the helper also clears
+      // any pre-flight override).
       reviewApprovedAt: null,
       reviewApprovedBy: null,
     },
   });
 
+  // Pre-flight is staff-only: the customer gets the same answer whether it
+  // passed or failed (an admin reviews and fixes the package before signing).
   return NextResponse.json({ key, signatures });
 }

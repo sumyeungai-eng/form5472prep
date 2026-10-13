@@ -121,4 +121,17 @@ describe("toClientFiling", () => {
     expect(JSON.stringify(out)).not.toContain("Internal admin narrative");
     expect(STAFF_ONLY_YEAR_FIELDS).toEqual(["rcsAdminNarrative", "rcsLearnedOn", "rcsSmallCorpParagraph"]);
   });
+
+  it("drops pre-flight findings, which quote the admin narrative and customer text", async () => {
+    const { toClientFiling } = await import("./session");
+    const out = toClientFiling({
+      id: "f1",
+      sessionId: "s",
+      preflightStatus: "failed",
+      preflightFailures: [{ id: "A26", message: 'Tax year 2024 → RCS narrative (admin): "Internal admin narrative"' }],
+      preflightWarnings: [{ id: "W26b", message: "customer text" }],
+    });
+    expect(out).toEqual({ id: "f1", preflightStatus: "failed" });
+    expect(JSON.stringify(out)).not.toContain("Internal admin narrative");
+  });
 });

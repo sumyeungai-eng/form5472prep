@@ -132,18 +132,22 @@ Source: `docs/reviews/2026-10-13-preflight-generator-spec.md` (house rules 1-6, 
 | A19 | Reference ID fields are alphanumeric, at most 50 characters, and equal the stored owner reference ID. | Yes |
 | A20 | LLC name, EIN, and print address are identical everywhere the generator writes them. | Yes |
 | A21 | Form 1120 item D equals Form 5472 line 1c. | Yes |
-| A22 | Cover letter enclosure wording is exact, the reversed phrase is absent, and removed timeliness words are absent as whole words. | Yes |
+| A22 | Cover letter enclosure wording is exact, the reversed phrase is absent, and removed timeliness words are absent as whole words. The LLC and owner names are taken out whitespace-flexibly first, so a name containing "Late" that wraps across two cover-letter lines is not a false failure (2026-10-14). | Yes |
 | A23 | Cover letter addressee matches the configured IRS address and the date matches `finalisedAt`. | Yes |
 | A24 | Reasonable cause statements exist if and only if the tax year is late, with exactly one per late year naming that year. A "not_sure" Form 7004 answer counts as no extension (generator 2.3.0). | Yes |
 | A25 | Authored statements use the configured signature heading exactly; the cover letter closes with `Signed:` and never carries the perjury heading. | Yes |
-| A26 | Reasonable cause text does not contradict questionnaire facts and required per-year answers are present. Since generator 2.3.0 the record's `rcsMissingAnswers` means "no admin narrative" (rule H4), so the existing A26 "answers missing" failure fires until the admin writes one; Lane B owns the message wording. | Yes |
+| A26 | Reasonable cause text makes no claim about operations, expenses, employees or transactions that the order data does not support or contradicts (dormant, inactive, no customers/vendors, "no operating expenses, employees, or transactions", ...), and does not deny U.S. income when the order records U.S.-source income. Spec item 2 / D8: each finding names its source field ("Tax year 2024 → RCS narrative (admin)", or "→ reasonable cause statement (generated text)"), quotes each matched phrase with about 80 characters of context, states the rule, and adds the year's Part V total when it has one. A missing admin narrative is reported by A32, not A26 (the generic "answers missing" message stays only for records older than generator 2.3.0). | Yes |
 | A27 | Every Part V and Part VI statement page includes LLC name, EIN, and tax year. | Yes |
 | A28 | The final PDF has zero AcroForm fields and zero widget annotations. | Yes |
 | A29 | The render check V-02 passed. Per Amendment 1, V-02 cannot run in-process on Vercel because it uses native render dependencies, so it is enforced by CI as a separate check and not inside `runPreflight`. | CI only |
 | A30 | PDF metadata carries package title, generator version, commit hash, and generation timestamp. | Yes |
 | R02 | Package print addresses fit their narrowest target fields, or validation fails. | Yes |
+| A32 | A late tax year has an admin-authored RCS narrative (`FilingYearData.rcsAdminNarrative`, rule H4). Message: `RCS narrative not written for tax year X.` The customer's explanation is never a fallback (spec item 3). | Yes |
+| A33 | Admin-authored or other free text that renders into an IRS-facing document carries no question or note addressed to us: a question mark, "could you", "can you", "would you", "please review", "please advise", "please let me know", "my objective", "minimal cost", "[CPA Name]" or any `[Placeholder]`. Checked in the RCS narrative, Part V row descriptions, owner-paid cost notes, Part VI descriptions and valuation methods (each named), then in the rendered Part V / Part VI / RCS text for anything else (e.g. the "other transactions" note). Each finding quotes the phrase and names the field (spec item 3, D9). | Yes |
+| A34 | Per tax year, the Part V statement's closing total (`Form 5472 lines 1f and 1h: $X.`) equals line 1f and line 1h as written on Form 5472, and equals the rounded Part V plus Part VI total (spec item 7). | Yes |
+| A35 | Paid preparer (spec item 8): `paidPreparerMode = "house"` with incomplete or invalid `HOUSE_PREPARER_*` config fails (names the missing/invalid settings); when a preparer is shown on any Form 1120, no RCS, Part V or Part VI statement may say "I prepared". | Yes |
 
-Implementation status is based on reading `src/lib/pdf/preflight.ts`: `runPreflight` calls `checkW02`, `checkA01` through `checkA28` except `checkA29`, `checkR02`, and `checkA30`. `checkA29` is intentionally absent because render verification runs in CI only.
+Implementation status is based on reading `src/lib/pdf/preflight.ts`: `runPreflight` calls `checkW02`, `checkA01` through `checkA28` except `checkA29`, `checkR02`, `checkA30`, `checkA31` through `checkA35`, and the warning checks W31 to W41. `checkA29` is intentionally absent because render verification runs in CI only.
 
 ## Warnings (non-blocking) referenced in preflight.ts
 
@@ -156,8 +160,33 @@ Implementation status is based on reading `src/lib/pdf/preflight.ts`: `runPrefli
 | W17 | Owner address is an older single-line address without structured state, postal, or no-postal-code answer. | `Tax year [year]: Owner address not in structured form (older order).` |
 | W18 | FTIN is blank and `ownerHasFtin` is not structured. | `Tax year [year]: Owner FTIN answer not in structured form (older order).` |
 | W26 | Reasonable cause statement uses fallback text predating per-year questions. Since generator 2.3.0 the generator never falls back to customer text (rule H4), so `rcsFallbackUsed` is always false and W26 no longer fires. | `Reasonable cause text predates the per-year questions.` |
+| W26b | A late year has no admin narrative yet and the customer's own explanation (why missed / when learned / the legacy order-level message; never printed) makes an A26-type claim. Context for the admin who is about to write the narrative; not shown once a narrative exists (D8). | `Tax year X → Customer's explanation: why missed (customer text, never printed): "…" — Context only: …` |
+| W34 | A late year after the first late year has no "Learned of requirement on" date, so its RCS cannot say whether the owner was still unaware at that year's due date (spec item 4, D4). | `Tax year X: "Learned of requirement on" is not recorded, …` |
+| W35 | "No IRS notice confirmed" is not Yes for a late year, so the notice sentence was left out of that RCS (spec item 5, rule H3). | `Tax year X: "No IRS notice confirmed" is not recorded, …` |
+| W36 | The Form 7004 answer for a year is "not sure" (`extensionUnclear`): the package treats it as no extension. Same wording as the admin page chip, raised before upload (spec item 14). | `Tax year X: Extension unclear — confirm with customer before fax. …` |
+| W37 | FTIN format by country of tax residence (spec item 11): Canada = SIN, 9 digits passing Luhn; Brazil = CPF, 11 digits with two check digits; other countries = 5 to 20 characters after removing separators. Warning only. | `Owner FTIN (Form 5472 line 4b(3)) does not look like a …` |
+| W38 | Possible swapped fields: the Reference ID passes the national-ID test for the country of tax residence but the FTIN does not. The numbers themselves are never printed in the message. | `Possible swapped fields: …` |
+| W39 | Owner address quality (spec item 13): the street line (printed exactly as entered) is all lowercase, or ends in a bare number with no unit label ("12 Main St 5"; Apt/Unit/Suite/Flat/#/Room/... and numbered roads are fine). The address is never rewritten automatically. Missing state/postal stays A17. | `Owner street address "…" is all lowercase …` / `… has no unit label …` |
+| W40 | The admin forced the small-corporation paragraph On while some of its conditions (rule H8) are not met. | `Tax year X: the small-corporation paragraph is switched On but these conditions are not met: …` |
+| W41 | "May the IRS discuss with the preparer?" is answered but no preparer is shown, or a preparer field printed below 6pt. | `"May the IRS discuss with the preparer?" is set to …` |
 
 W02 is implemented in `src/lib/pdf/preflight.ts` as a warning, not a blocking assertion.
+
+W15 suppression (spec item 10, 2026-10-14): `An earlier year may not have been filed.` is not raised when the EARLIEST tax year in the package contains the formation date (`isFormationYear`) or has Form 5472 line 1j checked; then no earlier year exists. The formation-year W15 (`Formation-year prior Form 5472 answer needs reviewer confirmation.`) is unchanged.
+
+## Pre-flight lifecycle (spec items 1 and 12, decisions D10 and D11)
+
+| Rule | Implemented |
+|---|---|
+| Pre-flight evaluates the ORDER DATA: the package is rebuilt in memory and checked. It never inspects an uploaded (reviewed or signed) PDF. | Yes |
+| Every trigger persists the result through one helper (`src/lib/pdf/persistPreflight.ts`): the Stripe webhook, the $0 checkout tier, the customer generate-pdf route, admin Regenerate and Resend order confirmation (new package: result stored, override cleared, generator version stamped), and the admin re-run (no new package). | Yes |
+| "Re-run pre-flight" (`rerunPreflight` action) and an automatic re-run after every change-logged `updateField` / `updateYearField` save and after Regenerate store status, failures, warnings and `preflightCheckedAt`, write NO PDF, and add a `preflight` change-log row (trigger, status, failure and warning IDs). An automatic re-run never fails the save it follows; it is skipped for DRAFT, FAXED and CONFIRMED filings. | Yes |
+| Override rule on a re-run: a recorded "Approve despite pre-flight failures" survives only while every current failure (ID and message) is one it approved. The approved failures are stored on the override's change-log row (`approvedFailures`); otherwise the override is cleared and a `preflightOverride` change-log row records why. Recording an override needs a reason of at least 10 non-space characters, logged with the admin and the time. | Yes |
+| The admin page shows the check time, a "Stale" badge when a change-logged data edit (`FilingChangeLog.changedAt`, not `Filing.updatedAt`) is newer than `preflightCheckedAt`, and a "Re-run pre-flight" button. While pre-flight failed with no override, "Upload reviewed PDF" is visibly disabled with the reason inline and a link to the override form; the server still answers 409 `preflight_failed` with the failing check IDs and what to do. | Yes |
+| Which file is which: the client checks and signs the current client version, `generatedPdfKey` (the accountant-reviewed upload `*_reviewed_*` when there is one, otherwise the generated PDF). The fax sends the signed PDF (`signedPdfKey`), copied byte-for-byte to the faxed snapshot (`faxedPdfKey`). | Yes (admin page help text) |
+| While a reviewed PDF is the client version, Regenerate asks for confirmation ("A reviewed PDF is the current client version. Regenerating will not replace it unless you upload again."), writes the new package as a draft to `${id}_unsigned.pdf` only, leaves `generatedPdfKey`, review approval, signature and status unchanged, and re-runs pre-flight (override rule above). The admin downloads it with "Download latest generated draft" (admin-only `/api/admin/filings/[id]/pdf?variant=draft`). | Yes |
+| Pre-flight findings are staff-only: `preflightFailures` / `preflightWarnings` are stripped from every customer API (`STAFF_ONLY_FILING_FIELDS`), and a failed pre-flight at payment changes nothing the customer sees or is sent. | Yes |
+| An admin who enters owner-paid costs for a year clears that year's display-only `noReportableTransactions` ("customer declared none") flag in the same write, with its own change-log row (spec item 7). | Yes |
 
 ## Review before signature
 
