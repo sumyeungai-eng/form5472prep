@@ -2,7 +2,7 @@
 title: "Form 5472 Deadline for 2026 and 2027"
 description: "The 2025 Form 5472 is due October 15, 2026 if extended. See every 2026-2027 deadline, the Form 7004 extension rule, and what to do if you're already late."
 date: 2026-08-15
-updated: 2026-10-07
+updated: 2026-10-13
 author: "Form5472 Prep"
 tags: ["form-5472", "deadline", "extension", "form-7004", "foreign-owned-llc"]
 draft: false
@@ -18,7 +18,7 @@ If a date has already passed for you, [we prepare and fax complete late packages
 
 ## The deadline calendar
 
-| Tax year | Standard due date | Extended due date (with Form 7004) | Status at 7 October 2026 |
+| Tax year | Standard due date | Extended due date (with Form 7004) | Status at 13 October 2026 |
 |---|---|---|---|
 | **2024** | 15 April 2025 | 15 October 2025 | Both passed — file late now |
 | **2025** | 15 April 2026 | **15 October 2026** | Extended deadline 15 October 2026; late since 16 April 2026 without Form 7004 |
