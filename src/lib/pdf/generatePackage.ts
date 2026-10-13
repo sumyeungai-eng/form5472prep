@@ -2204,7 +2204,7 @@ async function buildReasonableCause(
   space(6);
   // Only the LATE years are "outstanding" — a timely year in the same package
   // must never be described as outstanding in a signed statement.
-  const outstandingYears = [...new Set([...lateYears, year])].sort((a, b) => a - b);
+  const outstandingYears = Array.from(new Set([...lateYears, year])).sort((a, b) => a - b);
   const corrective = [
     outstandingYears.length > 1
       ? `As soon as I learned of the requirement, I took steps to file the outstanding returns for ${formatTaxYearList(outstandingYears)}, which I am now filing together.`
