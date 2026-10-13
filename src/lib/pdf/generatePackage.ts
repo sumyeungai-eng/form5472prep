@@ -12,6 +12,7 @@ import {
   form1120_2023FieldMap,
   form1120_2024FieldMap,
   form1120_2025FieldMap,
+  form1120PaidPreparerFieldMaps,
 } from "./fieldMaps";
 import {
   setText,
@@ -22,14 +23,23 @@ import {
   type PdfFieldWrite,
 } from "./fillForm";
 import { fitFontSize, measureFieldBox, type FieldBox, type FitLine } from "./fitText";
-import { countryForProse, displayCaseAddressPart, ownerNationalityClause } from "./textFormat";
+import { displayCaseAddressPart, ownerNationalityClause } from "./textFormat";
 import { formatDateForIrs } from "@/lib/utils";
 import {
+  effectiveDueDateUtc,
   extensionUnclear,
-  isYearDelinquent,
+  formatDueDate,
+  isYearDelinquentForPackage,
+  packageExtensionFacts,
   type ExtensionFacts,
 } from "@/lib/schemas";
 import {
+  housePreparerConfigStatus,
+  housePreparerFromEnv,
+  type HousePreparer,
+} from "@/config/housePreparer";
+import {
+  AUTHORED_DOC_DATE_LINE,
   AUTHORED_DOC_SIGNATURE_HEADING,
   COVER_LETTER_CLOSING,
   COVER_LETTER_ENCLOSURE_PHRASE,
@@ -38,7 +48,9 @@ import {
   IRS_MAIL_ADDRESS,
   IRS_MAIL_ADDRESS_DISPLAY_LINES,
   IRS_MAIL_ADDRESS_DISPLAY_SINGLE_LINE,
+  PART_V_STATEMENT_CITATION,
   SIGNER_TITLE,
+  SMALL_CORPORATION_PARAGRAPH,
   assertIrsJuratUntouched,
 } from "@/config/filingPackage";
 
@@ -149,20 +161,35 @@ type Filing = {
   //   extensionTransmittedAt  when the 7004 was transmitted
   extensionFiled?: string | null;
   extensionTransmittedAt?: Date | string | null;
+  // Legacy customer free text. Admin context only: never rendered (rules doc H4).
   reasonableCauseNarrative: string | null;
-    yearData: {
-      taxYear: number;
-      totalAssetsYearEnd: number;
-      contributions: number;
-      distributions: number;
-      otherTransactionsNote: string | null;
-      reportableTransactions?: ReportableTx[];
-      nonCashTransfers?: NonCashTransfer[];
-      ownerPaidCosts?: OwnerPaidCost[];
-      zeroConfirmations?: ZeroConfirmations;
-      rcsWhyMissed?: string | null;
+  // Paid preparer block (generator 2.3.0). null/"none" = blank block (default);
+  // "house" = fill it from the HOUSE_PREPARER_* config. Optional so call sites
+  // that predate it keep compiling.
+  paidPreparerMode?: string | null;
+  // "May the IRS discuss this return with the preparer?": null = blank, "yes" | "no".
+  irsMayDiscussWithPreparer?: string | null;
+  yearData: {
+    taxYear: number;
+    totalAssetsYearEnd: number;
+    contributions: number;
+    distributions: number;
+    otherTransactionsNote: string | null;
+    reportableTransactions?: ReportableTx[];
+    nonCashTransfers?: NonCashTransfer[];
+    ownerPaidCosts?: OwnerPaidCost[];
+    zeroConfirmations?: ZeroConfirmations;
+    // The customer's own explanation for a late year. Admin context only:
+    // never rendered into any document (rules doc H4).
+    rcsWhyMissed?: string | null;
     rcsWhenLearned?: string | null;
     rcsNoIrsNoticeConfirmed?: boolean | null;
+    // Generator 2.3.0 admin fields. rcsAdminNarrative is the ONLY cause text
+    // the reasonable cause statement renders; rcsLearnedOn drives the "still
+    // unaware" sentence; rcsSmallCorpParagraph null = automatic.
+    rcsAdminNarrative?: string | null;
+    rcsLearnedOn?: Date | string | null;
+    rcsSmallCorpParagraph?: boolean | null;
   }[];
 };
 
@@ -211,8 +238,66 @@ export type AuthoredDocumentRecord = {
   taxYear?: number;
   lines: string[];
   pages?: string[][];
+  // Always false since generator 2.3.0: customer text is never a fallback (H4).
   rcsFallbackUsed?: boolean;
+  // Since generator 2.3.0: true when the year has no admin narrative, so the
+  // cause section has no narrative text (pre-flight must fail).
   rcsMissingAnswers?: boolean;
+  // Where the rendered cause narrative came from: "admin" or null (none).
+  rcsNarrativeSource?: "admin" | null;
+};
+
+// Reasonable-cause decisions for one tax year (generator 2.3.0). Computed for
+// every year; the flags say what the statement actually printed, so pre-flight
+// can reason about it without re-parsing the text. See
+// docs/reviews/2026-10-13-preflight-generator-contract.md.
+export type RcsYearRecord = {
+  // "admin" when FilingYearData.rcsAdminNarrative has text, else null.
+  narrativeSource: "admin" | null;
+  // The admin narrative exactly as rendered (paragraphs joined by "\n\n"), or null.
+  narrative: string | null;
+  // The customer's own explanation. Context for the admin and pre-flight only:
+  // it is NEVER rendered into the package.
+  customerExplanation: { whyMissed: string | null; whenLearned: string | null };
+  // FilingYearData.rcsLearnedOn as YYYY-MM-DD, or null.
+  learnedOn: string | null;
+  // The due date the lateness decision used (YYYY-MM-DD; a "not sure" Form
+  // 7004 counts as no extension), and its prose form ("April 15, 2025").
+  dueDate: string;
+  dueDateProse: string;
+  // True for the earliest late year in the package.
+  isFirstLateYear: boolean;
+  // "I remained unaware of the requirement when the [year] return was due on [date]."
+  // needed: a late year after the first late year. rendered: needed and
+  // learnedOn is after dueDate.
+  stillUnaware: { needed: boolean; rendered: boolean };
+  // FilingYearData.rcsNoIrsNoticeConfirmed as stored, and whether the
+  // "I have not received any IRS notice about this return." sentence printed.
+  noticeConfirmed: boolean | null;
+  noticeSentence: boolean;
+  // "This is the LLC's first tax year." printed (formation year only).
+  firstTaxYearSentence: boolean;
+  smallCorpParagraph: {
+    // FilingYearData.rcsSmallCorpParagraph: null = automatic, true/false = admin override.
+    setting: boolean | null;
+    conditionsMet: boolean;
+    conditions: {
+      lateYear: boolean;
+      registeredAgentOnly: boolean;
+      noGrossReceiptsSignal: boolean;
+      notKnownBeforeDueDate: boolean;
+    };
+    rendered: boolean;
+  };
+};
+
+export type PaidPreparerYearRecord = {
+  // True when the house preparer's details were written into the block.
+  shown: boolean;
+  // The discuss answer ticked on this form (only when shown), else null.
+  discuss: "yes" | "no" | null;
+  // Labels of preparer fields whose text did not fit at 6pt (printed smaller).
+  fitFailures: string[];
 };
 
 export type PackageRecordYear = {
@@ -250,6 +335,22 @@ export type PackageRecordYear = {
   form1120: { fields: PdfFieldWrite[]; stampedTexts: string[] };
   form5472: { fields: PdfFieldWrite[] };
   reasonableCauseIncluded: boolean;
+  // ── Generator 2.3.0. Optional so records built by hand (tests) or before
+  // 2.3.0 still type-check; generatePackage always sets them. ──
+  // The tax year contains the LLC's formation date.
+  isFormationYear?: boolean;
+  // Effective due date used for the late/timely decision (YYYY-MM-DD).
+  dueDate?: string;
+  // The Form 7004 answer applied to THIS year (latest year only, else null).
+  extensionFiled?: string | null;
+  // True when this year's extension answer needs the reviewer: "not_sure"
+  // (treated as no extension, so the year can be late) or the June 30 edge.
+  extensionUnclear?: boolean;
+  // Whole dollars printed at the end of the Part V statement
+  // ("Form 5472 lines 1f and 1h: $X."). Equals line1f by construction.
+  partVStatementLine1fPrinted?: number;
+  paidPreparer?: PaidPreparerYearRecord;
+  rcs?: RcsYearRecord;
 };
 
 export type PrintAddressRecord = {
@@ -287,6 +388,23 @@ export type PackageRecord = {
   taxYears: PackageRecordYear[];
   authoredDocuments: AuthoredDocumentRecord[];
   pageOrder: PackagePageRecord[];
+  // ── Generator 2.3.0 (optional for hand-built records) ──
+  // Late tax years, ascending (one RCS each).
+  lateYears?: number[];
+  // Filing.paidPreparerMode normalised: "house" or "none".
+  paidPreparerMode?: "none" | "house";
+  // House preparer config status (env), whatever the mode.
+  housePreparer?: { configComplete: boolean; missing: string[]; invalid: string[] };
+  // Filing.irsMayDiscussWithPreparer normalised.
+  irsMayDiscussWithPreparer?: "yes" | "no" | null;
+  // Legacy Filing.reasonableCauseNarrative (customer text). Never rendered.
+  customerReasonableCauseNarrative?: string | null;
+};
+
+export type GeneratePackageOptions = {
+  // Environment the house preparer config is read from (default process.env).
+  // Tests pass synthetic values here.
+  env?: Record<string, string | undefined>;
 };
 
 type SignerTitleColumnBounds = {
@@ -395,7 +513,8 @@ function partVRowsForYear(f: Filing, year: number): ReportableTx[] {
   if (!hasContributionRows && yd.contributions > 0) {
     rows.push({
       date: periodEndIso,
-      description: "Capital contribution total entered by customer",
+      // Never "entered by customer": the statement is in the owner's voice (H1).
+      description: "Capital contributions during the tax year (total)",
       counterparty: f.ownerName,
       amountCents: Math.round(yd.contributions * 100),
       category: "contribution",
@@ -404,7 +523,7 @@ function partVRowsForYear(f: Filing, year: number): ReportableTx[] {
   if (!hasDistributionRows && yd.distributions > 0) {
     rows.push({
       date: periodEndIso,
-      description: "Distribution total entered by customer",
+      description: "Distributions during the tax year (total)",
       counterparty: f.ownerName,
       amountCents: -Math.round(yd.distributions * 100),
       category: "distribution",
@@ -431,19 +550,40 @@ function partVTotalCents(rows: ReportableTx[]): number {
   return rows.reduce((sum, tx) => sum + Math.abs(tx.amountCents), 0);
 }
 
+// Schedule description of an owner-paid cost, in the owner's voice (H1).
 function ownerPaidCostDescription(cost: OwnerPaidCost): string {
   if (cost.category === "other") {
-    return (cost.note ?? "").trim() || "Cost paid personally by owner";
+    const note = (cost.note ?? "").trim();
+    return note ? `${note}, paid from my personal funds` : "Cost paid from my personal funds";
   }
   const label: Record<OwnerPaidCost["category"], string> = {
-    state_filing_fee: "State filing fee paid personally by owner",
-    registered_agent: "Registered agent fee paid personally by owner",
-    formation_or_ein_service: "Formation or EIN service paid personally by owner",
-    software_subscriptions: "Software or subscription cost paid personally by owner",
-    initial_bank_funding: "Initial bank funding paid personally by owner",
-    other: "Cost paid personally by owner",
+    state_filing_fee: "State filing fee, paid from my personal funds",
+    registered_agent: "Registered agent fee, paid from my personal funds",
+    formation_or_ein_service: "Formation or EIN service fee, paid from my personal funds",
+    software_subscriptions: "Software or subscription costs, paid from my personal funds",
+    initial_bank_funding: "Initial bank funding from my personal funds",
+    other: "Cost paid from my personal funds",
   };
   return label[cost.category];
+}
+
+// The Part V statement sentence for one owner-paid cost (spec item 7, H9):
+// "During tax year [year], I paid $[amount] of [description] for [LLC] from my
+// personal funds." Initial bank funding is money moved, not a cost paid, so it
+// gets its own wording.
+function ownerPaidCostSentence(cost: OwnerPaidCost, year: number, llcName: string): string {
+  const amount = formatMoney(Math.abs(cost.amountCents) / 100);
+  if (cost.category === "initial_bank_funding") {
+    return `During tax year ${year}, I transferred ${amount} from my personal funds to ${llcName} as initial bank funding.`;
+  }
+  const what: Record<Exclude<OwnerPaidCost["category"], "initial_bank_funding">, string> = {
+    state_filing_fee: "state filing fees",
+    registered_agent: "registered agent fees",
+    formation_or_ein_service: "formation or EIN service fees",
+    software_subscriptions: "software or subscription costs",
+    other: (cost.note ?? "").trim() || "costs",
+  };
+  return `During tax year ${year}, I paid ${amount} of ${what[cost.category]} for ${llcName} from my personal funds.`;
 }
 
 export function roundedPartVTotalDollars(rows: ReportableTx[]): number {
@@ -971,6 +1111,60 @@ function fillForm5472(
 // (total assets) and 1m (date incorporated). Filling them mirrors the
 // 5472 data and removes the ambiguity at zero risk.
 // "Foreign-owned U.S. DE" is stamped across the top by stampForeignOwnedDeHeader().
+// "Tax year beginning" value for the Form 1120 header (generator 2.3.0, spec
+// item 9). Every revision prints the beginning YEAR itself ("tax year
+// beginning ______, 2024"), so the field takes MM/DD only — a full date
+// printed "11/02/2024, 2024". The one exception is the short-year
+// prior-revision exception, where the printed year is the previous year: there
+// the field keeps MM/DD/YYYY so the year-N date still shows (rules doc,
+// "Pro forma Form 1120").
+export function form1120TaxYearBeginningValue(
+  f: { llcDateIncorporated?: Date | string | null },
+  year: number,
+  shortYearException: boolean,
+): string {
+  const start = periodStartFor(f, year);
+  return shortYearException ? `${start}/${year}` : start;
+}
+
+type Form1120FillOptions = {
+  shortYearException: boolean;
+  // The house preparer to print, or null to leave the block blank.
+  preparer: HousePreparer | null;
+  discuss: "yes" | "no" | null;
+  measureFont: PDFFont;
+};
+
+// Fill the "Paid Preparer Use Only" block and the "May the IRS discuss"
+// boxes. Signature, date and the self-employed box are never written.
+function fillPaidPreparerBlock(
+  pdf: PDFDocument,
+  revision: Form1120Revision,
+  opts: Form1120FillOptions,
+  recorder: { form: string; writes: PdfFieldWrite[] },
+): PaidPreparerYearRecord {
+  if (!opts.preparer) return { shown: false, discuss: null, fitFailures: [] };
+  const form = pdf.getForm();
+  const m = form1120PaidPreparerFieldMaps[revision];
+  const fitFailures: string[] = [];
+  const write = (field: string, value: string, label: string) => {
+    const box = measureFieldBox(pdf, field, label);
+    const fit = fitFontSize([{ ...box, text: toPdfSafe(value) }], opts.measureFont, { max: 8, min: 6 });
+    if (!fit.fits) fitFailures.push(label);
+    setTextWithRecordedFontSize(form, field, value, recorder, fit.fontSize);
+  };
+  const p = opts.preparer;
+  write(m.preparerName, p.name, "Paid preparer name");
+  write(m.ptin, p.ptin, "Paid preparer PTIN");
+  write(m.firmName, p.firmName, "Paid preparer firm name");
+  write(m.firmEin, p.firmEin, "Paid preparer firm EIN");
+  write(m.firmAddress, p.firmAddress, "Paid preparer firm address");
+  if (p.phone) write(m.phone, p.phone, "Paid preparer phone");
+  if (opts.discuss === "yes") check(form, m.discussYes, recorder);
+  if (opts.discuss === "no") check(form, m.discussNo, recorder);
+  return { shown: true, discuss: opts.discuss, fitFailures };
+}
+
 async function fillForm1120(
   pdf: PDFDocument,
   f: Filing,
@@ -978,10 +1172,12 @@ async function fillForm1120(
   revision: Form1120Revision,
   llcPrintAddress: PrintAddressRecord,
   recorder: { form: string; writes: PdfFieldWrite[] },
+  opts: Form1120FillOptions,
 ): Promise<{
   signerTitleRect: PackageRecordYear["signerTitleRect"];
   signerTitleColumnBounds: PackageRecordYear["signerTitleColumnBounds"];
   signerDeclarationBounds: PackageRecordYear["signerDeclarationBounds"];
+  paidPreparer: PaidPreparerYearRecord;
 }> {
   const form = pdf.getForm();
   // Total assets at year-end — mirror Form 5472 line 1c. Pull the year that
@@ -991,8 +1187,9 @@ async function fillForm1120(
   const dateIncorporated = formatDateForIrs(f.llcDateIncorporated);
   const m = form1120MapForRevision(revision);
 
+  const taxYearBeginning = form1120TaxYearBeginningValue(f, year, opts.shortYearException);
   if ("1_street" in m) {
-    setText(form, m.taxYearBeginning, `${periodStartFor(f, year)}/${year}`, recorder);
+    setText(form, m.taxYearBeginning, taxYearBeginning, recorder);
     setText(form, m.taxYearEnding, periodEndFor(f, year), recorder);
     setText(form, m.taxYearEndingYear2, String(year).slice(-2), recorder);
     setTextWithRecordedFontSize(form, m["1a_name"], f.llcName, recorder, llcPrintAddress.fontSize);
@@ -1007,7 +1204,7 @@ async function fillForm1120(
     setText(form, m.C_dateIncorporated, dateIncorporated, recorder);
     setText(form, m.D_totalAssets, totalAssets, recorder);
   } else {
-    setText(form, m.taxYearBeginning, `${periodStartFor(f, year)}/${year}`, recorder);
+    setText(form, m.taxYearBeginning, taxYearBeginning, recorder);
     setText(form, m.taxYearEnding, periodEndFor(f, year), recorder);
     setText(form, m.taxYearEndingYear2, String(year).slice(-2), recorder);
     setTextWithRecordedFontSize(form, m["1a_name"], f.llcName, recorder, llcPrintAddress.fontSize);
@@ -1044,6 +1241,8 @@ async function fillForm1120(
     if ("E_initialReturn" in itemE) check(form, itemE.E_initialReturn, recorder);
   }
 
+  const paidPreparer = fillPaidPreparerBlock(pdf, revision, opts, recorder);
+
   const signerTitleBounds = deriveSignerTitleColumnBounds(pdf, revision);
 
   flatten(form);
@@ -1064,6 +1263,7 @@ async function fillForm1120(
       measuredField: signerTitleBounds.measuredField,
     },
     signerDeclarationBounds,
+    paidPreparer,
   };
 }
 
@@ -1157,16 +1357,20 @@ function deriveSignerDeclarationBounds(bounds: SignerTitleColumnBounds): Package
 // Vertical advance from one statement table row to the next (10pt type).
 const TABLE_ROW_ADVANCE = 15;
 
-// Build a brand-new PDF with the Part V supporting statement table.
+// Build a brand-new PDF with the Part V supporting statement (generator 2.3.0,
+// rules doc H9): first person, Date / Description / Amount (USD) schedule with
+// a total row, ending "Form 5472 lines 1f and 1h: $[total]." Returns the whole
+// dollars printed on that last line (always line 1f).
 async function buildSupportingStatement(
   f: Filing,
   year: number,
   line1fDollars: number,
   partVICentsAddedToLine1f: number,
   authoredDocuments: AuthoredDocumentRecord[],
-): Promise<PDFDocument> {
+): Promise<{ pdf: PDFDocument; line1fPrinted: number }> {
   const yd = f.yearData.find((y) => y.taxYear === year);
   const otherNote = (yd?.otherTransactionsNote ?? "").trim();
+  const ownerPaidCosts = yd?.ownerPaidCosts ?? [];
   const allTx = partVRowsForYear(f, year);
   const contributionsTx = allTx.filter((t) => t.category === "contribution");
   const distributionsTx = allTx.filter((t) => t.category === "distribution");
@@ -1237,7 +1441,7 @@ async function buildSupportingStatement(
 
   // ---- Header ----
   drawStatementHeader();
-  draw("Pursuant to Treas. Reg. sec. 1.6038A-2(b)(3) and Part V instructions", { font: italic, size: 9 });
+  draw(`Pursuant to ${PART_V_STATEMENT_CITATION} and Part V instructions`, { font: italic, size: 9 });
   y -= 22;
 
   const drawParagraph = (text: string, opts: { font?: typeof font } = {}) => {
@@ -1251,27 +1455,37 @@ async function buildSupportingStatement(
   // A year with no Part V rows and no "other transactions" note gets ONE clear
   // sentence instead of an empty table, a $0 sub-total and a total heading that
   // labels nothing. Line 1f can still be non-zero in that case when Part VI
-  // non-cash transfers are counted on it, so the sentence says so instead of $0.
+  // non-cash transfers are counted on it, so the sentence says so.
   const noPartVRows = allTx.length === 0;
   const zeroStatement = noPartVRows && !otherNote;
   if (zeroStatement) {
     const sentence =
       line1fDollars === 0
-        ? `There were no reportable transactions between ${f.llcName} and its foreign owner during ` +
-          `tax year ${year}; Form 5472 lines 1f and 1h are $0.`
-        : `There were no Part V reportable transactions between ${f.llcName} and its foreign owner during ` +
-          `tax year ${year}. The non-cash transfers listed in the attached Part VI statement are the amounts ` +
-          "included on Form 5472 lines 1f and 1h.";
+        ? `There were no reportable transactions between me and ${f.llcName} during tax year ${year}.`
+        : `There were no Part V reportable transactions between me and ${f.llcName} during tax year ${year}. ` +
+          "The non-cash transfers listed in the attached Part VI statement are the amounts included on " +
+          "Form 5472 lines 1f and 1h.";
     drawParagraph(sentence);
+    y -= 8;
   } else {
     // ---- Opening paragraph ----
     const opening = noPartVRows
-      ? `No capital contributions, distributions, loans or owner-paid costs between ${f.llcName} and its ` +
-        `foreign owner are reported for tax year ${year}. Other transactions are described below.`
-      : "The following reportable transactions of the foreign-owned U.S. disregarded entity are " +
-        "reported pursuant to Part V of Form 5472. These transactions include capital contributions, " +
-        "distributions, loans, and owner-paid costs between the disregarded entity and its foreign owner.";
+      ? `I report no capital contributions, distributions, loans or costs paid from my personal funds between ` +
+        `me and ${f.llcName} for tax year ${year}. Other transactions are described below.`
+      : `I am the foreign owner of ${f.llcName}, a foreign-owned U.S. disregarded entity. The schedule below ` +
+        `lists the transactions between me and ${f.llcName} during tax year ${year} that are reported in ` +
+        "Part V of Form 5472.";
     drawParagraph(opening);
+    if (ownerPaidCosts.length > 0) {
+      y -= 6;
+      const sentences = ownerPaidCosts.map((cost) => ownerPaidCostSentence(cost, year, f.llcName));
+      sentences.push(
+        ownerPaidCosts.length === 1
+          ? "This amount is a capital contribution to the LLC."
+          : "These amounts are capital contributions to the LLC.",
+      );
+      drawParagraph(sentences.join(" "));
+    }
     y -= 8;
   }
 
@@ -1294,14 +1508,14 @@ async function buildSupportingStatement(
   const drawTableRow = (tx: ReportableTx) => {
     const dateStr = formatTxDate(tx.date);
     const amount = formatMoney(Math.abs(tx.amountCents) / 100);
-    const descLines = wrapAtPx(describeTx(tx), font, 10, COL_DESC_W);
-    const rowH = Math.max(14, descLines.length * 13 + 2);
+    const desc = fitScheduleDescription(describeTx(tx), font, COL_DESC_W);
+    const rowH = Math.max(14, desc.lines.length * 13 + 2);
     ensureSpace(rowH);
     const rowTop = y;
     draw(dateStr, { x: COL_DATE_X, size: 10 });
-    for (let i = 0; i < descLines.length; i++) {
+    for (let i = 0; i < desc.lines.length; i++) {
       if (i > 0) y -= 13;
-      draw(descLines[i], { x: COL_DESC_X, size: 10 });
+      draw(desc.lines[i], { x: COL_DESC_X, size: desc.size });
     }
     // Amount aligned to first line of description
     const savedY = y;
@@ -1374,21 +1588,14 @@ async function buildSupportingStatement(
       loansToOwnerTx,
     );
   }
-  // ---- Grand total ---- (heading first, then the total it labels; skipped
-  // for the one-sentence no-transactions statement above)
-  if (!zeroStatement) {
-    ensureSpace(36);
+  // ---- Grand total row ---- (heading first, then the total row it labels;
+  // skipped for the one-sentence no-transactions statement above)
+  if (!noPartVRows) {
+    ensureSpace(40);
     draw("Total Reportable Transactions (Part V)", { font: bold, size: 11 });
-    y -= 16;
-    const grandTotal = partVTotalCents(allTx) / 100;
-    drawParagraph(
-      `Total Part V reportable transactions, tax year ${year}: ${formatMoney(grandTotal)} ` +
-        (partVICentsAddedToLine1f > 0
-          ? "(included on Form 5472 lines 1f and 1h together with the non-cash transfers in the attached Part VI statement)."
-          : "(entered on Form 5472 lines 1f and 1h)."),
-      { font: bold },
-    );
-    y -= 8;
+    y -= 6;
+    drawTableTotal(`Total Part V reportable transactions, tax year ${year}`, partVTotalCents(allTx));
+    y -= 2;
   }
 
   // ---- Other transactions disclosure ----
@@ -1406,20 +1613,33 @@ async function buildSupportingStatement(
 
   // ---- Closing ----
   // Skipped when the year has neither rows nor a note: "other than the
-  // transactions described above" would refer to nothing, and the one-sentence
+  // transactions listed above" would refer to nothing, and the one-sentence
   // statement already says there were none.
   const closing = otherNote
-    ? `The transactions above (capital contributions, distributions, and the items disclosed) ` +
-      `constitute all reportable transactions between the reporting corporation and the foreign ` +
-      `related party for tax year ${year}.`
+    ? `The transactions above, including the items disclosed, are all of the reportable transactions ` +
+      `between me and ${f.llcName} for tax year ${year}.`
     : zeroStatement
       ? ""
-      : "Other than the transactions described above, there were no other reportable transactions of " +
-        `the type described in Treas. Reg. sec. 1.482-1(i)(7) during tax year ${year}.`;
+      : "Other than the transactions listed above, there were no other reportable transactions of the type " +
+        `described in Treas. Reg. sec. 1.482-1(i)(7) between me and ${f.llcName} during tax year ${year}.`;
   if (closing) {
     ensureSpace(16);
     drawParagraph(closing);
+    y -= 6;
   }
+  // Part VI value counted on line 1f in addition to the Part V total.
+  if (partVICentsAddedToLine1f > 0 && !zeroStatement) {
+    drawParagraph(
+      `Form 5472 lines 1f and 1h also include ${formatWholeDollars(partVICentsAddedToLine1f)} of non-cash ` +
+        "transfers reported in the attached Part VI statement.",
+    );
+    y -= 6;
+  }
+
+  // ---- Ending line (spec item 7): always line 1f in whole dollars ----
+  ensureSpace(16);
+  draw(`Form 5472 lines 1f and 1h: ${formatWholeDollarsFromDollars(line1fDollars)}.`, { font: bold });
+  y -= 13;
 
   y -= 18;
   ensureSpace(70);
@@ -1432,7 +1652,40 @@ async function buildSupportingStatement(
   draw(SIGNER_TITLE);
 
   authoredDocuments.push({ kind: "partVStatement", taxYear: year, lines: drawnLines, pages: pageLines });
-  return pdf;
+  return { pdf, line1fPrinted: line1fDollars };
+}
+
+// Schedule descriptions stay on ONE line (spec item 7): shrink down to 8pt
+// when needed; only a description too long even at 8pt wraps (at 10pt), and
+// then never leaves a single word alone on its last line.
+const SCHEDULE_DESC_SIZES = [10, 9.5, 9, 8.5, 8] as const;
+
+export function fitScheduleDescription(
+  text: string,
+  font: PDFFont,
+  maxWidth: number,
+): { lines: string[]; size: number } {
+  const clean = text.trim().replace(/\s+/g, " ");
+  for (const size of SCHEDULE_DESC_SIZES) {
+    if (font.widthOfTextAtSize(toPdfSafe(clean), size) <= maxWidth) return { lines: [clean], size };
+  }
+  return { lines: wrapWithoutOrphan(clean, font, 10, maxWidth), size: 10 };
+}
+
+function wrapWithoutOrphan(text: string, font: PDFFont, size: number, maxWidth: number): string[] {
+  const lines = wrapAtPx(text, font, size, maxWidth);
+  const last = lines.length - 1;
+  if (last >= 1 && !lines[last].includes(" ")) {
+    const prevWords = lines[last - 1].split(" ");
+    if (prevWords.length >= 2) {
+      const moved = `${prevWords[prevWords.length - 1]} ${lines[last]}`;
+      if (font.widthOfTextAtSize(toPdfSafe(moved), size) <= maxWidth) {
+        lines[last - 1] = prevWords.slice(0, -1).join(" ");
+        lines[last] = moved;
+      }
+    }
+  }
+  return lines;
 }
 
 async function buildPartVIStatement(
@@ -1508,7 +1761,12 @@ async function buildPartVIStatement(
   };
 
   drawHeader();
-  drawParagraph("The following non-cash transfers between the foreign owner and the disregarded entity are reported for Part VI of Form 5472.", { font: italic, size: 9 });
+  // First person (rules doc H10).
+  drawParagraph(
+    `The following non-cash transfers between me and ${f.llcName} during tax year ${year} are reported for ` +
+      "Part VI of Form 5472.",
+    { font: italic, size: 9 },
+  );
   y -= 14;
 
   ensureSpace(18);
@@ -1569,6 +1827,10 @@ function formatMoney(dollars: number): string {
 function formatWholeDollars(cents: number): string {
   const dollars = roundedCentsToDollars(Math.abs(cents));
   return `$${dollars.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+}
+
+function formatWholeDollarsFromDollars(dollars: number): string {
+  return `$${Math.abs(dollars).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 }
 
 function formatTxDate(iso: string): string {
@@ -1708,9 +1970,99 @@ function noUsIncomeSentence(f: Filing, year: number): string | null {
   return `${opening}.`;
 }
 
+// Everything the reasonable cause statement for one year decides, computed
+// once so the rendered text and the record can never disagree (generator
+// 2.3.0, rules doc H3-H8).
+type RcsContext = {
+  isLate: boolean;
+  isFirstLateYear: boolean;
+  dueDateUtc: number;
+};
+
+function isoDate(utcMs: number): string {
+  return new Date(utcMs).toISOString().slice(0, 10);
+}
+
+// FilingYearData.rcsLearnedOn as YYYY-MM-DD (date-only, read in UTC), or null.
+function learnedOnIso(value: Date | string | null | undefined): string | null {
+  if (value == null || value === "") return null;
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10);
+  const d = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
+}
+
+// Admin narrative split into paragraphs (blank-line separated), whitespace
+// collapsed inside each. The text itself is rendered exactly as written.
+function narrativeParagraphs(value: string | null | undefined): string[] {
+  return (value ?? "")
+    .split(/\n\s*\n/)
+    .map((p) => p.trim().replace(/\s+/g, " "))
+    .filter((p) => p.length > 0);
+}
+
+function trimmedOrNull(value: string | null | undefined): string | null {
+  const t = (value ?? "").trim();
+  return t ? t : null;
+}
+
+function rcsYearRecord(f: Filing, year: number, ctx: RcsContext): RcsYearRecord {
+  const yd = f.yearData.find((row) => row.taxYear === year);
+  const paragraphs = narrativeParagraphs(yd?.rcsAdminNarrative);
+  const learnedOn = learnedOnIso(yd?.rcsLearnedOn);
+  const dueDate = isoDate(ctx.dueDateUtc);
+  const stillUnawareNeeded = ctx.isLate && !ctx.isFirstLateYear;
+  const conditions = {
+    lateYear: ctx.isLate,
+    registeredAgentOnly: f.llcAddressIsRegisteredAgentOnly === true,
+    // Form 1120 line 1a is never filled on our pro forma return; the gross
+    // receipts claim also needs no U.S.-source income and no sign of trading.
+    noGrossReceiptsSignal: f.hasUsSourceIncome !== true && !yearTrades(f, year),
+    // The paragraph says "I had no knowledge"; a recorded learned-on date on or
+    // before this year's due date contradicts that.
+    notKnownBeforeDueDate: !(learnedOn !== null && learnedOn <= dueDate),
+  };
+  const conditionsMet = Object.values(conditions).every(Boolean);
+  const setting = yd?.rcsSmallCorpParagraph ?? null;
+  return {
+    narrativeSource: paragraphs.length > 0 ? "admin" : null,
+    narrative: paragraphs.length > 0 ? paragraphs.join("\n\n") : null,
+    customerExplanation: {
+      whyMissed: trimmedOrNull(yd?.rcsWhyMissed),
+      whenLearned: trimmedOrNull(yd?.rcsWhenLearned),
+    },
+    learnedOn,
+    dueDate,
+    dueDateProse: formatDueDate(ctx.dueDateUtc),
+    isFirstLateYear: ctx.isLate && ctx.isFirstLateYear,
+    stillUnaware: {
+      needed: stillUnawareNeeded,
+      rendered: stillUnawareNeeded && learnedOn !== null && learnedOn > dueDate,
+    },
+    noticeConfirmed: yd?.rcsNoIrsNoticeConfirmed ?? null,
+    noticeSentence: ctx.isLate && yd?.rcsNoIrsNoticeConfirmed === true,
+    firstTaxYearSentence: ctx.isLate && formationYearOf(f) === year,
+    smallCorpParagraph: {
+      setting,
+      conditionsMet,
+      conditions,
+      rendered: ctx.isLate && (setting === null ? conditionsMet : setting),
+    },
+  };
+}
+
+// "is a Hong Kong permanent resident" → "am a Hong Kong permanent resident".
+function firstPersonNationality(clause: string | null): string | null {
+  if (!clause) return null;
+  return clause.startsWith("is ") ? `am ${clause.slice(3)}` : clause;
+}
+
+// The reasonable cause statement for ONE late year, in the owner's voice
+// (generator 2.3.0, rules doc H1-H8). The cause narrative comes only from the
+// admin field; the customer's explanation is never rendered (H4).
 async function buildReasonableCause(
   f: Filing,
   year: number,
+  rcs: RcsYearRecord,
   authoredDocuments: AuthoredDocumentRecord[],
 ): Promise<PDFDocument> {
   const pdf = await PDFDocument.create();
@@ -1757,12 +2109,6 @@ async function buildReasonableCause(
     }
   };
   const space = (n: number) => { y -= n; };
-  const yd = f.yearData.find((row) => row.taxYear === year);
-  const why = cleanSentence(yd?.rcsWhyMissed);
-  const learned = cleanSentence(yd?.rcsWhenLearned);
-  const hasPerYearAnswers = !!why || !!learned;
-  const fallback = !hasPerYearAnswers ? f.reasonableCauseNarrative?.trim() ?? "" : "";
-  const missingAnswers = !hasPerYearAnswers && !fallback;
 
   // ---- Header ----
   drawLine("REASONABLE CAUSE STATEMENT", { font: bold, size: 13 });
@@ -1777,8 +2123,8 @@ async function buildReasonableCause(
   space(20);
 
   drawParagraph(
-    "This statement explains the circumstances giving rise to the late filing of Form 5472 and the " +
-      `accompanying pro forma Form 1120 for tax year ${year}.`,
+    `I am the sole member of ${f.llcName}. This statement explains why I did not file Form 5472 and the ` +
+      `accompanying pro forma Form 1120 for tax year ${year} by the due date of ${rcs.dueDateProse}.`,
   );
   space(10);
 
@@ -1795,22 +2141,18 @@ async function buildReasonableCause(
       })
     : "(formation date on file)";
   // Normalize country/nationality the same way the 5472 form fields do, so
-  // the RCS prose and the form cells agree on the spelling (avoids "resident
-  // and citizen of Canadian" — demonym in a country-name context).
+  // the RCS prose and the form cells agree on the spelling.
   const rcsOwnerCitizenship = normalizeCountry(f.ownerCountryCitizenship);
   const rcsOwnerTaxResidence = normalizeCountry(f.ownerCountryTaxResidence);
   const stateName = stateNameForProse(displayCaseAddressPart(f.llcState, "region"));
-  // "is a Hong Kong permanent resident" / "is a citizen and resident of X" /
-  // "is a citizen of X and a resident of Y" — see ownerNationalityClause() for
-  // why Hong Kong and Macau are never called a country of citizenship.
-  const nationality = ownerNationalityClause(rcsOwnerCitizenship, rcsOwnerTaxResidence);
-  const ownerIntro = nationality
-    ? `${f.ownerName} ("the Owner") ${nationality}. The Owner formed ${f.llcName} `
-    : `${f.ownerName} ("the Owner") formed ${f.llcName} `;
+  // "I am a Hong Kong permanent resident." / "I am a citizen and resident of
+  // X." — see ownerNationalityClause() for why Hong Kong and Macau are never
+  // called a country of citizenship.
+  const nationality = firstPersonNationality(ownerNationalityClause(rcsOwnerCitizenship, rcsOwnerTaxResidence));
   drawParagraph(
-    ownerIntro +
-      `("the Company") on ${incDateStr} in ${stateName} as a single-member LLC. The Company is a ` +
-      "foreign-owned U.S. disregarded entity for U.S. federal income tax purposes. " +
+    (nationality ? `I ${nationality}. ` : "") +
+      `I formed ${f.llcName} ("the Company") on ${incDateStr} in ${stateName} as a single-member LLC. ` +
+      "The Company is a foreign-owned U.S. disregarded entity for U.S. federal income tax purposes. " +
       operationsParagraph(f),
   );
   if (f.hasUsSourceIncome === true && f.usTaxWithheld === true) {
@@ -1821,55 +2163,59 @@ async function buildReasonableCause(
   space(10);
 
   // ---- 2. Cause of the delinquency ----
+  // Only the admin-authored narrative; never the customer's text, never a
+  // fallback. With no narrative this section carries no narrative text and
+  // the record marks it missing so pre-flight fails.
   drawParagraph("2. Cause of the Delinquency", { font: bold, size: 11 });
   space(6);
-  const noUsIncome = noUsIncomeSentence(f, year);
-  if (fallback) {
-    drawParagraph(fallback);
-    if (noUsIncome) {
-      space(6);
-      drawParagraph(noUsIncome);
-    }
-  } else if (missingAnswers) {
-    drawParagraph(`Reasonable cause answers missing for ${year}.`);
-  } else {
-    if (why) drawParagraph(why);
+  for (const paragraph of narrativeParagraphs(rcs.narrative)) {
+    drawParagraph(paragraph);
     space(6);
-    if (noUsIncome) {
-      drawParagraph(noUsIncome);
-      space(6);
-    }
-    // The wizard no longer asks when the owner learned of the requirement;
-    // older filings may still carry that answer.
-    drawParagraph(
-      learned ||
-        "Upon learning of the filing requirement, the Owner promptly arranged for this return and the accompanying Form 5472 to be prepared and submitted.",
-    );
   }
-  space(10);
+  if (rcs.stillUnaware.rendered) {
+    drawParagraph(`I remained unaware of the requirement when the ${year} return was due on ${rcs.dueDateProse}.`);
+    space(6);
+  }
+  const noUsIncome = noUsIncomeSentence(f, year);
+  if (noUsIncome) {
+    drawParagraph(noUsIncome);
+    space(6);
+  }
+  if (rcs.smallCorpParagraph.rendered) {
+    drawParagraph(SMALL_CORPORATION_PARAGRAPH);
+    space(6);
+  }
+  space(4);
 
-  // ---- 3. Reasonable cause analysis ----
+  // ---- 3. Filing history and notice status ----
   drawParagraph("3. Filing History and Notice Status", { font: bold, size: 11 });
   space(6);
-  drawParagraph(
-    rcsOwnerTaxResidence
-      ? `The Owner is tax-domiciled in ${countryForProse(rcsOwnerTaxResidence)} and is submitting the tax year ${year} return with the accompanying Form 5472 package.`
-      : `The Owner is submitting the tax year ${year} return with the accompanying Form 5472 package.`,
-  );
-  if (yd?.rcsNoIrsNoticeConfirmed === true) {
-    drawParagraph("No IRS notice has been received regarding this return.");
-  }
-  space(8);
-
-  // ---- 4. Voluntary compliance ----
-  drawParagraph("4. Voluntary Compliance and Forward-Looking Statement", { font: bold, size: 11 });
-  space(6);
-  drawParagraph(
-    "The Owner has arranged this submission and will retain qualified assistance as needed for future Form 5472 obligations while the Company remains in existence.",
-  );
+  const history: string[] = [];
+  if (rcs.firstTaxYearSentence) history.push("This is the LLC's first tax year.");
+  history.push(`I am now filing the pro forma Form 1120 and Form 5472 for tax year ${year}.`);
+  // Only when "No IRS notice confirmed" is Yes for this year (H3).
+  if (rcs.noticeSentence) history.push("I have not received any IRS notice about this return.");
+  drawParagraph(history.join(" "));
   space(10);
 
-  // ---- Signature block ----
+  // ---- 4. Corrective action ----
+  drawParagraph("4. Corrective Action", { font: bold, size: 11 });
+  space(6);
+  const packageYears = [...f.taxYears].sort((a, b) => a - b);
+  const corrective = [
+    packageYears.length > 1
+      ? `As soon as I learned of the requirement, I took steps to file the outstanding returns for ${formatTaxYearList(packageYears)}, which I am now filing together.`
+      : `As soon as I learned of the requirement, I took steps to file the outstanding return for ${year}, which I am now filing.`,
+  ];
+  if (!f.isFinalReturn) {
+    corrective.push(
+      "I will file Form 5472 and the pro forma Form 1120 by the due date for each later tax year while the Company remains in existence.",
+    );
+  }
+  drawParagraph(corrective.join(" "));
+  space(10);
+
+  // ---- Signature block (spec item 5) ----
   ensureSpace(60);
   drawLine(AUTHORED_DOC_SIGNATURE_HEADING, { font: bold });
   space(28);
@@ -1879,14 +2225,15 @@ async function buildReasonableCause(
   space(12);
   drawLine(`${SIGNER_TITLE}, ${f.llcName}`);
   space(12);
-  drawLine("Date: ______________________");
+  drawLine(AUTHORED_DOC_DATE_LINE);
 
   authoredDocuments.push({
     kind: "reasonableCauseStatement",
     taxYear: year,
     lines: drawnLines,
-    rcsFallbackUsed: !!fallback,
-    rcsMissingAnswers: missingAnswers,
+    rcsFallbackUsed: false,
+    rcsMissingAnswers: rcs.narrativeSource === null,
+    rcsNarrativeSource: rcs.narrativeSource,
   });
   return pdf;
 }
@@ -1963,6 +2310,7 @@ export type GeneratedPackage = {
 export async function generatePackage(
   f: Filing,
   finalisedAt: Date = new Date(),
+  options: GeneratePackageOptions = {},
 ): Promise<GeneratedPackage> {
   assertIrsJuratUntouched();
   assertRelatedPartyCount(relatedPartyCount(f));
@@ -2082,17 +2430,34 @@ export async function generatePackage(
     filed: f.extensionFiled ?? null,
     transmittedAt: f.extensionTransmittedAt ?? null,
   };
+  //
+  // Generator 2.3.0 (D2): a "not sure" Form 7004 answer counts as NO extension
+  // for lateness, so a "not sure" year past its original due date is late and
+  // gets its own reasonable cause statement (isYearDelinquentForPackage). The
+  // year is still flagged extensionUnclear for the reviewer.
   const delinquentYears = f.taxYears.filter((y) =>
-    isYearDelinquent(y, dissolvedForDeadline, y === maxTaxYear ? extension : null, finalisedAt),
+    isYearDelinquentForPackage(y, dissolvedForDeadline, y === maxTaxYear ? extension : null, finalisedAt),
   );
+  const lateYears = [...delinquentYears].sort((a, b) => a - b);
+  const firstLateYear = lateYears.length > 0 ? lateYears[0] : null;
+  const dueDateUtcFor = (y: number) =>
+    effectiveDueDateUtc(y, dissolvedForDeadline, y === maxTaxYear ? packageExtensionFacts(extension) : null);
 
-  // "Not sure" about a Form 7004 asserts NEITHER timeliness nor delinquency.
-  // isYearDelinquent() already keeps such a year out of delinquentYears; this
-  // names it so the cover letter can also keep it out of the TIMELY wording,
-  // which it would otherwise fall into by default. Only the latest year can
-  // carry extension facts, so only it can ever be unresolved.
+  // Only the reviewer-only June 30 short-year 7004 edge case (an answer of
+  // "yes") still asserts neither timeliness nor delinquency. Only the latest
+  // year can carry extension facts, so only it can ever be unresolved.
+  const extensionUnclearForMax =
+    maxTaxYear != null && extensionUnclear(extension, maxTaxYear, dissolvedForDeadline);
   const unresolvedYear =
-    maxTaxYear != null && extensionUnclear(extension, maxTaxYear, dissolvedForDeadline) ? maxTaxYear : null;
+    extensionUnclearForMax && extension.filed !== "not_sure" ? maxTaxYear : null;
+
+  // Paid preparer block (generator 2.3.0, rules doc "Paid preparer block").
+  const env = options.env ?? process.env;
+  const paidPreparerMode: "none" | "house" = f.paidPreparerMode === "house" ? "house" : "none";
+  const housePreparerStatus = housePreparerConfigStatus(env);
+  const housePreparer = paidPreparerMode === "house" ? housePreparerFromEnv(env) : null;
+  const discussWithPreparer: "yes" | "no" | null =
+    f.irsMayDiscussWithPreparer === "yes" ? "yes" : f.irsMayDiscussWithPreparer === "no" ? "no" : null;
 
   const cover = await buildCoverLetter(f, finalisedAt, authoredDocuments);
   const coverStartPage = out.getPageCount() + 1;
@@ -2123,10 +2488,20 @@ export async function generatePackage(
     if (!form1120Selection) throw new Error(`Missing Form 1120 selection for tax year ${year}.`);
     const f1120 = await loadBlank(form1120Selection.fileName);
     const f1120Writes: PdfFieldWrite[] = [];
-    const f1120Meta = await fillForm1120(f1120, f, year, form1120Selection.revision, llcPrintAddress, {
-      form: `1120-${year}`,
-      writes: f1120Writes,
-    });
+    const f1120Meta = await fillForm1120(
+      f1120,
+      f,
+      year,
+      form1120Selection.revision,
+      llcPrintAddress,
+      { form: `1120-${year}`, writes: f1120Writes },
+      {
+        shortYearException: form1120Selection.shortYearException,
+        preparer: housePreparer,
+        discuss: discussWithPreparer,
+        measureFont,
+      },
+    );
     await stampForeignOwnedDeHeader(f1120, FOREIGN_OWNED_DE_HEADER);
     // Short-period annotation. A year is short when it starts after Jan 1 (the
     // LLC was formed mid-year) OR ends before Dec 31 (it was dissolved
@@ -2184,7 +2559,7 @@ export async function generatePackage(
 
     const supporting = await buildSupportingStatement(f, year, line1f, partVICentsAddedToLine1f, authoredDocuments);
     const supportingStartPage = out.getPageCount() + 1;
-    await copyAll(out, supporting);
+    await copyAll(out, supporting.pdf);
     pageOrder.push({
       label: "Part V Statement",
       taxYear: year,
@@ -2204,9 +2579,16 @@ export async function generatePackage(
       });
     }
 
+    // One statement per late year, placed after that year's Part V (and Part
+    // VI) statement, built from that year's data and narrative (rules doc H5).
+    const rcsRecord = rcsYearRecord(f, year, {
+      isLate: yearDelinquent,
+      isFirstLateYear: year === firstLateYear,
+      dueDateUtc: dueDateUtcFor(year),
+    });
     const reasonableCauseIncluded = yearDelinquent;
     if (reasonableCauseIncluded) {
-      const rcs = await buildReasonableCause(f, year, authoredDocuments);
+      const rcs = await buildReasonableCause(f, year, rcsRecord, authoredDocuments);
       const rcsStartPage = out.getPageCount() + 1;
       await copyAll(out, rcs);
       pageOrder.push({
@@ -2274,6 +2656,13 @@ export async function generatePackage(
       },
       form5472: { fields: f5472Writes },
       reasonableCauseIncluded,
+      isFormationYear: formationYearOf(f) === year,
+      dueDate: rcsRecord.dueDate,
+      extensionFiled: year === maxTaxYear ? (f.extensionFiled ?? null) : null,
+      extensionUnclear: year === maxTaxYear && extensionUnclearForMax,
+      partVStatementLine1fPrinted: supporting.line1fPrinted,
+      paidPreparer: f1120Meta.paidPreparer,
+      rcs: rcsRecord,
     });
   }
 
@@ -2306,6 +2695,15 @@ export async function generatePackage(
       taxYears: recordYears,
       authoredDocuments,
       pageOrder,
+      lateYears,
+      paidPreparerMode,
+      housePreparer: {
+        configComplete: housePreparerStatus.complete,
+        missing: housePreparerStatus.missing,
+        invalid: housePreparerStatus.invalid,
+      },
+      irsMayDiscussWithPreparer: discussWithPreparer,
+      customerReasonableCauseNarrative: trimmedOrNull(f.reasonableCauseNarrative),
     },
   };
 }

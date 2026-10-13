@@ -99,4 +99,26 @@ describe("toClientFiling", () => {
     expect(out).toEqual({ id: "f1", llcName: "Synthetic Test LLC", reviewApprovedAt: "2026-10-07T00:00:00Z" });
     expect(STAFF_ONLY_FILING_FIELDS).toContain("reviewApprovedBy");
   });
+
+  it("drops the generator 2.3.0 staff-only filing and year-row fields (admin RCS narrative never reaches a customer)", async () => {
+    const { toClientFiling, STAFF_ONLY_YEAR_FIELDS } = await import("./session");
+    const out = toClientFiling({
+      id: "f1",
+      sessionId: "s",
+      paidPreparerMode: "house",
+      irsMayDiscussWithPreparer: "yes",
+      yearData: [
+        {
+          taxYear: 2024,
+          rcsWhyMissed: "Customer's own words",
+          rcsAdminNarrative: "Internal admin narrative",
+          rcsLearnedOn: new Date("2026-03-01T00:00:00.000Z"),
+          rcsSmallCorpParagraph: true,
+        },
+      ],
+    });
+    expect(out).toEqual({ id: "f1", yearData: [{ taxYear: 2024, rcsWhyMissed: "Customer's own words" }] });
+    expect(JSON.stringify(out)).not.toContain("Internal admin narrative");
+    expect(STAFF_ONLY_YEAR_FIELDS).toEqual(["rcsAdminNarrative", "rcsLearnedOn", "rcsSmallCorpParagraph"]);
+  });
 });

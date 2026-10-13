@@ -197,6 +197,31 @@ describe("runPreflight", () => {
     });
   }
 
+  // Generator 2.3.0 (spec item 9): the 1120 prints the beginning year itself,
+  // so "tax year beginning" is MM/DD only. goodRecord above uses the short-year
+  // prior-revision exception, which keeps MM/DD/YYYY (the printed year is the
+  // previous year).
+  it("A06 requires MM/DD only on a same-revision 1120 and rejects a repeated year", async () => {
+    const sameRevision = clone(goodRecord);
+    sameRevision.taxYears[0].shortYearException = false;
+    sameRevision.taxYears[0].form1120Revision = "2026";
+    sameRevision.taxYears[0].form1120.fields[0].value = "01/15";
+    const ok = await runPreflight(sameRevision, await goodPdfBytes(sameRevision));
+    expect(ok.failures.filter((f) => f.id === "A06")).toEqual([]);
+
+    const repeated = clone(sameRevision);
+    repeated.taxYears[0].form1120.fields[0].value = "01/15/2026";
+    const bad = await runPreflight(repeated, await goodPdfBytes(repeated));
+    expect(bad.failures.filter((f) => f.id === "A06")).toEqual([
+      { id: "A06", message: "Tax year 2026: 1120 and 5472 header dates do not match." },
+    ]);
+
+    const exceptionWithoutYear = clone(goodRecord);
+    exceptionWithoutYear.taxYears[0].form1120.fields[0].value = "01/15";
+    const badException = await runPreflight(exceptionWithoutYear, await goodPdfBytes(exceptionWithoutYear));
+    expect(badException.failures.some((f) => f.id === "A06")).toBe(true);
+  });
+
   it("A31 fails when an authored document names the delinquent-submission procedure", async () => {
     const record = clone(goodRecord);
     record.authoredDocuments[0].lines.push("Submitted under the Delinquent International Information Return Submission Procedures.");

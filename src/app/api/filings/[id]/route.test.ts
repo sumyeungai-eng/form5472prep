@@ -70,6 +70,30 @@ describe("customer filing API never exposes staff identities", () => {
     expect(body).toMatchObject({ id: "filing_1", llcName: "Synthetic Test LLC", reviewApprovedAt: "2026-10-07T22:49:00.000Z" });
   });
 
+  it("GET strips staff-only year-row fields (admin RCS narrative) and preparer settings", async () => {
+    session.getOwnedFiling.mockResolvedValue({ id: "filing_1" });
+    findUnique.mockResolvedValue({
+      ...stored,
+      paidPreparerMode: "house",
+      irsMayDiscussWithPreparer: "yes",
+      yearData: [
+        {
+          taxYear: 2024,
+          rcsWhyMissed: "Customer explanation",
+          rcsAdminNarrative: "Admin-only narrative text",
+          rcsLearnedOn: new Date("2026-03-01T00:00:00.000Z"),
+          rcsSmallCorpParagraph: false,
+        },
+      ],
+    });
+    const res = await GET(new Request("https://example.test/api/filings/filing_1"), { params: { id: "filing_1" } });
+    const body = await res.json();
+    expect(JSON.stringify(body)).not.toContain("Admin-only narrative text");
+    expect(body).not.toHaveProperty("paidPreparerMode");
+    expect(body).not.toHaveProperty("irsMayDiscussWithPreparer");
+    expect(body.yearData).toEqual([{ taxYear: 2024, rcsWhyMissed: "Customer explanation" }]);
+  });
+
   it("PATCH responses are stripped too", async () => {
     session.getOwnedFiling.mockResolvedValue({ ...stored, taxYears: [2025], tier: "standard", status: "DRAFT" });
     db.update.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => ({ ...stored, ...data }));

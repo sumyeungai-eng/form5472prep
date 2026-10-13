@@ -383,6 +383,31 @@ export function isYearDelinquent(
   return now.getTime() >= effectiveDueDateUtc(taxYear, dissolvedAt, extension) + ONE_DAY_MS;
 }
 
+// The extension facts the PACKAGE GENERATOR applies to a year (generator
+// 2.3.0, orchestrator decision D2, docs/filing-package-rules.md "Filing status").
+// A "not sure" Form 7004 answer is treated as NO extension: a year past its
+// original due date is late and gets its own reasonable cause statement, and
+// the order keeps its "extension unclear" flag for the reviewer. Every other
+// answer passes through unchanged, so the reviewer-only June 30 short-year
+// deferral (extensionUnclear on a "yes") still applies.
+//
+// Customer-facing callers (wizard, completeness, isDiirsp) keep using
+// isYearDelinquent(), whose "not sure" deferral is unchanged.
+export function packageExtensionFacts(extension: ExtensionFacts | null | undefined): ExtensionFacts | null {
+  if (!extension) return null;
+  if (extension.filed === "not_sure") return { filed: "no", transmittedAt: null };
+  return extension;
+}
+
+export function isYearDelinquentForPackage(
+  taxYear: number,
+  dissolvedAt?: Date | string | null,
+  extension?: ExtensionFacts | null,
+  now: Date = new Date(),
+): boolean {
+  return isYearDelinquent(taxYear, dissolvedAt, packageExtensionFacts(extension), now);
+}
+
 // ─── Form 7004 extension gate ────────────────────────────────────────────────
 // Whether a return is late is a LEGAL CHARACTERISATION, and the wizard used to
 // infer it purely from the calendar — which misclassified every validly

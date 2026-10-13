@@ -367,6 +367,9 @@ export const packageFilingSelect = {
   extensionFiled: true,
   extensionTransmittedAt: true,
   reasonableCauseNarrative: true,
+  // Generator 2.3.0: per-order paid preparer block settings.
+  paidPreparerMode: true,
+  irsMayDiscussWithPreparer: true,
   yearData: {
     select: {
       taxYear: true,
@@ -381,6 +384,10 @@ export const packageFilingSelect = {
       rcsWhyMissed: true,
       rcsWhenLearned: true,
       rcsNoIrsNoticeConfirmed: true,
+      // Generator 2.3.0 admin RCS fields.
+      rcsAdminNarrative: true,
+      rcsLearnedOn: true,
+      rcsSmallCorpParagraph: true,
     },
   },
 } as const;

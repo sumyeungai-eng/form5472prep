@@ -66,8 +66,20 @@ function year(
     rcsWhyMissed: null,
     rcsWhenLearned: null,
     rcsNoIrsNoticeConfirmed: null,
+    rcsAdminNarrative: null,
+    rcsLearnedOn: null,
+    rcsSmallCorpParagraph: null,
     ...extra,
   };
+}
+
+// Synthetic admin-authored cause narrative (generator 2.3.0: the ONLY cause
+// text a reasonable cause statement renders). First person, no customer text.
+export function adminNarrative(taxYear: number): string {
+  return (
+    `I did not know that a foreign-owned single-member LLC must file Form 5472 with a pro forma Form 1120 ` +
+    `for tax year ${taxYear}. No U.S. adviser or formation service told me about the requirement.`
+  );
 }
 
 export const F1: FilingFixture = {
@@ -145,16 +157,19 @@ export const F5: FilingFixture = {
       rcsWhyMissed: "the owner was not aware that a disregarded LLC had a separate form 5472 filing obligation",
       rcsWhenLearned: "the owner learned about the requirement during a 2026 review of prior year filing obligations",
       rcsNoIrsNoticeConfirmed: true,
+      rcsAdminNarrative: adminNarrative(2022),
     }),
     year(2023, [tx("2023-03-01", "Owner capital contribution", 15_000_00, "contribution")], {
       rcsWhyMissed: "the owner continued to believe the investment account reporting was handled outside the LLC return",
       rcsWhenLearned: "the owner learned the 2023 form was also required during the same 2026 review",
       rcsNoIrsNoticeConfirmed: true,
+      rcsAdminNarrative: adminNarrative(2023),
     }),
     year(2024, [tx("2024-07-01", "Owner distribution", -3_000_00, "distribution")], {
       rcsWhyMissed: "the owner did not have a recurring reminder for the information return deadline",
       rcsWhenLearned: "the owner learned the 2024 form was late before receiving any IRS correspondence",
       rcsNoIrsNoticeConfirmed: true,
+      rcsAdminNarrative: adminNarrative(2024),
     }),
   ],
 };
@@ -164,7 +179,13 @@ export const F6: FilingFixture = {
   taxYears: [2025],
   extensionFiled: "not_sure",
   extensionTransmittedAt: null,
-  yearData: [year(2025, [tx("2025-08-01", "Owner capital contribution", 6_000_00, "contribution")])],
+  // Generator 2.3.0 (D2): "not sure" counts as no extension, so 2025 is late
+  // on `finalisedAt` and gets a reasonable cause statement.
+  yearData: [
+    year(2025, [tx("2025-08-01", "Owner capital contribution", 6_000_00, "contribution")], {
+      rcsAdminNarrative: adminNarrative(2025),
+    }),
+  ],
 };
 
 export const F7: FilingFixture = {
@@ -188,8 +209,12 @@ export const F8: FilingFixture = {
   reasonableCauseNarrative:
     "The owner learned of the Form 5472 filing requirement after the due dates and promptly arranged this submission.",
   yearData: [
-    year(2018, [tx("2018-02-01", "Owner capital contribution", 12_000_00, "contribution")]),
-    year(2019, [tx("2019-03-01", "Owner distribution", -4_500_00, "distribution")]),
+    year(2018, [tx("2018-02-01", "Owner capital contribution", 12_000_00, "contribution")], {
+      rcsAdminNarrative: adminNarrative(2018),
+    }),
+    year(2019, [tx("2019-03-01", "Owner distribution", -4_500_00, "distribution")], {
+      rcsAdminNarrative: adminNarrative(2019),
+    }),
   ],
 };
 
@@ -224,9 +249,12 @@ function zeroYear(taxYear: number) {
   return year(taxYear, [], {
     totalAssetsYearEnd: 0,
     zeroConfirmations: { ...ZERO_CONFIRMED },
+    // Customer's own words (third person, wizard preset style). Never rendered
+    // since generator 2.3.0; the admin narrative below is.
     rcsWhyMissed:
       "The Owner was not aware that a foreign-owned single-member LLC must file Form 5472 with a pro forma Form 1120, even when no U.S. tax is owed.",
     rcsNoIrsNoticeConfirmed: true,
+    rcsAdminNarrative: adminNarrative(taxYear),
   });
 }
 
@@ -267,4 +295,71 @@ export const F10: FilingFixture = {
 
 export const F10NoExtension: FilingFixture = { ...F10, extensionFiled: "no" };
 
-export const fixtures = { F1, F2, F3, F4, F5, F6, F7, F8, F10 };
+// F11: synthetic two-year late catch-up (generator 2.3.0 acceptance fixture).
+// Formed 2024-11-02 (so 2024 is the formation year and its 1120 header begins
+// 11/02); 2024 and 2025 filed together on `lateCatchUpFinalisedAt`; Form 7004
+// answer "not sure" (counts as no extension, so 2025 is late: due 2026-04-15);
+// LLC address is the registered agent's only; owner paid $424 of costs in
+// 2024 and $49 in 2025 from personal funds; admin narratives on both years;
+// owner learned of the requirement on 2026-09-20 (after both due dates); IRS
+// notice confirmed for 2024 only. The customer explanation holds raw intake
+// text that must never render.
+export const lateCatchUpFinalisedAt = new Date("2026-10-13T12:00:00.000Z");
+
+export const CUSTOMER_INTAKE_TEXT =
+  "Could you please review whether Form 5472 and 1120 are required for my LLC? My objective is to maintain " +
+  "the LLC at minimal cost. The Owner has no operating expenses, employees, or transactions.";
+
+export const F11: FilingFixture = {
+  ...base,
+  llcName: "Example Catchup Holdings LLC",
+  llcAddress: "30 N Example St Ste 100",
+  llcCity: "Sheridan",
+  llcState: "WY",
+  llcZip: "82801",
+  llcAddressIsRegisteredAgentOnly: true,
+  llcCountryBusiness: "Hong Kong",
+  llcDateIncorporated: new Date("2024-11-02T00:00:00.000Z"),
+  llcBusinessActivity: "Software / SaaS / app development",
+  llcBusinessCode: "541512",
+  priorForm5472Filed: "no",
+  hasUsSourceIncome: false,
+  usTaxWithheld: null,
+  ownerName: "Alex Example",
+  ownerReferenceId: "ALEXEXAMPLE2024",
+  taxYears: [2024, 2025],
+  extensionFiled: "not_sure",
+  extensionTransmittedAt: null,
+  reasonableCauseNarrative: CUSTOMER_INTAKE_TEXT,
+  yearData: [
+    year(2024, [], {
+      totalAssetsYearEnd: 0,
+      zeroConfirmations: { contributions: true, distributions: true, loansFromOwner: true, loansToOwner: true },
+      ownerPaidCosts: [
+        { category: "formation_or_ein_service", date: "2024-11-02", amountCents: 375_00 },
+        { category: "registered_agent", date: "2024-11-02", amountCents: 49_00 },
+      ],
+      rcsWhyMissed: CUSTOMER_INTAKE_TEXT,
+      rcsWhenLearned: "The Owner learned about it from a friend.",
+      rcsNoIrsNoticeConfirmed: true,
+      rcsAdminNarrative:
+        "I formed the LLC through an online formation service and relied on it for the state requirements.\n\n" +
+        "No one told me that a foreign-owned single-member LLC must file Form 5472 with a pro forma Form 1120 " +
+        "each year, even when it has no income.",
+      rcsLearnedOn: "2026-09-20",
+    }),
+    year(2025, [], {
+      totalAssetsYearEnd: 0,
+      zeroConfirmations: { contributions: true, distributions: true, loansFromOwner: true, loansToOwner: true },
+      ownerPaidCosts: [{ category: "registered_agent", date: "2025-11-02", amountCents: 49_00 }],
+      rcsWhyMissed: CUSTOMER_INTAKE_TEXT,
+      rcsNoIrsNoticeConfirmed: null,
+      rcsAdminNarrative:
+        "I still did not know about the Form 5472 requirement during 2025. I learned of it in September 2026 " +
+        "while reviewing the LLC's U.S. obligations.",
+      rcsLearnedOn: "2026-09-20",
+    }),
+  ],
+};
+
+export const fixtures = { F1, F2, F3, F4, F5, F6, F7, F8, F10, F11 };

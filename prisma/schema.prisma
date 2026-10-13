@@ -167,7 +167,17 @@ model Filing {
   // Filing scope
   taxYears                 Int[]
   isDiirsp                 Boolean @default(false)
+  // Legacy customer free text. Shown to the admin only; never rendered into
+  // the package (generator 2.3.0, docs/filing-package-rules.md H4).
   reasonableCauseNarrative String?
+
+  // Paid preparer block on every Form 1120 in the order (generator 2.3.0).
+  //   paidPreparerMode          null | "none" = blank block (default); "house" = fill it from the
+  //                             HOUSE_PREPARER_* env config (src/config/housePreparer.ts)
+  //   irsMayDiscussWithPreparer null = blank (default) | "yes" | "no"
+  // Staff-only: stripped from customer APIs (STAFF_ONLY_FILING_FIELDS).
+  paidPreparerMode          String?
+  irsMayDiscussWithPreparer String?
 
   // True = we fax the signed package to the IRS for the customer (+ fax fee).
   // False = customer faxes it themselves after downloading the signed PDF.
@@ -451,10 +461,19 @@ model FilingYearData {
   // Q-08 / G-09 Part VI: non-cash transfers between owner and LLC. JSON array of
   // { date: "YYYY-MM-DD", direction: "in" | "out", description, fairMarketValueCents, valuationMethod, alsoInPartV }
   nonCashTransfers        Json?
-  // Q-13 / C-04: the client's own account for a late year, in their words
+  // Q-13 / C-04: the client's own account for a late year, in their words.
+  // Generator 2.3.0: the customer's explanation is admin context only and is
+  // never rendered into the reasonable cause statement (rules doc H4).
   rcsWhyMissed            String?
   rcsWhenLearned          String?
   rcsNoIrsNoticeConfirmed Boolean?
+  // Generator 2.3.0, staff-only (stripped from customer APIs):
+  //   rcsAdminNarrative     the ONLY cause narrative the RCS renders (admin-authored, first person)
+  //   rcsLearnedOn          date the owner learned of the requirement (drives the "still unaware" sentence)
+  //   rcsSmallCorpParagraph null = automatic (on when conditions are met), true/false = admin override
+  rcsAdminNarrative       String?
+  rcsLearnedOn            DateTime? @db.Date
+  rcsSmallCorpParagraph   Boolean?
   // Q-01 wave 4: costs the owner paid personally for the LLC; each is a capital contribution row in Part V.
   // JSON array of { category: "state_filing_fee" | "registered_agent" | "formation_or_ein_service" |
   //   "software_subscriptions" | "initial_bank_funding" | "other", date: "YYYY-MM-DD", amountCents, note? }

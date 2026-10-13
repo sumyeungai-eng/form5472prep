@@ -208,26 +208,34 @@ function checkA05(record: PackageRecord, result: MutableResult) {
 }
 
 // A06: 1120 and 5472 header begin/end dates are both populated and identical.
+// Generator 2.3.0: the 1120 prints the beginning YEAR itself, so its "tax year
+// beginning" value is MM/DD only and must equal the 5472 begin month/day.
+// Under the short-year prior-revision exception the printed year is wrong, so
+// that value is MM/DD/YYYY and must equal the full 5472 begin date.
 function checkA06(record: PackageRecord, result: MutableResult) {
   for (const year of record.taxYears) {
     const m1120 = form1120MapForYear(year);
     const begin1120 = textValue(year.form1120.fields, m1120.taxYearBeginning);
     const end1120 = textValue(year.form1120.fields, m1120.taxYearEnding);
     const endYear1120 = textValue(year.form1120.fields, m1120.taxYearEndingYear2);
-    const begin5472 = `${textValue(year.form5472.fields, form5472FieldMap.taxYearBeginMonthDay)}/${textValue(
-      year.form5472.fields,
-      form5472FieldMap.taxYearBeginYear,
-    )}`;
+    const beginMonthDay5472 = textValue(year.form5472.fields, form5472FieldMap.taxYearBeginMonthDay);
+    const beginYear5472 = textValue(year.form5472.fields, form5472FieldMap.taxYearBeginYear);
+    const expectedBegin1120 = year.shortYearException ? `${beginMonthDay5472}/${beginYear5472}` : beginMonthDay5472;
+    const beginFormatOk = year.shortYearException
+      ? /^\d{2}\/\d{2}\/\d{4}$/.test(begin1120)
+      : /^\d{2}\/\d{2}$/.test(begin1120);
     const end5472 = textValue(year.form5472.fields, form5472FieldMap.taxYearEndMonthDay);
     const endYear5472 = textValue(year.form5472.fields, form5472FieldMap.taxYearEndYear);
     if (
       !begin1120 ||
       !end1120 ||
       !endYear1120 ||
-      !begin5472 ||
+      !beginMonthDay5472 ||
+      !beginYear5472 ||
       !end5472 ||
       !endYear5472 ||
-      begin1120 !== begin5472 ||
+      !beginFormatOk ||
+      begin1120 !== expectedBegin1120 ||
       end1120 !== end5472 ||
       endYear1120 !== endYear5472.slice(-2)
     ) {

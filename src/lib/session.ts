@@ -158,8 +158,28 @@ export const STAFF_ONLY_FILING_FIELDS = [
   "reviewApprovedBy",
   "preflightOverrideBy",
   "preflightOverrideReason",
+  // Generator 2.3.0 admin settings for the Form 1120 paid preparer block.
+  "paidPreparerMode",
+  "irsMayDiscussWithPreparer",
 ] as const;
 type StaffOnlyFilingField = (typeof STAFF_ONLY_FILING_FIELDS)[number];
+
+// Staff-only columns on FilingYearData rows (generator 2.3.0): the admin-
+// authored reasonable-cause narrative and the admin's structured RCS inputs.
+// Year rows ride along on customer filing JSON (`include: { yearData: true }`),
+// so toClientFiling strips these from every row too.
+export const STAFF_ONLY_YEAR_FIELDS = [
+  "rcsAdminNarrative",
+  "rcsLearnedOn",
+  "rcsSmallCorpParagraph",
+] as const;
+
+function withoutStaffYearFields(row: unknown): unknown {
+  if (!row || typeof row !== "object") return row;
+  const out = { ...(row as Record<string, unknown>) };
+  for (const field of STAFF_ONLY_YEAR_FIELDS) delete out[field];
+  return out;
+}
 
 export function toClientFiling<T extends { sessionId?: unknown }>(
   filing: T,
@@ -168,6 +188,7 @@ export function toClientFiling<T extends { sessionId?: unknown }>(
   const { sessionId, ...rest } = filing;
   const out = { ...rest } as Record<string, unknown>;
   for (const field of STAFF_ONLY_FILING_FIELDS) delete out[field];
+  if (Array.isArray(out.yearData)) out.yearData = out.yearData.map(withoutStaffYearFields);
   return out as Omit<T, "sessionId" | StaffOnlyFilingField>;
 }
 

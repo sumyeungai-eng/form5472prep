@@ -5,9 +5,11 @@ import { F5, finalisedAt } from "./__fixtures__/filings";
 
 // The per-year answer cap is 20,000 characters (2026-10-10). The statement page
 // must wrap and paginate an answer that long rather than overflow or throw.
+// Generator 2.3.0: the statement renders the ADMIN narrative only (rules doc
+// H4), so the long text goes in rcsAdminNarrative.
 describe("reasonable-cause statement with a maximum-length answer", () => {
   it("flows a near-cap answer onto additional pages", async () => {
-    const sentence = "the owner relied on a formation agent who did not explain the annual information return obligation. ";
+    const sentence = "I relied on a formation agent who did not explain the annual information return obligation. ";
     const longWhy = sentence.repeat(Math.floor((RCS_TEXT_MAX - 100) / sentence.length)).trim();
     expect(longWhy.length).toBeGreaterThan(RCS_TEXT_MAX - 200);
     expect(longWhy.length).toBeLessThanOrEqual(RCS_TEXT_MAX);
@@ -16,7 +18,7 @@ describe("reasonable-cause statement with a maximum-length answer", () => {
     const long = await generatePackage(
       {
         ...F5,
-        yearData: F5.yearData.map((row) => (row.taxYear === 2024 ? { ...row, rcsWhyMissed: longWhy } : row)),
+        yearData: F5.yearData.map((row) => (row.taxYear === 2024 ? { ...row, rcsAdminNarrative: longWhy } : row)),
       },
       finalisedAt,
     );

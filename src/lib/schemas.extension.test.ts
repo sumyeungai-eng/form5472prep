@@ -6,6 +6,8 @@ import {
   formatDueDate,
   isExtensionValid,
   isYearDelinquent,
+  isYearDelinquentForPackage,
+  packageExtensionFacts,
   type ExtensionFacts,
 } from "./schemas";
 
@@ -139,5 +141,35 @@ describe("extensionUnclear", () => {
 describe("formatDueDate", () => {
   it("renders the UTC calendar date regardless of local timezone", () => {
     expect(formatDueDate(Date.UTC(2026, 10, 16))).toBe("November 16, 2026");
+  });
+});
+
+// Generator 2.3.0 (D2): the PACKAGE treats a "not sure" Form 7004 as no
+// extension; customer-facing isYearDelinquent keeps its deferral.
+describe("isYearDelinquentForPackage: 'not_sure' counts as no extension", () => {
+  const notSure: ExtensionFacts = { filed: "not_sure", transmittedAt: null };
+
+  it("a 'not sure' year past its ORIGINAL due date is late for the package, not for customer screens", () => {
+    const now = new Date("2026-10-13T12:00:00Z");
+    expect(isYearDelinquentForPackage(2025, null, notSure, now)).toBe(true);
+    expect(isYearDelinquent(2025, null, notSure, now)).toBe(false);
+  });
+
+  it("is still timely through the original due day", () => {
+    expect(isYearDelinquentForPackage(2025, null, notSure, new Date("2026-04-15T23:00:00Z"))).toBe(false);
+    expect(isYearDelinquentForPackage(2025, null, notSure, new Date("2026-04-16T00:00:00Z"))).toBe(true);
+  });
+
+  it("passes every other answer through unchanged, including the June 30 reviewer edge", () => {
+    expect(packageExtensionFacts(notSure)).toEqual({ filed: "no", transmittedAt: null });
+    const yes: ExtensionFacts = { filed: "yes", transmittedAt: null };
+    expect(packageExtensionFacts(yes)).toBe(yes);
+    expect(packageExtensionFacts(null)).toBeNull();
+    const now = new Date("2026-10-13T12:00:00Z");
+    // June 30 2025 dissolution with a "yes": still deferred to the reviewer.
+    expect(isYearDelinquentForPackage(2025, "2025-06-30", yes, now)).toBe(
+      isYearDelinquent(2025, "2025-06-30", yes, now),
+    );
+    expect(isYearDelinquentForPackage(2025, "2025-06-30", yes, now)).toBe(false);
   });
 });

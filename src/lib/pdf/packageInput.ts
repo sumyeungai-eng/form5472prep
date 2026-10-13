@@ -23,6 +23,10 @@ export type PackageFilingRow = NullablePartial<Omit<PackageInput, "yearData">> &
     rcsWhyMissed?: string | null;
     rcsWhenLearned?: string | null;
     rcsNoIrsNoticeConfirmed?: boolean | null;
+    // Generator 2.3.0 admin fields (staff-only).
+    rcsAdminNarrative?: string | null;
+    rcsLearnedOn?: Date | string | null;
+    rcsSmallCorpParagraph?: boolean | null;
   }>;
 };
 
@@ -68,6 +72,8 @@ export function filingToPackageInput(filing: PackageFilingRow): PackageInput {
     extensionFiled: filing.extensionFiled ?? null,
     extensionTransmittedAt: filing.extensionTransmittedAt,
     reasonableCauseNarrative: filing.reasonableCauseNarrative ?? null,
+    paidPreparerMode: filing.paidPreparerMode ?? null,
+    irsMayDiscussWithPreparer: filing.irsMayDiscussWithPreparer ?? null,
     yearData: filing.yearData.map((year) => ({
       taxYear: year.taxYear,
       totalAssetsYearEnd: Number(year.totalAssetsYearEnd),
@@ -81,6 +87,9 @@ export function filingToPackageInput(filing: PackageFilingRow): PackageInput {
       rcsWhyMissed: year.rcsWhyMissed ?? null,
       rcsWhenLearned: year.rcsWhenLearned ?? null,
       rcsNoIrsNoticeConfirmed: year.rcsNoIrsNoticeConfirmed ?? null,
+      rcsAdminNarrative: year.rcsAdminNarrative ?? null,
+      rcsLearnedOn: year.rcsLearnedOn ?? null,
+      rcsSmallCorpParagraph: year.rcsSmallCorpParagraph ?? null,
     })),
   };
 }

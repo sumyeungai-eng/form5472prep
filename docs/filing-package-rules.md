@@ -56,13 +56,16 @@ This document is the authoritative written rule set for the Form 5472 / pro form
 - Use the Form 1120 for the tax year being filed, such as the 2023 form for a 2023 return. Exception: a short year that begins and ends in year N may go on the year N-1 form if the year N form is not yet released. The tax-year fields must still show the year-N dates.
 - Print `Foreign-owned U.S. DE` across the top of page 1.
 - Always populate the header fields for tax year beginning and ending, including for a full calendar year.
+- The "tax year beginning" field prints `MM/DD` only (e.g. `11/02`, `01/01`). The form already prints the year after it ("tax year beginning ______, 2024"), so a full date printed `11/02/2024, 2024` (generator 2.3.0, spec item 9). Source: the header line of every Form 1120 revision in `public/forms/` (2018-2025) prints the beginning year itself. Exception: under the short-year prior-revision exception below, the printed year is the wrong year, so that one case keeps `MM/DD/YYYY` to show the year-N date.
 - For a first year, the period begins on the formation date, not January 1.
 - For a final year, the period ends on the dissolution date, meaning the effective date on the certificate of dissolution or cancellation, not December 31.
 - Complete name, address, item B EIN, and item E. Tick E(1) Initial return in the first year and E(2) Final return on a final return.
 - Items C and D may remain filled as today. Item D must equal Form 5472 line 1c.
 - Put the signer's title in the Title field on the Sign Here line.
 - Nothing may be drawn over the printed declaration.
-- Use the configured paid preparer block rule.
+- Paid preparer block (generator 2.3.0, spec item 8): optional per order. `Filing.paidPreparerMode` null or `"none"` (the default) leaves the "Paid Preparer Use Only" block blank. `"house"` fills it on every Form 1120 in the order from the house preparer config (env vars `HOUSE_PREPARER_NAME`, `HOUSE_PREPARER_PTIN`, `HOUSE_PREPARER_FIRM_NAME`, `HOUSE_PREPARER_FIRM_EIN`, `HOUSE_PREPARER_FIRM_ADDRESS`, optional `HOUSE_PREPARER_PHONE`; read by `src/config/housePreparer.ts`, never hard-coded). If any required value is missing the block stays blank and the record says the config is incomplete (pre-flight error, Lane B). The preparer signature, preparer date and "Check if self-employed" box always stay blank; the signature is stamped later by the place-signature tool. Field names are mapped per revision (2018; 2019-2024; 2025) in `form1120PaidPreparerFieldMaps` and were confirmed by rendering filled forms (2026-10-13).
+- "May the IRS discuss this return with the preparer shown below?" (`Filing.irsMayDiscussWithPreparer`): null = blank (default), `"yes"` ticks Yes, `"no"` ticks No. It is answered only when a preparer is shown; with no preparer the boxes stay blank.
+- When a preparer is shown, no statement may say the owner prepared the returns (pre-flight, Lane B).
 
 ### LLC address
 
@@ -76,7 +79,7 @@ Do not use the registered agent's address. If the client says the LLC genuinely 
 - Accept the client's statement that an extension was filed as given. Do not demand proof, transmission dates, or destination. Optional follow-up fields may remain optional, never required.
 - If the return is timely or validly extended, do not generate, offer, attach, or mention a reasonable cause statement. Attaching one to a timely return mislabels it as late.
 - If the return is late, a reasonable cause statement is required, one per tax year.
-- If the client is unsure whether an extension was filed, do not classify the return. Route it to the reviewer with a neutral holding message to the client.
+- If the client is unsure whether an extension was filed ("not_sure"), the package treats that year as having NO extension for lateness (generator 2.3.0, spec item 4, orchestrator decision D2): a year past its original due date is late and gets its own reasonable cause statement. The order keeps the amber "Extension unclear - confirm with customer before fax" flag, and the record marks the year `extensionUnclear` so pre-flight can warn before upload. Customer-facing screens keep the neutral holding message (`isYearDelinquent` is unchanged; the package uses `isYearDelinquentForPackage`). The reviewer-only June 30 short-year 7004 edge case (R8 addendum) still records the year as `unresolved` with no statement.
 
 ### Wording rules for documents we write
 
@@ -87,6 +90,23 @@ Do not use the registered agent's address. If the client says the LLC genuinely 
 - Never promise or imply that penalty relief is automatic or guaranteed.
 - Customer-facing screens and emails do not use the words `DIIRSP` or `delinquent`. Use: `This return is being filed after its due date. We include a reasonable-cause statement explaining why.`
 
+### House rules for authored documents (generator 2.3.0)
+
+Source: `docs/reviews/2026-10-13-preflight-generator-spec.md` (house rules 1-6, items 3-7) and the orchestrator decisions in `docs/reviews/2026-10-13-preflight-generator-plan.md` (D1-D7). These are wording rules for documents we write; they need no IRS citation except where one is given.
+
+| ID | Rule | Implemented |
+|---|---|---|
+| H1 | Owner's voice. The reasonable cause statement (RCS), the Part V statement and the Part VI statement are written in the first person, as the owner ("I formed..."). They never mix "I" with "the Owner", and never use wording that shows a third party prepared them ("entered by customer", "the Owner arranged for...", "arranged for this return to be prepared", "qualified assistance", "I prepared"). | Yes (generatePackage.test.ts "voice" tests; render.test.ts DoD check) |
+| H2 | Perjury wording. The RCS, Part V and Part VI statements keep the heading `Signed under penalties of perjury:`. The cover letter closes with `Signed:` only and never carries perjury wording (D1, replaces the 2026-10-10 "Sincerely,"). The printed Form 1120 jurat stays as printed. | Yes (C-03, C-06, A25) |
+| H3 | No unconfirmed facts in signed statements. A sentence is printed only when its source field supports it: the IRS-notice sentence needs `rcsNoIrsNoticeConfirmed === true`; the first-tax-year sentence needs the formation year; the "still unaware" sentence needs `rcsLearnedOn` after that year's due date; the small-corporation paragraph needs its conditions (H8). | Yes |
+| H4 | No raw customer free text in IRS-facing documents. The customer's explanation (`FilingYearData.rcsWhyMissed`, `rcsWhenLearned`, legacy `Filing.reasonableCauseNarrative`, wizard presets) is source material shown to the admin only and is never rendered. The RCS cause narrative comes only from the admin field `FilingYearData.rcsAdminNarrative`. With no admin narrative the cause section has no narrative text (no fallback) and the record marks it missing so pre-flight fails. | Yes |
+| H5 | One RCS per late tax year, each placed after its own year's Part V (and Part VI) statement, using that year's data and that year's narrative. | Yes (C-05, two-year late fixture) |
+| H6 | For a late year after the first late year in the package, when `rcsLearnedOn` is after that year's due date, the RCS adds: `I remained unaware of the requirement when the [year] return was due on [Month D, YYYY].` | Yes |
+| H7 | RCS content. Sections: 1. Background, 2. Cause of the Delinquency, 3. Filing History and Notice Status, 4. Corrective Action. `This is the LLC's first tax year.` only for the year containing the formation date. `I have not received any IRS notice about this return.` only per H3. Corrective action: `As soon as I learned of the requirement, I took steps to file the outstanding returns for [years], which I am now filing together.` (single-year package: `...the outstanding return for [year], which I am now filing.`). Signature block: `Signed under penalties of perjury:`, a signature line, the owner's name, `Sole Member, [LLC name]`, `Date: ____`. | Yes |
+| H8 | Small-corporation paragraph (spec text verbatim, Treas. Reg. sec. 1.6038A-4(b)(2)(ii)). Per-year admin toggle `FilingYearData.rcsSmallCorpParagraph`: null = automatic, true/false = admin override. Automatic means on when all of: the year is late; the LLC address is registered-agent-only (`Filing.llcAddressIsRegisteredAgentOnly === true`, the existing intake flag); no gross-receipts signal (Form 1120 line 1a is always blank on our pro forma, `hasUsSourceIncome` is not true, and the year's transactions show no customers, sales or payment processors); and `rcsLearnedOn`, when recorded, is not on or before that year's due date (the paragraph says "I had no knowledge"). The record exposes each condition so pre-flight can warn when an admin forces it on with conditions unmet. | Yes |
+| H9 | Part V statement (spec item 7). First person. Heading citation `Treas. Reg. sec. 1.6038A-2(b)(3)(xi)` (D6: (b)(3)(xi) covers "any other transaction" of a sec. 301.7701-2(c)(2)(vi) entity, including contributions to and distributions from the entity; verified on law.cornell.edu by the orchestrator 2026-10-13). Each owner-paid cost gets the sentence `During tax year [year], I paid $[amount] of [description] for [LLC] from my personal funds.` followed by `This amount is a capital contribution to the LLC.` (or `These amounts are capital contributions to the LLC.`). Date / Description / Amount (USD) schedule with a total row. The statement ends with `Form 5472 lines 1f and 1h: $[total].` in whole dollars (= line 1f). Schedule descriptions stay on one line: shrink to 8pt if needed, otherwise wrap without leaving a single word alone on the last line. Owner-paid costs already flow into Part V rows and lines 1f/1h; Part IV lines 22 and 36 stay `0`; line 1c is unchanged. | Yes |
+| H10 | Part VI statement opening is first person. | Yes |
+
 ## Assertion List
 
 | ID | What it checks | Implemented |
@@ -96,7 +116,7 @@ Do not use the registered agent's address. If the client says the LLC genuinely 
 | A03 | Form 5472 lines 43a, 43b(1), and 43b(2) are completely blank. | Yes |
 | A04 | Form 5472 lines 37 through 42 are each answered. | Yes |
 | A05 | Lines 1e and 8d use valid Form 1120 activity codes for the tax year, line 1d is not blank, and the codes match. | Yes |
-| A06 | Form 1120 and Form 5472 header begin and end dates are populated and match. | Yes |
+| A06 | Form 1120 and Form 5472 header begin and end dates are populated and match. Since generator 2.3.0 the Form 1120 "tax year beginning" value is `MM/DD` only and must equal the Form 5472 begin month/day; under the short-year prior-revision exception it is `MM/DD/YYYY` and must equal the full Form 5472 begin date. | Yes |
 | A07 | First-year start date equals the formation date, and final-year end date equals the dissolution date. | Yes |
 | A08 | The Form 1120 revision year matches the tax year or the documented short-year exception. | Yes |
 | A09 | `Foreign-owned U.S. DE` appears on Form 1120 page 1. | Yes |
@@ -114,9 +134,9 @@ Do not use the registered agent's address. If the client says the LLC genuinely 
 | A21 | Form 1120 item D equals Form 5472 line 1c. | Yes |
 | A22 | Cover letter enclosure wording is exact, the reversed phrase is absent, and removed timeliness words are absent as whole words. | Yes |
 | A23 | Cover letter addressee matches the configured IRS address and the date matches `finalisedAt`. | Yes |
-| A24 | Reasonable cause statements exist if and only if the tax year is late, with exactly one per late year naming that year. | Yes |
-| A25 | Authored documents use the configured signature heading exactly. | Yes |
-| A26 | Reasonable cause text does not contradict questionnaire facts and required per-year answers are present. | Yes |
+| A24 | Reasonable cause statements exist if and only if the tax year is late, with exactly one per late year naming that year. A "not_sure" Form 7004 answer counts as no extension (generator 2.3.0). | Yes |
+| A25 | Authored statements use the configured signature heading exactly; the cover letter closes with `Signed:` and never carries the perjury heading. | Yes |
+| A26 | Reasonable cause text does not contradict questionnaire facts and required per-year answers are present. Since generator 2.3.0 the record's `rcsMissingAnswers` means "no admin narrative" (rule H4), so the existing A26 "answers missing" failure fires until the admin writes one; Lane B owns the message wording. | Yes |
 | A27 | Every Part V and Part VI statement page includes LLC name, EIN, and tax year. | Yes |
 | A28 | The final PDF has zero AcroForm fields and zero widget annotations. | Yes |
 | A29 | The render check V-02 passed. Per Amendment 1, V-02 cannot run in-process on Vercel because it uses native render dependencies, so it is enforced by CI as a separate check and not inside `runPreflight`. | CI only |
@@ -135,7 +155,7 @@ Implementation status is based on reading `src/lib/pdf/preflight.ts`: `runPrefli
 | W16 | Line 1o source is `default_us`. | `Tax year [year]: line 1o defaulted to United States.` |
 | W17 | Owner address is an older single-line address without structured state, postal, or no-postal-code answer. | `Tax year [year]: Owner address not in structured form (older order).` |
 | W18 | FTIN is blank and `ownerHasFtin` is not structured. | `Tax year [year]: Owner FTIN answer not in structured form (older order).` |
-| W26 | Reasonable cause statement uses fallback text predating per-year questions. | `Reasonable cause text predates the per-year questions.` |
+| W26 | Reasonable cause statement uses fallback text predating per-year questions. Since generator 2.3.0 the generator never falls back to customer text (rule H4), so `rcsFallbackUsed` is always false and W26 no longer fires. | `Reasonable cause text predates the per-year questions.` |
 
 W02 is implemented in `src/lib/pdf/preflight.ts` as a warning, not a blocking assertion.
 

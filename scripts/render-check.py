@@ -75,6 +75,31 @@ def check_text(expectations, engines):
                 raise SystemExit(f"{label}: expected text not found on page {page_index + 1} using {engine_name}: {value}")
 
 
+def check_absent(expectations, engines):
+    # Text that must NOT appear: on one page ("page"), or anywhere when "page"
+    # is omitted. "ignoreCase" compares case-insensitively.
+    for item in expectations:
+        value = normalize(str(item["value"]))
+        label = item.get("label", value)
+        ignore_case = bool(item.get("ignoreCase", False))
+        needle = value.lower() if ignore_case else value
+        for engine_name, pages in engines.items():
+            if "page" in item:
+                indices = [int(item["page"]) - 1]
+            else:
+                indices = list(range(len(pages)))
+            for page_index in indices:
+                if page_index < 0 or page_index >= len(pages):
+                    raise SystemExit(f"{label}: page {page_index + 1} missing in {engine_name}")
+                haystack = normalize(pages[page_index])
+                if ignore_case:
+                    haystack = haystack.lower()
+                if needle in haystack:
+                    raise SystemExit(
+                        f"{label}: forbidden text found on page {page_index + 1} using {engine_name}: {value}"
+                    )
+
+
 def dark_ratio(pix, rect):
     x, y, w, h = [int(round(v)) for v in rect]
     x = max(0, min(x, pix.width - 1))
@@ -133,6 +158,7 @@ def main():
         second_name, second_pages = second_engine_text(pdf_path)
         engines[second_name] = second_pages
         check_text(expected.get("text", []), engines)
+        check_absent(expected.get("absent", []), engines)
         check_checkboxes(doc, expected.get("checkboxes", []), dpi)
         print(f"render-check ok: {pdf_path} ({doc.page_count} pages, dpi={dpi}, second={second_name})")
 

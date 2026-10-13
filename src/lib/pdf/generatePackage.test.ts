@@ -2,7 +2,14 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { PDFDocument, StandardFonts } from "pdf-lib";
-import { AUTHORED_DOC_SIGNATURE_HEADING, COVER_LETTER_CLOSING, COVER_LETTER_ENCLOSURE_PHRASE, SIGNER_TITLE } from "@/config/filingPackage";
+import {
+  AUTHORED_DOC_DATE_LINE,
+  AUTHORED_DOC_SIGNATURE_HEADING,
+  COVER_LETTER_CLOSING,
+  COVER_LETTER_ENCLOSURE_PHRASE,
+  SIGNER_TITLE,
+  SMALL_CORPORATION_PARAGRAPH,
+} from "@/config/filingPackage";
 import {
   form5472FieldMap,
   form1120_2018FieldMap,
@@ -13,10 +20,12 @@ import {
   form1120_2023FieldMap,
   form1120_2024FieldMap,
   form1120_2025FieldMap,
+  form1120PaidPreparerFieldMaps,
 } from "./fieldMaps";
 import {
   assertRelatedPartyCount,
   deriveSignerTitleColumnBounds,
+  fitScheduleDescription,
   generatePackage,
   NeedsReviewError,
   roundedPartVTotalDollars,
@@ -35,8 +44,11 @@ import {
   F9,
   F10,
   F10NoExtension,
+  F11,
+  CUSTOMER_INTAKE_TEXT,
   finalisedAt,
   fixtures,
+  lateCatchUpFinalisedAt,
   reviewFinalisedAt,
 } from "./__fixtures__/filings";
 import { drawnTextWidth, usableFieldWidth } from "./fitText";
@@ -56,10 +68,15 @@ describe("generatePackage fixtures", () => {
       const preflight = await runPreflight(pkg.record, pkg.bytes);
       expect(preflight.failures).toEqual([]);
       if (name === "F6") {
-        // Existing status logic records "not_sure" Form 7004 as unresolved,
-        // not late, so no reasonable-cause statement is generated.
-        expect(pkg.record.taxYears[0].status).toBe("unresolved");
-        expect(pkg.record.authoredDocuments.some((doc) => doc.kind === "reasonableCauseStatement")).toBe(false);
+        // Generator 2.3.0 (D2): a "not_sure" Form 7004 counts as NO extension
+        // for lateness. 2025 was due 2026-04-15, so on finalisedAt it is late
+        // and gets its own statement; the year stays flagged for the reviewer.
+        expect(pkg.record.taxYears[0].status).toBe("late");
+        expect(pkg.record.taxYears[0].extensionUnclear).toBe(true);
+        expect(pkg.record.taxYears[0].extensionFiled).toBe("not_sure");
+        expect(
+          pkg.record.authoredDocuments.filter((doc) => doc.kind === "reasonableCauseStatement").map((d) => d.taxYear),
+        ).toEqual([2025]);
       }
     }, PDF_TIMEOUT);
   }
@@ -80,10 +97,10 @@ describe("generatePackage regressions", () => {
     expect(fields.some((field) => /43b|c3_9/.test(field))).toBe(false);
   }, PDF_TIMEOUT);
 
-  it("G-04 fills full calendar-year 1120 header dates", async () => {
+  it("G-04 fills full calendar-year 1120 header dates (beginning MM/DD only: the form prints the year)", async () => {
     const pkg = await generatePackage(F1, finalisedAt);
     const fields = pkg.record.taxYears[0].form1120.fields;
-    expect(fields).toContainEqual({ form: "1120-2025", field: form1120_2025FieldMap.taxYearBeginning, value: "01/01/2025" });
+    expect(fields).toContainEqual({ form: "1120-2025", field: form1120_2025FieldMap.taxYearBeginning, value: "01/01" });
     expect(fields).toContainEqual({ form: "1120-2025", field: form1120_2025FieldMap.taxYearEnding, value: "12/31" });
     expect(fields).toContainEqual({ form: "1120-2025", field: form1120_2025FieldMap.taxYearEndingYear2, value: "25" });
   }, PDF_TIMEOUT);
@@ -185,7 +202,11 @@ describe("generatePackage regressions", () => {
     ]);
     expect(year.partVTotalCents).toBe(520_00);
     expect(year.line1f).toBe(520);
-    expect(partVText).toContain("State filing fee paid personally by owner");
+    expect(partVText).toContain("State filing fee, paid from my personal funds");
+    expect(partVText).toContain(
+      "During tax year 2025, I paid $150.00 of state filing fees for Example Holdings LLC from my personal funds. This amount is a capital contribution to the LLC.",
+    );
+    expect(partVText).not.toMatch(/paid personally by owner|entered by customer/i);
     expect(partVText).toContain("Loans from Foreign Owner to LLC");
     expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
   }, PDF_TIMEOUT);
@@ -257,9 +278,11 @@ describe("generatePackage regressions", () => {
     const pkg = await generatePackage(F5, finalisedAt);
     const cover = pkg.record.authoredDocuments.find((doc) => doc.kind === "coverLetter");
     expect(cover?.lines.slice(0, 4)).toEqual([...IRS_MAIL_ADDRESS_DISPLAY_LINES]);
-    // Generator 2.2.0: the cover letter closes "Sincerely," — never under
+    // Generator 2.3.0: the cover letter closes "Signed:" — never under
     // penalties of perjury (that heading stays on the statements only).
-    expect(cover?.lines).toContain(COVER_LETTER_CLOSING);
+    expect(COVER_LETTER_CLOSING).toBe("Signed:");
+    expect(cover?.lines).toContain("Signed:");
+    expect(cover?.lines).not.toContain("Sincerely,");
     expect(cover?.lines).not.toContain(AUTHORED_DOC_SIGNATURE_HEADING);
     expect(cover?.lines.join(" ")).not.toMatch(/penalties of perjury/i);
     expect(cover?.lines).toContain(SIGNER_TITLE);
@@ -342,6 +365,8 @@ describe("generatePackage regressions", () => {
     });
   }, PDF_TIMEOUT);
 
+  // The prior-revision form prints the PREVIOUS year after "tax year
+  // beginning", so this one case keeps MM/DD/YYYY (rules doc, Form 1120).
   it("G-05 allows the documented short-year prior-revision exception", async () => {
     const pkg = await generatePackage(
       {
@@ -447,15 +472,22 @@ describe("generatePackage regressions", () => {
     expect(rcsText).not.toMatch(/\b(dividends|dormant|no customers|no vendors|did not operate with customers or vendors)\b/i);
   }, PDF_TIMEOUT);
 
-  it("closes the cause paragraph itself when no when-learned answer was given", async () => {
-    const filing = { ...F5, yearData: F5.yearData.map((year) => ({ ...year, rcsWhenLearned: null })) };
-    const pkg = await generatePackage(filing, finalisedAt);
+  it("never renders the customer's own explanation or the legacy narrative (rules doc H4)", async () => {
+    const pkg = await generatePackage(F5, finalisedAt);
     const statements = pkg.record.authoredDocuments.filter((doc) => doc.kind === "reasonableCauseStatement");
-    expect(statements.length).toBeGreaterThan(0);
+    expect(statements.map((d) => d.taxYear)).toEqual([2022, 2023, 2024]);
+    const everything = pkg.record.authoredDocuments.flatMap((doc) => doc.lines).join(" ");
+    for (const year of F5.yearData) {
+      for (const customer of [year.rcsWhyMissed, year.rcsWhenLearned]) {
+        expect(everything).not.toContain(customer!.slice(10, 60));
+      }
+    }
+    expect(everything).not.toContain(F5.reasonableCauseNarrative!.slice(10, 60));
+    expect(everything).not.toMatch(/promptly arranged|arranged for|qualified assistance/i);
     for (const doc of statements) {
-      const text = doc.lines.join(" ");
-      expect(text).toContain("Upon learning of the filing requirement, the Owner promptly arranged");
       expect(doc.rcsMissingAnswers).toBe(false);
+      expect(doc.rcsFallbackUsed).toBe(false);
+      expect(doc.rcsNarrativeSource).toBe("admin");
     }
   }, PDF_TIMEOUT);
 
@@ -688,14 +720,16 @@ describe("2026-10-05 review package (F10)", () => {
   it("writes the Hong Kong permanent-resident and no-U.S.-income facts into the RCS", async () => {
     const pkg = await generatePackage(F10, reviewFinalisedAt);
     const rcs = textOf(pkg, "reasonableCauseStatement", 2023);
-    expect(rcs).toContain('Mei Ling Example ("the Owner") is a Hong Kong permanent resident.');
+    // Generator 2.3.0: first person, never "the Owner".
+    expect(rcs).toContain("I am a Hong Kong permanent resident.");
     expect(rcs).not.toMatch(/citizen of Hong Kong|resident and citizen/);
     expect(rcs).toContain(
       "The Company had no U.S.-source income in tax year 2023, and no U.S. income tax was due or withheld for that year.",
     );
-    // The customer's chosen reason is kept, and no "when learned" date is invented.
-    expect(rcs).toContain("The Owner was not aware that a foreign-owned single-member LLC must file Form 5472");
-    expect(rcs).toContain("Upon learning of the filing requirement, the Owner promptly arranged");
+    // The admin narrative renders; the customer's preset (third person) does not.
+    expect(rcs).toContain("I did not know that a foreign-owned single-member LLC must file Form 5472");
+    expect(rcs).not.toContain("The Owner was not aware");
+    expect(rcs).not.toMatch(/the Owner/i);
   }, PDF_TIMEOUT);
 
   it("adds the no-U.S.-income facts only when the intake supports them", async () => {
@@ -716,8 +750,9 @@ describe("2026-10-05 review package (F10)", () => {
     const pkg = await generatePackage(F10, reviewFinalisedAt);
     const text = textOf(pkg, "partVStatement", 2024);
     expect(text).toContain(
-      "There were no reportable transactions between Example Harbour Software LLC and its foreign owner during tax year 2024; Form 5472 lines 1f and 1h are $0.",
+      "There were no reportable transactions between me and Example Harbour Software LLC during tax year 2024.",
     );
+    expect(text).toContain("Form 5472 lines 1f and 1h: $0.");
     expect(text).not.toMatch(/These transactions include|Total Part V Rows|Total Reportable Transactions|Other than the transactions described above/);
   }, PDF_TIMEOUT);
 
@@ -759,5 +794,410 @@ describe("2026-10-05 review package (F10)", () => {
     expect(preflight.warnings.filter((w) => w.id === "W33").map((w) => w.message)).toEqual([
       expect.stringContaining("Tax year 2023 includes the LLC's formation date"),
     ]);
+  }, PDF_TIMEOUT);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Generator 2.3.0 — docs/reviews/2026-10-13-preflight-generator-spec.md items
+// 3-9, rules doc H1-H10. F11 is the synthetic two-year late catch-up fixture.
+// ─────────────────────────────────────────────────────────────────────────────
+describe("generator 2.3.0: preflight-generator spec", () => {
+  type Pkg = Awaited<ReturnType<typeof generatePackage>>;
+  const docText = (pkg: Pkg, kind: string, taxYear?: number) =>
+    pkg.record.authoredDocuments
+      .filter((doc) => doc.kind === kind && (taxYear === undefined || doc.taxYear === taxYear))
+      .flatMap((doc) => doc.lines)
+      .join(" ");
+  const rcsLines = (pkg: Pkg, taxYear: number) =>
+    pkg.record.authoredDocuments.find((d) => d.kind === "reasonableCauseStatement" && d.taxYear === taxYear)?.lines ?? [];
+  // The cause section: everything between the "2." and "3." headings.
+  const causeSection = (pkg: Pkg, taxYear: number) => {
+    const lines = rcsLines(pkg, taxYear);
+    return lines.slice(lines.indexOf("2. Cause of the Delinquency") + 1, lines.indexOf("3. Filing History and Notice Status")).join(" ");
+  };
+  const count = (text: string, needle: RegExp) => (text.match(needle) ?? []).length;
+  const VOICE_BANS: Array<[string, RegExp]> = [
+    ["the Owner", /the Owner/gi],
+    ["I prepared", /I prepared/gi],
+    ["arranged for", /arranged for/gi],
+    ["qualified assistance", /qualified assistance/gi],
+    ["entered by customer", /entered by customer/gi],
+  ];
+  const expectOwnerVoice = (text: string) => {
+    for (const [label, pattern] of VOICE_BANS) expect(count(text, pattern), label).toBe(0);
+  };
+  const withYear = (filing: typeof F11, taxYear: number, patch: Partial<(typeof F11)["yearData"][number]>) => ({
+    ...filing,
+    yearData: filing.yearData.map((y) => (y.taxYear === taxYear ? { ...y, ...patch } : y)),
+  });
+  // Synthetic house preparer — never real preparer data.
+  const PREPARER_ENV = {
+    HOUSE_PREPARER_NAME: "Pat Q. Synthetic",
+    HOUSE_PREPARER_PTIN: "P00000001",
+    HOUSE_PREPARER_FIRM_NAME: "Synthetic Preparer Firm LLC",
+    HOUSE_PREPARER_FIRM_EIN: "00-0000001",
+    HOUSE_PREPARER_FIRM_ADDRESS: "1 Synthetic Way, Example City, ST 00000",
+    HOUSE_PREPARER_PHONE: "555-0100",
+  };
+
+  // ── Item 3: customer text never renders; only the admin narrative does ──
+  it("item 3: customer text and no admin narrative -> no cause narrative, record marks it missing, pre-flight fails", async () => {
+    const filing = withYear(F11, 2024, { rcsAdminNarrative: null });
+    const pkg = await generatePackage(filing, lateCatchUpFinalisedAt);
+    const all = pkg.record.authoredDocuments.flatMap((d) => d.lines).join(" ");
+    for (const phrase of ["Could you please review", "My objective", "minimal cost", "learned about it from a friend"]) {
+      expect(all).not.toContain(phrase);
+    }
+    // The cause section prints no narrative at all: only the structured facts.
+    expect(causeSection(pkg, 2024)).toBe(
+      "The Company had no U.S.-source income in tax year 2024, and no U.S. income tax was due or withheld for that " +
+        `year. ${SMALL_CORPORATION_PARAGRAPH}`,
+    );
+    const doc = pkg.record.authoredDocuments.find((d) => d.kind === "reasonableCauseStatement" && d.taxYear === 2024)!;
+    expect(doc.rcsMissingAnswers).toBe(true);
+    expect(doc.rcsNarrativeSource).toBeNull();
+    const year = pkg.record.taxYears.find((y) => y.taxYear === 2024)!;
+    expect(year.rcs?.narrativeSource).toBeNull();
+    expect(year.rcs?.narrative).toBeNull();
+    // Customer explanation is on the record for the admin/pre-flight only.
+    expect(year.rcs?.customerExplanation.whyMissed).toBe(CUSTOMER_INTAKE_TEXT);
+    const preflight = await runPreflight(pkg.record, pkg.bytes);
+    expect(preflight.failures).toContainEqual({ id: "A26", message: "Reasonable cause answers missing for 2024." });
+  }, PDF_TIMEOUT);
+
+  it("item 3: an admin narrative renders as the only cause narrative", async () => {
+    const pkg = await generatePackage(F11, lateCatchUpFinalisedAt);
+    const cause = causeSection(pkg, 2024);
+    expect(cause.startsWith("I formed the LLC through an online formation service and relied on it for the state requirements.")).toBe(true);
+    // Two admin paragraphs render as two paragraphs, in order.
+    expect(cause).toContain("No one told me that a foreign-owned single-member LLC must file Form 5472");
+    expect(cause).not.toContain("Could you");
+    expect(pkg.record.taxYears.find((y) => y.taxYear === 2024)?.rcs?.narrative).toBe(
+      "I formed the LLC through an online formation service and relied on it for the state requirements.\n\n" +
+        "No one told me that a foreign-owned single-member LLC must file Form 5472 with a pro forma Form 1120 " +
+        "each year, even when it has no income.",
+    );
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
+  }, PDF_TIMEOUT);
+
+  // ── Item 4: one RCS per late year, "not sure" = no extension ──
+  it("item 4: two late years -> two statements, each after its own Part V statement; later year says still unaware", async () => {
+    const pkg = await generatePackage(F11, lateCatchUpFinalisedAt);
+    expect(pkg.record.taxYears.map((y) => [y.taxYear, y.status, y.reasonableCauseIncluded])).toEqual([
+      [2024, "late", true],
+      [2025, "late", true],
+    ]);
+    expect(pkg.record.lateYears).toEqual([2024, 2025]);
+    expect(pkg.record.pageOrder.map((p) => [p.label, p.taxYear ?? null])).toEqual([
+      ["Cover letter", null],
+      ["Form 1120", 2024],
+      ["Form 5472", 2024],
+      ["Part V Statement", 2024],
+      ["Reasonable Cause Statement", 2024],
+      ["Form 1120", 2025],
+      ["Form 5472", 2025],
+      ["Part V Statement", 2025],
+      ["Reasonable Cause Statement", 2025],
+    ]);
+    const y2025 = pkg.record.taxYears.find((y) => y.taxYear === 2025)!;
+    expect(y2025.extensionFiled).toBe("not_sure");
+    expect(y2025.extensionUnclear).toBe(true);
+    expect(y2025.dueDate).toBe("2026-04-15");
+    expect(y2025.rcs?.stillUnaware).toEqual({ needed: true, rendered: true });
+    expect(docText(pkg, "reasonableCauseStatement", 2025)).toContain(
+      "I remained unaware of the requirement when the 2025 return was due on April 15, 2026.",
+    );
+    // The first late year never carries the sentence.
+    expect(pkg.record.taxYears[0].rcs?.stillUnaware).toEqual({ needed: false, rendered: false });
+    expect(docText(pkg, "reasonableCauseStatement", 2024)).not.toContain("I remained unaware");
+    // Each statement uses its own year's narrative.
+    expect(docText(pkg, "reasonableCauseStatement", 2025)).toContain("I still did not know about the Form 5472 requirement during 2025.");
+    expect(docText(pkg, "reasonableCauseStatement", 2025)).not.toContain("online formation service");
+  }, PDF_TIMEOUT);
+
+  it("item 4: no 'still unaware' sentence when rcsLearnedOn is missing or on/before the due date", async () => {
+    const missing = await generatePackage(withYear(F11, 2025, { rcsLearnedOn: null }), lateCatchUpFinalisedAt);
+    expect(missing.record.taxYears[1].rcs?.stillUnaware).toEqual({ needed: true, rendered: false });
+    expect(docText(missing, "reasonableCauseStatement", 2025)).not.toContain("I remained unaware");
+    const onDueDate = await generatePackage(withYear(F11, 2025, { rcsLearnedOn: new Date("2026-04-15T00:00:00.000Z") }), lateCatchUpFinalisedAt);
+    expect(onDueDate.record.taxYears[1].rcs?.learnedOn).toBe("2026-04-15");
+    expect(onDueDate.record.taxYears[1].rcs?.stillUnaware.rendered).toBe(false);
+  }, PDF_TIMEOUT * 2);
+
+  it("item 4: a 'not sure' extension year before its original due date stays timely", async () => {
+    const pkg = await generatePackage(F11, new Date("2026-04-15T12:00:00.000Z"));
+    expect(pkg.record.taxYears.map((y) => [y.taxYear, y.status])).toEqual([
+      [2024, "late"],
+      [2025, "timely"],
+    ]);
+    expect(pkg.record.taxYears[1].extensionUnclear).toBe(true);
+  }, PDF_TIMEOUT);
+
+  // ── Item 5: first-person RCS, exact wording, conditional sentences ──
+  it("item 5: formation year, notice confirmed, small-corporation paragraph on (snapshot)", async () => {
+    const pkg = await generatePackage(F11, lateCatchUpFinalisedAt);
+    const lines = rcsLines(pkg, 2024);
+    const text = lines.join(" ");
+    expectOwnerVoice(text);
+    expect(text).toContain("This is the LLC's first tax year.");
+    expect(text).toContain("I have not received any IRS notice about this return.");
+    expect(text).toContain(SMALL_CORPORATION_PARAGRAPH.slice(0, 60));
+    expect(text).toContain(
+      "As soon as I learned of the requirement, I took steps to file the outstanding returns for 2024 and 2025, which I am now filing together.",
+    );
+    expect(lines.slice(-5)).toEqual([
+      AUTHORED_DOC_SIGNATURE_HEADING,
+      "________________________________________",
+      "Alex Example",
+      "Sole Member, Example Catchup Holdings LLC",
+      AUTHORED_DOC_DATE_LINE,
+    ]);
+    expect(AUTHORED_DOC_SIGNATURE_HEADING).toBe("Signed under penalties of perjury:");
+    expect(AUTHORED_DOC_DATE_LINE.startsWith("Date: ____")).toBe(true);
+    expect(pkg.record.taxYears[0].rcs).toMatchObject({
+      firstTaxYearSentence: true,
+      noticeConfirmed: true,
+      noticeSentence: true,
+      smallCorpParagraph: { setting: null, conditionsMet: true, rendered: true },
+    });
+    expect(lines).toMatchSnapshot();
+  }, PDF_TIMEOUT);
+
+  it("item 5: later year, notice not recorded (snapshot)", async () => {
+    const pkg = await generatePackage(F11, lateCatchUpFinalisedAt);
+    const lines = rcsLines(pkg, 2025);
+    const text = lines.join(" ");
+    expectOwnerVoice(text);
+    expect(text).not.toContain("This is the LLC's first tax year.");
+    expect(text).not.toContain("IRS notice");
+    expect(pkg.record.taxYears[1].rcs).toMatchObject({
+      firstTaxYearSentence: false,
+      noticeConfirmed: null,
+      noticeSentence: false,
+    });
+    expect(lines.slice(-5)).toEqual([
+      AUTHORED_DOC_SIGNATURE_HEADING,
+      "________________________________________",
+      "Alex Example",
+      "Sole Member, Example Catchup Holdings LLC",
+      AUTHORED_DOC_DATE_LINE,
+    ]);
+    expect(lines).toMatchSnapshot();
+  }, PDF_TIMEOUT);
+
+  it("item 5: notice sentence only when confirmed Yes (false is not Yes)", async () => {
+    const pkg = await generatePackage(withYear(F11, 2024, { rcsNoIrsNoticeConfirmed: false }), lateCatchUpFinalisedAt);
+    expect(docText(pkg, "reasonableCauseStatement", 2024)).not.toContain("IRS notice");
+    expect(pkg.record.taxYears[0].rcs?.noticeSentence).toBe(false);
+  }, PDF_TIMEOUT);
+
+  it("item 5: small-corporation paragraph off (admin toggle) and auto-off when conditions are not met", async () => {
+    const off = await generatePackage(withYear(F11, 2024, { rcsSmallCorpParagraph: false }), lateCatchUpFinalisedAt);
+    expect(docText(off, "reasonableCauseStatement", 2024)).not.toContain("small corporation");
+    expect(off.record.taxYears[0].rcs?.smallCorpParagraph).toMatchObject({ setting: false, conditionsMet: true, rendered: false });
+    expectOwnerVoice(docText(off, "reasonableCauseStatement"));
+    expect(rcsLines(off, 2024)).toMatchSnapshot();
+
+    const notAgentOnly = await generatePackage({ ...F11, llcAddressIsRegisteredAgentOnly: false }, lateCatchUpFinalisedAt);
+    expect(notAgentOnly.record.taxYears[0].rcs?.smallCorpParagraph).toMatchObject({
+      setting: null,
+      conditionsMet: false,
+      conditions: { registeredAgentOnly: false },
+      rendered: false,
+    });
+    expect(docText(notAgentOnly, "reasonableCauseStatement")).not.toContain("small corporation");
+
+    const knewBeforeDue = await generatePackage(withYear(F11, 2025, { rcsLearnedOn: "2026-01-10" }), lateCatchUpFinalisedAt);
+    expect(knewBeforeDue.record.taxYears[1].rcs?.smallCorpParagraph).toMatchObject({
+      conditions: { notKnownBeforeDueDate: false },
+      rendered: false,
+    });
+
+    const forced = await generatePackage(
+      withYear({ ...F11, llcAddressIsRegisteredAgentOnly: false }, 2024, { rcsSmallCorpParagraph: true }),
+      lateCatchUpFinalisedAt,
+    );
+    expect(forced.record.taxYears[0].rcs?.smallCorpParagraph).toMatchObject({ setting: true, conditionsMet: false, rendered: true });
+    expect(docText(forced, "reasonableCauseStatement", 2024)).toContain(SMALL_CORPORATION_PARAGRAPH.slice(0, 60));
+  }, PDF_TIMEOUT * 3);
+
+  it("item 5: single-year package uses the singular corrective-action sentence", async () => {
+    const pkg = await generatePackage({ ...F11, taxYears: [2024], yearData: [F11.yearData[0]] }, lateCatchUpFinalisedAt);
+    expect(docText(pkg, "reasonableCauseStatement", 2024)).toContain(
+      "As soon as I learned of the requirement, I took steps to file the outstanding return for 2024, which I am now filing.",
+    );
+  }, PDF_TIMEOUT);
+
+  // ── Item 6: cover letter "Signed:" and never perjury wording ──
+  it("item 6: every fixture's cover letter closes 'Signed:' and never says 'penalties of perjury'", async () => {
+    for (const filing of [...Object.values(fixtures)]) {
+      const pkg = await generatePackage(filing, finalisedAt);
+      const cover = pkg.record.authoredDocuments.find((d) => d.kind === "coverLetter")!;
+      expect(cover.lines).toContain("Signed:");
+      expect(cover.lines.join(" ")).not.toMatch(/penalties of perjury/i);
+    }
+  }, PDF_TIMEOUT * 6);
+
+  // ── Item 7: owner-paid costs -> Part V, lines 1f/1h; first-person template ──
+  it("item 7: $424 / $49 owner-paid costs reach Part V and lines 1f/1h; 1c and Part IV unchanged", async () => {
+    const pkg = await generatePackage(F11, lateCatchUpFinalisedAt);
+    const field = (taxYear: number, name: string) =>
+      pkg.record.taxYears.find((y) => y.taxYear === taxYear)!.form5472.fields.find((w) => w.field === name)?.value;
+    for (const [taxYear, dollars] of [[2024, 424], [2025, 49]] as const) {
+      const year = pkg.record.taxYears.find((y) => y.taxYear === taxYear)!;
+      expect(year.line1f).toBe(dollars);
+      expect(year.line1h).toBe(dollars);
+      expect(year.partVTotalCents).toBe(dollars * 100);
+      expect(year.partVStatementLine1fPrinted).toBe(dollars);
+      expect(field(taxYear, form5472FieldMap["1f_totalPaymentsThisForm"])).toBe(String(dollars));
+      expect(field(taxYear, form5472FieldMap["1h_totalPaymentsAllForms"])).toBe(String(dollars));
+      expect(field(taxYear, form5472FieldMap["1c_totalAssets"])).toBe("0");
+      expect(field(taxYear, form5472FieldMap.line22_totalReceived)).toBe("0");
+      expect(field(taxYear, form5472FieldMap.line36_totalPaid)).toBe("0");
+      expect(field(taxYear, form5472FieldMap.partV_attachedStatementBox)).toBe(true);
+      const lines = pkg.record.authoredDocuments.find((d) => d.kind === "partVStatement" && d.taxYear === taxYear)!.lines;
+      const text = lines.join(" ");
+      expect(text).toContain("Pursuant to Treas. Reg. sec. 1.6038A-2(b)(3)(xi) and Part V instructions");
+      expect(text).toContain(`Form 5472 lines 1f and 1h: $${dollars}.`);
+      // The ending line is the last line before the signature block.
+      expect(lines[lines.indexOf(AUTHORED_DOC_SIGNATURE_HEADING) - 1]).toBe(`Form 5472 lines 1f and 1h: $${dollars}.`);
+      expect(text).toContain("Description");
+      expect(text).toContain("Amount (USD)");
+      expect(text).toContain(`Total Part V reportable transactions, tax year ${taxYear}`);
+      expect(text).not.toMatch(/no reportable transactions/i);
+      expectOwnerVoice(text);
+    }
+    const y2024 = docText(pkg, "partVStatement", 2024);
+    expect(y2024).toContain("During tax year 2024, I paid $375.00 of formation or EIN service fees for Example Catchup Holdings LLC from my personal funds.");
+    expect(y2024).toContain("These amounts are capital contributions to the LLC.");
+    expect(y2024).toContain("$424.00");
+    const y2025 = docText(pkg, "partVStatement", 2025);
+    expect(y2025).toContain("During tax year 2025, I paid $49.00 of registered agent fees for Example Catchup Holdings LLC from my personal funds. This amount is a capital contribution to the LLC.");
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
+  }, PDF_TIMEOUT);
+
+  it("item 7: Part VI value on line 1f is explained and the ending line still equals line 1f", async () => {
+    const pkg = await generatePackage(F5, finalisedAt);
+    const y2022 = pkg.record.taxYears.find((y) => y.taxYear === 2022)!;
+    expect(y2022.partVStatementLine1fPrinted).toBe(y2022.line1f);
+    expect(docText(pkg, "partVStatement", 2022)).toContain("Form 5472 lines 1f and 1h: $25,000.");
+    expect(docText(pkg, "partVIStatement", 2022)).toContain(
+      "The following non-cash transfers between me and Example Portfolio LLC during tax year 2022 are reported for Part VI of Form 5472.",
+    );
+    expectOwnerVoice(docText(pkg, "partVIStatement"));
+  }, PDF_TIMEOUT);
+
+  it("item 7: schedule descriptions stay on one line, or wrap with no orphan word", async () => {
+    const font = await (await PDFDocument.create()).embedFont(StandardFonts.Helvetica);
+    expect(fitScheduleDescription("Registered agent fee", font, 346)).toEqual({ lines: ["Registered agent fee"], size: 10 });
+    const longish = "Formation or EIN service fee, paid from my personal funds (Alexandria Example-Longname)";
+    const shrunk = fitScheduleDescription(longish, font, 346);
+    expect(shrunk.lines).toEqual([longish]);
+    expect(shrunk.size).toBeLessThan(10);
+    expect(shrunk.size).toBeGreaterThanOrEqual(8);
+    const veryLong = `${"Reimbursement of a software subscription paid on the company card ".repeat(2)}renewal`;
+    const wrapped = fitScheduleDescription(veryLong, font, 346);
+    expect(wrapped.lines.length).toBeGreaterThan(1);
+    expect(wrapped.lines[wrapped.lines.length - 1].split(" ").length).toBeGreaterThan(1);
+    for (const line of wrapped.lines) expect(font.widthOfTextAtSize(line, wrapped.size)).toBeLessThanOrEqual(346);
+  });
+
+  // ── Item 8: optional house paid preparer block ──
+  it("item 8: house preparer fills the 2024 and 2025 Paid Preparer blocks; signature/date/self-employed stay blank", async () => {
+    const pkg = await generatePackage(
+      { ...F11, paidPreparerMode: "house", irsMayDiscussWithPreparer: "yes" },
+      lateCatchUpFinalisedAt,
+      { env: PREPARER_ENV },
+    );
+    expect(pkg.record.paidPreparerMode).toBe("house");
+    expect(pkg.record.housePreparer).toEqual({ configComplete: true, missing: [], invalid: [] });
+    for (const [taxYear, revision] of [[2024, 2024], [2025, 2025]] as const) {
+      const year = pkg.record.taxYears.find((y) => y.taxYear === taxYear)!;
+      const m = form1120PaidPreparerFieldMaps[revision];
+      const value = (field: string) => year.form1120.fields.find((w) => w.field === field)?.value;
+      expect(year.form1120Revision).toBe(String(revision));
+      expect(value(m.preparerName)).toBe("Pat Q. Synthetic");
+      expect(value(m.ptin)).toBe("P00000001");
+      expect(value(m.firmName)).toBe("Synthetic Preparer Firm LLC");
+      expect(value(m.firmEin)).toBe("00-0000001");
+      expect(value(m.firmAddress)).toBe("1 Synthetic Way, Example City, ST 00000");
+      expect(value(m.phone)).toBe("555-0100");
+      expect(value(m.discussYes)).toBe(true);
+      expect(value(m.discussNo)).toBeUndefined();
+      expect(value(m.selfEmployed)).toBeUndefined();
+      expect(year.paidPreparer).toEqual({ shown: true, discuss: "yes", fitFailures: [] });
+    }
+    // 2024 and 2025 layouts use different fields.
+    expect(form1120PaidPreparerFieldMaps[2024].preparerName).not.toBe(form1120PaidPreparerFieldMaps[2025].preparerName);
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
+  }, PDF_TIMEOUT);
+
+  it("item 8: discuss No / blank, no preparer by default, and incomplete config leaves the block blank", async () => {
+    const no = await generatePackage({ ...F11, paidPreparerMode: "house", irsMayDiscussWithPreparer: "no" }, lateCatchUpFinalisedAt, {
+      env: PREPARER_ENV,
+    });
+    const m2025 = form1120PaidPreparerFieldMaps[2025];
+    const v = (pkg: Pkg, field: string) => pkg.record.taxYears[1].form1120.fields.find((w) => w.field === field)?.value;
+    expect(v(no, m2025.discussNo)).toBe(true);
+    expect(v(no, m2025.discussYes)).toBeUndefined();
+
+    const blank = await generatePackage({ ...F11, paidPreparerMode: "house" }, lateCatchUpFinalisedAt, { env: PREPARER_ENV });
+    expect(v(blank, m2025.discussYes)).toBeUndefined();
+    expect(v(blank, m2025.discussNo)).toBeUndefined();
+    expect(blank.record.irsMayDiscussWithPreparer).toBeNull();
+
+    const preparerFields = (pkg: Pkg) =>
+      pkg.record.taxYears.flatMap((year) => {
+        const m = form1120PaidPreparerFieldMaps[Number(year.form1120Revision) as 2024 | 2025];
+        return year.form1120.fields.filter((w) => Object.values(m).includes(w.field));
+      });
+    // Default (no mode) with a complete config and a discuss answer: still blank.
+    const none = await generatePackage({ ...F11, irsMayDiscussWithPreparer: "yes" }, lateCatchUpFinalisedAt, { env: PREPARER_ENV });
+    expect(none.record.paidPreparerMode).toBe("none");
+    expect(preparerFields(none)).toEqual([]);
+    expect(none.record.taxYears.every((y) => y.paidPreparer?.shown === false)).toBe(true);
+
+    const incomplete = await generatePackage({ ...F11, paidPreparerMode: "house" }, lateCatchUpFinalisedAt, {
+      env: { ...PREPARER_ENV, HOUSE_PREPARER_PTIN: "", HOUSE_PREPARER_FIRM_EIN: "000000001" },
+    });
+    expect(preparerFields(incomplete)).toEqual([]);
+    expect(incomplete.record.housePreparer).toEqual({
+      configComplete: false,
+      missing: ["HOUSE_PREPARER_PTIN"],
+      invalid: ["HOUSE_PREPARER_FIRM_EIN"],
+    });
+  }, PDF_TIMEOUT * 4);
+
+  // ── Item 9: 1120 header MM/DD only ──
+  it("item 9: the 1120 'tax year beginning' prints 11/02, never 11/02/2024", async () => {
+    const pkg = await generatePackage(F11, lateCatchUpFinalisedAt);
+    const begin = (taxYear: number, field: string) =>
+      pkg.record.taxYears.find((y) => y.taxYear === taxYear)!.form1120.fields.find((w) => w.field === field)?.value;
+    expect(begin(2024, form1120_2024FieldMap.taxYearBeginning)).toBe("11/02");
+    expect(begin(2025, form1120_2025FieldMap.taxYearBeginning)).toBe("01/01");
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures.filter((f) => f.id === "A06")).toEqual([]);
+  }, PDF_TIMEOUT);
+
+  // ── DoD: the whole two-year package in the owner's voice ──
+  it("DoD: two-year late package has no third-person or preparer wording and every statement is signed under penalties of perjury", async () => {
+    const pkg = await generatePackage(
+      { ...F11, paidPreparerMode: "house", irsMayDiscussWithPreparer: "yes" },
+      lateCatchUpFinalisedAt,
+      { env: PREPARER_ENV },
+    );
+    const statements = pkg.record.authoredDocuments.filter((d) => d.kind !== "coverLetter");
+    expect(statements.map((d) => [d.kind, d.taxYear])).toEqual([
+      ["partVStatement", 2024],
+      ["reasonableCauseStatement", 2024],
+      ["partVStatement", 2025],
+      ["reasonableCauseStatement", 2025],
+    ]);
+    for (const doc of statements) {
+      expect(doc.lines).toContain("Signed under penalties of perjury:");
+      expectOwnerVoice(doc.lines.join(" "));
+    }
+    expect(docText(pkg, "coverLetter")).not.toMatch(/penalties of perjury/i);
+    const preflight = await runPreflight(pkg.record, pkg.bytes);
+    expect(preflight.failures).toEqual([]);
   }, PDF_TIMEOUT);
 });

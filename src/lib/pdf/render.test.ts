@@ -5,7 +5,7 @@ import { execFileSync, spawnSync } from "node:child_process";
 import { describe, expect, it } from "vitest";
 import { FAX_RENDER_DPI } from "@/config/filingPackage";
 import { generatePackage } from "./generatePackage";
-import { finalisedAt, fixtures } from "./__fixtures__/filings";
+import { F11, finalisedAt, fixtures, lateCatchUpFinalisedAt } from "./__fixtures__/filings";
 
 const RENDER_TIMEOUT = 120_000;
 const PAGE_HEIGHT = 792;
@@ -134,4 +134,91 @@ describe("render-check", () => {
       expect(output).toContain("render-check ok");
     }, RENDER_TIMEOUT);
   }
+
+  // Generator 2.3.0 definition of done, checked on the RENDERED PDF text (two
+  // independent extractors) and pixels: the synthetic two-year late package
+  // with owner-paid costs in both years and admin narratives.
+  it("V-02 DoD: two-year late package text and the paid preparer block render as specified", async () => {
+    const env = {
+      HOUSE_PREPARER_NAME: "Pat Q. Synthetic",
+      HOUSE_PREPARER_PTIN: "P00000001",
+      HOUSE_PREPARER_FIRM_NAME: "Synthetic Preparer Firm LLC",
+      HOUSE_PREPARER_FIRM_EIN: "00-0000001",
+      HOUSE_PREPARER_FIRM_ADDRESS: "1 Synthetic Way, Example City, ST 00000",
+      HOUSE_PREPARER_PHONE: "555-0100",
+    };
+    const pkg = await generatePackage(
+      { ...F11, paidPreparerMode: "house", irsMayDiscussWithPreparer: "yes" },
+      lateCatchUpFinalisedAt,
+      { env },
+    );
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "form5472-render-dod-"));
+    const pdfPath = path.join(dir, "dod.pdf");
+    const expectedPath = path.join(dir, "dod.json");
+    await fs.writeFile(pdfPath, pkg.bytes);
+
+    const text: Array<{ page: number; value: string; label?: string }> = [];
+    const absent: Array<{ page?: number; value: string; label?: string; ignoreCase?: boolean }> = [
+      { value: "Could you please review", label: "no customer intake text anywhere" },
+      { page: findPage(pkg.record, "Cover letter"), value: "penalties of perjury", label: "cover letter perjury", ignoreCase: true },
+    ];
+    // Every page WE author (the printed IRS forms carry their own wording).
+    const authoredLabels = new Set(["Cover letter", "Part V Statement", "Part VI Statement", "Reasonable Cause Statement"]);
+    for (const entry of pkg.record.pageOrder.filter((p) => authoredLabels.has(p.label))) {
+      for (let page = entry.startPage; page <= entry.endPage; page++) {
+        absent.push(
+          { page, value: "the Owner", label: `${entry.label} ${entry.taxYear ?? ""} 'the Owner'`, ignoreCase: true },
+          { page, value: "I prepared", label: `${entry.label} ${entry.taxYear ?? ""} 'I prepared'`, ignoreCase: true },
+        );
+      }
+    }
+    text.push({ page: findPage(pkg.record, "Cover letter"), value: "Signed:", label: "cover letter Signed:" });
+    // Every Part V and RCS statement ends with the perjury signature heading.
+    for (const entry of pkg.record.pageOrder) {
+      if (entry.label === "Part V Statement" || entry.label === "Reasonable Cause Statement") {
+        text.push({
+          page: entry.endPage,
+          value: "Signed under penalties of perjury:",
+          label: `${entry.label} ${entry.taxYear} signature heading`,
+        });
+      }
+    }
+    text.push(
+      { page: findPage(pkg.record, "Part V Statement", 2024), value: "Form 5472 lines 1f and 1h: $424.", label: "2024 Part V ending" },
+      { page: findPage(pkg.record, "Part V Statement", 2025), value: "Form 5472 lines 1f and 1h: $49.", label: "2025 Part V ending" },
+      { page: findPage(pkg.record, "Part V Statement", 2024), value: "1.6038A-2(b)(3)(xi)", label: "Part V citation" },
+      {
+        page: findPage(pkg.record, "Reasonable Cause Statement", 2025),
+        value: "I remained unaware of the requirement when the 2025 return was due on April 15, 2026.",
+        label: "2025 still unaware",
+      },
+    );
+    // Paid preparer block on both revisions: text plus Yes ticked, No and
+    // self-employed empty (PDF bottom-left coordinates of each 8pt box).
+    const boxes = {
+      2024: { yes: { x: 522, y: 104 }, no: { x: 552, y: 104 }, selfEmployed: { x: 482, y: 82 } },
+      2025: { yes: { x: 524.4, y: 81.3 }, no: { x: 553.2, y: 81.3 }, selfEmployed: { x: 483, y: 67.5 } },
+    } as const;
+    const checkboxes: Array<{ page: number; rect: number[]; checked: boolean; label: string }> = [];
+    for (const taxYear of [2024, 2025] as const) {
+      const page = findPage(pkg.record, "Form 1120", taxYear);
+      for (const value of ["Pat Q. Synthetic", "P00000001", "Synthetic Preparer Firm LLC", "00-0000001", "1 Synthetic Way, Example City, ST 00000", "555-0100"]) {
+        text.push({ page, value, label: `${taxYear} 1120 preparer ${value}` });
+      }
+      const box = (at: { x: number; y: number }) => rasterRect({ ...at, width: 8, height: 8 });
+      checkboxes.push(
+        { page, rect: box(boxes[taxYear].yes), checked: true, label: `${taxYear} discuss Yes` },
+        { page, rect: box(boxes[taxYear].no), checked: false, label: `${taxYear} discuss No` },
+        { page, rect: box(boxes[taxYear].selfEmployed), checked: false, label: `${taxYear} self-employed` },
+      );
+    }
+
+    await fs.writeFile(expectedPath, JSON.stringify({ text, absent, checkboxes }, null, 2));
+    const output = execFileSync("python3", ["scripts/render-check.py", pdfPath, expectedPath], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+    });
+    expect(output).toContain("render-check ok");
+  }, RENDER_TIMEOUT);
 });
+

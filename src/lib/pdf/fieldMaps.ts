@@ -165,6 +165,76 @@ export const form1120_2022FieldMap = {
 export const form1120_2023FieldMap = form1120_2022FieldMap;
 export const form1120_2024FieldMap = form1120_2022FieldMap;
 
+// Form 1120 page 1 "Paid Preparer Use Only" block and the "May the IRS
+// discuss this return with the preparer shown below?" Yes/No boxes, per
+// revision (generator 2.3.0). Confirmed 2026-10-13 by widget geometry against
+// the printed labels (PyMuPDF word positions) AND by rendering filled forms of
+// every revision 2018-2025 and looking at where each value lands; render.test.ts
+// ("V-02 DoD") re-checks the 2024 and 2025 text and boxes on the rendered PDF
+// at 300 DPI. Each Yes/No pair is two separate fields: [0] sits left of
+// the printed "Yes", [1] left of "No". The preparer signature and date have no
+// fields; the self-employed box is mapped only so tests can prove it stays
+// blank.
+export type Form1120PaidPreparerFieldMap = {
+  readonly discussYes: string;
+  readonly discussNo: string;
+  readonly preparerName: string;
+  readonly selfEmployed: string;
+  readonly ptin: string;
+  readonly firmName: string;
+  readonly firmEin: string;
+  readonly firmAddress: string;
+  readonly phone: string;
+};
+
+const PAID_PREPARER_2019_2024: Form1120PaidPreparerFieldMap = {
+  discussYes: "topmostSubform[0].Page1[0].c1_11[0]",
+  discussNo: "topmostSubform[0].Page1[0].c1_11[1]",
+  preparerName: "topmostSubform[0].Page1[0].f1_53[0]",
+  selfEmployed: "topmostSubform[0].Page1[0].c1_12[0]",
+  ptin: "topmostSubform[0].Page1[0].f1_54[0]",
+  firmName: "topmostSubform[0].Page1[0].f1_55[0]",
+  firmAddress: "topmostSubform[0].Page1[0].f1_56[0]",
+  firmEin: "topmostSubform[0].Page1[0].f1_57[0]",
+  phone: "topmostSubform[0].Page1[0].f1_58[0]",
+};
+
+export const form1120PaidPreparerFieldMaps: Record<
+  2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025,
+  Form1120PaidPreparerFieldMap
+> = {
+  2018: {
+    discussYes: "topmostSubform[0].Page1[0].c1_11[0]",
+    discussNo: "topmostSubform[0].Page1[0].c1_11[1]",
+    preparerName: "topmostSubform[0].Page1[0].f1_97[0]",
+    selfEmployed: "topmostSubform[0].Page1[0].c1_12[0]",
+    ptin: "topmostSubform[0].Page1[0].f1_98[0]",
+    firmName: "topmostSubform[0].Page1[0].f1_99[0]",
+    firmAddress: "topmostSubform[0].Page1[0].f1_100[0]",
+    firmEin: "topmostSubform[0].Page1[0].f1_101[0]",
+    phone: "topmostSubform[0].Page1[0].f1_102[0]",
+  },
+  2019: PAID_PREPARER_2019_2024,
+  2020: PAID_PREPARER_2019_2024,
+  2021: PAID_PREPARER_2019_2024,
+  2022: PAID_PREPARER_2019_2024,
+  2023: PAID_PREPARER_2019_2024,
+  2024: PAID_PREPARER_2019_2024,
+  // 2025 moved the block down ~18pt and swapped the firm rows' field order:
+  // f1_61 firm name, f1_62 firm EIN, f1_63 firm address, f1_64 phone.
+  2025: {
+    discussYes: "topmostSubform[0].Page1[0].c1_12[0]",
+    discussNo: "topmostSubform[0].Page1[0].c1_12[1]",
+    preparerName: "topmostSubform[0].Page1[0].f1_59[0]",
+    selfEmployed: "topmostSubform[0].Page1[0].c1_13[0]",
+    ptin: "topmostSubform[0].Page1[0].f1_60[0]",
+    firmName: "topmostSubform[0].Page1[0].f1_61[0]",
+    firmEin: "topmostSubform[0].Page1[0].f1_62[0]",
+    firmAddress: "topmostSubform[0].Page1[0].f1_63[0]",
+    phone: "topmostSubform[0].Page1[0].f1_64[0]",
+  },
+};
+
 // 2025 Form 1120 restructured the header: the name/address block is split
 // into 7 separate fields (was 3), and item B (EIN), C (date), D (total assets)
 // shift downward in the numbering accordingly.
