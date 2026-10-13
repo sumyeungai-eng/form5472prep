@@ -67,6 +67,33 @@ own FAQ contradicting its own body copy.
 - The local build was **not** run, because it cannot succeed until those two packages are
   installed. The change is two markdown files; CI runs the full suite on push.
 
+## A gap this post exposed in the drip system (reported, not fixed)
+`src/app/api/cron/blog-release/route.ts` selects posts to revalidate and submit to
+IndexNow with:
+
+```
+const at = parsePublishAt(p.publishAt);
+return !!at && at.getTime() <= now && at.getTime() > now - WINDOW_MS;
+```
+
+A post published **without** `publishAt` — which is exactly how an off-cycle urgent post
+goes live — fails `!!at` and is therefore **never submitted to IndexNow by the cron**.
+It still appears on /blog, in the sitemap and in the feed; it simply never gets pinged.
+
+For this post the orchestrator submitted it by hand and IndexNow returned HTTP 200:
+```
+POST https://api.indexnow.org/IndexNow
+urlList: /blog/form-5472-deadline-tomorrow-urgent-filing,
+         /blog/form-5472-deadline-2026, /blog
+```
+(The key is public at `public/93ddcc589b3e2a572c208e3628e1e545.txt`, verified 200.)
+
+**Follow-up for whoever owns the scheduling files** (not touched here, since that session
+owns `blog-release/route.ts` and `blogSchedule.ts`): either treat a missing `publishAt`
+as "released now" for one window, or compare against the post's `date`. Until then, the
+rule for writers is: **a post published without `publishAt` needs a manual IndexNow
+submission**, or it waits for organic discovery.
+
 ## Contracts
 1. Deploy is `git push origin main`. Never `vercel --prod`.
 2. Express = ready to **check and sign** within 24 hours, 7 days a week, $199. Standard
