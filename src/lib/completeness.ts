@@ -5,6 +5,7 @@ import {
   refineUsIdOrReferenceId,
   makeYearScopeSchema,
   isYearDelinquent,
+  isYearDelinquentForPackage,
   filingDueDateUtc,
   type ExtensionFacts,
 } from "@/lib/schemas";
@@ -71,6 +72,7 @@ type ReasonableCauseYearData = {
   rcsWhyMissed?: string | null;
   rcsWhenLearned?: string | null;
   rcsNoIrsNoticeConfirmed?: boolean | null;
+  rcsAdminNarrative?: string | null;
 };
 
 const nonEmpty = (value: string | null | undefined): boolean =>
@@ -158,6 +160,39 @@ export function hasCompleteReasonableCause(
       row?.rcsNoIrsNoticeConfirmed === true
     );
   });
+}
+
+/**
+ * Fax gate (staff side). Since generator 2.3.0 the IRS-facing reasonable-cause
+ * statement is built ONLY from the admin-authored narrative
+ * (FilingYearData.rcsAdminNarrative); the customer's own explanation
+ * (rcsWhyMissed / legacy reasonableCauseNarrative) is never printed, so it can
+ * never satisfy this gate. Lateness uses the PACKAGE semantics (an unclear
+ * "not sure" extension counts as no extension), matching what the generator
+ * puts in the package. The customer-wizard gate (hasCompleteReasonableCause)
+ * is unchanged.
+ */
+export function hasAdminReasonableCauseForFax(
+  filing: Pick<
+    CompletionInput,
+    "taxYears" | "isFinalReturn" | "dissolvedAt" | "extensionFiled" | "extensionTransmittedAt"
+  >,
+  yearData: ReasonableCauseYearData[],
+  now: Date = new Date(),
+): boolean {
+  if (filing.taxYears.length === 0) return true;
+  const finalDissolved = filing.isFinalReturn ? filing.dissolvedAt : null;
+  const maxYear = Math.max(...filing.taxYears);
+  const extFacts: ExtensionFacts = {
+    filed: filing.extensionFiled,
+    transmittedAt: filing.extensionTransmittedAt,
+  };
+  const lateYears = filing.taxYears.filter((y) =>
+    isYearDelinquentForPackage(y, finalDissolved, y === maxYear ? extFacts : null, now),
+  );
+  return lateYears.every((taxYear) =>
+    nonEmpty(yearData.find((y) => y.taxYear === taxYear)?.rcsAdminNarrative),
+  );
 }
 
 /**

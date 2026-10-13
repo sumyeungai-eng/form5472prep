@@ -36,7 +36,7 @@ import {
   formatDueDate,
   isYearDelinquent,
 } from "@/lib/schemas";
-import { hasCompleteReasonableCause, requiresReasonableCause } from "@/lib/completeness";
+import { hasAdminReasonableCauseForFax, requiresReasonableCause } from "@/lib/completeness";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 import { brandForFiling } from "@/lib/partnerBrand";
 import {
@@ -1161,12 +1161,14 @@ export async function runFilingAction(
       // package was generated. The admin can override with force+reason for
       // the rare deliberate case; the override is captured in the change log.
       {
-        const rcsComplete = hasCompleteReasonableCause(filing, filing.yearData ?? []);
+        // Generator 2.3.0: the printed statement comes only from the admin
+        // narrative, so that (not the customer's explanation) is what's required.
+        const rcsComplete = hasAdminReasonableCauseForFax(filing, filing.yearData ?? []);
         if (!rcsComplete && !isValidForceOverride(ctx)) {
           throw new FilingActionError(
             409,
             "rcs_missing_for_late_filing",
-            "This filing is past its due date but has no reasonable-cause statement. Add the narrative (or force with a reason) before faxing.",
+            "This filing is past its due date but a late year has no admin RCS narrative, so the package has no reasonable-cause statement. Write the RCS narrative (admin) for each late year and regenerate (or force with a reason) before faxing.",
           );
         }
       }
