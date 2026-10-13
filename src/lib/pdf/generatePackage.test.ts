@@ -1026,6 +1026,18 @@ describe("generator 2.3.0: preflight-generator spec", () => {
     expect(docText(forced, "reasonableCauseStatement", 2024)).toContain(SMALL_CORPORATION_PARAGRAPH.slice(0, 60));
   }, PDF_TIMEOUT * 3);
 
+  it("a two-paragraph admin narrative prints both paragraphs and passes pre-flight's text checks", async () => {
+    const pkg = await generatePackage(
+      withYear(F11, 2024, { rcsAdminNarrative: "I relied on my formation service for every requirement.\n\nI did not know that Form 5472 was required." }),
+      lateCatchUpFinalisedAt,
+    );
+    const text = docText(pkg, "reasonableCauseStatement", 2024);
+    expect(text).toContain("I relied on my formation service for every requirement.");
+    expect(text).toContain("I did not know that Form 5472 was required.");
+    const result = await runPreflight(pkg.record, pkg.bytes);
+    expect(result.failures.filter((f) => ["A26", "A32", "A33"].includes(f.id))).toEqual([]);
+  }, PDF_TIMEOUT);
+
   it("item 5: single-year package uses the singular corrective-action sentence", async () => {
     const pkg = await generatePackage({ ...F11, taxYears: [2024], yearData: [F11.yearData[0]] }, lateCatchUpFinalisedAt);
     expect(docText(pkg, "reasonableCauseStatement", 2024)).toContain(

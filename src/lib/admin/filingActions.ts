@@ -425,6 +425,11 @@ export const ADMIN_EDITABLE_FILING_FIELDS = [
   "llcCountry", "llcCountryBusiness", "llcBusinessActivity", "llcBusinessCode",
   "llcMemberCount", "llcAddressIsRegisteredAgentOnly", "priorForm5472Filed",
   "ownerName", "ownerAddress",
+  // The structured owner address is what Form 5472 line 4a prints when
+  // present (the single line is only the fallback), so pre-flight W39's
+  // "correct it by hand" needs these to be editable.
+  "ownerAddressStreet", "ownerAddressCity", "ownerAddressState",
+  "ownerAddressPostal", "ownerAddressCountry",
   "ownerCountryCitizenship", "ownerCountryTaxResidence",
   "ownerCountryBusiness", "ownerFtin", "ownerItin", "ownerReferenceId",
   "ownerHasFtin", "ownerNoPostalCode", "hasUsSourceIncome", "usTaxWithheld",
@@ -1707,8 +1712,13 @@ export async function runFilingAction(
       let after: unknown;
       let writeValue: unknown;
       if (YEAR_NULLABLE_STRINGS.has(field)) {
-        const raw = body.value === undefined || body.value === null ? null : String(body.value);
-        if (raw !== null && !isPdfEncodable(raw)) {
+        let raw = body.value === undefined || body.value === null ? null : String(body.value);
+        // The admin narrative is multi-paragraph ("blank line = new paragraph"):
+        // line breaks are layout, not printed characters, so they are exempt
+        // from the PDF-encodable check (the generator splits on them).
+        if (raw !== null && field === "rcsAdminNarrative") raw = raw.replace(/\r\n?/g, "\n");
+        const encodable = raw === null || isPdfEncodable(field === "rcsAdminNarrative" ? raw.replace(/\n/g, " ") : raw);
+        if (!encodable) {
           throw new FilingActionError(400, "invalid_value", PDF_TEXT_MESSAGE);
         }
         if (field === "rcsAdminNarrative" && raw !== null && raw.length > MAX_RCS_NARRATIVE_CHARS) {

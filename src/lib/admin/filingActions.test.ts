@@ -1709,6 +1709,44 @@ describe("pre-flight workflow", () => {
     expect(logs()[1].afterJson).toMatchObject({ trigger: "updateYearField:2024:rcsAdminNarrative" });
   });
 
+  it("the admin RCS narrative keeps its paragraph breaks (blank line = new paragraph)", async () => {
+    givenFiling();
+    db.yearFindUnique.mockResolvedValue({ id: "y2024", rcsAdminNarrative: null, noReportableTransactions: false });
+    const result = await runFilingAction(
+      "filing_1",
+      "updateYearField",
+      { taxYear: 2024, field: "rcsAdminNarrative", value: "First paragraph.\r\n\r\nSecond paragraph." },
+      { adminId: "admin_1" },
+    );
+    expect(result).toMatchObject({ ok: true });
+    expect(db.yearUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      data: { rcsAdminNarrative: "First paragraph.\n\nSecond paragraph." },
+    }));
+  });
+
+  it("a non-encodable character in the narrative is still rejected", async () => {
+    givenFiling();
+    db.yearFindUnique.mockResolvedValue({ id: "y2024", rcsAdminNarrative: null, noReportableTransactions: false });
+    await expect(runFilingAction(
+      "filing_1",
+      "updateYearField",
+      { taxYear: 2024, field: "rcsAdminNarrative", value: "Line one.\n\n\u4e2d\u6587" },
+      { adminId: "admin_1" },
+    )).rejects.toMatchObject({ status: 400, code: "invalid_value" });
+  });
+
+  it("the structured owner street is editable (it is what Form 5472 line 4a prints)", async () => {
+    givenFiling();
+    const result = await runFilingAction(
+      "filing_1",
+      "updateField",
+      { field: "ownerAddressStreet", value: "88 Example Drive, Unit 1905" },
+      { adminId: "admin_1" },
+    );
+    expect(result).toMatchObject({ ok: true });
+    expect(logs().map((row) => row.field)).toContain("ownerAddressStreet");
+  });
+
   it("updateField also re-runs pre-flight after the change-logged save", async () => {
     givenFiling();
     const result = await runFilingAction("filing_1", "updateField", { field: "ownerFtin", value: "HK7654321" }, { adminId: "admin_1" });
