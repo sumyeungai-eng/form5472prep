@@ -1028,6 +1028,27 @@ describe("generator 2.3.0: preflight-generator spec", () => {
     );
   }, PDF_TIMEOUT);
 
+  it("item 5: a timely year in the same package is never called 'outstanding' (codex review)", async () => {
+    // 2025 extended (7004 transmitted before 15 Apr 2026) and finalised before the
+    // 15 Oct 2026 extended due date → timely; 2024 is late.
+    const mixed = await generatePackage(
+      {
+        ...F11,
+        extensionFiled: "yes",
+        extensionTransmittedAt: new Date("2026-04-10T12:00:00.000Z"),
+        extensionMethod: "efile",
+        extensionDestination: "IRS",
+      } as typeof F11,
+      lateCatchUpFinalisedAt,
+    );
+    expect(mixed.record.lateYears).toEqual([2024]);
+    const text = docText(mixed, "reasonableCauseStatement", 2024);
+    expect(text).toContain(
+      "As soon as I learned of the requirement, I took steps to file the outstanding return for 2024, which I am now filing.",
+    );
+    expect(text).not.toMatch(/outstanding returns? for 2024 and 2025/);
+  }, PDF_TIMEOUT);
+
   // ── Item 6: cover letter "Signed:" and never perjury wording ──
   it("item 6: every fixture's cover letter closes 'Signed:' and never says 'penalties of perjury'", async () => {
     for (const filing of [...Object.values(fixtures)]) {

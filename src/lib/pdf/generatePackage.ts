@@ -2064,6 +2064,7 @@ async function buildReasonableCause(
   year: number,
   rcs: RcsYearRecord,
   authoredDocuments: AuthoredDocumentRecord[],
+  lateYears: number[],
 ): Promise<PDFDocument> {
   const pdf = await PDFDocument.create();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
@@ -2201,15 +2202,17 @@ async function buildReasonableCause(
   // ---- 4. Corrective action ----
   drawParagraph("4. Corrective Action", { font: bold, size: 11 });
   space(6);
-  const packageYears = [...f.taxYears].sort((a, b) => a - b);
+  // Only the LATE years are "outstanding" — a timely year in the same package
+  // must never be described as outstanding in a signed statement.
+  const outstandingYears = [...new Set([...lateYears, year])].sort((a, b) => a - b);
   const corrective = [
-    packageYears.length > 1
-      ? `As soon as I learned of the requirement, I took steps to file the outstanding returns for ${formatTaxYearList(packageYears)}, which I am now filing together.`
+    outstandingYears.length > 1
+      ? `As soon as I learned of the requirement, I took steps to file the outstanding returns for ${formatTaxYearList(outstandingYears)}, which I am now filing together.`
       : `As soon as I learned of the requirement, I took steps to file the outstanding return for ${year}, which I am now filing.`,
   ];
   if (!f.isFinalReturn) {
     corrective.push(
-      "I will file Form 5472 and the pro forma Form 1120 by the due date for each later tax year while the Company remains in existence.",
+      "I will file Form 5472 and the pro forma Form 1120 by the due date for each later tax year while the LLC remains in existence.",
     );
   }
   drawParagraph(corrective.join(" "));
@@ -2588,7 +2591,7 @@ export async function generatePackage(
     });
     const reasonableCauseIncluded = yearDelinquent;
     if (reasonableCauseIncluded) {
-      const rcs = await buildReasonableCause(f, year, rcsRecord, authoredDocuments);
+      const rcs = await buildReasonableCause(f, year, rcsRecord, authoredDocuments, lateYears);
       const rcsStartPage = out.getPageCount() + 1;
       await copyAll(out, rcs);
       pageOrder.push({
