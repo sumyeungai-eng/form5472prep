@@ -203,6 +203,11 @@ export async function POST(req: Request) {
       // and "fall back to legacy no-attachment confirmation".
       let pdfBytes: Uint8Array | null = null;
       let pdfSignatures: SignatureLocation[] = [];
+      // SSN capture: a package that prints the owner's SSN on 4b(1)/8b(1) is
+      // never emailed. Only the ATTACHMENT is dropped (storage, pre-flight and
+      // the admin "PDF generated" flag are unchanged); this runs after the
+      // payment claim and cannot affect it.
+      let pdfCarriesSsn = false;
       try {
         const full = await prisma.filing.findUnique({
           where: { id: filing.id },
@@ -217,6 +222,7 @@ export async function POST(req: Request) {
           const result = await generatePackage(filingToPackageInput(full));
           pdfBytes = result.bytes;
           pdfSignatures = result.signatures;
+          pdfCarriesSsn = !!full.ownerSsnCiphertext;
           const key = `${filing.id}_unsigned.pdf`;
           await putPdf(key, result.bytes);
           // A failed pre-flight is staff-only: it never changes what the
@@ -319,8 +325,8 @@ export async function POST(req: Request) {
             portalLink: link,
             receiptUrl,
             funnelSource: filing.funnelSource,
-            pdfBytes,
-            signatures: pdfSignatures,
+            pdfBytes: pdfCarriesSsn ? null : pdfBytes,
+            signatures: pdfCarriesSsn ? [] : pdfSignatures,
             isFinalReturn: filing.isFinalReturn,
             dueDateText,
             requiresReasonableCause: requiresReasonableCause(filing),

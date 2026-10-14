@@ -5,6 +5,10 @@ import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { normalizeSsn, validateSsn } from "@/lib/crypto/ssn";
 
+// Masked text input rather than type="password": password managers and
+// browsers then never offer to save the SSN as a password. Never prefilled.
+const MASKED_INPUT = { WebkitTextSecurity: "disc" } as React.CSSProperties;
+
 // The client's secure SSN box on the order page (spec
 // docs/reviews/2026-10-15-ssn-capture-spec.md S1/S4). The full number is never
 // sent to this component and never prefilled: the server only ever tells it
@@ -148,7 +152,8 @@ export function OwnerSsnBox({ filingId, last4: initialLast4, submittedAt: initia
             <label className="block text-sm">
               <span className="text-slate-700">{onFile ? "New SSN" : "SSN"}</span>
               <input
-                type="password"
+                type="text"
+                style={MASKED_INPUT}
                 name="owner-ssn-entry"
                 autoComplete="off"
                 inputMode="numeric"
@@ -166,7 +171,8 @@ export function OwnerSsnBox({ filingId, last4: initialLast4, submittedAt: initia
             <label className="block text-sm">
               <span className="text-slate-700">Type it again</span>
               <input
-                type="password"
+                type="text"
+                style={MASKED_INPUT}
                 name="owner-ssn-confirm"
                 autoComplete="off"
                 inputMode="numeric"

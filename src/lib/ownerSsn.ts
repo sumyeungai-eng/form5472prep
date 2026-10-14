@@ -67,6 +67,9 @@ export type SaveOwnerSsnResult = {
   last4: string;
   submittedAt: Date;
   replaced: boolean;
+  // The number equals the one already on file: nothing was written (no new
+  // timestamp, no change-log row) and callers send no email / re-run nothing.
+  unchanged: boolean;
 };
 
 // Validate, encrypt and store. `confirm` must match `ssn` (S4: typed twice to
@@ -97,10 +100,23 @@ export async function saveOwnerSsn(opts: {
 
   const filing = await prisma.filing.findUnique({
     where: { id: opts.filingId },
-    select: { id: true, status: true, ownerSsnLast4: true },
+    select: { id: true, status: true, ownerSsnLast4: true, ownerSsnCiphertext: true, ownerSsnSubmittedAt: true },
   });
   if (!filing) throw new OwnerSsnError(404, "not_found", "Not found");
   assertEntryOpen(filing.status);
+
+  // Re-entering the number already on file is a no-op: keeping its timestamp
+  // means a package built after the first entry is not wrongly held by the
+  // fax gate (ownerSsnNewerThanPackage). A value that cannot be decrypted is
+  // treated as different and overwritten.
+  if (filing.ownerSsnCiphertext && filing.ownerSsnSubmittedAt && sameSsn(filing.ownerSsnCiphertext, checked.ssn)) {
+    return {
+      last4: checked.last4,
+      submittedAt: filing.ownerSsnSubmittedAt,
+      replaced: false,
+      unchanged: true,
+    };
+  }
 
   const ciphertext = encryptPii(checked.ssn);
   const submittedAt = new Date();
@@ -134,27 +150,69 @@ export async function saveOwnerSsn(opts: {
   });
   if (!written) throw new OwnerSsnError(409, "ssn_locked", SSN_LOCKED_MESSAGE);
 
-  return { last4: checked.last4, submittedAt, replaced: !!filing.ownerSsnLast4 };
+  return { last4: checked.last4, submittedAt, replaced: !!filing.ownerSsnLast4, unchanged: false };
 }
 
-// True when the SSN on file was saved AFTER the package now with the client
-// was approved (reviewed PDF uploaded) or, without a review stamp, signed —
-// so that package (and the signed copy the fax sends) does not show it. Used
-// by the admin card warning and the retryFax gate.
-export function ownerSsnNewerThanPackage(filing: {
-  ownerSsnSubmittedAt: Date | null;
-  reviewApprovedAt: Date | null;
-  signedAt: Date | null;
-}): boolean {
-  const packageAt = filing.reviewApprovedAt ?? filing.signedAt;
-  if (!filing.ownerSsnSubmittedAt || !packageAt) return false;
+function sameSsn(ciphertext: string, ssn: string): boolean {
+  try {
+    return normalizeSsn(decryptPii(ciphertext)) === ssn;
+  } catch {
+    return false;
+  }
+}
+
+// True when the SSN on file was saved AFTER the package that will be faxed
+// was built, so that package does not show it. "Built" is the latest of:
+//   - reviewApprovedAt: the accountant-reviewed PDF was uploaded (the client
+//     then signs that file in the portal / staff place the signature on it —
+//     those later signedAt stamps do NOT count, the content is the reviewed one);
+//   - signedPdfUploadedAt: staff uploaded an already-signed PDF
+//     (uploadSignedPdf sets signedAt but not reviewApprovedAt);
+// and only when neither exists, signedAt (legacy packages with no review).
+// Used by the admin card warning and the retryFax gate (which has an explicit,
+// change-logged staff override for the case where the package does show it).
+export function ownerSsnNewerThanPackage(
+  filing: {
+    ownerSsnSubmittedAt: Date | null;
+    reviewApprovedAt: Date | null;
+    signedAt: Date | null;
+  },
+  signedPdfUploadedAt: Date | null = null,
+): boolean {
+  if (!filing.ownerSsnSubmittedAt) return false;
+  const stamps = [filing.reviewApprovedAt, signedPdfUploadedAt].filter((d): d is Date => d instanceof Date);
+  const packageAt = stamps.length > 0 ? new Date(Math.max(...stamps.map((d) => d.getTime()))) : filing.signedAt;
+  if (!packageAt) return false;
   return filing.ownerSsnSubmittedAt.getTime() > packageAt.getTime();
 }
 
+// When staff last uploaded an already-signed PDF (admin "Upload signed PDF"):
+// its change-log row (field "pdf", after.status SIGNED_UPLOADED with a byte
+// count). Null when there is none or the lookup fails (the gate then falls
+// back to the stricter rule; the staff override covers the rest).
+export async function latestSignedPdfUploadAt(filingId: string): Promise<Date | null> {
+  try {
+    const rows = await prisma.filingChangeLog.findMany({
+      where: { filingId, field: "pdf" },
+      orderBy: { changedAt: "desc" },
+      take: 20,
+      select: { changedAt: true, afterJson: true },
+    });
+    for (const row of rows) {
+      const after = row.afterJson as { status?: unknown; bytes?: unknown } | null;
+      if (after && after.status === "SIGNED_UPLOADED" && typeof after.bytes === "number") return row.changedAt;
+    }
+  } catch (err) {
+    console.error(`[ownerSsn] ${filingId} signed-upload lookup failed`, err instanceof Error ? err.name : err);
+  }
+  return null;
+}
+
 export const SSN_NEWER_THAN_PACKAGE_MESSAGE =
-  "Fax held: the owner's SSN was added after this package was reviewed/signed, so the package does not show it on " +
-  "lines 4b(1)/8b(1). Build a new package with the SSN and upload it as the reviewed PDF (the client checks and " +
-  "signs again), then fax.";
+  "Fax held: the owner's SSN was added after this package was built, so it may not show the SSN on lines " +
+  "4b(1)/8b(1). Regenerate the package with the SSN, then either upload it as the reviewed PDF (the client checks " +
+  "and signs again) or, if the client has already signed the rebuilt package, upload that signed PDF. If the " +
+  "package you are faxing does show the SSN, confirm that below with a reason to send it anyway.";
 
 function assertEntryOpen(status: FilingStatus) {
   const state = ssnEntryState(status);

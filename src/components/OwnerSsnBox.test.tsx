@@ -17,7 +17,11 @@ describe("OwnerSsnBox (client order page)", () => {
     expect(html).toContain('id="ssn"');
     expect(html).toContain("U.S. Social Security Number — only if you have one");
     expect(html).toContain("encrypted");
-    expect(html.match(/type="password"/g)).toHaveLength(2);
+    // Masked text inputs (never type="password", so no "save password" prompt).
+    expect(html).not.toContain('type="password"');
+    expect(html.match(/-webkit-text-security:disc/g)).toHaveLength(2);
+    expect(html.match(/data-1p-ignore/g)).toHaveLength(2);
+    expect(html.match(/data-lpignore="true"/g)).toHaveLength(2);
     expect(html.match(/autoComplete="off"|autocomplete="off"/gi)?.length).toBeGreaterThanOrEqual(2);
     expect(html.match(/inputMode="numeric"|inputmode="numeric"/gi)).toHaveLength(2);
     expect(html).not.toMatch(/value="[^"]+"/);
@@ -27,7 +31,7 @@ describe("OwnerSsnBox (client order page)", () => {
     const html = renderToStaticMarkup(<OwnerSsnBox {...base} last4="6789" submittedAt="2026-10-15T12:00:00.000Z" />);
     expect(html).toContain("SSN on file ending <span class=\"font-mono\">6789</span> — added Oct 15, 2026");
     expect(html).toContain("Replace");
-    expect(html).not.toContain('type="password"');
+    expect(html).not.toContain("-webkit-text-security");
   });
 
   it("highlights the box when the team asked and nothing is on file", () => {
@@ -40,7 +44,7 @@ describe("OwnerSsnBox (client order page)", () => {
   it("shows the friendly unavailable message when the key is missing", () => {
     const html = renderToStaticMarkup(<OwnerSsnBox {...base} configured={false} />);
     expect(html).toContain("Secure entry is temporarily unavailable — please contact support.");
-    expect(html).not.toContain('type="password"');
+    expect(html).not.toContain("-webkit-text-security");
   });
 
   it("is read-only after the fax", () => {

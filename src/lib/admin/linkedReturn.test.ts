@@ -49,6 +49,37 @@ describe("createLinkedReturn", () => {
     db.create.mockResolvedValue({ id: "new" });
   });
 
+  it("copies the owner's SSN as ciphertext and logs it on the new return, masked only", async () => {
+    db.findUnique.mockResolvedValue({
+      ...original,
+      ownerSsnCiphertext: "v1:placeholder:placeholder:placeholder",
+      ownerSsnLast4: "6789",
+      ownerSsnSubmittedAt: new Date("2026-10-15T00:00:00Z"),
+      ownerSsnSubmittedBy: "client",
+      ownerSsnRequestedAt: new Date("2026-10-14T00:00:00Z"),
+    });
+    await createLinkedReturn({ sourceFilingId: "orig", taxYears: [2025], adminId: "a1" });
+    const data = db.create.mock.calls[0][0].data as Record<string, unknown>;
+    expect(data).toMatchObject({ ownerSsnCiphertext: "v1:placeholder:placeholder:placeholder", ownerSsnLast4: "6789" });
+    expect(data).not.toHaveProperty("ownerSsnRequestedAt");
+    const calls = log.logFilingChange.mock.calls as unknown as Array<[Record<string, unknown>]>;
+    const ssnLog = calls.map((c) => c[0]).find((entry) => entry.field === "ownerSsn");
+    expect(ssnLog).toMatchObject({
+      filingId: "new",
+      adminId: "a1",
+      before: null,
+      after: { ssn: "•••-••-6789", copiedFrom: "orig" },
+    });
+    expect(JSON.stringify(ssnLog)).not.toContain("v1:");
+  });
+
+  it("writes no SSN log row when the original has no SSN", async () => {
+    db.findUnique.mockResolvedValue(original);
+    await createLinkedReturn({ sourceFilingId: "orig", taxYears: [2025], adminId: "a1" });
+    const calls = log.logFilingChange.mock.calls as unknown as Array<[Record<string, unknown>]>;
+    expect(calls.map((c) => c[0].field)).not.toContain("ownerSsn");
+  });
+
   it("copies only client/LLC identity and starts a paid, in-review return linked to the original", async () => {
     db.findUnique.mockResolvedValue(original);
     const res = await createLinkedReturn({ sourceFilingId: "orig", taxYears: [2025], adminId: "a1" });

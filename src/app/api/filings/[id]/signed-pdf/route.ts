@@ -14,6 +14,8 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `inline; filename="form5472-signed-${filing.id}.pdf"`,
+      // Taxpayer IDs (incl. the owner's SSN): never cached.
+      "Cache-Control": "private, no-store",
     },
   });
 }

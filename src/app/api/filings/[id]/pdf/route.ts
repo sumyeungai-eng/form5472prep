@@ -24,6 +24,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       // defaults vary by host; explicit SAMEORIGIN keeps Vercel from sending
       // DENY on a route that we explicitly want to embed.
       "X-Frame-Options": "SAMEORIGIN",
+      // Taxpayer IDs (incl. the owner's SSN on 4b(1)/8b(1)): never stored by
+      // a shared cache or the browser's disk cache.
+      "Cache-Control": "private, no-store",
     },
   });
 }

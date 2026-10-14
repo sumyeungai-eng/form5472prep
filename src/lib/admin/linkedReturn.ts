@@ -1,5 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { logFilingChange } from "@/lib/admin/mutations";
+import { maskSsn } from "@/lib/crypto/ssn";
+import { OWNER_SSN_CHANGE_FIELD } from "@/lib/ownerSsn";
 import { prisma } from "@/lib/prisma";
 
 // "Add another return to this order": one paid order that needs two (or more)
@@ -119,6 +121,18 @@ export async function createLinkedReturn(args: {
     after: { linkedToFilingId: root.id, taxYears: args.taxYears },
     reason: "Added as another return on an existing paid order",
   }).catch((err) => console.error("[linkedReturn] change log (new) failed", err));
+  // The owner's SSN came along (encrypted): say so on the new return, masked.
+  if (root.ownerSsnCiphertext) {
+    await logFilingChange({
+      filingId: created.id,
+      adminId: args.adminId,
+      source: "admin",
+      field: OWNER_SSN_CHANGE_FIELD,
+      before: null,
+      after: { ssn: maskSsn(root.ownerSsnLast4) || null, copiedFrom: root.id },
+      reason: "SSN copied (encrypted) from the original order with the other owner details.",
+    }).catch((err) => console.error("[linkedReturn] SSN change log (new) failed", err instanceof Error ? err.name : err));
+  }
   await logFilingChange({
     filingId: root.id,
     adminId: args.adminId,

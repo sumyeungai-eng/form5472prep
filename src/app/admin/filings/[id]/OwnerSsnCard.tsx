@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { maskSsn, normalizeSsn, validateSsn } from "@/lib/crypto/ssn";
 
+// Masked text input rather than type="password": password managers and
+// browsers then never offer to save the SSN as a password. Never prefilled.
+const MASKED_INPUT = { WebkitTextSecurity: "disc" } as React.CSSProperties;
+
 // Admin view of the owner's SSN (spec docs/reviews/2026-10-15-ssn-capture-spec.md).
 // The page renders only the masked form; the number reaches this component
 // only as the response to an explicit Reveal click (change-logged server-side)
@@ -176,8 +180,10 @@ export function OwnerSsnCard({
       </p>
       {addedAfterPackage && entryState === "open" && (
         <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
-          The SSN was added after this package was reviewed/signed, so the package does not show it and the fax is held.
-          Build a new package with the SSN and upload it as the reviewed PDF (the client checks and signs again).
+          The SSN was added after this package was built, so it may not show it and the fax is held. Regenerate the
+          package with the SSN, then upload it as the reviewed PDF (the client checks and signs again) or, if the client
+          already signed the rebuilt package, upload that signed PDF. If the package being faxed does show the SSN,
+          confirm that in the fax section with a reason.
         </p>
       )}
       {requestedAt && (
@@ -248,7 +254,8 @@ export function OwnerSsnCard({
           </p>
           <div className="grid gap-2 sm:grid-cols-2">
             <input
-              type="password"
+              type="text"
+              style={MASKED_INPUT}
               name="admin-owner-ssn"
               autoComplete="off"
               inputMode="numeric"
@@ -264,7 +271,8 @@ export function OwnerSsnCard({
               required
             />
             <input
-              type="password"
+              type="text"
+              style={MASKED_INPUT}
               name="admin-owner-ssn-confirm"
               autoComplete="off"
               inputMode="numeric"

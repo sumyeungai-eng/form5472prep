@@ -235,6 +235,27 @@ describe("POST /api/filings/[id]/ssn", () => {
     expect(sentEmails).toHaveLength(1);
   });
 
+  it("re-entering the same number is a no-op: same timestamp, no write, no log, no email, no re-run", async () => {
+    seed("PDF_GENERATED");
+    const first = await (await post({ ssn: SSN, confirm: SSN })).json();
+    prismaMock.filing.updateMany.mockClear();
+    rerun.rerunPreflightAfterOwnerSsnChange.mockClear();
+    const res = await post({ ssn: "123 45 6789", confirm: DIGITS });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true, last4: "6789", submittedAt: first.submittedAt });
+    expect(prismaMock.filing.updateMany).not.toHaveBeenCalled();
+    expect(state.changeLog).toHaveLength(1);
+    expect(sentEmails).toHaveLength(1);
+    expect(rerun.rerunPreflightAfterOwnerSsnChange).not.toHaveBeenCalled();
+  });
+
+  it("a different number after an undecryptable stored value is written normally", async () => {
+    seed("PAID", { ownerSsnCiphertext: "v1:garbage:garbage:garbage", ownerSsnLast4: "0000", ownerSsnSubmittedAt: new Date(0) });
+    const res = await post({ ssn: SSN, confirm: SSN });
+    expect(res.status).toBe(200);
+    expect(decryptPii(String(state.filings.get("filing_1")!.ownerSsnCiphertext))).toBe(DIGITS);
+  });
+
   it("never lets the ciphertext or the digits reach a customer payload (toClientFiling)", async () => {
     seed("PAID");
     await post({ ssn: SSN, confirm: SSN });

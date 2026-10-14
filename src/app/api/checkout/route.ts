@@ -141,6 +141,9 @@ export async function POST(req: Request) {
 
     let pdfBytes: Uint8Array | null = null;
     let pdfSignatures: SignatureLocation[] = [];
+    // SSN capture: never email a package that prints the owner's SSN (see the
+    // Stripe webhook). Attachment only; storage and pre-flight are unchanged.
+    let pdfCarriesSsn = false;
     try {
       if (full && full.llcName && full.llcEin && full.llcAddress && full.llcCity &&
           full.llcState && full.llcZip && full.llcDateIncorporated &&
@@ -151,6 +154,7 @@ export async function POST(req: Request) {
         const result = await generatePackage(filingToPackageInput(full));
         pdfBytes = result.bytes;
         pdfSignatures = result.signatures;
+        pdfCarriesSsn = !!full.ownerSsnCiphertext;
         const key = `${filing.id}_unsigned.pdf`;
         await putPdf(key, result.bytes);
         // Staff-only result (see the Stripe webhook): never shown to the customer.
@@ -194,8 +198,8 @@ export async function POST(req: Request) {
           portalLink: makeMagicLink(full.user.id),
           receiptUrl: null,
           funnelSource: full.funnelSource,
-          pdfBytes,
-          signatures: pdfSignatures,
+          pdfBytes: pdfCarriesSsn ? null : pdfBytes,
+          signatures: pdfCarriesSsn ? [] : pdfSignatures,
           // Keep admin test orders identical to real ones: final returns get
           // the EIN-cancellation warning + deadline line.
           isFinalReturn: full.isFinalReturn,

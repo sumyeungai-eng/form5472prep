@@ -44,6 +44,7 @@ import { isPiiCryptoConfigured } from "@/lib/crypto/pii";
 import {
   OWNER_SSN_CHANGE_FIELD,
   OWNER_SSN_REQUEST_FIELD,
+  latestSignedPdfUploadAt,
   OwnerSsnError,
   ownerSsnNewerThanPackage,
   revealOwnerSsn,
@@ -1000,8 +1001,11 @@ export async function runFilingAction(
         ["SIGNATURE_PENDING", "SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status);
       let pdfBytes: Uint8Array | null = null;
       let signatures: SignatureLocation[] = [];
+      // Declared here so the SSN check below also sees a number saved between
+      // this action's first read and the regeneration.
+      let full: Prisma.FilingGetPayload<{ select: typeof packageFilingSelect }> | null = null;
       if (!packageLocked) try {
-        const full = await prisma.filing.findUnique({
+        full = await prisma.filing.findUnique({
           where: { id: filing.id },
           select: packageFilingSelect,
         });
@@ -1032,7 +1036,7 @@ export async function runFilingAction(
       }
       // A package with the owner's SSN on lines 4b(1)/8b(1) is never emailed
       // (SSN capture spec S3): the client opens it in their portal instead.
-      if (filing.ownerSsnLast4) {
+      if (filing.ownerSsnLast4 || full?.ownerSsnCiphertext) {
         pdfBytes = null;
         signatures = [];
       }
@@ -1239,11 +1243,34 @@ export async function runFilingAction(
           "Fax held: this package failed pre-flight checks. An admin must review it.",
         );
       }
-      // SSN capture: the client (or an admin) saved an SSN after this package
-      // was reviewed/signed, so the signed copy would go to the IRS without it.
-      // Staff-side gate; the remedy is a new reviewed upload + re-sign.
-      if (ownerSsnNewerThanPackage(filing)) {
-        throw new FilingActionError(409, "ssn_newer_than_package", SSN_NEWER_THAN_PACKAGE_MESSAGE);
+      // SSN capture: the client (or an admin) saved an SSN after the package
+      // being faxed was built, so it may go to the IRS without it. Staff-side
+      // gate. Its override is an explicit confirmation + written reason from
+      // THIS request's payload (ssnOnPackageConfirmed / ssnOnPackageReason) —
+      // never the web route's blanket force — attributed and change-logged
+      // before anything is sent, like the re-fax override.
+      let ssnOverride: { by: string; reason: string } | null = null;
+      if (filing.ownerSsnSubmittedAt && ownerSsnNewerThanPackage(filing, await latestSignedPdfUploadAt(filing.id))) {
+        const ssnReason = typeof body.ssnOnPackageReason === "string" ? body.ssnOnPackageReason.slice(0, 500).trim() : "";
+        if (body.ssnOnPackageConfirmed !== true) {
+          throw new FilingActionError(409, "ssn_newer_than_package", SSN_NEWER_THAN_PACKAGE_MESSAGE);
+        }
+        if (nonSpaceLength(ssnReason) < MIN_REFAX_REASON_CHARS) {
+          throw new FilingActionError(
+            400,
+            "ssn_override_reason_required",
+            `Write a reason of at least ${MIN_REFAX_REASON_CHARS} characters for faxing this package as it is. ${SSN_NEWER_THAN_PACKAGE_MESSAGE}`,
+          );
+        }
+        const by = ctx.approver ?? ctx.adminId;
+        if (!by) {
+          throw new FilingActionError(
+            403,
+            "identity_required",
+            "We could not tell which admin is signed in, so this override cannot be attributed. Sign out of the admin portal and sign in again.",
+          );
+        }
+        ssnOverride = { by, reason: ssnReason };
       }
       // A late filing without a reasonable-cause statement is legally naked on
       // the $25,000 exposure — the whole pitch of the service is that late
@@ -1295,6 +1322,33 @@ export async function runFilingAction(
           console.error(`[retryFax] ${filing.id} could not release ${MANUAL_FAX_CLAIM}`, err);
         }
       };
+
+      // The SSN-hold override is on file BEFORE anything reaches the IRS too.
+      if (ssnOverride) {
+        try {
+          await logFilingChange({
+            filingId: filing.id,
+            adminId: ctx.adminId,
+            source: "admin",
+            field: "faxSsnOverride",
+            before: {
+              ownerSsnSubmittedAt: filing.ownerSsnSubmittedAt,
+              reviewApprovedAt: filing.reviewApprovedAt,
+              signedAt: filing.signedAt,
+            },
+            after: { overridden: "ssn_newer_than_package", by: ssnOverride.by, reason: ssnOverride.reason },
+            reason: ssnOverride.reason,
+          });
+        } catch (err) {
+          console.error("[retryFax] SSN-hold override audit write failed", err instanceof Error ? err.name : err);
+          await release();
+          throw new FilingActionError(
+            500,
+            "audit_log_failed",
+            "Could not record the reason for this override, so nothing was sent. Try again in a minute.",
+          );
+        }
+      }
 
       // The reason is on file BEFORE anything reaches the IRS: no audit row,
       // no fax.
@@ -1410,6 +1464,7 @@ export async function runFilingAction(
             faxedPdfKey: faxedKey,
             status: "FAXED",
             ...(refaxOverride ? { refaxOverride } : {}),
+            ...(ssnOverride ? { ssnOverride } : {}),
           },
           reason: refaxOverride?.reason ?? ctx.reason,
         });
@@ -2373,12 +2428,16 @@ export async function runFilingAction(
         console.error(`[admin setOwnerSsn] ${filing.id} save failed (${err instanceof Error ? err.name : "unknown"})`);
         throw new FilingActionError(500, "save_failed", "The SSN could not be saved. Try again.");
       }
-      const preflightRerun = await autoRerunPreflight(filing, ctx, OWNER_SSN_CHANGE_FIELD);
+      // Same number as the one on file: nothing written, nothing to re-check.
+      const preflightRerun = saved.unchanged
+        ? null
+        : await autoRerunPreflight(filing, ctx, OWNER_SSN_CHANGE_FIELD);
       return {
         ok: true,
         last4: saved.last4,
         submittedAt: saved.submittedAt.toISOString(),
         replaced: saved.replaced,
+        unchanged: saved.unchanged,
         preflightRerun,
       };
     }

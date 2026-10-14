@@ -37,6 +37,7 @@ const prismaMock = vi.hoisted(() => {
         return { id: `log_${state.logs.length}` };
       }),
       findFirst: vi.fn(async () => null),
+      findMany: vi.fn(async (): Promise<Array<{ changedAt: Date; afterJson: unknown }>> => []),
     },
     emailLog: { create: vi.fn(async () => ({ id: "email_log_1" })) },
     $transaction: vi.fn(async (fn: (tx: unknown) => Promise<unknown>) => fn(client)),
@@ -64,7 +65,7 @@ vi.mock("@/lib/env", () => ({
 }));
 
 import { runFilingAction } from "./filingActions";
-import { ownerSsnNewerThanPackage } from "@/lib/ownerSsn";
+import { latestSignedPdfUploadAt, ownerSsnNewerThanPackage } from "@/lib/ownerSsn";
 import { decryptPii, encryptPii } from "@/lib/crypto/pii";
 
 const sent: Array<{ to: unknown; subject: string; html: string; text: string; from: string; reply_to?: string }> = [];
@@ -230,5 +231,43 @@ describe("ownerSsnNewerThanPackage", () => {
     expect(ownerSsnNewerThanPackage({ ownerSsnSubmittedAt: d("2026-10-12"), reviewApprovedAt: d("2026-10-10"), signedAt: d("2026-10-13") })).toBe(true);
     expect(ownerSsnNewerThanPackage({ ownerSsnSubmittedAt: d("2026-10-09"), reviewApprovedAt: d("2026-10-10"), signedAt: null })).toBe(false);
     expect(ownerSsnNewerThanPackage({ ownerSsnSubmittedAt: d("2026-10-12"), reviewApprovedAt: null, signedAt: d("2026-10-11") })).toBe(true);
+  });
+
+  it("counts a later signed-PDF upload by staff (uploadSignedPdf), not a portal/placed signature", () => {
+    const f = { ownerSsnSubmittedAt: d("2026-10-12"), reviewApprovedAt: d("2026-10-10"), signedAt: d("2026-10-13") };
+    expect(ownerSsnNewerThanPackage(f)).toBe(true);
+    expect(ownerSsnNewerThanPackage(f, d("2026-10-14"))).toBe(false);
+    expect(ownerSsnNewerThanPackage(f, d("2026-10-11"))).toBe(true);
+    // An upload with no review stamp at all.
+    expect(ownerSsnNewerThanPackage({ ownerSsnSubmittedAt: d("2026-10-12"), reviewApprovedAt: null, signedAt: null }, d("2026-10-14"))).toBe(false);
+  });
+
+  it("finds the latest signed-PDF upload in the change log (ignores reviewed uploads and regenerates)", async () => {
+    prismaMock.filingChangeLog.findMany.mockResolvedValueOnce([
+      { changedAt: d("2026-10-15"), afterJson: { draftOnly: true } },
+      { changedAt: d("2026-10-14"), afterJson: { generatedPdfKey: "r.pdf", status: "PDF_GENERATED" } },
+      { changedAt: d("2026-10-13"), afterJson: { signedPdfKey: "s.pdf", status: "SIGNED_UPLOADED", bytes: 99 } },
+    ]);
+    expect(await latestSignedPdfUploadAt("filing_1")).toEqual(d("2026-10-13"));
+    prismaMock.filingChangeLog.findMany.mockRejectedValueOnce(new Error("db down"));
+    expect(await latestSignedPdfUploadAt("filing_1")).toBeNull();
+  });
+});
+
+describe("setOwnerSsn with the number already on file", () => {
+  it("is a no-op: keeps the timestamp, writes nothing, logs nothing, re-runs nothing", async () => {
+    const firstAt = new Date("2026-10-01T00:00:00Z");
+    seed({ ownerSsnCiphertext: encryptPii(DIGITS), ownerSsnLast4: "6789", ownerSsnSubmittedAt: firstAt });
+    prismaMock.filing.updateMany.mockClear();
+    const result = await runFilingAction(
+      "filing_1",
+      "setOwnerSsn",
+      { ssn: "123 45 6789", confirm: "123-45-6789" },
+      { adminId: "admin_1", approver: "admin_1" },
+    );
+    expect(result).toMatchObject({ ok: true, last4: "6789", unchanged: true, replaced: false, preflightRerun: null });
+    expect(result.submittedAt).toBe(firstAt.toISOString());
+    expect(prismaMock.filing.updateMany).not.toHaveBeenCalled();
+    expect(state.logs).toHaveLength(0);
   });
 });

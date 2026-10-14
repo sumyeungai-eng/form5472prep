@@ -30,7 +30,7 @@ import { EditFieldsCard } from "./EditFieldsCard";
 import { OwnerSsnCard } from "./OwnerSsnCard";
 import { isPiiCryptoConfigured } from "@/lib/crypto/pii";
 import { maskSsn } from "@/lib/crypto/ssn";
-import { ownerSsnNewerThanPackage, ssnEntryState } from "@/lib/ownerSsn";
+import { latestSignedPdfUploadAt, ownerSsnNewerThanPackage, ssnEntryState } from "@/lib/ownerSsn";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { LinkedFaxes } from "@/components/admin/LinkedFaxes";
 import { YearBreakdown } from "./YearBreakdown";
@@ -98,6 +98,12 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
     !!filing.preflightCheckedAt &&
     !!latestDataChange &&
     latestDataChange.changedAt.getTime() > filing.preflightCheckedAt.getTime();
+
+  // SSN capture: the SSN was saved after the package being faxed was built
+  // (same rule as the retryFax hold).
+  const ssnFaxHold =
+    !!filing.ownerSsnSubmittedAt &&
+    ownerSsnNewerThanPackage(filing, await latestSignedPdfUploadAt(filing.id));
 
   // Returns on the same order: the original plus any linked extra returns.
   const linkedRootId = filing.linkedToFilingId ?? filing.id;
@@ -326,6 +332,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           reviewApprovedAt={filing.reviewApprovedAt ? filing.reviewApprovedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
           reviewApprovedBy={reviewApprovedAdmin?.email ?? displayStaffIdentity(filing.reviewApprovedBy)}
           faxedAt={filing.faxedAt ? filing.faxedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
+          ssnFaxHold={ssnFaxHold}
         />
       </div>
 
@@ -410,7 +417,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           configured={isPiiCryptoConfigured()}
           entryState={ssnEntryState(filing.status)}
           customerEmail={filing.user?.email ?? null}
-          addedAfterPackage={ownerSsnNewerThanPackage(filing)}
+          addedAfterPackage={ssnFaxHold}
         />
       </div>
 

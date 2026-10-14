@@ -144,3 +144,17 @@ describe("RerunPreflightButton", () => {
     expect(renderToStaticMarkup(<RerunPreflightButton filingId="filing_1" />)).toContain("Re-run pre-flight");
   });
 });
+
+describe("AdminActions › SSN fax hold (SSN capture)", () => {
+  it("explains the hold and the confirm-with-reason path next to the fax button", () => {
+    const html = renderToStaticMarkup(<AdminActions {...baseProps} ssnFaxHold />);
+    expect(html).toContain("Fax held: the owner&#x27;s SSN was added after this package was built");
+    expect(html).toContain("confirm with a reason that the package shows the SSN");
+    expect(html).toContain("Send fax to IRS");
+  });
+
+  it("shows nothing about SSNs when there is no hold", () => {
+    const html = renderToStaticMarkup(<AdminActions {...baseProps} />);
+    expect(html).not.toContain("Fax held: the owner");
+  });
+});

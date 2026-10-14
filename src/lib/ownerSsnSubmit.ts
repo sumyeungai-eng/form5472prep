@@ -46,8 +46,11 @@ export async function submitClientOwnerSsn(filingId: string, payload: unknown): 
     return { status: 500, body: { error: "We couldn't save your SSN. Please try again, or contact support." } };
   }
 
-  await notifyAdmin(filingId, saved.replaced);
-  await rerunPreflightAfterOwnerSsnChange(filingId, { adminId: null, changeSource: "customer" });
+  // Same number as the one on file: nothing changed, so no email and no re-run.
+  if (!saved.unchanged) {
+    await notifyAdmin(filingId, saved.replaced);
+    await rerunPreflightAfterOwnerSsnChange(filingId, { adminId: null, changeSource: "customer" });
+  }
 
   return {
     status: 200,

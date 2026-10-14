@@ -42,6 +42,11 @@ describe("OwnerSsnCard (admin)", () => {
     expect(html).not.toContain("Ask client for SSN");
   });
 
+  it("renders no SSN input until the admin opens the entry form (nothing to prefill)", () => {
+    const html = renderToStaticMarkup(<OwnerSsnCard {...base} last4="6789" submittedAt="2026-10-15T12:00:00.000Z" />);
+    expect(html).not.toContain("<input");
+  });
+
   it("locks entry after the fax", () => {
     const html = renderToStaticMarkup(<OwnerSsnCard {...base} entryState="locked" />);
     expect(html).toContain("Faxed to the IRS");
@@ -49,10 +54,11 @@ describe("OwnerSsnCard (admin)", () => {
     expect(html).not.toContain("Enter SSN");
   });
 
-  it("warns when the SSN was added after the package was reviewed/signed", () => {
+  it("warns when the SSN was added after the package was built", () => {
     const html = renderToStaticMarkup(
       <OwnerSsnCard {...base} last4="6789" submittedAt="2026-10-15T12:00:00.000Z" addedAfterPackage />,
     );
-    expect(html).toContain("added after this package was reviewed/signed");
+    expect(html).toContain("added after this package was built");
+    expect(html).toContain("confirm that in the fax section");
   });
 });

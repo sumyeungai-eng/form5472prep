@@ -14,6 +14,8 @@ const db = vi.hoisted(() => ({
   createLog: vi.fn((args: unknown) => ({ op: "log.create", args })),
   // Latest "preflightOverride" change-log row (the override's approvedFailures).
   findFirstLog: vi.fn(async (_args: unknown): Promise<unknown> => null),
+  // Change-log rows for the SSN fax hold (latest signed-PDF upload).
+  findManyLog: vi.fn(async (_args: unknown): Promise<unknown[]> => []),
   // Array form returns the ops; callback form runs with a tx that reuses the
   // same mocks (filing.updateMany / filingChangeLog.create).
   transaction: vi.fn(async (ops: unknown): Promise<unknown> =>
@@ -68,7 +70,7 @@ vi.mock("@/lib/prisma", () => ({
   prisma: {
     filing: { findUnique: db.findUnique, update: db.update, updateMany: db.updateMany },
     filingYearData: { findUnique: db.yearFindUnique, update: db.yearUpdate },
-    filingChangeLog: { create: db.createLog, findFirst: db.findFirstLog },
+    filingChangeLog: { create: db.createLog, findFirst: db.findFirstLog, findMany: db.findManyLog },
     $transaction: db.transaction,
   },
 }));
@@ -962,6 +964,17 @@ describe("resendOrderConfirmation", () => {
     expect(storage.putPdf).toHaveBeenCalled(); // still regenerated for the portal
     expect(email.sendOrderConfirmationEmail).toHaveBeenCalledWith(expect.objectContaining({ pdfBytes: null, signatures: [] }));
   });
+
+  it("also drops the attachment when the SSN arrived after the first read (package row carries it)", async () => {
+    db.findUnique
+      .mockResolvedValueOnce({ ...initialFiling, reviewApprovedAt: null, reviewApprovedBy: null, ownerSsnLast4: null })
+      .mockResolvedValueOnce({ ...packageFiling, ownerSsnCiphertext: "v1:placeholder:placeholder:placeholder" });
+
+    await expect(
+      runFilingAction("filing_1", "resendOrderConfirmation", {}, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, pdfAttached: false });
+    expect(email.sendOrderConfirmationEmail).toHaveBeenCalledWith(expect.objectContaining({ pdfBytes: null, signatures: [] }));
+  });
 });
 
 describe("retryFax pre-flight gate", () => {
@@ -1008,17 +1021,91 @@ describe("retryFax pre-flight gate", () => {
     expect(fax.submitFax).not.toHaveBeenCalled();
   });
 
-  it("holds the fax when the owner's SSN was saved after the package was reviewed/signed (SSN capture)", async () => {
-    db.findUnique.mockResolvedValue({
+  describe("SSN hold (SSN capture)", () => {
+    const held = {
       ...filing,
       reviewApprovedAt: new Date("2026-10-10T00:00:00Z"),
-      signedAt: new Date("2026-10-11T00:00:00Z"),
+      // Staff placed the client's signature on the (older) reviewed PDF: this
+      // later signedAt does NOT make the package newer than the SSN.
+      signedAt: new Date("2026-10-13T00:00:00Z"),
       ownerSsnSubmittedAt: new Date("2026-10-12T00:00:00Z"),
+    };
+    const REASON = "Checked page 6: 4b(1) shows the SSN";
+
+    beforeEach(() => {
+      db.findManyLog.mockReset();
+      db.findManyLog.mockResolvedValue([]);
     });
-    await expect(
-      runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1", force: true, reason: "legacy admin override" }),
-    ).rejects.toMatchObject({ status: 409, code: "ssn_newer_than_package" });
-    expect(fax.submitFax).not.toHaveBeenCalled();
+
+    it("holds the fax; the web route's blanket force + reason never bypass it", async () => {
+      db.findUnique.mockResolvedValue(held);
+      await expect(
+        runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1", force: true, reason: "legacy admin override" }),
+      ).rejects.toMatchObject({ status: 409, code: "ssn_newer_than_package" });
+      expect(fax.submitFax).not.toHaveBeenCalled();
+    });
+
+    it("does not hold a package uploaded as signed by staff after the SSN (uploadSignedPdf)", async () => {
+      db.findUnique.mockResolvedValue(held);
+      db.findManyLog.mockResolvedValue([
+        { changedAt: new Date("2026-10-14T00:00:00Z"), afterJson: { signedPdfKey: "filing_1_signed.pdf", status: "SIGNED_UPLOADED", bytes: 1234 } },
+      ]);
+      await runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1" });
+      expect(fax.submitFax).toHaveBeenCalled();
+    });
+
+    it("needs a written reason with the confirmation", async () => {
+      db.findUnique.mockResolvedValue(held);
+      await expect(
+        runFilingAction("filing_1", "retryFax", { ssnOnPackageConfirmed: true, ssnOnPackageReason: "ok it is" }, { adminId: "admin_1" }),
+      ).rejects.toMatchObject({ status: 400, code: "ssn_override_reason_required" });
+      await expect(
+        runFilingAction("filing_1", "retryFax", { ssnOnPackageConfirmed: "true", ssnOnPackageReason: REASON }, { adminId: "admin_1" }),
+      ).rejects.toMatchObject({ status: 409, code: "ssn_newer_than_package" });
+      expect(fax.submitFax).not.toHaveBeenCalled();
+    });
+
+    it("refuses an unattributable override", async () => {
+      db.findUnique.mockResolvedValue(held);
+      await expect(
+        runFilingAction("filing_1", "retryFax", { ssnOnPackageConfirmed: true, ssnOnPackageReason: REASON }, { adminId: null }),
+      ).rejects.toMatchObject({ status: 403, code: "identity_required" });
+      expect(fax.submitFax).not.toHaveBeenCalled();
+    });
+
+    it("faxes with an attributed, change-logged override written BEFORE the fax is submitted", async () => {
+      db.findUnique.mockResolvedValue(held);
+      const order: string[] = [];
+      db.createLog.mockImplementation((args: unknown) => {
+        order.push(`log:${(args as { data: { field: string } }).data.field}`);
+        return { op: "log.create", args };
+      });
+      fax.submitFax.mockImplementation(async () => {
+        order.push("submitFax");
+        return { id: "fax_job_1", status: "queued" };
+      });
+      await runFilingAction(
+        "filing_1",
+        "retryFax",
+        { ssnOnPackageConfirmed: true, ssnOnPackageReason: REASON },
+        { adminId: "admin_1", approver: "admin_1" },
+      );
+      expect(order.indexOf("log:faxSsnOverride")).toBeGreaterThanOrEqual(0);
+      expect(order.indexOf("log:faxSsnOverride")).toBeLessThan(order.indexOf("submitFax"));
+      const overrideLog = db.createLog.mock.calls
+        .map((c) => (c[0] as { data: Record<string, unknown> }).data)
+        .find((d) => d.field === "faxSsnOverride")!;
+      expect(overrideLog).toMatchObject({
+        adminId: "admin_1",
+        afterJson: { overridden: "ssn_newer_than_package", by: "admin_1", reason: REASON },
+      });
+      const faxLog = db.createLog.mock.calls
+        .map((c) => (c[0] as { data: Record<string, unknown> }).data)
+        .find((d) => d.field === "fax")!;
+      expect(faxLog.afterJson).toMatchObject({ ssnOverride: { by: "admin_1", reason: REASON } });
+      db.createLog.mockImplementation((args: unknown) => ({ op: "log.create", args }));
+      fax.submitFax.mockImplementation(async () => ({ id: "fax_job_1", status: "queued" }));
+    });
   });
 
   it("faxes when the SSN was on file before the package was reviewed", async () => {
