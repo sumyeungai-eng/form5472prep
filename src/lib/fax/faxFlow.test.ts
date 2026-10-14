@@ -958,3 +958,23 @@ describe("customer email failure after the claim is not silent", () => {
     expect(email.sendFaxDeliveredAdminEmail).toHaveBeenCalledWith(expect.objectContaining({ customerEmailStatus: "sent" }));
   });
 });
+
+describe("SSN capture: a faxed package carrying the owner's SSN is never emailed", () => {
+  it("attaches the signed package to the admin email when no SSN is on file", async () => {
+    seedFiling();
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("delivered")), { status: 200 }));
+    await telnyxWebhook(webhookRequest("fax.delivered"));
+    const args = email.sendFaxDeliveredAdminEmail.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+    expect(args.signedPdfBytes).toBeDefined();
+  });
+
+  it("leaves the signed package off the admin email when an SSN is on file", async () => {
+    seedFiling({ ownerSsnLast4: "6789" } as Partial<Row>);
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("delivered")), { status: 200 }));
+    await telnyxWebhook(webhookRequest("fax.delivered"));
+    expect(row().status).toBe("CONFIRMED");
+    const args = email.sendFaxDeliveredAdminEmail.mock.calls.at(-1)?.[0] as Record<string, unknown>;
+    expect(args.signedPdfBytes).toBeUndefined();
+    expect(args.receiptPdfBytes).toBeDefined();
+  });
+});

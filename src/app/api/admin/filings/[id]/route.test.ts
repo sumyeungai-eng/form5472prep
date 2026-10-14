@@ -31,6 +31,8 @@ vi.mock("@/lib/admin/auth", () => ({
 vi.mock("@/lib/admin/filingActions", () => ({
   FilingActionError: actions.FilingActionError,
   runFilingAction: actions.runFilingAction,
+  // Same list as WEB_ADMIN_ONLY_FILING_ACTIONS (pinned in filingActions.test.ts).
+  isWebAdminOnlyFilingAction: (action: string) => ["setOwnerSsn", "revealOwnerSsn"].includes(action),
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: {} }));
 vi.mock("@/lib/email", () => ({ sendAbandonedDraftReminderEmail: vi.fn() }));
@@ -102,5 +104,44 @@ describe("POST /api/admin/filings/[id] — retryFax confirmation plumbing", () =
     const res = await post({ action: "retryFax", force: true, reason: "IRS asked for a second copy" });
     expect(res.status).toBe(401);
     expect(actions.runFilingAction).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/admin/filings/[id] — SSN actions are admin-website only (SSN capture S3)", () => {
+  beforeEach(() => {
+    actions.runFilingAction.mockReset();
+    actions.runFilingAction.mockResolvedValue({ ok: true, ssn: "123-45-6789", revealedAt: "2026-10-15T00:00:00.000Z" });
+    auth.isAdmin.mockResolvedValue(true);
+  });
+
+  it.each(["revealOwnerSsn", "setOwnerSsn"])("refuses %s for a device (iOS) bearer token", async (action) => {
+    auth.getAdminPrincipal.mockResolvedValue({ adminId: "admin_1", email: "a@x.test", via: "bearer" });
+    const res = await post({ action, ssn: "123-45-6789", confirm: "123-45-6789" });
+    expect(res.status).toBe(403);
+    expect(res.headers.get("cache-control")).toBe("no-store");
+    expect(await res.json()).toMatchObject({ code: "web_admin_only" });
+    expect(actions.runFilingAction).not.toHaveBeenCalled();
+  });
+
+  it("serves Reveal to an admin website session with Cache-Control: no-store", async () => {
+    auth.getAdminPrincipal.mockResolvedValue({ adminId: "admin_1", email: "a@x.test", via: "cookie" });
+    const res = await post({ action: "revealOwnerSsn" });
+    expect(res.status).toBe(200);
+    expect(res.headers.get("cache-control")).toBe("no-store");
+    expect(actions.runFilingAction.mock.calls.at(-1)?.[1]).toBe("revealOwnerSsn");
+  });
+
+  it("serves Reveal to the shared password login too, attributed to the team", async () => {
+    auth.getAdminPrincipal.mockResolvedValue(null);
+    const res = await post({ action: "revealOwnerSsn" });
+    expect(res.status).toBe(200);
+    expect(ctxOfLastCall()).toMatchObject({ adminId: null, approver: "Form5472 Prep team (shared admin login)" });
+  });
+
+  it("leaves requestOwnerSsn available to bearer callers (it never carries the number)", async () => {
+    auth.getAdminPrincipal.mockResolvedValue({ adminId: "admin_1", email: "a@x.test", via: "bearer" });
+    actions.runFilingAction.mockResolvedValue({ ok: true });
+    const res = await post({ action: "requestOwnerSsn" });
+    expect(res.status).toBe(200);
   });
 });

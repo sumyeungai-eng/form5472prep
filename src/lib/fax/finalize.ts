@@ -49,6 +49,11 @@ export type FaxFinalizeFiling = {
   dissolvedAt: Date | null;
   userId: string | null;
   user: { id: string; email: string } | null;
+  // Set when the owner's SSN is on file (SSN capture, 2026-10-15): the faxed
+  // package then carries the SSN on lines 4b(1)/8b(1) and is NOT attached to
+  // the admin email (download it from the admin page instead). Optional so
+  // older callers/fixtures keep compiling; both real callers load the full row.
+  ownerSsnLast4?: string | null;
 };
 
 export type FinalizeDeliveredResult = {
@@ -129,8 +134,9 @@ export async function finalizeFaxDelivered(
 
   // The exact PDF that was faxed, for the ADMIN copy only (customer email
   // stays small — the package is in their portal). Missing key isn't fatal.
+  // Never attached when it contains the owner's SSN (spec S3: no SSN in email).
   let signedPdfBytes: Uint8Array | undefined;
-  if (filing.signedPdfKey) {
+  if (filing.signedPdfKey && !filing.ownerSsnLast4) {
     try {
       signedPdfBytes = await getStorageObject(filing.signedPdfKey);
     } catch (err) {

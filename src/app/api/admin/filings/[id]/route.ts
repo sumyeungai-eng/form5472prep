@@ -6,6 +6,7 @@ import { makeMagicLink } from "@/lib/magicLink";
 import { makeUnsubscribeLink } from "@/lib/unsubscribeToken";
 import {
   FilingActionError,
+  isWebAdminOnlyFilingAction,
   runFilingAction,
   type FilingActionName,
 } from "@/lib/admin/filingActions";
@@ -44,6 +45,16 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return handleDraftAction(params.id, action);
   }
 
+  // SSN entry / Reveal carry the plaintext SSN: admin website sessions only,
+  // never a device (iOS) bearer token (SSN capture spec S3).
+  const webOnly = isWebAdminOnlyFilingAction(action);
+  if (webOnly && principal?.via === "bearer") {
+    return NextResponse.json(
+      { error: "This action is only available on the admin website.", code: "web_admin_only" },
+      { status: 403, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
   try {
     const result = await runFilingAction(
       params.id,
@@ -69,7 +80,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
           : {}),
       },
     );
-    return NextResponse.json(result);
+    return NextResponse.json(result, webOnly ? { headers: { "Cache-Control": "no-store" } } : undefined);
   } catch (error) {
     if (error instanceof FilingActionError) {
       // `code` lets the admin UI react to a specific refusal (e.g. open the

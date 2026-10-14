@@ -30,7 +30,7 @@ This document is the authoritative written rule set for the Form 5472 / pro form
 | Line | Rule |
 |---|---|
 | 4a and 8a | Print the owner name and complete foreign address: street, city, province/state, postal code, and country. The address must physically print. |
-| 4b(1) / 8b(1) | Print the U.S. identifying number if the owner has one, such as an ITIN. Otherwise leave blank. |
+| 4b(1) / 8b(1) | Print the U.S. identifying number if the owner has one. Since generator 2.3.1 (2026-10-15, `docs/reviews/2026-10-15-ssn-capture-spec.md`): the owner's SSN when one is on file (stored encrypted, decrypted only in `packageInput.ts`, printed `123-45-6789`), else the ITIN field as entered. Otherwise leave blank. The reference ID on 4b(2)/8b(2) is unaffected. Source note: an SSN is a U.S. identifying number like the ITIN this row already allowed; the line-level instruction wording was not re-checked for this change (needs verification against the current Instructions for Form 5472 before relying on it for a new rule). |
 | 4b(2) / 8b(2) | Print the reference ID. It must be alphanumeric only, with no spaces or special characters, maximum 50 characters. Generate it once per owner, store it, and reuse it unchanged every tax year. Never regenerate it. |
 | 4b(3) / 8b(3) | Print the owner's foreign tax ID if one exists. If the owner has none, print `None`. A U.S. ITIN is not an FTIN and must not be accepted here. |
 | 4c / 8f | Print the principal country where the owner conducts business. |
@@ -146,8 +146,9 @@ Source: `docs/reviews/2026-10-13-preflight-generator-spec.md` (house rules 1-6, 
 | A33 | Admin-authored or other free text that renders into an IRS-facing document carries no question or note addressed to us: a question mark, "could you", "can you", "would you", "please review", "please advise", "please let me know", "my objective", "minimal cost", "[CPA Name]" or any `[Placeholder]`. Checked in the RCS narrative, Part V row descriptions, owner-paid cost notes, Part VI descriptions and valuation methods (each named), then in the rendered Part V / Part VI / RCS text for anything else (e.g. the "other transactions" note). Each finding quotes the phrase and names the field (spec item 3, D9). | Yes |
 | A34 | Per tax year, the Part V statement's closing total (`Form 5472 lines 1f and 1h: $X.`) equals line 1f and line 1h as written on Form 5472, and equals the rounded Part V plus Part VI total (spec item 7). | Yes |
 | A35 | Paid preparer (spec item 8): `paidPreparerMode = "house"` with incomplete or invalid `HOUSE_PREPARER_*` config fails (names the missing/invalid settings); when a preparer is shown on any Form 1120, no RCS, Part V or Part VI statement may say "I prepared". | Yes |
+| A36 | SSN capture (2026-10-15): an SSN is on file but could not be decrypted (`PII_ENCRYPTION_KEY` missing, wrong or rotated, or the stored value altered). Lines 4b(1)/8b(1) were filled as if there were no SSN. Message: `SSN on file could not be decrypted — check PII_ENCRYPTION_KEY. …` Never quotes the number. | Yes |
 
-Implementation status is based on reading `src/lib/pdf/preflight.ts`: `runPreflight` calls `checkW02`, `checkA01` through `checkA28` except `checkA29`, `checkR02`, `checkA30`, `checkA31` through `checkA35`, and the warning checks W31 to W41. `checkA29` is intentionally absent because render verification runs in CI only.
+Implementation status is based on reading `src/lib/pdf/preflight.ts`: `runPreflight` calls `checkW02`, `checkA01` through `checkA28` except `checkA29`, `checkR02`, `checkA30`, `checkA31` through `checkA36`, and the warning checks W31 to W41. `checkA29` is intentionally absent because render verification runs in CI only.
 
 ## Warnings (non-blocking) referenced in preflight.ts
 

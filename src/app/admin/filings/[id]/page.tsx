@@ -27,6 +27,10 @@ import { StatusBadge } from "../StatusBadge";
 import { AdminPageHeader } from "../../_components/AdminPageHeader";
 import { AdminActions, RerunPreflightButton } from "./AdminActions";
 import { EditFieldsCard } from "./EditFieldsCard";
+import { OwnerSsnCard } from "./OwnerSsnCard";
+import { isPiiCryptoConfigured } from "@/lib/crypto/pii";
+import { maskSsn } from "@/lib/crypto/ssn";
+import { ownerSsnNewerThanPackage, ssnEntryState } from "@/lib/ownerSsn";
 import { MessagesPanel } from "@/components/MessagesPanel";
 import { LinkedFaxes } from "@/components/admin/LinkedFaxes";
 import { YearBreakdown } from "./YearBreakdown";
@@ -393,6 +397,23 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
         />
       </div>
 
+      {/* Owner's U.S. SSN (lines 4b(1)/8b(1)). Masked here; the number only
+          reaches the browser through the change-logged Reveal action. */}
+      <div id="ssn" className="bg-white border border-slate-200 rounded-lg p-6 mb-6">
+        <h2 className="text-sm font-semibold text-slate-900 mb-3">U.S. SSN (Form 5472 lines 4b(1) / 8b(1))</h2>
+        <OwnerSsnCard
+          filingId={filing.id}
+          last4={filing.ownerSsnLast4}
+          submittedAt={filing.ownerSsnSubmittedAt?.toISOString() ?? null}
+          submittedBy={filing.ownerSsnSubmittedBy ? (filing.ownerSsnSubmittedBy === "client" ? "client" : "admin") : null}
+          requestedAt={filing.ownerSsnRequestedAt?.toISOString() ?? null}
+          configured={isPiiCryptoConfigured()}
+          entryState={ssnEntryState(filing.status)}
+          customerEmail={filing.user?.email ?? null}
+          addedAfterPackage={ownerSsnNewerThanPackage(filing)}
+        />
+      </div>
+
       {/* AI compliance check + change log UI removed when the AI plumbing
           was retired. The DB columns (validationStatus, aiHandoff,
           aiTurnsUsed, FilingChangeLog table) are left orphan rather than
@@ -443,6 +464,11 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           <Field label="Country of business" value={filing.ownerCountryBusiness} />
           <Field label="FTIN" value={filing.ownerFtin} mono />
           <Field label="ITIN" value={filing.ownerItin} mono />
+          <Field
+            label="SSN"
+            value={filing.ownerSsnLast4 ? `${maskSsn(filing.ownerSsnLast4)} (prints on 4b(1)/8b(1) instead of the ITIN)` : "Not on file"}
+            mono
+          />
           <Field label="Reference ID" value={filing.ownerReferenceId} mono />
         </DetailCard>
 

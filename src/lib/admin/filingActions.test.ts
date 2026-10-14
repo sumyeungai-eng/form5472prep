@@ -112,6 +112,7 @@ import {
   refaxDecision,
   runFilingAction,
   SIDE_EFFECTING_ACTIONS,
+  WEB_ADMIN_ONLY_FILING_ACTIONS,
 } from "./filingActions";
 import { filingToPackageInput } from "@/lib/pdf/packageInput";
 
@@ -120,11 +121,19 @@ describe("SIDE_EFFECTING_ACTIONS", () => {
     expect(Array.from(SIDE_EFFECTING_ACTIONS).sort()).toEqual([
       "approveForSignature",
       "regeneratePdf",
+      "requestOwnerSsn",
       "resendFaxConfirmation",
       "resendMagicLink",
       "resendOrderConfirmation",
       "retryFax",
     ]);
+  });
+
+  it("keeps the plaintext-SSN actions out of the v1 (iOS) API allow-list (SSN capture S3)", () => {
+    expect(FILING_ACTION_NAMES).toContain("requestOwnerSsn");
+    expect(FILING_ACTION_NAMES).not.toContain("revealOwnerSsn");
+    expect(FILING_ACTION_NAMES).not.toContain("setOwnerSsn");
+    expect([...WEB_ADMIN_ONLY_FILING_ACTIONS].sort()).toEqual(["revealOwnerSsn", "setOwnerSsn"]);
   });
 
   it("offers rerunPreflight as an action that needs no idempotency key (it writes no PDF and sends nothing)", () => {
@@ -940,6 +949,19 @@ describe("resendOrderConfirmation", () => {
       extensionUnclear: false,
     }));
   });
+
+  it("never attaches a package that carries the owner's SSN (SSN capture S3)", async () => {
+    db.findUnique
+      .mockResolvedValueOnce({ ...initialFiling, reviewApprovedAt: null, reviewApprovedBy: null, ownerSsnLast4: "6789" })
+      .mockResolvedValueOnce(packageFiling);
+
+    await expect(
+      runFilingAction("filing_1", "resendOrderConfirmation", {}, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, pdfAttached: false, signatureCount: 0 });
+
+    expect(storage.putPdf).toHaveBeenCalled(); // still regenerated for the portal
+    expect(email.sendOrderConfirmationEmail).toHaveBeenCalledWith(expect.objectContaining({ pdfBytes: null, signatures: [] }));
+  });
 });
 
 describe("retryFax pre-flight gate", () => {
@@ -984,6 +1006,30 @@ describe("retryFax pre-flight gate", () => {
       runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1" }),
     ).rejects.toMatchObject({ status: 409, code: "preflight_failed" });
     expect(fax.submitFax).not.toHaveBeenCalled();
+  });
+
+  it("holds the fax when the owner's SSN was saved after the package was reviewed/signed (SSN capture)", async () => {
+    db.findUnique.mockResolvedValue({
+      ...filing,
+      reviewApprovedAt: new Date("2026-10-10T00:00:00Z"),
+      signedAt: new Date("2026-10-11T00:00:00Z"),
+      ownerSsnSubmittedAt: new Date("2026-10-12T00:00:00Z"),
+    });
+    await expect(
+      runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1", force: true, reason: "legacy admin override" }),
+    ).rejects.toMatchObject({ status: 409, code: "ssn_newer_than_package" });
+    expect(fax.submitFax).not.toHaveBeenCalled();
+  });
+
+  it("faxes when the SSN was on file before the package was reviewed", async () => {
+    db.findUnique.mockResolvedValue({
+      ...filing,
+      ownerSsnSubmittedAt: new Date("2026-10-09T00:00:00Z"),
+      reviewApprovedAt: new Date("2026-10-10T00:00:00Z"),
+      signedAt: new Date("2026-10-11T00:00:00Z"),
+    });
+    await runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1" });
+    expect(fax.submitFax).toHaveBeenCalled();
   });
 
   it("calls submitFax when failed pre-flight has an override", async () => {

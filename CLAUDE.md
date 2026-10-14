@@ -67,6 +67,12 @@
   one checkout's `.git/config` — use SSH remotes.
 
 ## Facts that must not drift
+- The owner's U.S. SSN (since 2026-10-15) is stored ONLY encrypted
+  (`Filing.ownerSsnCiphertext`, AES-256-GCM, key `PII_ENCRYPTION_KEY`) and is
+  decrypted only in `src/lib/pdf/packageInput.ts` (lines 4b(1)/8b(1)) and the
+  admin-website Reveal action. It never goes into an API/partner/v1 payload,
+  email (incl. package attachments), log, change-log (masked only) or the
+  plain-text ITIN field. See `docs/sessions/2026-10-15-ssn-capture.md`.
 - Prices come from `src/lib/pricing.ts` (`TIERS`, `MULTI_YEAR_ADDON_CENTS`);
   never hardcode dollar figures in pages. Promo machinery exists but
   `PROMO_SOURCES` is empty (promo ended 2026-08-19).

@@ -154,6 +154,19 @@ model Filing {
   ownerFtin                String?
   ownerItin                String?
   ownerReferenceId         String?
+  // Owner's U.S. SSN for Form 5472 lines 4b(1)/8b(1) (spec
+  // docs/reviews/2026-10-15-ssn-capture-spec.md). The number is stored ONLY
+  // encrypted (src/lib/crypto/pii.ts, AES-256-GCM, "v1:iv:tag:ct"); it never
+  // leaves the server except as last4 and through the admin-only Reveal.
+  //   ownerSsnCiphertext   server-only — stripped from every client/partner/API payload
+  //   ownerSsnLast4        display only ("•••-••-1234")
+  //   ownerSsnSubmittedBy  "client" | admin id / shared-login label (staff-only)
+  //   ownerSsnRequestedAt  when an admin last emailed the client to add it
+  ownerSsnCiphertext       String?
+  ownerSsnLast4            String?
+  ownerSsnSubmittedAt      DateTime?
+  ownerSsnSubmittedBy      String?
+  ownerSsnRequestedAt      DateTime?
   // Wave 3 questionnaire (docs/TASK-5472-generator-fixes.md, amendments sec. 10). All nullable:
   // orders created before these questions existed keep null, and the reviewer is told what is unanswered.
   llcMemberCount                  Int?     // G-10: more than 1 -> route to a reviewer, no package

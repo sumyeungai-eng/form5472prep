@@ -47,7 +47,11 @@ export const FAX_RENDER_DPI = 300;
 // "not sure" Form 7004 year; cover letter "Signed:"; Part V citation
 // (b)(3)(xi) and "Form 5472 lines 1f and 1h: $X." ending; optional house paid
 // preparer block; 1120 "tax year beginning" prints MM/DD only.
-export const GENERATOR_VERSION = "2.3.0";
+// 2.3.1 (2026-10-15, docs/reviews/2026-10-15-ssn-capture-spec.md S7): Form
+// 5472 lines 4b(1)/8b(1) print the owner's SSN (123-45-6789) when one is on
+// file, decrypted server-side in packageInput, else the ITIN field as before;
+// pre-flight A36 fails when a stored SSN cannot be decrypted.
+export const GENERATOR_VERSION = "2.3.1";
 // The IRS-required marking written across the top of the pro forma Form 1120
 // (Form 5472 instructions, "Foreign-owned U.S. DE"); also stamped on Form 5472.
 // House position: no "DIIRSP" suffix or other procedure label on the forms.

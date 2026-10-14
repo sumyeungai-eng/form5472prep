@@ -25,6 +25,7 @@ import {
 import { fitFontSize, measureFieldBox, type FieldBox, type FitLine } from "./fitText";
 import { displayCaseAddressPart, ownerNationalityClause } from "./textFormat";
 import { formatDateForIrs } from "@/lib/utils";
+import { formatSsnForForms, normalizeSsn } from "@/lib/crypto/ssn";
 import {
   effectiveDueDateUtc,
   extensionUnclear,
@@ -142,6 +143,16 @@ type Filing = {
   ownerFtin: string;
   ownerItin: string | null;
   ownerReferenceId: string | null;
+  // Owner's U.S. SSN, 9 digits, decrypted server-side by the package-input
+  // adapter (src/lib/pdf/packageInput.ts) — never by any other caller. When
+  // present it prints on lines 4b(1)/8b(1) instead of ownerItin (SSN capture
+  // spec S7). Optional so call sites that predate it keep compiling.
+  ownerSsn?: string | null;
+  // An SSN is on file but could not be decrypted (wrong/missing key or an
+  // altered value). 4b(1)/8b(1) then behave exactly as without an SSN and
+  // pre-flight fails A36, so staff fix the key instead of faxing a package
+  // with the wrong U.S. ID.
+  ownerSsnUndecryptable?: boolean;
   taxYears: number[];
   isDiirsp: boolean;
   // Set when the LLC was dissolved/closed and this package is its FINAL
@@ -399,6 +410,10 @@ export type PackageRecord = {
   irsMayDiscussWithPreparer?: "yes" | "no" | null;
   // Legacy Filing.reasonableCauseNarrative (customer text). Never rendered.
   customerReasonableCauseNarrative?: string | null;
+  // SSN capture (2026-10-15): which value 4b(1)/8b(1) print. Never the number.
+  ownerUsIdSource?: "ssn" | "itin" | null;
+  // An SSN is on file but could not be decrypted (pre-flight A36).
+  ownerSsnUndecryptable?: boolean;
 };
 
 export type GeneratePackageOptions = {
@@ -708,6 +723,20 @@ function ownerPostalForA17(f: Filing): string | null {
 
 function ownerFtinForForms(f: Filing): string {
   return f.ownerHasFtin === false ? "None" : f.ownerFtin;
+}
+
+// Lines 4b(1)/8b(1) "U.S. identifying number": the owner's SSN when one is on
+// file (printed 123-45-6789), else the ITIN field as entered (unchanged
+// behaviour). The reference ID on 4b(2)/8b(2) is independent of this.
+function ownerUsIdForForms(f: Filing): string | null {
+  const source = ownerUsIdSourceFor(f);
+  if (source === "ssn") return formatSsnForForms(f.ownerSsn ?? "");
+  return source === "itin" ? f.ownerItin : null;
+}
+
+function ownerUsIdSourceFor(f: Filing): "ssn" | "itin" | null {
+  if (f.ownerSsn && /^\d{9}$/.test(normalizeSsn(f.ownerSsn))) return "ssn";
+  return f.ownerItin ? "itin" : null;
 }
 
 function shouldCheckLine1j(f: Filing, year: number): boolean {
@@ -1053,7 +1082,8 @@ function fillForm5472(
     fontSize: printAddresses.owner.fontSize,
     singleLine: true,
   });
-  if (f.ownerItin) setText(form, m["4b1_usId"], f.ownerItin, recorder);
+  const ownerUsId = ownerUsIdForForms(f);
+  if (ownerUsId) setText(form, m["4b1_usId"], ownerUsId, recorder);
   if (f.ownerReferenceId) setText(form, m["4b2_referenceId"], f.ownerReferenceId, recorder);
   setText(form, m["4b3_ftin"], ownerFtinForForms(f), recorder);
   setText(form, m["4c_principalCountry"], ownerBusinessCountry, recorder);
@@ -1067,7 +1097,7 @@ function fillForm5472(
     fontSize: printAddresses.owner.fontSize,
     singleLine: true,
   });
-  if (f.ownerItin) setText(form, m["8b1_usId"], f.ownerItin, recorder);
+  if (ownerUsId) setText(form, m["8b1_usId"], ownerUsId, recorder);
   if (f.ownerReferenceId) setText(form, m["8b2_referenceId"], f.ownerReferenceId, recorder);
   setText(form, m["8b3_ftin"], ownerFtinForForms(f), recorder);
   setText(form, m["8c_businessActivity"], f.llcBusinessActivity, recorder);
@@ -2707,6 +2737,8 @@ export async function generatePackage(
       },
       irsMayDiscussWithPreparer: discussWithPreparer,
       customerReasonableCauseNarrative: trimmedOrNull(f.reasonableCauseNarrative),
+      ownerUsIdSource: ownerUsIdSourceFor(f),
+      ownerSsnUndecryptable: f.ownerSsnUndecryptable === true,
     },
   };
 }

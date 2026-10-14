@@ -6,10 +6,15 @@ import {
   type OwnerPaidCost,
   type ZeroConfirmations,
 } from "./generatePackage";
+import { decryptPii } from "@/lib/crypto/pii";
+import { normalizeSsn } from "@/lib/crypto/ssn";
 
 type NullablePartial<T> = { [K in keyof T]?: T[K] | null };
 
-export type PackageFilingRow = NullablePartial<Omit<PackageInput, "yearData">> & {
+export type PackageFilingRow = NullablePartial<Omit<PackageInput, "yearData" | "ownerSsn" | "ownerSsnUndecryptable">> & {
+  // The stored, encrypted owner SSN (Filing.ownerSsnCiphertext). Decrypted
+  // here and nowhere else on the package path (SSN capture spec S7).
+  ownerSsnCiphertext?: string | null;
   yearData: Array<{
     taxYear: number;
     totalAssetsYearEnd: unknown;
@@ -31,6 +36,7 @@ export type PackageFilingRow = NullablePartial<Omit<PackageInput, "yearData">> &
 };
 
 export function filingToPackageInput(filing: PackageFilingRow): PackageInput {
+  const ownerSsn = ownerSsnForPackage(filing.ownerSsnCiphertext);
   return {
     llcName: requiredString(filing.llcName),
     llcEin: requiredString(filing.llcEin),
@@ -64,6 +70,8 @@ export function filingToPackageInput(filing: PackageFilingRow): PackageInput {
       ? ((filing.ownerFtin ?? "").trim() || "None")
       : requiredString(filing.ownerFtin),
     ownerItin: filing.ownerItin ?? null,
+    ownerSsn: ownerSsn.kind === "ok" ? ownerSsn.ssn : null,
+    ownerSsnUndecryptable: ownerSsn.kind === "undecryptable",
     ownerReferenceId: filing.ownerReferenceId ?? null,
     taxYears: filing.taxYears ?? [],
     isDiirsp: filing.isDiirsp ?? false,
@@ -92,6 +100,22 @@ export function filingToPackageInput(filing: PackageFilingRow): PackageInput {
       rcsSmallCorpParagraph: year.rcsSmallCorpParagraph ?? null,
     })),
   };
+}
+
+// Never throws: an SSN that cannot be decrypted (key missing or wrong, value
+// altered) must not crash generation — payment and the admin tools still get a
+// package (4b(1)/8b(1) as without an SSN) and pre-flight fails A36. Never logs
+// the value.
+function ownerSsnForPackage(
+  ciphertext: string | null | undefined,
+): { kind: "none" } | { kind: "ok"; ssn: string } | { kind: "undecryptable" } {
+  if (!ciphertext) return { kind: "none" };
+  try {
+    const ssn = normalizeSsn(decryptPii(ciphertext));
+    return /^\d{9}$/.test(ssn) ? { kind: "ok", ssn } : { kind: "undecryptable" };
+  } catch {
+    return { kind: "undecryptable" };
+  }
 }
 
 function parseOwnerPaidCosts(value: unknown, taxYear: number): OwnerPaidCost[] {

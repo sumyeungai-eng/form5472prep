@@ -8,6 +8,7 @@ import {
   sendFaxDeliveredEmail,
   sendMagicLinkEmail,
   sendOrderConfirmationEmail,
+  sendOwnerSsnRequestEmail,
   sendReadyToSignEmail,
 } from "@/lib/email";
 import { submitFax, TelnyxSubmitRejectedError } from "@/lib/fax";
@@ -39,6 +40,19 @@ import {
 import { hasAdminReasonableCauseForFax, requiresReasonableCause } from "@/lib/completeness";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 import { brandForFiling } from "@/lib/partnerBrand";
+import { isPiiCryptoConfigured } from "@/lib/crypto/pii";
+import {
+  OWNER_SSN_CHANGE_FIELD,
+  OWNER_SSN_REQUEST_FIELD,
+  OwnerSsnError,
+  ownerSsnNewerThanPackage,
+  revealOwnerSsn,
+  saveOwnerSsn,
+  SSN_ADMIN_KEY_MISSING_MESSAGE,
+  SSN_LOCKED_MESSAGE,
+  SSN_NEWER_THAN_PACKAGE_MESSAGE,
+  ssnEntryState,
+} from "@/lib/ownerSsn";
 import {
   deliveryFactsFromTelnyx,
   faxProofFromFacts,
@@ -60,7 +74,11 @@ export type FilingActionName =
   | "updateField"
   | "updateYearField"
   | "uploadReviewedPdf"
-  | "uploadSignedPdf";
+  | "uploadSignedPdf"
+  // SSN capture (docs/reviews/2026-10-15-ssn-capture-spec.md).
+  | "requestOwnerSsn"
+  | "setOwnerSsn"
+  | "revealOwnerSsn";
 
 export type FilingActionContext = {
   adminId: string | null;
@@ -74,6 +92,9 @@ export type FilingActionContext = {
    *  blanket-true for its legacy gates — a blanket flag must never count as a re-fax confirmation.
    *  When absent, `force`/`reason` are used (the v1 API passes them per request). */
   refax?: RefaxOverride;
+  /** Who caused a pre-flight re-run's change-log rows: "admin" (default), or
+   *  "customer" when the client's own SSN entry triggered it. */
+  changeSource?: "admin" | "customer";
 };
 
 export type FilingActionResult = { ok: true; [k: string]: unknown };
@@ -92,7 +113,22 @@ export const FILING_ACTION_NAMES = [
   "updateYearField",
   "uploadReviewedPdf",
   "uploadSignedPdf",
+  "requestOwnerSsn",
 ] as const satisfies readonly FilingActionName[];
+
+// Admin-WEBSITE-only actions. They carry (setOwnerSsn) or return
+// (revealOwnerSsn) the plaintext SSN, so they are deliberately NOT in
+// FILING_ACTION_NAMES — the admin v1 (iOS) API allow-list, whose idempotency
+// store persists results — and the web route refuses them for bearer-token
+// (device) callers. Spec S3: the v1 API only ever sees the SSN masked.
+export const WEB_ADMIN_ONLY_FILING_ACTIONS = [
+  "setOwnerSsn",
+  "revealOwnerSsn",
+] as const satisfies readonly FilingActionName[];
+
+export function isWebAdminOnlyFilingAction(action: string): boolean {
+  return (WEB_ADMIN_ONLY_FILING_ACTIONS as readonly string[]).includes(action);
+}
 
 export const SIDE_EFFECTING_ACTIONS: ReadonlySet<FilingActionName> = new Set<FilingActionName>([
   "retryFax",
@@ -101,6 +137,7 @@ export const SIDE_EFFECTING_ACTIONS: ReadonlySet<FilingActionName> = new Set<Fil
   "resendFaxConfirmation",
   "regeneratePdf",
   "approveForSignature",
+  "requestOwnerSsn",
 ]);
 
 export class FilingActionError extends Error {
@@ -288,6 +325,12 @@ const filingSelect = {
   ownerFtin: true,
   ownerItin: true,
   ownerReferenceId: true,
+  // SSN capture: masked state only — the ciphertext is never selected here.
+  ownerSsnLast4: true,
+  ownerSsnSubmittedAt: true,
+  ownerSsnRequestedAt: true,
+  // retryFax's SSN gate compares the SSN time with the signature time.
+  signedAt: true,
   reasonableCauseNarrative: true,
   // Generator 2.3.0 paid preparer settings (updateField logs their BEFORE value).
   paidPreparerMode: true,
@@ -374,6 +417,8 @@ export const packageFilingSelect = {
   ownerCountryBusiness: true,
   ownerFtin: true,
   ownerItin: true,
+  // Encrypted owner SSN: decrypted only inside filingToPackageInput (S7).
+  ownerSsnCiphertext: true,
   ownerReferenceId: true,
   taxYears: true,
   isDiirsp: true,
@@ -460,6 +505,9 @@ export const ADMIN_EDITABLE_YEAR_FIELDS = [
 // Columns updateField may change as a side effect of an edit (cascade or
 // recompute); each gets its own change-log row.
 const DERIVED_FILING_FIELDS = ["extensionProofKey"] as const;
+// Package data changed outside updateField: the owner's SSN (client box or
+// admin entry; the change-log row holds only the masked number).
+const OTHER_PACKAGE_DATA_FIELDS = [OWNER_SSN_CHANGE_FIELD] as const;
 
 // True for change-log rows that record a change to the data the package is
 // built from: updateField rows (and their derived rows) and updateYearField
@@ -469,14 +517,19 @@ export function isPackageDataChangeField(field: string): boolean {
   return (
     field.startsWith("year:") ||
     (ADMIN_EDITABLE_FILING_FIELDS as readonly string[]).includes(field) ||
-    (DERIVED_FILING_FIELDS as readonly string[]).includes(field)
+    (DERIVED_FILING_FIELDS as readonly string[]).includes(field) ||
+    (OTHER_PACKAGE_DATA_FIELDS as readonly string[]).includes(field)
   );
 }
 
 export const PACKAGE_DATA_CHANGE_WHERE = {
   OR: [
     { field: { startsWith: "year:" } },
-    { field: { in: [...ADMIN_EDITABLE_FILING_FIELDS, ...DERIVED_FILING_FIELDS] as string[] } },
+    {
+      field: {
+        in: [...ADMIN_EDITABLE_FILING_FIELDS, ...DERIVED_FILING_FIELDS, ...OTHER_PACKAGE_DATA_FIELDS] as string[],
+      },
+    },
   ],
 } satisfies Prisma.FilingChangeLogWhereInput;
 
@@ -753,10 +806,11 @@ async function persistRerunPreflight(
     select: { id: true },
   });
   const ids = (issues: PreflightIssue[]) => issues.map((issue) => issue.id);
+  const source = ctx.changeSource ?? "admin";
   await logFilingChange({
     filingId: filing.id,
     adminId: ctx.adminId,
-    source: "admin",
+    source,
     field: "preflight",
     before: {
       preflightStatus: filing.preflightStatus,
@@ -779,7 +833,7 @@ async function persistRerunPreflight(
     await logFilingChange({
       filingId: filing.id,
       adminId: ctx.adminId,
-      source: "admin",
+      source,
       field: "preflightOverride",
       before: {
         preflightOverrideBy: filing.preflightOverrideBy,
@@ -848,6 +902,26 @@ async function autoRerunPreflight(
       reason: "generation_failed",
       message: err instanceof Error ? err.message : "Pre-flight re-run failed",
     };
+  }
+}
+
+// The client's own SSN entry (POST /api/filings/[id]/ssn) changes package
+// data like an admin field save does, so it gets the same automatic pre-flight
+// re-run (spec S5). Same guarantees as autoRerunPreflight: never throws, skips
+// DRAFT/FAXED/CONFIRMED, and a problem leaves the stale badge to show.
+export async function rerunPreflightAfterOwnerSsnChange(
+  filingId: string,
+  ctx: FilingActionContext,
+): Promise<PreflightRerunSummary> {
+  try {
+    const filing = await prisma.filing.findUnique({ where: { id: filingId }, select: filingSelect });
+    if (!filing) {
+      return { ran: false, reason: "not_applicable", message: "filing not found" };
+    }
+    return await autoRerunPreflight(filing, ctx, OWNER_SSN_CHANGE_FIELD);
+  } catch (err) {
+    console.error(`[preflight] ${filingId} re-run after SSN change failed`, err);
+    return { ran: false, reason: "generation_failed", message: "Pre-flight re-run failed" };
   }
 }
 
@@ -955,6 +1029,12 @@ export async function runFilingAction(
         }
       } catch (err) {
         console.error("[admin resendOrderConfirmation] regenerate failed", err);
+      }
+      // A package with the owner's SSN on lines 4b(1)/8b(1) is never emailed
+      // (SSN capture spec S3): the client opens it in their portal instead.
+      if (filing.ownerSsnLast4) {
+        pdfBytes = null;
+        signatures = [];
       }
       await sendOrderConfirmationEmail({
         email: filing.user.email,
@@ -1158,6 +1238,12 @@ export async function runFilingAction(
           "preflight_failed",
           "Fax held: this package failed pre-flight checks. An admin must review it.",
         );
+      }
+      // SSN capture: the client (or an admin) saved an SSN after this package
+      // was reviewed/signed, so the signed copy would go to the IRS without it.
+      // Staff-side gate; the remedy is a new reviewed upload + re-sign.
+      if (ownerSsnNewerThanPackage(filing)) {
+        throw new FilingActionError(409, "ssn_newer_than_package", SSN_NEWER_THAN_PACKAGE_MESSAGE);
       }
       // A late filing without a reasonable-cause statement is legally naked on
       // the $25,000 exposure — the whole pitch of the service is that late
@@ -2194,6 +2280,128 @@ export async function runFilingAction(
         reason: ctx.reason,
       });
       return { ok: true, key, bytes: bytes.length };
+    }
+
+    // ── SSN capture (docs/reviews/2026-10-15-ssn-capture-spec.md) ──
+
+    case "requestOwnerSsn": {
+      // S1: email the client a sign-in link straight to the secure box on
+      // their order page. The email never carries the number or a field for it.
+      if (!filing.user) {
+        throw new FilingActionError(400, "no_customer_email", "no customer email");
+      }
+      const entry = ssnEntryState(filing.status);
+      if (entry === "locked") {
+        throw new FilingActionError(409, "ssn_locked", SSN_LOCKED_MESSAGE);
+      }
+      if (entry === "not_paid") {
+        throw new FilingActionError(
+          409,
+          "not_paid",
+          "This order is not paid yet. The SSN box is on the client's order page, which opens after payment.",
+        );
+      }
+      if (!isPiiCryptoConfigured()) {
+        throw new FilingActionError(503, "not_configured", SSN_ADMIN_KEY_MISSING_MESSAGE);
+      }
+      let brand: Awaited<ReturnType<typeof brandForFiling>> = null;
+      try {
+        brand = await brandForFiling(filing.id);
+      } catch (err) {
+        console.error("[admin requestOwnerSsn] brand lookup failed", err);
+      }
+      try {
+        await sendOwnerSsnRequestEmail({
+          email: filing.user.email,
+          recipientName: filing.ownerName,
+          filingId: filing.id,
+          llcName: filing.llcName,
+          taxYears: filing.taxYears,
+          portalLink: makeMagicLink(filing.user.id),
+          brand: brand ?? undefined,
+        });
+      } catch (err) {
+        throw new FilingActionError(
+          502,
+          "email_failed",
+          `The email could not be sent: ${err instanceof Error ? err.message : "unknown error"}`,
+        );
+      }
+      const requestedAt = new Date();
+      await prisma.filing.update({
+        where: { id: filing.id },
+        data: { ownerSsnRequestedAt: requestedAt },
+        select: { id: true },
+      });
+      await logFilingChange({
+        filingId: filing.id,
+        adminId: ctx.adminId,
+        source: "admin",
+        field: OWNER_SSN_REQUEST_FIELD,
+        before: { ownerSsnRequestedAt: filing.ownerSsnRequestedAt },
+        after: { action: "requestOwnerSsn", ownerSsnRequestedAt: requestedAt, emailSent: true },
+        reason: "Admin asked the client to add their SSN on the order page.",
+      });
+      return { ok: true, requestedAt: requestedAt.toISOString(), emailTo: filing.user.email };
+    }
+
+    case "setOwnerSsn": {
+      // S6: the client sent the number another way; staff type it in through
+      // the same encrypted path. Web admin only (WEB_ADMIN_ONLY_FILING_ACTIONS).
+      const who = ctx.approver ?? ctx.adminId;
+      if (!who) {
+        throw new FilingActionError(
+          403,
+          "identity_required",
+          "We could not tell which admin is signed in. Sign out of the admin portal and sign in again.",
+        );
+      }
+      let saved: Awaited<ReturnType<typeof saveOwnerSsn>>;
+      try {
+        saved = await saveOwnerSsn({
+          filingId: filing.id,
+          ssn: body.ssn,
+          confirm: body.confirm,
+          submittedBy: who,
+          adminId: ctx.adminId,
+          source: "admin",
+        });
+      } catch (err) {
+        if (err instanceof OwnerSsnError) throw new FilingActionError(err.status, err.code, err.message);
+        // Never rethrow the raw error: a database error can echo its arguments
+        // (the ciphertext) into the server log.
+        console.error(`[admin setOwnerSsn] ${filing.id} save failed (${err instanceof Error ? err.name : "unknown"})`);
+        throw new FilingActionError(500, "save_failed", "The SSN could not be saved. Try again.");
+      }
+      const preflightRerun = await autoRerunPreflight(filing, ctx, OWNER_SSN_CHANGE_FIELD);
+      return {
+        ok: true,
+        last4: saved.last4,
+        submittedAt: saved.submittedAt.toISOString(),
+        replaced: saved.replaced,
+        preflightRerun,
+      };
+    }
+
+    case "revealOwnerSsn": {
+      // S3: admin website only, change-logged (who, when) before the number is
+      // returned. The plaintext goes to the admin UI in this response only.
+      const who = ctx.approver ?? ctx.adminId;
+      if (!who) {
+        throw new FilingActionError(
+          403,
+          "identity_required",
+          "We could not tell which admin is signed in. Sign out of the admin portal and sign in again.",
+        );
+      }
+      try {
+        const revealed = await revealOwnerSsn({ filingId: filing.id, adminId: ctx.adminId, revealedBy: who });
+        return { ok: true, ssn: revealed.ssn, revealedAt: revealed.revealedAt.toISOString() };
+      } catch (err) {
+        if (err instanceof OwnerSsnError) throw new FilingActionError(err.status, err.code, err.message);
+        console.error(`[admin revealOwnerSsn] ${filing.id} failed (${err instanceof Error ? err.name : "unknown"})`);
+        throw new FilingActionError(500, "reveal_failed", "The SSN could not be shown. Try again.");
+      }
     }
 
     default:

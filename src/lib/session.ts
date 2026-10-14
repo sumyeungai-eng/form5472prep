@@ -166,8 +166,19 @@ export const STAFF_ONLY_FILING_FIELDS = [
   // item 2), and no customer screen reads them.
   "preflightFailures",
   "preflightWarnings",
+  // Who added the owner's SSN: "client", or an admin id / the shared-login
+  // label (SSN capture, 2026-10-15).
+  "ownerSsnSubmittedBy",
 ] as const;
-type StaffOnlyFilingField = (typeof STAFF_ONLY_FILING_FIELDS)[number];
+
+// Columns that never leave the server for ANY client — customer, partner or
+// API. The encrypted owner SSN (spec docs/reviews/2026-10-15-ssn-capture-spec.md
+// S3): only ownerSsnLast4 + timestamps are client-visible; admins see the
+// number only through the change-logged Reveal action.
+export const SERVER_ONLY_FILING_FIELDS = ["ownerSsnCiphertext"] as const;
+type StaffOnlyFilingField =
+  | (typeof STAFF_ONLY_FILING_FIELDS)[number]
+  | (typeof SERVER_ONLY_FILING_FIELDS)[number];
 
 // Staff-only columns on FilingYearData rows (generator 2.3.0): the admin-
 // authored reasonable-cause narrative and the admin's structured RCS inputs.
@@ -193,6 +204,7 @@ export function toClientFiling<T extends { sessionId?: unknown }>(
   const { sessionId, ...rest } = filing;
   const out = { ...rest } as Record<string, unknown>;
   for (const field of STAFF_ONLY_FILING_FIELDS) delete out[field];
+  for (const field of SERVER_ONLY_FILING_FIELDS) delete out[field];
   if (Array.isArray(out.yearData)) out.yearData = out.yearData.map(withoutStaffYearFields);
   return out as Omit<T, "sessionId" | StaffOnlyFilingField>;
 }

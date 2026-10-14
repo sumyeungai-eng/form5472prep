@@ -52,7 +52,8 @@ const FIELDS: Array<{
   { key: "ownerCountryTaxResidence", label: "Owner country of tax residence" },
   { key: "ownerCountryBusiness", label: "Owner country of business" },
   { key: "ownerFtin", label: "Owner FTIN" },
-  { key: "ownerItin", label: "Owner ITIN" },
+  // An SSN never goes here (plain text): it has its own encrypted card below.
+  { key: "ownerItin", label: "Owner ITIN (not an SSN — use the SSN card)" },
   { key: "ownerReferenceId", label: "Owner Reference ID" },
   { key: "priorForm5472Filed", label: "Prior Form 5472 filed", kind: "select", options: PRIOR_FORM_OPTIONS },
   { key: "hasUsSourceIncome", label: "Has US-source income", kind: "select", options: BOOLEAN_OPTIONS },

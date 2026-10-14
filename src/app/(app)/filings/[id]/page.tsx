@@ -15,6 +15,9 @@ import { getTiersForSource } from "@/lib/pricing";
 import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { TrustpilotWidget, TRUSTPILOT_TEMPLATES, REVIEW_COLLECTOR_TOKEN } from "@/components/TrustpilotWidget";
 import { supersedeDraftsFor } from "@/lib/supersedeDrafts";
+import { OwnerSsnBox } from "@/components/OwnerSsnBox";
+import { isPiiCryptoConfigured } from "@/lib/crypto/pii";
+import { ssnEntryState } from "@/lib/ownerSsn";
 
 // Statuses where the filing is paid but not yet acknowledged as complete —
 // the window in which the customer still cares "will this land before my
@@ -183,6 +186,17 @@ export default async function FilingDetailPage({
           faxService: filing.faxService,
           faxConfirmationKey: filing.faxConfirmationKey,
         }}
+      />
+
+      {/* Secure SSN box (#ssn — the admin's "Ask client for SSN" email links
+          here). Only the last four digits and the date ever reach the page. */}
+      <OwnerSsnBox
+        filingId={filing.id}
+        last4={filing.ownerSsnLast4}
+        submittedAt={filing.ownerSsnSubmittedAt?.toISOString() ?? null}
+        requested={!!filing.ownerSsnRequestedAt}
+        locked={ssnEntryState(filing.status) === "locked"}
+        configured={isPiiCryptoConfigured()}
       />
 
       <DocumentsUploader

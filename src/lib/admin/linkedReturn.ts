@@ -55,6 +55,13 @@ export const LINKED_RETURN_COPY_FIELDS = [
   "ownerReferenceId",
   "ownerHasFtin",
   "ownerNoPostalCode",
+  // The owner's SSN is owner identity like the ITIN: the extra return prints
+  // it on 4b(1)/8b(1) too. Copied as ciphertext (never decrypted here); the
+  // "requested" stamp is per order and is not copied.
+  "ownerSsnCiphertext",
+  "ownerSsnLast4",
+  "ownerSsnSubmittedAt",
+  "ownerSsnSubmittedBy",
 ] as const;
 // Deliberately NOT copied (they can differ per tax year / return):
 // priorForm5472Filed, hasUsSourceIncome, usTaxWithheld, every Form 7004 /

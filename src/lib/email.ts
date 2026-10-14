@@ -816,6 +816,102 @@ export async function sendReadyToSignEmail(args: {
   });
 }
 
+// ---------- 2b. Owner SSN (docs/reviews/2026-10-15-ssn-capture-spec.md) ----------
+//
+// NEITHER email ever carries the number, its last four digits, or a field for
+// it: the client enters it only on their order page (encrypted at rest).
+
+// Admin "Ask client for SSN": a sign-in link straight to the secure box on the
+// order page (#ssn). Partner-branded like every other client email (S8).
+export async function sendOwnerSsnRequestEmail(args: {
+  email: string;
+  recipientName?: string | null;
+  filingId: string;
+  llcName: string | null;
+  taxYears: number[];
+  portalLink: string;
+  brand?: EmailBrand;
+}) {
+  const salutation = firstNameFrom(args.recipientName) ?? "there";
+  const yearsLabel = args.taxYears.join(", ");
+  const llcLine = args.llcName ?? "your LLC";
+  const yearsSuffix = yearsLabel ? ` (tax year${args.taxYears.length === 1 ? "" : "s"} ${yearsLabel})` : "";
+  const link = portalLinkWithNext(args.portalLink, `/filings/${args.filingId}#ssn`);
+  const intro =
+    `To finish the Form 5472 for ${llcLine}${yearsSuffix}, we need your U.S. Social Security Number (SSN). ` +
+    "It goes on the form as your U.S. identifying number.";
+  const how =
+    "Please do not send it by email. Use the secure box on your order page instead: " +
+    "it is encrypted as soon as you save it and is used only on your IRS forms.";
+  const noSsn = "If you don't have an SSN, just reply to let us know — nothing else is needed.";
+  const bodyHtml = `
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${escapeHtml(intro)}</p>
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${escapeHtml(how)}</p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${escapeHtml(noSsn)}</p>`;
+
+  return sendEmail({
+    log: { kind: "ssn_request", filingId: args.filingId },
+    to: args.email,
+    fromName: args.brand?.name,
+    replyTo: args.brand?.replyTo,
+    subject: "Please add your U.S. Social Security Number securely",
+    text: customerText(
+      salutation,
+      `${intro}\n\n${how}\n\n${noSsn}\n\nAdd your SSN securely: ${link}`,
+      undefined,
+      args.brand,
+    ),
+    html: customerShell({
+      heading: "Please add your SSN securely",
+      salutation,
+      bodyHtml,
+      cta: { label: "Add my SSN securely", url: link },
+      brand: args.brand,
+    }),
+  });
+}
+
+// Admin notification after the CLIENT saved their SSN (S5). No digits at all —
+// the admin reads the number on the admin page (Reveal, change-logged).
+export async function sendOwnerSsnAddedAdminEmail(args: {
+  adminEmail: string;
+  llcName: string | null;
+  taxYears: number[];
+  filingId: string;
+  adminFilingUrl: string;
+  replaced: boolean;
+}) {
+  const llcLine = args.llcName ?? "(no LLC name)";
+  const yearsLabel = args.taxYears.join(", ");
+  const what = args.replaced ? "replaced their SSN" : "added their SSN";
+  const heading = `${llcLine}: the client ${what} — regenerate the package`;
+  return sendEmail({
+    log: { kind: "admin_ssn_added", filingId: args.filingId },
+    to: args.adminEmail,
+    subject: `[SSN ${args.replaced ? "replaced" : "added"}] ${heading}`,
+    text:
+      `${heading}.\n\n` +
+      `The number is stored encrypted and is not included in this email. ` +
+      `Open the filing to regenerate the package (lines 4b(1)/8b(1)); use Reveal on the admin page if you need to see it.\n\n` +
+      `LLC:         ${llcLine}\n` +
+      `Tax year(s): ${yearsLabel}\n` +
+      `Filing ID:   ${args.filingId}\n` +
+      `Admin view:  ${args.adminFilingUrl}\n`,
+    html: adminShell({
+      tag: "Client SSN",
+      heading,
+      rows: [
+        ["LLC", llcLine],
+        ["Tax years", yearsLabel],
+        ["Filing ID", args.filingId],
+        ["Next step", "Regenerate the package so lines 4b(1)/8b(1) show the SSN."],
+        ["Admin view", args.adminFilingUrl],
+      ],
+      extraHtml: `<p style="margin:0;color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.6;">The number is stored encrypted and is not included in this email.</p>`,
+    }),
+  });
+}
+
 // ---------- 3. Fax delivered email ----------
 
 export type FaxProof = {

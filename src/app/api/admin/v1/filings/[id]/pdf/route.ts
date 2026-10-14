@@ -25,10 +25,21 @@ export const GET = withAdminAuth(async (req, { params }) => {
       generatedPdfKey: true,
       signedPdfKey: true,
       faxedPdfKey: true,
+      ownerSsnLast4: true,
     },
   });
   if (!filing) {
     return fail(404, "not_found", "Filing not found");
+  }
+  // A package for an owner with an SSN on file prints the full number on
+  // lines 4b(1)/8b(1). The v1 (iOS) API only ever sees the SSN masked (SSN
+  // capture spec S3), so such PDFs are opened on the admin website instead.
+  if (filing.ownerSsnLast4) {
+    return fail(
+      403,
+      "web_admin_only",
+      "This package shows the owner's SSN. Open it on the admin website.",
+    );
   }
 
   const kind = parsed.data;

@@ -1,5 +1,6 @@
 import { fail, ok, withAdminAuth } from "@/lib/admin/api";
 import { prisma } from "@/lib/prisma";
+import { maskSsn } from "@/lib/crypto/ssn";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,6 +33,11 @@ export const GET = withAdminAuth(async (_req, { params }) => {
         ownerCountryBusiness: true,
         ownerFtin: true,
         ownerItin: true,
+        // SSN capture: masked state only. The ciphertext is never selected and
+        // the plaintext never reaches this API (spec S3; Reveal is web-only).
+        ownerSsnLast4: true,
+        ownerSsnSubmittedAt: true,
+        ownerSsnRequestedAt: true,
         ownerReferenceId: true,
         taxYears: true,
         isDiirsp: true,
@@ -117,6 +123,9 @@ export const GET = withAdminAuth(async (_req, { params }) => {
     ownerCountryBusiness: filing.ownerCountryBusiness,
     ownerFtin: filing.ownerFtin,
     ownerItin: filing.ownerItin,
+    ownerSsnMasked: maskSsn(filing.ownerSsnLast4) || null,
+    ownerSsnSubmittedAt: filing.ownerSsnSubmittedAt?.toISOString() ?? null,
+    ownerSsnRequestedAt: filing.ownerSsnRequestedAt?.toISOString() ?? null,
     ownerReferenceId: filing.ownerReferenceId,
     taxYears: filing.taxYears,
     isDiirsp: filing.isDiirsp,

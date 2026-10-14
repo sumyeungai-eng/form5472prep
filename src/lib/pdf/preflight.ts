@@ -81,6 +81,7 @@ export async function runPreflight(
   checkA33(record, result);
   checkA34(record, result);
   checkA35(record, result);
+  checkA36(record, result);
   checkW31(record, result);
   checkW32(record, result);
   checkW33(record, result);
@@ -861,6 +862,18 @@ function checkA35(record: PackageRecord, result: MutableResult) {
       );
     }
   }
+}
+
+// A36 (SSN capture, 2026-10-15): an SSN is on file but the package-input
+// adapter could not decrypt it, so lines 4b(1)/8b(1) were filled as if there
+// were none. Never quotes the number (there is none to quote).
+function checkA36(record: PackageRecord, result: MutableResult) {
+  if (record.ownerSsnUndecryptable !== true) return;
+  fail(
+    result,
+    "A36",
+    "SSN on file could not be decrypted — check PII_ENCRYPTION_KEY. Lines 4b(1)/8b(1) do not show the SSN in this package.",
+  );
 }
 
 // W34: a late year after the first late year has no "learned of requirement
