@@ -52,3 +52,6 @@ Follow-ups:
 
 ## Lane notes
 - Single deep-reasoner lane in one worktree; an Explore sweep mapped every Filing serialization sink (no full-row leak; the only spread into a client prop is the wizard edit page, which goes through `toClientFiling`). Independent code review run on the diff before commit.
+
+## Addendum — feature switched on (2026-10-15)
+- Owner set `PII_ENCRYPTION_KEY` in Vercel (Production) themselves; this commit triggers the redeploy that loads it. Preview env not set (preview deploys show the "unavailable" state). The key value lives only in Vercel and the owner's password manager.
