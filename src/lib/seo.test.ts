@@ -1,6 +1,8 @@
+import fs from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { formatDuration } from "@/components/HowToSummary";
-import { howTo, organizationNode, pageMeta, SITE_NAME, SITE_URL } from "./seo";
+import { AREA_SERVED, howTo, organizationNode, pageMeta, SITE_NAME, SITE_URL } from "./seo";
 
 describe("pageMeta", () => {
   it("emits canonical, RSS discovery, Open Graph, and Twitter metadata", () => {
@@ -58,12 +60,37 @@ describe("organizationNode", () => {
   it("carries the canonical organization facts", () => {
     const node = organizationNode();
 
-    expect(node).toMatchObject({
-      legalName: "Form5472 Prep",
-      foundingDate: "2025",
-      logo: `${SITE_URL}/logo-mark.svg`,
-    });
+    expect(node).toMatchObject({ foundingDate: "2025" });
     expect(node.sameAs).toEqual(["https://www.trustpilot.com/review/form5472prep.com"]);
+  });
+
+  it("does not assert an unverified legalName (owner-gated)", () => {
+    expect(organizationNode()).not.toHaveProperty("legalName");
+  });
+
+  it("points the logo at a crawlable raster ImageObject that exists in public/", () => {
+    const logo = organizationNode().logo as Record<string, unknown>;
+
+    expect(logo).toMatchObject({
+      "@type": "ImageObject",
+      url: `${SITE_URL}/logo-mark-512.png`,
+      width: 512,
+      height: 512,
+    });
+    expect(String(logo.url)).not.toMatch(/\.svg$/);
+
+    const file = path.join(process.cwd(), "public", "logo-mark-512.png");
+    expect(fs.existsSync(file)).toBe(true);
+    // PNG IHDR: width/height are big-endian u32 at bytes 16-23. Google needs >= 112x112.
+    const buf = fs.readFileSync(file);
+    expect(buf.subarray(1, 4).toString("ascii")).toBe("PNG");
+    expect(buf.readUInt32BE(16)).toBe(512);
+    expect(buf.readUInt32BE(20)).toBe(512);
+  });
+
+  it("serves a worldwide customer base, not only the United States", () => {
+    expect(organizationNode().areaServed).toEqual(AREA_SERVED);
+    expect(AREA_SERVED).toEqual({ "@type": "Place", name: "Worldwide" });
   });
 
   it("carries restored organization authority fields", () => {
@@ -83,7 +110,7 @@ describe("organizationNode", () => {
     expect(node.description).toBe(
       "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs. Every package reviewed by a qualified tax accountant before fax delivery to the IRS Ogden PIN Unit.",
     );
-    expect(node.areaServed).toEqual({ "@type": "Country", name: "United States" });
+    expect(node.areaServed).toEqual({ "@type": "Place", name: "Worldwide" });
     expect(node.contactPoint).toHaveLength(2);
     expect(node.contactPoint).toEqual([
       {

@@ -45,7 +45,13 @@ import { ANSWER_FIRST as LATE_FILING_ANSWER, FAQS as LATE_FILING_FAQS } from "@/
 import { TX_CHECKER_FAQS } from "@/lib/tools/reportable-transactions/content";
 import { formatPrice } from "@/lib/utils";
 
-// llms.txt / llms-full.txt / llms-guides.txt builders.
+// llms.txt / llms-full.txt / llms-services.txt / llms-guides.txt builders.
+//
+// Split (2026-10-16): llms-full.txt is the CORE corpus (entity facts, pricing,
+// about, FAQ, statistics, price comparison, tools, EIN/ITIN, educational topic
+// pages); llms-services.txt carries the /services/* page bodies and the
+// formation-provider customer pages; llms-guides.txt carries every guide.
+// Each file has its own size budget in llms.test.ts.
 //
 // Every price, turnaround, tier feature, address and penalty figure below is
 // interpolated from its source module (pricing.ts, seo.ts, penalty.ts) — never
@@ -178,7 +184,7 @@ const CORE_PAGES: readonly PageLink[] = [
   ["Partners", "/partners", "Partner / referral program for accountants, formation agents, and registered agents."],
   ["Guides index", "/blog", "Jargon-free guides for foreign-owned US LLC owners on Form 5472, pro forma 1120, DIIRSP catch-up filings, and related topics."],
   ["Contact", "/contact", "Contact Form5472 Prep for Form 5472, pro forma 1120, EIN, ITIN, and catch-up filing questions."],
-  ["About", "/about", "Who we are, how we work, and what we are and aren't."],
+  ["About", "/about", "What we do and don't do, how a filing works step by step, who reviews it, how customer data is protected and how our guides are sourced."],
   ["Compare Form 5472 filing services", "/compare", "Neutral comparison pages for formation and registered-agent providers (Stripe Atlas, doola, Firstbase, Clemta, StartGlobal, Zenind, Northwest Registered Agent) and what to confirm about Form 5472."],
   ["Form 5472 filing services compared: 2026 prices", "/compare/form-5472-filing-services", comparePageSummary()],
   ["Press kit", "/press", "Short blurb, boilerplate, key facts, logo files, brand colours and press contact for describing Form5472 Prep accurately."],
@@ -227,7 +233,7 @@ function buildServicePages(): string {
       (page) => `- [${page.h1}](${SITE_URL}${servicePath(page.slug)}): ${page.longDescription}`,
     ),
   ];
-  return `## Services\n\n${lines.join("\n")}`;
+  return `## Services\n\nFull text of every service page: ${SITE_URL}/llms-services.txt\n\n${lines.join("\n")}`;
 }
 
 function buildServiceDocument(page: (typeof SERVICE_PAGES)[number]): string {
@@ -247,6 +253,30 @@ function indexableLandingPages() {
   return LANDING_PAGES.filter((page) => !page.noindex).sort((a, b) =>
     a.slug.localeCompare(b.slug),
   );
+}
+
+// Landing pages written for customers of a specific formation / registered-
+// agent provider ("formed with doola? Form 5472 is separate"). They are
+// commercial, service-intent pages, so their full text ships in
+// llms-services.txt next to the /services/* pages instead of the core corpus.
+// llms.test.ts fails if a slug here stops existing, and checks every indexable
+// landing page lands in exactly one of the two files.
+export const PROVIDER_LANDING_SLUGS: ReadonlySet<string> = new Set([
+  "clemta-form-5472",
+  "doola-form-5472",
+  "firstbase-form-5472",
+  "northwest-registered-agent-form-5472",
+  "startglobal-form-5472",
+  "stripe-atlas-form-5472",
+  "zenind-form-5472",
+]);
+
+function coreLandingPages() {
+  return indexableLandingPages().filter((page) => !PROVIDER_LANDING_SLUGS.has(page.slug));
+}
+
+function providerLandingPages() {
+  return indexableLandingPages().filter((page) => PROVIDER_LANDING_SLUGS.has(page.slug));
 }
 
 function buildTopicPages(): string {
@@ -342,7 +372,8 @@ export async function buildLlmsTxt(): Promise<string> {
     buildServicePages(),
     buildTopicPages(),
     buildGuides(posts),
-    `Core full text (pricing, all FAQ answers, statistics, tools, EIN/ITIN, services and topic pages): ${SITE_URL}/llms-full.txt`,
+    `Core full text (pricing, all FAQ answers, statistics, tools, EIN/ITIN and topic pages): ${SITE_URL}/llms-full.txt`,
+    `Full text of every service page and formation-provider page: ${SITE_URL}/llms-services.txt`,
     `Full text of every guide: ${SITE_URL}/llms-guides.txt`,
     `RSS 2.0 feed with the latest public guides (${posts.length} items as of ${lastUpdated}): ${SITE_URL}/feed.xml`,
     BACKGROUND,
@@ -471,9 +502,11 @@ function buildToolsDocument(): string {
 
 /**
  * /llms-full.txt — the CORE corpus (entity, pricing, FAQ, statistics, about,
- * tools, EIN/ITIN, services, topic pages). Kept to ~400 KB so AI fetchers that
- * truncate long files still get every fact; the 180+ guides live in
- * /llms-guides.txt (buildLlmsGuidesTxt).
+ * price comparison, tools, EIN/ITIN, educational topic pages). Kept well under
+ * the 460 KB fetcher limit (budget in llms.test.ts) so AI fetchers that
+ * truncate long files still get every fact. Service pages and formation-
+ * provider pages live in /llms-services.txt (buildLlmsServicesTxt); the 180+
+ * guides live in /llms-guides.txt (buildLlmsGuidesTxt).
  */
 export async function buildLlmsFullTxt(): Promise<string> {
   const posts = await getAllPosts();
@@ -483,6 +516,7 @@ export async function buildLlmsFullTxt(): Promise<string> {
     ENTITY_SUMMARY,
     `Last updated: ${lastUpdated}`,
     `Pricing is authoritative at ${SITE_URL}/pricing — treat any pricing figures below as informational and defer to that page if they ever disagree.`,
+    `Full text of every service page (${SERVICE_PAGES.length} pages) and formation-provider page is in a separate file: ${SITE_URL}/llms-services.txt`,
     `Full text of every guide (${posts.length} guides) is in a separate file: ${SITE_URL}/llms-guides.txt`,
   ].join("\n\n");
   const factsDocument = [
@@ -504,8 +538,47 @@ export async function buildLlmsFullTxt(): Promise<string> {
     buildPriceComparisonDocument(),
     buildToolsDocument(),
     buildEinItinDocument(),
+    ...coreLandingPages().map(buildLandingDocument),
+  ];
+
+  return `${header}\n\n${documents.join(SECTION_SEPARATOR)}\n`;
+}
+
+function latestDate(dates: string[]): string {
+  let latest = CONTENT_LAST_REVIEWED;
+  for (const date of dates) {
+    const time = Date.parse(date);
+    if (Number.isFinite(time) && time > Date.parse(latest)) latest = date;
+  }
+  return formatDate(latest);
+}
+
+/**
+ * /llms-services.txt — full text of every /services/* page plus the
+ * formation-provider customer pages (PROVIDER_LANDING_SLUGS). Split out of
+ * llms-full.txt on 2026-10-16 when the core corpus reached ~453 KB of its
+ * 460 KB budget. Same facts-from-code rules as the other files.
+ */
+export async function buildLlmsServicesTxt(): Promise<string> {
+  const providerPages = providerLandingPages();
+  const lastUpdated = latestDate([
+    ...SERVICE_PAGES.map((page) => serviceLastReviewed(page)),
+    ...providerPages.map((page) => page.updated ?? CONTENT_LAST_REVIEWED),
+  ]);
+  const header = [
+    `# ${SITE_NAME} — Services (full text)`,
+    ENTITY_SUMMARY,
+    `Last updated: ${lastUpdated}`,
+    `Core facts (pricing, FAQ, statistics, tools, EIN/ITIN, topic pages): ${SITE_URL}/llms-full.txt. Full text of every guide: ${SITE_URL}/llms-guides.txt. Pricing is authoritative at ${SITE_URL}/pricing — treat any pricing figures below as informational and defer to that page if they ever disagree.`,
+    `## Contents\n\n${[
+      `- [${SERVICES_HUB.h1}](${SITE_URL}${SERVICES_HUB_PATH}) (hub page, not reproduced below)`,
+      ...SERVICE_PAGES.map((page) => `- [${page.h1}](${SITE_URL}${servicePath(page.slug)})`),
+      ...providerPages.map((page) => `- [${page.h1}](${SITE_URL}/${page.slug})`),
+    ].join("\n")}`,
+  ].join("\n\n");
+  const documents = [
     ...SERVICE_PAGES.map(buildServiceDocument),
-    ...indexableLandingPages().map(buildLandingDocument),
+    ...providerPages.map(buildLandingDocument),
   ];
 
   return `${header}\n\n${documents.join(SECTION_SEPARATOR)}\n`;
@@ -532,7 +605,7 @@ export async function buildLlmsGuidesTxt(): Promise<string> {
     `# ${SITE_NAME} — Guides (full text)`,
     ENTITY_SUMMARY,
     `Last updated: ${lastUpdated}`,
-    `Core facts (pricing, FAQ, statistics, services, topic pages): ${SITE_URL}/llms-full.txt. Pricing is authoritative at ${SITE_URL}/pricing — treat any pricing figures in the guides below as informational and defer to that page if they ever disagree.`,
+    `Core facts (pricing, FAQ, statistics, tools, topic pages): ${SITE_URL}/llms-full.txt. Service pages: ${SITE_URL}/llms-services.txt. Pricing is authoritative at ${SITE_URL}/pricing — treat any pricing figures in the guides below as informational and defer to that page if they ever disagree.`,
   ].join("\n\n");
   const blogDocuments = await buildBlogDocuments(posts);
 

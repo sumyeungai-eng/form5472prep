@@ -1,48 +1,101 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ShieldCheck, FileText, Send, PenTool, Users, ArrowRight } from "lucide-react";
+import type { ReactNode } from "react";
+import { ArrowRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/JsonLd";
-import { env } from "@/lib/env";
-import { CONTENT_LAST_REVIEWED, organizationNode, pageMeta } from "@/lib/seo";
+import { breadcrumbList, ORG_REF, organizationNode, pageMeta, SITE_NAME, SITE_URL, SPEAKABLE } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
+import {
+  ABOUT_LAST_REVIEWED,
+  ABOUT_LAST_REVIEWED_LABEL,
+  CTA_TEXT,
+  FOUNDED,
+  KEY_FACTS,
+  LEAD,
+  SECTIONS,
+  STEPS,
+  type AboutLink,
+  type AboutSection,
+} from "./content";
+
+// All copy lives in ./content.ts (policed by ./content.test.ts).
+const DESCRIPTION =
+  "Who Form5472 Prep is, what we do and don't do, how a Form 5472 filing works step by step, how your data is protected and how our guides are sourced.";
 
 export const metadata: Metadata = {
   // Brand is already in the title — seoTitle() stops the template doubling it.
   title: seoTitle("About Form5472 Prep"),
-  description:
-    "About Form5472 Prep: done-for-you filing and courier service for a foreign-owned single-member LLC's Form 5472 + pro forma 1120.",
+  description: DESCRIPTION,
   ...pageMeta({
     title: "About Form5472 Prep",
-    description:
-      "About Form5472 Prep: done-for-you filing and courier service for a foreign-owned single-member LLC's Form 5472 + pro forma 1120.",
+    description: DESCRIPTION,
     path: "/about",
   }),
 };
 
-const steps = [
-  { icon: FileText, title: "You complete the intake", body: "Provide your LLC and owner details, related-party transactions and year-end assets. Keep supporting records available so the figures can be checked." },
-  { icon: ShieldCheck, title: "We prepare the package", body: "Pro forma Form 1120 marked “Foreign-Owned U.S. DE”, the applicable Form 5472 parts and supporting statements, plus late-filing documentation where appropriate." },
-  { icon: PenTool, title: "Review and resolve signing", body: "A qualified tax accountant reviews the package before submission. Establish signing authority and the method appropriate to the document and delivery route before the completed cover is signed." },
-  { icon: Send, title: "We fax and document transmission", body: "We fax the signed package to the IRS Ogden PIN Unit and provide the timestamped provider transmission receipt. Keep it with the submitted package; it is not IRS acceptance or a guarantee of penalty relief." },
-];
+function SectionLinks({ links }: { links: AboutLink[] }) {
+  return (
+    <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+      {links.map((link) => (
+        <li key={link.href}>
+          {link.external ? (
+            <a href={link.href} className="text-accent hover:underline" rel="nofollow noopener" target="_blank">
+              {link.label}
+            </a>
+          ) : (
+            <Link href={link.href} className="text-accent hover:underline">
+              {link.label}
+            </Link>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function QaSection({ section, children }: { section: AboutSection; children?: ReactNode }) {
+  return (
+    <section id={section.id} className="scroll-mt-24 border-b border-slate-200 py-12 first:pt-0 last:border-b-0">
+      <h2 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">{section.question}</h2>
+      <p className="mt-4 text-base leading-relaxed text-slate-700">{section.answer}</p>
+      {section.points && section.points.length > 0 ? (
+        <ul className="mt-5 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
+          {section.points.map((point) => (
+            <li key={point}>{point}</li>
+          ))}
+        </ul>
+      ) : null}
+      {children}
+      {section.links && section.links.length > 0 ? <SectionLinks links={section.links} /> : null}
+    </section>
+  );
+}
 
 export default function AboutPage() {
+  const url = `${SITE_URL}/about`;
   const aboutJsonLd = {
     "@context": "https://schema.org",
     "@type": "AboutPage",
-    name: "About Form5472 Prep",
-    url: `${env.appUrl}/about`,
-    dateModified: CONTENT_LAST_REVIEWED,
-    mainEntity: organizationNode({
-      description:
-        "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs, reviewed by a qualified tax accountant before fax delivery to the IRS Ogden PIN Unit.",
-    }),
+    "@id": `${url}#webpage`,
+    url,
+    name: `About ${SITE_NAME}`,
+    description: DESCRIPTION,
+    inLanguage: "en",
+    dateModified: ABOUT_LAST_REVIEWED,
+    about: ORG_REF,
+    mainEntity: organizationNode(),
+    speakable: SPEAKABLE,
   };
+  const breadcrumbJsonLd = breadcrumbList([
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+  ]);
 
   return (
     <>
       <JsonLd data={aboutJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-ink text-white">
@@ -58,118 +111,63 @@ export default function AboutPage() {
             About us
           </p>
           <h1 className="mt-5 font-serif text-4xl sm:text-5xl font-semibold leading-[1.08] tracking-tight text-balance">
-            About Form5472 Prep
+            About {SITE_NAME}
           </h1>
-          <p className="mt-4 font-serif text-xl text-accent-100">
-            One filing, done properly. Founded in {String(organizationNode().foundingDate)}, we prepare Form 5472 and pro forma 1120 filings for foreign-owned U.S. LLCs.
+          <p data-speakable className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-200">
+            {LEAD}
           </p>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
-            Form5472 Prep prepares and files the IRS Form 5472 and pro forma Form 1120
-            package for supported foreign-owned U.S. single-member disregarded LLCs
-            with reportable transactions. We document transmission. We are not a general
-            tax firm and we don&apos;t try to be.
+          <p className="mt-6 font-mono text-xs uppercase tracking-[0.15em] text-slate-400">
+            Founded {FOUNDED} · Last reviewed{" "}
+            <time dateTime={ABOUT_LAST_REVIEWED}>{ABOUT_LAST_REVIEWED_LABEL}</time>
           </p>
         </div>
       </section>
 
-      {/* Why we exist */}
-      <section className="border-b border-slate-200">
-        <div className="mx-auto max-w-3xl px-6 py-16 space-y-5 text-slate-700 leading-relaxed">
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">Why did we build Form5472 Prep?</h2>
-          <p>
-            Most foreign founders discover Form 5472 the hard way — through a warning
-            about a <strong>$25,000 penalty</strong>, often after they&apos;ve already missed a
-            deadline. The form isn&apos;t hard to fill in, but it&apos;s hard to fill in completely,
-            correctly, and on time from outside the US, in a format the IRS accepts, using a
-            channel (fax to the Ogden PIN Unit) most people no longer have.
-          </p>
-          <p>
-            The foreign-owned disregarded-entity package uses special fax or mail
-            instructions rather than ordinary corporate e-file. Our filing service
-            focuses on this profile, with accountant review and a provider receipt
-            documenting transmission. Separate EIN and ITIN application services are
-            available when those numbers are genuinely needed.
-          </p>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="border-b border-slate-200 bg-paper">
-        <div className="mx-auto max-w-5xl px-6 py-16">
-          <div className="max-w-2xl">
-            <p className="font-mono text-xs font-medium uppercase tracking-[0.18em] text-accent">How we work</p>
-            <h2 className="mt-3 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
-              How do we work?
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-slate-600">
-              You complete the intake, we prepare the package, signing is resolved, and we fax and document transmission.
-            </p>
-          </div>
-          <ol className="mt-10 grid gap-6 sm:grid-cols-2">
-            {steps.map((s, i) => (
-              <li key={s.title} className="rounded-2xl border border-paper-edge bg-white p-6">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-accent text-white font-mono text-sm font-semibold">
-                    {i + 1}
-                  </span>
-                  <s.icon className="h-5 w-5 text-accent" />
-                </div>
-                <h3 className="mt-4 font-semibold text-ink">{s.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{s.body}</p>
-              </li>
+      {/* Key facts */}
+      <section aria-label="Key facts" className="border-b border-slate-200 bg-paper">
+        <div className="mx-auto max-w-4xl px-6 py-10">
+          {/* Not an h2: every h2 on this page is a question (AEO contract). */}
+          <p className="font-mono text-xs font-medium uppercase tracking-[0.18em] text-accent">Key facts</p>
+          <dl className="mt-5 grid gap-x-8 gap-y-4 sm:grid-cols-2">
+            {KEY_FACTS.map((fact) => (
+              <div key={fact.term} className="border-t border-paper-edge pt-3">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">{fact.term}</dt>
+                <dd className="mt-1 text-sm leading-relaxed text-ink">{fact.detail}</dd>
+              </div>
             ))}
-          </ol>
+          </dl>
         </div>
       </section>
 
-      {/* What we are / aren't — trust */}
-      <section className="border-b border-slate-200">
-        <div className="mx-auto max-w-3xl px-6 py-16">
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">What are we, and what are we not?</h2>
-          <p className="mt-4 text-sm leading-relaxed text-slate-600">
-            We are a form-preparation and filing-courier service, and we are not a general tax firm.
-          </p>
-          <div className="mt-8 grid gap-8 sm:grid-cols-2">
-            <div>
-              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-emerald-700">We are</p>
-              <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                <li>A form-preparation and filing-courier service for Form 5472 + pro forma 1120.</li>
-                <li>Reviewed by a qualified tax accountant before every submission.</li>
-                <li>Transparent about both tiers and up front about multi-year pricing.</li>
-                <li>Built to provide a timestamped provider receipt as transmission evidence.</li>
-              </ul>
-            </div>
-            <div>
-              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-slate-500">We are not</p>
-              <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                <li>A tool for multi-member LLCs or corporations (those file different returns).</li>
-                <li>Responsible for the accuracy of the information you submit — that stays with you.</li>
-                <li>Affiliated with the IRS or any government agency.</li>
-              </ul>
-            </div>
-          </div>
-          <p className="mt-8 text-sm leading-relaxed text-slate-600">
-            The guides on our{" "}
-            <Link href="/blog" className="text-accent hover:underline">blog</Link>{" "}
-            are researched from primary sources — chiefly the{" "}
-            <a href="https://www.irs.gov/instructions/i5472" className="text-accent hover:underline" rel="nofollow">IRS Instructions for Form 5472</a>{" "}
-            and the Internal Revenue Code — and reviewed on a regular schedule; see our{" "}
-            <Link href="/editorial-policy" className="text-accent hover:underline">editorial policy</Link>.
-            For how we handle your data, see{" "}
-            <Link href="/security" className="text-accent hover:underline">Security</Link>{" "}and{" "}
-            <Link href="/data-retention" className="text-accent hover:underline">Data Retention</Link>.
-            Questions? Email{" "}
-            <a href="mailto:support@form5472prep.com" className="text-accent hover:underline">support@form5472prep.com</a>.
-          </p>
-        </div>
-      </section>
+      {/* Question-led sections */}
+      <div className="mx-auto max-w-3xl px-6 py-16">
+        {SECTIONS.map((section) => (
+          <QaSection key={section.id} section={section}>
+            {section.id === "how-a-filing-works" ? (
+              <ol className="mt-6 grid gap-4 sm:grid-cols-2">
+                {STEPS.map((step, i) => (
+                  <li key={step.title} className="rounded-2xl border border-paper-edge bg-white p-5">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-accent font-mono text-sm font-semibold text-white">
+                        {i + 1}
+                      </span>
+                      <h3 className="font-semibold text-ink">{step.title}</h3>
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600">{step.body}</p>
+                  </li>
+                ))}
+              </ol>
+            ) : null}
+          </QaSection>
+        ))}
+      </div>
 
       {/* CTA */}
       <section className="relative overflow-hidden bg-ink">
         <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-seal/50" />
         <div className="relative mx-auto max-w-3xl px-6 py-16 text-center">
           <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-white text-balance">Ready to file?</h2>
-          <p className="mt-3 text-slate-300">$149 ready in 5-7 business days, or $199 ready to sign within 24 hours — same filing either way, accountant-reviewed and faxed to the IRS with a receipt once you sign.</p>
+          <p className="mt-3 text-slate-300">{CTA_TEXT}</p>
           <div className="mt-7">
             <Link href="/start" className="group inline-block">
               <Button size="lg" className="bg-white !text-ink hover:bg-slate-100">
