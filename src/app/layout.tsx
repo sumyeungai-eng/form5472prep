@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4, IBM_Plex_Mono } from "next/font/google";
-import Script from "next/script";
 import { env } from "@/lib/env";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -110,10 +109,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             alone was not enough. Conversion events queue in `dataLayer` via the
             inline init and flush once the script loads, so nothing is lost. The
             conversion event itself is dispatched from
-            src/lib/analytics/googleAds.ts. */}
-        <Script id="google-ads-init" strategy="afterInteractive">
-          {googleAdsBootstrapScript(GOOGLE_ADS_TAG_ID)}
-        </Script>
+            src/lib/analytics/googleAds.ts.
+            Plain inline <script>, not next/script (2026-10-16): the bootstrap is
+            ~1 KB of self-gating code, and next/script was the only reason its
+            ~2.7 KB-gzipped client runtime shipped on every marketing page before
+            first paint. The bootstrap now runs while the HTML is parsed instead
+            of after hydration; the gtag.js gate (load + FCP + idle) is unchanged
+            and covered by googleAdsLoader.test.ts (readyState "loading"). */}
+        <script
+          id="google-ads-init"
+          dangerouslySetInnerHTML={{ __html: googleAdsBootstrapScript(GOOGLE_ADS_TAG_ID) }}
+        />
         {children}
         <MetaPixel />
         <ChatWidget />
