@@ -58,7 +58,7 @@ const FAQS = [
   },
   {
     q: "Where do these figures come from?",
-    a: "Each figure links to its official source: the Internal Revenue Code, Treasury regulations, the Federal Register, IRS instructions, the Internal Revenue Manual, IRS Statistics of Income and the National Taxpayer Advocate. The review date is shown at the top.",
+    a: `${SITE_NAME} took each figure from its official source and links to it: the Internal Revenue Code, Treasury regulations, the Federal Register, IRS instructions, the Internal Revenue Manual, IRS Statistics of Income and the National Taxpayer Advocate. The review date is shown at the top.`,
   },
   {
     q: "Can I quote these statistics?",
@@ -171,8 +171,9 @@ export default function Form5472StatisticsPage() {
           </h1>
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-slate-300" data-speakable>
             The Form 5472 penalty is $25,000 per tax year, plus $25,000 for each 30 days a failure continues more
-            than 90 days after IRS notice, with no maximum. Below are {FORM5472_STATS.length} Form 5472 facts and
-            figures, each linked to the official source it comes from.
+            than 90 days after IRS notice, with no maximum. {SITE_NAME} compiled the {FORM5472_STATS.length} Form
+            5472 facts and figures below from IRS, Treasury and National Taxpayer Advocate sources, each linked to
+            the official source it comes from.
           </p>
           <p className="mt-5 text-sm text-slate-400">
             Last reviewed{" "}

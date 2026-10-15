@@ -60,7 +60,7 @@ export const STAT_CATEGORIES: Array<{ id: StatCategory; question: string; intro:
     id: "enforcement",
     question: "How does the IRS enforce Form 5472 penalties?",
     intro:
-      "Since 2013 the IRS has systemically assessed the initial penalty on each Form 5472 attached to a late-filed Form 1120. In 2018, 55% of the systemic Form 5471 and 5472 penalties were abated, or 71% by dollar value, according to the National Taxpayer Advocate.",
+      "Form5472 Prep's review of National Taxpayer Advocate data: in 2018 the IRS systemically assessed 9,889 Form 5471 and 5472 penalties totalling $253,087,500, and 55% were abated, or 71% by dollar value. Since 2013 the IRS has assessed the initial penalty automatically on each Form 5472 attached to a late-filed Form 1120.",
   },
   {
     id: "who-files",
@@ -82,9 +82,11 @@ export const STAT_CATEGORIES: Array<{ id: StatCategory; question: string; intro:
   },
   {
     id: "irs-data",
-    question: "What does IRS data show about Form 5472 filers?",
+    // Worded as the answer-engine prompt "how many foreign-owned companies
+    // file form 5472" (Moz AI Visibility, 2026-10-12).
+    question: "How many foreign-owned companies file Form 5472?",
     intro:
-      "IRS Statistics of Income (SOI) publishes Form 5472 data only for foreign-owned domestic corporations with total receipts of $500 million or more. It does not cover small LLCs.",
+      "Form5472 Prep uses the IRS Statistics of Income (SOI) count: 1,529 foreign-owned US corporations with $500 million or more in receipts filed Forms 5472 for tax year 2021, reporting 31,111 related foreign persons. SOI publishes Form 5472 data only for corporations of that size, so it does not count small foreign-owned LLCs.",
   },
 ];
 

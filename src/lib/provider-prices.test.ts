@@ -76,6 +76,15 @@ describe("provider-prices data", () => {
     }
   });
 
+  // The niche rivals answer engines cite next to us (Moz AI Visibility
+  // 2026-10-12) stay in the table while their own pages publish a price.
+  it("lists the filing services answer engines cite", () => {
+    const ids = PROVIDER_PRICES.map((p) => p.id);
+    for (const id of ["form5472-io", "edetax", "5472direct", "form5472-tax", "simple5472", "form5472-ai"]) {
+      expect(ids, id).toContain(id);
+    }
+  });
+
   it("never lists Snapfile", () => {
     const all = JSON.stringify([PROVIDER_PRICES, UNVERIFIED_PROVIDERS]);
     expect(all).not.toMatch(/snapfile/i);
@@ -117,14 +126,15 @@ describe("provider-prices helpers", () => {
   });
 
   it("computes the survey's ranges", () => {
-    expect(perFilingRange()).toMatchObject({ min: 49.99, max: 599 });
+    expect(perFilingRange()).toMatchObject({ min: 79.99, max: 599 });
     expect(bundleRange()).toMatchObject({ min: 899, max: 1500 });
   });
 
   it("reproduces the survey's three-late-year arithmetic", () => {
     const byId = Object.fromEntries(lateYearProviders().map((p) => [p.id, threeLateYearsUsd(p)]));
+    // Edetax left this table on 2026-10-15: its page announced a price rise
+    // without saying what late years cost afterwards.
     expect(byId).toEqual({
-      edetax: 149.97,
       form5472prep: TIERS.standard.priceCents / 100 + (2 * MULTI_YEAR_ADDON_CENTS) / 100,
       "form5472-tax": 897,
       "laramie-ledger": 1347,
@@ -135,6 +145,7 @@ describe("provider-prices helpers", () => {
 
   it("formats dollars", () => {
     expect(usd(49.99)).toBe("$49.99");
+    expect(usd(79.99)).toBe("$79.99");
     expect(usd(149)).toBe("$149");
     expect(usd(1500)).toBe("$1,500");
     expect(usd(149.97)).toBe("$149.97");

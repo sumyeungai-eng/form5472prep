@@ -3,17 +3,23 @@ title: "Final Form 5472 After Closing a U.S. LLC"
 description: "Closing a foreign-owned U.S. LLC does not erase its final Form 5472 filing. Report dissolution transactions and mark the pro forma 1120 final."
 date: 2026-09-28
 publishAt: "2026-09-28T09:00:00-04:00"
-updated: 2026-08-28
+updated: 2026-10-15
 author: "Form5472 Prep"
 tags: ["form-5472", "llc-dissolution", "final-return", "foreign-owned-llc"]
 draft: false
 ---
 
-**Last updated: September 2026**
+**Last updated: October 2026**
 
 A foreign-owned U.S. single-member LLC generally files a final Form 5472 with a [pro forma Form 1120](/pro-forma-1120) for the year it closes when reportable transactions occurred. Dissolution expenses, owner-paid bills, debt settlements, and final distributions can be reportable. Mark the pro forma Form 1120 as final, send the package by the applicable deadline, and retain proof of delivery. For the filing steps, see [how to file Form 5472](/file-form-5472).
 
 [Start a final-year filing](/start) before closing the LLC’s records.
+
+## Do I need to file a final Form 5472 when I dissolve my LLC?
+
+Yes, if the LLC had a reportable transaction in its final year, such as a final distribution, owner-paid closing costs or a loan repayment. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) list amounts paid or received in connection with dissolution as reportable. File it with a pro forma Form 1120 marked “Final return”. Form5472 Prep prepares and faxes final-year filings.
+
+The [Form 1120 instructions](https://www.irs.gov/instructions/i1120) say to check the “Final return” box in item E when the corporation will no longer exist. If no reportable transaction happened in the final year, the Form 5472 exception for a year with no reportable transactions applies; check the bank and card records for the whole period before relying on it.
 
 ## Why can a dissolved LLC still owe Form 5472?
 
@@ -62,7 +68,7 @@ The due date depends on the LLC’s final tax period and classification. A calen
 
 For a final short year, the [Form 5472 deadline calculator](/form-5472-deadline-calculator) helps separate the federal due date from the state dissolution date.
 
-Do not assume state dissolution makes the federal return immediately due or eliminates the regular due date. Confirm short-period or classification issues with a qualified tax professional.
+Do not assume state dissolution makes the federal return immediately due or eliminates the regular due date. For corporations, the [Form 1120 instructions](https://www.irs.gov/instructions/i1120) say a corporation that has dissolved generally files by the 15th day of the 4th month after the date it dissolved, which can be earlier than the calendar-year date; filing by the earlier date removes the doubt. Confirm short-period or classification issues with a qualified tax professional.
 
 ## How does Form5472 Prep handle a final year?
 

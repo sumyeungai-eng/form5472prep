@@ -5,6 +5,15 @@ import { FORM5472_STATS, STAT_CATEGORIES, STATS_LAST_REVIEWED } from "@/lib/form
 import { LANDING_PAGES } from "@/lib/landing-pages";
 import { CONTINUATION_GRACE_DAYS, CONTINUATION_PER_PERIOD_CENTS, PENALTY_PER_FORM_CENTS } from "@/lib/penalty";
 import {
+  PRICES_CHECKED_ON,
+  UNVERIFIED_PROVIDERS,
+  bundleRange,
+  perFilingRange,
+  pricedProviders,
+  unpricedProviders,
+  usd,
+} from "@/lib/provider-prices";
+import {
   EIN_PRICE_CENTS,
   EXPRESS_TURNAROUND,
   ITIN_PRICE_CENTS,
@@ -138,6 +147,14 @@ const FILING_DEADLINE = `## Filing deadline
 
 type PageLink = readonly [title: string, path: string, description: string];
 
+// Price-comparison facts come from src/lib/provider-prices.ts (each competitor
+// row quotes the provider's own page, dated PRICES_CHECKED_ON), never typed here.
+function comparePageSummary(): string {
+  const oneYear = perFilingRange();
+  const bundles = bundleRange();
+  return `${SITE_NAME}'s sourced price table, checked ${PRICES_CHECKED_ON}: ${oneYear.count} filing services and software tools publish one-year Form 5472 + pro forma 1120 prices from ${usd(oneYear.min)} to ${usd(oneYear.max)}; formation-provider bundles list ${usd(bundles.min)} to ${usd(bundles.max)} a year. Each competitor price is copied from its own page, and our own service is one of the rows.`;
+}
+
 // The eight free tools. Shared by llms.txt (link list) and llms-full.txt.
 const TOOL_PAGES: readonly PageLink[] = [
   ["Form 5472 deadline calculator", "/form-5472-deadline-calculator", "Work out exactly when your Form 5472 + pro forma 1120 is due, including dissolution short-years and Form 7004 extensions."],
@@ -163,7 +180,7 @@ const CORE_PAGES: readonly PageLink[] = [
   ["Contact", "/contact", "Contact Form5472 Prep for Form 5472, pro forma 1120, EIN, ITIN, and catch-up filing questions."],
   ["About", "/about", "Who we are, how we work, and what we are and aren't."],
   ["Compare Form 5472 filing services", "/compare", "Neutral comparison pages for formation and registered-agent providers (Stripe Atlas, doola, Firstbase, Clemta, StartGlobal, Zenind, Northwest Registered Agent) and what to confirm about Form 5472."],
-  ["Form 5472 filing services compared: 2026 prices", "/compare/form-5472-filing-services", "Sourced price table of Form 5472 filing services, software tools, CPA firms and formation-provider bundles, copied from each provider's own pricing page with the date checked. Form5472 Prep is one of the services listed."],
+  ["Form 5472 filing services compared: 2026 prices", "/compare/form-5472-filing-services", comparePageSummary()],
   ["Press kit", "/press", "Short blurb, boilerplate, key facts, logo files, brand colours and press contact for describing Form5472 Prep accurately."],
   ["Editorial policy", "/editorial-policy", "How our guides are sourced, reviewed, and kept current."],
   ["Security", "/security", "How customer data is protected in transit and at rest."],
@@ -380,8 +397,35 @@ function buildStatisticsDocument(): string {
   });
   return [
     `# Form 5472 statistics and key figures\nSource: ${SITE_URL}/form-5472-statistics\nLast reviewed: ${STATS_LAST_REVIEWED}`,
-    "Every figure below comes from an official source (IRS, Treasury, the US Code or eCFR) and is stated as the source states it.",
+    `${SITE_NAME} took every figure below from an official source (IRS, Treasury, the US Code, eCFR, the Federal Register or the National Taxpayer Advocate) and states it as the source states it.`,
     ...groups,
+  ].join("\n\n");
+}
+
+function buildPriceComparisonDocument(): string {
+  const oneYear = perFilingRange();
+  const bundles = bundleRange();
+  const priced = pricedProviders().map(
+    (p) =>
+      // Kept short: llms-full.txt has a size budget (llms.test.ts). The full
+      // columns (past years, delivery, review) are on the page itself.
+      `- ${p.name}${p.isOurs ? " (this site)" : ""}: ${usd(p.oneYearPriceUsd as number)}, ${p.kind}. ${p.priceNote}. Source: ${p.isOurs ? `${SITE_URL}/pricing` : p.sourceUrl}`,
+  );
+  const unpriced = [
+    ...unpricedProviders().map((p) => `- ${p.name}: ${p.priceNote} Source: ${p.sourceUrl}`),
+    ...UNVERIFIED_PROVIDERS.map((u) => `- ${u.name}: ${u.note}`),
+  ];
+  return [
+    `# Form 5472 filing services compared: 2026 prices
+Source: ${SITE_URL}/compare/form-5472-filing-services
+Last reviewed: ${PRICES_CHECKED_ON}`,
+    `${SITE_NAME}'s survey of providers' own pages, checked ${PRICES_CHECKED_ON}: published prices for one year of Form 5472 with the pro forma Form 1120 run from ${usd(oneYear.min)} to ${usd(oneYear.max)} across ${oneYear.count} filing services and software tools, and formation providers' annual packages that include Form 5472 list ${usd(bundles.min)} to ${usd(bundles.max)} a year. Our own service is one of the rows. Prices change, so check each provider's page before relying on a figure.`,
+    `## Published one-year prices, lowest first
+
+${priced.join("\n")}`,
+    `## No published Form 5472 price
+
+${unpriced.join("\n")}`,
   ].join("\n\n");
 }
 
@@ -457,6 +501,7 @@ export async function buildLlmsFullTxt(): Promise<string> {
     buildAboutDocument(),
     buildFaqDocument(),
     buildStatisticsDocument(),
+    buildPriceComparisonDocument(),
     buildToolsDocument(),
     buildEinItinDocument(),
     ...SERVICE_PAGES.map(buildServiceDocument),

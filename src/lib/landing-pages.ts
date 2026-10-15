@@ -4,6 +4,7 @@
 
 import { IRS_OGDEN_FAX, IRS_OGDEN_MAIL_ADDRESS } from "@/lib/seo";
 import { MULTI_YEAR_ADDON_CENTS, TIERS } from "@/lib/pricing";
+import { PRICES_CHECKED_ON_LABEL, PROVIDER_PRICES, perFilingRange, usd } from "@/lib/provider-prices";
 import { formatPrice } from "@/lib/utils";
 
 // Our own prices, derived from src/lib/pricing.ts so landing copy can never
@@ -23,6 +24,18 @@ const PRICE_EXP_3Y = formatPrice(EXP_CENTS + MULTI_YEAR_ADDON_CENTS * 2);
 const PRICE_STD_X3 = formatPrice(STD_CENTS * 3);
 // One Standard filing plus Delaware's $400 annual LLC tax (a state figure).
 const PRICE_STD_PLUS_DE_TAX = formatPrice(STD_CENTS + 40_000);
+
+// Competitor figures for the "alternatives" answers come from the sourced
+// survey in src/lib/provider-prices.ts (each row quotes the provider's own
+// page), so this copy moves with the comparison table, never ahead of it.
+function providerPriceUsd(id: string): string {
+  const row = PROVIDER_PRICES.find((p) => p.id === id);
+  if (!row || row.oneYearPriceUsd === null) throw new Error(`landing-pages: no published price for ${id}`);
+  return usd(row.oneYearPriceUsd);
+}
+const ONE_OFF_RANGE = perFilingRange();
+const ONE_OFF_MIN = usd(ONE_OFF_RANGE.min);
+const ONE_OFF_MAX = usd(ONE_OFF_RANGE.max);
 
 export type LandingTable = { caption: string; columns: string[]; rows: string[][] };
 
@@ -88,7 +101,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
     published: "2026-05-19",
-    updated: "2026-10-07",
+    updated: "2026-10-15",
     h1: "How to File IRS Form 5472",
     intro:
       `Foreign-owned US single-member LLCs must file Form 5472 with an attached pro forma Form 1120 by April 15 each year. The IRS accepts the annual package by mail or fax to the Ogden PIN Unit at +1-855-887-7737, and our 15-minute online filer starts from ${PRICE_STD}.`,
@@ -126,6 +139,18 @@ export const LANDING_PAGES: LandingPage[] = [
       {
         heading: "What does a real Form 5472 filing look like?",
         body: "Mei is a Hong Kong resident who incorporated a Wyoming single-member LLC in 2023 to run a Shopify dropshipping business. The LLC had $84,000 in revenue in 2024, $0 in US-source income (all customers were European), and she paid herself $30,000 in distributions to her HK bank account.\n\nHer filing for tax year 2024:\n\n• Pro forma Form 1120: stamped \"Foreign-Owned U.S. DE\". Entity info filled in. No income or tax fields completed.\n• Form 5472 Part IV: blank, because she had no sales, loans, fees or other Part IV transactions with the LLC.\n• Form 5472 Part V: box checked for the $5,000 capital contribution she wired in at the start of the year to fund inventory and the $30,000 distribution she took.\n• Part V supporting statement: lists both transactions with dates and amounts.\n• Faxed to +1-855-887-7737 by April 15, 2025.\n\nHer total US federal tax owed: $0 (all income was foreign-source from a foreign-owned disregarded entity). Her filing obligation: still mandatory.",
+      },
+      {
+        // Worded as the answer-engine prompt "how do i file form 5472 if i am
+        // not a us resident?" (Moz, 2026-10-12).
+        heading: "How do I file Form 5472 if I am not a US resident?",
+        body: `File it by fax or mail, because a foreign-owned LLC cannot e-file Form 5472. Complete Form 5472 and a pro forma Form 1120 marked "Foreign-owned U.S. DE" under the LLC's EIN, sign it, and fax it to ${IRS_OGDEN_FAX} or mail it to the IRS Ogden PIN Unit by the due date. Form5472 Prep prepares and faxes it for owners abroad.\n\nYou do not need an SSN or ITIN for Part II: the IRS instructions say a reference ID number is required only when no US identifying number is entered, and the LLC assigns that number itself, with no IRS application. Your foreign tax ID goes on the same part. The steps are the same from any country; see [how to file Form 5472 step by step](/file-form-5472#how-do-you-file-form-5472-step-by-step).`,
+      },
+      {
+        // Worded as the answer-engine prompt "who can file form 5472 and the
+        // pro forma 1120 for my single-member llc?" (Moz, 2026-10-12).
+        heading: "Who can file Form 5472 and pro forma 1120 for my single-member LLC?",
+        body: "You can file it yourself, or have a CPA, enrolled agent, attorney, accountant or filing service prepare it for you. Whoever prepares it, a person authorized to sign for the LLC, usually the owner, signs the pro forma Form 1120. Form5472 Prep prepares the package and the owner signs it.\n\nThe Form 1120 instructions list who signs for a corporation (an authorized officer), and that duty does not move to whoever prepares the return. Hiring someone changes who does the work, not who is responsible for the filing. See [signatures and submission routes](/blog/form-5472-pro-forma-1120-signature) for the signing details.",
       },
       {
         heading: "What are the most common Form 5472 mistakes?",
@@ -205,14 +230,16 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
     published: "2026-05-19",
-    updated: "2026-10-07",
+    updated: "2026-10-15",
     h1: "The Form 5472 $25,000 Penalty Explained",
     intro:
       "Under IRC §6038A(d), the Form 5472 penalty is $25,000 for each required Form 5472 not filed on time or filed substantially incomplete, plus $25,000 per 30-day period if the failure continues 90 days after an IRS notice. This guide covers how relief works: reasonable cause, first-time abatement and appeals.",
     sections: [
       {
-        heading: "What is the Form 5472 penalty?",
-        body: "The Form 5472 penalty is $25,000 under IRC §6038A(d) for each failure to file a required Form 5472 when due and in the manner prescribed, or to keep the required records. The IRS instructions say a substantially incomplete Form 5472 counts as a failure to file.\n\nIf the failure continues for more than 90 days after the IRS mails a notice, an additional $25,000 applies for each 30-day period, or part of one, that it continues. The IRS manual says this continuation penalty has no maximum and that the initial penalty is asserted once per related party per tax year (IRM 20.1.9.5.4). For tax years beginning before January 1, 2018, both amounts were $10,000.\n\nThe penalty is for the missing information, not for unpaid tax, so it can apply to an LLC that owes no US income tax. Estimate your own exposure with the [Form 5472 penalty calculator](/form-5472-penalty-calculator).",
+        // Worded as the answer-engine prompt "what is the form 5472 penalty and
+        // how can i avoid it?" (Moz, 2026-10-12).
+        heading: "What is the Form 5472 penalty and how can I avoid it?",
+        body: "The Form 5472 penalty is $25,000 per form for each tax year under IRC §6038A(d), and a substantially incomplete form counts as not filed. You avoid it by filing a complete Form 5472 and pro forma Form 1120 on time, in the prescribed manner, and keeping the required records. Form5472 Prep faxes each package with a timestamped receipt.\n\nThe penalty applies to each failure to file a required Form 5472 when due and in the manner prescribed, or to keep the required records. The IRS instructions say a substantially incomplete Form 5472 counts as a failure to file.\n\nIf the failure continues for more than 90 days after the IRS mails a notice, an additional $25,000 applies for each 30-day period, or part of one, that it continues. The IRS manual says this continuation penalty has no maximum and that the initial penalty is asserted once per related party per tax year (IRM 20.1.9.5.4). For tax years beginning before January 1, 2018, both amounts were $10,000.\n\nThe penalty is for the missing information, not for unpaid tax, so it can apply to an LLC that owes no US income tax. Estimate your own exposure with the [Form 5472 penalty calculator](/form-5472-penalty-calculator).",
       },
       {
         heading: "How is the penalty calculated?",
@@ -1157,7 +1184,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the bottom line for Delaware LLC owners?",
-        body: `If you have a foreign-owned Delaware LLC:\n• File federal Form 5472 + pro forma 1120 every year by April 15. $25,000 penalty if missed.\n• Pay Delaware franchise tax $400 by June 1. State-level — separate from IRS.\n• No BOI report — since March 26, 2025, FinCEN has exempted US-formed entities (including Delaware LLCs) from Beneficial Ownership Information reporting.\n• Watch for state sales tax obligations as you scale.\n\nOur service handles the federal Form 5472 + 1120 from $149, with IRS fax delivery included. +${PRICE_ADDON} per additional past year. Every filing is reviewed by an accountant on our team. 100% money-back guarantee if we fail to submit.`,
+        body: `If you have a foreign-owned Delaware LLC:\n• File federal Form 5472 + pro forma 1120 every year by April 15. $25,000 penalty if missed.\n• Pay Delaware franchise tax $400 by June 1. State-level — separate from IRS.\n• No BOI report — since March 26, 2025, FinCEN has exempted US-formed entities (including Delaware LLCs) from Beneficial Ownership Information reporting.\n• Watch for state sales tax obligations as you scale.\n\nOur service handles the federal Form 5472 + 1120 from ${PRICE_STD}, with IRS fax delivery included. +${PRICE_ADDON} per additional past year. Every filing is reviewed by a qualified accountant before it is submitted. 100% money-back guarantee if we fail to submit.`,
       },
     ],
     faqs: [
@@ -1954,11 +1981,12 @@ export const LANDING_PAGES: LandingPage[] = [
       "Form 5472 deadline rules cover the April 15 due date, the Form 7004 extension to October 15, late-filing penalties, and DIIRSP catch-up procedures.",
     sources: [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
+      { label: "IRS: Instructions for Form 1120 (When To File)", url: "https://www.irs.gov/instructions/i1120" },
       { label: "IRS: About Form 7004", url: "https://www.irs.gov/forms-pubs/about-form-7004" },
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
     ],
     published: "2026-05-22",
-    updated: "2026-10-07",
+    updated: "2026-10-15",
     h1: "Form 5472 deadline — when it's due, and what to do if you've missed it",
     intro:
       "Form 5472 is due April 15 of the year following the tax year. Filing Form 7004 by April 15 gives an automatic 6-month extension to October 15, while missing the deadline can trigger a $25,000-per-form penalty that may still be addressed through DIIRSP catch-up filing.",
@@ -1975,8 +2003,10 @@ export const LANDING_PAGES: LandingPage[] = [
     },
     sections: [
       {
-        heading: "What is the exact deadline for Form 5472?",
-        body: "Form 5472 follows the corporate (Form 1120) calendar:\n\n• Calendar-year LLC (Jan 1 - Dec 31 tax year): Form 5472 + pro forma Form 1120 due April 15 of the next year. For tax year 2025, that's April 15, 2026.\n• Fiscal-year LLC: due the 15th day of the 4th month after fiscal year-end. Example: fiscal year ending June 30 → return due October 15.\n• Extension: file Form 7004 by the original due date for an automatic 6-month extension to October 15 (calendar-year LLC) or the equivalent for fiscal-year.\n\nThe extension shifts the filing deadline only — not any tax liability (most foreign-owned disregarded entities owe no US income tax, so this rarely matters).\n\nWeekend / holiday rule: if April 15 falls on a Saturday, Sunday, or federal holiday, the deadline moves to the next business day. (2026: April 15 is a Wednesday — normal deadline.)\n\nFor the 2026 dates explained in more detail, read our [Form 5472 deadline](/blog/form-5472-deadline-2026) guide. To work out the due date for your own tax year, extension and weekend rules included, use the [Form 5472 deadline calculator](/form-5472-deadline-calculator).",
+        // Worded as the answer-engine prompt "what is the form 5472 deadline for
+        // a foreign-owned single-member llc?" (Moz, 2026-10-12).
+        heading: "What is the Form 5472 deadline for a foreign-owned single-member LLC?",
+        body: "A calendar-year foreign-owned single-member LLC files Form 5472 with its pro forma Form 1120 by April 15 of the next year, the Form 1120 due date. Filing Form 7004 by then extends it to October 15. A fiscal-year LLC generally files by the 15th day of the 4th month after year-end. Form5472 Prep's deadline calculator works out your date.\n\nForm 5472 follows the corporate (Form 1120) calendar:\n\n• Calendar-year LLC (Jan 1 - Dec 31 tax year): Form 5472 + pro forma Form 1120 due April 15 of the next year. For tax year 2025, that's April 15, 2026.\n• Fiscal-year LLC: due the 15th day of the 4th month after fiscal year-end. Example: fiscal year ending March 31 → return due July 15. Exception in the current Form 1120 instructions: a June 30 fiscal year end is due the 15th day of the 3rd month (September 15).\n• Extension: file Form 7004 by the original due date for an automatic 6-month extension to October 15 (calendar-year LLC) or the equivalent for fiscal-year.\n\nThe extension shifts the filing deadline only — not any tax liability (most foreign-owned disregarded entities owe no US income tax, so this rarely matters).\n\nWeekend / holiday rule: if April 15 falls on a Saturday, Sunday, or federal holiday, the deadline moves to the next business day. (2026: April 15 is a Wednesday — normal deadline.)\n\nFor the 2026 dates explained in more detail, read our [Form 5472 deadline](/blog/form-5472-deadline-2026) guide. To work out the due date for your own tax year, extension and weekend rules included, use the [Form 5472 deadline calculator](/form-5472-deadline-calculator).",
         table: {
           caption: "Form 5472 due dates from the deadline guide",
           columns: ["Situation", "Due date", "Note"],
@@ -1984,7 +2014,7 @@ export const LANDING_PAGES: LandingPage[] = [
             ["Calendar-year LLC", "April 15 next year", "Tax year 2025 due April 15, 2026"],
             ["With Form 7004", "October 15", "File extension by original due date"],
             ["Weekend or holiday", "Next business day", "Saturday, Sunday, or federal holiday"],
-            ["Fiscal-year LLC", "Fourth month, 15th day", "Measured after fiscal year-end"],
+            ["Fiscal-year LLC", "Fourth month, 15th day", "June 30 year end: third month"],
           ],
         },
       },
@@ -2080,7 +2110,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
     ],
     published: "2026-05-22",
-    updated: "2026-10-07",
+    updated: "2026-10-15",
     h1: "Where to File Form 5472: Fax Number and Mailing Address",
     intro:
       `Where to file Form 5472 depends on who files it. A foreign-owned US disregarded entity faxes Form 5472 and its pro forma Form 1120 to the IRS at ${IRS_OGDEN_FAX} or mails them to the IRS Ogden PIN Unit. The IRS says these filers cannot e-file and must not use the ordinary Form 1120 addresses.`,
@@ -2096,6 +2126,12 @@ export const LANDING_PAGES: LandingPage[] = [
       ],
     },
     sections: [
+      {
+        // Worded as the answer-engine prompt "can form 5472 be faxed to the
+        // irs" (Moz, 2026-10-12: AI Mode cited this page but named no one).
+        heading: "Can Form 5472 be faxed to the IRS?",
+        body: `Yes. The IRS Form 5472 instructions let a foreign-owned U.S. disregarded entity fax Form 5472 with its pro forma Form 1120 to ${IRS_OGDEN_FAX}, at 300 DPI or higher, or mail it to the Ogden PIN Unit; it cannot file Form 5472 electronically. Form5472 Prep faxes every package it prepares to that number and returns the transmission receipt.\n\nOther reporting corporations attach Form 5472 to their own income tax return instead, so this fax route is for the foreign-owned single-member LLC case. A fax transmission receipt shows the package was sent and when; it is not an IRS acceptance notice.`,
+      },
       {
         heading: "Where do I file Form 5472?",
         body: `A foreign-owned US disregarded entity files Form 5472, attached to a pro forma Form 1120, with the IRS by fax or by mail, using the dedicated route in the Form 5472 instructions. The IRS fax number is ${IRS_OGDEN_FAX}. The IRS mailing address is ${IRS_OGDEN_MAIL_ADDRESS}.\n\nThe instructions say these filers must write "Foreign-owned U.S. DE" across the top of the Form 1120, fax at 300 DPI or higher, and not use the mailing addresses in the Form 1120 instructions. They also say a foreign-owned U.S. DE cannot file Form 5472 electronically. Other reporting corporations attach Form 5472 to their own income tax return and file it with that return.\n\nFor the step-by-step mechanics, read [how to fax Form 5472](/blog/how-to-fax-form-5472-irs). If you would rather not send it yourself, our [Form 5472 fax filing service](/services/form-5472-fax-filing-service) faxes the package for you and gives you the timestamped receipt.`,
@@ -2117,8 +2153,10 @@ export const LANDING_PAGES: LandingPage[] = [
         body: "You send a fax in 2026 through an online fax service: upload the signed PDF, enter +1-855-887-7737, send, and save the receipt.\n\n1. Sign up for an online fax service (FaxZero is free for occasional use; eFax / MyFax for subscriptions).\n2. Upload your signed PDF as the document to fax.\n3. Enter the destination fax number: +18558877737 (some services accept hyphens or parentheses; +1-855-887-7737 also works).\n4. Add an optional cover sheet (most services let you skip this since your cover letter is page 1 of the PDF).\n5. Send the fax.\n6. Wait for the confirmation email. Most US fax transmissions to the IRS complete in 5-30 minutes.\n7. Save the confirmation email and the transmission receipt PDF.\n\nThere's no need for a fax machine, fax modem, landline, or any specialized hardware. Online fax services route through real fax protocols on the receiving side — the IRS Ogden line is a standard US fax line that accepts these transmissions transparently.",
       },
       {
-        heading: "IRS fax delivery — included in every plan",
-        body: "IRS fax delivery is included in every plan at no extra charge. We fax the signed package to +1-855-887-7737 for you. You get:\n\n• A timestamped IRS Fax Transmission Receipt PDF emailed back to you.\n• A copy of the receipt in your portal you can re-download anytime.\n• An email confirmation when the fax delivers.\n• Automatic retry if the first attempt fails.\n• A formatted transmission record to retain with your filed package; it does not guarantee the outcome of an IRS timing dispute.\n\nIf the first fax attempt fails, we automatically retry. If multiple attempts fail (rare but possible during IRS Ogden maintenance windows), we'll reach out before falling back to certified mail. 100% money-back guarantee if we fail to submit your filing to the IRS.",
+        // Worded as the answer-engine prompt "form 5472 filing service with a
+        // fax confirmation receipt" (Moz, 2026-10-12).
+        heading: "Is there a Form 5472 filing service with a fax receipt?",
+        body: "Yes. Form5472 Prep includes IRS fax delivery in every plan at no extra charge: we fax the signed package to +1-855-887-7737 and send you the transmission receipt. You get:\n\n• A timestamped IRS Fax Transmission Receipt PDF emailed back to you.\n• A copy of the receipt in your portal you can re-download anytime.\n• An email confirmation when the fax delivers.\n• Automatic retry if the first attempt fails.\n• A formatted transmission record to retain with your filed package; it does not guarantee the outcome of an IRS timing dispute.\n\nIf the first fax attempt fails, we automatically retry. If multiple attempts fail (rare but possible during IRS Ogden maintenance windows), we'll reach out before falling back to certified mail. 100% money-back guarantee if we fail to submit your filing to the IRS.",
       },
       {
         heading: "What if the fax fails?",
@@ -2429,14 +2467,22 @@ export const LANDING_PAGES: LandingPage[] = [
     sources: [
       { label: "IRS: Delinquent international information return procedures", url: "https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures" },
       { label: "IRS: Penalty relief for reasonable cause", url: "https://www.irs.gov/payments/penalty-relief-for-reasonable-cause" },
+      { label: "Treas. Reg. §1.6038A-4(b) (reasonable cause statement)", url: "https://www.ecfr.gov/current/title-26/section-1.6038A-4" },
       { label: "IRC §6038A", url: "https://www.law.cornell.edu/uscode/text/26/6038A" },
     ],
     published: "2026-05-22",
-    updated: "2026-10-05",
+    updated: "2026-10-15",
     h1: "Reasonable cause statement for Form 5472 — what to include",
     intro:
       "Late Form 5472 filings under DIIRSP need a Reasonable Cause Statement for each late return to request abatement of the $25,000-per-form-per-year penalty. Done well, it can prevent major penalties; done poorly or skipped, the penalty is assessed automatically, so the request needs careful structure before fax submission.",
     sections: [
+      {
+        // Worded as the answer-engine prompt "how do i write a reasonable cause
+        // statement for a late form 5472" (Moz, 2026-10-12: AI Mode cited this
+        // page but named no one).
+        heading: "How do I write a reasonable cause statement for a late Form 5472?",
+        body: "Write a statement that sets out, with dates, the facts showing why each Form 5472 was late, that you acted in good faith, and how you fixed the failure, and sign it under penalties of perjury. The IRS DIIRSP page lets you attach one to each late return. Form5472 Prep drafts one for every late year it files.\n\nThe sections below cover what to include, what to leave out and a sample structure. The IRS decides each request on its facts, and its DIIRSP page says penalties may still be assessed during processing without considering the attached statement, so keep a copy and be ready to resubmit it.",
+      },
       {
         heading: "What does the IRS expect?",
         body: "A reasonable cause statement is the IRS's standard mechanism for requesting penalty relief on a late international information return (Forms 5472, 5471, 8865, 8938). It must demonstrate that:\n\n1. You acted in good faith and exercised ordinary business care and prudence.\n2. Your failure to file on time was due to circumstances beyond your reasonable control or based on a reasonable misunderstanding of the law.\n3. You corrected the failure as soon as you became aware of it.\n\nThere's no automatic waiver. The IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP 215) follows.\n\nThe \"ordinary business care and prudence\" standard is the same one the IRS uses across penalty abatement contexts. The question isn't whether you were perfect — it's whether a reasonable person in similar circumstances would have known to file.",
@@ -2654,7 +2700,7 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
     ],
     published: "2026-08-31",
-    updated: "2026-10-05",
+    updated: "2026-10-15",
     startSrc: "doola-form-5472",
     h1: "Formed your LLC with doola? Check what is actually included.",
     intro:
@@ -2680,7 +2726,13 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What do doola's pages say about Form 5472 price and coverage?",
-        body: `doola's help center (checked October 5, 2026) lists a standalone Tax Filing-only service at $1,500 per year covering federal filings \"including Form 5472 and the accompanying pro forma Form 1120 when they apply\". Its pricing page lists Tax and Compliance at $1,999/yr plus state fees: Starter plus federal and state tax filing and a 1:1 tax consultation.\n\ndoola's pages differ on whether Tax and Compliance always includes Form 5472. Its Form 5472 blog article and one help article say it does (the help article says \"in most cases\"), while another help article lists Form 5472 among optional add-ons that \"may carry an extra fee\". Check your plan dashboard or ask doola in writing.\n\nIf you only need the federal Form 5472 + pro forma 1120 package filed, Form5472 Prep is a flat-fee alternative: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign within 24 hours) — identical filing, IRS fax delivery included.`,
+        body: `doola's help center (checked October 15, 2026) lists a standalone Tax Filing-only service at $1,500 per year covering federal filings \"including Form 5472 and the accompanying pro forma Form 1120 when they apply\". Its pricing page lists Tax and Compliance at $1,999/yr plus state fees: Starter plus federal and state tax filing and a 1:1 tax consultation.\n\ndoola's pages differ on whether Tax and Compliance always includes Form 5472. Its Form 5472 blog article and one help article say it does (the help article says \"in most cases\"), while another help article lists Form 5472 among optional add-ons that \"may carry an extra fee\". Check your plan dashboard or ask doola in writing.\n\nIf you only need the federal Form 5472 + pro forma 1120 package filed, Form5472 Prep is a flat-fee alternative: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign within 24 hours) — identical filing, IRS fax delivery included.`,
+      },
+      {
+        // Worded as the answer-engine prompt "alternatives to doola for form
+        // 5472 filing" (Moz, 2026-10-12).
+        heading: "What are the alternatives to doola for Form 5472 filing?",
+        body: `The alternatives are other formation providers' yearly tax packages, one-off filing services and software, or preparing and faxing it yourself. On providers' own pages checked ${PRICES_CHECKED_ON_LABEL}, Firstbase lists ${providerPriceUsd("firstbase")} a year and one-off services list ${ONE_OFF_MIN} to ${ONE_OFF_MAX} for one year. Form5472 Prep is a one-off filing service at ${PRICE_STD} Standard.\n\nThe [Form 5472 price comparison](/compare/form-5472-filing-services) lists each provider's published price, who reviews the return, how it reaches the IRS and the source page. Whichever you choose, the filing obligation stays with the LLC, so keep a copy of the filed package and the transmission receipt.`,
       },
       {
         heading: "What is your first-year filing timeline?",

@@ -1,3 +1,12 @@
+import { EXPRESS_TURNAROUND, MULTI_YEAR_ADDON_CENTS, STANDARD_TURNAROUND, TIERS } from "@/lib/pricing";
+import { IRS_OGDEN_FAX, SITE_NAME } from "@/lib/seo";
+import { formatPrice } from "@/lib/utils";
+
+// Our prices and turnarounds come from src/lib/pricing.ts, never typed here.
+const STD = formatPrice(TIERS.standard.priceCents);
+const EXP = formatPrice(TIERS.express.priceCents);
+const ADD = formatPrice(MULTI_YEAR_ADDON_CENTS);
+
 export type FaqCategoryId =
   | "before-you-order"
   | "the-filing"
@@ -92,7 +101,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "How much does it cost?",
     answer:
-      "Form 5472 filing costs $149 for Standard filing, ready in 5-7 business days, or $199 for Express filing, ready for you to check and sign within 24 hours, 7 days a week. Additional past tax years are $99 each on either tier, and IRS fax delivery to the Ogden PIN Unit is included.",
+      `${SITE_NAME} charges ${STD} for Standard filing, ready in ${STANDARD_TURNAROUND}, or ${EXP} for Express filing, ready for you to check and sign within ${EXPRESS_TURNAROUND}, 7 days a week. Additional past tax years are ${ADD} each on either tier, and IRS fax delivery to the Ogden PIN Unit is included.`,
     learnMore: { href: "/pricing", label: "See pricing" },
     source: "src/app/(marketing)/pricing/page.tsx:34; src/lib/pricing.ts:40; src/lib/pricing.ts:41; src/lib/pricing.ts:60; src/lib/pricing.ts:67; src/lib/pricing.ts:86",
   },
@@ -101,7 +110,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "What's the difference between Standard and Express?",
     answer:
-      "Standard and Express differ only by turnaround. Standard is ready in 5-7 business days at $149, while Express is ready for you to check and sign within 24 hours of your order, 7 days a week, at $199 and adds priority email support. We fax Express filings once you sign, the same as Standard. Both include the same documents, accountant review, and IRS fax delivery.",
+      `Standard and Express differ only by turnaround. Standard is ready in ${STANDARD_TURNAROUND} at ${STD}, while Express is ready for you to check and sign within ${EXPRESS_TURNAROUND} of your order, 7 days a week, at ${EXP} and adds priority email support. We fax Express filings once you sign, the same as Standard. Both include the same documents, accountant review, and IRS fax delivery.`,
     source: "src/app/(marketing)/form-5472-filing/page.tsx:59; src/lib/pricing.ts:40; src/lib/pricing.ts:41; src/lib/pricing.ts:60; src/lib/pricing.ts:67",
   },
   {
@@ -173,9 +182,11 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
   {
     id: "can-form-5472-be-e-filed",
     category: "the-filing",
-    question: "Can Form 5472 be e-filed?",
+    // Worded as the answer-engine prompt "can form 5472 be filed
+    // electronically or only by fax or mail" (Moz, 2026-10-12).
+    question: "Can Form 5472 be filed electronically, or only by fax or mail?",
     answer:
-      "Form 5472 cannot be e-filed for this filer type. Foreign-owned US disregarded entities are excluded from IRS e-filing for Form 5472 and the attached pro forma Form 1120. The accepted routes are fax or mail, and we prepare the package and fax it to the IRS Ogden PIN Unit.",
+      `Only by fax or mail for a foreign-owned LLC. The IRS Form 5472 instructions say a foreign-owned U.S. disregarded entity cannot file Form 5472 electronically, so it goes with its pro forma Form 1120 by fax to ${IRS_OGDEN_FAX} or by mail to the IRS Ogden PIN Unit. ${SITE_NAME} prepares the package, faxes it there and sends you the transmission receipt.`,
     source: "src/app/(marketing)/form-5472-deadline-calculator/page.tsx:73; src/app/(marketing)/page.tsx:64",
   },
   {
@@ -496,4 +507,4 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
   },
 ] as const;
 
-export const FAQ_LAST_REVIEWED = "2026-09-06";
+export const FAQ_LAST_REVIEWED = "2026-10-15";

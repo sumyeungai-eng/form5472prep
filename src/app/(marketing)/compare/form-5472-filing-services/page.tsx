@@ -31,10 +31,11 @@ import {
   pageMeta,
 } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
+import { MULTI_YEAR_ADDON_CENTS, TIERS } from "@/lib/pricing";
 
 // /compare/form-5472-filing-services: sourced price comparison. Every
 // competitor number comes from src/lib/provider-prices.ts, which copies the
-// survey in docs/seo/form5472-price-survey-2026-10-05.md; our own prices come
+// survey in docs/seo/form5472-price-survey-2026-10-15.md; our own prices come
 // from src/lib/pricing.ts through that file. Do not type a price into this
 // page. Tone rules: neutral, no superlatives, nothing about a competitor
 // beyond what its own page says, and we are never described as a CPA,
@@ -59,7 +60,43 @@ const OURS = ROWS.find((p) => p.isOurs);
 
 const DESCRIPTION = `Published one-year prices for Form 5472 + pro forma 1120 filing from ${ONE_YEAR.count} services, ${usd(ONE_YEAR.min)} to ${usd(ONE_YEAR.max)}, plus annual bundles, each linked to its source.`;
 
-const CAPSULE = `Published prices for one year of Form 5472 with the pro forma Form 1120 run from ${usd(ONE_YEAR.min)} to ${usd(ONE_YEAR.max)} across ${ONE_YEAR.count} filing services and software tools. Formation providers' annual packages that include Form 5472 list ${usd(BUNDLES.min)} to ${usd(BUNDLES.max)} a year. Prices checked ${PRICES_CHECKED_ON_LABEL}.`;
+// Brand-attributed capsule: answer engines quoted this page without naming
+// the source (Moz AI Visibility 2026-10-12), so the survey carries our name.
+const CAPSULE = `${SITE_NAME}'s survey of providers' own pages, checked ${PRICES_CHECKED_ON_LABEL}: published prices for one year of Form 5472 with the pro forma Form 1120 run from ${usd(ONE_YEAR.min)} to ${usd(ONE_YEAR.max)} across ${ONE_YEAR.count} filing services and software tools. Formation providers' annual packages that include Form 5472 list ${usd(BUNDLES.min)} to ${usd(BUNDLES.max)} a year.`;
+
+const STD = usd(TIERS.standard.priceCents / 100);
+const EXP = usd(TIERS.express.priceCents / 100);
+const ADD = usd(MULTI_YEAR_ADDON_CENTS / 100);
+const LOWEST = ROWS.find((p) => !p.isOurs && p.kind !== "formation-provider annual bundle");
+if (!LOWEST || LOWEST.oneYearPriceUsd === null) throw new Error("compare prices: no priced one-off provider");
+const range = (r: { min: number; max: number }) => `${usd(r.min)} to ${usd(r.max)}`;
+
+// Short answers under question H2s, each worded as a prompt answer engines
+// were asked and did not name us for (Moz AI Visibility 2026-10-12). Every
+// figure is computed from provider-prices.ts or pricing.ts; one brand mention
+// per answer. Mirrored in the FAQPage JSON-LD.
+const QUICK_ANSWERS: Array<{ id: string; q: string; a: string }> = [
+  {
+    id: "flat-fee",
+    q: "Is there a flat-fee Form 5472 filing service?",
+    a: `Yes. ${ONE_YEAR.count} services in this table publish a one-year price for Form 5472 with the pro forma Form 1120, from ${range(ONE_YEAR)}, checked ${PRICES_CHECKED_ON_LABEL}, though some add fees for fax delivery, activity or late years. ${SITE_NAME} charges a flat ${STD} Standard or ${EXP} Express, with IRS fax delivery included.`,
+  },
+  {
+    id: "lowest-cost",
+    q: "What is the cheapest way to file Form 5472 online?",
+    a: `Preparing the free IRS forms yourself and faxing them is the lowest-cost route; a foreign-owned LLC cannot e-file Form 5472. Among paid options checked ${PRICES_CHECKED_ON_LABEL}, the lowest published one-year price is ${LOWEST.name} at ${usd(LOWEST.oneYearPriceUsd)}${LOWEST.priceFromLabel ? ` from ${LOWEST.priceFromLabel}` : ""}, ${LOWEST.kind}. ${SITE_NAME} charges ${STD}, with a qualified accountant's review and IRS fax delivery included.`,
+  },
+  {
+    id: "hire-someone",
+    q: "How much does it cost to hire someone to file Form 5472?",
+    a: `On providers' own pages checked ${PRICES_CHECKED_ON_LABEL}, a done-for-you service or CPA firm charges ${range(DONE_FOR_YOU)} for one year of Form 5472 with the pro forma Form 1120, and software you complete yourself costs ${range(SOFTWARE)}. ${SITE_NAME}, a done-for-you service, charges ${STD} Standard or ${EXP} Express, plus ${ADD} per extra past year.`,
+  },
+  {
+    id: "non-resident-preparer",
+    q: "What is the best Form 5472 preparer for non-resident LLC owners?",
+    a: `It depends on how much you want done for you. Software (${range(SOFTWARE)}) suits owners who can complete the forms; done-for-you services (${range(DONE_FOR_YOU)}) prepare and send the package; a CPA firm prepares it with CPA review. ${SITE_NAME} prepares and faxes the package for foreign-owned single-member LLCs, and every filing is reviewed by a qualified accountant before it is submitted.`,
+  },
+];
 
 const KIND_GROUPS: Array<{ kind: ProviderKind; label: string; text: string }> = [
   {
@@ -114,7 +151,7 @@ const FAQS = [
   },
   {
     q: "Is sending the return to the IRS included in the price?",
-    a: `It varies. Edetax, form5472.tax, Laramie Ledger Tax and ${SITE_NAME} include fax or mail delivery in the listed price. 5472Direct and Form5472.online charge $49 for IRS fax delivery. form5472.io lists fax under its $197 plan. Several others do not publish their delivery method.`,
+    a: `It varies. Edetax, form5472.tax, Laramie Ledger Tax and ${SITE_NAME} include fax or mail delivery in the listed price. 5472Direct and Form5472.online charge $49 for IRS fax delivery, Simple5472 charges more for its fax bundle than for mailing it yourself, and form5472.io lists fax under its $197 plan. Several others do not publish their delivery method.`,
   },
   {
     q: "Does a fax receipt mean the IRS accepted my Form 5472?",
@@ -223,7 +260,7 @@ function StructuredData() {
   const faq = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: FAQS.map((f) => ({
+    mainEntity: [...QUICK_ANSWERS, ...FAQS].map((f) => ({
       "@type": "Question",
       name: f.q,
       acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -382,6 +419,15 @@ export default function Form5472FilingServicesComparePage() {
               ))}
             </ul>
           </section>
+          {QUICK_ANSWERS.map((qa) => (
+            <section key={qa.id} aria-labelledby={qa.id}>
+              <h2 id={qa.id} className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+                {qa.q}
+              </h2>
+              <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">{qa.a}</p>
+            </section>
+          ))}
+
           <section aria-labelledby="difference">
             <h2 id="difference" className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
               What&apos;s the difference between Form 5472 services?
