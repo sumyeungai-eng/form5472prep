@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { revalidateBlogIndex } from "@/lib/blog-revalidate";
 import { isAdmin } from "@/lib/admin/auth";
 import { writePost, getPostIncludingDraft, slugify } from "@/lib/blog";
 import { isUnresolvedPublishAt } from "@/lib/blogSchedule";
@@ -10,7 +11,7 @@ export const runtime = "nodejs";
 // Bust every surface that lists or renders a post so a publish shows up in
 // seconds instead of waiting out the 60s ISR window (or a redeploy).
 function revalidateBlog(...slugs: string[]) {
-  revalidatePath("/blog");
+  revalidateBlogIndex();
   for (const slug of slugs) revalidatePath(`/blog/${slug}`);
   revalidatePath("/sitemap.xml");
   revalidatePath("/feed.xml");

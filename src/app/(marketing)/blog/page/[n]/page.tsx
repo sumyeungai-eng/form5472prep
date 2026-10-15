@@ -10,6 +10,12 @@ import { BlogIndexView } from "../../_components/BlogIndexView";
 // within a minute.
 export const revalidate = 60;
 
+// A page that did not exist at build time (the post count crossed a multiple
+// of the page size, e.g. page 9 at 8 x 24 + 1 posts) renders on demand instead
+// of 404ing until the next deploy. Keep this true: resolvePage() still
+// 404s page numbers that do not exist yet.
+export const dynamicParams = true;
+
 // Prerender every page that exists at build time; a page created later (the
 // post count crossed a multiple of the page size) renders on demand.
 export async function generateStaticParams(): Promise<{ n: string }[]> {

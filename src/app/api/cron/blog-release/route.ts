@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { revalidateBlogIndex } from "@/lib/blog-revalidate";
 import { getAllPosts } from "@/lib/blog";
 import { parsePublishAt } from "@/lib/blogSchedule";
 import { INDEXNOW_SITE, submitToIndexNow } from "@/lib/indexnow";
@@ -30,7 +31,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ released: [], indexnow: null });
   }
 
-  revalidatePath("/blog");
+  revalidateBlogIndex();
   revalidatePath("/blog/topics", "layout");
   for (const p of released) revalidatePath(`/blog/${p.slug}`);
   revalidatePath("/sitemap.xml");

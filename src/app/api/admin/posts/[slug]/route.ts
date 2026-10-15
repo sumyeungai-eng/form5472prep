@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { revalidateBlogIndex } from "@/lib/blog-revalidate";
 import { isAdmin } from "@/lib/admin/auth";
 import {
   writePost,
@@ -17,7 +18,7 @@ export const runtime = "nodejs";
 // seconds instead of waiting out the 60s ISR window (or a redeploy). On a
 // rename, pass both slugs so the retired URL stops serving the old copy.
 function revalidateBlog(...slugs: string[]) {
-  revalidatePath("/blog");
+  revalidateBlogIndex();
   for (const slug of slugs) revalidatePath(`/blog/${slug}`);
   revalidatePath("/sitemap.xml");
   revalidatePath("/feed.xml");

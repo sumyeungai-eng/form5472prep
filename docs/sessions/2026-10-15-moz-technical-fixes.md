@@ -40,15 +40,18 @@ Checkout: `/Users/sumyeung/Developer/f5472-wt/tech`, branch `seo/tech-2026-10-15
 - `npm run build` exit 0 (twice; DB-unavailable fallback logs expected locally). `next start`: `/blog`, `/blog/page/2`, `/blog/page/8` 200; `/blog/page/9`, `/blog/page/1`, `/blog/page/02`, `/blog/page` 404; served robots.txt showed the four sign-in/apply Disallow lines (`/applications/` was added afterwards and is pinned by `robots.test.ts`); sitemap lists `/blog/page/2..8` and none of the queued posts. Pages 2-8 titled `Blog – page N · Form5472 Prep`, canonical self, `index, follow`.
 - Renamed queued posts return 404 before their release (correct). With `publishAt` temporarily moved into the past (dev server, then restored and byte-checked) all three rendered 200 with one H1, correct canonical, cover image 200 and cross-links pointing at the new slugs.
 
+## Follow-up commit (coordinator request, same day)
+
+- **Freshness.** New `src/lib/blog-revalidate.ts` (`revalidateBlogIndex()` = `revalidatePath("/blog")` + `revalidatePath("/blog/page/[n]", "page")`, the pattern matches the `[n]` folder name) now runs in all three places that used to revalidate only `/blog`: `api/admin/posts/route.ts`, `api/admin/posts/[slug]/route.ts`, `api/cron/blog-release/route.ts`. `/blog/page/[n]` has the same `revalidate = 60` as `/blog` and an explicit `dynamicParams = true`, so a new last page (page 9 once posts pass 8 x 24) renders on demand with no deploy. Tests: `blog-revalidate.test.ts`, `page/[n]/page.test.ts` (same ISR window, dynamicParams, page 8 -> 9 at the boundary).
+- **Duplicate sidebar.** `blog/[slug]/page.tsx` rendered the CTA and the related guides twice (desktop-only sidebar + mobile-only copies). Now one `<aside>` for all breakpoints (sticky at `lg`), headed "Related guides". Nomad post: 106 -> 100 anchors, one related block; ein-pending post 101 anchors.
+
 ## Open
 
 Owner-gated:
 - Deploy is `git push origin main` after merge (never `vercel --prod`). Check the 2026-10-18 Moz crawl: Meta Noindex should drop to 0, URL Too Long should stop growing, `/blog` and the nomad post should pass the internal-links factor.
 
 Follow-ups (outside this lane's files):
-- `src/app/(marketing)/blog/[slug]/page.tsx` renders the "Related guides" block twice (desktop sidebar + mobile block), ~5 extra anchors on every post; the footer carries 49 anchors. Trimming either would give every post more headroom under ~100.
 - `/blog/topics/form-5472` (230 links) and `/blog/topics/foreign-owned-llc` (203) are unpaginated and will hit the same Moz factor if graded.
-- Admin publish/delete actions call `revalidatePath("/blog")`; add `revalidatePath("/blog/page/[n]", "page")` so older pages refresh immediately (the 60 s ISR window covers it meanwhile).
 - `scripts/verify-nomad-blogs-20260922.mjs` (one-off, not in CI) asserts the nomad hub text contains each city slug; that no longer holds by design. `docs/sessions/2026-10-09-company-car-blogs.md` and `docs/marketing/2026-10-09-company-car-*` still name the old queued slugs (historical records, left as is).
 - The 52 over-length published slugs stay as they are (indexed); only 301-renaming them would clear the Moz count, at a ranking cost.
 

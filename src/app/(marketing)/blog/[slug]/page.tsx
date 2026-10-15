@@ -324,27 +324,16 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               )}
             </div>
 
-            {/* Mobile/tablet: the sidebar is desktop-only, so related guides
-                get their own block below the article. */}
-            {otherPosts.length > 0 && (
-              <div className="mt-10 lg:hidden">
-                <OtherPosts posts={otherPosts} heading="Related guides" />
-              </div>
-            )}
-
-            <aside className="mt-10 rounded-2xl bg-ink p-7 text-center text-white lg:hidden">
-              <h2 className="font-serif text-2xl font-semibold">Ready to prepare your Form 5472?</h2>
-              <p className="mt-3 text-sm leading-6 text-slate-300">Complete the guided questionnaire and receive a filing-ready package.</p>
-              <Link href="/start" className="mt-5 inline-flex h-11 items-center justify-center rounded-lg bg-white px-5 text-sm font-semibold text-ink">
-                Start your filing <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </aside>
           </div>
 
-          <aside className="hidden lg:block">
-            <div className="sticky top-8 space-y-6">
+          {/* One sidebar for every breakpoint: it sits beside the article on
+              desktop (sticky) and stacks below it on mobile/tablet. It used to
+              be rendered twice (a desktop-only copy plus a mobile-only copy of
+              the CTA and related guides), doubling those anchors in the DOM. */}
+          <aside>
+            <div className="space-y-6 lg:sticky lg:top-8">
               <BlogCta />
-              {otherPosts.length > 0 && <OtherPosts posts={otherPosts} />}
+              {otherPosts.length > 0 && <OtherPosts posts={otherPosts} heading="Related guides" />}
               <div className="px-2 text-[11px] leading-5 text-slate-500">
                 This article is educational and does not constitute tax or legal advice. Your facts may require professional review.
               </div>
