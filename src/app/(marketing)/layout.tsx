@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { MobileMenu } from "@/components/MobileMenu";
 import { HeaderAuthButtons } from "@/components/HeaderAuthButtons";
+import { Button } from "@/components/ui/button";
 import { SERVICE_PAGES, servicePath } from "@/lib/services-pages";
 
 // No `force-dynamic` and no cookie reads here: the auth-dependent header bits are
@@ -49,7 +50,13 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             >
               Contact
             </Link>
-            <HeaderAuthButtons />
+            {/* Buttons are rendered here (server) so the client island does not
+                ship Button's cn()/tailwind-merge code — see HeaderAuthButtons. */}
+            <HeaderAuthButtons
+              signInButton={<Button variant="ghost" size="sm">Sign in</Button>}
+              startButton={<Button size="sm">Start filing</Button>}
+              dashboardButton={<Button size="sm">My filings</Button>}
+            />
           </nav>
         </div>
       </header>
