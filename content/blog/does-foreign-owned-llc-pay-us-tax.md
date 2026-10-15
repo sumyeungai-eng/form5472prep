@@ -12,7 +12,7 @@ draft: false
 
 This is the single most confused question in the foreign-owned LLC world, and the confusion runs in both directions. Some owners believe a US LLC is a tax-free structure with nothing to file. Others believe having a US company means paying US corporate tax on everything. Both are wrong, and the second group usually overpays while the first group gets penalized.
 
-The two questions have to be answered separately: **do you owe US tax**, and **do you owe a US filing**. Very often the answers are no and yes. If you already know you need Form 5472, [we prepare and fax the complete package from $149](/start).
+The two questions have to be answered separately: **do you owe US tax**, and **do you owe a US filing**. Very often the answers are no and yes. If you already know you need Form 5472, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 The [Do I need to file Form 5472? checker](/do-i-need-to-file-form-5472) is useful when the filing answer is still unclear even though the income-tax answer looks like zero.
 
@@ -119,7 +119,7 @@ If you concluded you owe no US income tax, that is very likely correct — and i
 
 [Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120 stamped "Foreign-owned U.S. DE", and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation as your proof of filing.
 
-**$149** standard (5-7 business days), **$199** express (ready to sign within 24 hours), **+$99** per additional past tax year. IRS fax delivery included. We are not a CPA firm and do not give tax advice — for an ECI or treaty determination on your specific facts, use a qualified adviser. What we do is prepare and submit the information return accurately.
+**{{price.standard}}** standard (5-7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included. We are not a CPA firm and do not give tax advice — for an ECI or treaty determination on your specific facts, use a qualified adviser. What we do is prepare and submit the information return accurately.
 
 [Start your filing](/start) — about 15 minutes.
 

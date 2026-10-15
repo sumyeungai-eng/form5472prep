@@ -14,7 +14,7 @@ Korea-based owners arrive from two directions. Seoul and Busan founders form Del
 
 Two features of the Korean position change the mechanics of the filing compared with a UK or Indian owner. A full income tax treaty is in force, which surprises owners who expect a treaty to buy relief from the form. And Korea's identification-number system gives a number to registered residents and nothing to a visitor. Neither feature removes the obligation.
 
-If you want the filing done rather than explained, [we prepare and fax the complete package from $149](/start).
+If you want the filing done rather than explained, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do South Korea residents have to file Form 5472?
 
@@ -97,7 +97,7 @@ Sending an international fax from Korea is a nuisance, and the Korean-specific d
 
 Form5472 Prep prepares the complete package: Form 5472 with the FTIN and reference ID handled consistently, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews each package, we fax it to the IRS Ogden PIN Unit, and we return the timestamped receipt. Late years include a reasonable cause cover letter.
 
-**$149** standard, ready in 5-7 business days. **$199** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm, we do not give tax advice, and we do not advise on Korean tax. We prepare and submit the US information return accurately.
 

@@ -14,7 +14,7 @@ For a 2026 application, the distinction is the whole decision. A responsible par
 
 The IRS charges **$0** to issue an EIN and says applicants never have to pay a government fee on its [online EIN page](https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online). Paying a provider is optional. The provider's fee should buy accurate preparation, submission, IRS contact, and follow-up—not privileged access to a number the IRS sells for nothing.
 
-If handling an international SS-4 call or fax is the problem, [use the $149 EIN service](/ein). Form5472 Prep names the real responsible party, acts only within the signed designee authority, and returns the completed application record with the EIN.
+If handling an international SS-4 call or fax is the problem, [use the {{price.ein}} EIN service](/ein). Form5472 Prep names the real responsible party, acts only within the signed designee authority, and returns the completed application record with the EIN.
 
 ## What does an SS-4 third-party designee authorise?
 
@@ -88,7 +88,7 @@ DIY is better when the application is straightforward and the founder is comfort
 | Decision factor | DIY application | Third-party designee service |
 |---|---|---|
 | IRS fee | $0 | $0 |
-| Professional fee | None | Provider's disclosed fee; Form5472 Prep charges $149 |
+| Professional fee | None | Provider's disclosed fee; Form5472 Prep charges {{price.ein}} |
 | Founder time | Founder prepares, submits, monitors, and follows up | Founder supplies facts, reviews, and signs; provider handles the stated scope |
 | Elapsed time | Depends on route, IRS workload, and whether follow-up is needed | Form5472 Prep typically delivers in 1-5 business days; IRS issues the number |
 | Who deals with IRS application questions | Founder or another properly authorised person | Named designee while SS-4 authority remains active |
@@ -122,11 +122,11 @@ The hand-off file should contain the signed SS-4, assigned EIN, available IRS ev
 
 ## How does Form5472 Prep act as your EIN designee?
 
-Form5472 Prep prepares Form SS-4 for the foreign-owned entity, submits it, deals with the IRS on the client's behalf as third-party designee, and delivers the EIN, typically in **1-5 business days**. The service fee is **$149**; the IRS charges **$0** for the EIN itself.
+Form5472 Prep prepares Form SS-4 for the foreign-owned entity, submits it, deals with the IRS on the client's behalf as third-party designee, and delivers the EIN, typically in **1-5 business days**. The service fee is **{{price.ein}}**; the IRS charges **$0** for the EIN itself.
 
-When an ITIN is genuinely needed for a separate US tax purpose, the **$349** service at [/itin](/itin) includes identity-document certification through an IRS-authorised Certifying Acceptance Agent, so no original passport mailing is required. An ITIN is not required merely because a foreign owner appoints an EIN designee.
+When an ITIN is genuinely needed for a separate US tax purpose, the **{{price.itin}}** service at [/itin](/itin) includes identity-document certification through an IRS-authorised Certifying Acceptance Agent, so no original passport mailing is required. An ITIN is not required merely because a foreign owner appoints an EIN designee.
 
-Annual Form 5472 filing is a separate service: **$149** standard, **$199** express, and **+$99** for each additional past tax year. If the filing is due, [/start](/start) is the separate secondary route after the EIN is secured.
+Annual Form 5472 filing is a separate service: **{{price.standard}}** standard, **{{price.express}}** express, and **+{{price.additionalYear}}** for each additional past tax year. If the filing is due, [/start](/start) is the separate secondary route after the EIN is secured.
 
 We are not a CPA firm and do not give tax advice. Our role is form preparation, submission, and application handling within the authority the client signs.
 
@@ -162,4 +162,4 @@ No. DIY is viable. A foreign owner can use an available IRS application route an
 
 ---
 
-A third-party designee can carry the SS-4 workload without borrowing the owner's identity or taking continuing control. Keep the real owner in the responsible-party field, sign a complete application, and collect the final record when the temporary authority ends. [Have us obtain the EIN for $149](/ein), or read [the EIN application checklist for a foreign-owned LLC](/blog/ein-application-checklist-foreign-owned-llc).
+A third-party designee can carry the SS-4 workload without borrowing the owner's identity or taking continuing control. Keep the real owner in the responsible-party field, sign a complete application, and collect the final record when the temporary authority ends. [Have us obtain the EIN for {{price.ein}}](/ein), or read [the EIN application checklist for a foreign-owned LLC](/blog/ein-application-checklist-foreign-owned-llc).

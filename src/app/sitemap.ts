@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { env } from "@/lib/env";
 import { getAllPosts } from "@/lib/blog";
-import { blogPagePath, pageSlice, totalPages } from "@/lib/blog-pagination";
+import { blogPagePath, pageSlice, topicPagePath, totalPages } from "@/lib/blog-pagination";
 import { buildTagIndex, MIN_INDEXABLE_TAG_POSTS } from "@/lib/blog-tags";
 import { LANDING_PAGES } from "@/lib/landing-pages";
 import { CONTENT_LAST_REVIEWED } from "@/lib/seo";
@@ -139,18 +139,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
 
   // Tag hubs below MIN_INDEXABLE_TAG_POSTS are noindex, so they stay out of the
-  // sitemap. lastmod = newest post in the topic (posts arrive newest-first).
+  // sitemap. Large hubs are paginated like /blog (/blog/topics/<tag>/page/n);
+  // every page of an indexable hub is listed. lastmod = newest post in the
+  // topic for page 1 (unchanged), newest post on that page for older pages.
+  const newest = (list: (typeof posts)[number][]) =>
+    list
+      .map(postDate)
+      .filter((d): d is Date => !!d)
+      .sort((a, b) => b.getTime() - a.getTime())[0];
   const tagUrls: MetadataRoute.Sitemap = buildTagIndex(posts)
     .filter((entry) => entry.count >= MIN_INDEXABLE_TAG_POSTS)
-    .map((entry) => ({
-      url: `${base}/blog/topics/${entry.tag}`,
-      lastModified: entry.posts
-        .map(postDate)
-        .filter((d): d is Date => !!d)
-        .sort((a, b) => b.getTime() - a.getTime())[0],
-      changeFrequency: "weekly",
-      priority: 0.5,
-    }));
+    .flatMap((entry) =>
+      Array.from({ length: totalPages(entry.count) }, (_, i) => ({
+        url: `${base}${topicPagePath(entry.tag, i + 1)}`,
+        lastModified: newest(i === 0 ? entry.posts : pageSlice(entry.posts, i + 1)),
+        changeFrequency: "weekly" as const,
+        priority: i === 0 ? 0.5 : 0.4,
+      })),
+    );
 
   // SEO landing pages — high priority since these target the highest-intent
   // queries. Noindex pages (paid-ad landings) are excluded so Google doesn't

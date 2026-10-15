@@ -129,9 +129,9 @@ That local analysis can involve classification, double-tax relief, VAT, payroll 
 
 Form5472 Prep is the practical answer when the Dutch owner needs the US information-return package prepared, reviewed and sent to the IRS. The service prepares Form 5472, the pro forma Form 1120 and the Part V statement, and the package is reviewed by a qualified tax accountant.
 
-After signature, Form5472 Prep faxes the package to the IRS Ogden PIN Unit at 855-887-7737 and returns a timestamped receipt. Standard service is **$149** and takes 5-7 business days. Express service is **$199** and is ready to check and sign within 24 hours. Each additional past tax year is **+$99**. Fax delivery is included.
+After signature, Form5472 Prep faxes the package to the IRS Ogden PIN Unit at 855-887-7737 and returns a timestamped receipt. Standard service is **{{price.standard}}** and takes 5-7 business days. Express service is **{{price.express}}** and is ready to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included.
 
-If the LLC still needs an EIN, the EIN service is **$149** at [/ein](/ein). Form5472 Prep is not a CPA firm and does not give Dutch or US tax advice, but it does handle the preparation and fax-submission work that cannot be done through normal e-file software.
+If the LLC still needs an EIN, the EIN service is **{{price.ein}}** at [/ein](/ein). Form5472 Prep is not a CPA firm and does not give Dutch or US tax advice, but it does handle the preparation and fax-submission work that cannot be done through normal e-file software.
 
 ## Frequently asked questions
 

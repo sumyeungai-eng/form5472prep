@@ -14,7 +14,7 @@ draft: false
 
 Self-publishing generates an unusual amount of tax paperwork for a one-person business: a tax interview in the publishing dashboard, a W-8 form, possible withholding, a year-end statement from each platform, and a separate annual filing for the LLC itself. The documents come from different senders and answer different questions.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state a **$25,000 penalty** on a reporting corporation that fails to file when due and in the manner prescribed, and that a substantially incomplete Form 5472 constitutes a failure to file. [We prepare and fax the complete package from $149](/start).
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state a **$25,000 penalty** on a reporting corporation that fails to file when due and in the manner prescribed, and that a substantially incomplete Form 5472 constitutes a failure to file. [We prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Does a self-published author's US LLC have to file Form 5472?
 
@@ -101,7 +101,7 @@ The package is Form 5472 attached to a **pro forma Form 1120** with **"Foreign-o
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your royalty reports and owner-movement schedule, have a qualified tax accountant review the package, fax it to the IRS and send you the receipt.
 
-Standard is **$149** and ready in **5–7 business days**. Express is **$199** and ready to sign within **24 hours**. Each additional past tax year is **+$99**, and IRS fax delivery is included.
+Standard is **{{price.standard}}** and ready in **5–7 business days**. Express is **{{price.express}}** and ready to sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**, and IRS fax delivery is included.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return; withholding, treaty claims, effectively connected income and your home-country return belong with the appropriate adviser.
 

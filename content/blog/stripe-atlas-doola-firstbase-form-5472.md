@@ -15,7 +15,7 @@ Most non-US founders we hear from formed their LLC through a platform: Stripe At
 
 That gap produces one recurring question: *"I paid a company to set this up — aren't they filing it?"* Sometimes yes. It depends on which product you bought, and each provider describes its own products differently. We checked each company's own published pages on 18 September 2026 and set out what they say, in their words, below.
 
-If you already know nobody is filing it for you, [we prepare and fax the complete package from $149](/start).
+If you already know nobody is filing it for you, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Does forming an LLC through a platform include the annual Form 5472?
 
@@ -103,9 +103,9 @@ We do one thing: prepare and submit Form 5472 with the pro forma Form 1120 for f
 
 You answer a short online questionnaire. We prepare the package, a qualified tax accountant reviews it, and we fax it to the IRS and send you the timestamped transmission receipt.
 
-- **$149 Standard** — delivered in 5–7 business days
-- **$199 Express** — ready to sign within 24 hours
-- **+$99** per additional past tax year
+- **{{price.standard}} Standard** — delivered in 5–7 business days
+- **{{price.express}} Express** — ready to sign within 24 hours
+- **+{{price.additionalYear}}** per additional past tax year
 - **IRS fax delivery included** in both
 
 Full details are on our [pricing page](/pricing). We are not a CPA firm and do not give tax advice; we prepare and submit the information return.

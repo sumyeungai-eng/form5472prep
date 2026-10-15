@@ -16,7 +16,7 @@ There is no payroll to run and no wage to calculate. What matters is labelling e
 
 Getting the label wrong is the expensive part. The [instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a **$25,000** penalty will be assessed on a reporting corporation that fails to file when due and in the manner prescribed, and a filing treated as substantially incomplete is a failure to file.
 
-If you would rather hand over the bank statements than classify the transfers yourself, [we prepare and fax the complete package from $149](/start).
+If you would rather hand over the bank statements than classify the transfers yourself, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Can a non-resident owner take a salary from a US LLC?
 
@@ -119,7 +119,7 @@ If payroll filings or Forms W-2 were actually issued for the owner, that is beyo
 
 Our work is the classification and the paperwork: reading the year's statements, separating customer revenue from owner movements, drafting the Part V statement, completing Form 5472 and the pro forma Form 1120, and faxing the package to the Ogden PIN Unit with a timestamped receipt — transmission evidence, not IRS acceptance.
 
-**$149** standard (5–7 business days), **$199** express (ready to sign within 24 hours), **+$99** per additional past tax year, IRS fax delivery included; see [pricing](/pricing).
+**{{price.standard}}** standard (5–7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year, IRS fax delivery included; see [pricing](/pricing).
 
 A qualified tax accountant reviews each package before submission. We are not a CPA firm and do not give tax advice: we do not decide income tax positions, treaty positions or withholding, and we do not advise on any other country's tax.
 

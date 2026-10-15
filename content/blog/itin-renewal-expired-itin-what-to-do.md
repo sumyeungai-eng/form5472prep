@@ -14,7 +14,7 @@ An expired Individual Taxpayer Identification Number is usually a non-use proble
 
 The IRS says an ITIN expires on **December 31 after the third consecutive tax year in which it was not used on a US federal return**, according to its [ITIN renewal page](https://www.irs.gov/tin/itin/how-to-renew-an-itin). That rule lets you determine status from your own return history without relying on an old middle-digit schedule.
 
-If renewal is needed, [our $349 ITIN service](/itin) prepares the W-7 renewal, checks the supporting return or exception evidence, and verifies identity documents through an IRS-authorised CAA so you never mail an original passport.
+If renewal is needed, [our {{price.itin}} ITIN service](/itin) prepares the W-7 renewal, checks the supporting return or exception evidence, and verifies identity documents through an IRS-authorised CAA so you never mail an original passport.
 
 ## When does an ITIN expire?
 
@@ -109,7 +109,7 @@ Starting early helps with document review and name discrepancies, but an early i
 
 ## How can Form5472 Prep handle an ITIN renewal?
 
-Form5472 Prep’s ITIN acquisition and renewal service costs **$349**. We prepare Form W-7, assemble the supporting return or exception evidence, submit the package, and track the CP565 outcome.
+Form5472 Prep’s ITIN acquisition and renewal service costs **{{price.itin}}**. We prepare Form W-7, assemble the supporting return or exception evidence, submit the package, and track the CP565 outcome.
 
 We forward eligible applications to an IRS-authorized Certifying Acceptance Agent, who inspects permitted original identity documents and returns them immediately after review. You never mail an original passport to the IRS. The service addresses the application process; the IRS decides eligibility and timing.
 
@@ -147,4 +147,4 @@ No. ITIN expiry follows federal-return non-use, not passport validity. Renewal n
 
 ---
 
-An expired ITIN should be renewed only when a federal return or documented exception requires it. Check the last-use year, reuse the existing number, and submit a complete package. [Have our IRS-authorised CAA handle the renewal for $349](/itin), or read [when Form 5472 can be filed without an ITIN](/blog/itin-required-form-5472).
+An expired ITIN should be renewed only when a federal return or documented exception requires it. Check the last-use year, reuse the existing number, and submit a complete package. [Have our IRS-authorised CAA handle the renewal for {{price.itin}}](/itin), or read [when Form 5472 can be filed without an ITIN](/blog/itin-required-form-5472).

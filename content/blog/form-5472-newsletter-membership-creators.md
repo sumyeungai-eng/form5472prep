@@ -13,7 +13,7 @@ draft: false
 
 A subscription business has a money problem a one-off sale does not: at any moment some cash is collected but not earned, some earned but not paid out, some may yet be clawed back. An annual plan charged in January funds a year of issues, a platform sits on a balance between payout runs, one supporter disputes a charge, another cancels a pledge before it clears.
 
-None of that is a related-party transaction. It is customer revenue in motion between unrelated parties — subscribers, card networks, platforms, the LLC's own accounts. The one moment Form 5472 cares about is money crossing between the LLC and you. [We prepare and fax the complete package from $149](/start).
+None of that is a related-party transaction. It is customer revenue in motion between unrelated parties — subscribers, card networks, platforms, the LLC's own accounts. The one moment Form 5472 cares about is money crossing between the LLC and you. [We prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Does a paid newsletter or membership LLC have to file Form 5472?
 
@@ -106,7 +106,7 @@ The filing mechanics are identical; only the money's shape differs: a membership
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your payout exports and owner-movement schedule, have a qualified tax accountant review the package, fax it to the IRS, and send the timestamped receipt.
 
-Standard is **$149** over 5–7 business days; Express is **$199** ready to sign within 24 hours; each additional past tax year is **+$99**; IRS fax delivery is included. We are not a CPA firm and do not give tax advice — we prepare and submit the information return. Effectively connected income and your home-country tax belong to a qualified adviser.
+Standard is **{{price.standard}}** over 5–7 business days; Express is **{{price.express}}** ready to sign within 24 hours; each additional past tax year is **+{{price.additionalYear}}**; IRS fax delivery is included. We are not a CPA firm and do not give tax advice — we prepare and submit the information return. Effectively connected income and your home-country tax belong to a qualified adviser.
 
 ## Frequently asked questions
 

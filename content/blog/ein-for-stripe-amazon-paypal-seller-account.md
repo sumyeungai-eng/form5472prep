@@ -14,7 +14,7 @@ A platform rejection can look like an EIN problem when the number is valid. The 
 
 For a 2026 seller launch, the right preparation is deliberately boring: one formation record, one IRS record, and one consistent set of names and addresses. The IRS charges **$0** to issue an EIN and warns that nobody has to pay a government fee for one on its [online EIN page](https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online). A paid service charges for preparing Form SS-4 and handling the application, not for selling the number.
 
-If seller onboarding is waiting on the federal number, [get the LLC's EIN handled for $149](/ein). This guide begins after formation and concentrates on getting the EIN record ready for platform review; the separate [EIN application checklist](/blog/ein-application-checklist-foreign-owned-llc) covers the underlying SS-4 inputs.
+If seller onboarding is waiting on the federal number, [get the LLC's EIN handled for {{price.ein}}](/ein). This guide begins after formation and concentrates on getting the EIN record ready for platform review; the separate [EIN application checklist](/blog/ein-application-checklist-foreign-owned-llc) covers the underlying SS-4 inputs.
 
 ## Why do seller platforms ask for an EIN?
 
@@ -104,11 +104,11 @@ The LLC's name appears in a beneficial-owner field and the individual's name app
 
 ## How can Form5472 Prep obtain the EIN for the seller account?
 
-Form5472 Prep can prepare Form SS-4 correctly for a foreign-owned entity, submit the application, deal with the IRS as third-party designee, and deliver the EIN, typically in **1-5 business days**. The service costs **$149**. The IRS charge remains **$0**; the price covers preparation and handling.
+Form5472 Prep can prepare Form SS-4 correctly for a foreign-owned entity, submit the application, deal with the IRS as third-party designee, and deliver the EIN, typically in **1-5 business days**. The service costs **{{price.ein}}**. The IRS charge remains **$0**; the price covers preparation and handling.
 
-If an ITIN is genuinely required for a separate US tax purpose, the **$349** ITIN service at [/itin](/itin) includes identity-document certification through an IRS-authorised Certifying Acceptance Agent, so the applicant does not mail an original passport. An ITIN is not a prerequisite merely to obtain the LLC's EIN.
+If an ITIN is genuinely required for a separate US tax purpose, the **{{price.itin}}** ITIN service at [/itin](/itin) includes identity-document certification through an IRS-authorised Certifying Acceptance Agent, so the applicant does not mail an original passport. An ITIN is not a prerequisite merely to obtain the LLC's EIN.
 
-Annual Form 5472 filing is separate: **$149** standard, **$199** express, and **+$99** for each additional past tax year. If that annual filing is also due, [/start](/start) is the secondary next step after the EIN is available.
+Annual Form 5472 filing is separate: **{{price.standard}}** standard, **{{price.express}}** express, and **+{{price.additionalYear}}** for each additional past tax year. If that annual filing is also due, [/start](/start) is the secondary next step after the EIN is available.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the forms within the stated service scope; banks and seller platforms make their own account decisions.
 
@@ -144,4 +144,4 @@ No. The EIN resolves the federal entity-identifier step. A platform can separate
 
 ---
 
-Build the seller-account file in one direction: formation record, EIN confirmation, bank evidence, then platform application. When the entity name and owner documentation stay in their proper lanes, a rejection becomes much easier to diagnose. [Get the EIN handled for $149](/ein), or review [how to open a US bank account for a foreign-owned LLC](/blog/us-bank-account-foreign-owned-llc).
+Build the seller-account file in one direction: formation record, EIN confirmation, bank evidence, then platform application. When the entity name and owner documentation stay in their proper lanes, a rejection becomes much easier to diagnose. [Get the EIN handled for {{price.ein}}](/ein), or review [how to open a US bank account for a foreign-owned LLC](/blog/us-bank-account-foreign-owned-llc).

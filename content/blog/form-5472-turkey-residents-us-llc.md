@@ -14,7 +14,7 @@ Türkiye has become a common place to run a US LLC from. Developers and agency o
 
 Two features of the Turkish position change the mechanics of the filing compared with a UK or Indian owner. A treaty exists, which leads owners to assume it does something here. And Türkiye issues individuals a real personal tax number, including to foreigners. Neither feature removes the obligation.
 
-If you would rather have the filing done than explained, [we prepare and fax the complete package from $149](/start).
+If you would rather have the filing done than explained, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do Turkey residents have to file Form 5472?
 
@@ -101,7 +101,7 @@ The Turkish specifics — a treaty that is real but irrelevant here, a vergi kim
 
 Form5472 Prep prepares the complete package: Form 5472 with the FTIN and reference ID handled correctly, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews each one, we fax it to the IRS Ogden PIN Unit, and you get the timestamped confirmation receipt back. Past years include a reasonable cause cover letter.
 
-**$149** standard, ready in 5-7 business days. **$199** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included, so you never send an international fax from Türkiye.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included, so you never send an international fax from Türkiye.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on Turkish tax. We prepare and submit the US information return accurately.
 

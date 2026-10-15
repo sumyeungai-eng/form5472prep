@@ -14,7 +14,7 @@ The UAE is one of the largest sources of foreign-owned US LLCs: Dubai-based ecom
 
 Two features of the UAE position change the mechanics of the filing compared with a UK or Indian owner. Neither removes the obligation, and both are handled easily once you know about them. For a condensed version of the filing package, identification fields and deadlines, see our Form 5472 guide page for the [UAE resident US LLC](/form-5472-uae).
 
-If you want the filing done rather than explained, [we prepare and fax the complete package from $149](/start).
+If you want the filing done rather than explained, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do UAE residents have to file Form 5472?
 
@@ -112,7 +112,7 @@ The UAE specifics — no treaty, no personal tax ID, AED conversion, a free-zone
 
 [Form5472 Prep](/) prepares the complete package — Form 5472 with the reference ID handled correctly, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt. Late years include a reasonable cause cover letter.
 
-**$149** standard, ready in 5-7 business days. **$199** express, ready for you to check and sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included — you never have to send a fax from the UAE.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready for you to check and sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included — you never have to send a fax from the UAE.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on UAE corporate tax. We prepare and submit the US information return accurately.
 

@@ -14,7 +14,7 @@ Reference 101 is frustrating because the screen gives a number, not a useful exp
 
 The IRS limits issuance to **one EIN per responsible party per day**, across online, telephone, fax and mail requests, according to the [current Form SS-4 instructions](https://www.irs.gov/instructions/iss4). A same-day retry can therefore create a second problem without resolving the first.
 
-If the LLC is already formed and you want the form and IRS contact handled, [use our $149 EIN service](/ein). The IRS itself charges **$0** for an EIN; the service fee covers preparation, submission and follow-up.
+If the LLC is already formed and you want the form and IRS contact handled, [use our {{price.ein}} EIN service](/ein). The IRS itself charges **$0** for an EIN; the service fee covers preparation, submission and follow-up.
 
 ## What does EIN reference number 101 actually mean?
 
@@ -105,11 +105,11 @@ The daily limit also matters after a stop. If the responsible party already rece
 
 ## How can Form5472 Prep resolve the EIN application?
 
-Form5472 Prep's EIN acquisition service costs **$149**. We prepare Form SS-4 for the foreign-owned entity, submit it through the appropriate IRS route, deal with the IRS on the client's behalf as third-party designee, and deliver the EIN, typically in **1–5 business days**. A reference-code review can depend on IRS action, so the timing is not a guarantee.
+Form5472 Prep's EIN acquisition service costs **{{price.ein}}**. We prepare Form SS-4 for the foreign-owned entity, submit it through the appropriate IRS route, deal with the IRS on the client's behalf as third-party designee, and deliver the EIN, typically in **1–5 business days**. A reference-code review can depend on IRS action, so the timing is not a guarantee.
 
-The IRS charges **$0** for the EIN itself. The service price pays for the form work, submission and follow-up. Where an ITIN is genuinely required for a separate reason, our **$349** ITIN service uses an IRS-authorised Certifying Acceptance Agent to certify identity documents, so no original passport mailing is needed.
+The IRS charges **$0** for the EIN itself. The service price pays for the form work, submission and follow-up. Where an ITIN is genuinely required for a separate reason, our **{{price.itin}}** ITIN service uses an IRS-authorised Certifying Acceptance Agent to certify identity documents, so no original passport mailing is needed.
 
-Annual Form 5472 filing is separate: **$149** standard, **$199** express and **+$99** per extra past year. We are not a CPA firm and do not give tax advice.
+Annual Form 5472 filing is separate: **{{price.standard}}** standard, **{{price.express}}** express and **+{{price.additionalYear}}** per extra past year. We are not a CPA firm and do not give tax advice.
 
 ## Frequently asked questions
 
@@ -143,4 +143,4 @@ The IRS does not publish a specific processing time for a reference 101 manual r
 
 ---
 
-Reference 101 stops an automated session, not the LLC's ability to receive an EIN. Correct the record, give the IRS the formation evidence it needs and use one valid submission route. [Get the EIN application handled for $149](/ein), or read the [international EIN processing guide](/blog/ein-processing-time-international-applicants).
+Reference 101 stops an automated session, not the LLC's ability to receive an EIN. Correct the record, give the IRS the formation evidence it needs and use one valid submission route. [Get the EIN application handled for {{price.ein}}](/ein), or read the [international EIN processing guide](/blog/ein-processing-time-international-applicants).

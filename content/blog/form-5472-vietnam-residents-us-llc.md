@@ -14,7 +14,7 @@ Developers in Hanoi, agency owners in Da Nang, ecommerce operators in Ho Chi Min
 
 Two features of the Vietnam position change the mechanics of the filing compared with a UK or Indian owner: there is no treaty in force to reach for, and the number Vietnam issues individual taxpayers changed form in 2025. Neither removes the obligation.
 
-If you would rather have the filing done than explained, [we prepare and fax the complete package from $149](/start).
+If you would rather have the filing done than explained, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do Vietnam residents have to file Form 5472?
 
@@ -107,7 +107,7 @@ No treaty to invoke, an FTIN that changed form in 2025, VND conversion with a st
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120 and the Part V statement, has a qualified tax accountant review the package, faxes it to the IRS Ogden PIN Unit and returns the timestamped receipt.
 
-**$149** standard, ready in 5-7 business days. **$199** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, in the US or in Vietnam. We prepare and submit the US information return.
 

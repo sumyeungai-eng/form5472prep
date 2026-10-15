@@ -92,7 +92,7 @@ The IRS [single-member LLC page](https://www.irs.gov/businesses/small-businesses
 
 ## What does the federal side cost?
 
-Our Standard package is **$149** and is prepared in 5–7 business days; **$199** Express is prepared ready to sign within 24 hours; each additional past tax year is **+$99**. IRS fax delivery is included in every package, and current tiers are listed on our [pricing page](/pricing).
+Our Standard package is **{{price.standard}}** and is prepared in 5–7 business days; **{{price.express}}** Express is prepared ready to sign within 24 hours; each additional past tax year is **+{{price.additionalYear}}**. IRS fax delivery is included in every package, and current tiers are listed on our [pricing page](/pricing).
 
 **We are not a CPA firm and we do not give tax advice.** A qualified tax accountant reviews each package before it leaves. What we do is narrow on purpose: establish the outstanding years with you, prepare the pro forma Form 1120 and Form 5472 for each one, deliver the package to the IRS, and give you the receipt and a copy to keep.
 

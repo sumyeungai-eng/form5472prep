@@ -16,7 +16,7 @@ Freelancers, developers and agency owners often arrive in Tbilisi with a US LLC 
 
 Two features of the Georgian position change the mechanics of the filing compared with a UK or Indian owner: the treaty that covers Georgia is an old Soviet-era instrument, and whether you hold a Georgian tax number depends on whether you registered. Neither removes the obligation.
 
-If you would rather have it done than explained, [we prepare and fax the complete package from $149](/start).
+If you would rather have it done than explained, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do Georgia (country) residents have to file Form 5472?
 
@@ -112,7 +112,7 @@ The Georgian details — the right FTIN entry, lari conversion, payments to your
 
 We prepare Form 5472, the pro forma Form 1120 and the supporting statement; a qualified tax accountant reviews each package; and we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt.
 
-**$149** Standard, ready in 5–7 business days. **$199** Express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included.
+**{{price.standard}}** Standard, ready in 5–7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on Georgian tax or small business status. We prepare and submit the US information return.
 

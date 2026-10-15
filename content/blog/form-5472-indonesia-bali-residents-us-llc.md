@@ -14,7 +14,7 @@ Bali produces an unusual concentration of US LLC owners. Agency operators in Can
 
 Two features of the Indonesian position change the mechanics of the filing compared with a UK or Indian owner. There is a treaty in force, which owners misread as a filing exemption. And whether you hold an NPWP turns on your own tax status in Indonesia, so two neighbours on one Canggu street can correctly make different entries in the same box. Neither feature removes the obligation.
 
-If you would rather have the filing done than explained, [we prepare and fax the complete package from $149](/start).
+If you would rather have the filing done than explained, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do Indonesia and Bali residents have to file Form 5472?
 
@@ -97,7 +97,7 @@ The regular due date for a calendar-year entity is generally **15 April**, and F
 
 We prepare the complete package — Form 5472 with the FTIN and reference ID handled correctly, the pro forma Form 1120, and the Part V supporting statement — have it reviewed by a qualified tax accountant, and fax it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt. Late years include a reasonable cause cover letter.
 
-**$149** standard, ready in 5-7 business days. **$199** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm, and we do not give tax advice on US or Indonesian tax. We prepare and submit the US information return accurately.
 

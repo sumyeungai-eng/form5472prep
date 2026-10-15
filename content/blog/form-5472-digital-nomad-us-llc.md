@@ -15,7 +15,7 @@ The pattern is familiar: a Wyoming or New Mexico LLC, a Mercury account, Stripe 
 
 Two features of the no-fixed-residence position change the mechanics compared with a UK or Indian owner, who has a settled address and a national tax number. Neither removes the obligation: the FTIN box asks for a tax number you may not have, and the address fields ask separately where the LLC is and where you are.
 
-If you want the filing done rather than explained, [we prepare and fax the complete package from $149](/start).
+If you want the filing done rather than explained, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Does a digital nomad with no tax residence still file Form 5472?
 
@@ -144,7 +144,7 @@ The due date for a calendar-year entity is generally **15 April**; Form 7004 ext
 
 The hard part on the road is faxing internationally and keeping the reference ID identical to last year's.
 
-We prepare the package, have it reviewed by a qualified tax accountant, and fax it to the Ogden PIN Unit, returning a timestamped receipt — transmission evidence, not IRS acceptance. **$149** standard (5–7 business days), **$199** express (ready to sign within 24 hours), **+$99** per additional past year, IRS fax delivery included.
+We prepare the package, have it reviewed by a qualified tax accountant, and fax it to the Ogden PIN Unit, returning a timestamped receipt — transmission evidence, not IRS acceptance. **{{price.standard}}** standard (5–7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past year, IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on any country's personal tax.
 

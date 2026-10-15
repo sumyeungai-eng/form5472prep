@@ -13,7 +13,7 @@ draft: false
 
 Digital nomads usually compare these three vehicles on tax rates. This post compares something narrower: the paperwork each one generates every year, who receives it, and when it is due. It does not compare tax outcomes, personal filings or setup costs, and it does not rank the structures — that depends on where you live and what your advisers say.
 
-Each entity has a fixed annual cycle that runs whether or not the business made money. If you own a US LLC, [we prepare and fax the complete Form 5472 package from $149](/start); the Estonian and UAE sides need a local accountant. We describe those in outline only, from each government's own pages, and where we found no official statement the table says "varies — check" and names the authority.
+Each entity has a fixed annual cycle that runs whether or not the business made money. If you own a US LLC, [we prepare and fax the complete Form 5472 package from {{price.standard}}](/start); the Estonian and UAE sides need a local accountant. We describe those in outline only, from each government's own pages, and where we found no official statement the table says "varies — check" and names the authority.
 
 ## What does each entity file every year?
 
@@ -101,7 +101,7 @@ Nothing merges. An Estonian annual report or a UAE corporate tax return does not
 
 ## Getting the US filing done
 
-We prepare the US half — Form 5472 and the pro forma Form 1120 — and fax it to the IRS. **Standard is $149 (5–7 business days), Express is $199 (ready to sign within 24 hours), each additional past tax year is +$99, and IRS fax delivery is included.** A qualified tax accountant reviews each package before it goes out.
+We prepare the US half — Form 5472 and the pro forma Form 1120 — and fax it to the IRS. **Standard is {{price.standard}} (5–7 business days), Express is {{price.express}} (ready to sign within 24 hours), each additional past tax year is +{{price.additionalYear}}, and IRS fax delivery is included.** A qualified tax accountant reviews each package before it goes out.
 
 We are not a CPA firm and do not give tax advice. We do not prepare Estonian, UAE or free-zone filings; those belong with a local accountant.
 

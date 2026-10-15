@@ -12,7 +12,7 @@ draft: false
 
 Form SS-4 is short, but several answers establish the IRS account that later appears on banking records and federal filings. This walkthrough uses the [current IRS Form SS-4](https://www.irs.gov/pub/irs-pdf/fss4.pdf) and its December 2025 revision, current in 2026.
 
-The [IRS EIN application page](https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online) says the EIN is free and limits issuance to **one EIN per responsible party per day**. If you prefer to have the form prepared and the IRS contact handled, [use our $149 EIN service](/ein).
+The [IRS EIN application page](https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online) says the EIN is free and limits issuance to **one EIN per responsible party per day**. If you prefer to have the form prepared and the IRS contact handled, [use our {{price.ein}} EIN service](/ein).
 
 This guide assumes one foreign individual owns a US-organised LLC, no Form 8832 corporate election is in effect, and the LLC needs an EIN for Form 5472 and ordinary business use. A multi-member LLC, foreign entity, trust owner or elected corporation needs a different classification analysis.
 
@@ -132,11 +132,11 @@ The IRS instructions publish ordinary route estimates, but this guide makes no p
 
 ## How can Form5472 Prep prepare and submit Form SS-4?
 
-Form5472 Prep's EIN acquisition service costs **$149**. We prepare Form SS-4 for the foreign-owned entity, submit it through the appropriate IRS route, act as third-party designee to answer application questions, and deliver the EIN, typically in **1–5 business days**. The IRS charges **$0** for the number itself, and the service timing is not an IRS guarantee.
+Form5472 Prep's EIN acquisition service costs **{{price.ein}}**. We prepare Form SS-4 for the foreign-owned entity, submit it through the appropriate IRS route, act as third-party designee to answer application questions, and deliver the EIN, typically in **1–5 business days**. The IRS charges **$0** for the number itself, and the service timing is not an IRS guarantee.
 
-Where an ITIN is genuinely required for a separate purpose, our **$349** ITIN service uses an IRS-authorised Certifying Acceptance Agent to certify identity documents, so no original passport mailing is needed.
+Where an ITIN is genuinely required for a separate purpose, our **{{price.itin}}** ITIN service uses an IRS-authorised Certifying Acceptance Agent to certify identity documents, so no original passport mailing is needed.
 
-Annual Form 5472 filing is a separate service: **$149** standard, **$199** express and **+$99** per extra past year. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that a required but late or substantially incomplete form can carry a **$25,000** penalty. We are not a CPA firm and do not give tax advice.
+Annual Form 5472 filing is a separate service: **{{price.standard}}** standard, **{{price.express}}** express and **+{{price.additionalYear}}** per extra past year. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) state that a required but late or substantially incomplete form can carry a **$25,000** penalty. We are not a CPA firm and do not give tax advice.
 
 ## Frequently asked questions
 
@@ -170,4 +170,4 @@ No, not when the principal place of business is outside the United States. Use t
 
 ---
 
-A correct SS-4 keeps the LLC's legal name, owner, classification and business facts consistent from the first federal record. [Have Form5472 Prep obtain the EIN for $149](/ein), or use the [EIN application checklist](/blog/ein-application-checklist-foreign-owned-llc) for a final document review.
+A correct SS-4 keeps the LLC's legal name, owner, classification and business facts consistent from the first federal record. [Have Form5472 Prep obtain the EIN for {{price.ein}}](/ein), or use the [EIN application checklist](/blog/ein-application-checklist-foreign-owned-llc) for a final document review.

@@ -14,7 +14,7 @@ Form 5472 deadlines are simple in outline and easy to miss in practice, because 
 
 Here is the full calendar for tax years 2024 to 2027, plus the extension rule that is specific to foreign-owned disregarded entities and catches out people who assume Form 7004 works the way it does for everyone else.
 
-If a date has already passed for you, [we prepare and fax complete late packages with a reasonable cause letter from $149](/start). The [late Form 5472 filing service](/services/late-form-5472-filing-service) explains what each missed year's package includes.
+If a date has already passed for you, [we prepare and fax complete late packages with a reasonable cause letter from {{price.standard}}](/start). The [late Form 5472 filing service](/services/late-form-5472-filing-service) explains what each missed year's package includes.
 
 ## The deadline calendar
 
@@ -145,7 +145,7 @@ Note that the March buffer also gives you time to discover that a prior year was
 
 [Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning a timestamped provider transmission receipt. The receipt is useful transmission evidence; it is not an IRS acceptance notice. For late years we include a reasonable cause cover letter.
 
-**$149** standard, ready in **5-7 business days**. **$199** express, ready for you to check and sign within **24 hours**. **+$99** per additional past tax year. IRS fax delivery included on both.
+**{{price.standard}}** standard, ready in **5-7 business days**. **{{price.express}}** express, ready for you to check and sign within **24 hours**. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included on both.
 
 For current turnaround tiers before choosing a start date, [see current pricing](/pricing). For everything the package contains, see the [Form 5472 filing service](/services/form-5472-filing-service).
 

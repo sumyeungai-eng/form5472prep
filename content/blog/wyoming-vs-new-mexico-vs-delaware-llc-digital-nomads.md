@@ -14,7 +14,7 @@ Digital nomads usually pick a formation state from a list of three: Wyoming, New
 
 This comparison keeps them apart. The state figures below were re-checked on each state's own government website on 18 September 2026.
 
-If you already have an LLC and the federal return is what you need, [we prepare and fax the complete Form 5472 package from $149](/start), whichever of the three states you chose.
+If you already have an LLC and the federal return is what you need, [we prepare and fax the complete Form 5472 package from {{price.standard}}](/start), whichever of the three states you chose.
 
 ## Does the formation state change the Form 5472 requirement?
 
@@ -112,9 +112,9 @@ Then handle the state item separately, on the state's own calendar.
 
 We prepare the Form 5472 and pro forma Form 1120 package and fax it to the IRS. The state filing stays with you or your registered agent.
 
-- **Standard:** $149, delivered in 5–7 business days
-- **Express:** $199, ready to sign within 24 hours
-- **Each additional past tax year:** +$99
+- **Standard:** {{price.standard}}, delivered in 5–7 business days
+- **Express:** {{price.express}}, ready to sign within 24 hours
+- **Each additional past tax year:** +{{price.additionalYear}}
 - **IRS fax delivery:** included
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return, and a qualified tax accountant reviews each package. [Start your filing](/start) and choose the tax years you need.

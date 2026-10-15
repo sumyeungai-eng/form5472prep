@@ -14,7 +14,7 @@ An EIN identifies a foreign-owned U.S. disregarded LLC for its Form 5472 package
 
 The obstacle non-residents hit is that the IRS's fast online EIN application requires the responsible party to have an SSN or ITIN. That leads a lot of people to conclude they must first spend months and several hundred dollars obtaining an ITIN. **They do not.** The IRS instructions state it explicitly.
 
-If you would rather have this handled: [we obtain EINs for foreign-owned LLCs for $149](/ein), including preparing Form SS-4 and dealing with the IRS on your behalf.
+If you would rather have this handled: [we obtain EINs for foreign-owned LLCs for {{price.ein}}](/ein), including preparing Form SS-4 and dealing with the IRS on your behalf.
 
 ## Does a foreign-owned single-member LLC need an EIN?
 
@@ -115,9 +115,9 @@ If that is your situation, investigate the EIN and each year's filing requiremen
 
 The SS-4 route is free and workable if you are comfortable completing an IRS form correctly and dealing with fax transmissions or an international phone queue. What it costs you is the time, and the risk of a rejected application that you only discover weeks later.
 
-[Form5472 Prep](/ein) obtains the EIN for foreign-owned LLCs for **$149**: we prepare Form SS-4 correctly for a foreign-owned disregarded entity, submit it, deal with the IRS on your behalf, and deliver the EIN — typically in 1-5 business days. Where an ITIN is genuinely needed, identity documents are certified by an IRS-authorized Certifying Acceptance Agent, so no original passport ever has to be mailed.
+[Form5472 Prep](/ein) obtains the EIN for foreign-owned LLCs for **{{price.ein}}**: we prepare Form SS-4 correctly for a foreign-owned disregarded entity, submit it, deal with the IRS on your behalf, and deliver the EIN — typically in 1-5 business days. Where an ITIN is genuinely needed, identity documents are certified by an IRS-authorized Certifying Acceptance Agent, so no original passport ever has to be mailed.
 
-If you also need the annual filing, that is our main service: Form 5472 and the pro forma Form 1120 prepared, reviewed by a qualified tax accountant, and faxed to the IRS Ogden PIN Unit — **$149** standard (5-7 business days), **$199** express (ready to sign within 24 hours), **+$99** per additional past tax year.
+If you also need the annual filing, that is our main service: Form 5472 and the pro forma Form 1120 prepared, reviewed by a qualified tax accountant, and faxed to the IRS Ogden PIN Unit — **{{price.standard}}** standard (5-7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the forms accurately.
 

@@ -14,7 +14,7 @@ Owning a US LLC does not by itself qualify you for an Individual Taxpayer Identi
 
 Once a genuine trigger exists, accuracy matters across the whole package. The IRS says to allow **7 weeks** for an ITIN status notice, rising to **9–11 weeks** during January 15 through April 30 or when applying from overseas, on its [ITIN information page](https://www.irs.gov/individuals/individual-taxpayer-identification-number). An inconsistent W-7 can turn that wait into a request for evidence or a rejection.
 
-If you want the application prepared and your identity document verified without mailing your original passport, [use our $349 ITIN service](/itin). The guidance follows the current [IRS Instructions for Form W-7](https://www.irs.gov/instructions/iw7).
+If you want the application prepared and your identity document verified without mailing your original passport, [use our {{price.itin}} ITIN service](/itin). The guidance follows the current [IRS Instructions for Form W-7](https://www.irs.gov/instructions/iw7).
 
 ## When should a nonresident LLC owner use Form W-7?
 
@@ -109,7 +109,7 @@ Submit one internally consistent package through the route that protects your do
 
 ## How can Form5472 Prep handle the ITIN application?
 
-Form5472 Prep’s ITIN acquisition service costs **$349**. We prepare Form W-7 for a new application or renewal, assemble the supporting federal return or exception evidence, submit the package, and track the case through the CP565 outcome.
+Form5472 Prep’s ITIN acquisition service costs **{{price.itin}}**. We prepare Form W-7 for a new application or renewal, assemble the supporting federal return or exception evidence, submit the package, and track the case through the CP565 outcome.
 
 We forward eligible applications to an IRS-authorized Certifying Acceptance Agent, who verifies permitted identity documents and returns them immediately after review. The applicant never mails an original passport to the IRS. The IRS, not the CAA, decides eligibility and assigns the ITIN, so the published processing window is an estimate rather than a guarantee.
 
@@ -147,4 +147,4 @@ Direct mail requires original documents or issuing-agency-certified copies. A CA
 
 ---
 
-A correct W-7 begins with the right tax reason and ends with a package in which every name, address, document, and attachment agrees. [Have our IRS-authorised CAA prepare and submit your ITIN application for $349](/itin), or review [why Form 5472 alone does not require an ITIN](/blog/itin-required-form-5472).
+A correct W-7 begins with the right tax reason and ends with a package in which every name, address, document, and attachment agrees. [Have our IRS-authorised CAA prepare and submit your ITIN application for {{price.itin}}](/itin), or review [why Form 5472 alone does not require an ITIN](/blog/itin-required-form-5472).

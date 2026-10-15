@@ -27,6 +27,18 @@ export function blogPagePath(page: number): string {
 }
 
 /**
+ * Canonical path for a page of a topic hub: 1 -> /blog/topics/<tag>,
+ * n -> /blog/topics/<tag>/page/n. Topic hubs paginate exactly like /blog
+ * (same page size, same parsePageParam rules) — the form-5472 hub alone listed
+ * 165 posts on one page before 2026-10-16 (Moz avoid_excessive_internal_links).
+ * `tag` must already be a normalised tag slug (see tagSlug in blog-tags.ts).
+ */
+export function topicPagePath(tag: string, page: number): string {
+  const base = `/blog/topics/${tag}`;
+  return page <= 1 ? base : `${base}/page/${page}`;
+}
+
+/**
  * Parse the `[n]` route segment. Only canonical decimal strings >= 2 are
  * accepted ("2", not "02", "2.0", "+2" or "1"), so every page has exactly one
  * URL. Page 1 is /blog itself and is deliberately not accepted here.

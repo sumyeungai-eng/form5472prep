@@ -10,7 +10,7 @@ draft: false
 
 **A US-formed LLC has no BOI filing obligation, even if it is wholly owned by a non-US person. FinCEN's final rule, published in the Federal Register on 14 August 2026, permanently exempts US companies and US persons from beneficial ownership information reporting. Only entities formed under foreign law that register to do business in a US state or tribal jurisdiction still report — and only for their foreign individual owners.**
 
-If your LLC was formed in Wyoming, Delaware, New Mexico, or any other US state, this page is the short version: you do not file a BOI report for it, and you do not need to update one you filed in 2024 or 2025. This guide covers how that changed, who is still on the hook, what happens to information already on file, and how to tell a real compliance notice from a scam letter — because BOI-themed scam mail did not stop just because the filing requirement did. [We handle the still-mandatory federal Form 5472 filing for foreign-owned US LLCs](/start) from $149; we do not file BOI reports, because for a US-formed LLC there is nothing left to file.
+If your LLC was formed in Wyoming, Delaware, New Mexico, or any other US state, this page is the short version: you do not file a BOI report for it, and you do not need to update one you filed in 2024 or 2025. This guide covers how that changed, who is still on the hook, what happens to information already on file, and how to tell a real compliance notice from a scam letter — because BOI-themed scam mail did not stop just because the filing requirement did. [We handle the still-mandatory federal Form 5472 filing for foreign-owned US LLCs](/start) from {{price.standard}}; we do not file BOI reports, because for a US-formed LLC there is nothing left to file.
 
 ## What is the current BOI rule for a foreign-owned US LLC?
 
@@ -74,7 +74,7 @@ BOI exemption does not touch two separate obligations:
 
 ## Where Form5472 Prep fits
 
-[Form5472 Prep](/) prepares and faxes the annual federal Form 5472 and pro forma Form 1120 for foreign-owned US disregarded entities — $149 standard (5–7 business days), $199 express (ready to sign within 24 hours), plus $99 per additional past year. We also offer EIN service at $149 ([/ein](/ein)) and ITIN service at $349 ([/itin](/itin)). We do not offer registered-agent, LLC formation, or BOI-filing services, and we are not a law or CPA firm — nothing here is legal or tax advice.
+[Form5472 Prep](/) prepares and faxes the annual federal Form 5472 and pro forma Form 1120 for foreign-owned US disregarded entities — {{price.standard}} standard (5–7 business days), {{price.express}} express (ready to sign within 24 hours), plus {{price.additionalYear}} per additional past year. We also offer EIN service at {{price.ein}} ([/ein](/ein)) and ITIN service at {{price.itin}} ([/itin](/itin)). We do not offer registered-agent, LLC formation, or BOI-filing services, and we are not a law or CPA firm — nothing here is legal or tax advice.
 
 ## Frequently asked questions
 

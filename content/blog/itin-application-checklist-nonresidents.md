@@ -45,7 +45,7 @@ The authoritative requirements are in the current [Instructions for Form W-7](ht
 
 There are three practical approaches. Mailing directly to the IRS may require original documents or copies certified by the issuing agency. An IRS Taxpayer Assistance Center with ITIN services can authenticate most documents at a U.S. appointment. A Certifying Acceptance Agent can authenticate most permitted documents and submit the package without the applicant mailing the original passport to the IRS.
 
-Form5472 Prep’s **$349 ITIN service** includes Form W-7 preparation and IRS-authorized CAA certification. The original passport stays with the applicant. Exact evidence still depends on the W-7 reason and whether a tax return or exception package is required.
+Form5472 Prep’s **{{price.itin}} ITIN service** includes Form W-7 preparation and IRS-authorized CAA certification. The original passport stays with the applicant. Exact evidence still depends on the W-7 reason and whether a tax return or exception package is required.
 
 ## Final completeness check
 
@@ -65,6 +65,6 @@ Confirm that:
 
 The IRS advises allowing about seven weeks for an ITIN status notice and nine to eleven weeks during tax season or for overseas applications. Those are IRS processing periods, not a provider guarantee. Keep delivery evidence and avoid sending a second application merely because the first is still inside the stated window.
 
-[Start your ITIN application](/itin/apply) when you have a genuine federal tax purpose and want Form W-7 preparation plus CAA document certification for a flat $349 fee.
+[Start your ITIN application](/itin/apply) when you have a genuine federal tax purpose and want Form W-7 preparation plus CAA document certification for a flat {{price.itin}} fee.
 
 *Educational information only; not tax or legal advice. Eligibility, return filing, treaty, withholding, and exception questions depend on the applicant’s facts.*

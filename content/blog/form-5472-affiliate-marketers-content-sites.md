@@ -13,7 +13,7 @@ draft: false
 
 An affiliate business is easy to run through a US LLC and easy to mix up with yourself. The sites predate the LLC, the hosting renews on an old personal card, and sponsors email you rather than the company. None of that changes what Form 5472 asks for; all of it changes your answer.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a **$25,000 penalty** will be assessed on a reporting corporation that fails to file when due and in the manner prescribed, and that a substantially incomplete form counts as a failure to file. [We prepare and fax the package from $149](/start).
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a **$25,000 penalty** will be assessed on a reporting corporation that fails to file when due and in the manner prescribed, and that a substantially incomplete form counts as a failure to file. [We prepare and fax the package from {{price.standard}}](/start).
 
 ## Does an affiliate or content site's US LLC have to file Form 5472?
 
@@ -103,7 +103,7 @@ The [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472) links
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your network reports and owner-movement schedule, have a qualified tax accountant review the package, fax it to the IRS and send you the receipt.
 
-Standard is **$149** (5–7 business days); Express is **$199** (ready to sign within 24 hours); each additional past tax year is **+$99**; IRS fax delivery is included. [Start your Form 5472 package](/start).
+Standard is **{{price.standard}}** (5–7 business days); Express is **{{price.express}}** (ready to sign within 24 hours); each additional past tax year is **+{{price.additionalYear}}**; IRS fax delivery is included. [Start your Form 5472 package](/start).
 
 We are not a CPA firm and we do not give tax advice. Valuing a contributed site, whether your income is effectively connected with a US trade or business, and your home-country return are questions for the appropriate adviser. If part of your income is coaching or courses rather than content, [Form 5472 for coaches and course creators](/blog/form-5472-coaches-consultants-course-creators) covers that mix.
 

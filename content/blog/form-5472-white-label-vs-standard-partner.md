@@ -76,7 +76,7 @@ Branding should never obscure who is responsible for advice, accuracy, preparati
 
 ## Commercial model and pricing
 
-The standard partner page currently uses the same per-filing pricing as direct customers and has no platform subscription. Current public prices are Standard at $149 with a 5–7-business-day turnaround and Express at $199, ready to sign within 24 hours. An additional past tax year adds $99, and IRS fax delivery is included.
+The standard partner page currently uses the same per-filing pricing as direct customers and has no platform subscription. Current public prices are Standard at {{price.standard}} with a 5–7-business-day turnaround and Express at {{price.express}}, ready to sign within 24 hours. An additional past tax year adds {{price.additionalYear}}, and IRS fax delivery is included.
 
 [Verify current pricing](/pricing) before quoting a client. Volume pricing and consolidated invoicing are available for discussion, but a partner should not advertise a discount, margin, referral fee, or wholesale rate until the arrangement is confirmed in writing.
 

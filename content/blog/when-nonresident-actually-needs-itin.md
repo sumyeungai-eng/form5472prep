@@ -14,7 +14,7 @@ The useful question is which return, withholding rule, or reporting requirement 
 
 The [IRS Form W-7 instructions](https://www.irs.gov/instructions/iw7) define an ITIN as a number for someone who needs a US taxpayer identification number for federal tax purposes but cannot get an SSN. The same instructions say to allow about **7 weeks** for an application status notice, or **9–11 weeks** during 15 January through 30 April or when filing from overseas.
 
-If a real tax trigger applies, [use our $349 ITIN service](/itin). An IRS-authorised Certifying Acceptance Agent checks the identity documents and returns them immediately, so you do not mail an original passport to the IRS.
+If a real tax trigger applies, [use our {{price.itin}} ITIN service](/itin). An IRS-authorised Certifying Acceptance Agent checks the identity documents and returns them immediately, so you do not mail an original passport to the IRS.
 
 ## Which situations actually require an ITIN?
 
@@ -105,7 +105,7 @@ Do not obtain an ITIN “just in case.” Applying only when the tax trigger is 
 
 ## How does Form5472 Prep handle a genuine ITIN application?
 
-Form5472 Prep handles the complete ITIN acquisition for **$349**. We prepare Form W-7 for a new application or renewal, assemble the supporting Form 1040-NR or exception evidence, submit the package, and track the application through the CP565 assignment outcome.
+Form5472 Prep handles the complete ITIN acquisition for **{{price.itin}}**. We prepare Form W-7 for a new application or renewal, assemble the supporting Form 1040-NR or exception evidence, submit the package, and track the application through the CP565 assignment outcome.
 
 An IRS-authorised Certifying Acceptance Agent verifies the original identity documents and returns them immediately after review. The applicant never mails an original passport to the IRS. The CAA route does not weaken the documentation standard or guarantee approval; it removes the original-passport mailing risk and gives the application a structured review before submission.
 
@@ -143,4 +143,4 @@ Yes. A Certifying Acceptance Agent can verify eligible original identity documen
 
 ---
 
-Many foreign LLC owners never need an ITIN; the right moment to apply is when a documented personal tax purpose creates the need. If your Form 1040-NR, refund, treaty claim, or W-7 exception does, [start the $349 CAA ITIN service](/itin). For the most common false trigger, read [whether Form 5472 requires an ITIN](/blog/itin-required-form-5472).
+Many foreign LLC owners never need an ITIN; the right moment to apply is when a documented personal tax purpose creates the need. If your Form 1040-NR, refund, treaty claim, or W-7 exception does, [start the {{price.itin}} CAA ITIN service](/itin). For the most common false trigger, read [whether Form 5472 requires an ITIN](/blog/itin-required-form-5472).

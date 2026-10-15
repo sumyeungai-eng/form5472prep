@@ -58,12 +58,12 @@ The current [Form W-7 instructions](https://www.irs.gov/instructions/iw7) are th
 
 CAA service is mainly about authentication, correct assembly, and document control. It should not be sold as paid priority processing. The IRS uses the same ITIN operation to decide the application.
 
-Form5472 Prep’s $349 service prepares Form W-7 and uses CAA certification so the original passport is not mailed to the IRS. That removes a document-return concern and can reduce preventable package errors, while the actual assignment timeline remains the IRS’s responsibility.
+Form5472 Prep’s {{price.itin}} service prepares Form W-7 and uses CAA certification so the original passport is not mailed to the IRS. That removes a document-return concern and can reduce preventable package errors, while the actual assignment timeline remains the IRS’s responsibility.
 
 ## Plan backward from the real deadline
 
 If the ITIN will appear on a U.S. return, do not treat the filing date as the day to begin. Allow time to confirm eligibility, prepare the return, complete CAA authentication, send the package, and wait through the published IRS window. If the return deadline is close, consult the return instructions or a qualified tax adviser about filing and extension options; an ITIN application does not automatically extend a return.
 
-[Start the ITIN application](/itin/apply) for Form W-7 preparation and CAA certification. The flat fee is $349, and your original passport stays with you.
+[Start the ITIN application](/itin/apply) for Form W-7 preparation and CAA certification. The flat fee is {{price.itin}}, and your original passport stays with you.
 
 *Operational status checked September 3, 2026. Processing queues change. Educational information only; not tax or legal advice.*

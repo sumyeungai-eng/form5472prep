@@ -120,7 +120,7 @@ The arithmetic is **$5,000 + $800 + $14,000 = $19,800**. Ordinary customer recei
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit with a timestamped confirmation receipt.
 
-Standard is **$149**, ready in **5-7 business days**. Express is **$199**, ready for you to check and sign within **24 hours**. Each additional past tax year is **+$99**, and IRS fax delivery is included. EIN service is **$149** at [/ein](/ein).
+Standard is **{{price.standard}}**, ready in **5-7 business days**. Express is **{{price.express}}**, ready for you to check and sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**, and IRS fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein).
 
 For current federal filing tiers, [see current pricing](/pricing).
 

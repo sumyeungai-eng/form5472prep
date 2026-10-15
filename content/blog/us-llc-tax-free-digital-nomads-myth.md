@@ -14,7 +14,7 @@ The pitch is familiar: form a Wyoming or New Mexico LLC, connect Stripe, and pay
 
 The pitch leaves out the paperwork. Owing no US tax and owing no US filing are separate questions, and for a foreign-owned LLC the answers are usually "no" and "yes". What your residence country charges is a third question no US structure answers.
 
-If you already know you need the filing, [we prepare and fax the complete package from $149](/start).
+If you already know you need the filing, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Is a US LLC tax-free for a nonresident owner?
 
@@ -106,7 +106,7 @@ For a calendar-year LLC the due date is generally **15 April**, and Form 7004 ex
 
 We prepare the package, have it reviewed by a qualified tax accountant, and fax it to the IRS Ogden PIN Unit, returning the timestamped receipt. That receipt is transmission evidence, not IRS acceptance of the return.
 
-**$149** Standard (5–7 business days), **$199** Express (ready to sign within 24 hours), **+$99** per additional past tax year, IRS fax delivery included.
+**{{price.standard}}** Standard (5–7 business days), **{{price.express}}** Express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year, IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice. We do not decide whether you have ECI, and we do not advise on your residence country's tax. We prepare and submit the information return accurately.
 

@@ -14,7 +14,7 @@ Finding an error after filing is uncomfortable, and the instinct to leave it alo
 
 An incomplete or materially wrong return can therefore attract the same **$25,000 penalty** as filing nothing at all. Correcting it voluntarily, before the IRS raises it, is both cheaper and better evidence of good faith.
 
-This guide covers what the IRS does and does not say, which errors are worth correcting, and how to assemble the correction. If you would rather have it prepared for you, [we handle corrected filings from $149](/start).
+This guide covers what the IRS does and does not say, which errors are worth correcting, and how to assemble the correction. If you would rather have it prepared for you, [we handle corrected filings from {{price.standard}}](/start).
 
 ## Is there an official way to amend Form 5472?
 
@@ -100,7 +100,7 @@ A corrected filing has to be right the second time. It attracts attention by its
 
 [Form5472 Prep](/) prepares complete corrected packages — Form 5472 rebuilt from your actual transaction records, a corrected pro forma Form 1120 with the required annotation, the Part V supporting statement, an explanation statement, and a reasonable cause letter where the original was late — reviewed by a qualified tax accountant and faxed to the IRS Ogden PIN Unit, with the timestamped transmission receipt returned to you.
 
-**$149** standard (5-7 business days), **$199** express (ready to sign within 24 hours), **+$99** per additional past tax year if other years also need filing. IRS fax delivery included.
+**{{price.standard}}** standard (5-7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year if other years also need filing. IRS fax delivery included.
 
 For current corrected-filing options, [see current pricing](/pricing).
 

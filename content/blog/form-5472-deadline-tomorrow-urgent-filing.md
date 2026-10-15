@@ -1,7 +1,7 @@
 ---
 title: "Form 5472 Deadline on 15 October 2026: Filing in Two Days"
 seoTitle: "Form 5472 Deadline 15 October 2026"
-description: "The extended 2025 Form 5472 is due 15 October 2026. Express ($199) has your package ready to check and sign within 24 hours — then you sign and we fax."
+description: "The extended 2025 Form 5472 is due 15 October 2026. Express ({{price.express}}) has your package ready to check and sign within 24 hours — then you sign and we fax."
 date: 2026-10-13
 updated: 2026-10-13
 author: "Form5472 Prep"
@@ -9,7 +9,7 @@ tags: ["form-5472", "deadline", "express-filing", "form-7004", "foreign-owned-ll
 draft: false
 ---
 
-**Your extended 2025 Form 5472 is due Thursday 15 October 2026. Order Express ($199) today and your package is ready for you to check and sign within 24 hours, 7 days a week. It cannot go to the IRS until you sign it — only your signature belongs on the pro forma Form 1120.**
+**Your extended 2025 Form 5472 is due Thursday 15 October 2026. Order Express ({{price.express}}) today and your package is ready for you to check and sign within 24 hours, 7 days a week. It cannot go to the IRS until you sign it — only your signature belongs on the pro forma Form 1120.**
 
 Today is Tuesday 13 October 2026. If you extended your 2025 return on Form 7004, the useful question is no longer "what is the deadline" but "what can actually be completed between now and Thursday." This post answers only that — [start your filing now](/start) and read the rest while the intake is open.
 
@@ -23,7 +23,7 @@ Two things the extension did not do: it did not extend the time to pay anything 
 
 ## What does "within 24 hours" actually mean?
 
-Express ($199) means one thing precisely: **your completed package is ready for you to check and sign within 24 hours of ordering, 7 days a week.**
+Express ({{price.express}}) means one thing precisely: **your completed package is ready for you to check and sign within 24 hours of ordering, 7 days a week.**
 
 It does not mean filed within 24 hours, and we will not tell you otherwise to win the order. The reason is not a disclaimer — it is how the filing works.
 
@@ -73,9 +73,9 @@ If a number is genuinely unknown, say so. A flagged estimate we can question bea
 
 ## Is Standard still worth considering today?
 
-Standard is $149 and ready in 5-7 business days. Ordered today that lands after 15 October, so if your extension is live and you need the package ready to sign before Thursday, Standard is not your tier — and we will say so rather than take the cheaper order.
+Standard is {{price.standard}} and ready in 5-7 business days. Ordered today that lands after 15 October, so if your extension is live and you need the package ready to sign before Thursday, Standard is not your tier — and we will say so rather than take the cheaper order.
 
-It is not a lesser filing, though. The forms, the accountant review, the reasonable-cause letter where one is needed and the IRS fax delivery are identical on both tiers; only speed differs. Each additional past tax year is a flat $99 either way. Full breakdown on the [pricing page](/pricing).
+It is not a lesser filing, though. The forms, the accountant review, the reasonable-cause letter where one is needed and the IRS fax delivery are identical on both tiers; only speed differs. Each additional past tax year is a flat {{price.additionalYear}} either way. Full breakdown on the [pricing page](/pricing).
 
 ## What is the actual penalty exposure if Thursday passes?
 
@@ -115,7 +115,7 @@ Flag them in the intake. Our preparer and the reviewing accountant will question
 
 ### Do I pay more for earlier tax years?
 
-Each additional past tax year beyond the first is a flat $99, on either tier. Filing 2024 and 2025 together is one order, not two, and the same accountant review covers both.
+Each additional past tax year beyond the first is a flat {{price.additionalYear}}, on either tier. Filing 2024 and 2025 together is one order, not two, and the same accountant review covers both.
 
 ### Can I still order on Wednesday 14 October?
 

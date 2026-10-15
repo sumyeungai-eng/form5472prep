@@ -1,6 +1,6 @@
 ---
 title: "How Much Does an ITIN Cost? IRS Fee vs CAA Service"
-description: "The IRS charges no ITIN issuance fee. Compare free application routes with a $349 CAA service and see what professional ITIN help should include."
+description: "The IRS charges no ITIN issuance fee. Compare free application routes with a {{price.itin}} CAA service and see what professional ITIN help should include."
 date: 2026-09-03
 updated: 2026-09-03
 author: "Form5472 Prep"
@@ -8,9 +8,9 @@ tags: ["itin-cost", "itin", "caa", "form-w-7", "non-resident"]
 draft: false
 ---
 
-**The IRS charges $0 to issue an ITIN. Any amount you pay is for preparation, document authentication, tax-return work, translation, shipping, or professional assistance—not for purchasing the number from the government. Form5472 Prep charges $349 for Form W-7 preparation and CAA certification so the original passport does not have to be mailed to the IRS.**
+**The IRS charges $0 to issue an ITIN. Any amount you pay is for preparation, document authentication, tax-return work, translation, shipping, or professional assistance—not for purchasing the number from the government. Form5472 Prep charges {{price.itin}} for Form W-7 preparation and CAA certification so the original passport does not have to be mailed to the IRS.**
 
-If that scope matches what you need, [start the $349 ITIN application](/itin/apply).
+If that scope matches what you need, [start the {{price.itin}} ITIN application](/itin/apply).
 
 ## ITIN cost comparison
 
@@ -22,7 +22,7 @@ The real comparison is not “free ITIN versus paid ITIN.” It is a choice amon
 | IRS Taxpayer Assistance Center | $0 | Travel and any separate return preparation | Most documents authenticated and returned at appointment | Applicant who can attend a U.S. appointment |
 | Participating VITA site | $0 | Usually none for qualifying services | Authentication available at limited locations | Eligible applicant near a participating site |
 | Certifying Acceptance Agent | $0 IRS fee | Agent’s professional fee | CAA authenticates most permitted documents | Applicant prioritizing guidance and passport control |
-| Form5472 Prep CAA service | $0 IRS fee | **$349 flat service fee** | No original-passport mailing to IRS | Non-resident wanting W-7 preparation and CAA certification |
+| Form5472 Prep CAA service | $0 IRS fee | **{{price.itin}} flat service fee** | No original-passport mailing to IRS | Non-resident wanting W-7 preparation and CAA certification |
 
 The [IRS comparison of ITIN application options](https://www.irs.gov/tin/itin/how-to-apply-for-an-itin) identifies TAC and VITA services as free and CAAs as fee-based. Availability and the scope of tax-return help vary.
 
@@ -48,7 +48,7 @@ The value is controlled document handling and application support—not faster g
 
 That can matter when the applicant lives outside the United States, needs the passport for travel, or does not want to send an original document through international mail. A paid service can also reduce preventable inconsistencies, but it cannot guarantee that the IRS approves the application.
 
-## What the $349 Form5472 Prep fee includes
+## What the {{price.itin}} Form5472 Prep fee includes
 
 The current Form5472 Prep ITIN offer includes:
 
@@ -70,6 +70,6 @@ If the goal is only to obtain a business tax number for a foreign-owned U.S. LLC
 
 Choose a free route when you understand the W-7 package, can access a suitable appointment or handle certified documents, and are comfortable managing IRS follow-up. Choose a CAA service when preserving control of the original passport and receiving application support is worth the professional fee.
 
-[Apply for the $349 ITIN service](/itin/apply) only after confirming the federal tax purpose. You will receive the intake and payment steps online.
+[Apply for the {{price.itin}} ITIN service](/itin/apply) only after confirming the federal tax purpose. You will receive the intake and payment steps online.
 
 *Prices and service scope checked September 3, 2026. Educational information only; not tax or legal advice.*

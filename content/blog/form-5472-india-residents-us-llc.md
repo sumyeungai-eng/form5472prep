@@ -159,7 +159,7 @@ Use your PAN number as your FTIN, remember that the BOI obligation has been lift
 
 For a broader overview of the form, see [what Form 5472 is and who must file](/blog/what-is-form-5472). If you have missed years to sort out, the [late-filing guide](/blog/form-5472-filed-late-never-filed) covers DIIRSP step by step.
 
-Standard filing is $149 (5-7 business days), Express $199 (ready to sign within 24 hours), +$99 per additional past tax year — IRS fax delivery included on both.
+Standard filing is {{price.standard}} (5-7 business days), Express {{price.express}} (ready to sign within 24 hours), +{{price.additionalYear}} per additional past tax year — IRS fax delivery included on both.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the US information return accurately.
 

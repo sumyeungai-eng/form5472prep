@@ -1,6 +1,6 @@
 ---
 title: "How to Offer Form 5472 Filing as a Service to Your Clients"
-description: "Scope, price and describe a Form 5472 filing service for your own clients. Worked per-filing arithmetic on our $149 fee, and what to leave out."
+description: "Scope, price and describe a Form 5472 filing service for your own clients. Worked per-filing arithmetic on our {{price.standard}} fee, and what to leave out."
 date: 2026-09-18
 updated: 2026-09-18
 author: "Form5472 Prep"
@@ -8,7 +8,7 @@ tags: ["partner-program", "form-5472", "foreign-owned-llc"]
 draft: false
 ---
 
-**You can offer Form 5472 filing as a productised service without becoming a tax practice: scope it as coordination, price it as a fixed annual fee, and pay us $149 per Standard filing at checkout. There is no platform fee, no subscription and no commission — your margin is whatever you decide to charge your own client.**
+**You can offer Form 5472 filing as a productised service without becoming a tax practice: scope it as coordination, price it as a fixed annual fee, and pay us {{price.standard}} per Standard filing at checkout. There is no platform fee, no subscription and no commission — your margin is whatever you decide to charge your own client.**
 
 Most firms arrive from the same direction. You already form US LLCs for non-resident founders, act as their registered agent, or keep their books, and every March the same clients ask about a form nobody wants to own. Productising the answer turns that question into a line on your price list.
 
@@ -45,7 +45,7 @@ Two boundaries there matter commercially. The person authorised to sign for the 
 
 ## How should you price the service to your own client?
 
-Price it as one fixed annual fee, quoted before you start, covering your coordination plus our filing fee. Our published fees are the same for partners as for direct customers: **$149 Standard**, ready in 5–7 business days; **$199 Express**, ready to sign within 24 hours; **+$99 per additional past tax year** on either tier. IRS fax delivery is included, there is no platform fee and no subscription, and each filing is paid individually at checkout. Check [current pricing](/pricing) before publishing a number.
+Price it as one fixed annual fee, quoted before you start, covering your coordination plus our filing fee. Our published fees are the same for partners as for direct customers: **{{price.standard}} Standard**, ready in 5–7 business days; **{{price.express}} Express**, ready to sign within 24 hours; **+{{price.additionalYear}} per additional past tax year** on either tier. IRS fax delivery is included, there is no platform fee and no subscription, and each filing is paid individually at checkout. Check [current pricing](/pricing) before publishing a number.
 
 The filing work and the accountant review are identical on both tiers; only speed differs. Express is therefore a scheduling product, not a quality one: price it as a rush surcharge.
 
@@ -58,23 +58,23 @@ Assume you charge your client **$399** for the annual filing on our Standard tie
 | Line | Per filing | 20 clients |
 |---|---|---|
 | Your fee to your client | $399 | $7,980 |
-| Our Standard fee | $149 | $2,980 |
+| Our Standard fee | {{price.standard}} | {{price.standard * 20}} |
 | Platform fee | $0 | $0 |
 | Subscription | $0 | $0 |
 | Commission we pay you | $0 | $0 |
-| Your gross margin | $250 | $5,000 |
+| Your gross margin | {{399 - price.standard}} | {{(399 - price.standard) * 20}} |
 
-Twenty clients at $399 is $7,980 in, twenty Standard filings at $149 is $2,980 out, and the $5,000 difference equals twenty times the $250 per-filing margin.
+Twenty clients at $399 is $7,980 in, twenty Standard filings at {{price.standard}} is {{price.standard * 20}} out, and the {{(399 - price.standard) * 20}} difference equals twenty times the {{399 - price.standard}} per-filing margin.
 
 A real book is mixed. Suppose 16 of the 20 go Standard, 4 need Express, 3 also need one additional past tax year, and you charge $499 for Express and $249 per past year:
 
-- **Paid to us:** (16 × $149) + (4 × $199) + (3 × $99) = $2,384 + $796 + $297 = **$3,477**
+- **Paid to us:** (16 × {{price.standard}}) + (4 × {{price.express}}) + (3 × {{price.additionalYear}}) = {{16 * price.standard}} + {{4 * price.express}} + {{3 * price.additionalYear}} = **{{16 * price.standard + 4 * price.express + 3 * price.additionalYear}}**
 - **Billed to your clients:** (16 × $399) + (4 × $499) + (3 × $249) = $6,384 + $1,996 + $747 = **$9,127**
-- **Your gross margin:** $9,127 − $3,477 = **$5,650**
+- **Your gross margin:** $9,127 − {{16 * price.standard + 4 * price.express + 3 * price.additionalYear}} = **{{9127 - (16 * price.standard + 4 * price.express + 3 * price.additionalYear)}}**
 
-Check by line, not total: $250 × 16 = $4,000 on Standard, $300 × 4 = $1,200 on Express, $150 × 3 = $450 on extra years, totalling $5,650.
+Check by line, not total: {{399 - price.standard}} × 16 = {{(399 - price.standard) * 16}} on Standard, {{499 - price.express}} × 4 = {{(499 - price.express) * 4}} on Express, {{249 - price.additionalYear}} × 3 = {{(249 - price.additionalYear) * 3}} on extra years, totalling {{9127 - (16 * price.standard + 4 * price.express + 3 * price.additionalYear)}}.
 
-That is gross margin, not profit. Subtract your own time. If a filing costs your staff 40 minutes of intake, chasing and receipt-filing, a $250 margin implies about $375 an hour. If real handling time is two hours, the same $250 implies $125 an hour, and it is the price that needs revisiting, not the workflow. For market context, see [what Form 5472 filing costs](/blog/form-5472-cost).
+That is gross margin, not profit. Subtract your own time. If a filing costs your staff 40 minutes of intake, chasing and receipt-filing, a {{399 - price.standard}} margin implies about {{(399 - price.standard) * 60 / 40}} an hour. If real handling time is two hours, the same {{399 - price.standard}} implies {{(399 - price.standard) / 2}} an hour, and it is the price that needs revisiting, not the workflow. For market context, see [what Form 5472 filing costs](/blog/form-5472-cost).
 
 ## How do you describe the service to a client?
 
@@ -121,7 +121,7 @@ Whether client emails carry your brand or ours is a separate decision, made at a
 
 ### Do we pay a platform fee or subscription to offer this?
 
-No. There is no platform fee and no subscription for a partner account. Each filing is paid individually at checkout at the published rate — $149 Standard, $199 Express, plus $99 per additional past tax year.
+No. There is no platform fee and no subscription for a partner account. Each filing is paid individually at checkout at the published rate — {{price.standard}} Standard, {{price.express}} Express, plus {{price.additionalYear}} per additional past tax year.
 
 ### What commission or revenue share do you pay partners?
 

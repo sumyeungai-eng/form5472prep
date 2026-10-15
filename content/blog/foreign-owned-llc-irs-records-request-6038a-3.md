@@ -13,7 +13,7 @@ draft: false
 
 Most owners of a foreign-owned US LLC treat Form 5472 as a filing problem: file it, keep the fax receipt, done. The regulation behind it treats it as a records problem with a filing attached — and the penalty text follows the regulation.
 
-[We prepare and fax the complete package from $149](/start), and the first thing we ask for is the documents behind the numbers — which is what the regulation makes you keep.
+[We prepare and fax the complete package from {{price.standard}}](/start), and the first thing we ask for is the documents behind the numbers — which is what the regulation makes you keep.
 
 ## Does the $25,000 penalty really apply to records as well as to the form?
 

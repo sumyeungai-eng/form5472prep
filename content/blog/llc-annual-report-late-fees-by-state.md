@@ -93,9 +93,9 @@ These figures come straight from the sources cited above. They are not estimates
 
 We handle the federal side. We prepare each year's pro forma Form 1120 and Form 5472 with the Part V statement, including missing past years, and fax the package to the IRS Ogden PIN Unit with a timestamped transmission receipt. State reports, taxes and reinstatements stay with you or your registered agent. Every filing is reviewed by a qualified accountant before it is submitted.
 
-- **Standard:** $149, ready in 5–7 business days
-- **Express:** $199, ready to sign within 24 hours
-- **Each additional past tax year:** +$99
+- **Standard:** {{price.standard}}, ready in 5–7 business days
+- **Express:** {{price.express}}, ready to sign within 24 hours
+- **Each additional past tax year:** +{{price.additionalYear}}
 - **IRS fax delivery:** included
 
 We are not a CPA firm and do not give tax advice. See [pricing](/pricing), or [start your filing](/start) once you know which tax years are open.

@@ -12,7 +12,7 @@ draft: false
 
 Opening the account is an identity, entity, and risk-review process—not a benefit automatically delivered with the LLC. The provider decides which countries, activities, addresses, owners, and documents it will accept. Approval can never be guaranteed by a registered agent or formation service.
 
-The EIN normally comes first. The [IRS explanation of Notice CP575](https://www.irs.gov/individuals/understanding-your-cp575-notice) says the notice confirms an entity’s EIN and may be needed to open a bank account. If the LLC has no EIN confirmation yet, [the EIN service is $149](/ein) and is the practical first step. Once money starts moving, [prepare the LLC’s Form 5472 filing](/start) from the same source records.
+The EIN normally comes first. The [IRS explanation of Notice CP575](https://www.irs.gov/individuals/understanding-your-cp575-notice) says the notice confirms an entity’s EIN and may be needed to open a bank account. If the LLC has no EIN confirmation yet, [the EIN service is {{price.ein}}](/ein) and is the practical first step. Once money starts moving, [prepare the LLC’s Form 5472 filing](/start) from the same source records.
 
 ## What does a foreign-owned LLC need to open a US business account?
 
@@ -137,7 +137,7 @@ The initial failure-to-file penalty is **$25,000 per form per year**, and a subs
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement from the LLC’s related-party records. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt.
 
-Standard is **$149** and ready in **5-7 business days**. Express is **$199** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+$99**, and fax delivery is included. If the missing prerequisite is the federal number, EIN service is **$149** at [/ein](/ein).
+Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. If the missing prerequisite is the federal number, EIN service is **{{price.ein}}** at [/ein](/ein).
 
 We are not a CPA firm and do not give tax advice. We do not open, recommend, or guarantee bank accounts. We prepare the federal information return; income tax, licensing, banking eligibility, and home-country questions need the appropriate advisers and providers.
 

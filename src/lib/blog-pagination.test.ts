@@ -6,6 +6,7 @@ import {
   pageSlice,
   pageWindow,
   parsePageParam,
+  topicPagePath,
   totalPages,
 } from "./blog-pagination";
 
@@ -102,5 +103,13 @@ describe("pageRange", () => {
     expect(pageRange(1, 100)).toEqual({ from: 1, to: POSTS_PER_PAGE });
     expect(pageRange(2, 100)).toEqual({ from: POSTS_PER_PAGE + 1, to: POSTS_PER_PAGE * 2 });
     expect(pageRange(5, 100)).toEqual({ from: POSTS_PER_PAGE * 4 + 1, to: 100 });
+  });
+});
+
+describe("topicPagePath", () => {
+  it("keeps page 1 on the hub URL and nests older pages under /page/n", () => {
+    expect(topicPagePath("form-5472", 1)).toBe("/blog/topics/form-5472");
+    expect(topicPagePath("form-5472", 2)).toBe("/blog/topics/form-5472/page/2");
+    expect(topicPagePath("ein", 7)).toBe("/blog/topics/ein/page/7");
   });
 });

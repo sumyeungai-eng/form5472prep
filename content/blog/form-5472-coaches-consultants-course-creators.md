@@ -13,7 +13,7 @@ draft: false
 
 The pattern is familiar: form a US LLC, open a US business bank account, connect a course platform or invoicing tool to it, and bill clients for coaching retainers and cohort programs. What the LLC does with the money afterward is a separate question the platforms do not answer.
 
-No course-platform dashboard or invoicing tool tells you what belongs on Form 5472, because the form reports dealings between the LLC and its foreign owner, not gross sales. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state a **$25,000 penalty** for failure to file when due and in the manner prescribed, and that a substantially incomplete form counts as a failure to file. [We prepare and fax the complete package from $149](/start).
+No course-platform dashboard or invoicing tool tells you what belongs on Form 5472, because the form reports dealings between the LLC and its foreign owner, not gross sales. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state a **$25,000 penalty** for failure to file when due and in the manner prescribed, and that a substantially incomplete form counts as a failure to file. [We prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Does a coaching or course business's US LLC have to file Form 5472?
 
@@ -116,7 +116,7 @@ The [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472) links
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your course-platform reports and owner-movement schedule, have a qualified accountant review each package, fax it to the IRS, and send you the timestamped receipt.
 
-Standard is **$149** (5–7 business days); Express is **$199** (ready to sign within 24 hours); each additional past year is **+$99**; IRS fax delivery is included. See [Form 5472 cost](/blog/form-5472-cost).
+Standard is **{{price.standard}}** (5–7 business days); Express is **{{price.express}}** (ready to sign within 24 hours); each additional past year is **+{{price.additionalYear}}**; IRS fax delivery is included. See [Form 5472 cost](/blog/form-5472-cost).
 
 We are not a CPA firm and do not give tax advice; we prepare and submit the information return. Whether your income is effectively connected with a US trade or business, and your home-country tax, are questions for the appropriate adviser.
 

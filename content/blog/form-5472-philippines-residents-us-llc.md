@@ -15,7 +15,7 @@ Filipino freelancers, virtual assistants, agency owners and ecommerce sellers fo
 
 The Philippine position differs from a UK or Indian owner's in two ways. There is a treaty on the IRS list, and the Bureau of Internal Revenue (BIR) issues TINs to individuals. Both affect how you fill in the form. Neither removes the need to file it, and neither turns a BIR filing into a substitute for the US one.
 
-If you want the filing done rather than explained, [we prepare and fax the complete package from $149](/start).
+If you want the filing done rather than explained, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do Philippines residents have to file Form 5472?
 
@@ -107,7 +107,7 @@ Some details are specific to Philippine owners: a BIR TIN in the right field, pe
 
 We prepare the pro forma Form 1120, Form 5472 and the supporting statement. A qualified tax accountant reviews each package, and we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt.
 
-**$149** Standard (5–7 business days). **$199** Express (ready to sign within 24 hours). **+$99** per additional past tax year. IRS fax delivery is included, so you don't need to find an international fax line.
+**{{price.standard}}** Standard (5–7 business days). **{{price.express}}** Express (ready to sign within 24 hours). **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery is included, so you don't need to find an international fax line.
 
 We are not a CPA firm and do not give tax advice, including on Philippine tax. We prepare and submit the US information return.
 

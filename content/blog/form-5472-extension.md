@@ -64,7 +64,7 @@ The [IRS delinquent international information return procedures](https://www.irs
 
 An intake may be quick, but gathering records, resolving questions, reviewing the package and transmitting it take additional time. Reconcile owner transactions and retain supporting records. Choose between a timely extension and completing the return based on what can actually be finished by the deadline.
 
-Form5472 Prep generates the complete package (cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and a reasonable-cause statement if you're already late), an accountant reviews it, and we fax it to the IRS Ogden PIN Unit with a timestamped provider transmission record. Pricing is **$149 Standard** (ready in 5-7 business days) or **$199 Express** (ready to sign within 24 hours) — the filing, the accountant review and the package are identical, only the speed differs — with fax delivery included on both and **+$99 per additional past year** for DIIRSP catch-up. See full [pricing](/pricing) or [start your filing now](/start).
+Form5472 Prep generates the complete package (cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and a reasonable-cause statement if you're already late), an accountant reviews it, and we fax it to the IRS Ogden PIN Unit with a timestamped provider transmission record. Pricing is **{{price.standard}} Standard** (ready in 5-7 business days) or **{{price.express}} Express** (ready to sign within 24 hours) — the filing, the accountant review and the package are identical, only the speed differs — with fax delivery included on both and **+{{price.additionalYear}} per additional past year** for DIIRSP catch-up. See full [pricing](/pricing) or [start your filing now](/start).
 
 We are not a CPA firm and do not give tax advice. Form5472 Prep prepares and submits the Form 5472 and pro forma 1120 filing package; we don't file Form 7004 for you, so file the extension yourself by the original due date.
 
@@ -94,4 +94,4 @@ A late Form 7004 does not retroactively extend the deadline. Assess the delinque
 
 For the 2025 calendar tax year, a valid Form 7004 filed by April 15, 2026 generally extends the filing deadline to October 15, 2026. Follow the dedicated foreign-owned-DE route, preserve the package and transmission evidence, and allow time for preparation and review. Do not confuse an intake, EIN application or fax report with IRS acceptance.
 
-Don't want to think about deadlines at all? [File your Form 5472 now →](/start) — accountant-reviewed, faxed to the IRS, from $149.
+Don't want to think about deadlines at all? [File your Form 5472 now →](/start) — accountant-reviewed, faxed to the IRS, from {{price.standard}}.

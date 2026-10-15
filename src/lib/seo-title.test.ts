@@ -3,6 +3,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import { describe, expect, it } from "vitest";
 import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH, fitTitle, seoTitle } from "@/lib/seo-title";
+import { renderPriceTokens } from "@/lib/blog-price-tokens";
 
 describe("fitTitle", () => {
   it("appends the brand when the whole title fits in 60 chars", () => {
@@ -31,7 +32,10 @@ describe("blog front-matter snippet lengths", () => {
 
   it.each(files)("%s fits the title and description limits", (file) => {
     const fm = matter(fs.readFileSync(path.join(dir, file), "utf8")).data as Record<string, string>;
-    expect(fitTitle(fm.seoTitle ?? fm.title).length).toBeLessThanOrEqual(TITLE_MAX_LENGTH);
-    expect((fm.seoDescription ?? fm.description).length).toBeLessThanOrEqual(DESCRIPTION_MAX_LENGTH);
+    // Measure what readers see: {{price.*}} tokens render to e.g. "$149".
+    const title = renderPriceTokens(fm.seoTitle ?? fm.title, file);
+    const description = renderPriceTokens(fm.seoDescription ?? fm.description, file);
+    expect(fitTitle(title).length).toBeLessThanOrEqual(TITLE_MAX_LENGTH);
+    expect(description.length).toBeLessThanOrEqual(DESCRIPTION_MAX_LENGTH);
   });
 });

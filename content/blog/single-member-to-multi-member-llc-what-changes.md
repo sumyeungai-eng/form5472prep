@@ -14,7 +14,7 @@ draft: false
 
 You are about to sign in a partner, an investor or a co-founder. The paperwork in front of you is a state filing and an amended operating agreement, so the change looks like a company-law step. Federally it is larger: it can move the LLC out of one filing regime into another, and it can leave a Form 5472 obligation behind for the part of the year the LLC was still a one-owner entity.
 
-Below: the classification change, the before and after picture, what to gather while the records are fresh, and which parts of this we will not compute for you. If the pre-change period still needs a Form 5472 package, [we prepare and fax it from $149](/start).
+Below: the classification change, the before and after picture, what to gather while the records are fresh, and which parts of this we will not compute for you. If the pre-change period still needs a Form 5472 package, [we prepare and fax it from {{price.standard}}](/start).
 
 ## What does a second member do to your LLC's federal tax classification?
 
@@ -93,7 +93,7 @@ Steps 3 and 4 decay fastest: bank portals age out, dashboards close, and a co-fo
 
 We prepare the one piece belonging to the period you are leaving: the Form 5472 package for a foreign-owned US single-member disregarded entity.
 
-That means Form 5472, the pro forma Form 1120 marked "Foreign-owned U.S. DE", and the Part V supporting statement, reviewed by a qualified tax accountant and faxed to the IRS Ogden PIN Unit with a timestamped receipt — which is evidence of transmission, not IRS acceptance. Standard is **$149** in 5–7 business days, Express **$199** ready to sign within 24 hours, each additional past tax year **+$99** — [see current pricing](/pricing).
+That means Form 5472, the pro forma Form 1120 marked "Foreign-owned U.S. DE", and the Part V supporting statement, reviewed by a qualified tax accountant and faxed to the IRS Ogden PIN Unit with a timestamped receipt — which is evidence of transmission, not IRS acceptance. Standard is **{{price.standard}}** in 5–7 business days, Express **{{price.express}}** ready to sign within 24 hours, each additional past tax year **+{{price.additionalYear}}** — [see current pricing](/pricing).
 
 What we do not do: we are not a CPA firm and we do not give tax advice, we do not prepare partnership returns, and we will not tell you how your change year splits or when your classification change took effect. Those belong to your adviser. If the pre-change years need filing, [start the filing](/start).
 

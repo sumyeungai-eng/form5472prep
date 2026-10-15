@@ -126,7 +126,7 @@ If you want to handle this yourself, you need:
 - Form 5472 for each year (Part I, Part II, Part III with transactions, and Part V if applicable)
 - A well-drafted reasonable cause statement
 
-If you want someone else to handle it: [we prepare the complete DIIRSP package](/diirsp) — all years, the reasonable cause statement, and fax to the IRS — from $149. The [late Form 5472 filing service](/services/late-form-5472-filing-service) page shows what each year's package contains.
+If you want someone else to handle it: [we prepare the complete DIIRSP package](/diirsp) — all years, the reasonable cause statement, and fax to the IRS — from {{price.standard}}. The [late Form 5472 filing service](/services/late-form-5472-filing-service) page shows what each year's package contains.
 
 Current service tiers and multi-year options are listed on the [pricing page](/pricing).
 

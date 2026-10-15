@@ -14,7 +14,7 @@ The current Form 5472 is three pages and has nine parts, most of which a small f
 
 This walkthrough is the short version. It follows [Form 5472 (Rev. December 2023)](https://www.irs.gov/pub/irs-pdf/f5472.pdf) and the [Instructions (Rev. December 2024)](https://www.irs.gov/instructions/i5472), which are the current revisions as of September 2026. Always check the revision date in the top-right corner of the PDF you downloaded — using a stale version is one of the most common DIY errors. Our plain-English [Form 5472 instructions](/form-5472-instructions) guide covers the same ground, and the [completed Form 5472 example](/form-5472-example) shows a finished return to check your work against.
 
-If at any point this stops being worth your afternoon, [we prepare and fax the complete package from $149](/start). Before you hand it to anyone, see what a [Form 5472 preparer](/services/form-5472-preparer) should do and which questions to ask.
+If at any point this stops being worth your afternoon, [we prepare and fax the complete package from {{price.standard}}](/start). Before you hand it to anyone, see what a [Form 5472 preparer](/services/form-5472-preparer) should do and which questions to ask.
 
 ## What documents do you need before you start?
 
@@ -169,7 +169,7 @@ Nothing above is beyond a careful person with an afternoon and the instructions 
 
 [Form5472 Prep](/) prepares the whole package from your entity and transaction details — pro forma Form 1120, Form 5472 with the correct parts completed and the rest correctly left blank, the Part V supporting statement, and a reasonable cause letter for late years — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning your timestamped confirmation receipt.
 
-**$149** standard, ready in 5-7 business days. **$199** express, ready for you to check and sign within 24 hours. **+$99** per additional past tax year. Fax delivery included. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready for you to check and sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. Fax delivery included. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
 
 [Start your filing](/start) — about 15 minutes of questions, and we handle the rest.
 

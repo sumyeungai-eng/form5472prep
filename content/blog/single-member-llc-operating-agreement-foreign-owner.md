@@ -69,7 +69,7 @@ If your formation state's LLC act, or your bank, tells you one is needed, this i
 
 ## What we do and don't do
 
-Form5472 Prep prepares and faxes the annual Form 5472 and pro forma Form 1120 from your related-party records — Standard is $149 (5–7 business days), Express is $199 (ready to sign within 24 hours), and each additional past tax year is +$99. EIN service is $149 at [/ein](/ein), ITIN service is $349 at [/itin](/itin). We do not draft, review or store operating agreements, form LLCs, or act as your registered agent. We are not a law firm or a CPA firm, and nothing here is legal or tax advice — for the agreement itself, use a local attorney familiar with your formation state's LLC act.
+Form5472 Prep prepares and faxes the annual Form 5472 and pro forma Form 1120 from your related-party records — Standard is {{price.standard}} (5–7 business days), Express is {{price.express}} (ready to sign within 24 hours), and each additional past tax year is +{{price.additionalYear}}. EIN service is {{price.ein}} at [/ein](/ein), ITIN service is {{price.itin}} at [/itin](/itin). We do not draft, review or store operating agreements, form LLCs, or act as your registered agent. We are not a law firm or a CPA firm, and nothing here is legal or tax advice — for the agreement itself, use a local attorney familiar with your formation state's LLC act.
 
 ## Frequently asked questions
 

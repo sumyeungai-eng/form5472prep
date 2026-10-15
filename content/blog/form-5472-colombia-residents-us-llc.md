@@ -14,7 +14,7 @@ Colombia is now a main base for remote workers and online founders, many of them
 
 Two features of the Colombian position change the mechanics compared with a UK or Indian owner. The first is the treaty: none is in force, and much online content blurs that. The second is identification: whether you hold a NIT depends on whether you are registered in Colombia's RUT, which many recently arrived nomads are not. Neither removes the obligation.
 
-If you would rather have it done than read about it, [we prepare and fax the complete package from $149](/start).
+If you would rather have it done than read about it, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do Colombia residents have to file Form 5472?
 
@@ -116,7 +116,7 @@ No treaty, a NIT some owners have and others lack, COP conversion, sometimes a C
 
 We prepare the pro forma Form 1120, Form 5472 and the Part V statement; a qualified tax accountant reviews each package; we fax it to the IRS and send you the transmission receipt.
 
-**$149** Standard, 5 to 7 business days. **$199** Express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included. For a breakdown of what filing costs, see [Form 5472 filing cost](/blog/form-5472-cost).
+**{{price.standard}}** Standard, 5 to 7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included. For a breakdown of what filing costs, see [Form 5472 filing cost](/blog/form-5472-cost).
 
 We are not a CPA firm and do not give tax advice, US or Colombian. We prepare and submit the US information return.
 

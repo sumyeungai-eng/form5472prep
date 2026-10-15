@@ -17,7 +17,7 @@ The second group generates the confusion. Many nomads believe e-Residency made t
 
 Two features of the Estonian position change the mechanics of the filing compared with a UK or Indian owner: an e-resident is a non-resident for Estonian tax purposes, and Estonia issues personal identification codes to people who are not tax resident there. Neither removes the obligation.
 
-If you want the filing done rather than explained, [we prepare and fax the complete package from $149](/start).
+If you want the filing done rather than explained, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Does e-Residency make you an Estonian tax resident?
 
@@ -114,7 +114,7 @@ The e-resident FTIN trap, the line 4e country and an OÜ as a second related par
 
 We prepare Form 5472, the pro forma Form 1120 and the supporting statement. A qualified tax accountant reviews each package, and we fax it to the IRS Ogden PIN Unit and return the timestamped receipt.
 
-**$149** Standard, ready in 5–7 business days. **$199** Express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery is included.
+**{{price.standard}}** Standard, ready in 5–7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery is included.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on Estonian tax. We prepare and submit the US information return.
 

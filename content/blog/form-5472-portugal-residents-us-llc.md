@@ -14,7 +14,7 @@ Lisbon, Porto and the Algarve host many remote developers, agency owners, consul
 
 Two features of the Portuguese position change the mechanics compared with a UK or Indian owner. Neither removes the obligation. Portugal issues a personal tax number that fills the FTIN box, and its best-known expatriate regime was repealed, so most pre-2024 advice describes a regime closed to new entrants.
 
-If you would rather have the filing done than explained, [we prepare and fax the complete package from $149](/start).
+If you would rather have the filing done than explained, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do Portugal residents have to file Form 5472?
 
@@ -117,7 +117,7 @@ The Portuguese details — NIF, Portuguese address, euro conversion, a second fo
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement, have a qualified tax accountant review the package, and fax it to the IRS Ogden PIN Unit, returning the timestamped receipt. Late years include a reasonable cause letter.
 
-**$149** standard, ready in 5–7 business days. **$199** express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included.
+**{{price.standard}}** standard, ready in 5–7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, Portuguese or US. We prepare and submit the US information return.
 

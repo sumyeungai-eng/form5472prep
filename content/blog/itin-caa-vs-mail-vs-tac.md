@@ -31,7 +31,7 @@ A CAA is not an employee of the IRS and cannot approve an ITIN. Under the [IRS A
 
 Some items have authentication limits. Foreign military identification and certain dependent documents fall outside a CAA’s normal authentication authority. The applicant may still need original or issuing-agency-certified evidence for those items.
 
-Form5472 Prep’s ITIN service costs **$349** and includes W-7 preparation plus CAA certification. It is designed for applicants who have a valid federal tax purpose and want the original passport to remain with them.
+Form5472 Prep’s ITIN service costs **{{price.itin}}** and includes W-7 preparation plus CAA certification. It is designed for applicants who have a valid federal tax purpose and want the original passport to remain with them.
 
 ## When direct IRS mail makes sense
 
@@ -63,6 +63,6 @@ That distinction is central to choosing a provider. Ask whether the quoted servi
 - Choose a **TAC** when you can attend a U.S. appointment and mainly need document authentication.
 - Choose a **CAA** when you want preparation support and passport-safe authentication without relying on a U.S. appointment.
 
-[Start with Form5472 Prep’s CAA service](/itin/apply) for a $349 flat fee. Confirm the federal tax purpose first; the service cannot create eligibility where none exists.
+[Start with Form5472 Prep’s CAA service](/itin/apply) for a {{price.itin}} flat fee. Confirm the federal tax purpose first; the service cannot create eligibility where none exists.
 
 *Application routes and price checked September 3, 2026. Educational information only; not tax or legal advice.*

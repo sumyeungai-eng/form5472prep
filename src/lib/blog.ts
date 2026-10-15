@@ -4,6 +4,7 @@ import matter from "gray-matter";
 import readingTime from "reading-time";
 import type { Post as PostRow } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { PriceTokenError, renderPriceTokens } from "@/lib/blog-price-tokens";
 
 // Hybrid blog: markdown files on disk + a Postgres `Post` table.
 //
@@ -37,6 +38,13 @@ import { prisma } from "@/lib/prisma";
 // with `deleted: true` is a tombstone that hides the file. The reads below fall
 // back to files-only if the database is unreachable, so a DB blip can never
 // take the public blog down.
+//
+// Prices — posts never hard-code our own prices; they write tokens such as
+// {{price.standard}} (see src/lib/blog-price-tokens.ts). The PUBLIC readers
+// below (getAllPosts, getPost) render them from src/lib/pricing.ts, so the
+// post page, RSS, llms.txt, meta descriptions and FAQ JSON-LD all get live
+// figures. The admin reader (getPostIncludingDraft) and the write paths keep
+// the raw tokens, so editing or renaming a post never bakes a price in.
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 
@@ -380,6 +388,38 @@ async function readRow(slug: string): Promise<PostRow | null | undefined> {
   }
 }
 
+// Render price tokens in every reader-visible text field. Derived fields
+// (readingMinutes, imageAlt) are recomputed from the rendered text. Throws on
+// an unknown or malformed token — a raw token must never reach a reader.
+function withPrices(post: Post): Post {
+  const where = `blog post "${post.slug}"`;
+  const render = (text: string) => renderPriceTokens(text, where);
+  const title = render(post.title);
+  const body = render(post.body);
+  return {
+    ...post,
+    title,
+    description: render(post.description),
+    seoTitle: post.seoTitle ? render(post.seoTitle) : undefined,
+    seoDescription: post.seoDescription ? render(post.seoDescription) : undefined,
+    readingMinutes: Math.max(1, Math.round(readingTime(body).minutes)),
+    imageAlt: artworkAlt(post.slug, title),
+    body,
+  };
+}
+
+// Admin listings (includeDrafts) must keep working when one post has a bad
+// token — that page is where the admin fixes it — so they fall back to the raw
+// text for that post. Public listings never do: they throw.
+function withPricesOrRaw(post: Post): Post {
+  try {
+    return withPrices(post);
+  } catch (err) {
+    if (err instanceof PriceTokenError) return post;
+    throw err;
+  }
+}
+
 export async function getAllPosts(opts?: { includeDrafts?: boolean }): Promise<PostMeta[]> {
   const files = await listFiles();
   const [filePosts, rows] = await Promise.all([
@@ -400,6 +440,7 @@ export async function getAllPosts(opts?: { includeDrafts?: boolean }): Promise<P
 
   return Array.from(bySlug.values())
     .filter((p) => opts?.includeDrafts || isPubliclyAvailable(p))
+    .map(opts?.includeDrafts ? withPricesOrRaw : withPrices)
     .map(({ body: _body, ...meta }) => meta)
     .sort(
       (a, b) =>
@@ -436,7 +477,7 @@ async function readMerged(slug: string): Promise<Post | null> {
 export async function getPost(slug: string): Promise<Post | null> {
   const post = await readMerged(slug);
   if (!post || !isPubliclyAvailable(post)) return null;
-  return post;
+  return withPrices(post);
 }
 
 export function formatPostDate(iso: string): string {
@@ -564,6 +605,8 @@ export function slugify(input: string): string {
     .slice(0, 80);
 }
 
+// Admin read: RAW text, price tokens intact, so the editor round-trips them.
+// Never render this to a public page — use getPost.
 export async function getPostIncludingDraft(slug: string): Promise<Post | null> {
   return readMerged(slug);
 }
@@ -598,6 +641,9 @@ export async function writePost(
   if (!fm.title || !fm.description || !fm.date) {
     throw new Error("title, description, and date are required");
   }
+  // Refuse to save a post whose price tokens would not render (the admin API
+  // surfaces this message). The tokens themselves are stored as written.
+  for (const text of [fm.title, fm.description, body]) renderPriceTokens(text, `post "${slug}"`);
   const data = {
     title: fm.title,
     description: fm.description,

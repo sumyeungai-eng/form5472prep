@@ -12,7 +12,7 @@ draft: false
 
 Owners usually ask this after discovering several missed filings at once. The instinct is understandable: if the LLC was formed years ago, maybe the oldest year has aged out. For Form 5472, that is not a reliable assumption.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that the penalty for failure to file is **$25,000** per form, per year, and a substantially incomplete Form 5472 counts as a failure to file. If you need to catch up old years, [we prepare delinquent Form 5472 packages from $149](/start) with a Part V statement and fax receipt.
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that the penalty for failure to file is **$25,000** per form, per year, and a substantially incomplete Form 5472 counts as a failure to file. If you need to catch up old years, [we prepare delinquent Form 5472 packages from {{price.standard}}](/start) with a Part V statement and fax receipt.
 
 ## What is the Form 5472 statute of limitations rule?
 
@@ -99,7 +99,7 @@ Skipping old years also weakens the reasonable-cause story. A filing history tha
 
 Form5472 Prep prepares complete delinquent Form 5472 packages for foreign-owned US disregarded LLCs: pro forma Form 1120, Form 5472, Part V statement, and reasonable-cause cover letter where appropriate. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
-Standard service is **$149** and ready in 5-7 business days. Express service is **$199** and ready for you to check and sign within 24 hours. Each additional past tax year is **+$99**. Fax delivery is included. EIN service is **$149** at [/ein](/ein), and ITIN service is **$349** at [/itin](/itin).
+Standard service is **{{price.standard}}** and ready in 5-7 business days. Express service is **{{price.express}}** and ready for you to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein), and ITIN service is **{{price.itin}}** at [/itin](/itin).
 
 We are not a CPA firm and do not give tax advice. We do not decide whether reasonable cause will be accepted or whether an income tax return should be amended. We prepare and submit the missing information return package accurately.
 

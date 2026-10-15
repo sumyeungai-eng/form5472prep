@@ -14,7 +14,7 @@ Malaysia has a large and growing group of US LLC owners. Kuala Lumpur and Penang
 
 Two parts of the Malaysian position change how the filing works compared with a UK or Indian owner. The first is the treaty position, which is more specific than "there is no treaty". The second is the identification number, because a Malaysian citizen and a nomad on a pass may hold quite different numbers. Neither one removes the obligation.
 
-If you would rather have the filing done than read about it, [we prepare and fax the complete package from $149](/start).
+If you would rather have the filing done than read about it, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do Malaysia residents have to file Form 5472?
 
@@ -108,7 +108,7 @@ Most Malaysia-specific errors are small ones that make a return substantially in
 
 We prepare the complete package: Form 5472, the pro forma Form 1120 and the supporting statement. A qualified tax accountant reviews it, then we fax it to the IRS Ogden PIN Unit and send you the timestamped transmission receipt.
 
-**$149** Standard, ready in 5–7 business days. **$199** Express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery is included, so you never have to send an international fax from Kuala Lumpur.
+**{{price.standard}}** Standard, ready in 5–7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery is included, so you never have to send an international fax from Kuala Lumpur.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on Malaysian tax. We prepare and submit the US information return.
 

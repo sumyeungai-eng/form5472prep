@@ -14,7 +14,7 @@ Wyoming is the most popular US formation state for non-residents, and for good r
 
 What is often left out of the pitch is that the federal information-reporting obligation is entirely unaffected by the choice of state. A Wyoming LLC owned by a non-US person has exactly the same Form 5472 requirement as a Delaware, Florida or New Mexico one — and the $25,000 penalty for missing it dwarfs everything Wyoming saves you.
 
-If you already know Form 5472 is your gap, [we prepare and fax the complete package from $149](/start).
+If you already know Form 5472 is your gap, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## What does a foreign-owned Wyoming LLC owe each year?
 
@@ -22,7 +22,7 @@ If you already know Form 5472 is your gap, [we prepare and fax the complete pack
 |---|---|---|---|
 | **Wyoming annual report + license tax** | Greater of $60 or $0.0002 per $1 of Wyoming assets | First day of the anniversary month | Wyoming Secretary of State |
 | **Registered agent** | Typically $50-$200 | Per your agent's contract | Your registered agent |
-| **IRS Form 5472 + pro forma 1120** | No IRS fee; preparation from $149 | 15 April (15 October if extended) | IRS Ogden PIN Unit, by fax or mail |
+| **IRS Form 5472 + pro forma 1120** | No IRS fee; preparation from {{price.standard}} | 15 April (15 October if extended) | IRS Ogden PIN Unit, by fax or mail |
 | **Wyoming state income tax** | None | — | — |
 | **FinCEN BOI report** | Not required for US-formed LLCs — exempt since March 2025, permanently since FinCEN's final rule took effect 14 August 2026 | — | — |
 | **US federal income tax return** | Only if you have US-source or effectively connected income | Varies | IRS |
@@ -102,7 +102,7 @@ The state side of a Wyoming LLC is genuinely easy — a $60 report you can file 
 
 [Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt. For missed years we include a reasonable cause cover letter.
 
-**$149** standard, ready in 5-7 business days. **$199** express, ready for you to check and sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready for you to check and sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
 
 For the current federal filing options, [see current pricing](/pricing).
 

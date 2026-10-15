@@ -12,7 +12,7 @@ draft: false
 
 **Hiring in the United States gives your LLC obligations in its own name: a single-member LLC that is disregarded for income tax is a separate entity for employment-tax purposes. Classification and payroll belong to a qualified US provider. None of it changes Form 5472, which still reports only what moves between you and the LLC.**
 
-Before the first hire, a foreign-owned single-member LLC is a quiet thing: it invoices customers, pays vendors, and files Form 5472 with a pro forma Form 1120 once a year. The moment someone in the United States starts working for it, a second body of rules switches on — one with its own professionals, not one we work in. This guide draws that line and stops there. [We prepare and fax the Form 5472 package from $149](/start); payroll is not what we do.
+Before the first hire, a foreign-owned single-member LLC is a quiet thing: it invoices customers, pays vendors, and files Form 5472 with a pro forma Form 1120 once a year. The moment someone in the United States starts working for it, a second body of rules switches on — one with its own professionals, not one we work in. This guide draws that line and stops there. [We prepare and fax the Form 5472 package from {{price.standard}}](/start); payroll is not what we do.
 
 ## Does hiring in the United States change your LLC's tax identity?
 
@@ -103,7 +103,7 @@ Only item 5, and anything flagged by item 6, reaches the filing we prepare; our 
 
 At the Form 5472 package. We prepare Form 5472, the pro forma Form 1120 with "Foreign-owned U.S. DE" across page 1, and the Part V statement; a qualified tax accountant reviews each one; we fax it to the IRS at **855-887-7737** or mail it to Ogden, because it cannot be e-filed; and we send you the timestamped receipt — transmission evidence, not IRS acceptance.
 
-Standard is **$149** (5–7 business days), Express **$199** (ready to sign within 24 hours), and each additional past tax year is **+$99**, IRS fax delivery included. For a calendar-year LLC the regular due date is generally **15 April**; a timely Form 7004 extends it.
+Standard is **{{price.standard}}** (5–7 business days), Express **{{price.express}}** (ready to sign within 24 hours), and each additional past tax year is **+{{price.additionalYear}}**, IRS fax delivery included. For a calendar-year LLC the regular due date is generally **15 April**; a timely Form 7004 extends it.
 
 We are not a CPA firm and we do not give tax advice. Worker classification, payroll operation, employment-tax filings and any state obligation that comes with hiring are outside our scope and belong to a qualified US payroll provider or adviser. [Start your Form 5472 package](/start) and leave the hiring questions with them.
 

@@ -12,7 +12,7 @@ draft: false
 
 Foreign real estate investors often buy US property through a single-member LLC because lenders, title companies and property managers understand the structure. The LLC wrapper does not make the federal filing disappear. If the LLC is disregarded and wholly owned by a non-US person, the IRS treats it as a corporation only for Form 5472 reporting.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a foreign-owned US disregarded entity files Form 5472 with a pro forma Form 1120, and the penalty for missing the form is **$25,000** per form, per year. If you already know the LLC has owner funding or owner withdrawals to report, [we prepare the Form 5472 package from $149](/start).
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a foreign-owned US disregarded entity files Form 5472 with a pro forma Form 1120, and the penalty for missing the form is **$25,000** per form, per year. If you already know the LLC has owner funding or owner withdrawals to report, [we prepare the Form 5472 package from {{price.standard}}](/start).
 
 ## Why does a rental property LLC file Form 5472?
 
@@ -93,7 +93,7 @@ Build the Form 5472 file from the closing statement, bank activity and owner pay
 
 Form5472 Prep prepares the Form 5472 side of the rental LLC compliance file: Form 5472, the pro forma Form 1120, and the Part V statement showing owner funding, owner-paid expenses, distributions and loans. A qualified tax accountant reviews the package before it is faxed to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
-Standard service is **$149** and ready in 5-7 business days. Express service is **$199** and ready for you to check and sign within 24 hours. Each additional past tax year is **+$99**. Fax delivery is included. EIN service is **$149** at [/ein](/ein), and ITIN service is **$349** at [/itin](/itin).
+Standard service is **{{price.standard}}** and ready in 5-7 business days. Express service is **{{price.express}}** and ready for you to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein), and ITIN service is **{{price.itin}}** at [/itin](/itin).
 
 We are not a CPA firm and do not give tax advice. We do not decide whether you should make a section 871(d) election, claim treaty relief, or report rental deductions on Form 1040-NR. We prepare and submit the information return accurately.
 

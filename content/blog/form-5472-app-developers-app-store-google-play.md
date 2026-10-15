@@ -14,7 +14,7 @@ draft: false
 
 The setup is common: form a US LLC, enrol it in both developer programmes, point the payout details at a US business bank account, and ship. Two stores then deposit money on two schedules, net of amounts you never see.
 
-Neither store's payments dashboard tells you what belongs on Form 5472, because the form reports dealings between the LLC and its foreign owner, not units sold. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) set a **$25,000 penalty** for failure to file when due and in the manner prescribed, and treat a substantially incomplete form as a failure to file. [We prepare and fax the package from $149](/start).
+Neither store's payments dashboard tells you what belongs on Form 5472, because the form reports dealings between the LLC and its foreign owner, not units sold. The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) set a **$25,000 penalty** for failure to file when due and in the manner prescribed, and treat a substantially incomplete form as a failure to file. [We prepare and fax the package from {{price.standard}}](/start).
 
 ## Does an app developer's US LLC have to file Form 5472?
 
@@ -125,7 +125,7 @@ The [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472) links
 
 ## How can Form5472 Prep handle an app developer's filing?
 
-We build Form 5472, the pro forma Form 1120 and the Part V statement from your store reports and owner-movement schedule, have a qualified tax accountant review it, fax it to the IRS, and send you the timestamped receipt. Standard is **$149** (5–7 business days), Express **$199** (ready to sign within 24 hours), each extra past tax year **+$99**, IRS fax delivery included.
+We build Form 5472, the pro forma Form 1120 and the Part V statement from your store reports and owner-movement schedule, have a qualified tax accountant review it, fax it to the IRS, and send you the timestamped receipt. Standard is **{{price.standard}}** (5–7 business days), Express **{{price.express}}** (ready to sign within 24 hours), each extra past tax year **+{{price.additionalYear}}**, IRS fax delivery included.
 
 We are not a CPA firm and we do not give tax advice; we prepare and submit the information return. Whether your app income is effectively connected with a US trade or business, and what your home country taxes, are adviser questions.
 

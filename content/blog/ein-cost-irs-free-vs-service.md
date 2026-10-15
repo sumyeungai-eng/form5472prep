@@ -1,6 +1,6 @@
 ---
 title: "How Much Does an EIN Cost? Free IRS Application vs Service"
-description: "An EIN is free from the IRS. Compare the direct application routes with Form SS-4 preparation and international handling for a $149 service fee."
+description: "An EIN is free from the IRS. Compare the direct application routes with Form SS-4 preparation and international handling for a {{price.ein}} service fee."
 date: 2026-09-03
 updated: 2026-09-03
 author: "Form5472 Prep"
@@ -8,9 +8,9 @@ tags: ["ein-cost", "ein", "form-ss-4", "foreign-owned-llc", "non-resident"]
 draft: false
 ---
 
-**An EIN costs $0 when obtained directly from the IRS. Form5472 Prep’s $149 price is not a government charge; it pays for Form SS-4 preparation and handling the international phone or fax application for a foreign-owned U.S. LLC. Choose DIY when you are eligible and comfortable with the process, or paid help when time and error prevention justify it.**
+**An EIN costs $0 when obtained directly from the IRS. Form5472 Prep’s {{price.ein}} price is not a government charge; it pays for Form SS-4 preparation and handling the international phone or fax application for a foreign-owned U.S. LLC. Choose DIY when you are eligible and comfortable with the process, or paid help when time and error prevention justify it.**
 
-[Start the $149 managed EIN application](/ein/apply) if the LLC is formed and you want the paperwork and IRS contact handled.
+[Start the {{price.ein}} managed EIN application](/ein/apply) if the LLC is formed and you want the paperwork and IRS contact handled.
 
 ## EIN cost breakdown
 
@@ -20,7 +20,7 @@ draft: false
 | Form SS-4 preparation | Self-prepared | Included |
 | International phone or fax handling | Applicant handles | Included |
 | Completed SS-4 record | Applicant saves | Included |
-| Professional service fee | $0 | **$149** |
+| Professional service fee | $0 | **{{price.ein}}** |
 | IRS processing guarantee | None | None |
 
 The [IRS online EIN page](https://www.irs.gov/businesses/get-an-employer-identification-number) explicitly warns that applicants never have to pay a government fee for an EIN. A legitimate provider should explain that its charge is for services around the free number.
@@ -51,7 +51,7 @@ Apply directly when the application is straightforward, you understand the entit
 
 For an international fax filing, follow the current [Form SS-4 instructions](https://www.irs.gov/instructions/iss4), use a return fax number that works, sign the form, and keep the complete submission. For an international phone application, the caller must be authorized and able to answer the SS-4 questions.
 
-## When the $149 service can be worth it
+## When the {{price.ein}} service can be worth it
 
 Paid help is most relevant when:
 
@@ -70,6 +70,6 @@ Before paying, confirm the total price, refund terms, exact deliverables, proces
 
 If the LLC already has an EIN, locate the original notice, bank record, prior return, or request IRS verification instead of buying a new-number service. If the LLC has not been formed, complete state formation before applying.
 
-[Use Form5472 Prep’s EIN application service](/ein/apply) for a flat $149 when you want Form SS-4 prepared and the international application handled. The number itself remains free from the IRS.
+[Use Form5472 Prep’s EIN application service](/ein/apply) for a flat {{price.ein}} when you want Form SS-4 prepared and the international application handled. The number itself remains free from the IRS.
 
 *Price and IRS routes checked September 3, 2026. Educational information only; not tax or legal advice.*

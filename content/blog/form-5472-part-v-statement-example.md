@@ -12,7 +12,7 @@ draft: false
 
 Part V is where many otherwise careful filings become substantially incomplete. The form gives you only a checkbox, but the instructions require an attached statement describing the transactions. The IRS does not give a friendly template. For the rest of the form, see our [Form 5472 instructions](/form-5472-instructions) walkthrough.
 
-The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that Part V covers amounts paid or received in connection with formation, dissolution, acquisition and disposition of the entity, including contributions to and distributions from the entity. The same instructions state that a missing or substantially incomplete Form 5472 can trigger a **$25,000** penalty. If you want the attachment prepared with the rest of the filing, [we prepare Form 5472 packages from $149](/start).
+The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that Part V covers amounts paid or received in connection with formation, dissolution, acquisition and disposition of the entity, including contributions to and distributions from the entity. The same instructions state that a missing or substantially incomplete Form 5472 can trigger a **$25,000** penalty. If you want the attachment prepared with the rest of the filing, [we prepare Form 5472 packages from {{price.standard}}](/start).
 
 ## What does Form 5472 Part V require?
 
@@ -152,7 +152,7 @@ The weak statements all have the same problem: the IRS cannot see what happened 
 
 Form5472 Prep prepares the full package: Form 5472, pro forma Form 1120, and the Part V statement. We classify owner contributions, distributions, loans and reimbursements, have the package reviewed by a qualified tax accountant, and fax it to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
-Standard service is **$149** and ready in 5-7 business days. Express service is **$199** and ready for you to check and sign within 24 hours. Each additional past tax year is **+$99**. Fax delivery is included. EIN service is **$149** at [/ein](/ein), and ITIN service is **$349** at [/itin](/itin).
+Standard service is **{{price.standard}}** and ready in 5-7 business days. Express service is **{{price.express}}** and ready for you to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein), and ITIN service is **{{price.itin}}** at [/itin](/itin).
 
 We are not a CPA firm and do not give tax advice. We do not decide income tax positions or treaty positions. We prepare and submit the information return package accurately.
 

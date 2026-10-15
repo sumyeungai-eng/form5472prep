@@ -11,8 +11,9 @@ import type { PostMeta } from "@/lib/blog";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE_URL, breadcrumbList } from "@/lib/seo";
 import { buildTagIndex, formatTag, MIN_INDEXABLE_TAG_POSTS, tagHref, type TagEntry } from "@/lib/blog-tags";
-import { blogPagePath, pageRange, pageSlice, pageWindow, POSTS_PER_PAGE, totalPages } from "@/lib/blog-pagination";
+import { blogPagePath, pageRange, pageSlice, POSTS_PER_PAGE, totalPages } from "@/lib/blog-pagination";
 import { AuthorChip, PostCard, PostMetaLine } from "./PostCard";
+import { Pager } from "./Pager";
 
 export const BLOG_DESCRIPTION =
   "Practical guides for foreign-owned US LLC owners filing Form 5472, pro forma Form 1120, EINs, ITINs, penalties, deadlines, and catch-up returns.";
@@ -94,7 +95,7 @@ export function BlogIndexView({ posts, page }: { posts: PostMeta[]; page: number
                 </div>
               </section>
             )}
-            <Pager page={page} pages={pages} />
+            <Pager page={page} pages={pages} pathFor={blogPagePath} />
             <FilingPanel />
           </>
         )}
@@ -158,46 +159,6 @@ function PagedHeader({
         <TopicChips tags={tags} />
       </div>
     </section>
-  );
-}
-
-const pagerLink =
-  "inline-flex h-10 min-w-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 transition hover:border-accent/40 hover:text-accent";
-
-function Pager({ page, pages }: { page: number; pages: number }) {
-  if (pages <= 1) return null;
-  return (
-    <nav aria-label="Blog pages" className="mt-14 flex flex-wrap items-center justify-center gap-2">
-      {page > 1 && (
-        <Link href={blogPagePath(page - 1)} rel="prev" className={pagerLink}>
-          &larr; Newer guides
-        </Link>
-      )}
-      {pageWindow(page, pages).map((item, index) =>
-        item === "gap" ? (
-          <span key={`gap-${index}`} aria-hidden className="px-1 text-slate-400">
-            &hellip;
-          </span>
-        ) : item === page ? (
-          <span
-            key={item}
-            aria-current="page"
-            className="inline-flex h-10 min-w-10 items-center justify-center rounded-lg bg-ink px-3 text-sm font-semibold text-white"
-          >
-            {item}
-          </span>
-        ) : (
-          <Link key={item} href={blogPagePath(item)} aria-label={`Page ${item}`} className={pagerLink}>
-            {item}
-          </Link>
-        ),
-      )}
-      {page < pages && (
-        <Link href={blogPagePath(page + 1)} rel="next" className={pagerLink}>
-          Older guides &rarr;
-        </Link>
-      )}
-    </nav>
   );
 }
 

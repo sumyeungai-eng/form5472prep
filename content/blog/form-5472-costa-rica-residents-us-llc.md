@@ -14,7 +14,7 @@ Costa Rica draws remote founders for reasons unrelated to tax paperwork, and man
 
 Two features of the Costa Rican position change the mechanics of this filing compared with a UK or Indian owner. The first is territorial taxation, which leads owners to assume income earned through a foreign LLC is invisible everywhere, including to the IRS. The second is identification: Costa Rica issues foreigners two numbers, a DIMEX and a NITE, and which you hold — if either — decides the FTIN entry. Neither removes the obligation.
 
-Rather have it done? [We prepare and fax the complete package from $149](/start).
+Rather have it done? [We prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do Costa Rica residents have to file Form 5472?
 
@@ -91,7 +91,7 @@ For a calendar-year LLC the due date is generally April 15; Form 7004 extends it
 
 No treaty, a DIMEX or a NITE or neither, colón conversion, sometimes a Costa Rican company as a second related party: routine once seen, and exactly what makes a package substantially incomplete. We prepare the pro forma Form 1120, Form 5472 and the Part V statement, have a qualified tax accountant review the package, fax it to the IRS Ogden PIN Unit and send you the receipt. Late years include a reasonable cause cover letter.
 
-**$149** Standard, 5 to 7 business days. **$199** Express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included, so you never hunt for a fax machine in San José.
+**{{price.standard}}** Standard, 5 to 7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included, so you never hunt for a fax machine in San José.
 
 We are not a CPA firm and do not give tax advice, US or Costa Rican. We prepare and submit the US information return.
 

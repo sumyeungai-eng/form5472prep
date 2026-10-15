@@ -56,7 +56,7 @@ The application file can include:
 - exception evidence, if applying without a return; and
 - current mailing information for the IRS notice.
 
-The tax return and election need substantive tax preparation. Form5472 Prep’s ITIN service is a Form W-7 and CAA-certification service; do not assume the $349 fee includes preparation of Form 1040-NR or a rental-income election unless separately confirmed.
+The tax return and election need substantive tax preparation. Form5472 Prep’s ITIN service is a Form W-7 and CAA-certification service; do not assume the {{price.itin}} fee includes preparation of Form 1040-NR or a rental-income election unless separately confirmed.
 
 ## Why use a CAA for a rental-property application?
 
@@ -68,6 +68,6 @@ CAA involvement does not decide whether the section 871(d) election is beneficia
 
 Before submitting, confirm who owns the property for federal tax purposes, who receives the rent, which return will be filed, whether withholding occurred, and which EIN or ITIN belongs on each document. If an LLC owns the property, separately review its Form 5472 and state filing obligations.
 
-[Apply for the $349 ITIN service](/itin/apply) after the individual federal tax purpose is established. Form W-7 preparation and CAA certification are included, and the original passport stays with the applicant.
+[Apply for the {{price.itin}} ITIN service](/itin/apply) after the individual federal tax purpose is established. Form W-7 preparation and CAA certification are included, and the original passport stays with the applicant.
 
 *Educational information only; not tax or legal advice. Nonresident rental taxation and section 871(d) elections require analysis of the owner’s specific facts.*

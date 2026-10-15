@@ -14,7 +14,7 @@ Agency owners in Bangkok and Chiang Mai, ecommerce sellers in Phuket and consult
 
 Two features of the Thai position change the mechanics of the filing compared with a UK or Indian owner. Neither removes the obligation. A treaty is in effect, which leads people to assume something has been switched off — nothing has. And Thailand issues personal tax numbers mainly to people who have become taxpayers there, so many short-stay owners have nothing to enter in the FTIN box.
 
-If you want the filing done rather than explained, [we prepare and fax the complete package from $149](/start).
+If you want the filing done rather than explained, [we prepare and fax the complete package from {{price.standard}}](/start).
 
 ## Do Thailand residents have to file Form 5472?
 
@@ -102,7 +102,7 @@ The Thai details — a treaty that changes nothing, a tax number you may not hav
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement; a qualified tax accountant reviews each package; we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt. Late years include a reasonable cause letter.
 
-**$149** Standard, ready in 5–7 business days. **$199** Express, ready to sign within 24 hours. **+$99** per additional past tax year. IRS fax delivery included.
+**{{price.standard}}** Standard, ready in 5–7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, including on Thai tax. We prepare and submit the US information return.
 
