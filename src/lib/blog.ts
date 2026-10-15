@@ -632,18 +632,26 @@ function normDateString(v: string): string {
 // Publishes to the database, never to disk — the runtime filesystem is
 // read-only on Vercel. Upsert by slug, and clear any tombstone so re-creating
 // a previously deleted slug works.
+/**
+ * Every check writePost makes before it touches the database: slug shape,
+ * required fields, and price tokens that render (the tokens themselves are
+ * stored as written). Throws an admin-readable Error. Call it before any
+ * multi-step write so a bad payload fails while nothing has changed yet.
+ */
+export function validatePostInput(slug: string, fm: PostFrontmatter, body: string): void {
+  assertValidSlug(slug);
+  if (!fm.title || !fm.description || !fm.date) {
+    throw new Error("title, description, and date are required");
+  }
+  for (const text of [fm.title, fm.description, body]) renderPriceTokens(text, `post "${slug}"`);
+}
+
 export async function writePost(
   slug: string,
   fm: PostFrontmatter,
   body: string,
 ): Promise<void> {
-  assertValidSlug(slug);
-  if (!fm.title || !fm.description || !fm.date) {
-    throw new Error("title, description, and date are required");
-  }
-  // Refuse to save a post whose price tokens would not render (the admin API
-  // surfaces this message). The tokens themselves are stored as written.
-  for (const text of [fm.title, fm.description, body]) renderPriceTokens(text, `post "${slug}"`);
+  validatePostInput(slug, fm, body);
   const data = {
     title: fm.title,
     description: fm.description,
@@ -687,15 +695,57 @@ export async function deletePost(slug: string): Promise<void> {
   await prisma.post.delete({ where: { slug } });
 }
 
+/**
+ * Save an edit, optionally under a new slug, without ever leaving a
+ * half-renamed post:
+ *   1. the whole payload is validated before anything is written;
+ *   2. the edited post is written under the NEW slug (the old one untouched);
+ *   3. only then is the old slug retired (row deleted, or tombstoned when a
+ *      content/blog file backs it);
+ *   4. if step 3 fails, the new slug is put back exactly as it was (its prior
+ *      row restored, or removed if there was none) and the error rethrown.
+ * Same-slug saves are a plain writePost.
+ */
+export async function updatePost(
+  oldSlug: string,
+  newSlug: string,
+  fm: PostFrontmatter,
+  body: string,
+): Promise<void> {
+  validatePostInput(newSlug, fm, body);
+  if (oldSlug === newSlug) return writePost(newSlug, fm, body);
+  assertValidSlug(oldSlug);
+  // A tombstoned slug reads as "free" but still has a row; remember it so a
+  // rollback restores the tombstone instead of deleting it.
+  const priorNewRow = await prisma.post.findUnique({ where: { slug: newSlug } });
+  await writePost(newSlug, fm, body);
+  try {
+    await deletePost(oldSlug);
+  } catch (err) {
+    try {
+      if (priorNewRow) {
+        const { slug: _slug, createdAt: _createdAt, updatedAt: _updatedAt, ...data } = priorNewRow;
+        await prisma.post.update({ where: { slug: newSlug }, data });
+      } else {
+        await prisma.post.delete({ where: { slug: newSlug } });
+      }
+    } catch (undoErr) {
+      console.error(`[blog] rollback of rename "${oldSlug}" -> "${newSlug}" failed:`, undoErr);
+    }
+    throw err;
+  }
+}
+
 export async function renamePost(oldSlug: string, newSlug: string): Promise<void> {
   assertValidSlug(oldSlug);
   assertValidSlug(newSlug);
   if (oldSlug === newSlug) return;
   const current = await readMerged(oldSlug);
   if (!current) throw new Error(`Post "${oldSlug}" not found`);
-  // Copy the merged content to the new slug, then retire the old one — a real
-  // filesystem move isn't available (and wouldn't reach the DB row anyway).
-  await writePost(
+  // Copy the merged (raw, token-preserving) content to the new slug, then
+  // retire the old one — see updatePost for the ordering and rollback.
+  await updatePost(
+    oldSlug,
     newSlug,
     {
       title: current.title,
@@ -709,5 +759,4 @@ export async function renamePost(oldSlug: string, newSlug: string): Promise<void
     },
     current.body,
   );
-  await deletePost(oldSlug);
 }

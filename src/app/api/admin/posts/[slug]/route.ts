@@ -3,11 +3,12 @@ import { revalidatePath } from "next/cache";
 import { revalidateBlogIndex } from "@/lib/blog-revalidate";
 import { isAdmin } from "@/lib/admin/auth";
 import {
-  writePost,
   deletePost,
   getPostIncludingDraft,
-  renamePost,
   slugify,
+  updatePost,
+  validatePostInput,
+  type PostFrontmatter,
 } from "@/lib/blog";
 import { isUnresolvedPublishAt } from "@/lib/blogSchedule";
 
@@ -39,34 +40,42 @@ export async function PATCH(req: Request, { params }: { params: { slug: string }
     return NextResponse.json({ error: "Invalid publish date/time" }, { status: 400 });
   }
 
-  try {
-    if (desiredSlug !== params.slug) {
-      const clash = await getPostIncludingDraft(desiredSlug);
-      if (clash) {
-        return NextResponse.json(
-          { error: `A post with slug "${desiredSlug}" already exists` },
-          { status: 409 },
-        );
-      }
-      await renamePost(params.slug, desiredSlug);
-    }
+  const fm: PostFrontmatter = {
+    title: body.title ?? existing.title,
+    description: body.description ?? existing.description,
+    date: body.date ?? existing.date,
+    publishAt: publishAt || undefined,
+    // Carried through explicitly: a file-backed post can have `updated` in
+    // its frontmatter, and editing it here must not silently drop it.
+    updated: body.updated ?? existing.updated,
+    author: body.author ?? existing.author,
+    tags: Array.isArray(body.tags) ? body.tags : existing.tags ?? [],
+    draft: typeof body.draft === "boolean" ? body.draft : existing.draft,
+  };
+  const content: string = body.content ?? existing.body;
 
-    await writePost(
-      desiredSlug,
-      {
-        title: body.title ?? existing.title,
-        description: body.description ?? existing.description,
-        date: body.date ?? existing.date,
-        publishAt: publishAt || undefined,
-        // Carried through explicitly: a file-backed post can have `updated` in
-        // its frontmatter, and editing it here must not silently drop it.
-        updated: body.updated ?? existing.updated,
-        author: body.author ?? existing.author,
-        tags: Array.isArray(body.tags) ? body.tags : existing.tags ?? [],
-        draft: typeof body.draft === "boolean" ? body.draft : existing.draft,
-      },
-      body.content ?? existing.body,
+  // Validate the whole payload (slug shape, required fields, price tokens)
+  // BEFORE any write, so a rejected edit never leaves a half-renamed post.
+  try {
+    validatePostInput(desiredSlug, fm, content);
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Invalid post" },
+      { status: 400 },
     );
+  }
+
+  if (desiredSlug !== params.slug && (await getPostIncludingDraft(desiredSlug))) {
+    return NextResponse.json(
+      { error: `A post with slug "${desiredSlug}" already exists` },
+      { status: 409 },
+    );
+  }
+
+  // updatePost writes the new slug first and rolls it back if retiring the
+  // old slug fails, so any error here leaves the post where it was.
+  try {
+    await updatePost(params.slug, desiredSlug, fm, content);
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Write failed" },
