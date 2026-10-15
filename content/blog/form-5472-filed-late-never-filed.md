@@ -113,7 +113,7 @@ Most DIIRSP submissions for foreign-owned LLCs with no complex transactions are 
 
 Dissolving the LLC closes the entity going forward and stops the clock on future filing obligations. But it does not eliminate the filing obligation for years the LLC existed. A dissolved LLC with three years of unfiled Form 5472s still has $75,000 of potential penalties outstanding. Dissolution and back-filing are separate steps — ideally you'd do both.
 
-If you dissolve the LLC without filing the back-returns, the IRS still has your EIN and can assess penalties. The LLC being dissolved doesn't make the prior years go away.
+If you dissolve the LLC without filing the back-returns, the IRS still has your EIN and can assess penalties. The LLC being dissolved doesn't make the prior years go away. If the LLC is already closed, its last short year needs a [final Form 5472 for a dissolved LLC](/services/final-form-5472-for-dissolved-llc) as well.
 
 ---
 
@@ -126,7 +126,7 @@ If you want to handle this yourself, you need:
 - Form 5472 for each year (Part I, Part II, Part III with transactions, and Part V if applicable)
 - A well-drafted reasonable cause statement
 
-If you want someone else to handle it: [we prepare the complete DIIRSP package](/diirsp) — all years, the reasonable cause statement, and fax to the IRS — from $149.
+If you want someone else to handle it: [we prepare the complete DIIRSP package](/diirsp) — all years, the reasonable cause statement, and fax to the IRS — from $149. The [late Form 5472 filing service](/services/late-form-5472-filing-service) page shows what each year's package contains.
 
 Current service tiers and multi-year options are listed on the [pricing page](/pricing).
 

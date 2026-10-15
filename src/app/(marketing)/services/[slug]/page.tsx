@@ -8,6 +8,7 @@ import { JsonLd } from "@/components/JsonLd";
 import {
   SERVICES_HUB,
   SERVICES_HUB_PATH,
+  SERVICE_CATEGORY_LABEL,
   serviceLastReviewed,
   SERVICE_PAGES,
   getServicePage,
@@ -101,7 +102,7 @@ export default function ServicePageRoute({ params }: { params: { slug: string } 
             </nav>
             <p className="mt-8 flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-accent-100">
               <ShieldCheck className="h-3.5 w-3.5 flex-none" />
-              Form 5472 filing services
+              {SERVICE_CATEGORY_LABEL[page.category]}
             </p>
             <h1 className="mt-4 font-serif text-3xl font-semibold leading-[1.1] tracking-tight text-balance break-words sm:text-4xl lg:text-5xl">
               {page.h1}

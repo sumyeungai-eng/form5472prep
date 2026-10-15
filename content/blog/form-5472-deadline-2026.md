@@ -14,7 +14,7 @@ Form 5472 deadlines are simple in outline and easy to miss in practice, because 
 
 Here is the full calendar for tax years 2024 to 2027, plus the extension rule that is specific to foreign-owned disregarded entities and catches out people who assume Form 7004 works the way it does for everyone else.
 
-If a date has already passed for you, [we prepare and fax complete late packages with a reasonable cause letter from $149](/start).
+If a date has already passed for you, [we prepare and fax complete late packages with a reasonable cause letter from $149](/start). The [late Form 5472 filing service](/services/late-form-5472-filing-service) explains what each missed year's package includes.
 
 ## The deadline calendar
 
@@ -147,7 +147,7 @@ Note that the March buffer also gives you time to discover that a prior year was
 
 **$149** standard, ready in **5-7 business days**. **$199** express, ready for you to check and sign within **24 hours**. **+$99** per additional past tax year. IRS fax delivery included on both.
 
-For current turnaround tiers before choosing a start date, [see current pricing](/pricing).
+For current turnaround tiers before choosing a start date, [see current pricing](/pricing). For everything the package contains, see the [Form 5472 filing service](/services/form-5472-filing-service).
 
 Work backwards from your deadline: standard needs 5-7 business days and express is ready to sign within 24 hours, counted from when your details are complete, so leave room for both the turnaround and the fax. For a 2025 return still unprepared in the days before 15 October 2026, express is the tier whose turnaround still fits. If the deadline has already passed, file as soon as you can rather than waiting for the next one. Starting earlier is always cheaper than starting later, because the express upgrade exists precisely to buy back time you have already spent.
 

@@ -10,7 +10,7 @@ draft: false
 
 **White-label Form 5472 filing lets an accounting or bookkeeping firm keep its client relationship and agreed client-facing branding while Form5472 Prep handles the specialist preparation workflow behind the scenes. White-label delivery is available by request, with communication scope, responsibilities, and commercial terms confirmed during partner approval.**
 
-This model is useful when a firm's clients occasionally need Form 5472 and a pro forma Form 1120, but building and maintaining an internal workflow for that narrow filing would distract from the firm's core work.
+This model is useful when a firm's clients occasionally need Form 5472 and a pro forma Form 1120, but building and maintaining an internal workflow for that narrow filing would distract from the firm's core work. Firms still deciding between referral and a partner account can read [Form 5472 for accountants](/services/form-5472-for-accountants), and the service page explains [how white-label delivery works](/services/white-label-form-5472-filing).
 
 [Request a white-label partner discussion](/partners) and describe the client-facing touchpoints your firm needs branded.
 

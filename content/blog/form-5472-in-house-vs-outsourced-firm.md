@@ -12,7 +12,7 @@ draft: false
 
 This is a build-or-buy decision with a real answer in both directions. A firm with an established 1120 practice and a dozen or more foreign-owned disregarded entities on its books is usually better off keeping the work: the marginal cost of one more package is low, the reviewer is competent, and the evidence sits in a file the firm controls. A firm touching three a year pays to rebuild a perishable skill each spring.
 
-We sell the outsourced route, so the in-house case below is stated at full strength deliberately. If outsourcing is the better fit for your firm, you can [apply for a partner account](/partners) and file per client with no platform fee or subscription.
+We sell the outsourced route, so the in-house case below is stated at full strength deliberately. If outsourcing is the better fit for your firm, you can [apply for a partner account](/partners) and file per client with no platform fee or subscription. How referral, a partner account and branded delivery compare is set out in [Form 5472 for accountants](/services/form-5472-for-accountants).
 
 ## What is actually being compared?
 

@@ -116,7 +116,7 @@ Do not sign a blank SS-4. Replace any incorrect draft and sign the final version
 
 After the EIN is assigned and released, the SS-4 designee authority ends. The owner should receive the completed application record, store the IRS evidence, and use the LLC's legal name and EIN consistently on business and federal records.
 
-The EIN is an identifier, not a one-time compliance package. The LLC may have later filing duties based on its classification, activity, and transactions. For a foreign-owned US disregarded entity, annual Form 5472 work is separate from EIN acquisition; getting the number does not file the return or decide whether US income tax is due.
+The EIN is an identifier, not a one-time compliance package. The LLC may have later filing duties based on its classification, activity, and transactions. For a foreign-owned US disregarded entity, annual Form 5472 work is separate from EIN acquisition; getting the number does not file the return or decide whether US income tax is due. Our [Form 5472 filing service](/services/form-5472-filing-service) handles that annual return once the EIN is in place.
 
 The hand-off file should contain the signed SS-4, assigned EIN, available IRS evidence, exact LLC name, responsible-party information, and notes about any processing correction. The owner can then reuse one reliable record for banking, seller onboarding, tax administration, and future IRS contact.
 
