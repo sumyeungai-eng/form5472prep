@@ -13,7 +13,7 @@ draft: false
 
 The IRS may assess a $25,000 penalty for a failure to file when due and in the prescribed manner, for a substantially incomplete filing, or for failing to maintain required records. That makes careful scope and evidence more important than a promise that any filing route is risk-free. [Read the current IRS instructions](https://www.irs.gov/instructions/i5472) before choosing a route. Our [how to file Form 5472](/file-form-5472) guide walks through the filing steps.
 
-If you want preparation help, [view current service options and pricing](/pricing). This guide compares the work, not a market-price survey. For what each route costs, see [Form 5472 filing cost](/blog/form-5472-cost).
+If you want preparation help, [view current service options and pricing](/pricing). This guide compares the work, not a market-price survey. For what each route costs, see [Form 5472 filing cost](/blog/form-5472-cost). To see what a [Form 5472 preparer](/services/form-5472-preparer) should do, or what you hand over when you [hire someone to file Form 5472](/services/hire-someone-to-file-form-5472), read those service pages.
 
 ## DIY vs. preparer at a glance
 

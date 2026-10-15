@@ -50,7 +50,7 @@ The following examples assume a foreign individual owns 100% of a U.S. single-me
 | Unrelated customer pays an invoice | Generally no | The customer is not a related party |
 | LLC pays an unrelated software vendor | Generally no | The vendor is not related merely because it is foreign |
 
-The IRS instructions say foreign-owned disregarded entities describe Part V transactions on an attached statement ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). A clean statement should identify the date, parties, type, amount, currency, conversion method, and business purpose.
+The IRS instructions say foreign-owned disregarded entities describe Part V transactions on an attached statement ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). A clean statement should identify the date, parties, type, amount, currency, conversion method, and business purpose. A quiet year whose only entry is a fee the owner paid personally still counts; [Form 5472 filing for a dormant LLC](/services/form-5472-filing-for-dormant-llc) shows where the line falls.
 
 If your facts are SaaS-heavy, read [Form 5472 for SaaS founders](/blog/form-5472-saas-founders) after this section. SaaS founders often need the same owner-transfer analysis, but their processor exports make the records look more complicated than the Form 5472 issue really is.
 
@@ -146,6 +146,6 @@ Usually yes. If the foreign owner paid an LLC obligation personally, include it 
 
 ## What is the bottom line?
 
-Form 5472 is a related-party transaction report, not a list of every LLC payment. Start with the owner, identify other related parties, total every monetary and nonmonetary transfer, and keep a clear audit trail. [Prepare your Form 5472 package](/start), or read the [SaaS founder guide](/blog/form-5472-saas-founders) if payment processors are making the owner-transfer trail harder to see.
+Form 5472 is a related-party transaction report, not a list of every LLC payment. Start with the owner, identify other related parties, total every monetary and nonmonetary transfer, and keep a clear audit trail. [Prepare your Form 5472 package](/start), or read the [SaaS founder guide](/blog/form-5472-saas-founders) if payment processors are making the owner-transfer trail harder to see. The [Form 5472 filing service](/services/form-5472-filing-service) turns those totals into the finished package.
 
 *Educational content only; not tax or legal advice.*

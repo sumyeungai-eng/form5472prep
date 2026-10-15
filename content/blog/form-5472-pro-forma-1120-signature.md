@@ -55,7 +55,7 @@ Use this conservative workflow before sending a new package:
 4. **Sign the final cover in ink.** Enter the actual signing date and title. Do not backdate or insert somebody else's signature.
 5. **Scan and inspect.** For fax, replace the unsigned cover with the signed scan, preserve page order, and check that the signature, EIN and small text remain legible. Do not change the return after signing without having the signer review the changes.
 6. **Send by the appropriate route.** The IRS specifies fax at 300 DPI or higher to 855-887-7737, or mail to its dedicated Ogden PIN Unit address. Recheck the [current filing instructions](https://www.irs.gov/instructions/i5472) immediately before sending.
-7. **Keep one filing record.** Save the ink original, final transmitted file, destination, timestamp, page count and delivery evidence together. Our [fax guide](/blog/how-to-fax-form-5472-irs) covers transmission details.
+7. **Keep one filing record.** Save the ink original, final transmitted file, destination, timestamp, page count and delivery evidence together. Our [fax guide](/blog/how-to-fax-form-5472-irs) covers transmission details. If you would rather not send it yourself, the [Form 5472 fax filing service](/services/form-5472-fax-filing-service) sends the signed package and keeps the receipt.
 
 ## What if you already filed with an electronic signature?
 

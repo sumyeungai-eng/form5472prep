@@ -14,7 +14,7 @@ The current Form 5472 is three pages and has nine parts, most of which a small f
 
 This walkthrough is the short version. It follows [Form 5472 (Rev. December 2023)](https://www.irs.gov/pub/irs-pdf/f5472.pdf) and the [Instructions (Rev. December 2024)](https://www.irs.gov/instructions/i5472), which are the current revisions as of September 2026. Always check the revision date in the top-right corner of the PDF you downloaded — using a stale version is one of the most common DIY errors. Our plain-English [Form 5472 instructions](/form-5472-instructions) guide covers the same ground, and the [completed Form 5472 example](/form-5472-example) shows a finished return to check your work against.
 
-If at any point this stops being worth your afternoon, [we prepare and fax the complete package from $149](/start).
+If at any point this stops being worth your afternoon, [we prepare and fax the complete package from $149](/start). Before you hand it to anyone, see what a [Form 5472 preparer](/services/form-5472-preparer) should do and which questions to ask.
 
 ## What documents do you need before you start?
 

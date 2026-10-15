@@ -12,7 +12,7 @@ draft: false
 
 That answer applies whether the LLC runs an ecommerce store, invoices consulting clients, holds an investment, or earned no revenue. Form 5472 records transactions between the LLC and related parties; it does not calculate the owner's Hong Kong or US income tax.
 
-The distinction matters because an initial bank deposit, an owner-paid bill, or a withdrawal can create a filing obligation even when customers paid nothing. If you want the federal package prepared and faxed, [start a Hong Kong Form 5472 filing](/start).
+The distinction matters because an initial bank deposit, an owner-paid bill, or a withdrawal can create a filing obligation even when customers paid nothing. If you want the federal package prepared and faxed, [start a Hong Kong Form 5472 filing](/start). The [foreign owned LLC tax filing service](/services/foreign-owned-llc-tax-filing-service) page sets out what that federal filing covers and what it leaves out.
 
 ## When must a Hong Kong resident file Form 5472?
 

@@ -162,6 +162,15 @@ describe("services pages: on-page rules", () => {
         }
       });
 
+      // AI answers quoted our capsules without naming us (audit 2026-10-15 §5):
+      // the bold direct answer names the brand once, and no capsule stuffs it.
+      it("names the brand once in the bold answer and at most once per capsule", () => {
+        const brand = (t: string) => (t.match(/Form5472 Prep/g) ?? []).length;
+        expect(brand(page.intro.match(/\*\*([^*]+)\*\*/)?.[1] ?? "")).toBe(1);
+        for (const s of page.sections) expect(brand(firstBlock(s.body)), s.heading).toBeLessThanOrEqual(1);
+        for (const f of page.faqs) expect(brand(f.a), f.q).toBeLessThanOrEqual(1);
+      });
+
       it("has a 'what it is not / nobody can promise' section", () => {
         expect(page.sections.some((s) => /\bnot\b|nobody|cannot/i.test(s.heading))).toBe(true);
       });
@@ -327,20 +336,56 @@ describe("services hub", () => {
     const base = new Date("2026-10-01T00:00:00Z");
     const rows = serviceSitemapEntries("https://www.example.com", base);
     const at = (slug: string) => rows.find((r) => r.url.endsWith(`/services/${slug}`))?.lastModified.toISOString();
-    // Audience pages went live 2026-10-05; the Moz keyword-gap pass edited
-    // two of them (plus two original pages) on 2026-10-06.
-    for (const slug of ["form-5472-for-bookkeepers", "hire-someone-to-file-form-5472"]) {
-      expect(at(slug), slug).toBe("2026-10-05T00:00:00.000Z");
+    // Every page was rewritten on 2026-10-15 (docs/seo/service-pages-audit-2026-10-15.md);
+    // a page without its own date falls back to the date sitemap.ts passes.
+    for (const p of SERVICE_PAGES) {
+      expect(at(p.slug), p.slug).toBe(p.lastModified ? `${p.lastModified}T00:00:00.000Z` : base.toISOString());
     }
-    for (const slug of [
-      "form-5472-preparer",
-      "form-5472-for-accountants",
-      "form-5472-filing-service",
-      "late-form-5472-filing-service",
-    ]) {
-      expect(at(slug), slug).toBe("2026-10-06T00:00:00.000Z");
-    }
-    expect(at("foreign-owned-llc-tax-filing-service")).toBe(base.toISOString());
-    expect(rows[0].lastModified.toISOString()).toBe("2026-10-06T00:00:00.000Z");
+    expect(at("form-5472-filing-service")).toBe("2026-10-15T00:00:00.000Z");
+    const newest = [base.toISOString().slice(0, 10), ...SERVICE_PAGES.map((p) => p.lastModified ?? "")].sort().at(-1);
+    expect(rows[0].lastModified.toISOString()).toBe(`${newest}T00:00:00.000Z`);
   });
+});
+
+// Keyword ownership (docs/seo/service-pages-audit-2026-10-15.md §3): each
+// service page owns its primary keyword and its secondary keywords. Another
+// service page may name that phrase only as the anchor of a link to the owner;
+// in running text it would compete with the owner for the same query, which is
+// what the Oct 4-11 ranking loss looked like.
+describe("services pages: keyword ownership", () => {
+  const owned = SERVICE_PAGES.flatMap((p) =>
+    [p.keyword, ...p.secondaryKeywords].map((kw) => ({ owner: p.slug, kw: norm(kw) })),
+  );
+
+  it("no keyword is claimed by two pages", () => {
+    const kws = owned.map((o) => o.kw);
+    expect(new Set(kws).size).toBe(kws.length);
+  });
+
+  // Visible running text of a page, with link labels removed (a link carrying
+  // another page's keyword as its anchor points at that page; that is wanted).
+  const runningText = (p: (typeof SERVICE_PAGES)[number]) =>
+    norm(
+      [p.title, p.metaDescription, p.h1, p.intro, ...p.sections.flatMap((s) => [s.heading, s.body]), ...p.faqs.flatMap((f) => [f.q, f.a])]
+        .join(" \n ")
+        .replace(/\[([^\]]+)\]\((\/[^)\s]*)\)/g, " ")
+        .replace(/\*\*/g, "")
+        .replace(/[^a-z0-9§$'\s-]/gi, " ")
+        .replace(/-/g, " "),
+    );
+
+  for (const page of SERVICE_PAGES) {
+    it(`${page.slug} does not use another page's keyword outside a link`, () => {
+      // Mask the page's own keywords first: "late form 5472 filing service"
+      // contains "form 5472 filing service" and belongs to the late page.
+      let text = ` ${runningText(page)} `;
+      for (const kw of [page.keyword, ...page.secondaryKeywords].map(norm).sort((a, b) => b.length - a.length)) {
+        text = text.split(` ${kw} `).join(" ~ ").split(` ${kw}s `).join(" ~ ");
+      }
+      for (const o of owned) {
+        if (o.owner === page.slug) continue;
+        expect(text.includes(` ${o.kw} `), `"${o.kw}" (owned by ${o.owner})`).toBe(false);
+      }
+    });
+  }
 });

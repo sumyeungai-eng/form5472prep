@@ -69,7 +69,7 @@ The penalty for failing to file Form 5472, or filing it late or incompletely, is
 
 If you've missed prior years, there's a procedure called **DIIRSP** (Delinquent International Information Return Submission Procedure) that lets you catch up. You file the late returns with a written **[reasonable cause statement](/form-5472-reasonable-cause-statement)** explaining why you didn't file on time. If the IRS accepts the statement, the penalty may be abated.
 
-The DIIRSP procedure isn't a free pass. The IRS reviews each reasonable cause statement individually. But filing late with a reasonable cause statement is much better than not filing at all — and waiting only makes it worse.
+The DIIRSP procedure isn't a free pass. The IRS reviews each reasonable cause statement individually. But filing late with a reasonable cause statement is much better than not filing at all — and waiting only makes it worse. If you would rather hand the catch-up over, our [late Form 5472 filing service](/services/late-form-5472-filing-service) prepares a separate package and statement for each missed year.
 
 ## What about the deadline?
 
@@ -120,7 +120,7 @@ Doing it yourself costs $0 in IRS fees but takes hours and risks a $25,000 penal
 
 If you're filing for the first time, the IRS instructions are dense but workable. If you're catching up on multiple years, you'll want a reasonable cause statement that hits the right notes for DIIRSP.
 
-That's exactly what [Form5472 Prep does](/start) — generates the filled forms, the reasonable cause statement, and faxes the signed package to the IRS. About 15 minutes start to finish.
+That's exactly what [Form5472 Prep does](/start) — generates the filled forms, the reasonable cause statement, and faxes the signed package to the IRS. About 15 minutes start to finish. The [Form 5472 filing service](/services/form-5472-filing-service) page lists everything in the package.
 
 We are not a CPA firm and do not give tax advice; we prepare and submit the filing package accurately.
 

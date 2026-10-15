@@ -18,6 +18,8 @@
 // Facts: only what the site already verifies (docs/research/*.md,
 // src/lib/tools/**/sources.ts, form1120DueDate.ts, the partner program code).
 // Prices are interpolated from src/lib/pricing.ts — never type a dollar figure.
+// Transaction amounts in worked examples are written "USD 5,000", never "$",
+// so they cannot be mistaken for (or tested as) our prices.
 // Copy rules: no "CPA", "licensed", "IRS-approved", promised outcomes or
 // personal tax advice.
 //
@@ -26,7 +28,12 @@
 //   - the first block under each H2 is a standalone answer ("capsule"): a
 //     prose paragraph of at most 60 words, not a list, not a lead-in that
 //     ends in a colon, and not a pointer ("This ...", "Here ...");
-//   - every page states the Standard and Express prices.
+//   - every page states the Standard and Express prices;
+//   - the bold direct answer names "Form5472 Prep" exactly once and no
+//     capsule names it twice (brand-anchored quotes; audit 2026-10-15 §5);
+//   - keyword ownership: a page's primary/secondary keywords appear on
+//     another service page only as the anchor of a link to the owner
+//     (docs/seo/service-pages-audit-2026-10-15.md §3).
 //
 // Body markup (rendered by src/app/(marketing)/services/ServiceRichText.tsx):
 // blank line = new block; "- " = bullet; "1. " = numbered step;
@@ -37,10 +44,12 @@ import { formatPrice } from "@/lib/utils";
 import { parseLandingBody } from "@/lib/landing-body";
 
 export const SERVICES_HUB_PATH = "/services";
-export const SERVICES_LAST_REVIEWED = "2026-10-01";
-/** The four audience pages (hire someone / preparer / accountants /
- *  bookkeepers) went live on this date. */
-const AUDIENCE_PAGES_ADDED = "2026-10-05";
+export const SERVICES_LAST_REVIEWED = "2026-10-15";
+/** Every page was rewritten on this date to cut cross-page boilerplate after
+ *  the Oct 4-11 ranking loss (docs/seo/service-pages-audit-2026-10-15.md):
+ *  page-specific openings, worked examples instead of the repeated "how do the
+ *  options compare" block, and brand-named capsules. */
+const PAGES_REWRITTEN = "2026-10-15";
 
 const STD = formatPrice(TIERS.standard.priceCents);
 const EXP = formatPrice(TIERS.express.priceCents);
@@ -161,26 +170,26 @@ export const SERVICE_PAGES: ServicePage[] = [
     },
     secondaryKeywords: ["form 5472 and pro forma 1120 filing service", "form 5472 online filing", "1120 and 5472 filing service"],
     category: "annual",
-    lastModified: "2026-10-06",
+    lastModified: PAGES_REWRITTEN,
     title: "Form 5472 Filing Service, Faxed to the IRS | Form5472 Prep",
     metaDescription:
       "Form 5472 filing service for foreign-owned US LLCs: Form 5472 and pro forma 1120 prepared, reviewed by a qualified accountant and faxed to the IRS.",
     longDescription:
-      "Form 5472 and pro forma 1120 filing service for foreign-owned US single-member LLCs (disregarded entities): a 15-minute online questionnaire, a package generated from your answers, review by a qualified accountant, online signature, fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) and a timestamped fax receipt. Flat fee per filing year.",
+      "Form5472 Prep's Form 5472 and pro forma 1120 filing service for foreign-owned US single-member LLCs (disregarded entities): a 15-minute online questionnaire, a package generated from your answers, review by a qualified accountant, online signature, fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) and a timestamped fax receipt. Flat fee per filing year.",
     h1: "Form 5472 Filing Service for Foreign-Owned US LLCs",
-    shortBlurb: "The annual Form 5472 and pro forma 1120 package, prepared, reviewed and faxed for you.",
-    intro: `Our Form 5472 filing service prepares the Form 5472 and pro forma 1120 package for a foreign-owned US single-member LLC, then sends it to the IRS for you. **You answer about 15 minutes of questions, a qualified accountant reviews the package, you sign online, and we fax it to the IRS Ogden PIN Unit and give you the timestamped fax receipt.**
+    shortBlurb: "This year's Form 5472 and pro forma 1120, prepared, reviewed and faxed in one order.",
+    intro: `Our Form 5472 filing service is for the foreign owner of a US single-member LLC who needs this year's Form 5472 and pro forma 1120 filed. **Form5472 Prep turns about 15 minutes of your answers into the complete IRS package, has a qualified accountant review it, collects your online signature, faxes it to the IRS Ogden PIN Unit and stores the timestamped fax receipt.**
 
-Because the two forms travel together, it is a Form 1120 and 5472 filing service in one order. It is a filing service, not tax advice. The forms are built from the information you give us.`,
+Because the two forms travel together, it is a Form 1120 and 5472 filing service in one order. It is a filing service, not tax advice: the forms are built from the information you give us.`,
     cta: startCta("svc-form-5472-filing-service"),
     sections: [
       {
         heading: "What does the Form 5472 filing service include?",
-        body: `Both plans include Form 5472 and the pro forma Form 1120 prepared from your answers, review by a qualified accountant, online signing, fax delivery to the IRS Ogden PIN Unit and a timestamped fax receipt. Standard is ${STD} (ready in ${STANDARD_TURNAROUND}); Express is ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}).
+        body: `Every order covers one tax year end to end: the forms, a Part V statement and a cover letter, the accountant review, online signing, the IRS fax and the stored receipt. A late year also gets its own reasonable-cause statement.
 
 - Form 5472, completed for a foreign-owned disregarded entity
 - The pro forma Form 1120 cover, marked "Foreign-owned U.S. DE" as the instructions require
-- A Part V supporting statement listing the year's reportable transactions
+- A Part V supporting statement describing the year's contributions, distributions and other Part V transactions
 - A cover letter, plus a reasonable-cause statement for each late year
 - Review by a qualified accountant before you sign
 - Fax delivery to the IRS Ogden PIN Unit
@@ -196,40 +205,32 @@ ${PROCESS_STEPS}
 A foreign-owned disregarded entity cannot e-file this package. It goes to the IRS by fax or mail, which is why fax delivery is part of the service rather than an extra.`,
       },
       {
-        heading: "What do you need before you start?",
-        body: `You need four things: the LLC's details, the owner's details, the year's money movements between you and the LLC, and the LLC's year-end total assets. Nothing else is needed, and no accounting software is involved.
+        heading: "What does a filed package look like for a first-year LLC?",
+        body: `Take a Wyoming LLC formed in March by an owner who lives in Spain. During the year the owner wired USD 5,000 in, paid a USD 300 registered agent bill from a personal card and took USD 1,000 out in December. All three moved money between the owner and the LLC, so the LLC files.
 
-- **The LLC:** its name, EIN, US address, state and date of formation
-- **The owner:** name, address, country of residence and foreign tax ID
-- **The year's money movements:** capital you put in, distributions you took out, loans either way, and LLC costs you paid personally
-- **Year-end total assets:** what the LLC held on the last day of the tax year
+From those answers the package comes out as:
 
-If any amounts were in another currency, the [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) table converts them to US dollars.`,
+- **Pro forma Form 1120:** the LLC's name, address and EIN, the initial-return box in item E, and "Foreign-owned U.S. DE" across the top. The income, deduction and tax sections stay blank.
+- **Form 5472:** the owner's details as the foreign shareholder and related party, and the LLC's total assets on the last day of the year.
+- **Part V statement:** the USD 5,000 contribution, the USD 300 bill paid personally (also a contribution) and the USD 1,000 distribution, each on its own line.
+- **Cover letter:** the LLC, its EIN and the tax year, so the pages stay together at the IRS.
+
+For a calendar-year LLC this package is due April 15 of the following year. Amounts in another currency are converted with the [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates). The full list of what to have ready is on the [hire someone to file Form 5472](/services/hire-someone-to-file-form-5472) page.`,
       },
       {
         heading: "What is this service not, and what can nobody promise?",
         body: `The service prepares and submits two forms from the information you give us. It is not tax advice, not an IRS acceptance notice, not a penalty waiver and not a filing for other returns.
 
-- **Not tax advice.** We prepare and submit forms from the information you provide. You remain responsible for its accuracy.
-- **Not an IRS acceptance notice.** The fax receipt shows what was sent and when. It does not show that the IRS has processed the return.
+- **Not tax advice.** You remain responsible for the accuracy of what you tell us.
+- **Not an IRS acceptance notice.** The fax receipt shows what was sent and when, not that the IRS has processed the return.
 - **Not a penalty waiver.** If a year is already late, nobody can promise the IRS will not assess the $25,000 penalty under IRC §6038A(d).
-- **Not every return.** We do not prepare Form 1065 for multi-member LLCs, a full Form 1120 for an LLC taxed as a corporation, Form 1040-NR, state returns or Form 7004 extensions. We do not do bookkeeping.`,
-      },
-      {
-        heading: "How do the ways to file Form 5472 compare?",
-        body: `There are three ways to file: do it yourself by fax or mail (the IRS forms are free), hire an accounting firm, or use a fixed-fee specialist such as Form5472 Prep (from ${STD}). Each can be the right choice.
-
-- **Doing it yourself.** The IRS forms are free. You complete Form 5472 and the pro forma 1120, sign them, and send them by fax or mail. Our free [reportable transactions checker](/form-5472-reportable-transactions-checker) and [deadline calculator](/form-5472-deadline-calculator) help either way.
-- **An accounting firm.** Useful when you also need income-tax returns, bookkeeping or advice on your situation. Ask for a written quote and a list of what is included.
-- **A formation-company add-on.** Some formation providers sell a tax package. Check whether it covers the pro forma 1120 and who submits it.
-
-Whichever you choose, ask four questions. Who reviews the package? Who sends it to the IRS? What record do you get afterwards? How are late years handled?`,
+- **Not every return.** We do not prepare Form 1065, a full Form 1120 for an LLC taxed as a corporation, Form 1040-NR, state returns or Form 7004 extensions, and we do not keep books.`,
       },
       {
         heading: "How much does the Form 5472 filing service cost?",
-        body: `The Form 5472 filing service costs ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year on either plan. Fax delivery and the accountant review are included in both, with no subscription.
+        body: `Form5472 Prep charges ${STD} per filing year on Standard, ready in ${STANDARD_TURNAROUND}, or ${EXP} on Express, ready to sign within ${EXPRESS_TURNAROUND}. Each additional past year adds ${ADD} on either plan, and the accountant review and IRS fax are included, with no subscription.
 
-See the [pricing page](/pricing) for the full list, or start the questionnaire now.`,
+The sample LLC above would pay ${STD} on Standard. If it had also missed the year before, the order would be ${STD_2Y}. See the [pricing page](/pricing), or start the questionnaire now.`,
       },
     ],
     faqs: [
@@ -257,12 +258,12 @@ See the [pricing page](/pricing) for the full list, or start the questionnaire n
       {
         label: "About Form 5472 (IRS)",
         url: "https://www.irs.gov/forms-pubs/about-form-5472",
-        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+        blurb: "The current revision of Form 5472 and its instructions, and any later IRS changes to them.",
       },
       {
         label: "Instructions for Form 5472 (IRS)",
         url: "https://www.irs.gov/instructions/i5472",
-        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+        blurb: "Who must file, the pro forma Form 1120 a foreign-owned U.S. DE attaches Form 5472 to, and the Part V statement used in the example above.",
       },
     ],
   },
@@ -277,42 +278,38 @@ See the [pricing page](/pricing) for the full list, or start the questionnaire n
     },
     secondaryKeywords: ["pro forma 1120 preparer for non resident"],
     category: "annual",
+    lastModified: PAGES_REWRITTEN,
     title: "Pro Forma 1120 Filing Service with Form 5472 | Form5472 Prep",
     metaDescription:
       "Pro forma 1120 filing service for non-resident owners of US single-member LLCs: the 1120 cover and Form 5472 prepared, reviewed and faxed to the IRS.",
     longDescription:
-      "Pro forma Form 1120 preparation for non-resident owners of foreign-owned US single-member LLCs: the Form 1120 page-1 cover (name, address, EIN, item E boxes, marked \"Foreign-owned U.S. DE\") prepared together with Form 5472 and the Part V statement, reviewed by a qualified accountant, signed online and faxed to the IRS Ogden PIN Unit with a timestamped receipt.",
+      "Form5472 Prep's pro forma Form 1120 preparation for non-resident owners of foreign-owned US single-member LLCs: the Form 1120 page-1 cover (name, address, EIN, item E boxes, marked \"Foreign-owned U.S. DE\") prepared together with Form 5472 and the Part V statement, reviewed by a qualified accountant, signed online and faxed to the IRS Ogden PIN Unit with a timestamped receipt.",
     h1: "Pro Forma 1120 Filing Service for Non-Resident LLC Owners",
-    shortBlurb: "The Form 1120 cover your Form 5472 is attached to, prepared with it as one package.",
-    intro: `A pro forma 1120 filing service prepares the Form 1120 cover that a foreign-owned US disregarded entity attaches its Form 5472 to, and submits both. **The pro forma 1120 is not an income-tax return. It carries the LLC's identifying details, is marked "Foreign-owned U.S. DE", and is always filed together with Form 5472.**
+    shortBlurb: "The Form 1120 cover your Form 5472 is attached to, box by box, filed with it as one set.",
+    intro: `Our pro forma 1120 filing service is for a foreign-owned US single-member LLC that needs the Form 1120 cover its Form 5472 is attached to. **Form5472 Prep completes the few page-1 items the IRS asks for, writes "Foreign-owned U.S. DE" across the top, attaches Form 5472 and the Part V statement, and faxes the set to the IRS once you have signed.**
 
-We prepare both, have them reviewed, and fax them to the IRS.`,
+The pro forma 1120 is not an income-tax return: it reports no income and computes no tax.`,
     cta: startCta("svc-pro-forma-1120-filing-service"),
     sections: [
       {
         heading: "What is a pro forma 1120, in plain terms?",
         body: `A pro forma 1120 is the Form 1120 cover that a foreign-owned US single-member LLC attaches Form 5472 to. It carries only identifying details, is marked "Foreign-owned U.S. DE", and reports no income or tax.
 
-Under Treas. Reg. §1.6038A-1(c), a US LLC wholly owned by one foreign person is treated as a domestic corporation for Form 5472 purposes only. That is why it uses a Form 1120 at all. For income tax it stays a [disregarded entity](/what-is-a-disregarded-entity).
-
-The Form 5472 instructions require it to file a pro forma Form 1120 with Form 5472 attached. Only a few page-1 items apply:
-
-- The LLC's name and address
-- Item B, the employer identification number (EIN)
-- The applicable item E boxes: initial return, final return, name change, address change
-- "Foreign-owned U.S. DE" written across the top
-
-The income, deduction and tax sections stay blank. No tax is computed on it. For a filled-in sample, see the [completed Form 5472 example](/form-5472-example).`,
+Under Treas. Reg. §1.6038A-1(c), a US LLC wholly owned by one foreign person counts as a reporting corporation for the section 6038A rules only. That is why it uses a Form 1120 at all. For income tax it stays a [disregarded entity](/what-is-a-disregarded-entity).`,
       },
       {
-        heading: "What does our pro forma 1120 filing service do?",
-        body: `Our pro forma 1120 filing service prepares the 1120 cover and Form 5472 as one package, has a qualified accountant review it, collects your online signature and faxes it to the IRS Ogden PIN Unit. We treat them as one package because that is how the IRS receives them.
+        heading: "Which boxes does the pro forma 1120 filing service fill in?",
+        body: `Only the items the Form 5472 instructions list for a foreign-owned U.S. DE: the LLC's name and address, its EIN in item B, the applicable item E boxes and the "Foreign-owned U.S. DE" marking. The income, deduction and tax sections stay blank.
 
-- We fill the page-1 items from your questionnaire answers and mark the form "Foreign-owned U.S. DE".
-- We tick the applicable item E boxes, such as final return for a dissolved LLC.
-- We prepare Form 5472 and the Part V statement from the same answers, so the figures match.
-- A qualified accountant reviews the package before signing opens.
-- You sign online. We fax the package to the IRS Ogden PIN Unit and send you the timestamped receipt.`,
+For a first-year LLC the cover reads:
+
+- **Name and address:** the LLC's legal name and US address, as on its EIN letter
+- **Item B:** the LLC's nine-digit EIN
+- **Item E:** "Initial return" checked
+- **Top margin:** "Foreign-owned U.S. DE"
+- **Page 1 signature block:** signed by you, online, after the accountant review
+
+Form 5472 and the Part V statement are prepared from the same answers, so the EIN, name and year match on every page. For a filled-in sample of the forms, see the [completed Form 5472 example](/form-5472-example).`,
       },
       {
         heading: "Which mistakes does the accountant review catch?",
@@ -343,17 +340,19 @@ Not sure? The free [Do I need to file Form 5472?](/do-i-need-to-file-form-5472) 
 - **Not tax advice.** We prepare forms from the information you give us.`,
       },
       {
-        heading: "How do the options for preparing a pro forma 1120 compare?",
-        body: `You can prepare it yourself on the free IRS form, use a freelance preparer, hire an accounting firm or buy a formation-company package. Whichever you choose, confirm that Form 5472 is included and who sends the package to the IRS.
+        heading: "What changes on the pro forma 1120 from one year to the next?",
+        body: `Very little changes on the cover itself. Each year's pro forma 1120 shows that year's tax period, and the item E boxes follow what happened to the LLC; the figures that move every year live on Form 5472 and its Part V statement.
 
-- **Prepare it yourself.** The form is free on irs.gov. Most of the work is in Form 5472, not the cover: transaction totals, Part V, the signature and the fax. Our [reportable transactions checker](/form-5472-reportable-transactions-checker) helps identify what to report.
-- **A freelance preparer.** Ask whether they also prepare Form 5472 and who sends the package to the IRS. A cover page on its own is not a filing.
-- **An accounting firm.** Worth it if you need income-tax returns or advice beyond the information return.
-- **A formation-company package.** Check whether the pro forma 1120 is included, or only Form 5472, and what proof of submission you receive.`,
+- **First year:** "Initial return" in item E.
+- **A year the LLC changed its name or address:** the matching item E box, with the new details on the cover.
+- **The year the LLC dissolves:** "Final return" in item E, for the short year that ends on dissolution; see the [final Form 5472 for a dissolved LLC](/services/final-form-5472-for-dissolved-llc).
+- **Every year:** a new Form 5472 with that year's transactions and year-end total assets.
+
+A cover copied from last year with the old tax period or a stale box is one of the errors the review is there to catch.`,
       },
       {
         heading: "How much does a pro forma 1120 filing service cost?",
-        body: `The pro forma 1120 is never priced on its own: it is part of every Form 5472 filing, at ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year.
+        body: `Form5472 Prep never prices the pro forma 1120 on its own, because it is always filed with Form 5472. The pair costs ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} per additional past year.
 
 See the [pricing page](/pricing) for everything each plan includes.`,
       },
@@ -383,7 +382,7 @@ See the [pricing page](/pricing) for everything each plan includes.`,
       {
         label: "Instructions for Form 5472 (IRS)",
         url: "https://www.irs.gov/instructions/i5472",
-        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+        blurb: "The special rule for a foreign-owned U.S. DE: which Form 1120 items to complete and the marking written across the top.",
       },
       {
         label: "About Form 1120 (IRS)",
@@ -393,7 +392,7 @@ See the [pricing page](/pricing) for everything each plan includes.`,
       {
         label: "Instructions for Form 1120 (IRS)",
         url: "https://www.irs.gov/instructions/i1120",
-        blurb: "The IRS instructions for Form 1120, the form the pro forma return is based on.",
+        blurb: "The general Form 1120 instructions, including the item E boxes and the page 1 signature block used on the cover.",
       },
     ],
   },
@@ -408,17 +407,17 @@ See the [pricing page](/pricing) for everything each plan includes.`,
     },
     secondaryKeywords: ["delinquent form 5472 filing service", "form 5472 catch up filing multiple years"],
     category: "situations",
-    lastModified: "2026-10-06",
+    lastModified: PAGES_REWRITTEN,
     title: "Late Form 5472 Filing Service for Past Years | Form5472 Prep",
     metaDescription:
       "Late Form 5472 filing service for missed years: a package and reasonable-cause statement for each year, reviewed and faxed to the IRS Ogden PIN Unit.",
     longDescription:
-      "Delinquent Form 5472 filing service for foreign-owned US single-member LLCs: one Form 5472 and pro forma 1120 package per missed year, a reasonable-cause statement for each late year under Treas. Reg. §1.6038A-4(b), a DIIRSP cover letter, qualified-accountant review, and fax delivery to the IRS Ogden PIN Unit with a timestamped receipt for each package. No promise of penalty relief.",
+      "Form5472 Prep's delinquent Form 5472 filing service for foreign-owned US single-member LLCs: one Form 5472 and pro forma 1120 package per missed year, a reasonable-cause statement for each late year under Treas. Reg. §1.6038A-4(b), a DIIRSP cover letter, qualified-accountant review, and fax delivery to the IRS Ogden PIN Unit with a timestamped receipt for each package. No promise of penalty relief.",
     h1: "Late Form 5472 Filing Service for Missed Years",
     shortBlurb: "Catch-up filings for one or more missed years, with a reasonable-cause statement for each.",
-    intro: `Our late Form 5472 filing service prepares the missing Form 5472 and pro forma 1120 for each past year, with a reasonable-cause statement for each late year, and faxes them to the IRS. **Filing late does not cancel the $25,000 penalty under IRC §6038A(d). It puts the missing returns on record, and the statement asks the IRS to excuse the delay, a decision it makes case by case.**
+    intro: `Our late Form 5472 filing service is for foreign owners who missed one or more years of Form 5472 and want every missing year on record. **Form5472 Prep prepares a separate Form 5472 and pro forma 1120 for each missed year, writes a reasonable-cause statement for each from your facts, and faxes every package to the IRS with its own receipt.**
 
-We cannot tell you the outcome in advance. Nobody can.`,
+Filing late does not cancel the $25,000 penalty under IRC §6038A(d). Whether the delay is excused is the IRS's decision, made case by case, and nobody can tell you the outcome in advance.`,
     cta: startCta("svc-late-form-5472-filing-service"),
     sections: [
       {
@@ -467,20 +466,23 @@ The facts often differ from year to year: when the LLC was formed, when you lear
 - **No tax advice.** If you face an existing penalty or an examination, speak to a tax professional.`,
       },
       {
-        heading: "How do the ways to catch up on multiple years compare?",
-        body: `You can file each year yourself, hire an accounting firm, or use a filing service like ours that covers every missed year in one order. The right choice depends on whether you face an existing penalty, an examination or other unfiled returns.
+        heading: "What does a three-year catch-up look like?",
+        body: `Take an LLC that was formed three tax years ago and has never filed. That is three separate returns, each with its own figures, its own reasonable-cause statement and its own fax receipt, all ordered through one questionnaire.
 
-- **File each year yourself.** Possible, but each year needs its own package, its own figures and its own statement. A mistake made once tends to repeat in every year.
-- **An accounting firm.** Sensible if you face an existing penalty, an examination or other unfiled returns, where advice matters more than paperwork.
-- **A filing service like ours.** Fits the common case: a single-member LLC owned by one foreign person, unfiled years, no IRS contact yet. One questionnaire covers every year you select.
+- **The formation year:** the money you put in to set the LLC up and any setup costs you paid personally, with "Initial return" checked on that year's pro forma 1120.
+- **Each later year:** that year's contributions, distributions and loans, and the LLC's total assets at the end of that year.
+- **Three statements:** each one says what happened in its own year, from when the LLC was formed to when you learned of the filing.
+- **Three receipts:** one timestamped fax receipt per package, kept on your filing page.
 
-Before deciding, the [penalty calculator](/form-5472-penalty-calculator) shows the statutory exposure for the years involved.`,
+On Standard the whole catch-up costs ${STD_3Y}: ${STD} for the first year plus ${ADD} for each of the other two. Before you start, the [penalty calculator](/form-5472-penalty-calculator) shows the statutory exposure for the years involved.
+
+If you also face an existing penalty, an examination or other unfiled returns, advice from a tax professional matters more than paperwork.`,
       },
       {
         heading: "How much does a late Form 5472 filing cost?",
-        body: `A late Form 5472 filing costs ${STD} for the first year on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), then ${ADD} for each additional past year. Two years on Standard cost ${STD_2Y} and three cost ${STD_3Y}.
+        body: `Form5472 Prep charges ${STD} for the first late year on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), then ${ADD} for each additional past year. Two years on Standard cost ${STD_2Y}.
 
-Every late year includes its own reasonable-cause statement. See the [pricing page](/pricing).`,
+Each late year's price includes its own reasonable-cause statement. See the [pricing page](/pricing).`,
       },
     ],
     faqs: [
@@ -533,28 +535,27 @@ Every late year includes its own reasonable-cause statement. See the [pricing pa
     },
     secondaryKeywords: ["us tax filing service for non resident llc owner", "non resident llc compliance service"],
     category: "annual",
+    lastModified: PAGES_REWRITTEN,
     title: "Foreign Owned LLC Tax Filing Service | Form5472 Prep",
     metaDescription:
       "Foreign owned LLC tax filing service for non-resident owners of single-member US LLCs: Form 5472 and pro forma 1120 prepared, reviewed and faxed.",
     longDescription:
-      "Federal tax filing service for non-resident owners of foreign-owned US single-member LLCs: Form 5472 with the pro forma Form 1120 required by Treas. Reg. §301.7701-2(c)(2)(vi) and §1.6038A-1, prepared from a questionnaire, reviewed by a qualified accountant and faxed to the IRS Ogden PIN Unit. Scope stated plainly: no Form 1065, Form 1040-NR, state returns or bookkeeping.",
-    h1: "Foreign Owned LLC Tax Filing Service for Non-Resident Owners",
-    shortBlurb: "The federal filing a non-resident's single-member US LLC makes each year, with the scope stated plainly.",
-    intro: `A foreign owned LLC tax filing service handles the federal return that a non-resident's single-member US LLC files each year. **For a disregarded LLC with one foreign owner, the yearly federal filing at the LLC level is generally Form 5472 attached to a pro forma Form 1120. That is what we prepare and fax. Other obligations, such as the owner's own return or state reports, sit outside this service.**
+      "Federal tax filing service from Form5472 Prep for non-resident owners of foreign-owned US single-member LLCs: Form 5472 with the pro forma Form 1120 required by Treas. Reg. §301.7701-2(c)(2)(vi) and §1.6038A-1, prepared from a questionnaire, reviewed by a qualified accountant and faxed to the IRS Ogden PIN Unit. Scope stated plainly: no Form 1065, Form 1040-NR, state returns or bookkeeping.",
+    h1: "Foreign-Owned LLC Tax Filing Service for Non-Resident Owners",
+    shortBlurb: "Which US filings a non-resident's LLC has, and the federal one we prepare and fax.",
+    intro: `Our foreign-owned LLC tax filing service is for non-resident owners who want to know which US filings their single-member LLC has, and want the federal one done for them. **For a disregarded LLC with one foreign owner, the yearly LLC-level federal filing is generally Form 5472 attached to a pro forma Form 1120; Form5472 Prep prepares, reviews and faxes that filing and says plainly what it does not cover.**
 
-This page sets out both sides, so you can see whether we cover what you need.`,
+The owner's own return and the state's filings are separate obligations, set out below.`,
     cta: startCta("svc-foreign-owned-llc-tax-filing-service"),
     sections: [
       {
-        heading: "What does the foreign owned LLC tax filing service cover?",
-        body: `The foreign owned LLC tax filing service covers the yearly federal information return for a US LLC that has one foreign owner and has not elected corporate tax treatment: Form 5472 with the pro forma Form 1120, prepared, reviewed by a qualified accountant and faxed to the IRS.
+        heading: "What does the foreign-owned LLC tax filing service cover?",
+        body: `The service covers the yearly federal information return for a US LLC that has one foreign owner and has not elected corporate tax treatment: Form 5472 with the pro forma Form 1120, prepared, reviewed by a qualified accountant and faxed to the IRS.
 
 - Form 5472, reporting the year's transactions between the LLC and you or other related parties
 - The pro forma Form 1120 that Form 5472 is attached to
 - A Part V supporting statement, and a reasonable-cause statement for each late year
-- Qualified-accountant review, online signing, fax to the IRS Ogden PIN Unit and the timestamped receipt
-
-We also offer [EIN applications](/ein) for LLCs that do not have one yet, and [ITIN application support](/itin) for individuals with a federal tax reason to need one.`,
+- Qualified-accountant review, online signing, fax to the IRS Ogden PIN Unit and the timestamped receipt`,
       },
       {
         heading: "Why does a non-resident's LLC file at all?",
@@ -569,6 +570,18 @@ The result:
 The LLC uses the same tax year as its owner uses for US filing or, if the owner has none, the calendar year. The filing is due by the 15th day of the 4th month after the tax year ends: April 15 for a calendar year. It cannot be e-filed; it goes to the IRS by fax or mail.`,
       },
       {
+        heading: "Which US filings can a foreign-owned single-member LLC have?",
+        body: `They fall into three layers: the LLC's own federal information return, any US return the owner must file personally, and the filings set by the state of formation. Only the first layer is part of this service, and each layer has its own deadline.
+
+- **LLC, federal, each year with a reportable transaction:** Form 5472 with the pro forma Form 1120. Covered.
+- **LLC, federal, missed years:** the same package for each year, with a reasonable-cause statement. Covered by the [late Form 5472 filing service](/services/late-form-5472-filing-service).
+- **Owner, federal:** for example Form 1040-NR, if the owner has a US filing requirement of their own. Not covered; we cannot tell you whether you need one.
+- **LLC, state:** annual reports and franchise taxes set by the state of formation. The [LLC annual fees by state](/llc-annual-fees-by-state) table lists ten states. Not covered.
+- **Identification numbers:** an [EIN for the LLC](/ein) if it has none, and [ITIN application support](/itin) for an owner with a federal tax reason to need one. Separate services.
+
+The free [compliance calendar](/foreign-owned-llc-compliance-calendar) puts the federal and state dates in one list.`,
+      },
+      {
         heading: "Who does this service fit, and who does it not fit?",
         body: `It fits when a US LLC has a single owner who is not a US person, has not elected to be taxed as a corporation, and you want the federal information return prepared and sent for you.
 
@@ -580,33 +593,17 @@ It does not fit if:
       },
       {
         heading: "What can nobody promise you?",
-        body: `Nobody can promise that Form 5472 is your only US obligation, that state filings are covered, that your figures are complete or a penalty outcome for late years.
+        body: `Nobody can promise that the federal information return is your only US obligation, that the figures you supply are complete, or how the IRS will treat a late year. We prepare and file one return from your answers.
 
-- **That Form 5472 is your only obligation.** If the LLC earns US business income, the owner may have a personal US return, such as Form 1040-NR. We do not prepare it and cannot tell you whether you need one.
-- **That state obligations are covered.** Annual reports and franchise taxes are set by each state. The [LLC annual fees by state](/llc-annual-fees-by-state) table lists them for ten states; filing them is not part of this service.
-- **That your figures are complete.** We use the totals you give us. We do not keep the LLC's books.
+- **Completeness of your figures.** We use the totals you give us. We do not keep the LLC's books.
 - **A penalty outcome for late years.** The IRS decides reasonable cause case by case.
-- **Tax advice.** For planning, speak to a tax professional.`,
+- **Tax advice.** For planning, or for the owner's own return, speak to a tax professional.`,
       },
       {
-        heading: "How do compliance services for non-resident LLC owners compare?",
-        body: `Compliance services for non-resident LLC owners vary a lot in scope, so compare them on what is actually done, such as whether the pro forma 1120 is included, who submits it to the IRS and who reviews it.
+        heading: "How much does the foreign-owned LLC tax filing service cost?",
+        body: `Form5472 Prep charges a one-time fee per filing year, with no subscription and no annual retainer. Standard is ${STD} and is ready in ${STANDARD_TURNAROUND}; Express is ${EXP} and is ready to sign within ${EXPRESS_TURNAROUND}. Each earlier unfiled year is ${ADD}.
 
-Five questions separate a full filing from a partial one:
-
-- Is the pro forma 1120 included, or only Form 5472?
-- Who submits the package to the IRS, and what proof do you receive?
-- Does a qualified person review it before you sign?
-- Are late years handled with a statement for each year?
-- Are state reports, a registered agent and bookkeeping included, and do you need them?
-
-An all-in-one compliance subscription suits some owners. Others already have a registered agent and only need the federal filing; a per-filing service fits them. The free [compliance calendar](/foreign-owned-llc-compliance-calendar) lists your federal and state dates either way.`,
-      },
-      {
-        heading: "How much does the foreign owned LLC tax filing service cost?",
-        body: `Each filing year is a one-time fee with no subscription: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year.
-
-See the [pricing page](/pricing) for everything included.`,
+State fees, a registered agent and the owner's own return are not in that price, because they are not part of the service. See the [pricing page](/pricing) for everything included.`,
       },
     ],
     faqs: [
@@ -639,12 +636,12 @@ See the [pricing page](/pricing) for everything included.`,
       {
         label: "About Form 5472 (IRS)",
         url: "https://www.irs.gov/forms-pubs/about-form-5472",
-        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+        blurb: "The current Form 5472 and its instructions: the federal return this service covers.",
       },
       {
         label: "Instructions for Form 5472 (IRS)",
         url: "https://www.irs.gov/instructions/i5472",
-        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+        blurb: "Why a foreign-owned single-member LLC files Form 5472 with a pro forma Form 1120, and when it is due.",
       },
     ],
   },
@@ -659,25 +656,24 @@ See the [pricing page](/pricing) for everything included.`,
     },
     secondaryKeywords: ["fax form 5472 to irs service"],
     category: "annual",
+    lastModified: PAGES_REWRITTEN,
     title: "Form 5472 Fax Filing Service with Receipt | Form5472 Prep",
     metaDescription:
       "Form 5472 fax filing service: we fax your signed Form 5472 and pro forma 1120 to the IRS Ogden PIN Unit and give you the timestamped receipt.",
     longDescription:
-      "Form 5472 fax filing to the IRS Ogden PIN Unit (+1-855-887-7737), included in every plan: the reviewed and signed Form 5472 and pro forma 1120 package is faxed for you, and the fax provider's transmission receipt (destination number, timestamp, page count, result) is stored on your filing page. The receipt is proof of transmission, not IRS acceptance.",
+      "Form5472 Prep's Form 5472 fax filing to the IRS Ogden PIN Unit (+1-855-887-7737), included in every plan: the reviewed and signed Form 5472 and pro forma 1120 package is faxed for you, and the fax provider's transmission receipt (destination number, timestamp, page count, result) is stored on your filing page. The receipt is proof of transmission, not IRS acceptance.",
     h1: "Form 5472 Fax Filing Service With a Timestamped Receipt",
-    shortBlurb: "We fax the signed package to the IRS Ogden PIN Unit and store the transmission receipt.",
-    intro: `Our Form 5472 fax filing service sends your signed Form 5472 and pro forma 1120 package to the IRS Ogden PIN Unit at ${IRS_FAX} and gives you the transmission receipt. **A foreign-owned disregarded entity cannot e-file this package; it goes by fax or mail. The fax receipt records what was sent and when. It is not an IRS acceptance notice.**
+    shortBlurb: "Delivery to the IRS Ogden PIN Unit by fax, with the timestamped transmission receipt kept for you.",
+    intro: `Our Form 5472 fax filing service is for owners who want the signed package delivered to the IRS by fax, with a record of exactly when it went. **Form5472 Prep faxes the reviewed, signed Form 5472 and pro forma 1120 to the IRS Ogden PIN Unit at ${IRS_FAX} and stores the provider's timestamped transmission receipt on your filing page; fax delivery is included in every plan.**
 
-Fax delivery is included in every plan.`,
+A foreign-owned disregarded entity cannot e-file this package. The receipt records what was sent and when; it is not an IRS acceptance notice.`,
     cta: startCta("svc-form-5472-fax-filing-service"),
     sections: [
       {
         heading: "What does the Form 5472 fax filing service do?",
-        body: `After a qualified accountant has reviewed the package and you have signed it, we fax the complete package to the IRS Ogden PIN Unit at ${IRS_FAX}, email you when the fax provider reports delivery and store the transmission receipt on your filing page. Fax is part of the filing, not a separate product.
+        body: `The fax goes out only after a qualified accountant has reviewed the package and you have signed it. We send it to ${IRS_FAX}, email you when the fax provider reports delivery and keep the transmission receipt on your filing page to download at any time.
 
-The complete package is sent: cover letter, pro forma Form 1120, Form 5472 and supporting statements. You can download the receipt at any time.
-
-You do not need a fax machine, a fax account or an IRS account.`,
+You do not need a fax machine, a fax account or an IRS account, and nothing has to be posted from abroad.`,
       },
       {
         heading: "What does the IRS receive in the fax?",
@@ -712,16 +708,6 @@ You can also fax it yourself. You need a fax service that can send to a US toll-
 - **It does not cover other returns.** The Ogden PIN Unit line is for this package. We do not send Form 1065, Form 1040-NR or state filings.`,
       },
       {
-        heading: "Who uses the Form 5472 fax filing service?",
-        body: `Owners filing on time, owners catching up on missed years, and formation agents, registered agents or accounting firms filing for several client LLCs use the fax filing service.
-
-- **Owners filing on time** who want the package prepared, checked and sent without setting up a fax account.
-- **Owners catching up missed years,** who get a separate package and a separate receipt for each year.
-- **Formation agents, registered agents and accounting firms** filing for several client LLCs; see [white label Form 5472 filing](/services/white-label-form-5472-filing).
-
-In each case the fax is sent only after review and signature, and the receipt is kept on the filing page.`,
-      },
-      {
         heading: "How can you fax Form 5472 to the IRS?",
         body: `You can fax Form 5472 through your own online fax account, a print shop or office fax, an accounting firm or our service. Whichever you use, it must reach a US toll-free number and give you a transmission report to keep.
 
@@ -732,9 +718,9 @@ In each case the fax is sent only after review and signature, and the receipt is
       },
       {
         heading: "How much does Form 5472 fax filing cost?",
-        body: `There is no separate fax fee: fax delivery is included in both plans, at ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year.
+        body: `Form5472 Prep charges no separate fax fee. The plan you pick sets the speed, not the delivery: Standard at ${STD} is ready in ${STANDARD_TURNAROUND}, Express at ${EXP} is ready to sign within ${EXPRESS_TURNAROUND}, and both are faxed with a receipt. A past year adds ${ADD}.
 
-See the [pricing page](/pricing).`,
+Each past year is a separate package, so it is faxed separately and gets its own receipt. Firms filing for several client LLCs can use [white label Form 5472 filing](/services/white-label-form-5472-filing). See the [pricing page](/pricing).`,
       },
     ],
     faqs: [
@@ -762,12 +748,12 @@ See the [pricing page](/pricing).`,
       {
         label: "Instructions for Form 5472 (IRS)",
         url: "https://www.irs.gov/instructions/i5472",
-        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+        blurb: "The where-and-how-to-file rules for a foreign-owned U.S. DE, including the fax number and the mailing address for the package.",
       },
       {
         label: "About Form 5472 (IRS)",
         url: "https://www.irs.gov/forms-pubs/about-form-5472",
-        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+        blurb: "The IRS page to check for later developments, such as a change to how or where the package is filed.",
       },
     ],
   },
@@ -782,16 +768,15 @@ See the [pricing page](/pricing).`,
     },
     secondaryKeywords: ["form 5472 filing for company formation agents", "form 5472 filing for registered agents"],
     category: "partners",
-    // Body gained the accountants/bookkeepers cross-link on this date.
-    lastModified: AUDIENCE_PAGES_ADDED,
+    lastModified: PAGES_REWRITTEN,
     title: "White Label Form 5472 Filing for Agents | Form5472 Prep",
     metaDescription:
       "White label Form 5472 filing for formation agents, registered agents and accounting firms: client emails under your brand, replies to you, one dashboard.",
     longDescription:
       "White-label Form 5472 filing for company formation agents, registered agents, accounting firms and consultants: approved partners with white-label delivery enabled have client filing emails sent under the partner's brand name with replies to the partner's address, while Form5472 Prep prepares, has a qualified accountant review, and faxes each client's Form 5472 and pro forma 1120 to the IRS. One partner dashboard tracks every filing.",
     h1: "White Label Form 5472 Filing for Formation and Registered Agents",
-    shortBlurb: "Offer Form 5472 filing to your clients under your brand; we prepare, review and fax.",
-    intro: `Our white label Form 5472 filing option lets formation agents, registered agents and accounting firms offer Form 5472 filing to their clients under their own brand. **For approved partners with white-label delivery enabled, client emails go out under the partner's brand name and replies go to the partner's address, while we prepare, review and fax each filing.**
+    shortBlurb: "Client filing emails under your brand name, replies to you; preparation, review and fax behind it.",
+    intro: `Our white label Form 5472 filing option is for formation agents, registered agents and accounting firms that want to offer Form 5472 filing to their own clients under their own brand. **For approved partners with white-label delivery enabled, client emails go out under the partner's brand name and replies go to the partner's address, while Form5472 Prep prepares, reviews and faxes each filing.**
 
 White-label delivery is switched on per partner, on request, after the partner account is approved.`,
     cta: { href: "/partners#apply", label: "Apply as a partner" },
@@ -820,7 +805,7 @@ Missed years work the same way as for direct customers: one package and one reas
       },
       {
         heading: "What do your clients see with white-label delivery?",
-        body: `With white-label delivery on, client emails show your brand name as the sender and replies go to your address, with a short footer line saying Form5472 Prep processes the filing. Without it, clients receive these emails from Form5472 Prep, with you shown as the preparer coordinating the filing.
+        body: `With white-label delivery on, client emails show your brand name as the sender and replies go to your address, with a short footer line saying Form5472 Prep processes the filing. Without it, clients receive these emails from us, with you shown as the preparer coordinating the filing.
 
 - Client emails for each filing show your brand name as the sender name and in the email header.
 - When a client replies, the reply goes to the address you gave us. If none is set, replies come to our support address.
@@ -846,20 +831,20 @@ Missed years work the same way as for direct customers: one package and one reas
 - **Not an outcome promise.** For late years, nobody can promise the IRS will waive penalties.`,
       },
       {
-        heading: "How can you offer Form 5472 filing to your clients?",
-        body: `You can refer clients elsewhere, prepare Form 5472 in-house, or use white-label partner filing, where your brand faces the client and we handle preparation, review, fax and receipt storage.
+        heading: "What happens when a client has missed years, a dormant LLC or a closed one?",
+        body: `The same three situations come up in most client lists, and each runs through the partner account like an ordinary filing. You choose the years and the situation when you start the client's filing; the client still signs every return.
 
-- **Refer clients elsewhere.** Simple, but the client deals with another firm at tax time.
-- **Prepare in-house.** Full control. You need staff who know Form 5472 and the pro forma 1120, a review step, and a fax workflow that keeps receipts.
-- **White-label partner filing.** Your brand faces the client. Preparation, review, fax and receipt storage happen on our side, and you track every filing in one dashboard.
+- **Missed years.** One package and one reasonable-cause statement per late year, at ${ADD} for each year after the first. See the [late Form 5472 filing service](/services/late-form-5472-filing-service).
+- **A quiet LLC.** An owner who paid the state fee or registered agent personally has usually created a reportable transaction. See [Form 5472 filing for dormant LLC owners](/services/form-5472-filing-for-dormant-llc).
+- **A dissolved LLC.** The last short year needs a final return with the final-return box checked. See the [final Form 5472 for a dissolved LLC](/services/final-form-5472-for-dissolved-llc).
 
-Accountants and bookkeepers weighing these options can start with [Form 5472 for accountants and tax preparers](/services/form-5472-for-accountants) or [Form 5472 for bookkeepers](/services/form-5472-for-bookkeepers).`,
+Accountants comparing referral, a partner account and branded delivery can start with [Form 5472 for accountants and tax preparers](/services/form-5472-for-accountants).`,
       },
       {
         heading: "How much does white label Form 5472 filing cost?",
-        body: `Partner filings cost the same as direct filings: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year, with IRS fax delivery included.
+        body: `Form5472 Prep charges partners the same per filing as direct customers, with no platform fee: ${STD} for a Standard filing ready in ${STANDARD_TURNAROUND}, ${EXP} for Express, ready to sign within ${EXPRESS_TURNAROUND}, and ${ADD} for each extra past year, IRS fax included.
 
-See the [pricing page](/pricing), and ask about volume pricing or consolidated invoicing when you apply through the [partner program](/partners).`,
+What you charge your own client is up to you. Ask about volume pricing or consolidated invoicing when you apply through the [partner program](/partners).`,
       },
     ],
     faqs: [
@@ -887,12 +872,12 @@ See the [pricing page](/pricing), and ask about volume pricing or consolidated i
       {
         label: "About Form 5472 (IRS)",
         url: "https://www.irs.gov/forms-pubs/about-form-5472",
-        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+        blurb: "The form each client LLC files, with its current instructions and any later IRS updates.",
       },
       {
         label: "Instructions for Form 5472 (IRS)",
         url: "https://www.irs.gov/instructions/i5472",
-        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+        blurb: "Who must file and what counts as a reportable transaction, for checking a client's facts before you start the filing.",
       },
     ],
   },
@@ -907,16 +892,17 @@ See the [pricing page](/pricing), and ask about volume pricing or consolidated i
     },
     secondaryKeywords: ["form 5472 for llc with no activity"],
     category: "situations",
+    lastModified: PAGES_REWRITTEN,
     title: "Form 5472 Filing for Dormant LLC Owners | Form5472 Prep",
     metaDescription:
       "Form 5472 filing for dormant LLC owners: when an LLC with no activity still files, which owner-paid costs count, and how we prepare and fax it.",
     longDescription:
-      "Form 5472 for a foreign-owned US LLC with no activity: the Form 5472 instructions excuse only a year with no reportable transactions (Parts IV, V and VI), and owner-paid state fees, registered-agent fees, formation costs and capital contributions are reportable under Treas. Reg. §1.6038A-2(b)(3)(xi). We prepare the pro forma 1120 and Form 5472, have them reviewed and fax them to the IRS.",
+      "Form 5472 for a foreign-owned US LLC with no activity: the Form 5472 instructions excuse only a year with no reportable transactions (Parts IV, V and VI), and owner-paid state fees, registered-agent fees, formation costs and capital contributions are reportable under Treas. Reg. §1.6038A-2(b)(3)(xi). Form5472 Prep prepares the pro forma 1120 and Form 5472, has them reviewed and faxes them to the IRS.",
     h1: "Form 5472 Filing for Dormant LLC Owners",
     shortBlurb: "When an LLC with no business activity still files, and which owner-paid costs count.",
-    intro: `Form 5472 filing for dormant LLC owners usually comes down to one question: did any money move between you and the LLC? **A foreign-owned LLC with no bank activity can still have a reportable transaction. Paying its state fee or registered agent from your own pocket is one, and then the LLC files Form 5472 with a pro forma 1120 like any other year.**
+    intro: `Form 5472 filing for dormant LLC owners covers a foreign-owned US LLC that did little or nothing this year, and it turns on one question: did any money move between you and the LLC? **Paying the LLC's state fee or registered agent from your own pocket is a reportable transaction, so a quiet LLC often still files; Form5472 Prep then prepares the same Form 5472 and pro forma 1120 package as for any other year.**
 
-The Form 5472 instructions do excuse a year with no reportable transactions at all. This page explains where that line sits.`,
+The Form 5472 instructions do excuse a year with no reportable transactions at all. The examples below show where that line sits.`,
     cta: startCta("svc-form-5472-filing-for-dormant-llc"),
     sections: [
       {
@@ -944,9 +930,8 @@ The questionnaire asks about each type of transaction in turn, so a fee paid per
       },
       {
         heading: "What are the edge cases for Form 5472 for an LLC with no activity?",
-        body: `An LLC with no activity can still have a reportable transaction. Four edge cases decide it: fees the LLC paid from its own account, a part-year LLC, a missing EIN and a planned closure.
+        body: `Three edge cases come up alongside a quiet year: an LLC that existed for only part of the year, an LLC with no EIN yet, and an owner who plans to close the LLC. Each changes what the filing looks like, not whether the rule applies.
 
-- **The LLC paid its fees from its own account.** Payments from the LLC's account to unrelated vendors, such as the registered agent, are not reportable. If nothing else moved between you and the LLC, the year may have no reportable transaction.
 - **The LLC existed for part of the year.** It still had a tax year, and formation payments in that year count.
 - **The LLC has no EIN yet.** The forms need one. Our [EIN service](/ein) can obtain it.
 - **You plan to close it.** The last year has its own due date and a final-return box; see the [final Form 5472 for a dissolved LLC](/services/final-form-5472-for-dissolved-llc).
@@ -972,18 +957,20 @@ The free [reportable transactions checker](/form-5472-reportable-transactions-ch
 - **Whether to keep or close the LLC.** That is a planning question for a tax professional.`,
       },
       {
-        heading: "How do the options for a low-activity year compare?",
-        body: `For a low-activity year you can file it yourself, use a formation provider's package or use our service, which has the same flat price whatever the activity level.
+        heading: "Which of these quiet years still need a Form 5472?",
+        body: `Three typical quiet years show where the line falls. Two of them still need a Form 5472 because money moved between the owner and the LLC; the third may not, because nothing did.
 
-- **Do it yourself.** With few transactions the forms are short. You still need the pro forma 1120 cover, the right Part V entries, a signature, and a fax or mail submission.
-- **A formation provider's package.** Check whether it includes the pro forma 1120 and the submission, not only Form 5472.
-- **Our service.** The same flat price whatever the activity level, with accountant review and fax delivery included.`,
+- **The owner paid the annual state fee by personal card, and nothing else happened.** File. Paying the LLC's bill with your own money is a transfer to the LLC.
+- **The owner put USD 100 in to open the LLC's bank account, and the account then sat idle.** File. The deposit is a capital contribution.
+- **The LLC paid its registered agent from its own account, funded in an earlier year, and nothing moved between owner and LLC.** Possibly no filing for that year. A payment from the LLC to an unrelated vendor is not reportable, but check every record first.
+
+When a year falls in the first two groups, the filing costs and looks the same as any other year's.`,
       },
       {
         heading: "How much does Form 5472 filing for a dormant LLC cost?",
-        body: `A dormant-year filing costs the same as any other year: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} for each additional past year.
+        body: `Form5472 Prep charges the same for a quiet year as for a busy one, because the package and the review are the same. A quiet year is ${STD} on Standard, ready in ${STANDARD_TURNAROUND}, or ${EXP} on Express, ready to sign within ${EXPRESS_TURNAROUND}; an extra past year adds ${ADD}.
 
-See the [pricing page](/pricing).`,
+A dormant LLC that also skipped earlier years can file them in the same order. See the [pricing page](/pricing).`,
       },
     ],
     faqs: [
@@ -1011,12 +998,12 @@ See the [pricing page](/pricing).`,
       {
         label: "Instructions for Form 5472 (IRS)",
         url: "https://www.irs.gov/instructions/i5472",
-        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+        blurb: "The reportable-transaction rules, including the Part V list of formation, contribution and distribution items, behind the examples on this page.",
       },
       {
         label: "About Form 5472 (IRS)",
         url: "https://www.irs.gov/forms-pubs/about-form-5472",
-        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+        blurb: "The current Form 5472 and its instructions, and any later IRS updates to either.",
       },
     ],
   },
@@ -1031,16 +1018,17 @@ See the [pricing page](/pricing).`,
     },
     secondaryKeywords: ["close foreign owned us llc tax filing"],
     category: "situations",
+    lastModified: PAGES_REWRITTEN,
     title: "Final Form 5472 for Dissolved LLC Owners | Form5472 Prep",
     metaDescription:
       "Final Form 5472 for dissolved LLC owners: the short-year pro forma 1120 and Form 5472 with the final-return box checked, prepared and faxed to the IRS.",
     longDescription:
-      "Final-year Form 5472 and pro forma Form 1120 for a dissolved foreign-owned US LLC: a short tax year ending on dissolution, the item E final-return box checked, dissolution distributions reported, generally due the 15th day of the 4th month after dissolution (3rd month for a June short year beginning before 2026). Reviewed by a qualified accountant and faxed to the IRS Ogden PIN Unit.",
+      "Final-year Form 5472 and pro forma Form 1120 for a dissolved foreign-owned US LLC: a short tax year ending on dissolution, the item E final-return box checked, dissolution distributions reported, generally due the 15th day of the 4th month after dissolution (3rd month for a June short year beginning before 2026). Prepared by Form5472 Prep, reviewed by a qualified accountant and faxed to the IRS Ogden PIN Unit.",
     h1: "Final Form 5472 for Dissolved LLC Owners",
     shortBlurb: "The last Form 5472 and pro forma 1120 for the short year that ends on dissolution.",
-    intro: `A final Form 5472 for dissolved LLC owners closes the federal reporting of a foreign-owned US LLC: one last Form 5472 and pro forma 1120 for the short year that ends on dissolution. **It is generally due by the 15th day of the 4th month after the LLC dissolved. The final-return box on the pro forma 1120 is checked, and money you take out on closing is reportable.**
+    intro: `A final Form 5472 for dissolved LLC owners is the return that closes a foreign-owned US LLC's federal reporting: one Form 5472 and pro forma 1120 for the short year that ends on dissolution. **It is generally due by the 15th day of the 4th month after the LLC dissolved; Form5472 Prep checks the final-return box, reports what you took out on closing, and faxes the package to the IRS.**
 
-Closing with the state does not file it for you.`,
+Closing the LLC with the state does not file this return for you.`,
     cta: startCta("svc-final-form-5472-for-dissolved-llc"),
     sections: [
       {
@@ -1062,8 +1050,7 @@ The questionnaire asks for the dissolution date and marks the return as final. A
         heading: "When is the final Form 5472 due?",
         body: `The final Form 5472 and pro forma 1120 are generally due by the 15th day of the 4th month after the LLC dissolved. The Form 1120 instructions set that date for a dissolved corporation, and the same rule applies to the pro forma 1120 with Form 5472 attached.
 
-- **Example:** an LLC dissolved on 20 March files by 15 July of the same year.
-- **June exception:** for a short year ending in June that began before 1 January 2026, the due date is the 15th day of the 3rd month. An LLC dissolved in June 2025 was due on 15 September 2025.
+- **June exception:** for a short year ending in June that began before January 1, 2026, the due date is the 15th day of the 3rd month. An LLC dissolved in June 2025 was due on September 15, 2025.
 - **Weekends and holidays** move the date to the next business day.
 - **Form 7004** can extend the deadline. We do not file Form 7004.
 
@@ -1089,19 +1076,21 @@ The [deadline calculator](/form-5472-deadline-calculator) works out the exact da
 - **It is not tax advice.** How and when to close is a question for a tax professional.`,
       },
       {
-        heading: "How do the ways to file the final return compare?",
-        body: `You can ask a formation provider or registered agent, file it yourself, hire an accounting firm, or use our service for the federal final return only: prepared, reviewed and faxed, with a receipt.
+        heading: "What does a final return look like for an LLC dissolved in March?",
+        body: `Take a calendar-year LLC dissolved on March 20, with USD 1,200 left in its bank account that is wired to the owner on closing. Its final return covers January 1 to March 20 and is due by July 15 of the same year.
 
-- **A formation provider or registered agent.** Some handle the state dissolution. Ask whether the federal final Form 5472 is included.
-- **Do it yourself.** Possible. The short-year dates, the final-return box and the dissolution distribution are the details to get right.
-- **An accounting firm.** Worth it if the closure involves property, a sale of the business or other tax returns.
-- **Our service.** The federal final return only: prepared, reviewed and faxed, with a receipt.`,
+- **Pro forma 1120:** the short tax year from January 1 to March 20, the final-return box in item E checked, and "Foreign-owned U.S. DE" across the top.
+- **Form 5472:** the owner's details and the LLC's total assets at the end of the short year, which may be zero once the balance has gone out.
+- **Part V statement:** the USD 1,200 distribution on dissolution, plus any money the owner put in to pay closing costs.
+- **Earlier years:** any year before this one that was never filed, each with its own package and reasonable-cause statement.
+
+Dissolve in a different month and the due date moves with it, so the date above applies only to a March 20 dissolution.`,
       },
       {
         heading: "How much does a final Form 5472 for a dissolved LLC cost?",
-        body: `A final-year filing is priced like any other year: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} for each missing earlier year.
+        body: `Form5472 Prep prices the final short year like any other year: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} for each missing earlier year in the same order.
 
-See the [pricing page](/pricing).`,
+If the sample LLC above had also missed the previous year, both would cost ${STD_2Y} on Standard. See the [pricing page](/pricing).`,
       },
     ],
     faqs: [
@@ -1134,7 +1123,7 @@ See the [pricing page](/pricing).`,
       {
         label: "Instructions for Form 5472 (IRS)",
         url: "https://www.irs.gov/instructions/i5472",
-        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+        blurb: "Part V's list of reportable transactions, which includes amounts paid or received in connection with dissolution.",
       },
     ],
   },
@@ -1144,7 +1133,6 @@ See the [pricing page](/pricing).`,
   // words, unique copy concentrated in the first screen.
   {
     slug: "hire-someone-to-file-form-5472",
-    lastReviewed: "2026-10-05",
     keyword: "hire someone to file form 5472",
     heroImage: {
       src: "/services/services_hire-someone-to-file-form-5472_folder-handover.webp",
@@ -1152,22 +1140,22 @@ See the [pricing page](/pricing).`,
     },
     secondaryKeywords: ["pay someone to file form 5472", "form 5472 done for you"],
     category: "annual",
-    lastModified: AUDIENCE_PAGES_ADDED,
+    lastModified: PAGES_REWRITTEN,
     title: "Hire Someone to File Form 5472: Done for You | Form5472 Prep",
     metaDescription:
       "Hire someone to file Form 5472 for your foreign-owned LLC: answer 15 minutes of questions and sign; we prepare, review and fax it to the IRS.",
     longDescription:
       "Done-for-you Form 5472 and pro forma Form 1120 filing for owners of foreign-owned US single-member LLCs who would rather hire someone than file it themselves: the owner answers a 15-minute questionnaire, reviews and signs online; Form5472 Prep prepares the package, has a qualified accountant review it, faxes it to the IRS Ogden PIN Unit and stores the timestamped fax receipt. Flat fee per filing year.",
     h1: "Hire Someone to File Form 5472 for Your Foreign-Owned LLC",
-    shortBlurb: "Hand the filing over: what you provide, what we do, and the two things you still do yourself.",
-    intro: `If you want to hire someone to file Form 5472, the job splits cleanly in two. **You hand over the facts about your LLC and its money movements, then review and sign; we prepare the Form 5472 and pro forma 1120, have a qualified accountant check them, fax them to the IRS and keep the receipt for you.**
+    shortBlurb: "The handover in plain terms: what you give, what comes back, and the two things you still do.",
+    intro: `If you want to hire someone to file Form 5472, the handover is short and has a clear line down the middle. **You hand over the facts about your LLC and its money movements, then review and sign; Form5472 Prep prepares the Form 5472 and pro forma 1120, has a qualified accountant check them, faxes them to the IRS and keeps the receipt for you.**
 
 Most owners spend about 15 minutes on their part, with no meeting to book.`,
     cta: startCta("svc-hire-someone-to-file-form-5472"),
     sections: [
       {
         heading: "What do you hand over when you hire someone to file Form 5472?",
-        body: `You hand over four sets of facts, not forms: the LLC's details, your details as owner, the year's money movements and the LLC's year-end total assets.
+        body: `You hand over four sets of facts, not forms: the LLC's details, your details as owner, the year's money movements between you and the LLC, and the LLC's year-end total assets. No accounting software or bank login is involved.
 
 - **The LLC:** legal name, EIN, US address, state and date of formation
 - **You, as owner:** name, home address, country of residence and your foreign tax ID if you have one
@@ -1177,20 +1165,16 @@ Most owners spend about 15 minutes on their part, with no meeting to book.`,
 Not sure whether a payment counts? The [reportable transactions checker](/form-5472-reportable-transactions-checker) answers that for common cases before you start.`,
       },
       {
-        heading: "What do we do once you hand it over?",
-        body: `We build the package, have it checked, collect your signature, fax it to the IRS and save the receipt, in five steps.
+        heading: "What comes back to you, and when?",
+        body: `With Form5472 Prep the package is ready in ${STANDARD_TURNAROUND} on Standard (${STD}), or ready to sign within ${EXPRESS_TURNAROUND} on Express (${EXP}). After you sign, it is faxed and the receipt appears on your filing page.
 
-1. **Build the package.** After payment, your answers become a cover letter, the pro forma Form 1120, Form 5472 and a Part V statement.
-2. **Check it.** A qualified accountant compares the package with your answers and asks on your filing page if anything is unclear.
-3. **Send it for signature.** Signing opens only after the review is approved.
-4. **Fax it.** We send the signed package to the IRS Ogden PIN Unit at ${IRS_FAX}.
-5. **Hand you the proof.** The timestamped fax receipt is saved on your filing page.`,
-      },
-      {
-        heading: "How long does hiring us take, and what does it cost?",
-        body: `Your part takes about 15 minutes of questions plus a few minutes to review and sign. The package is ready in ${STANDARD_TURNAROUND} on Standard (${STD}) or ready to sign within ${EXPRESS_TURNAROUND} on Express (${EXP}).
+1. **Questions, if any.** The reviewing accountant compares the package with your answers and asks on your filing page if something is unclear.
+2. **The package to review.** Cover letter, pro forma Form 1120, Form 5472 and the Part V statement, ready for you to read.
+3. **The signing link.** It opens only after the review is approved.
+4. **The fax.** We send the signed package to the IRS Ogden PIN Unit at ${IRS_FAX}.
+5. **The proof.** The timestamped fax receipt, saved with the package.
 
-Missed earlier years add ${ADD} per extra year on either plan, each with its own reasonable-cause statement. For a calendar-year LLC the filing is due April 15. Full details are on the [pricing page](/pricing).`,
+Missed earlier years add ${ADD} each on either plan. For a calendar-year LLC the filing is due April 15; see the [pricing page](/pricing) for the full plan details.`,
       },
       {
         heading: "What do you still do yourself?",
@@ -1201,7 +1185,7 @@ Missed earlier years add ${ADD} per extra year on either plan, each with its own
         body: `Hiring us does not cover tax advice, other returns or a promised outcome. The fax receipt proves what was sent and when, not that the IRS has processed it.
 
 - **No other returns.** Form 1065, a full Form 1120 for an LLC taxed as a corporation, Form 1040-NR, state returns, Form 7004 and bookkeeping are outside the service.
-- **No promised outcome.** For late years, nobody can promise the IRS will not assess the $25,000 penalty under IRC §6038A(d).`,
+- **No promised outcome.** If you are hiring us for a year that is already late, the penalty decision stays with the IRS; nobody can tell you in advance whether it will be assessed.`,
       },
     ],
     faqs: [
@@ -1229,12 +1213,12 @@ Missed earlier years add ${ADD} per extra year on either plan, each with its own
       {
         label: "About Form 5472 (IRS)",
         url: "https://www.irs.gov/forms-pubs/about-form-5472",
-        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+        blurb: "The form you are handing over, with its current instructions, if you want to read what will be filed for you.",
       },
       {
         label: "Instructions for Form 5472 (IRS)",
         url: "https://www.irs.gov/instructions/i5472",
-        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+        blurb: "What the IRS asks the LLC to report, which is why the handover asks for the four sets of facts above.",
       },
     ],
   },
@@ -1242,7 +1226,6 @@ Missed earlier years add ${ADD} per extra year on either plan, each with its own
   // ── 10 ──────────────────────────────────────────────────────────────────
   {
     slug: "form-5472-preparer",
-    lastReviewed: "2026-10-05",
     keyword: "form 5472 preparer",
     heroImage: {
       src: "/services/services_form-5472-preparer_magnifier-over-form.webp",
@@ -1250,26 +1233,33 @@ Missed earlier years add ${ADD} per extra year on either plan, each with its own
     },
     secondaryKeywords: ["who prepares form 5472", "form 5472 tax preparer", "form 5472 preparation service"],
     category: "annual",
-    lastModified: "2026-10-06",
+    lastModified: PAGES_REWRITTEN,
     title: "Form 5472 Preparer, Reviewed Before You Sign | Form5472 Prep",
     metaDescription:
       "Form 5472 preparer for foreign-owned US LLCs: what a preparer does for Form 5472 and the pro forma 1120, how to choose one, and how our review works.",
     longDescription:
-      "What a Form 5472 preparer does for a foreign-owned US single-member LLC: sorting the year's reportable transactions, completing Form 5472, the Part V statement and the pro forma Form 1120 marked \"Foreign-owned U.S. DE\", and getting the package to the IRS by fax or mail. Includes a checklist for choosing a preparer and how Form5472 Prep's qualified-accountant review works before the owner signs online.",
+      "How to choose a Form 5472 preparer for a foreign-owned US single-member LLC: what the preparer does (sorting reportable transactions, completing Form 5472, the Part V statement and the pro forma Form 1120 marked \"Foreign-owned U.S. DE\", getting the package to the IRS by fax or mail), the four kinds of preparer, a checklist of questions, and how Form5472 Prep's qualified-accountant review works before the owner signs online.",
     h1: "A Form 5472 Preparer for Foreign-Owned US LLCs",
-    shortBlurb: "What a preparer actually does, a checklist for choosing one, and how our review works.",
-    intro: `A Form 5472 preparer turns what you know about your LLC's year into the two IRS forms a foreign-owned single-member LLC files. **The preparer completes Form 5472 and the pro forma Form 1120 it is attached to, checks them and gets them to the IRS; you, as the person authorized for the LLC, review and sign.** Our Form 5472 preparation service does that work for you, with a qualified accountant review before you sign.`,
+    shortBlurb: "How to choose who prepares your Form 5472: the four kinds of preparer and six questions to ask.",
+    intro: `A Form 5472 preparer turns what you know about your LLC's year into the two IRS forms a foreign-owned single-member LLC files, and the choice of preparer is what this page is about. **A preparer completes Form 5472 and the pro forma Form 1120 it is attached to, checks them and gets them to the IRS, while you review and sign; the Form 5472 preparation service at Form5472 Prep adds a qualified accountant review before you sign.**`,
     cta: startCta("svc-form-5472-preparer"),
     sections: [
       {
         heading: "What does a Form 5472 preparer do?",
-        body: `A Form 5472 preparer prepares the Form 5472 and pro forma 1120 from the owner's records, flags any missing information and assembles the package for fax or mail. The forms are short; the judgement is in what goes on them.
+        body: `A Form 5472 preparer turns the owner's records into Form 5472, the Part V statement and the pro forma 1120, flags anything missing and gets the package to the IRS. The forms are short; the judgment is in what goes on them.
 
-- **Sorts the year's money movements.** Contributions, distributions, loans and owner-paid LLC costs are identified and totalled by type.
-- **Completes Form 5472.** Owner details, related-party information, the transaction totals and year-end total assets.
-- **Writes the Part V statement.** A plain list of the reportable transactions behind the totals.
-- **Completes the pro forma 1120.** Only the identifying items, marked "Foreign-owned U.S. DE", with the income and tax lines left blank.
-- **Gets the package to the IRS.** A foreign-owned disregarded entity cannot e-file these forms, so they go by fax or mail.`,
+- **Sorts the year's money movements** into contributions, distributions, loans and owner-paid LLC costs, totalled by type.
+- **Completes the forms** with the owner and related-party details, the transaction totals and year-end total assets.
+- **Sends the package** by fax or mail, because a foreign-owned disregarded entity cannot e-file it.`,
+      },
+      {
+        heading: "What kinds of Form 5472 preparer can you choose from?",
+        body: `There are four routes: prepare it yourself on the free IRS forms, hire an accounting firm, take a formation company's tax add-on, or use a fixed-fee specialist such as Form5472 Prep. Each can be the right choice for a different owner.
+
+- **Yourself.** No fee, but you research the rules, send the package and keep the proof.
+- **An accounting firm.** Worth it when you also need income-tax returns, bookkeeping or advice.
+- **A formation-company add-on.** Check whether it includes the pro forma 1120 and who sends the package.
+- **A fixed-fee specialist.** One price per year for this filing only; check the review step and the proof of submission.`,
       },
       {
         heading: "How do you choose a Form 5472 preparer?",
@@ -1283,24 +1273,18 @@ Missed earlier years add ${ADD} per extra year on either plan, each with its own
 - Who signs? It should be you, or someone authorized for the LLC.`,
       },
       {
-        heading: "How does our Form 5472 preparation service review your filing?",
-        body: `Every filing is reviewed by a qualified accountant before it is submitted, and signing opens only after the review is approved, so you never sign an unchecked package.
+        heading: "How does our Form 5472 preparation service answer those questions?",
+        body: `The Form 5472 preparation service at Form5472 Prep costs **${STD}** on Standard (ready in ${STANDARD_TURNAROUND}) or **${EXP}** on Express (ready to sign within ${EXPRESS_TURNAROUND}), pro forma 1120 included, plus ${ADD} per additional past year.
 
-- The package is generated from your questionnaire answers, so the forms and the Part V statement use the same figures.
-- The reviewer compares the forms with those answers and checks details that are easy to miss, such as the "Foreign-owned U.S. DE" marking and a matching EIN on both forms.
-- If something is unclear, the question appears on your filing page. Nothing moves until it is answered.`,
+Every filing is reviewed by a qualified accountant before it is submitted, and signing opens only after the review is approved. We fax the package to the IRS Ogden PIN Unit and keep the timestamped receipt on your filing page. See [pricing](/pricing).`,
       },
       {
         heading: "What can a Form 5472 preparer not do for you?",
-        body: `A preparer cannot sign for the LLC, know facts you have not shared, promise penalty relief or replace tax advice.
+        body: `A preparer cannot sign for the LLC, know facts you have not shared or promise penalty relief, and preparing forms is not tax advice.
 
-- **Sign for the LLC.** The return is signed by the owner or another authorized person. Our staff never sign on a client's behalf.
-- **Know facts you have not shared.** A preparer works from your information, and you remain responsible for its accuracy.
-- **Promise penalty relief.** If a year is late, nobody can promise the IRS will not assess the $25,000 penalty under IRC §6038A(d).`,
-      },
-      {
-        heading: "How much does a Form 5472 preparer cost?",
-        body: `Our Form 5472 preparation costs **${STD}** on Standard (ready in ${STANDARD_TURNAROUND}) or **${EXP}** on Express (ready to sign within ${EXPRESS_TURNAROUND}), with the accountant review and IRS fax included in both. Each additional past year adds ${ADD}. See [pricing](/pricing), or start now.`,
+- **Sign for the LLC.** Our staff never sign on a client's behalf.
+- **Know facts you have not shared.** You remain responsible for the information.
+- **Promise penalty relief.** For a late year, nobody can promise the IRS will not assess the $25,000 penalty under IRC §6038A(d).`,
       },
     ],
     faqs: [
@@ -1328,17 +1312,17 @@ Missed earlier years add ${ADD} per extra year on either plan, each with its own
       {
         label: "Instructions for Form 5472 (IRS)",
         url: "https://www.irs.gov/instructions/i5472",
-        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+        blurb: "The rules any preparer works from: who must file, the reportable transactions and how a foreign-owned U.S. DE files.",
       },
       {
         label: "About Form 5472 (IRS)",
         url: "https://www.irs.gov/forms-pubs/about-form-5472",
-        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+        blurb: "The current revision of the form, to check that a preparer is using this year's version.",
       },
       {
         label: "Instructions for Form 1120 (IRS)",
         url: "https://www.irs.gov/instructions/i1120",
-        blurb: "The IRS instructions for Form 1120, the form the pro forma return is based on.",
+        blurb: "The Form 1120 instructions behind the pro forma cover, including its signature and paid-preparer blocks.",
       },
     ],
   },
@@ -1346,7 +1330,6 @@ Missed earlier years add ${ADD} per extra year on either plan, each with its own
   // ── 11 ──────────────────────────────────────────────────────────────────
   {
     slug: "form-5472-for-accountants",
-    lastReviewed: "2026-10-05",
     keyword: "form 5472 for accountants",
     heroImage: {
       src: "/services/services_form-5472-for-accountants_linked-firm-desks.webp",
@@ -1360,15 +1343,15 @@ Missed earlier years add ${ADD} per extra year on either plan, each with its own
       "form 5472 for cpas",
     ],
     category: "partners",
-    lastModified: "2026-10-06",
+    lastModified: PAGES_REWRITTEN,
     title: "Form 5472 for Accountants and CPAs: You Keep the Client",
     metaDescription:
       "Form 5472 for accountants, tax preparers and CPA firms: refer clients, or run their filings from a partner account while we prepare, review and fax.",
     longDescription:
       "Form 5472 and pro forma Form 1120 filing for accountants, tax preparers, CPA firms and accounting firms that do not want to prepare foreign-owned LLC information returns in-house: refer the client to file directly, start and track client filings from a partner account, or enable white-label delivery so client emails carry the firm's brand. Form5472 Prep prepares each package, has a qualified accountant review it, collects the client's online signature and faxes it to the IRS Ogden PIN Unit with a timestamped receipt.",
     h1: "Form 5472 for Accountants, CPAs and Tax Preparers",
-    shortBlurb: "Hand off Form 5472 work without losing the client: refer, partner or white label.",
-    intro: `Form 5472 for accountants is often small, seasonal work that does not fit the rest of the practice. **You can hand the preparation to us and keep the client: refer them to file directly, run their filings from a partner account, or offer the filing under your own brand while we prepare, review and fax each package.**
+    shortBlurb: "For firms deciding between referring, a partner account and branded delivery.",
+    intro: `Form 5472 for accountants is often small, seasonal work that does not fit the rest of the practice, and this page is for firms deciding how to hand it off. **You can pass the preparation to Form5472 Prep and keep the client: refer them to file directly, run their filings from a partner account, or offer the filing under your own brand while we prepare, review and fax each package.**
 
 Form 5472 for CPAs works the same way: we prepare the package, you keep the client relationship. Whichever route you choose, the client reviews and signs their own return.`,
     cta: { href: "/partners#apply", label: "Apply as a partner" },
@@ -1389,7 +1372,7 @@ Form 5472 for CPAs works the same way: we prepare the package, you keep the clie
 
 - **Refer the client.** Send them to [start a filing](/start?src=svc-form-5472-for-accountants) themselves. They deal with us directly and you stay out of the paperwork.
 - **Partner account.** Start each client's filing from one dashboard. Enter the details yourself or send the client a secure intake link, then follow preparation, signature and fax status in one place.
-- **White-label delivery.** For approved partners, on request: client emails go out under your brand name and replies come to your address. See [white label Form 5472 filing](/services/white-label-form-5472-filing) for how it works.
+- **White-label delivery.** For approved partners, on request, client emails carry your brand name; [white label Form 5472 filing](/services/white-label-form-5472-filing) explains what clients see.
 
 Partner accounts are approved manually, usually within one business day. Details are on the [partner program](/partners) page.`,
       },
@@ -1405,7 +1388,7 @@ Partner accounts are approved manually, usually within one business day. Details
         heading: "What do we not take on?",
         body: `We do not take on client advice, other returns or signing for the client. The person authorized for the client LLC signs, and our staff never sign in their place.
 
-Other returns means Form 1065, a full Form 1120 for an LLC taxed as a corporation, Form 1040-NR, state returns, Form 7004 and bookkeeping. For late years, nobody can promise the IRS will not assess the $25,000 penalty under IRC §6038A(d).`,
+Other returns stay with your firm or the client: partnership returns, a full Form 1120 for an LLC taxed as a corporation, the owner's Form 1040-NR, state filings, Form 7004 extensions and the books. For a client's late years, nobody can promise the IRS will waive the penalty.`,
       },
     ],
     faqs: [
@@ -1415,15 +1398,15 @@ Other returns means Form 1065, a full Form 1120 for an LLC taxed as a corporatio
       },
       {
         q: "What does each client filing cost?",
-        a: `Partner filings cost the same as direct filings: ${STD} on Standard (${STANDARD_TURNAROUND}), ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), +${ADD} per additional past year, IRS fax delivery included. Ask about volume pricing or consolidated invoicing when you apply.`,
+        a: `Form5472 Prep charges partner filings the same as direct ones: ${STD} on Standard (${STANDARD_TURNAROUND}), ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), +${ADD} per additional past year, IRS fax delivery included. Ask about volume pricing when you apply.`,
       },
       {
         q: "Can my firm enter the client's information?",
-        a: "Yes. From a partner account you can enter it from records you hold, or send the client a secure link to answer the questions themselves. You can review the answers before the package goes to accountant review.",
+        a: "Yes. A partner account lets your firm type in the figures from its own records, or have the client fill in the questionnaire through a secure link. Either way you can check the answers before they go to accountant review.",
       },
       {
         q: "Who signs the client's pro forma 1120 and Form 5472?",
-        a: "The person authorized to sign for the client LLC. You send the secure review-and-sign link from your dashboard; they review the completed package and sign online.",
+        a: "Whoever is authorized to sign for the client's LLC, usually the owner. The signing link goes out from your partner dashboard once the review is approved, and they sign in the browser.",
       },
     ],
     related: [],
@@ -1433,12 +1416,12 @@ Other returns means Form 1065, a full Form 1120 for an LLC taxed as a corporatio
       {
         label: "About Form 5472 (IRS)",
         url: "https://www.irs.gov/forms-pubs/about-form-5472",
-        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+        blurb: "The current form and instructions your firm would otherwise track each season.",
       },
       {
         label: "Instructions for Form 5472 (IRS)",
         url: "https://www.irs.gov/instructions/i5472",
-        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+        blurb: "The foreign-owned U.S. DE rules, reportable transactions and filing route, for reviewing what is filed for your clients.",
       },
     ],
   },
@@ -1446,7 +1429,6 @@ Other returns means Form 1065, a full Form 1120 for an LLC taxed as a corporatio
   // ── 12 ──────────────────────────────────────────────────────────────────
   {
     slug: "form-5472-for-bookkeepers",
-    lastReviewed: "2026-10-05",
     keyword: "form 5472 for bookkeepers",
     heroImage: {
       src: "/services/services_form-5472-for-bookkeepers_ledger-handoff.webp",
@@ -1454,7 +1436,7 @@ Other returns means Form 1065, a full Form 1120 for an LLC taxed as a corporatio
     },
     secondaryKeywords: ["form 5472 bookkeeping handoff", "foreign-owned llc bookkeeper form 5472"],
     category: "partners",
-    lastModified: AUDIENCE_PAGES_ADDED,
+    lastModified: PAGES_REWRITTEN,
     title: "Form 5472 for Bookkeepers: Hand Off the Filing",
     metaDescription:
       "Form 5472 for bookkeepers of foreign-owned LLCs: the records to hand over, how the filing handoff works, and how to refer the owner to us.",
@@ -1462,7 +1444,7 @@ Other returns means Form 1065, a full Form 1120 for an LLC taxed as a corporatio
       "Form 5472 handoff for bookkeepers who keep the books for foreign-owned US single-member LLCs: the year's owner contributions, distributions, loans, owner-paid LLC costs and related-company amounts, totalled in US dollars, plus year-end total assets. The owner or a partner account starts the filing; Form5472 Prep prepares Form 5472 and the pro forma 1120, has a qualified accountant review them, collects the owner's online signature and faxes the package to the IRS.",
     h1: "Form 5472 for Bookkeepers: Hand Off the Filing, Keep the Books",
     shortBlurb: "Which records to hand over for a client's Form 5472, and how the filing handoff works.",
-    intro: `Form 5472 for bookkeepers starts in the ledger you already keep. **If you keep the books for a foreign-owned US LLC, you hold most of what its Form 5472 needs: the money that moved between the owner and the LLC, and what the LLC owned at year end. Hand those totals over and we prepare, review and fax the filing.**
+    intro: `Form 5472 for bookkeepers starts in the ledger you already keep for a foreign-owned US LLC. **You already hold most of what its Form 5472 needs: the money that moved between the owner and the LLC, and what the LLC owned at year end. Hand those totals over and Form5472 Prep prepares, reviews and faxes the filing.**
 
 You keep the books. The owner keeps responsibility for the return and signs it.`,
     cta: { href: "/partners#apply", label: "Apply as a partner" },
@@ -1499,7 +1481,7 @@ Close the year early. For a calendar-year LLC the filing is due April 15, and th
         heading: "Should you refer the owner or open a partner account?",
         body: `For one or two clients, refer the owner to [start a filing](/start?src=svc-form-5472-for-bookkeepers) with your totals in hand. If you keep the books for several foreign-owned LLCs, a [partner account](/partners) lets you start and track every client's filing from one dashboard. Firms that want client emails under their own brand can read about [white label Form 5472 filing](/services/white-label-form-5472-filing).
 
-Each filing costs ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} per additional past year.`,
+Whoever starts it, a client filing is priced per tax year. Standard, at ${STD}, is ready in ${STANDARD_TURNAROUND}; Express, at ${EXP}, is ready to sign within ${EXPRESS_TURNAROUND}; each past year added to the order is ${ADD}.`,
       },
       {
         heading: "What do we not take over?",
@@ -1531,12 +1513,12 @@ Each filing costs ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP}
       {
         label: "Instructions for Form 5472 (IRS)",
         url: "https://www.irs.gov/instructions/i5472",
-        blurb: "Who must file, what counts as a reportable transaction, how to complete Part V, and where and how to file.",
+        blurb: "The reportable-transaction categories that map to the ledger totals listed on this page.",
       },
       {
         label: "About Form 5472 (IRS)",
         url: "https://www.irs.gov/forms-pubs/about-form-5472",
-        blurb: "The IRS page for Form 5472, with the current form, its instructions and any later developments.",
+        blurb: "The current Form 5472 and its instructions, and any later IRS updates.",
       },
       {
         label: "Single member limited liability companies (IRS)",
@@ -1643,17 +1625,30 @@ export function getServicePage(slug: string): ServicePage | null {
 
 // ── Hub (/services) ─────────────────────────────────────────────────────────
 
+// The hub is a directory "by situation", not a page for the head term: the
+// singular/plural "form 5472 filing service(s)" belongs to
+// /services/form-5472-filing-service (audit 2026-10-15 §3). Before that date
+// the hub's title and H1 were "Form 5472 filing services", a near-exact
+// collision with the flagship's title.
 export const SERVICES_HUB = {
-  title: "Form 5472 Filing Services | Form5472 Prep",
+  title: "Form 5472 Services by Situation | Form5472 Prep",
   metaDescription:
-    "Form 5472 filing services for foreign-owned US LLCs: annual, late, dormant and final-year filings, IRS fax delivery, white-label for agents, EIN and ITIN.",
+    "Form 5472 services by situation for foreign-owned US LLCs: annual, late, dormant and final-year filings, IRS fax delivery, partner filing, EIN and ITIN.",
   longDescription:
     "Form 5472 and pro forma Form 1120 filing services for foreign-owned US single-member LLCs: annual filings, late (DIIRSP) catch-up filings with reasonable-cause statements, dormant-LLC and final-year filings for dissolved LLCs, IRS Ogden PIN Unit fax delivery with timestamped receipts, white-label filing for formation and registered agents, plus EIN and ITIN application support.",
-  h1: "Form 5472 filing services",
+  h1: "Form 5472 services by situation",
   // The capsule under the H1: what the filing is, what it costs and how long it
   // takes (prices from pricing.ts; the test caps it at 60 words).
-  intro: `Every service here is one filing: Form 5472 with a pro forma Form 1120 for a US LLC owned by one foreign person, at ${STD} (ready in ${STANDARD_TURNAROUND}) or ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}) per year. Every filing is reviewed by a qualified accountant, then faxed to the IRS with a timestamped receipt.`,
+  intro: `Every Form5472 Prep service here is one filing: Form 5472 with a pro forma Form 1120 for a US LLC owned by one foreign person, at ${STD} (ready in ${STANDARD_TURNAROUND}) or ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}) per year. Every filing is reviewed by a qualified accountant, then faxed to the IRS with a timestamped receipt.`,
 } as const;
+
+/** Eyebrow above each service page's H1: the page's group, so the 12 pages
+ *  do not all open with the same head-term line. */
+export const SERVICE_CATEGORY_LABEL: Record<ServiceCategory, string> = {
+  annual: "Annual Form 5472 filing",
+  situations: "Missed, quiet and final years",
+  partners: "For firms and agents",
+};
 
 export type HubLink = { href: string; label: string; blurb: string };
 export type HubCategory = { heading: string; description: string; links: HubLink[] };

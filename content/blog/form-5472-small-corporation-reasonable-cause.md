@@ -82,7 +82,7 @@ Build the statement around the three conditions, one documented fact at a time. 
 4. **Attach a statement to each late return, organised by the three conditions.** The DIIRSP page allows a statement "to each delinquent information return"; the facts can be the same across years. Say when and how the LLC was formed, when and how you learned about Form 5472, and exactly what the US footprint consists of. Use dates, not adjectives.
 5. **Sign the declaration.** State that the statement is made under penalties of perjury, as § 1.6038A-4(b)(2)(i) requires.
 6. **Attach the evidence.** Formation invoice, proof of the owner's foreign address, bank-account opening documents, and whatever shows when you found out about the filing.
-7. **File and keep proof.** Fax the package to 855-887-7737 or mail it to the IRS PIN Unit in Ogden, as the Form 5472 instructions direct, and keep the transmission record.
+7. **File and keep proof.** Fax the package to 855-887-7737 or mail it to the IRS PIN Unit in Ogden, as the Form 5472 instructions direct, and keep the transmission record. A [Form 5472 fax filing service](/services/form-5472-fax-filing-service) can send it for you and keep that record.
 8. **Answer every IRS letter on time.** The third condition keeps running after you file.
 
 ## Four scenarios, worked through
@@ -99,7 +99,7 @@ These are illustrations of how the regulation's words map onto facts. They are n
 
 ## How does Form5472 Prep handle late filings?
 
-We prepare each missing year's pro forma Form 1120 and Form 5472, with the Part V statement, and fax the package to the IRS Ogden PIN Unit with a timestamped transmission receipt. For late years, the questionnaire asks why the filing was missed, and the package includes a reasonable cause statement built from your answers. Every filing is reviewed by a qualified accountant before it is submitted.
+We prepare each missing year's pro forma Form 1120 and Form 5472, with the Part V statement, and fax the package to the IRS Ogden PIN Unit with a timestamped transmission receipt. For late years, the questionnaire asks why the filing was missed, and the package includes a reasonable cause statement built from your answers. Every filing is reviewed by a qualified accountant before it is submitted. The [late Form 5472 filing service](/services/late-form-5472-filing-service) page shows what each year's package contains.
 
 - **Standard:** $149, ready in 5–7 business days
 - **Express:** $199, ready to sign within 24 hours

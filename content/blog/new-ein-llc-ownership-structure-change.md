@@ -86,7 +86,7 @@ By contrast, terminating the existing LLC and forming a new corporation or partn
 
 Adding an owner can change a disregarded single-member LLC into an LLC classified as a partnership by default. The general IRS ownership-change guidance and the entity-specific rules must be read together. The result can depend on how the transaction is structured, whether the same legal entity continues, prior tax treatment, and employment or excise obligations.
 
-Do not file a second SS-4 until a qualified adviser confirms the federal treatment. The move also changes annual return obligations: a partnership commonly files Form 1065 rather than the Form 5472 plus pro forma Form 1120 package used by many foreign-owned disregarded entities.
+Do not file a second SS-4 until a qualified adviser confirms the federal treatment. The move also changes annual return obligations: a partnership commonly files Form 1065 rather than the Form 5472 plus pro forma Form 1120 package used by many foreign-owned disregarded entities. The [foreign owned LLC tax filing service](/services/foreign-owned-llc-tax-filing-service) page sets out which filings a single-owner LLC has, and which it does not.
 
 ## What to review before ordering a new EIN
 
