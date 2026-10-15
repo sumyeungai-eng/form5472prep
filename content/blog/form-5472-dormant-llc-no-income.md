@@ -2,7 +2,7 @@
 title: "Form 5472 for a Dormant LLC With No Income"
 description: "Zero revenue doesn't mean no filing. A dormant foreign-owned LLC almost always still owes Form 5472 — contributions and distributions count as reportable."
 date: 2026-05-28
-updated: 2026-09-05
+updated: 2026-10-15
 author: "Form5472 Prep"
 tags: ["form-5472", "dormant-llc", "no-income", "foreign-owned-llc"]
 readingMinutes: 7
@@ -15,6 +15,10 @@ Your US LLC made zero revenue. No customers, no Stripe payments, no employees. Y
 
 The answer most people don't want to hear: **you almost certainly still need to file Form 5472**, even with no income. Here's exactly why, and what "dormant" actually means in IRS terms.
 
+## Do I need to file Form 5472 if my LLC had no income?
+
+Usually yes. Form 5472 reports transactions between the LLC and its foreign owner, not income, and the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) count contributions to and distributions from a foreign-owned LLC as reportable. Only a year with no reportable transaction is exempt. Form5472 Prep prepares and faxes no-income filings the same way as any other.
+
 ---
 
 ## TL;DR — Dormant LLC and Form 5472
@@ -24,7 +28,7 @@ The answer most people don't want to hear: **you almost certainly still need to 
 - **The only exemption** is a tax year with no reportable transactions of the types in Parts IV, V and VI of Form 5472. This is narrower than most people assume.
 - **Forming or funding the LLC counts.** The instructions treat contributions and amounts paid in connection with forming the LLC as Part V transactions, so a genuinely transaction-free year is rare.
 - **The penalty** is $25,000 per form, per year, under IRC §6038A(d).
-- **The fix is simple.** If you haven't filed, [DIIRSP](/diirsp) lets you catch up without criminal exposure in most cases.
+- **The fix is a late filing.** If you haven't filed, [DIIRSP](/diirsp) is the IRS route for late information returns when you are not under IRS examination or investigation and have not been contacted about them.
 - **Want it handled?** [Start your Form 5472 filing](/start) after you collect the LLC EIN and owner transaction history.
 
 ---
@@ -61,7 +65,7 @@ If you are trying to distinguish a true zero-transaction year from a quiet-but-r
 
 But check carefully before relying on it. The instructions excuse only a year with no reportable transactions of the types in Parts IV, V and VI, and they list amounts paid or received in connection with forming the LLC, including contributions, as Part V transactions. **If any such transaction happened, the full package is due.** Filing nothing for a year that had one is what attracts the $25,000 penalty.
 
-The safest approach in any year your LLC exists: file the pro forma 1120 with either a completed Form 5472 (if there were transactions) or a Form 5472 checked as "no transactions" (if there genuinely weren't any).
+The instructions' exception covers a year with no reportable transactions of the Part IV, V or VI types, so there is no Form 5472 to file for a year that is genuinely transaction-free. Before relying on that, check the bank, card and payment-app records for the whole year: one owner-paid fee is enough to make the year reportable.
 
 ---
 
@@ -83,7 +87,7 @@ If you used Wise to top up a business account, or received any funds into a Wise
 
 **4. You dissolved the LLC mid-year**
 
-The LLC existed and was foreign-owned for part of the year. Even a partial year triggers the filing obligation for that year.
+The LLC existed and was foreign-owned for part of the year. A partial year still needs a filing if it had a reportable transaction, and closing an LLC usually creates one, such as the final distribution. See [the final Form 5472 after closing an LLC](/blog/final-form-5472-closing-foreign-owned-llc).
 
 ---
 
@@ -91,7 +95,7 @@ The LLC existed and was foreign-owned for part of the year. Even a partial year 
 
 The IRS typically catches these through matching programs — if you have a US EIN, eventually the absence of a return gets noticed. But even if it hasn't been flagged yet, the $25,000 penalty per year per form can accumulate fast over a multi-year gap.
 
-The structured way to resolve this is the IRS's **[Delinquent International Information Return Submission Procedure](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures) (DIIRSP)**. You file all the missing returns, attach a [reasonable cause statement](/form-5472-reasonable-cause-statement) explaining why you didn't file, and submit everything together. Most foreign owners qualify for penalty abatement under this procedure. See our [DIIRSP guide](/diirsp) for the full walkthrough.
+The structured way to resolve this is the IRS's **[Delinquent International Information Return Submission Procedure](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures) (DIIRSP)**. You file all the missing returns, attach a [reasonable cause statement](/form-5472-reasonable-cause-statement) explaining why you didn't file, and submit everything together. The IRS decides penalty relief case by case, and its DIIRSP page says penalties may still be assessed during processing without considering the statement. See our [DIIRSP guide](/diirsp) for the full walkthrough.
 
 If you want to get it done quickly: [start your filing here](/start). We prepare the pro forma Form 1120 and Form 5472 for each outstanding year, draft the reasonable cause statement, and fax the complete package to the IRS Ogden PIN Unit on your behalf. If you are filing for yourself instead, see [how to file Form 5472](/file-form-5472).
 

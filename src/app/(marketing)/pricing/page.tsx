@@ -14,7 +14,7 @@ import { formatPrice } from "@/lib/utils";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 import { JsonLd } from "@/components/JsonLd";
 import { ComparisonTable, FILING_COMPARISON } from "@/components/ComparisonTable";
-import { ORG_REF, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pageMeta } from "@/lib/seo";
+import { ORG_REF, SITE_NAME, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Pricing for Form 5472 Filing",
@@ -32,12 +32,13 @@ const tierEntries = TIER_ORDER.map((key) => [key, TIERS[key]] as const);
 
 // Visible "Last reviewed" date and the WebPage dateModified share this one
 // constant so they cannot drift. Bump it whenever pricing or process copy changes.
-const PRICING_LAST_REVIEWED = "2026-10-11";
-const PRICING_LAST_REVIEWED_LABEL = "October 11, 2026";
+const PRICING_LAST_REVIEWED = "2026-10-15";
+const PRICING_LAST_REVIEWED_LABEL = "October 15, 2026";
 
-// The answer capsule under "How much does Form 5472 filing cost?": prices and
-// turnarounds come from src/lib/pricing.ts, never typed here.
-const COST_ANSWER = `Form 5472 filing costs ${formatPrice(TIERS.standard.priceCents)} on Standard (ready in ${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${formatPrice(MULTI_YEAR_ADDON_CENTS)} for each additional past tax year. IRS fax delivery and a qualified-accountant review are included on both plans, with no subscription.`;
+// The answer capsule under "How much does Form5472 Prep cost?": prices and
+// turnarounds come from src/lib/pricing.ts, never typed here. The brand name
+// leads the capsule so answer engines that quote it keep the attribution.
+const COST_ANSWER = `${SITE_NAME} charges ${formatPrice(TIERS.standard.priceCents)} on Standard (ready in ${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} on Express (ready to sign within ${EXPRESS_TURNAROUND}) to prepare and file Form 5472 with the pro forma Form 1120, plus ${formatPrice(MULTI_YEAR_ADDON_CENTS)} for each additional past tax year. IRS fax delivery and a qualified-accountant review are included on both plans, with no subscription.`;
 
 const PRICING_FAQS: { q: string; a: string }[] = [
   {
@@ -164,8 +165,7 @@ export default function PricingPage() {
               Done-for-you Form 5472 + pro forma 1120 for foreign-owned US LLCs.
               Same filing either way — pick the turnaround you need:{" "}
               ready in {STANDARD_TURNAROUND}, or ready to sign within {EXPRESS_TURNAROUND} on Express. Fax delivery
-              to the IRS Ogden PIN Unit is included on both plans, so you avoid
-              the $25,000-per-form IRS penalty.
+              to the IRS Ogden PIN Unit is included on both plans.
             </p>
 
             <p className="mt-5 text-xs text-slate-400">
@@ -189,7 +189,7 @@ export default function PricingPage() {
       <section className="max-w-6xl mx-auto px-6 py-12 sm:py-16">
         <div className="max-w-3xl mx-auto mb-10 text-center">
           <h2 id="cost" className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
-            How much does Form 5472 filing cost?
+            How much does Form5472 Prep cost?
           </h2>
           <p className="mt-3 text-slate-600" data-speakable>
             {COST_ANSWER}
@@ -207,7 +207,7 @@ export default function PricingPage() {
           </span>
           <span className="mx-2 text-slate-400">·</span>
           <span>
-            Saves you from the{" "}
+            A missed or incomplete filing can cost a{" "}
             <span className="font-semibold text-slate-900">
               $25,000-per-form IRS penalty
             </span>
@@ -217,6 +217,13 @@ export default function PricingPage() {
           Want the full breakdown? Read our guide to{" "}
           <Link href="/blog/form-5472-cost" className="font-medium text-accent underline underline-offset-2 hover:text-accent-700">
             Form 5472 filing cost
+          </Link>
+          , or see{" "}
+          <Link
+            href="/compare/form-5472-filing-services"
+            className="font-medium text-accent underline underline-offset-2 hover:text-accent-700"
+          >
+            other services&apos; published prices
           </Link>
           .
         </p>

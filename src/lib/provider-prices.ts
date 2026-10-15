@@ -1,7 +1,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // PROVIDER PRICES — data behind /compare/form-5472-filing-services.
 //
-// Evidence: docs/seo/form5472-price-survey-2026-10-05.md. Every competitor
+// Evidence: docs/seo/form5472-price-survey-2026-10-15.md (re-check of the
+// 2026-10-05 survey, plus Simple5472). Every competitor
 // figure and quote below was copied from that survey, which records the exact
 // wording on each provider's OWN page on PRICES_CHECKED_ON. Rules:
 //   - Only numbers from the survey's main table / evidence quotes. No review
@@ -23,9 +24,9 @@ import {
 } from "@/lib/pricing";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
-export const PRICES_CHECKED_ON = "2026-10-05";
-export const PRICES_CHECKED_ON_LABEL = "5 October 2026";
-export const PRICE_SURVEY_FILE = "docs/seo/form5472-price-survey-2026-10-05.md";
+export const PRICES_CHECKED_ON = "2026-10-15";
+export const PRICES_CHECKED_ON_LABEL = "15 October 2026";
+export const PRICE_SURVEY_FILE = "docs/seo/form5472-price-survey-2026-10-15.md";
 
 /** How each provider describes itself (per the survey), not our judgement. */
 export type ProviderKind =
@@ -58,6 +59,11 @@ export type ProviderPrice = {
   operatorNote?: string;
   /** Headline one-year price (USD) used for sorting; null = not published. */
   oneYearPriceUsd: number | null;
+  /**
+   * Set only when the provider's own page announces a future price and the row
+   * shows it: the date it takes effect, e.g. "16 October 2026".
+   */
+  priceFromLabel?: string;
   priceNote: string;
   billing: string;
   extraYearNote: string;
@@ -123,15 +129,18 @@ const COMPETITORS: ProviderPrice[] = [
     isOurs: false,
     kind: "software you complete yourself",
     reviewNote: 'Describes itself as "filing software, not a CPA firm or tax advisory"',
-    oneYearPriceUsd: 49.99,
-    priceNote: "$49.99 per filing",
+    // The pricing page announced a rise from $49.99 to $79.99 on 16 October
+    // 2026, the day after the check; the row shows the announced price.
+    oneYearPriceUsd: 79.99,
+    priceFromLabel: "16 October 2026",
+    priceNote: "$79.99 per filing from 16 October 2026, as announced on its pricing page ($49.99 until then)",
     billing: "One-off, per filing",
-    extraYearNote: "$49.99 per past year (tax years from 2017); penalty waiver statement included",
+    extraYearNote:
+      "Past years back to 2017 were $49.99 each before the announced rise; the late-year price from 16 October is not published",
     filingMethodNote: "Direct fax to the IRS with confirmation (included)",
     turnaroundNote: "Not published (about 10 minutes of your time)",
-    lateYears: { firstYearUsd: 49.99, eachAdditionalUsd: 49.99, note: "Penalty waiver statement included" },
     sourceUrl: "https://edetax.com/pricing",
-    sourceQuote: "Form 5472 + 1120 $49.99 / filing",
+    sourceQuote: "Price goes up to $79.99 on October 16. File before then for $49.99.",
     checkedOn: PRICES_CHECKED_ON,
   },
   {
@@ -149,7 +158,25 @@ const COMPETITORS: ProviderPrice[] = [
       'Starter lists "IRS-ready PDFs to download"; "We fax it straight to the IRS" is listed under the $197 Business plan',
     turnaroundNote: "Not published (about 15 minutes of your time)",
     sourceUrl: "https://form5472.io/pricing",
-    sourceQuote: "Starter For solo founders running one US LLC $ 147 one-time payment",
+    sourceQuote: "Starter For solo founders running one US LLC $147 one-time payment",
+    checkedOn: PRICES_CHECKED_ON,
+  },
+  {
+    id: "simple5472",
+    name: "Simple5472",
+    siteUrl: "https://simple5472.com",
+    isOurs: false,
+    kind: "software you complete yourself",
+    reviewNote: 'Describes itself as "self-service document-preparation software", not a CPA firm or paid tax return preparer',
+    oneYearPriceUsd: 149,
+    priceNote: "$149 if you mail the signed return yourself; $199 with IRS fax delivery (tax year 2025)",
+    billing: "One-off",
+    extraYearNote:
+      "Late years: $179 for one, $329 for two, $499 flat for three or more if you mail them; fax adds $50. Includes a reasonable-cause statement you write with its builder",
+    filingMethodNote: "You mail the signed PDF yourself, or the $199 bundle includes IRS fax transmission",
+    turnaroundNote: "Not published (about 15 minutes of your time)",
+    sourceUrl: "https://simple5472.com/pricing",
+    sourceQuote: "DIY · Mail yourself $149 one-time Save $49 Bundle · We fax it $199 $248 separately",
     checkedOn: PRICES_CHECKED_ON,
   },
   {
@@ -162,11 +189,11 @@ const COMPETITORS: ProviderPrice[] = [
     oneYearPriceUsd: 199,
     priceNote: "$199 flat (tax year 2025); IRS fax delivery is an optional +$49",
     billing: "One-off",
-    extraYearNote: 'Not published; prior years (2024 and earlier) are handled individually: "Contact us"',
+    extraYearNote: "Not published; prior-year filings are not in its self-serve tool yet (planned for the 2027 season)",
     filingMethodNote: "PDFs; optional +$49 IRS Direct Delivery (fax) with delivery receipt",
-    turnaroundNote: "PDFs in minutes; same-day transmission with Direct Delivery",
+    turnaroundNote: "PDFs in the same session; with Direct Delivery, a manual review (usually 1-12 hours), then you sign and it faxes",
     sourceUrl: "https://www.5472direct.com/pricing",
-    sourceQuote: "Standard LLC Filing $199 Flat fee, tax year 2025 filings",
+    sourceQuote: "$199 covers the preparation of one filing. $49 covers the optional IRS fax delivery.",
     checkedOn: PRICES_CHECKED_ON,
   },
   {
@@ -226,7 +253,7 @@ const COMPETITORS: ProviderPrice[] = [
     lateYears: { firstYearUsd: 449, eachAdditionalUsd: 449, note: "Reasonable-cause statement included" },
     sourceUrl: "https://laramieledgertax.com/pricing/",
     sourceQuote:
-      "Form 5472 + 1120 Annual information return, prepared and signed by a professional tax preparer, filed by mail/fax ... $349",
+      "Form 5472 + 1120 Annual information return, prepared and signed by a professional tax preparer, filed by mail/fax Foreign-owned U.S. LLC (incl. dormant) $349",
     checkedOn: PRICES_CHECKED_ON,
   },
   {
@@ -284,9 +311,9 @@ const COMPETITORS: ProviderPrice[] = [
     billing: "Per year",
     extraYearNote: "Not published as a filing price; penalty removal +$499 per year",
     filingMethodNote: '"We file with the IRS"; method not stated',
-    turnaroundNote: "10 business days; 3 business days +$199",
+    turnaroundNote: "10 business days; 3 business days +$199; 24-48 hours +$399",
     sourceUrl: "https://www.tax-usa.net/tax-filing-non-us-residents",
-    sourceQuote: "SINGLE MEMBER LLC Form 5472 + Form 1120 ... $599 per year",
+    sourceQuote: "Single-Member LLC: $599/year (Form 5472 + pro-forma 1120).",
     checkedOn: PRICES_CHECKED_ON,
   },
   {
@@ -323,7 +350,8 @@ const COMPETITORS: ProviderPrice[] = [
     filingMethodNote: "Not published",
     turnaroundNote: "Not published",
     sourceUrl: "https://www.firstbase.io/tax-software",
-    sourceQuote: "For Single-Member LLC owned by a non-US citizen or resident ... $899.00 Annually · Per package",
+    sourceQuote:
+      "For Single-Member LLC owned by a non-US citizen or resident * Catch up bookkeeping available as an add-on $899.00 Annually · Per package",
     checkedOn: PRICES_CHECKED_ON,
   },
   {
@@ -399,7 +427,7 @@ const COMPETITORS: ProviderPrice[] = [
     turnaroundNote: "Not applicable",
     sourceUrl: "https://stripe.com/atlas",
     sourceQuote:
-      "Company incorporation in Delaware ... Company tax ID / Founder equity issuance and share purchase / 83(b) election filing / Document templates",
+      "Company tax ID Founder equity issuance and share purchase 83(b) election filing Document templates to help you sell, hire and run your business",
     checkedOn: PRICES_CHECKED_ON,
   },
 ];
@@ -407,14 +435,15 @@ const COMPETITORS: ProviderPrice[] = [
 export const PROVIDER_PRICES: readonly ProviderPrice[] = [OURS, ...COMPETITORS];
 
 /**
- * Providers we tried to check but could not read, so nothing about them is
- * stated beyond that. Kept out of PROVIDER_PRICES because there is no quote.
+ * Providers whose checked page gives no Form 5472 price or quote we can cite,
+ * so nothing about them is stated beyond what the note says. Kept out of
+ * PROVIDER_PRICES because there is no price quote.
  */
 export const UNVERIFIED_PROVIDERS = [
   {
     name: "Northwest Registered Agent",
     siteUrl: "https://www.northwestregisteredagent.com",
-    note: "Its Form 5472 page could not be loaded for this check (the site returned a bot-check page), so no price or scope is listed.",
+    note: "Its Form 5472 page is an informational article that lists no Form 5472 price or filing service, so no price or scope is listed.",
     checkedOn: PRICES_CHECKED_ON,
   },
 ] as const;

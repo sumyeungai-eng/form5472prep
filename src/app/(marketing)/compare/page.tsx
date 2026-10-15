@@ -10,6 +10,7 @@ import {
   STANDARD_TURNAROUND,
   TIERS,
 } from "@/lib/pricing";
+import { PRICES_CHECKED_ON_LABEL, PROVIDER_PRICES, usd } from "@/lib/provider-prices";
 import { SERVICES_HUB_PATH } from "@/lib/services-pages";
 import { ORG_REF, SITE_NAME, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pageMeta } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
@@ -23,8 +24,8 @@ import { formatPrice } from "@/lib/utils";
 
 const PATH = "/compare";
 // Visible "Last reviewed" line and JSON-LD dateModified share this constant.
-const LAST_REVIEWED = "2026-10-11";
-const LAST_REVIEWED_LABEL = "October 11, 2026";
+const LAST_REVIEWED = "2026-10-15";
+const LAST_REVIEWED_LABEL = "October 15, 2026";
 const H1 = "Compare Form 5472 filing services";
 const DESCRIPTION =
   "How formation and registered-agent providers such as doola, Firstbase, Clemta, StartGlobal, Zenind, Northwest and Stripe Atlas relate to Form 5472 filing.";
@@ -61,6 +62,21 @@ const ADD = formatPrice(MULTI_YEAR_ADDON_CENTS);
 
 // The capsule under the H1. Prices and turnarounds come from pricing.ts.
 const CAPSULE = `Formation and registered-agent providers differ on whether Form 5472 is included, who prepares it, how it reaches the IRS and what proof you get. Form5472 Prep is a filing-only service at ${STD} (${STANDARD_TURNAROUND}) or ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} per extra year, with fax delivery included.`;
+
+/** Published one-year price from the sourced survey (src/lib/provider-prices.ts). */
+function surveyedPrice(id: string): string {
+  const row = PROVIDER_PRICES.find((p) => p.id === id);
+  if (!row || row.oneYearPriceUsd === null) throw new Error(`compare hub: no published price for ${id}`);
+  return usd(row.oneYearPriceUsd);
+}
+
+// Worded as the answer-engine prompt "doola vs firstbase for form 5472
+// filing" (Moz AI Visibility 2026-10-12: no engine named us). Both figures
+// come from the dated survey behind /compare/form-5472-filing-services.
+const DOOLA_VS_FIRSTBASE = {
+  q: "doola vs Firstbase for Form 5472 filing: what does each charge?",
+  a: `Both sell yearly packages that name Form 5472 for a non-US-owned single-member LLC. On their pages checked ${PRICES_CHECKED_ON_LABEL}, Firstbase lists ${surveyedPrice("firstbase")} a year for Tax Filing, and doola lists ${surveyedPrice("doola")} a year for its Tax Filing-only service. ${SITE_NAME} files Form 5472 alone for ${STD} Standard for one tax year, plus ${ADD} per extra past year.`,
+};
 
 // Visible FAQs, mirrored 1:1 in the FAQPage JSON-LD. Statements about a
 // provider repeat only what that provider's page on this site already says.
@@ -127,7 +143,7 @@ export default function ComparePage() {
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: FAQS.map((f) => ({
+    mainEntity: [DOOLA_VS_FIRSTBASE, ...FAQS].map((f) => ({
       "@type": "Question",
       name: f.q,
       acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -216,6 +232,33 @@ export default function ComparePage() {
                 </li>
               ))}
             </ul>
+          </section>
+
+          <section aria-labelledby="doola-vs-firstbase">
+            <h2 id="doola-vs-firstbase" className="font-serif text-2xl font-semibold tracking-tight text-ink">
+              {DOOLA_VS_FIRSTBASE.q}
+            </h2>
+            <p className="mt-2 max-w-2xl text-slate-600" data-speakable>
+              {DOOLA_VS_FIRSTBASE.a}
+            </p>
+            <p className="mt-3 text-sm text-slate-600">
+              What each plan covers, in each provider&apos;s own words:{" "}
+              <Link href="/doola-form-5472" className="font-medium text-accent underline-offset-4 hover:underline">
+                doola and Form 5472
+              </Link>{" "}
+              and{" "}
+              <Link href="/firstbase-form-5472" className="font-medium text-accent underline-offset-4 hover:underline">
+                Firstbase and Form 5472
+              </Link>
+              . Every published price, with its source:{" "}
+              <Link
+                href="/compare/form-5472-filing-services"
+                className="font-medium text-accent underline-offset-4 hover:underline"
+              >
+                Form 5472 filing services compared
+              </Link>
+              .
+            </p>
           </section>
 
           <section aria-labelledby="checklist">
