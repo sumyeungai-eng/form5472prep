@@ -8,9 +8,9 @@ import matter from "gray-matter";
 import sharp from "sharp";
 
 const slugs = [
-  "company-car-deductions-foreign-owned-us-llc",
-  "business-car-mileage-vs-actual-expenses-2026",
-  "electric-company-car-us-llc-tax-credits-2026",
+  "foreign-owned-llc-company-car-deduction",
+  "business-car-mileage-vs-actual-2026",
+  "electric-company-car-llc-tax-2026",
   "uk-company-car-vat-buy-lease-electric",
 ];
 const base = process.argv[2]?.replace(/\/$/, "");

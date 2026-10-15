@@ -54,7 +54,7 @@ For a vehicle acquired after the cutoff, do not insert an unavailable federal 30
 
 For a foreign owner, the LLC's US address does not establish a US deduction. [Publication 519](https://www.irs.gov/publications/p519) connects nonresident business deductions to effectively connected income. Mixed business and personal driving still needs allocation, and a vehicle purchase requires the applicable cost-recovery analysis.
 
-IRS vehicle-expense guidance allows mileage or actual costs when the taxpayer and vehicle qualify; it does not promise a full purchase-price write-off for an electric car. See [IRS Topic 510](https://www.irs.gov/taxtopics/tc510). Compare the methods using our [2026 mileage example](/blog/business-car-mileage-vs-actual-expenses-2026), including the midyear rate change.
+IRS vehicle-expense guidance allows mileage or actual costs when the taxpayer and vehicle qualify; it does not promise a full purchase-price write-off for an electric car. See [IRS Topic 510](https://www.irs.gov/taxtopics/tc510). Compare the methods using our [2026 mileage example](/blog/business-car-mileage-vs-actual-2026), including the midyear rate change.
 
 ## Make charging records usable
 
@@ -68,7 +68,7 @@ If UK VAT is involved, read the separate [company-car VAT guide](/blog/uk-compan
 
 The IRS [Form 5472 instructions](https://www.irs.gov/instructions/i5472) include contributions and distributions in the foreign-owned disregarded entity's reporting framework. Track money the owner contributes for the purchase, any owner-paid costs and repayments as actual dated events. The end of a purchase credit does not remove information-return obligations.
 
-Use the [company-car records guide](/blog/company-car-deductions-foreign-owned-us-llc) to keep the dealer purchase, owner funding and private-use questions distinct. Once the reportable transaction file is ready, [start your Form 5472 preparation](/start).
+Use the [company-car records guide](/blog/foreign-owned-llc-company-car-deduction) to keep the dealer purchase, owner funding and private-use questions distinct. Once the reportable transaction file is ready, [start your Form 5472 preparation](/start).
 
 ## Frequently asked questions
 

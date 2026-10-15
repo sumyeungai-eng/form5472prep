@@ -66,7 +66,7 @@ For actual costs, reconcile receipts to payments and flag purchase costs, financ
 
 An owner paying a cost personally and an LLC reimbursing that owner are payment events. The mileage calculation measures an eligible expense. They should not be substituted for one another in a Form 5472 total.
 
-Use the [owner-funding and reimbursement guide](/blog/form-5472-owner-loans-contributions-reimbursements) to assemble the actual transfer trail, alongside the [company-car deduction guide](/blog/company-car-deductions-foreign-owned-us-llc). The foreign-owned LLC's information return remains separate from any income-tax deduction claim.
+Use the [owner-funding and reimbursement guide](/blog/form-5472-owner-loans-contributions-reimbursements) to assemble the actual transfer trail, alongside the [company-car deduction guide](/blog/foreign-owned-llc-company-car-deduction). The foreign-owned LLC's information return remains separate from any income-tax deduction claim.
 
 ## Frequently asked questions
 

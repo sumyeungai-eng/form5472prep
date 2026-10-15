@@ -38,7 +38,7 @@ Reportable transactions include movements **between you and your own LLC**: cont
 
 More cases: [reportable transaction examples](/blog/form-5472-reportable-transactions-examples).
 
-The [IRS instructions](https://www.irs.gov/instructions/i5472) state that a **$25,000** penalty may apply for failure to file when due and in the prescribed manner, and that a substantially incomplete Form 5472 counts as a failure to file.
+The IRS instructions state that a **$25,000** penalty may apply for failure to file when due and in the prescribed manner, and that a substantially incomplete Form 5472 counts as a failure to file.
 
 ## Why does the 183-day rule not decide your Form 5472 obligation?
 
@@ -52,7 +52,7 @@ Claiming no tax residence elsewhere does not establish that you are a **foreign 
 
 Enter "None" or "N/A" in the FTIN block and a self-assigned reference ID number on the line above it.
 
-The [instructions for Form 5472](https://www.irs.gov/instructions/i5472) require a reference ID only where no US identifying number is entered, limit it to 50 alphanumeric characters with no spaces or special characters, and require the same ID every year for the same person. If you have no FTIN, they say to enter "None" or "N/A".
+The instructions for Form 5472 require a reference ID only where no US identifying number is entered, limit it to 50 alphanumeric characters with no spaces or special characters, and require the same ID every year for the same person. If you have no FTIN, they say to enter "None" or "N/A".
 
 | Part II line | Nomad with no tax number anywhere |
 |---|---|
@@ -103,62 +103,30 @@ Every combination lands on exactly one row. Absent from the list: where you slep
 
 ## Which country guide applies to you?
 
-| Where you spend time | Guide |
-|---|---|
-| Thailand | [Thailand residents](/blog/form-5472-thailand-residents-us-llc) |
-| Indonesia and Bali | [Indonesia and Bali residents](/blog/form-5472-indonesia-bali-residents-us-llc) |
-| Vietnam | [Vietnam residents](/blog/form-5472-vietnam-residents-us-llc) |
-| Portugal | [Portugal residents](/blog/form-5472-portugal-residents-us-llc) |
-| Philippines | [Philippines residents](/blog/form-5472-philippines-residents-us-llc) |
-| Malaysia | [Malaysia residents](/blog/form-5472-malaysia-residents-us-llc) |
-| Georgia (the country) | [Georgia residents](/blog/form-5472-georgia-country-residents-us-llc) |
-| Colombia | [Colombia residents](/blog/form-5472-colombia-residents-us-llc) |
-| Estonia, including e-Residents | [Estonia residents and e-Residents](/blog/form-5472-estonia-residents-us-llc) |
-| Türkiye | [Turkey residents](/blog/form-5472-turkey-residents-us-llc) |
-| Hungary | [Hungary residents](/blog/form-5472-hungary-residents-us-llc) |
-| Costa Rica | [Costa Rica residents](/blog/form-5472-costa-rica-residents-us-llc) |
-| Argentina | [Argentina residents](/blog/form-5472-argentina-residents-us-llc) |
-| South Korea | [South Korea residents](/blog/form-5472-south-korea-residents-us-llc) |
-| Croatia | [Croatia residents](/blog/form-5472-croatia-residents-us-llc) |
-| Taiwan | [Taiwan residents](/blog/form-5472-taiwan-residents-us-llc) |
-| UAE and Dubai | [UAE and Dubai residents](/blog/form-5472-uae-dubai-residents-us-llc) |
-| Singapore | [Singapore residents](/blog/form-5472-singapore-residents-us-llc) |
-| Hong Kong | [Hong Kong residents](/blog/form-5472-hong-kong-residents-us-llc) |
-| India | [India residents](/blog/form-5472-india-residents-us-llc) |
-| United Kingdom | [UK residents](/blog/form-5472-uk-residents-us-llc) |
-| Mexico | [Mexico residents](/blog/form-5472-mexico-residents-us-llc) |
+There is a dedicated guide for residents of Thailand, Indonesia and Bali, Vietnam, Portugal, the Philippines, Malaysia, Georgia (the country), Colombia, Estonia (including e-Residents), Türkiye, Hungary, Costa Rica, Argentina, South Korea, Croatia, Taiwan, the UAE and Dubai, Singapore, Hong Kong, India, the United Kingdom and Mexico. Most are collected in the [FTIN guides](/blog/topics/ftin), and all of them are in the blog archive.
 
 Local rules change what goes in the FTIN box and what you owe at home, not the US filing.
 
 ## Which nomad questions have their own guide?
 
-| If you are asking | Read |
-|---|---|
-| Is my US LLC really tax-free? | [the US LLC tax-free myth](/blog/us-llc-tax-free-digital-nomads-myth) |
-| My formation service set up the LLC — does it file Form 5472? | [Stripe Atlas, doola and Firstbase](/blog/stripe-atlas-doola-firstbase-form-5472) |
-| I freelance on Upwork or Fiverr through the LLC | [Form 5472 for freelancers](/blog/form-5472-freelancers-upwork-fiverr-us-llc) |
-| Which state should the LLC be in? | [Wyoming vs New Mexico vs Delaware](/blog/wyoming-vs-new-mexico-vs-delaware-llc-digital-nomads) |
-| Should I use a US LLC, an Estonian OÜ or a UAE company? | [annual filing burden compared](/blog/us-llc-vs-estonia-ou-vs-uae-company-digital-nomads) |
-| How do I actually pay myself from the LLC? | [paying yourself as a non-resident](/blog/pay-yourself-from-us-llc-non-resident) |
-| How do I turn bank statements into Form 5472 figures? | [from Mercury, Wise or Relay statements](/blog/form-5472-from-mercury-wise-relay-statements) |
-| I coach, consult or sell courses | [Form 5472 for coaches and course creators](/blog/form-5472-coaches-consultants-course-creators) |
+Separate guides answer the questions nomads ask next: whether a US LLC is really tax-free, whether your formation service (Stripe Atlas, doola, Firstbase) files Form 5472, freelancing on Upwork or Fiverr through the LLC, choosing between Wyoming, New Mexico and Delaware, comparing a US LLC with an Estonian OÜ or a UAE company, paying yourself as a non-resident, turning Mercury, Wise or Relay statements into Form 5472 figures, and coaching, consulting or selling courses. They are collected in the [digital nomad guides](/blog/topics/digital-nomad).
 
 ## Practical records guides by digital-nomad destination
 
 These city-focused guides address specific recordkeeping and adviser-handoff decisions. They are not rankings of nomad populations or promises of local tax exemptions.
 
-| Destination | Practical guide |
-| --- | --- |
-| Lisbon | [Prepare a two-country accountant handoff](/blog/lisbon-digital-nomad-us-llc-accountant-handoff) |
-| Bangkok | [Trace LLC transfers and personal remittances separately](/blog/bangkok-digital-nomad-llc-transfer-remittance-records) |
-| Mexico City | [Keep a physical work-location log](/blog/mexico-city-digital-nomad-us-llc-work-location-log) |
-| Tbilisi | [Reconcile Georgian IE and U.S. LLC records](/blog/tbilisi-digital-nomad-georgian-ie-us-llc-records) |
-| Chiang Mai | [Capture owner-paid costs and reimbursements](/blog/chiang-mai-digital-nomad-llc-coworking-owner-paid-costs) |
-| Buenos Aires | [Reconcile dollar receipts and peso spending](/blog/buenos-aires-digital-nomad-llc-usd-ars-reconciliation) |
-| Dubai | [Build a separate individual and entity tax-review pack](/blog/dubai-digital-nomad-us-llc-corporate-tax-review-pack) |
-| Kuala Lumpur | [Preserve travel records across December 31](/blog/kuala-lumpur-digital-nomad-cross-year-tax-records) |
-| Medellín | [Check a rolling 365-day presence log](/blog/medellin-digital-nomad-rolling-365-day-tax-log) |
-| Barcelona | [Separate visa approval and tax-election records](/blog/barcelona-digital-nomad-visa-us-llc-tax-election) |
+- **Lisbon:** prepare a two-country accountant handoff.
+- **Bangkok:** trace LLC transfers and personal remittances separately.
+- **Mexico City:** keep a physical work-location log.
+- **Tbilisi:** reconcile Georgian IE and U.S. LLC records.
+- **Chiang Mai:** capture owner-paid costs and reimbursements.
+- **Buenos Aires:** reconcile dollar receipts and peso spending.
+- **Dubai:** build a separate individual and entity tax-review pack.
+- **Kuala Lumpur:** preserve travel records across December 31.
+- **Medellín:** check a rolling 365-day presence log.
+- **Barcelona:** separate visa approval and tax-election records.
+
+Each has its own article, listed in the digital nomad guides above.
 
 ## How does a nomad actually file Form 5472?
 
@@ -176,7 +144,7 @@ The due date for a calendar-year entity is generally **15 April**; Form 7004 ext
 
 The hard part on the road is faxing internationally and keeping the reference ID identical to last year's.
 
-We prepare the package, have it reviewed by a qualified tax accountant, and fax it to the Ogden PIN Unit, returning a timestamped receipt — transmission evidence, not IRS acceptance. **$149** standard (5–7 business days), **$199** express (ready to sign within 24 hours), **+$99** per additional past year, IRS fax delivery included; see [pricing](/pricing).
+We prepare the package, have it reviewed by a qualified tax accountant, and fax it to the Ogden PIN Unit, returning a timestamped receipt — transmission evidence, not IRS acceptance. **$149** standard (5–7 business days), **$199** express (ready to sign within 24 hours), **+$99** per additional past year, IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on any country's personal tax.
 
@@ -214,6 +182,6 @@ File every outstanding year promptly with a reasonable cause statement, before t
 
 Your itinerary is not a variable in this filing. The LLC is American, you are a foreign person, and money moved between you — that is the whole test, from Chiang Mai or anywhere else.
 
-[Start your filing](/start) in about 15 minutes, or read the [filing requirements checklist](/blog/foreign-owned-llc-filing-requirements-checklist) first.
+[Start your filing](/start) in about 15 minutes, or read the filing requirements checklist first.
 
 *Educational content only; not tax or legal advice.*

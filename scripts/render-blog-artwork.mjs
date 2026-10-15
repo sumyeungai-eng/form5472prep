@@ -250,9 +250,9 @@ function svg({ accent, motif: kind, glyphs, location }) {
 
 const POSTS = {
   "form-5472-deadline-tomorrow-urgent-filing": { accent: C.clay, motif: "calendar", glyphs: ["calendar", "pen", "doc", "check"] },
-  "company-car-deductions-foreign-owned-us-llc": { location: "COMPANY CAR", accent: C.teal, motif: "car", glyphs: ["person", "doc", "hash", "check"] },
-  "business-car-mileage-vs-actual-expenses-2026": { location: "MILEAGE OR ACTUAL COSTS", accent: C.amber, motif: "car-route", glyphs: ["calendar", "pen", "hash", "check"] },
-  "electric-company-car-us-llc-tax-credits-2026": { location: "ELECTRIC COMPANY CAR", accent: C.green, motif: "car-electric", glyphs: ["calendar", "doc", "warn", "check"] },
+  "foreign-owned-llc-company-car-deduction": { location: "COMPANY CAR", accent: C.teal, motif: "car", glyphs: ["person", "doc", "hash", "check"] },
+  "business-car-mileage-vs-actual-2026": { location: "MILEAGE OR ACTUAL COSTS", accent: C.amber, motif: "car-route", glyphs: ["calendar", "pen", "hash", "check"] },
+  "electric-company-car-llc-tax-2026": { location: "ELECTRIC COMPANY CAR", accent: C.green, motif: "car-electric", glyphs: ["calendar", "doc", "warn", "check"] },
   "uk-company-car-vat-buy-lease-electric": { location: "UK CAR VAT", accent: C.navySoft, motif: "car-vat", glyphs: ["doc", "hash", "two", "check"] },
   "form-5472-affiliate-marketers-content-sites": { accent: C.teal, motif: "stack", glyphs: ["doc", "hash", "person", "check"] },
   "form-5472-app-developers-app-store-google-play": { accent: C.navySoft, motif: "split", glyphs: ["doc", "hash", "person", "check"] },

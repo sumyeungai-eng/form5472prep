@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { env } from "@/lib/env";
 import { getAllPosts } from "@/lib/blog";
+import { blogPagePath, pageSlice, totalPages } from "@/lib/blog-pagination";
 import { buildTagIndex, MIN_INDEXABLE_TAG_POSTS } from "@/lib/blog-tags";
 import { LANDING_PAGES } from "@/lib/landing-pages";
 import { CONTENT_LAST_REVIEWED } from "@/lib/seo";
@@ -119,6 +120,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // Older pages of the paginated blog index (/blog is page 1, listed above).
+  // lastmod = newest post shown on that page.
+  const blogPageUrls: MetadataRoute.Sitemap = Array.from(
+    { length: Math.max(0, totalPages(posts.length) - 1) },
+    (_, i) => {
+      const page = i + 2;
+      return {
+        url: `${base}${blogPagePath(page)}`,
+        lastModified: pageSlice(posts, page)
+          .map(postDate)
+          .filter((d): d is Date => !!d)
+          .sort((a, b) => b.getTime() - a.getTime())[0],
+        changeFrequency: "weekly" as const,
+        priority: 0.4,
+      };
+    },
+  );
+
   // Tag hubs below MIN_INDEXABLE_TAG_POSTS are noindex, so they stay out of the
   // sitemap. lastmod = newest post in the topic (posts arrive newest-first).
   const tagUrls: MetadataRoute.Sitemap = buildTagIndex(posts)
@@ -146,5 +165,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     }));
 
-  return [...staticUrls, ...landingUrls, ...postUrls, ...tagUrls];
+  return [...staticUrls, ...blogPageUrls, ...landingUrls, ...postUrls, ...tagUrls];
 }

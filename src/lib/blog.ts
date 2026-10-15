@@ -133,9 +133,9 @@ async function readFile(slug: string): Promise<Post | null> {
 
 const ARTWORK_ALTS: Record<string, string> = {
   "form-5472-deadline-tomorrow-urgent-filing": "A calendar and a signing pen illustrate preparing a Form 5472 package against a 48-hour deadline",
-  "company-car-deductions-foreign-owned-us-llc": "A company car beside a ledger illustrates separating vehicle costs from foreign-owner transactions",
-  "business-car-mileage-vs-actual-expenses-2026": "A car and dated route beside a ledger illustrate comparing mileage with actual vehicle costs",
-  "electric-company-car-us-llc-tax-credits-2026": "An electric car at a charging point beside a ledger illustrates separate purchase-credit and expense reviews",
+  "foreign-owned-llc-company-car-deduction": "A company car beside a ledger illustrates separating vehicle costs from foreign-owner transactions",
+  "business-car-mileage-vs-actual-2026": "A car and dated route beside a ledger illustrate comparing mileage with actual vehicle costs",
+  "electric-company-car-llc-tax-2026": "An electric car at a charging point beside a ledger illustrates separate purchase-credit and expense reviews",
   "uk-company-car-vat-buy-lease-electric": "A car and VAT invoice beside a ledger illustrate reviewing UK purchase, lease and charging costs",
   "form-5472-software-turbotax-taxact-hr-block": "Two document folders and a warning mark illustrate checking tax software against the Form 5472 fax-only rule",
   "form-966-closing-foreign-owned-llc": "A marked closing notice with document, calendar and pen icons illustrates the final Form 5472 year instead of Form 966",

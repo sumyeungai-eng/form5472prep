@@ -63,7 +63,7 @@ If the LLC provides the owner private use of a vehicle, preserve the arrangement
 
 Create one vehicle folder with the ownership or lease documents, purchase and disposal dates, annual odometer readings, dated trip purposes, running-cost receipts and an owner-payment reconciliation. Mark the country where the car is kept and used. Keep receipts in the original currency and retain the conversion method used in the US reporting workpapers.
 
-Then compare the eligible [standard mileage and actual-expense methods](/blog/business-car-mileage-vs-actual-expenses-2026). If the car is electric, also read the [current EV deduction and credit guide](/blog/electric-company-car-us-llc-tax-credits-2026). Neither choice resolves foreign VAT or local vehicle-registration requirements.
+Then compare the eligible [standard mileage and actual-expense methods](/blog/business-car-mileage-vs-actual-2026). If the car is electric, also read the [current EV deduction and credit guide](/blog/electric-company-car-llc-tax-2026). Neither choice resolves foreign VAT or local vehicle-registration requirements.
 
 ## Frequently asked questions
 
