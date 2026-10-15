@@ -131,6 +131,10 @@ const COMPETITORS: ProviderPrice[] = [
     reviewNote: 'Describes itself as "filing software, not a CPA firm or tax advisory"',
     // The pricing page announced a rise from $49.99 to $79.99 on 16 October
     // 2026, the day after the check; the row shows the announced price.
+    // Re-checked 2026-10-16 02:22 HKT (2026-10-15 18:22 UTC): the page still
+    // showed $49.99 with the same banner, so the post-rise price is not yet
+    // verifiable. Kept $79.99 with its dated note. See survey section 7. Re-fetch
+    // once 16 October has begun in the US and update this row.
     oneYearPriceUsd: 79.99,
     priceFromLabel: "16 October 2026",
     priceNote: "$79.99 per filing from 16 October 2026, as announced on its pricing page ($49.99 until then)",

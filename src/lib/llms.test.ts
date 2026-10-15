@@ -13,7 +13,13 @@ vi.mock("@/lib/prisma", () => ({
 
 import { FAQ_ITEMS } from "./faq";
 import { LANDING_PAGES } from "./landing-pages";
-import { buildLlmsFullTxt, buildLlmsTxt, ENTITY_SUMMARY } from "./llms";
+import {
+  buildLlmsFullTxt,
+  buildLlmsServicesTxt,
+  buildLlmsTxt,
+  ENTITY_SUMMARY,
+  PROVIDER_LANDING_SLUGS,
+} from "./llms";
 import {
   EIN_PRICE_CENTS,
   ITIN_PRICE_CENTS,
@@ -22,6 +28,7 @@ import {
   TIER_ORDER,
 } from "./pricing";
 import { IRS_OGDEN_FAX, IRS_OGDEN_MAIL_ADDRESS, SITE_URL } from "./seo";
+import { serviceLastReviewed, SERVICE_PAGES, servicePath } from "./services-pages";
 import { formatPrice } from "./utils";
 
 // Facts that were once wrong in llms.txt and must never come back
@@ -38,19 +45,21 @@ const BANNED = [
 ];
 
 let llmsTxt = "";
+// Core corpus: facts, FAQ, statistics, tools, EIN/ITIN, educational landing pages.
 let llmsFull = "";
-// llms-full.txt minus the /services/* documents. Service-page copy lives in
-// services-pages.ts and is policed by services-pages.test.ts; everything else
-// in llms-full (facts, FAQ, statistics, tools, EIN/ITIN, landing pages) is
-// checked here.
-let llmsFullCore = "";
+// /services/* bodies + formation-provider landing pages (split out 2026-10-16).
+let llmsServices = "";
+
+// The 460 KB ceiling is what truncating AI fetchers are known to read in full;
+// every llms-*.txt file except the guides dump must stay under it.
+const FETCHER_LIMIT_BYTES = 460_000;
 
 beforeAll(async () => {
-  [llmsTxt, llmsFull] = await Promise.all([buildLlmsTxt(), buildLlmsFullTxt()]);
-  llmsFullCore = llmsFull
-    .split("\n\n---\n\n")
-    .filter((doc) => !doc.includes(`Source: ${SITE_URL}/services/`))
-    .join("\n\n---\n\n");
+  [llmsTxt, llmsFull, llmsServices] = await Promise.all([
+    buildLlmsTxt(),
+    buildLlmsFullTxt(),
+    buildLlmsServicesTxt(),
+  ]);
 }, 60_000);
 
 function tierLine(text: string, priceCents: number): string {
@@ -93,12 +102,14 @@ describe("llms.txt facts come from code", () => {
 
   it.each(BANNED)("never states %j", (phrase) => {
     expect(llmsTxt).not.toContain(phrase);
-    expect(llmsFullCore).not.toContain(phrase);
+    expect(llmsFull).not.toContain(phrase);
+    expect(llmsServices).not.toContain(phrase);
   });
 
   it("qualifies the money-back guarantee wherever it appears", () => {
-    for (const text of [llmsTxt, llmsFullCore]) {
+    for (const text of [llmsTxt, llmsFull, llmsServices]) {
       const mentions = text.match(/money-back guarantee[^.]*/gi) ?? [];
+      // Every file opens with ENTITY_SUMMARY, which states the guarantee.
       expect(mentions.length).toBeGreaterThan(0);
       for (const mention of mentions) expect(mention).toMatch(/if we fail to submit/i);
     }
@@ -107,6 +118,7 @@ describe("llms.txt facts come from code", () => {
   it("links the guides corpus and keeps the index lean", () => {
     expect(llmsTxt).toContain(`${SITE_URL}/llms-guides.txt`);
     expect(llmsTxt).toContain(`${SITE_URL}/llms-full.txt`);
+    expect(llmsTxt).toContain(`${SITE_URL}/llms-services.txt`);
     expect(llmsTxt).toMatch(/^### /m); // guides grouped by topic
     expect(Buffer.byteLength(llmsTxt)).toBeLessThan(70_000);
   });
@@ -122,21 +134,66 @@ describe("llms-full.txt core corpus", () => {
 
   it("dates each landing page from its own `updated` field", () => {
     for (const page of LANDING_PAGES.filter((p) => !p.noindex && p.updated)) {
-      expect(llmsFull).toContain(`Source: ${SITE_URL}/${page.slug}\nLast reviewed: ${page.updated}`);
+      const dated = `Source: ${SITE_URL}/${page.slug}\nLast reviewed: ${page.updated}`;
+      expect(PROVIDER_LANDING_SLUGS.has(page.slug) ? llmsServices : llmsFull).toContain(dated);
     }
   });
 
-  it("includes statistics, EIN/ITIN and tools, but not the guides", () => {
+  it("includes statistics, EIN/ITIN and tools, but not the guides or service pages", () => {
     expect(llmsFull).toContain(`Source: ${SITE_URL}/form-5472-statistics`);
     expect(llmsFull).toContain(`Source: ${SITE_URL}/faq`);
     expect(llmsFull).toContain("# EIN and ITIN application services");
     expect(llmsFull).toContain("# Free Form 5472 tools");
     expect(llmsFull).not.toContain(`Source: ${SITE_URL}/blog/`);
+    expect(llmsFull).not.toContain(`Source: ${SITE_URL}/services/`);
     expect(llmsFull).toContain(`${SITE_URL}/llms-guides.txt`);
+    expect(llmsFull).toContain(`${SITE_URL}/llms-services.txt`);
   });
 
-  it("stays under 460 KB so truncating AI fetchers still read it all", () => {
-    // 2026-10-07: raised from 420_000 when the example, foreigner-LLC and disregarded-entity guides were added.
-    expect(Buffer.byteLength(llmsFull)).toBeLessThan(460_000);
+  it("stays well under the fetcher limit so truncating AI fetchers still read it all", () => {
+    // 2026-10-16: the service pages moved to llms-services.txt (453 KB -> ~340 KB).
+    // This 400 KB budget leaves room for a few more topic pages; when it trips,
+    // move another self-contained group out (as llms-services.txt did) rather
+    // than raising it past FETCHER_LIMIT_BYTES.
+    expect(Buffer.byteLength(llmsFull)).toBeLessThan(400_000);
+    expect(Buffer.byteLength(llmsFull)).toBeLessThan(FETCHER_LIMIT_BYTES);
+  });
+});
+
+describe("llms-services.txt", () => {
+  it("contains every service page, dated from services-pages.ts", () => {
+    for (const page of SERVICE_PAGES) {
+      expect(llmsServices).toContain(
+        `# ${page.h1}\nSource: ${SITE_URL}${servicePath(page.slug)}\nLast reviewed: ${serviceLastReviewed(page)}`,
+      );
+    }
+  });
+
+  it("names only real, indexable formation-provider landing pages", () => {
+    const indexable = new Set(LANDING_PAGES.filter((p) => !p.noindex).map((p) => p.slug));
+    for (const slug of Array.from(PROVIDER_LANDING_SLUGS)) expect(indexable.has(slug)).toBe(true);
+  });
+
+  it("puts every indexable landing page in exactly one corpus file", () => {
+    for (const page of LANDING_PAGES.filter((p) => !p.noindex)) {
+      const source = `Source: ${SITE_URL}/${page.slug}\n`;
+      const inFull = llmsFull.includes(source);
+      const inServices = llmsServices.includes(source);
+      expect(inFull !== inServices, page.slug).toBe(true);
+    }
+  });
+
+  it("points back to the core corpus and the guides, and states prices from pricing.ts", () => {
+    expect(llmsServices).toContain(`${SITE_URL}/llms-full.txt`);
+    expect(llmsServices).toContain(`${SITE_URL}/llms-guides.txt`);
+    expect(llmsServices).toContain(`${SITE_URL}/pricing`);
+    expect(llmsServices).not.toContain(`Source: ${SITE_URL}/blog/`);
+    for (const cents of [TIERS.standard.priceCents, TIERS.express.priceCents]) {
+      expect(llmsServices).toContain(formatPrice(cents));
+    }
+  });
+
+  it("stays under the fetcher limit", () => {
+    expect(Buffer.byteLength(llmsServices)).toBeLessThan(FETCHER_LIMIT_BYTES);
   });
 });

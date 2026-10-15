@@ -13,7 +13,26 @@ export const IRS_OGDEN_MAIL_ADDRESS =
   "Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201";
 export const ORG_EMAIL = "support@form5472prep.com";
 export const TRUSTPILOT_PROFILE_URL = "https://www.trustpilot.com/review/form5472prep.com";
-export const ORG_SAME_AS = [TRUSTPILOT_PROFILE_URL];
+// Organization `sameAs`: ONLY profiles we actually control and that resolve
+// publicly. Adding one is a one-line change — append its canonical URL here
+// (e.g. the LinkedIn company page, X profile, Crunchbase organization page)
+// once the owner has created it. Never add a placeholder or a profile we do
+// not own; search/answer engines use these links to confirm who we are.
+export const ORG_SAME_AS: readonly string[] = [TRUSTPILOT_PROFILE_URL];
+
+// Organization logo for Google's logo/knowledge-panel feature. Google requires
+// a crawlable RASTER image (PNG/JPG/WebP/GIF, at least 112x112) — an SVG is
+// ignored — so the schema points at this 512x512 PNG while the UI keeps
+// public/logo-mark.svg. Regenerate after any change to logo-mark.svg:
+//   node -e "require('sharp')('public/logo-mark.svg',{density:576}).resize(512,512,{fit:'contain',background:'#ffffff'}).flatten({background:'#ffffff'}).png({compressionLevel:9}).toFile('public/logo-mark-512.png')"
+export const ORG_LOGO_PATH = "/logo-mark-512.png";
+export const ORG_LOGO_SIZE = 512;
+
+// Where our customers are. The filing is a US federal return, but the people
+// who buy it are non-US owners of US LLCs living anywhere in the world, so a
+// "United States" areaServed told engines the opposite of the truth. Use this
+// constant for the Organization AND every Service node so they never drift.
+export const AREA_SERVED = { "@type": "Place", name: "Worldwide" } as const;
 
 // The ONE Organization entity. Search/answer engines consolidate entities by
 // @id, so every page must either embed organizationNode() (which carries this
@@ -177,13 +196,24 @@ export function organizationNode(extra: Record<string, unknown> = {}) {
     "@id": ORG_ID,
     name: SITE_NAME,
     alternateName: ["Form5472Prep", "form5472prep.com"],
-    legalName: SITE_NAME,
+    // No `legalName` on purpose: "Form5472 Prep" is the brand, not a verified
+    // registered entity name, and a wrong legalName is a trust signal against
+    // us. TODO(owner-gated): add `legalName` with the exact registered name of
+    // the operating company once the owner supplies it.
     url: SITE_URL,
-    logo: `${SITE_URL}/logo-mark.svg`,
+    logo: {
+      "@type": "ImageObject",
+      "@id": `${SITE_URL}/#logo`,
+      url: `${SITE_URL}${ORG_LOGO_PATH}`,
+      contentUrl: `${SITE_URL}${ORG_LOGO_PATH}`,
+      width: ORG_LOGO_SIZE,
+      height: ORG_LOGO_SIZE,
+      caption: SITE_NAME,
+    },
     description:
       "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs. Every package reviewed by a qualified tax accountant before fax delivery to the IRS Ogden PIN Unit.",
     foundingDate: "2025",
-    areaServed: { "@type": "Country", name: "United States" },
+    areaServed: AREA_SERVED,
     knowsAbout: [
       "IRS Form 5472",
       "IRS Form 1120 (pro forma)",
@@ -195,7 +225,7 @@ export function organizationNode(extra: Record<string, unknown> = {}) {
     ],
     slogan: "Flat-rate Form 5472 filing. No hidden fees.",
     email: ORG_EMAIL,
-    sameAs: ORG_SAME_AS,
+    sameAs: [...ORG_SAME_AS],
     contactPoint: [
       {
         "@type": "ContactPoint",
