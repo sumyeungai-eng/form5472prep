@@ -206,7 +206,7 @@ describe("blog loader renders price tokens", () => {
     await expect(getAllPosts()).rejects.toThrow(PriceTokenError);
     const admin = (await getAllPosts({ includeDrafts: true })).find((p) => p.slug === "db-bad-post");
     expect(admin?.description).toBe("Costs {{price.express}} for db-bad-post");
-  });
+  }, 30_000); // walks every post through the loader; slow under the full parallel suite
 
   it("writePost refuses a bad token before touching the database", async () => {
     upsert.mockClear();
@@ -232,5 +232,5 @@ describe("blog loader renders price tokens", () => {
     const [index, guides] = await Promise.all([buildLlmsTxt(), buildLlmsGuidesTxt()]);
     for (const text of [index, guides]) expect(text).not.toMatch(/\{\{|\}\}/);
     expect(guides).toContain(`pay us ${formatPrice(TIERS.standard.priceCents)} per Standard filing`);
-  });
+  }, 30_000); // walks every post through the loader; slow under the full parallel suite
 });

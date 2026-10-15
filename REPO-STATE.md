@@ -229,3 +229,7 @@ Claude and Codex sessions share these folders. Practical rules:
 - `docs/sessions/2026-10-11-moz-reread-plan.md` — Moz re-read (ranks/AI not yet refreshed; Oct 11 crawl) + plan `docs/seo/plan-2026-10-11-moz.md`: link the orphan new guides, finish CP 215, GSC requests.
 - `docs/sessions/2026-10-11-phase-a-fixes.md` — Phase A: links to the 3 new guides, CP 215 + IRM-sourced penalty timing, pro forma 1120 / 3-page / zero-transaction fixes, CP-15 guard over all copy; GSC requests; 747live.bet canonical watch item.
 - `docs/sessions/2026-10-15-moz-drop-diagnosis-and-fixes.md` — Moz drop diagnosis (GSC shows no real drop; service pages lost Moz keywords; 747live.bet canonical watch) + tech/services/GEO fix wave.
+- `docs/sessions/2026-10-16-seo-wave-integration.md` — integration of blog price tokens + hub pagination, entity/About/llms split, marketing JS cut; owner decisions listed.
+- `docs/sessions/2026-10-16-blog-price-tokens-and-hubs.md` — `{{price.*}}` tokens in blog markdown, topic hub pagination, revalidation paths with route groups.
+- `docs/sessions/2026-10-16-entity-trust.md` — Organization logo PNG, AREA_SERVED, About rebuild, /llms-services.txt.
+- `docs/sessions/2026-10-16-perf2-marketing-js.md` — pre-paint JS cut (header auth buttons, lazy chat, inline Ads bootstrap).
