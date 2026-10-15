@@ -5,14 +5,7 @@ import { HowToSummary } from "@/components/HowToSummary";
 import { JsonLd } from "@/components/JsonLd";
 import { PartnerScreenshots } from "@/components/PartnerScreenshots";
 import { env } from "@/lib/env";
-import {
-  CONTENT_LAST_REVIEWED,
-  SPEAKABLE,
-  breadcrumbList,
-  howTo,
-  organizationNode,
-  pageMeta,
-} from "@/lib/seo";
+import { CONTENT_LAST_REVIEWED, SPEAKABLE, breadcrumbList, howTo, organizationNode, pageMeta, AREA_SERVED } from "@/lib/seo";
 import { PartnerApplyForm } from "./PartnerApplyForm";
 
 export const metadata: Metadata = {
@@ -284,7 +277,7 @@ function PartnersStructuredData() {
     name: "Form5472 Prep Partner Program",
     provider: organizationNode(),
     dateModified: CONTENT_LAST_REVIEWED,
-    areaServed: { "@type": "Country", name: "United States" },
+    areaServed: AREA_SERVED,
     audience: {
       "@type": "Audience",
       audienceType:

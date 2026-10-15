@@ -29,14 +29,7 @@ import { formatPrice } from "@/lib/utils";
 import { env } from "@/lib/env";
 import { getConfirmedFilingsCount, formatFilingCount } from "@/lib/stats";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
-import {
-  CONTENT_LAST_REVIEWED,
-  ORG_REF,
-  SITE_NAME,
-  howTo,
-  organizationDocument,
-  pageMeta,
-} from "@/lib/seo";
+import { CONTENT_LAST_REVIEWED, ORG_REF, SITE_NAME, howTo, organizationDocument, pageMeta, AREA_SERVED } from "@/lib/seo";
 
 // FAQ content is the source of truth for both the rendered <dl> and the
 // FAQPage JSON-LD structured data — keep them in lockstep by sharing the array.
@@ -942,7 +935,7 @@ function StructuredData() {
     "@type": "Service",
     serviceType: "IRS Form 5472 and pro forma Form 1120 preparation and filing",
     provider: ORG_REF,
-    areaServed: { "@type": "Country", name: "United States" },
+    areaServed: AREA_SERVED,
     audience: {
       "@type": "Audience",
       audienceType: "Foreign-owned US single-member LLC owners",

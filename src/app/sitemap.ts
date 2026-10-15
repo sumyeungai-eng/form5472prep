@@ -29,7 +29,7 @@ const STATIC_PAGE_UPDATED: Record<string, string> = {
   "/itin": "2026-09-14",
   "/partners": "2026-09-18",
   "/contact": "2026-09-21",
-  "/about": "2026-09-21",
+  "/about": "2026-10-16",
   "/editorial-policy": "2026-09-21",
   "/terms": "2026-09-21",
   "/privacy": "2026-09-21",

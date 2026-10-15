@@ -5,14 +5,7 @@ import { EinItinTable } from "@/components/EinItinTable";
 import { HowToSummary } from "@/components/HowToSummary";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
-import {
-  CONTENT_LAST_REVIEWED,
-  SPEAKABLE,
-  breadcrumbList,
-  howTo,
-  organizationNode,
-  pageMeta,
-} from "@/lib/seo";
+import { CONTENT_LAST_REVIEWED, SPEAKABLE, breadcrumbList, howTo, organizationNode, pageMeta, AREA_SERVED } from "@/lib/seo";
 
 const ITIN_DESCRIPTION =
   "ITIN application support for non-residents. Eligible applications are forwarded to an IRS-authorized Certifying Acceptance Agent for document review.";
@@ -353,7 +346,7 @@ function ItinStructuredData() {
     name: "ITIN Acquisition for Non-Residents",
     provider: organizationNode(),
     dateModified: CONTENT_LAST_REVIEWED,
-    areaServed: { "@type": "Country", name: "United States" },
+    areaServed: AREA_SERVED,
     audience: {
       "@type": "Audience",
       audienceType: "Non-resident individuals requiring a US Individual Taxpayer Identification Number",

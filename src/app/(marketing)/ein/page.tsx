@@ -6,14 +6,7 @@ import { HowToSummary } from "@/components/HowToSummary";
 import { JsonLd } from "@/components/JsonLd";
 import { EIN_APPLICATION_FAQ } from "@/lib/einApplicationFaq";
 import { env } from "@/lib/env";
-import {
-  CONTENT_LAST_REVIEWED,
-  SPEAKABLE,
-  breadcrumbList,
-  howTo,
-  organizationNode,
-  pageMeta,
-} from "@/lib/seo";
+import { CONTENT_LAST_REVIEWED, SPEAKABLE, breadcrumbList, howTo, organizationNode, pageMeta, AREA_SERVED } from "@/lib/seo";
 
 export const metadata: Metadata = {
   // `absolute` skips the root layout's "%s · Form5472 Prep" template so the
@@ -348,7 +341,7 @@ function EinStructuredData() {
     name: "EIN Acquisition for Foreign-Owned US LLCs",
     provider: organizationNode(),
     dateModified: CONTENT_LAST_REVIEWED,
-    areaServed: { "@type": "Country", name: "United States" },
+    areaServed: AREA_SERVED,
     audience: {
       "@type": "Audience",
       audienceType: "Foreign founders of US LLCs without a US Social Security Number or ITIN",
