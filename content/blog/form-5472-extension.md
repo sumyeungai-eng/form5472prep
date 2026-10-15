@@ -66,7 +66,7 @@ An intake may be quick, but gathering records, resolving questions, reviewing th
 
 Form5472 Prep generates the complete package (cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, and a reasonable-cause statement if you're already late), an accountant reviews it, and we fax it to the IRS Ogden PIN Unit with a timestamped provider transmission record. Pricing is **$149 Standard** (ready in 5-7 business days) or **$199 Express** (ready to sign within 24 hours) — the filing, the accountant review and the package are identical, only the speed differs — with fax delivery included on both and **+$99 per additional past year** for DIIRSP catch-up. See full [pricing](/pricing) or [start your filing now](/start).
 
-We are not a CPA firm and do not give tax advice; we prepare and submit the extension or filing package accurately.
+We are not a CPA firm and do not give tax advice. Form5472 Prep prepares and submits the Form 5472 and pro forma 1120 filing package; we don't file Form 7004 for you, so file the extension yourself by the original due date.
 
 ## Frequently asked questions
 

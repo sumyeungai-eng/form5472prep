@@ -24,7 +24,7 @@ The IRS notices eventually. But there is a formal procedure for fixing this with
 - **Need help catching up?** [Start the DIIRSP filing](/diirsp) after gathering each missed year's owner transactions.
 - **No special IRS program needed.** DIIRSP is filed through normal channels — it's a package of returns plus a cover letter, not an online application.
 - **Earlier is better.** Penalties start running from the original due date. The sooner you file, the less exposure you have.
-- **Most foreign owners qualify** for reasonable cause abatement if the failure was due to not knowing about the requirement.
+- **Not knowing about the requirement is not, on its own, reasonable cause.** The IRS weighs all the facts and circumstances, including what you did once you learned of the requirement ([IRM 20.1.1.3.2.2.6](https://www.irs.gov/irm/part20/irm_20-001-001r)).
 
 ---
 
@@ -113,7 +113,7 @@ Most DIIRSP submissions for foreign-owned LLCs with no complex transactions are 
 
 Dissolving the LLC closes the entity going forward and stops the clock on future filing obligations. But it does not eliminate the filing obligation for years the LLC existed. A dissolved LLC with three years of unfiled Form 5472s still has $75,000 of potential penalties outstanding. Dissolution and back-filing are separate steps — ideally you'd do both.
 
-If you dissolve the LLC without filing the back-returns, the IRS still has your EIN and can assess penalties. The LLC being dissolved doesn't make the prior years go away. If the LLC is already closed, its last short year needs a [final Form 5472 for a dissolved LLC](/services/final-form-5472-for-dissolved-llc) as well.
+If you dissolve the LLC without filing the back-returns, the IRS still has your EIN and can assess penalties. The LLC being dissolved doesn't make the prior years go away. If the LLC is already closed, its last short year needs a [final Form 5472 for a dissolved LLC](/services/final-form-5472-for-dissolved-llc) as well if it had a reportable transaction in that year ([IRS, Instructions for Form 5472](https://www.irs.gov/instructions/i5472)).
 
 ---
 

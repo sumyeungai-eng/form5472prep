@@ -228,3 +228,4 @@ Claude and Codex sessions share these folders. Practical rules:
 - `docs/sessions/2026-10-08-no-trustpilot-email.md` — Trustpilot AFS invite removed from the automatic fax-delivered email, then restored the same day (owner); net: invites ON.
 - `docs/sessions/2026-10-11-moz-reread-plan.md` — Moz re-read (ranks/AI not yet refreshed; Oct 11 crawl) + plan `docs/seo/plan-2026-10-11-moz.md`: link the orphan new guides, finish CP 215, GSC requests.
 - `docs/sessions/2026-10-11-phase-a-fixes.md` — Phase A: links to the 3 new guides, CP 215 + IRM-sourced penalty timing, pro forma 1120 / 3-page / zero-transaction fixes, CP-15 guard over all copy; GSC requests; 747live.bet canonical watch item.
+- `docs/sessions/2026-10-15-moz-drop-diagnosis-and-fixes.md` — Moz drop diagnosis (GSC shows no real drop; service pages lost Moz keywords; 747live.bet canonical watch) + tech/services/GEO fix wave.
