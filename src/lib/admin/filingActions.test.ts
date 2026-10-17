@@ -1008,6 +1008,22 @@ describe("retryFax pre-flight gate", () => {
     storage.publicUrl.mockClear();
   });
 
+  it.each([
+    [true, null, null, true],
+    [false, null, null, false],
+    [undefined, null, null, false],
+    ["true", null, null, false],
+    [true, "1234", null, false],
+    [true, null, "synthetic-ciphertext", false],
+  ])("fax copy request %s with SSN markers %s/%s stores %s and audits it", async (requested, last4, ciphertext, expected) => {
+    db.findUnique.mockResolvedValue({ ...filing, ownerSsnLast4: last4, ownerSsnCiphertext: ciphertext });
+    await runFilingAction("filing_1", "retryFax", { sendCopyToClient: requested }, { adminId: "admin_1" });
+    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ faxCopyToClient: expected }) }));
+    expect(db.createLog).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({
+      field: "fax", afterJson: expect.objectContaining({ faxCopyToClient: expected }),
+    }) }));
+  });
+
   it("throws 409 and does not call submitFax when failed pre-flight has no override", async () => {
     db.findUnique.mockResolvedValue({
       ...filing,
@@ -1550,6 +1566,21 @@ describe("resendFaxConfirmation", () => {
   afterEach(() => {
     delete process.env.TELNYX_API_KEY;
     vi.unstubAllGlobals();
+  });
+
+  it.each([
+    [true, null, null, true],
+    [false, null, null, false],
+    [undefined, null, null, false],
+    [true, "1234", null, false],
+    [true, null, "synthetic-ciphertext", false],
+  ])("resend copy request %s with SSN markers %s/%s attaches %s", async (requested, last4, ciphertext, attached) => {
+    db.findUnique.mockResolvedValue({ ...confirmedFiling, faxedPdfKey: "snapshot.pdf", signedPdfKey: "newer.pdf", ownerSsnLast4: last4, ownerSsnCiphertext: ciphertext });
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify(telnyxRecord), { status: 200 })));
+    await runFilingAction("filing_fax", "resendFaxConfirmation", { sendCopyToClient: requested }, { adminId: "admin_1" });
+    expect(email.sendFaxDeliveredEmail).toHaveBeenCalledWith(expect.objectContaining({ signedPdfBytes: attached ? receipt : undefined }));
+    if (attached) expect(storage.get).toHaveBeenCalledWith("snapshot.pdf");
+    expect(storage.get).not.toHaveBeenCalledWith("newer.pdf");
   });
 
   it("re-sends the delivered email to the customer on file with the stored receipt attached, and logs it", async () => {

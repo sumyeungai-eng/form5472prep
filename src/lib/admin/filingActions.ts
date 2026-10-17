@@ -1,3 +1,4 @@
+import { loadFaxClientCopy } from "@/lib/fax/clientCopy";
 import { isPdfEncodable, PDF_TEXT_MESSAGE } from "@/lib/pdfText";
 import { Prisma, type FilingStatus } from "@prisma/client";
 import { z } from "zod";
@@ -365,6 +366,7 @@ const filingSelect = {
   reviewApprovedBy: true,
   generatorVersion: true,
   generatorCommit: true,
+  faxCopyToClient: true,
   faxedPdfKey: true,
   faxedAt: true,
   faxJobId: true,
@@ -1130,6 +1132,8 @@ export async function runFilingAction(
       if (!filing.user) {
         throw new FilingActionError(400, "no_customer_email", "no customer email");
       }
+      const sendCopyToClient = await allowFaxClientCopy(filing, body.sendCopyToClient);
+      const clientCopy = await loadFaxClientCopy(filing, sendCopyToClient);
       let receiptPdfBytes: Uint8Array | undefined;
       if (filing.faxConfirmationKey) {
         try {
@@ -1172,6 +1176,7 @@ export async function runFilingAction(
           proof,
           receiptPdfBytes,
           attachReceipt: receiptAttached,
+          signedPdfBytes: clientCopy,
           isFinalReturn: filing.isFinalReturn,
           dissolvedAt: filing.dissolvedAt,
           brand: brand ?? undefined,
@@ -1201,6 +1206,7 @@ export async function runFilingAction(
     }
 
     case "retryFax": {
+      const sendCopyToClient = await allowFaxClientCopy(filing, body.sendCopyToClient);
       if (!filing.signedPdfKey) {
         throw new FilingActionError(400, "signed_pdf_required", "no signed PDF on file");
       }
@@ -1431,6 +1437,7 @@ export async function runFilingAction(
             faxStatus: "queued",
             status: "FAXED",
             faxedPdfKey: faxedKey,
+            faxCopyToClient: sendCopyToClient,
             faxedAt,
           },
           select: { id: true },
@@ -1456,12 +1463,14 @@ export async function runFilingAction(
             faxJobId: filing.faxJobId,
             faxStatus: filing.faxStatus,
             faxedPdfKey: filing.faxedPdfKey,
+            faxCopyToClient: filing.faxCopyToClient,
             status: filing.status,
           },
           after: {
             faxJobId: job.id,
             faxStatus: "queued",
             faxedPdfKey: faxedKey,
+            faxCopyToClient: sendCopyToClient,
             status: "FAXED",
             ...(refaxOverride ? { refaxOverride } : {}),
             ...(ssnOverride ? { ssnOverride } : {}),
@@ -2466,4 +2475,14 @@ export async function runFilingAction(
     default:
       throw new FilingActionError(400, "unknown_action", "unknown action");
   }
+}
+
+// Keep ciphertext out of filingSelect, which also feeds admin API responses.
+async function allowFaxClientCopy(filing: { id: string; ownerSsnLast4: string | null }, requested: unknown): Promise<boolean> {
+  if (requested !== true || filing.ownerSsnLast4) return false;
+  const ssn = await prisma.filing.findUnique({
+    where: { id: filing.id },
+    select: { ownerSsnCiphertext: true },
+  });
+  return ssn != null && !ssn.ownerSsnCiphertext;
 }

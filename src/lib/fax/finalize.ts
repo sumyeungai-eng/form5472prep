@@ -1,3 +1,4 @@
+import { loadFaxClientCopy } from "@/lib/fax/clientCopy";
 // The ONE finalize path for an outbound IRS fax, shared by the Telnyx webhook
 // (/api/telnyx-webhook) and its hourly backstop (/api/cron/fax-status-poll).
 //
@@ -54,6 +55,9 @@ export type FaxFinalizeFiling = {
   // the admin email (download it from the admin page instead). Optional so
   // older callers/fixtures keep compiling; both real callers load the full row.
   ownerSsnLast4?: string | null;
+  ownerSsnCiphertext?: string | null;
+  faxCopyToClient?: boolean | null;
+  faxedPdfKey?: string | null;
 };
 
 export type FinalizeDeliveredResult = {
@@ -132,11 +136,11 @@ export async function finalizeFaxDelivered(
   const proof = faxProofFromFacts(facts);
   const adminFilingUrl = `${env.appUrl}/admin/filings/${filing.id}`;
 
-  // The exact PDF that was faxed, for the ADMIN copy only (customer email
-  // stays small — the package is in their portal). Missing key isn't fatal.
+  // Preserve the existing ADMIN attachment. The optional customer copy below
+  // uses the frozen faxed snapshot instead. Missing keys are not fatal.
   // Never attached when it contains the owner's SSN (spec S3: no SSN in email).
   let signedPdfBytes: Uint8Array | undefined;
-  if (filing.signedPdfKey && !filing.ownerSsnLast4) {
+  if (filing.signedPdfKey && !filing.ownerSsnLast4 && !filing.ownerSsnCiphertext) {
     try {
       signedPdfBytes = await getStorageObject(filing.signedPdfKey);
     } catch (err) {
@@ -177,6 +181,7 @@ export async function finalizeFaxDelivered(
   let customerEmailStatus: "sent" | "failed" | "no_customer" = "no_customer";
   if (filing.user && customerUserId) {
     const brand = await safeBrand(tag, filing.id);
+    const clientCopy = await loadFaxClientCopy(filing, filing.faxCopyToClient === true);
     try {
       await sendFaxDeliveredEmail({
         email: filing.user.email,
@@ -186,6 +191,7 @@ export async function finalizeFaxDelivered(
         portalLink: makeMagicLink(customerUserId),
         proof,
         receiptPdfBytes,
+        signedPdfBytes: clientCopy,
         isFinalReturn: filing.isFinalReturn,
         dissolvedAt: filing.dissolvedAt,
         brand,

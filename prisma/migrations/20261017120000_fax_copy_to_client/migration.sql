@@ -1,0 +1,1 @@
+ALTER TABLE "Filing" ADD COLUMN "faxCopyToClient" BOOLEAN;

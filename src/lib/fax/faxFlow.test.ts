@@ -14,6 +14,9 @@ type Row = {
   status: string;
   faxJobId: string | null;
   faxStatus: string | null;
+  faxCopyToClient?: boolean | null;
+  ownerSsnLast4?: string | null;
+  ownerSsnCiphertext?: string | null;
   faxedPdfKey: string | null;
   signedPdfKey: string | null;
   faxConfirmationKey: string | null;
@@ -976,5 +979,41 @@ describe("SSN capture: a faxed package carrying the owner's SSN is never emailed
     const args = email.sendFaxDeliveredAdminEmail.mock.calls.at(-1)?.[0] as Record<string, unknown>;
     expect(args.signedPdfBytes).toBeUndefined();
     expect(args.receiptPdfBytes).toBeDefined();
+  });
+});
+
+describe("customer copy of faxed forms", () => {
+  it.each([
+    [true, null, null, true],
+    [false, null, null, false],
+    [null, null, null, false],
+    [true, "1234", null, false],
+    [true, null, "synthetic-ciphertext", false],
+  ])("choice %s and SSN markers %s/%s attaches %s", async (choice, last4, ciphertext, attached) => {
+    seedFiling({ faxCopyToClient: choice, ownerSsnLast4: last4, ownerSsnCiphertext: ciphertext, faxedPdfKey: "frozen.pdf" });
+    const frozen = new Uint8Array([37, 80, 68, 70, 7]);
+    storage.get.mockImplementation(async (key) => key === "frozen.pdf" ? frozen : new Uint8Array([1]));
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("delivered")), { status: 200 }));
+    await telnyxWebhook(webhookRequest("fax.delivered"));
+    expect(email.sendFaxDeliveredEmail).toHaveBeenCalledWith(expect.objectContaining({ signedPdfBytes: attached ? frozen : undefined }));
+    expect(storage.get.mock.calls.some(([key]) => key === "frozen.pdf")).toBe(attached);
+  });
+
+  it.each(["failure", "oversize", "legacy", "boundary"])("%s keeps delivery confirmation working", async (mode) => {
+    seedFiling({ faxCopyToClient: true, faxedPdfKey: mode === "legacy" ? null : "frozen.pdf" });
+    const bytes = new Uint8Array(mode === "oversize" ? 20 * 1024 * 1024 + 1 : mode === "boundary" ? 20 * 1024 * 1024 : 4);
+    storage.get.mockImplementation(async (key) => {
+      if (key === "frozen.pdf" && mode === "failure") throw new TypeError("synthetic-private-message");
+      return bytes;
+    });
+    stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("delivered")), { status: 200 }));
+    await telnyxWebhook(webhookRequest("fax.delivered"));
+    expect(row().status).toBe("CONFIRMED");
+    expect(email.sendFaxDeliveredEmail).toHaveBeenCalledTimes(1);
+    const sent = email.sendFaxDeliveredEmail.mock.calls[0][0];
+    expect(sent.signedPdfBytes).toBe(mode === "legacy" || mode === "boundary" ? bytes : undefined);
+    if (mode === "failure") {
+      expect(console.error).toHaveBeenCalledWith("[fax-client-copy] storage read failed", "TypeError");
+    }
   });
 });

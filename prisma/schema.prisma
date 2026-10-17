@@ -203,6 +203,7 @@ model Filing {
   // admin verify exactly what was sent to the IRS even if signedPdfKey is
   // later cleared (e.g. after Regenerate PDF). Populated by the retryFax
   // action — null on legacy faxes that pre-date this field.
+  faxCopyToClient    Boolean?
   faxedPdfKey        String?
   faxedAt            DateTime?
   faxJobId           String?

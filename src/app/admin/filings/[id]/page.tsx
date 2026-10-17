@@ -333,6 +333,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           reviewApprovedBy={reviewApprovedAdmin?.email ?? displayStaffIdentity(filing.reviewApprovedBy)}
           faxedAt={filing.faxedAt ? filing.faxedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
           ssnFaxHold={ssnFaxHold}
+          hasOwnerSsn={!!(filing.ownerSsnLast4 || filing.ownerSsnCiphertext)}
         />
       </div>
 

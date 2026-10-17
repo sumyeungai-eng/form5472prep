@@ -158,3 +158,19 @@ describe("AdminActions › SSN fax hold (SSN capture)", () => {
     expect(html).not.toContain("Fax held: the owner");
   });
 });
+
+describe("AdminActions fax copy choice", () => {
+  it.each([false, true])("renders independent unchecked choices; SSN on file = %s", (hasOwnerSsn) => {
+    const html = renderToStaticMarkup(<AdminActions {...baseProps} canResendFaxConfirmation hasOwnerSsn={hasOwnerSsn} />);
+    const label = "Email the client a copy of the faxed forms (PDF) when delivery is confirmed";
+    expect(html.split(label)).toHaveLength(3);
+    const boxes = html.match(/<input[^>]*type="checkbox"[^>]*>/g) ?? [];
+    const copyBoxes = boxes.slice(0, 2);
+    expect(copyBoxes).toHaveLength(2);
+    for (const box of copyBoxes) {
+      expect(box).not.toContain('checked=""');
+      expect(box.includes('disabled=""')).toBe(hasOwnerSsn);
+    }
+    expect(html.includes("Not available — this package shows the client&#x27;s SSN, so it is never emailed. The client can download it from their portal.")).toBe(hasOwnerSsn);
+  });
+});

@@ -1,3 +1,5 @@
+import { downloadFileName } from "@/lib/pdf/downloadFileName";
+import { MAX_FAX_COPY_BYTES } from "@/lib/fax/clientCopy";
 // Transactional email. Uses Resend if RESEND_API_KEY is set; otherwise
 // falls through to console.log so dev works without an account.
 //
@@ -1006,7 +1008,8 @@ export async function sendFaxDeliveredEmail(args: {
   reviewInvite?: boolean;
 }) {
   const { email, recipientName, llcName, taxYears, portalLink, proof, signedPdfBytes, receiptPdfBytes, brand, isFinalReturn } = args;
-  const invite = args.reviewInvite
+  const attachCopy = !!(signedPdfBytes && signedPdfBytes.byteLength > 0 && signedPdfBytes.byteLength <= MAX_FAX_COPY_BYTES);
+  const invite = args.reviewInvite && !attachCopy
     ? trustpilotInvite({ recipientEmail: email, recipientName, referenceId: args.filingId, brand })
     : null;
   const attachReceipt = !!(args.attachReceipt && receiptPdfBytes && receiptPdfBytes.byteLength > 0);
@@ -1023,7 +1026,6 @@ export async function sendFaxDeliveredEmail(args: {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
         ${formatFaxProofRows(proof)}
       </table>
-      ${signedPdfBytes ? `<p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};font-size:13px;">The exact PDF transmitted to the IRS is available for download in your portal.</p>` : ""}
     `
     : "";
 
@@ -1066,6 +1068,7 @@ export async function sendFaxDeliveredEmail(args: {
       <strong>✓ Delivered to the IRS</strong> — please retain this message with your permanent tax records as evidence of timely submission.
     </div>
     ${proofTable}
+    ${attachCopy ? `<p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">The faxed forms are attached to this email. The exact PDF transmitted to the IRS is available for download in your portal.</p>` : ""}
     ${attachReceipt ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       A timestamped <strong>IRS Fax Transmission Receipt</strong> is attached to this email and saved
       in your portal. Please keep it with your tax records. It shows exactly
@@ -1127,6 +1130,7 @@ export async function sendFaxDeliveredEmail(args: {
       proofText +
       `\n` +
       receiptText +
+      (attachCopy ? "The faxed forms are attached to this email. The exact PDF transmitted to the IRS is available for download in your portal.\n\n" : "") +
       `The IRS does not send acknowledgments for faxed Form 5472 filings. You can re-download the receipt and your filing package anytime from your portal.\n\n` +
       closingText +
       `\nView your filing and download documents: ${portalLink}`,
@@ -1143,7 +1147,9 @@ export async function sendFaxDeliveredEmail(args: {
       }),
       invite?.snippet,
     ),
-    attachments: receiptAttachment,
+    attachments: attachCopy && signedPdfBytes
+      ? [...(receiptAttachment ?? []), { filename: downloadFileName(llcName, taxYears, "filed"), content: signedPdfBytes }]
+      : receiptAttachment,
     ...(invite ? { bcc: invite.bcc } : {}),
   });
 }

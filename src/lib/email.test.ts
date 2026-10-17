@@ -1,8 +1,12 @@
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { sendOrderConfirmationEmail } from "@/lib/email";
+
+vi.mock("@/lib/prisma", () => ({
+  prisma: { emailLog: { create: vi.fn(async () => ({ id: "synthetic-log" })) } },
+}));
 
 let PREVIEW_DIR = "";
 
@@ -176,5 +180,38 @@ describe("sendWebsiteQuestionReplyEmail", () => {
     expect(html).toContain("October 1, 2026");
     expect(text).toContain("Hello Ana,");
     expect(text).toContain("> Do I need to file Form 5472?");
+  });
+});
+
+describe("fax delivered customer attachment", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it.each([false, true])("bytes supplied = %s: attachment and matching copy", async (withCopy) => {
+    vi.stubEnv("EMAIL_PREVIEW_DIR", "");
+    vi.stubEnv("RESEND_API_KEY", "synthetic-key");
+    vi.stubEnv("TRUSTPILOT_AFS_BCC", "synthetic@invite.trustpilot.com");
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ id: "synthetic-email" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const { sendFaxDeliveredEmail } = await import("@/lib/email");
+    const bytes = new Uint8Array([37, 80, 68, 70]);
+    await sendFaxDeliveredEmail({
+      email: "owner@example.test", llcName: "Synthetic LLC", taxYears: [2024, 2025],
+      portalLink: "https://example.test/portal", signedPdfBytes: withCopy ? bytes : undefined,
+      reviewInvite: true,
+    });
+    const payload = JSON.parse((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body as string);
+    expect(payload.attachments).toEqual(withCopy ? [{ filename: "Form5472_Synthetic-LLC_2024-2025_filed.pdf", content: Buffer.from(bytes).toString("base64"), content_type: "application/pdf" }] : undefined);
+    if (withCopy) {
+      expect(payload).not.toHaveProperty("bcc");
+    } else {
+      expect(payload.bcc).toBe("synthetic@invite.trustpilot.com");
+    }
+    expect(payload.html.includes("The faxed forms are attached")).toBe(withCopy);
+    expect(payload.text.includes("The faxed forms are attached")).toBe(withCopy);
+    expect(payload.html).toContain("your portal");
+    expect(payload.text).toContain("your portal");
   });
 });
