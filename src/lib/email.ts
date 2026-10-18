@@ -137,7 +137,16 @@ function brandedFrom(fromName: string | undefined): string {
   return `"${fromName.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}" <${fromAddress(FROM)}>`;
 }
 
-export async function sendEmail({ to, subject, html, text, replyTo, bcc, attachments, headers, fromName, log }: SendArgs) {
+// Email subjects must be a single line: Resend rejects CR/LF with a 422
+// ("The `\\n` is not allowed in the `subject` field"), which silently cost
+// every website-question alert whose message contained a line break.
+export function singleLineSubject(subject: string): string {
+  const flat = subject.replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim();
+  return flat.length > 250 ? `${flat.slice(0, 249).trimEnd()}…` : flat;
+}
+
+export async function sendEmail({ to, subject: rawSubject, html, text, replyTo, bcc, attachments, headers, fromName, log }: SendArgs) {
+  const subject = singleLineSubject(rawSubject);
   const previewDir = process.env.EMAIL_PREVIEW_DIR;
   if (previewDir) {
     const slug = slugifySubject(subject);
@@ -2151,7 +2160,8 @@ export async function sendApplicationSignedAdminEmail(args: {
   });
 }
 
-function subjectSnippet(message: string, maxLength = 60) {
+function subjectSnippet(rawMessage: string, maxLength = 60) {
+  const message = rawMessage.replace(/\s+/g, " ").trim();
   if (message.length <= maxLength) return message;
   const initial = message.slice(0, maxLength).trimEnd();
   const boundary = /\s/.test(message.charAt(maxLength)) ? initial.length : initial.lastIndexOf(" ");
