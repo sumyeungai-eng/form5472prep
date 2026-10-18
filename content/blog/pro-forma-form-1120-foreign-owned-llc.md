@@ -145,7 +145,7 @@ The arithmetic does not mean only 700 is reportable. The contribution and distri
 
 ## How does Form5472 Prep fit as the answer?
 
-Form5472 Prep prepares the whole federal package: Form 5472, the pro forma Form 1120 and the Part V statement. A qualified tax accountant reviews the package before filing. The [pro forma 1120 filing service](/services/pro-forma-1120-filing-service) page shows which cover boxes are completed for you.
+Form5472 Prep prepares the whole federal package: Form 5472, the pro forma Form 1120 and the Part V statement. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before filing. The [pro forma 1120 filing service](/services/pro-forma-1120-filing-service) page shows which cover boxes are completed for you.
 
 After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped provider transmission receipt. The receipt records the provider's reported destination, time, status, and available page details; it is not an IRS acceptance notice. Standard service is {{price.standard}} and takes 5-7 business days. Express service is {{price.express}} and is ready to check and sign within 24 hours. Each additional past tax year is +{{price.additionalYear}}. Fax delivery is included.
 

@@ -111,7 +111,7 @@ export function FilingActions({ filing }: { filing: Filing }) {
           </p>
         ) : (
           <p className="text-sm text-slate-600">
-            A qualified accountant is reviewing your forms. If anything needs clarifying, we will message you here.
+            A PTIN-holding tax accountant is reviewing your forms. If anything needs clarifying, we will message you here.
           </p>
         )}
       </Step>

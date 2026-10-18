@@ -92,7 +92,7 @@ Worked example: the owner pays a €1,000 invoice and the LLC reimburses $1,090 
 
 ## How does Form5472 Prep turn the ledger into a filing?
 
-The intake separates contributions, distributions, owner-paid expenses, reimbursements, loans, principal repayments, interest, and other related-party amounts. Form5472 Prep then prepares Form 5472, the pro forma Form 1120, and a Part V supporting statement, followed by accountant review and IRS fax delivery.
+The intake separates contributions, distributions, owner-paid expenses, reimbursements, loans, principal repayments, interest, and other related-party amounts. Form5472 Prep then prepares Form 5472, the pro forma Form 1120, and a Part V supporting statement, followed by review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) and IRS fax delivery.
 
 [Start the {{price.standard}} Standard filing](/start) once each owner transfer has a purpose.
 

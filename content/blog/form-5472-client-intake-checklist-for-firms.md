@@ -129,7 +129,7 @@ Two choices there are deliberate. Citizenship and tax residence are asked as a v
 3. **A Part V statement exists** wherever the Part V box is checked, and reconciles to the Part I totals.
 4. **Transmission evidence is filed with the package.** A provider fax receipt records that a transmission occurred. It is not IRS acceptance of the return, and should never be presented to a client as confirmation that the filing was accepted.
 
-We prepare and submit the package, and a qualified tax accountant reviews every one. We are not a CPA firm and do not give tax advice, so a client's tax question belongs with a qualified adviser. Apply the same caution to your own marketing: describe the filing service you provide, not advice your firm is not qualified to give.
+We prepare and submit the package, and every one is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN). We are not a CPA firm and do not give tax advice, so a client's tax question belongs with a qualified adviser. Apply the same caution to your own marketing: describe the filing service you provide, not advice your firm is not qualified to give.
 
 Partner pricing matches direct customers — {{price.standard}} Standard in 5 to 7 business days, {{price.express}} Express ready to sign within 24 hours, plus {{price.additionalYear}} per additional past year, IRS fax included, no platform fee. What your firm charges its own client on top is your own decision, and we pay no commission.
 

@@ -117,7 +117,7 @@ We prepare the Form 5472 and pro forma Form 1120 package and fax it to the IRS. 
 - **Each additional past tax year:** +{{price.additionalYear}}
 - **IRS fax delivery:** included
 
-We are not a CPA firm and do not give tax advice. We prepare and submit the information return, and a qualified tax accountant reviews each package. [Start your filing](/start) and choose the tax years you need.
+We are not a CPA firm and do not give tax advice. We prepare and submit the information return, and each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN). [Start your filing](/start) and choose the tax years you need.
 
 ## Frequently asked questions
 

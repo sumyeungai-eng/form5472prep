@@ -36,7 +36,7 @@ function tierUrl(slug: Tier) {
 }
 
 const PAGE_TITLE = `Form 5472 Filing Service — ${formatPrice(TIERS.standard.priceCents)}, Done For You | Form5472 Prep`;
-const PAGE_DESCRIPTION = `Accountant-reviewed Form 5472 + pro forma 1120 for ${formatPrice(TIERS.standard.priceCents)}, with IRS Ogden fax delivery and a timestamped receipt included.`;
+const PAGE_DESCRIPTION = `Form 5472 + pro forma 1120 for ${formatPrice(TIERS.standard.priceCents)}, reviewed by a PTIN-holding tax accountant, with IRS Ogden fax delivery and a timestamped receipt included.`;
 
 export const metadata: Metadata = {
   title: { absolute: PAGE_TITLE },
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
 const FAQS = [
   {
     q: "What's included for the price?",
-    a: `The price includes Form 5472 + pro forma Form 1120 with the Part V supporting statement, review by a qualified tax accountant, a reasonable cause letter if you're late, IRS fax delivery, a timestamped receipt, filing confirmation, and a reminder before next year's deadline. There is no separate fax fee, setup fee, or subscription. Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each.`,
+    a: `The price includes Form 5472 + pro forma Form 1120 with the Part V supporting statement, review by a PTIN-holding tax accountant, a reasonable cause letter if you're late, IRS fax delivery, a timestamped receipt, filing confirmation, and a reminder before next year's deadline. There is no separate fax fee, setup fee, or subscription. Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each.`,
   },
   {
     q: "What's the difference between Standard and Express?",
@@ -108,7 +108,7 @@ function Hero() {
   const checklist = [
     "Filled IRS Form 5472 + pro forma 1120",
     "Reasonable cause statement (if late)",
-    "Reviewed by a qualified tax accountant",
+    "Reviewed by a PTIN-holding tax accountant",
     "Faxed to IRS Ogden PIN Unit",
     "100% money-back if we fail to submit",
   ];
@@ -239,8 +239,8 @@ function Offer() {
     },
     {
       icon: ShieldCheck,
-      title: "Reviewed by a qualified tax accountant",
-      body: "A qualified tax accountant checks the completed filing before anything is signed or sent to the IRS.",
+      title: "Reviewed by a tax accountant",
+      body: "A tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) checks the completed filing before anything is signed or sent to the IRS.",
     },
     {
       icon: Send,
@@ -280,7 +280,7 @@ function Offer() {
 function Includes() {
   const items = [
     'Filled IRS Form 5472 + pro forma Form 1120 with the "Foreign-Owned U.S. DE" stamp and Part V supporting statement',
-    "Review by a qualified tax accountant before anything is sent",
+    "Review by a tax accountant before anything is sent",
     "Reasonable cause statement for late filings under the IRS Delinquent International Information Return Submission Procedures (DIIRSP), drafted around your circumstances",
     "Fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) with no separate fax fee",
     "Timestamped fax transmission receipt emailed to you and stored in your portal",
@@ -451,7 +451,7 @@ function HowItWorks() {
     {
       icon: FileCheck2,
       title: "Accountant review",
-      body: "A qualified tax accountant checks the complete package and emails you if anything needs clarification.",
+      body: "A tax accountant checks the complete package and emails you if anything needs clarification.",
     },
     {
       icon: PenTool,

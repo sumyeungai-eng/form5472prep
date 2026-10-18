@@ -70,7 +70,7 @@ Then compare the EIN confirmation, prior-year return, state record, bank profile
 5. **Mark an address change when the form requires it.** If the change occurs after filing, the IRS instructs businesses to use Form 8822-B where applicable.
 6. **Keep delivery records.** Retain the signed package and IRS fax or mailing evidence at an address the owner can access.
 
-Form5472 Prep checks identity and address consistency, prepares the filing and statements, arranges accountant review, and returns a timestamped IRS fax receipt.
+Form5472 Prep checks identity and address consistency, prepares the filing and statements, arranges review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and returns a timestamped IRS fax receipt.
 
 ## Frequently asked questions
 

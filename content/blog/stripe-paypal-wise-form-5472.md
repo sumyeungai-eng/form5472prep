@@ -124,7 +124,7 @@ Whether the foreign owner separately owes U.S. income tax or must file Form 1040
 
 ## How can Form5472 Prep help with mixed platform activity?
 
-Form5472 Prep is the answer when the hard part is turning noisy platform records into a clean owner and related-party schedule. We prepare Form 5472, the pro forma Form 1120, and the Part V statement; a qualified tax accountant reviews the package; and we fax it to the IRS Ogden PIN Unit at **855-887-7737** with a timestamped receipt. The IRS instructions list that fax number for foreign-owned U.S. disregarded entities ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)).
+Form5472 Prep is the answer when the hard part is turning noisy platform records into a clean owner and related-party schedule. We prepare Form 5472, the pro forma Form 1120, and the Part V statement; the package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN); and we fax it to the IRS Ogden PIN Unit at **855-887-7737** with a timestamped receipt. The IRS instructions list that fax number for foreign-owned U.S. disregarded entities ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)).
 
 The Standard package is **{{price.standard}}** and ready in 5-7 business days. Express is **{{price.express}}** and ready for you to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. IRS fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein).
 

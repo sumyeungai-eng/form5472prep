@@ -68,7 +68,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               <Logo />
               <p className="max-w-sm leading-relaxed">
                 Done-for-you Form 5472 + pro forma 1120 filing for foreign-owned US LLCs.
-                Every filing is reviewed by a qualified accountant before it is submitted.
+                Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.
                 We prepare and submit the forms from the information you give us; we do not
                 provide personalised tax planning. You are responsible for the accuracy of what
                 you submit.

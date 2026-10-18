@@ -143,7 +143,7 @@ Note that the March buffer also gives you time to discover that a prior year was
 
 ## Meeting the deadline without doing the work
 
-[Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning a timestamped provider transmission receipt. The receipt is useful transmission evidence; it is not an IRS acceptance notice. For late years we include a reasonable cause cover letter.
+[Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes it to the IRS Ogden PIN Unit, returning a timestamped provider transmission receipt. The receipt is useful transmission evidence; it is not an IRS acceptance notice. For late years we include a reasonable cause cover letter.
 
 **{{price.standard}}** standard, ready in **5-7 business days**. **{{price.express}}** express, ready for you to check and sign within **24 hours**. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included on both.
 

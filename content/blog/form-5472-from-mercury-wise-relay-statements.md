@@ -13,7 +13,7 @@ draft: false
 
 Most foreign-owned single-member LLCs bank with one of a handful of fintech-style providers built for non-resident founders, and Mercury, Wise and Relay are three of the most common. Their exports are clean compared with a legacy bank PDF — but the export itself does not sort transactions into "reportable" and "not reportable." You still have to do that.
 
-This post walks through the same reconciliation whichever bank you use: export the year, separate revenue from owner activity, categorize what's left, total it, and tie the totals back to the form. [We prepare and fax the complete package from {{price.standard}}](/start) once you have the figures, and a qualified tax accountant reviews the classification before it goes out.
+This post walks through the same reconciliation whichever bank you use: export the year, separate revenue from owner activity, categorize what's left, total it, and tie the totals back to the form. [We prepare and fax the complete package from {{price.standard}}](/start) once you have the figures, and the classification is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it goes out.
 
 ## Do transaction exports already tell you what's reportable?
 
@@ -120,7 +120,7 @@ Wise and similar multi-currency accounts show balances and transfers in more tha
 
 Once your categories and totals reconcile the way the worked example above does, the remaining work is drafting the Part V statement, completing the pro forma Form 1120 cover, and filing — the return cannot be e-filed, so it goes by fax to 855-887-7737 or by mail to the IRS in Ogden, Utah. For the cover page, see our [1120 pro forma instructions](/1120-pro-forma-instructions). See [where to file Form 5472](/form-5472-fax-number).
 
-Form5472 Prep turns your categorized totals into the complete package: Form 5472, the pro forma Form 1120, and a matching Part V statement, reviewed by a qualified tax accountant before it's filed. Standard is **{{price.standard}}** in 5–7 business days; Express is **{{price.express}}**, ready to sign within 24 hours; each additional past year is **+{{price.additionalYear}}**; fax delivery is included. [Start your filing](/start) with the totals you've built.
+Form5472 Prep turns your categorized totals into the complete package: Form 5472, the pro forma Form 1120, and a matching Part V statement, reviewed by a PTIN-holding tax accountant before it's filed. Standard is **{{price.standard}}** in 5–7 business days; Express is **{{price.express}}**, ready to sign within 24 hours; each additional past year is **+{{price.additionalYear}}**; fax delivery is included. [Start your filing](/start) with the totals you've built.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return accurately; you or your adviser remain responsible for income-tax positions.
 

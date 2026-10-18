@@ -39,7 +39,7 @@ describe("checkoutCustomText", () => {
 
     expect(message.length).toBeLessThan(1200);
     expect(message).toContain(
-      "Every filing is reviewed by a qualified accountant before it is submitted. You sign only after the review.",
+      "Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. You sign only after the review.",
     );
     expect(message).not.toMatch(/\[[^\]]+\]\([^)]+\)/);
   });

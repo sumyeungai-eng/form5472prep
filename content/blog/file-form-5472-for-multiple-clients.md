@@ -71,7 +71,7 @@ Each stage is finished when a specific artefact exists, not when someone remembe
 | List built | A row per client LLC carrying EIN, tax year and due date |
 | Intake complete | The client's written confirmation of entity, owner and transaction figures |
 | Preparation | The drafted Form 5472 and pro forma Form 1120 package in the filing record |
-| Accountant review | The filing showing review complete by a qualified tax accountant |
+| Accountant review | The filing showing review complete by a PTIN-holding tax accountant |
 | Signature | The signed PDF carrying the authorised signer's signature in every required box |
 | Submission | The provider fax receipt stored against that client's filing |
 | Extension instead of filing | The timestamped Form 7004 transmission record |
@@ -83,7 +83,7 @@ One qualification in that table matters more than the rest. A provider fax recei
 
 **The assumption:** about 10 minutes of partner hands-on time per client filing. That figure is our own operating estimate, published as the stated time on our [partner workflow page](/partners) — not a measured study, a survey finding or an industry statistic. Your firm's figure will differ with client responsiveness and record quality.
 
-Ten minutes covers the partner-side actions only: starting the filing, entering the client's confirmed information, sending the signature link, and checking the receipt. Preparation, accountant review and submission sit with us. Because a real season includes chasing and at least one client who answers in instalments, the table below also shows a planning figure of 20 minutes per filing — the published estimate doubled. Plan with the second column.
+Ten minutes covers the partner-side actions only: starting the filing, entering the client's confirmed information, sending the signature link, and checking the receipt. Preparation, review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and submission sit with us. Because a real season includes chasing and at least one client who answers in instalments, the table below also shows a planning figure of 20 minutes per filing — the published estimate doubled. Plan with the second column.
 
 | Client LLCs | At 10 minutes each | At 20 minutes each | Working days at 20 minutes |
 |---|---|---|---|
@@ -97,13 +97,13 @@ Two conclusions follow. A fifty-client book is under three working days of partn
 
 ## What does Form5472 Prep do on each filing?
 
-We prepare the package, arrange the review and send it. For each client LLC we prepare the Form 5472 and pro forma Form 1120, have a qualified tax accountant review it, collect the authorised signer's signature through the secure link, fax the signed package to the IRS Ogden PIN Unit, and store the provider receipt against that filing.
+We prepare the package, arrange the review and send it. For each client LLC we prepare the Form 5472 and pro forma Form 1120, have it reviewed by a tax accountant, collect the authorised signer's signature through the secure link, fax the signed package to the IRS Ogden PIN Unit, and store the provider receipt against that filing.
 
 Pricing is identical to the direct-customer price, so there is no partner rate to explain: **{{price.standard}} Standard**, ready in 5–7 business days, **{{price.express}} Express**, ready to sign within 24 hours, and **+{{price.additionalYear}} per additional past tax year** on either tier. IRS fax delivery is included, there is no platform fee and no subscription, and each filing is paid individually at checkout. The filing work and accountant review are identical on both tiers; only speed differs. Volume pricing and consolidated invoicing are available on request through support@form5472prep.com.
 
 Your own client fee is your firm's commercial decision. We pay the partner nothing, so any margin is the difference between what your firm charges and what the filing costs.
 
-We are not a CPA firm and we do not give tax advice. We prepare and submit the information return, with a qualified tax accountant reviewing each package.
+We are not a CPA firm and we do not give tax advice. We prepare and submit the information return, with a tax accountant reviewing each package.
 
 Approved partners sign in through a secure email link at [the partner sign-in page](/partner/sign-in). If your firm has not applied, the [partner application](/partners) takes a few minutes and accounts are approved manually, typically in about one business day.
 

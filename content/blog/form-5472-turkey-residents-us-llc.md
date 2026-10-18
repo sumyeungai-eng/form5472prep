@@ -99,7 +99,7 @@ For a 2025 calendar-year LLC the return is generally due **15 April 2026**, with
 
 The Turkish specifics — a treaty that is real but irrelevant here, a vergi kimlik numarası in the FTIN box, lira conversion, a Turkish company as a possible second related party — are routine once seen.
 
-Form5472 Prep prepares the complete package: Form 5472 with the FTIN and reference ID handled correctly, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews each one, we fax it to the IRS Ogden PIN Unit, and you get the timestamped confirmation receipt back. Past years include a reasonable cause cover letter.
+Form5472 Prep prepares the complete package: Form 5472 with the FTIN and reference ID handled correctly, the pro forma Form 1120, and the Part V statement. Each one is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), we fax it to the IRS Ogden PIN Unit, and you get the timestamped confirmation receipt back. Past years include a reasonable cause cover letter.
 
 **{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included, so you never send an international fax from Türkiye.
 

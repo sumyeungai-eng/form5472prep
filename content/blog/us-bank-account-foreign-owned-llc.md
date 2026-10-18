@@ -135,7 +135,7 @@ The initial failure-to-file penalty is **$25,000 per form per year**, and a subs
 
 ## How can Form5472 Prep turn bank records into the filing?
 
-Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement from the LLC’s related-party records. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt.
+Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement from the LLC’s related-party records. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS Ogden PIN Unit with a timestamped receipt.
 
 Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. If the missing prerequisite is the federal number, EIN service is **{{price.ein}}** at [/ein](/ein).
 

@@ -52,7 +52,7 @@ export const EIN_PRICE_CENTS = 14900;
 export const ITIN_PRICE_CENTS = 34900;
 
 const SHARED_FEATURES = [
-  "Reviewed by a qualified tax accountant before submission",
+  "Reviewed by a PTIN-holding tax accountant before submission",
   "Form 5472 + pro forma 1120 prepared",
   "IRS Ogden fax delivery + timestamped receipt",
   "Filing confirmation",

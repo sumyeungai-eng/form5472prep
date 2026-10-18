@@ -114,7 +114,7 @@ If a foreign owner is late, solve both systems. File the missing Texas report th
 
 ## How does Form5472 Prep fit as the answer?
 
-Form5472 Prep handles the federal package for foreign-owned Texas LLCs. We prepare Form 5472, the pro forma Form 1120 and the Part V statement, then have the package reviewed by a qualified tax accountant.
+Form5472 Prep handles the federal package for foreign-owned Texas LLCs. We prepare Form 5472, the pro forma Form 1120 and the Part V statement, then have the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN).
 
 After signature, we fax the package to the IRS Ogden PIN Unit at 855-887-7737 and return the timestamped receipt. Standard service is {{price.standard}} and takes 5-7 business days. Express service is {{price.express}} and is ready to check and sign within 24 hours. Each additional past tax year is +{{price.additionalYear}}. Fax delivery is included.
 

@@ -109,7 +109,7 @@ The [multiple-related-parties guide](/blog/multiple-related-parties-form-5472) e
 
 ## How does Form5472 Prep help with a foreign corporate owner?
 
-Form5472 Prep prepares Form 5472, the pro forma Form 1120 and the Part V statement for foreign-owned U.S. disregarded entities, including cases where the owner is a foreign company. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
+Form5472 Prep prepares Form 5472, the pro forma Form 1120 and the Part V statement for foreign-owned U.S. disregarded entities, including cases where the owner is a foreign company. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
 Standard service is **{{price.standard}}** in 5-7 business days, Express is **{{price.express}}**, ready to sign within 24 hours, each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein). We are not a CPA firm and do not give tax advice, so transfer pricing, treaty, corporate-election and foreign-parent tax questions should go to your adviser.
 

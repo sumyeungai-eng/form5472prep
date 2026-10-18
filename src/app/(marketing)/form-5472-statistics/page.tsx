@@ -321,7 +321,7 @@ export default function Form5472StatisticsPage() {
           <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">Need Form 5472 filed?</h2>
           <p className="mx-auto mt-3 max-w-xl text-slate-600">
             We prepare Form 5472 with the pro forma Form 1120 for foreign-owned US LLCs. Every filing is reviewed by
-            a qualified accountant before it is submitted.
+            a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <Link href={SERVICES_HUB_PATH} className="group">

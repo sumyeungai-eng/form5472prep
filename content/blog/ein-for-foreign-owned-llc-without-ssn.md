@@ -117,7 +117,7 @@ The SS-4 route is free and workable if you are comfortable completing an IRS for
 
 [Form5472 Prep](/ein) obtains the EIN for foreign-owned LLCs for **{{price.ein}}**: we prepare Form SS-4 correctly for a foreign-owned disregarded entity, submit it, deal with the IRS on your behalf, and deliver the EIN — typically in 1-5 business days. Where an ITIN is genuinely needed, identity documents are certified by an IRS-authorized Certifying Acceptance Agent, so no original passport ever has to be mailed.
 
-If you also need the annual filing, that is our main service: Form 5472 and the pro forma Form 1120 prepared, reviewed by a qualified tax accountant, and faxed to the IRS Ogden PIN Unit — **{{price.standard}}** standard (5-7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year.
+If you also need the annual filing, that is our main service: Form 5472 and the pro forma Form 1120 prepared, reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxed to the IRS Ogden PIN Unit — **{{price.standard}}** standard (5-7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the forms accurately.
 

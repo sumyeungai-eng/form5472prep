@@ -101,7 +101,7 @@ export default async function StartPage() {
             <svg className="h-3.5 w-3.5 text-emerald-500 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Every order is reviewed by a qualified tax accountant before submission to the IRS.
+            Every order is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before submission to the IRS.
           </p>
         </>
       )}

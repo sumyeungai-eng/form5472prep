@@ -132,7 +132,7 @@ export default function ServicePageRoute({ params }: { params: { slug: string } 
               </Link>
             </div>
             <p className="mt-6 text-xs text-slate-400">
-              Every filing is reviewed by a qualified accountant before it is submitted.
+              Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.
             </p>
             {/* The page's one image, after H1 -> intro -> CTA so on phones the
                 order is text first. Fixed 16:9 box (width/height set) so it

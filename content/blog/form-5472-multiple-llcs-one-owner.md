@@ -103,7 +103,7 @@ Keep a master control sheet, but do not merge the books. Each LLC should retain 
 
 ## Filing support for multiple entities
 
-Form5472 Prep can prepare a separate standard information-return package for each qualifying foreign-owned US disregarded LLC. The package includes the pro forma Form 1120, applicable Form 5472, supporting statement, accountant review, IRS submission, and delivery receipt.
+Form5472 Prep can prepare a separate standard information-return package for each qualifying foreign-owned US disregarded LLC. The package includes the pro forma Form 1120, applicable Form 5472, supporting statement, IRS submission, and delivery receipt, and it is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.
 
 [Start the first LLC's filing](/start), then keep the other entity records separated by exact legal name and EIN. Tiered or series structures should receive an international tax classification review before preparation.
 

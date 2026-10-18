@@ -154,7 +154,7 @@ const TOOL = {
 // timestamped receipt. Reused verbatim where a page walks through the process.
 const PROCESS_STEPS = `1. **Questionnaire.** You answer guided questions about the LLC, the foreign owner and the year's money movements. It takes about 15 minutes.
 2. **Package generated.** After payment we generate the cover letter, pro forma Form 1120, Form 5472 and Part V supporting statement as one PDF.
-3. **Accountant review.** A qualified accountant checks the package against your answers. If something needs clarifying, we message you on your filing page.
+3. **Accountant review.** A tax accountant checks the package against your answers. If something needs clarifying, we message you on your filing page.
 4. **Online signature.** Signing opens only after the review is approved. You sign once in your browser and the signature is placed in each required box.
 5. **Fax to the IRS.** We fax the signed package to the IRS Ogden PIN Unit at ${IRS_FAX}.
 6. **Fax receipt.** You get the timestamped transmission receipt on your filing page. It is proof of what was sent and when, not an IRS acceptance notice.`;
@@ -173,12 +173,12 @@ export const SERVICE_PAGES: ServicePage[] = [
     lastModified: PAGES_REWRITTEN,
     title: "Form 5472 Filing Service, Faxed to the IRS | Form5472 Prep",
     metaDescription:
-      "Form 5472 filing service for foreign-owned US LLCs: Form 5472 and pro forma 1120 prepared, reviewed by a qualified accountant and faxed to the IRS.",
+      "Form 5472 filing service for foreign-owned US LLCs: Form 5472 and pro forma 1120 prepared, reviewed by a PTIN-holding tax accountant and faxed to the IRS.",
     longDescription:
-      "Form5472 Prep's Form 5472 and pro forma 1120 filing service for foreign-owned US single-member LLCs (disregarded entities): a 15-minute online questionnaire, a package generated from your answers, review by a qualified accountant, online signature, fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) and a timestamped fax receipt. Flat fee per filing year.",
+      "Form5472 Prep's Form 5472 and pro forma 1120 filing service for foreign-owned US single-member LLCs (disregarded entities): a 15-minute online questionnaire, a package generated from your answers, review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), online signature, fax delivery to the IRS Ogden PIN Unit (+1-855-887-7737) and a timestamped fax receipt. Flat fee per filing year.",
     h1: "Form 5472 Filing Service for Foreign-Owned US LLCs",
     shortBlurb: "This year's Form 5472 and pro forma 1120, prepared, reviewed and faxed in one order.",
-    intro: `Our Form 5472 filing service is for the foreign owner of a US single-member LLC who needs this year's Form 5472 and pro forma 1120 filed. **Form5472 Prep turns about 15 minutes of your answers into the complete IRS package, has a qualified accountant review it, collects your online signature, faxes it to the IRS Ogden PIN Unit and stores the timestamped fax receipt.**
+    intro: `Our Form 5472 filing service is for the foreign owner of a US single-member LLC who needs this year's Form 5472 and pro forma 1120 filed. **Form5472 Prep turns about 15 minutes of your answers into the complete IRS package, has a PTIN-holding tax accountant review it, collects your online signature, faxes it to the IRS Ogden PIN Unit and stores the timestamped fax receipt.**
 
 Because the two forms travel together, it is a Form 1120 and 5472 filing service in one order. It is a filing service, not tax advice: the forms are built from the information you give us.`,
     cta: startCta("svc-form-5472-filing-service"),
@@ -191,14 +191,14 @@ Because the two forms travel together, it is a Form 1120 and 5472 filing service
 - The pro forma Form 1120 cover, marked "Foreign-owned U.S. DE" as the instructions require
 - A Part V supporting statement describing the year's contributions, distributions and other Part V transactions
 - A cover letter, plus a reasonable-cause statement for each late year
-- Review by a qualified accountant before you sign
+- Review by a tax accountant before you sign
 - Fax delivery to the IRS Ogden PIN Unit
 - The timestamped fax receipt, stored on your filing page
 - A reminder in the second week of January for next year's filing`,
       },
       {
         heading: "How does the Form 1120 and 5472 filing service work, step by step?",
-        body: `The service has six steps: you answer about 15 minutes of questions, we generate the package, a qualified accountant reviews it, you sign online, we fax it to the IRS Ogden PIN Unit, and you get the timestamped fax receipt.
+        body: `The service has six steps: you answer about 15 minutes of questions, we generate the package, a tax accountant reviews it, you sign online, we fax it to the IRS Ogden PIN Unit, and you get the timestamped fax receipt.
 
 ${PROCESS_STEPS}
 
@@ -248,7 +248,7 @@ The sample LLC above would pay ${STD} on Standard. If it had also missed the yea
       },
       {
         q: "Who reviews my filing?",
-        a: "Every filing is reviewed by a qualified accountant before it is submitted. Signing opens only after the review is approved, so you never sign an unchecked package.",
+        a: "Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. Signing opens only after the review is approved, so you never sign an unchecked package.",
       },
     ],
     related: [], // filled below from slugs + tools
@@ -283,7 +283,7 @@ The sample LLC above would pay ${STD} on Standard. If it had also missed the yea
     metaDescription:
       "Pro forma 1120 filing service for non-resident owners of US single-member LLCs: the 1120 cover and Form 5472 prepared, reviewed and faxed to the IRS.",
     longDescription:
-      "Form5472 Prep's pro forma Form 1120 preparation for non-resident owners of foreign-owned US single-member LLCs: the Form 1120 page-1 cover (name, address, EIN, item E boxes, marked \"Foreign-owned U.S. DE\") prepared together with Form 5472 and the Part V statement, reviewed by a qualified accountant, signed online and faxed to the IRS Ogden PIN Unit with a timestamped receipt.",
+      "Form5472 Prep's pro forma Form 1120 preparation for non-resident owners of foreign-owned US single-member LLCs: the Form 1120 page-1 cover (name, address, EIN, item E boxes, marked \"Foreign-owned U.S. DE\") prepared together with Form 5472 and the Part V statement, reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), signed online and faxed to the IRS Ogden PIN Unit with a timestamped receipt.",
     h1: "Pro Forma 1120 Filing Service for Non-Resident LLC Owners",
     shortBlurb: "The Form 1120 cover your Form 5472 is attached to, box by box, filed with it as one set.",
     intro: `Our pro forma 1120 filing service is for a foreign-owned US single-member LLC that needs the Form 1120 cover its Form 5472 is attached to. **Form5472 Prep completes the few page-1 items the IRS asks for, writes "Foreign-owned U.S. DE" across the top, attaches Form 5472 and the Part V statement, and faxes the set to the IRS once you have signed.**
@@ -313,7 +313,7 @@ Form 5472 and the Part V statement are prepared from the same answers, so the EI
       },
       {
         heading: "Which mistakes does the accountant review catch?",
-        body: `The accountant review checks the small errors a short cover makes easy to miss, such as the "Foreign-owned U.S. DE" marking, blank income lines, matching EINs and the year-end total assets on Form 5472.
+        body: `The review by a PTIN-holding tax accountant checks the small errors a short cover makes easy to miss, such as the "Foreign-owned U.S. DE" marking, blank income lines, matching EINs and the year-end total assets on Form 5472.
 
 The checks include:
 
@@ -412,7 +412,7 @@ See the [pricing page](/pricing) for everything each plan includes.`,
     metaDescription:
       "Late Form 5472 filing service for missed years: a package and reasonable-cause statement for each year, reviewed and faxed to the IRS Ogden PIN Unit.",
     longDescription:
-      "Form5472 Prep's delinquent Form 5472 filing service for foreign-owned US single-member LLCs: one Form 5472 and pro forma 1120 package per missed year, a reasonable-cause statement for each late year under Treas. Reg. §1.6038A-4(b), a DIIRSP cover letter, qualified-accountant review, and fax delivery to the IRS Ogden PIN Unit with a timestamped receipt for each package. No promise of penalty relief.",
+      "Form5472 Prep's delinquent Form 5472 filing service for foreign-owned US single-member LLCs: one Form 5472 and pro forma 1120 package per missed year, a reasonable-cause statement for each late year under Treas. Reg. §1.6038A-4(b), a DIIRSP cover letter, PTIN-holding tax accountant review, and fax delivery to the IRS Ogden PIN Unit with a timestamped receipt for each package. No promise of penalty relief.",
     h1: "Late Form 5472 Filing Service for Missed Years",
     shortBlurb: "Catch-up filings for one or more missed years, with a reasonable-cause statement for each.",
     intro: `Our late Form 5472 filing service is for foreign owners who missed one or more years of Form 5472 and want every missing year on record. **Form5472 Prep prepares a separate Form 5472 and pro forma 1120 for each missed year, writes a reasonable-cause statement for each from your facts, and faxes every package to the IRS with its own receipt.**
@@ -430,12 +430,12 @@ If you already have an IRS notice, that is a different situation. Answer the not
       },
       {
         heading: "What does the late Form 5472 filing service include?",
-        body: `For each missed year we prepare a Form 5472 and pro forma 1120 package with that year's figures and a reasonable-cause statement, have a qualified accountant review it, and fax it to the IRS Ogden PIN Unit with a timestamped receipt.
+        body: `For each missed year we prepare a Form 5472 and pro forma 1120 package with that year's figures and a reasonable-cause statement, have a PTIN-holding tax accountant review it, and fax it to the IRS Ogden PIN Unit with a timestamped receipt.
 
 - One Form 5472 and pro forma 1120 package for each missed year, with that year's figures
 - A reasonable-cause statement for each late year, written from your answers about why the filing was missed
 - A cover letter for the delinquent submission
-- Review of every year's package by a qualified accountant before you sign
+- Review of every year's package by a tax accountant before you sign
 - Fax delivery of each package to the IRS Ogden PIN Unit, with a timestamped receipt for each
 
 For each year we ask for the money that moved between you and the LLC, loans, related-party payments and the year-end total assets. If amounts were in another currency, the [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) table converts them to US dollars.`,
@@ -540,7 +540,7 @@ Each late year's price includes its own reasonable-cause statement. See the [pri
     metaDescription:
       "Foreign owned LLC tax filing service for non-resident owners of single-member US LLCs: Form 5472 and pro forma 1120 prepared, reviewed and faxed.",
     longDescription:
-      "Federal tax filing service from Form5472 Prep for non-resident owners of foreign-owned US single-member LLCs: Form 5472 with the pro forma Form 1120 required by Treas. Reg. §301.7701-2(c)(2)(vi) and §1.6038A-1, prepared from a questionnaire, reviewed by a qualified accountant and faxed to the IRS Ogden PIN Unit. Scope stated plainly: no Form 1065, Form 1040-NR, state returns or bookkeeping.",
+      "Federal tax filing service from Form5472 Prep for non-resident owners of foreign-owned US single-member LLCs: Form 5472 with the pro forma Form 1120 required by Treas. Reg. §301.7701-2(c)(2)(vi) and §1.6038A-1, prepared from a questionnaire, reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) and faxed to the IRS Ogden PIN Unit. Scope stated plainly: no Form 1065, Form 1040-NR, state returns or bookkeeping.",
     h1: "Foreign-Owned LLC Tax Filing Service for Non-Resident Owners",
     shortBlurb: "Which US filings a non-resident's LLC has, and the federal one we prepare and fax.",
     intro: `Our foreign-owned LLC tax filing service is for non-resident owners who want to know which US filings their single-member LLC has, and want the federal one done for them. **For a disregarded LLC with one foreign owner, the yearly LLC-level federal filing is generally Form 5472 attached to a pro forma Form 1120; Form5472 Prep prepares, reviews and faxes that filing and says plainly what it does not cover.**
@@ -550,12 +550,12 @@ The owner's own return and the state's filings are separate obligations, set out
     sections: [
       {
         heading: "What does the foreign-owned LLC tax filing service cover?",
-        body: `The service covers the yearly federal information return for a US LLC that has one foreign owner and has not elected corporate tax treatment: Form 5472 with the pro forma Form 1120, prepared, reviewed by a qualified accountant and faxed to the IRS.
+        body: `The service covers the yearly federal information return for a US LLC that has one foreign owner and has not elected corporate tax treatment: Form 5472 with the pro forma Form 1120, prepared, reviewed by a PTIN-holding tax accountant and faxed to the IRS.
 
 - Form 5472, reporting the year's transactions between the LLC and you or other related parties
 - The pro forma Form 1120 that Form 5472 is attached to
 - A Part V supporting statement, and a reasonable-cause statement for each late year
-- Qualified-accountant review, online signing, fax to the IRS Ogden PIN Unit and the timestamped receipt`,
+- Tax-accountant review, online signing, fax to the IRS Ogden PIN Unit and the timestamped receipt`,
       },
       {
         heading: "Why does a non-resident's LLC file at all?",
@@ -671,7 +671,7 @@ A foreign-owned disregarded entity cannot e-file this package. The receipt recor
     sections: [
       {
         heading: "What does the Form 5472 fax filing service do?",
-        body: `The fax goes out only after a qualified accountant has reviewed the package and you have signed it. We send it to ${IRS_FAX}, email you when the fax provider reports delivery and keep the transmission receipt on your filing page to download at any time.
+        body: `The fax goes out only after a PTIN-holding tax accountant has reviewed the package and you have signed it. We send it to ${IRS_FAX}, email you when the fax provider reports delivery and keep the transmission receipt on your filing page to download at any time.
 
 You do not need a fax machine, a fax account or an IRS account, and nothing has to be posted from abroad.`,
       },
@@ -703,7 +703,7 @@ You can also fax it yourself. You need a fax service that can send to a US toll-
         body: `A fax filing is evidence of transmission only: it cannot confirm IRS acceptance, fix errors in the figures or make a late return timely, and it does not cover other returns.
 
 - **It cannot confirm IRS acceptance.** The receipt shows transmission. The IRS processes the return separately.
-- **It cannot fix the content.** A faxed package is only as good as its figures. That is why every filing is reviewed by a qualified accountant before it is submitted.
+- **It cannot fix the content.** A faxed package is only as good as its figures. That is why every filing is reviewed by a tax accountant before it is submitted.
 - **It cannot make a late return timely.** The timestamp records the actual arrival. For missed years, see the [late Form 5472 filing service](/services/late-form-5472-filing-service).
 - **It does not cover other returns.** The Ogden PIN Unit line is for this package. We do not send Form 1065, Form 1040-NR or state filings.`,
       },
@@ -738,7 +738,7 @@ Each past year is a separate package, so it is faxed separately and gets its own
       },
       {
         q: "When do you send the fax?",
-        a: "After a qualified accountant has reviewed the package and you have signed it online. Nothing is sent to the IRS until you sign. We email you when the fax is delivered.",
+        a: "After a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) has reviewed the package and you have signed it online. Nothing is sent to the IRS until you sign. We email you when the fax is delivered.",
       },
     ],
     related: [],
@@ -773,7 +773,7 @@ Each past year is a separate package, so it is faxed separately and gets its own
     metaDescription:
       "White label Form 5472 filing for formation agents, registered agents and accounting firms: client emails under your brand, replies to you, one dashboard.",
     longDescription:
-      "White-label Form 5472 filing for company formation agents, registered agents, accounting firms and consultants: approved partners with white-label delivery enabled have client filing emails sent under the partner's brand name with replies to the partner's address, while Form5472 Prep prepares, has a qualified accountant review, and faxes each client's Form 5472 and pro forma 1120 to the IRS. One partner dashboard tracks every filing.",
+      "White-label Form 5472 filing for company formation agents, registered agents, accounting firms and consultants: approved partners with white-label delivery enabled have client filing emails sent under the partner's brand name with replies to the partner's address, while Form5472 Prep prepares, has a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) review, and faxes each client's Form 5472 and pro forma 1120 to the IRS. One partner dashboard tracks every filing.",
     h1: "White Label Form 5472 Filing for Formation and Registered Agents",
     shortBlurb: "Client filing emails under your brand name, replies to you; preparation, review and fax behind it.",
     intro: `Our white label Form 5472 filing option is for formation agents, registered agents and accounting firms that want to offer Form 5472 filing to their own clients under their own brand. **For approved partners with white-label delivery enabled, client emails go out under the partner's brand name and replies go to the partner's address, while Form5472 Prep prepares, reviews and faxes each filing.**
@@ -789,7 +789,7 @@ White-label delivery is switched on per partner, on request, after the partner a
 2. **Ask for white-label delivery.** Say so on the application or after approval. We enable it and set your brand name and reply-to address.
 3. **Start client filings.** Each client LLC gets its own filing from your partner dashboard, using the same questionnaire as direct customers.
 4. **Send the signing link.** The client receives the secure review-and-sign link by email under your brand name.
-5. **We review and fax.** A qualified accountant reviews each package. After the client signs, we fax it to the IRS Ogden PIN Unit.
+5. **We review and fax.** A PTIN-holding tax accountant reviews each package. After the client signs, we fax it to the IRS Ogden PIN Unit.
 6. **Track it.** Your dashboard shows preparation, signature and submission status, and the fax receipt for every client.`,
       },
       {
@@ -919,7 +919,7 @@ Reportable transactions include amounts paid or received in connection with form
       },
       {
         heading: "What does Form 5472 filing for dormant LLC owners involve?",
-        body: `A year with little activity still needs the full filing package, which a qualified accountant reviews, you sign online and we fax to the IRS Ogden PIN Unit with a timestamped receipt.
+        body: `A year with little activity still needs the full filing package, which a PTIN-holding tax accountant reviews, you sign online and we fax to the IRS Ogden PIN Unit with a timestamped receipt.
 
 - the pro forma Form 1120 cover marked "Foreign-owned U.S. DE",
 - Form 5472 with the owner's details and the transactions that did happen, such as a fee you paid for the LLC,
@@ -1023,7 +1023,7 @@ A dormant LLC that also skipped earlier years can file them in the same order. S
     metaDescription:
       "Final Form 5472 for dissolved LLC owners: the short-year pro forma 1120 and Form 5472 with the final-return box checked, prepared and faxed to the IRS.",
     longDescription:
-      "Final-year Form 5472 and pro forma Form 1120 for a dissolved foreign-owned US LLC: a short tax year ending on dissolution, the item E final-return box checked, dissolution distributions reported, generally due the 15th day of the 4th month after dissolution (3rd month for a June short year beginning before 2026). Prepared by Form5472 Prep, reviewed by a qualified accountant and faxed to the IRS Ogden PIN Unit.",
+      "Final-year Form 5472 and pro forma Form 1120 for a dissolved foreign-owned US LLC: a short tax year ending on dissolution, the item E final-return box checked, dissolution distributions reported, generally due the 15th day of the 4th month after dissolution (3rd month for a June short year beginning before 2026). Prepared by Form5472 Prep, reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) and faxed to the IRS Ogden PIN Unit.",
     h1: "Final Form 5472 for Dissolved LLC Owners",
     shortBlurb: "The last Form 5472 and pro forma 1120 for the short year that ends on dissolution.",
     intro: `A final Form 5472 for dissolved LLC owners is the return that closes a foreign-owned US LLC's federal reporting: one Form 5472 and pro forma 1120 for the short year that ends on dissolution. **It is generally due by the 15th day of the 4th month after the LLC dissolved; Form5472 Prep checks the final-return box, reports what you took out on closing, and faxes the package to the IRS.**
@@ -1044,7 +1044,7 @@ We prepare:
 
 On closing, the LLC's remaining cash or property normally goes to you. That transfer is a distribution, and the Form 5472 instructions list amounts paid or received in connection with dissolution among the Part V transactions. Money you put in to pay closing costs is reportable too.
 
-The questionnaire asks for the dissolution date and marks the return as final. A qualified accountant reviews the package; you sign online; we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt.`,
+The questionnaire asks for the dissolution date and marks the return as final. A PTIN-holding tax accountant reviews the package; you sign online; we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt.`,
       },
       {
         heading: "When is the final Form 5472 due?",
@@ -1145,10 +1145,10 @@ If the sample LLC above had also missed the previous year, both would cost ${STD
     metaDescription:
       "Hire someone to file Form 5472 for your foreign-owned LLC: answer 15 minutes of questions and sign; we prepare, review and fax it to the IRS.",
     longDescription:
-      "Done-for-you Form 5472 and pro forma Form 1120 filing for owners of foreign-owned US single-member LLCs who would rather hire someone than file it themselves: the owner answers a 15-minute questionnaire, reviews and signs online; Form5472 Prep prepares the package, has a qualified accountant review it, faxes it to the IRS Ogden PIN Unit and stores the timestamped fax receipt. Flat fee per filing year.",
+      "Done-for-you Form 5472 and pro forma Form 1120 filing for owners of foreign-owned US single-member LLCs who would rather hire someone than file it themselves: the owner answers a 15-minute questionnaire, reviews and signs online; Form5472 Prep prepares the package, has a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) review it, faxes it to the IRS Ogden PIN Unit and stores the timestamped fax receipt. Flat fee per filing year.",
     h1: "Hire Someone to File Form 5472 for Your Foreign-Owned LLC",
     shortBlurb: "The handover in plain terms: what you give, what comes back, and the two things you still do.",
-    intro: `If you want to hire someone to file Form 5472, the handover is short and has a clear line down the middle. **You hand over the facts about your LLC and its money movements, then review and sign; Form5472 Prep prepares the Form 5472 and pro forma 1120, has a qualified accountant check them, faxes them to the IRS and keeps the receipt for you.**
+    intro: `If you want to hire someone to file Form 5472, the handover is short and has a clear line down the middle. **You hand over the facts about your LLC and its money movements, then review and sign; Form5472 Prep prepares the Form 5472 and pro forma 1120, has a PTIN-holding tax accountant check them, faxes them to the IRS and keeps the receipt for you.**
 
 Most owners spend about 15 minutes on their part, with no meeting to book.`,
     cta: startCta("svc-hire-someone-to-file-form-5472"),
@@ -1203,7 +1203,7 @@ Missed earlier years add ${ADD} each on either plan. For a calendar-year LLC the
       },
       {
         q: "How is this different from filing it myself?",
-        a: "The IRS forms are free and you can file them yourself. Hiring us adds preparation from plain-language questions, an accountant review before you sign, the IRS fax and a stored receipt.",
+        a: "The IRS forms are free and you can file them yourself. Hiring us adds preparation from plain-language questions, a review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before you sign, the IRS fax and a stored receipt.",
       },
     ],
     related: [],
@@ -1238,10 +1238,10 @@ Missed earlier years add ${ADD} each on either plan. For a calendar-year LLC the
     metaDescription:
       "Form 5472 preparer for foreign-owned US LLCs: what a preparer does for Form 5472 and the pro forma 1120, how to choose one, and how our review works.",
     longDescription:
-      "How to choose a Form 5472 preparer for a foreign-owned US single-member LLC: what the preparer does (sorting reportable transactions, completing Form 5472, the Part V statement and the pro forma Form 1120 marked \"Foreign-owned U.S. DE\", getting the package to the IRS by fax or mail), the four kinds of preparer, a checklist of questions, and how Form5472 Prep's qualified-accountant review works before the owner signs online.",
+      "How to choose a Form 5472 preparer for a foreign-owned US single-member LLC: what the preparer does (sorting reportable transactions, completing Form 5472, the Part V statement and the pro forma Form 1120 marked \"Foreign-owned U.S. DE\", getting the package to the IRS by fax or mail), the four kinds of preparer, a checklist of questions, and how Form5472 Prep's PTIN-holding tax accountant review works before the owner signs online.",
     h1: "A Form 5472 Preparer for Foreign-Owned US LLCs",
     shortBlurb: "How to choose who prepares your Form 5472: the four kinds of preparer and six questions to ask.",
-    intro: `A Form 5472 preparer turns what you know about your LLC's year into the two IRS forms a foreign-owned single-member LLC files, and the choice of preparer is what this page is about. **A preparer completes Form 5472 and the pro forma Form 1120 it is attached to, checks them and gets them to the IRS, while you review and sign; the Form 5472 preparation service at Form5472 Prep adds a qualified accountant review before you sign.**`,
+    intro: `A Form 5472 preparer turns what you know about your LLC's year into the two IRS forms a foreign-owned single-member LLC files, and the choice of preparer is what this page is about. **A preparer completes Form 5472 and the pro forma Form 1120 it is attached to, checks them and gets them to the IRS, while you review and sign; the Form 5472 preparation service at Form5472 Prep adds a PTIN-holding tax accountant review before you sign.**`,
     cta: startCta("svc-form-5472-preparer"),
     sections: [
       {
@@ -1276,7 +1276,7 @@ Missed earlier years add ${ADD} each on either plan. For a calendar-year LLC the
         heading: "How does our Form 5472 preparation service answer those questions?",
         body: `The Form 5472 preparation service at Form5472 Prep costs **${STD}** on Standard (ready in ${STANDARD_TURNAROUND}) or **${EXP}** on Express (ready to sign within ${EXPRESS_TURNAROUND}), pro forma 1120 included, plus ${ADD} per additional past year.
 
-Every filing is reviewed by a qualified accountant before it is submitted, and signing opens only after the review is approved. We fax the package to the IRS Ogden PIN Unit and keep the timestamped receipt on your filing page. See [pricing](/pricing).`,
+Every filing is reviewed by a tax accountant before it is submitted, and signing opens only after the review is approved. We fax the package to the IRS Ogden PIN Unit and keep the timestamped receipt on your filing page. See [pricing](/pricing).`,
       },
       {
         heading: "What can a Form 5472 preparer not do for you?",
@@ -1306,7 +1306,7 @@ Every filing is reviewed by a qualified accountant before it is submitted, and s
       },
     ],
     related: [],
-    serviceType: "Form 5472 and pro forma Form 1120 preparation with accountant review and IRS fax filing",
+    serviceType: "Form 5472 and pro forma Form 1120 preparation with PTIN-holding tax accountant review and IRS fax filing",
     showOffer: true,
     irsSources: [
       {
@@ -1348,7 +1348,7 @@ Every filing is reviewed by a qualified accountant before it is submitted, and s
     metaDescription:
       "Form 5472 for accountants, tax preparers and CPA firms: refer clients, or run their filings from a partner account while we prepare, review and fax.",
     longDescription:
-      "Form 5472 and pro forma Form 1120 filing for accountants, tax preparers, CPA firms and accounting firms that do not want to prepare foreign-owned LLC information returns in-house: refer the client to file directly, start and track client filings from a partner account, or enable white-label delivery so client emails carry the firm's brand. Form5472 Prep prepares each package, has a qualified accountant review it, collects the client's online signature and faxes it to the IRS Ogden PIN Unit with a timestamped receipt.",
+      "Form 5472 and pro forma Form 1120 filing for accountants, tax preparers, CPA firms and accounting firms that do not want to prepare foreign-owned LLC information returns in-house: refer the client to file directly, start and track client filings from a partner account, or enable white-label delivery so client emails carry the firm's brand. Form5472 Prep prepares each package, has a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) review it, collects the client's online signature and faxes it to the IRS Ogden PIN Unit with a timestamped receipt.",
     h1: "Form 5472 for Accountants, CPAs and Tax Preparers",
     shortBlurb: "For firms deciding between referring, a partner account and branded delivery.",
     intro: `Form 5472 for accountants is often small, seasonal work that does not fit the rest of the practice, and this page is for firms deciding how to hand it off. **You can pass the preparation to Form5472 Prep and keep the client: refer them to file directly, run their filings from a partner account, or offer the filing under your own brand while we prepare, review and fax each package.**
@@ -1361,7 +1361,7 @@ Form 5472 for CPAs works the same way: we prepare the package, you keep the clie
         body: `A foreign-owned single-member LLC files Form 5472 with a pro forma Form 1120 each year, and we take on the narrow but fiddly work of preparing, reviewing, signing, faxing and storing the receipt.
 
 - Preparing Form 5472, the pro forma 1120 and the Part V statement from the questionnaire answers
-- The accountant review before signing, including any follow-up questions
+- PTIN-holding tax accountant review before signing, including any follow-up questions
 - Collecting the client's online signature
 - Faxing the package to the IRS Ogden PIN Unit and storing the timestamped receipt
 - A January reminder for next year's filing`,
@@ -1441,7 +1441,7 @@ Other returns stay with your firm or the client: partnership returns, a full For
     metaDescription:
       "Form 5472 for bookkeepers of foreign-owned LLCs: the records to hand over, how the filing handoff works, and how to refer the owner to us.",
     longDescription:
-      "Form 5472 handoff for bookkeepers who keep the books for foreign-owned US single-member LLCs: the year's owner contributions, distributions, loans, owner-paid LLC costs and related-company amounts, totalled in US dollars, plus year-end total assets. The owner or a partner account starts the filing; Form5472 Prep prepares Form 5472 and the pro forma 1120, has a qualified accountant review them, collects the owner's online signature and faxes the package to the IRS.",
+      "Form 5472 handoff for bookkeepers who keep the books for foreign-owned US single-member LLCs: the year's owner contributions, distributions, loans, owner-paid LLC costs and related-company amounts, totalled in US dollars, plus year-end total assets. The owner or a partner account starts the filing; Form5472 Prep prepares Form 5472 and the pro forma 1120, has a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) review them, collects the owner's online signature and faxes the package to the IRS.",
     h1: "Form 5472 for Bookkeepers: Hand Off the Filing, Keep the Books",
     shortBlurb: "Which records to hand over for a client's Form 5472, and how the filing handoff works.",
     intro: `Form 5472 for bookkeepers starts in the ledger you already keep for a foreign-owned US LLC. **You already hold most of what its Form 5472 needs: the money that moved between the owner and the LLC, and what the LLC owned at year end. Hand those totals over and Form5472 Prep prepares, reviews and faxes the filing.**
@@ -1473,7 +1473,7 @@ Close the year early. For a calendar-year LLC the filing is due April 15, and th
 
 1. **You pull the totals.** Take the figures above from the books for the tax year.
 2. **The filing is started.** The owner starts it, or you start it from a partner account and either enter the totals or send the owner a secure intake link.
-3. **We prepare and review.** The package is generated and a qualified accountant checks it against the answers.
+3. **We prepare and review.** The package is generated and a PTIN-holding tax accountant checks it against the answers.
 4. **The owner signs.** The person authorized for the LLC reviews the package and signs online.
 5. **We fax it.** The package goes to the IRS Ogden PIN Unit and the timestamped receipt is stored on the filing page.`,
       },
@@ -1639,7 +1639,7 @@ export const SERVICES_HUB = {
   h1: "Form 5472 services by situation",
   // The capsule under the H1: what the filing is, what it costs and how long it
   // takes (prices from pricing.ts; the test caps it at 60 words).
-  intro: `Every Form5472 Prep service here is one filing: Form 5472 with a pro forma Form 1120 for a US LLC owned by one foreign person, at ${STD} (ready in ${STANDARD_TURNAROUND}) or ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}) per year. Every filing is reviewed by a qualified accountant, then faxed to the IRS with a timestamped receipt.`,
+  intro: `Every Form5472 Prep service here is one filing: Form 5472 with a pro forma Form 1120 for a US LLC owned by one foreign person, at ${STD} (ready in ${STANDARD_TURNAROUND}) or ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}) per year. Every filing is reviewed by a PTIN-holding tax accountant, then faxed to the IRS with a timestamped receipt.`,
 } as const;
 
 /** Eyebrow above each service page's H1: the page's group, so the 12 pages

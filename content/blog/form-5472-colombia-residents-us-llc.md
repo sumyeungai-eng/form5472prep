@@ -114,7 +114,7 @@ For a calendar-year LLC the due date is generally April 15; Form 7004 extends it
 
 No treaty, a NIT some owners have and others lack, COP conversion, sometimes a Colombian company as a second related party: routine once known, and exactly what makes a DIY filing substantially incomplete.
 
-We prepare the pro forma Form 1120, Form 5472 and the Part V statement; a qualified tax accountant reviews each package; we fax it to the IRS and send you the transmission receipt.
+We prepare the pro forma Form 1120, Form 5472 and the Part V statement; each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN); we fax it to the IRS and send you the transmission receipt.
 
 **{{price.standard}}** Standard, 5 to 7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included. For a breakdown of what filing costs, see [Form 5472 filing cost](/blog/form-5472-cost).
 

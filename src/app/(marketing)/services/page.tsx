@@ -173,7 +173,7 @@ export default function ServicesHubPage() {
         <div className="mx-auto max-w-3xl px-4 py-14 text-center sm:px-6">
           <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">Start your Form 5472 filing</h2>
           <p className="mx-auto mt-3 max-w-xl text-slate-600">
-            About 15 minutes of questions. Every filing is reviewed by a qualified accountant before it is
+            About 15 minutes of questions. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is
             submitted, then faxed to the IRS with a timestamped receipt.
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">

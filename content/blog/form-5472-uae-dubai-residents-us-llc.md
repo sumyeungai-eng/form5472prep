@@ -110,7 +110,7 @@ Sending an international fax from the UAE is a genuine friction point. Most Duba
 
 The UAE specifics — no treaty, no personal tax ID, AED conversion, a free-zone company as a second related party — are all routine once you have seen them before. They are also exactly the details that make a DIY filing come back as substantially incomplete.
 
-[Form5472 Prep](/) prepares the complete package — Form 5472 with the reference ID handled correctly, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt. Late years include a reasonable cause cover letter.
+[Form5472 Prep](/) prepares the complete package — Form 5472 with the reference ID handled correctly, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt. Late years include a reasonable cause cover letter.
 
 **{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready for you to check and sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included — you never have to send a fax from the UAE.
 

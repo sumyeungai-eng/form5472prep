@@ -118,14 +118,14 @@ export default function PartnersPage() {
             </h1>
             <p data-speakable className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
               Batch filings for every foreign-owned LLC you manage. You prepare each filing in
-              minutes, our tax accountant reviews, your client checks and signs with a secure link, and we fax
+              minutes, our PTIN-holding tax accountant reviews, your client checks and signs with a secure link, and we fax
               to the IRS Ogden PIN Unit — with a timestamped receipt for every one.
             </p>
             <ul className="mt-6 space-y-2">
               {[
                 "One dashboard for every client filing's live status",
                 "Clients sign with a one-click secure link — no paperwork chasing",
-                "Every package reviewed by a qualified tax accountant",
+                "Every package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN)",
                 "IRS fax receipt stored per filing as proof of submission",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm text-slate-300">
@@ -284,7 +284,7 @@ function PartnersStructuredData() {
         "Formation agencies, CPA firms, and registered agents managing foreign-owned US LLCs",
     },
     description:
-      "Batch IRS Form 5472 + pro forma 1120 filings for multiple client LLCs under a single partner account. Per-filing pricing from $149, client e-sign links, accountant review, and IRS fax delivery with receipts.",
+      "Batch IRS Form 5472 + pro forma 1120 filings for multiple client LLCs under a single partner account. Per-filing pricing from $149, client e-sign links, review by a PTIN-holding tax accountant, and IRS fax delivery with receipts.",
   };
 
   const faqSchema = {

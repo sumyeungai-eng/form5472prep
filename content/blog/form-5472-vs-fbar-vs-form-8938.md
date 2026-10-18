@@ -95,7 +95,7 @@ The Form 5472 deadline usually arrives first; our [deadline guide](/blog/form-54
 
 We prepare Form 5472 packages for foreign-owned US disregarded LLCs, and nothing else on this page.
 
-The package is Form 5472 with the pro forma Form 1120, the Part V statement where needed, review by a qualified tax accountant, and fax delivery to the Ogden PIN Unit with a timestamped receipt. Standard service is **{{price.standard}}** in 5–7 business days, Express **{{price.express}}** ready to sign within 24 hours, each additional past year **+{{price.additionalYear}}**. A fax receipt is transmission evidence, not IRS acceptance.
+The package is Form 5472 with the pro forma Form 1120 and the Part V statement where needed, reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) and faxed to the Ogden PIN Unit with a timestamped receipt. Standard service is **{{price.standard}}** in 5–7 business days, Express **{{price.express}}** ready to sign within 24 hours, each additional past year **+{{price.additionalYear}}**. A fax receipt is transmission evidence, not IRS acceptance.
 
 We are not a CPA firm and we do not give tax advice. **We do not prepare FBARs or Form 8938.** We will not tell you that you must file either, or that you need not: those are determinations about your own facts. Engage a CPA, enrolled agent or tax attorney who works with Bank Secrecy Act reporting and section 6038D disclosures.
 

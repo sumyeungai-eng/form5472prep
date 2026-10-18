@@ -35,7 +35,7 @@ You are selling coordination and accountability, not preparation. A scope table 
 | Identifying who must file | Flags the LLC as a foreign-owned US disregarded entity | Confirms the standard package fits | Confirms ownership is unchanged |
 | Collecting the facts | Gathers entity, owner and transaction details | Provides the structured intake | Supplies figures only they hold |
 | Preparing the package | Reviews the draft against what you know | Prepares Form 5472 and the pro forma Form 1120 | — |
-| Accountant review | — | Arranges review by a qualified tax accountant | — |
+| Accountant review | — | Arranges review by a PTIN-holding tax accountant | — |
 | Signature | Sends the secure sign link | Embeds the signature into the printable PDF | Signs — the LLC's authorised signer, not you |
 | Submission | Watches status in the dashboard | Sends the package to the IRS by fax | Keeps the completed copy |
 | Evidence | Files the fax receipt in the client record | Stores the receipt | — |
@@ -104,7 +104,7 @@ Exclusions are the part firms skip and the part that protects them. Leave out an
 
 **Do not advertise tax advice your firm is not qualified to give.** Copy that offers to "advise on your US tax position", or implies a credential your firm does not hold, is a professional and legal exposure regardless of how the work is actually performed. The IRS states that anyone who prepares a federal return for compensation must hold an issued [preparer tax identification number](https://www.irs.gov/tax-professionals/understanding-tax-return-preparer-credentials-and-qualifications), and that representation rights before the IRS differ by credential — unenrolled preparers have narrower rights than enrolled agents, CPAs and attorneys. If your intended role touches preparation for compensation or representation, confirm your position with your own adviser before publishing the page. Nothing here is advice on your licensing position.
 
-Our own posture, which you may quote: we are not a CPA firm and we do not give tax advice. We prepare and submit the information return, and a qualified tax accountant reviews every package.
+Our own posture, which you may quote: we are not a CPA firm and we do not give tax advice. We prepare and submit the information return, and every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN).
 
 ## How do you launch the offer?
 
@@ -141,7 +141,7 @@ No. A provider-reported fax result is transmission evidence that the package was
 
 ### Are you a CPA firm we can present as our tax adviser?
 
-No. We are not a CPA firm and we do not give tax advice. We prepare and submit the information return, and a qualified tax accountant reviews each package. Present us as a preparation and filing service.
+No. We are not a CPA firm and we do not give tax advice. We prepare and submit the information return, and a tax accountant reviews each package. Present us as a preparation and filing service.
 
 ### Can we charge whatever we like for the service?
 

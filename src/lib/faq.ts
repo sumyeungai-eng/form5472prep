@@ -118,7 +118,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "What's included for the price?",
     answer:
-      "The filing price includes Form 5472, pro forma Form 1120, the Part V supporting statement, review by a qualified tax accountant, a reasonable cause letter if you are late, IRS fax delivery, a timestamped receipt, filing confirmation, and a reminder before next year’s deadline.",
+      "The filing price includes Form 5472, pro forma Form 1120, the Part V supporting statement, review by a PTIN-holding tax accountant, a reasonable cause letter if you are late, IRS fax delivery, a timestamped receipt, filing confirmation, and a reminder before next year’s deadline.",
     source: "src/app/(marketing)/form-5472-filing/page.tsx:55",
   },
   {
@@ -150,9 +150,18 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "Are you a CPA firm? Who prepares my filing?",
     answer:
-      "Every filing is reviewed by a qualified accountant before it is submitted. We prepare and submit the forms from the information you give us; we do not provide personalised tax planning. Our role is preparation and submission, not tax-position advice.",
+      "Every filing is reviewed by a PTIN-holding tax accountant before it is submitted. We prepare and submit the forms from the information you give us; we do not provide personalised tax planning. Our role is preparation and submission, not tax-position advice.",
     learnMore: { href: "/about", label: "Read about Form5472 Prep" },
     source: "src/app/(marketing)/pricing/page.tsx:161; src/app/(marketing)/about/page.tsx:134; src/app/(marketing)/about/page.tsx:122",
+  },
+  {
+    id: "who-reviews-my-filing",
+    category: "before-you-order",
+    question: "Who reviews my Form 5472 filing?",
+    answer:
+      "Every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is faxed. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval. We are not a CPA firm and we do not give tax advice.",
+    learnMore: { href: "/about", label: "How we review filings" },
+    source: "docs/reviews/2026-10-17-ptin-credential-copy.md; src/app/(marketing)/about/content.ts:33",
   },
   {
     id: "what-is-pro-forma-form-1120",

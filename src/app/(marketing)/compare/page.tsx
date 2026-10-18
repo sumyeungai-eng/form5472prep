@@ -99,7 +99,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: "What does Form5472 Prep cost?",
-    a: `${STD} on Standard (${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}) per filing year, plus ${ADD} for each additional past year. IRS fax delivery and the accountant review are included on both plans.`,
+    a: `${STD} on Standard (${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}) per filing year, plus ${ADD} for each additional past year. IRS fax delivery and the review by a PTIN-holding tax accountant are included on both plans.`,
   },
 ];
 
@@ -308,7 +308,7 @@ export default function ComparePage() {
         <div className="mx-auto max-w-3xl px-4 py-14 text-center sm:px-6">
           <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">Start your Form 5472 filing</h2>
           <p className="mx-auto mt-3 max-w-xl text-slate-600">
-            About 15 minutes of questions. Every filing is reviewed by a qualified accountant before it is
+            About 15 minutes of questions. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is
             submitted, then faxed to the IRS with a timestamped receipt.
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">

@@ -101,7 +101,7 @@ Only item 5, and anything flagged by item 6, reaches the filing we prepare; our 
 
 ## Where does our work stop?
 
-At the Form 5472 package. We prepare Form 5472, the pro forma Form 1120 with "Foreign-owned U.S. DE" across page 1, and the Part V statement; a qualified tax accountant reviews each one; we fax it to the IRS at **855-887-7737** or mail it to Ogden, because it cannot be e-filed; and we send you the timestamped receipt — transmission evidence, not IRS acceptance.
+At the Form 5472 package. We prepare Form 5472, the pro forma Form 1120 with "Foreign-owned U.S. DE" across page 1, and the Part V statement; each one is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN); we fax it to the IRS at **855-887-7737** or mail it to Ogden, because it cannot be e-filed; and we send you the timestamped receipt — transmission evidence, not IRS acceptance.
 
 Standard is **{{price.standard}}** (5–7 business days), Express **{{price.express}}** (ready to sign within 24 hours), and each additional past tax year is **+{{price.additionalYear}}**, IRS fax delivery included. For a calendar-year LLC the regular due date is generally **15 April**; a timely Form 7004 extends it.
 

@@ -33,7 +33,7 @@ export function checkoutCustomText(): CustomText {
   return {
     submit: {
       message:
-        "Every filing is reviewed by a qualified accountant before it is submitted. You sign only after the review.",
+        "Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. You sign only after the review.",
     },
   };
 }

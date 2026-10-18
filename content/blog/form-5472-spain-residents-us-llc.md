@@ -62,7 +62,7 @@ Spanish tax treatment is also separate. A Spanish adviser should analyze whether
 5. **Sign and file by the deadline.** A calendar-year 2026 package is generally due April 15, 2027, or October 15, 2027 after a timely Form 7004 extension.
 6. **Keep the exact filed copy and delivery evidence.** Foreign-owned disregarded entities cannot e-file this package; the IRS instructions provide the dedicated fax and mailing routes.
 
-Form5472 Prep prepares the pro forma Form 1120, Form 5472, and supporting statement, arranges accountant review, faxes the signed package to the IRS, and returns a timestamped receipt.
+Form5472 Prep prepares the pro forma Form 1120, Form 5472, and supporting statement, arranges review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), faxes the signed package to the IRS, and returns a timestamped receipt.
 
 ## Frequently asked questions
 

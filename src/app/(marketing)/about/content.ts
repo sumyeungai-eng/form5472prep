@@ -30,7 +30,7 @@ import { formatPrice } from "@/lib/utils";
 export const ABOUT_LAST_REVIEWED = "2026-10-16";
 export const ABOUT_LAST_REVIEWED_LABEL = "16 October 2026";
 
-export const TRUST_LINE = "Every filing is reviewed by a qualified accountant before it is submitted.";
+export const TRUST_LINE = "Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.";
 export const SECURITY_EMAIL = "security@form5472prep.com";
 export const FOUNDED = String(organizationNode().foundingDate);
 
@@ -84,7 +84,7 @@ export const STEPS: Array<{ title: string; body: string }> = [
   },
   {
     title: "Accountant review",
-    body: "A qualified accountant checks the package against your answers. If something needs clarifying, we message you on your filing page.",
+    body: "A PTIN-holding tax accountant checks the package against your answers. If something needs clarifying, we message you on your filing page.",
   },
   {
     title: "You check and sign",
@@ -104,7 +104,7 @@ export const SECTIONS: AboutSection[] = [
   {
     id: "what-we-do",
     question: `What does ${SITE_NAME} do?`,
-    answer: `${SITE_NAME} prepares and files IRS Form 5472 with the pro forma Form 1120 for foreign-owned US single-member LLCs. We prepare the package from your answers, a qualified accountant reviews it, you sign it, and we fax it to the IRS Ogden PIN Unit with a timestamped transmission receipt.`,
+    answer: `${SITE_NAME} prepares and files IRS Form 5472 with the pro forma Form 1120 for foreign-owned US single-member LLCs. We prepare the package from your answers, a PTIN-holding tax accountant reviews it, you sign it, and we fax it to the IRS Ogden PIN Unit with a timestamped transmission receipt.`,
     points: [
       `Current-year and past-year filings, at ${ADDON} for each additional past tax year.`,
       "Late (DIIRSP) catch-up filings, with a reasonable cause statement.",
@@ -136,12 +136,12 @@ export const SECTIONS: AboutSection[] = [
   {
     id: "how-a-filing-works",
     question: "How does a filing work, step by step?",
-    answer: "A filing moves through six steps. You answer a guided questionnaire, we prepare the package, a qualified accountant reviews it, you check and sign it, we fax it to the IRS Ogden PIN Unit, and you receive the timestamped transmission receipt. Nothing is sent to the IRS until you have signed.",
+    answer: "A filing moves through six steps. You answer a guided questionnaire, we prepare the package, a tax accountant reviews it, you check and sign it, we fax it to the IRS Ogden PIN Unit, and you receive the timestamped transmission receipt. Nothing is sent to the IRS until you have signed.",
   },
   {
     id: "who-reviews",
     question: "Who reviews each filing?",
-    answer: `${TRUST_LINE} The accountant checks the prepared package against your answers, and signing opens only after that review is approved. The same qualified tax accountant who reviews customer packages informs the accuracy of the guides we publish.`,
+    answer: `${TRUST_LINE} The accountant checks the prepared package against your answers, and signing opens only after that review is approved. The same tax accountant who reviews customer packages informs the accuracy of the guides we publish.`,
   },
   {
     id: "pricing",

@@ -118,7 +118,7 @@ The arithmetic is **$5,000 + $800 + $14,000 = $19,800**. Ordinary customer recei
 
 ## How can Form5472 Prep handle the federal return?
 
-Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit with a timestamped confirmation receipt.
+Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS Ogden PIN Unit with a timestamped confirmation receipt.
 
 Standard is **{{price.standard}}**, ready in **5-7 business days**. Express is **{{price.express}}**, ready for you to check and sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**, and IRS fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein).
 

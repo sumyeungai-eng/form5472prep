@@ -4,7 +4,7 @@ import { SITE_URL } from "@/lib/seo";
 export const metadata = {
   title: "Terms of Service",
   description:
-    "Form5472 Prep Terms of Service for electronic signatures, refunds, accountant review, filing transmission, and customer responsibilities.",
+    "Form5472 Prep Terms of Service for electronic signatures, refunds, PTIN-holding tax accountant review, filing transmission, and customer responsibilities.",
   alternates: {
     canonical: "/terms",
     types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
@@ -25,7 +25,7 @@ export default function TermsPage() {
 
       <h2>2. Professional review and tax planning</h2>
       <p>
-        Every filing is reviewed by a qualified accountant before it is submitted. We prepare and submit the forms from the information you give us; we do not provide personalised tax planning.
+        Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. We prepare and submit the forms from the information you give us; we do not provide personalised tax planning.
       </p>
 
       <h2>3. Electronic signatures and communications</h2>

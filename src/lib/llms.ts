@@ -68,7 +68,7 @@ const PENALTY = formatPrice(PENALTY_PER_FORM_CENTS);
 const CONTINUATION = formatPrice(CONTINUATION_PER_PERIOD_CENTS);
 const MONEY_BACK = "100% money-back guarantee if we fail to submit the filing to the IRS.";
 
-export const ENTITY_SUMMARY = `Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition (${EIN_PRICE}) and ITIN acquisition (${ITIN_PRICE}) for non-residents — identity documents for ITIN applications are certified by an IRS-authorized Certifying Acceptance Agent (CAA), so eligible applicants never need to mail their original passport. Form5472 Prep prepares all required IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit. Two pricing tiers that differ by turnaround speed: Standard ${STD} (ready in ${STANDARD_TURNAROUND}) and Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADDON} per additional past tax year on either tier. IRS fax delivery is included on both. The filing itself, the accountant review and the package contents are identical on both tiers; Express is faster and adds priority email support. Every package is reviewed by a qualified tax accountant before submission. ${MONEY_BACK}`;
+export const ENTITY_SUMMARY = `Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition (${EIN_PRICE}) and ITIN acquisition (${ITIN_PRICE}) for non-residents — identity documents for ITIN applications are certified by an IRS-authorized Certifying Acceptance Agent (CAA), so eligible applicants never need to mail their original passport. Form5472 Prep prepares all required IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit. Two pricing tiers that differ by turnaround speed: Standard ${STD} (ready in ${STANDARD_TURNAROUND}) and Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADDON} per additional past tax year on either tier. IRS fax delivery is included on both. The filing itself, the accountant review and the package contents are identical on both tiers; Express is faster and adds priority email support. Every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before submission. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval. Form5472 Prep is not a CPA firm. ${MONEY_BACK}`;
 
 const WHO_THIS_IS_FOR = `## Who this is for
 
@@ -84,7 +84,7 @@ const WHAT_WE_DO = `## What we do
 - Calculate Form 5472 line 1f including Part V capital contributions and distributions per IRS rules for foreign-owned US disregarded entities.
 - Generate a Part V supporting statement itemizing reportable transactions.
 - For late filings, generate a DIIRSP cover letter and a reasonable-cause statement for each late year under Treas. Reg. §1.6038A-4(b).
-- Every package is reviewed by a qualified tax accountant on our team before it is faxed to the IRS.
+- Every package is reviewed by a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) before it is faxed to the IRS. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval.
 - Fax the signed package to the IRS Ogden Service Center PIN Unit at ${IRS_OGDEN_FAX} and return the timestamped fax transmission receipt (evidence of transmission, not IRS acceptance).
 - Store basic entity/owner data to one-click pre-fill next year's filing (7-year retention to match IRS records-retention guidance).`;
 
@@ -468,7 +468,7 @@ Source: ${SITE_URL}/about and ${SITE_URL}/press
 - What it does: prepares and files IRS Form 5472 with the pro forma Form 1120 for foreign-owned US single-member LLCs.
 - Who it is for: non-US owners of single-member US LLCs, plus formation agents, registered agents and accounting firms that file for client LLCs.
 - Founded: ${foundingDate}.
-- Review: every filing is reviewed by a qualified tax accountant before it is submitted.
+- Review: every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval.
 - Delivery: the signed package is faxed to the IRS Ogden PIN Unit (${IRS_OGDEN_FAX}) and a timestamped transmission receipt is stored. The receipt is evidence of transmission, not IRS acceptance.
 - Prices: Standard ${STD} (${STANDARD_TURNAROUND}), Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), +${ADDON} per additional past tax year; IRS fax delivery included. EIN service ${EIN_PRICE}; ITIN service ${ITIN_PRICE}.
 - Other services: late (DIIRSP) catch-up filings, dormant-LLC and final-year filings, EIN and ITIN application support, white-label filing for partners.

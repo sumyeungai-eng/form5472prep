@@ -107,7 +107,7 @@ Keep the legal effective date, tax-year end, EIN confirmation, post-formation ow
 
 ## Filing support
 
-Form5472 Prep prepares short-year Form 5472 packages for the standard foreign-owned US single-member disregarded LLC profile. We use the legal period, reconcile owner transactions, prepare the pro forma Form 1120 and supporting statement, obtain accountant review, and provide a timestamped IRS delivery receipt.
+Form5472 Prep prepares short-year Form 5472 packages for the standard foreign-owned US single-member disregarded LLC profile. We use the legal period, reconcile owner transactions, prepare the pro forma Form 1120 and supporting statement, obtain review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and provide a timestamped IRS delivery receipt.
 
 [Start the short-year package](/start) with the formation document, EIN confirmation, and every owner-funded cost through year-end.
 

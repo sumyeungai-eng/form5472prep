@@ -125,7 +125,7 @@ The [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472) links
 
 ## How can Form5472 Prep handle an app developer's filing?
 
-We build Form 5472, the pro forma Form 1120 and the Part V statement from your store reports and owner-movement schedule, have a qualified tax accountant review it, fax it to the IRS, and send you the timestamped receipt. Standard is **{{price.standard}}** (5–7 business days), Express **{{price.express}}** (ready to sign within 24 hours), each extra past tax year **+{{price.additionalYear}}**, IRS fax delivery included.
+We build Form 5472, the pro forma Form 1120 and the Part V statement from your store reports and owner-movement schedule, have it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), fax it to the IRS, and send you the timestamped receipt. Standard is **{{price.standard}}** (5–7 business days), Express **{{price.express}}** (ready to sign within 24 hours), each extra past tax year **+{{price.additionalYear}}**, IRS fax delivery included.
 
 We are not a CPA firm and we do not give tax advice; we prepare and submit the information return. Whether your app income is effectively connected with a US trade or business, and what your home country taxes, are adviser questions.
 

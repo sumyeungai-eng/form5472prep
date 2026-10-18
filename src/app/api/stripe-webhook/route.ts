@@ -266,7 +266,7 @@ export async function POST(req: Request) {
 
       // Send the order confirmation email directly — AI compliance check has
       // been removed from the order flow (every package is reviewed by our
-      // qualified accountant before fax instead). If PDF generation succeeded the
+      // tax accountant before fax instead). If PDF generation succeeded the
       // email includes the unsigned PDF attachment + signature locations so
       // the customer can sign in-portal immediately. If generation failed
       // (missing required fields) the email goes out without an attachment

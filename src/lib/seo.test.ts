@@ -108,7 +108,7 @@ describe("organizationNode", () => {
     expect(node.knowsAbout).not.toHaveLength(0);
     expect(node.slogan).toBe("Flat-rate Form 5472 filing. No hidden fees.");
     expect(node.description).toBe(
-      "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs. Every package reviewed by a qualified tax accountant before fax delivery to the IRS Ogden PIN Unit.",
+      "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs. Every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before fax delivery to the IRS Ogden PIN Unit.",
     );
     expect(node.areaServed).toEqual({ "@type": "Place", name: "Worldwide" });
     expect(node.contactPoint).toHaveLength(2);

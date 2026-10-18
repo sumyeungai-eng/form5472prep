@@ -100,7 +100,7 @@ Use trackable delivery and keep a full copy. Do not use the ordinary Form 1120 s
 
 ## How does Form5472 Prep handle fax filing?
 
-Form5472 Prep prepares the complete Form 5472 package, including Form 5472, the pro forma Form 1120 and the Part V statement, has it reviewed by a qualified tax accountant, and faxes the signed package to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
+Form5472 Prep prepares the complete Form 5472 package, including Form 5472, the pro forma Form 1120 and the Part V statement, has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes the signed package to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
 Standard service is **{{price.standard}}** in 5-7 business days, Express is **{{price.express}}**, ready to sign within 24 hours, each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein). We are not a CPA firm and we do not give tax advice, but we do make the filing package and delivery evidence complete.
 

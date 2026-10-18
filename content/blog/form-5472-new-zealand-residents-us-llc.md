@@ -72,7 +72,7 @@ The [owner-loan and contribution guide](/blog/form-5472-owner-loans-contribution
 
 The pro forma Form 1120, Form 5472, and supporting statements are signed and submitted together. A foreign-owned US disregarded entity cannot e-file the package; it must use the dedicated IRS fax or mailing route shown in the current instructions.
 
-For a calendar-year LLC, the package is generally due April 15 following the tax year, or October 15 after a timely Form 7004 extension. Form5472 Prep prepares the documents, arranges accountant review, faxes the final package, and returns a timestamped receipt.
+For a calendar-year LLC, the package is generally due April 15 following the tax year, or October 15 after a timely Form 7004 extension. Form5472 Prep prepares the documents, arranges review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), faxes the final package, and returns a timestamped receipt.
 
 ## Frequently asked questions
 

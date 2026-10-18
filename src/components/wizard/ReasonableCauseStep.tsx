@@ -228,7 +228,7 @@ export function ReasonableCauseStep({
                     <p className="font-medium">That&apos;s all we need for {row.taxYear}.</p>
                     <p className="mt-1 text-emerald-800">
                       We&apos;ll turn your answer into a formal reasonable-cause statement and attach it
-                      to your filing package. A qualified accountant reviews it before anything is
+                      to your filing package. A PTIN-holding tax accountant reviews it before anything is
                       submitted.
                     </p>
                   </div>

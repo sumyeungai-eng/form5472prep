@@ -115,7 +115,7 @@ The $25,000 exposure applies separately to each missing form and year. If the IR
 
 ## How can Form5472 Prep handle the Hong Kong filing?
 
-Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V supporting statement; a qualified tax accountant reviews the package. We fax it to the IRS Ogden PIN Unit and return the timestamped confirmation receipt.
+Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V supporting statement; the package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN). We fax it to the IRS Ogden PIN Unit and return the timestamped confirmation receipt.
 
 Standard filing is **{{price.standard}}** and is ready in **5-7 business days**. Express filing is **{{price.express}}** and is ready for you to check and sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**. IRS fax delivery is included.
 

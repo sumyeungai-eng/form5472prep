@@ -27,7 +27,7 @@ For the standard foreign-owned US disregarded LLC profile, Form5472 Prep prepare
 - the signature workflow; and
 - IRS fax delivery with a timestamped submission receipt.
 
-Every package receives review by a qualified tax accountant before submission. The [About page](/about) explains the filing-courier model and its boundaries.
+Every package receives review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before submission. The [About page](/about) explains the filing-courier model and its boundaries.
 
 ## Responsibility map for accounting firms
 

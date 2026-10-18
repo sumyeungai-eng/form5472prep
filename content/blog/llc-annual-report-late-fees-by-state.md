@@ -91,7 +91,7 @@ These figures come straight from the sources cited above. They are not estimates
 
 ## How does Form5472 Prep help when state and federal filings are both behind?
 
-We handle the federal side. We prepare each year's pro forma Form 1120 and Form 5472 with the Part V statement, including missing past years, and fax the package to the IRS Ogden PIN Unit with a timestamped transmission receipt. State reports, taxes and reinstatements stay with you or your registered agent. Every filing is reviewed by a qualified accountant before it is submitted.
+We handle the federal side. We prepare each year's pro forma Form 1120 and Form 5472 with the Part V statement, including missing past years, and fax the package to the IRS Ogden PIN Unit with a timestamped transmission receipt. State reports, taxes and reinstatements stay with you or your registered agent. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.
 
 - **Standard:** {{price.standard}}, ready in 5–7 business days
 - **Express:** {{price.express}}, ready to sign within 24 hours

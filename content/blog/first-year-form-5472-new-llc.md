@@ -117,7 +117,7 @@ The foreign owner's Form 5472 section can include an FTIN and, where required, a
 
 ## How does Form5472 Prep prepare a first-year return?
 
-Form5472 Prep is the answer when the first-year issue is mechanical filing, not tax planning. We prepare Form 5472, the pro forma Form 1120, and the Part V statement; a qualified tax accountant reviews the package; and we fax it to the IRS Ogden PIN Unit at **855-887-7737** with a timestamped receipt. The IRS instructions list that fax number for foreign-owned U.S. disregarded entities ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). Our [how to file Form 5472](/file-form-5472) guide walks through the filing steps.
+Form5472 Prep is the answer when the first-year issue is mechanical filing, not tax planning. We prepare Form 5472, the pro forma Form 1120, and the Part V statement; the package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN); and we fax it to the IRS Ogden PIN Unit at **855-887-7737** with a timestamped receipt. The IRS instructions list that fax number for foreign-owned U.S. disregarded entities ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). Our [how to file Form 5472](/file-form-5472) guide walks through the filing steps.
 
 The Standard package is **{{price.standard}}** and ready in 5-7 business days. Express is **{{price.express}}** and ready for you to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. IRS fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein).
 

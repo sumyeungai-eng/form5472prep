@@ -100,7 +100,7 @@ The regular due date for a calendar-year LLC is generally 15 April; Form 7004, f
 
 The Thai details — a treaty that changes nothing, a tax number you may not have, baht conversion, sometimes a Thai company as a second related party — are routine once you have seen them, and are exactly what makes a do-it-yourself form substantially incomplete.
 
-We prepare Form 5472, the pro forma Form 1120 and the Part V statement; a qualified tax accountant reviews each package; we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt. Late years include a reasonable cause letter.
+We prepare Form 5472, the pro forma Form 1120 and the Part V statement; each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN); we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt. Late years include a reasonable cause letter.
 
 **{{price.standard}}** Standard, ready in 5–7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 

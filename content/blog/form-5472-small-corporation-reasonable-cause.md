@@ -99,7 +99,7 @@ These are illustrations of how the regulation's words map onto facts. They are n
 
 ## How does Form5472 Prep handle late filings?
 
-We prepare each missing year's pro forma Form 1120 and Form 5472, with the Part V statement, and fax the package to the IRS Ogden PIN Unit with a timestamped transmission receipt. For late years, the questionnaire asks why the filing was missed, and the package includes a reasonable cause statement built from your answers. Every filing is reviewed by a qualified accountant before it is submitted. The [late Form 5472 filing service](/services/late-form-5472-filing-service) page shows what each year's package contains.
+We prepare each missing year's pro forma Form 1120 and Form 5472, with the Part V statement, and fax the package to the IRS Ogden PIN Unit with a timestamped transmission receipt. For late years, the questionnaire asks why the filing was missed, and the package includes a reasonable cause statement built from your answers. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. The [late Form 5472 filing service](/services/late-form-5472-filing-service) page shows what each year's package contains.
 
 - **Standard:** {{price.standard}}, ready in 5–7 business days
 - **Express:** {{price.express}}, ready to sign within 24 hours

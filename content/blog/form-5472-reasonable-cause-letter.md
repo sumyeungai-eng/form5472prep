@@ -120,7 +120,7 @@ For a 2025 calendar-year foreign-owned U.S. DE package, the normal due date is 1
 
 ## How does Form5472 Prep help with reasonable cause filings?
 
-Form5472 Prep prepares the mechanical catch-up package: Form 5472, the pro forma Form 1120 and the Part V statement, reviewed by a qualified tax accountant and faxed to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt. We can include a reasonable cause cover statement framework based on the facts you provide.
+Form5472 Prep prepares the mechanical catch-up package: Form 5472, the pro forma Form 1120 and the Part V statement, reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) and faxed to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt. We can include a reasonable cause cover statement framework based on the facts you provide.
 
 Standard service is **{{price.standard}}** in 5-7 business days, Express is **{{price.express}}**, ready to sign within 24 hours, each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein). We are not a CPA firm and do not give tax advice. A material penalty dispute should be reviewed by a CPA, enrolled agent or tax attorney.
 

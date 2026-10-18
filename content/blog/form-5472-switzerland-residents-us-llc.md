@@ -73,7 +73,7 @@ For example, do not convert only the owner’s year-end net balance. A contribut
 5. **Sign and file by fax or mail.** The foreign-owned disregarded-entity package cannot be e-filed.
 6. **Retain the package and delivery evidence.** Keep the exact signed pages, conversion workpaper, statements, and transmission record.
 
-A calendar-year 2026 package is generally due April 15, 2027, or October 15, 2027 after a timely extension. Form5472 Prep prepares the filing, arranges accountant review, submits it to the IRS Ogden PIN Unit, and returns a timestamped receipt.
+A calendar-year 2026 package is generally due April 15, 2027, or October 15, 2027 after a timely extension. Form5472 Prep prepares the filing, arranges review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), submits it to the IRS Ogden PIN Unit, and returns a timestamped receipt.
 
 ## Frequently asked questions
 

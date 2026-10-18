@@ -23,7 +23,7 @@ White label is available by request. It is not a different tax return or a promi
 | Partner manages relationship | Yes | Yes |
 | Partner dashboard | Yes | Yes |
 | Client signs the filing | Yes | Yes |
-| Qualified tax-accountant review | Included | Included |
+| Review by a PTIN-holding tax accountant | Included | Included |
 | IRS fax delivery and receipt | Included | Included |
 | Setup complexity | Lower | Depends on required brand touchpoints |
 | Custom domain or every portal screen | Not applicable | Not assumed; must be confirmed |
@@ -67,7 +67,7 @@ The delivery model does not change the filing's legal substance.
 - The client remains responsible for accurate information and signs the return.
 - The package still uses the legally required LLC and owner information.
 - Form5472 Prep prepares the supported Form 5472 and pro forma Form 1120 package.
-- A qualified tax accountant reviews the package before submission.
+- The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before submission.
 - The signed package is sent through the dedicated IRS filing route.
 - A timestamped fax receipt is retained as submission evidence.
 - Complex income-tax, treaty, state, withholding, and transfer-pricing questions remain outside the standard preparation scope.

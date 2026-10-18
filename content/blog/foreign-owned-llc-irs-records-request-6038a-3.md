@@ -129,7 +129,7 @@ Paragraph (f)(1) sets US maintenance as the default. Paragraph (f)(2) permits re
 
 ### Can you reconstruct my records for past years?
 
-No. We prepare and deliver the package from the records and figures you provide. We are not a CPA firm and do not give tax advice; a qualified tax accountant reviews each package before it goes out.
+No. We prepare and deliver the package from the records and figures you provide. We are not a CPA firm and do not give tax advice; each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it goes out.
 
 ## The bottom line
 

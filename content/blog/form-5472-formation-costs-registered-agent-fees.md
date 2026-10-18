@@ -76,7 +76,7 @@ Do not store only a screenshot showing a total. The [Form 5472 recordkeeping che
 5. **Prepare Part V and line 1f totals.** Reconcile the attached statement to the form’s gross related-party value.
 6. **File Form 5472 with the pro forma Form 1120.** A foreign-owned US disregarded entity must fax or mail the package; it cannot e-file.
 
-Form5472 Prep prepares the package, arranges accountant review, submits the signed filing to the IRS, and returns a timestamped receipt.
+Form5472 Prep prepares the package, arranges review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), submits the signed filing to the IRS, and returns a timestamped receipt.
 
 ## Frequently asked questions
 

@@ -144,7 +144,7 @@ The due date for a calendar-year entity is generally **15 April**; Form 7004 ext
 
 The hard part on the road is faxing internationally and keeping the reference ID identical to last year's.
 
-We prepare the package, have it reviewed by a qualified tax accountant, and fax it to the Ogden PIN Unit, returning a timestamped receipt — transmission evidence, not IRS acceptance. **{{price.standard}}** standard (5–7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past year, IRS fax delivery included.
+We prepare the package, have it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and fax it to the Ogden PIN Unit, returning a timestamped receipt — transmission evidence, not IRS acceptance. **{{price.standard}}** standard (5–7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past year, IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on any country's personal tax.
 

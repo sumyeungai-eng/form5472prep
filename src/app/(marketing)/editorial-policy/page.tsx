@@ -46,7 +46,7 @@ export default function EditorialPolicyPage() {
       <p>
         Guides covering the mechanics of a filing (deadlines, penalties, procedures) are
         reviewed against current IRS guidance before publication. Because our service prepares
-        these exact filings, the same qualified tax accountant who reviews customer packages
+        these exact filings, the same PTIN-holding tax accountant who reviews customer packages
         informs the accuracy of what we publish.
       </p>
 

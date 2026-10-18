@@ -99,7 +99,7 @@ If the owner change created a missed prior-year Form 5472, address the delinquen
 
 ## How does Form5472 Prep help after an ownership change?
 
-Form5472 Prep handles the mechanical information-return package when a foreign-owned U.S. disregarded entity still needs Form 5472. We prepare Form 5472, the pro forma Form 1120, and the Part V statement that describes the ownership event; a qualified tax accountant reviews the package; and we fax it to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
+Form5472 Prep handles the mechanical information-return package when a foreign-owned U.S. disregarded entity still needs Form 5472. We prepare Form 5472, the pro forma Form 1120, and the Part V statement that describes the ownership event; the package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN); and we fax it to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
 Standard service is **{{price.standard}}** in 5-7 business days, Express is **{{price.express}}**, ready to sign within 24 hours, each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein). We are not a CPA firm and we do not give tax advice, so classification changes, partner tax consequences and sale structuring should be reviewed by your own adviser. For how that compares with filing yourself, see [Form 5472 filing cost](/blog/form-5472-cost).
 

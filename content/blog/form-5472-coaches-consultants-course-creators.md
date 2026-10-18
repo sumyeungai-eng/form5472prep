@@ -114,7 +114,7 @@ The [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472) links
 
 ## How can Form5472 Prep handle a coaching or course-business filing?
 
-We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your course-platform reports and owner-movement schedule, have a qualified accountant review each package, fax it to the IRS, and send you the timestamped receipt.
+We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your course-platform reports and owner-movement schedule, have each package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), fax it to the IRS, and send you the timestamped receipt.
 
 Standard is **{{price.standard}}** (5–7 business days); Express is **{{price.express}}** (ready to sign within 24 hours); each additional past year is **+{{price.additionalYear}}**; IRS fax delivery is included. See [Form 5472 cost](/blog/form-5472-cost).
 

@@ -95,7 +95,7 @@ The regular due date for a calendar-year LLC is generally **April 15**, and Form
 
 Sending an international fax from Korea is a nuisance, and the Korean-specific details — the registration-number question, won conversion, a Korean company as a second related party — are what makes a self-prepared filing come back substantially incomplete.
 
-Form5472 Prep prepares the complete package: Form 5472 with the FTIN and reference ID handled consistently, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews each package, we fax it to the IRS Ogden PIN Unit, and we return the timestamped receipt. Late years include a reasonable cause cover letter.
+Form5472 Prep prepares the complete package: Form 5472 with the FTIN and reference ID handled consistently, the pro forma Form 1120, and the Part V statement. Each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), we fax it to the IRS Ogden PIN Unit, and we return the timestamped receipt. Late years include a reasonable cause cover letter.
 
 **{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 

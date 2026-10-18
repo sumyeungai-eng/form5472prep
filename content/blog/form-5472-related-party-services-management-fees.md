@@ -115,7 +115,7 @@ No. The post's service boundary says Form5472 Prep can report the supported tran
 
 ## Filing support
 
-Form5472 Prep prepares the Form 5472, pro forma Form 1120, and supporting statement for the standard foreign-owned US disregarded LLC profile. A qualified tax accountant reviews the package before IRS submission.
+Form5472 Prep prepares the Form 5472, pro forma Form 1120, and supporting statement for the standard foreign-owned US disregarded LLC profile. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before IRS submission.
 
 [Start the related-party filing](/start) when the parties, service contract, gross payments, and currency records are ready. Obtain separate international tax advice if the fees raise transfer-pricing, withholding, or income-tax questions.
 

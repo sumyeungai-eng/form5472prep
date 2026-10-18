@@ -100,7 +100,7 @@ The full walkthrough is in [how to fill out Form 5472](/blog/how-to-fill-out-for
 
 The state side of a Wyoming LLC is genuinely easy — a $60 report you can file yourself in ten minutes. The federal side is the one with the $25,000 exposure, no e-file route, no software support, and a form written for multinationals.
 
-[Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt. For missed years we include a reasonable cause cover letter.
+[Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt. For missed years we include a reasonable cause cover letter.
 
 **{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready for you to check and sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
 

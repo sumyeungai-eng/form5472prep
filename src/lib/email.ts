@@ -548,11 +548,11 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const expressReviewText =
     "Express order: your reviewed filing package will be ready for you to check and sign within 24 hours of your order. We will email you as soon as it is ready.";
   const reviewStepText = isExpress
-    ? "A qualified accountant reviews the package, and it is ready for you to check and sign within 24 hours of your order. We may message you if anything needs clarifying."
-    : "A qualified accountant reviews the package and may message you if anything needs clarifying.";
+    ? "A PTIN-holding tax accountant reviews the package, and it is ready for you to check and sign within 24 hours of your order. We may message you if anything needs clarifying."
+    : "A PTIN-holding tax accountant reviews the package and may message you if anything needs clarifying.";
   const reviewStepPlain = isExpress
-    ? "A qualified accountant reviews the package, and it is ready for you to check and sign within 24 hours of your order. We may message you with questions."
-    : "A qualified accountant reviews the package and may message you with questions.";
+    ? "A PTIN-holding tax accountant reviews the package, and it is ready for you to check and sign within 24 hours of your order. We may message you with questions."
+    : "A PTIN-holding tax accountant reviews the package and may message you with questions.";
   const yearCount = taxYears.length || 1;
   const extraYears = Math.max(0, yearCount - 1);
   const addOnCents = multiYearAddonCents(yearCount);
@@ -624,7 +624,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     <!-- Review in portal -->
     <p style="margin:24px 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Review in your portal</p>
     <p style="margin:0 0 12px;color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.5;">
-      Open your portal to view the generated package. A qualified accountant reviews it before signing opens, and we will email you when it is ready.
+      Open your portal to view the generated package. A PTIN-holding tax accountant reviews it before signing opens, and we will email you when it is ready.
     </p>`
     : "";
 
@@ -676,7 +676,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     : "";
 
   const signaturesText = hasPdf && sigCount > 0
-    ? `\nReview the generated package in your portal. A qualified accountant reviews it before signing opens.\n`
+    ? `\nReview the generated package in your portal. A PTIN-holding tax accountant reviews it before signing opens.\n`
     : "";
 
   const nextStepsText = hasPdf
@@ -784,7 +784,7 @@ export async function sendReadyToSignEmail(args: {
     : "Please check and sign your forms";
   const intro = args.resign
     ? `We've updated your forms for ${llcLine}${yearsSuffix} after review. Because the package changed, we need you to check the new version and sign it again.`
-    : `A qualified accountant has reviewed your forms for ${llcLine}${yearsSuffix}. Before we fax them to the IRS, please check that everything is correct.`;
+    : `A PTIN-holding tax accountant has reviewed your forms for ${llcLine}${yearsSuffix}. Before we fax them to the IRS, please check that everything is correct.`;
   const checks = [
     "LLC name, EIN and address",
     "Your name, address and foreign tax ID",

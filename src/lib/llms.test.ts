@@ -44,6 +44,13 @@ const BANNED = [
   "so applicants never need", // must say "eligible applicants"
 ];
 
+// Written with character classes so a repo-wide grep for the banned phrases
+// only ever hits real copy, not this guard.
+const IRS_APPROVAL_CLAIM = new RegExp(
+  ["IRS[- ](approved|certified|licensed|registered)", "licen[cs]ed by the IRS", "endors[e]d by the IRS", "authori[sz]ed by the IRS"].join("|"),
+  "i",
+);
+
 let llmsTxt = "";
 // Core corpus: facts, FAQ, statistics, tools, EIN/ITIN, educational landing pages.
 let llmsFull = "";
@@ -113,6 +120,14 @@ describe("llms.txt facts come from code", () => {
       expect(mentions.length).toBeGreaterThan(0);
       for (const mention of mentions) expect(mention).toMatch(/if we fail to submit/i);
     }
+  });
+
+  it("states that the reviewer holds a PTIN, framed as an ID number, not an approval", () => {
+    for (const text of [llmsTxt, llmsFull, llmsServices]) {
+      expect(text).toContain("reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN)");
+      expect(text).toContain("not a licence or IRS approval");
+    }
+    expect(ENTITY_SUMMARY).not.toMatch(IRS_APPROVAL_CLAIM);
   });
 
   it("links the guides corpus and keeps the index lean", () => {

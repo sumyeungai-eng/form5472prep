@@ -588,7 +588,7 @@ function HeroRailCta({ startUrl }: { startUrl: string }) {
   const bullets = [
     "Filled IRS Form 5472 + pro forma 1120",
     "Reasonable cause statement (if late)",
-    "Reviewed by a qualified tax accountant",
+    "Reviewed by a PTIN-holding tax accountant",
     "Faxed to IRS Ogden PIN Unit",
     "100% money-back if we fail to submit",
   ];
@@ -690,7 +690,7 @@ function PricingSection({
               Fax filing included on every plan
             </div>
             <div className="inline-flex items-center gap-2 rounded-full bg-accent-50 border-2 border-accent/30 px-4 py-1.5 text-xs font-medium text-accent">
-              Reviewed by a qualified tax accountant
+              Reviewed by a tax accountant
             </div>
           </div>
         </Reveal>

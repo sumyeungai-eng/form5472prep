@@ -91,7 +91,7 @@ Build the Form 5472 file from the closing statement, bank activity and owner pay
 
 ## How can Form5472 Prep help with a rental LLC?
 
-Form5472 Prep prepares the Form 5472 side of the rental LLC compliance file: Form 5472, the pro forma Form 1120, and the Part V statement showing owner funding, owner-paid expenses, distributions and loans. A qualified tax accountant reviews the package before it is faxed to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
+Form5472 Prep prepares the Form 5472 side of the rental LLC compliance file: Form 5472, the pro forma Form 1120, and the Part V statement showing owner funding, owner-paid expenses, distributions and loans. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is faxed to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
 Standard service is **{{price.standard}}** and ready in 5-7 business days. Express service is **{{price.express}}** and ready for you to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein), and ITIN service is **{{price.itin}}** at [/itin](/itin).
 

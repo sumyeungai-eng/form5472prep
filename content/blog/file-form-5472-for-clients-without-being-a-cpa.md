@@ -72,7 +72,7 @@ Branch two is why review depth matters. The Instructions for Form 5472 state tha
 
 It is the coordinate-only branch, built as a product. Your firm applies on [/partners](/partners), accounts are approved manually and typically within about one business day, and sign-in is passwordless through a secure email link at [/partner/sign-in](/partner/sign-in). From the dashboard you start one filing per client LLC, send the client a secure review-and-sign link, track preparation, signature and submission, and see the fax receipt per filing. A fax result is transmission evidence, not IRS acceptance of the return.
 
-Our posture, plainly: **we are not a CPA firm and we do not give tax advice.** We prepare and submit the information return, and a qualified tax accountant reviews every package. The person authorized to sign for the client LLC signs it — your firm does not sign for the client, and neither do we.
+Our posture, plainly: **we are not a CPA firm and we do not give tax advice.** We prepare and submit the information return, and every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN). The person authorized to sign for the client LLC signs it — your firm does not sign for the client, and neither do we.
 
 Pricing matches what a direct customer pays, so your margin is whatever you charge your own client: {{price.standard}} Standard, ready in 5 to 7 business days, or {{price.express}} Express, ready to sign within 24 hours, plus {{price.additionalYear}} per additional past tax year. IRS fax delivery is included, there is no platform fee and no subscription, and each filing is paid individually at checkout — see [/pricing](/pricing). We pay no commission, referral fee or revenue share, because none exists.
 
@@ -102,7 +102,7 @@ Its own title calls it an "Information Return of a 25% Foreign-Owned U.S. Corpor
 
 ### Does using your partner program make me the client's tax preparer?
 
-We prepare and submit the filing, and a qualified tax accountant reviews each package. Whether your surrounding role still makes your firm a preparer or assistant under the IRS rules depends on your own engagement and facts. Ask your adviser.
+We prepare and submit the filing, and a PTIN-holding tax accountant reviews each package. Whether your surrounding role still makes your firm a preparer or assistant under the IRS rules depends on your own engagement and facts. Ask your adviser.
 
 ---
 

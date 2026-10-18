@@ -71,7 +71,7 @@ If any answer is not zero, classify and document the transaction rather than rel
 5. **Prepare Form 5472 and the pro forma Form 1120.** Attach the Part V statement where required.
 6. **Fax or mail the signed package.** A foreign-owned US disregarded entity cannot e-file it.
 
-Form5472 Prep handles the document preparation, accountant review, IRS fax submission, and timestamped receipt even when all supporting activity occurred outside a US bank account.
+Form5472 Prep handles the document preparation, IRS fax submission, and timestamped receipt, and has the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), even when all supporting activity occurred outside a US bank account.
 
 ## Frequently asked questions
 

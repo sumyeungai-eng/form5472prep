@@ -37,7 +37,9 @@ describe("/about copy", () => {
   });
 
   it("uses the approved trust line verbatim", () => {
-    expect(TRUST_LINE).toBe("Every filing is reviewed by a qualified accountant before it is submitted.");
+    expect(TRUST_LINE).toBe(
+      "Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.",
+    );
     expect(LEAD).toContain(TRUST_LINE);
   });
 

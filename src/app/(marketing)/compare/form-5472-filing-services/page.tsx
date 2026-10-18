@@ -84,7 +84,7 @@ const QUICK_ANSWERS: Array<{ id: string; q: string; a: string }> = [
   {
     id: "lowest-cost",
     q: "What is the cheapest way to file Form 5472 online?",
-    a: `Preparing the free IRS forms yourself and faxing them is the lowest-cost route; a foreign-owned LLC cannot e-file Form 5472. Among paid options checked ${PRICES_CHECKED_ON_LABEL}, the lowest published one-year price is ${LOWEST.name} at ${usd(LOWEST.oneYearPriceUsd)}${LOWEST.priceFromLabel ? ` from ${LOWEST.priceFromLabel}` : ""}, ${LOWEST.kind}. ${SITE_NAME} charges ${STD}, with a qualified accountant's review and IRS fax delivery included.`,
+    a: `Preparing the free IRS forms yourself and faxing them is the lowest-cost route; a foreign-owned LLC cannot e-file Form 5472. Among paid options checked ${PRICES_CHECKED_ON_LABEL}, the lowest published one-year price is ${LOWEST.name} at ${usd(LOWEST.oneYearPriceUsd)}${LOWEST.priceFromLabel ? ` from ${LOWEST.priceFromLabel}` : ""}, ${LOWEST.kind}. ${SITE_NAME} charges ${STD}, with a PTIN-holding tax accountant's review and IRS fax delivery included.`,
   },
   {
     id: "hire-someone",
@@ -94,7 +94,7 @@ const QUICK_ANSWERS: Array<{ id: string; q: string; a: string }> = [
   {
     id: "non-resident-preparer",
     q: "What is the best Form 5472 preparer for non-resident LLC owners?",
-    a: `It depends on how much you want done for you. Software (${range(SOFTWARE)}) suits owners who can complete the forms; done-for-you services (${range(DONE_FOR_YOU)}) prepare and send the package; a CPA firm prepares it with CPA review. ${SITE_NAME} prepares and faxes the package for foreign-owned single-member LLCs, and every filing is reviewed by a qualified accountant before it is submitted.`,
+    a: `It depends on how much you want done for you. Software (${range(SOFTWARE)}) suits owners who can complete the forms; done-for-you services (${range(DONE_FOR_YOU)}) prepare and send the package; a CPA firm prepares it with CPA review. ${SITE_NAME} prepares and faxes the package for foreign-owned single-member LLCs, and every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.`,
   },
 ];
 
@@ -107,7 +107,7 @@ const KIND_GROUPS: Array<{ kind: ProviderKind; label: string; text: string }> = 
   {
     kind: "done-for-you filing service",
     label: "Done-for-you filing service",
-    text: "The provider prepares the package from your information. Who reviews it differs, as each site states it: a qualified tax accountant, a professional tax preparer or a CPA. Whether IRS delivery is in the listed price also differs.",
+    text: "The provider prepares the package from your information. Who reviews it differs, as each site states it: a tax accountant, a professional tax preparer or a CPA. Whether IRS delivery is in the listed price also differs.",
   },
   {
     kind: "CPA firm",
@@ -642,7 +642,7 @@ export default function Form5472FilingServicesComparePage() {
         <div className="mx-auto max-w-3xl px-4 py-14 text-center sm:px-6">
           <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">Start your Form 5472 filing</h2>
           <p className="mx-auto mt-3 max-w-xl text-slate-600">
-            About 15 minutes of questions. Every filing is reviewed by a qualified accountant before it is
+            About 15 minutes of questions. Every filing is reviewed by a PTIN-holding tax accountant before it is
             submitted, then faxed to the IRS with a timestamped receipt.
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">

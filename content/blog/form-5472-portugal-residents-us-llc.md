@@ -115,7 +115,7 @@ The regular due date for a calendar-year entity is generally 15 April; Form 7004
 
 The Portuguese details — NIF, Portuguese address, euro conversion, a second form where your Lda. transacted with the LLC — are what turn a DIY attempt into a substantially incomplete form.
 
-We prepare Form 5472, the pro forma Form 1120 and the Part V statement, have a qualified tax accountant review the package, and fax it to the IRS Ogden PIN Unit, returning the timestamped receipt. Late years include a reasonable cause letter.
+We prepare Form 5472, the pro forma Form 1120 and the Part V statement, have the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and fax it to the IRS Ogden PIN Unit, returning the timestamped receipt. Late years include a reasonable cause letter.
 
 **{{price.standard}}** standard, ready in 5–7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 

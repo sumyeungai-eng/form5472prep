@@ -93,7 +93,7 @@ Keep the legal payer and payee, relationship, IP ownership, rights granted, paym
 
 ## Filing scope
 
-Form5472 Prep prepares the Form 5472, pro forma Form 1120, and supporting statement for the standard foreign-owned US disregarded LLC filing. The package receives accountant review before submission through the dedicated IRS filing route.
+Form5472 Prep prepares the Form 5472, pro forma Form 1120, and supporting statement for the standard foreign-owned US disregarded LLC filing. The package receives review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before submission through the dedicated IRS filing route.
 
 [Start the IP transaction filing](/start) when the agreement, ownership chart, gross amounts, currency records, and withholding documents are ready. Use an international tax specialist for pricing, treaty, sourcing, and withholding conclusions.
 

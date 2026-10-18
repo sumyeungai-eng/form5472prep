@@ -107,7 +107,7 @@ If steps 2 or 3 produce anything unexpected, that is the point to bring in a tax
 
 Most people who arrive at this question turn out to be exactly what they thought: one foreign owner, one LLC, disregarded entity, Form 5472 due every year there was money moving between them.
 
-[Form5472 Prep](/) prepares that package — Form 5472, the pro forma Form 1120 stamped "Foreign-owned U.S. DE", and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt as proof of filing. Late years include a reasonable cause cover letter. To see what the finished package looks like, read the [Form 5472 example](/form-5472-example).
+[Form5472 Prep](/) prepares that package — Form 5472, the pro forma Form 1120 stamped "Foreign-owned U.S. DE", and the Part V supporting statement — has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt as proof of filing. Late years include a reasonable cause cover letter. To see what the finished package looks like, read the [Form 5472 example](/form-5472-example).
 
 **{{price.standard}}** standard (5-7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 

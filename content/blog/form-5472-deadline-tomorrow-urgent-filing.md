@@ -45,7 +45,7 @@ Assume you order on Tuesday 13 October. These are our commitments and your tasks
 |---|---|---|
 | **Tue 13 Oct, you order** | Your intake opens immediately; Express enters the same-day queue | Answer the intake: entity, owner, tax year, transaction totals |
 | **Tue 13 Oct, after intake** | A preparer builds the Form 5472 and pro forma Form 1120 from your answers | Watch your inbox: if a figure is ambiguous we email one question, and a fast reply protects the clock |
-| **Before the 24 hours are up** | A qualified tax accountant reviews the package | Nothing |
+| **Before the 24 hours are up** | A PTIN-holding tax accountant reviews the package | Nothing |
 | **By Wed 14 Oct, within 24 hours of your order** | We email you the completed package, ready to check and sign | **Your bottleneck starts here.** Check the figures, sign, return it |
 | **Same day your signature arrives** | We fax the signed package to the IRS and send the timestamped receipt | Keep the receipt with your records |
 | **Thu 15 Oct** | The extended deadline | — |
@@ -125,6 +125,6 @@ You can, and the 24-hour promise still holds — but your signing window shrinks
 
 If your extension is live and Thursday is the date you are working to, the sequence is short: [start your filing](/start), answer the intake in one sitting, sign the package when it arrives, and we fax it. The only link we cannot handle for you is the signature — which is exactly why we tell you about it before you pay rather than after.
 
-We are not a CPA firm and do not give tax advice. A qualified tax accountant reviews each package before it is sent.
+We are not a CPA firm and do not give tax advice. Each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is sent.
 
 *Educational content only; not tax or legal advice.*

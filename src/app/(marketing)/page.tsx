@@ -43,7 +43,7 @@ const FAQS = [
   },
   {
     q: "What's the difference between the two tiers?",
-    a: `Only the turnaround. The filing is identical on both: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation — plus a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready to sign within ${EXPRESS_TURNAROUND} and adds priority email support.`,
+    a: `Only the turnaround. The filing is identical on both: we prepare your Form 5472 + pro forma 1120, a PTIN-holding tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation — plus a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready to sign within ${EXPRESS_TURNAROUND} and adds priority email support.`,
   },
   {
     q: "What if I've missed prior years?",
@@ -104,8 +104,8 @@ const processSteps = [
   {
     id: "how-step-3",
     icon: ShieldCheck,
-    title: "A qualified accountant reviews it",
-    body: "Every filing is reviewed by a qualified accountant before it is submitted. The accountant checks the package against the answers you gave, and if anything needs clarifying we message you on your filing page. Signing opens only after the review is approved, so you never sign an unchecked package.",
+    title: "A PTIN-holding tax accountant reviews it",
+    body: "Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. The accountant checks the package against the answers you gave, and if anything needs clarifying we message you on your filing page. Signing opens only after the review is approved, so you never sign an unchecked package.",
   },
   {
     id: "how-step-4",
@@ -368,7 +368,7 @@ function Hero({ filingsCount }: { filingsCount: number }) {
                 {[
                   "Filled IRS Form 5472 + pro forma 1120",
                   "Reasonable cause statement (if late)",
-                  "Reviewed by a qualified tax accountant",
+                  "Reviewed by a PTIN-holding tax accountant",
                   "Faxed to IRS Ogden PIN Unit",
                   "100% money-back if we fail to submit",
                 ].map((it) => (
@@ -501,7 +501,7 @@ function HowItWorks() {
           eyebrow="How it works"
           title="How does Form 5472 filing work?"
           speakable
-          subtitle="Form 5472 filing works as a six-step flow: you enter your details, we prepare the package, a qualified accountant reviews it, you sign online, we fax it to the IRS, and you get the timestamped fax receipt. The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and a late-filing reasonable cause statement when the IRS DIIRSP procedure applies."
+          subtitle="Form 5472 filing works as a six-step flow: you enter your details, we prepare the package, a tax accountant reviews it, you sign online, we fax it to the IRS, and you get the timestamped fax receipt. The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and a late-filing reasonable cause statement when the IRS DIIRSP procedure applies."
         />
         <HowToSummary {...HOW_TO_META} className="mt-10" />
         <ol className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -558,7 +558,7 @@ function Deliverables() {
         <SectionHead
           eyebrow="What you get"
           title="What is included in the filing package?"
-          subtitle="The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and reasonable cause statement when the filing is late. Every filing is reviewed by a qualified accountant before it is submitted. Bundled as one PDF, ready for your signature."
+          subtitle="The package includes the cover letter, pro forma Form 1120, Form 5472, supporting statement, and reasonable cause statement when the filing is late. Every filing is reviewed by a tax accountant before it is submitted. Bundled as one PDF, ready for your signature."
         />
         <ul className="mt-10 space-y-3">
           {docs.map((d, i) => (
@@ -595,7 +595,7 @@ function Comparison() {
         <SectionHead
           eyebrow="vs. the alternatives"
           title="Why use Form5472 Prep instead of CPA or DIY?"
-          subtitle={`Form5472 Prep is a fixed-fee specialist: ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} (ready to sign within ${EXPRESS_TURNAROUND}), with qualified-accountant review, IRS fax delivery and a timestamped receipt included.`}
+          subtitle={`Form5472 Prep is a fixed-fee specialist: ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} (ready to sign within ${EXPRESS_TURNAROUND}), with tax-accountant review, IRS fax delivery and a timestamped receipt included.`}
         />
         <ComparisonTable {...FILING_COMPARISON} className="mt-10" />
       </div>
@@ -941,7 +941,7 @@ function StructuredData() {
       audienceType: "Foreign-owned US single-member LLC owners",
     },
     description:
-      "Done-for-you preparation, qualified-accountant review and fax delivery to the IRS Ogden PIN Unit of IRS Form 5472 with pro forma Form 1120 for foreign-owned US single-member LLCs. Includes a reasonable-cause statement for late (DIIRSP) filings.",
+      "Done-for-you preparation, review by a PTIN-holding tax accountant and fax delivery to the IRS Ogden PIN Unit of IRS Form 5472 with pro forma Form 1120 for foreign-owned US single-member LLCs. Includes a reasonable-cause statement for late (DIIRSP) filings.",
     offers: TIER_ORDER.map((key) => {
       const t = TIERS[key];
       return {

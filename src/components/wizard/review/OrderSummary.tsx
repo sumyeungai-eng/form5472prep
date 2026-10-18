@@ -167,7 +167,7 @@ function TrustList() {
       </li>
       <li className="flex gap-2">
         <ShieldCheck aria-hidden className="mt-0.5 h-3.5 w-3.5 flex-none text-emerald-600" />
-        <span>Every order is reviewed by a qualified accountant before submission to the IRS.</span>
+        <span>Every order is reviewed by a PTIN-holding tax accountant before submission to the IRS.</span>
       </li>
       <li className="flex gap-2">
         <Printer aria-hidden className="mt-0.5 h-3.5 w-3.5 flex-none text-slate-500" />

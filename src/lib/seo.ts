@@ -211,7 +211,7 @@ export function organizationNode(extra: Record<string, unknown> = {}) {
       caption: SITE_NAME,
     },
     description:
-      "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs. Every package reviewed by a qualified tax accountant before fax delivery to the IRS Ogden PIN Unit.",
+      "Done-for-you IRS Form 5472 + pro forma Form 1120 filing for foreign-owned US single-member LLCs. Every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before fax delivery to the IRS Ogden PIN Unit.",
     foundingDate: "2025",
     areaServed: AREA_SERVED,
     knowsAbout: [

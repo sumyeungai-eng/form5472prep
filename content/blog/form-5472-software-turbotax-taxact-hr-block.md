@@ -82,7 +82,7 @@ Doing it yourself costs nothing but time and carries the full penalty risk if th
 
 ## How does Form5472 Prep compare with doing it in software?
 
-We prepare the pro forma Form 1120, Form 5472 and the Part V statement for a foreign-owned single-member LLC from a questionnaire, then fax the package to the IRS Ogden PIN Unit and send you the transmission record. Every filing is reviewed by a qualified accountant before it is submitted.
+We prepare the pro forma Form 1120, Form 5472 and the Part V statement for a foreign-owned single-member LLC from a questionnaire, then fax the package to the IRS Ogden PIN Unit and send you the transmission record. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.
 
 That covers the parts a general tax program leaves to you: the pro forma entries, the Part V statement and the fax delivery. We do not give tax advice, and we do not prepare Form 1065, full corporate returns or state filings. Current prices are on the [pricing page](/pricing).
 

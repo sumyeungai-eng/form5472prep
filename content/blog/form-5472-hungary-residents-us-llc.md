@@ -115,7 +115,7 @@ The regular due date for a calendar-year LLC is generally **15 April**; Form 700
 
 The Hungarian specifics — a terminated treaty that changes nothing here, an *adóazonosító jel* in the FTIN box, forint conversion, a Hungarian company as a second related party — are routine once seen, and exactly the details that make a DIY package substantially incomplete.
 
-We prepare the package — Form 5472, the pro forma 1120 and the Part V statement — have it reviewed by a qualified tax accountant, and fax it to the IRS Ogden PIN Unit, returning the timestamped confirmation. Late years include a reasonable cause cover letter.
+We prepare the package — Form 5472, the pro forma 1120 and the Part V statement — have it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and fax it to the IRS Ogden PIN Unit, returning the timestamped confirmation. Late years include a reasonable cause cover letter.
 
 **{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included, so you never send a fax from Budapest. Terms: our [pricing page](/pricing).
 

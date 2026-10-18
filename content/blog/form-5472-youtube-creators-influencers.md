@@ -121,7 +121,7 @@ If a failure continues beyond 90 days after an IRS notice, §6038A(d)(2) adds **
 
 ## How can Form5472 Prep handle creator records?
 
-Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement from the creator’s related-party schedule. A qualified tax accountant reviews the package, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt.
+Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement from the creator’s related-party schedule. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS Ogden PIN Unit with a timestamped receipt.
 
 Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein).
 

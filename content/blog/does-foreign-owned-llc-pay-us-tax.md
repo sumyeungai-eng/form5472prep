@@ -117,7 +117,7 @@ The pattern across all four: the tax answer varies; the filing answer does not.
 
 If you concluded you owe no US income tax, that is very likely correct — and it changes nothing about Form 5472. The filing is annual, cannot be e-filed, is not supported by any consumer tax software, and carries a fixed $25,000 penalty that ignores how small your business is. The [Form 5472 penalty](/form-5472-penalty) guide has the detail.
 
-[Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120 stamped "Foreign-owned U.S. DE", and the Part V supporting statement — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation as your proof of filing.
+[Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120 stamped "Foreign-owned U.S. DE", and the Part V supporting statement — has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation as your proof of filing.
 
 **{{price.standard}}** standard (5-7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included. We are not a CPA firm and do not give tax advice — for an ECI or treaty determination on your specific facts, use a qualified adviser. What we do is prepare and submit the information return accurately.
 

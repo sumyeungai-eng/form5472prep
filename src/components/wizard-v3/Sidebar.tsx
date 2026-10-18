@@ -89,7 +89,7 @@ export function Sidebar({
           attached. This workflow does not e-file.
         </p>
         <p className="mt-2">
-          After payment, we generate the forms and a qualified accountant reviews your package.
+          After payment, we generate the forms and a PTIN-holding tax accountant reviews your package.
           You then sign in the portal, and we fax it to the IRS Ogden PIN Unit.
         </p>
       </div>

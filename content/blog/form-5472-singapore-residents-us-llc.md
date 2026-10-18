@@ -126,7 +126,7 @@ That Singapore point is intentionally narrow because local tax depends on facts 
 
 ## How can Form5472 Prep be the answer?
 
-Form5472 Prep is useful when the Singapore owner needs the US information-return package prepared and submitted, while tax advice remains with Singapore and US professionals. The service prepares Form 5472, the pro forma Form 1120 and the Part V statement, and the package is reviewed by a qualified tax accountant.
+Form5472 Prep is useful when the Singapore owner needs the US information-return package prepared and submitted, while tax advice remains with Singapore and US professionals. The service prepares Form 5472, the pro forma Form 1120 and the Part V statement, and the package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN).
 
 After signature, Form5472 Prep faxes the package to the IRS Ogden PIN Unit at 855-887-7737 and returns a timestamped receipt. Standard service is **{{price.standard}}** and takes 5-7 business days. Express service is **{{price.express}}** and is ready to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included.
 

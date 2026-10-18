@@ -99,7 +99,7 @@ The regular due date for a calendar-year LLC is generally **15 April**, extended
 
 The Argentine specifics — no treaty, a CUIT or a reference ID rather than a guess, a second related party when an Argentine company sits alongside the LLC — are routine once seen, and are what makes a self-prepared package come back incomplete.
 
-Form5472 Prep prepares the whole package: Form 5472 with the identifying numbers handled correctly, the pro forma Form 1120, and the Part V statement. A qualified tax accountant reviews each one before we fax it to the IRS Ogden PIN Unit and return the timestamped confirmation. Late years include a reasonable cause cover letter.
+Form5472 Prep prepares the whole package: Form 5472 with the identifying numbers handled correctly, the pro forma Form 1120, and the Part V statement. Each one is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before we fax it to the IRS Ogden PIN Unit and return the timestamped confirmation. Late years include a reasonable cause cover letter.
 
 **{{price.standard}}** Standard, ready in 5 to 7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past year. IRS fax delivery included — see [pricing](/pricing). For a breakdown of what filing costs, see [Form 5472 filing cost](/blog/form-5472-cost).
 

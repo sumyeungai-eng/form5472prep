@@ -118,7 +118,7 @@ The IRS's [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472)
 
 ## How can Form5472 Prep handle a freelancer's filing?
 
-We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your platform reports and owner-movement schedule. A qualified tax accountant reviews each package, and we fax it to the IRS and send you the timestamped receipt.
+We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your platform reports and owner-movement schedule. Each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS and send you the timestamped receipt.
 
 Standard is **{{price.standard}}**, ready in **5–7 business days**. Express is **{{price.express}}**, ready to sign **within 24 hours**. Each additional past tax year is **+{{price.additionalYear}}**. IRS fax delivery is included.
 

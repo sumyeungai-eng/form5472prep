@@ -127,7 +127,7 @@ That local question can involve more than income tax. German trade tax, VAT, boo
 
 ## How can Form5472 Prep be the answer?
 
-Form5472 Prep handles the US filing mechanics when the German owner has already identified the related-party activity and needs the annual package prepared correctly. The service prepares Form 5472, the pro forma Form 1120 and the Part V statement, and the package is reviewed by a qualified tax accountant.
+Form5472 Prep handles the US filing mechanics when the German owner has already identified the related-party activity and needs the annual package prepared correctly. The service prepares Form 5472, the pro forma Form 1120 and the Part V statement, and the package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN).
 
 After signature, Form5472 Prep faxes the package to the IRS Ogden PIN Unit at 855-887-7737 and returns a timestamped receipt. Standard service is **{{price.standard}}** and takes 5-7 business days. Express service is **{{price.express}}** and is ready to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included.
 

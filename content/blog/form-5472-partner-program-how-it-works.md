@@ -24,7 +24,7 @@ The [partner program](/partners) is built for organizations that repeatedly enco
 - business consultants and cross-border advisers; and
 - firms coordinating filings for several related client entities.
 
-It is not necessary to turn your team into a Form 5472 production department. The partner's role is to coordinate the client relationship and provide accurate information. Form5472 Prep's role is to prepare the supported filing package, arrange accountant review, collect the client's signature, and send the signed package through the dedicated IRS filing route.
+It is not necessary to turn your team into a Form 5472 production department. The partner's role is to coordinate the client relationship and provide accurate information. Form5472 Prep's role is to prepare the supported filing package, arrange review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), collect the client's signature, and send the signed package through the dedicated IRS filing route.
 
 ## The partner operating model
 
@@ -33,7 +33,7 @@ It is not necessary to turn your team into a Form 5472 production department. Th
 | Account setup | Applies and supplies company details | No action | Reviews and approves the partner account |
 | Filing intake | Starts one filing for the client LLC and coordinates records | Confirms entity, owner, and transaction information | Provides the structured intake workflow |
 | Preparation | Answers follow-up questions and monitors status | Supplies missing facts where needed | Prepares Form 5472, pro forma Form 1120, and supporting statement |
-| Review | Tracks the file | Reviews the completed package | Arranges qualified tax-accountant review |
+| Review | Tracks the file | Reviews the completed package | Arranges review by a PTIN-holding tax accountant |
 | Signature | Sends or coordinates the secure sign link | Signs in the browser | Stores the signature with the filing |
 | Submission | Watches the final status | Keeps the completed copy | Sends the package to the IRS and stores a timestamped receipt |
 

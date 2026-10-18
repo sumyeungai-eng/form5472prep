@@ -50,7 +50,7 @@ type Segment = string | { href: string; text: string };
 // Blurb and boilerplate are written once as segments, then rendered with links
 // on the page and flattened to plain text (absolute URLs) for the Copy button.
 const BLURB: Segment[] = [
-  "Form5472 Prep prepares and files IRS Form 5472 with the pro forma Form 1120 for foreign-owned US single-member LLCs. Every filing is reviewed by a qualified accountant before it is submitted, then signed online and faxed to the IRS Ogden PIN Unit with a timestamped receipt. See the ",
+  "Form5472 Prep prepares and files IRS Form 5472 with the pro forma Form 1120 for foreign-owned US single-member LLCs. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted, then signed online and faxed to the IRS Ogden PIN Unit with a timestamped receipt. See the ",
   { href: SERVICES_HUB_PATH, text: "filing services" },
   " or read ",
   { href: "/about", text: "about Form5472 Prep" },
@@ -61,7 +61,7 @@ const BOILERPLATE: Segment[][] = [
   [
     "Form5472 Prep (",
     { href: "/", text: "www.form5472prep.com" },
-    ") is an online filing service for the owners of US single-member LLCs who are not US persons. A single-member LLC owned by one foreign person must report certain transactions with its owner on IRS Form 5472, attached to a pro forma Form 1120. These forms cannot be e-filed, so Form5472 Prep prepares the package from the owner's answers, has it reviewed by a qualified accountant, collects the signature online and faxes it to the IRS Ogden PIN Unit, returning a timestamped transmission receipt.",
+    ") is an online filing service for the owners of US single-member LLCs who are not US persons. A single-member LLC owned by one foreign person must report certain transactions with its owner on IRS Form 5472, attached to a pro forma Form 1120. These forms cannot be e-filed, so Form5472 Prep prepares the package from the owner's answers, has it reviewed by a PTIN-holding tax accountant, collects the signature online and faxes it to the IRS Ogden PIN Unit, returning a timestamped transmission receipt.",
   ],
   [
     "The same service covers late and catch-up filings with a reasonable-cause statement, dormant LLCs and final-year filings for dissolved LLCs. It also offers ",
@@ -108,7 +108,7 @@ const FREE_TOOLS: Array<{ href: string; label: string; blurb: string }> = [
 const KEY_FACTS: string[] = [
   "What it does: prepares and files IRS Form 5472 with the pro forma Form 1120 for foreign-owned US single-member LLCs.",
   "Who it is for: non-US owners of single-member US LLCs, plus formation agents, registered agents and accounting firms that file for client LLCs.",
-  "Review: every filing is reviewed by a qualified accountant before it is submitted.",
+  "Review: every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.",
   "Delivery: the signed package is faxed to the IRS Ogden PIN Unit and a timestamped transmission receipt is stored.",
   `Prices: Standard ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}), Express ${formatPrice(TIERS.express.priceCents)} (ready to sign within ${EXPRESS_TURNAROUND}), +${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past tax year; IRS fax delivery included. The two tiers differ only in speed. EIN service ${formatPrice(EIN_PRICE_CENTS)}; ITIN service ${formatPrice(ITIN_PRICE_CENTS)}.`,
   "Other services: late (DIIRSP) catch-up filings, dormant-LLC and final-year filings, EIN and ITIN application support, white-label filing for partners.",

@@ -121,7 +121,7 @@ Our work is the classification and the paperwork: reading the year's statements,
 
 **{{price.standard}}** standard (5–7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year, IRS fax delivery included; see [pricing](/pricing).
 
-A qualified tax accountant reviews each package before submission. We are not a CPA firm and do not give tax advice: we do not decide income tax positions, treaty positions or withholding, and we do not advise on any other country's tax.
+Each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before submission. We are not a CPA firm and do not give tax advice: we do not decide income tax positions, treaty positions or withholding, and we do not advise on any other country's tax.
 
 ## Frequently asked questions
 

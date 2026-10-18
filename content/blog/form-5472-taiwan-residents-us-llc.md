@@ -113,7 +113,7 @@ For a 2025 calendar-year LLC the package was due **15 April 2026**, extended to 
 
 The Taiwan specifics — no treaty on the IRS list, a Taxpayer ID No. issued by an immigration authority, NT dollar conversion, and often a Taiwanese company as a second related party — are routine once handled before, and they are exactly what makes a self-prepared package come back as substantially incomplete.
 
-Form5472 Prep prepares the complete package: Form 5472 with the FTIN and reference ID handled correctly, the pro forma Form 1120, and the Part V supporting statement. A qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and we return the timestamped confirmation receipt. Late years include a reasonable cause cover letter.
+Form5472 Prep prepares the complete package: Form 5472 with the FTIN and reference ID handled correctly, the pro forma Form 1120, and the Part V supporting statement. It is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), we fax it to the IRS Ogden PIN Unit, and we return the timestamped confirmation receipt. Late years include a reasonable cause cover letter.
 
 **{{price.standard}}** standard, ready in 5–7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery is included, so you never send an international fax from Taipei.
 

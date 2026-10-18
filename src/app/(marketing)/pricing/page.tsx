@@ -38,7 +38,7 @@ const PRICING_LAST_REVIEWED_LABEL = "October 15, 2026";
 // The answer capsule under "How much does Form5472 Prep cost?": prices and
 // turnarounds come from src/lib/pricing.ts, never typed here. The brand name
 // leads the capsule so answer engines that quote it keep the attribution.
-const COST_ANSWER = `${SITE_NAME} charges ${formatPrice(TIERS.standard.priceCents)} on Standard (ready in ${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} on Express (ready to sign within ${EXPRESS_TURNAROUND}) to prepare and file Form 5472 with the pro forma Form 1120, plus ${formatPrice(MULTI_YEAR_ADDON_CENTS)} for each additional past tax year. IRS fax delivery and a qualified-accountant review are included on both plans, with no subscription.`;
+const COST_ANSWER = `${SITE_NAME} charges ${formatPrice(TIERS.standard.priceCents)} on Standard (ready in ${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} on Express (ready to sign within ${EXPRESS_TURNAROUND}) to prepare and file Form 5472 with the pro forma Form 1120, plus ${formatPrice(MULTI_YEAR_ADDON_CENTS)} for each additional past tax year. IRS fax delivery and a review by a PTIN-holding tax accountant are included on both plans, with no subscription.`;
 
 const PRICING_FAQS: { q: string; a: string }[] = [
   {
@@ -47,7 +47,7 @@ const PRICING_FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What's the difference between the two tiers?",
-    a: `Only the turnaround. The filing itself is identical: we prepare your Form 5472 + pro forma 1120, a qualified tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. Both tiers also include a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready to sign within ${EXPRESS_TURNAROUND} and comes with priority email support.`,
+    a: `Only the turnaround. The filing itself is identical: we prepare your Form 5472 + pro forma 1120, a PTIN-holding tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. Both tiers also include a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready to sign within ${EXPRESS_TURNAROUND} and comes with priority email support.`,
   },
   {
     q: "Is fax filing really included?",
@@ -230,7 +230,7 @@ export default function PricingPage() {
 
         <p className="mt-4 text-xs text-slate-500 text-center max-w-2xl mx-auto">
           One-time flat fee, billed in USD via Stripe. No subscription. Every
-          filing is reviewed by a qualified accountant before it is submitted.
+          filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.
           We prepare and submit the forms from the information you give us; we
           do not provide personalised tax planning.
         </p>

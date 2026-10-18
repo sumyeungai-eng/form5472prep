@@ -125,7 +125,7 @@ The one thing that never helps is waiting. Penalties accrue, the "voluntary befo
 
 Responding to a penalty notice has two halves. The abatement argument is yours — it depends on your facts, and if the amounts are large it deserves a tax attorney or CPA. The **filings** are mechanical, and that half is what we do.
 
-[Form5472 Prep](/) prepares the complete package for each missing year — pro forma Form 1120, Form 5472, the Part V supporting statement, and a reasonable cause cover letter — has it reviewed by a qualified tax accountant, and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt you will cite in your response. Standard filings are **{{price.standard}}** and ready in 5-7 business days; express is **{{price.express}}**, ready to sign within 24 hours; each additional past tax year is **+{{price.additionalYear}}**.
+[Form5472 Prep](/) prepares the complete package for each missing year — pro forma Form 1120, Form 5472, the Part V supporting statement, and a reasonable cause cover letter — has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt you will cite in your response. Standard filings are **{{price.standard}}** and ready in 5-7 business days; express is **{{price.express}}**, ready to sign within 24 hours; each additional past tax year is **+{{price.additionalYear}}**.
 
 For current flat-fee options before you start, [see current pricing](/pricing).
 

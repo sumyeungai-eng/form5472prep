@@ -101,7 +101,7 @@ The due date for a calendar-year entity is generally **April 15**. Form 7004 ext
 
 We do one thing: prepare and submit Form 5472 with the pro forma Form 1120 for foreign-owned single-member LLCs, wherever the LLC was formed and whoever formed it.
 
-You answer a short online questionnaire. We prepare the package, a qualified tax accountant reviews it, and we fax it to the IRS and send you the timestamped transmission receipt.
+You answer a short online questionnaire. We prepare the package; it is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS and send you the timestamped transmission receipt.
 
 - **{{price.standard}} Standard** — delivered in 5–7 business days
 - **{{price.express}} Express** — ready to sign within 24 hours

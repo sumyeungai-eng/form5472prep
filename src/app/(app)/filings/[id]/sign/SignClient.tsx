@@ -155,7 +155,7 @@ export function SignClient({
 
         <h1 className="text-2xl font-semibold text-slate-900">Check &amp; sign — {label}</h1>
         <p className="mt-1.5 text-sm text-slate-600">
-          A qualified accountant has reviewed your forms. Please check them, and if everything is correct,
+          A PTIN-holding tax accountant has reviewed your forms. Please check them, and if everything is correct,
           sign below. Nothing is sent to the IRS until you sign.
         </p>
 

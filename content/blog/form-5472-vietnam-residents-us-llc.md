@@ -105,7 +105,7 @@ The due date for a calendar-year entity is generally 15 April; Form 7004 extends
 
 No treaty to invoke, an FTIN that changed form in 2025, VND conversion with a stated basis and a possible second related party are routine once handled before - and exactly the details that make a do-it-yourself form substantially incomplete.
 
-Form5472 Prep prepares Form 5472, the pro forma Form 1120 and the Part V statement, has a qualified tax accountant review the package, faxes it to the IRS Ogden PIN Unit and returns the timestamped receipt.
+Form5472 Prep prepares Form 5472, the pro forma Form 1120 and the Part V statement, has the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), faxes it to the IRS Ogden PIN Unit and returns the timestamped receipt.
 
 **{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 

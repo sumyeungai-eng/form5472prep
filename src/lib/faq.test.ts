@@ -5,6 +5,13 @@ import { FAQ_CATEGORIES, FAQ_ITEMS } from "./faq";
 import { LANDING_PAGES } from "./landing-pages";
 import { SERVICE_PAGES } from "./services-pages";
 
+// Written with character classes so a repo-wide grep for the banned phrases
+// only ever hits real copy, not this guard.
+const IRS_APPROVAL_CLAIM = new RegExp(
+  ["IRS[- ](approved|certified|licensed|registered)", "licen[cs]ed by the IRS", "endors[e]d by the IRS", "authori[sz]ed by the IRS"].join("|"),
+  "i",
+);
+
 const FORBIDDEN_PHRASES = [
   "our CPA",
   "we are a CPA",
@@ -142,7 +149,7 @@ describe("central FAQ content", () => {
   });
 
   it("states the accountant-review boundary and keeps balanced coverage", () => {
-    expect(FAQ_ITEMS.some((item) => item.answer.includes("reviewed by a qualified accountant"))).toBe(true);
+    expect(FAQ_ITEMS.some((item) => item.answer.includes("reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN)"))).toBe(true);
     expect(FAQ_ITEMS.length).toBeGreaterThanOrEqual(35);
     expect(FAQ_ITEMS.length).toBeLessThanOrEqual(55);
 
@@ -151,6 +158,18 @@ describe("central FAQ content", () => {
         FAQ_ITEMS.filter((item) => item.category === category.id).length,
         category.id,
       ).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it("explains the reviewer's PTIN without implying approval, licensing or CPA status", () => {
+    const item = FAQ_ITEMS.find((faqItem) => faqItem.id === "who-reviews-my-filing");
+    expect(item?.question).toBe("Who reviews my Form 5472 filing?");
+    expect(item?.answer).toMatch(/Preparer Tax Identification Number \(PTIN\)/);
+    expect(item?.answer).toMatch(/not a licence or IRS approval/);
+    expect(item?.answer).toMatch(/not a CPA firm/);
+
+    for (const faqItem of FAQ_ITEMS) {
+      expect(faqItem.answer, faqItem.id).not.toMatch(IRS_APPROVAL_CLAIM);
     }
   });
 

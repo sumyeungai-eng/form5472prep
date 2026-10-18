@@ -99,7 +99,7 @@ The package is Form 5472 attached to a **pro forma Form 1120** with **"Foreign-o
 
 ## How can Form5472 Prep handle an author's filing?
 
-We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your royalty reports and owner-movement schedule, have a qualified tax accountant review the package, fax it to the IRS and send you the receipt.
+We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your royalty reports and owner-movement schedule, have the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), fax it to the IRS and send you the receipt.
 
 Standard is **{{price.standard}}** and ready in **5–7 business days**. Express is **{{price.express}}** and ready to sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**, and IRS fax delivery is included.
 

@@ -94,7 +94,7 @@ The two run on separate tracks with separate offices, and finishing one leaves t
 
 ## How does Form5472 Prep handle the final year?
 
-We prepare the final-year package for a foreign-owned single-member LLC: the pro forma Form 1120 with the "Final return" box checked, Form 5472 with the dissolution amounts in Part V, the Part V statement, and a reasonable-cause statement if the year is late. Every filing is reviewed by a qualified accountant before it is submitted, and we fax it to the IRS Ogden PIN Unit and send you the transmission record.
+We prepare the final-year package for a foreign-owned single-member LLC: the pro forma Form 1120 with the "Final return" box checked, Form 5472 with the dissolution amounts in Part V, the Part V statement, and a reasonable-cause statement if the year is late. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted, and we fax it to the IRS Ogden PIN Unit and send you the transmission record.
 
 Our package does not include Form 966, state dissolution filings, Form 1065 or a full corporate Form 1120. We do not give tax advice; if your LLC elected corporate status, ask a tax professional about Form 966. The scope and current prices are on the [final Form 5472 for a dissolved LLC](/services/final-form-5472-for-dissolved-llc) page and the [pricing page](/pricing).
 

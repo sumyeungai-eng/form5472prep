@@ -45,7 +45,7 @@ The client confirms ownership, addresses, funding, withdrawals, loans, reimburse
 
 ### Form5472 Prep handles the supported filing workflow
 
-Form5472 Prep prepares the Form 5472 and pro forma Form 1120 package, arranges qualified tax-accountant review, sends the signed package to the IRS, and stores a timestamped fax receipt.
+Form5472 Prep prepares the Form 5472 and pro forma Form 1120 package, arranges review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), sends the signed package to the IRS, and stores a timestamped fax receipt.
 
 ## The annual-renewal trigger map
 

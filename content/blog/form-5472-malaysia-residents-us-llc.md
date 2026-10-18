@@ -106,7 +106,7 @@ The regular due date for a calendar-year LLC is generally 15 April. Form 7004 ex
 
 Most Malaysia-specific errors are small ones that make a return substantially incomplete. Examples include a passport number in the FTIN box, a blank FTIN field where "None" was required, a company tax number entered as a personal one, or a Sdn Bhd that should have been reported as a second related party.
 
-We prepare the complete package: Form 5472, the pro forma Form 1120 and the supporting statement. A qualified tax accountant reviews it, then we fax it to the IRS Ogden PIN Unit and send you the timestamped transmission receipt.
+We prepare the complete package: Form 5472, the pro forma Form 1120 and the supporting statement. It is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), then we fax it to the IRS Ogden PIN Unit and send you the timestamped transmission receipt.
 
 **{{price.standard}}** Standard, ready in 5–7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery is included, so you never have to send an international fax from Kuala Lumpur.
 
