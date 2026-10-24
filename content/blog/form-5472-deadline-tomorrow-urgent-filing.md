@@ -1,129 +1,128 @@
 ---
-title: "Form 5472 Deadline on 15 October 2026: Filing in Two Days"
-seoTitle: "Form 5472 Deadline 15 October 2026"
-description: "The extended 2025 Form 5472 is due 15 October 2026. Express ({{price.express}}) has your package ready to check and sign within 24 hours — then you sign and we fax."
+title: "Form 5472 Deadline Passed on 15 October 2026: Filing Late Now"
+seoTitle: "Form 5472 Deadline Passed: Filing Late Now"
+description: "The extended 2025 Form 5472 deadline passed on 15 October 2026. Filing late is the task now, and Express ({{price.express}}) has the package ready to sign in 24 hours."
 date: 2026-10-13
-updated: 2026-10-13
+updated: 2026-10-24
 author: "Form5472 Prep"
-tags: ["form-5472", "deadline", "express-filing", "form-7004", "foreign-owned-llc"]
+tags: ["form-5472", "late-filing", "deadline", "form-7004", "foreign-owned-llc"]
 draft: false
 ---
 
-**Your extended 2025 Form 5472 is due Thursday 15 October 2026. Order Express ({{price.express}}) today and your package is ready for you to check and sign within 24 hours, 7 days a week. It cannot go to the IRS until you sign it — only your signature belongs on the pro forma Form 1120.**
+**The extended deadline for a 2025 Form 5472 was 15 October 2026 and it has passed. If the return is still unfiled and you had a valid Form 7004, it is now late; without a timely Form 7004 it has been late since 16 April 2026. A late filing is the task now. The next deadline is 15 April 2027, for tax year 2026.**
 
-Today is Tuesday 13 October 2026. If you extended your 2025 return on Form 7004, the useful question is no longer "what is the deadline" but "what can actually be completed between now and Thursday." This post answers only that — [start your filing now](/start) and read the rest while the intake is open.
+If a 2025 Form 5472 is still unfiled, the deadline is no longer the thing to plan around — the filing is. [Start your filing now](/start); the rest of this page covers what a late package involves, what delay costs, and how the signed return reaches the IRS.
 
-For the full calendar, every extended date and the fiscal-year exceptions, see [the Form 5472 deadline guide for 2026 and 2027](/blog/form-5472-deadline-2026). This page covers the next 48 hours.
+For the mechanics of catching up — several unfiled years at once, what belongs in a reasonable cause statement, what follows the fax — read [what to do if you filed late or never filed](/blog/form-5472-filed-late-never-filed). Every 2026 and 2027 date sits in [the Form 5472 deadline guide](/blog/form-5472-deadline-2026).
 
-## Is 15 October 2026 genuinely the last day?
+## Has the 15 October 2026 Form 5472 deadline passed?
 
-For a calendar-year 2025 return extended on Form 7004, yes. The [Form 7004 instructions](https://www.irs.gov/instructions/i7004) describe an automatic extension period of generally six months, carrying a 15 April 2026 due date to 15 October 2026 — a Thursday, so no weekend shift applies. There is no further extension after it.
+Yes, and so has the date behind it. A calendar-year 2025 return was due 15 April 2026. A Form 7004 filed by that date carried it to 15 October 2026 — an automatic extension period of generally six months ([Form 7004 instructions](https://www.irs.gov/instructions/i7004)). There is no further extension after 15 October 2026.
 
-Two things the extension did not do: it did not extend the time to pay anything — Form 7004 "does not extend the time to pay any tax due" — and it had to be filed by the regular due date to exist at all.
+Nothing about that is retroactive: a 2025 package sent now is a late filing, and no election, form or fee converts it back. The question worth asking is how quickly it can be completed, signed and sent.
 
-## What does "within 24 hours" actually mean?
+## Why does filing a late Form 5472 quickly still matter?
+
+Because penalty exposure grows with time instead of stopping at a fixed figure. A $25,000 penalty applies to a reporting corporation that fails to file Form 5472 when due and in the manner prescribed, and a substantially incomplete form counts as a failure to file ([IRS, Instructions for Form 5472](https://www.irs.gov/instructions/i5472)).
+
+The expensive part comes afterwards. Where the failure continues for more than 90 days after the IRS notifies the reporting corporation, an additional $25,000 applies with respect to each related party for each 30-day period, or part of one, after that 90-day window ends. The instructions state no maximum: once that 90-day window has elapsed it is a meter that runs until the filing is made, not a one-off fine to budget for.
+
+Filing before a notice arrives is the part still inside the LLC's control. If a notice has already arrived, [the penalty notice walkthrough](/blog/form-5472-penalty-notice-what-to-do) is a better starting point than this page.
+
+## What is the position of an LLC that never filed Form 7004?
+
+If the 2025 package is still unfiled, it has been late since 16 April 2026 — six months longer than for an LLC whose extension was live. Form 7004 had to be filed by the regular due date, 15 April 2026 for a calendar-year 2025 return, to create an extension at all, and even a valid one "does not extend the time to pay any tax due".
+
+Now that 15 October 2026 has passed, the two positions converge: both are late filings, and only the length of the delay differs. An extension that was never filed cannot be filed now, so the package is the only thing left to do.
+
+## Does a reasonable cause statement clear the penalty?
+
+No. A reasonable cause statement can accompany a late package and is worth preparing properly, but it does not remove the penalty on its own. The IRS states that during processing of a delinquent information return, penalties "may be assessed without considering the attached reasonable cause statement" ([delinquent international information return submission procedures](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures)).
+
+A statement puts the LLC's account of the delay on the record at the moment of filing rather than months later. One is included on both tiers where needed, and [what to do if you filed late or never filed](/blog/form-5472-filed-late-never-filed) sets out what belongs in it.
+
+## What does Express mean for a late 2025 filing?
 
 Express ({{price.express}}) means one thing precisely: **your completed package is ready for you to check and sign within 24 hours of ordering, 7 days a week.**
 
-It does not mean filed within 24 hours, and we will not tell you otherwise to win the order. The reason is not a disclaimer — it is how the filing works.
+That is not the same as filed within 24 hours, and we will not say otherwise to win an order. Form 5472 attaches to a pro forma Form 1120 with "Foreign-owned U.S. DE" across the top, only the name, address and items B and E completed on page 1, per the Instructions for Form 5472. That return carries the signature of the person authorised to sign for the LLC — never ours. Without that signature it is not a filing.
 
-Your Form 5472 is attached to a pro forma Form 1120 with "Foreign-owned U.S. DE" written across the top, and only the name, address and items B and E completed on page 1 ([IRS, Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). That return carries the signature of the person authorised to sign for the LLC. That is you, your co-owner or your officer — never us. A package without the right signature is not a filing.
+The sequence has five steps, and its only clocks are set by when the order and the signature arrive:
 
-So the honest sequence is three steps, in this order:
-
-1. **We prepare** — within 24 hours of your order, 7 days a week.
-2. **You sign** — the step only you can take.
-3. **We fax** — to the IRS, with a timestamped transmission receipt, included in the price.
-
-Everything up to the signature is on our clock; everything after it starts with you. That is why the promise stops where it does — and why we would rather you knew about step two now than discovered it on Thursday morning.
-
-## What happens hour by hour if you order Express today?
-
-Assume you order on Tuesday 13 October. These are our commitments and your tasks — not predictions about what the IRS will do with the package.
-
-| Clock | What we do | What you do |
+| Step | What we do | What you do |
 |---|---|---|
-| **Tue 13 Oct, you order** | Your intake opens immediately; Express enters the same-day queue | Answer the intake: entity, owner, tax year, transaction totals |
-| **Tue 13 Oct, after intake** | A preparer builds the Form 5472 and pro forma Form 1120 from your answers | Watch your inbox: if a figure is ambiguous we email one question, and a fast reply protects the clock |
-| **Before the 24 hours are up** | A PTIN-holding tax accountant reviews the package | Nothing |
-| **By Wed 14 Oct, within 24 hours of your order** | We email you the completed package, ready to check and sign | **Your bottleneck starts here.** Check the figures, sign, return it |
-| **Same day your signature arrives** | We fax the signed package to the IRS and send the timestamped receipt | Keep the receipt with your records |
-| **Thu 15 Oct** | The extended deadline | — |
+| **You order** | Your intake opens immediately; an Express order enters the same-day queue | Answer it: entity, owner, tax year, transaction totals |
+| **We prepare** | Build the Form 5472 and pro forma Form 1120; a tax accountant who holds an IRS PTIN reviews it | Reply quickly if we email a question |
+| **You check and sign** | Email the package, ready to check and sign, within 24 hours of an Express order | Check the figures, sign, return it — the step only you can take |
+| **We fax** | Fax the signed package to the IRS the same day your signature arrives | Nothing |
+| **You keep the receipt** | Send the timestamped receipt and a copy of what was transmitted | Keep both with the LLC's records |
 
-Read the table as a chain, not a guaranteed outcome. We control the first four rows. The fifth begins when your signature arrives: sign on Wednesday and the fax goes out with a day in hand. Leave it until Thursday evening and the time is gone — the one risk here we cannot absorb for you.
+Everything up to the signature runs on our clock; everything after begins with your signature. That is why the promise stops where it does, and why it is better said before you pay than after.
 
-## What if you never filed Form 7004?
+## What do you need ready before the intake?
 
-Then 15 October 2026 is not your deadline, and today's date changes nothing about your position.
+Four things let the intake be answered in one sitting:
 
-Form 7004 had to be filed by the regular due date — 15 April 2026 for a calendar-year 2025 return — to create an extension at all. Without one, your 2025 package has been late since 16 April 2026. Filing on Thursday would not make it timely; it would make it a late filing submitted on Thursday.
+- **The LLC's EIN**, exactly as issued, plus the legal name, US address, state and formation date. If the EIN is pending, say so rather than guessing.
+- **Owner details** — full legal name, address, country of residence and the foreign tax ID (FTIN), if any.
+- **The 2025 related-party transaction totals**: money in, money out, loans either way, and any sales or services between owner and LLC. Year totals, not a transaction list.
+- **Year-end total assets** at 31 December 2025, the figure for item E of the pro forma Form 1120 — the current form and instructions sit on the [IRS Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472).
 
-That is a late filing rather than a 15 October deadline, and it is better done this week than next quarter. A reasonable cause statement can accompany a late package, but it is not a procedure that clears the penalty: the IRS states that during processing of a delinquent information return, penalties "may be assessed without considering the attached reasonable cause statement" ([delinquent international information return submission procedures](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures)). Read [what to do if you filed late or never filed](/blog/form-5472-filed-late-never-filed) before you pick a tier — there is no deadline-driven reason to pay for Express if your return is already late.
-
-## What do you need to have ready to make 24 hours achievable?
-
-The clock starts when you order, but it only runs smoothly if the intake can be answered in one sitting. Have four things in front of you:
-
-- **The LLC's EIN**, exactly as issued, plus the legal name, US address, state and formation date. If the EIN is still pending, say so in the intake rather than guessing.
-- **Owner details** — full legal name, address, country of residence and the foreign tax ID (FTIN) if the owner has one.
-- **The year's related-party transaction totals** for 2025: money you put into the LLC, money you took out, loans in either direction, and any sales or services between you and the LLC. Totals for the year, not a transaction list.
-- **Year-end total assets** at 31 December 2025, the figure that goes in item E of the pro forma Form 1120 — the current form and instructions are on the [IRS Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472).
-
-If a number is genuinely unknown, say so. A flagged estimate we can question beats a confident wrong figure — the IRS treats a substantially incomplete Form 5472 as a failure to file, so the figures are the part worth getting right.
-
-## Is Standard still worth considering today?
-
-Standard is {{price.standard}} and ready in 5-7 business days. Ordered today that lands after 15 October, so if your extension is live and you need the package ready to sign before Thursday, Standard is not your tier — and we will say so rather than take the cheaper order.
-
-It is not a lesser filing, though. The forms, the accountant review, the reasonable-cause letter where one is needed and the IRS fax delivery are identical on both tiers; only speed differs. Each additional past tax year is a flat {{price.additionalYear}} either way. Full breakdown on the [pricing page](/pricing).
-
-## What is the actual penalty exposure if Thursday passes?
-
-A $25,000 penalty is assessed on a reporting corporation that fails to file Form 5472 when due and in the manner prescribed, and a substantially incomplete form counts as a failure to file ([IRS, Instructions for Form 5472](https://www.irs.gov/instructions/i5472)).
-
-The part people miss is that it does not stop there. If the failure continues for more than 90 days after the IRS notifies you, an additional $25,000 applies **with respect to each related party for each 30-day period**, or part of one, after that window ends. The instructions state no maximum. It is not a one-off fine you can price in; it is a meter that starts once a notice arrives and runs until the filing is made. If a notice has already reached you, [the penalty notice walkthrough](/blog/form-5472-penalty-notice-what-to-do) is a better starting point than this page.
+Where a number is genuinely unknown, flag it rather than inventing one: a flagged estimate beats a confident wrong figure, because a substantially incomplete form is treated as a failure to file in its own right.
 
 ## How does the signed package reach the IRS?
 
-Not electronically. The instructions state that you cannot file Form 5472 electronically, which is also why no amount of urgency turns this into a one-click submission.
+By fax or by mail, never electronically. The Instructions for Form 5472 state that a foreign-owned US disregarded entity cannot file Form 5472 electronically, which is why no amount of urgency makes this a one-click submission. The signed package goes by fax to **855-887-7737**, or by mail to the Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201. For a late package fax is the sensible route, and it is included on both tiers.
 
-The signed package goes by fax to **855-887-7737**, or by mail to the Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201. Two days out, fax is the only sensible route, and it is included in both tiers.
+Keep the transmission receipt, and be clear about what it is: evidence that a package was transmitted at a given date and time. It is not IRS acceptance, and the instructions do not describe a routine acknowledgment for a faxed package, so silence afterwards establishes neither acceptance nor rejection.
 
-Keep the transmission receipt — and be clear what it is. A fax receipt is evidence that the package was transmitted at a given date and time. It is not IRS acceptance, and the [Form 5472 instructions](https://www.irs.gov/instructions/i5472) do not describe a routine acknowledgment for a faxed package. Silence afterwards establishes neither acceptance nor rejection.
+## Is Standard or Express the better tier for a late package?
+
+Express ({{price.express}}) is the tier most late filers want, and the honest reason is time, not a deadline. A package ready to check and sign within 24 hours can be signed and faxed within a couple of days; Standard is {{price.standard}} and ready in 5-7 business days, putting the fax a week or more out.
+
+For a filing already months late, that difference is days of exposure, not a different outcome: worth paying for if a notice has arrived or you want it closed, not worth it if a week makes no practical difference. We would rather say that than take the dearer order.
+
+Standard is not a lesser filing either. The forms, the accountant review, the reasonable cause statement where needed and the IRS fax delivery are identical on both tiers; only speed differs. Each additional past tax year is a flat {{price.additionalYear}} either way, so 2024 and 2025 together are one order. Full breakdown on the [pricing page](/pricing).
+
+## When are the next Form 5472 deadlines?
+
+Tax year 2026 is due 15 April 2027, extended to 15 October 2027 if Form 7004 is filed by that April date. Form 7004 has to be filed by that regular due date to exist at all, and it does not extend the time to pay any tax due.
+
+Two consequences for anyone reading ahead. A 2026 package cannot be rescued in October 2027 by a Form 7004 filed that September, because the April date creates the extension. And an unfiled 2025 package does not fold into the 2026 cycle — it is a separate return, late now.
 
 ## Frequently asked questions
 
-### Can you file my Form 5472 within 24 hours?
+### Is it too late to file my 2025 Form 5472?
 
-We cannot promise it: filing depends on your signature, not on us. We prepare your complete package for signature within 24 hours of ordering, 7 days a week. Only you can sign it. Sign the same day and the fax goes the same day.
+No. A late Form 5472 is still the filing the IRS expects, and nothing closes the window. The extended deadline of 15 October 2026 has passed, so the package is late rather than timely. File it and keep the transmission receipt.
 
-### Is 15 October 2026 really my last day?
+### I filed Form 7004 — does that still help?
 
-Only if Form 7004 was filed by 15 April 2026. With a valid extension, 15 October 2026 is the final date and there is no further extension. Without one, your 2025 return has been late since 16 April 2026.
+Form 7004 carried a calendar-year 2025 return to 15 October 2026 and no further. After that date a package that remains unfiled is late, whether or not an extension was filed. Form 7004 never extended the time to pay any tax due either.
 
-### Can I e-file to beat the deadline?
+### What is the penalty for filing Form 5472 late?
 
-No. The Form 5472 instructions state you cannot file Form 5472 electronically. A foreign-owned US disregarded entity's package goes by fax or mail to the Ogden PIN Unit, which is why the signature step cannot be compressed away.
+$25,000 for failing to file when due and in the manner prescribed, and a substantially incomplete form counts as a failure. Where the failure continues more than 90 days after IRS notification, a further $25,000 applies per related party for each 30-day period, with no stated maximum.
 
-### Does the fax receipt prove the IRS accepted my filing?
+### Does a reasonable cause statement stop the penalty?
 
-It proves transmission, not acceptance. Keep the timestamped receipt and the exact package you sent. The instructions do not describe a routine acceptance acknowledgment for a faxed package, so treat subsequent silence as neither approval nor rejection.
+No. The IRS states that penalties "may be assessed without considering the attached reasonable cause statement" during processing of a delinquent information return. A statement still puts your account of the delay on the record at the moment of filing.
 
-### What if some of my 2025 figures are still estimates?
+### Can you file my late Form 5472 within 24 hours?
 
-Flag them in the intake. Our preparer and the reviewing accountant will question anything that looks off before the package reaches you. A substantially incomplete form counts as a failure to file, so a flagged estimate is safer than a confident guess.
+We cannot promise that: filing depends on your signature, not on us. Express has your complete package ready for you to check and sign within 24 hours of ordering, 7 days a week. Sign the same day and the fax goes the same day.
 
-### Do I pay more for earlier tax years?
+### Can I e-file a late Form 5472?
 
-Each additional past tax year beyond the first is a flat {{price.additionalYear}}, on either tier. Filing 2024 and 2025 together is one order, not two, and the same accountant review covers both.
+No. The Instructions for Form 5472 state that a foreign-owned US disregarded entity cannot file Form 5472 electronically. A foreign-owned US disregarded entity's package goes by fax to 855-887-7737 or by mail to the Ogden PIN Unit, which is why the signature step cannot be compressed away.
 
-### Can I still order on Wednesday 14 October?
+### Do I pay more for earlier unfiled years?
 
-You can, and the 24-hour promise still holds — but your signing window shrinks to hours rather than a day. If Thursday matters, today is materially better than tomorrow.
+Each additional past tax year beyond the first is a flat {{price.additionalYear}}, on either tier. Filing 2023, 2024 and 2025 together is one order rather than three, and the same accountant review covers every year in it.
 
-## Ordering today
+## Filing the 2025 package now
 
-If your extension is live and Thursday is the date you are working to, the sequence is short: [start your filing](/start), answer the intake in one sitting, sign the package when it arrives, and we fax it. The only link we cannot handle for you is the signature — which is exactly why we tell you about it before you pay rather than after.
+The sequence for a late 2025 Form 5472 is short: [start your filing](/start), answer the intake in one sitting, check and sign the package when it arrives, and we fax it to the IRS the same day your signature lands. The one step we cannot take for you is the signature.
 
 We are not a CPA firm and do not give tax advice. Each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is sent.
 
