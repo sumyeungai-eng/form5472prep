@@ -1,8 +1,8 @@
 ---
 title: "Form 5472 Deadline for 2026 and 2027"
-description: "The 2025 Form 5472 is due October 15, 2026 if extended. See every 2026-2027 deadline, the Form 7004 extension rule, and what to do if you're already late."
+description: "The 2025 Form 5472 was due 15 October 2026 and that date has passed. See every 2026-2027 deadline, the Form 7004 rule, and what to do if you are late."
 date: 2026-08-15
-updated: 2026-10-13
+updated: 2026-10-24
 author: "Form5472 Prep"
 tags: ["form-5472", "deadline", "extension", "form-7004", "foreign-owned-llc"]
 draft: false
@@ -18,10 +18,10 @@ If a date has already passed for you, [we prepare and fax complete late packages
 
 ## The deadline calendar
 
-| Tax year | Standard due date | Extended due date (with Form 7004) | Status at 13 October 2026 |
+| Tax year | Standard due date | Extended due date (with Form 7004) | Status at 24 October 2026 |
 |---|---|---|---|
 | **2024** | 15 April 2025 | 15 October 2025 | Both passed — file late now |
-| **2025** | 15 April 2026 | **15 October 2026** | Extended deadline 15 October 2026; late since 16 April 2026 without Form 7004 |
+| **2025** | 15 April 2026 | 15 October 2026 | Both passed — file late now |
 | **2026** | 15 April 2027 | 15 October 2027 | Upcoming |
 | **2027** | 15 April 2028 | 15 October 2028 | Upcoming |
 
@@ -49,7 +49,7 @@ The due date does not change based on:
 
 ## When is the Form 5472 for tax year 2025 due?
 
-**For a calendar-year foreign-owned LLC, the tax year 2025 Form 5472 and its pro forma Form 1120 were due 15 April 2026. If Form 7004 reached the Ogden PIN Unit by that date, the final deadline is 15 October 2026. Without a timely Form 7004, the 2025 return is already late and should be filed as soon as possible.**
+**For a calendar-year foreign-owned LLC, the tax year 2025 Form 5472 and its pro forma Form 1120 were due 15 April 2026. If Form 7004 reached the Ogden PIN Unit by that date, the final deadline was 15 October 2026 — which has now passed. Either way the 2025 return is late as at 24 October 2026 and should be filed as soon as possible. The next deadline is 15 April 2027, for tax year 2026.**
 
 "Tax year 2025" means the year in which the transactions happened, 1 January to 31 December 2025 for a calendar-year LLC, not the year you send the package. The 2025 return is the one filed during 2026.
 
@@ -58,7 +58,7 @@ Most foreign-owned LLCs are on the calendar year. The [IRS Form 5472 instruction
 To place your 2025 return:
 
 1. **Check whether Form 7004 was faxed or mailed to the Ogden PIN Unit by 15 April 2026.** An extension filed through ordinary e-file channels may not have reached the right unit.
-2. **If it was, your deadline is 15 October 2026.** There is no second extension.
+2. **If it was, your deadline was 15 October 2026, and it has passed.** There was no second extension beyond it.
 3. **If it was not, the return is late.** File the complete package now, with a reasonable cause statement.
 
 For a fiscal-year or short first year, the [Form 5472 deadline calculator](/form-5472-deadline-calculator) works out the specific date.
@@ -149,7 +149,7 @@ Note that the March buffer also gives you time to discover that a prior year was
 
 For current turnaround tiers before choosing a start date, [see current pricing](/pricing). For everything the package contains, see the [Form 5472 filing service](/services/form-5472-filing-service).
 
-Work backwards from your deadline: standard needs 5-7 business days and express is ready to sign within 24 hours, counted from when your details are complete, so leave room for both the turnaround and the fax. For a 2025 return still unprepared in the days before 15 October 2026, express is the tier whose turnaround still fits. If the deadline has already passed, file as soon as you can rather than waiting for the next one. Starting earlier is always cheaper than starting later, because the express upgrade exists precisely to buy back time you have already spent.
+Work backwards from your deadline: standard needs 5-7 business days and express is ready to sign within 24 hours, counted from when your details are complete, so leave room for both the turnaround and the fax. For a 2025 return, both dates have passed, so the question is no longer which tier fits the deadline but how quickly the late package can be closed. File as soon as you can rather than waiting for the next cycle. Starting earlier is always cheaper than starting later, because the express upgrade exists precisely to buy back time you have already spent.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return, on time.
 
