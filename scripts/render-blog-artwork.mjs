@@ -249,6 +249,7 @@ function svg({ accent, motif: kind, glyphs, location }) {
 }
 
 const POSTS = {
+  "form-5472-filing-service-comparison": { accent: C.navySoft, motif: "split", glyphs: ["hash", "person", "doc", "check"] },
   "form-5472-deadline-tomorrow-urgent-filing": { accent: C.clay, motif: "calendar", glyphs: ["calendar", "pen", "doc", "check"] },
   "foreign-owned-llc-company-car-deduction": { location: "COMPANY CAR", accent: C.teal, motif: "car", glyphs: ["person", "doc", "hash", "check"] },
   "business-car-mileage-vs-actual-2026": { location: "MILEAGE OR ACTUAL COSTS", accent: C.amber, motif: "car-route", glyphs: ["calendar", "pen", "hash", "check"] },

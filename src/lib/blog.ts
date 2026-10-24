@@ -140,6 +140,7 @@ async function readFile(slug: string): Promise<Post | null> {
 }
 
 const ARTWORK_ALTS: Record<string, string> = {
+  "form-5472-filing-service-comparison": "Three price columns and a review symbol compare Form 5472 filing services by cost and who checks the filing",
   "form-5472-deadline-tomorrow-urgent-filing": "A calendar and a signing pen illustrate preparing a Form 5472 package against a 48-hour deadline",
   "foreign-owned-llc-company-car-deduction": "A company car beside a ledger illustrates separating vehicle costs from foreign-owner transactions",
   "business-car-mileage-vs-actual-2026": "A car and dated route beside a ledger illustrate comparing mileage with actual vehicle costs",
