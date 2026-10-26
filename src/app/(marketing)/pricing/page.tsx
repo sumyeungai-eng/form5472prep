@@ -8,13 +8,16 @@ import {
   MULTI_YEAR_ADDON_LABEL,
   STANDARD_TURNAROUND,
   EXPRESS_TURNAROUND,
+  EIN_PRICE_CENTS,
+  ITIN_PRICE_CENTS,
   type Tier,
 } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 import { JsonLd } from "@/components/JsonLd";
 import { ComparisonTable, FILING_COMPARISON } from "@/components/ComparisonTable";
-import { ORG_REF, SITE_NAME, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pageMeta } from "@/lib/seo";
+import { BRAND_CAPSULES } from "@/lib/faq";
+import { ORG_REF, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Pricing for Form 5472 Filing",
@@ -32,19 +35,16 @@ const tierEntries = TIER_ORDER.map((key) => [key, TIERS[key]] as const);
 
 // Visible "Last reviewed" date and the WebPage dateModified share this one
 // constant so they cannot drift. Bump it whenever pricing or process copy changes.
-const PRICING_LAST_REVIEWED = "2026-10-15";
-const PRICING_LAST_REVIEWED_LABEL = "October 15, 2026";
+const PRICING_LAST_REVIEWED = "2026-10-26";
+const PRICING_LAST_REVIEWED_LABEL = "October 26, 2026";
 
-// The answer capsule under "How much does Form5472 Prep cost?": prices and
-// turnarounds come from src/lib/pricing.ts, never typed here. The brand name
-// leads the capsule so answer engines that quote it keep the attribution.
-const COST_ANSWER = `${SITE_NAME} charges ${formatPrice(TIERS.standard.priceCents)} on Standard (ready in ${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} on Express (ready to sign within ${EXPRESS_TURNAROUND}) to prepare and file Form 5472 with the pro forma Form 1120, plus ${formatPrice(MULTI_YEAR_ADDON_CENTS)} for each additional past tax year. IRS fax delivery and a review by a PTIN-holding tax accountant are included on both plans, with no subscription.`;
+// The H2 cost capsule and the brand FAQ entries are the shared brand capsules
+// (src/lib/faq.ts) — the same words as /, /about, /faq and llms.txt, with
+// prices and turnarounds templated from src/lib/pricing.ts.
+const { cost: COST, automated: AUTOMATED, express: EXPRESS, legit: LEGIT, snapfile: SNAPFILE } = BRAND_CAPSULES;
 
 const PRICING_FAQS: { q: string; a: string }[] = [
-  {
-    q: "How much does it cost?",
-    a: `Two flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready to sign within ${EXPRESS_TURNAROUND}. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on either tier. IRS fax delivery to the Ogden PIN Unit is included in both.`,
-  },
+  { q: EXPRESS.question, a: EXPRESS.answer },
   {
     q: "What's the difference between the two tiers?",
     a: `Only the turnaround. The filing itself is identical: we prepare your Form 5472 + pro forma 1120, a PTIN-holding tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. Both tiers also include a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready to sign within ${EXPRESS_TURNAROUND} and comes with priority email support.`,
@@ -61,6 +61,9 @@ const PRICING_FAQS: { q: string; a: string }[] = [
     q: "Are there any hidden fees?",
     a: "No. The price you see is the price you pay. No setup fee, no monthly subscription, no per-page fax surcharge.",
   },
+  { q: AUTOMATED.question, a: AUTOMATED.answer },
+  { q: LEGIT.question, a: LEGIT.answer },
+  { q: SNAPFILE.question, a: SNAPFILE.answer },
 ];
 
 // Schema.org Product with Offer per tier — drives rich-result pricing
@@ -119,7 +122,8 @@ const pricingWebPageJsonLd = {
 const pricingFaqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: PRICING_FAQS.map(({ q, a }) => ({
+  // The H2 cost capsule is visible on the page, so it leads the FAQPage.
+  mainEntity: [{ q: COST.question, a: COST.answer }, ...PRICING_FAQS].map(({ q, a }) => ({
     "@type": "Question",
     name: q,
     acceptedAnswer: { "@type": "Answer", text: a },
@@ -189,10 +193,10 @@ export default function PricingPage() {
       <section className="max-w-6xl mx-auto px-6 py-12 sm:py-16">
         <div className="max-w-3xl mx-auto mb-10 text-center">
           <h2 id="cost" className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
-            How much does Form5472 Prep cost?
+            {COST.question}
           </h2>
           <p className="mt-3 text-slate-600" data-speakable>
-            {COST_ANSWER}
+            {COST.answer}
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto items-stretch">
@@ -203,7 +207,7 @@ export default function PricingPage() {
 
         <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-700 text-center">
           <span className="font-semibold text-slate-900">
-            + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year, either tier
+            + {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past tax year, either tier
           </span>
           <span className="mx-2 text-slate-400">·</span>
           <span>
@@ -260,13 +264,13 @@ export default function PricingPage() {
             {[
               {
                 href: "/ein",
-                eyebrow: "EIN — $149",
+                eyebrow: `EIN — ${formatPrice(EIN_PRICE_CENTS)}`,
                 title: "Do you need an EIN for your LLC?",
                 body: "No SSN or ITIN required. We prepare Form SS-4 and obtain your EIN directly from the IRS in 1–5 business days.",
               },
               {
                 href: "/itin",
-                eyebrow: "ITIN — $349",
+                eyebrow: `ITIN — ${formatPrice(ITIN_PRICE_CENTS)}`,
                 title: "Do you need an ITIN for yourself?",
                 body: "Certified by an IRS Certifying Acceptance Agent — your documents are certified and we file Form W-7. No passport mailing.",
               },
@@ -301,7 +305,7 @@ export default function PricingPage() {
 
       <section className="max-w-4xl mx-auto px-6 pb-20 space-y-8">
         <h2 className="text-center font-serif text-2xl font-semibold tracking-tight text-ink">
-          What pricing questions do filers ask?
+          What do filers ask before they pay?
         </h2>
         <div className="space-y-4">
           {PRICING_FAQS.map(({ q, a }) => (

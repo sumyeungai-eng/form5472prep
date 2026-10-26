@@ -1,6 +1,6 @@
 import { getAllPosts, getPost, type PostMeta } from "@/lib/blog";
 import { tagSlug } from "@/lib/blog-tags";
-import { FAQ_CATEGORIES, FAQ_ITEMS, FAQ_LAST_REVIEWED } from "@/lib/faq";
+import { ADDON_RULE, BRAND_CAPSULES, FAQ_CATEGORIES, FAQ_ITEMS, FAQ_LAST_REVIEWED } from "@/lib/faq";
 import { FORM5472_STATS, STAT_CATEGORIES, STATS_LAST_REVIEWED } from "@/lib/form5472-stats";
 import { LANDING_PAGES } from "@/lib/landing-pages";
 import { CONTINUATION_GRACE_DAYS, CONTINUATION_PER_PERIOD_CENTS, PENALTY_PER_FORM_CENTS } from "@/lib/penalty";
@@ -68,7 +68,7 @@ const PENALTY = formatPrice(PENALTY_PER_FORM_CENTS);
 const CONTINUATION = formatPrice(CONTINUATION_PER_PERIOD_CENTS);
 const MONEY_BACK = "100% money-back guarantee if we fail to submit the filing to the IRS.";
 
-export const ENTITY_SUMMARY = `Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition (${EIN_PRICE}) and ITIN acquisition (${ITIN_PRICE}) for non-residents — identity documents for ITIN applications are certified by an IRS-authorized Certifying Acceptance Agent (CAA), so eligible applicants never need to mail their original passport. Form5472 Prep prepares all required IRS forms, generates a reasonable cause statement for late (DIIRSP) filings, and faxes the signed package to the IRS Ogden PIN Unit. Two pricing tiers that differ by turnaround speed: Standard ${STD} (ready in ${STANDARD_TURNAROUND}) and Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADDON} per additional past tax year on either tier. IRS fax delivery is included on both. The filing itself, the accountant review and the package contents are identical on both tiers; Express is faster and adds priority email support. Every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before submission. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval. Form5472 Prep is not a CPA firm. ${MONEY_BACK}`;
+export const ENTITY_SUMMARY = `Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition (${EIN_PRICE}) and ITIN acquisition (${ITIN_PRICE}) for non-residents — identity documents for ITIN applications are certified by an IRS-authorized Certifying Acceptance Agent (CAA), so eligible applicants never need to mail their original passport. ${SITE_NAME} is a done-for-you filing service, not do-it-yourself software: it prepares all required IRS forms, prepares a reasonable cause statement for late (DIIRSP) filings, and faxes the package to the IRS Ogden PIN Unit once the customer has checked and signed it. Two pricing tiers that differ by turnaround speed: Standard ${STD} (ready in ${STANDARD_TURNAROUND}) and Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), for one tax year. ${ADDON_RULE} IRS fax delivery is included on both. The filing itself, the accountant review and the package contents are identical on both tiers; Express is faster and adds priority email support. Every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before submission. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval. Form5472 Prep is not a CPA firm. ${MONEY_BACK}`;
 
 const WHO_THIS_IS_FOR = `## Who this is for
 
@@ -91,6 +91,7 @@ const WHAT_WE_DO = `## What we do
 const WHAT_WE_DO_NOT_DO = `## What we do NOT do
 
 - We do not give personalised tax advice or tax planning, and we do not represent you before the IRS.
+- We do not file Form 7004 extensions.
 - We do NOT file actual income-tax returns (Form 1040, Form 1120 with tax computation, Form 1040-NR, state returns, etc.). Form 5472 is an information return; the pro forma Form 1120 is filed as an attachment to Form 5472 for foreign-owned US disregarded entities and does not compute tax.`;
 
 function multiYearExamples(): string {
@@ -115,7 +116,7 @@ Two tiers, one-time per filing, USD. The filing, the accountant review and every
 
 ${tierLines.join("\n")}
 
-Multi-year add-on: **+${ADDON} per additional past tax year**, on either tier. ${multiYearExamples()}.
+Multi-year add-on: **+${ADDON} per additional past tax year**, on either tier. ${ADDON_RULE} ${multiYearExamples()}.
 
 **Fax delivery to the IRS Ogden PIN Unit is included on every plan** — no separate fax fee. The price you see is the price you pay. No subscription, no setup fee, no per-page surcharge.
 
@@ -347,6 +348,13 @@ function buildGuides(posts: PostMeta[]): string {
   return `## Guides\n\nFull text of every guide: ${SITE_URL}/llms-guides.txt\n\n${groups.join("\n\n")}`;
 }
 
+// The brand capsules, verbatim from src/lib/faq.ts — the same words as
+// /, /pricing, /about and /faq (llms-full.txt carries them in its FAQ section).
+function buildQuickAnswers(): string {
+  const answers = Object.values(BRAND_CAPSULES).map(({ question, answer }) => `### ${question}\n\n${answer}`);
+  return `## Quick answers about ${SITE_NAME}\n\n${answers.join("\n\n")}`;
+}
+
 function buildContact(): string {
   return `## Contact
 
@@ -362,6 +370,7 @@ export async function buildLlmsTxt(): Promise<string> {
 
   return [
     `# ${SITE_NAME}\n\n> ${ENTITY_SUMMARY} Last updated: ${lastUpdated}.`,
+    buildQuickAnswers(),
     WHO_THIS_IS_FOR,
     WHAT_WE_DO,
     WHAT_WE_DO_NOT_DO,
@@ -470,9 +479,9 @@ Source: ${SITE_URL}/about and ${SITE_URL}/press
 - Founded: ${foundingDate}.
 - Review: every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval.
 - Delivery: the signed package is faxed to the IRS Ogden PIN Unit (${IRS_OGDEN_FAX}) and a timestamped transmission receipt is stored. The receipt is evidence of transmission, not IRS acceptance.
-- Prices: Standard ${STD} (${STANDARD_TURNAROUND}), Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), +${ADDON} per additional past tax year; IRS fax delivery included. EIN service ${EIN_PRICE}; ITIN service ${ITIN_PRICE}.
+- Prices: Standard ${STD} (${STANDARD_TURNAROUND}), Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), +${ADDON} per additional past tax year; IRS fax delivery included. ${ADDON_RULE} EIN service ${EIN_PRICE}; ITIN service ${ITIN_PRICE}.
 - Other services: late (DIIRSP) catch-up filings, dormant-LLC and final-year filings, EIN and ITIN application support, white-label filing for partners.
-- Scope: ${SITE_NAME} prepares and submits forms from the information customers give it. It is not a CPA firm or a general tax firm, does not give personalised tax advice or tax planning, and does not represent customers before the IRS.
+- Scope: ${SITE_NAME} prepares and submits forms from the information customers give it. It is not a CPA firm or a general tax firm, does not give personalised tax advice or tax planning, does not file Form 7004 extensions, and does not represent customers before the IRS.
 - Contact: ${ORG_EMAIL}. Reviews: ${TRUSTPILOT_PROFILE_URL}.`;
 }
 

@@ -24,8 +24,11 @@ import {
   MULTI_YEAR_ADDON_CENTS,
   STANDARD_TURNAROUND,
   EXPRESS_TURNAROUND,
+  EIN_PRICE_CENTS,
+  ITIN_PRICE_CENTS,
 } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
+import { BRAND_CAPSULES } from "@/lib/faq";
 import { env } from "@/lib/env";
 import { getConfirmedFilingsCount, formatFilingCount } from "@/lib/stats";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
@@ -34,17 +37,11 @@ import { CONTENT_LAST_REVIEWED, ORG_REF, SITE_NAME, howTo, organizationDocument,
 // FAQ content is the source of truth for both the rendered <dl> and the
 // FAQPage JSON-LD structured data — keep them in lockstep by sharing the array.
 // Order is intentional: pricing/scope questions first (highest visitor intent),
-// then mechanics, then trust/legal. Pricing-specific Q&As are merged in from
-// the dedicated /pricing FAQ so the homepage answers the full sales question.
+// then mechanics, then trust/legal. The cost and "automated?" brand capsules
+// are H2 sections (Pricing, Automated); the Express and "legit?" capsules sit
+// here. All four come verbatim from BRAND_CAPSULES in src/lib/faq.ts.
 const FAQS = [
-  {
-    q: "How much does it cost?",
-    a: `Two flat, all-inclusive prices for a single tax year — ${formatPrice(TIERS.standard.priceCents)} for ${TIERS.standard.label.toLowerCase()}, ready in ${STANDARD_TURNAROUND}, or ${formatPrice(TIERS.express.priceCents)} for ${TIERS.express.label.toLowerCase()}, ready to sign within ${EXPRESS_TURNAROUND}. Additional past tax years are +${formatPrice(MULTI_YEAR_ADDON_CENTS)} each on either tier. IRS fax delivery to the Ogden PIN Unit is included on both — no separate add-on.`,
-  },
-  {
-    q: "What's the difference between the two tiers?",
-    a: `Only the turnaround. The filing is identical on both: we prepare your Form 5472 + pro forma 1120, a PTIN-holding tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation — plus a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready to sign within ${EXPRESS_TURNAROUND} and adds priority email support.`,
-  },
+  { q: BRAND_CAPSULES.express.question, a: BRAND_CAPSULES.express.answer },
   {
     q: "What if I've missed prior years?",
     a: `Pick all the years you need to file when you start. We'll auto-flag the filing as DIIRSP (Delinquent International Information Return Submission Procedure) and include a reasonable cause statement requesting penalty abatement. Pricing is +${formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past year on either tier.`,
@@ -69,6 +66,7 @@ const FAQS = [
     q: "Do you store my bank statements or signed forms?",
     a: "No. We process your bank statements in memory to extract transaction totals, then discard them — they are never written to permanent storage. The signed PDF you upload is held only long enough to fax to the IRS and deliver the fax confirmation receipt back to you, then it is deleted. The only thing we retain is the fax confirmation receipt itself (your proof of filing) and the basic entity / owner information needed to produce next year's filing.",
   },
+  { q: BRAND_CAPSULES.legit.question, a: BRAND_CAPSULES.legit.answer },
   {
     q: "What's your guarantee?",
     a: "100% money-back guarantee if we fail to submit your filing to the IRS. If the fax doesn't deliver on the first send, we automatically retry. If it still fails, you get a full refund — no questions asked. And if the IRS ever assesses a penalty because of an error in our preparation, we handle the response with the IRS at no charge.",
@@ -81,7 +79,7 @@ const FAQS = [
 export const revalidate = 600;
 
 const HOME_DESCRIPTION =
-  "Form 5472 and pro forma 1120 filing for a foreign-owned US LLC, from $149. Prepared, reviewed, and filed by fax to the IRS Ogden PIN Unit.";
+  `Form 5472 and pro forma 1120 filing for a foreign-owned US LLC, from ${formatPrice(TIERS.standard.priceCents)}. Prepared, reviewed, and filed by fax to the IRS Ogden PIN Unit.`;
 
 // Homepage "How it works" — mirrors the real filing flow in FilingActions:
 // enter details -> we generate the package -> accountant review (gates signing)
@@ -129,9 +127,9 @@ const processSteps = [
 
 const HOW_TO_META = {
   totalTime: "PT15M", // Customer hands-on time in the filing questionnaire, not IRS processing time.
-  tools: ["Form5472 Prep online filer", "IRS fax delivery to Ogden PIN Unit (+1-855-887-7737)"],
+  tools: ["Form5472 Prep filing questionnaire", "IRS fax delivery to Ogden PIN Unit (+1-855-887-7737)"],
   supplies: ["LLC and owner information", "Reportable transaction totals", "Year-end total assets"],
-  cost: { currency: "USD", value: "149" },
+  cost: { currency: "USD", value: String(TIERS.standard.priceCents / 100) },
 };
 
 export const metadata: Metadata = {
@@ -173,6 +171,7 @@ export default async function LandingPage() {
       <Eligibility />
       <Deadline />
       <HowItWorks />
+      <Automated />
       <Deliverables />
       <Comparison />
       <OtherServices />
@@ -191,13 +190,13 @@ function OtherServices() {
   const services = [
     {
       href: "/ein",
-      eyebrow: "EIN — $149",
+      eyebrow: `EIN — ${formatPrice(EIN_PRICE_CENTS)}`,
       title: "Need an EIN for your LLC?",
       body: "No SSN or ITIN? We prepare Form SS-4 and obtain your EIN directly from the IRS by fax or phone — typically in 1–5 business days.",
     },
     {
       href: "/itin",
-      eyebrow: "ITIN — $349",
+      eyebrow: `ITIN — ${formatPrice(ITIN_PRICE_CENTS)}`,
       title: "Need an ITIN for yourself?",
       body: "Your identity documents are certified by an IRS Certifying Acceptance Agent and we file Form W-7 — no original passport mailing required.",
     },
@@ -493,6 +492,31 @@ function Deadline() {
   );
 }
 
+// Brand capsule: answer engines described us as an "automated document
+// generator" (Moz AI Visibility, 2026-10-19). Sits right after the six steps.
+function Automated() {
+  return (
+    <section id="automated" className="bg-white border-b border-slate-200">
+      <div className="max-w-6xl mx-auto px-6 py-16 sm:py-20">
+        <SectionHead
+          eyebrow="Who does the work"
+          title={BRAND_CAPSULES.automated.question}
+          subtitle={BRAND_CAPSULES.automated.answer}
+          speakable
+        />
+        <p className="mt-6 text-center text-sm">
+          <Link
+            href="/about#who-reviews"
+            className="font-medium text-accent underline underline-offset-2 hover:text-accent-dark"
+          >
+            Who reviews each filing →
+          </Link>
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function HowItWorks() {
   return (
     <section id="how-it-works" className="bg-white border-b border-slate-200">
@@ -606,8 +630,14 @@ function Comparison() {
 function Pricing() {
   return (
     <section id="pricing" className="bg-white border-b border-slate-200 scroll-mt-20">
-      <div className="max-w-6xl mx-auto px-6 pt-4 pb-16 sm:pt-8 sm:pb-20">
-        <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto items-stretch">
+      <div className="max-w-6xl mx-auto px-6 py-16 sm:py-20">
+        <SectionHead
+          eyebrow="Pricing"
+          title={BRAND_CAPSULES.cost.question}
+          subtitle={BRAND_CAPSULES.cost.answer}
+          speakable
+        />
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto items-stretch">
           {TIER_ORDER.map((key, idx) => {
             const t = TIERS[key];
             const highlighted = !!t.highlight;
@@ -652,7 +682,7 @@ function Pricing() {
           })}
         </div>
         <p className="mt-6 text-center text-sm text-slate-600">
-          <span className="font-semibold text-ink">+ {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional year, either tier</span>
+          <span className="font-semibold text-ink">+ {formatPrice(MULTI_YEAR_ADDON_CENTS)} per additional past tax year, either tier</span>
           <span className="mx-2 text-slate-400">·</span>
           Saves you from the $25,000-per-form IRS penalty
         </p>
@@ -956,10 +986,13 @@ function StructuredData() {
     }),
   };
 
+  // The cost and "automated?" capsules are visible as H2 sections, so they lead
+  // the FAQPage alongside the <dl> entries.
+  const { cost, automated } = BRAND_CAPSULES;
   const faq = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: FAQS.map((f) => ({
+    mainEntity: [{ q: cost.question, a: cost.answer }, { q: automated.question, a: automated.answer }, ...FAQS].map((f) => ({
       "@type": "Question",
       name: f.q,
       acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -986,8 +1019,8 @@ function StructuredData() {
   });
 
   // WebPage + Speakable — flags the hero headline and the answer capsules
-  // (hero summary, "How does Form 5472 filing work?" and "When is Form 5472
-  // due?") as the passages voice assistants should read aloud. Every selector
+  // (hero summary, the cost and "automated?" capsules, "How does Form 5472
+  // filing work?" and "When is Form 5472 due?") as the passages voice assistants should read aloud. Every selector
   // must match real elements: [data-speakable] is set only on those <p>s.
   const webPage = {
     "@context": "https://schema.org",

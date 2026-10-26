@@ -11,7 +11,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-import { FAQ_ITEMS } from "./faq";
+import { ADDON_RULE, BRAND_CAPSULES, FAQ_ITEMS } from "./faq";
 import { LANDING_PAGES } from "./landing-pages";
 import {
   buildLlmsFullTxt,
@@ -128,6 +128,16 @@ describe("llms.txt facts come from code", () => {
       expect(text).toContain("not a licence or IRS approval");
     }
     expect(ENTITY_SUMMARY).not.toMatch(IRS_APPROVAL_CLAIM);
+  });
+
+  it("states the brand capsules in the same words as the site", () => {
+    for (const { question, answer } of Object.values(BRAND_CAPSULES)) {
+      expect(llmsTxt).toContain(`### ${question}\n\n${answer}`);
+      expect(llmsFull).toContain(answer);
+    }
+    // The add-on is never presented as a starting price; we are not DIY software.
+    expect(ENTITY_SUMMARY).toContain(ADDON_RULE);
+    expect(ENTITY_SUMMARY).toContain("not do-it-yourself software");
   });
 
   it("links the guides corpus and keeps the index lean", () => {

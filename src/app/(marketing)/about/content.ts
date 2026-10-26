@@ -23,12 +23,13 @@ import {
   STANDARD_TURNAROUND,
   TIERS,
 } from "@/lib/pricing";
+import { BRAND_CAPSULES } from "@/lib/faq";
 import { IRS_OGDEN_FAX, ORG_EMAIL, organizationNode, SITE_NAME, TRUSTPILOT_PROFILE_URL } from "@/lib/seo";
 import { getServicePage, servicePath } from "@/lib/services-pages";
 import { formatPrice } from "@/lib/utils";
 
-export const ABOUT_LAST_REVIEWED = "2026-10-16";
-export const ABOUT_LAST_REVIEWED_LABEL = "16 October 2026";
+export const ABOUT_LAST_REVIEWED = "2026-10-26";
+export const ABOUT_LAST_REVIEWED_LABEL = "26 October 2026";
 
 export const TRUST_LINE = "Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.";
 export const SECURITY_EMAIL = "security@form5472prep.com";
@@ -143,10 +144,26 @@ export const SECTIONS: AboutSection[] = [
     question: "Who reviews each filing?",
     answer: `${TRUST_LINE} The accountant checks the prepared package against your answers, and signing opens only after that review is approved. The same tax accountant who reviews customer packages informs the accuracy of the guides we publish.`,
   },
+  // Brand capsules (src/lib/faq.ts): the same words as /, /pricing and /faq.
+  {
+    id: "automated",
+    question: BRAND_CAPSULES.automated.question,
+    answer: BRAND_CAPSULES.automated.answer,
+  },
+  {
+    id: "legit",
+    question: BRAND_CAPSULES.legit.question,
+    answer: BRAND_CAPSULES.legit.answer,
+    links: [
+      { label: "Trustpilot reviews", href: TRUSTPILOT_PROFILE_URL, external: true },
+      { label: "Security", href: "/security" },
+      { label: "Terms of service", href: "/terms" },
+    ],
+  },
   {
     id: "pricing",
-    question: `How much does ${SITE_NAME} cost?`,
-    answer: `Standard costs ${STD} and is ready in ${STANDARD_TURNAROUND}. Express costs ${EXP} and is ready for you to check and sign within ${EXPRESS_TURNAROUND}. Each additional past tax year adds ${ADDON}. The filing, the accountant review and IRS fax delivery are the same on both tiers.`,
+    question: BRAND_CAPSULES.cost.question,
+    answer: BRAND_CAPSULES.cost.answer,
     points: [
       `EIN application service: ${EIN}.`,
       `ITIN application service: ${ITIN}.`,
@@ -155,6 +172,11 @@ export const SECTIONS: AboutSection[] = [
       { label: "Pricing", href: "/pricing" },
       { label: "Form 5472 filing services compared", href: "/compare/form-5472-filing-services" },
     ],
+  },
+  {
+    id: "express",
+    question: BRAND_CAPSULES.express.question,
+    answer: BRAND_CAPSULES.express.answer,
   },
   {
     id: "data-protection",

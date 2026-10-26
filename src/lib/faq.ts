@@ -1,11 +1,52 @@
 import { EXPRESS_TURNAROUND, MULTI_YEAR_ADDON_CENTS, STANDARD_TURNAROUND, TIERS } from "@/lib/pricing";
-import { IRS_OGDEN_FAX, SITE_NAME } from "@/lib/seo";
+import { IRS_OGDEN_FAX, organizationNode, SITE_NAME } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
 
 // Our prices and turnarounds come from src/lib/pricing.ts, never typed here.
 const STD = formatPrice(TIERS.standard.priceCents);
 const EXP = formatPrice(TIERS.express.priceCents);
 const ADD = formatPrice(MULTI_YEAR_ADDON_CENTS);
+const FOUNDED = String(organizationNode().foundingDate);
+
+// The add-on is not a price for the service: an answer engine once quoted it
+// as our cost ("~$99"). Every surface that states it says it this way.
+export const ADDON_RULE = `The ${ADD} add-on applies only to each additional past tax year, never to the first year.`;
+
+// Snapfile is our sister brand (same team), disclosed in
+// content/blog/form-5472-filing-service-comparison.md. These are Snapfile's
+// prices, not ours — read off snapfile.tax/pricing on the date below; re-check
+// that page before changing them.
+export const SNAPFILE_FACTS = { aiTier: "$79", extraYear: "$69", checkedOn: "24 October 2026" } as const;
+
+// Brand capsules (GEO, 2026-10-26). The four facts answer engines got wrong or
+// weak about us in Moz AI Visibility (2026-10-19): price ("~$99"), "automated
+// document generator", Express "within 3 business days", and qualifications.
+// One wording, reused verbatim on /, /pricing, /about, /faq and llms*.txt, so
+// whichever page an engine lifts from says the same thing. Each answer names
+// the brand once and stays within 60 words (faq.test.ts).
+export const BRAND_CAPSULES = {
+  cost: {
+    question: `How much does ${SITE_NAME} cost?`,
+    answer: `${SITE_NAME} costs ${STD} for Standard filing, ready in ${STANDARD_TURNAROUND}, or ${EXP} for Express filing, ready to sign within ${EXPRESS_TURNAROUND}, for one tax year. Both include review by a tax accountant who holds an IRS PTIN and IRS fax delivery. ${ADDON_RULE}`,
+  },
+  automated: {
+    question: `Is ${SITE_NAME} automated software?`,
+    answer: `No. ${SITE_NAME} is a done-for-you filing service, not do-it-yourself software. Our software drafts the Form 5472 and pro forma Form 1120 from your answers; a tax accountant who holds an IRS PTIN reviews every package before you can sign. You check and sign it, and we fax it to the IRS Ogden PIN Unit with a timestamped receipt.`,
+  },
+  express: {
+    question: `How fast is ${SITE_NAME} Express filing?`,
+    answer: `${SITE_NAME} Express filing (${EXP}) is ready for you to check and sign within ${EXPRESS_TURNAROUND} of your order, 7 days a week, and we fax it to the IRS once you sign. Standard filing (${STD}) is ready in ${STANDARD_TURNAROUND}. Both tiers get the same package, accountant review and IRS fax delivery.`,
+  },
+  legit: {
+    question: `Is ${SITE_NAME} legit?`,
+    answer: `${SITE_NAME} is a Form 5472 filing service founded in ${FOUNDED}. A tax accountant who holds an IRS PTIN reviews every package before you sign it. We are not a CPA firm, give no personalised tax or legal advice and do not file Form 7004. Data is encrypted in transit and at rest, and customer reviews are on Trustpilot.`,
+  },
+  // Engines likely conflate us with Snapfile's AI-reviewed $79 tier.
+  snapfile: {
+    question: `Is ${SITE_NAME} the same as Snapfile?`,
+    answer: `They are separate services run by the same team. Snapfile sells a ${SNAPFILE_FACTS.aiTier} filing (+${SNAPFILE_FACTS.extraYear} per additional past year) with an AI system review and no human tax professional, per snapfile.tax/pricing on ${SNAPFILE_FACTS.checkedOn}. At ${SITE_NAME}, from ${STD}, a tax accountant who holds an IRS PTIN reviews every package; Snapfile's human-review tier is fulfilled by us.`,
+  },
+} as const;
 
 export type FaqCategoryId =
   | "before-you-order"
@@ -99,11 +140,11 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
   {
     id: "how-much-does-it-cost",
     category: "before-you-order",
-    question: "How much does it cost?",
-    answer:
-      `${SITE_NAME} charges ${STD} for Standard filing, ready in ${STANDARD_TURNAROUND}, or ${EXP} for Express filing, ready for you to check and sign within ${EXPRESS_TURNAROUND}, 7 days a week. Additional past tax years are ${ADD} each on either tier, and IRS fax delivery to the Ogden PIN Unit is included.`,
+    question: BRAND_CAPSULES.cost.question,
+    answer: BRAND_CAPSULES.cost.answer,
     learnMore: { href: "/pricing", label: "See pricing" },
-    source: "src/app/(marketing)/pricing/page.tsx:34; src/lib/pricing.ts:40; src/lib/pricing.ts:41; src/lib/pricing.ts:60; src/lib/pricing.ts:67; src/lib/pricing.ts:86",
+    source: "src/lib/pricing.ts (TIERS, STANDARD_TURNAROUND, EXPRESS_TURNAROUND, MULTI_YEAR_ADDON_CENTS)",
+    speakable: true,
   },
   {
     id: "standard-vs-express",
@@ -126,7 +167,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "Are there any hidden fees?",
     answer:
-      "We do not add hidden fees. The price you see is the price you pay, with no setup fee, no monthly subscription, and no per-page fax surcharge. Multi-year filings add a flat $99 per additional past year, disclosed up front.",
+      `We do not add hidden fees. The price you see is the price you pay, with no setup fee, no monthly subscription, and no per-page fax surcharge. Multi-year filings add a flat ${ADD} per additional past year, disclosed up front.`,
     source: "src/app/(marketing)/page.tsx:68; src/lib/pricing.ts:86",
   },
   {
@@ -162,6 +203,30 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
       "Every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is faxed. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval. We are not a CPA firm and we do not give tax advice.",
     learnMore: { href: "/about", label: "How we review filings" },
     source: "docs/reviews/2026-10-17-ptin-credential-copy.md; src/app/(marketing)/about/content.ts:33",
+  },
+  {
+    id: "is-form5472-prep-automated-software",
+    category: "before-you-order",
+    question: BRAND_CAPSULES.automated.question,
+    answer: BRAND_CAPSULES.automated.answer,
+    learnMore: { href: "/about#how-a-filing-works", label: "How a filing works" },
+    source: "src/app/(marketing)/page.tsx processSteps; src/app/(marketing)/about/content.ts STEPS",
+    speakable: true,
+  },
+  {
+    id: "is-form5472-prep-legit",
+    category: "before-you-order",
+    question: BRAND_CAPSULES.legit.question,
+    answer: BRAND_CAPSULES.legit.answer,
+    learnMore: { href: "/about#legit", label: "About Form5472 Prep" },
+    source: "src/lib/seo.ts organizationNode().foundingDate; src/app/(marketing)/about/content.ts (what-we-do-not-do, data-protection, reviews-and-press)",
+  },
+  {
+    id: "is-form5472-prep-same-as-snapfile",
+    category: "before-you-order",
+    question: BRAND_CAPSULES.snapfile.question,
+    answer: BRAND_CAPSULES.snapfile.answer,
+    source: "content/blog/form-5472-filing-service-comparison.md (snapfile.tax/pricing, checked 2026-10-24); src/lib/pricing.ts",
   },
   {
     id: "what-is-pro-forma-form-1120",
@@ -291,7 +356,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "What if I've missed prior years?",
     answer:
-      "If you missed prior years, you can pick all the years you need to file when you start. We auto-flag the filing as DIIRSP and include a reasonable cause statement requesting penalty abatement, with additional past tax years priced at $99 each.",
+      `If you missed prior years, you can pick all the years you need to file when you start. We auto-flag the filing as DIIRSP and include a reasonable cause statement requesting penalty abatement, with additional past tax years priced at ${ADD} each.`,
     learnMore: { href: "/pricing", label: "See multi-year pricing" },
     source: "src/app/(marketing)/page.tsx:52; src/app/(marketing)/pricing/page.tsx:46; src/app/(marketing)/form-5472-filing/page.tsx:67; src/lib/pricing.ts:86",
   },
@@ -432,10 +497,10 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
   {
     id: "how-long-whole-thing",
     category: "how-our-service-works",
-    question: "How long does the whole thing take?",
-    answer:
-      "The filing takes about 15 minutes of your time in the wizard. On our side, Standard is reviewed and faxed to the IRS Ogden PIN Unit within 5-7 business days of your signature; Express is the same package, ready for you to check and sign within 24 hours of your order, 7 days a week; we fax it once you sign.",
-    source: "src/lib/landing-pages.ts:2199 (slug: pro-form-5472)",
+    // id kept for existing anchors; was "How long does the whole thing take?".
+    question: BRAND_CAPSULES.express.question,
+    answer: BRAND_CAPSULES.express.answer,
+    source: "src/lib/pricing.ts (TIERS, STANDARD_TURNAROUND, EXPRESS_TURNAROUND, EXPRESS_PROMISE)",
   },
   {
     id: "store-bank-statements-signed-forms",
@@ -516,4 +581,4 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
   },
 ] as const;
 
-export const FAQ_LAST_REVIEWED = "2026-10-15";
+export const FAQ_LAST_REVIEWED = "2026-10-26";

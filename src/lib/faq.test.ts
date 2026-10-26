@@ -1,7 +1,9 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { FAQ_CATEGORIES, FAQ_ITEMS } from "./faq";
+import { ADDON_RULE, BRAND_CAPSULES, FAQ_CATEGORIES, FAQ_ITEMS, SNAPFILE_FACTS } from "./faq";
+import { EXPRESS_TURNAROUND, MULTI_YEAR_ADDON_CENTS, STANDARD_TURNAROUND, TIERS } from "./pricing";
+import { formatPrice } from "./utils";
 import { LANDING_PAGES } from "./landing-pages";
 import { SERVICE_PAGES } from "./services-pages";
 
@@ -131,11 +133,37 @@ describe("central FAQ content", () => {
   });
 
   it("limits brand-name self-references in answers", () => {
-    const brandNameAnswerCount = FAQ_ITEMS.filter((item) =>
-      item.answer.includes("Form5472 Prep"),
-    ).length;
+    // The five brand capsules plus the e-file answer; never more than once each.
+    const branded = FAQ_ITEMS.filter((item) => item.answer.includes("Form5472 Prep"));
+    expect(branded.length).toBeLessThanOrEqual(6);
+    for (const item of branded) expect(item.answer.split("Form5472 Prep").length - 1, item.id).toBe(1);
+  });
 
-    expect(brandNameAnswerCount).toBeLessThanOrEqual(2);
+  it("keeps the brand capsules short, branded, on /faq and free of ratings", () => {
+    const answers = new Set(FAQ_ITEMS.map((item) => item.answer));
+    for (const [key, { question, answer }] of Object.entries(BRAND_CAPSULES)) {
+      expect(question, key).toMatch(/^.*Form5472 Prep.*\?$/);
+      expect(wordCount(answer), key).toBeLessThanOrEqual(60);
+      expect(answers.has(answer), key).toBe(true);
+      expect(answer, key).not.toMatch(/\blicen[cs]ed\b|\bguarantee|\bstars?\b|\/\s*5\b|\d+ reviews/i);
+    }
+    const { cost, automated, express, snapfile } = BRAND_CAPSULES;
+    for (const cents of [TIERS.standard.priceCents, TIERS.express.priceCents]) expect(cost.answer).toContain(formatPrice(cents));
+    expect(cost.answer).toContain(ADDON_RULE);
+    expect(ADDON_RULE).toContain(formatPrice(MULTI_YEAR_ADDON_CENTS));
+    expect(automated.answer).toMatch(/^No\. /);
+    expect(express.answer).toContain(`within ${EXPRESS_TURNAROUND}`);
+    expect(express.answer).toContain(STANDARD_TURNAROUND);
+    // Sister brand: disclosed, its prices attributed to its own page, ours from pricing.ts.
+    expect(snapfile.answer).toMatch(/same team/);
+    expect(snapfile.answer).toContain(`snapfile.tax/pricing on ${SNAPFILE_FACTS.checkedOn}`);
+    expect(snapfile.answer).toContain(`from ${formatPrice(TIERS.standard.priceCents)}`);
+    // Prices in FAQ answers come from pricing.ts; Snapfile's only in its own answer.
+    const ours = [TIERS.standard.priceCents, TIERS.express.priceCents, MULTI_YEAR_ADDON_CENTS].map(formatPrice);
+    for (const item of FAQ_ITEMS) {
+      const allowed = new Set(item.answer === snapfile.answer ? [...ours, SNAPFILE_FACTS.aiTier, SNAPFILE_FACTS.extraYear] : ours);
+      for (const amount of item.answer.match(/\$\d{2,3}\b(?!,)/g) ?? []) expect(allowed.has(amount), `${item.id} ${amount}`).toBe(true);
+    }
   });
 
   it("describes Certifying Acceptance Agent handling without implying in-house credentialing", () => {
