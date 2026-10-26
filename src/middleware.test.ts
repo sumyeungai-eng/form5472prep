@@ -12,9 +12,9 @@ describe("middleware X-Robots-Tag on RSC payloads", () => {
     expect(res.headers.get("X-Robots-Tag")).toBe("noindex");
   });
 
-  it("marks a ?_rsc= prefetch noindex", () => {
+  it("leaves a bare ?_rsc= URL alone (it may be served as HTML; robots.txt covers it)", () => {
     const res = middleware(new NextRequest(`${url}?_rsc=abc12`));
-    expect(res.headers.get("X-Robots-Tag")).toBe("noindex");
+    expect(res.headers.get("X-Robots-Tag")).toBeNull();
   });
 
   it("leaves the normal HTML page indexable", () => {

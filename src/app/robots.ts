@@ -20,6 +20,7 @@ import { env } from "@/lib/env";
 const APP_ROUTES_TO_HIDE = [
   // RSC prefetch payloads: not pages, no canonical tag (see src/middleware.ts).
   "/*?_rsc=",
+  "/*?*&_rsc=",
   "/dashboard",
   "/filings",
   "/applications/",

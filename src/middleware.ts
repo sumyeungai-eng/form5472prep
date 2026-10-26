@@ -27,7 +27,9 @@ export function middleware(req: NextRequest) {
   // no HTML <link rel=canonical>. Google folded them into duplicate clusters with
   // other Next.js sites and picked those sites as canonical for 11 of our pages
   // (Search Console 2026-10-26), so they must never be indexed.
-  if (req.headers.get("rsc") === "1" || req.nextUrl.searchParams.has("_rsc")) {
+  // Only a confirmed Flight request (RSC: 1 header): a bare ?_rsc= URL can still
+  // be served as HTML, and robots.txt already keeps crawlers off those.
+  if (req.headers.get("rsc") === "1") {
     res.headers.set("X-Robots-Tag", "noindex");
   }
 

@@ -23,6 +23,7 @@ describe("robots.txt rules", () => {
       "/ein/apply",
       "/itin/apply",
       "/*?_rsc=",
+      "/*?*&_rsc=",
     ]) {
       expect(disallow).toContain(route);
     }
