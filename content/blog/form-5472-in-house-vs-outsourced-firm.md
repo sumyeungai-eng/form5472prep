@@ -34,6 +34,8 @@ So the question is not "can our staff fill in a form". It is whether your firm w
 
 Volume pricing and consolidated invoicing are available on request from support@form5472prep.com. No discount table, commission or revenue share is published, because none exists. Confirm current figures on [pricing](/pricing) before quoting a client.
 
+If you are weighing outside providers against each other rather than against your own team, [compare Form 5472 filing services](/compare/form-5472-filing-services) in our full sourced price table.
+
 ## When does keeping Form 5472 in-house win?
 
 In-house wins when four conditions hold together.

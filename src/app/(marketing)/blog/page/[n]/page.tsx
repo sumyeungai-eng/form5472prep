@@ -48,6 +48,10 @@ export async function generateMetadata({ params }: { params: { n: string } }): P
       description,
       path: blogPagePath(page),
     }),
+    // Self-canonical but noindex: listing pages outranked the posts they list
+    // (Moz 2026-10-25: /blog/page/7 #1 for a country query) and were flagged
+    // Duplicate Content. `follow` + the pager keep every post crawlable.
+    robots: { index: false, follow: true },
   };
 }
 

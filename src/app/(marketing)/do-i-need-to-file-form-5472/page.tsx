@@ -380,6 +380,20 @@ function FinalCta() {
           If the checker points to a filing requirement, we prepare Form 5472 and the pro forma 1120
           for your foreign-owned LLC.
         </p>
+        <p className="mb-6 text-sm leading-relaxed text-accent-100">
+          Before you order, see what a{" "}
+          <Link href="/services/form-5472-preparer" className="font-semibold text-white underline underline-offset-2">
+            Form 5472 preparer
+          </Link>{" "}
+          does and what you hand over when you{" "}
+          <Link
+            href="/services/hire-someone-to-file-form-5472"
+            className="font-semibold text-white underline underline-offset-2"
+          >
+            hire someone to file Form 5472
+          </Link>
+          .
+        </p>
         <Link
           href="/start?src=tool-checker"
           className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-semibold text-accent transition-colors hover:bg-accent-50"

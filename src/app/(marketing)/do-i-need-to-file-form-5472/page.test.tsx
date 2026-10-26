@@ -51,4 +51,16 @@ describe("/do-i-need-to-file-form-5472 capsules", () => {
     expect(html).toContain('href="/form-5472-fax-number"');
     expect(html).toContain('href="/form-5472-instructions"');
   });
+
+  // Moz 2026-10-25: "form 5472 preparer" and "hire someone to file form 5472"
+  // ranked this checker instead of the service pages; exact-anchor links point
+  // Google at the intended pages.
+  it.each([
+    ["/services/form-5472-preparer", "Form 5472 preparer"],
+    ["/services/hire-someone-to-file-form-5472", "hire someone to file Form 5472"],
+  ])("links %s with the exact anchor %j", (href, anchor) => {
+    const link = html.match(new RegExp(`<a[^>]*href="${href}"[^>]*>([\\s\\S]*?)</a>`));
+    expect(link, href).not.toBeNull();
+    expect(text(link![1])).toBe(anchor);
+  });
 });

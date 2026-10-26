@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { getAllPosts } from "@/lib/blog";
 import { SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
-import { buildTagIndex, MIN_INDEXABLE_TAG_POSTS, tagHref } from "@/lib/blog-tags";
+import { buildTagIndex, isIndexableHub, MIN_INDEXABLE_TAG_POSTS, tagHref } from "@/lib/blog-tags";
 
 // Parent of every /blog/topics/[tag] page. Until 2026-10-01 this path 404'd
 // while 280 child pages existed. Same ISR cadence as the tag pages.
@@ -25,9 +25,10 @@ export const metadata: Metadata = {
 export default async function TopicsIndexPage(): Promise<JSX.Element> {
   const posts = await getAllPosts();
   const entries = buildTagIndex(posts);
-  const hubs = entries.filter((entry) => entry.count >= MIN_INDEXABLE_TAG_POSTS);
+  const hubs = entries.filter(isIndexableHub);
+  // Thin and near-duplicate hubs are noindex: listed as plain labels below.
   const more = entries
-    .filter((entry) => entry.count < MIN_INDEXABLE_TAG_POSTS && entry.count > 1)
+    .filter((entry) => !isIndexableHub(entry) && entry.count > 1)
     .sort((a, b) => a.label.localeCompare(b.label));
 
   const collectionJsonLd = {
@@ -137,8 +138,8 @@ export default async function TopicsIndexPage(): Promise<JSX.Element> {
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
               Narrower subjects with a handful of guides each, covered across the guide library.
             </p>
-            {/* Plain labels, not links: these topic pages are noindex (below
-                MIN_INDEXABLE_TAG_POSTS), so we don't spend internal links on them. */}
+            {/* Plain labels, not links: these topic pages are noindex (thin or
+                near-duplicate, see isIndexableHub), so we don't spend internal links on them. */}
             <ul className="mt-5 flex flex-wrap gap-2">
               {more.map((topic) => (
                 <li

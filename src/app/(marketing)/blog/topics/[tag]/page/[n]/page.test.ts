@@ -42,11 +42,11 @@ describe("/blog/topics/[tag]/page/[n]", () => {
     ]);
   });
 
-  it("is self-canonical and indexable for an indexable hub", async () => {
+  it("is self-canonical but noindex,follow even for an indexable hub", async () => {
     getAllPosts.mockResolvedValue(fakePosts("form-5472", POSTS_PER_PAGE + 5));
     const meta = await generateMetadata({ params: { tag: "form-5472", n: "2" } });
     expect(meta.alternates?.canonical).toMatch(/\/blog\/topics\/form-5472\/page\/2$/);
-    expect(meta.robots).toBeUndefined();
+    expect(meta.robots).toEqual({ index: false, follow: true });
     expect(meta.description).toContain("guides 25–29 of 29");
   });
 
@@ -70,6 +70,25 @@ describe("resolveTopicPage", () => {
     expect(resolveTopicPage(posts, "nope", 1)).toBeNull();
     expect(resolveTopicPage(posts, "form-5472", 4)).toBeNull();
     expect(resolveTopicPage(posts, "form-5472", 0)).toBeNull();
+  });
+
+  it("keeps page 1 of an indexable hub indexable and self-canonical", async () => {
+    getAllPosts.mockResolvedValue(fakePosts("form-5472", POSTS_PER_PAGE + 5));
+    const { generateMetadata: hubMeta } = await import("../../page");
+    const meta = await hubMeta({ params: { tag: "form-5472" } });
+    expect(meta.robots).toBeUndefined();
+    expect(meta.alternates?.canonical).toMatch(/\/blog\/topics\/form-5472$/);
+  });
+
+  it("makes a near-duplicate hub noindex,follow with its canonical on the stronger hub", async () => {
+    getAllPosts.mockResolvedValue([...fakePosts("itin", 15), ...fakePosts("form-w-7", 14)]);
+    const { generateMetadata: hubMeta } = await import("../../page");
+    const weak = await hubMeta({ params: { tag: "form-w-7" } });
+    expect(weak.robots).toEqual({ index: false, follow: true });
+    expect(weak.alternates?.canonical).toMatch(/\/blog\/topics\/itin$/);
+    const strong = await hubMeta({ params: { tag: "itin" } });
+    expect(strong.robots).toBeUndefined();
+    expect(strong.alternates?.canonical).toMatch(/\/blog\/topics\/itin$/);
   });
 
   it("keeps a thin hub noindex", async () => {

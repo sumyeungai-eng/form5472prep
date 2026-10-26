@@ -10,7 +10,7 @@ import {
 import type { PostMeta } from "@/lib/blog";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE_URL, breadcrumbList } from "@/lib/seo";
-import { buildTagIndex, formatTag, MIN_INDEXABLE_TAG_POSTS, tagHref, type TagEntry } from "@/lib/blog-tags";
+import { buildTagIndex, formatTag, isIndexableHub, tagHref, type TagEntry } from "@/lib/blog-tags";
 import { blogPagePath, pageRange, pageSlice, POSTS_PER_PAGE, totalPages } from "@/lib/blog-pagination";
 import { AuthorChip, PostCard, PostMetaLine } from "./PostCard";
 import { Pager } from "./Pager";
@@ -32,7 +32,7 @@ export function BlogIndexView({ posts, page }: { posts: PostMeta[]; page: number
   const [featured, rest] = page === 1 ? [pagePosts[0], pagePosts.slice(1)] : [undefined, pagePosts];
   // Only indexable topic hubs are linked (thin topic pages are noindex).
   const popularTags = buildTagIndex(posts)
-    .filter((entry) => entry.count >= MIN_INDEXABLE_TAG_POSTS)
+    .filter(isIndexableHub)
     .slice(0, 6);
   const path = blogPagePath(page);
   const collectionJsonLd = {

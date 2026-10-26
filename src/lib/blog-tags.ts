@@ -20,6 +20,20 @@ export const TAG_SLUG_ALIASES: Record<string, string> = {
   "digital-nomads": "digital-nomad",
 };
 
+/**
+ * Near-duplicate topic hubs: weaker hub slug -> the stronger hub it duplicates.
+ * The weaker hub keeps rendering (posts still link it by tag) but is
+ * noindex,follow with its canonical on the stronger hub, and is left out of the
+ * sitemap and every hub link list. Moz flagged /blog/topics/itin +
+ * /blog/topics/form-w-7 as Duplicate Content (crawls 2026-10-16 and 10-25):
+ * 13 shared posts = 87% of the larger list (itin 15, form-w-7 14). No other
+ * indexable pair reached 80% on 2026-10-26 (next: form-5472 ~ foreign-owned-llc
+ * at 76%). Don't delete the tag.
+ */
+export const DUPLICATE_TAG_HUBS: Record<string, string> = {
+  "form-w-7": "itin",
+};
+
 const TAG_LABELS: Record<string, string> = {
   ein: "EIN",
   itin: "ITIN",
@@ -95,11 +109,17 @@ export function buildTagIndex(posts: PostMeta[]): TagEntry[] {
  * pages Google is told to ignore (Moz crawl 2026-10-05).
  */
 export function indexableTagSlugs(posts: PostMeta[]): Set<string> {
-  return new Set(
-    buildTagIndex(posts)
-      .filter((entry) => entry.count >= MIN_INDEXABLE_TAG_POSTS)
-      .map((entry) => entry.tag),
-  );
+  return new Set(buildTagIndex(posts).filter(isIndexableHub).map((entry) => entry.tag));
+}
+
+/** The stronger hub a near-duplicate hub canonicalises to, else undefined. */
+export function duplicateHubTarget(tag: string): string | undefined {
+  return Object.hasOwn(DUPLICATE_TAG_HUBS, tag) ? DUPLICATE_TAG_HUBS[tag] : undefined;
+}
+
+/** A hub page 1 that may be indexed, linked and listed in the sitemap: big enough and not a near-duplicate. */
+export function isIndexableHub(entry: Pick<TagEntry, "tag" | "count">): boolean {
+  return entry.count >= MIN_INDEXABLE_TAG_POSTS && duplicateHubTarget(entry.tag) === undefined;
 }
 
 /** Exact lookup by URL segment; returns undefined when the tag has no posts. */

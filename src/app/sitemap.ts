@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 import { env } from "@/lib/env";
 import { getAllPosts } from "@/lib/blog";
-import { blogPagePath, pageSlice, topicPagePath, totalPages } from "@/lib/blog-pagination";
-import { buildTagIndex, MIN_INDEXABLE_TAG_POSTS } from "@/lib/blog-tags";
+import { buildTagIndex, isIndexableHub, tagHref } from "@/lib/blog-tags";
 import { LANDING_PAGES } from "@/lib/landing-pages";
 import { CONTENT_LAST_REVIEWED } from "@/lib/seo";
 import { LAST_REVIEWED_ISO as DEADLINE_REVIEWED } from "@/lib/tools/deadline/sources";
@@ -120,43 +119,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  // Older pages of the paginated blog index (/blog is page 1, listed above).
-  // lastmod = newest post shown on that page.
-  const blogPageUrls: MetadataRoute.Sitemap = Array.from(
-    { length: Math.max(0, totalPages(posts.length) - 1) },
-    (_, i) => {
-      const page = i + 2;
-      return {
-        url: `${base}${blogPagePath(page)}`,
-        lastModified: pageSlice(posts, page)
-          .map(postDate)
-          .filter((d): d is Date => !!d)
-          .sort((a, b) => b.getTime() - a.getTime())[0],
-        changeFrequency: "weekly" as const,
-        priority: 0.4,
-      };
-    },
-  );
-
-  // Tag hubs below MIN_INDEXABLE_TAG_POSTS are noindex, so they stay out of the
-  // sitemap. Large hubs are paginated like /blog (/blog/topics/<tag>/page/n);
-  // every page of an indexable hub is listed. lastmod = newest post in the
-  // topic for page 1 (unchanged), newest post on that page for older pages.
+  // Only page 1 of the blog index (/blog, listed above) and of each indexable
+  // topic hub is in the sitemap. Pages 2+ are noindex,follow (2026-10-26), and
+  // thin or near-duplicate hubs are noindex (isIndexableHub), so none of them
+  // is advertised here. lastmod = newest post in the topic.
   const newest = (list: (typeof posts)[number][]) =>
     list
       .map(postDate)
       .filter((d): d is Date => !!d)
       .sort((a, b) => b.getTime() - a.getTime())[0];
   const tagUrls: MetadataRoute.Sitemap = buildTagIndex(posts)
-    .filter((entry) => entry.count >= MIN_INDEXABLE_TAG_POSTS)
-    .flatMap((entry) =>
-      Array.from({ length: totalPages(entry.count) }, (_, i) => ({
-        url: `${base}${topicPagePath(entry.tag, i + 1)}`,
-        lastModified: newest(i === 0 ? entry.posts : pageSlice(entry.posts, i + 1)),
-        changeFrequency: "weekly" as const,
-        priority: i === 0 ? 0.5 : 0.4,
-      })),
-    );
+    .filter(isIndexableHub)
+    .map((entry) => ({
+      url: `${base}${tagHref(entry.tag)}`,
+      lastModified: newest(entry.posts),
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    }));
 
   // SEO landing pages — high priority since these target the highest-intent
   // queries. Noindex pages (paid-ad landings) are excluded so Google doesn't
@@ -171,5 +150,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     }));
 
-  return [...staticUrls, ...blogPageUrls, ...landingUrls, ...postUrls, ...tagUrls];
+  return [...staticUrls, ...landingUrls, ...postUrls, ...tagUrls];
 }

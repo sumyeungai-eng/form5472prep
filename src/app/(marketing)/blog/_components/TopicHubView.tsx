@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import type { PostMeta } from "@/lib/blog";
 import { SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
-import { buildTagIndex, MIN_INDEXABLE_TAG_POSTS, tagHref, type TagEntry } from "@/lib/blog-tags";
+import { buildTagIndex, duplicateHubTarget, isIndexableHub, tagHref, type TagEntry } from "@/lib/blog-tags";
 import { pageRange, pageSlice, POSTS_PER_PAGE, topicPagePath, totalPages } from "@/lib/blog-pagination";
 import { Pager } from "./Pager";
 import { PostCard } from "./PostCard";
@@ -13,8 +13,9 @@ import { PostCard } from "./PostCard";
 // One page of a topic hub. Page 1 is /blog/topics/<tag>; older posts live at
 // /blog/topics/<tag>/page/<n>, paginated exactly like /blog (POSTS_PER_PAGE per
 // page, newest first, every post on exactly one page, each page
-// self-canonical). Thin hubs (< MIN_INDEXABLE_TAG_POSTS posts) stay
-// noindex,follow on every page.
+// self-canonical). Only page 1 of a hub can be indexed: pages 2+, thin hubs
+// (< MIN_INDEXABLE_TAG_POSTS posts) and near-duplicate hubs (DUPLICATE_TAG_HUBS,
+// canonical on the stronger hub) are noindex,follow.
 
 export const OTHER_TOPIC_LINKS = 6;
 
@@ -42,11 +43,21 @@ function hubCopy({ entry, page, pages }: TopicPage) {
 
 export function topicHubMetadata(resolved: TopicPage): Metadata {
   const { title, description, path } = hubCopy(resolved);
+  // A near-duplicate hub points its canonical at the stronger hub (DUPLICATE_TAG_HUBS).
+  const duplicateOf = duplicateHubTarget(resolved.entry.tag);
+  // Indexable = page 1 of a non-duplicate hub with enough posts. Pages 2+ are
+  // noindex,follow (2026-10-26: they outranked the posts they list and Moz
+  // flagged them Duplicate Content) but stay crawlable via the pager links.
+  const indexable = resolved.page === 1 && isIndexableHub(resolved.entry);
   return {
     title: seoTitle(title),
     description,
-    ...pageMeta({ title: `${title} · Form5472 Prep`, description, path }),
-    ...(resolved.entry.count < MIN_INDEXABLE_TAG_POSTS ? { robots: { index: false, follow: true } } : {}),
+    ...pageMeta({
+      title: `${title} · Form5472 Prep`,
+      description,
+      path: duplicateOf ? topicPagePath(duplicateOf, 1) : path,
+    }),
+    ...(indexable ? {} : { robots: { index: false, follow: true } }),
   };
 }
 
@@ -60,7 +71,7 @@ export function TopicHubView(resolved: TopicPage) {
   // site chrome a hub page measured 97-99 anchors at 12 (build 2026-10-16), too
   // close to the ~100 Moz flags; the full list lives on /blog/topics.
   const otherTopics = entries
-    .filter((topic) => topic.tag !== entry.tag && topic.count >= MIN_INDEXABLE_TAG_POSTS)
+    .filter((topic) => topic.tag !== entry.tag && isIndexableHub(topic))
     .slice(0, OTHER_TOPIC_LINKS);
   const collectionJsonLd = {
     "@context": "https://schema.org",

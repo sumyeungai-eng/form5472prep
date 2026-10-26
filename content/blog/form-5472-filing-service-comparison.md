@@ -24,6 +24,8 @@ For the wider field — a dated survey of filing services, software and formatio
 
 Prices checked 24 October 2026 on each provider's own page: [snapfile.tax/pricing](https://snapfile.tax/pricing), and the form5472.online home page. Prices change, so read the provider's own page before you buy.
 
+To see more providers side by side, [compare Form 5472 filing services](/compare/form-5472-filing-services) in our full sourced price table.
+
 What is striking is how little the price changes the output. All three produce the same statutory package, because the IRS prescribes it: Form 5472 attached to a pro forma Form 1120. What changes across the $79 to $547 span is who looks at it first.
 
 ## Who reviews the filing at each price?

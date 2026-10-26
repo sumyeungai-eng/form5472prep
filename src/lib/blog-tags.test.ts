@@ -2,9 +2,12 @@ import { describe, expect, it } from "vitest";
 import type { PostMeta } from "@/lib/blog";
 import {
   buildTagIndex,
+  DUPLICATE_TAG_HUBS,
+  duplicateHubTarget,
   findTag,
   formatTag,
   indexableTagSlugs,
+  isIndexableHub,
   MIN_INDEXABLE_TAG_POSTS,
   TAG_SLUG_ALIASES,
   tagHref,
@@ -95,5 +98,23 @@ describe("blog tag helpers", () => {
     const slugs = indexableTagSlugs([...hub, ...thin]);
     expect(slugs.has("form-5472")).toBe(true);
     expect(slugs.has("dormant-llc")).toBe(false);
+  });
+
+  it("never indexes or links a near-duplicate hub, however big", () => {
+    const many = (tag: string) => Array.from({ length: MIN_INDEXABLE_TAG_POSTS + 5 }, (_, i) => post(`${tag}-${i}`, [tag]));
+    const slugs = indexableTagSlugs([...many("itin"), ...many("Form W-7")]);
+    expect(slugs.has("itin")).toBe(true);
+    expect(slugs.has("form-w-7")).toBe(false);
+    expect(isIndexableHub({ tag: "form-w-7", count: 100 })).toBe(false);
+    expect(duplicateHubTarget("form-w-7")).toBe("itin");
+    expect(duplicateHubTarget("constructor")).toBeUndefined();
+  });
+
+  it("points every near-duplicate hub at a different, non-duplicate hub", () => {
+    for (const [weak, strong] of Object.entries(DUPLICATE_TAG_HUBS)) {
+      expect(tagSlug(weak)).toBe(weak);
+      expect(strong).not.toBe(weak);
+      expect(duplicateHubTarget(strong)).toBeUndefined();
+    }
   });
 });
