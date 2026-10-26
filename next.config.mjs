@@ -62,6 +62,17 @@ const nextConfig = {
           { key: "Content-Security-Policy", value: "frame-ancestors *" },
         ],
       },
+      {
+        // RSC (Flight) payloads share each page's URL but carry no HTML
+        // <link rel=canonical>; Google folded them into duplicate clusters with
+        // other Next.js sites and picked those as canonical for 11 pages (Search
+        // Console 2026-10-26). Vercel serves them as prerendered .rsc files that
+        // never reach middleware, so the header lives here. Only `RSC: 1`
+        // requests match; normal HTML responses are untouched.
+        source: "/:path*",
+        has: [{ type: "header", key: "rsc", value: "1" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      },
     ];
   },
 };

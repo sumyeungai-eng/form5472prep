@@ -16,12 +16,12 @@ Integration worktree `~/Developer/f5472-wt/int1026` (branch `seo/integrate-2026-
 - Exact-anchor links: do-i-need → /services/form-5472-preparer, /services/hire-someone-to-file-form-5472; in-house + comparison posts → /compare/form-5472-filing-services.
 - `BRAND_CAPSULES` (src/lib/faq.ts): cost (+$99 only per extra past year), not automated (PTIN-holding tax accountant), Express 24 h, legit, Snapfile (same team; $79 AI-only vs our human review) on home/pricing/about/faq + llms "Quick answers".
 - "online filer" / "automatically generates" (RCS) / "We generate every form" → prepared + PTIN review wording.
-- `src/middleware.ts`: `X-Robots-Tag: noindex` on confirmed RSC requests (`RSC: 1`); robots disallows `/*?_rsc=` and `/*?*&_rsc=`.
+- `next.config.mjs` headers(): `X-Robots-Tag: noindex` when the request has `RSC: 1` (Vercel serves RSC as prerendered `.rsc` files that never reach middleware — a first middleware version was verified live NOT to apply, then moved here); robots disallows `/*?_rsc=` and `/*?*&_rsc=`. Test: `src/lib/rsc-noindex-config.test.ts`.
 - provider-prices.ts: Snapfile is ours (comment fixed). Snapfile live 2026-10-26: $79 AI review (+$69/yr), $149 human review "Offered and fulfilled by Form5472Prep.com".
 - Verified: src/lib + (marketing) tests 3,134/3,134 before the RSC change; middleware/robots tests 6/6 after; tsc clean; `next build` exit 0; Codex review — RSC rule narrowed to the header only (finding fixed); Snapfile "$89" finding not reproduced on the live site.
 
 ## Contracts
-- Never noindex normal HTML via middleware; only `RSC: 1` responses.
+- The RSC noindex rule must keep its `has: rsc=1` condition; never noindex normal HTML.
 - Paginated list pages stay noindex,follow; page 1 indexable.
 - Brand facts come from `BRAND_CAPSULES` + pricing.ts; reviewer wording "a tax accountant who holds an IRS PTIN".
 

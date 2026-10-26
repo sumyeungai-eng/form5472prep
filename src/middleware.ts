@@ -23,16 +23,6 @@ import {
 export function middleware(req: NextRequest) {
   const res = NextResponse.next();
 
-  // RSC flight payloads (client-navigation data) share each page's URL but carry
-  // no HTML <link rel=canonical>. Google folded them into duplicate clusters with
-  // other Next.js sites and picked those sites as canonical for 11 of our pages
-  // (Search Console 2026-10-26), so they must never be indexed.
-  // Only a confirmed Flight request (RSC: 1 header): a bare ?_rsc= URL can still
-  // be served as HTML, and robots.txt already keeps crawlers off those.
-  if (req.headers.get("rsc") === "1") {
-    res.headers.set("X-Robots-Tag", "noindex");
-  }
-
   // Already attributed? Leave it alone. This is the whole first-touch rule.
   if (req.cookies.has(ATTR_COOKIE)) return res;
 
