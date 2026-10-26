@@ -233,3 +233,6 @@ Claude and Codex sessions share these folders. Practical rules:
 - `docs/sessions/2026-10-16-blog-price-tokens-and-hubs.md` — `{{price.*}}` tokens in blog markdown, topic hub pagination, revalidation paths with route groups.
 - `docs/sessions/2026-10-16-entity-trust.md` — Organization logo PNG, AREA_SERVED, About rebuild, /llms-services.txt.
 - `docs/sessions/2026-10-16-perf2-marketing-js.md` — pre-paint JS cut (header auth buttons, lazy chat, inline Ads bootstrap).
+- `docs/sessions/2026-10-26-moz-reread-and-fixes.md` — Moz/GSC re-read + fixes: paginated pages noindex, money-page links, brand-fact capsules (cost/not automated/Snapfile), RSC payloads noindex; external-canonical watch.
+- `docs/sessions/2026-10-26-seo-pagination-and-money-links.md` — pagination noindex,follow, duplicate topic hubs, exact-anchor money links.
+- `docs/sessions/2026-10-26-geo-correct-facts.md` — BRAND_CAPSULES on home/pricing/about/faq + llms.
