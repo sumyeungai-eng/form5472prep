@@ -48,7 +48,9 @@ export function topicHubMetadata(resolved: TopicPage): Metadata {
   // Indexable = page 1 of a non-duplicate hub with enough posts. Pages 2+ are
   // noindex,follow (2026-10-26: they outranked the posts they list and Moz
   // flagged them Duplicate Content) but stay crawlable via the pager links.
-  const indexable = resolved.page === 1 && isIndexableHub(resolved.entry);
+  // A near-duplicate hub's page 1 relies on its cross-canonical alone: Google
+  // treats noindex + a canonical to another URL as conflicting signals.
+  const indexable = resolved.page === 1 && (isIndexableHub(resolved.entry) || duplicateOf !== undefined);
   return {
     title: seoTitle(title),
     description,

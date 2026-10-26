@@ -12,7 +12,7 @@ draft: false
 
 Every figure below was read off the provider's own page on 24 October 2026. Two of the three services are ours — Snapfile and Form5472 Prep are the same team — stated in the table and again further down, because a three-way comparison is worth nothing if you cannot tell which rows the author owns. If you already want a tax accountant on the filing, [start your filing](/start); our plans are on [pricing](/pricing).
 
-For the wider field — a dated survey of filing services, software and formation-provider bundles — see [compare Form 5472 filing services](/compare). This post is narrower: three services, one recommendation.
+For the wider field — a dated survey of filing services, software and formation-provider bundles — see [our comparison guides](/compare). This post is narrower: three services, one recommendation.
 
 ## What do the three Form 5472 filing services cost?
 

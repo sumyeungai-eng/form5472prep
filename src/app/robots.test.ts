@@ -22,6 +22,7 @@ describe("robots.txt rules", () => {
       "/partner/sign-in",
       "/ein/apply",
       "/itin/apply",
+      "/*?_rsc=",
     ]) {
       expect(disallow).toContain(route);
     }

@@ -12,7 +12,8 @@
 //   - Our own row is built from src/lib/pricing.ts. Never hardcode our prices.
 //   - Say "not published" where a page is silent. Never say a provider "does
 //     not offer" something unless its page says so.
-//   - Snapfile is excluded on purpose (possible affiliation, unconfirmed).
+//   - Snapfile is excluded on purpose: it is ours (same team; disclosed in
+//     content/blog/form-5472-filing-service-comparison.md and on snapfile.tax).
 // To refresh: re-run the survey, write a new dated survey file, update the
 // rows and PRICES_CHECKED_ON in the same commit.
 // ─────────────────────────────────────────────────────────────────────────────

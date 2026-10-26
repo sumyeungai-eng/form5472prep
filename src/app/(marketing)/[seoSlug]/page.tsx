@@ -428,7 +428,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
             <p className="mt-3 text-slate-600 max-w-xl mx-auto">
               {promoPricing ? (
                 <>
-                  We generate every form, you sign one PDF, we fax it to the IRS Ogden PIN Unit.{" "}
+                  We prepare every form, a tax accountant who holds an IRS PTIN reviews it, you sign one PDF, and we fax it to the IRS Ogden PIN Unit.{" "}
                   <span className="line-through text-slate-400">
                     {formatPrice(TIERS.standard.priceCents)}
                   </span>{" "}
@@ -439,7 +439,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                 </>
               ) : (
                 <>
-                  We generate every form, you sign one PDF, we fax it to the IRS Ogden PIN Unit.
+                  We prepare every form, a tax accountant who holds an IRS PTIN reviews it, you sign one PDF, and we fax it to the IRS Ogden PIN Unit.
                   Starting at {formatPrice(TIERS.standard.priceCents)}. IRS fax delivery included on every plan.
                 </>
               )}

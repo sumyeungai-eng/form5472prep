@@ -166,7 +166,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Skip the work — file in 15 minutes",
-        body: `Our online filer asks 12 simple questions about your LLC, owner, and year-end totals. We generate the entire package (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if late). You sign once on screen — no printing or scanning. A PTIN-holding tax accountant on our team reviews the package end-to-end. Then we fax it to the IRS Ogden PIN Unit and email you the timestamped fax transmission receipt as transmission evidence.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign within 24 hours) — same filing either way. IRS fax delivery included. +${PRICE_ADDON} per additional past year. 100% money-back guarantee if we fail to submit your filing.`,
+        body: `Form5472 Prep's questionnaire asks 12 simple questions about your LLC, owner, and year-end totals. We prepare the entire package (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if late). You sign once on screen — no printing or scanning. A PTIN-holding tax accountant on our team reviews the package end-to-end. Then we fax it to the IRS Ogden PIN Unit and email you the timestamped fax transmission receipt as transmission evidence.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign within 24 hours) — same filing either way. IRS fax delivery included. +${PRICE_ADDON} per additional past year. 100% money-back guarantee if we fail to submit your filing.`,
       },
     ],
     faqs: [
@@ -426,7 +426,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Catch up with our accountant-reviewed DIIRSP filer",
-        body: `Form5472 Prep automatically generates a Reasonable Cause Statement when you select 2 or 3 missed years in our wizard. The narrative is tailored to the most common DIIRSP scenario — first-time foreign LLC owner who was unaware of the Form 5472 obligation — and you can edit it to fit your specific circumstances.\n\nWe prepare the complete package for each year (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement). You sign once on screen — that signature embeds into every required signature box automatically. A PTIN-holding tax accountant on our team reviews everything end-to-end. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as transmission evidence.\n\n• 2-year DIIRSP catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3-year DIIRSP catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\n100% money-back guarantee if we fail to submit.`,
+        body: `When you have missed years, Form5472 Prep prepares a Reasonable Cause Statement for each late year. Our team writes the explanation from the facts you give us — it is never a generic template — and you check it before you sign.\n\nWe prepare the complete package for each year (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement). You sign once on screen — that signature embeds into every required signature box automatically. A PTIN-holding tax accountant on our team reviews everything end-to-end. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as transmission evidence.\n\n• 2-year DIIRSP catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3-year DIIRSP catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\n100% money-back guarantee if we fail to submit.`,
       },
     ],
     faqs: [
@@ -1992,7 +1992,7 @@ export const LANDING_PAGES: LandingPage[] = [
       "Form 5472 is due April 15 of the year following the tax year. Filing Form 7004 by April 15 gives an automatic 6-month extension to October 15, while missing the deadline can trigger a $25,000-per-form penalty that may still be addressed through DIIRSP catch-up filing.",
     howTo: {
       section: "How do you file before the deadline?",
-      tools: ["Form5472 Prep online filer"],
+      tools: ["Form5472 Prep questionnaire"],
       supplies: [
         "LLC info",
         "Foreign owner info",
@@ -2294,7 +2294,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "The fastest way to file",
-        body: `Our 15-minute online filer handles everything for the standard foreign-owned single-member LLC case:\n\n• 12-question wizard pre-tuned for non-US founders.\n• Pre-fills the next year from your prior filing.\n• Generates the complete package: cover letter, pro forma Form 1120, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (if late).\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Review of every package before submission by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN).\n• IRS fax delivery + timestamped receipt as transmission evidence.\n• 100% money-back guarantee if we fail to submit.\n\nPricing:\n• 1 tax year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 tax years (DIIRSP catch-up): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 tax years (DIIRSP catch-up): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n• +${PRICE_ADDON} per additional past year beyond the base package`,
+        body: `Form5472 Prep handles everything for the standard foreign-owned single-member LLC case:\n\n• 12-question wizard pre-tuned for non-US founders.\n• Pre-fills the next year from your prior filing.\n• Prepares the complete package: cover letter, pro forma Form 1120, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (if late).\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Review of every package before submission by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN).\n• IRS fax delivery + timestamped receipt as transmission evidence.\n• 100% money-back guarantee if we fail to submit.\n\nPricing:\n• 1 tax year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 tax years (DIIRSP catch-up): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 tax years (DIIRSP catch-up): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n• +${PRICE_ADDON} per additional past year beyond the base package`,
       },
     ],
     faqs: [
@@ -2591,7 +2591,7 @@ export const LANDING_PAGES: LandingPage[] = [
       `Answer 12 questions in about 15 minutes and get a Form 5472 plus pro forma Form 1120 package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before fax submission to the IRS Ogden PIN Unit. Standard is ${PRICE_STD} and ready in 5-7 business days; Express is ${PRICE_EXP} and ready to sign within 24 hours.`,
     howTo: {
       section: "How does your filing reach the IRS?",
-      tools: ["Form5472 Prep online filer"],
+      tools: ["Form5472 Prep questionnaire"],
       supplies: [
         "Wizard answers",
         "Canvas signature",

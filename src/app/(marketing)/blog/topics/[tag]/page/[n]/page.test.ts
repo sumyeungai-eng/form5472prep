@@ -80,11 +80,11 @@ describe("resolveTopicPage", () => {
     expect(meta.alternates?.canonical).toMatch(/\/blog\/topics\/form-5472$/);
   });
 
-  it("makes a near-duplicate hub noindex,follow with its canonical on the stronger hub", async () => {
+  it("points a near-duplicate hub's canonical at the stronger hub without noindex (no conflicting signals)", async () => {
     getAllPosts.mockResolvedValue([...fakePosts("itin", 15), ...fakePosts("form-w-7", 14)]);
     const { generateMetadata: hubMeta } = await import("../../page");
     const weak = await hubMeta({ params: { tag: "form-w-7" } });
-    expect(weak.robots).toEqual({ index: false, follow: true });
+    expect(weak.robots).toBeUndefined();
     expect(weak.alternates?.canonical).toMatch(/\/blog\/topics\/itin$/);
     const strong = await hubMeta({ params: { tag: "itin" } });
     expect(strong.robots).toBeUndefined();

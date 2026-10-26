@@ -18,6 +18,8 @@ import { env } from "@/lib/env";
 // (/applications/ein/<id>); Googlebot fetched one on 2026-10-13 and only got
 // the sign-in redirect, so keep crawlers from spending time there.
 const APP_ROUTES_TO_HIDE = [
+  // RSC prefetch payloads: not pages, no canonical tag (see src/middleware.ts).
+  "/*?_rsc=",
   "/dashboard",
   "/filings",
   "/applications/",
