@@ -163,7 +163,6 @@ await sendEinApplicationAdminEmail({
   ownerName,
   ownerCitizenship: "German",
   ownerResidence: "Germany",
-  passportNumber: "C01X23456",
   notes: "Applicant would like the EIN confirmation sent electronically.",
 });
 await sendEinApplicationConfirmationEmail({ email: customerEmail, fullName: ownerName, llcName, amountPaidCents: 14900, portalLink });

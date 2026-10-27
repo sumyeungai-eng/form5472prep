@@ -1883,7 +1883,6 @@ type EinApplicationEmailArgs = {
   ownerHomeAddress?: string;
   ownerCitizenship?: string;
   ownerResidence?: string;
-  passportNumber?: string;
   notes?: string;
 };
 
@@ -1914,7 +1913,6 @@ export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs
       `Owner home address: ${value(args.ownerHomeAddress)}`,
       `Citizenship: ${value(args.ownerCitizenship)}`,
       `Residence: ${value(args.ownerResidence)}`,
-      `Passport number: ${value(args.passportNumber)}`,
       `Notes: ${value(args.notes, "(none)")}`,
       "",
       "Reply directly to this email to contact the applicant.",
@@ -1939,7 +1937,6 @@ export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs
         ["Owner home address", value(args.ownerHomeAddress)],
         ["Citizenship", value(args.ownerCitizenship)],
         ["Residence", value(args.ownerResidence)],
-        ["Passport number", value(args.passportNumber)],
         ["Notes", value(args.notes, "(none)")],
       ],
       extraHtml: `<p style="margin:0;color:${EMAIL_STYLES.muted};font-size:13px;">Reply directly to this email to contact the applicant.</p>`,

@@ -37,7 +37,6 @@ export async function notifyApplicationPaid(type: "ein" | "itin", applicationId:
         ownerHomeAddress: app.ownerHomeAddress ?? undefined,
         ownerCitizenship: app.ownerCitizenship ?? undefined,
         ownerResidence: app.ownerResidence ?? undefined,
-        passportNumber: app.passportNumber ?? undefined,
         notes: app.notes ?? undefined,
         amountPaidCents: app.amountPaid,
       });

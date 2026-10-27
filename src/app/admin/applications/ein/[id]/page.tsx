@@ -130,7 +130,6 @@ export default async function AdminEinApplicationPage({ params }: { params: { id
           <Row label="Citizenship" value={app.ownerCitizenship} />
           <Row label="Residence" value={app.ownerResidence} />
           <Row label="US tax number" value={app.responsiblePartyTin} />
-          <Row label="Passport" value={app.passportNumber} />
         </Section>
         <Section title="Payment">
           <Row label="Status" value={<PaymentBadge paid={!!app.stripePaymentId} />} />
