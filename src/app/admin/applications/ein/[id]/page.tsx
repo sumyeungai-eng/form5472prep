@@ -16,10 +16,11 @@ import { EinAdminActions } from "./EinAdminActions";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const app = await prisma.einApplication.findUnique({
+  // Titles carry customer names: never query them for a visitor who isn't signed in as admin.
+  const app = (await isAdmin()) ? await prisma.einApplication.findUnique({
     where: { id: params.id },
     select: { llcName: true },
-  });
+  }) : null;
   const name = app?.llcName || "EIN application";
   return { title: `${name} · Applications · Admin` };
 }

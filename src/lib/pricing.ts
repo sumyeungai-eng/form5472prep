@@ -50,6 +50,9 @@ export const EXPRESS_PROMISE = `Ready for you to check and sign within ${EXPRESS
 // The EIN and ITIN marketing application pages quote these exact prices.
 export const EIN_PRICE_CENTS = 14900;
 export const ITIN_PRICE_CENTS = 34900;
+// Form 7004 extension filing (prepared + faxed to the IRS Ogden PIN Unit),
+// per LLC per tax year. Owner decision 2026-10-28.
+export const EXTENSION_PRICE_CENTS = 7900;
 
 const SHARED_FEATURES = [
   "Reviewed by a PTIN-holding tax accountant before submission",

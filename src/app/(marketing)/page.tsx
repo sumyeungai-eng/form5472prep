@@ -25,6 +25,7 @@ import {
   STANDARD_TURNAROUND,
   EXPRESS_TURNAROUND,
   EIN_PRICE_CENTS,
+  EXTENSION_PRICE_CENTS,
   ITIN_PRICE_CENTS,
 } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
@@ -200,16 +201,22 @@ function OtherServices() {
       title: "Need an ITIN for yourself?",
       body: "Your identity documents are certified by an IRS Certifying Acceptance Agent and we file Form W-7 — no original passport mailing required.",
     },
+    {
+      href: "/form-7004-extension",
+      eyebrow: `Form 7004 — ${formatPrice(EXTENSION_PRICE_CENTS)}`,
+      title: "Need more time to file?",
+      body: "We prepare Form 7004 for your foreign-owned LLC and fax it to the IRS Ogden PIN Unit. It must be filed by the original due date.",
+    },
   ];
   return (
     <section className="bg-slate-50 border-b border-slate-200">
       <div className="max-w-6xl mx-auto px-6 py-20">
         <SectionHead
           eyebrow="More for foreign founders"
-          title="Do you need EIN or ITIN help too?"
-          subtitle="Setting up a US LLC from abroad takes more than one form. We also obtain the two IRS identifiers non-resident owners need most."
+          title="Do you need EIN, ITIN or extension help too?"
+          subtitle="Setting up a US LLC from abroad takes more than one form. We also obtain the two IRS identifiers non-resident owners need most, and file the Form 7004 extension."
         />
-        <div className="mt-10 grid md:grid-cols-2 gap-4">
+        <div className="mt-10 grid md:grid-cols-3 gap-4">
           {services.map((s, i) => (
             <Reveal as="div" key={s.href} delay={i * 120}>
               <Link
@@ -468,7 +475,7 @@ function Eligibility() {
 // Deadline answer: a standalone capsule an answer engine can quote for
 // "when is Form 5472 due?" — the date rule, the extension and the fiscal-year
 // case in two sentences. Facts match /form-5472-deadline-calculator and the
-// services pages (Form 7004 extends; we do not file it).
+// services pages (Form 7004 extends; we offer it as a separate service).
 function Deadline() {
   return (
     <section id="deadline" className="bg-white border-b border-slate-200">

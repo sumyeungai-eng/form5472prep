@@ -22,6 +22,7 @@ model User {
   reminders            ReminderSent[]
   einApplications      EinApplication[]
   itinApplications     ItinApplication[]
+  extensionApplications ExtensionApplication[]
 }
 
 model Admin {
@@ -618,6 +619,49 @@ model EinApplication {
   user   User?   @relation(fields: [userId], references: [id])
   messages Message[]
   receivedFaxes ReceivedFax[]
+}
+
+// Form 7004 extension filing order ($79, EXTENSION_PRICE_CENTS). Fulfilment v1
+// is manual: staff prepare the 7004 ("Foreign-owned U.S. DE", Form 1120 code
+// 12), fax it to the IRS Ogden PIN Unit and mark the order COMPLETED. Every
+// intake field except email may be blank (never block payment); staff follow
+// up after payment. Reuses EinStatus: PAYMENT_PENDING -> IN_REVIEW (paid) ->
+// PROCESSING (faxing) -> COMPLETED, or CANCELLED.
+model ExtensionApplication {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fullName  String
+  email     String
+  phone     String?
+  llcName   String?
+  ein       String?
+  llcStreet String?
+  llcCity   String?
+  llcState  String?
+  llcZip    String?
+  taxYear   Int?
+  notes     String?
+
+  // Same first-touch attribution columns as EinApplication.
+  funnelSource String?
+  attrSource   String?
+  attrMedium   String?
+  attrCampaign String?
+  attrReferrer String?
+  attrLanding  String?
+
+  status     EinStatus @default(PAYMENT_PENDING)
+  adminNotes String?
+
+  amountPaid      Int       @default(0)
+  stripeSessionId String?   @unique
+  stripePaymentId String?   @unique
+  paidAt          DateTime?
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
 }
 
 enum EinStatus {

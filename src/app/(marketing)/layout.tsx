@@ -39,6 +39,12 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               ITIN
             </Link>
             <Link
+              href="/form-7004-extension"
+              className="hidden lg:inline text-sm text-slate-600 hover:text-slate-900 px-2"
+            >
+              Form 7004
+            </Link>
+            <Link
               href="/blog"
               className="hidden sm:inline text-sm text-slate-600 hover:text-slate-900 px-2"
             >
@@ -100,6 +106,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <li><Link href="/pricing" className="hover:text-ink">Form 5472 Filing</Link></li>
                 <li><Link href="/ein" className="hover:text-ink">EIN Acquisition</Link></li>
                 <li><Link href="/itin" className="hover:text-ink">ITIN Acquisition</Link></li>
+                <li><Link href="/form-7004-extension" className="hover:text-ink">Form 7004 extension</Link></li>
                 <li><Link href="/partners" className="hover:text-ink">Become a Partner</Link></li>
                 <li><Link href="/partner/sign-in" className="hover:text-ink">Partner sign in</Link></li>
                 <li><Link href="/blog" className="hover:text-ink">Guides</Link></li>

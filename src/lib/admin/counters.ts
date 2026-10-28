@@ -15,6 +15,7 @@ export async function getAdminCounters(): Promise<AdminCounters> {
     unfinishedDrafts,
     einApplicationsAwaiting,
     itinApplicationsAwaiting,
+    extensionApplicationsAwaiting,
     unreadMessages,
     unreadFaxes,
     openQuestions,
@@ -38,6 +39,8 @@ export async function getAdminCounters(): Promise<AdminCounters> {
     }),
     prisma.einApplication.count({ where: { status: "IN_REVIEW" } }),
     prisma.itinApplication.count({ where: { status: "IN_REVIEW" } }),
+    // Paid Form 7004 orders not yet started (manual fax fulfilment).
+    prisma.extensionApplication.count({ where: { status: "IN_REVIEW" } }),
     prisma.message.count({
       where: {
         fromAdmin: false,
@@ -51,7 +54,7 @@ export async function getAdminCounters(): Promise<AdminCounters> {
   return {
     filingsInReview,
     unfinishedDrafts,
-    applicationsAwaiting: einApplicationsAwaiting + itinApplicationsAwaiting,
+    applicationsAwaiting: einApplicationsAwaiting + itinApplicationsAwaiting + extensionApplicationsAwaiting,
     unreadMessages,
     unreadFaxes,
     openQuestions,

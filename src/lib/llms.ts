@@ -15,6 +15,7 @@ import {
 } from "@/lib/provider-prices";
 import {
   EIN_PRICE_CENTS,
+  EXTENSION_PRICE_CENTS,
   EXPRESS_TURNAROUND,
   ITIN_PRICE_CENTS,
   MULTI_YEAR_ADDON_CENTS,
@@ -64,11 +65,12 @@ const EXP = formatPrice(TIERS.express.priceCents);
 const ADDON = formatPrice(MULTI_YEAR_ADDON_CENTS);
 const EIN_PRICE = formatPrice(EIN_PRICE_CENTS);
 const ITIN_PRICE = formatPrice(ITIN_PRICE_CENTS);
+const EXT_PRICE = formatPrice(EXTENSION_PRICE_CENTS);
 const PENALTY = formatPrice(PENALTY_PER_FORM_CENTS);
 const CONTINUATION = formatPrice(CONTINUATION_PER_PERIOD_CENTS);
 const MONEY_BACK = "100% money-back guarantee if we fail to submit the filing to the IRS.";
 
-export const ENTITY_SUMMARY = `Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition (${EIN_PRICE}) and ITIN acquisition (${ITIN_PRICE}) for non-residents — identity documents for ITIN applications are certified by an IRS-authorized Certifying Acceptance Agent (CAA), so eligible applicants never need to mail their original passport. ${SITE_NAME} is a done-for-you filing service, not do-it-yourself software: it prepares all required IRS forms, prepares a reasonable cause statement for late (DIIRSP) filings, and faxes the package to the IRS Ogden PIN Unit once the customer has checked and signed it. Two pricing tiers that differ by turnaround speed: Standard ${STD} (ready in ${STANDARD_TURNAROUND}) and Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), for one tax year. ${ADDON_RULE} IRS fax delivery is included on both. The filing itself, the accountant review and the package contents are identical on both tiers; Express is faster and adds priority email support. Every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before submission. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval. Form5472 Prep is not a CPA firm. ${MONEY_BACK}`;
+export const ENTITY_SUMMARY = `Done-for-you IRS Form 5472 + pro forma Form 1120 filing service for foreign-owned US single-member LLCs (disregarded entities). Also offers EIN acquisition (${EIN_PRICE}), ITIN acquisition (${ITIN_PRICE}) for non-residents and Form 7004 extension filing (${EXT_PRICE} per LLC per tax year) — identity documents for ITIN applications are certified by an IRS-authorized Certifying Acceptance Agent (CAA), so eligible applicants never need to mail their original passport. ${SITE_NAME} is a done-for-you filing service, not do-it-yourself software: it prepares all required IRS forms, prepares a reasonable cause statement for late (DIIRSP) filings, and faxes the package to the IRS Ogden PIN Unit once the customer has checked and signed it. Two pricing tiers that differ by turnaround speed: Standard ${STD} (ready in ${STANDARD_TURNAROUND}) and Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), for one tax year. ${ADDON_RULE} IRS fax delivery is included on both. The filing itself, the accountant review and the package contents are identical on both tiers; Express is faster and adds priority email support. Every package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before submission. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval. Form5472 Prep is not a CPA firm. ${MONEY_BACK}`;
 
 const WHO_THIS_IS_FOR = `## Who this is for
 
@@ -91,7 +93,6 @@ const WHAT_WE_DO = `## What we do
 const WHAT_WE_DO_NOT_DO = `## What we do NOT do
 
 - We do not give personalised tax advice or tax planning, and we do not represent you before the IRS.
-- We do not file Form 7004 extensions.
 - We do NOT file actual income-tax returns (Form 1040, Form 1120 with tax computation, Form 1040-NR, state returns, etc.). Form 5472 is an information return; the pro forma Form 1120 is filed as an attachment to Form 5472 for foreign-owned US disregarded entities and does not compute tax.`;
 
 function multiYearExamples(): string {
@@ -134,6 +135,7 @@ function buildAdditionalServices(): string {
   return `## Additional Services
 
 - **EIN Acquisition — ${EIN_PRICE}**: We obtain a US Employer Identification Number for your foreign-owned LLC. No SSN or ITIN required and no passport mailing. Form SS-4 prepared and submitted through the IRS fax or phone application route. EIN delivered in 1–5 business days.
+- **Form 7004 Extension Filing — ${EXT_PRICE} per LLC per tax year**: We prepare Form 7004 (with "Foreign-owned U.S. DE" written across the top and Form 1120 code 12) and fax it to the IRS Ogden PIN Unit, then email you the fax confirmation. Orders are faxed within 2 business days; for a tax year that has not ended yet, we fax it in the first business days after 1 January. It must be filed by the regular due date of the return (15 April for a calendar-year LLC) and gives 6 more months to file, not to pay. The fax confirmation is evidence of transmission, not IRS acceptance. Details: ${SITE_URL}/form-7004-extension
 - **ITIN Acquisition — ${ITIN_PRICE}**: We obtain a US Individual Taxpayer Identification Number for non-residents who have a federal tax reason to need one. For eligible applications, CAA certification means no original passport mailing. Form W-7 prepared and submitted. The IRS says to allow 7 weeks for an ITIN status notice, or 9–11 weeks if you apply during January 15–April 30 or from overseas. Renewals also available.`;
 }
 
@@ -182,6 +184,7 @@ const CORE_PAGES: readonly PageLink[] = [
   ["Form 5472 statistics", "/form-5472-statistics", `Form 5472 facts and figures with official sources: the ${PENALTY} IRC §6038A(d) penalty and continuation penalty, IRS systemic-assessment and abatement data, T.D. 9796 dates, deadlines, recordkeeping estimates and IRS SOI filer counts.`],
   ["EIN Acquisition", "/ein", "EIN service for foreign-owned US LLC owners — no SSN or ITIN needed, no passport mailing."],
   ["ITIN Acquisition", "/itin", "ITIN service for non-residents — eligible applications go to an IRS-authorized CAA, so no original passport mailing."],
+  ["Form 7004 extension", "/form-7004-extension", `Form 7004 extension filing for foreign-owned US LLCs, ${EXT_PRICE} per LLC per tax year, faxed to the IRS Ogden PIN Unit; must be ordered before the original due date.`],
   ["Partners", "/partners", "Partner / referral program for accountants, formation agents, and registered agents."],
   ["Guides index", "/blog", "Jargon-free guides for foreign-owned US LLC owners on Form 5472, pro forma 1120, DIIRSP catch-up filings, and related topics."],
   ["Contact", "/contact", "Contact Form5472 Prep for Form 5472, pro forma 1120, EIN, ITIN, and catch-up filing questions."],
@@ -479,9 +482,9 @@ Source: ${SITE_URL}/about and ${SITE_URL}/press
 - Founded: ${foundingDate}.
 - Review: every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. A PTIN is the identification number the IRS requires of every paid tax return preparer; it is not a licence or IRS approval.
 - Delivery: the signed package is faxed to the IRS Ogden PIN Unit (${IRS_OGDEN_FAX}) and a timestamped transmission receipt is stored. The receipt is evidence of transmission, not IRS acceptance.
-- Prices: Standard ${STD} (${STANDARD_TURNAROUND}), Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), +${ADDON} per additional past tax year; IRS fax delivery included. ${ADDON_RULE} EIN service ${EIN_PRICE}; ITIN service ${ITIN_PRICE}.
-- Other services: late (DIIRSP) catch-up filings, dormant-LLC and final-year filings, EIN and ITIN application support, white-label filing for partners.
-- Scope: ${SITE_NAME} prepares and submits forms from the information customers give it. It is not a CPA firm or a general tax firm, does not give personalised tax advice or tax planning, does not file Form 7004 extensions, and does not represent customers before the IRS.
+- Prices: Standard ${STD} (${STANDARD_TURNAROUND}), Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), +${ADDON} per additional past tax year; IRS fax delivery included. ${ADDON_RULE} EIN service ${EIN_PRICE}; ITIN service ${ITIN_PRICE}; Form 7004 extension service ${EXT_PRICE}.
+- Other services: late (DIIRSP) catch-up filings, dormant-LLC and final-year filings, EIN and ITIN application support, Form 7004 extension filing, white-label filing for partners.
+- Scope: ${SITE_NAME} prepares and submits forms from the information customers give it. It is not a CPA firm or a general tax firm, does not give personalised tax advice or tax planning, files Form 7004 only as the separate extension service, and does not represent customers before the IRS.
 - Contact: ${ORG_EMAIL}. Reviews: ${TRUSTPILOT_PROFILE_URL}.`;
 }
 

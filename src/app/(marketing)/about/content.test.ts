@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   EIN_PRICE_CENTS,
+  EXTENSION_PRICE_CENTS,
   ITIN_PRICE_CENTS,
   MULTI_YEAR_ADDON_CENTS,
   TIERS,
@@ -45,7 +46,7 @@ describe("/about copy", () => {
 
   it("states only prices from pricing.ts", () => {
     const allowed = new Set(
-      [TIERS.standard.priceCents, TIERS.express.priceCents, MULTI_YEAR_ADDON_CENTS, EIN_PRICE_CENTS, ITIN_PRICE_CENTS].map(
+      [TIERS.standard.priceCents, TIERS.express.priceCents, MULTI_YEAR_ADDON_CENTS, EIN_PRICE_CENTS, ITIN_PRICE_CENTS, EXTENSION_PRICE_CENTS].map(
         formatPrice,
       ),
     );
@@ -70,6 +71,11 @@ describe("/about copy", () => {
     for (const match of Array.from(ALL_TEXT.matchAll(new RegExp(`[^.]*${IRS_OGDEN_FAX.replace(/[+]/g, "\\+")}[^.]*\\.`, "g")))) {
       expect(match[0]).toMatch(/IRS Ogden PIN Unit/);
     }
+  });
+
+  it("offers Form 7004 filing and no longer says we do not file it", () => {
+    expect(ALL_TEXT).not.toMatch(/(do not|don't) file Form 7004/i);
+    expect(SECTIONS.flatMap((s) => s.links ?? []).some((l) => l.href === "/form-7004-extension")).toBe(true);
   });
 
   it("carries an ISO review date", () => {

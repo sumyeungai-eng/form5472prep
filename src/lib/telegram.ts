@@ -2,6 +2,7 @@ import type Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
 import { tierLabel } from "@/lib/pricing";
+import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 
 export type OrderAlert = {
   id: string;
@@ -88,6 +89,22 @@ export async function notifyPaidOrderTelegram(session: Stripe.Checkout.Session):
     const applicationId = session.metadata?.applicationId;
     const amountCents = session.amount_total ?? 0;
     const currency = session.currency ?? "usd";
+    if (type === "extension" && applicationId) {
+      const app = await prisma.extensionApplication.findUnique({
+        where: { id: applicationId },
+        select: { id: true, fullName: true, email: true, llcName: true, taxYear: true, stripePaymentId: true },
+      });
+      if (!app || app.stripePaymentId !== paymentId) return true;
+      return deliverOrderAlert({
+        id: `extension:${app.id}`, service: "Form 7004 extension",
+        customer: app.llcName || app.fullName || app.email,
+        email: app.email, amountCents, currency,
+        details: app.taxYear
+          ? `Tax year: ${app.taxYear} · IRS due date: ${formatDueDate(filingDueDateUtc(app.taxYear))}`
+          : "Tax year: not provided",
+        adminPath: `/admin/applications/extension/${app.id}`,
+      });
+    }
     if ((type === "ein" || type === "itin") && applicationId) {
       const select = { id: true, fullName: true, email: true, stripePaymentId: true };
       const app = type === "ein"

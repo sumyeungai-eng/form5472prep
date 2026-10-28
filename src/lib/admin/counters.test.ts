@@ -4,6 +4,7 @@ const db = vi.hoisted(() => ({
   filingCount: vi.fn(),
   einApplicationCount: vi.fn(),
   itinApplicationCount: vi.fn(),
+  extensionApplicationCount: vi.fn(),
   messageCount: vi.fn(),
   receivedFaxCount: vi.fn(),
   websiteQuestionCount: vi.fn(),
@@ -19,6 +20,9 @@ vi.mock("@/lib/prisma", () => ({
     },
     itinApplication: {
       count: db.itinApplicationCount,
+    },
+    extensionApplication: {
+      count: db.extensionApplicationCount,
     },
     message: {
       count: db.messageCount,
@@ -39,6 +43,8 @@ describe("getAdminCounters", () => {
     db.filingCount.mockReset();
     db.einApplicationCount.mockReset();
     db.itinApplicationCount.mockReset();
+    db.extensionApplicationCount.mockReset();
+    db.extensionApplicationCount.mockResolvedValue(0);
     db.messageCount.mockReset();
     db.receivedFaxCount.mockReset();
     db.receivedFaxCount.mockResolvedValue(0);
@@ -92,16 +98,18 @@ describe("getAdminCounters", () => {
     });
   });
 
-  it("sums EIN and ITIN applications awaiting review", async () => {
+  it("sums EIN, ITIN and paid Form 7004 orders awaiting review", async () => {
     db.filingCount.mockResolvedValue(0);
     db.einApplicationCount.mockResolvedValue(2);
     db.itinApplicationCount.mockResolvedValue(5);
+    db.extensionApplicationCount.mockResolvedValue(3);
     db.messageCount.mockResolvedValue(0);
 
-    await expect(getAdminCounters()).resolves.toMatchObject({ applicationsAwaiting: 7 });
+    await expect(getAdminCounters()).resolves.toMatchObject({ applicationsAwaiting: 10 });
 
     expect(db.einApplicationCount).toHaveBeenCalledWith({ where: { status: "IN_REVIEW" } });
     expect(db.itinApplicationCount).toHaveBeenCalledWith({ where: { status: "IN_REVIEW" } });
+    expect(db.extensionApplicationCount).toHaveBeenCalledWith({ where: { status: "IN_REVIEW" } });
   });
 
   it("counts unread customer-authored messages and excludes admin-authored messages", async () => {

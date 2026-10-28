@@ -22,6 +22,7 @@ import {
 } from "./llms";
 import {
   EIN_PRICE_CENTS,
+  EXTENSION_PRICE_CENTS,
   ITIN_PRICE_CENTS,
   MULTI_YEAR_ADDON_CENTS,
   TIERS,
@@ -75,6 +76,13 @@ function tierLine(text: string, priceCents: number): string {
   return line;
 }
 
+describe("llms.txt Form 7004 service", () => {
+  it("lists the 7004 service and no longer says we do not file it", () => {
+    expect(llmsTxt).toContain("/form-7004-extension");
+    expect(llmsTxt).not.toMatch(/do not file Form 7004/i);
+  });
+});
+
 describe("llms.txt facts come from code", () => {
   it("states every price from pricing.ts", () => {
     for (const cents of [
@@ -83,6 +91,7 @@ describe("llms.txt facts come from code", () => {
       MULTI_YEAR_ADDON_CENTS,
       EIN_PRICE_CENTS,
       ITIN_PRICE_CENTS,
+      EXTENSION_PRICE_CENTS,
     ]) {
       expect(llmsTxt).toContain(formatPrice(cents));
       expect(ENTITY_SUMMARY).toContain(formatPrice(cents));

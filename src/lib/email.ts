@@ -7,7 +7,7 @@ import { MAX_FAX_COPY_BYTES } from "@/lib/fax/clientCopy";
 
 import { formatUsd } from "@/lib/utils";
 import { multiYearAddonCents, tierInfo, type Tier } from "@/lib/pricing";
-import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { effectiveDueDateUtc, filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 import type { EmailBrand } from "@/lib/partnerBrand";
 import { formLabel } from "@/lib/applicationSignature";
 import { env } from "@/lib/env";
@@ -2090,6 +2090,119 @@ export async function sendItinApplicationConfirmationEmail(args: {
         </ol>
         <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">You can follow your application&apos;s status at any time in your client portal:</p>`,
       cta: { label: "Open your application →", url: args.portalLink },
+      footnoteHtml: "If you have a question, reply to this email or write to support@form5472prep.com.",
+    }),
+  });
+}
+
+// ---------- Form 7004 extension filing orders ----------
+
+type ExtensionApplicationEmailArgs = {
+  id: string;
+  fullName: string;
+  email: string;
+  phone?: string | null;
+  llcName?: string | null;
+  ein?: string | null;
+  llcStreet?: string | null;
+  llcCity?: string | null;
+  llcState?: string | null;
+  llcZip?: string | null;
+  taxYear?: number | null;
+  notes?: string | null;
+};
+
+// "April 15, 2027" for a calendar tax year; null when the customer left it blank.
+function extensionDueText(taxYear: number | null | undefined): string | null {
+  return taxYear ? formatDueDate(filingDueDateUtc(taxYear)) : null;
+}
+
+export async function sendExtensionApplicationAdminEmail(args: ExtensionApplicationEmailArgs & { adminEmail: string; amountPaidCents?: number }) {
+  const value = (input?: string | null, fallback = "(not provided)") => input || fallback;
+  const paymentText = args.amountPaidCents && args.amountPaidCents > 0 ? `Payment: ${formatUsd(args.amountPaidCents)} received` : null;
+  const address = [args.llcStreet, args.llcCity, args.llcState, args.llcZip].filter(Boolean).join(", ");
+  const due = extensionDueText(args.taxYear);
+  const adminUrl = `${APP_URL}/admin/applications/extension/${args.id}`;
+  const rows: Array<[string, string]> = [
+    ...(paymentText ? [["Payment", `${formatUsd(args.amountPaidCents ?? 0)} received`] as [string, string]] : []),
+    ["Tax year", args.taxYear ? String(args.taxYear) : "(not provided — confirm with the client)"],
+    ["IRS due date (fax by)", value(due)],
+    ["LLC name", value(args.llcName)],
+    ["EIN", value(args.ein)],
+    ["LLC US address", value(address)],
+    ["Name", value(args.fullName)],
+    ["Email", args.email],
+    ["Phone", value(args.phone)],
+    ["Notes", value(args.notes, "(none)")],
+  ];
+  return sendEmail({
+    log: { kind: "admin_extension_application" },
+    to: args.adminEmail,
+    replyTo: args.email,
+    subject: `${paymentText ? "[Paid] " : ""}[Form 7004] ${args.llcName || args.fullName || args.email}${args.taxYear ? ` — tax year ${args.taxYear}` : ""}`,
+    text: [
+      "New Form 7004 extension order",
+      "",
+      ...(paymentText ? [paymentText] : []),
+      ...rows.filter(([label]) => label !== "Payment").map(([label, v]) => `${label}: ${v}`),
+      "",
+      `Prepare Form 7004 ("Foreign-owned U.S. DE" across the top, Form 1120 code 12), fax it to the IRS Ogden PIN Unit, email the client the fax confirmation, then mark the order Completed: ${adminUrl}`,
+      "",
+      "Reply directly to this email to contact the client.",
+    ].join("\n"),
+    html: adminShell({
+      tag: "Form 7004 extension",
+      heading: "New Form 7004 extension order",
+      rows,
+      extraHtml: `<p style="margin:0 0 12px;color:${EMAIL_STYLES.subtle};font-size:13px;line-height:1.6;">Prepare Form 7004 (&quot;Foreign-owned U.S. DE&quot; across the top, Form 1120 code 12), fax it to the IRS Ogden PIN Unit, email the client the fax confirmation, then mark the order Completed: <a href="${escapeHtml(adminUrl)}">${escapeHtml(adminUrl)}</a></p>
+        <p style="margin:0;color:${EMAIL_STYLES.muted};font-size:13px;">Reply directly to this email to contact the client.</p>`,
+    }),
+  });
+}
+
+export async function sendExtensionApplicationConfirmationEmail(args: {
+  email: string;
+  fullName: string;
+  llcName?: string | null;
+  taxYear?: number | null;
+  amountPaidCents: number;
+}) {
+  const amount = formatUsd(args.amountPaidCents);
+  const salutation = args.fullName || "there";
+  const llc = args.llcName || "your LLC";
+  const due = extensionDueText(args.taxYear);
+  const extended = args.taxYear
+    ? formatDueDate(effectiveDueDateUtc(args.taxYear, null, { filed: "yes", transmittedAt: null }))
+    : null;
+  const deadlineText = args.taxYear && due && extended
+    ? `For tax year ${args.taxYear}, Form 7004 must be filed by ${due}. A valid extension moves the due date of the Form 5472 and pro forma Form 1120 to ${extended}. It extends the time to file, not to pay.`
+    : "Reply with the tax year you need the extension for. Form 7004 must be filed by the original due date of the return (15 April for a calendar-year LLC). It extends the time to file, not to pay.";
+  const steps: Array<[string, string]> = [
+    ["We check your details — within 1 business day.", "If anything is missing, such as the LLC's EIN or US address, we email you a short list."],
+    ["We prepare Form 7004.", "\u201cForeign-owned U.S. DE\u201d is written across the top and Form 1120 code 12 is entered, as the IRS instructions describe for a foreign-owned disregarded entity."],
+    ["We fax it to the IRS Ogden PIN Unit.", "Orders are faxed within 2 business days; for a tax year that has not ended yet, we fax it in the first business days after 1 January."],
+    ["We email you the fax confirmation.", "It shows the fax was transmitted to the IRS. It is not an IRS acceptance of the extension."],
+  ];
+  const body = `Thank you. We have received your Form 7004 extension order for ${llc} and your payment of ${amount}. This email confirms that payment — you will not receive a separate payment request.\n\n` +
+    `What happens next\n\n` +
+    steps.map(([title, text], i) => `${i + 1}. ${title} ${text}`).join("\n") + "\n\n" +
+    `${deadlineText}\n\n` +
+    `If you have a question, reply to this email or write to support@form5472prep.com.`;
+  return sendEmail({
+    log: { kind: "extension_application_confirmation" },
+    to: args.email,
+    subject: `Form 7004 extension order received — ${llc}`,
+    text: customerText(salutation, body),
+    html: customerShell({
+      heading: "We have received your Form 7004 extension order",
+      salutation,
+      bodyHtml: `
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Thank you. We have received your Form 7004 extension order for <strong>${escapeHtml(llc)}</strong> and your payment of <strong>${escapeHtml(amount)}</strong>. This email confirms that payment — you will not receive a separate payment request.</p>
+        <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next</p>
+        <ol style="margin:0 0 24px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
+          ${steps.map(([title, text], i) => `<li style="margin-bottom:${i === steps.length - 1 ? 0 : 8}px;"><strong>${escapeHtml(title)}</strong> ${escapeHtml(text)}</li>`).join("\n          ")}
+        </ol>
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${escapeHtml(deadlineText)}</p>`,
       footnoteHtml: "If you have a question, reply to this email or write to support@form5472prep.com.",
     }),
   });

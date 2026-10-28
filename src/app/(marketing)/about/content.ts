@@ -17,6 +17,7 @@
 // emits it as dateModified.
 import {
   EIN_PRICE_CENTS,
+  EXTENSION_PRICE_CENTS,
   EXPRESS_TURNAROUND,
   ITIN_PRICE_CENTS,
   MULTI_YEAR_ADDON_CENTS,
@@ -39,6 +40,7 @@ const STD = formatPrice(TIERS.standard.priceCents);
 const EXP = formatPrice(TIERS.express.priceCents);
 const ADDON = formatPrice(MULTI_YEAR_ADDON_CENTS);
 const EIN = formatPrice(EIN_PRICE_CENTS);
+const EXT = formatPrice(EXTENSION_PRICE_CENTS);
 const ITIN = formatPrice(ITIN_PRICE_CENTS);
 
 export type AboutLink = { label: string; href: string; external?: boolean };
@@ -111,6 +113,7 @@ export const SECTIONS: AboutSection[] = [
       "Late (DIIRSP) catch-up filings, with a reasonable cause statement.",
       "Filings for dormant LLCs and final-year filings for dissolved LLCs.",
       `EIN application support (${EIN}) and ITIN application support (${ITIN}) when those numbers are genuinely needed.`,
+      `Form 7004 extension filing (${EXT} per LLC per tax year) for foreign-owned US LLCs, faxed to the IRS Ogden PIN Unit.`,
       "White-label filing for formation agents, registered agents and accounting firms through our partner program.",
     ],
     links: [
@@ -118,6 +121,7 @@ export const SECTIONS: AboutSection[] = [
       serviceLink("late-form-5472-filing-service"),
       { label: "EIN service", href: "/ein" },
       { label: "ITIN service", href: "/itin" },
+      { label: "Form 7004 extension service", href: "/form-7004-extension" },
       { label: "Partner program", href: "/partners" },
     ],
   },
@@ -127,7 +131,7 @@ export const SECTIONS: AboutSection[] = [
     answer: "We are not a CPA firm or a general tax firm. We prepare and submit forms from the information you give us. We do not give personalised tax advice, tax planning or legal advice, and we do not represent you before the IRS.",
     points: [
       "We do not prepare Form 1065, a full Form 1120 for an LLC taxed as a corporation, Form 1040-NR or state returns.",
-      "We do not file Form 7004 extensions, and we do not keep books.",
+      "We do not keep books. Form 7004 extension filing is a separate paid service, and it must be ordered before the return's original due date.",
       "We are not affiliated with the IRS or any government agency.",
       "We do not guarantee that the IRS will accept a filing, or that a reasonable cause statement will avoid or reduce a penalty.",
       "The accuracy of the information you submit stays with you.",

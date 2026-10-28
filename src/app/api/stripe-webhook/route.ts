@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     }
     const applicationType = session.metadata?.applicationType;
     const applicationId = session.metadata?.applicationId;
-    if (applicationType === "ein" || applicationType === "itin") {
+    if (applicationType === "ein" || applicationType === "itin" || applicationType === "extension") {
       if (!applicationId) {
         console.warn("[stripe-webhook] application checkout missing applicationId", {
           applicationType,
@@ -57,8 +57,22 @@ export async function POST(req: Request) {
       }
 
       const paymentIntentId = session.payment_intent as string;
+      // The 7004 claim is keyed on stripePaymentId alone (like the filing claim
+      // below): redeliveries still match 0, but a payment for an order staff
+      // had already moved on from (e.g. CANCELLED) is recorded and alerted
+      // instead of being silently dropped.
       const claim =
-        applicationType === "ein"
+        applicationType === "extension"
+          ? await prisma.extensionApplication.updateMany({
+              where: { id: applicationId, stripePaymentId: null },
+              data: {
+                stripePaymentId: paymentIntentId,
+                amountPaid: session.amount_total ?? 0,
+                paidAt: new Date(),
+                status: "IN_REVIEW",
+              },
+            })
+          : applicationType === "ein"
           ? await prisma.einApplication.updateMany({
               where: { id: applicationId, stripePaymentId: null, status: { in: ["RECEIVED", "PAYMENT_PENDING"] } },
               data: {

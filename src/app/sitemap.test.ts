@@ -32,3 +32,14 @@ describe("sitemap listing pages", () => {
     expect(urls).toContain("/blog/form-5472-0");
   });
 });
+
+describe("sitemap Form 7004 service", () => {
+  it("lists the landing page with its date, never the noindex apply page", async () => {
+    getAllPosts.mockResolvedValue([]);
+    const rows = await sitemap();
+    const row = rows.find((r) => new URL(r.url).pathname === "/form-7004-extension");
+    expect(row).toBeDefined();
+    expect(new Date(row!.lastModified as Date | string).toISOString().slice(0, 10)).toBe("2026-10-28");
+    expect(rows.some((r) => r.url.includes("/form-7004-extension/apply"))).toBe(false);
+  });
+});

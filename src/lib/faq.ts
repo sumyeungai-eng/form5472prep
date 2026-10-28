@@ -39,7 +39,7 @@ export const BRAND_CAPSULES = {
   },
   legit: {
     question: `Is ${SITE_NAME} legit?`,
-    answer: `${SITE_NAME} is a Form 5472 filing service founded in ${FOUNDED}. A tax accountant who holds an IRS PTIN reviews every package before you sign it. We are not a CPA firm, give no personalised tax or legal advice and do not file Form 7004. Data is encrypted in transit and at rest, and customer reviews are on Trustpilot.`,
+    answer: `${SITE_NAME} is a Form 5472 filing service founded in ${FOUNDED}. A tax accountant who holds an IRS PTIN reviews every package before you sign it. We are not a CPA firm and give no personalised tax or legal advice. Data is encrypted in transit and at rest, and customer reviews are on Trustpilot.`,
   },
   // Engines likely conflate us with Snapfile's AI-reviewed $79 tier.
   snapfile: {
@@ -298,7 +298,8 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "deadlines-penalties",
     question: "How does the Form 7004 extension work?",
     answer:
-      "Form 7004 must be filed by the original April 15 deadline. If Form 7004 is timely, it extends the Form 5472 package due date to October 15 because Form 5472 is attached to Form 1120. Without it, the April 15 deadline remains.",
+      "Form 7004 must be filed by the original April 15 deadline. If Form 7004 is timely, it extends the Form 5472 package due date to October 15 because Form 5472 is attached to Form 1120. Without it, the April 15 deadline remains. We file it as a separate paid service: we fax it to the IRS Ogden PIN Unit and email the fax confirmation, which is not IRS acceptance.",
+    learnMore: { href: "/form-7004-extension", label: "Form 7004 extension filing" },
     source: "src/app/(marketing)/form-5472-deadline-calculator/page.tsx:77; src/lib/landing-pages.ts:1687 (slug: form-5472-deadline)",
   },
   {

@@ -22,6 +22,7 @@ describe("robots.txt rules", () => {
       "/partner/sign-in",
       "/ein/apply",
       "/itin/apply",
+      "/form-7004-extension/apply",
       "/*?_rsc=",
       "/*?*&_rsc=",
     ]) {
@@ -34,6 +35,7 @@ describe("robots.txt rules", () => {
     expect(blocks("/start")).toBe(false);
     expect(blocks("/ein")).toBe(false);
     expect(blocks("/itin")).toBe(false);
+    expect(blocks("/form-7004-extension")).toBe(false);
     expect(blocks("/blog")).toBe(false);
     expect(blocks("/blog/page/2")).toBe(false);
   });

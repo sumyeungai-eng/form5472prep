@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const db = vi.hoisted(() => ({
   telegramOrderNotification: { upsert: vi.fn(), updateMany: vi.fn() },
   einApplication: { findUnique: vi.fn() }, itinApplication: { findUnique: vi.fn() },
+  extensionApplication: { findUnique: vi.fn() },
   filing: { findUnique: vi.fn() },
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: db }));
@@ -86,6 +87,25 @@ describe("paid-order routing", () => {
     const body = JSON.parse(vi.mocked(fetch).mock.calls[0][1]!.body as string);
     expect(body.text).toContain(`/admin/applications/${type}/app1`);
     expect(body.text).toContain(`${type.toUpperCase()} application`);
+  });
+  it("alerts a paid Form 7004 extension order with its tax year and IRS due date", async () => {
+    db.extensionApplication.findUnique.mockResolvedValue({
+      id: "ext1", fullName: "Alex", email: "alex@example.com", llcName: "Example LLC", taxYear: 2026, stripePaymentId: "pi_live",
+    });
+    expect(await notifyPaidOrderTelegram(session({ amount_total: 7900, metadata: { applicationType: "extension", applicationId: "ext1" } }))).toBe(true);
+    const body = JSON.parse(vi.mocked(fetch).mock.calls[0][1]!.body as string);
+    expect(body.text).toContain("Service: Form 7004 extension");
+    expect(body.text).toContain("Paid: $79.00");
+    expect(body.text).toContain("Tax year: 2026 · IRS due date: April 15, 2027");
+    expect(body.text).toContain("/admin/applications/extension/ext1");
+    expect(db.telegramOrderNotification.upsert).toHaveBeenCalledWith(expect.objectContaining({ where: { id: "extension:ext1" } }));
+  });
+  it("does not alert a Form 7004 order whose payment is not recorded yet", async () => {
+    db.extensionApplication.findUnique.mockResolvedValue({
+      id: "ext1", fullName: "", email: "alex@example.com", llcName: null, taxYear: null, stripePaymentId: null,
+    });
+    expect(await notifyPaidOrderTelegram(session({ metadata: { applicationType: "extension", applicationId: "ext1" } }))).toBe(true);
+    expect(fetch).not.toHaveBeenCalled();
   });
   it.each([{ livemode: false }, { payment_status: "unpaid" }, { payment_intent: null }])("ignores test or unpaid events: %j", async (overrides) => {
     expect(await notifyPaidOrderTelegram(session(overrides))).toBe(true);

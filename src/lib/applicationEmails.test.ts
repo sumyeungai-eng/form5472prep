@@ -4,6 +4,8 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   sendEinApplicationConfirmationEmail,
+  sendExtensionApplicationAdminEmail,
+  sendExtensionApplicationConfirmationEmail,
   sendItinApplicationConfirmationEmail,
 } from "@/lib/email";
 
@@ -85,5 +87,73 @@ describe("application confirmation emails", () => {
     expect(itin.text.toLowerCase()).not.toContain("payment link");
     expect(itin.html.toLowerCase()).not.toContain("payment link");
     expect(itin.html).toContain(`href="${itinPortalLink}"`);
+  });
+
+  it("renders the paid Form 7004 confirmation without overclaiming", async () => {
+    PREVIEW_DIR = await mkdtemp(join(tmpdir(), "application-email-previews-"));
+    process.env.EMAIL_PREVIEW_DIR = PREVIEW_DIR;
+
+    const ext = await readRenderedEmail(
+      await sendExtensionApplicationConfirmationEmail({
+        email: "alex@example.com",
+        fullName: "Alex Chen",
+        llcName: "Acme Holdings LLC",
+        taxYear: 2026,
+        amountPaidCents: 7900,
+      }),
+      "Form 7004 extension order received — Acme Holdings LLC",
+    );
+    expect(ext.text).toContain("$79.00");
+    expect(ext.text).toContain("you will not receive a separate payment request");
+    expect(ext.text).toContain("Foreign-owned U.S. DE");
+    expect(ext.text).toContain("Form 1120 code 12");
+    expect(ext.text).toContain("Ogden PIN Unit");
+    expect(ext.text).toContain("must be filed by April 15, 2027");
+    expect(ext.text).toContain("to October 15, 2027");
+    expect(ext.text).toContain("It is not an IRS acceptance of the extension.");
+    for (const body of [ext.text.toLowerCase(), ext.html.toLowerCase()]) {
+      expect(body).not.toContain("guarantee");
+      expect(body).not.toContain("payment link");
+      expect(body).not.toContain("approved");
+    }
+  });
+
+  it("asks for the tax year when the customer left it blank", async () => {
+    PREVIEW_DIR = await mkdtemp(join(tmpdir(), "application-email-previews-"));
+    process.env.EMAIL_PREVIEW_DIR = PREVIEW_DIR;
+
+    const ext = await readRenderedEmail(
+      await sendExtensionApplicationConfirmationEmail({ email: "alex@example.com", fullName: "", amountPaidCents: 7900 }),
+      "Form 7004 extension order received — your LLC",
+    );
+    expect(ext.text).toMatch(/^Hello there,/);
+    expect(ext.text).toContain("Reply with the tax year");
+  });
+
+  it("gives staff the order, deadline and admin link in the Form 7004 admin email", async () => {
+    PREVIEW_DIR = await mkdtemp(join(tmpdir(), "application-email-previews-"));
+    process.env.EMAIL_PREVIEW_DIR = PREVIEW_DIR;
+
+    const admin = await readRenderedEmail(
+      await sendExtensionApplicationAdminEmail({
+        id: "ext1",
+        adminEmail: "support@example.com",
+        fullName: "Alex Chen",
+        email: "alex@example.com",
+        llcName: "Acme Holdings LLC",
+        ein: "12-3456789",
+        llcStreet: "1 Example St",
+        llcCity: "Sheridan",
+        llcState: "WY",
+        llcZip: "82801",
+        taxYear: 2026,
+        amountPaidCents: 7900,
+      }),
+      "[Paid] [Form 7004] Acme Holdings LLC — tax year 2026",
+    );
+    expect(admin.text).toContain("Payment: $79.00 received");
+    expect(admin.text).toContain("IRS due date (fax by): April 15, 2027");
+    expect(admin.text).toContain("LLC US address: 1 Example St, Sheridan, WY, 82801");
+    expect(admin.text).toContain("/admin/applications/extension/ext1");
   });
 });

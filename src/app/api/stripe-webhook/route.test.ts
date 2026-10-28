@@ -3,6 +3,7 @@ const mock = vi.hoisted(() => ({
   event: vi.fn(), telegram: vi.fn(), applications: vi.fn(),
   filing: { updateMany: vi.fn(), findUnique: vi.fn() },
   einApplication: { updateMany: vi.fn() }, itinApplication: { updateMany: vi.fn() },
+  extensionApplication: { updateMany: vi.fn() },
 }));
 vi.mock("@/lib/stripe", () => ({ stripe: () => ({ webhooks: { constructEvent: mock.event } }) }));
 vi.mock("@/lib/env", () => ({ env: { stripe: { webhookSecret: "test" } } }));
@@ -23,10 +24,11 @@ beforeEach(() => {
   mock.telegram.mockResolvedValue(true);
   mock.einApplication.updateMany.mockResolvedValue({ count: 1 });
   mock.itinApplication.updateMany.mockResolvedValue({ count: 1 });
+  mock.extensionApplication.updateMany.mockResolvedValue({ count: 1 });
   mock.filing.updateMany.mockResolvedValue({ count: 0 });
 });
 describe("Stripe order alerts", () => {
-  it.each(["ein", "itin"])("completes %s emails even when Telegram fails, then requests retry", async (type) => {
+  it.each(["ein", "itin", "extension"])("completes %s emails even when Telegram fails, then requests retry", async (type) => {
     event({ applicationType: type, applicationId: "app1" }); mock.telegram.mockResolvedValue(false);
     expect((await POST(req())).status).toBe(500);
     expect(mock.applications).toHaveBeenCalledWith(type, "app1");
@@ -45,6 +47,26 @@ describe("Stripe order alerts", () => {
     mock.telegram.mockResolvedValue(false);
     expect((await POST(req())).status).toBe(500);
     expect(mock.applications).not.toHaveBeenCalled();
+  });
+  it("marks a Form 7004 extension order paid, then alerts and emails once", async () => {
+    event({ applicationType: "extension", applicationId: "ext1" }, { amount_total: 7900 });
+    expect((await POST(req())).status).toBe(200);
+    expect(mock.extensionApplication.updateMany).toHaveBeenCalledWith({
+      where: { id: "ext1", stripePaymentId: null },
+      data: { stripePaymentId: "pi_1", amountPaid: 7900, paidAt: expect.any(Date), status: "IN_REVIEW" },
+    });
+    expect(mock.einApplication.updateMany).not.toHaveBeenCalled();
+    expect(mock.telegram).toHaveBeenCalledOnce();
+    expect(mock.applications).toHaveBeenCalledWith("extension", "ext1");
+  });
+  it("is idempotent for a redelivered Form 7004 payment (no second email, Telegram still retried)", async () => {
+    event({ applicationType: "extension", applicationId: "ext1" }, { amount_total: 7900 });
+    mock.extensionApplication.updateMany.mockResolvedValue({ count: 0 });
+    const res = await POST(req());
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ deduplicated: true });
+    expect(mock.applications).not.toHaveBeenCalled();
+    expect(mock.telegram).toHaveBeenCalledOnce();
   });
   it("ignores unpaid checkout completions", async () => {
     event({ filingId: "filing1" }, { payment_status: "unpaid" });

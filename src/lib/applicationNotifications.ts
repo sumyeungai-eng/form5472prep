@@ -1,6 +1,8 @@
 import {
   sendEinApplicationAdminEmail,
   sendEinApplicationConfirmationEmail,
+  sendExtensionApplicationAdminEmail,
+  sendExtensionApplicationConfirmationEmail,
   sendItinApplicationAdminEmail,
   sendItinApplicationConfirmationEmail,
 } from "@/lib/email";
@@ -8,7 +10,11 @@ import { env } from "@/lib/env";
 import { makeMagicLink } from "@/lib/magicLink";
 import { prisma } from "@/lib/prisma";
 
-export async function notifyApplicationPaid(type: "ein" | "itin", applicationId: string): Promise<void> {
+export async function notifyApplicationPaid(type: "ein" | "itin" | "extension", applicationId: string): Promise<void> {
+  if (type === "extension") {
+    await notifyExtensionPaid(applicationId);
+    return;
+  }
   if (type === "ein") {
     const app = await prisma.einApplication.findUnique({
       where: { id: applicationId },
@@ -108,5 +114,33 @@ export async function notifyApplicationPaid(type: "ein" | "itin", applicationId:
     });
   } catch (err) {
     console.error("[applicationNotifications] ITIN confirmation email failed", err);
+  }
+}
+
+// Form 7004 orders have no customer portal page yet (v1): the confirmation
+// email carries the next steps and staff email the fax confirmation later.
+async function notifyExtensionPaid(applicationId: string): Promise<void> {
+  const app = await prisma.extensionApplication.findUnique({ where: { id: applicationId } });
+  if (!app) {
+    console.error("[applicationNotifications] Form 7004 order not found", { applicationId });
+    return;
+  }
+
+  try {
+    await sendExtensionApplicationAdminEmail({ ...app, adminEmail: env.adminEmail, amountPaidCents: app.amountPaid });
+  } catch (err) {
+    console.error("[applicationNotifications] Form 7004 admin email failed", err);
+  }
+
+  try {
+    await sendExtensionApplicationConfirmationEmail({
+      email: app.email,
+      fullName: app.fullName,
+      llcName: app.llcName,
+      taxYear: app.taxYear,
+      amountPaidCents: app.amountPaid,
+    });
+  } catch (err) {
+    console.error("[applicationNotifications] Form 7004 confirmation email failed", err);
   }
 }

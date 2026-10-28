@@ -14,10 +14,11 @@ import { ItinAdminActions } from "./ItinAdminActions";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const app = await prisma.itinApplication.findUnique({
+  // Titles carry customer names: never query them for a visitor who isn't signed in as admin.
+  const app = (await isAdmin()) ? await prisma.itinApplication.findUnique({
     where: { id: params.id },
     select: { fullName: true },
-  });
+  }) : null;
   const name = app?.fullName || "ITIN application";
   return { title: `${name} · Applications · Admin` };
 }

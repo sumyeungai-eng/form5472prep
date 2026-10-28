@@ -11,7 +11,7 @@ import { env } from "@/lib/env";
 // they are noindex duplicates of /start and were 110 of Moz's 114 "meta
 // noindex" crawl issues (2026-10-11). /start itself stays crawlable.
 // The other 4 of those 114 were the noindex login / application-form pages
-// (/sign-in, /partner/sign-in, /ein/apply, /itin/apply). They already carry a
+// (/sign-in, /partner/sign-in, /ein/apply, /itin/apply, and /form-7004-extension/apply added 2026-10-28). They already carry a
 // meta noindex and are not in the sitemap; disallowing them keeps Moz (which
 // honours robots.txt) from re-reporting them on every crawl.
 // "/applications/" is the auth-gated EIN/ITIN application area
@@ -31,6 +31,7 @@ const APP_ROUTES_TO_HIDE = [
   "/partner/sign-in",
   "/ein/apply",
   "/itin/apply",
+  "/form-7004-extension/apply",
 ];
 
 // AI crawler user-agents we explicitly allow. Maintaining this list (vs.

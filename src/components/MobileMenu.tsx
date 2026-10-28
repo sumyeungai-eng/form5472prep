@@ -13,6 +13,7 @@ const LINKS = [
   { href: "/pricing", label: "Pricing" },
   { href: "/ein", label: "EIN" },
   { href: "/itin", label: "ITIN" },
+  { href: "/form-7004-extension", label: "Form 7004 extension" },
   { href: "/blog", label: "Guide" },
 ];
 

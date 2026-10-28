@@ -49,9 +49,9 @@ function hubCategories(): HubCategory[] {
       links: formationLinks,
     },
     {
-      heading: "Do I need an EIN or ITIN before filing?",
+      heading: "Do I need an EIN, ITIN or extension before filing?",
       description:
-        "A foreign-owned LLC needs an EIN to file Form 5472, and its owner needs an ITIN only when there is a qualifying federal tax reason. We help with both.",
+        "A foreign-owned LLC needs an EIN to file Form 5472, and its owner needs an ITIN only when there is a qualifying federal tax reason. We help with both, and file Form 7004 when you need more time.",
       links: EIN_ITIN_LINKS,
     },
   ];

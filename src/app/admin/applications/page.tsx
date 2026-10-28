@@ -49,7 +49,7 @@ export default async function AdminApplicationsPage({
 }) {
   if (!(await isAdmin())) redirect("/admin/login");
 
-  const type = searchParams.type === "itin" ? "itin" : "ein";
+  const type = searchParams.type === "itin" ? "itin" : searchParams.type === "extension" ? "extension" : "ein";
   const q = (searchParams.q ?? "").trim();
 
   const einWhere = q
@@ -71,21 +71,33 @@ export default async function AdminApplicationsPage({
       }
     : {};
 
-  const [einApps, itinApps] = await Promise.all([
+  const extensionWhere = q
+    ? {
+        OR: [
+          { fullName: { contains: q, mode: "insensitive" as const } },
+          { email: { contains: q, mode: "insensitive" as const } },
+          { llcName: { contains: q, mode: "insensitive" as const } },
+          { ein: { contains: q, mode: "insensitive" as const } },
+        ],
+      }
+    : {};
+
+  const [einApps, itinApps, extensionApps] = await Promise.all([
     prisma.einApplication.findMany({ where: einWhere, orderBy: { createdAt: "desc" }, take: 100 }),
     prisma.itinApplication.findMany({ where: itinWhere, orderBy: { createdAt: "desc" }, take: 100 }),
+    prisma.extensionApplication.findMany({ where: extensionWhere, orderBy: { createdAt: "desc" }, take: 100 }),
   ]);
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
       <AdminPageHeader
         title="Applications"
-        description="EIN and ITIN applications. Paid applications appear as In review until you start them."
+        description="EIN and ITIN applications and Form 7004 extension orders. Paid applications appear as In review until you start them."
       />
 
       {/* Tabs */}
       <div className="flex gap-1 mb-6 border-b border-slate-200">
-        {(["ein", "itin"] as const).map((t) => (
+        {(["ein", "itin", "extension"] as const).map((t) => (
           <Link
             key={t}
             href={`/admin/applications?type=${t}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
@@ -95,9 +107,9 @@ export default async function AdminApplicationsPage({
                 : "border-transparent text-slate-600 hover:text-slate-900"
             }`}
           >
-            {t.toUpperCase()} Applications
+            {t === "extension" ? "Form 7004 Extensions" : `${t.toUpperCase()} Applications`}
             <span className="ml-1.5 text-xs text-slate-400">
-              ({t === "ein" ? einApps.length : itinApps.length})
+              ({t === "ein" ? einApps.length : t === "itin" ? itinApps.length : extensionApps.length})
             </span>
           </Link>
         ))}
@@ -114,7 +126,42 @@ export default async function AdminApplicationsPage({
         />
       </form>
 
-      {type === "ein" ? (
+      {type === "extension" ? (
+        extensionApps.length === 0 ? (
+          <p className="text-slate-500 text-sm">No Form 7004 orders yet.</p>
+        ) : (
+          <div className="bg-white border border-slate-200 rounded-lg divide-y divide-slate-100">
+            {extensionApps.map((app) => (
+              <Link
+                key={app.id}
+                href={`/admin/applications/extension/${app.id}`}
+                className="flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors"
+              >
+                <div>
+                  <p className="font-medium text-slate-900">
+                    {app.llcName || "(LLC name not provided)"}
+                    {app.taxYear ? <span className="ml-2 text-xs font-normal text-slate-500">Tax year {app.taxYear}</span> : null}
+                  </p>
+                  <p className="text-sm text-slate-500">
+                    {app.fullName || "(no name)"} &middot; {app.email}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${EIN_STATUS_COLORS[app.status] ?? "bg-slate-100 text-slate-700"}`}
+                  >
+                    {formatStatus(app.status)}
+                  </span>
+                  <SourceCell app={app} />
+                  <span className="text-xs text-slate-400">
+                    {app.createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )
+      ) : type === "ein" ? (
         einApps.length === 0 ? (
           <p className="text-slate-500 text-sm">No EIN applications yet.</p>
         ) : (

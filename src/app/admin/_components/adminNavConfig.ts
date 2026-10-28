@@ -92,6 +92,11 @@ export const ADMIN_NAV: NavGroup[] = [
             href: "/admin/applications?type=itin",
             param: { key: "type", value: "itin" },
           },
+          {
+            label: "Form 7004",
+            href: "/admin/applications?type=extension",
+            param: { key: "type", value: "extension" },
+          },
         ],
       },
       {

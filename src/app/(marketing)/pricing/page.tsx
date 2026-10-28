@@ -10,6 +10,7 @@ import {
   EXPRESS_TURNAROUND,
   EIN_PRICE_CENTS,
   ITIN_PRICE_CENTS,
+  EXTENSION_PRICE_CENTS,
   type Tier,
 } from "@/lib/pricing";
 import { formatPrice } from "@/lib/utils";
@@ -258,9 +259,9 @@ export default function PricingPage() {
             More for foreign founders
           </p>
           <h2 className="mt-3 text-center font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
-            Also need an EIN or ITIN?
+            Also need an EIN, ITIN or Form 7004 extension?
           </h2>
-          <div className="mt-8 grid md:grid-cols-2 gap-4">
+          <div className="mt-8 grid md:grid-cols-3 gap-4">
             {[
               {
                 href: "/ein",
@@ -273,6 +274,12 @@ export default function PricingPage() {
                 eyebrow: `ITIN — ${formatPrice(ITIN_PRICE_CENTS)}`,
                 title: "Do you need an ITIN for yourself?",
                 body: "Certified by an IRS Certifying Acceptance Agent — your documents are certified and we file Form W-7. No passport mailing.",
+              },
+              {
+                href: "/form-7004-extension",
+                eyebrow: `Form 7004 — ${formatPrice(EXTENSION_PRICE_CENTS)}`,
+                title: "Need more time to file?",
+                body: "We prepare Form 7004 and fax it to the IRS Ogden PIN Unit. It must be filed by the original due date.",
               },
             ].map((s) => (
               <Link

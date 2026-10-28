@@ -323,7 +323,7 @@ describe("services hub", () => {
       expect(lp, slug).not.toBeNull();
       expect(lp?.noindex).toBeFalsy();
     }
-    expect(EIN_ITIN_LINKS.map((l) => l.href)).toEqual(["/ein", "/itin"]);
+    expect(EIN_ITIN_LINKS.map((l) => l.href)).toEqual(["/ein", "/itin", "/form-7004-extension"]);
   });
 
   it("sitemap rows cover the hub and every page", () => {

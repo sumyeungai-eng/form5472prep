@@ -224,7 +224,7 @@ For a calendar-year LLC this package is due April 15 of the following year. Amou
 - **Not tax advice.** You remain responsible for the accuracy of what you tell us.
 - **Not an IRS acceptance notice.** The fax receipt shows what was sent and when, not that the IRS has processed the return.
 - **Not a penalty waiver.** If a year is already late, nobody can promise the IRS will not assess the $25,000 penalty under IRC §6038A(d).
-- **Not every return.** We do not prepare Form 1065, a full Form 1120 for an LLC taxed as a corporation, Form 1040-NR, state returns or Form 7004 extensions, and we do not keep books.`,
+- **Not every return.** We do not prepare Form 1065, a full Form 1120 for an LLC taxed as a corporation, Form 1040-NR or state returns, and we do not keep books. A [Form 7004 extension](/form-7004-extension) is a separate paid service.`,
       },
       {
         heading: "How much does the Form 5472 filing service cost?",
@@ -1052,7 +1052,7 @@ The questionnaire asks for the dissolution date and marks the return as final. A
 
 - **June exception:** for a short year ending in June that began before January 1, 2026, the due date is the 15th day of the 3rd month. An LLC dissolved in June 2025 was due on September 15, 2025.
 - **Weekends and holidays** move the date to the next business day.
-- **Form 7004** can extend the deadline. We do not file Form 7004.
+- **Form 7004** can extend the deadline. We offer [Form 7004 extension filing](/form-7004-extension) as a separate service; it must be filed by the original due date.
 
 The [deadline calculator](/form-5472-deadline-calculator) works out the exact date from your dissolution date.`,
       },
@@ -1485,7 +1485,7 @@ Whoever starts it, a client filing is priced per tax year. Standard, at ${STD}, 
       },
       {
         heading: "What do we not take over?",
-        body: `We do not take over your bookkeeping (no books, reconciliations or financial statements), other returns (Form 1065, Form 1040-NR, state returns or Form 7004) or tax advice. The owner remains responsible for the figures. For a late year, nobody can promise the IRS will not assess the $25,000 penalty under IRC §6038A(d).`,
+        body: `We do not take over your bookkeeping (no books, reconciliations or financial statements), other returns (Form 1065, Form 1040-NR or state returns) or tax advice; [Form 7004 extensions](/form-7004-extension) are sold separately. The owner remains responsible for the figures. For a late year, nobody can promise the IRS will not assess the $25,000 penalty under IRC §6038A(d).`,
       },
     ],
     faqs: [
@@ -1709,6 +1709,11 @@ export const EIN_ITIN_LINKS: HubLink[] = [
     href: "/itin",
     label: "Check whether you may need an ITIN for a federal tax purpose",
     blurb: "ITIN application support for individuals with a qualifying federal tax reason.",
+  },
+  {
+    href: "/form-7004-extension",
+    label: "File a Form 7004 extension for your foreign-owned LLC",
+    blurb: "We prepare Form 7004 and fax it to the IRS Ogden PIN Unit, then email you the fax confirmation.",
   },
 ];
 

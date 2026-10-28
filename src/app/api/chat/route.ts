@@ -3,7 +3,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/prisma";
 import { getOwnedFiling } from "@/lib/session";
 import { rateLimit, clientIp, tooManyRequests } from "@/lib/rateLimit";
-import { getTiersForSource } from "@/lib/pricing";
+import { EXTENSION_PRICE_CENTS, getTiersForSource } from "@/lib/pricing";
+import { formatPrice } from "@/lib/utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -141,6 +142,15 @@ notice is close.
 
 - Separate services (NOT part of the filing tiers, do not mix them into
   the filing math): EIN acquisition is $149 and ITIN is $349.
+  Form 7004 extension filing is ${formatPrice(EXTENSION_PRICE_CENTS)} per LLC per tax year, ordered at
+  /form-7004-extension. We prepare Form 7004 ("Foreign-owned U.S. DE" across
+  the top, Form 1120 code 12), fax it to the IRS Ogden PIN Unit and email
+  the fax confirmation (evidence of transmission, NOT IRS acceptance). Orders
+  are faxed within 2 business days; for a tax year that has not ended yet we
+  fax it in the first business days after 1 January. It must be filed by the
+  return's original due date (April 15 for a calendar-year LLC), gives 6
+  months to file (to October 15), does not extend time to pay, and cannot be
+  ordered after the original due date has passed. Never say guaranteed.
 
 WHAT'S INCLUDED IN EVERY PACKAGE
 - Cover letter
