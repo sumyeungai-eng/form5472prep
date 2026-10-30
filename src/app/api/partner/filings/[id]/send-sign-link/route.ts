@@ -1,3 +1,4 @@
+// partner-only mode: not linked from the dashboard UI; Phase 2 branded email will reuse this route.
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentPartner } from "@/lib/partner/auth";
