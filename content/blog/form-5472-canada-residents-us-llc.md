@@ -48,7 +48,7 @@ Reportable transactions are defined in [26 CFR §1.6038A-2(b)(3)–(4)](https://
 
 **Common examples for Canadian LLC owners:**
 
-- **Sending a wire from your TD, RBC, Scotiabank, or other Canadian bank account** to fund the LLC's Mercury, Relay, or US bank account — a capital contribution, reportable
+- **Sending a wire from your TD, RBC, Scotiabank, or other Canadian bank account** to fund the LLC's [Mercury, Relay, or US bank account](/blog/form-5472-from-mercury-wise-relay-statements) — a capital contribution, reportable
 - **Using Wise or Interac e-Transfer** routed into a US-linked account — still a capital contribution if it ends up in the LLC
 - **Any time the LLC pays you back** — distributions from the LLC to your Canadian account, reportable
 - **Paying the LLC's registered agent fee or state renewal** from your personal Canadian credit card — the LLC owes you that money back, making it either a capital contribution or a loan, both reportable

@@ -21,7 +21,7 @@ If you would rather have it done than read about it, [we prepare and fax the com
 Yes. Living in Colombia gives no exemption. The filing is required when three conditions are met:
 
 1. The LLC is a US disregarded entity: a single-member LLC that has not elected corporate treatment.
-2. Its sole owner is a foreign person: not a US citizen, green card holder or US tax resident.
+2. Its sole owner is a foreign person: not a US citizen, green card holder or [US tax resident](/blog/form-5472-owner-becomes-us-tax-resident).
 3. During the tax year there was at least one **reportable transaction** between the LLC and its owner or another foreign related party.
 
 Under Treasury Regulation § 1.6038A-1, for tax years beginning on or after 1 January 2017 and ending on or after 13 December 2017, a foreign-owned US disregarded entity is treated as a corporation separate from its owner solely for the § 6038A reporting rules. That is why an LLC that owes no US tax still files.

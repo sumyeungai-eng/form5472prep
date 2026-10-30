@@ -41,7 +41,7 @@ The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) sta
 
 The treaty is in force, and it changes nothing about Form 5472.
 
-Korea appears in the K section of the IRS's [income tax treaties A-to-Z list](https://www.irs.gov/businesses/international-businesses/united-states-income-tax-treaties-a-to-z), alongside Kazakhstan and Kyrgyzstan, with its own treaty-documents page. Korean residents are therefore better placed than UAE or Vietnam owners on which country may tax what.
+Korea appears in the K section of the IRS's [income tax treaties A-to-Z list](https://www.irs.gov/businesses/international-businesses/united-states-income-tax-treaties-a-to-z), alongside Kazakhstan and Kyrgyzstan, with its own treaty-documents page. Korean residents are therefore better placed than UAE or [Vietnam owners](/blog/form-5472-vietnam-residents-us-llc) on which country may tax what.
 
 That advantage stops short of the information return, for a structural reason. A treaty allocates the right to tax income between two countries. Form 5472 is not a tax; it is an information return imposed by IRC § 6038A, and no treaty article exempts a taxpayer from it. The treaty may decide whether your profits are taxable in the United States, and deserves an adviser's look if you have any US presence. It is irrelevant to whether the form is due.
 

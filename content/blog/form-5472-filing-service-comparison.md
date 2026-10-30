@@ -128,7 +128,7 @@ Its page lists $399, plus $49 for "IRS submission + confirmation", stated as "To
 
 ### What do doola and Firstbase charge for Form 5472?
 
-Neither sells it alone. doola lists $1,500 a year for its standalone Tax Filing-only service and $1,999 a year plus state fees for its Tax and Compliance plan; Firstbase lists $899 a year for the Tax Filing package covering a non-US-owned single-member LLC. Both are annual subscriptions that include more than this filing, checked 15 October 2026.
+Neither sells it alone. doola lists $1,500 a year for its standalone Tax Filing-only service and $1,999 a year plus state fees for its Tax and Compliance plan; Firstbase lists $899 a year for the Tax Filing package covering a non-US-owned single-member LLC. Both are annual subscriptions that include more than this filing, checked 15 October 2026. If one of them formed your LLC, see [who files Form 5472 after Stripe Atlas, doola or Firstbase](/blog/stripe-atlas-doola-firstbase-form-5472).
 
 ### Can a foreign-owned LLC file Form 5472 electronically?
 

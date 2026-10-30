@@ -161,4 +161,4 @@ No. Form 5472 is US information reporting. German income tax, trade tax, VAT and
 
 ## What should German owners do next?
 
-The safest starting point is a complete owner ledger, not a profit-and-loss report. [Start your filing](/start), or see [how Form 5472 is completed part by part](/blog/how-to-fill-out-form-5472) before preparing the package.
+The safest starting point is a complete owner ledger, not a profit-and-loss report. [Start your filing](/start), or see [how Form 5472 is completed part by part](/blog/how-to-fill-out-form-5472) before preparing the package. Owners next door have their own guides: [Form 5472 for French owners](/blog/form-5472-france-residents-us-llc), [Form 5472 for Swiss residents](/blog/form-5472-switzerland-residents-us-llc) and [Form 5472 for Dutch owners](/blog/form-5472-netherlands-residents-us-llc).

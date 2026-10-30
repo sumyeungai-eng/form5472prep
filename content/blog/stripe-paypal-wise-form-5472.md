@@ -102,7 +102,7 @@ For exchange-rate handling, read [Form 5472 currency conversion and exchange rat
 
 ## What documentation should you keep for Stripe, PayPal, and Wise?
 
-Keep the exports and statements that let someone rebuild the totals. The IRS instructions say records should be sufficient to establish the correctness of the return and should include records relevant to related-party transactions; the instructions also say books or records relating to a form must be retained as long as their contents may become material in administering internal revenue law ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)).
+Keep the exports and statements that let someone rebuild the totals. The IRS instructions say records should be sufficient to establish the correctness of the return and should include records relevant to related-party transactions; the instructions also say books or records relating to a form must be retained as long as their contents may become material in administering internal revenue law ([IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472)). The [Form 5472 recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) lists the full annual set.
 
 Keep these files in a year folder:
 

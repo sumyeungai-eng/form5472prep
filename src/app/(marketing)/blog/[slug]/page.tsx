@@ -30,6 +30,7 @@ import { env } from "@/lib/env";
 import { ORG_REF, SPEAKABLE, organizationNode, pageMeta } from "@/lib/seo";
 import { serviceForBlogTags } from "@/lib/service-links";
 import { relatedPosts } from "@/lib/related-posts";
+import { COUNTRY_HUB_PATH, isCountryHubPost } from "@/lib/blog-countries";
 import { ServiceCard } from "@/components/seo/ServiceCard";
 import { seoTitle } from "@/lib/seo-title";
 import { formatTag, indexableTagSlugs, tagHref, tagSlug } from "@/lib/blog-tags";
@@ -333,7 +334,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           <aside>
             <div className="space-y-6 lg:sticky lg:top-8">
               <BlogCta />
-              {otherPosts.length > 0 && <OtherPosts posts={otherPosts} heading="Related guides" />}
+              {otherPosts.length > 0 && (
+                <OtherPosts posts={otherPosts} heading="Related guides" countryHub={isCountryHubPost(post.slug)} />
+              )}
               <div className="px-2 text-[11px] leading-5 text-slate-500">
                 This article is educational and does not constitute tax or legal advice. Your facts may require professional review.
               </div>
@@ -367,7 +370,15 @@ function BlogCta() {
   );
 }
 
-function OtherPosts({ posts, heading = "Continue reading" }: { posts: PostMeta[]; heading?: string }) {
+function OtherPosts({
+  posts,
+  heading = "Continue reading",
+  countryHub = false,
+}: {
+  posts: PostMeta[];
+  heading?: string;
+  countryHub?: boolean;
+}) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{heading}</h3>
@@ -376,6 +387,7 @@ function OtherPosts({ posts, heading = "Continue reading" }: { posts: PostMeta[]
           <li key={post.slug}>
             <Link href={`/blog/${post.slug}`} className="group grid grid-cols-[72px_1fr] gap-3">
               <div className="relative aspect-square overflow-hidden rounded-lg bg-slate-100">
+                {/* Decorative: the title is the text right beside it in this same link. */}
                 <Image src={post.image} alt="" fill sizes="72px" className="object-cover transition duration-500 group-hover:scale-105" />
               </div>
               <div className="min-w-0">
@@ -386,6 +398,11 @@ function OtherPosts({ posts, heading = "Continue reading" }: { posts: PostMeta[]
           </li>
         ))}
       </ul>
+      {countryHub && (
+        <Link href={COUNTRY_HUB_PATH} className="mt-5 flex items-center text-xs font-semibold text-accent hover:underline">
+          Form 5472 by country <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+        </Link>
+      )}
       <Link href="/blog" className="mt-5 inline-flex items-center text-xs font-semibold text-accent hover:underline">
         Browse all guides <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
       </Link>

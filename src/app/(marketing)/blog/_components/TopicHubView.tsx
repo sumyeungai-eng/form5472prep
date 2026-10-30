@@ -7,6 +7,7 @@ import { SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
 import { buildTagIndex, duplicateHubTarget, isIndexableHub, tagHref, type TagEntry } from "@/lib/blog-tags";
 import { pageRange, pageSlice, POSTS_PER_PAGE, topicPagePath, totalPages } from "@/lib/blog-pagination";
+import { COUNTRY_HUB_PATH } from "@/lib/blog-countries";
 import { Pager } from "./Pager";
 import { PostCard } from "./PostCard";
 
@@ -18,6 +19,9 @@ import { PostCard } from "./PostCard";
 // canonical on the stronger hub) are noindex,follow.
 
 export const OTHER_TOPIC_LINKS = 6;
+
+// Hubs whose readers are usually looking for their own country's guide.
+const COUNTRY_HUB_TOPICS = new Set(["ftin", "digital-nomad", "non-resident", "foreign-owned-llc", "tax-treaty"]);
 
 export type TopicPage = { entry: TagEntry; entries: TagEntry[]; page: number; pages: number };
 
@@ -36,7 +40,7 @@ function hubCopy({ entry, page, pages }: TopicPage) {
   const { from, to } = pageRange(page, entry.count);
   const description =
     page === 1
-      ? `${entry.count} practical guides on ${entry.label} for foreign-owned US LLC owners.`
+      ? `${entry.count} practical guides from Form5472 Prep on ${entry.label} for foreign-owned US LLC owners.`
       : `Page ${page} of ${pages}: guides ${from}–${to} of ${entry.count} on ${entry.label} for foreign-owned US LLC owners.`;
   return { title, description, path: topicPagePath(entry.tag, page), from, to };
 }
@@ -131,6 +135,12 @@ export function TopicHubView(resolved: TopicPage) {
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
             {page === 1 ? description : `Guides ${from}–${to} of ${entry.count} on ${entry.label}, newest first.`}
           </p>
+          {COUNTRY_HUB_TOPICS.has(entry.tag) && (
+            <Link href={COUNTRY_HUB_PATH} className="mt-5 inline-flex items-center text-sm font-semibold text-accent hover:underline">
+              Find your country: Form 5472 by country
+              <ArrowRight className="ml-1.5 h-4 w-4" />
+            </Link>
+          )}
         </div>
       </section>
 

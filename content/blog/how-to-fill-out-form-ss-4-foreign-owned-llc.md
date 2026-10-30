@@ -18,7 +18,7 @@ This guide assumes one foreign individual owns a US-organised LLC, no Form 8832 
 
 ## What should you gather before completing Form SS-4?
 
-Gather the state-stamped formation record, operating agreement, current member record, mailing and physical addresses, foreign owner's legal name and any existing SSN or ITIN. Also settle the business start date, accounting year-end, expected employees, principal activity and whether this entity previously received an EIN. The SS-4 must describe the entity that exists now.
+Gather the state-stamped formation record, [operating agreement](/blog/single-member-llc-operating-agreement-foreign-owner), current member record, mailing and physical addresses, foreign owner's legal name and any existing SSN or ITIN. Also settle the business start date, accounting year-end, expected employees, principal activity and whether this entity previously received an EIN. The SS-4 must describe the entity that exists now.
 
 Form the LLC with the state before applying. The IRS warns that applying before state formation may delay the application.
 

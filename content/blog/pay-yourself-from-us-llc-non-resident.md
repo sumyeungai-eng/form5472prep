@@ -32,7 +32,7 @@ A transfer you call your "salary" is therefore, in substance, a distribution to 
 
 Because the self-employment tax that normally follows sole-proprietor treatment generally does not reach a non-resident owner, which removes the last reason people reach for a payroll structure.
 
-The IRS states that **nonresident aliens are not subject to self-employment tax**, that once a nonresident alien becomes a US resident alien under the residency rules they become liable on the same conditions as a US citizen, and that the tax may nonetheless be imposed on a nonresident alien under an international Social Security agreement, known as a Totalization Agreement ([Social Security tax, Medicare tax and self-employment](https://www.irs.gov/individuals/international-taxpayers/social-security-tax-medicare-tax-and-self-employment)).
+The IRS states that **nonresident aliens are not subject to self-employment tax**, that once a nonresident alien [becomes a US resident alien](/blog/form-5472-owner-becomes-us-tax-resident) under the residency rules they become liable on the same conditions as a US citizen, and that the tax may nonetheless be imposed on a nonresident alien under an international Social Security agreement, known as a Totalization Agreement ([Social Security tax, Medicare tax and self-employment](https://www.irs.gov/individuals/international-taxpayers/social-security-tax-medicare-tax-and-self-employment)).
 
 Whether the LLC's profit attracts US income tax at all is a separate question that turns on facts, and it is the subject of our guide on [whether a foreign-owned LLC pays US tax](/blog/does-foreign-owned-llc-pay-us-tax). What your own country does with the money you withdraw is outside our scope; ask your local tax authority or a local adviser.
 

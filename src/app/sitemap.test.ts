@@ -43,3 +43,16 @@ describe("sitemap Form 7004 service", () => {
     expect(rows.some((r) => r.url.includes("/form-7004-extension/apply"))).toBe(false);
   });
 });
+
+describe("sitemap country hub", () => {
+  it("lists /form-5472-by-country dated by the newest country guide", async () => {
+    getAllPosts.mockResolvedValue([
+      { slug: "form-5472-spain-residents-us-llc", tags: [], title: "Spain", date: "2026-08-25" },
+      { slug: "form-5472-vietnam-residents-us-llc", tags: [], title: "Vietnam", date: "2026-09-18" },
+      { slug: "form-5472-cost", tags: [], title: "Cost", date: "2026-10-20" },
+    ]);
+    const row = (await sitemap()).find((r) => new URL(r.url).pathname === "/form-5472-by-country");
+    expect(row).toBeDefined();
+    expect(new Date(row!.lastModified as Date | string).toISOString().slice(0, 10)).toBe("2026-09-18");
+  });
+});

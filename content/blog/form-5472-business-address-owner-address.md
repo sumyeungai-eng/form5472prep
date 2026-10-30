@@ -44,7 +44,7 @@ Use an accurate principal place of business and label a separate mail-receipt ar
 
 ## What if the LLC has only a registered agent?
 
-Identify where the business is actually directed and operated. For a solo consultant working from Italy, Spain, or Japan, that may be the owner’s foreign office. If the LLC has no active operations, use the best factual principal-office address and document the reasoning rather than defaulting automatically to the agent.
+Identify where the business is actually directed and operated. For a solo consultant working from [Italy](/blog/form-5472-italy-residents-us-llc), [Spain](/blog/form-5472-spain-residents-us-llc), or [Japan](/blog/form-5472-japan-residents-us-llc), that may be the owner’s foreign office. If the LLC has no active operations, use the best factual principal-office address and document the reasoning rather than defaulting automatically to the agent.
 
 The state registered agent remains important for legal service and state good standing. It simply does not become the federal principal-office address solely by being listed on the formation certificate.
 

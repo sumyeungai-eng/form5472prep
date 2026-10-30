@@ -32,7 +32,7 @@ The answer changes when the “customer” is actually the owner, the owner’s 
 
 Not by itself. The IRS explains that [personal-service income is generally sourced where the services are performed](https://www.irs.gov/individuals/international-taxpayers/source-of-income-personal-service-income), regardless of where the contract was made, where payment arrived, or where the payer lives.
 
-A consultant working entirely in Spain, Japan, or New Zealand can therefore earn foreign-source service income from a US client. US workdays, a US office, US employees, or a dependent US agent can change the result. Inventory, royalties, rents, and digital products follow different sourcing rules.
+A consultant working entirely in [Spain](/blog/form-5472-spain-residents-us-llc), [Japan](/blog/form-5472-japan-residents-us-llc), or [New Zealand](/blog/form-5472-new-zealand-residents-us-llc) can therefore earn foreign-source service income from a US client. US workdays, a US office, US employees, or a dependent US agent can change the result. Inventory, royalties, rents, and digital products follow different sourcing rules.
 
 “Foreign-source” does not mean “ignore the revenue.” The amount remains business income for bookkeeping and home-country tax purposes. It simply means the US income-tax sourcing analysis may differ from the customer’s location.
 

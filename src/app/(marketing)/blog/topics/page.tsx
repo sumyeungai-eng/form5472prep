@@ -6,6 +6,7 @@ import { getAllPosts } from "@/lib/blog";
 import { SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
 import { buildTagIndex, isIndexableHub, MIN_INDEXABLE_TAG_POSTS, tagHref } from "@/lib/blog-tags";
+import { COUNTRY_HUB_PATH } from "@/lib/blog-countries";
 
 // Parent of every /blog/topics/[tag] page. Until 2026-10-01 this path 404'd
 // while 280 child pages existed. Same ISR cadence as the tag pages.
@@ -81,7 +82,7 @@ export default async function TopicsIndexPage(): Promise<JSX.Element> {
             Form 5472 guides by topic
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-            Every guide in our library is tagged by the form, the filing problem or the kind of owner it is written
+            Every Form5472 Prep guide is tagged by the form, the filing problem or the kind of owner it is written
             for. Start with a topic below to see all the related guides in one place, from first-year Form 5472 and
             pro forma 1120 filings to EIN and ITIN applications, late-filing relief and the records a foreign owner
             should keep.
@@ -128,6 +129,13 @@ export default async function TopicsIndexPage(): Promise<JSX.Element> {
               </li>
             ))}
           </ul>
+          <p className="mt-6 text-sm leading-6 text-slate-600">
+            Looking for the guide for where you live?{" "}
+            <Link href={COUNTRY_HUB_PATH} className="font-semibold text-accent hover:underline">
+              Form 5472 by country
+            </Link>{" "}
+            lists every country guide by region.
+          </p>
         </section>
 
         {more.length > 0 && (

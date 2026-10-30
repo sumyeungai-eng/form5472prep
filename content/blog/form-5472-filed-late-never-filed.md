@@ -75,7 +75,7 @@ If there are reasons to go further back — for example, an IRS notice already r
 
 The reasonable cause standard for this penalty sits in [26 CFR §1.6038A-4(b)](https://www.law.cornell.edu/cfr/text/26/1.6038A-4) and means you exercised ordinary business care and prudence but still failed to file correctly. For Form 5472, the IRS has generally accepted:
 
-- **Not knowing about the requirement.** Foreign nationals who opened a US LLC for business reasons, relying on a state formation service or a general business advisor who didn't flag the IRS filing obligation, have a strong argument here.
+- **Not knowing about the requirement.** Foreign nationals who opened a US LLC for business reasons, relying on a state [formation service](/blog/stripe-atlas-doola-firstbase-form-5472) or a general business advisor who didn't flag the IRS filing obligation, have a strong argument here.
 - **Relying on a professional who gave incorrect advice.** If your accountant or lawyer told you no filing was required and that advice was wrong, reliance on a tax professional is a recognized reasonable cause category.
 - **Receiving conflicting information.** If you had a genuine good-faith belief that no return was required — for example, because you thought the LLC was truly dormant and the zero-transaction rule applied — that's also a reasonable cause argument.
 

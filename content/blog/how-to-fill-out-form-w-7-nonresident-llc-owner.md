@@ -65,7 +65,7 @@ Lines 6a through 6g connect citizenship, foreign tax records, immigration docume
 - **Line 6b:** Enter the tax identification number issued by your country of tax residence. Use N/A only when none applies.
 - **Line 6c:** Enter only US nonimmigrant visa details—classification, visa number, and expiry. Attach I-20 or I-94 copies when held.
 - **Line 6d:** Identify the first supporting document, issuer, number, expiry, and US entry date. Attach a labelled sheet for additional documents. If you never entered the United States, say so rather than inventing a date.
-- **Lines 6e and 6f:** Answer whether the IRS ever assigned an ITIN or IRSN. A renewal includes the prior ITIN and the name under which it was issued; a legal name change needs supporting evidence.
+- **Lines 6e and 6f:** Answer whether the IRS ever assigned an ITIN or IRSN. A renewal includes the prior ITIN and the name under which it was issued; [a legal name change](/blog/itin-name-change-marriage-passport) needs supporting evidence.
 - **Line 6g:** Complete the institution and stay details when box **f** applies, or the requested company details for a temporary US business visit.
 
 ## Which eight entries create the highest rejection risk?

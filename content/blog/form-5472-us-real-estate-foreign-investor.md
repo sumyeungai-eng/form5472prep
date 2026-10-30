@@ -20,7 +20,7 @@ A rental property LLC files Form 5472 because money and property move between th
 
 The purchase year is the year many investors miss. If you wired personal funds into the LLC bank account, paid closing costs personally, or transferred property into the LLC, the LLC had a reportable transaction with its foreign owner. The same rule applies when the owner pays repairs, insurance, HOA dues or property-management costs personally and the LLC treats the payment as a contribution or reimbursement.
 
-Customer rent is different. Rent paid by an unrelated tenant is not a transaction between the LLC and the foreign owner. Rental income belongs on the owner's income tax analysis, usually Form 1040-NR for an individual owner. Form 5472 asks what happened between the LLC and related parties.
+Customer rent is different. Rent paid by an unrelated tenant is not a transaction between the LLC and the foreign owner. Rental income belongs on the owner's income tax analysis, usually Form 1040-NR for an individual owner. Form 5472 asks what happened between the LLC and related parties. A short-term rental follows the same split; see [Airbnb US LLC non-resident taxes and Form 5472](/blog/form-5472-airbnb-short-term-rental-host).
 
 For a 2025 calendar-year LLC, the Form 5472 package is due with the pro forma Form 1120 on 15 April 2026, or 15 October 2026 if Form 7004 was filed by the regular due date. The same IRS instructions say a foreign-owned US disregarded entity cannot file Form 5472 electronically and must fax or mail the package to the Ogden PIN Unit.
 

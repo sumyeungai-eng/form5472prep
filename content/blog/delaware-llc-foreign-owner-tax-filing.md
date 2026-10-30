@@ -84,7 +84,7 @@ A Delaware LLC should retain one state-maintenance file and one federal related-
 | Owner ledger | Usually internal only | Core Form 5472 support |
 | Fax receipt | No Delaware purpose | Proof the IRS package was sent |
 
-The owner ledger should classify cash in, cash out, owner-paid expenses, reimbursements, loans, repayments and non-cash transfers. The [Form 5472 recordkeeping checklist](/blog/foreign-owned-llc-filing-requirements-checklist) gives a broader annual evidence list.
+The owner ledger should classify cash in, cash out, owner-paid expenses, reimbursements, loans, repayments and non-cash transfers. The [Form 5472 recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) gives a broader annual evidence list.
 
 ## What do four Delaware scenarios look like in practice?
 

@@ -99,4 +99,4 @@ No. The form reports US-dollar values. Preserve the original CHF amount and rate
 
 ---
 
-A Swiss filing turns on accurate owner identification and a gross CHF-to-USD ledger. [Start the reviewed Form 5472 package](/start), or review [how to fill out the form](/blog/how-to-fill-out-form-5472).
+A Swiss filing turns on accurate owner identification and a gross CHF-to-USD ledger. [Start the reviewed Form 5472 package](/start), or review [how to fill out the form](/blog/how-to-fill-out-form-5472). Neighbouring-country guides: [Form 5472 for Germany residents](/blog/form-5472-germany-residents-us-llc) and [Form 5472 for French owners](/blog/form-5472-france-residents-us-llc).

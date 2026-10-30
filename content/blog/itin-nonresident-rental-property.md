@@ -14,7 +14,7 @@ If a qualified adviser has confirmed the federal tax purpose, [start the ITIN ap
 
 ## Start with the owner, not just the property
 
-An ITIN identifies an individual. A property held directly by a nonresident individual can create an individual filing need. A property held through an LLC or corporation may involve both an entity EIN and an owner ITIN, depending on classification, income, elections, withholding, and return requirements.
+An ITIN identifies an individual. A property held directly by a nonresident individual can create an individual filing need. A property held through an LLC or corporation may involve both an entity EIN and an owner ITIN, depending on classification, income, elections, withholding, and return requirements. For a short-term rental run through an LLC, see [Airbnb US LLC non-resident taxes and Form 5472](/blog/form-5472-airbnb-short-term-rental-host).
 
 Use this identifier map:
 

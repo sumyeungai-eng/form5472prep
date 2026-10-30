@@ -1,6 +1,6 @@
 ---
 title: "Form 5472 Partner Program for Company Formation Agents"
-description: "Company-formation agencies can add a structured Form 5472 handoff, partner dashboard, client signature flow, and optional white-label delivery."
+description: "Company-formation agencies can add a structured Form 5472 handoff, partner dashboard, client signature flow, and white-label delivery."
 date: 2026-09-03
 updated: 2026-09-03
 author: "Form5472 Prep"
@@ -8,11 +8,11 @@ tags: ["company-formation-agents", "partner-program", "form-5472", "white-label"
 draft: false
 ---
 
-**A company-formation agency can use the Form5472 Prep partner program to connect LLC formation with the client's first federal information filing. The agency starts and monitors each client file, the client signs securely, and Form5472 Prep prepares and submits the package. White-label delivery is available by request for firms that want brand continuity after formation.**
+**A company-formation agency can use the Form5472 Prep partner program to connect LLC formation with the client's first federal information filing. The agency starts and monitors each client file, the client signs securely, and Form5472 Prep prepares and submits the package. Every partner filing is white-label, so Form5472 Prep never emails the agency's clients.**
 
 The opportunity is not to turn a formation specialist into a tax adviser. It is to create a reliable handoff before the new owner assumes that obtaining an EIN and paying the registered agent completed every federal obligation.
 
-[Request a formation-agency partner account](/partners) to discuss a standard or white-label workflow.
+[Request a formation-agency partner account](/partners).
 
 ## Formation can create the first reportable transaction
 
@@ -49,18 +49,18 @@ That status can show whether the filing is still a draft, has been paid, is awai
 
 The dashboard should be treated as the operating view, while the formation agency keeps its own client-management and engagement records.
 
-## Standard versus white-label formation bundles
+## Formation bundles under white-label delivery
 
-The standard program works when the agency is comfortable introducing Form5472 Prep as the specialist provider. White-label delivery is available by request when the agency wants agreed communications to remain under its own brand.
+Since 30 October 2026 every partner filing is white-label: the agency copies the intake and signing links from the partner dashboard and sends them, emails about a client's filing go to the agency, and the name the agency sets appears in the client's intake and on the fax receipt.
 
 | Agency model | Recommended delivery | Client experience |
 |---|---|---|
-| Formation-only service with an external compliance handoff | Standard partner flow | Client knows Form5472 Prep handles the filing workflow |
-| Formation plus annual-compliance package | White-label discussion | Agreed communications remain under the agency's brand |
+| Formation-only service with an external compliance handoff | Partner filing | Client receives the links from the agency |
+| Formation plus annual-compliance package | Partner filing | Client sees the agency's name in intake and on the fax receipt |
 | Adviser-led structure with complex tax work | Partner filing plus separate specialist advice | Routine filing and advisory work stay clearly separated |
-| High-volume incorporation platform | Custom partner discussion | Volume, invoicing, communication, and integration needs are scoped first |
+| High-volume incorporation platform | Custom partner discussion | Volume, invoicing, and integration needs are scoped first |
 
-White label does not change the underlying taxpayer or government forms. It changes agreed client-facing delivery. Specify which emails, instructions, or other touchpoints require the agency's brand during the application.
+White label does not change the underlying taxpayer or government forms, and client pages still open on form5472prep.com.
 
 ## A client-ready annual compliance package
 
@@ -89,6 +89,6 @@ For each client LLC, the formation agency should make available:
 
 The [first-year Form 5472 guide](/blog/first-year-form-5472-new-llc) explains why the formation year deserves its own review even when the company opened late in December.
 
-[Apply as a company-formation partner](/partners). Include the jurisdictions you serve, approximate annual formation volume, current compliance bundle, and whether white-label communications are required.
+[Apply as a company-formation partner](/partners). Include the jurisdictions you serve, approximate annual formation volume and current compliance bundle.
 
-*Educational and program information only; not tax or legal advice. Service eligibility and white-label scope are confirmed during partner approval.*
+*Educational and program information only; not tax or legal advice. Service eligibility is confirmed during partner approval.*

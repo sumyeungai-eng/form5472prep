@@ -108,14 +108,14 @@ Our own posture, which you may quote: we are not a CPA firm and we do not give t
 
 ## How do you launch the offer?
 
-1. **Apply for a partner account,** stating how many foreign-owned LLC clients you manage and whether you want standard or white-label delivery.
+1. **Apply for a partner account,** stating how many foreign-owned LLC clients you manage.
 2. **Decide your client price** and whether Express is a surcharge or a separate tier.
 3. **Write the scope page** using the table above, exclusions included.
 4. **Pick one intake owner** in your firm who collects facts and chases signatures.
 5. **Run one live filing** end to end before announcing the service, so your first client is not your test case.
 6. **Add it to renewals** alongside registered-agent or bookkeeping invoices, since the obligation recurs annually.
 
-Whether client emails carry your brand or ours is a separate decision, made at approval rather than automatically; the [standard versus white-label comparison](/blog/form-5472-white-label-vs-standard-partner) sets out what changes in each case.
+Every partner filing is white-label: we never email your clients, you send them the intake and signing links from your dashboard, and the [white-label partner delivery guide](/blog/form-5472-white-label-vs-standard-partner) explains what that means.
 
 ## Frequently asked questions
 
@@ -149,6 +149,6 @@ Your client fee is your own decision and we place no floor or ceiling on it. Wha
 
 ---
 
-Productising the filing is mostly a scoping exercise: fix the price, publish the exclusions, and run one filing before you announce the service. [Apply for a partner account](/partners) and tell us how many foreign-owned LLC clients you manage, then read the [standard versus white-label comparison](/blog/form-5472-white-label-vs-standard-partner) before you decide whose brand the client sees.
+Productising the filing is mostly a scoping exercise: fix the price, publish the exclusions, and run one filing before you announce the service. [Apply for a partner account](/partners) and tell us how many foreign-owned LLC clients you manage, then read the [white-label partner delivery guide](/blog/form-5472-white-label-vs-standard-partner) to see what your clients receive.
 
 *Educational content only; not tax or legal advice.*

@@ -8,49 +8,39 @@ tags: ["white-label", "partner-program", "form-5472", "accounting-firms"]
 draft: false
 ---
 
-**Choose the standard Form5472 Prep partner flow when you want the fastest operational setup and are comfortable identifying the specialist filing provider. Choose white-label delivery when maintaining your firm's brand across agreed client communications is important enough to justify a scoped onboarding discussion. The preparation, review, client signature, and IRS submission standards remain the same.**
+**Every Form5472 Prep partner filing is now white-label, so there is no standard flow to choose. Form5472 Prep never emails your clients: your firm copies the intake and signing links from the partner dashboard and sends them, and emails about a client's filing come to you. The preparation, review, client signature, and IRS submission standards remain the same.**
 
-White label is available by request. It is not a different tax return or a promise that every system becomes custom branded automatically.
+Update, 30 October 2026: the standard partner delivery compared below is no longer offered. Your firm pays per filing, your clients see no prices, and the name you set appears in the client's intake and on the fax receipt. White label is not a different tax return, and client pages still open on form5472prep.com.
 
-[Apply for the partner program](/partners) and state which delivery model fits your firm.
+[Apply for the partner program](/partners).
 
 ## Side-by-side decision matrix
 
-| Decision factor | Standard partner delivery | White-label delivery |
+| Decision factor | Standard partner delivery (no longer offered) | White-label delivery (every partner filing) |
 |---|---|---|
 | Primary use case | Organized specialist handoff | Brand-continuous managed service |
-| Client sees Form5472 Prep branding | Yes, in standard communications | Replaced by partner branding in agreed communications |
+| Client sees Form5472 Prep branding | Yes, in standard communications | No emails from us; the name you set appears in intake and on the fax receipt |
 | Partner manages relationship | Yes | Yes |
 | Partner dashboard | Yes | Yes |
 | Client signs the filing | Yes | Yes |
 | Review by a PTIN-holding tax accountant | Included | Included |
 | IRS fax delivery and receipt | Included | Included |
-| Setup complexity | Lower | Depends on required brand touchpoints |
-| Custom domain or every portal screen | Not applicable | Not assumed; must be confirmed |
+| Setup complexity | Lower | Set the name your clients see |
+| Custom domain or every portal screen | Not applicable | No; client pages open on form5472prep.com |
 | Volume pricing or consolidated invoice | Available for discussion | Available for discussion |
 | Best starting point | Firms that want to begin quickly | Firms selling a firm-branded compliance package |
 
-The right model depends on the client promise your firm already makes. A transparent specialist handoff can build trust; a consistent white-label experience can reduce brand fragmentation. Neither is automatically better.
+Since 30 October 2026 every partner account uses the white-label column.
 
 ## Standard partner delivery
 
-Under the [standard partner program](/partners), the partner starts and tracks multiple client filings from one account. Form5472 Prep communicates with the client for the supported signature, confirmation, and filing-receipt workflow. The partner remains visible as the professional coordinating the engagement.
-
-This model is usually the cleanest choice when:
-
-- the service is a referral or specialist handoff rather than a bundled product;
-- the partner wants minimal setup;
-- clients are comfortable knowing a specialist provider prepares the package;
-- the firm does not need to control every communication template; or
-- the firm wants to validate demand before creating a branded service line.
-
-Standard delivery does not mean the partner loses visibility. The dashboard groups the firm's client filings and shows their live status.
+Under the former standard flow, the partner started and tracked multiple client filings from one account, and Form5472 Prep emailed the client for the signature, confirmation, and filing-receipt workflow. It is no longer offered: the [partner dashboard](/partners) works the same way, but emails about a client's filing now go to the partner.
 
 ## White-label partner delivery
 
-White-label delivery lets the partner use its own brand on the client-facing communications agreed during onboarding. Form5472 Prep remains the preparation and filing back office, while the client experience follows the partner's brand requirements.
+White-label delivery keeps Form5472 Prep out of your clients' inboxes. Form5472 Prep remains the preparation and filing back office, while your firm sends the intake and signing links and receives the emails about each filing.
 
-This model is usually the better fit when:
+It fits especially well when:
 
 - the firm markets one annual-compliance package under its own name;
 - client ownership and brand continuity are central to the engagement;
@@ -58,7 +48,7 @@ This model is usually the better fit when:
 - the filing is bundled with formation, bookkeeping, registered-agent, or advisory services; or
 - the firm expects enough volume to justify a documented operating procedure.
 
-Before rollout, specify the required communications. A white-label request should answer: whose name appears, which email channel is used, who sends the signature instruction, who supplies support, who invoices, and how the final receipt reaches the client.
+Before rollout, decide inside your firm who sends the links, who answers client questions, and how the final receipt reaches the client.
 
 ## What does not change
 
@@ -76,28 +66,10 @@ Branding should never obscure who is responsible for advice, accuracy, preparati
 
 ## Commercial model and pricing
 
-The standard partner page currently uses the same per-filing pricing as direct customers and has no platform subscription. Current public prices are Standard at {{price.standard}} with a 5–7-business-day turnaround and Express at {{price.express}}, ready to sign within 24 hours. An additional past tax year adds {{price.additionalYear}}, and IRS fax delivery is included.
+The partner program uses the same per-filing pricing as direct customers and has no platform subscription. Current public prices are Standard at {{price.standard}} with a 5–7-business-day turnaround and Express at {{price.express}}, ready to sign within 24 hours. An additional past tax year adds {{price.additionalYear}}, and IRS fax delivery is included.
 
 [Verify current pricing](/pricing) before quoting a client. Volume pricing and consolidated invoicing are available for discussion, but a partner should not advertise a discount, margin, referral fee, or wholesale rate until the arrangement is confirmed in writing.
 
-White-label commercial terms may depend on volume, support model, billing flow, and the branding work required. Put those facts in the partner application rather than assuming that “white label” describes one fixed package.
+[Request your partner account](/partners). Include your expected filing volume and billing needs.
 
-## A simple selection test
-
-Choose standard delivery when all three statements are true:
-
-1. your client can see that Form5472 Prep is the specialist preparation provider;
-2. your firm mainly needs workflow visibility and a reliable handoff; and
-3. you want to launch without a separate branding specification.
-
-Request white-label delivery when all three statements are true:
-
-1. clients expect the service to remain under your firm's brand;
-2. your team can own a clearly defined communication and escalation process; and
-3. you are ready to specify the exact branded touchpoints before onboarding clients.
-
-If the answers are mixed, begin with the standard partner flow for suitable clients and discuss a white-label transition after the process is proven.
-
-[Request your partner account](/partners). Include the preferred delivery model, expected filing volume, billing needs, and the communications that must carry your brand.
-
-*Program information and pricing current as of August 31, 2026. Verify current terms at application; white-label scope is confirmed individually.*
+*Program information and pricing current as of August 31, 2026; partner delivery updated October 30, 2026. Verify current terms at application.*

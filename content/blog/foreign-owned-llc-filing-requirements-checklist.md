@@ -55,7 +55,7 @@ Also check states where the LLC is registered or conducts business; formation-st
 
 ## What else might apply?
 
-Income tax, Forms 1040-NR or 1120-F, Forms 1099 or 1042-S, payroll filings, sales-tax registration, and state income-tax returns depend on facts that this checklist cannot resolve: who earned the income, where work was performed, U.S. trade-or-business and treaty questions, payments made, employees, property, and state nexus. “No U.S. income tax due” is not the same as “no U.S. filing obligation.” Ask a qualified adviser before relying on either conclusion.
+Income tax, Forms 1040-NR or [1120-F](/blog/form-5472-vs-1120-f), Forms 1099 or 1042-S, payroll filings, sales-tax registration, and state income-tax returns depend on facts that this checklist cannot resolve: who earned the income, where work was performed, U.S. trade-or-business and treaty questions, payments made, employees, property, and state nexus. “No U.S. income tax due” is not the same as “no U.S. filing obligation.” Ask a qualified adviser before relying on either conclusion.
 
 ## Annual compliance cycle
 

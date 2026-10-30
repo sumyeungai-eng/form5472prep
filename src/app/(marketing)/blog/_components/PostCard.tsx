@@ -11,6 +11,8 @@ export function PostCard({ post }: { post: PostMeta }) {
       className="group flex min-h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_40px_-32px_rgba(15,23,42,0.5)] transition duration-300 hover:-translate-y-1 hover:border-accent/30 hover:shadow-[0_24px_55px_-32px_rgba(30,58,138,0.35)]"
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+        {/* Decorative: the post title is the <h3> inside this same link, so a
+            non-empty alt would make screen readers announce the topic twice. */}
         <Image
           src={post.image}
           alt=""

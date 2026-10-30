@@ -160,4 +160,4 @@ No. Form 5472 is US information reporting. French income tax, social charges, VA
 
 ## What should French owners do next?
 
-A clean filing begins with exact owner data and a complete two-way ledger. [Start your filing](/start), or compare the [DIY and prepared-filing routes](/blog/form-5472-diy-vs-preparer) before deciding how to file.
+A clean filing begins with exact owner data and a complete two-way ledger. [Start your filing](/start), or compare the [DIY and prepared-filing routes](/blog/form-5472-diy-vs-preparer) before deciding how to file. Neighbouring-country guides: [Form 5472 for Germany residents](/blog/form-5472-germany-residents-us-llc) and [Form 5472 for Swiss residents](/blog/form-5472-switzerland-residents-us-llc).

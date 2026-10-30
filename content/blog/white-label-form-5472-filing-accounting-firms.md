@@ -8,11 +8,11 @@ tags: ["white-label-tax-preparation", "accounting-firms", "form-5472", "partner-
 draft: false
 ---
 
-**White-label Form 5472 filing lets an accounting or bookkeeping firm keep its client relationship and agreed client-facing branding while Form5472 Prep handles the specialist preparation workflow behind the scenes. White-label delivery is available by request, with communication scope, responsibilities, and commercial terms confirmed during partner approval.**
+**White-label Form 5472 filing lets an accounting or bookkeeping firm keep its client relationship and agreed client-facing branding while Form5472 Prep handles the specialist preparation workflow behind the scenes. Every partner filing is white-label: Form5472 Prep never emails your clients, and your firm pays per filing.**
 
 This model is useful when a firm's clients occasionally need Form 5472 and a pro forma Form 1120, but building and maintaining an internal workflow for that narrow filing would distract from the firm's core work. Firms still deciding between referral and a partner account can read [Form 5472 for accountants](/services/form-5472-for-accountants), and the service page explains [how white-label delivery works](/services/white-label-form-5472-filing).
 
-[Request a white-label partner discussion](/partners) and describe the client-facing touchpoints your firm needs branded.
+[Request a partner account](/partners).
 
 ## A specialist back office without surrendering the relationship
 
@@ -40,7 +40,7 @@ Every package receives review by a tax accountant who holds an IRS Preparer Tax 
 | Prepare the Form 5472 package | Monitors | Owns | Reviews final package |
 | Sign the return | Coordinates | Provides secure link | Owns |
 | Submit and retain proof | Keeps client file | Faxes and stores receipt | Keeps signed copy |
-| Client-facing branding | Defines requested scope | Implements agreed white-label communications | Sees the agreed brand experience |
+| Client-facing branding | Sets the name clients see and sends the links | Sends no client emails | Sees the firm's name in intake and on the fax receipt |
 
 The client remains responsible for the accuracy of the submitted information. The accounting firm remains responsible for advice or conclusions outside the defined Form 5472 preparation service.
 
@@ -50,7 +50,7 @@ Before sending the first client, agree on five practical items.
 
 ### Brand touchpoints
 
-List the communications that should use the firm's brand. Do not assume that requesting white label automatically changes every portal page, URL, invoice, email sender, or government form. Government filings must still show the legally required taxpayer and preparer information.
+Form5472 Prep sends your clients no email; your firm sends the intake and signing links from the partner dashboard, and the name you set appears in the client's intake and on the fax receipt. Client pages still open on form5472prep.com, and government filings must still show the legally required taxpayer and preparer information.
 
 ### Client communication
 
@@ -66,7 +66,7 @@ Agree who retains formation documents, owner ledgers, signed packages, and fax r
 
 ### Billing
 
-The standard partner program uses per-filing checkout at the same current prices as direct customers. Volume pricing or consolidated invoicing can be discussed. Any client-facing fee or markup should be agreed between the accounting firm and its client and should not be confused with an unconfirmed commission from Form5472 Prep.
+Your firm pays for each filing at checkout, at the same current prices as direct customers, and your clients see no prices. Volume pricing or consolidated invoicing can be discussed. Any client-facing fee or markup should be agreed between the accounting firm and its client and should not be confused with an unconfirmed commission from Form5472 Prep.
 
 ## When white label is a strong fit
 
@@ -77,8 +77,6 @@ White-label delivery is particularly useful when:
 - the firm wants to retain its client relationship rather than make an external referral;
 - staff need a repeatable intake and status workflow; or
 - the firm serves clients across time zones and needs a browser-based signature and documented submission trail.
-
-The standard partner program may be simpler when speed matters more than brand continuity or when the accounting firm is comfortable telling the client that a specialist filing provider is involved.
 
 ## Questions to ask before outsourcing a Form 5472 workflow
 
@@ -99,6 +97,6 @@ Those answers belong in the operating agreement before client data begins moving
 
 Current direct pricing is listed on the [pricing page](/pricing). Start with a small group of suitable client files, document the handoff, and confirm who owns each communication. Once the workflow is stable, the same partner dashboard can manage additional client LLCs without creating separate partner logins.
 
-[Apply for the partner program](/partners) and select white-label interest. Include your expected volume, current workflow, and required brand touchpoints so the approval discussion can be specific.
+[Apply for the partner program](/partners). Include your expected volume and current workflow so the approval discussion can be specific.
 
-*Program information current as of August 31, 2026. White-label scope is agreed individually; this article does not promise a custom domain, portal, invoice, or communication channel unless confirmed for the partner account.*
+*Program information current as of August 31, 2026; white-label delivery updated October 30, 2026. Client pages open on form5472prep.com; this article does not promise a custom domain, portal or invoice.*

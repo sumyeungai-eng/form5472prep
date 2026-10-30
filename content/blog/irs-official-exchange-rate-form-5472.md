@@ -73,7 +73,7 @@ Yes, two, both typing errors in otherwise complete rows. On the IRS page as retr
 
 The neighbouring years make the intended values clear: 0.924 for the euro in 2024 and 73.686 for the ruble in 2021. Our exchange-rate tool shows the corrected values and footnotes the published text, so the difference is visible rather than hidden. If you paste the IRS table into a spreadsheet, check those two cells, because a comma or a double full stop can turn a rate into text or a wrong number.
 
-The IRS table is also limited in reach. It has no row for the Philippine peso, Nigerian naira, Pakistani rupee, Indonesian rupiah or Vietnamese dong, and the IRS page points to other posted rates for currencies not listed.
+The IRS table is also limited in reach. It has no row for the Philippine peso, Nigerian naira, Pakistani rupee, Indonesian rupiah or Vietnamese dong, and the IRS page points to other posted rates for currencies not listed. For how rupiah and dong amounts are handled in practice, see [Form 5472 for Indonesia and Bali residents](/blog/form-5472-indonesia-bali-residents-us-llc) and [Form 5472 for Vietnam residents](/blog/form-5472-vietnam-residents-us-llc).
 
 ## How do you document the exchange-rate source for Form 5472?
 

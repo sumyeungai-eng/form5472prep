@@ -86,7 +86,7 @@ Standard is not a lesser filing either. The forms, the accountant review, the re
 
 ## When are the next Form 5472 deadlines?
 
-Tax year 2026 is due 15 April 2027, extended to 15 October 2027 if Form 7004 is filed by that April date. Form 7004 has to be filed by that regular due date to exist at all, and it does not extend the time to pay any tax due.
+Tax year 2026 is due 15 April 2027, extended to 15 October 2027 if Form 7004 is filed by that April date. Form 7004 has to be filed by that regular due date to exist at all, and it does not extend the time to pay any tax due. See [Form 7004 extension filing](/form-7004-extension) to request the October 2027 date.
 
 Two consequences for anyone reading ahead. A 2026 package cannot be rescued in October 2027 by a Form 7004 filed that September, because the April date creates the extension. And an unfiled 2025 package does not fold into the 2026 cycle — it is a separate return, late now.
 
