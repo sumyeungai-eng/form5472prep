@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOwnedFiling, getCurrentUser, hasFilingInviteAccess, partnerOwnsFiling } from "@/lib/session";
-import { put } from "@/lib/storage";
+import { sha256Hex } from "@/lib/applicationSignature";
+import { clientIp } from "@/lib/applications/customerSignature";
+import { FILING_SIGNATURE_DECLARATION_VERSION } from "@/lib/filingSignature";
+import { get as getStorageObject, put } from "@/lib/storage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -75,6 +78,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     pngDataUrl?: unknown;
     confirmed?: unknown;
     pdfKey?: unknown;
+    signerName?: unknown;
   };
   // The client must explicitly confirm they checked the exact PDF they're
   // signing (the "everything is correct" tick on the check-and-sign page).
@@ -83,6 +87,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       { error: "Please confirm you've checked your forms and everything is correct." },
       { status: 400 },
     );
+  }
+  const signerName = typeof body.signerName === "string" ? body.signerName.trim() : "";
+  if (signerName.length < 1 || signerName.length > 200) {
+    return NextResponse.json({ error: "Enter your full legal name." }, { status: 400 });
   }
   if (typeof body.pdfKey !== "string" || body.pdfKey !== filing.generatedPdfKey) {
     return NextResponse.json(
@@ -111,6 +119,15 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     );
   }
 
+  // Hash the exact PDF the client was shown (pdfKey === generatedPdfKey above).
+  let pdfSha256: string;
+  try {
+    pdfSha256 = sha256Hex(await getStorageObject(filing.generatedPdfKey));
+  } catch (err) {
+    console.error("[sign] pdf hash failed", { filingId: filing.id, error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: "Could not read your forms to record the signature. Please try again." }, { status: 500 });
+  }
+
   // Versioned key: an earlier signature (set aside when a corrected PDF was
   // uploaded) stays in storage for the audit trail.
   const signatureKey = `${filing.id}_signature_${Date.now()}.png`;
@@ -133,6 +150,14 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     data: {
       signaturePngKey: signatureKey,
       signedAt: new Date(),
+      signerName,
+      signatureIp: clientIp(req.headers),
+      signatureUserAgent: req.headers.get("user-agent")?.slice(0, 500) ?? null,
+      signatureConsentVersion: FILING_SIGNATURE_DECLARATION_VERSION,
+      signedPreparedPdfSha256: pdfSha256,
+      // Partner invite link dies once signed.
+      inviteTokenHash: null,
+      inviteExpiresAt: null,
       // SIGNATURE_PENDING = customer acknowledged + signed; awaiting our
       // accountant to upload the final signed PDF for fax.
       status: "SIGNATURE_PENDING",

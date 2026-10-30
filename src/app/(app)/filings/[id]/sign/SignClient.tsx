@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SignaturePad } from "@/components/SignaturePad";
+import { filingDeclarationText } from "@/lib/filingSignature";
 
 // Client surface for the in-portal check-and-sign page (reached from the
 // "Check & sign my forms" email sent when admin uploads the reviewed PDF).
@@ -32,6 +33,7 @@ export function SignClient({
   const router = useRouter();
   const [dataUrl, setDataUrl] = useState<string | null>(priorSignatureDataUrl);
   const [confirmed, setConfirmed] = useState(false);
+  const [signerName, setSignerName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,6 +49,10 @@ export function SignClient({
       setError("Please confirm you've checked your forms first.");
       return;
     }
+    if (!signerName.trim()) {
+      setError("Please type your full legal name.");
+      return;
+    }
     if (!dataUrl) {
       setError("Please draw or keep a signature before continuing.");
       return;
@@ -57,7 +63,7 @@ export function SignClient({
       const r = await fetch(`/api/filings/${filingId}/sign`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pngDataUrl: dataUrl, confirmed: true, pdfKey }),
+        body: JSON.stringify({ pngDataUrl: dataUrl, confirmed: true, pdfKey, signerName: signerName.trim() }),
       });
       if (!r.ok) {
         const body = await r.json().catch(() => ({}));
@@ -197,7 +203,10 @@ export function SignClient({
                   setError(null);
                 }}
               />
-              <span>I&apos;ve checked my forms and everything is correct.</span>
+              <span>
+                I&apos;ve checked my forms and everything is correct.
+                <span className="mt-1 block text-xs text-slate-600">{filingDeclarationText()}</span>
+              </span>
             </label>
 
             <div className="mt-3">
@@ -258,6 +267,19 @@ export function SignClient({
                 : "Tick “everything is correct” in step 1 first."}
               {priorSignatureDataUrl && " We've pre-loaded the signature you used before — keep it or clear and re-draw."}
             </p>
+            <label className="mt-3 block text-sm font-medium text-slate-700" htmlFor="signer-name">
+              Full legal name
+            </label>
+            <input
+              id="signer-name"
+              type="text"
+              value={signerName}
+              onChange={(e) => setSignerName(e.target.value)}
+              maxLength={200}
+              autoComplete="name"
+              disabled={!confirmed}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-50"
+            />
             <div className={`mt-3 ${confirmed ? "" : "pointer-events-none"}`} aria-disabled={!confirmed}>
               <SignaturePad
                 initialPngDataUrl={priorSignatureDataUrl ?? undefined}
@@ -271,7 +293,7 @@ export function SignClient({
             <button
               type="button"
               onClick={submit}
-              disabled={busy || !dataUrl || !confirmed}
+              disabled={busy || !dataUrl || !confirmed || !signerName.trim()}
               className="mt-5 w-full rounded-full bg-blue-900 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-950 disabled:opacity-60"
             >
               {busy ? "Saving…" : "Confirm & sign"}

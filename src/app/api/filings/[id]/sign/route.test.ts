@@ -14,6 +14,7 @@ const db = vi.hoisted(() => ({
 
 const storage = vi.hoisted(() => ({
   put: vi.fn(),
+  get: vi.fn(),
 }));
 
 vi.mock("@/lib/session", () => ({
@@ -30,16 +31,18 @@ vi.mock("@/lib/prisma", () => ({
     },
   },
 }));
-vi.mock("@/lib/storage", () => ({ put: storage.put }));
+vi.mock("@/lib/storage", () => ({ put: storage.put, get: storage.get }));
 
 import { POST } from "./route";
 
 const REVIEW_PENDING_MESSAGE = "Your forms are still being reviewed. We will email you when they are ready to sign.";
 
-function request(extra: Record<string, unknown> = { confirmed: true, pdfKey: "unsigned.pdf" }) {
+const VALID = { confirmed: true, pdfKey: "unsigned.pdf", signerName: "  Jane Q. Owner  " };
+
+function request(extra: Record<string, unknown> = VALID, headers: Record<string, string> = {}) {
   return new Request("https://example.test/api/filings/filing_1/sign", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...headers },
     body: JSON.stringify({
       pngDataUrl: `data:image/png;base64,${Buffer.alloc(300, 1).toString("base64")}`,
       ...extra,
@@ -69,6 +72,8 @@ describe("POST /api/filings/[id]/sign review gate", () => {
     db.findUnique.mockReset();
     db.update.mockReset();
     storage.put.mockReset();
+    storage.get.mockReset();
+    storage.get.mockResolvedValue(new Uint8Array([1, 2, 3]));
 
     session.getOwnedFiling.mockResolvedValue({ id: "filing_1" });
     session.partnerOwnsFiling.mockResolvedValue(null);
@@ -127,19 +132,22 @@ describe("POST /api/filings/[id]/sign check confirmation", () => {
     db.findUnique.mockReset();
     db.update.mockReset();
     storage.put.mockReset();
+    storage.get.mockReset();
+    storage.get.mockResolvedValue(new Uint8Array([1, 2, 3]));
     session.getOwnedFiling.mockResolvedValue({ id: "filing_1" });
     session.partnerOwnsFiling.mockResolvedValue(null);
     db.findUnique.mockResolvedValue({ ...baseFiling, reviewApprovedAt: new Date("2026-10-05T10:00:00Z") });
   });
 
   it("refuses a signature for a PDF version the client was not shown", async () => {
-    const res = await POST(request({ confirmed: true, pdfKey: "old_version.pdf" }), { params: { id: "filing_1" } });
+    const res = await POST(request({ ...VALID, pdfKey: "old_version.pdf" }), { params: { id: "filing_1" } });
     expect(res.status).toBe(409);
     expect(storage.put).not.toHaveBeenCalled();
   });
 
   it("asks for a reload when the PDF changed between read and write", async () => {
     storage.put.mockResolvedValue(undefined);
+    storage.get.mockResolvedValue(new Uint8Array([1]));
     db.update.mockResolvedValueOnce({ count: 0 });
     const res = await POST(request(), { params: { id: "filing_1" } });
     expect(res.status).toBe(409);
@@ -150,6 +158,52 @@ describe("POST /api/filings/[id]/sign check confirmation", () => {
 
   it("refuses to sign unless the client confirmed everything is correct", async () => {
     const res = await POST(request({}), { params: { id: "filing_1" } });
+    expect(res.status).toBe(400);
+    expect(storage.put).not.toHaveBeenCalled();
+    expect(db.update).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/filings/[id]/sign signing record", () => {
+  beforeEach(() => {
+    session.getOwnedFiling.mockReset();
+    session.partnerOwnsFiling.mockReset();
+    db.findUnique.mockReset();
+    db.update.mockReset();
+    storage.put.mockReset();
+    storage.get.mockReset();
+    session.getOwnedFiling.mockResolvedValue({ id: "filing_1" });
+    session.partnerOwnsFiling.mockResolvedValue(null);
+    storage.put.mockResolvedValue(undefined);
+    storage.get.mockResolvedValue(new Uint8Array([1, 2, 3]));
+    db.update.mockResolvedValue({ count: 1 });
+    db.findUnique.mockResolvedValue({ ...baseFiling, reviewApprovedAt: new Date("2026-10-05T10:00:00Z") });
+  });
+
+  it("stores the five evidence fields and kills the invite link in the same update", async () => {
+    const res = await POST(
+      request(VALID, { "x-forwarded-for": "203.0.113.9, 10.0.0.1", "user-agent": "UA/1.0" }),
+      { params: { id: "filing_1" } },
+    );
+    expect(res.status).toBe(200);
+    expect(storage.get).toHaveBeenCalledWith("unsigned.pdf");
+    const arg = db.update.mock.calls[0][0];
+    expect(arg.data).toMatchObject({
+      signerName: "Jane Q. Owner",
+      signatureIp: "203.0.113.9",
+      signatureUserAgent: "UA/1.0",
+      signatureConsentVersion: "2026-10-30",
+      // sha256 of bytes [1,2,3]
+      signedPreparedPdfSha256: "039058c6f2c0cb492c533b0a4d14ef77cc0f78abccced5287d84a1a2011cfb81",
+      inviteTokenHash: null,
+      inviteExpiresAt: null,
+      status: "SIGNATURE_PENDING",
+    });
+    expect(arg.where).toMatchObject({ generatedPdfKey: "unsigned.pdf", status: { in: ["PDF_GENERATED", "SIGNATURE_PENDING"] } });
+  });
+
+  it.each([undefined, "", "   ", "x".repeat(201)])("rejects signerName %j with 400", async (signerName) => {
+    const res = await POST(request({ ...VALID, signerName }), { params: { id: "filing_1" } });
     expect(res.status).toBe(400);
     expect(storage.put).not.toHaveBeenCalled();
     expect(db.update).not.toHaveBeenCalled();

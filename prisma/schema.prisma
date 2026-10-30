@@ -217,6 +217,12 @@ model Filing {
   // the SignaturePad with this image so they don't have to re-draw.
   signaturePngKey String?
   signedAt        DateTime?
+  // Signing evidence (who/where/what/which document), written with signedAt.
+  signerName              String?
+  signatureIp             String?
+  signatureUserAgent      String?
+  signatureConsentVersion String?
+  signedPreparedPdfSha256 String?
 
   // Tracks the one-time "you didn't finish your filing" nudge so we don't
   // re-send. Null = not sent. Set timestamp on send.
