@@ -1,5 +1,5 @@
 # Plan: Partner white-label, Phase 1 ("invisible by default")
-Version: 1 | Status: APPROVED v1 — EXECUTING | Date: 2026-10-30
+Version: 1 | Status: STEPS 1–9 COMPLETE — step 10 (ship) awaiting owner | Date: 2026-10-30
 
 Source request: `partner-white-label-plan.md` (27 Oct 2026, AmericaNexus trigger), Phase 1 of its §8.
 This plan covers only the gaps the code actually has. The audit ran on `origin/main` @ `1881925`.
@@ -336,3 +336,14 @@ Overall: roughly 2–3 agent-days of work once 0b and 0c are done.
 
 ## 9. Execution log
 - 2026-10-30: owner approved v1 ("Approve, go") and then "write everything, i give you full approval, make it ready". Read as: Q1 = yes (partner-only for every partner), Q4 = yes (signing record + declaration text as written, all filings). Q2 (domain), Q3 (test DB), Q5 (live partners) still open. "Make it ready" = steps 1–9 complete on the branch; step 10 (prod migration + push) waits for 0b domain and 0e partner heads-up as planned.
+- Step 1 — branch `feat/partner-white-label-p1`; A1 confirmed (Filing.user = client, bound by partner links), A2 confirmed (partner pays via own session; an invite-only client's Pay 404s). Extra finding: checkout rebinds the filing to the typed email → fixed in step 4.
+- Step 2 — `eb5e17e`. Deviation (minor): guard keys off the existing `log: { kind, filingId }` instead of a new `partnerClient` arg; drop list by kind. 16 tests.
+- Step 3 — `07921a3` (copy actions already existed; only send buttons removed).
+- Step 5 — `adde046`; migration verified by applying all migrations to a throwaway local Postgres.
+- Step 4 — `4e6de3c`; also hid prices in the Years step and PreflightStep EIN links for clients.
+- Step 6 — `2568035`; 629/629 targeted tests.
+- Step 7 — `33379ed` + `f8e209a`. Deviation (minor): one env var (`NEXT_PUBLIC_PARTNER_PORTAL_HOST`) instead of two; main-host page redirect done in the filings layout (e9fb109) rather than per page; portal 404/expired/robots are bare route handlers.
+- Step 8 — `scripts/partner-leak-scan.mjs`; local E2E on throwaway embedded Postgres (Q3 workaround, no production access): exit 0 on both invites, catches 31 hits on a main-site page and an expired link. Network: no trackers on the portal.
+- Step 9 — Codex review: 7 findings, all verified + fixed in `e9fb109`; tsc clean, build passes with the portal host set; 724/724 related tests.
+- Step 10 — NOT started: needs 0b (domain), 0e (partner heads-up) and go-ahead for the production migration. Runbook in docs/sessions/2026-10-30-partner-white-label-p1.md.
+

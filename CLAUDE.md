@@ -84,3 +84,12 @@
 - Blog/ops details: `docs/reviews/blog-*.md`; growth plan:
   `docs/marketing/growth-plan-2026-09.md`; Google Ads:
   `docs/marketing/google-ads-diagnosis-2026-08-16.md`.
+- **Partner white-label** (`docs/sessions/2026-10-30-partner-white-label-p1.md`):
+  a partner's end client never hears from or sees us. All client mail goes
+  through `sendEmail()` with `log: { kind, filingId }`; the guard in
+  `src/lib/partner/clientMail.ts` redirects it to the partner or drops it
+  (new kinds redirect by default; it fails closed). The neutral portal domain
+  is `NEXT_PUBLIC_PARTNER_PORTAL_HOST`, parsed in BOTH `portalHost.ts` and
+  `next.config.mjs`; only invite/intake/sign + `/api` exist there, and any new
+  root-layout tracker/brand must check `onPortalHost()`. Only the owning
+  partner can pay for a partner filing.
