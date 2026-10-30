@@ -3,8 +3,7 @@
 Plan (approved v1): `docs/plans/PLAN-partner-white-label-phase1-20261030.md`.
 Source request: owner's `partner-white-label-plan.md` (AmericaNexus asked for client comms under their brand).
 
-**Status: built and verified on the branch. NOT merged, NOT deployed, migration NOT applied to production.**
-Shipping (plan step 10) waits on the owner: neutral domain, partner heads-up, go-ahead for the production migration.
+**Status: SHIPPED 2026-10-30 with the neutral portal OFF.** `main` @ `a1d9c6d`, production deployment `dpl_3rGPeuN89jQLEAciafavoo6ifded` (READY). The owner said "we just need to function ready", so everything except the neutral domain is live. The portal switches on when `NEXT_PUBLIC_PARTNER_PORTAL_HOST` is set in Vercel and the site is redeployed.
 
 ## Ownership
 
@@ -26,7 +25,16 @@ Shipping (plan step 10) waits on the owner: neutral domain, partner heads-up, go
 | `33379ed` | 7 | **Neutral portal domain** via `NEXT_PUBLIC_PARTNER_PORTAL_HOST` (unset means off). Details under Contracts. |
 | `f8e209a` | 7–8 | The portal invite redirect now stays on the portal. Adds `scripts/partner-leak-scan.mjs`. |
 | `e9fb109` | 9 | Fixes for the 7 Codex review findings (see Evidence). |
-| (this commit) | — | Session log, `CLAUDE.md` contracts, `scripts/partner-e2e-seed.mjs`. |
+| `2a3c98e` | 9 | Invite cookies are bound to their exact invite (Codex re-check). |
+| `954ece3` | — | Session log, `CLAUDE.md` contracts, `scripts/partner-e2e-seed.mjs`. |
+| `a38dffa` | v1.1 | **Partner "get ready" card** on `/partner`, added at the owner's request. The partner sets the name their clients see (`PATCH /api/partner/brand`: own row only, cleaned, at most 120 characters; blank falls back to the company name). The card also explains the flow. Verified in the browser: the saved name became the client's portal title and header. |
+
+**Live verification (2026-10-30, after deploy):**
+- The Vercel build ran `prisma migrate deploy`. It applied only `20261030120000_filing_signature_evidence` ("All migrations have been successfully applied").
+- The 3 production markers pass: empty EIN checkout POST returns 400; `/ein/apply` returns 200 and contains "Owner date of birth"; `/form-5472-penalty-calculator` returns 200.
+- `/`, `/pricing`, `/partner/sign-in`, `/robots.txt` and `/sitemap.xml` return 200, with no noindex on the main host.
+- New routes are live: `PATCH /api/partner/brand` returns 401 "Sign in again" without a session; client-finished returns 404 without access.
+- Vercel reported no runtime errors in the 20 minutes after the deploy.
 
 ## Evidence
 
@@ -90,7 +98,7 @@ Shipping (plan step 10) waits on the owner: neutral domain, partner heads-up, go
 2. Set `NEXT_PUBLIC_PARTNER_PORTAL_HOST=<host>` in Vercel for Production and Preview.
 3. Owner tells partners: their clients no longer get our emails, and links are copy-and-send.
 4. Rebase the branch on `origin/main`, then re-run tsc, the build and the targeted tests.
-5. Apply the migration to production Neon (`./node_modules/.bin/prisma migrate deploy` with the production `DATABASE_URL`). Do this **before** pushing.
+5. Migrations need no manual step. The `vercel-build` script (`prisma generate && prisma migrate deploy && next build`) applies them during the production build, before promotion. Keep them additive and nullable.
 6. Merge to `main` and run `git push origin main` (never `vercel --prod`).
 7. Live verification:
    - leak scan against a real test partner's invite on the neutral domain
@@ -99,6 +107,10 @@ Shipping (plan step 10) waits on the owner: neutral domain, partner heads-up, go
 8. The code can ship before the domain exists. With the portal off, the guard, checkout, price hiding, signing record and PDF hygiene go live, but partner pages stay on form5472prep.com as they do today.
 
 ## Open items
+
+**Owner to-do now**
+- In **Admin → Partners**, click **Reactivate** on the three pending applicants: AmericaNexus (Luciano Aliaga), American Leverage (Jean-Paul D'Andrea) and Crimson Peak (Carlo Bartolini). Reactivating sends each one a sign-in link.
+- Then send the drafted emails from **support@form5472prep.com**, never a personal Gmail. The drafts, including an optional heads-up for Jasmine Group (already active), are in the owner's Claude folder: `form5472-partner-portal-emails-2026-10-30.md`.
 
 **Owner-gated**
 - Q2: the neutral domain.
