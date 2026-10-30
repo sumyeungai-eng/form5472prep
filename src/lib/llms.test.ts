@@ -12,6 +12,7 @@ vi.mock("@/lib/prisma", () => ({
 }));
 
 import { ADDON_RULE, BRAND_CAPSULES, FAQ_ITEMS } from "./faq";
+import { FORM_7004_ANSWERS } from "./form7004-answers";
 import { LANDING_PAGES } from "./landing-pages";
 import {
   buildLlmsFullTxt,
@@ -80,6 +81,10 @@ describe("llms.txt Form 7004 service", () => {
   it("lists the 7004 service and no longer says we do not file it", () => {
     expect(llmsTxt).toContain("/form-7004-extension");
     expect(llmsTxt).not.toMatch(/do not file Form 7004/i);
+  });
+
+  it("carries the /form-7004-extension capsules verbatim as quick answers", () => {
+    for (const { q, a } of FORM_7004_ANSWERS) expect(llmsTxt).toContain(`### ${q}\n\n${a}`);
   });
 });
 

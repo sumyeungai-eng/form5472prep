@@ -28,7 +28,7 @@ const LAST_REVIEWED = "2026-10-15";
 const LAST_REVIEWED_LABEL = "October 15, 2026";
 const H1 = "Compare Form 5472 filing services";
 const DESCRIPTION =
-  "How formation and registered-agent providers such as doola, Firstbase, Clemta, StartGlobal, Zenind, Northwest and Stripe Atlas relate to Form 5472 filing.";
+  "Compare Form 5472 filing services: how doola, Firstbase, Clemta, StartGlobal, Zenind, Northwest and Stripe Atlas handle Form 5472, and what to check first.";
 const LONG_DESCRIPTION =
   "A neutral guide to how company-formation and registered-agent providers relate to the annual Form 5472 and pro forma Form 1120 filing for a foreign-owned US LLC, with a page for each provider and a checklist of what to confirm before you choose a filing service.";
 
@@ -61,7 +61,7 @@ const EXP = formatPrice(TIERS.express.priceCents);
 const ADD = formatPrice(MULTI_YEAR_ADDON_CENTS);
 
 // The capsule under the H1. Prices and turnarounds come from pricing.ts.
-const CAPSULE = `Formation and registered-agent providers differ on whether Form 5472 is included, who prepares it, how it reaches the IRS and what proof you get. Form5472 Prep is a filing-only service at ${STD} (${STANDARD_TURNAROUND}) or ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} per extra year, with fax delivery included.`;
+const CAPSULE = `Compare Form 5472 filing services on four points: whether Form 5472 is included, who prepares it, how it reaches the IRS and what proof you get. Form5472 Prep is a filing-only service at ${STD} (${STANDARD_TURNAROUND}) or ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} per extra year, with fax delivery included.`;
 
 /** Published one-year price from the sourced survey (src/lib/provider-prices.ts). */
 function surveyedPrice(id: string): string {
@@ -99,7 +99,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: "What does Form5472 Prep cost?",
-    a: `${STD} on Standard (${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}) per filing year, plus ${ADD} for each additional past year. IRS fax delivery and the review by a PTIN-holding tax accountant are included on both plans.`,
+    a: `${STD} on Standard (${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}) per filing year, plus ${ADD} for each additional past year. IRS fax delivery and the review by a tax accountant who holds an IRS PTIN are included on both plans.`,
   },
 ];
 

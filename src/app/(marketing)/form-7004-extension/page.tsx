@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ArrowRight, CalendarClock, CheckCircle2, FileText, Printer, Mail } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
+import { FORM_7004_ANSWERS } from "@/lib/form7004-answers";
 import { EXTENSION_PRICE_CENTS } from "@/lib/pricing";
 import { AREA_SERVED, breadcrumbList, organizationNode, pageMeta } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
@@ -50,20 +51,8 @@ const faq = [
     a: "Yes. A foreign-owned U.S. disregarded entity files Form 5472 attached to a pro forma Form 1120, so it requests more time with Form 7004 using the Form 1120 code (12). A valid extension moves the filing deadline by 6 months — for a calendar-year LLC, from 15 April to 15 October.",
   },
   {
-    q: "When must Form 7004 be filed?",
-    a: "By the original due date of the return: 15 April of the year after the tax year for a calendar-year LLC, moved to the next business day when it falls on a weekend or legal holiday. A Form 7004 filed after that date does not extend anything, so order before the deadline.",
-  },
-  {
     q: "Can I e-file Form 7004 for a foreign-owned DE?",
     a: "No. The IRS instructions route a foreign-owned U.S. DE's Form 7004 by fax or mail to the Ogden PIN Unit, not to the regular Form 7004 address or e-file. We fax it for you.",
-  },
-  {
-    q: `What do I get for ${PRICE}?`,
-    a: "Form 7004 prepared for one LLC and one tax year, faxed to the IRS Ogden PIN Unit, and the fax confirmation emailed to you. Orders are faxed within 2 business days; a tax year that has not ended yet is faxed in the first business days after 1 January.",
-  },
-  {
-    q: "Does the extension extend the time to pay?",
-    a: "No. Form 7004 extends the time to file, not to pay. A foreign-owned DE's pro forma Form 1120 normally reports no tax, so there is usually nothing to pay with it.",
   },
   {
     q: "Is the fax confirmation proof that the IRS accepted the extension?",
@@ -101,9 +90,10 @@ export default function Form7004ExtensionPage() {
               <span className="text-accent-100">for your foreign-owned LLC.</span>
             </h1>
             <p data-speakable className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
-              We prepare <strong className="text-white">Form 7004</strong> (with &ldquo;Foreign-owned U.S. DE&rdquo; and Form 1120
-              code 12) and fax it to the IRS Ogden PIN Unit, then email you the fax confirmation. A valid
-              extension moves your Form 5472 deadline from 15 April to 15 October.
+              Our <strong className="text-white">Form 7004 extension</strong> service prepares Form 7004 for your
+              foreign-owned LLC, with &ldquo;Foreign-owned U.S. DE&rdquo; and Form 1120 code 12, faxes it to the IRS
+              Ogden PIN Unit and emails you the fax confirmation. A valid extension moves your Form 5472 deadline from
+              15 April to 15 October.
             </p>
             <ul className="mt-6 space-y-2">
               {[
@@ -155,6 +145,28 @@ export default function Form7004ExtensionPage() {
       </section>
 
       <section className="py-16 border-b border-slate-100">
+        <div className="max-w-3xl mx-auto px-6 space-y-10">
+          {FORM_7004_ANSWERS.map(({ q, a, sources }) => (
+            <div key={q}>
+              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-3">{q}</h2>
+              <p className="text-base text-slate-700 leading-relaxed">{a}</p>
+              <p className="mt-2 text-xs text-slate-500">
+                Source:{" "}
+                {sources.map((src, i) => (
+                  <span key={src.url}>
+                    {i > 0 && " · "}
+                    <a href={src.url} target="_blank" rel="noopener" className="text-accent hover:underline">
+                      {src.label}
+                    </a>
+                  </span>
+                ))}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="py-16 border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-6">
           <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-4">How does the Form 7004 service work?</h2>
           <p className="mb-10 max-w-3xl text-sm leading-relaxed text-slate-600">
@@ -180,13 +192,13 @@ export default function Form7004ExtensionPage() {
           <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-5">What should you know before you order?</h2>
           <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
             <p>
-              <strong className="text-slate-800">The deadline is the original due date.</strong> For a calendar-year LLC,
-              Form 7004 must be filed by 15 April of the year after the tax year (the next business day if that falls on a
-              weekend or holiday). A valid extension moves the Form 5472 and pro forma Form 1120 due date by 6 months, to 15 October.
+              <strong className="text-slate-800">Order before the original due date.</strong> A late Form 7004 cannot
+              extend a deadline that has already passed.
             </p>
             <p>
-              <strong className="text-slate-800">It extends the time to file, not to pay.</strong> A foreign-owned DE&apos;s
-              pro forma Form 1120 normally reports no tax.
+              <strong className="text-slate-800">Who prepares it.</strong> Our team prepares Form 7004 from your order
+              details and faxes it; the form needs no signature from you. The review by a tax accountant who holds an IRS
+              PTIN is part of our Form 5472 filing service, where every package is reviewed before you sign it.
             </p>
             <p>
               <strong className="text-slate-800">A fax confirmation is not IRS acceptance.</strong> It is evidence that the
@@ -207,7 +219,7 @@ export default function Form7004ExtensionPage() {
 
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-8">Form 7004 questions from foreign LLC owners</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-8">What else do foreign LLC owners ask about Form 7004?</h2>
           <div className="space-y-6">
             {faq.map(({ q, a }) => (
               <div key={q}>
@@ -229,7 +241,8 @@ export default function Form7004ExtensionPage() {
   );
 }
 
-// Service + Offer (price from EXTENSION_PRICE_CENTS), FAQPage and BreadcrumbList.
+// Service + Offer (price from EXTENSION_PRICE_CENTS), FAQPage (matches the visible
+// Q&As exactly) and BreadcrumbList.
 function StructuredData() {
   const url = `${env.appUrl}/form-7004-extension`;
   const service = {
@@ -257,7 +270,8 @@ function StructuredData() {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faq.map((f) => ({
+    // Every visible Q&A, in page order: the question-H2 capsules, then the FAQ list.
+    mainEntity: [...FORM_7004_ANSWERS, ...faq].map((f) => ({
       "@type": "Question",
       name: f.q,
       acceptedAnswer: { "@type": "Answer", text: f.a },

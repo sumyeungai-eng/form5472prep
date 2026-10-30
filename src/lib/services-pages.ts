@@ -248,7 +248,7 @@ The sample LLC above would pay ${STD} on Standard. If it had also missed the yea
       },
       {
         q: "Who reviews my filing?",
-        a: "Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted. Signing opens only after the review is approved, so you never sign an unchecked package.",
+        a: "Every filing is reviewed by a tax accountant who holds an IRS PTIN (Preparer Tax Identification Number) before it is submitted. Signing opens only after the review is approved, so you never sign an unchecked package.",
       },
     ],
     related: [], // filled below from slugs + tools
@@ -313,7 +313,7 @@ Form 5472 and the Part V statement are prepared from the same answers, so the EI
       },
       {
         heading: "Which mistakes does the accountant review catch?",
-        body: `The review by a PTIN-holding tax accountant checks the small errors a short cover makes easy to miss, such as the "Foreign-owned U.S. DE" marking, blank income lines, matching EINs and the year-end total assets on Form 5472.
+        body: `The review by a tax accountant who holds an IRS PTIN checks the small errors a short cover makes easy to miss, such as the "Foreign-owned U.S. DE" marking, blank income lines, matching EINs and the year-end total assets on Form 5472.
 
 The checks include:
 
@@ -430,7 +430,7 @@ If you already have an IRS notice, that is a different situation. Answer the not
       },
       {
         heading: "What does the late Form 5472 filing service include?",
-        body: `For each missed year we prepare a Form 5472 and pro forma 1120 package with that year's figures and a reasonable-cause statement, have a PTIN-holding tax accountant review it, and fax it to the IRS Ogden PIN Unit with a timestamped receipt.
+        body: `For each missed year we prepare a Form 5472 and pro forma 1120 package with that year's figures and a reasonable-cause statement, have a tax accountant who holds an IRS PTIN review it, and fax it to the IRS Ogden PIN Unit with a timestamped receipt.
 
 - One Form 5472 and pro forma 1120 package for each missed year, with that year's figures
 - A reasonable-cause statement for each late year, written from your answers about why the filing was missed
@@ -550,7 +550,7 @@ The owner's own return and the state's filings are separate obligations, set out
     sections: [
       {
         heading: "What does the foreign-owned LLC tax filing service cover?",
-        body: `The service covers the yearly federal information return for a US LLC that has one foreign owner and has not elected corporate tax treatment: Form 5472 with the pro forma Form 1120, prepared, reviewed by a PTIN-holding tax accountant and faxed to the IRS.
+        body: `The service covers the yearly federal information return for a US LLC that has one foreign owner and has not elected corporate tax treatment: Form 5472 with the pro forma Form 1120, prepared, reviewed by a tax accountant who holds an IRS PTIN and faxed to the IRS.
 
 - Form 5472, reporting the year's transactions between the LLC and you or other related parties
 - The pro forma Form 1120 that Form 5472 is attached to
@@ -671,7 +671,7 @@ A foreign-owned disregarded entity cannot e-file this package. The receipt recor
     sections: [
       {
         heading: "What does the Form 5472 fax filing service do?",
-        body: `The fax goes out only after a PTIN-holding tax accountant has reviewed the package and you have signed it. We send it to ${IRS_FAX}, email you when the fax provider reports delivery and keep the transmission receipt on your filing page to download at any time.
+        body: `The fax goes out only after a tax accountant who holds an IRS PTIN has reviewed the package and you have signed it. We send it to ${IRS_FAX}, email you when the fax provider reports delivery and keep the transmission receipt on your filing page to download at any time.
 
 You do not need a fax machine, a fax account or an IRS account, and nothing has to be posted from abroad.`,
       },
@@ -738,7 +738,7 @@ Each past year is a separate package, so it is faxed separately and gets its own
       },
       {
         q: "When do you send the fax?",
-        a: "After a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) has reviewed the package and you have signed it online. Nothing is sent to the IRS until you sign. We email you when the fax is delivered.",
+        a: "After a tax accountant who holds an IRS PTIN (Preparer Tax Identification Number) has reviewed the package and you have signed it online. Nothing is sent to the IRS until you sign. We email you when the fax is delivered.",
       },
     ],
     related: [],
@@ -771,46 +771,46 @@ Each past year is a separate package, so it is faxed separately and gets its own
     lastModified: PAGES_REWRITTEN,
     title: "White Label Form 5472 Filing for Agents | Form5472 Prep",
     metaDescription:
-      "White label Form 5472 filing for formation agents, registered agents and accounting firms: client emails under your brand, replies to you, one dashboard.",
+      "White label Form 5472 filing for formation agents, registered agents and accounting firms: we never email your clients; you send their links, we review and fax.",
     longDescription:
-      "White-label Form 5472 filing for company formation agents, registered agents, accounting firms and consultants: approved partners with white-label delivery enabled have client filing emails sent under the partner's brand name with replies to the partner's address, while Form5472 Prep prepares, has a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) review, and faxes each client's Form 5472 and pro forma 1120 to the IRS. One partner dashboard tracks every filing.",
+      "White-label Form 5472 filing for company formation agents, registered agents, accounting firms and consultants: on every partner filing Form5472 Prep sends no email to the partner's client. The partner copies each intake and review-and-sign link from the partner dashboard and sends it, filing emails go to the partner, the partner pays per filing, and the name the partner sets appears in the client's intake and on the IRS fax receipt. Form5472 Prep prepares each client's Form 5472 and pro forma 1120, has a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) review it, and faxes it to the IRS. One partner dashboard tracks every filing.",
     h1: "White Label Form 5472 Filing for Formation and Registered Agents",
-    shortBlurb: "Client filing emails under your brand name, replies to you; preparation, review and fax behind it.",
-    intro: `Our white label Form 5472 filing option is for formation agents, registered agents and accounting firms that want to offer Form 5472 filing to their own clients under their own brand. **For approved partners with white-label delivery enabled, client emails go out under the partner's brand name and replies go to the partner's address, while Form5472 Prep prepares, reviews and faxes each filing.**
+    shortBlurb: "Your clients deal only with you: you send their links; we prepare, review and fax behind you.",
+    intro: `Our white label Form 5472 filing is for formation agents, registered agents and accounting firms that want to offer Form 5472 filing to their own clients without us appearing in their inbox. **On every partner filing, Form5472 Prep never emails your client: you send each intake and signing link yourself, filing emails come to you, and we prepare, review and fax the package to the IRS.**
 
-White-label delivery is switched on per partner, on request, after the partner account is approved.`,
+It applies to every approved partner account, so there is nothing to switch on.`,
     cta: { href: "/partners#apply", label: "Apply as a partner" },
     sections: [
       {
         heading: "How does white label Form 5472 filing work?",
-        body: `White label Form 5472 filing runs inside our partner program. You apply, ask for white-label delivery and start each client's filing from your dashboard; we prepare, review and fax it, and client emails carry your brand name.
+        body: `White label Form 5472 filing runs inside our partner program. You apply, start each client's filing from your dashboard and send the client their links yourself; we prepare the package, have it reviewed and fax it to the IRS once the client has signed.
 
 1. **Apply.** Submit the partner application. Accounts are approved manually, usually within one business day.
-2. **Ask for white-label delivery.** Say so on the application or after approval. We enable it and set your brand name and reply-to address.
+2. **Set the name your clients see.** Enter it on your partner dashboard. If you leave it blank, your company name is used.
 3. **Start client filings.** Each client LLC gets its own filing from your partner dashboard, using the same questionnaire as direct customers.
-4. **Send the signing link.** The client receives the secure review-and-sign link by email under your brand name.
-5. **We review and fax.** A PTIN-holding tax accountant reviews each package. After the client signs, we fax it to the IRS Ogden PIN Unit.
+4. **Send the links yourself.** Copy the client's intake or review-and-sign link from the dashboard and send it from your own email.
+5. **We review and fax.** A tax accountant who holds an IRS PTIN reviews each package before the client can sign. After the client signs, we fax it to the IRS Ogden PIN Unit.
 6. **Track it.** Your dashboard shows preparation, signature and submission status, and the fax receipt for every client.`,
       },
       {
         heading: "Who enters each client's information?",
-        body: `Either you or the client enters the information. You can enter it from records you already hold, or send the client a secure link to answer the questions themselves.
+        body: `Either you or the client enters the information. You can type it in from records you already hold, or copy the client's secure intake link from your dashboard and send it to them to answer the questions themselves.
 
 - **You enter it** from the records you already hold: the LLC's details, the owner's details, the year's reportable transactions and the year-end total assets.
-- **The client enters it.** Send the client a secure link to answer the questions themselves. With white-label delivery on, that email also goes out under your brand. You can copy the link instead and paste it into your own message.
+- **The client enters it.** The intake link opens the same questionnaire without our plans, prices or a payment step. When the client finishes, we email you.
 
 Either way the filing stays under your partner account, so you can review the answers before the package goes to accountant review. The client answers as themselves; you never sign in as the client.
 
 Missed years work the same way as for direct customers: one package and one reasonable-cause statement per late year. Partners sign in with a secure email link, so there is no password to manage.`,
       },
       {
-        heading: "What do your clients see with white-label delivery?",
-        body: `With white-label delivery on, client emails show your brand name as the sender and replies go to your address, with a short footer line saying Form5472 Prep processes the filing. Without it, clients receive these emails from us, with you shown as the preparer coordinating the filing.
+        heading: "What do your clients see, and what comes to you?",
+        body: `Your clients hear from you, not from us. Form5472 Prep sends no email to a partner's client; emails about a client's filing, such as review questions and the fax confirmation, come to your address marked with the client's LLC name, and you forward what you need.
 
-- Client emails for each filing show your brand name as the sender name and in the email header.
-- When a client replies, the reply goes to the address you gave us. If none is set, replies come to our support address.
-- A short line at the foot of those emails says the filing is processed by Form5472 Prep.
-- The forms are the client LLC's own IRS forms, signed by the person authorized to sign for it.`,
+- **Links:** the client opens the intake or signing link you sent them. Those pages currently open on form5472prep.com.
+- **Your name:** the name you set on your dashboard appears in the client's intake and on the IRS fax receipt.
+- **No prices:** the client sees no plans, prices or payment step. You pay for the filing at checkout, and the payment receipt comes to you.
+- **The forms:** they are the client LLC's own IRS forms, signed by the person authorized to sign for it.`,
       },
       {
         heading: "How does Form 5472 filing for company formation agents and registered agents work?",
@@ -821,13 +821,12 @@ Missed years work the same way as for direct customers: one package and one reas
 - **Accounting firms and consultants** managing several foreign-owned single-member LLCs.`,
       },
       {
-        heading: "What is white-label delivery not?",
-        body: `White-label delivery changes how client emails are branded; it is not a full rebrand, not automatic, not tax advice for your clients and not a wider scope or outcome promise.
+        heading: "What is white label Form 5472 filing not?",
+        body: `It changes who your clients deal with. It is not a website on your own domain, not tax advice for your clients, and not a wider scope or an outcome promise.
 
-- **Not a full rebrand.** Emails carry a short note that Form5472 Prep processes the filing, and the fax reaches the IRS through our fax service.
-- **Not automatic.** It is enabled per partner, on request, after approval.
+- **Not your own website.** Client pages open on form5472prep.com, and the fax reaches the IRS through our fax service.
 - **Not client advice.** We prepare and submit forms from the information entered. We do not give tax advice to your clients.
-- **Not a wider scope.** The same limits apply as for direct customers: no Form 1065, no full Form 1120 for LLCs taxed as corporations, no Form 7004 extensions, no bookkeeping.
+- **Not a wider scope.** The same limits apply as for direct customers: no Form 1065, no full Form 1120 for LLCs taxed as corporations and no bookkeeping. A [Form 7004 extension](/form-7004-extension) is a separate order.
 - **Not an outcome promise.** For late years, nobody can promise the IRS will waive penalties.`,
       },
       {
@@ -838,27 +837,27 @@ Missed years work the same way as for direct customers: one package and one reas
 - **A quiet LLC.** An owner who paid the state fee or registered agent personally has usually created a reportable transaction. See [Form 5472 filing for dormant LLC owners](/services/form-5472-filing-for-dormant-llc).
 - **A dissolved LLC.** The last short year needs a final return with the final-return box checked. See the [final Form 5472 for a dissolved LLC](/services/final-form-5472-for-dissolved-llc).
 
-Accountants comparing referral, a partner account and branded delivery can start with [Form 5472 for accountants and tax preparers](/services/form-5472-for-accountants).`,
+Accountants weighing a referral against a partner account can start with [Form 5472 for accountants and tax preparers](/services/form-5472-for-accountants).`,
       },
       {
         heading: "How much does white label Form 5472 filing cost?",
         body: `Form5472 Prep charges partners the same per filing as direct customers, with no platform fee: ${STD} for a Standard filing ready in ${STANDARD_TURNAROUND}, ${EXP} for Express, ready to sign within ${EXPRESS_TURNAROUND}, and ${ADD} for each extra past year, IRS fax included.
 
-What you charge your own client is up to you. Ask about volume pricing or consolidated invoicing when you apply through the [partner program](/partners).`,
+You pay for each filing at checkout, and what you charge your own client is up to you. Ask about volume pricing or consolidated invoicing when you apply through the [partner program](/partners).`,
       },
     ],
     faqs: [
       {
         q: "Do my clients know Form5472 Prep is involved?",
-        a: "Branded emails show your name and send replies to you, with a short footer line saying the filing is processed by Form5472 Prep. The IRS forms are the client LLC's own and are signed by its authorized signer.",
+        a: "We never email your clients. Their intake and signing pages currently open on form5472prep.com, and the IRS fax receipt carries the name you set. The IRS forms are the client LLC's own and are signed by its authorized signer.",
       },
       {
         q: "Who signs each client's filing?",
-        a: "The person authorized to sign for the client LLC. You send the secure review-and-sign link from your dashboard; they review the completed package and sign online. A wet-ink option is available.",
+        a: "The person authorized to sign for the client LLC. You copy the secure review-and-sign link from your dashboard and send it to them; they review the completed package and sign online. A wet-ink option is available.",
       },
       {
-        q: "How do I turn on white-label delivery?",
-        a: "Mention it on the partner application, or ask after approval. We enable it for approved partners and set your brand name and reply-to address.",
+        q: "Do I need to switch white-label filing on?",
+        a: "No. It applies to every partner filing from the day your account is approved. Set the name your clients see on your partner dashboard; if you leave it blank, your company name is used.",
       },
       {
         q: "Can I track all client filings in one place?",
@@ -919,7 +918,7 @@ Reportable transactions include amounts paid or received in connection with form
       },
       {
         heading: "What does Form 5472 filing for dormant LLC owners involve?",
-        body: `A year with little activity still needs the full filing package, which a PTIN-holding tax accountant reviews, you sign online and we fax to the IRS Ogden PIN Unit with a timestamped receipt.
+        body: `A year with little activity still needs the full filing package, which a tax accountant who holds an IRS PTIN reviews, you sign online and we fax to the IRS Ogden PIN Unit with a timestamped receipt.
 
 - the pro forma Form 1120 cover marked "Foreign-owned U.S. DE",
 - Form 5472 with the owner's details and the transactions that did happen, such as a fee you paid for the LLC,
@@ -1044,7 +1043,7 @@ We prepare:
 
 On closing, the LLC's remaining cash or property normally goes to you. That transfer is a distribution, and the Form 5472 instructions list amounts paid or received in connection with dissolution among the Part V transactions. Money you put in to pay closing costs is reportable too.
 
-The questionnaire asks for the dissolution date and marks the return as final. A PTIN-holding tax accountant reviews the package; you sign online; we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt.`,
+The questionnaire asks for the dissolution date and marks the return as final. A tax accountant who holds an IRS PTIN reviews the package; you sign online; we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt.`,
       },
       {
         heading: "When is the final Form 5472 due?",
@@ -1203,7 +1202,7 @@ Missed earlier years add ${ADD} each on either plan. For a calendar-year LLC the
       },
       {
         q: "How is this different from filing it myself?",
-        a: "The IRS forms are free and you can file them yourself. Hiring us adds preparation from plain-language questions, a review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before you sign, the IRS fax and a stored receipt.",
+        a: "The IRS forms are free and you can file them yourself. Hiring us adds preparation from plain-language questions, a review by a tax accountant who holds an IRS PTIN (Preparer Tax Identification Number) before you sign, the IRS fax and a stored receipt.",
       },
     ],
     related: [],
@@ -1241,7 +1240,7 @@ Missed earlier years add ${ADD} each on either plan. For a calendar-year LLC the
       "How to choose a Form 5472 preparer for a foreign-owned US single-member LLC: what the preparer does (sorting reportable transactions, completing Form 5472, the Part V statement and the pro forma Form 1120 marked \"Foreign-owned U.S. DE\", getting the package to the IRS by fax or mail), the four kinds of preparer, a checklist of questions, and how Form5472 Prep's PTIN-holding tax accountant review works before the owner signs online.",
     h1: "A Form 5472 Preparer for Foreign-Owned US LLCs",
     shortBlurb: "How to choose who prepares your Form 5472: the four kinds of preparer and six questions to ask.",
-    intro: `A Form 5472 preparer turns what you know about your LLC's year into the two IRS forms a foreign-owned single-member LLC files, and the choice of preparer is what this page is about. **A preparer completes Form 5472 and the pro forma Form 1120 it is attached to, checks them and gets them to the IRS, while you review and sign; the Form 5472 preparation service at Form5472 Prep adds a PTIN-holding tax accountant review before you sign.**`,
+    intro: `A Form 5472 preparer turns what you know about your LLC's year into the two IRS forms a foreign-owned single-member LLC files, and the choice of preparer is what this page is about. **A preparer completes Form 5472 and the pro forma Form 1120 it is attached to, checks them and gets them to the IRS, while you review and sign; Form5472 Prep adds a review by a tax accountant who holds an IRS PTIN before you sign.**`,
     cta: startCta("svc-form-5472-preparer"),
     sections: [
       {
@@ -1348,10 +1347,10 @@ Every filing is reviewed by a tax accountant before it is submitted, and signing
     metaDescription:
       "Form 5472 for accountants, tax preparers and CPA firms: refer clients, or run their filings from a partner account while we prepare, review and fax.",
     longDescription:
-      "Form 5472 and pro forma Form 1120 filing for accountants, tax preparers, CPA firms and accounting firms that do not want to prepare foreign-owned LLC information returns in-house: refer the client to file directly, start and track client filings from a partner account, or enable white-label delivery so client emails carry the firm's brand. Form5472 Prep prepares each package, has a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) review it, collects the client's online signature and faxes it to the IRS Ogden PIN Unit with a timestamped receipt.",
+      "Form 5472 and pro forma Form 1120 filing for accountants, tax preparers, CPA firms and accounting firms that do not want to prepare foreign-owned LLC information returns in-house: refer the client to file directly, or start and track client filings from a partner account, where Form5472 Prep never emails the firm's clients. Form5472 Prep prepares each package, has a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) review it, collects the client's online signature and faxes it to the IRS Ogden PIN Unit with a timestamped receipt.",
     h1: "Form 5472 for Accountants, CPAs and Tax Preparers",
-    shortBlurb: "For firms deciding between referring, a partner account and branded delivery.",
-    intro: `Form 5472 for accountants is often small, seasonal work that does not fit the rest of the practice, and this page is for firms deciding how to hand it off. **You can pass the preparation to Form5472 Prep and keep the client: refer them to file directly, run their filings from a partner account, or offer the filing under your own brand while we prepare, review and fax each package.**
+    shortBlurb: "For firms deciding between referring a client and running filings from a partner account.",
+    intro: `Form 5472 for accountants is often small, seasonal work that does not fit the rest of the practice, and this page is for firms deciding how to hand it off. **You can pass the preparation to Form5472 Prep and keep the client: refer them to file directly, or run their filings from a partner account where we never email your client, while we prepare, review and fax each package.**
 
 Form 5472 for CPAs works the same way: we prepare the package, you keep the client relationship. Whichever route you choose, the client reviews and signs their own return.`,
     cta: { href: "/partners#apply", label: "Apply as a partner" },
@@ -1361,34 +1360,33 @@ Form 5472 for CPAs works the same way: we prepare the package, you keep the clie
         body: `A foreign-owned single-member LLC files Form 5472 with a pro forma Form 1120 each year, and we take on the narrow but fiddly work of preparing, reviewing, signing, faxing and storing the receipt.
 
 - Preparing Form 5472, the pro forma 1120 and the Part V statement from the questionnaire answers
-- PTIN-holding tax accountant review before signing, including any follow-up questions
+- Review by a tax accountant who holds an IRS PTIN before signing, including any follow-up questions
 - Collecting the client's online signature
 - Faxing the package to the IRS Ogden PIN Unit and storing the timestamped receipt
 - A January reminder for next year's filing`,
       },
       {
-        heading: "How can accountants work with us: refer, partner or white label?",
-        body: `Accountants can refer the client to file directly, run client filings from a partner account, or enable white-label delivery so client emails carry the firm's brand.
+        heading: "How can accountants work with us: refer the client or use a partner account?",
+        body: `Accountants can refer the client to file directly or run client filings from a partner account.
 
 - **Refer the client.** Send them to [start a filing](/start?src=svc-form-5472-for-accountants) themselves. They deal with us directly and you stay out of the paperwork.
-- **Partner account.** Start each client's filing from one dashboard. Enter the details yourself or send the client a secure intake link, then follow preparation, signature and fax status in one place.
-- **White-label delivery.** For approved partners, on request, client emails carry your brand name; [white label Form 5472 filing](/services/white-label-form-5472-filing) explains what clients see.
+- **Partner account.** Start each client's filing from one dashboard. Enter the details yourself or copy the client's secure intake link and send it, then follow preparation, signature and fax status in one place. [White label Form 5472 filing](/services/white-label-form-5472-filing) explains what clients see.
 
 Partner accounts are approved manually, usually within one business day. Details are on the [partner program](/partners) page.`,
       },
       {
         heading: "Can you outsource Form 5472 preparation without handing over the client?",
-        body: `Yes. Filings sit under your partner account, you see every status, and with white-label delivery the client sees your brand on their emails. You keep the wider relationship, such as income-tax returns, state filings or bookkeeping, while the Form 5472 package runs through our process.`,
+        body: `Yes. Filings sit under your partner account, you see every status, and we never email your client: emails about the filing come to you. You keep the wider relationship, such as income-tax returns, state filings or bookkeeping, while the Form 5472 package runs through our process.`,
       },
       {
         heading: "Who is Form 5472 outsourcing for: tax preparers, CPA firms or accounting firms?",
-        body: `It suits tax preparers with a handful of foreign-owned LLC clients each spring, CPA firms and accounting firms with a larger book where one dashboard and branded client emails save chasing, and solo accountants who want to say yes without taking on a form they see once a year.`,
+        body: `It suits tax preparers with a handful of foreign-owned LLC clients each spring, CPA firms and accounting firms with a larger book where one dashboard and one inbox for every client filing save chasing, and solo accountants who want to say yes without taking on a form they see once a year.`,
       },
       {
         heading: "What do we not take on?",
         body: `We do not take on client advice, other returns or signing for the client. The person authorized for the client LLC signs, and our staff never sign in their place.
 
-Other returns stay with your firm or the client: partnership returns, a full Form 1120 for an LLC taxed as a corporation, the owner's Form 1040-NR, state filings, Form 7004 extensions and the books. For a client's late years, nobody can promise the IRS will waive the penalty.`,
+Other returns stay with your firm or the client: partnership returns, a full Form 1120 for an LLC taxed as a corporation, the owner's Form 1040-NR, state filings and the books. A [Form 7004 extension](/form-7004-extension) is a separate order. For a client's late years, nobody can promise the IRS will waive the penalty.`,
       },
     ],
     faqs: [
@@ -1406,7 +1404,7 @@ Other returns stay with your firm or the client: partnership returns, a full For
       },
       {
         q: "Who signs the client's pro forma 1120 and Form 5472?",
-        a: "Whoever is authorized to sign for the client's LLC, usually the owner. The signing link goes out from your partner dashboard once the review is approved, and they sign in the browser.",
+        a: "Whoever is authorized to sign for the client's LLC, usually the owner. Once the review is approved, you copy the signing link from your partner dashboard and send it; they sign in the browser.",
       },
     ],
     related: [],
@@ -1473,13 +1471,13 @@ Close the year early. For a calendar-year LLC the filing is due April 15, and th
 
 1. **You pull the totals.** Take the figures above from the books for the tax year.
 2. **The filing is started.** The owner starts it, or you start it from a partner account and either enter the totals or send the owner a secure intake link.
-3. **We prepare and review.** The package is generated and a PTIN-holding tax accountant checks it against the answers.
+3. **We prepare and review.** A tax accountant who holds an IRS PTIN checks the generated package against the answers.
 4. **The owner signs.** The person authorized for the LLC reviews the package and signs online.
 5. **We fax it.** The package goes to the IRS Ogden PIN Unit and the timestamped receipt is stored on the filing page.`,
       },
       {
         heading: "Should you refer the owner or open a partner account?",
-        body: `For one or two clients, refer the owner to [start a filing](/start?src=svc-form-5472-for-bookkeepers) with your totals in hand. If you keep the books for several foreign-owned LLCs, a [partner account](/partners) lets you start and track every client's filing from one dashboard. Firms that want client emails under their own brand can read about [white label Form 5472 filing](/services/white-label-form-5472-filing).
+        body: `For one or two clients, refer the owner to [start a filing](/start?src=svc-form-5472-for-bookkeepers) with your totals in hand. If you keep the books for several foreign-owned LLCs, a [partner account](/partners) lets you start and track every client's filing from one dashboard. We never email a partner's client; [white label Form 5472 filing](/services/white-label-form-5472-filing) explains what clients see.
 
 Whoever starts it, a client filing is priced per tax year. Standard, at ${STD}, is ready in ${STANDARD_TURNAROUND}; Express, at ${EXP}, is ready to sign within ${EXPRESS_TURNAROUND}; each past year added to the order is ${ADD}.`,
       },
@@ -1639,7 +1637,7 @@ export const SERVICES_HUB = {
   h1: "Form 5472 services by situation",
   // The capsule under the H1: what the filing is, what it costs and how long it
   // takes (prices from pricing.ts; the test caps it at 60 words).
-  intro: `Every Form5472 Prep service here is one filing: Form 5472 with a pro forma Form 1120 for a US LLC owned by one foreign person, at ${STD} (ready in ${STANDARD_TURNAROUND}) or ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}) per year. Every filing is reviewed by a PTIN-holding tax accountant, then faxed to the IRS with a timestamped receipt.`,
+  intro: `Every Form5472 Prep service here is one filing: Form 5472 with a pro forma Form 1120 for a US LLC with one foreign owner, at ${STD} (ready in ${STANDARD_TURNAROUND}) or ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}) per year. A tax accountant who holds an IRS PTIN reviews every filing before we fax it to the IRS.`,
 } as const;
 
 /** Eyebrow above each service page's H1: the page's group, so the 12 pages
