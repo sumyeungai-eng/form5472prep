@@ -1,3 +1,4 @@
+import { PORTAL_HOSTNAME } from "@/lib/partner/portalHost";
 // Inline bootstrap for the Google Ads tag (gtag.js), rendered once from
 // src/app/layout.tsx via <Script strategy="afterInteractive">.
 //
@@ -23,11 +24,14 @@ export const GTAG_FCP_FALLBACK_MS = 6000;
 
 export function googleAdsBootstrapScript(tagId: string): string {
   const src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(tagId)}`;
+  const notPortal = PORTAL_HOSTNAME ? `location.hostname !== ${JSON.stringify(PORTAL_HOSTNAME)}` : "true";
   return `
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 window.gtag = gtag;
 gtag('js', new Date());
+// Partner clients' portal domain: no ad tag at all (gtag stays a stub).
+if (${notPortal}) {
 // Embeddable tools run inside third-party pages: no ad tag there.
 if (!location.pathname.startsWith('/embed/')) gtag('config', ${JSON.stringify(tagId)});
 (function () {
@@ -66,5 +70,6 @@ if (!location.pathname.startsWith('/embed/')) gtag('config', ${JSON.stringify(ta
   if (document.readyState === 'complete') onLoad();
   else window.addEventListener('load', onLoad, { once: true });
 })();
+}
 `;
 }

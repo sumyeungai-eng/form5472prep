@@ -19,9 +19,13 @@ import {
   deriveAttribution,
   encodeAttributionCookie,
 } from "@/lib/attribution";
+import { isPortalHost } from "@/lib/partner/portalHost";
 
 export function middleware(req: NextRequest) {
   const res = NextResponse.next();
+
+  // Partner clients' portal domain: no attribution cookie (its name is ours).
+  if (isPortalHost(req.headers.get("host") ?? req.nextUrl.host)) return res;
 
   // Already attributed? Leave it alone. This is the whole first-touch rule.
   if (req.cookies.has(ATTR_COOKIE)) return res;

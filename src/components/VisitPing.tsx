@@ -2,13 +2,14 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { onPortalHost } from "@/lib/partner/portalHost";
 
 export function VisitPing() {
   const pathname = usePathname();
   const lastPingedPath = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!pathname || pathname.startsWith("/admin") || lastPingedPath.current === pathname) return;
+    if (!pathname || pathname.startsWith("/admin") || onPortalHost() || lastPingedPath.current === pathname) return;
     lastPingedPath.current = pathname;
 
     const body = JSON.stringify({

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4, IBM_Plex_Mono } from "next/font/google";
 import { env } from "@/lib/env";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SiteAnalytics } from "@/components/SiteAnalytics";
 import { ChatWidget } from "@/components/ChatWidget";
 import { MetaPixel } from "@/components/MetaPixel";
 import { VisitPing } from "@/components/VisitPing";
@@ -128,8 +127,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             retention, and gating this would blind the log exactly for the
             visitors most worth logging. */}
         <VisitPing />
-        <Analytics />
-        <SpeedInsights />
+        <SiteAnalytics />
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { env } from "./env";
 import { prisma } from "./prisma";
+import { portalOrigin } from "./partner/portalHost";
 
 export type InviteScope = "edit" | "sign";
 export const INVITE_TTL_DAYS = 14;
@@ -69,7 +70,7 @@ export async function createFilingInvite(
   const expiresAt = new Date(Date.now() + INVITE_TTL_DAYS * 24 * 60 * 60 * 1000);
   const normalizedEmail = email.trim().toLowerCase();
 
-  await prisma.filing.update({
+  const { partnerId } = await prisma.filing.update({
     where: { id: filingId },
     data: {
       inviteTokenHash: tokenHash,
@@ -78,9 +79,12 @@ export async function createFilingInvite(
       inviteExpiresAt: expiresAt,
       inviteCreatedAt: new Date(),
     },
+    select: { partnerId: true },
   });
 
-  return { url: `${env.appUrl}/invite/${encodeURIComponent(token)}`, expiresAt };
+  // A partner's client opens the link on the neutral portal domain when set.
+  const origin = (partnerId && portalOrigin()) || env.appUrl;
+  return { url: `${origin}/invite/${encodeURIComponent(token)}`, expiresAt };
 }
 
 export async function consumeFilingInvite(token: string): Promise<{ filingId: string; scope: InviteScope } | null> {

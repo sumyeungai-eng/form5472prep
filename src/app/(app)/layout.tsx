@@ -2,10 +2,17 @@ import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { SignOutLink } from "./SignOutLink";
 import { getCurrentUser } from "@/lib/session";
+import { headers } from "next/headers";
+import { isPortalHost } from "@/lib/partner/portalHost";
 
 export const dynamic = "force-dynamic";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  // Partner portal domain: no Form5472 header; filings/[id]/layout.tsx shows
+  // the partner's name instead.
+  if (isPortalHost(headers().get("host"))) {
+    return <main className="min-h-screen bg-slate-50">{children}</main>;
+  }
   const user = await getCurrentUser();
   return (
     <div className="min-h-screen flex flex-col">

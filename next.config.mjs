@@ -1,5 +1,25 @@
+// Partner clients' portal domain (same parsing as src/lib/partner/portalHost.ts).
+// On that host only the invite, intake and sign pages (plus /api, /_next and
+// /portal/*) exist; everything else, robots/sitemap/feeds included, is a
+// neutral 404 so the domain never shows or links to the main site.
+const PORTAL_HOSTNAME = (process.env.NEXT_PUBLIC_PARTNER_PORTAL_HOST || "").trim().toLowerCase().split(":")[0];
+const onPortal = PORTAL_HOSTNAME ? [{ type: "host", value: PORTAL_HOSTNAME.replace(/\./g, "\\.") }] : null;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    if (!onPortal) return { beforeFiles: [] };
+    return {
+      beforeFiles: [
+        { source: "/robots.txt", has: onPortal, destination: "/portal/robots" },
+        {
+          source: "/:path((?!invite/|filings/[^/]+/(?:edit|sign)$|api/|_next/|__nextjs|portal/).*)",
+          has: onPortal,
+          destination: "/portal/not-found",
+        },
+      ],
+    };
+  },
   async redirects() {
     return [
       // Service-page slugs renamed on 2026-10-01 so the URL holds the keyword
@@ -73,6 +93,9 @@ const nextConfig = {
         has: [{ type: "header", key: "rsc", value: "1" }],
         headers: [{ key: "X-Robots-Tag", value: "noindex" }],
       },
+      ...(onPortal
+        ? [{ source: "/:path*", has: onPortal, headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }]
+        : []),
     ];
   },
 };

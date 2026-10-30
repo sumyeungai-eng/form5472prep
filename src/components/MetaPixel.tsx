@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { META_CONSENT_KEY, META_PIXEL_ID } from "@/lib/analytics/meta";
+import { onPortalHost } from "@/lib/partner/portalHost";
 
 type Consent = "granted" | "denied" | null;
 
@@ -49,7 +50,7 @@ export function MetaPixel() {
   useEffect(() => {
     if (consent !== "granted") return;
     // Admin traffic is the operator, not a prospect — never feed it to Meta.
-    if (isAdminPath) return;
+    if (isAdminPath || onPortalHost()) return;
     initializePixel();
     window.fbq?.("track", "PageView");
   }, [consent, pathname, isAdminPath]);
@@ -63,7 +64,8 @@ export function MetaPixel() {
   }
 
   return (
-    <div className="fixed inset-x-4 bottom-4 z-[70] mx-auto flex max-w-3xl items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-xs shadow-2xl sm:text-sm">
+    // data-meta-consent: the partner portal layout hides this server-rendered banner.
+    <div data-meta-consent className="fixed inset-x-4 bottom-4 z-[70] mx-auto flex max-w-3xl items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-xs shadow-2xl sm:text-sm">
       <p className="min-w-0 flex-1 leading-tight text-slate-700">
         Optional Meta advertising cookies help us measure ad performance. We never send tax or bank information.{" "}
         <Link href="/privacy" className="font-medium text-blue-900 underline">
