@@ -12,7 +12,7 @@ describe("filing invite access semantics", () => {
     const now = new Date("2029-12-31T00:00:00.000Z");
     const raw = inviteCookieValue("A", "edit", expiresAt);
 
-    expect(parseInviteCookie(raw, now)).toEqual({ filingId: "A", scope: "edit" });
+    expect(parseInviteCookie(raw, now)).toMatchObject({ filingId: "A", scope: "edit" });
     expect(cookieGrantsAccess(raw, "A", "sign", now)).toBe(false);
   });
 
@@ -21,7 +21,7 @@ describe("filing invite access semantics", () => {
     const now = new Date("2029-12-31T00:00:00.000Z");
     const raw = inviteCookieValue("A", "sign", expiresAt);
 
-    expect(parseInviteCookie(raw, now)).toEqual({ filingId: "A", scope: "sign" });
+    expect(parseInviteCookie(raw, now)).toMatchObject({ filingId: "A", scope: "sign" });
     expect(cookieGrantsAccess(raw, "B", "sign", now)).toBe(false);
   });
 

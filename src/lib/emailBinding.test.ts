@@ -47,6 +47,7 @@ const db = vi.hoisted(() => {
       if (key === "AND") return ([] as Row[]).concat(cond as Row).every((w) => matches(row, w));
       const value = row[key] ?? null;
       if (cond === null) return value === null;
+      if (cond instanceof Date) return value instanceof Date && value.getTime() === cond.getTime();
       if (typeof cond === "object" && !(cond instanceof Date) && !Array.isArray(cond)) {
         return Object.entries(cond as Row).every(([op, arg]) => {
           if (arg === undefined) return true;
@@ -934,6 +935,15 @@ describe("form5472prep independent partner and invite grants", () => {
     invite(id, "sign");
     expect(await getOwnedFiling(id, "sign")).not.toBeNull();
     row(id).inviteExpiresAt = null; // what the sign route does on success
+    expect(await getOwnedFiling(id, "sign")).toBeNull();
+  });
+
+  it("re-issuing an invite revokes cookies from the previous one", async () => {
+    const id = await plantDraftOnVictim();
+    browser({});
+    invite(id, "sign");
+    expect(await getOwnedFiling(id, "sign")).not.toBeNull();
+    row(id).inviteExpiresAt = new Date(Date.now() + 120_000); // a new invite for this filing
     expect(await getOwnedFiling(id, "sign")).toBeNull();
   });
 

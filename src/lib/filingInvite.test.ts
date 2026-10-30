@@ -20,6 +20,7 @@ describe("inviteCookieValue and parseInviteCookie", () => {
     expect(parseInviteCookie(raw, new Date("2029-12-31T00:00:00.000Z"))).toEqual({
       filingId: "filing_123",
       scope: "edit",
+      expiresAt,
     });
   });
 

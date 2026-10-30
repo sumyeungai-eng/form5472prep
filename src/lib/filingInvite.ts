@@ -41,7 +41,7 @@ export function inviteCookieValue(filingId: string, scope: InviteScope, expiresA
 export function parseInviteCookie(
   raw: string | undefined,
   now: Date = new Date(),
-): { filingId: string; scope: InviteScope } | null {
+): { filingId: string; scope: InviteScope; expiresAt: Date } | null {
   if (!raw) return null;
 
   const parts = raw.split(".");
@@ -57,7 +57,7 @@ export function parseInviteCookie(
   const payload = `${filingId}.${scope}.${expiresMsRaw}`;
   if (!safeEqual(sign(payload), sig)) return null;
 
-  return { filingId, scope };
+  return { filingId, scope, expiresAt: new Date(expiresMs) };
 }
 
 export async function createFilingInvite(

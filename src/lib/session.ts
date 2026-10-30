@@ -225,10 +225,17 @@ function notHeldElsewhere(sessionId: string | undefined): Prisma.FilingWhereInpu
 
 const MAX_TAKEOVER_ATTEMPTS = 3;
 
+// Expiry of the invite this browser's cookie was issued for, when it is for
+// this filing + scope. Every invite gets a unique expiry, so it doubles as the
+// invite's identity: a cookie is only honoured while the filing row still holds
+// that exact invite (re-issuing or clearing it on sign revokes older cookies).
+function inviteCookieExpiry(filingId: string, scope: InviteScope): Date | null {
+  const invite = parseInviteCookie(cookies().get(INVITE_COOKIE)?.value);
+  return invite?.filingId === filingId && invite.scope === scope ? invite.expiresAt : null;
+}
+
 export function hasFilingInviteAccess(filingId: string, scope: InviteScope): boolean {
-  const raw = cookies().get(INVITE_COOKIE)?.value;
-  const invite = parseInviteCookie(raw);
-  return invite?.filingId === filingId && invite.scope === scope;
+  return inviteCookieExpiry(filingId, scope) !== null;
 }
 
 // Returns the filing IF it belongs either to the current anonymous session
@@ -246,13 +253,12 @@ export async function getOwnedFiling(
   const user = await getCurrentUser();
   const sessionId = getSessionId();
   const partner = await getCurrentPartner();
-  const inviteMatches = inviteScope ? hasFilingInviteAccess(filingId, inviteScope) : false;
+  const inviteExpiry = inviteScope ? inviteCookieExpiry(filingId, inviteScope) : null;
+  const inviteMatches = inviteExpiry !== null;
 
   const scope = requestScope(user?.id ?? null, sessionId);
   if (partner) scope.push({ partnerId: partner.id });
-  // The cookie alone is not enough: signing (or expiry) clears the invite in
-  // the DB, which must revoke cookies already handed out.
-  if (inviteMatches) scope.push({ id: filingId, inviteExpiresAt: { gt: new Date() } });
+  if (inviteExpiry) scope.push({ id: filingId, inviteExpiresAt: inviteExpiry });
 
   for (let attempt = 0; attempt < MAX_TAKEOVER_ATTEMPTS; attempt++) {
     const filing = await prisma.filing.findFirst({
@@ -266,7 +272,7 @@ export async function getOwnedFiling(
     // verified holder sees or edits the filing, just as for the account owner.
     const verifiedHolder = (user && filing.userId === user.id) ||
       (partner && filing.partnerId === partner.id) ||
-      (inviteMatches && !!filing.inviteExpiresAt && filing.inviteExpiresAt > new Date());
+      (inviteMatches && filing.inviteExpiresAt?.getTime() === inviteExpiry.getTime());
     if (!verifiedHolder || !filing.sessionId || filing.sessionId === sessionId) return filing;
 
     // Compare-and-set, then RE-READ even if count=0 (the holder may have rebound
@@ -420,7 +426,8 @@ export async function bindFilingToEmail(filingId: string, email: string, inviteS
     update: {},
     create: { email: normalized },
   });
-  if (inviteScope && hasFilingInviteAccess(filingId, inviteScope)) scope.push({ id: filingId, inviteExpiresAt: { gt: new Date() } });
+  const inviteExpiry = inviteScope ? inviteCookieExpiry(filingId, inviteScope) : null;
+  if (inviteExpiry) scope.push({ id: filingId, inviteExpiresAt: inviteExpiry });
   const { count } = await prisma.filing.updateMany({
     where: { id: filingId, OR: scope },
     data: { userId: user.id },
