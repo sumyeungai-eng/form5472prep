@@ -75,7 +75,7 @@ Form 5471 applies to specified US persons with reportable connections to foreign
 
 The Form 5471 instructions define filer categories for US persons who are officers, directors, shareholders, controllers or US shareholders of certain foreign corporations. The instructions also say Form 5471 is attached to the filer's income tax return, partnership return or exempt organization return and filed by that return's due date, including extensions.
 
-For a nonresident alien with no US-person status, Form 5471 is usually not the form. If that nonresident owns a US LLC, the US LLC may still need Form 5472. If the nonresident later becomes a US tax resident, becomes a US citizen, or adds a US-person owner, the Form 5471 analysis can change.
+For a nonresident alien with no US-person status, Form 5471 is usually not the form. If that nonresident owns a US LLC, the US LLC may still need Form 5472. If the nonresident later [becomes a US tax resident](/blog/form-5472-owner-becomes-us-tax-resident), becomes a US citizen, or adds a US-person owner, the Form 5471 analysis can change.
 
 ## How is Form 5472 different from nearby forms?
 

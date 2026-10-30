@@ -68,7 +68,7 @@ Suppose the owner contributed USD 8,000 earlier that year. That historical contr
 
 ## Hypothetical example 2: noncash assets and an owner loan
 
-Assume a different calendar-year LLC maintains accrual-basis books in USD. Its December 31, 2025 records support the following values; it has no other assets, and the receivables require no bad-debt allowance. These are hypothetical book values, not market appraisals or tax-depreciation calculations.
+Assume a different calendar-year LLC maintains [accrual-basis books](/blog/form-5472-cash-accrual-year-end-cutoff) in USD. Its December 31, 2025 records support the following values; it has no other assets, and the receivables require no bad-debt allowance. These are hypothetical book values, not market appraisals or tax-depreciation calculations.
 
 | Asset at December 31, 2025 | Net book value, USD |
 |---|---:|

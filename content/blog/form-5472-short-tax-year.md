@@ -59,7 +59,7 @@ Include transactions that occurred after legal formation and on or before the ta
 - related-party service or license payments; and
 - acquisition or dissolution activity within the period.
 
-Do not pull January transactions backward merely because they relate to December operations. Preserve the actual transaction date, accounting method, and supporting evidence.
+Do not pull January transactions backward merely because they relate to December operations. Preserve the actual transaction date, [accounting method](/blog/form-5472-cash-accrual-year-end-cutoff), and supporting evidence.
 
 ## What if the LLC was formed on December 30?
 

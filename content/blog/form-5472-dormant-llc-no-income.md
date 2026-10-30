@@ -75,7 +75,7 @@ Most LLC owners who think their entity was dormant have at least one of these in
 
 **1. The opening deposit**
 
-You opened a Mercury, Wise Business, or Relay account, and you put some money in to cover the first year of state fees or a Stripe Reserve. Even $200. That transfer from your personal account to the LLC's account is a capital contribution and is reportable on Form 5472, Part V.
+You opened a [Mercury, Wise Business, or Relay account](/blog/form-5472-from-mercury-wise-relay-statements), and you put some money in to cover the first year of state fees or a Stripe Reserve. Even $200. That transfer from your personal account to the LLC's account is a capital contribution and is reportable on Form 5472, Part V.
 
 **2. Paying the registered agent fee or state annual fee from your personal account**
 

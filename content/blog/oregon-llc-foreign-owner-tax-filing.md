@@ -37,7 +37,7 @@ Those definitions are independent of the owner's citizenship or tax residence:
 
 | Entity and owner | Oregon state-law status | Federal Form 5472 ownership screen |
 |---|---|---|
-| Oregon LLC owned by a French resident | Domestic Oregon LLC | Foreign-owned US entity |
+| Oregon LLC owned by a [French resident](/blog/form-5472-france-residents-us-llc) | Domestic Oregon LLC | Foreign-owned US entity |
 | Delaware LLC owned by a US citizen and registered in Oregon | Foreign non-Oregon LLC | Not foreign-owned for Form 5472 |
 | Delaware LLC owned by a French resident and registered in Oregon | Foreign non-Oregon LLC | Foreign-owned US entity |
 

@@ -38,7 +38,7 @@ Use the closure ledger:
 | LLC pays interest to owner | Related-party interest |
 | LLC transfers remaining cash to owner | Final distribution |
 | LLC distributes equipment or property | Nonmonetary distribution |
-| Owner assumes an LLC obligation | Potential noncash related-party transaction |
+| Owner assumes an LLC obligation | Potential [noncash related-party transaction](/blog/form-5472-noncash-property-transfers) |
 | Related foreign company waives a balance | Potential Part VI transaction |
 
 Record the gross events separately. A bank account that ends at zero can still contain substantial reportable transfers during the final year.

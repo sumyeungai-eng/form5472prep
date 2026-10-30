@@ -29,7 +29,7 @@ Form W-7 and the attached return are separate processing decisions. The IRS [CP5
 
 The IRS [Acceptance Agents Guide, Publication 4520](https://www.irs.gov/pub/irs-pdf/p4520.pdf), adds that a valid return attached to a rejected W-7 is processed separately under a temporary IRSN. That does not cure the document, eligibility, or application problem behind the rejection.
 
-A CP566 asks for information while the application remains open; a CP567 means it was rejected. Follow the notice rather than assuming an IRSN requires immediate reapplication.
+A CP566 asks for information while the application remains open; a [CP567 means it was rejected](/blog/itin-application-rejected-cp567-cp566). Follow the notice rather than assuming an IRSN requires immediate reapplication.
 
 ## What should you do with the number shown on IRS correspondence?
 

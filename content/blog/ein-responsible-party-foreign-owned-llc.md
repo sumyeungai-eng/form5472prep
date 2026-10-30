@@ -43,7 +43,7 @@ The LLC’s EIN does not go in the individual responsible-party field on its own
 
 The IRS page says that when more than one person could be a responsible party, the application should list the person the entity wants the IRS to recognize. The selected individual must still satisfy the control standard.
 
-Review the operating agreement, voting rights, manager authority, access to funds, and power to direct the entity. Do not select the person who is easiest to contact if another person actually exercises ultimate control.
+Review the [operating agreement](/blog/single-member-llc-operating-agreement-foreign-owner), voting rights, manager authority, access to funds, and power to direct the entity. Do not select the person who is easiest to contact if another person actually exercises ultimate control.
 
 A multi-member LLC is normally taxed as a partnership unless it elects otherwise, so the broader return and classification consequences should also be reviewed before Form SS-4 is submitted.
 

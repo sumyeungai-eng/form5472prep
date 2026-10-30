@@ -86,9 +86,9 @@ Whether a digital product or SaaS subscription is taxable at all varies by state
 
 **An Amazon FBA seller with inventory in several US fulfillment centers.** Amazon collects and remits on its own orders as marketplace facilitator. The open question is physical nexus: FBA inventory can sit in states the seller never chose, and some treat that stored inventory as a taxable presence in its own right. Check the states where inventory reports actually show stock.
 
-**A Shopify store shipping orders from abroad.** No marketplace facilitator collects on the LLC's behalf, so the LLC itself carries the analysis for every state it ships into. Economic-nexus thresholds apply directly to its own sales, state by state, so the LLC needs to track cumulative sales to know when a threshold is crossed.
+**A [Shopify store shipping orders from abroad](/blog/form-5472-shopify-dropshipping-foreign-owner).** No marketplace facilitator collects on the LLC's behalf, so the LLC itself carries the analysis for every state it ships into. Economic-nexus thresholds apply directly to its own sales, state by state, so the LLC needs to track cumulative sales to know when a threshold is crossed.
 
-**An Etsy or print-on-demand seller.** Etsy generally collects and remits as marketplace facilitator on its own platform. A POD supplier shipping directly to the customer doesn't change who collects on the Etsy sale, but a seller who also fulfills orders outside Etsy, or stores inventory with a POD partner, should check that arrangement separately.
+**An [Etsy or print-on-demand seller](/blog/form-5472-etsy-print-on-demand-sellers).** Etsy generally collects and remits as marketplace facilitator on its own platform. A POD supplier shipping directly to the customer doesn't change who collects on the Etsy sale, but a seller who also fulfills orders outside Etsy, or stores inventory with a POD partner, should check that arrangement separately.
 
 **A SaaS or digital-product seller with no inventory anywhere.** With no physical presence to analyze, the question narrows to economic nexus and to whether that state taxes digital products at all — a determination that varies by state and gets checked one state at a time, not assumed.
 

@@ -103,7 +103,7 @@ Every combination lands on exactly one row. Absent from the list: where you slep
 
 ## Which country guide applies to you?
 
-There is a dedicated guide for residents of Thailand, Indonesia and Bali, Vietnam, Portugal, the Philippines, Malaysia, Georgia (the country), Colombia, Estonia (including e-Residents), Türkiye, Hungary, Costa Rica, Argentina, South Korea, Croatia, Taiwan, the UAE and Dubai, Singapore, Hong Kong, India, the United Kingdom and Mexico. Most are collected in the [FTIN guides](/blog/topics/ftin), and all of them are in the blog archive.
+There is a dedicated guide for residents of Thailand, [Indonesia and Bali](/blog/form-5472-indonesia-bali-residents-us-llc), [Vietnam](/blog/form-5472-vietnam-residents-us-llc), Portugal, the Philippines, Malaysia, Georgia (the country), Colombia, [Estonia (including e-Residents)](/blog/form-5472-estonia-residents-us-llc), Türkiye, Hungary, Costa Rica, Argentina, South Korea, Croatia, Taiwan, the UAE and Dubai, Singapore, Hong Kong, India, the United Kingdom and Mexico. Most are collected in the [FTIN guides](/blog/topics/ftin), and all of them are in the blog archive.
 
 Local rules change what goes in the FTIN box and what you owe at home, not the US filing.
 

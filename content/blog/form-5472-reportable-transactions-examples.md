@@ -104,7 +104,7 @@ The support file should show:
 
 The Part V statement might describe the owner-paid cost and reimbursement together so the IRS can see that the LLC obligation was paid personally and then cleared. The statement should not turn the supplier into a related party. The reporting point is the movement between the LLC and the owner.
 
-If the LLC never reimburses the owner by year-end, the owner-paid cost still belongs in the related-party review. The open balance may support treating the amount as a contribution, payable, or loan depending on the records. That classification should match the books.
+If the LLC never reimburses the owner by year-end, the owner-paid cost still belongs in the related-party review. The open balance may support treating the amount as a contribution, payable, or loan depending on the records. That classification should match the books. If the reimbursement lands in January, see [Form 5472 cash vs accrual year-end cutoff](/blog/form-5472-cash-accrual-year-end-cutoff) for which year it belongs to.
 
 ## How does Form5472 Prep handle reportable transactions?
 

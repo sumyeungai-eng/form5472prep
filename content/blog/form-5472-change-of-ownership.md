@@ -75,7 +75,7 @@ The ownership-change file should prove both the legal transfer and the Form 5472
 
 | Stage | Evidence to preserve | Form 5472 use |
 |---|---|---|
-| Before | Operating agreement, ownership chart, capital accounts, intercompany balances | Shows who owned the LLC before the event |
+| Before | [Operating agreement](/blog/single-member-llc-operating-agreement-foreign-owner), ownership chart, capital accounts, intercompany balances | Shows who owned the LLC before the event |
 | Event | Signed transfer agreement, board or member consent, valuation, payment proof, effective timestamp | Supports acquisition, disposition and consideration |
 | After | New ownership ledger, responsible-party update, FTIN/reference ID notes, accounting close | Supports the next return and prevents old-owner carryover |
 

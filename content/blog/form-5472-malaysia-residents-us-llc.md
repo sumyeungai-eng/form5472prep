@@ -50,7 +50,7 @@ None of this reaches Form 5472. A tax treaty divides taxing rights over income. 
 | Area | Without a comprehensive treaty in force | Effect |
 |---|---|---|
 | Obligation to file Form 5472 | Same three conditions as any other foreign owner | **Does not change** |
-| Pro forma Form 1120 with "Foreign-owned U.S. DE" across the top | Required exactly as for a UK or German owner | **Does not change** |
+| Pro forma Form 1120 with "Foreign-owned U.S. DE" across the top | Required exactly as for a UK or [German owner](/blog/form-5472-germany-residents-us-llc) | **Does not change** |
 | How it is submitted | Fax to 855-887-7737 or mail to the Ogden PIN Unit; no e-filing | **Does not change** |
 | $25,000 penalty exposure | Same penalty rules under § 6038A | **Does not change** |
 | FTIN and reference ID fields | Filled from your identification numbers, not your treaty position | **Does not change** |

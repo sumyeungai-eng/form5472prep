@@ -77,7 +77,7 @@ An LLC formed in March, for example, files in Wyoming by 1 March 2027, in Nevada
 
 ## What is no longer on the 2027 calendar?
 
-Beneficial ownership information (BOI) reporting is off the calendar for US-formed LLCs. [FinCEN](https://www.fincen.gov/boi) issued a final rule on 11 August 2026, effective 14 August 2026, making permanent the exemption first introduced in its March 2025 interim final rule. FinCEN's page states that "U.S. companies are exempt from the Beneficial Ownership Information (BOI) reporting requirements."
+[Beneficial ownership information (BOI) reporting](/blog/boi-reporting-foreign-owned-us-llc-2026) is off the calendar for US-formed LLCs. [FinCEN](https://www.fincen.gov/boi) issued a final rule on 11 August 2026, effective 14 August 2026, making permanent the exemption first introduced in its March 2025 interim final rule. FinCEN's page states that "U.S. companies are exempt from the Beneficial Ownership Information (BOI) reporting requirements."
 
 Two other items never belonged on the calendar and still do not. A Delaware LLC files no annual report; the Division of Corporations states "There is no requirement to file an Annual Report." A New Mexico LLC files no annual report under the state's LLC Act.
 

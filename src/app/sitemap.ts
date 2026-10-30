@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { env } from "@/lib/env";
 import { getAllPosts } from "@/lib/blog";
 import { buildTagIndex, isIndexableHub, tagHref } from "@/lib/blog-tags";
+import { COUNTRY_HUB_PATH, isCountryHubPost } from "@/lib/blog-countries";
 import { LANDING_PAGES } from "@/lib/landing-pages";
 import { CONTENT_LAST_REVIEWED } from "@/lib/seo";
 import { LAST_REVIEWED_ISO as DEADLINE_REVIEWED } from "@/lib/tools/deadline/sources";
@@ -93,6 +94,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/partners`, lastModified: at("/partners"), changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/blog`, lastModified: newestPost, changeFrequency: "weekly", priority: 0.8 },
     { url: `${base}/blog/topics`, lastModified: newestPost, changeFrequency: "weekly", priority: 0.5 },
+    // Country hub: lastmod = newest country/city guide it lists.
+    {
+      url: `${base}${COUNTRY_HUB_PATH}`,
+      lastModified: posts
+        .filter((p) => isCountryHubPost(p.slug))
+        .map(postDate)
+        .filter((d): d is Date => !!d)
+        .sort((a, b) => b.getTime() - a.getTime())[0],
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
     { url: `${base}/contact`, lastModified: at("/contact"), changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/about`, lastModified: at("/about"), changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/editorial-policy`, lastModified: at("/editorial-policy"), changeFrequency: "yearly", priority: 0.3 },

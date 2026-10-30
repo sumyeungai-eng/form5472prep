@@ -34,7 +34,7 @@ The account owners and transaction counterparties determine the answer, not the 
 
 | Ledger event | Form 5472 treatment | Reason |
 |---|---|---|
-| Upwork client pays the LLC for genuine work | Not an owner transaction | The client is an unrelated customer |
+| [Upwork client](/blog/form-5472-freelancers-upwork-fiverr-us-llc) pays the LLC for genuine work | Not an owner transaction | The client is an unrelated customer |
 | Fiverr sends LLC earnings to an LLC-owned account | Not an owner transaction | Funds remain the LLC's business receipts |
 | LLC-owned Wise account sends money to the owner's Pakistan account | Reportable distribution | Value moved from LLC to owner |
 | LLC sends money to the owner's personal Payoneer account | Reportable distribution | The receiving account belongs to the owner |

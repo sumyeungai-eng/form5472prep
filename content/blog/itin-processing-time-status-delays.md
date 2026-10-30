@@ -50,7 +50,7 @@ Do not send a duplicate W-7 simply because the application is still inside the n
 2. **Missing tax return or exception evidence.** Most new applications include a U.S. federal return unless a specific exception applies.
 3. **Inconsistent personal information.** Names, dates, citizenship, passport information, and addresses must align across the W-7 and evidence.
 4. **Unacceptable or expired documents.** The IRS applies document-specific currency, photo, and dependent-residency rules.
-5. **Unreachable mailing address.** The IRS sends the assignment or rejection notice to the address on the application.
+5. **Unreachable mailing address.** The IRS sends the assignment or [rejection notice](/blog/itin-application-rejected-cp567-cp566) to the address on the application.
 
 The current [Form W-7 instructions](https://www.irs.gov/instructions/iw7) are the source of truth for the package. A CAA can help identify completeness problems before submission, but no preparer can control the IRS queue.
 

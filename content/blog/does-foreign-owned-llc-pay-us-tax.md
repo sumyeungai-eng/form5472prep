@@ -74,7 +74,7 @@ Two practical consequences that catch people out:
 1. **A treaty position is claimed, not assumed.** Relying on a treaty to exempt business profits generally means filing the relevant US return with **Form 8833** disclosing the position. Silently not filing is not the same as claiming treaty relief.
 2. **Treaty relief does nothing for Form 5472.** Form 5472 is an information return under IRC § 6038A. No treaty article exempts you from it. The $25,000 penalty applies to a treaty-protected owner exactly as it applies to anyone else.
 
-The United States has treaties with the UK, Canada, India, Germany, and many others — but notably **not** with the UAE, Hong Kong, Singapore, Brazil, or most of Africa and Southeast Asia. Owners in those places rely on the domestic ECI analysis alone.
+The United States has treaties with the UK, Canada, India, [Germany](/blog/form-5472-germany-residents-us-llc), and many others — but notably **not** with the UAE, Hong Kong, Singapore, [Brazil](/blog/form-5472-brazil-residents-us-llc), or most of Africa and Southeast Asia. Owners in those places rely on the domestic ECI analysis alone.
 
 ## So why do I still have to file Form 5472?
 

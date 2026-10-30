@@ -16,7 +16,7 @@ A foreign-owned U.S. disregarded entity should enter the owner’s foreign taxpa
 
 ## What is an FTIN on Form 5472?
 
-An FTIN is the taxpayer identification number issued by the owner’s country of tax administration. Examples include national tax numbers used on the owner’s local tax return. It is not the U.S. LLC’s EIN.
+An FTIN is the taxpayer identification number issued by the owner’s country of tax administration. Examples include national tax numbers used on the owner’s local tax return. It is not the U.S. LLC’s EIN. Country guides such as [Form 5472 for Estonia residents and e-residents](/blog/form-5472-estonia-residents-us-llc) show which number to use, and [Form 5472 by country](/form-5472-by-country) lists them all.
 
 The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) state that a foreign-owned U.S. disregarded entity must enter an FTIN, if any, for each listed foreign owner. If the owner has no FTIN, the instructions permit “None” or “N/A.”
 

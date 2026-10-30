@@ -12,6 +12,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { SITE_URL, breadcrumbList } from "@/lib/seo";
 import { buildTagIndex, formatTag, isIndexableHub, tagHref, type TagEntry } from "@/lib/blog-tags";
 import { blogPagePath, pageRange, pageSlice, POSTS_PER_PAGE, totalPages } from "@/lib/blog-pagination";
+import { COUNTRY_HUB_PATH } from "@/lib/blog-countries";
 import { AuthorChip, PostCard, PostMetaLine } from "./PostCard";
 import { Pager } from "./Pager";
 
@@ -118,6 +119,12 @@ function TopicChips({ tags }: { tags: TagEntry[] }) {
         <span className="font-mono text-[10px] text-slate-400">{entry.count}</span>
       </Link>
     ))}
+    <Link
+      href={COUNTRY_HUB_PATH}
+      className="inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium text-accent hover:underline"
+    >
+      Form 5472 by country →
+    </Link>
     <Link
       href="/blog/topics"
       className="inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium text-accent hover:underline"
