@@ -78,7 +78,7 @@ If any step fails, the blank IRS PDFs are as good a starting point as a paid pro
 
 There are three: complete the blank IRS forms yourself, hire a preparer, or use a filing service that prepares and sends the package. The IRS estimates 3 hours 4 minutes learning about the form and 3 hours 30 minutes preparing and sending it, before recordkeeping, for filers outside the business-taxpayer burden estimate.
 
-Doing it yourself costs nothing but time and carries the full penalty risk if the package is incomplete. A preparer or service takes on the preparation. The trade-offs are set out in [doing Form 5472 yourself versus using a preparer](/blog/form-5472-diy-vs-preparer), and the main providers are compared in our [Form 5472 filing services comparison](/compare/form-5472-filing-services).
+Doing it yourself costs nothing but time and carries the full penalty risk if the package is incomplete. A preparer or service takes on the preparation. The trade-offs are set out in [doing Form 5472 yourself versus using a preparer](/blog/form-5472-diy-vs-preparer), and the main providers are compared in our [Form 5472 filing services comparison](/compare/form-5472-filing-services). For price and who reviews the filing at five services, read [our review of Form 5472 filing services](/blog/form-5472-filing-service-comparison).
 
 ## How does Form5472 Prep compare with doing it in software?
 

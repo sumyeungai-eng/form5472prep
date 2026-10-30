@@ -20,7 +20,7 @@ The IRS may assess a $25,000 penalty for failing to file Form 5472 when due and 
 | **Tax professional** | Professional time and the stated preparation scope | Entity-type experience, whether advice is included, delivery responsibility, and treatment of late years |
 | **Specialist filing service** | The listed package and add-ons | Current price, included tax years, record review, attachments, delivery, and the copy/evidence returned to you |
 
-Provider fees are not interchangeable. A quote may cover only a completed form, or it may include fact collection, attachments, delivery, and later-year work. Obtain the current price and written scope before comparing services.
+Provider fees are not interchangeable. A quote may cover only a completed form, or it may include fact collection, attachments, delivery, and later-year work. Obtain the current price and written scope before comparing services. For five providers' published prices side by side, see [Form 5472 filing service prices compared](/blog/form-5472-filing-service-comparison).
 
 ## What is in a Form 5472 package?
 

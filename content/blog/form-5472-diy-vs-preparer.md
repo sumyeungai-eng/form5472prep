@@ -67,7 +67,7 @@ For late years, ask how the provider handles the facts and required explanation;
 
 DIY is more manageable when you have one current year, organized entity and bank records, a small number of clearly documented owner transactions, and time to use the current IRS instructions. Pause if you cannot identify the counterparty, direction, purpose, or evidence for each ledger item.
 
-Using a preparer may be more useful when the history spans years, classifications are uncertain, or you prefer help assembling the package and delivery evidence. Compare the provider's stated scope and current price, not an assumed market range.
+Using a preparer may be more useful when the history spans years, classifications are uncertain, or you prefer help assembling the package and delivery evidence. Compare the provider's stated scope and current price, not an assumed market range. For five named providers side by side, see [Form 5472 filing services compared](/blog/form-5472-filing-service-comparison).
 
 ## Frequently asked questions
 

@@ -120,7 +120,7 @@ Doing it yourself costs $0 in IRS fees but takes hours and risks a $25,000 penal
 
 If you're filing for the first time, the IRS instructions are dense but workable. If you're catching up on multiple years, you'll want a reasonable cause statement that hits the right notes for DIIRSP.
 
-That's exactly what [Form5472 Prep does](/start) — generates the filled forms, the reasonable cause statement, and faxes the signed package to the IRS. About 15 minutes start to finish. The [Form 5472 filing service](/services/form-5472-filing-service) page lists everything in the package.
+That's exactly what [Form5472 Prep does](/start) — generates the filled forms, writes the reasonable cause statement from the facts you give us, and faxes the signed package to the IRS. About 15 minutes start to finish. The [Form 5472 filing service](/services/form-5472-filing-service) page lists everything in the package.
 
 We are not a CPA firm and do not give tax advice; we prepare and submit the filing package accurately.
 

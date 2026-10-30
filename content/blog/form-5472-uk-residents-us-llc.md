@@ -109,7 +109,7 @@ The mistake we see most often: people assume that because the LLC had no US inco
 
 ## Ready to get it filed?
 
-Form5472 Prep prepares your Form 5472 and pro forma Form 1120, generates the reasonable cause statement if you're filing late, and faxes the signed package to the IRS Ogden PIN Unit on your behalf.
+Form5472 Prep prepares your Form 5472 and pro forma Form 1120, writes the reasonable cause statement from the facts you give us if you're filing late, and faxes the signed package to the IRS Ogden PIN Unit on your behalf.
 
 > **Standard filing is {{price.standard}} (5-7 business days), Express is {{price.express}} (ready to sign within 24 hours), and each additional past tax year is +{{price.additionalYear}} — IRS fax delivery included.** Takes about 15 minutes. 100% money-back guarantee if we fail to submit.
 >
