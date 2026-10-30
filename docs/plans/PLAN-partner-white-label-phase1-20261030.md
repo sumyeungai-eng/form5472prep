@@ -335,4 +335,4 @@ Overall: roughly 2–3 agent-days of work once 0b and 0c are done.
 - v1 (2026-10-30): initial plan, built from a three-lane audit of `origin/main` @ `1881925`. The audit superseded the source plan's §2 "what exists today": brandForFiling already exists, invites are already hashed with a 14-day expiry, and hosting is Vercel, not Cloudflare.
 
 ## 9. Execution log
-- 2026-10-30: owner approved v1 ("Approve, go"). Q1/Q3/Q4 asked separately before steps 2 and 5.
+- 2026-10-30: owner approved v1 ("Approve, go") and then "write everything, i give you full approval, make it ready". Read as: Q1 = yes (partner-only for every partner), Q4 = yes (signing record + declaration text as written, all filings). Q2 (domain), Q3 (test DB), Q5 (live partners) still open. "Make it ready" = steps 1–9 complete on the branch; step 10 (prod migration + push) waits for 0b domain and 0e partner heads-up as planned.

@@ -9,6 +9,7 @@ import { formatUsd } from "@/lib/utils";
 import { multiYearAddonCents, tierInfo, type Tier } from "@/lib/pricing";
 import { effectiveDueDateUtc, filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 import type { EmailBrand } from "@/lib/partnerBrand";
+import { partnerClientRoute, redirectForPartner, type PartnerClientRoute } from "@/lib/partner/clientMail";
 import { formLabel } from "@/lib/applicationSignature";
 import { env } from "@/lib/env";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -77,7 +78,7 @@ async function recordEmailLog(entry: {
   log: EmailLogTag | undefined;
   to: string;
   subject: string;
-  status: "sent" | "failed";
+  status: "sent" | "failed" | "dropped";
   resendId?: string | null;
   error?: string | null;
 }): Promise<void> {
@@ -146,7 +147,7 @@ export function singleLineSubject(subject: string): string {
 }
 
 export async function sendEmail({ to, subject: rawSubject, html, text, replyTo, bcc, attachments, headers, fromName, log }: SendArgs) {
-  const subject = singleLineSubject(rawSubject);
+  let subject = singleLineSubject(rawSubject);
   const previewDir = process.env.EMAIL_PREVIEW_DIR;
   if (previewDir) {
     const slug = slugifySubject(subject);
@@ -159,6 +160,26 @@ export async function sendEmail({ to, subject: rawSubject, html, text, replyTo, 
     ]);
     console.log(`[email preview] ${htmlPath} ${textPath}`);
     return { preview: true, htmlPath, textPath };
+  }
+
+  // Partner clients never get mail from us; see src/lib/partner/clientMail.ts.
+  let route: PartnerClientRoute | null = null;
+  try {
+    route = await partnerClientRoute(to, log);
+  } catch (err) {
+    // Fail open: a lookup error must not lose retail mail.
+    console.error("[email] partner-client lookup failed; sending unchanged", err);
+  }
+  if (route?.action === "drop") {
+    await recordEmailLog({ log, to, subject, status: "dropped" });
+    return { dropped: true };
+  }
+  if (route) {
+    ({ to, subject, html, text } = redirectForPartner({ to, subject, html, text }, route, APP_URL, escapeHtml));
+    subject = singleLineSubject(subject);
+    replyTo = undefined;
+    bcc = undefined; // never a Trustpilot invite on a partner filing
+    fromName = undefined;
   }
 
   const apiKey = process.env.RESEND_API_KEY;
