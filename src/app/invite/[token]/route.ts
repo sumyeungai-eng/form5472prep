@@ -12,8 +12,10 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request, { params }: { params: { token: string } }) {
   const invite = await consumeFilingInvite(decodeURIComponent(params.token));
   const url = new URL(req.url);
-  const origin = url.origin;
   const onPortal = isPortalHost(req.headers.get("host") ?? url.host);
+  // req.url's origin is not reliably the requested host, and the invite
+  // cookie must land on the same domain the client then browses.
+  const origin = (onPortal && portalOrigin()) || url.origin;
   // On the partner portal an expired link must not land on our sign-in page.
   const expired = onPortal ? `${origin}/portal/expired` : `${origin}/sign-in?invite=expired`;
 
