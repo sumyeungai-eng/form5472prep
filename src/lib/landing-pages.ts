@@ -795,7 +795,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What should you do if you've missed multiple years?",
-        body: `File ALL missed years in one DIIRSP package. Don't space them out. The IRS treats a comprehensive catch-up filing more favorably than serial late filings — one consistent reasonable cause narrative covering the whole period is stronger than separate filings each blaming the same circumstances.\n\nOur multi-year DIIRSP packages:\n\n• 2-year catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3-year catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\nThe package has one cover letter, a fully-completed Form 5472 + pro forma 1120 for each year, and a Reasonable Cause Statement for each late year, which we write from the facts you give us. Everything assembled into one package, faxed once, with one timestamped receipt per year.\n\nFor 4+ missed years, run two back-to-back packages or message us and we'll coordinate.`,
+        body: `File ALL missed years in one DIIRSP package. Don't space them out. The IRS treats a comprehensive catch-up filing more favorably than serial late filings — one consistent reasonable cause narrative covering the whole period is stronger than separate filings each blaming the same circumstances.\n\nOur multi-year DIIRSP packages:\n\n• 2-year catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3-year catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\nThe package has one cover letter, a fully-completed Form 5472 + pro forma 1120 for each year, and a Reasonable Cause Statement for each late year, which we write from the facts you give us. Each year's return is faxed to the IRS Ogden PIN Unit, and you get a timestamped fax receipt for each one.\n\nFor 4+ missed years, run two back-to-back packages or message us and we'll coordinate.`,
       },
       {
         heading: "What should you include in your Reasonable Cause Statement?",
@@ -1055,7 +1055,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you handle multi-year catch-up for a Wyoming LLC?",
-        body: `If you formed your Wyoming LLC in 2022 and just learned about Form 5472, you may have 2-3 unfiled years (2022, 2023, 2024). The IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up path:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement covering the entire period.\n• Submit via fax to +1-855-887-7737.\n• If accepted, no penalty assessed.\n\nOur multi-year DIIRSP packages:\n• 2-year catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included).\n• 3-year catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included).\n\nWe write the reasonable cause statement from the facts you give us, and you check it before you sign. Every package is reviewed by a tax accountant on our team who holds an IRS PTIN before we fax it.`,
+        body: `If you formed your Wyoming LLC in 2022 and just learned about Form 5472, you may have 2-3 unfiled years (2022, 2023, 2024). The IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up path:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement for each late year.\n• Submit via fax to +1-855-887-7737.\n• If accepted, no penalty assessed.\n\nOur multi-year DIIRSP packages:\n• 2-year catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included).\n• 3-year catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included).\n\nWe write the reasonable cause statement from the facts you give us, and you check it before you sign. Every package is reviewed by a tax accountant on our team who holds an IRS PTIN before we fax it.`,
       },
       {
         heading: "What does our service do for Wyoming LLC owners?",
@@ -1177,7 +1177,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you handle multi-year catch-up under DIIRSP?",
-        body: `Many Stripe Atlas founders discover Form 5472 a year or two after forming their Delaware LLC. The IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement covering the entire period.\n• Submit via fax to +1-855-887-7737.\n• Most well-documented first-time foreign-owner catch-ups are accepted without penalty.\n\nOur multi-year DIIRSP packages:\n• 2-year catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included).\n• 3-year catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included).\n\nWe write the Reasonable Cause Statement from the facts you give us, and you check it before you sign. Every package is reviewed by a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) before we fax it.`,
+        body: `Many Stripe Atlas founders discover Form 5472 a year or two after forming their Delaware LLC. The IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement for each late year.\n• Submit via fax to +1-855-887-7737.\n\nOur multi-year DIIRSP packages:\n• 2-year catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included).\n• 3-year catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included).\n\nWe write the Reasonable Cause Statement from the facts you give us, and you check it before you sign. Every package is reviewed by a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) before we fax it.`,
       },
       {
         heading: "How do you switch from Delaware to Wyoming?",
@@ -2528,7 +2528,7 @@ export const LANDING_PAGES: LandingPage[] = [
     faqs: [
       {
         q: "Does the IRS guarantee my penalty is waived if I submit a reasonable cause statement?",
-        a: "No. DIIRSP is the IRS's stated process for requesting relief, but each request is evaluated on its facts. Most well-documented first-time late filings are accepted, but there's no formal guarantee.",
+        a: "No. DIIRSP is the IRS's stated process for requesting relief, but each request is evaluated on its facts, and there is no guarantee of relief.",
       },
       {
         q: "Can I write the statement myself instead of using a template?",
@@ -2654,7 +2654,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Can you guarantee the IRS waives the penalty on my late filing?",
-        a: "No service can guarantee an IRS outcome. What we can do is make the DIIRSP submission as strong as possible — complete forms, documented transactions, an accountant-reviewed reasonable cause statement, and dated transmission evidence. Most well-documented first-time late filings are accepted, but the decision is the IRS's.",
+        a: "No service can guarantee an IRS outcome. What we can do is make the DIIRSP submission as strong as possible — complete forms, documented transactions, an accountant-reviewed reasonable cause statement, and dated transmission evidence. The decision is the IRS's.",
       },
       {
         q: "I have 5+ missed years — can you handle that?",
