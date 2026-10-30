@@ -6,7 +6,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const db = vi.hoisted(() => ({
   create: vi.fn(async (_args: unknown) => ({ id: "log_1" })),
 }));
-vi.mock("@/lib/prisma", () => ({ prisma: { emailLog: { create: db.create } } }));
+// filing: the partner-client guard in sendEmail finds no partner filing.
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    emailLog: { create: db.create },
+    filing: { findUnique: async () => null, findFirst: async () => null, count: async () => 0 },
+  },
+}));
 
 import { sendEmail, sendFaxDeliveredAdminEmail, sendFaxDeliveredEmail } from "@/lib/email";
 

@@ -57,6 +57,8 @@ const db = vi.hoisted(() => {
               return value !== null && (arg === null || value !== arg);
             case "lte":
               return value !== null && (value as Date) <= (arg as Date);
+            case "gt":
+              return value !== null && (value as Date) > (arg as Date);
             case "in":
               return (arg as unknown[]).includes(value);
             case "isEmpty":
@@ -844,8 +846,13 @@ describe("legitimate flows keep working", () => {
 
 
 describe("form5472prep independent partner and invite grants", () => {
+  // Like createFilingInvite: the DB row holds the invite expiry the cookie
+  // mirrors (a cookie is only honoured while the row's invite is live).
   function invite(id: string, scope: "edit" | "sign", expired = false) {
-    jar.set(INVITE_COOKIE, inviteCookieValue(id, scope, new Date(Date.now() + (expired ? -1 : 60_000))));
+    const expiresAt = new Date(Date.now() + (expired ? -1 : 60_000));
+    const target = db.state.filings.find((x) => x.id === id); // may be a cookie for another filing
+    if (target) target.inviteExpiresAt = expiresAt;
+    jar.set(INVITE_COOKIE, inviteCookieValue(id, scope, expiresAt));
   }
 
   it("owner takeover drops only the anonymous cookie; the owning partner can still edit and bind", async () => {
@@ -919,6 +926,15 @@ describe("form5472prep independent partner and invite grants", () => {
     expect(page.props.priorSignatureDataUrl).toBeNull();
     expect(await getOwnedFiling(id, "edit")).toBeNull();
     expect((await getFilingAccess(id, "sign")).kind).toBe("owned");
+  });
+
+  it("a signed (cleared) invite stops granting access even with a live cookie", async () => {
+    const id = await plantDraftOnVictim();
+    browser({});
+    invite(id, "sign");
+    expect(await getOwnedFiling(id, "sign")).not.toBeNull();
+    row(id).inviteExpiresAt = null; // what the sign route does on success
+    expect(await getOwnedFiling(id, "sign")).toBeNull();
   });
 
   it("an expired edit invite at bind time cannot rebind the account", async () => {

@@ -167,8 +167,11 @@ export async function sendEmail({ to, subject: rawSubject, html, text, replyTo, 
   try {
     route = await partnerClientRoute(to, log);
   } catch (err) {
-    // Fail open: a lookup error must not lose retail mail.
-    console.error("[email] partner-client lookup failed; sending unchanged", err);
+    // Fail closed, like a Resend failure: callers already handle a throw, and
+    // a partner's client must never receive our mail because a lookup failed.
+    const failure = new Error(`partner-client lookup failed: ${err instanceof Error ? err.message : String(err)}`);
+    await recordEmailLog({ log, to, subject, status: "failed", error: failure.message });
+    throw failure;
   }
   if (route?.action === "drop") {
     await recordEmailLog({ log, to, subject, status: "dropped" });
@@ -1526,6 +1529,7 @@ export async function sendFaxFailedEmail(args: {
 // rapid back-and-forth). Email is intentionally light on content — the
 // portal thread is the source of truth.
 export async function sendNewMessageToCustomerEmail(args: {
+  filingId?: string;
   email: string;
   recipientName?: string | null;
   llcName: string | null;
@@ -1551,7 +1555,7 @@ export async function sendNewMessageToCustomerEmail(args: {
   `;
 
   return sendEmail({
-    log: { kind: "new_message_customer" },
+    log: { kind: "new_message_customer", filingId: args.filingId },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,

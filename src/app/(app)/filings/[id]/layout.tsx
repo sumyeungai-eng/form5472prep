@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { isPortalHost } from "@/lib/partner/portalHost";
+import { isPortalHost, portalOrigin } from "@/lib/partner/portalHost";
+import { partnerOwnsFiling } from "@/lib/session";
 import { partnerDisplayName } from "@/lib/partner/displayName";
 import { portalMetadata } from "@/lib/partner/portalMetadata";
 
@@ -23,7 +25,17 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default async function FilingLayout({ children, params }: { children: React.ReactNode; params: { id: string } }) {
   const brand = await portalBrand(params.id);
-  if (!brand) return children;
+  if (!brand) {
+    // A partner's client on the main site (an invite cookie from before the
+    // portal existed) must not see us: send them to the portal's neutral
+    // "ask your provider for a new link" page. The partner keeps access.
+    const portal = portalOrigin();
+    if (portal) {
+      const filing = await prisma.filing.findUnique({ where: { id: params.id }, select: { partnerId: true } });
+      if (filing?.partnerId && !(await partnerOwnsFiling(params.id))) redirect(`${portal}/portal/expired`);
+    }
+    return children;
+  }
   return (
     <>
       {/* The root layout server-renders the Meta consent banner; hide it here. */}

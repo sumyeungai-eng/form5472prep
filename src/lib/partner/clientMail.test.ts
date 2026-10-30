@@ -6,11 +6,12 @@ const db = vi.hoisted(() => ({
   create: vi.fn(async (_args: unknown) => ({ id: "log_1" })),
   findUnique: vi.fn(),
   findFirst: vi.fn(),
+  count: vi.fn(),
 }));
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     emailLog: { create: db.create },
-    filing: { findUnique: db.findUnique, findFirst: db.findFirst },
+    filing: { findUnique: db.findUnique, findFirst: db.findFirst, count: db.count },
   },
 }));
 
@@ -39,6 +40,7 @@ describe("sendEmail partner-client guard", () => {
     db.create.mockReset().mockResolvedValue({ id: "log_1" });
     db.findUnique.mockReset().mockResolvedValue(null);
     db.findFirst.mockReset().mockResolvedValue(null);
+    db.count.mockReset().mockResolvedValue(0);
     fetchMock = vi.fn(async () => new Response(JSON.stringify({ id: "resend-abc" }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
   });
@@ -127,11 +129,21 @@ describe("sendEmail partner-client guard", () => {
     },
   );
 
-  it("fails open: a lookup error sends the mail unchanged", async () => {
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+  it("fails closed: a lookup error sends nothing, logs a failure and throws", async () => {
     db.findUnique.mockRejectedValue(new Error("db down"));
-    await sendEmail({ ...BASE, log: { kind: "fax_delivered", filingId: "f_partner" } });
+    await expect(sendEmail({ ...BASE, log: { kind: "fax_delivered", filingId: "f_partner" } })).rejects.toThrow(
+      "partner-client lookup failed: db down",
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(db.create).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ to: "client@example.test", status: "failed" }),
+    }));
+  });
+
+  it("leaves untagged mail alone for someone who is also our direct customer", async () => {
+    db.findFirst.mockResolvedValue(PARTNER_FILING);
+    db.count.mockResolvedValue(1);
+    await sendEmail({ ...BASE, log: { kind: "magic_link" } });
     expect(sentBody(fetchMock).to).toBe("client@example.test");
-    spy.mockRestore();
   });
 });

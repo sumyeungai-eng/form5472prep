@@ -72,6 +72,7 @@ export async function postAdminMessage(filingId: string, body: string, attachmen
 
     try {
       await sendNewMessageToCustomerEmail({
+        filingId,
         email: filing.user.email,
         recipientName: filing.ownerName,
         llcName: filing.llcName,

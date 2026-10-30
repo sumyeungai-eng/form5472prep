@@ -239,10 +239,16 @@ export function PreflightStep({
 
       {blocked && code !== "no-ein" && reason && (
         <div className="mt-4 rounded-lg bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-700">
-          <strong>This workflow may not fit your filing.</strong> {reason} If you&apos;d still like
-          help, email{" "}
-          <a href="mailto:support@form5472prep.com" className="underline">support@form5472prep.com</a>{" "}
-          before paying.
+          <strong>This workflow may not fit your filing.</strong> {reason}{" "}
+          {hidePrices ? (
+            <>Please check with the provider who sent you this link before continuing.</>
+          ) : (
+            <>
+              If you&apos;d still like help, email{" "}
+              <a href="mailto:support@form5472prep.com" className="underline">support@form5472prep.com</a>{" "}
+              before paying.
+            </>
+          )}
         </div>
       )}
 

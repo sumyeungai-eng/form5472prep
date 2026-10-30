@@ -5,7 +5,11 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 
 vi.mock("@/lib/prisma", () => ({
-  prisma: { emailLog: { create: vi.fn(async () => ({ id: "synthetic-log" })) } },
+  prisma: {
+    emailLog: { create: vi.fn(async () => ({ id: "synthetic-log" })) },
+    // The partner-client guard in sendEmail finds no partner filing.
+    filing: { findUnique: async () => null, findFirst: async () => null, count: async () => 0 },
+  },
 }));
 
 let PREVIEW_DIR = "";

@@ -56,6 +56,14 @@ export async function partnerClientRoute(
 
   const partnerEmail = filing?.partner?.email;
   if (!filing || !partnerEmail) return null;
+  // Untagged mail to someone who also has a filing of their own with us
+  // (login links, reminders): they are our customer too, so it goes as normal.
+  if (!log?.filingId) {
+    const own = await prisma.filing.count({
+      where: { partnerId: null, user: { email: { equals: to.trim(), mode: "insensitive" } } },
+    });
+    if (own > 0) return null;
+  }
   // The partner bound their own address as the filing's user: already theirs.
   if (partnerEmail.trim().toLowerCase() === to.trim().toLowerCase()) return null;
 

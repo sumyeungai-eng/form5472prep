@@ -63,6 +63,7 @@ for (const invite of invites) {
   const disposition = [];
 
   const id = landing.match(/\/filings\/([^/]+)\//)?.[1];
+  if (!id) hits.push(`${invite}: did not open a filing page (expired or used link?) -> ${landing}`);
   for (const kind of id ? ["pdf", "signed-pdf", "fax-receipt"] : []) {
     const r = await get(new URL(`/api/filings/${id}/${kind}`, landing).href, jar);
     if (r.res.status !== 200) continue;
