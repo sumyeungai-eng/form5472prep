@@ -62,10 +62,12 @@ function PreflightQuestionRow({
   q,
   value,
   onChange,
+  hidePrices = false,
 }: {
-  q: { id: keyof PreflightAnswers; text: string; explainer: string };
+  q: { id: keyof PreflightAnswers; text: string; explainer: string; plainExplainer?: string };
   value: boolean | null;
   onChange: (v: boolean) => void;
+  hidePrices?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -90,7 +92,7 @@ function PreflightQuestionRow({
       </div>
       {open && (
         <div className="mt-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs leading-relaxed text-slate-700">
-          {q.explainer}
+          {hidePrices ? (q.plainExplainer ?? q.explainer) : q.explainer}
         </div>
       )}
       <div className="mt-3 inline-flex items-center rounded-full border border-slate-200 bg-white text-sm">
@@ -124,6 +126,8 @@ type QDef = {
   // icon next to the question. Kept short so a non-tax-person can read it
   // in one scan.
   explainer: string;
+  // Same text without our prices, for a partner's client (never shown ours).
+  plainExplainer?: string;
 };
 
 const QUESTIONS: QDef[] = [
@@ -153,6 +157,11 @@ const QUESTIONS: QDef[] = [
       "If you already opened the LLC and got a confirmation letter from the IRS (CP 575 / 147C), you have an EIN. " +
       "If you don't have one yet, we can obtain it for you for $149 (no passport mailing, 1–5 business days), " +
       "or you can apply directly with the IRS for free and come back once it arrives.",
+    plainExplainer:
+      "EIN = Employer Identification Number. It's a 9-digit U.S. tax ID for businesses, formatted like 12-3456789. " +
+      "Every U.S. LLC needs one to file Form 5472. " +
+      "If you already opened the LLC and got a confirmation letter from the IRS (CP 575 / 147C), you have an EIN. " +
+      "If you don't have one yet, you can apply directly with the IRS for free and come back once it arrives.",
   },
 ];
 
@@ -160,10 +169,12 @@ export function PreflightStep({
   answers,
   onAnswers,
   onContinue,
+  hidePrices = false,
 }: {
   answers: PreflightAnswers;
   onAnswers: (next: PreflightAnswers) => void;
   onContinue: () => void;
+  hidePrices?: boolean;
 }) {
   const status = preflightStatus(answers);
   const { blocked, reason, code } = preflightBlocked(answers);
@@ -186,6 +197,7 @@ export function PreflightStep({
           <PreflightQuestionRow
             key={q.id}
             q={q}
+            hidePrices={hidePrices}
             value={answers[q.id]}
             onChange={(v) => onAnswers({ ...answers, [q.id]: v })}
           />
@@ -200,6 +212,7 @@ export function PreflightStep({
         <div className="mt-4 rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-slate-700">
           <strong className="text-slate-900">{reason}</strong> Every U.S. LLC needs one before we
           can prepare the return.
+          {!hidePrices && (
           <div className="mt-3">
             <a
               href="/ein"
@@ -208,8 +221,9 @@ export function PreflightStep({
               We can get your EIN for you — $149 <ArrowRight className="h-4 w-4" />
             </a>
           </div>
+          )}
           <p className="mt-2 text-xs leading-relaxed text-slate-600">
-            No passport mailing, 1–5 business days. Or{" "}
+            {hidePrices ? "You can" : "No passport mailing, 1–5 business days. Or"}{" "}
             <a
               href="https://www.irs.gov/ein"
               target="_blank"

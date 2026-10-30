@@ -148,3 +148,41 @@ describe("ReviewStep reasonable-cause row", () => {
     expect(html).toContain("missing");
   });
 });
+
+describe("ReviewStep viewer modes", () => {
+  function renderAs(viewer: "retail" | "partner" | "client") {
+    return renderToStaticMarkup(
+      <ReviewStep
+        filing={baseFiling}
+        onBack={() => {}}
+        onPay={async () => {}}
+        onSelectTier={async () => {}}
+        saving={false}
+        viewer={viewer}
+        partnerName="Acme Tax"
+      />,
+    );
+  }
+
+  it("client view shows no price, tiers, email field or Pay button, only the hand-off", () => {
+    const html = renderAs("client");
+    expect(html).not.toContain("$");
+    expect(html).not.toMatch(/Pay\b/);
+    expect(html).not.toContain("Choose your turnaround");
+    expect(html).not.toContain("Order summary");
+    expect(html).not.toContain('type="email"');
+    expect(html).toContain("That&#x27;s everything");
+    expect(html).toContain("Finish and send to Acme Tax");
+  });
+
+  it("partner view keeps the Pay button but has no email input", () => {
+    const html = renderAs("partner");
+    expect(html).toContain("securely");
+    expect(html).toContain("The receipt goes to your partner account email.");
+    expect(html).not.toContain('type="email"');
+  });
+
+  it("retail view still has the email input", () => {
+    expect(renderAs("retail")).toContain('type="email"');
+  });
+});

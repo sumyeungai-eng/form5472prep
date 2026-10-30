@@ -22,16 +22,51 @@ export function SaveForLater({
   filingId,
   mode,
   defaultEmail,
+  partnerName,
   onBeforeLeave,
 }: {
   filingId: string;
   mode: SaveForLaterMode;
   defaultEmail?: string | null;
+  partnerName?: string | null;
   onBeforeLeave?: () => Promise<boolean>;
 }) {
   const router = useRouter();
   const [leaving, setLeaving] = useState(false);
   const [leaveError, setLeaveError] = useState<string | null>(null);
+  const [clientSaved, setClientSaved] = useState(false);
+
+  // Partner's client: save the step, then point back to the invite link. No
+  // email is collected and nothing is sent.
+  if (mode.kind === "client") {
+    const handleClientSave = async () => {
+      setLeaving(true);
+      setLeaveError(null);
+      try {
+        if ((await onBeforeLeave?.()) === false) throw new Error("save failed");
+        setClientSaved(true);
+      } catch {
+        setLeaveError("We could not save your changes. Try again.");
+      }
+      setLeaving(false);
+    };
+    return (
+      <div className="flex flex-wrap items-center gap-3">
+        {clientSaved ? (
+          <p role="status" className="text-sm font-medium text-slate-700">
+            Your answers are saved. Use the same link from {partnerName?.trim() || "your provider"} to come
+            back.
+          </p>
+        ) : (
+          <button type="button" onClick={handleClientSave} disabled={leaving} className={`${BUTTON_CLASS} disabled:opacity-50`}>
+            <Save className="h-4 w-4" aria-hidden="true" />
+            {leaving ? "Saving..." : mode.label}
+          </button>
+        )}
+        {leaveError && <span className="basis-full text-sm text-red-600">{leaveError}</span>}
+      </div>
+    );
+  }
 
   if (mode.kind === "anonymous") {
     return (

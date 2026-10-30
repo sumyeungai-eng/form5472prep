@@ -32,4 +32,16 @@ describe("saveForLaterMode", () => {
       label: "Save for later",
     });
   });
+
+  it("returns the client mode (no email, no href) for a partner's end client", () => {
+    expect(saveForLaterMode({ isPartnerFiling: false, isSignedIn: false, isClient: true })).toEqual({
+      kind: "client",
+      label: "Save for later",
+    });
+  });
+
+  it("ranks partner above client, and client above signed-in", () => {
+    expect(saveForLaterMode({ isPartnerFiling: true, isSignedIn: false, isClient: true }).kind).toBe("partner");
+    expect(saveForLaterMode({ isPartnerFiling: false, isSignedIn: true, isClient: true }).kind).toBe("client");
+  });
 });

@@ -287,6 +287,9 @@ type FilingWizardProps = {
   hideTopStepper?: boolean;
   bareLayout?: boolean;
   onFilingChange?: (next: Filing) => void;
+  /** Who is looking: a partner's end client never sees prices (default "retail"). */
+  viewer?: "retail" | "partner" | "client";
+  partnerName?: string | null;
 };
 
 async function patchFiling(id: string, body: Record<string, unknown>) {
@@ -331,6 +334,8 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
   // returns updated record). Lets the sidebar recompute completion status
   // without reading prisma directly.
   onFilingChange,
+  viewer = "retail",
+  partnerName = null,
 }, ref) {
   const router = useRouter();
   const [filing, setFiling] = useState(initial);
@@ -546,6 +551,7 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
             onBack={goBack}
             onEditFormationDate={() => setStepKey("entity")}
             saving={saving}
+            hidePrice={viewer === "client"}
           />
         )}
         {stepKey === "rcs" && (
@@ -692,6 +698,8 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
             filing={filing}
             onBack={goBack}
             saving={saving}
+            viewer={viewer}
+            partnerName={partnerName}
             // Persists the customer's tier switch through the same PATCH +
             // setFiling path every other step uses, so `filing.tier` — the
             // value /api/checkout prices off — is what the summary shows.
@@ -1629,7 +1637,9 @@ export function YearsStep({
   onBack,
   onEditFormationDate,
   saving,
+  hidePrice = false,
 }: {
+  hidePrice?: boolean;
   filing: Filing;
   onSubmit: (data: YearStepSubmitData) => Promise<void>;
   onFormReady?: (get: (() => YearStepSubmitData | null) | null) => void;
@@ -2407,15 +2417,19 @@ export function YearsStep({
         <DeterminationFlag filingId={filing.id} sentence={determinationSentence} />
       )}
       <div className="rounded-md bg-slate-50 p-4 text-sm">
-        <p className="font-medium">
-          {activeTier.label}: {formatUsd(activeTier.priceCents)}
-          {extraYears > 0 && (
-            <span className="text-slate-500">
-              {" "}+ {extraYears} extra year{extraYears === 1 ? "" : "s"} × {formatUsd(MULTI_YEAR_ADDON_CENTS)} = {formatUsd(totalCents)}
-            </span>
-          )}
-        </p>
-        <p className="text-slate-600 mt-1">IRS fax delivery included.</p>
+        {!hidePrice && (
+          <>
+            <p className="font-medium">
+              {activeTier.label}: {formatUsd(activeTier.priceCents)}
+              {extraYears > 0 && (
+                <span className="text-slate-500">
+                  {" "}+ {extraYears} extra year{extraYears === 1 ? "" : "s"} × {formatUsd(MULTI_YEAR_ADDON_CENTS)} = {formatUsd(totalCents)}
+                </span>
+              )}
+            </p>
+            <p className="text-slate-600 mt-1">IRS fax delivery included.</p>
+          </>
+        )}
         {wouldBeDiirsp && (
           <p className="text-xs text-accent mt-2">
               This return is being filed after its due date. We include a reasonable-cause

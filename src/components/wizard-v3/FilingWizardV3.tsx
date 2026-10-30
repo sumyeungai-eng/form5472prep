@@ -127,11 +127,15 @@ export function FilingWizardV3({
   plaidEnabled = false,
   saveForLater,
   defaultEmail,
+  viewer = "retail",
+  partnerName = null,
 }: {
   filing: WizardFiling;
   plaidEnabled?: boolean;
   saveForLater: SaveForLaterMode;
   defaultEmail?: string | null;
+  viewer?: "retail" | "partner" | "client";
+  partnerName?: string | null;
 }) {
   // Fresh drafts land on the pre-flight check; returning users resume on the
   // first step they haven't completed (see resumeStep). Lazy initializer so it
@@ -163,6 +167,12 @@ export function FilingWizardV3({
     });
     return ALL_STEPS
       .filter((s) => s.key !== "rcs" || needsReasonableCause)
+      // A partner's client never pays: no "pay" wording in the step list.
+      .map((s) =>
+        viewer === "client" && s.key === "review"
+          ? { ...s, title: "Review", subtitle: "Confirm details and send to your provider." }
+          : s,
+      )
       // Re-number sequentially so badges always read "Step 1..N".
       .map((s, i) => ({ ...s, number: i + 1 }));
   }, [
@@ -171,6 +181,7 @@ export function FilingWizardV3({
     filing.extensionTransmittedAt,
     filing.isFinalReturn,
     filing.taxYears,
+    viewer,
   ]);
 
   // Status calc: pre-flight uses its own derivation; other steps reuse the
@@ -207,6 +218,7 @@ export function FilingWizardV3({
               <SaveForLater
                 filingId={initial.id}
                 mode={saveForLater}
+                partnerName={partnerName}
                 defaultEmail={defaultEmail}
                 onBeforeLeave={
                   stepKey === "preflight"
@@ -226,6 +238,7 @@ export function FilingWizardV3({
                   }
                 }}
                 onContinue={() => setStepKey("entity")}
+                hidePrices={viewer === "client"}
               />
             ) : (
               <FilingWizard
@@ -237,6 +250,8 @@ export function FilingWizardV3({
                 hideTopStepper
                 bareLayout
                 onFilingChange={setFiling}
+                viewer={viewer}
+                partnerName={partnerName}
               />
             )}
           </div>

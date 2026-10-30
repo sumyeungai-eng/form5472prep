@@ -1,6 +1,7 @@
 import { preparePreviousCheckout } from "@/lib/checkoutSessions";
 import { NextResponse } from "next/server";
-import { getOwnedFiling, bindFilingToEmail, FilingAccessLostError } from "@/lib/session";
+import { getOwnedFiling, bindFilingToEmail, FilingAccessLostError, partnerOwnsFiling } from "@/lib/session";
+import { getCurrentPartner } from "@/lib/partner/auth";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
@@ -19,13 +20,24 @@ import { createBrandedSession } from "@/lib/stripeCheckoutBranding";
 
 export async function POST(req: Request) {
   const { filingId, email } = await req.json();
-  if (typeof email !== "string" || !email.includes("@"))
+  // A partner's filing is paid by the partner and takes the receipt address
+  // from their session, so only retail filings need a body email.
+  const emailOk = typeof email === "string" && email.includes("@");
+  if (!emailOk && typeof filingId !== "string")
     return NextResponse.json({ error: "Email required" }, { status: 400 });
 
   const filing = await getOwnedFiling(filingId);
+  if (!emailOk && !filing?.partnerId)
+    return NextResponse.json({ error: "Email required" }, { status: 400 });
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (filing.status !== "DRAFT")
     return NextResponse.json({ error: "Already paid" }, { status: 409 });
+
+  // The partner's end client never pays us. Only the partner who owns the
+  // filing may check out, and their identity (not the typed email) is used.
+  const payingPartner = filing.partnerId && (await partnerOwnsFiling(filing.id)) ? await getCurrentPartner() : null;
+  if (filing.partnerId && !payingPartner)
+    return NextResponse.json({ error: "Your provider completes payment for this filing." }, { status: 403 });
 
   const filingYearData = await prisma.filing.findUnique({
     where: { id: filing.id },
@@ -113,7 +125,12 @@ export async function POST(req: Request) {
   // look up the user and email the magic link even if the cookie is lost.
   let user: Awaited<ReturnType<typeof bindFilingToEmail>>;
   try {
-    user = await bindFilingToEmail(filing.id, email);
+    // Partner filing: keep the client already bound to it; only bind the
+    // partner's own email when no user is attached yet (webhook needs one).
+    const existing = payingPartner && filing.userId
+      ? await prisma.user.findUnique({ where: { id: filing.userId } })
+      : null;
+    user = existing ?? (await bindFilingToEmail(filing.id, payingPartner ? payingPartner.email : email));
   } catch (err) {
     if (err instanceof FilingAccessLostError) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -338,14 +355,14 @@ export async function POST(req: Request) {
     {
       mode: "payment",
       payment_method_types: ["card"],
-      customer_email: user.email,
+      customer_email: payingPartner ? payingPartner.email : user.email,
       line_items: lineItems,
       // `discounts` and `allow_promotion_codes` are mutually exclusive in
       // Stripe — only ever set one of them (we never set the latter).
       ...(discounts ? { discounts } : {}),
       success_url: `${env.appUrl}/filings/${filing.id}?paid=1`,
       cancel_url: `${env.appUrl}/filings/${filing.id}/edit`,
-      metadata: { filingId: filing.id, userId: user.id },
+      metadata: { filingId: filing.id, userId: user.id, ...(payingPartner ? { partnerId: payingPartner.id } : {}) },
     },
     // Idempotency key scoped to the filing + its priced inputs (discount
     // included, so a promo and non-promo session for the same filing can never

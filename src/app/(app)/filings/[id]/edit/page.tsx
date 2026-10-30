@@ -6,6 +6,7 @@ import { FilingLocked } from "@/components/FilingLocked";
 import { PartnerFilingBar } from "@/components/PartnerFilingBar";
 import { plaidConfigured } from "@/lib/plaid";
 import { saveForLaterMode } from "@/lib/saveForLater";
+import { partnerDisplayName } from "@/lib/partner/displayName";
 
 export default async function EditFilingPage({ params }: { params: { id: string } }) {
   const access = await getFilingAccess(params.id, "edit");
@@ -21,6 +22,17 @@ export default async function EditFilingPage({ params }: { params: { id: string 
   if (!filing) notFound();
 
   const owningPartner = await partnerOwnsFiling(filing.id);
+  // A partner's end client (opened the partner's invite link) must never see
+  // our prices or a Pay button; the partner pays.
+  const viewer: "retail" | "partner" | "client" = owningPartner ? "partner" : filing.partnerId ? "client" : "retail";
+  let partnerName: string | null = null;
+  if (viewer === "client" && filing.partnerId) {
+    const p = await prisma.partner.findUnique({
+      where: { id: filing.partnerId },
+      select: { brandName: true, company: true, name: true },
+    });
+    partnerName = p ? partnerDisplayName(p) : null;
+  }
 
   // Signed-in test for the wizard's "Save for later" control: only true when
   // the current viewer IS the user this filing is bound to — a signed-in
@@ -65,8 +77,14 @@ export default async function EditFilingPage({ params }: { params: { id: string 
       <FilingWizardV3
         filing={serialized}
         plaidEnabled={plaidConfigured()}
-        saveForLater={saveForLaterMode({ isPartnerFiling: owningPartner !== null, isSignedIn })}
+        saveForLater={saveForLaterMode({
+          isPartnerFiling: owningPartner !== null,
+          isSignedIn,
+          isClient: viewer === "client",
+        })}
         defaultEmail={user?.email ?? null}
+        viewer={viewer}
+        partnerName={partnerName}
       />
     </>
   );

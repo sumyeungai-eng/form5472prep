@@ -1,3 +1,6 @@
+// A partner's END CLIENT (opened the partner's invite link) is a fourth
+// audience, ranked just below the partner: no email form, no API call — their
+// way back is the same invite link, so the control only saves the step.
 // Pure derivation of what the wizard's "Save for later" control should show
 // and do, based on who is looking at the filing. Three mutually exclusive
 // audiences, checked in priority order: a PARTNER working on a client filing
@@ -8,15 +11,20 @@
 // to the draft instead of a destination to click to right now.
 export type SaveForLaterMode =
   | { kind: "partner"; href: "/partner"; label: "Save and back to dashboard" }
+  | { kind: "client"; label: "Save for later" }
   | { kind: "user"; href: "/dashboard"; label: "Save and exit" }
   | { kind: "anonymous"; label: "Save for later" };
 
 export function saveForLaterMode(input: {
   isPartnerFiling: boolean;
   isSignedIn: boolean;
+  isClient?: boolean;
 }): SaveForLaterMode {
   if (input.isPartnerFiling) {
     return { kind: "partner", href: "/partner", label: "Save and back to dashboard" };
+  }
+  if (input.isClient) {
+    return { kind: "client", label: "Save for later" };
   }
   if (input.isSignedIn) {
     return { kind: "user", href: "/dashboard", label: "Save and exit" };

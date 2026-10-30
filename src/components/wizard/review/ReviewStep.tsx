@@ -64,13 +64,20 @@ export function ReviewStep({
   onPay,
   onSelectTier,
   saving,
+  viewer = "retail",
+  partnerName,
 }: {
   filing: ReviewStepFiling;
   onBack: () => void;
   onPay: (email: string, faxService: boolean) => Promise<void>;
   onSelectTier: (tier: Tier) => Promise<void>;
   saving: boolean;
+  /** Who is looking: a partner's end client never sees prices or a Pay button. */
+  viewer?: "retail" | "partner" | "client";
+  partnerName?: string | null;
 }) {
+  const isClient = viewer === "client";
+  const isPartner = viewer === "partner";
   // Tier is pre-selected upstream (/pricing, /start?tier=) but the customer
   // can still switch it here. This is the last screen before payment and the
   // only place the two turnarounds sit side by side, so it's where the
@@ -132,6 +139,17 @@ export function ReviewStep({
   const [paying, setPaying] = useState(false);
 
   async function handlePay() {
+    // Partner pays under their own account: /api/checkout takes the receipt
+    // address from the partner session, so no email is collected here.
+    if (isPartner) {
+      setPaying(true);
+      try {
+        await onPay("", true);
+      } finally {
+        setPaying(false);
+      }
+      return;
+    }
     const trimmed = email.trim();
     if (!trimmed || !trimmed.includes("@")) {
       setEmailError("Enter a valid email address");
@@ -148,23 +166,51 @@ export function ReviewStep({
     }
   }
 
+  const [finish, setFinish] = useState<{ status: "idle" | "sending" | "sent"; error: string | null }>({
+    status: "idle",
+    error: null,
+  });
+  const who = partnerName?.trim() || "your provider";
+
+  async function handleFinish() {
+    setFinish({ status: "sending", error: null });
+    try {
+      const res = await fetch(`/api/filings/${filing.id}/client-finished`, { method: "POST" });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        setFinish({ status: "idle", error: body.error ?? `Something went wrong (${res.status}). Please try again.` });
+        return;
+      }
+      setFinish({ status: "sent", error: null });
+    } catch {
+      setFinish({ status: "idle", error: "Something went wrong. Please try again." });
+    }
+  }
+
   return (
     <div className="[container-type:inline-size]">
       <header className="border-b border-slate-200 pb-6">
         <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent">
           <Lock aria-hidden className="h-3 w-3" />
-          Last step before payment
+          {isClient ? "Last step" : "Last step before payment"}
         </p>
         <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-          Review &amp; pay
+          {isClient ? "Review" : "Review & pay"}
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
-          Confirm everything looks right. After payment we&apos;ll generate the filled PDFs and
-          email you an access link.
+          {isClient
+            ? "Confirm everything looks right."
+            : "Confirm everything looks right. After payment we'll generate the filled PDFs and email you an access link."}
         </p>
       </header>
 
-      <div className="mt-8 grid grid-cols-1 gap-10 [@container(min-width:44rem)]:grid-cols-[minmax(0,1fr)_20rem] [@container(min-width:44rem)]:gap-x-10 [@container(min-width:44rem)]:gap-y-8">
+      <div
+        className={`mt-8 grid grid-cols-1 gap-10 ${
+          isClient
+            ? ""
+            : "[@container(min-width:44rem)]:grid-cols-[minmax(0,1fr)_20rem] [@container(min-width:44rem)]:gap-x-10 [@container(min-width:44rem)]:gap-y-8"
+        }`}
+      >
         <div className="min-w-0 space-y-10">
           <section aria-labelledby="review-details-title">
             <SectionHeading id="review-details-title" icon={FileText} title="Filing details" />
@@ -190,7 +236,7 @@ export function ReviewStep({
             </div>
           </section>
 
-          {!isTestFiling && (
+          {!isTestFiling && !isClient && (
             <section aria-labelledby="review-turnaround-title">
               <SectionHeading
                 id="review-turnaround-title"
@@ -220,6 +266,7 @@ export function ReviewStep({
             </section>
           )}
 
+          {!isClient && (
           <section aria-labelledby="review-delivery-title">
             <SectionHeading id="review-delivery-title" icon={Send} title="Delivery to the IRS" />
             <p className="mt-4 rounded-xl border border-paper-edge bg-paper p-4 text-sm leading-relaxed text-slate-700">
@@ -228,8 +275,52 @@ export function ReviewStep({
               included on every plan — no separate fee.
             </p>
           </section>
+          )}
         </div>
 
+        {isClient ? (
+          <section
+            aria-labelledby="review-handoff-title"
+            className="rounded-xl border border-paper-edge bg-paper p-6"
+          >
+            <h3 id="review-handoff-title" className="font-serif text-xl font-semibold text-ink">
+              That&apos;s everything
+            </h3>
+            {finish.status === "sent" ? (
+              <p role="status" className="mt-2 text-sm leading-relaxed text-slate-700">
+                Sent. {who} has been notified. You can close this page.
+              </p>
+            ) : (
+              <>
+                <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                  Send it to {who}. They&apos;ll review it and take it from here.
+                </p>
+                <Button
+                  type="button"
+                  size="lg"
+                  onClick={handleFinish}
+                  disabled={finish.status === "sending" || saving}
+                  aria-busy={finish.status === "sending"}
+                  className="mt-4 h-12 w-full text-base"
+                >
+                  {finish.status === "sending" ? (
+                    <>
+                      <Loader2 aria-hidden className="mr-2 h-4 w-4 animate-spin" />
+                      Sending…
+                    </>
+                  ) : (
+                    `Finish and send to ${who}`
+                  )}
+                </Button>
+                {finish.error && (
+                  <p role="alert" className="mt-3 text-sm text-red-600">
+                    {finish.error}
+                  </p>
+                )}
+              </>
+            )}
+          </section>
+        ) : (
         <aside
           aria-label="Order summary and payment"
           className="[@container(min-width:44rem)]:sticky [@container(min-width:44rem)]:top-6 [@container(min-width:44rem)]:col-start-2 [@container(min-width:44rem)]:row-span-2 [@container(min-width:44rem)]:row-start-1 [@container(min-width:44rem)]:self-start"
@@ -244,20 +335,26 @@ export function ReviewStep({
             total={total}
             dueNow={dueNow}
           >
-            <Field
-              label="Email address"
-              hint="We send your filing receipt and an access link to this address."
-              error={emailError ?? undefined}
-            >
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                autoComplete="email"
-                className="h-11 aria-[invalid=true]:border-red-400 aria-[invalid=true]:focus:border-red-500 aria-[invalid=true]:focus:ring-red-500"
-              />
-            </Field>
+            {isPartner ? (
+              <p className="text-sm text-slate-600">
+                The receipt goes to your partner account email.
+              </p>
+            ) : (
+              <Field
+                label="Email address"
+                hint="We send your filing receipt and an access link to this address."
+                error={emailError ?? undefined}
+              >
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  className="h-11 aria-[invalid=true]:border-red-400 aria-[invalid=true]:focus:border-red-500 aria-[invalid=true]:focus:ring-red-500"
+                />
+              </Field>
+            )}
             {/* Blocked while a tier switch is in flight: checkout prices off the
                 stored filing.tier, so paying mid-PATCH could charge the plan the
                 customer just switched away from. */}
@@ -283,8 +380,9 @@ export function ReviewStep({
             </Button>
           </OrderSummary>
         </aside>
+        )}
 
-        <div className="[@container(min-width:44rem)]:col-start-1 [@container(min-width:44rem)]:row-start-2">
+        <div className={isClient ? "" : "[@container(min-width:44rem)]:col-start-1 [@container(min-width:44rem)]:row-start-2"}>
           <Button type="button" variant="outline" onClick={onBack} className="h-11">
             <ArrowLeft aria-hidden className="mr-1.5 h-4 w-4" />
             Back
