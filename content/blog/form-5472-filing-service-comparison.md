@@ -1,6 +1,7 @@
 ---
-title: "Form 5472 Filing Services Compared: $79, {{price.standard}} or $547?"
-description: "Form 5472 filing compared: $79 AI review, {{price.standard}} with a tax accountant, or $448-$547 advertised as CPA-prepared. Prices checked 24 Oct 2026."
+title: "Form 5472 Filing Services Compared: $79 to $1,500"
+seoTitle: "Form 5472 Filing Services Compared"
+description: "Five Form 5472 filing services from $79 to $1,500 a year, compared on price and on who reviews the filing. Figures from each provider's own page."
 date: 2026-10-24
 updated: 2026-10-24
 author: "Form5472 Prep"
@@ -8,25 +9,27 @@ tags: ["form-5472", "pricing", "cost", "comparison", "foreign-owned-llc"]
 draft: false
 ---
 
-**Three ways to file Form 5472 for a foreign-owned US LLC, checked 24 October 2026: Snapfile at $79, where an AI system reviews the filing; Form5472 Prep at {{price.standard}}, where a tax accountant holding an IRS PTIN reviews it; and form5472.online at $448 to $547, which its page describes as CPA-prepared. Take the $79 tier for one straightforward year, and pay for a human review when the facts are not simple.**
+**Five ways to file Form 5472 for a foreign-owned US LLC: Snapfile at $79 with an AI system review; Form5472 Prep at {{price.standard}} with a tax accountant holding an IRS PTIN; form5472.online at $448 to $547, advertised as CPA-prepared; and formation bundles, Firstbase at $899 and doola at $1,500. Pay for a human review when the facts are not simple.**
 
-Every figure below was read off the provider's own page on 24 October 2026. Two of the three services are ours — Snapfile and Form5472 Prep are the same team — stated in the table and again further down, because a three-way comparison is worth nothing if you cannot tell which rows the author owns. If you already want a tax accountant on the filing, [start your filing](/start); our plans are on [pricing](/pricing).
+Every figure below was read off the provider's own page, on the date given under the table. Two of the five services are ours — Snapfile and Form5472 Prep are the same team — stated in the table and again further down, because a comparison is worth nothing if you cannot tell which rows the author owns. If you already want a tax accountant on the filing, [start your filing](/start); our plans are on [pricing](/pricing).
 
-For the wider field — a dated survey of filing services, software and formation-provider bundles — see [our comparison guides](/compare). This post is narrower: three services, one recommendation.
+For the wider field — a dated survey of filing services, software and formation-provider bundles — see [our comparison guides](/compare). This post is narrower: the five services most buyers actually weigh, and one recommendation.
 
-## What do the three Form 5472 filing services cost?
+## What do the five Form 5472 filing services cost?
 
 | Service | Price, one tax year | What's included | Who reviews it | Turnaround | Best for |
 |---|---|---|---|---|---|
 | **Snapfile** — AI review. Ours: snapfile.tax states that its human-review tier is "Offered and fulfilled by Form5472Prep.com." | **$79** one-time; additional past tax year **+$69** | Form 5472 and the required pro forma Form 1120 from your answers, reasonable-cause statement when needed, online signature, fax delivery to the IRS Ogden PIN Unit, timestamped receipt, automatic retry if the first fax fails, optional annual reminders | "AI system review for completeness and consistency". Snapfile's page states that this option "does not include a human tax professional" | Not published | One straightforward year, if you are content with an AI system review |
 | **Form5472 Prep** (this site) | **{{price.standard}}** Standard, **{{price.express}}** Express; additional past tax year **+{{price.additionalYear}}** | Form 5472 and the pro forma Form 1120 prepared, reasonable-cause letter for late filings, online signature, IRS Ogden fax delivery and timestamped receipt on both plans, next-year reminder | A tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), before submission | Standard: 5-7 business days. Express: ready for you to check and sign within 24 hours, 7 days a week | Catch-up years, a close deadline, or anyone wanting a person's judgement on the review |
 | **form5472.online** | **$399**, plus **$49** for "IRS submission + confirmation": "Total if filed with the IRS: $448 (All-In)", and "With reportable activity: $547 (All-In Active)" | Form 5472 and the pro forma Form 1120, headed "FORM 5472 — CPA PREPARED & FILED" | Its page states "CPA-prepared, reviewed & signed" by a "U.S.-licensed CPA (verified)" | Not stated in the figures quoted here | A buyer who specifically wants what that page describes, a CPA's preparation and signature |
+| **Firstbase** | **$899** a year | Its Tax Filing package for a non-US-owned single-member LLC lists Forms 5472, the pro forma Form 1120, 1099s and an extension | Its page describes a "full-service process by dedicated tax experts" | Not published | An owner who already uses Firstbase and wants the annual bundle in one place |
+| **doola** | **$1,500** a year for the standalone Tax Filing-only service; its Tax and Compliance plan is listed at **$1,999** a year plus state fees | Help centre: the standalone service "covers your federal tax filings, including Form 5472 and the accompanying pro forma Form 1120". Its help centre states these forms are submitted by mail or fax | Its pricing page refers to "our in-house tax and CPA teams" | Not published | An owner buying a whole compliance subscription, not a single filing |
 
-Prices checked 24 October 2026 on each provider's own page: [snapfile.tax/pricing](https://snapfile.tax/pricing), and the form5472.online home page. Prices change, so read the provider's own page before you buy.
+Prices checked 24 October 2026 on each provider's own page for [snapfile.tax/pricing](https://snapfile.tax/pricing) and the form5472.online home page; the Firstbase and doola figures were checked on 15 October 2026 for our [filing-service comparison page](/compare), which carries the full survey and the source quotes. Prices change, so read the provider's own page before you buy.
 
 To see more providers side by side, [compare Form 5472 filing services](/compare/form-5472-filing-services) in our full sourced price table.
 
-What is striking is how little the price changes the output. All three produce the same statutory package, because the IRS prescribes it: Form 5472 attached to a pro forma Form 1120. What changes across the $79 to $547 span is who looks at it first.
+What is striking is how little the price changes the output. All five produce the same statutory package, because the IRS prescribes it: Form 5472 attached to a pro forma Form 1120. What changes across the $79 to $1,500 span is who looks at it first — and, at the top end, how much else is bundled with it.
 
 ## Who reviews the filing at each price?
 
@@ -36,7 +39,13 @@ At **$79**, Snapfile's page offers an "AI system review for completeness and con
 
 At **{{price.standard}}**, a tax accountant who holds an IRS PTIN reviews the package before submission, deciding whether what you described belongs where you put it. Form5472 Prep is not a CPA firm and does not give tax advice.
 
-At **$448 to $547**, form5472.online's page states the return is "CPA-prepared, reviewed & signed" by a "U.S.-licensed CPA (verified)". We make no claim about their quality and have not used their service, and we have not verified those credentials — what follows is what their page says it offers.
+At **$448 to $547**, form5472.online's page states the return is "CPA-prepared, reviewed & signed" by a "U.S.-licensed CPA (verified)". We make no claim about their quality and have not used their service, and we have not verified those credentials — what the table above reports is what their page says it offers.
+
+At $899 and $1,500 a year, Firstbase's page describes a "full-service process by dedicated tax experts" and doola's pricing page refers to "our in-house tax and CPA teams" — their own words, for bundles that cover more than this one filing.
+
+## Why are Firstbase and doola so much more expensive?
+
+Because they are not selling the same thing. Firstbase at $899 a year, and doola at $1,500 a year for its standalone tax filing (its Tax and Compliance plan is listed at $1,999 a year plus state fees), are **annual compliance subscriptions from formation providers**. They are bought by owners who already run the company through that platform and want registered agent, bookkeeping and filings on one invoice. Judged as a bundle, that may be fair value; judged as a single Form 5472, it is the dearest way to buy one. If your LLC was set up through a formation service, [who files your Form 5472 after Stripe Atlas, doola or Firstbase](/blog/stripe-atlas-doola-firstbase-form-5472) covers what each plan does and does not include.
 
 ## When is the $79 AI-reviewed filing the right choice?
 
@@ -56,7 +65,7 @@ One thing, plus three options the cheaper tier does not offer at any price. Be c
 
 **The pieces that are missing.** If the LLC has no EIN, that is {{price.ein}}; if the owner needs an ITIN, {{price.itin}}. Firms filing for several clients can use a partner account.
 
-What that list is not is "cheapest". Snapfile at $79 undercuts us and you can verify it in one click. We think {{price.standard}} is the best value of the three — a human review at roughly a third of form5472.online's all-in price — which is a different claim from being the lowest number on the page.
+What that list is not is "cheapest". Snapfile at $79 undercuts us and you can verify it in one click. We think {{price.standard}} is the best value of the five — a human review at roughly a third of form5472.online's all-in price, and a fraction of the annual bundles — which is a different claim from being the lowest number on the page.
 
 ## Do you need a CPA to file Form 5472?
 
@@ -93,13 +102,13 @@ Two constraints apply whoever prepares it. A foreign-owned disregarded entity ca
 
 Yes — and it is worth saying twice. Snapfile is ours. Its $79 tier is Snapfile's own AI-reviewed workflow, operated by Horizons Furness LLC; its human-review tier at {{price.standard}} is this service, and snapfile.tax says so in its own words: "Offered and fulfilled by Form5472Prep.com. You'll continue on their website."
 
-Snapfile's page frames the choice as we have: "Choose Snapfile for fast preparation with an AI system review, or continue to Form5472Prep.com when you want a tax accountant to review the filing." Two of the three rows are therefore ours, which is why the $79 recommendation above is a recommendation rather than a concession. Only form5472.online is unrelated, and every figure and claim attributed to it is quoted from its own page.
+Snapfile's page frames the choice as we have: "Choose Snapfile for fast preparation with an AI system review, or continue to Form5472Prep.com when you want a tax accountant to review the filing." Two of the five rows are therefore ours, which is why the $79 recommendation above is a recommendation rather than a concession. form5472.online, Firstbase and doola are unrelated to us, and every figure and claim attributed to them is quoted from their own pages.
 
 ## Frequently asked questions
 
-### What is the cheapest of these three Form 5472 services?
+### What is the cheapest of these five Form 5472 services?
 
-Snapfile's $79 AI-reviewed filing, checked 24 October 2026 — the lowest published price of the three for one tax year. Preparing the free IRS forms yourself costs nothing but your time and your own fax or postage.
+Snapfile's $79 AI-reviewed filing, checked 24 October 2026 — the lowest published price of the five for one tax year. Preparing the free IRS forms yourself costs nothing but your time and your own fax or postage.
 
 ### Is a CPA required to file Form 5472?
 
@@ -117,6 +126,10 @@ Yes. Snapfile is ours. Its $79 tier is Snapfile's own AI-reviewed workflow, oper
 
 Its page lists $399, plus $49 for "IRS submission + confirmation", stated as "Total if filed with the IRS: $448 (All-In)" and "With reportable activity: $547 (All-In Active)", read off its page on 24 October 2026.
 
+### What do doola and Firstbase charge for Form 5472?
+
+Neither sells it alone. doola lists $1,500 a year for its standalone Tax Filing-only service and $1,999 a year plus state fees for its Tax and Compliance plan; Firstbase lists $899 a year for the Tax Filing package covering a non-US-owned single-member LLC. Both are annual subscriptions that include more than this filing, checked 15 October 2026.
+
 ### Can a foreign-owned LLC file Form 5472 electronically?
 
 No. A foreign-owned disregarded entity cannot file Form 5472 electronically. The pro forma Form 1120 with Form 5472 attached goes by fax at 300 DPI or higher to 855-887-7737, or by mail to the IRS PIN Unit in Ogden, Utah.
@@ -127,8 +140,8 @@ No. A timestamped transmission receipt shows that the package was sent and when.
 
 ## The bottom line
 
-One straightforward year and organised records: take the $79 AI-reviewed filing. A missed year, an owner loan you cannot confidently describe, a close deadline, or a preference for a person's judgement on the classification: the {{price.standard}} human review is the better value, and [you can start it here](/start). The CPA-signed service its page describes is priced at $448 to $547, but the form does not require the credential — and if what you need is representation before the IRS, buy that from an enrolled agent, CPA or attorney, not from a filing fee.
+One straightforward year and organised records: take the $79 AI-reviewed filing. A missed year, an owner loan you cannot confidently describe, a close deadline, or a preference for a person's judgement on the classification: the {{price.standard}} human review is the better value, and [you can start it here](/start). The CPA-signed service its page describes is priced at $448 to $547, and the formation-provider bundles run $899 to $1,500 a year for far more than this filing — but the form does not require the credential — and if what you need is representation before the IRS, buy that from an enrolled agent, CPA or attorney, not from a filing fee.
 
-The $25,000 penalty is why any of this is worth comparing. The IRS assesses it on a reporting corporation that fails to file Form 5472 when due and in the manner prescribed; a substantially incomplete form counts as a failure to file; and if the failure continues more than 90 days after IRS notification, a further $25,000 applies per related party per 30-day period. Against that, the gap between $79 and $547 is small.
+The $25,000 penalty is why any of this is worth comparing. The IRS assesses it on a reporting corporation that fails to file Form 5472 when due and in the manner prescribed; a substantially incomplete form counts as a failure to file; and if the failure continues more than 90 days after IRS notification, a further $25,000 applies per related party per 30-day period. Against that, the gap between $79 and $1,500 is small.
 
 *Educational content only; not tax or legal advice.*
