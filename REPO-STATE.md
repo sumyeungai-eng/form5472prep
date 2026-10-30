@@ -236,3 +236,4 @@ Claude and Codex sessions share these folders. Practical rules:
 - `docs/sessions/2026-10-26-moz-reread-and-fixes.md` — Moz/GSC re-read + fixes: paginated pages noindex, money-page links, brand-fact capsules (cost/not automated/Snapfile), RSC payloads noindex; external-canonical watch.
 - `docs/sessions/2026-10-26-seo-pagination-and-money-links.md` — pagination noindex,follow, duplicate topic hubs, exact-anchor money links.
 - `docs/sessions/2026-10-26-geo-correct-facts.md` — BRAND_CAPSULES on home/pricing/about/faq + llms.
+- `docs/sessions/2026-10-30-moz-reread-and-plan.md` — Moz re-read + 281-page audit + improvement plan `docs/seo/plan-2026-10-30-improvement.md`.
