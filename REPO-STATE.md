@@ -237,3 +237,7 @@ Claude and Codex sessions share these folders. Practical rules:
 - `docs/sessions/2026-10-26-seo-pagination-and-money-links.md` — pagination noindex,follow, duplicate topic hubs, exact-anchor money links.
 - `docs/sessions/2026-10-26-geo-correct-facts.md` — BRAND_CAPSULES on home/pricing/about/faq + llms.
 - `docs/sessions/2026-10-30-moz-reread-and-plan.md` — Moz re-read + 281-page audit + improvement plan `docs/seo/plan-2026-10-30-improvement.md`.
+- `docs/sessions/2026-10-30-fix-all-integration.md` — plan P0+P1: protected rankings, country hub, orphans, PTIN/7004/partner copy, FAQ/HowTo schema, RCS wording, no outcome claims.
+- `docs/sessions/2026-10-30-blog-links-country-hub.md` — /form-5472-by-country, related-posts series-first, orphan links.
+- `docs/sessions/2026-10-30-money-pages-ptin-7004.md` — PTIN statement on service pages, 7004 capsules, live white-label offer copy.
+- `docs/sessions/2026-10-30-guides-aeo-structure.md` — FAQ h3 markup, online-filer ban, how-to steps + HowTo schema.

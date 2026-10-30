@@ -1055,7 +1055,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you handle multi-year catch-up for a Wyoming LLC?",
-        body: `If you formed your Wyoming LLC in 2022 and just learned about Form 5472, you may have 2-3 unfiled years (2022, 2023, 2024). The IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up path:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement for each late year.\n• Submit via fax to +1-855-887-7737.\n• If accepted, no penalty assessed.\n\nOur multi-year DIIRSP packages:\n• 2-year catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included).\n• 3-year catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included).\n\nWe write the reasonable cause statement from the facts you give us, and you check it before you sign. Every package is reviewed by a tax accountant on our team who holds an IRS PTIN before we fax it.`,
+        body: `If you formed your Wyoming LLC in 2022 and just learned about Form 5472, you may have 2-3 unfiled years (2022, 2023, 2024). The IRS provides DIIRSP (Delinquent International Information Return Submission Procedure) as the standard catch-up path:\n\n• File all missed years together as one package.\n• Include a Reasonable Cause Statement for each late year.\n• Submit via fax to +1-855-887-7737.\n• Penalties may still be assessed; the IRS decides reasonable cause based on your facts.\n\nOur multi-year DIIRSP packages:\n• 2-year catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included).\n• 3-year catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included).\n\nWe write the reasonable cause statement from the facts you give us, and you check it before you sign. Every package is reviewed by a tax accountant on our team who holds an IRS PTIN before we fax it.`,
       },
       {
         heading: "What does our service do for Wyoming LLC owners?",
@@ -1285,7 +1285,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you handle multi-year catch-up as a German owner?",
-        body: `The DIIRSP catch-up path is to file all missed years together with one Reasonable Cause Statement covering the full period.\n\n• 2-year DIIRSP catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included).\n• 3-year DIIRSP catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included).\n\nWe write the reasonable cause statement from the facts you give us, and you check it before you sign. A tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews every package before it's faxed to the IRS.`,
+        body: `The DIIRSP catch-up path is to file all missed years together with a Reasonable Cause Statement for each late year, describing the relevant facts.\n\n• 2-year DIIRSP catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included).\n• 3-year DIIRSP catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included).\n\nWe write the reasonable cause statement from the facts you give us, and you check it before you sign. A tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews every package before it's faxed to the IRS.`,
       },
       {
         heading: "What is the bottom line for German-resident LLC owners?",
@@ -1381,7 +1381,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you handle multi-year catch-up as a UAE owner?",
-        body: `The DIIRSP catch-up path is to file all missed years together with one Reasonable Cause Statement covering the full period.\n\n• 2-year DIIRSP catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included).\n• 3-year DIIRSP catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included).\n\nWe write the reasonable cause statement from the facts you give us, and you check it before you sign. A tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews every package before it's faxed to the IRS.`,
+        body: `The DIIRSP catch-up path is to file all missed years together with a Reasonable Cause Statement for each late year, describing the relevant facts.\n\n• 2-year DIIRSP catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included).\n• 3-year DIIRSP catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included).\n\nWe write the reasonable cause statement from the facts you give us, and you check it before you sign. A tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews every package before it's faxed to the IRS.`,
       },
       {
         heading: "What is the bottom line for UAE-resident LLC owners?",
@@ -2522,7 +2522,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Bottom line",
-        body: `A Reasonable Cause Statement is the single most important document in a DIIRSP catch-up filing. Done well, it can save you tens of thousands of dollars in penalties. Done poorly, the IRS assesses $25,000 per form per year automatically.\n\nThe winning formula: specific facts, clear timeline, prompt corrective action, concise length, no vague excuses or boilerplate.\n\nOur DIIRSP packages include a Reasonable Cause Statement for each late year: we write it from the facts you give us; a tax accountant who holds an IRS PTIN reviews it, and you check it before you sign.\n\n• 2-year DIIRSP catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3-year DIIRSP catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.`,
+        body: `A Reasonable Cause Statement is the single most important document in a DIIRSP catch-up filing. Done well, it can save you tens of thousands of dollars in penalties. Penalties ($25,000 per form per year) may still be assessed during processing, regardless of the attached statement, in which case you respond to the IRS notice.\n\nThe winning formula: specific facts, clear timeline, prompt corrective action, concise length, no vague excuses or boilerplate.\n\nOur DIIRSP packages include a Reasonable Cause Statement for each late year: we write it from the facts you give us; a tax accountant who holds an IRS PTIN reviews it, and you check it before you sign.\n\n• 2-year DIIRSP catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3-year DIIRSP catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.`,
       },
     ],
     faqs: [
