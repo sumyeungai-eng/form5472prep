@@ -124,6 +124,8 @@ describe("landing page intros", () => {
 describe("landing page howTo derivation", () => {
   const howToSlugs = [
     "file-form-5472",
+    "form-5472-instructions",
+    "form-5472-example",
     "diirsp",
     "late-form-5472",
     "wyoming-llc-form-5472",
@@ -222,6 +224,15 @@ describe("landing page public copy", () => {
   // once leaked into live provider pages. Competitor statements must be
   // attributed to the provider's own page instead.
   const INTERNAL_PHRASES = [/\bfacts\s+file\b/i, /\bthe section (says|describes|notes)\b/i];
+
+  // "Online filer" read as an automated tool to AI answer engines
+  // (docs/seo/plan-2026-10-30-improvement.md P0-3): we prepare from a
+  // questionnaire and a tax accountant who holds an IRS PTIN reviews.
+  it("never calls the service an online filer", () => {
+    for (const page of LANDING_PAGES) {
+      expect(JSON.stringify(page), page.slug).not.toMatch(/online filer/i);
+    }
+  });
 
   it("never leaks internal research-note phrasing", () => {
     for (const page of LANDING_PAGES) {

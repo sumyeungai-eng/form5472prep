@@ -46,18 +46,20 @@ describe("landing body parsing", () => {
     expect(count).toBeGreaterThan(200);
   });
 
-  it("parses the file-form-5472 step-by-step section as one ordered list", () => {
+  it("parses the file-form-5472 step-by-step section as a lead plus one ordered list", () => {
     const page = LANDING_PAGES.find((landingPage) => landingPage.slug === "file-form-5472");
     expect(page).toBeDefined();
 
-    const section = page?.sections[2];
+    // Numbered steps lead the page (plan-2026-10-30 P1-4).
+    const section = page?.sections[0];
     expect(section?.heading).toBe("How do you file Form 5472 step by step?");
 
     const blocks = parseLandingBody(section?.body ?? "");
 
-    expect(blocks).toHaveLength(1);
-    expect(blocks[0]?.type).toBe("ol");
-    const items = blocks[0]?.type === "ol" ? blocks[0].items : [];
+    expect(blocks).toHaveLength(2);
+    expect(blocks[0]?.type).toBe("p");
+    expect(blocks[1]?.type).toBe("ol");
+    const items = blocks[1]?.type === "ol" ? blocks[1].items : [];
     expect(items).toHaveLength(8);
     expect(items[0]).toMatch(/^Gather your LLC info/);
   });

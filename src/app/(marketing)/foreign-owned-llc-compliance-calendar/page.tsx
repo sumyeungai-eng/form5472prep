@@ -328,8 +328,8 @@ export default function ComplianceCalendarPage() {
             {CALENDAR_FAQS.map((faq) => (
               <details key={faq.q} className="group rounded-lg border border-slate-200 bg-white p-4 open:bg-slate-50">
                 <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm font-semibold text-slate-900">
-                  {faq.q}
-                  <span className="ml-4 text-slate-400 transition group-open:rotate-180">▾</span>
+                  <h3>{faq.q}</h3>
+                  <span aria-hidden className="ml-4 text-slate-400 transition group-open:rotate-180">▾</span>
                 </summary>
                 <p className="mt-3 text-sm leading-relaxed text-slate-700">{faq.a}</p>
               </details>
@@ -359,7 +359,7 @@ function FinalCta() {
           Take the federal deadline off your list.
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
-          We prepare your Form 5472 and pro forma Form 1120, have it reviewed, and fax it to the IRS — from{" "}
+          Form5472 Prep prepares your Form 5472 and pro forma Form 1120, has it reviewed, and faxes it to the IRS — from{" "}
           {formatPrice(TIERS.standard.priceCents)}.
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

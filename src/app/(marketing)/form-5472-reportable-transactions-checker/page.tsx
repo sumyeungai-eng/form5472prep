@@ -326,8 +326,8 @@ function Faq() {
           {TX_CHECKER_FAQS.map(({ q, a }) => (
             <details key={q} className="group rounded-xl border border-slate-200 bg-white p-5">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-slate-900">
-                {q}
-                <span className="text-accent transition-transform group-open:rotate-45">+</span>
+                <h3>{q}</h3>
+                <span aria-hidden className="text-accent transition-transform group-open:rotate-45">+</span>
               </summary>
               <p className="mt-3 text-sm leading-relaxed text-slate-600">{a}</p>
             </details>
@@ -349,8 +349,8 @@ function FinalCta({ ctaLabel }: { ctaLabel: string }) {
           We report all of these for you
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-accent-100">
-          Tell us what moved between you and your LLC. We prepare Form 5472 and the pro forma Form
-          1120, including the attached statements, and fax the package to the IRS.
+          Tell us what moved between you and your LLC. Form5472 Prep prepares Form 5472 and the pro forma
+          Form 1120, including the attached statements, and faxes the package to the IRS.
         </p>
         <Link
           href={CTA_HREF}

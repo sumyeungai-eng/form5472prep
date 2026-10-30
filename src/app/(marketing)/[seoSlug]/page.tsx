@@ -171,6 +171,13 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
   if (!page) notFound();
   const derived = deriveHowTo(page);
   const headingIds = headingIdsFor(page.sections);
+  const reviewed = page.updated ?? CONTENT_LAST_REVIEWED;
+  const reviewedLabel = new Date(reviewed).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+  const updatedLine = (
+    <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.15em] text-slate-400">
+      Updated <time dateTime={reviewed}>{reviewedLabel}</time>
+    </p>
+  );
 
   // Topic-cluster-derived related pages — see TOPIC_CLUSTERS in
   // landing-pages.ts. Honours page.relatedSlugs[] overrides, falls back to
@@ -234,6 +241,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                   and ChatGPT direct answers, so page.intro is written as a
                   definitional / direct-answer paragraph. */}
               <p className="lead mt-6 text-lg leading-relaxed text-slate-300">{page.intro}</p>
+              {updatedLine}
               </div>
               <HeroRailCta startUrl={startUrl} />
             </div>
@@ -252,6 +260,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                   and ChatGPT direct answers, so page.intro is written as a
                   definitional / direct-answer paragraph. */}
               <p className="lead mt-6 text-lg leading-relaxed text-slate-300">{page.intro}</p>
+              {updatedLine}
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <Link href={startUrl} className="group">
                   <Button size="lg" className="shadow-lg shadow-accent/25 transition-all duration-200 hover:-translate-y-0.5">
@@ -396,7 +405,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                   Official sources
                 </h2>
                 <p className="mt-2 text-xs text-slate-500">
-                  Last reviewed {new Date(page.updated ?? CONTENT_LAST_REVIEWED).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" })}
+                  Last reviewed {reviewedLabel}
                 </p>
                 <ul className="mt-5 space-y-3 text-sm">
                   {page.sources.map((source) => (
@@ -428,7 +437,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
             <p className="mt-3 text-slate-600 max-w-xl mx-auto">
               {promoPricing ? (
                 <>
-                  We prepare every form, a tax accountant who holds an IRS PTIN reviews it, you sign one PDF, and we fax it to the IRS Ogden PIN Unit.{" "}
+                  Form5472 Prep prepares every form, a tax accountant who holds an IRS PTIN reviews it, you sign one PDF, and we fax it to the IRS Ogden PIN Unit.{" "}
                   <span className="line-through text-slate-400">
                     {formatPrice(TIERS.standard.priceCents)}
                   </span>{" "}
@@ -439,7 +448,7 @@ export default function SeoLandingPage({ params }: { params: { seoSlug: string }
                 </>
               ) : (
                 <>
-                  We prepare every form, a tax accountant who holds an IRS PTIN reviews it, you sign one PDF, and we fax it to the IRS Ogden PIN Unit.
+                  Form5472 Prep prepares every form, a tax accountant who holds an IRS PTIN reviews it, you sign one PDF, and we fax it to the IRS Ogden PIN Unit.
                   Starting at {formatPrice(TIERS.standard.priceCents)}. IRS fax delivery included on every plan.
                 </>
               )}
@@ -607,7 +616,7 @@ function HeroRailCta({ startUrl }: { startUrl: string }) {
         File in 15 minutes.
       </p>
       <p className="mt-2 text-sm text-slate-600">
-        We generate, you sign, we fax to the IRS.
+        We prepare, a tax accountant reviews, you sign, we fax.
       </p>
       <Link href={startUrl} className="mt-5 block group">
         {/* Bigger CTA than the default `lg` size — wider, taller, larger
@@ -785,6 +794,11 @@ function PricingSection({
   );
 }
 
+// JSON-LD carries the text a reader sees: link labels, not [label](/path).
+function plainText(text: string): string {
+  return text.replace(INLINE_LINK_RE, "$1");
+}
+
 function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof getLandingPage>> }) {
   const url = `${SITE_URL}/${page.slug}`;
   const article = {
@@ -823,7 +837,7 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
     mainEntity: page.faqs.map((f) => ({
       "@type": "Question",
       name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
+      acceptedAnswer: { "@type": "Answer", text: plainText(f.a) },
     })),
   };
   const breadcrumb = {
@@ -840,7 +854,7 @@ function ArticleStructuredData({ page }: { page: NonNullable<ReturnType<typeof g
         name: page.h1,
         description: page.metaDescription,
         url,
-        steps: derived.steps,
+        steps: derived.steps.map((step) => ({ ...step, name: plainText(step.name), text: plainText(step.text) })),
         tools: derived.tools,
         supplies: derived.supplies,
         totalTime: derived.totalTime,

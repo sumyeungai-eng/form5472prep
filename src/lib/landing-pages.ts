@@ -93,7 +93,7 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "how to file form 5472",
     title: "How to File IRS Form 5472 (2026 Step-by-Step Guide)",
     metaDescription:
-      "Step-by-step guide to filing IRS Form 5472 with pro forma Form 1120 for foreign-owned US LLCs. Avoid the $25,000 penalty. File online in 15 minutes.",
+      "Step-by-step guide to filing IRS Form 5472 with a pro forma Form 1120 for foreign-owned US LLCs: what to prepare, where to fax it, and the $25,000 penalty.",
     sources: [
       { label: "IRS: About Form 5472", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
@@ -101,10 +101,10 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
     published: "2026-05-19",
-    updated: "2026-10-15",
+    updated: "2026-10-30",
     h1: "How to File IRS Form 5472",
     intro:
-      `Foreign-owned US single-member LLCs must file Form 5472 with an attached pro forma Form 1120 by April 15 each year. The IRS accepts the annual package by mail or fax to the Ogden PIN Unit at +1-855-887-7737, and our 15-minute online filer starts from ${PRICE_STD}.`,
+      `Foreign-owned US single-member LLCs file Form 5472 attached to a pro forma Form 1120 by April 15 each year, by fax or mail to the IRS Ogden PIN Unit; it cannot be e-filed. Form5472 Prep prepares the package from a 15-minute questionnaire, a tax accountant who holds an IRS PTIN reviews it, and we fax it, from ${PRICE_STD}.`,
     howTo: {
       section: "How do you file Form 5472 step by step?",
       supplies: [
@@ -117,16 +117,16 @@ export const LANDING_PAGES: LandingPage[] = [
     },
     sections: [
       {
+        heading: "How do you file Form 5472 step by step?",
+        body: `File Form 5472 by attaching it to a pro forma Form 1120 and faxing or mailing the package to the IRS Ogden PIN Unit by the Form 1120 due date; a foreign-owned LLC cannot e-file it. For each line, see the [Form 5472 instructions](/form-5472-instructions) and a [completed Form 5472 example](/form-5472-example).\n\n1. Gather your LLC info: legal name as registered with the state, EIN, US address, date of formation, country of incorporation (US), state of incorporation, NAICS / principal business activity code.\n2. Gather your owner info: full legal name as on passport, foreign tax ID (FTIN) or self-assigned Reference ID, residential address abroad, country of citizenship, country of tax residence, country of organization of any related foreign entities.\n3. Add up year-end financials: capital contributions in, distributions out, total assets at year-end (in USD), and a list of every transaction between the LLC and any related party.\n4. Fill in Form 1120: name, address, item B (EIN) and applicable item E boxes, as the special DE instructions require. Leave income and tax sections blank. Stamp or type \"Foreign-Owned U.S. DE\" across the top margin.\n5. Fill in Form 5472: Part I (the LLC, with line 3 checked as a foreign-owned U.S. DE), Part II (25% foreign shareholder), Part III (related party), Part IV (monetary transactions), Part V (contributions, distributions and other DE transactions), Part VII (additional-information questions every filer answers).\n6. Build the Part V supporting statement: one line per reportable transaction with date, amount, related party, and nature.\n7. Have the authorized person sign the completed pro forma 1120 in ink, then scan that signed page for fax, as a conservative workflow. Form 5472 has no signature block; [electronic-signature rules depend on the document and route](/blog/form-5472-pro-forma-1120-signature).\n8. Fax the package to the IRS: send the complete package at 300 DPI or higher to ${IRS_OGDEN_FAX} (IRS Ogden PIN Unit), or mail it to the Ogden address in the IRS instructions. Keep the fax confirmation receipt — it is your transmission evidence.`,
+      },
+      {
         heading: "Who has to file Form 5472?",
         body: "You must file Form 5472 if all three are true:\n\n1. You own a single-member US LLC (Wyoming, Delaware, New Mexico, Florida, or any state).\n2. You are NOT a US person — meaning you are not a US citizen, green card holder, or US tax resident.\n3. Your LLC had at least one reportable transaction during the year (capital contributions in, distributions out, payments to or from the owner, loans, or any related-party transaction).\n\nEven if your LLC had zero revenue, you still have to file. Capital contributions and distributions count as reportable transactions — and almost every foreign-owned LLC has at least one. The seed money you wired in to open the bank account counts. A reimbursement you took out for a business expense counts. A payment from the LLC to a company you also own counts.\n\nIn practice, every active foreign-owned single-member LLC files Form 5472 every year. The only realistic exception is an LLC that has been totally dormant — no bank account, no money in or out, no contracts signed.",
       },
       {
         heading: "What forms do you actually file?",
         body: "You file Form 5472 by attaching it to a pro forma Form 1120 (US Corporation Income Tax Return) as the cover. The 1120 is \"pro forma,\" meaning you don't fill in most of it. You only complete the entity identification section and stamp \"Foreign-Owned U.S. DE\" across the top of page 1.\n\nThe full package is:\n\n1. Cover letter identifying the filing.\n2. Pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp.\n3. Form 5472 with Parts I, II and III completed, Part IV and Part V as the year's transactions require, and the Part VII questions answered.\n4. Part V supporting statement that lists each reportable transaction in detail.\n5. Reasonable Cause Statement (only if you are filing late under DIIRSP).\n\nMissing any one of these can trigger the $25,000 penalty, even if you've technically \"filed\". The IRS treats incomplete returns the same as missing returns under IRC § 6038A.",
-      },
-      {
-        heading: "How do you file Form 5472 step by step?",
-        body: "1. Gather your LLC info: legal name as registered with the state, EIN, US address, date of formation, country of incorporation (US), state of incorporation, NAICS / principal business activity code.\n2. Gather your owner info: full legal name as on passport, foreign tax ID (FTIN) or self-assigned Reference ID, residential address abroad, country of citizenship, country of tax residence, country of organization of any related foreign entities.\n3. Add up year-end financials: capital contributions in, distributions out, total assets at year-end (in USD), and a list of every transaction between the LLC and any related party.\n4. Fill in Form 1120: name, address, item B (EIN) and applicable item E boxes, as the special DE instructions require. Leave income and tax sections blank. Stamp or type \"Foreign-Owned U.S. DE\" across the top margin.\n5. Fill in Form 5472: Part I (the LLC, with line 3 checked as a foreign-owned U.S. DE), Part II (25% foreign shareholder), Part III (related party), Part IV (monetary transactions), Part V (contributions, distributions and other DE transactions), Part VII (additional-information questions every filer answers).\n6. Build the Part V supporting statement: one line per reportable transaction with date, amount, related party, and nature.\n7. Have the authorized person sign the completed pro forma 1120 in ink, then scan that signed page for fax, as a conservative workflow. Form 5472 has no signature block; [electronic-signature rules depend on the document and route](/blog/form-5472-pro-forma-1120-signature).\n8. Fax the complete package to +1-855-887-7737 (IRS Ogden PIN Unit). Keep the fax confirmation receipt — it is your transmission evidence.",
       },
       {
         heading: "What goes on each part of Form 5472?",
@@ -180,11 +180,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Can a US CPA file Form 5472 for me?",
-        a: "Technically yes, but most US-based CPAs see this filing once or twice in their career and aren't comfortable with it. Expect $400-$800 and 1-2 weeks of back-and-forth while they research the requirements. Our service starts at $149, takes 15 minutes, and is accountant-reviewed.",
+        a: `Technically yes, but most US-based CPAs see this filing once or twice in their career and aren't comfortable with it. Expect $400-$800 and 1-2 weeks of back-and-forth while they research the requirements. Form5472 Prep starts at ${PRICE_STD}: a 15-minute questionnaire, then review by a tax accountant who holds an IRS PTIN.`,
       },
       {
         q: "Do I need a US ITIN to file?",
-        a: "No. Form 5472 accepts either a US ITIN or a foreign tax ID (FTIN). If you don't have a FTIN either (some jurisdictions don't issue them), you can use a self-assigned Reference ID. Our wizard auto-generates one for you if you leave the field blank.",
+        a: "No. Form 5472 accepts either a US ITIN or a foreign tax ID (FTIN). If you don't have a FTIN either (some jurisdictions don't issue them), you can use a self-assigned Reference ID. Our questionnaire creates one for you if you leave the field blank.",
       },
       {
         q: "What if my LLC had no transactions at all?",
@@ -211,14 +211,14 @@ export const LANDING_PAGES: LandingPage[] = [
         a: "Yes. Every package is reviewed by a PTIN-holding tax accountant on our team before we fax it. Nothing goes to the IRS on autopilot. If anything looks off, we'll reach out before submitting.",
       },
     ],
-    relatedSlugs: ["form-5472-penalty", "form-5472-instructions", "diirsp", "form-5472-deadline", "form-5472-fax-number"],
+    relatedSlugs: ["form-5472-instructions", "form-5472-example", "form-5472-penalty", "diirsp", "form-5472-deadline", "form-5472-fax-number"],
   },
   {
     slug: "form-5472-penalty",
     keyword: "form 5472 $25,000 penalty",
     title: "Form 5472 $25,000 Penalty — How to Avoid or Reduce It",
     metaDescription:
-      "The Form 5472 penalty is $25,000 under IRC §6038A(d). How to ask the IRS to remove it, what counts as reasonable cause, whether first-time abatement applies, and how to appeal.",
+      "The Form 5472 penalty is $25,000 under IRC §6038A(d). How to ask the IRS to remove it, what counts as reasonable cause, first-time abatement, and appeals.",
     sources: [
       { label: "IRS: Instructions for Form 5472", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRM 20.1.9: International penalties", url: "https://www.irs.gov/irm/part20/irm_20-001-009" },
@@ -478,25 +478,26 @@ export const LANDING_PAGES: LandingPage[] = [
     keyword: "form 5472 instructions",
     title: "Form 5472 Instructions (2026) — Plain-English Walkthrough",
     metaDescription:
-      "Form 5472 instructions (Rev. December 2024) in plain English for foreign-owned US LLCs: what to enter in each part, common mistakes, and how to file the package.",
+      "Form 5472 instructions (Rev. December 2024) in plain English for foreign-owned US LLCs: step-by-step entries for each part, common mistakes, how to file.",
     sources: [
       { label: "IRS: Instructions for Form 5472 (Rev. December 2024)", url: "https://www.irs.gov/instructions/i5472" },
       { label: "IRS: About Form 5472 (current revision)", url: "https://www.irs.gov/forms-pubs/about-form-5472" },
       { label: "Treas. Reg. §1.6038A-2", url: "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/subject-group-ECFRe4c8b1cb2ac9d43/section-1.6038A-2" },
     ],
     published: "2026-05-19",
-    updated: "2026-10-07",
+    updated: "2026-10-30",
     h1: "Form 5472 Instructions: Plain-English Walkthrough",
+    howTo: { section: "How do you fill out Form 5472 step by step?" },
     intro:
       "This guide walks through the IRS Instructions for Form 5472 (Rev. December 2024), the current revision on IRS.gov, in plain English. It explains what each part means for a foreign-owned US single-member LLC, what to enter, the mistakes that can trigger the $25,000 penalty, and how to assemble a complete filing package.",
     sections: [
       {
-        heading: "Which Form 5472 instructions apply to tax year 2025?",
-        body: "As of October 2026, IRS.gov lists the Instructions for Form 5472 (Rev. December 2024) as the current revision, for use with the December 2023 revision of Form 5472. Unless the IRS posts a newer revision, those are the versions for tax year 2025 returns filed in 2026.\n\nThe What's New section of the December 2024 revision has one change: the joint-return exception in the definition of foreign person now cites Code sections 6013(g) and (h). The rules a foreign-owned US disregarded entity relies on — the pro forma Form 1120, the dedicated fax and mailing route, and no e-filing — sit under When and Where To File.\n\nTo see the instructions applied to a filled-in return, look at our [Form 5472 example](/form-5472-example).",
+        heading: "How do you fill out Form 5472 step by step?",
+        body: `Fill out Form 5472 from the top down, then attach it to a pro forma Form 1120. These ten steps follow the IRS Instructions for Form 5472 (Rev. December 2024) for a foreign-owned US single-member LLC; the sections below explain each part, and the [Form 5472 example](/form-5472-example) shows every entry filled in.\n\n1. Enter the tax year at the top: the owner's US tax year or, if the owner has none, the calendar year, with all money in US dollars.\n2. Complete Part I for the LLC: name, US address, EIN, total assets and principal business activity code, and check line 3 as a foreign-owned U.S. DE.\n3. Complete Part II for the foreign owner: a US identifying number if there is one, otherwise a self-assigned reference ID, plus the owner's FTIN or "None".\n4. Complete Part III for the related party: all filers complete it, even when the related party is the owner already named in Part II.\n5. Report Part IV monetary transactions: amounts paid to or received from the foreign related party, in US dollars, with a schedule of the exchange rates used.\n6. Complete Part V: check its box and attach a statement describing contributions, distributions and other transactions with the owner not already in Part IV.\n7. Answer the Part VII questions: every filer answers them, and a foreign-owned U.S. DE leaves lines 43a and 43b blank.\n8. Enter the Part I totals: line 1f for the amounts on this form, line 1g for the number of Forms 5472 filed, and line 1h for the total across all of them.\n9. Add the pro forma Form 1120 cover: write "Foreign-owned U.S. DE" across the top and complete only the name, address and items B and E.\n10. Send the package and keep proof: fax it at 300 DPI or higher to ${IRS_OGDEN_FAX} or mail it to the IRS Ogden PIN Unit by the Form 1120 due date, then keep a copy with the fax or mailing record. See [how to file Form 5472](/file-form-5472).`,
       },
       {
-        heading: "What's on this page?",
-        body: "This walkthrough follows the IRS form from top to bottom, one part at a time, for a foreign-owned US single-member LLC.\n\n• [What to gather before you start](/form-5472-instructions#what-do-you-need-to-gather-before-you-start): EIN letter, NAICS code, FTIN or Reference ID.\n• [The top of the form](/form-5472-instructions#what-goes-at-the-top-of-form-5472): the tax year's beginning and ending dates.\n• [Part I](/form-5472-instructions#what-goes-in-part-i-of-form-5472): the reporting LLC.\n• [Part II](/form-5472-instructions#what-goes-in-part-ii-of-form-5472): the 25% foreign shareholder.\n• [Part III](/form-5472-instructions#what-goes-in-part-iii-of-form-5472): the related party.\n• [Part IV](/form-5472-instructions#what-goes-in-part-iv-of-form-5472): monetary transactions.\n• [Part V](/form-5472-instructions#what-goes-in-part-v-of-form-5472): contributions, distributions and other DE transactions.\n• [Part VII](/form-5472-instructions#what-goes-in-part-vii-of-form-5472): additional information.\n• [Signing the package](/form-5472-instructions#how-do-you-sign-the-form-5472-package): the Form 1120 signature block.\n• [Common mistakes](/form-5472-instructions#what-are-the-common-mistakes-that-trigger-penalties) that create penalty exposure.",
+        heading: "Which Form 5472 instructions apply to tax year 2025?",
+        body: "As of October 2026, IRS.gov lists the Instructions for Form 5472 (Rev. December 2024) as the current revision, for use with the December 2023 revision of Form 5472. Unless the IRS posts a newer revision, those are the versions for tax year 2025 returns filed in 2026.\n\nThe What's New section of the December 2024 revision has one change: the joint-return exception in the definition of foreign person now cites Code sections 6013(g) and (h). The rules a foreign-owned US disregarded entity relies on — the pro forma Form 1120, the dedicated fax and mailing route, and no e-filing — sit under When and Where To File.\n\nTo see the instructions applied to a filled-in return, look at our [Form 5472 example](/form-5472-example).",
       },
       {
         heading: "What do you need to gather before you start?",
@@ -524,7 +525,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What goes in Part II of Form 5472?",
-        body: "This is YOU — the foreign owner. For a single-member LLC owned by one individual, the foreign shareholder is yourself.\n\n• Line 4a: Your full legal name and your residential address abroad.\n• Line 4b(1): US identifying number if you have one (SSN or ITIN). Leave blank if you don't — most foreign owners don't.\n• Line 4b(2): Reference ID number — required only if line 4b(1) is blank. Self-assigned, alphanumeric with no spaces or special characters, at most 50 characters, and used consistently every year. Our wizard auto-generates one if you don't pick your own.\n• Line 4b(3): Foreign taxpayer identification number (FTIN) from your country of residence. A foreign-owned DE enters \"None\" or \"N/A\" if there is no FTIN.\n• Line 4c: Principal country or countries where you conduct business.\n• Line 4d: Country of citizenship (or, for an entity owner, organization or incorporation).\n• Line 4e: Country or countries where you file an income tax return as a resident.\n\nLines 5a to 7e cover a second direct owner and ultimate indirect owners; they stay blank when one individual owns the LLC directly.",
+        body: "This is YOU — the foreign owner. For a single-member LLC owned by one individual, the foreign shareholder is yourself.\n\n• Line 4a: Your full legal name and your residential address abroad.\n• Line 4b(1): US identifying number if you have one (SSN or ITIN). Leave blank if you don't — most foreign owners don't.\n• Line 4b(2): Reference ID number — required only if line 4b(1) is blank. Self-assigned, alphanumeric with no spaces or special characters, at most 50 characters, and used consistently every year. The Form5472 Prep questionnaire creates one if you don't pick your own.\n• Line 4b(3): Foreign taxpayer identification number (FTIN) from your country of residence. A foreign-owned DE enters \"None\" or \"N/A\" if there is no FTIN.\n• Line 4c: Principal country or countries where you conduct business.\n• Line 4d: Country of citizenship (or, for an entity owner, organization or incorporation).\n• Line 4e: Country or countries where you file an income tax return as a resident.\n\nLines 5a to 7e cover a second direct owner and ultimate indirect owners; they stay blank when one individual owns the LLC directly.",
       },
       {
         heading: "What goes in Part III of Form 5472?",
@@ -558,7 +559,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What's an FTIN if my country doesn't issue tax IDs?",
-        a: "Write 'NOT LEGALLY REQUIRED' in the FTIN box. The IRS accepts this for residents of countries without tax ID systems (some Gulf states, BVI, Cayman, etc.). You'd then provide a Reference ID instead.",
+        a: "Enter \"None\" or \"N/A\" in the FTIN box (line 4b(3)), as the IRS instructions direct for a foreign-owned U.S. DE whose owner has no FTIN. If the owner also has no SSN or ITIN, enter a self-assigned reference ID on line 4b(2).",
       },
       {
         q: "Do I need to attach financial statements?",
@@ -586,14 +587,14 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Do I report transactions in USD or my home currency?",
-        a: "USD only. Convert each transaction at the prevailing exchange rate on the date of the transaction. For simplicity, many filers use the annual average rate published by the IRS for the tax year — also acceptable.",
+        a: "USD only. Convert each transaction at the prevailing exchange rate on the date of the transaction; many filers use the IRS yearly average rate for the tax year instead. The instructions require US-dollar amounts with an attached schedule of the exchange rates used.",
       },
       {
         q: "Where can I get help filling in the form?",
-        a: `Use our wizard — it asks 12 simple questions and generates the complete package (cover letter, pro forma 1120, Form 5472, Part V supporting statement). Every filing is reviewed by a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) before we fax it to the IRS Ogden PIN Unit. From ${PRICE_STD} (IRS fax delivery included).`,
+        a: `Use the Form5472 Prep questionnaire — it asks 12 simple questions and prepares the complete package (cover letter, pro forma 1120, Form 5472, Part V supporting statement). Every filing is reviewed by a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) before we fax it to the IRS Ogden PIN Unit. From ${PRICE_STD} (IRS fax delivery included).`,
       },
     ],
-    relatedSlugs: ["file-form-5472", "pro-forma-1120", "form-5472-vs-1120", "irs-form-5472", "form-5472-fax-number"],
+    relatedSlugs: ["file-form-5472", "form-5472-example", "pro-forma-1120", "form-5472-vs-1120", "irs-form-5472", "form-5472-fax-number"],
   },
   {
     slug: "foreign-owned-llc-tax",
@@ -1900,7 +1901,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file IRS Form 5472?",
-        body: "You file IRS Form 5472 by mail or fax to the Ogden PIN Unit. The IRS only accepts it by mail or fax to the Ogden PIN Unit. The fax route is faster and gives you a transmission receipt as transmission evidence.\n\n• Fax: +1-855-887-7737 (IRS Ogden PIN Unit).\n• Mail: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 (use certified mail with return receipt).\n\nOur 15-minute online filer handles the whole package — Form 5472, pro forma Form 1120, Part V supporting statement, cover letter, and reasonable cause statement (if late). Pricing starts at $149, we generate everything, you sign once on screen (the signature embeds into every required signature box), a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews the package end-to-end, and we fax it to the IRS Ogden PIN Unit. IRS fax delivery is included in every plan. You get the timestamped fax transmission receipt as transmission evidence.",
+        body: `You file IRS Form 5472 by mail or fax to the Ogden PIN Unit. The IRS only accepts it by mail or fax to the Ogden PIN Unit. The fax route is faster and gives you a transmission receipt as transmission evidence.\n\n• Fax: +1-855-887-7737 (IRS Ogden PIN Unit).\n• Mail: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 (use certified mail with return receipt).\n\nForm5472 Prep handles the whole package — Form 5472, pro forma Form 1120, Part V supporting statement, cover letter, and reasonable cause statement (if late). Pricing starts at ${PRICE_STD}: you answer a 15-minute questionnaire, we prepare everything, you sign once on screen (the signature embeds into every required signature box), a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews the package end-to-end, and we fax it to the IRS Ogden PIN Unit. IRS fax delivery is included in every plan. You get the timestamped fax transmission receipt as transmission evidence.`,
       },
       {
         heading: "What is the difference between Form 5472 and Form 1120?",
@@ -2044,7 +2045,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file before the deadline?",
-        body: `You file before the deadline by gathering the facts, generating the package, signing once, and saving the fax receipt.\n\n1. Gather your LLC info (EIN, address, formation date, NAICS code) and your foreign owner info (legal name, FTIN or self-assigned Reference ID, residential address, country of citizenship).\n2. Add up year-end totals: capital contributions in, distributions out, total assets at year-end in USD, list of any other reportable transactions.\n3. Use our 15-minute online filer to generate the full package: cover letter, pro forma 1120 with the \"Foreign-Owned U.S. DE\" stamp, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (only if late).\n4. Sign once on screen — the signature embeds into every required signature box automatically.\n5. Have a PTIN-holding tax accountant on our team review the package end-to-end.\n6. Get the package faxed to the IRS Ogden PIN Unit at +1-855-887-7737 and get the timestamped receipt emailed to you as transmission evidence.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign within 24 hours) — identical filing, IRS fax delivery included. +${PRICE_ADDON} per additional past year. 100% money-back guarantee if we fail to submit.`,
+        body: `You file before the deadline by gathering the facts, generating the package, signing once, and saving the fax receipt.\n\n1. Gather your LLC info (EIN, address, formation date, NAICS code) and your foreign owner info (legal name, FTIN or self-assigned Reference ID, residential address, country of citizenship).\n2. Add up year-end totals: capital contributions in, distributions out, total assets at year-end in USD, list of any other reportable transactions.\n3. Use the Form5472 Prep questionnaire (about 15 minutes) to prepare the full package: cover letter, pro forma 1120 with the \"Foreign-Owned U.S. DE\" stamp, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (only if late).\n4. Sign once on screen — the signature embeds into every required signature box automatically.\n5. Have a PTIN-holding tax accountant on our team review the package end-to-end.\n6. Get the package faxed to the IRS Ogden PIN Unit at +1-855-887-7737 and get the timestamped receipt emailed to you as transmission evidence.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign within 24 hours) — identical filing, IRS fax delivery included. +${PRICE_ADDON} per additional past year. 100% money-back guarantee if we fail to submit.`,
       },
       {
         heading: "Should you file early?",
@@ -2391,7 +2392,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are common Stripe Atlas LLC scenarios?",
-        body: `Common Stripe Atlas LLC scenarios include year-one funding, growing SaaS activity, late discovery, and multiple LLCs. The examples cover a no-revenue first year with a capital contribution, a second-year SaaS business with distributions, DIIRSP catch-up after missed years, and separate annual filings for separate LLCs.\n\nScenario A — Year 1, no revenue yet: Lucia formed her Stripe Atlas LLC in June 2024. By December 2024 the only activity was: $5K capital contribution to open Mercury account + $500 spent on Stripe Atlas formation fee. Required for tax year 2024: Form 5472 + pro forma 1120. Part V reports the $5K capital contribution. Files by April 15, 2025 with our service for Standard ${PRICE_STD} (fax included).\n\nScenario B — Year 2, growing SaaS: Mei has been running her Stripe Atlas Delaware LLC for 2 years selling SaaS to EU customers. Year 2 revenue: $180K, $0 US tax owed. She files Form 5472 + 1120 reporting capital contributions and distributions to/from her HK bank account. Standard ${PRICE_STD} (fax included) with our service.\n\nScenario C — Discovered Form 5472 late: Carlos formed his Stripe Atlas LLC in 2022. Three years later (2025) he discovers Form 5472 obligation. He files 2022, 2023, 2024 together under DIIRSP using our 3-year catch-up (Standard $347, fax included). Reasonable cause statement auto-generated for first-time foreign-owner unawareness. No outcome is guaranteed: if a penalty is assessed during processing, the statement is the basis for responding.\n\nScenario D — Multiple Stripe Atlas LLCs: Mei has 3 separate Stripe Atlas LLCs for 3 different product lines. Each one needs its own Form 5472 + pro forma 1120 every year — 3 separate filings, Standard ${PRICE_STD} each with us = ${PRICE_STD_X3}/year just for federal compliance.`,
+        body: `Common Stripe Atlas LLC scenarios include year-one funding, growing SaaS activity, late discovery, and multiple LLCs. The examples cover a no-revenue first year with a capital contribution, a second-year SaaS business with distributions, DIIRSP catch-up after missed years, and separate annual filings for separate LLCs.\n\nScenario A — Year 1, no revenue yet: Lucia formed her Stripe Atlas LLC in June 2024. By December 2024 the only activity was: $5K capital contribution to open Mercury account + $500 spent on Stripe Atlas formation fee. Required for tax year 2024: Form 5472 + pro forma 1120. Part V reports the $5K capital contribution. Files by April 15, 2025 with our service for Standard ${PRICE_STD} (fax included).\n\nScenario B — Year 2, growing SaaS: Mei has been running her Stripe Atlas Delaware LLC for 2 years selling SaaS to EU customers. Year 2 revenue: $180K, $0 US tax owed. She files Form 5472 + 1120 reporting capital contributions and distributions to/from her HK bank account. Standard ${PRICE_STD} (fax included) with our service.\n\nScenario C — Discovered Form 5472 late: Carlos formed his Stripe Atlas LLC in 2022. Three years later (2025) he discovers Form 5472 obligation. He files 2022, 2023, 2024 together under DIIRSP using our 3-year catch-up (Standard ${PRICE_STD_3Y}, fax included). Reasonable cause statement auto-generated for first-time foreign-owner unawareness. No outcome is guaranteed: if a penalty is assessed during processing, the statement is the basis for responding.\n\nScenario D — Multiple Stripe Atlas LLCs: Mei has 3 separate Stripe Atlas LLCs for 3 different product lines. Each one needs its own Form 5472 + pro forma 1120 every year — 3 separate filings, Standard ${PRICE_STD} each with us = ${PRICE_STD_X3}/year just for federal compliance.`,
       },
       {
         heading: "How do we handle Stripe Atlas Form 5472 filings?",
@@ -2433,7 +2434,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "I have 3 Stripe Atlas LLCs — do I file 3 separate Form 5472s?",
-        a: `Yes. Each LLC files its own Form 5472 + pro forma 1120 separately. Three LLCs = three filings = ${PRICE_STD_X3}/year at our Standard rate (3 × $149, fax included). Each gets its own fax receipt.`,
+        a: `Yes. Each LLC files its own Form 5472 + pro forma 1120 separately. Three LLCs = three filings = ${PRICE_STD_X3}/year at our Standard rate (3 × ${PRICE_STD}, fax included). Each gets its own fax receipt.`,
       },
       {
         q: "My Stripe Atlas LLC owes no US income tax — why file Form 5472?",
@@ -2586,7 +2587,7 @@ export const LANDING_PAGES: LandingPage[] = [
     ],
     published: "2026-05-22",
     updated: "2026-10-05",
-    h1: "Form 5472, filed properly — from $149, everything included.",
+    h1: `Form 5472, filed properly — from ${PRICE_STD}, everything included.`,
     intro:
       `Answer 12 questions in about 15 minutes and get a Form 5472 plus pro forma Form 1120 package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before fax submission to the IRS Ogden PIN Unit. Standard is ${PRICE_STD} and ready in 5-7 business days; Express is ${PRICE_EXP} and ready to sign within 24 hours.`,
     howTo: {
@@ -2623,7 +2624,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Pricing",
-        body: `• Standard — ${PRICE_STD} for one tax year, ready in 5-7 business days.\n• Express — ${PRICE_EXP} for one tax year, ready for you to check and sign within 24 hours, 7 days a week. Same filing, same review, same package — you are paying for speed only.\n• Each additional past tax year: +$99, on either tier.\n\nSo on Standard a two-year DIIRSP catch-up is ${PRICE_STD} + ${PRICE_ADDON} = ${PRICE_STD_2Y} and a three-year catch-up is ${PRICE_STD} + ${PRICE_ADDON_2Y} = ${PRICE_STD_3Y}. On Express the same catch-ups are ${PRICE_EXP_2Y} and ${PRICE_EXP_3Y}. Accountant review, the reasonable cause letter, IRS fax delivery, and the transmission receipt are included at every year count — no separate fax fee, no setup fee, no subscription.\n\nYou pay once, per filing. If we fail to submit your filing to the IRS, you get all of it back.`,
+        body: `• Standard — ${PRICE_STD} for one tax year, ready in 5-7 business days.\n• Express — ${PRICE_EXP} for one tax year, ready for you to check and sign within 24 hours, 7 days a week. Same filing, same review, same package — you are paying for speed only.\n• Each additional past tax year: +${PRICE_ADDON}, on either tier.\n\nSo on Standard a two-year DIIRSP catch-up is ${PRICE_STD} + ${PRICE_ADDON} = ${PRICE_STD_2Y} and a three-year catch-up is ${PRICE_STD} + ${PRICE_ADDON_2Y} = ${PRICE_STD_3Y}. On Express the same catch-ups are ${PRICE_EXP_2Y} and ${PRICE_EXP_3Y}. Accountant review, the reasonable cause letter, IRS fax delivery, and the transmission receipt are included at every year count — no separate fax fee, no setup fee, no subscription.\n\nYou pay once, per filing. If we fail to submit your filing to the IRS, you get all of it back.`,
       },
       {
         heading: "What happens if the IRS still assesses a penalty?",
@@ -3161,11 +3162,16 @@ export const LANDING_PAGES: LandingPage[] = [
       { label: "IRS: Instructions for Form 1120 (business activity codes)", url: "https://www.irs.gov/instructions/i1120" },
     ],
     published: "2026-10-07",
-    updated: "2026-10-07",
+    updated: "2026-10-30",
     h1: "Form 5472 Example: A Completed Sample With the Pro Forma 1120",
+    howTo: { section: "How do you fill out Form 5472, using this example?" },
     intro:
       "This is a fictional, clearly labelled Form 5472 example for a foreign-owned single-member US LLC, filled in line by line, with the pro forma Form 1120 it is attached to. Every name, number and amount is invented. Use it to see what a completed package looks like, then check your own facts against the IRS instructions.",
     sections: [
+      {
+        heading: "How do you fill out Form 5472, using this example?",
+        body: `Fill out Form 5472 in the order below, then attach it to a pro forma Form 1120. Each step shows what the invented Sample Widget Studio LLC enters; the [Form 5472 instructions](/form-5472-instructions) explain each line, and [how to file Form 5472](/file-form-5472) covers signing and sending.\n\n1. Enter the tax year at the top: the sample enters 01/01/2025 to 12/31/2025, the calendar year, because its owner has no US tax year.\n2. Complete Part I for the LLC: name, Wyoming address, EIN, $15,000 of total assets, business code 541511, and line 3 checked as a foreign-owned U.S. DE.\n3. Complete Part II for the owner: Alex Sample, with no SSN or ITIN, reference ID SAMPLEOWNER01 and a placeholder FTIN.\n4. Complete Part III for the related party: Alex Sample again, because every filer completes Part III.\n5. Check Part IV for monetary transactions: the sample owner sold, lent and charged nothing, so lines 22 and 36 show zero.\n6. Complete Part V: check its box and attach a statement listing the $10,000 contribution and the $4,000 distribution, $14,000 in total.\n7. Answer the Part VII questions: the sample answers No to each and leaves lines 43a and 43b blank.\n8. Enter the Part I totals: $14,000 on lines 1f and 1h, and 1 on line 1g for one Form 5472.\n9. Add the pro forma Form 1120 cover: "Foreign-owned U.S. DE" across the top, with the LLC's name, address and EIN in item B.\n10. Send the package and keep proof: fax it at 300 DPI or higher to ${IRS_OGDEN_FAX} or mail it to the IRS Ogden PIN Unit, then keep the full package with the fax or mailing record.`,
+      },
       {
         heading: "What does a completed Form 5472 look like?",
         body: "A completed Form 5472 for a foreign-owned single-member LLC is the three-page IRS form plus a Part V statement, attached to a pro forma Form 1120. Most boxes stay blank. The sample below uses an invented Wyoming LLC, Sample Widget Studio LLC, owned by an invented UK resident, Alex Sample.\n\nDownload the [watermarked sample package (PDF)](/samples/form-5472-example-sample.pdf): cover letter, pro forma Form 1120, Form 5472 and the Part V statement, produced by the same generator that builds customer packages and stamped SAMPLE – NOT FOR FILING on every page. Identifying numbers are placeholders such as XX-XXXXXXX.",
@@ -3349,7 +3355,7 @@ export const LANDING_PAGES: LandingPage[] = [
         a: "Yes. Each tax year gets its own pro forma Form 1120 with its own Form 5472 attached, built from that year's transactions. Late packages may also carry a reasonable-cause statement under the IRS delinquent international information return procedures.",
       },
     ],
-    relatedSlugs: ["form-5472-instructions", "pro-forma-1120", "irs-form-5472", "file-form-5472"],
+    relatedSlugs: ["form-5472-instructions", "file-form-5472", "pro-forma-1120", "irs-form-5472"],
   },
   {
     slug: "can-a-foreigner-own-a-us-llc",

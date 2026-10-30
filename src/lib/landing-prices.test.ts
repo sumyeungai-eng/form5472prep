@@ -22,7 +22,8 @@ describe("landing page prices", () => {
   const source = readFileSync(join(__dirname, "landing-pages.ts"), "utf8").split("\n");
 
   it.each(OUR_PRICES)("never hard-codes our price %s", (price) => {
-    const literal = new RegExp(`\\${price}(?![\\d,])`);
+    // "$149," and "$149." are hits; "$149,000" is a different figure.
+    const literal = new RegExp(`\\${price}(?!\\d|,\\d)`);
     const offenders = source
       .map((line, i) => ({ line, n: i + 1 }))
       .filter(({ line }) => !line.trimStart().startsWith("//") && literal.test(line) && !COMPETITOR_LINE.test(line))
