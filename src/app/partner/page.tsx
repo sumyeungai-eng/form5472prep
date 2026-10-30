@@ -7,6 +7,8 @@ import { timeAgo } from "@/lib/admin/filingPresence";
 import { PartnerHero } from "./PartnerHero";
 import { PartnerStatCards } from "./PartnerStatCards";
 import { PartnerFilingRow } from "./PartnerFilingRow";
+import { PartnerBrandCard } from "./PartnerBrandCard";
+import { portalOrigin } from "@/lib/partner/portalHost";
 import { PARTNER_PAGE_SIZE, pageCount, parsePartnerQuery, partnerFilingWhere } from "@/lib/partner/filingList";
 import { responsibilityFor, type Court } from "@/lib/partner/responsibility";
 
@@ -112,6 +114,14 @@ export default async function PartnerDashboard({
       />
 
       <div className="mx-auto max-w-6xl px-6 py-8">
+        <div className="mb-6">
+          <PartnerBrandCard
+            brandName={partner.brandName}
+            fallbackName={(partner.company || partner.name).trim()}
+            portalActive={portalOrigin() !== null}
+          />
+        </div>
+
         {hasAnyFilings && (
           <div className="mb-6">
             <PartnerStatCards counts={courtCounts} activeCourt={query.court} hrefFor={hrefFor} />
