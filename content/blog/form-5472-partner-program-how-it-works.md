@@ -8,11 +8,11 @@ tags: ["partner-program", "form-5472", "white-label", "foreign-owned-llc"]
 draft: false
 ---
 
-**The Form5472 Prep partner program gives formation agencies, registered agents, accounting firms, and consultants one account for managing Form 5472 filings across multiple client LLCs. The partner starts and tracks each filing, the client signs securely, and Form5472 Prep prepares, reviews, and sends the package to the IRS. White-label delivery is available by request.**
+**The Form5472 Prep partner program gives formation agencies, registered agents, accounting firms, and consultants one account for managing Form 5472 filings across multiple client LLCs. The partner starts and tracks each filing, the client signs securely, and Form5472 Prep prepares, reviews, and sends the package to the IRS. Every partner filing is white-label: Form5472 Prep never emails your clients.**
 
 The program is designed for firms that already help non-US founders form or maintain US companies but do not want every Form 5472 engagement to become a separate email chain.
 
-[Request a partner account](/partners) if your firm manages more than one foreign-owned US LLC and wants to discuss the standard or white-label workflow.
+[Request a partner account](/partners) if your firm manages more than one foreign-owned US LLC.
 
 ## Who the partner program is for
 
@@ -39,26 +39,24 @@ It is not necessary to turn your team into a Form 5472 production department. Th
 
 Every client LLC remains a separate filing. The dashboard is the control layer that keeps those filings visible under one partner login.
 
-## Standard and white-label delivery
+## White-label delivery
 
-The standard partner program is ready for firms that want an organized back-office workflow without changing the client-facing brand. Form5472 Prep sends the filing communications, while the partner appears as the professional coordinating the engagement.
+Since 30 October 2026 every partner filing is white-label. Form5472 Prep never emails your clients: your firm copies the intake and signing links from the partner dashboard and sends them, and emails about a client's filing come to you. Your firm pays per filing, clients see no prices, and the name you set appears in the client's intake and on the fax receipt.
 
-White-label options are available by request. In that arrangement, agreed client-facing communications can use the partner's brand instead of ours. The exact scope is confirmed after partner approval because firms differ in what they need branded: communication templates, client instructions, handoff language, or other touchpoints.
+| Delivery question | Answer |
+|---|---|
+| Who manages the client relationship? | Partner |
+| Who prepares the filing package? | Form5472 Prep |
+| Who signs the filing? | Client |
+| Who sends the intake and signing links? | Partner, copied from the dashboard |
+| Whose name does the client see? | The name the partner sets, in intake and on the fax receipt |
+| Where do client pages open? | form5472prep.com |
 
-| Delivery question | Standard partner flow | White-label option |
-|---|---|---|
-| Who manages the client relationship? | Partner | Partner |
-| Who prepares the filing package? | Form5472 Prep | Form5472 Prep |
-| Who signs the filing? | Client | Client |
-| Which brand appears in agreed communications? | Form5472 Prep | Partner brand, as scoped |
-| Is a separate technical integration required? | No | Confirm during approval |
-| Best fit | Fast operational rollout | Firms that need brand continuity |
-
-White label should not be treated as a vague promise that every screen, domain, payment flow, or legal document automatically changes. Put the required touchpoints in the application so both sides can define the delivery model before the first client filing.
+White label should not be treated as a promise that every screen, domain, payment flow, or legal document changes: client pages still open on form5472prep.com.
 
 ## Pricing and account structure
 
-There is no platform subscription for the standard partner account. Each filing is paid individually using the current public service tiers. [Check current pricing](/pricing) before quoting a client because pricing and turnaround can change.
+There is no platform subscription for a partner account. Each filing is paid individually using the current public service tiers. [Check current pricing](/pricing) before quoting a client because pricing and turnaround can change.
 
 The current plans are Standard at {{price.standard}} with a 5–7-business-day turnaround and Express at {{price.express}}, ready to sign within 24 hours. Each additional past tax year adds {{price.additionalYear}}, and IRS fax delivery is included. Firms needing volume pricing or consolidated invoicing can request a discussion during onboarding.
 
@@ -71,9 +69,8 @@ An effective application explains the operating model, not just the company name
 1. your legal business name, website, and primary contact;
 2. the services you currently provide;
 3. the approximate number of foreign-owned LLC clients you manage;
-4. whether you want standard or white-label delivery;
-5. who will collect client information and coordinate signatures; and
-6. any volume-pricing, invoicing, or communication requirements.
+4. who will collect client information and coordinate signatures; and
+5. any volume-pricing, invoicing, or communication requirements.
 
 Partner accounts are approved manually, usually within one business day. Once approved, the firm signs in through a secure email link rather than maintaining another password.
 
@@ -95,6 +92,6 @@ Five companion guides go deeper than this overview:
 | What to collect from each client before preparation starts | [the client intake checklist](/blog/form-5472-client-intake-checklist-for-firms) |
 | How to run a whole book of filings through one season | [filing for multiple clients](/blog/file-form-5472-for-multiple-clients) |
 
-[Apply to become a Form5472 Prep partner](/partners) and describe the clients you serve, expected filing volume, and whether you want white-label delivery.
+[Apply to become a Form5472 Prep partner](/partners) and describe the clients you serve and expected filing volume.
 
-*Program information current as of August 31, 2026. Exact white-label scope, pricing arrangements, and service eligibility are confirmed during partner approval.*
+*Program information current as of August 31, 2026; white-label delivery updated October 30, 2026. Pricing arrangements and service eligibility are confirmed during partner approval.*

@@ -37,7 +37,7 @@ For a **calendar-year** LLC — which is the default and covers almost every for
 
 For a **fiscal-year** LLC, the due date is generally the 15th day of the fourth month after the tax year ends — with one live exception. A tax year **ending 30 June that began before 1 January 2026** is due on the 15th day of the **third** month (so a year ended 30 June 2026 is due **15 September 2026**), and its automatic extension runs **seven** months, to 15 April 2027. Only a June-30 year that *begins* on or after 1 January 2026 — the first is the year ended 30 June 2027 — follows the standard fourth-month rule and the six-month extension. See the [Form 1120 instructions](https://www.irs.gov/instructions/i1120) and [Form 7004 instructions](https://www.irs.gov/instructions/i7004).
 
-For short years, fiscal years and extension scenarios, the [Form 5472 deadline calculator](/form-5472-deadline-calculator) converts those rules into a specific filing date.
+For short years, fiscal years and extension scenarios, the [Form 5472 deadline calculator](/form-5472-deadline-calculator) converts those rules into a specific filing date. To move tax year 2026 to 15 October 2027, the [Form 7004 extension filing](/form-7004-extension) has to reach the IRS by 15 April 2027.
 
 The due date does not change based on:
 

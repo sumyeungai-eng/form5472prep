@@ -8,11 +8,11 @@ tags: ["registered-agents", "partner-program", "form-5472", "white-label"]
 draft: false
 ---
 
-**Registered agents can use the Form5472 Prep partner program to coordinate federal Form 5472 filings for foreign-owned US LLC clients without becoming the tax preparer. The registered agent starts or monitors the file, the client confirms the facts and signs, and Form5472 Prep handles the supported preparation and IRS submission workflow. White-label delivery is available by request.**
+**Registered agents can use the Form5472 Prep partner program to coordinate federal Form 5472 filings for foreign-owned US LLC clients without becoming the tax preparer. The registered agent starts or monitors the file, the client confirms the facts and signs, and Form5472 Prep handles the supported preparation and IRS submission workflow. Every partner filing is white-label: Form5472 Prep never emails the registered agent's clients.**
 
 This closes a common compliance gap: the client renews the registered-agent service or files a state annual report and assumes every annual requirement is complete.
 
-[Request a registered-agent partner account](/partners) to add a standard or white-label federal filing handoff.
+[Request a registered-agent partner account](/partners) to add a white-label federal filing handoff.
 
 ## State maintenance and Form 5472 are different layers
 
@@ -61,18 +61,16 @@ These are screening prompts, not tax advice. A positive answer signals that the 
 
 ## White-label delivery for registered-agent firms
 
-White-label options are available by request for registered-agent companies that want agreed client communications to use their own brand. This can make sense when federal filing coordination is part of an annual-compliance package rather than a one-off external referral.
+Every partner filing is white-label. Form5472 Prep never emails your clients: you copy the intake and signing links from the partner dashboard and send them, and emails about a client's filing come to you. Your firm pays per filing, clients see no prices, and the name you set appears in the client's intake and on the fax receipt.
 
-Define the exact scope during partner approval:
+Decide inside your firm:
 
-- which client emails or instructions carry the registered agent's brand;
 - who answers client questions;
-- whether the partner or client pays each filing;
 - how fax receipts and completed packages are delivered;
 - how out-of-scope tax questions are escalated; and
 - whether volume pricing or consolidated invoicing is required.
 
-Do not describe the service as fully white-labeled across every system until those touchpoints are agreed. The government filing itself must show the legally required taxpayer and filing information.
+Do not describe the service as white-labeled across every system: client pages still open on form5472prep.com, and the government filing itself must show the legally required taxpayer and filing information.
 
 ## Fit and service boundaries
 
@@ -82,6 +80,6 @@ Form5472 Prep is a form-preparation and filing-courier service rather than a CPA
 
 The [foreign-owned LLC filing checklist](/blog/foreign-owned-llc-filing-requirements-checklist) can help partners explain the difference between state maintenance, federal information reporting, and owner-level tax analysis.
 
-[Apply to become a registered-agent partner](/partners). Include your client volume, states served, current annual-compliance workflow, and white-label requirements.
+[Apply to become a registered-agent partner](/partners). Include your client volume, states served and current annual-compliance workflow.
 
 *Educational and program information only; not tax or legal advice. Verify current IRS and state requirements for each client.*
