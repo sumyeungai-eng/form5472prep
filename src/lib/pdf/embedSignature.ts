@@ -29,7 +29,7 @@ export async function embedSignatureIntoPdf(
     throw new Error("No signature locations on file — refusing to write a blank signed PDF.");
   }
 
-  const pdf = await PDFDocument.load(unsignedPdfBytes);
+  const pdf = await PDFDocument.load(unsignedPdfBytes, { updateMetadata: false });
   const image = await pdf.embedPng(signaturePngBytes);
 
   let pagesSigned = 0;

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getFilingAccess } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getPdf } from "@/lib/storage";
+import { downloadFileName } from "@/lib/pdf/downloadFileName";
 
 export const runtime = "nodejs";
 
@@ -20,18 +21,17 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   }
   const filing = await prisma.filing.findUnique({
     where: { id: access.filing.id },
-    select: { llcName: true, faxConfirmationKey: true },
+    select: { llcName: true, taxYears: true, faxConfirmationKey: true },
   });
   if (!filing?.faxConfirmationKey) {
     return NextResponse.json({ error: "Receipt not generated yet" }, { status: 404 });
   }
 
   const bytes = await getPdf(filing.faxConfirmationKey);
-  const safeLlc = (filing.llcName ?? "filing").replace(/[^a-zA-Z0-9-]+/g, "_");
   return new NextResponse(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `inline; filename="IRS-fax-receipt-${safeLlc}.pdf"`,
+      "Content-Disposition": `inline; filename="${downloadFileName(filing.llcName, filing.taxYears, "fax receipt")}"`,
     },
   });
 }

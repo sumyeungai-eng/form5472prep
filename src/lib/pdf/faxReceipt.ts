@@ -27,7 +27,8 @@ export type FaxReceiptInput = {
   deliveredAtIso: string; // when Telnyx confirmed delivery
   pageCount: number | null;
 
-  // Optional: brand line and product description below the header.
+  // Partner filings: the partner's name, shown as the subtitle in place of ours
+  // and dropping our name from the footer. Omit for retail filings.
   brandLine?: string;
 };
 
@@ -43,6 +44,9 @@ const TONE = {
 
 export async function generateFaxReceiptPdf(input: FaxReceiptInput): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
+  // Neutral metadata (pdf-lib would otherwise write its own name).
+  pdf.setProducer("fax receipt");
+  pdf.setCreator("fax receipt");
   const page = pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
@@ -90,7 +94,7 @@ export async function generateFaxReceiptPdf(input: FaxReceiptInput): Promise<Uin
 
   const rows: Array<[string, string, "text" | "mono"]> = [
     ["Transmission ID", input.filingId, "mono"],
-    ["Telnyx Fax ID", input.telnyxFaxId, "mono"],
+    ["Fax ID", input.telnyxFaxId, "mono"],
     ["LLC Name", input.llcName ?? "(not provided)", "text"],
     ["EIN", input.llcEin ?? "(not provided)", "mono"],
     ["Tax Year", input.taxYears.length === 0 ? "(not provided)" : input.taxYears.join(", "), "text"],
@@ -148,7 +152,9 @@ export async function generateFaxReceiptPdf(input: FaxReceiptInput): Promise<Uin
   const footerY = margin.bottom - 16;
   drawText(
     page,
-    `Generated ${formatIsoUtc(new Date().toISOString())} UTC by Form5472 Prep · form5472prep.com`,
+    input.brandLine
+      ? `Generated ${formatIsoUtc(new Date().toISOString())} UTC`
+      : `Generated ${formatIsoUtc(new Date().toISOString())} UTC by Form5472 Prep · form5472prep.com`,
     margin.left,
     footerY,
     font,

@@ -2699,8 +2699,11 @@ export async function generatePackage(
     });
   }
 
-  out.setTitle("Form 5472 package");
-  out.setProducer(`form5472prep generator ${GENERATOR_VERSION}`);
+  // Neutral metadata: partners file for their own clients, so no brand string
+  // (and no pdf-lib default Creator) may appear. Author/Subject stay unset.
+  out.setTitle(`Form 5472 \u2013 ${toPdfSafe(f.llcName)} \u2013 ${formatTaxYearList(f.taxYears)}`);
+  out.setProducer(`generator ${GENERATOR_VERSION}`);
+  out.setCreator(`generator ${GENERATOR_VERSION}`);
   out.setKeywords([
     `version=${GENERATOR_VERSION}`,
     `commit=${commit}`,

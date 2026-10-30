@@ -174,7 +174,7 @@ describe("sendFaxDeliveredEmail receipt attachment", () => {
     await sendFaxDeliveredEmail({ ...args, attachReceipt: true, logKind: "fax_delivered_resend" });
     const body = sentBody();
     expect(body.attachments).toEqual([
-      { filename: "IRS-fax-receipt-Acme_LLC-2025.pdf", content: Buffer.from(receipt).toString("base64"), content_type: "application/pdf" },
+      { filename: "Acme LLC - Form 5472 - 2025 - fax receipt.pdf", content: Buffer.from(receipt).toString("base64"), content_type: "application/pdf" },
     ]);
     expect(body.text).toContain("is attached to this email");
     expect(body.html).toContain("is attached to this email");

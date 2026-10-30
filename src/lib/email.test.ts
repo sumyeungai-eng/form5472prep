@@ -203,7 +203,7 @@ describe("fax delivered customer attachment", () => {
       reviewInvite: true,
     });
     const payload = JSON.parse((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body as string);
-    expect(payload.attachments).toEqual(withCopy ? [{ filename: "Form5472_Synthetic-LLC_2024-2025_filed.pdf", content: Buffer.from(bytes).toString("base64"), content_type: "application/pdf" }] : undefined);
+    expect(payload.attachments).toEqual(withCopy ? [{ filename: "Synthetic LLC - Form 5472 - 2024, 2025 - filed.pdf", content: Buffer.from(bytes).toString("base64"), content_type: "application/pdf" }] : undefined);
     if (withCopy) {
       expect(payload).not.toHaveProperty("bcc");
     } else {

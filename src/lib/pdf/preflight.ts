@@ -1174,7 +1174,9 @@ async function checkA30(pdfBytes: Uint8Array, record: PackageRecord, result: Mut
   const producer = pdf.getProducer() ?? "";
   const rawKeywords = pdf.getKeywords() ?? "";
   const keywords = Array.isArray(rawKeywords) ? rawKeywords.join(" ") : rawKeywords;
-  if (pdf.getTitle() !== "Form 5472 package" || !producer.includes(GENERATOR_VERSION)) {
+  // Title: "Form 5472 – <LLC> – <years>" (older PDFs: "Form 5472 package").
+  // Producer: "generator <v>" (older PDFs: "form5472prep generator <v>"); includes() covers both.
+  if (!(pdf.getTitle() ?? "").startsWith("Form 5472") || !producer.includes(`generator ${GENERATOR_VERSION}`)) {
     fail(result, "A30", "PDF title or producer metadata is missing the generator version.");
   }
   for (const needle of [

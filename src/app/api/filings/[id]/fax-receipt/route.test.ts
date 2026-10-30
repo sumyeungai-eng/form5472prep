@@ -95,6 +95,7 @@ describe("GET /api/filings/[id]/fax-receipt — same viewers as the filing page"
         sessionId: null,
         status: "CONFIRMED",
         llcName: "Acme Holdings LLC",
+        taxYears: [2025],
         faxConfirmationKey: `${FILING}_fax_receipt.pdf`,
       },
     ];
@@ -105,7 +106,7 @@ describe("GET /api/filings/[id]/fax-receipt — same viewers as the filing page"
     const res = await download();
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toBe("application/pdf");
-    expect(res.headers.get("content-disposition")).toContain("IRS-fax-receipt-Acme_Holdings_LLC.pdf");
+    expect(res.headers.get("content-disposition")).toBe('inline; filename="Acme Holdings LLC - Form 5472 - 2025 - fax receipt.pdf"');
     expect(storage.getPdf).toHaveBeenCalledWith(`${FILING}_fax_receipt.pdf`);
     expect(new Uint8Array(await res.arrayBuffer())).toEqual(new Uint8Array([37, 80, 68, 70]));
   });

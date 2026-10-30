@@ -31,7 +31,7 @@ describe("admin filing PDF route", () => {
     const res = await get("?download=1&t=1");
     expect(res.status).toBe(200);
     expect(res.headers.get("Content-Disposition")).toBe(
-      'attachment; filename="Form5472_Acme-Holdings-LLC_2024-2025_unsigned.pdf"',
+      'attachment; filename="Acme Holdings LLC - Form 5472 - 2024, 2025 - unsigned.pdf"',
     );
   });
 
@@ -40,7 +40,7 @@ describe("admin filing PDF route", () => {
     expect(res.status).toBe(200);
     expect(storage.getPdf).toHaveBeenLastCalledWith("f1_unsigned.pdf");
     expect(res.headers.get("Content-Disposition")).toBe(
-      'attachment; filename="Form5472_Acme-Holdings-LLC_2024-2025_draft.pdf"',
+      'attachment; filename="Acme Holdings LLC - Form 5472 - 2024, 2025 - draft.pdf"',
     );
   });
 
@@ -59,7 +59,7 @@ describe("admin filing PDF route", () => {
   });
 
   it("builds a safe file name for any LLC name", () => {
-    expect(downloadFileName('Café "Ñandú" / Ltd', [2025], "unsigned")).toBe("Form5472_Cafe-Nandu-Ltd_2025_unsigned.pdf");
-    expect(downloadFileName(null, [], "signed")).toBe("Form5472_filing_signed.pdf");
+    expect(downloadFileName('Café "Ñandú" / Ltd', [2025], "unsigned")).toBe("Cafe Nandu Ltd - Form 5472 - 2025 - unsigned.pdf");
+    expect(downloadFileName(null, [], "signed")).toBe("LLC - Form 5472 - signed.pdf");
   });
 });

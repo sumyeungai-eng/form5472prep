@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getOwnedFiling } from "@/lib/session";
 import { getPdf } from "@/lib/storage";
+import { downloadFileName } from "@/lib/pdf/downloadFileName";
 
 export const runtime = "nodejs";
 
@@ -19,7 +20,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   return new NextResponse(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `${wantsDownload ? "attachment" : "inline"}; filename="form5472-${filing.id}.pdf"`,
+      "Content-Disposition": `${wantsDownload ? "attachment" : "inline"}; filename="${downloadFileName(filing.llcName, filing.taxYears, "package")}"`,
       // Allow same-origin iframes (the sign page) to embed. X-Frame-Options
       // defaults vary by host; explicit SAMEORIGIN keeps Vercel from sending
       // DENY on a route that we explicitly want to embed.

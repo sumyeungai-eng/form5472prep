@@ -88,7 +88,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   let outBytes: Uint8Array;
   let pagesTouched = 0;
   try {
-    const pdf = await PDFDocument.load(pdfBytes);
+    const pdf = await PDFDocument.load(pdfBytes, { updateMetadata: false });
     for (const p of placements) {
       const idx = p.page - 1;
       if (idx < 0 || idx >= pdf.getPageCount()) {

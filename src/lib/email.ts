@@ -1132,7 +1132,7 @@ export async function sendFaxDeliveredEmail(args: {
   // Same filename scheme as the admin copy (sendFaxDeliveredAdminEmail).
   const receiptAttachment = attachReceipt && receiptPdfBytes
     ? [{
-        filename: `IRS-fax-receipt-${llcLine.replace(/[^a-zA-Z0-9-]+/g, "_")}-${yearsLabel.replace(/[^0-9-]+/g, "-")}.pdf`,
+        filename: downloadFileName(llcName, taxYears, "fax receipt"),
         content: receiptPdfBytes,
       }]
     : undefined;
@@ -1294,20 +1294,16 @@ export async function sendFaxDeliveredAdminEmail(args: {
         ? "No customer email on file — the customer was not emailed."
         : null;
 
-  // Filename hygiene: scrub the LLC name down to alphanumerics + dashes so
-  // mail clients don't choke on Unicode / punctuation in attachment headers.
-  const safeLlc = llcLine.replace(/[^a-zA-Z0-9-]+/g, "_");
-  const safeYears = yearsLabel.replace(/[^0-9-]+/g, "-");
   const attachments: Array<{ filename: string; content: Uint8Array | Buffer }> = [];
   if (receiptPdfBytes) {
     attachments.push({
-      filename: `IRS-fax-receipt-${safeLlc}-${safeYears}.pdf`,
+      filename: downloadFileName(llcName, taxYears, "fax receipt"),
       content: receiptPdfBytes,
     });
   }
   if (signedPdfBytes) {
     attachments.push({
-      filename: `form5472-${safeLlc}-${safeYears}-faxed.pdf`,
+      filename: downloadFileName(llcName, taxYears, "filed"),
       content: signedPdfBytes,
     });
   }

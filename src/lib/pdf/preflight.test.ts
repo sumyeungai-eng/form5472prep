@@ -198,6 +198,21 @@ describe("runPreflight", () => {
     });
   }
 
+  // PDFs stored before the white-label change carry the old title/producer.
+  it("A30 still accepts the legacy 'form5472prep generator' metadata", async () => {
+    const legacy = await PDFDocument.create();
+    legacy.addPage([612, 792]);
+    legacy.setTitle("Form 5472 package");
+    legacy.setProducer(`form5472prep generator ${GENERATOR_VERSION}`);
+    legacy.setKeywords([
+      `version=${goodRecord.generatorVersion}`,
+      `commit=${goodRecord.commit}`,
+      `generatedAt=${goodRecord.generatedAt}`,
+    ]);
+    const result = await runPreflight(clone(goodRecord), await legacy.save());
+    expect(result.failures.filter((f) => f.id === "A30")).toEqual([]);
+  });
+
   // Generator 2.3.0 (spec item 9): the 1120 prints the beginning year itself,
   // so "tax year beginning" is MM/DD only. goodRecord above uses the short-year
   // prior-revision exception, which keeps MM/DD/YYYY (the printed year is the
@@ -878,8 +893,8 @@ function clone<T>(value: T): T {
 async function goodPdfBytes(record: PackageRecord): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
   pdf.addPage([612, 792]);
-  pdf.setTitle("Form 5472 package");
-  pdf.setProducer(`form5472prep generator ${GENERATOR_VERSION}`);
+  pdf.setTitle("Form 5472 \u2013 Test LLC \u2013 2025");
+  pdf.setProducer(`generator ${GENERATOR_VERSION}`);
   pdf.setKeywords([
     `version=${record.generatorVersion}`,
     `commit=${record.commit}`,
@@ -894,8 +909,8 @@ async function pdfWithFieldBytes(record: PackageRecord): Promise<Uint8Array> {
   const form = pdf.getForm();
   const field = form.createTextField("leftover");
   field.addToPage(page, { x: 50, y: 700, width: 100, height: 20 });
-  pdf.setTitle("Form 5472 package");
-  pdf.setProducer(`form5472prep generator ${GENERATOR_VERSION}`);
+  pdf.setTitle("Form 5472 \u2013 Test LLC \u2013 2025");
+  pdf.setProducer(`generator ${GENERATOR_VERSION}`);
   pdf.setKeywords([
     `version=${record.generatorVersion}`,
     `commit=${record.commit}`,

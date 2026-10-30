@@ -29,6 +29,7 @@ import {
 } from "@/lib/email";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 import { brandForFiling } from "@/lib/partnerBrand";
+import { partnerDisplayName } from "@/lib/partner/displayName";
 import { logFilingChange } from "@/lib/admin/mutations";
 import { faxProofFromFacts, type FaxDeliveryFacts } from "@/lib/fax/telnyxStatus";
 
@@ -58,6 +59,11 @@ export type FaxFinalizeFiling = {
   ownerSsnCiphertext?: string | null;
   faxCopyToClient?: boolean | null;
   faxedPdfKey?: string | null;
+  // Partner filings: the receipt carries the partner's name instead of ours.
+  // If the caller includes `partner` it is used as-is; otherwise it is looked
+  // up from `partnerId` (the callers' `include: { user: true }` loads the scalar).
+  partnerId?: string | null;
+  partner?: { brandName?: string | null; company?: string | null; name: string } | null;
 };
 
 export type FinalizeDeliveredResult = {
@@ -96,6 +102,25 @@ async function safeBrand(tag: string, filingId: string) {
     console.error(`[${tag}] brand lookup for ${filingId} failed`, err);
     return undefined;
   }
+}
+
+// Receipt subtitle for a partner filing; undefined = retail (our own branding).
+// Fails closed: a partner filing whose partner cannot be read still gets a
+// neutral line, never ours.
+async function receiptBrandLine(filing: FaxFinalizeFiling, tag: string): Promise<string | undefined> {
+  if (!filing.partnerId && !filing.partner) return undefined;
+  try {
+    const partner =
+      filing.partner ??
+      (await prisma.partner.findUnique({
+        where: { id: filing.partnerId! },
+        select: { brandName: true, company: true, name: true },
+      }));
+    if (partner) return partnerDisplayName(partner);
+  } catch (err) {
+    console.error(`[${tag}] partner lookup for ${filing.id} failed`, err);
+  }
+  return "IRS Direct Delivery Service";
 }
 
 export async function finalizeFaxDelivered(
@@ -164,6 +189,7 @@ export async function finalizeFaxDelivered(
       submittedAtIso: facts.submittedAtIso,
       deliveredAtIso: facts.deliveredAtIso,
       pageCount: proof.pageCount ?? null,
+      brandLine: await receiptBrandLine(filing, tag),
     });
     const receiptKey = faxReceiptKey(filing.id);
     await putPdf(receiptKey, receiptPdfBytes);

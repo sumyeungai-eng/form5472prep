@@ -141,7 +141,7 @@ export async function stampPlacements(
   placements: Placement[],
   preparerSignaturePngBytes: Uint8Array | null = null,
 ): Promise<Uint8Array> {
-  const pdf = await PDFDocument.load(pdfBytes);
+  const pdf = await PDFDocument.load(pdfBytes, { updateMetadata: false });
   const needsSignatureImage = placements.some((p) => p.kind === "signature");
   const transparentPng = needsSignatureImage && signaturePngBytes ? await chromaKeySignaturePng(signaturePngBytes) : null;
   const signatureImage = transparentPng ? await pdf.embedPng(transparentPng) : null;

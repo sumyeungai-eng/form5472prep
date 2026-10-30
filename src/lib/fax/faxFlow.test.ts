@@ -17,6 +17,8 @@ type Row = {
   faxCopyToClient?: boolean | null;
   ownerSsnLast4?: string | null;
   ownerSsnCiphertext?: string | null;
+  partnerId?: string | null;
+  partner?: { brandName: string | null; company: string | null; name: string } | null;
   faxedPdfKey: string | null;
   signedPdfKey: string | null;
   faxConfirmationKey: string | null;
@@ -145,6 +147,9 @@ vi.mock("@/lib/prisma", () => ({
       update: db.update,
     },
     filingChangeLog: { create: db.logCreate, findFirst: db.logFindFirst },
+    partner: {
+      findUnique: vi.fn(async () => ({ brandName: null, company: "Acme Tax Partners", name: "Pat Partner" })),
+    },
   },
 }));
 vi.mock("@/lib/email", () => email);
@@ -705,6 +710,36 @@ describe("shared finalize is exactly-once", () => {
     const pollWon = pollBody.delivered === 1;
     expect(webhookWon !== pollWon).toBe(true);
     if (!pollWon) expect(pollBody.alreadyFinalized).toBe(1);
+  });
+
+  it("partner filings: the receipt carries the partner's name; retail passes no brandLine", async () => {
+    const facts: FaxDeliveryFacts = {
+      faxId: FAX_ID,
+      submittedAtIso: "2026-09-20T10:00:00.000Z",
+      deliveredAtIso: "2026-09-20T10:03:00.000Z",
+      pageCount: 7,
+      durationSecs: 95,
+      from: null,
+      to: null,
+    };
+    const lastBrandLine = () =>
+      vi.mocked(receipt.generateFaxReceiptPdf).mock.calls.at(-1)![0].brandLine;
+
+    // partnerId only -> looked up
+    await finalizeFaxDelivered(seedFiling({ partnerId: "partner_1" }) as never, facts, { source: "webhook" });
+    expect(lastBrandLine()).toBe("Acme Tax Partners");
+
+    // partner already included by the caller -> used as-is (brand name wins)
+    await finalizeFaxDelivered(
+      seedFiling({ id: "filing_2", partner: { brandName: "Brand Co", company: null, name: "Pat" } }) as never,
+      facts,
+      { source: "webhook" },
+    );
+    expect(lastBrandLine()).toBe("Brand Co");
+
+    // retail
+    await finalizeFaxDelivered(seedFiling({ id: "filing_3" }) as never, facts, { source: "webhook" });
+    expect(lastBrandLine()).toBeUndefined();
   });
 
   it("a redelivered webhook after finalize is a no-op", async () => {
