@@ -80,7 +80,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 you submit.
               </p>
               <p className="font-mono text-[11px] uppercase tracking-wide text-slate-500">
-                Filed to the IRS Ogden PIN Unit · +1-855-887-7737
+                Filed to the IRS Ogden PIN Unit · IRS fax +1-855-887-7737
               </p>
               <p>
                 Questions?{" "}

@@ -355,8 +355,8 @@ function Form5472Usage() {
             used, consistently posted rate you can use for that schedule.
           </p>
           <p>
-            We prepare the Form 5472 and pro forma Form 1120 package,
-            including the exchange-rate schedule, as part of every filing.
+            Form5472 Prep prepares the Form 5472 and pro forma Form 1120
+            package, including the exchange-rate schedule, as part of every filing.
           </p>
         </div>
         <Link href="/start?src=tool-exchange-rates" className="group mt-6 inline-flex">
@@ -384,8 +384,8 @@ function Faq() {
               className="group rounded-xl border border-slate-200 bg-white p-5"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-slate-900">
-                {faq.q}
-                <span className="text-accent transition-transform group-open:rotate-45">
+                <h3>{faq.q}</h3>
+                <span aria-hidden className="text-accent transition-transform group-open:rotate-45">
                   +
                 </span>
               </summary>

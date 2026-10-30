@@ -23,7 +23,7 @@ import { FilingChecker } from "./FilingChecker";
 const PAGE_PATH = "/do-i-need-to-file-form-5472";
 const PAGE_TITLE = "Do I Need to File Form 5472? 2-Minute Checker";
 const PAGE_DESCRIPTION =
-  "Who must file Form 5472 and the filing requirements, from the IRS instructions, plus a free checker to see whether your foreign-owned US LLC needs Form 5472 and pro forma 1120.";
+  "Who must file Form 5472, from the IRS instructions, plus a free 2-minute checker: does your foreign-owned US LLC need Form 5472 and a pro forma 1120?";
 
 export const metadata: Metadata = {
   // seoTitle(): brand only when it fits in 60 chars (it does not here).
@@ -361,7 +361,10 @@ function Faq() {
         <div className="mt-8 space-y-3">
           {CHECKER_FAQS.map(({ q, a }) => (
             <details key={q} className="rounded-lg border border-slate-200 bg-white p-5">
-              <summary className="cursor-pointer text-sm font-semibold text-slate-900">{q}</summary>
+              <summary className="cursor-pointer text-sm font-semibold text-slate-900">
+                {/* inline keeps the question beside the native disclosure marker */}
+                <h3 className="inline">{q}</h3>
+              </summary>
               <p className="mt-3 text-sm leading-relaxed text-slate-600">{a}</p>
             </details>
           ))}
@@ -377,8 +380,8 @@ function FinalCta() {
       <div className="mx-auto max-w-xl px-6">
         <h2 className="mb-3 text-2xl font-semibold">Ready to file the forms?</h2>
         <p className="mb-6 text-sm leading-relaxed text-accent-100">
-          If the checker points to a filing requirement, we prepare Form 5472 and the pro forma 1120
-          for your foreign-owned LLC.
+          If the checker points to a filing requirement, Form5472 Prep prepares Form 5472 and the pro
+          forma 1120 for your foreign-owned LLC.
         </p>
         <p className="mb-6 text-sm leading-relaxed text-accent-100">
           Before you order, see what a{" "}

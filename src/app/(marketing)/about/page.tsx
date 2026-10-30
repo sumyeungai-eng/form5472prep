@@ -23,12 +23,14 @@ import {
 const DESCRIPTION =
   "Who Form5472 Prep is, what we do and don't do, how a Form 5472 filing works step by step, how your data is protected and how our guides are sourced.";
 
+const TITLE = "About Form5472 Prep: Who Prepares and Reviews Your Filing";
+
 export const metadata: Metadata = {
   // Brand is already in the title — seoTitle() stops the template doubling it.
-  title: seoTitle("About Form5472 Prep"),
+  title: seoTitle(TITLE),
   description: DESCRIPTION,
   ...pageMeta({
-    title: "About Form5472 Prep",
+    title: TITLE,
     description: DESCRIPTION,
     path: "/about",
   }),
@@ -87,6 +89,17 @@ export default function AboutPage() {
     mainEntity: organizationNode(),
     speakable: SPEAKABLE,
   };
+  // Every h2 below is a question with its answer under it, so the FAQPage
+  // lists exactly those visible Q&As.
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: SECTIONS.map((section) => ({
+      "@type": "Question",
+      name: section.question,
+      acceptedAnswer: { "@type": "Answer", text: [section.answer, ...(section.points ?? [])].join(" ") },
+    })),
+  };
   const breadcrumbJsonLd = breadcrumbList([
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
@@ -95,6 +108,7 @@ export default function AboutPage() {
   return (
     <>
       <JsonLd data={aboutJsonLd} />
+      <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
 
       {/* Hero */}

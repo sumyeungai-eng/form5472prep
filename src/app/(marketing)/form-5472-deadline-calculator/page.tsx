@@ -188,7 +188,7 @@ function HowWeCalculate() {
         <SectionHead
           eyebrow="How we calculate this"
           title="How does the deadline rule work?"
-          subtitle="The calculator applies the filing year, dissolution date, and extension status to the same due-date logic used in our filing workflow. We start with April 15, switch to the dissolution short-year rule when needed (including the earlier June rule for years that began before 2026), add the Form 7004 extension for a timely filing, and move a date that lands on a weekend or DC legal holiday to the next business day."
+          subtitle="The calculator starts from April 15, the Form 1120 due date for a calendar-year LLC. It switches to the dissolution short-year rule when needed, including the earlier June rule for years that began before 2026, adds the Form 7004 extension for a timely filing, and moves a weekend or DC legal-holiday date to the next business day."
         />
         <div className="mt-10 grid gap-4 md:grid-cols-2">
           {deadlineRules.map((rule) => (
@@ -252,8 +252,8 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   return (
     <details className="group rounded-lg border border-slate-200 bg-white p-4 open:bg-slate-50">
       <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm font-semibold text-slate-900">
-        {q}
-        <span className="ml-4 text-slate-400 transition group-open:rotate-180">▾</span>
+        <h3>{q}</h3>
+        <span aria-hidden className="ml-4 text-slate-400 transition group-open:rotate-180">▾</span>
       </summary>
       <p className="mt-3 text-sm leading-relaxed text-slate-700">{a}</p>
     </details>

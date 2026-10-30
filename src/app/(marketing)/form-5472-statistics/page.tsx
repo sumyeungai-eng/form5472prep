@@ -305,8 +305,8 @@ export default function Form5472StatisticsPage() {
               {FAQS.map((f) => (
                 <details key={f.q} className="group rounded-xl border border-slate-200 bg-white p-5">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-slate-900">
-                    {f.q}
-                    <span className="text-accent transition-transform group-open:rotate-45">+</span>
+                    <h3>{f.q}</h3>
+                    <span aria-hidden className="text-accent transition-transform group-open:rotate-45">+</span>
                   </summary>
                   <p className="mt-3 text-sm leading-relaxed text-slate-600">{f.a}</p>
                 </details>

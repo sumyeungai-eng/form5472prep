@@ -323,8 +323,8 @@ function Faq() {
           {FAQS.map((faq) => (
             <details key={faq.q} className="group rounded-xl border border-slate-200 bg-white p-5">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-slate-900">
-                {faq.q}
-                <span className="text-accent transition-transform group-open:rotate-45">+</span>
+                <h3>{faq.q}</h3>
+                <span aria-hidden className="text-accent transition-transform group-open:rotate-45">+</span>
               </summary>
               <p className="mt-3 text-sm leading-relaxed text-slate-600">{faq.a}</p>
             </details>
@@ -356,7 +356,7 @@ function FinalCta() {
           Ready to file the late years?
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-accent-100">
-          Our late-filing package prepares the missing Form 5472 and pro forma Form 1120 for each year,
+          The Form5472 Prep late-filing package prepares the missing Form 5472 and pro forma Form 1120 for each year,
           plus a reasonable-cause statement. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before
           it is submitted. {formatPrice(TIERS.standard.priceCents)} for the first year,{" "}
           {formatPrice(MULTI_YEAR_ADDON_CENTS)} for each additional year.
