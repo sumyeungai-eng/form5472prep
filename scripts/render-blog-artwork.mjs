@@ -249,6 +249,16 @@ function svg({ accent, motif: kind, glyphs, location }) {
 }
 
 const POSTS = {
+  "form-7004-line-by-line-foreign-owned-llc": { accent: C.navySoft, motif: "card", glyphs: ["doc", "pen", "hash", "check"] },
+  "form-5472-first-time-penalty-abatement": { accent: C.clay, motif: "notice", glyphs: ["warn", "doc", "hash", "check"] },
+  "form-5472-extension-vs-late-filing-which-is-cheaper": { accent: C.amber, motif: "split", glyphs: ["calendar", "two", "hash", "check"] },
+  "form-5472-no-ein-yet-what-to-do": { accent: C.teal, motif: "stack", glyphs: ["hash", "doc", "clock", "check"] },
+  "foreign-owned-llc-year-end-checklist-december-2026": { accent: C.green, motif: "checklist", glyphs: ["calendar", "doc", "hash", "check"] },
+  "foreign-owned-llc-1099-nec-deadline-january-2027": { accent: C.amber, motif: "calendar", glyphs: ["calendar", "person", "doc", "check"] },
+  "form-5472-records-to-gather-before-filing": { accent: C.green, motif: "checklist", glyphs: ["doc", "hash", "pen", "check"] },
+  "how-to-fill-out-w-8ben-e-foreign-owned-llc": { accent: C.navy, motif: "split", glyphs: ["doc", "two", "globe", "check"] },
+  "delaware-llc-annual-tax-2027-foreign-owner": { accent: C.navySoft, motif: "calendar", glyphs: ["calendar", "hash", "doc", "check"] },
+  "us-sales-tax-vs-vat-foreign-owned-llc": { accent: C.teal, motif: "globe", glyphs: ["globe", "hash", "doc", "check"] },
   "form-5472-filing-service-comparison": { accent: C.navySoft, motif: "split", glyphs: ["hash", "person", "doc", "check"] },
   "form-5472-deadline-tomorrow-urgent-filing": { accent: C.clay, motif: "calendar", glyphs: ["calendar", "pen", "doc", "check"] },
   "foreign-owned-llc-company-car-deduction": { location: "COMPANY CAR", accent: C.teal, motif: "car", glyphs: ["person", "doc", "hash", "check"] },

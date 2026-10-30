@@ -140,6 +140,26 @@ async function readFile(slug: string): Promise<Post | null> {
 }
 
 const ARTWORK_ALTS: Record<string, string> = {
+  "form-7004-line-by-line-foreign-owned-llc":
+    "A blank extension form with marked lines and a signing pen illustrates completing Form 7004 line by line",
+  "form-5472-first-time-penalty-abatement":
+    "An IRS notice beside a penalty figure illustrates testing whether first-time abatement reaches a Form 5472 penalty",
+  "form-5472-extension-vs-late-filing-which-is-cheaper":
+    "Two dated columns beside a cost figure compare requesting an extension with filing Form 5472 late",
+  "form-5472-no-ein-yet-what-to-do":
+    "An empty employer identification number field beside a clock illustrates a filing deadline arriving before the EIN",
+  "foreign-owned-llc-year-end-checklist-december-2026":
+    "A December calendar beside a ticked checklist illustrates year-end tasks for a foreign-owned US LLC",
+  "foreign-owned-llc-1099-nec-deadline-january-2027":
+    "A January calendar beside a contractor payment record illustrates the information-return deadline",
+  "form-5472-records-to-gather-before-filing":
+    "Bank statements and a ledger beside a ticked list illustrate the records gathered before a Form 5472 is prepared",
+  "how-to-fill-out-w-8ben-e-foreign-owned-llc":
+    "A withholding certificate with its name, classification and reference lines marked illustrates completing Form W-8BEN-E",
+  "delaware-llc-annual-tax-2027-foreign-owner":
+    "A dated Delaware tax notice beside an annual amount illustrates the yearly LLC tax and its due date",
+  "us-sales-tax-vs-vat-foreign-owned-llc":
+    "A globe between a state sales-tax line and a VAT line illustrates two different consumption-tax systems",
   "form-5472-filing-service-comparison": "Three price columns and a review symbol compare Form 5472 filing services by cost and who checks the filing",
   "form-5472-deadline-tomorrow-urgent-filing": "A calendar and a signing pen illustrate preparing a Form 5472 package against a 48-hour deadline",
   "foreign-owned-llc-company-car-deduction": "A company car beside a ledger illustrates separating vehicle costs from foreign-owner transactions",

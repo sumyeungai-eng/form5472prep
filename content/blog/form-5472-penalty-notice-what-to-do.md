@@ -48,7 +48,7 @@ This is also why practitioners who tell clients "just file late with a reasonabl
 
 ## Does First Time Abate apply to a Form 5472 penalty?
 
-No. The IRS's First Time Abate (FTA) administrative waiver covers three penalty types only, and the Form 5472 penalty is not among them.
+As a general waiver, no. The IRS's First Time Abate (FTA) administrative waiver covers three penalty types only, and the Form 5472 penalty is not among them. There is one narrow exception, and a CP215 holder is the reader most likely to fall inside it: where the penalty was systemically assessed with penalty reference number 711 because Form 5472 was attached to a late-filed Form 1120, IRM 20.1.9.5.5(3) allows it to be abated with penalty reason code 018 if the related Form 1120's failure-to-file penalty was abated under FTA — or would have been eligible but none was assessed "because there was $0 tax due or it was a fully paid return", which is the normal state of a pro forma Form 1120. Two further conditions apply: no similar penalties in the three prior periods, and the related Form 1120 not filed late in those periods. Our guide to [first-time penalty abatement and Form 5472](/blog/form-5472-first-time-penalty-abatement) works through that route.
 
 The [IRS Administrative penalty relief page](https://www.irs.gov/payments/administrative-penalty-relief) — reviewed 14 July 2026 — lists FTA as available for:
 
