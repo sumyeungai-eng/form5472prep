@@ -143,7 +143,7 @@ export function PartnerApplyForm() {
         </div>
         <div className="sm:col-span-2">
           <label className="block text-sm font-medium text-slate-700 mb-1">
-            Interested in white-label delivery?
+            Want to discuss client-facing branding?
           </label>
           <div className="grid sm:grid-cols-2 gap-2">
             <label className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700">
@@ -172,8 +172,8 @@ export function PartnerApplyForm() {
             </label>
           </div>
           <p className="mt-1 text-xs text-slate-400">
-            White-label means your clients see your brand on communications instead of ours. We&apos;ll
-            discuss options with you after approval.
+            Every partner filing is already white-label: we never email your clients, and you send them their
+            links. Choose Yes if you would like to discuss branding with us after approval.
           </p>
         </div>
       </div>

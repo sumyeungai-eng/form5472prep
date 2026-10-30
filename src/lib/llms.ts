@@ -2,6 +2,7 @@ import { getAllPosts, getPost, type PostMeta } from "@/lib/blog";
 import { tagSlug } from "@/lib/blog-tags";
 import { ADDON_RULE, BRAND_CAPSULES, FAQ_CATEGORIES, FAQ_ITEMS, FAQ_LAST_REVIEWED } from "@/lib/faq";
 import { FORM5472_STATS, STAT_CATEGORIES, STATS_LAST_REVIEWED } from "@/lib/form5472-stats";
+import { FORM_7004_ANSWERS } from "@/lib/form7004-answers";
 import { LANDING_PAGES } from "@/lib/landing-pages";
 import { CONTINUATION_GRACE_DAYS, CONTINUATION_PER_PERIOD_CENTS, PENALTY_PER_FORM_CENTS } from "@/lib/penalty";
 import {
@@ -185,7 +186,7 @@ const CORE_PAGES: readonly PageLink[] = [
   ["EIN Acquisition", "/ein", "EIN service for foreign-owned US LLC owners — no SSN or ITIN needed, no passport mailing."],
   ["ITIN Acquisition", "/itin", "ITIN service for non-residents — eligible applications go to an IRS-authorized CAA, so no original passport mailing."],
   ["Form 7004 extension", "/form-7004-extension", `Form 7004 extension filing for foreign-owned US LLCs, ${EXT_PRICE} per LLC per tax year, faxed to the IRS Ogden PIN Unit; must be ordered before the original due date.`],
-  ["Partners", "/partners", "Partner / referral program for accountants, formation agents, and registered agents."],
+  ["Partners", "/partners", "Partner program for accountants, formation agents, and registered agents: every partner filing is white-label (we never email the partner's clients; the partner sends their links and pays per filing)."],
   ["Guides index", "/blog", "Jargon-free guides for foreign-owned US LLC owners on Form 5472, pro forma 1120, DIIRSP catch-up filings, and related topics."],
   ["Contact", "/contact", "Contact Form5472 Prep for Form 5472, pro forma 1120, EIN, ITIN, and catch-up filing questions."],
   ["About", "/about", "What we do and don't do, how a filing works step by step, who reviews it, how customer data is protected and how our guides are sourced."],
@@ -352,9 +353,16 @@ function buildGuides(posts: PostMeta[]): string {
 }
 
 // The brand capsules, verbatim from src/lib/faq.ts — the same words as
-// /, /pricing, /about and /faq (llms-full.txt carries them in its FAQ section).
+// /, /pricing, /about and /faq (llms-full.txt carries them in its FAQ section),
+// then the Form 7004 capsules, verbatim from /form-7004-extension.
 function buildQuickAnswers(): string {
-  const answers = Object.values(BRAND_CAPSULES).map(({ question, answer }) => `### ${question}\n\n${answer}`);
+  const answers = [
+    ...Object.values(BRAND_CAPSULES).map(({ question, answer }) => `### ${question}\n\n${answer}`),
+    ...FORM_7004_ANSWERS.map(
+      ({ q, a, sources }) =>
+        `### ${q}\n\n${a}\n\nSource: ${sources.map((s) => s.url).join(", ")} · ${SITE_URL}/form-7004-extension`,
+    ),
+  ];
   return `## Quick answers about ${SITE_NAME}\n\n${answers.join("\n\n")}`;
 }
 

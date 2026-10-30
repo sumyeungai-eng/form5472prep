@@ -6,18 +6,22 @@ import { HowToSummary } from "@/components/HowToSummary";
 import { JsonLd } from "@/components/JsonLd";
 import { EIN_APPLICATION_FAQ } from "@/lib/einApplicationFaq";
 import { env } from "@/lib/env";
+import { EIN_PRICE_CENTS } from "@/lib/pricing";
+import { formatPrice } from "@/lib/utils";
 import { CONTENT_LAST_REVIEWED, SPEAKABLE, breadcrumbList, howTo, organizationNode, pageMeta, AREA_SERVED } from "@/lib/seo";
+
+const PRICE = formatPrice(EIN_PRICE_CENTS);
 
 export const metadata: Metadata = {
   // `absolute` skips the root layout's "%s · Form5472 Prep" template so the
   // brand isn't doubled (the title already ends in "| Form5472 Prep").
   title: { absolute: "EIN for Foreign-Owned US LLC — No SSN Needed | Form5472 Prep" },
   description:
-    "EIN for foreign-owned US LLCs: $149 flat fee, no SSN or ITIN required. We prepare Form SS-4 and get your EIN directly from the IRS.",
+    `EIN for foreign-owned US LLCs: ${PRICE} flat fee, no SSN or ITIN required. We prepare Form SS-4 and get your EIN directly from the IRS.`,
   ...pageMeta({
     title: "EIN for Foreign-Owned US LLC — No SSN Needed",
     description:
-      "EIN for foreign-owned US LLCs: $149 flat fee, no SSN or ITIN required. We prepare Form SS-4 and get your EIN directly from the IRS.",
+      `EIN for foreign-owned US LLCs: ${PRICE} flat fee, no SSN or ITIN required. We prepare Form SS-4 and get your EIN directly from the IRS.`,
     path: "/ein",
   }),
 };
@@ -96,7 +100,7 @@ const HOW_TO_META = {
   totalTime: "PT10M", // Customer hands-on time for intake and review, not IRS processing time.
   tools: ["Form SS-4", "IRS fax or phone application route"],
   supplies: ["LLC formation document", "Responsible party name and country", "Business activity description"],
-  cost: { currency: "USD", value: "149" },
+  cost: { currency: "USD", value: String(EIN_PRICE_CENTS / 100) },
 };
 
 export default function EinPage() {
@@ -148,7 +152,7 @@ export default function EinPage() {
           {/* CTA card */}
           <div className="rounded-2xl bg-white text-slate-900 ring-1 ring-black/5 shadow-2xl shadow-black/30 p-6 sticky top-6">
             <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent mb-1">EIN Acquisition</p>
-            <p className="font-serif text-5xl font-semibold text-ink">$149</p>
+            <p className="font-serif text-5xl font-semibold text-ink">{PRICE}</p>
             <p className="text-sm text-slate-500 mt-1">Flat fee · one-time · no subscription</p>
             <Link
               href="/ein/apply"
@@ -232,6 +236,12 @@ export default function EinPage() {
               online portal is unavailable — you must go through the paper/phone process. We handle this
               for you.
             </p>
+            <p>
+              Form5472 Prep&apos;s EIN service prepares Form SS-4 from your answers and makes the fax or phone
+              application to the IRS for you. The review by a tax accountant who holds an IRS PTIN is part of our{" "}
+              <Link href="/services/form-5472-filing-service" className="text-accent underline">Form 5472 filing service</Link>:
+              if you also order that filing, its package is reviewed before you sign it.
+            </p>
           </div>
         </div>
       </section>
@@ -306,7 +316,7 @@ export default function EinPage() {
         <div className="max-w-xl mx-auto px-6">
           <h2 className="text-2xl font-semibold mb-3">Ready to get your EIN?</h2>
           <p className="text-accent-100 mb-6 text-sm leading-relaxed">
-            Flat fee of $149. No passport mailing. EIN delivered in 1–5 business days.
+            Flat fee of {PRICE}. No passport mailing. EIN delivered in 1–5 business days.
           </p>
           <Link
             href="/ein/apply"
@@ -328,7 +338,7 @@ export default function EinPage() {
 }
 
 // Structured data for search + AI answer engines.
-// - Service + Offer surfaces the $149 EIN offering with price for AEO/GEO.
+// - Service + Offer surfaces the EIN_PRICE_CENTS EIN offering with price for AEO/GEO.
 // - FAQPage (shares the rendered `faq` array) powers Google's FAQ rich result.
 // - BreadcrumbList + WebPage/Speakable round out the entity graph.
 function EinStructuredData() {
@@ -351,7 +361,7 @@ function EinStructuredData() {
     offers: {
       "@type": "Offer",
       name: "EIN Acquisition — flat fee",
-      price: "149.00",
+      price: (EIN_PRICE_CENTS / 100).toFixed(2),
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
       url,

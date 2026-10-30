@@ -23,11 +23,11 @@ import { ORG_REF, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pag
 export const metadata: Metadata = {
   title: "Pricing for Form 5472 Filing",
   description:
-    `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} ready in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} ready to sign within ${EXPRESS_TURNAROUND}. We fax to the IRS Ogden PIN Unit.`,
+    `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} ready in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} ready to sign within ${EXPRESS_TURNAROUND}, IRS fax included.`,
   ...pageMeta({
     title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
     description:
-      `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} ready in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} ready to sign within ${EXPRESS_TURNAROUND}. We fax to the IRS Ogden PIN Unit.`,
+      `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} ready in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} ready to sign within ${EXPRESS_TURNAROUND}, IRS fax included.`,
     path: "/pricing",
   }),
 };

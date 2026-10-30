@@ -5,8 +5,14 @@ import { HowToSummary } from "@/components/HowToSummary";
 import { JsonLd } from "@/components/JsonLd";
 import { PartnerScreenshots } from "@/components/PartnerScreenshots";
 import { env } from "@/lib/env";
+import { EXPRESS_TURNAROUND, MULTI_YEAR_ADDON_CENTS, STANDARD_TURNAROUND, TIERS } from "@/lib/pricing";
+import { formatPrice } from "@/lib/utils";
 import { CONTENT_LAST_REVIEWED, SPEAKABLE, breadcrumbList, howTo, organizationNode, pageMeta, AREA_SERVED } from "@/lib/seo";
 import { PartnerApplyForm } from "./PartnerApplyForm";
+
+const STD = formatPrice(TIERS.standard.priceCents);
+const EXP = formatPrice(TIERS.express.priceCents);
+const ADD = formatPrice(MULTI_YEAR_ADDON_CENTS);
 
 export const metadata: Metadata = {
   // `absolute` skips the root layout's "%s · Form5472 Prep" template so the
@@ -33,11 +39,11 @@ const faq = [
   },
   {
     q: "Who signs each filing?",
-    a: "The person authorized to sign for the client LLC reviews the completed package. You can send the secure review/sign link from your dashboard, but signing authority and the method appropriate to the document and filing route must be resolved before submission. Contact us if an ink-signed cover is needed.",
+    a: "The person authorized to sign for the client LLC reviews the completed package. You copy the secure review-and-sign link from your dashboard and send it to them yourself, but signing authority and the method appropriate to the document and filing route must be resolved before submission. Contact us if an ink-signed cover is needed.",
   },
   {
     q: "How does payment work?",
-    a: "Each filing is paid individually at checkout with the same pricing as direct customers — Standard $149 (ready in 5-7 business days) or Express $199 (ready to sign within 24 hours), +$99 per additional past year on either tier, IRS fax delivery included. The filing and the accountant review are identical on both tiers; only the speed differs. For volume pricing or consolidated invoicing, email support@form5472prep.com.",
+    a: `You pay for each filing at checkout, at the same prices as direct customers: Standard ${STD} (ready in ${STANDARD_TURNAROUND}) or Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), +${ADD} per additional past year on either tier, IRS fax delivery included. Your clients never see our prices. The filing and the accountant review are identical on both tiers; only the speed differs. For volume pricing or consolidated invoicing, email support@form5472prep.com.`,
   },
   {
     q: "How do I become a partner?",
@@ -45,7 +51,7 @@ const faq = [
   },
   {
     q: "Do my clients see Form5472 Prep or my brand?",
-    a: "Clients receive email from Form5472 Prep: the sign link, filing confirmation, and the IRS fax receipt. You appear as the preparer coordinating the filing. White-label delivery is available for approved partners on request, so the partner brand name and reply-to address appear on those emails instead of ours. Ask about it when you apply.",
+    a: "Every partner filing is white-label: Form5472 Prep never emails your clients. You copy each intake and signing link from your dashboard and send it yourself, and emails about a client's filing come to you. The name you set on your dashboard appears in your client's intake and on the IRS fax receipt. Client pages currently open on form5472prep.com.",
   },
 ];
 
@@ -66,7 +72,7 @@ const steps = [
     icon: Send,
     title: "Send the client the signing link",
     anchor: "#step-3",
-    body: "Send the secure review-and-sign link to the person authorized to sign for the client LLC. They review the completed package and sign once in their browser; we embed the signature into every required signature box on the printable PDF, so nothing is printed or scanned in the standard flow. A wet-ink alternative — print, sign in pen, upload — is available if the client prefers it.",
+    body: "Copy the secure review-and-sign link from your dashboard and send it from your own email to the person authorized to sign for the client LLC; we never email your clients. They review the completed package and sign once in their browser; we embed the signature into every required signature box on the printable PDF, so nothing is printed or scanned in the standard flow. A wet-ink alternative — print, sign in pen, upload — is available if the client prefers it.",
   },
   {
     icon: LayoutDashboard,
@@ -86,7 +92,7 @@ const HOW_TO_META = {
   totalTime: "PT10M", // Partner hands-on time per client filing, not IRS processing time.
   tools: ["Form5472 Prep partner dashboard", "Secure client review and sign link"],
   supplies: ["Client LLC information", "Client owner information", "Reportable transaction totals"],
-  cost: { currency: "USD", value: "149" },
+  cost: { currency: "USD", value: String(TIERS.standard.priceCents / 100) },
 };
 
 export default function PartnersPage() {
@@ -117,15 +123,16 @@ export default function PartnersPage() {
               <span className="text-accent-100">one partner account.</span>
             </h1>
             <p data-speakable className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
-              Batch filings for every foreign-owned LLC you manage. You prepare each filing in
-              minutes, our PTIN-holding tax accountant reviews, your client checks and signs with a secure link, and we fax
-              to the IRS Ogden PIN Unit — with a timestamped receipt for every one.
+              The Form5472 Prep partner program batches filings for every foreign-owned LLC you manage. You prepare
+              each filing in minutes, a tax accountant who holds an IRS PTIN reviews it, your client checks and signs
+              with the secure link you send them, and we fax it to the IRS Ogden PIN Unit — with a timestamped receipt
+              for every one. We never email your clients.
             </p>
             <ul className="mt-6 space-y-2">
               {[
                 "One dashboard for every client filing's live status",
                 "Clients sign with a one-click secure link — no paperwork chasing",
-                "Every package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN)",
+                "Every package reviewed by a tax accountant who holds an IRS PTIN (Preparer Tax Identification Number)",
                 "IRS fax receipt stored per filing as proof of submission",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm text-slate-300">
@@ -143,7 +150,7 @@ export default function PartnersPage() {
             </p>
             <p className="font-serif text-2xl font-semibold text-ink">Same pricing as direct</p>
             <p className="text-sm text-slate-500 mt-1">
-              From $149 per filing · fax included · no subscription
+              From {STD} per filing · fax included · no subscription
             </p>
             <a
               href="#apply"
@@ -284,7 +291,7 @@ function PartnersStructuredData() {
         "Formation agencies, CPA firms, and registered agents managing foreign-owned US LLCs",
     },
     description:
-      "Batch IRS Form 5472 + pro forma 1120 filings for multiple client LLCs under a single partner account. Per-filing pricing from $149, client e-sign links, review by a PTIN-holding tax accountant, and IRS fax delivery with receipts.",
+      `Batch IRS Form 5472 + pro forma 1120 filings for multiple client LLCs under a single partner account. Per-filing pricing from ${STD}, client e-sign links the partner sends, no email from us to the partner's clients, review by a tax accountant who holds an IRS PTIN, and IRS fax delivery with receipts.`,
   };
 
   const faqSchema = {

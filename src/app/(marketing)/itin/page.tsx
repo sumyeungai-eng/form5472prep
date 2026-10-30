@@ -5,7 +5,11 @@ import { EinItinTable } from "@/components/EinItinTable";
 import { HowToSummary } from "@/components/HowToSummary";
 import { JsonLd } from "@/components/JsonLd";
 import { env } from "@/lib/env";
+import { ITIN_PRICE_CENTS } from "@/lib/pricing";
+import { formatPrice } from "@/lib/utils";
 import { CONTENT_LAST_REVIEWED, SPEAKABLE, breadcrumbList, howTo, organizationNode, pageMeta, AREA_SERVED } from "@/lib/seo";
+
+const PRICE = formatPrice(ITIN_PRICE_CENTS);
 
 const ITIN_DESCRIPTION =
   "ITIN application support for non-residents. Eligible applications are forwarded to an IRS-authorized Certifying Acceptance Agent for document review.";
@@ -98,7 +102,7 @@ const HOW_TO_META = {
   totalTime: "PT20M", // Customer hands-on time for eligibility and document steps, not IRS processing time.
   tools: ["Form W-7", "IRS-authorized Certifying Acceptance Agent review"],
   supplies: ["Federal tax reason or IRS exception evidence", "Identity and foreign-status documents"],
-  cost: { currency: "USD", value: "349" },
+  cost: { currency: "USD", value: String(ITIN_PRICE_CENTS / 100) },
 };
 
 export default function ItinPage() {
@@ -151,7 +155,7 @@ export default function ItinPage() {
           {/* CTA card */}
           <div className="rounded-2xl bg-white text-slate-900 ring-1 ring-black/5 shadow-2xl shadow-black/30 p-6 sticky top-6">
             <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent mb-1">ITIN Acquisition</p>
-            <p className="font-serif text-5xl font-semibold text-ink">$349</p>
+            <p className="font-serif text-5xl font-semibold text-ink">{PRICE}</p>
             <p className="text-sm text-slate-500 mt-1">Flat fee · one-time · no subscription</p>
             <Link
               href="/itin/apply"
@@ -261,6 +265,13 @@ export default function ItinPage() {
               paid checkout before team review. If you are unsure about eligibility, documents, or
               whether related return preparation is included, <Link href="/contact" className="text-accent underline">contact us before purchasing</Link>.
             </p>
+            <p className="text-slate-600 leading-relaxed">
+              Form5472 Prep&apos;s ITIN service prepares Form W-7 and forwards eligible applications to an
+              IRS-authorized CAA, who reviews and certifies the identity documents. The review by a tax accountant who
+              holds an IRS PTIN is part of our{" "}
+              <Link href="/services/form-5472-filing-service" className="text-accent underline">Form 5472 filing service</Link>,
+              where every package is reviewed before you sign it.
+            </p>
           </div>
           <div className="rounded-xl border border-accent/20 bg-white p-6 space-y-4">
             <div className="flex gap-4">
@@ -333,7 +344,7 @@ export default function ItinPage() {
 }
 
 // Structured data for search + AI answer engines.
-// - Service + Offer surfaces the $349 ITIN offering with price for AEO/GEO.
+// - Service + Offer surfaces the ITIN_PRICE_CENTS ITIN offering with price for AEO/GEO.
 // - FAQPage (shares the rendered `faq` array) powers Google's FAQ rich result.
 // - BreadcrumbList + WebPage/Speakable round out the entity graph.
 function ItinStructuredData() {
@@ -356,7 +367,7 @@ function ItinStructuredData() {
     offers: {
       "@type": "Offer",
       name: "ITIN Acquisition — flat fee",
-      price: "349.00",
+      price: (ITIN_PRICE_CENTS / 100).toFixed(2),
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
       url,

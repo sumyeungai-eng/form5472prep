@@ -171,6 +171,24 @@ describe("services pages: on-page rules", () => {
         for (const f of page.faqs) expect(brand(f.a), f.q).toBeLessThanOrEqual(1);
       });
 
+      // Plan 2026-10-30 P0-4: the exact site wording, in the visible body.
+      it("states the review by a tax accountant who holds an IRS PTIN", () => {
+        expect(servicePlainBody(page)).toContain("tax accountant who holds an IRS PTIN");
+      });
+
+      // Plan 2026-10-30 P1-1: Moz grades descriptions under 120 chars as short.
+      it("meta description is at least 120 chars", () => {
+        expect(page.metaDescription.length).toBeGreaterThanOrEqual(120);
+      });
+
+      // Plan 2026-10-30 P0-5: partner filings are white-label for every partner
+      // (src/lib/partner/clientMail.ts): we never email a partner's clients, so
+      // no page may describe the retired on-request branded-email option.
+      it("does not describe the retired branded client-email option", () => {
+        const text = [page.metaDescription, page.longDescription, page.shortBlurb, servicePlainBody(page)].join(" ");
+        expect(text).not.toMatch(/white-label delivery|branded (client )?emails?|under (your|the partner's) brand name|reply-to address/i);
+      });
+
       it("has a 'what it is not / nobody can promise' section", () => {
         expect(page.sections.some((s) => /\bnot\b|nobody|cannot/i.test(s.heading))).toBe(true);
       });
