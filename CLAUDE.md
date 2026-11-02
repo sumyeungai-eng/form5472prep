@@ -93,3 +93,8 @@
   `next.config.mjs`; only invite/intake/sign + `/api` exist there, and any new
   root-layout tracker/brand must check `onPortalHost()`. Only the owning
   partner can pay for a partner filing.
+- **Generator 2.4.0** (`docs/sessions/2026-11-02-generator-fix-spec.md`): the RCS
+  formation state comes ONLY from `Filing.llcFormationState` (never an address
+  field; omitted when missing; optional for customers). Pre-flight ends with the
+  post-generation PDF validator `src/lib/pdf/validatePackage.ts` (A39–A51,
+  W46–W47), which reads the produced PDF and must never throw.
