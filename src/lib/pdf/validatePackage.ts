@@ -291,24 +291,24 @@ export function datesIn(text: string): FoundDate[] {
   const add = (raw: string, y: number, m: number, d: number | null) => {
     if (valid(y, m, d)) found.push({ text: raw, y, m, d });
   };
-  for (const x of text.matchAll(/\b(\d{1,2})[/.](\d{1,2})[/.](\d{4})\b/g)) {
+  for (const x of Array.from(text.matchAll(/\b(\d{1,2})[/.](\d{1,2})[/.](\d{4})\b/g))) {
     const a = Number(x[1]);
     const b = Number(x[2]);
     if (a > 12) add(x[0], Number(x[3]), b, a);
     else add(x[0], Number(x[3]), a, b);
   }
-  for (const x of text.matchAll(/\b(\d{4})-(\d{2})-(\d{2})\b/g)) add(x[0], Number(x[1]), Number(x[2]), Number(x[3]));
+  for (const x of Array.from(text.matchAll(/\b(\d{4})-(\d{2})-(\d{2})\b/g))) add(x[0], Number(x[1]), Number(x[2]), Number(x[3]));
   const monthIndex = (s: string) => MONTHS.indexOf(s.toLowerCase().slice(0, 3)) + 1;
   const covered: Array<[number, number]> = [];
-  for (const x of text.matchAll(new RegExp(`\\b${MONTH_RE}\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(\\d{4})\\b`, "gi"))) {
+  for (const x of Array.from(text.matchAll(new RegExp(`\\b${MONTH_RE}\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(\\d{4})\\b`, "gi")))) {
     add(x[0], Number(x[3]), monthIndex(x[1]), Number(x[2]));
     covered.push([x.index ?? 0, (x.index ?? 0) + x[0].length]);
   }
-  for (const x of text.matchAll(new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+${MONTH_RE},?\\s+(\\d{4})\\b`, "gi"))) {
+  for (const x of Array.from(text.matchAll(new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+${MONTH_RE},?\\s+(\\d{4})\\b`, "gi")))) {
     add(x[0], Number(x[3]), monthIndex(x[2]), Number(x[1]));
     covered.push([x.index ?? 0, (x.index ?? 0) + x[0].length]);
   }
-  for (const x of text.matchAll(new RegExp(`\\b${MONTH_RE},?\\s+(\\d{4})\\b`, "gi"))) {
+  for (const x of Array.from(text.matchAll(new RegExp(`\\b${MONTH_RE},?\\s+(\\d{4})\\b`, "gi")))) {
     const at = x.index ?? 0;
     if (covered.some(([s, e]) => at >= s && at < e)) continue;
     add(x[0], Number(x[2]), monthIndex(x[1]), null);
