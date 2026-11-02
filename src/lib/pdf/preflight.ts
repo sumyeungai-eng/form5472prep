@@ -20,6 +20,7 @@ import {
 } from "./fieldMaps";
 import type { PackageRecord, PackageRecordYear } from "./generatePackage";
 import { isValidPbaCode } from "@/lib/irsCodes";
+import { validatePackage } from "./validatePackage";
 
 export type PreflightIssue = { id: string; message: string };
 export type PreflightResult = {
@@ -94,8 +95,22 @@ export async function runPreflight(
   checkW41(record, result);
   await checkA28(pdfBytes, result);
   await checkA30(pdfBytes, record, result);
+  await checkRenderedPackage(record, pdfBytes, result);
 
   return { ok: result.failures.length === 0, ...result };
+}
+
+// A39-A51 / W46-W47: post-generation validator on the PRODUCED PDF (generator
+// 2.4.0, src/lib/pdf/validatePackage.ts). Pre-flight also runs at payment, so
+// this never throws: a validator crash becomes staff-blocking A51.
+async function checkRenderedPackage(record: PackageRecord, pdfBytes: Uint8Array, result: MutableResult) {
+  try {
+    const rendered = await validatePackage(pdfBytes, record);
+    result.failures.push(...rendered.failures);
+    result.warnings.push(...rendered.warnings);
+  } catch (err) {
+    fail(result, "A51", `The post-generation PDF validator could not read the package: ${err instanceof Error ? err.message : String(err)}`);
+  }
 }
 
 // W02: older orders may predate explicit per-category transaction confirmations.

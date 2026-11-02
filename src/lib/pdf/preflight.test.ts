@@ -1,4 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+// The post-generation PDF validator has its own suite (validatePackage.test.ts);
+// these record-level tests feed synthetic one-page PDFs it would rightly reject.
+vi.mock("./validatePackage", () => ({ validatePackage: async () => ({ failures: [], warnings: [] }) }));
 import { PDFDocument } from "pdf-lib";
 import { AUTHORED_DOC_SIGNATURE_HEADING, COVER_LETTER_CLOSING, COVER_LETTER_ENCLOSURE_PHRASE, GENERATOR_VERSION } from "@/config/filingPackage";
 import { form5472FieldMap, form1120_2025FieldMap } from "./fieldMaps";
