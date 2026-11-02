@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { getOwnedFiling } from "@/lib/session";
 import { getPdf } from "@/lib/storage";
 import { downloadFileName } from "@/lib/pdf/downloadFileName";
+import { clientMaySeeSignedPdf } from "@/lib/pdf/packageKeys";
 
 export const runtime = "nodejs";
 
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const filing = await getOwnedFiling(params.id);
-  if (!filing?.signedPdfKey)
+  // Release gate: no signed copy before release (or fax).
+  if (!filing?.signedPdfKey || !clientMaySeeSignedPdf(filing))
     return NextResponse.json({ error: "Not uploaded yet" }, { status: 404 });
 
   const bytes = await getPdf(filing.signedPdfKey);

@@ -1,4 +1,5 @@
 import { get as getStorageObject } from "@/lib/storage";
+import { clientMaySeeSignedPdf } from "@/lib/pdf/packageKeys";
 
 export const MAX_FAX_COPY_BYTES = 20 * 1024 * 1024;
 
@@ -9,8 +10,12 @@ export async function loadFaxClientCopy(filing: {
   signedPdfKey?: string | null;
   ownerSsnLast4?: string | null;
   ownerSsnCiphertext?: string | null;
+  reviewApprovedAt?: Date | null;
+  faxedAt?: Date | null;
 }, requested: boolean): Promise<Uint8Array | undefined> {
   if (!requested || filing.ownerSsnLast4 || filing.ownerSsnCiphertext) return undefined;
+  // Release gate: never email the client a package staff neither released nor faxed.
+  if (!clientMaySeeSignedPdf(filing)) return undefined;
   const key = filing.faxedPdfKey || filing.signedPdfKey;
   if (!key) return undefined;
   try {

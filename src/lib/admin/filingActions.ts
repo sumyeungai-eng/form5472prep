@@ -362,6 +362,7 @@ const filingSelect = {
   preflightFailures: true,
   preflightWarnings: true,
   preflightCheckedAt: true,
+  preflightPdfKey: true,
   preflightOverrideBy: true,
   preflightOverrideAt: true,
   preflightOverrideReason: true,
@@ -750,6 +751,8 @@ type ReleaseCheckFiling = Pick<
   | "preflightStatus"
   | "preflightFailures"
   | "preflightCheckedAt"
+  | "preflightPdfKey"
+  | "generatedPdfKey"
   | "preflightOverrideBy"
   | "preflightOverrideReason"
 > & { yearData?: Array<{ taxYear: number; rcsAdminNarrative: string | null }> | null };
@@ -762,12 +765,27 @@ type ReleaseCheckFiling = Pick<
 //   3. no A32 — a late year without an admin cause is never releasable, with
 //      or without an override (same rule as the fax gate);
 //   4. pre-flight passed, or failed with an override that records a reason.
-export async function canReleaseToClient(filing: ReleaseCheckFiling): Promise<ReleaseCheck> {
+export async function canReleaseToClient(
+  filing: ReleaseCheckFiling,
+  // uploadReviewedPdf releases the staff-reviewed upload, not the generated PDF.
+  opts: { reviewedUpload?: boolean } = {},
+): Promise<ReleaseCheck> {
   if (!filing.preflightCheckedAt || !filing.preflightStatus) {
     return {
       ok: false,
       code: "preflight_not_run",
       message: "Pre-flight has not run on this order's data yet. Click \"Re-run pre-flight\" first.",
+    };
+  }
+  // A generated PDF is released only if pre-flight checked those very bytes
+  // (a reviewed upload is checked by staff; its pre-flight checks the data).
+  if (!opts.reviewedUpload && !isReviewedPdfKey(filing.generatedPdfKey) && filing.preflightPdfKey !== filing.generatedPdfKey) {
+    return {
+      ok: false,
+      code: "preflight_other_pdf",
+      message:
+        "Pre-flight last ran on a different PDF than the current one. Click \"Re-run pre-flight\" " +
+        "(it rebuilds the PDF from the current data), check the new PDF, then release it.",
     };
   }
   const latestDataChange = await prisma.filingChangeLog.findFirst({
@@ -950,6 +968,9 @@ async function persistRerunPreflight(
   preflight: PreflightResult,
   ctx: FilingActionContext,
   trigger: string,
+  // Release gate: the checked bytes, already stored under `key`, become the
+  // current generated PDF (unreleased, unsigned, generated key only).
+  newPackage?: { key: string; record: { generatorVersion: string; commit: string } },
 ): Promise<{ checkedAt: Date; overrideCleared: boolean }> {
   const checkedAt = new Date();
   let overrideCleared = false;
@@ -958,14 +979,34 @@ async function persistRerunPreflight(
     approved = await approvedFailuresForOverride(filing);
     overrideCleared = !overrideCoversFailures(approved, preflight.failures);
   }
-  await prisma.filing.update({
-    where: { id: filing.id },
-    data: {
-      ...preflightResultColumns(preflight, checkedAt),
-      ...(overrideCleared ? CLEARED_PREFLIGHT_OVERRIDE : {}),
-    },
-    select: { id: true },
-  });
+  const data = {
+    ...preflightResultColumns(preflight, checkedAt),
+    ...(overrideCleared ? CLEARED_PREFLIGHT_OVERRIDE : {}),
+  };
+  let swapped = false;
+  if (newPackage) {
+    try {
+      // Pinned on the state judged above: a reviewed upload or a release
+      // landing meanwhile is never replaced by these bytes.
+      await prisma.filing.update({
+        where: { id: filing.id, generatedPdfKey: filing.generatedPdfKey, reviewApprovedAt: null },
+        data: {
+          ...data,
+          generatedPdfKey: newPackage.key,
+          preflightPdfKey: newPackage.key,
+          generatorVersion: newPackage.record.generatorVersion,
+          generatorCommit: newPackage.record.commit,
+        },
+        select: { id: true },
+      });
+      swapped = true;
+    } catch (err) {
+      if (!(err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025")) throw err;
+    }
+  }
+  if (!swapped) {
+    await prisma.filing.update({ where: { id: filing.id }, data, select: { id: true } });
+  }
   const ids = (issues: PreflightIssue[]) => issues.map((issue) => issue.id);
   const source = ctx.changeSource ?? "admin";
   await logFilingChange({
@@ -986,6 +1027,7 @@ async function persistRerunPreflight(
       failureIds: ids(preflight.failures),
       warningIds: ids(preflight.warnings),
       overrideKept: !!filing.preflightOverrideBy && !overrideCleared,
+      ...(swapped ? { generatedPdfKey: newPackage!.key, previousGeneratedPdfKey: filing.generatedPdfKey } : {}),
     },
     reason: ctx.reason,
   });
@@ -1029,7 +1071,21 @@ async function rerunPreflightNow(
     return { ran: false, reason: "generation_failed", message: `The package could not be built in memory: ${msg}` };
   }
   const preflight = await runPreflight(pkg.record, pkg.bytes);
-  const { checkedAt, overrideCleared } = await persistRerunPreflight(filing, preflight, ctx, trigger);
+  // Release gate: for an unreleased, unsigned GENERATED package, keep the bytes
+  // pre-flight just checked and make them the current PDF, so release can
+  // require preflightPdfKey === generatedPdfKey. Reviewed uploads keep theirs.
+  let newPackage: { key: string; record: { generatorVersion: string; commit: string } } | undefined;
+  if (
+    filing.generatedPdfKey &&
+    !isReviewedPdfKey(filing.generatedPdfKey) &&
+    !filing.reviewApprovedAt &&
+    !filing.signaturePngKey &&
+    !filing.signedPdfKey
+  ) {
+    newPackage = { key: newUnsignedPdfKey(filing.id), record: pkg.record };
+    await putPdf(newPackage.key, pkg.bytes);
+  }
+  const { checkedAt, overrideCleared } = await persistRerunPreflight(filing, preflight, ctx, trigger, newPackage);
   return {
     ran: true,
     status: preflight.ok ? "passed" : "failed",
@@ -2364,7 +2420,7 @@ export async function runFilingAction(
         throw new FilingActionError(409, "preflight_failed", preflightBlockedMessage(filing));
       }
       // Uploading the reviewed PDF releases it to the client: same predicate.
-      const releaseCheck = await canReleaseToClient(filing);
+      const releaseCheck = await canReleaseToClient(filing, { reviewedUpload: true });
       if (!releaseCheck.ok) {
         throw new FilingActionError(409, releaseCheck.code, releaseCheck.message);
       }

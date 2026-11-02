@@ -21,6 +21,7 @@ const db = vi.hoisted(() => ({
       ownerSsnSubmittedBy: "client",
       ownerSsnRequestedAt: null,
       taxYears: [2025],
+      generatedPdfKey: "filing_1_unsigned_100.pdf",
       faxedAt: null,
       signedAt: null,
       validationCheckedAt: null,
@@ -74,5 +75,13 @@ describe("GET /api/admin/v1/filings/[id] — state of formation (generator 2.4.0
     const res = await GET(new Request("http://localhost/api/admin/v1/filings/filing_1"), { params: { id: "filing_1" } });
     expect(db.findUnique.mock.calls[0][0].select).toHaveProperty("llcFormationState", true);
     expect((await res.json()).data.filing).toMatchObject({ llcState: "DE", llcFormationState: "WY" });
+  });
+});
+
+describe("GET /api/admin/v1/filings/[id] — release gate", () => {
+  it("returns the current reviewable key so approveForSignature can send it back as expectedPdfKey", async () => {
+    const res = await GET(new Request("http://localhost/api/admin/v1/filings/filing_1"), { params: { id: "filing_1" } });
+    const json = await res.json();
+    expect(json.data.filing).toMatchObject({ hasGeneratedPdf: true, generatedPdfKey: "filing_1_unsigned_100.pdf" });
   });
 });

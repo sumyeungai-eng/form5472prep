@@ -47,6 +47,8 @@ export async function persistNewPackagePreflight(opts: {
       ...(opts.data ?? {}),
       ...preflightResultColumns(opts.preflight, opts.checkedAt),
       ...CLEARED_PREFLIGHT_OVERRIDE,
+      // Release gate: this pre-flight ran on the bytes stored under this key.
+      ...(typeof opts.data?.generatedPdfKey === "string" ? { preflightPdfKey: opts.data.generatedPdfKey } : {}),
       generatorVersion: opts.record.generatorVersion,
       generatorCommit: opts.record.commit,
     },

@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { releasedPdfKey } from "@/lib/pdf/packageKeys";
+import { clientMaySeeSignedPdf, releasedPdfKey } from "@/lib/pdf/packageKeys";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { Prisma } from "@prisma/client";
@@ -211,6 +211,9 @@ export function toClientFiling<T extends { sessionId?: unknown }>(
   if (!releasedPdfKey(out as Parameters<typeof releasedPdfKey>[0])) {
     if ("generatedPdfKey" in out) out.generatedPdfKey = null;
     if ("reviewApprovedPdfKey" in out) out.reviewApprovedPdfKey = null;
+  }
+  if ("signedPdfKey" in out && !clientMaySeeSignedPdf(out as Parameters<typeof clientMaySeeSignedPdf>[0])) {
+    out.signedPdfKey = null;
   }
   return out as Omit<T, "sessionId" | StaffOnlyFilingField>;
 }

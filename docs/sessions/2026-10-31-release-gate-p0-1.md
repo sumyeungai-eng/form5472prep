@@ -30,12 +30,27 @@ D11 backfill). That plan file currently lives on the `sign-reedit` worktree bran
 - Evidence: targeted vitest 31 files / 494 tests passed before commit (plus new tests); `tsc` exit 0;
   `next build` result in the commit report.
 
+## Codex review fixes (2026-11-03)
+- P1 signed copy: `/api/filings/[id]/signed-pdf`, `toClientFiling.signedPdfKey`, the portal page prop and
+  `loadFaxClientCopy` now require `reviewApprovedAt` OR `faxedAt` (`clientMaySeeSignedPdf`).
+- P1 stale bytes: new `Filing.preflightPdfKey` (same unpushed migration; `migrate diff` = two ADD COLUMNs).
+  `persistNewPackagePreflight` records it; a pre-flight re-run on an unreleased, unsigned GENERATED package
+  stores the checked bytes under a new versioned key and points `generatedPdfKey` + `preflightPdfKey` at them
+  (pinned update: never replaces a reviewed upload or a release that landed meanwhile). Releasing a generated
+  PDF requires `preflightPdfKey === generatedPdfKey` (`preflight_other_pdf`); reviewed uploads keep the old rules.
+  NOT backfilled: each unreleased order needs one "Re-run pre-flight" before release.
+- P2 v1 API: the detail response now returns `generatedPdfKey`, to send back as `payload.expectedPdfKey`.
+  Missing key stays a 400; the iOS UI has no approve action today.
+
 ## Contracts a future editor must respect
 - Clients only ever get `reviewApprovedPdfKey`, only while `reviewApprovedAt` is set. No status exemption.
 - Every write of `generatedPdfKey` must either clear `reviewApprovedAt/By/PdfKey` or set the key as released.
 - Never overwrite a released key: always `newUnsignedPdfKey()`.
 - A32 is never overridable for release (same rule as the fax gate).
 - Never pass a raw package key to a client component.
+- Pre-flight approves bytes, not data: any path that persists a pre-flight result for a generated PDF must also
+  record `preflightPdfKey` for the exact bytes it checked.
+- A client's signed/faxed copy is visible only after release or fax (`clientMaySeeSignedPdf`).
 
 ## Open
 - Owner-gated: before the P0 push, list PDF_GENERATED orders without approval (`awaitingReview`) — those

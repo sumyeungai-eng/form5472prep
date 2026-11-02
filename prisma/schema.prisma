@@ -360,6 +360,9 @@ model Filing {
   preflightFailures  Json?
   preflightWarnings  Json?
   preflightCheckedAt DateTime?
+  // Release gate: the package key the stored pre-flight ran on. Release of a generated PDF requires
+  // preflightPdfKey === generatedPdfKey, so pre-flight can never approve bytes other than the ones released.
+  preflightPdfKey    String?
   preflightOverrideBy String?
   preflightOverrideAt DateTime?
   preflightOverrideReason String?

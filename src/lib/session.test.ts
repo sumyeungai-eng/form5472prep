@@ -142,6 +142,13 @@ describe("toClientFiling", () => {
     expect(after).toMatchObject({ generatedPdfKey: "f1_unsigned_1.pdf", reviewApprovedPdfKey: "f1_unsigned_1.pdf" });
   });
 
+  it("release gate: nulls signedPdfKey until the package is released or faxed", async () => {
+    const { toClientFiling } = await import("./session");
+    const row = { id: "f1", sessionId: "s", signedPdfKey: "f1_signed.pdf", reviewApprovedAt: null, faxedAt: null as Date | null };
+    expect(toClientFiling(row).signedPdfKey).toBeNull();
+    expect(toClientFiling({ ...row, faxedAt: new Date("2026-10-31T00:00:00Z") }).signedPdfKey).toBe("f1_signed.pdf");
+  });
+
   it("drops pre-flight findings, which quote the admin narrative and customer text", async () => {
     const { toClientFiling } = await import("./session");
     const out = toClientFiling({

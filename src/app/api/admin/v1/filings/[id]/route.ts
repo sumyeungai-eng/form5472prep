@@ -133,6 +133,9 @@ export const GET = withAdminAuth(async (_req, { params }) => {
     isDiirsp: filing.isDiirsp,
     reasonableCauseNarrative: filing.reasonableCauseNarrative,
     hasGeneratedPdf: !!filing.generatedPdfKey,
+    // Release gate: send this back as payload.expectedPdfKey with
+    // approveForSignature (stale -> 409, missing -> 400).
+    generatedPdfKey: filing.generatedPdfKey,
     hasSignedPdf: !!filing.signedPdfKey,
     hasFaxedPdf: !!filing.faxedPdfKey,
     hasCustomerSignature: !!filing.signaturePngKey,

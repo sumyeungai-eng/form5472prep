@@ -405,6 +405,7 @@ describe("approveForSignature", () => {
     generatedPdfKey: "unsigned.pdf",
     preflightStatus: "passed",
     preflightCheckedAt: new Date("2026-09-22T11:00:00.000Z"),
+    preflightPdfKey: "unsigned.pdf",
     preflightOverrideBy: null,
     preflightOverrideReason: null,
     reviewApprovedAt: null,
@@ -1544,6 +1545,8 @@ describe("resendFaxConfirmation", () => {
     faxJobId: "fax-uuid-1",
     faxStatus: "delivered",
     faxConfirmationKey: "filing_fax_fax_receipt.pdf",
+    // Faxed: the client copy may be attached (release gate allows release OR fax).
+    faxedAt: new Date("2026-09-20T10:00:00.000Z"),
     user: { id: "u1", email: "owner@example.test" },
   };
   const receipt = new Uint8Array([37, 80, 68, 70, 45]);
@@ -1811,7 +1814,10 @@ describe("pre-flight workflow", () => {
     );
   }
 
-  it("Re-run pre-flight rebuilds the package in memory, writes no PDF and stores fresh findings + timestamp", async () => {
+  // Release gate (Codex P1): for an unreleased, unsigned GENERATED package the
+  // re-run keeps the bytes it checked as the current PDF (new versioned key),
+  // so release can require preflightPdfKey === generatedPdfKey.
+  it("Re-run pre-flight rebuilds the package, stores the checked bytes as the current PDF, and stores fresh findings + timestamp", async () => {
     givenFiling();
     pdf.runPreflight.mockResolvedValueOnce({
       ok: false,
@@ -1823,16 +1829,18 @@ describe("pre-flight workflow", () => {
 
     expect(result).toMatchObject({ ok: true, ran: true, status: "failed", failures: [A32_2025], overrideCleared: false });
     expect(pdf.generatePackage).toHaveBeenCalledOnce();
-    expect(storage.putPdf).not.toHaveBeenCalled();
+    const key = (storage.putPdf.mock.calls[0] as unknown[])[0] as string;
+    expect(key).toMatch(/^filing_1_unsigned_\d+\.pdf$/);
     expect(storage.put).not.toHaveBeenCalled();
     const data = updates().at(-1)!;
     expect(data).toMatchObject({
       preflightStatus: "failed",
       preflightFailures: [A32_2025],
       preflightWarnings: [{ id: "W36", message: "Tax year 2025: Extension unclear." }],
+      generatedPdfKey: key,
+      preflightPdfKey: key,
     });
     expect((data.preflightCheckedAt as Date).getTime()).toBeGreaterThan(STALE_CHECK.getTime());
-    expect(data).not.toHaveProperty("generatedPdfKey");
     expect(data).not.toHaveProperty("reviewApprovedAt");
     expect(logs()).toEqual([
       expect.objectContaining({
@@ -2189,6 +2197,7 @@ describe("release gate (PR 1)", () => {
     preflightStatus: "passed" as string | null,
     preflightFailures: [] as unknown,
     preflightCheckedAt: new Date("2026-10-31T11:00:00.000Z") as Date | null,
+    preflightPdfKey: "filing_1_unsigned_100.pdf" as string | null,
     preflightOverrideBy: null as string | null,
     preflightOverrideReason: null as string | null,
     reviewApprovedAt: null as Date | null,
@@ -2362,12 +2371,72 @@ describe("release gate (PR 1)", () => {
       for (const data of updates()) expect(data).not.toHaveProperty("reviewApprovedAt");
     });
 
-    it("not released: just re-runs pre-flight, no warning", async () => {
+    it("not released: re-runs pre-flight and keeps the checked bytes as the current PDF, no warning", async () => {
       given();
       const result = await editYear();
       expect(result).toMatchObject({ ok: true });
       expect(result).not.toHaveProperty("releaseWarning", expect.anything());
-      expect(storage.putPdf).not.toHaveBeenCalled();
+      const key = (storage.putPdf.mock.calls[0] as unknown[])[0] as string;
+      expect(key).toMatch(/^filing_1_unsigned_\d+\.pdf$/);
+      expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+        where: { id: "filing_1", generatedPdfKey: "filing_1_unsigned_100.pdf", reviewApprovedAt: null },
+        data: expect.objectContaining({ generatedPdfKey: key, preflightPdfKey: key, preflightStatus: "passed" }),
+      }));
+    });
+  });
+
+  describe("pre-flight must have checked the bytes being released (Codex P1)", () => {
+    const late = {
+      taxYears: [2024],
+      generatedPdfKey: "filing_1_unsigned_100.pdf",
+      preflightPdfKey: "filing_1_unsigned_100.pdf",
+      preflightStatus: "failed",
+      preflightFailures: [{ id: "A32", message: "RCS narrative not written for tax year 2024." }],
+      yearData: [{ taxYear: 2024, rcsAdminNarrative: null }],
+    };
+
+    it("staff add the narrative: the re-run stores new bytes and points generatedPdfKey at them", async () => {
+      given(late);
+      db.yearFindUnique.mockResolvedValue({ id: "y2024", rcsAdminNarrative: null });
+      await runFilingAction(
+        "filing_1",
+        "updateYearField",
+        { taxYear: 2024, field: "rcsAdminNarrative", value: "I formed the LLC and did not know.", reason: "narrative" },
+        { adminId: "admin_1" },
+      );
+      const key = (storage.putPdf.mock.calls[0] as unknown[])[0] as string;
+      expect(key).not.toBe("filing_1_unsigned_100.pdf");
+      expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({ generatedPdfKey: key, preflightPdfKey: key, preflightStatus: "passed" }),
+      }));
+    });
+
+    it("refuses to release the stale PDF that pre-flight did not pass on", async () => {
+      // The stored pre-flight passed (on newer bytes) but the current key is the old PDF.
+      given({
+        ...late,
+        preflightStatus: "passed",
+        preflightFailures: [],
+        preflightPdfKey: "filing_1_unsigned_200.pdf",
+        yearData: [{ taxYear: 2024, rcsAdminNarrative: "I formed the LLC and did not know." }],
+      });
+      await expect(approve()).rejects.toMatchObject({ status: 409, code: "preflight_other_pdf" });
+      expect(db.updateMany).not.toHaveBeenCalled();
+    });
+
+    it("releases the regenerated PDF that pre-flight passed on", async () => {
+      given({
+        ...late,
+        generatedPdfKey: "filing_1_unsigned_200.pdf",
+        preflightPdfKey: "filing_1_unsigned_200.pdf",
+        preflightStatus: "passed",
+        preflightFailures: [],
+        yearData: [{ taxYear: 2024, rcsAdminNarrative: "I formed the LLC and did not know." }],
+      });
+      await expect(approve({ expectedPdfKey: "filing_1_unsigned_200.pdf" })).resolves.toMatchObject({ ok: true });
+      expect(db.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({ reviewApprovedPdfKey: "filing_1_unsigned_200.pdf" }),
+      }));
     });
   });
 });

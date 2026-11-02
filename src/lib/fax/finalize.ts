@@ -59,6 +59,9 @@ export type FaxFinalizeFiling = {
   ownerSsnCiphertext?: string | null;
   faxCopyToClient?: boolean | null;
   faxedPdfKey?: string | null;
+  // Release gate (loadFaxClientCopy): the client copy needs a release or a fax.
+  reviewApprovedAt?: Date | null;
+  faxedAt?: Date | null;
   // Partner filings: the receipt carries the partner's name instead of ours.
   // If the caller includes `partner` it is used as-is; otherwise it is looked
   // up from `partnerId` (the callers' `include: { user: true }` loads the scalar).

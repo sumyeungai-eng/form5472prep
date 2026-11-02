@@ -18,7 +18,7 @@ import { supersedeDraftsFor } from "@/lib/supersedeDrafts";
 import { OwnerSsnBox } from "@/components/OwnerSsnBox";
 import { isPiiCryptoConfigured } from "@/lib/crypto/pii";
 import { ssnEntryState } from "@/lib/ownerSsn";
-import { releasedPdfKey } from "@/lib/pdf/packageKeys";
+import { clientMaySeeSignedPdf, releasedPdfKey } from "@/lib/pdf/packageKeys";
 import { FilingReviewSummary } from "@/components/FilingReviewSummary";
 import { SendCorrection } from "@/components/SendCorrection";
 
@@ -197,7 +197,7 @@ export default async function FilingDetailPage({
           reviewApprovedAt: filing.reviewApprovedAt?.toISOString() ?? null,
           unreadTeamMessages,
           signaturePngKey: filing.signaturePngKey,
-          signedPdfKey: filing.signedPdfKey,
+          signedPdfKey: clientMaySeeSignedPdf(filing) ? filing.signedPdfKey : null,
           faxJobId: filing.faxJobId,
           faxStatus: filing.faxStatus,
           faxService: filing.faxService,

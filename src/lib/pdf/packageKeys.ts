@@ -26,6 +26,16 @@ export function releasedPdfKey(filing: {
   return filing.reviewApprovedAt && filing.reviewApprovedPdfKey ? filing.reviewApprovedPdfKey : null;
 }
 
+// The client's signed / faxed copy: only once staff released the package, or
+// once it was faxed (final and staff-sent — an offline-signed order may never
+// have been released in the portal).
+export function clientMaySeeSignedPdf(filing: {
+  reviewApprovedAt?: Date | string | null;
+  faxedAt?: Date | string | null;
+}): boolean {
+  return !!filing.reviewApprovedAt || !!filing.faxedAt;
+}
+
 // Admin "Download latest generated draft": the newest GENERATED package, even
 // while a reviewed upload is the client version. Newest-first over the "pdf"
 // change-log rows: a draft-only regenerate records `after.draftKey`; a
