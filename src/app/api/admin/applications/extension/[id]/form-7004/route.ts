@@ -3,13 +3,16 @@ import { isAdmin } from "@/lib/admin/auth";
 import { extensionFaxedKey, extensionFormKey } from "@/lib/fax/extension";
 import { form7004Warnings, generateForm7004 } from "@/lib/pdf/form7004";
 import { prisma } from "@/lib/prisma";
-import { get, put } from "@/lib/storage";
+import { del, get, put } from "@/lib/storage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// POST: generate Form 7004 from the order and store it as <id>_7004.pdf.
+// POST: generate Form 7004 from the order under a NEW immutable key, then
+// publish that key only if the printed fields are still what it was built
+// from — a request that lost to a newer edit publishes (and overwrites) nothing.
 // Missing data still generates; the warnings tell staff what to fix.
+// shortcut: superseded PDFs stay in storage (a few kB each); prune if it ever matters.
 export async function POST(_req: Request, { params }: { params: { id: string } }) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -26,13 +29,13 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
     const message = err instanceof Error ? err.message : "unknown error";
     return NextResponse.json({ error: `Could not generate the form: ${message}` }, { status: 500 });
   }
-  // Recorded only if the printed fields are still what the PDF was built from.
   const generatedAt = new Date();
   const saved = await prisma.extensionApplication.updateMany({
     where: { id: params.id, ...app },
     data: { generatedPdfKey: key, generatedAt },
   });
   if (saved.count !== 1) {
+    await del(key).catch(() => {});
     return NextResponse.json({ error: "The order changed while the form was being generated. Generate it again." }, { status: 409 });
   }
   return NextResponse.json({ ok: true, generatedAt: generatedAt.toISOString(), warnings: form7004Warnings(app) });

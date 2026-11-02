@@ -82,6 +82,9 @@ const storage = vi.hoisted(() => ({
     return key;
   }),
   publicUrl: vi.fn(async (key: string) => `https://storage.example.test/${key}`),
+  del: vi.fn(async (key: string) => {
+    storage.files.delete(key);
+  }),
 }));
 const fax = vi.hoisted(() => {
   class TelnyxSubmitRejectedError extends Error {
@@ -136,6 +139,7 @@ import { PATCH as patchRoute } from "@/app/api/admin/applications/extension/[id]
 import { GET as faxStatusPoll } from "@/app/api/cron/fax-status-poll/route";
 import { POST as telnyxWebhook } from "@/app/api/telnyx-webhook/route";
 import { EXTENSION_FAX_CLAIM } from "@/lib/fax/extension";
+import { generateForm7004 } from "@/lib/pdf/form7004";
 
 const ID = "ext_1";
 const params = { params: { id: ID } };
@@ -334,7 +338,7 @@ describe("POST /api/admin/applications/extension/[id]/fax — sending", () => {
     fax.submitFax.mockRejectedValueOnce(new Error("socket hang up"));
     const res = await faxRoute(faxRequest(), params);
     expect(await res.json()).toMatchObject({ code: "fax_submit_ambiguous" });
-    expect(row().faxStatus).toBe(EXTENSION_FAX_CLAIM);
+    expect(row().faxStatus).toMatch(/^submitting:[0-9a-f-]{36}$/);
     expect(await (await faxRoute(faxRequest({ reason: "retry the fax right now" }), params)).json()).toMatchObject({
       code: "fax_in_progress",
     });
@@ -465,7 +469,95 @@ describe("order edits never leave a stale form to fax", () => {
     const res = await generateRoute(new Request("https://example.test/x", { method: "POST" }), params);
     expect(res.status).toBe(200);
     expect(await res.json()).toMatchObject({ ok: true, warnings: ["Address incomplete — missing ZIP."] });
-    expect(storage.put).toHaveBeenCalledWith(`${ID}_7004.pdf`, new Uint8Array([70, 55]), "application/pdf");
-    expect(row()).toMatchObject({ generatedPdfKey: `${ID}_7004.pdf` });
+    const [key, bytes, type] = storage.put.mock.calls[0];
+    expect(key).toMatch(/^ext_1_7004_\d+_[0-9a-f]{8}\.pdf$/);
+    expect([bytes, type]).toEqual([new Uint8Array([70, 55]), "application/pdf"]);
+    expect(row()).toMatchObject({ generatedPdfKey: key });
+  });
+});
+
+// Races found by the Codex review of ccfded6: each interleaving is forced with
+// gated mocks so the test fails on the old code path.
+describe("races", () => {
+  const readRow = db.findUnique.getMockImplementation()!;
+  function patchReq(body: Row) {
+    return new Request(`https://example.test/api/admin/applications/extension/${ID}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  }
+
+  it("race 1: two reasoned re-sends of the same stale claim send ONE fax", async () => {
+    seed({ faxStatus: EXTENSION_FAX_CLAIM, updatedAt: new Date("2026-02-10T08:00:00Z") });
+    // Both requests read the stale claim before either writes.
+    let arrived = 0;
+    let bothRead!: () => void;
+    const barrier = new Promise<void>((resolve) => (bothRead = resolve));
+    const gatedRead = async (args: Parameters<typeof readRow>[0]) => {
+      const found = await readRow(args);
+      if (++arrived === 2) bothRead();
+      await barrier;
+      return found;
+    };
+    db.findUnique.mockImplementationOnce(gatedRead).mockImplementationOnce(gatedRead);
+
+    const reason = { reason: "checked Telnyx, nothing went out" };
+    const [a, b] = await Promise.all([faxRoute(faxRequest(reason), params), faxRoute(faxRequest(reason), params)]);
+
+    expect([a.status, b.status].sort()).toEqual([200, 409]);
+    expect(fax.submitFax).toHaveBeenCalledTimes(1);
+    expect(row()).toMatchObject({ faxJobId: "fax-ext-1", faxAttempts: 1, status: "PROCESSING" });
+  });
+
+  it("race 2: a generation that lost to a newer edit cannot overwrite the published PDF", async () => {
+    seed({ generatedPdfKey: null, generatedAt: null });
+    const gen = vi.mocked(generateForm7004);
+    let aReading!: () => void;
+    const aRead = new Promise<void>((resolve) => (aReading = resolve));
+    let openA!: () => void;
+    const gateA = new Promise<void>((resolve) => (openA = resolve));
+    gen.mockImplementationOnce(async () => {
+      aReading();
+      await gateA;
+      return new Uint8Array([0x0a]); // built from the OLD EIN
+    });
+    const post = () => generateRoute(new Request("https://example.test/x", { method: "POST" }), params);
+
+    const a = post(); // A has read the old EIN and is generating
+    await aRead;
+    expect((await patchRoute(patchReq({ ein: "12-3456789" }), params)).status).toBe(200);
+    gen.mockImplementationOnce(async () => new Uint8Array([0x0b])); // B: the corrected EIN
+    expect((await post()).status).toBe(200);
+    openA();
+    expect((await a).status).toBe(409);
+
+    const key = row().generatedPdfKey as string;
+    expect(key).toBeTruthy();
+    expect(storage.files.get(key)).toEqual(new Uint8Array([0x0b]));
+    // The loser's own upload is cleaned up; nothing it wrote is published.
+    expect(Array.from(storage.files.values())).not.toContainEqual(new Uint8Array([0x0a]));
+  });
+
+  it("race 3: a printed-field edit that read an idle order cannot commit after a fax claimed it", async () => {
+    seed();
+    let patchReading!: () => void;
+    const patchRead = new Promise<void>((resolve) => (patchReading = resolve));
+    let openPatch!: () => void;
+    const gate = new Promise<void>((resolve) => (openPatch = resolve));
+    db.findUnique.mockImplementationOnce(async (args) => {
+      const found = await readRow(args);
+      patchReading();
+      await gate;
+      return found;
+    });
+
+    const p = patchRoute(patchReq({ ein: "12-3456789" }), params);
+    await patchRead;
+    expect((await faxRoute(faxRequest(), params)).status).toBe(200);
+    openPatch();
+
+    expect((await p).status).toBe(409);
+    expect(row()).toMatchObject({ ein: "98-7654321", generatedPdfKey: `${ID}_7004.pdf`, faxJobId: "fax-ext-1" });
   });
 });

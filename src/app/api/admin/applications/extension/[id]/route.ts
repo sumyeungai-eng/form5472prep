@@ -43,6 +43,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     ...(adminNotes !== undefined ? { adminNotes: adminNotes.trim().slice(0, 5000) || null } : {}),
   };
 
+  // Idle-fax snapshot a printed-field edit is conditioned on (see below).
+  let printedEditFrom: { faxJobId: string | null; faxStatus: string | null; status: string } | null = null;
   if (Object.keys(details.values).length > 0) {
     const current = await prisma.extensionApplication.findUnique({ where: { id: params.id } });
     if (!current) return NextResponse.json({ error: "Order not found" }, { status: 404 });
@@ -59,7 +61,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     if (changes.length > 0) {
       Object.assign(data, Object.fromEntries(changes));
       // A stale form must never be faxed: any change to a printed field clears it.
-      if (formChanged) Object.assign(data, { generatedPdfKey: null, generatedAt: null });
+      if (formChanged) {
+        Object.assign(data, { generatedPdfKey: null, generatedAt: null });
+        printedEditFrom = current;
+      }
       const summary = changes.map(([key, value]) => `${key}: "${(current as Record<string, unknown>)[key] ?? ""}" → "${value ?? ""}"`).join("; ");
       const base = adminNotes !== undefined ? adminNotes.trim() : current.adminNotes;
       data.adminNotes = appendNote(
@@ -67,6 +72,22 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         auditLine(new Date(), `Order details edited by admin — ${summary}${formChanged ? " (generated Form 7004 cleared)" : ""}`),
       );
     }
+  }
+
+  if (printedEditFrom) {
+    // A printed field changes: commit only if no send claimed the order (and no
+    // fax job moved) since the idle snapshot checked above.
+    const saved = await prisma.extensionApplication.updateMany({
+      where: { id: params.id, faxJobId: printedEditFrom.faxJobId, faxStatus: printedEditFrom.faxStatus },
+      data,
+    });
+    if (saved.count !== 1) {
+      return NextResponse.json(
+        { error: "A Form 7004 fax started while you were saving. Nothing was changed — refresh and check the order before editing it." },
+        { status: 409 },
+      );
+    }
+    return NextResponse.json({ ok: true, status: (data.status as string | undefined) ?? printedEditFrom.status });
   }
 
   const app = await prisma.extensionApplication.update({ where: { id: params.id }, data });

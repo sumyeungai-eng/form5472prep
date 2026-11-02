@@ -10,6 +10,7 @@
 //     a failure alerts the admin only.
 // The duplicate guard mirrors refaxDecision in lib/admin/filingActions.ts.
 
+import { randomUUID } from "node:crypto";
 import type { Prisma } from "@prisma/client";
 import { IRS_FAX_NUMBER } from "@/config/filingPackage";
 import { env } from "@/lib/env";
@@ -39,11 +40,17 @@ import { sendAdminTelegram } from "@/lib/telegram";
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 // Held while a send is between "decided" and "recorded". After an ambiguous
-// Telnyx answer it stays, so nothing sends again without a human.
+// Telnyx answer it stays, so nothing sends again without a human. Every claim
+// is "submitting:<uuid>": a new value per send, so two requests that observed
+// the same (even stale) claim can never both win the claim write.
 export const EXTENSION_FAX_CLAIM = "submitting";
+export function isExtensionFaxClaim(faxStatus: string | null | undefined): boolean {
+  return faxStatus === EXTENSION_FAX_CLAIM || !!faxStatus?.startsWith(`${EXTENSION_FAX_CLAIM}:`);
+}
 export const MIN_EXTENSION_REFAX_REASON_CHARS = 10;
 
-export const extensionFormKey = (id: string) => `${id}_7004.pdf`;
+// Each generation gets its own immutable key, published by a conditional write.
+export const extensionFormKey = (id: string) => `${id}_7004_${Date.now()}_${randomUUID().slice(0, 8)}.pdf`;
 export const extensionFaxedKey = (id: string) => `${id}_7004_faxed.pdf`;
 export const extensionReceiptKey = (id: string) => `${id}_7004_fax_receipt.pdf`;
 
@@ -83,7 +90,7 @@ export function appendNote(notes: string | null | undefined, line: string): stri
 
 // A fax job is "live" when it may still reach (or has reached) the IRS.
 export function extensionFaxInFlight(app: Pick<ExtensionFaxRow, "faxJobId" | "faxStatus" | "faxDeliveredAt">): boolean {
-  if (app.faxStatus === EXTENSION_FAX_CLAIM) return true;
+  if (isExtensionFaxClaim(app.faxStatus)) return true;
   return !!app.faxJobId && !app.faxDeliveredAt && !isTerminalFaxStatus(app.faxStatus);
 }
 
@@ -124,7 +131,7 @@ export function extensionFaxDecision(
     };
   }
 
-  if (app.faxStatus === EXTENSION_FAX_CLAIM) {
+  if (isExtensionFaxClaim(app.faxStatus)) {
     const ageMs = now.getTime() - app.updatedAt.getTime();
     if (ageMs < RETRY_CLAIM_GRACE_MS) {
       return {
@@ -197,11 +204,13 @@ export async function faxExtensionToIrs(
     notes = appendNote(notes, auditLine(now, `Re-fax override (${decision.state}) by ${opts.actor}: ${reason}`));
   }
 
-  // Claim pinned on the exact state judged above: of two racing sends only one
-  // proceeds, and an edit that cleared the generated form in between wins.
+  // Claim pinned on the exact state judged above and written as a NEW unique
+  // value: of two racing sends only one proceeds (also when both observed the
+  // same stale claim), and an edit or regeneration in between wins.
+  const myClaim = `${EXTENSION_FAX_CLAIM}:${randomUUID()}`;
   const claim = await prisma.extensionApplication.updateMany({
     where: { id, status: app.status, faxJobId: app.faxJobId, faxStatus: app.faxStatus, generatedPdfKey: app.generatedPdfKey },
-    data: { faxStatus: EXTENSION_FAX_CLAIM, adminNotes: notes },
+    data: { faxStatus: myClaim, adminNotes: notes },
   });
   if (claim.count !== 1) {
     throw new ExtensionFaxError(409, "fax_state_changed", "This order changed while you were sending. Nothing was sent — refresh the page and check it before trying again.");
@@ -209,7 +218,7 @@ export async function faxExtensionToIrs(
   const release = async () => {
     try {
       await prisma.extensionApplication.updateMany({
-        where: { id, faxJobId: app.faxJobId, faxStatus: EXTENSION_FAX_CLAIM },
+        where: { id, faxStatus: myClaim },
         data: { faxStatus: app.faxStatus },
       });
     } catch (err) {
@@ -246,9 +255,11 @@ export async function faxExtensionToIrs(
     );
   }
 
+  // Recorded only while this send still owns its claim.
+  let recorded = 0;
   try {
-    await prisma.extensionApplication.update({
-      where: { id },
+    ({ count: recorded } = await prisma.extensionApplication.updateMany({
+      where: { id, faxStatus: myClaim },
       data: {
         faxJobId: job.id,
         faxStatus: "queued",
@@ -259,10 +270,12 @@ export async function faxExtensionToIrs(
         faxAttempts: { increment: 1 },
         adminNotes: appendNote(notes, auditLine(now, `Form 7004 faxed to the IRS (${IRS_FAX_NUMBER}) by ${opts.actor} — Telnyx fax ${job.id}`)),
       },
-      select: { id: true },
-    });
+    }));
   } catch (err) {
     console.error(`[extension-fax] UNTRACKED_FAX_JOB order=${id} faxId=${job.id}`, err);
+  }
+  if (recorded !== 1) {
+    console.error(`[extension-fax] UNTRACKED_FAX_JOB order=${id} faxId=${job.id} — send claim lost or write failed`);
     throw new ExtensionFaxError(
       500,
       "fax_record_failed",
@@ -279,7 +292,7 @@ export async function findExtensionByFaxJob(faxId: string): Promise<ExtensionFax
 // Display-only progress label from a non-terminal webhook event. Never over a
 // claim or a recorded outcome, and only for the job the event is about.
 export async function recordExtensionFaxProgress(app: ExtensionFaxRow, faxId: string, evt: string): Promise<void> {
-  if (app.faxStatus === EXTENSION_FAX_CLAIM || app.faxDeliveredAt || isTerminalFaxStatus(app.faxStatus)) return;
+  if (isExtensionFaxClaim(app.faxStatus) || app.faxDeliveredAt || isTerminalFaxStatus(app.faxStatus)) return;
   await prisma.extensionApplication.updateMany({
     where: { id: app.id, faxJobId: faxId, faxStatus: app.faxStatus, faxDeliveredAt: null },
     data: { faxStatus: evt.replace(/^fax\./, "").slice(0, 60) },
@@ -465,7 +478,7 @@ export function extensionPollWhere(now: Date): Prisma.ExtensionApplicationWhereI
 }
 
 export function isExtensionPollable(app: Pick<ExtensionFaxRow, "faxJobId" | "faxStatus" | "faxDeliveredAt">): boolean {
-  return extensionFaxInFlight(app) && app.faxStatus !== EXTENSION_FAX_CLAIM && !isSandboxFaxId(app.faxJobId);
+  return extensionFaxInFlight(app) && !isExtensionFaxClaim(app.faxStatus) && !isSandboxFaxId(app.faxJobId);
 }
 
 export type ExtensionPollSummary = {

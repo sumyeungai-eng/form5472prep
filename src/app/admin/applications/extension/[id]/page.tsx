@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { formatUsd } from "@/lib/utils";
 import { AdminPageHeader } from "../../../_components/AdminPageHeader";
-import { extensionFaxDecision } from "@/lib/fax/extension";
+import { extensionFaxDecision, isExtensionFaxClaim } from "@/lib/fax/extension";
 import { form7004Warnings } from "@/lib/pdf/form7004";
 import { ExtensionAdminActions } from "./ExtensionAdminActions";
 import { ExtensionDetailsForm } from "./ExtensionDetailsForm";
@@ -129,7 +129,7 @@ export default async function AdminExtensionApplicationPage({ params }: { params
           faxNeedsReason={faxDecision.kind === "needs_reason" ? faxDecision.message : null}
           fax={{
             jobId: app.faxJobId,
-            status: app.faxStatus,
+            status: isExtensionFaxClaim(app.faxStatus) ? "submitting (send in progress or unconfirmed)" : app.faxStatus,
             sentAt: app.faxSentAt?.toISOString() ?? null,
             deliveredAt: app.faxDeliveredAt?.toISOString() ?? null,
             attempts: app.faxAttempts,
