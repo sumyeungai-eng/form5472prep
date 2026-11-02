@@ -1,0 +1,73 @@
+import type { FilingFixture } from "./filings";
+
+// Synthetic twin of the fix spec's §6 acceptance case (2026-11-02). Same shape,
+// no real client data: a Wyoming LLC with a Delaware mail-forwarding address,
+// a short first year, a French individual owner with a long accented address,
+// an FTIN typed with spaces, an advertising business and $253.94 of capital
+// contributions. Every identifier here is invented.
+export const EXAMPLE_IMPACT_FINALISED_AT = new Date("2026-11-02T12:00:00.000Z");
+
+export const EXAMPLE_IMPACT: FilingFixture = {
+  llcName: "EXAMPLE IMPACT LLC",
+  llcEin: "98-0000001",
+  llcAddress: "100 Example Ave Ste 1",
+  llcCity: "Wilmington",
+  llcState: "DE",
+  llcZip: "19806",
+  llcCountry: "USA",
+  llcCountryBusiness: "United States",
+  llcFormationState: "WY",
+  llcMemberCount: 1,
+  llcAddressIsRegisteredAgentOnly: false,
+  priorForm5472Filed: "no",
+  hasUsSourceIncome: false,
+  usTaxWithheld: false,
+  llcDateIncorporated: new Date("2025-10-28T00:00:00.000Z"),
+  llcBusinessActivity: "Advertising services",
+  llcBusinessCode: "541800",
+  ownerName: "Camille Exemple",
+  ownerAddress: "101 rue des Exemples, Fréjus, Var, 83600, France",
+  ownerAddressStreet: "101 rue des Exemples",
+  ownerAddressCity: "Fréjus",
+  ownerAddressState: "Var",
+  ownerAddressPostal: "83600",
+  ownerAddressCountry: "France",
+  ownerHasFtin: true,
+  ownerNoPostalCode: false,
+  ownerCountryCitizenship: "France",
+  ownerCountryTaxResidence: "France",
+  ownerCountryBusiness: "France",
+  ownerFtin: "12 34 567 890 123",
+  ownerItin: null,
+  ownerReferenceId: "EXAMPLEREF7Q2",
+  taxYears: [2025],
+  isDiirsp: true,
+  isFinalReturn: false,
+  dissolvedAt: null,
+  extensionFiled: "no",
+  extensionTransmittedAt: null,
+  reasonableCauseNarrative: null,
+  yearData: [
+    {
+      taxYear: 2025,
+      totalAssetsYearEnd: 0,
+      contributions: 0,
+      distributions: 0,
+      otherTransactionsNote: null,
+      reportableTransactions: [
+        { date: "2025-10-28", description: "Capital contribution from foreign owner", counterparty: "Camille Exemple", amountCents: 200_00, category: "contribution" },
+        { date: "2025-12-15", description: "Capital contribution from foreign owner", counterparty: "Camille Exemple", amountCents: 53_94, category: "contribution" },
+      ],
+      nonCashTransfers: [],
+      zeroConfirmations: { distributions: true, loansFromOwner: true, loansToOwner: true, ownerPaidCosts: true },
+      rcsWhyMissed: null,
+      rcsWhenLearned: null,
+      rcsNoIrsNoticeConfirmed: true,
+      rcsAdminNarrative:
+        "I did not know that a foreign-owned single-member LLC must file Form 5472 with a pro forma Form 1120. " +
+        "No U.S. adviser or formation service told me about the requirement.",
+      rcsLearnedOn: null,
+      rcsSmallCorpParagraph: null,
+    },
+  ],
+};
