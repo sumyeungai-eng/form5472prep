@@ -448,9 +448,11 @@ export function PlaceSignatureClient({
   // Preview mode — shown after Save succeeds. Lets the admin verify the
   // embedded signature lands where they intended before navigating away or
   // sending to fax. "Re-edit" goes back to the placement canvas with the
-  // same placements still loaded.
-  if (previewUrl) {
-    return (
+  // same placements still loaded. The editor below stays MOUNTED (only
+  // hidden) while previewing: unmounting it threw away the rendered page
+  // canvases, and pdfjs only renders once, so Re-edit came back to blank
+  // 300×150 canvases with the placements floating over nothing.
+  const preview = previewUrl ? (
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4">
         <div className="flex items-center justify-between">
           <Link href={resolvedEndpoints.backHref} className="text-sm text-slate-500 hover:underline">
@@ -501,11 +503,12 @@ export function PlaceSignatureClient({
           style={{ height: "85vh" }}
         />
       </div>
-    );
-  }
+  ) : null;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+    <>
+    {preview}
+    <div className={`max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4${previewUrl ? " hidden" : ""}`}>
       <div className="flex items-center justify-between">
         <Link href={resolvedEndpoints.backHref} className="text-sm text-slate-500 hover:underline">
           ← Back to {resolvedEndpoints.backLabel}
@@ -784,6 +787,7 @@ export function PlaceSignatureClient({
         })}
       </div>
     </div>
+    </>
   );
 }
 
