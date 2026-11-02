@@ -2,7 +2,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { sendOrderConfirmationEmail } from "@/lib/email";
+import { ORDER_CONFIRMATION_INTRO, sendMagicLinkEmail, sendOrderConfirmationEmail } from "@/lib/email";
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -152,6 +152,59 @@ describe("order confirmation email", () => {
     );
     expect(standard.html).not.toContain("under 3 days");
     expect(standard.text).not.toContain("under 3 days");
+  });
+});
+
+describe("release gate copy (PR 1)", () => {
+  afterEach(async () => {
+    delete process.env.EMAIL_PREVIEW_DIR;
+    if (PREVIEW_DIR) await rm(PREVIEW_DIR, { recursive: true, force: true });
+    PREVIEW_DIR = "";
+  });
+
+  const read = async (result: unknown) => {
+    const r = result as { htmlPath: string; textPath: string };
+    return { html: await readFile(r.htmlPath, "utf8"), text: await readFile(r.textPath, "utf8") };
+  };
+
+  it("order_confirmation: the intro is the review sentence and no copy offers the generated package", async () => {
+    expect(ORDER_CONFIRMATION_INTRO).toBe(
+      "Our team is reviewing your package. We'll email you a link to check and sign it when it's ready.",
+    );
+    await usePreviewDir();
+    for (const pdfBytes of [null, new Uint8Array([37, 80, 68, 70])]) {
+      const { html, text } = await read(
+        await sendOrderConfirmationEmail({
+          ...minimalOrderArgs(),
+          filingId: "filing_1",
+          pdfBytes,
+          signatures: [{ page: 1, label: "Form 1120" } as never],
+        }),
+      );
+      expect(html).toContain("Our team is reviewing your package.");
+      expect(text).toContain(ORDER_CONFIRMATION_INTRO);
+      for (const body of [html, text]) {
+        expect(body).not.toMatch(/view the generated package|Review the generated package|generated PDF in your portal/i);
+      }
+    }
+  });
+
+  it("order_confirmation: plain-text copy snapshot", async () => {
+    await usePreviewDir();
+    const { text } = await read(
+      await sendOrderConfirmationEmail({ ...minimalOrderArgs(), filingId: "filing_1", pdfBytes: new Uint8Array([37, 80, 68, 70]) }),
+    );
+    expect(text).toMatchSnapshot();
+  });
+
+  it("magic_link: no longer offers to download the generated PDF", async () => {
+    await usePreviewDir();
+    const { html, text } = await read(
+      await sendMagicLinkEmail("alex@example.com", "https://form5472prep.com/auth/tok?next=%2Ffilings%2Ff1", "Example Holdings LLC"),
+    );
+    expect(html).not.toMatch(/download the generated PDF/i);
+    expect(text).not.toMatch(/download the generated PDF/i);
+    expect(html).toContain("check and sign it once it");
   });
 });
 

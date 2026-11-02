@@ -402,8 +402,8 @@ export async function sendMagicLinkEmail(
   const brandName = brand?.name ?? "Form5472 Prep";
   const bodyHtml = `
     <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      Use the button below to access your filing (<strong>${escapeHtml(filingLabel)}</strong>) —
-      download the generated PDF, upload your signed copy, and track the fax delivery to the IRS.
+      Use the button below to open your filing (<strong>${escapeHtml(filingLabel)}</strong>) —
+      see where it is in review, check and sign it once it's ready, and track the fax delivery to the IRS.
     </p>
     <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days.</p>`;
 
@@ -553,10 +553,13 @@ function portalLinkWithNext(portalLink: string, nextPath: string): string {
   }
 }
 
+export const ORDER_CONFIRMATION_INTRO =
+  "Our team is reviewing your package. We'll email you a link to check and sign it when it's ready.";
+
 export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const {
     email, recipientName, llcName, taxYears, tier, amountPaidCents, portalLink, receiptUrl,
-    pdfBytes, signatures, isFinalReturn, dueDateText, requiresReasonableCause, extensionUnclear, brand,
+    pdfBytes, isFinalReturn, dueDateText, requiresReasonableCause, extensionUnclear, brand,
   } = args;
   const salutation = firstNameFrom(recipientName) ?? "there";
   const brandName = brand?.name ?? "Form5472 Prep";
@@ -583,7 +586,6 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "(LLC name pending)";
   const hasPdf = !!pdfBytes && pdfBytes.byteLength > 0;
-  const sigCount = signatures?.length ?? 0;
 
   // ----- Post-purchase sequencing -----
   // Deadline line, shown high in the email so the customer can sanity-check
@@ -639,18 +641,8 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   const step3Html = `<li style="margin-bottom:6px;">We fax it to the IRS Ogden PIN Unit and send you a delivery confirmation email.</li>`;
   const step3Text = `  4. We fax it to the IRS Ogden PIN Unit and email you confirmation.`;
 
-  const introCopy = hasPdf
-    ? "Thanks for your order. Your IRS filing package has been generated and is now in review."
-    : "Thanks for your order. We've received your payment and started preparing your IRS filing. You'll get the generated PDF in your portal within a few minutes.";
-
-  const signaturesHtml = hasPdf && sigCount > 0
-    ? `
-    <!-- Review in portal -->
-    <p style="margin:24px 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Review in your portal</p>
-    <p style="margin:0 0 12px;color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.5;">
-      Open your portal to view the generated package. A PTIN-holding tax accountant reviews it before signing opens, and we will email you when it is ready.
-    </p>`
-    : "";
+  // Release gate: the client sees nothing until staff release the package.
+  const introCopy = ORDER_CONFIRMATION_INTRO;
 
   const bodyHtml = `
     <p style="margin:0 0 12px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
@@ -663,7 +655,6 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       Save <strong>donotreply@form5472prep.com</strong> to your contacts to make sure our filing emails reach your inbox.
     </p>
 
-    ${signaturesHtml}
 
     <!-- Receipt -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;margin:0 0 24px;">
@@ -699,9 +690,6 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     ? `  + ${extraYears} extra year${extraYears === 1 ? "" : "s"}: ${formatUsd(addOnCents)}\n`
     : "";
 
-  const signaturesText = hasPdf && sigCount > 0
-    ? `\nReview the generated package in your portal. A PTIN-holding tax accountant reviews it before signing opens.\n`
-    : "";
 
   const nextStepsText = hasPdf
     ? `What to do next:\n` +
@@ -747,7 +735,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       : `Order confirmed — ${brandName} filing (${yearsLabel})`,
     text: customerText(
       salutation,
-      `Thank you for your order.\n\n` +
+      `Thank you for your order. ${ORDER_CONFIRMATION_INTRO}\n\n` +
       (isExpress ? `${expressReviewText}\n\n` : "") +
       dueDateLineText +
       filingStatusNoticeLineText +
@@ -759,7 +747,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       faxFeeTextLine +
       multiYearTextLine +
       `  Total paid:    ${formatUsd(amountPaidCents)}\n` +
-      signaturesText + "\n" +
+      "\n" +
       nextStepsText + "\n" +
       nextImportantText + "\n" +
       `Open your filing: ${portalLink}`,

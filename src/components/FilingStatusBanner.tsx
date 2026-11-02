@@ -5,12 +5,14 @@ type Props = {
   filingId: string;
   status: string;
   updatedAt: Date;
+  // Staff released the package to the client (release gate).
+  released: boolean;
 };
 
 // Top-of-page banner that gives the customer a clear "where are we right now"
 // summary, so they don't have to interpret which 3-step card is highlighted.
-export function FilingStatusBanner({ filingId, status, updatedAt }: Props) {
-  const view = viewFor(status);
+export function FilingStatusBanner({ filingId, status, updatedAt, released }: Props) {
+  const view = !released && (status === "PAID" || status === "PDF_GENERATED") ? IN_REVIEW_VIEW : viewFor(status);
 
   return (
     <div className={`rounded-lg border p-4 ${view.bg} ${view.border}`}>
@@ -49,6 +51,19 @@ type View = {
   detail: string;
   action?: { label: string; href: string };
   actionStyle?: string;
+};
+
+// Before release the client sees no PDF and no sign step, only this.
+const IN_REVIEW_VIEW: View = {
+  bg: "bg-blue-50",
+  border: "border-blue-200",
+  title: "text-blue-900",
+  body: "text-blue-800",
+  icon: "text-blue-500",
+  iconNode: <Clock className="h-5 w-5" />,
+  headline: "In review",
+  detail:
+    "Our team is reviewing your package. We'll email you a link to check and sign it when it's ready. Spot something wrong below? Send us a correction.",
 };
 
 function viewFor(status: string): View {

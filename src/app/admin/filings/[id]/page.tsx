@@ -15,6 +15,7 @@ import {
   isYearDelinquentForPackage,
 } from "@/lib/schemas";
 import {
+  canReleaseToClient,
   canResendFaxConfirmation,
   extensionReviewFlags,
   isReviewedPdfKey,
@@ -98,6 +99,26 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
     !!filing.preflightCheckedAt &&
     !!latestDataChange &&
     latestDataChange.changedAt.getTime() > filing.preflightCheckedAt.getTime();
+
+  // Release gate: the same server predicate approveForSignature runs, so the
+  // button is disabled with the server's reason. "Re-release needed" = the
+  // latest review-approval change cleared a release.
+  const releaseCheck = filing.generatedPdfKey
+    ? await canReleaseToClient(filing).catch((err: unknown) => {
+        console.error("[admin filing] release check failed", err);
+        return { ok: false as const, code: "check_failed", message: "Could not check whether this package can be released. Reload the page." };
+      })
+    : { ok: false as const, code: "generated_package_required", message: "No generated package yet." };
+  const lastApprovalChange = await prisma.filingChangeLog
+    .findFirst({
+      where: { filingId: filing.id, field: "reviewApproval" },
+      orderBy: { changedAt: "desc" },
+      select: { afterJson: true },
+    })
+    .catch(() => null);
+  const reReleaseNeeded =
+    !filing.reviewApprovedAt &&
+    (lastApprovalChange?.afterJson as { reviewApprovedAt?: unknown } | null | undefined)?.reviewApprovedAt === null;
 
   // SSN capture: the SSN was saved after the package being faxed was built
   // (same rule as the retryFax hold).
@@ -329,6 +350,9 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             filing.preflightStatus === "failed" && !filing.preflightOverrideBy ? preflightBlockedMessage(filing) : null
           }
           hasReviewedPdf={isReviewedPdfKey(filing.generatedPdfKey)}
+          currentPdfKey={filing.generatedPdfKey}
+          releaseBlockedReason={releaseCheck.ok ? null : releaseCheck.message}
+          reReleaseNeeded={reReleaseNeeded}
           reviewApprovedAt={filing.reviewApprovedAt ? filing.reviewApprovedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}
           reviewApprovedBy={reviewApprovedAdmin?.email ?? displayStaffIdentity(filing.reviewApprovedBy)}
           faxedAt={filing.faxedAt ? filing.faxedAt.toISOString().replace("T", " ").slice(0, 16) + " UTC" : null}

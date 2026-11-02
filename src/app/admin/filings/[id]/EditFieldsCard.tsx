@@ -238,11 +238,18 @@ type Props = {
 };
 
 type SaveResponse = {
+  // Release gate: what a save after release did ("re-release needed", or a warning).
+  releaseWarning?: string;
   preflight?: { ran?: boolean; status?: string; failures?: Array<{ id: string }>; message?: string; overrideCleared?: boolean };
 };
 
 // What the automatic pre-flight re-run after a save found, in one line.
 export function preflightRerunNote(body: SaveResponse): string {
+  const release = body.releaseWarning ? ` ${body.releaseWarning}` : "";
+  return preflightOnlyNote(body) + release;
+}
+
+function preflightOnlyNote(body: SaveResponse): string {
   const rerun = body.preflight;
   if (!rerun) return "";
   if (rerun.ran === false) return ` Pre-flight was not re-run: ${rerun.message ?? "unknown reason"}.`;

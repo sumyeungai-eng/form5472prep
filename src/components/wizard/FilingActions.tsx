@@ -7,7 +7,11 @@ import { Button } from "@/components/ui/button";
 type Filing = {
   id: string;
   status: string;
-  generatedPdfKey: string | null;
+  // Booleans, never the storage key: no package key reaches the browser
+  // before staff release it (release gate).
+  hasGeneratedPdf: boolean;
+  // Staff released the package (reviewApprovedAt + reviewApprovedPdfKey).
+  released: boolean;
   reviewApprovedAt: string | null;
   unreadTeamMessages: number;
   // R2 key for the customer's signature PNG, captured on the in-portal sign
@@ -26,20 +30,11 @@ type Filing = {
   faxConfirmationKey: string | null;
 };
 
-const SIGNING_STARTED_STATUSES = new Set([
-  "SIGNATURE_PENDING",
-  "SIGNED_UPLOADED",
-  "FAXED",
-  "CONFIRMED",
-  "FAILED",
-]);
-
 export function FilingActions({ filing }: { filing: Filing }) {
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
-  const reviewApproved = !!filing.reviewApprovedAt;
-  const signingStarted = SIGNING_STARTED_STATUSES.has(filing.status);
-  const canSign = !!filing.generatedPdfKey && (reviewApproved || signingStarted);
+  const reviewApproved = filing.released;
+  const canSign = filing.hasGeneratedPdf && filing.released;
   const signed = !!filing.signaturePngKey || !!filing.signedPdfKey;
   const approvedDate = filing.reviewApprovedAt
     ? new Date(filing.reviewApprovedAt).toLocaleDateString(undefined, {
@@ -76,14 +71,14 @@ export function FilingActions({ filing }: { filing: Filing }) {
       <Step
         n={1}
         title="Generate your forms"
-        done={!!filing.generatedPdfKey}
-        active={filing.status === "PAID" && !filing.generatedPdfKey}
+        done={filing.hasGeneratedPdf}
+        active={filing.status === "PAID" && !filing.hasGeneratedPdf}
       >
         <p className="text-sm text-slate-600 mb-3">
           Cover letter, reasonable-cause statement (late filings), filled Form 1120 and Form 5472,
           plus the Part V supporting statement — combined into one PDF.
         </p>
-        {!filing.generatedPdfKey ? (
+        {!filing.hasGeneratedPdf ? (
           <Button onClick={generate} disabled={busy === "generate"}>
             {busy === "generate" ? "Generating…" : "Generate PDF"}
           </Button>
@@ -98,7 +93,7 @@ export function FilingActions({ filing }: { filing: Filing }) {
         n={2}
         title="Accountant review"
         done={reviewApproved}
-        active={!!filing.generatedPdfKey && !reviewApproved}
+        active={filing.hasGeneratedPdf && !reviewApproved}
       >
         {filing.unreadTeamMessages > 0 ? (
           <p className="text-sm text-slate-700">
@@ -123,7 +118,7 @@ export function FilingActions({ filing }: { filing: Filing }) {
         active={canSign && !signed}
       >
         <>
-          {filing.generatedPdfKey && (
+          {filing.released && (
             <a
               href={`/api/filings/${filing.id}/pdf`}
               target="_blank"

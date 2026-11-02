@@ -18,6 +18,9 @@ import { supersedeDraftsFor } from "@/lib/supersedeDrafts";
 import { OwnerSsnBox } from "@/components/OwnerSsnBox";
 import { isPiiCryptoConfigured } from "@/lib/crypto/pii";
 import { ssnEntryState } from "@/lib/ownerSsn";
+import { releasedPdfKey } from "@/lib/pdf/packageKeys";
+import { FilingReviewSummary } from "@/components/FilingReviewSummary";
+import { SendCorrection } from "@/components/SendCorrection";
 
 // Statuses where the filing is paid but not yet acknowledged as complete —
 // the window in which the customer still cares "will this land before my
@@ -120,6 +123,12 @@ export default async function FilingDetailPage({
         )
       : null;
 
+  // Release gate: until staff release the package the client gets the
+  // "In review" screen — no PDF link, no sign button.
+  const released = !!releasedPdfKey(filing);
+  const inReview =
+    !released && !filing.signedPdfKey && ["PAID", "PDF_GENERATED", "SIGNATURE_PENDING"].includes(filing.status);
+
   return (
     <>
       {owningPartner && (
@@ -160,6 +169,7 @@ export default async function FilingDetailPage({
           filingId={filing.id}
           status={filing.status}
           updatedAt={filing.updatedAt}
+          released={released}
         />
 
         {deadlineText && (
@@ -172,11 +182,18 @@ export default async function FilingDetailPage({
 
       {filing.faxConfirmationKey && <FaxReceiptCard filingId={filing.id} />}
 
+      {inReview ? (
+        <>
+          <FilingReviewSummary filing={filing} />
+          <SendCorrection filingId={filing.id} />
+        </>
+      ) : (
       <FilingActions
         filing={{
           id: filing.id,
           status: filing.status,
-          generatedPdfKey: filing.generatedPdfKey,
+          hasGeneratedPdf: !!filing.generatedPdfKey,
+          released,
           reviewApprovedAt: filing.reviewApprovedAt?.toISOString() ?? null,
           unreadTeamMessages,
           signaturePngKey: filing.signaturePngKey,
@@ -187,6 +204,7 @@ export default async function FilingDetailPage({
           faxConfirmationKey: filing.faxConfirmationKey,
         }}
       />
+      )}
 
       {/* Secure SSN box (#ssn — the admin's "Ask client for SSN" email links
           here). Only the last four digits and the date ever reach the page. */}

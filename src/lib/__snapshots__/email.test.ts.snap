@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`release gate copy (PR 1) > order_confirmation: plain-text copy snapshot 1`] = `
+"Hello there,
+
+Thank you for your order. Our team is reviewing your package. We'll email you a link to check and sign it when it's ready.
+
+Tip: save donotreply@form5472prep.com to your contacts so our emails reach your inbox.
+
+Order summary:
+  LLC:           Example Holdings LLC
+  Tax year(s):   2024
+  Plan:          Standard filing — $149.00
+  Fax delivery:  Included
+  Total paid:    $149.00
+
+What to do next:
+  1. Open your portal: https://form5472prep.com/portal/sample
+  2. A PTIN-holding tax accountant reviews the package and may message you with questions.
+  3. After approval, we email you a secure link to sign digitally.
+  4. We fax it to the IRS Ogden PIN Unit and email you confirmation.
+
+What happens next — important
+
+  Your proof of filing
+  The IRS does not send an acknowledgment for Form 5472. Your proof is the timestamped
+  fax transmission report plus your filed copy — we email both to you at no charge once
+  transmission completes.
+
+  Keep your filed copy and the transmission report with your LLC records for at least six years.
+
+Open your filing: https://form5472prep.com/portal/sample
+
+Thank you,
+The Form5472 Prep team"
+`;
