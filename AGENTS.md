@@ -23,3 +23,13 @@ Production = `origin/main`, auto-deployed by Vercel's git integration.
 a CLI deploy publishes the local tree (branches, uncommitted files) and is silently
 reverted by the next push; this wiped live pages on 2026-08-27 and 2026-09-04.
 The `hktax/` app must never be deployed to the form5472prep.com project.
+
+## Release gate — the client sees nothing until staff release it (2026-10-31, P0-1)
+- A client (customer or partner) may only ever receive `Filing.reviewApprovedPdfKey`, and only while
+  `reviewApprovedAt` is set (`releasedPdfKey()` in `src/lib/pdf/packageKeys.ts`). No status exemption.
+- Releasing (`approveForSignature` with `expectedPdfKey`, or `uploadReviewedPdf`) goes through
+  `canReleaseToClient()` in `src/lib/admin/filingActions.ts`. A32 is never overridable for release.
+- Every generation writes a NEW key (`newUnsignedPdfKey()`); never overwrite released bytes, and every
+  write of `generatedPdfKey` must clear `reviewApprovedAt/By/PdfKey` (or set them to the new key).
+- `toClientFiling` nulls package keys before release; never pass a raw key to a client component.
+- Spec: `docs/reviews/2026-10-30-system-update-plan.md` (PR 1); handoff: `docs/sessions/2026-10-31-release-gate-p0-1.md`.
