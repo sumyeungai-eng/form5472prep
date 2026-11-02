@@ -94,6 +94,30 @@ describe("customer filing API never exposes staff identities", () => {
     expect(body.yearData).toEqual([{ taxYear: 2024, rcsWhyMissed: "Customer explanation" }]);
   });
 
+  it("GET strips the package key until staff release it (release gate)", async () => {
+    session.getOwnedFiling.mockResolvedValue({ id: "filing_1" });
+    findUnique.mockResolvedValue({
+      ...stored,
+      reviewApprovedAt: null,
+      generatedPdfKey: "filing_1_unsigned_1.pdf",
+      reviewApprovedPdfKey: null,
+    });
+    const body = await (await GET(new Request("https://example.test/api/filings/filing_1"), { params: { id: "filing_1" } })).json();
+    expect(body.generatedPdfKey).toBeNull();
+    expect(JSON.stringify(body)).not.toContain("_unsigned_");
+  });
+
+  it("GET keeps the released key once staff released it", async () => {
+    session.getOwnedFiling.mockResolvedValue({ id: "filing_1" });
+    findUnique.mockResolvedValue({
+      ...stored,
+      generatedPdfKey: "filing_1_unsigned_1.pdf",
+      reviewApprovedPdfKey: "filing_1_unsigned_1.pdf",
+    });
+    const body = await (await GET(new Request("https://example.test/api/filings/filing_1"), { params: { id: "filing_1" } })).json();
+    expect(body.reviewApprovedPdfKey).toBe("filing_1_unsigned_1.pdf");
+  });
+
   it("PATCH responses are stripped too", async () => {
     session.getOwnedFiling.mockResolvedValue({ ...stored, taxYears: [2025], tier: "standard", status: "DRAFT" });
     db.update.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => ({ ...stored, ...data }));

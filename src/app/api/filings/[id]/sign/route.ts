@@ -5,19 +5,13 @@ import { sha256Hex } from "@/lib/applicationSignature";
 import { clientIp } from "@/lib/applications/customerSignature";
 import { FILING_SIGNATURE_DECLARATION_VERSION } from "@/lib/filingSignature";
 import { get as getStorageObject, put } from "@/lib/storage";
+import { releasedPdfKey } from "@/lib/pdf/packageKeys";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 const REVIEW_PENDING_MESSAGE = "Your forms are still being reviewed. We will email you when they are ready to sign.";
-const REVIEW_GATE_GRANDFATHERED_STATUSES = new Set([
-  "SIGNATURE_PENDING",
-  "SIGNED_UPLOADED",
-  "FAXED",
-  "CONFIRMED",
-  "FAILED",
-]);
 
 // POST /api/filings/[id]/sign
 //
@@ -58,7 +52,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!filing.generatedPdfKey) {
     return NextResponse.json({ error: "Filing has not been generated yet" }, { status: 400 });
   }
-  if (!filing.reviewApprovedAt && !REVIEW_GATE_GRANDFATHERED_STATUSES.has(filing.status)) {
+  if (!releasedPdfKey(filing)) {
     return NextResponse.json({ error: REVIEW_PENDING_MESSAGE }, { status: 409 });
   }
   // Guard against a stale open tab / double-submit / direct re-POST after the
@@ -92,7 +86,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (signerName.length < 1 || signerName.length > 200) {
     return NextResponse.json({ error: "Enter your full legal name." }, { status: 400 });
   }
-  if (typeof body.pdfKey !== "string" || body.pdfKey !== filing.generatedPdfKey) {
+  // The client signs only the released package, which is also the current one.
+  if (typeof body.pdfKey !== "string" || body.pdfKey !== releasedPdfKey(filing) || body.pdfKey !== filing.generatedPdfKey) {
     return NextResponse.json(
       { error: "Your forms were updated since you opened this page. Please reload and check the new version." },
       { status: 409 },
@@ -145,6 +140,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     where: {
       id: filing.id,
       generatedPdfKey: body.pdfKey,
+      reviewApprovedPdfKey: body.pdfKey,
+      reviewApprovedAt: { not: null },
       status: { in: ["PDF_GENERATED", "SIGNATURE_PENDING"] },
     },
     data: {

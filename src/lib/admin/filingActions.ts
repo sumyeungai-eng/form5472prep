@@ -19,6 +19,7 @@ import { env } from "@/lib/env";
 import { generatePackage, type GeneratedPackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { normalizeUsStateCode } from "@/lib/pdf/textFormat";
+import { isReviewedPdfKey, newUnsignedPdfKey } from "@/lib/pdf/packageKeys";
 import { runPreflight, type PreflightIssue, type PreflightResult } from "@/lib/pdf/preflight";
 import {
   CLEARED_PREFLIGHT_OVERRIDE,
@@ -366,6 +367,7 @@ const filingSelect = {
   preflightOverrideReason: true,
   reviewApprovedAt: true,
   reviewApprovedBy: true,
+  reviewApprovedPdfKey: true,
   generatorVersion: true,
   generatorCommit: true,
   faxCopyToClient: true,
@@ -632,13 +634,6 @@ export function preflightBlockedMessage(filing: {
   );
 }
 
-function hasPreflightApproval(filing: {
-  preflightStatus: string | null;
-  preflightOverrideBy: string | null;
-}): boolean {
-  return filing.preflightStatus === "passed" || !!filing.preflightOverrideBy;
-}
-
 // ─── Extension review flags (internal only) ──────────────────────────────────
 // Three things about a Form 7004 answer that a human must look at before the
 // package is faxed. None of them change what the customer is told or what the
@@ -739,9 +734,167 @@ export type PreflightRerunSummary =
 
 const MISSING_PACKAGE_FIELDS_MESSAGE = "filing is missing required fields — finish the wizard first";
 
-// The reviewed upload is the client version while generatedPdfKey points at it.
-export function isReviewedPdfKey(key: string | null | undefined): boolean {
-  return !!key && key.includes("_reviewed_");
+export { isReviewedPdfKey };
+
+// ─── Release gate (PR 1, docs/reviews/2026-10-30-system-update-plan.md) ──────
+export type ReleaseCheck = { ok: true } | { ok: false; code: string; message: string };
+
+type ReleaseCheckFiling = Pick<
+  FilingRow,
+  | "id"
+  | "taxYears"
+  | "isFinalReturn"
+  | "dissolvedAt"
+  | "extensionFiled"
+  | "extensionTransmittedAt"
+  | "preflightStatus"
+  | "preflightFailures"
+  | "preflightCheckedAt"
+  | "preflightOverrideBy"
+  | "preflightOverrideReason"
+> & { yearData?: Array<{ taxYear: number; rcsAdminNarrative: string | null }> | null };
+
+// The one server-side rule for handing a package to the client: used by
+// approveForSignature, uploadReviewedPdf (web and v1 API alike, both go
+// through runFilingAction) and the admin page's release button. In order:
+//   1. pre-flight has run;
+//   2. on the current data (no package-data change logged after it ran);
+//   3. no A32 — a late year without an admin cause is never releasable, with
+//      or without an override (same rule as the fax gate);
+//   4. pre-flight passed, or failed with an override that records a reason.
+export async function canReleaseToClient(filing: ReleaseCheckFiling): Promise<ReleaseCheck> {
+  if (!filing.preflightCheckedAt || !filing.preflightStatus) {
+    return {
+      ok: false,
+      code: "preflight_not_run",
+      message: "Pre-flight has not run on this order's data yet. Click \"Re-run pre-flight\" first.",
+    };
+  }
+  const latestDataChange = await prisma.filingChangeLog.findFirst({
+    where: { filingId: filing.id, ...PACKAGE_DATA_CHANGE_WHERE },
+    orderBy: { changedAt: "desc" },
+    select: { changedAt: true },
+  });
+  if (latestDataChange && latestDataChange.changedAt.getTime() > filing.preflightCheckedAt.getTime()) {
+    return {
+      ok: false,
+      code: "preflight_stale",
+      message: "The order data changed after pre-flight last ran. Click \"Re-run pre-flight\" first.",
+    };
+  }
+  const a32 =
+    preflightIssues(filing.preflightFailures).some((issue) => issue.id === "A32") ||
+    !hasAdminReasonableCauseForFax(filing, filing.yearData ?? []);
+  if (a32) {
+    return {
+      ok: false,
+      code: "rcs_missing_for_late_filing",
+      message:
+        "A32: a late year has no admin RCS narrative, so the package has no reasonable-cause statement. " +
+        "Write the narrative for each late year and regenerate. This check cannot be overridden for release.",
+    };
+  }
+  if (filing.preflightStatus === "passed") return { ok: true };
+  if (filing.preflightOverrideBy && filing.preflightOverrideReason?.trim()) return { ok: true };
+  return {
+    ok: false,
+    code: "preflight_not_approved",
+    message: preflightBlockedMessage(filing).replace("the reviewed PDF can't be uploaded yet", "the package can't be released yet"),
+  };
+}
+
+// Release gate, "data edits after release": after a staff save that changed
+// package data. Generated PDF released and not signed → regenerate, clear the
+// release ("re-release needed"). Signed → warning only. Reviewed upload →
+// staff own it: release kept, warning. Not released → just re-run pre-flight.
+async function rerunAfterDataEdit(
+  filing: FilingRow,
+  ctx: FilingActionContext,
+  trigger: string,
+): Promise<{ preflight: PreflightRerunSummary; releaseWarning?: string; releaseCleared?: true }> {
+  const released = !!filing.reviewApprovedAt;
+  const signed = !!filing.signaturePngKey || !!filing.signedPdfKey;
+  const reviewed = isReviewedPdfKey(filing.reviewApprovedPdfKey ?? filing.generatedPdfKey);
+  if (!released || signed || reviewed) {
+    const preflight = await autoRerunPreflight(filing, ctx, trigger);
+    if (!released) return { preflight };
+    return {
+      preflight,
+      releaseWarning: signed
+        ? "Data changed after signing — regenerate deliberately."
+        : "Data changed after reviewed upload — the released reviewed PDF was kept.",
+    };
+  }
+  const preflight = await regenerateAndClearRelease(filing, ctx, trigger);
+  return {
+    preflight,
+    releaseCleared: true,
+    releaseWarning:
+      "Re-release needed: the package data changed after release, so the PDF was regenerated and the client release was cleared.",
+  };
+}
+
+// Clears the release FIRST (a failure there reaches the admin: the client must
+// never keep a PDF that no longer matches the order data), then rebuilds the
+// package. A rebuild problem is reported in the summary, like autoRerunPreflight.
+async function regenerateAndClearRelease(
+  filing: FilingRow,
+  ctx: FilingActionContext,
+  trigger: string,
+): Promise<PreflightRerunSummary> {
+  const cleared = { reviewApprovedAt: null, reviewApprovedBy: null, reviewApprovedPdfKey: null };
+  await prisma.filing.update({ where: { id: filing.id }, data: cleared, select: { id: true } });
+  await logFilingChange({
+    filingId: filing.id,
+    adminId: ctx.adminId,
+    source: ctx.changeSource ?? "admin",
+    field: "reviewApproval",
+    before: {
+      reviewApprovedAt: filing.reviewApprovedAt,
+      reviewApprovedBy: filing.reviewApprovedBy,
+      reviewApprovedPdfKey: filing.reviewApprovedPdfKey,
+    },
+    after: { ...cleared, trigger },
+    reason: "Package data changed after release; the PDF is regenerated and must be released again.",
+  });
+  try {
+    const full = await loadPackageFiling(filing.id);
+    if (!full || !hasPackageRequiredFields(full)) {
+      return { ran: false, reason: "missing_required_fields", message: MISSING_PACKAGE_FIELDS_MESSAGE };
+    }
+    const pkg = await generatePackage(filingToPackageInput(full));
+    const key = newUnsignedPdfKey(filing.id);
+    await putPdf(key, pkg.bytes);
+    const preflight = await runPreflight(pkg.record, pkg.bytes);
+    const checkedAt = new Date();
+    await persistNewPackagePreflight({
+      filingId: filing.id,
+      preflight,
+      record: pkg.record,
+      checkedAt,
+      data: { generatedPdfKey: key, ...cleared, status: "PDF_GENERATED" },
+    });
+    await logFilingChange({
+      filingId: filing.id,
+      adminId: ctx.adminId,
+      source: ctx.changeSource ?? "admin",
+      field: "pdf",
+      before: { generatedPdfKey: filing.generatedPdfKey, status: filing.status },
+      after: { generatedPdfKey: key, status: "PDF_GENERATED", trigger, preflightStatus: preflight.ok ? "passed" : "failed" },
+      reason: ctx.reason,
+    });
+    return {
+      ran: true,
+      status: preflight.ok ? "passed" : "failed",
+      failures: preflight.failures,
+      warnings: preflight.warnings,
+      checkedAt: checkedAt.toISOString(),
+      overrideCleared: !!filing.preflightOverrideBy,
+    };
+  } catch (err) {
+    console.error(`[release] ${filing.id} regenerate after ${trigger} failed`, err);
+    return { ran: false, reason: "generation_failed", message: err instanceof Error ? err.message : "Regeneration failed" };
+  }
 }
 
 async function loadPackageFiling(filingId: string) {
@@ -1024,7 +1177,7 @@ export async function runFilingAction(
           const result = await generatePackage(filingToPackageInput(full));
           pdfBytes = result.bytes;
           signatures = result.signatures;
-          const key = `${filing.id}_unsigned.pdf`;
+          const key = newUnsignedPdfKey(filing.id);
           await putPdf(key, result.bytes);
           const preflight = await runPreflight(result.record, result.bytes);
           await persistNewPackagePreflight({
@@ -1035,6 +1188,7 @@ export async function runFilingAction(
               generatedPdfKey: key,
               reviewApprovedAt: null,
               reviewApprovedBy: null,
+              reviewApprovedPdfKey: null,
             },
           });
         }
@@ -1521,7 +1675,8 @@ export async function runFilingAction(
         const msg = err instanceof Error ? err.message : "unknown";
         throw new FilingActionError(500, "generation_failed", `generation failed: ${msg}`);
       }
-      const key = `${filing.id}_unsigned.pdf`;
+      // Versioned: released bytes (reviewApprovedPdfKey) are never overwritten.
+      const key = newUnsignedPdfKey(filing.id);
       await putPdf(key, pkg.bytes);
       const preflight = await runPreflight(pkg.record, pkg.bytes);
 
@@ -1586,6 +1741,7 @@ export async function runFilingAction(
           validationCheckedAt: null,
           reviewApprovedAt: null,
           reviewApprovedBy: null,
+          reviewApprovedPdfKey: null,
           status: "PDF_GENERATED",
         },
       });
@@ -1839,14 +1995,16 @@ export async function runFilingAction(
         ),
       ]);
       // Spec item 1: every change-logged save re-runs pre-flight on the new data.
-      const preflightRerun = await autoRerunPreflight(filing, ctx, `updateField:${field}`);
+      const rerun = await rerunAfterDataEdit(filing, ctx, `updateField:${field}`);
       return {
         ok: true,
         field,
         before,
         after,
         derived: Object.fromEntries(derivedKeys.map((k) => [k, toJson(update[k])])),
-        preflight: preflightRerun,
+        preflight: rerun.preflight,
+        releaseWarning: rerun.releaseWarning,
+        releaseCleared: rerun.releaseCleared,
       };
     }
 
@@ -1982,11 +2140,13 @@ export async function runFilingAction(
         });
       }
       // Spec item 1: every change-logged save re-runs pre-flight on the new data.
-      const preflightRerun = await autoRerunPreflight(filing, ctx, `updateYearField:${taxYear}:${field}`);
+      const rerun = await rerunAfterDataEdit(filing, ctx, `updateYearField:${taxYear}:${field}`);
       return {
         ok: true,
         ...(clearsNoneDeclared ? { derived: { noReportableTransactions: false } } : {}),
-        preflight: preflightRerun,
+        preflight: rerun.preflight,
+        releaseWarning: rerun.releaseWarning,
+        releaseCleared: rerun.releaseCleared,
       };
     }
 
@@ -2088,26 +2248,45 @@ export async function runFilingAction(
           "Generate the filing package before approving it for signature.",
         );
       }
-      if (!hasPreflightApproval(filing)) {
+      // The key the admin reviewed. A newer package (regenerate, upload,
+      // client re-generate) since then means they reviewed a different file.
+      const expectedPdfKey = typeof body.expectedPdfKey === "string" ? body.expectedPdfKey : "";
+      if (!expectedPdfKey) {
+        throw new FilingActionError(400, "expected_pdf_key_required", "expectedPdfKey (the package you reviewed) is required.");
+      }
+      if (expectedPdfKey !== filing.generatedPdfKey) {
         throw new FilingActionError(
           409,
-          "preflight_not_approved",
-          "Pre-flight must pass or be overridden before approval for signature.",
+          "stale_pdf_key",
+          "The package changed since you opened this page. Reload, check the current PDF, and release it again.",
         );
+      }
+      const releaseCheck = await canReleaseToClient(filing);
+      if (!releaseCheck.ok) {
+        throw new FilingActionError(409, releaseCheck.code, releaseCheck.message);
       }
       if (!filing.user) {
         throw new FilingActionError(400, "no_customer_email", "no customer email");
       }
 
       const approvedAt = new Date();
-      await prisma.filing.update({
-        where: { id: filing.id },
+      // Pinned on the reviewed key so a package written between our read and
+      // now is never released unseen.
+      const released = await prisma.filing.updateMany({
+        where: { id: filing.id, generatedPdfKey: expectedPdfKey },
         data: {
           reviewApprovedAt: approvedAt,
           reviewApprovedBy: ctx.approver ?? ctx.adminId,
+          reviewApprovedPdfKey: expectedPdfKey,
         },
-        select: { id: true },
       });
+      if (released.count !== 1) {
+        throw new FilingActionError(
+          409,
+          "stale_pdf_key",
+          "The package changed since you opened this page. Reload, check the current PDF, and release it again.",
+        );
+      }
       await logFilingChange({
         filingId: filing.id,
         adminId: ctx.adminId,
@@ -2120,6 +2299,7 @@ export async function runFilingAction(
         after: {
           reviewApprovedAt: approvedAt,
           reviewApprovedBy: ctx.approver ?? ctx.adminId,
+          reviewApprovedPdfKey: expectedPdfKey,
         },
         reason: ctx.reason,
       });
@@ -2183,6 +2363,11 @@ export async function runFilingAction(
       if (filing.preflightStatus === "failed" && !filing.preflightOverrideBy) {
         throw new FilingActionError(409, "preflight_failed", preflightBlockedMessage(filing));
       }
+      // Uploading the reviewed PDF releases it to the client: same predicate.
+      const releaseCheck = await canReleaseToClient(filing);
+      if (!releaseCheck.ok) {
+        throw new FilingActionError(409, releaseCheck.code, releaseCheck.message);
+      }
       const rawB64 = typeof body.pdfBase64 === "string" ? body.pdfBase64 : "";
       const cleaned = rawB64.includes(",") ? rawB64.slice(rawB64.indexOf(",") + 1) : rawB64;
       if (cleaned.length < 200) {
@@ -2234,6 +2419,7 @@ export async function runFilingAction(
             validationCheckedAt: null,
             reviewApprovedAt: approvedAt,
             reviewApprovedBy: ctx.approver ?? ctx.adminId,
+            reviewApprovedPdfKey: key,
             status: reviewedStatus,
           },
         });
@@ -2262,6 +2448,7 @@ export async function runFilingAction(
             status: reviewedStatus,
             reviewApprovedAt: approvedAt,
             reviewApprovedBy: ctx.approver ?? ctx.adminId,
+            reviewApprovedPdfKey: key,
             clientEmailed: body.notifyClient !== false,
           },
           reason: ctx.reason,
@@ -2449,16 +2636,16 @@ export async function runFilingAction(
         throw new FilingActionError(500, "save_failed", "The SSN could not be saved. Try again.");
       }
       // Same number as the one on file: nothing written, nothing to re-check.
-      const preflightRerun = saved.unchanged
-        ? null
-        : await autoRerunPreflight(filing, ctx, OWNER_SSN_CHANGE_FIELD);
+      const rerun = saved.unchanged ? null : await rerunAfterDataEdit(filing, ctx, OWNER_SSN_CHANGE_FIELD);
       return {
         ok: true,
         last4: saved.last4,
         submittedAt: saved.submittedAt.toISOString(),
         replaced: saved.replaced,
         unchanged: saved.unchanged,
-        preflightRerun,
+        preflightRerun: rerun?.preflight ?? null,
+        releaseWarning: rerun?.releaseWarning,
+        releaseCleared: rerun?.releaseCleared,
       };
     }
 

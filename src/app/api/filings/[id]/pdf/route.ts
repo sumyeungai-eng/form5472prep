@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getOwnedFiling } from "@/lib/session";
 import { getPdf } from "@/lib/storage";
+import { releasedPdfKey } from "@/lib/pdf/packageKeys";
 import { downloadFileName } from "@/lib/pdf/downloadFileName";
 
 export const runtime = "nodejs";
@@ -11,12 +12,15 @@ export const runtime = "nodejs";
 // download dialog (no current caller uses it; kept for symmetry).
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   const filing = await getOwnedFiling(params.id, "sign");
-  if (!filing?.generatedPdfKey)
-    return NextResponse.json({ error: "Not generated yet" }, { status: 404 });
+  // Release gate: customers and partners (they share this route) see nothing
+  // until staff release the package, and then only the released key.
+  const key = filing ? releasedPdfKey(filing) : null;
+  if (!filing || !key)
+    return NextResponse.json({ error: "Not available yet" }, { status: 404 });
 
   const url = new URL(req.url);
   const wantsDownload = url.searchParams.get("download") === "1";
-  const bytes = await getPdf(filing.generatedPdfKey);
+  const bytes = await getPdf(key);
   return new NextResponse(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",

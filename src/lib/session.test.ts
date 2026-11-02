@@ -122,6 +122,26 @@ describe("toClientFiling", () => {
     expect(STAFF_ONLY_YEAR_FIELDS).toEqual(["rcsAdminNarrative", "rcsLearnedOn", "rcsSmallCorpParagraph"]);
   });
 
+  it("release gate: nulls package keys until staff release, keeps them after", async () => {
+    const { toClientFiling } = await import("./session");
+    const before = toClientFiling({
+      id: "f1",
+      sessionId: "s",
+      reviewApprovedAt: null,
+      generatedPdfKey: "f1_unsigned_1.pdf",
+      reviewApprovedPdfKey: null,
+    });
+    expect(before).toEqual({ id: "f1", reviewApprovedAt: null, generatedPdfKey: null, reviewApprovedPdfKey: null });
+    const after = toClientFiling({
+      id: "f1",
+      sessionId: "s",
+      reviewApprovedAt: new Date("2026-10-31T00:00:00Z"),
+      generatedPdfKey: "f1_unsigned_1.pdf",
+      reviewApprovedPdfKey: "f1_unsigned_1.pdf",
+    });
+    expect(after).toMatchObject({ generatedPdfKey: "f1_unsigned_1.pdf", reviewApprovedPdfKey: "f1_unsigned_1.pdf" });
+  });
+
   it("drops pre-flight findings, which quote the admin narrative and customer text", async () => {
     const { toClientFiling } = await import("./session");
     const out = toClientFiling({

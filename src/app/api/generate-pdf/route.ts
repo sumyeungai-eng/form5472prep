@@ -6,6 +6,7 @@ import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { runPreflight } from "@/lib/pdf/preflight";
 import { persistNewPackagePreflight } from "@/lib/pdf/persistPreflight";
 import { putPdf } from "@/lib/storage";
+import { newUnsignedPdfKey } from "@/lib/pdf/packageKeys";
 
 export const runtime = "nodejs";
 
@@ -61,9 +62,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing required field: ownerFtin" }, { status: 400 });
   }
 
-  const { bytes, signatures, record } = await generatePackage(filingToPackageInput(filing));
+  const { bytes, record } = await generatePackage(filingToPackageInput(filing));
 
-  const key = `${filing.id}_unsigned.pdf`;
+  const key = newUnsignedPdfKey(filing.id);
   await putPdf(key, bytes);
   const preflight = await runPreflight(record, bytes);
 
@@ -79,10 +80,13 @@ export async function POST(req: Request) {
       // any pre-flight override).
       reviewApprovedAt: null,
       reviewApprovedBy: null,
+      reviewApprovedPdfKey: null,
     },
   });
 
   // Pre-flight is staff-only: the customer gets the same answer whether it
   // passed or failed (an admin reviews and fixes the package before signing).
-  return NextResponse.json({ key, signatures });
+  // Release gate: no key, URL or signature map — the client sees the package
+  // only after staff release it.
+  return NextResponse.json({ ok: true });
 }

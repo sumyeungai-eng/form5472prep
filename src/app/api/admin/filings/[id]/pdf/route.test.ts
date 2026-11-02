@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/admin/auth", () => ({ isAdmin: vi.fn(async () => true) }));
-const db = vi.hoisted(() => ({ findUnique: vi.fn() }));
-vi.mock("@/lib/prisma", () => ({ prisma: { filing: { findUnique: db.findUnique } } }));
+const db = vi.hoisted(() => ({ findUnique: vi.fn(), findManyLog: vi.fn(async (): Promise<unknown[]> => []) }));
+vi.mock("@/lib/prisma", () => ({
+  prisma: { filing: { findUnique: db.findUnique }, filingChangeLog: { findMany: db.findManyLog } },
+}));
 const storage = vi.hoisted(() => ({ getPdf: vi.fn(async (_key: string) => new Uint8Array([37, 80, 68, 70])) }));
 vi.mock("@/lib/storage", () => ({ getPdf: storage.getPdf }));
 
@@ -42,6 +44,24 @@ describe("admin filing PDF route", () => {
     expect(res.headers.get("Content-Disposition")).toBe(
       'attachment; filename="Acme Holdings LLC - Form 5472 - 2024, 2025 - draft.pdf"',
     );
+  });
+
+  it("serves the newest versioned draft recorded in the change log (release gate: versioned keys)", async () => {
+    db.findManyLog.mockResolvedValueOnce([
+      { beforeJson: { generatedPdfKey: "f1_reviewed_123.pdf" }, afterJson: { draftOnly: true, draftKey: "f1_unsigned_200.pdf" } },
+      { beforeJson: { generatedPdfKey: "f1_unsigned_100.pdf" }, afterJson: { generatedPdfKey: "f1_reviewed_123.pdf" } },
+    ]);
+    const res = await get("?variant=draft&t=2");
+    expect(res.status).toBe(200);
+    expect(storage.getPdf).toHaveBeenLastCalledWith("f1_unsigned_200.pdf");
+  });
+
+  it("serves the generated key itself as the draft when no reviewed upload is current", async () => {
+    db.findUnique.mockResolvedValueOnce({
+      generatedPdfKey: "f1_unsigned_300.pdf", signedPdfKey: null, faxedPdfKey: null, llcName: "Acme", taxYears: [2025],
+    });
+    await get("?variant=draft&t=3");
+    expect(storage.getPdf).toHaveBeenLastCalledWith("f1_unsigned_300.pdf");
   });
 
   it("answers 404 when no generated draft exists", async () => {

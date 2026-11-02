@@ -56,6 +56,7 @@ const baseFiling = {
   status: "PDF_GENERATED",
   generatedPdfKey: "unsigned.pdf",
   reviewApprovedAt: null as Date | null,
+  reviewApprovedPdfKey: "unsigned.pdf" as string | null,
   signaturePngKey: null,
   signedPdfKey: null,
   validationStatus: "passed",
@@ -110,18 +111,34 @@ describe("POST /api/filings/[id]/sign review gate", () => {
     }));
   });
 
-  it("allows signing for pre-existing SIGNATURE_PENDING filings without approval", async () => {
+  // Release gate: the grandfathered-status bypass is gone (the D11 backfill
+  // released every filing that was already past PDF_GENERATED).
+  it("refuses a former-grandfathered SIGNATURE_PENDING filing that was never released", async () => {
     db.findUnique.mockResolvedValue({
       ...baseFiling,
       status: "SIGNATURE_PENDING",
       reviewApprovedAt: null,
+      reviewApprovedPdfKey: null,
     });
 
     const res = await POST(request(), { params: { id: "filing_1" } });
 
-    expect(res.status).toBe(200);
-    expect(storage.put).toHaveBeenCalled();
-    expect(db.update).toHaveBeenCalled();
+    expect(res.status).toBe(409);
+    expect(storage.put).not.toHaveBeenCalled();
+    expect(db.update).not.toHaveBeenCalled();
+  });
+
+  it("refuses to sign a package other than the released one", async () => {
+    db.findUnique.mockResolvedValue({
+      ...baseFiling,
+      reviewApprovedAt: new Date("2026-09-22T12:00:00.000Z"),
+      reviewApprovedPdfKey: "older_released.pdf",
+    });
+
+    const res = await POST(request(), { params: { id: "filing_1" } });
+
+    expect(res.status).toBe(409);
+    expect(db.update).not.toHaveBeenCalled();
   });
 });
 

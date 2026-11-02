@@ -119,7 +119,23 @@ describe.each([
     expect(fake.sendOrderConfirmationEmail).toHaveBeenCalledWith(
       expect.objectContaining({ pdfBytes: null, signatures: [] }),
     );
-    expect(fake.putPdf).toHaveBeenCalledWith("filing_1_unsigned.pdf", PDF);
+    expect(fake.putPdf).toHaveBeenCalledWith(expect.stringMatching(/^filing_1_unsigned_\d+\.pdf$/), PDF);
     expect(fake.sendNewOrderAdminEmail).toHaveBeenCalledWith(expect.objectContaining({ pdfGenerated: true }));
+  });
+});
+
+describe("Stripe webhook: order-time magic link (release gate)", () => {
+  it("lands the client on the filing page via the existing ?next= support", async () => {
+    const row = { ...filing, tier: "standard", ownerSsnCiphertext: null };
+    fake.findUnique.mockResolvedValue(row);
+    fake.getOwnedFiling.mockResolvedValue(row);
+    expect((await webhook(webhookRequest())).status).toBe(200);
+    expect(fake.sendMagicLinkEmail).toHaveBeenCalledWith(
+      filing.user.email,
+      `https://example.test/login?next=${encodeURIComponent(`/filings/${filing.id}`)}`,
+      expect.any(String),
+      undefined,
+      filing.id,
+    );
   });
 });

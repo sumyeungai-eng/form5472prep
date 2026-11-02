@@ -31,6 +31,7 @@ const filing = {
   status: "PDF_GENERATED",
   generatedPdfKey: "filing_1_reviewed_1.pdf",
   reviewApprovedAt: new Date("2026-10-05T10:00:00Z"),
+  reviewApprovedPdfKey: "filing_1_reviewed_1.pdf",
   llcName: "Demo LLC",
   taxYears: [2025],
   user: { email: "owner@example.test" },

@@ -6,17 +6,11 @@ import { bindFilingToEmail } from "@/lib/session";
 import { sendMagicLinkEmail } from "@/lib/email";
 import { brandForFiling, type EmailBrand } from "@/lib/partnerBrand";
 import { createFilingInvite } from "@/lib/filingInvite";
+import { releasedPdfKey } from "@/lib/pdf/packageKeys";
 
 export const runtime = "nodejs";
 
 const REVIEW_PENDING_MESSAGE = "Your forms are still being reviewed. We will email you when they are ready to sign.";
-const REVIEW_GATE_GRANDFATHERED_STATUSES = new Set([
-  "SIGNATURE_PENDING",
-  "SIGNED_UPLOADED",
-  "FAXED",
-  "CONFIRMED",
-  "FAILED",
-]);
 
 // Partner sends their client a secure link to review + sign a filing.
 //
@@ -49,7 +43,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       { status: 409 },
     );
   }
-  if (!filing.reviewApprovedAt && !REVIEW_GATE_GRANDFATHERED_STATUSES.has(filing.status)) {
+  if (!releasedPdfKey(filing)) {
     return NextResponse.json({ error: REVIEW_PENDING_MESSAGE }, { status: 409 });
   }
   if (filing.signaturePngKey || filing.signedPdfKey) {

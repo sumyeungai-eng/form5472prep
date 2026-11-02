@@ -74,13 +74,30 @@ describe("customer generate-pdf with a failed pre-flight", () => {
         where: { id: "f1" },
         data: expect.objectContaining({
           status: "PDF_GENERATED",
-          generatedPdfKey: "f1_unsigned.pdf",
+          generatedPdfKey: expect.stringMatching(/^f1_unsigned_\d+\.pdf$/),
           preflightStatus: "failed",
           preflightFailures: [{ id: "A32", message: "RCS narrative not written for tax year 2024." }],
           preflightOverrideBy: null,
           reviewApprovedAt: null,
+          reviewApprovedPdfKey: null,
         }),
       }),
     );
+  });
+
+  it("release gate: returns no key, URL or signature map to the client", async () => {
+    pdf.runPreflight.mockResolvedValueOnce({ ok: true, failures: [], warnings: [] });
+    const res = await call();
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body).toEqual({ ok: true });
+    expect(JSON.stringify(body)).not.toMatch(/unsigned|\.pdf|key|url|signature/i);
+  });
+
+  it("refuses to replace a released package", async () => {
+    db.findUnique.mockResolvedValueOnce({ ...paidFiling, reviewApprovedAt: new Date() });
+    const res = await call();
+    expect(res.status).toBe(409);
+    expect(pdf.generatePackage).not.toHaveBeenCalled();
   });
 });

@@ -14,6 +14,7 @@ import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { runPreflight } from "@/lib/pdf/preflight";
 import { persistNewPackagePreflight } from "@/lib/pdf/persistPreflight";
 import { putPdf } from "@/lib/storage";
+import { newUnsignedPdfKey } from "@/lib/pdf/packageKeys";
 import { sendMetaPurchase } from "@/lib/analytics/metaServer";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
 import { formatUsd } from "@/lib/utils";
@@ -237,7 +238,7 @@ export async function POST(req: Request) {
           pdfBytes = result.bytes;
           pdfSignatures = result.signatures;
           pdfCarriesSsn = !!full.ownerSsnCiphertext;
-          const key = `${filing.id}_unsigned.pdf`;
+          const key = newUnsignedPdfKey(filing.id);
           await putPdf(key, result.bytes);
           // A failed pre-flight is staff-only: it never changes what the
           // customer is sent (the confirmation below says the package is in
@@ -257,6 +258,7 @@ export async function POST(req: Request) {
               // clears any pre-flight override).
               reviewApprovedAt: null,
               reviewApprovedBy: null,
+              reviewApprovedPdfKey: null,
             },
           });
         } else {
@@ -269,7 +271,9 @@ export async function POST(req: Request) {
       // Send the magic link no matter what — customers always need a way to
       // come back to their portal.
       if (filing.user) {
-        const link = makeMagicLink(filing.user.id);
+        // Land on the filing page (its "In review" screen until staff release
+        // the package) via the auth route's existing ?next= support.
+        const link = `${makeMagicLink(filing.user.id)}?next=${encodeURIComponent(`/filings/${filing.id}`)}`;
         const label = filing.llcName ?? `tax year ${filing.taxYears.join(", ")}`;
         try {
           await sendMagicLinkEmail(filing.user.email, link, label, undefined, filing.id);

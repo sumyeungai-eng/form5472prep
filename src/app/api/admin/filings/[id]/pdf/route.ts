@@ -3,6 +3,7 @@ import { isAdmin } from "@/lib/admin/auth";
 import { prisma } from "@/lib/prisma";
 import { getPdf } from "@/lib/storage";
 import { downloadFileName } from "@/lib/pdf/downloadFileName";
+import { latestGeneratedDraftKey } from "@/lib/pdf/packageKeys";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
 // the unsigned PDF for click-to-place. ?signed=1 returns the signed PDF if
 // one exists (for previewing after embedding). ?download=1 sends it as a
 // file download with a readable name instead of opening it in the browser.
-// ?variant=draft returns the latest GENERATED package (`${id}_unsigned.pdf`)
+// ?variant=draft returns the latest GENERATED package (latestGeneratedDraftKey)
 // even while an accountant-reviewed upload is the client version
 // (generatedPdfKey = *_reviewed_*): Regenerate writes the draft there and
 // leaves the client version alone (spec item 12).
@@ -32,7 +33,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   let key: string | null;
   let missingLabel: string;
   if (wantDraft) {
-    key = `${params.id}_unsigned.pdf`;
+    key = await latestGeneratedDraftKey(params.id, filing.generatedPdfKey);
     missingLabel = "no generated draft on file";
   } else if (wantFaxed) {
     key = filing.faxedPdfKey;

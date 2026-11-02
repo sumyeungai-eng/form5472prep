@@ -368,6 +368,9 @@ model Filing {
   // package is generated, because a new package needs a new review.
   reviewApprovedAt        DateTime?
   reviewApprovedBy        String?
+  // The exact package key released to the client (immutable versioned key). The client PDF route
+  // serves only this key, and only while reviewApprovedAt is set.
+  reviewApprovedPdfKey    String?
   generatorVersion   String?
   generatorCommit    String?
 

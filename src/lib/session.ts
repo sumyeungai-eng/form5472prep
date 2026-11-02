@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { releasedPdfKey } from "@/lib/pdf/packageKeys";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { Prisma } from "@prisma/client";
@@ -206,6 +207,11 @@ export function toClientFiling<T extends { sessionId?: unknown }>(
   for (const field of STAFF_ONLY_FILING_FIELDS) delete out[field];
   for (const field of SERVER_ONLY_FILING_FIELDS) delete out[field];
   if (Array.isArray(out.yearData)) out.yearData = out.yearData.map(withoutStaffYearFields);
+  // Release gate: no package key reaches a client before staff release it.
+  if (!releasedPdfKey(out as Parameters<typeof releasedPdfKey>[0])) {
+    if ("generatedPdfKey" in out) out.generatedPdfKey = null;
+    if ("reviewApprovedPdfKey" in out) out.reviewApprovedPdfKey = null;
+  }
   return out as Omit<T, "sessionId" | StaffOnlyFilingField>;
 }
 

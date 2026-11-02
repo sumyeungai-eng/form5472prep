@@ -11,6 +11,7 @@ import { filingToPackageInput } from "@/lib/pdf/packageInput";
 import { runPreflight } from "@/lib/pdf/preflight";
 import { persistNewPackagePreflight } from "@/lib/pdf/persistPreflight";
 import { putPdf } from "@/lib/storage";
+import { newUnsignedPdfKey } from "@/lib/pdf/packageKeys";
 import { sendOrderConfirmationEmail, sendNewOrderAdminEmail } from "@/lib/email";
 import { makeMagicLink } from "@/lib/magicLink";
 import { effectiveDueDateUtc, extensionUnclear, formatDueDate } from "@/lib/schemas";
@@ -172,7 +173,7 @@ export async function POST(req: Request) {
         pdfBytes = result.bytes;
         pdfSignatures = result.signatures;
         pdfCarriesSsn = !!full.ownerSsnCiphertext;
-        const key = `${filing.id}_unsigned.pdf`;
+        const key = newUnsignedPdfKey(filing.id);
         await putPdf(key, result.bytes);
         // Staff-only result (see the Stripe webhook): never shown to the customer.
         const preflight = await runPreflight(result.record, result.bytes);
@@ -185,6 +186,7 @@ export async function POST(req: Request) {
             status: "PDF_GENERATED",
             reviewApprovedAt: null,
             reviewApprovedBy: null,
+            reviewApprovedPdfKey: null,
           },
         });
       } else {

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getOwnedFiling } from "@/lib/session";
 import { env } from "@/lib/env";
 import { sendNewMessageToAdminEmail } from "@/lib/email";
+import { releasedPdfKey } from "@/lib/pdf/packageKeys";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,6 +46,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       status: true,
       generatedPdfKey: true,
       reviewApprovedAt: true,
+      reviewApprovedPdfKey: true,
       llcName: true,
       taxYears: true,
       user: { select: { email: true } },
@@ -53,7 +55,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!filing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (
     !filing.generatedPdfKey ||
-    !filing.reviewApprovedAt ||
+    !releasedPdfKey(filing) ||
     !["PDF_GENERATED", "SIGNATURE_PENDING"].includes(filing.status)
   ) {
     return NextResponse.json(

@@ -406,7 +406,7 @@ describe("C2 (a): the sign page never serves another account's saved signature",
   async function plantPaidFiling(): Promise<string> {
     const id = await plantDraftOnVictim();
     // The attacker pays for their own planted filing; the package is generated.
-    Object.assign(row(id), { status: "PDF_GENERATED", reviewApprovedAt: new Date(), generatedPdfKey: `pdf/${id}.pdf`, taxYears: [2025] });
+    Object.assign(row(id), { status: "PDF_GENERATED", reviewApprovedAt: new Date(), generatedPdfKey: `pdf/${id}.pdf`, reviewApprovedPdfKey: `pdf/${id}.pdf`, taxYears: [2025] });
     return id;
   }
 
@@ -918,7 +918,7 @@ describe("form5472prep independent partner and invite grants", () => {
 
   it("a sign invite survives owner takeover without exposing a prior account signature or granting edits", async () => {
     const id = await plantDraftOnVictim();
-    Object.assign(row(id), { status: "PDF_GENERATED", generatedPdfKey: "pdf/test", reviewApprovedAt: new Date() });
+    Object.assign(row(id), { status: "PDF_GENERATED", generatedPdfKey: "pdf/test", reviewApprovedPdfKey: "pdf/test", reviewApprovedAt: new Date() });
     await victimTakesOverAndTypes(id);
     expect(row(id).sessionId).toBeNull();
     browser({});

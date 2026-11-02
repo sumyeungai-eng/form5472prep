@@ -7,6 +7,8 @@ vi.mock("@/lib/session", () => ({
   getOwnedFiling: vi.fn(async () => ({
     id: "filing_1",
     generatedPdfKey: "filing_1_unsigned.pdf",
+    reviewApprovedAt: new Date("2026-10-30T00:00:00Z"),
+    reviewApprovedPdfKey: "filing_1_unsigned.pdf",
     signedPdfKey: "filing_1_signed.pdf",
   })),
 }));

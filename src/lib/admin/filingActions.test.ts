@@ -404,7 +404,9 @@ describe("approveForSignature", () => {
     taxYears: [2026],
     generatedPdfKey: "unsigned.pdf",
     preflightStatus: "passed",
+    preflightCheckedAt: new Date("2026-09-22T11:00:00.000Z"),
     preflightOverrideBy: null,
+    preflightOverrideReason: null,
     reviewApprovedAt: null,
     reviewApprovedBy: null,
     user: { id: "u1", email: "owner@example.test" },
@@ -415,7 +417,9 @@ describe("approveForSignature", () => {
     vi.setSystemTime(new Date("2026-09-22T12:00:00.000Z"));
     db.findUnique.mockReset();
     db.update.mockClear();
+    db.updateMany.mockClear();
     db.createLog.mockClear();
+    db.findFirstLog.mockResolvedValue(null);
     email.sendReadyToSignEmail.mockClear();
   });
 
@@ -427,17 +431,17 @@ describe("approveForSignature", () => {
     db.findUnique.mockResolvedValue(filing);
 
     await expect(
-      runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+      runFilingAction("filing_1", "approveForSignature", { expectedPdfKey: "unsigned.pdf" }, { adminId: "admin_1" }),
     ).resolves.toMatchObject({ ok: true, emailSent: true });
 
-    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
-      where: { id: "filing_1" },
+    expect(db.updateMany).toHaveBeenCalledWith({
+      where: { id: "filing_1", generatedPdfKey: "unsigned.pdf" },
       data: {
         reviewApprovedAt: new Date("2026-09-22T12:00:00.000Z"),
         reviewApprovedBy: "admin_1",
+        reviewApprovedPdfKey: "unsigned.pdf",
       },
-      select: { id: true },
-    }));
+    });
     expect(db.createLog).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({
         filingId: "filing_1",
@@ -457,7 +461,7 @@ describe("approveForSignature", () => {
     brand.brandForFiling.mockResolvedValueOnce({ name: "ExitGuru", replyTo: "team@exitguru.test" });
 
     await expect(
-      runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+      runFilingAction("filing_1", "approveForSignature", { expectedPdfKey: "unsigned.pdf" }, { adminId: "admin_1" }),
     ).resolves.toMatchObject({ ok: true, emailSent: true });
 
     expect(email.sendReadyToSignEmail).toHaveBeenCalledWith(expect.objectContaining({
@@ -470,10 +474,10 @@ describe("approveForSignature", () => {
     db.findUnique.mockResolvedValue(filing);
 
     await expect(
-      runFilingAction("filing_1", "approveForSignature", {}, { adminId: null, approver: "admin@example.test" }),
+      runFilingAction("filing_1", "approveForSignature", { expectedPdfKey: "unsigned.pdf" }, { adminId: null, approver: "admin@example.test" }),
     ).resolves.toMatchObject({ ok: true });
 
-    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+    expect(db.updateMany).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ reviewApprovedBy: "admin@example.test" }),
     }));
   });
@@ -482,7 +486,7 @@ describe("approveForSignature", () => {
     db.findUnique.mockResolvedValue(filing);
 
     await expect(
-      runFilingAction("filing_1", "approveForSignature", {}, { adminId: null }),
+      runFilingAction("filing_1", "approveForSignature", { expectedPdfKey: "unsigned.pdf" }, { adminId: null }),
     ).rejects.toMatchObject({ status: 403 });
   });
 
@@ -490,11 +494,13 @@ describe("approveForSignature", () => {
     db.findUnique.mockResolvedValue({
       ...filing,
       preflightStatus: "failed",
+      preflightFailures: [{ id: "A26", message: "Synthetic non-A32 failure" }],
       preflightOverrideBy: "admin_override",
+      preflightOverrideReason: "Reviewed by the accountant.",
     });
 
     await expect(
-      runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+      runFilingAction("filing_1", "approveForSignature", { expectedPdfKey: "unsigned.pdf" }, { adminId: "admin_1" }),
     ).resolves.toMatchObject({ ok: true });
   });
 
@@ -503,17 +509,18 @@ describe("approveForSignature", () => {
     email.sendReadyToSignEmail.mockRejectedValueOnce(new Error("SMTP unavailable"));
 
     await expect(
-      runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+      runFilingAction("filing_1", "approveForSignature", { expectedPdfKey: "unsigned.pdf" }, { adminId: "admin_1" }),
     ).resolves.toMatchObject({
       ok: true,
       emailSent: false,
       emailError: "SMTP unavailable",
     });
 
-    expect(db.update).toHaveBeenCalledWith(expect.objectContaining({
+    expect(db.updateMany).toHaveBeenCalledWith(expect.objectContaining({
       data: {
         reviewApprovedAt: new Date("2026-09-22T12:00:00.000Z"),
         reviewApprovedBy: "admin_1",
+        reviewApprovedPdfKey: "unsigned.pdf",
       },
     }));
   });
@@ -526,7 +533,7 @@ describe("approveForSignature", () => {
     });
 
     await expect(
-      runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+      runFilingAction("filing_1", "approveForSignature", { expectedPdfKey: "unsigned.pdf" }, { adminId: "admin_1" }),
     ).rejects.toMatchObject({ status: 409, code: "preflight_not_approved" });
     expect(db.update).not.toHaveBeenCalled();
     expect(email.sendReadyToSignEmail).not.toHaveBeenCalled();
@@ -538,7 +545,7 @@ describe("approveForSignature", () => {
       db.findUnique.mockResolvedValue({ ...filing, status });
 
       await expect(
-        runFilingAction("filing_1", "approveForSignature", {}, { adminId: "admin_1" }),
+        runFilingAction("filing_1", "approveForSignature", { expectedPdfKey: "unsigned.pdf" }, { adminId: "admin_1" }),
       ).rejects.toMatchObject({ status: 409, code: "already_signed_or_filed" });
       expect(db.update).not.toHaveBeenCalled();
     },
@@ -557,6 +564,7 @@ describe("uploadReviewedPdf — hands the package to the client", () => {
     signedPdfKey: null,
     signaturePngKey: null as string | null,
     preflightStatus: "passed",
+    preflightCheckedAt: new Date("2026-01-01T00:00:00.000Z") as Date | null,
     preflightOverrideBy: null,
     reviewApprovedAt: null,
     reviewApprovedBy: null,
@@ -2023,12 +2031,29 @@ describe("pre-flight workflow", () => {
     expect(storage.put).not.toHaveBeenCalled();
   });
 
-  it("accepts the reviewed-PDF upload once an override is recorded", async () => {
+  it("release gate: refuses the reviewed-PDF upload for an A32 failure even with an override recorded", async () => {
     givenFiling({ preflightOverrideBy: "admin_2", preflightOverrideAt: new Date(), preflightOverrideReason: "Reviewed and approved." });
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64, notifyClient: false }, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 409, code: "rcs_missing_for_late_filing" });
+    expect(storage.put).not.toHaveBeenCalled();
+  });
+
+  it("accepts the reviewed-PDF upload once an override is recorded for a non-A32 failure", async () => {
+    givenFiling({
+      taxYears: [2026],
+      preflightFailures: [{ id: "A26", message: "Synthetic finding" }],
+      preflightOverrideBy: "admin_2",
+      preflightOverrideAt: new Date(),
+      preflightOverrideReason: "Reviewed and approved.",
+    });
     await expect(
       runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64, notifyClient: false }, { adminId: "admin_1" }),
     ).resolves.toMatchObject({ ok: true });
     expect(storage.put).toHaveBeenCalled();
+    expect(db.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ reviewApprovedPdfKey: expect.stringMatching(/^filing_1_reviewed_\d+\.pdf$/) }),
+    }));
   });
 
   it("Regenerate while a reviewed PDF is current writes a draft only and keeps the client version", async () => {
@@ -2044,8 +2069,9 @@ describe("pre-flight workflow", () => {
 
     const result = await runFilingAction("filing_1", "regeneratePdf", {}, { adminId: "admin_1" });
 
-    expect(result).toMatchObject({ ok: true, draftOnly: true, draftKey: "filing_1_unsigned.pdf", preflightStatus: "passed" });
-    expect(storage.putPdf).toHaveBeenCalledWith("filing_1_unsigned.pdf", expect.any(Uint8Array));
+    const draftKey = expect.stringMatching(/^filing_1_unsigned_\d+\.pdf$/);
+    expect(result).toMatchObject({ ok: true, draftOnly: true, draftKey, preflightStatus: "passed" });
+    expect(storage.putPdf).toHaveBeenCalledWith(draftKey, expect.any(Uint8Array));
     for (const data of updates()) {
       for (const key of ["generatedPdfKey", "reviewApprovedAt", "reviewApprovedBy", "signaturePngKey", "signedPdfKey", "status"]) {
         expect(data).not.toHaveProperty(key);
@@ -2055,7 +2081,7 @@ describe("pre-flight workflow", () => {
     expect(logs().map((row) => row.field)).toEqual(["preflight", "pdf"]);
     expect(logs()[1].afterJson).toMatchObject({
       draftOnly: true,
-      draftKey: "filing_1_unsigned.pdf",
+      draftKey,
       generatedPdfKey: "filing_1_reviewed_1760000000000.pdf",
     });
   });
@@ -2122,5 +2148,226 @@ describe("pre-flight workflow", () => {
     expect(isReviewedPdfKey("f_reviewed_123.pdf")).toBe(true);
     expect(isReviewedPdfKey("f_unsigned.pdf")).toBe(false);
     expect(isReviewedPdfKey(null)).toBe(false);
+  });
+});
+
+describe("release gate (PR 1)", () => {
+  const NOW = new Date("2026-10-31T12:00:00.000Z");
+  const pdfBase64 = Buffer.concat([Buffer.from("%PDF-1.7\n"), Buffer.alloc(400, 32)]).toString("base64");
+  const base = {
+    id: "filing_1",
+    status: "PDF_GENERATED",
+    llcName: "Synthetic Release LLC",
+    llcEin: "12-3456789",
+    llcAddress: "1 Example St",
+    llcCity: "Sheridan",
+    llcState: "WY",
+    llcZip: "82801",
+    llcCountry: "USA",
+    llcCountryBusiness: "Hong Kong",
+    llcDateIncorporated: new Date("2024-11-02T00:00:00.000Z"),
+    llcBusinessActivity: "Software",
+    llcBusinessCode: "541512",
+    ownerName: "Alex Example",
+    ownerAddress: "88 Example Road, Hong Kong",
+    ownerCountryCitizenship: "Hong Kong",
+    ownerCountryTaxResidence: "Hong Kong",
+    ownerCountryBusiness: "Hong Kong",
+    ownerFtin: "HK1234567",
+    ownerItin: null,
+    ownerReferenceId: null,
+    taxYears: [2026],
+    isDiirsp: false,
+    isFinalReturn: false,
+    dissolvedAt: null,
+    extensionFiled: null as string | null,
+    extensionTransmittedAt: null as Date | null,
+    reasonableCauseNarrative: null,
+    generatedPdfKey: "filing_1_unsigned_100.pdf",
+    signedPdfKey: null as string | null,
+    signaturePngKey: null as string | null,
+    preflightStatus: "passed" as string | null,
+    preflightFailures: [] as unknown,
+    preflightCheckedAt: new Date("2026-10-31T11:00:00.000Z") as Date | null,
+    preflightOverrideBy: null as string | null,
+    preflightOverrideReason: null as string | null,
+    reviewApprovedAt: null as Date | null,
+    reviewApprovedBy: null as string | null,
+    reviewApprovedPdfKey: null as string | null,
+    faxJobId: null,
+    faxStatus: null,
+    faxedAt: null,
+    yearData: [] as Array<Record<string, unknown>>,
+    user: { id: "u1", email: "owner@example.test" },
+  };
+  const approve = (payload: Record<string, unknown> = { expectedPdfKey: "filing_1_unsigned_100.pdf" }) =>
+    runFilingAction("filing_1", "approveForSignature", payload, { adminId: "admin_1" });
+  const updates = () => db.update.mock.calls.map((call) => (call[0] as { data: Record<string, unknown> }).data);
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(NOW);
+    vi.clearAllMocks();
+    db.findUnique.mockReset();
+    db.findFirstLog.mockReset();
+    db.findFirstLog.mockResolvedValue(null);
+    db.updateMany.mockResolvedValue({ count: 1 });
+    db.yearFindUnique.mockReset();
+    pdf.runPreflight.mockResolvedValue({ ok: true, failures: [], warnings: [] });
+  });
+  afterEach(() => vi.useRealTimers());
+
+  const given = (overrides: Partial<typeof base> = {}) => db.findUnique.mockResolvedValue({ ...base, ...overrides });
+
+  it("releases the exact key the admin reviewed", async () => {
+    given();
+    await expect(approve()).resolves.toMatchObject({ ok: true });
+    expect(db.updateMany).toHaveBeenCalledWith({
+      where: { id: "filing_1", generatedPdfKey: "filing_1_unsigned_100.pdf" },
+      data: expect.objectContaining({ reviewApprovedPdfKey: "filing_1_unsigned_100.pdf" }),
+    });
+  });
+
+  it("answers 409 when the reviewed key is no longer the current package", async () => {
+    given({ generatedPdfKey: "filing_1_unsigned_200.pdf" });
+    await expect(approve()).rejects.toMatchObject({ status: 409, code: "stale_pdf_key" });
+    expect(db.updateMany).not.toHaveBeenCalled();
+    expect(email.sendReadyToSignEmail).not.toHaveBeenCalled();
+  });
+
+  it("answers 409 when a new package lands between the read and the write", async () => {
+    given();
+    db.updateMany.mockResolvedValueOnce({ count: 0 });
+    await expect(approve()).rejects.toMatchObject({ status: 409, code: "stale_pdf_key" });
+    expect(email.sendReadyToSignEmail).not.toHaveBeenCalled();
+  });
+
+  it("requires the reviewed key", async () => {
+    given();
+    await expect(approve({})).rejects.toMatchObject({ status: 400, code: "expected_pdf_key_required" });
+  });
+
+  it("refuses when pre-flight never ran", async () => {
+    given({ preflightStatus: null, preflightCheckedAt: null });
+    await expect(approve()).rejects.toMatchObject({ status: 409, code: "preflight_not_run" });
+  });
+
+  it("refuses when the data changed after pre-flight ran (not run on the current data)", async () => {
+    given();
+    db.findFirstLog.mockResolvedValueOnce({ changedAt: new Date("2026-10-31T11:30:00.000Z") });
+    await expect(approve()).rejects.toMatchObject({ status: 409, code: "preflight_stale" });
+  });
+
+  it("refuses an A32 failure even with an override and a reason", async () => {
+    given({
+      preflightStatus: "failed",
+      preflightFailures: [{ id: "A32", message: "RCS narrative not written for tax year 2024." }],
+      preflightOverrideBy: "admin_2",
+      preflightOverrideReason: "Accountant reviewed it.",
+    });
+    await expect(approve()).rejects.toMatchObject({ status: 409, code: "rcs_missing_for_late_filing" });
+    expect(db.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("refuses a late year without an admin narrative even when the stored pre-flight passed (fax-gate rule)", async () => {
+    given({ taxYears: [2023], yearData: [{ taxYear: 2023, rcsAdminNarrative: null }] });
+    await expect(approve()).rejects.toMatchObject({ status: 409, code: "rcs_missing_for_late_filing" });
+  });
+
+  it("allows another failure with an override that records a reason", async () => {
+    given({
+      preflightStatus: "failed",
+      preflightFailures: [{ id: "A26", message: "Synthetic finding" }],
+      preflightOverrideBy: "admin_2",
+      preflightOverrideReason: "Accountant reviewed it.",
+    });
+    await expect(approve()).resolves.toMatchObject({ ok: true });
+  });
+
+  it("refuses the reviewed-PDF upload when pre-flight never ran", async () => {
+    given({ preflightStatus: null, preflightCheckedAt: null });
+    await expect(
+      runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64 }, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 409, code: "preflight_not_run" });
+    expect(storage.put).not.toHaveBeenCalled();
+  });
+
+  it("regeneration writes a new versioned key and clears the release", async () => {
+    given({
+      reviewApprovedAt: new Date("2026-10-30T00:00:00.000Z"),
+      reviewApprovedBy: "admin_2",
+      reviewApprovedPdfKey: "filing_1_unsigned_100.pdf",
+    });
+    await expect(runFilingAction("filing_1", "regeneratePdf", {}, { adminId: "admin_1" })).resolves.toMatchObject({ ok: true });
+    const key = (storage.putPdf.mock.calls[0] as unknown[])[0] as string;
+    expect(key).toMatch(/^filing_1_unsigned_\d+\.pdf$/);
+    expect(key).not.toBe("filing_1_unsigned_100.pdf");
+    expect(updates().at(-1)).toMatchObject({
+      generatedPdfKey: key,
+      reviewApprovedAt: null,
+      reviewApprovedBy: null,
+      reviewApprovedPdfKey: null,
+    });
+  });
+
+  describe("data edits after release", () => {
+    const editYear = () =>
+      runFilingAction(
+        "filing_1",
+        "updateYearField",
+        { taxYear: 2026, field: "rcsWhyMissed", value: "Corrected text", reason: "client correction" },
+        { adminId: "admin_1" },
+      );
+    beforeEach(() => {
+      db.yearFindUnique.mockResolvedValue({ id: "y2026", rcsWhyMissed: "Old text" });
+    });
+
+    it("generated PDF released, not signed: regenerates, clears the release, says re-release needed", async () => {
+      given({
+        reviewApprovedAt: new Date("2026-10-30T00:00:00.000Z"),
+        reviewApprovedBy: "admin_2",
+        reviewApprovedPdfKey: "filing_1_unsigned_100.pdf",
+      });
+      const result = await editYear();
+      expect(result).toMatchObject({ ok: true, releaseCleared: true, releaseWarning: expect.stringContaining("Re-release needed") });
+      expect(updates()[0]).toEqual({ reviewApprovedAt: null, reviewApprovedBy: null, reviewApprovedPdfKey: null });
+      const key = (storage.putPdf.mock.calls[0] as unknown[])[0] as string;
+      expect(key).toMatch(/^filing_1_unsigned_\d+\.pdf$/);
+      expect(updates().at(-1)).toMatchObject({ generatedPdfKey: key, reviewApprovedPdfKey: null, status: "PDF_GENERATED" });
+    });
+
+    it("client already signed: warning only, nothing regenerated, release kept", async () => {
+      given({
+        status: "SIGNATURE_PENDING",
+        signaturePngKey: "filing_1_signature_1.png",
+        reviewApprovedAt: new Date("2026-10-30T00:00:00.000Z"),
+        reviewApprovedPdfKey: "filing_1_unsigned_100.pdf",
+      });
+      const result = await editYear();
+      expect(result).toMatchObject({ ok: true, releaseWarning: "Data changed after signing — regenerate deliberately." });
+      expect(result).not.toHaveProperty("releaseCleared", true);
+      expect(storage.putPdf).not.toHaveBeenCalled();
+      for (const data of updates()) expect(data).not.toHaveProperty("reviewApprovedAt");
+    });
+
+    it("reviewed upload released: approval kept, with a warning", async () => {
+      given({
+        generatedPdfKey: "filing_1_reviewed_100.pdf",
+        reviewApprovedAt: new Date("2026-10-30T00:00:00.000Z"),
+        reviewApprovedPdfKey: "filing_1_reviewed_100.pdf",
+      });
+      const result = await editYear();
+      expect(result).toMatchObject({ ok: true, releaseWarning: expect.stringContaining("after reviewed upload") });
+      expect(storage.putPdf).not.toHaveBeenCalled();
+      for (const data of updates()) expect(data).not.toHaveProperty("reviewApprovedAt");
+    });
+
+    it("not released: just re-runs pre-flight, no warning", async () => {
+      given();
+      const result = await editYear();
+      expect(result).toMatchObject({ ok: true });
+      expect(result).not.toHaveProperty("releaseWarning", expect.anything());
+      expect(storage.putPdf).not.toHaveBeenCalled();
+    });
   });
 });

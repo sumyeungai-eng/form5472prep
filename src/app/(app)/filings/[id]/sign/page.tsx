@@ -5,15 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { FilingLocked } from "@/components/FilingLocked";
 import { SignClient } from "./SignClient";
 import { get as getStorageObject } from "@/lib/storage";
+import { releasedPdfKey } from "@/lib/pdf/packageKeys";
 
 const REVIEW_PENDING_MESSAGE = "Your forms are still being reviewed. We will email you when they are ready to sign.";
-const REVIEW_GATE_GRANDFATHERED_STATUSES = new Set([
-  "SIGNATURE_PENDING",
-  "SIGNED_UPLOADED",
-  "FAXED",
-  "CONFIRMED",
-  "FAILED",
-]);
 
 // Page where customers sign their filing in-portal. Replaces the prior
 // "download + sign offline + upload signed PDF" loop. Gated to:
@@ -69,7 +63,7 @@ export default async function SignFilingPage({ params }: { params: { id: string 
     // detail page where the status banner will explain.
     redirect(`/filings/${filing.id}`);
   }
-  if (!filing.reviewApprovedAt && !REVIEW_GATE_GRANDFATHERED_STATUSES.has(filing.status)) {
+  if (!releasedPdfKey(filing)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
         <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
@@ -135,7 +129,7 @@ export default async function SignFilingPage({ params }: { params: { id: string 
       llcName={filing.llcName}
       taxYears={filing.taxYears}
       priorSignatureDataUrl={priorSignatureDataUrl}
-      pdfKey={filing.generatedPdfKey!}
+      pdfKey={releasedPdfKey(filing)!}
       showFilingLink={!(grantedByInvite && (!currentUser || currentUser.id !== filing.userId))}
     />
   );
