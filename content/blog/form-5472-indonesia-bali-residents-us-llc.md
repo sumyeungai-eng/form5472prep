@@ -97,7 +97,7 @@ The regular due date for a calendar-year entity is generally **15 April**, and F
 
 We prepare the complete package — Form 5472 with the FTIN and reference ID handled correctly, the pro forma Form 1120, and the Part V supporting statement — have it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and fax it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt. Late years include a reasonable cause cover letter.
 
-**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign in under 3 days. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm, and we do not give tax advice on US or Indonesian tax. We prepare and submit the US information return accurately.
 

@@ -112,7 +112,7 @@ The UAE specifics — no treaty, no personal tax ID, AED conversion, a free-zone
 
 [Form5472 Prep](/) prepares the complete package — Form 5472 with the reference ID handled correctly, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes it to the IRS Ogden PIN Unit, returning the timestamped confirmation receipt. Late years include a reasonable cause cover letter.
 
-**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready for you to check and sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included — you never have to send a fax from the UAE.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready for you to check and sign in under 3 days. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included — you never have to send a fax from the UAE.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on UAE corporate tax. We prepare and submit the US information return accurately.
 

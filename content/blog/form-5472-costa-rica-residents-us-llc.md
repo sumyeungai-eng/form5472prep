@@ -91,7 +91,7 @@ For a calendar-year LLC the due date is generally April 15; Form 7004 extends it
 
 No treaty, a DIMEX or a NITE or neither, colón conversion, sometimes a Costa Rican company as a second related party: routine once seen, and exactly what makes a package substantially incomplete. We prepare the pro forma Form 1120, Form 5472 and the Part V statement, have the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), fax it to the IRS Ogden PIN Unit and send you the receipt. Late years include a reasonable cause cover letter.
 
-**{{price.standard}}** Standard, 5 to 7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included, so you never hunt for a fax machine in San José.
+**{{price.standard}}** Standard, 5 to 7 business days. **{{price.express}}** Express, ready to sign in under 3 days. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included, so you never hunt for a fax machine in San José.
 
 We are not a CPA firm and do not give tax advice, US or Costa Rican. We prepare and submit the US information return.
 

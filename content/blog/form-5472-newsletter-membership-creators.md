@@ -106,7 +106,7 @@ The filing mechanics are identical; only the money's shape differs: a membership
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your payout exports and owner-movement schedule, have the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), fax it to the IRS, and send the timestamped receipt.
 
-Standard is **{{price.standard}}** over 5–7 business days; Express is **{{price.express}}** ready to sign within 24 hours; each additional past tax year is **+{{price.additionalYear}}**; IRS fax delivery is included. We are not a CPA firm and do not give tax advice — we prepare and submit the information return. Effectively connected income and your home-country tax belong to a qualified adviser.
+Standard is **{{price.standard}}** over 5–7 business days; Express is **{{price.express}}** ready to sign in under 3 days; each additional past tax year is **+{{price.additionalYear}}**; IRS fax delivery is included. We are not a CPA firm and do not give tax advice — we prepare and submit the information return. Effectively connected income and your home-country tax belong to a qualified adviser.
 
 ## Frequently asked questions
 

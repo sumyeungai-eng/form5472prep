@@ -116,7 +116,7 @@ No treaty, a NIT some owners have and others lack, COP conversion, sometimes a C
 
 We prepare the pro forma Form 1120, Form 5472 and the Part V statement; each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN); we fax it to the IRS and send you the transmission receipt.
 
-**{{price.standard}}** Standard, 5 to 7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included. For a breakdown of what filing costs, see [Form 5472 filing cost](/blog/form-5472-cost).
+**{{price.standard}}** Standard, 5 to 7 business days. **{{price.express}}** Express, ready to sign in under 3 days. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included. For a breakdown of what filing costs, see [Form 5472 filing cost](/blog/form-5472-cost).
 
 We are not a CPA firm and do not give tax advice, US or Colombian. We prepare and submit the US information return.
 

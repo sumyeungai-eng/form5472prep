@@ -114,7 +114,7 @@ A treaty signed but not in force, an OIB in the FTIN box, euro conversion with a
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120 and the Part V statement, has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), faxes it to the IRS Ogden PIN Unit and returns the timestamped receipt. Late years include a reasonable cause cover letter.
 
-**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included. For a breakdown of what filing costs, see [Form 5472 filing cost](/blog/form-5472-cost).
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign in under 3 days. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included. For a breakdown of what filing costs, see [Form 5472 filing cost](/blog/form-5472-cost).
 
 We are not a CPA firm and do not give tax advice, in the US or in Croatia. We prepare and submit the US information return.
 

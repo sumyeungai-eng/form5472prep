@@ -92,7 +92,7 @@ Form 5472 is a federal information return, filed with a pro forma Form 1120, rep
 
 Form5472 Prep prepares the federal package: Form 5472, the pro forma Form 1120 and the Part V statement, reviewed by a tax accountant who holds an IRS PTIN and faxed to the IRS Ogden PIN Unit with a timestamped receipt.
 
-Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign within 24 hours, 7 days a week. Each additional past tax year is **+{{price.additionalYear}}**. EIN service is **{{price.ein}}** at [/ein](/ein) and ITIN service is **{{price.itin}}** at [/itin](/itin).
+Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign in under 3 days, 7 days a week. Each additional past tax year is **+{{price.additionalYear}}**. EIN service is **{{price.ein}}** at [/ein](/ein) and ITIN service is **{{price.itin}}** at [/itin](/itin).
 
 We do not register LLCs for sales tax, file sales tax returns, collect or remit sales tax, or advise on VAT or GST in any country. We are not a law firm or a CPA firm. A state-by-state sales tax determination belongs with a state tax professional or a sales tax compliance service. [Start the Form 5472 filing](/start) for the federal information return.
 

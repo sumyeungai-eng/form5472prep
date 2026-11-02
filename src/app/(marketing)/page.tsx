@@ -148,7 +148,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "File IRS Form 5472 + Pro Forma 1120 — Form5472 Prep",
     description:
-      `For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. From ${formatPrice(TIERS.standard.priceCents)}, or ${formatPrice(TIERS.express.priceCents)} for express, ready to sign within ${EXPRESS_TURNAROUND}.`,
+      `For foreign-owned US single-member LLCs. We prepare, you sign once, we fax to the IRS. From ${formatPrice(TIERS.standard.priceCents)}, or ${formatPrice(TIERS.express.priceCents)} for express, ready to sign in ${EXPRESS_TURNAROUND}.`,
     images: ["/opengraph-image"],
   },
 };
@@ -626,7 +626,7 @@ function Comparison() {
         <SectionHead
           eyebrow="vs. the alternatives"
           title="Why use Form5472 Prep instead of CPA or DIY?"
-          subtitle={`Form5472 Prep is a fixed-fee specialist: ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} (ready to sign within ${EXPRESS_TURNAROUND}), with tax-accountant review, IRS fax delivery and a timestamped receipt included.`}
+          subtitle={`Form5472 Prep is a fixed-fee specialist: ${formatPrice(TIERS.standard.priceCents)} (${STANDARD_TURNAROUND}) or ${formatPrice(TIERS.express.priceCents)} (ready to sign in ${EXPRESS_TURNAROUND}), with tax-accountant review, IRS fax delivery and a timestamped receipt included.`}
         />
         <ComparisonTable {...FILING_COMPARISON} className="mt-10" />
       </div>

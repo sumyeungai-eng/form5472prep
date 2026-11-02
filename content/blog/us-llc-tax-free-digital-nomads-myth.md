@@ -106,7 +106,7 @@ For a calendar-year LLC the due date is generally **15 April**, and Form 7004 ex
 
 We prepare the package, have it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and fax it to the IRS Ogden PIN Unit, returning the timestamped receipt. That receipt is transmission evidence, not IRS acceptance of the return.
 
-**{{price.standard}}** Standard (5–7 business days), **{{price.express}}** Express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year, IRS fax delivery included.
+**{{price.standard}}** Standard (5–7 business days), **{{price.express}}** Express (ready to sign in under 3 days), **+{{price.additionalYear}}** per additional past tax year, IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice. We do not decide whether you have ECI, and we do not advise on your residence country's tax. We prepare and submit the information return accurately.
 

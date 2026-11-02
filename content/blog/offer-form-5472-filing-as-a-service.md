@@ -45,7 +45,7 @@ Two boundaries there matter commercially. The person authorised to sign for the 
 
 ## How should you price the service to your own client?
 
-Price it as one fixed annual fee, quoted before you start, covering your coordination plus our filing fee. Our published fees are the same for partners as for direct customers: **{{price.standard}} Standard**, ready in 5–7 business days; **{{price.express}} Express**, ready to sign within 24 hours; **+{{price.additionalYear}} per additional past tax year** on either tier. IRS fax delivery is included, there is no platform fee and no subscription, and each filing is paid individually at checkout. Check [current pricing](/pricing) before publishing a number.
+Price it as one fixed annual fee, quoted before you start, covering your coordination plus our filing fee. Our published fees are the same for partners as for direct customers: **{{price.standard}} Standard**, ready in 5–7 business days; **{{price.express}} Express**, ready to sign in under 3 days; **+{{price.additionalYear}} per additional past tax year** on either tier. IRS fax delivery is included, there is no platform fee and no subscription, and each filing is paid individually at checkout. Check [current pricing](/pricing) before publishing a number.
 
 The filing work and the accountant review are identical on both tiers; only speed differs. Express is therefore a scheduling product, not a quality one: price it as a rush surcharge.
 

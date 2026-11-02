@@ -152,7 +152,7 @@ describe("central FAQ content", () => {
     expect(cost.answer).toContain(ADDON_RULE);
     expect(ADDON_RULE).toContain(formatPrice(MULTI_YEAR_ADDON_CENTS));
     expect(automated.answer).toMatch(/^No\. /);
-    expect(express.answer).toContain(`within ${EXPRESS_TURNAROUND}`);
+    expect(express.answer).toContain(`in ${EXPRESS_TURNAROUND}`);
     expect(express.answer).toContain(STANDARD_TURNAROUND);
     // Sister brand: disclosed, its prices attributed to its own page, ours from pricing.ts.
     expect(snapfile.answer).toMatch(/same team/);

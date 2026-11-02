@@ -152,7 +152,7 @@ The weak statements all have the same problem: the IRS cannot see what happened 
 
 Form5472 Prep prepares the full package: Form 5472, pro forma Form 1120, and the Part V statement. We classify owner contributions, distributions, loans and reimbursements, have the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and fax it to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
-Standard service is **{{price.standard}}** and ready in 5-7 business days. Express service is **{{price.express}}** and ready for you to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein), and ITIN service is **{{price.itin}}** at [/itin](/itin).
+Standard service is **{{price.standard}}** and ready in 5-7 business days. Express service is **{{price.express}}** and ready for you to check and sign in under 3 days. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein), and ITIN service is **{{price.itin}}** at [/itin](/itin).
 
 We are not a CPA firm and do not give tax advice. We do not decide income tax positions or treaty positions. We prepare and submit the information return package accurately.
 

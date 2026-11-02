@@ -133,7 +133,7 @@ If the LLC has multiple members, read [multi-member LLC Form 5472 or Form 1065](
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement for a foreign-owned disregarded LLC. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS Ogden PIN Unit with a timestamped receipt. If Form 8832 is already effective, contact us before ordering because the entity also needs a full corporate Form 1120.
 
-Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein).
+Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign in **under 3 days**. Each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein).
 
 We are not a CPA firm and do not give tax advice. We do not recommend or file a Form 8832 election as part of the standard Form 5472 package. Classification changes, deemed transactions, corporate returns, treaties, and home-country consequences need qualified advisers.
 

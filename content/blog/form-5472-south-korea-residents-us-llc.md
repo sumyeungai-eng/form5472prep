@@ -97,7 +97,7 @@ Sending an international fax from Korea is a nuisance, and the Korean-specific d
 
 Form5472 Prep prepares the complete package: Form 5472 with the FTIN and reference ID handled consistently, the pro forma Form 1120, and the Part V statement. Each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), we fax it to the IRS Ogden PIN Unit, and we return the timestamped receipt. Late years include a reasonable cause cover letter.
 
-**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign in under 3 days. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm, we do not give tax advice, and we do not advise on Korean tax. We prepare and submit the US information return accurately.
 

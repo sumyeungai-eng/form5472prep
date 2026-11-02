@@ -133,7 +133,7 @@ A substantially incomplete filing counts as failure to file. After 90 days from 
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V statement from the related-party totals. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS Ogden PIN Unit with a timestamped receipt.
 
-Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein).
+Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign in **under 3 days**. Each additional past tax year is **+{{price.additionalYear}}**, and fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein).
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the federal information return; income tax, transfer pricing, sales tax, and home-country positions should be reviewed with the appropriate adviser.
 

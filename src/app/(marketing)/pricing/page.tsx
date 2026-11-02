@@ -23,11 +23,11 @@ import { ORG_REF, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pag
 export const metadata: Metadata = {
   title: "Pricing for Form 5472 Filing",
   description:
-    `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} ready in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} ready to sign within ${EXPRESS_TURNAROUND}, IRS fax included.`,
+    `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} ready in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} ready to sign in ${EXPRESS_TURNAROUND}, IRS fax included.`,
   ...pageMeta({
     title: "Pricing — Form 5472 Filing for Foreign-Owned LLCs",
     description:
-      `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} ready in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} ready to sign within ${EXPRESS_TURNAROUND}, IRS fax included.`,
+      `Pricing for Form 5472 + pro forma 1120 filing: Standard ${formatPrice(TIERS.standard.priceCents)} ready in ${STANDARD_TURNAROUND}, Express ${formatPrice(TIERS.express.priceCents)} ready to sign in ${EXPRESS_TURNAROUND}, IRS fax included.`,
     path: "/pricing",
   }),
 };
@@ -48,7 +48,7 @@ const PRICING_FAQS: { q: string; a: string }[] = [
   { q: EXPRESS.question, a: EXPRESS.answer },
   {
     q: "What's the difference between the two tiers?",
-    a: `Only the turnaround. The filing itself is identical: we prepare your Form 5472 + pro forma 1120, a PTIN-holding tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. Both tiers also include a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready to sign within ${EXPRESS_TURNAROUND} and comes with priority email support.`,
+    a: `Only the turnaround. The filing itself is identical: we prepare your Form 5472 + pro forma 1120, a PTIN-holding tax accountant reviews it, we fax it to the IRS Ogden PIN Unit, and email you the timestamped confirmation. Both tiers also include a reasonable-cause letter on late / DIIRSP filings and a filing reminder in the second week of January for next year. ${TIERS.standard.label} (${formatPrice(TIERS.standard.priceCents)}) is ready in ${STANDARD_TURNAROUND}; ${TIERS.express.label.toLowerCase()} (${formatPrice(TIERS.express.priceCents)}) is ready to sign in ${EXPRESS_TURNAROUND} and comes with priority email support.`,
   },
   {
     q: "Is fax filing really included?",
@@ -169,7 +169,7 @@ export default function PricingPage() {
             <p className="mt-6 text-lg leading-relaxed text-slate-300 max-w-2xl mx-auto">
               Done-for-you Form 5472 + pro forma 1120 for foreign-owned US LLCs.
               Same filing either way — pick the turnaround you need:{" "}
-              ready in {STANDARD_TURNAROUND}, or ready to sign within {EXPRESS_TURNAROUND} on Express. Fax delivery
+              ready in {STANDARD_TURNAROUND}, or ready to sign in {EXPRESS_TURNAROUND} on Express. Fax delivery
               to the IRS Ogden PIN Unit is included on both plans.
             </p>
 

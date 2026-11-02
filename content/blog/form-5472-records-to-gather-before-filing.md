@@ -85,7 +85,7 @@ A filing built from a reconstructed, documented ledger is a filing. A year left 
 
 ## The bottom line
 
-Gather four things before anything else: the EIN notice, your own identification details, a labelled 2026 ledger of every owner-LLC movement, and the document behind each row. If a row has no document, write the memo now rather than leaving the row blank. [Start your Form 5472 filing from {{price.standard}}](/start) — Standard turnaround is 5-7 business days, Express is ready for you to check and sign within 24 hours, 7 days a week, and every filing is reviewed by a tax accountant who holds an IRS PTIN.
+Gather four things before anything else: the EIN notice, your own identification details, a labelled 2026 ledger of every owner-LLC movement, and the document behind each row. If a row has no document, write the memo now rather than leaving the row blank. [Start your Form 5472 filing from {{price.standard}}](/start) — Standard turnaround is 5-7 business days, Express is ready for you to check and sign in under 3 days, 7 days a week, and every filing is reviewed by a tax accountant who holds an IRS PTIN.
 
 ## Frequently asked questions
 

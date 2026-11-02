@@ -120,7 +120,7 @@ The IRS's [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472)
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your platform reports and owner-movement schedule. Each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS and send you the timestamped receipt.
 
-Standard is **{{price.standard}}**, ready in **5–7 business days**. Express is **{{price.express}}**, ready to sign **within 24 hours**. Each additional past tax year is **+{{price.additionalYear}}**. IRS fax delivery is included.
+Standard is **{{price.standard}}**, ready in **5–7 business days**. Express is **{{price.express}}**, ready to sign **in under 3 days**. Each additional past tax year is **+{{price.additionalYear}}**. IRS fax delivery is included.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return. Withholding forms, treaty claims, whether your income is effectively connected with a US trade or business, and your home-country tax are questions for the appropriate adviser. If you travel between countries while freelancing, the residence questions are covered in [Form 5472 for digital nomads](/blog/form-5472-digital-nomad-us-llc).
 

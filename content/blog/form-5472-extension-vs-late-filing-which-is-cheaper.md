@@ -29,7 +29,7 @@ Route A is a deadline decision made before the due date. Route B is what is left
 Two line items, both known in advance:
 
 1. **The Form 7004 filing itself** — one page, no signature required, faxed or mailed to the IRS Ogden PIN Unit. You can prepare it yourself at no cost beyond your time, or [order Form 7004 extension filing](/form-7004-extension) and see the fee on that page.
-2. **The Form 5472 package**, prepared during the extended window. Our Standard preparation is {{price.standard}}, ready in 5-7 business days, with Express at {{price.express}} ready for you to check and sign within 24 hours, 7 days a week.
+2. **The Form 5472 package**, prepared during the extended window. Our Standard preparation is {{price.standard}}, ready in 5-7 business days, with Express at {{price.express}} ready for you to check and sign in under 3 days, 7 days a week.
 
 **Penalty exposure on Route A: nil for that year, provided the extension is valid and the package is filed inside the extended window.** The Form 5472 instructions assess the penalty on a reporting corporation that fails to file "when due" — and a valid extension moves when due.
 

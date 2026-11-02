@@ -74,7 +74,7 @@ BOI exemption does not touch two separate obligations:
 
 ## Where Form5472 Prep fits
 
-[Form5472 Prep](/) prepares and faxes the annual federal Form 5472 and pro forma Form 1120 for foreign-owned US disregarded entities — {{price.standard}} standard (5–7 business days), {{price.express}} express (ready to sign within 24 hours), plus {{price.additionalYear}} per additional past year. We also offer EIN service at {{price.ein}} ([/ein](/ein)) and ITIN service at {{price.itin}} ([/itin](/itin)). We do not offer registered-agent, LLC formation, or BOI-filing services, and we are not a law or CPA firm — nothing here is legal or tax advice.
+[Form5472 Prep](/) prepares and faxes the annual federal Form 5472 and pro forma Form 1120 for foreign-owned US disregarded entities — {{price.standard}} standard (5–7 business days), {{price.express}} express (ready to sign in under 3 days), plus {{price.additionalYear}} per additional past year. We also offer EIN service at {{price.ein}} ([/ein](/ein)) and ITIN service at {{price.itin}} ([/itin](/itin)). We do not offer registered-agent, LLC formation, or BOI-filing services, and we are not a law or CPA firm — nothing here is legal or tax advice.
 
 ## Frequently asked questions
 

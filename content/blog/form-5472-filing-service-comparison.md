@@ -20,7 +20,7 @@ For the wider field — a dated survey of filing services, software and formatio
 | Service | Price, one tax year | What's included | Who reviews it | Turnaround | Best for |
 |---|---|---|---|---|---|
 | **Snapfile** — AI review. Ours: snapfile.tax states that its human-review tier is "Offered and fulfilled by Form5472Prep.com." | **$79** one-time; additional past tax year **+$69** | Form 5472 and the required pro forma Form 1120 from your answers, reasonable-cause statement when needed, online signature, fax delivery to the IRS Ogden PIN Unit, timestamped receipt, automatic retry if the first fax fails, optional annual reminders | "AI system review for completeness and consistency". Snapfile's page states that this option "does not include a human tax professional" | Not published | One straightforward year, if you are content with an AI system review |
-| **Form5472 Prep** (this site) | **{{price.standard}}** Standard, **{{price.express}}** Express; additional past tax year **+{{price.additionalYear}}** | Form 5472 and the pro forma Form 1120 prepared, reasonable-cause letter for late filings, online signature, IRS Ogden fax delivery and timestamped receipt on both plans, next-year reminder | A tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), before submission | Standard: 5-7 business days. Express: ready for you to check and sign within 24 hours, 7 days a week | Catch-up years, a close deadline, or anyone wanting a person's judgement on the review |
+| **Form5472 Prep** (this site) | **{{price.standard}}** Standard, **{{price.express}}** Express; additional past tax year **+{{price.additionalYear}}** | Form 5472 and the pro forma Form 1120 prepared, reasonable-cause letter for late filings, online signature, IRS Ogden fax delivery and timestamped receipt on both plans, next-year reminder | A tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), before submission | Standard: 5-7 business days. Express: ready for you to check and sign in under 3 days, 7 days a week | Catch-up years, a close deadline, or anyone wanting a person's judgement on the review |
 | **form5472.online** | **$399**, plus **$49** for "IRS submission + confirmation": "Total if filed with the IRS: $448 (All-In)", and "With reportable activity: $547 (All-In Active)" | Form 5472 and the pro forma Form 1120, headed "FORM 5472 — CPA PREPARED & FILED" | Its page states "CPA-prepared, reviewed & signed" by a "U.S.-licensed CPA (verified)" | Not stated in the figures quoted here | A buyer who specifically wants what that page describes, a CPA's preparation and signature |
 | **Firstbase** | **$899** a year | Its Tax Filing package for a non-US-owned single-member LLC lists Forms 5472, the pro forma Form 1120, 1099s and an extension | Its page describes a "full-service process by dedicated tax experts" | Not published | An owner who already uses Firstbase and wants the annual bundle in one place |
 | **doola** | **$1,500** a year for the standalone Tax Filing-only service; its Tax and Compliance plan is listed at **$1,999** a year plus state fees | Help centre: the standalone service "covers your federal tax filings, including Form 5472 and the accompanying pro forma Form 1120". Its help centre states these forms are submitted by mail or fax | Its pricing page refers to "our in-house tax and CPA teams" | Not published | An owner buying a whole compliance subscription, not a single filing |
@@ -59,7 +59,7 @@ One thing, plus three options the cheaper tier does not offer at any price. Be c
 
 **A person decides the judgement calls.** Owner loans, reimbursements, formation costs paid personally, a distribution that was really a repayment — classification questions a completeness check cannot answer. A substantially incomplete Form 5472 counts as a failure to file, which is why who reads it matters.
 
-**A deadline you can still meet.** Express at {{price.express}} is ready for you to check and sign within 24 hours, 7 days a week. The clock stops at "ready to sign", because the fax goes out once you sign.
+**A deadline you can still meet.** Express at {{price.express}} is ready for you to check and sign in under 3 days, 7 days a week. The clock stops at "ready to sign", because the fax goes out once you sign.
 
 **Catch-up years at +{{price.additionalYear}} each**, deliberately well below the first-year fee. A reasonable-cause letter is included; no provider can promise the IRS will accept one.
 
@@ -116,7 +116,7 @@ No. The IRS states that any tax professional holding a PTIN is authorized to pre
 
 ### Why does Form5472 Prep cost more than $79?
 
-A tax accountant who holds an IRS PTIN reviews the package before submission, rather than an automated completeness check. Express is ready for you to check and sign within 24 hours, 7 days a week.
+A tax accountant who holds an IRS PTIN reviews the package before submission, rather than an automated completeness check. Express is ready for you to check and sign in under 3 days, 7 days a week.
 
 ### Are Snapfile and Form5472 Prep related?
 

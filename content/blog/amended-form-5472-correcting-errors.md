@@ -100,7 +100,7 @@ A corrected filing has to be right the second time. It attracts attention by its
 
 [Form5472 Prep](/) prepares complete corrected packages — Form 5472 rebuilt from your actual transaction records, a corrected pro forma Form 1120 with the required annotation, the Part V supporting statement, an explanation statement, and a reasonable cause letter where the original was late — reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) and faxed to the IRS Ogden PIN Unit, with the timestamped transmission receipt returned to you.
 
-**{{price.standard}}** standard (5-7 business days), **{{price.express}}** express (ready to sign within 24 hours), **+{{price.additionalYear}}** per additional past tax year if other years also need filing. IRS fax delivery included.
+**{{price.standard}}** standard (5-7 business days), **{{price.express}}** express (ready to sign in under 3 days), **+{{price.additionalYear}}** per additional past tax year if other years also need filing. IRS fax delivery included.
 
 For current corrected-filing options, [see current pricing](/pricing).
 

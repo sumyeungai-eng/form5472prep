@@ -98,7 +98,7 @@ The two are independent. An LLC can be fully paid up in Delaware and still have 
 
 Form5472 Prep prepares the federal package: Form 5472, the pro forma Form 1120 and the Part V statement, reviewed by a tax accountant who holds an IRS PTIN and faxed to the IRS Ogden PIN Unit with a timestamped receipt.
 
-Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign within 24 hours, 7 days a week. Each additional past tax year is **+{{price.additionalYear}}**. EIN service is **{{price.ein}}** at [/ein](/ein) and ITIN service is **{{price.itin}}** at [/itin](/itin).
+Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign in under 3 days, 7 days a week. Each additional past tax year is **+{{price.additionalYear}}**. EIN service is **{{price.ein}}** at [/ein](/ein) and ITIN service is **{{price.itin}}** at [/itin](/itin).
 
 We do not pay the Delaware annual tax for clients, act as a registered agent or file state documents, and we are not a CPA firm. Pay the Delaware tax directly to the Division of Corporations and keep the confirmation. [Start the Form 5472 filing](/start) for the federal return.
 

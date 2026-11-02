@@ -27,7 +27,7 @@ export const SNAPFILE_FACTS = { aiTier: "$79", extraYear: "$69", checkedOn: "24 
 export const BRAND_CAPSULES = {
   cost: {
     question: `How much does ${SITE_NAME} cost?`,
-    answer: `${SITE_NAME} costs ${STD} for Standard filing, ready in ${STANDARD_TURNAROUND}, or ${EXP} for Express filing, ready to sign within ${EXPRESS_TURNAROUND}, for one tax year. Both include review by a tax accountant who holds an IRS PTIN and IRS fax delivery. ${ADDON_RULE}`,
+    answer: `${SITE_NAME} costs ${STD} for Standard filing, ready in ${STANDARD_TURNAROUND}, or ${EXP} for Express filing, ready to sign in ${EXPRESS_TURNAROUND}, for one tax year. Both include review by a tax accountant who holds an IRS PTIN and IRS fax delivery. ${ADDON_RULE}`,
   },
   automated: {
     question: `Is ${SITE_NAME} automated software?`,
@@ -35,7 +35,7 @@ export const BRAND_CAPSULES = {
   },
   express: {
     question: `How fast is ${SITE_NAME} Express filing?`,
-    answer: `${SITE_NAME} Express filing (${EXP}) is ready for you to check and sign within ${EXPRESS_TURNAROUND} of your order, 7 days a week, and we fax it to the IRS once you sign. Standard filing (${STD}) is ready in ${STANDARD_TURNAROUND}. Both tiers get the same package, accountant review and IRS fax delivery.`,
+    answer: `${SITE_NAME} Express filing (${EXP}) is ready for you to check and sign in ${EXPRESS_TURNAROUND} from your order, 7 days a week, and we fax it to the IRS once you sign. Standard filing (${STD}) is ready in ${STANDARD_TURNAROUND}. Both tiers get the same package, accountant review and IRS fax delivery.`,
   },
   legit: {
     question: `Is ${SITE_NAME} legit?`,
@@ -151,7 +151,7 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     category: "before-you-order",
     question: "What's the difference between Standard and Express?",
     answer:
-      `Standard and Express differ only by turnaround. Standard is ready in ${STANDARD_TURNAROUND} at ${STD}, while Express is ready for you to check and sign within ${EXPRESS_TURNAROUND} of your order, 7 days a week, at ${EXP} and adds priority email support. We fax Express filings once you sign, the same as Standard. Both include the same documents, accountant review, and IRS fax delivery.`,
+      `Standard and Express differ only by turnaround. Standard is ready in ${STANDARD_TURNAROUND} at ${STD}, while Express is ready for you to check and sign in ${EXPRESS_TURNAROUND} from your order, 7 days a week, at ${EXP} and adds priority email support. We fax Express filings once you sign, the same as Standard. Both include the same documents, accountant review, and IRS fax delivery.`,
     source: "src/app/(marketing)/form-5472-filing/page.tsx:59; src/lib/pricing.ts:40; src/lib/pricing.ts:41; src/lib/pricing.ts:60; src/lib/pricing.ts:67",
   },
   {

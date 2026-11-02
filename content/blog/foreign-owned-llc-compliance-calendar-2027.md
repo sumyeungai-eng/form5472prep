@@ -120,7 +120,7 @@ The Wyoming owner has two dates six weeks apart, so both belong in one preparati
 We handle the federal date. We prepare the pro forma Form 1120 and Form 5472 with the Part V statement, and fax the package to the IRS Ogden PIN Unit with a timestamped transmission receipt. State reports and taxes stay with you or your registered agent. Every filing is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before it is submitted.
 
 - **Standard:** {{price.standard}}, ready in 5–7 business days
-- **Express:** {{price.express}}, ready to sign within 24 hours
+- **Express:** {{price.express}}, ready to sign in under 3 days
 - **Each additional past tax year:** +{{price.additionalYear}}
 - **IRS fax delivery:** included
 

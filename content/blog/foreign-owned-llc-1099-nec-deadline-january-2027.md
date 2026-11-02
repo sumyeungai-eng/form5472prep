@@ -86,7 +86,7 @@ An unrelated designer in Lisbon never appears on Form 5472 at all. Your own offs
 
 Three dates and one question. Monday 1 February 2027 for Form 1099-NEC at the new $2,000 threshold, Monday 15 March 2027 for Form 1042-S where US-source income reached a foreign payee, and Thursday 15 April 2027 for the Form 5472 package. Two questions sort your contractors: where each one physically worked, and which rail you paid them on. Ask both before January, not during it.
 
-[Start your Form 5472 filing from {{price.standard}}](/start). Standard turnaround is 5-7 business days; Express is ready for you to check and sign within 24 hours, 7 days a week, and every filing is reviewed by a tax accountant who holds an IRS PTIN.
+[Start your Form 5472 filing from {{price.standard}}](/start). Standard turnaround is 5-7 business days; Express is ready for you to check and sign in under 3 days, 7 days a week, and every filing is reviewed by a tax accountant who holds an IRS PTIN.
 
 ## Frequently asked questions
 

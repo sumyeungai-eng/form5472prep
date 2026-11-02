@@ -1,7 +1,7 @@
 ---
 title: "Form 5472 Deadline Passed on 15 October 2026: Filing Late Now"
 seoTitle: "Form 5472 Deadline Passed: Filing Late Now"
-description: "The extended 2025 Form 5472 deadline passed on 15 October 2026. Filing late is the task now, and Express ({{price.express}}) has the package ready to sign in 24 hours."
+description: "The extended 2025 Form 5472 deadline passed on 15 October 2026. Filing late is the task now, and Express ({{price.express}}) has the package ready to sign in under 3 days."
 date: 2026-10-13
 updated: 2026-10-24
 author: "Form5472 Prep"
@@ -43,9 +43,9 @@ A statement puts the LLC's account of the delay on the record at the moment of f
 
 ## What does Express mean for a late 2025 filing?
 
-Express ({{price.express}}) means one thing precisely: **your completed package is ready for you to check and sign within 24 hours of ordering, 7 days a week.**
+Express ({{price.express}}) means one thing precisely: **your completed package is ready for you to check and sign in under 3 days from ordering, 7 days a week.**
 
-That is not the same as filed within 24 hours, and we will not say otherwise to win an order. Form 5472 attaches to a pro forma Form 1120 with "Foreign-owned U.S. DE" across the top, only the name, address and items B and E completed on page 1, per the Instructions for Form 5472. That return carries the signature of the person authorised to sign for the LLC — never ours. Without that signature it is not a filing.
+That is not the same as filed in under 3 days, and we will not say otherwise to win an order. Form 5472 attaches to a pro forma Form 1120 with "Foreign-owned U.S. DE" across the top, only the name, address and items B and E completed on page 1, per the Instructions for Form 5472. That return carries the signature of the person authorised to sign for the LLC — never ours. Without that signature it is not a filing.
 
 The sequence has five steps, and its only clocks are set by when the order and the signature arrive:
 
@@ -53,7 +53,7 @@ The sequence has five steps, and its only clocks are set by when the order and t
 |---|---|---|
 | **You order** | Your intake opens immediately; an Express order enters the same-day queue | Answer it: entity, owner, tax year, transaction totals |
 | **We prepare** | Build the Form 5472 and pro forma Form 1120; a tax accountant who holds an IRS PTIN reviews it | Reply quickly if we email a question |
-| **You check and sign** | Email the package, ready to check and sign, within 24 hours of an Express order | Check the figures, sign, return it — the step only you can take |
+| **You check and sign** | Email the package, ready to check and sign, in under 3 days from an Express order | Check the figures, sign, return it — the step only you can take |
 | **We fax** | Fax the signed package to the IRS the same day your signature arrives | Nothing |
 | **You keep the receipt** | Send the timestamped receipt and a copy of what was transmitted | Keep both with the LLC's records |
 
@@ -78,7 +78,7 @@ Keep the transmission receipt, and be clear about what it is: evidence that a pa
 
 ## Is Standard or Express the better tier for a late package?
 
-Express ({{price.express}}) is the tier most late filers want, and the honest reason is time, not a deadline. A package ready to check and sign within 24 hours can be signed and faxed within a couple of days; Standard is {{price.standard}} and ready in 5-7 business days, putting the fax a week or more out.
+Express ({{price.express}}) is the tier most late filers want, and the honest reason is time, not a deadline. A package ready to check and sign in under 3 days can be signed and faxed soon after; Standard is {{price.standard}} and ready in 5-7 business days, putting the fax a week or more out.
 
 For a filing already months late, that difference is days of exposure, not a different outcome: worth paying for if a notice has arrived or you want it closed, not worth it if a week makes no practical difference. We would rather say that than take the dearer order.
 
@@ -108,9 +108,9 @@ $25,000 for failing to file when due and in the manner prescribed, and a substan
 
 No. The IRS states that penalties "may be assessed without considering the attached reasonable cause statement" during processing of a delinquent information return. A statement still puts your account of the delay on the record at the moment of filing.
 
-### Can you file my late Form 5472 within 24 hours?
+### Can you file my late Form 5472 in under 3 days?
 
-We cannot promise that: filing depends on your signature, not on us. Express has your complete package ready for you to check and sign within 24 hours of ordering, 7 days a week. Sign the same day and the fax goes the same day.
+We cannot promise that: filing depends on your signature, not on us. Express has your complete package ready for you to check and sign in under 3 days from ordering, 7 days a week. Sign the same day and the fax goes the same day.
 
 ### Can I e-file a late Form 5472?
 

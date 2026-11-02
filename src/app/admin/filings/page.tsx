@@ -431,9 +431,9 @@ export default async function AdminFilingsPage({
                       {f.tier === "express" && f.status !== "DRAFT" && !f.reviewApprovedAt && (
                         <span
                           className="rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700"
-                          title="Express order: the reviewed package must be ready for the client to sign within 24 hours of the order, 7 days a week."
+                          title="Express order: the reviewed package must be ready for the client to sign in under 3 days from the order, 7 days a week."
                         >
-                          Express 24h
+                          Express · under 3 days
                         </span>
                       )}
                       {f.linkedToFilingId && (

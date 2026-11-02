@@ -99,7 +99,7 @@ Skipping old years also weakens the reasonable-cause story. A filing history tha
 
 Form5472 Prep prepares complete delinquent Form 5472 packages for foreign-owned US disregarded LLCs: pro forma Form 1120, Form 5472, Part V statement, and reasonable-cause cover letter where appropriate. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS Ogden PIN Unit at 855-887-7737 with a timestamped receipt.
 
-Standard service is **{{price.standard}}** and ready in 5-7 business days. Express service is **{{price.express}}** and ready for you to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein), and ITIN service is **{{price.itin}}** at [/itin](/itin).
+Standard service is **{{price.standard}}** and ready in 5-7 business days. Express service is **{{price.express}}** and ready for you to check and sign in under 3 days. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included. EIN service is **{{price.ein}}** at [/ein](/ein), and ITIN service is **{{price.itin}}** at [/itin](/itin).
 
 We are not a CPA firm and do not give tax advice. We do not decide whether reasonable cause will be accepted or whether an income tax return should be amended. We prepare and submit the missing information return package accurately.
 

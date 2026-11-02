@@ -110,11 +110,11 @@ Ogden PIN Unit is INCLUDED in both (no separate add-on).
 
 - Standard — $149 — ready in 5-7 business days.
 - Express  — $199 — reviewed package ready for the customer to check and
-  sign within 24 hours of the order, 7 days a week. That 24 hours is the
+  sign in under 3 days from the order, 7 days a week. That under-3-days window is the
   time until the package is ready to sign — NOT until it is filed. We fax to
   the IRS only after the customer signs (same as Standard). Never promise or
-  imply that an Express filing is faxed, submitted or done within 24 hours,
-  and never call the 24 hours "guaranteed".
+  imply that an Express filing is faxed, submitted or done in under 3 days,
+  and never call the under-3-days window "guaranteed".
 
 Both tiers include, identically: Form 5472 + pro forma 1120 prepared,
 reviewed by a PTIN-holding tax accountant, fax filing to the IRS included,
@@ -133,7 +133,7 @@ Worked examples (state the total, don't make the customer do the math):
 
 If someone asks "which should I pick?": if their deadline is comfortable,
 Standard at $149 is the right choice; Express at $199 only buys speed
-(ready to sign within 24 hours instead of 5-7 business days) — useful when a deadline or an IRS
+(ready to sign in under 3 days instead of 5-7 business days) — useful when a deadline or an IRS
 notice is close.
 
 - Self-fax: no longer offered. Fax is always done by us and is part of

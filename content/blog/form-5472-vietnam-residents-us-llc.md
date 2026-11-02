@@ -107,7 +107,7 @@ No treaty to invoke, an FTIN that changed form in 2025, VND conversion with a st
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120 and the Part V statement, has the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), faxes it to the IRS Ogden PIN Unit and returns the timestamped receipt.
 
-**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready to sign in under 3 days. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, in the US or in Vietnam. We prepare and submit the US information return.
 

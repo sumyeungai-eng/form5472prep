@@ -228,7 +228,7 @@ For a calendar-year LLC this package is due April 15 of the following year. Amou
       },
       {
         heading: "How much does the Form 5472 filing service cost?",
-        body: `Form5472 Prep charges ${STD} per filing year on Standard, ready in ${STANDARD_TURNAROUND}, or ${EXP} on Express, ready to sign within ${EXPRESS_TURNAROUND}. Each additional past year adds ${ADD} on either plan, and the accountant review and IRS fax are included, with no subscription.
+        body: `Form5472 Prep charges ${STD} per filing year on Standard, ready in ${STANDARD_TURNAROUND}, or ${EXP} on Express, ready to sign in ${EXPRESS_TURNAROUND}. Each additional past year adds ${ADD} on either plan, and the accountant review and IRS fax are included, with no subscription.
 
 The sample LLC above would pay ${STD} on Standard. If it had also missed the year before, the order would be ${STD_2Y}. See the [pricing page](/pricing), or start the questionnaire now.`,
       },
@@ -352,7 +352,7 @@ A cover copied from last year with the old tax period or a stale box is one of t
       },
       {
         heading: "How much does a pro forma 1120 filing service cost?",
-        body: `Form5472 Prep never prices the pro forma 1120 on its own, because it is always filed with Form 5472. The pair costs ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} per additional past year.
+        body: `Form5472 Prep never prices the pro forma 1120 on its own, because it is always filed with Form 5472. The pair costs ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign in ${EXPRESS_TURNAROUND}), plus ${ADD} per additional past year.
 
 See the [pricing page](/pricing) for everything each plan includes.`,
       },
@@ -480,7 +480,7 @@ If you also face an existing penalty, an examination or other unfiled returns, a
       },
       {
         heading: "How much does a late Form 5472 filing cost?",
-        body: `Form5472 Prep charges ${STD} for the first late year on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), then ${ADD} for each additional past year. Two years on Standard cost ${STD_2Y}.
+        body: `Form5472 Prep charges ${STD} for the first late year on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign in ${EXPRESS_TURNAROUND}), then ${ADD} for each additional past year. Two years on Standard cost ${STD_2Y}.
 
 Each late year's price includes its own reasonable-cause statement. See the [pricing page](/pricing).`,
       },
@@ -601,7 +601,7 @@ It does not fit if:
       },
       {
         heading: "How much does the foreign-owned LLC tax filing service cost?",
-        body: `Form5472 Prep charges a one-time fee per filing year, with no subscription and no annual retainer. Standard is ${STD} and is ready in ${STANDARD_TURNAROUND}; Express is ${EXP} and is ready to sign within ${EXPRESS_TURNAROUND}. Each earlier unfiled year is ${ADD}.
+        body: `Form5472 Prep charges a one-time fee per filing year, with no subscription and no annual retainer. Standard is ${STD} and is ready in ${STANDARD_TURNAROUND}; Express is ${EXP} and is ready to sign in ${EXPRESS_TURNAROUND}. Each earlier unfiled year is ${ADD}.
 
 State fees, a registered agent and the owner's own return are not in that price, because they are not part of the service. See the [pricing page](/pricing) for everything included.`,
       },
@@ -718,7 +718,7 @@ You can also fax it yourself. You need a fax service that can send to a US toll-
       },
       {
         heading: "How much does Form 5472 fax filing cost?",
-        body: `Form5472 Prep charges no separate fax fee. The plan you pick sets the speed, not the delivery: Standard at ${STD} is ready in ${STANDARD_TURNAROUND}, Express at ${EXP} is ready to sign within ${EXPRESS_TURNAROUND}, and both are faxed with a receipt. A past year adds ${ADD}.
+        body: `Form5472 Prep charges no separate fax fee. The plan you pick sets the speed, not the delivery: Standard at ${STD} is ready in ${STANDARD_TURNAROUND}, Express at ${EXP} is ready to sign in ${EXPRESS_TURNAROUND}, and both are faxed with a receipt. A past year adds ${ADD}.
 
 Each past year is a separate package, so it is faxed separately and gets its own receipt. Firms filing for several client LLCs can use [white label Form 5472 filing](/services/white-label-form-5472-filing). See the [pricing page](/pricing).`,
       },
@@ -841,7 +841,7 @@ Accountants weighing a referral against a partner account can start with [Form 5
       },
       {
         heading: "How much does white label Form 5472 filing cost?",
-        body: `Form5472 Prep charges partners the same per filing as direct customers, with no platform fee: ${STD} for a Standard filing ready in ${STANDARD_TURNAROUND}, ${EXP} for Express, ready to sign within ${EXPRESS_TURNAROUND}, and ${ADD} for each extra past year, IRS fax included.
+        body: `Form5472 Prep charges partners the same per filing as direct customers, with no platform fee: ${STD} for a Standard filing ready in ${STANDARD_TURNAROUND}, ${EXP} for Express, ready to sign in ${EXPRESS_TURNAROUND}, and ${ADD} for each extra past year, IRS fax included.
 
 You pay for each filing at checkout, and what you charge your own client is up to you. Ask about volume pricing or consolidated invoicing when you apply through the [partner program](/partners).`,
       },
@@ -967,7 +967,7 @@ When a year falls in the first two groups, the filing costs and looks the same a
       },
       {
         heading: "How much does Form 5472 filing for a dormant LLC cost?",
-        body: `Form5472 Prep charges the same for a quiet year as for a busy one, because the package and the review are the same. A quiet year is ${STD} on Standard, ready in ${STANDARD_TURNAROUND}, or ${EXP} on Express, ready to sign within ${EXPRESS_TURNAROUND}; an extra past year adds ${ADD}.
+        body: `Form5472 Prep charges the same for a quiet year as for a busy one, because the package and the review are the same. A quiet year is ${STD} on Standard, ready in ${STANDARD_TURNAROUND}, or ${EXP} on Express, ready to sign in ${EXPRESS_TURNAROUND}; an extra past year adds ${ADD}.
 
 A dormant LLC that also skipped earlier years can file them in the same order. See the [pricing page](/pricing).`,
       },
@@ -1087,7 +1087,7 @@ Dissolve in a different month and the due date moves with it, so the date above 
       },
       {
         heading: "How much does a final Form 5472 for a dissolved LLC cost?",
-        body: `Form5472 Prep prices the final short year like any other year: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), plus ${ADD} for each missing earlier year in the same order.
+        body: `Form5472 Prep prices the final short year like any other year: ${STD} on Standard (ready in ${STANDARD_TURNAROUND}) or ${EXP} on Express (ready to sign in ${EXPRESS_TURNAROUND}), plus ${ADD} for each missing earlier year in the same order.
 
 If the sample LLC above had also missed the previous year, both would cost ${STD_2Y} on Standard. See the [pricing page](/pricing).`,
       },
@@ -1165,7 +1165,7 @@ Not sure whether a payment counts? The [reportable transactions checker](/form-5
       },
       {
         heading: "What comes back to you, and when?",
-        body: `With Form5472 Prep the package is ready in ${STANDARD_TURNAROUND} on Standard (${STD}), or ready to sign within ${EXPRESS_TURNAROUND} on Express (${EXP}). After you sign, it is faxed and the receipt appears on your filing page.
+        body: `With Form5472 Prep the package is ready in ${STANDARD_TURNAROUND} on Standard (${STD}), or ready to sign in ${EXPRESS_TURNAROUND} on Express (${EXP}). After you sign, it is faxed and the receipt appears on your filing page.
 
 1. **Questions, if any.** The reviewing accountant compares the package with your answers and asks on your filing page if something is unclear.
 2. **The package to review.** Cover letter, pro forma Form 1120, Form 5472 and the Part V statement, ready for you to read.
@@ -1273,7 +1273,7 @@ Missed earlier years add ${ADD} each on either plan. For a calendar-year LLC the
       },
       {
         heading: "How does our Form 5472 preparation service answer those questions?",
-        body: `The Form 5472 preparation service at Form5472 Prep costs **${STD}** on Standard (ready in ${STANDARD_TURNAROUND}) or **${EXP}** on Express (ready to sign within ${EXPRESS_TURNAROUND}), pro forma 1120 included, plus ${ADD} per additional past year.
+        body: `The Form 5472 preparation service at Form5472 Prep costs **${STD}** on Standard (ready in ${STANDARD_TURNAROUND}) or **${EXP}** on Express (ready to sign in ${EXPRESS_TURNAROUND}), pro forma 1120 included, plus ${ADD} per additional past year.
 
 Every filing is reviewed by a tax accountant before it is submitted, and signing opens only after the review is approved. We fax the package to the IRS Ogden PIN Unit and keep the timestamped receipt on your filing page. See [pricing](/pricing).`,
       },
@@ -1396,7 +1396,7 @@ Other returns stay with your firm or the client: partnership returns, a full For
       },
       {
         q: "What does each client filing cost?",
-        a: `Form5472 Prep charges partner filings the same as direct ones: ${STD} on Standard (${STANDARD_TURNAROUND}), ${EXP} on Express (ready to sign within ${EXPRESS_TURNAROUND}), +${ADD} per additional past year, IRS fax delivery included. Ask about volume pricing when you apply.`,
+        a: `Form5472 Prep charges partner filings the same as direct ones: ${STD} on Standard (${STANDARD_TURNAROUND}), ${EXP} on Express (ready to sign in ${EXPRESS_TURNAROUND}), +${ADD} per additional past year, IRS fax delivery included. Ask about volume pricing when you apply.`,
       },
       {
         q: "Can my firm enter the client's information?",
@@ -1479,7 +1479,7 @@ Close the year early. For a calendar-year LLC the filing is due April 15, and th
         heading: "Should you refer the owner or open a partner account?",
         body: `For one or two clients, refer the owner to [start a filing](/start?src=svc-form-5472-for-bookkeepers) with your totals in hand. If you keep the books for several foreign-owned LLCs, a [partner account](/partners) lets you start and track every client's filing from one dashboard. We never email a partner's client; [white label Form 5472 filing](/services/white-label-form-5472-filing) explains what clients see.
 
-Whoever starts it, a client filing is priced per tax year. Standard, at ${STD}, is ready in ${STANDARD_TURNAROUND}; Express, at ${EXP}, is ready to sign within ${EXPRESS_TURNAROUND}; each past year added to the order is ${ADD}.`,
+Whoever starts it, a client filing is priced per tax year. Standard, at ${STD}, is ready in ${STANDARD_TURNAROUND}; Express, at ${EXP}, is ready to sign in ${EXPRESS_TURNAROUND}; each past year added to the order is ${ADD}.`,
       },
       {
         heading: "What do we not take over?",
@@ -1637,7 +1637,7 @@ export const SERVICES_HUB = {
   h1: "Form 5472 services by situation",
   // The capsule under the H1: what the filing is, what it costs and how long it
   // takes (prices from pricing.ts; the test caps it at 60 words).
-  intro: `Every Form5472 Prep service here is one filing: Form 5472 with a pro forma Form 1120 for a US LLC with one foreign owner, at ${STD} (ready in ${STANDARD_TURNAROUND}) or ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}) per year. A tax accountant who holds an IRS PTIN reviews every filing before we fax it to the IRS.`,
+  intro: `Every Form5472 Prep service here is one filing: Form 5472 with a pro forma Form 1120 for a US LLC with one foreign owner, at ${STD} (ready in ${STANDARD_TURNAROUND}) or ${EXP} (ready to sign in ${EXPRESS_TURNAROUND}) per year. A tax accountant who holds an IRS PTIN reviews every filing before we fax it to the IRS.`,
 } as const;
 
 /** Eyebrow above each service page's H1: the page's group, so the 12 pages

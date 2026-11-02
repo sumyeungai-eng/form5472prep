@@ -6,7 +6,7 @@
 //   accountant review and everything in the package are identical:
 //     standard $149 — ready in 5-7 business days
 //     express  $199 — reviewed package ready for the client to check and
-//                     sign within 24 hours of the order, 7 days a week
+//                     sign in under 3 days from the order, 7 days a week
 //                     (owner decision 2026-10-11: $199, was $249 earlier the same day;
 //                     before that $199 / 3 business days).
 //                     The promise stops at "ready to sign" — the fax goes out
@@ -43,9 +43,9 @@ export type TierInfo = {
 // identical promise — a turnaround stated three different ways is how a
 // service-level complaint starts.
 export const STANDARD_TURNAROUND = "5-7 business days";
-export const EXPRESS_TURNAROUND = "24 hours";
-// The exact Express promise. Never "filed/faxed within 24 hours".
-export const EXPRESS_PROMISE = `Ready for you to check and sign within ${EXPRESS_TURNAROUND}, 7 days a week`;
+export const EXPRESS_TURNAROUND = "under 3 days";
+// The exact Express promise. Never "filed/faxed in under 3 days".
+export const EXPRESS_PROMISE = `Ready for you to check and sign in ${EXPRESS_TURNAROUND}, 7 days a week`;
 
 // The EIN and ITIN marketing application pages quote these exact prices.
 export const EIN_PRICE_CENTS = 14900;
@@ -73,7 +73,7 @@ export const TIERS: Record<Tier, TierInfo> = {
   },
   express: {
     label: "Express filing",
-    subtitle: `Ready to sign within ${EXPRESS_TURNAROUND}`,
+    subtitle: `Ready to sign in ${EXPRESS_TURNAROUND}`,
     priceCents: 19900,
     // No tier carries `highlight` (the "Most popular" badge + emphasised
     // border). Nudging customers toward the dearer plan isn't the pitch here,

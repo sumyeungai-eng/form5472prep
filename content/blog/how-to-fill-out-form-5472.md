@@ -169,7 +169,7 @@ Nothing above is beyond a careful person with an afternoon and the instructions 
 
 [Form5472 Prep](/) prepares the whole package from your entity and transaction details — pro forma Form 1120, Form 5472 with the correct parts completed and the rest correctly left blank, the Part V supporting statement, and a reasonable cause letter for late years — has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes it to the IRS Ogden PIN Unit, returning your timestamped confirmation receipt.
 
-**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready for you to check and sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. Fax delivery included. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
+**{{price.standard}}** standard, ready in 5-7 business days. **{{price.express}}** express, ready for you to check and sign in under 3 days. **+{{price.additionalYear}}** per additional past tax year. Fax delivery included. We are not a CPA firm and do not give tax advice; we prepare and submit the return accurately.
 
 [Start your filing](/start) — about 15 minutes of questions, and we handle the rest.
 

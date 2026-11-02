@@ -75,7 +75,7 @@ Counting them in December gives you four months to assemble four years of record
 
 ## The bottom line
 
-December is a documentation month, not a filing month. Label the owner transfers, download the statements, chase the W-9s and W-8BENs, and confirm the EIN — then the April package is assembly rather than archaeology. [Start your Form 5472 filing from {{price.standard}}](/start); Standard turnaround is 5-7 business days, and Express is ready for you to check and sign within 24 hours, 7 days a week. Every filing is reviewed by a tax accountant who holds an IRS PTIN.
+December is a documentation month, not a filing month. Label the owner transfers, download the statements, chase the W-9s and W-8BENs, and confirm the EIN — then the April package is assembly rather than archaeology. [Start your Form 5472 filing from {{price.standard}}](/start); Standard turnaround is 5-7 business days, and Express is ready for you to check and sign in under 3 days, 7 days a week. Every filing is reviewed by a tax accountant who holds an IRS PTIN.
 
 ## Frequently asked questions
 

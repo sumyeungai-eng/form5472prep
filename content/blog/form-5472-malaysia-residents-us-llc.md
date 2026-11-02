@@ -108,7 +108,7 @@ Most Malaysia-specific errors are small ones that make a return substantially in
 
 We prepare the complete package: Form 5472, the pro forma Form 1120 and the supporting statement. It is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), then we fax it to the IRS Ogden PIN Unit and send you the timestamped transmission receipt.
 
-**{{price.standard}}** Standard, ready in 5–7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery is included, so you never have to send an international fax from Kuala Lumpur.
+**{{price.standard}}** Standard, ready in 5–7 business days. **{{price.express}}** Express, ready to sign in under 3 days. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery is included, so you never have to send an international fax from Kuala Lumpur.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on Malaysian tax. We prepare and submit the US information return.
 

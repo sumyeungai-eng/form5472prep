@@ -133,7 +133,7 @@ The US filing question is narrower: if the foreign-owned US disregarded entity h
 
 Form5472 Prep is useful when the Australian owner's main problem is preparing and submitting the US information-return package, not getting legal or tax advice on Australian classification. The service prepares Form 5472, the pro forma Form 1120 and the Part V statement, then has the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN).
 
-After signature, Form5472 Prep faxes the package to the IRS Ogden PIN Unit at 855-887-7737 and returns a timestamped receipt. Standard service is **{{price.standard}}** and takes 5-7 business days. Express service is **{{price.express}}** and is ready to check and sign within 24 hours. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included.
+After signature, Form5472 Prep faxes the package to the IRS Ogden PIN Unit at 855-887-7737 and returns a timestamped receipt. Standard service is **{{price.standard}}** and takes 5-7 business days. Express service is **{{price.express}}** and is ready to check and sign in under 3 days. Each additional past tax year is **+{{price.additionalYear}}**. Fax delivery is included.
 
 If the LLC still needs an EIN, the EIN service is **{{price.ein}}** at [/ein](/ein). Form5472 Prep is not a CPA firm and does not give tax advice, but it does handle the preparation and fax submission mechanics that most Australian owners struggle to complete correctly.
 

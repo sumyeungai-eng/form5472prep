@@ -112,7 +112,7 @@ The Georgian details — the right FTIN entry, lari conversion, payments to your
 
 We prepare Form 5472, the pro forma Form 1120 and the supporting statement; each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN); and we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt.
 
-**{{price.standard}}** Standard, ready in 5–7 business days. **{{price.express}}** Express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
+**{{price.standard}}** Standard, ready in 5–7 business days. **{{price.express}}** Express, ready to sign in under 3 days. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, and we do not advise on Georgian tax or small business status. We prepare and submit the US information return.
 

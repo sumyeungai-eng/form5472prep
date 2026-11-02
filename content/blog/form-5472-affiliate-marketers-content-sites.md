@@ -103,7 +103,7 @@ The [About Form 5472 page](https://www.irs.gov/forms-pubs/about-form-5472) links
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement from your network reports and owner-movement schedule, have the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), fax it to the IRS and send you the receipt.
 
-Standard is **{{price.standard}}** (5–7 business days); Express is **{{price.express}}** (ready to sign within 24 hours); each additional past tax year is **+{{price.additionalYear}}**; IRS fax delivery is included. [Start your Form 5472 package](/start).
+Standard is **{{price.standard}}** (5–7 business days); Express is **{{price.express}}** (ready to sign in under 3 days); each additional past tax year is **+{{price.additionalYear}}**; IRS fax delivery is included. [Start your Form 5472 package](/start).
 
 We are not a CPA firm and we do not give tax advice. Valuing a contributed site, whether your income is effectively connected with a US trade or business, and your home-country return are questions for the appropriate adviser. If part of your income is coaching or courses rather than content, [Form 5472 for coaches and course creators](/blog/form-5472-coaches-consultants-course-creators) covers that mix.
 

@@ -97,7 +97,7 @@ They also run on different clocks. A Form W-8 is refreshed when it expires or th
 
 Form5472 Prep prepares Form 5472 with the pro forma Form 1120 and the Part V statement. Every package is reviewed by a tax accountant who holds an IRS PTIN and faxed to the IRS Ogden PIN Unit with a timestamped receipt.
 
-Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign within 24 hours, 7 days a week. Each additional past tax year is **+{{price.additionalYear}}**. EIN service is **{{price.ein}}** at [/ein](/ein) and ITIN service is **{{price.itin}}** at [/itin](/itin).
+Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign in under 3 days, 7 days a week. Each additional past tax year is **+{{price.additionalYear}}**. EIN service is **{{price.ein}}** at [/ein](/ein) and ITIN service is **{{price.itin}}** at [/itin](/itin).
 
 We do not complete Forms W-8BEN-E, W-8BEN or W-9, and we are not a CPA firm. Withholding, treaty and entity-classification positions belong with an appropriate tax adviser. [Start the Form 5472 filing](/start) for the federal information return.
 

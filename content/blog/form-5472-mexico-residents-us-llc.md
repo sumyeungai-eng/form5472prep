@@ -120,7 +120,7 @@ Each missing form and year has its own $25,000 exposure. If the IRS has issued a
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V supporting statement. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS Ogden PIN Unit with a timestamped confirmation receipt returned to you.
 
-Standard filing is **{{price.standard}}** and is ready in **5-7 business days**. Express filing is **{{price.express}}** and is ready for you to check and sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**. IRS fax delivery is included.
+Standard filing is **{{price.standard}}** and is ready in **5-7 business days**. Express filing is **{{price.express}}** and is ready for you to check and sign in **under 3 days**. Each additional past tax year is **+{{price.additionalYear}}**. IRS fax delivery is included.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the US information return; US-Mexico treaty positions, federal or state tax, real-estate filings, and Mexican classification require the appropriate adviser.
 

@@ -124,7 +124,7 @@ This map is useful because one bank statement can support two reviews without fo
 
 Form5472 Prep prepares Form 5472, the pro forma Form 1120, and the Part V supporting statement. The package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS Ogden PIN Unit with a timestamped confirmation receipt.
 
-Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign within **24 hours**. Each additional past tax year is **+{{price.additionalYear}}**, and IRS fax delivery is included. If the LLC still needs its federal number, EIN service is **{{price.ein}}** at [/ein](/ein).
+Standard is **{{price.standard}}** and ready in **5-7 business days**. Express is **{{price.express}}** and ready for you to check and sign in **under 3 days**. Each additional past tax year is **+{{price.additionalYear}}**, and IRS fax delivery is included. If the LLC still needs its federal number, EIN service is **{{price.ein}}** at [/ein](/ein).
 
 For current federal filing tiers, [see current pricing](/pricing).
 

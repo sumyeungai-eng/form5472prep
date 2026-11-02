@@ -241,4 +241,4 @@ export const SECTIONS: AboutSection[] = [
   },
 ];
 
-export const CTA_TEXT = `${STD} ready in ${STANDARD_TURNAROUND}, or ${EXP} ready to sign within ${EXPRESS_TURNAROUND}. Same filing either way: accountant-reviewed, and faxed to the IRS with a timestamped receipt once you sign.`;
+export const CTA_TEXT = `${STD} ready in ${STANDARD_TURNAROUND}, or ${EXP} ready to sign in ${EXPRESS_TURNAROUND}. Same filing either way: accountant-reviewed, and faxed to the IRS with a timestamped receipt once you sign.`;

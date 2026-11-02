@@ -43,7 +43,7 @@ const faq = [
   },
   {
     q: "How does payment work?",
-    a: `You pay for each filing at checkout, at the same prices as direct customers: Standard ${STD} (ready in ${STANDARD_TURNAROUND}) or Express ${EXP} (ready to sign within ${EXPRESS_TURNAROUND}), +${ADD} per additional past year on either tier, IRS fax delivery included. Your clients never see our prices. The filing and the accountant review are identical on both tiers; only the speed differs. For volume pricing or consolidated invoicing, email support@form5472prep.com.`,
+    a: `You pay for each filing at checkout, at the same prices as direct customers: Standard ${STD} (ready in ${STANDARD_TURNAROUND}) or Express ${EXP} (ready to sign in ${EXPRESS_TURNAROUND}), +${ADD} per additional past year on either tier, IRS fax delivery included. Your clients never see our prices. The filing and the accountant review are identical on both tiers; only the speed differs. For volume pricing or consolidated invoicing, email support@form5472prep.com.`,
   },
   {
     q: "How do I become a partner?",

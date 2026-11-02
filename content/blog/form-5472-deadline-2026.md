@@ -145,11 +145,11 @@ Note that the March buffer also gives you time to discover that a prior year was
 
 [Form5472 Prep](/) prepares the complete package — Form 5472, the pro forma Form 1120, and the Part V supporting statement — has it reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and faxes it to the IRS Ogden PIN Unit, returning a timestamped provider transmission receipt. The receipt is useful transmission evidence; it is not an IRS acceptance notice. For late years we include a reasonable cause cover letter.
 
-**{{price.standard}}** standard, ready in **5-7 business days**. **{{price.express}}** express, ready for you to check and sign within **24 hours**. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included on both.
+**{{price.standard}}** standard, ready in **5-7 business days**. **{{price.express}}** express, ready for you to check and sign in **under 3 days**. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included on both.
 
 For current turnaround tiers before choosing a start date, [see current pricing](/pricing). For everything the package contains, see the [Form 5472 filing service](/services/form-5472-filing-service).
 
-Work backwards from your deadline: standard needs 5-7 business days and express is ready to sign within 24 hours, counted from when your details are complete, so leave room for both the turnaround and the fax. For a 2025 return, both dates have passed, so the question is no longer which tier fits the deadline but how quickly the late package can be closed. File as soon as you can rather than waiting for the next cycle. Starting earlier is always cheaper than starting later, because the express upgrade exists precisely to buy back time you have already spent.
+Work backwards from your deadline: standard needs 5-7 business days and express is ready to sign in under 3 days, counted from when your details are complete, so leave room for both the turnaround and the fax. For a 2025 return, both dates have passed, so the question is no longer which tier fits the deadline but how quickly the late package can be closed. File as soon as you can rather than waiting for the next cycle. Starting earlier is always cheaper than starting later, because the express upgrade exists precisely to buy back time you have already spent.
 
 We are not a CPA firm and do not give tax advice. We prepare and submit the information return, on time.
 

@@ -117,7 +117,7 @@ The Portuguese details — NIF, Portuguese address, euro conversion, a second fo
 
 We prepare Form 5472, the pro forma Form 1120 and the Part V statement, have the package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and fax it to the IRS Ogden PIN Unit, returning the timestamped receipt. Late years include a reasonable cause letter.
 
-**{{price.standard}}** standard, ready in 5–7 business days. **{{price.express}}** express, ready to sign within 24 hours. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
+**{{price.standard}}** standard, ready in 5–7 business days. **{{price.express}}** express, ready to sign in under 3 days. **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery included.
 
 We are not a CPA firm and do not give tax advice, Portuguese or US. We prepare and submit the US information return.
 

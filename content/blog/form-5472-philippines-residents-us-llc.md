@@ -107,7 +107,7 @@ Some details are specific to Philippine owners: a BIR TIN in the right field, pe
 
 We prepare the pro forma Form 1120, Form 5472 and the supporting statement. Each package is reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), and we fax it to the IRS Ogden PIN Unit and send you the timestamped receipt.
 
-**{{price.standard}}** Standard (5–7 business days). **{{price.express}}** Express (ready to sign within 24 hours). **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery is included, so you don't need to find an international fax line.
+**{{price.standard}}** Standard (5–7 business days). **{{price.express}}** Express (ready to sign in under 3 days). **+{{price.additionalYear}}** per additional past tax year. IRS fax delivery is included, so you don't need to find an international fax line.
 
 We are not a CPA firm and do not give tax advice, including on Philippine tax. We prepare and submit the US information return.
 
