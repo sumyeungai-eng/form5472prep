@@ -79,6 +79,28 @@ export async function deliverOrderAlert(order: OrderAlert): Promise<boolean> {
   }
 }
 
+// Best-effort one-off ops alert (e.g. a Form 7004 fax outcome). The caller's
+// own atomic claim makes it exactly-once; never throws, never logs the error
+// (it can contain the bot token).
+export async function sendAdminTelegram(lines: string[]): Promise<boolean> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return false;
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text: lines.map(line).join("\n"), link_preview_options: { is_disabled: true } }),
+      signal: AbortSignal.timeout(8_000),
+      cache: "no-store",
+    });
+    return response.ok;
+  } catch {
+    console.error("[telegram] Admin alert failed");
+    return false;
+  }
+}
+
 export async function notifyPaidOrderTelegram(session: Stripe.Checkout.Session): Promise<boolean> {
   if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID || !session.livemode) return true;
   if (session.payment_status !== "paid" && session.payment_status !== "no_payment_required") return true;

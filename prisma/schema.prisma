@@ -666,6 +666,18 @@ model ExtensionApplication {
   stripePaymentId String?   @unique
   paidAt          DateTime?
 
+  // Auto-generated Form 7004 + admin-triggered IRS fax (2026-10-30).
+  // generatedPdfKey is cleared whenever a field printed on the form changes,
+  // so a stale form can never be faxed (see lib/fax/extension.ts).
+  generatedPdfKey    String?
+  generatedAt        DateTime?
+  faxJobId           String?   @unique
+  faxStatus          String?
+  faxSentAt          DateTime?
+  faxDeliveredAt     DateTime?
+  faxConfirmationKey String?
+  faxAttempts        Int       @default(0)
+
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
 }

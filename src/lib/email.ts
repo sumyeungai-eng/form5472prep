@@ -2229,6 +2229,145 @@ export async function sendExtensionApplicationConfirmationEmail(args: {
   });
 }
 
+// Form 7004 fax delivered (lib/fax/extension.ts). Transmission evidence only:
+// never says the IRS accepted or approved the extension.
+function extensionAttachmentName(prefix: string, llcName: string | null | undefined, taxYear: number | null | undefined) {
+  return `${prefix}-${(llcName || "LLC").replace(/[^a-zA-Z0-9-]+/g, "_")}${taxYear ? `-${taxYear}` : ""}.pdf`;
+}
+
+export async function sendExtensionFaxedEmail(args: {
+  email: string;
+  fullName: string;
+  llcName?: string | null;
+  taxYear?: number | null;
+  deliveredAtIso: string;
+  receiptPdfBytes?: Uint8Array;
+  formPdfBytes?: Uint8Array;
+}) {
+  const salutation = args.fullName || "there";
+  const llc = args.llcName || "your LLC";
+  const faxedOn = new Date(args.deliveredAtIso).toUTCString();
+  const extended = args.taxYear
+    ? formatDueDate(effectiveDueDateUtc(args.taxYear, null, { filed: "yes", transmittedAt: null }))
+    : null;
+  const attachments = [
+    ...(args.receiptPdfBytes ? [{ filename: extensionAttachmentName("IRS-fax-receipt-Form-7004", args.llcName, args.taxYear), content: args.receiptPdfBytes }] : []),
+    ...(args.formPdfBytes ? [{ filename: extensionAttachmentName("Form-7004", args.llcName, args.taxYear), content: args.formPdfBytes }] : []),
+  ];
+  const paragraphs = [
+    `We faxed Form 7004 for ${llc}${args.taxYear ? ` (tax year ${args.taxYear})` : ""} to the IRS Ogden PIN Unit, and the fax was delivered on ${faxedOn}.`,
+    attachments.length
+      ? "Attached are the fax transmission receipt and a copy of the Form 7004 we faxed. Please keep them with your records."
+      : "Reply to this email if you would like a copy of the fax transmission receipt and the Form 7004 we faxed.",
+    "The receipt shows that the form was transmitted to the IRS. It is not an IRS acceptance of the extension.",
+    extended
+      ? `A valid extension moves the due date of the Form 5472 and pro forma Form 1120 to ${extended}. It extends the time to file, not to pay.`
+      : "A valid extension moves the due date of the Form 5472 and pro forma Form 1120 to 15 October. It extends the time to file, not to pay.",
+  ];
+  return sendEmail({
+    log: { kind: "extension_fax_delivered" },
+    to: args.email,
+    subject: `Form 7004 faxed to the IRS — ${llc}`,
+    text: customerText(salutation, paragraphs.join("\n\n"), "If you have a question, reply to this email or write to support@form5472prep.com."),
+    html: customerShell({
+      heading: "Your Form 7004 was faxed to the IRS",
+      salutation,
+      bodyHtml: paragraphs
+        .map((p) => `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${escapeHtml(p)}</p>`)
+        .join("\n        "),
+      footnoteHtml: "If you have a question, reply to this email or write to support@form5472prep.com.",
+    }),
+    attachments: attachments.length ? attachments : undefined,
+  });
+}
+
+type ExtensionFaxAdminArgs = {
+  adminEmail: string;
+  id: string;
+  llcName: string | null;
+  taxYear: number | null;
+  customerEmail: string;
+  faxId: string;
+};
+
+export async function sendExtensionFaxDeliveredAdminEmail(args: ExtensionFaxAdminArgs & {
+  deliveredAtIso: string;
+  pageCount: number | null;
+  customerEmailStatus: "sent" | "failed";
+  receiptPdfBytes?: Uint8Array;
+  formPdfBytes?: Uint8Array;
+}) {
+  const adminUrl = `${APP_URL}/admin/applications/extension/${args.id}`;
+  const llc = args.llcName || "(no LLC name)";
+  const notice = args.customerEmailStatus === "failed"
+    ? "Customer email FAILED — the client has NOT been told. Email them the attached receipt and Form 7004 by hand."
+    : null;
+  const attachments = [
+    ...(args.receiptPdfBytes ? [{ filename: extensionAttachmentName("IRS-fax-receipt-Form-7004", args.llcName, args.taxYear), content: args.receiptPdfBytes }] : []),
+    ...(args.formPdfBytes ? [{ filename: extensionAttachmentName("Form-7004", args.llcName, args.taxYear), content: args.formPdfBytes }] : []),
+  ];
+  const rows: Array<[string, string]> = [
+    ["LLC", llc],
+    ["Tax year", args.taxYear ? String(args.taxYear) : "(not set)"],
+    ["Customer", args.customerEmail],
+    ["Delivered at", new Date(args.deliveredAtIso).toUTCString()],
+    ...(args.pageCount != null ? [["Pages", String(args.pageCount)] as [string, string]] : []),
+    ["Telnyx fax ID", args.faxId],
+    ["Customer email", args.customerEmailStatus === "sent" ? "Sent (receipt + Form 7004 attached)" : "FAILED"],
+    ["Admin view", adminUrl],
+  ];
+  return sendEmail({
+    log: { kind: "admin_extension_fax_delivered" },
+    to: args.adminEmail,
+    subject: `${notice ? "[Form 7004 fax delivered — customer email FAILED]" : "[Form 7004 fax delivered]"} ${llc}${args.taxYear ? ` (${args.taxYear})` : ""}`,
+    text: [
+      "Form 7004 fax delivered to the IRS. Order marked Completed.",
+      ...(notice ? ["", `>>> ${notice}`] : []),
+      "",
+      ...rows.map(([label, v]) => `${label}: ${v}`),
+    ].join("\n"),
+    html: adminShell({
+      tag: "Form 7004 fax",
+      heading: "Form 7004 fax delivered",
+      rows,
+      extraHtml: notice
+        ? `<div style="margin:0 0 16px;padding:12px 14px;background:${EMAIL_STYLES.redBg};border:1px solid ${EMAIL_STYLES.redBorder};border-radius:6px;color:${EMAIL_STYLES.redDark};font-size:14px;font-weight:600;">${escapeHtml(notice)}</div>`
+        : undefined,
+    }),
+    attachments: attachments.length ? attachments : undefined,
+  });
+}
+
+export async function sendExtensionFaxFailedAdminEmail(args: ExtensionFaxAdminArgs & { failureReason: string | null }) {
+  const adminUrl = `${APP_URL}/admin/applications/extension/${args.id}`;
+  const llc = args.llcName || "(no LLC name)";
+  const rows: Array<[string, string]> = [
+    ["LLC", llc],
+    ["Tax year", args.taxYear ? String(args.taxYear) : "(not set)"],
+    ["Customer", args.customerEmail],
+    ["Telnyx fax ID", args.faxId],
+    ["Failure reason", args.failureReason ?? "(not given)"],
+    ["Admin view", adminUrl],
+  ];
+  return sendEmail({
+    log: { kind: "admin_extension_fax_failed" },
+    to: args.adminEmail,
+    subject: `[Form 7004 fax FAILED] ${llc}${args.taxYear ? ` (${args.taxYear})` : ""}`,
+    text: [
+      "The Form 7004 fax to the IRS failed. The order is back to In review and the client was NOT emailed.",
+      "Fax it again from the admin page (before the IRS due date).",
+      "",
+      ...rows.map(([label, v]) => `${label}: ${v}`),
+    ].join("\n"),
+    html: adminShell({
+      tag: "Form 7004 fax",
+      heading: "Form 7004 fax failed",
+      rows,
+      extraHtml: `<p style="margin:0;color:${EMAIL_STYLES.subtle};font-size:13px;line-height:1.6;">The order is back to In review and the client was NOT emailed. Fax it again from the admin page before the IRS due date.</p>`,
+    }),
+  });
+}
+
 export async function sendApplicationSignatureRequestEmail(args: {
   email: string;
   fullName: string;

@@ -7,7 +7,7 @@ const db = vi.hoisted(() => ({
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: db }));
 vi.mock("@/lib/env", () => ({ env: { appUrl: "https://www.form5472prep.com" } }));
-import { deliverOrderAlert, notifyPaidOrderTelegram, orderAlertText, type OrderAlert } from "./telegram";
+import { deliverOrderAlert, notifyPaidOrderTelegram, orderAlertText, sendAdminTelegram, type OrderAlert } from "./telegram";
 import type Stripe from "stripe";
 const order: OrderAlert = {
   id: "filing:123", service: "Form 5472", customer: "Example LLC", email: "test@example.com",
@@ -119,5 +119,20 @@ describe("paid-order routing", () => {
   it("requests retry when the order database is unavailable", async () => {
     db.filing.findUnique.mockRejectedValue(new Error("database unavailable"));
     expect(await notifyPaidOrderTelegram(session())).toBe(false);
+  });
+});
+describe("sendAdminTelegram", () => {
+  it("sends plain, line-bounded text and never throws", async () => {
+    expect(await sendAdminTelegram(["Form 7004 fax FAILED", "LLC: Example\nLLC"])).toBe(true);
+    const body = JSON.parse(vi.mocked(fetch).mock.calls[0][1]!.body as string);
+    expect(body).toMatchObject({ chat_id: "12345", text: "Form 7004 fax FAILED\nLLC: Example LLC" });
+    vi.mocked(fetch).mockRejectedValue(new Error("network secret-token"));
+    expect(await sendAdminTelegram(["x"])).toBe(false);
+    expect(vi.mocked(console.error).mock.calls.flat().join(" ")).not.toContain("secret-token");
+  });
+  it("does nothing without configuration", async () => {
+    vi.stubEnv("TELEGRAM_BOT_TOKEN", "");
+    expect(await sendAdminTelegram(["x"])).toBe(false);
+    expect(fetch).not.toHaveBeenCalled();
   });
 });

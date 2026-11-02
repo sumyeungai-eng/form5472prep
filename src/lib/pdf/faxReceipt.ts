@@ -30,6 +30,12 @@ export type FaxReceiptInput = {
   // Partner filings: the partner's name, shown as the subtitle in place of ours
   // and dropping our name from the footer. Omit for retail filings.
   brandLine?: string;
+
+  // Optional, for a fax that is not the Form 5472 package (the Form 7004
+  // extension). Omitted = the filing receipt, unchanged.
+  formsTransmitted?: string;
+  ownerLabel?: string;
+  legalParagraphs?: [string, string];
 };
 
 const PAGE_WIDTH = 612; // US Letter, pts
@@ -98,12 +104,13 @@ export async function generateFaxReceiptPdf(input: FaxReceiptInput): Promise<Uin
     ["LLC Name", input.llcName ?? "(not provided)", "text"],
     ["EIN", input.llcEin ?? "(not provided)", "mono"],
     ["Tax Year", input.taxYears.length === 0 ? "(not provided)" : input.taxYears.join(", "), "text"],
-    ["Owner / Signer", input.ownerName ?? "(not provided)", "text"],
+    [input.ownerLabel ?? "Owner / Signer", input.ownerName ?? "(not provided)", "text"],
     [
       "Forms Transmitted",
-      input.taxYears.length > 1
-        ? `Pro Forma Form 1120 + Form 5472 (× ${input.taxYears.length} years)`
-        : "Pro Forma Form 1120 + Form 5472",
+      input.formsTransmitted ??
+        (input.taxYears.length > 1
+          ? `Pro Forma Form 1120 + Form 5472 (× ${input.taxYears.length} years)`
+          : "Pro Forma Form 1120 + Form 5472"),
       "text",
     ],
     ["From (Sender Fax)", input.fromFax ?? "(unknown)", "mono"],
@@ -136,11 +143,13 @@ export async function generateFaxReceiptPdf(input: FaxReceiptInput): Promise<Uin
   const toLabel = input.toFax ?? "+1-855-887-7737";
 
   const legal1 =
+    input.legalParagraphs?.[0] ??
     `This receipt confirms that IRS Form 5472 and Pro Forma Form 1120 for ${llcLabel}, ` +
     `EIN: ${einLabel}, ${yearWord} ${yearsLabel} were successfully transmitted to the ` +
     `Internal Revenue Service (IRS) at ${toLabel} on ${formatIsoUtc(input.deliveredAtIso)} UTC.`;
 
   const legal2 =
+    input.legalParagraphs?.[1] ??
     `This timestamped transmission receipt is evidence of when the filing reached the IRS and may be ` +
     `presented to the IRS in the event of any penalty assessment under IRC Section 6038A.`;
 

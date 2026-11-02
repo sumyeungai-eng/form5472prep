@@ -3,6 +3,12 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { parseInboundFaxEvent, inboundFaxAllowed, ingestInboundFax } from "@/lib/inboundFax";
 import { finalizeFaxDelivered } from "@/lib/fax/finalize";
+import {
+  finalizeExtensionFaxDelivered,
+  finalizeExtensionFaxFailed,
+  findExtensionByFaxJob,
+  recordExtensionFaxProgress,
+} from "@/lib/fax/extension";
 import { handleConfirmedFaxFailure } from "@/lib/fax/retry";
 import {
   deliveryFactsFromTelnyx,
@@ -127,7 +133,7 @@ export async function POST(req: Request) {
     where: { faxJobId: faxId },
     include: { user: true },
   });
-  if (!filing) return NextResponse.json({ ok: true });
+  if (!filing) return handleExtensionFaxEvent(faxId, evt, body?.data?.payload ?? {}, signatureVerified);
 
   // ── Terminal events: confirm with Telnyx's API before acting ──
   // The payload is only a hint. Without a verified signature (and even with
@@ -234,6 +240,47 @@ export async function POST(req: Request) {
       data: { faxStatus: evt.replace(/^fax\./, "") },
     });
   }
+  return NextResponse.json({ ok: true });
+}
+
+// Form 7004 extension orders fax through the same connection; their jobs live
+// on ExtensionApplication (lib/fax/extension.ts). Same rules as a filing:
+// a terminal event acts only once Telnyx's API agrees, and the finalize claim
+// makes redeliveries and webhook/poll races no-ops. No automatic retry.
+async function handleExtensionFaxEvent(
+  faxId: string,
+  evt: string | undefined,
+  payload: Record<string, unknown>,
+  signatureVerified: boolean,
+) {
+  const app = await findExtensionByFaxJob(faxId);
+  if (!app) return NextResponse.json({ ok: true });
+
+  if (evt && TERMINAL_EVENTS.has(evt)) {
+    const trustedPayload = signatureVerified ? payload : null;
+    const confirmation = await confirmWithTelnyx(faxId, evt, payload);
+    if (!confirmation.ok) {
+      console.warn(
+        `[telnyx-webhook] extension ${app.id}: could not confirm ${evt} with the Telnyx API (${confirmation.error}) — answering 503; fax-status-poll is the backstop`,
+      );
+      return NextResponse.json({ error: "could not confirm fax status with Telnyx" }, { status: 503 });
+    }
+    const tx = confirmation.fax;
+    if (evt === "fax.delivered") {
+      if (tx.status !== TELNYX_DELIVERED_STATUS) return NextResponse.json({ ok: true, ignored: "status_mismatch" });
+      const result = await finalizeExtensionFaxDelivered(app, deliveryFactsFromTelnyx(tx, trustedPayload), { source: "webhook" });
+      return NextResponse.json(result.claimed ? { ok: true } : { ok: true, deduplicated: true });
+    }
+    if (!isTelnyxFailedStatus(tx.status)) return NextResponse.json({ ok: true, ignored: "status_mismatch" });
+    const failureReason =
+      (typeof tx.failure_reason === "string" && tx.failure_reason) ||
+      (typeof trustedPayload?.failure_reason === "string" && trustedPayload.failure_reason) ||
+      null;
+    const result = await finalizeExtensionFaxFailed(app, { faxId, failureReason }, { source: "webhook" });
+    return NextResponse.json(result.claimed ? { ok: true, failed: true } : { ok: true, deduplicated: true });
+  }
+
+  if (evt) await recordExtensionFaxProgress(app, faxId, evt);
   return NextResponse.json({ ok: true });
 }
 

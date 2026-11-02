@@ -150,6 +150,9 @@ vi.mock("@/lib/prisma", () => ({
     partner: {
       findUnique: vi.fn(async () => ({ brandName: null, company: "Acme Tax Partners", name: "Pat Partner" })),
     },
+    // Form 7004 extension faxes (lib/fax/extension.ts, own tests in
+    // extension.test.ts): no extension rows here, so every filing path is unchanged.
+    extensionApplication: { findUnique: vi.fn(async () => null), findMany: vi.fn(async () => []) },
   },
 }));
 vi.mock("@/lib/email", () => email);

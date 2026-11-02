@@ -7,7 +7,11 @@ import { prisma } from "@/lib/prisma";
 import { filingDueDateUtc, formatDueDate } from "@/lib/schemas";
 import { formatUsd } from "@/lib/utils";
 import { AdminPageHeader } from "../../../_components/AdminPageHeader";
+import { extensionFaxDecision } from "@/lib/fax/extension";
+import { form7004Warnings } from "@/lib/pdf/form7004";
 import { ExtensionAdminActions } from "./ExtensionAdminActions";
+import { ExtensionDetailsForm } from "./ExtensionDetailsForm";
+import { Form7004Panel } from "./Form7004Panel";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +40,9 @@ export default async function AdminExtensionApplicationPage({ params }: { params
     referrer: app.attrReferrer,
     landing: app.attrLanding,
   };
+  const faxDecision = extensionFaxDecision(app, new Date());
+  // Remount the client panels after router.refresh() so they show fresh data.
+  const freshKey = app.updatedAt.toISOString();
   const hasTrafficSource = !!(app.funnelSource || app.attrSource || app.attrMedium || app.attrCampaign || app.attrReferrer || app.attrLanding);
 
   return (
@@ -103,16 +110,51 @@ export default async function AdminExtensionApplicationPage({ params }: { params
       </div>
 
       <div className="mb-8 rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-slate-700">
-        <p className="font-semibold text-slate-900 mb-2">Manual fulfilment checklist</p>
+        <p className="font-semibold text-slate-900 mb-2">Fulfilment</p>
         <ol className="list-decimal pl-5 space-y-1">
-          <li>Prepare Form 7004: Part I line 1 = Form 1120 code 12; write &quot;Foreign-owned U.S. DE&quot; across the top; LLC name, EIN and address exactly as on IRS records; no signature line.</li>
-          <li>Fax it to the IRS Ogden PIN Unit at {IRS_FAX_NUMBER} (300 DPI or better) before the due date above. Set status to Faxing while it is in progress.</li>
-          <li>Email the client the fax confirmation (transmission evidence — not IRS acceptance).</li>
-          <li>Record the fax date in the notes and set status to Completed.</li>
+          <li>Check the order details against IRS records (LLC name, EIN, address) and correct them below if needed.</li>
+          <li>Generate Form 7004 and open it — every line, the &quot;Foreign-owned U.S. DE&quot; header and code 12.</li>
+          <li>After the tax year ends and before the due date above, click Fax to IRS ({IRS_FAX_NUMBER}). Status moves to Faxing.</li>
+          <li>On delivery the order completes itself and the client is emailed the receipt and the faxed form (transmission evidence — not IRS acceptance). A failed fax returns the order to In review and alerts you only.</li>
         </ol>
       </div>
 
-      <ExtensionAdminActions id={app.id} currentStatus={app.status} currentAdminNotes={app.adminNotes ?? ""} />
+      <div className="space-y-6 mb-8">
+        <Form7004Panel
+          key={`f7004-${freshKey}`}
+          id={app.id}
+          generatedAt={app.generatedPdfKey && app.generatedAt ? app.generatedAt.toISOString() : null}
+          warnings={form7004Warnings(app)}
+          faxRefusal={faxDecision.kind === "refused" ? faxDecision.message : null}
+          faxNeedsReason={faxDecision.kind === "needs_reason" ? faxDecision.message : null}
+          fax={{
+            jobId: app.faxJobId,
+            status: app.faxStatus,
+            sentAt: app.faxSentAt?.toISOString() ?? null,
+            deliveredAt: app.faxDeliveredAt?.toISOString() ?? null,
+            attempts: app.faxAttempts,
+            hasReceipt: !!app.faxConfirmationKey,
+          }}
+          irsFaxNumber={IRS_FAX_NUMBER}
+        />
+        <ExtensionDetailsForm
+          key={`details-${freshKey}`}
+          id={app.id}
+          initial={{
+            llcName: app.llcName ?? "",
+            ein: app.ein ?? "",
+            llcStreet: app.llcStreet ?? "",
+            llcCity: app.llcCity ?? "",
+            llcState: app.llcState ?? "",
+            llcZip: app.llcZip ?? "",
+            taxYear: app.taxYear ? String(app.taxYear) : "",
+            fullName: app.fullName,
+            email: app.email,
+          }}
+        />
+      </div>
+
+      <ExtensionAdminActions key={`actions-${freshKey}`} id={app.id} currentStatus={app.status} currentAdminNotes={app.adminNotes ?? ""} />
     </div>
   );
 }

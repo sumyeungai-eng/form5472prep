@@ -12,6 +12,10 @@ import { formatPrice } from "@/lib/utils";
 const PRICE = formatPrice(EXTENSION_PRICE_CENTS);
 const DESCRIPTION = `Form 7004 extension for foreign-owned single-member LLCs, ${PRICE} per tax year. We prepare it, fax it to the IRS Ogden PIN Unit and email you the confirmation.`;
 
+// Visible "Last updated" line and the FAQPage JSON-LD dateModified share this constant.
+const LAST_UPDATED = "2026-10-30";
+const LAST_UPDATED_LABEL = "October 30, 2026";
+
 export const metadata: Metadata = {
   title: seoTitle(`Form 7004 Extension for Foreign-Owned LLCs — ${PRICE}`),
   description: DESCRIPTION,
@@ -108,6 +112,9 @@ export default function Form7004ExtensionPage() {
                 </li>
               ))}
             </ul>
+            <p className="mt-6 text-xs text-slate-400">
+              Last updated <time dateTime={LAST_UPDATED}>{LAST_UPDATED_LABEL}</time>
+            </p>
           </div>
 
           <div className="rounded-2xl bg-white text-slate-900 ring-1 ring-black/5 shadow-2xl shadow-black/30 p-6">
@@ -270,6 +277,7 @@ function StructuredData() {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    dateModified: LAST_UPDATED,
     // Every visible Q&A, in page order: the question-H2 capsules, then the FAQ list.
     mainEntity: [...FORM_7004_ANSWERS, ...faq].map((f) => ({
       "@type": "Question",

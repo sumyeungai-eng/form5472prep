@@ -6,6 +6,9 @@ import {
   sendEinApplicationConfirmationEmail,
   sendExtensionApplicationAdminEmail,
   sendExtensionApplicationConfirmationEmail,
+  sendExtensionFaxDeliveredAdminEmail,
+  sendExtensionFaxedEmail,
+  sendExtensionFaxFailedAdminEmail,
   sendItinApplicationConfirmationEmail,
 } from "@/lib/email";
 
@@ -155,5 +158,53 @@ describe("application confirmation emails", () => {
     expect(admin.text).toContain("IRS due date (fax by): April 15, 2027");
     expect(admin.text).toContain("LLC US address: 1 Example St, Sheridan, WY, 82801");
     expect(admin.text).toContain("/admin/applications/extension/ext1");
+  });
+
+  it("tells the client the Form 7004 was faxed — transmission evidence, never IRS acceptance", async () => {
+    PREVIEW_DIR = await mkdtemp(join(tmpdir(), "application-email-previews-"));
+    process.env.EMAIL_PREVIEW_DIR = PREVIEW_DIR;
+
+    const faxed = await readRenderedEmail(
+      await sendExtensionFaxedEmail({
+        email: "alex@example.com",
+        fullName: "Alex Chen",
+        llcName: "Acme Holdings LLC",
+        taxYear: 2026,
+        deliveredAtIso: "2027-01-05T10:12:00.000Z",
+        receiptPdfBytes: new Uint8Array([1]),
+        formPdfBytes: new Uint8Array([2]),
+      }),
+      "Form 7004 faxed to the IRS — Acme Holdings LLC",
+    );
+    expect(faxed.text).toContain("Ogden PIN Unit");
+    expect(faxed.text).toContain("Tue, 05 Jan 2027 10:12:00 GMT");
+    expect(faxed.text).toContain("Attached are the fax transmission receipt and a copy of the Form 7004 we faxed.");
+    expect(faxed.text).toContain("It is not an IRS acceptance of the extension.");
+    expect(faxed.text).toContain("to October 15, 2027");
+    for (const body of [faxed.text.toLowerCase(), faxed.html.toLowerCase()]) {
+      expect(body).not.toContain("guarantee");
+      expect(body).not.toContain("approved");
+      expect(body).not.toMatch(/gmail\.com/);
+    }
+  });
+
+  it("alerts staff on a delivered (customer email failed) and a failed Form 7004 fax", async () => {
+    PREVIEW_DIR = await mkdtemp(join(tmpdir(), "application-email-previews-"));
+    process.env.EMAIL_PREVIEW_DIR = PREVIEW_DIR;
+    const base = { adminEmail: "support@example.com", id: "ext1", llcName: "Acme Holdings LLC", taxYear: 2026, customerEmail: "alex@example.com", faxId: "fax-1" };
+
+    const delivered = await readRenderedEmail(
+      await sendExtensionFaxDeliveredAdminEmail({ ...base, deliveredAtIso: "2027-01-05T10:12:00.000Z", pageCount: 1, customerEmailStatus: "failed" }),
+      "[Form 7004 fax delivered — customer email FAILED] Acme Holdings LLC (2026)",
+    );
+    expect(delivered.text).toContain("Customer email FAILED");
+    expect(delivered.text).toContain("/admin/applications/extension/ext1");
+
+    const failed = await readRenderedEmail(
+      await sendExtensionFaxFailedAdminEmail({ ...base, failureReason: "busy" }),
+      "[Form 7004 fax FAILED] Acme Holdings LLC (2026)",
+    );
+    expect(failed.text).toContain("Failure reason: busy");
+    expect(failed.text).toContain("the client was NOT emailed");
   });
 });

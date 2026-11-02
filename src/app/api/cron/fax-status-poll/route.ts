@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { finalizeFaxDelivered } from "@/lib/fax/finalize";
+import { pollExtensionFaxes, type ExtensionPollSummary } from "@/lib/fax/extension";
 import { alertStuckRetryClaim, handleConfirmedFaxFailure } from "@/lib/fax/retry";
 import {
   isPollable,
@@ -99,6 +100,7 @@ export async function GET(req: Request) {
     stuckAlertsSent,
     attention: [] as string[],
     errors: [] as string[],
+    extensions: null as ExtensionPollSummary | null,
   };
 
   let processed = 0;
@@ -174,6 +176,15 @@ export async function GET(req: Request) {
     } catch (err) {
       result.errors.push(`${filing.id}: ${err instanceof Error ? err.message : "unknown"}`);
     }
+  }
+
+  // Form 7004 extension orders' faxes, after the filings and inside the same
+  // time budget: same Telnyx lookup, their own finalize (lib/fax/extension.ts).
+  try {
+    result.extensions = await pollExtensionFaxes({ apiKey, now, deadlineMs: startedAt + TIME_BUDGET_MS });
+    result.errors.push(...result.extensions.errors);
+  } catch (err) {
+    result.errors.push(`extensions: ${err instanceof Error ? err.message : "unknown"}`);
   }
 
   return NextResponse.json(result);
