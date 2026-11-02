@@ -73,7 +73,7 @@ const storage = vi.hoisted(() => ({
     if (!bytes) throw new Error(`missing ${key}`);
     return bytes;
   }),
-  put: vi.fn(async (key: string, bytes: Uint8Array) => {
+  put: vi.fn(async (key: string, bytes: Uint8Array, _contentType?: string) => {
     storage.files.set(key, bytes);
     return key;
   }),
