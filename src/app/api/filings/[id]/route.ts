@@ -7,6 +7,7 @@ import { totalPriceCents, isTier } from "@/lib/pricing";
 import { del } from "@/lib/storage";
 import { collectFilingStorageKeys, type FilingWithKeys } from "@/lib/filingStorageKeys";
 import { isValidPbaCode } from "@/lib/irsCodes";
+import { normalizeUsStateCode } from "@/lib/pdf/textFormat";
 import {
   entitySchema,
   reasonableCauseNarrativeSchema,
@@ -173,6 +174,14 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   const data: Record<string, unknown> = {};
   for (const k of stringFields) if (clean[k] !== undefined) data[k] = clean[k];
+  // State of formation (generator 2.4.0) is optional and never rejected: a
+  // value we cannot read is stored as null, the wizard shows a warning and
+  // staff pre-flight (W46) asks for it after payment.
+  if (hasKey("llcFormationState")) {
+    data.llcFormationState = normalizeUsStateCode(
+      typeof body.llcFormationState === "string" ? body.llcFormationState : null,
+    );
+  }
 
   for (const k of [
     "ownerHasFtin",

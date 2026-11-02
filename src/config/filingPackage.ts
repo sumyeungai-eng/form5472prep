@@ -51,7 +51,12 @@ export const FAX_RENDER_DPI = 300;
 // 5472 lines 4b(1)/8b(1) print the owner's SSN (123-45-6789) when one is on
 // file, decrypted server-side in packageInput, else the ITIN field as before;
 // pre-flight A36 fails when a stored SSN cannot be decrypted.
-export const GENERATOR_VERSION = "2.3.1";
+// 2.4.0 (2026-11-02, docs/reviews/2026-11-02-generator-fix-triage.md): the RCS
+// formation sentence takes the state ONLY from Filing.llcFormationState (never
+// the mailing address) and omits it when missing; FTIN prints unspaced on
+// 4b(3)/8b(3); pre-flight also runs the post-generation PDF validator
+// (src/lib/pdf/validatePackage.ts, A39-A51 / W46-W47).
+export const GENERATOR_VERSION = "2.4.0";
 // The IRS-required marking written across the top of the pro forma Form 1120
 // (Form 5472 instructions, "Foreign-owned U.S. DE"); also stamped on Form 5472.
 // House position: no "DIIRSP" suffix or other procedure label on the forms.

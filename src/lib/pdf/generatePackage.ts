@@ -23,7 +23,7 @@ import {
   type PdfFieldWrite,
 } from "./fillForm";
 import { fitFontSize, measureFieldBox, type FieldBox, type FitLine } from "./fitText";
-import { displayCaseAddressPart, ownerNationalityClause } from "./textFormat";
+import { displayCaseAddressPart, normalizeUsStateCode, ownerNationalityClause, US_STATE_NAMES } from "./textFormat";
 import { formatDateForIrs } from "@/lib/utils";
 import { formatSsnForForms, normalizeSsn } from "@/lib/crypto/ssn";
 import {
@@ -126,6 +126,11 @@ type Filing = {
   hasUsSourceIncome?: boolean | null;
   usTaxWithheld?: boolean | null;
   llcDateIncorporated: Date;
+  // State the LLC was FORMED in (2-letter code or full name, from the Articles
+  // of Organization). The only source of the state in "I formed X on DATE in
+  // STATE" — never llcState, which is the mailing address (spec P0-2). Missing
+  // or unreadable: the clause is left out. Optional so older call sites compile.
+  llcFormationState?: string | null;
   llcBusinessActivity: string;
   llcBusinessCode: string;
   ownerName: string;
@@ -395,6 +400,9 @@ export type PackageRecord = {
   // Optional so records built before generator 2.1.0 still type-check.
   ownerStreet?: string | null;
   formationDate: string | null;
+  // Filing.llcFormationState normalised to a 2-letter code, or null (generator
+  // 2.4.0). The post-generation validator compares the RCS against it.
+  formationState?: string | null;
   dissolutionDate: string | null;
   taxYears: PackageRecordYear[];
   authoredDocuments: AuthoredDocumentRecord[];
@@ -721,8 +729,10 @@ function ownerPostalForA17(f: Filing): string | null {
   return f.ownerAddressPostal?.trim() || null;
 }
 
+// Printed unspaced ("12 34 567" -> "1234567"): the IRS wants the FTIN as one
+// token (spec P1-8). Only whitespace is removed; letters and hyphens stay.
 function ownerFtinForForms(f: Filing): string {
-  return f.ownerHasFtin === false ? "None" : f.ownerFtin;
+  return f.ownerHasFtin === false ? "None" : f.ownerFtin.replace(/\s+/g, "");
 }
 
 // Lines 4b(1)/8b(1) "U.S. identifying number": the owner's SSN when one is on
@@ -751,23 +761,6 @@ function cleanSentence(value: string | null | undefined): string {
   if (!cleaned) return "";
   const capitalized = cleaned[0].toUpperCase() + cleaned.slice(1);
   return /[.!?]$/.test(capitalized) ? capitalized : `${capitalized}.`;
-}
-
-function stateNameForProse(value: string): string {
-  const states: Record<string, string> = {
-    AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
-    CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
-    HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
-    KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
-    MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi",
-    MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire",
-    NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina",
-    ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania",
-    RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee",
-    TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington",
-    WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming", DC: "District of Columbia",
-  };
-  return states[value.toUpperCase()] ?? value;
 }
 
 function yearTrades(f: Filing, year: number): boolean {
@@ -855,7 +848,7 @@ function isKnown1120Revision(year: number): year is Form1120Revision {
   return Object.prototype.hasOwnProperty.call(FORM1120_MAPS, year);
 }
 
-function form1120MapForRevision(revision: number): Form1120FieldMap {
+export function form1120MapForRevision(revision: number): Form1120FieldMap {
   if (!isKnown1120Revision(revision)) {
     throw new Error(`No Form 1120 field map for revision ${revision}.`);
   }
@@ -2175,14 +2168,17 @@ async function buildReasonableCause(
   // the RCS prose and the form cells agree on the spelling.
   const rcsOwnerCitizenship = normalizeCountry(f.ownerCountryCitizenship);
   const rcsOwnerTaxResidence = normalizeCountry(f.ownerCountryTaxResidence);
-  const stateName = stateNameForProse(displayCaseAddressPart(f.llcState, "region"));
+  // Formation state ONLY from llcFormationState — never an address field.
+  const formationState = normalizeUsStateCode(f.llcFormationState);
   // "I am a Hong Kong permanent resident." / "I am a citizen and resident of
   // X." — see ownerNationalityClause() for why Hong Kong and Macau are never
   // called a country of citizenship.
   const nationality = firstPersonNationality(ownerNationalityClause(rcsOwnerCitizenship, rcsOwnerTaxResidence));
   drawParagraph(
     (nationality ? `I ${nationality}. ` : "") +
-      `I formed ${f.llcName} ("the Company") on ${incDateStr} in ${stateName} as a single-member LLC. ` +
+      `I formed ${f.llcName} ("the Company") on ${incDateStr}` +
+      (formationState ? ` in ${US_STATE_NAMES[formationState]}` : "") +
+      " as a single-member LLC. " +
       "The Company is a foreign-owned U.S. disregarded entity for U.S. federal income tax purposes. " +
       operationsParagraph(f),
   );
@@ -2727,6 +2723,7 @@ export async function generatePackage(
       ownerPrintAddress,
       ownerStreet: toPdfSafe(ownerStreetForForms(f).trim()) || null,
       formationDate: f.llcDateIncorporated ? new Date(f.llcDateIncorporated).toISOString() : null,
+      formationState: normalizeUsStateCode(f.llcFormationState),
       dissolutionDate: f.isFinalReturn && f.dissolvedAt ? new Date(f.dissolvedAt).toISOString() : null,
       taxYears: recordYears,
       authoredDocuments,

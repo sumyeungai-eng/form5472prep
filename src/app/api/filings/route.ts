@@ -82,6 +82,7 @@ export async function POST(req: Request) {
         llcAddress: previous.llcAddress,
         llcCity: previous.llcCity,
         llcState: previous.llcState,
+        llcFormationState: previous.llcFormationState,
         llcZip: previous.llcZip,
         llcCountry: previous.llcCountry,
         llcDateIncorporated: previous.llcDateIncorporated,

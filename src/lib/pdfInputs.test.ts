@@ -225,3 +225,23 @@ describe("newer stored year text at PATCH and checkout", () => {
     expect(fake.stripeCreate).toHaveBeenCalledOnce();
   });
 });
+
+// Generator 2.4.0 (fix spec P0-2): the state of formation is asked for but
+// never required — owner rule, a customer is never blocked from paying.
+describe("state of formation never blocks saving or paying", () => {
+  it.each([["wy", "WY"], ["Wyoming", "WY"], ["Wyo", null], ["", null]] as const)(
+    "PATCH stores %j as %j with a 200",
+    async (input, stored) => {
+      const response = await patch({ llcFormationState: input });
+      expect(response.status).toBe(200);
+      expect(fake.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ llcFormationState: stored }) }),
+      );
+    },
+  );
+  it("a bad-data order (no formation state, spaced FTIN) still reaches Stripe", async () => {
+    fake.getOwnedFiling.mockResolvedValue({ ...filing, llcFormationState: null, ownerFtin: "12 34 567 890 123" });
+    expect((await pay()).status).toBe(200);
+    expect(fake.stripeCreate).toHaveBeenCalledOnce();
+  });
+});

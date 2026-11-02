@@ -206,3 +206,33 @@ export function ownerNationalityClause(
   if (sameJurisdiction(cit, res)) return `is a citizen and resident of ${citProse}`;
   return `is a citizen of ${citProse} and a resident of ${resProse}`;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// U.S. states (and D.C.) by 2-letter code. Used for the LLC's state of
+// FORMATION (Filing.llcFormationState, generator 2.4.0): the wizard warns on a
+// value this cannot read, the API stores the normalised code, and the
+// reasonable cause statement prints the full name.
+// ─────────────────────────────────────────────────────────────────────────────
+export const US_STATE_NAMES: Readonly<Record<string, string>> = {
+  AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+  CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
+  HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
+  KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
+  MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi",
+  MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire",
+  NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina",
+  ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania",
+  RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee",
+  TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington",
+  WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming", DC: "District of Columbia",
+};
+
+// "wy", " WY ", "Wyoming" -> "WY"; anything else (blank, "Wyo", "Germany") -> null.
+export function normalizeUsStateCode(value: string | null | undefined): string | null {
+  const raw = (value ?? "").trim().replace(/\s+/g, " ");
+  if (!raw) return null;
+  const upper = raw.toUpperCase();
+  if (US_STATE_NAMES[upper]) return upper;
+  const byName = Object.entries(US_STATE_NAMES).find(([, name]) => name.toUpperCase() === upper);
+  return byName ? byName[0] : null;
+}

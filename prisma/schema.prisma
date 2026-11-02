@@ -135,6 +135,10 @@ model Filing {
   llcCountry          String    @default("USA")
   llcCountryBusiness  String?
   llcDateIncorporated DateTime?
+  // U.S. state the LLC was FORMED in (2-letter code, from the Articles of
+  // Organization). Never derived from llcState, which is the MAILING state.
+  // Only the reasonable cause statement prints it (generator 2.4.0).
+  llcFormationState   String?
   llcBusinessActivity String?
   llcBusinessCode     String?
 

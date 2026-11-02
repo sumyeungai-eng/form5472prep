@@ -69,6 +69,9 @@ export const entitySchema = z.object({
   llcDateIncorporated: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD"),
+  // State of formation (generator 2.4.0). Never an error: the API stores the
+  // 2-letter code or null and staff pre-flight asks for a missing one.
+  llcFormationState: z.string().optional().nullable(),
   llcBusinessActivity: z.string().trim().min(2, "Required").refine(isPdfEncodable, PDF_TEXT_MESSAGE),
   llcBusinessCode: z
     .string()

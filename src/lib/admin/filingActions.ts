@@ -18,6 +18,7 @@ import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
 import { generatePackage, type GeneratedPackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { filingToPackageInput } from "@/lib/pdf/packageInput";
+import { normalizeUsStateCode } from "@/lib/pdf/textFormat";
 import { runPreflight, type PreflightIssue, type PreflightResult } from "@/lib/pdf/preflight";
 import {
   CLEARED_PREFLIGHT_OVERRIDE,
@@ -302,6 +303,7 @@ const filingSelect = {
   llcAddress: true,
   llcCity: true,
   llcState: true,
+  llcFormationState: true,
   llcZip: true,
   llcCountry: true,
   llcCountryBusiness: true,
@@ -395,6 +397,7 @@ export const packageFilingSelect = {
   llcAddress: true,
   llcCity: true,
   llcState: true,
+  llcFormationState: true,
   llcZip: true,
   llcCountry: true,
   llcCountryBusiness: true,
@@ -471,6 +474,8 @@ const MAX_RCS_NARRATIVE_CHARS = 4000;
 export const ADMIN_EDITABLE_FILING_FIELDS = [
   "llcName", "llcEin", "llcAddress", "llcCity", "llcState", "llcZip",
   "llcCountry", "llcCountryBusiness", "llcBusinessActivity", "llcBusinessCode",
+  // Generator 2.4.0: state of formation (RCS only), never the mailing state.
+  "llcFormationState",
   "llcMemberCount", "llcAddressIsRegisteredAgentOnly", "priorForm5472Filed",
   "ownerName", "ownerAddress",
   // The structured owner address is what Form 5472 line 4a prints when
@@ -1719,6 +1724,12 @@ export async function runFilingAction(
         else if (truthy.has(raw)) writeValue = true;
         else if (falsy.has(raw)) writeValue = false;
         else throw new FilingActionError(400, "invalid_value", `${field} must be true, false, or blank`);
+      } else if (field === "llcFormationState") {
+        // Stored as the 2-letter code the generator reads; blank clears it.
+        const code = normalizeUsStateCode(value);
+        if (blank) writeValue = null;
+        else if (code) writeValue = code;
+        else throw new FilingActionError(400, "invalid_value", "llcFormationState must be a U.S. state code such as WY, or blank");
       } else if (field === "llcMemberCount") {
         const raw = (value ?? "").trim();
         if (blank) writeValue = null;

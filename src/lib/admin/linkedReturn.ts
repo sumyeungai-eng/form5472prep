@@ -34,6 +34,7 @@ export const LINKED_RETURN_COPY_FIELDS = [
   "llcAddress",
   "llcCity",
   "llcState",
+  "llcFormationState",
   "llcZip",
   "llcCountry",
   "llcCountryBusiness",

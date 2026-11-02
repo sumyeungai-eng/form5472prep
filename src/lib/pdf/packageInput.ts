@@ -52,6 +52,7 @@ export function filingToPackageInput(filing: PackageFilingRow): PackageInput {
     hasUsSourceIncome: filing.hasUsSourceIncome,
     usTaxWithheld: filing.usTaxWithheld,
     llcDateIncorporated: requiredDate(filing.llcDateIncorporated),
+    llcFormationState: filing.llcFormationState ?? null,
     llcBusinessActivity: requiredString(filing.llcBusinessActivity),
     llcBusinessCode: requiredString(filing.llcBusinessCode),
     ownerName: requiredString(filing.ownerName),

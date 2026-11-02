@@ -350,6 +350,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             llcAddress: filing.llcAddress,
             llcCity: filing.llcCity,
             llcState: filing.llcState,
+            llcFormationState: filing.llcFormationState,
             llcZip: filing.llcZip,
             llcCountry: filing.llcCountry,
             llcCountryBusiness: filing.llcCountryBusiness,
@@ -449,6 +450,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             ].filter(Boolean).join("\n")}
           />
           <Field label="Date incorporated" value={filing.llcDateIncorporated?.toISOString().split("T")[0] ?? null} />
+          <Field label="State of formation" value={filing.llcFormationState} />
           <Field label="Business activity" value={filing.llcBusinessActivity} />
           <Field label="Business code" value={filing.llcBusinessCode} mono />
           {businessCodeWarning && (
