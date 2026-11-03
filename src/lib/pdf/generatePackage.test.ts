@@ -30,6 +30,7 @@ import {
   NeedsReviewError,
   roundedPartVTotalDollars,
   signerTitleStampPlacement,
+  RCS_DRAFT_MARKER,
 } from "./generatePackage";
 import { runPreflight } from "./preflight";
 import { filingToPackageInput } from "./packageInput";
@@ -723,9 +724,15 @@ describe("2026-10-05 review package (F10)", () => {
     // Generator 2.3.0: first person, never "the Owner".
     expect(rcs).toContain("I am a Hong Kong permanent resident.");
     expect(rcs).not.toMatch(/citizen of Hong Kong|resident and citizen/);
-    expect(rcs).toContain(
-      "The Company had no U.S.-source income in tax year 2023, and no U.S. income tax was due or withheld for that year.",
-    );
+    const noIncome =
+      "The Company had no U.S.-source income in tax year 2023, and no U.S. income tax was due or withheld for that year.";
+    expect(rcs).toContain(noIncome);
+    // PR 2: a structured fact in the background section, never under the cause heading.
+    const lines = pkg.record.authoredDocuments.find((d) => d.kind === "reasonableCauseStatement" && d.taxYear === 2023)!.lines;
+    const background = lines.slice(lines.indexOf("1. Background"), lines.indexOf("2. Cause of the Delinquency")).join(" ");
+    const cause = lines.slice(lines.indexOf("2. Cause of the Delinquency"), lines.indexOf("3. Filing History and Notice Status")).join(" ");
+    expect(background).toContain(noIncome);
+    expect(cause).not.toContain("no U.S.-source income");
     // The admin narrative renders; the customer's preset (third person) does not.
     expect(rcs).toContain("I did not know that a foreign-owned single-member LLC must file Form 5472");
     expect(rcs).not.toContain("The Owner was not aware");
@@ -848,11 +855,11 @@ describe("generator 2.3.0: preflight-generator spec", () => {
     for (const phrase of ["Could you please review", "My objective", "minimal cost", "learned about it from a friend"]) {
       expect(all).not.toContain(phrase);
     }
-    // The cause section prints no narrative at all: only the structured facts.
-    expect(causeSection(pkg, 2024)).toBe(
-      "The Company had no U.S.-source income in tax year 2024, and no U.S. income tax was due or withheld for that " +
-        `year. ${SMALL_CORPORATION_PARAGRAPH}`,
-    );
+    // PR 2: no filler cause. The section prints only the red DRAFT marker:
+    // no structured facts, no "still unaware", no small-corporation paragraph.
+    expect(causeSection(pkg, 2024)).toBe(RCS_DRAFT_MARKER);
+    expect(rcsLines(pkg, 2024).join(" ")).not.toContain(SMALL_CORPORATION_PARAGRAPH);
+    expect(rcsLines(pkg, 2024).join(" ")).toContain("The Company had no U.S.-source income in tax year 2024");
     const doc = pkg.record.authoredDocuments.find((d) => d.kind === "reasonableCauseStatement" && d.taxYear === 2024)!;
     expect(doc.rcsMissingAnswers).toBe(true);
     expect(doc.rcsNarrativeSource).toBeNull();
@@ -868,6 +875,8 @@ describe("generator 2.3.0: preflight-generator spec", () => {
       message: expect.stringContaining("RCS narrative not written for tax year 2024."),
     });
     expect(preflight.failures.some((f) => f.id === "A26")).toBe(false);
+    // The DRAFT-marker statement still passes the post-generation validator: A32 is the only failure.
+    expect(preflight.failures.map((f) => f.id)).toEqual(["A32"]);
   }, PDF_TIMEOUT);
 
   it("item 3: an admin narrative renders as the only cause narrative", async () => {

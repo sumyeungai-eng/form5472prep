@@ -2046,6 +2046,9 @@ function rcsYearRecord(f: Filing, year: number, ctx: RcsContext): RcsYearRecord 
   };
   const conditionsMet = Object.values(conditions).every(Boolean);
   const setting = yd?.rcsSmallCorpParagraph ?? null;
+  // Without a cause narrative the section prints only the DRAFT marker, so the
+  // canned "still unaware" and small-corporation paragraphs never render alone.
+  const hasCause = paragraphs.length > 0;
   return {
     narrativeSource: paragraphs.length > 0 ? "admin" : null,
     narrative: paragraphs.length > 0 ? paragraphs.join("\n\n") : null,
@@ -2059,7 +2062,7 @@ function rcsYearRecord(f: Filing, year: number, ctx: RcsContext): RcsYearRecord 
     isFirstLateYear: ctx.isLate && ctx.isFirstLateYear,
     stillUnaware: {
       needed: stillUnawareNeeded,
-      rendered: stillUnawareNeeded && learnedOn !== null && learnedOn > dueDate,
+      rendered: hasCause && stillUnawareNeeded && learnedOn !== null && learnedOn > dueDate,
     },
     noticeConfirmed: yd?.rcsNoIrsNoticeConfirmed ?? null,
     noticeSentence: ctx.isLate && yd?.rcsNoIrsNoticeConfirmed === true,
@@ -2068,7 +2071,7 @@ function rcsYearRecord(f: Filing, year: number, ctx: RcsContext): RcsYearRecord 
       setting,
       conditionsMet,
       conditions,
-      rendered: ctx.isLate && (setting === null ? conditionsMet : setting),
+      rendered: hasCause && ctx.isLate && (setting === null ? conditionsMet : setting),
     },
   };
 }
@@ -2078,6 +2081,8 @@ function firstPersonNationality(clause: string | null): string | null {
   if (!clause) return null;
   return clause.startsWith("is ") ? `am ${clause.slice(3)}` : clause;
 }
+
+export const RCS_DRAFT_MARKER = "DRAFT \u2014 cause narrative missing";
 
 // The reasonable cause statement for ONE late year, in the owner's voice
 // (generator 2.3.0, rules doc H1-H8). The cause narrative comes only from the
@@ -2182,6 +2187,9 @@ async function buildReasonableCause(
       "The Company is a foreign-owned U.S. disregarded entity for U.S. federal income tax purposes. " +
       operationsParagraph(f),
   );
+  // A structured fact, not a cause: it belongs in the background (PR 2).
+  const noUsIncome = noUsIncomeSentence(f, year);
+  if (noUsIncome) drawParagraph(noUsIncome);
   if (f.hasUsSourceIncome === true && f.usTaxWithheld === true) {
     drawParagraph(
       "The Company received U.S.-source income for which no U.S. income tax return was required, and U.S. tax on that U.S.-source income was satisfied by withholding at source.",
@@ -2191,21 +2199,23 @@ async function buildReasonableCause(
 
   // ---- 2. Cause of the delinquency ----
   // Only the admin-authored narrative; never the customer's text, never a
-  // fallback. With no narrative this section carries no narrative text and
-  // the record marks it missing so pre-flight fails.
+  // fallback. With no narrative this section prints only a red DRAFT marker
+  // (no filler cause, PR 2) and the record marks it missing so pre-flight
+  // fails A32, which is never overridable for release or fax.
   drawParagraph("2. Cause of the Delinquency", { font: bold, size: 11 });
   space(6);
+  if (rcs.narrativeSource === null) {
+    ensureSpace(14);
+    page.drawText(RCS_DRAFT_MARKER, { x: MARGIN_L, y, size: 11, font: bold, color: rgb(0.8, 0, 0) });
+    drawnLines.push(RCS_DRAFT_MARKER);
+    y -= 20;
+  }
   for (const paragraph of narrativeParagraphs(rcs.narrative)) {
     drawParagraph(paragraph);
     space(6);
   }
   if (rcs.stillUnaware.rendered) {
     drawParagraph(`I remained unaware of the requirement when the ${year} return was due on ${rcs.dueDateProse}.`);
-    space(6);
-  }
-  const noUsIncome = noUsIncomeSentence(f, year);
-  if (noUsIncome) {
-    drawParagraph(noUsIncome);
     space(6);
   }
   if (rcs.smallCorpParagraph.rendered) {
