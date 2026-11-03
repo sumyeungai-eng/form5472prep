@@ -589,6 +589,7 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
             ownerName={filing.ownerName}
             plaidEnabled={plaidEnabled}
             formationYear={filing.llcDateIncorporated ? new Date(filing.llcDateIncorporated).getUTCFullYear() : null}
+            formationDate={filing.llcDateIncorporated ? new Date(filing.llcDateIncorporated).toISOString().slice(0, 10) : null}
             // Drives the final-return copy: on a closing LLC the money that came
             // back to the owner at wind-up is a distribution, and customers
             // routinely don't think of it as one.

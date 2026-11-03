@@ -6,9 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import type { CategorizedTransaction, Category } from "@/lib/bank/categorize";
 import { formatUsd } from "@/lib/utils";
+import { PAID_VIA, parseDecimalAmount, partVRowWarnings, toPartVRow, type PaidVia } from "@/lib/partV";
 import {
   buildYearPayload,
   categoryTotals,
+  checklistRow,
+  OWNER_PAID_CHECKLIST,
+  withAmountInput,
   deriveInitialAnswer,
   EMPTY_ANSWER_MESSAGE,
   extractSimpleLoans,
@@ -18,6 +22,8 @@ import {
   yesErrorMessages,
   type LoanDirection,
   type LoanDraft,
+  type PayloadRow,
+  type TxRow,
   type OwnerPaidCostCategory,
   type OwnerPaidCostRow,
   type YesNo,
@@ -27,15 +33,24 @@ import {
 // button is hidden on the transactions page. Restore alongside the JSX
 // when re-enabling.
 
-type ManualOnlyCategory = "loan_from_owner" | "loan_to_owner";
+type ManualOnlyCategory = "loan_from_owner" | "loan_to_owner" | "other";
 type WizardCategory = Category | ManualOnlyCategory;
-type WizardTransaction = Omit<CategorizedTransaction, "category"> & { category: WizardCategory };
+// P0-4: plus the line-item draft fields (date/amount as typed, currency, paidVia).
+type WizardTransaction = Omit<CategorizedTransaction, "category"> &
+  Omit<TxRow, "category"> & { category: WizardCategory };
+
+const PAID_VIA_LABELS: Record<PaidVia, string> = {
+  OWNER_PAID_PERSONALLY: "Paid personally",
+  TRANSFER: "Bank transfer",
+  OTHER: "Other",
+};
 
 const CATEGORY_LABELS: Record<WizardCategory, string> = {
   contribution: "Contribution (Part V)",
   distribution: "Distribution (Part V)",
   loan_from_owner: "Loan from you to LLC (Part V)",
   loan_to_owner: "Loan from LLC to you (Part V)",
+  other: "Other transaction with you (Part V)",
   revenue: "Revenue",
   vendor_expense: "Vendor expense",
   card_reimbursement: "Card reimbursement",
@@ -136,28 +151,28 @@ function normalizeOwnerPaidCosts(value: unknown): OwnerPaidCostRow[] {
   });
 }
 
+// P0-4: saved rows are drafts — a row with no amount or date is kept (and
+// reopens with what was typed), never dropped.
 function normalizeReportableTransactions(value: unknown): WizardTransaction[] {
   if (!Array.isArray(value)) return [];
-  return value.flatMap((row): WizardTransaction[] => {
-    if (!row || typeof row !== "object") return [];
-    const item = row as Record<string, unknown>;
-    if (
-      typeof item.date !== "string" ||
-      typeof item.description !== "string" ||
-      typeof item.amountCents !== "number" ||
-      !Number.isFinite(item.amountCents) ||
-      typeof item.category !== "string"
-    ) {
-      return [];
-    }
+  return value.flatMap((raw): WizardTransaction[] => {
+    const item = toPartVRow(raw);
     if (!isReportableCategory(item.category)) return [];
     return [{
       date: item.date,
       description: item.description,
-      counterparty: typeof item.counterparty === "string" ? item.counterparty : "",
-      amountCents: item.amountCents,
+      counterparty: item.counterparty ?? "",
+      amountCents: item.amountCents ?? 0,
+      amountMissing: item.amountCents === null,
       category: item.category as WizardCategory,
-      rule: "Saved transaction",
+      rule: item.rule || "Saved transaction",
+      ...(item.amountInput ? { amountInput: item.amountInput } : {}),
+      ...(item.dateInput ? { dateInput: item.dateInput } : {}),
+      ...(item.paidVia ? { paidVia: item.paidVia } : {}),
+      ...(item.currency ? { currency: item.currency } : {}),
+      ...(item.originalAmountInput || item.originalAmount != null
+        ? { originalAmountInput: item.originalAmountInput ?? String(item.originalAmount) }
+        : {}),
     }];
   });
 }
@@ -178,6 +193,7 @@ export function TransactionsReview({
   ownerName: _ownerName,
   plaidEnabled: _plaidEnabled = false,
   formationYear,
+  formationDate = null,
   isFinalReturn = false,
   initialYears,
   initialHasUsSourceIncome,
@@ -190,6 +206,8 @@ export function TransactionsReview({
   ownerName: string | null;
   plaidEnabled?: boolean;
   formationYear: number | null;
+  // YYYY-MM-DD, for the "before the LLC was formed" row warning (P0-4).
+  formationDate?: string | null;
   // True when this package is the LLC's FINAL (short-year) return. Copy-only:
   // a closing LLC almost always pays its remaining cash out to the owner, and
   // customers don't recognise that wind-up transfer as a Part V distribution.
@@ -215,7 +233,7 @@ export function TransactionsReview({
     totalAssetsYearEnd: number;
     contributions: number;
     distributions: number;
-    reportableTransactions: WizardTransaction[];
+    reportableTransactions: Array<PayloadRow<WizardTransaction> | TxRow>;
     otherTransactionsNote: string;
     noReportableTransactions: boolean;
     replaceReportableTransactions: boolean;
@@ -293,7 +311,7 @@ export function TransactionsReview({
 
   // Draft state for the inline "add transaction manually" form, keyed by year.
   // null means the form is hidden for that year.
-  type Draft = { description: string; amountUsd: string; category: WizardCategory };
+  type Draft = { description: string; amountUsd: string; category: WizardCategory; date: string };
   const [drafts, setDrafts] = useState<Record<number, Draft | null>>({});
   // Bulk-paste textarea state, keyed by year. null = hidden.
   const [bulkPaste, setBulkPaste] = useState<Record<number, string | null>>({});
@@ -325,7 +343,7 @@ export function TransactionsReview({
   function startDraft(taxYear: number) {
     setDrafts((d) => ({
       ...d,
-      [taxYear]: { description: "", amountUsd: "", category: "contribution" },
+      [taxYear]: { description: "", amountUsd: "", category: "contribution", date: "" },
     }));
     // Focus the description input after the form mounts.
     setTimeout(() => descRefs.current[taxYear]?.focus(), 0);
@@ -343,14 +361,15 @@ export function TransactionsReview({
     const draft = drafts[taxYear];
     if (!draft) return;
     const desc = draft.description.trim();
-    const amount = parseFloat(draft.amountUsd);
-    if (!desc || !Number.isFinite(amount) || amount === 0) return;
-    appendManualTx(taxYear, desc, amount, draft.category);
+    // Never refused (P0-4): anything typed becomes a row; an unreadable or
+    // missing amount shows a warning and staff see A38.
+    if (!desc && !draft.amountUsd.trim()) return;
+    appendManualTx(taxYear, desc, draft.amountUsd.trim(), draft.category, draft.date);
     // Reset to blank but keep the form open and refocus description for fast
     // rapid-fire entry: type → Tab → type amount → Enter → next row.
     setDrafts((d) => ({
       ...d,
-      [taxYear]: { description: "", amountUsd: "", category: draft.category },
+      [taxYear]: { description: "", amountUsd: "", category: draft.category, date: draft.date },
     }));
     setTimeout(() => descRefs.current[taxYear]?.focus(), 0);
   }
@@ -359,25 +378,15 @@ export function TransactionsReview({
   function appendManualTx(
     taxYear: number,
     description: string,
-    amount: number,
+    amountInput: string,
     category: WizardCategory,
+    date = "",
   ) {
-    const cents = Math.round(Math.abs(amount) * 100);
-    const signedCents =
-      category === "distribution" || category === "loan_to_owner" ? -cents : cents;
-    // Default the transaction date to the LAST day of the tax year being
-    // filed (not today). Manual entries without a specific date should fall
-    // within the period the form covers — otherwise the AI compliance check
-    // (correctly) flags a tax-year-vs-date mismatch.
-    const defaultDate = `${taxYear}-12-31`;
-    const newTx: WizardTransaction = {
-      date: defaultDate,
-      description,
-      counterparty: "",
-      amountCents: signedCents,
-      category,
-      rule: "Manually entered",
-    };
+    // P0-4: a real date or none — never a forced 12/31 (staff see A13/A48).
+    const newTx: WizardTransaction = withAmountInput(
+      { date, description, counterparty: "", amountCents: 0, category, rule: "Manually entered" },
+      amountInput,
+    );
     setYears((all) =>
       all.map((y) =>
         y.taxYear === taxYear ? { ...y, transactions: [...y.transactions, newTx] } : y,
@@ -393,19 +402,18 @@ export function TransactionsReview({
     const raw = bulkPaste[taxYear];
     if (!raw) return;
     const lines = raw.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    // Tab-separated keeps "1.234,56"; comma-separated splits only description/amount/type.
     let added = 0;
     for (const line of lines) {
       const parts = line.split(/\t|,/).map((p) => p.trim());
       if (parts.length < 2) continue;
       const desc = parts[0];
-      // Strip currency symbols, thousands separators, and parentheses (which
-      // some accounting exports use for negatives).
-      const rawAmount = parts[1].replace(/[$,\s]/g, "");
-      const isParenNeg = /^\(.+\)$/.test(rawAmount);
-      const numStr = isParenNeg ? rawAmount.slice(1, -1) : rawAmount;
-      const num = parseFloat(numStr);
-      if (!desc || !Number.isFinite(num) || num === 0) continue;
-      const signedNum = isParenNeg ? -Math.abs(num) : num;
+      // Decimal-aware (P0-4): "1.234,56" and "1,234.56" both read correctly;
+      // an ambiguous "1.500" is kept as typed and flagged on the row instead of
+      // being silently read one way. An unreadable amount still adds the row.
+      const rawAmount = parts[1];
+      const signedNum = parseDecimalAmount(rawAmount) ?? 0;
+      if (!desc && !rawAmount) continue;
       // Determine category: explicit 3rd column wins; else infer from sign.
       let category: WizardCategory = "contribution";
       const typeHint = (parts[2] ?? "").toLowerCase();
@@ -420,7 +428,7 @@ export function TransactionsReview({
       } else {
         category = signedNum < 0 ? "distribution" : "contribution";
       }
-      appendManualTx(taxYear, desc, signedNum, category);
+      appendManualTx(taxYear, desc, rawAmount, category);
       added++;
     }
     if (added > 0) {
@@ -520,6 +528,40 @@ export function TransactionsReview({
           : y,
       ),
     );
+  }
+
+  // P0-4 line-item edits (all optional, never refused).
+  function updateTx(taxYear: number, idx: number, patch: Partial<WizardTransaction>) {
+    setYears((all) =>
+      all.map((y) =>
+        y.taxYear === taxYear
+          ? {
+              ...y,
+              transactions: y.transactions.map((t, i) => {
+                if (i !== idx) return t;
+                const next = { ...t, ...patch };
+                return patch.amountInput !== undefined ? withAmountInput(next, patch.amountInput) : next;
+              }),
+            }
+          : y,
+      ),
+    );
+  }
+
+  // The owner-paid checklist: ticking seeds one contribution row to complete,
+  // unticking removes that row while it is still untouched.
+  function toggleChecklist(taxYear: number, item: (typeof OWNER_PAID_CHECKLIST)[number], on: boolean) {
+    setYears((all) =>
+      all.map((y) => {
+        if (y.taxYear !== taxYear) return y;
+        if (on) return { ...y, transactions: [...y.transactions, checklistRow(item) as WizardTransaction] };
+        const at = y.transactions.findIndex(
+          (t) => t.rule === "Owner-paid checklist" && t.description === item.label && t.amountMissing && !t.date,
+        );
+        return at < 0 ? y : { ...y, transactions: y.transactions.filter((_, i) => i !== at) };
+      }),
+    );
+    if (on) setPanelOpen(taxYear, "upload", true);
   }
 
   function removeTx(taxYear: number, idx: number) {
@@ -645,10 +687,11 @@ export function TransactionsReview({
     .filter((row) => row.messages.length > 0);
   const transactionsIncomplete = yearIssues.length > 0;
 
+  // Never refused (owner rule, P0-4): open questions are shown as warnings and
+  // the step saves what was entered. An unanswered year claims no zero answers.
   async function handleSubmit() {
-    if (transactionsIncomplete) return;
     const payload = years.map((y) =>
-      buildYearPayload(y.moneyMoved === "no" ? "no" : "yes", {
+      buildYearPayload(y.moneyMoved === "no" ? "no" : y.moneyMoved === "yes" ? "yes" : "unanswered", {
         ...y,
         nonCashTransfers: y.nonCashTransfers.map((row) => ({
           date: row.date,
@@ -738,8 +781,8 @@ export function TransactionsReview({
       <div>
         <h2 className="text-xl font-semibold">Transactions per year</h2>
         <p className="text-sm text-slate-500 mt-1">
-          All amounts are in US dollars. If your records are in another currency, convert using
-          the{" "}
+          Enter amounts in US dollars. For a payment made in another currency, also enter the
+          currency and the original amount on that line. To convert, use the{" "}
           <a
             href="https://www.irs.gov/individuals/international-taxpayers/yearly-average-currency-exchange-rates"
             target="_blank"
@@ -833,6 +876,33 @@ export function TransactionsReview({
                       </ul>
                     </div>
                   )}
+
+                  <fieldset>
+                    <legend className="text-sm font-medium text-slate-700">
+                      Did you pay any of these for the LLC in {y.taxYear} from your own money?
+                    </legend>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Tick each one. We add a line for it below; enter the date and amount if you have them.
+                    </p>
+                    <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                      {OWNER_PAID_CHECKLIST.map((item) => {
+                        const checked = y.transactions.some(
+                          (t) => t.rule === "Owner-paid checklist" && t.description === item.label,
+                        );
+                        return (
+                          <label key={item.key} className="flex items-center gap-2 text-sm text-slate-800">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={(e) => toggleChecklist(y.taxYear, item, e.target.checked)}
+                              className="h-4 w-4 accent-accent"
+                            />
+                            {item.label}
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </fieldset>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {totals.contributionRowCount > 0 ? (
@@ -1006,7 +1076,7 @@ export function TransactionsReview({
                       open={uploadOpen}
                       onToggle={() => setPanelOpen(y.taxYear, "upload", !uploadOpen)}
                     >
-                      Upload a bank statement instead
+                      Line items: add each payment, or upload a bank statement
                     </PanelToggle>
                     {uploadOpen && (
                       <div className="mt-3">
@@ -1046,7 +1116,15 @@ export function TransactionsReview({
                                 </button>
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
-                                <div className="sm:col-span-6">
+                                <div className="sm:col-span-3">
+                                  <label className="text-xs text-slate-500 mb-1 block">Date</label>
+                                  <Input
+                                    type="date"
+                                    value={drafts[y.taxYear]!.date}
+                                    onChange={(e) => updateDraft(y.taxYear, { date: e.target.value })}
+                                  />
+                                </div>
+                                <div className="sm:col-span-3">
                                   <label className="text-xs text-slate-500 mb-1 block">Description</label>
                                   <Input
                                     ref={(el) => {
@@ -1068,8 +1146,7 @@ export function TransactionsReview({
                                 <div className="sm:col-span-3">
                                   <label className="text-xs text-slate-500 mb-1 block">Amount (USD)</label>
                                   <Input
-                                    type="number"
-                                    step="0.01"
+                                    inputMode="decimal"
                                     placeholder="0.00"
                                     value={drafts[y.taxYear]!.amountUsd}
                                     onChange={(e) =>
@@ -1098,6 +1175,7 @@ export function TransactionsReview({
                                     <option value="distribution">Distribution (LLC → you)</option>
                                     <option value="loan_from_owner">Loan from you to the LLC</option>
                                     <option value="loan_to_owner">Loan from the LLC to you</option>
+                                    <option value="other">Other transaction with you</option>
                                   </select>
                                 </div>
                               </div>
@@ -1114,8 +1192,8 @@ export function TransactionsReview({
                                   size="sm"
                                   onClick={() => commitDraft(y.taxYear)}
                                   disabled={
-                                    !drafts[y.taxYear]!.description.trim() ||
-                                    !parseFloat(drafts[y.taxYear]!.amountUsd)
+                                    !drafts[y.taxYear]!.description.trim() &&
+                                    !drafts[y.taxYear]!.amountUsd.trim()
                                   }
                                 >
                                   Add to list
@@ -1218,32 +1296,81 @@ export function TransactionsReview({
                                     <tr>
                                       <th className="py-2 px-3 font-medium">Date</th>
                                       <th className="py-2 px-3 font-medium">Description</th>
-                                      <th className="py-2 px-3 font-medium text-right">Amount</th>
+                                      <th className="py-2 px-3 font-medium text-right">Amount (USD)</th>
+                                      <th className="py-2 px-3 font-medium">Currency / original</th>
+                                      <th className="py-2 px-3 font-medium">Paid how</th>
                                       <th className="py-2 px-3 font-medium">Category</th>
                                       <th className="py-2 px-3 w-8"></th>
                                     </tr>
                                   </thead>
                                   <tbody className="divide-y divide-slate-200">
-                                    {y.transactions.map((tx, i) => (
+                                    {y.transactions.map((tx, i) => {
+                                      const reportable = isReportableCategory(tx.category);
+                                      const warnings = reportable
+                                        ? partVRowWarnings(toPartVRow(tx), y.taxYear, formationDate)
+                                        : [];
+                                      return (
                                       <tr
                                         key={i}
-                                        className={
-                                          isReportableCategory(tx.category) ? "bg-accent-50/40" : ""
-                                        }
+                                        className={reportable ? "bg-accent-50/40 align-top" : "align-top"}
                                       >
                                         <td className="py-2 px-3 text-slate-600 whitespace-nowrap">
-                                          {tx.date}
+                                          <input
+                                            type="date"
+                                            aria-label="Date"
+                                            value={tx.date}
+                                            onChange={(e) => updateTx(y.taxYear, i, { date: e.target.value, dateInput: undefined })}
+                                            className="text-xs border border-slate-300 rounded px-1.5 py-1 bg-white"
+                                          />
                                         </td>
-                                        <td className="py-2 px-3 text-slate-900 max-w-xs truncate" title={tx.description}>
-                                          {tx.description}
+                                        <td className="py-2 px-3 text-slate-900 max-w-xs">
+                                          <span className="block truncate" title={tx.description}>{tx.description || "—"}</span>
+                                          {warnings.length > 0 && (
+                                            <ul className="mt-1 space-y-0.5 text-[11px] text-amber-800">
+                                              {warnings.map((w) => <li key={w}>{w}</li>)}
+                                            </ul>
+                                          )}
                                         </td>
-                                        <td
-                                          className={`py-2 px-3 text-right font-mono whitespace-nowrap ${
-                                            tx.amountCents > 0 ? "text-emerald-700" : "text-slate-700"
-                                          }`}
-                                        >
-                                          {tx.amountCents > 0 ? "+" : ""}
-                                          {formatUsd(tx.amountCents)}
+                                        <td className="py-2 px-3 text-right whitespace-nowrap">
+                                          <input
+                                            inputMode="decimal"
+                                            aria-label="Amount in US dollars"
+                                            placeholder="0.00"
+                                            value={tx.amountInput ?? (tx.amountMissing ? "" : (Math.abs(tx.amountCents) / 100).toFixed(2))}
+                                            onChange={(e) => updateTx(y.taxYear, i, { amountInput: e.target.value })}
+                                            className="w-24 text-right font-mono text-xs border border-slate-300 rounded px-1.5 py-1 bg-white"
+                                          />
+                                        </td>
+                                        <td className="py-2 px-3 whitespace-nowrap">
+                                          <input
+                                            aria-label="Currency (3 letters)"
+                                            placeholder="USD"
+                                            maxLength={3}
+                                            value={tx.currency ?? ""}
+                                            onChange={(e) => updateTx(y.taxYear, i, { currency: e.target.value.toUpperCase() || undefined })}
+                                            className="w-14 text-xs uppercase border border-slate-300 rounded px-1.5 py-1 bg-white"
+                                          />{" "}
+                                          <input
+                                            inputMode="decimal"
+                                            aria-label="Original amount"
+                                            placeholder="original"
+                                            value={tx.originalAmountInput ?? ""}
+                                            onChange={(e) => updateTx(y.taxYear, i, { originalAmountInput: e.target.value || undefined })}
+                                            className="w-20 text-xs border border-slate-300 rounded px-1.5 py-1 bg-white"
+                                          />
+                                        </td>
+                                        <td className="py-2 px-3">
+                                          <select
+                                            aria-label="How it was paid"
+                                            value={tx.paidVia ?? ""}
+                                            onChange={(e) => updateTx(y.taxYear, i, { paidVia: (e.target.value || undefined) as PaidVia | undefined })}
+                                            className="text-xs border border-slate-300 rounded px-2 py-1 bg-white"
+                                          >
+                                            <option value="">—</option>
+                                            {PAID_VIA.map((v) => (
+                                              <option key={v} value={v}>{PAID_VIA_LABELS[v]}</option>
+                                            ))}
+                                          </select>
                                         </td>
                                         <td className="py-2 px-3">
                                           <select
@@ -1272,7 +1399,8 @@ export function TransactionsReview({
                                           </button>
                                         </td>
                                       </tr>
-                                    ))}
+                                      );
+                                    })}
                                   </tbody>
                                 </table>
                               </div>
@@ -1546,6 +1674,7 @@ export function TransactionsReview({
         <div className="flex flex-col items-end gap-2">
           {transactionsIncomplete && (
             <div className="max-w-sm text-right text-xs text-amber-700">
+              <p className="font-medium">You can continue now and our team will follow up on:</p>
               {yearIssues.map((row) => (
                 <p key={row.taxYear}>
                   {row.taxYear}: {row.messages.join(" ")}
@@ -1556,7 +1685,7 @@ export function TransactionsReview({
           <Button
             type="button"
             onClick={handleSubmit}
-            disabled={saving || transactionsIncomplete}
+            disabled={saving}
           >
             {saving ? "Saving…" : "Continue"}
           </Button>
@@ -1770,6 +1899,7 @@ function CategorySummary({
     distribution: "bg-accent-50 text-accent border-accent/20",
     loan_from_owner: "bg-accent-50 text-accent border-accent/20",
     loan_to_owner: "bg-accent-50 text-accent border-accent/20",
+    other: "bg-accent-50 text-accent border-accent/20",
     revenue: "bg-emerald-50 text-emerald-700 border-emerald-200",
     vendor_expense: "bg-slate-100 text-slate-700 border-slate-200",
     card_reimbursement: "bg-slate-100 text-slate-700 border-slate-200",
@@ -1783,6 +1913,7 @@ function CategorySummary({
     "distribution",
     "loan_from_owner",
     "loan_to_owner",
+    "other",
     "revenue",
     "vendor_expense",
     "card_reimbursement",

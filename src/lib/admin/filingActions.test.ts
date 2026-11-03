@@ -828,6 +828,57 @@ describe("updateYearField", () => {
     ).rejects.toMatchObject({ status: 400 });
   });
 
+  it("P0-4: saves partial Part V line items (staff see A38, not a 400) and clears 'no transactions'", async () => {
+    db.findUnique.mockResolvedValue(filing);
+    db.yearFindUnique.mockResolvedValue({ id: "year_2025", reportableTransactions: [], noReportableTransactions: true });
+    await runFilingAction(
+      "filing_1",
+      "updateYearField",
+      {
+        taxYear: 2025,
+        field: "reportableTransactions",
+        value: JSON.stringify([{ description: "Mailroom", amountInput: "", category: "other", currency: "eur" }]),
+      },
+      { adminId: "admin_1" },
+    );
+    const data = (db.yearUpdate.mock.calls[0][0] as { data: Record<string, unknown> }).data;
+    expect(data.reportableTransactions).toEqual([{ date: "", description: "Mailroom", amountCents: null, category: "other", currency: "EUR" }]);
+    expect(data.noReportableTransactions).toBe(false);
+    const fields = db.createLog.mock.calls.map((c) => (c[0] as { data: { field: string } }).data.field);
+    expect(fields).toContain("year:2025:reportableTransactions");
+  });
+
+  it("P0-4: Convert to line items moves legacy owner-paid costs in one write, logged", async () => {
+    db.findUnique.mockResolvedValue(filing);
+    db.yearFindUnique.mockResolvedValue({
+      id: "year_2025",
+      reportableTransactions: [{ date: "2025-01-10", description: "Capital", amountCents: 1_000_00, category: "contribution" }],
+      ownerPaidCosts: [
+        { category: "registered_agent", date: "2025-02-01", amountCents: 49_00 },
+        { category: "initial_bank_funding", date: "2025-02-02", amountCents: 500_00 },
+      ],
+      noReportableTransactions: false,
+    });
+    await expect(
+      runFilingAction("filing_1", "convertOwnerPaidCosts", { taxYear: 2025 }, { adminId: "admin_1" }),
+    ).resolves.toMatchObject({ ok: true, converted: 2 });
+    const data = (db.yearUpdate.mock.calls[0][0] as { data: Record<string, unknown> }).data;
+    expect(data.ownerPaidCosts).toEqual([]);
+    expect(data.reportableTransactions).toEqual([
+      { date: "2025-01-10", description: "Capital", amountCents: 1_000_00, category: "contribution" },
+      expect.objectContaining({ date: "2025-02-01", description: "Registered agent fee", amountCents: 49_00, paidVia: "OWNER_PAID_PERSONALLY" }),
+      expect.objectContaining({ date: "2025-02-02", description: "Initial bank funding", amountCents: 500_00, paidVia: "TRANSFER" }),
+    ]);
+    const fields = db.createLog.mock.calls.map((c) => (c[0] as { data: { field: string } }).data.field);
+    expect(fields).toEqual(expect.arrayContaining(["year:2025:reportableTransactions", "year:2025:ownerPaidCosts"]));
+    db.yearUpdate.mockClear();
+    db.yearFindUnique.mockResolvedValue({ id: "year_2025", reportableTransactions: [], ownerPaidCosts: [], noReportableTransactions: false });
+    await expect(runFilingAction("filing_1", "convertOwnerPaidCosts", { taxYear: 2025 }, { adminId: "admin_1" })).rejects.toMatchObject({
+      code: "nothing_to_convert",
+    });
+    expect(db.yearUpdate).not.toHaveBeenCalled();
+  });
+
   it("rejects an invalid ownerPaidCosts JSON shape with no write", async () => {
     db.findUnique.mockResolvedValue(filing);
 

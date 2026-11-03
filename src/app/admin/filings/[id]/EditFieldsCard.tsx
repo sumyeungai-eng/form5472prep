@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { PAID_VIA, toPartVRow, toPartVRows, type PartVRow } from "@/lib/partV";
 import { Loader2 } from "lucide-react";
 
 // Whitelisted fields the admin can edit on a filing. Mirrors the server
@@ -104,7 +105,7 @@ const SMALL_CORP_OPTIONS = [
 const YEAR_FIELDS: ReadonlyArray<{
   key: YearFieldKey;
   label: string;
-  kind: "narrative" | "date" | "select" | "json";
+  kind: "narrative" | "date" | "select" | "json" | "lineItems";
   options?: Array<{ value: string; label: string }>;
   hint?: string;
 }> = [
@@ -143,6 +144,12 @@ const YEAR_FIELDS: ReadonlyArray<{
     options: SMALL_CORP_OPTIONS,
   },
   { key: "rcsNoIrsNoticeConfirmed", label: "No IRS notice confirmed", kind: "select", options: BOOLEAN_OPTIONS },
+  {
+    key: "reportableTransactions",
+    label: "Part V line items",
+    kind: "lineItems",
+    hint: "One row per payment. A row without a USD amount fails A38; a non-USD row needs the currency and original amount (W45).",
+  },
   { key: "nonCashTransfers", label: "Non-cash transfers", kind: "json" },
   { key: "ownerPaidCosts", label: "Owner-paid costs", kind: "json" },
   { key: "zeroConfirmations", label: "Zero confirmations", kind: "json" },
@@ -155,6 +162,7 @@ type YearFieldKey =
   | "rcsLearnedOn"
   | "rcsSmallCorpParagraph"
   | "rcsNoIrsNoticeConfirmed"
+  | "reportableTransactions"
   | "nonCashTransfers"
   | "ownerPaidCosts"
   | "zeroConfirmations";
@@ -250,6 +258,7 @@ type Props = {
     rcsSmallCorpParagraph: boolean | null;
     // The package treats this year as late (it gets a reasonable cause statement).
     packageLate?: boolean;
+    reportableTransactions?: unknown;
     nonCashTransfers: unknown;
     ownerPaidCosts: unknown;
     zeroConfirmations: unknown;
@@ -354,7 +363,8 @@ export function EditFieldsCard({ filingId, initial, years, housePreparerConfig }
     if (field === "rcsAdminNarrative" || field === "rcsVerbatimText") {
       value = String(value).trim() === "" ? null : String(value).replace(/\s+$/, "");
     }
-    if (YEAR_FIELDS.find((f) => f.key === field)?.kind === "json") {
+    const fieldKind = YEAR_FIELDS.find((f) => f.key === field)?.kind;
+    if (fieldKind === "json" || fieldKind === "lineItems") {
       const raw = String(value).trim();
       if (!raw) {
         value = null;
@@ -396,6 +406,31 @@ export function EditFieldsCard({ filingId, initial, years, housePreparerConfig }
       setMsg({ key, kind: "err", text: e instanceof Error ? e.message : "Network error" });
       setSavingKey(null);
     }
+  }
+
+  // P0-4 "Convert to line items": moves this year's legacy owner-paid costs
+  // into Part V rows on the server (one write, logged, pre-flight re-runs).
+  async function convertOwnerPaidCosts(taxYear: number) {
+    const key = yearKey(taxYear, "reportableTransactions");
+    setMsg(null);
+    setSavingKey(key);
+    try {
+      const res = await fetch(`/api/admin/filings/${filingId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "convertOwnerPaidCosts", taxYear, reason: reason.trim() || "Convert to line items" }),
+      });
+      if (!res.ok) {
+        setMsg({ key, kind: "err", text: (await res.text()) || `HTTP ${res.status}` });
+      } else {
+        const body = (await res.json().catch(() => ({}))) as SaveResponse;
+        setMsg({ key, kind: "ok", text: `Converted.${preflightRerunNote(body)} Reload to edit the new rows.` });
+        startTransition(() => router.refresh());
+      }
+    } catch (e) {
+      setMsg({ key, kind: "err", text: e instanceof Error ? e.message : "Network error" });
+    }
+    setSavingKey(null);
   }
 
   return (
@@ -668,7 +703,7 @@ export function EditFieldsCard({ filingId, initial, years, housePreparerConfig }
                     const isSaving = savingKey === key;
                     const fieldMsg = msg?.key === key ? msg : null;
                     return (
-                      <div key={key} className={`space-y-1 ${f.kind === "narrative" ? "sm:col-span-2" : ""}`}>
+                      <div key={key} className={`space-y-1 ${f.kind === "narrative" || f.kind === "lineItems" ? "sm:col-span-2" : ""}`}>
                         <label className="block text-xs">
                           <span className="block text-slate-600 font-medium mb-1">{f.label}</span>
                           {f.kind === "select" ? (
@@ -686,6 +721,12 @@ export function EditFieldsCard({ filingId, initial, years, housePreparerConfig }
                                 </option>
                               ))}
                             </select>
+                          ) : f.kind === "lineItems" ? (
+                            <LineItemsEditor
+                              value={yearValues[key] ?? "[]"}
+                              onChange={(next) => setYearValues((v) => ({ ...v, [key]: next }))}
+                              disabled={pending || isSaving}
+                            />
                           ) : f.kind === "date" ? (
                             <input
                               type="date"
@@ -710,6 +751,20 @@ export function EditFieldsCard({ filingId, initial, years, housePreparerConfig }
                           )}
                         </label>
                         {f.hint && <p className="text-[11px] text-slate-500">{f.hint}</p>}
+                        {f.kind === "lineItems" && Array.isArray(year.ownerPaidCosts) && year.ownerPaidCosts.length > 0 && (
+                          <p className="text-[11px] text-slate-600">
+                            This year has {year.ownerPaidCosts.length} legacy owner-paid cost
+                            {year.ownerPaidCosts.length === 1 ? "" : "s"} (printed as today).{" "}
+                            <button
+                              type="button"
+                              onClick={() => convertOwnerPaidCosts(year.taxYear)}
+                              disabled={isSaving || pending}
+                              className="font-medium text-accent underline disabled:opacity-40"
+                            >
+                              Convert to line items
+                            </button>
+                          </p>
+                        )}
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
@@ -833,7 +888,71 @@ function yearDisplayValue(
   if (field === "nonCashTransfers" || field === "ownerPaidCosts" || field === "zeroConfirmations") {
     return JSON.stringify(value, null, 2);
   }
+  if (field === "reportableTransactions") return JSON.stringify(toPartVRows(value));
   if (value instanceof Date) return value.toISOString().slice(0, 10);
   if (typeof value === "boolean") return value ? "true" : "false";
   return String(value);
+}
+
+// P0-4 per-year Part V line-item table. Edits a JSON list of PartVRow in the
+// shared string state; the server sanitises it (toPartVRows) and pre-flight
+// judges it (A38 / W43 / W44 / W45).
+const LINE_ITEM_CATEGORIES = [
+  ["contribution", "Contribution"],
+  ["distribution", "Distribution"],
+  ["loan_from_owner", "Loan from owner"],
+  ["loan_to_owner", "Loan to owner"],
+  ["other", "Other"],
+] as const;
+
+function LineItemsEditor({ value, onChange, disabled }: { value: string; onChange: (next: string) => void; disabled: boolean }) {
+  let rows: PartVRow[] = [];
+  try {
+    rows = toPartVRows(JSON.parse(value || "[]"));
+  } catch {
+    rows = [];
+  }
+  const set = (next: PartVRow[]) => onChange(JSON.stringify(next));
+  const edit = (i: number, patch: Record<string, unknown>) =>
+    set(rows.map((row, at) => (at === i ? toPartVRow({ ...row, ...patch }) : row)));
+  const cell = "w-full px-1.5 py-1 text-xs border border-slate-300 rounded";
+  const usd = (row: PartVRow) => row.amountInput ?? (row.amountCents === null ? "" : (Math.abs(row.amountCents) / 100).toFixed(2));
+  return (
+    <div className="overflow-x-auto rounded-md border border-slate-200">
+      <table className="w-full text-xs">
+        <thead className="bg-slate-50 text-left text-slate-500">
+          <tr>
+            <th className="p-1.5">Date</th><th className="p-1.5">Description</th><th className="p-1.5">Category</th>
+            <th className="p-1.5">Paid how</th><th className="p-1.5">USD</th><th className="p-1.5">Cur.</th><th className="p-1.5">Original</th><th />
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i} className={row.amountCents === null ? "bg-red-50" : ""}>
+              <td className="p-1"><input type="date" disabled={disabled} className={cell} value={row.date} onChange={(e) => edit(i, { date: e.target.value, dateInput: undefined })} /></td>
+              <td className="p-1"><input disabled={disabled} className={cell} value={row.description} onChange={(e) => edit(i, { description: e.target.value })} /></td>
+              <td className="p-1">
+                <select disabled={disabled} className={cell} value={row.category} onChange={(e) => edit(i, { category: e.target.value, amountCents: undefined, amountInput: usd(row) })}>
+                  {LINE_ITEM_CATEGORIES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                </select>
+              </td>
+              <td className="p-1">
+                <select disabled={disabled} className={cell} value={row.paidVia ?? ""} onChange={(e) => edit(i, { paidVia: e.target.value || undefined })}>
+                  <option value="">—</option>
+                  {PAID_VIA.map((v) => <option key={v} value={v}>{v}</option>)}
+                </select>
+              </td>
+              <td className="p-1"><input disabled={disabled} inputMode="decimal" className={`${cell} text-right`} value={usd(row)} onChange={(e) => edit(i, { amountCents: undefined, amountInput: e.target.value })} /></td>
+              <td className="p-1"><input disabled={disabled} maxLength={3} className={`${cell} uppercase`} value={row.currency ?? ""} onChange={(e) => edit(i, { currency: e.target.value })} /></td>
+              <td className="p-1"><input disabled={disabled} inputMode="decimal" className={cell} value={row.originalAmountInput ?? (row.originalAmount != null ? String(row.originalAmount) : "")} onChange={(e) => edit(i, { originalAmount: undefined, originalAmountInput: e.target.value })} /></td>
+              <td className="p-1"><button type="button" disabled={disabled} onClick={() => set(rows.filter((_, at) => at !== i))} className="text-red-600">Remove</button></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button type="button" disabled={disabled} onClick={() => set([...rows, toPartVRow({ category: "contribution" })])} className="m-1.5 text-xs font-medium text-accent">
+        + Add row
+      </button>
+    </div>
+  );
 }

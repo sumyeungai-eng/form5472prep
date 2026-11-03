@@ -3,6 +3,10 @@ import {
   ALL_ZERO_CONFIRMATIONS,
   buildYearPayload,
   categoryTotals,
+  checklistRow,
+  isReportableCategory,
+  OWNER_PAID_CHECKLIST,
+  withAmountInput,
   deriveInitialAnswer,
   EMPTY_ANSWER_MESSAGE,
   EMPTY_LOAN,
@@ -379,5 +383,39 @@ describe("buildYearPayload", () => {
   it("never creates owner-paid cost rows", () => {
     const payload = buildYearPayload("yes", yearState({ manualContributions: 300 }));
     expect(payload.ownerPaidCosts).toEqual([]);
+  });
+});
+
+describe("P0-4 line items in the wizard", () => {
+  it("treats OTHER as a Part V category", () => {
+    expect(isReportableCategory("other")).toBe(true);
+  });
+
+  it("the checklist seeds rows to complete: paid personally, bank funding as a transfer", () => {
+    const fee = checklistRow(OWNER_PAID_CHECKLIST.find((i) => i.key === "registered_agent")!);
+    expect(fee).toMatchObject({ category: "contribution", paidVia: "OWNER_PAID_PERSONALLY", amountMissing: true, date: "" });
+    expect(checklistRow(OWNER_PAID_CHECKLIST.find((i) => i.key === "bank_funding")!).paidVia).toBe("TRANSFER");
+  });
+
+  it("reads typed amounts decimal-aware and never refuses one", () => {
+    const base = row("distribution", 0);
+    expect(withAmountInput(base, "1.234,56")).toMatchObject({ amountCents: -123456, amountMissing: false });
+    expect(withAmountInput(base, "abc")).toMatchObject({ amountCents: 0, amountMissing: true, amountInput: "abc" });
+  });
+
+  it("sends a missing amount as null (never $0) and keeps OTHER rows", () => {
+    const missing = { ...row("contribution", 0), amountMissing: true };
+    const payload = buildYearPayload("yes", yearState({ transactions: [missing, row("other", 250_00)] }));
+    expect(payload.reportableTransactions.map((r) => [r.category, r.amountCents])).toEqual([
+      ["contribution", null],
+      ["other", 250_00],
+    ]);
+  });
+
+  it("an unanswered year saves what was entered but claims no zero answers (never-block advance)", () => {
+    const payload = buildYearPayload("unanswered", yearState({ transactions: [row("contribution", 100_00)] }));
+    expect(payload.noReportableTransactions).toBe(false);
+    expect(payload.zeroConfirmations).toEqual({});
+    expect(payload.reportableTransactions).toHaveLength(1);
   });
 });

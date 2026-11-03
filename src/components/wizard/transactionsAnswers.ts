@@ -11,13 +11,17 @@
 // noReportableTransactions, nonCashTransfers), because Form 5472 Part V / Part VI
 // / line 1c and pro forma 1120 item D are generated from them.
 
+import { parseDecimalAmount, type PaidVia } from "@/lib/partV";
+
 export type YesNo = "yes" | "no" | null;
 
+// P0-4: "other" (any other transaction with the owner) is a Part V row too.
 export const REPORTABLE_CATEGORIES = [
   "contribution",
   "distribution",
   "loan_from_owner",
   "loan_to_owner",
+  "other",
 ] as const;
 
 export type ZeroConfirmationKey =
@@ -66,13 +70,57 @@ export type NonCashTransferRow = {
 };
 
 // Minimal shape of a detailed Part V row (uploaded, manually added, or saved).
+// P0-4 draft fields: what the customer typed is kept; amountMissing marks a
+// row with no readable USD amount (amountCents is then 0 in the step, and the
+// payload sends null so the server never stores it as a real $0).
 export type TxRow = {
   date: string;
   description: string;
   counterparty: string;
   amountCents: number;
   category: string;
+  amountMissing?: boolean;
+  amountInput?: string;
+  dateInput?: string;
+  paidVia?: PaidVia;
+  currency?: string;
+  originalAmountInput?: string;
 };
+
+// "Did you pay any of these personally?" checklist (P0-4): each tick seeds one
+// contribution row for the customer to complete. Initial bank funding is money
+// moved into the LLC's account, so it is a TRANSFER (plan O3).
+export const OWNER_PAID_CHECKLIST: ReadonlyArray<{ key: string; label: string; paidVia: PaidVia }> = [
+  { key: "state_fee", label: "State formation fee", paidVia: "OWNER_PAID_PERSONALLY" },
+  { key: "registered_agent", label: "Registered agent fee", paidVia: "OWNER_PAID_PERSONALLY" },
+  { key: "mailroom", label: "Mailroom or business address service", paidVia: "OWNER_PAID_PERSONALLY" },
+  { key: "ein_formation", label: "EIN or formation service fee", paidVia: "OWNER_PAID_PERSONALLY" },
+  { key: "bank_funding", label: "Initial bank funding", paidVia: "TRANSFER" },
+];
+
+export function checklistRow(item: (typeof OWNER_PAID_CHECKLIST)[number]): TxRow & { rule: string } {
+  return {
+    date: "",
+    description: item.label,
+    counterparty: "",
+    amountCents: 0,
+    amountMissing: true,
+    amountInput: "",
+    category: "contribution",
+    paidVia: item.paidVia,
+    rule: "Owner-paid checklist",
+  };
+}
+
+// A typed USD amount → the row's amount fields. Never refuses: an unreadable
+// amount keeps the text and marks the row missing (A38 for staff).
+export function withAmountInput<T extends TxRow>(row: T, amountInput: string): T {
+  const parsed = parseDecimalAmount(amountInput);
+  if (parsed === null) return { ...row, amountInput, amountCents: 0, amountMissing: true };
+  const cents = Math.round(Math.abs(parsed) * 100);
+  const outflow = row.category === "distribution" || row.category === "loan_to_owner";
+  return { ...row, amountInput, amountCents: outflow ? -cents : cents, amountMissing: false };
+}
 
 export type LoanDirection = "loan_from_owner" | "loan_to_owner";
 
@@ -297,12 +345,15 @@ export function deriveInitialAnswer(saved: {
   return null;
 }
 
+// Payload row: a missing amount is sent as null, never as 0.
+export type PayloadRow<T extends TxRow> = Omit<T, "amountCents"> & { amountCents: number | null };
+
 export type YearPayload<T extends TxRow> = {
   taxYear: number;
   totalAssetsYearEnd: number;
   contributions: number;
   distributions: number;
-  reportableTransactions: Array<T | LoanRow>;
+  reportableTransactions: Array<PayloadRow<T> | LoanRow>;
   otherTransactionsNote: string;
   noReportableTransactions: boolean;
   replaceReportableTransactions: boolean;
@@ -313,8 +364,11 @@ export type YearPayload<T extends TxRow> = {
 
 // Builds the per-year object handed to the wizard's onSubmit (and from there
 // PATCHed to /api/filings/[id] as one yearData entry).
+// "unanswered" (P0-4, never-block): the customer continued without answering
+// the money question. Whatever they entered is saved, but no "None this year"
+// confirmations are claimed for them.
 export function buildYearPayload<T extends TxRow>(
-  answer: "yes" | "no",
+  answer: "yes" | "no" | "unanswered",
   y: YearAnswerState<T> & {
     totalAssetsYearEnd: number;
     nonCashTransfers: NonCashTransferRow[];
@@ -347,11 +401,13 @@ export function buildYearPayload<T extends TxRow>(
   }
 
   const totals = categoryTotals(y);
-  const detailRows = y.transactions.filter((tx) => isReportableCategory(tx.category));
+  const detailRows: Array<PayloadRow<T>> = y.transactions
+    .filter((tx) => isReportableCategory(tx.category))
+    .map((tx) => (tx.amountMissing ? { ...tx, amountCents: null } : tx));
   const loanRows = (["loan_from_owner", "loan_to_owner"] as const)
     .map((direction) => buildLoanRow(direction, y.loans[direction]))
     .filter((row): row is LoanRow => row !== null);
-  const reportableTransactions: Array<T | LoanRow> = [...detailRows, ...loanRows];
+  const reportableTransactions: Array<PayloadRow<T> | LoanRow> = [...detailRows, ...loanRows];
 
   const hasRows = (category: string) =>
     reportableTransactions.some((tx) => tx.category === category);
@@ -365,6 +421,7 @@ export function buildYearPayload<T extends TxRow>(
   if (!hasRows("loan_from_owner")) zeroConfirmations.loansFromOwner = true;
   if (!hasRows("loan_to_owner")) zeroConfirmations.loansToOwner = true;
   if (y.ownerPaidCosts.length === 0) zeroConfirmations.ownerPaidCosts = true;
+  if (answer === "unanswered") for (const key of Object.keys(zeroConfirmations)) delete zeroConfirmations[key as ZeroConfirmationKey];
 
   return {
     ...common,

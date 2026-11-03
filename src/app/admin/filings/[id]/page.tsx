@@ -425,6 +425,7 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             rcsLearnedOn: year.rcsLearnedOn ? year.rcsLearnedOn.toISOString().slice(0, 10) : null,
             rcsSmallCorpParagraph: year.rcsSmallCorpParagraph,
             packageLate: packageYears.some((y) => y.taxYear === year.taxYear && y.late),
+            reportableTransactions: year.reportableTransactions,
             nonCashTransfers: year.nonCashTransfers,
             ownerPaidCosts: year.ownerPaidCosts,
             zeroConfirmations: year.zeroConfirmations,

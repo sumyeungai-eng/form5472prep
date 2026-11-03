@@ -94,9 +94,14 @@ export function FilingReviewSummary({ filing }: { filing: FilingReviewSummaryFil
                   <tbody className="divide-y divide-slate-100">
                     {txs.map((t, i) => (
                       <tr key={`t${i}`}>
-                        <td className="py-1 pr-3 whitespace-nowrap">{str(t.date)}</td>
-                        <td className="py-1 pr-3">{join([str(t.category), str(t.description), str(t.counterparty)])}</td>
-                        <td className="py-1 text-right whitespace-nowrap">{cents(t.amountCents)}</td>
+                        <td className="py-1 pr-3 whitespace-nowrap">{str(t.date) || str(t.dateInput)}</td>
+                        <td className="py-1 pr-3">
+                          {join([str(t.category), str(t.description), str(t.counterparty)])}
+                          {str(t.currency) && str(t.currency) !== "USD" ? ` (${str(t.originalAmountInput) || String(t.originalAmount ?? "")} ${str(t.currency)})` : ""}
+                        </td>
+                        <td className="py-1 text-right whitespace-nowrap">
+                          {typeof t.amountCents === "number" ? cents(t.amountCents) : "amount missing"}
+                        </td>
                       </tr>
                     ))}
                     {costs.map((c, i) => (

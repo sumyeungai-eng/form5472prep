@@ -18,6 +18,7 @@ import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
 import { generatePackage, type GeneratedPackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { filingToPackageInput } from "@/lib/pdf/packageInput";
+import { toPartVRow, toPartVRows, type PartVRow } from "@/lib/partV";
 import { normalizeUsStateCode } from "@/lib/pdf/textFormat";
 import { isReviewedPdfKey, newUnsignedPdfKey } from "@/lib/pdf/packageKeys";
 import { runPreflight, type PreflightIssue, type PreflightResult } from "@/lib/pdf/preflight";
@@ -79,6 +80,8 @@ export type FilingActionName =
   | "approveForSignature"
   | "updateField"
   | "updateYearField"
+  // P0-4: move a year's legacy ownerPaidCosts into Part V line items.
+  | "convertOwnerPaidCosts"
   | "uploadReviewedPdf"
   | "uploadSignedPdf"
   // SSN capture (docs/reviews/2026-10-15-ssn-capture-spec.md).
@@ -524,6 +527,8 @@ export const ADMIN_EDITABLE_YEAR_FIELDS = [
   // P0-3 reasonable cause source + the verbatim body (D5: editable, logged, snapshotted).
   "rcsSource",
   "rcsVerbatimText",
+  // P0-4: the per-year Part V line-item table (permissive rows; A38/W43-W45 judge them).
+  "reportableTransactions",
   "nonCashTransfers",
   "ownerPaidCosts",
   "zeroConfirmations",
@@ -631,6 +636,26 @@ function parseYearJsonField(field: keyof typeof YEAR_JSON_SCHEMAS, value: unknow
 function yearJsonWriteValue(value: unknown) {
   if (value === null) return Prisma.JsonNull;
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+}
+
+// P0-4: one legacy owner-paid cost as a Part V line item (same amount and date).
+const LEGACY_COST_LABELS: Record<string, string> = {
+  state_filing_fee: "State filing fee",
+  registered_agent: "Registered agent fee",
+  formation_or_ein_service: "Formation or EIN service fee",
+  software_subscriptions: "Software or subscription costs",
+  initial_bank_funding: "Initial bank funding",
+};
+export function legacyCostToLineItem(cost: Record<string, unknown>): PartVRow {
+  const category = String(cost.category ?? "other");
+  const note = typeof cost.note === "string" ? cost.note.trim() : "";
+  const cents = typeof cost.amountCents === "number" && Number.isFinite(cost.amountCents) ? Math.abs(Math.round(cost.amountCents)) : null;
+  return {
+    ...toPartVRow({ date: cost.date, description: LEGACY_COST_LABELS[category] ?? (note || "Cost"), category: "contribution" }),
+    amountCents: cents,
+    paidVia: category === "initial_bank_funding" ? "TRANSFER" : "OWNER_PAID_PERSONALLY",
+    rule: "Converted from owner-paid costs",
+  };
 }
 
 // P0-3: the text an empty verbatim box starts from. Raw keeps the customer's
@@ -2140,6 +2165,20 @@ export async function runFilingAction(
         }
         after = raw.trim() === "" ? null : raw;
         writeValue = after;
+      } else if (field === "reportableTransactions") {
+        let raw = body.value;
+        if (typeof raw === "string") {
+          try {
+            raw = raw.trim() ? JSON.parse(raw) : [];
+          } catch {
+            throw new FilingActionError(400, "invalid_value", "reportableTransactions must be valid JSON");
+          }
+        }
+        if (raw !== null && raw !== undefined && !Array.isArray(raw)) {
+          throw new FilingActionError(400, "invalid_value", "reportableTransactions must be a list of rows");
+        }
+        after = toPartVRows(raw ?? []);
+        writeValue = yearJsonWriteValue(after);
       } else if (YEAR_NULLABLE_STRINGS.has(field)) {
         let raw = body.value === undefined || body.value === null ? null : String(body.value);
         // The admin narrative is multi-paragraph ("blank line = new paragraph"):
@@ -2201,6 +2240,7 @@ export async function runFilingAction(
           rcsSource: true,
           rcsVerbatimText: true,
           rcsWhyMissedRaw: true,
+          reportableTransactions: true,
           nonCashTransfers: true,
           ownerPaidCosts: true,
           zeroConfirmations: true,
@@ -2219,7 +2259,7 @@ export async function runFilingAction(
       // transactions" declaration for that year no longer holds. Cleared in the
       // same write and change-logged on its own row.
       const clearsNoneDeclared =
-        field === "ownerPaidCosts" &&
+        (field === "ownerPaidCosts" || field === "reportableTransactions") &&
         Array.isArray(after) &&
         after.length > 0 &&
         year.noReportableTransactions === true;
@@ -2285,6 +2325,37 @@ export async function runFilingAction(
         releaseWarning: rerun.releaseWarning,
         releaseCleared: rerun.releaseCleared,
       };
+    }
+
+    case "convertOwnerPaidCosts": {
+      // P0-4 "Convert to line items": an explicit staff action, never automatic
+      // and never matched by amount. One write moves every legacy cost of the
+      // year into Part V rows (paid personally; initial bank funding = transfer),
+      // so the year is never counted twice or half-converted.
+      if (["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
+        throw new FilingActionError(409, "already_signed_or_filed", "This filing has been signed or faxed. Its package cannot be regenerated.");
+      }
+      const taxYear = Number(body.taxYear);
+      if (!Number.isInteger(taxYear)) throw new FilingActionError(400, "invalid_value", "taxYear must be an integer");
+      const year = await prisma.filingYearData.findUnique({
+        where: { filingId_taxYear: { filingId: filing.id, taxYear } },
+        select: { id: true, reportableTransactions: true, ownerPaidCosts: true, noReportableTransactions: true },
+      });
+      if (!year) throw new FilingActionError(404, "year_not_found", "filing year not found");
+      const costs = Array.isArray(year.ownerPaidCosts) ? (year.ownerPaidCosts as Array<Record<string, unknown>>) : [];
+      if (costs.length === 0) throw new FilingActionError(409, "nothing_to_convert", "This year has no legacy owner-paid costs.");
+      const before = toPartVRows(year.reportableTransactions);
+      const after = [...before, ...costs.map(legacyCostToLineItem)];
+      await prisma.filingYearData.update({
+        where: { filingId_taxYear: { filingId: filing.id, taxYear } },
+        data: { reportableTransactions: yearJsonWriteValue(after), ownerPaidCosts: [], noReportableTransactions: false },
+        select: { id: true },
+      });
+      const reason = (typeof body.reason === "string" && body.reason.slice(0, 500)) || ctx.reason || "Convert to line items";
+      await logFilingChange({ filingId: filing.id, adminId: ctx.adminId, source: "admin", field: `year:${taxYear}:reportableTransactions`, before, after, reason });
+      await logFilingChange({ filingId: filing.id, adminId: ctx.adminId, source: "admin", field: `year:${taxYear}:ownerPaidCosts`, before: costs, after: [], reason });
+      const rerun = await rerunAfterDataEdit(filing, ctx, `convertOwnerPaidCosts:${taxYear}`);
+      return { ok: true, converted: costs.length, preflight: rerun.preflight, releaseWarning: rerun.releaseWarning, releaseCleared: rerun.releaseCleared };
     }
 
     case "approvePreflightOverride": {
