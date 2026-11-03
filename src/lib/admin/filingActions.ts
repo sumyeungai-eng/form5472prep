@@ -806,7 +806,8 @@ type ReleaseCheckFiling = Pick<
 //   1. pre-flight has run;
 //   2. on the current data (no package-data change logged after it ran);
 //   3. no A32 — a late year without an admin cause is never releasable, with
-//      or without an override (same rule as the fax gate);
+//      or without an override (same rule as the fax gate). Not for a reviewed
+//      upload: its statement is in the PDF staff checked (owner, 2026-11-03);
 //   4. pre-flight passed, or failed with an override that records a reason.
 export async function canReleaseToClient(
   filing: ReleaseCheckFiling,
@@ -844,8 +845,9 @@ export async function canReleaseToClient(
     };
   }
   const a32 =
-    preflightIssues(filing.preflightFailures).some((issue) => issue.id === "A32") ||
-    !hasAdminReasonableCauseForFax(filing, filing.yearData ?? []);
+    !opts.reviewedUpload &&
+    (preflightIssues(filing.preflightFailures).some((issue) => issue.id === "A32") ||
+      !hasAdminReasonableCauseForFax(filing, filing.yearData ?? []));
   if (a32) {
     return {
       ok: false,
@@ -1548,7 +1550,9 @@ export async function runFilingAction(
       {
         // Generator 2.3.0: the printed statement comes only from the admin
         // narrative, so that (not the customer's explanation) is what's required.
-        const rcsComplete = hasAdminReasonableCauseForFax(filing, filing.yearData ?? []);
+        // A staff-reviewed upload carries its own statement (owner, 2026-11-03).
+        const reviewedPackage = isReviewedPdfKey(filing.reviewApprovedPdfKey ?? filing.generatedPdfKey);
+        const rcsComplete = reviewedPackage || hasAdminReasonableCauseForFax(filing, filing.yearData ?? []);
         if (!rcsComplete && !isValidForceOverride(ctx)) {
           throw new FilingActionError(
             409,

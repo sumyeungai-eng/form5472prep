@@ -98,6 +98,10 @@
   field; omitted when missing; optional for customers). Pre-flight ends with the
   post-generation PDF validator `src/lib/pdf/validatePackage.ts` (A39–A51,
   W46–W47), which reads the produced PDF and must never throw.
+- **Reviewed upload vs A32** (`docs/sessions/2026-11-03-reviewed-upload-a32.md`): A32 blocks
+  releasing/faxing a GENERATED package only. A staff-uploaded reviewed PDF (`_reviewed_` key)
+  skips A32 in `canReleaseToClient({ reviewedUpload: true })` and in the `retryFax` gate; the
+  pre-flight override for other failures is still required.
 - **Generator 2.5.0** (`docs/sessions/2026-11-04-system-update-p0-2-4.md`): no filler RCS
   cause (red DRAFT marker, A32); per-year reasonable cause source with a verbatim
   WinAnsi body (A37/W42); Part V line items are permissive customer drafts

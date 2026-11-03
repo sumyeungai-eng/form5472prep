@@ -9,7 +9,8 @@ What changes for staff when this update goes live, and what to do about it.
   - *Pre-flight has not run on this data* — click **Re-run pre-flight**.
   - *Pre-flight last ran on a different PDF* — click **Re-run pre-flight** (it rebuilds the PDF from the current data), check the new PDF, then release.
   - *The order data changed after pre-flight* — click **Re-run pre-flight**.
-  - *A32: a late year has no reasonable cause* — write the admin narrative, or choose "Customer's own words" with text (see section 4). A32 can never be overridden.
+  - *A32: a late year has no reasonable cause* — write the admin narrative, or choose "Customer's own words" with text (see section 4). A32 can never be overridden for the generated PDF.
+  - **Exception (2026-11-03): Upload reviewed PDF.** A reviewed PDF you upload carries its own reasonable-cause statement, so A32 does not block it (or its fax). You still need **Approve despite pre-flight failures** with a reason first. Checking that the uploaded PDF really contains the statement is on you.
   - *Pre-flight failed* — fix the finding, or record an override with a reason (except A32).
 - **Orders already waiting for review when the update goes live:** click **Re-run pre-flight once on each of them** before releasing. The button stays disabled until you do.
 

@@ -1144,6 +1144,20 @@ describe("retryFax pre-flight gate", () => {
     }) }));
   });
 
+  it("late year with no admin cause: refuses a generated package, faxes a staff-reviewed upload", async () => {
+    const late = { ...filing, taxYears: [2023], yearData: [{ taxYear: 2023, rcsAdminNarrative: null }] };
+    db.findUnique.mockResolvedValue({ ...late, reviewApprovedPdfKey: "filing_1_unsigned_1.pdf" });
+    await expect(runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1" })).rejects.toMatchObject({
+      status: 409,
+      code: "rcs_missing_for_late_filing",
+    });
+    expect(fax.submitFax).not.toHaveBeenCalled();
+
+    db.findUnique.mockResolvedValue({ ...late, reviewApprovedPdfKey: "filing_1_reviewed_1.pdf" });
+    await runFilingAction("filing_1", "retryFax", {}, { adminId: "admin_1" });
+    expect(fax.submitFax).toHaveBeenCalled();
+  });
+
   it("throws 409 and does not call submitFax when failed pre-flight has no override", async () => {
     db.findUnique.mockResolvedValue({
       ...filing,
@@ -2150,12 +2164,12 @@ describe("pre-flight workflow", () => {
     expect(storage.put).not.toHaveBeenCalled();
   });
 
-  it("release gate: refuses the reviewed-PDF upload for an A32 failure even with an override recorded", async () => {
+  it("accepts the reviewed-PDF upload for an A32 failure once an override is recorded (statement is in the PDF)", async () => {
     givenFiling({ preflightOverrideBy: "admin_2", preflightOverrideAt: new Date(), preflightOverrideReason: "Reviewed and approved." });
     await expect(
       runFilingAction("filing_1", "uploadReviewedPdf", { pdfBase64, notifyClient: false }, { adminId: "admin_1" }),
-    ).rejects.toMatchObject({ status: 409, code: "rcs_missing_for_late_filing" });
-    expect(storage.put).not.toHaveBeenCalled();
+    ).resolves.toMatchObject({ ok: true, emailSkipped: true });
+    expect(storage.put).toHaveBeenCalled();
   });
 
   it("accepts the reviewed-PDF upload once an override is recorded for a non-A32 failure", async () => {
