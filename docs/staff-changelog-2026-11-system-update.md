@@ -60,3 +60,11 @@ What changes for staff when this update goes live, and what to do about it.
 | **W45** | No | A foreign-currency row is missing a valid 3-letter currency or a positive original amount, so no conversion sentence prints. Complete the row. |
 
 A32 now also says when the source is verbatim but the box is empty.
+
+## 7. Review queue, due chips and the "Late filing" label (P1, PR 8 + PR 10)
+- **Review queue:** on Filings, click **Review queue** (or open `/admin/filings?queue=1`). It lists orders waiting for review (paid, not yet released), most urgent first: express orders, then orders whose pre-flight failed, then the oldest payment. The normal Filings list is unchanged.
+- **Due chip:** each unreleased paid order shows "due in 5h", "due in 3d" or "overdue 2d". Express is due 72 hours after payment. Standard is due 7 business days after payment (weekends and U.S. federal holidays don't count). The chip disappears once you release the package.
+- **"—" instead of a due time:** we only started recording the payment time now. Older orders show "—" and sort after orders with a known payment time; check their order date.
+- **Not released:** a grey badge on any order whose package exists but has not been released, so the client can't see or sign it yet.
+- **Late filing:** the order page now says **Late filing: Yes** where it used to say "DIIRSP: Yes — delinquent submission". Same meaning. Customer-facing app text, the chat assistant and the contact page now say "late filing with a reasonable-cause statement" instead of "DIIRSP". The marketing pages and blog posts still mention DIIRSP; that is deliberate.
+- **Check & sign page:** clients now see a short "Why some lines are blank" note under their forms (pro forma 1120 lines, 5472 lines 43a–43b, Part IV vs Part V, Parts VIII–IX).
