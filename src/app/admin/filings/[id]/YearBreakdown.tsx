@@ -1,6 +1,6 @@
 import type { BankStatement, FilingYearData } from "@prisma/client";
 import { ExternalLink } from "lucide-react";
-import { reportableTransactionsSchema } from "@/lib/schemas";
+import { toPartVRows } from "@/lib/partV";
 import { formatUsd } from "@/lib/utils";
 
 type YearWithBankStatementUrls = FilingYearData & {
@@ -18,6 +18,10 @@ type ReportableTransaction = {
   counterparty?: string;
   amountCents: number;
   category: string;
+  // P0-4: no valid USD amount (A38); counted as 0 here, shown as missing.
+  amountMissing?: boolean;
+  currency?: string;
+  originalAmount?: number | null;
 };
 
 type ReconciliationWarning = {
@@ -34,8 +38,14 @@ const dollarFormatter = new Intl.NumberFormat("en-US", {
 });
 
 export function YearBreakdown({ year }: YearBreakdownProps) {
-  const parsedTransactions = reportableTransactionsSchema.safeParse(year.reportableTransactions);
-  const transactions = parsedTransactions.success ? parsedTransactions.data : null;
+  // P0-4: rows are customer drafts; read them the way the generator does.
+  const transactions: ReportableTransaction[] | null = Array.isArray(year.reportableTransactions)
+    ? toPartVRows(year.reportableTransactions).map((row) => ({
+        ...row,
+        amountCents: row.amountCents ?? 0,
+        amountMissing: row.amountCents === null,
+      }))
+    : null;
   const categorySubtotals = transactions ? subtotalByCategory(transactions) : [];
   const grandTotalCents = transactions
     ? transactions.reduce((sum, tx) => sum + Math.abs(tx.amountCents), 0)
@@ -125,7 +135,12 @@ export function YearBreakdown({ year }: YearBreakdownProps) {
                       </td>
                       <td className="py-2 pr-3 text-slate-700">{tx.category}</td>
                       <td className="py-2 text-right tabular-nums text-slate-900">
-                        {formatUsd(Math.abs(tx.amountCents))}
+                        {tx.amountMissing ? <span className="text-red-700">missing (A38)</span> : formatUsd(Math.abs(tx.amountCents))}
+                        {tx.currency && tx.currency !== "USD" ? (
+                          <span className="block text-xs text-slate-500">
+                            {tx.originalAmount ?? "?"} {tx.currency}
+                          </span>
+                        ) : null}
                       </td>
                     </tr>
                   ))}

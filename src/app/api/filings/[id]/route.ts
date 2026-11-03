@@ -16,7 +16,6 @@ import {
   makeYearDataSchema,
   makeYearScopeSchema,
   makeOwnerPaidCostsSchema,
-  reportableTransactionsSchema,
   zeroConfirmationsSchema,
   nonCashTransfersSchema,
   looksLikeUsItin,
@@ -26,6 +25,7 @@ import {
   isYearDelinquent,
   type ExtensionFacts,
 } from "@/lib/schemas";
+import { toPartVRows, type PartVRow } from "@/lib/partV";
 
 // Server-side backstop for the incremental wizard PATCH. Reuses the SAME field
 // rules the wizard enforces client-side (entitySchema + ownerBaseSchema) so
@@ -630,7 +630,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     distributions: number;
     otherTransactionsNote: unknown;
     noReportableTransactions: boolean;
-    cleanTransactions: z.infer<typeof reportableTransactionsSchema> | undefined;
+    cleanTransactions: PartVRow[] | undefined;
     replaceReportableTransactions: boolean;
     cleanOwnerPaidCosts: z.infer<ReturnType<typeof makeOwnerPaidCostsSchema>> | undefined;
     cleanZeroConfirmations: z.infer<typeof zeroConfirmationsSchema> | undefined;
@@ -670,21 +670,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
           { status: 400 },
         );
       }
-      // Validate the detailed reportable-transaction rows (Part IV/V). A direct
-      // PATCH could otherwise store amountCents:"abc" → $NaN on the form.
-      let cleanTransactions: z.infer<typeof reportableTransactionsSchema> | undefined;
+      // P0-4 layer (a): Part V rows are customer drafts. Every field may be
+      // partial; what was typed is kept and a bad row is NEVER a 400 (owner
+      // rule: never block paying). toPartVRows makes amountCents a finite
+      // integer or null (never "abc"/NaN); staff see A38/W43-W45.
+      let cleanTransactions: PartVRow[] | undefined;
       if (Array.isArray(y.reportableTransactions) && y.reportableTransactions.length > 0) {
-        const tv = reportableTransactionsSchema.safeParse(y.reportableTransactions);
-        if (!tv.success) {
-          return NextResponse.json(
-            {
-              error: "Invalid reportable transactions",
-              issues: tv.error.issues.map((i) => ({ field: i.path.join("."), message: i.message })),
-            },
-            { status: 400 },
-          );
-        }
-        cleanTransactions = tv.data;
+        cleanTransactions = toPartVRows(y.reportableTransactions);
       }
       const replaceReportableTransactions = yHasKey("replaceReportableTransactions")
         ? y.replaceReportableTransactions === true

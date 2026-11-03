@@ -151,8 +151,10 @@ describe("stored PDF text completeness", () => {
   it("reports notes from any stored year once by field name", () => {
     expect(filingCompletionIssues(filing, [{ taxYear: 2023, otherTransactionsNote: "Latin" }, { taxYear: 2023, otherTransactionsNote: "王小明" }, { taxYear: 2023, otherTransactionsNote: "王小明" }])).toEqual(["otherTransactionsNote"]);
   });
-  it.each(["date", "description", "counterparty", "category"])("rejects stored non-encodable transaction %s", (field) => {
-    expect(filingCompletionIssues(filing, [{ taxYear: 2023, reportableTransactions: [{ ...transaction, [field]: "王小明" }] }])).toEqual([field]);
+  // P0-4: Part V rows are customer drafts; their text never blocks payment
+  // (the generator prints them through toPdfSafe; staff review the package).
+  it.each(["date", "description", "counterparty", "category"])("never flags stored Part V row text (%s)", (field) => {
+    expect(filingCompletionIssues(filing, [{ taxYear: 2023, reportableTransactions: [{ ...transaction, [field]: "王小明" }] }])).toEqual([]);
   });
   it("accepts Latin text, blank/null notes and filings with no optional notes", () => {
     expect(filingCompletionIssues(filing, [{ taxYear: 2023, otherTransactionsNote: "José Müller — consulting", reportableTransactions: [transaction] }, { taxYear: 2023, otherTransactionsNote: "" }, { taxYear: 2023, otherTransactionsNote: null }])).toEqual([]);
@@ -202,7 +204,6 @@ describe("newer stored year text at PATCH and checkout", () => {
     ["rcsWhyMissed", { rcsWhyMissed: "王小明" }],
     ["rcsWhenLearned", { rcsWhenLearned: "王小明" }],
     ["otherTransactionsNote", { otherTransactionsNote: "王小明" }],
-    ["description", { reportableTransactions: [{ ...transaction, description: "王小明" }] }],
     ["valuationMethod", { nonCashTransfers: [{ date: "2023-01-01", direction: "in", description: "Equipment", fairMarketValueCents: 100, valuationMethod: "王小明" }] }],
     ["note", { ownerPaidCosts: [{ date: "2023-01-01", category: "other", amountCents: 100, note: "王小明" }] }],
   ] as const;
@@ -217,6 +218,27 @@ describe("newer stored year text at PATCH and checkout", () => {
     expect(payment.status).toBe(400);
     expect((await payment.json()).issues).toContain(field);
     expect(fake.stripeCreate).not.toHaveBeenCalled();
+  });
+  it("P0-4: incomplete or invalid Part V rows save (200) and still reach Stripe", async () => {
+    const rows = [
+      { description: "Owner capital", amountInput: "abc", category: "contribution" },
+      { dateInput: "31/02/2023", description: "王小明 transfer", amountInput: "1.500", category: "contribution", currency: "EUR" },
+      { amountInput: "12,50", category: "other", paidVia: "TRANSFER" },
+      { date: "2023-05-01", description: "Registered agent", amountCents: 49_00, category: "contribution", paidVia: "OWNER_PAID_PERSONALLY", currency: "Euro", originalAmountInput: "x" },
+      "not even an object",
+    ];
+    const response = await patch({ yearData: [{ taxYear: 2023, reportableTransactions: rows, replaceReportableTransactions: true }] });
+    expect(response.status).toBe(200);
+    const stored = fake.upsert.mock.calls.at(-1)![0].update.reportableTransactions;
+    expect(stored).toHaveLength(5);
+    expect(stored[0]).toMatchObject({ amountCents: null, amountInput: "abc", date: "" });
+    expect(stored[1]).toMatchObject({ amountCents: 150, amountInput: "1.500", dateInput: "31/02/2023", date: "", currency: "EUR" });
+    expect(stored[2]).toMatchObject({ amountCents: 1250, category: "other", paidVia: "TRANSFER" });
+    expect(stored[4]).toMatchObject({ description: "(unreadable row)", amountCents: null });
+    fake.findUnique.mockResolvedValue({ yearData: [{ taxYear: 2023, reportableTransactions: stored }] });
+    const payment = await pay();
+    expect(payment.status).toBe(200);
+    expect(fake.stripeCreate).toHaveBeenCalledOnce();
   });
   it("uses the stored per-year reasonable cause answers when deciding completeness", async () => {
     fake.getOwnedFiling.mockResolvedValue({ ...filing, reasonableCauseNarrative: null });

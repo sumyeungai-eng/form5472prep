@@ -339,7 +339,10 @@ export function filingCompletionIssues(
   ] as const) checkText(field, filing[field]);
   for (const row of detailedYearData) {
     for (const field of ["rcsWhyMissed", "rcsWhenLearned", "otherTransactionsNote"] as const) checkText(field, row[field]);
-    for (const field of ["reportableTransactions", "nonCashTransfers", "ownerPaidCosts"] as const) {
+    // Part V rows (reportableTransactions) are permissive customer drafts since
+    // P0-4: never a reason to refuse payment; the generator prints them through
+    // toPdfSafe and staff see A38/W43-W45.
+    for (const field of ["nonCashTransfers", "ownerPaidCosts"] as const) {
       const entries = row[field];
       if (!Array.isArray(entries)) continue;
       for (const entry of entries) {

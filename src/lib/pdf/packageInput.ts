@@ -8,6 +8,7 @@ import {
 } from "./generatePackage";
 import { decryptPii } from "@/lib/crypto/pii";
 import { normalizeSsn } from "@/lib/crypto/ssn";
+import { toPartVRows } from "@/lib/partV";
 
 type NullablePartial<T> = { [K in keyof T]?: T[K] | null };
 
@@ -186,25 +187,22 @@ function requiredDate(value: Date | string | null | undefined): Date {
   return value instanceof Date ? value : new Date(value ?? 0);
 }
 
-function parseReportableTransactions(value: unknown, taxYear: number): ReportableTx[] {
-  if (!Array.isArray(value)) return [];
-  return value.map((item, index): ReportableTx => {
-    if (!item || typeof item !== "object") {
-      throw new NeedsReviewError(`Tax year ${taxYear}: reportable transaction row ${index + 1} is malformed.`);
-    }
-    const tx = item as Record<string, unknown>;
-    const valid =
-      typeof tx.date === "string" &&
-      typeof tx.description === "string" &&
-      typeof tx.amountCents === "number" &&
-      Number.isFinite(tx.amountCents) &&
-      typeof tx.category === "string" &&
-      (tx.counterparty === undefined || typeof tx.counterparty === "string");
-    if (!valid) {
-      throw new NeedsReviewError(`Tax year ${taxYear}: reportable transaction row ${index + 1} is malformed.`);
-    }
-    return tx as ReportableTx;
-  });
+// P0-4 layer (b): never throws for row content. A row with no valid USD
+// amount is kept with amountMissing (amountCents 0, out of every total, A38);
+// it is never treated as a real $0 payment.
+function parseReportableTransactions(value: unknown, _taxYear: number): ReportableTx[] {
+  return toPartVRows(value).map((row): ReportableTx => ({
+    date: row.date,
+    description: row.description,
+    ...(row.counterparty ? { counterparty: row.counterparty } : {}),
+    amountCents: row.amountCents ?? 0,
+    category: row.category,
+    ...(row.amountCents === null ? { amountMissing: true } : {}),
+    ...(row.paidVia ? { paidVia: row.paidVia } : {}),
+    ...(row.currency ? { currency: row.currency } : {}),
+    ...(row.originalAmount != null ? { originalAmount: row.originalAmount } : {}),
+    ...(row.originalAmountInput ? { originalAmountInput: row.originalAmountInput } : {}),
+  }));
 }
 
 function parseNonCashTransfers(value: unknown, taxYear: number): NonCashTransfer[] {

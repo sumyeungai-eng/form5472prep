@@ -21,6 +21,7 @@ import {
 import type { PackageRecord, PackageRecordYear } from "./generatePackage";
 import { isValidPbaCode } from "@/lib/irsCodes";
 import { validatePackage } from "./validatePackage";
+import { hasFxProblem } from "@/lib/partV";
 
 export type PreflightIssue = { id: string; message: string };
 export type PreflightResult = {
@@ -84,6 +85,7 @@ export async function runPreflight(
   checkA35(record, result);
   checkA36(record, result);
   checkA37(record, result);
+  checkA38(record, result);
   checkW31(record, result);
   checkW32(record, result);
   checkW33(record, result);
@@ -95,6 +97,9 @@ export async function runPreflight(
   checkW40(record, result);
   checkW41(record, result);
   checkW42(record, result);
+  checkW43(record, result);
+  checkW44(record, result);
+  checkW45(record, result);
   await checkA28(pdfBytes, result);
   await checkA30(pdfBytes, record, result);
   await checkRenderedPackage(record, pdfBytes, result);
@@ -363,7 +368,8 @@ function checkA13(record: PackageRecord, result: MutableResult) {
       fail(result, "A13", `Tax year ${year.taxYear}: Part V attached-statement box is not checked.`);
     }
     for (const row of year.partVRows) {
-      if (!row.description?.trim() || Math.abs(row.amountCents) <= 0 || !dateInsidePeriod(row.date, year.taxYear, year.periodStart, year.periodEnd)) {
+      // A missing USD amount is A38's finding (P0-4); A13 keeps the date/description/zero checks.
+      if (!row.description?.trim() || (!row.amountMissing && Math.abs(row.amountCents) <= 0) || !dateInsidePeriod(row.date, year.taxYear, year.periodStart, year.periodEnd)) {
         fail(result, "A13", `Tax year ${year.taxYear}: Part V row is missing a valid date, description, or amount.`);
       }
     }
@@ -856,6 +862,74 @@ function checkW42(record: PackageRecord, result: MutableResult) {
       "W42",
       `Tax year ${year.taxYear}: the verbatim RCS text may be a note to us, not a statement to the IRS: ` +
         `${unique(quotes).join("; ")}. Edit the verbatim text or switch the source to the admin narrative.`,
+    );
+  }
+}
+
+// ── P0-4 Part V line items (staff findings are strict; the customer only saw warnings) ──
+function rowLabel(row: { date: string; description: string }): string {
+  const d = row.description.trim() || "(no description)";
+  return `"${d.length > 60 ? `${d.slice(0, 59)}…` : d}"${row.date ? ` (${row.date})` : ""}`;
+}
+
+// A38: a Part V row has no valid USD amount. It is left out of the totals and
+// prints "MISSING"; enter the amount before release.
+function checkA38(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const missing = year.partVRows.filter((row) => row.amountMissing);
+    if (missing.length === 0) continue;
+    fail(
+      result,
+      "A38",
+      `Tax year ${year.taxYear}: ${missing.length} Part V row${missing.length === 1 ? " has" : "s have"} no USD amount: ` +
+        `${missing.map(rowLabel).join("; ")}. Enter the amount in the Part V line items (Edit filing fields).`,
+    );
+  }
+}
+
+// W43: a contribution or loan row under $100 — often "5.000" typed for 5,000.
+function checkW43(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const small = year.partVRows.filter(
+      (row) =>
+        !row.amountMissing &&
+        // Fees the owner paid personally (registered agent $49) are normally small.
+        !row.legacyOwnerPaid &&
+        row.paidVia !== "OWNER_PAID_PERSONALLY" &&
+        ["contribution", "loan_from_owner", "loan_to_owner"].includes(row.category) &&
+        Math.abs(row.amountCents) > 0 &&
+        Math.abs(row.amountCents) < 100_00,
+    );
+    if (small.length === 0) continue;
+    warn(
+      result,
+      "W43",
+      `Tax year ${year.taxYear}: contribution or loan row${small.length === 1 ? "" : "s"} under $100: ` +
+        `${small.map((row) => `${rowLabel(row)} ${formatCents(Math.abs(row.amountCents))}`).join("; ")}. ` +
+        "Check the client did not mean thousands (\"5.000\" read as $5.00).",
+    );
+  }
+}
+
+// W44: Part V has only a year total for contributions or distributions.
+function checkW44(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    if (!year.partVRows.some((row) => row.totalOnly)) continue;
+    warn(result, "W44", `Tax year ${year.taxYear}: Part V has only a total — ask the client for line items.`);
+  }
+}
+
+// W45: a foreign-currency row with a missing, zero or malformed currency or
+// original amount; no conversion sentence printed for it.
+function checkW45(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const bad = year.partVRows.filter((row) => hasFxProblem(row));
+    if (bad.length === 0) continue;
+    warn(
+      result,
+      "W45",
+      `Tax year ${year.taxYear}: foreign-currency row${bad.length === 1 ? "" : "s"} without a valid currency code and ` +
+        `original amount, so no conversion sentence prints: ${bad.map(rowLabel).join("; ")}.`,
     );
   }
 }

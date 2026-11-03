@@ -1,4 +1,5 @@
 import { toPdfSafe, toWinAnsiVerbatim } from "../pdfText";
+import { fxSentence, PART_V_CATEGORIES, type PaidVia } from "../partV";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { PDFDocument, PDFTextField, StandardFonts, rgb, type PDFFont } from "pdf-lib";
@@ -218,11 +219,22 @@ type Filing = {
 export type PackageInput = Filing;
 
 export type ReportableTx = {
-  date: string; // YYYY-MM-DD
+  date: string; // YYYY-MM-DD, or "" when the customer gave no readable date (never forced to 12/31)
   description: string;
   counterparty?: string;
   amountCents: number; // signed: positive = inflow (contribution), negative = outflow (distribution)
-  category: string; // "contribution" | "distribution" | other
+  category: string; // "contribution" | "distribution" | "loan_from_owner" | "loan_to_owner" | "other"
+  // P0-4 line items. amountMissing: no valid USD amount was given; amountCents
+  // is then 0, the row prints "MISSING", is left out of every total and fails
+  // A38 (staff-blocking). totalOnly: a row synthesised from a bare year total (W44).
+  amountMissing?: boolean;
+  totalOnly?: boolean;
+  // A legacy ownerPaidCosts entry rendered as today (never written for new orders).
+  legacyOwnerPaid?: boolean;
+  paidVia?: PaidVia;
+  currency?: string;
+  originalAmount?: number | null;
+  originalAmountInput?: string;
 };
 
 export type NonCashTransfer = {
@@ -540,7 +552,7 @@ function partVRowsForYear(f: Filing, year: number): ReportableTx[] {
   const yd = f.yearData.find((y) => y.taxYear === year);
   if (!yd) return [];
   const rows = (yd.reportableTransactions ?? []).filter((t) =>
-    ["contribution", "distribution", "loan_from_owner", "loan_to_owner"].includes(t.category),
+    (PART_V_CATEGORIES as readonly string[]).includes(t.category),
   );
   const hasContributionRows = rows.some((t) => t.category === "contribution");
   const hasDistributionRows = rows.some((t) => t.category === "distribution");
@@ -554,6 +566,7 @@ function partVRowsForYear(f: Filing, year: number): ReportableTx[] {
       counterparty: f.ownerName,
       amountCents: Math.round(yd.contributions * 100),
       category: "contribution",
+      totalOnly: true,
     });
   }
   if (!hasDistributionRows && yd.distributions > 0) {
@@ -563,6 +576,7 @@ function partVRowsForYear(f: Filing, year: number): ReportableTx[] {
       counterparty: f.ownerName,
       amountCents: -Math.round(yd.distributions * 100),
       category: "distribution",
+      totalOnly: true,
     });
   }
   for (const cost of yd.ownerPaidCosts ?? []) {
@@ -572,6 +586,7 @@ function partVRowsForYear(f: Filing, year: number): ReportableTx[] {
       counterparty: f.ownerName,
       amountCents: Math.abs(cost.amountCents),
       category: "contribution",
+      legacyOwnerPaid: true,
     });
   }
   return rows;
@@ -1412,6 +1427,7 @@ async function buildSupportingStatement(
   const distributionsTx = allTx.filter((t) => t.category === "distribution");
   const loansFromOwnerTx = allTx.filter((t) => t.category === "loan_from_owner");
   const loansToOwnerTx = allTx.filter((t) => t.category === "loan_to_owner");
+  const otherTx = allTx.filter((t) => t.category === "other");
   const drawnLines: string[] = [];
   const pageLines: string[][] = [[]];
   let currentPageLines = pageLines[0];
@@ -1543,7 +1559,8 @@ async function buildSupportingStatement(
 
   const drawTableRow = (tx: ReportableTx) => {
     const dateStr = formatTxDate(tx.date);
-    const amount = formatMoney(Math.abs(tx.amountCents) / 100);
+    // A38 blocks release; the PDF says so instead of printing a $0.00 payment.
+    const amount = tx.amountMissing ? "MISSING" : formatMoney(Math.abs(tx.amountCents) / 100);
     const desc = fitScheduleDescription(describeTx(tx), font, COL_DESC_W);
     const rowH = Math.max(14, desc.lines.length * 13 + 2);
     ensureSpace(rowH);
@@ -1624,6 +1641,13 @@ async function buildSupportingStatement(
       loansToOwnerTx,
     );
   }
+  if (otherTx.length > 0) {
+    drawTransactionSection(
+      "Other Transactions with Foreign Owner",
+      `Total Other Transactions, Tax Year ${year}`,
+      otherTx,
+    );
+  }
   // ---- Grand total row ---- (heading first, then the total row it labels;
   // skipped for the one-sentence no-transactions statement above)
   if (!noPartVRows) {
@@ -1632,6 +1656,20 @@ async function buildSupportingStatement(
     y -= 6;
     drawTableTotal(`Total Part V reportable transactions, tax year ${year}`, partVTotalCents(allTx));
     y -= 2;
+  }
+
+  // ---- P0-4: currency conversions and the no-distributions sentence ----
+  const fx = allTx.map((tx) => fxSentence(tx)).filter((t): t is string => t !== null);
+  if (fx.length > 0) {
+    ensureSpace(20);
+    drawParagraph(`Amounts paid in another currency were converted to US dollars as follows. ${fx.join(" ")}`);
+    y -= 6;
+  }
+  // Only when the customer answered the money question for this year (a "No",
+  // or "Yes" with nothing taken out): an unanswered year never gets this claim.
+  if (!noPartVRows && distributionsTx.length === 0 && yd?.zeroConfirmations?.distributions === true) {
+    drawParagraph(`I received no distributions from ${f.llcName} during tax year ${year}.`);
+    y -= 6;
   }
 
   // ---- Other transactions disclosure ----
@@ -1849,11 +1887,23 @@ async function buildPartVIStatement(
 
 // Friendly per-transaction description: use the cleaner of description vs.
 // counterparty, prefer combining when both add signal.
+// First-person "how it was paid" from paidVia (P0-4); none for OTHER/unset.
+function paidViaPhrase(tx: ReportableTx): string | null {
+  if (tx.paidVia === "OWNER_PAID_PERSONALLY") return "paid from my personal funds";
+  if (tx.paidVia !== "TRANSFER") return null;
+  if (tx.category === "distribution" || tx.category === "loan_to_owner") return "transferred to my personal account";
+  if (tx.category === "other") return "paid by bank transfer";
+  return "transferred from my personal account";
+}
+
 function describeTx(tx: ReportableTx): string {
   const d = (tx.description ?? "").trim();
   const c = (tx.counterparty ?? "").trim();
-  if (d && c && !d.toLowerCase().includes(c.toLowerCase())) return `${d} (${c})`;
-  return d || c || "(no description)";
+  const base = d && c && !d.toLowerCase().includes(c.toLowerCase()) ? `${d} (${c})` : d || c;
+  const via = paidViaPhrase(tx);
+  if (!via) return base || "(no description)";
+  if (!base) return via[0].toUpperCase() + via.slice(1);
+  return base.toLowerCase().includes(via) ? base : `${base}, ${via}`;
 }
 
 function formatMoney(dollars: number): string {

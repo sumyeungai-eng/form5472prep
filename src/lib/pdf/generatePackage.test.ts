@@ -409,18 +409,20 @@ describe("generatePackage regressions", () => {
     await expect(generatePackage(F9, finalisedAt)).rejects.toThrow(NeedsReviewError);
   }, PDF_TIMEOUT);
 
-  it("routes malformed transaction and non-cash transfer rows to review with the tax year named", () => {
-    expect(() =>
-      filingToPackageInput({
-        ...F1,
-        yearData: [
-          {
-            ...F1.yearData[0],
-            reportableTransactions: [{ date: "2025-01-01", amountCents: "bad", category: "contribution" }],
-          },
-        ],
-      }),
-    ).toThrow("Tax year 2025: reportable transaction row 1 is malformed.");
+  it("keeps a malformed Part V row flagged (never thrown, never $0) and routes malformed non-cash rows to review", () => {
+    // P0-4 layer (b): payment-time generation must never throw on a Part V row.
+    const mapped = filingToPackageInput({
+      ...F1,
+      yearData: [
+        {
+          ...F1.yearData[0],
+          reportableTransactions: [{ date: "2025-01-01", amountCents: "bad", category: "contribution" }],
+        },
+      ],
+    });
+    expect(mapped.yearData[0].reportableTransactions).toEqual([
+      { date: "2025-01-01", description: "", amountCents: 0, amountMissing: true, category: "contribution" },
+    ]);
 
     expect(() =>
       filingToPackageInput({
