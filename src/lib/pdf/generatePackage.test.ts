@@ -831,6 +831,8 @@ describe("generator 2.3.0: preflight-generator spec", () => {
     ["arranged for", /arranged for/gi],
     ["qualified assistance", /qualified assistance/gi],
     ["entered by customer", /entered by customer/gi],
+    // PR 9 item 12: the statements and the cover letter never say a third party prepared them.
+    ["prepared by", /prepared by/gi],
   ];
   const expectOwnerVoice = (text: string) => {
     for (const [label, pattern] of VOICE_BANS) expect(count(text, pattern), label).toBe(0);
@@ -1278,6 +1280,33 @@ describe("generator 2.3.0: preflight-generator spec", () => {
     expect(begin(2025, form1120_2025FieldMap.taxYearBeginning)).toBe("01/01");
     expect((await runPreflight(pkg.record, pkg.bytes)).failures.filter((f) => f.id === "A06")).toEqual([]);
   }, PDF_TIMEOUT);
+
+  // ── PR 9 item 12: voice bans over every statement AND the cover letter ──
+  it("PR 9 item 12: no 'prepared by' / 'entered by customer' in any statement or the cover letter; a CUSTOMER_VERBATIM body is exempt", async () => {
+    const pkg = await generatePackage(F11, lateCatchUpFinalisedAt);
+    expect(pkg.record.authoredDocuments.some((d) => d.kind === "coverLetter")).toBe(true);
+    for (const doc of pkg.record.authoredDocuments) expectOwnerVoice(doc.lines.join(" "));
+
+    // The customer's own words are printed verbatim and may say anything: only the
+    // text OUTSIDE the verbatim body (headers, signature block, cover letter) is held to the bans.
+    const quote = "My accountant said the return was prepared by his office and entered by customer service.";
+    const verbatim = await generatePackage(
+      withYear(F11, 2024, { rcsSource: "CUSTOMER_VERBATIM", rcsVerbatimText: quote }),
+      lateCatchUpFinalisedAt,
+    );
+    const rcs = verbatim.record.authoredDocuments.find((d) => d.kind === "reasonableCauseStatement" && d.taxYear === 2024)!;
+    const lines = rcs.lines;
+    const bodyStart = lines.findIndex((l) => l.startsWith("Foreign Owner:")) + 1;
+    const bodyEnd = lines.indexOf(AUTHORED_DOC_SIGNATURE_HEADING);
+    const body = lines.slice(bodyStart, bodyEnd).join(" ");
+    expect(count(body, /prepared by/gi)).toBe(1);
+    expect(count(body, /entered by customer/gi)).toBe(1);
+    const outsideBody = [...lines.slice(0, bodyStart), ...lines.slice(bodyEnd)].join(" ");
+    expectOwnerVoice(outsideBody);
+    for (const doc of verbatim.record.authoredDocuments) {
+      if (doc !== rcs) expectOwnerVoice(doc.lines.join(" "));
+    }
+  }, PDF_TIMEOUT * 2);
 
   // ── DoD: the whole two-year package in the owner's voice ──
   it("DoD: two-year late package has no third-person or preparer wording and every statement is signed under penalties of perjury", async () => {
