@@ -139,3 +139,36 @@ describe("Stripe webhook: order-time magic link (release gate)", () => {
     );
   });
 });
+
+// PR 8: paidAt is stamped once on both pay paths, and a failing stamp never
+// blocks payment/fulfilment (owner rule: never block payment).
+describe.each([
+  ["Stripe webhook", "standard", () => webhook(webhookRequest())],
+  ["$0 test checkout", "test", () => checkout(checkoutRequest())],
+])("%s: paidAt stamp", (_name, tier, run) => {
+  function seed() {
+    const row = { ...filing, tier, ownerSsnCiphertext: null };
+    fake.findUnique.mockResolvedValue(row);
+    fake.getOwnedFiling.mockResolvedValue(row);
+  }
+  const isStamp = (args: { data?: Record<string, unknown> }) => args?.data && "paidAt" in args.data;
+
+  it("stamps paidAt only where it is still null", async () => {
+    seed();
+    expect((await run()).status).toBe(200);
+    expect(fake.updateMany).toHaveBeenCalledWith({
+      where: { id: filing.id, paidAt: null },
+      data: { paidAt: expect.any(Date) },
+    });
+  });
+
+  it("still fulfils the order when the paidAt write fails", async () => {
+    seed();
+    fake.updateMany.mockImplementation(async (args: { data?: Record<string, unknown> }) => {
+      if (isStamp(args)) throw new Error("column paidAt does not exist");
+      return { count: 1 };
+    });
+    expect((await run()).status).toBe(200);
+    expect(fake.sendOrderConfirmationEmail).toHaveBeenCalled();
+  });
+});

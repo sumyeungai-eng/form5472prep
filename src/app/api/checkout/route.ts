@@ -18,6 +18,7 @@ import { effectiveDueDateUtc, extensionUnclear, formatDueDate } from "@/lib/sche
 import { filingCompletionIssues, requiresReasonableCause } from "@/lib/completeness";
 import { brandForFiling } from "@/lib/partnerBrand";
 import { createBrandedSession } from "@/lib/stripeCheckoutBranding";
+import { stampPaidAt } from "@/lib/paidAt";
 
 export async function POST(req: Request) {
   const { filingId, email } = await req.json();
@@ -149,6 +150,7 @@ export async function POST(req: Request) {
       where: { id: filing.id },
       data: { status: "PAID", stripePaymentId: "test_no_payment" },
     });
+    await stampPaidAt(filing.id); // never throws
 
     // Refetch with yearData + user so we have everything generatePackage +
     // sendOrderConfirmationEmail need.

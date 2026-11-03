@@ -17,6 +17,7 @@ import { ArchiveCheckbox, ArchiveSelectAll, BulkArchiveBar } from "./BulkArchive
 import { isArchivableStatus } from "@/lib/admin/archive";
 import { ReviewToggle } from "./ReviewToggle";
 import { PreflightSweepButton } from "./PreflightSweepButton";
+import { dueAt, dueLabel, isNotReleased, orderByIds, reviewQueueIds, showsDueChip } from "@/lib/admin/reviewQueue";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Filings · Admin" };
@@ -30,6 +31,7 @@ type SearchParams = {
   awaitingReview?: string;
   partner?: string;
   paid?: string;
+  queue?: string;
 };
 
 // yearData rides along ONLY on the draft view (conditional include below), so
@@ -59,7 +61,10 @@ export default async function AdminFilingsPage({
   // paid=1 narrows to orders money was actually received for, at any stage
   // after checkout (PAID through CONFIRMED, plus FAILED faxes that were paid).
   const paidOnly = searchParams.paid === "1";
-  const draftView = (!statusFilter || statusFilter === "DRAFT" || showHidden) && !paidOnly;
+  // queue=1: the review queue (PR 8) — awaiting-review orders, most urgent
+  // first. Opt-in, so the plain /admin/filings link keeps its meaning.
+  const queueView = searchParams.queue === "1";
+  const draftView = (!statusFilter || statusFilter === "DRAFT" || showHidden) && !paidOnly && !queueView;
   // ready=1 narrows to the drafts checkout would accept — the customers who
   // filled everything in and stopped at the payment step.
   const readyOnly = draftView && searchParams.ready === "1";
@@ -109,9 +114,12 @@ export default async function AdminFilingsPage({
       ],
     });
   }
+  // Ordered + limited in SQL (reviewQueueSql); other filters still narrow it.
+  const queueIds = queueView ? await reviewQueueIds(prisma) : null;
+  if (queueIds) whereParts.push({ id: { in: queueIds } });
   const where: Prisma.FilingWhereInput = { AND: whereParts };
 
-  const filings: FilingRow[] = await prisma.filing.findMany({
+  const fetched: FilingRow[] = await prisma.filing.findMany({
     where,
     include: {
       user: true,
@@ -121,6 +129,8 @@ export default async function AdminFilingsPage({
     orderBy: { updatedAt: "desc" },
     take: 100,
   });
+  const filings = queueIds ? orderByIds(fetched, queueIds) : fetched;
+  const now = new Date();
 
   // Which drafts are actually finished. Uses the SAME helper /api/checkout
   // gates on, so a green pill means "this would have paid if they'd clicked".
@@ -291,6 +301,7 @@ export default async function AdminFilingsPage({
         {awaitingReviewOnly && <input type="hidden" name="awaitingReview" value="1" />}
         {/* Paid narrowing stays sticky while changing search or status. */}
         {paidOnly && <input type="hidden" name="paid" value="1" />}
+        {queueView && <input type="hidden" name="queue" value="1" />}
         <input
           type="text"
           name="q"
@@ -317,6 +328,13 @@ export default async function AdminFilingsPage({
       </form>
 
       <div className="mb-4 text-xs flex gap-4">
+        <Link
+          href={queueView ? "/admin/filings" : "/admin/filings?queue=1"}
+          className={queueView ? "font-medium text-accent hover:underline" : "text-slate-500 hover:text-slate-900 hover:underline"}
+          title="Awaiting review: express first, then pre-flight failed, then oldest payment"
+        >
+          {queueView ? "← All rows" : "Review queue"}
+        </Link>
         <Link href={toggleHref} className="text-slate-500 hover:text-slate-900 hover:underline">
           {showHidden ? "← Hide archived" : "Show hidden"}
         </Link>
@@ -436,6 +454,15 @@ export default async function AdminFilingsPage({
                           Express · under 3 days
                         </span>
                       )}
+                      {isNotReleased(f) && (
+                        <span
+                          className="rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-700"
+                          title="Package generated but not released — the client can't see or sign it yet."
+                        >
+                          Not released
+                        </span>
+                      )}
+                      {showsDueChip(f) && <DueChip due={dueAt(f)} now={now} />}
                       {f.linkedToFilingId && (
                         <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-medium text-indigo-700">
                           Additional return
@@ -474,10 +501,23 @@ export default async function AdminFilingsPage({
 
       {filings.length === 100 && (
         <p className="mt-4 text-xs text-slate-500 text-center">
-          Showing newest 100. Use filters to narrow down.
+          {queueView ? "Showing the 100 most urgent." : "Showing newest 100."} Use filters to narrow down.
         </p>
       )}
     </div>
+  );
+}
+
+function DueChip({ due, now }: { due: Date | null; now: Date }) {
+  const { text, overdue } = dueLabel(due, now);
+  const tone = overdue ? "bg-red-100 text-red-800" : due ? "bg-sky-50 text-sky-800" : "text-slate-400";
+  return (
+    <span
+      className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${tone}`}
+      title={due ? `Ready-to-sign target: ${due.toLocaleString()}` : "Payment time unknown (paid before tracking began)"}
+    >
+      {text}
+    </span>
   );
 }
 

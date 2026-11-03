@@ -22,6 +22,7 @@ import { brandForFiling } from "@/lib/partnerBrand";
 import { notifyApplicationPaid } from "@/lib/applicationNotifications";
 import { supersedeDraftsFor } from "@/lib/supersedeDrafts";
 import { requiresReasonableCause } from "@/lib/completeness";
+import { stampPaidAt } from "@/lib/paidAt";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -148,6 +149,7 @@ export async function POST(req: Request) {
         const delivered = await notifyPaidOrderTelegram(session);
         return NextResponse.json({ received: true, deduplicated: true, telegramDelivered: delivered }, { status: delivered ? 200 : 500 });
       }
+      await stampPaidAt(filingId); // never throws; no-op if the return page stamped first
       const filing = await prisma.filing.findUnique({
         where: { id: filingId },
         include: { user: true },

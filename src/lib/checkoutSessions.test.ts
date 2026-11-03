@@ -296,7 +296,9 @@ describe("webhook route with fake mailer", () => {
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ received: true, telegramDelivered: true });
     expect(fake.sendEmail).not.toHaveBeenCalled();
-    expect(fake.updateMany).toHaveBeenCalledOnce();
+    // The idempotency claim, then the PR 8 paidAt stamp (only-if-null).
+    expect(fake.updateMany).toHaveBeenCalledTimes(2);
+    expect(fake.updateMany).toHaveBeenLastCalledWith({ where: { id: filing.id, paidAt: null }, data: { paidAt: expect.any(Date) } });
     expect(fake.update).toHaveBeenCalledWith({ where: { id: filing.id }, data: { amountPaid: 8900 } });
     expect(fake.generatePackage).toHaveBeenCalledOnce();
     expect(fake.sendOrderConfirmationEmail).toHaveBeenCalledOnce();

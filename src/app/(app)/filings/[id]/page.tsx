@@ -21,6 +21,7 @@ import { ssnEntryState } from "@/lib/ownerSsn";
 import { clientMaySeeSignedPdf, releasedPdfKey } from "@/lib/pdf/packageKeys";
 import { FilingReviewSummary } from "@/components/FilingReviewSummary";
 import { SendCorrection } from "@/components/SendCorrection";
+import { stampPaidAt } from "@/lib/paidAt";
 
 // Statuses where the filing is paid but not yet acknowledged as complete —
 // the window in which the customer still cares "will this land before my
@@ -81,6 +82,7 @@ export default async function FilingDetailPage({
         where: { id: filing.id },
         data: { status: "PAID" },
       });
+      await stampPaidAt(filing.id); // never throws; idempotent with the webhook
       try {
         await supersedeDraftsFor(filing.id);
       } catch (err) {

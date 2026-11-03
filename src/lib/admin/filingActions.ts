@@ -1,3 +1,4 @@
+import { stampPaidAt } from "@/lib/paidAt";
 import { loadFaxClientCopy } from "@/lib/fax/clientCopy";
 import { isPdfEncodable, PDF_TEXT_MESSAGE } from "@/lib/pdfText";
 import { Prisma, type FilingStatus } from "@prisma/client";
@@ -1222,6 +1223,7 @@ export async function runFilingAction(
         data: { status: nextStatus },
         select: { id: true },
       });
+      if (nextStatus === "PAID") await stampPaidAt(filing.id); // offline/manual payment; set once
       await logFilingChange({
         filingId: filing.id,
         adminId: ctx.adminId,

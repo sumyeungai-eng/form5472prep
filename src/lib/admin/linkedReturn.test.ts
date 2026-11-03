@@ -12,6 +12,7 @@ const original = {
   linkedToFilingId: null,
   supersededAt: null,
   status: "SIGNED_UPLOADED",
+  paidAt: new Date("2026-10-20T12:00:00Z"),
   userId: "u1",
   partnerId: null,
   tier: "standard",
@@ -102,7 +103,9 @@ describe("createLinkedReturn", () => {
     ]) {
       expect(data, key).not.toHaveProperty(key);
     }
-    const allowed = new Set<string>([...LINKED_RETURN_COPY_FIELDS, "linkedToFilingId", "status", "amountPaid", "taxYears", "inReview", "reviewStartedAt"]);
+    const allowed = new Set<string>([...LINKED_RETURN_COPY_FIELDS, "linkedToFilingId", "status", "amountPaid", "taxYears", "inReview", "reviewStartedAt", "paidAt"]);
+    // PR 8: the extra return inherits the root order's payment time (due clock).
+    expect(data.paidAt).toEqual(new Date("2026-10-20T12:00:00Z"));
     expect(Object.keys(data).filter((k) => !allowed.has(k))).toEqual([]);
     expect(log.logFilingChange).toHaveBeenCalledTimes(2);
   });

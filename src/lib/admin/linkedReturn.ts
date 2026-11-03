@@ -105,6 +105,8 @@ export async function createLinkedReturn(args: {
       ...(copied as Prisma.FilingUncheckedCreateInput),
       linkedToFilingId: root.id,
       status: "PAID",
+      // Same order, same payment: the extra return is due on the root's clock.
+      paidAt: root.paidAt,
       amountPaid: 0,
       taxYears: args.taxYears,
       inReview: true,

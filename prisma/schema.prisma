@@ -124,6 +124,10 @@ model Filing {
   amountPaid      Int     @default(0)
   stripeSessionId String?
   stripePaymentId String?
+  // First time payment was recognised (webhook, return page, $0 test path,
+  // admin status->PAID; linked returns copy the root's). Set once, only when
+  // null — src/lib/paidAt.ts. Drives the admin review-queue due chip.
+  paidAt          DateTime?
 
   // Entity info
   llcName             String?
