@@ -55,17 +55,39 @@ describe("badges", () => {
 describe("review queue order", () => {
   it("sorts in SQL before LIMIT: express, pre-flight failed, oldest paidAt", () => {
     const sql = reviewQueueSql().sql.replace(/\s+/g, " ");
-    const express = sql.indexOf(`CASE WHEN "tier" = 'express'`);
-    const failed = sql.indexOf(`CASE WHEN "preflightStatus" = 'failed'`);
-    const paid = sql.indexOf(`"paidAt" ASC NULLS LAST`);
+    const express = sql.indexOf(`CASE WHEN f."tier" = 'express'`);
+    const failed = sql.indexOf(`CASE WHEN f."preflightStatus" = 'failed'`);
+    const paid = sql.indexOf(`f."paidAt" ASC NULLS LAST`);
     const limit = sql.indexOf("LIMIT");
     expect(sql).toContain("ORDER BY");
     expect(express).toBeGreaterThan(sql.indexOf("ORDER BY"));
     expect(express).toBeLessThan(failed);
     expect(failed).toBeLessThan(paid);
     expect(paid).toBeLessThan(limit);
-    expect(sql).toContain(`"reviewApprovedAt" IS NULL`);
+    expect(sql).toContain(`f."reviewApprovedAt" IS NULL`);
     expect(reviewQueueSql().values).toEqual([100]);
+  });
+
+  it("applies search/status/partner/review filters inside the SQL, before LIMIT, as bound params", () => {
+    const q = "Acme%_'; DROP TABLE x;--";
+    const built = reviewQueueSql({ q, status: "PDF_GENERATED", partner: true, inReview: true });
+    const sql = built.sql.replace(/\s+/g, " ");
+    const where = sql.indexOf("WHERE");
+    const order = sql.indexOf("ORDER BY");
+    for (const frag of [`f."llcName" ILIKE`, `u."email" ILIKE`, `f."id" =`, `f."partnerId" IS NOT NULL`, `f."inReview" = true`, `CAST(`]) {
+      const at = sql.indexOf(frag);
+      expect(at, frag).toBeGreaterThan(where);
+      expect(at, frag).toBeLessThan(order);
+    }
+    expect(sql).not.toContain("Acme"); // never interpolated
+    expect(built.values).toEqual(["PDF_GENERATED", "%Acme\\%\\_'; DROP TABLE x;--%", "%Acme\\%\\_'; DROP TABLE x;--%", q, 100]);
+  });
+
+  it("direct-only filter and no-filter variants", () => {
+    expect(reviewQueueSql({ partner: false }).sql).toContain(`f."partnerId" IS NULL`);
+    const plain = reviewQueueSql();
+    expect(plain.sql).not.toContain("ILIKE");
+    expect(plain.values).toEqual([100]);
   });
 
   it("restores the SQL order after findMany", () => {

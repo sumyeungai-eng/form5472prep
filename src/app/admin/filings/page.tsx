@@ -114,8 +114,16 @@ export default async function AdminFilingsPage({
       ],
     });
   }
-  // Ordered + limited in SQL (reviewQueueSql); other filters still narrow it.
-  const queueIds = queueView ? await reviewQueueIds(prisma) : null;
+  // Ordered, filtered and limited in SQL (reviewQueueSql).
+  // The list filters go INTO the queue SQL so they apply before its LIMIT.
+  const queueIds = queueView
+    ? await reviewQueueIds(prisma, {
+        q: q || undefined,
+        status: statusFilter && isFilingStatus(statusFilter) ? statusFilter : undefined,
+        partner: partnerFilter,
+        inReview: reviewOnly || undefined,
+      })
+    : null;
   if (queueIds) whereParts.push({ id: { in: queueIds } });
   const where: Prisma.FilingWhereInput = { AND: whereParts };
 
@@ -189,6 +197,7 @@ export default async function AdminFilingsPage({
   const toggleQuery = new URLSearchParams();
   if (statusFilter) toggleQuery.set("status", statusFilter);
   if (q) toggleQuery.set("q", q);
+  if (queueView) toggleQuery.set("queue", "1");
   if (readyOnly) toggleQuery.set("ready", "1");
   if (reviewOnly) toggleQuery.set("review", "1");
   if (awaitingReviewOnly) toggleQuery.set("awaitingReview", "1");
@@ -214,6 +223,7 @@ export default async function AdminFilingsPage({
   const reviewQuery = new URLSearchParams();
   if (statusFilter) reviewQuery.set("status", statusFilter);
   if (q) reviewQuery.set("q", q);
+  if (queueView) reviewQuery.set("queue", "1");
   if (showHidden) reviewQuery.set("hidden", "1");
   if (readyOnly) reviewQuery.set("ready", "1");
   if (awaitingReviewOnly) reviewQuery.set("awaitingReview", "1");
@@ -227,6 +237,7 @@ export default async function AdminFilingsPage({
   const awaitingReviewQuery = new URLSearchParams();
   if (statusFilter) awaitingReviewQuery.set("status", statusFilter);
   if (q) awaitingReviewQuery.set("q", q);
+  if (queueView) awaitingReviewQuery.set("queue", "1");
   if (showHidden) awaitingReviewQuery.set("hidden", "1");
   if (readyOnly) awaitingReviewQuery.set("ready", "1");
   if (reviewOnly) awaitingReviewQuery.set("review", "1");
@@ -240,6 +251,7 @@ export default async function AdminFilingsPage({
   const paidQuery = new URLSearchParams();
   if (statusFilter) paidQuery.set("status", statusFilter);
   if (q) paidQuery.set("q", q);
+  if (queueView) paidQuery.set("queue", "1");
   if (showHidden) paidQuery.set("hidden", "1");
   if (reviewOnly) paidQuery.set("review", "1");
   if (awaitingReviewOnly) paidQuery.set("awaitingReview", "1");
@@ -254,6 +266,7 @@ export default async function AdminFilingsPage({
     const query = new URLSearchParams();
     if (statusFilter) query.set("status", statusFilter);
     if (q) query.set("q", q);
+    if (queueView) query.set("queue", "1");
     if (showHidden) query.set("hidden", "1");
     if (readyOnly) query.set("ready", "1");
     if (reviewOnly) query.set("review", "1");

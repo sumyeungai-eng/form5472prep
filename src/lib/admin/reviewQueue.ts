@@ -62,29 +62,55 @@ export function showsDueChip(f: { status: FilingStatus; reviewApprovedAt: Date |
   return f.status !== "DRAFT" && !f.reviewApprovedAt;
 }
 
+// The list filters that also apply in the queue. They go into the SQL WHERE
+// (as bound parameters, never interpolated) so they narrow the candidates
+// BEFORE the LIMIT — otherwise a search for order #101 would find nothing.
+export type ReviewQueueFilters = {
+  q?: string;
+  status?: FilingStatus;
+  partner?: boolean; // true = partner filings only, false = direct only
+  inReview?: boolean; // true = "In review only"
+};
+
+function likeContains(q: string): string {
+  return `%${q.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+}
+
 // Ordered in SQL BEFORE the LIMIT so the 100 rows shown are the 100 most
 // urgent, not the newest 100 re-sorted: express first, then pre-flight
 // failed, then oldest payment (unknown paidAt last), then oldest order.
 // Scope = awaiting review (same rule as the "Awaiting review" filter).
-export function reviewQueueSql(): Prisma.Sql {
+export function reviewQueueSql(filters: ReviewQueueFilters = {}): Prisma.Sql {
+  const extra: Prisma.Sql[] = [];
+  if (filters.status) extra.push(Prisma.sql`AND f."status" = CAST(${filters.status} AS "FilingStatus")`);
+  if (filters.partner === true) extra.push(Prisma.sql`AND f."partnerId" IS NOT NULL`);
+  if (filters.partner === false) extra.push(Prisma.sql`AND f."partnerId" IS NULL`);
+  if (filters.inReview) extra.push(Prisma.sql`AND f."inReview" = true`);
+  if (filters.q) {
+    const like = likeContains(filters.q);
+    extra.push(Prisma.sql`AND (f."llcName" ILIKE ${like} OR u."email" ILIKE ${like} OR f."id" = ${filters.q})`);
+  }
   return Prisma.sql`
-    SELECT "id" FROM "Filing"
-    WHERE "status" IN ('PAID', 'PDF_GENERATED')
-      AND "reviewApprovedAt" IS NULL
-      AND "adminHidden" = false
-      AND "supersededAt" IS NULL
+    SELECT f."id" FROM "Filing" f
+    LEFT JOIN "User" u ON u."id" = f."userId"
+    WHERE f."status" IN ('PAID', 'PDF_GENERATED')
+      AND f."reviewApprovedAt" IS NULL
+      AND f."adminHidden" = false
+      AND f."supersededAt" IS NULL
+      ${extra.length ? Prisma.join(extra, " ") : Prisma.empty}
     ORDER BY
-      CASE WHEN "tier" = 'express' THEN 0 ELSE 1 END,
-      CASE WHEN "preflightStatus" = 'failed' THEN 0 ELSE 1 END,
-      "paidAt" ASC NULLS LAST,
-      "createdAt" ASC
+      CASE WHEN f."tier" = 'express' THEN 0 ELSE 1 END,
+      CASE WHEN f."preflightStatus" = 'failed' THEN 0 ELSE 1 END,
+      f."paidAt" ASC NULLS LAST,
+      f."createdAt" ASC
     LIMIT ${REVIEW_QUEUE_LIMIT}`;
 }
 
-export async function reviewQueueIds(db: {
-  $queryRaw: <T>(query: Prisma.Sql) => Prisma.PrismaPromise<T>;
-}): Promise<string[]> {
-  const rows = await db.$queryRaw<{ id: string }[]>(reviewQueueSql());
+export async function reviewQueueIds(
+  db: { $queryRaw: <T>(query: Prisma.Sql) => Prisma.PrismaPromise<T> },
+  filters: ReviewQueueFilters = {},
+): Promise<string[]> {
+  const rows = await db.$queryRaw<{ id: string }[]>(reviewQueueSql(filters));
   return rows.map((r) => r.id);
 }
 
