@@ -12,7 +12,7 @@ deploy`, which applies the new additive column.
 
 | Checkout / branch | Owns |
 |---|---|
-| `~/Developer/f5472-wt/gen-fix`, branch `fix/generator-spec-2026-11` (from `origin/main` 5260393) | every file in `5260393..HEAD` |
+| `~/Developer/f5472-wt/gen-fix`, branch `fix/generator-spec-2026-11` (rebased 2026-11-03 onto `origin/main` incl. `20261102120000_extension_autogen`) | every file in `origin/main..HEAD` |
 | `~/Documents/Claude work/form5472` (main checkout) | not touched (another session's uncommitted work) |
 | Parallel lanes `sys-p0`, `express-3d`, `f7004-auto` | not touched. Release-gate files edited here, minimally, because the fix needs them: `prisma/schema.prisma` (one column), `src/lib/admin/filingActions.ts` (allowlist, two selects, one validation branch for `llcFormationState`). Expect a trivial merge with `sys-p0`. |
 
@@ -20,12 +20,15 @@ deploy`, which applies the new additive column.
 
 | Commit | Change |
 |---|---|
-| `81fa5f8` | Triage of every spec item against generator 2.3.1. |
-| `f460cef` | **P0-2** `Filing.llcFormationState` (migration `20261103120000_llc_formation_state`, `ALTER TABLE "Filing" ADD COLUMN "llcFormationState" TEXT`; validated with `prisma migrate diff` against HEAD's schema). Wizard field next to the formation date, optional with an amber note; PATCH stores the 2-letter code or null, never 400; admin-editable (Edit filing fields + LLC details card); copied to linked and prefilled returns. RCS: "I formed X on DATE in <state>" only from that field; clause omitted when missing. **P1-8** FTIN printed with whitespace removed. Presets moved to `src/lib/irsCodes/presets.ts`. `GENERATOR_VERSION` 2.4.0. |
-| `4246c11` | **§5 validator** `src/lib/pdf/validatePackage.ts` + wiring as the last step of `runPreflight` (A39–A51, W46–W47; see triage). |
-| `bb9b2d3` | §6 acceptance on the synthetic twin `src/lib/pdf/__fixtures__/exampleImpact.ts` + negative tests (`validatePackage.test.ts`). |
-| `226c981` | tsc fix: `matchAll` iterated via `Array.from` (ES5 target). |
-| (this commit) | Session log + `CLAUDE.md` pointer line. |
+| `e6db302` | Triage of every spec item against generator 2.3.1. |
+| `fb7c7c5` | **P0-2** `Filing.llcFormationState` (migration `20261103120000_llc_formation_state`, `ALTER TABLE "Filing" ADD COLUMN "llcFormationState" TEXT`; validated with `prisma migrate diff` against HEAD's schema). Wizard field next to the formation date, optional with an amber note; PATCH stores the 2-letter code or null, never 400; admin-editable (Edit filing fields + LLC details card); copied to linked and prefilled returns. RCS: "I formed X on DATE in <state>" only from that field; clause omitted when missing. **P1-8** FTIN printed with whitespace removed. Presets moved to `src/lib/irsCodes/presets.ts`. `GENERATOR_VERSION` 2.4.0. |
+| `61b6c0e` | **§5 validator** `src/lib/pdf/validatePackage.ts` + wiring as the last step of `runPreflight` (A39–A51, W46–W47; see triage). |
+| `c0ffbdf` | §6 acceptance on the synthetic twin `src/lib/pdf/__fixtures__/exampleImpact.ts` + negative tests (`validatePackage.test.ts`). |
+| `261a7f7` | tsc fix: `matchAll` iterated via `Array.from` (ES5 target). |
+| `17ee9e3`, `7224389` | Session log + `CLAUDE.md` pointer line. |
+| `f48cae6` | Codex review P1: A40 now requires the name/EIN/year once per authored DOCUMENT and checks every printed EIN and "Reporting Corporation:" name for consistency. A long RCS continuation page has no header and used to fail A40 (blocking release/fax). Regression: two-page RCS passes; a stray different EIN fails. |
+| `7888361` | Codex review P2: admin v1 filing detail (`api/admin/v1/filings/[id]`) selects and returns `llcFormationState`, with a test. |
+| `eb50de2` | Migration renamed `20261103120000_llc_formation_state` so timestamps stay strictly increasing after `20261102120000_extension_autogen`. |
 
 ## Evidence
 
@@ -34,7 +37,7 @@ deploy`, which applies the new additive column.
   `filingActions`, `linkedReturn`, `api/filings`, wizard, schemas, checkout,
   pay-path): **565/565 passed**, exit 0. Snapshots unchanged (existing fixtures
   set `llcFormationState` equal to their old `llcState`).
-- `npx tsc --noEmit -p .`: exit 0 (after `226c981`).
+- `npx tsc --noEmit -p .`: exit 0 (after `261a7f7`; re-run after the rebase: exit 0).
 - `MAGIC_LINK_SECRET=x SESSION_SECRET=placeholder-... npx next build`: exit 0
   (prisma "DATABASE_URL not found" lines during prerender are the usual
   no-DB local noise).
