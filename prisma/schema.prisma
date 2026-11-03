@@ -652,7 +652,7 @@ model EinApplication {
   receivedFaxes ReceivedFax[]
 }
 
-// Form 7004 extension filing order ($79, EXTENSION_PRICE_CENTS). Fulfilment v1
+// Form 7004 extension filing order ($19, EXTENSION_PRICE_CENTS). Fulfilment v1
 // is manual: staff prepare the 7004 ("Foreign-owned U.S. DE", Form 1120 code
 // 12), fax it to the IRS Ogden PIN Unit and mark the order COMPLETED. Every
 // intake field except email may be blank (never block payment); staff follow

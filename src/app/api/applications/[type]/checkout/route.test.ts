@@ -26,13 +26,13 @@ beforeEach(() => {
 });
 
 describe("Form 7004 extension checkout", () => {
-  it("charges EXTENSION_PRICE_CENTS (7900) and returns to the 7004 apply page", async () => {
+  it("charges EXTENSION_PRICE_CENTS (1900) and returns to the 7004 apply page", async () => {
     const res = await checkout("extension");
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ url: "https://checkout.stripe.com/c/cs_ext" });
 
     const [params, options] = branded.mock.calls[0];
-    expect(params.line_items[0].price_data.unit_amount).toBe(7900);
+    expect(params.line_items[0].price_data.unit_amount).toBe(1900);
     expect(params.line_items[0].price_data.product_data.name).toBe("Form 7004 extension filing");
     expect(params.metadata).toEqual({ applicationType: "extension", applicationId: "ext1" });
     expect(params.customer_email).toBe("owner@example.com");

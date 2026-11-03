@@ -51,8 +51,9 @@ export const EXPRESS_PROMISE = `Ready for you to check and sign in ${EXPRESS_TUR
 export const EIN_PRICE_CENTS = 14900;
 export const ITIN_PRICE_CENTS = 34900;
 // Form 7004 extension filing (prepared + faxed to the IRS Ogden PIN Unit),
-// per LLC per tax year. Owner decision 2026-10-28.
-export const EXTENSION_PRICE_CENTS = 7900;
+// per LLC per tax year. Owner decision 2026-10-28 ($79); cut to $19 on
+// 2026-11-03 to match the self-serve e-file tools ($17.99–$19.95).
+export const EXTENSION_PRICE_CENTS = 1900;
 
 const SHARED_FEATURES = [
   "Reviewed by a PTIN-holding tax accountant before submission",
