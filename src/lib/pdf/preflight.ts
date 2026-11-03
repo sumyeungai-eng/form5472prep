@@ -1139,10 +1139,16 @@ export function isValidBrazilianCpf(value: string): boolean {
 // W39: owner address quality (spec item 13). The street line prints exactly as
 // entered (city and region are display-cased by the generator), so flag an
 // all-lowercase street and a bare trailing number with no unit label
-// ("12 Main St 5"). The address is never rewritten automatically. A17 keeps
-// the missing state/postal check.
+// ("12 Main St 5", "Main Street 5"). The address is never rewritten
+// automatically. A17 keeps the missing state/postal check.
+// A unit label ANYWHERE in the street (any comma part) silences the trailing
+// number check, and a comma part holding a local numbering term (Thai Moo / Mu
+// / Moo Ban / Soi / Tambon, Japanese chome / -ban / -go, whole words) is not a
+// missing-unit case: "280 Moo 5, Room P6" is fine.
 const UNIT_LABEL = /^(?:apt|apartment|unit|suite|ste|flat|fl|floor|room|rm|block|blk|tower|bldg|building|no|nr|lot|box|#)\.?$/i;
 const NUMBERED_ROAD = /^(?:route|rte|highway|hwy|interstate|road|rd)\.?$/i;
+const LOCAL_NUMBERING = /\b(?:moo ban|moo|mu|soi|tambon|chome)\b|\d-(?:ban|go)\b/i;
+const isUnitWord = (word: string) => UNIT_LABEL.test(word) || /^#\w/.test(word);
 
 function checkW39(record: PackageRecord, result: MutableResult) {
   const street = record.ownerStreet?.trim();
@@ -1156,12 +1162,13 @@ function checkW39(record: PackageRecord, result: MutableResult) {
         "capitalisation with the client and correct it by hand (it is never rewritten automatically).",
     );
   }
+  if (street.split(/[\s,]+/).some(isUnitWord)) return;
   for (const segment of street.split(",")) {
     const words = segment.trim().split(/\s+/);
-    if (words.length < 3 || !/^\d+[A-Za-z]?$/.test(words[0])) continue;
+    if (words.length < 2 || LOCAL_NUMBERING.test(segment)) continue;
     const last = words[words.length - 1];
     const before = words[words.length - 2];
-    if (/^\d+[A-Za-z]?$/.test(last) && !UNIT_LABEL.test(before) && !NUMBERED_ROAD.test(before) && !/\d/.test(before)) {
+    if (/^\d+[A-Za-z]?$/.test(last) && !NUMBERED_ROAD.test(before) && !/\d/.test(before)) {
       warn(
         result,
         "W39",

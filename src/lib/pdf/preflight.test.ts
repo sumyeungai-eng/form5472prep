@@ -805,10 +805,46 @@ describe("pre-flight 2.3.0: owner data warnings (items 11, 13)", () => {
     bare.ownerStreet = "12 Main St 5";
     expect((await preflightOf(bare)).warnings.find((w) => w.id === "W39")?.message).toContain('ends "St 5"');
 
-    for (const street of ["12 Main St Apt 5", "12 Main St #5", "88 Queen Road Central, Suite 1200", "Calle Mayor 5", "12 Route 66"]) {
+    for (const street of ["12 Main St Apt 5", "12 Main St #5", "88 Queen Road Central, Suite 1200", "12 Route 66"]) {
       const ok = clone(goodRecord);
       ok.ownerStreet = street;
       expect(ids((await preflightOf(ok)).warnings), street).not.toContain("W39");
+    }
+  });
+
+  // PR 6: whole-street unit scan, local numbering terms, trailing house number.
+  it("W39 does not warn on Thai and Japanese numbering terms (whole words), or when a unit label sits in a later comma part", async () => {
+    const quiet = [
+      "280 Moo 5, Room P6, Example Subdistrict", // later Room, plus Moo
+      "99 Moo Ban Example 7",
+      "12 Mu 4",
+      "45 Soi Example 9",
+      "10 Tambon Example 3",
+      "Example-cho 1-chome 5",
+      "Example Heights 2-ban 7",
+      "Example Building 3-go 4",
+      "12 Main St 5, Apt 3", // unit label in the later part silences the earlier bare number
+      "77 Example Rd 5, Floor 2",
+      "12 Main St 5, #4B",
+    ];
+    for (const street of quiet) {
+      const ok = clone(goodRecord);
+      ok.ownerStreet = street;
+      expect(ids((await preflightOf(ok)).warnings), street).not.toContain("W39");
+    }
+  });
+
+  it("W39 still warns on a trailing house number with no unit anywhere, including 'Main Street 5', and matches local terms as whole words", async () => {
+    for (const [street, tail] of [
+      ["Main Street 5", "Street 5"],
+      ["Calle Mayor 5", "Mayor 5"],
+      ["12 Main St 5, Example City", "St 5"],
+      ["Smoothie Avenue 8", "Avenue 8"], // "Mu"/"Soi" inside other words are not local terms
+      ["Gomoo-ban Road 8 Lane 3", "Lane 3"],
+    ] as const) {
+      const bad = clone(goodRecord);
+      bad.ownerStreet = street;
+      expect((await preflightOf(bad)).warnings.find((w) => w.id === "W39")?.message, street).toContain(`ends "${tail}"`);
     }
   });
 
