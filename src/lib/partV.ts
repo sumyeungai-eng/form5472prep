@@ -123,9 +123,14 @@ export function toPartVRow(item: unknown): PartVRow {
   };
 }
 
+// Never drops a row: every captured row reaches storage, the generator and staff.
 export function toPartVRows(value: unknown): PartVRow[] {
-  return Array.isArray(value) ? value.slice(0, 500).map(toPartVRow) : [];
+  return Array.isArray(value) ? value.map(toPartVRow) : [];
 }
+
+// Rule on a stored row that carries a bare year total kept by "Convert to line
+// items"; the generator treats it as total-only (W44).
+export const CONVERTED_TOTAL_RULE = "Year total kept at conversion";
 
 // A row in a currency other than USD (or with an original amount typed).
 export function isForeignCurrencyRow(row: { currency?: string; originalAmount?: number | null; originalAmountInput?: string }): boolean {
@@ -178,4 +183,52 @@ export function partVRowWarnings(row: PartVRow, taxYear: number, formationDate?:
     out.push(`Check the amount "${row.amountInput}": it reads as under $100. If you meant thousands, type it without the separator.`);
   }
   return out;
+}
+
+// ── "Convert to line items" (admin, explicit only) ─────────────────────────
+const LEGACY_COST_LABELS: Record<string, string> = {
+  state_filing_fee: "State filing fee",
+  registered_agent: "Registered agent fee",
+  formation_or_ein_service: "Formation or EIN service fee",
+  software_subscriptions: "Software or subscription costs",
+  initial_bank_funding: "Initial bank funding",
+};
+
+// One legacy owner-paid cost as a Part V row (same amount and date; paid
+// personally, except initial bank funding = transfer).
+export function legacyCostToLineItem(cost: Record<string, unknown>): PartVRow {
+  const category = String(cost.category ?? "other");
+  const note = typeof cost.note === "string" ? cost.note.trim() : "";
+  const cents = typeof cost.amountCents === "number" && Number.isFinite(cost.amountCents) ? Math.abs(Math.round(cost.amountCents)) : null;
+  return {
+    ...toPartVRow({ date: cost.date, description: LEGACY_COST_LABELS[category] ?? (note || "Cost"), category: "contribution" }),
+    amountCents: cents,
+    paidVia: category === "initial_bank_funding" ? "TRANSFER" : "OWNER_PAID_PERSONALLY",
+    rule: "Converted from owner-paid costs",
+  };
+}
+
+// The year's rows after conversion. A bare contribution total that had no
+// contribution rows printed through the generator's fallback; converted rows
+// are contribution rows and would switch that fallback off, so the total is
+// kept as its own row (dated like the fallback) and the Part V total does not
+// change. Never matched or netted by amount.
+export function convertLegacyCosts(
+  before: PartVRow[],
+  contributionsTotal: number,
+  costs: Array<Record<string, unknown>>,
+  periodEndIso: string,
+): PartVRow[] {
+  const totalCents = Math.round((Number.isFinite(contributionsTotal) ? contributionsTotal : 0) * 100);
+  const keepTotal: PartVRow[] =
+    totalCents > 0 && !before.some((row) => row.category === "contribution")
+      ? [{
+          date: periodEndIso,
+          description: "Capital contributions during the tax year (total)",
+          amountCents: totalCents,
+          category: "contribution",
+          rule: CONVERTED_TOTAL_RULE,
+        }]
+      : [];
+  return [...before, ...keepTotal, ...costs.map(legacyCostToLineItem)];
 }

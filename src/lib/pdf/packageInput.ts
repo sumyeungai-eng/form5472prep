@@ -8,7 +8,7 @@ import {
 } from "./generatePackage";
 import { decryptPii } from "@/lib/crypto/pii";
 import { normalizeSsn } from "@/lib/crypto/ssn";
-import { toPartVRows } from "@/lib/partV";
+import { CONVERTED_TOTAL_RULE, toPartVRows } from "@/lib/partV";
 
 type NullablePartial<T> = { [K in keyof T]?: T[K] | null };
 
@@ -198,6 +198,7 @@ function parseReportableTransactions(value: unknown, _taxYear: number): Reportab
     amountCents: row.amountCents ?? 0,
     category: row.category,
     ...(row.amountCents === null ? { amountMissing: true } : {}),
+    ...(row.rule === CONVERTED_TOTAL_RULE ? { totalOnly: true } : {}),
     ...(row.paidVia ? { paidVia: row.paidVia } : {}),
     ...(row.currency ? { currency: row.currency } : {}),
     ...(row.originalAmount != null ? { originalAmount: row.originalAmount } : {}),

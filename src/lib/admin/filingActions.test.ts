@@ -92,7 +92,8 @@ vi.mock("@/lib/email", () => ({
 }));
 vi.mock("@/lib/partnerBrand", () => ({ brandForFiling: brand.brandForFiling }));
 vi.mock("@/lib/magicLink", () => ({ makeMagicLink: () => "https://example.test/magic" }));
-vi.mock("@/lib/pdf/generatePackage", () => ({
+vi.mock("@/lib/pdf/generatePackage", async (orig) => ({
+  ...(await orig<typeof import("@/lib/pdf/generatePackage")>()),
   generatePackage: pdf.generatePackage,
 }));
 vi.mock("@/lib/pdf/preflight", () => ({ runPreflight: pdf.runPreflight }));
@@ -862,6 +863,7 @@ describe("updateYearField", () => {
     await expect(
       runFilingAction("filing_1", "convertOwnerPaidCosts", { taxYear: 2025 }, { adminId: "admin_1" }),
     ).resolves.toMatchObject({ ok: true, converted: 2 });
+    // (This year already has a contribution row, so no bare total row is added.)
     const data = (db.yearUpdate.mock.calls[0][0] as { data: Record<string, unknown> }).data;
     expect(data.ownerPaidCosts).toEqual([]);
     expect(data.reportableTransactions).toEqual([
@@ -871,6 +873,21 @@ describe("updateYearField", () => {
     ]);
     const fields = db.createLog.mock.calls.map((c) => (c[0] as { data: { field: string } }).data.field);
     expect(fields).toEqual(expect.arrayContaining(["year:2025:reportableTransactions", "year:2025:ownerPaidCosts"]));
+    // A bare $1,000 total with no rows is kept as a row of its own (Part V total unchanged).
+    db.yearUpdate.mockClear();
+    db.yearFindUnique.mockResolvedValue({
+      id: "year_2025",
+      reportableTransactions: [],
+      contributions: 1000,
+      ownerPaidCosts: [{ category: "registered_agent", date: "2025-02-01", amountCents: 49_00 }],
+      noReportableTransactions: false,
+    });
+    await runFilingAction("filing_1", "convertOwnerPaidCosts", { taxYear: 2025 }, { adminId: "admin_1" });
+    const kept = (db.yearUpdate.mock.calls[0][0] as { data: { reportableTransactions: Array<{ amountCents: number; description: string; date: string }> } }).data.reportableTransactions;
+    expect(kept.map((r) => [r.description, r.amountCents, r.date])).toEqual([
+      ["Capital contributions during the tax year (total)", 1_000_00, "2025-12-31"],
+      ["Registered agent fee", 49_00, "2025-02-01"],
+    ]);
     db.yearUpdate.mockClear();
     db.yearFindUnique.mockResolvedValue({ id: "year_2025", reportableTransactions: [], ownerPaidCosts: [], noReportableTransactions: false });
     await expect(runFilingAction("filing_1", "convertOwnerPaidCosts", { taxYear: 2025 }, { adminId: "admin_1" })).rejects.toMatchObject({

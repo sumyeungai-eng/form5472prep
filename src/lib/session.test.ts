@@ -137,6 +137,22 @@ describe("toClientFiling", () => {
     ]);
   });
 
+  it("release gate: preflightPdfKey never reaches a client, before or after release", async () => {
+    const { toClientFiling } = await import("./session");
+    for (const reviewApprovedAt of [null, new Date("2026-10-31T00:00:00Z")]) {
+      const out = toClientFiling({
+        id: "f1",
+        sessionId: "s",
+        reviewApprovedAt,
+        generatedPdfKey: "f1_unsigned_2.pdf",
+        reviewApprovedPdfKey: reviewApprovedAt ? "f1_unsigned_2.pdf" : null,
+        preflightPdfKey: "f1_unsigned_2.pdf",
+      });
+      expect(out).not.toHaveProperty("preflightPdfKey");
+      if (!reviewApprovedAt) expect(JSON.stringify(out)).not.toContain("f1_unsigned_2.pdf");
+    }
+  });
+
   it("release gate: nulls package keys until staff release, keeps them after", async () => {
     const { toClientFiling } = await import("./session");
     const before = toClientFiling({

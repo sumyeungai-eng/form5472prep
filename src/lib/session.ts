@@ -176,7 +176,9 @@ export const STAFF_ONLY_FILING_FIELDS = [
 // API. The encrypted owner SSN (spec docs/reviews/2026-10-15-ssn-capture-spec.md
 // S3): only ownerSsnLast4 + timestamps are client-visible; admins see the
 // number only through the change-logged Reveal action.
-export const SERVER_ONLY_FILING_FIELDS = ["ownerSsnCiphertext"] as const;
+// preflightPdfKey names the (possibly unreleased) bytes pre-flight checked:
+// a package key, so it never reaches a client, released or not.
+export const SERVER_ONLY_FILING_FIELDS = ["ownerSsnCiphertext", "preflightPdfKey"] as const;
 type StaffOnlyFilingField =
   | (typeof STAFF_ONLY_FILING_FIELDS)[number]
   | (typeof SERVER_ONLY_FILING_FIELDS)[number];

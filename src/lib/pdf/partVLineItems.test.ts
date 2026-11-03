@@ -4,7 +4,7 @@ import { filingToPackageInput } from "./packageInput";
 import { runPreflight } from "./preflight";
 import { readPageLines } from "./validatePackage";
 import { F1, finalisedAt } from "./__fixtures__/filings";
-import { isAmbiguousDecimal, parseDecimalAmount, partVRowWarnings, toPartVRow } from "@/lib/partV";
+import { convertLegacyCosts, isAmbiguousDecimal, parseDecimalAmount, partVRowWarnings, toPartVRow, toPartVRows } from "@/lib/partV";
 
 // P0-4 Part V line items. Synthetic data only. F1 is a timely 2025 filing, so
 // no reasonable cause statement gets in the way of the Part V checks.
@@ -111,6 +111,40 @@ describe("P0-4 Part V line items", () => {
     expect(preflight.failures).toEqual([]);
     expect(preflight.warnings).toContainEqual({ id: "W44", message: "Tax year 2025: Part V has only a total — ask the client for line items." });
   }, PDF_TIMEOUT);
+
+  it("Convert to line items keeps a bare contribution total: $1,000 total + $49 fee = $1,049 before and after", async () => {
+    const cost = { category: "registered_agent", date: "2025-02-01", amountCents: 49_00 };
+    const before = await pkgFor({ reportableTransactions: [], contributions: 1000, ownerPaidCosts: [cost] });
+    expect(before.record.taxYears[0].line1f).toBe(1049);
+    const converted = convertLegacyCosts([], 1000, [cost], "2025-12-31");
+    const after = await pkgFor({ reportableTransactions: converted, contributions: 1000, ownerPaidCosts: [] });
+    expect(after.record.taxYears[0].line1f).toBe(1049);
+    expect(after.record.taxYears[0].line1h).toBe(1049);
+    const preflight = await runPreflight(after.record, after.bytes);
+    expect(preflight.failures).toEqual([]);
+    // The kept total is still a total, so staff are still told to ask for line items.
+    expect(ids(preflight.warnings)).toContain("W44");
+    // A year that already had contribution rows gets no extra total row.
+    const withRows = [toPartVRow({ date: "2025-01-10", description: "Capital", amountCents: 1_000_00, category: "contribution" })];
+    expect(convertLegacyCosts(withRows, 1000, [cost], "2025-12-31")).toHaveLength(2);
+  }, PDF_TIMEOUT * 2);
+
+  it("never drops captured rows: 501 rows of $1 give 501 rows and $501 on 1f/1h", async () => {
+    const rows = Array.from({ length: 501 }, (_, i) => ({
+      date: "2025-03-01",
+      description: `Transfer ${i + 1}`,
+      amountCents: 100,
+      category: "contribution",
+      paidVia: "TRANSFER",
+    }));
+    expect(toPartVRows(rows)).toHaveLength(501);
+    const pkg = await pkgFor({ reportableTransactions: rows });
+    const year = pkg.record.taxYears[0];
+    expect(year.partVRows).toHaveLength(501);
+    expect(year.line1f).toBe(501);
+    expect(year.line1h).toBe(501);
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
+  }, PDF_TIMEOUT * 3);
 
   it("W43 flags a transfer under $100 (decimal hint), not a small fee paid personally", async () => {
     const pkg = await pkgFor({

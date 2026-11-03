@@ -18,7 +18,8 @@ import { publicUrl, put, putPdf, get as getStorageObject } from "@/lib/storage";
 import { env } from "@/lib/env";
 import { generatePackage, type GeneratedPackage, type SignatureLocation } from "@/lib/pdf/generatePackage";
 import { filingToPackageInput } from "@/lib/pdf/packageInput";
-import { toPartVRow, toPartVRows, type PartVRow } from "@/lib/partV";
+import { convertLegacyCosts, toPartVRows } from "@/lib/partV";
+import { periodEndFor } from "@/lib/pdf/generatePackage";
 import { normalizeUsStateCode } from "@/lib/pdf/textFormat";
 import { isReviewedPdfKey, newUnsignedPdfKey } from "@/lib/pdf/packageKeys";
 import { runPreflight, type PreflightIssue, type PreflightResult } from "@/lib/pdf/preflight";
@@ -636,26 +637,6 @@ function parseYearJsonField(field: keyof typeof YEAR_JSON_SCHEMAS, value: unknow
 function yearJsonWriteValue(value: unknown) {
   if (value === null) return Prisma.JsonNull;
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
-}
-
-// P0-4: one legacy owner-paid cost as a Part V line item (same amount and date).
-const LEGACY_COST_LABELS: Record<string, string> = {
-  state_filing_fee: "State filing fee",
-  registered_agent: "Registered agent fee",
-  formation_or_ein_service: "Formation or EIN service fee",
-  software_subscriptions: "Software or subscription costs",
-  initial_bank_funding: "Initial bank funding",
-};
-export function legacyCostToLineItem(cost: Record<string, unknown>): PartVRow {
-  const category = String(cost.category ?? "other");
-  const note = typeof cost.note === "string" ? cost.note.trim() : "";
-  const cents = typeof cost.amountCents === "number" && Number.isFinite(cost.amountCents) ? Math.abs(Math.round(cost.amountCents)) : null;
-  return {
-    ...toPartVRow({ date: cost.date, description: LEGACY_COST_LABELS[category] ?? (note || "Cost"), category: "contribution" }),
-    amountCents: cents,
-    paidVia: category === "initial_bank_funding" ? "TRANSFER" : "OWNER_PAID_PERSONALLY",
-    rule: "Converted from owner-paid costs",
-  };
 }
 
 // P0-3: the text an empty verbatim box starts from. Raw keeps the customer's
@@ -2339,13 +2320,16 @@ export async function runFilingAction(
       if (!Number.isInteger(taxYear)) throw new FilingActionError(400, "invalid_value", "taxYear must be an integer");
       const year = await prisma.filingYearData.findUnique({
         where: { filingId_taxYear: { filingId: filing.id, taxYear } },
-        select: { id: true, reportableTransactions: true, ownerPaidCosts: true, noReportableTransactions: true },
+        select: { id: true, reportableTransactions: true, ownerPaidCosts: true, noReportableTransactions: true, contributions: true },
       });
       if (!year) throw new FilingActionError(404, "year_not_found", "filing year not found");
       const costs = Array.isArray(year.ownerPaidCosts) ? (year.ownerPaidCosts as Array<Record<string, unknown>>) : [];
       if (costs.length === 0) throw new FilingActionError(409, "nothing_to_convert", "This year has no legacy owner-paid costs.");
       const before = toPartVRows(year.reportableTransactions);
-      const after = [...before, ...costs.map(legacyCostToLineItem)];
+      // Keeps a bare contribution total as its own row (see convertLegacyCosts):
+      // the year's Part V total is identical before and after conversion.
+      const [endMonth, endDay] = periodEndFor(filing, taxYear).split("/");
+      const after = convertLegacyCosts(before, Number(year.contributions), costs, `${taxYear}-${endMonth}-${endDay}`);
       await prisma.filingYearData.update({
         where: { filingId_taxYear: { filingId: filing.id, taxYear } },
         data: { reportableTransactions: yearJsonWriteValue(after), ownerPaidCosts: [], noReportableTransactions: false },
