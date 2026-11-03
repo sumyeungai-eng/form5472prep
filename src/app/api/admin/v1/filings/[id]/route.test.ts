@@ -12,6 +12,8 @@ const db = vi.hoisted(() => ({
       tier: "single_year",
       amountPaid: 14900,
       llcDateIncorporated: null,
+      llcState: "DE",
+      llcFormationState: "WY",
       ownerItin: null,
       ownerSsnCiphertext: "v1:aaaa:bbbb:cccc",
       ownerSsnLast4: "6789",
@@ -63,5 +65,14 @@ describe("GET /api/admin/v1/filings/[id] — SSN is masked only", () => {
     });
     expect(JSON.stringify(json)).not.toContain("v1:aaaa");
     expect(JSON.stringify(json)).not.toContain("ownerSsnCiphertext");
+  });
+});
+
+describe("GET /api/admin/v1/filings/[id] — state of formation (generator 2.4.0)", () => {
+  it("selects llcFormationState and returns it next to the mailing state", async () => {
+    db.findUnique.mockClear();
+    const res = await GET(new Request("http://localhost/api/admin/v1/filings/filing_1"), { params: { id: "filing_1" } });
+    expect(db.findUnique.mock.calls[0][0].select).toHaveProperty("llcFormationState", true);
+    expect((await res.json()).data.filing).toMatchObject({ llcState: "DE", llcFormationState: "WY" });
   });
 });
