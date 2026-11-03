@@ -2589,7 +2589,7 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-10-05",
     h1: `Form 5472, filed properly — from ${PRICE_STD}, everything included.`,
     intro:
-      `Answer 12 questions in about 15 minutes and get a Form 5472 plus pro forma Form 1120 package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before fax submission to the IRS Ogden PIN Unit. Standard is ${PRICE_STD} and ready in 5-7 business days; Express is ${PRICE_EXP} and ready to sign in under 3 days.`,
+      `Answer 12 questions in 15 minutes and get a Form 5472 plus pro forma Form 1120 package reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before fax submission to the IRS Ogden PIN Unit. Standard is ${PRICE_STD} and ready in 5-7 business days; Express is ${PRICE_EXP} and ready to sign in under 3 days.`,
     howTo: {
       section: "How does your filing reach the IRS?",
       tools: ["Form5472 Prep questionnaire"],

@@ -144,19 +144,19 @@ const ARTWORK_ALTS: Record<string, string> = {
     "A blank extension form with marked lines and a signing pen illustrates completing Form 7004 line by line",
   "form-5472-first-time-penalty-abatement":
     "An IRS notice beside a penalty figure illustrates testing whether first-time abatement reaches a Form 5472 penalty",
-  "form-5472-extension-vs-late-filing-which-is-cheaper":
+  "form-5472-extension-vs-late-filing":
     "Two dated columns beside a cost figure compare requesting an extension with filing Form 5472 late",
   "form-5472-no-ein-yet-what-to-do":
     "An empty employer identification number field beside a clock illustrates a filing deadline arriving before the EIN",
-  "foreign-owned-llc-year-end-checklist-december-2026":
+  "foreign-llc-year-end-checklist-2026":
     "A December calendar beside a ticked checklist illustrates year-end tasks for a foreign-owned US LLC",
-  "foreign-owned-llc-1099-nec-deadline-january-2027":
+  "1099-nec-deadline-2027-foreign-llc":
     "A January calendar beside a contractor payment record illustrates the information-return deadline",
   "form-5472-records-to-gather-before-filing":
     "Bank statements and a ledger beside a ticked list illustrate the records gathered before a Form 5472 is prepared",
-  "how-to-fill-out-w-8ben-e-foreign-owned-llc":
+  "w-8ben-e-for-foreign-owned-llc":
     "A withholding certificate with its name, classification and reference lines marked illustrates completing Form W-8BEN-E",
-  "delaware-llc-annual-tax-2027-foreign-owner":
+  "delaware-llc-annual-tax-2027":
     "A dated Delaware tax notice beside an annual amount illustrates the yearly LLC tax and its due date",
   "us-sales-tax-vs-vat-foreign-owned-llc":
     "A globe between a state sales-tax line and a VAT line illustrates two different consumption-tax systems",

@@ -22,6 +22,12 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // 2026-11-03: November blog slugs shortened to the 75-char URL limit (blog-slug-length.test.ts).
+      { source: "/blog/delaware-llc-annual-tax-2027-foreign-owner", destination: "/blog/delaware-llc-annual-tax-2027", permanent: true },
+      { source: "/blog/foreign-owned-llc-1099-nec-deadline-january-2027", destination: "/blog/1099-nec-deadline-2027-foreign-llc", permanent: true },
+      { source: "/blog/foreign-owned-llc-year-end-checklist-december-2026", destination: "/blog/foreign-llc-year-end-checklist-2026", permanent: true },
+      { source: "/blog/form-5472-extension-vs-late-filing-which-is-cheaper", destination: "/blog/form-5472-extension-vs-late-filing", permanent: true },
+      { source: "/blog/how-to-fill-out-w-8ben-e-foreign-owned-llc", destination: "/blog/w-8ben-e-for-foreign-owned-llc", permanent: true },
       // Service-page slugs renamed on 2026-10-01 so the URL holds the keyword
       // in typed word order (Moz "keyword in URL" factor).
       {
