@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Inbox } from "lucide-react";
@@ -8,7 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { formatUsd } from "@/lib/utils";
 import { formatAttribution } from "@/lib/attribution";
 import { filingCompletionIssues } from "@/lib/completeness";
-import { extensionReviewFlags, type ExtensionReviewFlag } from "@/lib/admin/filingActions";
+import { extensionReviewFlags, refaxDecision, type ExtensionReviewFlag } from "@/lib/admin/filingActions";
 import { getPresenceForFilings, timeAgo, type FilingPresence } from "@/lib/admin/filingPresence";
 import { AdminPageHeader } from "../_components/AdminPageHeader";
 import { StatusBadge } from "./StatusBadge";
@@ -17,7 +18,18 @@ import { ArchiveCheckbox, ArchiveSelectAll, BulkArchiveBar } from "./BulkArchive
 import { isArchivableStatus } from "@/lib/admin/archive";
 import { ReviewToggle } from "./ReviewToggle";
 import { PreflightSweepButton } from "./PreflightSweepButton";
-import { dueAt, dueLabel, isNotReleased, orderByIds, reviewQueueIds, showsDueChip } from "@/lib/admin/reviewQueue";
+import {
+  dueAt,
+  dueLabel,
+  isNotReleased,
+  OPEN_WORK_STATUSES,
+  orderByIds,
+  reviewQueueIds,
+  showsDueChip,
+  TURN_ORDER,
+  turnOf,
+  type Turn,
+} from "@/lib/admin/reviewQueue";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Filings · Admin" };
@@ -137,8 +149,24 @@ export default async function AdminFilingsPage({
     orderBy: { updatedAt: "desc" },
     take: 100,
   });
-  const filings = queueIds ? orderByIds(fetched, queueIds) : fetched;
+  // Open paid orders always show, even when 100 newer rows (mostly drafts)
+  // would push them off: they are the work still to do.
+  const openWork: FilingRow[] = queueIds
+    ? []
+    : await prisma.filing.findMany({
+        where: { AND: [...whereParts, { status: { in: OPEN_WORK_STATUSES } }] },
+        include: { user: true, partner: { select: { id: true, name: true, company: true } } },
+      });
+  const fetchedIds = new Set(fetched.map((f) => f.id));
   const now = new Date();
+  const turnOfRow = (f: FilingRow) => turnOf(f, refaxDecision(f, now).kind === "allowed");
+  const filings = queueIds
+    ? orderByIds(fetched, queueIds)
+    : [...fetched, ...openWork.filter((f) => !fetchedIds.has(f.id))].sort(
+        (a, b) =>
+          TURN_ORDER.indexOf(turnOfRow(a)) - TURN_ORDER.indexOf(turnOfRow(b)) ||
+          b.updatedAt.getTime() - a.updatedAt.getTime(),
+      );
 
   // Which drafts are actually finished. Uses the SAME helper /api/checkout
   // gates on, so a green pill means "this would have paid if they'd clicked".
@@ -164,6 +192,8 @@ export default async function AdminFilingsPage({
   const visibleFilings = readyOnly
     ? filings.filter((f) => draftIssues.get(f.id)?.length === 0)
     : filings;
+  const turnCounts = new Map<Turn, number>();
+  for (const f of visibleFilings) turnCounts.set(turnOfRow(f), (turnCounts.get(turnOfRow(f)) ?? 0) + 1);
 
   // Quick stats: last 30 days
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -431,8 +461,13 @@ export default async function AdminFilingsPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {visibleFilings.map((f) => (
-                <tr key={f.id} className="hover:bg-slate-50">
+              {visibleFilings.map((f, i) => {
+                const turn = turnOfRow(f);
+                const startsGroup = !queueView && (i === 0 || turnOfRow(visibleFilings[i - 1]) !== turn);
+                return (
+                <Fragment key={f.id}>
+                {startsGroup && <TurnHeader turn={turn} count={turnCounts.get(turn) ?? 0} />}
+                <tr className={turn === "staff" && !queueView ? "bg-orange-50/60 hover:bg-orange-50" : "hover:bg-slate-50"}>
                   <td className="w-8 pl-4 py-3 align-top">
                     {(showHidden ? f.adminHidden : isArchivableStatus(f.status)) && (
                       <ArchiveCheckbox
@@ -505,19 +540,39 @@ export default async function AdminFilingsPage({
                     )}
                   </td>
                 </tr>
-              ))}
+                </Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>
         </>
       )}
 
-      {filings.length === 100 && (
+      {fetched.length === 100 && (
         <p className="mt-4 text-xs text-slate-500 text-center">
-          {queueView ? "Showing the 100 most urgent." : "Showing newest 100."} Use filters to narrow down.
+          {queueView ? "Showing the 100 most urgent." : "Showing the newest 100, plus every open paid order."} Use filters to narrow down.
         </p>
       )}
     </div>
+  );
+}
+
+const TURN_HEADERS: Record<Turn, { title: string; hint: string; className: string }> = {
+  staff: { title: "Your turn", hint: "review and release, fax a signed package, or fix a failed fax", className: "bg-orange-100 text-orange-900" },
+  client: { title: "Waiting on the client", hint: "released, they need to check and sign", className: "bg-sky-50 text-sky-900" },
+  other: { title: "Everything else", hint: "drafts, faxing, delivered", className: "bg-slate-100 text-slate-700" },
+};
+
+function TurnHeader({ turn, count }: { turn: Turn; count: number }) {
+  const h = TURN_HEADERS[turn];
+  return (
+    <tr className={h.className}>
+      <td colSpan={11} className="px-4 py-2 text-xs">
+        <span className="font-semibold uppercase tracking-wider">{h.title} · {count}</span>
+        <span className="ml-2 opacity-80">{h.hint}</span>
+      </td>
+    </tr>
   );
 }
 
@@ -579,7 +634,7 @@ function SignedCell({ filing: f }: { filing: FilingRow }) {
 
   if (["PAID", "PDF_GENERATED"].includes(f.status) && !f.reviewApprovedAt) {
     return (
-      <span className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-100 text-amber-800">
+      <span className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-orange-100 text-orange-800">
         Awaiting review
       </span>
     );
@@ -587,7 +642,7 @@ function SignedCell({ filing: f }: { filing: FilingRow }) {
 
   if (["PAID", "PDF_GENERATED", "SIGNATURE_PENDING"].includes(f.status)) {
     return (
-      <span className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-100 text-amber-800">
+      <span className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-sky-100 text-sky-800">
         Awaiting signature
       </span>
     );
@@ -611,7 +666,7 @@ function SignedCell({ filing: f }: { filing: FilingRow }) {
   }
 
   return (
-    <span className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-100 text-amber-800">
+    <span className="inline-block text-[11px] font-medium rounded-full px-2 py-0.5 bg-sky-100 text-sky-800">
       Awaiting signature
     </span>
   );

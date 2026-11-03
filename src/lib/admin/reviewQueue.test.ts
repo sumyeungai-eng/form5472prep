@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addBusinessDays, dueAt, dueLabel, isNotReleased, orderByIds, reviewQueueSql, showsDueChip } from "./reviewQueue";
+import { addBusinessDays, dueAt, dueLabel, isNotReleased, orderByIds, reviewQueueSql, showsDueChip, turnOf } from "./reviewQueue";
 
 describe("due-by", () => {
   it("express = paidAt + 72 hours (3 days, weekends included)", () => {
@@ -93,5 +93,23 @@ describe("review queue order", () => {
   it("restores the SQL order after findMany", () => {
     const rows = [{ id: "c" }, { id: "a" }, { id: "b" }];
     expect(orderByIds(rows, ["a", "b", "c"]).map((r) => r.id)).toEqual(["a", "b", "c"]);
+  });
+});
+
+describe("turnOf (admin list grouping)", () => {
+  const base = { reviewApprovedAt: null, signedAt: null, signedPdfKey: null };
+  const released = new Date("2026-11-01T00:00:00Z");
+  it.each([
+    ["paid, not released", { ...base, status: "PAID" }, true, "staff"],
+    ["generated, not released", { ...base, status: "PDF_GENERATED" }, true, "staff"],
+    ["released, unsigned", { ...base, status: "PDF_GENERATED", reviewApprovedAt: released }, true, "client"],
+    ["signature pending", { ...base, status: "SIGNATURE_PENDING", reviewApprovedAt: released }, true, "client"],
+    ["signed, ready to fax", { ...base, status: "SIGNED_UPLOADED", reviewApprovedAt: released, signedPdfKey: "s.pdf" }, true, "staff"],
+    ["signed, fax in flight", { ...base, status: "SIGNED_UPLOADED", reviewApprovedAt: released, signedPdfKey: "s.pdf" }, false, "other"],
+    ["fax failed", { ...base, status: "FAILED" }, true, "staff"],
+    ["draft", { ...base, status: "DRAFT" }, true, "other"],
+    ["delivered", { ...base, status: "CONFIRMED", signedPdfKey: "s.pdf" }, false, "other"],
+  ] as const)("%s → %s", (_label, filing, canFax, turn) => {
+    expect(turnOf(filing, canFax)).toBe(turn);
   });
 });

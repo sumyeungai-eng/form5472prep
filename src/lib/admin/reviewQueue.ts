@@ -119,3 +119,25 @@ export function orderByIds<T extends { id: string }>(rows: T[], ids: string[]): 
   const rank = new Map(ids.map((id, i) => [id, i]));
   return [...rows].sort((a, b) => (rank.get(a.id) ?? Infinity) - (rank.get(b.id) ?? Infinity));
 }
+
+// Whose move is it on an order (admin Filings list grouping)? "staff": review
+// and release, fax a signed package, or fix a failed fax. "client": released,
+// waiting for the client to check and sign. "other": drafts, faxing, done.
+export type Turn = "staff" | "client" | "other";
+export const TURN_ORDER: readonly Turn[] = ["staff", "client", "other"];
+// Statuses that can still need someone's move; fetched past the 100-row cap.
+export const OPEN_WORK_STATUSES: FilingStatus[] = ["PAID", "PDF_GENERATED", "SIGNATURE_PENDING", "SIGNED_UPLOADED", "FAILED"];
+
+// canFax: refaxDecision(f).kind === "allowed" (no fax in flight, claimed or delivered).
+export function turnOf(
+  f: { status: FilingStatus; reviewApprovedAt: Date | null; signedAt: Date | null; signedPdfKey: string | null },
+  canFax: boolean,
+): Turn {
+  if (f.status === "FAILED") return "staff";
+  if ((f.status === "PAID" || f.status === "PDF_GENERATED") && !f.reviewApprovedAt) return "staff";
+  const signed = f.signedAt != null || f.signedPdfKey != null;
+  const unsent = ["PDF_GENERATED", "SIGNATURE_PENDING", "SIGNED_UPLOADED"].includes(f.status) && canFax;
+  if (unsent && (signed || f.status === "SIGNED_UPLOADED")) return "staff";
+  if (["PAID", "PDF_GENERATED", "SIGNATURE_PENDING"].includes(f.status)) return "client";
+  return "other";
+}
