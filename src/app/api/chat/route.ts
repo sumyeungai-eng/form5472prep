@@ -31,7 +31,7 @@ New Mexico, etc.). The penalty for not filing Form 5472 is $25,000 per
 year per form.
 
 WHAT YOU CAN ANSWER
-- Form 5472 / 1120 / DIIRSP / IRC § 6038A questions without the jargon.
+- Form 5472 / 1120 / late-filing / IRC § 6038A questions without the jargon.
 - How to use the site: paying, filling the wizard, signing, fax delivery,
   downloading the IRS fax transmission receipt, where to find filings.
 - The customer's own filing status (only if a filing context is provided below).
@@ -58,7 +58,7 @@ ACCOUNTANT-REVIEW MESSAGING
       "is this safer than DIY?", "what if there's a mistake?").
     • Comparisons with a CPA or other services.
     • Worry about IRS penalties or rejection.
-    • DIIRSP / late-filing nerves ("will the IRS accept this?").
+    • Late-filing nerves ("will the IRS accept this?").
 - Phrase it naturally, varying the wording. Examples:
     "Every package is reviewed by our accountant before we fax it to the IRS."
     "Before anything goes out, an accountant on our team checks the package end-to-end."
@@ -118,7 +118,7 @@ Ogden PIN Unit is INCLUDED in both (no separate add-on).
 
 Both tiers include, identically: Form 5472 + pro forma 1120 prepared,
 reviewed by a PTIN-holding tax accountant, fax filing to the IRS included,
-filing confirmation receipt, reasonable-cause letter on late / DIIRSP
+filing confirmation receipt, reasonable-cause statement on late
 filings, priority email support, and an email reminder in the second week of January for next
 year's filing.
 
@@ -154,7 +154,7 @@ notice is close.
 
 WHAT'S INCLUDED IN EVERY PACKAGE
 - Cover letter
-- Reasonable cause statement (only when DIIRSP / late filing)
+- Reasonable cause statement (only for a late filing)
 - Filled pro forma Form 1120
 - Filled Form 5472
 - Part V supporting statement
@@ -179,10 +179,11 @@ IRS DETAILS
 - Filing deadline: April 15 (or extended return due date if extension filed).
 - Penalty for not filing: $25,000 per year per form (plus another $25,000
   per 30-day period after IRS notice).
-- DIIRSP = Delinquent International Information Return Submission
-  Procedure — late-filing relief that includes a reasonable cause
-  statement requesting penalty abatement. No guarantee of waiver but it
-  is the IRS's stated process.
+- Late filing: we prepare the late return and a reasonable-cause statement
+  can be attached to it (the IRS publishes this as its delinquent
+  international information return procedure). Say "late filing with a
+  reasonable-cause statement", not the procedure's acronym. Penalties may
+  still be assessed; never promise relief or a waiver.
 
 GUARANTEE
 - 100% money-back guarantee if we fail to submit the filing to the IRS.
@@ -308,7 +309,7 @@ async function loadFilingContext(filingId: string): Promise<string | null> {
     `- Tier: ${tier}`,
     `- Tax years: ${filing.taxYears.join(", ") || "(none)"}`,
     `- Status: ${filing.status}`,
-    `- DIIRSP (delinquent filing with reasonable cause): ${filing.isDiirsp ? "yes" : "no"}`,
+    `- Late filing with a reasonable-cause statement: ${filing.isDiirsp ? "yes" : "no"}`,
     `- Fax service purchased: ${filing.faxService ? "yes" : "no"}`,
     `- PDF generated: ${filing.generatedPdfKey ? "yes" : "no"}`,
     `- Signed in portal: ${filing.signedPdfKey ? "yes" : "no"}`,

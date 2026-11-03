@@ -32,7 +32,7 @@ const CONTACT_FAQS: { q: string; a: string }[] = [
   },
   {
     q: "I'm several years behind. Can you still help?",
-    a: `Yes. We file the past years together under the IRS Delinquent International Information Return Submission Procedures (DIIRSP), with one reasonable-cause statement covering every delinquent year. Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each.`,
+    a: `Yes. We prepare the past years together as a late filing, with one reasonable-cause statement covering every late year. The IRS may still assess penalties, so no one can promise relief. Additional past tax years are ${formatPrice(MULTI_YEAR_ADDON_CENTS)} each.`,
   },
   {
     q: "I've received an IRS notice — what do you need from me?",
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
 
 const HELP_TOPICS = [
   "Form 5472 + pro forma 1120 filing",
-  "Late or missed tax years (DIIRSP)",
+  "Late or missed tax years",
   "EIN applications without an SSN",
   "ITIN applications",
   "IRS notices and penalties",

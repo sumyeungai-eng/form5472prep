@@ -59,7 +59,7 @@ const SHARED_FEATURES = [
   "Form 5472 + pro forma 1120 prepared",
   "IRS Ogden fax delivery + timestamped receipt",
   "Filing confirmation",
-  "Reasonable-cause letter for late / DIIRSP filings",
+  "Reasonable-cause statement for late filings",
   "Next-year filing reminder (second week of January)",
 ];
 

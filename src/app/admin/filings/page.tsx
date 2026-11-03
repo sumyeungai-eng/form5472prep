@@ -641,7 +641,7 @@ function ExtensionHint({ filing }: { filing: FilingRow }) {
       {late && (
         <span
           className="text-[11px] font-medium rounded-full px-2 py-0.5 bg-amber-50 text-amber-800"
-          title="Classified as a delinquent (DIIRSP) submission — package carries the late-filing language and a reasonable cause statement."
+          title="Classified as a late filing — the package carries the late-filing language and a reasonable cause statement."
         >
           Late filing
         </span>

@@ -519,10 +519,10 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
             value={filing.faxService ? "We fax it (paid)" : "Customer self-faxes (DIY — no action needed from us)"}
           />
           <Field
-            label="DIIRSP"
+            label="Late filing"
             value={
               filing.isDiirsp
-                ? "Yes — delinquent submission"
+                ? "Yes"
                 : diirspContradiction
                   ? "No on customer screens — but the package treats the year(s) below as late"
                   : "No (current year)"

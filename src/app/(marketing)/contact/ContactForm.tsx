@@ -121,7 +121,7 @@ export function ContactForm() {
         >
           <option value="service">Pre-sales question</option>
           <option value="in-progress">Filing in progress</option>
-          <option value="late-years">Late or past years (DIIRSP)</option>
+          <option value="late-years">Late or past years</option>
           <option value="ein-itin">EIN or ITIN</option>
           <option value="irs-notice">IRS notice or penalty</option>
           <option value="billing">Billing or refund</option>

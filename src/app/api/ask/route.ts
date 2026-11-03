@@ -29,7 +29,7 @@ const INVALID_EMAIL_ERROR =
 const TOPIC_LABELS = {
   service: "Pre-sales question",
   "in-progress": "Filing in progress",
-  "late-years": "Late or past years (DIIRSP)",
+  "late-years": "Late or past years",
   "ein-itin": "EIN or ITIN",
   "irs-notice": "IRS notice or penalty",
   billing: "Billing or refund",
