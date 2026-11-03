@@ -1452,63 +1452,6 @@ export async function sendFaxReceivedAdminEmail(args: {
   });
 }
 
-// ---------- 4. Fax failed email ----------
-
-export async function sendFaxFailedEmail(args: {
-  email: string;
-  recipientName?: string | null;
-  llcName: string | null;
-  taxYears: number[];
-  portalLink: string;
-  brand?: EmailBrand;
-  // Ties the EmailLog audit row to the filing.
-  filingId?: string | null;
-}) {
-  const { email, recipientName, llcName, taxYears, portalLink, brand } = args;
-  const salutation = firstNameFrom(recipientName) ?? "there";
-  const yearsLabel = taxYears.join(", ");
-  const llcLine = llcName ?? "your filing";
-
-  const bodyHtml = `
-    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      We tried to fax your signed Form 5472 + pro forma 1120 for <strong>${escapeHtml(llcLine)}</strong>
-      (tax year${taxYears.length > 1 ? "s" : ""} ${escapeHtml(yearsLabel)}) to the IRS Ogden PIN Unit,
-      but the transmission didn't go through after multiple attempts.
-    </p>
-    <div style="background:${EMAIL_STYLES.redBg};border:1px solid ${EMAIL_STYLES.redBorder};border-radius:8px;padding:14px 18px;margin:0 0 20px;color:${EMAIL_STYLES.redDark};font-size:14px;">
-      <strong>Fax delivery failed</strong> — no action lost. Our team has been notified and will
-      reach out within one business day with next steps (manual retry or refund).
-    </div>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      You don't need to do anything right now. If you have questions in the meantime,
-      reply to this email and we'll get back to you quickly.
-    </p>
-  `;
-
-  return sendEmail({
-    log: { kind: "fax_failed", filingId: args.filingId ?? null },
-    to: email,
-    fromName: brand?.name,
-    replyTo: brand?.replyTo,
-    subject: `Action needed — fax to IRS failed (${llcLine})`,
-    text: customerText(
-      salutation,
-      `We tried to fax your signed Form 5472 + pro forma 1120 for ${llcLine} (${yearsLabel}) to the IRS Ogden PIN Unit, but transmission failed after multiple attempts.\n\n` +
-      `Our team has been notified and will reach out within one business day with next steps. You don't need to do anything right now.\n\n` +
-      `View your filing: ${portalLink}`,
-      undefined,
-      brand,
-    ),
-    html: customerShell({
-      heading: "We could not fax your filing",
-      salutation,
-      bodyHtml,
-      cta: { label: "View my filing", url: portalLink },
-      brand,
-    }),
-  });
-}
-
 
 // ---------- 5a. New portal message — admin → customer ----------
 

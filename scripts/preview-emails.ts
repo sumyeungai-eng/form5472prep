@@ -7,7 +7,6 @@ import {
   sendFaxDeliveredAdminEmail,
   sendFaxDeliveredEmail,
   sendFaxFailedAdminEmail,
-  sendFaxFailedEmail,
   sendItinApplicationAdminEmail,
   sendItinApplicationConfirmationEmail,
   sendJanuaryReminderEmail,
@@ -112,7 +111,6 @@ await sendFaxFailedAdminEmail({
   failureReason: "The destination line did not answer",
   deliveryAttempts: 3,
 });
-await sendFaxFailedEmail({ email: customerEmail, recipientName: "Maria Schmidt", llcName, taxYears: [taxYear], portalLink });
 await sendNewMessageToCustomerEmail({
   email: customerEmail,
   recipientName: "Maria Schmidt",

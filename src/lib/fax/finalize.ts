@@ -24,7 +24,6 @@ import { generateFaxReceiptPdf } from "@/lib/pdf/faxReceipt";
 import {
   sendFaxDeliveredEmail,
   sendFaxDeliveredAdminEmail,
-  sendFaxFailedEmail,
   sendFaxFailedAdminEmail,
 } from "@/lib/email";
 import { apnsConfigured, sendAdminPush } from "@/lib/apns";
@@ -311,24 +310,7 @@ export async function finalizeFaxFailed(
   });
 
   const adminFilingUrl = `${env.appUrl}/admin/filings/${filing.id}`;
-  const customerUserId = filing.user?.id ?? filing.userId;
-  if (filing.user && customerUserId) {
-    const brand = await safeBrand(tag, filing.id);
-    try {
-      await sendFaxFailedEmail({
-        email: filing.user.email,
-        recipientName: filing.ownerName,
-        llcName: filing.llcName,
-        taxYears: filing.taxYears,
-        portalLink: makeMagicLink(customerUserId),
-        brand,
-        filingId: filing.id,
-      });
-      result.customerEmailed = true;
-    } catch (err) {
-      console.error(`[${tag}] customer failed email for ${filing.id} failed`, err);
-    }
-  }
+  // Fax failures are internal only: staff are alerted below; the customer is never emailed.
   try {
     await sendFaxFailedAdminEmail({
       adminEmail: env.adminEmail,

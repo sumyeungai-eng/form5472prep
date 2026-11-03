@@ -447,7 +447,7 @@ describe("telnyx-webhook: unsigned terminal events are confirmed with the Telnyx
     expect(row().status).toBe("FAXED");
   });
 
-  it("gives up (FAILED + emails) only when Telnyx confirms the failure and retries are exhausted", async () => {
+  it("gives up (FAILED + staff alert, no customer email) only when Telnyx confirms the failure and retries are exhausted", async () => {
     seedFiling({ faxStatus: "retry_3" });
     stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("failed", { failure_reason: "no_answer" })), { status: 200 }));
 
@@ -456,8 +456,8 @@ describe("telnyx-webhook: unsigned terminal events are confirmed with the Telnyx
     expect(await res.json()).toMatchObject({ ok: true, gaveUp: true });
     expect(row()).toMatchObject({ status: "FAILED", faxStatus: "failed:no_answer" });
     expect(fax.submitFax).not.toHaveBeenCalled();
-    expect(email.sendFaxFailedEmail).toHaveBeenCalledTimes(1);
-    expect(email.sendFaxFailedEmail).toHaveBeenCalledWith(expect.objectContaining({ filingId: "filing_1" }));
+    // Internal only: the customer is never emailed about a failed fax.
+    expect(email.sendFaxFailedEmail).not.toHaveBeenCalled();
     expect(email.sendFaxFailedAdminEmail).toHaveBeenCalledWith(expect.objectContaining({ deliveryAttempts: 3 }));
   });
 
@@ -575,7 +575,7 @@ describe("fax-status-poll", () => {
     expect(body).toMatchObject({ failed: 1, reconciled: 1, retried: 0 });
     expect(row()).toMatchObject({ status: "FAILED", faxStatus: "failed:busy" });
     expect(fax.submitFax).not.toHaveBeenCalled();
-    expect(email.sendFaxFailedEmail).toHaveBeenCalledTimes(1);
+    expect(email.sendFaxFailedEmail).not.toHaveBeenCalled();
     expect(email.sendFaxFailedAdminEmail).toHaveBeenCalledWith(expect.objectContaining({ deliveryAttempts: 3 }));
   });
 
