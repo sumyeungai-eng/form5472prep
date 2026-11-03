@@ -3,6 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, PDFStream, decodePDFRawStream } from "pdf-lib";
 import { form1120_2025FieldMap, form5472FieldMap } from "./fieldMaps";
+import { AUTHORED_DOC_SIGNATURE_HEADING } from "@/config/filingPackage";
 import { generatePackage, type PackageRecord } from "./generatePackage";
 import { readPageLines, readPrintedFields, validatePackage } from "./validatePackage";
 import { EXAMPLE_IMPACT, EXAMPLE_IMPACT_FINALISED_AT } from "./__fixtures__/exampleImpact";
@@ -170,4 +171,40 @@ describe("PR 9 gap: A43 / A44 / A46 negative tests on the printed page", () => {
     const wrongYear = await overwriteField(pkg, "f1120--2025.pdf", m1120.taxYearEndingYear2, "BT /F1 8 Tf 0 2 Td (24) Tj ET");
     expect(ids((await validatePackage(wrongYear, pkg.record)).failures)).toEqual(["A40"]);
   }, TIMEOUT * 2);
+});
+
+describe("PR 9 gap: items 2, 8 and 11 read from the printed PDF", () => {
+  it("item 2: 'Sole Member' is drawn on the Form 1120 signing page, inside the measured Title column and below the jurat", async () => {
+    const pkg = await build();
+    const year = pkg.record.taxYears[0];
+    const first1120 = pkg.record.pageOrder.find((p) => p.label === "Form 1120" && p.taxYear === 2025)!;
+    let drawn = false;
+    for (let page = first1120.startPage; page <= first1120.endPage; page++) {
+      if ((await readPageLines(pkg.bytes, page)).includes("Sole Member")) drawn = true;
+    }
+    expect(drawn).toBe(true);
+    expect(year.signerTitleRect.left).toBeGreaterThanOrEqual(year.signerTitleColumnBounds.left);
+    expect(year.signerTitleRect.right).toBeLessThanOrEqual(year.signerTitleColumnBounds.right);
+    expect(year.signerTitleRect.top).toBeLessThanOrEqual(year.signerDeclarationBounds.bottom);
+  }, TIMEOUT);
+
+  it("item 8: lines 37 and 39-42 print answered No, 38a/38c and 43a stay blank", async () => {
+    const pkg = await build();
+    const answered = [m.q37_imports_no, m.q39_csa_no, m.q40a_267A_no, m.q41a_fdii_no, m.q42a_safeHavenInRange_no, m.q42b_safeHavenOutsideRange_no];
+    const blank = [m.q38a_customsValue_no, m.q38a_customsValue_yes, m.q38c_importDocumentation_no, m.q38c_importDocumentation_yes, m.q43a_coveredDebt_no, m.q43a_coveredDebt_yes];
+    const f = await readPrintedFields(pkg.bytes, pkg.record, 2025, { form5472: [...answered, ...blank] });
+    for (const name of answered) expect(f[name]?.checked, name).toBe(true);
+    for (const name of blank) expect(f[name]?.checked ?? false, name).toBe(false);
+  }, TIMEOUT);
+
+  it("item 11: the Part V statement and the RCS each end with 'Signed under penalties of perjury:' and only the signature block follows", async () => {
+    const pkg = await build();
+    for (const label of ["Part V Statement", "Reasonable Cause Statement"]) {
+      const lines = (await Promise.all(pages(pkg.record, label).map((p) => readPageLines(pkg.bytes, p)))).flat();
+      const at = lines.lastIndexOf(AUTHORED_DOC_SIGNATURE_HEADING);
+      expect(at, label).toBeGreaterThan(0);
+      expect(lines.length - at, label).toBeLessThanOrEqual(5); // heading, rule, name, title, optional date
+      expect(lines.slice(at + 1).join(" "), label).toContain("Camille Exemple");
+    }
+  }, TIMEOUT);
 });

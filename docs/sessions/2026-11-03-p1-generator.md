@@ -19,7 +19,7 @@ Spec: `docs/reviews/2026-10-30-system-update-plan.md` → PR 5, PR 6, PR 9, deci
 | `bf56fc9` | PR 9 | Regression map doc, `pdfRegression.test.ts`, `prepared by` in `VOICE_BANS` plus the cover-letter/verbatim-exempt voice test. |
 
 ## Evidence
-- **Full vitest (`rtk proxy npx vitest run`), once:** 193 files, 4504 tests, all passed (no flakes this run).
+- **Full vitest (`rtk proxy npx vitest run`), once:** 193 files, 4504 tests, all passed (no flakes this run); `pdfRegression.test.ts` then grew from 7 to 10 tests and was re-run alone: 10 passed.
 - **`npx tsc --noEmit -p .`:** exit 0.
 - **`next build`** (`MAGIC_LINK_SECRET=x SESSION_SECRET=placeholder-…`): exit 0. It compiled and generated 574/574 pages; the Prisma "database unavailable" lines are the usual local noise.
 - **Mutation check:** the PR 5 fit test fails when the firm address is lengthened until it overflows.
@@ -33,7 +33,7 @@ Spec: `docs/reviews/2026-10-30-system-update-plan.md` → PR 5, PR 6, PR 9, deci
 - **Version:** any change to what the generator prints for a given (filing, env) bumps `GENERATOR_VERSION` and the two version-asserting tests. This lane bumped it because a name-less config and the IRS_DISCUSS default change output. It makes existing pre-flight results show as stale, as 2.5.0 did.
 
 ## 12-check map (PR 9)
-`docs/reviews/2026-11-03-p2-9-regression-map.md`. **The owner's original 12-item list is not committed;** items 4, 5, 9, 10, 12 are exact (from the brief), the rest are reconstructed and need owner confirmation. Gaps filled: item 4 (110+ char address), 5 (Canadian province + postal), 10 (designator in all four places), 12 (`prepared by`, cover letter, verbatim exemption), and PDF-level A43/A44/A46 negatives. Items 1–3, 6–9, 11 were already covered by the validator and §6 fixture tests.
+`docs/reviews/2026-11-03-p2-9-regression-map.md`, built from section 9 of the owner's `~/Downloads/form5472prep-system-update.md` (kept outside the repo). Gaps filled: item 1 (A46 negatives), 2 (printed "Sole Member"), 3 (A43 negatives), 4 (110+ char address, A44 negatives), 5 (Canadian province + postal), 8 (PDF-level lines 37-42), 10 (designator in all four places), 11 (signature block is last), 12 (`prepared by`, cover letter, verbatim exemption). Items 6, 7 and 9 were already covered.
 
 ## Open
 ### Owner-gated
@@ -47,7 +47,6 @@ Spec: `docs/reviews/2026-10-30-system-update-plan.md` → PR 5, PR 6, PR 9, deci
   - `HOUSE_PREPARER_IRS_DISCUSS` = `blank` | `yes` | `no` (default `blank`; leave `blank` unless the owner decides the firm may discuss)
   
   An admin then sets "Paid preparer" to House preparer per order. A long firm name or address shrinks to fit (6 to 8 pt); only an extreme value raises W41.
-- Confirm or renumber the reconstructed items in the regression map.
 - Push to `main` (one push, after the other lane merges) is the orchestrator's and owner's call. No migrations in this lane.
 
 ### Follow-ups
