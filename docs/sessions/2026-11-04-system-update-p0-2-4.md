@@ -75,3 +75,9 @@ Builds on PR 1: `docs/sessions/2026-10-31-release-gate-p0-1.md`. Generator now *
 ## Lane notes
 - No real client data was used. All fixtures are synthetic (F1 and F11 plus inline rows).
 - `tsc` output piped through `head` hides its exit code, and one commit was amended for a test-typing fix found that way. Run `npx tsc` bare before committing.
+
+## Ship record (2026-11-03, orchestrator)
+- Branch rebased onto origin/main `4cc2304`; SHAs in the table above changed. Final P0 range: `921e6a9..98aacd1` (PR1 `921e6a9`–`d10841d`, PR2 `8df4d2f`, PR3 `0e4f26d`, PR4 `de8beeb` `caec213`, docs `b5b6a20`, review fixes `98aacd1`).
+- Full-diff Codex review (high effort): NO SHIP on 2 amount-loss defects + 1 key leak → fixed in `98aacd1` (convert keeps the bare contribution total as its own row; no 500-row cap; `preflightPdfKey` stripped from client JSON). No migration/SQL/backfill/pay-path findings.
+- Evidence before push: FULL vitest 191 files / 4,487 tests pass; `tsc` 0; `next build` 0 (574 pages); renders `sys-p0-out/seven-p11.png` (7 rows, $9,199 = 1f/1h, EUR sentence) and `verbatim-p12.png` checked by the orchestrator.
+- Deploy-day ops (owner/staff): each order already waiting for review needs one "Re-run pre-flight" click before Release enables; PDF_GENERATED orders lose client PDF access until released (by design). See `docs/staff-changelog-2026-11-system-update.md`.
