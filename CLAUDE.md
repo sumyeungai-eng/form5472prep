@@ -98,3 +98,7 @@
   field; omitted when missing; optional for customers). Pre-flight ends with the
   post-generation PDF validator `src/lib/pdf/validatePackage.ts` (A39–A51,
   W46–W47), which reads the produced PDF and must never throw.
+- **Generator 2.5.0** (`docs/sessions/2026-11-04-system-update-p0-2-4.md`): no filler RCS
+  cause (red DRAFT marker, A32); per-year reasonable cause source with a verbatim
+  WinAnsi body (A37/W42); Part V line items are permissive customer drafts
+  (`src/lib/partV.ts`) — a missing amount is A38, never $0 (A38, W43–W45).

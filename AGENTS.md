@@ -33,3 +33,12 @@ The `hktax/` app must never be deployed to the form5472prep.com project.
   write of `generatedPdfKey` must clear `reviewApprovedAt/By/PdfKey` (or set them to the new key).
 - `toClientFiling` nulls package keys before release; never pass a raw key to a client component.
 - Spec: `docs/reviews/2026-10-30-system-update-plan.md` (PR 1); handoff: `docs/sessions/2026-10-31-release-gate-p0-1.md`.
+
+## Reasonable cause source + Part V line items (2026-11-04, P0-2..4, generator 2.5.0)
+- `rcsSource = CUSTOMER_VERBATIM` prints `rcsVerbatimText` only (empty = DRAFT marker + A32, never the admin narrative);
+  same rule in `generatePackage.rcsYearRecord` and `completeness.yearHasReasonableCause` (release + fax gates).
+- Verbatim text never goes through `toPdfSafe` (use `toWinAnsiVerbatim`; A37). Snapshot change-log field is
+  `rcsVerbatimSnapshot:<year>` — never a `year:` field.
+- Part V rows are permissive drafts (`src/lib/partV.ts`, `amountCents: number | null`): no customer path may 400 on row
+  content; a missing USD amount is `amountMissing` (A38), never a real $0. FX sentence only via `fxSentence()`.
+- Handoff: `docs/sessions/2026-11-04-system-update-p0-2-4.md`; staff guide: `docs/staff-changelog-2026-11-system-update.md`.
