@@ -10,7 +10,7 @@ D11 backfill). That plan file currently lives on the `sign-reedit` worktree bran
 | separate generator-fix lane | `generatePackage.ts`, `preflight.ts`, `packageInput.ts`, wizard intake. PR1 touched none of them. |
 
 ## What shipped (local commits on `feat/system-update-p0`, not pushed)
-- `Filing.reviewApprovedPdfKey` + migration `20261031100000_release_gate` (additive column + D11 backfill;
+- `Filing.reviewApprovedPdfKey` + migration `20261104100000_release_gate` (additive column + D11 backfill;
   also stamps the key on filings that were already approved).
 - `src/lib/pdf/packageKeys.ts`: `newUnsignedPdfKey` (versioned `{id}_unsigned_{ts}.pdf`), `releasedPdfKey`,
   `isReviewedPdfKey` (moved here, re-exported from filingActions), `latestGeneratedDraftKey` (admin draft download).
