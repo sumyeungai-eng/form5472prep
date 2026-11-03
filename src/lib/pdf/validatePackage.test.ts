@@ -114,6 +114,30 @@ describe("P0-2: state of formation never comes from the mailing address", () => 
   }, TIMEOUT);
 });
 
+describe("A40 on multi-page authored documents (Codex review P1)", () => {
+  const longNarrative = Array.from({ length: 6 }, (_, k) =>
+    `Paragraph ${k + 1}: I did not know that a foreign-owned single-member LLC must file Form 5472 with a pro forma ` +
+    "Form 1120 every year, including years with no U.S. income. No adviser, bank or formation service told me about " +
+    "the requirement, and the state documents I received mentioned only the annual report and franchise tax.",
+  ).join("\n\n").repeat(2);
+
+  it("a valid two-page RCS passes: continuation pages need not repeat the header", async () => {
+    const yd = EXAMPLE_IMPACT.yearData[0];
+    const pkg = await build({ yearData: [{ ...yd, rcsAdminNarrative: longNarrative }] });
+    expect(longNarrative.length).toBeGreaterThan(2_800);
+    expect(pages(pkg.record, "Reasonable Cause Statement").length).toBeGreaterThanOrEqual(2);
+    expect(await validatePackage(pkg.bytes, pkg.record)).toEqual({ failures: [], warnings: [] });
+  }, TIMEOUT);
+
+  it("still fails when an authored page prints a different EIN", async () => {
+    const pkg = await build();
+    const doc = await PDFDocument.load(pkg.bytes);
+    const rcsPage = pages(pkg.record, "Reasonable Cause Statement")[0];
+    doc.getPage(rcsPage - 1).drawText("EIN: 98-0000009", { x: 72, y: 40, size: 10, font: await doc.embedFont(StandardFonts.Helvetica) });
+    expect(ids((await validatePackage(await doc.save(), pkg.record)).failures)).toEqual(["A40"]);
+  }, TIMEOUT);
+});
+
 describe("validator findings on bad data (generation never throws)", () => {
   it("A48: a client description dated outside the tax year is flagged, never rewritten", async () => {
     const yd = EXAMPLE_IMPACT.yearData[0];

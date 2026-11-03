@@ -396,16 +396,28 @@ export async function validatePackage(bytes: Uint8Array, record: PackageRecord):
       fail("A47", `Page ${pageNo}: the cover letter contains "penalties of perjury" wording.`);
     }
   }
-  // A40 (authored pages): every page we write names the LLC and its EIN.
+  // A40 (authored documents): each document shows the LLC name, EIN and tax
+  // year at least once, and every EIN or "Reporting Corporation:" name it
+  // prints matches the forms. Continuation pages (a long RCS) carry no header,
+  // so presence is per document, consistency per occurrence.
   for (const entry of record.pageOrder) {
     if (entry.label === "Form 1120" || entry.label === "Form 5472") continue;
-    for (let pageNo = entry.startPage; pageNo <= entry.endPage; pageNo++) {
-      const text = reader.lines(pageNo).join(" ");
-      if (!text.includes(record.llcName) || !text.includes(record.llcEin)) {
-        fail("A40", `Page ${pageNo} (${entry.label}) does not show the LLC name and EIN exactly as on the forms.`);
-      }
-      if (entry.taxYear !== undefined && !text.includes(String(entry.taxYear))) {
-        fail("A40", `Page ${pageNo} (${entry.label}) does not show tax year ${entry.taxYear}.`);
+    const where = `${entry.label}${entry.taxYear !== undefined ? ` ${entry.taxYear}` : ""} (pages ${entry.startPage}-${entry.endPage})`;
+    const lines: string[] = [];
+    for (let pageNo = entry.startPage; pageNo <= entry.endPage; pageNo++) lines.push(...reader.lines(pageNo));
+    const text = lines.join(" ");
+    if (!text.includes(record.llcName) || !text.includes(record.llcEin)) {
+      fail("A40", `${where} does not show the LLC name and EIN exactly as on the forms.`);
+    }
+    if (entry.taxYear !== undefined && !text.includes(String(entry.taxYear))) {
+      fail("A40", `${where} does not show tax year ${entry.taxYear}.`);
+    }
+    const otherEins = Array.from(new Set(text.match(/\b\d{2}-\d{7}\b/g) ?? [])).filter((ein) => ein !== record.llcEin);
+    if (otherEins.length > 0) fail("A40", `${where} prints EIN ${otherEins.join(", ")}; the forms show ${record.llcEin}.`);
+    for (const line of lines) {
+      const named = /^Reporting Corporation: (.+?)(?:, EIN .*)?$/.exec(line)?.[1];
+      if (named !== undefined && named !== record.llcName) {
+        fail("A40", `${where} names the reporting corporation "${named}"; the forms show "${record.llcName}".`);
       }
     }
   }
