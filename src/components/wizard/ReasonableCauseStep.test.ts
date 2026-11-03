@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateReasonableCauseYears } from "./ReasonableCauseStep";
+import { applyWhySelection, initialWhySelection, validateReasonableCauseYears } from "./ReasonableCauseStep";
 
 describe("validateReasonableCauseYears", () => {
   it("rejects an answer over the 20,000-character server cap before saving", () => {
@@ -53,5 +53,23 @@ describe("validateReasonableCauseYears", () => {
         },
       ]),
     ).toEqual({});
+  });
+});
+
+describe("P0-3 raw capture", () => {
+  const row = { taxYear: 2024, rcsWhyMissed: "", rcsWhenLearned: "", rcsNoIrsNoticeConfirmed: true };
+  const typed = "I moved countries in 2024.\n\nMy mail was not forwarded,\nso I missed the letter.";
+
+  it("keeps the textarea value untouched beside the normalised sentence", () => {
+    const next = applyWhySelection(row, { key: "other", detail: typed });
+    expect(next.rcsWhyMissedRaw).toBe(typed);
+    expect(next.rcsWhyMissed).toBe("I moved countries in 2024. My mail was not forwarded, so I missed the letter.");
+  });
+
+  it("reopens the step from the raw text, line breaks included", () => {
+    const saved = applyWhySelection(row, { key: "other", detail: typed });
+    expect(initialWhySelection(saved)).toEqual({ key: "other", detail: typed });
+    // Orders captured before raw capture reopen from the normalised text.
+    expect(initialWhySelection({ ...saved, rcsWhyMissedRaw: undefined }).detail).toBe(saved.rcsWhyMissed);
   });
 });

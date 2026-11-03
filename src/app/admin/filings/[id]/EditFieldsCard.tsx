@@ -109,6 +109,22 @@ const YEAR_FIELDS: ReadonlyArray<{
   hint?: string;
 }> = [
   {
+    key: "rcsSource",
+    label: "Reasonable cause source",
+    kind: "select",
+    options: [
+      { value: "ADMIN_NARRATIVE", label: "Admin narrative (templated statement)" },
+      { value: "CUSTOMER_VERBATIM", label: "Customer's own words (verbatim)" },
+    ],
+    hint: "Verbatim prints the text below as the whole statement body, between the heading and the signature block. Choosing it records who chose it.",
+  },
+  {
+    key: "rcsVerbatimText",
+    label: "Verbatim text (printed as written when the source is verbatim)",
+    kind: "narrative",
+    hint: "Starts as the customer's own text. Edits are change-logged; each stored PDF snapshots the exact printed text. Characters the PDF font cannot print become \"?\" (A37).",
+  },
+  {
     key: "rcsAdminNarrative",
     label: "RCS narrative (admin)",
     kind: "narrative",
@@ -133,6 +149,8 @@ const YEAR_FIELDS: ReadonlyArray<{
 ];
 
 type YearFieldKey =
+  | "rcsSource"
+  | "rcsVerbatimText"
   | "rcsAdminNarrative"
   | "rcsLearnedOn"
   | "rcsSmallCorpParagraph"
@@ -220,6 +238,10 @@ type Props = {
   years: Array<{
     taxYear: number;
     rcsWhyMissed: string | null;
+    // P0-3: the customer's textarea as typed (null for orders before 2026-10-31).
+    rcsWhyMissedRaw?: string | null;
+    rcsSource?: string | null;
+    rcsVerbatimText?: string | null;
     rcsWhenLearned: string | null;
     rcsNoIrsNoticeConfirmed: boolean | null;
     // Generator 2.3.0 admin RCS fields (rcsLearnedOn as YYYY-MM-DD).
@@ -329,7 +351,9 @@ export function EditFieldsCard({ filingId, initial, years, housePreparerConfig }
 
     let value: unknown = yearValues[key] ?? "";
     // The narrative keeps its line breaks (paragraphs); blank means "not written".
-    if (field === "rcsAdminNarrative") value = String(value).trim() === "" ? null : String(value).replace(/\s+$/, "");
+    if (field === "rcsAdminNarrative" || field === "rcsVerbatimText") {
+      value = String(value).trim() === "" ? null : String(value).replace(/\s+$/, "");
+    }
     if (YEAR_FIELDS.find((f) => f.key === field)?.kind === "json") {
       const raw = String(value).trim();
       if (!raw) {
@@ -621,12 +645,13 @@ export function EditFieldsCard({ filingId, initial, years, housePreparerConfig }
                   Tax year {year.taxYear}
                   {year.packageLate ? (
                     <span className="ml-2 font-normal text-amber-800">
-                      Late per package — the reasonable cause statement needs an admin narrative.
+                      Late per package — the reasonable cause statement needs an admin narrative or verbatim text.
                     </span>
                   ) : null}
                 </h4>
+                <RcsSourcePreview year={year} />
                 <CustomerExplanation
-                  whyMissed={year.rcsWhyMissed}
+                  whyMissed={year.rcsWhyMissedRaw?.trim() ? year.rcsWhyMissedRaw : year.rcsWhyMissed}
                   whenLearned={year.rcsWhenLearned}
                   onCopy={() => {
                     const key = yearKey(year.taxYear, "rcsAdminNarrative");
@@ -714,6 +739,25 @@ export function EditFieldsCard({ filingId, initial, years, housePreparerConfig }
         )}
       </div>
     </div>
+  );
+}
+
+// P0-3 preview label: what this year's statement prints, from the SAVED values.
+function RcsSourcePreview({ year }: { year: Props["years"][number] }) {
+  const verbatim = year.rcsSource === "CUSTOMER_VERBATIM";
+  const legacy = !year.rcsWhyMissedRaw?.trim() && !!year.rcsWhyMissed?.trim();
+  return (
+    <p className="mb-2 text-xs text-slate-700">
+      <span className="font-medium">Prints: </span>
+      {verbatim
+        ? year.rcsVerbatimText?.trim()
+          ? "the customer's own words, verbatim (body only; heading and signature unchanged)."
+          : "nothing yet: the source is verbatim but the verbatim text is empty (A32)."
+        : "the templated statement with the admin narrative as its cause section."}
+      {verbatim && legacy && (
+        <span className="ml-1 text-amber-800">Formatting not recoverable (captured before 2026-10-31).</span>
+      )}
+    </p>
   );
 }
 

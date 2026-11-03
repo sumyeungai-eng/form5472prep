@@ -189,6 +189,11 @@ export const STAFF_ONLY_YEAR_FIELDS = [
   "rcsAdminNarrative",
   "rcsLearnedOn",
   "rcsSmallCorpParagraph",
+  // P0-3: the staff-edited verbatim body and who chose verbatim (staff identity).
+  // The customer's own raw text (rcsWhyMissedRaw) stays visible to them.
+  "rcsVerbatimText",
+  "rcsVerbatimChosenBy",
+  "rcsVerbatimChosenAt",
 ] as const;
 
 function withoutStaffYearFields(row: unknown): unknown {

@@ -73,6 +73,9 @@ type ReasonableCauseYearData = {
   rcsWhenLearned?: string | null;
   rcsNoIrsNoticeConfirmed?: boolean | null;
   rcsAdminNarrative?: string | null;
+  // P0-3: CUSTOMER_VERBATIM with non-empty text is a cause, same as a narrative.
+  rcsSource?: string | null;
+  rcsVerbatimText?: string | null;
 };
 
 const nonEmpty = (value: string | null | undefined): boolean =>
@@ -190,9 +193,17 @@ export function hasAdminReasonableCauseForFax(
   const lateYears = filing.taxYears.filter((y) =>
     isYearDelinquentForPackage(y, finalDissolved, y === maxYear ? extFacts : null, now),
   );
-  return lateYears.every((taxYear) =>
-    nonEmpty(yearData.find((y) => y.taxYear === taxYear)?.rcsAdminNarrative),
-  );
+  return lateYears.every((taxYear) => yearHasReasonableCause(yearData.find((y) => y.taxYear === taxYear)));
+}
+
+// The cause the generator prints for a year (P0-3): the verbatim text when the
+// source is CUSTOMER_VERBATIM (never a fall back to the admin narrative), else
+// the admin narrative. Same rule as generatePackage's rcsYearRecord.
+export function yearHasReasonableCause(
+  year: Pick<ReasonableCauseYearData, "rcsAdminNarrative" | "rcsSource" | "rcsVerbatimText"> | undefined,
+): boolean {
+  if (year?.rcsSource === "CUSTOMER_VERBATIM") return nonEmpty(year.rcsVerbatimText);
+  return nonEmpty(year?.rcsAdminNarrative);
 }
 
 /**

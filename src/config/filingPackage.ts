@@ -56,7 +56,11 @@ export const FAX_RENDER_DPI = 300;
 // the mailing address) and omits it when missing; FTIN prints unspaced on
 // 4b(3)/8b(3); pre-flight also runs the post-generation PDF validator
 // (src/lib/pdf/validatePackage.ts, A39-A51 / W46-W47).
-export const GENERATOR_VERSION = "2.4.0";
+// 2.5.0 (2026-11, docs/reviews/2026-10-30-system-update-plan.md P0 PR 2-4): no
+// filler cause (red DRAFT marker, A32); "Reasonable cause source" with a
+// verbatim WinAnsi body (A37, W42); Part V line items with paidVia, currency
+// and FX sentences (A38, W43-W45).
+export const GENERATOR_VERSION = "2.5.0";
 // The IRS-required marking written across the top of the pro forma Form 1120
 // (Form 5472 instructions, "Foreign-owned U.S. DE"); also stamped on Form 5472.
 // House position: no "DIIRSP" suffix or other procedure label on the forms.

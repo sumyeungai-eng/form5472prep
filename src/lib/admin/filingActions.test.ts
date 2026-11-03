@@ -785,6 +785,49 @@ describe("updateYearField", () => {
     },
   );
 
+  it("P0-3: choosing verbatim records who chose it and pre-fills from the customer's raw text", async () => {
+    db.findUnique.mockResolvedValue({ ...filing, reasonableCauseNarrative: "Order-level message" });
+    db.yearFindUnique.mockResolvedValue({
+      id: "year_2025",
+      rcsWhyMissed: "Normalised sentence.",
+      rcsWhyMissedRaw: "Line one.\n\nLine two.",
+      rcsSource: "ADMIN_NARRATIVE",
+      rcsVerbatimText: null,
+    });
+    await runFilingAction(
+      "filing_1",
+      "updateYearField",
+      { taxYear: 2025, field: "rcsSource", value: "CUSTOMER_VERBATIM" },
+      { adminId: "admin_1", approver: "admin_1" },
+    );
+    const data = (db.yearUpdate.mock.calls[0][0] as { data: Record<string, unknown> }).data;
+    expect(data).toMatchObject({
+      rcsSource: "CUSTOMER_VERBATIM",
+      rcsVerbatimChosenBy: "admin_1",
+      rcsVerbatimText: "Line one.\n\nLine two.",
+    });
+    expect(data.rcsVerbatimChosenAt).toBeInstanceOf(Date);
+    const fields = db.createLog.mock.calls.map((c) => (c[0] as { data: { field: string } }).data.field);
+    expect(fields).toEqual(expect.arrayContaining(["year:2025:rcsSource", "year:2025:rcsVerbatimText"]));
+    // Both are package-data changes (pre-flight goes stale; the PR 1 data-edit rule applies).
+    expect(fields.every((f) => !f.startsWith("year:") || isPackageDataChangeField(f))).toBe(true);
+  });
+
+  it("P0-3: verbatim text keeps line breaks and non-WinAnsi characters (A37 judges them, not the save)", async () => {
+    db.findUnique.mockResolvedValue(filing);
+    db.yearFindUnique.mockResolvedValue({ id: "year_2025", rcsVerbatimText: null });
+    await runFilingAction(
+      "filing_1",
+      "updateYearField",
+      { taxYear: 2025, field: "rcsVerbatimText", value: "Café line.\r\nฉัน" },
+      { adminId: "admin_1" },
+    );
+    expect(db.yearUpdate).toHaveBeenCalledWith(expect.objectContaining({ data: { rcsVerbatimText: "Café line.\nฉัน" } }));
+    await expect(
+      runFilingAction("filing_1", "updateYearField", { taxYear: 2025, field: "rcsSource", value: "BOTH" }, { adminId: "admin_1" }),
+    ).rejects.toMatchObject({ status: 400 });
+  });
+
   it("rejects an invalid ownerPaidCosts JSON shape with no write", async () => {
     db.findUnique.mockResolvedValue(filing);
 
@@ -2227,6 +2270,20 @@ describe("release gate (PR 1)", () => {
   afterEach(() => vi.useRealTimers());
 
   const given = (overrides: Partial<typeof base> = {}) => db.findUnique.mockResolvedValue({ ...base, ...overrides });
+
+  it("P0-3: a late year with CUSTOMER_VERBATIM text satisfies the cause; verbatim without text never does", async () => {
+    const late = { taxYears: [2024], generatedPdfKey: "filing_1_unsigned_100.pdf" };
+    given({
+      ...late,
+      yearData: [{ taxYear: 2024, rcsAdminNarrative: null, rcsSource: "CUSTOMER_VERBATIM", rcsVerbatimText: "My own words." }],
+    });
+    await expect(approve()).resolves.toMatchObject({ ok: true });
+    given({
+      ...late,
+      yearData: [{ taxYear: 2024, rcsAdminNarrative: "Admin text", rcsSource: "CUSTOMER_VERBATIM", rcsVerbatimText: "  " }],
+    });
+    await expect(approve()).rejects.toMatchObject({ code: "rcs_missing_for_late_filing" });
+  });
 
   it("releases the exact key the admin reviewed", async () => {
     given();

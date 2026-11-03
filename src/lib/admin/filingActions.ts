@@ -25,6 +25,8 @@ import {
   CLEARED_PREFLIGHT_OVERRIDE,
   overrideCoversFailures,
   persistNewPackagePreflight,
+  logVerbatimSnapshots,
+  type PersistedPackageRecord,
   preflightIssueKey,
   preflightIssues,
   preflightResultColumns,
@@ -390,6 +392,9 @@ const filingSelect = {
       rcsAdminNarrative: true,
       rcsLearnedOn: true,
       rcsSmallCorpParagraph: true,
+      // P0-3: verbatim mode satisfies the cause for release and fax.
+      rcsSource: true,
+      rcsVerbatimText: true,
     },
   },
 } as const;
@@ -459,6 +464,11 @@ export const packageFilingSelect = {
       rcsAdminNarrative: true,
       rcsLearnedOn: true,
       rcsSmallCorpParagraph: true,
+      // P0-3 reasonable cause source.
+      rcsSource: true,
+      rcsVerbatimText: true,
+      rcsVerbatimChosenBy: true,
+      rcsVerbatimChosenAt: true,
     },
   },
 } as const;
@@ -469,6 +479,9 @@ const YEAR_NULLABLE_DATES = new Set(["rcsLearnedOn"]);
 // The admin-authored RCS narrative renders into a signed IRS statement; keep it
 // to a length that fits the statement page.
 const MAX_RCS_NARRATIVE_CHARS = 4000;
+export const RCS_SOURCES = ["ADMIN_NARRATIVE", "CUSTOMER_VERBATIM"] as const;
+// Verbatim text flows across pages; same cap as the customer's answer.
+const MAX_RCS_VERBATIM_CHARS = 20000;
 
 // Filing columns an admin may edit with updateField (same set the customer can
 // edit in the wizard, plus the Form 7004 remediation fields and the paid
@@ -508,6 +521,9 @@ export const ADMIN_EDITABLE_YEAR_FIELDS = [
   "rcsAdminNarrative",
   "rcsLearnedOn",
   "rcsSmallCorpParagraph",
+  // P0-3 reasonable cause source + the verbatim body (D5: editable, logged, snapshotted).
+  "rcsSource",
+  "rcsVerbatimText",
   "nonCashTransfers",
   "ownerPaidCosts",
   "zeroConfirmations",
@@ -615,6 +631,19 @@ function parseYearJsonField(field: keyof typeof YEAR_JSON_SCHEMAS, value: unknow
 function yearJsonWriteValue(value: unknown) {
   if (value === null) return Prisma.JsonNull;
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+}
+
+// P0-3: the text an empty verbatim box starts from. Raw keeps the customer's
+// line breaks; the normalised answer and the order-level message are the
+// fallbacks for orders captured before raw capture existed.
+export function verbatimPrefillText(
+  year: { rcsWhyMissedRaw?: string | null; rcsWhyMissed?: string | null },
+  orderNarrative: string | null | undefined,
+): { text: string; from: "rcsWhyMissedRaw" | "rcsWhyMissed" | "reasonableCauseNarrative" } | null {
+  if (year.rcsWhyMissedRaw?.trim()) return { text: year.rcsWhyMissedRaw, from: "rcsWhyMissedRaw" };
+  if (year.rcsWhyMissed?.trim()) return { text: year.rcsWhyMissed, from: "rcsWhyMissed" };
+  if (orderNarrative?.trim()) return { text: orderNarrative, from: "reasonableCauseNarrative" };
+  return null;
 }
 
 // Why the reviewed-PDF upload is blocked, in words the admin can act on. The
@@ -755,7 +784,14 @@ type ReleaseCheckFiling = Pick<
   | "generatedPdfKey"
   | "preflightOverrideBy"
   | "preflightOverrideReason"
-> & { yearData?: Array<{ taxYear: number; rcsAdminNarrative: string | null }> | null };
+> & {
+  yearData?: Array<{
+    taxYear: number;
+    rcsAdminNarrative: string | null;
+    rcsSource?: string | null;
+    rcsVerbatimText?: string | null;
+  }> | null;
+};
 
 // The one server-side rule for handing a package to the client: used by
 // approveForSignature, uploadReviewedPdf (web and v1 API alike, both go
@@ -808,8 +844,9 @@ export async function canReleaseToClient(
       ok: false,
       code: "rcs_missing_for_late_filing",
       message:
-        "A32: a late year has no admin RCS narrative, so the package has no reasonable-cause statement. " +
-        "Write the narrative for each late year and regenerate. This check cannot be overridden for release.",
+        "A32: a late year has no reasonable cause (no admin RCS narrative, and no verbatim text when the source is " +
+        "\"Customer's own words\"). Write the narrative or choose verbatim for each late year and re-run pre-flight. " +
+        "This check cannot be overridden for release.",
     };
   }
   if (filing.preflightStatus === "passed") return { ok: true };
@@ -970,7 +1007,7 @@ async function persistRerunPreflight(
   trigger: string,
   // Release gate: the checked bytes, already stored under `key`, become the
   // current generated PDF (unreleased, unsigned, generated key only).
-  newPackage?: { key: string; record: { generatorVersion: string; commit: string } },
+  newPackage?: { key: string; record: PersistedPackageRecord },
 ): Promise<{ checkedAt: Date; overrideCleared: boolean }> {
   const checkedAt = new Date();
   let overrideCleared = false;
@@ -1000,6 +1037,7 @@ async function persistRerunPreflight(
         select: { id: true },
       });
       swapped = true;
+      await logVerbatimSnapshots(filing.id, newPackage.key, newPackage.record);
     } catch (err) {
       if (!(err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025")) throw err;
     }
@@ -1074,7 +1112,7 @@ async function rerunPreflightNow(
   // Release gate: for an unreleased, unsigned GENERATED package, keep the bytes
   // pre-flight just checked and make them the current PDF, so release can
   // require preflightPdfKey === generatedPdfKey. Reviewed uploads keep theirs.
-  let newPackage: { key: string; record: { generatorVersion: string; commit: string } } | undefined;
+  let newPackage: { key: string; record: PersistedPackageRecord } | undefined;
   if (
     filing.generatedPdfKey &&
     !isReviewedPdfKey(filing.generatedPdfKey) &&
@@ -2086,7 +2124,23 @@ export async function runFilingAction(
 
       let after: unknown;
       let writeValue: unknown;
-      if (YEAR_NULLABLE_STRINGS.has(field)) {
+      if (field === "rcsSource") {
+        const raw = String(body.value ?? "").trim();
+        if (!(RCS_SOURCES as readonly string[]).includes(raw)) {
+          throw new FilingActionError(400, "invalid_value", `rcsSource must be one of ${RCS_SOURCES.join(", ")}`);
+        }
+        after = raw;
+        writeValue = raw;
+      } else if (field === "rcsVerbatimText") {
+        // Printed as written (WinAnsi; anything else becomes "?" and fails A37),
+        // so no PDF-encodable refusal here. Line breaks are kept.
+        const raw = body.value === undefined || body.value === null ? "" : String(body.value).replace(/\r\n?/g, "\n");
+        if (raw.length > MAX_RCS_VERBATIM_CHARS) {
+          throw new FilingActionError(400, "invalid_value", `The verbatim text must be ${MAX_RCS_VERBATIM_CHARS} characters or fewer.`);
+        }
+        after = raw.trim() === "" ? null : raw;
+        writeValue = after;
+      } else if (YEAR_NULLABLE_STRINGS.has(field)) {
         let raw = body.value === undefined || body.value === null ? null : String(body.value);
         // The admin narrative is multi-paragraph ("blank line = new paragraph"):
         // line breaks are layout, not printed characters, so they are exempt
@@ -2144,6 +2198,9 @@ export async function runFilingAction(
           rcsAdminNarrative: true,
           rcsLearnedOn: true,
           rcsSmallCorpParagraph: true,
+          rcsSource: true,
+          rcsVerbatimText: true,
+          rcsWhyMissedRaw: true,
           nonCashTransfers: true,
           ownerPaidCosts: true,
           zeroConfirmations: true,
@@ -2167,6 +2224,19 @@ export async function runFilingAction(
         after.length > 0 &&
         year.noReportableTransactions === true;
       if (clearsNoneDeclared) data.noReportableTransactions = false;
+      // P0-3: choosing verbatim records who chose it, and an empty verbatim box
+      // is pre-filled from the customer's raw text, then the normalised answer,
+      // then the order-level message (logged on its own row).
+      const choosesVerbatim = field === "rcsSource" && after === "CUSTOMER_VERBATIM" && year.rcsSource !== after;
+      const verbatimPrefill =
+        choosesVerbatim && !year.rcsVerbatimText?.trim()
+          ? verbatimPrefillText(year, filing.reasonableCauseNarrative)
+          : null;
+      if (choosesVerbatim) {
+        data.rcsVerbatimChosenBy = ctx.approver ?? ctx.adminId ?? null;
+        data.rcsVerbatimChosenAt = new Date();
+      }
+      if (verbatimPrefill) data.rcsVerbatimText = verbatimPrefill.text;
       await prisma.filingYearData.update({
         where: { filingId_taxYear: { filingId: filing.id, taxYear } },
         data: data as never,
@@ -2182,6 +2252,17 @@ export async function runFilingAction(
         after,
         reason: logReason,
       });
+      if (verbatimPrefill) {
+        await logFilingChange({
+          filingId: filing.id,
+          adminId: ctx.adminId,
+          source: "admin",
+          field: `year:${taxYear}:rcsVerbatimText`,
+          before: year.rcsVerbatimText ?? null,
+          after: verbatimPrefill.text,
+          reason: `derived from rcsSource edit: pre-filled from ${verbatimPrefill.from}`,
+        });
+      }
       if (clearsNoneDeclared) {
         await logFilingChange({
           filingId: filing.id,

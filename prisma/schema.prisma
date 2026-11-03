@@ -505,6 +505,17 @@ model FilingYearData {
   rcsAdminNarrative       String?
   rcsLearnedOn            DateTime? @db.Date
   rcsSmallCorpParagraph   Boolean?
+  // P0-3 (2026-11): which cause the RCS prints. "ADMIN_NARRATIVE" (default) =
+  // the templated statement with rcsAdminNarrative; "CUSTOMER_VERBATIM" = the
+  // statement body is rcsVerbatimText, printed as written (WinAnsi, A37).
+  rcsSource               String    @default("ADMIN_NARRATIVE")
+  // The step-5 textarea exactly as typed (line breaks kept); customer-visible.
+  rcsWhyMissedRaw         String?
+  // Staff-only (stripped from customer APIs): the verbatim body (staff-editable,
+  // change-logged, snapshotted per persisted PDF) and who chose verbatim.
+  rcsVerbatimText         String?
+  rcsVerbatimChosenBy     String?
+  rcsVerbatimChosenAt     DateTime?
   // Q-01 wave 4: costs the owner paid personally for the LLC; each is a capital contribution row in Part V.
   // JSON array of { category: "state_filing_fee" | "registered_agent" | "formation_or_ein_service" |
   //   "software_subscriptions" | "initial_bank_funding" | "other", date: "YYYY-MM-DD", amountCents, note? }

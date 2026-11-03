@@ -33,3 +33,19 @@ export function toPdfSafe(text: string): string {
     return isPdfEncodable(replacement) ? replacement : "?";
   }).join("");
 }
+
+/**
+ * Verbatim reasonable-cause text (P0-3). Unlike toPdfSafe it keeps every
+ * character Helvetica's WinAnsi encoding can print (é, ü, curly quotes, dashes,
+ * ellipsis) and replaces only the rest (e.g. Thai or Chinese script) with "?".
+ * Line breaks pass through; tabs become spaces. Never throws.
+ */
+export function toWinAnsiVerbatim(text: string): { text: string; replaced: string[] } {
+  const replaced: string[] = [];
+  const out = Array.from(text.normalize("NFC").replace(/\r\n?/g, "\n").replace(/\t/g, " "), (char) => {
+    if (char === "\n" || isPdfEncodable(char)) return char;
+    if (!replaced.includes(char)) replaced.push(char);
+    return "?";
+  }).join("");
+  return { text: out, replaced };
+}

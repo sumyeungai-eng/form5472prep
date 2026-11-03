@@ -32,6 +32,11 @@ export type PackageFilingRow = NullablePartial<Omit<PackageInput, "yearData" | "
     rcsAdminNarrative?: string | null;
     rcsLearnedOn?: Date | string | null;
     rcsSmallCorpParagraph?: boolean | null;
+    // P0-3 reasonable cause source (staff-only).
+    rcsSource?: string | null;
+    rcsVerbatimText?: string | null;
+    rcsVerbatimChosenBy?: string | null;
+    rcsVerbatimChosenAt?: Date | string | null;
   }>;
 };
 
@@ -99,6 +104,10 @@ export function filingToPackageInput(filing: PackageFilingRow): PackageInput {
       rcsAdminNarrative: year.rcsAdminNarrative ?? null,
       rcsLearnedOn: year.rcsLearnedOn ?? null,
       rcsSmallCorpParagraph: year.rcsSmallCorpParagraph ?? null,
+      rcsSource: year.rcsSource ?? null,
+      rcsVerbatimText: year.rcsVerbatimText ?? null,
+      rcsVerbatimChosenBy: year.rcsVerbatimChosenBy ?? null,
+      rcsVerbatimChosenAt: year.rcsVerbatimChosenAt ?? null,
     })),
   };
 }

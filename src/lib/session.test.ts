@@ -114,12 +114,27 @@ describe("toClientFiling", () => {
           rcsAdminNarrative: "Internal admin narrative",
           rcsLearnedOn: new Date("2026-03-01T00:00:00.000Z"),
           rcsSmallCorpParagraph: true,
+          rcsWhyMissedRaw: "Customer's own\nwords",
+          rcsVerbatimText: "Staff-edited verbatim",
+          rcsVerbatimChosenBy: "staff@example.test",
+          rcsVerbatimChosenAt: new Date("2026-11-01T00:00:00.000Z"),
         },
       ],
     });
-    expect(out).toEqual({ id: "f1", yearData: [{ taxYear: 2024, rcsWhyMissed: "Customer's own words" }] });
+    expect(out).toEqual({
+      id: "f1",
+      yearData: [{ taxYear: 2024, rcsWhyMissed: "Customer's own words", rcsWhyMissedRaw: "Customer's own\nwords" }],
+    });
     expect(JSON.stringify(out)).not.toContain("Internal admin narrative");
-    expect(STAFF_ONLY_YEAR_FIELDS).toEqual(["rcsAdminNarrative", "rcsLearnedOn", "rcsSmallCorpParagraph"]);
+    expect(JSON.stringify(out)).not.toContain("staff@example.test");
+    expect(STAFF_ONLY_YEAR_FIELDS).toEqual([
+      "rcsAdminNarrative",
+      "rcsLearnedOn",
+      "rcsSmallCorpParagraph",
+      "rcsVerbatimText",
+      "rcsVerbatimChosenBy",
+      "rcsVerbatimChosenAt",
+    ]);
   });
 
   it("release gate: nulls package keys until staff release, keeps them after", async () => {

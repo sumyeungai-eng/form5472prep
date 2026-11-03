@@ -83,6 +83,7 @@ export async function runPreflight(
   checkA34(record, result);
   checkA35(record, result);
   checkA36(record, result);
+  checkA37(record, result);
   checkW31(record, result);
   checkW32(record, result);
   checkW33(record, result);
@@ -93,6 +94,7 @@ export async function runPreflight(
   checkW39(record, result);
   checkW40(record, result);
   checkW41(record, result);
+  checkW42(record, result);
   await checkA28(pdfBytes, result);
   await checkA30(pdfBytes, record, result);
   await checkRenderedPackage(record, pdfBytes, result);
@@ -643,9 +645,11 @@ function checkA26(record: PackageRecord, result: MutableResult) {
       if (rcs.narrative?.trim()) {
         sources.push({ label: `Tax year ${year.taxYear} → RCS narrative (admin)`, text: rcs.narrative });
       }
+      // P0-3: a verbatim body is the client's own words (W42 covers notes to
+      // us); A26 judges only the text we generate around it.
       sources.push({
         label: `Tax year ${year.taxYear} → reasonable cause statement (generated text)`,
-        text: removeTexts(docText, rcs.narrative ? [rcs.narrative] : []),
+        text: removeTexts(docText, [rcs.narrative, rcs.verbatim?.text].filter((t): t is string => !!t)),
       });
     } else {
       sources.push({ label: `Tax year ${year.taxYear} → reasonable cause statement text`, text: docText });
@@ -755,8 +759,11 @@ function checkA32(record: PackageRecord, result: MutableResult) {
     fail(
       result,
       "A32",
-      `RCS narrative not written for tax year ${year.taxYear}. Write the cause narrative in "RCS narrative (admin)" ` +
-        `for ${year.taxYear}, in the first person. The customer's explanation is never printed.`,
+      year.rcs.verbatimSelected
+        ? `RCS verbatim text is empty for tax year ${year.taxYear}. The source is "Customer's own words": fill in the ` +
+            `verbatim text, or switch the source back to the admin narrative and write it.`
+        : `RCS narrative not written for tax year ${year.taxYear}. Write the cause narrative in "RCS narrative (admin)" ` +
+            `for ${year.taxYear}, in the first person, or choose "Customer's own words" as the source.`,
     );
   }
 }
@@ -774,6 +781,8 @@ const BLOCKED_PHRASES =
 function checkA33(record: PackageRecord, result: MutableResult) {
   const knownSources: string[] = [];
   for (const year of record.taxYears) {
+    // P0-3: verbatim text is never judged by A33 (W42 warns instead).
+    if (year.rcs?.verbatim?.text) knownSources.push(year.rcs.verbatim.text);
     const sources: Array<{ label: string; text: string | null | undefined }> = [
       { label: "RCS narrative (admin)", text: year.reasonableCauseIncluded ? year.rcs?.narrative : null },
       ...year.partVRows.map((row) => ({ label: "Part V transaction description", text: row.description })),
@@ -812,6 +821,42 @@ function checkA33(record: PackageRecord, result: MutableResult) {
         `${doc.taxYear ? `Tax year ${doc.taxYear} → ` : ""}${DOC_LABELS[doc.kind]} text: ${unique(quotes).join("; ")} — ${A33_RULE}`,
       );
     }
+  }
+}
+
+// A37 (P0-3): the verbatim RCS body has characters Helvetica cannot print;
+// each was replaced with "?" in the PDF. Staff-blocking.
+function checkA37(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const chars = year.rcs?.verbatim?.unencodable ?? [];
+    if (chars.length === 0) continue;
+    fail(
+      result,
+      "A37",
+      `Tax year ${year.taxYear}: the verbatim RCS text has characters the PDF font cannot print, printed as "?": ` +
+        `${chars.map((c) => `"${c}"`).join(" ")}. Edit the verbatim text (English letters, accents and punctuation print fine).`,
+    );
+  }
+}
+
+// W42 (P0-3): the verbatim RCS body reads like a note to us rather than a
+// statement to the IRS: a question mark, "please", "can you", "your team", an
+// email address or a URL. Warning: staff decide whether to edit it.
+const NOTE_TO_US = /\?|\b(?:please|can you|your team)\b|[\w.+-]+@[\w-]+\.[\w.-]+|\bhttps?:\/\/\S+|\bwww\.\S+/gi;
+
+function checkW42(record: PackageRecord, result: MutableResult) {
+  for (const year of record.taxYears) {
+    const text = year.rcs?.verbatim?.text;
+    if (!text) continue;
+    // shortcut: a "?" that replaced an unencodable character (A37) also matches; fixing A37 clears it.
+    const quotes = quoteMatches(text, NOTE_TO_US);
+    if (quotes.length === 0) continue;
+    warn(
+      result,
+      "W42",
+      `Tax year ${year.taxYear}: the verbatim RCS text may be a note to us, not a statement to the IRS: ` +
+        `${unique(quotes).join("; ")}. Edit the verbatim text or switch the source to the admin narrative.`,
+    );
   }
 }
 
@@ -912,7 +957,7 @@ function checkW34(record: PackageRecord, result: MutableResult) {
 function checkW35(record: PackageRecord, result: MutableResult) {
   for (const year of record.taxYears) {
     const rcs = year.rcs;
-    if (!rcs || year.status !== "late" || rcs.noticeConfirmed === true) continue;
+    if (!rcs || year.status !== "late" || rcs.noticeConfirmed === true || rcs.narrativeSource === "verbatim") continue;
     warn(
       result,
       "W35",

@@ -16,6 +16,8 @@ import {
 export type ReasonableCauseYearInput = {
   taxYear: number;
   rcsWhyMissed: string;
+  /** P0-3: the textarea exactly as typed (line breaks kept); staff may print it word for word. */
+  rcsWhyMissedRaw?: string;
   /** No longer asked; an earlier saved answer is passed through unchanged. */
   rcsWhenLearned: string;
   rcsNoIrsNoticeConfirmed: boolean;
@@ -43,6 +45,18 @@ export function validateReasonableCauseYears(rows: ReasonableCauseYearInput[]): 
   return errors;
 }
 
+// P0-3 raw capture: the normalised sentence keeps feeding existing consumers,
+// and the textarea value is kept untouched (line breaks and all) beside it.
+export function applyWhySelection(row: ReasonableCauseYearInput, sel: WhyMissedSelection): ReasonableCauseYearInput {
+  return { ...row, rcsWhyMissed: composeWhyMissed(sel), rcsWhyMissedRaw: sel.detail };
+}
+
+// Reopen from the raw text when we have it, so line breaks come back.
+export function initialWhySelection(row: ReasonableCauseYearInput): WhyMissedSelection {
+  const parsed = parseWhyMissed(row.rcsWhyMissed);
+  return parsed.key && row.rcsWhyMissedRaw?.trim() ? { ...parsed, detail: row.rcsWhyMissedRaw } : parsed;
+}
+
 const FIELD_CLASS =
   "block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
 
@@ -59,7 +73,7 @@ export function ReasonableCauseStep({
 }) {
   const [rows, setRows] = useState<ReasonableCauseYearInput[]>(years);
   const [selections, setSelections] = useState<Record<number, WhyMissedSelection>>(() =>
-    Object.fromEntries(years.map((row) => [row.taxYear, parseWhyMissed(row.rcsWhyMissed)])),
+    Object.fromEntries(years.map((row) => [row.taxYear, initialWhySelection(row)])),
   );
   const [errors, setErrors] = useState<FieldErrors>({});
   const sortedRows = useMemo(() => rows.slice().sort((a, b) => a.taxYear - b.taxYear), [rows]);
@@ -76,7 +90,7 @@ export function ReasonableCauseStep({
     setSelections((current) => ({ ...current, [taxYear]: next }));
     setRows((current) =>
       current.map((row) =>
-        row.taxYear === taxYear ? { ...row, rcsWhyMissed: composeWhyMissed(next) } : row,
+        row.taxYear === taxYear ? applyWhySelection(row, next) : row,
       ),
     );
     clearErrors(taxYear, ["rcsWhyMissed"]);
@@ -176,7 +190,7 @@ export function ReasonableCauseStep({
                         className="block text-xs font-medium text-slate-600"
                       >
                         {whyOption.key === "other"
-                          ? "Explain in your own words"
+                          ? "Write your own explanation"
                           : whyOption.detailRequired
                             ? "Briefly describe what happened"
                             : "Add details (optional)"}
@@ -195,6 +209,9 @@ export function ReasonableCauseStep({
                         }
                         className={`mt-1 ${FIELD_CLASS}`}
                       />
+                      <p className="mt-1 text-xs text-slate-500">
+                        Our team reviews it and may use it word for word in your signed statement.
+                      </p>
                       {sel.detail.trim() && (
                         <p
                           className={`mt-1 text-xs ${
@@ -227,9 +244,9 @@ export function ReasonableCauseStep({
                   <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
                     <p className="font-medium">That&apos;s all we need for {row.taxYear}.</p>
                     <p className="mt-1 text-emerald-800">
-                      We&apos;ll turn your answer into a formal reasonable-cause statement and attach it
-                      to your filing package. A PTIN-holding tax accountant reviews it before anything is
-                      submitted.
+                      Our team reviews your answer and either writes your reasonable-cause statement from
+                      it or uses your own words as written. You check and sign the statement before
+                      anything is submitted.
                     </p>
                   </div>
                 )}

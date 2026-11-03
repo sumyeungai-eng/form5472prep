@@ -21,6 +21,7 @@ import {
   nonCashTransfersSchema,
   looksLikeUsItin,
   ITIN_IN_FTIN_MESSAGE,
+  RCS_TEXT_MAX,
   validateDissolvedAt,
   isYearDelinquent,
   type ExtensionFacts,
@@ -635,6 +636,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     cleanZeroConfirmations: z.infer<typeof zeroConfirmationsSchema> | undefined;
     nonCashTransfers: z.infer<typeof nonCashTransfersSchema>;
     rcsWhyMissed: string | null;
+    rcsWhyMissedRaw: string | null | undefined;
     rcsWhenLearned: string | null;
     rcsNoIrsNoticeConfirmed: boolean | null;
     hasNonCashTransfers: boolean;
@@ -734,6 +736,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         cleanZeroConfirmations,
         nonCashTransfers: yv.data.nonCashTransfers ?? [],
         rcsWhyMissed: yv.data.rcsWhyMissed ?? null,
+        // P0-3: the step-5 textarea as typed (line breaks kept). Never a reason
+        // to refuse the save: a non-string is ignored, an over-long one is cut.
+        rcsWhyMissedRaw:
+          typeof y?.rcsWhyMissedRaw === "string"
+            ? y.rcsWhyMissedRaw.slice(0, RCS_TEXT_MAX) || null
+            : y?.rcsWhyMissedRaw === null ? null : undefined,
         rcsWhenLearned: yv.data.rcsWhenLearned ?? null,
         rcsNoIrsNoticeConfirmed: yv.data.rcsNoIrsNoticeConfirmed ?? null,
         hasNonCashTransfers: yHasKey("nonCashTransfers"),
@@ -794,6 +802,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             ...(y.cleanZeroConfirmations !== undefined ? { zeroConfirmations: y.cleanZeroConfirmations } : {}),
             ...(y.hasNonCashTransfers ? { nonCashTransfers: y.nonCashTransfers } : {}),
             ...(y.hasRcsWhyMissed ? { rcsWhyMissed: y.rcsWhyMissed } : {}),
+            ...(y.rcsWhyMissedRaw !== undefined ? { rcsWhyMissedRaw: y.rcsWhyMissedRaw } : {}),
             ...(y.hasRcsWhenLearned ? { rcsWhenLearned: y.rcsWhenLearned } : {}),
             ...(y.hasRcsNoIrsNoticeConfirmed
               ? { rcsNoIrsNoticeConfirmed: y.rcsNoIrsNoticeConfirmed }
@@ -814,6 +823,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             zeroConfirmations: y.cleanZeroConfirmations ?? {},
             nonCashTransfers: y.nonCashTransfers,
             rcsWhyMissed: y.rcsWhyMissed,
+            rcsWhyMissedRaw: y.rcsWhyMissedRaw ?? null,
             rcsWhenLearned: y.rcsWhenLearned,
             rcsNoIrsNoticeConfirmed: y.rcsNoIrsNoticeConfirmed,
           },

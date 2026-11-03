@@ -416,6 +416,9 @@ export default async function AdminFilingDetailPage({ params }: { params: { id: 
           years={filing.yearData.map((year) => ({
             taxYear: year.taxYear,
             rcsWhyMissed: year.rcsWhyMissed,
+            rcsWhyMissedRaw: year.rcsWhyMissedRaw,
+            rcsSource: year.rcsSource,
+            rcsVerbatimText: year.rcsVerbatimText,
             rcsWhenLearned: year.rcsWhenLearned,
             rcsNoIrsNoticeConfirmed: year.rcsNoIrsNoticeConfirmed,
             rcsAdminNarrative: year.rcsAdminNarrative,

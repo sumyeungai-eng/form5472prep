@@ -36,7 +36,7 @@ describe("fix spec §6 acceptance: synthetic EXAMPLE IMPACT LLC twin", () => {
     const rendered = await validatePackage(pkg.bytes, pkg.record);
     expect(rendered).toEqual({ failures: [], warnings: [] });
     expect((await runPreflight(pkg.record, pkg.bytes)).failures).toEqual([]);
-    expect(pkg.record.generatorVersion).toBe("2.4.0");
+    expect(pkg.record.generatorVersion).toBe("2.5.0");
   }, TIMEOUT);
 
   it("asserts every row of the §6 table on the PRINTED package", async () => {

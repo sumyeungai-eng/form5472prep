@@ -205,6 +205,7 @@ type Filing = {
       ownerPaidCosts?: unknown;
       zeroConfirmations?: unknown;
       rcsWhyMissed?: string | null;
+      rcsWhyMissedRaw?: string | null;
     rcsWhenLearned?: string | null;
     rcsNoIrsNoticeConfirmed?: boolean | null;
   }[];
@@ -524,6 +525,7 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
                 return {
                   taxYear: year,
                   rcsWhyMissed: existing?.rcsWhyMissed ?? "",
+                  rcsWhyMissedRaw: existing?.rcsWhyMissedRaw ?? "",
                   rcsWhenLearned: existing?.rcsWhenLearned ?? "",
                   rcsNoIrsNoticeConfirmed: existing?.rcsNoIrsNoticeConfirmed === true,
                 };
@@ -543,6 +545,8 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
                     ownerPaidCosts: existing?.ownerPaidCosts ?? [],
                     zeroConfirmations: existing?.zeroConfirmations ?? {},
                     rcsWhyMissed: row.rcsWhyMissed,
+                    // P0-3: the untouched textarea value, stored as rcsWhyMissedRaw.
+                    ...(row.rcsWhyMissedRaw !== undefined ? { rcsWhyMissedRaw: row.rcsWhyMissedRaw } : {}),
                   rcsWhenLearned: row.rcsWhenLearned,
                   rcsNoIrsNoticeConfirmed: row.rcsNoIrsNoticeConfirmed,
                 };
@@ -626,6 +630,9 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
                   rcsWhyMissed:
                     filing.yearData.find((existing) => existing.taxYear === y.taxYear)
                       ?.rcsWhyMissed ?? null,
+                  rcsWhyMissedRaw:
+                    filing.yearData.find((existing) => existing.taxYear === y.taxYear)
+                      ?.rcsWhyMissedRaw ?? null,
                   rcsWhenLearned:
                     filing.yearData.find((existing) => existing.taxYear === y.taxYear)
                       ?.rcsWhenLearned ?? null,

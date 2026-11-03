@@ -315,6 +315,45 @@ describe("filing PATCH Form 7004 extension fields", () => {
     );
   });
 
+  it("P0-3: stores the step-5 textarea as typed (line breaks kept) and never refuses it", async () => {
+    const typed = "I moved countries in 2024.\n\nMy mail was not forwarded,\nso I missed the letter — café “closed”.";
+    const res = await PATCH(
+      new Request("https://example.test/api/filings/filing_1", {
+        method: "PATCH",
+        body: JSON.stringify({
+          yearData: [
+            {
+              taxYear: 2025,
+              totalAssetsYearEnd: 0,
+              contributions: 0,
+              distributions: 0,
+              rcsWhyMissed: "I moved countries in 2024. My mail was not forwarded, so I missed the letter.",
+              rcsWhyMissedRaw: typed,
+              rcsNoIrsNoticeConfirmed: true,
+            },
+          ],
+        }),
+      }),
+      { params: { id: "filing_1" } },
+    );
+    expect(res.status).toBe(200);
+    const call = db.upsert.mock.calls[0][0];
+    expect(call.update.rcsWhyMissedRaw).toBe(typed);
+    expect(call.create.rcsWhyMissedRaw).toBe(typed);
+
+    // Thai script in the raw box is stored too (staff see A37 only if they print it).
+    db.upsert.mockClear();
+    const thai = await PATCH(
+      new Request("https://example.test/api/filings/filing_1", {
+        method: "PATCH",
+        body: JSON.stringify({ yearData: [{ taxYear: 2025, rcsWhyMissedRaw: "ฉันไม่ทราบ" }] }),
+      }),
+      { params: { id: "filing_1" } },
+    );
+    expect(thai.status).toBe(200);
+    expect(db.upsert.mock.calls[0][0].update.rcsWhyMissedRaw).toBe("ฉันไม่ทราบ");
+  });
+
   it("persists owner-paid costs, zero confirmations, and explicit empty transaction replacements", async () => {
     const res = await PATCH(
       new Request("https://example.test/api/filings/filing_1", {

@@ -1,6 +1,54 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { PreflightIssue, PreflightResult } from "./preflight";
+import type { RcsYearRecord } from "./generatePackage";
+
+// What a persisted package's record must carry for the verbatim snapshot.
+export type PersistedPackageRecord = {
+  generatorVersion: string;
+  commit: string;
+  taxYears?: Array<{ taxYear: number; rcs?: RcsYearRecord }>;
+};
+
+// P0-3 snapshot: one FilingChangeLog row per verbatim RCS in a package whose
+// bytes were STORED under `artifactKey` (never for in-memory pre-flight runs).
+// The field name deliberately does not start with "year:": a snapshot is not a
+// package-data change and must not make pre-flight stale. Never throws: it runs
+// on the payment path; a failed write is logged, the payment is not undone.
+export async function logVerbatimSnapshots(
+  filingId: string,
+  artifactKey: string,
+  record: PersistedPackageRecord,
+): Promise<number> {
+  const rows = (record.taxYears ?? []).flatMap((year) => {
+    const verbatim = year.rcs?.verbatim;
+    if (!verbatim) return [];
+    return [
+      {
+        filingId,
+        source: "system",
+        field: `rcsVerbatimSnapshot:${year.taxYear}`,
+        afterJson: {
+          artifactKey,
+          taxYear: year.taxYear,
+          renderedBody: verbatim.text,
+          unencodable: verbatim.unencodable,
+          chosenBy: verbatim.chosenBy,
+          chosenAt: verbatim.chosenAt,
+        },
+        reason: "Verbatim reasonable cause text as printed in this stored PDF.",
+      },
+    ];
+  });
+  if (rows.length === 0) return 0;
+  try {
+    await prisma.filingChangeLog.createMany({ data: rows });
+  } catch (err) {
+    console.error(`[rcs] ${filingId} verbatim snapshot for ${artifactKey} not written`, err);
+    return 0;
+  }
+  return rows.length;
+}
 
 // ONE place that turns a pre-flight result into Filing columns (spec item 1,
 // orchestrator decision D11). Used by every trigger: the Stripe webhook, the
@@ -37,7 +85,7 @@ export const CLEARED_PREFLIGHT_OVERRIDE = {
 export async function persistNewPackagePreflight(opts: {
   filingId: string;
   preflight: PreflightResult;
-  record: { generatorVersion: string; commit: string };
+  record: PersistedPackageRecord;
   data?: Prisma.FilingUpdateInput;
   checkedAt?: Date;
 }): Promise<void> {
@@ -54,6 +102,9 @@ export async function persistNewPackagePreflight(opts: {
     },
     select: { id: true },
   });
+  if (typeof opts.data?.generatedPdfKey === "string") {
+    await logVerbatimSnapshots(opts.filingId, opts.data.generatedPdfKey, opts.record);
+  }
 }
 
 // Identity of a finding for the override rule. The message is part of it: two

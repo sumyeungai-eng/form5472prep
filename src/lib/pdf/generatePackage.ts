@@ -1,4 +1,4 @@
-import { toPdfSafe } from "../pdfText";
+import { toPdfSafe, toWinAnsiVerbatim } from "../pdfText";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { PDFDocument, PDFTextField, StandardFonts, rgb, type PDFFont } from "pdf-lib";
@@ -206,6 +206,12 @@ type Filing = {
     rcsAdminNarrative?: string | null;
     rcsLearnedOn?: Date | string | null;
     rcsSmallCorpParagraph?: boolean | null;
+    // P0-3: "CUSTOMER_VERBATIM" prints rcsVerbatimText as the statement body;
+    // anything else (default "ADMIN_NARRATIVE") is the templated statement.
+    rcsSource?: string | null;
+    rcsVerbatimText?: string | null;
+    rcsVerbatimChosenBy?: string | null;
+    rcsVerbatimChosenAt?: Date | string | null;
   }[];
 };
 
@@ -259,8 +265,8 @@ export type AuthoredDocumentRecord = {
   // Since generator 2.3.0: true when the year has no admin narrative, so the
   // cause section has no narrative text (pre-flight must fail).
   rcsMissingAnswers?: boolean;
-  // Where the rendered cause narrative came from: "admin" or null (none).
-  rcsNarrativeSource?: "admin" | null;
+  // Where the rendered cause came from: "admin", "verbatim" (P0-3) or null (none).
+  rcsNarrativeSource?: "admin" | "verbatim" | null;
 };
 
 // Reasonable-cause decisions for one tax year (generator 2.3.0). Computed for
@@ -268,9 +274,16 @@ export type AuthoredDocumentRecord = {
 // can reason about it without re-parsing the text. See
 // docs/reviews/2026-10-13-preflight-generator-contract.md.
 export type RcsYearRecord = {
-  // "admin" when FilingYearData.rcsAdminNarrative has text, else null.
-  narrativeSource: "admin" | null;
-  // The admin narrative exactly as rendered (paragraphs joined by "\n\n"), or null.
+  // "admin" when FilingYearData.rcsAdminNarrative has text, "verbatim" when the
+  // source is CUSTOMER_VERBATIM with non-empty text (P0-3), else null.
+  narrativeSource: "admin" | "verbatim" | null;
+  // P0-3: the source selected for this year (true = CUSTOMER_VERBATIM), and the
+  // verbatim body exactly as printed (trimmed, after "?" replacements) with the
+  // characters Helvetica could not encode (A37) and who chose verbatim.
+  verbatimSelected?: boolean;
+  verbatim?: { text: string; unencodable: string[]; chosenBy: string | null; chosenAt: string | null } | null;
+  // The admin narrative exactly as rendered (paragraphs joined by "\n\n"), or
+  // null (always null in verbatim mode).
   narrative: string | null;
   // The customer's own explanation. Context for the admin and pre-flight only:
   // it is NEVER rendered into the package.
@@ -2023,6 +2036,12 @@ function narrativeParagraphs(value: string | null | undefined): string[] {
     .filter((p) => p.length > 0);
 }
 
+function isoTimestampOrNull(value: Date | string | null | undefined): string | null {
+  if (value == null || value === "") return null;
+  const d = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
 function trimmedOrNull(value: string | null | undefined): string | null {
   const t = (value ?? "").trim();
   return t ? t : null;
@@ -2030,10 +2049,24 @@ function trimmedOrNull(value: string | null | undefined): string | null {
 
 function rcsYearRecord(f: Filing, year: number, ctx: RcsContext): RcsYearRecord {
   const yd = f.yearData.find((row) => row.taxYear === year);
-  const paragraphs = narrativeParagraphs(yd?.rcsAdminNarrative);
+  // P0-3: the selected source decides. Verbatim chosen with no text is a
+  // missing cause (DRAFT marker, A32), never a silent fall back to the admin text.
+  const verbatimSelected = yd?.rcsSource === "CUSTOMER_VERBATIM";
+  const verbatimEncoded = toWinAnsiVerbatim((yd?.rcsVerbatimText ?? "").trim());
+  const verbatim =
+    verbatimSelected && verbatimEncoded.text.trim()
+      ? {
+          text: verbatimEncoded.text,
+          unencodable: verbatimEncoded.replaced,
+          chosenBy: yd?.rcsVerbatimChosenBy ?? null,
+          chosenAt: isoTimestampOrNull(yd?.rcsVerbatimChosenAt),
+        }
+      : null;
+  const paragraphs = verbatimSelected ? [] : narrativeParagraphs(yd?.rcsAdminNarrative);
+  const templated = verbatim === null;
   const learnedOn = learnedOnIso(yd?.rcsLearnedOn);
   const dueDate = isoDate(ctx.dueDateUtc);
-  const stillUnawareNeeded = ctx.isLate && !ctx.isFirstLateYear;
+  const stillUnawareNeeded = templated && ctx.isLate && !ctx.isFirstLateYear;
   const conditions = {
     lateYear: ctx.isLate,
     registeredAgentOnly: f.llcAddressIsRegisteredAgentOnly === true,
@@ -2050,8 +2083,10 @@ function rcsYearRecord(f: Filing, year: number, ctx: RcsContext): RcsYearRecord 
   // canned "still unaware" and small-corporation paragraphs never render alone.
   const hasCause = paragraphs.length > 0;
   return {
-    narrativeSource: paragraphs.length > 0 ? "admin" : null,
+    narrativeSource: verbatim ? "verbatim" : paragraphs.length > 0 ? "admin" : null,
     narrative: paragraphs.length > 0 ? paragraphs.join("\n\n") : null,
+    verbatimSelected,
+    verbatim,
     customerExplanation: {
       whyMissed: trimmedOrNull(yd?.rcsWhyMissed),
       whenLearned: trimmedOrNull(yd?.rcsWhenLearned),
@@ -2065,8 +2100,8 @@ function rcsYearRecord(f: Filing, year: number, ctx: RcsContext): RcsYearRecord 
       rendered: hasCause && stillUnawareNeeded && learnedOn !== null && learnedOn > dueDate,
     },
     noticeConfirmed: yd?.rcsNoIrsNoticeConfirmed ?? null,
-    noticeSentence: ctx.isLate && yd?.rcsNoIrsNoticeConfirmed === true,
-    firstTaxYearSentence: ctx.isLate && formationYearOf(f) === year,
+    noticeSentence: templated && ctx.isLate && yd?.rcsNoIrsNoticeConfirmed === true,
+    firstTaxYearSentence: templated && ctx.isLate && formationYearOf(f) === year,
     smallCorpParagraph: {
       setting,
       conditionsMet,
@@ -2138,6 +2173,19 @@ async function buildReasonableCause(
     }
   };
   const space = (n: number) => { y -= n; };
+  // ---- Signature block (spec item 5) — same in both modes ----
+  const drawSignatureBlock = () => {
+    ensureSpace(60);
+    drawLine(AUTHORED_DOC_SIGNATURE_HEADING, { font: bold });
+    space(28);
+    drawLine("________________________________________");
+    space(14);
+    drawLine(`${f.ownerName}`);
+    space(12);
+    drawLine(`${SIGNER_TITLE}, ${f.llcName}`);
+    space(12);
+    drawLine(AUTHORED_DOC_DATE_LINE);
+  };
 
   // ---- Header ----
   drawLine("REASONABLE CAUSE STATEMENT", { font: bold, size: 13 });
@@ -2150,6 +2198,38 @@ async function buildReasonableCause(
   space(12);
   drawLine(`Foreign Owner: ${f.ownerName} (${normalizeCountry(f.ownerCountryTaxResidence)})`);
   space(20);
+
+  if (rcs.verbatim) {
+    // P0-3 verbatim mode: the body is the customer's text as written (chosen by
+    // staff), between the unchanged heading and signature block. Never toPdfSafe:
+    // toWinAnsiVerbatim already made every character encodable, so "café" and
+    // curly quotes survive. Blank lines are paragraph breaks, single line breaks
+    // stay line breaks, long lines word-wrap and flow across pages.
+    for (const sourceLine of rcs.verbatim.text.split("\n")) {
+      const trimmed = sourceLine.trim();
+      if (!trimmed) {
+        space(6);
+        continue;
+      }
+      for (const line of wrapAtPx(trimmed, font, 10, CONTENT_W)) {
+        ensureSpace(14);
+        page.drawText(line, { x: MARGIN_L, y, size: 10, font });
+        drawnLines.push(line);
+        y -= 14;
+      }
+    }
+    space(16);
+    drawSignatureBlock();
+    authoredDocuments.push({
+      kind: "reasonableCauseStatement",
+      taxYear: year,
+      lines: drawnLines,
+      rcsFallbackUsed: false,
+      rcsMissingAnswers: false,
+      rcsNarrativeSource: "verbatim",
+    });
+    return pdf;
+  }
 
   drawParagraph(
     `I am the sole member of ${f.llcName}. This statement explains why I did not file Form 5472 and the ` +
@@ -2254,17 +2334,7 @@ async function buildReasonableCause(
   drawParagraph(corrective.join(" "));
   space(10);
 
-  // ---- Signature block (spec item 5) ----
-  ensureSpace(60);
-  drawLine(AUTHORED_DOC_SIGNATURE_HEADING, { font: bold });
-  space(28);
-  drawLine("________________________________________");
-  space(14);
-  drawLine(`${f.ownerName}`);
-  space(12);
-  drawLine(`${SIGNER_TITLE}, ${f.llcName}`);
-  space(12);
-  drawLine(AUTHORED_DOC_DATE_LINE);
+  drawSignatureBlock();
 
   authoredDocuments.push({
     kind: "reasonableCauseStatement",

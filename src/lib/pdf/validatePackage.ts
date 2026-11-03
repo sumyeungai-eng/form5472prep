@@ -550,7 +550,11 @@ export async function validatePackage(bytes: Uint8Array, record: PackageRecord):
       const formed = /I formed .+? \("the Company"\) on (.+?) as a single-member LLC/.exec(rcsText);
       const printedState = formed ? / in ([A-Z][A-Za-z ]+)$/.exec(formed[1])?.[1] ?? null : null;
       const expected = record.formationState ? US_STATE_NAMES[record.formationState] ?? null : null;
-      if (!formed) {
+      // P0-3: a verbatim body is the client's own words, with no generated
+      // formation sentence; A45/W46 apply to the templated statement only.
+      if (year.rcs?.narrativeSource === "verbatim") {
+        // nothing to compare
+      } else if (!formed) {
         fail("A45", `Tax year ${ty}: the reasonable cause statement has no readable formation sentence.`);
       } else if (printedState !== expected) {
         fail("A45", `Tax year ${ty}: the reasonable cause statement says the LLC was formed in ${printedState ?? "(no state)"}, but the state of formation on file is ${expected ?? "(none)"}.`);
