@@ -192,6 +192,7 @@ export function SignClient({
               className="mt-3 w-full h-[360px] sm:h-[480px] rounded-lg border border-slate-200"
               title="Your forms to check"
             />
+            <BlankLinesPanel />
 
             <label className="mt-4 flex items-start gap-2.5 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-800">
               <input
@@ -306,6 +307,35 @@ export function SignClient({
           </section>
         </div>
       </div>
+    </div>
+  );
+}
+
+// PR 7: static explainer for the blank lines clients ask about. Keep it
+// factual (i5472/i1120): no "doesn't apply to you" claims for Parts VIII–IX (O6).
+export function BlankLinesPanel() {
+  return (
+    <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
+      <div className="font-semibold text-slate-900">Why some lines are blank</div>
+      <ul className="mt-1.5 list-disc space-y-1 pl-4">
+        <li>
+          <strong>Form 1120:</strong> the income, deduction and tax lines and the schedules are not completed for a
+          foreign-owned U.S. disregarded entity. Only the name, address, EIN and item E are required on this pro forma
+          1120.
+        </li>
+        <li>
+          <strong>Form 5472, lines 43a–43b:</strong> the IRS instructions say not to complete these lines for a
+          foreign-owned U.S. disregarded entity.
+        </li>
+        <li>
+          <strong>Part IV</strong> covers sales, services, rents, loans and similar items. Money you put into or took
+          out of the LLC (contributions and distributions) is reported in <strong>Part V</strong> instead.
+        </li>
+        <li>
+          <strong>Parts VIII and IX</strong> cover cost sharing arrangements and base erosion payments. They are blank
+          because nothing was reported for them.
+        </li>
+      </ul>
     </div>
   );
 }
