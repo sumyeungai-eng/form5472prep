@@ -1217,6 +1217,58 @@ describe("generator 2.3.0: preflight-generator spec", () => {
     });
   }, PDF_TIMEOUT * 4);
 
+  // ── PR 5 (2026-11): optional preparer name, IRS_DISCUSS default, long firm values ──
+  it("PR 5: a name-less house preparer leaves the name box blank, prints the rest and does not fail A35", async () => {
+    const { HOUSE_PREPARER_NAME: _name, ...nameless } = PREPARER_ENV;
+    const pkg = await generatePackage({ ...F11, paidPreparerMode: "house" }, lateCatchUpFinalisedAt, { env: nameless });
+    expect(pkg.record.housePreparer).toEqual({ configComplete: true, missing: [], invalid: [] });
+    for (const year of pkg.record.taxYears) {
+      const m = form1120PaidPreparerFieldMaps[Number(year.form1120Revision) as 2024 | 2025];
+      const value = (field: string) => year.form1120.fields.find((w) => w.field === field)?.value;
+      expect(value(m.preparerName)).toBeUndefined();
+      expect(value(m.ptin)).toBe("P00000001");
+      expect(value(m.firmName)).toBe("Synthetic Preparer Firm LLC");
+      expect(year.paidPreparer?.shown).toBe(true);
+    }
+    expect((await runPreflight(pkg.record, pkg.bytes)).failures.some((f) => f.id === "A35")).toBe(false);
+  }, PDF_TIMEOUT);
+
+  it("PR 5: HOUSE_PREPARER_IRS_DISCUSS fills only an unset order; the per-order answer wins; a none-mode order is untouched", async () => {
+    const env = { ...PREPARER_ENV, HOUSE_PREPARER_IRS_DISCUSS: "yes" };
+    const v = (pkg: Pkg, field: string) => pkg.record.taxYears[1].form1120.fields.find((w) => w.field === field)?.value;
+    const m = form1120PaidPreparerFieldMaps[2025];
+    const unset = await generatePackage({ ...F11, paidPreparerMode: "house" }, lateCatchUpFinalisedAt, { env });
+    expect(unset.record.irsMayDiscussWithPreparer).toBe("yes");
+    expect(v(unset, m.discussYes)).toBe(true);
+    const orderNo = await generatePackage({ ...F11, paidPreparerMode: "house", irsMayDiscussWithPreparer: "no" }, lateCatchUpFinalisedAt, { env });
+    expect(orderNo.record.irsMayDiscussWithPreparer).toBe("no");
+    expect(v(orderNo, m.discussNo)).toBe(true);
+    expect(v(orderNo, m.discussYes)).toBeUndefined();
+    const none = await generatePackage(F11, lateCatchUpFinalisedAt, { env });
+    expect(none.record.irsMayDiscussWithPreparer).toBeNull();
+    expect((await runPreflight(none.record, none.bytes)).warnings.some((w) => w.id === "W41")).toBe(false);
+  }, PDF_TIMEOUT * 3);
+
+  it("PR 5 FIT: a 45+ character firm name and a 70+ character firm address stay inside their field clip boxes (A39) with no fit warning", async () => {
+    const firmName = "Synthetic Example Preparation Services Group LLC"; // 48 chars
+    const firmAddress = "1234 Synthetic Boulevard North, Suite 5678, Example City, ST 00000-1234"; // 70+ chars
+    expect(firmName.length).toBeGreaterThanOrEqual(45);
+    expect(firmAddress.length).toBeGreaterThanOrEqual(70);
+    const pkg = await generatePackage({ ...F11, paidPreparerMode: "house" }, lateCatchUpFinalisedAt, {
+      env: { ...PREPARER_ENV, HOUSE_PREPARER_FIRM_NAME: firmName, HOUSE_PREPARER_FIRM_ADDRESS: firmAddress },
+    });
+    for (const year of pkg.record.taxYears) {
+      const m = form1120PaidPreparerFieldMaps[Number(year.form1120Revision) as 2024 | 2025];
+      const value = (field: string) => year.form1120.fields.find((w) => w.field === field)?.value;
+      expect(value(m.firmName)).toBe(firmName);
+      expect(value(m.firmAddress)).toBe(firmAddress);
+      expect(year.paidPreparer?.fitFailures).toEqual([]);
+    }
+    const result = await runPreflight(pkg.record, pkg.bytes);
+    expect(result.failures.filter((f) => f.id === "A39")).toEqual([]);
+    expect(result.warnings.filter((w) => w.id === "W41")).toEqual([]);
+  }, PDF_TIMEOUT);
+
   // ── Item 9: 1120 header MM/DD only ──
   it("item 9: the 1120 'tax year beginning' prints 11/02, never 11/02/2024", async () => {
     const pkg = await generatePackage(F11, lateCatchUpFinalisedAt);

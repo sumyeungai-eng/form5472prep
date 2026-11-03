@@ -10,7 +10,7 @@ import { persistNewPackagePreflight } from "./persistPreflight";
 // P0-3 snapshot: written only when a generated artifact is STORED.
 describe("verbatim RCS snapshot", () => {
   const verbatimRecord = {
-    generatorVersion: "2.5.0",
+    generatorVersion: "2.5.1",
     commit: "test",
     taxYears: [
       { taxYear: 2024, rcs: { verbatim: { text: "My words ?", unencodable: ["ฉ"], chosenBy: "admin_1", chosenAt: "2026-11-01T00:00:00.000Z" } } },
@@ -41,7 +41,7 @@ describe("verbatim RCS snapshot", () => {
     await persistNewPackagePreflight({
       filingId: "f1",
       preflight,
-      record: { generatorVersion: "2.5.0", commit: "t", taxYears: [] },
+      record: { generatorVersion: "2.5.1", commit: "t", taxYears: [] },
       data: { generatedPdfKey: "f1_unsigned_10.pdf" },
     });
     expect(db.createMany).not.toHaveBeenCalled();

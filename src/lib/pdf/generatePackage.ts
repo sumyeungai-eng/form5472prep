@@ -38,6 +38,7 @@ import {
 import {
   housePreparerConfigStatus,
   housePreparerFromEnv,
+  housePreparerIrsDiscussDefault,
   type HousePreparer,
 } from "@/config/housePreparer";
 import {
@@ -1205,7 +1206,7 @@ function fillPaidPreparerBlock(
     setTextWithRecordedFontSize(form, field, value, recorder, fit.fontSize);
   };
   const p = opts.preparer;
-  write(m.preparerName, p.name, "Paid preparer name");
+  if (p.name) write(m.preparerName, p.name, "Paid preparer name");
   write(m.ptin, p.ptin, "Paid preparer PTIN");
   write(m.firmName, p.firmName, "Paid preparer firm name");
   write(m.firmEin, p.firmEin, "Paid preparer firm EIN");
@@ -2615,8 +2616,16 @@ export async function generatePackage(
   const paidPreparerMode: "none" | "house" = f.paidPreparerMode === "house" ? "house" : "none";
   const housePreparerStatus = housePreparerConfigStatus(env);
   const housePreparer = paidPreparerMode === "house" ? housePreparerFromEnv(env) : null;
+  // The order's own answer wins; the env default (house mode only, so a "none" order never
+  // trips W41) fills in only when the order's value is unset (null).
   const discussWithPreparer: "yes" | "no" | null =
-    f.irsMayDiscussWithPreparer === "yes" ? "yes" : f.irsMayDiscussWithPreparer === "no" ? "no" : null;
+    f.irsMayDiscussWithPreparer === "yes"
+      ? "yes"
+      : f.irsMayDiscussWithPreparer === "no"
+        ? "no"
+        : paidPreparerMode === "house"
+          ? housePreparerIrsDiscussDefault(env)
+          : null;
 
   const cover = await buildCoverLetter(f, finalisedAt, authoredDocuments);
   const coverStartPage = out.getPageCount() + 1;

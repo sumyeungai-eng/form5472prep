@@ -5,8 +5,13 @@
 // Filing.paidPreparerMode = "house". When any required value is missing the
 // generator leaves the block blank and records the config as incomplete, so
 // pre-flight can stop the package instead of printing half a preparer.
+//
+// The preparer NAME is optional (PR 5, 2026-11): a firm-only preparer leaves
+// the name box blank and A35 does not fail. Required: PTIN, firm name, firm
+// EIN, firm address.
 
 export type HousePreparer = {
+  // "" when HOUSE_PREPARER_NAME is unset: the name box stays blank.
   name: string;
   ptin: string;
   firmName: string;
@@ -21,10 +26,14 @@ export const HOUSE_PREPARER_ENV = {
   firmName: "HOUSE_PREPARER_FIRM_NAME",
   firmEin: "HOUSE_PREPARER_FIRM_EIN",
   firmAddress: "HOUSE_PREPARER_FIRM_ADDRESS",
-  phone: "HOUSE_PREPARER_PHONE",
+  // Preferred phone variable; HOUSE_PREPARER_PHONE is the older name and the fallback.
+  phone: "HOUSE_PREPARER_FIRM_PHONE",
+  legacyPhone: "HOUSE_PREPARER_PHONE",
+  // "May the IRS discuss this return with the preparer?" default: blank | yes | no.
+  irsDiscuss: "HOUSE_PREPARER_IRS_DISCUSS",
 } as const;
 
-const REQUIRED = ["name", "ptin", "firmName", "firmEin", "firmAddress"] as const;
+const REQUIRED = ["ptin", "firmName", "firmEin", "firmAddress"] as const;
 
 export type HousePreparerConfigStatus = {
   // True when every required value is present and well formed.
@@ -49,6 +58,21 @@ const FORMAT: Partial<Record<keyof typeof HOUSE_PREPARER_ENV, RegExp>> = {
   firmEin: /^\d{2}-\d{7}$/,
 };
 
+// HOUSE_PREPARER_IRS_DISCUSS: unset/"blank" -> null (box left blank), "yes" | "no".
+// Anything else is reported as invalid (never silently guessed: it is a consent box).
+function parseIrsDiscuss(env: Env): { value: "yes" | "no" | null; valid: boolean } {
+  const raw = read(env, HOUSE_PREPARER_ENV.irsDiscuss).toLowerCase();
+  if (raw === "" || raw === "blank") return { value: null, valid: true };
+  if (raw === "yes" || raw === "no") return { value: raw, valid: true };
+  return { value: null, valid: false };
+}
+
+// The env default for the discuss boxes. Used only when the order's own
+// irsMayDiscussWithPreparer is unset: the per-order value always wins.
+export function housePreparerIrsDiscussDefault(env: Env = process.env): "yes" | "no" | null {
+  return parseIrsDiscuss(env).value;
+}
+
 export function housePreparerConfigStatus(env: Env = process.env): HousePreparerConfigStatus {
   const missing = REQUIRED.filter((field) => !read(env, HOUSE_PREPARER_ENV[field])).map(
     (field) => HOUSE_PREPARER_ENV[field],
@@ -59,6 +83,7 @@ export function housePreparerConfigStatus(env: Env = process.env): HousePreparer
       return value !== "" && !FORMAT[field]!.test(value);
     })
     .map((field) => HOUSE_PREPARER_ENV[field]);
+  if (!parseIrsDiscuss(env).valid) invalid.push(HOUSE_PREPARER_ENV.irsDiscuss);
   return { complete: missing.length === 0 && invalid.length === 0, missing, invalid };
 }
 
@@ -71,6 +96,6 @@ export function housePreparerFromEnv(env: Env = process.env): HousePreparer | nu
     firmName: read(env, HOUSE_PREPARER_ENV.firmName),
     firmEin: read(env, HOUSE_PREPARER_ENV.firmEin),
     firmAddress: read(env, HOUSE_PREPARER_ENV.firmAddress),
-    phone: read(env, HOUSE_PREPARER_ENV.phone) || null,
+    phone: read(env, HOUSE_PREPARER_ENV.phone) || read(env, HOUSE_PREPARER_ENV.legacyPhone) || null,
   };
 }

@@ -60,7 +60,11 @@ export const FAX_RENDER_DPI = 300;
 // filler cause (red DRAFT marker, A32); "Reasonable cause source" with a
 // verbatim WinAnsi body (A37, W42); Part V line items with paidVia, currency
 // and FX sentences (A38, W43-W45).
-export const GENERATOR_VERSION = "2.5.0";
+// 2.5.1 (2026-11, same plan, PR 5): the house preparer NAME is optional (blank
+// box, no A35); HOUSE_PREPARER_FIRM_PHONE (falls back to HOUSE_PREPARER_PHONE);
+// HOUSE_PREPARER_IRS_DISCUSS fills the discuss boxes of an order that has no
+// answer of its own. PR 6 (W39) is pre-flight only.
+export const GENERATOR_VERSION = "2.5.1";
 // The IRS-required marking written across the top of the pro forma Form 1120
 // (Form 5472 instructions, "Foreign-owned U.S. DE"); also stamped on Form 5472.
 // House position: no "DIIRSP" suffix or other procedure label on the forms.
