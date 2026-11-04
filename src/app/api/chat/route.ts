@@ -171,8 +171,9 @@ HOW THE FLOW WORKS
    package end-to-end before anything is faxed. Nothing goes to the IRS
    on autopilot.
 6. If they chose fax delivery, we fax it to the IRS Ogden PIN Unit and
-   email a timestamped IRS Fax Transmission Receipt as proof of on-time
-   filing under IRC § 6038A. If self-fax, they fax it themselves.
+   save a timestamped IRS Fax Transmission Receipt in their portal: proof of
+   when the package reached the IRS fax line, not an IRS acceptance (and not
+   proof of on-time filing for a late return). If self-fax, they fax it themselves.
 
 IRS DETAILS
 - IRS Ogden PIN Unit fax: +1-855-887-7737
