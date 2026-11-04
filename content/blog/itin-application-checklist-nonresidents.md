@@ -14,7 +14,7 @@ This checklist is for non-residents preparing a new Individual Taxpayer Identifi
 
 ## How do I get an ITIN as a non-resident?
 
-A non-resident normally submits Form W-7, a current passport as proof of identity and foreign status, and the federal return the ITIN is needed for, unless a W-7 exception applies. Submit by mail, at a Taxpayer Assistance Center, or through a Certifying Acceptance Agent. The IRS says allow about seven weeks, or nine to eleven from overseas.
+A non-resident normally submits Form W-7, a passport as proof of identity and foreign status, and the federal return the ITIN is needed for, unless a W-7 exception applies. Submit by mail, at a Taxpayer Assistance Center, or through a Certifying Acceptance Agent. The IRS says allow about seven weeks, or nine to eleven in tax season or from overseas.
 
 First confirm that an ITIN is the right number. The IRS issues an ITIN to an individual who needs a U.S. taxpayer identification number for federal tax purposes but is not eligible for an SSN. It does not issue an ITIN solely to open a bank account, start an ecommerce business, improve credit, or provide general identification.
 

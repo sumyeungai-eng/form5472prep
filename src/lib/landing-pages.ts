@@ -219,7 +219,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Does someone actually review my filing before it goes to the IRS?",
-        a: "Yes. Every package is reviewed by a PTIN-holding tax accountant on our team before we fax it. Nothing goes to the IRS on autopilot. If anything looks off, we'll reach out before submitting.",
+        a: "Yes. Every package is reviewed by a tax accountant on our team who holds an IRS PTIN before we fax it. Nothing goes to the IRS on autopilot. If anything looks off, we'll reach out before submitting.",
       },
     ],
     relatedSlugs: ["form-5472-instructions", "form-5472-example", "form-5472-penalty", "diirsp", "form-5472-deadline", "form-5472-fax-number"],
@@ -1939,7 +1939,7 @@ export const LANDING_PAGES: LandingPage[] = [
         // GSC query "foreign-owned single member us llc form 5472 filing service
         // price" (2026-11-04).
         heading: "How much does a Form 5472 filing service cost for a foreign-owned LLC?",
-        body: `Form5472 Prep's Form 5472 filing service costs ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) for one tax year, plus ${PRICE_ADDON} for each additional past tax year.\n\n• 1 tax year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 tax years (DIIRSP catch-up): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 tax years (DIIRSP catch-up): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\nIRS fax delivery to the Ogden PIN Unit at +1-855-887-7737 is included in every plan — no separate fee.\n\nEvery package is reviewed by a PTIN-holding tax accountant on our team before we fax it to the IRS. 100% money-back guarantee if we fail to submit your filing.`,
+        body: `Form5472 Prep's Form 5472 filing service costs ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) for one tax year, plus ${PRICE_ADDON} for each additional past tax year.\n\n• 1 tax year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 tax years (DIIRSP catch-up): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 tax years (DIIRSP catch-up): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\nIRS fax delivery to the Ogden PIN Unit at +1-855-887-7737 is included in every plan — no separate fee.\n\nEvery package is reviewed by a tax accountant on our team who holds an IRS PTIN before we fax it to the IRS. 100% money-back guarantee if we fail to submit your filing.`,
       },
       {
         heading: "Why use Form5472 Prep instead of a CPA or DIY?",
