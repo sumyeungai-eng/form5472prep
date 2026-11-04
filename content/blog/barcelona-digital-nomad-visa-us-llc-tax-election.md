@@ -12,7 +12,9 @@ A digital-nomad visa does not automatically settle the Spanish tax treatment of 
 
 This guide assumes a non-U.S. individual owns a single-member U.S. disregarded LLC without a corporate election. It does not determine eligibility for Spain's special regime or address U.S. citizens living abroad.
 
-## Do not collapse four decisions into one approval
+## What four decisions does a Barcelona LLC owner need to separate?
+
+Four separate decisions apply: immigration permission, eligibility for Spain's special tax regime, the election procedure, and the LLC's U.S. filing. Approval of one does not establish the others. Your immigration provider, Spanish tax adviser, and U.S. preparer may each cover only part of the work, so assign it clearly.
 
 | Decision | Evidence to gather | What it does not establish |
 | --- | --- | --- |
@@ -23,7 +25,9 @@ This guide assumes a non-U.S. individual owns a single-member U.S. disregarded L
 
 The purpose of the table is to assign the work clearly. Your immigration provider, Spanish tax adviser, and U.S. preparer may each cover only part of it.
 
-## Why an LLC owner should not assume an employee example applies
+## Does an employee example for Spain's special regime apply to an LLC owner?
+
+Not automatically. Spain's tax agency describes several qualifying routes, and its remote-employment discussion references employed workers, while entrepreneurial and certain professional activities have their own conditions. Owning the LLC that invoices customers is a different situation from being an employee, so give the adviser your real contracts and operating agreement.
 
 Spain's tax agency describes several qualifying routes and conditions for its special regime. Its discussion of remote employment specifically references employed workers, while entrepreneurial and certain professional activities have their own conditions. See the [AEAT explanation of the regime's scope](https://sede.agenciatributaria.gob.es/Sede/en_gb/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2024/c02-irpf-cuestiones-generales/sujecion-irpf-aspectos-personales/regimen-fiscal-especial-aplicable-trabajadores-desplazados/regimen-aplicable-trabajadores-desplazados/ambito-aplicacion.html).
 
@@ -31,15 +35,17 @@ Owning the LLC that invoices customers is not the same factual situation as bein
 
 Ask for the exact eligibility route being considered and which documents support it. If the answer depends on an unresolved classification of the LLC or its activities, resolve that before relying on a projected rate.
 
-## The election needs its own evidence trail
+## What evidence does the Spanish tax election need?
+
+The election needs its own record: the eligibility analysis, required supporting evidence, submission reference, and any response, kept together. A visa approval email does not substitute for it, and a draft Form 149 is not proof of submission. Ask the Spanish adviser to confirm the applicable deadline from your actual facts.
 
 AEAT's [Form 149 procedure](https://sede.agenciatributaria.gob.es/Sede/procedimientoini/G606.shtml) describes the election communication and supporting-document submission. Keep the eligibility analysis, required evidence, submission reference, and any response together. Ask the Spanish adviser to confirm the applicable deadline from your actual facts; do not assume it runs from whichever date is easiest to find.
 
 A visa approval email is not a substitute for the tax-election record. Likewise, a draft Form 149 is not evidence that it was submitted.
 
-## Build one LLC packet for both advisers
+## What should one LLC packet for both advisers include?
 
-Include the formation document, operating agreement, ownership history, any U.S. tax elections, EIN confirmation, contracts, work-location record, and bank statements. Add a schedule distinguishing customer receipts from money contributed by or paid to the owner.
+Include the formation document, operating agreement, ownership history, any U.S. tax elections, EIN confirmation, contracts, work-location record, and bank statements. Add a schedule separating customer receipts from money contributed by or paid to the owner, so neither the Spanish adviser nor the U.S. preparer has to infer facts from a transfer memo.
 
 For example, a Barcelona-based designer may receive client income in an LLC account and later withdraw money personally. The Spanish adviser needs to determine the local treatment of the arrangement and income. The U.S. preparer needs the LLC's reportable related-party transactions. Neither should have to infer those facts from the transfer memo alone.
 

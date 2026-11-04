@@ -2,7 +2,7 @@
 title: "Oregon LLC Foreign Owner Tax Filing Requirements"
 description: "A foreign owner of an Oregon LLC may need an annual report, Oregon CAT review, and the separate federal Form 5472 information return."
 date: 2026-08-28
-updated: 2026-09-05
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["oregon-llc", "foreign-owner", "form-5472", "oregon-cat"]
 draft: false
@@ -14,7 +14,9 @@ The word “foreign” also has two meanings here. Oregon may call an LLC foreig
 
 If a non-US owner funded, withdrew from, lent to, or paid expenses for the LLC, [start the federal Form 5472 package](/start) while resolving Oregon compliance separately.
 
-## The Oregon federal-state matrix
+## What state and federal filings can an Oregon LLC with a foreign owner have?
+
+Separate six layers: the Oregon annual report, Corporate Activity Tax, income or excise tax, state and local taxes, the federal Form 5472 with a pro forma Form 1120, and the owner's federal return. No single Oregon tax return settles every layer, and Form5472 Prep covers only the federal Form 5472 package for the standard profile.
 
 | Layer | Core question | Filing authority | Form5472 Prep scope |
 |---|---|---|---|
@@ -27,7 +29,9 @@ If a non-US owner funded, withdrew from, lent to, or paid expenses for the LLC, 
 
 No single “Oregon LLC tax return” settles every row.
 
-## Annual report and the two meanings of foreign
+## What does foreign mean for an Oregon LLC with a non-US owner?
+
+Foreign has two meanings. Under Oregon entity law, a foreign LLC is formed outside Oregon and registered to do business there. For Form 5472, the question is whether a non-US person owns the entity. The two definitions are independent of each other, so verify the entity's exact registration category in the official system.
 
 The Oregon Secretary of State warns that an Oregon corporation or LLC must file an annual report and currently lists a $100 fee in its [official annual-report guidance](https://sos.oregon.gov/business/pages/dont-be-misled.aspx).
 
@@ -43,7 +47,9 @@ Those definitions are independent of the owner's citizenship or tax residence:
 
 Verify current fees and the entity's exact registration category in the official system before paying.
 
-## Oregon Corporate Activity Tax thresholds
+## What are Oregon's Corporate Activity Tax thresholds?
+
+Oregon guidance currently describes three levels of Oregon commercial activity: $750,000 or less is generally excluded from CAT requirements, more than $750,000 means registering for CAT, and more than $1 million means filing a CAT return and paying CAT. Sourcing and exclusions can change the result, so near a threshold consult an Oregon tax professional.
 
 Oregon's [Corporate Activity Tax guidance](https://www.oregon.gov/DOR/programs/businesses/Pages/corporate-activity-tax.aspx) currently uses three important commercial-activity levels:
 
@@ -63,7 +69,9 @@ The Oregon Department of Revenue's [sales-tax page](https://www.oregon.gov/dor/p
 
 An Oregon e-commerce business can therefore have no general sales-tax collection in Oregon and still need annual-report, CAT, payroll, or federal filings. Sales into other states can also create those states' sales-tax duties.
 
-## Federal Form 5472 uses a different trigger
+## What triggers federal Form 5472 for an Oregon LLC?
+
+A foreign-owned U.S. disregarded entity files Form 5472 with a pro forma Form 1120 when it has a reportable transaction, such as owner contributions and distributions, loans, owner-paid expenses, or related-party services, rents, royalties, or property. It does not depend on reaching Oregon's CAT thresholds, so an LLC with no customer revenue can still have reporting.
 
 Under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472), a foreign-owned US disregarded entity files Form 5472 with a pro forma Form 1120 when it has a reportable transaction. Common transactions include:
 
@@ -73,7 +81,7 @@ Under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472), 
 - related-party services, rents, royalties, or property; and
 - certain formation, acquisition, disposition, and dissolution activity.
 
-The federal return does not depend on reaching Oregon's $750,000 or $1 million CAT thresholds. An LLC with no customer revenue can still have Form 5472 reporting because the owner funded it. Conversely, high Oregon customer revenue is not itself a Form 5472 transaction when the customers are unrelated.
+High Oregon customer revenue is not itself a Form 5472 transaction when the customers are unrelated.
 
 ## A clean compliance file
 

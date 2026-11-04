@@ -575,6 +575,65 @@ export function extractFaqs(body: string): { q: string; a: string }[] {
   return out;
 }
 
+// Fallback for posts with no FAQ section: each question-form `## ...?` heading
+// plus the first paragraph under it (the visible answer) becomes a Q&A pair.
+// A first paragraph ending in ":" is a lead-in, so the list right after it
+// (first 6 items, joined with "; ") completes the answer. A section whose first
+// block is a list, table, code fence or quote, or that has no text before the
+// next heading, is skipped.
+export function extractQuestionHeadings(body: string): { q: string; a: string }[] {
+  const out: { q: string; a: string }[] = [];
+  const ITEM = /^([-*+]|\d+[.)])\s+(.*)/;
+  let q: string | null = null;
+  let ans: string[] = [];
+  let items: string[] = [];
+  let state: "pending" | "collecting" | "list" | "done" = "pending";
+  const lead = () => stripMarkdown(ans.join(" "));
+  const flush = () => {
+    const list = items
+      .slice(0, 6)
+      .map((i) => stripMarkdown(i).replace(/[.;,]?\s+(and|or)$/i, "").replace(/[.;,]+$/, "")) // drop list punctuation and a trailing "; and"
+      .filter(Boolean);
+    const a = lead().endsWith(":") && list.length ? `${lead()} ${list.join("; ")}.` : lead();
+    if (q && a) out.push({ q, a });
+    q = null;
+    ans = [];
+    items = [];
+    state = "pending";
+  };
+  for (const line of body.split("\n")) {
+    const t = line.trim();
+    const heading = t.match(/^(#{1,6})\s+(.*)/);
+    if (heading || /^(-{3,}|\*{3,}|_{3,})$/.test(t)) {
+      flush();
+      const text = heading && heading[1] === "##" ? stripMarkdown(heading[2]) : "";
+      if (text.endsWith("?") && !/frequently asked|faq|common questions/i.test(text)) q = text;
+      continue;
+    }
+    if (!q || state === "done") continue;
+    const item = line.match(ITEM);
+    if (state === "list") {
+      if (item) items.push(item[2]);
+      else if (t !== "" && /^\s/.test(line) && items.length) {
+        if (!ITEM.test(t)) items[items.length - 1] += " " + t; // wrapped item; nested bullets are skipped
+      } else if (t !== "") state = "done";
+    } else if (t === "") {
+      if (state === "collecting") state = lead().endsWith(":") ? "list" : "done";
+    } else if (state === "pending" && /^([-*+]\s|\d+[.)]\s|\||```|~~~|>)/.test(t)) {
+      ans = [];
+      state = "done"; // first block is not a paragraph: no answer for this question
+    } else if (state === "collecting" && item) {
+      state = lead().endsWith(":") ? "list" : "done"; // a list may interrupt a paragraph
+      if (state === "list") items.push(item[2]);
+    } else {
+      state = "collecting";
+      ans.push(t);
+    }
+  }
+  flush();
+  return out;
+}
+
 // Pull the first substantial numbered process from a question-form "How..."
 // section. This lets process guides expose matching HowTo schema without
 // duplicating step copy in frontmatter or page code.

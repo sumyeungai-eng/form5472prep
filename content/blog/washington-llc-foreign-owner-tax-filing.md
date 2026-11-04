@@ -2,7 +2,7 @@
 title: "Washington LLC Foreign Owner Tax Filing Requirements"
 description: "A foreign owner of a Washington LLC may face a state annual report, B&O and sales-tax registration, plus the separate federal Form 5472 filing."
 date: 2026-08-28
-updated: 2026-09-05
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["washington-llc", "foreign-owner", "form-5472", "business-and-occupation-tax"]
 draft: false
@@ -14,7 +14,9 @@ Washington has no individual income tax on wages, but that slogan does not remov
 
 If the LLC had funding, withdrawals, loans, reimbursements, or other transactions with its foreign owner, [start the federal Form 5472 package](/start) while resolving the Washington filings separately.
 
-## The Washington federal-state matrix
+## What filings can a Washington LLC with a foreign owner face?
+
+Check three separate layers: the Washington annual report, Department of Revenue obligations such as business license registration, B&O tax, and retail sales tax, and the federal Form 5472 with a pro forma Form 1120. Completing one layer does not complete the others, and Form5472 Prep's scope is only the federal package for the standard profile.
 
 | Compliance layer | Trigger | Agency | Form5472 Prep scope |
 |---|---|---|---|
@@ -27,13 +29,17 @@ If the LLC had funding, withdrawals, loans, reimbursements, or other transaction
 
 This matrix prevents a common mistake: treating a Secretary of State renewal as a tax return, or treating a federal filing as proof that Washington accounts are current.
 
-## Washington annual report
+## When is the Washington LLC annual report due?
 
-The Washington Secretary of State's [annual-report guidance](https://www.sos.wa.gov/vi/node/30116) currently lists a $70 fee for a profit corporation or LLC. The report is due by the last day of the month in which the entity was first formed or registered. The state also lists a $25 delinquency fee and requires a registered agent with a physical Washington address.
+The Secretary of State says the report is due by the last day of the month in which the entity was first formed or registered. Calendar the deadline using the entity's original Washington registration month, not the federal tax-return due date. A registered agent with a physical Washington address is also required.
 
-Fees and procedures can change, so verify the amount in the official filing system when submitting. Calendar the deadline using the entity's original Washington registration month, not the federal tax-return due date.
+The Washington Secretary of State's [annual-report guidance](https://www.sos.wa.gov/vi/node/30116) currently lists a $70 fee for a profit corporation or LLC and a $25 delinquency fee.
 
-## Business and occupation tax is based on gross receipts
+Fees and procedures can change, so verify the amount in the official filing system when submitting.
+
+## Is Washington B&O tax based on profit or gross receipts?
+
+Washington's B&O tax is a gross-receipts tax, with the calculation depending on business classification. The Department of Revenue states that businesses generally do not deduct labor, materials, taxes, or other costs from gross income, so profit is an unreliable screening shortcut. An LLC with little or no net profit can still have gross-receipts reporting.
 
 Washington's [business and occupation tax](https://dor.wa.gov/taxes-rates/business-occupation-tax) is a gross-receipts tax. The tax calculation depends on the business classification, and the Department of Revenue states that businesses generally do not deduct labor, materials, taxes, or other costs from gross income when computing B&O tax.
 
@@ -48,9 +54,11 @@ Key facts to collect include:
 - marketplace-facilitator sales; and
 - the LLC's business-license and Department of Revenue account status.
 
-## Remote sales can create registration duties
+## Do remote sales to Washington customers require registration?
 
-Washington's [remote-seller guidance](https://dor.wa.gov/taxes-rates/retail-sales-tax/marketplace-fairness-leveling-playing-field/remote-sellers) currently states that remote businesses exceeding $100,000 of combined Washington gross receipts in the current or prior year generally must register and report. A business organized or commercially domiciled in Washington can have a registration obligation without waiting to exceed that economic-nexus threshold.
+They can. Washington's guidance currently says remote businesses exceeding $100,000 of combined Washington gross receipts in the current or prior year generally must register and report. A Washington-organized or commercially domiciled business can have a registration obligation without waiting for that threshold, and marketplace sales need separate handling.
+
+Washington's [remote-seller guidance](https://dor.wa.gov/taxes-rates/retail-sales-tax/marketplace-fairness-leveling-playing-field/remote-sellers) currently states that remote businesses exceeding $100,000 of combined Washington gross receipts in the current or prior year generally must register and report.
 
 Marketplace sales need separate handling. A marketplace facilitator may collect retail sales tax, while the seller can still have reporting and B&O consequences. Do not exclude marketplace revenue from the nexus review merely because the platform collected tax.
 

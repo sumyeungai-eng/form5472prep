@@ -2,7 +2,7 @@
 title: "Form 5472 Partner Program for Company Formation Agents"
 description: "Company-formation agencies can add a structured Form 5472 handoff, partner dashboard, client signature flow, and white-label delivery."
 date: 2026-09-03
-updated: 2026-09-03
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["company-formation-agents", "partner-program", "form-5472", "white-label"]
 draft: false
@@ -14,7 +14,9 @@ The opportunity is not to turn a formation specialist into a tax adviser. It is 
 
 [Request a formation-agency partner account](/partners).
 
-## Formation can create the first reportable transaction
+## Can company formation create the first reportable Form 5472 transaction?
+
+Yes. New LLCs frequently have owner activity before earning revenue, such as the owner paying the state fee or registered agent, depositing initial capital, or buying services personally. That is why having no sales is not enough to conclude that no filing is needed, and why agencies should preserve dates, payers, and receipts.
 
 The [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) apply special reporting rules to foreign-owned US disregarded entities. When the LLC has a reportable transaction with its foreign owner or another related party, it generally files Form 5472 with a pro forma Form 1120.
 
@@ -28,7 +30,9 @@ New LLCs frequently have owner activity before earning revenue:
 
 Those facts are why “the company had no sales” is not enough to conclude that no Form 5472 filing is needed. Formation agents do not have to make the final tax determination, but they are well placed to preserve the dates, payers, receipts, and ownership information that the filing review needs.
 
-## A formation-to-filing handoff
+## What does a formation-to-filing handoff look like?
+
+The agency preserves the formation date, legal name, EIN confirmation, payer records for setup costs, and the separation of owner deposits from business receipts, while the client confirms owner details and transfer purposes. At filing season, the agency starts the filing from the partner dashboard, and the client reviews and signs the prepared package.
 
 | Timing | Formation agency action | Client action | Filing outcome |
 |---|---|---|---|
@@ -41,17 +45,17 @@ Those facts are why “the company had no sales” is not enough to conclude tha
 
 This handoff makes the agency more useful without requiring it to interpret treaty positions, effectively connected income, or state tax nexus.
 
-## What the partner dashboard changes
+## What does the partner dashboard change for a formation agency?
+
+The agency starts one filing per client LLC and sees each file's status under one account, from draft and paid to awaiting signature, faxed, and confirmation. The client signs through a secure link, so the agency does not collect a handwritten signature or share its login.
 
 Without a partner system, an agency may send each founder a link and lose visibility. Under the [Form5472 Prep partner program](/partners), the agency starts one filing per client LLC and sees each file's status under one account.
 
-That status can show whether the filing is still a draft, has been paid, is awaiting signature, has been faxed, or has reached its confirmation stage. The client signs through a secure link; the agency does not need to collect a handwritten signature or share its login.
-
 The dashboard should be treated as the operating view, while the formation agency keeps its own client-management and engagement records.
 
-## Formation bundles under white-label delivery
+## How do formation bundles work under white-label delivery?
 
-Since 30 October 2026 every partner filing is white-label: the agency copies the intake and signing links from the partner dashboard and sends them, emails about a client's filing go to the agency, and the name the agency sets appears in the client's intake and on the fax receipt.
+Since 30 October 2026 every partner filing is white-label. The agency copies the intake and signing links from the partner dashboard and sends them, emails about a client's filing go to the agency, and the name the agency sets appears in the client's intake and on the fax receipt. Client pages still open on form5472prep.com.
 
 | Agency model | Recommended delivery | Client experience |
 |---|---|---|

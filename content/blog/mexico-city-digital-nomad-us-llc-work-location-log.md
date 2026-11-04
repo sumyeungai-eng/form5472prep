@@ -12,7 +12,9 @@ A digital nomad working from Mexico City should record where services were physi
 
 This article addresses a non-U.S. individual with a single-member U.S. LLC treated as disregarded, without a corporate election. It is not a U.S.-expat tax guide or an assessment of your right to work in Mexico.
 
-## The invoice cannot answer every tax question
+## Does the client's address decide where my income is sourced?
+
+Generally not for personal-service income. IRS guidance looks to where the services are performed, regardless of contract location, payment location, or the payer's residence, and partly U.S. work may need an allocation. Other income categories, such as royalties and inventory sales, can follow different sourcing rules.
 
 A consultant might have a Delaware LLC, a U.S. account, and a New York customer while doing the actual work in an apartment in Roma Norte. Those are four different facts.
 
@@ -20,7 +22,9 @@ The [IRS personal-service sourcing guidance](https://www.irs.gov/individuals/int
 
 That does not mean all income of an online business follows this rule. Royalties, inventory sales, and other income categories can use different sourcing rules. Nor does it settle whether a U.S. trade or business, an applicable treaty, or a separate filing requirement changes the outcome.
 
-## A work-location log you can maintain weekly
+## What should a weekly work-location log record?
+
+Use one row per work period, splitting a project when your physical location changes. Record the project and contract, service dates, physical location, work performed, invoice and receipt, and supporting evidence such as calendar or travel records. You do not need every coffee shop, but you do need a reliable account of country changes.
 
 Use one row per work period, splitting a project when your physical location changes. Keep travel evidence alongside the log.
 
@@ -41,17 +45,17 @@ Suppose you spend most of a project in Mexico City but travel to the United Stat
 
 Give the contract, work log, and travel dates to your U.S. adviser. Let that adviser determine sourcing, any appropriate allocation, and whether personal U.S. filing is required. A log is evidence for that decision, not a “zero tax” certificate.
 
-## Mexico does not reduce to a generic 183-day rule
+## Does Mexico apply a generic 183-day rule to digital nomads?
 
-The Mexican tax authority's [residency guidance](https://wwwmat.sat.gob.mx/consulta/06710/que-se-entiende-por-residente-en-el-extranjero) discusses a home in Mexico and, where homes exist in more than one country, income and the centre of professional activities. It does not present a universal short-stay exemption for digital nomads.
+Not according to the Mexican tax authority's residency guidance, which discusses a home in Mexico and, where homes exist in more than one country, income and the centre of professional activities. It presents no universal short-stay exemption. Keep accommodation, other homes, work pattern, and registrations in a separate residency folder.
 
-Keep your accommodation arrangements, other homes, work pattern, and local registrations in a separate residency folder. Ask a Mexican adviser to examine those facts and the LLC's treatment. An American client list does not resolve them.
+See the [Mexican tax authority's residency guidance](https://wwwmat.sat.gob.mx/consulta/06710/que-se-entiende-por-residente-en-el-extranjero). Ask a Mexican adviser to examine those facts and the LLC's treatment. An American client list does not resolve them.
 
-## Keep the Form 5472 ledger separate
+## Why keep the Form 5472 ledger separate from the work log?
 
-Your work log explains activity. Your related-party ledger explains transactions between the LLC and its foreign owner or other related parties. The [Form 5472 instructions](https://www.irs.gov/instructions/i5472) address this reporting separately, including contributions and distributions for foreign-owned disregarded entities.
+Because the two records answer different questions. The work log shows where services were performed, while the related-party ledger shows transactions between the LLC and its foreign owner or other related parties. An owner contribution that funds the business can still require reporting even when the work log supports foreign-source services. Keep both records.
 
-An owner contribution used to fund the business can require reporting even when the work log supports foreign-source services. Keep both records; neither replaces the other.
+The [Form 5472 instructions](https://www.irs.gov/instructions/i5472) address this reporting separately, including contributions and distributions for foreign-owned disregarded entities.
 
 Changing destinations? The [digital-nomad filing hub](/blog/form-5472-digital-nomad-us-llc) links the related country guides and practical checklists.
 

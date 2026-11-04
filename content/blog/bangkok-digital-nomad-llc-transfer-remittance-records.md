@@ -12,7 +12,9 @@ If you fund life in Bangkok by moving money from a U.S. LLC to a personal accoun
 
 The useful record is a linked trail showing the income's origin, each account's legal owner, transfer dates, fees, and the amount ultimately received. This guide assumes a non-U.S. individual owns a U.S. single-member disregarded LLC without a corporate election.
 
-## Three events that a bank export can blur
+## What are the three stages from customer payment to Thai remittance?
+
+Record three stages separately: the customer's payment to the LLC, the LLC's transfer to the owner's personal account, and the owner's later remittance into Thailand. On the stated facts, only the LLC-to-owner transfer belongs in the Form 5472 related-party review. Preserve the Thai remittance for the separate Thai analysis.
 
 A payment platform may display three credits that look like three pieces of income. They might actually be one customer payment moving through several accounts.
 
@@ -28,7 +30,9 @@ For U.S. Form 5472, a foreign-owned disregarded entity's distributions and contr
 
 In the example, the $3,000 LLC-to-owner transfer belongs in the related-party review. The subsequent movement between the owner's two personal accounts is not another LLC-to-owner transfer on the stated facts. Preserve it for the separate Thai analysis.
 
-## Why the year of earning the money matters
+## Does the year the money was earned matter for Thai remittances?
+
+Yes. The Thai Revenue Department's foreign-income guidance distinguishes when foreign-source assessable income arose, whether you were in Thailand that year, and when the money was brought in. Postponing a transfer to the following year does not automatically make it exempt, so ask a Thai adviser to classify the underlying activity first.
 
 The Thai Revenue Department's [foreign-income questions and answers](https://www.rd.go.th/fileadmin/download/news/question_p161_162.pdf) distinguishes when foreign-source assessable income arose, presence in Thailand in that year, and when it was brought into Thailand. Its examples cover income arising from January 1, 2024 onward and later-year remittances.
 
@@ -36,7 +40,9 @@ Do not assume that postponing a transfer until the following year makes it exemp
 
 This foreign-income guidance also does not establish that work you physically perform in Bangkok is foreign-source for Thai purposes. Ask a Thai adviser to classify the underlying activity before applying remittance rules. A U.S. bank account is not evidence of where the work happened.
 
-## Make your transfer trail reviewable
+## How do I make my transfer trail reviewable?
+
+Assign one reference to the LLC debit and the matching personal credit, then give the later Thai remittance a second reference linked back to the first. Keep gross amounts and fees visible, add a notes column for mixed funds, and reconcile the year-end distribution figure from the LLC's own records.
 
 Assign one reference, such as `OWNER-2026-09-01`, to the LLC debit and matching personal credit. Assign a second reference to the later Thai remittance and link it back to the first. Keep gross amounts and fees visible rather than forcing unequal bank credits to match.
 

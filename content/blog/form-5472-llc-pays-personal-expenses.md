@@ -2,7 +2,7 @@
 title: "Form 5472 When Your LLC Pays Your Personal Expenses"
 description: "An LLC payment of a foreign owner's personal bills may need Form 5472 review. Learn how to separate expense deductions, owner benefits, and repayments."
 date: 2026-09-11
-updated: 2026-09-11
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["form-5472", "owner-distributions", "foreign-owned-llc", "bookkeeping"]
 draft: false
@@ -12,13 +12,17 @@ If your foreign-owned US single-member disregarded LLC pays your personal rent, 
 
 Two separate questions matter: whether a cost is deductible and whether an owner-related transaction must be disclosed on Form 5472. Answering one does not answer the other.
 
-## Start with who benefited from the payment
+## Who benefited when my LLC paid a personal expense?
+
+Start with who benefited. Business deductions generally require ordinary and necessary business expenses, and paying through a company card does not change a purchase's purpose. For Form 5472, a payment that satisfies the owner's personal obligation can require analysis as an owner benefit, though the exact classification depends on the arrangement.
 
 The IRS explains that business deductions generally require ordinary and necessary business expenses; personal, living, and family expenses generally are not deductible. Paying through a company card does not change the purpose of the purchase. See the [IRS explanation of personal expenses paid from a business account](https://www.irs.gov/faqs/small-business-self-employed-other-business/income-expenses/income-expenses-1).
 
 For Form 5472, a foreign-owned US disregarded entity has an additional reporting framework that includes contributions, distributions, and other transactions with its owner. A payment satisfying the owner's personal obligation can therefore require analysis as an owner benefit. The exact classification depends on the arrangement; it is not automatically a distribution in every case. See [Form 5472 instructions, Part V](https://www.irs.gov/instructions/i5472) and [Treasury Regulation section 1.6038A-2](https://www.law.cornell.edu/cfr/text/26/1.6038A-2).
 
-## A practical personal-payment review table
+## How do I review personal or mixed payments made by my LLC?
+
+Triage each payment by the question it raises, such as whether rent was a personal benefit, a genuine business cost, or mixed use, then keep the matching evidence: lease, receipts, itinerary, allocation rationale, or reimbursement proof. The table is a bookkeeping triage tool, not a final tax classification.
 
 This table is a bookkeeping triage tool, not a final tax classification.
 
@@ -32,17 +36,21 @@ This table is a bookkeeping triage tool, not a final tax classification.
 
 The last two rows are not the same as the LLC buying the owner's personal consumption. Our [owner loans, contributions, and reimbursements guide](/blog/form-5472-owner-loans-contributions-reimbursements) covers the reverse direction: an owner paying business costs and later receiving reimbursement.
 
-## Why the merchant name can hide an owner transaction
+## Can the merchant name hide an owner transaction?
 
-Suppose an LLC sends $1,200 directly to its foreign owner's personal landlord. The statement identifies the landlord, but the economic benefit may be the payment of the owner's rent. A review that searches only for transfers to the owner's bank account would miss that benefit.
+Yes. If an LLC pays its foreign owner's personal landlord directly, the statement names the landlord, but the economic benefit may be payment of the owner's rent. A review that searches only for transfers to the owner's bank account would miss it. Review it as a possible owner benefit, not an ordinary business expense.
+
+Suppose an LLC sends $1,200 directly to its foreign owner's personal landlord.
 
 This is an illustrative scenario. If the payment is properly classified as a distribution, retain the supporting explanation for the Form 5472 review. If the parties say it was a loan, a ledger label alone is not enough: establish the actual terms and facts. If it relates to services or mixed business use, obtain the appropriate classification before filing.
 
 Do not enter the same payment twice simply because both a merchant and an owner were involved. Trace one economic event through the payment evidence and the owner account.
 
-## A later repayment does not erase the record
+## Does a later repayment erase the original payment?
 
-Imagine the owner repays that $1,200 a month later. Keep the original payment and the repayment as separate dated entries, linked by a clear explanation. The preparer can then determine how both events belong in the reporting categories. A zero year-end owner balance does not show that no activity occurred.
+No. Keep the original payment and the owner's repayment as separate dated entries, linked by a clear explanation, so the preparer can determine how both events belong in the reporting categories. Do not net them away. A zero year-end owner balance does not show that no activity occurred.
+
+Imagine the owner repays that $1,200 a month later: both the payment and the repayment stay on the record.
 
 Before handing over the file:
 

@@ -11,7 +11,9 @@ If you pay an LLC business cost with your personal card while working in Chiang 
 
 This guide assumes one non-U.S. individual owns a U.S. disregarded LLC without a corporate election. It does not establish that your accommodation, flights, meals, or coworking costs are deductible in any country.
 
-## The missing-transaction problem
+## Why can an owner-paid cost disappear from the Form 5472 file?
+
+A cost paid with the owner's personal card never appears in the LLC bank statement, so a later reimbursement can look like an unexplained owner payment. Record who paid, what the cost was for, whether the LLC reimbursed you, and how the books treat it. The first step is disclosure, not choosing a form line.
 
 Your LLC statement shows no payment for a coworking membership because you used a personal card. Later, the LLC transfers money back to you. If the preparer sees only that transfer, they may lack the evidence needed to distinguish reimbursement from another owner payment.
 
@@ -19,7 +21,9 @@ The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) require
 
 The right first step is disclosure, not choosing a form line from the merchant name.
 
-## Use a receipt-to-reimbursement register
+## What should a receipt-to-reimbursement register include?
+
+For each owner-paid cost, save the original receipt, evidence of the personal card payment, the business explanation, the THB amount with conversion evidence, the bookkeeping treatment, and any matching reimbursement. Use a shared reference across the receipt, card entry, and reimbursement, and keep the original currency visible after converting to dollars.
 
 For a nomad moving between coworking spaces and short-term accommodation, this register is more useful than a folder of unlabeled phone photos.
 
@@ -42,7 +46,9 @@ Give the preparer both events: the original owner-funded payment and the later r
 
 The proper related-party reporting depends on the underlying facts and accounting entries. Keep the two directions visible and have the preparer determine the reporting, rather than netting everything to zero because you personally “broke even.”
 
-## Be careful with mixed personal and business spending
+## How should I handle mixed personal and business spending?
+
+Ask the provider for an itemized receipt and record your business explanation at the time. A single card payment does not prove that every component, such as meals or airport pickup, was an LLC business cost. If you cannot establish the business portion, flag it for review instead of inventing a percentage.
 
 An accommodation bill can include a room, meals, airport pickup, and workspace access. A single card payment is not proof that every component was an LLC business cost. Ask the provider for an itemized receipt and record your business explanation contemporaneously.
 

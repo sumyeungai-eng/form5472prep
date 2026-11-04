@@ -12,7 +12,9 @@ For a Buenos Aires digital nomad paid through a U.S. LLC, the dollar invoice, ne
 
 This guide assumes a non-U.S. individual owns a single-member U.S. disregarded LLC without a corporate election. It is not guidance on Argentine tax rates, currency-market access, or exchange-control compliance.
 
-## Start with who owns the money at each stage
+## Who owns the money at each stage of a Buenos Aires LLC payment?
+
+Label every account as LLC-owned or personally owned before importing transactions, because two accounts showing your name can have different legal holders. Transfers between two LLC accounts need reconciliation but are not automatically owner distributions, while a transfer from an LLC account to you personally raises a different reporting question.
 
 The city government's [digital-nomad information](https://investba.buenosaires.gob.ar/es/List/view/Novedad/39) describes Buenos Aires as a remote-work destination. For an LLC owner living there, a practical administrative issue is keeping the payment trail understandable across currencies and accounts.
 
@@ -20,7 +22,9 @@ Label every account as LLC-owned or personally owned before importing transactio
 
 Transfers between two accounts owned by the LLC need reconciliation, but they are not automatically owner distributions. A transfer from an LLC account to you personally raises a different reporting question.
 
-## Worked example: from a $2,000 invoice to personal peso spending
+## How does a $2,000 invoice turn into personal peso spending?
+
+In the hypothetical example, a $2,000 customer payment, a $60 processor fee, and a $1,940 net payout are one receipt, not separate sales. The LLC's $1,000 transfer to the owner goes into Form 5472 review, and the owner's later peso conversion is a personal record, not another LLC sale.
 
 The following amounts are hypothetical. The example deliberately does not assume an ARS exchange rate.
 
@@ -36,19 +40,23 @@ Assuming the LLC bank started at zero and had no other entries, it ends with $94
 
 If the processor or customer is a related party, disclose that separately; the example assumes they are unrelated.
 
-## Keep the conversion method visible
+## How should I document the USD-to-ARS conversion method?
 
-For each transaction that needs translation, preserve the original currency, date, amount, rate source, rate direction, fees, and resulting dollar amount. “1 USD equals X ARS” is different from “1 ARS equals X USD.” An inverted rate can produce a plausible-looking but incorrect spreadsheet. The [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) tool lists the published figures.
+For each transaction that needs translation, preserve the original currency, date, amount, rate source, rate direction, fees, and resulting dollar amount. Check whether a rate means 1 USD equals X ARS or the reverse, and ask the preparer to confirm a suitable method instead of applying one annual average to everything.
+
+“1 USD equals X ARS” is different from “1 ARS equals X USD.” An inverted rate can produce a plausible-looking but incorrect spreadsheet. The [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) tool lists the published figures.
 
 The [IRS foreign-currency guidance](https://www.irs.gov/individuals/international-taxpayers/foreign-currency-and-currency-exchange-rates) discusses functional currency and using the exchange rate appropriate to the transaction. Do not automatically apply one annual average to every transfer, asset balance, or tax form. Ask the preparer to confirm a suitable method for the records being reported.
 
 Where a personal conversion follows a completed $1,000 LLC distribution, do not rewrite that dollar distribution each time the peso value changes. If the LLC itself holds or converts pesos, provide those business-account records too; that is a different fact pattern.
 
-## Separate the U.S. filing from Argentine treatment
+## Is the U.S. filing separate from Argentine tax treatment?
 
-The [Form 5472 instructions](https://www.irs.gov/instructions/i5472) include contributions and distributions in the reporting framework for foreign-owned U.S. disregarded entities. They do not determine how Argentina taxes the owner or classifies the LLC.
+Yes. Argentina's treatment of the owner and the LLC is a separate question that the Form 5472 instructions do not answer; they cover contributions and distributions for foreign-owned U.S. disregarded entities. Give an Argentine adviser your work location, residency facts, contracts, income timeline, and local banking records.
 
-Give an Argentine adviser the work location, residency facts, contracts, income timeline, and local banking records. Do not assume that retaining dollars abroad removes local reporting or that a personal withdrawal date is necessarily the date income became taxable.
+The [Form 5472 instructions](https://www.irs.gov/instructions/i5472) are the source for that federal framework.
+
+Do not assume that retaining dollars abroad removes local reporting or that a personal withdrawal date is necessarily the date income became taxable.
 
 Our [Argentina resident U.S. LLC guide](/blog/form-5472-argentina-residents-us-llc) covers the broader federal filing background.
 

@@ -76,6 +76,8 @@ const BOILERPLATE: Segment[][] = [
 
 const toPlain = (segs: Segment[]) =>
   segs.map((s) => (typeof s === "string" ? s : `${s.text} (${s.href === "/" ? SITE_URL : `${SITE_URL}${s.href}`})`)).join("");
+// The text a reader sees: link text only, no URLs (toPlain is for the Copy button).
+const toVisible = (segs: Segment[]) => segs.map((s) => (typeof s === "string" ? s : s.text)).join("");
 const wordCount = (segs: Segment[]) => toPlain(segs).replace(/\(https?:[^)]*\)/g, "").trim().split(/\s+/).length;
 
 function Rich({ segments }: { segments: Segment[] }) {
@@ -118,6 +120,16 @@ const KEY_FACTS: string[] = [
   "Website: www.form5472prep.com. Reviews: Trustpilot.",
 ];
 
+// Question H2s and their visible answers, written once so the FAQPage JSON-LD
+// repeats the page text exactly.
+const Q = {
+  blurb: "What is Form5472 Prep?",
+  facts: "What are the key facts about Form5472 Prep?",
+  contact: "Who is the press contact?",
+} as const;
+const CONTACT_BEFORE = "For press enquiries, interview requests and corrections, email";
+const CONTACT_AFTER = ". Please mention that the enquiry is for the press team.";
+
 // Keep in sync with tailwind.config.ts (accent, ink, paper, seal) and the
 // wordmark colour inside public/logo.svg.
 const COLOURS: Array<{ name: string; hex: string; use: string; text: string }> = [
@@ -159,9 +171,24 @@ export default function PressPage() {
     ],
   };
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { q: Q.blurb, a: toVisible(BLURB) },
+      { q: Q.facts, a: KEY_FACTS.join(" ") },
+      { q: Q.contact, a: `${CONTACT_BEFORE} ${ORG_EMAIL}${CONTACT_AFTER}` },
+    ].map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   return (
     <>
       <JsonLd data={graph} />
+      <JsonLd data={faqJsonLd} />
       <JsonLd
         data={breadcrumbList([
           { name: "Home", path: "/" },
@@ -202,7 +229,7 @@ export default function PressPage() {
         <div className="mx-auto max-w-4xl space-y-16 px-4 py-14 sm:px-6 sm:py-16">
           <section aria-labelledby="blurb">
             <h2 id="blurb" className="font-serif text-2xl font-semibold tracking-tight text-ink">
-              What is Form5472 Prep?
+              {Q.blurb}
             </h2>
             <p className="mt-1 text-xs text-slate-500">Short blurb, {wordCount(BLURB)} words.</p>
             <div className="mt-4 rounded-lg border border-slate-200 bg-paper p-5">
@@ -238,7 +265,7 @@ export default function PressPage() {
           </section>
 
           <section aria-labelledby="facts">
-            <h2 id="facts" className="font-serif text-2xl font-semibold tracking-tight text-ink">What are the key facts about Form5472 Prep?</h2>
+            <h2 id="facts" className="font-serif text-2xl font-semibold tracking-tight text-ink">{Q.facts}</h2>
             <ul className="mt-4 list-disc space-y-2 pl-5 leading-relaxed text-slate-700 marker:text-accent">
               {KEY_FACTS.map((f) => (
                 <li key={f}>{f}</li>
@@ -362,13 +389,13 @@ export default function PressPage() {
           </section>
 
           <section aria-labelledby="contact" className="rounded-lg border border-paper-edge bg-paper p-6">
-            <h2 id="contact" className="font-serif text-2xl font-semibold tracking-tight text-ink">Who is the press contact?</h2>
+            <h2 id="contact" className="font-serif text-2xl font-semibold tracking-tight text-ink">{Q.contact}</h2>
             <p className="mt-3 text-slate-700">
-              For press enquiries, interview requests and corrections, email{" "}
+              {CONTACT_BEFORE}{" "}
               <a href={`mailto:${ORG_EMAIL}`} className="font-medium text-accent underline-offset-4 hover:underline">
                 {ORG_EMAIL}
               </a>
-              . Please mention that the enquiry is for the press team.
+              {CONTACT_AFTER}
             </p>
             <p className="mt-4">
               <Link href="/contact" className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline">

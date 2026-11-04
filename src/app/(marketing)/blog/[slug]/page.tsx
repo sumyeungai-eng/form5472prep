@@ -22,6 +22,7 @@ import {
   getPost,
   formatPostDate,
   extractFaqs,
+  extractQuestionHeadings,
   extractHowTo,
   blogSlugFromHref,
   type PostMeta,
@@ -129,7 +130,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     ],
   };
   let leadMarked = false;
-  const faqs = extractFaqs(post.body);
+  // No FAQ section: fall back to the post's visible question-form H2s.
+  const sectionFaqs = extractFaqs(post.body);
+  const faqs = sectionFaqs.length > 0 ? sectionFaqs : extractQuestionHeadings(post.body);
   const howTo = extractHowTo(post.body);
   const tocHeadings = extractH2Headings(post.body);
   const faqJsonLd = faqs.length >= 2

@@ -2,7 +2,7 @@
 title: "White-Label vs Standard Form 5472 Partner Delivery"
 description: "Compare standard and white-label Form 5472 partner delivery by branding, client communication, setup, billing, and operational control."
 date: 2026-09-03
-updated: 2026-09-03
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["white-label", "partner-program", "form-5472", "accounting-firms"]
 draft: false
@@ -14,7 +14,9 @@ Update, 30 October 2026: the standard partner delivery compared below is no long
 
 [Apply for the partner program](/partners).
 
-## Side-by-side decision matrix
+## What was the difference between standard and white-label partner delivery?
+
+Under the former standard flow, Form5472 Prep emailed the client for signature, confirmation, and the filing receipt. Under white label, which every partner filing now uses, Form5472 Prep sends your clients no emails and your firm sends the intake and signing links. The dashboard, client signature, accountant review, and IRS fax delivery stay the same.
 
 | Decision factor | Standard partner delivery (no longer offered) | White-label delivery (every partner filing) |
 |---|---|---|
@@ -36,9 +38,9 @@ Since 30 October 2026 every partner account uses the white-label column.
 
 Under the former standard flow, the partner started and tracked multiple client filings from one account, and Form5472 Prep emailed the client for the signature, confirmation, and filing-receipt workflow. It is no longer offered: the [partner dashboard](/partners) works the same way, but emails about a client's filing now go to the partner.
 
-## White-label partner delivery
+## What does white-label partner delivery involve?
 
-White-label delivery keeps Form5472 Prep out of your clients' inboxes. Form5472 Prep remains the preparation and filing back office, while your firm sends the intake and signing links and receives the emails about each filing.
+White-label delivery keeps Form5472 Prep out of your clients' inboxes. Form5472 Prep remains the preparation and filing back office, while your firm sends the intake and signing links and receives the emails about each filing. Your firm pays per filing, and the name you set appears in the client's intake and on the fax receipt.
 
 It fits especially well when:
 
@@ -50,9 +52,9 @@ It fits especially well when:
 
 Before rollout, decide inside your firm who sends the links, who answers client questions, and how the final receipt reaches the client.
 
-## What does not change
+## What does not change under white-label delivery?
 
-The delivery model does not change the filing's legal substance.
+The filing's legal substance does not change. The client remains responsible for accurate information and signs the return, the package uses the legally required LLC and owner information, a tax accountant who holds an IRS PTIN reviews it before submission, and the signed package goes through the dedicated IRS filing route with a timestamped fax receipt.
 
 - The client remains responsible for accurate information and signs the return.
 - The package still uses the legally required LLC and owner information.
@@ -64,11 +66,13 @@ The delivery model does not change the filing's legal substance.
 
 Branding should never obscure who is responsible for advice, accuracy, preparation, signature, or submission.
 
-## Commercial model and pricing
+## How is partner delivery priced?
 
-The partner program uses the same per-filing pricing as direct customers and has no platform subscription. Current public prices are Standard at {{price.standard}} with a 5–7-business-day turnaround and Express at {{price.express}}, ready to sign in under 3 days. An additional past tax year adds {{price.additionalYear}}, and IRS fax delivery is included.
+The partner program uses the same per-filing pricing as direct customers and has no platform subscription. Volume pricing and consolidated invoicing are available for discussion, but a partner should not advertise a discount, margin, referral fee, or wholesale rate until the arrangement is confirmed in writing.
 
-[Verify current pricing](/pricing) before quoting a client. Volume pricing and consolidated invoicing are available for discussion, but a partner should not advertise a discount, margin, referral fee, or wholesale rate until the arrangement is confirmed in writing.
+Current public prices are Standard at {{price.standard}} with a 5–7-business-day turnaround and Express at {{price.express}}, ready to sign in under 3 days. An additional past tax year adds {{price.additionalYear}}, and IRS fax delivery is included.
+
+[Verify current pricing](/pricing) before quoting a client.
 
 [Request your partner account](/partners). Include your expected filing volume and billing needs.
 

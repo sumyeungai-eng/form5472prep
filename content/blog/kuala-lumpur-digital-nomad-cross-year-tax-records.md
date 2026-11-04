@@ -12,7 +12,9 @@ If you arrive in Kuala Lumpur late in one year and stay into the next, keep a co
 
 This guide is for a non-U.S. individual owning a U.S. single-member disregarded LLC without a corporate election. It provides a records method, not a Malaysian residency determination or a DE Rantau eligibility assessment.
 
-## Why a January reset can hide important facts
+## Why can a January reset hide facts in a Malaysian residency review?
+
+Malaysia's tax authority describes a 182-day test, linked-period rules, and additional residence tests. Two separate annual spreadsheets can omit the connection across December 31 that an adviser needs to examine. Keep the year-end boundary visible, keep the adjacent travel periods, and record immigration permission separately from tax residency.
 
 Malaysia's tax authority describes a 182-day test as well as linked-period rules and additional residence tests under section 7. Certain temporary absences may be relevant under specified conditions. See [HASiL's residence-status guidance](https://www.hasil.gov.my/individu/taraf-mastautin/).
 
@@ -20,7 +22,9 @@ Therefore, two separate annual spreadsheets can omit the very connection an advi
 
 Immigration permission and tax residency should also be recorded separately. The name of a pass is not a substitute for testing the dates and other relevant facts.
 
-## A cross-year example to discuss with your adviser
+## What does a stay that crosses December 31 look like in day counts?
+
+In the hypothetical example, a stay from November 1, 2025 through July 1, 2026 is 61 days in the first year, 182 days in the next, and 243 days overall. Looking only at the first row invites a premature nonresident conclusion, so a Malaysian adviser should assess the complete timeline.
 
 Assume uninterrupted presence in Malaysia from November 1, 2025 through July 1, 2026, with both endpoints included. This is a hypothetical day-count illustration, not a conclusion about an actual traveller.
 
@@ -34,7 +38,9 @@ Looking only at the first row invites a premature “nonresident” conclusion. 
 
 If your real trip included an absence, replace the uninterrupted example with the actual exit, re-entry, reason for travel, and supporting evidence. Do not simply count all days abroad as Malaysian days or automatically exclude every absence.
 
-## Keep two views of the same evidence
+## How should I organize travel records and LLC records?
+
+Keep a master travel log with dates, countries, source documents, and corrections, then prepare a Malaysian residency view and a work-location view from it. Maintain a separate annual LLC ledger of receipts, contributions, distributions, loans, and reimbursements. Do not change the LLC's reporting period to match a Malaysian stay or visa period.
 
 Maintain a master travel log with arrival date, departure date, country, source document, and corrections. From that log, prepare a Malaysian residency view covering adjacent years and a separate work-location view showing where your business activities occurred.
 
@@ -42,11 +48,11 @@ For the LLC, maintain an annual transaction ledger with opening balances, custom
 
 The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) specify the tax-year framework for foreign-owned U.S. disregarded entities and their related-party reporting. Do not change the LLC's reporting period merely to match a Malaysian stay or visa period.
 
-## What to send before your filing appointment
+## What should I send each adviser before my filing appointment?
 
-Send the Malaysian adviser the continuous travel history and facts about your work, income, homes, and prior residence. Send the U.S. preparer the LLC's legal documents, confirmed tax classification, applicable tax year, and complete related-party transactions.
+Send the Malaysian adviser the continuous travel history and facts about your work, income, homes, and prior residence. Send the U.S. preparer the LLC's legal documents, confirmed tax classification, applicable tax year, and complete related-party transactions. If one adviser's conclusions affect the other's work, share the written explanation.
 
-If the advisers reach conclusions affecting each other's work, share the written explanation. Avoid translating a local “resident” label into “U.S. resident”: those are different legal tests. A non-U.S. citizen can also become a U.S. tax resident under U.S. rules, so disclose U.S. travel separately.
+Avoid translating a local “resident” label into “U.S. resident”: those are different legal tests. A non-U.S. citizen can also become a U.S. tax resident under U.S. rules, so disclose U.S. travel separately.
 
 Read our [Malaysia resident U.S. LLC guide](/blog/form-5472-malaysia-residents-us-llc) for the general federal filing framework.
 

@@ -2,7 +2,7 @@
 title: "Form 5472 for Noncash Property Transfers"
 description: "Foreign-owned LLCs may need to disclose equipment, intellectual property, services, and other noncash transfers with related parties on Form 5472."
 date: 2026-08-28
-updated: 2026-09-05
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["form-5472", "noncash-transactions", "property-transfers", "foreign-owned-llc"]
 draft: false
@@ -14,7 +14,9 @@ That makes a bank-only review incomplete. A laptop supplied by the owner, softwa
 
 If the owner transferred noncash value to or from the LLC, [start a reviewed Form 5472 package](/start) with the transfer evidence and valuation support.
 
-## The noncash transfer matrix
+## Which noncash transfers need Form 5472 review?
+
+Review transfers of property, rights, obligations, or services between the LLC and a related party, such as a contributed computer, distributed equipment, free software use, or an assumed obligation. Part VI applies when a reportable transaction involves nonmonetary or less than full consideration. A market-price purchase from an unrelated supplier is usually outside Form 5472.
 
 The [Form 5472 instructions](https://www.irs.gov/instructions/i5472) require a Part VI description when a reportable transaction involves nonmonetary consideration or less than full consideration. The implementing rule, [Treasury Regulation section 1.6038A-2](https://www.law.cornell.edu/cfr/text/26/1.6038A-2), covers exchanges of property, rights, obligations, and services.
 
@@ -28,9 +30,9 @@ The [Form 5472 instructions](https://www.irs.gov/instructions/i5472) require a P
 
 The correct location on the form depends on the transaction's substance. Do not force a noncash owner contribution into only one disclosure bucket without checking both the ownership transaction and the nonmonetary exchange.
 
-## Fair market value is not the same as tax basis
+## Is fair market value the same as tax basis on Form 5472?
 
-Part VI asks for a reasonable estimate of fair market value when possible. That reporting value is not automatically the LLC's tax basis, a depreciation conclusion, or an appraisal for another tax purpose.
+No. Part VI asks for a reasonable estimate of fair market value when possible, but that reporting value is not automatically the LLC's tax basis, a depreciation conclusion, or an appraisal for another purpose. Preserve original cost and the basis analysis separately, and support the value with evidence such as comparable listings, appraisals, or quotes.
 
 Suppose the foreign owner transfers a used laptop to the LLC. The owner originally paid $4,000, but comparable used units sell for approximately $2,500 on the transfer date. The workpaper might use $2,500 as the supported fair market value estimate while separately preserving the original cost and tax-basis analysis. The form should not silently treat the two numbers as interchangeable.
 
@@ -44,7 +46,9 @@ Useful valuation evidence can include:
 
 Material intellectual property, real estate, or business transfers usually justify professional valuation and international tax advice.
 
-## Build a transfer record that survives review
+## What should a noncash transfer record include?
+
+For each item, record the parties, their relationship, the transfer date, a specific description, the consideration, fair market value with method and evidence date, cost or tax basis kept separately, the business purpose, and the form treatment. Show gross exchanges: a contributed item and a later shipping reimbursement are separate events.
 
 For each noncash item, record:
 
@@ -62,9 +66,9 @@ For each noncash item, record:
 
 The records should show the gross exchange. If the owner contributes equipment and the LLC later reimburses shipping, retain the contribution and reimbursement as separate events rather than netting them.
 
-## Noncash services also matter
+## Do noncash services count as related-party transactions?
 
-A related party can transfer value through work rather than property. An owner may build the LLC's website, provide management support, or license software without issuing an invoice. Routine acts performed only as an owner do not automatically create a service transaction, but a structured exchange of valuable services for no or below-market consideration needs review.
+They can. A related party can transfer value through work, such as building the LLC's website or providing management support without an invoice. Routine acts performed only as an owner do not automatically create a service transaction, but a structured exchange of valuable services for no or below-market consideration needs review.
 
 Document the actual arrangement before estimating a number. Identify who performed the work, when and where it was performed, the deliverables, what the parties agreed, and whether the LLC owed anything in return. Our [related-party services guide](/blog/form-5472-related-party-services-management-fees) covers the monetary and nonmonetary distinction in more detail.
 

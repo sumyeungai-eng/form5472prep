@@ -11,13 +11,17 @@ A digital nomad returning to Medellín should not reset their Colombian presence
 
 This guide assumes a non-U.S. individual owns a single-member U.S. disregarded LLC without a corporate election. The day-count example illustrates one Colombian residence test; it does not cover every residency condition or determine your local tax bill.
 
-## Start with the exact threshold
+## What is the Colombian 183-day residency test?
+
+DIAN describes more than 183 days of presence in a consecutive 365-day period, whether the stay is continuous or interrupted, including entry and exit days. It is not a calendar-year count. Use the authority's wording, and ask an adviser how it applies to your timeline and to the other residence conditions.
 
 DIAN's [residency explanation](https://www.dian.gov.co/impuestos/personas/Renta-Personas-Naturales-AG-2020/Paginas/Eres-residente-en-Colombia-para-efectos-tributarios.aspx) says more than 183 days in a consecutive 365-day period, whether the stay is continuous or interrupted. It also explains the second-year treatment where the relevant stay crosses tax years. DIAN's [current return-preparation guide](https://micrositios.dian.gov.co/renta-personas-naturales-ag-2025/preparese-para-la-declaracion/) reiterates the rolling-period test and directs readers to the other conditions in Article 10.
 
 “183 days,” “more than 183 days,” and “183 days per calendar year” are not identical instructions. Use the authority's wording and ask an adviser how it applies to your timeline.
 
-## Worked example: a stay spanning New Year
+## How can a stay spanning New Year pass 183 days?
+
+In the hypothetical example, presence from October 1, 2025 through April 2, 2026 totals 92 days in 2025 and 92 days in 2026, which is 184 overall. Neither calendar-year segment reaches 183 alone, but the rolling count does. A Colombian adviser should confirm the resulting treatment and whether other residence conditions matter.
 
 Assume continuous presence from October 1, 2025 through April 2, 2026, counting both entry and exit days. The following is hypothetical arithmetic, not a recommended travel schedule.
 
@@ -32,7 +36,9 @@ The example exceeds 183 days even though neither calendar-year segment alone rea
 
 For interrupted stays, the exercise is more involved: add the days of presence within each relevant 365-day window. A departure does not automatically erase earlier days from the window.
 
-## What the travel log should contain
+## What should a Colombian travel log contain?
+
+Keep a row for every Colombian entry and exit, with the actual date and a supporting immigration or travel record. Count days spent anywhere in Colombia, since this is a country-presence test, not a Medellín-only count. Keep cancelled itineraries separate from completed travel, and flag any discrepancy between documents.
 
 Keep a row for every Colombian entry and exit, with the actual date and supporting immigration or travel record. Include days spent elsewhere in Colombia; this is a country-presence test, not a Medellín-only count.
 
@@ -40,9 +46,11 @@ Retain cancelled itineraries separately from completed travel. A booking confirm
 
 If you build a spreadsheet, test it against the 184-day example above, a same-day entry and exit, and a stay that crosses a leap day. Do not use an untested formula to make a residency decision.
 
-## Keep the LLC reporting on its own track
+## Does a Colombian residency conclusion change the LLC's Form 5472 reporting?
 
-A Colombian residency conclusion does not erase the U.S. LLC's information-return requirements. Under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472), a foreign-owned disregarded entity with reportable related-party transactions generally files Form 5472 with a pro forma Form 1120.
+No. A Colombian residency conclusion does not erase the U.S. LLC's information-return requirements. A foreign-owned disregarded entity with reportable related-party transactions generally files Form 5472 with a pro forma Form 1120. The travel log records presence, while the related-party ledger records contributions, distributions, loans, and reimbursements.
+
+Under the [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472), a foreign-owned disregarded entity with reportable related-party transactions generally files Form 5472 with a pro forma Form 1120.
 
 The travel log and related-party ledger serve different purposes. One records presence; the other records contributions, distributions, loans, reimbursements, and other relevant events. An LLC owner can have an important owner transaction on a day spent outside Colombia.
 

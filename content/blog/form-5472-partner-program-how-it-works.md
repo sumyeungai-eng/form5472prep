@@ -2,7 +2,7 @@
 title: "How the Form5472 Prep Partner Program Works"
 description: "A practical guide for agencies, accountants, registered agents, and consultants that want to manage Form 5472 filings for multiple clients."
 date: 2026-09-03
-updated: 2026-09-03
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["partner-program", "form-5472", "white-label", "foreign-owned-llc"]
 draft: false
@@ -14,9 +14,11 @@ The program is designed for firms that already help non-US founders form or main
 
 [Request a partner account](/partners) if your firm manages more than one foreign-owned US LLC.
 
-## Who the partner program is for
+## Who is the Form 5472 partner program for?
 
-The [partner program](/partners) is built for organizations that repeatedly encounter foreign-owned US single-member LLCs, including:
+It is built for organizations that repeatedly encounter foreign-owned US single-member LLCs: company-formation agencies, registered-agent and annual-compliance providers, accounting and bookkeeping firms, business consultants and cross-border advisers, and firms coordinating filings for several related client entities. The partner coordinates the client relationship and provides accurate information, while Form5472 Prep prepares the supported filing package.
+
+Typical users of the [partner program](/partners) include:
 
 - company-formation agencies serving international founders;
 - registered-agent and annual-compliance providers;
@@ -26,7 +28,9 @@ The [partner program](/partners) is built for organizations that repeatedly enco
 
 It is not necessary to turn your team into a Form 5472 production department. The partner's role is to coordinate the client relationship and provide accurate information. Form5472 Prep's role is to prepare the supported filing package, arrange review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), collect the client's signature, and send the signed package through the dedicated IRS filing route.
 
-## The partner operating model
+## How does the partner operating model work?
+
+The partner starts one filing per client LLC and coordinates records, and the client confirms entity, owner, and transaction information. Form5472 Prep prepares Form 5472 and the pro forma Form 1120, a tax accountant who holds an IRS PTIN reviews the package, the client signs in the browser, and Form5472 Prep sends it to the IRS.
 
 | Stage | Partner | Client | Form5472 Prep |
 |---|---|---|---|
@@ -39,9 +43,9 @@ It is not necessary to turn your team into a Form 5472 production department. Th
 
 Every client LLC remains a separate filing. The dashboard is the control layer that keeps those filings visible under one partner login.
 
-## White-label delivery
+## What does white-label delivery mean for partners?
 
-Since 30 October 2026 every partner filing is white-label. Form5472 Prep never emails your clients: your firm copies the intake and signing links from the partner dashboard and sends them, and emails about a client's filing come to you. Your firm pays per filing, clients see no prices, and the name you set appears in the client's intake and on the fax receipt.
+Since 30 October 2026 every partner filing is white-label. Form5472 Prep never emails your clients: your firm copies the intake and signing links from the partner dashboard and sends them, and emails about a client's filing come to you. Your firm pays per filing, and the name you set appears in intake and on the fax receipt.
 
 | Delivery question | Answer |
 |---|---|
@@ -54,13 +58,11 @@ Since 30 October 2026 every partner filing is white-label. Form5472 Prep never e
 
 White label should not be treated as a promise that every screen, domain, payment flow, or legal document changes: client pages still open on form5472prep.com.
 
-## Pricing and account structure
+## How is the partner program priced?
 
-There is no platform subscription for a partner account. Each filing is paid individually using the current public service tiers. [Check current pricing](/pricing) before quoting a client because pricing and turnaround can change.
+There is no platform subscription, and each filing is paid individually at the current public service tiers. Pricing and turnaround can change, so [check current pricing](/pricing) before quoting a client. Your client price and commercial relationship remain your decision; do not promise a margin, commission, or wholesale rate until it is confirmed in writing.
 
 The current plans are Standard at {{price.standard}} with a 5–7-business-day turnaround and Express at {{price.express}}, ready to sign in under 3 days. Each additional past tax year adds {{price.additionalYear}}, and IRS fax delivery is included. Firms needing volume pricing or consolidated invoicing can request a discussion during onboarding.
-
-Your client price and commercial relationship remain your decision. Do not promise a margin, commission, or wholesale rate until it is confirmed in writing for your account.
 
 ## Information to prepare before applying
 

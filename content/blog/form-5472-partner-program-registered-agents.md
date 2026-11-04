@@ -2,7 +2,7 @@
 title: "Form 5472 Partner Program for Registered Agents"
 description: "Registered agents can connect foreign-owned LLC clients with a structured Form 5472 filing workflow while keeping state and federal duties separate."
 date: 2026-09-03
-updated: 2026-09-03
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["registered-agents", "partner-program", "form-5472", "white-label"]
 draft: false
@@ -14,9 +14,9 @@ This closes a common compliance gap: the client renews the registered-agent serv
 
 [Request a registered-agent partner account](/partners) to add a white-label federal filing handoff.
 
-## State maintenance and Form 5472 are different layers
+## Does a registered-agent renewal or state annual report file Form 5472?
 
-A registered agent's core service concerns state entity records and receipt of legal or government notices. Form 5472 is a federal information return administered by the IRS. Paying the registered-agent renewal or filing the state annual report does not file the federal return.
+No. A registered agent's core service concerns state entity records and receipt of legal or government notices, while Form 5472 is a federal information return administered by the IRS. Paying the registered-agent renewal or filing the state annual report does not file the federal return, even though clients often assume every annual requirement is complete.
 
 | Compliance event | Typical authority | What it proves | What it does not prove |
 |---|---|---|---|
@@ -27,7 +27,9 @@ A registered agent's core service concerns state entity records and receipt of l
 
 The [IRS instructions](https://www.irs.gov/instructions/i5472) currently state that failing to file a timely and substantially complete Form 5472 can trigger a $25,000 penalty. Verify the current instructions before filing because penalty rules and procedures can change.
 
-## A practical registered-agent handoff
+## How does a registered-agent handoff to Form 5472 filing work?
+
+The registered agent identifies foreign-owned single-member LLC clients, reminds them that state renewal and federal reporting differ, starts the filing, and monitors status. Form5472 Prep prepares the package, a tax accountant who holds an IRS PTIN reviews it, the client signs through a secure link, and it goes to the IRS.
 
 Registered agents already hold several useful facts: the LLC's exact legal name, formation state, effective date, registered address, and renewal calendar. The partner workflow adds the federal filing information without asking the agent to decide tax positions.
 
@@ -47,7 +49,9 @@ The client confirms ownership, addresses, funding, withdrawals, loans, reimburse
 
 Form5472 Prep prepares the Form 5472 and pro forma Form 1120 package, arranges review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN), sends the signed package to the IRS, and stores a timestamped fax receipt.
 
-## The annual-renewal trigger map
+## When should a registered agent prompt clients about Form 5472?
+
+Use each touchpoint as a screening prompt: the new-entity welcome, first renewal notice, state annual-report reminder, year-end communication, and dissolution request. Ask who owns the LLC, who paid setup costs, whether the owner funded or withdrew money, and whether ownership changed. A positive answer signals that the client should complete the filing review.
 
 | Registered-agent touchpoint | Useful Form 5472 prompt |
 |---|---|
@@ -59,9 +63,9 @@ Form5472 Prep prepares the Form 5472 and pro forma Form 1120 package, arranges r
 
 These are screening prompts, not tax advice. A positive answer signals that the client should complete the filing review.
 
-## White-label delivery for registered-agent firms
+## How does white-label delivery work for registered-agent firms?
 
-Every partner filing is white-label. Form5472 Prep never emails your clients: you copy the intake and signing links from the partner dashboard and send them, and emails about a client's filing come to you. Your firm pays per filing, clients see no prices, and the name you set appears in the client's intake and on the fax receipt.
+Every partner filing is white-label. Form5472 Prep never emails your clients: you copy the intake and signing links from the partner dashboard and send them, and emails about a client's filing come to you. Your firm pays per filing, clients see no prices, and the name you set appears in intake and on the fax receipt.
 
 Decide inside your firm:
 

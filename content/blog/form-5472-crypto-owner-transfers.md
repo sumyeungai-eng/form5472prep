@@ -2,7 +2,7 @@
 title: "Form 5472 for Crypto Transfers Between an LLC and Its Owner"
 description: "Trace crypto contributions and withdrawals between a foreign owner and a US LLC, document dollar values, and separate owner transfers from wallet moves."
 date: 2026-09-11
-updated: 2026-09-11
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["form-5472", "crypto", "foreign-owned-llc", "recordkeeping"]
 draft: false
@@ -12,13 +12,17 @@ A crypto transfer between a foreign owner and their US single-member disregarded
 
 This guide covers owner-to-LLC transfers and the records needed for disclosure. It does not determine the income-tax treatment of trading, staking, mining, lending, or decentralized finance.
 
-## Why crypto cannot be left out of the transaction file
+## Do crypto transfers belong in the Form 5472 transaction file?
+
+They can. The IRS treats convertible virtual currency as property, and the Form 5472 rules for a foreign-owned U.S. disregarded entity include owner contributions and distributions. A crypto-funded contribution therefore needs review like any other property contribution. That is a synthesis of the rules, not a special crypto exemption or filing regime.
 
 The IRS treats convertible virtual currency as property for federal tax purposes. Separately, the Form 5472 rules for a foreign-owned US disregarded entity include owner contributions, distributions, and other specified transactions. Applying those rules together means a crypto-funded contribution needs review just as another property contribution would. That is a synthesis of the rules, not a special IRS crypto exemption or separate crypto filing regime. See [IRS Notice 2014-21](https://www.irs.gov/pub/irs-drop/n-14-21.pdf) and the [Form 5472 instructions, Parts V and VI](https://www.irs.gov/instructions/i5472).
 
 Part V addresses certain disregarded-entity transactions not already entered in Part IV. Part VI addresses nonmonetary or less-than-full-consideration transactions with a foreign related party. The preparer must decide which descriptions are required without double-counting the same event in summary totals.
 
-## The wallet-ownership decision table
+## How do I tell which wallet movements are owner transfers?
+
+Establish who owned the asset before and after each movement. Transfers between the owner's personal wallet and an LLC-owned wallet need related-party review, while moves between two wallets of the same LLC, or payments from unrelated customers, are not owner transfers merely because crypto or a new address is involved.
 
 Use this research-based triage table before importing exchange exports into your filing worksheet.
 
@@ -32,7 +36,9 @@ Use this research-based triage table before importing exchange exports into your
 
 A wallet controlled by the owner is not necessarily the owner's personal property: an owner can hold keys for the LLC. Conversely, naming an exchange account after the LLC is not enough to explain every asset in it. Preserve agreements, account records, and bookkeeping that establish whose assets are involved.
 
-## Build a dollar-value trail, not just a token total
+## How do I build a dollar-value trail for crypto transfers?
+
+Keep the token quantity and the U.S. dollar calculation together for each owner transfer: asset, network, hash, timestamp, wallet ownership, price source, observation time, conversion, and network fees. Notice 2014-21 describes a reasonable, consistently applied exchange-rate method for the situations it covers. Do not assume a stablecoin was worth exactly $1.
 
 The [Form 5472 instructions](/form-5472-instructions) require US-dollar reporting and specify valuation information for nonmonetary exchanges. Keep the quantity and the dollar calculation together. Notice 2014-21 also explains using a reasonable, consistently applied exchange-rate method to establish dollar fair market value in the situations it covers. [IRS sources: Form 5472 instructions](https://www.irs.gov/instructions/i5472), [Notice 2014-21, questions 1 and 5](https://www.irs.gov/pub/irs-drop/n-14-21.pdf). The [IRS yearly average exchange rates](/irs-yearly-average-exchange-rates) tool lists the published figures.
 
@@ -47,11 +53,11 @@ For each owner transfer, retain:
 
 **Illustrative calculation:** an owner transfers 2 tokens to the LLC. A documented, appropriate market price at the transfer time is $1,500 per token. The gross reference value is 2 × $1,500 = $3,000, before separately analyzing fees. This is an example, not a token price or a tax-basis conclusion. Do not assume a stablecoin was worth exactly $1 simply from its name.
 
-## Resolve missing records before choosing a filing package
+## What if my crypto records are incomplete?
 
-A year-end balance cannot reconstruct gross owner activity. An LLC could receive and return the same number of tokens while still having two events to classify. Reconcile wallet activity to the ledger, preserve both directions, and explain unmatched transfers.
+A year-end balance cannot reconstruct gross owner activity: an LLC could receive and return the same number of tokens and still have two events to classify. Reconcile wallet activity to the ledger, preserve both directions, and explain unmatched transfers. If the records cannot separate personal and company holdings, ask a qualified adviser to resolve ownership and classification first.
 
-If the records cannot distinguish personal and company holdings, ask a qualified adviser to resolve ownership and classification first. Material valuations, token loans, protocol transactions, and compensation paid in crypto can need work beyond a standard information-return package. Our [noncash property guide](/blog/form-5472-noncash-property-transfers) explains the broader disclosure framework.
+Material valuations, token loans, protocol transactions, and compensation paid in crypto can need work beyond a standard information-return package. Our [noncash property guide](/blog/form-5472-noncash-property-transfers) explains the broader disclosure framework.
 
 ## Frequently asked questions
 

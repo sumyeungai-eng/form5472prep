@@ -11,15 +11,19 @@ Moving to Lisbon does not give your U.S. LLC a fresh tax year. Prepare one compl
 
 This guide is for a non-U.S. individual with a wholly owned U.S. LLC treated as a disregarded entity, with no corporate tax election. A U.S. citizen living in Portugal, a multi-member LLC, or a corporation needs a different filing analysis.
 
-## Why an arrival date is not enough
+## Is an arrival date enough to settle Portuguese tax residency?
 
-Portugal's tax authority describes both a presence test—more than 183 days in a relevant 12-month period—and a habitual-home test that can apply to a shorter stay. It also explains that residents typically face tax on worldwide income. Do not use “I arrived late in the year” as a substitute for a residency review. See the [Portuguese Tax and Customs Authority's residency rules](https://info.portaldasfinancas.gov.pt/en/tax-information/getting-started-in-portugal/tax-residency/tax-residency-rules/Pages/default.aspx).
+No. Portugal's tax authority describes a presence test of more than 183 days in a relevant 12-month period and a habitual-home test that can apply to a shorter stay. Arriving late in the year does not replace a residency review, and your U.S. preparer still needs the LLC's complete applicable tax year.
+
+Portugal's tax authority also explains that residents typically face tax on worldwide income. See the [Portuguese Tax and Customs Authority's residency rules](https://info.portaldasfinancas.gov.pt/en/tax-information/getting-started-in-portugal/tax-residency/tax-residency-rules/Pages/default.aspx).
 
 For the U.S. reporting side, a foreign-owned disregarded entity with reportable related-party transactions generally files Form 5472 with a pro forma Form 1120. Contributions and distributions can matter even without U.S. income tax. The [IRS instructions](https://www.irs.gov/instructions/i5472) make this an information-reporting obligation, not a Portuguese tax calculation.
 
 The practical consequence: your Portuguese adviser may need a relocation-period analysis while your U.S. preparer still needs the LLC's complete applicable tax year.
 
-## Build this two-country handoff folder
+## What belongs in a two-country handoff folder for Lisbon?
+
+Include a travel timeline, the Lisbon home records, LLC identity documents, a work timeline, a money timeline of revenue, contributions, distributions, loans, and reimbursements, and prior filings. Keep original documents unchanged and put your explanations in a separate index, so another preparer can distinguish evidence from interpretation.
 
 Use this checklist before your first accountant meeting. It is an organizational tool, not a determination of Portuguese treatment of the LLC.
 
@@ -42,9 +46,9 @@ The U.S. preparer needs the transaction date, amount, account ownership, and rea
 
 Writing “November salary” in the bank memo does not answer those questions. Nor does treating the LLC as disregarded for U.S. income-tax purposes establish how Portugal will classify it. Give the local adviser the governing documents before asking about distributions, retained profits, or special regimes.
 
-## Agree who is responsible for each filing
+## Who is responsible for each filing when I move to Lisbon?
 
-Ask each adviser to confirm their scope in writing. Your U.S. Form 5472 engagement should not silently become a promise to handle Portuguese personal returns, company-residency questions, VAT, or social security. Equally, a Portuguese accountant's review should not be assumed to include faxing a U.S. information return.
+Ask each adviser to confirm their scope in writing. A U.S. Form 5472 engagement should not silently become a promise to handle Portuguese personal returns, company-residency questions, VAT, or social security, and a Portuguese accountant's review should not be assumed to include faxing a U.S. return. Then track every obligation against a named owner.
 
 Keep a simple tracker with four fields: obligation, responsible person, deadline confirmed by that person, and evidence of completion. Mark unresolved classification questions explicitly. “Waiting for documents” is more useful than an empty box that looks finished.
 

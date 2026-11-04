@@ -93,10 +93,25 @@ export default function ServicesHubPage() {
     },
   };
 
+  // Each question H2 and the description paragraph under it, from the same
+  // data the sections render, so schema and visible text cannot drift.
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: categories
+      .filter((c) => c.heading.endsWith("?"))
+      .map((c) => ({
+        "@type": "Question",
+        name: c.heading,
+        acceptedAnswer: { "@type": "Answer", text: c.description },
+      })),
+  };
+
   return (
     <>
       <JsonLd data={organizationDocument()} />
       <JsonLd data={collection} />
+      <JsonLd data={faqJsonLd} />
       <JsonLd
         data={breadcrumbList([
           { name: "Home", path: "/" },

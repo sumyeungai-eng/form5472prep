@@ -2,7 +2,7 @@
 title: "White-Label Form 5472 Filing for Accounting Firms"
 description: "Accounting firms can add specialist Form 5472 preparation under their own brand while keeping the client relationship and review workflow clear."
 date: 2026-09-03
-updated: 2026-09-03
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["white-label-tax-preparation", "accounting-firms", "form-5472", "partner-program"]
 draft: false
@@ -14,7 +14,9 @@ This model is useful when a firm's clients occasionally need Form 5472 and a pro
 
 [Request a partner account](/partners).
 
-## A specialist back office without surrendering the relationship
+## What does white label mean for an accounting firm's client relationship?
+
+White label is an operating agreement, not a logo on a document. It settles who the client sees, who gathers information, who prepares the work, who reviews it, who answers questions, and who keeps the filing record. Form5472 Prep prepares the package, and a tax accountant who holds an IRS PTIN reviews it before submission.
 
 White label is not simply placing a logo on a document. It is an operating agreement about who the client sees, who gathers the information, who prepares the work, who reviews it, who answers questions, and who preserves the filing record.
 
@@ -29,7 +31,9 @@ For the standard foreign-owned US disregarded LLC profile, Form5472 Prep prepare
 
 Every package receives review by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) before submission. The [About page](/about) explains the filing-courier model and its boundaries.
 
-## Responsibility map for accounting firms
+## Who is responsible for what in a white-label Form 5472 filing?
+
+The accounting firm owns the overall engagement and decides whether other returns are needed. Form5472 Prep owns preparing the Form 5472 package, then faxes it and stores the receipt. The client supplies information, reviews the final package, signs, and remains responsible for accuracy. The firm sets the name clients see; Form5472 Prep sends no client emails.
 
 | Responsibility | Accounting firm | Form5472 Prep | Client |
 |---|---|---|---|
@@ -44,7 +48,9 @@ Every package receives review by a tax accountant who holds an IRS Preparer Tax 
 
 The client remains responsible for the accuracy of the submitted information. The accounting firm remains responsible for advice or conclusions outside the defined Form 5472 preparation service.
 
-## What to define in a white-label agreement
+## What should a white-label agreement define?
+
+Agree five practical items before the first client: brand touchpoints, client communication, scope escalation, document custody, and billing. For example, your firm sends the intake and signing links, Form5472 Prep sends your clients no email, your firm pays for each filing at checkout, and your clients see no prices.
 
 Before sending the first client, agree on five practical items.
 
@@ -78,7 +84,9 @@ White-label delivery is particularly useful when:
 - staff need a repeatable intake and status workflow; or
 - the firm serves clients across time zones and needs a browser-based signature and documented submission trail.
 
-## Questions to ask before outsourcing a Form 5472 workflow
+## What should I ask before outsourcing a Form 5472 workflow?
+
+Judge any provider on operational facts rather than full-service language. Ask whether it separates Form 5472 reporting from owner income-tax advice, prepares the pro forma Form 1120, and states who reviews the package and who obtains the signature. Ask which submission route and proof it uses, and which communications are actually white-labeled.
 
 Evaluate any provider against operational facts rather than broad “full-service tax” language:
 

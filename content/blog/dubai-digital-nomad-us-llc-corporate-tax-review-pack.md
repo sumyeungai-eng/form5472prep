@@ -12,15 +12,17 @@ A Dubai residence document does not answer every tax question for a digital noma
 
 This guide assumes a non-U.S. individual wholly owns a U.S. disregarded LLC with no corporate election. An LLC owned by a UAE company, a partnership, or a U.S. person needs a different analysis.
 
-## Understand what the AED 1 million test actually describes
+## What does the AED 1 million test actually describe?
+
+It describes when a natural person is subject to UAE Corporate Tax: where they conduct business activities in the UAE and relevant turnover exceeds AED 1 million in a calendar year. It is not a universal exemption for every company controlled by someone in Dubai, nor a test based on how much the owner withdraws.
 
 The UAE Federal Tax Authority states that a natural person is subject to Corporate Tax where they conduct business or business activities in the UAE and the relevant turnover exceeds AED 1 million in a calendar year. Its page separately identifies wages, personal investment income, and real estate investment income as excluded categories for this purpose. See the [FTA's natural-person guidance](https://tax.gov.ae/en/taxes/corporate.tax/corporate.tax.topics/basis.of.taxation.natural.person.aspx).
 
-That is a rule about qualifying natural-person business activity and turnover—not a universal exemption for every company controlled by someone in Dubai. It is also not a test based simply on how much the owner withdraws for living costs.
-
 Ask a UAE adviser to determine the LLC's local treatment before deciding which framework applies. The fact that the LLC is disregarded for U.S. income-tax purposes does not itself provide the UAE conclusion.
 
-## Prepare this four-part review pack
+## What should a Dubai LLC owner put in a review pack?
+
+Prepare four parts: the individual, the business activity, the entity and its management, and the money and reporting. Keep each part separate from its look-alike, such as the LLC's tax classification or personal withdrawals used as a turnover proxy. List uncertainties explicitly so an adviser can trace each income stream to a real activity and taxpayer.
 
 | Part | Documents and facts | Keep separate from |
 | --- | --- | --- |
@@ -39,7 +41,9 @@ Provide gross business receipts and the contracts behind them. Do not send only 
 
 Ask the adviser to return a short scope note: who the taxpayer is, what activity is being tested, what period applies, what registrations or returns require action, and which facts could change the result. Keep that note with the underlying documents.
 
-## Form 5472 remains a separate U.S. question
+## Does a Dubai residence or UAE tax conclusion remove the Form 5472 question?
+
+No. A UAE residence card or local tax conclusion does not remove the separate U.S. analysis. A foreign-owned disregarded LLC with reportable related-party transactions files Form 5472 with a pro forma Form 1120. Tell the preparer about funding, distributions, loans, or owner-paid costs; a low bank balance does not mean there is nothing to report.
 
 The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) address reportable related-party transactions for foreign-owned U.S. disregarded entities, including contributions and distributions. A required filing uses Form 5472 with a pro forma Form 1120.
 
