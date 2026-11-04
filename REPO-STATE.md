@@ -241,3 +241,4 @@ Claude and Codex sessions share these folders. Practical rules:
 - `docs/sessions/2026-10-30-blog-links-country-hub.md` — /form-5472-by-country, related-posts series-first, orphan links.
 - `docs/sessions/2026-10-30-money-pages-ptin-7004.md` — PTIN statement on service pages, 7004 capsules, live white-label offer copy.
 - `docs/sessions/2026-10-30-guides-aeo-structure.md` — FAQ h3 markup, online-filer ban, how-to steps + HowTo schema.
+- `docs/sessions/2026-11-04-moz-improvement-wave.md` — Moz 11-01/11-02 re-read + GSC index check; footer/hub/compare links, 7004 retitle, question H2s, no "wizard", review-before-sign order, topic-hub intros.
