@@ -29,7 +29,7 @@ const words = (s: string) => s.split(/\s+/).filter(Boolean).length;
 describe("/do-i-need-to-file-form-5472 capsules", () => {
   it.each([
     ["who-must-file-form-5472", "Who must file Form 5472?"],
-    ["form-5472-filing-requirements", "What are the Form 5472 filing requirements?"],
+    ["form-5472-filing-requirements", "What are the Form 5472 filing requirements for a foreign-owned US LLC?"],
   ])("answers %s in 40-60 words right under the question H2", (id, question) => {
     expect(html).toContain(question);
     const lead = leadAfter(id);

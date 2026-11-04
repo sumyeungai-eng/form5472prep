@@ -3,7 +3,7 @@ title: "Form 5472 vs FBAR vs Form 8938: Which Ones Apply to You?"
 description: "Form 5472, the FBAR and Form 8938 answer different questions and go to different bodies. Compare who files each, the deadlines, penalties and authority."
 date: 2026-10-04
 publishAt: "2026-10-04T09:00:00+01:00"
-updated: 2026-10-03
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["form-5472", "fbar", "form-8938", "foreign-owned-llc", "comparison"]
 draft: false
@@ -114,6 +114,10 @@ The IRS FBAR page lists a limited liability company among the US persons that mu
 ### Can you tell me whether I have to file an FBAR or Form 8938?
 
 No. Both depend on your accounts, assets, residence and US tax status, which we neither see nor are qualified to assess. We give the test and the page stating it; take both to an adviser.
+
+### What is the difference between the FBAR and Form 8938?
+
+The FBAR (FinCEN Form 114) reports foreign financial accounts to FinCEN, electronically, when their aggregate value exceeded $10,000 at any time in the year. Form 8938 reports specified foreign financial assets to the IRS, attached to your annual return. Filing one does not satisfy the other.
 
 ### Does Form 8938 replace the FBAR?
 

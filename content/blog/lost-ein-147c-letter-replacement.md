@@ -2,7 +2,7 @@
 title: "Lost EIN Letter? How to Get Letter 147C"
 description: "Lost your CP575 EIN letter? Find the number in your records or request IRS Letter 147C by phone, with the correct route for foreign owners."
 date: 2026-08-30
-updated: 2026-08-30
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["ein", "letter-147c", "cp575", "foreign-owned-llc", "ein-verification"]
 draft: false
@@ -57,7 +57,9 @@ An unauthorised assistant cannot receive confidential EIN information merely bec
 
 The Third Party Designee box on the original SS-4 is not permanent authority. The SS-4 instructions say that authority ends when the new EIN is assigned and released. A later 147C request may therefore require fresh Form 2848 or Form 8821 authority.
 
-## How does a foreign owner request Letter 147C?
+## How do I request Letter 147C from the IRS?
+
+Call the IRS Business and Specialty Tax Line (800-829-4933 from inside the US, +1-267-941-1000 from abroad), authenticate as the responsible party or an authorised representative, and ask for Letter 147C, EIN Previously Assigned. After authentication the IRS can fax the letter or mail it to the address of record.
 
 A foreign owner follows the same authentication process, but the usual number does not work from abroad. The Business and Specialty Tax Line is **800-829-4933** — a toll-free US number that generally cannot be dialled from outside the United States. For callers overseas the IRS lists **+1-267-941-1000** on its [help for international taxpayers page](https://www.irs.gov/help/help-with-tax-questions-international-taxpayers). A separate line, **+1-267-941-1099**, appears in the [Form SS-4 instructions](https://www.irs.gov/instructions/iss4) for *applying* for an EIN from outside the US; the IRS does not publish it as the route for a Letter 147C request, so treat it as the EIN-application line rather than the verification line.
 

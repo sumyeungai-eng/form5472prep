@@ -2,7 +2,7 @@
 title: "Form 5472 Deadline for 2026 and 2027"
 description: "The 2025 Form 5472 was due 15 October 2026 and that date has passed. See every 2026-2027 deadline, the Form 7004 rule, and what to do if you are late."
 date: 2026-08-15
-updated: 2026-10-24
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["form-5472", "deadline", "extension", "form-7004", "foreign-owned-llc"]
 draft: false
@@ -16,7 +16,9 @@ Here is the full calendar for tax years 2024 to 2027, plus the extension rule th
 
 If a date has already passed for you, [we prepare and fax complete late packages with a reasonable cause letter from {{price.standard}}](/start). The [late Form 5472 filing service](/services/late-form-5472-filing-service) explains what each missed year's package includes.
 
-## The deadline calendar
+## What are the Form 5472 due dates for each calendar-year tax year?
+
+A calendar-year foreign-owned US LLC files Form 5472 with its pro forma Form 1120 by 15 April of the following year, or by 15 October with a timely Form 7004. Tax year 2025 was due 15 April 2026 (15 October 2026 extended); tax year 2026 is due 15 April 2027 (15 October 2027 extended).
 
 | Tax year | Standard due date | Extended due date (with Form 7004) | Status at 24 October 2026 |
 |---|---|---|---|
@@ -27,7 +29,7 @@ If a date has already passed for you, [we prepare and fax complete late packages
 
 If a due date falls on a Saturday, Sunday or legal holiday, it moves to the next business day.
 
-**For the 2025 tax year, the last possible date is 15 October 2026**, and only if Form 7004 was filed by 15 April 2026. There is no further extension. If you did not file Form 7004, your 2025 return has been late since 16 April 2026 and the penalty exposure is already running. Once 15 October 2026 has passed, an unfiled 2025 return is late either way, so file it as soon as possible.
+**For the 2025 tax year, the last possible date is 15 October 2026**, and only if Form 7004 was filed by 15 April 2026. There is no further extension. If you did not file Form 7004, your 2025 return has been late since 16 April 2026 and the penalty exposure is already running. Once 15 October 2026 has passed, an unfiled 2025 return is late either way, so file it as soon as possible. Our guide to [filing late now that the 15 October 2026 deadline has passed](/blog/form-5472-deadline-tomorrow-urgent-filing) covers the fastest route.
 
 ## When is Form 5472 due?
 
@@ -49,7 +51,7 @@ The due date does not change based on:
 
 ## When is the Form 5472 for tax year 2025 due?
 
-**For a calendar-year foreign-owned LLC, the tax year 2025 Form 5472 and its pro forma Form 1120 were due 15 April 2026. If Form 7004 reached the Ogden PIN Unit by that date, the final deadline was 15 October 2026 — which has now passed. Either way the 2025 return is late as at 24 October 2026 and should be filed as soon as possible. The next deadline is 15 April 2027, for tax year 2026.**
+**For a calendar-year foreign-owned LLC, the tax year 2025 Form 5472 and pro forma Form 1120 were due 15 April 2026, or 15 October 2026 if Form 7004 reached the Ogden PIN Unit by 15 April. Both dates have passed, so an unfiled 2025 return is now late.**
 
 "Tax year 2025" means the year in which the transactions happened, 1 January to 31 December 2025 for a calendar-year LLC, not the year you send the package. The 2025 return is the one filed during 2026.
 

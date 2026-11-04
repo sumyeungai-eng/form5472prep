@@ -2,7 +2,7 @@
 title: "ITIN Application Checklist for Non-Residents"
 description: "Use this ITIN application checklist to confirm eligibility, Form W-7 documents, tax-return requirements, passport options, and the next step."
 date: 2026-09-03
-updated: 2026-09-03
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["itin", "form-w-7", "non-resident", "caa", "tax-id"]
 draft: false
@@ -12,9 +12,11 @@ draft: false
 
 This checklist is for non-residents preparing a new Individual Taxpayer Identification Number application. If you already know the reason code that applies, [start the ITIN application](/itin/apply).
 
-## First confirm that an ITIN is the right number
+## How do I get an ITIN as a non-resident?
 
-The IRS issues an ITIN to an individual who needs a U.S. taxpayer identification number for federal tax purposes but is not eligible for an SSN. It does not issue an ITIN solely to open a bank account, start an ecommerce business, improve credit, or provide general identification.
+A non-resident normally submits Form W-7, a current passport as proof of identity and foreign status, and the federal return the ITIN is needed for, unless a W-7 exception applies. Submit by mail, at a Taxpayer Assistance Center, or through a Certifying Acceptance Agent. The IRS says allow about seven weeks, or nine to eleven from overseas.
+
+First confirm that an ITIN is the right number. The IRS issues an ITIN to an individual who needs a U.S. taxpayer identification number for federal tax purposes but is not eligible for an SSN. It does not issue an ITIN solely to open a bank account, start an ecommerce business, improve credit, or provide general identification.
 
 Use this eligibility screen before paying anyone:
 
@@ -25,7 +27,7 @@ Use this eligibility screen before paying anyone:
 | Must you file a U.S. return? | Attach the applicable return to Form W-7 | Check whether a documented W-7 exception applies |
 | Is the ITIN for Form 5472 only? | Recheck the need: the LLC generally needs an EIN, not an owner ITIN | Continue based on the separate federal purpose |
 
-The [IRS ITIN eligibility page](https://www.irs.gov/tin/itin/individual-taxpayer-identification-number-itin) lists common federal purposes and people who should use an SSN instead. Our existing guide explains why an owner [usually does not need an ITIN solely for Form 5472](/blog/itin-required-form-5472).
+The [IRS ITIN eligibility page](https://www.irs.gov/tin/itin/individual-taxpayer-identification-number-itin) lists common federal purposes and people who should use an SSN instead. Our existing guide explains why an owner [usually does not need an ITIN solely for Form 5472](/blog/itin-required-form-5472). If the applicant is a nonresident spouse electing a joint return with a U.S. citizen or resident spouse, see [ITIN for a nonresident spouse](/blog/itin-nonresident-spouse-joint-return-w7).
 
 ## ITIN application document checklist
 

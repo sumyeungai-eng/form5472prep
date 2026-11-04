@@ -2,7 +2,7 @@
 title: "Can a Third-Party Designee Get an EIN for You?"
 description: "A third-party designee can receive an EIN and answer SS-4 questions, but cannot replace the real responsible party. Learn the limits and red flags."
 date: 2026-08-30
-updated: 2026-08-30
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["ein", "third-party-designee", "form-ss-4", "responsible-party", "foreign-owned-llc"]
 draft: false
@@ -131,6 +131,10 @@ Annual Form 5472 filing is a separate service: **{{price.standard}}** standard, 
 We are not a CPA firm and do not give tax advice. Our role is form preparation, submission, and application handling within the authority the client signs.
 
 ## Frequently asked questions
+
+### Who is the designee on an EIN application?
+
+The designee is the person you name in the Third Party Designee block of Form SS-4. You authorise them to answer IRS questions about that application and receive the newly assigned EIN. Their authority ends when the EIN is assigned and released, and they do not own or control the LLC.
 
 ### Can someone get an EIN for me?
 

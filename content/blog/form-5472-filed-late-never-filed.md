@@ -2,7 +2,7 @@
 title: "Filed Late or Never Filed Form 5472? Here's What to Do Now"
 description: "Late Form 5472 filings can trigger a $25,000 penalty per form and year. Learn how DIIRSP, complete catch-up returns, and reasonable cause requests work."
 date: 2026-05-28
-updated: 2026-09-05
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["form-5472", "late-filing", "diirsp", "penalty-abatement", "foreign-owned-llc"]
 readingMinutes: 8
@@ -39,7 +39,7 @@ So if you missed Form 5472 for three years, the initial exposure is $75,000. If 
 
 For a year-by-year estimate before you decide what to file first, the [Form 5472 penalty calculator](/form-5472-penalty-calculator) shows the statutory exposure for late and unfiled years.
 
-One clarification worth making: the $25,000 penalty is per **form**, not per **transaction**. If you have one LLC and one foreign owner, that's typically one Form 5472 per year — so $25,000 per missed year. The [Form 5472 penalty relief](/form-5472-penalty) guide covers the penalty in more detail.
+One clarification worth making: the $25,000 penalty is per **form**, not per **transaction**. If you have one LLC and one foreign owner, that's typically one Form 5472 per year — so $25,000 per missed year. Our guide to the [IRS penalty for late filing of Form 5472](/form-5472-penalty) covers the penalty and relief in more detail.
 
 ---
 

@@ -4,7 +4,7 @@ seoTitle: "Single-Member LLC Taking On a Partner"
 description: "A second member generally ends the disregarded-entity treatment behind Form 5472 and moves the LLC toward a partnership return. What to check first."
 date: 2026-10-07
 publishAt: "2026-10-07T09:00:00+01:00"
-updated: 2026-10-03
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["form-5472", "multi-member-llc", "entity-classification", "taking-on-a-partner", "foreign-owned-llc"]
 draft: false
@@ -23,6 +23,8 @@ A second member generally converts the LLC from a disregarded entity into a part
 The [IRS single-member LLC page](https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies) states that "a domestic LLC with at least two members is classified as a partnership for federal income tax purposes unless it files Form 8832 and elects to be treated as a corporation," and that "for income tax purposes, an LLC with only one member is treated as an entity disregarded as separate from its owner, unless it files Form 8832 and affirmatively elects to be treated as a corporation."
 
 Two things follow from reading those sentences side by side. The test is the **number of members**, not the owners' nationality, the ownership split or what the business does. And the partnership result is a **default** — nothing is filed to make it happen.
+
+Going the other way, from two members to one, is covered in [how to change a multi-member LLC to a single-member LLC](/blog/form-5472-change-of-ownership).
 
 ## Why does losing disregarded-entity status matter for Form 5472?
 
@@ -107,9 +109,9 @@ Going forward, generally yes — two members means a partnership by default, and
 
 Yes. The IRS default rule turns on the LLC having at least two members, not on how the percentages are divided. There is no de minimis second member that preserves disregarded-entity treatment.
 
-### Do I file anything to make the partnership classification happen?
+### How do I change a single-member LLC to a multi-member LLC?
 
-No. The IRS states a domestic LLC with at least two members is classified as a partnership unless it files Form 8832 to elect corporate treatment. The partnership result is the default; the election is what would override it.
+Federally, no IRS filing creates the partnership classification: a domestic LLC with at least two members is a partnership by default unless it files Form 8832 to elect corporate treatment. Form 5472 generally stops applying going forward, but earlier foreign-owned DE years with reportable transactions remain due. Ask an adviser whether the LLC needs a new EIN.
 
 ### Does the LLC need a new EIN?
 

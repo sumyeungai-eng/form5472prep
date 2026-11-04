@@ -205,7 +205,7 @@ function FilingRequirements() {
             id="form-5472-filing-requirements"
             className="font-serif text-2xl font-semibold text-ink sm:text-3xl"
           >
-            What are the Form 5472 filing requirements?
+            What are the Form 5472 filing requirements for a foreign-owned US LLC?
           </h2>
           <div className="mt-6 space-y-4 text-sm leading-relaxed text-slate-600">
             <p data-speakable>

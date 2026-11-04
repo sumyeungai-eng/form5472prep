@@ -2,7 +2,7 @@
 title: "How Much Does an EIN Cost? Free IRS Application vs Service"
 description: "An EIN is free from the IRS. Compare the direct application routes with Form SS-4 preparation and international handling for a {{price.ein}} service fee."
 date: 2026-09-03
-updated: 2026-09-03
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["ein-cost", "ein", "form-ss-4", "foreign-owned-llc", "non-resident"]
 draft: false
@@ -64,7 +64,9 @@ Paid help is most relevant when:
 
 The buying decision is an exchange of money for preparation and administrative handling, not a purchase of the EIN itself.
 
-## Avoid misleading “EIN fees”
+## Is there an EIN filing service with no hidden fees?
+
+Yes. The IRS charges nothing for an EIN, and Form5472 Prep’s managed EIN application is one flat {{price.ein}} with no add-on charges and no subscription. Avoid sites that add “government” or “processing” fees to an EIN order, because there is no IRS fee to pass on.
 
 Before paying, confirm the total price, refund terms, exact deliverables, processing estimate, and whether the provider is applying for a new number or retrieving an existing one. A business should have only one EIN. Do not order a second application because the confirmation letter is missing.
 

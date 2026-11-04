@@ -126,7 +126,12 @@ function Hero() {
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-slate-400">
             Use this as a statutory exposure estimate, then compare it with the
             ordinary catch-up route: file the missing Form 5472 package and
-            include a reasonable-cause statement under DIIRSP.
+            include a reasonable-cause statement under DIIRSP. How relief works
+            is in our guide to the{" "}
+            <Link href="/form-5472-penalty" className="font-medium text-white underline underline-offset-2">
+              IRS penalty for late filing of Form 5472
+            </Link>
+            .
           </p>
         </div>
 

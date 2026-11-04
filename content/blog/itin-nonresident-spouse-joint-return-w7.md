@@ -3,7 +3,7 @@ title: "ITIN for a Nonresident Spouse Filing a Joint Return: Form W-7 Package"
 seoTitle: "ITIN for a Nonresident Spouse Filing Jointly: Form W-7"
 description: "Learn what belongs in a nonresident spouse's ITIN package when a joint federal return and Form W-7 are appropriate, and where personal tax advice is needed."
 date: 2026-09-11
-updated: 2026-09-11
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["itin", "form-w-7", "nonresident-spouse", "joint-return"]
 draft: false
@@ -28,9 +28,9 @@ The election requires a statement signed by both spouses and attached to the fir
 | The spouse needs an ITIN for a different IRS exception | Use the exception's evidence rules, not this joint-return checklist | Whether the exception applies to the income or treaty claim |
 | The couple has not decided whether to elect joint treatment | Pause the W-7 package tied to a joint return | Worldwide-income, treaty, state, and future-year consequences |
 
-## Put the package together in the right order
+## How do I apply for an ITIN for a nonresident spouse?
 
-For a first-time applicant, the IRS generally requires Form W-7, the federal return for which the ITIN is needed, and identity/foreign-status evidence. Attach each W-7 to the front of the return and leave the ITIN applicant's SSN area blank. [IRS ITIN application guidance](https://www.irs.gov/tin/itin/how-to-apply-for-an-itin).
+For a nonresident spouse applying for a first ITIN, the IRS generally requires Form W-7, the federal return for which the ITIN is needed, and identity/foreign-status evidence. Attach each W-7 to the front of the return and leave the ITIN applicant's SSN area blank. [IRS ITIN application guidance](https://www.irs.gov/tin/itin/how-to-apply-for-an-itin).
 
 For the spouse described here, the working package normally has four parts:
 

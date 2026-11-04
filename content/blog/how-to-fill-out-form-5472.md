@@ -2,7 +2,7 @@
 title: "Form 5472: How to Fill It Out Part by Part"
 description: "A part-by-part walkthrough of Form 5472 and the pro forma 1120 — which boxes to complete, which to skip, and the errors that trigger the $25,000 penalty."
 date: 2026-08-15
-updated: 2026-09-11
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["form-5472", "filing-guide", "diy", "pro-forma-1120", "foreign-owned-llc"]
 draft: false
@@ -190,6 +190,10 @@ No. Put your FTIN on line 4b(3). If your country issues no foreign tax ID, write
 ### Can I fill in Form 5472 in a spreadsheet or a third-party PDF?
 
 Use the official IRS PDF from irs.gov and check the revision date in the top-right corner. Reconstructed or outdated forms cause processing problems, and an old revision is one of the more common DIY mistakes.
+
+### Can I fill out Form 5472 for free?
+
+Yes. The IRS publishes Form 5472 and Form 1120 as free fillable PDFs on irs.gov and charges no filing fee. A foreign-owned US LLC still has to print, sign and fax or mail the package, because it cannot e-file.
 
 ### What is written across the top of the Form 1120?
 

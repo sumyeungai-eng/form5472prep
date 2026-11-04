@@ -417,7 +417,7 @@ See the [pricing page](/pricing) for everything each plan includes.`,
     shortBlurb: "Catch-up filings for one or more missed years, with a reasonable-cause statement for each.",
     intro: `Our late Form 5472 filing service is for foreign owners who missed one or more years of Form 5472 and want every missing year on record. **Form5472 Prep prepares a separate Form 5472 and pro forma 1120 for each missed year, writes a reasonable-cause statement for each from your facts, and faxes every package to the IRS with its own receipt.**
 
-Filing late does not cancel the $25,000 penalty under IRC §6038A(d). Whether the delay is excused is the IRS's decision, made case by case, and nobody can tell you the outcome in advance.`,
+Filing late does not cancel the $25,000 [IRS penalty for late filing of Form 5472](/form-5472-penalty) under IRC §6038A(d). Whether the delay is excused is the IRS's decision, made case by case, and nobody can tell you the outcome in advance.`,
     cta: startCta("svc-late-form-5472-filing-service"),
     sections: [
       {

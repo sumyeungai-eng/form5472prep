@@ -2,7 +2,7 @@
 title: "Form 5472 When a Foreign Company Owns the US LLC"
 description: "A foreign company can wholly own a US disregarded LLC. Form 5472 must identify the direct and ultimate owners and related-party transactions."
 date: 2026-08-19
-updated: 2026-08-19
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["form-5472", "foreign-company", "corporate-owner", "related-parties"]
 draft: false
@@ -10,7 +10,7 @@ draft: false
 
 **A foreign company may wholly own a US single-member LLC, and the US LLC can remain a disregarded entity for federal tax purposes. When reportable transactions occur, Form 5472 identifies the foreign corporate owner, any ultimate indirect 25% foreign shareholder, and each related party. A separate Form 5472 is generally required for each related party with reportable transactions.**
 
-Corporate ownership adds an ownership-chain exercise to the ordinary Form 5472 filing. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) define a reporting corporation as a 25% foreign-owned U.S. corporation, including a foreign-owned U.S. disregarded entity, or a foreign corporation engaged in a U.S. trade or business; the same instructions state that the initial penalty for failing to file Form 5472 when due is **$25,000**. [Start the filing](/start) after gathering the foreign company's registration, tax number and shareholder chart.
+Corporate ownership adds an ownership-chain exercise to the ordinary Form 5472 filing. If an individual rather than a company owns the LLC, see the [Form 5472 filing requirements for a foreign-owned US LLC](/do-i-need-to-file-form-5472) instead. The [IRS Form 5472 instructions](https://www.irs.gov/instructions/i5472) define a reporting corporation as a 25% foreign-owned U.S. corporation, including a foreign-owned U.S. disregarded entity, or a foreign corporation engaged in a U.S. trade or business; the same instructions state that the initial penalty for failing to file Form 5472 when due is **$25,000**. [Start the filing](/start) after gathering the foreign company's registration, tax number and shareholder chart.
 
 ## Can a foreign company own a U.S. disregarded LLC?
 

@@ -2,7 +2,7 @@
 title: "Form 5472 After a Change of LLC Ownership"
 description: "A sale, transfer, new member or owner change can create Form 5472 reporting and change an LLC's federal classification. Use this checklist."
 date: 2026-08-19
-updated: 2026-09-05
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["form-5472", "ownership-change", "llc-sale", "entity-classification"]
 draft: false
@@ -116,6 +116,10 @@ It can. A disposition is a Part V transaction for a foreign-owned U.S. DE, and t
 ### What happens when a second member joins?
 
 A domestic LLC with two or more members is generally a partnership by default unless a corporate election applies. Form 1065 obligations can begin from the classification change date.
+
+### How do I change a multi-member LLC to a single-member LLC?
+
+When a two-member LLC taxed as a partnership drops to one member, it becomes a disregarded entity by default unless it elected corporate treatment (Treas. Reg. 301.7701-3(f)). If the other member buys the interest, the partnership terminates ([Rev. Rul. 99-6](https://www.irs.gov/pub/irs-drop/rr-99-6.pdf)). A foreign sole owner's LLC then files Form 5472 if it has reportable transactions. Confirm with a tax adviser.
 
 ### Can the new owner use the old reference ID?
 

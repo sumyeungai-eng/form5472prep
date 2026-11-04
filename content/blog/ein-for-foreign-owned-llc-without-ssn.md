@@ -2,7 +2,7 @@
 title: "How to Get an EIN for a US LLC Without an SSN or ITIN"
 description: "No SSN or ITIN? You can still get an EIN via Form SS-4. Learn what to write on line 7b, the fax number to use, and how long approval takes."
 date: 2026-08-15
-updated: 2026-10-07
+updated: 2026-11-04
 author: "Form5472 Prep"
 tags: ["ein", "ss-4", "foreign-owned-llc", "non-resident", "getting-started"]
 draft: false
@@ -128,6 +128,12 @@ We are not a CPA firm and do not give tax advice. We prepare and submit the form
 ### Can a non-US resident get an EIN?
 
 Yes. A non-resident with no SSN or ITIN can obtain an EIN by filing Form SS-4 by fax, mail or phone. The only restriction is that the IRS online EIN application cannot be used without a US tax identification number.
+
+### Is there a separate foreign EIN?
+
+No. Foreign owners apply for the same kind of EIN on Form SS-4, writing "foreign" on line 7b when there is no SSN or ITIN, by fax, mail or phone. A foreign-owned US LLC needs its own EIN whether its owner is a non-US individual or a non-US company.
+
+The IRS [EIN prefix list](https://www.irs.gov/businesses/small-businesses-self-employed/how-eins-are-assigned-and-valid-ein-prefixes) says the first two digits show the IRS campus that assigned the number, or that you applied online. It lists 98 under the Philadelphia campus and does not say 98 marks a foreign or international number.
 
 ### What do I put on line 7b of Form SS-4 without an SSN?
 
