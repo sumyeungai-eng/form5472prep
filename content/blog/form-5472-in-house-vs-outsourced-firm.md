@@ -8,13 +8,15 @@ tags: ["partner-program", "form-5472", "accounting-firms", "outsourcing"]
 draft: false
 ---
 
-**Keep Form 5472 in-house when your firm already prepares Form 1120 returns, has trained staff, files enough volume each year to stay current, and retains its own submission evidence. Outsource when the work is occasional, the knowledge sits with one person, or nobody can cover the deadline. Volume and existing competence decide it, not price.**
+**Keep Form 5472 in-house when your firm already prepares Form 1120 returns, has trained staff, files enough volume each year to stay current, and retains its own submission evidence. [Outsource Form 5472 preparation](/services/form-5472-preparer) when the work is occasional, the knowledge sits with one person, or nobody can cover the deadline. Volume and existing competence decide it, not price.**
 
 This is a build-or-buy decision with a real answer in both directions. A firm with an established 1120 practice and a dozen or more foreign-owned disregarded entities on its books is usually better off keeping the work: the marginal cost of one more package is low, the reviewer is competent, and the evidence sits in a file the firm controls. A firm touching three a year pays to rebuild a perishable skill each spring.
 
 We sell the outsourced route, so the in-house case below is stated at full strength deliberately. If outsourcing is the better fit for your firm, you can [apply for a partner account](/partners) and file per client with no platform fee or subscription. How referral, a partner account and branded delivery compare is set out in [Form 5472 for accountants](/services/form-5472-for-accountants).
 
 ## What is actually being compared?
+
+Two ways to produce the same IRS package: your firm prepares Form 5472 and the pro forma Form 1120 itself, or a specialist prepares it. The package is identical either way. What differs is who owns fact collection, review, signature and submission evidence for each client, every year.
 
 Form 5472 for a foreign-owned US disregarded entity is not a standalone return. Per the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472), the entity attaches Form 5472 to a **pro forma Form 1120**, writes "Foreign-owned U.S. DE" across the top of page 1, and **cannot file electronically**. The package goes by fax to 855-887-7737, an IRS fax line and not a phone number, or by mail to the IRS Ogden PIN Unit in Ogden, Utah.
 

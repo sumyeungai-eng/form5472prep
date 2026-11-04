@@ -178,6 +178,17 @@ export const metadata: Metadata = {
 };
 
 const linkClass = "font-medium text-accent underline-offset-4 hover:underline";
+
+const PROVIDER_GUIDES: readonly (readonly [label: string, href: string])[] = [
+  ["Stripe Atlas and Form 5472", "/stripe-atlas-form-5472"],
+  ["doola and Form 5472", "/doola-form-5472"],
+  ["Firstbase and Form 5472", "/firstbase-form-5472"],
+  ["Clemta and Form 5472", "/clemta-form-5472"],
+  ["StartGlobal and Form 5472", "/startglobal-form-5472"],
+  ["Zenind and Form 5472", "/zenind-form-5472"],
+  ["Northwest Registered Agent and Form 5472", "/northwest-registered-agent-form-5472"],
+  ["What is IRS Form 5472?", "/irs-form-5472"],
+];
 // First column stays visible while the table scrolls sideways on small screens.
 const STICKY =
   "sticky left-0 z-10 w-28 min-w-[7rem] px-3 shadow-[1px_0_0_0_#e2e8f0] sm:w-40 sm:min-w-[10rem] sm:px-4";
@@ -544,6 +555,25 @@ export default function Form5472FilingServicesComparePage() {
                 </p>
               </div>
             </div>
+          </section>
+
+          <section aria-labelledby="provider-guides">
+            <h2 id="provider-guides" className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+              Provider-specific guides
+            </h2>
+            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+              Each guide below covers one provider&apos;s Form 5472 coverage and what to confirm with it, plus our
+              overview of the form itself.
+            </p>
+            <ul className="mt-4 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
+              {PROVIDER_GUIDES.map(([label, href]) => (
+                <li key={href}>
+                  <Link href={href} className={linkClass}>
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
 
           <section aria-labelledby="checklist">

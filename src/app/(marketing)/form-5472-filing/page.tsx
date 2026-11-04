@@ -446,7 +446,7 @@ function HowItWorks() {
     {
       icon: FileText,
       title: "Answer 12 questions",
-      body: "Complete the wizard in about 15 minutes the first year, or about 5 minutes when you return.",
+      body: "Complete the guided intake form in about 15 minutes the first year, or about 5 minutes when you return.",
     },
     {
       icon: FileCheck2,

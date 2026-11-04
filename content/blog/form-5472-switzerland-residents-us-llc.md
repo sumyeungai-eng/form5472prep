@@ -1,5 +1,5 @@
 ---
-title: "Form 5472 for Swiss Residents With a US LLC"
+title: "Form 5472 for Switzerland Residents With a US LLC"
 description: "Swiss owners of US LLCs may need Form 5472 after owner transactions. See the AHV number, UID, treaty, and filing rules."
 date: 2026-08-25
 updated: 2026-08-25

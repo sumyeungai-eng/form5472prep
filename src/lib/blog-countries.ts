@@ -64,6 +64,14 @@ export const CITY_GUIDES: Record<string, [city: string, countryKey: string]> = {
   "tbilisi-digital-nomad-georgian-ie-us-llc-records": ["Tbilisi", "georgia-country"],
 };
 
+/** Digital-nomad guides with no single country; listed under the hub's "No fixed country" section, first one is the main guide. */
+export const NOMAD_GUIDE_SLUGS = [
+  "form-5472-digital-nomad-us-llc",
+  "us-llc-tax-free-digital-nomads-myth",
+  "us-llc-vs-estonia-ou-vs-uae-company-digital-nomads",
+  "wyoming-vs-new-mexico-vs-delaware-llc-digital-nomads",
+] as const;
+
 export const countryGuideSlug = (key: string) => `form-5472-${key}-residents-us-llc`;
 
 const HUB_SLUGS = new Set([...Object.keys(COUNTRIES).map(countryGuideSlug), ...Object.keys(CITY_GUIDES)]);

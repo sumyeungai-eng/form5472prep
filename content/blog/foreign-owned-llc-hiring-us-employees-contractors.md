@@ -97,7 +97,7 @@ Separate them at the point of entry, once, rather than untangling them in April.
 5. Keep a separate schedule of every movement between you and the LLC — date, direction, amount, and whether it is a contribution, distribution, loan or reimbursement.
 6. Flag any payment to a company you own or control for related-party review.
 
-Only item 5, and anything flagged by item 6, reaches the filing we prepare; our [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) covers what that file should hold.
+Only item 5, and anything flagged by item 6, reaches the filing we prepare; our [recordkeeping checklist](/blog/form-5472-recordkeeping-checklist) covers what that file should hold. If you would rather hire someone to file Form 5472 for the LLC, see [hire someone to file Form 5472](/services/hire-someone-to-file-form-5472).
 
 ## Where does our work stop?
 

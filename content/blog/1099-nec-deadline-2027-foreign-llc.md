@@ -18,7 +18,9 @@ This post is about the January deadline specifically. For the payer-side documen
 
 ## When is Form 1099-NEC due for the 2026 tax year?
 
-The statutory date is 31 January. The [IRS Instructions for Form 1099-MISC and Form 1099-NEC](https://www.irs.gov/instructions/i1099mec), revision 12/2026 — the revision used to report 2026 payments in early 2027 — state that "Section 6071(c) requires you to file Form 1099-NEC on or before January 31" and that "you are required to furnish the payee statements and file with the IRS by January 31." One date covers both the copy to the contractor and the copy to the IRS.
+Form 1099-NEC is due 31 January. For 2026 payments, 31 January 2027 is a Sunday, so the next-business-day rule gives Monday 1 February 2027.
+
+The [IRS Instructions for Form 1099-MISC and Form 1099-NEC](https://www.irs.gov/instructions/i1099mec), revision 12/2026 — the revision used to report 2026 payments in early 2027 — state that "Section 6071(c) requires you to file Form 1099-NEC on or before January 31" and that "you are required to furnish the payee statements and file with the IRS by January 31." One date covers both the copy to the contractor and the copy to the IRS.
 
 31 January 2027 is a Sunday. The [General Instructions for Certain Information Returns](https://www.irs.gov/instructions/i1099gi) state that "if the regular due date falls on a Saturday, Sunday, or legal holiday in the District of Columbia or where the return is to be filed, file by the next business day." Applying that rule to a Sunday 31 January gives Monday 1 February 2027. Confirm the printed date against the general instructions for 2026 returns when the IRS posts that revision.
 

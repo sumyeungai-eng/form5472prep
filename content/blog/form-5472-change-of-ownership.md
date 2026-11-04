@@ -16,7 +16,9 @@ The same IRS instructions state that Part V includes transactions connected with
 
 ## Is an LLC ownership transfer reportable on Form 5472?
 
-An LLC ownership transfer can be reportable when the LLC is a foreign-owned U.S. disregarded entity and the transaction falls within Part V or involves a related party. The IRS instructions say reportable transactions include any transaction listed in Part IV, Part V or Part VI; for a foreign-owned U.S. DE, Part V covers formation, dissolution, acquisition and disposition of the entity, including contributions and distributions.
+An LLC ownership transfer can be reportable when the LLC is a foreign-owned U.S. disregarded entity and the transaction falls within Part V or involves a related party.
+
+The IRS instructions say reportable transactions include any transaction listed in Part IV, Part V or Part VI; for a foreign-owned U.S. DE, Part V covers formation, dissolution, acquisition and disposition of the entity, including contributions and distributions.
 
 Review the transfer as a transaction, not just as a state-law amendment. The return preparer needs the legal date, tax-effective date, parties, percentage moved, consideration, and whether money or property moved between the LLC and a foreign related party.
 

@@ -141,6 +141,17 @@ export const LANDING_PAGES: LandingPage[] = [
         body: "Mei is a Hong Kong resident who incorporated a Wyoming single-member LLC in 2023 to run a Shopify dropshipping business. The LLC had $84,000 in revenue in 2024, $0 in US-source income (all customers were European), and she paid herself $30,000 in distributions to her HK bank account.\n\nHer filing for tax year 2024:\n\n• Pro forma Form 1120: stamped \"Foreign-Owned U.S. DE\". Entity info filled in. No income or tax fields completed.\n• Form 5472 Part IV: blank, because she had no sales, loans, fees or other Part IV transactions with the LLC.\n• Form 5472 Part V: box checked for the $5,000 capital contribution she wired in at the start of the year to fund inventory and the $30,000 distribution she took.\n• Part V supporting statement: lists both transactions with dates and amounts.\n• Faxed to +1-855-887-7737 by April 15, 2025.\n\nHer total US federal tax owed: $0 (all income was foreign-source from a foreign-owned disregarded entity). Her filing obligation: still mandatory.",
       },
       {
+        // Moz gap keyword "where to send form 5472?" (2026-11-04). The answer
+        // repeats the form-5472-fax-number guide's "Where do I file" facts.
+        heading: "Where do I send Form 5472?",
+        body: `A foreign-owned US disregarded entity files Form 5472, attached to a pro forma Form 1120, with the IRS by fax or by mail, using the dedicated route in the Form 5472 instructions. The IRS fax number is ${IRS_OGDEN_FAX}. The IRS mailing address is ${IRS_OGDEN_MAIL_ADDRESS}.\n\nThe instructions say these filers must write "Foreign-owned U.S. DE" across the top of the Form 1120, fax at 300 DPI or higher, and not use the mailing addresses in the Form 1120 instructions. Send it by April 15 for a calendar-year LLC, or file a [Form 5472 extension (Form 7004)](/form-7004-extension) by then to move the deadline to October 15. If you would rather not send it yourself, our [fax filing service](/services/form-5472-fax-filing-service) faxes the package for you and gives you the timestamped receipt.`,
+      },
+      {
+        // Moz gap keyword "how to fill out form 5472" (2026-11-04).
+        heading: "How do I fill out Form 5472 online?",
+        body: "You fill out Form 5472 online in one of two ways: fill in the blank Form 5472 PDF from irs.gov yourself, following the line-by-line instructions, or answer Form5472 Prep's guided intake form and let our team prepare it. Either way, the finished form is faxed or mailed with a pro forma Form 1120, not e-filed.\n\nOur intake form asks 12 questions about the LLC, the foreign owner, year-end totals and related-party transactions, and takes about 15 minutes. Our team prepares Form 5472 and the pro forma 1120 from your answers, a tax accountant who holds an IRS PTIN reviews the package, and you check and sign it on screen before we fax it. For the line-by-line rules, see the [Form 5472 instructions](/form-5472-instructions).",
+      },
+      {
         // Worded as the answer-engine prompt "how do i file form 5472 if i am
         // not a us resident?" (Moz, 2026-10-12).
         heading: "How do I file Form 5472 if I am not a US resident?",
@@ -150,7 +161,7 @@ export const LANDING_PAGES: LandingPage[] = [
         // Worded as the answer-engine prompt "who can file form 5472 and the
         // pro forma 1120 for my single-member llc?" (Moz, 2026-10-12).
         heading: "Who can file Form 5472 and pro forma 1120 for my single-member LLC?",
-        body: "You can file it yourself, or have a CPA, enrolled agent, attorney, accountant or filing service prepare it for you. Whoever prepares it, a person authorized to sign for the LLC, usually the owner, signs the pro forma Form 1120. Form5472 Prep prepares the package and the owner signs it.\n\nThe Form 1120 instructions list who signs for a corporation (an authorized officer), and that duty does not move to whoever prepares the return. Hiring someone changes who does the work, not who is responsible for the filing. See [signatures and submission routes](/blog/form-5472-pro-forma-1120-signature) for the signing details.",
+        body: "You can file it yourself, or have a CPA, enrolled agent, attorney, accountant or filing service prepare it for you. Whoever prepares it, a person authorized to sign for the LLC, usually the owner, signs the pro forma Form 1120. Form5472 Prep prepares the package and the owner signs it.\n\nThe Form 1120 instructions list who signs for a corporation (an authorized officer), and that duty does not move to whoever prepares the return. Hiring someone changes who does the work, not who is responsible for the filing. See [signatures and submission routes](/blog/form-5472-pro-forma-1120-signature) for the signing details. Our [pro forma 1120 filing service](/services/pro-forma-1120-filing-service) prepares the 1120 cover and Form 5472 together for the owner to sign.",
       },
       {
         heading: "What are the most common Form 5472 mistakes?",
@@ -166,7 +177,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Skip the work — file in 15 minutes",
-        body: `Form5472 Prep's questionnaire asks 12 simple questions about your LLC, owner, and year-end totals. We prepare the entire package (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if late). You sign once on screen — no printing or scanning. A PTIN-holding tax accountant on our team reviews the package end-to-end. Then we fax it to the IRS Ogden PIN Unit and email you the timestamped fax transmission receipt as transmission evidence.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — same filing either way. IRS fax delivery included. +${PRICE_ADDON} per additional past year. 100% money-back guarantee if we fail to submit your filing.`,
+        body: `Form5472 Prep's questionnaire asks 12 simple questions about your LLC, owner, and year-end totals. We prepare the entire package (cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if late). You sign once on screen — no printing or scanning. A PTIN-holding tax accountant on our team reviews the package end-to-end. Then we fax it to the IRS Ogden PIN Unit and email you the timestamped fax transmission receipt as transmission evidence.\n\nOur [Form 5472 filing service](/services/form-5472-filing-service) covers every step above. Pricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — same filing either way. IRS fax delivery included. +${PRICE_ADDON} per additional past year. 100% money-back guarantee if we fail to submit your filing.`,
       },
     ],
     faqs: [
@@ -305,7 +316,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Does the penalty apply to multi-member LLCs?",
-        body: "Form 5472 also applies to US corporations that are 25%+ owned by a foreign person, but the filing is different and outside the scope of our service. The $25,000 penalty applies the same way for those filings under IRC § 6038A — but the actual forms include real income and tax calculations, not just a pro forma 1120.\n\nIf your LLC has more than one member, our wizard will flag you out at the pre-flight step. You'll need a CPA familiar with foreign-owned partnerships (Form 8865) or corporations (Form 5472 + full Form 1120). The good news: we handle the most common foreign-owned LLC case (single-member, foreign-owned, disregarded for tax) at flat rates.",
+        body: "Form 5472 also applies to US corporations that are 25%+ owned by a foreign person, but the filing is different and outside the scope of our service. The $25,000 penalty applies the same way for those filings under IRC § 6038A — but the actual forms include real income and tax calculations, not just a pro forma 1120.\n\nIf your LLC has more than one member, our guided intake form will flag you out at the pre-flight step. You'll need a CPA familiar with foreign-owned partnerships (Form 8865) or corporations (Form 5472 + full Form 1120). The good news: we handle the most common foreign-owned LLC case (single-member, foreign-owned, disregarded for tax) at flat rates.",
       },
     ],
     faqs: [
@@ -410,7 +421,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you handle multi-year DIIRSP filings?",
-        body: `If you've missed 2 or 3+ years, file them all at once, with a Reasonable Cause Statement attached to each late year's return. The IRS manual recommends that reasonable cause not be considered for any year until all delinquent returns have been filed, so one catch-up beats filings spaced out over time.\n\nOur flat-rate DIIRSP catch-up packages:\n\n• 2-year DIIRSP catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3-year DIIRSP catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\nThe per-year price is cheaper than filing separately, and each year's reasonable cause statement tells the same consistent story. Every package is reviewed by a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) before we fax it to the IRS.\n\nFor 4+ missed years, you'd run two packages back-to-back or message us to coordinate — the IRS still accepts the comprehensive catch-up approach but the multi-year package limit is 3 years per wizard session.`,
+        body: `If you've missed 2 or 3+ years, file them all at once, with a Reasonable Cause Statement attached to each late year's return. The IRS manual recommends that reasonable cause not be considered for any year until all delinquent returns have been filed, so one catch-up beats filings spaced out over time.\n\nOur flat-rate DIIRSP catch-up packages:\n\n• 2-year DIIRSP catch-up: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3-year DIIRSP catch-up: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\nThe per-year price is cheaper than filing separately, and each year's reasonable cause statement tells the same consistent story. Every package is reviewed by a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) before we fax it to the IRS.\n\nFor 4+ missed years, you'd run two packages back-to-back or message us to coordinate — the IRS still accepts the comprehensive catch-up approach, but one order covers up to 3 years.`,
       },
       {
         heading: "How do DIIRSP, Streamlined, and Quiet Disclosure differ?",
@@ -444,7 +455,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "I missed 5 years — can I still file under DIIRSP?",
-        a: "Yes. There's no statutory limit on how many years you can catch up under DIIRSP. Our wizard supports up to 3 years per session; for 4+ missed years run two packages back-to-back or message us and we'll coordinate.",
+        a: "Yes. There's no statutory limit on how many years you can catch up under DIIRSP. One order covers up to 3 years; for 4+ missed years run two packages back-to-back or message us and we'll coordinate.",
       },
       {
         q: "I already got a CP 215 notice — is DIIRSP still an option?",
@@ -452,7 +463,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Do I need a lawyer for DIIRSP?",
-        a: "Almost never. DIIRSP is a paperwork process: prepare the late returns, write a reasonable cause statement, send it in. A lawyer adds value only if you're facing collection action, criminal exposure, or unusual circumstances. For a standard first-time foreign LLC catch-up, the wizard handles it.",
+        a: "Almost never. DIIRSP is a paperwork process: prepare the late returns, write a reasonable cause statement, send it in. A lawyer adds value only if you're facing collection action, criminal exposure, or unusual circumstances. For a standard first-time foreign LLC catch-up, our team prepares it from your guided intake form answers, and a tax accountant who holds an IRS PTIN reviews it.",
       },
       {
         q: "What's the difference between DIIRSP and just filing late?",
@@ -497,7 +508,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Which Form 5472 instructions apply to tax year 2025?",
-        body: "As of October 2026, IRS.gov lists the Instructions for Form 5472 (Rev. December 2024) as the current revision, for use with the December 2023 revision of Form 5472. Unless the IRS posts a newer revision, those are the versions for tax year 2025 returns filed in 2026.\n\nThe What's New section of the December 2024 revision has one change: the joint-return exception in the definition of foreign person now cites Code sections 6013(g) and (h). The rules a foreign-owned US disregarded entity relies on — the pro forma Form 1120, the dedicated fax and mailing route, and no e-filing — sit under When and Where To File.\n\nTo see the instructions applied to a filled-in return, look at our [Form 5472 example](/form-5472-example).",
+        body: "As of October 2026, IRS.gov lists the Instructions for Form 5472 (Rev. December 2024) as the current revision, for use with the December 2023 revision of Form 5472. Unless the IRS posts a newer revision, those are the versions for tax year 2025 returns filed in 2026.\n\nThe What's New section of the December 2024 revision has one change: the joint-return exception in the definition of foreign person now cites Code sections 6013(g) and (h). The rules a foreign-owned US disregarded entity relies on — the pro forma Form 1120, the dedicated fax and mailing route, and no e-filing — sit under When and Where To File.\n\nTo see the instructions applied to a filled-in return, look at our [Form 5472 example](/form-5472-example). If you would rather not apply them yourself, our [Form 5472 filing service](/services/form-5472-filing-service) prepares the package for you.",
       },
       {
         heading: "What do you need to gather before you start?",
@@ -549,7 +560,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are the common mistakes that trigger penalties?",
-        body: "• Forgetting to attach pro forma Form 1120 — Form 5472 by itself isn't a valid filing.\n• Forgetting the Part V supporting statement when Part V has entries.\n• Mismatching Line 1f / 1h totals with the Part IV / Part V details.\n• Missing the April 15 deadline without filing Form 7004 for an extension.\n• Filing by email or trying to e-file — neither method is accepted by the IRS for these forms.\n• Sending to the wrong fax number — only +1-855-887-7737 (IRS Ogden PIN Unit) is correct.\n• Using a US address on Part I that can't receive mail (some virtual mailboxes return-to-sender IRS letters).\n• Filing in the wrong tax year (the form is for the tax year that ENDED, not the year you're sending it in).\n• Reporting amounts in your home currency instead of USD using a documented exchange rate.\n\nMaterial filing failures can create $25,000 penalty exposure under IRC § 6038A; not every imperfection automatically invalidates a filing.",
+        body: "• Forgetting to attach pro forma Form 1120 — Form 5472 by itself isn't a valid filing.\n• Forgetting the Part V supporting statement when Part V has entries.\n• Mismatching Line 1f / 1h totals with the Part IV / Part V details.\n• Missing the April 15 deadline without filing a [Form 5472 extension (Form 7004)](/form-7004-extension).\n• Filing by email or trying to e-file — neither method is accepted by the IRS for these forms.\n• Sending to the wrong fax number — only +1-855-887-7737 (IRS Ogden PIN Unit) is correct.\n• Using a US address on Part I that can't receive mail (some virtual mailboxes return-to-sender IRS letters).\n• Filing in the wrong tax year (the form is for the tax year that ENDED, not the year you're sending it in).\n• Reporting amounts in your home currency instead of USD using a documented exchange rate.\n\nMaterial filing failures can create $25,000 penalty exposure under IRC § 6038A; not every imperfection automatically invalidates a filing.\n\nOur [pro forma 1120 filing service](/services/pro-forma-1120-filing-service) prepares the 1120 cover and Form 5472 as one package. Our [fax filing service](/services/form-5472-fax-filing-service) sends it to the right IRS fax number and gives you a timestamped receipt.",
       },
     ],
     faqs: [
@@ -783,7 +794,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "How late can you actually file?",
-        body: "You can file Form 5472 late for any missed tax year, back to when your LLC was formed. There is no IRS cut-off for filing a late return, but the longer a return stays unfiled, the more likely an IRS penalty notice arrives first and DIIRSP no longer applies to that year.\n\nPractically:\n\n• Within a few months of the deadline: file now under DIIRSP with a reasonable-cause statement.\n• 1-2 years late: the same DIIRSP route, filing every missed year together.\n• 3+ years late: still file every missed year, but the IRS may have already issued a notice you didn't see, so check your mail first.\n• Already received a CP 215 notice: DIIRSP is no longer the right path for that year — you respond to the notice with an abatement request and appeal if denied.\n\nThe IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP 215) follows.",
+        body: "You can file Form 5472 late for any missed tax year, back to when your LLC was formed. There is no IRS cut-off for filing a late return, but the longer a return stays unfiled, the more likely an IRS penalty notice arrives first and DIIRSP no longer applies to that year.\n\nPractically:\n\n• Within a few months of the deadline: file now under DIIRSP with a reasonable-cause statement.\n• 1-2 years late: the same DIIRSP route, filing every missed year together.\n• 3+ years late: still file every missed year, but the IRS may have already issued a notice you didn't see, so check your mail first.\n• Already received a CP 215 notice: DIIRSP is no longer the right path for that year — you respond to the notice with an abatement request and appeal if denied.\n\nThe IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP 215) follows.\n\nA [Form 5472 extension (Form 7004)](/form-7004-extension) cannot help once the original due date has passed, because it must be filed by April 15 for a calendar-year LLC. Use it in future years if you need more time.",
       },
       {
         heading: "What happens if you miss the deadline entirely?",
@@ -811,7 +822,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are real-world late-filing scenarios?",
-        body: "Real-world late filings range from a just-missed return to multi-year DIIRSP catch-up or a CP 215 appeal problem. Carlos files one month after the 2024 return was due, Mei catches up several years together, and Ahmed faces $100,000+ continuation penalties by 2026.\n\nScenario B — three-year catch-up: Mei has had a Delaware LLC since 2022, never filed. Discovers obligation in 2026. Files 2022, 2023, 2024, and 2025 together in one DIIRSP package. (Our wizard supports 3 years, so 2022 would run as a separate filing.) No outcome is guaranteed: penalties may still be assessed during processing, and her documented statement is then the basis for responding.\n\nScenario C — ignored a CP 215: Ahmed received a CP 215 in July 2024 for tax year 2022. By 2026, continuation penalties have stacked to $100,000+. Needs both to file the actual return AND to engage a tax professional to handle the assessed penalty appeal. Much more expensive and stressful than scenarios A and B.\n\nThe takeaway: act fast. Even multi-year catch-up is vastly cheaper than waiting for an IRS notice and then delaying.",
+        body: "Real-world late filings range from a just-missed return to multi-year DIIRSP catch-up or a CP 215 appeal problem. Carlos files one month after the 2024 return was due, Mei catches up several years together, and Ahmed faces $100,000+ continuation penalties by 2026.\n\nScenario B — three-year catch-up: Mei has had a Delaware LLC since 2022, never filed. Discovers obligation in 2026. Files 2022, 2023, 2024, and 2025 together in one DIIRSP package. (One order covers up to 3 years, so 2022 would run as a separate filing.) No outcome is guaranteed: penalties may still be assessed during processing, and her documented statement is then the basis for responding.\n\nScenario C — ignored a CP 215: Ahmed received a CP 215 in July 2024 for tax year 2022. By 2026, continuation penalties have stacked to $100,000+. Needs both to file the actual return AND to engage a tax professional to handle the assessed penalty appeal. Much more expensive and stressful than scenarios A and B.\n\nThe takeaway: act fast. Even multi-year catch-up is vastly cheaper than waiting for an IRS notice and then delaying.",
         table: {
           caption: "Late filing examples and relief routes",
           columns: ["Years late", "What you file", "Relief route"],
@@ -828,7 +839,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Get caught up in 15 minutes",
-        body: `Our DIIRSP-aware filer handles the entire late-filing package. The wizard asks 12 questions about your LLC, owner, and year-end totals for each missed year. We generate everything — cover letter, pro forma Form 1120, Form 5472, Part V supporting statement, AND the Reasonable Cause Statement.\n\nYou sign once on screen. A tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews the package. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as transmission evidence.\n\n• 1 year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 years (DIIRSP): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 years (DIIRSP): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.`,
+        body: `Our team prepares the entire late-filing package. Our guided intake form asks 12 questions about your LLC, owner, and year-end totals for each missed year. From your answers we prepare the cover letter, pro forma Form 1120, Form 5472 and Part V supporting statement, and our staff write the Reasonable Cause Statement from the facts you give us.\n\nA tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews the package, then you check it and sign once on screen. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt for each year as transmission evidence.\n\n• 1 year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 years (DIIRSP): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 years (DIIRSP): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\n100% money-back guarantee if we fail to submit your filing to the IRS.`,
       },
     ],
     faqs: [
@@ -936,8 +947,8 @@ export const LANDING_PAGES: LandingPage[] = [
         body: "Physical / faxed order of the package:\n\n1. Cover letter (1 page)\n2. Pro forma Form 1120 (1-2 pages, stamped \"Foreign-Owned U.S. DE\")\n3. Form 5472 (3 pages)\n4. Part V supporting statement (1+ pages depending on transaction count)\n5. Reasonable Cause Statement (1-2 pages, only if filing late under DIIRSP)\n\nTotal package: typically 6-9 pages.\n\nFax destination: +1-855-887-7737 (IRS Ogden PIN Unit).\nOr mail: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201.\n\nThe whole package is one filing. You fax it together, you get one transmission receipt covering the entire package as transmission evidence.",
       },
       {
-        heading: "What does our service generate?",
-        body: "When you complete our wizard, we generate the complete package automatically:\n\n• Cover letter introducing the filing.\n• Pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp and your entity info.\n• Form 5472 fully filled in (Parts I, II, III, IV, V, VII as needed).\n• Part V supporting statement listing each reportable transaction.\n• Reasonable Cause Statement (only if the filing is late).\n\nYou sign once on screen. A tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews it. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt as transmission evidence.",
+        heading: "What does our service prepare?",
+        body: "When you complete our guided intake form, our team prepares the complete package from your answers:\n\n• Cover letter introducing the filing.\n• Pro forma Form 1120 with the \"Foreign-Owned U.S. DE\" stamp and your entity info.\n• Form 5472 fully filled in (Parts I, II, III, IV, V, VII as needed).\n• Part V supporting statement listing each reportable transaction.\n• Reasonable Cause Statement (only if the filing is late).\n\nA tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews it, then you check it and sign once on screen. We fax to the IRS Ogden PIN Unit and email you the timestamped receipt as transmission evidence.",
       },
       {
         heading: "Pricing",
@@ -975,11 +986,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Where do I get blank copies of these forms?",
-        a: "Form 1120 and Form 5472 are both downloadable as PDFs from irs.gov. Our wizard handles this for you — you don't need to download anything; we generate filled, signature-ready PDFs.",
+        a: "Form 1120 and Form 5472 are both downloadable as PDFs from irs.gov. With our service you don't need to download anything: our team prepares the filled forms from your intake answers, and a tax accountant who holds an IRS PTIN reviews them before you sign.",
       },
       {
         q: "Is the package the same for every year?",
-        a: "Structurally yes — pro forma 1120 + Form 5472 + Part V supporting statement. Year-by-year the numbers change (capital contributions, distributions, total assets). Our wizard pre-fills from your prior year's filing if you come back.",
+        a: "Structurally yes — pro forma 1120 + Form 5472 + Part V supporting statement. Year-by-year the numbers change (capital contributions, distributions, total assets). Our intake form pre-fills from your prior year's filing if you come back.",
       },
       {
         q: "Can I file them at different times?",
@@ -1059,7 +1070,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What does our service do for Wyoming LLC owners?",
-        body: `Our wizard is pre-tuned for the foreign-owned single-member LLC profile — which is overwhelmingly Wyoming and Delaware. Wyoming-specific touches:\n\n• Pre-populated state code (WY) on the 1120 entity info.\n• Default NAICS suggestions for the most common Wyoming foreign-owner business types (ecommerce, SaaS, consulting, marketing).\n• Validation that the address matches a recognized Wyoming registered agent pattern (helps catch typos).\n• No state-specific add-ons needed — Wyoming has no state filing we'd add to the package.\n\nPricing identical to any other state:\n• 1 year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 years: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 years: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)`,
+        body: `Our guided intake form is pre-tuned for the foreign-owned single-member LLC profile — which is overwhelmingly Wyoming and Delaware. Wyoming-specific touches:\n\n• Pre-populated state code (WY) on the 1120 entity info.\n• Default NAICS suggestions for the most common Wyoming foreign-owner business types (ecommerce, SaaS, consulting, marketing).\n• Validation that the address matches a recognized Wyoming registered agent pattern (helps catch typos).\n• No state-specific add-ons needed — Wyoming has no state filing we'd add to the package.\n\nPricing identical to any other state:\n• 1 year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 years: ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 years: ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)`,
       },
       {
         heading: "What is the bottom line for Wyoming LLC owners?",
@@ -1281,7 +1292,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What does Form5472 Prep do for German owners?",
-        body: `Our wizard accepts the German Steuer-ID format directly in the foreign tax ID field, and flags it clearly as separate from a Steuernummer or VAT ID so you don't enter the wrong one. Beyond that, the process is identical to any other country:\n\n• 12-question wizard, 15 minutes.\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Timestamped fax confirmation receipt emailed back to you as transmission evidence.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — identical filing, IRS fax delivery included on every plan. +${PRICE_ADDON} per additional past year.`,
+        body: `Our guided intake form accepts the German Steuer-ID format directly in the foreign tax ID field, and flags it clearly as separate from a Steuernummer or VAT ID so you don't enter the wrong one. Beyond that, the process is identical to any other country:\n\n• 12-question guided intake form, 15 minutes.\n• Full package prepared by our team from your answers: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Review by a tax accountant who holds an IRS PTIN before you sign, then we fax to the IRS Ogden PIN Unit.\n• Timestamped fax confirmation receipt emailed back to you as transmission evidence.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — identical filing, IRS fax delivery included on every plan. +${PRICE_ADDON} per additional past year.`,
       },
       {
         heading: "How do you handle multi-year catch-up as a German owner?",
@@ -1377,7 +1388,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What does Form5472 Prep do for UAE owners?",
-        body: `Our wizard handles the \"no foreign tax ID\" case cleanly — if you don't have a UAE TRN or other tax number, it walks you through the self-assigned reference ID option instead of leaving you stuck. Beyond that, the process is the same as anywhere else:\n\n• 12-question wizard, 15 minutes, accessible any time of day (no need to align with US business hours).\n• Full package generated: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Accountant review before we fax to the IRS Ogden PIN Unit.\n• Email support is included on every filing — useful across the UAE's time zone gap with US business hours.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — identical filing, IRS fax delivery included on every plan. +${PRICE_ADDON} per additional past year.`,
+        body: `Our guided intake form handles the \"no foreign tax ID\" case cleanly — if you don't have a UAE TRN or other tax number, it walks you through the self-assigned reference ID option instead of leaving you stuck. Beyond that, the process is the same as anywhere else:\n\n• 12-question guided intake form, 15 minutes, accessible any time of day (no need to align with US business hours).\n• Full package prepared by our team from your answers: cover letter, pro forma 1120, Form 5472, Part V supporting statement, reasonable cause statement if filing late.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Review by a tax accountant who holds an IRS PTIN before you sign, then we fax to the IRS Ogden PIN Unit.\n• Email support is included on every filing — useful across the UAE's time zone gap with US business hours.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — identical filing, IRS fax delivery included on every plan. +${PRICE_ADDON} per additional past year.`,
       },
       {
         heading: "How do you handle multi-year catch-up as a UAE owner?",
@@ -1419,7 +1430,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Is there a time-zone issue getting this filed from the UAE?",
-        a: "No — our wizard, portal, and email support are available any time. Email support is included on every filing, and most UAE customers find written correspondence easier across the time difference than phone calls during US business hours.",
+        a: "No — our intake form, portal, and email support are available any time. Email support is included on every filing, and most UAE customers find written correspondence easier across the time difference than phone calls during US business hours.",
       },
     ],
     relatedSlugs: ["foreign-owned-llc-tax", "single-member-llc-foreign-owner", "wyoming-llc-form-5472", "delaware-llc-form-5472", "diirsp"],
@@ -1455,7 +1466,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What is the 'Foreign-Owned U.S. DE' stamp?",
-        body: "The \"Foreign-Owned U.S. DE\" stamp is the visible notation the IRS instructions require at the top of Form 1120 page 1. It tells the IRS Ogden PIN Unit how to route the return, link the Form 5472 attachment, and avoid regular 1120 processing.\n\n\"Foreign-Owned U.S. DE\"\n\nThis tells the IRS Ogden PIN Unit how to route and process the return. Without this stamp:\n\n• The IRS may try to process it as a regular 1120 — triggering deficiency notices for missing income data.\n• The Form 5472 attachment may not be correctly linked to your LLC.\n• The return may be misrouted within the IRS, delaying processing.\n• Worst case: the filing is treated as incomplete, triggering the $25,000 §6038A penalty.\n\nYou can hand-write it, type it, or stamp it — any visible \"Foreign-Owned U.S. DE\" notation at the top margin works. Our wizard automatically adds this text when generating the PDF.",
+        body: "The \"Foreign-Owned U.S. DE\" stamp is the visible notation the IRS instructions require at the top of Form 1120 page 1. It tells the IRS Ogden PIN Unit how to route the return, link the Form 5472 attachment, and avoid regular 1120 processing.\n\n\"Foreign-Owned U.S. DE\"\n\nThis tells the IRS Ogden PIN Unit how to route and process the return. Without this stamp:\n\n• The IRS may try to process it as a regular 1120 — triggering deficiency notices for missing income data.\n• The Form 5472 attachment may not be correctly linked to your LLC.\n• The return may be misrouted within the IRS, delaying processing.\n• Worst case: the filing is treated as incomplete, triggering the $25,000 §6038A penalty.\n\nYou can hand-write it, type it, or stamp it — any visible \"Foreign-Owned U.S. DE\" notation at the top margin works. Our team adds this text to every pro forma 1120 we prepare.",
       },
       {
         heading: "Why a 'pro forma' format and not a separate form?",
@@ -1463,7 +1474,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you file the complete package?",
-        body: "Once your pro forma 1120 is filled and stamped, the full package order is:\n\n1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (1-2 pages, with the \"Foreign-Owned U.S. DE\" stamp).\n3. Form 5472 (3 pages).\n4. Part V supporting statement (1+ pages).\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nFor a conservative signing workflow, sign the completed 1120 cover in ink and scan that page for fax. Use the [1120 pro forma instructions](/1120-pro-forma-instructions) as a final field-by-field check, then fax the entire package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the fax transmission receipt as transmission evidence.\n\nOur service generates the entire correctly-formatted package automatically. You sign one PDF on screen (the signature embeds into every required signature box), a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews it, and we fax it to the IRS. IRS fax delivery is included in every plan — no separate fee.",
+        body: "Once your pro forma 1120 is filled and stamped, the full package order is:\n\n1. Cover letter (1 page) identifying the filing.\n2. Pro forma Form 1120 (1-2 pages, with the \"Foreign-Owned U.S. DE\" stamp).\n3. Form 5472 (3 pages).\n4. Part V supporting statement (1+ pages).\n5. Reasonable Cause Statement (only if filing late under DIIRSP).\n\nFor a conservative signing workflow, sign the completed 1120 cover in ink and scan that page for fax. Use the [1120 pro forma instructions](/1120-pro-forma-instructions) as a final field-by-field check, then fax the entire package to the IRS Ogden PIN Unit at +1-855-887-7737. Save the fax transmission receipt as transmission evidence.\n\nOur team prepares the entire correctly-formatted package from your guided intake form answers. A tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews it, you check it and sign one PDF on screen (the signature embeds into every required signature box), and we fax it to the IRS. IRS fax delivery is included in every plan — no separate fee.",
       },
       {
         heading: "What are common mistakes on pro forma 1120?",
@@ -1490,7 +1501,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Use our pre-filled pro forma 1120",
-        body: `Our wizard generates a correctly-formatted pro forma Form 1120 with:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Entity name, EIN, US address pre-filled from your wizard answers.\n• Date of incorporation pre-filled.\n• Total assets at year-end pre-filled from your year-end total.\n• Signature line ready for your in-portal canvas signature.\n• All income/deduction/tax fields correctly left blank.\n• Any populated item C, item D or Schedule L fields are additional preparation practice, not requirements of the special pro forma instruction.\n\nNo manual form-filling. The signed PDF is ready to fax to +1-855-887-7737, and we handle that for you — IRS fax delivery is included in every plan.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — same filing either way. +${PRICE_ADDON} per additional past year. 100% money-back guarantee if we fail to submit.`,
+        body: `Our team prepares a correctly-formatted pro forma Form 1120 from your guided intake form answers, with:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Entity name, EIN, US address pre-filled from your intake answers.\n• Date of incorporation pre-filled.\n• Total assets at year-end pre-filled from your year-end total.\n• Signature line ready for your in-portal canvas signature.\n• All income/deduction/tax fields correctly left blank.\n• Any populated item C, item D or Schedule L fields are additional preparation practice, not requirements of the special pro forma instruction.\n\nNo form-filling on your side, and a tax accountant who holds an IRS PTIN reviews the package before you sign. The signed PDF is ready to fax to +1-855-887-7737, and we handle that for you — IRS fax delivery is included in every plan.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — same filing either way. +${PRICE_ADDON} per additional past year. 100% money-back guarantee if we fail to submit.`,
       },
     ],
     faqs: [
@@ -1508,7 +1519,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What if my LLC has subsidiaries?",
-        a: "If your foreign-owned LLC owns other entities, each subsidiary may need its own Form 5472 + pro forma 1120 depending on the structure. Get a CPA involved for multi-entity setups — our wizard supports single-entity filings only.",
+        a: "If your foreign-owned LLC owns other entities, each subsidiary may need its own Form 5472 + pro forma 1120 depending on the structure. Get a CPA involved for multi-entity setups — our service covers single-entity filings only.",
       },
       {
         q: "Do I file pro forma 1120 if my LLC owes US tax?",
@@ -1528,11 +1539,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Can I use last year's pro forma 1120 as a template?",
-        a: "Yes. The structure is identical year over year — only the year, total assets, and dates change. Our wizard pre-fills from your prior year's filing if you're a return customer.",
+        a: "Yes. The structure is identical year over year — only the year, total assets, and dates change. Our intake form pre-fills from your prior year's filing if you're a return customer.",
       },
       {
         q: "What if I forget the 'Foreign-Owned U.S. DE' stamp?",
-        a: "The filing may be misrouted or processed incorrectly. If you've already faxed without it, you can fax a corrected version with the stamp added. Better: catch the missing stamp before sending. Our wizard adds it automatically.",
+        a: "The filing may be misrouted or processed incorrectly. If you've already faxed without it, you can fax a corrected version with the stamp added. Better: catch the missing stamp before sending. Our team adds it to every pro forma 1120 we prepare.",
       },
     ],
     relatedSlugs: ["form-5472-vs-1120", "file-form-5472", "form-5472-instructions", "form-1120-disregarded-entity", "form-1120-foreign-owned-llc"],
@@ -1601,7 +1612,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Get it done in 15 minutes",
-        body: `Our service generates a perfectly-formatted pro forma 1120 + Form 5472 package automatically. You answer 12 questions in a wizard, we generate the PDF, you sign one page on screen (the signature embeds into every required signature box), and a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews everything before we fax it to the IRS.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — identical filing, IRS fax delivery included. +${PRICE_ADDON} per additional past year for multi-year DIIRSP catch-up. 100% money-back guarantee if we fail to submit your filing.`,
+        body: `Our team prepares the pro forma 1120 + Form 5472 package from your answers. You answer 12 questions in a guided intake form, we prepare the PDF, a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews everything, and you check it and sign one page on screen (the signature embeds into every required signature box) before we fax it to the IRS.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — identical filing, IRS fax delivery included. +${PRICE_ADDON} per additional past year for multi-year DIIRSP catch-up. 100% money-back guarantee if we fail to submit your filing.`,
       },
     ],
     faqs: [
@@ -1703,7 +1714,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Skip the paperwork — 15-minute filing",
-        body: `Form5472 Prep generates the complete disregarded entity filing package automatically:\n\n• Cover letter.\n• Pro forma Form 1120 with \"Foreign-Owned U.S. DE\" stamp, entity info, signature line.\n• Form 5472 (Parts I, II, III, IV, V, VII).\n• Part V supporting statement listing each reportable transaction.\n• Reasonable Cause Statement for each late year (if filing late under DIIRSP), which we write from the facts you give us.\n\nYou answer 12 questions in the wizard, sign once on screen (the signature embeds into every required signature box), a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews everything, and we fax to the IRS Ogden PIN Unit. You get the timestamped receipt as transmission evidence.\n\n• 1 year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 years (DIIRSP): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 years (DIIRSP): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\n100% money-back guarantee if we fail to submit.`,
+        body: `Form5472 Prep's team prepares the complete disregarded entity filing package from your answers:\n\n• Cover letter.\n• Pro forma Form 1120 with \"Foreign-Owned U.S. DE\" stamp, entity info, signature line.\n• Form 5472 (Parts I, II, III, IV, V, VII).\n• Part V supporting statement listing each reportable transaction.\n• Reasonable Cause Statement for each late year (if filing late under DIIRSP), which we write from the facts you give us.\n\nYou answer 12 questions in the guided intake form, a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews everything, you check it and sign once on screen (the signature embeds into every required signature box), and we fax to the IRS Ogden PIN Unit. You get the timestamped receipt as transmission evidence.\n\n• 1 year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 years (DIIRSP): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 years (DIIRSP): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n\n100% money-back guarantee if we fail to submit.`,
       },
     ],
     faqs: [
@@ -1769,7 +1780,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "What do you need to gather before you start?",
-        body: "Gather these before opening Form 1120:\n\n• Your LLC's CP-575 EIN confirmation letter from the IRS (gives the legal name, EIN, and US address exactly as the IRS has them on file).\n• Formation and year-end asset records for the attached Form 5472; these are not required item C/D entries on the special pro forma 1120.\n• A pen if following the conservative ink-sign-and-scan workflow.\n\nIf you're using the IRS's official PDF, download the current tax year's blank Form 1120 from irs.gov. Don't use a prior-year form for a current-year filing — the IRS rejects out-of-year forms.\n\nIf you're using our service, the wizard generates a pre-filled 1120 from your answers; you don't need to download anything.",
+        body: "Gather these before opening Form 1120:\n\n• Your LLC's CP-575 EIN confirmation letter from the IRS (gives the legal name, EIN, and US address exactly as the IRS has them on file).\n• Formation and year-end asset records for the attached Form 5472; these are not required item C/D entries on the special pro forma 1120.\n• A pen if following the conservative ink-sign-and-scan workflow.\n\nIf you're using the IRS's official PDF, download the current tax year's blank Form 1120 from irs.gov. Don't use a prior-year form for a current-year filing — the IRS rejects out-of-year forms.\n\nIf you're using our service, our team prepares the 1120 from your intake answers; you don't need to download anything.",
       },
       {
         heading: "What do you fill in on Page 1 header?",
@@ -1805,7 +1816,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Use our pre-filled pro forma 1120",
-        body: `Our wizard generates a pre-filled, signature-ready pro forma 1120 for review alongside the special IRS required-fields instruction:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Header section pre-filled from your wizard answers.\n• Income, deductions, tax sections correctly empty.\n• Any additional asset fields populated by the preparation workflow are not required by the special pro forma 1120 instruction.\n• Signature line ready for your in-portal canvas signature.\n• Form 5472 + Part V supporting statement assembled behind it.\n\n${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — same filing either way. IRS fax delivery included on every plan. +${PRICE_ADDON} per additional past year. Every package is reviewed by a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) before submission. 100% money-back guarantee if we fail to submit.`,
+        body: `Our team prepares a pre-filled, signature-ready pro forma 1120 from your intake answers, for review alongside the special IRS required-fields instruction:\n\n• \"Foreign-Owned U.S. DE\" stamp at the top.\n• Header section pre-filled from your intake answers.\n• Income, deductions, tax sections correctly empty.\n• Any additional asset fields populated by the preparation workflow are not required by the special pro forma 1120 instruction.\n• Signature line ready for your in-portal canvas signature.\n• Form 5472 + Part V supporting statement assembled behind it.\n\n${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — same filing either way. IRS fax delivery included on every plan. +${PRICE_ADDON} per additional past year. Every package is reviewed by a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) before submission. 100% money-back guarantee if we fail to submit.`,
       },
     ],
     faqs: [
@@ -1819,7 +1830,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Can I print a blank 1120 PDF and fill it by hand?",
-        a: "Yes, the IRS accepts handwritten Form 1120. Use blue or black ink, write neatly, and stamp \"Foreign-Owned U.S. DE\" at the top. Our service generates a typed PDF you can sign — far fewer transcription errors than handwriting.",
+        a: "Yes, the IRS accepts handwritten Form 1120. Use blue or black ink, write neatly, and stamp \"Foreign-Owned U.S. DE\" at the top. Our team prepares a typed PDF you can sign — far fewer transcription errors than handwriting.",
       },
       {
         q: "Which tax-year version of Form 1120 do I use?",
@@ -1843,11 +1854,11 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What if Schedule K asks about foreign accounts and my LLC has a non-US bank account?",
-        a: "Most foreign-owned DEs bank with US-based services (Mercury, Wise USD, Relay). If your LLC has a non-US financial account, you may need to answer the Schedule K foreign-account questions and potentially file FBAR for the LLC. Talk to a tax professional if this applies — our wizard's standard package assumes US-based banking.",
+        a: "Most foreign-owned DEs bank with US-based services (Mercury, Wise USD, Relay). If your LLC has a non-US financial account, you may need to answer the Schedule K foreign-account questions and potentially file FBAR for the LLC. Talk to a tax professional if this applies — our standard package assumes US-based banking.",
       },
       {
         q: "Where can I see what a completed pro forma 1120 looks like?",
-        a: "Run our wizard with sample data — at the PDF preview step you'll see exactly what gets faxed to the IRS. The pro forma 1120 page shows the \"Foreign-Owned U.S. DE\" stamp, filled header, empty body, and signature-ready format.",
+        a: "Our Form 5472 example guide (/form-5472-example) walks through a completed filing. With our service you see your own package before you sign it: the pro forma 1120 page shows the \"Foreign-Owned U.S. DE\" stamp, filled header, empty body, and signature-ready format.",
       },
     ],
     relatedSlugs: ["pro-forma-1120", "form-1120-foreign-owned-llc", "form-1120-disregarded-entity", "form-5472-instructions", "file-form-5472"],
@@ -1868,7 +1879,7 @@ export const LANDING_PAGES: LandingPage[] = [
     updated: "2026-10-05",
     h1: "IRS Form 5472 — the complete guide for foreign-owned LLCs",
     intro:
-      "IRS Form 5472 is the information return foreign-owned US single-member LLCs file every year with an attached pro forma Form 1120. Missing it can trigger a $25,000 penalty per year, per form, and our 15-minute workflow prepares the package before faxing it to the IRS Ogden PIN Unit.",
+      "IRS Form 5472 is the information return foreign-owned US single-member LLCs file every year with an attached pro forma Form 1120. Missing the 5472 form can trigger a $25,000 penalty per year, per form; our team prepares the package, a tax accountant who holds an IRS PTIN reviews it, and we fax it to the IRS Ogden PIN Unit.",
     howTo: {
       section: "How do you catch up with DIIRSP after missed years?",
       supplies: [
@@ -1884,8 +1895,8 @@ export const LANDING_PAGES: LandingPage[] = [
         body: "IRS Form 5472 is the information return the IRS uses to track related-party transactions between foreign owners and the US entities they control. Its purpose is transparency, giving the IRS visibility into money flowing between non-US persons and controlled US entities even when no US tax is owed.\n\nIts purpose: transparency. The IRS wants visibility into money flowing between non-US persons and US entities they control, even when no US tax is actually owed. It's not a tax return — it's an information return.\n\nSince 2017, single-member LLCs owned by non-US persons are treated as corporations for the purpose of Section 6038A reporting under Treasury Regulation § 1.6038A-1. That means even a one-person Wyoming or Delaware LLC owned by someone abroad has to file Form 5472 every year, attached to a stripped-down (pro forma) Form 1120.\n\nThe regulation closed a transparency loophole: before 2017, foreign-owned single-member US LLCs were invisible to the IRS for disclosure purposes. After 2017, they must report every related-party transaction annually or face the $25,000-per-form-per-year penalty.",
       },
       {
-        heading: "Who has to file Form 5472?",
-        body: "You must file if all three are true:\n\n1. You own a single-member US LLC (any state — Wyoming, Delaware, Florida, New Mexico, Nevada, etc.).\n2. You are NOT a US person — not a US citizen, not a green card holder, not a US tax resident.\n3. The LLC had at least one reportable transaction in the year — capital contributions in, distributions out, payments to/from the owner, loans, or any related-party transaction.\n\nA reportable transaction is broad. The list of what counts:\n• Capital contributed to the LLC (e.g. wiring USD into the bank account).\n• Distributions taken from the LLC (e.g. paying yourself).\n• Loans from you to the LLC (or LLC to you).\n• Rent / royalties / interest paid to or from you.\n• Payments to or from any other foreign entity you control.\n• Sales of property between you and the LLC.\n\nEven moving money into the LLC to fund operations counts. So in practice almost every foreign-owned LLC needs to file Form 5472 every year, even with zero revenue. The exception is a truly dormant LLC with no bank account and no money in or out — rare.",
+        heading: "Who is required to file Form 5472?",
+        body: "A foreign-owned US single-member LLC is required to file Form 5472 for every tax year in which it has a reportable transaction with its foreign owner or another related party, such as a capital contribution, distribution or loan. It files the form attached to a pro forma Form 1120, even with zero revenue and no US tax owed.\n\nYou must file if all three are true:\n\n1. You own a single-member US LLC (any state — Wyoming, Delaware, Florida, New Mexico, Nevada, etc.).\n2. You are NOT a US person — not a US citizen, not a green card holder, not a US tax resident.\n3. The LLC had at least one reportable transaction in the year — capital contributions in, distributions out, payments to/from the owner, loans, or any related-party transaction.\n\nA reportable transaction is broad. The list of what counts:\n• Capital contributed to the LLC (e.g. wiring USD into the bank account).\n• Distributions taken from the LLC (e.g. paying yourself).\n• Loans from you to the LLC (or LLC to you).\n• Rent / royalties / interest paid to or from you.\n• Payments to or from any other foreign entity you control.\n• Sales of property between you and the LLC.\n\nEven moving money into the LLC to fund operations counts. So in practice almost every foreign-owned LLC needs to file Form 5472 every year, even with zero revenue. The exception is a truly dormant LLC with no bank account and no money in or out — rare.",
       },
       {
         heading: "What's the penalty for not filing?",
@@ -1897,15 +1908,15 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "When is Form 5472 due?",
-        body: "For a calendar-year LLC, Form 5472 is due April 15 of the year following the tax year. A Form 7004 extension filed by April 15 moves the package to October 15, and fiscal-year LLCs follow the 15th day of the 4th month after fiscal year-end.\n\nExtensions: file Form 7004 by April 15 for an automatic 6-month extension to October 15. Since Form 5472 is attached to the 1120, the extension covers both forms.\n\nFiscal-year LLCs: 15th day of the 4th month after fiscal year-end.\n\nFiling evidence: retain the exact package and transmission or mailing records. A fax timestamp records the provider’s event, not an IRS acceptance or a statutory postmark. Send early and check the rules for your chosen mailing method; do not assume a deadline-day attempt alone establishes timely filing. See the receipt and follow-up guide.\n\nMissed the deadline? Don't panic. File under DIIRSP immediately with a reasonable cause statement — the longer you wait, the higher the risk of a CP 215 penalty notice.",
+        body: "For a calendar-year LLC, Form 5472 is due April 15 of the year following the tax year. A Form 7004 extension filed by April 15 moves the package to October 15, and fiscal-year LLCs follow the 15th day of the 4th month after fiscal year-end.\n\nExtensions: file a [Form 5472 extension (Form 7004)](/form-7004-extension) by April 15 for an automatic 6-month extension to October 15. Since Form 5472 is attached to the 1120, the extension covers both forms.\n\nFiscal-year LLCs: 15th day of the 4th month after fiscal year-end.\n\nFiling evidence: retain the exact package and transmission or mailing records. A fax timestamp records the provider’s event, not an IRS acceptance or a statutory postmark. Send early and check the rules for your chosen mailing method; do not assume a deadline-day attempt alone establishes timely filing. See the receipt and follow-up guide.\n\nMissed the deadline? Don't panic. File under DIIRSP immediately with a reasonable cause statement — the longer you wait, the higher the risk of a CP 215 penalty notice.",
       },
       {
         heading: "How do you file IRS Form 5472?",
-        body: `You file IRS Form 5472 by mail or fax to the Ogden PIN Unit. The IRS only accepts it by mail or fax to the Ogden PIN Unit. The fax route is faster and gives you a transmission receipt as transmission evidence.\n\n• Fax: +1-855-887-7737 (IRS Ogden PIN Unit).\n• Mail: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 (use certified mail with return receipt).\n\nForm5472 Prep handles the whole package — Form 5472, pro forma Form 1120, Part V supporting statement, cover letter, and reasonable cause statement (if late). Pricing starts at ${PRICE_STD}: you answer a 15-minute questionnaire, we prepare everything, you sign once on screen (the signature embeds into every required signature box), a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews the package end-to-end, and we fax it to the IRS Ogden PIN Unit. IRS fax delivery is included in every plan. You get the timestamped fax transmission receipt as transmission evidence.`,
+        body: `You file IRS Form 5472 by mail or fax to the Ogden PIN Unit. The IRS only accepts it by mail or fax to the Ogden PIN Unit. The fax route is faster and gives you a transmission receipt as transmission evidence.\n\n• Fax: +1-855-887-7737 (IRS Ogden PIN Unit).\n• Mail: Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 (use certified mail with return receipt).\n\nOur [Form 5472 filing service](/services/form-5472-filing-service) handles the whole package — Form 5472, pro forma Form 1120, Part V supporting statement, cover letter, and reasonable cause statement (if late). Pricing starts at ${PRICE_STD}: you answer a 15-minute guided intake form, our team prepares the package from your answers, a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews it end-to-end, you check it and sign once on screen (the signature embeds into every required signature box), and we fax it to the IRS Ogden PIN Unit. IRS fax delivery is included in every plan; our [fax filing service](/services/form-5472-fax-filing-service) explains the receipt you get. You get the timestamped fax transmission receipt as transmission evidence.`,
       },
       {
         heading: "What is the difference between Form 5472 and Form 1120?",
-        body: "Form 5472 reports related-party transactions; Form 1120 is the corporate income tax return. For a foreign-owned single-member LLC, the 1120 is only a pro forma procedural envelope with most fields blank, because Form 5472 must be attached to a tax return and filed as one package.\n\nFor a real US C-corporation, Form 1120 is a substantive tax filing — income, deductions, tax computation. For a foreign-owned single-member LLC, Form 1120 is pro forma — most fields blank, used only as a procedural envelope for Form 5472.\n\nForm 5472 by itself is not a valid IRS submission. The IRS requires it to be attached to a tax return. For foreign-owned disregarded entities, the IRS chose Form 1120 as that attachment.\n\nSo you file both, together, as one package: pro forma 1120 in front, Form 5472 + Part V supporting statement attached behind, faxed as one document. The 1120 is the envelope, the 5472 is the letter.",
+        body: "Form 5472 reports related-party transactions; Form 1120 is the corporate income tax return. For a foreign-owned single-member LLC, the 1120 is only a pro forma procedural envelope with most fields blank, because Form 5472 must be attached to a tax return and filed as one package.\n\nFor a real US C-corporation, Form 1120 is a substantive tax filing — income, deductions, tax computation. For a foreign-owned single-member LLC, Form 1120 is pro forma — most fields blank, used only as a procedural envelope for Form 5472.\n\nForm 5472 by itself is not a valid IRS submission. The IRS requires it to be attached to a tax return. For foreign-owned disregarded entities, the IRS chose Form 1120 as that attachment.\n\nSo you file both, together, as one package: pro forma 1120 in front, Form 5472 + Part V supporting statement attached behind, faxed as one document. The 1120 is the envelope, the 5472 is the letter. Our [pro forma 1120 filing service](/services/pro-forma-1120-filing-service) prepares the two together.",
         table: {
           caption: "Form 1120 versus Form 5472 on this page",
           columns: ["Item", "Pro forma Form 1120", "Form 5472"],
@@ -1927,7 +1938,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Why use Form5472 Prep instead of a CPA or DIY?",
-        body: `Form5472 Prep is built for the standard foreign-owned single-member LLC filing workflow rather than a broad CPA engagement or blank IRS-form DIY process. The wizard pre-fills the package from simple questions, the generated PDFs follow current IRS instructions, an accountant reviews before fax submission, and IRS fax delivery is included.\n\nDIY with IRS forms ($0 fees; the IRS estimates 6 hr 34 min per Form 5472 to learn about and prepare it, before recordkeeping): you download blank 1120 and 5472 PDFs from irs.gov, fill them by hand, sign, and fax. Risk: any mistake (missing stamp, blank Part V, wrong signature method) can trigger the $25,000 penalty. Many DIY filings fail compliance review.\n\nUS CPA ($400-$800, 1-2 weeks): most CPAs see foreign-owned DE filings once or twice in their career. They'll typically research the requirements from scratch each time, which makes the turnaround long and the cost high. Some will decline the work entirely.\n\nForm5472 Prep (${PRICE_STD} Standard or ${PRICE_EXP} Express, plus ${PRICE_ADDON} per additional past year, 15 minutes): purpose-built for this exact filing. Wizard pre-fills everything based on 12 simple questions. Generated PDFs follow current IRS instructions. Every package is accountant-reviewed before fax submission. IRS fax delivery included. Money-back guarantee if we fail to submit. For late filings, we write the reasonable cause statement from the facts you give us, and you check it before you sign.\n\nFor the standard foreign-owned single-member LLC profile, our service is dramatically faster and lower-cost than CPA, and dramatically lower risk than DIY.`,
+        body: `Form5472 Prep is a done-for-you service for the standard foreign-owned single-member LLC filing, not a broad CPA engagement or a blank IRS-form DIY process. Our team prepares the package from your guided intake form answers, following current IRS instructions; a tax accountant who holds an IRS PTIN reviews it before you check and sign, and IRS fax delivery is included.\n\nDIY with IRS forms ($0 fees; the IRS estimates 6 hr 34 min per Form 5472 to learn about and prepare it, before recordkeeping): you download blank 1120 and 5472 PDFs from irs.gov, fill them by hand, sign, and fax. Risk: any mistake (missing stamp, blank Part V, wrong signature method) can trigger the $25,000 penalty. Many DIY filings fail compliance review.\n\nUS CPA ($400-$800, 1-2 weeks): most CPAs see foreign-owned DE filings once or twice in their career. They'll typically research the requirements from scratch each time, which makes the turnaround long and the cost high. Some will decline the work entirely.\n\nForm5472 Prep (${PRICE_STD} Standard or ${PRICE_EXP} Express, plus ${PRICE_ADDON} per additional past year, 15 minutes): purpose-built for this exact filing. You answer a 12-question guided intake form; our team prepares the package from your answers, following current IRS instructions. Every package is reviewed by a tax accountant who holds an IRS PTIN before you check and sign it. IRS fax delivery included. Money-back guarantee if we fail to submit. For late filings, we write the reasonable cause statement from the facts you give us, and you check it before you sign.\n\nFor the standard foreign-owned single-member LLC profile, our service is dramatically faster and lower-cost than CPA, and dramatically lower risk than DIY.`,
       },
     ],
     faqs: [
@@ -1961,7 +1972,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "What if I own multiple foreign-owned LLCs?",
-        a: "Each LLC files its own separate Form 5472 + pro forma 1120 package. If you own 3 LLCs, that's 3 separate filings every year. You'd start 3 separate filings in our wizard.",
+        a: "Each LLC files its own separate Form 5472 + pro forma 1120 package. If you own 3 LLCs, that's 3 separate filings every year. With us, that's 3 separate orders.",
       },
       {
         q: "Does the IRS audit Form 5472 filings?",
@@ -1969,7 +1980,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Where can I see a sample completed Form 5472?",
-        a: "Run our wizard with sample data — at the PDF preview step you'll see exactly what gets faxed. The Form 5472 page shows all parts filled in based on your wizard answers.",
+        a: "Our Form 5472 example guide (/form-5472-example) shows every part filled in for a sample LLC. With our service you see your own completed package, prepared from your intake answers, before you sign it.",
       },
     ],
     relatedSlugs: ["file-form-5472", "form-5472-penalty", "diirsp", "form-5472-instructions", "form-5472-deadline", "form-5472-fax-number"],
@@ -2020,6 +2031,11 @@ export const LANDING_PAGES: LandingPage[] = [
         },
       },
       {
+        // Moz gap keyword "form 5472 due date 2026" (2026-11-04).
+        heading: "When is Form 5472 due in 2026?",
+        body: "For tax year 2025, Form 5472 and its pro forma Form 1120 were due April 15, 2026, a Wednesday, so the normal deadline applied. Filing Form 7004 by April 15, 2026 extended the deadline to October 15, 2026. A fiscal-year LLC files by the 15th day of the 4th month after its year ends.\n\nBoth 2026 dates have now passed, so a tax year 2025 return that has not been filed is late: file it as soon as possible, with a reasonable cause statement under DIIRSP if the IRS has not contacted you. A [Form 5472 extension (Form 7004)](/form-7004-extension) only helps when it is filed by the original due date.",
+      },
+      {
         heading: "How do you file Form 7004 for an extension?",
         body: `File Form 7004 by the original due date to request the automatic 6-month extension for the Form 5472 package. For calendar-year LLCs, that means April 15; use Form 1120 code 12, the same LLC identification details, and $0 estimated tax for foreign-owned DEs with no tax liability.\n\nWhat to put on Form 7004:\n• Part I: select form code \"12\" (Form 1120).\n• Identification: LLC name, EIN, address — same as on the eventual 1120.\n• Estimated tax: $0 for foreign-owned DEs (no tax liability).\n\nSubmit Form 7004 by:\n• Fax to ${IRS_OGDEN_FAX} (the same IRS fax number as the return).\n• Mail to ${IRS_OGDEN_MAIL_ADDRESS}.\n\nThe extension is automatic — the IRS doesn't send a confirmation. Just keep transmission evidence of the 7004 (fax receipt or certified mail receipt). Your Form 5472 + pro forma 1120 is then due by October 15.\n\nDon't file Form 7004 if you're already past April 15 — at that point file the actual Form 5472 + 1120 directly with a DIIRSP reasonable cause statement.`,
       },
@@ -2033,7 +2049,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do you use DIIRSP after missing the deadline?",
-        body: `You use DIIRSP after missing the deadline by filing late with a Reasonable Cause Statement requesting penalty abatement. The IRS provides a relief path called DIIRSP — Delinquent International Information Return Submission Procedure — that lets you file late with a Reasonable Cause Statement requesting penalty abatement.\n\nDIIRSP is available as long as:\n• The IRS has NOT yet contacted you about the specific delinquency.\n• You're not under IRS examination or criminal investigation.\n\nThose are the only two conditions on the IRS's DIIRSP page. Owners who find the missed filing themselves, before any IRS contact, generally meet both.\n\nThere's no guarantee the IRS will waive the penalty. The IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP 215) follows.\n\nOur DIIRSP-aware filer automatically attaches the Reasonable Cause Statement for late filings. Multi-year catch-up packages on Standard: ${PRICE_STD_2Y} for 2 years, ${PRICE_STD_3Y} for 3 years. Every package is reviewed by a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) before we fax it.`,
+        body: `You use DIIRSP after missing the deadline by filing late with a Reasonable Cause Statement requesting penalty abatement. The IRS provides a relief path called DIIRSP — Delinquent International Information Return Submission Procedure — that lets you file late with a Reasonable Cause Statement requesting penalty abatement.\n\nDIIRSP is available as long as:\n• The IRS has NOT yet contacted you about the specific delinquency.\n• You're not under IRS examination or criminal investigation.\n\nThose are the only two conditions on the IRS's DIIRSP page. Owners who find the missed filing themselves, before any IRS contact, generally meet both.\n\nThere's no guarantee the IRS will waive the penalty. The IRS does not publish DIIRSP outcome data, and its DIIRSP page says penalties may be assessed during processing without considering the attached reasonable-cause statement. A specific, documented statement is the strongest basis for responding if a penalty notice (such as CP 215) follows.\n\nFor late filings, our staff write the Reasonable Cause Statement from the facts you give us, and you check it before you sign. Multi-year catch-up packages on Standard: ${PRICE_STD_2Y} for 2 years, ${PRICE_STD_3Y} for 3 years. Every package is reviewed by a tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) before we fax it.`,
       },
       {
         heading: "What is the late-filing penalty in detail?",
@@ -2041,15 +2057,15 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "What are real-world deadline scenarios?",
-        body: "Scenario A — on-time filing: Carlos files his Wyoming LLC's tax year 2024 Form 5472 on April 10, 2025 via our wizard. We fax to the IRS Ogden PIN Unit. Fax receipt timestamps the filing at April 10 — well before April 15. No penalty risk.\n\nScenario B — extension: Mei is traveling in April and won't have her year-end financials ready until summer. On April 14, 2026 she faxes Form 7004 to +1-855-887-7737, requesting the 6-month extension. New deadline: October 15, 2026. She files Form 5472 + 1120 on September 30, 2026 — on time.\n\nScenario C — DIIRSP catch-up: Ahmed forgot about Form 5472 for tax year 2023. He learns about it in June 2025 (14 months late). He files under DIIRSP immediately with a reasonable cause statement explaining first-time foreign-owner unawareness. The IRS hasn't sent a CP 215 yet, so DIIRSP is the right path. No outcome is guaranteed: if a penalty is assessed during processing, his statement is the basis for responding.\n\nScenario D — CP 215 already received: Lin missed tax year 2022 and received a $25,000 CP 215 in November 2024. DIIRSP is no longer available for that year. She responds with a Form 843 abatement request plus the late return, a post-assessment path where her documented reasonable-cause statement is the basis for the response. She also files under DIIRSP for 2023 and 2024 (where she hasn't been contacted yet).\n\nTakeaway: act before the IRS contacts you. DIIRSP is dramatically easier than post-assessment appeal.",
+        body: "Scenario A — on-time filing: Carlos files his Wyoming LLC's tax year 2024 Form 5472 on April 10, 2025 through our service. We fax to the IRS Ogden PIN Unit. Fax receipt timestamps the filing at April 10 — well before April 15. No penalty risk.\n\nScenario B — extension: Mei is traveling in April and won't have her year-end financials ready until summer. On April 14, 2026 she faxes Form 7004 to +1-855-887-7737, requesting the 6-month extension. New deadline: October 15, 2026. She files Form 5472 + 1120 on September 30, 2026 — on time.\n\nScenario C — DIIRSP catch-up: Ahmed forgot about Form 5472 for tax year 2023. He learns about it in June 2025 (14 months late). He files under DIIRSP immediately with a reasonable cause statement explaining first-time foreign-owner unawareness. The IRS hasn't sent a CP 215 yet, so DIIRSP is the right path. No outcome is guaranteed: if a penalty is assessed during processing, his statement is the basis for responding.\n\nScenario D — CP 215 already received: Lin missed tax year 2022 and received a $25,000 CP 215 in November 2024. DIIRSP is no longer available for that year. She responds with a Form 843 abatement request plus the late return, a post-assessment path where her documented reasonable-cause statement is the basis for the response. She also files under DIIRSP for 2023 and 2024 (where she hasn't been contacted yet).\n\nTakeaway: act before the IRS contacts you. DIIRSP is dramatically easier than post-assessment appeal.",
       },
       {
         heading: "How do you file before the deadline?",
-        body: `You file before the deadline by gathering the facts, generating the package, signing once, and saving the fax receipt.\n\n1. Gather your LLC info (EIN, address, formation date, NAICS code) and your foreign owner info (legal name, FTIN or self-assigned Reference ID, residential address, country of citizenship).\n2. Add up year-end totals: capital contributions in, distributions out, total assets at year-end in USD, list of any other reportable transactions.\n3. Use the Form5472 Prep questionnaire (about 15 minutes) to prepare the full package: cover letter, pro forma 1120 with the \"Foreign-Owned U.S. DE\" stamp, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (only if late).\n4. Sign once on screen — the signature embeds into every required signature box automatically.\n5. Have a PTIN-holding tax accountant on our team review the package end-to-end.\n6. Get the package faxed to the IRS Ogden PIN Unit at +1-855-887-7737 and get the timestamped receipt emailed to you as transmission evidence.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — identical filing, IRS fax delivery included. +${PRICE_ADDON} per additional past year. 100% money-back guarantee if we fail to submit.`,
+        body: `You file before the deadline by gathering the facts, having the package prepared and reviewed, signing once, and saving the fax receipt.\n\n1. Gather your LLC info (EIN, address, formation date, NAICS code) and your foreign owner info (legal name, FTIN or self-assigned Reference ID, residential address, country of citizenship).\n2. Add up year-end totals: capital contributions in, distributions out, total assets at year-end in USD, list of any other reportable transactions.\n3. Use the Form5472 Prep questionnaire (about 15 minutes) to prepare the full package: cover letter, pro forma 1120 with the \"Foreign-Owned U.S. DE\" stamp, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (only if late).\n4. Sign once on screen — the signature embeds into every required signature box automatically.\n5. Have a PTIN-holding tax accountant on our team review the package end-to-end.\n6. Get the package faxed to the IRS Ogden PIN Unit at +1-855-887-7737 and get the timestamped receipt emailed to you as transmission evidence.\n\nPricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — identical filing, IRS fax delivery included. +${PRICE_ADDON} per additional past year. 100% money-back guarantee if we fail to submit.`,
       },
       {
         heading: "Should you file early?",
-        body: "Yes, ideally. There's no penalty or downside for filing Form 5472 early. Benefits of filing in January-February rather than waiting until April:\n\n• Avoid last-minute scramble if you discover missing information.\n• Less stress.\n• Buffer against any wizard or fax delivery issues.\n• Faster IRS processing.\n• Get the obligation off your to-do list.\n\nOur returning customers typically file in January or February each year — pre-filled from their prior year's filing, takes 5-10 minutes total.\n\nFiling earlier than your tax year ends doesn't work — the IRS won't process a return for a tax year that hasn't completed yet. So January 1 is the earliest practical filing date for the prior calendar year.",
+        body: "Yes, ideally. There's no penalty or downside for filing Form 5472 early. Benefits of filing in January-February rather than waiting until April:\n\n• Avoid last-minute scramble if you discover missing information.\n• Less stress.\n• Buffer against any intake or fax delivery issues.\n• Faster IRS processing.\n• Get the obligation off your to-do list.\n\nOur returning customers typically file in January or February each year — pre-filled from their prior year's filing, takes 5-10 minutes total.\n\nFiling earlier than your tax year ends doesn't work — the IRS won't process a return for a tax year that hasn't completed yet. So January 1 is the earliest practical filing date for the prior calendar year.",
       },
       {
         heading: "What is the annual reminder system?",
@@ -2071,7 +2087,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "I'm filing for last year — can I still use your service?",
-        a: `Yes. The wizard auto-detects late filings and adds the DIIRSP Reasonable Cause Statement automatically. Pricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) for 1 year, fax included — same filing either way. Add ${PRICE_ADDON} per additional past year for multi-year catch-up.`,
+        a: `Yes. Our intake form flags late years, our staff write the DIIRSP Reasonable Cause Statement from the facts you give us, and you check it before you sign. Pricing: ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) for 1 year, fax included — same filing either way. Add ${PRICE_ADDON} per additional past year for multi-year catch-up.`,
       },
       {
         q: "What's the deadline for tax year 2024?",
@@ -2283,7 +2299,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "When and how do you file?",
-        body: `File by April 15, or by October 15 with Form 7004, and send the package by fax or mail to the IRS Ogden PIN Unit. The section lists fax as the preferred route for a timestamped transmission receipt, mail as backup, and e-file as unavailable for foreign-owned DE filings.\n\nWhen: April 15 of the year following the tax year. October 15 with Form 7004 extension.\n\nHow:\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit) — preferred. Get a timestamped transmission receipt as transmission evidence.\n• Mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 — backup. Use certified mail with return receipt.\n• E-file: NOT available for foreign-owned DE filings.\n\nWho:\n• Establish who is authorized to sign for the LLC. Ink signing the completed Form 1120 is a conservative workflow; Form 5472 has no separate signature block.\n\nWith us:\n• Wizard (12 questions) → generated PDF → sign once on screen → accountant review → fax to IRS → timestamped receipt. ~15 minutes total. ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — same filing either way. IRS fax delivery included. +${PRICE_ADDON} per additional past year.`,
+        body: `File by April 15, or by October 15 with Form 7004, and send the package by fax or mail to the IRS Ogden PIN Unit. The section lists fax as the preferred route for a timestamped transmission receipt, mail as backup, and e-file as unavailable for foreign-owned DE filings.\n\nWhen: April 15 of the year following the tax year. October 15 with Form 7004 extension.\n\nHow:\n• Fax to +1-855-887-7737 (IRS Ogden PIN Unit) — preferred. Get a timestamped transmission receipt as transmission evidence.\n• Mail to Internal Revenue Service, 1973 Rulon White Blvd, M/S 6112, Attn: PIN Unit, Ogden, UT 84201 — backup. Use certified mail with return receipt.\n• E-file: NOT available for foreign-owned DE filings.\n\nWho:\n• Establish who is authorized to sign for the LLC. Ink signing the completed Form 1120 is a conservative workflow; Form 5472 has no separate signature block.\n\nWith us:\n• Guided intake form (12 questions) → package prepared by our team → review by a tax accountant who holds an IRS PTIN → you check and sign once on screen → fax to IRS → timestamped receipt. ~15 minutes of your time. ${PRICE_STD} Standard (ready in 5-7 business days) or ${PRICE_EXP} Express (ready to sign in under 3 days) — same filing either way. IRS fax delivery included. +${PRICE_ADDON} per additional past year.`,
       },
       {
         heading: "What do you do if you've missed prior years?",
@@ -2295,7 +2311,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "The fastest way to file",
-        body: `Form5472 Prep handles everything for the standard foreign-owned single-member LLC case:\n\n• 12-question wizard pre-tuned for non-US founders.\n• Pre-fills the next year from your prior filing.\n• Prepares the complete package: cover letter, pro forma Form 1120, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (if late).\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Review of every package before submission by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN).\n• IRS fax delivery + timestamped receipt as transmission evidence.\n• 100% money-back guarantee if we fail to submit.\n\nPricing:\n• 1 tax year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 tax years (DIIRSP catch-up): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 tax years (DIIRSP catch-up): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n• +${PRICE_ADDON} per additional past year beyond the base package`,
+        body: `Form5472 Prep handles everything for the standard foreign-owned single-member LLC case:\n\n• 12-question guided intake form pre-tuned for non-US founders.\n• Pre-fills the next year from your prior filing.\n• Prepares the complete package: cover letter, pro forma Form 1120, Form 5472 (all parts), Part V supporting statement, Reasonable Cause Statement (if late).\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Review of every package before submission by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN).\n• IRS fax delivery + timestamped receipt as transmission evidence.\n• 100% money-back guarantee if we fail to submit.\n\nPricing:\n• 1 tax year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 tax years (DIIRSP catch-up): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 tax years (DIIRSP catch-up): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n• +${PRICE_ADDON} per additional past year beyond the base package`,
       },
     ],
     faqs: [
@@ -2313,7 +2329,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Do I need a US ITIN or just my foreign tax ID?",
-        a: "You don't need a US ITIN. Form 5472 accepts your foreign tax ID (FTIN) or a self-assigned Reference ID. If you leave the Reference ID blank in our wizard, we generate one based on your name (e.g. SMITHJA7B2 — letters and numbers only, no special characters, per IRS rules).",
+        a: "You don't need a US ITIN. Form 5472 accepts your foreign tax ID (FTIN) or a self-assigned Reference ID. If you leave the Reference ID blank in our intake form, we create one based on your name (e.g. SMITHJA7B2 — letters and numbers only, no special characters, per IRS rules).",
       },
       {
         q: "Does filing Form 5472 mean I owe US tax?",
@@ -2396,7 +2412,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do we handle Stripe Atlas Form 5472 filings?",
-        body: `We handle Stripe Atlas Form 5472 filings with a wizard pre-tuned for the Stripe Atlas, Mercury, and non-US-founder profile. The wizard is set up for this exact case:\n\n• 12-question wizard. Pre-filled state (Delaware), common NAICS suggestions for SaaS / ecommerce / consulting.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Review of every package before submission by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN).\n• IRS fax delivery + timestamped receipt as transmission evidence.\n• Pre-fills the next year from your prior filing — year 2 onward takes 5 minutes.\n• Optional annual reminder emails so you don't miss the April 15 deadline.\n\nPricing:\n• 1 tax year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 tax years (DIIRSP catch-up): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 tax years (DIIRSP catch-up): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n• +${PRICE_ADDON} per additional past year\n\n100% money-back guarantee if we fail to submit your filing to the IRS.`,
+        body: `We handle Stripe Atlas Form 5472 filings with a guided intake form pre-tuned for the Stripe Atlas, Mercury, and non-US-founder profile. The intake form is set up for this exact case:\n\n• 12-question guided intake form. Pre-filled state (Delaware), common NAICS suggestions for SaaS / ecommerce / consulting.\n• In-portal canvas signature — no printing, scanning, or uploading needed.\n• Review of every package before submission by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN).\n• IRS fax delivery + timestamped receipt as transmission evidence.\n• Pre-fills the next year from your prior filing — year 2 onward takes 5 minutes.\n• Optional annual reminder emails so you don't miss the April 15 deadline.\n\nPricing:\n• 1 tax year: ${PRICE_STD} Standard / ${PRICE_EXP} Express (fax included)\n• 2 tax years (DIIRSP catch-up): ${PRICE_STD_2Y} Standard / ${PRICE_EXP_2Y} Express (fax included)\n• 3 tax years (DIIRSP catch-up): ${PRICE_STD_3Y} Standard / ${PRICE_EXP_3Y} Express (fax included)\n• +${PRICE_ADDON} per additional past year\n\n100% money-back guarantee if we fail to submit your filing to the IRS.`,
       },
       {
         heading: "What do you do if you've missed prior years as a Stripe Atlas user?",
@@ -2454,7 +2470,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Does your service work for Stripe Atlas LLCs specifically?",
-        a: "Yes — most of our customers are Stripe Atlas Delaware LLC owners. The wizard is pre-tuned for this profile (defaults to Delaware, common NAICS for SaaS / ecommerce / consulting, Mercury-style banking assumptions). 15 minutes for year 1, even faster for year 2+.",
+        a: "Yes — most of our customers are Stripe Atlas Delaware LLC owners. Our guided intake form is pre-tuned for this profile (defaults to Delaware, common NAICS for SaaS / ecommerce / consulting, Mercury-style banking assumptions). 15 minutes for year 1, even faster for year 2+.",
       },
     ],
     relatedSlugs: ["delaware-llc-form-5472", "foreign-owned-llc-tax", "single-member-llc-foreign-owner", "form-5472-deadline", "irs-form-5472"],
@@ -2505,8 +2521,8 @@ export const LANDING_PAGES: LandingPage[] = [
         body: "Reasonable cause narratives work when they are supported by your actual facts.\n\n• First-time foreign LLC owner unaware of Form 5472: \"I formed [LLC] in [year] through [Stripe Atlas / IncFile / etc.] as my first US business entity. As a [country] resident with no prior US tax filing experience, I was unaware of the specific IRC § 6038A reporting requirement for foreign-owned single-member LLCs introduced in 2017. I learned of the obligation in [month/year] through [source] and immediately began preparing this catch-up filing.\"\n\n• Reliance on formation service: \"I formed [LLC] through [Stripe Atlas / similar], whose service materials emphasized that they did not provide ongoing tax services. As a foreign-resident first-time US LLC owner, I assumed the annual federal compliance obligations were communicated by the IRS directly if applicable. I learned of the Form 5472 obligation in [month/year] and am filing all missed returns concurrently.\"\n\n• Pre-2017 LLC owner: \"My LLC was formed in [year before 2017] and prior to the §6038A rule extension in 2017, no Form 5472 filing was required for foreign-owned single-member LLCs. I was unaware that the 2017 regulatory change applied retroactively to entities formed before its effective date. Upon learning of the obligation in [month/year], I am filing all post-2017 missed returns concurrently.\"\n\n• Prior adviser, stated as facts: \"For tax years [years], I retained [Name / Firm] in [country] for my international tax matters. I gave them [information provided] and asked [question]; they advised [advice given] and did not identify a Form 5472 requirement. I learned of the obligation in [month/year] from [source] and am now filing under DIIRSP.\" The IRS manual says relying on someone else to file is generally not reasonable cause on its own (IRM 20.1.1.3.2.2.5), so the adviser's involvement supports the facts rather than replacing them.\n\nIn all of these, the structure is: specific circumstances + how you discovered the obligation + prompt corrective action.",
       },
       {
-        heading: "How does our filer handle this?",
-        body: "Our 2-year and 3-year DIIRSP catch-up packages include a Reasonable Cause Statement for each late year. We write it from the facts you give us in the wizard, following the structure outlined above, so the statement describes your own circumstances rather than a stock scenario.\n\nAt the reasonable cause step in the wizard, for each late year you:\n• Choose why the filing was missed (for example, you didn't know a foreign-owned LLC had to file, or your formation service or accountant didn't tell you).\n• Add details where your situation needs them.\n\nA tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews every late-filing package before we fax it to the IRS. If anything in your answers is vague, contradictory or missing dates, we'll reach out before submission. You check the statement before you sign, and you can ask us to change it.",
+        heading: "How does our team handle this?",
+        body: "Our 2-year and 3-year DIIRSP catch-up packages include a Reasonable Cause Statement for each late year. We write it from the facts you give us in the guided intake form, following the structure outlined above, so the statement describes your own circumstances rather than a stock scenario.\n\nAt the reasonable cause step of the intake form, for each late year you:\n• Choose why the filing was missed (for example, you didn't know a foreign-owned LLC had to file, or your formation service or accountant didn't tell you).\n• Add details where your situation needs them.\n\nA tax accountant on our team who holds an IRS Preparer Tax Identification Number (PTIN) reviews every late-filing package before we fax it to the IRS. If anything in your answers is vague, contradictory or missing dates, we'll reach out before submission. You check the statement before you sign, and you can ask us to change it.",
       },
       {
         heading: "What happens after you file Form 5472?",
@@ -2536,7 +2552,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "Do I need a lawyer to write this?",
-        a: "Almost never. A reasonable cause statement for a first-time late Form 5472 is a straightforward 1-2 page document. If you've been audited, are facing IRS collection action, or have complex circumstances, a lawyer or enrolled agent can help — but for a standard catch-up filing, the wizard handles it.",
+        a: "Almost never. A reasonable cause statement for a first-time late Form 5472 is a straightforward 1-2 page document. If you've been audited, are facing IRS collection action, or have complex circumstances, a lawyer or enrolled agent can help — but for a standard catch-up filing, our team writes it from the facts you give us, and you check it before you sign.",
       },
       {
         q: "What happens after I file?",
@@ -2594,7 +2610,7 @@ export const LANDING_PAGES: LandingPage[] = [
       section: "How does your filing reach the IRS?",
       tools: ["Form5472 Prep questionnaire"],
       supplies: [
-        "Wizard answers",
+        "Intake form answers",
         "Canvas signature",
         "Full package",
         "Signed package",
@@ -2620,7 +2636,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How does your filing reach the IRS?",
-        body: "Your filing reaches the IRS by wizard completion, signature, accountant review, fax delivery, and receipt return.\n\n1. Complete the 12-question wizard — about 15 minutes the first year, about 5 minutes for returning customers.\n2. Sign once on screen. The canvas signature is embedded into every required signature box on the forms.\n3. Have a PTIN-holding tax accountant review the full package and email you if anything needs clarifying.\n4. Get the signed package faxed to the IRS Ogden PIN Unit at +1-855-887-7737 once review clears, within 5-7 business days of your signature on Standard. On Express the package is ready for you to check and sign in under 3 days from the order, 7 days a week, and we fax it once you sign.\n5. Receive the timestamped IRS fax transmission receipt by email, with a copy kept in your portal.\n\nYou can't e-file Form 5472. The IRS only accepts it by mail or fax to Ogden, and fax is the route that produces a dated transmission receipt — which is why we use it. In the rare event the Ogden fax line is down for an extended period, we fall back to certified mail with return receipt and send you the tracking details.",
+        body: "Your filing reaches the IRS by intake form completion, accountant review, your check and signature, fax delivery, and receipt return.\n\n1. Complete the 12-question guided intake form — about 15 minutes the first year, about 5 minutes for returning customers.\n2. Have a PTIN-holding tax accountant review the full package and email you if anything needs clarifying.\n3. Check the reviewed package and sign once on screen. The canvas signature is embedded into every required signature box on the forms. On Standard the package is ready for you to check and sign in 5-7 business days; on Express in under 3 days from the order, 7 days a week.\n4. Get the signed package faxed to the IRS Ogden PIN Unit at +1-855-887-7737 once you sign.\n5. Receive the timestamped IRS fax transmission receipt by email, with a copy kept in your portal.\n\nYou can't e-file Form 5472. The IRS only accepts it by mail or fax to Ogden, and fax is the route that produces a dated transmission receipt — which is why we use it. In the rare event the Ogden fax line is down for an extended period, we fall back to certified mail with return receipt and send you the tracking details.",
       },
       {
         heading: "Pricing",
@@ -2636,7 +2652,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "Get started",
-        body: "Click Start filing now. You'll answer the 12-question wizard (about 15 minutes) and sign once on screen — an accountant on our team takes it from there: package reviewed, faxed to the IRS Ogden PIN Unit, timestamped receipt back in your inbox.\n\nWant to talk your situation through before paying? Use the in-portal chat once you start, or email support@form5472prep.com. Email support is included on every filing.",
+        body: "Click Start filing now. You'll answer the 12-question guided intake form (about 15 minutes), an accountant on our team reviews the package, you check it and sign once on screen, and we fax it to the IRS Ogden PIN Unit, with the timestamped receipt back in your inbox.\n\nWant to talk your situation through before paying? Use the in-portal chat once you start, or email support@form5472prep.com. Email support is included on every filing.",
       },
     ],
     faqs: [
@@ -2650,7 +2666,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "How long does the whole thing take?",
-        a: "About 15 minutes of your time in the wizard. On our side, a Standard filing is reviewed and faxed to the IRS Ogden PIN Unit within 5-7 business days of your signature; Express is the same package, ready for you to check and sign in under 3 days from your order, and faxed once you sign. Either way the timestamped fax receipt comes back to you by email.",
+        a: "About 15 minutes of your time in the guided intake form. On our side, a Standard filing is reviewed and ready for you to check and sign within 5-7 business days; Express is the same package, ready for you to check and sign in under 3 days from your order. Either tier is faxed to the IRS Ogden PIN Unit once you sign. Either way the timestamped fax receipt comes back to you by email.",
       },
       {
         q: "Can you guarantee the IRS waives the penalty on my late filing?",
@@ -2658,7 +2674,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         q: "I have 5+ missed years — can you handle that?",
-        a: `Yes. The wizard covers up to three years directly; beyond that we coordinate the extra DIIRSP years with you by email. Write to support@form5472prep.com with your entity details and the years involved and we'll scope it before you pay. Pricing follows the same rule: ${PRICE_STD} Standard or ${PRICE_EXP} Express for the first year, +${PRICE_ADDON} per additional past year.`,
+        a: `Yes. One order covers up to three years directly; beyond that we coordinate the extra DIIRSP years with you by email. Write to support@form5472prep.com with your entity details and the years involved and we'll scope it before you pay. Pricing follows the same rule: ${PRICE_STD} Standard or ${PRICE_EXP} Express for the first year, +${PRICE_ADDON} per additional past year.`,
       },
       {
         q: "Can my CPA or tax attorney work with your accountant?",
@@ -2816,7 +2832,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do we file it?",
-        body: "Our wizard collects the filing facts in 12 questions: LLC details, foreign owner details, year-end assets, and related-party transactions. We prepare the pro forma Form 1120, Form 5472, the Part V supporting statement, and a reasonable cause statement when a late filing needs DIIRSP treatment.\n\nA tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) reviews every package before we submit it. We deliver by fax to the IRS Ogden PIN Unit at +1-855-887-7737 and keep the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
+        body: "Our guided intake form collects the filing facts in 12 questions: LLC details, foreign owner details, year-end assets, and related-party transactions. We prepare the pro forma Form 1120, Form 5472, the Part V supporting statement, and a reasonable cause statement when a late filing needs DIIRSP treatment.\n\nA tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) reviews every package before we submit it. We deliver by fax to the IRS Ogden PIN Unit at +1-855-887-7737 and keep the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "How do you catch up on multiple missed years?",
@@ -2893,7 +2909,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do we file it?",
-        body: "Form5472 Prep uses a 12-question wizard to capture the LLC, owner, formation-year, year-end asset, and related-party transaction facts. We prepare the IRS package, including pro forma Form 1120, Form 5472, the supporting statement, and a DIIRSP reasonable cause statement if needed.\n\nA tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) reviews the filing before it leaves our system. We fax it to the IRS Ogden PIN Unit at +1-855-887-7737 and provide the timestamped fax receipt. 100% money-back guarantee if we fail to submit.",
+        body: "Form5472 Prep uses a 12-question guided intake form to capture the LLC, owner, formation-year, year-end asset, and related-party transaction facts. We prepare the IRS package, including pro forma Form 1120, Form 5472, the supporting statement, and a DIIRSP reasonable cause statement if needed.\n\nA tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) reviews the filing before it leaves our system. We fax it to the IRS Ogden PIN Unit at +1-855-887-7737 and provide the timestamped fax receipt. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "How do you catch up on multiple missed years?",
@@ -2971,7 +2987,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do we file it?",
-        body: "We file it by turning your formation details, owner information, year-end assets, and related-party transactions into a complete Form 5472 package. The 12-question wizard also prepares a DIIRSP reasonable cause statement for missed prior years, then a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) reviews the package before Ogden PIN Unit fax submission.\n\nEvery package is accountant-reviewed before we fax it to the IRS Ogden PIN Unit at +1-855-887-7737. You receive the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
+        body: "We file it by turning your formation details, owner information, year-end assets, and related-party transactions into a complete Form 5472 package. Our staff also write a DIIRSP reasonable cause statement for missed prior years from your intake answers, then a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) reviews the package before Ogden PIN Unit fax submission.\n\nEvery package is accountant-reviewed before we fax it to the IRS Ogden PIN Unit at +1-855-887-7737. You receive the timestamped fax receipt as transmission evidence. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "How do you catch up on multiple missed years?",
@@ -3121,7 +3137,7 @@ export const LANDING_PAGES: LandingPage[] = [
       },
       {
         heading: "How do we file it?",
-        body: "Our 12-question wizard collects the LLC facts, foreign-owner facts, year-end totals, and transactions between the LLC and related parties. We generate the complete federal package: pro forma Form 1120, Form 5472, supporting statement, cover letter, and reasonable cause statement if late.\n\nA tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) reviews each package before submission. We fax the signed return to the IRS Ogden PIN Unit at +1-855-887-7737 and provide the timestamped fax receipt. 100% money-back guarantee if we fail to submit.",
+        body: "Our 12-question guided intake form collects the LLC facts, foreign-owner facts, year-end totals, and transactions between the LLC and related parties. From your answers our team prepares the complete federal package: pro forma Form 1120, Form 5472, supporting statement, cover letter, and reasonable cause statement if late.\n\nA tax accountant who holds an IRS Preparer Tax Identification Number (PTIN) reviews each package before submission. We fax the signed return to the IRS Ogden PIN Unit at +1-855-887-7737 and provide the timestamped fax receipt. 100% money-back guarantee if we fail to submit.",
       },
       {
         heading: "How do you catch up on multiple missed years?",

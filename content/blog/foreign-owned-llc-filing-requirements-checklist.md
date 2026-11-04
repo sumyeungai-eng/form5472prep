@@ -25,7 +25,9 @@ This is a compliance map, not a substitute for advice on income tax, withholding
 
 ## Do I have to file Form 5472?
 
-A foreign-owned U.S. disregarded entity is a domestic disregarded entity wholly owned by a foreign person. For the limited section 6038A reporting rules, it is treated as a corporation. It generally files Form 5472 when it had a reportable transaction with a related party. The [IRS instructions](https://www.irs.gov/instructions/i5472) define the transactions and explain that a DE with no reportable Part IV, V, or VI transactions does not have this filing requirement.
+Generally yes, when the LLC is a foreign-owned U.S. disregarded entity that had a reportable transaction with a related party. That means a domestic disregarded entity wholly owned by a foreign person, which is treated as a corporation for the limited section 6038A reporting rules.
+
+The [IRS instructions](https://www.irs.gov/instructions/i5472) define the transactions and explain that a DE with no reportable Part IV, V, or VI transactions does not have this filing requirement.
 
 Common owner-to-LLC movements may be reportable, but classification turns on the actual facts. Keep an itemized ledger and source documents for contributions, distributions, loans, reimbursements, services, and noncash transfers. Unrelated customer revenue is not automatically a related-party transaction merely because it entered the LLC's account; a later owner transfer can raise a separate question. See [worked transaction examples](/blog/form-5472-reportable-transactions-examples).
 

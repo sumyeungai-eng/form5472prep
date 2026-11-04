@@ -10,21 +10,36 @@ import { seoTitle } from "@/lib/seo-title";
 import { formatPrice } from "@/lib/utils";
 
 const PRICE = formatPrice(EXTENSION_PRICE_CENTS);
-const DESCRIPTION = `Form 7004 extension for foreign-owned single-member LLCs, ${PRICE} per tax year. We prepare it, fax it to the IRS Ogden PIN Unit and email you the confirmation.`;
+// Title, H1 and description all name "Form 5472 extension" and "Form 7004" (Moz 2026-11-04:
+// "form 5472 extension" is a competitor term our page did not carry).
+const TITLE = `Form 5472 Extension (Form 7004) — ${PRICE}`;
+const DESCRIPTION = `Form 5472 extension (Form 7004) for foreign-owned LLCs, ${PRICE} per tax year: we prepare it, fax it to the IRS Ogden PIN Unit and email you the confirmation.`;
 
 // Visible "Last updated" line and the FAQPage JSON-LD dateModified share this constant.
 const LAST_UPDATED = "2026-10-30";
 const LAST_UPDATED_LABEL = "October 30, 2026";
 
 export const metadata: Metadata = {
-  title: seoTitle(`Form 7004 Extension for Foreign-Owned LLCs — ${PRICE}`),
+  title: seoTitle(TITLE),
   description: DESCRIPTION,
   ...pageMeta({
-    title: `Form 7004 Extension for Foreign-Owned LLCs — ${PRICE}`,
+    title: TITLE,
     description: DESCRIPTION,
     path: "/form-7004-extension",
   }),
 };
+
+// First question-H2 capsule on the page (≤60 words), ahead of FORM_7004_ANSWERS;
+// also the first FAQPage entry.
+const EXTENSION_CAPSULE = {
+  q: "How do I get an extension for Form 5472?",
+  a: "File Form 7004 by the original due date of the pro forma Form 1120: 15 April for a calendar-year LLC. Because Form 5472 is attached to that return, a valid Form 7004 gives an automatic 6-month extension for both, to 15 October. A foreign-owned LLC enters Form 1120 code 12 and faxes Form 7004 to the IRS Ogden PIN Unit.",
+  sources: [
+    { label: "Instructions for Form 7004 (IRS)", url: "https://www.irs.gov/instructions/i7004" },
+    { label: "Instructions for Form 5472 (IRS)", url: "https://www.irs.gov/instructions/i5472" },
+  ],
+};
+const ANSWERS = [EXTENSION_CAPSULE, ...FORM_7004_ANSWERS];
 
 const steps = [
   {
@@ -90,7 +105,7 @@ export default function Form7004ExtensionPage() {
               Form 7004 · foreign-owned U.S. DE
             </p>
             <h1 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-balance leading-[1.08]">
-              Form 7004 extension<br />
+              Form 5472 extension (Form 7004)<br />
               <span className="text-accent-100">for your foreign-owned LLC.</span>
             </h1>
             <p data-speakable className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
@@ -153,7 +168,7 @@ export default function Form7004ExtensionPage() {
 
       <section className="py-16 border-b border-slate-100">
         <div className="max-w-3xl mx-auto px-6 space-y-10">
-          {FORM_7004_ANSWERS.map(({ q, a, sources }) => (
+          {ANSWERS.map(({ q, a, sources }) => (
             <div key={q}>
               <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-3">{q}</h2>
               <p className="text-base text-slate-700 leading-relaxed">{a}</p>
@@ -279,7 +294,7 @@ function StructuredData() {
     "@type": "FAQPage",
     dateModified: LAST_UPDATED,
     // Every visible Q&A, in page order: the question-H2 capsules, then the FAQ list.
-    mainEntity: [...FORM_7004_ANSWERS, ...faq].map((f) => ({
+    mainEntity: [...ANSWERS, ...faq].map((f) => ({
       "@type": "Question",
       name: f.q,
       acceptedAnswer: { "@type": "Answer", text: f.a },

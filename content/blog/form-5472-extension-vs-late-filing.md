@@ -18,6 +18,8 @@ This post covers a U.S.-formed single-member LLC wholly owned by a foreign perso
 
 ## What are the two routes actually being compared?
 
+Route A is to file Form 7004 by the regular due date, then file the complete Form 5472 package within the extended window. Route B is to miss the due date without a valid extension, then file late with a reasonable cause statement and ask the IRS not to assess the penalty.
+
 **Route A — extend, then file.** File Form 7004 by the regular due date of the pro forma Form 1120, which moves the filing deadline out by the automatic extension period of generally six months, then file the complete Form 5472 package within that window. The [Instructions for Form 5472](https://www.irs.gov/instructions/i5472) confirm a foreign-owned U.S. DE "can request an extension of time to file by filing Form 7004."
 
 **Route B — file late, request relief.** Miss the regular due date without a valid extension, then file the delinquent package with a reasonable cause statement and ask the IRS not to assess the penalty.

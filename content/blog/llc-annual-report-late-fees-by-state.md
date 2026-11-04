@@ -16,7 +16,9 @@ This guide collects the late consequences for the ten states in our [LLC annual 
 
 ## What happens when an LLC misses its state annual report or fee?
 
-In the ten states covered here, the consequence usually comes in two stages: money first, then status. In most of them a late charge or penalty follows the missed due date, although California's $250 applies only 60 days after its notice, and Wyoming's and New York's official pages state no late fee at all. If the filing stays missing, the state changes the LLC's standing, which can mean a "delinquent" label, an administrative dissolution or a cancelled certificate of formation.
+In the ten states covered here, the consequence usually comes in two stages: money first, then status. In most of them a late charge or penalty follows the missed due date; if the filing stays missing, the state changes the LLC's standing, which can mean a "delinquent" label, an administrative dissolution or a cancelled certificate of formation.
+
+Two details on the money stage: California's $250 applies only 60 days after its notice, and Wyoming's and New York's official pages state no late fee at all.
 
 The money stage is usually small. The status stage is the one that hurts, because banks, payment processors and marketplaces may ask for proof that the LLC is in good standing. Our [certificate of good standing guide](/blog/certificate-of-good-standing-foreign-owned-llc) covers who asks for it and why.
 

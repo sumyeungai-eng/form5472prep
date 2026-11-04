@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ArrowLeft, ArrowRight, Globe2 } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
 import { getAllPosts } from "@/lib/blog";
-import { COUNTRY_HUB_PATH, countryHubSections } from "@/lib/blog-countries";
+import { COUNTRY_HUB_PATH, NOMAD_GUIDE_SLUGS, countryHubSections } from "@/lib/blog-countries";
 import { SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
 
@@ -15,7 +15,6 @@ const TITLE = "Form 5472 by Country";
 const DESCRIPTION =
   "One Form 5472 guide per country of residence for foreign owners of a US single-member LLC, grouped by region, with city guides for digital nomads.";
 const IRS_INSTRUCTIONS_URL = "https://www.irs.gov/instructions/i5472";
-const NOMAD_GUIDE_SLUG = "form-5472-digital-nomad-us-llc";
 
 export const metadata: Metadata = {
   title: seoTitle(TITLE),
@@ -27,7 +26,7 @@ export default async function CountryHubPage(): Promise<JSX.Element> {
   const posts = await getAllPosts();
   const sections = countryHubSections(posts);
   const entries = sections.flatMap((section) => section.entries);
-  const nomadGuide = posts.find((post) => post.slug === NOMAD_GUIDE_SLUG);
+  const nomadGuides = NOMAD_GUIDE_SLUGS.flatMap((slug) => posts.filter((post) => post.slug === slug));
 
   const collectionJsonLd = {
     "@context": "https://schema.org",
@@ -129,14 +128,22 @@ export default async function CountryHubPage(): Promise<JSX.Element> {
           );
         })}
 
-        {nomadGuide && (
-          <p className="mt-14 text-sm leading-6 text-slate-600">
-            No fixed country of residence? Read{" "}
-            <Link href={`/blog/${nomadGuide.slug}`} className="font-medium text-accent hover:underline">
-              {nomadGuide.title}
-            </Link>
-            .
-          </p>
+        {nomadGuides.length > 0 && (
+          <section className="mt-14" aria-labelledby="no-fixed-country-heading">
+            <h2 id="no-fixed-country-heading" className="font-serif text-2xl font-semibold tracking-tight text-ink">
+              No fixed country of residence
+            </h2>
+            <ul className="mt-5 divide-y divide-slate-200 border-y border-slate-200">
+              {nomadGuides.map((guide) => (
+                <li key={guide.slug} className="py-4 text-sm leading-6 text-slate-600">
+                  <Link href={`/blog/${guide.slug}`} className="font-medium text-accent hover:underline">
+                    {guide.title}
+                  </Link>
+                  . {guide.description}
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
 
         <div className="mt-10">

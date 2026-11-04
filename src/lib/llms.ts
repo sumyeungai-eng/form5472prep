@@ -1,4 +1,5 @@
 import { getAllPosts, getPost, type PostMeta } from "@/lib/blog";
+import { COUNTRY_HUB_PATH } from "@/lib/blog-countries";
 import { tagSlug } from "@/lib/blog-tags";
 import { ADDON_RULE, BRAND_CAPSULES, FAQ_CATEGORIES, FAQ_ITEMS, FAQ_LAST_REVIEWED } from "@/lib/faq";
 import { FORM5472_STATS, STAT_CATEGORIES, STATS_LAST_REVIEWED } from "@/lib/form5472-stats";
@@ -177,6 +178,13 @@ const TOOL_PAGES: readonly PageLink[] = [
   ["LLC annual fees by state", "/llc-annual-fees-by-state", "Annual LLC fees, franchise taxes and report due dates for Delaware, Wyoming, New Mexico, Florida, Texas, Nevada, New York, California, Colorado and Montana, with official sources."],
 ];
 
+// Hub of every country-of-residence and digital-nomad guide; listed in the core pages and above the guide index.
+const COUNTRY_HUB_PAGE: PageLink = [
+  "Form 5472 by country",
+  COUNTRY_HUB_PATH,
+  "One Form 5472 guide per country of residence for foreign owners of a US single-member LLC, grouped by region, with city guides for digital nomads.",
+];
+
 const CORE_PAGES: readonly PageLink[] = [
   ["Home", "/", "Form5472 Prep home — Form 5472 + pro forma 1120 filing for foreign-owned US LLCs."],
   ["Pricing", "/pricing", `Standard ${STD} and Express ${EXP} filing tiers with the full feature list.`],
@@ -188,6 +196,7 @@ const CORE_PAGES: readonly PageLink[] = [
   ["Form 7004 extension", "/form-7004-extension", `Form 7004 extension filing for foreign-owned US LLCs, ${EXT_PRICE} per LLC per tax year, faxed to the IRS Ogden PIN Unit; must be ordered before the original due date.`],
   ["Partners", "/partners", "Partner program for accountants, formation agents, and registered agents: every partner filing is white-label (we never email the partner's clients; the partner sends their links and pays per filing)."],
   ["Guides index", "/blog", "Jargon-free guides for foreign-owned US LLC owners on Form 5472, pro forma 1120, DIIRSP catch-up filings, and related topics."],
+  COUNTRY_HUB_PAGE,
   ["Contact", "/contact", "Contact Form5472 Prep for Form 5472, pro forma 1120, EIN, ITIN, and catch-up filing questions."],
   ["About", "/about", "What we do and don't do, how a filing works step by step, who reviews it, how customer data is protected and how our guides are sourced."],
   ["Compare Form 5472 filing services", "/compare", "Neutral comparison pages for formation and registered-agent providers (Stripe Atlas, doola, Firstbase, Clemta, StartGlobal, Zenind, Northwest Registered Agent) and what to confirm about Form 5472."],
@@ -349,7 +358,7 @@ function buildGuides(posts: PostMeta[]): string {
       return `### ${label}\n\n${lines.join("\n")}`;
     });
 
-  return `## Guides\n\nFull text of every guide: ${SITE_URL}/llms-guides.txt\n\n${groups.join("\n\n")}`;
+  return `## Guides\n\nFull text of every guide: ${SITE_URL}/llms-guides.txt\n\nBy country of residence:\n\n${linkLine(COUNTRY_HUB_PAGE)}\n\n${groups.join("\n\n")}`;
 }
 
 // The brand capsules, verbatim from src/lib/faq.ts — the same words as

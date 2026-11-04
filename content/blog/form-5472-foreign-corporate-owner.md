@@ -14,7 +14,9 @@ Corporate ownership adds an ownership-chain exercise to the ordinary Form 5472 f
 
 ## Can a foreign company own a U.S. disregarded LLC?
 
-Yes. A foreign company can be the sole owner of a domestic LLC, and the domestic LLC can still be disregarded for federal income tax purposes unless it elects corporate treatment. The [IRS single-member LLC page](https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies) says a single-member LLC is disregarded unless Form 8832 is filed to elect corporate treatment, and that a single-member LLC owned by a corporation should be reflected on the owner's federal tax return as a division of the corporation.
+Yes. A foreign company can be the sole owner of a domestic LLC, and the domestic LLC can still be disregarded for federal income tax purposes unless it elects corporate treatment.
+
+The [IRS single-member LLC page](https://www.irs.gov/businesses/small-businesses-self-employed/single-member-limited-liability-companies) says a single-member LLC is disregarded unless Form 8832 is filed to elect corporate treatment, and that a single-member LLC owned by a corporation should be reflected on the owner's federal tax return as a division of the corporation.
 
 Form 5472 adds a limited reporting rule on top of that default classification. For tax years beginning on or after 1 January 2017, and ending on or after December 13, 2017, the IRS instructions treat a foreign-owned U.S. disregarded entity as separate from its owner and as a corporation only for section 6038A reporting. That special rule is why a disregarded LLC with a foreign corporate parent can still need a [pro forma Form 1120](/pro-forma-1120) and Form 5472.
 

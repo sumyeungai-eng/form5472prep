@@ -44,7 +44,9 @@ Match each entry to the named source document, resolve any loan or contribution 
 
 ## How long should records be kept?
 
-The IRS instructions say to retain books and records for as long as their contents may become material in administering federal tax law. That can be longer than a generic three-year rule. Keep filed packages and delivery evidence with the underlying transaction records for as long as they can affect an open year, a related-party balance, basis, a loan, or a later inquiry. A qualified adviser can set a retention policy for the LLC's actual facts.
+The IRS instructions say to retain books and records for as long as their contents may become material in administering federal tax law. That can be longer than a generic three-year rule.
+
+Keep filed packages and delivery evidence with the underlying transaction records for as long as they can affect an open year, a related-party balance, basis, a loan, or a later inquiry. A qualified adviser can set a retention policy for the LLC's actual facts.
 
 ## Preserve delivery evidence without overstating it
 

@@ -43,6 +43,8 @@ At **$448 to $547**, form5472.online's page states the return is "CPA-prepared, 
 
 At $899 and $1,500 a year, Firstbase's page describes a "full-service process by dedicated tax experts" and doola's pricing page refers to "our in-house tax and CPA teams" — their own words, for bundles that cover more than this one filing.
 
+For a closer look at one provider at a time, see our [Firstbase Form 5472 guide](/firstbase-form-5472) and [doola Form 5472 guide](/doola-form-5472).
+
 ## Why are Firstbase and doola so much more expensive?
 
 Because they are not selling the same thing. Firstbase at $899 a year, and doola at $1,500 a year for its standalone tax filing (its Tax and Compliance plan is listed at $1,999 a year plus state fees), are **annual compliance subscriptions from formation providers**. They are bought by owners who already run the company through that platform and want registered agent, bookkeeping and filings on one invoice. Judged as a bundle, that may be fair value; judged as a single Form 5472, it is the dearest way to buy one. If your LLC was set up through a formation service, [who files your Form 5472 after Stripe Atlas, doola or Firstbase](/blog/stripe-atlas-doola-firstbase-form-5472) covers what each plan does and does not include.

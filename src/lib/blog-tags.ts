@@ -34,6 +34,41 @@ export const DUPLICATE_TAG_HUBS: Record<string, string> = {
   "form-w-7": "itin",
 };
 
+/**
+ * Optional hand-written intro for a topic hub's page 1 (never /page/N). `answer`
+ * is the <=60-word direct answer AI engines lift; `body` is plain text where
+ * `[label](/path)` internal links render as <Link>s. When a hub has one it
+ * replaces the generic "N practical guides..." line. Added 2026-11-04: the
+ * deadline, penalty and late-filing hubs measured 378-400 words (thin).
+ */
+export type TopicHubIntro = { question: string; answer: string; body: string };
+
+export const TOPIC_HUB_INTROS: Partial<Record<string, TopicHubIntro>> = {
+  deadline: {
+    question: "When is Form 5472 due?",
+    answer:
+      "Form 5472 is filed with the entity's pro forma Form 1120 and is due on the 15th day of the 4th month after its tax year ends, so April 15 for calendar-year LLCs. A timely Form 7004 extends the deadline by six months, to October 15.",
+    body: "Form 7004 must be filed by the regular due date; a later one extends nothing. These guides cover how the deadline works, when an extension helps and what to do when the date has passed. Start with the [Form 5472 deadline guide](/form-5472-deadline), then use the [deadline calculator](/form-5472-deadline-calculator) to find your date. If it has already passed, read [what to do about a late Form 5472](/late-form-5472) and the comparison of [extending versus filing late](/blog/form-5472-extension-vs-late-filing).",
+  },
+  penalty: {
+    question: "How much is the Form 5472 penalty?",
+    answer:
+      "The penalty is $25,000 per form, per year under IRC section 6038A(d). If the failure continues more than 90 days after the IRS mails a notice, a further $25,000 applies for each 30-day period or part of one.",
+    body: "The penalty attaches to each form and year, not to each transaction. Relief is not automatic and is not guaranteed; the IRS decides each abatement request on its facts. These guides explain how the penalty is assessed, what a notice means and which relief routes exist. Start with the [Form 5472 penalty guide](/form-5472-penalty), estimate your exposure with the [penalty calculator](/form-5472-penalty-calculator), check whether [First Time Abate applies](/blog/form-5472-first-time-penalty-abatement), and if you hold a notice read [what to do with a penalty notice](/blog/form-5472-penalty-notice-what-to-do).",
+  },
+  "late-filing": {
+    question: "What happens if Form 5472 is filed late or never filed?",
+    answer:
+      "The $25,000 per form, per year penalty can apply to a late or missing Form 5472. The usual route is to file the delinquent returns with a reasonable-cause statement requesting abatement; the IRS decides each request on its facts.",
+    body: "Filing promptly and completely matters, because the continuation penalty stops growing once you file. Not knowing about the requirement is not, on its own, reasonable cause. These guides walk through catching up on missed years, from what a reasonable-cause statement needs to what happens after the package is sent. Start with [what to do about a late Form 5472](/late-form-5472) and the [late or never-filed guide](/blog/form-5472-filed-late-never-filed), then check your exposure with the [penalty calculator](/form-5472-penalty-calculator).",
+  },
+};
+
+/** The intro for a hub, else undefined (hasOwn: a tag named "constructor" must not match). */
+export function topicHubIntro(tag: string): TopicHubIntro | undefined {
+  return Object.hasOwn(TOPIC_HUB_INTROS, tag) ? TOPIC_HUB_INTROS[tag] : undefined;
+}
+
 const TAG_LABELS: Record<string, string> = {
   ein: "EIN",
   itin: "ITIN",

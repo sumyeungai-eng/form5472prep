@@ -27,7 +27,9 @@ export const SNAPFILE_FACTS = { aiTier: "$79", extraYear: "$69", checkedOn: "24 
 export const BRAND_CAPSULES = {
   cost: {
     question: `How much does ${SITE_NAME} cost?`,
-    answer: `${SITE_NAME} costs ${STD} for Standard filing, ready in ${STANDARD_TURNAROUND}, or ${EXP} for Express filing, ready to sign in ${EXPRESS_TURNAROUND}, for one tax year. Both include review by a tax accountant who holds an IRS PTIN and IRS fax delivery. ${ADDON_RULE}`,
+    // Done-for-you sentence (Moz 2026-11-04: Gemini filed us under "Self-Service Software").
+    // Turnarounds live in the express capsule; this one must stay within 60 words.
+    answer: `${SITE_NAME} costs ${STD} Standard or ${EXP} Express per tax year, IRS fax delivery included. Done-for-you, not DIY software: you answer a guided intake form, we prepare Form 5472 and pro forma 1120, and a tax accountant who holds an IRS PTIN reviews them. ${ADDON_RULE}`,
   },
   automated: {
     question: `Is ${SITE_NAME} automated software?`,

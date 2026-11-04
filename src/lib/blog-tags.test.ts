@@ -12,6 +12,8 @@ import {
   TAG_SLUG_ALIASES,
   tagHref,
   tagSlug,
+  TOPIC_HUB_INTROS,
+  topicHubIntro,
 } from "@/lib/blog-tags";
 
 function post(slug: string, tags: string[]): PostMeta {
@@ -116,5 +118,27 @@ describe("blog tag helpers", () => {
       expect(strong).not.toBe(weak);
       expect(duplicateHubTarget(strong)).toBeUndefined();
     }
+  });
+});
+
+describe("topic hub intros", () => {
+  const words = (text: string) => text.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").split(/\s+/).filter(Boolean).length;
+
+  it.each(Object.keys(TOPIC_HUB_INTROS))("%s: question lead, <=60-word answer, 120-180 words, internal links only", (tag) => {
+    const intro = topicHubIntro(tag)!;
+    expect(intro.question.endsWith("?")).toBe(true);
+    expect(words(intro.answer)).toBeLessThanOrEqual(60);
+    const total = words(`${intro.question} ${intro.answer} ${intro.body}`);
+    expect(total).toBeGreaterThanOrEqual(120);
+    expect(total).toBeLessThanOrEqual(180);
+    const links = Array.from(intro.body.matchAll(/\[[^\]]+\]\(([^)]*)\)/g), (m) => m[1]);
+    expect(links.length).toBeGreaterThanOrEqual(2);
+    for (const href of links) expect(href).toMatch(/^\/[^/]/);
+  });
+
+  it("covers the thin deadline, penalty and late-filing hubs and nothing inherited from Object.prototype", () => {
+    for (const tag of ["deadline", "penalty", "late-filing"]) expect(topicHubIntro(tag)).toBeDefined();
+    expect(topicHubIntro("constructor")).toBeUndefined();
+    expect(topicHubIntro("ein")).toBeUndefined();
   });
 });

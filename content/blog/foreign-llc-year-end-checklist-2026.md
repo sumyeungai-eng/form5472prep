@@ -18,7 +18,9 @@ This is the action list, not a calendar. If you want the dates themselves — fe
 
 ## What does 31 December 2026 actually close?
 
-For a calendar-year LLC, 31 December 2026 closes the tax year that the April 2027 filing reports. The [IRS Instructions for Form 1120](https://www.irs.gov/instructions/i1120) set the due date at "the 15th day of the 4th month after the end of its tax year," and the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) require Form 5472 to be filed "as an attachment to the reporting corporation's income tax return" by "the due date (including extensions) of that return." For tax year 2026 that date is Thursday 15 April 2027.
+For a calendar-year LLC, 31 December 2026 closes the tax year that the April 2027 filing reports, and for tax year 2026 that filing is due Thursday 15 April 2027.
+
+The [IRS Instructions for Form 1120](https://www.irs.gov/instructions/i1120) set the due date at "the 15th day of the 4th month after the end of its tax year," and the [IRS Instructions for Form 5472](https://www.irs.gov/instructions/i5472) require Form 5472 to be filed "as an attachment to the reporting corporation's income tax return" by "the due date (including extensions) of that return."
 
 What closes is the set of facts. Which transfers happened, in which direction, on which date, for what reason — all of that is settled by 31 December. Nothing after that date changes it.
 

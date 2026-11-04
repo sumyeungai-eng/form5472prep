@@ -14,7 +14,9 @@ Most firms asking this have conflated two permissions. Preparing a filing for co
 
 ## Does federal law require a CPA license to prepare a client's Form 5472?
 
-No. The IRS page [Understanding Tax Return Preparer Credentials and Qualifications](https://www.irs.gov/tax-professionals/understanding-tax-return-preparer-credentials-and-qualifications) states: "Any tax professional with an IRS preparer tax identification number (PTIN) is authorized to prepare federal tax returns." The same page addresses preparers with no credential at all: those "who have an active preparer tax identification number, but no professional credentials and do not participate in the Annual Filing Season Program, are authorized to prepare tax returns."
+No. The IRS states that any tax professional with a preparer tax identification number (PTIN) is authorized to prepare federal tax returns, and that preparers with an active PTIN but no professional credentials are authorized too.
+
+The IRS page [Understanding Tax Return Preparer Credentials and Qualifications](https://www.irs.gov/tax-professionals/understanding-tax-return-preparer-credentials-and-qualifications) states: "Any tax professional with an IRS preparer tax identification number (PTIN) is authorized to prepare federal tax returns." The same page addresses preparers with no credential at all: those "who have an active preparer tax identification number, but no professional credentials and do not participate in the Annual Filing Season Program, are authorized to prepare tax returns."
 
 The statutory hook for the number is IRC section 6109(a)(4): "[a]ny return or claim for refund prepared by a tax return preparer shall bear such identifying number for securing proper identification of such preparer, his employer, or both, as may be prescribed."
 

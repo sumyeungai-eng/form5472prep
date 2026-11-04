@@ -16,7 +16,9 @@ This guide separates the sales tax question from the federal question, explains 
 
 ## What is sales tax nexus, and why does it matter for a foreign-owned LLC?
 
-Nexus is the legal connection between a seller and a state that is strong enough for that state to require registering, collecting its sales tax, and remitting it. Before 2018, nexus meant physical presence — an office, employees, or inventory in the state. A foreign-owned LLC with no US staff and a Wyoming or Delaware mailing address could sell into every state and, in most cases, owe no collection duty anywhere, because it had no physical footprint.
+Nexus is the legal connection between a seller and a state that is strong enough for that state to require registering, collecting its sales tax, and remitting it.
+
+Before 2018, nexus meant physical presence — an office, employees, or inventory in the state. A foreign-owned LLC with no US staff and a Wyoming or Delaware mailing address could sell into every state and, in most cases, owe no collection duty anywhere, because it had no physical footprint.
 
 Economic nexus changed that by measuring sales activity instead. A foreign-owned LLC now checks two separate questions for every state it sells into: is there a physical connection there, and does it exceed that state's own economic-nexus threshold. Either one can create a collection obligation on its own.
 

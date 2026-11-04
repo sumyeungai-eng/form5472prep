@@ -14,7 +14,9 @@ This article is a review checklist, not a conclusion about a particular transiti
 
 ## What makes an individual a U.S. tax resident?
 
-An individual who is not a U.S. citizen is generally a resident alien for a calendar year by meeting either the green card test or the substantial presence test. The substantial presence test generally requires at least 31 days in the current year and 183 weighted days across the current and prior two years: all current-year days, one-third of the preceding year's days, and one-sixth of the second preceding year's days ([IRS Topic 851](https://www.irs.gov/taxtopics/tc851)).
+An individual who is not a U.S. citizen is generally a resident alien for a calendar year by meeting either the green card test or the substantial presence test. The substantial presence test generally requires at least 31 days in the current year and 183 weighted days across the current and prior two years ([IRS Topic 851](https://www.irs.gov/taxtopics/tc851)).
+
+The weighting counts all current-year days, one-third of the preceding year's days, and one-sixth of the second preceding year's days.
 
 That arithmetic is only the start. Some days do not count, including qualifying days for certain exempt individuals. A closer-connection exception can apply only under specified conditions and with a timely Form 8840. An income-tax treaty may treat a dual resident as a foreign-country resident for computing U.S. tax, often with a Form 8833 disclosure. Elections can also create resident treatment.
 

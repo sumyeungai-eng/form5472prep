@@ -1,5 +1,5 @@
 ---
-title: "Form 5472 for French Owners of a US LLC"
+title: "Form 5472 for France Residents With a US LLC"
 description: "French owners of a single-member US LLC may need Form 5472 with a pro forma 1120. Learn which tax ID and owner transactions to report."
 date: 2026-08-19
 updated: 2026-08-19

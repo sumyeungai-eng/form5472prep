@@ -9,11 +9,11 @@ readingMinutes: 8
 draft: false
 ---
 
-**If you filed Form 5472 late or never filed it, file the delinquent returns under the [IRS's DIIRSP](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures) with a reasonable-cause statement** requesting penalty abatement. There is no formal waiver guarantee, but well-documented first-time late filings by foreign owners are commonly accepted without penalty. File promptly and completely — the continuation penalty only begins stacking after the IRS sends a notice.
+**If you filed Form 5472 late or never filed it, file the delinquent returns under the [IRS's DIIRSP](https://www.irs.gov/individuals/international-taxpayers/delinquent-international-information-return-submission-procedures) with a reasonable-cause statement** requesting penalty abatement. There is no formal waiver guarantee, but well-documented first-time late filings by foreign owners are a common basis for a penalty-abatement request, though the IRS decides each case on its facts. File promptly and completely — the continuation penalty only begins stacking after the IRS sends a notice.
 
 You missed a Form 5472 filing — maybe one year, maybe several. You might have just found out the requirement exists. Or you knew about it and kept putting it off, hoping the IRS wouldn't notice.
 
-The IRS notices eventually. But there is a formal procedure for fixing this without the worst-case penalties, and it's available to most foreign-owned LLC owners who come forward voluntarily. Here's what to do.
+The IRS notices eventually. But there is a formal procedure for catching up: you file the missing returns with a reasonable-cause statement that asks the IRS to abate the penalty, and the IRS decides each request on its facts. Here's what to do.
 
 ---
 
@@ -73,9 +73,9 @@ If there are reasons to go further back — for example, an IRS notice already r
 
 ## What counts as "reasonable cause"?
 
-The reasonable cause standard for this penalty sits in [26 CFR §1.6038A-4(b)](https://www.law.cornell.edu/cfr/text/26/1.6038A-4) and means you exercised ordinary business care and prudence but still failed to file correctly. For Form 5472, the IRS has generally accepted:
+The reasonable cause standard for this penalty sits in [26 CFR §1.6038A-4(b)](https://www.law.cornell.edu/cfr/text/26/1.6038A-4) and means you exercised ordinary business care and prudence but still failed to file correctly. For Form 5472, the explanations that can support a reasonable-cause request include:
 
-- **Not knowing about the requirement.** Foreign nationals who opened a US LLC for business reasons, relying on a state [formation service](/blog/stripe-atlas-doola-firstbase-form-5472) or a general business advisor who didn't flag the IRS filing obligation, have a strong argument here.
+- **Not knowing about the requirement.** Foreign nationals who opened a US LLC for business reasons, relying on a state [formation service](/blog/stripe-atlas-doola-firstbase-form-5472) or a general business advisor who didn't flag the IRS filing obligation, can raise a reasonable-cause argument here, though not knowing about the requirement is not enough on its own.
 - **Relying on a professional who gave incorrect advice.** If your accountant or lawyer told you no filing was required and that advice was wrong, reliance on a tax professional is a recognized reasonable cause category.
 - **Receiving conflicting information.** If you had a genuine good-faith belief that no return was required — for example, because you thought the LLC was truly dormant and the zero-transaction rule applied — that's also a reasonable cause argument.
 
@@ -101,11 +101,11 @@ Keep it factual. Avoid emotional appeals or lengthy explanations of how unfair t
 After your DIIRSP package arrives at the IRS Ogden PIN Unit:
 
 - **Initial review** (4–8 weeks typically): The IRS processes the returns and checks whether they're complete.
-- **If the package is accepted**: The IRS processes the returns, applies any penalty abatement granted by the reasonable cause statement, and closes the case. You may receive a notice confirming acceptance or you may simply hear nothing — no news is generally good news.
+- **If the package is accepted**: The IRS processes the returns, applies any penalty abatement granted by the reasonable cause statement, and closes the case. You may receive a notice confirming acceptance or you may simply hear nothing, which is not confirmation of the outcome either way.
 - **If there are questions**: The IRS may send a notice requesting additional information or clarification about specific items on the returns. Respond promptly and in writing.
 - **If penalty abatement is denied**: You can appeal. The reasonable cause argument is reviewable at the Appeals level.
 
-Most DIIRSP submissions for foreign-owned LLCs with no complex transactions are processed without incident, especially when the reasonable cause statement is well-drafted and the returns are complete.
+Complete returns and a specific, well-drafted reasonable cause statement give the IRS what it needs to review the submission; the outcome is still the IRS's decision on the facts.
 
 ---
 
@@ -158,7 +158,7 @@ The IRS First-Time Abatement (FTA) policy technically applies to penalties under
 
 ## The bottom line
 
-Late Form 5472 filings are fixable. The IRS has a procedure for it, most foreign owners qualify for reasonable cause abatement, and the penalty exposure largely disappears once you've filed properly.
+Late Form 5472 filings can be cured by filing. The IRS has a procedure for submitting delinquent returns with a reasonable-cause statement, and filing properly stops the continuation penalty from growing. Whether the penalty is abated is the IRS's decision on the facts of each case.
 
 What makes this worse is waiting. Act before the IRS sends a notice, and you control the narrative entirely. Act after, and you're responding to a penalty assessment instead of volunteering to fix an oversight.
 

@@ -474,7 +474,7 @@ The facts often differ from year to year: when the LLC was formed, when you lear
 - **Three statements:** each one says what happened in its own year, from when the LLC was formed to when you learned of the filing.
 - **Three receipts:** one timestamped fax receipt per package, kept on your filing page.
 
-On Standard the whole catch-up costs ${STD_3Y}: ${STD} for the first year plus ${ADD} for each of the other two. Before you start, the [penalty calculator](/form-5472-penalty-calculator) shows the statutory exposure for the years involved.
+On Standard the whole catch-up costs ${STD_3Y}: ${STD} for the first year plus ${ADD} for each of the other two. Before you start, the [Form 5472 penalty calculator](/form-5472-penalty-calculator) shows the statutory exposure for the years involved.
 
 If you also face an existing penalty, an examination or other unfiled returns, advice from a tax professional matters more than paperwork.`,
       },
@@ -1235,7 +1235,7 @@ Missed earlier years add ${ADD} each on either plan. For a calendar-year LLC the
     lastModified: PAGES_REWRITTEN,
     title: "Form 5472 Preparer, Reviewed Before You Sign | Form5472 Prep",
     metaDescription:
-      "Form 5472 preparer for foreign-owned US LLCs: what a preparer does for Form 5472 and the pro forma 1120, how to choose one, and how our review works.",
+      "Form 5472 preparer for foreign-owned US LLCs: what a preparer does, how to choose one, and how our Form 5472 preparation service works.",
     longDescription:
       "How to choose a Form 5472 preparer for a foreign-owned US single-member LLC: what the preparer does (sorting reportable transactions, completing Form 5472, the Part V statement and the pro forma Form 1120 marked \"Foreign-owned U.S. DE\", getting the package to the IRS by fax or mail), the four kinds of preparer, a checklist of questions, and how Form5472 Prep's PTIN-holding tax accountant review works before the owner signs online.",
     h1: "A Form 5472 Preparer for Foreign-Owned US LLCs",
@@ -1710,7 +1710,7 @@ export const EIN_ITIN_LINKS: HubLink[] = [
   },
   {
     href: "/form-7004-extension",
-    label: "File a Form 7004 extension for your foreign-owned LLC",
+    label: "File a Form 5472 extension (Form 7004) for your foreign-owned LLC",
     blurb: "We prepare Form 7004 and fax it to the IRS Ogden PIN Unit, then email you the fax confirmation.",
   },
 ];

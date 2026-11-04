@@ -2,7 +2,7 @@ import { readdirSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import type { PostMeta } from "./blog";
-import { CITY_GUIDES, COUNTRIES, countryGuideSlug, countryHubSections, isCountryHubPost } from "./blog-countries";
+import { CITY_GUIDES, COUNTRIES, NOMAD_GUIDE_SLUGS, countryGuideSlug, countryHubSections, isCountryHubPost } from "./blog-countries";
 
 function post(slug: string): PostMeta {
   return { slug, title: slug, description: slug, date: "2026-09-01", tags: [], readingMinutes: 5, image: "/x.jpg", imageAlt: "" };
@@ -16,6 +16,12 @@ describe("country hub data", () => {
     const cityFiles = slugs.filter((s) => /^[a-z]+(?:-[a-z]+)?-digital-nomad-/.test(s));
     expect(countryFiles.filter((s) => !isCountryHubPost(s))).toEqual([]);
     expect(cityFiles.filter((s) => !isCountryHubPost(s))).toEqual([]);
+  });
+
+  it("lists every other digital-nomad guide in NOMAD_GUIDE_SLUGS, all real posts", () => {
+    const nomadFiles = slugs.filter((s) => /digital-nomads?(-|$)/.test(s) && !isCountryHubPost(s));
+    expect(nomadFiles.filter((s) => !(NOMAD_GUIDE_SLUGS as readonly string[]).includes(s))).toEqual([]);
+    expect(NOMAD_GUIDE_SLUGS.filter((s) => !slugs.includes(s))).toEqual([]);
   });
 
   it("points only at posts that exist and city guides at known countries", () => {

@@ -14,7 +14,9 @@ Delaware's Division of Corporations issues its certificate through the [Document
 
 ## What is a certificate of good standing?
 
-It's an official statement, issued by the state where the LLC was formed (or, for a foreign-registered entity, the state where it registered to do business), that the entity is on record, has not been administratively dissolved or revoked, and is current on whatever the state requires — usually an annual report, a franchise or license tax, and a registered agent. It does not confirm the LLC's income tax status, its federal information-return history, or anything about the IRS.
+A certificate of good standing is a state-issued statement that an LLC is on record, has not been administratively dissolved or revoked, and is current on whatever the state requires, usually an annual report, a franchise or license tax and a registered agent.
+
+It's issued by the state where the LLC was formed (or, for a foreign-registered entity, the state where it registered to do business). It does not confirm the LLC's income tax status, its federal information-return history, or anything about the IRS.
 
 The exact name varies by state, which matters if you're trying to order the right thing:
 

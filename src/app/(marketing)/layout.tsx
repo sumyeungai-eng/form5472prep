@@ -149,11 +149,14 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <li key={p.slug}><Link href={servicePath(p.slug)} className="hover:text-ink">{p.h1}</Link></li>
               ))}
               <li><Link href="/compare" className="hover:text-ink">Compare providers</Link></li>
+              <li><Link href="/compare/form-5472-filing-services" className="hover:text-ink">Compare filing services</Link></li>
             </ul>
           </nav>
           <nav aria-label="Guides" className="mt-10 space-y-3 border-t border-paper-edge pt-8">
             <p className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-ink">Guides</p>
             <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+              <li><Link href="/irs-form-5472" className="hover:text-ink">What is IRS Form 5472?</Link></li>
+              <li><Link href="/form-5472-by-country" className="hover:text-ink">Form 5472 by country</Link></li>
               <li><Link href="/form-5472-instructions" className="hover:text-ink">Form 5472 instructions</Link></li>
               <li><Link href="/form-5472-example" className="hover:text-ink">Form 5472 example</Link></li>
               <li><Link href="/form-5472-penalty" className="hover:text-ink">Form 5472 penalty</Link></li>

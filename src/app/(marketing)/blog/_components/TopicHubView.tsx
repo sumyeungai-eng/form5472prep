@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import type { PostMeta } from "@/lib/blog";
 import { SITE_URL, breadcrumbList, pageMeta } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
-import { buildTagIndex, duplicateHubTarget, isIndexableHub, tagHref, type TagEntry } from "@/lib/blog-tags";
+import { buildTagIndex, duplicateHubTarget, isIndexableHub, tagHref, topicHubIntro, type TagEntry } from "@/lib/blog-tags";
 import { pageRange, pageSlice, POSTS_PER_PAGE, topicPagePath, totalPages } from "@/lib/blog-pagination";
 import { COUNTRY_HUB_PATH } from "@/lib/blog-countries";
 import { Pager } from "./Pager";
@@ -67,10 +67,29 @@ export function topicHubMetadata(resolved: TopicPage): Metadata {
   };
 }
 
+// Renders the `[label](/path)` internal links of a TOPIC_HUB_INTROS body as <Link>s.
+function IntroText({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/(\[[^\]]+\]\(\/[^)\s]*\))/).map((part, i) => {
+        const link = /^\[([^\]]+)\]\((\/[^)\s]*)\)$/.exec(part);
+        return link ? (
+          <Link key={i} href={link[2]} className="font-semibold text-accent hover:underline">
+            {link[1]}
+          </Link>
+        ) : (
+          part
+        );
+      })}
+    </>
+  );
+}
+
 export function TopicHubView(resolved: TopicPage) {
   const { entry, entries, page, pages } = resolved;
   const { title, description, path, from, to } = hubCopy(resolved);
   const pagePosts = pageSlice(entry.posts, page);
+  const intro = page === 1 ? topicHubIntro(entry.tag) : undefined;
   const offset = (page - 1) * POSTS_PER_PAGE;
   // Cross-links go to indexable hubs only; thin topic pages are noindex. Six,
   // like the /blog topic chips (was 12): with 24 post cards, the pager and the
@@ -132,9 +151,19 @@ export function TopicHubView(resolved: TopicPage) {
             {entry.label} guides
             {page > 1 && <span className="text-accent">, page {page}</span>}
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-            {page === 1 ? description : `Guides ${from}–${to} of ${entry.count} on ${entry.label}, newest first.`}
-          </p>
+          {intro ? (
+            <div className="mt-6 max-w-2xl">
+              <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink">{intro.question}</h2>
+              <p className="mt-3 text-lg leading-8 text-slate-600">{intro.answer}</p>
+              <p className="mt-4 leading-7 text-slate-600">
+                <IntroText text={intro.body} />
+              </p>
+            </div>
+          ) : (
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+              {page === 1 ? description : `Guides ${from}–${to} of ${entry.count} on ${entry.label}, newest first.`}
+            </p>
+          )}
           {COUNTRY_HUB_TOPICS.has(entry.tag) && (
             <Link href={COUNTRY_HUB_PATH} className="mt-5 inline-flex items-center text-sm font-semibold text-accent hover:underline">
               Find your country: Form 5472 by country

@@ -14,7 +14,9 @@ If your LLC was formed in Wyoming, Delaware, New Mexico, or any other US state, 
 
 ## What is the current BOI rule for a foreign-owned US LLC?
 
-FinCEN's [BOI page](https://www.fincen.gov/boi) now states plainly that U.S. companies are exempt from the Beneficial Ownership Information reporting requirements. The rule change is not limited to majority-US-owned companies — ownership nationality is irrelevant for a domestic entity. A Wyoming LLC owned entirely by a non-US individual is still a "US company" for this purpose, because BOI reporting under the amended rule turns on where and how the entity was formed, not who owns it.
+FinCEN's [BOI page](https://www.fincen.gov/boi) now states plainly that U.S. companies are exempt from the Beneficial Ownership Information reporting requirements. The rule change is not limited to majority-US-owned companies — ownership nationality is irrelevant for a domestic entity.
+
+A Wyoming LLC owned entirely by a non-US individual is still a "US company" for this purpose, because BOI reporting under the amended rule turns on where and how the entity was formed, not who owns it.
 
 FinCEN's reporting-company definition, per the same page, now covers only entities "formed under the law of a foreign country and that have registered to do business in any U.S. State or Tribal jurisdiction." An LLC formed under a US state's LLC statute simply does not meet that definition anymore, regardless of the owner's citizenship or residence.
 

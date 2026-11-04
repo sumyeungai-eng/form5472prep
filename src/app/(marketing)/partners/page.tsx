@@ -66,7 +66,7 @@ const steps = [
     icon: FileText,
     title: "Prepare client filings",
     anchor: "#step-2",
-    body: "Start one filing for each client LLC from the partner dashboard. The same filing wizard collects LLC details, owner details, reportable transaction totals, and year-end total assets, with the filing pre-tagged to your partner account. Filings started from the dashboard stay grouped under one login for preparation, signature, and submission tracking.",
+    body: "Start one filing for each client LLC from the partner dashboard. The same guided intake form collects LLC details, owner details, reportable transaction totals, and year-end total assets, with the filing pre-tagged to your partner account. Filings started from the dashboard stay grouped under one login for preparation, signature, and submission tracking.",
   },
   {
     icon: Send,

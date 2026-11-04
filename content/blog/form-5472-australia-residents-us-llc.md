@@ -14,7 +14,9 @@ The filing is a US information return, not a calculation of Australian tax. The 
 
 ## Does an Australian-owned US LLC have to file Form 5472?
 
-An Australian-owned US LLC generally has to file Form 5472 when it is a domestic disregarded entity wholly owned by a foreign person and it had a reportable transaction during the tax year. The IRS instructions define a foreign-owned US disregarded entity as a domestic disregarded entity wholly owned by a foreign person, and say that reporting corporations file Form 5472 when reportable transactions occur.
+An Australian-owned US LLC generally has to file Form 5472 when it is a domestic disregarded entity wholly owned by a foreign person and it had a reportable transaction during the tax year.
+
+The IRS instructions define a foreign-owned US disregarded entity as a domestic disregarded entity wholly owned by a foreign person, and say that reporting corporations file Form 5472 when reportable transactions occur.
 
 Use this filing test:
 

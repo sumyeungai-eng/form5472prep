@@ -163,6 +163,13 @@ describe("llms.txt facts come from code", () => {
   });
 });
 
+describe("llms.txt country hub", () => {
+  it("lists /form-5472-by-country in the core pages and above the guide index", () => {
+    const link = `[Form 5472 by country](${SITE_URL}/form-5472-by-country)`;
+    expect(llmsTxt.split(link).length - 1).toBe(2);
+  });
+});
+
 describe("llms-full.txt core corpus", () => {
   it("contains every /faq question and answer", () => {
     for (const item of FAQ_ITEMS) {
