@@ -210,4 +210,88 @@ describe("extractQuestionHeadings", () => {
       { q: "Which steps come first?", a: "Do these in order: Form the LLC; Apply for the EIN." },
     ]);
   });
+
+  it("ignores headings inside fenced code blocks (``` and ~~~)", () => {
+    const body = [
+      "## Real question?",
+      "",
+      "A real answer.",
+      "",
+      "```md",
+      "## Fenced question?",
+      "",
+      "Not an answer.",
+      "```",
+      "",
+      "~~~",
+      "## Tilde question?",
+      "",
+      "Nor this.",
+      "~~~",
+      "",
+      "## Another real one?",
+      "",
+      "Also real.",
+    ].join("\n");
+    expect(extractQuestionHeadings(body)).toEqual([
+      { q: "Real question?", a: "A real answer." },
+      { q: "Another real one?", a: "Also real." },
+    ]);
+  });
+
+  it("strips HTML, decodes basic entities, and drops reference links and strikethrough", () => {
+    const body = [
+      "## What is cleaned?",
+      "",
+      "<span>Tags</span> &amp; <b>entities</b> &lt;ok&gt; &quot;quoted&quot; it&#39;s&nbsp;fine, ~~old~~ [ref link][1] and ![alt text](img.png) and [a](b).",
+    ].join("\n");
+    expect(extractQuestionHeadings(body)).toEqual([
+      {
+        q: "What is cleaned?",
+        a: 'Tags & entities <ok> "quoted" it\'s fine, old ref link and alt text and a.',
+      },
+    ]);
+  });
+
+  it("stops the answer at a table row or fence even after the paragraph began", () => {
+    const body = [
+      "## Table next?",
+      "",
+      "Answer line one",
+      "| a | b |",
+      "|---|---|",
+      "| 1 | 2 |",
+      "",
+      "## Code next?",
+      "",
+      "Answer before code",
+      "```",
+      "echo hi",
+      "```",
+      "more text that must not join the answer",
+    ].join("\n");
+    expect(extractQuestionHeadings(body)).toEqual([
+      { q: "Table next?", a: "Answer line one" },
+      { q: "Code next?", a: "Answer before code" },
+    ]);
+  });
+});
+
+describe("extractFaqs fenced code", () => {
+  it("ignores FAQ headings and questions inside code fences", () => {
+    const fenced = ["```", "## Frequently asked questions", "### Fake?", "Nope.", "```"].join("\n");
+    expect(extractFaqs(fenced)).toEqual([]);
+    const body = [
+      "## Frequently asked questions",
+      "",
+      "### Real?",
+      "",
+      "Yes.",
+      "```",
+      "### Not a question?",
+      "code",
+      "```",
+    ].join("\n");
+    expect(extractFaqs(body)).toEqual([{ q: "Real?", a: "Yes." }]);
+  });
 });

@@ -50,7 +50,7 @@ The client remains responsible for the accuracy of the submitted information. Th
 
 ## What should a white-label agreement define?
 
-Agree five practical items before the first client: brand touchpoints, client communication, scope escalation, document custody, and billing. For example, your firm sends the intake and signing links, Form5472 Prep sends your clients no email, your firm pays for each filing at checkout, and your clients see no prices.
+Agree five practical items before the first client: brand touchpoints, client communication, scope escalation, document custody, and billing. For example, your firm sends the intake and signing links, Form5472 Prep sends your clients no email, and your firm pays for each filing at checkout.
 
 Before sending the first client, agree on five practical items.
 

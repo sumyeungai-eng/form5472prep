@@ -79,7 +79,7 @@ Under [Orden HAP/72/2013](https://www.boe.es/buscar/act.php?id=BOE-A-2013-954), 
 |---|---|---|
 | Accounts at foreign financial institutions | Holders, representatives, authorised persons, beneficiaries, people with power of disposal, and beneficial owners | The owner usually signs on the LLC’s US business account |
 | Securities or rights representing a participation in any type of legal entity located abroad | Holders and beneficial owners | The LLC membership interest itself |
-| Real estate located abroad | Holders and beneficial owners | Only if the LLC or owner holds US property |
+| Real estate located abroad | Holders and beneficial owners | If the owner holds or beneficially owns property outside Spain, including through the LLC |
 
 The implementing regulation, [Real Decreto 1065/2007](https://www.boe.es/buscar/act.php?id=BOE-A-2007-15984) (articles 42 bis, 42 ter and 54 bis), exempts a category when the combined values do not exceed EUR 50,000. Whether the LLC interest or its account falls in scope, how it is valued, and whether an exemption applies are questions for a Spanish adviser. Modelo 720 is not filed with the IRS and is not part of our package.
 

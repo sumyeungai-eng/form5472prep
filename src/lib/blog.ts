@@ -509,15 +509,29 @@ export function formatPostDate(iso: string): string {
   });
 }
 
-// Strip the markdown that would be noise inside JSON-LD plain text: links →
-// their text, bold/italic markers, inline code backticks.
+// Strip the markup that would be noise inside JSON-LD plain text: images and
+// links (inline or reference-style) → their text, inline HTML tags, bold/italic
+// /strikethrough markers, inline code backticks; then decode the basic entities
+// so the text matches what a reader sees.
 function stripMarkdown(s: string): string {
   return s
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/[*_`]+/g, "")
+    .replace(/\[([^\]]+)\]\[[^\]]*\]/g, "$1")
+    .replace(/<\/?[a-zA-Z][^>]*>/g, "")
+    .replace(/~~|[*_`]+/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&")
     .replace(/\s+/g, " ")
     .trim();
 }
+
+// The fence character (` or ~) a line opens or closes a fenced code block with.
+const fenceChar = (t: string) => t.match(/^(`{3,}|~{3,})/)?.[1][0] ?? null;
 
 // Extract Q&A pairs from a post's "## Frequently asked questions" section so
 // they can be emitted as FAQPage JSON-LD. Recognizes both question formats used
@@ -538,8 +552,19 @@ export function extractFaqs(body: string): { q: string; a: string }[] {
     started = false;
     done = false;
   };
+  let fence: string | null = null;
   for (const line of body.split("\n")) {
     const t = line.trim();
+    const fc = fenceChar(t);
+    if (fence) {
+      if (fc === fence) fence = null;
+      continue; // code is never a heading or an answer
+    }
+    if (fc) {
+      fence = fc;
+      if (started) done = true;
+      continue;
+    }
     const h2 = line.match(/^##\s+(.*)/);
     if (h2) {
       flush();
@@ -601,8 +626,19 @@ export function extractQuestionHeadings(body: string): { q: string; a: string }[
     items = [];
     state = "pending";
   };
+  let fence: string | null = null;
   for (const line of body.split("\n")) {
     const t = line.trim();
+    const fc = fenceChar(t);
+    if (fence) {
+      if (fc === fence) fence = null;
+      continue; // code is never a heading or an answer
+    }
+    if (fc) {
+      fence = fc;
+      state = "done"; // a fence ends whatever block was being read
+      continue;
+    }
     const heading = t.match(/^(#{1,6})\s+(.*)/);
     if (heading || /^(-{3,}|\*{3,}|_{3,})$/.test(t)) {
       flush();
@@ -622,6 +658,8 @@ export function extractQuestionHeadings(body: string): { q: string; a: string }[
     } else if (state === "pending" && /^([-*+]\s|\d+[.)]\s|\||```|~~~|>)/.test(t)) {
       ans = [];
       state = "done"; // first block is not a paragraph: no answer for this question
+    } else if (state === "collecting" && t.startsWith("|")) {
+      state = "done"; // a table row ends the paragraph
     } else if (state === "collecting" && item) {
       state = lead().endsWith(":") ? "list" : "done"; // a list may interrupt a paragraph
       if (state === "list") items.push(item[2]);
