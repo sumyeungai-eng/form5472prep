@@ -107,3 +107,28 @@ The owner asked to "read every pages updates about our site on moz and plan a im
 - `extractHowTo` (blog.ts) and `extractH2Headings` (BlogToc.tsx) now ignore fenced code. They recognise ``` and ~~~, and a fence closes only on the same character that opened it. Test added in `blog.test.ts`.
 - `ein-application-checklist-foreign-owned-llc` gains the H2 "What information do you need for Form SS-4?" with a 53-word answer drawn from the post's own table. In `itin-caa-vs-mail-vs-tac`, "What a CAA actually does" becomes "What does a CAA actually do?". Both posts now have ≥2 question H2s, so they get FAQPage through the fallback.
 - Verified: vitest (blog, blog route, components) 422/422; tsc 0 errors; build (see commit).
+
+## Wave 4: long-tail GSC questions (owner-approved, branch `seo/longtail` → main)
+- **Method:** a tip from @ShenyuanNext, read via the Grok CLI. The GSC regex `^(?:\S+\s+){7,}\S+$` (8+ words) plus a question-word regex, over 16 months, found 115 queries with 412 impressions and 0 clicks. These grouped into 46 intents: 25 answered, 10 buried, 5 on the wrong page, 1 gap, 5 off-topic. Data and mapping are in `docs/seo/gsc-longtail-2026-11-04/`.
+- **The owner approved all 8 plan items** and confirmed that the EIN order has no add-on charges, so "no hidden fees" may be said.
+- **`7202317`:**
+  - Deadline question H2 and answer. **Fact fix:** tax year 2026 is due 15 Apr 2027, or 15 Oct 2027 with Form 7004; this was added to the deadline guide and the file-form-5472 FAQ.
+  - New question headings and FAQs:
+    - free fill-out;
+    - IRS late-filing penalty;
+    - filing alongside Form 1120;
+    - EIN service with no hidden fees;
+    - filing-service cost;
+    - foreign-owned LLC requirements;
+    - ITIN for non-residents and spouses;
+    - single-member ↔ multi-member LLC, citing Treas. Reg. 301.7701-3(f)(2) and Rev. Rul. 99-6;
+    - EIN designee;
+    - "foreign EIN" (98 = the IRS Philadelphia campus prefix);
+    - Letter 147C;
+    - FBAR vs Form 8938.
+  - Links now point to the pages Google should show.
+- **`02e1ed7`, Codex fixes:** ITIN timing now includes tax season; the PTIN wording is standardised in two price sections.
+- **Verified:** vitest 2279/2279; tsc 0 errors; build 578/578.
+- **Follow-up:**
+  - Re-pull the same two regex filters around 2026-12-02 and compare clicks and CTR per intent.
+  - The deadline calculator and /faq could link to the deadline post; those files were not in this wave.
