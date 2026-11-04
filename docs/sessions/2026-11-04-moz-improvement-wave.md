@@ -78,3 +78,27 @@ The owner asked to "read every pages updates about our site on moz and plan a im
 ## Lane notes
 - **Lanes:** A (sonnet) handled links, B (opus) money pages and copy, C (sonnet) blog hygiene. They worked on disjoint files in one worktree with no lane commits; the architect committed.
 - **Moz readers:** they opened stray Chrome tabs before the "in-app browser" correction (ids 639181727/733/730/743). Those tabs could not be closed from the session.
+
+## Wave 2 — "finish the remaining" (branch `seo/moz-1104b` → main)
+- **`3c8e849`:**
+  - 21 posts gained 80 question H2s with 40–60-word answers. The posts are the 9 digital-nomad cities, the 4 partner-program/white-label posts, and the crypto, personal-expenses, noncash, estimates, royalties, Oregon and Washington posts.
+  - Blog FAQPage fallback: `extractQuestionHeadings()` in `blog.ts` uses question H2s plus their first paragraph (≥2 required) when a post has no FAQ section. A colon lead-in carries its list. 12 posts gain FAQPage this way.
+  - `/services` and `/press` emit FAQPage from the data they render. Tests assert that schema text equals visible text.
+  - The Spain and Switzerland posts are expanded to about 2,100 words and cite BOE, ESTV and IRS sources. They use the 2025 IRS yearly averages from `tools/exchange-rates/data.ts` (EUR 0.886, CHF 0.831).
+- **`e8bc584`, Codex review fixes** (verified: vitest 2215/2215, tsc 0 errors, build 576/576):
+  - FAQ extraction ignores code fences.
+  - `stripMarkdown` strips HTML, entities, strikethrough and reference links (shared with `extractFaqs`/`extractHowTo`).
+  - The Spain Modelo 720 real-estate row now says "property outside Spain".
+  - "your clients see no prices" was removed from the white-label post.
+- **GSC (after 79ea9d8):** indexing requested for all 10 priority URLs (table in `~/Developer/f5472-wt/moz-1104/gsc-inspect-2026-11-04.md`).
+  - Live test: `/compare` and `/services/hire-someone…` are "available to Google" with a self user-canonical. Google's canonical is re-decided after indexing; it was still 747live.bet before the request.
+  - The white-label page was "unknown to Google".
+  - GSC worked in Chrome Browser 1 via `authuser=sumyeungai%40gmail.com`.
+- **Deliberately not changed:**
+  - Blog-card thumbnails keep `alt=""`. They are decorative next to the title text, so filling them would duplicate it for screen readers.
+  - The "spaced brand variant" audit hit is a false positive: it matched "Form 5472 Preparer".
+  - The /blog and topic-hub "Q&A" are post-card titles, so they get no FAQPage.
+  - The 3 company-car posts are owner-gated.
+- **Follow-ups:**
+  - `extractHowTo` and `extractH2Headings` don't yet ignore code fences.
+  - `ein-application-checklist-foreign-owned-llc` and `itin-caa-vs-mail-vs-tac` have only one question H2 each, so they get no FAQPage.
