@@ -102,3 +102,8 @@ The owner asked to "read every pages updates about our site on moz and plan a im
 - **Follow-ups:**
   - `extractHowTo` and `extractH2Headings` don't yet ignore code fences.
   - `ein-application-checklist-foreign-owned-llc` and `itin-caa-vs-mail-vs-tac` have only one question H2 each, so they get no FAQPage.
+
+## Wave 3: the two follow-ups (branch `seo/moz-1104c` → main)
+- `extractHowTo` (blog.ts) and `extractH2Headings` (BlogToc.tsx) now ignore fenced code. They recognise ``` and ~~~, and a fence closes only on the same character that opened it. Test added in `blog.test.ts`.
+- `ein-application-checklist-foreign-owned-llc` gains the H2 "What information do you need for Form SS-4?" with a 53-word answer drawn from the post's own table. In `itin-caa-vs-mail-vs-tac`, "What a CAA actually does" becomes "What does a CAA actually do?". Both posts now have ≥2 question H2s, so they get FAQPage through the fallback.
+- Verified: vitest (blog, blog route, components) 422/422; tsc 0 errors; build (see commit).

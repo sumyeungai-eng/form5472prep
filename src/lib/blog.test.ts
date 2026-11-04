@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { blogSlugFromHref, extractFaqs, extractQuestionHeadings, isPubliclyAvailable } from "./blog";
+import { blogSlugFromHref, extractFaqs, extractHowTo, extractQuestionHeadings, isPubliclyAvailable } from "./blog";
+import { extractH2Headings } from "@/components/BlogToc";
 
 describe("isPubliclyAvailable", () => {
   const now = new Date("2026-07-27T13:00:00.000Z");
@@ -293,5 +294,28 @@ describe("extractFaqs fenced code", () => {
       "```",
     ].join("\n");
     expect(extractFaqs(body)).toEqual([{ q: "Real?", a: "Yes." }]);
+  });
+});
+
+describe("code fences in extractHowTo and extractH2Headings", () => {
+  const body = [
+    "## How to file",
+    "1. Prepare the forms.",
+    "2. Fax them.",
+    "~~~md",
+    "## How to fake a step",
+    "1. Not a step.",
+    "```",
+    "## Still inside the tilde fence",
+    "~~~",
+    "## After the fence",
+  ].join("\n");
+
+  it("extractHowTo skips steps inside a fence", () => {
+    expect(extractHowTo(body)?.steps.map((s) => s.name)).toEqual(["Prepare the forms", "Fax them"]);
+  });
+
+  it("extractH2Headings ignores headings inside ~~~ and does not close on ```", () => {
+    expect(extractH2Headings(body).map((h) => h.text)).toEqual(["How to file", "After the fence"]);
   });
 });

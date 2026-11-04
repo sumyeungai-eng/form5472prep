@@ -682,7 +682,17 @@ export function extractHowTo(
   let steps: { name: string; text: string }[] = [];
 
   const finish = () => (name && steps.length >= 2 ? { name, steps } : null);
+  let fence: string | null = null;
   for (const line of body.split("\n")) {
+    const fc = fenceChar(line.trim());
+    if (fence) {
+      if (fc === fence) fence = null;
+      continue;
+    }
+    if (fc) {
+      fence = fc;
+      continue;
+    }
     const h2 = line.match(/^##\s+(.+)/);
     if (h2) {
       const ready = finish();

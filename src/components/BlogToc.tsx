@@ -7,14 +7,18 @@ type BlogTocProps = {
 export function extractH2Headings(body: string): { text: string; id: string }[] {
   const slugger = new GithubSlugger();
   const headings: { text: string; id: string }[] = [];
-  let inFence = false;
+  let fence: string | null = null;
 
   for (const line of body.split("\n")) {
-    if (line.trimStart().startsWith("```")) {
-      inFence = !inFence;
+    const fc = line.trimStart().match(/^(`{3,}|~{3,})/)?.[1][0] ?? null;
+    if (fence) {
+      if (fc === fence) fence = null;
       continue;
     }
-    if (inFence) continue;
+    if (fc) {
+      fence = fc;
+      continue;
+    }
 
     const match = line.match(/^(#{1,6})\s+(.+)$/);
     if (!match) continue;

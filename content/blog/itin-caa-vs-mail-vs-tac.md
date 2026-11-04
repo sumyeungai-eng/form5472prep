@@ -25,7 +25,7 @@ For non-residents applying from abroad, the practical decision often comes down 
 
 The [IRS application-route comparison](https://www.irs.gov/tin/itin/how-to-apply-for-an-itin) also lists participating VITA sites, which may provide free help at limited U.S. locations.
 
-## What a CAA actually does
+## What does a CAA actually do?
 
 A CAA is not an employee of the IRS and cannot approve an ITIN. Under the [IRS Acceptance Agent program](https://www.irs.gov/tin/itin/itin-acceptance-agents), a CAA can help complete Form W-7, authenticate most supporting documents, return authenticated documents immediately, mail the application package, and work with the IRS on application issues.
 

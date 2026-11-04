@@ -24,7 +24,9 @@ Save the state-stamped articles, certificate of formation, or equivalent record.
 - organizer and member or manager roles; and
 - current registered and business addresses.
 
-## Information needed for Form SS-4
+## What information do you need for Form SS-4?
+
+Form SS-4 asks for the LLC's legal name, mailing and street address, the responsible party (the natural person who ultimately owns or controls the LLC), member count and state of formation, the intended federal tax treatment, the reason for applying and start date, expected employees, and an authorized signer with reachable contact details.
 
 Use one source file so the same facts appear everywhere.
 
