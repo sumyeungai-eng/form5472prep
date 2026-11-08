@@ -1,10 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/JsonLd";
+import { CONTACT_EMAIL } from "@/lib/contactEmail";
 import { MULTI_YEAR_ADDON_CENTS } from "@/lib/pricing";
 import {
   breadcrumbList,
-  ORG_EMAIL,
   organizationNode,
   pageMeta,
   SITE_URL,
@@ -20,7 +20,7 @@ const PAGE_DESCRIPTION =
 const CONTACT_FAQS: { q: string; a: string }[] = [
   {
     q: "How quickly will you reply?",
-    a: "Within one business day, Monday to Friday, from support@form5472prep.com. If you don't see our reply, check your spam folder.",
+    a: "Within one business day, Monday to Friday. If you don't see our reply, check your spam folder.",
   },
   {
     q: "What should I include in my message?",
@@ -110,8 +110,8 @@ export default function ContactPage() {
             <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-slate-500">
               <span>Replies within 1 business day</span>
               <span aria-hidden className="text-slate-300">·</span>
-              <a href={`mailto:${ORG_EMAIL}`} className="text-accent hover:underline">
-                {ORG_EMAIL}
+              <a href={`mailto:${CONTACT_EMAIL}`} className="text-accent hover:underline">
+                {CONTACT_EMAIL}
               </a>
               <span aria-hidden className="text-slate-300">·</span>
               <span>Filed to the IRS Ogden PIN Unit</span>
@@ -149,10 +149,10 @@ export default function ContactPage() {
                   Prefer email?
                 </h2>
                 <a
-                  href={`mailto:${ORG_EMAIL}`}
+                  href={`mailto:${CONTACT_EMAIL}`}
                   className="mt-3 inline-flex break-all font-medium text-accent hover:underline"
                 >
-                  {ORG_EMAIL}
+                  {CONTACT_EMAIL}
                 </a>
                 <p className="mt-3 font-medium text-ink">We reply within 1 business day.</p>
               </div>

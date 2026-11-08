@@ -4,6 +4,7 @@ import { MobileMenu } from "@/components/MobileMenu";
 import { HeaderAuthButtons } from "@/components/HeaderAuthButtons";
 import { Button } from "@/components/ui/button";
 import { SERVICE_PAGES, servicePath } from "@/lib/services-pages";
+import { CONTACT_EMAIL } from "@/lib/contactEmail";
 
 // No `force-dynamic` and no cookie reads here: the auth-dependent header bits are
 // client islands (MobileMenu + HeaderAuthButtons) that poll /api/me after paint,
@@ -84,8 +85,8 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               </p>
               <p>
                 Questions?{" "}
-                <a href="mailto:support@form5472prep.com" className="text-accent hover:underline">
-                  support@form5472prep.com
+                <a href={`mailto:${CONTACT_EMAIL}`} className="text-accent hover:underline">
+                  {CONTACT_EMAIL}
                 </a>
               </p>
               <p>

@@ -2,9 +2,9 @@
 
 import type { FormEvent } from "react";
 import { useState } from "react";
+import { CONTACT_EMAIL } from "@/lib/contactEmail";
 
-const SUPPORT_EMAIL = "support@form5472prep.com";
-const GENERIC_ERROR = `Could not send your message. Please email ${SUPPORT_EMAIL} directly.`;
+const GENERIC_ERROR = `Could not send your message. Please email ${CONTACT_EMAIL} directly.`;
 
 function valueFrom(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -44,7 +44,7 @@ export function ContactForm() {
 
       if (response.status === 429) {
         setError(
-          `Too many messages from your connection — please wait a few minutes or email ${SUPPORT_EMAIL} directly.`,
+          `Too many messages from your connection — please wait a few minutes or email ${CONTACT_EMAIL} directly.`,
         );
         return;
       }
@@ -62,15 +62,12 @@ export function ContactForm() {
     return (
       <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm leading-relaxed text-emerald-900">
         <p>
-          Thanks — we&apos;ve received your question. We reply within 1 business day, from{" "}
-          <a href={`mailto:${SUPPORT_EMAIL}`} className="font-medium underline underline-offset-2">
-            {SUPPORT_EMAIL}
+          Thanks — we&apos;ve received your question. We reply within 1 business day. If our
+          reply doesn&apos;t arrive, check your spam folder or email{" "}
+          <a href={`mailto:${CONTACT_EMAIL}`} className="font-medium underline underline-offset-2">
+            {CONTACT_EMAIL}
           </a>
           .
-        </p>
-        <p className="mt-2">
-          You&apos;ll get a reply from {SUPPORT_EMAIL} — if it doesn&apos;t arrive, check your
-          spam folder.
         </p>
       </div>
     );
