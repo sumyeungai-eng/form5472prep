@@ -74,6 +74,7 @@ export type FilingActionName =
   | "setStatus"
   | "resendOrderConfirmation"
   | "resendMagicLink"
+  | "sendSignReminder"
   | "resendFaxConfirmation"
   | "retryFax"
   | "regeneratePdf"
@@ -114,6 +115,7 @@ export const FILING_ACTION_NAMES = [
   "setStatus",
   "resendOrderConfirmation",
   "resendMagicLink",
+  "sendSignReminder",
   "resendFaxConfirmation",
   "retryFax",
   "regeneratePdf",
@@ -145,6 +147,7 @@ export const SIDE_EFFECTING_ACTIONS: ReadonlySet<FilingActionName> = new Set<Fil
   "retryFax",
   "resendOrderConfirmation",
   "resendMagicLink",
+  "sendSignReminder",
   "resendFaxConfirmation",
   "regeneratePdf",
   "approveForSignature",
@@ -1376,6 +1379,43 @@ export async function runFilingAction(
         reason: ctx.reason,
       });
       return { ok: true };
+    }
+
+    case "sendSignReminder": {
+      // Re-sends the check-and-sign email for a released, still-unsigned package.
+      if (!filing.user) throw new FilingActionError(400, "no_customer_email", "no customer email");
+      if (!filing.reviewApprovedAt) {
+        throw new FilingActionError(409, "not_released", "The package has not been released to the client yet, so there is nothing to sign.");
+      }
+      if (filing.signaturePngKey || filing.signedPdfKey || ["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(filing.status)) {
+        throw new FilingActionError(409, "already_signed", "The client has already signed this package.");
+      }
+      let brand: Awaited<ReturnType<typeof brandForFiling>> = null;
+      try {
+        brand = await brandForFiling(filing.id);
+      } catch (err) {
+        console.error("[sendSignReminder] brand lookup failed", err);
+      }
+      await sendReadyToSignEmail({
+        email: filing.user.email,
+        recipientName: filing.ownerName,
+        filingId: filing.id,
+        llcName: filing.llcName,
+        taxYears: filing.taxYears,
+        portalLink: makeMagicLink(filing.user.id),
+        brand: brand ?? undefined,
+        reminder: true,
+      });
+      await logFilingChange({
+        filingId: filing.id,
+        adminId: ctx.adminId,
+        source: "admin",
+        field: "email",
+        before: null,
+        after: { action: "sendSignReminder", to: filing.user.email },
+        reason: ctx.reason,
+      });
+      return { ok: true, to: filing.user.email };
     }
 
     case "resendFaxConfirmation": {

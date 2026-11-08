@@ -785,6 +785,8 @@ export async function sendReadyToSignEmail(args: {
   // True when the client had signed an earlier version: we uploaded a
   // corrected package, so their earlier signature no longer applies.
   resign?: boolean;
+  // Admin "Send signing reminder": same email, reminder subject + log kind.
+  reminder?: boolean;
 }) {
   const salutation = firstNameFrom(args.recipientName) ?? "there";
   const yearsLabel = args.taxYears.join(", ");
@@ -793,10 +795,12 @@ export async function sendReadyToSignEmail(args: {
   const signLink = portalLinkWithNext(args.portalLink, `/filings/${args.filingId}/sign`);
   const subject = args.resign
     ? "Updated forms: please check and sign again"
-    : "Please check and sign your forms";
+    : args.reminder
+      ? "Reminder: please check and sign your forms"
+      : "Please check and sign your forms";
   const intro = args.resign
     ? `We've updated your forms for ${llcLine}${yearsSuffix} after review. Because the package changed, we need you to check the new version and sign it again.`
-    : `A PTIN-holding tax accountant has reviewed your forms for ${llcLine}${yearsSuffix}. Before we fax them to the IRS, please check that everything is correct.`;
+    : `${args.reminder ? "A quick reminder: your forms are still waiting for your signature, and we can't fax them to the IRS until you sign. " : ""}A PTIN-holding tax accountant has reviewed your forms for ${llcLine}${yearsSuffix}. Before we fax them to the IRS, please check that everything is correct.`;
   const checks = [
     "LLC name, EIN and address",
     "Your name, address and foreign tax ID",
@@ -815,7 +819,7 @@ export async function sendReadyToSignEmail(args: {
     </p>`;
 
   return sendEmail({
-    log: { kind: "ready_to_sign", filingId: args.filingId },
+    log: { kind: args.reminder ? "sign_reminder" : "ready_to_sign", filingId: args.filingId },
     to: args.email,
     fromName: args.brand?.name,
     replyTo: args.brand?.replyTo,

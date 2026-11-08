@@ -606,6 +606,15 @@ export function AdminActions({ filingId, currentStatus, userEmail, hasFaxService
             >
               Resend magic link
             </ActionButton>
+            {reviewApprovedAt && !hasSignedPdf && !hasCustomerSignature && !["SIGNED_UPLOADED", "FAXED", "CONFIRMED"].includes(currentStatus) && (
+              <ActionButton
+                disabled={pending || uploading !== null || !userEmail}
+                onClick={() => callApi({ action: "sendSignReminder" }, "Signing reminder sent")}
+                tooltip={!userEmail ? "No customer email on file" : undefined}
+              >
+                Send signing reminder
+              </ActionButton>
+            )}
             {canResendFaxConfirmation && (
               <>
               <FaxCopyCheckbox checked={resendCopyToClient} onChange={setResendCopyToClient} hasOwnerSsn={hasOwnerSsn} busy={resendingFaxConfirmation} />

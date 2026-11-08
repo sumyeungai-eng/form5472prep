@@ -129,6 +129,7 @@ describe("SIDE_EFFECTING_ACTIONS", () => {
       "resendMagicLink",
       "resendOrderConfirmation",
       "retryFax",
+      "sendSignReminder",
     ]);
   });
 
@@ -552,6 +553,47 @@ describe("approveForSignature", () => {
       expect(db.update).not.toHaveBeenCalled();
     },
   );
+});
+
+describe("sendSignReminder", () => {
+  const released = {
+    id: "filing_1",
+    status: "PDF_GENERATED",
+    llcName: "Acme LLC",
+    ownerName: "Owner One",
+    taxYears: [2025],
+    reviewApprovedAt: new Date("2026-11-01T00:00:00Z"),
+    signaturePngKey: null,
+    signedPdfKey: null,
+    user: { id: "u1", email: "owner@example.test" },
+  };
+  beforeEach(() => {
+    db.findUnique.mockReset();
+    db.createLog.mockClear();
+    email.sendReadyToSignEmail.mockClear();
+  });
+
+  it("re-sends the check-and-sign email as a reminder and logs it", async () => {
+    db.findUnique.mockResolvedValue(released);
+    await expect(runFilingAction("filing_1", "sendSignReminder", {}, { adminId: "admin_1" })).resolves.toMatchObject({
+      ok: true,
+      to: "owner@example.test",
+    });
+    expect(email.sendReadyToSignEmail).toHaveBeenCalledWith(
+      expect.objectContaining({ email: "owner@example.test", filingId: "filing_1", reminder: true }),
+    );
+    expect(db.createLog).toHaveBeenCalled();
+  });
+
+  it.each([
+    ["not released", { reviewApprovedAt: null }, "not_released"],
+    ["already signed", { signaturePngKey: "sig.png" }, "already_signed"],
+    ["already faxed", { status: "FAXED" }, "already_signed"],
+  ])("refuses when %s", async (_label, patch, code) => {
+    db.findUnique.mockResolvedValue({ ...released, ...patch });
+    await expect(runFilingAction("filing_1", "sendSignReminder", {}, { adminId: "admin_1" })).rejects.toMatchObject({ code });
+    expect(email.sendReadyToSignEmail).not.toHaveBeenCalled();
+  });
 });
 
 describe("uploadReviewedPdf — hands the package to the client", () => {
