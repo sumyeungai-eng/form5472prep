@@ -28,3 +28,15 @@ Codex review skipped (small, admin-only, no customer data path).
 
 ## Open
 - Owner-gated: none. Follow-up: an admin UI button if this gets used often.
+
+## Follow-up (same day)
+- Tests 1–2 (+81455222373) failed at Telnyx: `destination_not_in_countries_whitelist`.
+- Owner-approved: Telnyx Outbound Voice Profile `form5472-fax` (2964410030356432178)
+  → Allowed Destinations now also includes **Japan +81** (only Japan added).
+  Remove it there if international faxing should be closed again.
+- Test 3 sent 14:31 UTC; Telnyx webhook events ran until 14:33:45 (a real
+  transmission attempt, ~45 s). Final status not captured (browser timeout);
+  owner to confirm the page arrived.
+- Spotted: production logs `[telnyx-webhook] SIGNATURE VERIFICATION DISABLED —
+  TELNYX_PUBLIC_KEY not set` on every webhook. Owner-gated: set
+  TELNYX_PUBLIC_KEY in Vercel (Telnyx portal → Keys & Credentials → Public Key).
