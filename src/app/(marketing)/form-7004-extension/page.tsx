@@ -109,10 +109,12 @@ export default function Form7004ExtensionPage() {
               <span className="text-accent-100">for your foreign-owned LLC.</span>
             </h1>
             <p data-speakable className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
-              Our <strong className="text-white">Form 7004 extension</strong> service prepares Form 7004 for your
-              foreign-owned LLC, with &ldquo;Foreign-owned U.S. DE&rdquo; and Form 1120 code 12, faxes it to the IRS
-              Ogden PIN Unit and emails you the fax confirmation. A valid extension moves your Form 5472 deadline from
-              15 April to 15 October.
+              Yes, our <strong className="text-white">Form 7004 extension service at Form5472 Prep</strong> can
+              extend your filing deadline if ordered before the original due date. Order online with your LLC details;
+              our team prepares Form 7004 with &ldquo;Foreign-owned U.S. DE&rdquo; and code 12, faxes it to the IRS Ogden
+              PIN Unit within 2 business days (after 1 January for unfinished tax years) and emails the fax receipt.
+              {PRICE} per LLC, per tax year; no subscription. Only foreign-owned single-member LLCs filing the pro forma
+              1120; no tax advice, planning or IRS representation; not a CPA firm. This does not replace filing Form 5472.
             </p>
             <ul className="mt-6 space-y-2">
               {[
