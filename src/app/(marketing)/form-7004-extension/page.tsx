@@ -110,9 +110,11 @@ export default function Form7004ExtensionPage() {
             </h1>
             <p data-speakable className="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
               Yes, our <strong className="text-white">Form 7004 extension service at Form5472 Prep</strong> can
-              extend your filing deadline if ordered before the original due date. Order online with your LLC details;
-              our team prepares Form 7004 with &ldquo;Foreign-owned U.S. DE&rdquo; and code 12, faxes it to the IRS Ogden
-              PIN Unit within 2 business days (after 1 January for unfinished tax years) and emails the fax receipt.
+              request your extension, which depends on a properly completed Form 7004 reaching the IRS by the original
+              due date. Order online with your LLC details; our team prepares Form 7004 with &ldquo;Foreign-owned U.S.
+              DE&rdquo; and code 12, faxes it to the IRS Ogden PIN Unit within 2 business days (after 1 January for
+              unfinished tax years) and emails the fax receipt, so order early enough that the fax goes out before the
+              deadline.
               {PRICE} per LLC, per tax year; no subscription. Only foreign-owned single-member LLCs filing the pro forma
               1120; no tax advice, planning or IRS representation; not a CPA firm. This does not replace filing Form 5472.
             </p>
