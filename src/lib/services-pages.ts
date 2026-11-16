@@ -1527,6 +1527,42 @@ Whoever starts it, a client filing is priced per tax year. Standard, at ${STD}, 
   },
 ];
 
+/** Add a situation-specific overview without rewriting the established copy. */
+function prependIntro(page: ServicePage, overview: string): void {
+  page.intro = `${overview}\n\n${page.intro}`;
+}
+
+const SERVICE_OPENINGS: Record<string, string> = {
+  "form-5472-filing-service":
+    `Form 5472 filing service can handle your annual package. Guided intake form takes about 15 minutes; our team prepares, a tax accountant who holds an IRS PTIN reviews, you check and sign online, then we fax to the IRS Ogden PIN Unit and send your fax receipt. Ready to sign: ${STANDARD_TURNAROUND} (Standard), ${EXPRESS_TURNAROUND} (Express). Prices: Standard ${STD}/Express ${EXP}; additional past years ${ADD}; no subscription. Scope: pro forma 1120 filings for foreign-owned single-member LLCs; no tax advice/planning or IRS representation; not a CPA firm.`,
+  "pro-forma-1120-filing-service":
+    `Pro forma 1120 filing service handles your cover. About 15 minutes completes guided intake; our team prepares the package, then a tax accountant who holds an IRS PTIN checks. Then check and sign online; we fax it to IRS Ogden PIN Unit, sending the fax receipt. Standard signing readiness: ${STANDARD_TURNAROUND}; for Express: ${EXPRESS_TURNAROUND}. Plans: Standard ${STD}, Express ${EXP}; plus ${ADD} per additional past year; no subscription. Foreign-owned single-member LLCs filing the pro forma 1120 only; not a CPA firm; tax advice, planning and IRS representation excluded.`,
+  "late-form-5472-filing-service":
+    `Late Form 5472 filing service covers missed years. Guided intake uses about 15 minutes; our team prepares the package; a tax accountant who holds an IRS PTIN conducts review; check and sign online. We fax packages to the IRS Ogden PIN Unit, supplying a fax receipt. Standard ready for signing: ${STANDARD_TURNAROUND}; Express takes ${EXPRESS_TURNAROUND}. Standard ${STD}; Express costs ${EXP}; additional past years ${ADD} each; no subscription. Only covers foreign-owned single-member LLCs filing pro forma 1120; no tax planning/advice or IRS representation; we’re not a CPA firm.`,
+  "foreign-owned-llc-tax-filing-service":
+    `Foreign-owned LLC tax filing service can cover federal reporting. Guided intake requires about 15 minutes. Our team prepares it; a tax accountant who holds an IRS PTIN examines it. Check online and sign. We fax to IRS Ogden PIN Unit, providing the fax receipt. Ready to sign in ${STANDARD_TURNAROUND} with Standard; ${EXPRESS_TURNAROUND} with Express. Pay ${STD} Standard or ${EXP} Express; add past years for ${ADD}; no subscription. Pro forma 1120 filers only: foreign-owned single-member LLCs; not a CPA firm; excludes IRS representation, planning and tax advice.`,
+  "form-5472-fax-filing-service":
+    `Form 5472 fax filing service delivers your package. Our team prepares from guided intake: about 15 minutes; a tax accountant who holds an IRS PTIN assesses it; check online, then sign. We fax it to the IRS Ogden PIN Unit, then supply its fax receipt. Standard: ${STANDARD_TURNAROUND} until ready to sign; Express needs ${EXPRESS_TURNAROUND}. Standard ${STD}; choose Express ${EXP}; additional past years cost ${ADD}; no subscription. For pro forma 1120 filers: foreign-owned single-member LLCs only; no IRS representation, planning or tax advice; not a CPA firm.`,
+  "white-label-form-5472-filing":
+    `White label Form 5472 filing serves firms. Send intake and sign links; we never email your clients. Intake is guided: about 15 minutes; our team prepares packages; a tax accountant who holds an IRS PTIN provides review; clients check online, then sign. We fax packages to IRS Ogden PIN Unit; send the fax receipt. Signing ready: Standard ${STANDARD_TURNAROUND}/Express ${EXPRESS_TURNAROUND}. Standard ${STD}/Express ${EXP}; add past years ${ADD}; no subscription. Pro forma 1120 only: foreign-owned single-member LLCs; no planning/tax advice; not a CPA firm; no IRS representation.`,
+  "form-5472-filing-for-dormant-llc":
+    `Form 5472 filing for dormant LLC owners covers quiet years. Guided intake needs about 15 minutes; our team prepares for review by a tax accountant who holds an IRS PTIN. You check and sign online; we fax your return to IRS Ogden PIN Unit, sending a fax receipt. Signing readiness: Standard takes ${STANDARD_TURNAROUND}, or Express ${EXPRESS_TURNAROUND}. Standard costs ${STD}; Express ${EXP}; extra past years ${ADD}; subscription-free. Only pro forma 1120 packages for single-member foreign-owned LLCs; no IRS representation or tax advice/planning; not a CPA firm.`,
+  "final-form-5472-for-dissolved-llc":
+    `Final Form 5472 for dissolved LLC owners can cover closure. Our team prepares after about 15 minutes’ guided intake; a tax accountant who holds an IRS PTIN then reviews; you check online and sign. We fax your final package to the IRS Ogden PIN Unit, returning a fax receipt. Standard signing: ${STANDARD_TURNAROUND}; Express signing: ${EXPRESS_TURNAROUND}. Choose Standard ${STD}/Express ${EXP}; each additional past year ${ADD}; no subscription. Scope: foreign-owned single-member LLCs using pro forma 1120; no planning or tax advice; IRS representation excluded; not a CPA firm.`,
+  "hire-someone-to-file-form-5472":
+    `You can hire someone to file Form 5472. Guided intake runs about 15 minutes. Our team prepares everything; a tax accountant who holds an IRS PTIN completes review; you check, then sign online. We fax everything to IRS Ogden PIN Unit, then send the fax receipt. Signing turnaround: ${STANDARD_TURNAROUND} for Standard; Express ${EXPRESS_TURNAROUND}. Standard ${STD} or Express ${EXP}; add ${ADD} per past year; no subscription. Limited to foreign-owned single-member LLCs filing a pro forma 1120; not a CPA firm; excludes tax advice/planning and IRS representation.`,
+  "form-5472-preparer":
+    `A Form 5472 preparer can complete your package. Complete guided intake in about 15 minutes. Our team prepares returns; a tax accountant who holds an IRS PTIN undertakes review. You check online before signing; we fax the return to IRS Ogden PIN Unit and supply your fax receipt. For signing, allow Standard ${STANDARD_TURNAROUND}; Express turnaround: ${EXPRESS_TURNAROUND}. Charges: ${STD} Standard/${EXP} Express, additional past years at ${ADD}; no subscription. Pro forma 1120 for foreign-owned single-member LLCs only; not a CPA firm; tax planning/advice and IRS representation excluded.`,
+  "form-5472-for-accountants":
+    `Form 5472 for accountants can outsource preparation. About 15 minutes of guided intake; our team prepares filings; a tax accountant who holds an IRS PTIN handles review; clients check and sign online. We fax each package to IRS Ogden PIN Unit; you get a fax receipt. Ready to sign: Standard needs ${STANDARD_TURNAROUND}; Express signing takes ${EXPRESS_TURNAROUND}. Standard ${STD}; ${EXP} buys Express; additional past years ${ADD}; subscription-free. Limited to single-member foreign-owned LLC pro forma 1120 filings; not a CPA firm; excludes planning, tax advice and IRS representation.`,
+  "form-5472-for-bookkeepers":
+    `Form 5472 for bookkeepers can use ledger totals. Guided intake: about 15 minutes; our team prepares forms; a tax accountant who holds an IRS PTIN performs review; owners check and sign online. We fax filings to IRS Ogden PIN Unit and return the fax receipt. Standard ready for signing in ${STANDARD_TURNAROUND}; Express for ${EXPRESS_TURNAROUND}. Standard at ${STD}, Express at ${EXP}; additional past years are ${ADD}; no subscription. For foreign-owned single-member LLCs’ pro forma 1120 filings only; not a CPA firm; IRS representation and tax advice/planning excluded.`,
+};
+
+for (const page of SERVICE_PAGES) {
+  prependIntro(page, SERVICE_OPENINGS[page.slug]);
+}
+
 // Related links: two or three sibling services plus the most relevant free
 // tools. Kept here (not inline above) so the sibling anchors always equal the
 // sibling's current H1.

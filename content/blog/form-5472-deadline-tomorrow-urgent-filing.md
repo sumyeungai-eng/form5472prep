@@ -15,6 +15,10 @@ If a 2025 Form 5472 is still unfiled, the deadline is no longer the thing to pla
 
 For the mechanics of catching up — several unfiled years at once, what belongs in a reasonable cause statement, what follows the fax — read [what to do if you filed late or never filed](/blog/form-5472-filed-late-never-filed). Every 2026 and 2027 date sits in [the Form 5472 deadline guide](/blog/form-5472-deadline-2026).
 
+## Can Form5472 Prep get my filing ready before the deadline?
+
+Express is ready to sign in under 3 days, 7 days a week. You then check and sign the package online, and we fax it to the IRS. We cannot promise the IRS accepts it on time: the fax receipt shows when it was sent, not IRS acceptance.
+
 ## Has the 15 October 2026 Form 5472 deadline passed?
 
 Yes, and so has the date behind it. A calendar-year 2025 return was due 15 April 2026. A Form 7004 filed by that date carried it to 15 October 2026 — an automatic extension period of generally six months ([Form 7004 instructions](https://www.irs.gov/instructions/i7004)). There is no further extension after 15 October 2026.

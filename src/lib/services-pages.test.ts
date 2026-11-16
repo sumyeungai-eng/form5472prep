@@ -36,7 +36,7 @@ const words = (s: string) =>
     .map((w) => w.replace(/[.,]+$/g, "").replace(/^[.,]+/g, ""))
     .filter(Boolean);
 // The four short audience pages (docs/seo/audience-keywords-2026-10-05.md):
-// 400–700 words instead of 800–1,200.
+// 400–800 words instead of 800–1,300.
 const AUDIENCE_PAGES = new Set([
   "hire-someone-to-file-form-5472",
   "form-5472-preparer",
@@ -204,7 +204,8 @@ describe("services pages: on-page rules", () => {
         expect(new Set(page.related.map((r) => r.href)).size).toBe(page.related.length);
       });
 
-      const [minWords, maxWords] = AUDIENCE_PAGES.has(page.slug) ? [400, 700] : [800, 1200];
+      const [minWords, maxWords] = AUDIENCE_PAGES.has(page.slug) ? [400, 800] : [800, 1300];
+      // +100 on the caps (2026-11-16): each page gained a ~90-word answer-first paragraph above its unchanged intro.
       it(`body is ${minWords}–${maxWords} words`, () => {
         const n = wordCount(servicePlainBody(page));
         expect(n).toBeGreaterThanOrEqual(minWords);
@@ -215,6 +216,8 @@ describe("services pages: on-page rules", () => {
         let text = [page.title, page.metaDescription, page.longDescription, page.h1, servicePlainBody(page)].join(" ");
         // "CPA firms" is allowed only as an audience word on the accountants page.
         if (page.slug === "form-5472-for-accountants") text = text.replace(/\bCPA firms\b/g, "");
+        // The explicit scope disclaimer is allowed; professional-status claims are not.
+        text = text.replace(/\bnot a CPA firm\b/g, "");
         expect(text).not.toMatch(/\bCPA\b/);
         expect(text).not.toMatch(/licensed|IRS[- ]approved|guarantee|best\b|leading\b|enrolled agent|US-based|#1\b/i);
         // We never sign for the client.

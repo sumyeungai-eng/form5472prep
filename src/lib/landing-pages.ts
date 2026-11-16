@@ -2391,6 +2391,14 @@ export const LANDING_PAGES: LandingPage[] = [
       "Stripe Atlas incorporates Delaware LLCs and C corps, but Atlas's published inclusions do not list the annual Form 5472 plus pro forma Form 1120 filing. For a foreign-owned single-member LLC that package stays with the owner, and missing it can trigger a $25,000 penalty per form, per year.",
     sections: [
       {
+        heading: "Can a Stripe Atlas customer file Form 5472 another way?",
+        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY may suffice.`,
+      },
+      {
+        heading: "What does this filing cost and exclude?",
+        body: `Atlas gets the company incorporated; the annual package is then yours to arrange. We charge ${PRICE_STD} (Standard) or ${PRICE_EXP} (Express) with no subscription attached. If you can prepare and send the full package yourself, doing it yourself is a fair choice. State returns and bookkeeping are outside what we do, as are tax advice and IRS representation.`,
+      },
+      {
         heading: "What does Stripe Atlas cover and not cover?",
         body: "Stripe Atlas's pricing section (checked October 5, 2026) lists a US$500 one-time fee covering Delaware incorporation, a company tax ID, founder equity, an 83(b) election filing, document templates and the first year of registered agent service. Form 5472 is not on that list.\n\nListed in Atlas's US$500 setup fee:\n\n• Company incorporation in Delaware, including expedited processing and state filing fees.\n• Company tax ID (EIN).\n• Founder equity issuance and share purchase.\n• 83(b) election filing.\n• Document templates created with Cooley LLP.\n• First year of registered agent service (then US$100 a year).\n\nNot in Atlas's published inclusions (its business-taxes docs point founders to partner tax and accounting services):\n\n• Annual federal tax filings, including Form 5472.\n• Pro forma Form 1120 (the attachment to Form 5472).\n• Delaware annual LLC tax ($400/year, due June 1).\n• State annual reports outside Delaware.\n• Personal Form 1040-NR (if you have US-source income).\n• Sales tax registrations.\n• Bookkeeping or accounting.\n\nNote: BOI (Beneficial Ownership Information) reporting isn't on this list because it no longer applies. Since March 26, 2025, FinCEN has exempted US-formed entities like your Delaware LLC from BOI reporting entirely.\n\nIf you formed your LLC through Stripe Atlas and you're a non-US person, Form 5472 is yours to file — every year, by April 15. Atlas's published ongoing service is registered agent renewal, not the annual IRS filing.",
 
@@ -2735,6 +2743,14 @@ export const LANDING_PAGES: LandingPage[] = [
       "doola forms US LLCs and C corps for founders worldwide and sells bookkeeping, analytics, banking help and tax plans. If doola formed your foreign-owned single-member LLC, check whether your plan covers the annual Form 5472 + pro forma Form 1120 filing; doola's own pages describe that coverage in more than one way.",
     sections: [
       {
+        heading: "Can a doola customer file Form 5472 another way?",
+        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. doola's own tax plan may suffice.`,
+      },
+      {
+        heading: "What does this filing cost and exclude?",
+        body: `Price for the Form 5472 + pro forma 1120 package: ${PRICE_STD} on the Standard track or ${PRICE_EXP} on Express, nothing recurring. A doola customer has the company formed and may hold a tax plan; what remains is the filing itself, unless doola confirms in writing that your plan covers it. Left out: bookkeeping, state returns, tax advice and IRS representation.`,
+      },
+      {
         heading: "What does doola do for you?",
         body: "doola's home and pricing pages describe LLC or C corp formation, an EIN, a US business address, registered agent service, bookkeeping, e-commerce analytics, US bank account guidance and tax filing plans. Its pricing page lists Starter at $297/yr, Tax and Compliance at $1,999/yr and Business-in-a-Box at $2,999/yr, each plus state fees (checked October 5, 2026).\n\ndoola's help center says Wyoming is the most popular state for non-residents running online and e-commerce businesses, and recommends Delaware if you may later convert to a C corp to raise venture capital from US investors.",
       },
@@ -2816,6 +2832,14 @@ export const LANDING_PAGES: LandingPage[] = [
       "Firstbase forms companies in Delaware or Wyoming and sells registered agent, mailroom, accounting and tax filing subscriptions. Its pricing page lists an $899-per-year Tax Filing package for non-US-owned single-member LLCs that names Form 5472 and a pro forma Form 1120, and the Firstbase One bundle includes Tax Filing.",
     sections: [
       {
+        heading: "Can a Firstbase customer file Form 5472 another way?",
+        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. Firstbase's Tax Filing may suffice.`,
+      },
+      {
+        heading: "What does this filing cost and exclude?",
+        body: `Our fee is ${PRICE_STD} (Standard) or ${PRICE_EXP} (Express), paid once, with no subscription to join. Firstbase's Tax Filing package already names these two forms, so if you hold it you may have no reason to pay us; this route suits owners who do not. Not included on our side: IRS representation, tax advice, bookkeeping or state returns.`,
+      },
+      {
         heading: "What does Firstbase do for you?",
         body: "Firstbase's pricing page lists Start, a one-time formation offer for companies in Delaware or Wyoming with EIN setup and banking-partner access, plus standalone Registered Agent, Mailroom Premium, Accounting and Tax Filing subscriptions. Firstbase One bundles those four subscriptions at $199 per month, billed yearly at $2,388 (checked October 5, 2026).\n\nThe Firstbase One page says its tax team covers federal, state and local forms, \"even the tricky ones like 5472 for foreign-owned companies\".",
       },
@@ -2891,6 +2915,14 @@ export const LANDING_PAGES: LandingPage[] = [
     intro:
       "Clemta sells annual plans for international founders that include company formation, an EIN, a registered agent and US business address, and financial tools. Its pricing page includes Federal Tax Filing in the Pro and Premium plans but does not name Form 5472, so confirm Form 5472 + pro forma Form 1120 coverage for your account.",
     sections: [
+      {
+        heading: "Can a Clemta customer file Form 5472 another way?",
+        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. Its tax filing may suffice.`,
+      },
+      {
+        heading: "What does this filing cost and exclude?",
+        body: `Pay ${PRICE_STD} for Standard or ${PRICE_EXP} for Express, once, with no plan to renew. Clemta's Pro and Premium plans include Federal Tax Filing, yet its pricing page does not name Form 5472, so get Clemta to confirm coverage in writing before paying twice. Still outside our scope: bookkeeping, tax advice, state returns and representation before the IRS.`,
+      },
       {
         heading: "What does Clemta do for you?",
         body: "Clemta's pricing page lists three annual plans: Essentials at $349, Pro at $1,068 and Premium at $2,879, each plus state fee. Every plan includes company formation, an EIN, a registered agent, a business address with mail forwarding, bank account application support and invoicing tools (checked October 5, 2026).\n\nClemta's company registration page covers LLC and C corporation formation for international founders and compares Wyoming and Delaware, noting that other states may also fit.",
@@ -2969,6 +3001,14 @@ export const LANDING_PAGES: LandingPage[] = [
       "StartGlobal sells LLC formation, registered agent service, EIN/business tax number support, remote US bank account setup, virtual mailing address, US phone number, invoicing, bookkeeping, Federal Tax Filing, and state annual reports to non-US founders. If you used StartGlobal, the key next step is confirming whether its Federal Tax Filing line specifically covers Form 5472 + pro forma Form 1120.",
     sections: [
       {
+        heading: "Can a StartGlobal customer file Form 5472 another way?",
+        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY may suffice.`,
+      },
+      {
+        heading: "What does this filing cost and exclude?",
+        body: `${PRICE_STD} buys Standard and ${PRICE_EXP} buys Express, billed one time. StartGlobal's Federal Tax Filing line may already cover this package, so ask it for written confirmation first; if it does not, we fill that gap. If you can prepare and send everything yourself, DIY works too. We skip tax advice, IRS representation, state returns and bookkeeping.`,
+      },
+      {
         heading: "What does StartGlobal do for you?",
         body: "StartGlobal's public offering includes LLC formation with state fees included, registered agent service, EIN/business tax number support, remote US bank account setup, virtual US mailing address, US phone number, invoicing/payments, bookkeeping, Federal Tax Filing, and state annual reports. The services are sold a la carte or through a Managed LLC plan.\n\nStartGlobal's LLC formation page calls Wyoming or Delaware excellent choices for most international founders, with Delaware preferred for businesses planning to raise venture capital. Its pricing page lists formation at $399 one-time, state fees included, and the Managed LLC plan at $149 per month (checked October 5, 2026).",
       },
@@ -3046,6 +3086,14 @@ export const LANDING_PAGES: LandingPage[] = [
       "Zenind offers online US company formation, registered agent service in all 50 states and DC, EIN application preparation, compliance tracking and annual report filing, notary, foreign qualification and accounting services. Its Form 5472 guide explains the rule, but a foreign-owned single-member LLC still needs the annual IRS package prepared and filed.",
     sections: [
       {
+        heading: "Can a Zenind customer file Form 5472 another way?",
+        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY from Zenind's guide may suffice.`,
+      },
+      {
+        heading: "What does this filing cost and exclude?",
+        body: `Zenind's guide teaches the rule, but its pricing page lists no Form 5472 line item, so the filing itself is the missing piece. Our rates are ${PRICE_STD} for Standard and ${PRICE_EXP} for Express, with no recurring charge. DIY from Zenind's guide remains a fair option. Tax advice, state returns, bookkeeping and IRS representation are not part of this service.`,
+      },
+      {
         heading: "What does Zenind do for you?",
         body: "Zenind's home page lists company formation, registered agent service in 50 states and the District of Columbia, compliance tracking and annual report filing, EIN application preparation assistance, notary services, foreign qualification and accounting services. Its home page says it serves businesses of every scale, from solo entrepreneurs upward (checked October 5, 2026).",
       },
@@ -3120,6 +3168,14 @@ export const LANDING_PAGES: LandingPage[] = [
     intro:
       "A registered agent receives legal papers and official state notices for your LLC; it does not by itself file federal information returns. If Northwest Registered Agent formed or serves your foreign-owned single-member LLC, Form 5472 + pro forma Form 1120 is a separate annual IRS package, so confirm in writing whether any service you bought covers it.",
     sections: [
+      {
+        heading: "Can a Northwest Registered Agent customer file Form 5472 another way?",
+        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY may suffice.`,
+      },
+      {
+        heading: "What does this filing cost and exclude?",
+        body: `A registered agent forwards official notices; it does not file this return. Our package runs ${PRICE_STD} Standard or ${PRICE_EXP} Express, and there is no subscription. If a Northwest service you bought confirms coverage in writing, you may not need us, and DIY is possible. Excluded here: IRS representation, state returns, tax advice and bookkeeping.`,
+      },
       {
         heading: "What does Northwest Registered Agent do for you?",
         body: "As its name says, Northwest Registered Agent is a registered agent company. A registered agent accepts service of process and official state notices for your LLC. Northwest's plans and prices are not summarized here; check Northwest's own site or your invoice for what your order includes, including any tax filing service.",

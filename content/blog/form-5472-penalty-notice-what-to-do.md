@@ -14,6 +14,10 @@ The notice usually arrives as a **CP215, "Notice of Civil Penalty Charge."** It 
 
 This guide explains what triggered the penalty, why the letter you may have already written did not stop it, and what an effective response actually contains. If you still have unfiled years alongside the penalized one, [we prepare and fax complete Form 5472 packages from {{price.standard}}](/start) — filing the missing years is usually the first step in any abatement request.
 
+## What should I do if I get an IRS CP15 notice for Form 5472?
+
+CP15 is an individual-account civil-penalty notice, according to the [IRS manual](https://www.irs.gov/irm/part21/irm_21-003-001r). Check the penalty reference number, tax year and response instructions on your notice. Form 5472 business-account penalties generally use CP215, which this guide covers below. Do not assume the codes are interchangeable; ask a tax professional to review a notice that does not match your LLC.
+
 ## Why did the IRS assess a $25,000 Form 5472 penalty?
 
 The IRS assesses a $25,000 penalty when a reporting corporation fails to file Form 5472 when due and in the manner prescribed, or files a substantially incomplete form. The rule is in IRC § 6038A(d) and is restated plainly in the [IRS Instructions for Form 5472 (Rev. December 2024)](https://www.irs.gov/instructions/i5472): "A penalty of $25,000 will be assessed on any reporting corporation that fails to file Form 5472 when due and in the manner prescribed."
