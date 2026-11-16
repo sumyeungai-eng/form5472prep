@@ -242,3 +242,4 @@ Claude and Codex sessions share these folders. Practical rules:
 - `docs/sessions/2026-10-30-money-pages-ptin-7004.md` — PTIN statement on service pages, 7004 capsules, live white-label offer copy.
 - `docs/sessions/2026-10-30-guides-aeo-structure.md` — FAQ h3 markup, online-filer ban, how-to steps + HowTo schema.
 - `docs/sessions/2026-11-04-moz-improvement-wave.md` — Moz 11-01/11-02 re-read + GSC index check; footer/hub/compare links, 7004 retitle, question H2s, no "wizard", review-before-sign order, topic-hub intros.
+- `docs/sessions/2026-11-16-aeo-plan-execution.md` — AEO plan v5: batch 1 shipped (No-facts FAQ, compare summary, safety Q&A), batch 2 held on seo/aeo-batch2 until ChatGPT re-test.

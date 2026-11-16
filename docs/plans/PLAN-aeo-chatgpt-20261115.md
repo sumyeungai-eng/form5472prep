@@ -303,4 +303,17 @@ v4 (2026-11-15): Search Console checked at the owner's request: no penalty; clic
 v5 (2026-11-15): owner asked about the risk of losing ChatGPT placement. Added the protected-pages rule, add-only edits on pages ChatGPT cites, two shipping batches with a re-test between, and a revert rule.
 
 ## 9. Execution log
-(Empty until approved.)
+2026-11-16 (approved v5 by owner: "work on everything, use codex to build as much as possible")
+- Step 1 done: docs/seo/aeo/questions.md (14 questions).
+- Step 2 done: Moz 11-15 ranks (visibility 1.66%, top-3/10/20 14/45/62; filing service #11, dissolved #5, late #8, form 5472 extension #8); AI 11-16 run not posted.
+- Step 3: penalty check done 11-15 (none). Remaining parts BLOCKED: Claude in Chrome not connected.
+- Step 4 done: ChatGPT logged-out, 28 runs; named 7/14 then 8/14; no wrong facts (docs/seo/aeo/tracking.tsv, chatgpt-baseline-2026-11-16.md, protected-pages.md).
+- Step 5, 6 BLOCKED: /admin and Bing not signed in in the in-app browser.
+- Step 7 done (empty-seats.md), Step 8 done (third-party-ledger.md: 4 of 17 mention us, 3 with wrong/missing facts), Step 9 Moz half done (links/link-inventory-2026-11.md).
+- Step 10: owner pre-approved execution; shortlist taken from empty-seats (no translated pages).
+- Batch 1 SHIPPED (main 6b17a93): Steps 11, 12, 16; add-only on protected pages (0 removed lines); vitest pass, tsc 0, build 589/589, Codex review nothing material; live-verified; IndexNow 200.
+- Step 17: no change needed — current /terms and /partners never say we contact partner clients; ChatGPT quotes an older version.
+- Batch 2 BUILT, HELD on branch seo/aeo-batch2 (4892a32, c2066d2): Steps 13, 15. Service pages and provider guides add-only above unchanged originals (first lane rewrote intros on ranking pages and repeated a block on 12 pages — sent back); 7004 timely-filing wording; deadline + CP15 sections; new is-form5472-prep-legit post. vitest 2238/2238, tsc 0, build 591/591, Codex findings fixed.
+- Phase C drafted (not sent): listing-kit, 32 targets, outreach-drafts (Codex fact-check fixes applied), corrections, links/vendor-brief.
+- Step 12a, 18 (GSC requests), 22 GSC half: waiting on Chrome.
+- Next: re-run Step 4 questions on or after 2026-11-20; if no protected question lost, merge seo/aeo-batch2 to main.
