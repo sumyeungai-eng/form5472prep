@@ -2,6 +2,7 @@ import { getAllPosts, getPost, type PostMeta } from "@/lib/blog";
 import { COUNTRY_HUB_PATH } from "@/lib/blog-countries";
 import { tagSlug } from "@/lib/blog-tags";
 import { ADDON_RULE, BRAND_CAPSULES, FAQ_CATEGORIES, FAQ_ITEMS, FAQ_LAST_REVIEWED } from "@/lib/faq";
+import { SERVICE_FACT_FAQS } from "@/lib/faq";
 import { FORM5472_STATS, STAT_CATEGORIES, STATS_LAST_REVIEWED } from "@/lib/form5472-stats";
 import { FORM_7004_ANSWERS } from "@/lib/form7004-answers";
 import { LANDING_PAGES } from "@/lib/landing-pages";
@@ -366,6 +367,7 @@ function buildGuides(posts: PostMeta[]): string {
 // then the Form 7004 capsules, verbatim from /form-7004-extension.
 function buildQuickAnswers(): string {
   const answers = [
+    ...SERVICE_FACT_FAQS.map(({ question, answer }) => `### ${question}\n\n${answer}`),
     ...Object.values(BRAND_CAPSULES).map(({ question, answer }) => `### ${question}\n\n${answer}`),
     ...FORM_7004_ANSWERS.map(
       ({ q, a, sources }) =>

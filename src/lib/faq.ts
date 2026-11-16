@@ -109,7 +109,35 @@ export const FAQ_CATEGORIES: readonly FaqCategory[] = [
   },
 ] as const;
 
+export const SERVICE_FACT_FAQS: readonly FaqItem[] = [
+  {
+    id: "express-ready-in-24-hours",
+    category: "before-you-order",
+    question: `Is ${SITE_NAME}'s Express filing ready in 24 hours?`,
+    answer: `No. Express is ready to sign in ${EXPRESS_TURNAROUND}, counted in calendar days, 7 days a week. Standard is ready in ${STANDARD_TURNAROUND}. After you check and sign your prepared Form 5472 and pro forma Form 1120, we fax the package to the IRS.`,
+    learnMore: { href: "/pricing", label: "Compare filing turnarounds" },
+    source: "src/lib/pricing.ts (EXPRESS_TURNAROUND, STANDARD_TURNAROUND)",
+  },
+  {
+    id: "additional-year-is-not-first-year-price",
+    category: "before-you-order",
+    question: `Does ${SITE_NAME} cost ${ADD}?`,
+    answer: `No. One tax year costs ${STD} for Standard or ${EXP} for Express, including preparation, review and IRS fax delivery. The ${ADD} additional-year price applies only to each additional past tax year in the same order; it is never the price for the first year.`,
+    learnMore: { href: "/pricing", label: "See filing prices" },
+    source: "src/lib/pricing.ts (TIERS, MULTI_YEAR_ADDON_CENTS)",
+  },
+  {
+    id: "is-form5472-prep-tax-software",
+    category: "before-you-order",
+    question: `Is ${SITE_NAME} tax software?`,
+    answer: "No. It is a done-for-you service: you answer a guided intake form, our team prepares Form 5472 and the pro forma 1120, and a tax accountant who holds an IRS PTIN reviews them. You then check and sign, and we fax the package to the IRS.",
+    learnMore: { href: "/about#how-a-filing-works", label: "How a filing works" },
+    source: "src/app/(marketing)/about/content.ts (STEPS)",
+  },
+] as const;
+
 export const FAQ_ITEMS: readonly FaqItem[] = [
+  ...SERVICE_FACT_FAQS,
   {
     id: "what-is-form-5472-who-files",
     category: "before-you-order",

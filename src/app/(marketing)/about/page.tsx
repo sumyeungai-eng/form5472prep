@@ -25,6 +25,13 @@ const DESCRIPTION =
 
 const TITLE = "About Form5472 Prep: Who Prepares and Reviews Your Filing";
 
+const DOCUMENT_UPLOAD_SECTION: AboutSection = {
+  id: "safe-document-upload",
+  question: "Is it safe to upload documents to Form5472 Prep?",
+  answer: "Yes. Documents are encrypted in transit and at rest, with data processed in the United States and the European Union. We use your information to prepare, review and support your filing. Retention varies by record, and you can request earlier deletion. Only you, the client, sign your return.",
+  links: [{ href: "/security", label: "Read how we protect your documents" }],
+};
+
 export const metadata: Metadata = {
   // Brand is already in the title — seoTitle() stops the template doubling it.
   title: seoTitle(TITLE),
@@ -104,6 +111,11 @@ export default function AboutPage() {
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
   ]);
+  faqJsonLd.mainEntity.push({
+    "@type": "Question",
+    name: DOCUMENT_UPLOAD_SECTION.question,
+    acceptedAnswer: { "@type": "Answer", text: DOCUMENT_UPLOAD_SECTION.answer },
+  });
 
   return (
     <>
@@ -174,6 +186,7 @@ export default function AboutPage() {
             ) : null}
           </QaSection>
         ))}
+        <QaSection section={DOCUMENT_UPLOAD_SECTION} />
       </div>
 
       {/* CTA */}

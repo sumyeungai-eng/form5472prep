@@ -278,6 +278,9 @@ function Hero({ filingsCount }: { filingsCount: number }) {
               Avoid the $25,000-per-form IRS penalty — with fax delivery to the
               IRS Ogden PIN Unit included on every plan.
             </p>
+            <p className="mt-3 max-w-xl text-base leading-relaxed text-slate-300">
+              This is a done-for-you service: our team prepares your forms and a tax accountant who holds an IRS PTIN reviews them before you sign.
+            </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white ring-1 ring-white/15">

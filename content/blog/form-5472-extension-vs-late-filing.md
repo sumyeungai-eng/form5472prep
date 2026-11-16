@@ -12,6 +12,8 @@ draft: false
 
 **A timely Form 7004 extension is almost always cheaper, because it costs a filing fee and removes the $25,000 Form 5472 penalty exposure for that year. Filing late on reasonable cause costs the same preparation work plus a penalty no provider can promise the IRS will waive, and the continuation penalty can multiply it.**
 
+Our [Form 5472 extension (Form 7004)](/form-7004-extension) service prepares the extension and faxes it to the IRS Ogden PIN Unit.
+
 The question comes up every April from foreign owners whose records are not ready: is it worth bothering with an extension, or is it simpler to file late and write a letter? Framed as a cost comparison, the two options are not close. The comparison below prices both routes for a single-member foreign-owned LLC using figures from the IRS instructions themselves. If the regular due date has not passed yet, [a Form 7004 extension](/form-7004-extension) is the cheap option.
 
 This post covers a U.S.-formed single-member LLC wholly owned by a foreign person, treated as a disregarded entity, filing Form 5472 attached to a pro forma Form 1120.

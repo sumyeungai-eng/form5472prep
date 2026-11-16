@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { ADDON_RULE, BRAND_CAPSULES, FAQ_CATEGORIES, FAQ_ITEMS, SNAPFILE_FACTS } from "./faq";
+import { SERVICE_FACT_FAQS } from "./faq";
 import { EXPRESS_TURNAROUND, MULTI_YEAR_ADDON_CENTS, STANDARD_TURNAROUND, TIERS } from "./pricing";
 import { formatPrice } from "./utils";
 import { LANDING_PAGES } from "./landing-pages";
@@ -76,6 +77,20 @@ function normalizeApostrophes(value: string): string {
 }
 
 describe("central FAQ content", () => {
+  it("includes the three direct service corrections as concise shared answers", () => {
+    expect(SERVICE_FACT_FAQS.map((item) => item.question)).toEqual([
+      "Is Form5472 Prep's Express filing ready in 24 hours?",
+      `Does Form5472 Prep cost ${formatPrice(MULTI_YEAR_ADDON_CENTS)}?`,
+      "Is Form5472 Prep tax software?",
+    ]);
+    for (const item of SERVICE_FACT_FAQS) {
+      expect(FAQ_ITEMS).toContain(item);
+      expect(item.answer).toMatch(/^No\. /);
+      expect(wordCount(item.answer)).toBeGreaterThanOrEqual(40);
+      expect(wordCount(item.answer)).toBeLessThanOrEqual(60);
+    }
+  });
+
   it("has complete, categorized items with stable ids", () => {
     for (const item of FAQ_ITEMS) {
       expect(item.id).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
@@ -179,7 +194,7 @@ describe("central FAQ content", () => {
   it("states the accountant-review boundary and keeps balanced coverage", () => {
     expect(FAQ_ITEMS.some((item) => item.answer.includes("reviewed by a tax accountant who holds an IRS Preparer Tax Identification Number (PTIN)"))).toBe(true);
     expect(FAQ_ITEMS.length).toBeGreaterThanOrEqual(35);
-    expect(FAQ_ITEMS.length).toBeLessThanOrEqual(55);
+    expect(FAQ_ITEMS.length).toBeLessThanOrEqual(55 + SERVICE_FACT_FAQS.length);
 
     for (const category of FAQ_CATEGORIES) {
       expect(

@@ -12,6 +12,7 @@ vi.mock("@/lib/prisma", () => ({
 }));
 
 import { ADDON_RULE, BRAND_CAPSULES, FAQ_ITEMS } from "./faq";
+import { SERVICE_FACT_FAQS } from "./faq";
 import { FORM_7004_ANSWERS } from "./form7004-answers";
 import { LANDING_PAGES } from "./landing-pages";
 import {
@@ -89,6 +90,18 @@ describe("llms.txt Form 7004 service", () => {
 });
 
 describe("llms.txt facts come from code", () => {
+  it("includes all three new service questions with the visible FAQ answers", () => {
+    expect(SERVICE_FACT_FAQS.map((item) => item.question)).toEqual([
+      "Is Form5472 Prep's Express filing ready in 24 hours?",
+      `Does Form5472 Prep cost ${formatPrice(MULTI_YEAR_ADDON_CENTS)}?`,
+      "Is Form5472 Prep tax software?",
+    ]);
+    for (const { question, answer } of SERVICE_FACT_FAQS) {
+      expect(llmsTxt).toContain(`### ${question}\n\n${answer}`);
+      expect(llmsFull).toContain(`### ${question}\n\n${answer}`);
+    }
+  });
+
   it("states every price from pricing.ts", () => {
     for (const cents of [
       TIERS.standard.priceCents,

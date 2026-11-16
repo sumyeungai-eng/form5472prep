@@ -15,6 +15,50 @@ export const metadata = {
 export default function SecurityPage() {
   return (
     <LegalLayout title="Information Security Policy" lastUpdated="2026-09-21">
+      <h2>Is it safe to upload my passport and LLC documents?</h2>
+      <p>
+        Yes. We protect the passport details and LLC documents you submit with encryption
+        in transit and at rest, and use them to prepare, review and support your filing.
+        Data is processed in the United States and the European Union. Retention depends
+        on the record; you can request earlier deletion.
+      </p>
+      <ul>
+        <li>
+          <strong>What is stored:</strong> identity and passport details, LLC and owner
+          information, uploaded supporting documents, signature records, prepared forms,
+          fax records and payment metadata, according to the record type.
+        </li>
+        <li>
+          <strong>Where:</strong> encrypted infrastructure operated by Vercel, our managed
+          PostgreSQL database provider and Cloudflare R2, with processing in the United
+          States and the European Union.
+        </li>
+        <li>
+          <strong>Who uses it:</strong> our team uses it to prepare, review and support
+          your filing; data is shared with the IRS and service providers acting on our
+          behalf for those purposes.
+        </li>
+        <li>
+          <strong>How long:</strong> entity and owner identification data is retained for
+          7 years from the last filing, and fax receipts for 7 years from filing; uploaded
+          dissolution certificates and extension proof are kept for up to 72 hours after
+          the filing or support task is complete. See the{" "}
+          <a href="/data-retention">Data Retention Policy</a> for the full schedule.
+        </li>
+        <li>
+          <strong>Request deletion:</strong> email{" "}
+          <a href="mailto:support@form5472prep.com">support@form5472prep.com</a> from
+          your account email address. Requests are processed within 30 days; some records
+          must be retained for tax and accounting obligations.
+        </li>
+        <li>
+          <strong>Service providers:</strong> Stripe handles payments, Cloudflare R2
+          handles file storage, Resend handles transactional email, and Telnyx handles fax.
+          We never see or store your payment card details.
+        </li>
+        <li><strong>Signing:</strong> only you, the client, sign your return.</li>
+      </ul>
+
       <p className="text-sm text-slate-500">Version 1.0</p>
 
       <h2>1. Purpose &amp; Scope</h2>

@@ -32,6 +32,7 @@ import {
 } from "@/lib/seo";
 import { seoTitle } from "@/lib/seo-title";
 import { MULTI_YEAR_ADDON_CENTS, TIERS } from "@/lib/pricing";
+import { EXPRESS_TURNAROUND, STANDARD_TURNAROUND } from "@/lib/pricing";
 
 // /compare/form-5472-filing-services: sourced price comparison. Every
 // competitor number comes from src/lib/provider-prices.ts, which copies the
@@ -346,6 +347,18 @@ export default function Form5472FilingServicesComparePage() {
 
       <div className="bg-white">
         <div className="mx-auto max-w-6xl px-4 pt-14 sm:px-6 sm:pt-16">
+          <section aria-labelledby="form5472-prep-at-a-glance" className="mb-10 rounded-xl border border-slate-200 bg-slate-50 p-6">
+            <h2 id="form5472-prep-at-a-glance" className="font-serif text-2xl font-semibold tracking-tight text-ink">
+              Form5472 Prep at a glance
+            </h2>
+            <ul className="mt-4 space-y-2 text-sm leading-relaxed text-slate-700">
+              <li>Form5472 Prep Standard: {STD} per tax year, ready in {STANDARD_TURNAROUND}.</li>
+              <li>Form5472 Prep Express: {EXP} per tax year, ready to sign in {EXPRESS_TURNAROUND}, counted in calendar days, 7 days a week.</li>
+              <li>Includes pro forma 1120 + Form 5472 preparation, review by a tax accountant who holds an IRS PTIN, and IRS fax delivery with the fax receipt after you sign.</li>
+              <li>Single-member foreign-owned LLCs only; no tax advice, not a CPA firm, and no IRS representation.</li>
+            </ul>
+          </section>
+
           <section aria-labelledby="prices">
             <h2 id="prices" className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
               Published Form 5472 prices, one tax year

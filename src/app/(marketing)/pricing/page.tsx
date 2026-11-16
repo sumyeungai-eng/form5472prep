@@ -17,7 +17,7 @@ import { formatPrice } from "@/lib/utils";
 import { FaxReceiptProof } from "@/components/FaxReceiptProof";
 import { JsonLd } from "@/components/JsonLd";
 import { ComparisonTable, FILING_COMPARISON } from "@/components/ComparisonTable";
-import { BRAND_CAPSULES } from "@/lib/faq";
+import { BRAND_CAPSULES, SERVICE_FACT_FAQS } from "@/lib/faq";
 import { ORG_REF, SITE_URL, SPEAKABLE, breadcrumbList, organizationDocument, pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -65,6 +65,7 @@ const PRICING_FAQS: { q: string; a: string }[] = [
   { q: AUTOMATED.question, a: AUTOMATED.answer },
   { q: LEGIT.question, a: LEGIT.answer },
   { q: SNAPFILE.question, a: SNAPFILE.answer },
+  ...SERVICE_FACT_FAQS.map(({ question, answer }) => ({ q: question, a: answer })),
 ];
 
 // Schema.org Product with Offer per tier — drives rich-result pricing
