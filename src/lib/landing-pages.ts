@@ -3,7 +3,7 @@
 // All content funnels back to /start.
 
 import { IRS_OGDEN_FAX, IRS_OGDEN_MAIL_ADDRESS } from "@/lib/seo";
-import { MULTI_YEAR_ADDON_CENTS, TIERS } from "@/lib/pricing";
+import { EXPRESS_TURNAROUND, MULTI_YEAR_ADDON_CENTS, STANDARD_TURNAROUND, TIERS } from "@/lib/pricing";
 import { PRICES_CHECKED_ON_LABEL, PROVIDER_PRICES, perFilingRange, usd } from "@/lib/provider-prices";
 import { formatPrice } from "@/lib/utils";
 
@@ -2392,7 +2392,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "Can a Stripe Atlas customer file Form 5472 another way?",
-        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY may suffice.`,
+        body: `Yes, in five steps:\n\n1. Complete the guided intake form.\n2. Our team prepares the package.\n3. A tax accountant who holds an IRS PTIN reviews it.\n4. You check and sign.\n5. We fax it to the IRS.\n\nExpress (${PRICE_EXP}) is ready to sign in ${EXPRESS_TURNAROUND}; Standard (${PRICE_STD}), ${STANDARD_TURNAROUND}; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY may suffice.`,
       },
       {
         heading: "What does this filing cost and exclude?",
@@ -2744,7 +2744,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "Can a doola customer file Form 5472 another way?",
-        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. doola's own tax plan may suffice.`,
+        body: `Yes, in five steps:\n\n1. Complete the guided intake form.\n2. Our team prepares the package.\n3. A tax accountant who holds an IRS PTIN reviews it.\n4. You check and sign.\n5. We fax it to the IRS.\n\nExpress (${PRICE_EXP}) is ready to sign in ${EXPRESS_TURNAROUND}; Standard (${PRICE_STD}), ${STANDARD_TURNAROUND}; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. doola's own tax plan may suffice.`,
       },
       {
         heading: "What does this filing cost and exclude?",
@@ -2833,7 +2833,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "Can a Firstbase customer file Form 5472 another way?",
-        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. Firstbase's Tax Filing may suffice.`,
+        body: `Yes, in five steps:\n\n1. Complete the guided intake form.\n2. Our team prepares the package.\n3. A tax accountant who holds an IRS PTIN reviews it.\n4. You check and sign.\n5. We fax it to the IRS.\n\nExpress (${PRICE_EXP}) is ready to sign in ${EXPRESS_TURNAROUND}; Standard (${PRICE_STD}), ${STANDARD_TURNAROUND}; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. Firstbase's Tax Filing may suffice.`,
       },
       {
         heading: "What does this filing cost and exclude?",
@@ -2917,7 +2917,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "Can a Clemta customer file Form 5472 another way?",
-        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. Its tax filing may suffice.`,
+        body: `Yes, in five steps:\n\n1. Complete the guided intake form.\n2. Our team prepares the package.\n3. A tax accountant who holds an IRS PTIN reviews it.\n4. You check and sign.\n5. We fax it to the IRS.\n\nExpress (${PRICE_EXP}) is ready to sign in ${EXPRESS_TURNAROUND}; Standard (${PRICE_STD}), ${STANDARD_TURNAROUND}; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. Its tax filing may suffice.`,
       },
       {
         heading: "What does this filing cost and exclude?",
@@ -3002,7 +3002,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "Can a StartGlobal customer file Form 5472 another way?",
-        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY may suffice.`,
+        body: `Yes, in five steps:\n\n1. Complete the guided intake form.\n2. Our team prepares the package.\n3. A tax accountant who holds an IRS PTIN reviews it.\n4. You check and sign.\n5. We fax it to the IRS.\n\nExpress (${PRICE_EXP}) is ready to sign in ${EXPRESS_TURNAROUND}; Standard (${PRICE_STD}), ${STANDARD_TURNAROUND}; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY may suffice.`,
       },
       {
         heading: "What does this filing cost and exclude?",
@@ -3087,7 +3087,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "Can a Zenind customer file Form 5472 another way?",
-        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY from Zenind's guide may suffice.`,
+        body: `Yes, in five steps:\n\n1. Complete the guided intake form.\n2. Our team prepares the package.\n3. A tax accountant who holds an IRS PTIN reviews it.\n4. You check and sign.\n5. We fax it to the IRS.\n\nExpress (${PRICE_EXP}) is ready to sign in ${EXPRESS_TURNAROUND}; Standard (${PRICE_STD}), ${STANDARD_TURNAROUND}; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY from Zenind's guide may suffice.`,
       },
       {
         heading: "What does this filing cost and exclude?",
@@ -3170,7 +3170,7 @@ export const LANDING_PAGES: LandingPage[] = [
     sections: [
       {
         heading: "Can a Northwest Registered Agent customer file Form 5472 another way?",
-        body: `Yes. Use our guided intake form; a tax accountant who holds an IRS PTIN reviews, you sign online, we fax the IRS Ogden PIN Unit. Standard (${PRICE_STD}) ready to sign in 5-7 business days, Express (${PRICE_EXP}) under 3; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY may suffice.`,
+        body: `Yes, in five steps:\n\n1. Complete the guided intake form.\n2. Our team prepares the package.\n3. A tax accountant who holds an IRS PTIN reviews it.\n4. You check and sign.\n5. We fax it to the IRS.\n\nExpress (${PRICE_EXP}) is ready to sign in ${EXPRESS_TURNAROUND}; Standard (${PRICE_STD}), ${STANDARD_TURNAROUND}; no subscription. Not covered: state returns, bookkeeping, tax advice, IRS representation. DIY may suffice.`,
       },
       {
         heading: "What does this filing cost and exclude?",

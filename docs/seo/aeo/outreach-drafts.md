@@ -15,11 +15,11 @@ Hello,
 
 I run Form5472 Prep. Your comparison pages list us, but two facts are out of date. Could you update them?
 
-Wrong: "Form5472Prep $99 flat" (also "$99" on your best-services page).
-Right: "Form5472 Prep: $149 per tax year (Standard, ready to sign in 5-7 business days) or $199 (Express, ready to sign in under 3 days). +$99 per additional past year."
+When I last looked, the pages showed a $99 price for us (verify wording on each page before sending).
+Current price: "Form5472 Prep: $149 per tax year (Standard, ready to sign in 5-7 business days) or $199 (Express, ready to sign in under 3 days). +$99 per additional past year."
 
-Wrong: "No named professional" / "software wizard".
-Right: "Done-for-you: our team prepares Form 5472 and the pro forma 1120, and a tax accountant who holds an IRS PTIN reviews every package before the client signs."
+They also describe the service as software-assisted. How it works:
+"Done-for-you: our team prepares Form 5472 and the pro forma 1120, and a tax accountant who holds an IRS PTIN reviews every package before the client signs."
 
 Details: form5472prep.com/pricing. We would also be glad to be considered for your "best online services" page.
 
@@ -59,7 +59,7 @@ Thank you,
 Subject: Form 5472 option for your Doola pricing page
 Hello,
 
-Your Doola pricing page says a CPA typically costs $400-$800 a year for Form 5472 work. Another option for owners who only need the filing: Form5472 Prep, Standard $149 per tax year (ready to sign in 5-7 business days), Express $199 (under 3 days). A PTIN-holding tax accountant reviews each package; we are not a CPA firm.
+Your Doola pricing page compares annual compliance costs. Another option for owners who only need the Form 5472 filing: Form5472 Prep, Standard $149 per tax year (ready to sign in 5-7 business days), Express $199 (under 3 days). A PTIN-holding tax accountant reviews each package; we are not a CPA firm.
 
 Description: K50. Page: form5472prep.com/pricing.
 
@@ -91,7 +91,7 @@ Thank you,
 Subject: Form 5472 services for your comparison page
 Hello,
 
-Your comparison covers Doola, Stripe Atlas and a CPA. A done-for-you filing-only service is a fourth option for foreign-owned single-member LLCs. Form5472 Prep: K50 Price line: Standard $149 per tax year, Express $199.
+Verify the page URL before sending. A done-for-you filing-only service may be a useful addition to your comparison for foreign-owned single-member LLCs. Form5472 Prep: K50 Price line: Standard $149 per tax year, Express $199.
 
 Page: form5472prep.com/pricing.
 
@@ -111,7 +111,7 @@ Thank you,
 Subject: Suggestion for your Stripe Atlas alternatives review
 Hello,
 
-Your Stripe Atlas alternatives page covers formation tools. After formation, owners outside the US still have to file Form 5472 each year. Form5472 Prep covers only that step: K50 Page: form5472prep.com/pricing.
+Your Stripe Atlas alternatives page covers formation tools. After formation, a US LLC wholly owned by a foreign person and disregarded for federal income tax purposes generally files Form 5472 with a pro forma 1120 for years with reportable related-party transactions, including owner contributions (irs.gov/instructions/i5472). Form5472 Prep covers only that step: K50 Page: form5472prep.com/pricing.
 
 If a "after you form your LLC" section fits your page, we would appreciate a mention.
 
@@ -161,16 +161,16 @@ Use the same fields in each:
 Each is under 150 words, mentions us once with disclosure, and gives the free route. Check the current IRS instructions for Form 5472 before posting. Never post the same text twice; reword per thread.
 
 ### A1. "Do I need Form 5472 if my LLC made no money?" (r/tax, r/smallbusiness)
-Usually yes if you are a foreign owner of a single-member US LLC. The trigger is a reportable transaction, not income. Putting money into the LLC (for example to open a bank account) counts, and so do payments between you and the LLC. In that case the LLC files Form 5472 attached to a pro forma Form 1120. On the 1120 you only complete the header and sign. The late penalty is $25,000 per form, so it is worth fixing early. Free route: get the instructions on irs.gov, fill in both forms yourself, and send them as the instructions direct. Disclosure: I run Form5472 Prep. If you would rather not do it yourself, we prepare and fax it, with a tax accountant who holds an IRS PTIN reviewing it. This is general information, not tax advice.
+Possibly. A US LLC wholly owned by a foreign person and disregarded for federal income tax purposes generally files Form 5472 with a pro forma Form 1120 for years with reportable related-party transactions, including owner contributions. Income is not the test. See irs.gov/instructions/i5472. On the 1120 you complete the entity's name, address, items B and E, write "Foreign-owned U.S. DE" across the top, and sign. The penalty is $25,000 per form to start, with more $25,000 increments if the failure continues after an IRS notice. Incomplete filings can also be penalised. Free route: do both forms yourself from the IRS instructions. Disclosure: I run Form5472 Prep. We prepare and fax it, with a PTIN-holding tax accountant reviewing. General information, not tax advice.
 
 ### A2. "Stripe Atlas LLC, non-US owner, what do I have to file?" (r/stripe)
-Atlas forms the company, but the yearly tax filings are yours. For a single-member LLC owned by a non-US person you typically need Form 5472 and a pro forma Form 1120 each year, due on the corporate due date (April 15 for most calendar-year LLCs). Form 7004 extends the deadline by six months. You also need your EIN. Free route: download both forms and the instructions from irs.gov and file them yourself. Disclosure: I run Form5472 Prep. We handle this one step for $149 per tax year (ready to sign in 5-7 business days) or $199 for Express, one-time, no subscription. We are not a CPA firm and give no tax advice. Ask anything about the process here.
+Atlas forms the company; the tax filings are yours. A US LLC wholly owned by a foreign person and disregarded for federal income tax purposes generally files Form 5472 with a pro forma Form 1120 for years with reportable related-party transactions, including owner contributions (irs.gov/instructions/i5472). The due date is generally April 15 for calendar-year entities. A timely, properly completed Form 7004 extends it to October 15 (weekend and holiday adjustments apply). Free route: download the forms and instructions from irs.gov and file them yourself. Disclosure: I run Form5472 Prep. We handle this step for $149 per tax year (ready to sign in 5-7 business days) or $199 for Express, one-time, no subscription. We are not a CPA firm and give no tax advice.
 
 ### A3. "I missed Form 5472 for earlier years, what now?" (r/tax, Quora)
-Start by working out which years had reportable transactions. The penalty is $25,000 per form per year. You can file late and attach a reasonable cause statement, and the IRS decides each case on its facts, so there is no guarantee. If the IRS has not written to you yet, filing the missing years soon is usually better than waiting. If a notice arrives, read it before doing anything. Free route: file each missing year yourself using that year's forms and instructions from irs.gov. Disclosure: I run Form5472 Prep. We prepare past years at $99 for each additional year on top of the first, and we do not represent clients before the IRS. General information only.
+Work out which years had reportable transactions. The penalty is $25,000 per form to start, and further $25,000 increments can follow if the failure continues after IRS notice. Incomplete filings and record-keeping failures can also be penalised. What to do depends on your facts and on whether the IRS has contacted you. A reasonable-cause statement may be submitted, but relief is not automatic; see the IRS page on delinquent international information returns (DIIRSP) on irs.gov. Free route: prepare each year yourself using that year's forms and instructions. Disclosure: I run Form5472 Prep. We prepare past years at $99 for each additional year, and we do not represent clients before the IRS. General information only.
 
 ### A4. "How do I get an extension for Form 5472?" (r/expats, r/Entrepreneur, Quora)
-Form 5472 itself has no separate extension form. You extend the pro forma Form 1120 it is attached to by filing Form 7004 before the due date, which gives six more months for the return and the 5472. Filing a 7004 does not move the payment date for any tax due, but for most of these LLCs no tax is due. Free route: Form 7004 is on irs.gov and you can file it yourself. Disclosure: I run Form5472 Prep. We prepare and fax a Form 7004 for $19 per tax year. Check the current IRS instructions for how and where to send it, since filing methods change.
+Form 5472 has no separate extension form. You extend the pro forma Form 1120 it is attached to with Form 7004. Due dates are generally April 15 for calendar-year entities, and a timely, properly completed Form 7004 extends to October 15 (weekend and holiday adjustments apply). It cannot be e-filed for this return; fax or mail it as the special Form 5472 instructions say. This informational filing does not determine your own income-tax obligations. Free route: Form 7004 and the instructions are on irs.gov. Disclosure: I run Form5472 Prep. We prepare and fax a Form 7004 for $19 per tax year. Check the current IRS instructions, since methods change.
 
 ### A5. "A service says it is not a CPA firm but a tax accountant with a PTIN reviews it. Is that okay?" (Quora)
 A PTIN is the number the IRS requires of anyone paid to prepare a return. It is not a licence or an IRS approval. CPAs, enrolled agents and attorneys can also represent you before the IRS in ways a PTIN holder alone may not. For a routine Form 5472 and pro forma 1120 you mostly need accuracy and an on-time filing, but if you expect an IRS notice, ask who will respond to it. Free route: prepare it yourself from the IRS instructions. Disclosure: I run Form5472 Prep. A tax accountant who holds a PTIN reviews every package, and we are not a CPA firm. We do not give tax advice or represent clients before the IRS.
@@ -178,12 +178,12 @@ A PTIN is the number the IRS requires of anyone paid to prepare a return. It is 
 ## Part 4. Article outline (Medium or dev.to), T32
 Title: "How a non-US owner files Form 5472 and the pro forma 1120 (a plain guide)"
 Disclosure line at the top: "I run Form5472 Prep, a filing service. This guide includes the free do-it-yourself route first."
-1. Who must file: foreign-owned single-member US LLCs with reportable transactions (a capital contribution counts). Link to the IRS instructions.
-2. What the two forms are: Form 5472 and the pro forma 1120 (header and signature only), attached together.
+1. Who must file: a US LLC wholly owned by a foreign person and disregarded for federal income tax purposes generally files Form 5472 with a pro forma 1120 for years with reportable related-party transactions, including owner contributions. Link irs.gov/instructions/i5472.
+2. What the two forms are: Form 5472 and the pro forma 1120 (complete the entity's name, address, items B and E; write "Foreign-owned U.S. DE" across the top; sign), attached together.
 3. What you need before you start: EIN, LLC details, owner details, list of transactions.
-4. Due date and Form 7004 (six months).
-5. How to file yourself, step by step (free route).
-6. The penalty ($25,000 per form) and the reasonable cause route if you are late. No guarantees.
+4. Due date: generally April 15; a timely, properly completed Form 7004 extends to October 15 (weekend/holiday adjustments). It cannot be e-filed.
+5. How to file yourself (free route): fax or mail per the special Form 5472 instructions.
+6. Penalties: $25,000 initial penalty per form, further $25,000 increments if the failure continues after IRS notice, plus penalties for incomplete filings and record failures. Late filers: procedures depend on facts and IRS contact; a reasonable-cause statement may be submitted but relief is not automatic (link the IRS DIIRSP page).
 7. When people use a service: what each option does (DIY, CPA firm, done-for-you). Mention us once, neutrally, with the kit price line; name other options by type.
 8. Checklist and links to the IRS pages.
 Length 1,200-1,500 words. Add no promised outcomes. Run the Codex tax-fact check before publishing.
