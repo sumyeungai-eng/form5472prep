@@ -35,12 +35,17 @@ draft: false
    `{{price.itin}}` ($349). Arithmetic is allowed: `{{price.standard - 79}}`.
    A literal "$149"/"$199"/"$99"/"$349" outside a token fails
    `src/lib/blog-price-tokens.test.ts`.
-   **There is NO token for the $79 Form 7004 extension service.** Do not state its
-   price at all — link to `/form-7004-extension` and let that page carry the figure.
+   **There is still NO token for the Form 7004 extension service**, whose price was
+   cut from $79 to $19 on 2026-11-03 (`EXTENSION_PRICE_CENTS`). Do not state its price
+   — link to `/form-7004-extension` and let that page carry the figure. (At $19 it no
+   longer collides with Snapfile's $79, so a `price.extension` token is now safe to
+   add if someone wants one; it was not safe at $79.)
 
 3. **Fixed wording, no paraphrasing:**
-   - Express is "ready for you to check and sign within 24 hours, 7 days a week".
-     **Never** "filed within 24 hours" or "faxed within 24 hours" — the fax goes out
+   - Express is "ready for you to check and sign in under 3 days, 7 days a week"
+     (`EXPRESS_PROMISE` in `src/lib/pricing.ts`; it was "within 24 hours" until
+     2026-11-03 — do not copy the old wording from an older post).
+     **Never** "filed in under 3 days" or "faxed in under 3 days" — the fax goes out
      after the client signs.
    - Our reviewer is "a tax accountant who holds an IRS PTIN". **Never**
      "IRS-approved", "IRS-licensed", "our CPAs", or any claim of CPA status.

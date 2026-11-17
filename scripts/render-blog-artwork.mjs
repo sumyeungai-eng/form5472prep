@@ -249,6 +249,8 @@ function svg({ accent, motif: kind, glyphs, location }) {
 }
 
 const POSTS = {
+  "is-it-safe-to-use-an-ein-service": { accent: C.teal, motif: "card", glyphs: ["person", "doc", "hash", "check"] },
+  "form-1120x-foreign-owned-llc-amended-return": { accent: C.clay, motif: "correct", glyphs: ["doc", "pen", "two", "check"] },
   "form-7004-line-by-line-foreign-owned-llc": { accent: C.navySoft, motif: "card", glyphs: ["doc", "pen", "hash", "check"] },
   "form-5472-first-time-penalty-abatement": { accent: C.clay, motif: "notice", glyphs: ["warn", "doc", "hash", "check"] },
   "form-5472-extension-vs-late-filing": { accent: C.amber, motif: "split", glyphs: ["calendar", "two", "hash", "check"] },
