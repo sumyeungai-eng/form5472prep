@@ -7,6 +7,10 @@ import { CountryFlag } from "./CountryFlag";
 import { isAdmin } from "@/lib/admin/auth";
 import { formatAttribution } from "@/lib/attribution";
 import { env } from "@/lib/env";
+import { getTrafficOverview, percentChange, type RangeKey } from "@/lib/admin/trafficStats";
+import { LineChart } from "@/components/admin/charts/LineChart";
+import { StackedBarChart } from "@/components/admin/charts/StackedBarChart";
+import { BarList } from "@/components/admin/charts/BarList";
 import {
   getIpGroups,
   getIpVisitorCounts,
@@ -22,6 +26,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Traffic · Admin" };
 
 type SearchParams = {
+  range?: string;
   from?: string;
   to?: string;
   country?: string;
@@ -70,6 +75,8 @@ export default async function AdminTrafficPage({
         description="Every page view by a real browser — who came from where, and which visits became orders."
       />
 
+      <TrafficOverviewSection range={parsed.values.range} searchParams={searchParams} />
+
       <ViewToggle values={parsed.values} />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
@@ -96,6 +103,7 @@ export default async function AdminTrafficPage({
       </div>
 
       <form method="get" className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
+        <input type="hidden" name="range" value={parsed.values.range} />
         {parsed.values.view === "ips" ? <input type="hidden" name="view" value="ips" /> : null}
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
           <Field label="From">
@@ -297,6 +305,97 @@ export default async function AdminTrafficPage({
   );
 }
 
+async function TrafficOverviewSection({ range, searchParams }: { range: RangeKey; searchParams: SearchParams }) {
+  try {
+    const overview = await getTrafficOverview(range);
+    return <TrafficOverview overview={overview} range={range} searchParams={searchParams} />;
+  } catch (error) {
+    console.error("Traffic overview unavailable", error);
+    const message = (error instanceof Error ? error.message : String(error)).split(/\r?\n/)[0].slice(0, 120) || "Unknown error";
+    return <div role="status" className="mb-6 rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-600">Overview unavailable: {message}</div>;
+  }
+}
+
+function TrafficOverview({ overview, range, searchParams }: {
+  overview: Awaited<ReturnType<typeof getTrafficOverview>>;
+  range: RangeKey;
+  searchParams: SearchParams;
+}) {
+  const { totals } = overview;
+  const count = (value: number) => value.toLocaleString("en-US");
+  const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
+  const cards = [
+    { label: "Visitors", metric: totals.visitors, value: count(totals.visitors.current) },
+    { label: "Page views", metric: totals.views, value: count(totals.views.current) },
+    { label: "Started filings", metric: totals.startedFilings, value: count(totals.startedFilings.current) },
+    { label: "Paid filings", metric: totals.paidFilings, value: count(totals.paidFilings.current) },
+    { label: "Revenue (USD)", metric: totals.revenueCents, value: new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(totals.revenueCents.current / 100) },
+    { label: "Visit → paid conversion", metric: totals.conversion, value: pct(totals.conversion.current) },
+  ];
+  const rangeHref = (next: RangeKey) => {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(searchParams)) if (value !== undefined) params.set(key, value);
+    params.set("range", next);
+    return `/admin/traffic?${params.toString()}`;
+  };
+  return <section aria-labelledby="traffic-overview" className="mb-10 space-y-5 border-b border-slate-200 pb-8">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <h2 id="traffic-overview" className="text-xl font-semibold text-slate-900">Overview</h2>
+      <nav aria-label="Overview date range" className="inline-flex rounded-md border border-slate-200 bg-white p-0.5">
+        {(["7d", "28d", "90d"] as const).map(key => <Link key={key} href={rangeHref(key)} aria-current={range === key ? "page" : undefined} className={`rounded px-3 py-1.5 text-sm ${range === key ? "bg-slate-100 font-medium text-slate-900" : "text-slate-600 hover:text-slate-900"}`}>{key.slice(0, -1)} days</Link>)}
+      </nav>
+    </div>
+    <p className="text-xs text-slate-500">Overview uses the selected range, independently of the filters below. Includes today up to now; compares with the preceding {range.slice(0, -1)} UTC days.</p>
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
+      {cards.map(card => <div key={card.label} className="rounded-lg border border-slate-200 bg-white p-4">
+        <h3 className="text-xs text-slate-500">{card.label}</h3>
+        <p className="mt-2 text-2xl font-semibold tabular-nums text-slate-900">{card.value}</p>
+        <div className="mt-2 text-xs"><OverviewChange value={card.metric.change} /><span className="text-slate-400"> vs previous</span></div>
+        {card.label === "Paid filings" ? <div className="mt-2 text-xs text-slate-500">+ {count(totals.paidEinItin.current)} EIN/ITIN paid · <OverviewChange value={totals.paidEinItin.change} /></div> : null}
+      </div>)}
+    </div>
+    <p className="text-xs text-slate-500">Funnel: visitors → filings started → filings paid in this period; these are activity counts, not a matched visitor cohort. Conversion = paid filings ÷ visitors. Revenue includes filing, EIN and ITIN payments, derived from cents.</p>
+    <div className="grid gap-5 lg:grid-cols-2">
+      <div className="rounded-lg border border-slate-200 bg-white p-4"><h3 className="mb-4 text-sm font-semibold text-slate-900">Traffic trend</h3><LineChart data={overview.daily} /></div>
+      <div className="rounded-lg border border-slate-200 bg-white p-4"><h3 className="mb-4 text-sm font-semibold text-slate-900">Visitors by channel</h3><StackedBarChart data={overview.dailyByGroup} /></div>
+    </div>
+    <p className="text-xs text-slate-500">Times in UTC. Visits are kept 90 days. Bots excluded.</p>
+    <p className="text-xs text-slate-500">Previous-period traffic may be incomplete due to retention, especially for 90 days. Sources use first-touch attribution. Orders with no retained visitor remain included; EIN/ITIN orders have no bot flag.</p>
+    <OverviewTable title="Sources" columns={["Group", "Visitors", "Share", "Change", "Started", "Paid", "Conversion"]}>
+      {overview.byGroup.some(row => row.visitors || row.prevVisitors || row.startedFilings || row.paidFilings) ? overview.byGroup.map(row => <tr key={row.group}>
+        <th scope="row" className="px-4 py-3 text-left font-medium">{row.group}</th><td className="px-4 py-3">{count(row.visitors)}</td><td className="px-4 py-3">{pct(totals.visitors.current ? row.visitors / totals.visitors.current : 0)}</td><td className="px-4 py-3"><OverviewChange value={percentChange(row.visitors, row.prevVisitors)} /></td><td className="px-4 py-3">{count(row.startedFilings)}</td><td className="px-4 py-3">{count(row.paidFilings)}</td><td className="px-4 py-3">{pct(row.conv)}</td>
+      </tr>) : <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500">No source data in this period.</td></tr>}
+    </OverviewTable>
+    <OverviewTable title="AI engines" columns={["Engine", "Visitors", "Change", "Started", "Paid"]}>
+      {overview.aiEngines.length ? overview.aiEngines.map(row => <tr key={row.engine}>
+        <th scope="row" className="px-4 py-3 text-left font-medium">{row.engine}</th><td className="px-4 py-3">{count(row.visitors)}</td><td className="px-4 py-3"><OverviewChange value={percentChange(row.visitors, row.prevVisitors)} /></td><td className="px-4 py-3">{count(row.startedFilings)}</td><td className="px-4 py-3">{count(row.paidFilings)}</td>
+      </tr>) : <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-500">No AI engine data in this period.</td></tr>}
+    </OverviewTable>
+    <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <BarList title="Top landing pages · new visitors" rows={overview.topLanding.map(row => ({ label: row.path, value: row.visitors }))} />
+      <BarList title="Top pages · views" rows={overview.topPages.map(row => ({ label: row.path, value: row.views, detail: `${row.prevViews} previous` }))} />
+      <BarList title="Countries · visitors" rows={overview.countries.map(row => ({ label: row.country, value: row.visitors }))} />
+      <BarList title="Devices · views" rows={overview.devices.map(row => ({ label: row.device, value: row.views }))} />
+    </div>
+  </section>;
+}
+
+function OverviewChange({ value }: { value: number | null }) {
+  if (value === null) return <span className="text-slate-400">—</span>;
+  if (!Number.isFinite(value)) return <span className="text-emerald-700">↑ New</span>;
+  return <span className={value > 0 ? "text-emerald-700" : value < 0 ? "text-rose-700" : "text-slate-500"}>{value > 0 ? "↑" : value < 0 ? "↓" : "→"} {Math.abs(value).toFixed(1)}%</span>;
+}
+
+function OverviewTable({ title, columns, children }: { title: string; columns: string[]; children: React.ReactNode }) {
+  return <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+    <table className="w-full whitespace-nowrap text-left text-sm tabular-nums text-slate-700">
+      <caption className="px-4 py-3 text-left text-sm font-semibold text-slate-900">{title}</caption>
+      <thead className="border-y border-slate-200 bg-slate-50 text-xs uppercase tracking-wider text-slate-500"><tr>{columns.map(column => <th key={column} scope="col" className="px-4 py-3 font-semibold">{column}</th>)}</tr></thead>
+      <tbody className="divide-y divide-slate-200">{children}</tbody>
+    </table>
+  </div>;
+}
+
 function parseSearchParams(searchParams: SearchParams): {
   filters: TrafficFilters;
   page: number;
@@ -304,6 +403,7 @@ function parseSearchParams(searchParams: SearchParams): {
     customersOnly: string;
     includeBots: string;
     view: "views" | "ips";
+    range: RangeKey;
   };
 } {
   const now = new Date();
@@ -328,6 +428,7 @@ function parseSearchParams(searchParams: SearchParams): {
     },
     page,
     values: {
+      range: searchParams.range === "7d" || searchParams.range === "90d" ? searchParams.range : "28d",
       from: formatDateInput(from),
       to: formatDateInput(to),
       country: clean(searchParams.country) ?? "",
@@ -534,6 +635,7 @@ function PageLink({
 
 function pageHref(page: number, values: ReturnType<typeof parseSearchParams>["values"]): string {
   const params = new URLSearchParams();
+  params.set("range", values.range);
   params.set("from", values.from);
   params.set("to", values.to);
   if (values.view === "ips") params.set("view", values.view);
@@ -549,6 +651,7 @@ function pageHref(page: number, values: ReturnType<typeof parseSearchParams>["va
 
 function viewHref(view: "views" | "ips", values: ReturnType<typeof parseSearchParams>["values"]): string {
   const params = new URLSearchParams();
+  params.set("range", values.range);
   params.set("from", values.from);
   params.set("to", values.to);
   if (view === "ips") params.set("view", view);
