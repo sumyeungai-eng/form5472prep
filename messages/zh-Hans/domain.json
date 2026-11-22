@@ -1,0 +1,50 @@
+{
+  "status": {
+    "draft": "草稿",
+    "paid": "已付款 — 可生成文件",
+    "readyToSign": "可签署",
+    "awaitingSignature": "等待签署",
+    "readyToFax": "可发送传真",
+    "faxed": "已发送传真",
+    "confirmed": "已确认",
+    "failed": "未成功",
+    "received": "已收到",
+    "inReview": "审核中",
+    "documentsRequested": "需要补充文件",
+    "paymentPending": "等待付款",
+    "processing": "IRS 处理中",
+    "einCompleted": "已完成 — EIN 已签发",
+    "itinCompleted": "已完成 — ITIN 已签发",
+    "cancelled": "已取消",
+    "caaScheduled": "CAA 预约已安排",
+    "w7Submitted": "W-7 已提交至 IRS"
+  },
+  "taxYears": "税务年度：{years}",
+  "taxYear": "税务年度 {years}",
+  "filingStatus": {
+    "DRAFT": "草稿",
+    "PAID": "已付款 — 可生成文件",
+    "PDF_GENERATED": "可签署",
+    "SIGNATURE_PENDING": "等待签署",
+    "SIGNED_UPLOADED": "可发送传真",
+    "FAXED": "已发送传真",
+    "CONFIRMED": "已确认",
+    "FAILED": "未成功"
+  },
+  "tier": {
+    "single_year": "单一年度（旧版方案）",
+    "two_year_diirsp": "两年补报（旧版方案）",
+    "multi_year_diirsp": "三年补报（旧版方案）",
+    "standard": "标准申报",
+    "express": "加急申报",
+    "priority": "24 小时申报（已停用方案）",
+    "rush": "快速申报（旧版方案）",
+    "premium": "高级申报（旧版方案）"
+  },
+  "documentType": {
+    "faxReceipt": "传真发送回执（申报凭证）",
+    "signedCopy": "已签署副本（PDF）",
+    "faxedForms": "已传真至 IRS 的表格（PDF）",
+    "signedForms": "已签署表格（PDF）"
+  }
+}

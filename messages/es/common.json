@@ -1,0 +1,14 @@
+{
+  "sending": "Enviando…",
+  "saving": "Guardando…",
+  "downloadLabel": "Descargar {label}",
+  "download": "Descargar",
+  "language": "Idioma",
+  "back": "Volver",
+  "cancel": "Cancelar",
+  "date": "Fecha",
+  "justNow": "hace un momento",
+  "minutesAgo": "hace {count} min",
+  "hoursAgo": "hace {count} h",
+  "daysAgo": "hace {count} días"
+}

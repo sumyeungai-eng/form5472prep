@@ -1,0 +1,50 @@
+{
+  "status": {
+    "draft": "Brouillon",
+    "paid": "Payé — prêt pour la génération",
+    "readyToSign": "Prêt à signer",
+    "awaitingSignature": "En attente de signature",
+    "readyToFax": "Prêt à être faxé",
+    "faxed": "Fax envoyé",
+    "confirmed": "Confirmé",
+    "failed": "Échec",
+    "received": "Reçu",
+    "inReview": "En cours de vérification",
+    "documentsRequested": "Documents demandés",
+    "paymentPending": "En attente de paiement",
+    "processing": "En cours de traitement par l’IRS",
+    "einCompleted": "Terminé — EIN attribué",
+    "itinCompleted": "Terminé — ITIN attribué",
+    "cancelled": "Annulé",
+    "caaScheduled": "Rendez-vous CAA fixé",
+    "w7Submitted": "W-7 soumis à l’IRS"
+  },
+  "taxYears": "Années fiscales {years}",
+  "taxYear": "année fiscale {years}",
+  "filingStatus": {
+    "DRAFT": "Brouillon",
+    "PAID": "Payé — prêt pour la génération",
+    "PDF_GENERATED": "Prêt à signer",
+    "SIGNATURE_PENDING": "En attente de signature",
+    "SIGNED_UPLOADED": "Prêt à être faxé",
+    "FAXED": "Fax envoyé",
+    "CONFIRMED": "Confirmé",
+    "FAILED": "Échec"
+  },
+  "tier": {
+    "single_year": "Une année (ancienne offre)",
+    "two_year_diirsp": "Régularisation de deux années (ancienne offre)",
+    "multi_year_diirsp": "Régularisation de trois années (ancienne offre)",
+    "standard": "Déclaration standard",
+    "express": "Déclaration express",
+    "priority": "Déclaration sous 24 heures (offre retirée)",
+    "rush": "Déclaration urgente (ancienne offre)",
+    "premium": "Déclaration premium (ancienne offre)"
+  },
+  "documentType": {
+    "faxReceipt": "Accusé de transmission par fax (preuve de dépôt)",
+    "signedCopy": "Copie signée (PDF)",
+    "faxedForms": "Formulaires faxés à l’IRS (PDF)",
+    "signedForms": "Formulaires signés (PDF)"
+  }
+}

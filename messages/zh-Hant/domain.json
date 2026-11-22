@@ -1,0 +1,50 @@
+{
+  "status": {
+    "draft": "草稿",
+    "paid": "已付款 — 可產生文件",
+    "readyToSign": "可簽署",
+    "awaitingSignature": "等待簽署",
+    "readyToFax": "可傳送傳真",
+    "faxed": "已傳送傳真",
+    "confirmed": "已確認",
+    "failed": "未成功",
+    "received": "已收到",
+    "inReview": "審核中",
+    "documentsRequested": "需要補充文件",
+    "paymentPending": "等待付款",
+    "processing": "IRS 處理中",
+    "einCompleted": "已完成 — EIN 已核發",
+    "itinCompleted": "已完成 — ITIN 已核發",
+    "cancelled": "已取消",
+    "caaScheduled": "CAA 預約已安排",
+    "w7Submitted": "W-7 已提交至 IRS"
+  },
+  "taxYears": "稅務年度：{years}",
+  "taxYear": "稅務年度 {years}",
+  "filingStatus": {
+    "DRAFT": "草稿",
+    "PAID": "已付款 — 可產生文件",
+    "PDF_GENERATED": "可簽署",
+    "SIGNATURE_PENDING": "等待簽署",
+    "SIGNED_UPLOADED": "可傳送傳真",
+    "FAXED": "已傳送傳真",
+    "CONFIRMED": "已確認",
+    "FAILED": "未成功"
+  },
+  "tier": {
+    "single_year": "單一年度（舊版方案）",
+    "two_year_diirsp": "兩年補報（舊版方案）",
+    "multi_year_diirsp": "三年補報（舊版方案）",
+    "standard": "標準申報",
+    "express": "加急申報",
+    "priority": "24 小時申報（已停用方案）",
+    "rush": "快速申報（舊版方案）",
+    "premium": "進階申報（舊版方案）"
+  },
+  "documentType": {
+    "faxReceipt": "傳真傳送回執（申報證明）",
+    "signedCopy": "已簽署副本（PDF）",
+    "faxedForms": "已傳真至 IRS 的表格（PDF）",
+    "signedForms": "已簽署表格（PDF）"
+  }
+}

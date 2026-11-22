@@ -1,3 +1,6 @@
+import createNextIntlPlugin from "next-intl/plugin";
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+
 // Partner clients' portal domain (same parsing as src/lib/partner/portalHost.ts).
 // On that host only the invite, intake and sign pages (plus /api, /_next and
 // /portal/*) exist; everything else, robots/sitemap/feeds included, is a
@@ -107,4 +110,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

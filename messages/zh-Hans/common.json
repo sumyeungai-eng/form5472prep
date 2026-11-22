@@ -1,0 +1,14 @@
+{
+  "sending": "正在发送…",
+  "saving": "正在保存…",
+  "downloadLabel": "下载{label}",
+  "download": "下载",
+  "language": "语言",
+  "back": "返回",
+  "cancel": "取消",
+  "date": "日期",
+  "justNow": "刚刚",
+  "minutesAgo": "{count}分钟前",
+  "hoursAgo": "{count}小时前",
+  "daysAgo": "{count}天前"
+}

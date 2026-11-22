@@ -1,0 +1,50 @@
+{
+  "status": {
+    "draft": "Borrador",
+    "paid": "Pagado — listo para generar",
+    "readyToSign": "Listo para firmar",
+    "awaitingSignature": "Pendiente de firma",
+    "readyToFax": "Listo para enviar por fax",
+    "faxed": "Fax enviado",
+    "confirmed": "Confirmado",
+    "failed": "Error",
+    "received": "Recibido",
+    "inReview": "En revisión",
+    "documentsRequested": "Documentos solicitados",
+    "paymentPending": "Pendiente de pago",
+    "processing": "En trámite ante el IRS",
+    "einCompleted": "Completado — EIN emitido",
+    "itinCompleted": "Completado — ITIN emitido",
+    "cancelled": "Cancelado",
+    "caaScheduled": "Cita con CAA programada",
+    "w7Submitted": "W-7 presentado al IRS"
+  },
+  "taxYears": "Años fiscales {years}",
+  "taxYear": "año fiscal {years}",
+  "filingStatus": {
+    "DRAFT": "Borrador",
+    "PAID": "Pagado — listo para generar",
+    "PDF_GENERATED": "Listo para firmar",
+    "SIGNATURE_PENDING": "Pendiente de firma",
+    "SIGNED_UPLOADED": "Listo para enviar por fax",
+    "FAXED": "Fax enviado",
+    "CONFIRMED": "Confirmado",
+    "FAILED": "Error"
+  },
+  "tier": {
+    "single_year": "Un año (plan anterior)",
+    "two_year_diirsp": "Regularización de dos años (plan anterior)",
+    "multi_year_diirsp": "Regularización de tres años (plan anterior)",
+    "standard": "Declaración estándar",
+    "express": "Declaración exprés",
+    "priority": "Declaración en 24 horas (plan retirado)",
+    "rush": "Declaración urgente (plan anterior)",
+    "premium": "Declaración prémium (plan anterior)"
+  },
+  "documentType": {
+    "faxReceipt": "Comprobante de transmisión por fax (justificante de presentación)",
+    "signedCopy": "Copia firmada (PDF)",
+    "faxedForms": "Formularios enviados por fax al IRS (PDF)",
+    "signedForms": "Formularios firmados (PDF)"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "status": {
+    "draft": "Entwurf",
+    "paid": "Bezahlt — bereit zur Erstellung",
+    "readyToSign": "Bereit zur Unterschrift",
+    "awaitingSignature": "Unterschrift ausstehend",
+    "readyToFax": "Bereit zum Faxversand",
+    "faxed": "Per Fax versandt",
+    "confirmed": "Bestätigt",
+    "failed": "Fehlgeschlagen",
+    "received": "Eingegangen",
+    "inReview": "In Prüfung",
+    "documentsRequested": "Unterlagen angefordert",
+    "paymentPending": "Zahlung ausstehend",
+    "processing": "In Bearbeitung beim IRS",
+    "einCompleted": "Abgeschlossen — EIN erteilt",
+    "itinCompleted": "Abgeschlossen — ITIN erteilt",
+    "cancelled": "Storniert",
+    "caaScheduled": "CAA-Termin vereinbart",
+    "w7Submitted": "W-7 beim IRS eingereicht"
+  },
+  "taxYears": "Steuerjahre {years}",
+  "taxYear": "Steuerjahr {years}",
+  "filingStatus": {
+    "DRAFT": "Entwurf",
+    "PAID": "Bezahlt — bereit zur Erstellung",
+    "PDF_GENERATED": "Bereit zur Unterschrift",
+    "SIGNATURE_PENDING": "Unterschrift ausstehend",
+    "SIGNED_UPLOADED": "Bereit zum Faxversand",
+    "FAXED": "Per Fax versandt",
+    "CONFIRMED": "Bestätigt",
+    "FAILED": "Fehlgeschlagen"
+  },
+  "tier": {
+    "single_year": "Einzeljahr (früherer Tarif)",
+    "two_year_diirsp": "Nachreichung für zwei Jahre (früherer Tarif)",
+    "multi_year_diirsp": "Nachreichung für drei Jahre (früherer Tarif)",
+    "standard": "Standard-Einreichung",
+    "express": "Express-Einreichung",
+    "priority": "Einreichung innerhalb von 24 Stunden (eingestellter Tarif)",
+    "rush": "Eilige Einreichung (früherer Tarif)",
+    "premium": "Premium-Einreichung (früherer Tarif)"
+  },
+  "documentType": {
+    "faxReceipt": "Fax-Sendebeleg (Einreichungsnachweis)",
+    "signedCopy": "Unterschriebene Kopie (PDF)",
+    "faxedForms": "An den IRS gefaxte Formulare (PDF)",
+    "signedForms": "Unterschriebene Formulare (PDF)"
+  }
+}

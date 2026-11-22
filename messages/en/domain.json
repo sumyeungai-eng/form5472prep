@@ -1,0 +1,50 @@
+{
+  "status": {
+    "draft": "Draft",
+    "paid": "Paid — ready to generate",
+    "readyToSign": "Ready to sign",
+    "awaitingSignature": "Awaiting signature",
+    "readyToFax": "Ready to fax",
+    "faxed": "Faxed",
+    "confirmed": "Confirmed",
+    "failed": "Failed",
+    "received": "Received",
+    "inReview": "In review",
+    "documentsRequested": "Documents requested",
+    "paymentPending": "Payment pending",
+    "processing": "Processing with IRS",
+    "einCompleted": "Completed — EIN issued",
+    "itinCompleted": "Completed — ITIN issued",
+    "cancelled": "Cancelled",
+    "caaScheduled": "CAA appointment set",
+    "w7Submitted": "W-7 submitted to IRS"
+  },
+  "taxYears": "Tax years {years}",
+  "taxYear": "tax year {years}",
+  "filingStatus": {
+    "DRAFT": "Draft",
+    "PAID": "Paid — ready to generate",
+    "PDF_GENERATED": "Ready to sign",
+    "SIGNATURE_PENDING": "Awaiting signature",
+    "SIGNED_UPLOADED": "Ready to fax",
+    "FAXED": "Faxed",
+    "CONFIRMED": "Confirmed",
+    "FAILED": "Failed"
+  },
+  "tier": {
+    "single_year": "Single year (legacy plan)",
+    "two_year_diirsp": "Two-year catch-up (legacy plan)",
+    "multi_year_diirsp": "Three-year catch-up (legacy plan)",
+    "standard": "Standard filing",
+    "express": "Express filing",
+    "priority": "24-Hour filing (retired plan)",
+    "rush": "Rush (legacy plan)",
+    "premium": "Premium (legacy plan)"
+  },
+  "documentType": {
+    "faxReceipt": "Fax transmission receipt (proof of filing)",
+    "signedCopy": "Signed copy (PDF)",
+    "faxedForms": "Forms faxed to the IRS (PDF)",
+    "signedForms": "Signed forms (PDF)"
+  }
+}

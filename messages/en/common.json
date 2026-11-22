@@ -1,0 +1,14 @@
+{
+  "sending": "Sending…",
+  "saving": "Saving…",
+  "downloadLabel": "Download {label}",
+  "download": "Download",
+  "language": "Language",
+  "back": "Back",
+  "cancel": "Cancel",
+  "date": "Date",
+  "justNow": "just now",
+  "minutesAgo": "{count}m ago",
+  "hoursAgo": "{count}h ago",
+  "daysAgo": "{count}d ago"
+}
