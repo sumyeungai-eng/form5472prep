@@ -32,7 +32,8 @@ export function WizardStaticProvider({ children }: { children: React.ReactNode }
   }, []);
   return (
     <NextIntlClientProvider locale={state.locale} messages={state.messages} timeZone="UTC" onError={() => {}}>
-      {children}
+      {/* lang for screen readers; display:contents keeps the layout unchanged. */}
+      <div lang={state.locale} className="contents">{children}</div>
     </NextIntlClientProvider>
   );
 }

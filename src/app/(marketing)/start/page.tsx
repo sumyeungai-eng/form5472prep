@@ -93,7 +93,7 @@ export default async function StartPage() {
             {/* Suspense boundary required by useSearchParams inside StartForm. */}
             <Suspense fallback={<div className="mt-6 h-[380px]" aria-hidden />}>
               <NextIntlClientProvider locale={locale} messages={clientMessages}>
-                <StartForm />
+                <div lang={locale} className="contents"><StartForm /></div>
               </NextIntlClientProvider>
             </Suspense>
             <p className="mt-6 text-xs text-slate-500 text-center">

@@ -12,7 +12,7 @@ import { LOCALES } from "@/i18n/locales";
 describe("wizard display copy never blocks the form", () => {
   it("uses English without a provider and on the static first paint", () => {
     expect(renderToStaticMarkup(<WizardCopy text="Continue" />)).toBe("Continue");
-    expect(renderToStaticMarkup(<WizardStaticProvider><WizardCopy text="Continue" /></WizardStaticProvider>)).toBe("Continue");
+    expect(renderToStaticMarkup(<WizardStaticProvider><WizardCopy text="Continue" /></WizardStaticProvider>)).toBe('<div lang="en" class="contents">Continue</div>');
   });
   it("uses the existing intl context", () => {
     expect(renderToStaticMarkup(<NextIntlClientProvider locale="de" messages={{ wizard: german }}><WizardCopy text="Continue" /></NextIntlClientProvider>)).toBe("Weiter");
