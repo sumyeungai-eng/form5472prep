@@ -12,7 +12,7 @@
 | `monitor` | `feat/error-monitoring` | Phase 2 | merged |
 | `i18n` | `feat/i18n-portal` | Phase 3a portal | merged |
 | `i18n-email` | `feat/i18n-emails` | Phase 3b emails + FilingLocked | merged |
-| `i18n-wiz` | `feat/i18n-wizard` | Phase 3c wizard | in progress at the time of writing |
+| `i18n-wiz` | `feat/i18n-wizard` | Phase 3c wizard | merged |
 
 The main checkout `~/Documents/Claude work/form5472` holds another session's uncommitted work and was not touched. The merged worktrees are stale and may be removed.
 
@@ -26,6 +26,7 @@ Every row was deployed, and each one passed the full vitest suite, `next build`,
 | **Filed documents.** Adds `GET /api/filings/[id]/faxed-pdf` (owner or owning partner via `getFilingAccess`; 404 until `faxedAt`; serves `faxedPdfKey`, falling back to `signedPdfKey`). Adds `FiledDocumentsCard` (`#documents`) on the filing and confirmation pages, banner actions and dashboard links. The delivery email links to `#documents` and attaches the fax receipt. The forms are never attached when an SSN is on file. | `503cb56`, `54923c4` |
 | **Portal i18n (3a).** next-intl 3.26.5 without i18n routing. The locale comes from the `NEXT_LOCALE` cookie, then Accept-Language, then `en`. There is no DB access in `request.ts`. English is deep-merged under every locale, and `onError` only logs. Adds `User.locale` (migration `20261123120000_user_locale`), applied to the cookie at magic-link login. The language switcher is a server action. The provider lives only in `(app)/layout.tsx`, so marketing stays ○/● (verified in the build route table). Verified live: every locale renders the "English is authoritative" footer. | `f851ae1`, `1267505` |
 | **Email i18n (3b).** 18 customer emails take a `locale` argument (from `User.locale`, already loaded; no new webhook or checkout queries). English output is byte-identical (25 fixture hashes). Admin and partner-firm emails stay English. `FilingLocked` is translated. The German no-name greeting uses an ICU select. The email translator does not import `server-only`. | `2f7098d`…`7ce4abb` |
+| **Wizard i18n (3c).** The questionnaire is translated: `components/wizard/**` (inside the `(app)` provider), `wizard-v3`, `/file/*` (English-first lazy client provider, so the pages stay ○ static, verified in the route table) and the `/start` form (server `getMessages`; the route was already ƒ). The change is text only. A Codex review confirmed that values, option codes, validation, navigation and the pay-button state are identical, and that the pay button stays enabled on bad data in all 6 locales. A `lang` wrapper (`display:contents`) is added for screen readers. Verified live: `/file` in `de` renders German with `lang="de"`. Codex's sandbox could not commit, so its 3 commits were imported from a git bundle after a byte-for-byte check against the worktree. | `130fd34`…`8c39660` |
 
 Read-only Codex reviews ran on every lane before shipping, and every finding was fixed. The highest-value finds:
 - the monitoring cron sampled partner filings;
@@ -52,8 +53,7 @@ Read-only Codex reviews ran on every lane before shipping, and every finding was
 - Optional: `grok login` to restore the Grok lane (it was logged out, so Codex was used instead).
 
 **Follow-ups:**
-- Phase 3c (wizard) is in progress.
-- Server zod/schema validation messages stay English.
+- Server zod/schema validation messages and raw checkout/API errors still show in English (the 3c follow-up list: entity and owner field errors, year, dissolution and extension errors, reasonable-cause length and encoding errors, save banners).
 - Form 7004 confirmations stay English (no account or locale).
 - `npm run email:preview` needs `tsx` (it was missing before this work).
 - The smoke cron and alerts are only proven when the first 02:30 run / first error happens; check Telegram.
