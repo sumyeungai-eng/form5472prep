@@ -8,10 +8,7 @@ const vitestEsbuild = {
 
 export default defineConfig({
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "server-only": path.resolve(__dirname, "node_modules/next/dist/compiled/server-only/empty.js"),
-    },
+    alias: { "@": path.resolve(__dirname, "./src") },
   },
   esbuild: vitestEsbuild,
   oxc: false,

@@ -1,4 +1,3 @@
-import "server-only";
 import { createTranslator } from "next-intl";
 import en from "../../messages/en/email.json";
 import hans from "../../messages/zh-Hans/email.json";

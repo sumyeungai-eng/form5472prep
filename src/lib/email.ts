@@ -750,7 +750,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
       : t("orderConfirmation.subject", { v0: brandName, v1: yearsLabel }),
     text: customerText(
       salutation,
-      t("orderConfirmation.text8", { v0: ORDER_CONFIRMATION_INTRO }) +
+      t("orderConfirmation.text8", { v0: introCopy }) +
       (isExpress ? `${expressReviewText}\n\n` : "") +
       dueDateLineText +
       filingStatusNoticeLineText +
