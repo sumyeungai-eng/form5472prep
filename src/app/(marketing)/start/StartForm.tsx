@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Mail } from "lucide-react";
@@ -39,6 +41,7 @@ function readTier(params: URLSearchParams | null): string | null {
 }
 
 export function StartForm() {
+  const w = useWizardText();
   const router = useRouter();
   const searchParams = useSearchParams();
   const funnelSource = readFunnelSource(searchParams);
@@ -51,7 +54,7 @@ export function StartForm() {
     e.preventDefault();
     const trimmed = email.trim();
     if (!trimmed.includes("@")) {
-      setError("Enter a valid email address");
+      setError(w("Enter a valid email address"));
       return;
     }
     setSubmitting(true);
@@ -140,15 +143,15 @@ export function StartForm() {
 
       <div className="flex items-center gap-3 text-xs text-slate-500">
         <span className="flex-1 border-t border-slate-200" />
-        <span>or with email</span>
+        <span>{w("or with email")}</span>
         <span className="flex-1 border-t border-slate-200" />
       </div>
 
       <form onSubmit={submitEmail} className="space-y-4">
         <Field
-          label="Email address"
-          hint="We save your progress here — you'll only pay at the end."
-          error={error ?? undefined}
+          label={w("Email address")}
+          hint={w("We save your progress here — you'll only pay at the end.")}
+          error={error ? w(error) : undefined}
         >
           <Input
             type="email"
@@ -161,11 +164,10 @@ export function StartForm() {
         </Field>
         <Button type="submit" disabled={submitting} size="lg" className="w-full">
           {submitting ? (
-            "Starting…"
+            w("Starting…")
           ) : (
             <>
-              Begin filing
-              <ArrowRight className="ml-2 h-4 w-4" />
+              {w("Begin filing")}<ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}
         </Button>
@@ -174,8 +176,7 @@ export function StartForm() {
       <p className="flex items-start gap-2 text-xs text-slate-500">
         <Mail className="h-3.5 w-3.5 mt-0.5 flex-none text-slate-400" />
         <span>
-          We email a reminder if you do not finish, and a link to sign back in. No spam.
-        </span>
+          {w("We email a reminder if you do not finish, and a link to sign back in. No spam.")}</span>
       </p>
     </div>
   );

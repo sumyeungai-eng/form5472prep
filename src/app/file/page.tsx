@@ -1,3 +1,4 @@
+import { WizardCopy } from "@/components/wizard/WizardCopy";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, Clock, Send } from "lucide-react";
@@ -19,17 +20,14 @@ export default function FileFunnelLandingPage() {
         {/* Badge */}
         <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 border border-accent/20 px-3 py-1 text-xs font-semibold text-accent tracking-wide uppercase">
           <ShieldCheck className="h-3.5 w-3.5" />
-          Foreign-owned US LLCs
-        </span>
+          <WizardCopy text="Foreign-owned US LLCs" /></span>
 
         {/* Headline */}
         <h1 className="mt-6 text-5xl sm:text-6xl font-semibold tracking-tight text-slate-900 text-balance leading-[1.08]">
-          Get your<br />
-          <span className="text-accent">Form 5472</span> filed.
-        </h1>
+          <WizardCopy text="Get your" /><br />
+          <span className="text-accent">Form 5472</span> <WizardCopy text=" filed." /></h1>
         <p className="mt-5 text-lg text-slate-500 max-w-sm mx-auto text-balance leading-relaxed">
-          Answer two quick questions. We handle the forms, filings, and IRS submission.
-        </p>
+          <WizardCopy text="Answer two quick questions. We handle the forms, filings, and IRS submission." /></p>
 
         {/* CTA */}
         <div className="mt-10">
@@ -38,11 +36,10 @@ export default function FileFunnelLandingPage() {
               size="lg"
               className="h-14 px-10 text-base font-semibold shadow-xl shadow-accent/25 hover:shadow-2xl hover:shadow-accent/35 transition-all duration-200 hover:-translate-y-0.5 rounded-xl"
             >
-              Fill it now
-              <ArrowRight className="ml-2.5 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
+              <WizardCopy text="Fill it now" /><ArrowRight className="ml-2.5 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
             </Button>
           </Link>
-          <p className="mt-3 text-sm text-slate-400">No account needed to start</p>
+          <p className="mt-3 text-sm text-slate-400"><WizardCopy text="No account needed to start" /></p>
         </div>
 
         {/* Trust strip */}
@@ -59,8 +56,8 @@ export default function FileFunnelLandingPage() {
               <div className="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center">
                 <it.icon className="h-4 w-4" />
               </div>
-              <p className="text-sm font-semibold text-slate-900 leading-tight">{it.label}</p>
-              <p className="text-xs text-slate-500 leading-tight">{it.sub}</p>
+              <p className="text-sm font-semibold text-slate-900 leading-tight"><WizardCopy text={it.label} /></p>
+              <p className="text-xs text-slate-500 leading-tight"><WizardCopy text={it.sub} /></p>
             </div>
           ))}
         </div>

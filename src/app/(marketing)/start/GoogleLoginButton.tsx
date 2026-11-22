@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardLocale, useWizardText } from "@/components/wizard/useWizardText";
+
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
@@ -17,7 +19,7 @@ interface GsiAccountsId {
   initialize(opts: { client_id: string; callback: GsiCallback }): void;
   renderButton(
     parent: HTMLElement,
-    opts: { theme?: string; size?: string; width?: number | string; text?: string; shape?: string; logo_alignment?: string },
+    opts: { theme?: string; size?: string; width?: number | string; text?: string; shape?: string; logo_alignment?: string; locale?: string },
   ): void;
 }
 declare global {
@@ -31,6 +33,9 @@ export function GoogleLoginButton({
 }: {
   onCredential: (credential: string) => void;
 }) {
+  const w = useWizardText();
+  const locale = useWizardLocale();
+  const googleLocale = locale === "zh-Hans" ? "zh_CN" : locale === "zh-Hant" ? "zh_TW" : locale;
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID;
   const buttonRef = useRef<HTMLDivElement>(null);
   const buttonRenderedRef = useRef(false);
@@ -67,6 +72,7 @@ export function GoogleLoginButton({
         text: "continue_with",
         shape: "rectangular",
         logo_alignment: "left",
+        locale: googleLocale,
       });
       buttonRenderedRef.current = true;
       setButtonRendered(true);
@@ -75,7 +81,7 @@ export function GoogleLoginButton({
         setLoadFailed(true);
       }
     }
-  }, [clientId, scriptLoaded]);
+  }, [clientId, scriptLoaded, googleLocale]);
 
   if (!clientId) {
     return (
@@ -86,14 +92,11 @@ export function GoogleLoginButton({
           className="inline-flex items-center justify-center gap-2 h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-400 cursor-not-allowed"
         >
           <GoogleGlyph muted />
-          Continue with Google
-          <span className="ml-1 text-[10px] uppercase tracking-wide bg-slate-200 text-slate-600 rounded px-1.5 py-0.5">
-            Unavailable
-          </span>
+          {w("Continue with Google")}<span className="ml-1 text-[10px] uppercase tracking-wide bg-slate-200 text-slate-600 rounded px-1.5 py-0.5">
+            {w("Unavailable")}</span>
         </button>
         <p className="text-[11px] text-amber-700 text-center">
-          Set <code>NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID</code> in <code>.env.local</code> to enable.
-        </p>
+          {w("Set ")}<code>NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID</code> {w(" in ")}<code>.env.local</code> {w(" to enable.")}</p>
       </div>
     );
   }
@@ -101,7 +104,7 @@ export function GoogleLoginButton({
   return (
     <>
       <Script
-        src="https://accounts.google.com/gsi/client"
+        src={`https://accounts.google.com/gsi/client?hl=${googleLocale}`}
         strategy="afterInteractive"
         onLoad={() => setScriptLoaded(true)}
         onError={() => {
@@ -127,13 +130,11 @@ export function GoogleLoginButton({
             <div className="absolute inset-0 flex items-center justify-center">
               {loadFailed ? (
                 <p className="text-[11px] text-slate-500 text-center">
-                  Google sign-in is not available right now. Use your email below.
-                </p>
+                  {w("Google sign-in is not available right now. Use your email below.")}</p>
               ) : (
                 <div className="inline-flex items-center justify-center gap-2 h-10 w-full rounded-md border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-400 pointer-events-none">
                   <GoogleGlyph muted />
-                  Continue with Google
-                </div>
+                  {w("Continue with Google")}</div>
               )}
             </div>
           )}

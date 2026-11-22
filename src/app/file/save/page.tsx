@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, ArrowRight, Lock, CheckCircle2 } from "lucide-react";
@@ -16,6 +18,7 @@ const TIER_MAP: Record<string, { tier: string; yearLabel: string; price: string;
 };
 
 function SaveForm() {
+  const w = useWizardText();
   const router = useRouter();
   const params = useSearchParams();
   const yearsKey = params.get("years") ?? "1";
@@ -48,7 +51,7 @@ function SaveForm() {
 
       router.push(`/filings/${id}/edit`);
     } catch {
-      setError("Something went wrong — please try again.");
+      setError(w("Something went wrong — please try again."));
       setLoading(false);
     }
   }
@@ -61,26 +64,24 @@ function SaveForm() {
 
         {/* Heading */}
         <div className="mt-10">
-          <p className="text-sm font-semibold text-accent uppercase tracking-wider">Step 3 of 3</p>
+          <p className="text-sm font-semibold text-accent uppercase tracking-wider">{w("Step 3 of 3")}</p>
           <h1 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
-            Almost there
-          </h1>
+            {w("Almost there")}</h1>
           <p className="mt-2 text-slate-500">
-            Enter your email to save your progress and receive the completed forms.
-          </p>
+            {w("Enter your email to save your progress and receive the completed forms.")}</p>
         </div>
 
         {/* Price reveal */}
         <div className="mt-8 rounded-2xl border-2 border-accent/20 bg-accent/5 p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold text-accent uppercase tracking-wider">Your plan</p>
+              <p className="text-xs font-semibold text-accent uppercase tracking-wider">{w("Your plan")}</p>
               <p className="mt-1 text-2xl font-semibold text-slate-900">{tierInfo.price}</p>
-              <p className="mt-0.5 text-sm text-slate-600">{tierInfo.yearLabel}</p>
+              <p className="mt-0.5 text-sm text-slate-600">{w(tierInfo.yearLabel)}</p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-slate-400">That&apos;s only</p>
-              <p className="text-sm font-medium text-slate-600">{tierInfo.perYear}</p>
+              <p className="text-xs text-slate-400">{w("That's only")}</p>
+              <p className="text-sm font-medium text-slate-600">{w(tierInfo.perYear)}</p>
             </div>
           </div>
           <div className="mt-4 pt-4 border-t border-accent/10 space-y-1.5">
@@ -92,7 +93,7 @@ function SaveForm() {
             ].map((item) => (
               <div key={item} className="flex items-center gap-2 text-sm text-slate-600">
                 <CheckCircle2 className="flex-none h-3.5 w-3.5 text-emerald-500" />
-                {item}
+                {w(item)}
               </div>
             ))}
           </div>
@@ -102,8 +103,7 @@ function SaveForm() {
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
-              Email address
-            </label>
+              {w("Email address")}</label>
             <input
               id="email"
               type="email"
@@ -127,18 +127,16 @@ function SaveForm() {
             disabled={loading || !email.trim()}
             className="w-full h-12 text-sm font-semibold rounded-xl shadow-lg shadow-accent/20 hover:shadow-xl hover:shadow-accent/30 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none"
           >
-            {loading ? "Starting your filing…" : (
+            {loading ? w("Starting your filing…") : (
               <>
-                Continue to filing
-                <ArrowRight className="ml-2 h-4 w-4" />
+                {w("Continue to filing")}<ArrowRight className="ml-2 h-4 w-4" />
               </>
             )}
           </Button>
 
           <p className="flex items-center justify-center gap-1.5 text-xs text-slate-400">
             <Lock className="h-3 w-3" />
-            No password · No subscription · Pay only at the end
-          </p>
+            {w("No password · No subscription · Pay only at the end")}</p>
         </form>
       </div>
     </div>
@@ -146,12 +144,13 @@ function SaveForm() {
 }
 
 function StepBar({ current, total, onBack }: { current: number; total: number; onBack: () => void }) {
+  const w = useWizardText();
   return (
     <div className="flex items-center gap-3">
       <button
         onClick={onBack}
         className="flex-none w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 hover:border-slate-300 hover:shadow-sm transition-all flex items-center justify-center"
-        aria-label="Back"
+        aria-label={w("Back")}
       >
         <ArrowLeft className="h-4 w-4" />
       </button>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, AlertTriangle } from "lucide-react";
@@ -29,6 +31,7 @@ const QUESTIONS: { key: AnswerKey; label: string; detail: string }[] = [
 ];
 
 export default function OwnerStepPage() {
+  const w = useWizardText();
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<AnswerKey, boolean | null>>({
     individual: null,
@@ -54,13 +57,11 @@ export default function OwnerStepPage() {
         <StepBar current={1} total={3} onBack={() => router.push("/file")} />
 
         <div className="mt-10">
-          <p className="text-sm font-semibold text-accent uppercase tracking-wider">Step 1 of 3</p>
+          <p className="text-sm font-semibold text-accent uppercase tracking-wider">{w("Step 1 of 3")}</p>
           <h1 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 text-balance leading-tight">
-            Quick eligibility check
-          </h1>
+            {w("Quick eligibility check")}</h1>
           <p className="mt-3 text-slate-500">
-            Our service handles the standard foreign-owned single-member LLC case. Confirm each item below.
-          </p>
+            {w("Our service handles the standard foreign-owned single-member LLC case. Confirm each item below.")}</p>
         </div>
 
         <div className="mt-8 space-y-3">
@@ -69,8 +70,8 @@ export default function OwnerStepPage() {
               key={q.key}
               className="rounded-2xl border-2 border-slate-200 bg-white p-5"
             >
-              <p className="font-medium text-slate-900 leading-snug">{q.label}</p>
-              <p className="mt-1.5 text-sm text-slate-500 leading-relaxed">{q.detail}</p>
+              <p className="font-medium text-slate-900 leading-snug">{w(q.label)}</p>
+              <p className="mt-1.5 text-sm text-slate-500 leading-relaxed">{w(q.detail)}</p>
               <div className="mt-4 flex gap-2">
                 <button
                   type="button"
@@ -82,8 +83,7 @@ export default function OwnerStepPage() {
                   }`}
                 >
                   <Check className="inline h-4 w-4 mr-1.5" />
-                  Yes
-                </button>
+                  {w("Yes")}</button>
                 <button
                   type="button"
                   onClick={() => setAnswer(q.key, false)}
@@ -93,8 +93,7 @@ export default function OwnerStepPage() {
                       : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
                   }`}
                 >
-                  No / Not sure
-                </button>
+                  {w("No / Not sure")}</button>
               </div>
             </div>
           ))}
@@ -105,13 +104,9 @@ export default function OwnerStepPage() {
             <div className="flex gap-3">
               <AlertTriangle className="flex-none h-5 w-5 text-amber-600 mt-0.5" />
               <div>
-                <p className="font-semibold text-amber-900">Your filing has extra complexity</p>
+                <p className="font-semibold text-amber-900">{w("Your filing has extra complexity")}</p>
                 <p className="mt-1.5 text-sm text-amber-800 leading-relaxed">
-                  We&apos;re built for the standard case above. Filings involving foreign-entity owners,
-                  US trade or business income, or unconverted foreign-currency records need a CPA who
-                  handles international tax. We don&apos;t want to take your money and give you a wrong
-                  filing.
-                </p>
+                  {w("We're built for the standard case above. Filings involving foreign-entity owners, US trade or business income, or unconverted foreign-currency records need a CPA who handles international tax. We don't want to take your money and give you a wrong filing.")}</p>
               </div>
             </div>
           </div>
@@ -125,11 +120,10 @@ export default function OwnerStepPage() {
             onClick={continueOn}
             className="w-full h-12 text-sm font-semibold rounded-xl shadow-lg shadow-accent/20 hover:shadow-xl hover:shadow-accent/30 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none"
           >
-            Continue
-            <ArrowRight className="ml-2 h-4 w-4" />
+            {w("Continue")}<ArrowRight className="ml-2 h-4 w-4" />
           </Button>
           {!allAnswered && (
-            <p className="mt-2 text-xs text-slate-400 text-center">Answer all three to continue</p>
+            <p className="mt-2 text-xs text-slate-400 text-center">{w("Answer all three to continue")}</p>
           )}
         </div>
       </div>
@@ -138,12 +132,13 @@ export default function OwnerStepPage() {
 }
 
 function StepBar({ current, total, onBack }: { current: number; total: number; onBack: () => void }) {
+  const w = useWizardText();
   return (
     <div className="flex items-center gap-3">
       <button
         onClick={onBack}
         className="flex-none w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 hover:border-slate-300 hover:shadow-sm transition-all flex items-center justify-center"
-        aria-label="Back"
+        aria-label={w("Back")}
       >
         <ArrowLeft className="h-4 w-4" />
       </button>

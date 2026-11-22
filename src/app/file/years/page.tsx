@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { useRouter } from "next/navigation";
 import { CalendarDays, CalendarRange, Layers, ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -28,6 +30,7 @@ const OPTIONS = [
 ];
 
 export default function YearsStepPage() {
+  const w = useWizardText();
   const router = useRouter();
 
   function pick(years: string) {
@@ -42,13 +45,11 @@ export default function YearsStepPage() {
 
         {/* Question */}
         <div className="mt-10">
-          <p className="text-sm font-semibold text-accent uppercase tracking-wider">Step 2 of 3</p>
+          <p className="text-sm font-semibold text-accent uppercase tracking-wider">{w("Step 2 of 3")}</p>
           <h1 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 text-balance leading-tight">
-            How many tax years do you need to file?
-          </h1>
+            {w("How many tax years do you need to file?")}</h1>
           <p className="mt-3 text-slate-500">
-            Each missed year needs its own Form 5472. Filing them together is the standard catch-up route.
-          </p>
+            {w("Each missed year needs its own Form 5472. Filing them together is the standard catch-up route.")}</p>
         </div>
 
         {/* Options */}
@@ -68,14 +69,14 @@ export default function YearsStepPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-semibold text-slate-900">{opt.label}</p>
+                      <p className="font-semibold text-slate-900">{w(opt.label)}</p>
                       {opt.tag && (
                         <span className="text-[10px] font-bold uppercase tracking-wider rounded-full bg-amber-100 text-amber-700 px-2 py-0.5">
-                          {opt.tag}
+                          {w(opt.tag)}
                         </span>
                       )}
                     </div>
-                    <p className="mt-0.5 text-sm text-slate-500 leading-relaxed">{opt.description}</p>
+                    <p className="mt-0.5 text-sm text-slate-500 leading-relaxed">{w(opt.description)}</p>
                   </div>
                   <ArrowRight className="flex-none h-4 w-4 text-slate-300 group-hover:text-slate-500 transition-colors mt-1" />
                 </div>
@@ -85,20 +86,20 @@ export default function YearsStepPage() {
         </div>
 
         <p className="mt-5 text-xs text-slate-400 text-center">
-          Not sure how many years? Pick the higher number — you can adjust inside the form.
-        </p>
+          {w("Not sure how many years? Pick the higher number — you can adjust inside the form.")}</p>
       </div>
     </div>
   );
 }
 
 function StepBar({ current, total, onBack }: { current: number; total: number; onBack: () => void }) {
+  const w = useWizardText();
   return (
     <div className="flex items-center gap-3">
       <button
         onClick={onBack}
         className="flex-none w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 hover:border-slate-300 hover:shadow-sm transition-all flex items-center justify-center"
-        aria-label="Back"
+        aria-label={w("Back")}
       >
         <ArrowLeft className="h-4 w-4" />
       </button>
