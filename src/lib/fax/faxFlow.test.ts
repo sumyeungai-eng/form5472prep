@@ -397,6 +397,7 @@ describe("telnyx-webhook: unsigned terminal events are confirmed with the Telnyx
       filingId: "filing_1",
       logKind: "fax_delivered",
       receiptPdfBytes: expect.any(Uint8Array),
+      attachReceipt: true,
       proof: expect.objectContaining({ faxId: FAX_ID, pageCount: 7 }),
     }));
     expect(email.sendFaxDeliveredAdminEmail).toHaveBeenCalledTimes(1);
@@ -1033,7 +1034,15 @@ describe("customer copy of faxed forms", () => {
     storage.get.mockImplementation(async (key) => key === "frozen.pdf" ? frozen : new Uint8Array([1]));
     stubTelnyx(() => new Response(JSON.stringify(telnyxRecord("delivered")), { status: 200 }));
     await telnyxWebhook(webhookRequest("fax.delivered"));
-    expect(email.sendFaxDeliveredEmail).toHaveBeenCalledWith(expect.objectContaining({ signedPdfBytes: attached ? frozen : undefined }));
+    expect(email.sendFaxDeliveredEmail).toHaveBeenCalledWith(expect.objectContaining({
+      signedPdfBytes: attached ? frozen : undefined,
+      ownerSsnLast4: last4,
+      ownerSsnCiphertext: ciphertext,
+      receiptPdfBytes: expect.any(Uint8Array),
+      attachReceipt: true,
+      filingId: "filing_1",
+      portalLink: "https://example.test/magic/user_1",
+    }));
     expect(storage.get.mock.calls.some(([key]) => key === "frozen.pdf")).toBe(attached);
   });
 

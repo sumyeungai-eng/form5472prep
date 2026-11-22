@@ -4,7 +4,7 @@ import { getFilingAccess, getCurrentUser, partnerOwnsFiling } from "@/lib/sessio
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { FilingActions } from "@/components/wizard/FilingActions";
-import { FaxReceiptCard } from "./FaxReceiptCard";
+import { FiledDocumentsCard } from "@/components/FiledDocumentsCard";
 import { FilingStatusBanner } from "@/components/FilingStatusBanner";
 import { FilingLocked } from "@/components/FilingLocked";
 import { PartnerFilingBar } from "@/components/PartnerFilingBar";
@@ -183,7 +183,14 @@ export default async function FilingDetailPage({
         )}
       </div>
 
-      {filing.faxConfirmationKey && <FaxReceiptCard filingId={filing.id} />}
+      <FiledDocumentsCard
+        filingId={filing.id}
+        isFiled={filing.status === "FAXED" || filing.status === "CONFIRMED"}
+        hasFiledForms={!!filing.faxedAt && !!(filing.faxedPdfKey || filing.signedPdfKey)}
+        hasFaxedPdf={!!filing.faxedPdfKey}
+        hasFaxReceipt={!!filing.faxedAt && !!filing.faxConfirmationKey}
+        hasDistinctSignedCopy={!!filing.faxedAt && !!filing.faxedPdfKey && !!filing.signedPdfKey && filing.faxedPdfKey !== filing.signedPdfKey}
+      />
 
       {inReview ? (
         <>

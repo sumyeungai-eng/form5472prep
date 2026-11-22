@@ -166,11 +166,14 @@ describe("sendFaxDeliveredEmail receipt attachment", () => {
     return JSON.parse(init.body!) as { attachments?: Array<{ filename: string; content: string }>; html: string; text: string };
   }
 
-  it("keeps the automatic email attachment-free (portal copy) and tags it fax_delivered", async () => {
+  it("attaches the receipt automatically and tags it fax_delivered", async () => {
     await sendFaxDeliveredEmail(args);
     const body = sentBody();
-    expect(body.attachments).toBeUndefined();
-    expect(body.text).toContain("is saved in your portal");
+    expect(body.attachments).toEqual([
+      { filename: "Acme LLC - Form 5472 - 2025 - fax receipt.pdf", content: Buffer.from(receipt).toString("base64"), content_type: "application/pdf" },
+    ]);
+    expect(body.text).toContain("is attached to this email");
+    expect(body.text).toContain("next=%2Ffilings%2Ffiling_1%23documents");
     expect(db.create).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ kind: "fax_delivered", filingId: "filing_1", resendId: "resend-xyz" }),
     }));

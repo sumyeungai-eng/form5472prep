@@ -1011,6 +1011,9 @@ export async function sendFaxDeliveredEmail(args: {
   portalLink: string;
   proof?: FaxProof;
   signedPdfBytes?: Uint8Array | Buffer;
+  // Defense in depth: forms carrying an SSN stay in the authenticated portal.
+  ownerSsnLast4?: string | null;
+  ownerSsnCiphertext?: string | null;
   // Generated IRS Fax Transmission Receipt PDF. Attached separately from
   // the signed-package PDF so the customer can keep / forward / file the
   // proof-of-delivery document on its own.
@@ -1018,11 +1021,7 @@ export async function sendFaxDeliveredEmail(args: {
   brand?: EmailBrand;
   isFinalReturn?: boolean;
   dissolvedAt?: Date | string | null;
-  // Attach the receipt PDF to this email. Off for the automatic delivery
-  // email: commit 4e7160c deliberately moved customer PDFs out of email and
-  // into the portal (copy says "saved in your portal"). The admin "Resend fax
-  // confirmation" action turns it on, because that resend exists precisely for
-  // customers who could not find their proof.
+  // Receipts contain no SSN and attach by default, including automatic delivery.
   attachReceipt?: boolean;
   // EmailLog audit tag. logKind defaults to "fax_delivered"; the admin resend
   // passes "fax_delivered_resend".
@@ -1033,11 +1032,14 @@ export async function sendFaxDeliveredEmail(args: {
   reviewInvite?: boolean;
 }) {
   const { email, recipientName, llcName, taxYears, portalLink, proof, signedPdfBytes, receiptPdfBytes, brand, isFinalReturn } = args;
-  const attachCopy = !!(signedPdfBytes && signedPdfBytes.byteLength > 0 && signedPdfBytes.byteLength <= MAX_FAX_COPY_BYTES);
+  const attachCopy = !!(!args.ownerSsnLast4 && !args.ownerSsnCiphertext && signedPdfBytes && signedPdfBytes.byteLength > 0 && signedPdfBytes.byteLength <= MAX_FAX_COPY_BYTES);
   const invite = args.reviewInvite && !attachCopy
     ? trustpilotInvite({ recipientEmail: email, recipientName, referenceId: args.filingId, brand })
     : null;
-  const attachReceipt = !!(args.attachReceipt && receiptPdfBytes && receiptPdfBytes.byteLength > 0);
+  const attachReceipt = !!(args.attachReceipt !== false && receiptPdfBytes && receiptPdfBytes.byteLength > 0);
+  const documentsLink = args.filingId
+    ? portalLinkWithNext(portalLink, `/filings/${args.filingId}#documents`)
+    : portalLink;
   const salutation = firstNameFrom(recipientName) ?? "there";
   const yearsLabel = taxYears.join(", ");
   const llcLine = llcName ?? "your filing";
@@ -1093,7 +1095,8 @@ export async function sendFaxDeliveredEmail(args: {
       <strong>✓ Delivered to the IRS</strong> — please retain this message with your permanent tax records as evidence of timely submission.
     </div>
     ${proofTable}
-    ${attachCopy ? `<p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">The faxed forms are attached to this email. The exact PDF transmitted to the IRS is available for download in your portal.</p>` : ""}
+    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">Download the exact forms we faxed and your fax receipt from your portal.</p>
+    ${attachCopy ? `<p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">A copy of your signed forms is attached to this email.</p>` : ""}
     ${attachReceipt ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
       A timestamped <strong>IRS Fax Transmission Receipt</strong> is attached to this email and saved
       in your portal. Please keep it with your tax records. It shows exactly
@@ -1155,10 +1158,11 @@ export async function sendFaxDeliveredEmail(args: {
       proofText +
       `\n` +
       receiptText +
-      (attachCopy ? "The faxed forms are attached to this email. The exact PDF transmitted to the IRS is available for download in your portal.\n\n" : "") +
+      `Download the exact forms we faxed and your fax receipt from your portal.\n\n` +
+      (attachCopy ? "A copy of your signed forms is attached to this email.\n\n" : "") +
       `The IRS does not send acknowledgments for faxed Form 5472 filings. You can re-download the receipt and your filing package anytime from your portal.\n\n` +
       closingText +
-      `\nView your filing and download documents: ${portalLink}`,
+      `\nDownload your filed documents: ${documentsLink}`,
       undefined,
       brand,
     ),
@@ -1167,7 +1171,7 @@ export async function sendFaxDeliveredEmail(args: {
         heading: "Your filing was delivered to the IRS",
         salutation,
         bodyHtml,
-        cta: { label: "View my filing", url: portalLink },
+        cta: { label: "Download your filed documents", url: documentsLink },
         brand,
       }),
       invite?.snippet,

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Download } from "lucide-react";
+import { FiledDocumentsCard } from "@/components/FiledDocumentsCard";
 import { getOwnedFiling, partnerOwnsFiling } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { PrintButton } from "./PrintButton";
@@ -9,9 +9,7 @@ import { requiresReasonableCause } from "@/lib/completeness";
 
 export const dynamic = "force-dynamic";
 
-// Printable proof-of-filing page. Customers reach this from the
-// FilingStatusBanner once status === CONFIRMED. The print stylesheet is
-// inlined below so they can Cmd/Ctrl-P → Save as PDF for their tax records.
+// Printable proof-of-filing page, with the same downloads as the filing page.
 export default async function FilingConfirmationPage({ params }: { params: { id: string } }) {
   const owned = await getOwnedFiling(params.id);
   if (!owned) notFound();
@@ -50,19 +48,16 @@ export default async function FilingConfirmationPage({ params }: { params: { id:
         <PrintButton />
       </div>
 
-      {filing.faxConfirmationKey && (
-        <div className="print:hidden mb-6">
-          <a
-            href={`/api/filings/${filing.id}/fax-receipt`}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline"
-          >
-            <Download className="h-4 w-4" />
-            Download IRS fax receipt (PDF)
-          </a>
-        </div>
-      )}
+      <div className="print:hidden mb-6">
+        <FiledDocumentsCard
+          filingId={filing.id}
+          isFiled={filing.status === "FAXED" || filing.status === "CONFIRMED"}
+          hasFiledForms={!!filing.faxedAt && !!(filing.faxedPdfKey || filing.signedPdfKey)}
+          hasFaxedPdf={!!filing.faxedPdfKey}
+          hasFaxReceipt={!!filing.faxedAt && !!filing.faxConfirmationKey}
+          hasDistinctSignedCopy={!!filing.faxedAt && !!filing.faxedPdfKey && !!filing.signedPdfKey && filing.faxedPdfKey !== filing.signedPdfKey}
+        />
+      </div>
 
       {/* Printable card */}
       <div className="bg-white border border-slate-200 rounded-lg p-8 print:border-0 print:p-0">

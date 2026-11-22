@@ -27,7 +27,7 @@ export function DashboardRow({
   statusTone,
   canDelete,
   unreadMessages = 0,
-  hasFaxReceipt = false,
+  hasFiledDocuments = false,
 }: {
   id: string;
   href: string;
@@ -42,7 +42,7 @@ export function DashboardRow({
   statusTone: "slate" | "amber" | "blue" | "emerald" | "red";
   canDelete: boolean;
   unreadMessages?: number;
-  hasFaxReceipt?: boolean;
+  hasFiledDocuments?: boolean;
 }) {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
@@ -121,17 +121,15 @@ export function DashboardRow({
           )}
         </div>
       </Link>
-      {hasFaxReceipt && (
+      {hasFiledDocuments && (
         <div className="px-5 pb-4 -mt-1 sm:-mt-2">
-          <a
-            href={`/api/filings/${id}/fax-receipt`}
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            href={`/filings/${id}#documents`}
             className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline"
           >
             <Download className="h-3.5 w-3.5" />
-            Download IRS fax receipt
-          </a>
+            Filed documents
+          </Link>
         </div>
       )}
     </div>

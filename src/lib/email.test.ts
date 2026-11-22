@@ -266,9 +266,64 @@ describe("fax delivered customer attachment", () => {
     } else {
       expect(payload.bcc).toBe("synthetic@invite.trustpilot.com");
     }
-    expect(payload.html.includes("The faxed forms are attached")).toBe(withCopy);
-    expect(payload.text.includes("The faxed forms are attached")).toBe(withCopy);
+    expect(payload.html.includes("A copy of your signed forms is attached")).toBe(withCopy);
+    expect(payload.text.includes("A copy of your signed forms is attached")).toBe(withCopy);
     expect(payload.html).toContain("your portal");
     expect(payload.text).toContain("your portal");
+  });
+
+  it.each([
+    { ownerSsnLast4: "1234", ownerSsnCiphertext: null },
+    { ownerSsnLast4: null, ownerSsnCiphertext: "synthetic-ciphertext" },
+    { ownerSsnLast4: null, ownerSsnCiphertext: null },
+  ])("attaches the receipt, protects forms with SSN markers $ownerSsnLast4/$ownerSsnCiphertext, and deep-links to documents", async (ssn) => {
+    vi.stubEnv("EMAIL_PREVIEW_DIR", "");
+    vi.stubEnv("RESEND_API_KEY", "synthetic-key");
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ id: "synthetic-email" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const { sendFaxDeliveredEmail } = await import("@/lib/email");
+    const receipt = new Uint8Array([37, 80, 68, 70, 1]);
+    const forms = new Uint8Array([37, 80, 68, 70, 2]);
+    await sendFaxDeliveredEmail({
+      email: "owner@example.test", llcName: "Synthetic LLC", taxYears: [2025],
+      portalLink: "https://example.test/auth/synthetic-token?existing=1",
+      filingId: "f1", receiptPdfBytes: receipt, signedPdfBytes: forms, ...ssn,
+    });
+    const payload = JSON.parse((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body as string);
+    expect(payload.attachments[0]).toEqual({
+      filename: "Synthetic LLC - Form 5472 - 2025 - fax receipt.pdf",
+      content: Buffer.from(receipt).toString("base64"), content_type: "application/pdf",
+    });
+    const hasSsn = !!(ssn.ownerSsnLast4 || ssn.ownerSsnCiphertext);
+    expect(payload.attachments).toHaveLength(hasSsn ? 1 : 2);
+    if (hasSsn) {
+      expect(payload.text).not.toContain("A copy of your signed forms is attached");
+      expect(payload.html).not.toContain("A copy of your signed forms is attached");
+    }
+    for (const body of [payload.html, payload.text]) {
+      expect(body).toContain("Download the exact forms we faxed and your fax receipt from your portal.");
+      expect(body).toContain("%2Ffilings%2Ff1%23documents");
+    }
+    const href = payload.html.match(/href="([^"]+next=[^"]+)"/)?.[1].replace(/&amp;/g, "&");
+    const magic = new URL(href!);
+    expect(magic.pathname).toBe("/auth/synthetic-token");
+    expect(magic.searchParams.get("existing")).toBe("1");
+    expect(magic.searchParams.get("next")).toBe("/filings/f1#documents");
+    expect(new URL(magic.searchParams.get("next")!, magic.origin).hash).toBe("#documents");
+  });
+
+  it.each([0, 20 * 1024 * 1024, 20 * 1024 * 1024 + 1])("keeps the signed-copy size cap at 20 MiB (%s bytes)", async (size) => {
+    vi.stubEnv("EMAIL_PREVIEW_DIR", "");
+    vi.stubEnv("RESEND_API_KEY", "synthetic-key");
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ id: "synthetic-email" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const { sendFaxDeliveredEmail } = await import("@/lib/email");
+    await sendFaxDeliveredEmail({
+      email: "owner@example.test", llcName: "Synthetic LLC", taxYears: [2025],
+      portalLink: "https://example.test/auth/token", filingId: "f1",
+      signedPdfBytes: new Uint8Array(size), receiptPdfBytes: new Uint8Array([1]),
+    });
+    const payload = JSON.parse((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body as string);
+    expect(payload.attachments).toHaveLength(size === 20 * 1024 * 1024 ? 2 : 1);
   });
 });

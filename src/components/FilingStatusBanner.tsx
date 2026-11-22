@@ -138,6 +138,7 @@ function viewFor(status: string): View {
         iconNode: <Clock className="h-5 w-5" />,
         headline: "Faxing to the IRS",
         detail: "Transmission in progress. You'll get an email the moment it's delivered.",
+        action: { label: "Download your filed documents", href: "/filings/:id#documents" },
       };
     case "CONFIRMED":
       return {
@@ -149,7 +150,7 @@ function viewFor(status: string): View {
         iconNode: <CheckCircle2 className="h-5 w-5" />,
         headline: "Delivered to the IRS ✓",
         detail: "Your filing was successfully faxed. The IRS doesn't acknowledge faxed 5472 filings, so no further action is needed.",
-        action: { label: "Save proof of filing", href: "/filings/:id/confirmation" },
+        action: { label: "Download your filed documents", href: "/filings/:id#documents" },
         actionStyle: "text-emerald-700",
       };
     case "FAILED":
