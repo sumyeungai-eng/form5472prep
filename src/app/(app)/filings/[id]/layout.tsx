@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -15,7 +16,7 @@ async function portalBrand(filingId: string): Promise<string | null> {
     where: { id: filingId },
     select: { partner: { select: { brandName: true, company: true, name: true } } },
   });
-  return filing?.partner ? partnerDisplayName(filing.partner) : "Secure filing";
+  return filing?.partner ? partnerDisplayName(filing.partner) : (await getTranslations("portal.layout"))("secureFiling");
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {

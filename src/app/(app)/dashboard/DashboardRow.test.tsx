@@ -1,5 +1,10 @@
+import { NextIntlClientProvider } from "next-intl";
+import type { ReactNode } from "react";
+import common from "../../../../messages/en/common.json";
+import domain from "../../../../messages/en/domain.json";
+import portal from "../../../../messages/en/portal.json";
 import { describe, expect, it, vi } from "vitest";
-import { renderToStaticMarkup } from "react-dom/server";
+import { renderToStaticMarkup as renderMarkup } from "react-dom/server";
 import { DashboardRow } from "./DashboardRow";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
@@ -22,3 +27,7 @@ describe("DashboardRow filed documents", () => {
     expect(renderToStaticMarkup(<DashboardRow {...base} />)).not.toContain("#documents");
   });
 });
+
+function renderToStaticMarkup(node: ReactNode) {
+  return renderMarkup(<NextIntlClientProvider locale="en" messages={{ common, domain, portal }} timeZone="UTC">{node}</NextIntlClientProvider>);
+}

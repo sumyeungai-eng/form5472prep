@@ -1,3 +1,4 @@
+import { getTranslations, getFormatter } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getFilingAccess, getCurrentUser, partnerOwnsFiling } from "@/lib/session";
@@ -12,7 +13,7 @@ import { MessagesPanel } from "@/components/MessagesPanel";
 import { DocumentsUploader } from "@/components/DocumentsUploader";
 import { PurchaseConversionPing } from "./PurchaseConversionPing";
 import { getTiersForSource } from "@/lib/pricing";
-import { effectiveDueDateUtc, formatDueDate } from "@/lib/schemas";
+import { effectiveDueDateUtc } from "@/lib/schemas";
 import { TrustpilotWidget } from "@/components/TrustpilotWidget";
 import { TRUSTPILOT_TEMPLATES, REVIEW_COLLECTOR_TOKEN } from "@/lib/trustpilot";
 import { supersedeDraftsFor } from "@/lib/supersedeDrafts";
@@ -60,6 +61,8 @@ export default async function FilingDetailPage({
   params: { id: string };
   searchParams: { paid?: string };
 }) {
+  const t = await getTranslations();
+  const format = await getFormatter();
   const access = await getFilingAccess(params.id);
   if (access.kind === "not_found") notFound();
   if (access.kind === "locked") return <FilingLocked ownerEmail={access.ownerEmail} />;
@@ -118,11 +121,12 @@ export default async function FilingDetailPage({
   const maxTaxYear = filing.taxYears.length > 0 ? Math.max(...filing.taxYears) : null;
   const deadlineText =
     maxTaxYear != null && DEADLINE_VISIBLE_STATUSES.has(filing.status)
-      ? formatDueDate(
+      ? format.dateTime(
           effectiveDueDateUtc(maxTaxYear, filing.isFinalReturn ? filing.dissolvedAt : null, {
             filed: filing.extensionFiled,
             transmittedAt: filing.extensionTransmittedAt,
           }),
+          { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" },
         )
       : null;
 
@@ -154,16 +158,16 @@ export default async function FilingDetailPage({
       <div>
         {user ? (
           <Link href="/dashboard" className="text-sm text-slate-500 hover:underline">
-            ← My filings
+            {t("portal.filing.myFilings")}
           </Link>
         ) : (
           <Link href="/" className="text-sm text-slate-500 hover:underline">
-            ← Home
+            {t("portal.filing.home")}
           </Link>
         )}
-        <h1 className="text-2xl font-semibold mt-2">{filing.llcName ?? "Filing"}</h1>
+        <h1 className="text-2xl font-semibold mt-2">{filing.llcName ?? t("portal.filing.filing")}</h1>
         <p className="text-sm text-slate-500">
-          {getTiersForSource(filing.funnelSource)[filing.tier as "single_year" | "two_year_diirsp" | "multi_year_diirsp"]?.label} · Tax years {filing.taxYears.join(", ")}
+          {t.has(`domain.tier.${filing.tier}`) ? t(`domain.tier.${filing.tier}`) : getTiersForSource(filing.funnelSource)[filing.tier as "single_year" | "two_year_diirsp" | "multi_year_diirsp"]?.label} · {t("domain.taxYears", { years: filing.taxYears.join(", ") })}
         </p>
       </div>
 
@@ -177,8 +181,8 @@ export default async function FilingDetailPage({
 
         {deadlineText && (
           <p className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-            <span className="font-medium text-slate-900">Your filing deadline: {deadlineText}</span>{" "}
-            — we file well before this.
+            <span className="font-medium text-slate-900">{t("portal.filing.yourFilingDeadline", { date: deadlineText })}</span>{" "}
+            {t("portal.filing.weFileWellBeforeThis")}
           </p>
         )}
       </div>
@@ -229,8 +233,8 @@ export default async function FilingDetailPage({
 
       <DocumentsUploader
         filingId={filing.id}
-        title="Documents"
-        description="Upload any supporting documents for our accountant — bank statements, formation papers, IRS letters."
+        title={t("portal.filing.documents")}
+        description={t("portal.filing.uploadAnySupportingDocumentsForOurAccountantBankStatements")}
       />
 
       {/* Ask for a Trustpilot review at the happiest moment — once the filing
@@ -238,9 +242,9 @@ export default async function FilingDetailPage({
           TrustBox that's free on every plan. */}
       {filing.status === "CONFIRMED" && (
         <div className="rounded-xl border border-slate-200 bg-white p-5 text-center">
-          <p className="text-sm font-semibold text-slate-900">Filed with the IRS — nicely done.</p>
+          <p className="text-sm font-semibold text-slate-900">{t("portal.filing.filedWithTheIRSNicelyDone")}</p>
           <p className="mx-auto mt-1 max-w-sm text-sm text-slate-600">
-            If we made Form 5472 painless, a quick review helps other foreign founders find us.
+            {t("portal.filing.ifWeMadeForm5472PainlessAQuickReview")}
           </p>
           <div className="mt-3 flex justify-center">
             <TrustpilotWidget

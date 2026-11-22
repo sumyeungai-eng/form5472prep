@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -27,6 +28,7 @@ export function ApplicationSignClient({
   hasIntakeSignature?: boolean;
   intakeSignerName?: string | null;
 }) {
+  const t = useTranslations();
   const router = useRouter();
   const [signaturePngDataUrl, setSignaturePngDataUrl] = useState<string | null>(null);
   const [signerName, setSignerName] = useState(hasIntakeSignature ? intakeSignerName ?? defaultName : defaultName);
@@ -60,7 +62,7 @@ export function ApplicationSignClient({
       router.push(`/applications/${type}/${id}`);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign failed");
+      setError(err instanceof Error ? err.message : t("portal.sign.failed"));
       setBusy(false);
     }
   }
@@ -68,10 +70,10 @@ export function ApplicationSignClient({
   return (
     <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="text-xs font-semibold uppercase tracking-wider text-blue-900">Step 1</div>
-        <h2 className="mt-1 text-lg font-semibold text-slate-900">Review the {label}</h2>
+        <div className="text-xs font-semibold uppercase tracking-wider text-blue-900">{t("portal.applications.step1")}</div>
+        <h2 className="mt-1 text-lg font-semibold text-slate-900">{t("portal.applications.reviewForm", { label })}</h2>
         <p className="mt-3 text-sm text-slate-600">
-          On a phone, open the form in a new tab to read it comfortably.
+          {t("portal.applications.onAPhoneOpenTheFormInANew")}
         </p>
         <Link
           href={documentUrl}
@@ -79,29 +81,29 @@ export function ApplicationSignClient({
           rel="noopener noreferrer"
           className="mt-3 inline-flex items-center justify-center rounded-full border border-blue-900 px-4 py-2 text-sm font-semibold text-blue-900 transition hover:bg-blue-50"
         >
-          Open the form in a new tab
+          {t("portal.applications.openTheFormInANewTab")}
         </Link>
         <iframe
           src={`${documentUrl}#toolbar=0`}
           className="mt-4 h-[60vh] w-full rounded-lg border border-slate-200 lg:h-[70vh]"
-          title={`Prepared ${label}`}
+          title={t("portal.applications.prepared", { label })}
         />
       </section>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="text-xs font-semibold uppercase tracking-wider text-blue-900">Step 2</div>
-        <h2 className="mt-1 text-lg font-semibold text-slate-900">Sign after review</h2>
+        <div className="text-xs font-semibold uppercase tracking-wider text-blue-900">{t("portal.applications.step2")}</div>
+        <h2 className="mt-1 text-lg font-semibold text-slate-900">{t("portal.applications.signAfterReview")}</h2>
 
         {alreadySigned && (
           <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-            You already signed this form. Submitting again replaces your earlier signature.
+            {t("portal.applications.youAlreadySignedThisFormSubmittingAgainReplacesYour")}
           </p>
         )}
 
         {hasIntakeSignature && !drawNewSignature ? (
           <>
             <label htmlFor="signerName" className="mt-4 block text-sm font-medium text-slate-700">
-              Full legal name
+              {t("portal.applications.fullLegalName")}
             </label>
             <input
               id="signerName"
@@ -122,7 +124,7 @@ export function ApplicationSignClient({
             </label>
 
             <p className="mt-4 text-sm text-slate-600">
-              We will use the signature you drew when you applied.
+              {t("portal.applications.weWillUseTheSignatureYouDrewWhenYou")}
             </p>
 
             {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
@@ -133,7 +135,7 @@ export function ApplicationSignClient({
               disabled={!canSubmitIntake}
               className="mt-5 w-full rounded-full bg-blue-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-950 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {busy ? "Saving..." : "Confirm and sign"}
+              {busy ? t("common.saving") : t("portal.sign.confirmSign")}
             </button>
             <button
               type="button"
@@ -143,13 +145,13 @@ export function ApplicationSignClient({
               }}
               className="mt-3 w-full text-center text-sm font-semibold text-blue-900 hover:underline"
             >
-              Draw a new signature instead
+              {t("portal.applications.drawANewSignatureInstead")}
             </button>
           </>
         ) : (
           <>
             <label htmlFor="signerName" className="mt-4 block text-sm font-medium text-slate-700">
-              Full legal name
+              {t("portal.applications.fullLegalName")}
             </label>
             <input
               id="signerName"
@@ -181,12 +183,12 @@ export function ApplicationSignClient({
               disabled={!canSubmit}
               className="mt-5 w-full rounded-full bg-blue-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-950 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {busy ? "Saving..." : "Sign and submit"}
+              {busy ? t("common.saving") : t("portal.applications.signSubmit")}
             </button>
           </>
         )}
         <p className="mt-2 text-center text-xs text-slate-500">
-          If anything on the form looks wrong, do not sign. Reply to our email and we will correct it.
+          {t("portal.applications.ifAnythingOnTheFormLooksWrongDoNot")}
         </p>
       </section>
     </div>

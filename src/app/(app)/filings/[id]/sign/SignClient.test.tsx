@@ -1,5 +1,10 @@
+import { NextIntlClientProvider } from "next-intl";
+import type { ReactNode } from "react";
+import common from "../../../../../../messages/en/common.json";
+import domain from "../../../../../../messages/en/domain.json";
+import portal from "../../../../../../messages/en/portal.json";
 import { describe, expect, it, vi } from "vitest";
-import { renderToStaticMarkup } from "react-dom/server";
+import { renderToStaticMarkup as renderMarkup } from "react-dom/server";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => {}, push: () => {} }) }));
 
@@ -31,3 +36,7 @@ describe("SignClient — Why some lines are blank (PR 7)", () => {
     expect(html).not.toMatch(/(do not|don.t|does not|doesn.t) apply/i);
   });
 });
+
+function renderToStaticMarkup(node: ReactNode) {
+  return renderMarkup(<NextIntlClientProvider locale="en" messages={{ common, domain, portal }} timeZone="UTC">{node}</NextIntlClientProvider>);
+}

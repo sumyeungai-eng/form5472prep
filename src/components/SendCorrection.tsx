@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ export const CORRECTION_PREFIX = "Correction before release:";
 // message thread (api/filings/[id]/messages), so it stays on the order and
 // staff see it on the admin filing page — not the website questions inbox.
 export function SendCorrection({ filingId }: { filingId: string }) {
+  const t = useTranslations();
   const router = useRouter();
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
@@ -26,11 +28,11 @@ export function SendCorrection({ filingId }: { filingId: string }) {
       });
       if (!res.ok) {
         const err = (await res.json().catch(() => ({}))) as { error?: string };
-        setMsg({ ok: false, text: err.error ?? "Could not send. Please try again." });
+        setMsg({ ok: false, text: err.error ?? t("portal.filing.couldNotSend") });
         return;
       }
       setText("");
-      setMsg({ ok: true, text: "Sent. Our team will update your package and reply in your messages below." });
+      setMsg({ ok: true, text: t("portal.filing.correctionSent") });
       router.refresh();
     } finally {
       setBusy(false);
@@ -39,9 +41,9 @@ export function SendCorrection({ filingId }: { filingId: string }) {
 
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-5 space-y-3">
-      <h2 className="font-medium">Send a correction</h2>
+      <h2 className="font-medium">{t("portal.filing.sendACorrection")}</h2>
       <label className="block text-sm text-slate-600">
-        Tell us what needs changing. It goes to the team reviewing your package.
+        {t("portal.filing.tellUsWhatNeedsChangingItGoesToThe")}
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -52,7 +54,7 @@ export function SendCorrection({ filingId }: { filingId: string }) {
         />
       </label>
       <Button onClick={send} disabled={busy || text.trim().length < 5}>
-        {busy ? "Sending…" : "Send correction"}
+        {busy ? t("common.sending") : t("portal.filing.sendCorrection")}
       </Button>
       {msg && (
         <p role="status" className={`text-sm ${msg.ok ? "text-emerald-700" : "text-red-700"}`}>

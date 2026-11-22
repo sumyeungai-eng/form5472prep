@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations, useLocale } from "next-intl";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -31,13 +32,15 @@ type Filing = {
 };
 
 export function FilingActions({ filing }: { filing: Filing }) {
+  const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
   const reviewApproved = filing.released;
   const canSign = filing.hasGeneratedPdf && filing.released;
   const signed = !!filing.signaturePngKey || !!filing.signedPdfKey;
   const approvedDate = filing.reviewApprovedAt
-    ? new Date(filing.reviewApprovedAt).toLocaleDateString(undefined, {
+    ? new Date(filing.reviewApprovedAt).toLocaleDateString(locale, {
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -53,7 +56,7 @@ export function FilingActions({ filing }: { filing: Filing }) {
         body: JSON.stringify({ filingId: filing.id }),
       });
       if (!res.ok) {
-        alert(`Generation failed: ${await res.text()}`);
+        alert(t("portal.filing.generationFailed", { error: await res.text() }));
         return;
       }
       router.refresh();
@@ -70,50 +73,49 @@ export function FilingActions({ filing }: { filing: Filing }) {
     <div className="space-y-6">
       <Step
         n={1}
-        title="Generate your forms"
+        title={t("portal.filing.generateYourForms")}
         done={filing.hasGeneratedPdf}
         active={filing.status === "PAID" && !filing.hasGeneratedPdf}
       >
         <p className="text-sm text-slate-600 mb-3">
-          Cover letter, reasonable-cause statement (late filings), filled Form 1120 and Form 5472,
-          plus the Part V supporting statement — combined into one PDF.
+          {t("portal.filing.coverLetterReasonableCauseStatementLateFilingsFilledForm")}
         </p>
         {!filing.hasGeneratedPdf ? (
           <Button onClick={generate} disabled={busy === "generate"}>
-            {busy === "generate" ? "Generating…" : "Generate PDF"}
+            {busy === "generate" ? t("portal.filing.generating") : t("portal.filing.generatePDF")}
           </Button>
         ) : (
           <p className="text-sm text-slate-700">
-            <span className="font-medium">PDF generated.</span> Your forms are ready for review.
+            <span className="font-medium">{t("portal.filing.pDFGenerated")}</span> {t("portal.filing.yourFormsAreReadyForReview")}
           </p>
         )}
       </Step>
 
       <Step
         n={2}
-        title="Accountant review"
+        title={t("portal.filing.accountantReview")}
         done={reviewApproved}
         active={filing.hasGeneratedPdf && !reviewApproved}
       >
         {filing.unreadTeamMessages > 0 ? (
           <p className="text-sm text-slate-700">
-            <span className="font-medium text-amber-800">We have a question for you</span>{" "}
-            <a href="#messages" className="text-accent hover:underline">Open messages</a>
+            <span className="font-medium text-amber-800">{t("portal.filing.weHaveAQuestionForYou")}</span>{" "}
+            <a href="#messages" className="text-accent hover:underline">{t("portal.filing.openMessages")}</a>
           </p>
         ) : reviewApproved ? (
           <p className="text-sm text-slate-700">
-            <span className="font-medium text-emerald-700">Approved on {approvedDate}</span>
+            <span className="font-medium text-emerald-700">{t("portal.filing.approvedOn", { date: approvedDate ?? "" })}</span>
           </p>
         ) : (
           <p className="text-sm text-slate-600">
-            A PTIN-holding tax accountant is reviewing your forms. If anything needs clarifying, we will message you here.
+            {t("portal.filing.aPTINHoldingTaxAccountantIsReviewingYourForms")}
           </p>
         )}
       </Step>
 
       <Step
         n={3}
-        title="Sign digitally"
+        title={t("portal.filing.signDigitally")}
         done={signed}
         active={canSign && !signed}
       >
@@ -125,17 +127,17 @@ export function FilingActions({ filing }: { filing: Filing }) {
               rel="noopener"
               className="mb-3 inline-block text-sm text-accent hover:underline"
             >
-              View your filing package (PDF)
+              {t("portal.filing.viewYourFilingPackagePDF")}
             </a>
           )}
           {filing.signedPdfKey ? (
             <>
               <p className="text-sm text-slate-600 mb-3">
                 {filing.faxJobId
-                  ? "Signed and sent to the IRS."
+                  ? t("portal.filing.signedSent")
                   : filing.faxService
-                    ? "Signed PDF is ready. The complete package is being prepared for fax."
-                    : "Signed. Fax the signed PDF to the IRS as shown in step 4."}
+                    ? t("portal.filing.signedPreparing")
+                    : t("portal.filing.selfFax")}
               </p>
               <a
                 href={`/api/filings/${filing.id}/signed-pdf`}
@@ -143,26 +145,26 @@ export function FilingActions({ filing }: { filing: Filing }) {
                 rel="noreferrer"
                 className="text-sm text-accent hover:underline"
               >
-                View signed PDF
+                {t("portal.filing.viewSignedPDF")}
               </a>
             </>
           ) : filing.signaturePngKey ? (
             <p className="text-sm text-slate-600">
-              <span className="font-medium text-emerald-700">Signature received.</span>{" "}
-              We will fax it to the IRS Ogden PIN Unit shortly. You&apos;ll get an email the moment it&apos;s sent.
+              <span className="font-medium text-emerald-700">{t("portal.filing.signatureReceived")}</span>{" "}
+              {t("portal.filing.weWillFaxItToTheIRSOgdenPIN")}
             </p>
           ) : (
             <>
               <p className="text-sm text-slate-600 mb-3">
                 {canSign
-                  ? "Your reviewed forms are ready. Check them, then sign online. No printing, scanning, or uploading needed."
-                  : "Once our accountant has reviewed your forms, we'll email you a link to check them and sign online."}
+                  ? t("portal.filing.readyCheck")
+                  : t("portal.filing.emailCheck")}
               </p>
               <Button
                 onClick={() => router.push(`/filings/${filing.id}/sign`)}
                 disabled={!canSign}
               >
-                {canSign ? "Check & sign my forms" : "Available after review"}
+                {canSign ? t("portal.filing.checkSign") : t("portal.filing.afterReview")}
               </Button>
             </>
           )}
@@ -172,7 +174,7 @@ export function FilingActions({ filing }: { filing: Filing }) {
       {filing.faxService ? (
         <Step
           n={4}
-          title="We fax to the IRS"
+          title={t("portal.filing.weFaxToTheIRS")}
           done={!!filing.faxJobId}
           active={!!filing.signedPdfKey && !filing.faxJobId}
         >
@@ -181,19 +183,18 @@ export function FilingActions({ filing }: { filing: Filing }) {
               {/* Plain-language fax status; the job id stays as a small reference. */}
               <p className="text-sm">
                 {filing.faxStatus === "delivered" ? (
-                  <span className="font-medium text-emerald-700">Delivered to the IRS ✓</span>
+                  <span className="font-medium text-emerald-700">{t("portal.filing.deliveredToTheIRS")}</span>
                 ) : filing.faxStatus?.startsWith("failed") ? (
                   <span className="text-slate-700">
-                    The last fax attempt didn&apos;t go through. Our team has been notified and will
-                    follow up.
+                    {t("portal.filing.theLastFaxAttemptDidnTGoThroughOur")}
                   </span>
                 ) : (
                   <span className="text-slate-700">
-                    Sending to the IRS — we&apos;ll email you as soon as it&apos;s delivered.
+                    {t("portal.filing.sendingToTheIRSWeLlEmailYouAs")}
                   </span>
                 )}
               </p>
-              <p className="mt-1 text-xs text-slate-400 break-all">Fax reference: {filing.faxJobId}</p>
+              <p className="mt-1 text-xs text-slate-400 break-all">{t("portal.filing.faxReference", { reference: filing.faxJobId })}</p>
               {filing.faxConfirmationKey && (
                 <a
                   href={`/api/filings/${filing.id}/fax-receipt`}
@@ -201,19 +202,19 @@ export function FilingActions({ filing }: { filing: Filing }) {
                   rel="noreferrer"
                   className="mt-3 inline-block text-sm text-accent hover:underline"
                 >
-                  Download IRS fax receipt (PDF)
+                  {t("portal.filing.downloadIRSFaxReceiptPDF")}
                 </a>
               )}
             </>
           ) : (
             <div className="rounded-md bg-slate-50 border border-slate-200 p-3 text-sm text-slate-700">
               <p className="font-medium">
-                {filing.signaturePngKey || filing.signedPdfKey ? "Preparing to fax" : "After you sign"}
+                {filing.signaturePngKey || filing.signedPdfKey ? t("portal.filing.preparingFax") : t("portal.filing.afterSign")}
               </p>
               <p className="mt-1 text-slate-600">
                 {filing.signaturePngKey || filing.signedPdfKey
-                  ? "We are faxing your signed forms to the IRS. We will email you the fax confirmation as soon as it goes through."
-                  : "Once you sign, we fax your forms to the IRS and email you the fax confirmation."}
+                  ? t("portal.filing.faxingSigned")
+                  : t("portal.filing.signThenFax")}
               </p>
             </div>
           )}
@@ -221,23 +222,20 @@ export function FilingActions({ filing }: { filing: Filing }) {
       ) : (
         <Step
           n={4}
-          title="We fax to the IRS"
+          title={t("portal.filing.weFaxToTheIRS")}
           done={false}
           active={!!filing.signedPdfKey}
         >
           <p className="text-sm text-slate-600 mb-3">
-            You chose to handle the fax transmission yourself. Fax the signed PDF to the
-            IRS Ogden PIN Unit at the number below — use any online fax service or a fax
-            machine.
+            {t("portal.filing.youChoseToHandleTheFaxTransmissionYourselfFax")}
           </p>
           <div className="rounded-md bg-slate-50 border border-slate-200 p-3 mb-3 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-slate-600">IRS Ogden PIN Unit fax number:</span>
+              <span className="text-slate-600">{t("portal.filing.iRSOgdenPINUnitFaxNumber")}</span>
               <span className="font-mono font-medium text-slate-900">+1-855-887-7737</span>
             </div>
             <p className="text-xs text-slate-500 mt-2">
-              Recommended online fax services: eFax, FaxZero, or Google Voice (Workspace).
-              Keep your fax confirmation receipt — it&apos;s your proof of when you filed.
+              {t("portal.filing.recommendedOnlineFaxServicesEFaxFaxZeroOrGoogleVoice")}
             </p>
           </div>
           {filing.signedPdfKey ? (
@@ -246,11 +244,11 @@ export function FilingActions({ filing }: { filing: Filing }) {
               target="_blank"
               rel="noreferrer"
             >
-              <Button variant="outline">Download signed PDF to fax</Button>
+              <Button variant="outline">{t("portal.filing.downloadSignedPDFToFax")}</Button>
             </a>
           ) : (
             <p className="text-xs text-slate-500 italic">
-              Upload your signed PDF above first, then download it here to fax.
+              {t("portal.filing.uploadYourSignedPDFAboveFirstThenDownloadIt")}
             </p>
           )}
         </Step>

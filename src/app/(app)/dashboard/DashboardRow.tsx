@@ -1,10 +1,10 @@
 "use client";
+import { useTranslations, useLocale } from "next-intl";
 
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Trash2, MessageSquare, Download } from "lucide-react";
-import { formatUsd } from "@/lib/utils";
 
 const TONE: Record<string, string> = {
   slate: "bg-slate-100 text-slate-700",
@@ -44,26 +44,28 @@ export function DashboardRow({
   unreadMessages?: number;
   hasFiledDocuments?: boolean;
 }) {
+  const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
 
   async function handleDelete(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    const label = llcName ?? "this draft filing";
-    if (!confirm(`Delete "${label}"? This can't be undone.`)) return;
+    const label = llcName ?? t("portal.dashboard.thisDraftFiling");
+    if (!confirm(t("portal.dashboard.deleteConfirm", { label }))) return;
     setDeleting(true);
     try {
       const res = await fetch(`/api/filings/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        alert(`Could not delete: ${body?.error ?? res.statusText}`);
+        alert(t("portal.dashboard.deleteError", { error: body?.error ?? res.statusText }));
         setDeleting(false);
         return;
       }
       router.refresh();
     } catch (err) {
-      alert(`Could not delete: ${err instanceof Error ? err.message : "unknown error"}`);
+      alert(t("portal.dashboard.deleteError", { error: err instanceof Error ? err.message : t("portal.dashboard.unknownError") }));
       setDeleting(false);
     }
   }
@@ -78,20 +80,20 @@ export function DashboardRow({
             name or many tax years never get squeezed into a narrow column. */}
         <div className="min-w-0">
           <p className="font-medium text-slate-900 break-words sm:truncate">
-            {llcName ?? <em className="text-slate-400">Unnamed filing</em>}
+            {llcName ?? <em className="text-slate-400">{t("portal.dashboard.unnamedFiling")}</em>}
           </p>
           <p className="text-sm text-slate-500 mt-0.5">
-            {taxYears.length > 0 ? `Tax years ${taxYears.join(", ")}` : "No years selected"}
+            {taxYears.length > 0 ? t("domain.taxYears", { years: taxYears.join(", ") }) : t("portal.dashboard.noYears")}
             {" · "}
             {tierLabel}
           </p>
-          <p className="text-xs text-slate-400 mt-1">Last updated {updatedAt}</p>
+          <p className="text-xs text-slate-400 mt-1">{t("portal.dashboard.lastUpdated", { date: updatedAt })}</p>
         </div>
         <div className="flex flex-none items-center gap-3 sm:ml-4 sm:text-right">
           {unreadMessages > 0 && (
             <span
               className="inline-flex items-center gap-1 rounded-full bg-blue-900 text-white text-xs font-medium px-2.5 py-1"
-              title={`${unreadMessages} new message${unreadMessages === 1 ? "" : "s"}`}
+              title={t("portal.dashboard.newMessages", { count: unreadMessages })}
             >
               <MessageSquare className="h-3 w-3" />
               {unreadMessages}
@@ -104,7 +106,7 @@ export function DashboardRow({
               {statusLabel}
             </span>
             <p className="text-xs text-slate-500 sm:mt-2">
-              {includedInOrder ? "Included in your order" : formatUsd(amountPaid)}
+              {includedInOrder ? t("portal.dashboard.included") : new Intl.NumberFormat(locale, { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(amountPaid / 100)}
             </p>
           </div>
           {canDelete && (
@@ -112,8 +114,8 @@ export function DashboardRow({
               type="button"
               onClick={handleDelete}
               disabled={deleting}
-              aria-label="Delete draft filing"
-              title="Delete draft filing"
+              aria-label={t("portal.dashboard.deleteDraftFiling")}
+              title={t("portal.dashboard.deleteDraftFiling")}
               className="ml-auto p-2 -mr-2 rounded-md text-slate-400 sm:ml-0 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Trash2 className="h-4 w-4" />
@@ -128,7 +130,7 @@ export function DashboardRow({
             className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline"
           >
             <Download className="h-3.5 w-3.5" />
-            Filed documents
+            {t("portal.dashboard.filedDocuments")}
           </Link>
         </div>
       )}

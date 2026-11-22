@@ -1,3 +1,4 @@
+import { useTranslations, useLocale } from "next-intl";
 // "In review" summary on /filings/[id] (release gate, PR 1): before staff
 // release the package the client sees what they told us — not the PDF — so
 // they can spot a mistake and send a correction. Values are shown as stored.
@@ -36,15 +37,17 @@ export type FilingReviewSummaryFiling = {
   yearData: YearRow[];
 };
 
-const usd = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD" });
-const dollars = (v: Money) => usd(Number(v ?? 0) || 0);
-const cents = (v: unknown) => usd((typeof v === "number" && Number.isFinite(v) ? v : 0) / 100);
 const join = (parts: Array<string | null | undefined>) => parts.map((p) => p?.trim()).filter(Boolean).join(", ");
 const str = (v: unknown) => (typeof v === "string" ? v : "");
 const rows = (v: unknown): Array<Record<string, unknown>> =>
   Array.isArray(v) ? v.filter((r): r is Record<string, unknown> => !!r && typeof r === "object") : [];
 
 export function FilingReviewSummary({ filing }: { filing: FilingReviewSummaryFiling }) {
+  const t = useTranslations();
+  const locale = useLocale();
+  const usd = (n: number) => n.toLocaleString(locale, { style: "currency", currency: "USD" });
+  const dollars = (v: Money) => usd(Number(v ?? 0) || 0);
+  const cents = (v: unknown) => usd((typeof v === "number" && Number.isFinite(v) ? v : 0) / 100);
   const ownerAddress =
     join([
       filing.ownerAddressStreet,
@@ -58,14 +61,14 @@ export function FilingReviewSummary({ filing }: { filing: FilingReviewSummaryFil
 
   return (
     <section className="space-y-4" aria-labelledby="review-summary-heading">
-      <h2 id="review-summary-heading" className="font-medium">What you told us</h2>
+      <h2 id="review-summary-heading" className="font-medium">{t("portal.filing.whatYouToldUs")}</h2>
       <dl className="divide-y divide-slate-200 overflow-hidden rounded-lg border border-slate-200 bg-white text-sm">
         <Row label="LLC" value={filing.llcName} />
         <Row label="EIN" value={filing.llcEin} />
-        <Row label="Company address" value={companyAddress} />
-        <Row label="Owner" value={filing.ownerName} />
-        <Row label="Owner address" value={ownerAddress} />
-        <Row label="Tax years" value={filing.taxYears.join(", ")} />
+        <Row label={t("portal.filing.companyAddress")} value={companyAddress} />
+        <Row label={t("portal.filing.owner")} value={filing.ownerName} />
+        <Row label={t("portal.filing.ownerAddress")} value={ownerAddress} />
+        <Row label={t("portal.filing.taxYears2")} value={filing.taxYears.join(", ")} />
       </dl>
 
       {years.map((y) => {
@@ -76,31 +79,31 @@ export function FilingReviewSummary({ filing }: { filing: FilingReviewSummaryFil
           <div key={y.taxYear} className="rounded-lg border border-slate-200 bg-white p-4 text-sm space-y-3">
             <h3 className="font-medium">{y.taxYear}</h3>
             <dl className="grid grid-cols-1 gap-1 sm:grid-cols-3">
-              <Stat label="Total assets at year end" value={dollars(y.totalAssetsYearEnd)} />
-              <Stat label="Contributions" value={dollars(y.contributions)} />
-              <Stat label="Distributions" value={dollars(y.distributions)} />
+              <Stat label={t("portal.filing.totalAssetsAtYearEnd")} value={dollars(y.totalAssetsYearEnd)} />
+              <Stat label={t("portal.filing.contributions")} value={dollars(y.contributions)} />
+              <Stat label={t("portal.filing.distributions")} value={dollars(y.distributions)} />
             </dl>
             {(txs.length > 0 || costs.length > 0 || nonCash.length > 0) && (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <caption className="sr-only">Part V transactions for {y.taxYear}</caption>
+                  <caption className="sr-only">{t("portal.filing.partVTransactionsFor", { year: y.taxYear })}</caption>
                   <thead className="text-slate-500">
                     <tr>
-                      <th className="py-1 pr-3 font-medium">Date</th>
-                      <th className="py-1 pr-3 font-medium">Description</th>
-                      <th className="py-1 text-right font-medium">Amount</th>
+                      <th className="py-1 pr-3 font-medium">{t("common.date")}</th>
+                      <th className="py-1 pr-3 font-medium">{t("portal.filing.description")}</th>
+                      <th className="py-1 text-right font-medium">{t("portal.filing.amount")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {txs.map((t, i) => (
+                    {txs.map((transaction, i) => (
                       <tr key={`t${i}`}>
-                        <td className="py-1 pr-3 whitespace-nowrap">{str(t.date) || str(t.dateInput)}</td>
+                        <td className="py-1 pr-3 whitespace-nowrap">{str(transaction.date) || str(transaction.dateInput)}</td>
                         <td className="py-1 pr-3">
-                          {join([str(t.category), str(t.description), str(t.counterparty)])}
-                          {str(t.currency) && str(t.currency) !== "USD" ? ` (${str(t.originalAmountInput) || String(t.originalAmount ?? "")} ${str(t.currency)})` : ""}
+                          {join([str(transaction.category), str(transaction.description), str(transaction.counterparty)])}
+                          {str(transaction.currency) && str(transaction.currency) !== "USD" ? ` (${str(transaction.originalAmountInput) || String(transaction.originalAmount ?? "")} ${str(transaction.currency)})` : ""}
                         </td>
                         <td className="py-1 text-right whitespace-nowrap">
-                          {typeof t.amountCents === "number" ? cents(t.amountCents) : "amount missing"}
+                          {typeof transaction.amountCents === "number" ? cents(transaction.amountCents) : t("portal.filing.amountMissing")}
                         </td>
                       </tr>
                     ))}
@@ -108,7 +111,7 @@ export function FilingReviewSummary({ filing }: { filing: FilingReviewSummaryFil
                       <tr key={`c${i}`}>
                         <td className="py-1 pr-3 whitespace-nowrap">{str(c.date)}</td>
                         <td className="py-1 pr-3">
-                          {join(["Paid by owner", str(c.category).replace(/_/g, " "), str(c.note)])}
+                          {join([t("portal.filing.paidByOwner"), str(c.category).replace(/_/g, " "), str(c.note)])}
                         </td>
                         <td className="py-1 text-right whitespace-nowrap">{cents(c.amountCents)}</td>
                       </tr>
@@ -117,7 +120,7 @@ export function FilingReviewSummary({ filing }: { filing: FilingReviewSummaryFil
                       <tr key={`n${i}`}>
                         <td className="py-1 pr-3 whitespace-nowrap">{str(n.date)}</td>
                         <td className="py-1 pr-3">
-                          {join(["Non-cash transfer", n.direction === "out" ? "to owner" : "from owner", str(n.description)])}
+                          {join([t("portal.filing.nonCashTransfer"), n.direction === "out" ? t("portal.filing.toOwner") : t("portal.filing.fromOwner"), str(n.description)])}
                         </td>
                         <td className="py-1 text-right whitespace-nowrap">{cents(n.fairMarketValueCents)}</td>
                       </tr>
@@ -128,16 +131,16 @@ export function FilingReviewSummary({ filing }: { filing: FilingReviewSummaryFil
             )}
             {y.otherTransactionsNote?.trim() && (
               <p className="text-slate-600">
-                <span className="font-medium text-slate-900">Other transactions:</span> {y.otherTransactionsNote}
+                <span className="font-medium text-slate-900">{t("portal.filing.otherTransactions")}</span> {y.otherTransactionsNote}
               </p>
             )}
             {(y.rcsWhyMissed?.trim() || y.rcsWhenLearned?.trim()) && (
               <div className="space-y-1">
-                <p className="font-medium text-slate-900">Why this year was filed late (your words)</p>
+                <p className="font-medium text-slate-900">{t("portal.filing.whyThisYearWasFiledLateYourWords")}</p>
                 {y.rcsWhyMissed?.trim() && <p className="whitespace-pre-wrap text-slate-700">{y.rcsWhyMissed}</p>}
                 {y.rcsWhenLearned?.trim() && (
                   <p className="whitespace-pre-wrap text-slate-700">
-                    <span className="font-medium text-slate-900">When you learned of it:</span> {y.rcsWhenLearned}
+                    <span className="font-medium text-slate-900">{t("portal.filing.whenYouLearnedOfIt")}</span> {y.rcsWhenLearned}
                   </p>
                 )}
               </div>
@@ -150,11 +153,12 @@ export function FilingReviewSummary({ filing }: { filing: FilingReviewSummaryFil
 }
 
 function Row({ label, value }: { label: string; value: string | null | undefined }) {
+  const t = useTranslations();
   return (
     <div className="grid grid-cols-1 gap-0.5 px-4 py-3 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-4">
       <dt className="text-slate-500">{label}</dt>
       <dd className="break-words font-medium text-slate-900">
-        {value || <em className="font-normal text-amber-700">missing</em>}
+        {value || <em className="font-normal text-amber-700">{t("portal.filing.missing")}</em>}
       </dd>
     </div>
   );

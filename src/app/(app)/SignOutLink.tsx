@@ -1,8 +1,10 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 import { useRouter } from "next/navigation";
 
 export function SignOutLink() {
+  const t = useTranslations();
   const router = useRouter();
   async function signOut() {
     await fetch("/api/auth/sign-out", { method: "POST" });
@@ -11,7 +13,7 @@ export function SignOutLink() {
   }
   return (
     <button onClick={signOut} className="text-slate-500 hover:text-slate-900 text-sm">
-      Sign out
+      {t("portal.layout.signOut")}
     </button>
   );
 }

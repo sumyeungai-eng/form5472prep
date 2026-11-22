@@ -1,5 +1,10 @@
+import { NextIntlClientProvider } from "next-intl";
+import type { ReactNode } from "react";
+import common from "../../messages/en/common.json";
+import domain from "../../messages/en/domain.json";
+import portal from "../../messages/en/portal.json";
 import { describe, expect, it } from "vitest";
-import { renderToStaticMarkup } from "react-dom/server";
+import { renderToStaticMarkup as renderMarkup } from "react-dom/server";
 import { FiledDocumentsCard } from "./FiledDocumentsCard";
 
 const base = {
@@ -57,3 +62,7 @@ describe("FiledDocumentsCard", () => {
     expect(renderToStaticMarkup(<FiledDocumentsCard {...base} isFiled={false} />)).toBe("");
   });
 });
+
+function renderToStaticMarkup(node: ReactNode) {
+  return renderMarkup(<NextIntlClientProvider locale="en" messages={{ common, domain, portal }} timeZone="UTC">{node}</NextIntlClientProvider>);
+}

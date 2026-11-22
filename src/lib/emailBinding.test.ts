@@ -1,3 +1,7 @@
+import { createTranslator } from "next-intl";
+import common from "../../messages/en/common.json";
+import domain from "../../messages/en/domain.json";
+import portal from "../../messages/en/portal.json";
 import crypto from "node:crypto";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -1174,3 +1178,8 @@ describe("review follow-up: Prisma fake NULL semantics", () => {
     expect(notNull.map((f) => f.id)).not.toContain(empty.id);
   });
 });
+
+vi.mock("next-intl/server", () => ({
+  getTranslations: async () => createTranslator({ locale: "en", messages: { common, domain, portal } }),
+  getLocale: async () => "en",
+}));

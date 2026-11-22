@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -14,44 +15,46 @@ type Props = {
 export function FiledDocumentsCard({
   filingId, isFiled, hasFiledForms, hasFaxedPdf, hasFaxReceipt, hasDistinctSignedCopy,
 }: Props) {
+  const t = useTranslations();
   if (!isFiled) return null;
 
   return (
     <section id="documents" aria-labelledby="filed-documents-title" className="scroll-mt-6 rounded-lg border border-slate-200 bg-white p-5">
-      <h2 id="filed-documents-title" className="text-lg font-semibold text-slate-900">Your filed documents</h2>
+      <h2 id="filed-documents-title" className="text-lg font-semibold text-slate-900">{t("portal.documents.yourFiledDocuments")}</h2>
       <div className="mt-4 divide-y divide-slate-200">
         {hasFiledForms && (
           <DocumentRow
-            label={hasFaxedPdf ? "Forms faxed to the IRS (PDF)" : "Signed forms (PDF)"}
-            description={hasFaxedPdf ? "The exact package transmitted to the IRS." : "The signed package saved for this filing."}
+            label={hasFaxedPdf ? t("domain.documentType.faxedForms") : t("domain.documentType.signedForms")}
+            description={hasFaxedPdf ? t("portal.documents.exactPackage") : t("portal.documents.savedPackage")}
             href={`/api/filings/${filingId}/faxed-pdf`}
           />
         )}
         {hasFaxReceipt ? (
           <DocumentRow
-            label="Fax transmission receipt (proof of filing)"
-            description="Timestamped confirmation that your fax reached the IRS."
+            label={t("domain.documentType.faxReceipt")}
+            description={t("portal.documents.timestampedConfirmationThatYourFaxReachedTheIRS")}
             href={`/api/filings/${filingId}/fax-receipt`}
           />
         ) : (
-          <p className="py-4 text-sm text-slate-600">Your fax receipt will appear here once the IRS fax line confirms delivery.</p>
+          <p className="py-4 text-sm text-slate-600">{t("portal.documents.yourFaxReceiptWillAppearHereOnceTheIRS")}</p>
         )}
         {hasDistinctSignedCopy && (
           <DocumentRow
-            label="Signed copy (PDF)"
-            description="Your signed copy, kept separately from the faxed package."
+            label={t("domain.documentType.signedCopy")}
+            description={t("portal.documents.yourSignedCopyKeptSeparatelyFromTheFaxedPackage")}
             href={`/api/filings/${filingId}/signed-pdf`}
           />
         )}
       </div>
       <p className="mt-4 text-sm text-slate-500">
-        Keep these with your company records. The IRS does not send an acknowledgement for faxed Form 5472 filings; the fax receipt is your proof of filing.
+        {t("portal.documents.keepTheseWithYourCompanyRecordsTheIRSDoes")}
       </p>
     </section>
   );
 }
 
 function DocumentRow({ label, description, href }: { label: string; description: string; href: string }) {
+  const t = useTranslations();
   return (
     <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
@@ -59,9 +62,9 @@ function DocumentRow({ label, description, href }: { label: string; description:
         <p className="mt-1 text-sm text-slate-500">{description}</p>
       </div>
       <a href={href} target="_blank" rel="noreferrer" className="sm:flex-none">
-        <Button variant="outline" className="w-full sm:w-auto" aria-label={`Download ${label}`}>
+        <Button variant="outline" className="w-full sm:w-auto" aria-label={t("common.downloadLabel", { label })}>
           <Download className="mr-1.5 h-4 w-4" />
-          Download
+          {t("common.download")}
         </Button>
       </a>
     </div>

@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentUser, getFilingAccess, hasFilingInviteAccess, partnerOwnsFiling } from "@/lib/session";
@@ -7,7 +8,7 @@ import { SignClient } from "./SignClient";
 import { get as getStorageObject } from "@/lib/storage";
 import { releasedPdfKey } from "@/lib/pdf/packageKeys";
 
-const REVIEW_PENDING_MESSAGE = "Your forms are still being reviewed. We will email you when they are ready to sign.";
+
 
 // Page where customers sign their filing in-portal. Replaces the prior
 // "download + sign offline + upload signed PDF" loop. Gated to:
@@ -16,6 +17,7 @@ const REVIEW_PENDING_MESSAGE = "Your forms are still being reviewed. We will ema
 //   - AI validation, if it ran, must NOT be in needs_customer_input state
 //     (otherwise we send the user back to the chat thread first)
 export default async function SignFilingPage({ params }: { params: { id: string } }) {
+  const t = await getTranslations();
   const access = await getFilingAccess(params.id, "sign");
   if (access.kind === "not_found") notFound();
   if (access.kind === "locked") return <FilingLocked ownerEmail={access.ownerEmail} />;
@@ -41,17 +43,13 @@ export default async function SignFilingPage({ params }: { params: { id: string 
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
         <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
-          <h1 className="text-xl font-semibold text-slate-900">Only the client can sign this filing</h1>
-          <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-            Signing captures the client&apos;s own acknowledgment of the package, so it has to happen from
-            their sign link, not the partner dashboard. Send (or resend) {filing.llcName ?? "this client"}
-            &apos;s sign link from their filing row, and they can sign from there.
-          </p>
+          <h1 className="text-xl font-semibold text-slate-900">{t("portal.sign.onlyTheClientCanSignThisFiling")}</h1>
+          <p className="mt-3 text-sm text-slate-600 leading-relaxed"> {t("portal.sign.partnerInstruction", { client: filing.llcName ?? t("portal.sign.thisClient") })} </p>
           <Link
             href="/partner"
             className="mt-6 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-accent px-4 text-white text-sm font-semibold shadow-lg shadow-accent/20 hover:shadow-xl hover:shadow-accent/30 transition-all hover:-translate-y-0.5"
           >
-            Back to partner dashboard
+            {t("portal.sign.backToPartnerDashboard")}
           </Link>
         </div>
       </div>
@@ -67,15 +65,15 @@ export default async function SignFilingPage({ params }: { params: { id: string 
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
         <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
-          <h1 className="text-xl font-semibold text-slate-900">Review in progress</h1>
+          <h1 className="text-xl font-semibold text-slate-900">{t("portal.sign.reviewInProgress")}</h1>
           <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-            {REVIEW_PENDING_MESSAGE}
+            {t("portal.sign.reviewPending")}
           </p>
           <Link
             href={`/filings/${filing.id}`}
             className="mt-6 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-accent px-4 text-white text-sm font-semibold shadow-lg shadow-accent/20 hover:shadow-xl hover:shadow-accent/30 transition-all hover:-translate-y-0.5"
           >
-            Back to filing
+            {t("portal.sign.backToFiling")}
           </Link>
         </div>
       </div>

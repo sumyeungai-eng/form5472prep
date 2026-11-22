@@ -1,5 +1,10 @@
+import { NextIntlClientProvider } from "next-intl";
+import type { ReactNode } from "react";
+import common from "../../messages/en/common.json";
+import domain from "../../messages/en/domain.json";
+import portal from "../../messages/en/portal.json";
 import { describe, expect, it } from "vitest";
-import { renderToStaticMarkup } from "react-dom/server";
+import { renderToStaticMarkup as renderMarkup } from "react-dom/server";
 import { FilingStatusBanner } from "./FilingStatusBanner";
 
 describe("FilingStatusBanner filed documents action", () => {
@@ -14,3 +19,7 @@ describe("FilingStatusBanner filed documents action", () => {
     expect(html).not.toContain("#documents");
   });
 });
+
+function renderToStaticMarkup(node: ReactNode) {
+  return renderMarkup(<NextIntlClientProvider locale="en" messages={{ common, domain, portal }} timeZone="UTC">{node}</NextIntlClientProvider>);
+}

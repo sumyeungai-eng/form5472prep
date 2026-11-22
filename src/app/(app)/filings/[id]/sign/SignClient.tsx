@@ -1,10 +1,10 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SignaturePad } from "@/components/SignaturePad";
-import { filingDeclarationText } from "@/lib/filingSignature";
 
 // Client surface for the in-portal check-and-sign page (reached from the
 // "Check & sign my forms" email sent when admin uploads the reviewed PDF).
@@ -30,6 +30,7 @@ export function SignClient({
   // open /filings/{id}, so don't offer a link that dead-ends.
   showFilingLink: boolean;
 }) {
+  const t = useTranslations();
   const router = useRouter();
   const [dataUrl, setDataUrl] = useState<string | null>(priorSignatureDataUrl);
   const [confirmed, setConfirmed] = useState(false);
@@ -46,15 +47,15 @@ export function SignClient({
 
   async function submit() {
     if (!confirmed) {
-      setError("Please confirm you've checked your forms first.");
+      setError(t("portal.sign.confirmFirst"));
       return;
     }
     if (!signerName.trim()) {
-      setError("Please type your full legal name.");
+      setError(t("portal.sign.typeName"));
       return;
     }
     if (!dataUrl) {
-      setError("Please draw or keep a signature before continuing.");
+      setError(t("portal.sign.signatureRequired"));
       return;
     }
     setBusy(true);
@@ -75,7 +76,7 @@ export function SignClient({
         setSignedDone(true);
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Sign failed");
+      setError(e instanceof Error ? e.message : t("portal.sign.failed"));
       setBusy(false);
     }
   }
@@ -83,7 +84,7 @@ export function SignClient({
   async function requestChange() {
     const text = changeText.trim();
     if (text.length < 5) {
-      setChangeError("Tell us briefly what needs changing.");
+      setChangeError(t("portal.sign.changeBriefly"));
       return;
     }
     setChangeBusy(true);
@@ -100,21 +101,21 @@ export function SignClient({
       }
       setChangeSent(true);
     } catch (e) {
-      setChangeError(e instanceof Error ? e.message : "Could not send your note");
+      setChangeError(e instanceof Error ? e.message : t("portal.sign.noteFailed"));
     } finally {
       setChangeBusy(false);
     }
   }
 
-  const label = llcName ?? `tax year ${taxYears.join(", ")}`;
+  const label = llcName ?? t("domain.taxYear", { years: taxYears.join(", ") });
 
   if (signedDone) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
         <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
-          <h1 className="text-xl font-semibold text-slate-900">Thank you — your forms are signed</h1>
+          <h1 className="text-xl font-semibold text-slate-900">{t("portal.sign.thankYouYourFormsAreSigned")}</h1>
           <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-            We&apos;ll now send them to the IRS by fax and email you the confirmation once they&apos;re delivered.
+            {t("portal.sign.weLlNowSendThemToTheIRSBy")}
           </p>
         </div>
       </div>
@@ -125,17 +126,16 @@ export function SignClient({
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
         <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
-          <h1 className="text-xl font-semibold text-slate-900">Thanks — we&apos;ve got your note</h1>
+          <h1 className="text-xl font-semibold text-slate-900">{t("portal.sign.thanksWeVeGotYourNote")}</h1>
           <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-            We&apos;ll correct your forms and email you a new version to check and sign. Nothing is sent to
-            the IRS until you&apos;ve signed.
+            {t("portal.sign.weLlCorrectYourFormsAndEmailYouA")}
           </p>
           {showFilingLink && (
             <Link
               href={`/filings/${filingId}`}
               className="mt-6 inline-flex items-center justify-center h-11 rounded-xl bg-accent px-4 text-white text-sm font-semibold"
             >
-              Back to filing
+              {t("portal.sign.backToFiling")}
             </Link>
           )}
         </div>
@@ -151,28 +151,27 @@ export function SignClient({
         <div className="mb-6 flex items-center justify-between">
           {showFilingLink ? (
             <Link href={`/filings/${filingId}`} className="text-sm text-slate-500 hover:underline">
-              ← Back to filing
+              {t("portal.sign.backToFiling2")}
             </Link>
           ) : (
             <span />
           )}
-          <span className="text-xs uppercase tracking-wider text-slate-400">Check &amp; sign</span>
+          <span className="text-xs uppercase tracking-wider text-slate-400">{t("portal.sign.checkSign")}</span>
         </div>
 
-        <h1 className="text-2xl font-semibold text-slate-900">Check &amp; sign — {label}</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">{t("portal.sign.checkSign2", { label })}</h1>
         <p className="mt-1.5 text-sm text-slate-600">
-          A PTIN-holding tax accountant has reviewed your forms. Please check them, and if everything is correct,
-          sign below. Nothing is sent to the IRS until you sign.
+          {t("portal.sign.aPTINHoldingTaxAccountantHasReviewedYourForms")}
         </p>
 
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
           <section className="rounded-2xl border border-slate-200 bg-white p-5">
-            <div className="text-xs font-semibold tracking-wider uppercase text-blue-900">Step 1</div>
-            <h2 className="mt-1 text-lg font-semibold">Check your forms</h2>
+            <div className="text-xs font-semibold tracking-wider uppercase text-blue-900">{t("portal.sign.step1")}</div>
+            <h2 className="mt-1 text-lg font-semibold">{t("portal.sign.checkYourForms")}</h2>
             <ul className="mt-2 list-disc pl-5 text-xs text-slate-600 space-y-0.5">
-              <li>LLC name, EIN and address</li>
-              <li>Your name, address and foreign tax ID</li>
-              <li>The amounts and the tax year(s)</li>
+              <li>{t("portal.sign.lLCNameEINAndAddress")}</li>
+              <li>{t("portal.sign.yourNameAddressAndForeignTaxID")}</li>
+              <li>{t("portal.sign.theAmountsAndTheTaxYearS")}</li>
             </ul>
             {/* iPhone Safari often renders only page 1 of an embedded PDF, so
                 the full-PDF button sits above the preview where it's seen. */}
@@ -182,15 +181,15 @@ export function SignClient({
               rel="noreferrer"
               className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-blue-900 px-4 py-2.5 text-sm font-semibold text-blue-900 hover:bg-blue-50"
             >
-              View full forms (all pages) ↗
+              {t("portal.sign.viewFullFormsAllPages")}
             </a>
             <p className="mt-1.5 text-xs text-slate-500 sm:hidden">
-              On a phone the preview below may show only the first page — tap the button above to check every page.
+              {t("portal.sign.onAPhoneThePreviewBelowMayShowOnly")}
             </p>
             <iframe
               src={`/api/filings/${filingId}/pdf?v=${encodeURIComponent(pdfKey)}#toolbar=0`}
               className="mt-3 w-full h-[360px] sm:h-[480px] rounded-lg border border-slate-200"
-              title="Your forms to check"
+              title={t("portal.sign.yourFormsToCheck")}
             />
             <BlankLinesPanel />
 
@@ -205,8 +204,8 @@ export function SignClient({
                 }}
               />
               <span>
-                I&apos;ve checked my forms and everything is correct.
-                <span className="mt-1 block text-xs text-slate-600">{filingDeclarationText()}</span>
+                {t("portal.sign.iVeCheckedMyFormsAndEverythingIsCorrect")}
+                <span className="mt-1 block text-xs text-slate-600">{t("portal.sign.declaration")}</span>
               </span>
             </label>
 
@@ -217,19 +216,19 @@ export function SignClient({
                   onClick={() => setChangeOpen(true)}
                   className="text-sm font-medium text-blue-900 hover:underline"
                 >
-                  Something&apos;s not right? Request a change
+                  {t("portal.sign.somethingSNotRightRequestAChange")}
                 </button>
               ) : (
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-slate-700" htmlFor="change-text">
-                    What needs changing?
+                    {t("portal.sign.whatNeedsChanging")}
                   </label>
                   <textarea
                     id="change-text"
                     rows={4}
                     value={changeText}
                     onChange={(e) => setChangeText(e.target.value)}
-                    placeholder="E.g. The LLC address should be Suite 200, not Suite 100."
+                    placeholder={t("portal.sign.eGTheLLCAddressShouldBeSuite200")}
                     className="block w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900/20"
                   />
                   {changeError && <p className="text-xs text-rose-600">{changeError}</p>}
@@ -240,14 +239,14 @@ export function SignClient({
                       disabled={changeBusy}
                       className="rounded-full border border-blue-900 px-4 py-2 text-sm font-semibold text-blue-900 hover:bg-blue-50 disabled:opacity-60"
                     >
-                      {changeBusy ? "Sending…" : "Send to our team"}
+                      {changeBusy ? t("common.sending") : t("portal.sign.sendTeam")}
                     </button>
                     <button
                       type="button"
                       onClick={() => setChangeOpen(false)}
                       className="text-sm text-slate-500 hover:underline"
                     >
-                      Cancel
+                      {t("common.cancel")}
                     </button>
                   </div>
                 </div>
@@ -260,16 +259,16 @@ export function SignClient({
               confirmed ? "" : "opacity-60"
             }`}
           >
-            <div className="text-xs font-semibold tracking-wider uppercase text-blue-900">Step 2</div>
-            <h2 className="mt-1 text-lg font-semibold">Sign</h2>
+            <div className="text-xs font-semibold tracking-wider uppercase text-blue-900">{t("portal.sign.step2")}</div>
+            <h2 className="mt-1 text-lg font-semibold">{t("portal.sign.sign")}</h2>
             <p className="mt-1 text-xs text-slate-500">
               {confirmed
-                ? "Draw your signature below."
-                : "Tick “everything is correct” in step 1 first."}
-              {priorSignatureDataUrl && " We've pre-loaded the signature you used before — keep it or clear and re-draw."}
+                ? t("portal.sign.drawBelow")
+                : t("portal.sign.tickFirst")}
+              {priorSignatureDataUrl && t("portal.sign.priorSignature")}
             </p>
             <label className="mt-3 block text-sm font-medium text-slate-700" htmlFor="signer-name">
-              Full legal name
+              {t("portal.sign.fullLegalName")}
             </label>
             <input
               id="signer-name"
@@ -297,12 +296,10 @@ export function SignClient({
               disabled={busy || !dataUrl || !confirmed || !signerName.trim()}
               className="mt-5 w-full rounded-full bg-blue-900 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-950 disabled:opacity-60"
             >
-              {busy ? "Saving…" : "Confirm & sign"}
+              {busy ? t("common.saving") : t("portal.sign.confirmSign")}
             </button>
             <p className="mt-2 text-xs text-slate-400 text-center">
-              Your signature is placed on the owner&apos;s signature line of the pro forma Form 1120 (page 1).
-              By signing, you confirm the forms above are correct and authorize us to submit them to the IRS
-              by fax.
+              {t("portal.sign.yourSignatureIsPlacedOnTheOwnerSSignature")}
             </p>
           </section>
         </div>
@@ -314,26 +311,21 @@ export function SignClient({
 // PR 7: static explainer for the blank lines clients ask about. Keep it
 // factual (i5472/i1120): no "doesn't apply to you" claims for Parts VIII–IX (O6).
 export function BlankLinesPanel() {
+  const t = useTranslations();
   return (
     <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
-      <div className="font-semibold text-slate-900">Why some lines are blank</div>
+      <div className="font-semibold text-slate-900">{t("portal.sign.whySomeLinesAreBlank")}</div>
       <ul className="mt-1.5 list-disc space-y-1 pl-4">
         <li>
-          <strong>Form 1120:</strong> the income, deduction and tax lines and the schedules are not completed for a
-          foreign-owned U.S. disregarded entity. Only the name, address, EIN and item E are required on this pro forma
-          1120.
+          <strong>Form 1120:</strong> {t("portal.sign.theIncomeDeductionAndTaxLinesAndTheSchedules")}
         </li>
         <li>
-          <strong>Form 5472, lines 43a–43b:</strong> the IRS instructions say not to complete these lines for a
-          foreign-owned U.S. disregarded entity.
+          <strong>{t("portal.sign.lines43")}</strong> {t("portal.sign.theIRSInstructionsSayNotToCompleteTheseLines")}
         </li>
         <li>
-          <strong>Part IV</strong> covers sales, services, rents, loans and similar items. Money you put into or took
-          out of the LLC (contributions and distributions) is reported in <strong>Part V</strong> instead.
-        </li>
+          <strong>{t("portal.sign.partIV")}</strong> {t("portal.sign.partIVBody")} <strong>Part V</strong>{t("portal.sign.partVSuffix")} </li>
         <li>
-          <strong>Parts VIII and IX</strong> cover cost sharing arrangements and base erosion payments. They are blank
-          because nothing was reported for them.
+          <strong>{t("portal.sign.partsVIIIAndIX")}</strong> {t("portal.sign.coverCostSharingArrangementsAndBaseErosionPaymentsThey")}
         </li>
       </ul>
     </div>
