@@ -1,3 +1,7 @@
+"use client";
+
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { Check, Clock } from "lucide-react";
 import { TIERS, TIER_ORDER, type Tier } from "@/lib/pricing";
 import { formatUsd } from "@/lib/utils";
@@ -15,10 +19,11 @@ export function TierChooser({
   disabled: boolean;
   onSelect: (tier: Tier) => void;
 }) {
+  const w = useWizardText();
   return (
     <div
       role="radiogroup"
-      aria-label="Choose your turnaround"
+      aria-label={w("Choose your turnaround")}
       className="grid gap-3 sm:grid-cols-2"
     >
       {TIER_ORDER.map((key) => {
@@ -41,8 +46,7 @@ export function TierChooser({
           >
             {info.highlight && (
               <span className="mb-2 inline-flex self-start rounded-full bg-accent px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-white">
-                Most popular
-              </span>
+                {w("Most popular")}</span>
             )}
             <span className="flex items-center gap-2.5">
               <span
@@ -53,11 +57,11 @@ export function TierChooser({
               >
                 {isSelected && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
               </span>
-              <span className="font-semibold text-ink">{info.label}</span>
+              <span className="font-semibold text-ink">{w(info.label)}</span>
             </span>
             <span className="mt-1.5 flex items-start gap-1.5 pl-7 text-sm leading-snug text-slate-600">
               <Clock aria-hidden className="mt-0.5 h-3.5 w-3.5 flex-none text-slate-500" />
-              {info.subtitle}
+              {w(info.subtitle)}
             </span>
             <span className="mt-3 block pl-7 font-serif text-2xl font-semibold tabular-nums tracking-tight text-ink">
               {formatUsd(info.priceCents)}
@@ -67,7 +71,7 @@ export function TierChooser({
                 {ownFeatures.map((f) => (
                   <li key={f} className="flex gap-1.5">
                     <Check aria-hidden className="mt-px h-3.5 w-3.5 flex-none text-accent" strokeWidth={2.5} />
-                    <span>{f}</span>
+                    <span>{w(f)}</span>
                   </li>
                 ))}
               </ul>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { isPdfEncodable, PDF_TEXT_MESSAGE } from "@/lib/pdfText";
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
@@ -285,6 +287,7 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
   viewer = "retail",
   partnerName = null,
 }, ref) {
+  const w = useWizardText();
   const router = useRouter();
   const [filing, setFiling] = useState(initial);
   const [saving, setSaving] = useState(false);
@@ -463,7 +466,7 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
       <div className={`${hideTopStepper ? "" : "mt-6 sm:mt-8"} bg-white rounded-lg border border-slate-200 p-5 sm:p-8`}>
         {saveError && (
           <div className="mb-5 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800" role="alert">
-            <strong>Couldn&apos;t save:</strong> {saveError}
+            <strong>{w("Couldn't save:")}</strong> {w(saveError)}
           </div>
         )}
         {stepKey === "entity" && (
@@ -671,7 +674,7 @@ export const FilingWizard = forwardRef<FilingWizardHandle, FilingWizardProps>(fu
               });
               if (!res.ok) {
                 const body = await res.json().catch(() => ({}));
-                alert(`Checkout failed: ${body.error ?? res.status}`);
+                alert(w("Checkout failed: {v0}", { v0: body.error ?? res.status }));
                 return;
               }
               const { url } = await res.json();
@@ -703,12 +706,13 @@ function Stepper({
   current: number;
   onJumpTo: (key: StepKey) => void;
 }) {
+  const w = useWizardText();
   const currentLabel = steps[current]?.label ?? "";
   return (
     <div>
       {/* Mobile-only: show "Step N of M — Label" since dots alone aren't self-describing */}
       <p className="sm:hidden text-xs text-slate-500 mb-2">
-        Step {current + 1} of {steps.length} · <span className="font-medium text-slate-900">{currentLabel}</span>
+        {w("Step ")}{current + 1} {w(" of ")}{steps.length} · <span className="font-medium text-slate-900">{currentLabel}</span>
       </p>
       <ol className="flex items-center text-xs">
       {steps.map((s, i) => {
@@ -733,7 +737,7 @@ function Stepper({
               canJump ? "group-hover:text-slate-900 group-hover:underline" : ""
             }`}
           >
-            {s.label}
+            {w(s.label)}
           </span>
         );
         return (
@@ -743,8 +747,8 @@ function Stepper({
                 type="button"
                 onClick={() => onJumpTo(s.key)}
                 className="group flex items-center rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                aria-label={`Go back to ${s.label}`}
-                title={`Go back to ${s.label}`}
+                aria-label={w("Go back to {v0}", { v0: w(s.label) })}
+                title={w("Go back to {v0}", { v0: w(s.label) })}
               >
                 {dot}
                 {label}
@@ -775,6 +779,7 @@ function EntityStep({
   onFormReady?: (get: (() => EntityForm | null) | null) => void;
   saving: boolean;
 }) {
+  const w = useWizardText();
   const {
     register,
     handleSubmit,
@@ -895,42 +900,35 @@ function EntityStep({
   return (
     <form onSubmit={handleSubmit((data) => onSubmit(data as EntityForm))} className="space-y-5">
       <div>
-        <h2 className="text-xl font-semibold">LLC information</h2>
+        <h2 className="text-xl font-semibold">{w("LLC information")}</h2>
         <p className="text-sm text-slate-500 mt-1">
-          Use the legal name and address registered with your state.
-        </p>
+          {w("Use the legal name and address registered with your state.")}</p>
       </div>
       {isPrefilled && (
         <div className="rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
-          <strong>Pre-filled from your previous filing.</strong> Review each field and update anything that&apos;s changed since last year — address, EIN, owner details, etc.
-        </div>
+          <strong>{w("Pre-filled from your previous filing.")}</strong> {w(" Review each field and update anything that's changed since last year — address, EIN, owner details, etc.")}</div>
       )}
-      <Field label="LLC legal name" error={errors.llcName?.message}>
-        <Input {...register("llcName")} placeholder="Acme Holdings LLC" />
+      <Field label={w("LLC legal name")} error={errors.llcName?.message}>
+        <Input {...register("llcName")} placeholder={w("Acme Holdings LLC")} />
       </Field>
       <Field
         label="EIN"
-        hint="9-digit IRS employer identification number, e.g. 12-3456789."
+        hint={w("9-digit IRS employer identification number, e.g. 12-3456789.")}
         error={errors.llcEin?.message}
         help={
           <>
             <p>
-              The <strong>EIN</strong> (Employer Identification Number) is the IRS&apos;s
-              identifier for your LLC. It&apos;s on the IRS confirmation letter (CP 575) you
-              received when the LLC was registered.
-            </p>
+              {w("The ")}<strong>EIN</strong> {w(" (Employer Identification Number) is the IRS's identifier for your LLC. It's on the IRS confirmation letter (CP 575) you received when the LLC was registered.")}</p>
             <p className="mt-2">
-              Don&apos;t have one yet? You can&apos;t file Form 5472 without it. Apply via{" "}
+              {w("Don't have one yet? You can't file Form 5472 without it. Apply via")}{" "}
               <a
                 className="text-accent underline"
                 href="https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online"
                 target="_blank"
                 rel="noreferrer"
               >
-                irs.gov/EIN
-              </a>
-              {" "}— foreign owners must apply by fax or mail using Form SS-4 (takes 2–4 weeks).
-            </p>
+                {w("irs.gov/EIN")}</a>
+              {" "}{w("— foreign owners must apply by fax or mail using Form SS-4 (takes 2–4 weeks).")}</p>
           </>
         }
       >
@@ -953,24 +951,23 @@ function EntityStep({
           }}
         />
       </Field>
-      <Field label="Street address" error={errors.llcAddress?.message}>
-        <Input {...register("llcAddress")} placeholder="123 Main St" />
+      <Field label={w("Street address")} error={errors.llcAddress?.message}>
+        <Input {...register("llcAddress")} placeholder={w("123 Main St")} />
       </Field>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <Field label="City" error={errors.llcCity?.message}>
+        <Field label={w("City")} error={errors.llcCity?.message}>
           <Input {...register("llcCity")} />
         </Field>
-        <Field label="State" hint="2-letter" error={errors.llcState?.message}>
-          <Input {...register("llcState")} placeholder="WY" maxLength={2} />
+        <Field label={w("State")} hint={w("2-letter")} error={errors.llcState?.message}>
+          <Input {...register("llcState")} placeholder={w("WY")} maxLength={2} />
         </Field>
-        <Field label="ZIP" error={errors.llcZip?.message}>
+        <Field label={w("ZIP")} error={errors.llcZip?.message}>
           <Input {...register("llcZip")} placeholder="82001" />
         </Field>
       </div>
       <fieldset className="space-y-2">
         <legend className="block text-sm font-medium text-slate-700">
-          Does the LLC receive its mail at this U.S. address?
-        </legend>
+          {w("Does the LLC receive its mail at this U.S. address?")}</legend>
         <div className="space-y-2">
           <label className="flex items-start gap-2 rounded-md border border-slate-300 bg-white p-3 text-sm">
             <input
@@ -985,7 +982,7 @@ function EntityStep({
               }
               className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
             />
-            <span>Yes, the LLC gets its mail here</span>
+            <span>{w("Yes, the LLC gets its mail here")}</span>
           </label>
           <label className="flex items-start gap-2 rounded-md border border-slate-300 bg-white p-3 text-sm">
             <input
@@ -1000,23 +997,20 @@ function EntityStep({
               }
               className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
             />
-            <span>No, this is only my registered agent&apos;s address</span>
+            <span>{w("No, this is only my registered agent's address")}</span>
           </label>
         </div>
         {watch("llcAddressIsRegisteredAgentOnly") === true && (
           <p className="text-xs text-slate-500">
-            We will put your own address on the forms so IRS letters reach you.
-          </p>
+            {w("We will put your own address on the forms so IRS letters reach you.")}</p>
         )}
       </fieldset>
       <Field
-        label="Date of formation"
+        label={w("Date of formation")}
         error={errors.llcDateIncorporated?.message}
         help={
           <p>
-            The date the state registered your LLC. Check the formation certificate or the
-            confirmation email from the state agency (or the company that formed it for you).
-          </p>
+            {w("The date the state registered your LLC. Check the formation certificate or the confirmation email from the state agency (or the company that formed it for you).")}</p>
         }
       >
         <Input type="date" {...register("llcDateIncorporated")} />
@@ -1024,20 +1018,18 @@ function EntityStep({
       {/* Optional and never blocks Continue (owner rule): a blank or unreadable
           value only shows the note below; staff confirm it after payment. */}
       <Field
-        label="State where the LLC was formed (from your Articles of Organization)"
-        hint="2-letter code, for example WY. This can differ from the mailing address above."
+        label={w("State where the LLC was formed (from your Articles of Organization)")}
+        hint={w("2-letter code, for example WY. This can differ from the mailing address above.")}
       >
-        <Input {...register("llcFormationState")} placeholder="WY" maxLength={2} />
+        <Input {...register("llcFormationState")} placeholder={w("WY")} maxLength={2} />
         {!normalizeUsStateCode(watch("llcFormationState")) && (
           <p className="mt-1 text-xs text-amber-800">
-            Please add the 2-letter state from your Articles of Organization. You can continue
-            without it; our team will confirm it with you before filing.
-          </p>
+            {w("Please add the 2-letter state from your Articles of Organization. You can continue without it; our team will confirm it with you before filing.")}</p>
         )}
       </Field>
       <Field
-        label="Where does the LLC mainly do business?"
-        hint="This is about the LLC, not about you. Most U.S. LLCs answer United States."
+        label={w("Where does the LLC mainly do business?")}
+        hint={w("This is about the LLC, not about you. Most U.S. LLCs answer United States.")}
         error={errors.llcCountryBusiness?.message}
       >
         <Select {...register("llcCountryBusiness")}>
@@ -1045,19 +1037,19 @@ function EntityStep({
         </Select>
       </Field>
       <Field
-        label="Has a Form 5472 been filed for this LLC for any earlier year?"
+        label={w("Has a Form 5472 been filed for this LLC for any earlier year?")}
         error={errors.priorForm5472Filed?.message}
       >
         <Select {...register("priorForm5472Filed")}>
-          <option value="">Select…</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-          <option value="not_sure">Not sure</option>
+          <option value="">{w("Select…")}</option>
+          <option value="yes">{w("Yes")}</option>
+          <option value="no">{w("No")}</option>
+          <option value="not_sure">{w("Not sure")}</option>
         </Select>
       </Field>
       <Field
-        label="Principal business activity"
-        hint="Pick the closest match. We'll auto-fill the IRS 6-digit code below."
+        label={w("Principal business activity")}
+        hint={w("Pick the closest match. We'll auto-fill the IRS 6-digit code below.")}
         error={errors.llcBusinessActivity?.message}
       >
         <select
@@ -1069,18 +1061,18 @@ function EntityStep({
           onChange={(e) => handleActivitySelect(e.target.value)}
           className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
         >
-          <option value="">Select your business activity…</option>
+          <option value="">{w("Select your business activity…")}</option>
           {BUSINESS_ACTIVITIES.map((b) => (
             <option key={b.activity} value={b.activity}>
-              {b.activity}
+              {w(b.activity)}
             </option>
           ))}
-          <option value="__other__">Other (specify) …</option>
+          <option value="__other__">{w("Other (specify) …")}</option>
         </select>
         {activityIsOther && (
           <Input
             {...register("llcBusinessActivity")}
-            placeholder="Describe what your LLC does (e.g., custom yacht brokering)"
+            placeholder={w("Describe what your LLC does (e.g., custom yacht brokering)")}
             className="mt-2"
           />
         )}
@@ -1089,22 +1081,19 @@ function EntityStep({
         )}
       </Field>
       <Field
-        label="Principal business activity code"
-        hint={`Choose a 6-digit code from the IRS Form 1120 list for ${pbaTaxYear}.`}
+        label={w("Principal business activity code")}
+        hint={w("Choose a 6-digit code from the IRS Form 1120 list for {v0}.", { v0: pbaTaxYear })}
         error={errors.llcBusinessCode?.message}
         help={
           <p>
-            Form 5472 uses the Principal Business Activity Codes printed in the Form 1120
-            instructions for the tax year. A real NAICS code is only valid here if it appears
-            on that IRS list.
-          </p>
+            {w("Form 5472 uses the Principal Business Activity Codes printed in the Form 1120 instructions for the tax year. A real NAICS code is only valid here if it appears on that IRS list.")}</p>
         }
       >
         <div className="relative">
           <input type="hidden" {...register("llcBusinessCode")} />
           <Input
             value={businessCodeQuery}
-            placeholder="Search by code or activity"
+            placeholder={w("Search by code or activity")}
             autoComplete="off"
             role="combobox"
             aria-expanded={codePickerOpen}
@@ -1148,7 +1137,7 @@ function EntityStep({
               className="absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-md border border-slate-200 bg-white shadow-lg"
             >
               {codeOptions.length === 0 ? (
-                <li className="px-3 py-2 text-sm text-slate-500">No matching IRS codes</li>
+                <li className="px-3 py-2 text-sm text-slate-500">{w("No matching IRS codes")}</li>
               ) : (
                 codeOptions.map((option, index) => (
                   <li
@@ -1166,10 +1155,10 @@ function EntityStep({
                     }}
                   >
                     {option.code === NO_ACTIVITY_CODE ? (
-                      <span className="block font-medium">No business activity yet</span>
+                      <span className="block font-medium">{w("No business activity yet")}</span>
                     ) : null}
                     <span className="font-mono font-medium">{option.code}</span>
-                    <span className="ml-2 break-words">{option.description}</span>
+                    <span className="ml-2 break-words">{w(option.description)}</span>
                   </li>
                 ))
               )}
@@ -1177,14 +1166,14 @@ function EntityStep({
           )}
           {currentBusinessCode && selectedBusinessDescription && (
             <p className="mt-2 text-sm text-slate-700">
-              Selected: <code>{currentBusinessCode}</code> - {selectedBusinessDescription}
+              {w("Selected: ")}<code>{currentBusinessCode}</code> - {selectedBusinessDescription}
             </p>
           )}
         </div>
       </Field>
       <div className="flex justify-end">
         <Button type="submit" disabled={saving}>
-          {saving ? "Saving…" : "Continue"}
+          {saving ? w("Saving…") : w("Continue")}
         </Button>
       </div>
     </form>
@@ -1261,6 +1250,7 @@ function OwnerStep({
   onBack: () => void;
   saving: boolean;
 }) {
+  const w = useWizardText();
   const nameParts = splitOwnerName(filing.ownerName);
   const {
     register,
@@ -1316,42 +1306,42 @@ function OwnerStep({
   return (
     <form onSubmit={handleSubmit(handleOwnerSubmit)} className="space-y-5">
       <div>
-        <h2 className="text-xl font-semibold">Foreign owner information</h2>
-        <p className="text-sm text-slate-500 mt-1">As shown on your passport.</p>
+        <h2 className="text-xl font-semibold">{w("Foreign owner information")}</h2>
+        <p className="text-sm text-slate-500 mt-1">{w("As shown on your passport.")}</p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Field label="First name" error={errors.ownerFirstName?.message}>
-          <Input {...register("ownerFirstName")} placeholder="John" />
+        <Field label={w("First name")} error={errors.ownerFirstName?.message}>
+          <Input {...register("ownerFirstName")} placeholder={w("John")} />
         </Field>
-        <Field label="Middle name" error={errors.ownerMiddleName?.message}>
-          <Input {...register("ownerMiddleName")} placeholder="(optional)" />
+        <Field label={w("Middle name")} error={errors.ownerMiddleName?.message}>
+          <Input {...register("ownerMiddleName")} placeholder={w("(optional)")} />
         </Field>
-        <Field label="Last name" error={errors.ownerLastName?.message}>
-          <Input {...register("ownerLastName")} placeholder="Smith" />
+        <Field label={w("Last name")} error={errors.ownerLastName?.message}>
+          <Input {...register("ownerLastName")} placeholder={w("Smith")} />
         </Field>
       </div>
-      <Field label="Street address" error={errors.ownerAddressStreet?.message}>
-        <Input {...register("ownerAddressStreet")} placeholder="Flat 5A, 123 Queens Rd" />
+      <Field label={w("Street address")} error={errors.ownerAddressStreet?.message}>
+        <Input {...register("ownerAddressStreet")} placeholder={w("Flat 5A, 123 Queens Rd")} />
       </Field>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field label="City" error={errors.ownerAddressCity?.message}>
-          <Input {...register("ownerAddressCity")} placeholder="Hong Kong" />
+        <Field label={w("City")} error={errors.ownerAddressCity?.message}>
+          <Input {...register("ownerAddressCity")} placeholder={w("Hong Kong")} />
         </Field>
-        <Field label="State / Province" error={errors.ownerAddressState?.message}>
-          <Input {...register("ownerAddressState")} placeholder="State, province, or region" />
+        <Field label={w("State / Province")} error={errors.ownerAddressState?.message}>
+          <Input {...register("ownerAddressState")} placeholder={w("State, province, or region")} />
         </Field>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field label="Postal / ZIP code" error={errors.ownerAddressPostal?.message}>
+        <Field label={w("Postal / ZIP code")} error={errors.ownerAddressPostal?.message}>
           <Input
             {...register("ownerAddressPostal")}
-            placeholder={ownerNoPostalCode ? "Not used" : "Postal code"}
+            placeholder={ownerNoPostalCode ? w("Not used") : w("Postal code")}
             disabled={ownerNoPostalCode === true}
           />
         </Field>
-        <Field label="Country" error={errors.ownerAddressCountry?.message}>
+        <Field label={w("Country")} error={errors.ownerAddressCountry?.message}>
           <Select {...register("ownerAddressCountry")}>
-            <option value="">Select a country…</option>
+            <option value="">{w("Select a country…")}</option>
             {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </Select>
         </Field>
@@ -1374,66 +1364,57 @@ function OwnerStep({
           }}
           className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
         />
-        <span>My country does not use postal codes</span>
+        <span>{w("My country does not use postal codes")}</span>
       </label>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Field
-          label="Citizenship"
+          label={w("Citizenship")}
           error={errors.ownerCountryCitizenship?.message}
           help={
             <p>
-              The country that issued your passport. If you hold more than one passport, list the
-              country you use the most (or the same one you used on bank documents for this LLC).
-            </p>
+              {w("The country that issued your passport. If you hold more than one passport, list the country you use the most (or the same one you used on bank documents for this LLC).")}</p>
           }
         >
           <Select {...register("ownerCountryCitizenship")}>
-            <option value="">Select a country…</option>
+            <option value="">{w("Select a country…")}</option>
             {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </Select>
         </Field>
         <Field
-          label="Tax residence"
+          label={w("Tax residence")}
           error={errors.ownerCountryTaxResidence?.message}
           help={
             <>
               <p>
-                The country where you currently <strong>pay personal income tax</strong>. Usually
-                the country you live in and have a tax ID for.
-              </p>
+                {w("The country where you currently ")}<strong>{w("pay personal income tax")}</strong>{w(". Usually the country you live in and have a tax ID for.")}</p>
               <p className="mt-2">
-                Example: a UK citizen living in Dubai pays tax in the UAE, so the answer is{" "}
-                <strong>United Arab Emirates</strong>, not United Kingdom.
-              </p>
+                {w("Example: a UK citizen living in Dubai pays tax in the UAE, so the answer is")}{" "}
+                <strong>{w("United Arab Emirates")}</strong>{w(", not United Kingdom.")}</p>
             </>
           }
         >
           <Select {...register("ownerCountryTaxResidence")}>
-            <option value="">Select a country…</option>
+            <option value="">{w("Select a country…")}</option>
             {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </Select>
         </Field>
         <Field
-          label="Country of business"
+          label={w("Country of business")}
           error={errors.ownerCountryBusiness?.message}
           help={
             <p>
-              Where you actually <strong>run the LLC from</strong> — the country you&apos;re sitting in
-              when you make decisions, sign contracts, and manage operations. Often the same as
-              your tax residence.
-            </p>
+              {w("Where you actually ")}<strong>{w("run the LLC from")}</strong> {w(" — the country you're sitting in when you make decisions, sign contracts, and manage operations. Often the same as your tax residence.")}</p>
           }
         >
           <Select {...register("ownerCountryBusiness")}>
-            <option value="">Select a country…</option>
+            <option value="">{w("Select a country…")}</option>
             {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </Select>
         </Field>
       </div>
       <fieldset className="space-y-2">
         <legend className="block text-sm font-medium text-slate-700">
-          Do you have a tax number in your country of residence?
-        </legend>
+          {w("Do you have a tax number in your country of residence?")}</legend>
         {errors.ownerHasFtin?.message && (
           <p className="text-xs text-red-600">{errors.ownerHasFtin.message}</p>
         )}
@@ -1451,7 +1432,7 @@ function OwnerStep({
               }
               className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
             />
-            <span>Yes</span>
+            <span>{w("Yes")}</span>
           </label>
           <label className="flex items-start gap-2 rounded-md border border-slate-300 bg-white p-3 text-sm">
             <input
@@ -1470,95 +1451,81 @@ function OwnerStep({
               }}
               className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
             />
-            <span>No</span>
+            <span>{w("No")}</span>
           </label>
         </div>
       </fieldset>
       {ownerHasFtin === true && (
         <Field
-          label="Foreign tax ID (FTIN)"
-          hint={ftinSoftWarning ?? "The number your home country uses to identify you for tax purposes."}
+          label={w("Foreign tax ID (FTIN)")}
+          hint={ftinSoftWarning ? w(ftinSoftWarning) : w("The number your home country uses to identify you for tax purposes.")}
           error={errors.ownerFtin?.message}
           help={
             <>
-              <p className="font-medium text-slate-900 mb-1.5">What goes here?</p>
+              <p className="font-medium text-slate-900 mb-1.5">{w("What goes here?")}</p>
               <p>
-                The tax identification number issued to you by your <strong>home country</strong>
-                {" "}- not the United States. The IRS uses this on Form 5472 to identify you as the
-                foreign owner.
-              </p>
-              <p className="mt-2 font-medium text-slate-900">Common examples by country:</p>
+                {w("The tax identification number issued to you by your ")}<strong>{w("home country")}</strong>
+                {" "}{w("- not the United States. The IRS uses this on Form 5472 to identify you as the foreign owner.")}</p>
+              <p className="mt-2 font-medium text-slate-900">{w("Common examples by country:")}</p>
               <ul className="mt-1 space-y-0.5 list-disc list-inside">
-                <li><strong>Hong Kong:</strong> HKID number (e.g. A123456(7))</li>
-                <li><strong>United Kingdom:</strong> UTR (10 digits) or National Insurance number</li>
-                <li><strong>Singapore:</strong> NRIC / FIN number</li>
-                <li><strong>Canada:</strong> SIN (Social Insurance Number)</li>
-                <li><strong>Australia:</strong> TFN (Tax File Number)</li>
-                <li><strong>EU countries:</strong> your national tax / personal ID number</li>
-                <li><strong>BVI, Cayman, other tax-free jurisdictions:</strong> your national ID or
-                  passport number</li>
+                <li><strong>{w("Hong Kong:")}</strong> {w(" HKID number (e.g. A123456(7))")}</li>
+                <li><strong>{w("United Kingdom:")}</strong> {w(" UTR (10 digits) or National Insurance number")}</li>
+                <li><strong>{w("Singapore:")}</strong> {w(" NRIC / FIN number")}</li>
+                <li><strong>{w("Canada:")}</strong> {w(" SIN (Social Insurance Number)")}</li>
+                <li><strong>{w("Australia:")}</strong> {w(" TFN (Tax File Number)")}</li>
+                <li><strong>{w("EU countries:")}</strong> {w(" your national tax / personal ID number")}</li>
+                <li><strong>{w("BVI, Cayman, other tax-free jurisdictions:")}</strong> {w(" your national ID or passport number")}</li>
               </ul>
             </>
           }
         >
-          <Input {...register("ownerFtin")} placeholder="Your home-country tax ID number" />
+          <Input {...register("ownerFtin")} placeholder={w("Your home-country tax ID number")} />
         </Field>
       )}
       {ownerHasFtin === false && (
         <p className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-          We will print &apos;None&apos; on the form and use your reference ID.
-        </p>
+          {w("We will print 'None' on the form and use your reference ID.")}</p>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field
-          label="US ITIN (optional)"
-          hint="Only if you've previously been issued one by the IRS."
+          label={w("US ITIN (optional)")}
+          hint={w("Only if you've previously been issued one by the IRS.")}
           error={errors.ownerItin?.message}
           help={
             <>
               <p>
-                An <strong>ITIN</strong> (Individual Taxpayer Identification Number) is a 9-digit
-                number the IRS issues to non-US persons who need to file US tax returns but
-                can&apos;t get an SSN. It starts with the digit 9, e.g. <code>9XX-XX-XXXX</code>.
+                {w("An ")}<strong>ITIN</strong> {w(" (Individual Taxpayer Identification Number) is a 9-digit number the IRS issues to non-US persons who need to file US tax returns but can't get an SSN. It starts with the digit 9, e.g. ")}<code>9XX-XX-XXXX</code>.
               </p>
               <p className="mt-2">
-                Most foreign-owned LLC owners <strong>don&apos;t have one</strong> — leave this
-                field blank. Form 5472 accepts a Reference ID instead (next field).
-              </p>
+                {w("Most foreign-owned LLC owners ")}<strong>{w("don't have one")}</strong> {w(" — leave this field blank. Form 5472 accepts a Reference ID instead (next field).")}</p>
             </>
           }
         >
           <Input {...register("ownerItin")} placeholder="9XX-XX-XXXX" />
         </Field>
         <Field
-          label="Reference ID (if no ITIN)"
-          hint="Leave blank and we'll generate one for you. Letters/numbers only."
+          label={w("Reference ID (if no ITIN)")}
+          hint={w("Leave blank and we'll generate one for you. Letters/numbers only.")}
           error={errors.ownerReferenceId?.message}
           help={
             <>
               <p>
-                If you don&apos;t have a US ITIN, the IRS requires a self-assigned Reference ID
-                on Form 5472. It just needs to be unique to you and stable across years.
-              </p>
+                {w("If you don't have a US ITIN, the IRS requires a self-assigned Reference ID on Form 5472. It just needs to be unique to you and stable across years.")}</p>
               <p className="mt-2">
-                <strong>You can leave this blank</strong> — we&apos;ll generate one based on your
-                name (e.g. <code>SMITHJA7B2</code>). Or set your own: easiest is your{" "}
-                <strong>FTIN with dashes removed</strong>, or a short code like{" "}
-                <code>SMITHJ001</code>. Letters and numbers only — no spaces, dashes, or special
-                characters.
-              </p>
+                <strong>{w("You can leave this blank")}</strong> {w(" — we'll generate one based on your name (e.g. ")}<code>SMITHJA7B2</code>{w("). Or set your own: easiest is your")}{" "}
+                <strong>{w("FTIN with dashes removed")}</strong>{w(", or a short code like")}{" "}
+                <code>SMITHJ001</code>{w(". Letters and numbers only — no spaces, dashes, or special characters.")}</p>
             </>
           }
         >
-          <Input {...register("ownerReferenceId")} placeholder="e.g. A1234567 or SMITHJ001" />
+          <Input {...register("ownerReferenceId")} placeholder={w("e.g. A1234567 or SMITHJ001")} />
         </Field>
       </div>
       <div className="flex justify-between">
         <Button type="button" variant="outline" onClick={onBack}>
-          Back
-        </Button>
+          {w("Back")}</Button>
         <Button type="submit" disabled={saving}>
-          {saving ? "Saving…" : "Continue"}
+          {saving ? w("Saving…") : w("Continue")}
         </Button>
       </div>
     </form>
@@ -1617,6 +1584,7 @@ export function YearsStep({
   onEditFormationDate?: () => void;
   saving: boolean;
 }) {
+  const w = useWizardText();
   const currentYear = new Date().getUTCFullYear();
   // Cap the picker at the last COMPLETED tax year — a user shouldn't file for a
   // year that hasn't ended yet (the server enforces the same bound via
@@ -1740,7 +1708,7 @@ export function YearsStep({
       }
       setCertKey(json.key ?? null);
     } catch {
-      setCertError("Upload failed. Please try again.");
+      setCertError(w("Upload failed. Please try again."));
     } finally {
       setCertUploading(false);
     }
@@ -1757,7 +1725,7 @@ export function YearsStep({
       }
       setCertKey(null);
     } catch {
-      setCertError("Could not remove the certificate. Please try again.");
+      setCertError(w("Could not remove the certificate. Please try again."));
     }
   }
 
@@ -1778,7 +1746,7 @@ export function YearsStep({
       }
       setExtProofKey(json.key ?? null);
     } catch {
-      setExtProofError("Upload failed. Please try again.");
+      setExtProofError(w("Upload failed. Please try again."));
     } finally {
       setExtProofUploading(false);
     }
@@ -1795,7 +1763,7 @@ export function YearsStep({
       }
       setExtProofKey(null);
     } catch {
-      setExtProofError("Could not remove the file. Please try again.");
+      setExtProofError(w("Could not remove the file. Please try again."));
     }
   }
 
@@ -2044,7 +2012,7 @@ export function YearsStep({
         // server does not require one, so neither may we.
         if (extensionWindowOpen && extensionFiled === null) {
           setExtensionAnswerError(
-            "Select whether you filed Form 7004 — it decides whether your return is late.",
+            w("Select whether you filed Form 7004 — it decides whether your return is late."),
           );
           return;
         }
@@ -2080,30 +2048,22 @@ export function YearsStep({
       className="space-y-5"
     >
       <div>
-        <h2 className="text-xl font-semibold">Tax years to file</h2>
+        <h2 className="text-xl font-semibold">{w("Tax years to file")}</h2>
         <p className="text-sm text-slate-500 mt-1">
-          Pick every tax year you want to file for. If any year is being filed after its
-          due date, we&apos;ll help you write a short reasonable-cause statement explaining
-          why — it&apos;s what protects you from the $25,000 penalty.
-        </p>
+          {w("Pick every tax year you want to file for. If any year is being filed after its due date, we'll help you write a short reasonable-cause statement explaining why — it's what protects you from the $25,000 penalty.")}</p>
       </div>
       <input type="hidden" {...register("taxYears", { valueAsNumber: false })} />
       {noFilableYearYet && (
         <div role="status" className="rounded-md border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900 space-y-2">
-          <p className="font-medium">There&apos;s no tax year to file yet.</p>
+          <p className="font-medium">{w("There's no tax year to file yet.")}</p>
           <p>
-            You told us your LLC was formed on {formationDateLabel ?? "a date this year"}. Form 5472 is filed
-            after a tax year ends, so your first return covers {formationYear ?? currentYear} and can be filed
-            from January {(formationYear ?? currentYear) + 1}.
+            {w("You told us your LLC was formed on ")}{formationDateLabel ?? w("a date this year")}{w(". Form 5472 is filed after a tax year ends, so your first return covers ")}{formationYear ?? currentYear} {w(" and can be filed from January ")}{(formationYear ?? currentYear) + 1}.
           </p>
           <p>
-            If that formation date is wrong, please correct it in the Entity step.
-            {" "}If your LLC has already been closed, tick the final-return box below.
-          </p>
+            {w("If that formation date is wrong, please correct it in the Entity step.")}{" "}{w("If your LLC has already been closed, tick the final-return box below.")}</p>
           {onEditFormationDate && (
             <Button type="button" variant="outline" size="sm" onClick={onEditFormationDate}>
-              Fix the formation date
-            </Button>
+              {w("Fix the formation date")}</Button>
           )}
         </div>
       )}
@@ -2138,14 +2098,10 @@ export function YearsStep({
             className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
           />
           <span className="font-medium">
-            My LLC has been closed or dissolved — this is its final return
-          </span>
+            {w("My LLC has been closed or dissolved — this is its final return")}</span>
         </label>
         <p className="text-xs text-amber-800 mt-1.5 ml-6">
-          Only tick this if the LLC has actually been dissolved. It marks the return as final
-          on Form 1120, and if the LLC closed during {currentYear} it also lets you file that
-          short tax year now instead of waiting for the year to end.
-        </p>
+          {w("Only tick this if the LLC has actually been dissolved. It marks the return as final on Form 1120, and if the LLC closed during ")}{currentYear} {w(" it also lets you file that short tax year now instead of waiting for the year to end.")}</p>
         {isFinalReturn && (
           <div className="mt-3 ml-6">
             <Field
@@ -2154,8 +2110,8 @@ export function YearsStep({
               // before (or after) the state's effective date. Name the document
               // the right date is printed on so the customer copies it off the
               // certificate instead of a dashboard.
-              label="Effective date of dissolution — as shown on your Certificate of Cancellation / Dissolution"
-              hint="Use the date printed on the state certificate, not the date your formation/closure service marked the task complete — the two can differ."
+              label={w("Effective date of dissolution — as shown on your Certificate of Cancellation / Dissolution")}
+              hint={w("Use the date printed on the state certificate, not the date your formation/closure service marked the task complete — the two can differ.")}
               error={dissolvedAtError ?? undefined}
             >
               <Input
@@ -2175,19 +2131,17 @@ export function YearsStep({
               />
             </Field>
             <p className="text-xs text-amber-800 mt-1.5">
-              The forms will cover {periodStartLabel} through {periodEndLabel}.
+              {w("The forms will cover ")}{periodStartLabel} {w(" through ")}{periodEndLabel}.
             </p>
             {dissolvedAtError === DISSOLVED_AT_FUTURE && (
               <p className="text-xs text-amber-800 mt-1.5">
-                If your LLC&apos;s closure isn&apos;t effective yet, come back once you have the
-                certificate — we&apos;ll email you a reminder if you leave your draft unfinished.
-              </p>
+                {w("If your LLC's closure isn't effective yet, come back once you have the certificate — we'll email you a reminder if you leave your draft unfinished.")}</p>
             )}
             <div className="mt-3">
               <Field
-                label="Upload your Certificate of Dissolution (optional)"
-                hint="Optional — lets our accountant double-check the effective date against the certificate."
-                error={certError ?? undefined}
+                label={w("Upload your Certificate of Dissolution (optional)")}
+                hint={w("Optional — lets our accountant double-check the effective date against the certificate.")}
+                error={certError ? w(certError) : undefined}
               >
                 <div>
                   <input
@@ -2203,14 +2157,13 @@ export function YearsStep({
                   />
                   {certKey ? (
                     <p className="text-sm text-emerald-700">
-                      ✓ Certificate uploaded{" "}
+                      {w("✓ Certificate uploaded")}{" "}
                       <button
                         type="button"
                         onClick={() => void removeCert()}
                         className="ml-1 text-xs text-slate-500 hover:underline"
                       >
-                        Remove
-                      </button>
+                        {w("Remove")}</button>
                     </p>
                   ) : (
                     <Button
@@ -2220,7 +2173,7 @@ export function YearsStep({
                       disabled={certUploading}
                       onClick={() => certInputRef.current?.click()}
                     >
-                      {certUploading ? "Uploading…" : "Upload certificate (optional)"}
+                      {certUploading ? w("Uploading…") : w("Upload certificate (optional)")}
                     </Button>
                   )}
                 </div>
@@ -2232,12 +2185,9 @@ export function YearsStep({
       {showExtensionSection && (
         <fieldset className="rounded-md border border-slate-200 bg-white p-4">
           <legend className="text-sm font-medium text-slate-900">
-            Did you file Form 7004 (extension of time to file) for this tax year?
-          </legend>
+            {w("Did you file Form 7004 (extension of time to file) for this tax year?")}</legend>
           <p className="text-xs text-slate-500 mt-1">
-            A Form 7004 filed on time gives you six extra months — if you have one, this
-            return isn&apos;t late at all.
-          </p>
+            {w("A Form 7004 filed on time gives you six extra months — if you have one, this return isn't late at all.")}</p>
           <div className="mt-3 space-y-2">
             {[
               { value: "yes", label: "Yes — filed on or before the original due date" },
@@ -2270,9 +2220,9 @@ export function YearsStep({
                     className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
                   />
                   <span>
-                    <span className="text-slate-900">{opt.label}</span>
+                    <span className="text-slate-900">{w(opt.label)}</span>
                     {opt.helper && (
-                      <span className="block text-xs text-slate-500 mt-1">{opt.helper}</span>
+                      <span className="block text-xs text-slate-500 mt-1">{w(opt.helper)}</span>
                     )}
                   </span>
                 </label>
@@ -2283,15 +2233,15 @@ export function YearsStep({
               control that has to change. */}
           {extensionAnswerError && (
             <p className="text-xs text-red-600 mt-2" role="alert">
-              {extensionAnswerError}
+              {w(extensionAnswerError)}
             </p>
           )}
 
           {extensionFiled === "yes" && (
             <div className="mt-4 space-y-3">
               <Field
-                label="Date you sent Form 7004 (optional)"
-                hint="The day it was faxed or postmarked — not the day you prepared it."
+                label={w("Date you sent Form 7004 (optional)")}
+                hint={w("The day it was faxed or postmarked — not the day you prepared it.")}
                 error={extensionDateError ?? undefined}
               >
                 <Input
@@ -2308,40 +2258,36 @@ export function YearsStep({
                   customer on a fact they can't change. */}
               {extensionSentLate && originalDueMs !== null && (
                 <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-                    This return is being filed after its due date. We include a
-                    reasonable-cause statement explaining why.
-                </div>
+                    {w("This return is being filed after its due date. We include a reasonable-cause statement explaining why.")}</div>
               )}
-              <Field label="How did you send it? (optional)">
+              <Field label={w("How did you send it? (optional)")}>
                 <Select
                   value={extensionMethod}
                   onChange={(e) => setExtensionMethod(e.target.value)}
                 >
-                  <option value="">Select…</option>
-                  <option value="fax">Fax</option>
-                  <option value="certified_mail">Certified mail</option>
-                  <option value="mail">Regular mail</option>
-                  <option value="not_sure">Not sure</option>
+                  <option value="">{w("Select…")}</option>
+                  <option value="fax">{w("Fax")}</option>
+                  <option value="certified_mail">{w("Certified mail")}</option>
+                  <option value="mail">{w("Regular mail")}</option>
+                  <option value="not_sure">{w("Not sure")}</option>
                 </Select>
               </Field>
-              <Field label="Where did you send it? (optional)">
+              <Field label={w("Where did you send it? (optional)")}>
                 <Select
                   value={extensionDestination}
                   onChange={(e) => setExtensionDestination(e.target.value)}
                 >
-                  <option value="">Select…</option>
+                  <option value="">{w("Select…")}</option>
                   <option value="ogden">
-                    The IRS address or fax line for foreign-owned disregarded entities
-                    (Ogden, Utah)
-                  </option>
-                  <option value="standard">The standard Form 7004 filing address</option>
-                  <option value="not_sure">Not sure</option>
+                    {w("The IRS address or fax line for foreign-owned disregarded entities (Ogden, Utah)")}</option>
+                  <option value="standard">{w("The standard Form 7004 filing address")}</option>
+                  <option value="not_sure">{w("Not sure")}</option>
                 </Select>
               </Field>
               <Field
-                label="Upload proof of your extension (optional)"
-                hint="A fax receipt, certified-mail slip, or the 7004 copy — helps if the IRS has no record of it."
-                error={extProofError ?? undefined}
+                label={w("Upload proof of your extension (optional)")}
+                hint={w("A fax receipt, certified-mail slip, or the 7004 copy — helps if the IRS has no record of it.")}
+                error={extProofError ? w(extProofError) : undefined}
               >
                 <div>
                   <input
@@ -2357,14 +2303,13 @@ export function YearsStep({
                   />
                   {extProofKey ? (
                     <p className="text-sm text-emerald-700">
-                      ✓ Proof uploaded{" "}
+                      {w("✓ Proof uploaded")}{" "}
                       <button
                         type="button"
                         onClick={() => void removeExtProof()}
                         className="ml-1 text-xs text-slate-500 hover:underline"
                       >
-                        Remove
-                      </button>
+                        {w("Remove")}</button>
                     </p>
                   ) : (
                     <Button
@@ -2374,7 +2319,7 @@ export function YearsStep({
                       disabled={extProofUploading}
                       onClick={() => extProofInputRef.current?.click()}
                     >
-                      {extProofUploading ? "Uploading…" : "Upload proof (optional)"}
+                      {extProofUploading ? w("Uploading…") : w("Upload proof (optional)")}
                     </Button>
                   )}
                 </div>
@@ -2390,29 +2335,26 @@ export function YearsStep({
         {!hidePrice && (
           <>
             <p className="font-medium">
-              {activeTier.label}: {formatUsd(activeTier.priceCents)}
+              {w(activeTier.label)}: {formatUsd(activeTier.priceCents)}
               {extraYears > 0 && (
                 <span className="text-slate-500">
-                  {" "}+ {extraYears} extra year{extraYears === 1 ? "" : "s"} × {formatUsd(MULTI_YEAR_ADDON_CENTS)} = {formatUsd(totalCents)}
+                  {" "}+ {extraYears} {w(" {count, plural, one {extra year} other {extra years}}", { count: extraYears })} × {formatUsd(MULTI_YEAR_ADDON_CENTS)} = {formatUsd(totalCents)}
                 </span>
               )}
             </p>
-            <p className="text-slate-600 mt-1">IRS fax delivery included.</p>
+            <p className="text-slate-600 mt-1">{w("IRS fax delivery included.")}</p>
           </>
         )}
         {wouldBeDiirsp && (
           <p className="text-xs text-accent mt-2">
-              This return is being filed after its due date. We include a reasonable-cause
-              statement explaining why.
-          </p>
+              {w("This return is being filed after its due date. We include a reasonable-cause statement explaining why.")}</p>
         )}
       </div>
       <div className="flex justify-between">
         <Button type="button" variant="outline" onClick={onBack}>
-          Back
-        </Button>
+          {w("Back")}</Button>
         <Button type="submit" disabled={saving}>
-          {saving ? "Saving…" : "Continue"}
+          {saving ? w("Saving…") : w("Continue")}
         </Button>
       </div>
     </form>

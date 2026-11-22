@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { useCallback, useEffect, useState } from "react";
 import { usePlaidLink } from "react-plaid-link";
 import { Landmark, Loader2 } from "lucide-react";
@@ -30,6 +32,7 @@ export function PlaidConnectButton({
     transactions: CategorizedTransaction[];
   }) => void;
 }) {
+  const w = useWizardText();
   const [linkToken, setLinkToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -116,19 +119,16 @@ export function PlaidConnectButton({
         <button
           type="button"
           disabled
-          title="Plaid isn't configured on this server"
+          title={w("Plaid isn't configured on this server")}
           className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-400 cursor-not-allowed"
         >
           <Landmark className="h-4 w-4" />
-          Connect bank with Plaid
-          <span className="ml-1 text-[10px] uppercase tracking-wide bg-slate-200 text-slate-600 rounded px-1.5 py-0.5">
-            Unavailable
-          </span>
+          {w("Connect bank with Plaid")}<span className="ml-1 text-[10px] uppercase tracking-wide bg-slate-200 text-slate-600 rounded px-1.5 py-0.5">
+            {w("Unavailable")}</span>
         </button>
         <p className="text-xs text-amber-700">
-          Plaid isn&apos;t configured on this server. Set <code>PLAID_CLIENT_ID</code> +{" "}
-          <code>PLAID_SECRET</code> in your <code>.env.local</code> to enable bank connections.
-        </p>
+          {w("Plaid isn't configured on this server. Set ")}<code>PLAID_CLIENT_ID</code> +{" "}
+          <code>PLAID_SECRET</code> {w(" in your ")}<code>.env.local</code> {w(" to enable bank connections.")}</p>
       </div>
     );
   }
@@ -146,16 +146,15 @@ export function PlaidConnectButton({
         ) : (
           <Landmark className="h-5 w-5" />
         )}
-        {loading ? "Opening Plaid…" : "Connect bank with Plaid"}
+        {loading ? w("Opening Plaid…") : w("Connect bank with Plaid")}
         {!loading && (
           <span className="ml-1 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
-            Fastest
-          </span>
+            {w("Fastest")}</span>
         )}
       </button>
       {error && (
         <p className="mt-2 text-xs text-red-600">
-          {error}
+          {w(error)}
         </p>
       )}
     </div>

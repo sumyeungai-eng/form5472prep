@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { buildFlagMessage, FLAG_NOTE_MAX } from "@/lib/flagMessage";
@@ -18,6 +20,7 @@ export function DeterminationFlag({
   initialNote?: string;
   initialState?: "idle" | "sent";
 }) {
+  const w = useWizardText();
   // Escape hatch: "this doesn't match my situation" posts into the existing
   // per-filing message thread the accountant already watches. The trigger
   // reveals a small panel (flagPanelOpen) where the customer can add an
@@ -53,7 +56,7 @@ export function DeterminationFlag({
       setFlagState("sent");
       setFlagPanelOpen(false);
     } catch {
-      setFlagError("Could not send. Please try again.");
+      setFlagError(w("Could not send. Please try again."));
       setFlagState("idle");
     }
   }
@@ -66,25 +69,22 @@ export function DeterminationFlag({
 
   return (
     <div className="rounded-md bg-slate-50 border border-slate-200 p-4 text-sm">
-      <p className="text-slate-700">{sentence}</p>
+      <p className="text-slate-700">{w(sentence)}</p>
       <div className="mt-2">
         {flagState === "sent" ? (
           <p className="text-xs text-emerald-700">
-            ✓ Thanks. We have flagged this for review and will email you before anything is
-            filed.
-          </p>
+            {w("✓ Thanks. We have flagged this for review and will email you before anything is filed.")}</p>
         ) : flagPanelOpen ? (
           <div className="space-y-2">
             <label htmlFor={flagNoteId} className="block text-xs font-medium text-slate-700">
-              Tell us what is different (optional)
-            </label>
+              {w("Tell us what is different (optional)")}</label>
             <textarea
               id={flagNoteId}
               value={flagNote}
               onChange={(e) => setFlagNote(e.target.value)}
               maxLength={FLAG_NOTE_MAX}
               rows={3}
-              placeholder="For example: my accountant e-filed the 7004 on March 12, or the LLC dissolved in June."
+              placeholder={w("For example: my accountant e-filed the 7004 on March 12, or the LLC dissolved in June.")}
               className="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent disabled:bg-slate-50"
             />
             {flagNote.length > 400 && (
@@ -97,7 +97,7 @@ export function DeterminationFlag({
                 disabled={flagState === "sending"}
                 onClick={() => void flagDetermination(sentence, flagNote)}
               >
-                {flagState === "sending" ? "Sending…" : "Send to our team"}
+                {flagState === "sending" ? w("Sending…") : w("Send to our team")}
               </Button>
               <button
                 type="button"
@@ -105,10 +105,9 @@ export function DeterminationFlag({
                 disabled={flagState === "sending"}
                 className="text-xs text-slate-500 underline hover:text-slate-700 disabled:opacity-50"
               >
-                Cancel
-              </button>
+                {w("Cancel")}</button>
             </div>
-            {flagError && <p className="text-xs text-red-600 mt-1">{flagError}</p>}
+            {flagError && <p className="text-xs text-red-600 mt-1">{w(flagError)}</p>}
           </div>
         ) : (
           <button
@@ -116,8 +115,7 @@ export function DeterminationFlag({
             onClick={() => setFlagPanelOpen(true)}
             className="text-xs text-slate-500 underline hover:text-slate-700"
           >
-            This doesn&apos;t match my situation
-          </button>
+            {w("This doesn't match my situation")}</button>
         )}
       </div>
     </div>

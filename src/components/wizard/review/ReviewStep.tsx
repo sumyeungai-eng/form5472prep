@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { useEffect, useState } from "react";
 import { ArrowLeft, Clock, FileText, Loader2, Lock, Paperclip, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -76,6 +78,7 @@ export function ReviewStep({
   viewer?: "retail" | "partner" | "client";
   partnerName?: string | null;
 }) {
+  const w = useWizardText();
   const isClient = viewer === "client";
   const isPartner = viewer === "partner";
   // Tier is pre-selected upstream (/pricing, /start?tier=) but the customer
@@ -152,7 +155,7 @@ export function ReviewStep({
     }
     const trimmed = email.trim();
     if (!trimmed || !trimmed.includes("@")) {
-      setEmailError("Enter a valid email address");
+      setEmailError(w("Enter a valid email address"));
       return;
     }
     setEmailError(null);
@@ -170,7 +173,7 @@ export function ReviewStep({
     status: "idle",
     error: null,
   });
-  const who = partnerName?.trim() || "your provider";
+  const who = partnerName?.trim() || w("your provider");
 
   async function handleFinish() {
     setFinish({ status: "sending", error: null });
@@ -192,15 +195,15 @@ export function ReviewStep({
       <header className="border-b border-slate-200 pb-6">
         <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-accent">
           <Lock aria-hidden className="h-3 w-3" />
-          {isClient ? "Last step" : "Last step before payment"}
+          {isClient ? w("Last step") : w("Last step before payment")}
         </p>
         <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-          {isClient ? "Review" : "Review & pay"}
+          {isClient ? w("Review") : w("Review & pay")}
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
           {isClient
-            ? "Confirm everything looks right."
-            : "Confirm everything looks right. After payment we'll generate the filled PDFs and email you an access link."}
+            ? w("Confirm everything looks right.")
+            : w("Confirm everything looks right. After payment we'll generate the filled PDFs and email you an access link.")}
         </p>
       </header>
 
@@ -213,7 +216,7 @@ export function ReviewStep({
       >
         <div className="min-w-0 space-y-10">
           <section aria-labelledby="review-details-title">
-            <SectionHeading id="review-details-title" icon={FileText} title="Filing details" />
+            <SectionHeading id="review-details-title" icon={FileText} title={w("Filing details")} />
             <div className="mt-4">
               <FilingDetails filing={filing} />
             </div>
@@ -223,13 +226,12 @@ export function ReviewStep({
             <SectionHeading
               id="review-documents-title"
               icon={Paperclip}
-              title="Supporting documents"
+              title={w("Supporting documents")}
               aside={
                 <span className="flex-none rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-                  Optional
-                </span>
+                  {w("Optional")}</span>
               }
-              description="Anything that helps us prepare your filing — formation documents, IRS letters, prior filings."
+              description={w("Anything that helps us prepare your filing — formation documents, IRS letters, prior filings.")}
             />
             <div className="mt-4">
               <DocumentsUploader filingId={filing.id} />
@@ -241,13 +243,13 @@ export function ReviewStep({
               <SectionHeading
                 id="review-turnaround-title"
                 icon={Clock}
-                title="Choose your turnaround"
+                title={w("Choose your turnaround")}
                 aside={
                   <span aria-live="polite" className="flex-none text-xs text-slate-500">
-                    {tierSaving ? "Updating…" : ""}
+                    {tierSaving ? w("Updating…") : ""}
                   </span>
                 }
-                description="Both plans include the same package and the same accountant review — the only difference is how fast it goes out. You can switch until you pay."
+                description={w("Both plans include the same package and the same accountant review — the only difference is how fast it goes out. You can switch until you pay.")}
               />
               <div className="mt-4">
                 <TierChooser
@@ -258,9 +260,8 @@ export function ReviewStep({
               </div>
               {extraYears > 0 && (
                 <p className="mt-3 text-xs text-slate-500">
-                  Prices shown are for the first tax year. Each additional past year adds{" "}
-                  {formatUsd(MULTI_YEAR_ADDON_CENTS)} on either plan.
-                </p>
+                  {w("Prices shown are for the first tax year. Each additional past year adds")}{" "}
+                  {formatUsd(MULTI_YEAR_ADDON_CENTS)} {w(" on either plan.")}</p>
               )}
               <IncludedFeatures features={sharedTierFeatures()} />
             </section>
@@ -268,12 +269,9 @@ export function ReviewStep({
 
           {!isClient && (
           <section aria-labelledby="review-delivery-title">
-            <SectionHeading id="review-delivery-title" icon={Send} title="Delivery to the IRS" />
+            <SectionHeading id="review-delivery-title" icon={Send} title={w("Delivery to the IRS")} />
             <p className="mt-4 rounded-xl border border-paper-edge bg-paper p-4 text-sm leading-relaxed text-slate-700">
-              We fax your signed package to the IRS Ogden PIN Unit and return the
-              timestamped fax receipt as proof of when your package reached the IRS. Fax delivery is
-              included on every plan — no separate fee.
-            </p>
+              {w("We fax your signed package to the IRS Ogden PIN Unit and return the timestamped fax receipt as proof of when your package reached the IRS. Fax delivery is included on every plan — no separate fee.")}</p>
           </section>
           )}
         </div>
@@ -284,17 +282,14 @@ export function ReviewStep({
             className="rounded-xl border border-paper-edge bg-paper p-6"
           >
             <h3 id="review-handoff-title" className="font-serif text-xl font-semibold text-ink">
-              That&apos;s everything
-            </h3>
+              {w("That's everything")}</h3>
             {finish.status === "sent" ? (
               <p role="status" className="mt-2 text-sm leading-relaxed text-slate-700">
-                Sent. {who} has been notified. You can close this page.
-              </p>
+                {w("Sent. ")}{who} {w(" has been notified. You can close this page.")}</p>
             ) : (
               <>
                 <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                  Send it to {who}. They&apos;ll review it and take it from here.
-                </p>
+                  {w("Send it to ")}{who}{w(". They'll review it and take it from here.")}</p>
                 <Button
                   type="button"
                   size="lg"
@@ -306,15 +301,14 @@ export function ReviewStep({
                   {finish.status === "sending" ? (
                     <>
                       <Loader2 aria-hidden className="mr-2 h-4 w-4 animate-spin" />
-                      Sending…
-                    </>
+                      {w("Sending…")}</>
                   ) : (
-                    `Finish and send to ${who}`
+                    w("Finish and send to {v0}", { v0: who })
                   )}
                 </Button>
                 {finish.error && (
                   <p role="alert" className="mt-3 text-sm text-red-600">
-                    {finish.error}
+                    {w(finish.error)}
                   </p>
                 )}
               </>
@@ -322,7 +316,7 @@ export function ReviewStep({
           </section>
         ) : (
         <aside
-          aria-label="Order summary and payment"
+          aria-label={w("Order summary and payment")}
           className="[@container(min-width:44rem)]:sticky [@container(min-width:44rem)]:top-6 [@container(min-width:44rem)]:col-start-2 [@container(min-width:44rem)]:row-span-2 [@container(min-width:44rem)]:row-start-1 [@container(min-width:44rem)]:self-start"
         >
           <OrderSummary
@@ -337,12 +331,11 @@ export function ReviewStep({
           >
             {isPartner ? (
               <p className="text-sm text-slate-600">
-                The receipt goes to your partner account email.
-              </p>
+                {w("The receipt goes to your partner account email.")}</p>
             ) : (
               <Field
-                label="Email address"
-                hint="We send your filing receipt and an access link to this address."
+                label={w("Email address")}
+                hint={w("We send your filing receipt and an access link to this address.")}
                 error={emailError ?? undefined}
               >
                 <Input
@@ -369,12 +362,11 @@ export function ReviewStep({
               {paying ? (
                 <>
                   <Loader2 aria-hidden className="mr-2 h-4 w-4 animate-spin" />
-                  Redirecting…
-                </>
+                  {w("Redirecting…")}</>
               ) : (
                 <>
                   <Lock aria-hidden className="mr-2 h-4 w-4" />
-                  {`Pay ${formatUsd(dueNow)} securely`}
+                  {w("Pay {v0} securely", { v0: formatUsd(dueNow) })}
                 </>
               )}
             </Button>
@@ -385,8 +377,7 @@ export function ReviewStep({
         <div className={isClient ? "" : "[@container(min-width:44rem)]:col-start-1 [@container(min-width:44rem)]:row-start-2"}>
           <Button type="button" variant="outline" onClick={onBack} className="h-11">
             <ArrowLeft aria-hidden className="mr-1.5 h-4 w-4" />
-            Back
-          </Button>
+            {w("Back")}</Button>
         </div>
       </div>
     </div>

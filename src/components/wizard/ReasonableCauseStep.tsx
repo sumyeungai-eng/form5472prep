@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { isPdfEncodable, PDF_TEXT_MESSAGE } from "@/lib/pdfText";
 import { RCS_TEXT_MAX, rcsTooLongMessage } from "@/lib/schemas";
 
@@ -71,6 +73,7 @@ export function ReasonableCauseStep({
   onBack: () => void;
   saving: boolean;
 }) {
+  const w = useWizardText();
   const [rows, setRows] = useState<ReasonableCauseYearInput[]>(years);
   const [selections, setSelections] = useState<Record<number, WhyMissedSelection>>(() =>
     Object.fromEntries(years.map((row) => [row.taxYear, initialWhySelection(row)])),
@@ -125,11 +128,9 @@ export function ReasonableCauseStep({
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-semibold">Reasonable cause statement</h2>
+        <h2 className="text-xl font-semibold">{w("Reasonable cause statement")}</h2>
         <p className="text-sm text-slate-500 mt-1">
-          This return is being filed after its due date, so the IRS needs a short explanation. Pick
-          the reason that fits best, or choose &ldquo;Other&rdquo; and write your own.
-        </p>
+          {w("This return is being filed after its due date, so the IRS needs a short explanation. Pick the reason that fits best, or choose “Other” and write your own.")}</p>
       </div>
 
       <div className="space-y-4">
@@ -146,7 +147,7 @@ export function ReasonableCauseStep({
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 id={`rcs-heading-${row.taxYear}`} className="text-sm font-semibold text-slate-900">
-                  Tax year {row.taxYear}
+                  {w("Tax year ")}{row.taxYear}
                 </h3>
                 {previousYear !== null && (
                   <button
@@ -154,7 +155,7 @@ export function ReasonableCauseStep({
                     onClick={() => copyFrom(previousYear, row.taxYear)}
                     className="text-xs font-medium text-accent hover:underline"
                   >
-                    Use the same answers as {previousYear}
+                    {w("Use the same answers as ")}{previousYear}
                   </button>
                 )}
               </div>
@@ -164,8 +165,7 @@ export function ReasonableCauseStep({
                     htmlFor={`rcs-why-${row.taxYear}`}
                     className="block text-sm font-medium text-slate-700"
                   >
-                    Why was the filing for {row.taxYear} missed?
-                  </label>
+                    {w("Why was the filing for ")}{row.taxYear} {w(" missed?")}</label>
                   <select
                     id={`rcs-why-${row.taxYear}`}
                     value={sel.key}
@@ -175,11 +175,10 @@ export function ReasonableCauseStep({
                     className={`mt-1 ${FIELD_CLASS}`}
                   >
                     <option value="" disabled>
-                      Choose a reason…
-                    </option>
+                      {w("Choose a reason…")}</option>
                     {WHY_MISSED_OPTIONS.map((o) => (
                       <option key={o.key} value={o.key}>
-                        {o.label}
+                        {w(o.label)}
                       </option>
                     ))}
                   </select>
@@ -190,10 +189,10 @@ export function ReasonableCauseStep({
                         className="block text-xs font-medium text-slate-600"
                       >
                         {whyOption.key === "other"
-                          ? "Write your own explanation"
+                          ? w("Write your own explanation.")
                           : whyOption.detailRequired
-                            ? "Briefly describe what happened"
-                            : "Add details (optional)"}
+                            ? w("Briefly describe what happened")
+                            : w("Add details (optional)")}
                       </label>
                       <textarea
                         id={`rcs-why-detail-${row.taxYear}`}
@@ -202,16 +201,15 @@ export function ReasonableCauseStep({
                         onChange={(e) => updateWhy(row.taxYear, { detail: e.target.value })}
                         placeholder={
                           whyOption.key === "other"
-                            ? "E.g. I moved countries that year and my mail was not forwarded."
+                            ? w("E.g. I moved countries that year and my mail was not forwarded.")
                             : whyOption.key === "hardship"
-                              ? "E.g. I was in hospital from March to June 2024."
-                              : "Anything the IRS should know about your situation."
+                              ? w("E.g. I was in hospital from March to June 2024.")
+                              : w("Anything the IRS should know about your situation.")
                         }
                         className={`mt-1 ${FIELD_CLASS}`}
                       />
                       <p className="mt-1 text-xs text-slate-500">
-                        Our team reviews it and may use it word for word in your signed statement.
-                      </p>
+                        {w("Our team reviews it and may use it word for word in your signed statement.")}</p>
                       {sel.detail.trim() && (
                         <p
                           className={`mt-1 text-xs ${
@@ -219,35 +217,30 @@ export function ReasonableCauseStep({
                           }`}
                         >
                           {row.rcsWhyMissed.length.toLocaleString("en-US")} /{" "}
-                          {RCS_TEXT_MAX.toLocaleString("en-US")} characters
-                        </p>
+                          {RCS_TEXT_MAX.toLocaleString("en-US")} {w(" characters")}</p>
                       )}
                     </div>
                   )}
                   {!isPdfEncodable(years.find((year) => year.taxYear === row.taxYear)?.rcsWhenLearned ?? "") && (
                     <label className="block text-xs text-slate-700">
-                      When you learned about the filing requirement (saved answer)
-                      <textarea
+                      {w("When you learned about the filing requirement (saved answer)")}<textarea
                         value={row.rcsWhenLearned}
                         onChange={(e) => update(row.taxYear, { rcsWhenLearned: e.target.value })}
                         className={FIELD_CLASS}
                       />
-                      <span className="text-red-600">{errors[`${prefix}.rcsWhenLearned`]}</span>
+                      <span className="text-red-600">{w(errors[`${prefix}.rcsWhenLearned`] ?? "")}</span>
                     </label>
                   )}
                   {errors[`${prefix}.rcsWhyMissed`] && (
-                    <p className="mt-1 text-xs text-red-600">{errors[`${prefix}.rcsWhyMissed`]}</p>
+                    <p className="mt-1 text-xs text-red-600">{w(errors[`${prefix}.rcsWhyMissed`])}</p>
                   )}
                 </div>
 
                 {whyOption && (!whyOption.detailRequired || sel.detail.trim()) && (
                   <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
-                    <p className="font-medium">That&apos;s all we need for {row.taxYear}.</p>
+                    <p className="font-medium">{w("That's all we need for ")}{row.taxYear}.</p>
                     <p className="mt-1 text-emerald-800">
-                      Our team reviews your answer and either writes your reasonable-cause statement from
-                      it or uses your own words as written. You check and sign the statement before
-                      anything is submitted.
-                    </p>
+                      {w("Our team reviews your answer and either writes your reasonable-cause statement from it or uses your own words as written. You check and sign the statement before anything is submitted.")}</p>
                   </div>
                 )}
 
@@ -261,12 +254,11 @@ export function ReasonableCauseStep({
                     className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
                   />
                   <span>
-                    I confirm I have not received an IRS notice about this {row.taxYear} return.
-                  </span>
+                    {w("I confirm I have not received an IRS notice about this ")}{row.taxYear} {w(" return.")}</span>
                 </label>
                 {errors[`${prefix}.rcsNoIrsNoticeConfirmed`] && (
                   <p className="text-xs text-red-600">
-                    {errors[`${prefix}.rcsNoIrsNoticeConfirmed`]}
+                    {w(errors[`${prefix}.rcsNoIrsNoticeConfirmed`])}
                   </p>
                 )}
               </div>
@@ -277,10 +269,9 @@ export function ReasonableCauseStep({
 
       <div className="flex justify-between">
         <Button type="button" variant="outline" onClick={onBack}>
-          Back
-        </Button>
+          {w("Back")}</Button>
         <Button onClick={() => void submit()} disabled={saving}>
-          {saving ? "Saving..." : "Continue"}
+          {saving ? w("Saving...") : w("Continue")}
         </Button>
       </div>
     </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { useRef, useState, type ReactNode } from "react";
 import { Upload, FileText, X, Sparkles, AlertTriangle, ArrowUp, ArrowDown, Plus, ClipboardPaste } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -256,6 +258,7 @@ export function TransactionsReview({
   onBack: () => void;
   saving: boolean;
 }) {
+  const w = useWizardText();
   const [years, setYears] = useState<YearState[]>(() =>
     initialYears.map((y) => {
       const savedRows = normalizeReportableTransactions(y.reportableTransactions);
@@ -434,7 +437,7 @@ export function TransactionsReview({
     if (added > 0) {
       setBulkPaste((b) => ({ ...b, [taxYear]: null }));
     } else {
-      alert("Couldn't parse any rows. Use one transaction per line: description, amount [, contribution|distribution]");
+      alert(w("Couldn't parse any rows. Use one transaction per line: description, amount [, contribution|distribution]"));
     }
   }
 
@@ -443,13 +446,13 @@ export function TransactionsReview({
     if (!year) return;
     const remaining = MAX_FILES_PER_YEAR - year.uploadedFiles.length;
     if (remaining <= 0) {
-      alert(`You've already uploaded ${MAX_FILES_PER_YEAR} files for ${taxYear}.`);
+      alert(w("You've already uploaded {v0} files for {v1}.", { v0: MAX_FILES_PER_YEAR, v1: taxYear }));
       return;
     }
     const toUpload = files.slice(0, remaining);
     if (toUpload.length < files.length) {
       alert(
-        `Only the first ${remaining} files were accepted (limit: ${MAX_FILES_PER_YEAR}/year).`,
+        w("Only the first {v0} files were accepted (limit: {v1}/year).", { v0: remaining, v1: MAX_FILES_PER_YEAR }),
       );
     }
 
@@ -466,7 +469,7 @@ export function TransactionsReview({
         });
         if (!res.ok) {
           const errorText = await res.text();
-          alert(`Upload failed for ${file.name}: ${errorText}`);
+          alert(w("Upload failed for {v0}: {v1}", { v0: file.name, v1: errorText }));
           continue;
         }
         const data: {
@@ -609,13 +612,13 @@ export function TransactionsReview({
     const year = years.find((y) => y.taxYear === taxYear);
     const file = year?.uploadedFiles.find((f) => f.id === statementId);
     if (!file) return;
-    if (!confirm(`Remove "${file.name}" and its ${file.addedTxCount} transaction(s)?`)) return;
+    if (!confirm(w("Remove \"{v0}\" and its {v1} transaction(s)?", { v0: file.name, v1: file.addedTxCount }))) return;
 
     const res = await fetch(`/api/filings/${filingId}/statements/${statementId}`, {
       method: "DELETE",
     });
     if (!res.ok) {
-      alert(`Couldn't remove that file: ${await res.text()}`);
+      alert(w("Couldn't remove that file: {v0}", { v0: await res.text() }));
       return;
     }
 
@@ -753,24 +756,20 @@ export function TransactionsReview({
     return (
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold">Transactions per year</h2>
+          <h2 className="text-xl font-semibold">{w("Transactions per year")}</h2>
           <p className="text-sm text-slate-500 mt-1">
-            Pick at least one tax year first — this step shows a card per year so you can enter
-            the totals.
-          </p>
+            {w("Pick at least one tax year first — this step shows a card per year so you can enter the totals.")}</p>
         </div>
         <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          You haven&apos;t selected any tax years yet. Head back to the <strong>Tax years</strong>{" "}
-          step to pick the year(s) you&apos;re filing for, then come back here.
-        </div>
+          {w("You haven't selected any tax years yet. Head back to the ")}<strong>{w("Tax years")}</strong>{" "}
+          {w("step to pick the year(s) you're filing for, then come back here.")}</div>
         {onBack && (
           <button
             type="button"
             onClick={onBack}
             className="inline-flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
-            ← Go to Tax years
-          </button>
+            {w("← Go to Tax years")}</button>
         )}
       </div>
     );
@@ -779,18 +778,16 @@ export function TransactionsReview({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold">Transactions per year</h2>
+        <h2 className="text-xl font-semibold">{w("Transactions per year")}</h2>
         <p className="text-sm text-slate-500 mt-1">
-          Enter amounts in US dollars. For a payment made in another currency, also enter the
-          currency and the original amount on that line. To convert, use the{" "}
+          {w("Enter amounts in US dollars. For a payment made in another currency, also enter the currency and the original amount on that line. To convert, use the")}{" "}
           <a
             href="https://www.irs.gov/individuals/international-taxpayers/yearly-average-currency-exchange-rates"
             target="_blank"
             rel="noreferrer"
             className="underline"
           >
-            IRS yearly average rate
-          </a>
+            {w("IRS yearly average rate")}</a>
           .
         </p>
       </div>
@@ -806,17 +803,17 @@ export function TransactionsReview({
           const uploadOpen = isPanelOpen(y.taxYear, "upload");
           return (
             <div key={y.taxYear} className="border border-slate-200 rounded-md bg-white p-4 sm:p-5">
-              <p className="font-medium mb-4">Tax year {y.taxYear}</p>
+              <p className="font-medium mb-4">{w("Tax year ")}{y.taxYear}</p>
 
               {/* 1. Money between the owner and the LLC (Part V). */}
               <fieldset>
                 <legend className="text-sm font-medium text-slate-900">
-                  Did any money move between you and the LLC in {y.taxYear}?
+                  {w("Did any money move between you and the LLC in ")}{y.taxYear}?
                 </legend>
                 <p className="mt-1 text-xs text-slate-500">
                   {isFormationYear
-                    ? `This includes LLC costs you paid personally when forming the LLC in ${y.taxYear} — the state filing fee, registered agent fee and any annual report fee — and any bank deposit you made.`
-                    : "Includes LLC costs you paid personally, such as the state filing fee, registered agent fee or annual report fee."}
+                    ? w("This includes LLC costs you paid personally when forming the LLC in {v0} — the state filing fee, registered agent fee and any annual report fee — and any bank deposit you made.", { v0: y.taxYear })
+                    : w("Includes LLC costs you paid personally, such as the state filing fee, registered agent fee or annual report fee.")}
                 </p>
                 <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <label className={RADIO_LABEL}>
@@ -827,7 +824,7 @@ export function TransactionsReview({
                       onChange={() => updateYear(y.taxYear, { moneyMoved: "yes" })}
                       className={RADIO_INPUT}
                     />
-                    <span>Yes</span>
+                    <span>{w("Yes")}</span>
                   </label>
                   <label className={RADIO_LABEL}>
                     <input
@@ -837,7 +834,7 @@ export function TransactionsReview({
                       onChange={() => updateYear(y.taxYear, { moneyMoved: "no" })}
                       className={RADIO_INPUT}
                     />
-                    <span>No</span>
+                    <span>{w("No")}</span>
                   </label>
                 </div>
               </fieldset>
@@ -847,8 +844,7 @@ export function TransactionsReview({
                   {hasLegacyCosts && (
                     <div>
                       <p className="text-sm font-medium text-slate-700">
-                        Costs you already told us you paid personally
-                      </p>
+                        {w("Costs you already told us you paid personally")}</p>
                       <ul className="mt-2 divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
                         {y.ownerPaidCosts.map((row, index) => (
                           <li
@@ -857,8 +853,8 @@ export function TransactionsReview({
                           >
                             <span className="min-w-0">
                               <span className="block text-slate-900">
-                                {OWNER_PAID_COST_LABELS[row.category]}
-                                {row.note ? ` — ${row.note}` : ""}
+                                {w(OWNER_PAID_COST_LABELS[row.category])}
+                                {row.note ? w(" — {v0}", { v0: row.note }) : ""}
                               </span>
                               <span className="block text-xs text-slate-500">
                                 {row.date} · {formatUsd(row.amountCents)}
@@ -869,8 +865,7 @@ export function TransactionsReview({
                               onClick={() => removeOwnerPaidCost(y.taxYear, index)}
                               className="flex-none text-sm text-red-600 hover:underline"
                             >
-                              Remove
-                            </button>
+                              {w("Remove")}</button>
                           </li>
                         ))}
                       </ul>
@@ -879,11 +874,9 @@ export function TransactionsReview({
 
                   <fieldset>
                     <legend className="text-sm font-medium text-slate-700">
-                      Did you pay any of these for the LLC in {y.taxYear} from your own money?
-                    </legend>
+                      {w("Did you pay any of these for the LLC in ")}{y.taxYear} {w(" from your own money?")}</legend>
                     <p className="mt-1 text-xs text-slate-500">
-                      Tick each one. We add a line for it below; enter the date and amount if you have them.
-                    </p>
+                      {w("Tick each one. We add a line for it below; enter the date and amount if you have them.")}</p>
                     <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                       {OWNER_PAID_CHECKLIST.map((item) => {
                         const checked = y.transactions.some(
@@ -897,7 +890,7 @@ export function TransactionsReview({
                               onChange={(e) => toggleChecklist(y.taxYear, item, e.target.checked)}
                               className="h-4 w-4 accent-accent"
                             />
-                            {item.label}
+                            {w(item.label)}
                           </label>
                         );
                       })}
@@ -909,8 +902,8 @@ export function TransactionsReview({
                       <StatementTotal
                         label={
                           hasLegacyCosts
-                            ? "Other money you put in (not listed above)"
-                            : "Money you put in (including LLC costs you paid yourself)"
+                            ? w("Other money you put in (not listed above)")
+                            : w("Money you put in (including LLC costs you paid yourself)")
                         }
                         amount={totals.contributions}
                         count={totals.contributionRowCount}
@@ -920,10 +913,10 @@ export function TransactionsReview({
                       <Field
                         label={
                           hasLegacyCosts
-                            ? "Other money you put in (not listed above)"
-                            : "Money you put in (including LLC costs you paid yourself)"
+                            ? w("Other money you put in (not listed above)")
+                            : w("Money you put in (including LLC costs you paid yourself)")
                         }
-                        error={errors.contributions ?? undefined}
+                        error={errors.contributions ? w(errors.contributions) : undefined}
                       >
                         <Input
                           type="number"
@@ -939,24 +932,24 @@ export function TransactionsReview({
                     )}
                     {totals.distributionRowCount > 0 ? (
                       <StatementTotal
-                        label="Money you took out"
+                        label={w("Money you took out")}
                         amount={totals.distributions}
                         count={totals.distributionRowCount}
                         onEdit={() => openStatementPanel(y.taxYear)}
                       />
                     ) : (
                       <Field
-                        label="Money you took out"
+                        label={w("Money you took out")}
                         // On a final return the biggest distribution of the year is
                         // usually the closing sweep of the remaining bank balance
                         // back to the owner — which customers think of as "closing
                         // the account", not as money taken out. Say so.
                         hint={
                           isFinalReturn
-                            ? "Including anything that came back to you when the LLC closed."
+                            ? w("Including anything that came back to you when the LLC closed.")
                             : undefined
                         }
-                        error={errors.distributions ?? undefined}
+                        error={errors.distributions ? w(errors.distributions) : undefined}
                       >
                         <Input
                           type="number"
@@ -978,8 +971,7 @@ export function TransactionsReview({
                       open={loansOpen}
                       onToggle={() => setPanelOpen(y.taxYear, "loans", !loansOpen)}
                     >
-                      Any loans between you and the LLC?
-                    </PanelToggle>
+                      {w("Any loans between you and the LLC?")}</PanelToggle>
                     {loansOpen && (
                       <div className="mt-3 space-y-4">
                         {LOAN_FIELDS.map(({ direction, label }) => {
@@ -990,22 +982,19 @@ export function TransactionsReview({
                           const error = errors.loans[direction];
                           return (
                             <div key={direction}>
-                              <p className="text-sm font-medium text-slate-700">{label}</p>
+                              <p className="text-sm font-medium text-slate-700">{w(label)}</p>
                               {statementRows.length > 0 && (
                                 <p className="mt-1 text-xs text-slate-500">
-                                  Your statement already includes{" "}
+                                  {w("Your statement already includes")}{" "}
                                   {formatUsd(
                                     statementRows.reduce((s, tx) => s + Math.abs(tx.amountCents), 0),
                                   )}{" "}
-                                  from {statementRows.length}{" "}
-                                  {statementRows.length === 1 ? "transaction" : "transactions"} — only
-                                  enter a loan here if it isn&apos;t listed there.
-                                </p>
+                                  {w("from ")}{statementRows.length}{" "}
+                                  {statementRows.length === 1 ? w("transaction") : w("transactions")} {w(" — only enter a loan here if it isn't listed there.")}</p>
                               )}
                               <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <label className="block text-xs font-medium text-slate-600">
-                                  Amount (USD)
-                                  <Input
+                                  {w("Amount (USD)")}<Input
                                     type="number"
                                     min="0"
                                     step="0.01"
@@ -1019,8 +1008,7 @@ export function TransactionsReview({
                                   />
                                 </label>
                                 <label className="block text-xs font-medium text-slate-600">
-                                  Date
-                                  <Input
+                                  {w("Date")}<Input
                                     type="date"
                                     min={`${y.taxYear}-01-01`}
                                     max={`${y.taxYear}-12-31`}
@@ -1033,7 +1021,7 @@ export function TransactionsReview({
                                   />
                                 </label>
                               </div>
-                              {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+                              {error && <p className="mt-1 text-xs text-red-600">{w(error)}</p>}
                             </div>
                           );
                         })}
@@ -1047,16 +1035,14 @@ export function TransactionsReview({
                       open={otherOpen}
                       onToggle={() => setPanelOpen(y.taxYear, "other", !otherOpen)}
                     >
-                      Anything else between you and the LLC (sales, services, rent, royalties)?
-                    </PanelToggle>
+                      {w("Anything else between you and the LLC (sales, services, rent, royalties)?")}</PanelToggle>
                     {otherOpen && (
                       <div className="mt-3">
                         <label
                           htmlFor={`other-tx-${y.taxYear}`}
                           className="block text-xs text-slate-500"
                         >
-                          Describe each one with its amount and date.
-                        </label>
+                          {w("Describe each one with its amount and date.")}</label>
                         <textarea
                           id={`other-tx-${y.taxYear}`}
                           rows={3}
@@ -1076,14 +1062,11 @@ export function TransactionsReview({
                       open={uploadOpen}
                       onToggle={() => setPanelOpen(y.taxYear, "upload", !uploadOpen)}
                     >
-                      Line items: add each payment, or upload a bank statement
-                    </PanelToggle>
+                      {w("Line items: add each payment, or upload a bank statement")}</PanelToggle>
                     {uploadOpen && (
                       <div className="mt-3">
                         <p className="mb-3 text-xs text-slate-500">
-                          We sort the transactions for you. Only rows marked Contribution,
-                          Distribution or Loan are reported.
-                        </p>
+                          {w("We sort the transactions for you. Only rows marked Contribution, Distribution or Loan are reported.")}</p>
                         <UploadDropzone
                           disabled={uploading === y.taxYear || y.uploadedFiles.length >= MAX_FILES_PER_YEAR}
                           uploading={uploading === y.taxYear}
@@ -1104,20 +1087,18 @@ export function TransactionsReview({
                             <div className="border border-slate-200 rounded-md p-3 bg-white">
                               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                                 <p className="text-xs font-medium text-slate-700">
-                                  Add transactions — press <kbd className="px-1 py-0.5 bg-white border border-slate-300 rounded text-[10px] font-mono">Enter</kbd> after amount to add and continue
-                                </p>
+                                  {w("Add transactions — press ")}<kbd className="px-1 py-0.5 bg-white border border-slate-300 rounded text-[10px] font-mono">{w("Enter")}</kbd> {w(" after amount to add and continue")}</p>
                                 <button
                                   type="button"
                                   onClick={() => setBulkPaste((b) => ({ ...b, [y.taxYear]: "" }))}
                                   className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
                                 >
                                   <ClipboardPaste className="h-3 w-3" />
-                                  Paste from spreadsheet
-                                </button>
+                                  {w("Paste from spreadsheet")}</button>
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
                                 <div className="sm:col-span-3">
-                                  <label className="text-xs text-slate-500 mb-1 block">Date</label>
+                                  <label className="text-xs text-slate-500 mb-1 block">{w("Date")}</label>
                                   <Input
                                     type="date"
                                     value={drafts[y.taxYear]!.date}
@@ -1125,12 +1106,12 @@ export function TransactionsReview({
                                   />
                                 </div>
                                 <div className="sm:col-span-3">
-                                  <label className="text-xs text-slate-500 mb-1 block">Description</label>
+                                  <label className="text-xs text-slate-500 mb-1 block">{w("Description")}</label>
                                   <Input
                                     ref={(el) => {
                                       descRefs.current[y.taxYear] = el;
                                     }}
-                                    placeholder="e.g., Owner capital injection"
+                                    placeholder={w("e.g., Owner capital injection")}
                                     value={drafts[y.taxYear]!.description}
                                     onChange={(e) =>
                                       updateDraft(y.taxYear, { description: e.target.value })
@@ -1144,7 +1125,7 @@ export function TransactionsReview({
                                   />
                                 </div>
                                 <div className="sm:col-span-3">
-                                  <label className="text-xs text-slate-500 mb-1 block">Amount (USD)</label>
+                                  <label className="text-xs text-slate-500 mb-1 block">{w("Amount (USD)")}</label>
                                   <Input
                                     inputMode="decimal"
                                     placeholder="0.00"
@@ -1161,7 +1142,7 @@ export function TransactionsReview({
                                   />
                                 </div>
                                 <div className="sm:col-span-3">
-                                  <label className="text-xs text-slate-500 mb-1 block">Type</label>
+                                  <label className="text-xs text-slate-500 mb-1 block">{w("Type")}</label>
                                   <select
                                     value={drafts[y.taxYear]!.category}
                                     onChange={(e) =>
@@ -1171,11 +1152,11 @@ export function TransactionsReview({
                                     }
                                     className="w-full text-sm border border-slate-300 rounded-md px-2 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
                                   >
-                                    <option value="contribution">Contribution (you → LLC)</option>
-                                    <option value="distribution">Distribution (LLC → you)</option>
-                                    <option value="loan_from_owner">Loan from you to the LLC</option>
-                                    <option value="loan_to_owner">Loan from the LLC to you</option>
-                                    <option value="other">Other transaction with you</option>
+                                    <option value="contribution">{w("Contribution (you → LLC)")}</option>
+                                    <option value="distribution">{w("Distribution (LLC → you)")}</option>
+                                    <option value="loan_from_owner">{w("Loan from you to the LLC")}</option>
+                                    <option value="loan_to_owner">{w("Loan from the LLC to you")}</option>
+                                    <option value="other">{w("Other transaction with you")}</option>
                                   </select>
                                 </div>
                               </div>
@@ -1185,8 +1166,7 @@ export function TransactionsReview({
                                   onClick={() => cancelDraft(y.taxYear)}
                                   className="text-sm px-3 py-1.5 text-slate-600 hover:text-slate-900"
                                 >
-                                  Done
-                                </button>
+                                  {w("Done")}</button>
                                 <Button
                                   type="button"
                                   size="sm"
@@ -1196,23 +1176,19 @@ export function TransactionsReview({
                                     !drafts[y.taxYear]!.amountUsd.trim()
                                   }
                                 >
-                                  Add to list
-                                </Button>
+                                  {w("Add to list")}</Button>
                               </div>
 
                               {bulkPaste[y.taxYear] !== null && bulkPaste[y.taxYear] !== undefined && (
                                 <div className="mt-3 pt-3 border-t border-slate-200">
                                   <label className="text-xs text-slate-600 mb-1 block">
-                                    Paste rows from Excel or Google Sheets — one transaction per line.
-                                    Columns: <span className="font-mono">description, amount [, type]</span>.
-                                    Negative amounts auto-classify as distributions.
-                                  </label>
+                                    {w("Paste rows from Excel or Google Sheets — one transaction per line. Columns: ")}<span className="font-mono">{w("description, amount [, type]")}</span>{w(". Negative amounts auto-classify as distributions.")}</label>
                                   <textarea
                                     value={bulkPaste[y.taxYear] ?? ""}
                                     onChange={(e) =>
                                       setBulkPaste((b) => ({ ...b, [y.taxYear]: e.target.value }))
                                     }
-                                    placeholder={`Owner capital injection, 5000\nManagement fee paid out, -1200, distribution\nLoan from owner, 10000`}
+                                    placeholder={w("Owner capital injection, 5000\nManagement fee paid out, -1200, distribution\nLoan from owner, 10000")}
                                     rows={5}
                                     className="w-full text-sm font-mono border border-slate-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
                                   />
@@ -1222,16 +1198,14 @@ export function TransactionsReview({
                                       onClick={() => setBulkPaste((b) => ({ ...b, [y.taxYear]: null }))}
                                       className="text-sm px-3 py-1.5 text-slate-600 hover:text-slate-900"
                                     >
-                                      Cancel
-                                    </button>
+                                      {w("Cancel")}</button>
                                     <Button
                                       type="button"
                                       size="sm"
                                       onClick={() => commitBulkPaste(y.taxYear)}
                                       disabled={!(bulkPaste[y.taxYear] ?? "").trim()}
                                     >
-                                      Add all rows
-                                    </Button>
+                                      {w("Add all rows")}</Button>
                                   </div>
                                 </div>
                               )}
@@ -1244,8 +1218,7 @@ export function TransactionsReview({
                                 className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline"
                               >
                                 <Plus className="h-3.5 w-3.5" />
-                                Add transaction manually
-                              </button>
+                                {w("Add transaction manually")}</button>
                               <span className="text-slate-300">·</span>
                               <button
                                 type="button"
@@ -1256,8 +1229,7 @@ export function TransactionsReview({
                                 className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline"
                               >
                                 <ClipboardPaste className="h-3.5 w-3.5" />
-                                Paste from spreadsheet
-                              </button>
+                                {w("Paste from spreadsheet")}</button>
                             </div>
                           )}
                         </div>
@@ -1271,8 +1243,8 @@ export function TransactionsReview({
 
                         {y.uploadWarnings.length > 0 && (
                           <ul className="mt-3 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3 space-y-1">
-                            {y.uploadWarnings.map((w, i) => (
-                              <li key={i}>{w}</li>
+                            {y.uploadWarnings.map((warning, i) => (
+                              <li key={i}>{w(warning)}</li>
                             ))}
                           </ul>
                         )}
@@ -1287,19 +1259,18 @@ export function TransactionsReview({
                             />
                             <p className="text-xs text-slate-500 mt-3 mb-2 flex items-center gap-1">
                               <Sparkles className="h-3.5 w-3.5" />
-                              Auto-categorized. Override any row you disagree with — totals update live.
-                            </p>
+                              {w("Auto-categorized. Override any row you disagree with — totals update live.")}</p>
                             <div className="border border-slate-200 rounded-md overflow-hidden bg-white">
                               <div className="overflow-x-auto max-h-96">
                                 <table className="w-full text-sm">
                                   <thead className="bg-slate-50 text-left text-xs text-slate-500 sticky top-0">
                                     <tr>
-                                      <th className="py-2 px-3 font-medium">Date</th>
-                                      <th className="py-2 px-3 font-medium">Description</th>
-                                      <th className="py-2 px-3 font-medium text-right">Amount (USD)</th>
-                                      <th className="py-2 px-3 font-medium">Currency / original</th>
-                                      <th className="py-2 px-3 font-medium">Paid how</th>
-                                      <th className="py-2 px-3 font-medium">Category</th>
+                                      <th className="py-2 px-3 font-medium">{w("Date")}</th>
+                                      <th className="py-2 px-3 font-medium">{w("Description")}</th>
+                                      <th className="py-2 px-3 font-medium text-right">{w("Amount (USD)")}</th>
+                                      <th className="py-2 px-3 font-medium">{w("Currency / original")}</th>
+                                      <th className="py-2 px-3 font-medium">{w("Paid how")}</th>
+                                      <th className="py-2 px-3 font-medium">{w("Category")}</th>
                                       <th className="py-2 px-3 w-8"></th>
                                     </tr>
                                   </thead>
@@ -1317,7 +1288,7 @@ export function TransactionsReview({
                                         <td className="py-2 px-3 text-slate-600 whitespace-nowrap">
                                           <input
                                             type="date"
-                                            aria-label="Date"
+                                            aria-label={w("Date")}
                                             value={tx.date}
                                             onChange={(e) => updateTx(y.taxYear, i, { date: e.target.value, dateInput: undefined })}
                                             className="text-xs border border-slate-300 rounded px-1.5 py-1 bg-white"
@@ -1327,14 +1298,14 @@ export function TransactionsReview({
                                           <span className="block truncate" title={tx.description}>{tx.description || "—"}</span>
                                           {warnings.length > 0 && (
                                             <ul className="mt-1 space-y-0.5 text-[11px] text-amber-800">
-                                              {warnings.map((w) => <li key={w}>{w}</li>)}
+                                              {warnings.map((warning) => <li key={warning}>{w(warning)}</li>)}
                                             </ul>
                                           )}
                                         </td>
                                         <td className="py-2 px-3 text-right whitespace-nowrap">
                                           <input
                                             inputMode="decimal"
-                                            aria-label="Amount in US dollars"
+                                            aria-label={w("Amount in US dollars")}
                                             placeholder="0.00"
                                             value={tx.amountInput ?? (tx.amountMissing ? "" : (Math.abs(tx.amountCents) / 100).toFixed(2))}
                                             onChange={(e) => updateTx(y.taxYear, i, { amountInput: e.target.value })}
@@ -1343,7 +1314,7 @@ export function TransactionsReview({
                                         </td>
                                         <td className="py-2 px-3 whitespace-nowrap">
                                           <input
-                                            aria-label="Currency (3 letters)"
+                                            aria-label={w("Currency (3 letters)")}
                                             placeholder="USD"
                                             maxLength={3}
                                             value={tx.currency ?? ""}
@@ -1352,8 +1323,8 @@ export function TransactionsReview({
                                           />{" "}
                                           <input
                                             inputMode="decimal"
-                                            aria-label="Original amount"
-                                            placeholder="original"
+                                            aria-label={w("Original amount")}
+                                            placeholder={w("original")}
                                             value={tx.originalAmountInput ?? ""}
                                             onChange={(e) => updateTx(y.taxYear, i, { originalAmountInput: e.target.value || undefined })}
                                             className="w-20 text-xs border border-slate-300 rounded px-1.5 py-1 bg-white"
@@ -1361,14 +1332,14 @@ export function TransactionsReview({
                                         </td>
                                         <td className="py-2 px-3">
                                           <select
-                                            aria-label="How it was paid"
+                                            aria-label={w("How it was paid")}
                                             value={tx.paidVia ?? ""}
                                             onChange={(e) => updateTx(y.taxYear, i, { paidVia: (e.target.value || undefined) as PaidVia | undefined })}
                                             className="text-xs border border-slate-300 rounded px-2 py-1 bg-white"
                                           >
                                             <option value="">—</option>
                                             {PAID_VIA.map((v) => (
-                                              <option key={v} value={v}>{PAID_VIA_LABELS[v]}</option>
+                                              <option key={v} value={v}>{w(PAID_VIA_LABELS[v])}</option>
                                             ))}
                                           </select>
                                         </td>
@@ -1382,7 +1353,7 @@ export function TransactionsReview({
                                           >
                                             {(Object.keys(CATEGORY_LABELS) as WizardCategory[]).map((k) => (
                                               <option key={k} value={k}>
-                                                {CATEGORY_LABELS[k]}
+                                                {w(CATEGORY_LABELS[k])}
                                               </option>
                                             ))}
                                           </select>
@@ -1392,8 +1363,8 @@ export function TransactionsReview({
                                             type="button"
                                             onClick={() => removeTx(y.taxYear, i)}
                                             className="text-slate-400 hover:text-red-600"
-                                            title="Remove this row"
-                                            aria-label="Remove this row"
+                                            title={w("Remove this row")}
+                                            aria-label={w("Remove this row")}
                                           >
                                             <X className="h-3.5 w-3.5" />
                                           </button>
@@ -1413,7 +1384,7 @@ export function TransactionsReview({
 
                   {errors.empty && (
                     <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-                      {EMPTY_ANSWER_MESSAGE}
+                      {w(EMPTY_ANSWER_MESSAGE)}
                     </p>
                   )}
                 </div>
@@ -1422,28 +1393,22 @@ export function TransactionsReview({
               {/* 2. Total assets at year end → pro forma 1120 item D. */}
               <div className="mt-5 pt-5 border-t border-slate-100">
                 <Field
-                  label={`LLC's total assets at the end of ${y.taxYear}`}
+                  label={w("LLC's total assets at the end of {v0}", { v0: y.taxYear })}
                   hint={
                     y.totalAssetsAutoFilled
-                      ? "Filled in from your statement. Check it matches the LLC's bank balance on the last day of the year."
-                      : "Usually the LLC's bank balance on the last day of the year. Enter 0 if it had no bank account."
+                      ? w("Filled in from your statement. Check it matches the LLC's bank balance on the last day of the year.")
+                      : w("Usually the LLC's bank balance on the last day of the year. Enter 0 if it had no bank account.")
                   }
                   help={
                     <>
                       <p>
-                        The value of everything the LLC owns on the last day of the year. Goes on{" "}
-                        <strong>Form 1120 item D</strong>.
+                        {w("The value of everything the LLC owns on the last day of the year. Goes on")}{" "}
+                        <strong>{w("Form 1120 item D")}</strong>.
                       </p>
                       <p className="mt-2">
-                        For a typical single-member LLC with one bank account, this is just the
-                        year-end bank balance. Add any other assets the LLC holds at year end,
-                        such as another business account, unpaid customer invoices, equipment or
-                        crypto held by the LLC.
-                      </p>
+                        {w("For a typical single-member LLC with one bank account, this is just the year-end bank balance. Add any other assets the LLC holds at year end, such as another business account, unpaid customer invoices, equipment or crypto held by the LLC.")}</p>
                       <p className="mt-2">
-                        Don&apos;t include anything in your personal accounts, or debts the LLC
-                        owes.
-                      </p>
+                        {w("Don't include anything in your personal accounts, or debts the LLC owes.")}</p>
                     </>
                   }
                 >
@@ -1464,9 +1429,7 @@ export function TransactionsReview({
               <div className="mt-5 pt-5 border-t border-slate-100">
                 <fieldset>
                   <legend className="block text-sm font-medium text-slate-900">
-                    Did you move anything other than cash into or out of the LLC in {y.taxYear},
-                    such as shares, crypto or equipment?
-                  </legend>
+                    {w("Did you move anything other than cash into or out of the LLC in ")}{y.taxYear}{w(", such as shares, crypto or equipment?")}</legend>
                   <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <label className={RADIO_LABEL}>
                       <input
@@ -1478,7 +1441,7 @@ export function TransactionsReview({
                         }}
                         className={RADIO_INPUT}
                       />
-                      <span>Yes</span>
+                      <span>{w("Yes")}</span>
                     </label>
                     <label className={RADIO_LABEL}>
                       <input
@@ -1488,7 +1451,7 @@ export function TransactionsReview({
                         onChange={() => setNonCashTransfers(y.taxYear, [])}
                         className={RADIO_INPUT}
                       />
-                      <span>No</span>
+                      <span>{w("No")}</span>
                     </label>
                   </div>
                 </fieldset>
@@ -1501,8 +1464,7 @@ export function TransactionsReview({
                       >
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <label className="block text-xs font-medium text-slate-600">
-                            Date
-                            <Input
+                            {w("Date")}<Input
                               type="date"
                               value={row.date}
                               onChange={(e) =>
@@ -1512,8 +1474,7 @@ export function TransactionsReview({
                             />
                           </label>
                           <label className="block text-xs font-medium text-slate-600">
-                            Direction
-                            <select
+                            {w("Direction")}<select
                               value={row.direction}
                               onChange={(e) =>
                                 updateNonCashTransfer(y.taxYear, index, {
@@ -1522,13 +1483,12 @@ export function TransactionsReview({
                               }
                               className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
                             >
-                              <option value="in">Into the LLC</option>
-                              <option value="out">Out of the LLC</option>
+                              <option value="in">{w("Into the LLC")}</option>
+                              <option value="out">{w("Out of the LLC")}</option>
                             </select>
                           </label>
                           <label className="block text-xs font-medium text-slate-600 sm:col-span-2">
-                            Description of what was transferred
-                            <Input
+                            {w("Description of what was transferred")}<Input
                               value={row.description}
                               onChange={(e) =>
                                 updateNonCashTransfer(y.taxYear, index, {
@@ -1539,8 +1499,7 @@ export function TransactionsReview({
                             />
                           </label>
                           <label className="block text-xs font-medium text-slate-600">
-                            Fair market value in USD
-                            <Input
+                            {w("Fair market value in USD")}<Input
                               type="number"
                               min="0"
                               step="0.01"
@@ -1554,8 +1513,7 @@ export function TransactionsReview({
                             />
                           </label>
                           <label className="block text-xs font-medium text-slate-600">
-                            How the value was worked out
-                            <Input
+                            {w("How the value was worked out")}<Input
                               value={row.valuationMethod}
                               onChange={(e) =>
                                 updateNonCashTransfer(y.taxYear, index, {
@@ -1578,15 +1536,14 @@ export function TransactionsReview({
                               }
                               className="mt-0.5 h-4 w-4 shrink-0 accent-accent"
                             />
-                            <span>I also listed this as a cash contribution above</span>
+                            <span>{w("I also listed this as a cash contribution above")}</span>
                           </label>
                           <button
                             type="button"
                             onClick={() => removeNonCashTransfer(y.taxYear, index)}
                             className="self-start text-sm text-red-600 hover:underline"
                           >
-                            Remove
-                          </button>
+                            {w("Remove")}</button>
                         </div>
                       </div>
                     ))}
@@ -1596,8 +1553,7 @@ export function TransactionsReview({
                       size="sm"
                       onClick={() => addNonCashTransfer(y.taxYear)}
                     >
-                      Add another non-cash transfer
-                    </Button>
+                      {w("Add another non-cash transfer")}</Button>
                   </div>
                 )}
               </div>
@@ -1609,8 +1565,7 @@ export function TransactionsReview({
       {/* 4. Asked once per filing. */}
       <fieldset className="rounded-md border border-slate-200 bg-white p-4">
         <legend className="text-sm font-medium text-slate-900">
-          Did the LLC earn any U.S.-source income, such as dividends from U.S. shares?
-        </legend>
+          {w("Did the LLC earn any U.S.-source income, such as dividends from U.S. shares?")}</legend>
         <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
           <label className={RADIO_LABEL}>
             <input
@@ -1620,7 +1575,7 @@ export function TransactionsReview({
               onChange={() => setHasUsSourceIncome(true)}
               className={RADIO_INPUT}
             />
-            <span>Yes</span>
+            <span>{w("Yes")}</span>
           </label>
           <label className={RADIO_LABEL}>
             <input
@@ -1633,14 +1588,13 @@ export function TransactionsReview({
               }}
               className={RADIO_INPUT}
             />
-            <span>No</span>
+            <span>{w("No")}</span>
           </label>
         </div>
         {hasUsSourceIncome === true && (
           <fieldset className="mt-4">
             <legend className="text-sm font-medium text-slate-900">
-              Was U.S. tax withheld at source?
-            </legend>
+              {w("Was U.S. tax withheld at source?")}</legend>
             <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
               <label className={RADIO_LABEL}>
                 <input
@@ -1650,7 +1604,7 @@ export function TransactionsReview({
                   onChange={() => setUsTaxWithheld(true)}
                   className={RADIO_INPUT}
                 />
-                <span>Yes</span>
+                <span>{w("Yes")}</span>
               </label>
               <label className={RADIO_LABEL}>
                 <input
@@ -1660,7 +1614,7 @@ export function TransactionsReview({
                   onChange={() => setUsTaxWithheld(false)}
                   className={RADIO_INPUT}
                 />
-                <span>No</span>
+                <span>{w("No")}</span>
               </label>
             </div>
           </fieldset>
@@ -1669,15 +1623,14 @@ export function TransactionsReview({
 
       <div className="flex justify-between gap-3">
         <Button type="button" variant="outline" onClick={onBack}>
-          Back
-        </Button>
+          {w("Back")}</Button>
         <div className="flex flex-col items-end gap-2">
           {transactionsIncomplete && (
             <div className="max-w-sm text-right text-xs text-amber-700">
-              <p className="font-medium">You can continue now and our team will follow up on:</p>
+              <p className="font-medium">{w("You can continue now and our team will follow up on:")}</p>
               {yearIssues.map((row) => (
                 <p key={row.taxYear}>
-                  {row.taxYear}: {row.messages.join(" ")}
+                  {row.taxYear}: {row.messages.map((message) => w(message)).join(" ")}
                 </p>
               ))}
             </div>
@@ -1687,7 +1640,7 @@ export function TransactionsReview({
             onClick={handleSubmit}
             disabled={saving}
           >
-            {saving ? "Saving…" : "Continue"}
+            {saving ? w("Saving…") : w("Continue")}
           </Button>
         </div>
       </div>
@@ -1730,22 +1683,21 @@ function StatementTotal({
   count: number;
   onEdit: () => void;
 }) {
+  const w = useWizardText();
   return (
     <div>
-      <p className="text-sm font-medium text-slate-700 mb-1.5">{label}</p>
+      <p className="text-sm font-medium text-slate-700 mb-1.5">{w(label)}</p>
       <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm">
         <span className="font-semibold text-slate-900">{formatUsd(Math.round(amount * 100))}</span>{" "}
         <span className="text-slate-500">
-          from {count} {count === 1 ? "transaction" : "transactions"} in your statement
-        </span>
+          {w("from ")}{count} {count === 1 ? w("transaction") : w("transactions")} {w(" in your statement")}</span>
       </div>
       <button
         type="button"
         onClick={onEdit}
         className="mt-1 text-xs text-accent hover:underline"
       >
-        Edit transactions
-      </button>
+        {w("Edit transactions")}</button>
     </div>
   );
 }
@@ -1763,6 +1715,7 @@ function UploadDropzone({
   uploadedCount: number;
   limit: number;
 }) {
+  const w = useWizardText();
   const [hover, setHover] = useState(false);
   const atLimit = uploadedCount >= limit;
   return (
@@ -1800,27 +1753,24 @@ function UploadDropzone({
         {uploading ? (
           <>
             <FileText className="h-6 w-6 text-accent animate-pulse" />
-            <span className="text-slate-600">Parsing…</span>
+            <span className="text-slate-600">{w("Parsing…")}</span>
           </>
         ) : atLimit ? (
           <>
             <FileText className="h-6 w-6 text-slate-400" />
             <span className="text-slate-700 font-medium">
-              Limit reached — {uploadedCount} / {limit} files uploaded
-            </span>
+              {w("Limit reached — ")}{uploadedCount} / {limit} {w(" files uploaded")}</span>
             <span className="text-xs text-slate-500">
-              Remove an existing file to upload another.
-            </span>
+              {w("Remove an existing file to upload another.")}</span>
           </>
         ) : (
           <>
             <Upload className="h-6 w-6 text-slate-400" />
             <span className="text-slate-700 font-medium">
-              Drop your bank statements here or click to browse (optional)
-            </span>
+              {w("Drop your bank statements here or click to browse (optional)")}</span>
             <span className="text-xs text-slate-500">
-              CSV or Excel (.xlsx, .xls) · Mercury · Wise · Relay · Brex · or generic · up to{" "}
-              {limit - uploadedCount} more file{limit - uploadedCount === 1 ? "" : "s"}
+              {w("CSV or Excel (.xlsx, .xls) · Mercury · Wise · Relay · Brex · or generic · up to")}{" "}
+              {limit - uploadedCount} {w(" {count, plural, one {more file} other {more files}}", { count: limit - uploadedCount })}
             </span>
           </>
         )}
@@ -1836,6 +1786,7 @@ function UploadedFilesList({
   files: { id: string; name: string; type: "csv" | "excel"; addedTxCount: number }[];
   onRemove: (id: string) => void;
 }) {
+  const w = useWizardText();
   return (
     <ul className="mt-3 border border-slate-200 rounded-md divide-y divide-slate-100 bg-white">
       {files.map((f) => (
@@ -1856,14 +1807,14 @@ function UploadedFilesList({
             <span className="text-slate-700 truncate">{f.name}</span>
           </div>
           <span className="flex-none text-slate-500">
-            {f.addedTxCount} {f.addedTxCount === 1 ? "transaction" : "transactions"}
+            {f.addedTxCount} {f.addedTxCount === 1 ? w("transaction") : w("transactions")}
           </span>
           <button
             type="button"
             onClick={() => onRemove(f.id)}
             className="flex-none text-slate-400 hover:text-red-600 rounded p-1 -mr-1"
-            aria-label={`Remove ${f.name}`}
-            title="Remove this file and its transactions"
+            aria-label={w("Remove {v0}", { v0: f.name })}
+            title={w("Remove this file and its transactions")}
           >
             <X className="h-3.5 w-3.5" />
           </button>
@@ -1884,6 +1835,7 @@ function CategorySummary({
   transactions: WizardTransaction[];
   onBulkReclassify: (from: WizardCategory, to: WizardCategory) => void;
 }) {
+  const w = useWizardText();
   const counts = transactions.reduce(
     (acc, t) => {
       acc[t.category] = (acc[t.category] ?? 0) + 1;
@@ -1931,7 +1883,7 @@ function CategorySummary({
               key={cat}
               className={`inline-flex items-center gap-1.5 text-xs font-medium rounded-full border px-2.5 py-1 ${pillTone[cat]}`}
             >
-              {CATEGORY_LABELS[cat]}
+              {w(CATEGORY_LABELS[cat])}
               <span className="font-normal opacity-70">{counts[cat]}</span>
             </span>
           ))}
@@ -1943,45 +1895,37 @@ function CategorySummary({
             <AlertTriangle className="flex-none h-4 w-4 text-amber-600 mt-0.5" />
             <div className="flex-1 text-xs text-amber-900">
               <p className="font-medium">
-                {unknownCount} {unknownCount === 1 ? "row" : "rows"} not auto-categorized
-              </p>
+                {unknownCount} {unknownCount === 1 ? w("row") : w("rows")} {w(" not auto-categorized")}</p>
               <p className="mt-0.5 text-amber-800">
-                We couldn&apos;t tell from the bank description who these counterparties are.
-                Pick a category for each row in the table below — they don&apos;t count toward
-                your Form 5472 totals until you do.
-              </p>
+                {w("We couldn't tell from the bank description who these counterparties are. Pick a category for each row in the table below — they don't count toward your Form 5472 totals until you do.")}</p>
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span className="text-amber-800 font-medium">Bulk actions:</span>
+                <span className="text-amber-800 font-medium">{w("Bulk actions:")}</span>
                 <button
                   type="button"
                   onClick={() => onBulkReclassify("unknown", "contribution")}
                   className="inline-flex items-center gap-1 rounded border border-amber-300 bg-white text-amber-900 hover:bg-amber-100 px-2 py-1 transition-colors"
                 >
                   <ArrowUp className="h-3 w-3" />
-                  Mark all as Contribution
-                </button>
+                  {w("Mark all as Contribution")}</button>
                 <button
                   type="button"
                   onClick={() => onBulkReclassify("unknown", "distribution")}
                   className="inline-flex items-center gap-1 rounded border border-amber-300 bg-white text-amber-900 hover:bg-amber-100 px-2 py-1 transition-colors"
                 >
                   <ArrowDown className="h-3 w-3" />
-                  Mark all as Distribution
-                </button>
+                  {w("Mark all as Distribution")}</button>
                 <button
                   type="button"
                   onClick={() => onBulkReclassify("unknown", "revenue")}
                   className="inline-flex items-center gap-1 rounded border border-amber-300 bg-white text-amber-900 hover:bg-amber-100 px-2 py-1 transition-colors"
                 >
-                  Mark all as Revenue
-                </button>
+                  {w("Mark all as Revenue")}</button>
                 <button
                   type="button"
                   onClick={() => onBulkReclassify("unknown", "vendor_expense")}
                   className="inline-flex items-center gap-1 rounded border border-amber-300 bg-white text-amber-900 hover:bg-amber-100 px-2 py-1 transition-colors"
                 >
-                  Mark all as Vendor expense
-                </button>
+                  {w("Mark all as Vendor expense")}</button>
               </div>
             </div>
           </div>

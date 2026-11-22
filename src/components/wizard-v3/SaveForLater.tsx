@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -31,6 +33,7 @@ export function SaveForLater({
   partnerName?: string | null;
   onBeforeLeave?: () => Promise<boolean>;
 }) {
+  const w = useWizardText();
   const router = useRouter();
   const [leaving, setLeaving] = useState(false);
   const [leaveError, setLeaveError] = useState<string | null>(null);
@@ -46,7 +49,7 @@ export function SaveForLater({
         if ((await onBeforeLeave?.()) === false) throw new Error("save failed");
         setClientSaved(true);
       } catch {
-        setLeaveError("We could not save your changes. Try again.");
+        setLeaveError(w("We could not save your changes. Try again."));
       }
       setLeaving(false);
     };
@@ -54,13 +57,11 @@ export function SaveForLater({
       <div className="flex flex-wrap items-center gap-3">
         {clientSaved ? (
           <p role="status" className="text-sm font-medium text-slate-700">
-            Your answers are saved. Use the same link from {partnerName?.trim() || "your provider"} to come
-            back.
-          </p>
+            {w("Your answers are saved. Use the same link from ")}{partnerName?.trim() || w("your provider")} {w(" to come back.")}</p>
         ) : (
           <button type="button" onClick={handleClientSave} disabled={leaving} className={`${BUTTON_CLASS} disabled:opacity-50`}>
             <Save className="h-4 w-4" aria-hidden="true" />
-            {leaving ? "Saving..." : mode.label}
+            {leaving ? w("Saving...") : w(mode.label)}
           </button>
         )}
         {leaveError && <span className="basis-full text-sm text-red-600">{leaveError}</span>}
@@ -72,7 +73,7 @@ export function SaveForLater({
     return (
       <AnonymousSaveForLater
         filingId={filingId}
-        label={mode.label}
+        label={w(mode.label)}
         defaultEmail={defaultEmail}
         onBeforeLeave={onBeforeLeave}
       />
@@ -84,9 +85,9 @@ export function SaveForLater({
       <div className="flex flex-wrap items-center gap-3">
         <Link href={mode.href} className={BUTTON_CLASS}>
           <LogOut className="h-4 w-4" aria-hidden="true" />
-          {mode.label}
+          {w(mode.label)}
         </Link>
-        <span className="text-xs text-slate-500">{REASSURANCE}</span>
+        <span className="text-xs text-slate-500">{w(REASSURANCE)}</span>
       </div>
     );
   }
@@ -103,9 +104,9 @@ export function SaveForLater({
         router.push(destinationHref);
         return;
       }
-      setLeaveError("We could not save your changes. Try again.");
+      setLeaveError(w("We could not save your changes. Try again."));
     } catch {
-      setLeaveError("We could not save your changes. Try again.");
+      setLeaveError(w("We could not save your changes. Try again."));
     }
     setLeaving(false);
   }
@@ -119,9 +120,9 @@ export function SaveForLater({
         className={`${BUTTON_CLASS} disabled:opacity-50`}
       >
         <LogOut className="h-4 w-4" aria-hidden="true" />
-        {leaving ? "Saving..." : mode.label}
+        {leaving ? w("Saving...") : w(mode.label)}
       </button>
-      <span className="text-xs text-slate-500">{REASSURANCE}</span>
+      <span className="text-xs text-slate-500">{w(REASSURANCE)}</span>
       {leaveError && <span className="basis-full text-sm text-red-600">{leaveError}</span>}
     </div>
   );
@@ -140,6 +141,7 @@ function AnonymousSaveForLater({
   defaultEmail?: string | null;
   onBeforeLeave?: () => Promise<boolean>;
 }) {
+  const w = useWizardText();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState(defaultEmail ?? "");
   const [status, setStatus] = useState<SubmitStatus>("idle");
@@ -154,7 +156,7 @@ function AnonymousSaveForLater({
         const ok = await onBeforeLeave();
         if (!ok) {
           setStatus("error");
-          setError("We could not save your changes. Try again.");
+          setError(w("We could not save your changes. Try again."));
           return;
         }
       }
@@ -165,18 +167,18 @@ function AnonymousSaveForLater({
       });
       if (res.status === 429) {
         setStatus("error");
-        setError("Too many requests. Try again in a few minutes.");
+        setError(w("Too many requests. Try again in a few minutes."));
         return;
       }
       if (!res.ok) {
         setStatus("error");
-        setError("Something went wrong. Please try again.");
+        setError(w("Something went wrong. Please try again."));
         return;
       }
       setStatus("sent");
     } catch {
       setStatus("error");
-      setError("Something went wrong. Please try again.");
+      setError(w("Something went wrong. Please try again."));
     }
   }
 
@@ -185,9 +187,9 @@ function AnonymousSaveForLater({
       <div className="flex flex-wrap items-center gap-3">
         <button type="button" onClick={() => setOpen(true)} className={BUTTON_CLASS}>
           <Save className="h-4 w-4" aria-hidden="true" />
-          {label}
+          {w(label)}
         </button>
-        <span className="text-xs text-slate-500">{REASSURANCE}</span>
+        <span className="text-xs text-slate-500">{w(REASSURANCE)}</span>
       </div>
     );
   }
@@ -195,11 +197,11 @@ function AnonymousSaveForLater({
   return (
     <div className="w-full max-w-md rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-xs text-slate-500">{REASSURANCE}</p>
+        <p className="text-xs text-slate-500">{w(REASSURANCE)}</p>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          aria-label="Dismiss"
+          aria-label={w("Dismiss")}
           className="shrink-0 text-slate-400 hover:text-slate-600"
         >
           <X className="h-4 w-4" aria-hidden="true" />
@@ -208,14 +210,11 @@ function AnonymousSaveForLater({
 
       {status === "sent" ? (
         <p className="mt-2 text-sm font-medium text-slate-700">
-          Link sent. Check your inbox to continue this filing.
-        </p>
+          {w("Link sent. Check your inbox to continue this filing.")}</p>
       ) : (
         <>
           <p className="mt-1 text-sm text-slate-700">
-            Your answers so far are already saved. Enter your email and we will send you a link to
-            come back to this filing.
-          </p>
+            {w("Your answers so far are already saved. Enter your email and we will send you a link to come back to this filing.")}</p>
           <form onSubmit={handleSubmit} className="mt-3 flex flex-wrap items-center gap-2">
             <input
               type="email"
@@ -230,7 +229,7 @@ function AnonymousSaveForLater({
               disabled={status === "submitting"}
               className={`${BUTTON_CLASS} disabled:opacity-50`}
             >
-              {status === "submitting" ? "Sending..." : "Email me a link"}
+              {status === "submitting" ? w("Sending...") : w("Email me a link")}
             </button>
           </form>
           <div className="mt-2 min-h-[1.25rem] text-sm text-red-600">{status === "error" ? error : null}</div>

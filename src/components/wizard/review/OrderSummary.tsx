@@ -1,3 +1,7 @@
+"use client";
+
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import Link from "next/link";
 import { Lock, Printer, ShieldCheck } from "lucide-react";
 import { MULTI_YEAR_ADDON_CENTS, PROMO_LABEL, type TierInfo } from "@/lib/pricing";
@@ -31,6 +35,7 @@ export function OrderSummary({
   dueNow: number;
   children: React.ReactNode;
 }) {
+  const w = useWizardText();
   const yearsLabel =
     taxYears.length === 0
       ? null
@@ -48,45 +53,44 @@ export function OrderSummary({
             id="order-summary-title"
             className="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-slate-500"
           >
-            Order summary
-          </h3>
+            {w("Order summary")}</h3>
           <p className="mt-2 break-words font-serif text-lg font-semibold leading-snug text-ink">
-            {llcName || "Your LLC"}
+            {llcName || w("Your LLC")}
           </p>
           <p className="mt-0.5 text-sm text-slate-600">
-            Form 5472 + pro forma 1120{yearsLabel ? ` · ${yearsLabel}` : ""}
+            {w("Form 5472 + pro forma 1120")}{yearsLabel ? w(" · {v0}", { v0: w(yearsLabel) }) : ""}
           </p>
         </div>
 
         <dl className="px-5 text-sm">
           <LineItem
-            label={activeTier.label}
-            detail={activeTier.subtitle}
+            label={w(activeTier.label)}
+            detail={w(activeTier.subtitle)}
             amount={formatUsd(activeTier.priceCents)}
           />
           <LineItem
-            label="IRS fax delivery"
-            detail="Timestamped fax receipt"
-            amount="Included"
+            label={w("IRS fax delivery")}
+            detail={w("Timestamped fax receipt")}
+            amount={w("Included")}
             amountClassName="text-emerald-700"
           />
           {extraYears > 0 && (
             <LineItem
-              label={`${extraYears} additional tax year${extraYears === 1 ? "" : "s"}`}
-              detail={`${extraYears} × ${formatUsd(MULTI_YEAR_ADDON_CENTS)}`}
+              label={w("{v0} additional tax year{v1}", { v0: extraYears, v1: extraYears === 1 ? "" : "s" })}
+              detail={w("{v0} × {v1}", { v0: extraYears, v1: formatUsd(MULTI_YEAR_ADDON_CENTS) })}
               amount={formatUsd(addOnCents)}
             />
           )}
           {promoDiscount > 0 && (
             <LineItem
-              label={PROMO_LABEL}
-              amount={`−${formatUsd(promoDiscount)}`}
+              label={w(PROMO_LABEL)}
+              amount={w("−{v0}", { v0: formatUsd(promoDiscount) })}
               amountClassName="text-emerald-700"
             />
           )}
           <div className="flex items-end justify-between gap-4 border-t border-slate-200 pt-4">
             <dt>
-              <span className="block font-semibold text-ink">Total</span>
+              <span className="block font-semibold text-ink">{w("Total")}</span>
               <span className="mt-0.5 block text-xs text-slate-500">USD</span>
             </dt>
             <dd className="text-right tabular-nums">
@@ -107,7 +111,7 @@ export function OrderSummary({
             </dd>
           </div>
         </dl>
-        <p className="px-5 pb-4 pt-1.5 text-xs text-slate-500">One-time payment · no subscription</p>
+        <p className="px-5 pb-4 pt-1.5 text-xs text-slate-500">{w("One-time payment · no subscription")}</p>
 
         <div className="space-y-4 border-t border-slate-100 px-5 pb-5 pt-4">
           {children}
@@ -116,15 +120,14 @@ export function OrderSummary({
       </section>
 
       <p className="mt-3 px-1 text-center text-xs leading-relaxed text-slate-500">
-        Fees and refunds are covered in our{" "}
+        {w("Fees and refunds are covered in our")}{" "}
         <Link
           href="/terms"
           target="_blank"
           rel="noopener noreferrer"
           className="rounded-sm text-slate-700 underline decoration-slate-300 underline-offset-2 hover:text-accent hover:decoration-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
-          Terms of Service
-        </Link>
+          {w("Terms of Service")}</Link>
         .
       </p>
     </div>
@@ -156,22 +159,23 @@ function LineItem({
 }
 
 function TrustList() {
+  const w = useWizardText();
   return (
     <ul className="space-y-2.5 text-xs leading-relaxed text-slate-600">
       <li className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <span className="flex items-center gap-2">
           <Lock aria-hidden className="h-3.5 w-3.5 flex-none text-slate-500" />
-          <span className="font-medium text-slate-800">Secure payment by Stripe</span>
+          <span className="font-medium text-slate-800">{w("Secure payment by Stripe")}</span>
         </span>
         <CardMarks />
       </li>
       <li className="flex gap-2">
         <ShieldCheck aria-hidden className="mt-0.5 h-3.5 w-3.5 flex-none text-emerald-600" />
-        <span>Every order is reviewed by a PTIN-holding tax accountant before submission to the IRS.</span>
+        <span>{w("Every order is reviewed by a PTIN-holding tax accountant before submission to the IRS.")}</span>
       </li>
       <li className="flex gap-2">
         <Printer aria-hidden className="mt-0.5 h-3.5 w-3.5 flex-none text-slate-500" />
-        <span>Timestamped IRS fax receipt included.</span>
+        <span>{w("Timestamped IRS fax receipt included.")}</span>
       </li>
     </ul>
   );
@@ -181,10 +185,11 @@ function TrustList() {
 // payment_method_types: ["card"], so these are the card networks Stripe
 // accepts on it; they are decoration, the sr-only line carries the meaning.
 function CardMarks() {
+  const w = useWizardText();
   const chip = "inline-flex h-6 min-w-[2.5rem] items-center justify-center rounded border px-1.5";
   return (
     <span className="flex items-center gap-1.5">
-      <span className="sr-only">Visa, Mastercard and American Express accepted</span>
+      <span className="sr-only">{w("Visa, Mastercard and American Express accepted")}</span>
       <span
         aria-hidden
         className={`${chip} border-slate-200 bg-white font-sans text-[11px] font-extrabold italic tracking-tight text-[#1a1f71]`}

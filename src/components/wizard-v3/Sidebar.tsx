@@ -1,5 +1,7 @@
 "use client";
 
+import { useWizardText } from "@/components/wizard/useWizardText";
+
 import {
   Building2,
   User as UserIcon,
@@ -50,17 +52,16 @@ export function Sidebar({
   progressPct: number;
   onJump: (k: StepKey) => void;
 }) {
+  const w = useWizardText();
   return (
     <aside className="w-72 shrink-0 hidden lg:flex flex-col gap-6">
       <div className="rounded-2xl border border-slate-200 bg-white px-5 py-5">
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="text-xs font-semibold tracking-wider text-blue-900 uppercase">
-              Progress
-            </div>
+              {w("Progress")}</div>
             <p className="mt-1.5 text-xs text-slate-500 leading-snug">
-              Move in order. The review step assumes the earlier sections are complete.
-            </p>
+              {w("Move in order. The review step assumes the earlier sections are complete.")}</p>
           </div>
           <div className="shrink-0 rounded-full bg-blue-50 border border-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-900">
             {Math.round(progressPct)}%
@@ -82,16 +83,11 @@ export function Sidebar({
 
       <div className="rounded-2xl border border-slate-200 bg-white px-5 py-5 text-xs text-slate-500 leading-relaxed">
         <div className="text-blue-900 font-semibold tracking-wider uppercase mb-2">
-          Filing reminders
-        </div>
+          {w("Filing reminders")}</div>
         <p>
-          Foreign-owned U.S. disregarded entities file a pro forma Form 1120 with Form 5472
-          attached. This workflow does not e-file.
-        </p>
+          {w("Foreign-owned U.S. disregarded entities file a pro forma Form 1120 with Form 5472 attached. This workflow does not e-file.")}</p>
         <p className="mt-2">
-          After payment, we generate the forms and a PTIN-holding tax accountant reviews your package.
-          You then sign in the portal, and we fax it to the IRS Ogden PIN Unit.
-        </p>
+          {w("After payment, we generate the forms and a PTIN-holding tax accountant reviews your package. You then sign in the portal, and we fax it to the IRS Ogden PIN Unit.")}</p>
       </div>
     </aside>
   );
@@ -108,6 +104,7 @@ function SidebarStep({
   active: boolean;
   onClick: () => void;
 }) {
+  const w = useWizardText();
   // Fallback to HelpCircle when a step key has no icon mapping — prevents
   // a future synthetic step (like preflight) from rendering `<undefined />`
   // and crashing the whole layout if someone forgets to add the entry.
@@ -141,10 +138,10 @@ function SidebarStep({
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
               <span className={`text-sm font-semibold ${active ? "text-slate-900" : "text-slate-800"}`}>
-                {step.title}
+                {w(step.title)}
               </span>
               <span className="shrink-0 rounded-full bg-blue-50 border border-blue-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-blue-900">
-                Step {step.number}
+                {w("Step ")}{step.number}
               </span>
             </div>
             <div className="mt-1">
@@ -152,10 +149,10 @@ function SidebarStep({
             </div>
             {step.formSection && (
               <div className="mt-1 text-[11px] font-medium text-slate-500">
-                {step.formSection}
+                {w(step.formSection)}
               </div>
             )}
-            <p className="mt-1 text-xs text-slate-500 leading-snug">{step.subtitle}</p>
+            <p className="mt-1 text-xs text-slate-500 leading-snug">{w(step.subtitle)}</p>
           </div>
         </div>
       </button>
@@ -164,23 +161,21 @@ function SidebarStep({
 }
 
 function StatusBadge({ status }: { status: StepStatus }) {
+  const w = useWizardText();
   if (status === "complete") {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-blue-900">
-        <Check className="h-3 w-3" /> Complete
-      </span>
+        <Check className="h-3 w-3" /> {w(" Complete")}</span>
     );
   }
   if (status === "missing") {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-700">
-        <AlertCircle className="h-3 w-3" /> Missing info
-      </span>
+        <AlertCircle className="h-3 w-3" /> {w(" Missing info")}</span>
     );
   }
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-      Not started
-    </span>
+      {w("Not started")}</span>
   );
 }
