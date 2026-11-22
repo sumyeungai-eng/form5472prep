@@ -25,6 +25,7 @@ const PAID_STATUSES: FilingStatus[] = [
 ];
 
 export type EligibleUser = {
+  locale?: string | null;
   userId: string;
   email: string;
   previousLlcNames: string[];
@@ -60,6 +61,7 @@ export async function findEligibleUsers(
     select: {
       id: true,
       email: true,
+      locale: true,
       filings: {
         where: { status: { in: PAID_STATUSES } },
         select: { llcName: true, taxYears: true, status: true },
@@ -80,6 +82,7 @@ export async function findEligibleUsers(
     .map((u) => ({
       userId: u.id,
       email: u.email,
+      locale: u.locale,
       previousLlcNames: distinct(
         u.filings.map((f) => f.llcName).filter((n): n is string => !!n && n.trim().length > 0),
       ),
@@ -143,6 +146,7 @@ export async function runCampaign(args: {
       // The magic-link wrapper signs them in; bare /start would miss the prefill.
       const startLink = makeMagicLink(u.userId) + "?next=" + encodeURIComponent(startPath);
       await sendFn({
+        locale: u.locale,
         email: u.email,
         taxYearToFile: taxYear,
         previousLlcNames: u.previousLlcNames,

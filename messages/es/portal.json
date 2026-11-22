@@ -260,5 +260,12 @@
     "prepared": "{label} preparado",
     "einConsent": "He revisado el Form SS-4 adjunto. Bajo pena de perjurio, declaro que, según mi leal saber y entender, es veraz, correcto y completo, y adopto la firma de abajo como propia.",
     "itinConsent": "He revisado el Form W-7 adjunto. Bajo pena de perjurio, declaro que, según mi leal saber y entender, es veraz, correcto y completo, y adopto la firma de abajo como propia."
+  },
+  "locked": {
+    "heading": "Inicie sesión para continuar su declaración",
+    "linkedEmail": "Esta declaración está vinculada a una cuenta de correo",
+    "continue": "Inicie sesión con ese correo para continuar donde lo dejó.",
+    "signIn": "Iniciar sesión por correo",
+    "linkExplanation": "Le enviaremos un enlace de acceso con un clic; no necesita contraseña."
   }
 }

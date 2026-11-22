@@ -25,6 +25,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!question) return NextResponse.json({ error: "not found" }, { status: 404 });
 
   try {
+    // A website visitor need not have a User account; no locale lookup here.
     await sendWebsiteQuestionReplyEmail({
       to: question.email,
       name: question.name,

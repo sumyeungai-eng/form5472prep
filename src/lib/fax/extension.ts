@@ -58,6 +58,7 @@ export const extensionReceiptKey = (id: string) => `${id}_7004_fax_receipt.pdf`;
 export const EXTENSION_FORM_FIELDS = ["llcName", "ein", "llcStreet", "llcCity", "llcState", "llcZip", "taxYear"] as const;
 
 export const EXTENSION_FAX_SELECT = {
+  user: { select: { locale: true } },
   id: true,
   status: true,
   fullName: true,
@@ -78,7 +79,8 @@ export const EXTENSION_FAX_SELECT = {
   updatedAt: true,
 } satisfies Prisma.ExtensionApplicationSelect;
 
-export type ExtensionFaxRow = Prisma.ExtensionApplicationGetPayload<{ select: typeof EXTENSION_FAX_SELECT }>;
+type SelectedExtensionFaxRow = Prisma.ExtensionApplicationGetPayload<{ select: typeof EXTENSION_FAX_SELECT }>;
+export type ExtensionFaxRow = Omit<SelectedExtensionFaxRow, "user"> & { user?: SelectedExtensionFaxRow["user"] };
 
 export function auditLine(now: Date, text: string): string {
   return `[${now.toISOString().slice(0, 16).replace("T", " ")} UTC] ${text.replace(/[\r\n]+/g, " ")}`;
@@ -376,6 +378,7 @@ export async function finalizeExtensionFaxDelivered(
 
   try {
     await sendExtensionFaxedEmail({
+      locale: app.user?.locale,
       email: app.email,
       fullName: app.fullName,
       llcName: app.llcName,

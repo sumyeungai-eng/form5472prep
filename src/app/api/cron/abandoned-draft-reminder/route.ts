@@ -103,6 +103,7 @@ async function processCohort(opts: CohortOpts) {
     }
     try {
       await sendAbandonedDraftReminderEmail({
+        locale: f.user.locale,
         email: f.user.email,
         recipientName: f.ownerName,
         llcName: f.llcName,

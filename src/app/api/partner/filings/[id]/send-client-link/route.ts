@@ -55,7 +55,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   }
   const preparerName = brand?.name ?? (partner.company?.trim() || partner.name);
   try {
-    await sendClientIntakeEmail(user.email, clientLink, label, preparerName, brand ?? undefined);
+    await sendClientIntakeEmail(user.email, clientLink, label, preparerName, brand ?? undefined, user.locale);
   } catch (err) {
     console.error("[partner send-client-link] email failed", err);
     return NextResponse.json({ error: "Could not send the email. Try again." }, { status: 500 });

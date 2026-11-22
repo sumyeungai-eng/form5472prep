@@ -260,5 +260,12 @@
     "prepared": "Vorbereitete {label}",
     "einConsent": "Ich habe die beigefügte Form SS-4 geprüft. Unter Strafandrohung wegen Meineids erkläre ich, dass sie nach bestem Wissen wahr, richtig und vollständig ist, und erkenne die untenstehende Unterschrift als meine eigene an.",
     "itinConsent": "Ich habe die beigefügte Form W-7 geprüft. Unter Strafandrohung wegen Meineids erkläre ich, dass sie nach bestem Wissen wahr, richtig und vollständig ist, und erkenne die untenstehende Unterschrift als meine eigene an."
+  },
+  "locked": {
+    "heading": "Melden Sie sich an, um Ihre Einreichung fortzusetzen",
+    "linkedEmail": "Diese Einreichung ist mit einem E-Mail-Konto verknüpft",
+    "continue": "Melden Sie sich mit dieser E-Mail-Adresse an, um dort fortzufahren, wo Sie aufgehört haben.",
+    "signIn": "Per E-Mail anmelden",
+    "linkExplanation": "Wir senden Ihnen einen Link zur Anmeldung mit einem Klick — kein Passwort erforderlich."
   }
 }

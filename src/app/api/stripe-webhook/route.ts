@@ -278,7 +278,7 @@ export async function POST(req: Request) {
         const link = `${makeMagicLink(filing.user.id)}?next=${encodeURIComponent(`/filings/${filing.id}`)}`;
         const label = filing.llcName ?? `tax year ${filing.taxYears.join(", ")}`;
         try {
-          await sendMagicLinkEmail(filing.user.email, link, label, undefined, filing.id);
+          await sendMagicLinkEmail(filing.user.email, link, label, undefined, filing.id, filing.user.locale);
         } catch (err) {
           console.error("[stripe-webhook] magic link email failed", err);
         }
@@ -335,6 +335,7 @@ export async function POST(req: Request) {
 
         try {
           await sendOrderConfirmationEmail({
+            locale: filing.user.locale,
             email: filing.user.email,
             filingId: filing.id,
             llcName: filing.llcName,

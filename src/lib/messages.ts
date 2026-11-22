@@ -24,7 +24,7 @@ export async function postAdminMessage(filingId: string, body: string, attachmen
       ownerName: true,
       taxYears: true,
       userId: true,
-      user: { select: { email: true } },
+      user: { select: { email: true, locale: true } },
     },
   });
   if (!filing) {
@@ -72,6 +72,7 @@ export async function postAdminMessage(filingId: string, body: string, attachmen
 
     try {
       await sendNewMessageToCustomerEmail({
+        locale: filing.user.locale,
         filingId,
         email: filing.user.email,
         recipientName: filing.ownerName,

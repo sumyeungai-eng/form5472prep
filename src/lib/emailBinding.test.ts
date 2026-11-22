@@ -1158,11 +1158,12 @@ describe("review follow-up: save-for-later", () => {
 
   it("still binds and sends the resume link for an authorized customer", async () => {
     browser({ session: "sess_customer" });
+    db.state.users.push({ id: "user_customer_de", email: "customer@example.com", locale: "de" });
     const id = await startDraftViaApi();
     const response = await saveForLater(jsonRequest("http://localhost/save-for-later", "POST", { email: " Customer@Example.com " }), { params: { id } });
     expect(response.status).toBe(200);
     expect(row(id).userId).toBe(userIdFor("customer@example.com"));
-    expect(sendResumeEmail).toHaveBeenCalledWith("customer@example.com", expect.stringContaining(encodeURIComponent(`/filings/${id}/edit`)), expect.any(String), undefined);
+    expect(sendResumeEmail).toHaveBeenCalledWith("customer@example.com", expect.stringContaining(encodeURIComponent(`/filings/${id}/edit`)), expect.any(String), undefined, "de");
   });
 });
 

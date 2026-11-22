@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Mail, ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function FilingLocked({ ownerEmail }: { ownerEmail: string | null }) {
+  const t = useTranslations("portal.locked");
   const masked = ownerEmail ? maskEmail(ownerEmail) : null;
 
   return (
@@ -13,22 +15,22 @@ export function FilingLocked({ ownerEmail }: { ownerEmail: string | null }) {
           </div>
         </div>
         <h1 className="mt-5 text-xl font-semibold text-slate-900 text-center">
-          Sign in to continue your filing
+          {t("heading")}
         </h1>
         <p className="mt-3 text-sm text-slate-600 text-center leading-relaxed">
-          This filing is linked to an email account
+          {t("linkedEmail")}
           {masked ? <> (<span className="font-medium text-slate-900">{masked}</span>)</> : null}.
-          Sign in with that email to pick up where you left off.
+          {t("continue")}
         </p>
         <Link
           href="/sign-in"
           className="mt-6 w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-accent text-white text-sm font-semibold shadow-lg shadow-accent/20 hover:shadow-xl hover:shadow-accent/30 transition-all hover:-translate-y-0.5"
         >
-          Sign in by email
+          {t("signIn")}
           <ArrowRight className="h-4 w-4" />
         </Link>
         <p className="mt-4 text-xs text-slate-400 text-center leading-relaxed">
-          We&apos;ll email you a one-click link — no password needed.
+          {t("linkExplanation")}
         </p>
       </div>
     </div>

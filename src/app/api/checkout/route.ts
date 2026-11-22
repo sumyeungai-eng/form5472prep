@@ -208,6 +208,7 @@ export async function POST(req: Request) {
 
       try {
         await sendOrderConfirmationEmail({
+          locale: full.user.locale,
           email: full.user.email,
           recipientName: full.ownerName,
           filingId: full.id,

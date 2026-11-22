@@ -24,6 +24,7 @@ type MessageAttachment = {
 };
 
 type ApplicationRecord = {
+  user?: { locale: string | null } | null;
   id: string;
   userId: string | null;
   fullName: string;
@@ -65,6 +66,7 @@ async function findApplication(type: ApplicationType, id: string): Promise<Appli
     const application = await prisma.einApplication.findUnique({
       where: { id },
       select: {
+        user: { select: { locale: true } },
         id: true,
         userId: true,
         fullName: true,
@@ -79,6 +81,7 @@ async function findApplication(type: ApplicationType, id: string): Promise<Appli
   const application = await prisma.itinApplication.findUnique({
     where: { id },
     select: {
+      user: { select: { locale: true } },
       id: true,
       userId: true,
       fullName: true,
@@ -248,6 +251,7 @@ export async function POST(req: Request, { params }: { params: { type: string; i
       if (caller.role === "admin") {
         if (caller.application.userId) {
           await sendNewApplicationMessageCustomerEmail({
+            locale: caller.application.user?.locale,
             email: caller.application.email,
             recipientName: caller.application.fullName,
             kind,

@@ -126,7 +126,7 @@ describe.each([
 
 describe("Stripe webhook: order-time magic link (release gate)", () => {
   it("lands the client on the filing page via the existing ?next= support", async () => {
-    const row = { ...filing, tier: "standard", ownerSsnCiphertext: null };
+    const row = { ...filing, user: { ...filing.user, locale: "zh-Hans" }, tier: "standard", ownerSsnCiphertext: null };
     fake.findUnique.mockResolvedValue(row);
     fake.getOwnedFiling.mockResolvedValue(row);
     expect((await webhook(webhookRequest())).status).toBe(200);
@@ -136,7 +136,9 @@ describe("Stripe webhook: order-time magic link (release gate)", () => {
       expect.any(String),
       undefined,
       filing.id,
+      "zh-Hans",
     );
+    expect(fake.sendOrderConfirmationEmail).toHaveBeenCalledWith(expect.objectContaining({ locale: "zh-Hans" }));
   });
 });
 

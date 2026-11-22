@@ -389,7 +389,7 @@ const filingSelect = {
   faxConfirmationKey: true,
   // retryFax's re-fax guard: for a retrying_N claim, when it was taken.
   updatedAt: true,
-  user: { select: { id: true, email: true } },
+  user: { select: { id: true, email: true, locale: true } },
   yearData: {
     select: {
       taxYear: true,
@@ -1309,6 +1309,7 @@ export async function runFilingAction(
         signatures = [];
       }
       await sendOrderConfirmationEmail({
+        locale: filing.user.locale,
         email: filing.user.email,
         recipientName: filing.ownerName,
         filingId: filing.id,
@@ -1368,7 +1369,7 @@ export async function runFilingAction(
         throw new FilingActionError(400, "no_customer_email", "no customer email");
       }
       const label = filing.llcName ?? `tax year ${filing.taxYears.join(", ")}`;
-      await sendMagicLinkEmail(filing.user.email, makeMagicLink(filing.user.id), label, undefined, filing.id);
+      await sendMagicLinkEmail(filing.user.email, makeMagicLink(filing.user.id), label, undefined, filing.id, filing.user.locale);
       await logFilingChange({
         filingId: filing.id,
         adminId: ctx.adminId,
@@ -1397,6 +1398,7 @@ export async function runFilingAction(
         console.error("[sendSignReminder] brand lookup failed", err);
       }
       await sendReadyToSignEmail({
+        locale: filing.user.locale,
         email: filing.user.email,
         recipientName: filing.ownerName,
         filingId: filing.id,
@@ -1471,6 +1473,7 @@ export async function runFilingAction(
       }
       try {
         await sendFaxDeliveredEmail({
+          locale: filing.user.locale,
           email: filing.user.email,
           recipientName: filing.ownerName,
           llcName: filing.llcName,
@@ -2552,6 +2555,7 @@ export async function runFilingAction(
       }
       try {
         await sendReadyToSignEmail({
+          locale: filing.user.locale,
           email: filing.user.email,
           recipientName: filing.ownerName,
           filingId: filing.id,
@@ -2716,6 +2720,7 @@ export async function runFilingAction(
       }
       try {
         await sendReadyToSignEmail({
+          locale: filing.user.locale,
           email: filing.user.email,
           recipientName: filing.ownerName,
           filingId: filing.id,
@@ -2812,6 +2817,7 @@ export async function runFilingAction(
       }
       try {
         await sendOwnerSsnRequestEmail({
+          locale: filing.user.locale,
           email: filing.user.email,
           recipientName: filing.ownerName,
           filingId: filing.id,

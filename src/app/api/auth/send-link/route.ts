@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     const label = filing.llcName ?? `tax year ${filing.taxYears.join(", ")}`;
     const link = makeMagicLink(user.id);
     try {
-      await sendMagicLinkEmail(user.email, link, label);
+      await sendMagicLinkEmail(user.email, link, label, undefined, undefined, user.locale);
     } catch (err) {
       console.error("[send-link] email send failed", err);
       // Don't surface the failure to the caller — they shouldn't be able to

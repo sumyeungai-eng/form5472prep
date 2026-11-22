@@ -260,5 +260,12 @@
     "prepared": "{label} préparé",
     "einConsent": "J’ai examiné le Form SS-4 joint. Sous peine de sanctions pour parjure, je déclare qu’à ma connaissance il est sincère, exact et complet, et je reconnais la signature ci-dessous comme étant la mienne.",
     "itinConsent": "J’ai examiné le Form W-7 joint. Sous peine de sanctions pour parjure, je déclare qu’à ma connaissance il est sincère, exact et complet, et je reconnais la signature ci-dessous comme étant la mienne."
+  },
+  "locked": {
+    "heading": "Connectez-vous pour poursuivre votre déclaration",
+    "linkedEmail": "Ce dossier est lié à une adresse e-mail",
+    "continue": "Connectez-vous avec cette adresse pour reprendre là où vous vous êtes arrêté(e).",
+    "signIn": "Se connecter par e-mail",
+    "linkExplanation": "Nous vous enverrons un lien de connexion en un clic — aucun mot de passe nécessaire."
   }
 }

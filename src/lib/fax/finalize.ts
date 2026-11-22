@@ -49,7 +49,7 @@ export type FaxFinalizeFiling = {
   isFinalReturn: boolean;
   dissolvedAt: Date | null;
   userId: string | null;
-  user: { id: string; email: string } | null;
+  user: { id: string; email: string; locale?: string | null } | null;
   // Set when the owner's SSN is on file (SSN capture, 2026-10-15): the faxed
   // package then carries the SSN on lines 4b(1)/8b(1) and is NOT attached to
   // the admin email (download it from the admin page instead). Optional so
@@ -212,6 +212,7 @@ export async function finalizeFaxDelivered(
     const clientCopy = await loadFaxClientCopy(filing, filing.faxCopyToClient === true);
     try {
       await sendFaxDeliveredEmail({
+        locale: filing.user.locale,
         email: filing.user.email,
         recipientName: filing.ownerName,
         llcName: filing.llcName,

@@ -25,6 +25,7 @@ import {
 process.env.EMAIL_PREVIEW_DIR ||= "tmp-emails";
 
 const previewDir = process.env.EMAIL_PREVIEW_DIR;
+const locale = process.env.PREVIEW_LOCALE;
 const baseUrl = "https://www.form5472prep.com";
 const customerEmail = "maria.schmidt@example.com";
 const adminEmail = "support@form5472prep.com";
@@ -47,10 +48,11 @@ const proof = {
 export async function main() {
 await mkdir(previewDir, { recursive: true });
 
-await sendMagicLinkEmail(customerEmail, portalLink, `${llcName} — ${taxYear}`);
+await sendMagicLinkEmail(customerEmail, portalLink, `${llcName} — ${taxYear}`, undefined, undefined, locale);
 await sendPartnerLoginEmail(customerEmail, `${baseUrl}/partners/auth/sample-token`, ownerName);
 await sendPartnerApplicationAckEmail(customerEmail, ownerName);
 await sendOrderConfirmationEmail({
+  locale,
   email: customerEmail,
   recipientName: "Maria Schmidt",
   llcName,
@@ -68,6 +70,7 @@ await sendOrderConfirmationEmail({
   dueDateText: "April 15, 2026",
 });
 await sendFaxDeliveredEmail({
+  locale,
   email: customerEmail,
   recipientName: "Maria Schmidt",
   llcName,
@@ -112,6 +115,7 @@ await sendFaxFailedAdminEmail({
   deliveryAttempts: 3,
 });
 await sendNewMessageToCustomerEmail({
+  locale,
   email: customerEmail,
   recipientName: "Maria Schmidt",
   llcName,
@@ -129,6 +133,7 @@ await sendNewMessageToAdminEmail({
   bodyExcerpt: "The LLC was formed on February 14, 2025.",
 });
 await sendJanuaryReminderEmail({
+  locale,
   email: customerEmail,
   taxYearToFile: taxYear,
   previousLlcNames: [llcName],
@@ -136,6 +141,7 @@ await sendJanuaryReminderEmail({
   unsubscribeUrl,
 });
 await sendMarchReminderEmail({
+  locale,
   email: customerEmail,
   taxYearToFile: taxYear,
   previousLlcNames: [llcName],
@@ -143,6 +149,7 @@ await sendMarchReminderEmail({
   unsubscribeUrl,
 });
 await sendAbandonedDraftReminderEmail({
+  locale,
   email: customerEmail,
   recipientName: "Maria Schmidt",
   llcName,
@@ -163,7 +170,7 @@ await sendEinApplicationAdminEmail({
   ownerResidence: "Germany",
   notes: "Applicant would like the EIN confirmation sent electronically.",
 });
-await sendEinApplicationConfirmationEmail({ email: customerEmail, fullName: ownerName, llcName, amountPaidCents: 14900, portalLink });
+await sendEinApplicationConfirmationEmail({ locale, email: customerEmail, fullName: ownerName, llcName, amountPaidCents: 14900, portalLink });
 await sendItinApplicationAdminEmail({
   adminEmail,
   fullName: ownerName,
@@ -180,7 +187,7 @@ await sendItinApplicationAdminEmail({
   passportExpiry: "2031-06-20",
   notes: "Applicant prefers a morning CAA appointment.",
 });
-await sendItinApplicationConfirmationEmail({ email: customerEmail, fullName: ownerName, amountPaidCents: 34900, portalLink });
+await sendItinApplicationConfirmationEmail({ locale, email: customerEmail, fullName: ownerName, amountPaidCents: 34900, portalLink });
 await sendWebsiteQuestionAdminEmail({
   adminEmail,
   name: ownerName,

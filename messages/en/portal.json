@@ -260,5 +260,12 @@
     "prepared": "Prepared {label}",
     "einConsent": "I have reviewed the attached Form SS-4. Under penalties of perjury, I declare that it is true, correct, and complete to the best of my knowledge, and I adopt the signature below as my own.",
     "itinConsent": "I have reviewed the attached Form W-7. Under penalties of perjury, I declare that it is true, correct, and complete to the best of my knowledge, and I adopt the signature below as my own."
+  },
+  "locked": {
+    "heading": "Sign in to continue your filing",
+    "linkedEmail": "This filing is linked to an email account",
+    "continue": "Sign in with that email to pick up where you left off.",
+    "signIn": "Sign in by email",
+    "linkExplanation": "We’ll email you a one-click link — no password needed."
   }
 }

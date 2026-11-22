@@ -16,6 +16,9 @@ function flatten(messages: Messages, prefix = ""): Record<string, string> {
 const read = (locale: string, file: string): Messages => JSON.parse(readFileSync(join(root, locale, file), "utf8"));
 
 describe("translation catalog contract", () => {
+  it("checks the server-only email namespace alongside portal catalogs", () => {
+    expect(files).toContain("email.json");
+  });
   for (const locale of LOCALES) {
     it(`${locale} has exactly the English namespaces and keys, with plain text messages`, () => {
       expect(readdirSync(join(root, locale)).filter((file) => file.endsWith(".json")).sort()).toEqual(files);
@@ -87,6 +90,7 @@ describe("request messages and cookie preferences", () => {
     const result = await config();
     expect(result.locale).toBe("zh-Hant");
     expect(result.messages).toHaveProperty("portal.dashboard.yourFilings", "您的申報");
+    expect(result.messages).not.toHaveProperty("email");
     expect(state.update).not.toHaveBeenCalled();
   });
   it("uses weighted browser language and falls back to English", async () => {

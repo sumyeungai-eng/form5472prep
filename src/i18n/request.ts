@@ -1,21 +1,11 @@
 import { getRequestConfig } from "next-intl/server";
 import { cookies, headers } from "next/headers";
 import { localeFromAcceptLanguage, normalizeLocale } from "./locales";
+import { deepMerge, type Messages } from "./merge";
+export { deepMerge } from "./merge";
 
-// Add future email/wizard namespaces here; no portal components need to change.
+// Email catalogs are loaded statically by server.ts, never sent to the portal.
 export const MESSAGE_NAMESPACES = ["common", "domain", "portal"] as const;
-type Messages = { [key: string]: string | Messages };
-
-export function deepMerge(english: Messages, translated: Messages): Messages {
-  const merged: Messages = { ...english };
-  for (const key of Object.keys(english)) {
-    const base = english[key];
-    const value = translated[key];
-    if (typeof base === "string") merged[key] = typeof value === "string" ? value : base;
-    else merged[key] = deepMerge(base, value && typeof value === "object" ? value : {});
-  }
-  return merged;
-}
 
 export default getRequestConfig(async () => {
   const cookie = cookies().get("NEXT_LOCALE");

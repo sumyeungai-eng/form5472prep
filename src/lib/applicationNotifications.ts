@@ -57,6 +57,7 @@ export async function notifyApplicationPaid(type: "ein" | "itin" | "extension", 
 
     try {
       await sendEinApplicationConfirmationEmail({
+        locale: app.user?.locale,
         email: app.email,
         fullName: app.fullName,
         llcName: app.llcName,
@@ -107,6 +108,7 @@ export async function notifyApplicationPaid(type: "ein" | "itin" | "extension", 
 
   try {
     await sendItinApplicationConfirmationEmail({
+      locale: app.user?.locale,
       email: app.email,
       fullName: app.fullName,
       amountPaidCents: app.amountPaid ?? 0,
@@ -133,6 +135,8 @@ async function notifyExtensionPaid(applicationId: string): Promise<void> {
   }
 
   try {
+    // This webhook path has no loaded User. Keep English rather than adding
+    // a locale lookup to payment fulfillment.
     await sendExtensionApplicationConfirmationEmail({
       email: app.email,
       fullName: app.fullName,

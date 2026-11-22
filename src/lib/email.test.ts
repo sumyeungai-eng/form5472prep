@@ -286,6 +286,7 @@ describe("fax delivered customer attachment", () => {
     const forms = new Uint8Array([37, 80, 68, 70, 2]);
     await sendFaxDeliveredEmail({
       email: "owner@example.test", llcName: "Synthetic LLC", taxYears: [2025],
+      locale: "en",
       portalLink: "https://example.test/auth/synthetic-token?existing=1",
       filingId: "f1", receiptPdfBytes: receipt, signedPdfBytes: forms, ...ssn,
     });

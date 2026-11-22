@@ -58,7 +58,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   }
 
   try {
-    await sendResumeFilingEmail(user.email, link, label, brand ?? undefined);
+    await sendResumeFilingEmail(user.email, link, label, brand ?? undefined, user.locale);
   } catch (err) {
     console.error("[save-for-later] email failed", err);
     return NextResponse.json({ error: "Could not send the email. Try again." }, { status: 500 });

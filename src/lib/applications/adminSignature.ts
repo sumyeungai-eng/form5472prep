@@ -18,6 +18,7 @@ import { del, get as getStorageObject, getPdf, put, putPdf } from "@/lib/storage
 const MIN_PDF_BYTES = 1024;
 
 type ApplicationRecord = {
+  user?: { locale: string | null } | null;
   id: string;
   email: string;
   fullName: string;
@@ -165,6 +166,7 @@ export async function handleRequestSignature(type: ApplicationType, id: string, 
 
   try {
     await sendApplicationSignatureRequestEmail({
+      locale: app.user?.locale,
       email: app.email,
       fullName: app.fullName,
       type,
@@ -350,6 +352,7 @@ async function updateStampedApplication(
 }
 
 const applicationSelect = {
+  user: { select: { locale: true } },
   id: true,
   email: true,
   fullName: true,

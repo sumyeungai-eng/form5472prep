@@ -1,3 +1,4 @@
+import { getEmailTranslator, englishEmailTranslator, emailLocale, type EmailTranslator } from "@/i18n/server";
 import { downloadFileName } from "@/lib/pdf/downloadFileName";
 import { MAX_FAX_COPY_BYTES } from "@/lib/fax/clientCopy";
 // Transactional email. Uses Resend if RESEND_API_KEY is set; otherwise
@@ -14,6 +15,32 @@ import { formLabel } from "@/lib/applicationSignature";
 import { env } from "@/lib/env";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+
+// Keep delivery independent of translation, including an unexpected throw
+// from the translator factory or a single message formatter.
+function safeEmailTranslator(locale?: string | null): EmailTranslator {
+  let translator: EmailTranslator;
+  try { translator = getEmailTranslator(locale); }
+  catch (error) { console.warn("[email i18n] English fallback", error); translator = englishEmailTranslator; }
+  return (key, values) => {
+    try { return translator(key, values); }
+    catch (error) { console.warn("[email i18n] English fallback", error); return englishEmailTranslator(key, values); }
+  };
+}
+
+function emailDate(value: string, locale?: string | null, timestamp = false): string {
+  if (emailLocale(locale) === "en") return value;
+  try {
+    const date = new Date(value);
+    if (!Number.isFinite(date.getTime())) return value;
+    return new Intl.DateTimeFormat(emailLocale(locale), {
+      dateStyle: "long", ...(timestamp ? { timeStyle: "long" as const } : {}), timeZone: "UTC",
+    }).format(date);
+  } catch (error) {
+    console.warn("[email i18n] English date fallback", error);
+    return value;
+  }
+}
 
 // Single source of truth for the inline colours used across every email.
 export const EMAIL_STYLES = {
@@ -253,6 +280,7 @@ export async function sendEmail({ to, subject: rawSubject, html, text, replyTo, 
 // look stays consistent. Inline styles only — most email clients strip <style>.
 
 type ShellArgs = {
+  locale?: string | null;
   preheader: string; // ~90 chars hidden preview shown in inbox before opening
   heading: string;
   bodyHtml: string;
@@ -265,7 +293,8 @@ type ShellArgs = {
   brand?: { name: string };
 };
 
-function shell({ preheader, heading, bodyHtml, cta, unsubscribeUrl, closingHtml = "", internal = false, brand }: ShellArgs) {
+function shell({ preheader, heading, bodyHtml, cta, unsubscribeUrl, closingHtml = "", internal = false, brand, locale }: ShellArgs) {
+  const t = safeEmailTranslator(locale);
   const footerUrl = internal ? "https://www.form5472prep.com" : APP_URL;
   const headerHtml = brand
     ? `          <!-- Brand header: partner wordmark. -->
@@ -282,7 +311,7 @@ function shell({ preheader, heading, bodyHtml, cta, unsubscribeUrl, closingHtml 
                 style="display:block;width:100%;height:auto;border:0;color:${EMAIL_STYLES.white};font-size:18px;font-weight:600;" />
             </td>
           </tr>`;
-  const processedByLine = brand ? "\n              <br/>Filing processed securely by Form5472 Prep." : "";
+  const processedByLine = brand ? `\n              <br/>${t("shared.processedBy")}` : "";
   const ctaBlock = cta
     ? `<tr><td style="padding:8px 0 24px;">
          <a href="${escapeHtml(cta.url)}" style="display:inline-block;background:${EMAIL_STYLES.brand};color:${EMAIL_STYLES.white};text-decoration:none;padding:14px 24px;border-radius:8px;font-weight:600;font-size:15px;">${escapeHtml(cta.label)}</a>
@@ -290,7 +319,7 @@ function shell({ preheader, heading, bodyHtml, cta, unsubscribeUrl, closingHtml 
     : "";
 
   return `<!doctype html>
-<html lang="en">
+<html lang="${emailLocale(locale)}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -316,9 +345,9 @@ ${headerHtml}
           <!-- Footer -->
           <tr>
             <td style="padding:20px 32px;border-top:1px solid ${EMAIL_STYLES.border};background:${EMAIL_STYLES.bg};color:${EMAIL_STYLES.muted};font-size:12px;line-height:1.5;">
-              Questions? Reply to this email or write to <a href="mailto:support@form5472prep.com" style="color:${EMAIL_STYLES.brand};text-decoration:none;">support@form5472prep.com</a>.${processedByLine}
+              ${t("shared.questions")} <a href="mailto:support@form5472prep.com" style="color:${EMAIL_STYLES.brand};text-decoration:none;">support@form5472prep.com</a>.${processedByLine}
               <br/>Form5472 Prep · <a href="${footerUrl}" style="color:${EMAIL_STYLES.brand};text-decoration:none;">form5472prep.com</a>
-              ${unsubscribeUrl ? `<br/><br/><a href="${escapeHtml(unsubscribeUrl)}" style="color:${EMAIL_STYLES.muted};text-decoration:underline;">Unsubscribe from filing reminders</a>` : ""}
+              ${unsubscribeUrl ? `<br/><br/><a href="${escapeHtml(unsubscribeUrl)}" style="color:${EMAIL_STYLES.muted};text-decoration:underline;">${t("shared.unsubscribe")}</a>` : ""}
             </td>
           </tr>
         </table>
@@ -330,6 +359,7 @@ ${headerHtml}
 }
 
 export function customerShell({
+  locale,
   heading,
   salutation,
   bodyHtml,
@@ -339,6 +369,7 @@ export function customerShell({
   preheader,
   brand,
 }: {
+  locale?: string | null;
   heading: string;
   salutation: string;
   bodyHtml: string;
@@ -348,11 +379,12 @@ export function customerShell({
   preheader?: string;
   brand?: { name: string };
 }) {
-  const greeting = `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Hello ${escapeHtml(salutation)},</p>`;
+  const t = safeEmailTranslator(locale);
+  const greeting = `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("shared.greeting", { name: escapeHtml(salutation) })}</p>`;
   const teamName = brand?.name ?? "Form5472 Prep";
   const closingHtml = `${footnoteHtml ? `<div style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.6;">${footnoteHtml}</div>` : ""}
-    <p style="margin:0;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">Thank you,<br/>The ${escapeHtml(teamName)} team</p>`;
-  return shell({ preheader: preheader ?? heading, heading, bodyHtml: `${greeting}${bodyHtml}`, cta, closingHtml, unsubscribeUrl, brand });
+    <p style="margin:0;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">${t("shared.thanks")}<br/>${t("shared.team", { name: escapeHtml(teamName) })}</p>`;
+  return shell({ preheader: preheader ?? heading, heading, bodyHtml: `${greeting}${bodyHtml}`, cta, closingHtml, unsubscribeUrl, brand, locale });
 }
 
 export function adminShell({
@@ -379,8 +411,9 @@ export function adminShell({
   return shell({ preheader: `${tag}: ${heading}`, heading, bodyHtml, internal: true });
 }
 
-function customerText(salutation: string, body: string, footnote?: string, brand?: EmailBrand) {
-  return `Hello ${salutation},\n\n${body}${footnote ? `\n\n${footnote}` : ""}\n\nThank you,\nThe ${brand?.name ?? "Form5472 Prep"} team`;
+function customerText(salutation: string, body: string, footnote?: string, brand?: EmailBrand, locale?: string | null) {
+  const t = safeEmailTranslator(locale);
+  return `${t("shared.greeting", { name: salutation })}\n\n${body}${footnote ? `\n\n${footnote}` : ""}\n\n${t("shared.thanks")}\n${t("shared.team", { name: brand?.name ?? "Form5472 Prep" })}`;
 }
 
 export function firstNameFrom(name: string | null | undefined): string | null {
@@ -397,33 +430,33 @@ export async function sendMagicLinkEmail(
   brand?: EmailBrand,
   // Optional: ties the EmailLog audit row to the filing this link opens.
   filingId?: string | null,
+  locale?: string | null
 ) {
-  const heading = "Open your filing";
+  const t = safeEmailTranslator(locale);
+  const heading = t("magicLink.heading");
   const brandName = brand?.name ?? "Form5472 Prep";
   const bodyHtml = `
-    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      Use the button below to open your filing (<strong>${escapeHtml(filingLabel)}</strong>) —
-      see where it is in review, check and sign it once it's ready, and track the fax delivery to the IRS.
-    </p>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days.</p>`;
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("magicLink.bodyHtml", { tag0: "<strong>", tag1: "</strong>", v1: escapeHtml(filingLabel) })}</p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">${t("magicLink.bodyHtml2")}</p>`;
 
   return sendEmail({
     log: { kind: "magic_link", filingId: filingId ?? null },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
-    subject: `Your ${brandName} filing — access link`,
+    subject: t("magicLink.subject", { v0: brandName }),
     text: customerText(
-      "there",
-      `Use this secure link to open your filing (${filingLabel}):\n\n${link}\n\nThis link is good for 7 days. If you did not request this, you can ignore this email.`,
+      t("magicLink.salutation"),
+      t("magicLink.text", { v0: filingLabel, v1: link }),
       undefined,
       brand,
+      locale,
     ),
-    html: customerShell({
+    html: customerShell({ locale,
       heading,
-      salutation: "there",
+      salutation: t("magicLink.salutation"),
       bodyHtml,
-      cta: { label: "Open my filing", url: link },
+      cta: { label: t("magicLink.label"), url: link },
       brand,
     }),
   });
@@ -498,6 +531,7 @@ type OrderSignatureInfo = {
 };
 
 type OrderConfirmationArgs = {
+  locale?: string | null;
   email: string;
   recipientName?: string | null;
   llcName: string | null;
@@ -557,53 +591,52 @@ export const ORDER_CONFIRMATION_INTRO =
   "Our team is reviewing your package. We'll email you a link to check and sign it when it's ready.";
 
 export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
+  const t = safeEmailTranslator(args.locale);
   const {
     email, recipientName, llcName, taxYears, tier, amountPaidCents, portalLink, receiptUrl,
-    pdfBytes, isFinalReturn, dueDateText, requiresReasonableCause, extensionUnclear, brand,
+    pdfBytes, isFinalReturn, dueDateText: originalDueDateText, requiresReasonableCause, extensionUnclear, brand,
   } = args;
-  const salutation = firstNameFrom(recipientName) ?? "there";
+  const dueDateText = originalDueDateText ? emailDate(originalDueDateText, args.locale) : originalDueDateText;
+  const salutation = firstNameFrom(recipientName) ?? t("orderConfirmation.salutation");
   const brandName = brand?.name ?? "Form5472 Prep";
   // Resolve the tier through pricing.ts so legacy tier values from old
   // filings still render a sensible label rather than crashing.
-  const t = tierInfo(tier);
-  const tierLabel = t.label;
-  const tierPrice = formatUsd(t.priceCents);
+  const plan = tierInfo(tier);
+  const tierKey = ["standard", "express", "priority", "rush", "premium", "single_year", "two_year_diirsp", "multi_year_diirsp"].includes(tier) ? tier : "standard";
+  const tierLabel = t(`orderConfirmation.tier_${tierKey}`);
+  const tierPrice = formatUsd(plan.priceCents);
   // Express orders: reviewed package ready to check and sign in under 3 days
   // of the order, 7 days a week (2026-10-11). Standard gets no timeframe.
   // Legacy "rush" resolves to standard.
   const isExpress = tier === "express";
   const expressReviewText =
-    "Express order: your reviewed filing package will be ready for you to check and sign in under 3 days from your order. We will email you as soon as it is ready.";
+    t("orderConfirmation.expressReviewText");
   const reviewStepText = isExpress
-    ? "A PTIN-holding tax accountant reviews the package, and it is ready for you to check and sign in under 3 days from your order. We may message you if anything needs clarifying."
-    : "A PTIN-holding tax accountant reviews the package and may message you if anything needs clarifying.";
+    ? t("orderConfirmation.reviewStepText2")
+    : t("orderConfirmation.reviewStepText");
   const reviewStepPlain = isExpress
-    ? "A PTIN-holding tax accountant reviews the package, and it is ready for you to check and sign in under 3 days from your order. We may message you with questions."
-    : "A PTIN-holding tax accountant reviews the package and may message you with questions.";
+    ? t("orderConfirmation.reviewStepPlain2")
+    : t("orderConfirmation.reviewStepPlain");
   const yearCount = taxYears.length || 1;
   const extraYears = Math.max(0, yearCount - 1);
   const addOnCents = multiYearAddonCents(yearCount);
   const yearsLabel = taxYears.join(", ");
-  const llcLine = llcName ?? "(LLC name pending)";
+  const llcLine = llcName ?? t("orderConfirmation.llcLine");
   const hasPdf = !!pdfBytes && pdfBytes.byteLength > 0;
 
   // ----- Post-purchase sequencing -----
   // Deadline line, shown high in the email so the customer can sanity-check
   // that what they just bought lands before the date they were worried about.
   const dueDateHtml = dueDateText
-    ? `<p style="margin:0 0 12px;color:${EMAIL_STYLES.slate};line-height:1.6;font-size:14px;">
-         <strong style="color:${EMAIL_STYLES.ink};">Your filing deadline:</strong> ${escapeHtml(dueDateText)} — we prepare and file well before this.
-       </p>`
+    ? `<p style="margin:0 0 12px;color:${EMAIL_STYLES.slate};line-height:1.6;font-size:14px;">${t("orderConfirmation.dueDateHtml", { tag0: "<strong style=\"color:" + (EMAIL_STYLES.ink) + ";\">", tag1: "</strong>", v2: escapeHtml(dueDateText) })}</p>`
     : "";
   const filingStatusNoticeText = requiresReasonableCause
-    ? "This return is being filed after its due date. We include a reasonable-cause statement explaining why."
+    ? t("orderConfirmation.filingStatusNoticeText2")
     : extensionUnclear
-      ? "We are checking whether an extension was filed for this year. We will confirm before anything is sent."
+      ? t("orderConfirmation.filingStatusNoticeText")
       : "";
   const expressReviewHtml = isExpress
-    ? `<div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-left:4px solid ${EMAIL_STYLES.brand};border-radius:8px;padding:12px 16px;margin:0 0 12px;color:${EMAIL_STYLES.ink};font-size:14px;line-height:1.6;">
-         <strong>Express order:</strong> your reviewed filing package will be ready for you to check and sign in under 3 days from your order. We will email you as soon as it is ready.
-       </div>`
+    ? `<div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-left:4px solid ${EMAIL_STYLES.brand};border-radius:8px;padding:12px 16px;margin:0 0 12px;color:${EMAIL_STYLES.ink};font-size:14px;line-height:1.6;">${t("orderConfirmation.expressReviewHtml", { tag0: "<strong>", tag1: "</strong>" })}</div>`
     : "";
   const filingStatusNoticeHtml = filingStatusNoticeText
     ? `<p style="margin:0 0 12px;color:${EMAIL_STYLES.slate};line-height:1.6;font-size:14px;">${filingStatusNoticeText}</p>`
@@ -612,37 +645,29 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   // Amber warning — FINAL RETURNS ONLY, and deliberately the loudest block in
   // the "what happens next" section.
   const einWarningHtml = isFinalReturn
-    ? `<div style="background:${EMAIL_STYLES.amberBg};border:1px solid ${EMAIL_STYLES.amberBorder};border-radius:8px;padding:14px 18px;margin:0 0 16px;color:${EMAIL_STYLES.amber};font-size:14px;line-height:1.6;">
-         <strong style="display:block;margin:0 0 6px;color:${EMAIL_STYLES.amberDark};font-size:15px;">Before you close anything else</strong>
-         Do not sign any EIN cancellation letter, and don't mark your closure task complete with your formation service, until we send you the fax transmission confirmation. Cancelling the EIN before the filing is transmitted can cause the IRS to reject or misfile your final return.
-       </div>`
+    ? `<div style="background:${EMAIL_STYLES.amberBg};border:1px solid ${EMAIL_STYLES.amberBorder};border-radius:8px;padding:14px 18px;margin:0 0 16px;color:${EMAIL_STYLES.amber};font-size:14px;line-height:1.6;">${t("orderConfirmation.einWarningHtml", { tag0: "<strong style=\"display:block;margin:0 0 6px;color:" + (EMAIL_STYLES.amberDark) + ";font-size:15px;\">", tag1: "</strong>" })}</div>`
     : "";
 
   const nextImportantHtml = `
     <!-- What happens next — important -->
-    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next — important</p>
+    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">${t("orderConfirmation.nextImportantHtml")}</p>
     ${einWarningHtml}
-    <div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;padding:14px 18px;margin:0 0 12px;color:${EMAIL_STYLES.slate};font-size:14px;line-height:1.6;">
-      <strong style="display:block;margin:0 0 6px;color:${EMAIL_STYLES.ink};">Your proof of filing</strong>
-      The IRS does not send an acknowledgment for Form 5472. Your proof is the timestamped fax transmission report plus your filed copy — we email both to you at no charge once transmission completes.
-    </div>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.6;">
-      Keep your filed copy and the transmission report with your LLC records for at least six years.
-    </p>
+    <div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;padding:14px 18px;margin:0 0 12px;color:${EMAIL_STYLES.slate};font-size:14px;line-height:1.6;">${t("orderConfirmation.nextImportantHtml2", { tag0: "<strong style=\"display:block;margin:0 0 6px;color:" + (EMAIL_STYLES.ink) + ";\">", tag1: "</strong>" })}</div>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.6;">${t("orderConfirmation.nextImportantHtml3")}</p>
   `;
 
   // Fax delivery is included on every tier — the row just states that
   // explicitly so the customer can see what they got.
-  const faxFeeRowHtml = `<tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">IRS fax delivery</td><td align="right" style="padding:4px 0;">Included</td></tr>`;
+  const faxFeeRowHtml = `<tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">${t("orderConfirmation.faxFeeRowHtml")}</td><td align="right" style="padding:4px 0;">${t("orderConfirmation.faxFeeRowHtml2")}</td></tr>`;
   const multiYearRowHtml = extraYears > 0
-    ? `<tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">+ ${extraYears} additional year${extraYears === 1 ? "" : "s"}</td><td align="right" style="padding:4px 0;">${formatUsd(addOnCents)}</td></tr>`
+    ? `<tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">${t("orderConfirmation.multiYearRowHtml", { v1: extraYears, v2: extraYears === 1 ? "" : t("shared.pluralSuffix") })}</td><td align="right" style="padding:4px 0;">${formatUsd(addOnCents)}</td></tr>`
     : "";
 
-  const step3Html = `<li style="margin-bottom:6px;">We fax it to the IRS Ogden PIN Unit and send you a delivery confirmation email.</li>`;
-  const step3Text = `  4. We fax it to the IRS Ogden PIN Unit and email you confirmation.`;
+  const step3Html = `<li style="margin-bottom:6px;">${t("orderConfirmation.body2")}</li>`;
+  const step3Text = t("orderConfirmation.body");
 
   // Release gate: the client sees nothing until staff release the package.
-  const introCopy = ORDER_CONFIRMATION_INTRO;
+  const introCopy = t("orderConfirmation.intro");
 
   const bodyHtml = `
     <p style="margin:0 0 12px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
@@ -651,79 +676,69 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     ${expressReviewHtml}
     ${dueDateHtml}
     ${filingStatusNoticeHtml}
-    <p style="margin:0 0 20px;color:${EMAIL_STYLES.muted};font-size:13px;">
-      Save <strong>donotreply@form5472prep.com</strong> to your contacts to make sure our filing emails reach your inbox.
-    </p>
+    <p style="margin:0 0 20px;color:${EMAIL_STYLES.muted};font-size:13px;">${t("orderConfirmation.bodyHtml2", { tag0: "<strong>", tag1: "</strong>" })}</p>
 
 
     <!-- Receipt -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;margin:0 0 24px;">
-      <tr><td style="padding:16px 20px;border-bottom:1px solid ${EMAIL_STYLES.border};font-size:13px;color:${EMAIL_STYLES.muted};text-transform:uppercase;letter-spacing:0.04em;font-weight:600;">Order receipt</td></tr>
+      <tr><td style="padding:16px 20px;border-bottom:1px solid ${EMAIL_STYLES.border};font-size:13px;color:${EMAIL_STYLES.muted};text-transform:uppercase;letter-spacing:0.04em;font-weight:600;">${t("orderConfirmation.bodyHtml3")}</td></tr>
       <tr><td style="padding:14px 20px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:${EMAIL_STYLES.ink};">
           <tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">LLC</td><td align="right" style="padding:4px 0;">${escapeHtml(llcLine)}</td></tr>
-          <tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">Tax year${taxYears.length > 1 ? "s" : ""}</td><td align="right" style="padding:4px 0;">${escapeHtml(yearsLabel)}</td></tr>
-          <tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">Plan</td><td align="right" style="padding:4px 0;">${escapeHtml(tierLabel)} — ${tierPrice}</td></tr>
+          <tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">${t("orderConfirmation.bodyHtml4", { v14: taxYears.length > 1 ? t("shared.pluralSuffix") : "" })}</td><td align="right" style="padding:4px 0;">${escapeHtml(yearsLabel)}</td></tr>
+          <tr><td style="padding:4px 0;color:${EMAIL_STYLES.muted};">${t("orderConfirmation.bodyHtml5")}</td><td align="right" style="padding:4px 0;">${escapeHtml(tierLabel)} — ${tierPrice}</td></tr>
           ${faxFeeRowHtml}
           ${multiYearRowHtml}
-          <tr><td style="padding:10px 0 4px;border-top:1px solid ${EMAIL_STYLES.border};font-weight:600;">Total paid</td><td align="right" style="padding:10px 0 4px;border-top:1px solid ${EMAIL_STYLES.border};font-weight:600;">${formatUsd(amountPaidCents)}</td></tr>
+          <tr><td style="padding:10px 0 4px;border-top:1px solid ${EMAIL_STYLES.border};font-weight:600;">${t("orderConfirmation.bodyHtml6")}</td><td align="right" style="padding:10px 0 4px;border-top:1px solid ${EMAIL_STYLES.border};font-weight:600;">${formatUsd(amountPaidCents)}</td></tr>
         </table>
       </td></tr>
     </table>
 
     <!-- What happens next -->
-    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next</p>
+    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">${t("orderConfirmation.bodyHtml7")}</p>
     <ol style="margin:0 0 24px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      <li style="margin-bottom:6px;">We generate your filled <strong>Form 5472 + pro forma Form 1120</strong> (≈ 2 min).</li>
+      <li style="margin-bottom:6px;">${t("orderConfirmation.bodyHtml8", { tag0: "<strong>", tag1: "</strong>" })}</li>
       <li style="margin-bottom:6px;">${reviewStepText}</li>
-      <li style="margin-bottom:6px;">After approval, we email you a secure link to sign digitally.</li>
+      <li style="margin-bottom:6px;">${t("orderConfirmation.bodyHtml9")}</li>
       ${step3Html}
     </ol>
 
     ${nextImportantHtml}
 
-    ${receiptUrl ? `<p style="margin:0 0 20px;font-size:13px;color:${EMAIL_STYLES.muted};">A detailed payment receipt is also available on <a href="${receiptUrl}" style="color:${EMAIL_STYLES.brand};text-decoration:none;">Stripe</a>.</p>` : ""}
+    ${receiptUrl ? `<p style="margin:0 0 20px;font-size:13px;color:${EMAIL_STYLES.muted};">${t("orderConfirmation.bodyHtml", { tag0: "<a href=\"" + (receiptUrl) + "\" style=\"color:" + (EMAIL_STYLES.brand) + ";text-decoration:none;\">", tag1: "</a>" })}</p>` : ""}
   `;
 
-  const faxFeeTextLine = `  Fax delivery:  Included\n`;
+  const faxFeeTextLine = t("orderConfirmation.faxFeeTextLine");
   const multiYearTextLine = extraYears > 0
-    ? `  + ${extraYears} extra year${extraYears === 1 ? "" : "s"}: ${formatUsd(addOnCents)}\n`
+    ? t("orderConfirmation.multiYearTextLine", { v0: extraYears, v1: extraYears === 1 ? "" : t("shared.pluralSuffix"), v2: formatUsd(addOnCents) })
     : "";
 
 
   const nextStepsText = hasPdf
-    ? `What to do next:\n` +
-      `  1. Open your portal: ${portalLink}\n` +
+    ? t("orderConfirmation.nextStepsText4") +
+      t("orderConfirmation.nextStepsText3", { v0: portalLink }) +
       `  2. ${reviewStepPlain}\n` +
-      `  3. After approval, we email you a secure link to sign digitally.\n` +
+      t("orderConfirmation.nextStepsText") +
       step3Text + "\n"
-    : `What happens next:\n` +
-      `  1. We generate your Form 5472 + pro forma 1120 (≈ 2 min).\n` +
+    : t("orderConfirmation.nextStepsText2") +
       `  2. ${reviewStepPlain}\n` +
-      `  3. After approval, we email you a secure link to sign digitally.\n` +
+      t("orderConfirmation.nextStepsText") +
       step3Text + "\n";
 
   // Plain-text mirror of the post-purchase sequencing section above.
   const dueDateLineText = dueDateText
-    ? `Your filing deadline: ${dueDateText} — we prepare and file well before this.\n\n`
+    ? t("orderConfirmation.dueDateLineText", { v0: dueDateText })
     : "";
   const filingStatusNoticeLineText = filingStatusNoticeText
     ? `${filingStatusNoticeText}\n\n`
     : "";
   const nextImportantText =
-    `What happens next — important\n\n` +
+    t("orderConfirmation.nextImportantText7") +
     (isFinalReturn
-      ? `  Before you close anything else\n` +
-        `  Do not sign any EIN cancellation letter, and don't mark your closure task complete\n` +
-        `  with your formation service, until we send you the fax transmission confirmation.\n` +
-        `  Cancelling the EIN before the filing is transmitted can cause the IRS to reject or\n` +
-        `  misfile your final return.\n\n`
+      ? t("orderConfirmation.nextImportantText6")
       : "") +
-    `  Your proof of filing\n` +
-    `  The IRS does not send an acknowledgment for Form 5472. Your proof is the timestamped\n` +
-    `  fax transmission report plus your filed copy — we email both to you at no charge once\n` +
-    `  transmission completes.\n\n` +
-    `  Keep your filed copy and the transmission report with your LLC records for at least six years.\n`;
+    t("orderConfirmation.proofText") +
+    t("orderConfirmation.nextImportantText");
 
   return sendEmail({
     log: { kind: "order_confirmation", filingId: args.filingId ?? null },
@@ -731,38 +746,39 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
     fromName: brand?.name,
     replyTo: brand?.replyTo,
     subject: hasPdf
-      ? "Your Form 5472 filing package is in review"
-      : `Order confirmed — ${brandName} filing (${yearsLabel})`,
+      ? t("orderConfirmation.subject2")
+      : t("orderConfirmation.subject", { v0: brandName, v1: yearsLabel }),
     text: customerText(
       salutation,
-      `Thank you for your order. ${ORDER_CONFIRMATION_INTRO}\n\n` +
+      t("orderConfirmation.text8", { v0: ORDER_CONFIRMATION_INTRO }) +
       (isExpress ? `${expressReviewText}\n\n` : "") +
       dueDateLineText +
       filingStatusNoticeLineText +
-      `Tip: save donotreply@form5472prep.com to your contacts so our emails reach your inbox.\n\n` +
-      `Order summary:\n` +
-      `  LLC:           ${llcLine}\n` +
-      `  Tax year(s):   ${yearsLabel}\n` +
-      `  Plan:          ${tierLabel} — ${tierPrice}\n` +
+      t("orderConfirmation.text7") +
+      t("orderConfirmation.text6") +
+      t("orderConfirmation.text5", { v0: llcLine }) +
+      t("orderConfirmation.text4", { v0: yearsLabel }) +
+      t("orderConfirmation.text3", { v0: tierLabel, v1: tierPrice }) +
       faxFeeTextLine +
       multiYearTextLine +
-      `  Total paid:    ${formatUsd(amountPaidCents)}\n` +
+      t("orderConfirmation.text2", { v0: formatUsd(amountPaidCents) }) +
       "\n" +
       nextStepsText + "\n" +
       nextImportantText + "\n" +
-      `Open your filing: ${portalLink}`,
+      t("orderConfirmation.text", { v0: portalLink }),
       undefined,
       brand,
+      args.locale,
     ),
-    html: customerShell({
-      heading: hasPdf ? "Your forms are being reviewed" : "Order confirmed",
+    html: customerShell({ locale: args.locale,
+      heading: hasPdf ? t("orderConfirmation.heading2") : t("orderConfirmation.heading"),
       salutation,
       bodyHtml,
       // The package is generated, but signing opens only after accountant
       // review. Send customers to the filing overview, not the signature pad.
       cta: hasPdf
-        ? { label: "Open my filing", url: portalLinkWithNext(portalLink, `/filings/${args.filingId ?? ""}`) }
-        : { label: "Open my filing", url: portalLink },
+        ? { label: t("orderConfirmation.label"), url: portalLinkWithNext(portalLink, `/filings/${args.filingId ?? ""}`) }
+        : { label: t("orderConfirmation.label"), url: portalLink },
       brand,
     }),
   });
@@ -775,6 +791,7 @@ export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
 // confirm it's correct, and sign — or ask for a change instead.
 
 export async function sendReadyToSignEmail(args: {
+  locale?: string | null;
   email: string;
   recipientName?: string | null;
   filingId: string;
@@ -788,35 +805,34 @@ export async function sendReadyToSignEmail(args: {
   // Admin "Send signing reminder": same email, reminder subject + log kind.
   reminder?: boolean;
 }) {
-  const salutation = firstNameFrom(args.recipientName) ?? "there";
+  const t = safeEmailTranslator(args.locale);
+  const salutation = firstNameFrom(args.recipientName) ?? t("readyToSign.salutation");
   const yearsLabel = args.taxYears.join(", ");
-  const llcLine = args.llcName ?? "your filing";
-  const yearsSuffix = yearsLabel ? `, tax year${args.taxYears.length === 1 ? "" : "s"} ${yearsLabel}` : "";
+  const llcLine = args.llcName ?? t("readyToSign.llcLine");
+  const yearsSuffix = yearsLabel ? t("readyToSign.yearsSuffix", { v0: args.taxYears.length === 1 ? "" : t("shared.pluralSuffix"), v1: yearsLabel }) : "";
   const signLink = portalLinkWithNext(args.portalLink, `/filings/${args.filingId}/sign`);
   const subject = args.resign
-    ? "Updated forms: please check and sign again"
+    ? t("readyToSign.subject2")
     : args.reminder
-      ? "Reminder: please check and sign your forms"
-      : "Please check and sign your forms";
+      ? t("readyToSign.subject")
+      : t("readyToSign.heading");
   const intro = args.resign
-    ? `We've updated your forms for ${llcLine}${yearsSuffix} after review. Because the package changed, we need you to check the new version and sign it again.`
-    : `${args.reminder ? "A quick reminder: your forms are still waiting for your signature, and we can't fax them to the IRS until you sign. " : ""}A PTIN-holding tax accountant has reviewed your forms for ${llcLine}${yearsSuffix}. Before we fax them to the IRS, please check that everything is correct.`;
+    ? t("readyToSign.intro3", { v0: llcLine, v1: yearsSuffix })
+    : t("readyToSign.intro2", { v0: args.reminder ? t("readyToSign.intro") : "", v1: llcLine, v2: yearsSuffix });
   const checks = [
-    "LLC name, EIN and address",
-    "Your name, address and foreign tax ID",
-    "The amounts and the tax year(s)",
+    t("readyToSign.checks3"),
+    t("readyToSign.checks2"),
+    t("readyToSign.checks"),
   ];
   const bodyHtml = `
     <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       ${escapeHtml(intro)}
     </p>
-    <p style="margin:0 0 8px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Please check:</p>
+    <p style="margin:0 0 8px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("readyToSign.bodyHtml")}</p>
     <ul style="margin:0 0 14px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       ${checks.map((c) => `<li>${escapeHtml(c)}</li>`).join("")}
     </ul>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      If everything is correct, sign digitally on the same page. If something needs changing, tell us there (or reply to this email) and we'll fix it before anything is sent.
-    </p>`;
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("readyToSign.bodyHtml2")}</p>`;
 
   return sendEmail({
     log: { kind: args.reminder ? "sign_reminder" : "ready_to_sign", filingId: args.filingId },
@@ -827,17 +843,18 @@ export async function sendReadyToSignEmail(args: {
     text: customerText(
       salutation,
       `${intro}\n\n` +
-      `Please check:\n${checks.map((c) => `- ${c}`).join("\n")}\n\n` +
-      `If everything is correct, sign digitally on the same page. If something needs changing, tell us there (or reply to this email) and we'll fix it before anything is sent.\n\n` +
-      `Check and sign your forms: ${signLink}`,
+      t("readyToSign.text3", { v0: checks.map((c) => `- ${c}`).join("\n") }) +
+      t("readyToSign.text2") +
+      t("readyToSign.text", { v0: signLink }),
       undefined,
       args.brand,
+      args.locale,
     ),
-    html: customerShell({
-      heading: args.resign ? "Please check your updated forms" : "Please check and sign your forms",
+    html: customerShell({ locale: args.locale,
+      heading: args.resign ? t("readyToSign.heading2") : t("readyToSign.heading"),
       salutation,
       bodyHtml,
-      cta: { label: "Check & sign my forms", url: signLink },
+      cta: { label: t("readyToSign.label"), url: signLink },
       brand: args.brand,
     }),
   });
@@ -851,6 +868,7 @@ export async function sendReadyToSignEmail(args: {
 // Admin "Ask client for SSN": a sign-in link straight to the secure box on the
 // order page (#ssn). Partner-branded like every other client email (S8).
 export async function sendOwnerSsnRequestEmail(args: {
+  locale?: string | null;
   email: string;
   recipientName?: string | null;
   filingId: string;
@@ -859,18 +877,18 @@ export async function sendOwnerSsnRequestEmail(args: {
   portalLink: string;
   brand?: EmailBrand;
 }) {
-  const salutation = firstNameFrom(args.recipientName) ?? "there";
+  const t = safeEmailTranslator(args.locale);
+  const salutation = firstNameFrom(args.recipientName) ?? t("ownerSsnRequest.salutation");
   const yearsLabel = args.taxYears.join(", ");
-  const llcLine = args.llcName ?? "your LLC";
-  const yearsSuffix = yearsLabel ? ` (tax year${args.taxYears.length === 1 ? "" : "s"} ${yearsLabel})` : "";
+  const llcLine = args.llcName ?? t("ownerSsnRequest.llcLine");
+  const yearsSuffix = yearsLabel ? t("ownerSsnRequest.yearsSuffix", { v0: args.taxYears.length === 1 ? "" : t("shared.pluralSuffix"), v1: yearsLabel }) : "";
   const link = portalLinkWithNext(args.portalLink, `/filings/${args.filingId}#ssn`);
   const intro =
-    `To finish the Form 5472 for ${llcLine}${yearsSuffix}, we need your U.S. Social Security Number (SSN). ` +
-    "It goes on the form as your U.S. identifying number.";
+    t("ownerSsnRequest.intro2", { v0: llcLine, v1: yearsSuffix }) +
+    t("ownerSsnRequest.intro");
   const how =
-    "Please do not send it by email. Use the secure box on your order page instead: " +
-    "it is encrypted as soon as you save it and is used only on your IRS forms.";
-  const noSsn = "If you don't have an SSN, just reply to let us know — nothing else is needed.";
+    t("ownerSsnRequest.how");
+  const noSsn = t("ownerSsnRequest.noSsn");
   const bodyHtml = `
     <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${escapeHtml(intro)}</p>
     <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${escapeHtml(how)}</p>
@@ -881,18 +899,19 @@ export async function sendOwnerSsnRequestEmail(args: {
     to: args.email,
     fromName: args.brand?.name,
     replyTo: args.brand?.replyTo,
-    subject: "Please add your U.S. Social Security Number securely",
+    subject: t("ownerSsnRequest.subject"),
     text: customerText(
       salutation,
-      `${intro}\n\n${how}\n\n${noSsn}\n\nAdd your SSN securely: ${link}`,
+      t("ownerSsnRequest.text", { v0: intro, v1: how, v2: noSsn, v3: link }),
       undefined,
       args.brand,
+      args.locale,
     ),
-    html: customerShell({
-      heading: "Please add your SSN securely",
+    html: customerShell({ locale: args.locale,
+      heading: t("ownerSsnRequest.heading"),
       salutation,
       bodyHtml,
-      cta: { label: "Add my SSN securely", url: link },
+      cta: { label: t("ownerSsnRequest.label"), url: link },
       brand: args.brand,
     }),
   });
@@ -950,15 +969,16 @@ export type FaxProof = {
   to?: string | null;
 };
 
-function formatFaxProofRows(proof: FaxProof): string {
+function formatFaxProofRows(proof: FaxProof, locale?: string | null): string {
+  const t = safeEmailTranslator(locale);
   const rows: Array<[string, string]> = [
-    ["IRS fax number", proof.to ?? "+1 (855) 887-7737 (Ogden PIN Unit)"],
-    ["Delivered at", new Date(proof.deliveredAt).toUTCString()],
+    [t("shared.faxNumber"), proof.to ?? "+1 (855) 887-7737 (Ogden PIN Unit)"],
+    [t("shared.deliveredAt"), emailDate(new Date(proof.deliveredAt).toUTCString(), locale, true)],
   ];
-  if (proof.pageCount != null) rows.push(["Pages transmitted", String(proof.pageCount)]);
-  if (proof.durationSecs != null) rows.push(["Transmission duration", `${proof.durationSecs}s`]);
-  if (proof.from) rows.push(["Sent from", proof.from]);
-  rows.push(["Telnyx confirmation ID", proof.faxId]);
+  if (proof.pageCount != null) rows.push([t("shared.pages"), String(proof.pageCount)]);
+  if (proof.durationSecs != null) rows.push([t("shared.duration"), `${proof.durationSecs}s`]);
+  if (proof.from) rows.push([t("shared.sentFrom"), proof.from]);
+  rows.push([t("shared.confirmationId"), proof.faxId]);
 
   return rows
     .map(
@@ -1004,6 +1024,7 @@ export function trustpilotInvite(args: {
 }
 
 export async function sendFaxDeliveredEmail(args: {
+  locale?: string | null;
   email: string;
   recipientName?: string | null;
   llcName: string | null;
@@ -1031,6 +1052,7 @@ export async function sendFaxDeliveredEmail(args: {
   // automatic first delivery email sets this — admin resends don't.
   reviewInvite?: boolean;
 }) {
+  const t = safeEmailTranslator(args.locale);
   const { email, recipientName, llcName, taxYears, portalLink, proof, signedPdfBytes, receiptPdfBytes, brand, isFinalReturn } = args;
   const attachCopy = !!(!args.ownerSsnLast4 && !args.ownerSsnCiphertext && signedPdfBytes && signedPdfBytes.byteLength > 0 && signedPdfBytes.byteLength <= MAX_FAX_COPY_BYTES);
   const invite = args.reviewInvite && !attachCopy
@@ -1040,18 +1062,18 @@ export async function sendFaxDeliveredEmail(args: {
   const documentsLink = args.filingId
     ? portalLinkWithNext(portalLink, `/filings/${args.filingId}#documents`)
     : portalLink;
-  const salutation = firstNameFrom(recipientName) ?? "there";
+  const salutation = firstNameFrom(recipientName) ?? t("faxDelivered.salutation");
   const yearsLabel = taxYears.join(", ");
-  const llcLine = llcName ?? "your filing";
+  const llcLine = llcName ?? t("faxDelivered.llcLine");
   const latestYear = taxYears.length ? Math.max(...taxYears) : null;
   const nextTaxYear = latestYear != null ? latestYear + 1 : null;
-  const nextDueDateLabel = nextTaxYear != null ? formatDueDate(filingDueDateUtc(nextTaxYear)) : null;
+  const nextDueDateLabel = nextTaxYear != null ? emailDate(formatDueDate(filingDueDateUtc(nextTaxYear)), args.locale) : null;
 
   const proofTable = proof
     ? `
-      <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Proof of fax</p>
+      <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">${t("faxDelivered.proofTable")}</p>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border-collapse:collapse;">
-        ${formatFaxProofRows(proof)}
+        ${formatFaxProofRows(proof, args.locale)}
       </table>
     `
     : "";
@@ -1061,71 +1083,39 @@ export async function sendFaxDeliveredEmail(args: {
       ? ""
       : isFinalReturn
         ? `
-    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Final return</p>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      Because this filing was submitted as a final return for a dissolved entity, no further Form 5472
-      filings are required provided the company does not resume activity. Please retain this message,
-      the IRS Fax Transmission Receipt, and the filed package with your permanent tax records for at
-      least six years.
-    </p>
+    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">${t("faxDelivered.closingHtml4")}</p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">${t("faxDelivered.closingHtml5")}</p>
   `
         : `
-    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">Your next filing obligation</p>
-    <p style="margin:0 0 12px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      Form 5472 remains an annual requirement for as long as <strong>${escapeHtml(llcLine)}</strong>
-      remains a foreign-owned U.S. entity. The next return covers tax year ${escapeHtml(String(nextTaxYear))}
-      and is due on ${escapeHtml(nextDueDateLabel)}. Late or missed filings carry a statutory penalty of
-      <strong>$25,000 per return</strong>, so the date is worth noting now.
-    </p>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      We will send a reminder in <strong>the second week of January ${escapeHtml(String(nextTaxYear + 1))}</strong>,
-      giving over three months' notice before the deadline, and a further reminder if the filing remains
-      outstanding. Because company and ownership details are retained on file, a returning filing takes
-      about five minutes.
-    </p>
+    <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">${t("faxDelivered.closingHtml")}</p>
+    <p style="margin:0 0 12px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">${t("faxDelivered.closingHtml2", { tag0: "<strong>", tag1: "</strong>", tag2: "<strong>", tag3: "</strong>", v2: escapeHtml(llcLine), v3: escapeHtml(String(nextTaxYear)), v4: escapeHtml(nextDueDateLabel) })}</p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">${t("faxDelivered.closingHtml3", { tag0: "<strong>", tag1: "</strong>", v6: escapeHtml(String(nextTaxYear + 1)) })}</p>
   `;
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      We are pleased to confirm that your signed Form 5472 and pro forma Form 1120 for
-      <strong>${escapeHtml(llcLine)}</strong> (tax year${taxYears.length > 1 ? "s" : ""}
-      ${escapeHtml(yearsLabel)}) were successfully faxed to the IRS Ogden PIN Unit.
-    </p>
-    <div style="background:${EMAIL_STYLES.greenBg};border:1px solid ${EMAIL_STYLES.greenBorder};border-radius:8px;padding:14px 18px;margin:0 0 20px;color:${EMAIL_STYLES.greenDark};font-size:14px;">
-      <strong>✓ Delivered to the IRS</strong> — please retain this message with your permanent tax records as evidence of timely submission.
-    </div>
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("faxDelivered.bodyHtml4", { tag0: "<strong>", tag1: "</strong>", v1: escapeHtml(llcLine), v2: taxYears.length > 1 ? t("shared.pluralSuffix") : "", v3: escapeHtml(yearsLabel) })}</p>
+    <div style="background:${EMAIL_STYLES.greenBg};border:1px solid ${EMAIL_STYLES.greenBorder};border-radius:8px;padding:14px 18px;margin:0 0 20px;color:${EMAIL_STYLES.greenDark};font-size:14px;">${t("faxDelivered.bodyHtml5", { tag0: "<strong>", tag1: "</strong>" })}</div>
     ${proofTable}
-    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">Download the exact forms we faxed and your fax receipt from your portal.</p>
-    ${attachCopy ? `<p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">A copy of your signed forms is attached to this email.</p>` : ""}
-    ${attachReceipt ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      A timestamped <strong>IRS Fax Transmission Receipt</strong> is attached to this email and saved
-      in your portal. Please keep it with your tax records. It shows exactly
-      when your package reached the IRS, if the IRS ever asks.
-    </p>` : receiptPdfBytes ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      A timestamped <strong>IRS Fax Transmission Receipt</strong> is saved in your portal. Please
-      download it and keep it with your tax records. It shows exactly when your package
-      reached the IRS, if the IRS ever asks.
-    </p>` : ""}
-    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      The IRS does not send acknowledgments for faxed Form 5472 filings. You can re-download the
-      receipt and your filing package anytime from your portal.
-    </p>
+    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">${t("faxDelivered.bodyHtml6")}</p>
+    ${attachCopy ? `<p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">${t("faxDelivered.bodyHtml")}</p>` : ""}
+    ${attachReceipt ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">${t("faxDelivered.bodyHtml3", { tag0: "<strong>", tag1: "</strong>" })}</p>` : receiptPdfBytes ? `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">${t("faxDelivered.bodyHtml2", { tag0: "<strong>", tag1: "</strong>" })}</p>` : ""}
+    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">${t("faxDelivered.bodyHtml7")}</p>
     ${closingHtml}
   `;
 
   const proofText = proof
-    ? `\nProof of fax\n` +
-      `  IRS fax number: ${proof.to ?? "+1 (855) 887-7737 (Ogden PIN Unit)"}\n` +
-      `  Delivered at:   ${new Date(proof.deliveredAt).toUTCString()}\n` +
-      (proof.pageCount != null ? `  Pages:          ${proof.pageCount}\n` : "") +
-      (proof.durationSecs != null ? `  Duration:       ${proof.durationSecs}s\n` : "") +
-      (proof.from ? `  Sent from:      ${proof.from}\n` : "") +
-      `  Confirmation:   ${proof.faxId}\n`
+    ? t("faxDelivered.proofText7") +
+      t("faxDelivered.proofText6", { v0: proof.to ?? "+1 (855) 887-7737 (Ogden PIN Unit)" }) +
+      t("faxDelivered.proofText5", { v0: emailDate(new Date(proof.deliveredAt).toUTCString(), args.locale, true) }) +
+      (proof.pageCount != null ? t("faxDelivered.proofText4", { v0: proof.pageCount }) : "") +
+      (proof.durationSecs != null ? t("faxDelivered.proofText3", { v0: proof.durationSecs }) : "") +
+      (proof.from ? t("faxDelivered.proofText2", { v0: proof.from }) : "") +
+      t("faxDelivered.proofText", { v0: proof.faxId })
     : "";
   const receiptText = attachReceipt
-    ? `A timestamped IRS Fax Transmission Receipt is attached to this email and saved in your portal. Please keep it with your tax records. It shows exactly when your package reached the IRS, if the IRS ever asks.\n\n`
+    ? t("faxDelivered.receiptText2")
     : receiptPdfBytes
-      ? `A timestamped IRS Fax Transmission Receipt is saved in your portal. Please download it and keep it with your tax records. It shows exactly when your package reached the IRS, if the IRS ever asks.\n\n`
+      ? t("faxDelivered.receiptText")
       : "";
   // Same filename scheme as the admin copy (sendFaxDeliveredAdminEmail).
   const receiptAttachment = attachReceipt && receiptPdfBytes
@@ -1139,39 +1129,39 @@ export async function sendFaxDeliveredEmail(args: {
     nextTaxYear == null || nextDueDateLabel == null
       ? ""
       : isFinalReturn
-        ? `Final return\n\n` +
-          `Because this filing was submitted as a final return for a dissolved entity, no further Form 5472 filings are required provided the company does not resume activity. Please retain this message, the IRS Fax Transmission Receipt, and the filed package with your permanent tax records for at least six years.\n\n`
-        : `Your next filing obligation\n\n` +
-          `Form 5472 remains an annual requirement for as long as ${llcLine} remains a foreign-owned U.S. entity. The next return covers tax year ${nextTaxYear} and is due on ${nextDueDateLabel}. Late or missed filings carry a statutory penalty of $25,000 per return, so the date is worth noting now.\n\n` +
-          `We will send a reminder in the second week of January ${nextTaxYear + 1}, giving over three months' notice before the deadline, and a further reminder if the filing remains outstanding. Because company and ownership details are retained on file, a returning filing takes about five minutes.\n\n`;
+        ? t("faxDelivered.closingText4")
+        : t("faxDelivered.closingText3") +
+          t("faxDelivered.closingText2", { v0: llcLine, v1: nextTaxYear, v2: nextDueDateLabel }) +
+          t("faxDelivered.closingText", { v0: nextTaxYear + 1 });
 
   return sendEmail({
     log: { kind: args.logKind ?? "fax_delivered", filingId: args.filingId ?? null },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
-    subject: `Confirmation of IRS filing — Form 5472, ${llcLine}, tax year${taxYears.length > 1 ? "s" : ""} ${yearsLabel}`,
+    subject: t("faxDelivered.subject", { v0: llcLine, v1: taxYears.length > 1 ? t("shared.pluralSuffix") : "", v2: yearsLabel }),
     text: customerText(
       salutation,
-      `We are pleased to confirm that your signed Form 5472 and pro forma Form 1120 for ${llcLine} (tax year${taxYears.length > 1 ? "s" : ""} ${yearsLabel}) were successfully faxed to the IRS Ogden PIN Unit.\n\n` +
-      `Delivered to the IRS. Please retain this message with your permanent tax records as evidence of timely submission.\n` +
+      t("faxDelivered.text6", { v0: llcLine, v1: taxYears.length > 1 ? t("shared.pluralSuffix") : "", v2: yearsLabel }) +
+      t("faxDelivered.text5") +
       proofText +
       `\n` +
       receiptText +
-      `Download the exact forms we faxed and your fax receipt from your portal.\n\n` +
-      (attachCopy ? "A copy of your signed forms is attached to this email.\n\n" : "") +
-      `The IRS does not send acknowledgments for faxed Form 5472 filings. You can re-download the receipt and your filing package anytime from your portal.\n\n` +
+      t("faxDelivered.text4") +
+      (attachCopy ? t("faxDelivered.text3") : "") +
+      t("faxDelivered.text2") +
       closingText +
-      `\nDownload your filed documents: ${documentsLink}`,
+      t("faxDelivered.text", { v0: documentsLink }),
       undefined,
       brand,
+      args.locale,
     ),
     html: withTrustpilotSnippet(
-      customerShell({
-        heading: "Your filing was delivered to the IRS",
+      customerShell({ locale: args.locale,
+        heading: t("faxDelivered.heading"),
         salutation,
         bodyHtml,
-        cta: { label: "Download your filed documents", url: documentsLink },
+        cta: { label: t("faxDelivered.label"), url: documentsLink },
         brand,
       }),
       invite?.snippet,
@@ -1468,6 +1458,7 @@ export async function sendFaxReceivedAdminEmail(args: {
 // rapid back-and-forth). Email is intentionally light on content — the
 // portal thread is the source of truth.
 export async function sendNewMessageToCustomerEmail(args: {
+  locale?: string | null;
   filingId?: string;
   email: string;
   recipientName?: string | null;
@@ -1477,20 +1468,16 @@ export async function sendNewMessageToCustomerEmail(args: {
   portalLink: string;
   brand?: EmailBrand;
 }) {
+  const t = safeEmailTranslator(args.locale);
   const { email, recipientName, llcName, taxYears, bodyExcerpt, portalLink, brand } = args;
-  const salutation = firstNameFrom(recipientName) ?? "there";
+  const salutation = firstNameFrom(recipientName) ?? t("newMessageToCustomer.salutation");
   const yearsLabel = taxYears.join(", ");
-  const llcLine = llcName ?? "your filing";
+  const llcLine = llcName ?? t("newMessageToCustomer.llcLine");
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      You have a new message from our team about <strong>${escapeHtml(llcLine)}</strong>
-      (tax year${taxYears.length > 1 ? "s" : ""} ${escapeHtml(yearsLabel)}).
-    </p>
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("newMessageToCustomer.bodyHtml", { tag0: "<strong>", tag1: "</strong>", v1: escapeHtml(llcLine), v2: taxYears.length > 1 ? t("shared.pluralSuffix") : "", v3: escapeHtml(yearsLabel) })}</p>
     <blockquote style="margin:0 0 20px;padding:14px 18px;background:${EMAIL_STYLES.bg};border-left:3px solid ${EMAIL_STYLES.brand};color:${EMAIL_STYLES.ink};font-size:14px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(bodyExcerpt)}</blockquote>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      Open your portal to read the full message and reply.
-    </p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">${t("newMessageToCustomer.bodyHtml2")}</p>
   `;
 
   return sendEmail({
@@ -1498,20 +1485,21 @@ export async function sendNewMessageToCustomerEmail(args: {
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
-    subject: `New message about your filing — ${llcLine}`,
+    subject: t("newMessageToCustomer.subject", { v0: llcLine }),
     text: customerText(
       salutation,
-      `You have a new message from our team about ${llcLine} (${yearsLabel}).\n\n` +
+      t("newMessageToCustomer.text2", { v0: llcLine, v1: yearsLabel }) +
       `${bodyExcerpt}\n\n` +
-      `Open your portal to read and reply: ${portalLink}`,
+      t("newMessageToCustomer.text", { v0: portalLink }),
       undefined,
       brand,
+      args.locale,
     ),
-    html: customerShell({
-      heading: "You have a new message",
+    html: customerShell({ locale: args.locale,
+      heading: t("newMessageToCustomer.heading"),
       salutation,
       bodyHtml,
-      cta: { label: "Open my portal", url: portalLink },
+      cta: { label: t("newMessageToCustomer.label"), url: portalLink },
       brand,
     }),
   });
@@ -1594,6 +1582,7 @@ export async function sendNewApplicationMessageAdminEmail(args: {
 }
 
 export async function sendNewApplicationMessageCustomerEmail(args: {
+  locale?: string | null;
   email: string;
   recipientName?: string | null;
   kind: "EIN" | "ITIN";
@@ -1601,35 +1590,31 @@ export async function sendNewApplicationMessageCustomerEmail(args: {
   bodyExcerpt: string;
   portalLink: string;
 }): Promise<unknown> {
+  const t = safeEmailTranslator(args.locale);
   const { email, recipientName, kind, subjectLabel, bodyExcerpt, portalLink } = args;
-  const salutation = firstNameFrom(recipientName) ?? "there";
+  const salutation = firstNameFrom(recipientName) ?? t("newApplicationMessageCustomer.salutation");
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      You have a new message from our team about your <strong>${escapeHtml(kind)}</strong>
-      application for <strong>${escapeHtml(subjectLabel)}</strong>.
-    </p>
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("newApplicationMessageCustomer.bodyHtml", { tag0: "<strong>", tag1: "</strong>", tag2: "<strong>", tag3: "</strong>", v1: escapeHtml(kind), v2: escapeHtml(subjectLabel) })}</p>
     <blockquote style="margin:0 0 20px;padding:14px 18px;background:${EMAIL_STYLES.bg};border-left:3px solid ${EMAIL_STYLES.brand};color:${EMAIL_STYLES.ink};font-size:14px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(bodyExcerpt)}</blockquote>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-      Open your portal to read the full message and reply.
-    </p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">${t("newApplicationMessageCustomer.bodyHtml2")}</p>
   `;
 
   return sendEmail({
     log: { kind: "application_message_customer" },
     to: email,
-    subject: `New message about your ${kind} application`,
+    subject: t("newApplicationMessageCustomer.subject", { v0: kind }),
     text: customerText(
       salutation,
-      `You have a new message from our team about your ${kind} application for ${subjectLabel}.\n\n` +
+      t("newApplicationMessageCustomer.text2", { v0: kind, v1: subjectLabel }) +
       `${bodyExcerpt}\n\n` +
-      `Open your portal to read and reply: ${portalLink}`,
+      t("newApplicationMessageCustomer.text", { v0: portalLink }), undefined, undefined, args.locale
     ),
-    html: customerShell({
-      heading: "You have a new message",
+    html: customerShell({ locale: args.locale,
+      heading: t("newApplicationMessageCustomer.heading"),
       salutation,
       bodyHtml,
-      cta: { label: "Open my portal", url: portalLink },
+      cta: { label: t("newApplicationMessageCustomer.label"), url: portalLink },
     }),
   });
 }
@@ -1637,6 +1622,7 @@ export async function sendNewApplicationMessageCustomerEmail(args: {
 // ---------- 6. January reminder (annual marketing email) ----------
 
 type ReminderArgs = {
+  locale?: string | null;
   email: string;
   taxYearToFile: number; // e.g. 2025 if reminding in January 2026 about the 2025 tax year
   previousLlcNames: string[]; // distinct LLCs the customer has filed for before
@@ -1645,48 +1631,39 @@ type ReminderArgs = {
 };
 
 export async function sendJanuaryReminderEmail(args: ReminderArgs) {
+  const t = safeEmailTranslator(args.locale);
   const { email, taxYearToFile, previousLlcNames, startLink, unsubscribeUrl } = args;
   // Shared rule owns the date — never a hardcoded April 15. Prospect mail, so
   // there are no extension facts to apply: this is the original due date.
-  const deadline = formatDueDate(filingDueDateUtc(taxYearToFile));
+  const deadline = emailDate(formatDueDate(filingDueDateUtc(taxYearToFile)), args.locale);
   const llcLine =
     previousLlcNames.length === 0
-      ? "your foreign-owned LLC"
+      ? t("januaryReminder.llcLine2")
       : previousLlcNames.length === 1
         ? previousLlcNames[0]
-        : `${previousLlcNames.slice(0, -1).join(", ")} and ${previousLlcNames[previousLlcNames.length - 1]}`;
+        : t("januaryReminder.llcLine", { v0: previousLlcNames.slice(0, -1).join(", "), v1: previousLlcNames[previousLlcNames.length - 1] });
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      The new filing season is here. The IRS requires foreign-owned US LLCs to file
-      <strong>Form 5472 + pro forma Form 1120</strong> every year, even if there was no income.
-    </p>
-    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      For ${escapeHtml(llcLine)}, your <strong>${taxYearToFile}</strong> tax year filing is due by
-      <strong>${deadline}</strong>. Start now and have it filed in ~15 minutes —
-      we'll pull your previous answers forward so you don't re-enter the LLC details.
-    </p>
-    <div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;padding:14px 18px;margin:0 0 24px;color:${EMAIL_STYLES.slate};font-size:14px;line-height:1.5;">
-      <strong style="color:${EMAIL_STYLES.ink};">Why now?</strong> Filing in January means no last-minute rush
-      and no risk of IRS late-filing penalties on Form 5472.
-    </div>
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("januaryReminder.bodyHtml", { tag0: "<strong>", tag1: "</strong>" })}</p>
+    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("januaryReminder.bodyHtml2", { tag0: "<strong>", tag1: "</strong>", tag2: "<strong>", tag3: "</strong>", v2: escapeHtml(llcLine), v3: taxYearToFile, v4: deadline })}</p>
+    <div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;padding:14px 18px;margin:0 0 24px;color:${EMAIL_STYLES.slate};font-size:14px;line-height:1.5;">${t("januaryReminder.bodyHtml3", { tag0: "<strong style=\"color:" + (EMAIL_STYLES.ink) + ";\">", tag1: "</strong>" })}</div>
   `;
 
   return sendEmail({
     log: { kind: "january_reminder" },
     to: email,
-    subject: `Time to file your ${taxYearToFile} Form 5472`,
+    subject: t("januaryReminder.heading", { v0: taxYearToFile }),
     text:
-      `Hello there,\n\nYour ${taxYearToFile} Form 5472 + pro forma 1120 for ${llcLine} is due by ${deadline}.\n\n` +
-      `File now in ~15 minutes — we'll pull your previous answers forward: ${startLink}\n\n` +
-      `Filing early avoids IRS late-filing penalties on Form 5472.\n\n` +
-      `Thank you,\nThe Form5472 Prep team\n\n` +
-      `Unsubscribe from filing reminders: ${unsubscribeUrl}`,
-    html: customerShell({
-      heading: `Time to file your ${taxYearToFile} Form 5472`,
-      salutation: "there",
+      t("januaryReminder.text5", { v0: taxYearToFile, v1: llcLine, v2: deadline }) +
+      t("januaryReminder.text4", { v0: startLink }) +
+      t("januaryReminder.text3") +
+      t("januaryReminder.text2") +
+      t("januaryReminder.text", { v0: unsubscribeUrl }),
+    html: customerShell({ locale: args.locale,
+      heading: t("januaryReminder.heading", { v0: taxYearToFile }),
+      salutation: t("januaryReminder.salutation"),
       bodyHtml,
-      cta: { label: `File my ${taxYearToFile} return`, url: startLink },
+      cta: { label: t("januaryReminder.label", { v0: taxYearToFile }), url: startLink },
       unsubscribeUrl,
     }),
     headers: {
@@ -1699,48 +1676,40 @@ export async function sendJanuaryReminderEmail(args: ReminderArgs) {
 // ---------- 6. March deadline reminder (second touch) ----------
 
 export async function sendMarchReminderEmail(args: ReminderArgs) {
+  const t = safeEmailTranslator(args.locale);
   const { email, taxYearToFile, previousLlcNames, startLink, unsubscribeUrl } = args;
   // Never hardcode April 15: the shared rule owns the date (and rolls a
   // weekend deadline forward, e.g. tax year 2027 is really due April 17 2028).
   // No extension facts here — this reminder goes to a prospect with no filing
   // on record, so it is the ordinary original due date by definition.
-  const deadline = formatDueDate(filingDueDateUtc(taxYearToFile));
+  const deadline = emailDate(formatDueDate(filingDueDateUtc(taxYearToFile)), args.locale);
   const llcLine =
     previousLlcNames.length === 0
-      ? "your foreign-owned LLC"
+      ? t("marchReminder.llcLine2")
       : previousLlcNames.length === 1
         ? previousLlcNames[0]
-        : `${previousLlcNames.slice(0, -1).join(", ")} and ${previousLlcNames[previousLlcNames.length - 1]}`;
+        : t("marchReminder.llcLine", { v0: previousLlcNames.slice(0, -1).join(", "), v1: previousLlcNames[previousLlcNames.length - 1] });
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      Quick reminder — your <strong>${taxYearToFile}</strong> Form 5472 for
-      ${escapeHtml(llcLine)} is due in about <strong>30 days</strong> (deadline: ${deadline}).
-    </p>
-    <div style="background:${EMAIL_STYLES.redBg};border:1px solid ${EMAIL_STYLES.redBorder};border-radius:8px;padding:14px 18px;margin:0 0 20px;color:${EMAIL_STYLES.redDark};font-size:14px;line-height:1.5;">
-      <strong>Heads up:</strong> the IRS imposes significant late-filing penalties for Form 5472 —
-      act now to file on time.
-    </div>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      The filing takes ~15 minutes from start to faxed-with-the-IRS. We've kept your previous
-      LLC and owner details on file so you can move fast.
-    </p>
+    <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("marchReminder.bodyHtml", { tag0: "<strong>", tag1: "</strong>", tag2: "<strong>", tag3: "</strong>", v1: taxYearToFile, v2: escapeHtml(llcLine), v3: deadline })}</p>
+    <div style="background:${EMAIL_STYLES.redBg};border:1px solid ${EMAIL_STYLES.redBorder};border-radius:8px;padding:14px 18px;margin:0 0 20px;color:${EMAIL_STYLES.redDark};font-size:14px;line-height:1.5;">${t("marchReminder.bodyHtml2", { tag0: "<strong>", tag1: "</strong>" })}</div>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("marchReminder.bodyHtml3")}</p>
   `;
 
   return sendEmail({
     log: { kind: "march_reminder" },
     to: email,
-    subject: `30 days left — file your ${taxYearToFile} Form 5472 before ${deadline}`,
+    subject: t("marchReminder.subject", { v0: taxYearToFile, v1: deadline }),
     text:
-      `Hello there,\n\nYour ${taxYearToFile} Form 5472 for ${llcLine} is due in about 30 days (deadline: ${deadline}).\n\n` +
-      `The IRS imposes significant late-filing penalties on Form 5472. Take 15 minutes now and we'll fax it to the IRS today: ${startLink}\n\n` +
-      `Thank you,\nThe Form5472 Prep team\n\n` +
-      `Unsubscribe from filing reminders: ${unsubscribeUrl}`,
-    html: customerShell({
-      heading: `Your ${taxYearToFile} Form 5472 deadline is in 30 days`,
-      salutation: "there",
+      t("marchReminder.text4", { v0: taxYearToFile, v1: llcLine, v2: deadline }) +
+      t("marchReminder.text3", { v0: startLink }) +
+      t("marchReminder.text2") +
+      t("marchReminder.text", { v0: unsubscribeUrl }),
+    html: customerShell({ locale: args.locale,
+      heading: t("marchReminder.heading", { v0: taxYearToFile }),
+      salutation: t("marchReminder.salutation"),
       bodyHtml,
-      cta: { label: `File my ${taxYearToFile} return now`, url: startLink },
+      cta: { label: t("marchReminder.label", { v0: taxYearToFile }), url: startLink },
       unsubscribeUrl,
     }),
     headers: {
@@ -1753,6 +1722,7 @@ export async function sendMarchReminderEmail(args: ReminderArgs) {
 // ---------- 7. Abandoned-draft reminder (one-shot) ----------
 
 type AbandonedDraftArgs = {
+  locale?: string | null;
   email: string;
   recipientName?: string | null;
   llcName: string | null;
@@ -1765,57 +1735,50 @@ type AbandonedDraftArgs = {
 };
 
 export async function sendAbandonedDraftReminderEmail(args: AbandonedDraftArgs) {
+  const t = safeEmailTranslator(args.locale);
   const { email, recipientName, llcName, resumeLink, unsubscribeUrl, variant = "first" } = args;
-  const salutation = firstNameFrom(recipientName) ?? "there";
-  const llcLine = llcName ? escapeHtml(llcName) : "your foreign-owned LLC";
-  const llcPlain = llcName ?? "your foreign-owned LLC";
+  const salutation = firstNameFrom(recipientName) ?? t("abandonedDraftReminder.salutation");
+  const llcLine = llcName ? escapeHtml(llcName) : t("abandonedDraftReminder.llcPlain");
+  const llcPlain = llcName ?? t("abandonedDraftReminder.llcPlain");
   const isFinal = variant === "final";
 
   const subject = isFinal
-    ? "Still time to file your Form 5472 — your draft is saved"
-    : "Finish your Form 5472 filing — your progress is saved";
-  const heading = isFinal ? "Your Form 5472 draft is still saved" : "Finish your Form 5472 filing";
+    ? t("abandonedDraftReminder.subject2")
+    : t("abandonedDraftReminder.subject");
+  const heading = isFinal ? t("abandonedDraftReminder.heading2") : t("abandonedDraftReminder.heading");
   const preheader = isFinal
-    ? "It's been about a month — your draft is still saved and takes ~15 minutes to finish."
-    : "Your progress is saved. Pick up where you left off — about 15 minutes left.";
+    ? t("abandonedDraftReminder.preheader2")
+    : t("abandonedDraftReminder.preheader");
   const introHtml = isFinal
-    ? `It's been about a month since you started a Form 5472 filing for <strong>${llcLine}</strong>.
-       Your progress is still saved — you can pick up right where you left off whenever you're ready.`
-    : `You started a Form 5472 filing for <strong>${llcLine}</strong> but didn't finish.
-       Your progress is saved — you can pick up right where you left off.`;
+    ? t("abandonedDraftReminder.introHtml2", { tag0: "<strong>", tag1: "</strong>", v0: llcLine })
+    : t("abandonedDraftReminder.introHtml", { tag0: "<strong>", tag1: "</strong>", v0: llcLine });
   const introText = isFinal
-    ? `It's been about a month since you started a Form 5472 filing for ${llcPlain}. Your progress is still saved.`
-    : `You started a Form 5472 filing for ${llcPlain} but didn't finish.\n\nYour progress is saved.`;
+    ? t("abandonedDraftReminder.introText2", { v0: llcPlain })
+    : t("abandonedDraftReminder.introText", { v0: llcPlain });
 
   const bodyHtml = `
     <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
       ${introHtml}
     </p>
-    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      Most customers finish in about <strong>15 minutes</strong>. The IRS imposes
-      significant penalties for missing Form 5472 filings, so it's worth completing today.
-    </p>
-    <div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;padding:14px 18px;margin:0 0 24px;color:${EMAIL_STYLES.slate};font-size:14px;line-height:1.5;">
-      <strong style="color:${EMAIL_STYLES.ink};">Need help?</strong> Just reply to this email and we'll
-      walk you through whatever you got stuck on.
-    </div>`;
+    <p style="margin:0 0 20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("abandonedDraftReminder.bodyHtml", { tag0: "<strong>", tag1: "</strong>" })}</p>
+    <div style="background:${EMAIL_STYLES.bg};border:1px solid ${EMAIL_STYLES.border};border-radius:8px;padding:14px 18px;margin:0 0 24px;color:${EMAIL_STYLES.slate};font-size:14px;line-height:1.5;">${t("abandonedDraftReminder.bodyHtml2", { tag0: "<strong style=\"color:" + (EMAIL_STYLES.ink) + ";\">", tag1: "</strong>" })}</div>`;
 
   return sendEmail({
     log: { kind: "abandoned_draft_reminder" },
     to: email,
     subject,
     text:
-      `Hello ${salutation},\n\n${introText}\n\n` +
-      `Pick up where you left off (most customers finish in ~15 minutes):\n` +
+      t("abandonedDraftReminder.text5", { v0: salutation, v1: introText }) +
+      t("abandonedDraftReminder.text4") +
       `${resumeLink}\n\n` +
-      `The IRS imposes significant penalties for missing Form 5472 filings — worth completing today.\n\n` +
-      `If you need help, reply to this email.\n\nThank you,\nThe Form5472 Prep team\n\n` +
-      `Unsubscribe from these emails: ${unsubscribeUrl}`,
-    html: customerShell({ preheader,
+      t("abandonedDraftReminder.text3") +
+      t("abandonedDraftReminder.text2") +
+      t("abandonedDraftReminder.text", { v0: unsubscribeUrl }),
+    html: customerShell({ locale: args.locale, preheader,
       heading,
       salutation,
       bodyHtml,
-      cta: { label: "Resume my filing", url: resumeLink },
+      cta: { label: t("abandonedDraftReminder.label"), url: resumeLink },
       unsubscribeUrl,
     }),
     headers: {
@@ -1905,44 +1868,46 @@ export async function sendEinApplicationAdminEmail(args: EinApplicationEmailArgs
 }
 
 export async function sendEinApplicationConfirmationEmail(args: {
+  locale?: string | null;
   email: string;
   fullName: string;
   llcName: string;
   amountPaidCents: number;
   portalLink: string;
 }) {
+  const t = safeEmailTranslator(args.locale);
   const amount = formatUsd(args.amountPaidCents);
-  const body = `Thank you. We have received your EIN application for ${args.llcName} and your payment of ${amount}. This email confirms that payment — you will not receive a separate payment request.\n\n` +
-    `What happens next\n\n` +
-    `1. Review — within 1 business day. We check the details you provided. If anything is missing, we email you a short list of exactly what to send.\n` +
-    `2. Form SS-4 prepared. We complete Form SS-4 on your behalf. An EIN does not require identity documents: no passport to mail, nothing to certify.\n` +
-    `3. We contact the IRS. We call the IRS Business & Specialty Tax Line for you and can often obtain the EIN on the call. Complex cases may take slightly longer.\n` +
-    `4. Your EIN delivered. You receive your nine-digit EIN by email, together with a copy of the completed Form SS-4 for your records. The IRS then mails the official CP 575 confirmation letter to your LLC's address within 4–6 weeks — this is the document banks sometimes ask for.\n\n` +
-    `Typical timing: 1–5 business days once we have everything we need.\n\n` +
-    `You can follow your application's status at any time in your client portal:\n\n` +
+  const body = t("einApplicationConfirmation.body8", { v0: args.llcName, v1: amount }) +
+    t("einApplicationConfirmation.body7") +
+    t("einApplicationConfirmation.body6") +
+    t("einApplicationConfirmation.body5") +
+    t("einApplicationConfirmation.body4") +
+    t("einApplicationConfirmation.body3") +
+    t("einApplicationConfirmation.body2") +
+    t("einApplicationConfirmation.body") +
     `${args.portalLink}\n\n` +
-    `If you have a question, reply to this email or write to support@form5472prep.com.`;
+    t("einApplicationConfirmation.footnoteHtml");
   return sendEmail({
     log: { kind: "ein_application_confirmation" },
     to: args.email,
-    subject: `EIN application received — ${args.llcName}`,
-    text: customerText(args.fullName, body),
-    html: customerShell({
-      heading: "We have received your EIN application",
+    subject: t("einApplicationConfirmation.subject", { v0: args.llcName }),
+    text: customerText(args.fullName, body, undefined, undefined, args.locale),
+    html: customerShell({ locale: args.locale,
+      heading: t("einApplicationConfirmation.heading"),
       salutation: args.fullName,
       bodyHtml: `
-        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Thank you. We have received your EIN application for <strong>${escapeHtml(args.llcName)}</strong> and your payment of <strong>${escapeHtml(amount)}</strong>. This email confirms that payment — you will not receive a separate payment request.</p>
-        <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next</p>
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("einApplicationConfirmation.bodyHtml", { tag0: "<strong>", tag1: "</strong>", tag2: "<strong>", tag3: "</strong>", v1: escapeHtml(args.llcName), v2: escapeHtml(amount) })}</p>
+        <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">${t("einApplicationConfirmation.bodyHtml2")}</p>
         <ol style="margin:0 0 24px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-          <li style="margin-bottom:8px;"><strong>Review — within 1 business day.</strong> We check the details you provided. If anything is missing, we email you a short list of exactly what to send.</li>
-          <li style="margin-bottom:8px;"><strong>Form SS-4 prepared.</strong> We complete Form SS-4 on your behalf. An EIN does not require identity documents: no passport to mail, nothing to certify.</li>
-          <li style="margin-bottom:8px;"><strong>We contact the IRS.</strong> We call the IRS Business &amp; Specialty Tax Line for you and can often obtain the EIN on the call. Complex cases may take slightly longer.</li>
-          <li style="margin-bottom:0;"><strong>Your EIN delivered.</strong> You receive your nine-digit EIN by email, together with a copy of the completed Form SS-4 for your records. The IRS then mails the official CP 575 confirmation letter to your LLC&apos;s address within 4–6 weeks — this is the document banks sometimes ask for.</li>
+          <li style="margin-bottom:8px;">${t("einApplicationConfirmation.bodyHtml3", { tag0: "<strong>", tag1: "</strong>" })}</li>
+          <li style="margin-bottom:8px;">${t("einApplicationConfirmation.bodyHtml4", { tag0: "<strong>", tag1: "</strong>" })}</li>
+          <li style="margin-bottom:8px;">${t("einApplicationConfirmation.bodyHtml5", { tag0: "<strong>", tag1: "</strong>" })}</li>
+          <li style="margin-bottom:0;">${t("einApplicationConfirmation.bodyHtml6", { tag0: "<strong>", tag1: "</strong>" })}</li>
         </ol>
-        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;"><strong>Typical timing:</strong> 1–5 business days once we have everything we need.</p>
-        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">You can follow your application&apos;s status at any time in your client portal:</p>`,
-      cta: { label: "Open your application →", url: args.portalLink },
-      footnoteHtml: "If you have a question, reply to this email or write to support@form5472prep.com.",
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("einApplicationConfirmation.bodyHtml7", { tag0: "<strong>", tag1: "</strong>" })}</p>
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("einApplicationConfirmation.bodyHtml8")}</p>`,
+      cta: { label: t("einApplicationConfirmation.label"), url: args.portalLink },
+      footnoteHtml: t("einApplicationConfirmation.footnoteHtml"),
     }),
   });
 }
@@ -2016,41 +1981,43 @@ export async function sendItinApplicationAdminEmail(args: ItinApplicationEmailAr
 }
 
 export async function sendItinApplicationConfirmationEmail(args: {
+  locale?: string | null;
   email: string;
   fullName: string;
   amountPaidCents: number;
   portalLink: string;
 }) {
+  const t = safeEmailTranslator(args.locale);
   const amount = formatUsd(args.amountPaidCents);
-  const body = `Thank you. We have received your ITIN application and your payment of ${amount}. This email confirms that payment — you will not receive a separate payment request.\n\n` +
-    `What happens next\n\n` +
-    `1. Eligibility check and checklist — within 1 business day. We review your details and email you a short checklist of the identity documents required.\n` +
-    `2. Identity certification. We forward your application to an IRS-authorized Certifying Acceptance Agent, who verifies your documents by video call or secure upload and certifies them, so the IRS accepts the certified copies. Your original passport stays with you — nothing is mailed to the IRS.\n` +
-    `3. Form W-7 submitted. We prepare your Form W-7 and submit it to the IRS ITIN Unit with the certification attached.\n` +
-    `4. ITIN issued. The IRS typically issues an ITIN within 6–11 weeks of receiving a complete application. Applications filed during peak season (January–April) can take longer; IRS processing time is outside our control.\n\n` +
-    `You can follow your application's status at any time in your client portal:\n\n` +
+  const body = t("itinApplicationConfirmation.body7", { v0: amount }) +
+    t("itinApplicationConfirmation.body6") +
+    t("itinApplicationConfirmation.body5") +
+    t("itinApplicationConfirmation.body4") +
+    t("itinApplicationConfirmation.body3") +
+    t("itinApplicationConfirmation.body2") +
+    t("itinApplicationConfirmation.body") +
     `${args.portalLink}\n\n` +
-    `If you have a question, reply to this email or write to support@form5472prep.com.`;
+    t("itinApplicationConfirmation.footnoteHtml");
   return sendEmail({
     log: { kind: "itin_application_confirmation" },
     to: args.email,
-    subject: `ITIN application received — ${args.fullName}`,
-    text: customerText(args.fullName, body),
-    html: customerShell({
-      heading: "We have received your ITIN application",
+    subject: t("itinApplicationConfirmation.subject", { v0: args.fullName }),
+    text: customerText(args.fullName, body, undefined, undefined, args.locale),
+    html: customerShell({ locale: args.locale,
+      heading: t("itinApplicationConfirmation.heading"),
       salutation: args.fullName,
       bodyHtml: `
-        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Thank you. We have received your ITIN application and your payment of <strong>${escapeHtml(amount)}</strong>. This email confirms that payment — you will not receive a separate payment request.</p>
-        <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next</p>
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("itinApplicationConfirmation.bodyHtml", { tag0: "<strong>", tag1: "</strong>", v1: escapeHtml(amount) })}</p>
+        <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">${t("itinApplicationConfirmation.bodyHtml2")}</p>
         <ol style="margin:0 0 24px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
-          <li style="margin-bottom:8px;"><strong>Eligibility check and checklist — within 1 business day.</strong> We review your details and email you a short checklist of the identity documents required.</li>
-          <li style="margin-bottom:8px;"><strong>Identity certification.</strong> We forward your application to an IRS-authorized Certifying Acceptance Agent, who verifies your documents by video call or secure upload and certifies them, so the IRS accepts the certified copies. Your original passport stays with you — nothing is mailed to the IRS.</li>
-          <li style="margin-bottom:8px;"><strong>Form W-7 submitted.</strong> We prepare your Form W-7 and submit it to the IRS ITIN Unit with the certification attached.</li>
-          <li style="margin-bottom:0;"><strong>ITIN issued.</strong> The IRS typically issues an ITIN within <strong>6–11 weeks</strong> of receiving a complete application. Applications filed during peak season (January–April) can take longer; IRS processing time is outside our control.</li>
+          <li style="margin-bottom:8px;">${t("itinApplicationConfirmation.bodyHtml3", { tag0: "<strong>", tag1: "</strong>" })}</li>
+          <li style="margin-bottom:8px;">${t("itinApplicationConfirmation.bodyHtml4", { tag0: "<strong>", tag1: "</strong>" })}</li>
+          <li style="margin-bottom:8px;">${t("itinApplicationConfirmation.bodyHtml5", { tag0: "<strong>", tag1: "</strong>" })}</li>
+          <li style="margin-bottom:0;">${t("itinApplicationConfirmation.bodyHtml6", { tag0: "<strong>", tag1: "</strong>", tag2: "<strong>", tag3: "</strong>" })}</li>
         </ol>
-        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">You can follow your application&apos;s status at any time in your client portal:</p>`,
-      cta: { label: "Open your application →", url: args.portalLink },
-      footnoteHtml: "If you have a question, reply to this email or write to support@form5472prep.com.",
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("itinApplicationConfirmation.bodyHtml7")}</p>`,
+      cta: { label: t("itinApplicationConfirmation.label"), url: args.portalLink },
+      footnoteHtml: t("itinApplicationConfirmation.footnoteHtml"),
     }),
   });
 }
@@ -2121,49 +2088,52 @@ export async function sendExtensionApplicationAdminEmail(args: ExtensionApplicat
 }
 
 export async function sendExtensionApplicationConfirmationEmail(args: {
+  locale?: string | null;
   email: string;
   fullName: string;
   llcName?: string | null;
   taxYear?: number | null;
   amountPaidCents: number;
 }) {
+  const t = safeEmailTranslator(args.locale);
   const amount = formatUsd(args.amountPaidCents);
-  const salutation = args.fullName || "there";
-  const llc = args.llcName || "your LLC";
-  const due = extensionDueText(args.taxYear);
+  const salutation = args.fullName || t("extensionApplicationConfirmation.salutation");
+  const llc = args.llcName || t("extensionApplicationConfirmation.llc");
+  const originalDue = extensionDueText(args.taxYear);
+  const due = originalDue ? emailDate(originalDue, args.locale) : null;
   const extended = args.taxYear
-    ? formatDueDate(effectiveDueDateUtc(args.taxYear, null, { filed: "yes", transmittedAt: null }))
+    ? emailDate(formatDueDate(effectiveDueDateUtc(args.taxYear, null, { filed: "yes", transmittedAt: null })), args.locale)
     : null;
   const deadlineText = args.taxYear && due && extended
-    ? `For tax year ${args.taxYear}, Form 7004 must be filed by ${due}. A valid extension moves the due date of the Form 5472 and pro forma Form 1120 to ${extended}. It extends the time to file, not to pay.`
-    : "Reply with the tax year you need the extension for. Form 7004 must be filed by the original due date of the return (15 April for a calendar-year LLC). It extends the time to file, not to pay.";
+    ? t("extensionApplicationConfirmation.deadlineText2", { v0: args.taxYear, v1: due, v2: extended })
+    : t("extensionApplicationConfirmation.deadlineText");
   const steps: Array<[string, string]> = [
-    ["We check your details — within 1 business day.", "If anything is missing, such as the LLC's EIN or US address, we email you a short list."],
-    ["We prepare Form 7004.", "\u201cForeign-owned U.S. DE\u201d is written across the top and Form 1120 code 12 is entered, as the IRS instructions describe for a foreign-owned disregarded entity."],
-    ["We fax it to the IRS Ogden PIN Unit.", "Orders are faxed within 2 business days; for a tax year that has not ended yet, we fax it in the first business days after 1 January."],
-    ["We email you the fax confirmation.", "It shows the fax was transmitted to the IRS. It is not an IRS acceptance of the extension."],
+    [t("extensionApplicationConfirmation.steps8"), t("extensionApplicationConfirmation.steps7")],
+    [t("extensionApplicationConfirmation.steps6"), t("extensionApplicationConfirmation.steps5")],
+    [t("extensionApplicationConfirmation.steps4"), t("extensionApplicationConfirmation.steps3")],
+    [t("extensionApplicationConfirmation.steps2"), t("extensionApplicationConfirmation.steps")],
   ];
-  const body = `Thank you. We have received your Form 7004 extension order for ${llc} and your payment of ${amount}. This email confirms that payment — you will not receive a separate payment request.\n\n` +
-    `What happens next\n\n` +
+  const body = t("extensionApplicationConfirmation.body2", { v0: llc, v1: amount }) +
+    t("extensionApplicationConfirmation.body") +
     steps.map(([title, text], i) => `${i + 1}. ${title} ${text}`).join("\n") + "\n\n" +
     `${deadlineText}\n\n` +
-    `If you have a question, reply to this email or write to support@form5472prep.com.`;
+    t("extensionApplicationConfirmation.footnoteHtml");
   return sendEmail({
     log: { kind: "extension_application_confirmation" },
     to: args.email,
-    subject: `Form 7004 extension order received — ${llc}`,
-    text: customerText(salutation, body),
-    html: customerShell({
-      heading: "We have received your Form 7004 extension order",
+    subject: t("extensionApplicationConfirmation.subject", { v0: llc }),
+    text: customerText(salutation, body, undefined, undefined, args.locale),
+    html: customerShell({ locale: args.locale,
+      heading: t("extensionApplicationConfirmation.heading"),
       salutation,
       bodyHtml: `
-        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Thank you. We have received your Form 7004 extension order for <strong>${escapeHtml(llc)}</strong> and your payment of <strong>${escapeHtml(amount)}</strong>. This email confirms that payment — you will not receive a separate payment request.</p>
-        <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">What happens next</p>
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("extensionApplicationConfirmation.bodyHtml", { tag0: "<strong>", tag1: "</strong>", tag2: "<strong>", tag3: "</strong>", v1: escapeHtml(llc), v2: escapeHtml(amount) })}</p>
+        <p style="margin:0 0 8px;font-weight:600;color:${EMAIL_STYLES.ink};font-size:15px;">${t("extensionApplicationConfirmation.bodyHtml2")}</p>
         <ol style="margin:0 0 24px;padding-left:20px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:14px;">
           ${steps.map(([title, text], i) => `<li style="margin-bottom:${i === steps.length - 1 ? 0 : 8}px;"><strong>${escapeHtml(title)}</strong> ${escapeHtml(text)}</li>`).join("\n          ")}
         </ol>
         <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${escapeHtml(deadlineText)}</p>`,
-      footnoteHtml: "If you have a question, reply to this email or write to support@form5472prep.com.",
+      footnoteHtml: t("extensionApplicationConfirmation.footnoteHtml"),
     }),
   });
 }
@@ -2175,6 +2145,7 @@ function extensionAttachmentName(prefix: string, llcName: string | null | undefi
 }
 
 export async function sendExtensionFaxedEmail(args: {
+  locale?: string | null;
   email: string;
   fullName: string;
   llcName?: string | null;
@@ -2183,38 +2154,39 @@ export async function sendExtensionFaxedEmail(args: {
   receiptPdfBytes?: Uint8Array;
   formPdfBytes?: Uint8Array;
 }) {
-  const salutation = args.fullName || "there";
-  const llc = args.llcName || "your LLC";
-  const faxedOn = new Date(args.deliveredAtIso).toUTCString();
+  const t = safeEmailTranslator(args.locale);
+  const salutation = args.fullName || t("extensionFaxed.salutation");
+  const llc = args.llcName || t("extensionFaxed.llc");
+  const faxedOn = emailDate(new Date(args.deliveredAtIso).toUTCString(), args.locale, true);
   const extended = args.taxYear
-    ? formatDueDate(effectiveDueDateUtc(args.taxYear, null, { filed: "yes", transmittedAt: null }))
+    ? emailDate(formatDueDate(effectiveDueDateUtc(args.taxYear, null, { filed: "yes", transmittedAt: null })), args.locale)
     : null;
   const attachments = [
     ...(args.receiptPdfBytes ? [{ filename: extensionAttachmentName("IRS-fax-receipt-Form-7004", args.llcName, args.taxYear), content: args.receiptPdfBytes }] : []),
     ...(args.formPdfBytes ? [{ filename: extensionAttachmentName("Form-7004", args.llcName, args.taxYear), content: args.formPdfBytes }] : []),
   ];
   const paragraphs = [
-    `We faxed Form 7004 for ${llc}${args.taxYear ? ` (tax year ${args.taxYear})` : ""} to the IRS Ogden PIN Unit, and the fax was delivered on ${faxedOn}.`,
+    t("extensionFaxed.paragraphs7", { v0: llc, v1: args.taxYear ? t("extensionFaxed.paragraphs6", { v0: args.taxYear }) : "", v2: faxedOn }),
     attachments.length
-      ? "Attached are the fax transmission receipt and a copy of the Form 7004 we faxed. Please keep them with your records."
-      : "Reply to this email if you would like a copy of the fax transmission receipt and the Form 7004 we faxed.",
-    "The receipt shows that the form was transmitted to the IRS. It is not an IRS acceptance of the extension.",
+      ? t("extensionFaxed.paragraphs5")
+      : t("extensionFaxed.paragraphs4"),
+    t("extensionFaxed.paragraphs3"),
     extended
-      ? `A valid extension moves the due date of the Form 5472 and pro forma Form 1120 to ${extended}. It extends the time to file, not to pay.`
-      : "A valid extension moves the due date of the Form 5472 and pro forma Form 1120 to 15 October. It extends the time to file, not to pay.",
+      ? t("extensionFaxed.paragraphs2", { v0: extended })
+      : t("extensionFaxed.paragraphs"),
   ];
   return sendEmail({
     log: { kind: "extension_fax_delivered" },
     to: args.email,
-    subject: `Form 7004 faxed to the IRS — ${llc}`,
-    text: customerText(salutation, paragraphs.join("\n\n"), "If you have a question, reply to this email or write to support@form5472prep.com."),
-    html: customerShell({
-      heading: "Your Form 7004 was faxed to the IRS",
+    subject: t("extensionFaxed.subject", { v0: llc }),
+    text: customerText(salutation, paragraphs.join("\n\n"), t("extensionFaxed.footnoteHtml"), undefined, args.locale),
+    html: customerShell({ locale: args.locale,
+      heading: t("extensionFaxed.heading"),
       salutation,
       bodyHtml: paragraphs
         .map((p) => `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${escapeHtml(p)}</p>`)
         .join("\n        "),
-      footnoteHtml: "If you have a question, reply to this email or write to support@form5472prep.com.",
+      footnoteHtml: t("extensionFaxed.footnoteHtml"),
     }),
     attachments: attachments.length ? attachments : undefined,
   });
@@ -2308,30 +2280,32 @@ export async function sendExtensionFaxFailedAdminEmail(args: ExtensionFaxAdminAr
 }
 
 export async function sendApplicationSignatureRequestEmail(args: {
+  locale?: string | null;
   email: string;
   fullName: string;
   type: "ein" | "itin";
   signLink: string;
 }) {
+  const t = safeEmailTranslator(args.locale);
   const label = formLabel(args.type);
-  const body = `Your ${label} is prepared and ready for your review.\n\n` +
-    `Please review the form carefully and sign it online when everything looks correct:\n\n` +
+  const body = t("applicationSignatureRequest.body2", { v0: label }) +
+    t("applicationSignatureRequest.body") +
     `${args.signLink}\n\n` +
-    `If anything looks wrong, reply to this email before signing.`;
+    t("applicationSignatureRequest.footnoteHtml");
 
   return sendEmail({
     log: { kind: "application_signature_request" },
     to: args.email,
-    subject: `Your ${label} is ready to review and sign`,
-    text: customerText(args.fullName, body),
-    html: customerShell({
-      heading: `Your ${label} is ready to review and sign`,
+    subject: t("applicationSignatureRequest.heading", { v0: label }),
+    text: customerText(args.fullName, body, undefined, undefined, args.locale),
+    html: customerShell({ locale: args.locale,
+      heading: t("applicationSignatureRequest.heading", { v0: label }),
       salutation: args.fullName,
       bodyHtml: `
-        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Your ${escapeHtml(label)} is prepared and ready for your review.</p>
-        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">Please review the form carefully and sign it online when everything looks correct.</p>`,
-      cta: { label: "Review and sign", url: args.signLink },
-      footnoteHtml: "If anything looks wrong, reply to this email before signing.",
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("applicationSignatureRequest.bodyHtml", { v1: escapeHtml(label) })}</p>
+        <p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("applicationSignatureRequest.bodyHtml2")}</p>`,
+      cta: { label: t("applicationSignatureRequest.label"), url: args.signLink },
+      footnoteHtml: t("applicationSignatureRequest.footnoteHtml"),
     }),
   });
 }
@@ -2435,14 +2409,16 @@ export async function sendWebsiteQuestionAdminEmail(args: {
 // Replies to it land in support@ (the default Reply-To), so the conversation
 // can continue by email.
 export async function sendWebsiteQuestionReplyEmail(args: {
+  locale?: string | null;
   to: string;
   name?: string | null;
   reply: string;
   originalMessage: string;
   askedAt: Date;
 }) {
-  const salutation = firstNameFrom(args.name) ?? "there";
-  const askedOn = args.askedAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+  const t = safeEmailTranslator(args.locale);
+  const salutation = firstNameFrom(args.name) ?? t("websiteQuestionReply.salutation");
+  const askedOn = emailDate(args.askedAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }), args.locale);
   const paragraphs = args.reply
     .split(/\n{2,}/)
     .map((p) => p.trim())
@@ -2450,26 +2426,26 @@ export async function sendWebsiteQuestionReplyEmail(args: {
     .map((p) => `<p style="margin:0 0 16px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${escapeHtml(p).replace(/\n/g, "<br/>")}</p>`)
     .join("");
   const quoted = `<div style="margin:8px 0 24px;padding:12px 16px;border-left:3px solid ${EMAIL_STYLES.border};background:${EMAIL_STYLES.bg};color:${EMAIL_STYLES.muted};font-size:13px;line-height:1.6;">
-      <div style="margin:0 0 6px;font-weight:600;">Your question (${escapeHtml(askedOn)}):</div>
+      <div style="margin:0 0 6px;font-weight:600;">${t("websiteQuestionReply.quoted", { v3: escapeHtml(askedOn) })}</div>
       ${escapeHtml(args.originalMessage).replace(/\n/g, "<br/>")}
     </div>`;
   const quotedText = args.originalMessage.split("\n").map((line) => `> ${line}`).join("\n");
   return sendEmail({
     log: { kind: "website_question_reply" },
     to: args.to,
-    subject: "Re: your question to Form5472 Prep",
+    subject: t("websiteQuestionReply.subject"),
     text: customerText(
       salutation,
-      `${args.reply.trim()}\n\nYour question (${askedOn}):\n${quotedText}`,
-      "You can reply to this email if you have any other questions.",
+      t("websiteQuestionReply.text", { v0: args.reply.trim(), v1: askedOn, v2: quotedText }),
+      t("websiteQuestionReply.footnoteHtml"), undefined, args.locale
     ),
-    html: customerShell({
-      heading: "Our answer to your question",
+    html: customerShell({ locale: args.locale,
+      heading: t("websiteQuestionReply.heading"),
       salutation,
       // shell() inserts the preheader raw, so escape the admin-typed text.
       preheader: escapeHtml(subjectSnippet(args.reply.trim(), 90)),
       bodyHtml: `${paragraphs}${quoted}`,
-      footnoteHtml: "You can reply to this email if you have any other questions.",
+      footnoteHtml: t("websiteQuestionReply.footnoteHtml"),
     }),
   });
 }
@@ -2605,32 +2581,32 @@ export async function sendClientIntakeEmail(
   filingLabel: string,
   preparerName: string,
   brand?: EmailBrand,
+  locale?: string | null
 ): Promise<unknown> {
-  const heading = "Your Form 5472 filing needs your details";
+  const t = safeEmailTranslator(locale);
+  const heading = t("clientIntake.heading");
   const bodyHtml = `
-    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      ${escapeHtml(preparerName)} started this filing for <strong>${escapeHtml(filingLabel)}</strong> and
-      needs you to answer the remaining questions and upload your documents.
-    </p>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days.</p>`;
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("clientIntake.bodyHtml", { tag0: "<strong>", tag1: "</strong>", v1: escapeHtml(preparerName), v2: escapeHtml(filingLabel) })}</p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">${t("clientIntake.bodyHtml2")}</p>`;
 
   return sendEmail({
     log: { kind: "client_intake" },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
-    subject: `Add your details for ${filingLabel}`,
+    subject: t("clientIntake.subject", { v0: filingLabel }),
     text: customerText(
-      "there",
-      `${preparerName} started this filing for ${filingLabel} and needs you to answer the remaining questions and upload your documents.\n\nOpen your filing:\n\n${link}\n\nThis link is good for 7 days. If you were not expecting this, you can ignore this email.`,
+      t("clientIntake.salutation"),
+      t("clientIntake.text", { v0: preparerName, v1: filingLabel, v2: link }),
       undefined,
       brand,
+      locale,
     ),
-    html: customerShell({
+    html: customerShell({ locale,
       heading,
-      salutation: "there",
+      salutation: t("clientIntake.salutation"),
       bodyHtml,
-      cta: { label: "Open my filing", url: link },
+      cta: { label: t("clientIntake.label"), url: link },
       brand,
     }),
   });
@@ -2650,32 +2626,32 @@ export async function sendResumeFilingEmail(
   link: string,
   filingLabel: string,
   brand?: EmailBrand,
+  locale?: string | null
 ): Promise<unknown> {
-  const heading = "Pick up where you left off";
+  const t = safeEmailTranslator(locale);
+  const heading = t("resumeFiling.heading");
   const bodyHtml = `
-    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">
-      The answers you already gave for <strong>${escapeHtml(filingLabel)}</strong> are saved. Use the
-      button below to reopen your filing and finish it whenever you are ready.
-    </p>
-    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">This link is good for 7 days. If you did not request this, you can ignore this email.</p>`;
+    <p style="margin:0 0 14px;color:${EMAIL_STYLES.subtle};line-height:1.6;font-size:15px;">${t("resumeFiling.bodyHtml", { tag0: "<strong>", tag1: "</strong>", v1: escapeHtml(filingLabel) })}</p>
+    <p style="margin:0 0 24px;color:${EMAIL_STYLES.muted};font-size:13px;">${t("resumeFiling.bodyHtml2")}</p>`;
 
   return sendEmail({
     log: { kind: "resume_filing" },
     to: email,
     fromName: brand?.name,
     replyTo: brand?.replyTo,
-    subject: "Continue your Form 5472 filing",
+    subject: t("resumeFiling.subject"),
     text: customerText(
-      "there",
-      `The answers you already gave for ${filingLabel} are saved. Use this secure link to reopen your filing and finish it whenever you are ready:\n\n${link}\n\nThis link is good for 7 days. If you did not request this, you can ignore this email.`,
+      t("resumeFiling.salutation"),
+      t("resumeFiling.text", { v0: filingLabel, v1: link }),
       undefined,
       brand,
+      locale,
     ),
-    html: customerShell({
+    html: customerShell({ locale,
       heading,
-      salutation: "there",
+      salutation: t("resumeFiling.salutation"),
       bodyHtml,
-      cta: { label: "Continue my filing", url: link },
+      cta: { label: t("resumeFiling.label"), url: link },
       brand,
     }),
   });

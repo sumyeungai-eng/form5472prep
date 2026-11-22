@@ -134,7 +134,7 @@ async function handleDraftAction(
       userId: true,
       llcName: true,
       abandonedReminderSentAt: true,
-      user: { select: { email: true, emailMarketingOptOut: true } },
+      user: { select: { email: true, locale: true, emailMarketingOptOut: true } },
     },
   });
   if (!filing) return NextResponse.json({ error: "filing not found" }, { status: 404 });
@@ -195,6 +195,7 @@ async function handleDraftAction(
 
       try {
         await sendAbandonedDraftReminderEmail({
+          locale: filing.user.locale,
           email: filing.user.email,
           llcName: filing.llcName,
           resumeLink: makeMagicLink(filing.userId),
